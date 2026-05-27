@@ -6,7 +6,7 @@
   "main": "src/index.ts",
   "types": "src/index.ts",
   "scripts": {
-    "typecheck": "echo scaffold-only:@tiko/identity",
-    "test": "echo scaffold-only:@tiko/identity"
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "test": "vitest run ../../tests/identity-api.test.ts"
   }
 }
