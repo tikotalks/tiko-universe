@@ -13,7 +13,7 @@ Runtime principles:
 - Production domains: `https://tikotalks.com` and `https://www.tikotalks.com`.
 - Source path: `apps/website/web`.
 - Build output: `apps/website/web/dist`.
-- Build command: `npm --workspace @tiko-web/website run build`.
+- Build command: `npm --workspace @tiko-universe/website-web run build`.
 - CI Node runtime: Node 22+.
 - Static site only for v1: no Worker, D1, KV, R2, Queue, auth, or backend dependency is required by the website deploy itself.
 
@@ -140,9 +140,9 @@ jobs:
 
       - run: npm ci
 
-      - run: npm --workspace @tiko-web/website run test
+      - run: npm --workspace @tiko-universe/website-web run test
 
-      - run: npm --workspace @tiko-web/website run build
+      - run: npm --workspace @tiko-universe/website-web run build
 
       - uses: actions/upload-artifact@v4
         with:
@@ -224,8 +224,8 @@ The root package can optionally add convenience scripts after the website app st
 ```json
 {
   "scripts": {
-    "build:website": "npm --workspace @tiko-web/website run build",
-    "test:website": "npm --workspace @tiko-web/website run test"
+    "build:website": "npm --workspace @tiko-universe/website-web run build",
+    "test:website": "npm --workspace @tiko-universe/website-web run test"
   }
 }
 ```
@@ -236,8 +236,8 @@ Before enabling dev deploy:
 
 1. `node -v` returns Node 22+.
 2. `npm ci` succeeds.
-3. `npm --workspace @tiko-web/website run test` passes.
-4. `npm --workspace @tiko-web/website run build` creates `apps/website/web/dist`.
+3. `npm --workspace @tiko-universe/website-web run test` passes.
+4. `npm --workspace @tiko-universe/website-web run build` creates `apps/website/web/dist`.
 5. GitHub Actions dry run or first dev run uploads a non-empty `tikotalks-dist` artifact.
 6. `npx wrangler pages deploy apps/website/web/dist --project-name tikotalks-dev --branch development` is run by GitHub Actions, not manually from the VPS, for the canonical deploy.
 7. `curl -I https://dev.tikotalks.com` returns 200 or expected static redirect.
@@ -264,20 +264,26 @@ npm -v
 
 Result:
 
-- `node -v`: `v24.15.0`.
-- `npm -v`: `11.12.1`.
+- `node -v`: `v22.22.3`.
+- `npm -v`: `10.9.8`.
 
 ```bash
-npm --workspace @tiko-web/website run build
+npm run audit:doctrine
 ```
 
-Result: failed before deployment wiring can be enabled. The current untracked `apps/website/web` implementation imports `tikoWebsiteAppUniverse` from `src/content/appUniverse.ts`, but that file currently exports `appUniverse` instead.
+Result: passed. The doctrine checker reported `doctrine checks passed`.
 
 ```bash
-npm --workspace @tiko-web/website run test
+npm --workspace @tiko-universe/website-web run test
 ```
 
-Result: failed before deployment wiring can be enabled. The current `src/content/appUniverse.spec.ts` expects `tikoWebsiteAppUniverse`, `getTikoWebsiteAppMetadata`, and related fields that the current `appUniverse.ts` file does not export.
+Result: passed. Vitest ran 2 test files / 8 tests successfully. The run emitted known missing-source sourcemap warnings from `@sil/color`, but no test failures.
+
+```bash
+npm --workspace @tiko-universe/website-web run build
+```
+
+Result: passed. Vite built `apps/website/web/dist` successfully. The build emitted the expected large-chunk warning because the current static site pulls in broad `@sil/ui` / Open Icon assets; this is a performance follow-up, not a deployment blocker for the wiring plan.
 
 Cloudflare read-only checks:
 
@@ -287,9 +293,9 @@ Cloudflare read-only checks:
 
 ## Open blockers before actual deployment
 
-1. Fix or replace the untracked `apps/website/web` implementation so website build and tests pass.
-2. Confirm whether production branch is `main` or `master` for this repo before committing workflow branch filters.
-3. Create or confirm Cloudflare Pages projects `tikotalks-dev` and `tikotalks` in account `8cef251b5fdcf6c6f63db98b7aa49f9a`.
-4. Attach `dev.tikotalks.com`, `tikotalks.com`, and `www.tikotalks.com` to the correct Pages projects.
-5. Decide whether the existing apex/`www` records pointing to `tiko-marketing.pages.dev` should be replaced during TikoTalks production cutover.
-6. Add GitHub Actions secret/variables by name only: `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`, `CLOUDFLARE_PAGES_PROJECT_DEV`, `CLOUDFLARE_PAGES_PROJECT_PROD`.
+1. Confirm whether production branch is `main` or `master` for this repo before committing workflow branch filters.
+2. Create or confirm Cloudflare Pages projects `tikotalks-dev` and `tikotalks` in account `8cef251b5fdcf6c6f63db98b7aa49f9a`.
+3. Attach `dev.tikotalks.com`, `tikotalks.com`, and `www.tikotalks.com` to the correct Pages projects.
+4. Decide whether the existing apex/`www` records pointing to `tiko-marketing.pages.dev` should be replaced during TikoTalks production cutover.
+5. Add GitHub Actions secret/variables by name only: `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`, `CLOUDFLARE_PAGES_PROJECT_DEV`, `CLOUDFLARE_PAGES_PROJECT_PROD`.
+6. Commit `.github/workflows/deploy-tikotalks.yml` only after the production branch and Pages project names are confirmed; keep canonical deploys in GitHub Actions, not from the VPS.
