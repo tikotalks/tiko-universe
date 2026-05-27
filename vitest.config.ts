@@ -6,6 +6,8 @@ export default defineConfig({
   plugins: [vue()],
   resolve: {
     alias: {
+      '@tiko/i18n': fileURLToPath(new URL('./packages/i18n/src/index.ts', import.meta.url)),
+      '@tiko/i18n/': fileURLToPath(new URL('./packages/i18n/src/', import.meta.url)) + '/',
       '@tiko/ui': fileURLToPath(new URL('./packages/ui/src/index.ts', import.meta.url)),
       '@tiko/ui/': fileURLToPath(new URL('./packages/ui/src/', import.meta.url)) + '/'
     }
