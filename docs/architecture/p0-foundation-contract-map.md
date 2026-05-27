@@ -2,380 +2,414 @@
 
 ## Purpose
 
-This is the build order and ownership map for the Tiko clean rebuild foundation. It exists to prevent app teams from inventing backend behavior independently.
+This is the authoritative P0 contract map for the clean Tiko rebuild. It exists to stop app work from inventing backend behavior inside clients.
 
-Tiko remains API-first: web, iOS, and Android clients consume the same documented contracts. Workers own durable behavior. Packages own typed clients, local helpers, and test fixtures. Apps stay thin.
+P0 builds the shared service foundation in this order:
 
-## Non-negotiable boundaries
+1. Identity.
+2. App settings and app state.
+3. Generation and TTS.
+4. Media and content.
+5. Admin.
 
+The order matters. Yes No and Type must prove that web, iOS, and Android can consume the same contracts before broader app migration starts.
+
+## Non-negotiable constraints
+
+- API first: every client-visible behavior starts as a documented contract.
 - No passwords.
-- No login wall before child-facing app use.
-- Device-first identity is the first session state.
-- D1 is the source of truth for relational app data and generated-media metadata.
-- R2 is the source of truth for media bytes.
-- KV is cache only; it must be rebuildable from D1/R2 or external systems.
-- Lezu owns translation management; Tiko packages may load Lezu output and checked-in fallbacks, not rebuild translation admin.
-- Browser cookies may exist for web convenience, but native clients must work with bearer session bundles.
-- `tiko-mono` is reference only and must not be modified for this rebuild.
+- No login walls.
+- Identity is device-first, with optional caregiver email recovery by magic link.
+- Web, iOS, and Android are equal clients. Do not rely on browser-only cookies.
+- D1 is the durable source of truth for relational data.
+- R2 is the durable source of truth for media bytes.
+- KV is cache only and can always be rebuilt from D1/R2 or Lezu.
+- Lezu owns translation management. Tiko consumes translation bundles and local fallbacks.
+- Workers own backend behavior. Packages expose contracts, clients, models, and test helpers; they do not become hidden backends.
 
-## P0 service boundaries
+## Service boundaries
 
 ### `identity-api`
 
-Owns users, devices, sessions, caregiver email recovery, magic-link verification, and logout.
+Owns:
 
-Initial endpoints, matching `docs/api/openapi.yaml`:
+- Device bootstrap.
+- Users.
+- Devices.
+- Sessions.
+- Magic links.
+- Optional caregiver email recovery.
+- Session introspection and logout.
+
+Initial endpoint order:
 
 1. `POST /v1/identity/device`
 2. `GET /v1/identity/session`
 3. `POST /v1/identity/email`
 4. `POST /v1/identity/magic-links/verify`
-5. `POST /v1/identity/logout` (documented in architecture; should be added to OpenAPI before implementation if it remains in P0)
+5. `POST /v1/identity/logout`
 
-D1 ownership:
+Storage ownership:
 
-- `users`
-- `devices`
-- `sessions`
-- `magic_links`
-- `user_profile_events`
+- D1: `users`, `devices`, `sessions`, `magic_links`, `user_profile_events`.
+- KV: rate-limit/cache keys only, never primary session state.
+- R2: none.
 
-KV/R2 ownership: none in P0.
+Package ownership:
 
-Package owner: `packages/identity` provides the browser TypeScript client, session bundle types, token storage adapter interfaces, and contract-test helpers. Native platforms mirror the same OpenAPI contract in Swift/Kotlin; they do not import the web package.
+- `packages/identity` exports the OpenAPI-aligned TypeScript session models, request helpers, token storage adapter interfaces, and client functions.
+- Native clients mirror these contracts in Swift/Kotlin from `docs/api/openapi.yaml`; they do not import the TypeScript package.
 
 ### `app-api`
 
-Owns user-scoped app settings and small app state. It is the first worker after identity because Yes-No and Type must stop treating localStorage as the durable cross-device contract.
+Owns:
 
-Initial endpoints, matching `docs/api/openapi.yaml`:
+- User-scoped app settings.
+- User-scoped app state.
+- App-level schema versioning for small Tiko apps.
+- Last-write metadata and future conflict handling.
+
+Initial endpoint order:
 
 1. `GET /v1/apps/{app}/settings`
 2. `PUT /v1/apps/{app}/settings`
 3. `GET /v1/apps/{app}/state`
 4. `PUT /v1/apps/{app}/state`
 
-D1 ownership:
+Storage ownership:
 
-- `app_settings`: one active settings document per `(user_id, app)` with version metadata.
-- `app_state`: one small state document per `(user_id, app)` for resumable app state.
-- `app_events` only if needed for audit/debug; not required before Yes-No proof.
+- D1: `app_settings`, `app_state`, and optional `app_state_events` once audit/history is needed.
+- KV: read-through cache for hot settings/state after D1 writes are working.
+- R2: none for P0 app state.
 
-KV ownership:
+Package ownership:
 
-- Optional short-lived cache for settings/state reads after the D1 shape is stable.
-- KV entries must be invalidated by writes and must never be the only copy.
-
-R2 ownership: none in P0.
-
-Package owner: `packages/data` owns `getAppSettings`, `putAppSettings`, `getAppState`, `putAppState`, app-specific settings/state TypeScript models, and contract fixtures.
+- `packages/data` exports `AppName`, app settings/state models, versioned app payload schemas, and thin client functions.
+- It may include local fallback/default factories, but not durable persistence beyond client storage adapters.
 
 ### `generation-api`
 
-Owns generated outputs: TTS, sentence generation, image generation, and asynchronous generation jobs. TTS belongs here conceptually, even if the existing `workers/tts-api` remains temporarily.
+Owns:
 
-P0 endpoint order:
+- TTS generation and cache lookup.
+- Future sentence suggestions.
+- Future image or symbol generation.
+- Generation job records and async queues.
+
+Initial endpoint order:
 
 1. `POST /v1/generation/tts`
-2. `GET /v1/generation/tts/{id}` or `GET /v1/media/audio/{id}` after the media boundary is finalized
-3. Later: sentence/image generation job creation and status endpoints
+2. `GET /v1/generation/audio/{id}` or signed R2 read URL contract.
+3. `GET /v1/generation/jobs/{id}` only when async jobs are introduced.
 
-D1 ownership:
+Storage ownership:
 
-- `generation_jobs` for asynchronous requests once needed.
-- `tts_audio` metadata may begin in the temporary TTS worker schema, but the target owner is generation/media foundation, not a permanent standalone service.
+- D1: generation request records, provider metadata, cache keys, generated audio metadata, job status.
+- R2: generated audio bytes and future generated media bytes.
+- KV: dedupe/read cache only.
+- Queues: slow generation work after the synchronous P0 path is proven.
 
-R2 ownership:
+Package ownership:
 
-- Generated MP3/audio bytes are stored in R2 under stable generated-audio keys.
+- `packages/media` owns media and generated-asset client models that are consumed by apps.
+- Do not keep TTS request/response types in `packages/ui`; UI can call a generation/media client but must not own service contracts.
 
-KV ownership:
+### `workers/tts-api` decision
 
-- Optional dedupe/cache hints only. TTS cache keys are derived from normalized text, language, provider, voice, model, speed, and pitch; the durable metadata stays in D1.
-
-Package owner: generation request/response types should not live in `packages/ui`. Move TTS client contracts from `packages/ui` into `packages/media` or a future `packages/generation` before broader Type work. `packages/ui` may call a provided speech adapter, but it should not own API URLs or generation semantics long-term.
-
-### `media-api`
-
-Owns user-uploaded media, generated media access, upload authorization, media metadata, and R2 object retrieval policies.
-
-P0 endpoint order:
-
-1. Read access for generated TTS audio once generation uses stable IDs.
-2. Later: upload authorization for Cards media.
-3. Later: metadata CRUD for user media libraries.
-
-D1 ownership:
-
-- `media_objects`
-- `media_derivatives` when thumbnails/transcodes appear
-
-R2 ownership:
-
-- User uploads.
-- Generated media bytes if a shared media namespace is preferred over generation-specific buckets.
-
-KV ownership:
-
-- CDN/cache metadata only.
-
-Package owner: `packages/media` owns upload/download helpers, generated audio URL resolution, and media-object types.
-
-### `content-api`
-
-Owns published app content, curriculum/content documents, cacheable public read models, and future CMS-like entries.
-
-P0 status: not on the critical path for Yes-No or Type unless Type needs seeded phrases from server content. Do not build content admin until identity, app state, and generation/TTS are stable.
-
-D1 ownership:
-
-- `content_entries`
-- `content_versions`
-- `content_publications`
-
-KV ownership:
-
-- Cacheable public read models derived from D1.
-
-R2 ownership:
-
-- Only large content assets if they are not user media.
-
-Package owner: `packages/data` or a later `packages/content` once content complexity justifies a split.
-
-### `admin-api`
-
-Owns dangerous or caregiver/admin-only operations: support, reports, removal, moderation, content publishing, and operational inspection.
-
-P0 status: last. Admin must not become an app dependency and must not create a login wall for child-facing use.
-
-D1 ownership:
-
-- Admin audit records only after admin actions exist.
-
-KV/R2 ownership: none as source of truth.
-
-## `workers/tts-api` decision
-
-Decision: fold TTS into `generation-api` as the durable product boundary. Keep `workers/tts-api` only as temporary compatibility/proof code until the P0 generation route exists.
+`workers/tts-api` should be folded into `workers/generation-api`, not kept as a permanent service.
 
 Exact path:
 
-1. Treat the current `workers/tts-api` contract (`POST /generate`, `GET /audio?key=...`) as temporary and non-canonical.
-2. Add canonical OpenAPI paths for `POST /v1/generation/tts` and generated audio retrieval before new clients depend on TTS.
-3. Move reusable normalization, hashing, provider selection, and D1/R2 metadata behavior into `generation-api` implementation or a shared internal worker module.
-4. Move the public TypeScript TTS request/response client out of `packages/ui`; target `packages/media` unless a separate `packages/generation` is created.
-5. Keep the old worker deployable only as an adapter from `/generate` to the canonical generation contract if the current Yes-No proof needs a bridge.
-6. Delete `workers/tts-api` after Yes-No and Type both use the canonical generation/media contract and contract tests cover cache hit, cache miss, provider unavailable, and browser fallback behavior.
+1. Treat `workers/tts-api` as temporary compatibility for the existing Yes No proof app only.
+2. Move the accepted `POST /generate` behavior to `POST /v1/generation/tts` in `generation-api` before Type depends on TTS.
+3. Move `GET /audio?key=...` to either `GET /v1/generation/audio/{id}` or a signed R2 URL returned by `POST /v1/generation/tts`.
+4. Keep `https://tts.tikoapi.org/generate` as a compatibility adapter that forwards to `generation-api` during one transition window.
+5. After Yes No web/iOS and Type web use the new contract, delete or archive `workers/tts-api` and remove `https://tts.tikoapi.org` from package defaults.
 
-Reason: a permanent standalone TTS worker would split generated-media ownership too early. TTS is the first generation use case, not a separate platform domain.
+Reasoning:
 
-## Shared API envelope
+- TTS is generation, not an isolated product domain.
+- Keeping a separate TTS Worker would duplicate D1/R2/cache/job policy as soon as sentence/image generation arrives.
+- The current `tts-api` contract uses `{ success, audioUrl, cached }`, while the platform needs one shared response/error envelope.
 
-All new P0 worker routes should return a consistent envelope. Existing OpenAPI payload schemas (`SessionBundle`, `AppSettings`, `AppState`) describe the `data` body and should be wrapped when the OpenAPI contract is tightened.
+### `media-api`
 
-Success shape:
+Owns:
 
-```json
-{
-  "ok": true,
-  "data": {},
-  "meta": {
-    "requestId": "req_...",
-    "serverTime": "2026-01-01T00:00:00.000Z"
+- Upload authorization.
+- Media metadata.
+- User media ownership.
+- R2 object access and signed URL policy.
+
+P0 endpoint order, after generation/TTS:
+
+1. `POST /v1/media/uploads`
+2. `GET /v1/media/{id}`
+3. `DELETE /v1/media/{id}` when deletion UX exists.
+
+Storage ownership:
+
+- D1: media records, owner user/device, content type, object key, size, lifecycle metadata.
+- R2: bytes.
+- KV: public/read cache only.
+
+Package ownership:
+
+- `packages/media` exports upload/download contracts, media asset models, and test fixtures.
+
+### `content-api`
+
+Owns:
+
+- Published app content.
+- Curriculum/content documents.
+- CMS-like read models.
+- Cacheable content payloads.
+
+P0 position:
+
+- Not needed for Yes No or Type foundation unless Type ships saved shared phrase packs.
+- Cards should be the first app that forces content-api hardening.
+
+Storage ownership:
+
+- D1: content records, versions, app visibility, publish state.
+- KV: published read-model cache only.
+- R2: content-owned media bytes only through media-api records, not direct anonymous object ownership.
+
+Package ownership:
+
+- `packages/data` may expose content client types if payloads are app-state-adjacent.
+- `packages/media` remains responsible for media asset types.
+
+### `admin-api`
+
+Owns:
+
+- Dangerous operations.
+- Support tooling.
+- Reports.
+- Moderation/removal.
+- Back-office inspection.
+
+P0 position:
+
+- Build last.
+- No child-facing app depends on admin-api.
+- Never place admin bypasses in app workers.
+
+Storage ownership:
+
+- D1: admin audit logs and support actions.
+- R2: none unless exporting reports.
+- KV: cache only.
+
+## Shared response and error envelope
+
+The current OpenAPI file already defines the first identity and app state endpoints. P0 should extend it with the following shared shapes before builders implement Workers.
+
+Successful responses return the resource directly unless metadata is needed. If metadata is needed, use this envelope:
+
+```ts
+interface ApiEnvelope<T> {
+  data: T
+  meta?: {
+    requestId?: string
+    schemaVersion?: number
+    cached?: boolean
   }
 }
 ```
 
-Error shape:
+Errors always use this envelope:
 
-```json
-{
-  "ok": false,
-  "error": {
-    "code": "invalid_request",
-    "message": "Request could not be processed.",
-    "field": "language",
-    "retryable": false
-  },
-  "meta": {
-    "requestId": "req_...",
-    "serverTime": "2026-01-01T00:00:00.000Z"
+```ts
+interface ApiErrorEnvelope {
+  error: {
+    code: string
+    message: string
+    field?: string
+    retryAfterSeconds?: number
+  }
+  meta?: {
+    requestId?: string
   }
 }
 ```
 
 Rules:
 
-- Error `message` is safe for logs and simple client display, but child-facing apps should map known codes to their own calm UI text.
-- Do not leak whether a caregiver email exists.
-- Use stable lowercase snake_case error codes.
-- Include `requestId` on every response.
-- Use bearer auth for native and optional HttpOnly Secure cookies for web.
-- Avoid platform-specific response branches; platform differences belong in clients.
+- Do not use `{ success: false }` for platform APIs.
+- Use stable machine-readable `error.code` values.
+- Keep human `message` simple and safe; never reveal whether a recovery email exists.
+- Attach `requestId` once observability exists.
+- Avoid wrapping simple successful resources twice. `SessionBundle`, `AppSettings`, and `AppState` may remain direct responses as shown in `docs/api/openapi.yaml`.
+- Generation/TTS should not leak provider error bodies into client-visible errors.
 
-## Session envelope
+## Shared session envelope
 
-Canonical session `data` for identity routes:
+`docs/api/openapi.yaml` currently defines `SessionBundle` as the source contract. P0 should keep that shape and make these semantics explicit:
 
-```json
-{
-  "user": {
-    "id": "usr_...",
-    "kind": "device",
-    "recoverable": false,
-    "displayName": "Tiko"
-  },
-  "device": {
-    "id": "dev_...",
-    "name": "This device"
-  },
-  "session": {
-    "token": "session_token_returned_once_or_rotated",
-    "expiresAt": "2026-01-01T00:00:00.000Z"
+```ts
+interface SessionBundle {
+  user: {
+    id: string
+    displayName?: string
+    kind: 'device' | 'recoverable'
+    recoverable: boolean
+  }
+  device: {
+    id: string
+    name?: string
+  }
+  session: {
+    token: string
+    expiresAt: string
   }
 }
 ```
 
-Storage rules:
+Rules:
 
-- Server stores session tokens and magic-link tokens as hashes.
-- Native clients store the session bundle in platform-secure storage where available.
-- Web clients may use HttpOnly Secure cookies and/or explicit session bundle storage, but the API must not require cookies only.
-- `GET /v1/identity/session` returns the current session payload without rotating unless the contract later documents rotation.
+- `POST /v1/identity/device` is idempotent from a client perspective. Existing device credentials should restore a session when possible; otherwise it creates a device user.
+- Native clients store `session.token` as a bearer token in platform-appropriate secure storage.
+- Web clients may use HttpOnly Secure cookies, but must also support explicit bearer token flows for parity.
+- Server stores only token hashes.
+- A recoverable user is still the same child/caregiver identity; email recovery upgrades the user, not the app startup flow.
 
-## P0 build order
+## D1/R2/KV ownership summary
 
-1. Identity contract and tests.
-2. Identity worker minimal implementation.
-3. `packages/identity` client and fixtures.
-4. App settings/state contract and tests.
-5. `app-api` minimal implementation.
-6. `packages/data` client and app models.
-7. Canonical generation/TTS contract.
-8. Generation/media implementation for TTS cache and audio retrieval.
-9. Move TTS client out of UI package.
-10. Media/content contracts needed by Cards and later apps.
-11. Admin only after production support needs exist.
+| Domain | D1 source of truth | R2 source of truth | KV usage |
+| --- | --- | --- | --- |
+| Identity | users, devices, sessions, magic_links, events | none | rate limits/cache only |
+| App state/settings | app_settings, app_state, app_state_events later | none | hot read cache only |
+| Generation/TTS | generation requests, audio metadata, job records | generated audio/media bytes | dedupe/read cache only |
+| Media | media metadata and ownership | uploaded/user media bytes | signed/read cache only |
+| Content | content records, versions, publish state | content media via media records | published read models only |
+| Admin | audit/support action records | report exports if needed | cache only |
 
-App priority for API build:
+No Worker may treat KV as durable state.
 
-1. Identity.
-2. App settings/state.
-3. Generation/TTS.
-4. Media/content.
-5. Admin.
+## Package versus Worker rule
 
-Product app priority remains: Yes-No, Type, Cards, Sequence, Timer.
+Put code in packages when it is:
 
-## Yes-No contract needs
+- A typed client for an already documented API.
+- A shared request/response model.
+- A schema/default factory used by clients/tests.
+- A test fixture or contract helper.
+- A UI primitive that has no backend authority.
 
-Yes-No is the first proof app. It needs these contracts before being considered migrated:
+Put code in Workers when it is:
 
-- `POST /v1/identity/device`: app opens and gets/restores a device session without login.
-- `GET /v1/identity/session`: app can verify a stored session bundle.
-- `GET /v1/apps/yes-no/settings`: returns button labels, language, color mode, and speech preferences.
-- `PUT /v1/apps/yes-no/settings`: saves caregiver settings.
-- `GET /v1/apps/yes-no/state`: returns optional latest answer/history if cross-device resume is desired.
-- `PUT /v1/apps/yes-no/state`: saves latest answer/history only if product decides history is durable; otherwise keep answer history local and do not invent server audit.
-- `POST /v1/generation/tts`: returns generated/cached speech audio for yes/no labels and custom prompt sentence.
-- Generated audio retrieval path: stable URL or media ID usable by web, iOS, and Android.
+- Authorization/session validation.
+- D1/R2/KV/Queue access.
+- Provider calls.
+- Rate limiting.
+- Durable mutations.
+- Dangerous/admin behavior.
 
-Initial `yes-no` settings shape:
+If a package needs a secret, a binding, or a provider API key, it is in the wrong place.
 
-```json
-{
-  "language": "en",
-  "colorMode": "system",
-  "sentence": "Do you want to go eat?",
-  "choices": [
-    { "id": "yes", "label": "Yes", "speechText": "Yes", "tone": "primary" },
-    { "id": "no", "label": "No", "speechText": "No", "tone": "secondary" }
-  ],
-  "speech": {
-    "provider": "auto",
-    "voice": "nova",
-    "speed": 1
+## Yes No P0 contracts
+
+Yes No is the first proof app. Before broader work, it needs only these accepted contracts:
+
+1. `POST /v1/identity/device`
+   - Returns `SessionBundle`.
+   - App opens even if this call fails; local-only fallback is allowed for play, but must show no login wall.
+2. `GET /v1/apps/yes-no/settings`
+   - Returns settings with at least `language`, `colorMode`, `sentence`, and optional button labels.
+3. `PUT /v1/apps/yes-no/settings`
+   - Persists caregiver-visible settings.
+4. `GET /v1/apps/yes-no/state`
+   - Returns lightweight state/history if the product keeps history across devices.
+5. `PUT /v1/apps/yes-no/state`
+   - Saves latest answer/history only if persistence is intentional.
+6. `POST /v1/generation/tts`
+   - Speaks Yes/No labels and custom sentence prompts.
+   - Returns a generated audio asset or a safe fallback error that clients can route to browser/native speech.
+
+Suggested Yes No payloads:
+
+```ts
+interface YesNoSettings {
+  language: string
+  colorMode: 'light' | 'dark' | 'system'
+  sentence: string
+  labels?: {
+    yes?: string
+    no?: string
   }
 }
-```
 
-Do not store emoji/icon choices in the API contract as product doctrine. If icons are needed, use open-icon names in UI/client specs.
-
-## Type contract needs
-
-Type validates text entry, language behavior, saved phrases, and TTS under heavier use.
-
-Required after Yes-No foundation:
-
-- Same identity endpoints as Yes-No.
-- `GET /v1/apps/type/settings`: typing preferences, language, voice/speech preferences, keyboard/display options.
-- `PUT /v1/apps/type/settings`: save typing and speech preferences.
-- `GET /v1/apps/type/state`: optional current draft and recent local state if cross-device resume is wanted.
-- `PUT /v1/apps/type/state`: save current draft only if product accepts cloud persistence of typed text; otherwise keep drafts local for privacy.
-- `POST /v1/generation/tts`: speak typed text.
-- Later, if saved phrases become structured content: either keep them in `app-api` as app state/settings for P0 or promote them to `content-api` after the Type proof.
-
-Initial `type` settings shape:
-
-```json
-{
-  "language": "en",
-  "colorMode": "system",
-  "speech": {
-    "provider": "auto",
-    "voice": "nova",
-    "speed": 1
-  },
-  "typing": {
-    "fontScale": 1,
-    "autoSpeak": false,
-    "showSuggestions": false
-  },
-  "savedPhrases": []
+interface YesNoState {
+  latestAnswer?: 'yes' | 'no'
+  answerHistory?: Array<{
+    answer: 'yes' | 'no'
+    label: string
+    answeredAt: string
+  }>
 }
 ```
 
-Privacy rule: typed free text is more sensitive than Yes-No button state. Do not persist drafts/server history by default unless the app spec explicitly accepts it.
+Keep button interaction immediate. API persistence must not delay speech or selection feedback.
 
-## Packages vs workers
+## Type P0 contracts
 
-Belongs in packages:
+Type is second because it validates text entry, language behavior, saved phrases, and TTS/native keyboard parity.
 
-- Public TypeScript types derived from or aligned with OpenAPI.
-- Thin clients for identity, app data, i18n, media/generation retrieval.
-- Storage adapter interfaces for web clients.
-- Test fixtures and contract test helpers.
-- UI components that are purely presentational or call injected clients/adapters.
+It needs:
 
-Belongs in workers:
+1. `POST /v1/identity/device`
+2. `GET/PUT /v1/apps/type/settings`
+3. `GET/PUT /v1/apps/type/state`
+4. `POST /v1/generation/tts`
+5. Media/content endpoints only after saved/shared phrase packs include user media or published content.
 
-- Auth/session verification.
-- D1 reads/writes and migrations.
-- R2 object writes/reads and signed access.
-- KV cache population/invalidation.
-- Provider secrets and external API calls.
-- Rate limiting and abuse protection.
-- Request IDs, logging, and server-side error mapping.
+Suggested Type payloads:
 
-Does not belong in apps:
+```ts
+interface TypeSettings {
+  language: string
+  colorMode: 'light' | 'dark' | 'system'
+  voice?: string
+  speakOnSubmit?: boolean
+  textSize?: 'normal' | 'large' | 'extra-large'
+}
 
-- Hardcoded API semantics beyond calling package clients.
-- Provider-specific TTS logic.
-- Durable data ownership decisions.
-- Browser-only identity assumptions.
+interface TypeState {
+  draft?: string
+  savedPhrases?: Array<{
+    id: string
+    text: string
+    language: string
+    createdAt: string
+    updatedAt?: string
+  }>
+  recentPhrases?: string[]
+}
+```
 
-## OpenAPI alignment notes
+Do not build Type-specific TTS routes. Type must use the same generation/TTS contract as Yes No.
 
-Current `docs/api/openapi.yaml` already covers the identity device/session/email/magic-link routes and the app settings/state routes for `yes-no`, `type`, `cards`, `sequence`, and `timer`.
+## Builder sequence
 
-Before workers are implemented, OpenAPI should be tightened in this order:
+1. Update `docs/api/openapi.yaml` with error schemas, `POST /identity/logout`, and generation/TTS paths.
+2. Add contract tests in `packages/testing` for identity, app settings/state, and generation/TTS response/error behavior.
+3. Implement `identity-api` minimal D1 schema and handlers.
+4. Implement `packages/identity` client against that contract.
+5. Implement `app-api` minimal D1 schema and handlers.
+6. Implement `packages/data` client plus Yes No/Type payload schemas.
+7. Move TTS from `workers/tts-api` into `workers/generation-api` and leave a temporary adapter.
+8. Move TTS client contracts out of `packages/ui` into `packages/media` or a generation client package if one is created.
+9. Wire Yes No web and iOS to identity/app/generation contracts without changing the child-facing first screen.
+10. Start Type only after Yes No proves identity, settings/state, and TTS across at least web plus one native path.
 
-1. Add the shared success/error envelope components.
-2. Add request bodies for device bootstrap, email recovery, settings/state writes, and magic-link verification.
-3. Add error responses for all existing routes.
-4. Decide whether `POST /v1/identity/logout` remains P0 and add it if yes.
-5. Add canonical generation/TTS routes.
-6. Replace `additionalProperties: true` app settings/state with per-app schemas for Yes-No and Type first.
+## Validation checklist for P0 docs
 
-Until then, builder agents should treat `SessionBundle`, `AppSettings`, and `AppState` as payload schemas, not permission to invent incompatible route shapes.
+- `docs/api/openapi.yaml` remains the source for current accepted paths.
+- This plan does not introduce passwords, Better Auth, Supabase, login walls, or legacy migration assumptions.
+- `workers/tts-api` is explicitly temporary compatibility.
+- D1/R2/KV ownership is unambiguous.
+- Yes No and Type can proceed without inventing private client-only contracts.
