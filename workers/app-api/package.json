@@ -4,8 +4,8 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "typecheck": "echo scaffold-only:app-api",
-    "test": "echo scaffold-only:app-api",
-    "deploy:dry-run": "echo scaffold-only:app-api"
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "test": "vitest run --root ../.. tests/app-api.test.ts",
+    "deploy:dry-run": "wrangler deploy --dry-run"
   }
 }
