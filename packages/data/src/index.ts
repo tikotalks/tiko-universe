@@ -34,6 +34,7 @@ export interface YesNoSettings extends JsonObject {
 export interface YesNoState extends JsonObject {
   prompt?: string
   lastAnswer?: 'yes' | 'no' | null
+  answerHistory?: Array<'yes' | 'no'>
 }
 
 export interface TypeSettings extends JsonObject {

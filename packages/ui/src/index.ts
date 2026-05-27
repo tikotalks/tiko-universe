@@ -224,8 +224,8 @@ export const TikoAppHeader = defineComponent({
   name: 'TikoAppHeader',
   props: {
     appName: { type: String, required: true },
-    appIcon: { type: String, default: '👍' },
-    avatar: { type: String, default: '🐷' },
+    appIcon: { type: String, default: 'ui/check-fat' },
+    avatar: { type: String, default: '' },
     appColor: { type: String as () => TikoAppColor, default: 'yes-no' },
     actions: { type: Array as () => TikoHeaderAction[], default: () => [] }
   },
@@ -233,7 +233,7 @@ export const TikoAppHeader = defineComponent({
   setup(props, { emit }) {
     return () => h('header', { class: 'tiko-app-header', 'data-test': 'tiko-app-header', 'data-app-color': props.appColor }, [
       h('div', { class: 'tiko-app-header__brand' }, [
-        h('span', { class: 'tiko-app-header__app-icon', 'aria-hidden': 'true' }, props.appIcon),
+        h('span', { class: 'tiko-app-header__app-icon', 'aria-hidden': 'true' }, [iconSpan(props.appIcon)]),
         h('span', { class: 'tiko-app-header__title', 'data-test': 'tiko-shell-title' }, props.appName)
       ]),
       h('div', { class: 'tiko-app-header__actions' }, [
@@ -247,7 +247,7 @@ export const TikoAppHeader = defineComponent({
           'data-test': `tiko-header-action-${action.id}`,
           onClick: () => emit('action', action.id)
         })),
-        h('span', { class: 'tiko-app-header__avatar', 'aria-hidden': 'true' }, props.avatar)
+        props.avatar ? h('span', { class: 'tiko-app-header__avatar', 'aria-hidden': 'true' }, [iconSpan(props.avatar)]) : null
       ])
     ])
   }
@@ -257,8 +257,9 @@ export const TikoAppShell = defineComponent({
   name: 'TikoAppShell',
   props: {
     appName: { type: String, required: true },
-    appIcon: { type: String, default: '👍' },
+    appIcon: { type: String, default: 'ui/check-fat' },
     appColor: { type: String as () => TikoAppColor, default: 'yes-no' },
+    avatar: { type: String, default: '' },
     actions: { type: Array as () => TikoHeaderAction[], default: () => [] }
   },
   emits: ['headerAction'],
@@ -267,6 +268,7 @@ export const TikoAppShell = defineComponent({
       h(TikoAppHeader, {
         appName: props.appName,
         appIcon: props.appIcon,
+        avatar: props.avatar,
         appColor: props.appColor,
         actions: props.actions,
         onAction: (id: string) => emit('headerAction', id)
@@ -288,7 +290,7 @@ export const TikoAnswerButton = defineComponent({
       'data-test': 'tiko-answer-button',
       onClick: () => !props.choice.disabled && emit('answer', props.choice.id)
     }, () => [
-      h('span', { class: 'tiko-answer-button__tile', 'aria-hidden': 'true' }, props.choice.icon ?? (props.choice.id === 'no' ? '👎' : '👍')),
+      h('span', { class: 'tiko-answer-button__tile', 'aria-hidden': 'true' }, [iconSpan(props.choice.icon ?? (props.choice.id === 'no' ? 'ui/cross' : 'ui/check'))]),
       h('span', { class: 'tiko-answer-button__label' }, props.choice.label)
     ])
   }
