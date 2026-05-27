@@ -1,6 +1,14 @@
 import { mount } from '@vue/test-utils'
-import { describe, expect, it } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 import App from './App.vue'
+
+beforeEach(() => {
+  window.localStorage.clear()
+  vi.stubGlobal('fetch', vi.fn(async () => new Response(JSON.stringify({ success: true, audioUrl: '/audio?key=audio%2Ftest.mp3' }), { status: 200 })))
+  vi.stubGlobal('Audio', vi.fn(function AudioMock() {
+    return { play: vi.fn(async () => undefined) }
+  }))
+})
 
 describe('Yes No web app', () => {
   it('opens immediately with Yes and No choices and no login wall', () => {
@@ -13,18 +21,59 @@ describe('Yes No web app', () => {
     expect(wrapper.text()).not.toContain('Password')
   })
 
-  it('records the latest answer locally after a choice is tapped', async () => {
+  it('records the latest answer locally after a choice is tapped and speaks it', async () => {
     const wrapper = mount(App)
 
     await wrapper.findAll('[data-test="tiko-answer-button"]').find((button) => button.text().includes('Yes'))!.trigger('click')
 
     expect(wrapper.text()).toContain('Latest answer: Yes')
+    expect(fetch).toHaveBeenCalledWith('https://tts.tikoapi.org/generate', expect.objectContaining({
+      method: 'POST',
+      body: expect.stringContaining('Yes')
+    }))
   })
 
-  it('shows setup user as optional recovery, not a first-use blocker', () => {
+  it('shows setup user as optional recovery, not a first-use blocker', async () => {
     const wrapper = mount(App)
 
     expect(wrapper.text()).toContain('Setup user')
     expect(wrapper.text()).toContain('optional')
+
+    await wrapper.get('[data-test="tiko-setup-card"] button').trigger('click')
+    expect(wrapper.text()).toContain('play remains available now')
+  })
+
+  it('opens settings and updates language and color mode', async () => {
+    const wrapper = mount(App)
+
+    await wrapper.get('[data-test="tiko-header-action-settings"]').trigger('click')
+    await wrapper.get('[data-test="tiko-settings-language"]').setValue('nl')
+    await wrapper.get('[data-test="tiko-settings-color-mode"]').setValue('dark')
+
+    expect(wrapper.text()).toContain('Ja')
+    expect(wrapper.text()).toContain('Nee')
+    expect(document.documentElement.dataset.colorMode).toBe('dark')
+  })
+
+  it('allows custom sentence speech and persists it locally', async () => {
+    const wrapper = mount(App)
+
+    await wrapper.get('textarea').setValue('Do you want music?')
+    await wrapper.get('.yes-no-app__speak').trigger('click')
+
+    expect(fetch).toHaveBeenCalledWith('https://tts.tikoapi.org/generate', expect.objectContaining({
+      body: expect.stringContaining('Do you want music?')
+    }))
+    expect(window.localStorage.getItem('tiko:yes-no')).toContain('Do you want music?')
+  })
+
+  it('shows answer history from the header action', async () => {
+    const wrapper = mount(App)
+
+    await wrapper.findAll('[data-test="tiko-answer-button"]').find((button) => button.text().includes('No'))!.trigger('click')
+    await wrapper.get('[data-test="tiko-header-action-history"]').trigger('click')
+
+    expect(wrapper.text()).toContain('History')
+    expect(wrapper.text()).toContain('No')
   })
 })

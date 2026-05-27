@@ -37,6 +37,8 @@ const CORS_HEADERS = {
   'Access-Control-Allow-Headers': 'Content-Type',
 }
 
+const OPENAI_VOICES = new Set(['alloy', 'ash', 'ballad', 'coral', 'echo', 'fable', 'nova', 'onyx', 'sage', 'shimmer', 'verse'])
+
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
     if (request.method === 'OPTIONS') return new Response(null, { headers: CORS_HEADERS })
@@ -50,19 +52,23 @@ export default {
 }
 
 async function generate(request: Request, env: Env): Promise<Response> {
-  const body = await request.json() as GenerateRequest
+  let body: GenerateRequest
+  try {
+    body = await request.json() as GenerateRequest
+  } catch {
+    return json({ success: false, error: 'invalid_json' }, 400)
+  }
+
   const validationError = validate(body)
   if (validationError) return json({ success: false, error: validationError }, 400)
 
   const normalized = normalizeRequest(body)
-  const textHash = generateTextHash(normalized)
+  const textHash = await generateTextHash(normalized)
   const existing = await findAudio(textHash, env)
   if (existing) return json({ success: true, audioUrl: existing.audio_url, cached: true, metadata: existing })
 
-  // Generation provider hook. The old Tiko worker called OpenAI here and stored bytes in R2.
-  // This new API-first worker keeps that seam isolated so Azure/OpenAI/browser fallback can share one cache contract.
   const generated = await generateAudioBytes(normalized, env)
-  if (!generated.success) return json({ success: false, error: generated.error }, generated.status ?? 503)
+  if ('error' in generated) return json({ success: false, error: generated.error }, generated.status ?? 503)
 
   const r2Key = `audio/${textHash}.mp3`
   await env.AUDIO_BUCKET.put(r2Key, generated.bytes, {
@@ -72,30 +78,28 @@ async function generate(request: Request, env: Env): Promise<Response> {
   const audioUrl = `/audio?key=${encodeURIComponent(r2Key)}`
   await env.TTS_DB.prepare(`INSERT INTO tts_audio (
     id, text_hash, text, language, provider, voice, model, speed, pitch, audio_url, r2_key, file_size_bytes, generated_at
-  ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`)
-    .bind(
-      crypto.randomUUID(),
-      textHash,
-      normalized.text,
-      normalized.language,
-      normalized.provider,
-      normalized.voice,
-      normalized.model,
-      normalized.speed,
-      normalized.pitch,
-      audioUrl,
-      r2Key,
-      generated.bytes.byteLength,
-      new Date().toISOString(),
-    )
-    .run()
+  ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`).bind(
+    crypto.randomUUID(),
+    textHash,
+    normalized.text,
+    normalized.language,
+    normalized.provider,
+    normalized.voice,
+    normalized.model,
+    normalized.speed,
+    normalized.pitch,
+    audioUrl,
+    r2Key,
+    generated.bytes.byteLength,
+    new Date().toISOString(),
+  ).run()
 
   return json({ success: true, audioUrl, cached: false })
 }
 
 async function getAudio(request: Request, env: Env): Promise<Response> {
   const key = new URL(request.url).searchParams.get('key')
-  if (!key || !key.startsWith('audio/')) return new Response('Missing or invalid key', { status: 400, headers: CORS_HEADERS })
+  if (!key || !key.startsWith('audio/') || key.includes('..')) return new Response('Missing or invalid key', { status: 400, headers: CORS_HEADERS })
 
   const object = await env.AUDIO_BUCKET.get(key)
   if (!object) return new Response('Audio not found', { status: 404, headers: CORS_HEADERS })
@@ -110,47 +114,71 @@ async function getAudio(request: Request, env: Env): Promise<Response> {
 }
 
 function normalizeRequest(body: GenerateRequest): Required<GenerateRequest> {
+  const provider = body.provider === 'azure' ? 'azure' : body.provider === 'openai' ? 'openai' : 'auto'
+  const voice = body.voice && OPENAI_VOICES.has(body.voice) ? body.voice : 'nova'
+
   return {
     text: body.text.trim(),
     language: body.language.trim().toLowerCase(),
-    provider: body.provider ?? 'auto',
-    voice: body.voice ?? 'nova',
-    model: body.model ?? 'tts-1',
-    speed: body.speed ?? 1,
-    pitch: body.pitch ?? 0,
+    provider,
+    voice,
+    model: body.model?.trim() || 'tts-1',
+    speed: clamp(body.speed ?? 1, 0.25, 4),
+    pitch: clamp(body.pitch ?? 0, -20, 20),
   }
 }
 
 function validate(body: GenerateRequest): string | null {
-  if (!body.text || !body.text.trim()) return 'missing_text'
-  if (!body.language || !body.language.trim()) return 'missing_language'
+  if (!body || typeof body !== 'object') return 'invalid_body'
+  if (!body.text || typeof body.text !== 'string' || !body.text.trim()) return 'missing_text'
+  if (!body.language || typeof body.language !== 'string' || !body.language.trim()) return 'missing_language'
   if (body.text.length > 500) return 'text_too_long'
+  if (body.speed !== undefined && (typeof body.speed !== 'number' || Number.isNaN(body.speed))) return 'invalid_speed'
+  if (body.pitch !== undefined && (typeof body.pitch !== 'number' || Number.isNaN(body.pitch))) return 'invalid_pitch'
   return null
 }
 
-function generateTextHash(input: Required<GenerateRequest>): string {
+async function generateTextHash(input: Required<GenerateRequest>): Promise<string> {
   const str = [input.text, input.language, input.provider, input.voice, input.model, input.speed, input.pitch].join('|')
-  let hash = 0
-  for (let i = 0; i < str.length; i += 1) {
-    hash = ((hash << 5) - hash) + str.charCodeAt(i)
-    hash &= hash
-  }
-  return Math.abs(hash).toString(36)
+  const bytes = new TextEncoder().encode(str)
+  const digest = await crypto.subtle.digest('SHA-256', bytes)
+  return Array.from(new Uint8Array(digest)).map((byte) => byte.toString(16).padStart(2, '0')).join('').slice(0, 32)
 }
 
 async function findAudio(textHash: string, env: Env): Promise<AudioRecord | null> {
   return env.TTS_DB.prepare(`SELECT audio_url, r2_key, provider, language, voice, model, generated_at, file_size_bytes, duration_seconds
-    FROM tts_audio WHERE text_hash = ? LIMIT 1`)
-    .bind(textHash)
-    .first<AudioRecord>()
+    FROM tts_audio WHERE text_hash = ? LIMIT 1`).bind(textHash).first<AudioRecord>()
 }
 
 async function generateAudioBytes(input: Required<GenerateRequest>, env: Env): Promise<{ success: true; bytes: Uint8Array } | { success: false; error: string; status?: number }> {
+  if (input.provider === 'azure') return { success: false, error: 'azure_tts_not_configured', status: 501 }
   if (!env.OPENAI_API_KEY) return { success: false, error: 'tts_generation_not_configured', status: 503 }
-  // Provider implementation intentionally left as the next implementation slice to avoid committing secrets
-  // or old production-specific assumptions. The cache contract above is complete and mirrors old Tiko.
-  void input
-  return { success: false, error: 'tts_provider_hook_not_implemented', status: 501 }
+
+  const response = await fetch('https://api.openai.com/v1/audio/speech', {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${env.OPENAI_API_KEY}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      model: input.model,
+      voice: input.voice,
+      input: input.text,
+      response_format: 'mp3',
+      speed: input.speed,
+    }),
+  })
+
+  if (!response.ok) {
+    const message = await response.text().catch(() => '')
+    return { success: false, error: message ? `openai_tts_failed:${message.slice(0, 180)}` : 'openai_tts_failed', status: 502 }
+  }
+
+  return { success: true, bytes: new Uint8Array(await response.arrayBuffer()) }
+}
+
+function clamp(value: number, min: number, max: number) {
+  return Math.min(max, Math.max(min, value))
 }
 
 function json(data: unknown, status = 200): Response {

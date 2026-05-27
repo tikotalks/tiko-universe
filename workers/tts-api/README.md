@@ -8,7 +8,9 @@ This is the API-first replacement for the old `workers/tts-generation` service i
 
 - `POST /generate`
   - body: `{ "text": string, "language": string, "provider"?: "openai" | "azure" | "auto", "voice"?: string, "model"?: string, "speed"?: number, "pitch"?: number }`
-  - returns: `{ "success": true, "audioUrl": string, "cached": boolean }`
+  - returns generated or cached metadata: `{ "success": true, "audioUrl": string, "cached": boolean }`
+  - cache misses generate OpenAI MP3 audio when `OPENAI_API_KEY` is configured.
+  - if generation is not configured, returns a clear non-2xx error so clients can fall back to browser speech.
 - `GET /audio?key=audio/<hash>.mp3`
   - returns cached audio bytes from R2 with immutable cache headers.
 
@@ -24,4 +26,10 @@ This is the API-first replacement for the old `workers/tts-generation` service i
 
 - `TTS_DB` — D1 database with `tts_audio` table.
 - `AUDIO_BUCKET` — R2 bucket for generated audio.
-- `OPENAI_API_KEY` / Azure secrets — configured as worker secrets, never committed.
+- `OPENAI_API_KEY` — configured as a worker secret, never committed.
+
+## Validation
+
+```bash
+npm run typecheck -w @tiko-universe/tts-api
+```

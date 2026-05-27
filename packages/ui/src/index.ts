@@ -1,5 +1,4 @@
-
-import { defineComponent, h, ref, watch } from 'vue'
+import { defineComponent, h, watch } from 'vue'
 
 export type TikoChoiceTone = 'primary' | 'secondary' | 'success' | 'danger'
 export type TikoColorMode = 'light' | 'dark' | 'system'
@@ -39,6 +38,7 @@ export interface TikoTtsRequest {
   language: string
   provider?: TikoTtsProvider
   voice?: string
+  model?: string
   speed?: number
   pitch?: number
 }
@@ -64,7 +64,8 @@ export const tikoKitComponents = [
   'TikoAppShell',
   'TikoAnswerButton',
   'TikoChoiceGrid',
-  'TikoSetupCard'
+  'TikoSetupCard',
+  'TikoSettingsPanel'
 ]
 
 export function createTikoChoice(input: TikoChoiceInput): TikoChoice {
@@ -83,6 +84,15 @@ function normalizeBaseUrl(url: string): string {
   return url.replace(/\/$/, '')
 }
 
+function createBrowserFallback(fallbackUsed = false, error?: string): TikoTtsResponse {
+  return {
+    success: true,
+    cached: false,
+    ...(error ? { error } : {}),
+    metadata: { provider: 'browser', ...(fallbackUsed ? { fallbackUsed: true } : {}) }
+  }
+}
+
 export function createTikoTtsClient(options: TikoTtsClientOptions = {}) {
   const workerUrl = normalizeBaseUrl(options.workerUrl ?? 'https://tts.tikoapi.org')
   const cdnUrl = normalizeBaseUrl(options.cdnUrl ?? 'https://tts.tikocdn.org')
@@ -90,7 +100,15 @@ export function createTikoTtsClient(options: TikoTtsClientOptions = {}) {
   const memoryCache = new Map<string, TikoTtsResponse>()
 
   function cacheKey(request: TikoTtsRequest) {
-    return [request.language, request.provider ?? 'auto', request.voice ?? '', request.speed ?? 1, request.pitch ?? 0, request.text].join('|')
+    return [
+      request.language,
+      request.provider ?? 'auto',
+      request.voice ?? '',
+      request.model ?? 'tts-1',
+      request.speed ?? 1,
+      request.pitch ?? 0,
+      request.text
+    ].join('|')
   }
 
   function toCdnUrl(audioUrl: string) {
@@ -105,53 +123,67 @@ export function createTikoTtsClient(options: TikoTtsClientOptions = {}) {
     const cached = memoryCache.get(key)
     if (cached) return { ...cached, cached: true }
 
-    if (!fetcher) return { success: true, cached: false, metadata: { provider: 'browser' } }
+    if (!fetcher) return createBrowserFallback()
 
-    const response = await fetcher(`${workerUrl}/generate`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        text: request.text,
-        language: request.language,
-        provider: request.provider,
-        voice: request.voice,
-        speed: request.speed,
-        pitch: request.pitch
+    try {
+      const response = await fetcher(`${workerUrl}/generate`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          text: request.text,
+          language: request.language,
+          provider: request.provider,
+          voice: request.voice,
+          model: request.model,
+          speed: request.speed,
+          pitch: request.pitch
+        })
       })
-    })
 
-    if (!response.ok) {
-      return { success: true, cached: false, metadata: { provider: 'browser', fallbackUsed: true } }
+      if (!response.ok) return createBrowserFallback(true, `tts_http_${response.status}`)
+
+      const data = await response.json() as TikoTtsResponse
+      const normalized = data.audioUrl ? { ...data, audioUrl: toCdnUrl(data.audioUrl) } : data
+      memoryCache.set(key, normalized)
+      return normalized
+    } catch (error) {
+      return createBrowserFallback(true, error instanceof Error ? error.message : 'tts_fetch_failed')
     }
-
-    const data = await response.json() as TikoTtsResponse
-    const normalized = data.audioUrl ? { ...data, audioUrl: toCdnUrl(data.audioUrl) } : data
-    memoryCache.set(key, normalized)
-    return normalized
   }
 
   async function speak(request: TikoTtsRequest): Promise<TikoTtsResponse> {
     const result = await getAudio(request)
     if (result.audioUrl) {
-      const audio = options.audioFactory ? options.audioFactory(result.audioUrl) : new Audio(result.audioUrl)
-      await audio.play()
-      return result
+      try {
+        const audio = options.audioFactory ? options.audioFactory(result.audioUrl) : new Audio(result.audioUrl)
+        await audio.play()
+        return result
+      } catch (error) {
+        const fallback = createBrowserFallback(true, error instanceof Error ? error.message : 'audio_play_failed')
+        speakWithBrowser(request)
+        return fallback
+      }
     }
 
+    speakWithBrowser(request)
+    return result
+  }
+
+  function speakWithBrowser(request: TikoTtsRequest) {
     const synth = options.speechSynthesis ?? globalThis.speechSynthesis
     if (synth && 'SpeechSynthesisUtterance' in globalThis) {
       const utterance = new SpeechSynthesisUtterance(request.text)
       utterance.lang = request.language
+      utterance.rate = request.speed ?? 1
       synth.cancel()
       synth.speak(utterance)
     }
-    return result
   }
 
   return { getAudio, speak, clearCache: () => memoryCache.clear(), cacheSize: () => memoryCache.size }
 }
 
-function iconSpan(icon: string, label: string) {
+function iconSpan(icon: string) {
   return h('span', { class: 'tiko-icon', 'aria-hidden': 'true', 'data-icon': icon }, icon === 'media/volume-iii' ? '🔊' : icon === 'ui/settings-dual' ? '☷' : icon === 'ui/clock' ? '◷' : '•')
 }
 
@@ -178,7 +210,7 @@ export const TikoAppHeader = defineComponent({
           disabled: action.disabled,
           'data-test': `tiko-header-action-${action.id}`,
           onClick: () => emit('action', action.id)
-        }, [iconSpan(action.icon, action.label)])),
+        }, [iconSpan(action.icon)])),
         h('span', { class: 'tiko-app-header__avatar', 'aria-hidden': 'true' }, props.avatar)
       ])
     ])
@@ -246,7 +278,7 @@ export const TikoSetupCard = defineComponent({
   },
   emits: ['setup'],
   setup(props, { emit }) {
-    return () => h('aside', { class: 'tiko-setup-card' }, [
+    return () => h('aside', { class: 'tiko-setup-card', 'data-test': 'tiko-setup-card' }, [
       h('strong', {}, props.title),
       h('p', {}, props.description),
       props.actionLabel ? h('button', { type: 'button', onClick: () => emit('setup') }, props.actionLabel) : null
@@ -262,14 +294,18 @@ export const TikoSettingsPanel = defineComponent({
   },
   emits: ['update:language', 'update:colorMode'],
   setup(props, { emit }) {
-    return () => h('section', { class: 'tiko-settings-panel', 'data-test': 'tiko-settings-panel' }, [
-      h('label', {}, ['Language', h('select', { value: props.language, onChange: (e: Event) => emit('update:language', (e.target as HTMLSelectElement).value) }, [
+    watch(() => props.colorMode, (mode) => {
+      if (!['light', 'dark', 'system'].includes(mode)) emit('update:colorMode', 'system')
+    }, { immediate: true })
+
+    return () => h('section', { class: 'tiko-settings-panel', 'data-test': 'tiko-settings-panel', 'aria-label': 'Settings' }, [
+      h('label', {}, ['Language', h('select', { value: props.language, 'data-test': 'tiko-settings-language', onChange: (e: Event) => emit('update:language', (e.target as HTMLSelectElement).value) }, [
         h('option', { value: 'en' }, 'English'),
         h('option', { value: 'nl' }, 'Nederlands'),
         h('option', { value: 'fr' }, 'Français'),
         h('option', { value: 'es' }, 'Español')
       ])]),
-      h('label', {}, ['Color mode', h('select', { value: props.colorMode, onChange: (e: Event) => emit('update:colorMode', (e.target as HTMLSelectElement).value) }, [
+      h('label', {}, ['Color mode', h('select', { value: props.colorMode, 'data-test': 'tiko-settings-color-mode', onChange: (e: Event) => emit('update:colorMode', (e.target as HTMLSelectElement).value) }, [
         h('option', { value: 'light' }, 'Light'),
         h('option', { value: 'dark' }, 'Dark'),
         h('option', { value: 'system' }, 'System')

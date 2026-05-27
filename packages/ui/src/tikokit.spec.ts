@@ -18,7 +18,8 @@ describe('TikoKit component contract', () => {
       'TikoAppShell',
       'TikoAnswerButton',
       'TikoChoiceGrid',
-      'TikoSetupCard'
+      'TikoSetupCard',
+      'TikoSettingsPanel'
     ])
   })
 
