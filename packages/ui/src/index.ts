@@ -1,4 +1,6 @@
 import { defineComponent, h, watch } from 'vue'
+import type { GenerationTtsRequest, LegacyTtsResponse } from '@tiko/media'
+import { generationTtsCacheKey, isGenerationTtsResponse } from '@tiko/media'
 import { Button, Icon } from '@sil/ui'
 import './styles.css'
 
@@ -7,7 +9,7 @@ export { Button as SilButton, Icon as SilIcon } from '@sil/ui'
 export type TikoChoiceTone = 'primary' | 'secondary' | 'success' | 'danger'
 export type TikoAppColor = 'yes-no' | 'type' | 'cards' | 'sequence' | 'timer' | 'tiko'
 export type TikoColorMode = 'light' | 'dark' | 'system'
-export type TikoTtsProvider = 'openai' | 'azure' | 'browser' | 'auto'
+export type { TikoTtsProvider } from '@tiko/media'
 
 export const tikoAppColors: Record<TikoAppColor, { label: string; primary: string; dark: string }> = {
   'yes-no': { label: 'Yes No', primary: '#9b3fbd', dark: '#49125e' },
@@ -47,15 +49,7 @@ export interface TikoHeaderAction {
   visible?: boolean
 }
 
-export interface TikoTtsRequest {
-  text: string
-  language: string
-  provider?: TikoTtsProvider
-  voice?: string
-  model?: string
-  speed?: number
-  pitch?: number
-}
+export interface TikoTtsRequest extends GenerationTtsRequest {}
 
 export interface TikoTtsResponse {
   success: boolean
@@ -108,28 +102,50 @@ function createBrowserFallback(fallbackUsed = false, error?: string): TikoTtsRes
 }
 
 export function createTikoTtsClient(options: TikoTtsClientOptions = {}) {
-  const workerUrl = normalizeBaseUrl(options.workerUrl ?? 'https://tts.tikoapi.org')
+  const workerUrl = normalizeBaseUrl(options.workerUrl ?? 'https://api.tikoapi.org/v1')
   const cdnUrl = normalizeBaseUrl(options.cdnUrl ?? 'https://tts.tikocdn.org')
   const fetcher = options.fetcher ?? globalThis.fetch
   const memoryCache = new Map<string, TikoTtsResponse>()
 
   function cacheKey(request: TikoTtsRequest) {
-    return [
-      request.language,
-      request.provider ?? 'auto',
-      request.voice ?? '',
-      request.model ?? 'tts-1',
-      request.speed ?? 1,
-      request.pitch ?? 0,
-      request.text
-    ].join('|')
+    return generationTtsCacheKey(request)
+  }
+
+  function ttsEndpoint() {
+    if (workerUrl.endsWith('/generate')) return workerUrl
+    if (workerUrl.endsWith('/v1')) return `${workerUrl}/generation/tts`
+    if (workerUrl.endsWith('/v1/generation')) return `${workerUrl}/tts`
+    if (workerUrl.includes('tts.tikoapi.org')) return `${workerUrl}/generate`
+    return `${workerUrl}/v1/generation/tts`
   }
 
   function toCdnUrl(audioUrl: string) {
     if (audioUrl.startsWith('http')) return audioUrl
     const key = audioUrl.match(/key=([^&]+)/)?.[1]
     if (key) return `${cdnUrl}/${decodeURIComponent(key)}`
+    if (audioUrl.startsWith('/v1/generation/audio/')) return `${workerUrl.replace(/\/v1$/, '')}${audioUrl}`
     return `${cdnUrl}${audioUrl.startsWith('/') ? '' : '/'}${audioUrl}`
+  }
+
+  function normalizeTtsResponse(data: unknown): TikoTtsResponse {
+    if (isGenerationTtsResponse(data)) {
+      return {
+        success: true,
+        audioUrl: toCdnUrl(data.data.audioUrl),
+        cached: data.meta?.cached ?? false,
+        metadata: {
+          id: data.data.id,
+          provider: data.data.provider,
+          language: data.data.language,
+          voice: data.data.voice,
+          model: data.data.model,
+          schemaVersion: data.meta?.schemaVersion
+        }
+      }
+    }
+
+    const legacy = data as LegacyTtsResponse
+    return legacy.audioUrl ? { ...legacy, audioUrl: toCdnUrl(legacy.audioUrl) } : legacy
   }
 
   async function getAudio(request: TikoTtsRequest): Promise<TikoTtsResponse> {
@@ -140,7 +156,7 @@ export function createTikoTtsClient(options: TikoTtsClientOptions = {}) {
     if (!fetcher) return createBrowserFallback()
 
     try {
-      const response = await fetcher(`${workerUrl}/generate`, {
+      const response = await fetcher(ttsEndpoint(), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -156,8 +172,8 @@ export function createTikoTtsClient(options: TikoTtsClientOptions = {}) {
 
       if (!response.ok) return createBrowserFallback(true, `tts_http_${response.status}`)
 
-      const data = await response.json() as TikoTtsResponse
-      const normalized = data.audioUrl ? { ...data, audioUrl: toCdnUrl(data.audioUrl) } : data
+      const data = await response.json()
+      const normalized = normalizeTtsResponse(data)
       memoryCache.set(key, normalized)
       return normalized
     } catch (error) {

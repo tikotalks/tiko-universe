@@ -59,6 +59,18 @@ docs/
   migration/
 ```
 
+## Generation and TTS
+
+TTS now belongs to `workers/generation-api` under the versioned platform contract:
+
+- `POST /v1/generation/tts` accepts `{ text, language, provider?, voice?, model?, speed?, pitch? }`.
+- Responses use `{ data, meta }`, where `data.audioUrl` points to `GET /v1/generation/audio/{id}` and `meta.cached` reports D1 cache hits.
+- D1 binding `GENERATION_DB` owns generated-audio metadata and request hashes.
+- R2 binding `GENERATED_MEDIA_BUCKET` owns generated audio bytes.
+- `workers/tts-api` is temporary compatibility for old `/generate` and `/audio?key=...` proof-app calls only.
+
+New clients should consume the OpenAPI contract in `docs/api/openapi.yaml`; web fallback behavior remains in `@tiko/ui` while shared TTS request/response models live in `@tiko/media`.
+
 ## Development doctrine
 
 Start every feature with:

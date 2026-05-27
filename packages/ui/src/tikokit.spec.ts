@@ -95,16 +95,40 @@ describe('TikoKit component contract', () => {
   })
 
 
-  it('posts speech text to the old Tiko TTS worker and rewrites relative audio URLs to the CDN', async () => {
+  it('posts speech text to the generation TTS contract and rewrites legacy relative audio URLs to the CDN', async () => {
     const play = vi.fn()
     const fetcher = vi.fn(async () => new Response(JSON.stringify({ success: true, audioUrl: '/audio?key=audio%2Fyes.mp3' }), { status: 200 })) as unknown as typeof fetch
     const client = createTikoTtsClient({ fetcher, audioFactory: () => ({ play }) })
 
     const result = await client.speak({ text: 'Yes', language: 'en', provider: 'auto' })
 
-    expect(fetcher).toHaveBeenCalledWith('https://tts.tikoapi.org/generate', expect.objectContaining({ method: 'POST' }))
+    expect(fetcher).toHaveBeenCalledWith('https://api.tikoapi.org/v1/generation/tts', expect.objectContaining({ method: 'POST' }))
     expect(result.audioUrl).toBe('https://tts.tikocdn.org/audio/yes.mp3')
     expect(play).toHaveBeenCalledTimes(1)
+  })
+
+  it('accepts the generation API response envelope for browser playback', async () => {
+    const fetcher = vi.fn(async () => new Response(JSON.stringify({
+      data: {
+        id: 'asset-1',
+        audioUrl: '/v1/generation/audio/asset-1',
+        contentType: 'audio/mpeg',
+        generatedAt: '2026-05-27T00:00:00.000Z',
+        provider: 'openai',
+        language: 'en',
+        voice: 'nova',
+        model: 'tts-1'
+      },
+      meta: { cached: true, schemaVersion: 1 }
+    }), { status: 200 })) as unknown as typeof fetch
+    const client = createTikoTtsClient({ fetcher, audioFactory: () => ({ play: vi.fn() }) })
+
+    const result = await client.getAudio({ text: 'Yes', language: 'en' })
+
+    expect(result.success).toBe(true)
+    expect(result.audioUrl).toBe('https://api.tikoapi.org/v1/generation/audio/asset-1')
+    expect(result.cached).toBe(true)
+    expect(result.metadata).toMatchObject({ id: 'asset-1', provider: 'openai', schemaVersion: 1 })
   })
 
   it('keeps a local audio response cache to avoid repeated TTS generation calls', async () => {
