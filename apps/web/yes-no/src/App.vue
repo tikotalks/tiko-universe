@@ -115,6 +115,7 @@ function resetSentence() {
   <TikoAppShell
     app-name="Yes No"
     app-icon="👍"
+    app-color="yes-no"
     :actions="headerActions"
     @header-action="headerAction"
   >

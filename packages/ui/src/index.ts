@@ -1,11 +1,22 @@
 import { defineComponent, h, watch } from 'vue'
 import { Button, Icon } from '@sil/ui'
+import './styles.css'
 
 export { Button as SilButton, Icon as SilIcon } from '@sil/ui'
 
 export type TikoChoiceTone = 'primary' | 'secondary' | 'success' | 'danger'
+export type TikoAppColor = 'yes-no' | 'type' | 'cards' | 'sequence' | 'timer' | 'tiko'
 export type TikoColorMode = 'light' | 'dark' | 'system'
 export type TikoTtsProvider = 'openai' | 'azure' | 'browser' | 'auto'
+
+export const tikoAppColors: Record<TikoAppColor, { label: string; primary: string; dark: string }> = {
+  'yes-no': { label: 'Yes No', primary: '#9b3fbd', dark: '#49125e' },
+  type: { label: 'Type', primary: '#2488ff', dark: '#0d3f91' },
+  cards: { label: 'Cards', primary: '#ff8a1f', dark: '#9a3d00' },
+  sequence: { label: 'Sequence', primary: '#16b8a6', dark: '#08665d' },
+  timer: { label: 'Timer', primary: '#f8c22e', dark: '#8a5d00' },
+  tiko: { label: 'Tiko', primary: '#ef4f8f', dark: '#8d1c4f' }
+}
 
 export interface TikoChoiceInput {
   id: string
@@ -67,7 +78,8 @@ export const tikoKitComponents = [
   'TikoAppShell',
   'TikoAnswerButton',
   'TikoChoiceGrid',
-  'TikoSettingsPanel'
+  'TikoSettingsPanel',
+  'tikoAppColors'
 ]
 
 export function createTikoChoice(input: TikoChoiceInput): TikoChoice {
@@ -198,11 +210,12 @@ export const TikoAppHeader = defineComponent({
     appName: { type: String, required: true },
     appIcon: { type: String, default: '👍' },
     avatar: { type: String, default: '🐷' },
+    appColor: { type: String as () => TikoAppColor, default: 'yes-no' },
     actions: { type: Array as () => TikoHeaderAction[], default: () => [] }
   },
   emits: ['action'],
   setup(props, { emit }) {
-    return () => h('header', { class: 'tiko-app-header', 'data-test': 'tiko-app-header' }, [
+    return () => h('header', { class: 'tiko-app-header', 'data-test': 'tiko-app-header', 'data-app-color': props.appColor }, [
       h('div', { class: 'tiko-app-header__brand' }, [
         h('span', { class: 'tiko-app-header__app-icon', 'aria-hidden': 'true' }, props.appIcon),
         h('span', { class: 'tiko-app-header__title', 'data-test': 'tiko-shell-title' }, props.appName)
@@ -229,14 +242,16 @@ export const TikoAppShell = defineComponent({
   props: {
     appName: { type: String, required: true },
     appIcon: { type: String, default: '👍' },
+    appColor: { type: String as () => TikoAppColor, default: 'yes-no' },
     actions: { type: Array as () => TikoHeaderAction[], default: () => [] }
   },
   emits: ['headerAction'],
   setup(props, { slots, emit }) {
-    return () => h('div', { class: 'tiko-app-shell' }, [
+    return () => h('div', { class: 'tiko-app-shell', 'data-app-color': props.appColor }, [
       h(TikoAppHeader, {
         appName: props.appName,
         appIcon: props.appIcon,
+        appColor: props.appColor,
         actions: props.actions,
         onAction: (id: string) => emit('headerAction', id)
       }),

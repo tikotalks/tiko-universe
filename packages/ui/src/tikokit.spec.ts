@@ -7,6 +7,7 @@ import {
   TikoChoiceGrid,
   createTikoChoice,
   createTikoTtsClient,
+  tikoAppColors,
   tikoKitComponents
 } from './index'
 
@@ -17,7 +18,8 @@ describe('TikoKit component contract', () => {
       'TikoAppShell',
       'TikoAnswerButton',
       'TikoChoiceGrid',
-      'TikoSettingsPanel'
+      'TikoSettingsPanel',
+      'tikoAppColors'
     ])
   })
 
@@ -30,11 +32,19 @@ describe('TikoKit component contract', () => {
     })
   })
 
-  it('renders the design header with open-icon action names', async () => {
+  it('keeps one canonical app-color palette with a different primary for each project', () => {
+    const primaryColors = Object.values(tikoAppColors).map((color) => color.primary)
+
+    expect(tikoAppColors['yes-no'].primary).toBe('#9b3fbd')
+    expect(new Set(primaryColors).size).toBe(primaryColors.length)
+  })
+
+  it('renders the design header with open-icon action names and app color token', async () => {
     const wrapper = mount(TikoAppHeader, {
       props: {
         appName: 'Yes No',
         appIcon: '👍',
+        appColor: 'yes-no',
         actions: [
           { id: 'history', label: 'History', icon: 'ui/clock' },
           { id: 'settings', label: 'Settings', icon: 'ui/settings-dual' }
@@ -42,6 +52,7 @@ describe('TikoKit component contract', () => {
       }
     })
 
+    expect(wrapper.get('[data-test="tiko-app-header"]').attributes('data-app-color')).toBe('yes-no')
     expect(wrapper.get('[data-test="tiko-app-header"]').text()).toContain('Yes No')
     await wrapper.get('[data-test="tiko-header-action-settings"]').trigger('click')
     expect(wrapper.emitted('action')).toEqual([['settings']])
@@ -53,6 +64,7 @@ describe('TikoKit component contract', () => {
       slots: { default: '<p data-test="content">Ready</p>' }
     })
 
+    expect(wrapper.get('.tiko-app-shell').attributes('data-app-color')).toBe('yes-no')
     expect(wrapper.get('[data-test="tiko-shell-title"]').text()).toBe('Yes No')
     expect(wrapper.get('[data-test="content"]').text()).toBe('Ready')
   })

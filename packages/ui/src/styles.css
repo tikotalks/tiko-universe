@@ -1,0 +1,246 @@
+:root {
+  --tiko-color-purple: #9b3fbd;
+  --tiko-color-purple-dark: #49125e;
+  --tiko-color-blue: #2488ff;
+  --tiko-color-blue-dark: #0d3f91;
+  --tiko-color-teal: #16b8a6;
+  --tiko-color-teal-dark: #08665d;
+  --tiko-color-orange: #ff8a1f;
+  --tiko-color-orange-dark: #9a3d00;
+  --tiko-color-amber: #f8c22e;
+  --tiko-color-amber-dark: #8a5d00;
+  --tiko-color-pink: #ef4f8f;
+  --tiko-color-pink-dark: #8d1c4f;
+  --tiko-color-green: #93ee3f;
+  --tiko-color-red: #ef405d;
+  --tiko-color-cream: #f8f6f1;
+  --tiko-color-ink: #0b5a7a;
+
+  --tiko-app-primary: var(--tiko-color-purple);
+  --tiko-app-primary-dark: var(--tiko-color-purple-dark);
+  --tiko-answer-primary: var(--tiko-color-green);
+  --tiko-answer-secondary: var(--tiko-color-red);
+  --tiko-surface: var(--tiko-color-cream);
+  --tiko-surface-raised: color-mix(in srgb, white, var(--tiko-surface) 20%);
+  --tiko-foreground: #202020;
+  --tiko-foreground-strong: var(--tiko-color-ink);
+  --tiko-panel: color-mix(in srgb, var(--tiko-app-primary), transparent 88%);
+}
+
+[data-color-mode="dark"] {
+  --tiko-surface: #17131c;
+  --tiko-surface-raised: #241b2c;
+  --tiko-panel: color-mix(in srgb, var(--tiko-app-primary), transparent 72%);
+  --tiko-foreground: #fffaf2;
+  --tiko-foreground-strong: #a2e8ff;
+}
+
+[data-app-color="yes-no"] {
+  --tiko-app-primary: var(--tiko-color-purple);
+  --tiko-app-primary-dark: var(--tiko-color-purple-dark);
+}
+
+[data-app-color="type"] {
+  --tiko-app-primary: var(--tiko-color-blue);
+  --tiko-app-primary-dark: var(--tiko-color-blue-dark);
+}
+
+[data-app-color="cards"] {
+  --tiko-app-primary: var(--tiko-color-orange);
+  --tiko-app-primary-dark: var(--tiko-color-orange-dark);
+}
+
+[data-app-color="sequence"] {
+  --tiko-app-primary: var(--tiko-color-teal);
+  --tiko-app-primary-dark: var(--tiko-color-teal-dark);
+}
+
+[data-app-color="timer"] {
+  --tiko-app-primary: var(--tiko-color-amber);
+  --tiko-app-primary-dark: var(--tiko-color-amber-dark);
+}
+
+[data-app-color="tiko"] {
+  --tiko-app-primary: var(--tiko-color-pink);
+  --tiko-app-primary-dark: var(--tiko-color-pink-dark);
+}
+
+body {
+  background: var(--tiko-surface);
+}
+
+.tiko-app-shell {
+  min-height: 100dvh;
+  background: var(--tiko-surface);
+  color: var(--tiko-foreground);
+  font-family: Inter, ui-rounded, system-ui, sans-serif;
+}
+
+.tiko-app-shell__main {
+  max-width: 920px;
+  margin: 0 auto;
+  padding: .75rem 1.5rem 2rem;
+}
+
+.tiko-app-header {
+  position: sticky;
+  top: .9rem;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  width: min(560px, calc(100% - 2rem));
+  margin: .9rem auto 0;
+  padding: .35rem .5rem;
+  border-radius: 999px;
+  background: var(--tiko-app-primary);
+  color: white;
+  box-shadow: inset 0 -4px 0 rgba(0, 0, 0, .12);
+}
+
+.tiko-app-header__brand,
+.tiko-app-header__actions {
+  display: flex;
+  align-items: center;
+  gap: .65rem;
+}
+
+.tiko-app-header__app-icon,
+.tiko-app-header__avatar {
+  display: grid;
+  place-items: center;
+  width: 3rem;
+  height: 3rem;
+  border-radius: 50%;
+  background: color-mix(in srgb, white, transparent 72%);
+  font-size: 2rem;
+}
+
+.tiko-app-header__title {
+  font-size: 1.45rem;
+  font-weight: 800;
+}
+
+.tiko-app-header__action {
+  display: grid;
+  place-items: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  border: 0;
+  border-radius: .45rem;
+  background: color-mix(in srgb, var(--tiko-app-primary-dark), transparent 44%);
+  color: white;
+  cursor: pointer;
+  transition: transform .12s ease, outline-color .12s ease;
+}
+
+.tiko-app-header__action:active {
+  transform: scale(.94);
+}
+
+.tiko-app-header__action--active {
+  outline: 3px solid rgba(255, 255, 255, .42);
+}
+
+.tiko-choice-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(220px, 1fr));
+  gap: clamp(1.5rem, 7vw, 5rem);
+  align-items: start;
+}
+
+.tiko-answer-button {
+  border: 0;
+  background: transparent;
+  color: var(--tiko-foreground-strong);
+  font-weight: 900;
+  font-size: clamp(1.9rem, 4vw, 2.6rem);
+  cursor: pointer;
+  transition: transform .12s ease;
+}
+
+.tiko-answer-button .button__container,
+.tiko-answer-button .button__text {
+  display: grid;
+  justify-items: center;
+  gap: 0;
+}
+
+.tiko-answer-button:active {
+  transform: scale(.97);
+}
+
+.tiko-answer-button__tile {
+  display: grid;
+  place-items: center;
+  min-height: clamp(132px, 23vw, 180px);
+  border-radius: 1rem;
+  margin-bottom: .35rem;
+  box-shadow: 0 24px 22px rgba(0, 0, 0, .18);
+  font-size: clamp(5rem, 12vw, 8.5rem);
+  line-height: 1;
+}
+
+.tiko-answer-button--primary .tiko-answer-button__tile,
+.tiko-answer-button--success .tiko-answer-button__tile {
+  background: var(--tiko-answer-primary);
+}
+
+.tiko-answer-button--secondary .tiko-answer-button__tile,
+.tiko-answer-button--danger .tiko-answer-button__tile {
+  background: var(--tiko-answer-secondary);
+}
+
+.tiko-settings-panel {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin: 1rem auto 0;
+  max-width: 36rem;
+  padding: 1rem;
+  border-radius: 1rem;
+  background: var(--tiko-panel);
+}
+
+.tiko-settings-panel label {
+  display: grid;
+  gap: .35rem;
+  text-align: left;
+  font-weight: 700;
+}
+
+.tiko-settings-panel select {
+  border: 0;
+  border-radius: .6rem;
+  padding: .7rem .9rem;
+  color: inherit;
+  background: var(--tiko-surface-raised);
+}
+
+@media (max-width: 720px) {
+  .tiko-choice-grid {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+
+  .tiko-app-shell__main {
+    padding-top: 1.25rem;
+  }
+
+  .tiko-app-header__title {
+    font-size: 1.15rem;
+  }
+
+  .tiko-app-header__app-icon,
+  .tiko-app-header__avatar {
+    width: 2.5rem;
+    height: 2.5rem;
+    font-size: 1.6rem;
+  }
+
+  .tiko-answer-button__tile {
+    min-height: 170px;
+  }
+}

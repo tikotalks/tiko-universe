@@ -9,3 +9,5 @@ Tiko-specific web UI components that compose generic primitives from `@sil/ui`.
 - Tiko child-facing screens should feel direct and object-based: content sits on the page, not inside decorative cards.
 - Avoid explanatory labels/chrome such as "optional setup" in the main play flow. Setup/recovery can exist later, but it must not distract from immediate app use.
 - Keep `@tiko/ui` for product-specific composition: app shell/header, answer tiles, choice grids, settings panels, and API/TTS contracts.
+- Keep app-level color ownership in TikoKit. `tikoAppColors` defines one primary color per Tiko app, and `TikoAppShell`/`TikoAppHeader` apply it via `appColor`/`data-app-color` tokens.
+- Do not hardcode header/shell colors in individual apps. App CSS may tune local layout, but shared chrome and palette variables belong in `@tiko/ui`.
