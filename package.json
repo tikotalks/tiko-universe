@@ -6,7 +6,7 @@
   "type": "module",
   "packageManager": "npm@10.0.0",
   "workspaces": [
-    "apps/web/*",
+    "apps/*/web",
     "packages/*",
     "workers/*"
   ],
