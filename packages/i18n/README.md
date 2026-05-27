@@ -4,7 +4,7 @@ Framework-agnostic i18n contract for Tiko apps. The package provides typed app/l
 
 ## Apps and languages
 
-`TikoAppKey` covers the first rebuild apps: `yes-no`, `type`, `cards`, `sequence`, and `timer`.
+`TikoAppKey` currently covers the first two rebuild apps: `yes-no` and `type`. Add later apps to the tuple when their text/API contracts are mapped.
 
 `TikoLanguage` covers the shared Lezu locale set used by Tiko clients: `en`, `de`, `es`, `fr`, `nl`, `pt`, `ja`, `zh`, `ko`, `mt`, `it`, `ar`, and `hy`.
 

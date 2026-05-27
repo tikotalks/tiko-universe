@@ -1,6 +1,7 @@
 import { describe, expect, it, vi } from 'vitest'
 import {
   defaultLanguage,
+  tikoAppKeys,
   tikoI18nKeys,
   createI18n,
   createLezuTranslationLoader,
@@ -13,6 +14,7 @@ describe('@tiko/i18n fallback contract', () => {
   it('loads initial typed Yes No and Type keys from the local English fallback bundle', () => {
     const i18n = createI18n({ app: 'yes-no', language: defaultLanguage })
 
+    expect(tikoAppKeys).toEqual(['yes-no', 'type'])
     expect(tikoI18nKeys.yesNo.answers.yes).toBe('yesNo.answers.yes')
     expect(i18n.t(tikoI18nKeys.yesNo.appName)).toBe('Yes No')
     expect(i18n.t(tikoI18nKeys.yesNo.answers.yes)).toBe('Yes')

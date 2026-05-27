@@ -18,7 +18,7 @@ export const tikoLanguages = [
 
 export type TikoLanguage = typeof tikoLanguages[number]
 
-export const tikoAppKeys = ['yes-no', 'type', 'cards', 'sequence', 'timer'] as const
+export const tikoAppKeys = ['yes-no', 'type'] as const
 
 export type TikoAppKey = typeof tikoAppKeys[number]
 
