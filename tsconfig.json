@@ -1,0 +1,21 @@
+{
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "composite": true,
+    "baseUrl": ".",
+    "paths": {
+      "@tiko/ui": ["packages/ui/src/index.ts"],
+      "@tiko/ui/*": ["packages/ui/src/*"]
+    },
+    "types": ["vitest/globals", "node"]
+  },
+  "include": [
+    "apps/**/*.ts",
+    "apps/**/*.vue",
+    "packages/**/*.ts",
+    "packages/**/*.vue",
+    "workers/**/*.ts",
+    "tests/**/*.ts",
+    "env.d.ts"
+  ]
+}
