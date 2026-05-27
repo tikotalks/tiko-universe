@@ -1,0 +1,11 @@
+{
+  "name": "@tiko-worker/generation-api",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "typecheck": "echo scaffold-only:generation-api",
+    "test": "echo scaffold-only:generation-api",
+    "deploy:dry-run": "echo scaffold-only:generation-api"
+  }
+}

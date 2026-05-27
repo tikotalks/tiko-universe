@@ -1,0 +1,11 @@
+{
+  "name": "@tiko-worker/content-api",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "typecheck": "echo scaffold-only:content-api",
+    "test": "echo scaffold-only:content-api",
+    "deploy:dry-run": "echo scaffold-only:content-api"
+  }
+}

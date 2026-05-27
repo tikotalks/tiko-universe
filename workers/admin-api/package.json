@@ -1,0 +1,11 @@
+{
+  "name": "@tiko-worker/admin-api",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "typecheck": "echo scaffold-only:admin-api",
+    "test": "echo scaffold-only:admin-api",
+    "deploy:dry-run": "echo scaffold-only:admin-api"
+  }
+}

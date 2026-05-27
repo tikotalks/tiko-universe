@@ -1,0 +1,11 @@
+{
+  "name": "@tiko-web/cards",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "echo scaffold-only:cards",
+    "build": "echo scaffold-only:cards",
+    "test": "echo scaffold-only:cards"
+  }
+}

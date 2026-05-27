@@ -1,0 +1,11 @@
+{
+  "name": "@tiko-worker/media-api",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "typecheck": "echo scaffold-only:media-api",
+    "test": "echo scaffold-only:media-api",
+    "deploy:dry-run": "echo scaffold-only:media-api"
+  }
+}

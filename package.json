@@ -1,0 +1,22 @@
+{
+  "name": "tiko-universe",
+  "private": true,
+  "version": "0.0.0",
+  "description": "API-first Tiko platform with web, iOS, and Android clients.",
+  "type": "module",
+  "packageManager": "npm@10.0.0",
+  "workspaces": [
+    "apps/web/*",
+    "packages/*",
+    "workers/*"
+  ],
+  "scripts": {
+    "check": "npm run lint && npm run typecheck && npm run test",
+    "lint": "node tools/check-placeholders.mjs",
+    "typecheck": "node tools/check-placeholders.mjs",
+    "test": "node tools/check-placeholders.mjs",
+    "build": "node tools/check-placeholders.mjs",
+    "audit:doctrine": "node tools/check-doctrine.mjs"
+  },
+  "devDependencies": {}
+}

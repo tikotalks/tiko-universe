@@ -1,0 +1,165 @@
+openapi: 3.1.0
+info:
+  title: Tiko Universe API
+  version: 0.1.0
+  description: Initial API-first contract for Tiko web, iOS, and Android clients.
+servers:
+  - url: https://api.tikoapi.org/v1
+    description: Future production API gateway
+  - url: https://dev.api.tikoapi.org/v1
+    description: Future development API gateway
+paths:
+  /identity/device:
+    post:
+      summary: Create or restore a device-first user session
+      responses:
+        '200':
+          description: Session bundle
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SessionBundle'
+  /identity/session:
+    get:
+      summary: Return the current session
+      security:
+        - bearerSession: []
+      responses:
+        '200':
+          description: Current session
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SessionBundle'
+  /identity/email:
+    post:
+      summary: Attach or request recovery email magic link with generic response
+      security:
+        - bearerSession: []
+      responses:
+        '202':
+          description: Generic accepted response
+  /identity/magic-links/verify:
+    post:
+      summary: Verify a magic link and return a session bundle
+      responses:
+        '200':
+          description: Session bundle
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SessionBundle'
+  /apps/{app}/settings:
+    get:
+      summary: Read app settings
+      security:
+        - bearerSession: []
+      parameters:
+        - $ref: '#/components/parameters/AppName'
+      responses:
+        '200':
+          description: App settings
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppSettings'
+    put:
+      summary: Save app settings
+      security:
+        - bearerSession: []
+      parameters:
+        - $ref: '#/components/parameters/AppName'
+      responses:
+        '200':
+          description: Saved app settings
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppSettings'
+  /apps/{app}/state:
+    get:
+      summary: Read app state
+      security:
+        - bearerSession: []
+      parameters:
+        - $ref: '#/components/parameters/AppName'
+      responses:
+        '200':
+          description: App state
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppState'
+    put:
+      summary: Save app state
+      security:
+        - bearerSession: []
+      parameters:
+        - $ref: '#/components/parameters/AppName'
+      responses:
+        '200':
+          description: Saved app state
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppState'
+components:
+  securitySchemes:
+    bearerSession:
+      type: http
+      scheme: bearer
+  parameters:
+    AppName:
+      name: app
+      in: path
+      required: true
+      schema:
+        type: string
+        enum: [yes-no, type, cards, sequence, timer]
+  schemas:
+    SessionBundle:
+      type: object
+      required: [user, device, session]
+      properties:
+        user:
+          $ref: '#/components/schemas/User'
+        device:
+          $ref: '#/components/schemas/Device'
+        session:
+          $ref: '#/components/schemas/Session'
+    User:
+      type: object
+      required: [id, kind, recoverable]
+      properties:
+        id:
+          type: string
+        displayName:
+          type: string
+        kind:
+          type: string
+          enum: [device, recoverable]
+        recoverable:
+          type: boolean
+    Device:
+      type: object
+      required: [id]
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+    Session:
+      type: object
+      required: [token, expiresAt]
+      properties:
+        token:
+          type: string
+        expiresAt:
+          type: string
+          format: date-time
+    AppSettings:
+      type: object
+      additionalProperties: true
+    AppState:
+      type: object
+      additionalProperties: true

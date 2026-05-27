@@ -1,0 +1,11 @@
+{
+  "name": "@tiko-web/timer",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "echo scaffold-only:timer",
+    "build": "echo scaffold-only:timer",
+    "test": "echo scaffold-only:timer"
+  }
+}

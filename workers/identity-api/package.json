@@ -1,0 +1,11 @@
+{
+  "name": "@tiko-worker/identity-api",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "typecheck": "echo scaffold-only:identity-api",
+    "test": "echo scaffold-only:identity-api",
+    "deploy:dry-run": "echo scaffold-only:identity-api"
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "name": "@tiko-web/sequence",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "echo scaffold-only:sequence",
+    "build": "echo scaffold-only:sequence",
+    "test": "echo scaffold-only:sequence"
+  }
+}
