@@ -71,6 +71,19 @@ TTS now belongs to `workers/generation-api` under the versioned platform contrac
 
 New clients should consume the OpenAPI contract in `docs/api/openapi.yaml`; web fallback behavior remains in `@tiko/ui` while shared TTS request/response models live in `@tiko/media`.
 
+## Contract and smoke testing
+
+`@tiko/testing` contains shared helpers for API contract tests: JSON request builders, bearer/session fixtures, Cloudflare-style D1/R2 mocks, JSON/error envelope assertions, and Yes-No proof-app smoke checklist helpers.
+
+Useful commands:
+
+- `npm run test:contracts` — identity-api, app-api, generation/TTS, and shared harness contracts.
+- `npm run test:services` — alias for the service contract suite.
+- `npm run test -w @tiko/testing` — shared testing package contract tests only.
+- `npm run typecheck -w @tiko/testing` — shared testing package typecheck.
+
+Manual/proof-app smoke evidence for Yes-No belongs in `docs/apps/yes-no-smoke-checklist.md`.
+
 ## Development doctrine
 
 Start every feature with:

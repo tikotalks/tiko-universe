@@ -15,6 +15,8 @@
     "lint": "node tools/check-placeholders.mjs",
     "typecheck": "vue-tsc --noEmit -p tsconfig.json",
     "test": "vitest run",
+    "test:contracts": "vitest run tests/identity-api.test.ts tests/app-api.test.ts tests/generation-api.test.ts tests/testing-contract.test.ts",
+    "test:services": "npm run test:contracts",
     "build": "npm run build --workspaces --if-present",
     "audit:doctrine": "node tools/check-doctrine.mjs",
     "deploy:dry-run:tts": "npm --workspace @tiko-universe/tts-api run deploy:dry-run",
