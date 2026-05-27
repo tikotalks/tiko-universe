@@ -24,9 +24,9 @@ body { margin: 0; background: var(--tiko-bg); }
 button, textarea, select { font: inherit; }
 button:disabled { cursor: not-allowed; opacity: .45; }
 .tiko-app-shell { min-height: 100dvh; background: var(--tiko-bg); color: inherit; }
-.tiko-app-shell__main { max-width: 920px; margin: 0 auto; padding: 1.25rem 1.5rem 3rem; }
+.tiko-app-shell__main { max-width: 920px; margin: 0 auto; padding: .75rem 1.5rem 2rem; }
 .tiko-app-shell__eyebrow { text-align: center; opacity: .55; font-size: .875rem; }
-.tiko-app-header { position: sticky; top: 1.4rem; z-index: 2; display: flex; align-items: center; justify-content: space-between; gap: 1rem; width: min(560px, calc(100% - 2rem)); margin: 1.4rem auto 0; padding: .35rem .5rem; border-radius: 999px; background: var(--tiko-purple); color: white; box-shadow: inset 0 -4px 0 rgba(0,0,0,.12); }
+.tiko-app-header { position: sticky; top: .9rem; z-index: 2; display: flex; align-items: center; justify-content: space-between; gap: 1rem; width: min(560px, calc(100% - 2rem)); margin: .9rem auto 0; padding: .35rem .5rem; border-radius: 999px; background: var(--tiko-purple); color: white; box-shadow: inset 0 -4px 0 rgba(0,0,0,.12); }
 .tiko-app-header__brand, .tiko-app-header__actions { display: flex; align-items: center; gap: .65rem; }
 .tiko-app-header__app-icon, .tiko-app-header__avatar { display: grid; place-items: center; width: 3rem; height: 3rem; border-radius: 50%; background: color-mix(in srgb, white, transparent 72%); font-size: 2rem; }
 .tiko-app-header__title { font-size: 1.45rem; font-weight: 800; }
@@ -34,17 +34,20 @@ button:disabled { cursor: not-allowed; opacity: .45; }
 .tiko-app-header__action:active { transform: scale(.94); }
 .tiko-app-header__action--active { outline: 3px solid rgba(255,255,255,.42); }
 .yes-no-app { text-align: center; }
-.yes-no-app__sentence-card { display: grid; gap: .75rem; max-width: 46rem; margin: 1rem auto; padding: 1rem; border-radius: 1.25rem; background: var(--tiko-card); box-shadow: 0 12px 26px color-mix(in srgb, black, transparent 88%); }
+.yes-no-app__sentence-card { display: grid; gap: .45rem; max-width: 40rem; margin: .45rem auto; padding: .65rem; border-radius: 1.25rem; background: var(--tiko-card); box-shadow: 0 12px 26px color-mix(in srgb, black, transparent 88%); }
+.yes-no-app__sentence-card .card__content { display: grid; gap: .55rem; padding: 0; }
 .yes-no-app__sentence-label { color: var(--tiko-ink); font-weight: 900; text-transform: uppercase; font-size: .8rem; letter-spacing: .08em; }
-.yes-no-app__sentence-input { width: 100%; box-sizing: border-box; border: 0; border-radius: 1rem; padding: .8rem 1rem; resize: vertical; min-height: 4.6rem; background: color-mix(in srgb, var(--tiko-bg), white 55%); color: inherit; text-align: center; font-size: clamp(1.5rem, 4vw, 2.35rem); line-height: 1.2; }
+.yes-no-app__sentence-input { width: 100%; box-sizing: border-box; }
+.yes-no-app__sentence-input .input-textarea__control { min-height: 3.5rem !important; height: 3.5rem !important; padding: .5rem .9rem; border: 0; border-radius: 1rem; resize: none; background: color-mix(in srgb, var(--tiko-bg), white 55%); color: inherit; text-align: center; font-size: clamp(1.25rem, 3vw, 1.85rem); line-height: 1.15; }
 [data-color-mode="dark"] .yes-no-app__sentence-input { background: color-mix(in srgb, var(--tiko-bg), white 8%); }
 .yes-no-app__sentence-actions { display: flex; justify-content: center; gap: .75rem; align-items: center; flex-wrap: wrap; }
-.yes-no-app__speak { width: 3.8rem; height: 3.8rem; border: 0; border-radius: 50%; background: #e9e6df; font-size: 2rem; cursor: pointer; box-shadow: inset 0 -4px 0 rgba(0,0,0,.08); }
-.yes-no-app__reset, .tiko-setup-card button { border: 0; border-radius: 999px; padding: .8rem 1.1rem; background: var(--tiko-purple); color: white; font-weight: 800; cursor: pointer; }
-.tiko-choice-grid { display: grid; grid-template-columns: repeat(2, minmax(220px, 1fr)); gap: clamp(2rem, 8vw, 7rem); align-items: start; margin-top: 1.25rem; }
-.tiko-answer-button { border: 0; background: transparent; color: var(--tiko-ink); font-weight: 900; font-size: clamp(2.1rem, 5vw, 3rem); cursor: pointer; transition: transform .12s ease; }
+.yes-no-app__speak { width: 3.6rem; height: 3.6rem; border-radius: 50%; --button-color-text: white; }
+.yes-no-app__reset, .tiko-setup-card button { border-radius: 999px; font-weight: 800; cursor: pointer; }
+.tiko-choice-grid { display: grid; grid-template-columns: repeat(2, minmax(220px, 1fr)); gap: clamp(1.5rem, 7vw, 5rem); align-items: start; margin-top: .55rem; }
+.tiko-answer-button { border: 0; background: transparent; color: var(--tiko-ink); font-weight: 900; font-size: clamp(1.9rem, 4vw, 2.6rem); cursor: pointer; transition: transform .12s ease; }
+.tiko-answer-button .button__container, .tiko-answer-button .button__text { display: grid; justify-items: center; gap: 0; }
 .tiko-answer-button:active { transform: scale(.97); }
-.tiko-answer-button__tile { display: grid; place-items: center; min-height: 190px; border-radius: 1rem; margin-bottom: 1rem; box-shadow: 0 24px 22px rgba(0,0,0,.18); font-size: clamp(7rem, 16vw, 11rem); line-height: 1; }
+.tiko-answer-button__tile { display: grid; place-items: center; min-height: clamp(132px, 23vw, 180px); border-radius: 1rem; margin-bottom: .35rem; box-shadow: 0 24px 22px rgba(0,0,0,.18); font-size: clamp(5rem, 12vw, 8.5rem); line-height: 1; }
 .tiko-answer-button--primary .tiko-answer-button__tile { background: var(--tiko-yes); }
 .tiko-answer-button--secondary .tiko-answer-button__tile { background: var(--tiko-no); }
 .yes-no-app__latest { color: var(--tiko-ink); font-weight: 800; }

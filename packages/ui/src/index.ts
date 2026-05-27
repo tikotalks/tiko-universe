@@ -1,4 +1,7 @@
 import { defineComponent, h, watch } from 'vue'
+import { Button, Card, Colors, Icon } from '@sil/ui'
+
+export { Button as SilButton, Card as SilCard, Colors as SilColors, Icon as SilIcon } from '@sil/ui'
 
 export type TikoChoiceTone = 'primary' | 'secondary' | 'success' | 'danger'
 export type TikoColorMode = 'light' | 'dark' | 'system'
@@ -184,7 +187,10 @@ export function createTikoTtsClient(options: TikoTtsClientOptions = {}) {
 }
 
 function iconSpan(icon: string) {
-  return h('span', { class: 'tiko-icon', 'aria-hidden': 'true', 'data-icon': icon }, icon === 'media/volume-iii' ? '🔊' : icon === 'ui/settings-dual' ? '☷' : icon === 'ui/clock' ? '◷' : '•')
+  if (icon.includes('/')) {
+    return h(Icon, { class: 'tiko-icon', name: icon, size: 'medium', 'aria-hidden': 'true', 'data-icon': icon })
+  }
+  return h('span', { class: 'tiko-icon', 'aria-hidden': 'true', 'data-icon': icon }, icon)
 }
 
 export const TikoAppHeader = defineComponent({
@@ -203,14 +209,16 @@ export const TikoAppHeader = defineComponent({
         h('span', { class: 'tiko-app-header__title', 'data-test': 'tiko-shell-title' }, props.appName)
       ]),
       h('div', { class: 'tiko-app-header__actions' }, [
-        ...props.actions.filter(a => a.visible !== false).map(action => h('button', {
+        ...props.actions.filter(a => a.visible !== false).map(action => h(Button, {
           class: ['tiko-app-header__action', action.active ? 'tiko-app-header__action--active' : ''],
-          type: 'button',
+          variant: 'ghost',
+          iconOnly: true,
+          icon: action.icon,
           'aria-label': action.label,
           disabled: action.disabled,
           'data-test': `tiko-header-action-${action.id}`,
           onClick: () => emit('action', action.id)
-        }, [iconSpan(action.icon)])),
+        })),
         h('span', { class: 'tiko-app-header__avatar', 'aria-hidden': 'true' }, props.avatar)
       ])
     ])
@@ -245,13 +253,13 @@ export const TikoAnswerButton = defineComponent({
   props: { choice: { type: Object as () => TikoChoice, required: true } },
   emits: ['answer'],
   setup(props, { emit }) {
-    return () => h('button', {
+    return () => h(Button, {
       class: ['tiko-answer-button', `tiko-answer-button--${props.choice.tone}`],
-      type: 'button',
+      variant: 'ghost',
       disabled: props.choice.disabled,
       'data-test': 'tiko-answer-button',
       onClick: () => !props.choice.disabled && emit('answer', props.choice.id)
-    }, [
+    }, () => [
       h('span', { class: 'tiko-answer-button__tile', 'aria-hidden': 'true' }, props.choice.icon ?? (props.choice.id === 'no' ? '👎' : '👍')),
       h('span', { class: 'tiko-answer-button__label' }, props.choice.label)
     ])
@@ -278,11 +286,13 @@ export const TikoSetupCard = defineComponent({
   },
   emits: ['setup'],
   setup(props, { emit }) {
-    return () => h('aside', { class: 'tiko-setup-card', 'data-test': 'tiko-setup-card' }, [
+    return () => h(Card, { class: 'tiko-setup-card', variant: 'elevated', color: Colors.BACKGROUND, tag: 'aside', 'data-test': 'tiko-setup-card' }, {
+      default: () => [
       h('strong', {}, props.title),
       h('p', {}, props.description),
-      props.actionLabel ? h('button', { type: 'button', onClick: () => emit('setup') }, props.actionLabel) : null
-    ])
+      props.actionLabel ? h(Button, { variant: 'primary', onClick: () => emit('setup') }, () => props.actionLabel) : null
+      ]
+    })
   }
 })
 
@@ -298,18 +308,20 @@ export const TikoSettingsPanel = defineComponent({
       if (!['light', 'dark', 'system'].includes(mode)) emit('update:colorMode', 'system')
     }, { immediate: true })
 
-    return () => h('section', { class: 'tiko-settings-panel', 'data-test': 'tiko-settings-panel', 'aria-label': 'Settings' }, [
-      h('label', {}, ['Language', h('select', { value: props.language, 'data-test': 'tiko-settings-language', onChange: (e: Event) => emit('update:language', (e.target as HTMLSelectElement).value) }, [
+    return () => h(Card, { class: 'tiko-settings-panel', variant: 'elevated', color: Colors.BACKGROUND, tag: 'section', 'data-test': 'tiko-settings-panel', 'aria-label': 'Settings' }, {
+      default: () => [
+      h('label', {}, ['Language', h('select', { value: props.language, class: 'tiko-settings-panel__select', 'data-test': 'tiko-settings-language', onChange: (e: Event) => emit('update:language', (e.target as HTMLSelectElement).value) }, [
         h('option', { value: 'en' }, 'English'),
         h('option', { value: 'nl' }, 'Nederlands'),
         h('option', { value: 'fr' }, 'Français'),
         h('option', { value: 'es' }, 'Español')
       ])]),
-      h('label', {}, ['Color mode', h('select', { value: props.colorMode, 'data-test': 'tiko-settings-color-mode', onChange: (e: Event) => emit('update:colorMode', (e.target as HTMLSelectElement).value) }, [
+      h('label', {}, ['Color mode', h('select', { value: props.colorMode, class: 'tiko-settings-panel__select', 'data-test': 'tiko-settings-color-mode', onChange: (e: Event) => emit('update:colorMode', (e.target as HTMLSelectElement).value) }, [
         h('option', { value: 'light' }, 'Light'),
         h('option', { value: 'dark' }, 'Dark'),
         h('option', { value: 'system' }, 'System')
       ])])
-    ])
+      ]
+    })
   }
 })

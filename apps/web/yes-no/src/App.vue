@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
+import { Button, Card, Colors, InputTextArea } from '@sil/ui'
 import {
   TikoAppShell,
   TikoChoiceGrid,
@@ -124,21 +125,21 @@ function setupUser() {
     @header-action="headerAction"
   >
     <section class="yes-no-app" :data-color-mode="colorMode">
-      <div class="yes-no-app__sentence-card">
+      <Card class="yes-no-app__sentence-card" variant="elevated" :color="Colors.BACKGROUND">
         <label class="yes-no-app__sentence-label" for="yes-no-sentence">Sentence</label>
-        <textarea
+        <InputTextArea
           id="yes-no-sentence"
           v-model="sentence"
           class="yes-no-app__sentence-input"
-          rows="2"
-          maxlength="160"
+          :rows="2"
+          :maxlength="160"
           aria-label="Sentence to speak"
         />
         <div class="yes-no-app__sentence-actions">
-          <button class="yes-no-app__speak" type="button" :disabled="!canSpeakSentence" aria-label="Speak sentence" @click="speak(sentence)">🔊</button>
-          <button class="yes-no-app__reset" type="button" @click="resetSentence">Reset</button>
+          <Button class="yes-no-app__speak" variant="primary" icon="media/volume-iii" icon-only :disabled="!canSpeakSentence" aria-label="Speak sentence" @click="speak(sentence)" />
+          <Button class="yes-no-app__reset" variant="primary" @click="resetSentence">Reset</Button>
         </div>
-      </div>
+      </Card>
 
       <p v-if="speakStatus === 'fallback'" class="yes-no-app__status" role="status">{{ labels.fallback }}</p>
       <p v-if="speakStatus === 'error'" class="yes-no-app__status yes-no-app__status--error" role="alert">Could not speak yet. Try again.</p>
