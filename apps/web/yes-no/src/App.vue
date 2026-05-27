@@ -1,11 +1,10 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
-import { Button, Card, Colors, InputTextArea } from '@sil/ui'
+import { Button, InputTextArea } from '@sil/ui'
 import {
   TikoAppShell,
   TikoChoiceGrid,
   TikoSettingsPanel,
-  TikoSetupCard,
   createTikoChoice,
   createTikoTtsClient,
   type TikoColorMode
@@ -39,7 +38,6 @@ const settingsOpen = ref(false)
 const historyOpen = ref(false)
 const sentence = ref(stored.sentence ?? defaultSentence)
 const speakStatus = ref<'idle' | 'speaking' | 'fallback' | 'error'>('idle')
-const setupStatus = ref('')
 const tts = createTikoTtsClient()
 
 const labels = computed(() => {
@@ -111,22 +109,17 @@ function resetSentence() {
   sentence.value = defaultSentence
 }
 
-function setupUser() {
-  setupStatus.value = 'Setup user flow will attach a caregiver email later — play remains available now.'
-}
 </script>
 
 <template>
   <TikoAppShell
     app-name="Yes No"
-    eyebrow="optional setup · no login wall"
     app-icon="👍"
     :actions="headerActions"
     @header-action="headerAction"
   >
     <section class="yes-no-app" :data-color-mode="colorMode">
-      <Card class="yes-no-app__sentence-card" variant="elevated" :color="Colors.BACKGROUND">
-        <label class="yes-no-app__sentence-label" for="yes-no-sentence">Sentence</label>
+      <section class="yes-no-app__sentence" aria-label="Sentence to speak">
         <InputTextArea
           id="yes-no-sentence"
           v-model="sentence"
@@ -139,7 +132,7 @@ function setupUser() {
           <Button class="yes-no-app__speak" variant="primary" icon="media/volume-iii" icon-only :disabled="!canSpeakSentence" aria-label="Speak sentence" @click="speak(sentence)" />
           <Button class="yes-no-app__reset" variant="primary" @click="resetSentence">Reset</Button>
         </div>
-      </Card>
+      </section>
 
       <p v-if="speakStatus === 'fallback'" class="yes-no-app__status" role="status">{{ labels.fallback }}</p>
       <p v-if="speakStatus === 'error'" class="yes-no-app__status yes-no-app__status--error" role="alert">Could not speak yet. Try again.</p>
@@ -160,13 +153,6 @@ function setupUser() {
 
       <TikoChoiceGrid :choices="choices" @answer="answer" />
       <p v-if="latestAnswer" class="yes-no-app__latest">{{ labels.latest }}: {{ latestAnswer }}</p>
-      <TikoSetupCard
-        title="Make this device recoverable"
-        description="Setup user is optional and can be added later without blocking play."
-        action-label="Setup user"
-        @setup="setupUser"
-      />
-      <p v-if="setupStatus" class="yes-no-app__status">{{ setupStatus }}</p>
     </section>
   </TikoAppShell>
 </template>

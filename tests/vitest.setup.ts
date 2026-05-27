@@ -19,18 +19,6 @@ vi.mock('@sil/ui', () => {
     }
   })
 
-  const Card = defineComponent({
-    name: 'SilCardMock',
-    props: {
-      tag: { type: String, default: 'div' },
-      variant: String,
-      color: String
-    },
-    setup(props, { attrs, slots }) {
-      return () => h(props.tag, attrs, slots.default?.())
-    }
-  })
-
   const Icon = defineComponent({
     name: 'SilIconMock',
     props: {
@@ -63,11 +51,7 @@ vi.mock('@sil/ui', () => {
 
   return {
     Button,
-    Card,
     Icon,
-    InputTextArea,
-    Colors: {
-      BACKGROUND: 'background'
-    }
+    InputTextArea
   }
 })

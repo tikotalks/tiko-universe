@@ -25,7 +25,6 @@ button, textarea, select { font: inherit; }
 button:disabled { cursor: not-allowed; opacity: .45; }
 .tiko-app-shell { min-height: 100dvh; background: var(--tiko-bg); color: inherit; }
 .tiko-app-shell__main { max-width: 920px; margin: 0 auto; padding: .75rem 1.5rem 2rem; }
-.tiko-app-shell__eyebrow { text-align: center; opacity: .55; font-size: .875rem; }
 .tiko-app-header { position: sticky; top: .9rem; z-index: 2; display: flex; align-items: center; justify-content: space-between; gap: 1rem; width: min(560px, calc(100% - 2rem)); margin: .9rem auto 0; padding: .35rem .5rem; border-radius: 999px; background: var(--tiko-purple); color: white; box-shadow: inset 0 -4px 0 rgba(0,0,0,.12); }
 .tiko-app-header__brand, .tiko-app-header__actions { display: flex; align-items: center; gap: .65rem; }
 .tiko-app-header__app-icon, .tiko-app-header__avatar { display: grid; place-items: center; width: 3rem; height: 3rem; border-radius: 50%; background: color-mix(in srgb, white, transparent 72%); font-size: 2rem; }
@@ -34,15 +33,13 @@ button:disabled { cursor: not-allowed; opacity: .45; }
 .tiko-app-header__action:active { transform: scale(.94); }
 .tiko-app-header__action--active { outline: 3px solid rgba(255,255,255,.42); }
 .yes-no-app { text-align: center; }
-.yes-no-app__sentence-card { display: grid; gap: .45rem; max-width: 40rem; margin: .45rem auto; padding: .65rem; border-radius: 1.25rem; background: var(--tiko-card); box-shadow: 0 12px 26px color-mix(in srgb, black, transparent 88%); }
-.yes-no-app__sentence-card .card__content { display: grid; gap: .55rem; padding: 0; }
-.yes-no-app__sentence-label { color: var(--tiko-ink); font-weight: 900; text-transform: uppercase; font-size: .8rem; letter-spacing: .08em; }
+.yes-no-app__sentence { display: grid; gap: .55rem; max-width: 40rem; margin: .55rem auto 0; padding: .25rem 0 0; }
 .yes-no-app__sentence-input { width: 100%; box-sizing: border-box; }
 .yes-no-app__sentence-input .input-textarea__control { min-height: 3.5rem !important; height: 3.5rem !important; padding: .5rem .9rem; border: 0; border-radius: 1rem; resize: none; background: color-mix(in srgb, var(--tiko-bg), white 55%); color: inherit; text-align: center; font-size: clamp(1.25rem, 3vw, 1.85rem); line-height: 1.15; }
 [data-color-mode="dark"] .yes-no-app__sentence-input { background: color-mix(in srgb, var(--tiko-bg), white 8%); }
 .yes-no-app__sentence-actions { display: flex; justify-content: center; gap: .75rem; align-items: center; flex-wrap: wrap; }
 .yes-no-app__speak { width: 3.6rem; height: 3.6rem; border-radius: 50%; --button-color-text: white; }
-.yes-no-app__reset, .tiko-setup-card button { border-radius: 999px; font-weight: 800; cursor: pointer; }
+.yes-no-app__reset { border-radius: 999px; font-weight: 800; cursor: pointer; }
 .tiko-choice-grid { display: grid; grid-template-columns: repeat(2, minmax(220px, 1fr)); gap: clamp(1.5rem, 7vw, 5rem); align-items: start; margin-top: .55rem; }
 .tiko-answer-button { border: 0; background: transparent; color: var(--tiko-ink); font-weight: 900; font-size: clamp(1.9rem, 4vw, 2.6rem); cursor: pointer; transition: transform .12s ease; }
 .tiko-answer-button .button__container, .tiko-answer-button .button__text { display: grid; justify-items: center; gap: 0; }
@@ -51,7 +48,7 @@ button:disabled { cursor: not-allowed; opacity: .45; }
 .tiko-answer-button--primary .tiko-answer-button__tile { background: var(--tiko-yes); }
 .tiko-answer-button--secondary .tiko-answer-button__tile { background: var(--tiko-no); }
 .yes-no-app__latest { color: var(--tiko-ink); font-weight: 800; }
-.tiko-setup-card, .tiko-settings-panel, .yes-no-app__history, .yes-no-app__status { margin: 1rem auto 0; max-width: 36rem; padding: 1rem; border-radius: 1rem; background: var(--tiko-panel); }
+.tiko-settings-panel, .yes-no-app__history, .yes-no-app__status { margin: 1rem auto 0; max-width: 36rem; padding: 1rem; border-radius: 1rem; background: var(--tiko-panel); }
 .tiko-settings-panel { display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap; }
 .tiko-settings-panel label { display: grid; gap: .35rem; text-align: left; font-weight: 700; }
 .tiko-settings-panel select { border: 0; border-radius: .6rem; padding: .7rem .9rem; color: inherit; background: var(--tiko-card); }

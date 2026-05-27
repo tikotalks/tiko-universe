@@ -33,14 +33,13 @@ describe('Yes No web app', () => {
     }))
   })
 
-  it('shows setup user as optional recovery, not a first-use blocker', async () => {
+  it('keeps setup/recovery chrome out of the first-use play flow', () => {
     const wrapper = mount(App)
 
-    expect(wrapper.text()).toContain('Setup user')
-    expect(wrapper.text()).toContain('optional')
-
-    await wrapper.get('[data-test="tiko-setup-card"] button').trigger('click')
-    expect(wrapper.text()).toContain('play remains available now')
+    expect(wrapper.text()).not.toContain('Setup user')
+    expect(wrapper.text()).not.toContain('optional setup')
+    expect(wrapper.find('[data-test="tiko-setup-card"]').exists()).toBe(false)
+    expect(wrapper.find('.yes-no-app__sentence-card').exists()).toBe(false)
   })
 
   it('opens settings and updates language and color mode', async () => {

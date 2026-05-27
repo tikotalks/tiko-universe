@@ -5,7 +5,6 @@ import {
   TikoAppHeader,
   TikoAppShell,
   TikoChoiceGrid,
-  TikoSetupCard,
   createTikoChoice,
   createTikoTtsClient,
   tikoKitComponents
@@ -18,7 +17,6 @@ describe('TikoKit component contract', () => {
       'TikoAppShell',
       'TikoAnswerButton',
       'TikoChoiceGrid',
-      'TikoSetupCard',
       'TikoSettingsPanel'
     ])
   })
@@ -51,12 +49,11 @@ describe('TikoKit component contract', () => {
 
   it('renders app shell title and default slot', () => {
     const wrapper = mount(TikoAppShell, {
-      props: { appName: 'Yes No', eyebrow: 'Tiko' },
+      props: { appName: 'Yes No' },
       slots: { default: '<p data-test="content">Ready</p>' }
     })
 
     expect(wrapper.get('[data-test="tiko-shell-title"]').text()).toBe('Yes No')
-    expect(wrapper.get('[data-test="tiko-shell-eyebrow"]').text()).toBe('Tiko')
     expect(wrapper.get('[data-test="content"]').text()).toBe('Ready')
   })
 
@@ -85,20 +82,6 @@ describe('TikoKit component contract', () => {
     expect(wrapper.emitted('answer')).toEqual([['no']])
   })
 
-  it('renders setup card with optional recovery action', async () => {
-    const wrapper = mount(TikoSetupCard, {
-      props: {
-        title: 'Make this device recoverable',
-        description: 'Add caregiver email later without blocking play.',
-        actionLabel: 'Setup user'
-      }
-    })
-
-    expect(wrapper.text()).toContain('Make this device recoverable')
-    expect(wrapper.text()).toContain('Add caregiver email later without blocking play.')
-    await wrapper.get('button').trigger('click')
-    expect(wrapper.emitted('setup')).toEqual([[]])
-  })
 
   it('posts speech text to the old Tiko TTS worker and rewrites relative audio URLs to the CDN', async () => {
     const play = vi.fn()

@@ -1,7 +1,7 @@
 import { defineComponent, h, watch } from 'vue'
-import { Button, Card, Colors, Icon } from '@sil/ui'
+import { Button, Icon } from '@sil/ui'
 
-export { Button as SilButton, Card as SilCard, Colors as SilColors, Icon as SilIcon } from '@sil/ui'
+export { Button as SilButton, Icon as SilIcon } from '@sil/ui'
 
 export type TikoChoiceTone = 'primary' | 'secondary' | 'success' | 'danger'
 export type TikoColorMode = 'light' | 'dark' | 'system'
@@ -67,7 +67,6 @@ export const tikoKitComponents = [
   'TikoAppShell',
   'TikoAnswerButton',
   'TikoChoiceGrid',
-  'TikoSetupCard',
   'TikoSettingsPanel'
 ]
 
@@ -229,7 +228,6 @@ export const TikoAppShell = defineComponent({
   name: 'TikoAppShell',
   props: {
     appName: { type: String, required: true },
-    eyebrow: { type: String, default: '' },
     appIcon: { type: String, default: '👍' },
     actions: { type: Array as () => TikoHeaderAction[], default: () => [] }
   },
@@ -242,7 +240,6 @@ export const TikoAppShell = defineComponent({
         actions: props.actions,
         onAction: (id: string) => emit('headerAction', id)
       }),
-      props.eyebrow ? h('p', { class: 'tiko-app-shell__eyebrow', 'data-test': 'tiko-shell-eyebrow' }, props.eyebrow) : null,
       h('main', { class: 'tiko-app-shell__main' }, slots.default?.())
     ])
   }
@@ -277,25 +274,6 @@ export const TikoChoiceGrid = defineComponent({
   }
 })
 
-export const TikoSetupCard = defineComponent({
-  name: 'TikoSetupCard',
-  props: {
-    title: { type: String, required: true },
-    description: { type: String, required: true },
-    actionLabel: { type: String, default: '' }
-  },
-  emits: ['setup'],
-  setup(props, { emit }) {
-    return () => h(Card, { class: 'tiko-setup-card', variant: 'elevated', color: Colors.BACKGROUND, tag: 'aside', 'data-test': 'tiko-setup-card' }, {
-      default: () => [
-      h('strong', {}, props.title),
-      h('p', {}, props.description),
-      props.actionLabel ? h(Button, { variant: 'primary', onClick: () => emit('setup') }, () => props.actionLabel) : null
-      ]
-    })
-  }
-})
-
 export const TikoSettingsPanel = defineComponent({
   name: 'TikoSettingsPanel',
   props: {
@@ -308,8 +286,7 @@ export const TikoSettingsPanel = defineComponent({
       if (!['light', 'dark', 'system'].includes(mode)) emit('update:colorMode', 'system')
     }, { immediate: true })
 
-    return () => h(Card, { class: 'tiko-settings-panel', variant: 'elevated', color: Colors.BACKGROUND, tag: 'section', 'data-test': 'tiko-settings-panel', 'aria-label': 'Settings' }, {
-      default: () => [
+    return () => h('section', { class: 'tiko-settings-panel', 'data-test': 'tiko-settings-panel', 'aria-label': 'Settings' }, [
       h('label', {}, ['Language', h('select', { value: props.language, class: 'tiko-settings-panel__select', 'data-test': 'tiko-settings-language', onChange: (e: Event) => emit('update:language', (e.target as HTMLSelectElement).value) }, [
         h('option', { value: 'en' }, 'English'),
         h('option', { value: 'nl' }, 'Nederlands'),
@@ -321,7 +298,6 @@ export const TikoSettingsPanel = defineComponent({
         h('option', { value: 'dark' }, 'Dark'),
         h('option', { value: 'system' }, 'System')
       ])])
-      ]
-    })
+    ])
   }
 })
