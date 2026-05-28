@@ -35,7 +35,7 @@ describe('TikoKit component contract', () => {
   it('keeps one canonical app-color palette with a different primary for each project', () => {
     const primaryColors = Object.values(tikoAppColors).map((color) => color.primary)
 
-    expect(tikoAppColors['yes-no'].primary).toBe('#9b3fbd')
+    expect(tikoAppColors['yes-no'].primary).toBe('var(--color-primary)')
     expect(new Set(primaryColors).size).toBe(primaryColors.length)
   })
 

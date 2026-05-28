@@ -27,7 +27,7 @@ export const tikoWebsiteAppUniverse = [
     status: 'available',
     availability: 'available',
     platformNotes: 'Open on the web now. Native iOS and Android paths should keep the same simple two-choice shape.',
-    color: '#9b3fbd',
+    color: 'var(--color-primary)',
     useWhen: [
       'a child needs to answer quickly',
       'a caregiver wants a simple prompt',
@@ -42,7 +42,7 @@ export const tikoWebsiteAppUniverse = [
     status: 'planned',
     availability: 'planned',
     platformNotes: 'Coming to the web first, then native paths from the same child-first text and speech contract.',
-    color: '#2488ff',
+    color: 'var(--color-secondary)',
     useWhen: [
       'a child wants to type a message',
       'saved phrases may help later',
@@ -57,7 +57,7 @@ export const tikoWebsiteAppUniverse = [
     status: 'planned',
     availability: 'planned',
     platformNotes: 'Coming as a small card experience before any caregiver sync or transfer layer is added.',
-    color: '#ff8a1f',
+    color: 'var(--color-accent)',
     useWhen: [
       'images or symbols help more than text alone',
       'choices should be visible and tappable',
@@ -72,7 +72,7 @@ export const tikoWebsiteAppUniverse = [
     status: 'planned',
     availability: 'planned',
     platformNotes: 'Coming for web and native with the next step always visible and without heavy system framing.',
-    color: '#16b8a6',
+    color: 'var(--color-tertiary)',
     useWhen: [
       'a routine needs a simple order',
       'the next step should be visible',
@@ -87,7 +87,7 @@ export const tikoWebsiteAppUniverse = [
     status: 'planned',
     availability: 'planned',
     platformNotes: 'Coming as a focused screen that does one thing on web, iOS, and Android.',
-    color: '#f8c22e',
+    color: 'var(--color-warning)',
     useWhen: [
       'transitions need a visible end',
       'waiting should feel less abstract',

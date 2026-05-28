@@ -2,7 +2,7 @@ import { defineComponent, h, watch } from 'vue'
 import type { GenerationTtsRequest, LegacyTtsResponse } from '@tiko/media'
 import { generationTtsCacheKey, isGenerationTtsResponse } from '@tiko/media'
 import { Button, Icon } from '@sil/ui'
-import './styles.css'
+import './styles.scss'
 
 export { Button as SilButton, Icon as SilIcon } from '@sil/ui'
 
@@ -12,12 +12,12 @@ export type TikoColorMode = 'light' | 'dark' | 'system'
 export type { TikoTtsProvider } from '@tiko/media'
 
 export const tikoAppColors: Record<TikoAppColor, { label: string; primary: string; dark: string }> = {
-  'yes-no': { label: 'Yes No', primary: '#9b3fbd', dark: '#49125e' },
-  type: { label: 'Type', primary: '#2488ff', dark: '#0d3f91' },
-  cards: { label: 'Cards', primary: '#ff8a1f', dark: '#9a3d00' },
-  sequence: { label: 'Sequence', primary: '#16b8a6', dark: '#08665d' },
-  timer: { label: 'Timer', primary: '#f8c22e', dark: '#8a5d00' },
-  tiko: { label: 'Tiko', primary: '#ef4f8f', dark: '#8d1c4f' }
+  'yes-no': { label: 'Yes No', primary: 'var(--color-primary)', dark: 'color-mix(in srgb, var(--color-primary), var(--color-foreground) 42%)' },
+  type: { label: 'Type', primary: 'var(--color-secondary)', dark: 'color-mix(in srgb, var(--color-secondary), var(--color-foreground) 42%)' },
+  cards: { label: 'Cards', primary: 'var(--color-accent)', dark: 'color-mix(in srgb, var(--color-accent), var(--color-foreground) 42%)' },
+  sequence: { label: 'Sequence', primary: 'var(--color-tertiary)', dark: 'color-mix(in srgb, var(--color-tertiary), var(--color-foreground) 42%)' },
+  timer: { label: 'Timer', primary: 'var(--color-warning)', dark: 'color-mix(in srgb, var(--color-warning), var(--color-foreground) 42%)' },
+  tiko: { label: 'Tiko', primary: 'var(--color-error)', dark: 'color-mix(in srgb, var(--color-error), var(--color-foreground) 42%)' }
 }
 
 export interface TikoChoiceInput {

@@ -12,7 +12,7 @@ import {
   createTikoTtsClient,
   type TikoColorMode
 } from '@tiko/ui'
-import './styles.css'
+import './styles.scss'
 
 const storageKey = 'tiko:yes-no'
 const identityStorageKey = 'tiko:identity:device-session'

@@ -1,68 +1,62 @@
+@use '@sil/ui/defaults' with ($project-colors: (
+  'primary': #9b3fbd,
+  'secondary': #2488ff,
+  'tertiary': #16b8a6,
+  'accent': #ff8a1f,
+  'success': #93ee3f,
+  'warning': #f8c22e,
+  'error': #ef405d,
+  'dark': #17131c,
+  'light': #f8f6f1,
+));
+
+@use '@sil/ui/styles/main.scss';
+
 :root {
-  --tiko-color-purple: #9b3fbd;
-  --tiko-color-purple-dark: #49125e;
-  --tiko-color-blue: #2488ff;
-  --tiko-color-blue-dark: #0d3f91;
-  --tiko-color-teal: #16b8a6;
-  --tiko-color-teal-dark: #08665d;
-  --tiko-color-orange: #ff8a1f;
-  --tiko-color-orange-dark: #9a3d00;
-  --tiko-color-amber: #f8c22e;
-  --tiko-color-amber-dark: #8a5d00;
-  --tiko-color-pink: #ef4f8f;
-  --tiko-color-pink-dark: #8d1c4f;
-  --tiko-color-green: #93ee3f;
-  --tiko-color-red: #ef405d;
-  --tiko-color-cream: #f8f6f1;
-  --tiko-color-ink: #0b5a7a;
-
-  --tiko-app-primary: var(--tiko-color-purple);
-  --tiko-app-primary-dark: var(--tiko-color-purple-dark);
-  --tiko-answer-primary: var(--tiko-color-green);
-  --tiko-answer-secondary: var(--tiko-color-red);
-  --tiko-surface: var(--tiko-color-cream);
-  --tiko-surface-raised: color-mix(in srgb, white, var(--tiko-surface) 20%);
-  --tiko-foreground: #202020;
-  --tiko-foreground-strong: var(--tiko-color-ink);
-  --tiko-panel: color-mix(in srgb, var(--tiko-app-primary), transparent 88%);
-}
-
-[data-color-mode="dark"] {
-  --tiko-surface: #17131c;
-  --tiko-surface-raised: #241b2c;
-  --tiko-panel: color-mix(in srgb, var(--tiko-app-primary), transparent 72%);
-  --tiko-foreground: #fffaf2;
-  --tiko-foreground-strong: #a2e8ff;
+  --tiko-app-primary: var(--color-primary);
+  --tiko-app-primary-text: var(--color-primary-text);
+  --tiko-app-primary-deep: color-mix(in srgb, var(--tiko-app-primary), var(--color-foreground) 42%);
+  --tiko-answer-primary: var(--color-success);
+  --tiko-answer-primary-text: var(--color-success-text);
+  --tiko-answer-secondary: var(--color-error);
+  --tiko-answer-secondary-text: var(--color-error-text);
+  --tiko-surface: var(--color-background);
+  --tiko-surface-raised: color-mix(in srgb, var(--color-background), var(--color-foreground) 4%);
+  --tiko-foreground: var(--color-foreground);
+  --tiko-foreground-accent: color-mix(in srgb, var(--color-foreground), var(--tiko-app-primary) 34%);
+  --tiko-panel: color-mix(in srgb, var(--color-background), var(--tiko-app-primary) 12%);
+  --tiko-border: color-mix(in srgb, var(--color-foreground), transparent 86%);
+  --tiko-shadow: color-mix(in srgb, var(--color-foreground), transparent 84%);
 }
 
 [data-app-color="yes-no"] {
-  --tiko-app-primary: var(--tiko-color-purple);
-  --tiko-app-primary-dark: var(--tiko-color-purple-dark);
+  --tiko-app-primary: var(--color-primary);
+  --tiko-app-primary-text: var(--color-primary-text);
 }
 
 [data-app-color="type"] {
-  --tiko-app-primary: var(--tiko-color-blue);
-  --tiko-app-primary-dark: var(--tiko-color-blue-dark);
+  --tiko-app-primary: var(--color-secondary);
+  --tiko-app-primary-text: var(--color-secondary-text);
 }
 
 [data-app-color="cards"] {
-  --tiko-app-primary: var(--tiko-color-orange);
-  --tiko-app-primary-dark: var(--tiko-color-orange-dark);
+  --tiko-app-primary: var(--color-accent);
+  --tiko-app-primary-text: var(--color-accent-text);
 }
 
 [data-app-color="sequence"] {
-  --tiko-app-primary: var(--tiko-color-teal);
-  --tiko-app-primary-dark: var(--tiko-color-teal-dark);
+  --tiko-app-primary: var(--color-tertiary);
+  --tiko-app-primary-text: var(--color-tertiary-text);
 }
 
 [data-app-color="timer"] {
-  --tiko-app-primary: var(--tiko-color-amber);
-  --tiko-app-primary-dark: var(--tiko-color-amber-dark);
+  --tiko-app-primary: var(--color-warning);
+  --tiko-app-primary-text: var(--color-warning-text);
 }
 
 [data-app-color="tiko"] {
-  --tiko-app-primary: var(--tiko-color-pink);
-  --tiko-app-primary-dark: var(--tiko-color-pink-dark);
+  --tiko-app-primary: var(--color-error);
+  --tiko-app-primary-text: var(--color-error-text);
 }
 
 body {
@@ -95,8 +89,8 @@ body {
   padding: .35rem .5rem;
   border-radius: 999px;
   background: var(--tiko-app-primary);
-  color: white;
-  box-shadow: inset 0 -4px 0 rgba(0, 0, 0, .12);
+  color: var(--tiko-app-primary-text);
+  box-shadow: inset 0 -4px 0 color-mix(in srgb, var(--color-foreground), transparent 88%);
 }
 
 .tiko-app-header__brand,
@@ -113,7 +107,7 @@ body {
   width: 3rem;
   height: 3rem;
   border-radius: 50%;
-  background: color-mix(in srgb, white, transparent 72%);
+  background: color-mix(in srgb, var(--tiko-app-primary-text), transparent 72%);
   font-size: 2rem;
 }
 
@@ -129,8 +123,8 @@ body {
   height: 2.25rem;
   border: 0;
   border-radius: .45rem;
-  background: color-mix(in srgb, var(--tiko-app-primary-dark), transparent 44%);
-  color: white;
+  background: color-mix(in srgb, var(--tiko-app-primary-deep), transparent 44%);
+  color: var(--tiko-app-primary-text);
   cursor: pointer;
   transition: transform .12s ease, outline-color .12s ease;
 }
@@ -140,7 +134,7 @@ body {
 }
 
 .tiko-app-header__action--active {
-  outline: 3px solid rgba(255, 255, 255, .42);
+  outline: 3px solid color-mix(in srgb, var(--tiko-app-primary-text), transparent 58%);
 }
 
 .tiko-choice-grid {
@@ -153,7 +147,7 @@ body {
 .tiko-answer-button {
   border: 0;
   background: transparent;
-  color: var(--tiko-foreground-strong);
+  color: var(--tiko-foreground-accent);
   font-weight: 900;
   font-size: clamp(1.9rem, 4vw, 2.6rem);
   cursor: pointer;
@@ -177,7 +171,7 @@ body {
   min-height: clamp(132px, 23vw, 180px);
   border-radius: 1rem;
   margin-bottom: .35rem;
-  box-shadow: 0 24px 22px rgba(0, 0, 0, .18);
+  box-shadow: 0 24px 22px var(--tiko-shadow);
   font-size: clamp(5rem, 12vw, 8.5rem);
   line-height: 1;
 }
@@ -185,11 +179,13 @@ body {
 .tiko-answer-button--primary .tiko-answer-button__tile,
 .tiko-answer-button--success .tiko-answer-button__tile {
   background: var(--tiko-answer-primary);
+  color: var(--tiko-answer-primary-text);
 }
 
 .tiko-answer-button--secondary .tiko-answer-button__tile,
 .tiko-answer-button--danger .tiko-answer-button__tile {
   background: var(--tiko-answer-secondary);
+  color: var(--tiko-answer-secondary-text);
 }
 
 .tiko-settings-panel {
