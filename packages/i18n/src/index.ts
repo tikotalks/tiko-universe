@@ -18,7 +18,7 @@ export const tikoLanguages = [
 
 export type TikoLanguage = typeof tikoLanguages[number]
 
-export const tikoAppKeys = ['yes-no', 'type'] as const
+export const tikoAppKeys = ['yes-no', 'type', 'timer'] as const
 
 export type TikoAppKey = typeof tikoAppKeys[number]
 
@@ -121,6 +121,30 @@ export const tikoI18nKeys = {
       speechError: 'type.status.speechError',
     },
   },
+  timer: {
+    appName: 'timer.appName',
+    display: {
+      expired: 'timer.display.expired',
+    },
+    controls: {
+      start: 'timer.controls.start',
+      pause: 'timer.controls.pause',
+      resume: 'timer.controls.resume',
+      reset: 'timer.controls.reset',
+    },
+    presets: {
+      label: 'timer.presets.label',
+      oneMin: 'timer.presets.oneMin',
+      threeMin: 'timer.presets.threeMin',
+      fiveMin: 'timer.presets.fiveMin',
+      tenMin: 'timer.presets.tenMin',
+      custom: 'timer.presets.custom',
+    },
+    settings: {
+      minutes: 'timer.settings.minutes',
+      seconds: 'timer.settings.seconds',
+    },
+  },
 } as const
 
 const yesNoEnglish: TranslationMap = {
@@ -174,12 +198,30 @@ const typeEnglish: TranslationMap = {
   [tikoI18nKeys.type.status.speechError]: 'Could not speak yet. Try again.',
 }
 
+const timerEnglish: TranslationMap = {
+  [tikoI18nKeys.timer.appName]: 'Timer',
+  [tikoI18nKeys.timer.display.expired]: 'Time is up!',
+  [tikoI18nKeys.timer.controls.start]: 'Start',
+  [tikoI18nKeys.timer.controls.pause]: 'Pause',
+  [tikoI18nKeys.timer.controls.resume]: 'Resume',
+  [tikoI18nKeys.timer.controls.reset]: 'Reset',
+  [tikoI18nKeys.timer.presets.label]: 'Quick presets',
+  [tikoI18nKeys.timer.presets.oneMin]: '1 min',
+  [tikoI18nKeys.timer.presets.threeMin]: '3 min',
+  [tikoI18nKeys.timer.presets.fiveMin]: '5 min',
+  [tikoI18nKeys.timer.presets.tenMin]: '10 min',
+  [tikoI18nKeys.timer.presets.custom]: 'Custom',
+  [tikoI18nKeys.timer.settings.minutes]: 'Minutes',
+  [tikoI18nKeys.timer.settings.seconds]: 'Seconds',
+}
+
 const localTranslationBundles = [
   createTranslationBundle({ app: 'yes-no', language: 'en', translations: yesNoEnglish }),
   createTranslationBundle({ app: 'yes-no', language: 'fr', translations: yesNoFrench }),
   createTranslationBundle({ app: 'yes-no', language: 'nl', translations: yesNoDutch }),
   createTranslationBundle({ app: 'yes-no', language: 'es', translations: yesNoSpanish }),
   createTranslationBundle({ app: 'type', language: 'en', translations: typeEnglish }),
+  createTranslationBundle({ app: 'timer', language: 'en', translations: timerEnglish }),
 ]
 
 export function createTranslationBundle<App extends TikoAppKey, Language extends TikoLanguage>(
