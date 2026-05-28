@@ -106,7 +106,7 @@ watchEffect(() => {
         </div>
         <ul :class="bemm('trust-list')" aria-label="Trust principles">
           <li v-for="principle in trustPrinciples" :key="principle">
-            <Icon name="status/check" size="small" aria-hidden="true" />
+            <Icon name="ui/check-fat" size="small" aria-hidden="true" />
             <span>{{ principle }}</span>
           </li>
         </ul>
@@ -172,7 +172,7 @@ watchEffect(() => {
       </div>
       <ul :class="bemm('trust-list')" aria-label="Trust principles">
         <li v-for="principle in trustPrinciples" :key="principle">
-          <Icon name="status/check" size="small" aria-hidden="true" />
+          <Icon name="ui/check-fat" size="small" aria-hidden="true" />
           <span>{{ principle }}</span>
         </li>
       </ul>
