@@ -24,8 +24,8 @@ public struct TikoAppHeader: View {
 
     public init(
         appName: String,
-        appIcon: String = "👍",
-        avatar: String = "🐷",
+        appIcon: String = "checkmark.circle",
+        avatar: String = "pig", // SF Symbol fallback
         appColor: TikoAppColor,
         actions: [TikoHeaderAction] = [],
         onAction: @escaping (String) -> Void = { _ in }
@@ -40,8 +40,9 @@ public struct TikoAppHeader: View {
 
     public var body: some View {
         HStack(spacing: 12) {
-            Text(appIcon)
-                .font(.system(size: 30))
+            Image(systemName: appIcon)
+                .font(.system(size: 20, weight: .bold))
+                .foregroundStyle(.white)
                 .frame(width: 48, height: 48)
                 .background(.white.opacity(0.28))
                 .clipShape(Circle())
@@ -65,8 +66,9 @@ public struct TikoAppHeader: View {
                     .accessibilityLabel(action.label)
                 }
 
-                Text(avatar)
-                    .font(.system(size: 30))
+                Image(systemName: avatar)
+                    .font(.system(size: 20, weight: .bold))
+                    .foregroundStyle(.white)
                     .frame(width: 48, height: 48)
                     .background(.white.opacity(0.28))
                     .clipShape(Circle())
@@ -93,8 +95,8 @@ public struct TikoAppShell<Content: View>: View {
 
     public init(
         appName: String,
-        appIcon: String = "👍",
-        avatar: String = "🐷",
+        appIcon: String = "checkmark.circle",
+        avatar: String = "pig",
         appColor: TikoAppColor,
         actions: [TikoHeaderAction] = [],
         onAction: @escaping (String) -> Void = { _ in },

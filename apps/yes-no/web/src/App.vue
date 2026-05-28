@@ -16,7 +16,6 @@ import './styles.scss'
 
 const storageKey = 'tiko:yes-no'
 const identityStorageKey = 'tiko:identity:device-session'
-const defaultSentence = 'Do you want to go eat?'
 const appId = 'yes-no' as const
 const apiBaseUrl = resolveApiBaseUrl()
 
@@ -89,7 +88,7 @@ const latestAnswerId = ref<YesNoAnswer | ''>(toAnswer(stored.latestAnswerId ?? s
 const answerHistory = ref<YesNoAnswer[]>(toHistory(stored.answerHistory))
 const settingsOpen = ref(false)
 const historyOpen = ref(false)
-const sentence = ref(stored.sentence ?? defaultSentence)
+const sentence = ref(stored.sentence || i18n.t(tikoI18nKeys.yesNo.sentence.default))
 const speakStatus = ref<SpeakStatus>('idle')
 const settingsVersion = ref<number | undefined>()
 const stateVersion = ref<number | undefined>()
@@ -98,6 +97,8 @@ const bootstrapped = ref(false)
 const tts = createTikoTtsClient()
 const identityClient = new IdentityClient({ baseUrl: apiBaseUrl })
 const dataClient = new TikoDataClient({ baseUrl: apiBaseUrl })
+
+const defaultSentence = computed(() => i18n.t(tikoI18nKeys.yesNo.sentence.default))
 
 const labels = computed(() => {
   void language.value
@@ -185,7 +186,7 @@ async function bootstrapIdentity() {
 function applySettings(settings: YesNoSettings, version?: number) {
   language.value = toLanguage(settings.language)
   colorMode.value = toColorMode(settings.colorMode)
-  sentence.value = typeof settings.spokenPrompt === 'string' && settings.spokenPrompt.trim() ? settings.spokenPrompt : defaultSentence
+  sentence.value = typeof settings.spokenPrompt === 'string' && settings.spokenPrompt.trim() ? settings.spokenPrompt : defaultSentence.value
   settingsVersion.value = version
 }
 
@@ -292,7 +293,7 @@ function headerAction(id: string) {
 }
 
 function resetSentence() {
-  sentence.value = defaultSentence
+  sentence.value = defaultSentence.value
 }
 </script>
 

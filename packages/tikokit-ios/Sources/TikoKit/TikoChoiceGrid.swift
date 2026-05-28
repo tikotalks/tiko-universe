@@ -8,16 +8,26 @@ public enum TikoChoiceTone: Equatable, Sendable {
 }
 
 public struct TikoAnswerChoice: Identifiable, Equatable, Sendable {
+    public enum Icon: Equatable, Sendable {
+        case systemName(String)
+        case text(String)
+    }
+
     public let id: String
     public let label: String
-    public let symbol: String
+    public let icon: Icon
     public let tone: TikoChoiceTone
 
-    public init(id: String, label: String, symbol: String, tone: TikoChoiceTone) {
+    public init(id: String, label: String, icon: Icon, tone: TikoChoiceTone) {
         self.id = id
         self.label = label
-        self.symbol = symbol
+        self.icon = icon
         self.tone = tone
+    }
+
+    /// Convenience initializer accepting a plain string (treated as .text for backward compatibility).
+    public init(id: String, label: String, symbol: String, tone: TikoChoiceTone) {
+        self.init(id: id, label: label, icon: .text(symbol), tone: tone)
     }
 }
 
@@ -33,8 +43,7 @@ public struct TikoAnswerButton: View {
     public var body: some View {
         Button(action: action) {
             VStack(spacing: 8) {
-                Text(choice.symbol)
-                    .font(.system(size: 92))
+                iconView
                     .frame(maxWidth: .infinity, minHeight: 160)
                     .background(tileColor)
                     .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
@@ -47,6 +56,20 @@ public struct TikoAnswerButton: View {
         }
         .buttonStyle(.plain)
         .accessibilityLabel(choice.label)
+    }
+
+    @ViewBuilder
+    private var iconView: some View {
+        switch choice.icon {
+        case .systemName(let name):
+            Image(systemName: name)
+                .renderingMode(.template)
+                .foregroundStyle(.white)
+                .font(.system(size: 48, weight: .bold))
+        case .text(let text):
+            Text(text)
+                .font(.system(size: 92))
+        }
     }
 
     private var tileColor: Color {
