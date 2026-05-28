@@ -2,21 +2,29 @@ import SwiftUI
 import TikoKit
 
 struct YesNoView: View {
-    @State private var sentence = "Do you want to go eat?"
-    @State private var latestAnswer: String?
+    private let defaultSentence = "Do you want to go eat?"
+
+    @AppStorage("yesno.sentence") private var sentence = ""
+    @AppStorage("yesno.latestAnswer") private var latestAnswerRaw = ""
     @State private var showingSettings = false
     @State private var showingHistory = false
+    @AppStorage("yesno.history") private var historyData = Data()
+
     @State private var history: [String] = []
 
+    private var effectiveSentence: String {
+        sentence.isEmpty ? defaultSentence : sentence
+    }
+
     private let choices = [
-        TikoAnswerChoice(id: "yes", label: "Yes", symbol: "👍", tone: .primary),
-        TikoAnswerChoice(id: "no", label: "No", symbol: "👎", tone: .secondary)
+        TikoAnswerChoice(id: "yes", label: "Yes", icon: .systemName("checkmark"), tone: .primary),
+        TikoAnswerChoice(id: "no", label: "No", icon: .systemName("xmark"), tone: .secondary)
     ]
 
     var body: some View {
         TikoAppShell(
             appName: "Yes No",
-            appIcon: "👍",
+            appIcon: "checkmark.circle",
             appColor: .yesNo,
             actions: [
                 TikoHeaderAction(id: "history", label: "History", systemImage: "clock", isActive: showingHistory),
@@ -46,7 +54,7 @@ struct YesNoView: View {
                     .accessibilityLabel("Speak sentence")
 
                     Button("Reset") {
-                        sentence = "Do you want to go eat?"
+                        sentence = ""
                     }
                     .font(.system(.body, design: .rounded).weight(.heavy))
                     .buttonStyle(.borderedProminent)
@@ -63,8 +71,8 @@ struct YesNoView: View {
 
                 TikoChoiceGrid(choices: choices, onSelect: selectChoice)
 
-                if let latestAnswer {
-                    Text("Last answer: \(latestAnswer)")
+                if !latestAnswerRaw.isEmpty {
+                    Text("Last answer: \(latestAnswerRaw)")
                         .font(.system(.headline, design: .rounded).weight(.heavy))
                         .foregroundStyle(Color(hex: 0x0b5a7a))
                 }
@@ -85,6 +93,9 @@ struct YesNoView: View {
             }
             .padding(.top, 18)
         }
+        .onAppear {
+            loadHistory()
+        }
     }
 
     private func handleHeaderAction(_ id: String) {
@@ -99,16 +110,29 @@ struct YesNoView: View {
     }
 
     private func selectChoice(_ choice: TikoAnswerChoice) {
-        latestAnswer = choice.label
+        latestAnswerRaw = choice.label
         history.insert(choice.label, at: 0)
         if history.count > 5 {
             history.removeLast()
         }
+        saveHistory()
         // TODO: call the shared TTS API once identity/API clients are in place.
     }
 
     private func speakSentence() {
         // TODO: call the shared TTS API once identity/API clients are in place.
+    }
+
+    private func loadHistory() {
+        guard let decoded = try? JSONDecoder().decode([String].self, from: historyData) else {
+            history = []
+            return
+        }
+        history = decoded
+    }
+
+    private func saveHistory() {
+        historyData = (try? JSONEncoder().encode(history)) ?? Data()
     }
 }
 
