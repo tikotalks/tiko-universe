@@ -123,22 +123,26 @@ export const tikoI18nKeys = {
   },
   timer: {
     appName: 'timer.appName',
-    set: {
-      label: 'timer.set.label',
-      minutes: 'timer.set.minutes',
-      seconds: 'timer.set.seconds',
-      start: 'timer.set.start',
+    display: {
+      expired: 'timer.display.expired',
     },
     controls: {
+      start: 'timer.controls.start',
       pause: 'timer.controls.pause',
       resume: 'timer.controls.resume',
       reset: 'timer.controls.reset',
     },
-    status: {
-      expired: 'timer.status.expired',
-      running: 'timer.status.running',
-      paused: 'timer.status.paused',
-      idle: 'timer.status.idle',
+    presets: {
+      label: 'timer.presets.label',
+      oneMin: 'timer.presets.oneMin',
+      threeMin: 'timer.presets.threeMin',
+      fiveMin: 'timer.presets.fiveMin',
+      tenMin: 'timer.presets.tenMin',
+      custom: 'timer.presets.custom',
+    },
+    settings: {
+      minutes: 'timer.settings.minutes',
+      seconds: 'timer.settings.seconds',
     },
   },
 } as const
@@ -196,17 +200,19 @@ const typeEnglish: TranslationMap = {
 
 const timerEnglish: TranslationMap = {
   [tikoI18nKeys.timer.appName]: 'Timer',
-  [tikoI18nKeys.timer.set.label]: 'Set timer',
-  [tikoI18nKeys.timer.set.minutes]: 'Minutes',
-  [tikoI18nKeys.timer.set.seconds]: 'Seconds',
-  [tikoI18nKeys.timer.set.start]: 'Start',
+  [tikoI18nKeys.timer.display.expired]: 'Time is up!',
+  [tikoI18nKeys.timer.controls.start]: 'Start',
   [tikoI18nKeys.timer.controls.pause]: 'Pause',
   [tikoI18nKeys.timer.controls.resume]: 'Resume',
   [tikoI18nKeys.timer.controls.reset]: 'Reset',
-  [tikoI18nKeys.timer.status.expired]: 'Time is up!',
-  [tikoI18nKeys.timer.status.running]: 'Running',
-  [tikoI18nKeys.timer.status.paused]: 'Paused',
-  [tikoI18nKeys.timer.status.idle]: 'Ready',
+  [tikoI18nKeys.timer.presets.label]: 'Quick presets',
+  [tikoI18nKeys.timer.presets.oneMin]: '1 min',
+  [tikoI18nKeys.timer.presets.threeMin]: '3 min',
+  [tikoI18nKeys.timer.presets.fiveMin]: '5 min',
+  [tikoI18nKeys.timer.presets.tenMin]: '10 min',
+  [tikoI18nKeys.timer.presets.custom]: 'Custom',
+  [tikoI18nKeys.timer.settings.minutes]: 'Minutes',
+  [tikoI18nKeys.timer.settings.seconds]: 'Seconds',
 }
 
 const localTranslationBundles = [

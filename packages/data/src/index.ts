@@ -57,14 +57,15 @@ export interface TimerSettings extends JsonObject {
   colorMode?: 'light' | 'dark' | 'system'
   defaultMinutes?: number
   defaultSeconds?: number
+  soundEnabled?: boolean
 }
 
 export interface TimerState extends JsonObject {
-  mode?: 'countdown' | 'countup'
-  targetTimestamp?: string | null
-  totalSeconds?: number
-  isRunning?: boolean
-  lastStartedAt?: string | null
+  mode?: 'idle' | 'running' | 'paused' | 'expired'
+  targetMs?: number
+  remainingMs?: number
+  startedAt?: number | null
+  lastPresets?: number[]
 }
 
 export interface AppSettingsById {

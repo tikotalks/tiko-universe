@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 import { Button } from '@sil/ui'
 import { IdentityClient, type SessionBundle } from '@tiko/identity'
 import { TikoDataClient, type TimerSettings, type TimerState } from '@tiko/data'
@@ -7,9 +7,9 @@ import { createI18n, defaultLanguage, tikoI18nKeys, tikoLanguages, type TikoLang
 import {
   TikoAppShell,
   TikoSettingsPanel,
-  createTikoTtsClient,
-  type TikoColorMode
+  TikoColorMode
 } from '@tiko/ui'
+import { useTimer, type TimerMode } from './composables/useTimer'
 import './styles.scss'
 
 const storageKey = 'tiko:timer'
@@ -20,13 +20,12 @@ const apiBaseUrl = resolveApiBaseUrl()
 interface PersistedState {
   language?: string
   colorMode?: TikoColorMode
-  defaultMinutes?: number
-  defaultSeconds?: number
-  mode?: string
-  targetTimestamp?: string | null
-  totalSeconds?: number
-  isRunning?: boolean
-  lastStartedAt?: string | null
+  customMinutes?: number
+  customSeconds?: number
+  timerMode?: TimerMode
+  targetMs?: number
+  remainingMs?: number
+  startedAt?: number | null
 }
 
 interface StoredIdentity {
@@ -68,171 +67,92 @@ const stored = readJson<PersistedState>(storageKey, {})
 const i18n = createI18n({ app: appId, language: toLanguage(stored.language) })
 const language = ref<TikoLanguage>(toLanguage(stored.language))
 const colorMode = ref<TikoColorMode>(toColorMode(stored.colorMode))
+const customMinutes = ref(stored.customMinutes ?? 5)
+const customSeconds = ref(stored.customSeconds ?? 0)
 const settingsOpen = ref(false)
 const settingsVersion = ref<number | undefined>()
 const stateVersion = ref<number | undefined>()
 const sessionToken = ref<string>('')
 const bootstrapped = ref(false)
-const tts = createTikoTtsClient()
 const identityClient = new IdentityClient({ baseUrl: apiBaseUrl })
 const dataClient = new TikoDataClient({ baseUrl: apiBaseUrl })
 
-// Timer state
-const setMinutes = ref(stored.defaultMinutes ?? 5)
-const setSeconds = ref(stored.defaultSeconds ?? 0)
-const mode = ref<'countdown'>(stored.mode === 'countdown' ? 'countdown' : 'countdown')
-const totalSeconds = ref(stored.totalSeconds ?? (stored.defaultMinutes ?? 5) * 60 + (stored.defaultSeconds ?? 0))
-const isRunning = ref(false)
-const targetTimestamp = ref<string | null>(stored.targetTimestamp ?? null)
-const lastStartedAt = ref<string | null>(stored.lastStartedAt ?? null)
-const displayTime = ref(formatRemaining(totalSeconds.value * 1000))
-const statusLabel = ref(i18n.t(tikoI18nKeys.timer.status.idle))
-const expired = ref(false)
+const timer = useTimer()
 
-let intervalId: ReturnType<typeof setInterval> | null = null
+// If we have a persisted running/paused timer, restore it
+if (stored.timerMode && stored.timerMode !== 'idle') {
+  timer.restoreFromState({
+    mode: stored.timerMode,
+    targetMs: stored.targetMs ?? 0,
+    remainingMs: stored.remainingMs ?? 0,
+    startedAt: stored.startedAt ?? null
+  })
+}
+
+const presets = [
+  { id: '1m', ms: 60_000 },
+  { id: '3m', ms: 180_000 },
+  { id: '5m', ms: 300_000 },
+  { id: '10m', ms: 600_000 }
+] as const
+
+const RING_CIRCUMFERENCE = 2 * Math.PI * 80
 
 const labels = computed(() => {
   void language.value
   return {
     appName: i18n.t(tikoI18nKeys.timer.appName),
-    setLabel: i18n.t(tikoI18nKeys.timer.set.label),
-    minutesLabel: i18n.t(tikoI18nKeys.timer.set.minutes),
-    secondsLabel: i18n.t(tikoI18nKeys.timer.set.seconds),
-    startLabel: i18n.t(tikoI18nKeys.timer.set.start),
-    pauseLabel: i18n.t(tikoI18nKeys.timer.controls.pause),
-    resumeLabel: i18n.t(tikoI18nKeys.timer.controls.resume),
-    resetLabel: i18n.t(tikoI18nKeys.timer.controls.reset),
-    expiredLabel: i18n.t(tikoI18nKeys.timer.status.expired),
-    runningLabel: i18n.t(tikoI18nKeys.timer.status.running),
-    pausedLabel: i18n.t(tikoI18nKeys.timer.status.paused),
-    idleLabel: i18n.t(tikoI18nKeys.timer.status.idle)
+    expired: i18n.t(tikoI18nKeys.timer.display.expired),
+    start: i18n.t(tikoI18nKeys.timer.controls.start),
+    pause: i18n.t(tikoI18nKeys.timer.controls.pause),
+    resume: i18n.t(tikoI18nKeys.timer.controls.resume),
+    reset: i18n.t(tikoI18nKeys.timer.controls.reset),
+    presetsLabel: i18n.t(tikoI18nKeys.timer.presets.label),
+    oneMin: i18n.t(tikoI18nKeys.timer.presets.oneMin),
+    threeMin: i18n.t(tikoI18nKeys.timer.presets.threeMin),
+    fiveMin: i18n.t(tikoI18nKeys.timer.presets.fiveMin),
+    tenMin: i18n.t(tikoI18nKeys.timer.presets.tenMin),
+    custom: i18n.t(tikoI18nKeys.timer.presets.custom),
+    minutes: i18n.t(tikoI18nKeys.timer.settings.minutes),
+    seconds: i18n.t(tikoI18nKeys.timer.settings.seconds)
   }
 })
+
+const presetLabels = computed(() => [
+  labels.value.oneMin,
+  labels.value.threeMin,
+  labels.value.fiveMin,
+  labels.value.tenMin
+])
 
 const headerActions = computed(() => [
   { id: 'settings', label: 'Settings', icon: 'ui/settings-dual', active: settingsOpen.value }
 ])
 
-function resolveColorMode(m: TikoColorMode) {
-  if (m !== 'system') return m
+const isIdle = computed(() => timer.mode.value === 'idle')
+const isRunning = computed(() => timer.mode.value === 'running')
+const isPaused = computed(() => timer.mode.value === 'paused')
+const isExpired = computed(() => timer.mode.value === 'expired')
+const isActive = computed(() => isRunning.value || isPaused.value)
+
+const ringDashoffset = computed(() => {
+  const p = timer.progress.value
+  return RING_CIRCUMFERENCE * (1 - p)
+})
+
+function resolveColorMode(mode: TikoColorMode) {
+  if (mode !== 'system') return mode
   if (typeof window === 'undefined') return 'light'
   return window.matchMedia?.('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
-}
-
-function formatRemaining(ms: number): string {
-  const totalSec = Math.max(0, Math.ceil(ms / 1000))
-  const m = Math.floor(totalSec / 60)
-  const s = totalSec % 60
-  return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`
-}
-
-function computeRemainingMs(): number {
-  if (!targetTimestamp.value) return totalSeconds.value * 1000
-  return new Date(targetTimestamp.value).getTime() - Date.now()
-}
-
-function tick() {
-  const remaining = computeRemainingMs()
-  if (remaining <= 0) {
-    displayTime.value = '00:00'
-    stopInterval()
-    isRunning.value = false
-    expired.value = true
-    statusLabel.value = labels.value.expiredLabel
-    saveLocalFallback()
-    void announceExpired()
-    void persistStateRemote()
-  } else {
-    displayTime.value = formatRemaining(remaining)
-    statusLabel.value = labels.value.runningLabel
-  }
-}
-
-function startInterval() {
-  stopInterval()
-  intervalId = setInterval(tick, 1000)
-}
-
-function stopInterval() {
-  if (intervalId !== null) {
-    clearInterval(intervalId)
-    intervalId = null
-  }
-}
-
-function startTimer() {
-  const totalMs = (setMinutes.value * 60 + setSeconds.value) * 1000
-  if (totalMs <= 0) return
-  totalSeconds.value = setMinutes.value * 60 + setSeconds.value
-  const target = new Date(Date.now() + totalMs)
-  targetTimestamp.value = target.toISOString()
-  lastStartedAt.value = new Date().toISOString()
-  isRunning.value = true
-  expired.value = false
-  mode.value = 'countdown'
-  displayTime.value = formatRemaining(totalMs)
-  statusLabel.value = labels.value.runningLabel
-  startInterval()
-  saveLocalFallback()
-  void persistStateRemote()
-}
-
-function pauseTimer() {
-  stopInterval()
-  isRunning.value = false
-  const remaining = computeRemainingMs()
-  totalSeconds.value = Math.max(0, Math.ceil(remaining / 1000))
-  targetTimestamp.value = null
-  statusLabel.value = labels.value.pausedLabel
-  saveLocalFallback()
-  void persistStateRemote()
-}
-
-function resumeTimer() {
-  if (totalSeconds.value <= 0) return
-  const totalMs = totalSeconds.value * 1000
-  const target = new Date(Date.now() + totalMs)
-  targetTimestamp.value = target.toISOString()
-  lastStartedAt.value = new Date().toISOString()
-  isRunning.value = true
-  statusLabel.value = labels.value.runningLabel
-  startInterval()
-  saveLocalFallback()
-  void persistStateRemote()
-}
-
-function resetTimer() {
-  stopInterval()
-  isRunning.value = false
-  expired.value = false
-  targetTimestamp.value = null
-  lastStartedAt.value = null
-  totalSeconds.value = setMinutes.value * 60 + setSeconds.value
-  displayTime.value = formatRemaining(totalSeconds.value * 1000)
-  statusLabel.value = labels.value.idleLabel
-  saveLocalFallback()
-  void persistStateRemote()
-}
-
-async function announceExpired() {
-  try {
-    await tts.speak({ text: labels.value.expiredLabel, language: language.value, provider: 'auto' })
-  } catch {
-    // TTS failure is non-critical
-  }
 }
 
 function saveLocalFallback() {
   writeJson(storageKey, {
     language: language.value,
     colorMode: colorMode.value,
-    defaultMinutes: setMinutes.value,
-    defaultSeconds: setSeconds.value,
-    mode: mode.value,
-    targetTimestamp: targetTimestamp.value,
-    totalSeconds: totalSeconds.value,
-    isRunning: isRunning.value,
-    lastStartedAt: lastStartedAt.value
+    customMinutes: customMinutes.value,
+    customSeconds: customSeconds.value,
+    ...timer.getState()
   })
 }
 
@@ -256,7 +176,7 @@ async function bootstrapIdentity() {
       saveIdentity(bundle)
       return
     } catch {
-      // Fall through to device bootstrap
+      // Fall through to device bootstrap with the known device id/secret.
     }
   }
 
@@ -275,50 +195,22 @@ function applySettings(settings: TimerSettings, version?: number) {
   language.value = toLanguage(settings.language)
   colorMode.value = toColorMode(settings.colorMode)
   if (typeof settings.defaultMinutes === 'number' && settings.defaultMinutes >= 0) {
-    setMinutes.value = settings.defaultMinutes
+    customMinutes.value = settings.defaultMinutes
   }
   if (typeof settings.defaultSeconds === 'number' && settings.defaultSeconds >= 0) {
-    setSeconds.value = settings.defaultSeconds
-  }
-  // Align totalSeconds if not currently running
-  if (!isRunning.value && !targetTimestamp.value) {
-    totalSeconds.value = setMinutes.value * 60 + setSeconds.value
-    displayTime.value = formatRemaining(totalSeconds.value * 1000)
+    customSeconds.value = settings.defaultSeconds
   }
   settingsVersion.value = version
 }
 
 function applyState(state: TimerState, version?: number) {
-  if (state.targetTimestamp) {
-    const target = new Date(state.targetTimestamp).getTime()
-    const now = Date.now()
-    if (target > now) {
-      // Timer is still active — resume it
-      targetTimestamp.value = state.targetTimestamp
-      totalSeconds.value = state.totalSeconds ?? totalSeconds.value
-      lastStartedAt.value = state.lastStartedAt ?? null
-      isRunning.value = true
-      expired.value = false
-      displayTime.value = formatRemaining(target - now)
-      statusLabel.value = labels.value.runningLabel
-      startInterval()
-    } else {
-      // Timer expired while away
-      targetTimestamp.value = null
-      totalSeconds.value = state.totalSeconds ?? totalSeconds.value
-      isRunning.value = false
-      expired.value = true
-      displayTime.value = '00:00'
-      statusLabel.value = labels.value.expiredLabel
-    }
-  } else if (state.isRunning && typeof state.totalSeconds === 'number') {
-    // Paused state with remaining seconds
-    targetTimestamp.value = null
-    totalSeconds.value = state.totalSeconds
-    isRunning.value = false
-    expired.value = false
-    displayTime.value = formatRemaining(totalSeconds.value * 1000)
-    statusLabel.value = labels.value.pausedLabel
+  if (state.mode && state.mode !== 'idle') {
+    timer.restoreFromState({
+      mode: state.mode,
+      targetMs: state.targetMs ?? 0,
+      remainingMs: state.remainingMs ?? 0,
+      startedAt: state.startedAt ?? null
+    })
   }
   stateVersion.value = version
 }
@@ -339,28 +231,28 @@ async function persistSettingsRemote() {
     const response = await dataClient.putSettings(appId, sessionToken.value, {
       language: language.value,
       colorMode: colorMode.value,
-      defaultMinutes: setMinutes.value,
-      defaultSeconds: setSeconds.value
+      defaultMinutes: customMinutes.value,
+      defaultSeconds: customSeconds.value
     }, { version: settingsVersion.value })
     settingsVersion.value = response.version
   } catch {
-    // Local fallback is already written
+    // Local fallback is already written; remote will be retried on the next edit.
   }
 }
 
 async function persistStateRemote() {
   if (!bootstrapped.value || !sessionToken.value) return
   try {
+    const timerState = timer.getState()
     const response = await dataClient.putState(appId, sessionToken.value, {
-      mode: mode.value,
-      targetTimestamp: targetTimestamp.value,
-      totalSeconds: totalSeconds.value,
-      isRunning: isRunning.value,
-      lastStartedAt: lastStartedAt.value
+      mode: timerState.mode,
+      targetMs: timerState.targetMs,
+      remainingMs: timerState.remainingMs,
+      startedAt: timerState.startedAt
     }, { version: stateVersion.value })
     stateVersion.value = response.version
   } catch {
-    // Local fallback is already written
+    // Local fallback is already written; remote will be retried on the next change.
   }
 }
 
@@ -368,64 +260,63 @@ watch(language, (value) => {
   i18n.setLanguage(value)
 }, { immediate: true })
 
-watch(colorMode, (m) => {
-  const effective = resolveColorMode(m)
+watch(colorMode, (mode) => {
+  const effective = resolveColorMode(mode)
   document.documentElement.dataset.colorMode = effective
   document.documentElement.dataset.theme = effective
 }, { immediate: true })
 
-watch([language, colorMode, setMinutes, setSeconds], () => {
+watch([language, colorMode, customMinutes, customSeconds], () => {
   saveLocalFallback()
   void persistSettingsRemote()
 })
 
-// Initialize display from loaded state
-function initDisplay() {
-  if (targetTimestamp.value) {
-    const target = new Date(targetTimestamp.value).getTime()
-    const now = Date.now()
-    if (target > now && stored.isRunning) {
-      isRunning.value = true
-      displayTime.value = formatRemaining(target - now)
-      statusLabel.value = labels.value.runningLabel
-      startInterval()
-      return
-    } else if (target <= now) {
-      expired.value = true
-      displayTime.value = '00:00'
-      statusLabel.value = labels.value.expiredLabel
-      targetTimestamp.value = null
-      return
-    }
-  }
-  if (stored.isRunning && stored.totalSeconds) {
-    // Was running but no target timestamp — treat as paused
-    totalSeconds.value = stored.totalSeconds
-    displayTime.value = formatRemaining(totalSeconds.value * 1000)
-    statusLabel.value = labels.value.pausedLabel
-  } else {
-    totalSeconds.value = setMinutes.value * 60 + setSeconds.value
-    displayTime.value = formatRemaining(totalSeconds.value * 1000)
-    statusLabel.value = labels.value.idleLabel
-  }
-}
+watch(timer.mode, () => {
+  saveLocalFallback()
+  void persistStateRemote()
+})
 
 onMounted(async () => {
-  initDisplay()
   try {
     await bootstrapIdentity()
     await hydrateRemoteData()
   } catch {
-    // Keep the local flow available when API is offline
+    // Keep the child-facing local flow available when API bootstrap is offline.
   } finally {
     bootstrapped.value = true
     saveLocalFallback()
   }
 })
 
-onBeforeUnmount(() => {
-  stopInterval()
-})
+function selectPreset(ms: number) {
+  timer.reset()
+  timer.start(ms)
+}
+
+function startCustom() {
+  const ms = (customMinutes.value * 60 + customSeconds.value) * 1000
+  if (ms <= 0) return
+  timer.reset()
+  timer.start(ms)
+}
+
+function handleStart() {
+  if (isIdle.value || isExpired.value) {
+    startCustom()
+  }
+}
+
+function handlePause() {
+  timer.pause()
+}
+
+function handleResume() {
+  timer.resume()
+}
+
+function handleReset() {
+  timer.reset()
+}
 
 function headerAction(id: string) {
   if (id === 'settings') settingsOpen.value = !settingsOpen.value
@@ -435,77 +326,107 @@ function headerAction(id: string) {
 <template>
   <TikoAppShell
     :app-name="labels.appName"
-    app-icon="media/timer"
+    app-icon="ui/timer"
     app-color="timer"
     :actions="headerActions"
     @header-action="headerAction"
   >
     <section class="timer-app" :data-color-mode="colorMode">
-      <section class="timer-app__display" :aria-label="statusLabel">
-        <output class="timer-app__time" :class="{ 'timer-app__time--expired': expired }">{{ displayTime }}</output>
-        <p class="timer-app__status">{{ statusLabel }}</p>
-      </section>
-
-      <section class="timer-app__set" :aria-label="labels.setLabel">
-        <label class="timer-app__field">
-          <span class="timer-app__field-label">{{ labels.minutesLabel }}</span>
-          <input
-            v-model.number="setMinutes"
-            class="timer-app__field-input"
-            type="number"
-            min="0"
-            max="99"
-            :disabled="isRunning"
+      <!-- Countdown ring -->
+      <div class="timer-app__ring-wrap">
+        <svg class="timer-app__ring-svg" viewBox="0 0 180 180">
+          <circle class="timer-app__ring-bg" cx="90" cy="90" r="80" />
+          <circle
+            class="timer-app__ring-progress"
+            cx="90"
+            cy="90"
+            r="80"
+            :stroke-dasharray="RING_CIRCUMFERENCE"
+            :stroke-dashoffset="ringDashoffset"
           />
-        </label>
-        <label class="timer-app__field">
-          <span class="timer-app__field-label">{{ labels.secondsLabel }}</span>
-          <input
-            v-model.number="setSeconds"
-            class="timer-app__field-input"
-            type="number"
-            min="0"
-            max="59"
-            :disabled="isRunning"
-          />
-        </label>
-      </section>
+        </svg>
+        <div class="timer-app__ring-text">
+          <span class="timer-app__time">{{ timer.displayTime.value }}</span>
+          <span v-if="isExpired" class="timer-app__expired-label">{{ labels.expired }}</span>
+        </div>
+      </div>
 
-      <section class="timer-app__controls">
+      <!-- Preset buttons -->
+      <div v-if="isIdle" class="timer-app__presets" :aria-label="labels.presetsLabel">
         <Button
-          v-if="!isRunning && !expired && totalSeconds > 0 && !targetTimestamp"
+          v-for="(preset, index) in presets"
+          :key="preset.id"
+          class="timer-app__preset-btn"
           variant="primary"
-          class="timer-app__btn"
-          @click="startTimer"
+          @click="selectPreset(preset.ms)"
         >
-          {{ labels.startLabel }}
+          {{ presetLabels[index] }}
+        </Button>
+      </div>
+
+      <!-- Custom time input -->
+      <div v-if="isIdle" class="timer-app__custom">
+        <label for="timer-custom-min">{{ labels.minutes }}</label>
+        <input
+          id="timer-custom-min"
+          v-model.number="customMinutes"
+          type="number"
+          min="0"
+          max="99"
+          aria-label="Minutes"
+        />
+        <label for="timer-custom-sec">{{ labels.seconds }}</label>
+        <input
+          id="timer-custom-sec"
+          v-model.number="customSeconds"
+          type="number"
+          min="0"
+          max="59"
+          aria-label="Seconds"
+        />
+      </div>
+
+      <!-- Controls -->
+      <div class="timer-app__controls">
+        <Button
+          v-if="isIdle || isExpired"
+          class="timer-app__control-btn timer-app__control-btn--start"
+          variant="primary"
+          icon="media/play"
+          @click="handleStart"
+        >
+          {{ labels.start }}
         </Button>
         <Button
           v-if="isRunning"
+          class="timer-app__control-btn"
           variant="primary"
-          class="timer-app__btn"
-          @click="pauseTimer"
+          icon="media/pause"
+          @click="handlePause"
         >
-          {{ labels.pauseLabel }}
+          {{ labels.pause }}
         </Button>
         <Button
-          v-if="!isRunning && (targetTimestamp || expired || totalSeconds !== setMinutes * 60 + setSeconds)"
+          v-if="isPaused"
+          class="timer-app__control-btn timer-app__control-btn--start"
           variant="primary"
-          class="timer-app__btn"
-          @click="resumeTimer"
+          icon="media/play"
+          @click="handleResume"
         >
-          {{ labels.resumeLabel }}
+          {{ labels.resume }}
         </Button>
         <Button
-          v-if="isRunning || expired || targetTimestamp || totalSeconds !== setMinutes * 60 + setSeconds"
+          v-if="isActive || isExpired"
+          class="timer-app__control-btn"
           variant="secondary"
-          class="timer-app__btn timer-app__btn--reset"
-          @click="resetTimer"
+          icon="ui/reset"
+          @click="handleReset"
         >
-          {{ labels.resetLabel }}
+          {{ labels.reset }}
         </Button>
-      </section>
+      </div>
 
+      <!-- Settings panel -->
       <TikoSettingsPanel
         v-if="settingsOpen"
         v-model:language="language"
