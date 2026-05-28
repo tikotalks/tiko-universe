@@ -2,33 +2,30 @@
 import { computed, onMounted, ref, watch } from 'vue'
 import { Button, InputTextArea } from '@sil/ui'
 import { IdentityClient, type SessionBundle } from '@tiko/identity'
-import { TikoDataClient, type YesNoSettings, type YesNoState } from '@tiko/data'
+import { TikoDataClient, type TypeSettings, type TypeState } from '@tiko/data'
 import { createI18n, defaultLanguage, tikoI18nKeys, tikoLanguages, type TikoLanguage } from '@tiko/i18n'
 import {
   TikoAppShell,
-  TikoChoiceGrid,
   TikoSettingsPanel,
-  createTikoChoice,
   createTikoTtsClient,
   type TikoColorMode
 } from '@tiko/ui'
 import './styles.scss'
 
-const storageKey = 'tiko:yes-no'
+const storageKey = 'tiko:type'
 const identityStorageKey = 'tiko:identity:device-session'
-const appId = 'yes-no' as const
+const appId = 'type' as const
 const apiBaseUrl = resolveApiBaseUrl()
 
-type YesNoAnswer = 'yes' | 'no'
+type KeyboardLayout = 'qwerty' | 'azerty' | 'abc'
 type SpeakStatus = 'idle' | 'speaking' | 'fallback' | 'error'
 
 interface PersistedState {
   language?: string
-  colorMode?: TikoColorMode
-  sentence?: string
-  latestAnswer?: YesNoAnswer | string | null
-  latestAnswerId?: YesNoAnswer | null
-  answerHistory?: string[]
+  colorMode?: string
+  keyboardLayout?: string
+  text?: string
+  completedPrompts?: string[]
 }
 
 interface StoredIdentity {
@@ -66,29 +63,23 @@ function toColorMode(value: string | undefined): TikoColorMode {
   return value === 'light' || value === 'dark' || value === 'system' ? value : 'system'
 }
 
-function toAnswer(value: unknown): YesNoAnswer | '' {
-  return value === 'yes' || value === 'no' ? value : ''
+function toKeyboardLayout(value: string | undefined): KeyboardLayout {
+  return value === 'qwerty' || value === 'azerty' || value === 'abc' ? value : 'qwerty'
 }
 
-function toHistory(value: unknown): YesNoAnswer[] {
-  return Array.isArray(value) ? value.map(toAnswer).filter((answer): answer is YesNoAnswer => answer !== '').slice(0, 6) : []
-}
-
-function answerLabel(answer: YesNoAnswer | '') {
-  if (answer === 'yes') return i18n.t(tikoI18nKeys.yesNo.answers.yes)
-  if (answer === 'no') return i18n.t(tikoI18nKeys.yesNo.answers.no)
-  return ''
+function toCompletedPrompts(value: unknown): string[] {
+  return Array.isArray(value) ? value.filter((v): v is string => typeof v === 'string').slice(0, 50) : []
 }
 
 const stored = readJson<PersistedState>(storageKey, {})
 const i18n = createI18n({ app: appId, language: toLanguage(stored.language) })
 const language = ref<TikoLanguage>(toLanguage(stored.language))
 const colorMode = ref<TikoColorMode>(toColorMode(stored.colorMode))
-const latestAnswerId = ref<YesNoAnswer | ''>(toAnswer(stored.latestAnswerId ?? stored.latestAnswer))
-const answerHistory = ref<YesNoAnswer[]>(toHistory(stored.answerHistory))
+const keyboardLayout = ref<KeyboardLayout>(toKeyboardLayout(stored.keyboardLayout))
+const text = ref(stored.text ?? '')
+const completedPrompts = ref<string[]>(toCompletedPrompts(stored.completedPrompts))
 const settingsOpen = ref(false)
-const historyOpen = ref(false)
-const sentence = ref(stored.sentence ?? i18n.t(tikoI18nKeys.yesNo.sentence.default))
+const phrasesOpen = ref(false)
 const speakStatus = ref<SpeakStatus>('idle')
 const settingsVersion = ref<number | undefined>()
 const stateVersion = ref<number | undefined>()
@@ -101,34 +92,24 @@ const dataClient = new TikoDataClient({ baseUrl: apiBaseUrl })
 const labels = computed(() => {
   void language.value
   return {
-    appName: i18n.t(tikoI18nKeys.yesNo.appName),
-    sentenceLabel: i18n.t(tikoI18nKeys.yesNo.sentence.label),
-    reset: i18n.t(tikoI18nKeys.yesNo.sentence.reset),
-    speak: i18n.t(tikoI18nKeys.yesNo.sentence.speak),
-    yes: i18n.t(tikoI18nKeys.yesNo.answers.yes),
-    no: i18n.t(tikoI18nKeys.yesNo.answers.no),
-    latest: i18n.t(tikoI18nKeys.yesNo.latestAnswer),
-    historyLabel: i18n.t(tikoI18nKeys.yesNo.history.label),
-    historyTitle: i18n.t(tikoI18nKeys.yesNo.history.title),
-    historyEmpty: i18n.t(tikoI18nKeys.yesNo.history.empty),
-    fallback: i18n.t(tikoI18nKeys.yesNo.status.browserVoiceFallback),
-    speechError: i18n.t(tikoI18nKeys.yesNo.status.speechError)
+    appName: i18n.t(tikoI18nKeys.type.appName),
+    composeLabel: i18n.t(tikoI18nKeys.type.compose.label),
+    composePlaceholder: i18n.t(tikoI18nKeys.type.compose.placeholder),
+    speak: i18n.t(tikoI18nKeys.type.compose.speak),
+    clear: i18n.t(tikoI18nKeys.type.compose.clear),
+    phrasesTitle: i18n.t(tikoI18nKeys.type.phrases.title),
+    phrasesEmpty: i18n.t(tikoI18nKeys.type.phrases.empty),
+    fallback: i18n.t(tikoI18nKeys.type.status.browserVoiceFallback),
+    speechError: i18n.t(tikoI18nKeys.type.status.speechError)
   }
 })
 
-const choices = computed(() => [
-  createTikoChoice({ id: 'yes', label: labels.value.yes, tone: 'primary', speechText: labels.value.yes, icon: 'ui/check-fat' }),
-  createTikoChoice({ id: 'no', label: labels.value.no, tone: 'secondary', speechText: labels.value.no, icon: 'wayfinding/cross' })
-])
-
 const headerActions = computed(() => [
-  { id: 'history', label: labels.value.historyTitle, icon: 'ui/clock', active: historyOpen.value },
+  { id: 'phrases', label: labels.value.phrasesTitle, icon: 'ui/clock', active: phrasesOpen.value },
   { id: 'settings', label: 'Settings', icon: 'ui/settings-dual', active: settingsOpen.value }
 ])
 
-const canSpeakSentence = computed(() => sentence.value.trim().length > 0)
-const latestAnswerLabel = computed(() => answerLabel(latestAnswerId.value))
-const answerHistoryLabels = computed(() => answerHistory.value.map(answerLabel))
+const canSpeak = computed(() => text.value.trim().length > 0)
 
 function resolveColorMode(mode: TikoColorMode) {
   if (mode !== 'system') return mode
@@ -140,9 +121,9 @@ function saveLocalFallback() {
   writeJson(storageKey, {
     language: language.value,
     colorMode: colorMode.value,
-    sentence: sentence.value,
-    latestAnswerId: latestAnswerId.value || null,
-    answerHistory: answerHistory.value
+    keyboardLayout: keyboardLayout.value,
+    text: text.value,
+    completedPrompts: completedPrompts.value
   })
 }
 
@@ -174,23 +155,23 @@ async function bootstrapIdentity() {
     device: {
       id: storedIdentity.deviceId,
       secret: storedIdentity.deviceSecret,
-      name: 'Yes No web',
+      name: 'Type web',
       platform: 'web'
     }
   })
   saveIdentity(bundle)
 }
 
-function applySettings(settings: YesNoSettings, version?: number) {
+function applySettings(settings: TypeSettings, version?: number) {
   language.value = toLanguage(settings.language)
   colorMode.value = toColorMode(settings.colorMode)
-  sentence.value = typeof settings.spokenPrompt === 'string' && settings.spokenPrompt.trim() ? settings.spokenPrompt : i18n.t(tikoI18nKeys.yesNo.sentence.default)
+  keyboardLayout.value = toKeyboardLayout(settings.keyboardLayout)
   settingsVersion.value = version
 }
 
-function applyState(state: YesNoState, version?: number) {
-  latestAnswerId.value = toAnswer(state.lastAnswer)
-  answerHistory.value = toHistory(state.answerHistory)
+function applyState(state: TypeState, version?: number) {
+  if (typeof state.text === 'string') text.value = state.text
+  completedPrompts.value = toCompletedPrompts(state.completedPrompts)
   stateVersion.value = version
 }
 
@@ -210,7 +191,7 @@ async function persistSettingsRemote() {
     const response = await dataClient.putSettings(appId, sessionToken.value, {
       language: language.value,
       colorMode: colorMode.value,
-      spokenPrompt: sentence.value
+      keyboardLayout: keyboardLayout.value
     }, { version: settingsVersion.value })
     settingsVersion.value = response.version
   } catch {
@@ -222,13 +203,12 @@ async function persistStateRemote() {
   if (!bootstrapped.value || !sessionToken.value) return
   try {
     const response = await dataClient.putState(appId, sessionToken.value, {
-      prompt: sentence.value,
-      lastAnswer: latestAnswerId.value || null,
-      answerHistory: answerHistory.value
+      text: text.value,
+      completedPrompts: completedPrompts.value
     }, { version: stateVersion.value })
     stateVersion.value = response.version
   } catch {
-    // Local fallback is already written; remote will be retried on the next answer.
+    // Local fallback is already written; remote will be retried on next change.
   }
 }
 
@@ -242,12 +222,12 @@ watch(colorMode, (mode) => {
   document.documentElement.dataset.theme = effective
 }, { immediate: true })
 
-watch([language, colorMode, sentence], () => {
+watch([language, colorMode, keyboardLayout], () => {
   saveLocalFallback()
   void persistSettingsRemote()
 })
 
-watch([latestAnswerId, answerHistory], () => {
+watch([text, completedPrompts], () => {
   saveLocalFallback()
   void persistStateRemote()
 }, { deep: true })
@@ -264,8 +244,8 @@ onMounted(async () => {
   }
 })
 
-async function speak(text: string) {
-  const trimmed = text.trim()
+async function speakText() {
+  const trimmed = text.value.trim()
   if (!trimmed) return
   speakStatus.value = 'speaking'
   try {
@@ -274,53 +254,56 @@ async function speak(text: string) {
   } catch {
     speakStatus.value = 'error'
   }
+  savePromptToHistory(trimmed)
 }
 
-async function answer(id: string) {
-  const answerId = toAnswer(id)
-  const choice = choices.value.find((item) => item.id === answerId)
-  if (!answerId || !choice) return
-  latestAnswerId.value = answerId
-  answerHistory.value = [answerId, ...answerHistory.value].slice(0, 6)
-  await speak(choice.speechText ?? choice.label)
+function savePromptToHistory(prompt: string) {
+  if (completedPrompts.value[0] === prompt) return
+  completedPrompts.value = [prompt, ...completedPrompts.value].slice(0, 50)
+}
+
+function clearText() {
+  text.value = ''
+}
+
+function reSpeakPhrase(phrase: string) {
+  text.value = phrase
+  void speakText()
 }
 
 function headerAction(id: string) {
   if (id === 'settings') settingsOpen.value = !settingsOpen.value
-  if (id === 'history') historyOpen.value = !historyOpen.value
-}
-
-function resetSentence() {
-  sentence.value = i18n.t(tikoI18nKeys.yesNo.sentence.default)
+  if (id === 'phrases') phrasesOpen.value = !phrasesOpen.value
 }
 </script>
 
 <template>
   <TikoAppShell
     :app-name="labels.appName"
-    app-icon="ui/check-fat"
-    app-color="yes-no"
+    app-icon="ui/keyboard"
+    app-color="type"
     :actions="headerActions"
     @header-action="headerAction"
   >
-    <section class="yes-no-app" :data-color-mode="colorMode">
-      <section class="yes-no-app__sentence" :aria-label="labels.sentenceLabel">
+    <section class="type-app" :data-color-mode="colorMode">
+      <section class="type-app__compose" :aria-label="labels.composeLabel">
         <InputTextArea
-          id="yes-no-sentence"
-          v-model="sentence"
-          class="yes-no-app__sentence-input"
-          :rows="2"
-          :maxlength="160"
-          :aria-label="labels.sentenceLabel"
+          id="type-compose"
+          v-model="text"
+          class="type-app__compose-input"
+          :rows="3"
+          :maxlength="500"
+          :aria-label="labels.composeLabel"
+          :placeholder="labels.composePlaceholder"
         />
-        <div class="yes-no-app__sentence-actions">
-          <Button class="yes-no-app__speak" variant="primary" icon="media/volume-iii" icon-only :disabled="!canSpeakSentence" :aria-label="labels.speak" @click="speak(sentence)" />
-          <Button class="yes-no-app__reset" variant="primary" @click="resetSentence">{{ labels.reset }}</Button>
+        <div class="type-app__compose-actions">
+          <Button class="type-app__speak" variant="primary" icon="media/volume-iii" icon-only :disabled="!canSpeak" :aria-label="labels.speak" @click="speakText" />
+          <Button class="type-app__clear" variant="secondary" @click="clearText">{{ labels.clear }}</Button>
         </div>
       </section>
 
-      <p v-if="speakStatus === 'fallback'" class="yes-no-app__status" role="status">{{ labels.fallback }}</p>
-      <p v-if="speakStatus === 'error'" class="yes-no-app__status yes-no-app__status--error" role="alert">{{ labels.speechError }}</p>
+      <p v-if="speakStatus === 'fallback'" class="type-app__status" role="status">{{ labels.fallback }}</p>
+      <p v-if="speakStatus === 'error'" class="type-app__status type-app__status--error" role="alert">{{ labels.speechError }}</p>
 
       <TikoSettingsPanel
         v-if="settingsOpen"
@@ -328,16 +311,31 @@ function resetSentence() {
         v-model:color-mode="colorMode"
       />
 
-      <aside v-if="historyOpen" class="yes-no-app__history" :aria-label="labels.historyLabel">
-        <strong>{{ labels.historyTitle }}</strong>
-        <p v-if="answerHistory.length === 0">{{ labels.historyEmpty }}</p>
-        <ol v-else>
-          <li v-for="(item, index) in answerHistoryLabels" :key="`${item}-${index}`">{{ item }}</li>
-        </ol>
-      </aside>
+      <section v-if="settingsOpen" class="type-app__keyboard-setting" data-test="type-settings-keyboard">
+        <label>
+          Keyboard layout
+          <select
+            class="tiko-settings-panel__select"
+            :value="keyboardLayout"
+            data-test="tiko-settings-keyboard-layout"
+            @change="keyboardLayout = ($event.target as HTMLSelectElement).value as KeyboardLayout"
+          >
+            <option value="qwerty">QWERTY</option>
+            <option value="azerty">AZERTY</option>
+            <option value="abc">ABC</option>
+          </select>
+        </label>
+      </section>
 
-      <TikoChoiceGrid :choices="choices" @answer="answer" />
-      <p v-if="latestAnswerLabel" class="yes-no-app__latest">{{ labels.latest }}: {{ latestAnswerLabel }}</p>
+      <aside v-if="phrasesOpen" class="type-app__phrases" :aria-label="labels.phrasesTitle">
+        <strong>{{ labels.phrasesTitle }}</strong>
+        <p v-if="completedPrompts.length === 0">{{ labels.phrasesEmpty }}</p>
+        <ul v-else class="type-app__phrases-list">
+          <li v-for="(phrase, index) in completedPrompts" :key="`${phrase}-${index}`">
+            <button class="type-app__phrase-button" @click="reSpeakPhrase(phrase)">{{ phrase }}</button>
+          </li>
+        </ul>
+      </aside>
     </section>
   </TikoAppShell>
 </template>

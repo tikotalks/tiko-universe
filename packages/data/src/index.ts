@@ -52,8 +52,20 @@ export type CardsSettings = JsonObject
 export type CardsState = JsonObject
 export type SequenceSettings = JsonObject
 export type SequenceState = JsonObject
-export type TimerSettings = JsonObject
-export type TimerState = JsonObject
+export interface TimerSettings extends JsonObject {
+  language?: string
+  colorMode?: 'light' | 'dark' | 'system'
+  defaultMinutes?: number
+  defaultSeconds?: number
+}
+
+export interface TimerState extends JsonObject {
+  mode?: 'countdown' | 'countup'
+  targetTimestamp?: string | null
+  totalSeconds?: number
+  isRunning?: boolean
+  lastStartedAt?: string | null
+}
 
 export interface AppSettingsById {
   'yes-no': YesNoSettings

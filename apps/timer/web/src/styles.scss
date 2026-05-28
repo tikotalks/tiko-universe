@@ -1,0 +1,109 @@
+body { margin: 0; }
+button, input, select, textarea { font: inherit; }
+button:disabled { cursor: not-allowed; opacity: .45; }
+.timer-app { text-align: center; }
+
+.timer-app__display {
+  margin: var(--space, 1rem) auto;
+  padding: var(--space, 1rem);
+}
+
+.timer-app__time {
+  display: block;
+  font-size: clamp(3rem, 12vw, 7rem);
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  color: var(--color-foreground);
+  letter-spacing: .05em;
+  line-height: 1.1;
+}
+
+.timer-app__time--expired {
+  color: var(--color-warning);
+}
+
+.timer-app__status {
+  margin: .35rem 0 0;
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: var(--color-primary);
+}
+
+.timer-app__set {
+  display: flex;
+  justify-content: center;
+  gap: 1.25rem;
+  margin: .75rem auto;
+  max-width: 24rem;
+}
+
+.timer-app__field {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: .3rem;
+}
+
+.timer-app__field-label {
+  font-size: .85rem;
+  font-weight: 600;
+  color: var(--color-foreground);
+  opacity: .75;
+}
+
+.timer-app__field-input {
+  width: 5rem;
+  padding: .5rem;
+  border: 2px solid color-mix(in srgb, var(--color-foreground), transparent 75%);
+  border-radius: .75rem;
+  background: var(--tiko-surface, #fff);
+  color: var(--color-foreground);
+  font-size: 1.5rem;
+  font-weight: 700;
+  text-align: center;
+  appearance: textfield;
+}
+
+.timer-app__field-input::-webkit-inner-spin-button,
+.timer-app__field-input::-webkit-outer-spin-button {
+  appearance: none;
+  margin: 0;
+}
+
+.timer-app__field-input:disabled {
+  opacity: .5;
+}
+
+.timer-app__controls {
+  display: flex;
+  justify-content: center;
+  gap: .75rem;
+  flex-wrap: wrap;
+  margin: .75rem auto;
+}
+
+.timer-app__btn {
+  border-radius: 999px;
+  font-weight: 800;
+  min-width: 7rem;
+  cursor: pointer;
+}
+
+@media (max-width: 42rem) {
+  .timer-app__time {
+    font-size: clamp(2.5rem, 14vw, 5rem);
+  }
+
+  .timer-app__set {
+    gap: .75rem;
+  }
+
+  .timer-app__field-input {
+    width: 4rem;
+    font-size: 1.25rem;
+  }
+
+  .timer-app__btn {
+    min-width: 5.5rem;
+  }
+}

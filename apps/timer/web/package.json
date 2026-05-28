@@ -1,11 +1,21 @@
 {
-  "name": "@tiko-web/timer",
+  "name": "@tiko-universe/timer-web",
   "private": true,
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "echo scaffold-only:timer",
-    "build": "echo scaffold-only:timer",
-    "test": "echo scaffold-only:timer"
-  }
+    "dev": "vite --host 0.0.0.0 --port 3057",
+    "build": "vite build",
+    "test": "vitest run --root ../../.. apps/timer/web/src/App.spec.ts"
+  },
+  "dependencies": {
+    "@tiko/data": "file:../../../packages/data",
+    "@tiko/identity": "file:../../../packages/identity",
+    "@tiko/i18n": "file:../../../packages/i18n",
+    "@tiko/ui": "file:../../../packages/ui",
+    "@vitejs/plugin-vue": "^6.0.1",
+    "vite": "^7.2.4",
+    "vue": "^3.5.24"
+  },
+  "devDependencies": {}
 }
