@@ -70,6 +70,14 @@ export interface TimerState extends JsonObject {
 
 export type TrackSource = 'youtube' | 'r2' | 'upload'
 
+export interface RadioCategory {
+  id: string
+  name: string
+  icon: string      // e.g. 'animals', 'farm', 'bedtime', 'songs'
+  color: string     // e.g. '#FFD93D' (yellow), '#6BCB77' (green), etc.
+  order: number
+}
+
 export interface RadioTrack {
   id: string
   title: string
@@ -77,6 +85,7 @@ export interface RadioTrack {
   source: TrackSource
   youtubeVideoId?: string
   audioUrl?: string
+  categoryId?: string    // which category this track belongs to
   thumbnailUrl?: string
   duration?: number
   addedAt?: string
@@ -92,6 +101,7 @@ export interface RadioSettings extends JsonObject {
 export interface RadioState {
   currentTrackIndex?: number
   tracks?: RadioTrack[]
+  categories?: RadioCategory[]
   shuffleEnabled?: boolean
   repeatEnabled?: boolean
   [key: string]: unknown
