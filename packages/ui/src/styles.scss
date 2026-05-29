@@ -27,7 +27,6 @@
   --tiko-panel: color-mix(in srgb, var(--color-background), var(--tiko-app-primary) 12%);
   --tiko-border: color-mix(in srgb, var(--color-foreground), transparent 86%);
   --tiko-shadow: color-mix(in srgb, var(--color-foreground), transparent 84%);
-  --tiko-squircle: squircle;
 }
 
 [data-app-color="yes-no"] {
@@ -88,7 +87,7 @@ body {
   width: min(560px, calc(100% - 2rem));
   margin: .9rem auto 0;
   padding: .35rem .5rem;
-  border-radius: 999px var(--tiko-squircle);
+  border-radius: 999px;
   background: var(--tiko-app-primary);
   color: var(--tiko-app-primary-text);
   box-shadow: inset 0 -4px 0 color-mix(in srgb, var(--color-foreground), transparent 88%);
@@ -128,7 +127,7 @@ body {
   width: 2.25rem;
   height: 2.25rem;
   border: 0;
-  border-radius: .45rem var(--tiko-squircle);
+  border-radius: .45rem;
   background: color-mix(in srgb, var(--tiko-app-primary-deep), transparent 44%);
   color: var(--tiko-app-primary-text);
   cursor: pointer;
@@ -175,7 +174,7 @@ body {
   display: grid;
   place-items: center;
   min-height: clamp(132px, 23vw, 180px);
-  border-radius: 1rem var(--tiko-squircle);
+  border-radius: 1rem;
   margin-bottom: .35rem;
   box-shadow: 0 24px 22px var(--tiko-shadow);
   font-size: clamp(5rem, 12vw, 8.5rem);
@@ -202,7 +201,7 @@ body {
   margin: 1rem auto 0;
   max-width: 36rem;
   padding: 1rem;
-  border-radius: 1rem var(--tiko-squircle);
+  border-radius: 1rem;
   background: var(--tiko-panel);
 }
 
@@ -215,7 +214,7 @@ body {
 
 .tiko-settings-panel select {
   border: 0;
-  border-radius: .6rem var(--tiko-squircle);
+  border-radius: .6rem;
   padding: .7rem .9rem;
   color: inherit;
   background: var(--tiko-surface-raised);
