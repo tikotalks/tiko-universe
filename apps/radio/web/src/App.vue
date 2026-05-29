@@ -15,6 +15,7 @@ import { useTrackLibrary } from './composables/useTrackLibrary'
 import { useCategories } from './composables/useCategories'
 import AddVideoPopup from './components/AddVideoPopup.vue'
 import SettingsPopup from './components/SettingsPopup.vue'
+import PinPopup from './components/PinPopup.vue'
 import './styles.scss'
 
 // ---- popupService (provided in main.ts) ------------------------------------
@@ -95,7 +96,8 @@ const identityClient = new IdentityClient({ baseUrl: apiBaseUrl })
 const dataClient = new TikoDataClient({ baseUrl: apiBaseUrl })
 
 // ---- Kid / parent mode ----------------------------------------------------
-const parentMode = ref(false)
+const parentMode = ref(true)
+const pinHash = ref<string | undefined>()
 const selectedCategoryId = ref<string | null>(null)
 const manageCategoryId = ref<string | null>(null)
 const newCategoryName = ref('')
@@ -127,8 +129,6 @@ const labels = computed(() => {
     newCategory: i18n.t(tikoI18nKeys.radio.management.newCategory),
     categoryName: i18n.t(tikoI18nKeys.radio.management.categoryName),
     createCategory: i18n.t(tikoI18nKeys.radio.management.createCategory),
-    parentModeEnter: i18n.t(tikoI18nKeys.radio.parentMode.enter),
-    parentModeExit: i18n.t(tikoI18nKeys.radio.parentMode.exit),
     removeTrack: i18n.t(tikoI18nKeys.radio.library.removeTrack),
     uploadFile: i18n.t(tikoI18nKeys.radio.library.uploadFile),
     login: 'Log in',
@@ -161,13 +161,13 @@ const headerActions = computed(() => {
     },
   ]
 
-  // Parent mode toggle – only when logged in
-  if (sessionToken.value) {
+  // Child/parent mode toggle – only when logged in with a PIN set
+  if (sessionToken.value && pinHash.value) {
     actions.push({
-      id: 'parent-mode',
-      label: parentMode.value ? labels.value.parentModeExit : labels.value.parentModeEnter,
+      id: 'toggle-mode',
+      label: parentMode.value ? 'Child mode' : 'Parent mode',
       icon: 'ui/user-shield',
-      active: parentMode.value,
+      active: !parentMode.value,
     })
   }
 
@@ -283,6 +283,9 @@ function applySettings(settings: RadioSettings, version?: number) {
   if (typeof settings.volume === 'number' && settings.volume >= 0 && settings.volume <= 1) {
     volume.value = settings.volume
   }
+  if (typeof settings.pinHash === 'string' && settings.pinHash) {
+    pinHash.value = settings.pinHash
+  }
   settingsVersion.value = version
 }
 
@@ -329,6 +332,7 @@ async function persistSettingsRemote() {
         language: language.value,
         colorMode: colorMode.value,
         volume: volume.value,
+        pinHash: pinHash.value,
       },
       { version: settingsVersion.value },
     )
@@ -504,6 +508,29 @@ function openSettingsPopup() {
   })
 }
 
+function openPinPopup() {
+  popup.showPopup({
+    component: markRaw(PinPopup),
+    title: '',
+    props: { existingHash: pinHash.value },
+    config: { position: 'center', canClose: true, background: true, width: '22rem' },
+    on: {
+      set: (hash: string) => {
+        if (!pinHash.value) {
+          // First time: save PIN hash, switch to child mode
+          pinHash.value = hash
+          parentMode.value = false
+          persistSettingsRemote()
+        } else {
+          // Verification passed: toggle mode
+          parentMode.value = !parentMode.value
+        }
+      },
+      cancel: () => {},
+    },
+  })
+}
+
 function openAddVideoPopup() {
   popup.showPopup({
     component: markRaw(AddVideoPopup),
@@ -640,13 +667,11 @@ function headerAction(id: string) {
   if (id === 'volume') {
     openVolumePopup()
   }
-  if (id === 'parent-mode') {
-    parentMode.value = !parentMode.value
+  if (id === 'toggle-mode') {
+    openPinPopup()
   }
   if (id === 'add-video') {
-    if (!parentMode.value) {
-      parentMode.value = true
-    }
+    if (!parentMode.value) return // Can't add in child mode
     openAddVideoPopup()
   }
 }
@@ -758,7 +783,7 @@ function handleCreateCategory() {
       <!-- Popup host (renders popupService.popups) -->
       <Popup />
 
-      <!-- ==================== KID MODE (default) ==================== -->
+      <!-- ==================== KID MODE ==================== -->
       <div v-if="!parentMode" class="radio-app__kid">
 
         <!-- Category tiles: only show categories that have videos -->
@@ -773,14 +798,6 @@ function handleCreateCategory() {
           >
             <span class="radio-app__category-card__icon">{{ cat.icon }}</span>
             <span class="radio-app__category-card__label">{{ cat.name }}</span>
-          </button>
-        </div>
-
-        <!-- Big + tile when no videos at all -->
-        <div v-if="!hasAnyVideos" class="radio-app__categories">
-          <button class="radio-app__category-card radio-app__category-card--add" @click="handleHeaderAction('add-video')">
-            <span class="radio-app__category-card__icon">+</span>
-            <span class="radio-app__category-card__label">Add video</span>
           </button>
         </div>
 

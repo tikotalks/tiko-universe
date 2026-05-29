@@ -92,24 +92,27 @@ afterEach(() => {
 })
 
 describe('Radio App (kid mode + parent mode)', () => {
-  it('renders kid mode by default', async () => {
+  it('renders parent mode by default (temp user)', async () => {
     const { wrapper } = mountApp()
     await nextTick()
 
-    // Kid mode section should be visible
-    expect(wrapper.find('.radio-app__kid').exists()).toBe(true)
-    // Parent mode should NOT be visible
-    expect(wrapper.find('.radio-app__manage').exists()).toBe(false)
+    // Parent mode is the default for all users (temp or logged-in)
+    expect(wrapper.find('.radio-app__manage').exists()).toBe(true)
+    // Kid mode should NOT be visible by default
+    expect(wrapper.find('.radio-app__kid').exists()).toBe(false)
   })
 
-  it('shows category cards in kid mode when tracks exist, or + tile when empty', async () => {
+  it('kid mode shows category cards with tracks, no + tile', async () => {
     const { wrapper } = mountApp()
     await nextTick()
 
-    // No tracks → should show the big + add tile
+    // Switch to kid mode
+    await wrapper.setData({ parentMode: false })
+    await nextTick()
+
+    // No tracks → no category cards, no + tile (kids can't add)
     let categoryCards = wrapper.findAll('.radio-app__category-card')
-    expect(categoryCards.length).toBe(1)
-    expect(categoryCards[0].classes()).toContain('radio-app__category-card--add')
+    expect(categoryCards.length).toBe(0)
 
     // Seed a track in a category → category tiles should appear
     await wrapper.vm.library.addTrack({
@@ -122,7 +125,6 @@ describe('Radio App (kid mode + parent mode)', () => {
 
     categoryCards = wrapper.findAll('.radio-app__category-card')
     expect(categoryCards.length).toBeGreaterThanOrEqual(1)
-    // The add tile should be gone (has videos now)
     expect(categoryCards[0].classes()).not.toContain('radio-app__category-card--add')
   })
 
@@ -130,7 +132,10 @@ describe('Radio App (kid mode + parent mode)', () => {
     const { wrapper } = mountApp()
     await nextTick()
 
-    // Track grid area should exist (even if empty)
+    // Switch to kid mode
+    await wrapper.setData({ parentMode: false })
+    await nextTick()
+
     expect(wrapper.find('.radio-app__kid').exists()).toBe(true)
   })
 
@@ -147,6 +152,10 @@ describe('Radio App (kid mode + parent mode)', () => {
     const ls = createLocalStorageMock()
     seedTracks(ls)
     const { wrapper } = mountApp(ls)
+    await nextTick()
+
+    // Switch to kid mode
+    await wrapper.setData({ parentMode: false })
     await nextTick()
 
     // Select the animals category
