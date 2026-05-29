@@ -458,7 +458,7 @@ function headerAction(id: string) {
   <TikoAppShell
     :app-name="labels.appName"
     app-icon="media/radio"
-    app-color="timer"
+    app-color="radio"
     :actions="headerActions"
     @header-action="headerAction"
   >

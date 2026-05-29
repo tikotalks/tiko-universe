@@ -7,7 +7,7 @@ import './styles.scss'
 export { Button as SilButton, Icon as SilIcon } from '@sil/ui'
 
 export type TikoChoiceTone = 'primary' | 'secondary' | 'success' | 'danger'
-export type TikoAppColor = 'yes-no' | 'type' | 'cards' | 'sequence' | 'timer' | 'tiko'
+export type TikoAppColor = 'yes-no' | 'type' | 'cards' | 'sequence' | 'timer' | 'radio' | 'tiko'
 export type TikoColorMode = 'light' | 'dark' | 'system'
 export type { TikoTtsProvider } from '@tiko/media'
 
@@ -17,6 +17,7 @@ export const tikoAppColors: Record<TikoAppColor, { label: string; primary: strin
   cards: { label: 'Cards', primary: 'var(--color-accent)', dark: 'color-mix(in srgb, var(--color-accent), var(--color-foreground) 42%)' },
   sequence: { label: 'Sequence', primary: 'var(--color-tertiary)', dark: 'color-mix(in srgb, var(--color-tertiary), var(--color-foreground) 42%)' },
   timer: { label: 'Timer', primary: 'var(--color-warning)', dark: 'color-mix(in srgb, var(--color-warning), var(--color-foreground) 42%)' },
+  radio: { label: 'Radio', primary: 'var(--color-error)', dark: 'color-mix(in srgb, var(--color-error), var(--color-foreground) 42%)' },
   tiko: { label: 'Tiko', primary: 'var(--color-error)', dark: 'color-mix(in srgb, var(--color-error), var(--color-foreground) 42%)' }
 }
 
