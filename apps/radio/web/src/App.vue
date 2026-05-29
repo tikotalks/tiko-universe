@@ -8,13 +8,13 @@ import type { RadioTrack, RadioCategory } from '@tiko/data'
 import { createI18n, defaultLanguage, tikoI18nKeys, tikoLanguages, type TikoLanguage } from '@tiko/i18n'
 import {
   TikoAppShell,
-  TikoSettingsPanel,
   TikoColorMode,
 } from '@tiko/ui'
 import { useAudioPlayer } from './composables/useAudioPlayer'
 import { useTrackLibrary } from './composables/useTrackLibrary'
 import { useCategories } from './composables/useCategories'
 import AddVideoPopup from './components/AddVideoPopup.vue'
+import SettingsPopup from './components/SettingsPopup.vue'
 import './styles.scss'
 
 // ---- popupService (provided in main.ts) ------------------------------------
@@ -87,7 +87,6 @@ const volume = ref(stored.volume ?? 1)
 const shuffleEnabled = ref(stored.shuffleEnabled ?? false)
 const repeatEnabled = ref(stored.repeatEnabled ?? false)
 const currentTrackIndex = ref(stored.currentTrackIndex ?? -1)
-const settingsOpen = ref(false)
 const settingsVersion = ref<number | undefined>()
 const stateVersion = ref<number | undefined>()
 const sessionToken = ref<string>('')
@@ -102,6 +101,7 @@ const manageCategoryId = ref<string | null>(null)
 const newCategoryName = ref('')
 const newCategoryOpen = ref(false)
 const userId = ref<string>('')
+const isRecoverable = ref(false)
 
 // ---- Composables ----------------------------------------------------------
 const player = useAudioPlayer()
@@ -198,6 +198,14 @@ const sortedCategories = computed(() =>
   [...categories.categories.value].sort((a, b) => a.order - b.order),
 )
 
+const categoriesWithTracks = computed(() =>
+  sortedCategories.value.filter(cat =>
+    library.tracks.value.some(t => t.categoryId === cat.id),
+  ),
+)
+
+const hasAnyVideos = computed(() => library.tracks.value.length > 0)
+
 const filteredTracks = computed(() => {
   if (!selectedCategoryId.value) return library.tracks.value
   return library.tracks.value.filter((t) => t.categoryId === selectedCategoryId.value)
@@ -235,6 +243,7 @@ function saveLocalFallback() {
 function saveIdentity(bundle: SessionBundle) {
   sessionToken.value = bundle.session.token
   userId.value = bundle.user.id
+  isRecoverable.value = bundle.user.kind === 'recoverable'
   writeJson(identityStorageKey, {
     userId: bundle.user.id,
     deviceId: bundle.device.id,
@@ -355,10 +364,9 @@ function seedDefaultCategories() {
   if (categories.isEmpty.value) {
     const defaults: RadioCategory[] = [
       { id: 'animals', name: 'Animals', icon: '🐾', color: '#FFD93D', order: 0 },
-      { id: 'farm', name: 'Farm', icon: '🚜', color: '#6BCB77', order: 1 },
-      { id: 'bedtime', name: 'Bedtime', icon: '🌙', color: '#4D96FF', order: 2 },
-      { id: 'songs', name: 'Songs', icon: '🎵', color: '#FF6B6B', order: 3 },
-      { id: 'favorites', name: 'Favorites', icon: '⭐', color: '#FF922B', order: 4 },
+      { id: 'stories', name: 'Stories', icon: '📖', color: '#C3AED6', order: 1 },
+      { id: 'bedtime', name: 'Bedtime', icon: '🌙', color: '#A8D8EA', order: 2 },
+      { id: 'songs', name: 'Songs', icon: '🎵', color: '#FFB3C1', order: 3 },
     ]
     for (const cat of defaults) {
       categories.addCategory(cat)
@@ -427,7 +435,7 @@ watch(parentMode, (isParent) => {
     manageCategoryId.value = sortedCategories.value[0].id
   }
   if (!isParent) {
-    settingsOpen.value = false
+    // Exiting parent mode — popups auto-close via popupService
   }
 })
 
@@ -483,11 +491,24 @@ function openVolumePopup() {
   })
 }
 
+function openSettingsPopup() {
+  popup.showPopup({
+    component: markRaw(SettingsPopup),
+    title: '',
+    props: { language: language.value, colorMode: colorMode.value },
+    config: { position: 'center', canClose: true, background: true, width: '24rem' },
+    on: {
+      'update:language': (value: string) => { language.value = value as TikoLanguage },
+      'update:colorMode': (value: string) => { colorMode.value = value as TikoColorMode },
+    },
+  })
+}
+
 function openAddVideoPopup() {
   popup.showPopup({
     component: markRaw(AddVideoPopup),
     title: '',
-    props: { categoryId: manageCategoryId.value ?? '' },
+    props: { categoryId: manageCategoryId.value ?? '', hasEmail: isRecoverable.value },
     config: { position: 'center', canClose: true, background: true, width: '28rem' },
     on: {
       add: (track: unknown) => {
@@ -614,7 +635,7 @@ function openAccountPopup() {
 // ---- Event handlers --------------------------------------------------------
 function headerAction(id: string) {
   if (id === 'settings') {
-    settingsOpen.value = !settingsOpen.value
+    openSettingsPopup()
   }
   if (id === 'volume') {
     openVolumePopup()
@@ -737,20 +758,13 @@ function handleCreateCategory() {
       <!-- Popup host (renders popupService.popups) -->
       <Popup />
 
-      <!-- ==================== SETTINGS PANEL ==================== -->
-      <TikoSettingsPanel
-        v-if="settingsOpen"
-        v-model:language="language"
-        v-model:color-mode="colorMode"
-      />
-
       <!-- ==================== KID MODE (default) ==================== -->
       <div v-if="!parentMode" class="radio-app__kid">
 
-        <!-- Horizontal scrollable category cards (only if categories exist) -->
-        <div v-if="hasCategories" class="radio-app__categories">
+        <!-- Category tiles: only show categories that have videos -->
+        <div v-if="categoriesWithTracks.length" class="radio-app__categories">
           <button
-            v-for="cat in sortedCategories"
+            v-for="cat in categoriesWithTracks"
             :key="cat.id"
             class="radio-app__category-card"
             :class="{ 'radio-app__category-card--active': selectedCategoryId === cat.id }"
@@ -759,6 +773,14 @@ function handleCreateCategory() {
           >
             <span class="radio-app__category-card__icon">{{ cat.icon }}</span>
             <span class="radio-app__category-card__label">{{ cat.name }}</span>
+          </button>
+        </div>
+
+        <!-- Big + tile when no videos at all -->
+        <div v-if="!hasAnyVideos" class="radio-app__categories">
+          <button class="radio-app__category-card radio-app__category-card--add" @click="handleHeaderAction('add-video')">
+            <span class="radio-app__category-card__icon">+</span>
+            <span class="radio-app__category-card__label">Add video</span>
           </button>
         </div>
 
@@ -786,24 +808,6 @@ function handleCreateCategory() {
           </button>
         </div>
         <p v-else class="radio-app__empty">{{ labels.noTracks }}</p>
-
-        <!-- Shuffle / repeat toggles -->
-        <div class="radio-app__extra-controls">
-          <Button
-            :variant="shuffleEnabled ? 'primary' : 'ghost'"
-            icon="ui/settings-aligned-random"
-            icon-only
-            @click="toggleShuffle"
-            :aria-label="labels.shuffle"
-          />
-          <Button
-            :variant="repeatEnabled ? 'primary' : 'ghost'"
-            icon="ui/check-fat"
-            icon-only
-            @click="toggleRepeat"
-            :aria-label="labels.repeat"
-          />
-        </div>
       </div>
 
       <!-- ==================== PARENT MODE ==================== -->

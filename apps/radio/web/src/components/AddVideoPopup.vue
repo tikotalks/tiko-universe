@@ -6,10 +6,12 @@ import { useCategories } from '../composables/useCategories'
 
 interface Props {
   categoryId?: string
+  hasEmail?: boolean
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  categoryId: ''
+  categoryId: '',
+  hasEmail: false,
 })
 
 const emit = defineEmits<{
@@ -32,6 +34,31 @@ const addVideoCategoryId = ref(props.categoryId)
 const videoPreview = ref<{ title: string; thumbnailUrl: string; duration: number } | null>(null)
 const youtubeMeta = useYouTubeMeta()
 const categories = useCategories()
+
+const newCatName = ref('')
+const newCatIcon = ref('')
+const newCatOpen = ref(false)
+
+const EMOJI_OPTIONS = ['🎵', '📖', '🐾', '🌙', '🎨', '🌟', '🚗', '🌈', '🎪', '🏠', '🦁', 'ABC']
+
+function pickRandomEmoji() {
+  const used = new Set(categories.categories.value.map(c => c.icon))
+  const available = EMOJI_OPTIONS.filter(e => !used.has(e))
+  return available.length > 0 ? available[Math.floor(Math.random() * available.length)] : '🎵'
+}
+
+function handleNewCat() {
+  const name = newCatName.value.trim()
+  if (!name) return
+  const icon = newCatIcon.value.trim() || pickRandomEmoji()
+  const hue = Math.floor(Math.random() * 360)
+  const color = `hsl(${hue}, 65%, 70%)`
+  const cat = categories.addCategory({ name, icon, color })
+  addVideoCategoryId.value = cat.id
+  newCatName.value = ''
+  newCatIcon.value = ''
+  newCatOpen.value = false
+}
 
 // Auto-fetch YouTube metadata when URL is pasted
 watch(youtubeUrl, async (url) => {
@@ -84,8 +111,6 @@ function handleFileUpload(event: Event) {
 
 <template>
   <div class="radio-add-popup">
-    <h3 class="radio-add-popup__title">Add video</h3>
-
     <!-- YouTube link input -->
     <label class="radio-add-popup__label">
       <SilIcon name="ui/link" size="small" />
@@ -108,10 +133,7 @@ function handleFileUpload(event: Event) {
     </label>
 
     <!-- Category selector -->
-    <div
-      class="radio-add-popup__category"
-      v-if="categories.categories.value.length > 0"
-    >
+    <div class="radio-add-popup__category">
       <span class="radio-add-popup__category-label">Category</span>
       <div class="radio-add-popup__category-list">
         <button
@@ -124,9 +146,39 @@ function handleFileUpload(event: Event) {
           :style="{ '--chip-color': cat.color }"
           @click="addVideoCategoryId = addVideoCategoryId === cat.id ? '' : cat.id"
         >
-          {{ cat.icon }} {{ cat.name }}
+          <span class="radio-add-popup__category-chip-icon">{{ cat.icon }}</span>
+          <span class="radio-add-popup__category-chip-name">{{ cat.name }}</span>
+        </button>
+        <button
+          class="radio-add-popup__category-chip radio-add-popup__category-chip--new"
+          @click="newCatOpen = !newCatOpen"
+        >
+          + New
         </button>
       </div>
+    </div>
+
+    <!-- New category inline form -->
+    <div v-if="newCatOpen" class="radio-add-popup__new-cat">
+      <input
+        v-model="newCatName"
+        placeholder="Category name"
+        @keyup.enter="handleNewCat"
+      />
+      <input
+        v-model="newCatIcon"
+        placeholder="Emoji (optional)"
+        class="radio-add-popup__new-cat-icon"
+        maxlength="4"
+      />
+      <Button
+        variant="primary"
+        size="small"
+        :disabled="!newCatName.trim()"
+        @click="handleNewCat"
+      >
+        Add
+      </Button>
     </div>
 
     <!-- Preview -->
@@ -160,8 +212,8 @@ function handleFileUpload(event: Event) {
       Upload audio file
     </label>
 
-    <!-- Parent notice -->
-    <p class="radio-add-popup__notice">
+    <!-- Parent notice — only when user has a linked email -->
+    <p v-if="hasEmail" class="radio-add-popup__notice">
       <SilIcon name="ui/lock" size="small" />
       Only parents can manage videos
     </p>
@@ -183,14 +235,6 @@ function handleFileUpload(event: Event) {
   margin: 0 auto;
   font-family: inherit;
   animation: radio-add-popup-enter 0.2s ease;
-
-  // ---- Title ---------------------------------------------------------------
-  &__title {
-    font-size: 1.25rem;
-    font-weight: 800;
-    margin: 0 0 0.25rem;
-    color: var(--color-foreground, #1a1a2e);
-  }
 
   // ---- Label rows (icon + input) ------------------------------------------
   &__label {
@@ -246,8 +290,8 @@ function handleFileUpload(event: Event) {
   &__category-chip {
     display: inline-flex;
     align-items: center;
-    gap: 0.3rem;
-    padding: 0.35rem 0.8rem;
+    gap: 0.25rem;
+    padding: 0.3rem 0.7rem;
     border: 2px solid color-mix(in srgb, var(--chip-color, #ccc), var(--tiko-surface, #fff) 25%);
     border-radius: 2rem;
     background: color-mix(in srgb, var(--tiko-surface, #fff), var(--chip-color, #ccc) 12%);
@@ -270,6 +314,52 @@ function handleFileUpload(event: Event) {
       &:hover {
         background: color-mix(in srgb, var(--chip-color, #e84057), var(--color-foreground, #1a1a2e) 10%);
       }
+    }
+
+    &--new {
+      border-style: dashed;
+      border-color: color-mix(in srgb, var(--color-foreground, #1a1a2e), transparent 60%);
+      background: transparent;
+      color: color-mix(in srgb, var(--color-foreground, #1a1a2e), transparent 40%);
+
+      &:hover {
+        border-color: var(--color-primary, #e84057);
+        color: var(--color-primary, #e84057);
+      }
+    }
+
+    &-icon {
+      font-size: 0.85rem;
+    }
+
+    &-name {
+      font-size: 0.78rem;
+    }
+  }
+
+  // ---- New category form --------------------------------------------------
+  &__new-cat {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+
+    input {
+      padding: 0.4rem 0.6rem;
+      border: 2px solid color-mix(in srgb, var(--tiko-surface, #fff), var(--color-foreground, #1a1a2e) 15%);
+      border-radius: 0.6rem;
+      font-size: 0.85rem;
+      background: color-mix(in srgb, var(--tiko-surface, #fff), var(--color-foreground, #1a1a2e) 4%);
+      color: inherit;
+
+      &:focus {
+        outline: none;
+        border-color: var(--color-primary, #e84057);
+      }
+    }
+
+    &-icon {
+      width: 3.5rem;
+      text-align: center;
     }
   }
 

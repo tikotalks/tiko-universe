@@ -102,14 +102,28 @@ describe('Radio App (kid mode + parent mode)', () => {
     expect(wrapper.find('.radio-app__manage').exists()).toBe(false)
   })
 
-  it('shows category cards in kid mode', async () => {
+  it('shows category cards in kid mode when tracks exist, or + tile when empty', async () => {
     const { wrapper } = mountApp()
     await nextTick()
 
-    const categoryCards = wrapper.findAll('.radio-app__category-card')
-    expect(categoryCards.length).toBeGreaterThan(0)
-    // Should have at least the default categories
-    expect(categoryCards.length).toBeGreaterThanOrEqual(3)
+    // No tracks → should show the big + add tile
+    let categoryCards = wrapper.findAll('.radio-app__category-card')
+    expect(categoryCards.length).toBe(1)
+    expect(categoryCards[0].classes()).toContain('radio-app__category-card--add')
+
+    // Seed a track in a category → category tiles should appear
+    await wrapper.vm.library.addTrack({
+      title: 'Test Song',
+      source: 'youtube',
+      youtubeVideoId: 'abc123',
+      categoryId: 'animals',
+    })
+    await nextTick()
+
+    categoryCards = wrapper.findAll('.radio-app__category-card')
+    expect(categoryCards.length).toBeGreaterThanOrEqual(1)
+    // The add tile should be gone (has videos now)
+    expect(categoryCards[0].classes()).not.toContain('radio-app__category-card--add')
   })
 
   it('kid mode shows track grid area', async () => {
@@ -120,12 +134,13 @@ describe('Radio App (kid mode + parent mode)', () => {
     expect(wrapper.find('.radio-app__kid').exists()).toBe(true)
   })
 
-  it('shows shuffle and repeat controls in kid mode', async () => {
+  it('kid mode does not show shuffle/repeat controls', async () => {
     const { wrapper } = mountApp()
     await nextTick()
 
+    // Kids don't need shuffle/repeat — those are parent-mode only
     const controls = wrapper.findAll('.radio-app__extra-controls button')
-    expect(controls.length).toBe(2) // shuffle + repeat
+    expect(controls.length).toBe(0)
   })
 
   it('shows track grid when category has tracks', async () => {

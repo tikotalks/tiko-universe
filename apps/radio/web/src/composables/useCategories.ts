@@ -2,9 +2,10 @@ import { ref, watch, computed, type ComputedRef } from 'vue'
 import type { RadioCategory } from '@tiko/data'
 
 const DEFAULT_CATEGORIES: RadioCategory[] = [
-  { id: 'animals', name: 'Animals', icon: 'animals', color: '#FFD93D', order: 0 },
-  { id: 'bedtime', name: 'Bedtime', icon: 'bedtime', color: '#A8D8EA', order: 1 },
-  { id: 'songs', name: 'Songs', icon: 'songs', color: '#FFB3C1', order: 2 },
+  { id: 'animals', name: 'Animals', icon: '🐾', color: '#FFD93D', order: 0 },
+  { id: 'stories', name: 'Stories', icon: '📖', color: '#C3AED6', order: 1 },
+  { id: 'bedtime', name: 'Bedtime', icon: '🌙', color: '#A8D8EA', order: 2 },
+  { id: 'songs', name: 'Songs', icon: '🎵', color: '#FFB3C1', order: 3 },
 ]
 
 export function useCategories(storageKey: string = 'tiko:radio:categories') {

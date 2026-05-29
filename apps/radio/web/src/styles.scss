@@ -54,6 +54,20 @@ border-radius: 1.25rem;
     outline-offset: 2px;
   }
 
+  &--add {
+    background: color-mix(in srgb, var(--tiko-surface, #fff), var(--color-foreground, #1a1a2e) 8%);
+    color: color-mix(in srgb, var(--color-foreground, #1a1a2e), transparent 35%);
+    border: 2px dashed color-mix(in srgb, var(--color-foreground, #1a1a2e), transparent 20%);
+    box-shadow: none;
+
+    &:hover {
+      background: color-mix(in srgb, var(--tiko-app-primary, #e84057) 12%, var(--tiko-surface, #fff));
+      color: var(--tiko-app-primary, #e84057);
+      border-color: var(--tiko-app-primary, #e84057);
+      transform: scale(1.05);
+    }
+  }
+
   &__icon {
     font-size: 1.75rem;
     line-height: 1;
