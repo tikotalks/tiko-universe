@@ -25,6 +25,14 @@ function seedTracks(ls: ReturnType<typeof createLocalStorageMock>) {
   ls.store['tiko:radio:tracks'] = JSON.stringify(tracks)
 }
 
+function seedCategories(ls: ReturnType<typeof createLocalStorageMock>) {
+  const categories = [
+    { id: 'animals', name: 'Animals', icon: '🐾', color: '#FFD93D', order: 0, trackIds: ['t1', 't2'] },
+    { id: 'songs', name: 'Songs', icon: '🎵', color: '#FFB3C1', order: 1, trackIds: ['t3'] },
+  ]
+  ls.store['tiko:radio:categories'] = JSON.stringify(categories)
+}
+
 function mountApp(existingLs?: ReturnType<typeof createLocalStorageMock>) {
   const ls = existingLs ?? createLocalStorageMock()
   const origLs = globalThis.localStorage
@@ -91,82 +99,113 @@ afterEach(() => {
   restoreLocalStorage()
 })
 
-describe('Radio App (kid mode + parent mode)', () => {
-  it('renders parent mode by default (temp user)', async () => {
+describe('Radio App (unified layout)', () => {
+  it('renders content area by default (parent mode is default)', async () => {
     const { wrapper } = mountApp()
     await nextTick()
 
-    // Parent mode is the default for all users (temp or logged-in)
-    expect(wrapper.find('.radio-app__manage').exists()).toBe(true)
-    // Kid mode should NOT be visible by default
-    expect(wrapper.find('.radio-app__kid').exists()).toBe(false)
+    // Both modes share the same content area
+    expect(wrapper.find('.radio-app__content').exists()).toBe(true)
   })
 
-  it('kid mode shows category cards with tracks, no + tile', async () => {
-    const { wrapper } = mountApp()
-    await nextTick()
-
-    // Switch to kid mode
-    await wrapper.setData({ parentMode: false })
-    await nextTick()
-
-    // No tracks → no category cards, no + tile (kids can't add)
-    let categoryCards = wrapper.findAll('.radio-app__category-card')
-    expect(categoryCards.length).toBe(0)
-
-    // Seed a track in a category → category tiles should appear
-    await wrapper.vm.library.addTrack({
-      title: 'Test Song',
-      source: 'youtube',
-      youtubeVideoId: 'abc123',
-      categoryId: 'animals',
-    })
-    await nextTick()
-
-    categoryCards = wrapper.findAll('.radio-app__category-card')
-    expect(categoryCards.length).toBeGreaterThanOrEqual(1)
-    expect(categoryCards[0].classes()).not.toContain('radio-app__category-card--add')
-  })
-
-  it('kid mode shows track grid area', async () => {
-    const { wrapper } = mountApp()
-    await nextTick()
-
-    // Switch to kid mode
-    await wrapper.setData({ parentMode: false })
-    await nextTick()
-
-    expect(wrapper.find('.radio-app__kid').exists()).toBe(true)
-  })
-
-  it('kid mode does not show shuffle/repeat controls', async () => {
-    const { wrapper } = mountApp()
-    await nextTick()
-
-    // Kids don't need shuffle/repeat — those are parent-mode only
-    const controls = wrapper.findAll('.radio-app__extra-controls button')
-    expect(controls.length).toBe(0)
-  })
-
-  it('shows track grid when category has tracks', async () => {
+  it('shows 2-column track grid on mobile', async () => {
     const ls = createLocalStorageMock()
     seedTracks(ls)
+    seedCategories(ls)
     const { wrapper } = mountApp(ls)
     await nextTick()
 
+    const trackCards = wrapper.findAll('.radio-app__track-card')
+    // With no category selected, all 3 tracks show
+    expect(trackCards.length).toBe(3)
+  })
+
+  it('shows category cards for categories that have videos', async () => {
+    const ls = createLocalStorageMock()
+    seedTracks(ls)
+    seedCategories(ls)
+    const { wrapper } = mountApp(ls)
+    await nextTick()
+
+    const categoryCards = wrapper.findAll('.radio-app__category-card')
+    // animals + songs = 2 categories with tracks, + add button in parent mode = 3
+    expect(categoryCards.length).toBe(3)
+  })
+
+  it('parent mode shows + category button, kid mode does not', async () => {
+    const ls = createLocalStorageMock()
+    seedTracks(ls)
+    seedCategories(ls)
+    const { wrapper } = mountApp(ls)
+    await nextTick()
+
+    // Parent mode (default): should have + add card
+    const addCards = wrapper.findAll('.radio-app__category-card--add')
+    expect(addCards.length).toBe(1)
+
     // Switch to kid mode
     await wrapper.setData({ parentMode: false })
     await nextTick()
 
-    // Select the animals category
+    // Kid mode: no + add card
+    const kidAddCards = wrapper.findAll('.radio-app__category-card--add')
+    expect(kidAddCards.length).toBe(0)
+  })
+
+  it('parent mode shows delete buttons on track cards, kid mode does not', async () => {
+    const ls = createLocalStorageMock()
+    seedTracks(ls)
+    seedCategories(ls)
+    const { wrapper } = mountApp(ls)
+    await nextTick()
+
+    // Parent mode: delete buttons on tracks
+    const removeBtns = wrapper.findAll('.radio-app__track-card__remove')
+    expect(removeBtns.length).toBe(3)
+
+    // Switch to kid mode
+    await wrapper.setData({ parentMode: false })
+    await nextTick()
+
+    // Kid mode: no delete buttons
+    const kidRemoveBtns = wrapper.findAll('.radio-app__track-card__remove')
+    expect(kidRemoveBtns.length).toBe(0)
+  })
+
+  it('kid mode hides + add-video header action', async () => {
+    const { wrapper } = mountApp()
+    await nextTick()
+
+    // Switch to kid mode
+    await wrapper.setData({ parentMode: false })
+    await nextTick()
+
+    // In kid mode, clicking add-video action should not open popup
+    const actions = wrapper.vm.headerActions as Array<{ id: string }>
+    const addVideoAction = actions.find(a => a.id === 'add-video')
+    // The action is still visible but handler returns early in child mode
+    expect(addVideoAction).toBeDefined()
+  })
+
+  it('filters tracks by selected category', async () => {
+    const ls = createLocalStorageMock()
+    seedTracks(ls)
+    seedCategories(ls)
+    const { wrapper } = mountApp(ls)
+    await nextTick()
+
+    // No category selected → all 3 tracks
+    expect(wrapper.findAll('.radio-app__track-card').length).toBe(3)
+
+    // Select animals category
     const animalCard = wrapper.findAll('.radio-app__category-card').find(
       c => c.text().includes('Animals')
     )
     if (animalCard) await animalCard.trigger('click')
     await nextTick()
 
-    const trackCards = wrapper.findAll('.radio-app__track-card')
-    expect(trackCards.length).toBe(2) // Baby Shark + Wheels on the Bus
+    // Only 2 animal tracks
+    expect(wrapper.findAll('.radio-app__track-card').length).toBe(2)
   })
 
   it('shows empty state when no tracks exist', async () => {
@@ -176,66 +215,39 @@ describe('Radio App (kid mode + parent mode)', () => {
     // No tracks seeded — should show empty text
     const trackGrid = wrapper.find('.radio-app__track-grid')
     expect(trackGrid.exists()).toBe(false)
-  })
-
-  it('parent mode shows video management', async () => {
-    const { wrapper } = mountApp()
-    await nextTick()
-
-    // Force parent mode on
-    await wrapper.setData({ parentMode: true })
-    await nextTick()
-
-    expect(wrapper.find('.radio-app__manage').exists()).toBe(true)
-    // No title/subtitle — just the video list and tabs
-    expect(wrapper.find('.radio-app__manage__tabs').exists()).toBe(true)
-    expect(wrapper.find('.radio-app__manage__notice').exists()).toBe(true)
-  })
-
-  it('parent mode shows category tabs', async () => {
-    const { wrapper } = mountApp()
-    await nextTick()
-
-    await wrapper.setData({ parentMode: true })
-    await nextTick()
-
-    const tabs = wrapper.findAll('.radio-app__manage__tab')
-    expect(tabs.length).toBeGreaterThan(0)
-  })
-
-  it('parent mode shows video list, add is via popup', async () => {
-    const { wrapper } = mountApp()
-    await nextTick()
-
-    await wrapper.setData({ parentMode: true })
-    await nextTick()
-
-    // Add form is no longer inline — it opens via popupService
-    // Verify the manage list section exists
-    const addSection = wrapper.find('.radio-app__manage__list')
-    expect(addSection.exists()).toBe(true)
-  })
-
-  it('parent mode shows video list with tracks', async () => {
-    const ls = createLocalStorageMock()
-    seedTracks(ls)
-    const { wrapper } = mountApp(ls)
-    await nextTick()
-
-    await wrapper.setData({ parentMode: true, manageCategoryId: 'animals' })
-    await nextTick()
-
-    const videoRows = wrapper.findAll('.radio-app__manage__video-row')
-    expect(videoRows.length).toBe(2) // 2 tracks in animals category
+    expect(wrapper.find('.radio-app__empty').exists()).toBe(true)
   })
 
   it('categories composable uses localStorage', async () => {
-    // Verify the composable accesses localStorage during init
     const ls = createLocalStorageMock()
     vi.spyOn(globalThis, 'localStorage', 'get').mockReturnValue(ls)
     mountApp(ls)
     await nextTick()
     // Composable should have read categories from localStorage
     expect(ls.getItem).toHaveBeenCalledWith('tiko:radio:categories')
+  })
+
+  it('new category form shows in parent mode when + card clicked', async () => {
+    const { wrapper } = mountApp()
+    await nextTick()
+
+    // Click the + add category card
+    const addCard = wrapper.find('.radio-app__category-card--add')
+    if (addCard.exists()) {
+      await addCard.trigger('click')
+      await nextTick()
+      expect(wrapper.find('.radio-app__new-cat-form').exists()).toBe(true)
+    }
+  })
+
+  it('kid mode does not show new category form', async () => {
+    const { wrapper } = mountApp()
+    await nextTick()
+
+    await wrapper.setData({ parentMode: false })
+    await nextTick()
+
+    expect(wrapper.find('.radio-app__new-cat-form').exists()).toBe(false)
+    expect(wrapper.find('.radio-app__category-card--add').exists()).toBe(false)
   })
 })

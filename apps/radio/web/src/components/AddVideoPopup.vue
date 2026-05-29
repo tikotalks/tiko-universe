@@ -78,7 +78,7 @@ function handleAddVideo() {
   const url = youtubeUrl.value.trim()
   if (!url) return
   const videoId = youtubeMeta.getVideoId(url)
-  if (!videoId) return
+  if (!videoId || !addVideoCategoryId.value) return
 
   emit('add', {
     title: displayName.value || videoPreview.value?.title || `Video ${videoId}`,
@@ -86,7 +86,7 @@ function handleAddVideo() {
     youtubeVideoId: videoId,
     thumbnailUrl: videoPreview.value?.thumbnailUrl,
     duration: videoPreview.value?.duration,
-    categoryId: addVideoCategoryId.value || undefined,
+    categoryId: addVideoCategoryId.value,
   })
 
   // Reset form
@@ -98,12 +98,12 @@ function handleAddVideo() {
 function handleFileUpload(event: Event) {
   const input = event.target as HTMLInputElement
   const file = input.files?.[0]
-  if (!file) return
+  if (!file || !addVideoCategoryId.value) return
   emit('upload', {
     title: file.name.replace(/\.[^.]+$/, ''),
     source: 'upload',
     file,
-    categoryId: addVideoCategoryId.value || undefined,
+    categoryId: addVideoCategoryId.value,
   })
   input.value = ''
 }
@@ -199,7 +199,7 @@ function handleFileUpload(event: Event) {
     <!-- Submit -->
     <Button
       variant="primary"
-      :disabled="!youtubeUrl.trim() || !youtubeMeta.getVideoId(youtubeUrl)"
+      :disabled="!youtubeUrl.trim() || !youtubeMeta.getVideoId(youtubeUrl) || !addVideoCategoryId"
       @click="handleAddVideo"
       class="radio-add-popup__submit"
     >

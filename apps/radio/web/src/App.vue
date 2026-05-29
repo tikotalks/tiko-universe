@@ -99,7 +99,6 @@ const dataClient = new TikoDataClient({ baseUrl: apiBaseUrl })
 const parentMode = ref(true)
 const pinHash = ref<string | undefined>()
 const selectedCategoryId = ref<string | null>(null)
-const manageCategoryId = ref<string | null>(null)
 const newCategoryName = ref('')
 const newCategoryOpen = ref(false)
 const userId = ref<string>('')
@@ -194,14 +193,10 @@ const currentTrackArtist = computed(
 
 const hasCategories = computed(() => categories.categories.value.length > 0)
 
-const sortedCategories = computed(() =>
-  [...categories.categories.value].sort((a, b) => a.order - b.order),
-)
-
 const categoriesWithTracks = computed(() =>
-  sortedCategories.value.filter(cat =>
-    library.tracks.value.some(t => t.categoryId === cat.id),
-  ),
+  [...categories.categories.value]
+    .sort((a, b) => a.order - b.order)
+    .filter(cat => library.tracks.value.some(t => t.categoryId === cat.id)),
 )
 
 const hasAnyVideos = computed(() => library.tracks.value.length > 0)
@@ -211,10 +206,6 @@ const filteredTracks = computed(() => {
   return library.tracks.value.filter((t) => t.categoryId === selectedCategoryId.value)
 })
 
-const manageTracks = computed(() => {
-  if (!manageCategoryId.value) return library.tracks.value
-  return library.tracks.value.filter((t) => t.categoryId === manageCategoryId.value)
-})
 
 // ---- Formatting -----------------------------------------------------------
 function formatTime(seconds: number): string {
@@ -433,15 +424,6 @@ watch(player.isPlaying, (playing, wasPlaying) => {
   }
 })
 
-// Auto-set manageCategoryId when entering parent mode
-watch(parentMode, (isParent) => {
-  if (isParent && !manageCategoryId.value && sortedCategories.value.length > 0) {
-    manageCategoryId.value = sortedCategories.value[0].id
-  }
-  if (!isParent) {
-    // Exiting parent mode — popups auto-close via popupService
-  }
-})
 
 // ---- Lifecycle -------------------------------------------------------------
 onMounted(async () => {
@@ -783,8 +765,8 @@ function handleCreateCategory() {
       <!-- Popup host (renders popupService.popups) -->
       <Popup />
 
-      <!-- ==================== KID MODE ==================== -->
-      <div v-if="!parentMode" class="radio-app__kid">
+      <!-- ==================== CONTENT (shared by both modes) ==================== -->
+      <div class="radio-app__content">
 
         <!-- Category tiles: only show categories that have videos -->
         <div v-if="categoriesWithTracks.length" class="radio-app__categories">
@@ -799,11 +781,36 @@ function handleCreateCategory() {
             <span class="radio-app__category-card__icon">{{ cat.icon }}</span>
             <span class="radio-app__category-card__label">{{ cat.name }}</span>
           </button>
+          <!-- Parent mode: add category button -->
+          <button
+            v-if="parentMode"
+            class="radio-app__category-card radio-app__category-card--add"
+            @click="newCategoryOpen = !newCategoryOpen"
+          >
+            <span class="radio-app__category-card__icon">+</span>
+            <span class="radio-app__category-card__label">{{ labels.newCategory }}</span>
+          </button>
+        </div>
+
+        <!-- New category inline form (parent mode) -->
+        <div v-if="parentMode && newCategoryOpen" class="radio-app__new-cat-form">
+          <input
+            v-model="newCategoryName"
+            :placeholder="labels.categoryName"
+            @keyup.enter="handleCreateCategory"
+          />
+          <Button
+            variant="primary"
+            :disabled="!newCategoryName.trim()"
+            @click="handleCreateCategory"
+          >
+            {{ labels.createCategory }}
+          </Button>
         </div>
 
         <!-- Track grid -->
         <div v-if="filteredTracks.length" class="radio-app__track-grid">
-          <button
+          <div
             v-for="track in filteredTracks"
             :key="track.id"
             class="radio-app__track-card"
@@ -822,85 +829,18 @@ function handleCreateCategory() {
               <span class="radio-app__track-card__title">{{ track.title }}</span>
               <span v-if="track.artist" class="radio-app__track-card__artist">{{ track.artist }}</span>
             </div>
-          </button>
-        </div>
-        <p v-else class="radio-app__empty">{{ labels.noTracks }}</p>
-      </div>
-
-      <!-- ==================== PARENT MODE ==================== -->
-      <div v-else class="radio-app__manage">
-
-        <!-- Category tabs -->
-        <div class="radio-app__manage__tabs">
-          <button
-            v-for="cat in sortedCategories"
-            :key="cat.id"
-            class="radio-app__manage__tab"
-            :class="{ 'radio-app__manage__tab--active': manageCategoryId === cat.id }"
-            @click="manageCategoryId = cat.id"
-          >
-            {{ cat.icon }} {{ cat.name }}
-          </button>
-          <button
-            class="radio-app__manage__tab radio-app__manage__tab--add"
-            @click="newCategoryOpen = !newCategoryOpen"
-          >
-            + {{ labels.newCategory }}
-          </button>
-        </div>
-
-        <!-- New category inline form -->
-        <div v-if="newCategoryOpen" class="radio-app__manage__new-cat">
-          <input
-            v-model="newCategoryName"
-            :placeholder="labels.categoryName"
-            @keyup.enter="handleCreateCategory"
-          />
-          <Button
-            variant="primary"
-            :disabled="!newCategoryName.trim()"
-            @click="handleCreateCategory"
-          >
-            {{ labels.createCategory }}
-          </Button>
-        </div>
-
-        <!-- Video list -->
-        <div class="radio-app__manage__list">
-          <p v-if="manageTracks.length === 0" class="radio-app__manage__empty">{{ labels.noVideos }}</p>
-          <div v-else class="radio-app__manage__video-list">
-            <div
-              v-for="track in manageTracks"
-              :key="track.id"
-              class="radio-app__manage__video-row"
+            <!-- Parent mode: delete button on track card -->
+            <button
+              v-if="parentMode"
+              class="radio-app__track-card__remove"
+              :aria-label="labels.removeTrack"
+              @click.stop="removeTrackById(track.id)"
             >
-              <img
-                v-if="track.thumbnailUrl"
-                :src="track.thumbnailUrl"
-                class="radio-app__manage__video-thumb"
-                :alt="track.title"
-                loading="lazy"
-              />
-              <div v-else class="radio-app__manage__video-thumb-placeholder">🎵</div>
-              <div class="radio-app__manage__video-info">
-                <span class="radio-app__manage__video-title">{{ track.title }}</span>
-                <span v-if="track.duration" class="radio-app__manage__video-duration">
-                  {{ formatTime(track.duration) }}
-                </span>
-              </div>
-              <button
-                class="radio-app__manage__video-remove"
-                :aria-label="labels.removeTrack"
-                @click="removeTrackById(track.id)"
-              >
-                ×
-              </button>
-            </div>
+              ×
+            </button>
           </div>
         </div>
-
-        <!-- Parent-only notice -->
-        <p class="radio-app__manage__notice">🔒 {{ labels.parentOnly }}</p>
+        <p v-else class="radio-app__empty">{{ labels.noTracks }}</p>
       </div>
 
       <!-- ==================== FLOATING PLAYER ==================== -->
