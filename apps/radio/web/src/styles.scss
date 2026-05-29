@@ -1,0 +1,118 @@
+body { margin: 0; }
+button, textarea, select { font: inherit; }
+button:disabled { cursor: not-allowed; opacity: .45; }
+
+.radio-app { text-align: center; display: flex; flex-direction: column; align-items: center; gap: 1rem; padding: 1rem 0; }
+
+/* Now-playing card */
+.radio-app__now-playing {
+  width: 100%;
+  max-width: 24rem;
+  padding: 1.5rem;
+  border-radius: 1.25rem;
+  background: color-mix(in srgb, var(--tiko-surface), var(--color-primary) 8%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: .75rem;
+}
+
+.radio-app__track-name {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: inherit;
+  word-break: break-word;
+}
+
+.radio-app__now-playing-label {
+  font-size: .85rem;
+  font-weight: 600;
+  color: var(--color-primary, #e84057);
+}
+
+/* Progress bar */
+.radio-app__progress-wrap {
+  width: 100%;
+  height: .5rem;
+  border-radius: .25rem;
+  background: color-mix(in srgb, var(--tiko-surface), var(--color-foreground) 10%);
+  cursor: pointer;
+  overflow: hidden;
+}
+
+.radio-app__progress-fill {
+  height: 100%;
+  border-radius: .25rem;
+  background: var(--color-primary, #e84057);
+  transition: width .15s linear;
+}
+
+/* Transport controls */
+.radio-app__controls {
+  display: flex;
+  justify-content: center;
+  gap: .75rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.radio-app__control-btn { border-radius: 999px; font-weight: 800; }
+.radio-app__control-btn--play { --button-color-text: var(--color-primary-text, #fff); }
+
+.radio-app__shuffle-btn {
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: .85rem;
+}
+
+.radio-app__shuffle-btn--active {
+  --button-color-text: var(--color-primary-text, #fff);
+}
+
+/* Playlist */
+.radio-app__playlist {
+  width: 100%;
+  max-width: 24rem;
+  text-align: left;
+}
+
+.radio-app__playlist-title {
+  font-size: 1rem;
+  font-weight: 700;
+  margin-bottom: .5rem;
+}
+
+.radio-app__playlist-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: .25rem;
+}
+
+.radio-app__playlist-item {
+  padding: .65rem .75rem;
+  border-radius: .75rem;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: .95rem;
+  transition: background .15s ease;
+  background: color-mix(in srgb, var(--tiko-surface), var(--color-foreground) 4%);
+}
+
+.radio-app__playlist-item:hover {
+  background: color-mix(in srgb, var(--tiko-surface), var(--color-foreground) 10%);
+}
+
+.radio-app__playlist-item--active {
+  background: color-mix(in srgb, var(--tiko-surface), var(--color-primary) 15%);
+  color: var(--color-primary, #e84057);
+}
+
+.radio-app__playlist-empty {
+  font-size: .9rem;
+  color: color-mix(in srgb, var(--color-foreground), transparent 40%);
+  text-align: center;
+  padding: 1rem 0;
+}
