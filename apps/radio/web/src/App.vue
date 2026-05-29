@@ -13,7 +13,7 @@ import {
 import { useAudioPlayer } from './composables/useAudioPlayer'
 import { useTrackLibrary } from './composables/useTrackLibrary'
 import { useCategories } from './composables/useCategories'
-import AddVideoPopup from './components/AddVideoPopup.vue'
+import AddAudioPopup from './components/AddAudioPopup.vue'
 import SettingsPopup from './components/SettingsPopup.vue'
 import PinPopup from './components/PinPopup.vue'
 import './styles.scss'
@@ -513,11 +513,11 @@ function openPinPopup() {
   })
 }
 
-function openAddVideoPopup() {
+function openAddAudioPopup() {
   popup.showPopup({
-    component: markRaw(AddVideoPopup),
+    component: markRaw(AddAudioPopup),
     title: '',
-    props: { categoryId: '', hasEmail: isRecoverable.value },
+    props: { hasEmail: isRecoverable.value },
     config: { position: 'center', canClose: true, background: true, width: '28rem' },
     on: {
       add: (track: unknown) => {
@@ -654,7 +654,7 @@ function headerAction(id: string) {
   }
   if (id === 'add-video') {
     if (!parentMode.value) return // Can't add in child mode
-    openAddVideoPopup()
+    openAddAudioPopup()
   }
 }
 
