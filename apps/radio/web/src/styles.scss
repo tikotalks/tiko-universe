@@ -2,7 +2,14 @@ body { margin: 0; }
 button, textarea, select { font: inherit; }
 button:disabled { cursor: not-allowed; opacity: .45; }
 
-.radio-app { text-align: center; display: flex; flex-direction: column; align-items: center; gap: 1rem; padding: 1rem 0; }
+.radio-app {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 0;
+}
 
 /* Now-playing card */
 .radio-app__now-playing {
@@ -14,21 +21,14 @@ button:disabled { cursor: not-allowed; opacity: .45; }
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: .75rem;
+  gap: .5rem;
 }
 
-.radio-app__track-name {
-  font-size: 1.15rem;
-  font-weight: 700;
-  color: inherit;
-  word-break: break-word;
-}
+.radio-app__now-playing-label { font-size: .85rem; font-weight: 600; color: var(--color-primary, #e84057); }
+.radio-app__track-name { font-size: 1.15rem; font-weight: 700; color: inherit; word-break: break-word; }
+.radio-app__track-artist { font-size: .95rem; font-weight: 500; color: color-mix(in srgb, var(--color-foreground), transparent 30%); }
 
-.radio-app__now-playing-label {
-  font-size: .85rem;
-  font-weight: 600;
-  color: var(--color-primary, #e84057);
-}
+.radio-app__time-display { font-size: .8rem; font-weight: 600; font-variant-numeric: tabular-nums; color: color-mix(in srgb, var(--color-foreground), transparent 30%); }
 
 /* Progress bar */
 .radio-app__progress-wrap {
@@ -48,50 +48,93 @@ button:disabled { cursor: not-allowed; opacity: .45; }
 }
 
 /* Transport controls */
-.radio-app__controls {
-  display: flex;
-  justify-content: center;
-  gap: .75rem;
-  align-items: center;
-  flex-wrap: wrap;
-}
+.radio-app__controls { display: flex; justify-content: center; gap: .75rem; align-items: center; flex-wrap: wrap; }
+.radio-app__controls .sil-button { border-radius: 999px; font-weight: 800; }
+.radio-app__controls .sil-button--primary { --button-color-text: var(--color-primary-text, #fff); }
 
-.radio-app__control-btn { border-radius: 999px; font-weight: 800; }
-.radio-app__control-btn--play { --button-color-text: var(--color-primary-text, #fff); }
-
-.radio-app__shuffle-btn {
-  border-radius: 999px;
-  font-weight: 600;
-  font-size: .85rem;
-}
-
-.radio-app__shuffle-btn--active {
-  --button-color-text: var(--color-primary-text, #fff);
-}
-
-/* Playlist */
-.radio-app__playlist {
+/* Volume */
+.radio-app__volume {
   width: 100%;
-  max-width: 24rem;
-  text-align: left;
+  max-width: 16rem;
+  display: flex;
+  align-items: center;
+  gap: .75rem;
 }
 
-.radio-app__playlist-title {
-  font-size: 1rem;
-  font-weight: 700;
-  margin-bottom: .5rem;
+.radio-app__volume label { font-weight: 600; font-size: .9rem; white-space: nowrap; }
+
+.radio-app__volume input[type="range"] {
+  flex: 1;
+  accent-color: var(--color-primary, #e84057);
+  height: .5rem;
 }
 
-.radio-app__playlist-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
+/* Add panel */
+.radio-app__add-panel { width: 100%; max-width: 24rem; }
+
+.radio-app__add-panel__content {
+  margin-top: .5rem;
+  padding: 1rem;
+  border-radius: 1rem;
+  background: color-mix(in srgb, var(--tiko-surface), var(--color-foreground) 4%);
   display: flex;
   flex-direction: column;
-  gap: .25rem;
+  gap: 1rem;
 }
 
-.radio-app__playlist-item {
+.radio-app__add-panel__youtube { display: flex; flex-direction: column; gap: .5rem; }
+.radio-app__add-panel__youtube > span { font-weight: 600; font-size: .9rem; text-align: left; }
+
+.radio-app__add-panel__youtube-input {
+  display: flex;
+  gap: .5rem;
+}
+
+.radio-app__add-panel__youtube-input input {
+  flex: 1;
+  padding: .5rem .75rem;
+  border: 2px solid color-mix(in srgb, var(--tiko-surface), var(--color-foreground) 15%);
+  border-radius: .75rem;
+  font-size: .9rem;
+  background: color-mix(in srgb, var(--tiko-surface), var(--color-foreground) 4%);
+  color: inherit;
+}
+
+.radio-app__add-panel__youtube-input input:focus {
+  outline: 2px solid var(--color-primary, #e84057);
+  outline-offset: 1px;
+}
+
+.radio-app__add-panel__upload-label {
+  display: inline-flex;
+  align-items: center;
+  gap: .5rem;
+  padding: .5rem 1rem;
+  border-radius: .75rem;
+  font-weight: 600;
+  font-size: .9rem;
+  cursor: pointer;
+  background: color-mix(in srgb, var(--tiko-surface), var(--color-primary) 12%);
+  color: var(--color-primary, #e84057);
+  transition: background .15s ease;
+}
+
+.radio-app__add-panel__upload-label:hover {
+  background: color-mix(in srgb, var(--tiko-surface), var(--color-primary) 20%);
+}
+
+/* Library */
+.radio-app__library { width: 100%; max-width: 24rem; text-align: left; }
+
+.radio-app__library-title { font-size: 1rem; font-weight: 700; margin-bottom: .5rem; }
+.radio-app__library-empty { font-size: .9rem; color: color-mix(in srgb, var(--color-foreground), transparent 40%); text-align: center; padding: 1rem 0; }
+
+.radio-app__library-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: .25rem; }
+
+.radio-app__library-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   padding: .65rem .75rem;
   border-radius: .75rem;
   cursor: pointer;
@@ -101,18 +144,31 @@ button:disabled { cursor: not-allowed; opacity: .45; }
   background: color-mix(in srgb, var(--tiko-surface), var(--color-foreground) 4%);
 }
 
-.radio-app__playlist-item:hover {
-  background: color-mix(in srgb, var(--tiko-surface), var(--color-foreground) 10%);
-}
+.radio-app__library-item:hover { background: color-mix(in srgb, var(--tiko-surface), var(--color-foreground) 10%); }
 
-.radio-app__playlist-item--active {
+.radio-app__library-item--active {
   background: color-mix(in srgb, var(--tiko-surface), var(--color-primary) 15%);
   color: var(--color-primary, #e84057);
 }
 
-.radio-app__playlist-empty {
-  font-size: .9rem;
-  color: color-mix(in srgb, var(--color-foreground), transparent 40%);
-  text-align: center;
-  padding: 1rem 0;
+.radio-app__library-item-info { display: flex; flex-direction: column; gap: .15rem; min-width: 0; flex: 1; }
+.radio-app__library-item-title { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.radio-app__library-item-artist { font-size: .85rem; font-weight: 400; color: color-mix(in srgb, var(--color-foreground), transparent 30%); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+.radio-app__library-item-remove {
+  background: none;
+  border: none;
+  font-size: 1.25rem;
+  line-height: 1;
+  cursor: pointer;
+  padding: .25rem .5rem;
+  border-radius: .5rem;
+  color: color-mix(in srgb, var(--color-foreground), transparent 50%);
+  transition: color .15s ease, background .15s ease;
+  flex-shrink: 0;
+}
+
+.radio-app__library-item-remove:hover {
+  color: #e84057;
+  background: color-mix(in srgb, var(--tiko-surface), #e84057 10%);
 }
