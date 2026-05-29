@@ -623,10 +623,6 @@ function headerAction(id: string) {
     parentMode.value = !parentMode.value
   }
   if (id === 'add-video') {
-    if (!sessionToken.value) {
-      openLoginPopup()
-      return
-    }
     if (!parentMode.value) {
       parentMode.value = true
     }

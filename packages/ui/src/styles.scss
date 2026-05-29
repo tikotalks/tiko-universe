@@ -122,8 +122,6 @@ body {
 }
 
 .tiko-app-header__action {
-  display: grid;
-  place-items: center;
   width: 2.25rem;
   height: 2.25rem;
   border: 0;
@@ -132,6 +130,23 @@ body {
   color: var(--tiko-app-primary-text);
   cursor: pointer;
   transition: transform .12s ease, outline-color .12s ease;
+
+  &::before {
+    border-radius: .45rem;
+  }
+
+  .button__container {
+    padding: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    aspect-ratio: auto !important;
+    display: grid;
+    place-items: center;
+  }
+
+  .button__icon {
+    font-size: 1.15rem;
+  }
 }
 
 .tiko-app-header__action:active {
