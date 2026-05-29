@@ -132,6 +132,9 @@ const labels = computed(() => {
     removeTrack: i18n.t(tikoI18nKeys.radio.library.removeTrack),
     uploadFile: i18n.t(tikoI18nKeys.radio.library.uploadFile),
     login: 'Log in',
+    magicLinkSent: 'Check your email!',
+    magicLinkHint: 'We sent a magic link to',
+    sendMagicLink: 'Send magic link',
     logout: 'Log out',
   }
 })
@@ -520,33 +523,50 @@ function openLoginPopup() {
     component: markRaw({
       setup() {
         const email = ref('')
-        const password = ref('')
+        const sent = ref(false)
+        const loading = ref(false)
+
+        async function sendMagicLink() {
+          if (!email.value.trim()) return
+          loading.value = true
+          try {
+            await identityClient.value.requestRecoveryEmail({ email: email.value.trim() })
+            sent.value = true
+          } catch {
+            // will wire up error handling when identity worker is live
+          } finally {
+            loading.value = false
+          }
+        }
+
         return () => h('div', { class: 'radio-app__login-popup' }, [
           h('h3', { class: 'radio-app__login-popup__title' }, 'Log in'),
-          h('label', { class: 'radio-app__login-popup__label' }, [
-            'Email',
-            h('input', {
-              type: 'email',
-              value: email.value,
-              'onUpdate:modelValue': (v: string) => { email.value = v },
-              placeholder: 'you@example.com',
-            }),
-          ]),
-          h('label', { class: 'radio-app__login-popup__label' }, [
-            'Password',
-            h('input', {
-              type: 'password',
-              value: password.value,
-              'onUpdate:modelValue': (v: string) => { password.value = v },
-              placeholder: '••••••••',
-            }),
-          ]),
-          h('p', { class: 'radio-app__login-popup__hint' }, 'Identity flow will be wired up later.'),
+          sent.value
+            ? h('div', { class: 'radio-app__login-popup__sent' }, [
+                h('p', { class: 'radio-app__login-popup__sent-text' }, 'Check your email!'),
+                h('p', { class: 'radio-app__login-popup__sent-hint' }, `We sent a magic link to ${email.value}`),
+              ])
+            : [
+                h('label', { class: 'radio-app__login-popup__label' }, [
+                  'Email',
+                  h('input', {
+                    type: 'email',
+                    value: email.value,
+                    'onUpdate:modelValue': (v: string) => { email.value = v },
+                    placeholder: 'you@example.com',
+                    onKeydown: (e: KeyboardEvent) => { if (e.key === 'Enter') sendMagicLink() },
+                  }),
+                ]),
+                h('button', {
+                  class: 'radio-app__login-popup__submit',
+                  disabled: !email.value.trim() || loading.value,
+                  onClick: sendMagicLink,
+                }, loading.value ? 'Sending…' : 'Send magic link'),
+              ],
         ])
       },
     }),
     title: '',
-    props: {},
     config: { position: 'center', canClose: true, background: true, width: '22rem' },
     onClose: () => {},
   })

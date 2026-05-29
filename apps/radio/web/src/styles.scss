@@ -497,6 +497,45 @@ border-radius: 0.75rem var(--tiko-squircle);
     color: color-mix(in srgb, var(--color-foreground) 50%, transparent);
     margin-top: 0.5rem;
   }
+
+  &__submit {
+    width: 100%;
+    padding: 0.65rem 0.85rem;
+    border: 0;
+    border-radius: 0.75rem var(--tiko-squircle);
+    background: var(--tiko-app-primary);
+    color: var(--tiko-app-primary-text);
+    font-size: 0.9rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: opacity 0.15s ease;
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    &:not(:disabled):active {
+      transform: scale(0.97);
+    }
+  }
+
+  &__sent {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 1rem 0;
+  }
+
+  &__sent-text {
+    font-size: 1.1rem;
+    font-weight: 700;
+  }
+
+  &__sent-hint {
+    font-size: 0.85rem;
+    color: color-mix(in srgb, var(--color-foreground) 50%, transparent);
+  }
 }
 
 // ---- Account popup (logged in) -----------------------------------------------
