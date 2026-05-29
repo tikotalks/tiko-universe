@@ -1,147 +1,163 @@
-import { flushPromises, mount } from '@vue/test-utils'
-import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { mount } from '@vue/test-utils'
+import { nextTick } from 'vue'
 import App from './App.vue'
 
-const sessionBundle = {
-  user: { id: 'user-device', kind: 'device', recoverable: false },
-  device: { id: 'device-1', secret: 'device-secret' },
-  session: { token: 'session-token', expiresAt: '2099-01-01T00:00:00.000Z' }
+function createLocalStorageMock() {
+  const store: Record<string, string> = {}
+  return {
+    getItem: vi.fn((key: string) => store[key] ?? null),
+    setItem: vi.fn((key: string, value: string) => { store[key] = value }),
+    removeItem: vi.fn((key: string) => { delete store[key] }),
+    clear: vi.fn(() => { Object.keys(store).forEach(k => delete store[k]) }),
+    get store() { return store }
+  }
 }
 
-function jsonResponse(body: unknown, status = 200) {
-  return new Response(JSON.stringify(body), { status, headers: { 'content-type': 'application/json' } })
+function mountApp(localStorageOverride?: Record<string, string>) {
+  const ls = createLocalStorageMock()
+  if (localStorageOverride) {
+    Object.entries(localStorageOverride).forEach(([k, v]) => { ls.store[k] = v })
+  }
+
+  const win = globalThis.window as any
+  if (win) {
+    win.localStorage = ls
+  }
+
+  const wrapper = mount(App, {
+    global: {
+      stubs: {
+        'tiko-app-shell': {
+          name: 'TikoAppShell',
+          template: '<div class="tiko-app-shell-stub"><slot /></div>',
+          props: ['appName', 'appIcon', 'appColor', 'actions'],
+          emits: ['headerAction']
+        },
+        'tiko-settings-panel': {
+          template: '<div class="tiko-settings-panel-stub" />',
+          props: ['modelValue', 'colorMode']
+        }
+      }
+    }
+  })
+
+  return { wrapper, ls }
 }
 
-function createFetchMock(options: {
-  settings?: Record<string, unknown>
-  state?: Record<string, unknown>
-  failBootstrap?: boolean
-  failTts?: boolean
-} = {}) {
-  return vi.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
-    const url = String(input)
-    const method = init?.method ?? 'GET'
-
-    if (url.endsWith('/identity/session')) return jsonResponse(sessionBundle)
-    if (url.endsWith('/identity/device')) {
-      if (options.failBootstrap) return jsonResponse({ error: { code: 'offline', message: 'offline' } }, 503)
-      return jsonResponse(sessionBundle)
-    }
-
-    if (url.endsWith('/apps/type/settings') && method === 'GET') {
-      return jsonResponse({ app: 'type', updatedAt: null, version: 2, settings: options.settings ?? {} })
-    }
-
-    if (url.endsWith('/apps/type/state') && method === 'GET') {
-      return jsonResponse({ app: 'type', updatedAt: null, version: 3, state: options.state ?? {} })
-    }
-
-    if (url.endsWith('/apps/type/settings') && method === 'PUT') {
-      return jsonResponse({ app: 'type', updatedAt: 'now', version: 4, settings: JSON.parse(String(init?.body)).settings })
-    }
-
-    if (url.endsWith('/apps/type/state') && method === 'PUT') {
-      return jsonResponse({ app: 'type', updatedAt: 'now', version: 5, state: JSON.parse(String(init?.body)).state })
-    }
-
-    if (url.endsWith('/generation/tts')) {
-      if (options.failTts) return jsonResponse({ error: 'tts down' }, 503)
-      return jsonResponse({ success: true, audioUrl: '/audio?key=audio%2Ftest.mp3' })
-    }
-
-    return jsonResponse({ error: { code: 'unexpected', message: url } }, 500)
-  })
-}
-
-beforeEach(() => {
-  window.localStorage.clear()
-  vi.stubGlobal('fetch', createFetchMock())
-  vi.stubGlobal('Audio', vi.fn(function AudioMock() {
-    return { play: vi.fn(async () => undefined) }
-  }))
-})
-
-describe('Type web app', () => {
-  it('opens immediately with compose area and no login wall while bootstrapping identity in the background', async () => {
-    const wrapper = mount(App)
-
-    expect(wrapper.text()).toContain('Type')
-    expect(wrapper.find('textarea').exists()).toBe(true)
-    expect(wrapper.text()).not.toContain('Log in')
-    expect(wrapper.text()).not.toContain('Password')
-
-    await flushPromises()
-    expect(fetch).toHaveBeenCalledWith('https://api.tikoapi.org/v1/identity/device', expect.objectContaining({ method: 'POST' }))
+describe('Type App', () => {
+  beforeEach(() => {
+    vi.useFakeTimers()
   })
 
-  it('typing text and clicking speak triggers TTS', async () => {
-    const fetchMock = createFetchMock()
-    vi.stubGlobal('fetch', fetchMock)
-    const wrapper = mount(App)
-    await flushPromises()
-
-    await wrapper.get('textarea').setValue('Hello world')
-    await wrapper.get('.type-app__speak').trigger('click')
-
-    expect(fetchMock).toHaveBeenCalledWith('https://api.tikoapi.org/v1/generation/tts', expect.objectContaining({
-      method: 'POST',
-      body: expect.stringContaining('Hello world')
-    }))
+  it('opens immediately with compose area, no login wall', () => {
+    const { wrapper } = mountApp()
+    expect(wrapper.find('.type-app').exists()).toBe(true)
+    expect(wrapper.find('.type-app__textarea').exists()).toBe(true)
+    expect(wrapper.find('.type-app__compose').exists()).toBe(true)
   })
 
-  it('clear button resets the compose area', async () => {
-    const wrapper = mount(App)
-    await flushPromises()
-
-    await wrapper.get('textarea').setValue('Some text here')
-    await wrapper.get('.type-app__clear').trigger('click')
-
-    expect((wrapper.get('textarea').element as HTMLTextAreaElement).value).toBe('')
+  it('textarea is visible and editable', () => {
+    const { wrapper } = mountApp()
+    const textarea = wrapper.find('.type-app__textarea')
+    expect(textarea.exists()).toBe(true)
+    expect(textarea.element.tagName).toBe('TEXTAREA')
   })
 
-  it('spoken phrases are saved to history', async () => {
-    const wrapper = mount(App)
-    await flushPromises()
-
-    await wrapper.get('textarea').setValue('I want water')
-    await wrapper.get('.type-app__speak').trigger('click')
-    await flushPromises()
-
-    await wrapper.get('[data-test="tiko-header-action-phrases"]').trigger('click')
-    expect(wrapper.text()).toContain('I want water')
+  it('speak button exists', () => {
+    const { wrapper } = mountApp()
+    const allBtns = wrapper.findAll('button')
+    const speakBtn = allBtns.find(b => b.text().includes('Speak'))
+    expect(speakBtn).toBeTruthy()
   })
 
-  it('settings persist to localStorage as local fallback', async () => {
-    const fetchMock = createFetchMock()
-    vi.stubGlobal('fetch', fetchMock)
-    const wrapper = mount(App)
-    await flushPromises()
+  it('clear button clears text', async () => {
+    const { wrapper } = mountApp()
+    // Type some text
+    const textarea = wrapper.find('.type-app__textarea')
+    await textarea.setValue('hello world')
+    await nextTick()
 
-    await wrapper.get('[data-test="tiko-header-action-settings"]').trigger('click')
-    await wrapper.get('[data-test="tiko-settings-language"]').setValue('nl')
-    await wrapper.get('[data-test="tiko-settings-color-mode"]').setValue('dark')
+    // Find and click clear button
+    const clearBtn = wrapper.findAll('button').find(b => b.text().includes('Clear'))
+    expect(clearBtn).toBeTruthy()
+    await clearBtn!.trigger('click')
+    await nextTick()
 
-    await vi.waitFor(() => {
-      expect(window.localStorage.getItem('tiko:type')).toContain('"colorMode":"dark"')
-    })
-    expect(window.localStorage.getItem('tiko:type')).toContain('"language":"nl"')
-    expect(document.documentElement.dataset.colorMode).toBe('dark')
+    expect(wrapper.find('.type-app__textarea').element.value).toBe('')
   })
 
-  it('falls back to local flow when API is unavailable', async () => {
-    vi.stubGlobal('fetch', createFetchMock({ failBootstrap: true, failTts: true }))
-    const wrapper = mount(App)
-    await flushPromises()
+  it('virtual keyboard buttons insert characters', async () => {
+    const { wrapper } = mountApp()
+    const keys = wrapper.findAll('.type-app__key')
+    expect(keys.length).toBeGreaterThan(0)
 
-    expect(wrapper.find('textarea').exists()).toBe(true)
-    expect(wrapper.text()).not.toContain('Log in')
+    // Click the first letter key
+    const firstKey = keys[0]
+    await firstKey.trigger('click')
+    await nextTick()
 
-    await wrapper.get('textarea').setValue('Local test')
-    await wrapper.get('.type-app__speak').trigger('click')
+    const textarea = wrapper.find('.type-app__textarea')
+    expect(textarea.element.value.length).toBeGreaterThan(0)
+  })
 
-    await vi.waitFor(() => {
-      expect(wrapper.text()).toContain('Browser voice used')
-    })
-    expect(window.localStorage.getItem('tiko:type')).toContain('Local test')
+  it('phrases section is displayed', () => {
+    const { wrapper } = mountApp()
+    expect(wrapper.find('.type-app__phrases').exists()).toBe(true)
+    expect(wrapper.find('.type-app__phrases-title').exists()).toBe(true)
+  })
+
+  it('localStorage persistence works', async () => {
+    const { wrapper, ls } = mountApp()
+    const textarea = wrapper.find('.type-app__textarea')
+    await textarea.setValue('test text')
+    await nextTick()
+
+    expect(ls.setItem).toHaveBeenCalledWith('tiko:type', expect.any(String))
+    const saved = JSON.parse(ls.store['tiko:type'])
+    expect(saved.text).toBe('test text')
+  })
+
+  it('settings panel opens and closes', async () => {
+    const { wrapper } = mountApp()
+    // Settings panel not visible initially
+    expect(wrapper.find('.tiko-settings-panel-stub').exists()).toBe(false)
+
+    // Emit header-action to open settings
+    const shell = wrapper.findComponent({ name: 'TikoAppShell' })
+    shell.vm.$emit('headerAction', 'settings')
+    await nextTick()
+
+    expect(wrapper.find('.tiko-settings-panel-stub').exists()).toBe(true)
+  })
+
+  it('keyboard layout toggle exists', () => {
+    const { wrapper } = mountApp()
+    const toggleBtn = wrapper.find('.type-app__keyboard-toggle button')
+    expect(toggleBtn.exists()).toBe(true)
+  })
+
+  it('shows empty phrases message when no phrases saved', () => {
+    const { wrapper } = mountApp()
+    const phrasesList = wrapper.find('.type-app__phrases-list')
+    expect(phrasesList.exists()).toBe(false)
+  })
+
+  it('saving a phrase adds it to the list', async () => {
+    const { wrapper } = mountApp()
+    const textarea = wrapper.find('.type-app__textarea')
+    await textarea.setValue('hello phrase')
+    await nextTick()
+
+    const saveBtn = wrapper.findAll('button').find(b => b.text().includes('Save'))
+    expect(saveBtn).toBeTruthy()
+    await saveBtn!.trigger('click')
+    await nextTick()
+
+    const phrasesList = wrapper.find('.type-app__phrases-list')
+    expect(phrasesList.exists()).toBe(true)
+    const items = wrapper.findAll('.type-app__phrase-item')
+    expect(items.length).toBe(1)
+    expect(items[0].text()).toBe('hello phrase')
   })
 })

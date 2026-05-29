@@ -1,14 +1,13 @@
 <script setup lang="ts">
 import { computed, onMounted, ref, watch } from 'vue'
-import { Button, InputTextArea } from '@sil/ui'
+import { Button } from '@sil/ui'
 import { IdentityClient, type SessionBundle } from '@tiko/identity'
 import { TikoDataClient, type TypeSettings, type TypeState } from '@tiko/data'
 import { createI18n, defaultLanguage, tikoI18nKeys, tikoLanguages, type TikoLanguage } from '@tiko/i18n'
 import {
   TikoAppShell,
   TikoSettingsPanel,
-  createTikoTtsClient,
-  type TikoColorMode
+  TikoColorMode
 } from '@tiko/ui'
 import './styles.scss'
 
@@ -17,13 +16,10 @@ const identityStorageKey = 'tiko:identity:device-session'
 const appId = 'type' as const
 const apiBaseUrl = resolveApiBaseUrl()
 
-type KeyboardLayout = 'qwerty' | 'azerty' | 'abc'
-type SpeakStatus = 'idle' | 'speaking' | 'fallback' | 'error'
-
 interface PersistedState {
   language?: string
-  colorMode?: string
-  keyboardLayout?: string
+  colorMode?: TikoColorMode
+  keyboardLayout?: 'qwerty' | 'azerty' | 'abc'
   text?: string
   completedPrompts?: string[]
 }
@@ -63,29 +59,18 @@ function toColorMode(value: string | undefined): TikoColorMode {
   return value === 'light' || value === 'dark' || value === 'system' ? value : 'system'
 }
 
-function toKeyboardLayout(value: string | undefined): KeyboardLayout {
-  return value === 'qwerty' || value === 'azerty' || value === 'abc' ? value : 'qwerty'
-}
-
-function toCompletedPrompts(value: unknown): string[] {
-  return Array.isArray(value) ? value.filter((v): v is string => typeof v === 'string').slice(0, 50) : []
-}
-
 const stored = readJson<PersistedState>(storageKey, {})
 const i18n = createI18n({ app: appId, language: toLanguage(stored.language) })
 const language = ref<TikoLanguage>(toLanguage(stored.language))
 const colorMode = ref<TikoColorMode>(toColorMode(stored.colorMode))
-const keyboardLayout = ref<KeyboardLayout>(toKeyboardLayout(stored.keyboardLayout))
+const keyboardLayout = ref<'qwerty' | 'azerty' | 'abc'>(stored.keyboardLayout ?? 'abc')
 const text = ref(stored.text ?? '')
-const completedPrompts = ref<string[]>(toCompletedPrompts(stored.completedPrompts))
+const completedPrompts = ref<string[]>(stored.completedPrompts ?? [])
 const settingsOpen = ref(false)
-const phrasesOpen = ref(false)
-const speakStatus = ref<SpeakStatus>('idle')
 const settingsVersion = ref<number | undefined>()
 const stateVersion = ref<number | undefined>()
 const sessionToken = ref<string>('')
 const bootstrapped = ref(false)
-const tts = createTikoTtsClient()
 const identityClient = new IdentityClient({ baseUrl: apiBaseUrl })
 const dataClient = new TikoDataClient({ baseUrl: apiBaseUrl })
 
@@ -99,17 +84,44 @@ const labels = computed(() => {
     clear: i18n.t(tikoI18nKeys.type.compose.clear),
     phrasesTitle: i18n.t(tikoI18nKeys.type.phrases.title),
     phrasesEmpty: i18n.t(tikoI18nKeys.type.phrases.empty),
-    fallback: i18n.t(tikoI18nKeys.type.status.browserVoiceFallback),
+    browserVoiceFallback: i18n.t(tikoI18nKeys.type.status.browserVoiceFallback),
     speechError: i18n.t(tikoI18nKeys.type.status.speechError)
   }
 })
 
 const headerActions = computed(() => [
-  { id: 'phrases', label: labels.value.phrasesTitle, icon: 'ui/clock', active: phrasesOpen.value },
   { id: 'settings', label: 'Settings', icon: 'ui/settings-dual', active: settingsOpen.value }
 ])
 
-const canSpeak = computed(() => text.value.trim().length > 0)
+const QWERTY_ROWS = [
+  'qwertyuiop'.split(''),
+  'asdfghjkl'.split(''),
+  'zxcvbnm'.split('')
+]
+
+const AZERTY_ROWS = [
+  'azertyuiop'.split(''),
+  'qsdfghjklm'.split(''),
+  'wxcvbn'.split('')
+]
+
+const ABC_ROWS = [
+  'abcdefghij'.split(''),
+  'klmnopqrst'.split(''),
+  'uvwxyz'.split('')
+]
+
+const keyboardRows = computed(() => {
+  if (keyboardLayout.value === 'qwerty') return QWERTY_ROWS
+  if (keyboardLayout.value === 'azerty') return AZERTY_ROWS
+  return ABC_ROWS
+})
+
+const keyboardToggleLabel = computed(() => {
+  if (keyboardLayout.value === 'qwerty') return 'ABC'
+  if (keyboardLayout.value === 'azerty') return 'ABC'
+  return 'QWERTY'
+})
 
 function resolveColorMode(mode: TikoColorMode) {
   if (mode !== 'system') return mode
@@ -165,13 +177,19 @@ async function bootstrapIdentity() {
 function applySettings(settings: TypeSettings, version?: number) {
   language.value = toLanguage(settings.language)
   colorMode.value = toColorMode(settings.colorMode)
-  keyboardLayout.value = toKeyboardLayout(settings.keyboardLayout)
+  if (settings.keyboardLayout === 'qwerty' || settings.keyboardLayout === 'azerty' || settings.keyboardLayout === 'abc') {
+    keyboardLayout.value = settings.keyboardLayout
+  }
   settingsVersion.value = version
 }
 
 function applyState(state: TypeState, version?: number) {
-  if (typeof state.text === 'string') text.value = state.text
-  completedPrompts.value = toCompletedPrompts(state.completedPrompts)
+  if (typeof state.text === 'string') {
+    text.value = state.text
+  }
+  if (Array.isArray(state.completedPrompts)) {
+    completedPrompts.value = state.completedPrompts
+  }
   stateVersion.value = version
 }
 
@@ -208,7 +226,7 @@ async function persistStateRemote() {
     }, { version: stateVersion.value })
     stateVersion.value = response.version
   } catch {
-    // Local fallback is already written; remote will be retried on next change.
+    // Local fallback is already written; remote will be retried on the next change.
   }
 }
 
@@ -244,98 +262,166 @@ onMounted(async () => {
   }
 })
 
-async function speakText() {
-  const trimmed = text.value.trim()
-  if (!trimmed) return
-  speakStatus.value = 'speaking'
-  try {
-    const result = await tts.speak({ text: trimmed, language: language.value, provider: 'auto' })
-    speakStatus.value = result.metadata?.fallbackUsed ? 'fallback' : 'idle'
-  } catch {
-    speakStatus.value = 'error'
+function handleSpeak() {
+  if (!text.value.trim()) return
+  if (typeof window === 'undefined' || !window.speechSynthesis) return
+
+  window.speechSynthesis.cancel()
+  const utterance = new SpeechSynthesisUtterance(text.value)
+  utterance.onerror = () => {
+    // Speech synthesis error — silently handled
   }
-  savePromptToHistory(trimmed)
+  window.speechSynthesis.speak(utterance)
 }
 
-function savePromptToHistory(prompt: string) {
-  if (completedPrompts.value[0] === prompt) return
-  completedPrompts.value = [prompt, ...completedPrompts.value].slice(0, 50)
-}
-
-function clearText() {
+function handleClear() {
   text.value = ''
 }
 
-function reSpeakPhrase(phrase: string) {
+function handleKeyInput(char: string) {
+  text.value += char
+}
+
+function handleBackspace() {
+  text.value = text.value.slice(0, -1)
+}
+
+function handleSpace() {
+  text.value += ' '
+}
+
+function toggleKeyboardLayout() {
+  if (keyboardLayout.value === 'abc') {
+    keyboardLayout.value = 'qwerty'
+  } else if (keyboardLayout.value === 'qwerty') {
+    keyboardLayout.value = 'azerty'
+  } else {
+    keyboardLayout.value = 'abc'
+  }
+}
+
+function savePhrase() {
+  const trimmed = text.value.trim()
+  if (!trimmed) return
+  if (!completedPrompts.value.includes(trimmed)) {
+    completedPrompts.value = [...completedPrompts.value, trimmed]
+  }
+}
+
+function loadPhrase(phrase: string) {
   text.value = phrase
-  void speakText()
+}
+
+function removePhrase(phrase: string) {
+  completedPrompts.value = completedPrompts.value.filter(p => p !== phrase)
 }
 
 function headerAction(id: string) {
   if (id === 'settings') settingsOpen.value = !settingsOpen.value
-  if (id === 'phrases') phrasesOpen.value = !phrasesOpen.value
 }
 </script>
 
 <template>
   <TikoAppShell
     :app-name="labels.appName"
-    app-icon="ui/keyboard"
+    app-icon="ui/type"
     app-color="type"
     :actions="headerActions"
     @header-action="headerAction"
   >
     <section class="type-app" :data-color-mode="colorMode">
-      <section class="type-app__compose" :aria-label="labels.composeLabel">
-        <InputTextArea
-          id="type-compose"
+      <!-- Compose area -->
+      <div class="type-app__compose">
+        <label for="type-textarea">{{ labels.composeLabel }}</label>
+        <textarea
+          id="type-textarea"
           v-model="text"
-          class="type-app__compose-input"
-          :rows="3"
-          :maxlength="500"
-          :aria-label="labels.composeLabel"
+          class="type-app__textarea"
           :placeholder="labels.composePlaceholder"
         />
-        <div class="type-app__compose-actions">
-          <Button class="type-app__speak" variant="primary" icon="media/volume-iii" icon-only :disabled="!canSpeak" :aria-label="labels.speak" @click="speakText" />
-          <Button class="type-app__clear" variant="secondary" @click="clearText">{{ labels.clear }}</Button>
+
+        <!-- Action buttons -->
+        <div class="type-app__actions">
+          <Button
+            class="type-app__action-btn"
+            variant="primary"
+            icon="media/volume-up"
+            :disabled="!text.trim()"
+            @click="handleSpeak"
+          >
+            {{ labels.speak }}
+          </Button>
+          <Button
+            class="type-app__action-btn"
+            variant="secondary"
+            icon="ui/clear"
+            :disabled="!text"
+            @click="handleClear"
+          >
+            {{ labels.clear }}
+          </Button>
+          <Button
+            class="type-app__action-btn"
+            variant="secondary"
+            icon="ui/save"
+            :disabled="!text.trim()"
+            @click="savePhrase"
+          >
+            Save
+          </Button>
         </div>
-      </section>
+      </div>
 
-      <p v-if="speakStatus === 'fallback'" class="type-app__status" role="status">{{ labels.fallback }}</p>
-      <p v-if="speakStatus === 'error'" class="type-app__status type-app__status--error" role="alert">{{ labels.speechError }}</p>
+      <!-- Virtual keyboard -->
+      <div class="type-app__keyboard-toggle">
+        <button @click="toggleKeyboardLayout">
+          {{ keyboardToggleLabel }}
+        </button>
+      </div>
+      <div class="type-app__keyboard">
+        <template v-for="(row, rowIndex) in keyboardRows" :key="rowIndex">
+          <button
+            v-for="key in row"
+            :key="key"
+            class="type-app__key"
+            @click="handleKeyInput(key)"
+          >
+            {{ key.toUpperCase() }}
+          </button>
+          <!-- Add space and backspace on last row -->
+          <template v-if="rowIndex === keyboardRows.length - 1">
+            <button class="type-app__key type-app__key--space" @click="handleSpace">
+              Space
+            </button>
+            <button class="type-app__key type-app__key--wide" @click="handleBackspace">
+              &larr;
+            </button>
+          </template>
+        </template>
+      </div>
 
+      <!-- Saved phrases -->
+      <div class="type-app__phrases">
+        <div class="type-app__phrases-title">{{ labels.phrasesTitle }}</div>
+        <ul v-if="completedPrompts.length" class="type-app__phrases-list">
+          <li
+            v-for="phrase in completedPrompts"
+            :key="phrase"
+            class="type-app__phrase-item"
+            @click="loadPhrase(phrase)"
+          >
+            {{ phrase }}
+          </li>
+        </ul>
+        <p v-else>{{ labels.phrasesEmpty }}</p>
+      </div>
+
+      <!-- Settings panel -->
       <TikoSettingsPanel
         v-if="settingsOpen"
         v-model:language="language"
         v-model:color-mode="colorMode"
       />
-
-      <section v-if="settingsOpen" class="type-app__keyboard-setting" data-test="type-settings-keyboard">
-        <label>
-          Keyboard layout
-          <select
-            class="tiko-settings-panel__select"
-            :value="keyboardLayout"
-            data-test="tiko-settings-keyboard-layout"
-            @change="keyboardLayout = ($event.target as HTMLSelectElement).value as KeyboardLayout"
-          >
-            <option value="qwerty">QWERTY</option>
-            <option value="azerty">AZERTY</option>
-            <option value="abc">ABC</option>
-          </select>
-        </label>
-      </section>
-
-      <aside v-if="phrasesOpen" class="type-app__phrases" :aria-label="labels.phrasesTitle">
-        <strong>{{ labels.phrasesTitle }}</strong>
-        <p v-if="completedPrompts.length === 0">{{ labels.phrasesEmpty }}</p>
-        <ul v-else class="type-app__phrases-list">
-          <li v-for="(phrase, index) in completedPrompts" :key="`${phrase}-${index}`">
-            <button class="type-app__phrase-button" @click="reSpeakPhrase(phrase)">{{ phrase }}</button>
-          </li>
-        </ul>
-      </aside>
     </section>
   </TikoAppShell>
 </template>
