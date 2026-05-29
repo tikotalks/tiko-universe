@@ -38,7 +38,7 @@
   gap: 0.35rem;
   width: 5.5rem;
   height: 5.5rem;
-  border-radius: 1.25rem;
+border-radius: 1.25rem var(--tiko-squircle);
   border: none;
   background: var(--cat-color, #e8e8e8);
   color: #fff;
@@ -77,7 +77,7 @@
 .radio-app__track-card {
   display: flex;
   flex-direction: column;
-  border-radius: 1rem;
+border-radius: 1rem var(--tiko-squircle);
   overflow: hidden;
   background: var(--tiko-surface, var(--color-background));
   border: 2px solid transparent;
@@ -168,7 +168,7 @@
 
   &__tab {
     padding: 0.4rem 0.85rem;
-    border-radius: 2rem;
+border-radius: 2rem var(--tiko-squircle);
     border: 2px solid color-mix(in srgb, var(--color-foreground) 15%, transparent);
     background: transparent;
     font-size: 0.8rem;
@@ -196,7 +196,7 @@
     input {
       flex: 1;
       padding: 0.5rem 0.75rem;
-      border-radius: 0.75rem;
+border-radius: 0.75rem var(--tiko-squircle);
       border: 2px solid color-mix(in srgb, var(--color-foreground) 15%, transparent);
       background: var(--color-background);
       font-size: 0.85rem;
@@ -227,7 +227,7 @@
     align-items: center;
     gap: 0.75rem;
     padding: 0.6rem;
-    border-radius: 0.75rem;
+border-radius: 0.75rem var(--tiko-squircle);
     background: var(--tiko-surface, var(--color-background));
     transition: background 0.15s ease;
 
@@ -239,7 +239,7 @@
   &__video-thumb {
     width: 4rem;
     height: 3rem;
-    border-radius: 0.5rem;
+border-radius: 0.5rem var(--tiko-squircle);
     object-fit: cover;
     flex-shrink: 0;
   }
@@ -247,7 +247,7 @@
   &__video-thumb-placeholder {
     width: 4rem;
     height: 3rem;
-    border-radius: 0.5rem;
+border-radius: 0.5rem var(--tiko-squircle);
     background: color-mix(in srgb, var(--color-primary) 10%, var(--color-background));
     display: flex;
     align-items: center;
@@ -305,7 +305,7 @@
   left: 1rem;
   right: 1rem;
   z-index: 100;
-  border-radius: 1.5rem;
+border-radius: 1.5rem var(--tiko-squircle);
   background: #e84057;
   color: #fff;
   box-shadow: 0 8px 32px rgba(232, 64, 87, 0.35), 0 2px 8px rgba(0, 0, 0, 0.12);
@@ -342,7 +342,7 @@
   &__thumb {
     width: 4.5rem;
     height: 4.5rem;
-    border-radius: 1rem;
+border-radius: 1rem var(--tiko-squircle);
     object-fit: cover;
     flex-shrink: 0;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
@@ -351,7 +351,7 @@
   &__thumb-placeholder {
     width: 4.5rem;
     height: 4.5rem;
-    border-radius: 1rem;
+border-radius: 1rem var(--tiko-squircle);
     background: rgba(255, 255, 255, 0.15);
     display: flex;
     align-items: center;
@@ -481,7 +481,7 @@
 
     input {
       padding: 0.65rem 0.85rem;
-      border-radius: 0.75rem;
+border-radius: 0.75rem var(--tiko-squircle);
       border: 2px solid color-mix(in srgb, var(--color-foreground) 15%, transparent);
       font-size: 0.9rem;
       outline: none;
@@ -513,7 +513,7 @@
   &__logout {
     display: inline-block;
     padding: 0.5rem 1.25rem;
-    border-radius: 2rem;
+border-radius: 2rem var(--tiko-squircle);
     border: 2px solid #e84057;
     background: transparent;
     color: #e84057;
@@ -533,6 +533,6 @@
 .tiko-settings-panel {
   margin-top: 1rem;
   padding: 1rem;
-  border-radius: 1rem;
+border-radius: 1rem var(--tiko-squircle);
   background: var(--tiko-surface, var(--color-background));
 }

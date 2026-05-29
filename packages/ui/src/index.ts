@@ -48,6 +48,7 @@ export interface TikoHeaderAction {
   active?: boolean
   disabled?: boolean
   visible?: boolean
+  round?: boolean
 }
 
 export interface TikoTtsRequest extends GenerationTtsRequest {}
@@ -230,16 +231,16 @@ export const TikoAppHeader = defineComponent({
     appColor: { type: String as () => TikoAppColor, default: 'yes-no' },
     actions: { type: Array as () => TikoHeaderAction[], default: () => [] }
   },
-  emits: ['action'],
-  setup(props, { emit }) {
-    return () => h('header', { class: 'tiko-app-header', 'data-test': 'tiko-app-header', 'data-app-color': props.appColor }, [
+    emits: ['action', 'avatar-click'],
+    setup(props, { emit }) {
+      return () => h('header', { class: 'tiko-app-header', 'data-test': 'tiko-app-header', 'data-app-color': props.appColor }, [
       h('div', { class: 'tiko-app-header__brand' }, [
         h('span', { class: 'tiko-app-header__app-icon', 'aria-hidden': 'true' }, [iconSpan(props.appIcon)]),
         h('span', { class: 'tiko-app-header__title', 'data-test': 'tiko-shell-title' }, props.appName)
       ]),
       h('div', { class: 'tiko-app-header__actions' }, [
         ...props.actions.filter(a => a.visible !== false).map(action => h(Button, {
-          class: ['tiko-app-header__action', action.active ? 'tiko-app-header__action--active' : ''],
+          class: ['tiko-app-header__action', action.active ? 'tiko-app-header__action--active' : '', action.round ? 'tiko-app-header__action--round' : ''],
           variant: 'ghost',
           iconOnly: true,
           icon: action.icon,
@@ -248,7 +249,11 @@ export const TikoAppHeader = defineComponent({
           'data-test': `tiko-header-action-${action.id}`,
           onClick: () => emit('action', action.id)
         })),
-        props.avatar ? h('span', { class: 'tiko-app-header__avatar', 'aria-hidden': 'true' }, [iconSpan(props.avatar)]) : null
+        props.avatar ? h('button', {
+          class: 'tiko-app-header__avatar',
+          'aria-label': 'Account',
+          onClick: () => emit('avatar-click'),
+        }, [iconSpan(props.avatar)]) : null
       ])
     ])
   }
@@ -263,7 +268,7 @@ export const TikoAppShell = defineComponent({
     avatar: { type: String, default: '' },
     actions: { type: Array as () => TikoHeaderAction[], default: () => [] }
   },
-  emits: ['headerAction'],
+  emits: ['headerAction', 'avatar-click'],
   setup(props, { slots, emit }) {
     return () => h('div', { class: 'tiko-app-shell', 'data-app-color': props.appColor }, [
       h(TikoAppHeader, {
@@ -272,7 +277,8 @@ export const TikoAppShell = defineComponent({
         avatar: props.avatar,
         appColor: props.appColor,
         actions: props.actions,
-        onAction: (id: string) => emit('headerAction', id)
+        onAction: (id: string) => emit('headerAction', id),
+        onAvatarClick: () => emit('avatar-click'),
       }),
       h('main', { class: 'tiko-app-shell__main' }, slots.default?.())
     ])

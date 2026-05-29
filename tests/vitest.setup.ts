@@ -49,9 +49,17 @@ vi.mock('@sil/ui', () => {
     }
   })
 
+  const Popup = defineComponent({
+    name: 'SilPopupMock',
+    setup(_, { slots }) {
+      return () => slots.default?.()
+    }
+  })
+
   return {
     Button,
     Icon,
-    InputTextArea
+    InputTextArea,
+    Popup
   }
 })

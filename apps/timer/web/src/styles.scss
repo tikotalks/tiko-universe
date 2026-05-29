@@ -13,17 +13,17 @@ button:disabled { cursor: not-allowed; opacity: .45; }
 .timer-app__expired-label { font-size: 1.1rem; font-weight: 700; color: var(--color-primary, #f8c22e); margin-top: .25rem; }
 
 .timer-app__presets { display: flex; flex-wrap: wrap; justify-content: center; gap: .5rem; }
-.timer-app__preset-btn { border-radius: 999px; font-weight: 700; cursor: pointer; }
+.timer-app__preset-btn { border-radius: 999px var(--tiko-squircle); font-weight: 700; cursor: pointer; }
 
 .timer-app__custom { display: flex; align-items: center; justify-content: center; gap: .5rem; flex-wrap: wrap; }
 .timer-app__custom input {
   width: 4rem; padding: .45rem .5rem; border: 2px solid color-mix(in srgb, var(--tiko-surface), var(--color-foreground) 15%);
-  border-radius: .75rem; text-align: center; font-size: 1rem; font-weight: 600;
+  border-radius: .75rem var(--tiko-squircle); text-align: center; font-size: 1rem; font-weight: 600;
   background: color-mix(in srgb, var(--tiko-surface), var(--color-foreground) 4%); color: inherit;
 }
 .timer-app__custom input:focus { outline: 2px solid var(--color-primary, #f8c22e); outline-offset: 1px; }
 .timer-app__custom label { font-weight: 600; font-size: .9rem; }
 
 .timer-app__controls { display: flex; justify-content: center; gap: .75rem; align-items: center; flex-wrap: wrap; }
-.timer-app__control-btn { border-radius: 999px; font-weight: 800; }
+.timer-app__control-btn { border-radius: 999px var(--tiko-squircle); font-weight: 800; }
 .timer-app__control-btn--start { --button-color-text: var(--color-primary-text, #000); }

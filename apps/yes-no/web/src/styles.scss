@@ -4,13 +4,13 @@ button:disabled { cursor: not-allowed; opacity: .45; }
 .yes-no-app { text-align: center; }
 .yes-no-app__sentence { display: grid; gap: .55rem; max-width: 40rem; margin: .55rem auto 0; padding: .25rem 0 0; }
 .yes-no-app__sentence-input { width: 100%; box-sizing: border-box; }
-.yes-no-app__sentence-input .input-textarea__control { min-height: 3.5rem !important; height: 3.5rem !important; padding: .5rem .9rem; border: 0; border-radius: 1rem; resize: none; background: color-mix(in srgb, var(--tiko-surface), var(--color-foreground) 6%); color: inherit; text-align: center; font-size: clamp(1.25rem, 3vw, 1.85rem); line-height: 1.15; }
+.yes-no-app__sentence-input .input-textarea__control { min-height: 3.5rem !important; height: 3.5rem !important; padding: .5rem .9rem; border: 0; border-radius: 1rem var(--tiko-squircle); resize: none; background: color-mix(in srgb, var(--tiko-surface), var(--color-foreground) 6%); color: inherit; text-align: center; font-size: clamp(1.25rem, 3vw, 1.85rem); line-height: 1.15; }
 .yes-no-app__sentence-actions { display: flex; justify-content: center; gap: .75rem; align-items: center; flex-wrap: wrap; }
 .yes-no-app__speak { width: 3.6rem; height: 3.6rem; border-radius: 50%; --button-color-text: var(--color-primary-text); }
-.yes-no-app__reset { border-radius: 999px; font-weight: 800; cursor: pointer; }
+.yes-no-app__reset { border-radius: 999px var(--tiko-squircle); font-weight: 800; cursor: pointer; }
 .yes-no-app .tiko-choice-grid { margin-top: .55rem; }
 .yes-no-app__latest { color: var(--tiko-foreground-accent); font-weight: 800; }
-.yes-no-app__history, .yes-no-app__status { margin: 1rem auto 0; max-width: 36rem; padding: 1rem; border-radius: 1rem; background: var(--tiko-panel); }
+.yes-no-app__history, .yes-no-app__status { margin: 1rem auto 0; max-width: 36rem; padding: 1rem; border-radius: 1rem var(--tiko-squircle); background: var(--tiko-panel); }
 .yes-no-app__history ol { display: inline-grid; gap: .35rem; margin: .75rem 0 0; padding-left: 1.5rem; text-align: left; font-weight: 800; }
 .yes-no-app__status { font-weight: 700; }
 .yes-no-app__status--error { background: color-mix(in srgb, var(--tiko-answer-secondary), transparent 80%); color: var(--tiko-foreground); }

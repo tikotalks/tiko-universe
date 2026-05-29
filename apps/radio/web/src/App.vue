@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, onMounted, ref, watch, nextTick, inject, markRaw, h } from 'vue'
-import { Button } from '@sil/ui'
+import { Button, Popup } from '@sil/ui'
 import type { PopupService } from '@sil/ui'
 import { IdentityClient, type SessionBundle } from '@tiko/identity'
 import { TikoDataClient, type RadioSettings, type RadioState } from '@tiko/data'
@@ -151,16 +151,12 @@ const headerActions = computed(() => {
       label: labels.value.volume,
       icon: volumeIcon.value,
     },
-  ]
-
-  // Add button: only visible in parent mode (which requires being logged in)
-  if (parentMode.value) {
-    actions.push({
+    {
       id: 'add-video',
       label: labels.value.addVideo,
       icon: 'ui/add-m',
-    })
-  }
+    },
+  ]
 
   // Parent mode toggle – only when logged in
   if (sessionToken.value) {
@@ -174,11 +170,6 @@ const headerActions = computed(() => {
 
   actions.push(
     { id: 'settings', label: 'Settings', icon: 'ui/settings' },
-    {
-      id: 'avatar',
-      label: sessionToken.value ? 'Account' : labels.value.login,
-      icon: sessionToken.value ? 'ui/circle-user' : 'ui/circle-user',
-    },
   )
 
   return actions
@@ -561,6 +552,45 @@ function openLoginPopup() {
   })
 }
 
+// ---- Avatar click (login / account) ----------------------------------------
+function handleAvatarClick() {
+  if (!sessionToken.value) {
+    openLoginPopup()
+  } else {
+    openAccountPopup()
+  }
+}
+
+function openAccountPopup() {
+  popup.showPopup({
+    component: markRaw({
+      emits: ['logout'],
+      setup(_: any, { emit }: any) {
+        return () => h('div', { class: 'radio-app__account-popup' }, [
+          h('p', { class: 'radio-app__account-popup__info' }, `Logged in as ${userId.value}`),
+          h('button', {
+            class: 'radio-app__account-popup__logout',
+            onClick: () => {
+              emit('logout')
+            },
+          }, 'Log out'),
+        ])
+      },
+    }),
+    title: '',
+    config: { position: 'center', canClose: true, background: true, width: '16rem' },
+    on: {
+      logout: () => {
+        sessionToken.value = ''
+        userId.value = ''
+        parentMode.value = false
+        localStorage.removeItem(identityStorageKey)
+      },
+    },
+    onClose: () => {},
+  })
+}
+
 // ---- Event handlers --------------------------------------------------------
 function headerAction(id: string) {
   if (id === 'settings') {
@@ -572,41 +602,14 @@ function headerAction(id: string) {
   if (id === 'parent-mode') {
     parentMode.value = !parentMode.value
   }
-  if (id === 'avatar') {
+  if (id === 'add-video') {
     if (!sessionToken.value) {
       openLoginPopup()
-    } else {
-      // Logged in — show a simple popup with logout option
-      popup.showPopup({
-        component: markRaw({
-          emits: ['logout'],
-          setup(_: any, { emit }: any) {
-            return () => h('div', { class: 'radio-app__account-popup' }, [
-              h('p', { class: 'radio-app__account-popup__info' }, `Logged in as ${userId.value}`),
-              h('button', {
-                class: 'radio-app__account-popup__logout',
-                onClick: () => {
-                  emit('logout')
-                },
-              }, 'Log out'),
-            ])
-          },
-        }),
-        title: '',
-        config: { position: 'center', canClose: true, background: true, width: '16rem' },
-        on: {
-          logout: () => {
-            sessionToken.value = ''
-            userId.value = ''
-            parentMode.value = false
-            localStorage.removeItem(identityStorageKey)
-          },
-        },
-        onClose: () => {},
-      })
+      return
     }
-  }
-  if (id === 'add-video') {
+    if (!parentMode.value) {
+      parentMode.value = true
+    }
     openAddVideoPopup()
   }
 }
@@ -708,10 +711,15 @@ function handleCreateCategory() {
     :app-name="labels.appName"
     app-icon="media/headphones"
     app-color="radio"
+    avatar="ui/circle-user"
     :actions="headerActions"
     @header-action="headerAction"
+    @avatar-click="handleAvatarClick"
   >
     <section class="radio-app" :data-color-mode="colorMode">
+
+      <!-- Popup host (renders popupService.popups) -->
+      <Popup />
 
       <!-- ==================== SETTINGS PANEL ==================== -->
       <TikoSettingsPanel
