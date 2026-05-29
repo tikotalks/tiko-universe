@@ -18,7 +18,7 @@ export const tikoLanguages = [
 
 export type TikoLanguage = typeof tikoLanguages[number]
 
-export const tikoAppKeys = ['yes-no', 'type', 'timer'] as const
+export const tikoAppKeys = ['yes-no', 'type', 'timer', 'radio'] as const
 
 export type TikoAppKey = typeof tikoAppKeys[number]
 
@@ -145,6 +145,24 @@ export const tikoI18nKeys = {
       seconds: 'timer.settings.seconds',
     },
   },
+  radio: {
+    appName: 'radio.appName',
+    player: {
+      play: 'radio.player.play',
+      pause: 'radio.player.pause',
+      next: 'radio.player.next',
+      previous: 'radio.player.previous',
+      shuffle: 'radio.player.shuffle',
+      noTracks: 'radio.player.noTracks',
+    },
+    playlist: {
+      title: 'radio.playlist.title',
+      empty: 'radio.playlist.empty',
+    },
+    status: {
+      nowPlaying: 'radio.status.nowPlaying',
+    },
+  },
 } as const
 
 const yesNoEnglish: TranslationMap = {
@@ -215,6 +233,19 @@ const timerEnglish: TranslationMap = {
   [tikoI18nKeys.timer.settings.seconds]: 'Seconds',
 }
 
+const radioEnglish: TranslationMap = {
+  [tikoI18nKeys.radio.appName]: 'Radio',
+  [tikoI18nKeys.radio.player.play]: 'Play',
+  [tikoI18nKeys.radio.player.pause]: 'Pause',
+  [tikoI18nKeys.radio.player.next]: 'Next',
+  [tikoI18nKeys.radio.player.previous]: 'Previous',
+  [tikoI18nKeys.radio.player.shuffle]: 'Shuffle',
+  [tikoI18nKeys.radio.player.noTracks]: 'No tracks loaded',
+  [tikoI18nKeys.radio.playlist.title]: 'Playlist',
+  [tikoI18nKeys.radio.playlist.empty]: 'No tracks yet.',
+  [tikoI18nKeys.radio.status.nowPlaying]: 'Now playing',
+}
+
 const localTranslationBundles = [
   createTranslationBundle({ app: 'yes-no', language: 'en', translations: yesNoEnglish }),
   createTranslationBundle({ app: 'yes-no', language: 'fr', translations: yesNoFrench }),
@@ -222,6 +253,7 @@ const localTranslationBundles = [
   createTranslationBundle({ app: 'yes-no', language: 'es', translations: yesNoSpanish }),
   createTranslationBundle({ app: 'type', language: 'en', translations: typeEnglish }),
   createTranslationBundle({ app: 'timer', language: 'en', translations: timerEnglish }),
+  createTranslationBundle({ app: 'radio', language: 'en', translations: radioEnglish }),
 ]
 
 export function createTranslationBundle<App extends TikoAppKey, Language extends TikoLanguage>(

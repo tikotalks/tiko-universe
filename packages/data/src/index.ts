@@ -68,12 +68,26 @@ export interface TimerState extends JsonObject {
   lastPresets?: number[]
 }
 
+export interface RadioSettings extends JsonObject {
+  language?: string
+  colorMode?: 'light' | 'dark' | 'system'
+  autoPlay?: boolean
+  volume?: number
+}
+
+export interface RadioState extends JsonObject {
+  currentTrackIndex?: number
+  playlist?: string[]
+  shuffleEnabled?: boolean
+}
+
 export interface AppSettingsById {
   'yes-no': YesNoSettings
   type: TypeSettings
   cards: CardsSettings
   sequence: SequenceSettings
   timer: TimerSettings
+  radio: RadioSettings
 }
 
 export interface AppStateById {
@@ -82,6 +96,7 @@ export interface AppStateById {
   cards: CardsState
   sequence: SequenceState
   timer: TimerState
+  radio: RadioState
 }
 
 export class TikoDataClient {

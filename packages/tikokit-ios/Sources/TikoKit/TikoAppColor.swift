@@ -6,6 +6,7 @@ public enum TikoAppColor: String, CaseIterable, Sendable {
     case cards
     case sequence
     case timer
+    case radio
     case tiko
 }
 
@@ -34,6 +35,8 @@ public extension TikoAppColor {
             TikoAppPalette(label: "Sequence", primary: Color(hex: 0x16b8a6), dark: Color(hex: 0x08665d))
         case .timer:
             TikoAppPalette(label: "Timer", primary: Color(hex: 0xf8c22e), dark: Color(hex: 0x8a5d00))
+        case .radio:
+            TikoAppPalette(label: "Radio", primary: Color(hex: 0xe84057), dark: Color(hex: 0x7a1e2d))
         case .tiko:
             TikoAppPalette(label: "Tiko", primary: Color(hex: 0xef4f8f), dark: Color(hex: 0x8d1c4f))
         }
