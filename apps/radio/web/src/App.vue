@@ -517,7 +517,7 @@ function openAddVideoPopup() {
   popup.showPopup({
     component: markRaw(AddVideoPopup),
     title: '',
-    props: { categoryId: manageCategoryId.value ?? '', hasEmail: isRecoverable.value },
+    props: { categoryId: '', hasEmail: isRecoverable.value },
     config: { position: 'center', canClose: true, background: true, width: '28rem' },
     on: {
       add: (track: unknown) => {
