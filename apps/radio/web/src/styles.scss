@@ -1,793 +1,538 @@
-// ==========================================================================
-//  Radio App – Kid Mode + Parent Mode Styles
-//  Mobile-first · Colorful · Playful
-// ==========================================================================
-
-// ---- Global resets -------------------------------------------------------
-body { margin: 0; }
-button, textarea, select { font: inherit; }
-button:disabled { cursor: not-allowed; opacity: 0.45; }
-
-// ---- Custom properties (fallbacks if design tokens are missing) -----------
-:root {
-  --color-primary: #e84057;
-  --color-primary-text: #fff;
-  --color-foreground: #1a1a2e;
-  --tiko-surface: #fff;
+// ---- Radio App Styles --------------------------------------------------------
+// ---- Animations ---------------------------------------------------------------
+@keyframes radio-fade-in {
+  from { opacity: 0; transform: translateY(0.5rem); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
-[data-color-mode="dark"] {
-  --tiko-surface: #1a1a2e;
-  --color-foreground: #f0f0f5;
-}
-
-// ---- Main layout ---------------------------------------------------------
+// ---- Base layout --------------------------------------------------------------
 .radio-app {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  min-height: calc(100vh - 4rem); /* subtract header */
-  padding: 1rem;
-  padding-bottom: 7.5rem; /* space for fixed now-playing bar */
+  padding-bottom: 14rem; // room for floating player
+  animation: radio-fade-in 0.3s ease-out;
+
+  &__empty {
+    text-align: center;
+    padding: 2rem 1rem;
+    color: color-mix(in srgb, var(--color-foreground) 50%, transparent);
+    font-size: 0.95rem;
+  }
 }
 
-// ==========================================================================
-//  VOLUME POPOVER
-// ==========================================================================
-.radio-app__volume-popover {
-  position: absolute;
-  top: 0;
-  right: 0.5rem;
-  z-index: 30;
-  animation: radio-fade-in 0.15s ease;
-}
-
-.radio-app__volume-popover__inner {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  padding: 0.75rem 1rem;
-  border-radius: 1rem;
-  background: var(--tiko-surface);
-  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.12);
-  border: 1px solid color-mix(in srgb, var(--tiko-surface), var(--color-foreground) 12%);
-}
-
-.radio-app__volume-popover input[type="range"] {
-  width: 8rem;
-  accent-color: var(--color-primary, #e84057);
-  height: 0.4rem;
-}
-
-.radio-app__volume-popover__value {
-  font-size: 0.8rem;
-  font-weight: 600;
-  color: color-mix(in srgb, var(--color-foreground), transparent 30%);
-  min-width: 2.5rem;
-  text-align: right;
-  font-variant-numeric: tabular-nums;
-}
-
-// ==========================================================================
-//  KID MODE
-// ==========================================================================
-.radio-app__kid {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 1.25rem;
-  padding-top: 0.5rem;
-}
-
-.radio-app__pick-text {
-  font-size: 1.15rem;
-  font-weight: 700;
-  color: color-mix(in srgb, var(--color-foreground), transparent 15%);
-  text-align: center;
-  margin: 0;
-}
-
-// ---- Category cards (horizontal scroll) ----------------------------------
+// ---- Categories (conditional — only shown when categories exist) ---------------
 .radio-app__categories {
   display: flex;
   gap: 0.75rem;
+  padding: 0.5rem 0 1rem;
   overflow-x: auto;
-  padding: 0.5rem 0;
-  width: 100%;
-  max-width: 42rem;
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
-}
-
-.radio-app__categories::-webkit-scrollbar {
-  display: none;
+  &::-webkit-scrollbar { display: none; }
 }
 
 .radio-app__category-card {
+  flex-shrink: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 0.4rem;
-  min-width: 5rem;
-  min-height: 5rem;
-  padding: 0.75rem;
-  border: 3px solid transparent;
-  border-radius: 1.5rem;
-  background: var(--cat-color, #ddd);
+  gap: 0.35rem;
+  width: 5.5rem;
+  height: 5.5rem;
+  border-radius: 1.25rem;
+  border: none;
+  background: var(--cat-color, #e8e8e8);
   color: #fff;
+  font-weight: 600;
   cursor: pointer;
-  transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
-  flex-shrink: 0;
-  box-shadow: 0 3px 12px color-mix(in srgb, var(--cat-color, #999) 40%, transparent);
-  font-family: inherit;
-  font-size: inherit;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  box-shadow: 0 2px 8px color-mix(in srgb, var(--cat-color, #e8e8e8) 30%, transparent);
+
+  &--active {
+    transform: scale(1.08);
+    box-shadow: 0 4px 16px color-mix(in srgb, var(--cat-color, #e8e8e8) 45%, transparent);
+    outline: 3px solid var(--color-foreground);
+    outline-offset: 2px;
+  }
+
+  &__icon {
+    font-size: 1.75rem;
+    line-height: 1;
+  }
+
+  &__label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+  }
 }
 
-.radio-app__category-card:hover {
-  transform: scale(1.08);
-  box-shadow: 0 5px 20px color-mix(in srgb, var(--cat-color, #999) 50%, transparent);
-}
-
-.radio-app__category-card:active {
-  transform: scale(0.96);
-}
-
-.radio-app__category-card--active {
-  border-color: var(--color-foreground, #333);
-  transform: scale(1.08);
-  box-shadow: 0 5px 20px color-mix(in srgb, var(--cat-color, #999) 50%, transparent);
-}
-
-.radio-app__category-card__icon {
-  font-size: 1.75rem;
-  line-height: 1;
-  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.2));
-}
-
-.radio-app__category-card__label {
-  font-size: 0.8rem;
-  font-weight: 700;
-  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
-  letter-spacing: 0.01em;
-}
-
-// ---- Track grid ----------------------------------------------------------
+// ---- Track grid ---------------------------------------------------------------
 .radio-app__track-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(8.5rem, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(10rem, 1fr));
   gap: 1rem;
-  width: 100%;
-  max-width: 52rem;
+  padding: 0.5rem 0;
 }
 
 .radio-app__track-card {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.75rem;
-  border-radius: 1.25rem;
+  border-radius: 1rem;
+  overflow: hidden;
+  background: var(--tiko-surface, var(--color-background));
   border: 2px solid transparent;
-  background: color-mix(in srgb, var(--tiko-surface), var(--color-foreground) 6%);
   cursor: pointer;
-  transition: transform 0.15s ease, border-color 0.15s ease, background 0.15s ease;
-  text-align: center;
-  font-family: inherit;
-  font-size: inherit;
+  transition: transform 0.15s ease, border-color 0.15s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+  }
+
+  &--active {
+    border-color: var(--color-primary);
+  }
+
+  &__thumb {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+  }
+
+  &__placeholder {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.5rem;
+    background: color-mix(in srgb, var(--color-primary) 10%, var(--color-background));
+  }
+
+  &__info {
+    padding: 0.6rem 0.75rem;
+  }
+
+  &__title {
+    display: block;
+    font-weight: 600;
+    font-size: 0.85rem;
+    color: var(--color-foreground);
+    line-height: 1.3;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &__artist {
+    display: block;
+    font-size: 0.75rem;
+    color: color-mix(in srgb, var(--color-foreground) 50%, transparent);
+    margin-top: 0.15rem;
+  }
 }
 
-.radio-app__track-card:hover {
-  background: color-mix(in srgb, var(--tiko-surface), var(--color-primary) 10%);
-  transform: translateY(-2px);
-}
-
-.radio-app__track-card:active {
-  transform: scale(0.97);
-}
-
-.radio-app__track-card--active {
-  border-color: var(--color-primary, #e84057);
-  background: color-mix(in srgb, var(--tiko-surface), var(--color-primary) 14%);
-}
-
-.radio-app__track-card__thumb {
-  width: 100%;
-  aspect-ratio: 16 / 9;
-  object-fit: cover;
-  border-radius: 0.75rem;
-  background: color-mix(in srgb, var(--tiko-surface), var(--color-foreground) 10%);
-}
-
-.radio-app__track-card__placeholder {
-  width: 100%;
-  aspect-ratio: 16 / 9;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 2.5rem;
-  border-radius: 0.75rem;
-  background: color-mix(in srgb, var(--tiko-surface), var(--color-foreground) 10%);
-}
-
-.radio-app__track-card__info {
-  display: flex;
-  flex-direction: column;
-  gap: 0.15rem;
-  width: 100%;
-}
-
-.radio-app__track-card__title {
-  font-size: 0.9rem;
-  font-weight: 700;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.radio-app__track-card__artist {
-  font-size: 0.8rem;
-  font-weight: 500;
-  color: color-mix(in srgb, var(--color-foreground), transparent 30%);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-// ---- Empty state ----------------------------------------------------------
-.radio-app__empty {
-  font-size: 0.95rem;
-  color: color-mix(in srgb, var(--color-foreground), transparent 40%);
-  text-align: center;
-  padding: 2rem 1rem;
-}
-
-// ---- Extra controls (shuffle / repeat) -------------------------------------
+// ---- Extra controls (shuffle/repeat) ------------------------------------------
 .radio-app__extra-controls {
   display: flex;
   gap: 0.5rem;
   justify-content: center;
-  margin-top: 0.25rem;
+  padding: 1rem 0 0.5rem;
 }
 
-// ==========================================================================
-//  NOW-PLAYING BAR (fixed bottom, always visible when a track is active)
-// ==========================================================================
-.radio-app__now-playing {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  z-index: 20;
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  padding: 0.6rem 1rem;
-  background: color-mix(in srgb, var(--tiko-surface), var(--color-foreground) 2%);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border-top: 1px solid color-mix(in srgb, var(--tiko-surface), var(--color-foreground) 8%);
-  box-shadow: 0 -2px 20px rgba(0, 0, 0, 0.06);
+// ---- Kid mode ----------------------------------------------------------------
+.radio-app__kid {
+  animation: radio-fade-in 0.3s ease-out;
 }
 
-.radio-app__now-playing__thumb {
-  width: 2.75rem;
-  height: 2.75rem;
-  border-radius: 0.75rem;
-  object-fit: cover;
-  flex-shrink: 0;
-}
-
-.radio-app__now-playing__thumb-placeholder {
-  width: 2.75rem;
-  height: 2.75rem;
-  border-radius: 0.75rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.25rem;
-  background: color-mix(in srgb, var(--tiko-surface), var(--color-foreground) 8%);
-  flex-shrink: 0;
-}
-
-.radio-app__now-playing__info {
-  display: flex;
-  flex-direction: column;
-  gap: 0.1rem;
-  min-width: 0;
-  flex: 0 1 auto;
-  max-width: 12rem;
-}
-
-.radio-app__now-playing__title {
-  font-size: 0.85rem;
-  font-weight: 700;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.radio-app__now-playing__artist {
-  font-size: 0.75rem;
-  font-weight: 500;
-  color: color-mix(in srgb, var(--color-foreground), transparent 30%);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.radio-app__now-playing__progress {
-  flex: 1;
-  height: 0.375rem;
-  border-radius: 0.1875rem;
-  background: color-mix(in srgb, var(--tiko-surface), var(--color-foreground) 10%);
-  cursor: pointer;
-  overflow: hidden;
-  min-width: 3rem;
-}
-
-.radio-app__now-playing__progress-fill {
-  height: 100%;
-  border-radius: 0.1875rem;
-  background: var(--color-primary, #e84057);
-  transition: width 0.15s linear;
-}
-
-.radio-app__now-playing__time {
-  font-size: 0.7rem;
-  font-weight: 600;
-  font-variant-numeric: tabular-nums;
-  color: color-mix(in srgb, var(--color-foreground), transparent 35%);
-  white-space: nowrap;
-  flex-shrink: 0;
-}
-
-.radio-app__now-playing__transport {
-  display: flex;
-  align-items: center;
-  gap: 0.25rem;
-  flex-shrink: 0;
-}
-
-// ==========================================================================
-//  PARENT MODE / MANAGEMENT
-// ==========================================================================
+// ---- Parent mode / manage ----------------------------------------------------
 .radio-app__manage {
-  display: flex;
-  flex-direction: column;
-  gap: 1.25rem;
-}
+  animation: radio-fade-in 0.3s ease-out;
 
-// ---- Management header ----------------------------------------------------
-.radio-app__manage__header {
-  text-align: left;
-}
-
-.radio-app__manage__title {
-  font-size: 1.5rem;
-  font-weight: 800;
-  margin: 0 0 0.25rem;
-}
-
-.radio-app__manage__subtitle {
-  font-size: 0.95rem;
-  font-weight: 500;
-  color: color-mix(in srgb, var(--color-foreground), transparent 25%);
-  margin: 0 0 0.75rem;
-}
-
-.radio-app__manage__notice {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.4rem;
-  font-size: 0.85rem;
-  font-weight: 600;
-  color: color-mix(in srgb, var(--color-foreground), transparent 35%);
-  background: color-mix(in srgb, var(--tiko-surface), var(--color-foreground) 5%);
-  padding: 0.45rem 0.85rem;
-  border-radius: 0.75rem;
-  margin: 0;
-}
-
-// ---- Category tabs -------------------------------------------------------
-.radio-app__manage__tabs {
-  display: flex;
-  gap: 0.5rem;
-  overflow-x: auto;
-  padding: 0.25rem 0;
-  scrollbar-width: none;
-}
-
-.radio-app__manage__tabs::-webkit-scrollbar {
-  display: none;
-}
-
-.radio-app__manage__tab {
-  padding: 0.5rem 1rem;
-  border-radius: 2rem;
-  border: 2px solid color-mix(in srgb, var(--tiko-surface), var(--color-foreground) 12%);
-  background: color-mix(in srgb, var(--tiko-surface), var(--color-foreground) 4%);
-  font-size: 0.85rem;
-  font-weight: 600;
-  white-space: nowrap;
-  cursor: pointer;
-  transition: all 0.15s ease;
-  flex-shrink: 0;
-  font-family: inherit;
-}
-
-.radio-app__manage__tab:hover {
-  background: color-mix(in srgb, var(--tiko-surface), var(--color-foreground) 10%);
-}
-
-.radio-app__manage__tab--active {
-  background: var(--color-primary, #e84057);
-  border-color: var(--color-primary, #e84057);
-  color: var(--color-primary-text, #fff);
-}
-
-.radio-app__manage__tab--active:hover {
-  background: color-mix(in srgb, var(--color-primary, #e84057), var(--color-foreground) 10%);
-}
-
-.radio-app__manage__tab--add {
-  border-style: dashed;
-  color: color-mix(in srgb, var(--color-foreground), transparent 40%);
-}
-
-// ---- New category inline form --------------------------------------------
-.radio-app__manage__new-cat {
-  display: flex;
-  gap: 0.5rem;
-  align-items: center;
-  animation: radio-fade-in 0.15s ease;
-}
-
-.radio-app__manage__new-cat input {
-  padding: 0.5rem 0.75rem;
-  border: 2px solid color-mix(in srgb, var(--tiko-surface), var(--color-foreground) 15%);
-  border-radius: 0.75rem;
-  font-size: 0.9rem;
-  background: color-mix(in srgb, var(--tiko-surface), var(--color-foreground) 4%);
-  color: inherit;
-  flex: 1;
-  max-width: 16rem;
-}
-
-.radio-app__manage__new-cat input:focus {
-  outline: 2px solid var(--color-primary, #e84057);
-  outline-offset: 1px;
-}
-
-// ---- Two-column content layout --------------------------------------------
-.radio-app__manage__content {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 1.5rem;
-}
-
-@media (min-width: 48rem) {
-  .radio-app__manage__content {
-    grid-template-columns: 1fr 1fr;
-  }
-}
-
-// ---- Video list panel -----------------------------------------------------
-.radio-app__manage__list h3,
-.radio-app__manage__add h3 {
-  font-size: 1.1rem;
-  font-weight: 700;
-  margin: 0 0 0.75rem;
-}
-
-.radio-app__manage__empty {
-  font-size: 0.9rem;
-  color: color-mix(in srgb, var(--color-foreground), transparent 40%);
-  padding: 1.5rem 0;
-  text-align: center;
-}
-
-.radio-app__manage__video-list {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-
-.radio-app__manage__video-row {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  padding: 0.5rem;
-  border-radius: 0.75rem;
-  background: color-mix(in srgb, var(--tiko-surface), var(--color-foreground) 4%);
-  transition: background 0.15s ease;
-}
-
-.radio-app__manage__video-row:hover {
-  background: color-mix(in srgb, var(--tiko-surface), var(--color-foreground) 10%);
-}
-
-.radio-app__manage__video-thumb {
-  width: 4.5rem;
-  height: 2.5rem;
-  border-radius: 0.5rem;
-  object-fit: cover;
-  flex-shrink: 0;
-}
-
-.radio-app__manage__video-thumb-placeholder {
-  width: 4.5rem;
-  height: 2.5rem;
-  border-radius: 0.5rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.1rem;
-  background: color-mix(in srgb, var(--tiko-surface), var(--color-foreground) 10%);
-  flex-shrink: 0;
-}
-
-.radio-app__manage__video-info {
-  display: flex;
-  flex-direction: column;
-  gap: 0.1rem;
-  min-width: 0;
-  flex: 1;
-}
-
-.radio-app__manage__video-title {
-  font-size: 0.85rem;
-  font-weight: 600;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.radio-app__manage__video-duration {
-  font-size: 0.75rem;
-  font-weight: 500;
-  color: color-mix(in srgb, var(--color-foreground), transparent 30%);
-  font-variant-numeric: tabular-nums;
-}
-
-.radio-app__manage__video-remove {
-  background: none;
-  border: none;
-  font-size: 1.4rem;
-  line-height: 1;
-  cursor: pointer;
-  padding: 0.25rem 0.5rem;
-  border-radius: 0.5rem;
-  color: color-mix(in srgb, var(--color-foreground), transparent 50%);
-  transition: color 0.15s ease, background 0.15s ease;
-  flex-shrink: 0;
-}
-
-.radio-app__manage__video-remove:hover {
-  color: #e84057;
-  background: color-mix(in srgb, var(--tiko-surface), #e84057 10%);
-}
-
-// ---- Add video form panel -------------------------------------------------
-.radio-app__manage__form {
-  display: flex;
-  flex-direction: column;
-  gap: 0.65rem;
-}
-
-.radio-app__manage__form label {
-  font-size: 0.85rem;
-  font-weight: 600;
-  color: color-mix(in srgb, var(--color-foreground), transparent 15%);
-}
-
-.radio-app__manage__form input[type="url"],
-.radio-app__manage__form input[type="text"] {
-  padding: 0.6rem 0.85rem;
-  border: 2px solid color-mix(in srgb, var(--tiko-surface), var(--color-foreground) 15%);
-  border-radius: 0.85rem;
-  font-size: 0.9rem;
-  background: color-mix(in srgb, var(--tiko-surface), var(--color-foreground) 4%);
-  color: inherit;
-  transition: border-color 0.15s ease;
-}
-
-.radio-app__manage__form input[type="url"]:focus,
-.radio-app__manage__form input[type="text"]:focus {
-  outline: none;
-  border-color: var(--color-primary, #e84057);
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-primary, #e84057), transparent 75%);
-}
-
-.radio-app__manage__form select {
-  padding: 0.6rem 0.85rem;
-  border: 2px solid color-mix(in srgb, var(--tiko-surface), var(--color-foreground) 15%);
-  border-radius: 0.85rem;
-  font-size: 0.9rem;
-  background: color-mix(in srgb, var(--tiko-surface), var(--color-foreground) 4%);
-  color: inherit;
-  cursor: pointer;
-  transition: border-color 0.15s ease;
-}
-
-.radio-app__manage__form select:focus {
-  outline: none;
-  border-color: var(--color-primary, #e84057);
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-primary, #e84057), transparent 75%);
-}
-
-// ---- YouTube preview card ------------------------------------------------
-.radio-app__manage__preview {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  animation: radio-fade-in 0.2s ease;
-}
-
-.radio-app__manage__preview-label {
-  font-size: 0.85rem;
-  font-weight: 600;
-  color: color-mix(in srgb, var(--color-foreground), transparent 15%);
-}
-
-.radio-app__manage__preview-card {
-  display: flex;
-  gap: 0.75rem;
-  align-items: center;
-  padding: 0.6rem;
-  border-radius: 0.85rem;
-  background: color-mix(in srgb, var(--tiko-surface), var(--color-foreground) 6%);
-}
-
-.radio-app__manage__preview-card img {
-  width: 7rem;
-  height: 4rem;
-  border-radius: 0.5rem;
-  object-fit: cover;
-  flex-shrink: 0;
-}
-
-.radio-app__manage__preview-card > div {
-  display: flex;
-  flex-direction: column;
-  gap: 0.15rem;
-  min-width: 0;
-  overflow: hidden;
-}
-
-.radio-app__manage__preview-title {
-  font-size: 0.85rem;
-  font-weight: 600;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-}
-
-.radio-app__manage__preview-duration {
-  font-size: 0.75rem;
-  font-weight: 500;
-  color: color-mix(in srgb, var(--color-foreground), transparent 30%);
-  font-variant-numeric: tabular-nums;
-}
-
-// ---- Upload label ---------------------------------------------------------
-.radio-app__manage__upload {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.55rem 1.1rem;
-  border-radius: 0.85rem;
-  font-weight: 600;
-  font-size: 0.9rem;
-  cursor: pointer;
-  background: color-mix(in srgb, var(--tiko-surface), var(--color-primary) 12%);
-  color: var(--color-primary, #e84057);
-  transition: background 0.15s ease;
-  width: fit-content;
-}
-
-.radio-app__manage__upload:hover {
-  background: color-mix(in srgb, var(--tiko-surface), var(--color-primary) 20%);
-}
-
-// ==========================================================================
-//  SETTINGS PANEL OVERRIDES
-// ==========================================================================
-.tiko-settings-panel {
-  margin-bottom: 1rem;
-  padding: 1rem 1.25rem;
-  border-radius: 1rem;
-  background: color-mix(in srgb, var(--tiko-surface), var(--color-foreground) 4%);
-  animation: radio-fade-in 0.15s ease;
-}
-
-// ==========================================================================
-//  ANIMATIONS
-// ==========================================================================
-@keyframes radio-fade-in {
-  from {
-    opacity: 0;
-    transform: translateY(-0.35rem);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-// ==========================================================================
-//  RESPONSIVE: Small screens (< 24rem / ~384px)
-// ==========================================================================
-@media (max-width: 24rem) {
-  .radio-app__now-playing {
-    flex-wrap: wrap;
+  &__notice {
+    display: flex;
+    align-items: center;
     gap: 0.4rem;
-    padding: 0.5rem 0.75rem;
+    font-size: 0.8rem;
+    color: color-mix(in srgb, var(--color-foreground) 50%, transparent);
+    margin-bottom: 1rem;
   }
 
-  .radio-app__now-playing__info {
-    flex: 1 1 calc(100% - 3.75rem);
-    max-width: none;
+  &__tabs {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin-bottom: 1rem;
   }
 
-  .radio-app__now-playing__progress {
-    order: 5;
-    flex-basis: 100%;
+  &__tab {
+    padding: 0.4rem 0.85rem;
+    border-radius: 2rem;
+    border: 2px solid color-mix(in srgb, var(--color-foreground) 15%, transparent);
+    background: transparent;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s ease;
+
+    &--active {
+      background: var(--color-primary);
+      color: #fff;
+      border-color: var(--color-primary);
+    }
+
+    &--add {
+      border-style: dashed;
+      color: color-mix(in srgb, var(--color-foreground) 50%, transparent);
+    }
   }
 
-  .radio-app__now-playing__time {
-    order: 6;
+  &__new-cat {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+
+    input {
+      flex: 1;
+      padding: 0.5rem 0.75rem;
+      border-radius: 0.75rem;
+      border: 2px solid color-mix(in srgb, var(--color-foreground) 15%, transparent);
+      background: var(--color-background);
+      font-size: 0.85rem;
+    }
   }
 
-  .radio-app__track-grid {
-    grid-template-columns: repeat(auto-fill, minmax(6.5rem, 1fr));
-    gap: 0.65rem;
+  &__list {
+    h3 {
+      font-size: 1rem;
+      margin-bottom: 0.75rem;
+    }
   }
 
-  .radio-app__category-card {
-    min-width: 4.25rem;
-    min-height: 4.25rem;
+  &__empty {
+    text-align: center;
+    padding: 2rem;
+    color: color-mix(in srgb, var(--color-foreground) 50%, transparent);
   }
 
-  .radio-app__category-card__icon {
-    font-size: 1.5rem;
+  &__video-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  &__video-row {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.6rem;
+    border-radius: 0.75rem;
+    background: var(--tiko-surface, var(--color-background));
+    transition: background 0.15s ease;
+
+    &:hover {
+      background: color-mix(in srgb, var(--tiko-surface, var(--color-background)) 90%, var(--color-primary));
+    }
+  }
+
+  &__video-thumb {
+    width: 4rem;
+    height: 3rem;
+    border-radius: 0.5rem;
+    object-fit: cover;
+    flex-shrink: 0;
+  }
+
+  &__video-thumb-placeholder {
+    width: 4rem;
+    height: 3rem;
+    border-radius: 0.5rem;
+    background: color-mix(in srgb, var(--color-primary) 10%, var(--color-background));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+    flex-shrink: 0;
+  }
+
+  &__video-info {
+    flex: 1;
+    min-width: 0;
+  }
+
+  &__video-title {
+    display: block;
+    font-weight: 600;
+    font-size: 0.85rem;
+    color: var(--color-foreground);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &__video-duration {
+    font-size: 0.75rem;
+    color: color-mix(in srgb, var(--color-foreground) 50%, transparent);
+  }
+
+  &__video-remove {
+    width: 2rem;
+    height: 2rem;
+    border-radius: 50%;
+    border: none;
+    background: color-mix(in srgb, #e84057 15%, transparent);
+    color: #e84057;
+    font-size: 1rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: background 0.15s ease;
+
+    &:hover {
+      background: #e84057;
+      color: #fff;
+    }
   }
 }
 
-// ==========================================================================
-//  RESPONSIVE: Medium screens (≥ 48rem / ~768px)
-// ==========================================================================
-@media (min-width: 48rem) {
-  .radio-app {
-    padding: 1.5rem 2rem;
-    padding-bottom: 8rem;
+// ---- Floating Player (big, chunky, red) ---------------------------------------
+.radio-app__player {
+  position: fixed;
+  bottom: 1rem;
+  left: 1rem;
+  right: 1rem;
+  z-index: 100;
+  border-radius: 1.5rem;
+  background: #e84057;
+  color: #fff;
+  box-shadow: 0 8px 32px rgba(232, 64, 87, 0.35), 0 2px 8px rgba(0, 0, 0, 0.12);
+  overflow: hidden;
+  animation: radio-fade-in 0.3s ease-out;
+  max-width: 40rem;
+  margin: 0 auto;
+
+  // Progress bar on top
+  &__progress {
+    width: 100%;
+    height: 0.35rem;
+    background: rgba(255, 255, 255, 0.25);
+    cursor: pointer;
+
+    &-fill {
+      height: 100%;
+      background: rgba(255, 255, 255, 0.85);
+      border-radius: 0 0.25rem 0.25rem 0;
+      transition: width 0.3s linear;
+      will-change: width;
+    }
   }
 
-  .radio-app__track-grid {
-    grid-template-columns: repeat(auto-fill, minmax(10rem, 1fr));
+  // Body: thumb + info + transport
+  &__body {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem 1.25rem;
   }
 
-  .radio-app__now-playing {
-    padding: 0.7rem 2rem;
+  // Thumbnail
+  &__thumb {
+    width: 4.5rem;
+    height: 4.5rem;
+    border-radius: 1rem;
+    object-fit: cover;
+    flex-shrink: 0;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
   }
 
-  .radio-app__now-playing__info {
-    max-width: 18rem;
+  &__thumb-placeholder {
+    width: 4.5rem;
+    height: 4.5rem;
+    border-radius: 1rem;
+    background: rgba(255, 255, 255, 0.15);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    flex-shrink: 0;
+  }
+
+  // Info (title, artist, elapsed)
+  &__info {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+  }
+
+  &__title {
+    font-weight: 700;
+    font-size: 0.95rem;
+    line-height: 1.2;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &__artist {
+    font-size: 0.8rem;
+    opacity: 0.8;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &__elapsed {
+    font-size: 0.75rem;
+    opacity: 0.6;
+    font-variant-numeric: tabular-nums;
+  }
+
+  // Transport controls
+  &__transport {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    flex-shrink: 0;
+  }
+
+  &__transport-btn {
+    border: none;
+    background: rgba(255, 255, 255, 0.15);
+    color: #fff;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.15s ease, transform 0.1s ease;
+
+    &:hover { background: rgba(255, 255, 255, 0.25); }
+    &:active { transform: scale(0.92); }
+
+    &--small {
+      width: 2.5rem;
+      height: 2.5rem;
+
+      svg { width: 1.1rem; height: 1.1rem; }
+    }
+
+    &--play {
+      width: 3.5rem;
+      height: 3.5rem;
+      background: #fff;
+      color: #e84057;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+
+      svg { width: 1.4rem; height: 1.4rem; }
+
+      &:hover { background: #fff; transform: scale(1.05); }
+      &:active { transform: scale(0.95); }
+    }
   }
 }
 
-// ==========================================================================
-//  RESPONSIVE: Large screens (≥ 64rem / ~1024px)
-// ==========================================================================
-@media (min-width: 64rem) {
-  .radio-app {
-    padding: 2rem 3rem;
-    padding-bottom: 8rem;
+// ---- Volume popup (inside popupService) ---------------------------------------
+.radio-app__volume-popup {
+  padding: 1.25rem;
+  min-width: 14rem;
+
+  &__inner {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
   }
 
-  .radio-app__track-grid {
-    grid-template-columns: repeat(auto-fill, minmax(11rem, 1fr));
+  &__value {
+    text-align: center;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--color-foreground);
+    font-variant-numeric: tabular-nums;
   }
+
+  input[type="range"] {
+    width: 100%;
+    accent-color: var(--color-primary);
+    height: 0.35rem;
+  }
+}
+
+// ---- Login popup (placeholder) -----------------------------------------------
+.radio-app__login-popup {
+  padding: 1.5rem;
+  text-align: center;
+
+  &__title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-bottom: 0.75rem;
+  }
+
+  &__label {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
+
+    input {
+      padding: 0.65rem 0.85rem;
+      border-radius: 0.75rem;
+      border: 2px solid color-mix(in srgb, var(--color-foreground) 15%, transparent);
+      font-size: 0.9rem;
+      outline: none;
+
+      &:focus {
+        border-color: var(--color-primary);
+      }
+    }
+  }
+
+  &__hint {
+    font-size: 0.8rem;
+    color: color-mix(in srgb, var(--color-foreground) 50%, transparent);
+    margin-top: 0.5rem;
+  }
+}
+
+// ---- Account popup (logged in) -----------------------------------------------
+.radio-app__account-popup {
+  padding: 1rem;
+  text-align: center;
+
+  &__info {
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+  }
+
+  &__logout {
+    display: inline-block;
+    padding: 0.5rem 1.25rem;
+    border-radius: 2rem;
+    border: 2px solid #e84057;
+    background: transparent;
+    color: #e84057;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s ease;
+
+    &:hover {
+      background: #e84057;
+      color: #fff;
+    }
+  }
+}
+
+// ---- Settings panel override ---------------------------------------------------
+.tiko-settings-panel {
+  margin-top: 1rem;
+  padding: 1rem;
+  border-radius: 1rem;
+  background: var(--tiko-surface, var(--color-background));
 }

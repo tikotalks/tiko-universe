@@ -32,6 +32,9 @@ function mountApp(existingLs?: ReturnType<typeof createLocalStorageMock>) {
 
   const wrapper = mount(App, {
     global: {
+      provide: {
+        popupService: { showPopup: vi.fn(), close: vi.fn(), closeAllPopups: vi.fn(), popups: { value: [] } }
+      },
       stubs: {
         'tiko-app-shell': {
           name: 'TikoAppShell',
@@ -109,11 +112,12 @@ describe('Radio App (kid mode + parent mode)', () => {
     expect(categoryCards.length).toBeGreaterThanOrEqual(3)
   })
 
-  it('shows "Pick something to listen to" text', async () => {
+  it('kid mode shows track grid area', async () => {
     const { wrapper } = mountApp()
     await nextTick()
 
-    expect(wrapper.find('.radio-app__pick-text').exists()).toBe(true)
+    // Track grid area should exist (even if empty)
+    expect(wrapper.find('.radio-app__kid').exists()).toBe(true)
   })
 
   it('shows shuffle and repeat controls in kid mode', async () => {
@@ -150,22 +154,7 @@ describe('Radio App (kid mode + parent mode)', () => {
     expect(trackGrid.exists()).toBe(false)
   })
 
-  it('toggles parent mode via header action', async () => {
-    const { wrapper } = mountApp()
-    await nextTick()
-
-    // Initially kid mode
-    expect(wrapper.find('.radio-app__kid').exists()).toBe(true)
-
-    // The parent-mode toggle is an action in the header. The TikoAppShell stub
-    // receives actions but we need to trigger the headerAction method.
-    // Since the shell stub doesn't emit, we check that parent mode is toggled
-    // programmatically.
-    // For now, verify the data model:
-    expect(wrapper.vm.parentMode).toBe(false)
-  })
-
-  it('parent mode shows manage videos UI', async () => {
+  it('parent mode shows video management', async () => {
     const { wrapper } = mountApp()
     await nextTick()
 
@@ -174,8 +163,8 @@ describe('Radio App (kid mode + parent mode)', () => {
     await nextTick()
 
     expect(wrapper.find('.radio-app__manage').exists()).toBe(true)
-    expect(wrapper.find('.radio-app__manage__title').exists()).toBe(true)
-    expect(wrapper.find('.radio-app__manage__subtitle').exists()).toBe(true)
+    // No title/subtitle — just the video list and tabs
+    expect(wrapper.find('.radio-app__manage__tabs').exists()).toBe(true)
     expect(wrapper.find('.radio-app__manage__notice').exists()).toBe(true)
   })
 
@@ -190,18 +179,17 @@ describe('Radio App (kid mode + parent mode)', () => {
     expect(tabs.length).toBeGreaterThan(0)
   })
 
-  it('parent mode shows add video form', async () => {
+  it('parent mode shows video list, add is via popup', async () => {
     const { wrapper } = mountApp()
     await nextTick()
 
     await wrapper.setData({ parentMode: true })
     await nextTick()
 
-    // Add video form with YouTube input
-    const addSection = wrapper.find('.radio-app__manage__add')
+    // Add form is no longer inline — it opens via popupService
+    // Verify the manage list section exists
+    const addSection = wrapper.find('.radio-app__manage__list')
     expect(addSection.exists()).toBe(true)
-    expect(addSection.find('input[type="url"]').exists()).toBe(true)
-    expect(addSection.find('input[type="text"]').exists()).toBe(true)
   })
 
   it('parent mode shows video list with tracks', async () => {
