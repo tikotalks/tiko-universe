@@ -2,17 +2,17 @@ export type TikoAppId = 'yes-no' | 'type' | 'cards' | 'sequence' | 'timer' | 'ra
 export type JsonValue = null | boolean | number | string | JsonValue[] | { [key: string]: JsonValue }
 export type JsonObject = { [key: string]: JsonValue | undefined }
 
-export interface VersionedAppData<T extends JsonObject> {
+export interface VersionedAppData<T extends Record<string, unknown> = Record<string, unknown>> {
   app: TikoAppId
   updatedAt: string | null
   version: number
 }
 
-export interface AppSettingsResponse<T extends JsonObject = JsonObject> extends VersionedAppData<T> {
+export interface AppSettingsResponse<T extends Record<string, unknown> = Record<string, unknown>> extends VersionedAppData<T> {
   settings: T
 }
 
-export interface AppStateResponse<T extends JsonObject = JsonObject> extends VersionedAppData<T> {
+export interface AppStateResponse<T extends Record<string, unknown> = Record<string, unknown>> extends VersionedAppData<T> {
   state: T
 }
 
@@ -70,7 +70,7 @@ export interface TimerState extends JsonObject {
 
 export type TrackSource = 'youtube' | 'r2' | 'upload'
 
-export interface RadioTrack extends JsonObject {
+export interface RadioTrack {
   id: string
   title: string
   artist?: string
@@ -89,11 +89,12 @@ export interface RadioSettings extends JsonObject {
   volume?: number
 }
 
-export interface RadioState extends JsonObject {
+export interface RadioState {
   currentTrackIndex?: number
   tracks?: RadioTrack[]
   shuffleEnabled?: boolean
   repeatEnabled?: boolean
+  [key: string]: unknown
 }
 
 export interface AppSettingsById {

@@ -17,7 +17,7 @@ export const tikoAppColors: Record<TikoAppColor, { label: string; primary: strin
   cards: { label: 'Cards', primary: 'var(--color-accent)', dark: 'color-mix(in srgb, var(--color-accent), var(--color-foreground) 42%)' },
   sequence: { label: 'Sequence', primary: 'var(--color-tertiary)', dark: 'color-mix(in srgb, var(--color-tertiary), var(--color-foreground) 42%)' },
   timer: { label: 'Timer', primary: 'var(--color-warning)', dark: 'color-mix(in srgb, var(--color-warning), var(--color-foreground) 42%)' },
-  radio: { label: 'Radio', primary: 'var(--color-error)', dark: 'color-mix(in srgb, var(--color-error), var(--color-foreground) 42%)' },
+  radio: { label: 'Radio', primary: '#e84057', dark: 'color-mix(in srgb, #e84057, var(--color-foreground) 42%)' },
   tiko: { label: 'Tiko', primary: 'var(--color-error)', dark: 'color-mix(in srgb, var(--color-error), var(--color-foreground) 42%)' }
 }
 

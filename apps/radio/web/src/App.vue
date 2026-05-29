@@ -143,8 +143,8 @@ const currentTrack = computed(() => {
   return library.tracks.value[currentTrackIndex.value] ?? null
 })
 
-const currentTrackName = computed(() => player.currentTrack.value?.title ?? currentTrack.value?.title ?? labels.value.noTracks)
-const currentTrackArtist = computed(() => player.currentTrack.value?.artist ?? currentTrack.value?.artist ?? '')
+const currentTrackName = computed((): string => player.currentTrack.value?.title ?? currentTrack.value?.title ?? labels.value.noTracks)
+const currentTrackArtist = computed((): string => player.currentTrack.value?.artist ?? currentTrack.value?.artist ?? '')
 
 function formatTime(seconds: number): string {
   const m = Math.floor(seconds / 60)
