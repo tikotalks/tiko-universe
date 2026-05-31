@@ -316,7 +316,6 @@ const APP_FALLBACK_EMOJI: Record<string, Array<{ emoji: string; label: string }>
 
   &__hero {
     background: var(--color-background);
-    border-bottom: 4px solid var(--app-color);
     overflow: hidden;
   }
 
@@ -392,7 +391,6 @@ const APP_FALLBACK_EMOJI: Record<string, Array<{ emoji: string; label: string }>
     &--outline {
       background: transparent;
       color: var(--text-secondary);
-      border: 1.5px solid var(--border-strong);
 
       &:hover {
         color: var(--color-foreground);
@@ -403,7 +401,6 @@ const APP_FALLBACK_EMOJI: Record<string, Array<{ emoji: string; label: string }>
     &--coming {
       background: var(--surface-subtle);
       color: var(--text-muted);
-      border: 1px solid var(--border);
       cursor: default;
       &:hover {
         transform: none;
@@ -420,8 +417,6 @@ const APP_FALLBACK_EMOJI: Record<string, Array<{ emoji: string; label: string }>
 
   &__mockup {
     background: var(--surface-card);
-    border: 1.5px solid var(--border);
-    border-top: 4px solid var(--app-color);
     border-radius: 20px;
     width: 220px;
     padding: 16px;
@@ -486,7 +481,6 @@ const APP_FALLBACK_EMOJI: Record<string, Array<{ emoji: string; label: string }>
     place-items: center;
     aspect-ratio: 1;
     background: var(--app-color-light);
-    border: 1px solid var(--border);
     border-radius: 10px;
     font-size: 1.4rem;
     cursor: pointer;
@@ -494,7 +488,6 @@ const APP_FALLBACK_EMOJI: Record<string, Array<{ emoji: string; label: string }>
 
   &__mockup-type {
     background: var(--surface-subtle);
-    border: 1px solid var(--border);
     border-radius: 10px;
     padding: 10px;
     font-size: 0.8rem;
@@ -503,7 +496,6 @@ const APP_FALLBACK_EMOJI: Record<string, Array<{ emoji: string; label: string }>
   }
 
   &__mockup-speak {
-    border: none;
     border-radius: 999px;
     padding: 8px 16px;
     color: white;
@@ -562,7 +554,7 @@ const APP_FALLBACK_EMOJI: Record<string, Array<{ emoji: string; label: string }>
     font-family: var(--font-family-heading);
     font-size: 2.5rem;
     font-weight: 900;
-    letter-spacing: -0.03em;
+    letter-spacing: 0;
   }
 
   &__mockup-timer-ring {
@@ -574,7 +566,6 @@ const APP_FALLBACK_EMOJI: Record<string, Array<{ emoji: string; label: string }>
     width: 80px;
     height: 80px;
     border-radius: 50%;
-    border: 6px solid;
     border-right-color: transparent;
     opacity: 0.3;
   }
@@ -582,7 +573,6 @@ const APP_FALLBACK_EMOJI: Record<string, Array<{ emoji: string; label: string }>
   // Features
   &__features {
     background: var(--surface-subtle);
-    border-bottom: 1px solid var(--border);
   }
 
   &__features-heading {
@@ -621,7 +611,6 @@ const APP_FALLBACK_EMOJI: Record<string, Array<{ emoji: string; label: string }>
 
   // Media section
   &__media {
-    border-bottom: 1px solid var(--border);
   }
 
   &__media-heading {
@@ -659,7 +648,6 @@ const APP_FALLBACK_EMOJI: Record<string, Array<{ emoji: string; label: string }>
     flex-direction: column;
     gap: var(--space-s);
     background: var(--surface-card);
-    border: 1px solid var(--border);
     border-radius: 16px;
     overflow: hidden;
 
@@ -721,7 +709,6 @@ const APP_FALLBACK_EMOJI: Record<string, Array<{ emoji: string; label: string }>
     color: var(--color-foreground);
     padding: calc(var(--space) * 1.25);
     background: var(--surface-card);
-    border: 1px solid var(--border);
     border-radius: 16px;
     box-shadow: var(--shadow-s);
   }

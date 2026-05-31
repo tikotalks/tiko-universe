@@ -116,7 +116,6 @@ const identityProps = [
 .how-page {
   &__hero {
     background: var(--surface-subtle);
-    border-bottom: 1px solid var(--border);
   }
 
   &__heading {
@@ -143,7 +142,6 @@ const identityProps = [
 
   &__identity {
     background: var(--surface-subtle);
-    border-block: 1px solid var(--border);
   }
 }
 
@@ -178,7 +176,6 @@ const identityProps = [
   gap: calc(var(--space) * 1.25);
   padding: calc(var(--space) * 1.5);
   background: var(--surface-card);
-  border: 1px solid var(--border);
   border-radius: 20px;
   box-shadow: var(--shadow-s);
 

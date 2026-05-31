@@ -48,7 +48,7 @@ function applyTheme(mode: ColorMode) {
   const effective = mode === 'system' ? (prefersDark ? 'dark' : 'light') : mode
   try {
     document.documentElement.setAttribute('data-theme', effective)
-    document.documentElement.setAttribute('data-color-mode', mode)
+    document.documentElement.setAttribute('data-color-mode', effective)
   } catch { /* ignore in test env */ }
   safeStorage('set', 'color-mode', mode)
 }
@@ -119,16 +119,16 @@ onMounted(() => {
   top: 0;
   z-index: 100;
   background: var(--header-bg);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border-bottom: 1px solid var(--border);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
 
   &__inner {
     display: flex;
     align-items: center;
     justify-content: space-between;
     height: var(--header-height);
-    gap: calc(var(--space) * 1.5);
+    gap: var(--space);
+    min-width: 0;
   }
 
   &__brand {
@@ -157,7 +157,6 @@ onMounted(() => {
     font-family: var(--font-family-heading);
     font-weight: 800;
     font-size: 1rem;
-    letter-spacing: -0.01em;
     color: var(--color-foreground);
   }
 
@@ -165,8 +164,10 @@ onMounted(() => {
     display: flex;
     align-items: center;
     gap: var(--space-xs);
-    flex: 1;
+    flex: 1 1 auto;
     justify-content: flex-end;
+    min-width: 0;
+    flex-wrap: nowrap;
   }
 
   &__nav-link {
@@ -190,8 +191,7 @@ onMounted(() => {
   }
 
   &__cta {
-    margin-left: calc(var(--space) * 0.75);
-    padding: 8px 20px;
+    padding: 8px 18px;
     border-radius: 999px;
     background: var(--app-yes-no);
     color: white;
@@ -216,7 +216,6 @@ onMounted(() => {
     height: 36px;
     padding: 6px;
     background: none;
-    border: 1px solid var(--border);
     border-radius: 8px;
     cursor: pointer;
     flex-shrink: 0;
@@ -233,12 +232,12 @@ onMounted(() => {
   &__backdrop {
     position: fixed;
     inset: 0;
-    background: rgba(17,17,17,0.3);
+    background: color-mix(in srgb, var(--color-foreground), transparent 70%);
     z-index: -1;
   }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
   .site-header {
     &__nav {
       display: none;
@@ -251,7 +250,6 @@ onMounted(() => {
       gap: 0;
       padding: calc(var(--space) * 0.75);
       background: var(--surface-card);
-      border-bottom: 1px solid var(--border);
       box-shadow: var(--shadow-m);
 
       &--open {

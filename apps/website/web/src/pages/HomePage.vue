@@ -13,7 +13,42 @@ interface MediaImage {
   original_url: string
 }
 
+interface MediaApiImage {
+  id: string
+  title?: string
+  original_url?: string
+  file_name?: string
+}
+
 const mediaImages = ref<MediaImage[]>([])
+
+const appImages: Record<string, MediaImage> = {
+  'yes-no': {
+    id: 'boy-im-hungry',
+    title: 'Boy saying I am hungry',
+    original_url: 'https://data.tikocdn.org/uploads/1754856272700-boy-im-hungry.png',
+  },
+  type: {
+    id: 'mechanical-keyboard',
+    title: 'Mechanical Keyboard',
+    original_url: 'https://data.tikocdn.org/uploads/1754986243669-mechanical-keyboard.png',
+  },
+  cards: {
+    id: 'happy-boy',
+    title: 'Happy Boy',
+    original_url: 'https://data.tikocdn.org/uploads/1756901925456-happy-boy-disney-pixar-style.png',
+  },
+  sequence: {
+    id: 'sequence-icon',
+    title: 'Sequence Icon',
+    original_url: 'https://data.tikocdn.org/uploads/1755680504224-sequence-icon.png',
+  },
+  timer: {
+    id: 'timer',
+    title: 'Timer',
+    original_url: 'https://data.tikocdn.org/uploads/1754413853153-timer2.png',
+  },
+}
 
 const CDN_ORIGIN = 'data.tikocdn.org'
 
@@ -28,10 +63,23 @@ function cdnUrl(originalUrl: string, width = 200): string {
 
 async function loadHomeImages() {
   try {
-    const res = await fetch('https://api.tikotalks.com/v1/media?category=animals&limit=8&type=image')
+    const res = await fetch('https://media.tikoapi.org/v1/media?category=animals&limit=8&type=image')
     if (res.ok) {
-      const json = await res.json() as { data?: MediaImage[] }
-      mediaImages.value = (json.data ?? []).slice(0, 8)
+      const json = await res.json() as { data?: MediaApiImage[] }
+      mediaImages.value = (json.data ?? [])
+        .map((item): MediaImage | null => {
+          const originalUrl = item.original_url
+            ?? (item.file_name ? `https://${CDN_ORIGIN}/${item.file_name}` : '')
+          if (!originalUrl) return null
+
+          return {
+            id: item.id,
+            title: item.title ?? 'Tiko media image',
+            original_url: originalUrl,
+          }
+        })
+        .filter((item): item is MediaImage => item !== null)
+        .slice(0, 8)
     }
   } catch {
     // silently fail — fallback tiles shown
@@ -117,18 +165,22 @@ onMounted(() => {
           :class="bemm('app-card')"
           :style="{ '--app-color': app.color, '--app-color-light': app.colorLight }"
         >
-          <div :class="bemm('app-card-header')">
-            <div :class="bemm('app-card-icon')" />
+          <div :class="bemm('app-card-image-wrap')">
+            <img
+              :src="cdnUrl(appImages[app.id].original_url, 360)"
+              :alt="appImages[app.id].title"
+              loading="lazy"
+              :class="bemm('app-card-image')"
+            />
+          </div>
+          <div :class="bemm('app-card-label')">
+            <h3 :class="bemm('app-card-name')">{{ app.name }}</h3>
             <span
               class="badge"
               :class="app.status === 'available' ? 'badge--available' : 'badge--planned'"
             >
               {{ app.statusLabel }}
             </span>
-          </div>
-          <div :class="bemm('app-card-body')">
-            <h3 :class="bemm('app-card-name')">{{ app.name }}</h3>
-            <p :class="bemm('app-card-summary')">{{ app.summary }}</p>
           </div>
         </RouterLink>
       </div>
@@ -241,7 +293,6 @@ onMounted(() => {
 .home {
   &__hero {
     background: var(--color-background);
-    border-bottom: 1px solid var(--border);
     overflow: hidden;
   }
 
@@ -298,7 +349,6 @@ onMounted(() => {
     &--outline {
       background: var(--surface-card);
       color: var(--color-foreground);
-      border: 1.5px solid var(--border-strong);
     }
   }
 
@@ -334,7 +384,7 @@ onMounted(() => {
     width: 10px;
     height: 10px;
     border-radius: 50%;
-    background: rgba(255,255,255,0.25);
+    background: color-mix(in srgb, var(--color-background), transparent 75%);
   }
 
   &__device-question {
@@ -367,7 +417,7 @@ onMounted(() => {
     }
 
     &--no {
-      background: rgba(255,255,255,0.15);
+      background: color-mix(in srgb, var(--color-background), transparent 85%);
       color: white;
     }
   }
@@ -379,7 +429,6 @@ onMounted(() => {
     gap: 8px;
     padding: 8px 14px;
     background: var(--surface-card);
-    border: 1px solid var(--border);
     border-radius: 999px;
     font-size: 0.8rem;
     font-weight: 700;
@@ -427,63 +476,52 @@ onMounted(() => {
   &__app-card {
     display: flex;
     flex-direction: column;
-    background: var(--surface-card);
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    overflow: hidden;
+    gap: var(--space-s);
     text-decoration: none;
-    transition: transform 0.15s, box-shadow 0.15s;
-    box-shadow: var(--shadow-s);
+    transition: transform 0.15s;
 
     &:hover {
       transform: translateY(-3px);
-      box-shadow: var(--shadow-m);
     }
   }
 
-  &__app-card-header {
-    height: 80px;
-    background: color-mix(in srgb, var(--app-color) 18%, var(--surface-card));
-    border-bottom: 3px solid var(--app-color);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: calc(var(--space) * 0.75) var(--space);
-  }
-
-  &__app-card-icon {
-    width: 36px;
-    height: 36px;
-    border-radius: 10px;
+  &__app-card-image-wrap {
+    aspect-ratio: 1;
+    display: grid;
+    place-items: center;
+    padding: clamp(0.75rem, 2vw, 1.25rem);
+    border-radius: 24px;
     background: var(--app-color);
-    opacity: 0.9;
+    overflow: hidden;
+    box-shadow: var(--shadow-s);
   }
 
-  &__app-card-body {
+  &__app-card-image {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    filter: drop-shadow(0 14px 20px color-mix(in srgb, var(--color-foreground), transparent 76%));
+  }
+
+  &__app-card-label {
     display: flex;
     flex-direction: column;
-    gap: var(--space-s);
-    padding: var(--space);
+    align-items: center;
+    gap: var(--space-xs);
+    text-align: center;
+    padding-inline: var(--space-xs);
   }
 
   &__app-card-name {
     font-family: var(--font-family-heading);
-    font-size: 0.95rem;
-    font-weight: 800;
-    letter-spacing: -0.01em;
+    font-size: 1rem;
+    font-weight: 900;
     color: var(--color-foreground);
-  }
-
-  &__app-card-summary {
-    font-size: 0.78rem;
-    line-height: 1.5;
-    color: var(--text-secondary);
   }
 
   // Trust
   &__trust {
     background: var(--surface-subtle);
-    border-block: 1px solid var(--border);
   }
 
   &__trust-layout {
@@ -514,7 +552,6 @@ onMounted(() => {
     gap: calc(var(--space) * 0.75);
     padding: var(--space-l);
     background: var(--surface-card);
-    border: 1px solid var(--border);
     border-radius: 20px;
     box-shadow: var(--shadow-s);
   }
@@ -544,7 +581,6 @@ onMounted(() => {
   // Media
   &__media {
     background: var(--surface-subtle);
-    border-block: 1px solid var(--border);
   }
 
   &__media-heading {
@@ -563,7 +599,6 @@ onMounted(() => {
     aspect-ratio: 1;
     border-radius: 16px;
     overflow: hidden;
-    border: 1px solid var(--border);
     background: var(--surface-card);
 
     &--placeholder {
@@ -651,9 +686,8 @@ onMounted(() => {
     }
 
     &--ghost {
-      background: rgba(255,255,255,0.15);
+      background: color-mix(in srgb, var(--color-background), transparent 85%);
       color: white;
-      border: 1.5px solid rgba(255,255,255,0.3);
     }
   }
 }

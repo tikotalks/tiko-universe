@@ -88,7 +88,6 @@ const sections = [
 .care-page {
   &__hero {
     background: var(--surface-subtle);
-    border-bottom: 1px solid var(--border);
   }
 
   &__heading {
@@ -124,7 +123,6 @@ const sections = [
   gap: var(--space);
   padding: var(--space) calc(var(--space) * 1.25);
   background: var(--surface-card);
-  border: 1px solid var(--border);
   border-radius: 14px;
   font-size: 0.95rem;
   font-weight: 600;
@@ -147,7 +145,6 @@ const sections = [
 
 .care-sections {
   background: var(--surface-subtle);
-  border-block: 1px solid var(--border);
 
   &__grid {
     display: grid;

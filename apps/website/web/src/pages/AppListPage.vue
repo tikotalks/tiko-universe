@@ -84,7 +84,6 @@ const bemm = useBemm('apps-page', { return: 'string', includeBaseClass: true })
 .apps-page {
   &__hero {
     background: var(--surface-subtle);
-    border-bottom: 1px solid var(--border);
   }
 
   &__heading {
@@ -107,7 +106,6 @@ const bemm = useBemm('apps-page', { return: 'string', includeBaseClass: true })
   display: flex;
   flex-direction: column;
   background: var(--surface-card);
-  border: 1px solid var(--border);
   border-radius: 24px;
   overflow: hidden;
   text-decoration: none;
@@ -159,7 +157,7 @@ const bemm = useBemm('apps-page', { return: 'string', includeBaseClass: true })
     font-family: var(--font-family-heading);
     font-size: 1.75rem;
     font-weight: 900;
-    letter-spacing: -0.03em;
+    letter-spacing: 0;
     color: white;
     line-height: 1;
     text-shadow: 0 2px 8px rgba(0,0,0,0.2);
@@ -200,7 +198,6 @@ const bemm = useBemm('apps-page', { return: 'string', includeBaseClass: true })
     flex-direction: column;
     gap: var(--space-xs);
     padding-top: calc(var(--space) * 0.75);
-    border-top: 1px solid var(--border);
   }
 
   &__use-item {
@@ -220,7 +217,6 @@ const bemm = useBemm('apps-page', { return: 'string', includeBaseClass: true })
 
   &__footer {
     padding: var(--space) calc(var(--space) * 1.25);
-    border-top: 1px solid var(--border);
   }
 
   &__link {
@@ -233,7 +229,6 @@ const bemm = useBemm('apps-page', { return: 'string', includeBaseClass: true })
 
 .apps-note {
   background: var(--surface-subtle);
-  border-top: 1px solid var(--border);
 
   &__inner {
     max-width: 56ch;

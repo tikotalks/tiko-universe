@@ -102,7 +102,7 @@ const bemm = useBemm('site-footer', { return: 'string', includeBaseClass: true }
     font-weight: 800;
     font-size: 1.05rem;
     color: white;
-    letter-spacing: -0.01em;
+    letter-spacing: 0;
   }
 
   &__tagline {
@@ -154,7 +154,6 @@ const bemm = useBemm('site-footer', { return: 'string', includeBaseClass: true }
     flex-wrap: wrap;
     gap: var(--space-s);
     padding-top: calc(var(--space) * 1.5);
-    border-top: 1px solid rgba(255,255,255,0.08);
   }
 
   &__copy,

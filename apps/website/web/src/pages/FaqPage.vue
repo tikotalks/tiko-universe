@@ -63,7 +63,6 @@ function toggle(i: number) {
 .faq-page {
   &__hero {
     background: var(--surface-subtle);
-    border-bottom: 1px solid var(--border);
   }
 
   &__heading {
@@ -77,7 +76,6 @@ function toggle(i: number) {
 
   &__more {
     background: var(--surface-subtle);
-    border-top: 1px solid var(--border);
   }
 }
 
@@ -91,7 +89,6 @@ function toggle(i: number) {
 
 .faq-item {
   background: var(--surface-card);
-  border: 1px solid var(--border);
   border-radius: 16px;
   overflow: hidden;
   box-shadow: var(--shadow-s);
@@ -99,7 +96,6 @@ function toggle(i: number) {
 
   &--open {
     box-shadow: var(--shadow-m);
-    border-color: var(--border-strong);
   }
 
   &__question {
@@ -110,7 +106,6 @@ function toggle(i: number) {
     gap: var(--space);
     padding: calc(var(--space) * 1.25) calc(var(--space) * 1.5);
     background: none;
-    border: none;
     text-align: left;
     cursor: pointer;
     font-family: var(--font-family-heading);
@@ -132,7 +127,6 @@ function toggle(i: number) {
 
   &__answer {
     padding: 0 calc(var(--space) * 1.5) calc(var(--space) * 1.25);
-    border-top: 1px solid var(--border);
     padding-top: var(--space);
   }
 }

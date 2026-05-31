@@ -7,7 +7,7 @@
     <title>TikoTalks</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Nunito:wght@700;800;900&display=swap" rel="stylesheet" />
     <script>
       (function() {
         var stored = localStorage.getItem('color-mode') || 'system';
@@ -15,7 +15,7 @@
           ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
           : stored;
         document.documentElement.setAttribute('data-theme', effective);
-        document.documentElement.setAttribute('data-color-mode', stored);
+        document.documentElement.setAttribute('data-color-mode', effective);
       })();
     </script>
   </head>
