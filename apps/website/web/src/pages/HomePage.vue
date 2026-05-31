@@ -240,12 +240,7 @@ onMounted(() => {
 // Hero
 .home {
   &__hero {
-    background: linear-gradient(
-      135deg,
-      color-mix(in srgb, var(--app-yes-no-light) 70%, var(--surface-page)) 0%,
-      var(--surface-page) 50%,
-      color-mix(in srgb, var(--app-type-light) 50%, var(--surface-page)) 100%
-    );
+    background: var(--color-background);
     border-bottom: 1px solid var(--border);
     overflow: hidden;
   }
@@ -262,7 +257,7 @@ onMounted(() => {
   &__hero-copy {
     display: flex;
     flex-direction: column;
-    gap: var(--sp-6);
+    gap: calc(var(--space) * 1.5);
   }
 
   &__hero-heading {
@@ -276,8 +271,8 @@ onMounted(() => {
   &__hero-actions {
     display: flex;
     flex-wrap: wrap;
-    gap: var(--sp-3);
-    margin-top: var(--sp-2);
+    gap: calc(var(--space) * 0.75);
+    margin-top: var(--space-s);
   }
 
   &__hero-btn {
@@ -292,7 +287,7 @@ onMounted(() => {
 
     &:hover {
       transform: translateY(-2px);
-      box-shadow: var(--shadow-md);
+      box-shadow: var(--shadow-m);
     }
 
     &--primary {
@@ -302,7 +297,7 @@ onMounted(() => {
 
     &--outline {
       background: var(--surface-card);
-      color: var(--text-primary);
+      color: var(--color-foreground);
       border: 1.5px solid var(--border-strong);
     }
   }
@@ -327,7 +322,7 @@ onMounted(() => {
     display: flex;
     flex-direction: column;
     gap: 16px;
-    box-shadow: var(--shadow-lg), 0 0 0 6px rgba(155, 63, 189, 0.15);
+    box-shadow: var(--shadow-l), 0 0 0 6px rgba(155, 63, 189, 0.15);
   }
 
   &__device-top {
@@ -362,7 +357,7 @@ onMounted(() => {
     justify-content: center;
     height: 60px;
     border-radius: 16px;
-    font-family: var(--font-display);
+    font-family: var(--font-family-heading);
     font-weight: 900;
     font-size: 1.5rem;
 
@@ -388,8 +383,8 @@ onMounted(() => {
     border-radius: 999px;
     font-size: 0.8rem;
     font-weight: 700;
-    color: var(--text-primary);
-    box-shadow: var(--shadow-md);
+    color: var(--color-foreground);
+    box-shadow: var(--shadow-m);
 
     &--1 { top: 0; right: 0; }
     &--2 { bottom: 20%; left: -10%; }
@@ -409,8 +404,8 @@ onMounted(() => {
     align-items: flex-end;
     justify-content: space-between;
     flex-wrap: wrap;
-    gap: var(--sp-4);
-    margin-bottom: var(--sp-8);
+    gap: var(--space);
+    margin-bottom: var(--space-l);
   }
 
   &__apps-see-all {
@@ -420,13 +415,13 @@ onMounted(() => {
     text-decoration: none;
     white-space: nowrap;
 
-    &:hover { color: var(--text-primary); }
+    &:hover { color: var(--color-foreground); }
   }
 
   &__apps-grid {
     display: grid;
     grid-template-columns: repeat(5, minmax(0, 1fr));
-    gap: var(--sp-3);
+    gap: calc(var(--space) * 0.75);
   }
 
   &__app-card {
@@ -438,11 +433,11 @@ onMounted(() => {
     overflow: hidden;
     text-decoration: none;
     transition: transform 0.15s, box-shadow 0.15s;
-    box-shadow: var(--shadow-sm);
+    box-shadow: var(--shadow-s);
 
     &:hover {
       transform: translateY(-3px);
-      box-shadow: var(--shadow-md);
+      box-shadow: var(--shadow-m);
     }
   }
 
@@ -453,7 +448,7 @@ onMounted(() => {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: var(--sp-3) var(--sp-4);
+    padding: calc(var(--space) * 0.75) var(--space);
   }
 
   &__app-card-icon {
@@ -467,16 +462,16 @@ onMounted(() => {
   &__app-card-body {
     display: flex;
     flex-direction: column;
-    gap: var(--sp-2);
-    padding: var(--sp-4);
+    gap: var(--space-s);
+    padding: var(--space);
   }
 
   &__app-card-name {
-    font-family: var(--font-display);
+    font-family: var(--font-family-heading);
     font-size: 0.95rem;
     font-weight: 800;
     letter-spacing: -0.01em;
-    color: var(--text-primary);
+    color: var(--color-foreground);
   }
 
   &__app-card-summary {
@@ -501,7 +496,7 @@ onMounted(() => {
   &__trust-copy {
     display: flex;
     flex-direction: column;
-    gap: var(--sp-6);
+    gap: calc(var(--space) * 1.5);
   }
 
   &__trust-link {
@@ -510,27 +505,27 @@ onMounted(() => {
     color: var(--text-secondary);
     text-decoration: none;
 
-    &:hover { color: var(--text-primary); }
+    &:hover { color: var(--color-foreground); }
   }
 
   &__trust-list {
     display: flex;
     flex-direction: column;
-    gap: var(--sp-3);
-    padding: var(--sp-8);
+    gap: calc(var(--space) * 0.75);
+    padding: var(--space-l);
     background: var(--surface-card);
     border: 1px solid var(--border);
     border-radius: 20px;
-    box-shadow: var(--shadow-sm);
+    box-shadow: var(--shadow-s);
   }
 
   &__trust-item {
     display: flex;
     align-items: flex-start;
-    gap: var(--sp-3);
+    gap: calc(var(--space) * 0.75);
     font-size: 0.95rem;
     font-weight: 600;
-    color: var(--text-primary);
+    color: var(--color-foreground);
   }
 
   &__trust-check {
@@ -554,14 +549,14 @@ onMounted(() => {
 
   &__media-heading {
     max-width: 22ch;
-    margin-top: var(--sp-2);
-    margin-bottom: var(--sp-8);
+    margin-top: var(--space-s);
+    margin-bottom: var(--space-l);
   }
 
   &__media-grid {
     display: grid;
     grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: var(--sp-3);
+    gap: calc(var(--space) * 0.75);
   }
 
   &__media-item {
@@ -586,35 +581,35 @@ onMounted(() => {
   &__platform-header {
     display: flex;
     flex-direction: column;
-    gap: var(--sp-4);
+    gap: var(--space);
     max-width: 52ch;
-    margin-bottom: var(--sp-8);
+    margin-bottom: var(--space-l);
   }
 
   &__platform-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: var(--sp-4);
+    gap: var(--space);
   }
 
   &__platform-card {
-    padding: var(--sp-6);
+    padding: calc(var(--space) * 1.5);
     display: flex;
     flex-direction: column;
-    gap: var(--sp-2);
+    gap: var(--space-s);
   }
 
   &__platform-card-label {
-    font-family: var(--font-display);
+    font-family: var(--font-family-heading);
     font-size: 1.05rem;
     font-weight: 800;
-    color: var(--text-primary);
+    color: var(--color-foreground);
   }
 
   // CTA
   &__cta {
     background: var(--app-yes-no);
-    margin-top: clamp(var(--sp-12), 10vw, var(--sp-24));
+    margin-top: clamp(calc(var(--space) * 3), 10vw, calc(var(--space) * 6));
   }
 
   &__cta-inner {
@@ -622,20 +617,20 @@ onMounted(() => {
     align-items: center;
     justify-content: space-between;
     flex-wrap: wrap;
-    gap: var(--sp-6);
-    padding-block: clamp(var(--sp-10), 7vw, var(--sp-16));
+    gap: calc(var(--space) * 1.5);
+    padding-block: clamp(calc(var(--space) * 2.5), 7vw, var(--space-xl));
   }
 
   &__cta-copy {
     display: flex;
     flex-direction: column;
-    gap: var(--sp-3);
+    gap: calc(var(--space) * 0.75);
   }
 
   &__cta-actions {
     display: flex;
     flex-wrap: wrap;
-    gap: var(--sp-3);
+    gap: calc(var(--space) * 0.75);
   }
 
   &__cta-btn {

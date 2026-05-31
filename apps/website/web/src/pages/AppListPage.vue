@@ -89,7 +89,7 @@ const bemm = useBemm('apps-page', { return: 'string', includeBaseClass: true })
 
   &__heading {
     max-width: 12ch;
-    margin-bottom: var(--sp-6);
+    margin-bottom: calc(var(--space) * 1.5);
   }
 
   &__lede {
@@ -100,7 +100,7 @@ const bemm = useBemm('apps-page', { return: 'string', includeBaseClass: true })
 .apps-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: var(--sp-6);
+  gap: calc(var(--space) * 1.5);
 }
 
 .app-card {
@@ -112,11 +112,11 @@ const bemm = useBemm('apps-page', { return: 'string', includeBaseClass: true })
   overflow: hidden;
   text-decoration: none;
   transition: transform 0.15s, box-shadow 0.15s;
-  box-shadow: var(--shadow-sm);
+  box-shadow: var(--shadow-s);
 
   &:hover {
     transform: translateY(-4px);
-    box-shadow: var(--shadow-md);
+    box-shadow: var(--shadow-m);
 
     .app-card__link {
       color: var(--app-color);
@@ -124,28 +124,24 @@ const bemm = useBemm('apps-page', { return: 'string', includeBaseClass: true })
   }
 
   &__hero {
-    min-height: 160px;
-    background: linear-gradient(
-      160deg,
-      var(--app-color) 0%,
-      color-mix(in srgb, var(--app-color) 70%, black) 100%
-    );
+    min-height: 120px;
+    background: var(--app-color);
     display: flex;
     align-items: flex-end;
     justify-content: space-between;
-    padding: var(--sp-5) var(--sp-5) var(--sp-4);
+    padding: calc(var(--space) * 1.25) calc(var(--space) * 1.25) var(--space);
     position: relative;
-    gap: var(--sp-3);
+    gap: calc(var(--space) * 0.75);
   }
 
   &__icon-wrap {
     position: absolute;
-    top: var(--sp-5);
-    left: var(--sp-5);
-    width: 52px;
-    height: 52px;
-    background: rgba(255,255,255,0.2);
-    border-radius: 16px;
+    top: calc(var(--space) * 1.25);
+    left: calc(var(--space) * 1.25);
+    width: 48px;
+    height: 48px;
+    background: rgba(255,255,255,0.25);
+    border-radius: 14px;
     display: grid;
     place-items: center;
     backdrop-filter: blur(4px);
@@ -160,7 +156,7 @@ const bemm = useBemm('apps-page', { return: 'string', includeBaseClass: true })
   }
 
   &__name {
-    font-family: var(--font-display);
+    font-family: var(--font-family-heading);
     font-size: 1.75rem;
     font-weight: 900;
     letter-spacing: -0.03em;
@@ -174,22 +170,22 @@ const bemm = useBemm('apps-page', { return: 'string', includeBaseClass: true })
   &__body {
     display: flex;
     flex-direction: column;
-    gap: var(--sp-3);
-    padding: var(--sp-5);
+    gap: calc(var(--space) * 0.75);
+    padding: calc(var(--space) * 1.25);
     flex: 1;
   }
 
   &__meta {
     display: flex;
     align-items: center;
-    gap: var(--sp-2);
+    gap: var(--space-s);
   }
 
   &__headline {
-    font-family: var(--font-display);
+    font-family: var(--font-family-heading);
     font-size: 1rem;
     font-weight: 700;
-    color: var(--text-primary);
+    color: var(--color-foreground);
     line-height: 1.3;
   }
 
@@ -202,15 +198,15 @@ const bemm = useBemm('apps-page', { return: 'string', includeBaseClass: true })
   &__use-when {
     display: flex;
     flex-direction: column;
-    gap: var(--sp-1);
-    padding-top: var(--sp-3);
+    gap: var(--space-xs);
+    padding-top: calc(var(--space) * 0.75);
     border-top: 1px solid var(--border);
   }
 
   &__use-item {
     font-size: 0.8rem;
     color: var(--text-muted);
-    padding-left: var(--sp-3);
+    padding-left: calc(var(--space) * 0.75);
     position: relative;
     font-weight: 600;
 
@@ -223,7 +219,7 @@ const bemm = useBemm('apps-page', { return: 'string', includeBaseClass: true })
   }
 
   &__footer {
-    padding: var(--sp-4) var(--sp-5);
+    padding: var(--space) calc(var(--space) * 1.25);
     border-top: 1px solid var(--border);
   }
 
@@ -243,7 +239,7 @@ const bemm = useBemm('apps-page', { return: 'string', includeBaseClass: true })
     max-width: 56ch;
     display: flex;
     flex-direction: column;
-    gap: var(--sp-4);
+    gap: var(--space);
   }
 
   &__link {
@@ -252,7 +248,7 @@ const bemm = useBemm('apps-page', { return: 'string', includeBaseClass: true })
     color: var(--text-secondary);
     text-decoration: none;
 
-    &:hover { color: var(--text-primary); }
+    &:hover { color: var(--color-foreground); }
   }
 }
 

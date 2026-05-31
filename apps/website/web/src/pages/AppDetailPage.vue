@@ -307,16 +307,16 @@ const APP_FALLBACK_EMOJI: Record<string, Array<{ emoji: string; label: string }>
 .app-detail {
   &__404-link {
     display: inline-flex;
-    margin-top: var(--sp-4);
+    margin-top: var(--space);
     font-weight: 700;
     color: var(--text-secondary);
     text-decoration: none;
-    &:hover { color: var(--text-primary); }
+    &:hover { color: var(--color-foreground); }
   }
 
   &__hero {
-    background: color-mix(in srgb, var(--app-color-light) 60%, var(--surface-page));
-    border-bottom: 1px solid color-mix(in srgb, var(--app-color) 20%, transparent);
+    background: var(--color-background);
+    border-bottom: 4px solid var(--app-color);
     overflow: hidden;
   }
 
@@ -332,7 +332,7 @@ const APP_FALLBACK_EMOJI: Record<string, Array<{ emoji: string; label: string }>
   &__hero-copy {
     display: flex;
     flex-direction: column;
-    gap: var(--sp-4);
+    gap: var(--space);
   }
 
   &__back {
@@ -350,11 +350,11 @@ const APP_FALLBACK_EMOJI: Record<string, Array<{ emoji: string; label: string }>
   }
 
   &__headline {
-    font-family: var(--font-display);
+    font-family: var(--font-family-heading);
     font-size: clamp(1.1rem, 2.5vw, 1.5rem);
     font-weight: 700;
     color: var(--text-secondary);
-    margin-top: calc(-1 * var(--sp-2));
+    margin-top: calc(-1 * var(--space-s));
   }
 
   &__desc {
@@ -365,8 +365,8 @@ const APP_FALLBACK_EMOJI: Record<string, Array<{ emoji: string; label: string }>
     display: flex;
     align-items: center;
     flex-wrap: wrap;
-    gap: var(--sp-3);
-    margin-top: var(--sp-2);
+    gap: calc(var(--space) * 0.75);
+    margin-top: var(--space-s);
   }
 
   &__btn {
@@ -382,7 +382,7 @@ const APP_FALLBACK_EMOJI: Record<string, Array<{ emoji: string; label: string }>
     &:hover {
       opacity: 0.88;
       transform: translateY(-2px);
-      box-shadow: var(--shadow-md);
+      box-shadow: var(--shadow-m);
     }
 
     &--primary {
@@ -395,7 +395,7 @@ const APP_FALLBACK_EMOJI: Record<string, Array<{ emoji: string; label: string }>
       border: 1.5px solid var(--border-strong);
 
       &:hover {
-        color: var(--text-primary);
+        color: var(--color-foreground);
         background: var(--surface-card);
       }
     }
@@ -428,7 +428,7 @@ const APP_FALLBACK_EMOJI: Record<string, Array<{ emoji: string; label: string }>
     display: flex;
     flex-direction: column;
     gap: 12px;
-    box-shadow: var(--shadow-md);
+    box-shadow: var(--shadow-m);
     min-height: 200px;
   }
 
@@ -464,7 +464,7 @@ const APP_FALLBACK_EMOJI: Record<string, Array<{ emoji: string; label: string }>
     place-items: center;
     height: 56px;
     border-radius: 12px;
-    font-family: var(--font-display);
+    font-family: var(--font-family-heading);
     font-weight: 900;
     font-size: 1.2rem;
     color: white;
@@ -498,7 +498,7 @@ const APP_FALLBACK_EMOJI: Record<string, Array<{ emoji: string; label: string }>
     border-radius: 10px;
     padding: 10px;
     font-size: 0.8rem;
-    color: var(--text-primary);
+    color: var(--color-foreground);
     min-height: 60px;
   }
 
@@ -537,7 +537,7 @@ const APP_FALLBACK_EMOJI: Record<string, Array<{ emoji: string; label: string }>
   &__mockup-step-label {
     font-weight: 700;
     font-size: 0.9rem;
-    color: var(--text-primary);
+    color: var(--color-foreground);
   }
 
   &__mockup-progress {
@@ -559,7 +559,7 @@ const APP_FALLBACK_EMOJI: Record<string, Array<{ emoji: string; label: string }>
   }
 
   &__mockup-timer-text {
-    font-family: var(--font-display);
+    font-family: var(--font-family-heading);
     font-size: 2.5rem;
     font-weight: 900;
     letter-spacing: -0.03em;
@@ -587,21 +587,21 @@ const APP_FALLBACK_EMOJI: Record<string, Array<{ emoji: string; label: string }>
 
   &__features-heading {
     max-width: 16ch;
-    margin-top: var(--sp-2);
-    margin-bottom: var(--sp-8);
+    margin-top: var(--space-s);
+    margin-bottom: var(--space-l);
   }
 
   &__features-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-    gap: var(--sp-4);
+    gap: var(--space);
   }
 
   &__feature {
-    padding: var(--sp-6);
+    padding: calc(var(--space) * 1.5);
     display: flex;
     flex-direction: column;
-    gap: var(--sp-3);
+    gap: calc(var(--space) * 0.75);
   }
 
   &__feature-dot {
@@ -612,10 +612,10 @@ const APP_FALLBACK_EMOJI: Record<string, Array<{ emoji: string; label: string }>
   }
 
   &__feature-title {
-    font-family: var(--font-display);
+    font-family: var(--font-family-heading);
     font-size: 1rem;
     font-weight: 800;
-    color: var(--text-primary);
+    color: var(--color-foreground);
     line-height: 1.3;
   }
 
@@ -626,25 +626,25 @@ const APP_FALLBACK_EMOJI: Record<string, Array<{ emoji: string; label: string }>
 
   &__media-heading {
     max-width: 20ch;
-    margin-top: var(--sp-2);
-    margin-bottom: var(--sp-3);
+    margin-top: var(--space-s);
+    margin-bottom: calc(var(--space) * 0.75);
   }
 
   &__media-lede {
     max-width: 48ch;
-    margin-bottom: var(--sp-8);
+    margin-bottom: var(--space-l);
   }
 
   &__media-grid {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: var(--sp-3);
+    gap: calc(var(--space) * 0.75);
   }
 
   &__media-loading {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: var(--sp-3);
+    gap: calc(var(--space) * 0.75);
   }
 
   &__media-placeholder {
@@ -657,7 +657,7 @@ const APP_FALLBACK_EMOJI: Record<string, Array<{ emoji: string; label: string }>
   &__media-item {
     display: flex;
     flex-direction: column;
-    gap: var(--sp-2);
+    gap: var(--space-s);
     background: var(--surface-card);
     border: 1px solid var(--border);
     border-radius: 16px;
@@ -667,7 +667,7 @@ const APP_FALLBACK_EMOJI: Record<string, Array<{ emoji: string; label: string }>
       align-items: center;
       justify-content: center;
       aspect-ratio: 1;
-      padding: var(--sp-4);
+      padding: var(--space);
     }
   }
 
@@ -687,7 +687,7 @@ const APP_FALLBACK_EMOJI: Record<string, Array<{ emoji: string; label: string }>
     font-weight: 700;
     color: var(--text-muted);
     text-align: center;
-    padding: var(--sp-2) var(--sp-3) var(--sp-3);
+    padding: var(--space-s) calc(var(--space) * 0.75) calc(var(--space) * 0.75);
   }
 
   // Use when
@@ -701,29 +701,29 @@ const APP_FALLBACK_EMOJI: Record<string, Array<{ emoji: string; label: string }>
   &__use-copy {
     display: flex;
     flex-direction: column;
-    gap: var(--sp-4);
+    gap: var(--space);
     position: sticky;
-    top: calc(var(--header-height) + var(--sp-6));
+    top: calc(var(--header-height) + calc(var(--space) * 1.5));
   }
 
   &__use-list {
     display: flex;
     flex-direction: column;
-    gap: var(--sp-4);
+    gap: var(--space);
   }
 
   &__use-item {
     display: flex;
     align-items: flex-start;
-    gap: var(--sp-4);
+    gap: var(--space);
     font-size: 1rem;
     font-weight: 600;
-    color: var(--text-primary);
-    padding: var(--sp-5);
+    color: var(--color-foreground);
+    padding: calc(var(--space) * 1.25);
     background: var(--surface-card);
     border: 1px solid var(--border);
     border-radius: 16px;
-    box-shadow: var(--shadow-sm);
+    box-shadow: var(--shadow-s);
   }
 
   &__use-dot {
@@ -741,20 +741,20 @@ const APP_FALLBACK_EMOJI: Record<string, Array<{ emoji: string; label: string }>
     grid-template-columns: 1fr auto;
     gap: clamp(2rem, 5vw, 4rem);
     align-items: center;
-    padding: clamp(var(--sp-8), 5vw, var(--sp-12));
+    padding: clamp(var(--space-l), 5vw, calc(var(--space) * 3));
   }
 
   &__platform-copy {
     display: flex;
     flex-direction: column;
-    gap: var(--sp-4);
+    gap: var(--space);
     max-width: 48ch;
   }
 
   &__platform-actions {
     display: flex;
     flex-direction: column;
-    gap: var(--sp-3);
+    gap: calc(var(--space) * 0.75);
     align-items: flex-start;
   }
 }

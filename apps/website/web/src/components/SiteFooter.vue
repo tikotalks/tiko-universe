@@ -59,20 +59,20 @@ const bemm = useBemm('site-footer', { return: 'string', includeBaseClass: true }
 .site-footer {
   background: #111111;
   color: rgba(255,255,255,0.7);
-  padding-top: clamp(var(--sp-12), 8vw, var(--sp-20));
-  padding-bottom: var(--sp-8);
-  margin-top: clamp(var(--sp-12), 10vw, var(--sp-24));
+  padding-top: clamp(calc(var(--space) * 3), 8vw, calc(var(--space) * 5));
+  padding-bottom: var(--space-l);
+  margin-top: clamp(calc(var(--space) * 3), 10vw, calc(var(--space) * 6));
 
   &__inner {
     display: flex;
     flex-direction: column;
-    gap: var(--sp-12);
+    gap: calc(var(--space) * 3);
   }
 
   &__top {
     display: grid;
     grid-template-columns: 1.5fr repeat(3, 1fr);
-    gap: clamp(var(--sp-6), 4vw, var(--sp-10));
+    gap: clamp(calc(var(--space) * 1.5), 4vw, calc(var(--space) * 2.5));
   }
 
   &__brand {
@@ -80,7 +80,7 @@ const bemm = useBemm('site-footer', { return: 'string', includeBaseClass: true }
     align-items: center;
     gap: 10px;
     text-decoration: none;
-    margin-bottom: var(--sp-4);
+    margin-bottom: var(--space);
   }
 
   &__brand-mark {
@@ -90,7 +90,7 @@ const bemm = useBemm('site-footer', { return: 'string', includeBaseClass: true }
     height: 36px;
     border-radius: 50%;
     background: #f6c85f;
-    font-family: var(--font-display);
+    font-family: var(--font-family-heading);
     font-weight: 900;
     font-size: 1rem;
     color: #111111;
@@ -98,7 +98,7 @@ const bemm = useBemm('site-footer', { return: 'string', includeBaseClass: true }
   }
 
   &__brand-text {
-    font-family: var(--font-display);
+    font-family: var(--font-family-heading);
     font-weight: 800;
     font-size: 1.05rem;
     color: white;
@@ -113,25 +113,25 @@ const bemm = useBemm('site-footer', { return: 'string', includeBaseClass: true }
   }
 
   &__col-label {
-    font-family: var(--font-body);
+    font-family: var(--font-family);
     font-size: 0.7rem;
     font-weight: 700;
     letter-spacing: 0.1em;
     text-transform: uppercase;
     color: rgba(255,255,255,0.4);
-    margin-bottom: var(--sp-4);
+    margin-bottom: var(--space);
   }
 
   &__col {
     display: flex;
     flex-direction: column;
-    gap: var(--sp-2);
+    gap: var(--space-s);
   }
 
   &__link {
     display: flex;
     align-items: center;
-    gap: var(--sp-2);
+    gap: var(--space-s);
     font-size: 0.9rem;
     color: rgba(255,255,255,0.6);
     text-decoration: none;
@@ -152,8 +152,8 @@ const bemm = useBemm('site-footer', { return: 'string', includeBaseClass: true }
     align-items: center;
     justify-content: space-between;
     flex-wrap: wrap;
-    gap: var(--sp-2);
-    padding-top: var(--sp-6);
+    gap: var(--space-s);
+    padding-top: calc(var(--space) * 1.5);
     border-top: 1px solid rgba(255,255,255,0.08);
   }
 

@@ -13,10 +13,9 @@
 // ─── Design tokens ───────────────────────────────────────────────────────────
 
 :root {
-  // Typography
-  --font-display: 'Nunito', ui-sans-serif, system-ui, -apple-system, sans-serif;
-  --font-body: 'Nunito', ui-sans-serif, system-ui, -apple-system, sans-serif;
-  --font-mono: 'PT Mono', ui-monospace, 'Cascadia Code', monospace;
+  // Override @sil/ui font defaults with Nunito
+  --font-family-body: 'Nunito', ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-family-heading: 'Nunito', ui-sans-serif, system-ui, -apple-system, sans-serif;
 
   // App palette
   --app-yes-no: #9b3fbd;
@@ -30,41 +29,21 @@
   --app-timer: #f8c22e;
   --app-timer-light: #fef9c3;
 
-  // Surface (light mode)
-  --surface-page: #faf8f4;
+  // Surface tiers (--color-background covers page bg via @sil/ui)
   --surface-card: #ffffff;
   --surface-subtle: #f4f2ee;
   --surface-ink-wash: rgba(17, 17, 17, 0.04);
 
-  // Text (light mode)
-  --text-primary: #111111;
+  // Text secondary/muted (--color-foreground covers primary via @sil/ui)
   --text-secondary: #4b5563;
   --text-muted: #9ca3af;
 
-  // Border / shadow (light mode)
+  // Border (--shadow-s/m/l come from @sil/ui)
   --border: rgba(17, 17, 17, 0.10);
   --border-strong: rgba(17, 17, 17, 0.18);
-  --shadow-sm: 0 1px 3px rgba(17, 17, 17, 0.06), 0 1px 2px rgba(17, 17, 17, 0.04);
-  --shadow-md: 0 4px 16px rgba(17, 17, 17, 0.08), 0 2px 6px rgba(17, 17, 17, 0.04);
-  --shadow-lg: 0 8px 32px rgba(17, 17, 17, 0.10), 0 4px 12px rgba(17, 17, 17, 0.06);
 
   // Header
   --header-bg: rgba(250, 248, 244, 0.92);
-
-  // Spacing scale (4px base)
-  --sp-1: 4px;
-  --sp-2: 8px;
-  --sp-3: 12px;
-  --sp-4: 16px;
-  --sp-5: 20px;
-  --sp-6: 24px;
-  --sp-8: 32px;
-  --sp-10: 40px;
-  --sp-12: 48px;
-  --sp-16: 64px;
-  --sp-20: 80px;
-  --sp-24: 96px;
-  --sp-32: 128px;
 
   // Layout
   --max-width: 1200px;
@@ -74,20 +53,16 @@
 // ─── Dark mode overrides ───────────────────────────────────────────────────────
 
 [data-theme="dark"] {
-  --surface-page: #111111;
+  // --color-background and --color-foreground are set by @sil/ui via [data-color-mode]
   --surface-card: #1c1c1c;
   --surface-subtle: #161616;
   --surface-ink-wash: rgba(255, 255, 255, 0.05);
 
-  --text-primary: #f0f0f0;
   --text-secondary: #a0a0a0;
   --text-muted: #666666;
 
   --border: rgba(255, 255, 255, 0.08);
   --border-strong: rgba(255, 255, 255, 0.15);
-  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.5), 0 1px 2px rgba(0, 0, 0, 0.4);
-  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.6), 0 2px 6px rgba(0, 0, 0, 0.4);
-  --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.7), 0 4px 12px rgba(0, 0, 0, 0.5);
 
   --header-bg: rgba(17, 17, 17, 0.92);
 }
@@ -106,9 +81,9 @@ body {
   min-height: 100vh;
   overflow: visible !important;
   display: block !important;
-  background: var(--surface-page);
-  color: var(--text-primary);
-  font-family: var(--font-body);
+  background: var(--color-background);
+  color: var(--color-foreground);
+  font-family: var(--font-family);
   font-size: 16px;
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
@@ -121,12 +96,12 @@ body {
 }
 
 h1, h2, h3, h4, h5, h6 {
-  font-family: var(--font-display);
+  font-family: var(--font-family-heading);
   font-weight: 800;
   line-height: 1.05;
   letter-spacing: -0.02em;
   margin: 0;
-  color: var(--text-primary);
+  color: var(--color-foreground);
 }
 
 p { margin: 0; }
@@ -142,7 +117,7 @@ img { max-width: 100%; height: auto; display: block; }
 ul, ol { margin: 0; padding: 0; list-style: none; }
 
 code, pre {
-  font-family: var(--font-mono);
+  font-family: var(--font-family-monospace);
 }
 
 // ─── Site shell ───────────────────────────────────────────────────────────────
@@ -167,11 +142,11 @@ code, pre {
 }
 
 .section {
-  padding-block: clamp(var(--sp-12), 10vw, var(--sp-24));
+  padding-block: clamp(calc(var(--space) * 3), 10vw, calc(var(--space) * 6));
 }
 
 .section--tight {
-  padding-block: clamp(var(--sp-8), 6vw, var(--sp-16));
+  padding-block: clamp(var(--space-l), 6vw, var(--space-xl));
 }
 
 .section--flush-top {
@@ -182,13 +157,13 @@ code, pre {
 
 .eyebrow {
   display: inline-block;
-  font-family: var(--font-body);
+  font-family: var(--font-family);
   font-size: 0.75rem;
   font-weight: 700;
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--text-muted);
-  margin-bottom: var(--sp-3);
+  margin-bottom: calc(var(--space) * 0.75);
 }
 
 .display-1 {
@@ -227,11 +202,11 @@ code, pre {
   background: var(--surface-card);
   border: 1px solid var(--border);
   border-radius: 20px;
-  box-shadow: var(--shadow-sm);
+  box-shadow: var(--shadow-s);
 }
 
 .card--raised {
-  box-shadow: var(--shadow-md);
+  box-shadow: var(--shadow-m);
 }
 
 // ─── Status badge ─────────────────────────────────────────────────────────────
@@ -239,7 +214,7 @@ code, pre {
 .badge {
   display: inline-flex;
   align-items: center;
-  gap: var(--sp-1);
+  gap: var(--space-xs);
   padding: 3px 10px;
   border-radius: 999px;
   font-size: 0.75rem;
@@ -266,7 +241,7 @@ code, pre {
 pre {
   overflow-x: auto;
   margin: 0;
-  padding: var(--sp-6);
+  padding: calc(var(--space) * 1.5);
   border-radius: 16px;
   background: #111111;
   color: #e5e7eb;

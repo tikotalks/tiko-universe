@@ -2,7 +2,7 @@
 import { RouterLink, useRoute } from 'vue-router'
 import { ref, onMounted } from 'vue'
 import { useBemm } from 'bemm'
-import { ThemeToggle, LanguageSwitch } from '@sil/ui'
+import { ThemeToggle } from '@sil/ui'
 
 const bemm = useBemm('site-header', { return: 'string', includeBaseClass: true })
 
@@ -11,27 +11,12 @@ const mobileOpen = ref(false)
 
 type ColorMode = 'light' | 'dark' | 'system'
 const colorMode = ref<ColorMode>('system')
-const currentLang = ref('en')
 
 const navLinks = [
   { label: 'Apps', path: '/apps' },
   { label: 'How it works', path: '/how-it-works' },
   { label: 'Caregivers', path: '/caregivers' },
   { label: 'Docs', path: '/docs' },
-]
-
-const langOptions = [
-  { value: 'en', label: 'English', regionCode: 'GB' },
-  { value: 'de', label: 'Deutsch', regionCode: 'DE' },
-  { value: 'es', label: 'Español', regionCode: 'ES' },
-  { value: 'fr', label: 'Français', regionCode: 'FR' },
-  { value: 'nl', label: 'Nederlands', regionCode: 'NL' },
-  { value: 'pt', label: 'Português', regionCode: 'PT' },
-  { value: 'ja', label: '日本語', regionCode: 'JP' },
-  { value: 'zh', label: '中文', regionCode: 'CN' },
-  { value: 'ko', label: '한국어', regionCode: 'KR' },
-  { value: 'it', label: 'Italiano', regionCode: 'IT' },
-  { value: 'ar', label: 'العربية', regionCode: 'SA' },
 ]
 
 function isActive(path: string) {
@@ -75,19 +60,9 @@ function cycleTheme() {
   applyTheme(colorMode.value)
 }
 
-function onLangSelect(option: { value?: string; label?: string }) {
-  const val = option.value
-  if (!val) return
-  currentLang.value = val
-  try { document.documentElement.lang = val } catch { /* ignore */ }
-  safeStorage('set', 'lang', val)
-}
-
 onMounted(() => {
   const stored = safeStorage('get', 'color-mode') as ColorMode | null
   colorMode.value = stored || 'system'
-  currentLang.value = safeStorage('get', 'lang') || 'en'
-  try { document.documentElement.lang = currentLang.value } catch { /* ignore */ }
 })
 </script>
 
@@ -111,23 +86,14 @@ onMounted(() => {
           {{ link.label }}
         </RouterLink>
 
-        <div :class="bemm('controls')">
-          <ThemeToggle :theme="colorMode" @toggle="cycleTheme" />
-          <LanguageSwitch
-            v-model="currentLang"
-            :options="langOptions"
-            surface="popover"
-            display-mode="code"
-            @select="onLangSelect"
-          />
-        </div>
+        <ThemeToggle :theme="colorMode" @toggle="cycleTheme" />
 
         <RouterLink
           to="/apps/yes-no"
           :class="bemm('cta')"
           @click="closeMobile"
         >
-          Try Yes No
+          Try Tiko Now
         </RouterLink>
       </nav>
 
@@ -162,7 +128,7 @@ onMounted(() => {
     align-items: center;
     justify-content: space-between;
     height: var(--header-height);
-    gap: var(--sp-4);
+    gap: calc(var(--space) * 1.5);
   }
 
   &__brand {
@@ -176,37 +142,37 @@ onMounted(() => {
   &__brand-mark {
     display: grid;
     place-items: center;
-    width: 36px;
-    height: 36px;
+    width: 32px;
+    height: 32px;
     border-radius: 50%;
     background: #f6c85f;
-    border: 2px solid rgba(17,17,17,0.12);
-    font-family: var(--font-display);
+    font-family: var(--font-family-heading);
     font-weight: 900;
-    font-size: 1rem;
+    font-size: 0.9rem;
     color: #111111;
-    box-shadow: 0 3px 0 rgba(17,17,17,0.15);
     flex-shrink: 0;
   }
 
   &__brand-text {
-    font-family: var(--font-display);
+    font-family: var(--font-family-heading);
     font-weight: 800;
-    font-size: 1.05rem;
+    font-size: 1rem;
     letter-spacing: -0.01em;
-    color: var(--text-primary);
+    color: var(--color-foreground);
   }
 
   &__nav {
     display: flex;
     align-items: center;
-    gap: var(--sp-1);
+    gap: var(--space-xs);
+    flex: 1;
+    justify-content: flex-end;
   }
 
   &__nav-link {
-    padding: 6px 14px;
-    border-radius: 999px;
-    font-size: 0.9rem;
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-size: 0.875rem;
     font-weight: 600;
     color: var(--text-secondary);
     text-decoration: none;
@@ -214,26 +180,18 @@ onMounted(() => {
     white-space: nowrap;
 
     &:hover {
-      color: var(--text-primary);
+      color: var(--color-foreground);
       background: var(--surface-ink-wash);
     }
 
     &--active {
-      color: var(--text-primary);
-      background: var(--surface-ink-wash);
+      color: var(--color-foreground);
     }
   }
 
-  &__controls {
-    display: flex;
-    align-items: center;
-    gap: var(--sp-1);
-    margin-left: var(--sp-2);
-  }
-
   &__cta {
-    margin-left: var(--sp-2);
-    padding: 8px 18px;
+    margin-left: calc(var(--space) * 0.75);
+    padding: 8px 20px;
     border-radius: 999px;
     background: var(--app-yes-no);
     color: white;
@@ -241,11 +199,11 @@ onMounted(() => {
     font-weight: 700;
     text-decoration: none;
     white-space: nowrap;
-    transition: opacity 0.15s, transform 0.1s;
+    transition: opacity 0.15s;
+    flex-shrink: 0;
 
     &:hover {
       opacity: 0.88;
-      transform: translateY(-1px);
     }
   }
 
@@ -268,7 +226,7 @@ onMounted(() => {
     display: block;
     width: 100%;
     height: 2px;
-    background: var(--text-primary);
+    background: var(--color-foreground);
     border-radius: 2px;
   }
 
@@ -290,32 +248,25 @@ onMounted(() => {
       right: 0;
       flex-direction: column;
       align-items: stretch;
-      gap: var(--sp-1);
-      padding: var(--sp-4);
+      gap: 0;
+      padding: calc(var(--space) * 0.75);
       background: var(--surface-card);
       border-bottom: 1px solid var(--border);
-      box-shadow: var(--shadow-md);
+      box-shadow: var(--shadow-m);
 
       &--open {
         display: flex;
       }
     }
 
-    &__controls {
-      margin-left: 0;
-      justify-content: flex-start;
-      padding: var(--sp-2) 0;
-    }
-
     &__nav-link {
       padding: 12px 16px;
-      border-radius: 12px;
+      border-radius: 8px;
       font-size: 1rem;
     }
 
     &__cta {
-      margin-left: 0;
-      margin-top: var(--sp-2);
+      margin: calc(var(--space) * 0.75) 0 0;
       padding: 12px 16px;
       text-align: center;
       border-radius: 12px;

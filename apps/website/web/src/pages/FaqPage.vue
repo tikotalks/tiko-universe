@@ -68,7 +68,7 @@ function toggle(i: number) {
 
   &__heading {
     max-width: 12ch;
-    margin-bottom: var(--sp-6);
+    margin-bottom: calc(var(--space) * 1.5);
   }
 
   &__lede {
@@ -82,11 +82,11 @@ function toggle(i: number) {
 }
 
 .faq-list {
-  padding-top: var(--sp-12);
+  padding-top: calc(var(--space) * 3);
   max-width: 720px;
   display: flex;
   flex-direction: column;
-  gap: var(--sp-2);
+  gap: var(--space-s);
 }
 
 .faq-item {
@@ -94,11 +94,11 @@ function toggle(i: number) {
   border: 1px solid var(--border);
   border-radius: 16px;
   overflow: hidden;
-  box-shadow: var(--shadow-sm);
+  box-shadow: var(--shadow-s);
   transition: box-shadow 0.15s;
 
   &--open {
-    box-shadow: var(--shadow-md);
+    box-shadow: var(--shadow-m);
     border-color: var(--border-strong);
   }
 
@@ -107,16 +107,16 @@ function toggle(i: number) {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: var(--sp-4);
-    padding: var(--sp-5) var(--sp-6);
+    gap: var(--space);
+    padding: calc(var(--space) * 1.25) calc(var(--space) * 1.5);
     background: none;
     border: none;
     text-align: left;
     cursor: pointer;
-    font-family: var(--font-display);
+    font-family: var(--font-family-heading);
     font-size: 1.05rem;
     font-weight: 700;
-    color: var(--text-primary);
+    color: var(--color-foreground);
     line-height: 1.35;
 
     &:hover {
@@ -131,9 +131,9 @@ function toggle(i: number) {
   }
 
   &__answer {
-    padding: 0 var(--sp-6) var(--sp-5);
+    padding: 0 calc(var(--space) * 1.5) calc(var(--space) * 1.25);
     border-top: 1px solid var(--border);
-    padding-top: var(--sp-4);
+    padding-top: var(--space);
   }
 }
 
@@ -141,7 +141,7 @@ function toggle(i: number) {
   max-width: 52ch;
   display: flex;
   flex-direction: column;
-  gap: var(--sp-4);
+  gap: var(--space);
 
   &__link {
     font-weight: 700;
@@ -149,7 +149,7 @@ function toggle(i: number) {
     color: var(--text-secondary);
     text-decoration: none;
 
-    &:hover { color: var(--text-primary); }
+    &:hover { color: var(--color-foreground); }
   }
 }
 </style>

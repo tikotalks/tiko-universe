@@ -121,7 +121,7 @@ const identityProps = [
 
   &__heading {
     max-width: 14ch;
-    margin-bottom: var(--sp-6);
+    margin-bottom: calc(var(--space) * 1.5);
   }
 
   &__lede {
@@ -131,14 +131,14 @@ const identityProps = [
   &__platforms {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: var(--sp-4);
-    padding-top: var(--sp-12);
+    gap: var(--space);
+    padding-top: calc(var(--space) * 3);
   }
 
   &__flow-heading {
     max-width: 16ch;
-    margin-bottom: var(--sp-10);
-    margin-top: var(--sp-2);
+    margin-bottom: calc(var(--space) * 2.5);
+    margin-top: var(--space-s);
   }
 
   &__identity {
@@ -148,60 +148,60 @@ const identityProps = [
 }
 
 .how-platform-card {
-  padding: var(--sp-6);
+  padding: calc(var(--space) * 1.5);
   display: flex;
   flex-direction: column;
-  gap: var(--sp-3);
+  gap: calc(var(--space) * 0.75);
 
   &__label-wrap {
     display: flex;
     align-items: center;
-    gap: var(--sp-2);
+    gap: var(--space-s);
   }
 
   &__label {
-    font-family: var(--font-display);
+    font-family: var(--font-family-heading);
     font-size: 1.1rem;
     font-weight: 800;
-    color: var(--text-primary);
+    color: var(--color-foreground);
   }
 }
 
 .how-steps {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: var(--sp-4);
+  gap: var(--space);
 }
 
 .how-step {
   display: flex;
-  gap: var(--sp-5);
-  padding: var(--sp-6);
+  gap: calc(var(--space) * 1.25);
+  padding: calc(var(--space) * 1.5);
   background: var(--surface-card);
   border: 1px solid var(--border);
   border-radius: 20px;
-  box-shadow: var(--shadow-sm);
+  box-shadow: var(--shadow-s);
 
   &__num {
     flex-shrink: 0;
     width: 36px;
     height: 36px;
     border-radius: 50%;
-    background: var(--text-primary);
-    color: var(--surface-page);
+    background: var(--color-foreground);
+    color: var(--color-background);
     display: grid;
     place-items: center;
-    font-family: var(--font-display);
+    font-family: var(--font-family-heading);
     font-weight: 800;
     font-size: 0.9rem;
   }
 
   &__title {
-    font-family: var(--font-display);
+    font-family: var(--font-family-heading);
     font-size: 1rem;
     font-weight: 800;
-    color: var(--text-primary);
-    margin-bottom: var(--sp-2);
+    color: var(--color-foreground);
+    margin-bottom: var(--space-s);
   }
 }
 
@@ -216,19 +216,19 @@ const identityProps = [
   &__copy {
     display: flex;
     flex-direction: column;
-    gap: var(--sp-6);
+    gap: calc(var(--space) * 1.5);
   }
 
   &__props {
-    padding: var(--sp-6);
+    padding: calc(var(--space) * 1.5);
     display: flex;
     flex-direction: column;
-    gap: var(--sp-5);
+    gap: calc(var(--space) * 1.25);
   }
 
   &__prop {
     display: flex;
-    gap: var(--sp-4);
+    gap: var(--space);
     align-items: flex-start;
   }
 
@@ -245,8 +245,8 @@ const identityProps = [
     display: block;
     font-weight: 700;
     font-size: 0.9rem;
-    color: var(--text-primary);
-    margin-bottom: var(--sp-1);
+    color: var(--color-foreground);
+    margin-bottom: var(--space-xs);
   }
 }
 
@@ -254,13 +254,13 @@ const identityProps = [
   max-width: 56ch;
   display: flex;
   flex-direction: column;
-  gap: var(--sp-4);
+  gap: var(--space);
 
   &__links {
     display: flex;
     flex-wrap: wrap;
-    gap: var(--sp-4);
-    margin-top: var(--sp-2);
+    gap: var(--space);
+    margin-top: var(--space-s);
   }
 
   &__link {
@@ -269,10 +269,10 @@ const identityProps = [
     color: var(--text-secondary);
     text-decoration: none;
 
-    &:hover { color: var(--text-primary); }
+    &:hover { color: var(--color-foreground); }
 
     &--primary {
-      color: var(--text-primary);
+      color: var(--color-foreground);
     }
   }
 }

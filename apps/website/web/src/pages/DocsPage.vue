@@ -95,20 +95,20 @@ const currentPage = computed(() => getDocsPage(currentPath.value) ?? docsPages[0
 
 .docs-sidebar {
   position: sticky;
-  top: calc(var(--header-height) + var(--sp-6));
+  top: calc(var(--header-height) + calc(var(--space) * 1.5));
 
   &__nav {
     display: flex;
     flex-direction: column;
-    gap: var(--sp-2);
-    margin-top: var(--sp-3);
+    gap: var(--space-s);
+    margin-top: calc(var(--space) * 0.75);
   }
 
   &__link {
     display: flex;
     flex-direction: column;
     gap: 2px;
-    padding: var(--sp-4);
+    padding: var(--space);
     border: 1px solid var(--border);
     border-radius: 12px;
     background: var(--surface-card);
@@ -117,19 +117,19 @@ const currentPage = computed(() => getDocsPage(currentPath.value) ?? docsPages[0
 
     &:hover {
       background: var(--surface-subtle);
-      box-shadow: var(--shadow-sm);
+      box-shadow: var(--shadow-s);
     }
 
     &--active {
       background: color-mix(in srgb, #f6c85f 18%, var(--surface-card));
       border-color: color-mix(in srgb, #f6c85f 40%, transparent);
-      box-shadow: var(--shadow-sm);
+      box-shadow: var(--shadow-s);
     }
 
     &-title {
       font-size: 0.9rem;
       font-weight: 700;
-      color: var(--text-primary);
+      color: var(--color-foreground);
     }
 
     &-summary {
@@ -143,13 +143,13 @@ const currentPage = computed(() => getDocsPage(currentPath.value) ?? docsPages[0
 .docs-article {
   display: flex;
   flex-direction: column;
-  gap: clamp(var(--sp-8), 5vw, var(--sp-12));
+  gap: clamp(var(--space-l), 5vw, calc(var(--space) * 3));
 
   &__header {
     display: flex;
     flex-direction: column;
-    gap: var(--sp-4);
-    padding-bottom: clamp(var(--sp-6), 4vw, var(--sp-10));
+    gap: var(--space);
+    padding-bottom: clamp(calc(var(--space) * 1.5), 4vw, calc(var(--space) * 2.5));
     border-bottom: 1px solid var(--border);
   }
 
@@ -160,46 +160,46 @@ const currentPage = computed(() => getDocsPage(currentPath.value) ?? docsPages[0
   &__callouts {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: var(--sp-3);
+    gap: calc(var(--space) * 0.75);
   }
 
   &__sections {
     display: flex;
     flex-direction: column;
-    gap: var(--sp-4);
+    gap: var(--space);
   }
 }
 
 .docs-callout {
-  padding: var(--sp-5);
+  padding: calc(var(--space) * 1.25);
   display: flex;
   flex-direction: column;
-  gap: var(--sp-2);
+  gap: var(--space-s);
 
   &__title {
-    font-family: var(--font-display);
+    font-family: var(--font-family-heading);
     font-size: 0.9rem;
     font-weight: 800;
-    color: var(--text-primary);
+    color: var(--color-foreground);
   }
 }
 
 .docs-section {
-  padding: clamp(var(--sp-5), 3vw, var(--sp-8));
+  padding: clamp(calc(var(--space) * 1.25), 3vw, var(--space-l));
   background: var(--surface-card);
   border: 1px solid var(--border);
   border-radius: 16px;
   display: flex;
   flex-direction: column;
-  gap: var(--sp-4);
-  box-shadow: var(--shadow-sm);
+  gap: var(--space);
+  box-shadow: var(--shadow-s);
 
   &__heading {
     font-size: clamp(1.25rem, 3vw, 1.85rem);
     font-weight: 800;
     letter-spacing: -0.02em;
     max-width: 22ch;
-    color: var(--text-primary);
+    color: var(--color-foreground);
   }
 
   &__body {
@@ -210,8 +210,8 @@ const currentPage = computed(() => getDocsPage(currentPath.value) ?? docsPages[0
   &__bullets {
     display: flex;
     flex-direction: column;
-    gap: var(--sp-2);
-    padding-left: var(--sp-6);
+    gap: var(--space-s);
+    padding-left: calc(var(--space) * 1.5);
 
     > * {
       position: relative;
@@ -222,7 +222,7 @@ const currentPage = computed(() => getDocsPage(currentPath.value) ?? docsPages[0
       &::before {
         content: '–';
         position: absolute;
-        left: calc(-1 * var(--sp-4));
+        left: calc(-1 * var(--space));
         color: var(--text-muted);
       }
     }

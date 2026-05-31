@@ -93,7 +93,7 @@ const sections = [
 
   &__heading {
     max-width: 16ch;
-    margin-bottom: var(--sp-6);
+    margin-bottom: calc(var(--space) * 1.5);
   }
 
   &__lede {
@@ -102,34 +102,34 @@ const sections = [
 }
 
 .care-principles {
-  padding-top: var(--sp-12);
+  padding-top: calc(var(--space) * 3);
 
   &__heading {
     max-width: 16ch;
-    margin-top: var(--sp-2);
-    margin-bottom: var(--sp-8);
+    margin-top: var(--space-s);
+    margin-bottom: var(--space-l);
   }
 }
 
 .care-trust-list {
   display: flex;
   flex-direction: column;
-  gap: var(--sp-3);
+  gap: calc(var(--space) * 0.75);
   max-width: 560px;
 }
 
 .care-trust-item {
   display: flex;
   align-items: center;
-  gap: var(--sp-4);
-  padding: var(--sp-4) var(--sp-5);
+  gap: var(--space);
+  padding: var(--space) calc(var(--space) * 1.25);
   background: var(--surface-card);
   border: 1px solid var(--border);
   border-radius: 14px;
   font-size: 0.95rem;
   font-weight: 600;
-  color: var(--text-primary);
-  box-shadow: var(--shadow-sm);
+  color: var(--color-foreground);
+  box-shadow: var(--shadow-s);
 
   &__check {
     flex-shrink: 0;
@@ -152,21 +152,21 @@ const sections = [
   &__grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: var(--sp-4);
+    gap: var(--space);
   }
 }
 
 .care-section {
-  padding: var(--sp-6);
+  padding: calc(var(--space) * 1.5);
   display: flex;
   flex-direction: column;
-  gap: var(--sp-3);
+  gap: calc(var(--space) * 0.75);
 
   &__title {
-    font-family: var(--font-display);
+    font-family: var(--font-family-heading);
     font-size: 1rem;
     font-weight: 800;
-    color: var(--text-primary);
+    color: var(--color-foreground);
     line-height: 1.3;
   }
 }
@@ -176,7 +176,7 @@ const sections = [
   align-items: center;
   justify-content: space-between;
   flex-wrap: wrap;
-  gap: var(--sp-6);
+  gap: calc(var(--space) * 1.5);
 
   &__link {
     font-weight: 700;
@@ -185,7 +185,7 @@ const sections = [
     text-decoration: none;
     white-space: nowrap;
 
-    &:hover { color: var(--text-primary); }
+    &:hover { color: var(--color-foreground); }
   }
 }
 </style>
