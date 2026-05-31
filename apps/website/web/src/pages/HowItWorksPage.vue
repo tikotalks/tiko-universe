@@ -1,15 +1,40 @@
 <script setup lang="ts">
 import { RouterLink } from 'vue-router'
+import { useBemm } from 'bemm'
 import { platformNotes } from '../siteContent'
+
+const bemm = useBemm('how-page', { return: 'string', includeBaseClass: true })
+
+const steps = [
+  {
+    title: 'Open the link',
+    body: 'A caregiver shares a link or bookmarks a Tiko app. No app store, no download required — just a URL.',
+  },
+  {
+    title: 'Use it immediately',
+    body: 'The app is ready with no sign-in, no tutorial, no onboarding flow. The child sees the tool straight away.',
+  },
+  {
+    title: 'Recover later if needed',
+    body: 'If the caregiver wants to keep settings across devices, they can add an email and get a magic link — no password ever.',
+  },
+]
+
+const identityProps = [
+  { label: 'Device session', body: 'Created automatically on first open. Stored locally, never requires login.' },
+  { label: 'Magic link recovery', body: 'Optional. The caregiver adds an email and verifies it once to enable cross-device sync.' },
+  { label: 'No child-facing ceremony', body: 'Recovery and admin flows are always caregiver-only. The child never sees an account form.' },
+  { label: 'Bearer token auth', body: 'API sessions use bearer tokens so iOS, Android, and web all behave the same way.' },
+]
 </script>
 
 <template>
-  <div class="how-page">
-    <header class="how-page__hero section">
+  <div :class="bemm('')">
+    <header :class="[bemm('hero'), 'section']">
       <div class="container">
         <p class="eyebrow">How Tiko works</p>
-        <h1 class="display-1 how-page__heading">Open first.<br />Setup stays in the background.</h1>
-        <p class="body-lg how-page__lede">
+        <h1 :class="['display-1', bemm('heading')]">Open first.<br />Setup stays in the background.</h1>
+        <p :class="['body-lg', bemm('lede')]">
           Tiko starts device-first. Apps open and work immediately.
           Caregiver recovery can come later through email magic links — never before the child gets to use the tool.
         </p>
@@ -18,7 +43,7 @@ import { platformNotes } from '../siteContent'
 
     <section class="section section--flush-top">
       <div class="container">
-        <div class="how-page__platforms">
+        <div :class="bemm('platforms')">
           <article v-for="item in platformNotes" :key="item.label" class="how-platform-card card">
             <div class="how-platform-card__label-wrap">
               <strong class="how-platform-card__label">{{ item.label }}</strong>
@@ -29,10 +54,10 @@ import { platformNotes } from '../siteContent'
       </div>
     </section>
 
-    <section class="section how-page__flow">
+    <section :class="[bemm('flow'), 'section']">
       <div class="container">
         <p class="eyebrow">The experience</p>
-        <h2 class="display-2 how-page__flow-heading">Three moments, no friction.</h2>
+        <h2 :class="['display-2', bemm('flow-heading')]">Three moments, no friction.</h2>
         <div class="how-steps">
           <div v-for="(step, i) in steps" :key="step.title" class="how-step">
             <div class="how-step__num">{{ i + 1 }}</div>
@@ -45,7 +70,7 @@ import { platformNotes } from '../siteContent'
       </div>
     </section>
 
-    <section class="section how-page__identity">
+    <section :class="[bemm('identity'), 'section']">
       <div class="container">
         <div class="how-identity__layout">
           <div class="how-identity__copy">
@@ -71,7 +96,7 @@ import { platformNotes } from '../siteContent'
       </div>
     </section>
 
-    <section class="section how-page__cta">
+    <section :class="[bemm('cta'), 'section']">
       <div class="container">
         <div class="how-cta">
           <p class="eyebrow">Architecture docs</p>
@@ -87,31 +112,7 @@ import { platformNotes } from '../siteContent'
   </div>
 </template>
 
-<script lang="ts">
-const steps = [
-  {
-    title: 'Open the link',
-    body: 'A caregiver shares a link or bookmarks a Tiko app. No app store, no download required — just a URL.',
-  },
-  {
-    title: 'Use it immediately',
-    body: 'The app is ready with no sign-in, no tutorial, no onboarding flow. The child sees the tool straight away.',
-  },
-  {
-    title: 'Recover later if needed',
-    body: 'If the caregiver wants to keep settings across devices, they can add an email and get a magic link — no password ever.',
-  },
-]
-
-const identityProps = [
-  { label: 'Device session', body: 'Created automatically on first open. Stored locally, never requires login.' },
-  { label: 'Magic link recovery', body: 'Optional. The caregiver adds an email and verifies it once to enable cross-device sync.' },
-  { label: 'No child-facing ceremony', body: 'Recovery and admin flows are always caregiver-only. The child never sees an account form.' },
-  { label: 'Bearer token auth', body: 'API sessions use bearer tokens so iOS, Android, and web all behave the same way.' },
-]
-</script>
-
-<style scoped lang="scss">
+<style lang="scss">
 .how-page {
   &__hero {
     background: var(--surface-subtle);
@@ -138,6 +139,11 @@ const identityProps = [
     max-width: 16ch;
     margin-bottom: var(--sp-10);
     margin-top: var(--sp-2);
+  }
+
+  &__identity {
+    background: var(--surface-subtle);
+    border-block: 1px solid var(--border);
   }
 }
 
@@ -182,7 +188,7 @@ const identityProps = [
     height: 36px;
     border-radius: 50%;
     background: var(--text-primary);
-    color: white;
+    color: var(--surface-page);
     display: grid;
     place-items: center;
     font-family: var(--font-display);
@@ -242,11 +248,6 @@ const identityProps = [
     color: var(--text-primary);
     margin-bottom: var(--sp-1);
   }
-}
-
-.how-page__identity {
-  background: var(--surface-subtle);
-  border-block: 1px solid var(--border);
 }
 
 .how-cta {

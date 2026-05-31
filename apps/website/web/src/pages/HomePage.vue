@@ -1,56 +1,95 @@
 <script setup lang="ts">
 import { RouterLink } from 'vue-router'
+import { ref, onMounted } from 'vue'
+import { useBemm } from 'bemm'
 import { tikoApps } from '../content/appUniverse'
 import { trustPrinciples, platformNotes } from '../siteContent'
+
+const bemm = useBemm('home', { return: 'string', includeBaseClass: true })
+
+interface MediaImage {
+  id: string
+  title: string
+  original_url: string
+}
+
+const mediaImages = ref<MediaImage[]>([])
+
+const CDN_ORIGIN = 'data.tikocdn.org'
+
+function cdnUrl(originalUrl: string, width = 200): string {
+  try {
+    const u = new URL(originalUrl)
+    return `https://${CDN_ORIGIN}/cdn-cgi/image/width=${width},quality=85,f=auto${u.pathname}`
+  } catch {
+    return originalUrl
+  }
+}
+
+async function loadHomeImages() {
+  try {
+    const res = await fetch('https://api.tikotalks.com/v1/media?category=animals&limit=8&type=image')
+    if (res.ok) {
+      const json = await res.json() as { data?: MediaImage[] }
+      mediaImages.value = (json.data ?? []).slice(0, 8)
+    }
+  } catch {
+    // silently fail — fallback tiles shown
+  }
+}
+
+onMounted(() => {
+  loadHomeImages()
+})
 </script>
 
 <template>
   <!-- Hero -->
-  <section class="home-hero">
-    <div class="home-hero__inner container">
-      <div class="home-hero__copy">
+  <section :class="bemm('hero')">
+    <div :class="[bemm('hero-inner'), 'container']">
+      <div :class="bemm('hero-copy')">
         <p class="eyebrow">Small tools for big moments</p>
-        <h1 class="display-1 home-hero__heading">
+        <h1 :class="['display-1', bemm('hero-heading')]">
           Tiko helps children<br />communicate calmly.
         </h1>
-        <p class="body-lg home-hero__lede">
+        <p :class="['body-lg', bemm('hero-lede')]">
           Open a tiny app, use it right away.
           No passwords, no login walls, no setup ceremony —
           just clear tools for everyday moments.
         </p>
-        <div class="home-hero__actions">
-          <RouterLink to="/apps/yes-no" class="home-hero__btn home-hero__btn--primary">
+        <div :class="bemm('hero-actions')">
+          <RouterLink to="/apps/yes-no" :class="bemm('hero-btn', 'primary')">
             Try Yes No — it's free
           </RouterLink>
-          <RouterLink to="/apps" class="home-hero__btn home-hero__btn--outline">
+          <RouterLink to="/apps" :class="bemm('hero-btn', 'outline')">
             See all apps
           </RouterLink>
         </div>
-        <p class="home-hero__note">Works on any device. No account required.</p>
+        <p :class="bemm('hero-note')">Works on any device. No account required.</p>
       </div>
 
-      <div class="home-hero__visual" aria-hidden="true">
-        <div class="home-hero__device">
-          <div class="home-hero__device-top">
-            <span class="home-hero__device-dot" />
-            <span class="home-hero__device-dot" style="background:#f6c85f" />
+      <div :class="bemm('hero-visual')" aria-hidden="true">
+        <div :class="bemm('device')">
+          <div :class="bemm('device-top')">
+            <span :class="bemm('device-dot')" />
+            <span :class="bemm('device-dot')" style="background:#f6c85f" />
           </div>
-          <p class="home-hero__device-question">Are you hungry?</p>
-          <div class="home-hero__device-choices">
-            <span class="home-hero__choice home-hero__choice--yes">Yes</span>
-            <span class="home-hero__choice home-hero__choice--no">No</span>
+          <p :class="bemm('device-question')">Are you hungry?</p>
+          <div :class="bemm('device-choices')">
+            <span :class="bemm('choice', 'yes')">Yes</span>
+            <span :class="bemm('choice', 'no')">No</span>
           </div>
         </div>
-        <div class="home-hero__floating-card home-hero__floating-card--1">
-          <span class="home-hero__fc-dot" style="background:var(--app-type)" />
+        <div :class="[bemm('floating-card'), bemm('floating-card', '1')]">
+          <span :class="bemm('fc-dot')" style="background:var(--app-type)" />
           <span>Type</span>
         </div>
-        <div class="home-hero__floating-card home-hero__floating-card--2">
-          <span class="home-hero__fc-dot" style="background:var(--app-cards)" />
+        <div :class="[bemm('floating-card'), bemm('floating-card', '2')]">
+          <span :class="bemm('fc-dot')" style="background:var(--app-cards)" />
           <span>Cards</span>
         </div>
-        <div class="home-hero__floating-card home-hero__floating-card--3">
-          <span class="home-hero__fc-dot" style="background:var(--app-timer)" />
+        <div :class="[bemm('floating-card'), bemm('floating-card', '3')]">
+          <span :class="bemm('fc-dot')" style="background:var(--app-timer)" />
           <span>Timer</span>
         </div>
       </div>
@@ -60,34 +99,36 @@ import { trustPrinciples, platformNotes } from '../siteContent'
   <!-- App universe strip -->
   <section class="section section--tight">
     <div class="container">
-      <div class="home-apps__header">
+      <div :class="bemm('apps-header')">
         <div>
           <p class="eyebrow">The app universe</p>
           <h2 class="display-2">Tiny apps.<br />One clear job each.</h2>
         </div>
-        <RouterLink to="/apps" class="home-apps__see-all">
+        <RouterLink to="/apps" :class="bemm('apps-see-all')">
           View all apps →
         </RouterLink>
       </div>
 
-      <div class="home-apps__grid">
+      <div :class="bemm('apps-grid')">
         <RouterLink
           v-for="app in tikoApps"
           :key="app.id"
           :to="app.path"
-          class="home-app-card"
+          :class="bemm('app-card')"
           :style="{ '--app-color': app.color, '--app-color-light': app.colorLight }"
         >
-          <div class="home-app-card__icon" aria-hidden="true" />
-          <div class="home-app-card__body">
+          <div :class="bemm('app-card-header')">
+            <div :class="bemm('app-card-icon')" />
             <span
               class="badge"
               :class="app.status === 'available' ? 'badge--available' : 'badge--planned'"
             >
               {{ app.statusLabel }}
             </span>
-            <h3 class="home-app-card__name">{{ app.name }}</h3>
-            <p class="home-app-card__summary">{{ app.summary }}</p>
+          </div>
+          <div :class="bemm('app-card-body')">
+            <h3 :class="bemm('app-card-name')">{{ app.name }}</h3>
+            <p :class="bemm('app-card-summary')">{{ app.summary }}</p>
           </div>
         </RouterLink>
       </div>
@@ -95,10 +136,10 @@ import { trustPrinciples, platformNotes } from '../siteContent'
   </section>
 
   <!-- Trust section -->
-  <section class="section home-trust">
+  <section :class="[bemm('trust'), 'section']">
     <div class="container">
-      <div class="home-trust__layout">
-        <div class="home-trust__copy">
+      <div :class="bemm('trust-layout')">
+        <div :class="bemm('trust-copy')">
           <p class="eyebrow">Caregiver trust</p>
           <h2 class="display-2">Built so the first moment is not an account form.</h2>
           <p class="body-lg">
@@ -106,13 +147,13 @@ import { trustPrinciples, platformNotes } from '../siteContent'
             Tiko is designed so a caregiver can open an app, see whether it helps,
             and only add recovery or sync when that actually matters.
           </p>
-          <RouterLink to="/caregivers" class="home-trust__link">
+          <RouterLink to="/caregivers" :class="bemm('trust-link')">
             Read our trust principles →
           </RouterLink>
         </div>
-        <ul class="home-trust__list" aria-label="Trust principles">
-          <li v-for="principle in trustPrinciples" :key="principle" class="home-trust__item">
-            <span class="home-trust__check" aria-hidden="true">✓</span>
+        <ul :class="bemm('trust-list')" aria-label="Trust principles">
+          <li v-for="principle in trustPrinciples" :key="principle" :class="bemm('trust-item')">
+            <span :class="bemm('trust-check')" aria-hidden="true">✓</span>
             <span>{{ principle }}</span>
           </li>
         </ul>
@@ -120,10 +161,42 @@ import { trustPrinciples, platformNotes } from '../siteContent'
     </div>
   </section>
 
+  <!-- Media images section -->
+  <section :class="[bemm('media'), 'section section--tight']">
+    <div class="container">
+      <p class="eyebrow">Built-in media library</p>
+      <h2 :class="['display-2', bemm('media-heading')]">Hundreds of 4K images,<br />ready to use.</h2>
+      <div :class="bemm('media-grid')">
+        <template v-if="mediaImages.length">
+          <div
+            v-for="img in mediaImages"
+            :key="img.id"
+            :class="bemm('media-item')"
+          >
+            <img
+              :src="cdnUrl(img.original_url, 280)"
+              :alt="img.title"
+              loading="lazy"
+              :class="bemm('media-img')"
+            />
+          </div>
+        </template>
+        <template v-else>
+          <div
+            v-for="(color, i) in ['#9b3fbd','#2488ff','#ff8a1f','#16b8a6','#f8c22e','#9b3fbd','#2488ff','#ff8a1f']"
+            :key="i"
+            :class="[bemm('media-item'), bemm('media-item', 'placeholder')]"
+            :style="{ background: color }"
+          />
+        </template>
+      </div>
+    </div>
+  </section>
+
   <!-- Platform section -->
   <section class="section">
     <div class="container">
-      <div class="home-platform__header">
+      <div :class="bemm('platform-header')">
         <p class="eyebrow">One Tiko, many screens</p>
         <h2 class="display-2">A link is the fastest way to try a tool.</h2>
         <p class="body-lg">
@@ -131,9 +204,9 @@ import { trustPrinciples, platformNotes } from '../siteContent'
           Native apps follow the same calm behaviour as the web apps.
         </p>
       </div>
-      <div class="home-platform__grid">
-        <article v-for="item in platformNotes" :key="item.label" class="home-platform__card card">
-          <strong class="home-platform__card-label">{{ item.label }}</strong>
+      <div :class="bemm('platform-grid')">
+        <article v-for="item in platformNotes" :key="item.label" :class="[bemm('platform-card'), 'card']">
+          <strong :class="bemm('platform-card-label')">{{ item.label }}</strong>
           <p class="body-sm">{{ item.copy }}</p>
         </article>
       </div>
@@ -141,20 +214,20 @@ import { trustPrinciples, platformNotes } from '../siteContent'
   </section>
 
   <!-- CTA banner -->
-  <section class="home-cta section--tight">
+  <section :class="[bemm('cta'), 'section--tight']">
     <div class="container">
-      <div class="home-cta__inner">
-        <div class="home-cta__copy">
+      <div :class="bemm('cta-inner')">
+        <div :class="bemm('cta-copy')">
           <h2 class="display-3" style="color:white">Ready to try?</h2>
-          <p style="color:rgba(255,255,255,0.7);font-size:1rem;line-height:1.65">
+          <p style="color:rgba(255,255,255,0.75);font-size:1rem;line-height:1.65">
             Yes No is live on the web right now. No account, no setup.
           </p>
         </div>
-        <div class="home-cta__actions">
-          <a href="https://yesno.tikoapps.org" class="home-cta__btn" target="_blank" rel="noopener">
+        <div :class="bemm('cta-actions')">
+          <a href="https://yesno.tikoapps.org" :class="bemm('cta-btn')" target="_blank" rel="noopener">
             Open Yes No
           </a>
-          <RouterLink to="/apps" class="home-cta__btn home-cta__btn--ghost">
+          <RouterLink to="/apps" :class="bemm('cta-btn', 'ghost')">
             See all apps
           </RouterLink>
         </div>
@@ -163,14 +236,21 @@ import { trustPrinciples, platformNotes } from '../siteContent'
   </section>
 </template>
 
-<style scoped lang="scss">
+<style lang="scss">
 // Hero
-.home-hero {
-  background: var(--surface-page);
-  border-bottom: 1px solid var(--border);
-  overflow: hidden;
+.home {
+  &__hero {
+    background: linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--app-yes-no-light) 70%, var(--surface-page)) 0%,
+      var(--surface-page) 50%,
+      color-mix(in srgb, var(--app-type-light) 50%, var(--surface-page)) 100%
+    );
+    border-bottom: 1px solid var(--border);
+    overflow: hidden;
+  }
 
-  &__inner {
+  &__hero-inner {
     display: grid;
     grid-template-columns: minmax(0, 1.1fr) minmax(280px, 0.7fr);
     gap: clamp(2rem, 6vw, 5rem);
@@ -179,33 +259,33 @@ import { trustPrinciples, platformNotes } from '../siteContent'
     padding-bottom: clamp(3rem, 8vw, 6rem);
   }
 
-  &__copy {
+  &__hero-copy {
     display: flex;
     flex-direction: column;
     gap: var(--sp-6);
   }
 
-  &__heading {
+  &__hero-heading {
     max-width: 14ch;
   }
 
-  &__lede {
+  &__hero-lede {
     max-width: 44ch;
   }
 
-  &__actions {
+  &__hero-actions {
     display: flex;
     flex-wrap: wrap;
     gap: var(--sp-3);
     margin-top: var(--sp-2);
   }
 
-  &__btn {
+  &__hero-btn {
     display: inline-flex;
     align-items: center;
     padding: 14px 28px;
     border-radius: 999px;
-    font-weight: 600;
+    font-weight: 700;
     font-size: 0.95rem;
     text-decoration: none;
     transition: transform 0.15s, opacity 0.15s, box-shadow 0.15s;
@@ -216,31 +296,30 @@ import { trustPrinciples, platformNotes } from '../siteContent'
     }
 
     &--primary {
-      background: var(--text-primary);
+      background: var(--app-yes-no);
       color: white;
     }
 
     &--outline {
-      background: white;
+      background: var(--surface-card);
       color: var(--text-primary);
       border: 1.5px solid var(--border-strong);
     }
   }
 
-  &__note {
+  &__hero-note {
     font-size: 0.8rem;
     color: var(--text-muted);
   }
 
-  // Device mockup
-  &__visual {
+  &__hero-visual {
     position: relative;
     display: flex;
     justify-content: center;
   }
 
   &__device {
-    background: var(--text-primary);
+    background: var(--app-yes-no);
     color: white;
     border-radius: 28px;
     padding: 20px;
@@ -248,7 +327,7 @@ import { trustPrinciples, platformNotes } from '../siteContent'
     display: flex;
     flex-direction: column;
     gap: 16px;
-    box-shadow: var(--shadow-lg);
+    box-shadow: var(--shadow-lg), 0 0 0 6px rgba(155, 63, 189, 0.15);
   }
 
   &__device-top {
@@ -260,14 +339,15 @@ import { trustPrinciples, platformNotes } from '../siteContent'
     width: 10px;
     height: 10px;
     border-radius: 50%;
-    background: rgba(255,255,255,0.2);
+    background: rgba(255,255,255,0.25);
   }
 
   &__device-question {
     font-size: 0.95rem;
-    color: rgba(255,255,255,0.7);
+    color: rgba(255,255,255,0.8);
     text-align: center;
     padding: 0 4px;
+    font-weight: 600;
   }
 
   &__device-choices {
@@ -283,34 +363,33 @@ import { trustPrinciples, platformNotes } from '../siteContent'
     height: 60px;
     border-radius: 16px;
     font-family: var(--font-display);
-    font-weight: 800;
+    font-weight: 900;
     font-size: 1.5rem;
+
+    &--yes {
+      background: white;
+      color: var(--app-yes-no);
+    }
+
+    &--no {
+      background: rgba(255,255,255,0.15);
+      color: white;
+    }
   }
 
-  &__choice--yes {
-    background: #16b8a6;
-    color: white;
-  }
-
-  &__choice--no {
-    background: #ff8a65;
-    color: white;
-  }
-
-  // Floating accent cards
   &__floating-card {
     position: absolute;
     display: flex;
     align-items: center;
     gap: 8px;
     padding: 8px 14px;
-    background: white;
+    background: var(--surface-card);
     border: 1px solid var(--border);
     border-radius: 999px;
     font-size: 0.8rem;
-    font-weight: 600;
+    font-weight: 700;
     color: var(--text-primary);
-    box-shadow: var(--shadow-sm);
+    box-shadow: var(--shadow-md);
 
     &--1 { top: 0; right: 0; }
     &--2 { bottom: 20%; left: -10%; }
@@ -323,11 +402,9 @@ import { trustPrinciples, platformNotes } from '../siteContent'
     border-radius: 50%;
     display: block;
   }
-}
 
-// App grid
-.home-apps {
-  &__header {
+  // App grid
+  &__apps-header {
     display: flex;
     align-items: flex-end;
     justify-content: space-between;
@@ -336,88 +413,99 @@ import { trustPrinciples, platformNotes } from '../siteContent'
     margin-bottom: var(--sp-8);
   }
 
-  &__see-all {
-    font-weight: 600;
+  &__apps-see-all {
+    font-weight: 700;
     font-size: 0.9rem;
     color: var(--text-secondary);
     text-decoration: none;
     white-space: nowrap;
-    padding-bottom: 4px;
 
     &:hover { color: var(--text-primary); }
   }
 
-  &__grid {
+  &__apps-grid {
     display: grid;
     grid-template-columns: repeat(5, minmax(0, 1fr));
     gap: var(--sp-3);
   }
-}
 
-.home-app-card {
-  display: flex;
-  flex-direction: column;
-  background: var(--surface-card);
-  border: 1px solid var(--border);
-  border-top: 4px solid var(--app-color);
-  border-radius: 16px;
-  overflow: hidden;
-  text-decoration: none;
-  transition: transform 0.15s, box-shadow 0.15s;
-  box-shadow: var(--shadow-sm);
+  &__app-card {
+    display: flex;
+    flex-direction: column;
+    background: var(--surface-card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+    text-decoration: none;
+    transition: transform 0.15s, box-shadow 0.15s;
+    box-shadow: var(--shadow-sm);
 
-  &:hover {
-    transform: translateY(-3px);
-    box-shadow: var(--shadow-md);
+    &:hover {
+      transform: translateY(-3px);
+      box-shadow: var(--shadow-md);
+    }
   }
 
-  &__icon {
+  &__app-card-header {
     height: 80px;
-    background: color-mix(in srgb, var(--app-color-light) 60%, white);
+    background: color-mix(in srgb, var(--app-color) 18%, var(--surface-card));
+    border-bottom: 3px solid var(--app-color);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--sp-3) var(--sp-4);
   }
 
-  &__body {
+  &__app-card-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    background: var(--app-color);
+    opacity: 0.9;
+  }
+
+  &__app-card-body {
     display: flex;
     flex-direction: column;
     gap: var(--sp-2);
     padding: var(--sp-4);
   }
 
-  &__name {
+  &__app-card-name {
     font-family: var(--font-display);
-    font-size: 1rem;
+    font-size: 0.95rem;
     font-weight: 800;
     letter-spacing: -0.01em;
     color: var(--text-primary);
   }
 
-  &__summary {
-    font-size: 0.8rem;
-    line-height: 1.55;
+  &__app-card-summary {
+    font-size: 0.78rem;
+    line-height: 1.5;
     color: var(--text-secondary);
   }
-}
 
-// Trust
-.home-trust {
-  background: var(--surface-subtle);
-  border-block: 1px solid var(--border);
+  // Trust
+  &__trust {
+    background: var(--surface-subtle);
+    border-block: 1px solid var(--border);
+  }
 
-  &__layout {
+  &__trust-layout {
     display: grid;
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
     gap: clamp(2rem, 6vw, 5rem);
     align-items: start;
   }
 
-  &__copy {
+  &__trust-copy {
     display: flex;
     flex-direction: column;
     gap: var(--sp-6);
   }
 
-  &__link {
-    font-weight: 600;
+  &__trust-link {
+    font-weight: 700;
     font-size: 0.9rem;
     color: var(--text-secondary);
     text-decoration: none;
@@ -425,27 +513,27 @@ import { trustPrinciples, platformNotes } from '../siteContent'
     &:hover { color: var(--text-primary); }
   }
 
-  &__list {
+  &__trust-list {
     display: flex;
     flex-direction: column;
     gap: var(--sp-3);
     padding: var(--sp-8);
-    background: white;
+    background: var(--surface-card);
     border: 1px solid var(--border);
     border-radius: 20px;
     box-shadow: var(--shadow-sm);
   }
 
-  &__item {
+  &__trust-item {
     display: flex;
     align-items: flex-start;
     gap: var(--sp-3);
     font-size: 0.95rem;
-    font-weight: 500;
+    font-weight: 600;
     color: var(--text-primary);
   }
 
-  &__check {
+  &__trust-check {
     flex-shrink: 0;
     width: 22px;
     height: 22px;
@@ -457,11 +545,45 @@ import { trustPrinciples, platformNotes } from '../siteContent'
     color: #065f46;
     font-weight: 700;
   }
-}
 
-// Platform
-.home-platform {
-  &__header {
+  // Media
+  &__media {
+    background: var(--surface-subtle);
+    border-block: 1px solid var(--border);
+  }
+
+  &__media-heading {
+    max-width: 22ch;
+    margin-top: var(--sp-2);
+    margin-bottom: var(--sp-8);
+  }
+
+  &__media-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: var(--sp-3);
+  }
+
+  &__media-item {
+    aspect-ratio: 1;
+    border-radius: 16px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    background: var(--surface-card);
+
+    &--placeholder {
+      opacity: 0.6;
+    }
+  }
+
+  &__media-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  // Platform
+  &__platform-header {
     display: flex;
     flex-direction: column;
     gap: var(--sp-4);
@@ -469,33 +591,33 @@ import { trustPrinciples, platformNotes } from '../siteContent'
     margin-bottom: var(--sp-8);
   }
 
-  &__grid {
+  &__platform-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
     gap: var(--sp-4);
   }
 
-  &__card {
+  &__platform-card {
     padding: var(--sp-6);
     display: flex;
     flex-direction: column;
     gap: var(--sp-2);
   }
 
-  &__card-label {
+  &__platform-card-label {
     font-family: var(--font-display);
     font-size: 1.05rem;
     font-weight: 800;
     color: var(--text-primary);
   }
-}
 
-// CTA
-.home-cta {
-  background: var(--text-primary);
-  margin-top: clamp(var(--sp-12), 10vw, var(--sp-24));
+  // CTA
+  &__cta {
+    background: var(--app-yes-no);
+    margin-top: clamp(var(--sp-12), 10vw, var(--sp-24));
+  }
 
-  &__inner {
+  &__cta-inner {
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -504,28 +626,28 @@ import { trustPrinciples, platformNotes } from '../siteContent'
     padding-block: clamp(var(--sp-10), 7vw, var(--sp-16));
   }
 
-  &__copy {
+  &__cta-copy {
     display: flex;
     flex-direction: column;
     gap: var(--sp-3);
   }
 
-  &__actions {
+  &__cta-actions {
     display: flex;
     flex-wrap: wrap;
     gap: var(--sp-3);
   }
 
-  &__btn {
+  &__cta-btn {
     display: inline-flex;
     align-items: center;
     padding: 14px 28px;
     border-radius: 999px;
-    font-weight: 600;
+    font-weight: 700;
     font-size: 0.95rem;
     text-decoration: none;
-    background: #f6c85f;
-    color: #111;
+    background: white;
+    color: var(--app-yes-no);
     transition: opacity 0.15s, transform 0.15s;
 
     &:hover {
@@ -534,41 +656,45 @@ import { trustPrinciples, platformNotes } from '../siteContent'
     }
 
     &--ghost {
-      background: rgba(255,255,255,0.1);
-      color: rgba(255,255,255,0.8);
-      border: 1px solid rgba(255,255,255,0.15);
+      background: rgba(255,255,255,0.15);
+      color: white;
+      border: 1.5px solid rgba(255,255,255,0.3);
     }
   }
 }
 
 // Responsive
 @media (max-width: 900px) {
-  .home-apps__grid {
+  .home__apps-grid {
     grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .home__media-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
 @media (max-width: 768px) {
-  .home-hero__inner {
+  .home__hero-inner {
     grid-template-columns: 1fr;
   }
 
-  .home-hero__visual {
+  .home__hero-visual {
     display: none;
   }
 
-  .home-trust__layout {
+  .home__trust-layout {
     grid-template-columns: 1fr;
   }
 
-  .home-cta__inner {
+  .home__cta-inner {
     flex-direction: column;
     align-items: flex-start;
   }
 }
 
 @media (max-width: 560px) {
-  .home-apps__grid {
+  .home__apps-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }

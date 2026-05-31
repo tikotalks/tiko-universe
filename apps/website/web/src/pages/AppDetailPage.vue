@@ -1,18 +1,35 @@
 <script setup lang="ts">
 import { RouterLink, useRoute } from 'vue-router'
-import { computed, ref, onMounted } from 'vue'
+import { computed, ref, watch, onMounted } from 'vue'
+import { useBemm } from 'bemm'
 import { getAppBySlug } from '../content/appUniverse'
+
+const bemm = useBemm('app-detail', { return: 'string', includeBaseClass: true })
 
 const route = useRoute()
 const slug = computed(() => route.params.slug as string)
 const app = computed(() => getAppBySlug(slug.value))
 
-// Media images for Cards app
-const mediaImages = ref<Array<{ id: string; title: string; original_url: string; tags?: string[] }>>([])
+interface MediaImage {
+  id: string
+  title: string
+  original_url: string
+  tags?: string[]
+}
+
+const mediaImages = ref<MediaImage[]>([])
 const mediaLoading = ref(false)
 
 const API_BASE = 'https://api.tikotalks.com/v1'
 const CDN_ORIGIN = 'data.tikocdn.org'
+
+const APP_MEDIA_CATEGORY: Record<string, string> = {
+  'yes-no': 'emotions',
+  'type': 'letters',
+  'cards': 'animals',
+  'sequence': 'food',
+  'timer': 'transport',
+}
 
 function cdnUrl(originalUrl: string, width = 400): string {
   try {
@@ -23,72 +40,96 @@ function cdnUrl(originalUrl: string, width = 400): string {
   }
 }
 
-async function loadCardImages() {
-  if (slug.value !== 'cards') return
+async function loadMedia(appSlug: string) {
+  const category = APP_MEDIA_CATEGORY[appSlug]
+  if (!category) return
   mediaLoading.value = true
+  mediaImages.value = []
   try {
-    const res = await fetch(`${API_BASE}/media?category=animals&limit=9&type=image`)
+    const res = await fetch(`${API_BASE}/media?category=${category}&limit=9&type=image`)
     if (res.ok) {
-      const json = await res.json() as { data?: typeof mediaImages.value }
+      const json = await res.json() as { data?: MediaImage[] }
       mediaImages.value = (json.data ?? []).slice(0, 9)
     }
   } catch {
-    // Silently fail — API may not be reachable
+    // silently fail — fallback shown
   } finally {
     mediaLoading.value = false
   }
 }
 
 onMounted(() => {
-  loadCardImages()
+  loadMedia(slug.value)
 })
 
-function getAppScreenshotUrl(appSlug: string): string | null {
-  // Once we have actual screenshot images from the media API, return their CDN URLs here
-  return null
+watch(slug, (newSlug) => {
+  loadMedia(newSlug)
+})
+
+const APP_FALLBACK_EMOJI: Record<string, Array<{ emoji: string; label: string }>> = {
+  'yes-no': [
+    { emoji: '😊', label: 'Happy' }, { emoji: '😢', label: 'Sad' }, { emoji: '😡', label: 'Angry' },
+    { emoji: '😴', label: 'Tired' }, { emoji: '🤔', label: 'Thinking' }, { emoji: '😲', label: 'Surprised' },
+    { emoji: '🥰', label: 'Love' }, { emoji: '😰', label: 'Worried' }, { emoji: '😌', label: 'Calm' },
+  ],
+  'type': [
+    { emoji: '🔤', label: 'ABC' }, { emoji: '💬', label: 'Message' }, { emoji: '📢', label: 'Speak' },
+    { emoji: '✏️', label: 'Write' }, { emoji: '🔊', label: 'Voice' }, { emoji: '📝', label: 'Notes' },
+    { emoji: '💡', label: 'Idea' }, { emoji: '🗣️', label: 'Talk' }, { emoji: '📖', label: 'Words' },
+  ],
+  'cards': [
+    { emoji: '🐶', label: 'Dog' }, { emoji: '🐱', label: 'Cat' }, { emoji: '🐦', label: 'Bird' },
+    { emoji: '🐠', label: 'Fish' }, { emoji: '🐸', label: 'Frog' }, { emoji: '🦋', label: 'Butterfly' },
+    { emoji: '🍎', label: 'Apple' }, { emoji: '🥦', label: 'Broccoli' }, { emoji: '😊', label: 'Happy' },
+  ],
+  'sequence': [
+    { emoji: '1️⃣', label: 'Step 1' }, { emoji: '2️⃣', label: 'Step 2' }, { emoji: '3️⃣', label: 'Step 3' },
+    { emoji: '🍳', label: 'Cook' }, { emoji: '🧼', label: 'Wash' }, { emoji: '👕', label: 'Dress' },
+    { emoji: '🎒', label: 'Pack' }, { emoji: '🚌', label: 'Go' }, { emoji: '✅', label: 'Done' },
+  ],
+  'timer': [
+    { emoji: '⏰', label: 'Timer' }, { emoji: '⌚', label: 'Watch' }, { emoji: '⏳', label: 'Waiting' },
+    { emoji: '🚗', label: 'Car' }, { emoji: '🚌', label: 'Bus' }, { emoji: '✈️', label: 'Plane' },
+    { emoji: '🚂', label: 'Train' }, { emoji: '🚲', label: 'Bike' }, { emoji: '🏃', label: 'Run' },
+  ],
 }
 </script>
 
 <template>
-  <div v-if="!app" class="app-detail-404 section">
+  <div v-if="!app" :class="[bemm('404'), 'section']">
     <div class="container">
       <p class="eyebrow">Not found</p>
       <h1 class="display-2">App not found.</h1>
       <p class="body-lg">There is no Tiko app with that name.</p>
-      <RouterLink to="/apps" class="app-detail-404__link">← Back to all apps</RouterLink>
+      <RouterLink to="/apps" :class="bemm('404-link')">← Back to all apps</RouterLink>
     </div>
   </div>
 
-  <div v-else class="app-detail">
+  <div v-else :class="bemm('')">
     <!-- Hero -->
     <header
-      class="app-detail__hero"
+      :class="bemm('hero')"
       :style="{ '--app-color': app.color, '--app-color-light': app.colorLight }"
     >
-      <div class="app-detail__hero-inner container">
-        <div class="app-detail__hero-copy">
-          <RouterLink to="/apps" class="app-detail__back">← All apps</RouterLink>
+      <div :class="[bemm('hero-inner'), 'container']">
+        <div :class="bemm('hero-copy')">
+          <RouterLink to="/apps" :class="bemm('back')">← All apps</RouterLink>
           <p class="eyebrow" :style="{ color: app.color }">Tiko</p>
-          <h1 class="display-1 app-detail__name">{{ app.name }}</h1>
-          <p class="app-detail__headline">{{ app.headline }}</p>
-          <p class="body-lg app-detail__desc">{{ app.description }}</p>
-          <div class="app-detail__hero-actions">
+          <h1 :class="['display-1', bemm('name')]">{{ app.name }}</h1>
+          <p :class="bemm('headline')">{{ app.headline }}</p>
+          <p :class="['body-lg', bemm('desc')]">{{ app.description }}</p>
+          <div :class="bemm('hero-actions')">
             <a
               v-if="app.appUrl && app.status === 'available'"
               :href="app.appUrl"
-              class="app-detail__btn app-detail__btn--primary"
+              :class="bemm('btn', 'primary')"
               target="_blank"
               rel="noopener"
               :style="{ background: app.color }"
             >
               Open {{ app.name }} →
             </a>
-            <span
-              v-else
-              class="app-detail__btn app-detail__btn--coming"
-            >
-              Coming soon
-            </span>
+            <span v-else :class="bemm('btn', 'coming')">Coming soon</span>
             <span
               class="badge"
               :class="app.status === 'available' ? 'badge--available' : 'badge--planned'"
@@ -98,51 +139,51 @@ function getAppScreenshotUrl(appSlug: string): string | null {
           </div>
         </div>
 
-        <div class="app-detail__hero-visual" aria-hidden="true">
-          <div class="app-detail__mockup" :style="{ borderTopColor: app.color }">
-            <div class="app-detail__mockup-bar">
-              <span class="app-detail__mockup-dot" />
-              <span class="app-detail__mockup-dot" />
+        <div :class="bemm('hero-visual')" aria-hidden="true">
+          <div :class="bemm('mockup')" :style="{ borderTopColor: app.color }">
+            <div :class="bemm('mockup-bar')">
+              <span :class="bemm('mockup-dot')" />
+              <span :class="bemm('mockup-dot')" />
             </div>
             <!-- Yes No mockup -->
             <template v-if="slug === 'yes-no'">
-              <p class="app-detail__mockup-label">Are you ready?</p>
-              <div class="app-detail__mockup-yn">
-                <span class="app-detail__mockup-yn-yes" :style="{ background: app.color }">Yes</span>
-                <span class="app-detail__mockup-yn-no">No</span>
+              <p :class="bemm('mockup-label')">Are you ready?</p>
+              <div :class="bemm('mockup-yn')">
+                <span :class="bemm('mockup-yn-yes')" :style="{ background: app.color }">Yes</span>
+                <span :class="bemm('mockup-yn-no')">No</span>
               </div>
             </template>
             <!-- Cards mockup -->
             <template v-else-if="slug === 'cards'">
-              <p class="app-detail__mockup-label">Choose a card</p>
-              <div class="app-detail__mockup-cards">
-                <span v-for="label in ['🐶', '🐱', '🐦', '🐠', '🐸', '🦋']" :key="label" class="app-detail__mockup-card">{{ label }}</span>
+              <p :class="bemm('mockup-label')">Choose a card</p>
+              <div :class="bemm('mockup-cards')">
+                <span v-for="label in ['🐶', '🐱', '🐦', '🐠', '🐸', '🦋']" :key="label" :class="bemm('mockup-card')">{{ label }}</span>
               </div>
             </template>
             <!-- Type mockup -->
             <template v-else-if="slug === 'type'">
-              <div class="app-detail__mockup-type">
-                <span class="app-detail__mockup-type-text">I want a drink of water</span>
+              <div :class="bemm('mockup-type')">
+                <span :class="bemm('mockup-type-text')">I want a drink of water</span>
               </div>
-              <button class="app-detail__mockup-speak" :style="{ background: app.color }">Speak ▶</button>
+              <button :class="bemm('mockup-speak')" :style="{ background: app.color }">Speak ▶</button>
             </template>
             <!-- Sequence mockup -->
             <template v-else-if="slug === 'sequence'">
-              <div class="app-detail__mockup-step">
-                <span class="app-detail__mockup-step-num" :style="{ background: app.color }">2</span>
-                <span class="app-detail__mockup-step-label">Wash hands</span>
+              <div :class="bemm('mockup-step')">
+                <span :class="bemm('mockup-step-num')" :style="{ background: app.color }">2</span>
+                <span :class="bemm('mockup-step-label')">Wash hands</span>
               </div>
-              <div class="app-detail__mockup-progress">
-                <div class="app-detail__mockup-progress-fill" :style="{ background: app.color, width: '40%' }" />
+              <div :class="bemm('mockup-progress')">
+                <div :class="bemm('mockup-progress-fill')" :style="{ background: app.color, width: '40%' }" />
               </div>
             </template>
             <!-- Timer mockup -->
             <template v-else-if="slug === 'timer'">
-              <div class="app-detail__mockup-timer">
-                <span class="app-detail__mockup-timer-text" :style="{ color: app.color }">4:30</span>
+              <div :class="bemm('mockup-timer')">
+                <span :class="bemm('mockup-timer-text')" :style="{ color: app.color }">4:30</span>
               </div>
-              <div class="app-detail__mockup-timer-ring">
-                <div class="app-detail__mockup-timer-arc" :style="{ borderColor: app.color }" />
+              <div :class="bemm('mockup-timer-ring')">
+                <div :class="bemm('mockup-timer-arc')" :style="{ borderColor: app.color }" />
               </div>
             </template>
           </div>
@@ -151,85 +192,80 @@ function getAppScreenshotUrl(appSlug: string): string | null {
     </header>
 
     <!-- Features -->
-    <section class="section app-detail-features">
+    <section :class="[bemm('features'), 'section']">
       <div class="container">
         <p class="eyebrow">What it does</p>
-        <h2 class="display-2 app-detail-features__heading">Built for one clear job.</h2>
-        <div class="app-detail-features__grid">
+        <h2 :class="['display-2', bemm('features-heading')]">Built for one clear job.</h2>
+        <div :class="bemm('features-grid')">
           <article
             v-for="feature in app.features"
             :key="feature.title"
-            class="app-detail-feature card"
+            :class="[bemm('feature'), 'card']"
           >
-            <div class="app-detail-feature__dot" :style="{ background: app.color }" />
-            <h3 class="app-detail-feature__title">{{ feature.title }}</h3>
+            <div :class="bemm('feature-dot')" :style="{ background: app.color }" />
+            <h3 :class="bemm('feature-title')">{{ feature.title }}</h3>
             <p class="body-sm">{{ feature.body }}</p>
           </article>
         </div>
       </div>
     </section>
 
-    <!-- Media images — Cards only -->
-    <section v-if="slug === 'cards'" class="section app-detail-media">
+    <!-- Media images — all apps -->
+    <section :class="[bemm('media'), 'section']">
       <div class="container">
         <p class="eyebrow">Built-in library</p>
-        <h2 class="display-2 app-detail-media__heading">Hundreds of 4K images, ready to use.</h2>
-        <p class="body-lg app-detail-media__lede">
+        <h2 :class="['display-2', bemm('media-heading')]">Hundreds of 4K images, ready to use.</h2>
+        <p :class="['body-lg', bemm('media-lede')]">
           Animals, food, emotions, shapes, colours, transport, numbers, and letters —
           all included and served in full quality.
         </p>
-        <div v-if="mediaLoading" class="app-detail-media__loading">
-          <div v-for="i in 9" :key="i" class="app-detail-media__placeholder" />
+        <div v-if="mediaLoading" :class="bemm('media-loading')">
+          <div v-for="i in 9" :key="i" :class="bemm('media-placeholder')" />
         </div>
-        <div v-else-if="mediaImages.length" class="app-detail-media__grid">
+        <div v-else-if="mediaImages.length" :class="bemm('media-grid')">
           <div
             v-for="img in mediaImages"
             :key="img.id"
-            class="app-detail-media__item"
+            :class="bemm('media-item')"
           >
             <img
-              :src="cdnUrl(img.original_url, 400)"
+              :src="cdnUrl(img.original_url, 300)"
               :alt="img.title"
               loading="lazy"
-              class="app-detail-media__img"
+              :class="bemm('media-img')"
             />
-            <span class="app-detail-media__caption">{{ img.title }}</span>
+            <span :class="bemm('media-caption')">{{ img.title }}</span>
           </div>
         </div>
-        <div v-else class="app-detail-media__grid">
-          <!-- Fallback emoji grid when API is not reachable -->
+        <div v-else :class="bemm('media-grid')">
           <div
-            v-for="item in [
-              { emoji: '🐶', label: 'Dog' }, { emoji: '🐱', label: 'Cat' }, { emoji: '🐦', label: 'Bird' },
-              { emoji: '🐠', label: 'Fish' }, { emoji: '🐸', label: 'Frog' }, { emoji: '🦋', label: 'Butterfly' },
-              { emoji: '🍎', label: 'Apple' }, { emoji: '🥦', label: 'Broccoli' }, { emoji: '😊', label: 'Happy' }
-            ]"
+            v-for="item in APP_FALLBACK_EMOJI[slug] ?? APP_FALLBACK_EMOJI['cards']"
             :key="item.label"
-            class="app-detail-media__item app-detail-media__item--fallback"
+            :class="[bemm('media-item'), bemm('media-item', 'fallback')]"
           >
-            <span class="app-detail-media__emoji">{{ item.emoji }}</span>
-            <span class="app-detail-media__caption">{{ item.label }}</span>
+            <span :class="bemm('media-emoji')">{{ item.emoji }}</span>
+            <span :class="bemm('media-caption')">{{ item.label }}</span>
           </div>
         </div>
       </div>
     </section>
 
     <!-- Use when -->
-    <section class="section app-detail-use">
+    <section :class="[bemm('use'), 'section']">
       <div class="container">
-        <div class="app-detail-use__layout">
-          <div class="app-detail-use__copy">
+        <div :class="bemm('use-layout')">
+          <div :class="bemm('use-copy')">
             <p class="eyebrow">Use cases</p>
             <h2 class="display-2">When to reach for {{ app.name }}</h2>
           </div>
-          <ul class="app-detail-use__list">
+          <ul :class="bemm('use-list')">
             <li
               v-for="use in app.useWhen"
               :key="use"
-              class="app-detail-use__item"
+              :class="bemm('use-item')"
               :style="{ '--app-color': app.color }"
             >
-              <span class="app-detail-use__dot" />
+              <span :class="bemm('use-dot')" />
               {{ use }}
             </li>
           </ul>
@@ -238,26 +274,26 @@ function getAppScreenshotUrl(appSlug: string): string | null {
     </section>
 
     <!-- Platform notes -->
-    <section class="section app-detail-platform">
+    <section :class="[bemm('platform'), 'section']">
       <div class="container">
-        <div class="app-detail-platform__inner card card--raised">
-          <div class="app-detail-platform__copy">
+        <div :class="[bemm('platform-inner'), 'card card--raised']">
+          <div :class="bemm('platform-copy')">
             <p class="eyebrow">Availability</p>
             <h2 class="display-3">{{ app.status === 'available' ? 'Open now on the web.' : 'Coming soon.' }}</h2>
             <p class="body-lg">{{ app.platformNotes }}</p>
           </div>
-          <div class="app-detail-platform__actions">
+          <div :class="bemm('platform-actions')">
             <a
               v-if="app.appUrl && app.status === 'available'"
               :href="app.appUrl"
-              class="app-detail__btn app-detail__btn--primary"
+              :class="bemm('btn', 'primary')"
               target="_blank"
               rel="noopener"
               :style="{ background: app.color }"
             >
               Open {{ app.name }} →
             </a>
-            <RouterLink to="/apps" class="app-detail__btn app-detail__btn--outline">
+            <RouterLink to="/apps" :class="bemm('btn', 'outline')">
               ← All apps
             </RouterLink>
           </div>
@@ -267,21 +303,19 @@ function getAppScreenshotUrl(appSlug: string): string | null {
   </div>
 </template>
 
-<style scoped lang="scss">
-.app-detail-404 {
-  &__link {
+<style lang="scss">
+.app-detail {
+  &__404-link {
     display: inline-flex;
     margin-top: var(--sp-4);
-    font-weight: 600;
+    font-weight: 700;
     color: var(--text-secondary);
     text-decoration: none;
     &:hover { color: var(--text-primary); }
   }
-}
 
-.app-detail {
   &__hero {
-    background: color-mix(in srgb, var(--app-color-light) 60%, white);
+    background: color-mix(in srgb, var(--app-color-light) 60%, var(--surface-page));
     border-bottom: 1px solid color-mix(in srgb, var(--app-color) 20%, transparent);
     overflow: hidden;
   }
@@ -304,7 +338,7 @@ function getAppScreenshotUrl(appSlug: string): string | null {
   &__back {
     display: inline-flex;
     font-size: 0.85rem;
-    font-weight: 600;
+    font-weight: 700;
     color: var(--text-muted);
     text-decoration: none;
     &:hover { color: var(--text-secondary); }
@@ -340,7 +374,7 @@ function getAppScreenshotUrl(appSlug: string): string | null {
     align-items: center;
     padding: 12px 24px;
     border-radius: 999px;
-    font-weight: 600;
+    font-weight: 700;
     font-size: 0.95rem;
     text-decoration: none;
     transition: opacity 0.15s, transform 0.15s, box-shadow 0.15s;
@@ -362,7 +396,7 @@ function getAppScreenshotUrl(appSlug: string): string | null {
 
       &:hover {
         color: var(--text-primary);
-        background: white;
+        background: var(--surface-card);
       }
     }
 
@@ -379,14 +413,13 @@ function getAppScreenshotUrl(appSlug: string): string | null {
     }
   }
 
-  // Hero mockup
   &__hero-visual {
     display: flex;
     justify-content: center;
   }
 
   &__mockup {
-    background: white;
+    background: var(--surface-card);
     border: 1.5px solid var(--border);
     border-top: 4px solid var(--app-color);
     border-radius: 20px;
@@ -418,7 +451,6 @@ function getAppScreenshotUrl(appSlug: string): string | null {
     text-align: center;
   }
 
-  // Yes No mockup
   &__mockup-yn {
     display: flex;
     flex-direction: column;
@@ -433,7 +465,7 @@ function getAppScreenshotUrl(appSlug: string): string | null {
     height: 56px;
     border-radius: 12px;
     font-family: var(--font-display);
-    font-weight: 800;
+    font-weight: 900;
     font-size: 1.2rem;
     color: white;
     cursor: pointer;
@@ -443,7 +475,6 @@ function getAppScreenshotUrl(appSlug: string): string | null {
     background: #ff8a65;
   }
 
-  // Cards mockup
   &__mockup-cards {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -461,7 +492,6 @@ function getAppScreenshotUrl(appSlug: string): string | null {
     cursor: pointer;
   }
 
-  // Type mockup
   &__mockup-type {
     background: var(--surface-subtle);
     border: 1px solid var(--border);
@@ -478,12 +508,11 @@ function getAppScreenshotUrl(appSlug: string): string | null {
     padding: 8px 16px;
     color: white;
     font-size: 0.8rem;
-    font-weight: 600;
+    font-weight: 700;
     cursor: pointer;
     align-self: flex-start;
   }
 
-  // Sequence mockup
   &__mockup-step {
     display: flex;
     align-items: center;
@@ -506,8 +535,9 @@ function getAppScreenshotUrl(appSlug: string): string | null {
   }
 
   &__mockup-step-label {
-    font-weight: 600;
+    font-weight: 700;
     font-size: 0.9rem;
+    color: var(--text-primary);
   }
 
   &__mockup-progress {
@@ -520,10 +550,8 @@ function getAppScreenshotUrl(appSlug: string): string | null {
   &__mockup-progress-fill {
     height: 100%;
     border-radius: 999px;
-    transition: width 0.3s;
   }
 
-  // Timer mockup
   &__mockup-timer {
     display: flex;
     justify-content: center;
@@ -550,85 +578,87 @@ function getAppScreenshotUrl(appSlug: string): string | null {
     border-right-color: transparent;
     opacity: 0.3;
   }
-}
 
-// Features
-.app-detail-features {
-  &__heading {
+  // Features
+  &__features {
+    background: var(--surface-subtle);
+    border-bottom: 1px solid var(--border);
+  }
+
+  &__features-heading {
     max-width: 16ch;
     margin-top: var(--sp-2);
     margin-bottom: var(--sp-8);
   }
 
-  &__grid {
+  &__features-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
     gap: var(--sp-4);
   }
-}
 
-.app-detail-feature {
-  padding: var(--sp-6);
-  display: flex;
-  flex-direction: column;
-  gap: var(--sp-3);
+  &__feature {
+    padding: var(--sp-6);
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-3);
+  }
 
-  &__dot {
+  &__feature-dot {
     width: 10px;
     height: 10px;
     border-radius: 50%;
     flex-shrink: 0;
   }
 
-  &__title {
+  &__feature-title {
     font-family: var(--font-display);
     font-size: 1rem;
     font-weight: 800;
     color: var(--text-primary);
     line-height: 1.3;
   }
-}
 
-// Media (Cards page)
-.app-detail-media {
-  background: var(--surface-subtle);
-  border-block: 1px solid var(--border);
+  // Media section
+  &__media {
+    border-bottom: 1px solid var(--border);
+  }
 
-  &__heading {
+  &__media-heading {
     max-width: 20ch;
     margin-top: var(--sp-2);
     margin-bottom: var(--sp-3);
   }
 
-  &__lede {
+  &__media-lede {
     max-width: 48ch;
     margin-bottom: var(--sp-8);
   }
 
-  &__grid {
+  &__media-grid {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: var(--sp-3);
   }
 
-  &__loading {
+  &__media-loading {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: var(--sp-3);
   }
 
-  &__placeholder {
+  &__media-placeholder {
     aspect-ratio: 1;
     background: var(--border);
     border-radius: 16px;
-    animation: pulse 1.5s ease-in-out infinite alternate;
+    animation: media-pulse 1.5s ease-in-out infinite alternate;
   }
 
-  &__item {
+  &__media-item {
     display: flex;
     flex-direction: column;
     gap: var(--sp-2);
-    background: white;
+    background: var(--surface-card);
     border: 1px solid var(--border);
     border-radius: 16px;
     overflow: hidden;
@@ -641,41 +671,34 @@ function getAppScreenshotUrl(appSlug: string): string | null {
     }
   }
 
-  &__img {
+  &__media-img {
     width: 100%;
     aspect-ratio: 1;
     object-fit: cover;
   }
 
-  &__emoji {
+  &__media-emoji {
     font-size: 3rem;
     line-height: 1;
   }
 
-  &__caption {
+  &__media-caption {
     font-size: 0.75rem;
-    font-weight: 600;
+    font-weight: 700;
     color: var(--text-muted);
     text-align: center;
     padding: var(--sp-2) var(--sp-3) var(--sp-3);
   }
-}
 
-@keyframes pulse {
-  from { opacity: 0.5; }
-  to { opacity: 1; }
-}
-
-// Use when
-.app-detail-use {
-  &__layout {
+  // Use when
+  &__use-layout {
     display: grid;
     grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
     gap: clamp(2rem, 6vw, 5rem);
     align-items: start;
   }
 
-  &__copy {
+  &__use-copy {
     display: flex;
     flex-direction: column;
     gap: var(--sp-4);
@@ -683,18 +706,18 @@ function getAppScreenshotUrl(appSlug: string): string | null {
     top: calc(var(--header-height) + var(--sp-6));
   }
 
-  &__list {
+  &__use-list {
     display: flex;
     flex-direction: column;
     gap: var(--sp-4);
   }
 
-  &__item {
+  &__use-item {
     display: flex;
     align-items: flex-start;
     gap: var(--sp-4);
     font-size: 1rem;
-    font-weight: 500;
+    font-weight: 600;
     color: var(--text-primary);
     padding: var(--sp-5);
     background: var(--surface-card);
@@ -703,7 +726,7 @@ function getAppScreenshotUrl(appSlug: string): string | null {
     box-shadow: var(--shadow-sm);
   }
 
-  &__dot {
+  &__use-dot {
     flex-shrink: 0;
     width: 10px;
     height: 10px;
@@ -711,11 +734,9 @@ function getAppScreenshotUrl(appSlug: string): string | null {
     background: var(--app-color);
     margin-top: 5px;
   }
-}
 
-// Platform notes
-.app-detail-platform {
-  &__inner {
+  // Platform notes
+  &__platform-inner {
     display: grid;
     grid-template-columns: 1fr auto;
     gap: clamp(2rem, 5vw, 4rem);
@@ -723,14 +744,14 @@ function getAppScreenshotUrl(appSlug: string): string | null {
     padding: clamp(var(--sp-8), 5vw, var(--sp-12));
   }
 
-  &__copy {
+  &__platform-copy {
     display: flex;
     flex-direction: column;
     gap: var(--sp-4);
     max-width: 48ch;
   }
 
-  &__actions {
+  &__platform-actions {
     display: flex;
     flex-direction: column;
     gap: var(--sp-3);
@@ -738,37 +759,36 @@ function getAppScreenshotUrl(appSlug: string): string | null {
   }
 }
 
+@keyframes media-pulse {
+  from { opacity: 0.5; }
+  to { opacity: 1; }
+}
+
 @media (max-width: 900px) {
-  .app-detail {
-    &__hero-inner,
-    &__hero-visual {
-      grid-template-columns: 1fr;
-    }
-
-    &__hero-visual {
-      display: none;
-    }
+  .app-detail__hero-inner {
+    grid-template-columns: 1fr;
   }
 
-  .app-detail-use {
-    &__layout {
-      grid-template-columns: 1fr;
-    }
-
-    &__copy {
-      position: static;
-    }
+  .app-detail__hero-visual {
+    display: none;
   }
 
-  .app-detail-platform {
-    &__inner {
-      grid-template-columns: 1fr;
-    }
+  .app-detail__use-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .app-detail__use-copy {
+    position: static;
+  }
+
+  .app-detail__platform-inner {
+    grid-template-columns: 1fr;
   }
 }
 
 @media (max-width: 640px) {
-  .app-detail-media__grid {
+  .app-detail__media-grid,
+  .app-detail__media-loading {
     grid-template-columns: repeat(2, 1fr);
   }
 }

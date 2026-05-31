@@ -1,7 +1,10 @@
 <script setup lang="ts">
 import { RouterLink, useRoute } from 'vue-router'
 import { computed } from 'vue'
+import { useBemm } from 'bemm'
 import { docsPages, getDocsPage } from '../docsContent'
+
+const bemm = useBemm('docs-page', { return: 'string', includeBaseClass: true })
 
 const route = useRoute()
 
@@ -15,10 +18,9 @@ const currentPage = computed(() => getDocsPage(currentPath.value) ?? docsPages[0
 </script>
 
 <template>
-  <div class="docs-page section">
+  <div :class="[bemm(''), 'section']">
     <div class="container">
       <div class="docs-layout">
-        <!-- Sidebar -->
         <aside class="docs-sidebar" aria-label="Documentation pages">
           <p class="eyebrow">Docs</p>
           <nav class="docs-sidebar__nav">
@@ -36,7 +38,6 @@ const currentPage = computed(() => getDocsPage(currentPath.value) ?? docsPages[0
           </nav>
         </aside>
 
-        <!-- Content -->
         <article class="docs-article" :key="currentPage.id">
           <header class="docs-article__header">
             <p class="eyebrow">Tiko platform docs</p>
@@ -84,7 +85,7 @@ const currentPage = computed(() => getDocsPage(currentPath.value) ?? docsPages[0
   </div>
 </template>
 
-<style scoped lang="scss">
+<style lang="scss">
 .docs-layout {
   display: grid;
   grid-template-columns: 260px minmax(0, 1fr);
@@ -120,7 +121,7 @@ const currentPage = computed(() => getDocsPage(currentPath.value) ?? docsPages[0
     }
 
     &--active {
-      background: color-mix(in srgb, #f6c85f 18%, white);
+      background: color-mix(in srgb, #f6c85f 18%, var(--surface-card));
       border-color: color-mix(in srgb, #f6c85f 40%, transparent);
       box-shadow: var(--shadow-sm);
     }

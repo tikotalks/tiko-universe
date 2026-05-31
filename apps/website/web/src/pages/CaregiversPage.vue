@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import { RouterLink } from 'vue-router'
+import { useBemm } from 'bemm'
 import { trustPrinciples } from '../siteContent'
+
+const bemm = useBemm('care-page', { return: 'string', includeBaseClass: true })
 
 const sections = [
   {
@@ -23,12 +26,12 @@ const sections = [
 </script>
 
 <template>
-  <div class="care-page">
-    <header class="care-page__hero section">
+  <div :class="bemm('')">
+    <header :class="[bemm('hero'), 'section']">
       <div class="container">
         <p class="eyebrow">For caregivers</p>
-        <h1 class="display-1 care-page__heading">Built so the first moment is not an account form.</h1>
-        <p class="body-lg care-page__lede">
+        <h1 :class="['display-1', bemm('heading')]">Built so the first moment is not an account form.</h1>
+        <p :class="['body-lg', bemm('lede')]">
           You should be able to try a tool before trusting it.
           Tiko is designed so a caregiver can open an app, see whether it helps,
           and only add recovery or sync when that actually matters.
@@ -67,7 +70,7 @@ const sections = [
       </div>
     </section>
 
-    <section class="section care-page__cta">
+    <section :class="[bemm('cta'), 'section']">
       <div class="container">
         <div class="care-cta">
           <div>
@@ -81,7 +84,7 @@ const sections = [
   </div>
 </template>
 
-<style scoped lang="scss">
+<style lang="scss">
 .care-page {
   &__hero {
     background: var(--surface-subtle);
@@ -124,7 +127,7 @@ const sections = [
   border: 1px solid var(--border);
   border-radius: 14px;
   font-size: 0.95rem;
-  font-weight: 500;
+  font-weight: 600;
   color: var(--text-primary);
   box-shadow: var(--shadow-sm);
 
@@ -176,7 +179,7 @@ const sections = [
   gap: var(--sp-6);
 
   &__link {
-    font-weight: 600;
+    font-weight: 700;
     font-size: 1rem;
     color: var(--text-secondary);
     text-decoration: none;

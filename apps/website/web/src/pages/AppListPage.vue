@@ -1,15 +1,18 @@
 <script setup lang="ts">
 import { RouterLink } from 'vue-router'
+import { useBemm } from 'bemm'
 import { tikoApps } from '../content/appUniverse'
+
+const bemm = useBemm('apps-page', { return: 'string', includeBaseClass: true })
 </script>
 
 <template>
-  <div class="apps-page">
-    <header class="apps-page__hero section">
+  <div :class="bemm('')">
+    <header :class="[bemm('hero'), 'section']">
       <div class="container">
         <p class="eyebrow">The app universe</p>
-        <h1 class="display-1 apps-page__heading">Tiny apps.<br />One clear job each.</h1>
-        <p class="body-lg apps-page__lede">
+        <h1 :class="['display-1', bemm('heading')]">Tiny apps.<br />One clear job each.</h1>
+        <p :class="['body-lg', bemm('lede')]">
           Tiko is not one giant app. It is a set of small, focused tools that open immediately
           and do one thing well. Pick the one that fits the moment.
         </p>
@@ -30,15 +33,18 @@ import { tikoApps } from '../content/appUniverse'
               <div class="app-card__icon-wrap" aria-hidden="true">
                 <div class="app-card__icon" />
               </div>
-              <span
-                class="badge"
-                :class="app.status === 'available' ? 'badge--available' : 'badge--planned'"
-              >
-                {{ app.statusLabel }}
-              </span>
+              <h2 class="app-card__name">{{ app.name }}</h2>
             </div>
             <div class="app-card__body">
-              <h2 class="app-card__name">{{ app.name }}</h2>
+              <div class="app-card__meta">
+                <span
+                  class="badge"
+                  :class="app.status === 'available' ? 'badge--available' : 'badge--planned'"
+                >
+                  {{ app.statusLabel }}
+                </span>
+              </div>
+              <p class="app-card__headline">{{ app.headline }}</p>
               <p class="app-card__summary">{{ app.summary }}</p>
               <ul class="app-card__use-when">
                 <li v-for="use in app.useWhen" :key="use" class="app-card__use-item">
@@ -74,7 +80,7 @@ import { tikoApps } from '../content/appUniverse'
   </div>
 </template>
 
-<style scoped lang="scss">
+<style lang="scss">
 .apps-page {
   &__hero {
     background: var(--surface-subtle);
@@ -93,8 +99,8 @@ import { tikoApps } from '../content/appUniverse'
 
 .apps-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: var(--sp-4);
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: var(--sp-6);
 }
 
 .app-card {
@@ -102,7 +108,7 @@ import { tikoApps } from '../content/appUniverse'
   flex-direction: column;
   background: var(--surface-card);
   border: 1px solid var(--border);
-  border-radius: 20px;
+  border-radius: 24px;
   overflow: hidden;
   text-decoration: none;
   transition: transform 0.15s, box-shadow 0.15s;
@@ -118,33 +124,51 @@ import { tikoApps } from '../content/appUniverse'
   }
 
   &__hero {
-    height: 160px;
-    background: color-mix(in srgb, var(--app-color-light) 80%, white);
-    border-bottom: 1px solid color-mix(in srgb, var(--app-color) 15%, transparent);
+    min-height: 160px;
+    background: linear-gradient(
+      160deg,
+      var(--app-color) 0%,
+      color-mix(in srgb, var(--app-color) 70%, black) 100%
+    );
     display: flex;
-    align-items: center;
+    align-items: flex-end;
     justify-content: space-between;
-    padding: var(--sp-5);
+    padding: var(--sp-5) var(--sp-5) var(--sp-4);
     position: relative;
+    gap: var(--sp-3);
   }
 
   &__icon-wrap {
-    width: 64px;
-    height: 64px;
-    background: white;
-    border-radius: 18px;
+    position: absolute;
+    top: var(--sp-5);
+    left: var(--sp-5);
+    width: 52px;
+    height: 52px;
+    background: rgba(255,255,255,0.2);
+    border-radius: 16px;
     display: grid;
     place-items: center;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-    border: 1.5px solid rgba(0,0,0,0.06);
+    backdrop-filter: blur(4px);
   }
 
   &__icon {
-    width: 40px;
-    height: 40px;
-    border-radius: 12px;
-    background: var(--app-color);
-    opacity: 0.8;
+    width: 32px;
+    height: 32px;
+    border-radius: 10px;
+    background: white;
+    opacity: 0.9;
+  }
+
+  &__name {
+    font-family: var(--font-display);
+    font-size: 1.75rem;
+    font-weight: 900;
+    letter-spacing: -0.03em;
+    color: white;
+    line-height: 1;
+    text-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    flex: 1;
+    align-self: flex-end;
   }
 
   &__body {
@@ -155,26 +179,31 @@ import { tikoApps } from '../content/appUniverse'
     flex: 1;
   }
 
-  &__name {
+  &__meta {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-2);
+  }
+
+  &__headline {
     font-family: var(--font-display);
-    font-size: 1.35rem;
-    font-weight: 800;
-    letter-spacing: -0.02em;
+    font-size: 1rem;
+    font-weight: 700;
     color: var(--text-primary);
+    line-height: 1.3;
   }
 
   &__summary {
     font-size: 0.875rem;
     line-height: 1.6;
     color: var(--text-secondary);
-    font-weight: 500;
   }
 
   &__use-when {
     display: flex;
     flex-direction: column;
     gap: var(--sp-1);
-    padding-top: var(--sp-2);
+    padding-top: var(--sp-3);
     border-top: 1px solid var(--border);
   }
 
@@ -183,6 +212,7 @@ import { tikoApps } from '../content/appUniverse'
     color: var(--text-muted);
     padding-left: var(--sp-3);
     position: relative;
+    font-weight: 600;
 
     &::before {
       content: '•';
@@ -199,7 +229,7 @@ import { tikoApps } from '../content/appUniverse'
 
   &__link {
     font-size: 0.875rem;
-    font-weight: 600;
+    font-weight: 700;
     color: var(--text-secondary);
     transition: color 0.15s;
   }
@@ -217,12 +247,18 @@ import { tikoApps } from '../content/appUniverse'
   }
 
   &__link {
-    font-weight: 600;
+    font-weight: 700;
     font-size: 0.9rem;
     color: var(--text-secondary);
     text-decoration: none;
 
     &:hover { color: var(--text-primary); }
+  }
+}
+
+@media (max-width: 640px) {
+  .apps-grid {
+    grid-template-columns: 1fr;
   }
 }
 </style>

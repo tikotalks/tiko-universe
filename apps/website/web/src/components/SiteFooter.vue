@@ -1,58 +1,61 @@
 <script setup lang="ts">
 import { RouterLink } from 'vue-router'
+import { useBemm } from 'bemm'
 import { tikoApps } from '../content/appUniverse'
+
+const bemm = useBemm('site-footer', { return: 'string', includeBaseClass: true })
 </script>
 
 <template>
-  <footer class="site-footer">
-    <div class="site-footer__inner container">
-      <div class="site-footer__top">
-        <div class="site-footer__brand-col">
-          <RouterLink class="site-footer__brand" to="/" aria-label="TikoTalks home">
-            <span class="site-footer__brand-mark" aria-hidden="true">T</span>
-            <span class="site-footer__brand-text">TikoTalks</span>
+  <footer :class="bemm('')">
+    <div :class="[bemm('inner'), 'container']">
+      <div :class="bemm('top')">
+        <div :class="bemm('brand-col')">
+          <RouterLink :class="bemm('brand')" to="/" aria-label="TikoTalks home">
+            <span :class="bemm('brand-mark')" aria-hidden="true">T</span>
+            <span :class="bemm('brand-text')">TikoTalks</span>
           </RouterLink>
-          <p class="site-footer__tagline">Small tools for big moments.<br />No passwords. No account ceremony.</p>
+          <p :class="bemm('tagline')">Small tools for big moments.<br />No passwords. No account ceremony.</p>
         </div>
 
-        <nav class="site-footer__col" aria-label="Apps">
-          <p class="site-footer__col-label">Apps</p>
+        <nav :class="bemm('col')" aria-label="Apps">
+          <p :class="bemm('col-label')">Apps</p>
           <RouterLink
             v-for="app in tikoApps"
             :key="app.id"
             :to="app.path"
-            class="site-footer__link"
+            :class="bemm('link')"
           >
             {{ app.name }}
-            <span v-if="app.status === 'available'" class="site-footer__available">●</span>
+            <span v-if="app.status === 'available'" :class="bemm('available')">●</span>
           </RouterLink>
         </nav>
 
-        <nav class="site-footer__col" aria-label="Platform">
-          <p class="site-footer__col-label">Platform</p>
-          <RouterLink to="/how-it-works" class="site-footer__link">How it works</RouterLink>
-          <RouterLink to="/docs" class="site-footer__link">Documentation</RouterLink>
-          <RouterLink to="/docs/architecture" class="site-footer__link">Architecture</RouterLink>
-          <RouterLink to="/docs/apis" class="site-footer__link">API contracts</RouterLink>
+        <nav :class="bemm('col')" aria-label="Platform">
+          <p :class="bemm('col-label')">Platform</p>
+          <RouterLink to="/how-it-works" :class="bemm('link')">How it works</RouterLink>
+          <RouterLink to="/docs" :class="bemm('link')">Documentation</RouterLink>
+          <RouterLink to="/docs/architecture" :class="bemm('link')">Architecture</RouterLink>
+          <RouterLink to="/docs/apis" :class="bemm('link')">API contracts</RouterLink>
         </nav>
 
-        <nav class="site-footer__col" aria-label="For caregivers">
-          <p class="site-footer__col-label">Caregivers</p>
-          <RouterLink to="/caregivers" class="site-footer__link">Trust principles</RouterLink>
-          <RouterLink to="/faq" class="site-footer__link">FAQ</RouterLink>
-          <RouterLink to="/docs/philosophy" class="site-footer__link">Philosophy</RouterLink>
+        <nav :class="bemm('col')" aria-label="For caregivers">
+          <p :class="bemm('col-label')">Caregivers</p>
+          <RouterLink to="/caregivers" :class="bemm('link')">Trust principles</RouterLink>
+          <RouterLink to="/faq" :class="bemm('link')">FAQ</RouterLink>
+          <RouterLink to="/docs/philosophy" :class="bemm('link')">Philosophy</RouterLink>
         </nav>
       </div>
 
-      <div class="site-footer__bottom">
-        <p class="site-footer__copy">© 2026 TikoTalks. Not a medical or diagnostic product.</p>
-        <p class="site-footer__note">Tiko does not make therapy or outcome claims.</p>
+      <div :class="bemm('bottom')">
+        <p :class="bemm('copy')">© 2026 TikoTalks. Not a medical or diagnostic product.</p>
+        <p :class="bemm('note')">Tiko does not make therapy or outcome claims.</p>
       </div>
     </div>
   </footer>
 </template>
 
-<style scoped lang="scss">
+<style lang="scss">
 .site-footer {
   background: var(--text-primary);
   color: rgba(255,255,255,0.7);
@@ -112,7 +115,7 @@ import { tikoApps } from '../content/appUniverse'
   &__col-label {
     font-family: var(--font-body);
     font-size: 0.7rem;
-    font-weight: 600;
+    font-weight: 700;
     letter-spacing: 0.1em;
     text-transform: uppercase;
     color: rgba(255,255,255,0.4);

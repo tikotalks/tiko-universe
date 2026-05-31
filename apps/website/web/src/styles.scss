@@ -14,8 +14,8 @@
 
 :root {
   // Typography
-  --font-display: 'Montserrat', ui-sans-serif, system-ui, -apple-system, sans-serif;
-  --font-body: 'Inter', ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-display: 'Nunito', ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-body: 'Nunito', ui-sans-serif, system-ui, -apple-system, sans-serif;
   --font-mono: 'PT Mono', ui-monospace, 'Cascadia Code', monospace;
 
   // App palette
@@ -30,29 +30,33 @@
   --app-timer: #f8c22e;
   --app-timer-light: #fef9c3;
 
-  // Surface
+  // Surface (light mode)
   --surface-page: #faf8f4;
   --surface-card: #ffffff;
   --surface-subtle: #f4f2ee;
   --surface-ink-wash: rgba(17, 17, 17, 0.04);
 
-  // Text
+  // Text (light mode)
   --text-primary: #111111;
   --text-secondary: #4b5563;
   --text-muted: #9ca3af;
 
-  // Border / shadow
+  // Border / shadow (light mode)
   --border: rgba(17, 17, 17, 0.10);
   --border-strong: rgba(17, 17, 17, 0.18);
   --shadow-sm: 0 1px 3px rgba(17, 17, 17, 0.06), 0 1px 2px rgba(17, 17, 17, 0.04);
   --shadow-md: 0 4px 16px rgba(17, 17, 17, 0.08), 0 2px 6px rgba(17, 17, 17, 0.04);
   --shadow-lg: 0 8px 32px rgba(17, 17, 17, 0.10), 0 4px 12px rgba(17, 17, 17, 0.06);
 
+  // Header
+  --header-bg: rgba(250, 248, 244, 0.92);
+
   // Spacing scale (4px base)
   --sp-1: 4px;
   --sp-2: 8px;
   --sp-3: 12px;
   --sp-4: 16px;
+  --sp-5: 20px;
   --sp-6: 24px;
   --sp-8: 32px;
   --sp-10: 40px;
@@ -65,6 +69,27 @@
   // Layout
   --max-width: 1200px;
   --header-height: 64px;
+}
+
+// ─── Dark mode overrides ───────────────────────────────────────────────────────
+
+[data-theme="dark"] {
+  --surface-page: #111111;
+  --surface-card: #1c1c1c;
+  --surface-subtle: #161616;
+  --surface-ink-wash: rgba(255, 255, 255, 0.05);
+
+  --text-primary: #f0f0f0;
+  --text-secondary: #a0a0a0;
+  --text-muted: #666666;
+
+  --border: rgba(255, 255, 255, 0.08);
+  --border-strong: rgba(255, 255, 255, 0.15);
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.5), 0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.6), 0 2px 6px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.7), 0 4px 12px rgba(0, 0, 0, 0.5);
+
+  --header-bg: rgba(17, 17, 17, 0.92);
 }
 
 // ─── Reset / base ─────────────────────────────────────────────────────────────
@@ -88,6 +113,7 @@ body {
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  transition: background 0.2s ease, color 0.2s ease;
 }
 
 *, *::before, *::after {
@@ -158,7 +184,7 @@ code, pre {
   display: inline-block;
   font-family: var(--font-body);
   font-size: 0.75rem;
-  font-weight: 600;
+  font-weight: 700;
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--text-muted);
@@ -217,7 +243,7 @@ code, pre {
   padding: 3px 10px;
   border-radius: 999px;
   font-size: 0.75rem;
-  font-weight: 600;
+  font-weight: 700;
   background: var(--surface-subtle);
   color: var(--text-secondary);
   border: 1px solid var(--border);

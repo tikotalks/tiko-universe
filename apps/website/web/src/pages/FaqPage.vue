@@ -1,7 +1,11 @@
 <script setup lang="ts">
 import { RouterLink } from 'vue-router'
+import { useBemm } from 'bemm'
 import { faqs } from '../siteContent'
 import { ref } from 'vue'
+
+const bemm = useBemm('faq-page', { return: 'string', includeBaseClass: true })
+const bemmItem = useBemm('faq-item', { return: 'string', includeBaseClass: true })
 
 const openIndex = ref<number | null>(null)
 
@@ -11,12 +15,12 @@ function toggle(i: number) {
 </script>
 
 <template>
-  <div class="faq-page">
-    <header class="faq-page__hero section">
+  <div :class="bemm('')">
+    <header :class="[bemm('hero'), 'section']">
       <div class="container">
         <p class="eyebrow">Frequently asked questions</p>
-        <h1 class="display-1 faq-page__heading">Plain answers<br />before setup.</h1>
-        <p class="body-lg faq-page__lede">
+        <h1 :class="['display-1', bemm('heading')]">Plain answers<br />before setup.</h1>
+        <p :class="['body-lg', bemm('lede')]">
           Short answers to the questions caregivers, teachers, and developers ask most often.
         </p>
       </div>
@@ -28,14 +32,13 @@ function toggle(i: number) {
           <article
             v-for="(item, i) in faqs"
             :key="item.question"
-            class="faq-item"
-            :class="{ 'faq-item--open': openIndex === i }"
+            :class="bemmItem('', { open: openIndex === i })"
           >
-            <button class="faq-item__question" @click="toggle(i)" :aria-expanded="openIndex === i">
+            <button :class="bemmItem('question')" @click="toggle(i)" :aria-expanded="openIndex === i">
               <span>{{ item.question }}</span>
-              <span class="faq-item__arrow" aria-hidden="true">{{ openIndex === i ? '↑' : '↓' }}</span>
+              <span :class="bemmItem('arrow')" aria-hidden="true">{{ openIndex === i ? '↑' : '↓' }}</span>
             </button>
-            <div v-show="openIndex === i" class="faq-item__answer">
+            <div v-show="openIndex === i" :class="bemmItem('answer')">
               <p class="body-sm">{{ item.answer }}</p>
             </div>
           </article>
@@ -43,7 +46,7 @@ function toggle(i: number) {
       </div>
     </section>
 
-    <section class="faq-page__more section">
+    <section :class="[bemm('more'), 'section']">
       <div class="container">
         <div class="faq-more">
           <p class="eyebrow">Still have questions?</p>
@@ -56,7 +59,7 @@ function toggle(i: number) {
   </div>
 </template>
 
-<style scoped lang="scss">
+<style lang="scss">
 .faq-page {
   &__hero {
     background: var(--surface-subtle);
@@ -70,6 +73,11 @@ function toggle(i: number) {
 
   &__lede {
     max-width: 48ch;
+  }
+
+  &__more {
+    background: var(--surface-subtle);
+    border-top: 1px solid var(--border);
   }
 }
 
@@ -129,11 +137,6 @@ function toggle(i: number) {
   }
 }
 
-.faq-page__more {
-  background: var(--surface-subtle);
-  border-top: 1px solid var(--border);
-}
-
 .faq-more {
   max-width: 52ch;
   display: flex;
@@ -141,7 +144,7 @@ function toggle(i: number) {
   gap: var(--sp-4);
 
   &__link {
-    font-weight: 600;
+    font-weight: 700;
     font-size: 0.95rem;
     color: var(--text-secondary);
     text-decoration: none;
