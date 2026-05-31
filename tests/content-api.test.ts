@@ -110,7 +110,7 @@ describe('content-api worker', () => {
     const second = await worker.fetch(new Request('https://content.test/v1/projects'), env as never)
 
     expect(first.status).toBe(200)
-    expect((await parseJson(first)).data).toEqual([{ id: 'proj_1', name: 'Cards', slug: 'cards', description: 'Cards content', created_at: '2026-05-01T00:00:00.000Z', updated_at: '2026-05-01T00:00:00.000Z' }])
+    expect((await parseJson(first)).data).toEqual([{ id: 'proj_1', name: 'Cards', slug: 'cards', description: 'Cards content', is_active: true, created_at: '2026-05-01T00:00:00.000Z', updated_at: '2026-05-01T00:00:00.000Z' }])
     expect(second.status).toBe(200)
     expect(env.CONTENT_CACHE.values.size).toBe(1)
   })
