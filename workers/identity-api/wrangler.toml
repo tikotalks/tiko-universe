@@ -1,6 +1,7 @@
 name = "tiko-identity-api"
 main = "src/index.ts"
 compatibility_date = "2026-05-27"
+account_id = "8cef251b5fdcf6c6f63db98b7aa49f9a"
 
 [vars]
 ALLOWED_ORIGINS = "*"
@@ -10,5 +11,5 @@ MAGIC_LINK_BASE_URL = "https://tikoapi.org/identity/magic"
 [[d1_databases]]
 binding = "IDENTITY_DB"
 database_name = "tiko-identity"
-database_id = "00000000-0000-0000-0000-000000000000"
+database_id = "0b5e035d-6420-451e-8e54-0af5829cc95c"
 migrations_dir = "migrations"

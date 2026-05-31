@@ -10,7 +10,7 @@ workers_dev = true
 [[d1_databases]]
 binding = "GENERATION_DB"
 database_name = "tiko-generation-db-dev"
-database_id = "00000000-0000-0000-0000-000000000000"
+database_id = "230d0e88-5090-4281-86b4-29c88aaafd92"
 migrations_dir = "migrations"
 
 [[r2_buckets]]
