@@ -18,7 +18,7 @@ export const tikoLanguages = [
 
 export type TikoLanguage = typeof tikoLanguages[number]
 
-export const tikoAppKeys = ['yes-no', 'type', 'timer', 'radio'] as const
+export const tikoAppKeys = ['yes-no', 'type', 'timer', 'radio', 'cards', 'sequence', 'todo'] as const
 
 export type TikoAppKey = typeof tikoAppKeys[number]
 
@@ -209,6 +209,86 @@ export const tikoI18nKeys = {
     },
     volume: 'radio.volume',
   },
+  cards: {
+    appName: 'cards.appName',
+    collections: {
+      empty: 'cards.collections.empty',
+      addNew: 'cards.collections.addNew',
+      newName: 'cards.collections.newName',
+      create: 'cards.collections.create',
+    },
+    tiles: {
+      empty: 'cards.tiles.empty',
+      addNew: 'cards.tiles.addNew',
+      newName: 'cards.tiles.newName',
+    },
+    settings: {
+      restoreDefaults: 'cards.settings.restoreDefaults',
+      restoreConfirm: 'cards.settings.restoreConfirm',
+    },
+    status: {
+      browserVoiceFallback: 'cards.status.browserVoiceFallback',
+      speechError: 'cards.status.speechError',
+    },
+  },
+  sequence: {
+    appName: 'sequence.appName',
+    empty: {
+      title: 'sequence.empty.title',
+      description: 'sequence.empty.description',
+      create: 'sequence.empty.create',
+    },
+    create: {
+      title: 'sequence.create.title',
+      name: 'sequence.create.name',
+      namePlaceholder: 'sequence.create.namePlaceholder',
+      submit: 'sequence.create.submit',
+      cancel: 'sequence.create.cancel',
+      addStep: 'sequence.create.addStep',
+    },
+    play: {
+      step: 'sequence.play.step',
+      next: 'sequence.play.next',
+      done: 'sequence.play.done',
+    },
+    status: {
+      loadError: 'sequence.status.loadError',
+      retry: 'sequence.status.retry',
+    },
+  },
+  todo: {
+    appName: 'todo.appName',
+    empty: {
+      title: 'todo.empty.title',
+      description: 'todo.empty.description',
+      create: 'todo.empty.create',
+    },
+    create: {
+      title: 'todo.create.title',
+      name: 'todo.create.name',
+      namePlaceholder: 'todo.create.namePlaceholder',
+      details: 'todo.create.details',
+      submit: 'todo.create.submit',
+      cancel: 'todo.create.cancel',
+      selectImage: 'todo.create.selectImage',
+      step: 'todo.create.step',
+      speak: 'todo.create.speak',
+    },
+    item: {
+      markComplete: 'todo.item.markComplete',
+      markIncomplete: 'todo.item.markIncomplete',
+      done: 'todo.item.done',
+      pending: 'todo.item.pending',
+      remaining: 'todo.item.remaining',
+    },
+    status: {
+      loadError: 'todo.status.loadError',
+      retry: 'todo.status.retry',
+    },
+  },
+  common: {
+    settings: 'common.settings',
+  },
 } as const
 
 const yesNoEnglish: TranslationMap = {
@@ -330,12 +410,72 @@ const radioEnglish: TranslationMap = {
   [tikoI18nKeys.radio.volume]: 'Volume',
 }
 
+const cardsEnglish: TranslationMap = {
+  [tikoI18nKeys.cards.appName]: 'Cards',
+  [tikoI18nKeys.cards.collections.empty]: 'No collections yet.',
+  [tikoI18nKeys.cards.collections.addNew]: 'Add collection',
+  [tikoI18nKeys.cards.collections.newName]: 'New collection name',
+  [tikoI18nKeys.cards.collections.create]: 'Create',
+  [tikoI18nKeys.cards.tiles.empty]: 'No tiles yet.',
+  [tikoI18nKeys.cards.tiles.addNew]: 'Add tile',
+  [tikoI18nKeys.cards.tiles.newName]: 'New tile name',
+  [tikoI18nKeys.cards.settings.restoreDefaults]: 'Restore defaults',
+  [tikoI18nKeys.cards.settings.restoreConfirm]: 'This will show all default collections again.',
+  [tikoI18nKeys.cards.status.browserVoiceFallback]: 'Browser voice used',
+  [tikoI18nKeys.cards.status.speechError]: 'Could not speak yet. Try again.',
+}
+
+const sequenceEnglish: TranslationMap = {
+  [tikoI18nKeys.sequence.appName]: 'Sequence',
+  [tikoI18nKeys.sequence.empty.title]: 'No sequences yet',
+  [tikoI18nKeys.sequence.empty.description]: 'Create your first sequence to get started.',
+  [tikoI18nKeys.sequence.empty.create]: 'Create sequence',
+  [tikoI18nKeys.sequence.create.title]: 'New Sequence',
+  [tikoI18nKeys.sequence.create.name]: 'Name',
+  [tikoI18nKeys.sequence.create.namePlaceholder]: 'Enter sequence name',
+  [tikoI18nKeys.sequence.create.submit]: 'Create',
+  [tikoI18nKeys.sequence.create.cancel]: 'Cancel',
+  [tikoI18nKeys.sequence.create.addStep]: '+ Add step',
+  [tikoI18nKeys.sequence.play.step]: 'Step {current} of {total}',
+  [tikoI18nKeys.sequence.play.next]: 'Next',
+  [tikoI18nKeys.sequence.play.done]: 'Done',
+  [tikoI18nKeys.sequence.status.loadError]: 'Could not load data.',
+  [tikoI18nKeys.sequence.status.retry]: 'Retry',
+}
+
+const todoEnglish: TranslationMap = {
+  [tikoI18nKeys.todo.appName]: 'Todo',
+  [tikoI18nKeys.todo.empty.title]: 'No items yet',
+  [tikoI18nKeys.todo.empty.description]: 'Add your first task to get started.',
+  [tikoI18nKeys.todo.empty.create]: 'Add task',
+  [tikoI18nKeys.todo.create.title]: 'New Task',
+  [tikoI18nKeys.todo.create.name]: 'Task name',
+  [tikoI18nKeys.todo.create.namePlaceholder]: 'Enter task name',
+  [tikoI18nKeys.todo.create.details]: 'Details',
+  [tikoI18nKeys.todo.create.submit]: 'Add',
+  [tikoI18nKeys.todo.create.cancel]: 'Cancel',
+  [tikoI18nKeys.todo.create.selectImage]: 'Select image',
+  [tikoI18nKeys.todo.create.step]: 'Step',
+  [tikoI18nKeys.todo.create.speak]: 'Speak',
+  [tikoI18nKeys.todo.item.markComplete]: 'Mark complete',
+  [tikoI18nKeys.todo.item.markIncomplete]: 'Mark incomplete',
+  [tikoI18nKeys.todo.item.done]: 'Done',
+  [tikoI18nKeys.todo.item.pending]: 'Pending',
+  [tikoI18nKeys.todo.item.remaining]: '{count} remaining',
+  [tikoI18nKeys.todo.status.loadError]: 'Could not load data.',
+  [tikoI18nKeys.todo.status.retry]: 'Retry',
+  [tikoI18nKeys.common.settings]: 'Settings',
+}
+
 const localTranslationBundles = [
   createTranslationBundle({ app: 'yes-no', language: 'en', translations: yesNoEnglish }),
   createTranslationBundle({ app: 'yes-no', language: 'fr', translations: yesNoFrench }),
   createTranslationBundle({ app: 'yes-no', language: 'nl', translations: yesNoDutch }),
   createTranslationBundle({ app: 'yes-no', language: 'es', translations: yesNoSpanish }),
   createTranslationBundle({ app: 'type', language: 'en', translations: typeEnglish }),
+  createTranslationBundle({ app: 'cards', language: 'en', translations: cardsEnglish }),
+  createTranslationBundle({ app: 'sequence', language: 'en', translations: sequenceEnglish }),
+  createTranslationBundle({ app: 'todo', language: 'en', translations: todoEnglish }),
   createTranslationBundle({ app: 'timer', language: 'en', translations: timerEnglish }),
   createTranslationBundle({ app: 'radio', language: 'en', translations: radioEnglish }),
 ]

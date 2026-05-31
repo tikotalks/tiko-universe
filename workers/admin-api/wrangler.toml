@@ -19,3 +19,27 @@ MEDIA_API_URL = "https://media.tikoapi.org/v1"
 
 # Secrets:
 # TOKEN_PEPPER — same pepper as identity-api, required for email hash verification
+
+# ── Production environment ──────────────────────────────────────
+# Deploy with: npx wrangler deploy --env production
+
+[env.production]
+name = "tiko-admin-api"
+workers_dev = false
+
+[[env.production.d1_databases]]
+binding = "AUTH_DB"
+database_name = "tiko-identity"
+database_id = "036a1726-ac16-48a9-ab76-22c3a88ca7ae"
+
+[env.production.vars]
+TIKO_ENVIRONMENT = "production"
+ADMIN_EMAIL = "me@sil.mt"
+IDENTITY_BASE_URL = "https://api.tikoapi.org/v1"
+APP_API_URL = "https://api.tikoapi.org/v1/apps"
+GENERATION_API_URL = "https://api.tikoapi.org/v1/generation"
+MEDIA_API_URL = "https://media.tikoapi.org/v1"
+
+[[env.production.routes]]
+pattern = "admin.tikoapi.org"
+custom_domain = true

@@ -17,11 +17,11 @@ final class YouTubePlaybackBridge {
     }
 
     func pause() {
-        webView.evaluateJavaScript("document.querySelectorAll('video, iframe').forEach(el => { try { el.contentWindow.postMessage('{\"event\":\"command\",\"func\":\"pauseVideo\"}', '*') } catch(e) { el.pause?.() } });") { _ in }
+        webView.evaluateJavaScript("document.querySelectorAll('video, iframe').forEach(el => { try { el.contentWindow.postMessage('{\"event\":\"command\",\"func\":\"pauseVideo\"}', '*') } catch(e) { el.pause?.() } });") { _, _ in }
     }
 
     func resume() {
-        webView.evaluateJavaScript("document.querySelectorAll('video, iframe').forEach(el => { try { el.contentWindow.postMessage('{\"event\":\"command\",\"func\":\"playVideo\"}', '*') } catch(e) { el.play?.() } });") { _ in }
+        webView.evaluateJavaScript("document.querySelectorAll('video, iframe').forEach(el => { try { el.contentWindow.postMessage('{\"event\":\"command\",\"func\":\"playVideo\"}', '*') } catch(e) { el.play?.() } });") { _, _ in }
     }
 
     func stop() {

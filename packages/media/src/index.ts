@@ -67,3 +67,38 @@ export function generationTtsCacheKey(request: GenerationTtsRequest): string {
     request.text.trim()
   ].join('|')
 }
+
+export interface TikoMedia {
+  id: string
+  name: string
+  title: string
+  original_url: string
+  tags?: string[]
+  [key: string]: unknown
+}
+
+export const COLLECTION_CATEGORY_MAP: Record<string, string[]> = {
+  __default_animals: ['animals'],
+  __default_colors: ['colors'],
+  __default_food: ['food', 'food-drinks'],
+  __default_body: ['body', 'body-parts'],
+  __default_shapes: ['shapes'],
+  __default_emotions: ['emotions', 'feelings'],
+  __default_transport: ['transport', 'vehicles'],
+  __default_numbers: ['numbers'],
+  __default_letters: ['letters', 'alphabet'],
+}
+
+export function useTikoMedia() {
+  const loading = { value: false }
+
+  async function fetchByCategory(categories: string[], _options?: { limit?: number }): Promise<TikoMedia[]> {
+    return []
+  }
+
+  async function search(query: string, _options?: { limit?: number }): Promise<TikoMedia[]> {
+    return []
+  }
+
+  return { fetchByCategory, search, loading }
+}

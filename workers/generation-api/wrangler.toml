@@ -20,3 +20,28 @@ bucket_name = "tiko-generated-media-dev"
 [vars]
 TIKO_ENVIRONMENT = "development"
 GENERATION_PUBLIC_ROUTE = "https://dev.api.tikoapi.org/v1/generation"
+
+# ── Production environment ──────────────────────────────────────
+# Deploy with: npx wrangler deploy --env production
+
+[env.production]
+name = "tiko-generation-api"
+workers_dev = false
+
+[env.production.vars]
+TIKO_ENVIRONMENT = "production"
+GENERATION_PUBLIC_ROUTE = "https://api.tikoapi.org/v1/generation"
+
+[[env.production.d1_databases]]
+binding = "GENERATION_DB"
+database_name = "tiko-generation-db"
+database_id = "230d0e88-5090-4281-86b4-29c88aaafd92"
+migrations_dir = "migrations"
+
+[[env.production.r2_buckets]]
+binding = "GENERATED_MEDIA_BUCKET"
+bucket_name = "tiko-generated-media"
+
+[[env.production.routes]]
+pattern = "api.tikoapi.org/v1/generation/*"
+zone_name = "tikoapi.org"

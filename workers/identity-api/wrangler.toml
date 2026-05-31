@@ -1,7 +1,8 @@
-name = "tiko-identity-api"
+name = "tiko-identity-api-dev"
 main = "src/index.ts"
 compatibility_date = "2026-05-27"
 account_id = "8cef251b5fdcf6c6f63db98b7aa49f9a"
+workers_dev = true
 
 [vars]
 ALLOWED_ORIGINS = "https://tiko.mt,https://www.tiko.mt,https://tiko.tikoapps.org,https://yesno.tikoapps.org,https://cards.tikoapps.org,https://sequence.tikoapps.org,https://type.tikoapps.org,https://timer.tikoapps.org,https://admin.tikoapps.org,https://dev.tiko.tikoapps.org,https://dev.yesno.tikoapps.org,https://dev.cards.tikoapps.org,https://dev.sequence.tikoapps.org,https://dev.type.tikoapps.org,https://dev.timer.tikoapps.org,https://dev.admin.tikoapps.org,http://localhost:5173,http://localhost:4173,capacitor://localhost,ionic://localhost,tiko://native"
@@ -13,3 +14,24 @@ binding = "IDENTITY_DB"
 database_name = "tiko-identity"
 database_id = "0b5e035d-6420-451e-8e54-0af5829cc95c"
 migrations_dir = "migrations"
+
+# ── Production environment ──────────────────────────────────────
+# Deploy with: npx wrangler deploy --env production
+
+[env.production]
+name = "tiko-identity-api"
+workers_dev = false
+
+[env.production.vars]
+ALLOWED_ORIGINS = "https://tiko.mt,https://www.tiko.mt,https://tiko.tikoapps.org,https://yesno.tikoapps.org,https://cards.tikoapps.org,https://sequence.tikoapps.org,https://type.tikoapps.org,https://timer.tikoapps.org,https://admin.tikoapps.org,http://localhost:5173,http://localhost:4173,capacitor://localhost,ionic://localhost,tiko://native"
+MAGIC_LINK_BASE_URL = "https://tikoapi.org/identity/magic"
+
+[[env.production.d1_databases]]
+binding = "IDENTITY_DB"
+database_name = "tiko-identity"
+database_id = "0b5e035d-6420-451e-8e54-0af5829cc95c"
+migrations_dir = "migrations"
+
+[[env.production.routes]]
+pattern = "id.tiko.mt/*"
+zone_name = "tiko.mt"
