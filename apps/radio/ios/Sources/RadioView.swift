@@ -3,46 +3,6 @@ import TikoKit
 import AVFoundation
 import WebKit
 
-// MARK: - Track Model
-
-struct RadioTrack: Identifiable, Codable {
-    let id: String
-    let title: String
-    let artist: String?
-    let source: TrackSource
-    let youtubeVideoId: String?
-    let audioUrl: String?
-    let thumbnailUrl: String?
-    let duration: TimeInterval?
-    let addedAt: String?
-
-    enum TrackSource: String, Codable {
-        case youtube, r2, upload
-    }
-
-    init(
-        id: String = UUID().uuidString,
-        title: String,
-        artist: String? = nil,
-        source: TrackSource,
-        youtubeVideoId: String? = nil,
-        audioUrl: String? = nil,
-        thumbnailUrl: String? = nil,
-        duration: TimeInterval? = nil,
-        addedAt: String? = nil
-    ) {
-        self.id = id
-        self.title = title
-        self.artist = artist
-        self.source = source
-        self.youtubeVideoId = youtubeVideoId
-        self.audioUrl = audioUrl
-        self.thumbnailUrl = thumbnailUrl
-        self.duration = duration
-        self.addedAt = addedAt ?? ISO8601DateFormatter().string(from: Date())
-    }
-}
-
 // MARK: - WebViewController
 
 private class WebViewController: NSObject, ObservableObject {
@@ -89,7 +49,6 @@ private struct HiddenWebView: UIViewRepresentable {
 // MARK: - AddTrackSheet
 
 struct AddTrackSheet: View {
-    @Binding var tracksData: Data
     @State private var youtubeUrl = ""
     @State private var trackTitle = ""
     @State private var trackArtist = ""
@@ -139,19 +98,7 @@ struct AddTrackSheet: View {
     }
 
     private func addYouTubeTrack() {
-        let trimmed = youtubeUrl.trimmingCharacters(in: .whitespacesAndNewlines)
-        var videoId = trimmed
-
-        // Extract video ID from various YouTube URL formats
-        if let components = URLComponents(string: trimmed),
-           let host = components.host,
-           (host.contains("youtube.com") || host.contains("youtu.be")) {
-            if host.contains("youtu.be") {
-                videoId = components.path.trimmingCharacters(in: CharacterSet(charactersIn: "/"))
-            } else if let queryItem = components.queryItems?.first(where: { $0.name == "v" }) {
-                videoId = queryItem.value ?? trimmed
-            }
-        }
+        let videoId = YouTubeVideoIDParser.parse(youtubeUrl)
 
         let title = trackTitle.trimmingCharacters(in: .whitespaces).isEmpty
             ? "YouTube Track (\(videoId.prefix(8)))"
@@ -394,7 +341,7 @@ struct RadioView: View {
             .frame(width: 1, height: 1)
             .hidden()
         .sheet(isPresented: $showAddSheet) {
-            AddTrackSheet(tracks: $tracksData) { newTrack in
+            AddTrackSheet { newTrack in
                 addTrack(newTrack)
             }
         }
