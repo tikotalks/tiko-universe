@@ -1,3 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>https://tikotalks.com/</loc></url>
+  <url><loc>https://tikotalks.com/tools</loc></url>
+  <url><loc>https://tikotalks.com/how-it-works</loc></url>
+  <url><loc>https://tikotalks.com/caregivers</loc></url>
+  <url><loc>https://tikotalks.com/faq</loc></url>
+  <url><loc>https://tikotalks.com/docs</loc></url>
+  <url><loc>https://tikotalks.com/docs/philosophy</loc></url>
+  <url><loc>https://tikotalks.com/docs/architecture</loc></url>
+  <url><loc>https://tikotalks.com/docs/apis</loc></url>
 </urlset>

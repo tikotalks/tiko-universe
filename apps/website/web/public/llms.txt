@@ -1,1 +1,18 @@
-# This app does not provide llms.txt.
+# TikoTalks
+
+TikoTalks is the public documentation and brand surface for Tiko Universe.
+
+Core documentation pages:
+
+- https://tikotalks.com/docs — platform overview
+- https://tikotalks.com/docs/philosophy — product and engineering philosophy
+- https://tikotalks.com/docs/architecture — monorepo, Cloudflare, Worker, storage, and domain architecture
+- https://tikotalks.com/docs/apis — public API contract families
+
+Important principles:
+
+- Child-facing apps open immediately; login is never the first screen.
+- Tiko uses device-first identity with optional caregiver email recovery.
+- Web, iOS, and Android clients consume the same HTTPS JSON APIs.
+- Cloudflare Workers own backend authority, provider secrets, D1/R2 bindings, and durable mutations.
+- D1 is relational source of truth, R2 is byte source of truth, and KV is cache only.

@@ -1,6 +1,7 @@
 import { appUniverse, stableRoutes, type StableRoute } from './content/appUniverse'
+import { docsPages } from './docsContent'
 
-export type WebsiteRouteId = 'home' | 'tools' | 'how-it-works' | 'caregivers' | 'faq'
+export type WebsiteRouteId = 'home' | 'tools' | 'how-it-works' | 'caregivers' | 'faq' | 'docs'
 
 export interface WebsiteRoute {
   id: WebsiteRouteId
@@ -26,7 +27,8 @@ export const routes: WebsiteRoute[] = [
   { id: 'tools', path: '/tools', label: 'Tools', title: 'Tiny apps, each with one clear job.', description: 'A simple look at the first Tiko tools.' },
   { id: 'how-it-works', path: '/how-it-works', label: 'How it works', title: 'One Tiko, many screens.', description: 'Tiko starts on the web and keeps native paths aligned.' },
   { id: 'caregivers', path: '/caregivers', label: 'Caregivers', title: 'Built so the first moment is not an account form.', description: 'Plain trust principles for adults choosing tools.' },
-  { id: 'faq', path: '/faq', label: 'FAQ', title: 'Plain answers before setup.', description: 'Short answers about accounts, claims, platforms, and data.' }
+  { id: 'faq', path: '/faq', label: 'FAQ', title: 'Plain answers before setup.', description: 'Short answers about accounts, claims, platforms, and data.' },
+  { id: 'docs', path: '/docs', label: 'Docs', title: 'Tiko Universe docs.', description: 'Architecture, philosophy, and API docs for the Tiko platform.' }
 ]
 
 export const tools: TikoTool[] = appUniverse.map((app) => ({
@@ -41,7 +43,7 @@ export const tools: TikoTool[] = appUniverse.map((app) => ({
 }))
 
 export const tikoApps = tools
-export { stableRoutes }
+export { docsPages, stableRoutes }
 
 export const platformNotes = [
   { label: 'Web', copy: 'The first place to try Tiko apps, because a link is the fastest way to open a tool.' },

@@ -339,6 +339,105 @@ a:not(.button) {
   font-size: clamp(1.35rem, 3vw, 2rem);
 }
 
+.tiko-talks__docs-layout {
+  display: grid;
+  grid-template-columns: minmax(14rem, .32fr) minmax(0, 1fr);
+  gap: clamp(1.2rem, 4vw, 3rem);
+  align-items: start;
+}
+
+.tiko-talks__docs-nav {
+  position: sticky;
+  top: 1rem;
+  display: grid;
+  gap: .7rem;
+}
+
+.tiko-talks__docs-nav a:not(.button) {
+  display: grid;
+  gap: .25rem;
+  padding: .9rem;
+  border: 1px solid var(--tiko-border);
+  border-radius: 1rem;
+  background: var(--tiko-panel-background);
+  color: var(--tiko-quiet-text);
+  text-decoration: none;
+}
+
+.tiko-talks__docs-nav a:not(.button)[aria-current='page'] {
+  color: var(--color-foreground);
+  background: color-mix(in srgb, var(--color-background), var(--color-primary) 18%);
+  border-color: color-mix(in srgb, var(--color-primary), var(--color-foreground) 16%);
+}
+
+.tiko-talks__docs-nav strong {
+  font-size: 1rem;
+}
+
+.tiko-talks__docs-nav span {
+  font-size: .9rem;
+  line-height: 1.45;
+}
+
+.tiko-talks__docs-article,
+.tiko-talks__docs-hero,
+.tiko-talks__docs-section {
+  display: grid;
+  gap: 1rem;
+}
+
+.tiko-talks__docs-article {
+  gap: clamp(1.4rem, 4vw, 3rem);
+}
+
+.tiko-talks__docs-hero {
+  padding-bottom: clamp(1rem, 3vw, 2rem);
+  border-bottom: 1px solid var(--tiko-border);
+}
+
+.tiko-talks__docs-callouts {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr));
+  gap: 1rem;
+}
+
+.tiko-talks__docs-section {
+  padding: clamp(1.2rem, 3vw, 2rem);
+  border: 1px solid var(--tiko-border);
+  border-radius: 1.6rem;
+  background: var(--tiko-panel-background);
+}
+
+.tiko-talks__docs-section h2 {
+  max-width: 18ch;
+  font-size: clamp(1.75rem, 4vw, 3rem);
+}
+
+.tiko-talks__docs-section p,
+.tiko-talks__docs-section li {
+  color: color-mix(in srgb, var(--color-foreground), transparent 22%);
+  font-size: 1rem;
+  line-height: 1.65;
+}
+
+.tiko-talks__docs-section ul {
+  display: grid;
+  gap: .65rem;
+  margin: 0;
+  padding-left: 1.2rem;
+}
+
+.tiko-talks__docs-section pre {
+  overflow-x: auto;
+  margin: 0;
+  padding: 1rem;
+  border-radius: 1rem;
+  background: var(--color-foreground);
+  color: var(--color-background);
+  font-size: .9rem;
+  line-height: 1.55;
+}
+
 @media (min-width: 600px) {
   .tiko-talks__app-grid {
     grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -359,7 +458,8 @@ a:not(.button) {
 
   .tiko-talks__nav,
   .tiko-talks__hero,
-  .tiko-talks__section--split {
+  .tiko-talks__section--split,
+  .tiko-talks__docs-layout {
     grid-template-columns: 1fr;
   }
 
