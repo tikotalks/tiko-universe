@@ -1,0 +1,20 @@
+name = "tiko-admin-api-dev"
+main = "src/index.ts"
+compatibility_date = "2026-05-27"
+account_id = "8cef251b5fdcf6c6f63db98b7aa49f9a"
+workers_dev = true
+
+[[d1_databases]]
+binding = "AUTH_DB"
+database_name = "tiko-identity"
+database_id = "036a1726-ac16-48a9-ab76-22c3a88ca7ae"
+
+[vars]
+TIKO_ENVIRONMENT = "development"
+ADMIN_EMAIL = "me@sil.mt"
+IDENTITY_BASE_URL = "https://api.tikoapi.org/v1"
+GENERATION_API_URL = "https://dev.api.tikoapi.org/v1/generation"
+MEDIA_API_URL = "https://media.tikoapi.org/v1"
+
+# Secrets:
+# TOKEN_PEPPER — same pepper as identity-api, required for email hash verification

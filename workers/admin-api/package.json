@@ -4,8 +4,8 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "typecheck": "echo scaffold-only:admin-api",
+    "typecheck": "tsc --noEmit --strict --lib ES2022,WebWorker --module ESNext --moduleResolution Bundler src/index.ts",
     "test": "echo scaffold-only:admin-api",
-    "deploy:dry-run": "echo scaffold-only:admin-api"
+    "deploy:dry-run": "wrangler deploy --dry-run"
   }
 }
