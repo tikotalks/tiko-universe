@@ -44,4 +44,12 @@ final class TikoRadioTests: XCTestCase {
         XCTAssertEqual(reloaded.tracks.count, 1)
         XCTAssertEqual(reloaded.tracks.first?.title, "Song")
     }
+
+    @MainActor
+    func testPlaybackServiceStartsIdle() {
+        let playback = RadioPlaybackService()
+        XCTAssertFalse(playback.isPlaying)
+        XCTAssertFalse(playback.hasCurrentTrack)
+        XCTAssertEqual(playback.progress, 0)
+    }
 }

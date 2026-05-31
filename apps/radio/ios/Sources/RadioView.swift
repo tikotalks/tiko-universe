@@ -1,43 +1,11 @@
 import SwiftUI
 import TikoKit
-import AVFoundation
 import WebKit
-
-// MARK: - WebViewController
-
-private class WebViewController: NSObject, ObservableObject {
-    let webView = WKWebView(frame: CGRect(x: 0, y: 0, width: 1, height: 1))
-
-    override init() {
-        super.init()
-        webView.isHidden = true
-        webView.navigationDelegate = nil
-    }
-
-    func playYouTube(videoId: String) {
-        let urlString = "https://www.youtube.com/embed/\(videoId)?autoplay=1&controls=0&playsinline=1"
-        guard let url = URL(string: urlString) else { return }
-        webView.load(URLRequest(url: url))
-    }
-
-    func pause() {
-        webView.evaluateJavaScript("document.querySelectorAll('video, iframe').forEach(el => { try { el.contentWindow.postMessage('{\"event\":\"command\",\"func\":\"pauseVideo\"}', '*') } catch(e) { el.pause?.() } });") { _ in }
-    }
-
-    func resume() {
-        webView.evaluateJavaScript("document.querySelectorAll('video, iframe').forEach(el => { try { el.contentWindow.postMessage('{\"event\":\"command\",\"func\":\"playVideo\"}', '*') } catch(e) { el.play?.() } });") { _ in }
-    }
-
-    func stop() {
-        webView.stopLoading()
-        webView.load(URLRequest(url: URL(string: "about:blank")!))
-    }
-}
 
 // MARK: - WebViewRepresentable
 
 private struct HiddenWebView: UIViewRepresentable {
-    let controller: WebViewController
+    let controller: YouTubePlaybackBridge
 
     func makeUIView(context: Context) -> WKWebView {
         controller.webView
@@ -128,14 +96,9 @@ struct RadioView: View {
 
     // State
     @State private var library = RadioLibraryStore()
-    @State private var isPlaying = false
+    @State private var playback = RadioPlaybackService()
     @State private var showingSettings = false
-    @State private var progress: Double = 0
-    @State private var currentTime: TimeInterval = 0
     @State private var showAddSheet = false
-    @State private var webController = WebViewController()
-    @State private var audioPlayer: AVAudioPlayer?
-    @State private var progressTimer: Timer?
 
     // MARK: - Computed Properties
 
@@ -149,19 +112,23 @@ struct RadioView: View {
         return tracks[index]
     }
 
+    private var currentDisplayTrack: RadioTrack? {
+        playback.currentTrack ?? currentTrack
+    }
+
     private var currentTrackTitle: String {
-        currentTrack?.title ?? "No Track Selected"
+        currentDisplayTrack?.title ?? "No Track Selected"
     }
 
     private var currentTrackArtist: String? {
-        currentTrack?.artist
+        currentDisplayTrack?.artist
     }
 
     private var timeDisplay: String {
-        let current = Int(currentTime)
+        let current = Int(playback.currentTime)
         let minutes = current / 60
         let seconds = current % 60
-        let duration = currentTrack?.duration.map { Int($0) } ?? 0
+        let duration = Int(playback.duration ?? currentDisplayTrack?.duration ?? 0)
         let durMin = duration / 60
         let durSec = duration % 60
         return String(format: "%d:%02d / %d:%02d", minutes, seconds, durMin, durSec)
@@ -200,7 +167,7 @@ struct RadioView: View {
                     GeometryReader { geo in
                         ZStack(alignment: .leading) {
                             Capsule().fill(.white.opacity(0.2))
-                            Capsule().fill(.white).frame(width: geo.size.width * progress)
+                            Capsule().fill(.white).frame(width: geo.size.width * playback.progress)
                         }
                     }
                     .frame(height: 6)
@@ -225,14 +192,14 @@ struct RadioView: View {
                     .accessibilityLabel("Previous")
 
                     Button(action: togglePlay) {
-                        Image(systemName: isPlaying ? "pause.fill" : "play.fill")
+                        Image(systemName: playback.isPlaying ? "pause.fill" : "play.fill")
                             .font(.title.weight(.bold))
                             .foregroundStyle(.white)
                             .frame(width: 64, height: 64)
                             .background(Color.white.opacity(0.28))
                             .clipShape(Circle())
                     }
-                    .accessibilityLabel(isPlaying ? "Pause" : "Play")
+                    .accessibilityLabel(playback.isPlaying ? "Pause" : "Play")
 
                     Button(action: nextTrack) {
                         Image(systemName: "forward.fill")
@@ -336,7 +303,7 @@ struct RadioView: View {
             }
         }
         // Hidden WebView for YouTube playback
-        HiddenWebView(controller: webController)
+        HiddenWebView(controller: playback.youtubeBridge)
             .frame(width: 1, height: 1)
             .hidden()
         .sheet(isPresented: $showAddSheet) {
@@ -348,7 +315,7 @@ struct RadioView: View {
             library.load()
         }
         .onDisappear {
-            stopPlayback()
+            playback.stop()
         }
     }
 
@@ -365,69 +332,23 @@ struct RadioView: View {
     private func selectTrack(_ index: Int) {
         guard index >= 0, index < tracks.count else { return }
         currentTrackIndex = index
-        progress = 0
-        currentTime = 0
         playCurrentTrack()
     }
 
     // MARK: - Playback
 
     private func playCurrentTrack() {
-        stopPlayback()
         guard let track = currentTrack else { return }
-
-        switch track.source {
-        case .youtube:
-            if let videoId = track.youtubeVideoId {
-                webController.playYouTube(videoId: videoId)
-                isPlaying = true
-                startProgressTimer()
-            }
-        case .r2, .upload:
-            if let urlString = track.audioUrl, let url = URL(string: urlString) {
-                DispatchQueue.global(qos: .userInitiated).async {
-                    if let data = try? Data(contentsOf: url) {
-                        DispatchQueue.main.async {
-                            do {
-                                self.audioPlayer = try AVAudioPlayer(data: data)
-                                self.audioPlayer?.play()
-                                self.isPlaying = true
-                                self.startProgressTimer()
-                            } catch {
-                                self.isPlaying = false
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    private func stopPlayback() {
-        audioPlayer?.stop()
-        audioPlayer = nil
-        webController.stop()
-        isPlaying = false
-        stopProgressTimer()
+        playback.play(track)
     }
 
     private func togglePlay() {
-        if isPlaying {
-            // Pause
-            audioPlayer?.pause()
-            webController.pause()
-            isPlaying = false
-            stopProgressTimer()
+        if playback.isPlaying {
+            playback.pause()
+        } else if playback.currentTrack != nil {
+            playback.resume()
         } else {
-            // Resume or start
-            if audioPlayer != nil {
-                audioPlayer?.play()
-                webController.resume()
-                isPlaying = true
-                startProgressTimer()
-            } else {
-                playCurrentTrack()
-            }
+            playCurrentTrack()
         }
     }
 
@@ -435,15 +356,13 @@ struct RadioView: View {
         guard !tracks.isEmpty else { return }
         if shuffleEnabled {
             var newIndex = Int.random(in: 0..<tracks.count)
-            while newIndex == currentTrackIndex %% tracks.count && tracks.count > 1 {
+            while newIndex == currentTrackIndex % tracks.count && tracks.count > 1 {
                 newIndex = Int.random(in: 0..<tracks.count)
             }
             currentTrackIndex = newIndex
         } else {
-            currentTrackIndex = (currentTrackIndex + 1) %% tracks.count
+            currentTrackIndex = (currentTrackIndex + 1) % tracks.count
         }
-        progress = 0
-        currentTime = 0
         playCurrentTrack()
     }
 
@@ -451,62 +370,14 @@ struct RadioView: View {
         guard !tracks.isEmpty else { return }
         if shuffleEnabled {
             var newIndex = Int.random(in: 0..<tracks.count)
-            while newIndex == currentTrackIndex %% tracks.count && tracks.count > 1 {
+            while newIndex == currentTrackIndex % tracks.count && tracks.count > 1 {
                 newIndex = Int.random(in: 0..<tracks.count)
             }
             currentTrackIndex = newIndex
         } else {
-            currentTrackIndex = (currentTrackIndex - 1 + tracks.count) %% tracks.count
+            currentTrackIndex = (currentTrackIndex - 1 + tracks.count) % tracks.count
         }
-        progress = 0
-        currentTime = 0
         playCurrentTrack()
-    }
-
-    // MARK: - Progress Timer
-
-    private func startProgressTimer() {
-        stopProgressTimer()
-        progressTimer = Timer.scheduledTimer(withTimeInterval: 0.5, repeats: true) { _ in
-            updateProgress()
-        }
-    }
-
-    private func stopProgressTimer() {
-        progressTimer?.invalidate()
-        progressTimer = nil
-    }
-
-    private func updateProgress() {
-        if let player = audioPlayer, player.duration > 0 {
-            currentTime = player.currentTime
-            progress = player.currentTime / player.duration
-
-            if !player.isPlaying {
-                isPlaying = false
-                stopProgressTimer()
-                if repeatEnabled {
-                    playCurrentTrack()
-                } else {
-                    nextTrack()
-                }
-            }
-        } else {
-            // YouTube tracks — estimate progress based on duration if available
-            currentTime += 0.5
-            if let duration = currentTrack?.duration, duration > 0 {
-                progress = min(currentTime / duration, 1.0)
-                if currentTime >= duration {
-                    isPlaying = false
-                    stopProgressTimer()
-                    if repeatEnabled {
-                        playCurrentTrack()
-                    } else {
-                        nextTrack()
-                    }
-                }
-            }
-        }
     }
 }
 
