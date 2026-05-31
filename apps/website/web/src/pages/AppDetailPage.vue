@@ -29,7 +29,7 @@ async function loadCardImages() {
   try {
     const res = await fetch(`${API_BASE}/media?category=animals&limit=9&type=image`)
     if (res.ok) {
-      const json = await res.json()
+      const json = await res.json() as { data?: typeof mediaImages.value }
       mediaImages.value = (json.data ?? []).slice(0, 9)
     }
   } catch {
