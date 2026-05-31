@@ -194,8 +194,8 @@ export const docsPages: readonly DocsPage[] = [
           '`tikotalks.com`: public TikoTalks documentation/brand surface for these pages.',
           '`*.tikoapps.org`: app runtime family such as yesno, type, cards, sequence, timer, media, and admin.',
           '`id.tiko.mt`: device-first identity origin.',
-          '`api.tikoapi.org/v1/*`: consolidated API route family where practical.',
-          '`media.tikoapi.org`, `admin.tikoapi.org`, `tts.tikoapi.org`: dedicated service subdomains where separation is useful.',
+          '`api.tikotalks.com/v1/*`: consolidated API route family where practical.',
+          '`media-api.tikotalks.com`, `admin-api.tikotalks.com`, `tts.tikotalks.com`: dedicated service subdomains where separation is useful.',
           '`*.tikocdn.org`: byte delivery only, not application logic.'
         ]
       }

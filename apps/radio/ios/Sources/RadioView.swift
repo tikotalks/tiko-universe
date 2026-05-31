@@ -97,7 +97,6 @@ struct RadioView: View {
     // State
     @State private var library = RadioLibraryStore()
     @State private var playback = RadioPlaybackService()
-    @State private var showingSettings = false
     @State private var showAddSheet = false
 
     // MARK: - Computed Properties
@@ -134,6 +133,9 @@ struct RadioView: View {
         return String(format: "%d:%02d / %d:%02d", minutes, seconds, durMin, durSec)
     }
 
+    private var radioPrimary: Color { TikoAppColor.radio.palette.primary }
+    private var radioDark: Color { TikoAppColor.radio.palette.dark }
+
     // MARK: - Body
 
     var body: some View {
@@ -141,11 +143,11 @@ struct RadioView: View {
             appName: "Radio",
             appIcon: "antenna.radiowaves.left.and.right",
             appColor: .radio,
-            actions: [
-                TikoHeaderAction(id: "settings", label: "Settings", systemImage: "slider.horizontal.3", isActive: showingSettings)
-            ],
-            onAction: { id in
-                if id == "settings" { showingSettings.toggle() }
+            settingsContent: {
+                TikoSettingsSection(title: "Radio") {
+                    TikoSettingsToggleRow(title: "Shuffle", icon: "shuffle", appColor: .radio, isOn: $shuffleEnabled)
+                    TikoSettingsToggleRow(title: "Repeat", icon: "repeat", appColor: .radio, isOn: $repeatEnabled)
+                }
             }
         ) {
             VStack(spacing: 20) {
@@ -153,21 +155,21 @@ struct RadioView: View {
                 VStack(spacing: 8) {
                     Text(currentTrackTitle)
                         .font(.system(.title2, design: .rounded).weight(.heavy))
-                        .foregroundStyle(.white)
+                        .foregroundStyle(radioDark)
                         .lineLimit(1)
 
                     if let artist = currentTrackArtist, !artist.isEmpty {
                         Text(artist)
                             .font(.system(.subheadline, design: .rounded).weight(.medium))
-                            .foregroundStyle(.white.opacity(0.7))
+                            .foregroundStyle(radioDark.opacity(0.72))
                             .lineLimit(1)
                     }
 
                     // Progress bar
                     GeometryReader { geo in
                         ZStack(alignment: .leading) {
-                            Capsule().fill(.white.opacity(0.2))
-                            Capsule().fill(.white).frame(width: geo.size.width * playback.progress)
+                            Capsule().fill(radioPrimary.opacity(0.18))
+                            Capsule().fill(radioPrimary).frame(width: geo.size.width * playback.progress)
                         }
                     }
                     .frame(height: 6)
@@ -175,7 +177,7 @@ struct RadioView: View {
 
                     Text(timeDisplay)
                         .font(.system(.caption, design: .monospaced).weight(.semibold))
-                        .foregroundStyle(.white.opacity(0.6))
+                        .foregroundStyle(radioDark.opacity(0.62))
                 }
                 .padding(.top, 24)
 
@@ -184,9 +186,9 @@ struct RadioView: View {
                     Button(action: previousTrack) {
                         Image(systemName: "backward.fill")
                             .font(.title2.weight(.bold))
-                            .foregroundStyle(.white)
+                            .foregroundStyle(radioDark)
                             .frame(width: 50, height: 50)
-                            .background(Color.white.opacity(0.18))
+                            .background(radioPrimary.opacity(0.14))
                             .clipShape(Circle())
                     }
                     .accessibilityLabel("Previous")
@@ -194,9 +196,9 @@ struct RadioView: View {
                     Button(action: togglePlay) {
                         Image(systemName: playback.isPlaying ? "pause.fill" : "play.fill")
                             .font(.title.weight(.bold))
-                            .foregroundStyle(.white)
+                            .foregroundStyle(radioDark)
                             .frame(width: 64, height: 64)
-                            .background(Color.white.opacity(0.28))
+                            .background(radioPrimary.opacity(0.22))
                             .clipShape(Circle())
                     }
                     .accessibilityLabel(playback.isPlaying ? "Pause" : "Play")
@@ -204,9 +206,9 @@ struct RadioView: View {
                     Button(action: nextTrack) {
                         Image(systemName: "forward.fill")
                             .font(.title2.weight(.bold))
-                            .foregroundStyle(.white)
+                            .foregroundStyle(radioDark)
                             .frame(width: 50, height: 50)
-                            .background(Color.white.opacity(0.18))
+                            .background(radioPrimary.opacity(0.14))
                             .clipShape(Circle())
                     }
                     .accessibilityLabel("Next")
@@ -217,9 +219,9 @@ struct RadioView: View {
                     Button(action: { shuffleEnabled.toggle() }) {
                         Image(systemName: "shuffle")
                             .font(.body.weight(.bold))
-                            .foregroundStyle(shuffleEnabled ? .white : .white.opacity(0.5))
+                            .foregroundStyle(shuffleEnabled ? radioDark : radioDark.opacity(0.48))
                             .padding(8)
-                            .background(shuffleEnabled ? Color.white.opacity(0.28) : Color.white.opacity(0.1))
+                            .background(shuffleEnabled ? radioPrimary.opacity(0.22) : radioPrimary.opacity(0.10))
                             .clipShape(Capsule())
                     }
                     .accessibilityLabel("Shuffle")
@@ -227,9 +229,9 @@ struct RadioView: View {
                     Button(action: { repeatEnabled.toggle() }) {
                         Image(systemName: "repeat")
                             .font(.body.weight(.bold))
-                            .foregroundStyle(repeatEnabled ? .white : .white.opacity(0.5))
+                            .foregroundStyle(repeatEnabled ? radioDark : radioDark.opacity(0.48))
                             .padding(8)
-                            .background(repeatEnabled ? Color.white.opacity(0.28) : Color.white.opacity(0.1))
+                            .background(repeatEnabled ? radioPrimary.opacity(0.22) : radioPrimary.opacity(0.10))
                             .clipShape(Capsule())
                     }
                     .accessibilityLabel("Repeat")
@@ -239,7 +241,7 @@ struct RadioView: View {
                 Button(action: { showAddSheet = true }) {
                     Image(systemName: "plus.circle.fill")
                         .font(.title3)
-                        .foregroundStyle(.white)
+                        .foregroundStyle(radioDark)
                 }
                 .padding(.top, 4)
 
@@ -247,12 +249,12 @@ struct RadioView: View {
                 VStack(spacing: 6) {
                     Text("Library")
                         .font(.system(.headline, design: .rounded).weight(.heavy))
-                        .foregroundStyle(.white)
+                        .foregroundStyle(radioDark)
 
                     if tracks.isEmpty {
                         Text("No tracks yet. Add music to get started.")
                             .font(.system(.subheadline, design: .rounded))
-                            .foregroundStyle(.white.opacity(0.5))
+                            .foregroundStyle(radioDark.opacity(0.55))
                             .padding()
                     } else {
                         ScrollView {
@@ -263,25 +265,25 @@ struct RadioView: View {
                                             VStack(alignment: .leading, spacing: 2) {
                                                 Text(track.title)
                                                     .font(.system(.body, design: .rounded).weight(currentTrackIndex == index ? .heavy : .regular))
-                                                    .foregroundStyle(.white)
+                                                    .foregroundStyle(radioDark)
                                                     .lineLimit(1)
                                                 if let artist = track.artist {
                                                     Text(artist)
                                                         .font(.system(.caption, design: .rounded))
-                                                        .foregroundStyle(.white.opacity(0.6))
+                                                        .foregroundStyle(radioDark.opacity(0.62))
                                                         .lineLimit(1)
                                                 }
                                             }
                                             Spacer()
                                             if currentTrackIndex == index {
                                                 Image(systemName: "speaker.wave.2.fill")
-                                                    .foregroundStyle(.white)
+                                                    .foregroundStyle(radioDark)
                                                     .font(.caption)
                                             }
                                         }
                                         .padding(.vertical, 8)
                                         .padding(.horizontal, 12)
-                                        .background(currentTrackIndex == index ? Color.white.opacity(0.28) : Color.white.opacity(0.1))
+                                        .background(currentTrackIndex == index ? radioPrimary.opacity(0.20) : Color.white.opacity(0.72))
                                         .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
                                     }
                                 }
@@ -290,16 +292,6 @@ struct RadioView: View {
                     }
                 }
                 .padding(.horizontal, 20)
-
-                // Settings placeholder
-                if showingSettings {
-                    Text("Settings: Language and color mode synced via API.")
-                        .font(.system(.body, design: .rounded).weight(.semibold))
-                        .padding()
-                        .background(.white.opacity(0.35))
-                        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
-                        .padding(.horizontal, 20)
-                }
             }
         }
         // Hidden WebView for YouTube playback

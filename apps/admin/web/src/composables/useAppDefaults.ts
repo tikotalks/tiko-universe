@@ -28,7 +28,7 @@ export function useAppDefaults() {
   const error = ref<string | null>(null)
 
   function appBaseUrl(): string {
-    return (config.value?.appApiUrl ?? 'https://dev.api.tikoapi.org/v1/apps').replace(/\/$/, '')
+    return (config.value?.appApiUrl ?? 'https://dev.api.tikotalks.com/v1/apps').replace(/\/$/, '')
   }
 
   async function read(app: TikoManagedApp, resource: AppResource): Promise<AppDataPayload> {

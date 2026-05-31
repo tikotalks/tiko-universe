@@ -37,7 +37,7 @@ bucket_name = "user-media"
 
 # ── Secrets (set via `wrangler secret put`) ────────────────────
 # OPENAI_API_KEY
-# IDENTITY_BASE_URL — optional, defaults to https://api.tikoapi.org/v1
+# IDENTITY_BASE_URL — optional, defaults to https://api.tikotalks.com/v1
 
 [[d1_databases]]
 binding = "AUTH_DB"
@@ -79,5 +79,5 @@ database_name = "tiko-identity"
 database_id = "0b5e035d-6420-451e-8e54-0af5829cc95c"
 
 [[env.production.routes]]
-pattern = "media.tikoapi.org"
+pattern = "media-api.tikotalks.com"
 custom_domain = true

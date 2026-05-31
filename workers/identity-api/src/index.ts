@@ -161,7 +161,7 @@ async function requestRecoveryEmail(request: Request, env: Env): Promise<Respons
       const magicHash = await hashToken(magicToken, env.TOKEN_PEPPER)
       const expiresAt = new Date(now.getTime() + MAGIC_LINK_TTL_MS).toISOString()
       await run(env.IDENTITY_DB.prepare('INSERT INTO magic_links (id, user_id, email_hash, token_hash, purpose, expires_at, created_at, consumed_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)').bind(id('mlk'), userId, emailHash, magicHash, 'recovery', expiresAt, now.toISOString(), null))
-      const url = `${env.MAGIC_LINK_BASE_URL ?? 'https://identity.tikoapi.org/magic'}?token=${encodeURIComponent(magicToken)}`
+      const url = `${env.MAGIC_LINK_BASE_URL ?? 'https://api.tikotalks.com/v1/identity/magic'}?token=${encodeURIComponent(magicToken)}`
       env.MAGIC_LINK_TEST_SINK?.push({ email, token: magicToken, url })
     }
   }

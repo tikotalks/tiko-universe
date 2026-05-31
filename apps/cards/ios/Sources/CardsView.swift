@@ -6,6 +6,7 @@ struct CardsView: View {
     @StateObject private var store = CardsStore()
     private let speechService = CardsSpeechService()
 
+    @AppStorage("cards.speechEnabled") private var speechEnabled = true
     @State private var speakingCardID: String?
 
     var body: some View {
@@ -16,7 +17,12 @@ struct CardsView: View {
             actions: [
                 TikoHeaderAction(id: "edit", label: "Edit cards", systemImage: "pencil"),
                 TikoHeaderAction(id: "speak", label: "Speech settings", systemImage: "speaker.wave.2.fill")
-            ]
+            ],
+            settingsContent: {
+                TikoSettingsSection(title: "Cards") {
+                    TikoSettingsToggleRow(title: "Speak cards", icon: "speaker.wave.2.fill", appColor: .cards, isOn: $speechEnabled)
+                }
+            }
         ) {
             NavigationStack {
                 GeometryReader { geometry in
@@ -61,6 +67,7 @@ struct CardsView: View {
 
     private func speak(_ card: CommunicationCard) {
         UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+        guard speechEnabled else { return }
         speakingCardID = card.id
         speechService.speak(card.speech)
 

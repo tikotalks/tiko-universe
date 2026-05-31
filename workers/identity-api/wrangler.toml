@@ -6,7 +6,7 @@ workers_dev = true
 
 [vars]
 ALLOWED_ORIGINS = "https://tiko.mt,https://www.tiko.mt,https://tiko.tikoapps.org,https://yesno.tikoapps.org,https://cards.tikoapps.org,https://sequence.tikoapps.org,https://type.tikoapps.org,https://timer.tikoapps.org,https://admin.tikoapps.org,https://dev.tiko.tikoapps.org,https://dev.yesno.tikoapps.org,https://dev.cards.tikoapps.org,https://dev.sequence.tikoapps.org,https://dev.type.tikoapps.org,https://dev.timer.tikoapps.org,https://dev.admin.tikoapps.org,http://localhost:5173,http://localhost:4173,capacitor://localhost,ionic://localhost,tiko://native"
-MAGIC_LINK_BASE_URL = "https://tikoapi.org/identity/magic"
+MAGIC_LINK_BASE_URL = "https://api.tikotalks.com/v1/identity/magic"
 # Set TOKEN_PEPPER with `wrangler secret put TOKEN_PEPPER`; do not commit real token peppers.
 
 [[d1_databases]]
@@ -24,7 +24,7 @@ workers_dev = false
 
 [env.production.vars]
 ALLOWED_ORIGINS = "https://tiko.mt,https://www.tiko.mt,https://tiko.tikoapps.org,https://yesno.tikoapps.org,https://cards.tikoapps.org,https://sequence.tikoapps.org,https://type.tikoapps.org,https://timer.tikoapps.org,https://admin.tikoapps.org,http://localhost:5173,http://localhost:4173,capacitor://localhost,ionic://localhost,tiko://native"
-MAGIC_LINK_BASE_URL = "https://tikoapi.org/identity/magic"
+MAGIC_LINK_BASE_URL = "https://api.tikotalks.com/v1/identity/magic"
 
 [[env.production.d1_databases]]
 binding = "IDENTITY_DB"
@@ -33,5 +33,5 @@ database_id = "0b5e035d-6420-451e-8e54-0af5829cc95c"
 migrations_dir = "migrations"
 
 [[env.production.routes]]
-pattern = "id.tiko.mt/*"
-zone_name = "tiko.mt"
+pattern = "api.tikotalks.com/v1/identity/*"
+zone_name = "tikotalks.com"

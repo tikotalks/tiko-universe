@@ -4,7 +4,7 @@ import TikoKit
 struct TypeView: View {
     @AppStorage("type.text") private var text = ""
     @AppStorage("type.phrases") private var phrasesData = Data()
-    @State private var showingSettings = false
+    @AppStorage("type.speechEnabled") private var speechEnabled = true
     @State private var phrases: [String] = []
 
     private let layouts: [(label: String, keys: [[String]])] = [
@@ -14,16 +14,18 @@ struct TypeView: View {
 
     @State private var layoutIndex = 0
 
+    private var typePrimary: Color { TikoAppColor.type.palette.primary }
+    private var typeDark: Color { TikoAppColor.type.palette.dark }
+
     var body: some View {
         TikoAppShell(
             appName: "Type",
             appIcon: "text.cursor",
             appColor: .type,
-            actions: [
-                TikoHeaderAction(id: "settings", label: "Settings", systemImage: "slider.horizontal.3", isActive: showingSettings)
-            ],
-            onAction: { id in
-                if id == "settings" { showingSettings.toggle() }
+            settingsContent: {
+                TikoSettingsSection(title: "Type") {
+                    TikoSettingsToggleRow(title: "Speak typed text", icon: "speaker.wave.2.fill", appColor: .type, isOn: $speechEnabled)
+                }
             }
         ) {
             VStack(spacing: 18) {
@@ -42,9 +44,9 @@ struct TypeView: View {
                     Button(action: speakText) {
                         Image(systemName: "speaker.wave.2.fill")
                             .font(.title2.weight(.bold))
-                            .foregroundStyle(.white)
+                            .foregroundStyle(typeDark)
                             .frame(width: 56, height: 56)
-                            .background(Color.white.opacity(0.28))
+                            .background(typePrimary.opacity(0.22))
                             .clipShape(Circle())
                     }
                     .accessibilityLabel("Speak")
@@ -52,9 +54,9 @@ struct TypeView: View {
                     Button(action: { text = "" }) {
                         Image(systemName: "xmark.circle.fill")
                             .font(.title2.weight(.bold))
-                            .foregroundStyle(.white)
+                            .foregroundStyle(typeDark)
                             .frame(width: 56, height: 56)
-                            .background(Color.white.opacity(0.18))
+                            .background(typePrimary.opacity(0.14))
                             .clipShape(Circle())
                     }
                     .accessibilityLabel("Clear")
@@ -62,9 +64,9 @@ struct TypeView: View {
                     Button(action: savePhrase) {
                         Image(systemName: "square.and.arrow.down.fill")
                             .font(.title2.weight(.bold))
-                            .foregroundStyle(.white)
+                            .foregroundStyle(typeDark)
                             .frame(width: 56, height: 56)
-                            .background(Color.white.opacity(0.28))
+                            .background(typePrimary.opacity(0.22))
                             .clipShape(Circle())
                     }
                     .accessibilityLabel("Save phrase")
@@ -75,10 +77,10 @@ struct TypeView: View {
                     layoutIndex = (layoutIndex + 1) % layouts.count
                 }
                 .font(.system(.caption, design: .rounded).weight(.heavy))
-                .foregroundStyle(.white.opacity(0.8))
+                .foregroundStyle(typeDark.opacity(0.78))
                 .padding(.horizontal, 16)
                 .padding(.vertical, 6)
-                .background(.white.opacity(0.15))
+                .background(typePrimary.opacity(0.12))
                 .clipShape(Capsule())
 
                 // Virtual keyboard
@@ -124,15 +126,6 @@ struct TypeView: View {
                     .background(.white.opacity(0.35))
                     .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
                 }
-
-                if showingSettings {
-                    Text("Settings will use the shared API-first language and color contracts.")
-                        .font(.system(.body, design: .rounded).weight(.semibold))
-                        .padding()
-                        .background(.white.opacity(0.35))
-                        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
-                        .padding(.horizontal, 24)
-                }
             }
             .padding(.top, 18)
         }
@@ -140,7 +133,7 @@ struct TypeView: View {
     }
 
     private func speakText() {
-        guard !text.isEmpty else { return }
+        guard speechEnabled, !text.isEmpty else { return }
         // TODO: call shared TTS API
     }
 

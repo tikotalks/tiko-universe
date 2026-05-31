@@ -45,8 +45,8 @@ Bindings:
 
 Routes/domains:
 
-- Preferred dev route: `https://dev.id.tiko.mt/*`.
-- Production target remains `https://id.tiko.mt/*`, but this plan does not deploy production.
+- Preferred dev route: `https://dev.api.tikotalks.com/v1/identity/*`.
+- Production target remains `https://api.tikotalks.com/v1/identity/*`, but this plan does not deploy production.
 
 Missing before deploy:
 
@@ -65,7 +65,7 @@ Bindings:
 
 Routes/domains:
 
-- Preferred dev route: `https://dev.api.tikoapi.org/v1/apps/*` if API consolidation is selected.
+- Preferred dev route: `https://dev.api.tikotalks.com/v1/apps/*` if API consolidation is selected.
 - Alternative bounded route: `https://dev.apps.tikoapi.org/*`.
 - Do not invent app-specific data domains unless an ADR chooses them.
 
@@ -102,9 +102,9 @@ Long-term generation bindings:
 
 Routes/domains:
 
-- Temporary compatibility route: `https://dev.tts.tikoapi.org/*`.
-- Long-term route: `https://dev.api.tikoapi.org/v1/generation/*`.
-- Keep `tts.tikoapi.org` production compatibility out of this dev-only task.
+- Temporary compatibility route: `https://dev.tts.tikotalks.com/*`.
+- Long-term route: `https://dev.api.tikotalks.com/v1/generation/*`.
+- Keep `tts.tikotalks.com` production compatibility out of this dev-only task.
 
 Create commands for missing dev resources when approved:
 
@@ -127,7 +127,7 @@ Bindings:
 
 Routes/domains:
 
-- API route: `https://dev.api.tikoapi.org/v1/media/*`.
+- API route: `https://dev.api.tikotalks.com/v1/media/*`.
 - Byte/CDN route after access policy exists: `https://dev.media.tikocdn.org/*`.
 
 ### `content-api` later
@@ -142,7 +142,7 @@ Bindings:
 
 Routes/domains:
 
-- API route: `https://dev.api.tikoapi.org/v1/content/*`.
+- API route: `https://dev.api.tikotalks.com/v1/content/*`.
 
 ## Wrangler layout
 

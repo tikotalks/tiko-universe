@@ -29,7 +29,7 @@ export function useStoryNarration() {
   const { token, config } = useAdminAuth()
 
   function generationBaseUrl(): string {
-    return (config.value?.generationApiUrl ?? 'https://dev.api.tikoapi.org/v1/generation').replace(/\/$/, '')
+    return (config.value?.generationApiUrl ?? 'https://dev.api.tikotalks.com/v1/generation').replace(/\/$/, '')
   }
 
   async function post<T>(path: string, payload: unknown): Promise<T> {

@@ -60,7 +60,7 @@ export function useAdminMediaLibrary() {
   const error = ref<string | null>(null)
 
   function mediaBaseUrl(): string {
-    return (config.value?.mediaApiUrl ?? 'https://media.tikoapi.org/v1').replace(/\/$/, '')
+    return (config.value?.mediaApiUrl ?? 'https://media-api.tikotalks.com/v1').replace(/\/$/, '')
   }
 
   async function list(params: { search?: string; type?: string; page?: number; limit?: number } = {}) {

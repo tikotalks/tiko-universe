@@ -19,7 +19,7 @@ export function useImageGeneration() {
   const { token, config } = useAdminAuth()
 
   async function generateImage(input: GenerateImageInput): Promise<ImageGenerationResult> {
-    const baseUrl = config.value?.generationApiUrl ?? 'https://dev.api.tikoapi.org/v1/generation'
+    const baseUrl = config.value?.generationApiUrl ?? 'https://dev.api.tikotalks.com/v1/generation'
     const response = await fetch(`${baseUrl}/image`, {
       method: 'POST',
       headers: {

@@ -37,7 +37,7 @@ export interface AuthEnv {
   }
   /** Comma-separated list of valid API keys (fallback when AUTH_DB is absent) */
   API_KEYS?: string
-  /** Base URL of the identity service (e.g. https://api.tikoapi.org/v1) */
+  /** Base URL of the identity service (e.g. https://api.tikotalks.com/v1) */
   IDENTITY_BASE_URL?: string
 }
 
@@ -131,7 +131,7 @@ async function validateSession(
   token: string,
   identityBaseUrl: string | undefined,
 ): Promise<{ userId: string } | null> {
-  const baseUrl = (identityBaseUrl ?? 'https://api.tikoapi.org/v1').replace(/\/$/, '')
+  const baseUrl = (identityBaseUrl ?? 'https://api.tikotalks.com/v1').replace(/\/$/, '')
   try {
     const response = await fetch(`${baseUrl}/identity/session`, {
       method: 'GET',

@@ -7,7 +7,7 @@ struct TimerView: View {
     @AppStorage("timer.mode") private var persistedMode = "idle"
     @AppStorage("timer.targetMs") private var persistedTargetMs = 0.0
     @AppStorage("timer.remainingMs") private var persistedRemainingMs = 0.0
-    @State private var showingSettings = false
+    @AppStorage("timer.soundEnabled") private var soundEnabled = true
 
     @State private var mode: TimerMode = .idle
     @State private var targetDate = Date()
@@ -52,41 +52,43 @@ struct TimerView: View {
 
     private let ringCircumference = 2 * Double.pi * 80
 
+    private var timerPrimary: Color { TikoAppColor.timer.palette.primary }
+    private var timerDark: Color { TikoAppColor.timer.palette.dark }
+
     var body: some View {
         TikoAppShell(
             appName: "Timer",
             appIcon: "timer",
             appColor: .timer,
-            actions: [
-                TikoHeaderAction(id: "settings", label: "Settings", systemImage: "slider.horizontal.3", isActive: showingSettings)
-            ],
-            onAction: { id in
-                if id == "settings" { showingSettings.toggle() }
+            settingsContent: {
+                TikoSettingsSection(title: "Timer") {
+                    TikoSettingsToggleRow(title: "Sound when done", icon: "bell.fill", appColor: .timer, isOn: $soundEnabled)
+                }
             }
         ) {
             VStack(spacing: 24) {
                 // Countdown ring
                 ZStack {
                     Circle()
-                        .stroke(Color.white.opacity(0.2), lineWidth: 12)
+                        .stroke(timerPrimary.opacity(0.22), lineWidth: 12)
                         .frame(width: 180, height: 180)
 
                     Circle()
                         .trim(from: 0, to: progress)
-                        .stroke(Color.white, style: StrokeStyle(lineWidth: 12, lineCap: .round))
+                        .stroke(timerPrimary, style: StrokeStyle(lineWidth: 12, lineCap: .round))
                         .frame(width: 180, height: 180)
                         .rotationEffect(.degrees(-90))
 
                     VStack(spacing: 4) {
                         Text(displayTime)
                             .font(.system(size: 44, weight: .bold, design: .rounded))
-                            .foregroundStyle(.white)
+                            .foregroundStyle(timerDark)
                             .monospacedDigit()
 
                         if mode == .expired {
                             Text("Time is up!")
                                 .font(.system(.headline, design: .rounded).weight(.heavy))
-                                .foregroundStyle(.white.opacity(0.9))
+                                .foregroundStyle(timerDark.opacity(0.82))
                         }
                     }
                 }
@@ -115,9 +117,9 @@ struct TimerView: View {
                         Button(action: startCustom) {
                             Image(systemName: "play.fill")
                                 .font(.title2.weight(.bold))
-                                .foregroundStyle(.white)
+                                .foregroundStyle(timerDark)
                                 .frame(width: 64, height: 64)
-                                .background(Color.white.opacity(0.28))
+                                .background(timerPrimary.opacity(0.22))
                                 .clipShape(Circle())
                         }
                         .accessibilityLabel("Start")
@@ -127,9 +129,9 @@ struct TimerView: View {
                         Button(action: pause) {
                             Image(systemName: "pause.fill")
                                 .font(.title2.weight(.bold))
-                                .foregroundStyle(.white)
+                                .foregroundStyle(timerDark)
                                 .frame(width: 64, height: 64)
-                                .background(Color.white.opacity(0.28))
+                                .background(timerPrimary.opacity(0.22))
                                 .clipShape(Circle())
                         }
                         .accessibilityLabel("Pause")
@@ -139,9 +141,9 @@ struct TimerView: View {
                         Button(action: resume) {
                             Image(systemName: "play.fill")
                                 .font(.title2.weight(.bold))
-                                .foregroundStyle(.white)
+                                .foregroundStyle(timerDark)
                                 .frame(width: 64, height: 64)
-                                .background(Color.white.opacity(0.28))
+                                .background(timerPrimary.opacity(0.22))
                                 .clipShape(Circle())
                         }
                         .accessibilityLabel("Resume")
@@ -151,22 +153,13 @@ struct TimerView: View {
                         Button(action: reset) {
                             Image(systemName: "arrow.counterclockwise")
                                 .font(.title2.weight(.bold))
-                                .foregroundStyle(.white)
+                                .foregroundStyle(timerDark)
                                 .frame(width: 64, height: 64)
-                                .background(Color.white.opacity(0.18))
+                                .background(timerPrimary.opacity(0.14))
                                 .clipShape(Circle())
                         }
                         .accessibilityLabel("Reset")
                     }
-                }
-
-                if showingSettings {
-                    Text("Settings will use the shared API-first language and color contracts.")
-                        .font(.system(.body, design: .rounded).weight(.semibold))
-                        .padding()
-                        .background(.white.opacity(0.35))
-                        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
-                        .padding(.horizontal, 24)
                 }
             }
         }
@@ -178,6 +171,9 @@ struct TimerView: View {
             tickCounter += 1
             if remaining <= 0 {
                 mode = .expired
+                if soundEnabled {
+                    // TODO: play shared Tiko completion sound when the audio asset is available.
+                }
                 persist()
             }
         }

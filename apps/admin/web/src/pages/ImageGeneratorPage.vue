@@ -60,7 +60,7 @@ async function onGenerate() {
 
 function imageSrc(result: ImageGenerationResult): string {
   if (result.imageUrl.startsWith('http')) return result.imageUrl
-  const base = config.value?.generationApiUrl ?? 'https://dev.api.tikoapi.org/v1/generation'
+  const base = config.value?.generationApiUrl ?? 'https://dev.api.tikotalks.com/v1/generation'
   return `${base.replace(/\/$/, '')}${result.imageUrl.replace('/v1/generation', '')}`
 }
 

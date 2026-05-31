@@ -123,8 +123,8 @@ Exact path:
 1. Treat `workers/tts-api` as temporary compatibility for the existing Yes No proof app only.
 2. Move the accepted `POST /generate` behavior to `POST /v1/generation/tts` in `generation-api` before Type depends on TTS.
 3. Move `GET /audio?key=...` to either `GET /v1/generation/audio/{id}` or a signed R2 URL returned by `POST /v1/generation/tts`.
-4. Keep `https://tts.tikoapi.org/generate` as a compatibility adapter that forwards to `generation-api` during one transition window.
-5. After Yes No web/iOS and Type web use the new contract, delete or archive `workers/tts-api` and remove `https://tts.tikoapi.org` from package defaults.
+4. Keep `https://tts.tikotalks.com/generate` as a compatibility adapter that forwards to `generation-api` during one transition window.
+5. After Yes No web/iOS and Type web use the new contract, delete or archive `workers/tts-api` and remove `https://tts.tikotalks.com` from package defaults.
 
 Reasoning:
 
