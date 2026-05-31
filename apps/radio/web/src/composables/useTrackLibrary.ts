@@ -9,6 +9,7 @@ type NewTrackInput = {
   audioUrl?: string
   thumbnailUrl?: string
   duration?: number
+  categoryId?: string
 }
 
 export function useTrackLibrary(storageKey: string = 'tiko:radio:tracks') {
@@ -39,6 +40,12 @@ export function useTrackLibrary(storageKey: string = 'tiko:radio:tracks') {
     return newTrack
   }
 
+  function mergeTracks(nextTracks: RadioTrack[]) {
+    const existing = new Map(tracks.value.map(track => [track.id, track]))
+    for (const track of nextTracks) existing.set(track.id, { ...existing.get(track.id), ...track })
+    tracks.value = Array.from(existing.values())
+  }
+
   function removeTrack(id: string) {
     tracks.value = tracks.value.filter(t => t.id !== id)
   }
@@ -63,5 +70,5 @@ export function useTrackLibrary(storageKey: string = 'tiko:radio:tracks') {
 
   watch(tracks, saveTracks, { deep: true })
 
-  return { tracks, addTrack, removeTrack, removeTrackByIndex, moveTrack, clearAll, isEmpty, count }
+  return { tracks, addTrack, mergeTracks, removeTrack, removeTrackByIndex, moveTrack, clearAll, isEmpty, count }
 }
