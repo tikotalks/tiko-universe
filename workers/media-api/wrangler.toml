@@ -1,0 +1,45 @@
+name = "tiko-media-api-dev"
+main = "src/index.ts"
+compatibility_date = "2026-05-27"
+account_id = "dc2b7d14a69351375cab6de9a13ddee9"
+workers_dev = true
+
+# Unified media-api worker combining:
+#   media-upload  → R2 uploads + OpenAI Vision analysis
+#   media-cache   → D1 media listing (KV caching skipped for now)
+#   assets-upload → R2 uploads + D1 asset tracking
+
+# ── D1 Databases ──────────────────────────────────────────────
+
+[[d1_databases]]
+binding = "MEDIA_DB"
+database_name = "tiko-media"
+database_id = "f984707d-04a1-4266-bf9d-012164ccde85"
+
+[[d1_databases]]
+binding = "ASSETS_DB"
+database_name = "tiko-assets"
+database_id = "4287b238-934f-4dd8-8559-7facb9ff39ef"
+
+# ── R2 Buckets ────────────────────────────────────────────────
+
+[[r2_buckets]]
+binding = "MEDIA_BUCKET"
+bucket_name = "media"
+
+[[r2_buckets]]
+binding = "ASSETS_BUCKET"
+bucket_name = "tiko-assets"
+
+[[r2_buckets]]
+binding = "USER_MEDIA_BUCKET"
+bucket_name = "user-media"
+
+# ── Secrets (set via `wrangler secret put`) ────────────────────
+# OPENAI_API_KEY
+# IDENTITY_BASE_URL — optional, defaults to https://api.tikoapi.org/v1
+
+[[d1_databases]]
+binding = "AUTH_DB"
+database_name = "tiko-identity"
+database_id = "036a1726-ac16-48a9-ab76-22c3a88ca7ae"
