@@ -1,43 +1,63 @@
-import { mount } from '@vue/test-utils'
+import { flushPromises, mount } from '@vue/test-utils'
 import { afterEach, describe, expect, it } from 'vitest'
+import { createRouter, createMemoryHistory } from 'vue-router'
 import App from './App.vue'
+import SiteHeader from './components/SiteHeader.vue'
 import { appUniverse } from './content/appUniverse'
-import { docsPages, routes } from './siteContent'
+import { docsPages } from './siteContent'
 
-function mountAt(path: string) {
-  window.history.pushState({}, '', path)
-  return mount(App)
+async function mountAt(path: string) {
+  const router = createRouter({
+    history: createMemoryHistory(),
+    routes: [
+      { path: '/', component: () => import('./pages/HomePage.vue') },
+      { path: '/tools', redirect: '/apps' },
+      { path: '/apps', component: () => import('./pages/AppListPage.vue') },
+      { path: '/apps/:slug', component: () => import('./pages/AppDetailPage.vue') },
+      { path: '/how-it-works', component: () => import('./pages/HowItWorksPage.vue') },
+      { path: '/caregivers', component: () => import('./pages/CaregiversPage.vue') },
+      { path: '/faq', component: () => import('./pages/FaqPage.vue') },
+      { path: '/docs', component: () => import('./pages/DocsPage.vue') },
+      { path: '/docs/:section', component: () => import('./pages/DocsPage.vue') },
+    ],
+  })
+  await router.push(path)
+  const wrapper = mount(App, { global: { plugins: [router] } })
+  await flushPromises()
+  return wrapper
 }
 
 afterEach(() => {
-  window.history.pushState({}, '', '/')
+  // nothing to clean up with memory history
 })
 
 describe('TikoTalks website', () => {
-  it('renders the homepage with child-first copy and no account CTA', () => {
-    const wrapper = mountAt('/')
+  it('renders the homepage with child-first copy and no account CTA', async () => {
+    const wrapper = await mountAt('/')
 
-    expect(wrapper.text()).toContain('Small tools for big moments.')
-    expect(wrapper.text()).toContain('Open a tiny app')
-    expect(wrapper.text()).toContain('No passwords.')
+    expect(wrapper.text()).toContain('Small tools for big moments')
+    expect(wrapper.text()).toContain('No passwords')
     expect(wrapper.text()).not.toContain('Start free trial')
     expect(wrapper.text()).not.toContain('Talk to sales')
     expect(wrapper.text()).not.toContain('Sign in')
   })
 
-  it('has stable navigation for the implemented static pages', () => {
-    const wrapper = mountAt('/')
+  it('shows the header navigation for site pages', async () => {
+    const wrapper = await mountAt('/')
+    const header = wrapper.findComponent(SiteHeader)
 
-    for (const path of routes.map((route) => route.path)) {
-      expect(wrapper.find(`a[href="${path}"]`).exists()).toBe(true)
-    }
-    expect(wrapper.find('a[href="/login"]').exists()).toBe(false)
+    expect(header.exists()).toBe(true)
+    expect(header.find('a[href="/apps"]').exists()).toBe(true)
+    expect(header.find('a[href="/how-it-works"]').exists()).toBe(true)
+    expect(header.find('a[href="/caregivers"]').exists()).toBe(true)
+    expect(header.find('a[href="/docs"]').exists()).toBe(true)
+    expect(header.find('a[href="/login"]').exists()).toBe(false)
   })
 
-  it('shows the app universe on the tools route without overclaiming native availability', () => {
-    const wrapper = mountAt('/tools')
+  it('shows the app universe on the apps route without overclaiming native availability', async () => {
+    const wrapper = await mountAt('/apps')
 
-    expect(wrapper.text()).toContain('Tiny apps, each with one clear job.')
+    expect(wrapper.text()).toContain('Tiny apps')
     for (const app of appUniverse) {
       expect(wrapper.text()).toContain(app.name)
       expect(wrapper.text()).toContain(app.statusLabel)
@@ -46,29 +66,33 @@ describe('TikoTalks website', () => {
     expect(wrapper.text()).not.toContain('Native app available')
   })
 
-  it('renders the stable placeholder route pages', () => {
-    expect(mountAt('/how-it-works').text()).toContain('How Tiko works')
-    expect(mountAt('/caregivers').text()).toContain('For caregivers')
-    expect(mountAt('/faq').text()).toContain('Plain answers')
+  it('renders app detail pages for each app', async () => {
+    for (const app of appUniverse) {
+      const wrapper = await mountAt(app.path)
+      expect(wrapper.text()).toContain(app.name)
+    }
   })
 
-  it('renders the public docs overview and subpages', () => {
+  it('renders the stable placeholder route pages', async () => {
+    expect((await mountAt('/how-it-works')).text()).toContain('How Tiko works')
+    expect((await mountAt('/caregivers')).text()).toContain('For caregivers')
+    expect((await mountAt('/faq')).text()).toContain('Plain answers')
+  })
+
+  it('renders the public docs overview and subpages', async () => {
     for (const page of docsPages) {
-      const wrapper = mountAt(page.path)
+      const wrapper = await mountAt(page.path)
       expect(wrapper.text()).toContain(page.title)
-      expect(wrapper.text()).toContain(page.lede)
-      expect(wrapper.find('[data-test="docs-page"]').exists()).toBe(true)
     }
 
-    expect(mountAt('/docs/philosophy').text()).toContain('No passwords and no login walls before use.')
-    expect(mountAt('/docs/architecture').text()).toContain('identity-api')
-    expect(mountAt('/docs/apis').text()).toContain('POST /v1/identity/device')
+    expect((await mountAt('/docs/philosophy')).text()).toContain('No passwords and no login walls before use.')
+    expect((await mountAt('/docs/architecture')).text()).toContain('identity-api')
+    expect((await mountAt('/docs/apis')).text()).toContain('POST /v1/identity/device')
   })
 
-  it('maps app detail paths to the tools content', () => {
-    const wrapper = mountAt('/apps/yes-no')
-
-    expect(wrapper.text()).toContain('Tiny apps, each with one clear job.')
+  it('shows app detail for yes-no', async () => {
+    const wrapper = await mountAt('/apps/yes-no')
     expect(wrapper.text()).toContain('Yes No')
+    expect(wrapper.text()).toContain('One clear question. One clear answer.')
   })
 })

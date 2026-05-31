@@ -6,16 +6,26 @@ export type StableRoute = '/' | '/tools' | '/how-it-works' | '/caregivers' | '/f
 
 export const stableRoutes: StableRoute[] = ['/', '/tools', '/how-it-works', '/caregivers', '/faq', '/docs', '/docs/philosophy', '/docs/architecture', '/docs/apis']
 
+export interface AppFeature {
+  title: string
+  body: string
+}
+
 export interface TikoWebsiteAppMetadata {
   slug: TikoWebsiteAppSlug
   appName: string
   shortSummary: string
+  headline: string
+  description: string
   route: `/apps/${TikoWebsiteAppSlug}`
+  appUrl?: string
   status: TikoWebsiteAppStatus
   availability: TikoWebsiteAppStatus
   platformNotes: string
   color: string
+  colorLight: string
   useWhen: readonly string[]
+  features: readonly AppFeature[]
 }
 
 export const tikoWebsiteAppUniverse = [
@@ -23,75 +33,125 @@ export const tikoWebsiteAppUniverse = [
     slug: 'yes-no',
     appName: 'Yes No',
     shortSummary: 'Big yes and no choices for quick, clear answers.',
+    headline: 'One clear question. One clear answer.',
+    description: 'Yes No gives children two giant, unmissable choices on a single screen. No clutter, no scrolling, no account. Open it, see the question, tap the answer.',
     route: '/apps/yes-no',
+    appUrl: 'https://yesno.tikoapps.org',
     status: 'available',
     availability: 'available',
     platformNotes: 'Open on the web now. Native iOS and Android paths should keep the same simple two-choice shape.',
-    color: 'var(--color-primary)',
+    color: '#9b3fbd',
+    colorLight: '#f3e8ff',
     useWhen: [
       'a child needs to answer quickly',
       'a caregiver wants a simple prompt',
       'speech or tapping should happen without a complicated screen'
+    ],
+    features: [
+      { title: 'Two giant buttons', body: 'Yes and No fill the screen. Impossible to miss, easy to tap.' },
+      { title: 'Speech output', body: 'Each answer is spoken aloud so everyone in the room hears it.' },
+      { title: 'Answer history', body: 'Caregivers can review recent answers without disturbing the child.' },
+      { title: 'Works offline', body: 'No network required for basic use. Just open and tap.' }
     ]
   },
   {
     slug: 'type',
     appName: 'Type',
     shortSummary: 'A quiet place to type a message and speak it aloud.',
+    headline: 'Type a thought. Hear it spoken.',
+    description: 'Type is a distraction-free text input for moments when a child wants to communicate in writing. Every message can be spoken aloud at the tap of a button.',
     route: '/apps/type',
+    appUrl: 'https://type.tikoapps.org',
     status: 'planned',
     availability: 'planned',
     platformNotes: 'Coming to the web first, then native paths from the same child-first text and speech contract.',
-    color: 'var(--color-secondary)',
+    color: '#2488ff',
+    colorLight: '#dbeafe',
     useWhen: [
       'a child wants to type a message',
       'saved phrases may help later',
       'spoken output should stay simple and accessible'
+    ],
+    features: [
+      { title: 'Clean text input', body: 'One field, one button. Type a message and speak it without menus.' },
+      { title: 'Phrase library', body: 'Save phrases that come up often so they are one tap away.' },
+      { title: 'Voice selection', body: 'Choose a voice that feels right for the child and the moment.' },
+      { title: 'Keyboard friendly', body: 'Works with on-screen keyboards and external hardware alike.' }
     ]
   },
   {
     slug: 'cards',
     appName: 'Cards',
     shortSummary: 'Visual choices and familiar items that stay easy to tap.',
+    headline: 'Pictures that speak for themselves.',
+    description: 'Cards shows familiar images in a simple grid. Tap a card to hear its name spoken. Choose from built-in categories or build a custom set for any routine or context.',
     route: '/apps/cards',
+    appUrl: 'https://cards.tikoapps.org',
     status: 'planned',
     availability: 'planned',
     platformNotes: 'Coming as a small card experience before any caregiver sync or transfer layer is added.',
-    color: 'var(--color-accent)',
+    color: '#ff8a1f',
+    colorLight: '#fff3e0',
     useWhen: [
       'images or symbols help more than text alone',
       'choices should be visible and tappable',
       'a small library is enough'
+    ],
+    features: [
+      { title: 'Image cards', body: 'Tap a card to hear its name. Images make choices faster to recognise.' },
+      { title: 'Built-in categories', body: 'Animals, food, emotions, body, shapes, colours, transport, numbers, and letters ready to use.' },
+      { title: 'Custom cards', body: 'Add cards with a name, image, and custom speech for any word or phrase.' },
+      { title: 'Offline first', body: 'Cards and images load from local storage so the app stays usable without network.' }
     ]
   },
   {
     slug: 'sequence',
     appName: 'Sequence',
     shortSummary: 'Ordered steps for routines that need calm structure.',
+    headline: 'One step at a time, always clear.',
+    description: 'Sequence turns any routine into a clear list of steps. The current step is always large and central. Tap to move forward. No guessing what comes next.',
     route: '/apps/sequence',
+    appUrl: 'https://sequence.tikoapps.org',
     status: 'planned',
     availability: 'planned',
     platformNotes: 'Coming for web and native with the next step always visible and without heavy system framing.',
-    color: 'var(--color-tertiary)',
+    color: '#16b8a6',
+    colorLight: '#ccfbf1',
     useWhen: [
       'a routine needs a simple order',
       'the next step should be visible',
       'predictability matters'
+    ],
+    features: [
+      { title: 'One step, full screen', body: 'The current step is always the largest thing on the screen.' },
+      { title: 'Progress bar', body: 'A simple visual shows how far along the routine has gone.' },
+      { title: 'Custom routines', body: 'Build any sequence: morning routine, class transition, getting dressed.' },
+      { title: 'Images per step', body: 'Each step can have an image to make it immediately recognisable.' }
     ]
   },
   {
     slug: 'timer',
     appName: 'Timer',
     shortSummary: 'A readable timer for seeing time pass.',
+    headline: 'Time you can actually see.',
+    description: 'Timer makes the passage of time visible and calm. A large countdown shows exactly how much is left. No anxiety-inducing beeps, just a quiet visual end.',
     route: '/apps/timer',
+    appUrl: 'https://timer.tikoapps.org',
     status: 'planned',
     availability: 'planned',
     platformNotes: 'Coming as a focused screen that does one thing on web, iOS, and Android.',
-    color: 'var(--color-warning)',
+    color: '#f8c22e',
+    colorLight: '#fef9c3',
     useWhen: [
       'transitions need a visible end',
       'waiting should feel less abstract',
       'the screen should do one thing only'
+    ],
+    features: [
+      { title: 'Large countdown', body: 'Time fills the screen. No small numbers, no hidden clocks.' },
+      { title: 'Visual progress', body: 'A ring or bar shrinks as time passes, making time feel concrete.' },
+      { title: 'Gentle end signal', body: 'A calm visual and optional soft sound signals when time is up.' },
+      { title: 'Quick presets', body: 'Set common intervals like 5, 10, or 15 minutes in one tap.' }
     ]
   }
 ] as const satisfies readonly TikoWebsiteAppMetadata[]
@@ -99,13 +159,18 @@ export const tikoWebsiteAppUniverse = [
 export const tikoApps = tikoWebsiteAppUniverse.map((app) => ({
   id: app.slug,
   name: app.appName,
+  headline: app.headline,
+  description: app.description,
   path: app.route,
+  appUrl: app.appUrl,
   color: app.color,
+  colorLight: app.colorLight,
   status: app.status,
   statusLabel: app.status === 'available' ? 'Web available' : 'Planned',
   summary: app.shortSummary,
   platformNotes: app.platformNotes,
-  useWhen: [...app.useWhen]
+  useWhen: [...app.useWhen],
+  features: [...app.features]
 }))
 
 export type TikoAppInfo = (typeof tikoApps)[number]
@@ -116,4 +181,8 @@ export function getTikoWebsiteAppMetadata(slug: TikoWebsiteAppSlug): TikoWebsite
   const app = tikoWebsiteAppUniverse.find((item) => item.slug === slug)
   if (!app) throw new Error(`Unknown Tiko website app metadata slug: ${slug}`)
   return app
+}
+
+export function getAppBySlug(slug: string): TikoAppInfo | undefined {
+  return tikoApps.find((app) => app.id === slug)
 }
