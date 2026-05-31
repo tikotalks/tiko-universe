@@ -3,6 +3,7 @@ node_modules/
 dist/
 **/dist/
 .wrangler/
+*.tsbuildinfo
 .env
 .env.*
 !.env.example

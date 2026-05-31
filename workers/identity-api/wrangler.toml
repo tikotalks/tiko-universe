@@ -1,0 +1,14 @@
+name = "tiko-identity-api"
+main = "src/index.ts"
+compatibility_date = "2026-05-27"
+
+[vars]
+ALLOWED_ORIGINS = "*"
+MAGIC_LINK_BASE_URL = "https://tikoapi.org/identity/magic"
+# Set TOKEN_PEPPER with `wrangler secret put TOKEN_PEPPER`; do not commit real token peppers.
+
+[[d1_databases]]
+binding = "IDENTITY_DB"
+database_name = "tiko-identity"
+database_id = "00000000-0000-0000-0000-000000000000"
+migrations_dir = "migrations"

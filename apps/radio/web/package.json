@@ -1,0 +1,21 @@
+{
+  "name": "@tiko-web/radio",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host 0.0.0.0 --port 3059",
+    "build": "vite build",
+    "test": "vitest run --root ../../.. apps/radio/web/src/App.spec.ts"
+  },
+  "dependencies": {
+    "@tiko/data": "file:../../../packages/data",
+    "@tiko/identity": "file:../../../packages/identity",
+    "@tiko/i18n": "file:../../../packages/i18n",
+    "@tiko/ui": "file:../../../packages/ui",
+    "@vitejs/plugin-vue": "^6.0.1",
+    "vite": "^7.2.4",
+    "vue": "^3.5.24"
+  },
+  "devDependencies": {}
+}

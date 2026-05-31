@@ -6,7 +6,7 @@
   "main": "src/index.ts",
   "types": "src/index.ts",
   "scripts": {
-    "typecheck": "echo scaffold-only:@tiko/testing",
-    "test": "echo scaffold-only:@tiko/testing"
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "test": "vitest run --root ../.. tests/testing-contract.test.ts"
   }
 }

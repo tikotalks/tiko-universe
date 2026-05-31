@@ -6,17 +6,37 @@
   "type": "module",
   "packageManager": "npm@10.0.0",
   "workspaces": [
-    "apps/web/*",
+    "apps/*/web",
     "packages/*",
     "workers/*"
   ],
   "scripts": {
     "check": "npm run lint && npm run typecheck && npm run test",
     "lint": "node tools/check-placeholders.mjs",
-    "typecheck": "node tools/check-placeholders.mjs",
-    "test": "node tools/check-placeholders.mjs",
-    "build": "node tools/check-placeholders.mjs",
-    "audit:doctrine": "node tools/check-doctrine.mjs"
+    "typecheck": "vue-tsc --noEmit -p tsconfig.json",
+    "test": "vitest run",
+    "test:contracts": "vitest run tests/identity-api.test.ts tests/app-api.test.ts tests/generation-api.test.ts tests/testing-contract.test.ts",
+    "test:services": "npm run test:contracts",
+    "build": "npm run build --workspaces --if-present",
+    "audit:doctrine": "node tools/check-doctrine.mjs",
+    "deploy:dry-run:tts": "npm --workspace @tiko-universe/tts-api run deploy:dry-run",
+    "deploy:dry-run:generation": "npm --workspace @tiko-worker/generation-api run deploy:dry-run"
   },
-  "devDependencies": {}
+  "dependencies": {
+    "@sil/ui": "^2.6.0",
+    "@vitejs/plugin-vue": "^6.0.1",
+    "@vue/test-utils": "^2.4.6",
+    "bemm": "^1.4.0",
+    "jsdom": "^27.2.0",
+    "open-icon": "^1.1.9",
+    "sass": "^1.94.2",
+    "typescript": "^5.9.3",
+    "vite": "^7.2.4",
+    "vitest": "^4.0.14",
+    "vue": "^3.5.24",
+    "vue-tsc": "^3.1.5"
+  },
+  "devDependencies": {
+    "@types/node": "^25.9.1"
+  }
 }

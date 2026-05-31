@@ -6,7 +6,7 @@
   "main": "src/index.ts",
   "types": "src/index.ts",
   "scripts": {
-    "typecheck": "echo scaffold-only:@tiko/media",
-    "test": "echo scaffold-only:@tiko/media"
+    "typecheck": "tsc --noEmit --target ES2022 --module ESNext --moduleResolution Bundler --strict --skipLibCheck src/index.ts",
+    "test": "echo contract-only:@tiko/media"
   }
 }

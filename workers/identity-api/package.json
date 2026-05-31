@@ -4,8 +4,8 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "typecheck": "echo scaffold-only:identity-api",
-    "test": "echo scaffold-only:identity-api",
-    "deploy:dry-run": "echo scaffold-only:identity-api"
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "test": "vitest run ../../tests/identity-api.test.ts",
+    "deploy:dry-run": "wrangler deploy --dry-run"
   }
 }

@@ -1,28 +1,39 @@
 # Repository Structure
 
-## `apps/web/*`
+## `apps/<product>/<platform>`
 
-Vue/Vite web apps. Each app is a thin client around shared packages and documented APIs.
+Tiko apps are organized product-first, then platform. This keeps web, native iOS, and future Android clients for the same app together, which makes product parity and app-specific assets easier to manage.
 
 Initial app order:
 
-- `apps/web/yes-no`
-- `apps/web/type`
-- `apps/web/cards`
-- `apps/web/sequence`
-- `apps/web/timer`
+- `apps/yes-no/web`
+- `apps/yes-no/ios`
+- `apps/type/web`
+- `apps/cards/web`
+- `apps/sequence/web`
+- `apps/timer/web`
 
-## `apps/ios/*`
+Expected product shape:
 
-SwiftUI native apps. Use XcodeGen project definitions. Do not commit generated `.xcodeproj` files.
+```text
+apps/
+  yes-no/
+    web/      # Vue/Vite client
+    ios/      # SwiftUI client, XcodeGen project definition
+    README.md # product-specific notes and parity status
+```
 
-## `apps/android/*`
-
-Native Android apps using Kotlin and Jetpack Compose. Android is a first-class client, but should follow the API once web/iOS proof app contracts are stable.
+Web clients should remain thin and consume shared packages plus documented APIs. Native clients consume the same HTTPS API contracts and native TikoKit components.
 
 ## `packages/*`
 
-Shared TypeScript packages used by web apps and API tests. Native apps consume API contracts rather than importing these packages directly.
+Shared packages used across clients and API tests:
+
+- `packages/ui` — TikoKit for web, composed from low-level `@sil/ui` primitives.
+- `packages/tikokit-ios` — TikoKit for SwiftUI/native iOS.
+- `packages/identity`, `packages/data`, `packages/i18n`, `packages/media`, `packages/testing` — API clients, contracts, helpers, and shared test utilities.
+
+Native apps should not import web packages directly. Shared behavior belongs in documented API contracts and mirrored platform-specific TikoKit components.
 
 ## `workers/*`
 

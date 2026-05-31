@@ -4,6 +4,8 @@
 
 Make Tiko a small Cloudflare platform with web, iOS, and Android clients consuming the same API contracts.
 
+For the authoritative P0 build order, service ownership map, shared envelope rules, and Yes No/Type foundation contracts, see `docs/architecture/p0-foundation-contract-map.md`.
+
 ## High-level architecture
 
 ```text

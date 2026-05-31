@@ -1,0 +1,21 @@
+name = "tiko-tts-api-dev"
+main = "src/index.ts"
+compatibility_date = "2026-05-27"
+account_id = "8cef251b5fdcf6c6f63db98b7aa49f9a"
+workers_dev = true
+
+# Temporary compatibility Worker for the Yes No proof app.
+# Long-term TTS ownership moves into workers/generation-api.
+
+[[d1_databases]]
+binding = "TTS_DB"
+database_name = "tiko-tts-db-dev"
+database_id = "9ec91ef0-a12c-44c7-9a0a-bc4dbc5a4b74"
+
+[[r2_buckets]]
+binding = "AUDIO_BUCKET"
+bucket_name = "tiko-generated-audio-dev"
+
+[vars]
+TIKO_ENVIRONMENT = "development"
+TTS_PUBLIC_ROUTE = "https://dev.tts.tikoapi.org"

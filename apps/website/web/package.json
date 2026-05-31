@@ -1,0 +1,19 @@
+{
+  "name": "@tiko-universe/website-web",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host 0.0.0.0 --port 3060",
+    "build": "vite build",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@sil/ui": "^2.6.0",
+    "@vitejs/plugin-vue": "^6.0.1",
+    "bemm": "^1.4.0",
+    "vite": "^7.2.4",
+    "vue": "^3.5.24"
+  },
+  "devDependencies": {}
+}

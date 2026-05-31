@@ -3,9 +3,11 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
   "scripts": {
-    "typecheck": "echo scaffold-only:generation-api",
-    "test": "echo scaffold-only:generation-api",
-    "deploy:dry-run": "echo scaffold-only:generation-api"
+    "typecheck": "tsc --noEmit --target ES2022 --lib ES2022,WebWorker --module ESNext --moduleResolution Bundler --strict --skipLibCheck src/index.ts",
+    "test": "vitest run ../../tests/generation-api.test.ts",
+    "deploy:dry-run": "npx -y wrangler@latest deploy --dry-run --outdir dist"
   }
 }

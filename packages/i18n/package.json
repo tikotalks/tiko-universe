@@ -6,7 +6,7 @@
   "main": "src/index.ts",
   "types": "src/index.ts",
   "scripts": {
-    "typecheck": "echo scaffold-only:@tiko/i18n",
-    "test": "echo scaffold-only:@tiko/i18n"
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "test": "cd ../.. && vitest run packages/i18n/src/index.spec.ts"
   }
 }
