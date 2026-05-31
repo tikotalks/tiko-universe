@@ -2,13 +2,7 @@ import SwiftUI
 import TikoKit
 
 struct CardsView: View {
-    private let previewCollections = [
-        PreviewCardCollection(id: "needs", title: "Needs", symbol: "heart.fill", count: 6),
-        PreviewCardCollection(id: "feelings", title: "Feelings", symbol: "face.smiling.fill", count: 8),
-        PreviewCardCollection(id: "people", title: "People", symbol: "person.2.fill", count: 5),
-        PreviewCardCollection(id: "activities", title: "Activities", symbol: "figure.play", count: 7)
-    ]
-
+    private let collections = defaultCardCollections
     private let columns = [
         GridItem(.adaptive(minimum: 140, maximum: 220), spacing: 16)
     ]
@@ -26,11 +20,11 @@ struct CardsView: View {
             NavigationStack {
                 ScrollView {
                     LazyVGrid(columns: columns, spacing: 16) {
-                        ForEach(previewCollections) { collection in
+                        ForEach(collections) { collection in
                             NavigationLink {
-                                PreviewCollectionDetail(collection: collection)
+                                CollectionDetailView(collection: collection)
                             } label: {
-                                PreviewCollectionTile(collection: collection)
+                                CollectionTile(collection: collection)
                             }
                             .buttonStyle(.plain)
                         }
@@ -44,15 +38,8 @@ struct CardsView: View {
     }
 }
 
-private struct PreviewCardCollection: Identifiable, Equatable {
-    let id: String
-    let title: String
-    let symbol: String
-    let count: Int
-}
-
-private struct PreviewCollectionTile: View {
-    let collection: PreviewCardCollection
+private struct CollectionTile: View {
+    let collection: CardCollection
 
     var body: some View {
         VStack(spacing: 14) {
@@ -60,7 +47,7 @@ private struct PreviewCollectionTile: View {
                 .font(.system(size: 42, weight: .heavy))
                 .foregroundStyle(.white)
                 .frame(width: 84, height: 84)
-                .background(Color(hex: 0xff8a1f))
+                .background(Color(hex: collection.colorHex))
                 .clipShape(RoundedRectangle(cornerRadius: 22, style: .continuous))
 
             VStack(spacing: 4) {
@@ -68,7 +55,7 @@ private struct PreviewCollectionTile: View {
                     .font(.system(.title3, design: .rounded).weight(.heavy))
                     .foregroundStyle(Color(hex: 0x0b5a7a))
 
-                Text("\(collection.count) cards")
+                Text("\(collection.cards.count) cards")
                     .font(.system(.caption, design: .rounded).weight(.bold))
                     .foregroundStyle(.secondary)
             }
@@ -81,27 +68,52 @@ private struct PreviewCollectionTile: View {
     }
 }
 
-private struct PreviewCollectionDetail: View {
-    let collection: PreviewCardCollection
+private struct CollectionDetailView: View {
+    let collection: CardCollection
+
+    private let columns = [
+        GridItem(.adaptive(minimum: 128, maximum: 200), spacing: 14)
+    ]
 
     var body: some View {
-        VStack(spacing: 18) {
-            Image(systemName: collection.symbol)
-                .font(.system(size: 72, weight: .heavy))
-                .foregroundStyle(Color(hex: 0xff8a1f))
-
-            Text(collection.title)
-                .font(.system(.largeTitle, design: .rounded).weight(.heavy))
-
-            Text("Native card grid, speech, haptics, editing, and Photos integration come next.")
-                .font(.system(.body, design: .rounded).weight(.semibold))
-                .multilineTextAlignment(.center)
-                .foregroundStyle(.secondary)
-                .padding(.horizontal, 24)
+        ScrollView {
+            LazyVGrid(columns: columns, spacing: 14) {
+                ForEach(collection.cards) { card in
+                    CommunicationCardTile(card: card)
+                }
+            }
+            .padding(20)
         }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
         .navigationTitle(collection.title)
         .navigationBarTitleDisplayMode(.inline)
+    }
+}
+
+private struct CommunicationCardTile: View {
+    let card: CommunicationCard
+
+    var body: some View {
+        VStack(spacing: 12) {
+            if let symbol = card.symbol {
+                Image(systemName: symbol)
+                    .font(.system(size: 42, weight: .heavy))
+                    .foregroundStyle(.white)
+                    .frame(width: 88, height: 88)
+                    .background(Color(hex: card.colorHex))
+                    .clipShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
+            }
+
+            Text(card.title)
+                .font(.system(.title2, design: .rounded).weight(.heavy))
+                .foregroundStyle(Color(hex: 0x0b5a7a))
+                .multilineTextAlignment(.center)
+        }
+        .frame(maxWidth: .infinity, minHeight: 162)
+        .padding(14)
+        .background(.white.opacity(0.76))
+        .clipShape(RoundedRectangle(cornerRadius: 26, style: .continuous))
+        .shadow(color: .black.opacity(0.08), radius: 10, x: 0, y: 7)
+        .accessibilityLabel(card.speech)
     }
 }
 
