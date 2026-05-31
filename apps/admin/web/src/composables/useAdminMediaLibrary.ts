@@ -45,6 +45,10 @@ interface UploadResponse {
   details?: string
 }
 
+interface ApiErrorBody {
+  error?: { message?: string } | string
+}
+
 export function useAdminMediaLibrary() {
   const { token, config } = useAdminAuth()
   const items = ref<AdminMediaItem[]>([])
@@ -69,8 +73,9 @@ export function useAdminMediaLibrary() {
       url.searchParams.set('page', String(params.page ?? page.value))
       url.searchParams.set('limit', String(params.limit ?? 20))
       const response = await fetch(url, { headers: { authorization: `Bearer ${token.value}` } })
-      const body = await response.json().catch(() => null)
-      if (!response.ok) throw new Error(body?.error?.message ?? body?.error ?? `Media list failed: ${response.status}`)
+      const body = await response.json().catch(() => null) as ApiErrorBody | MediaListResponse | null
+      const apiError = body && 'error' in body ? body.error : undefined
+      if (!response.ok) throw new Error((typeof apiError === 'string' ? apiError : apiError?.message) ?? `Media list failed: ${response.status}`)
       const parsed = body as MediaListResponse
       items.value = parsed.data
       total.value = parsed.meta.total

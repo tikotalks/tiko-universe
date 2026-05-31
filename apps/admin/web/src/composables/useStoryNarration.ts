@@ -21,6 +21,10 @@ interface RenderStoryInput {
   tags?: string[]
 }
 
+interface ApiErrorBody {
+  error?: { message?: string } | string
+}
+
 export function useStoryNarration() {
   const { token, config } = useAdminAuth()
 
@@ -37,8 +41,9 @@ export function useStoryNarration() {
       },
       body: JSON.stringify(payload),
     })
-    const body = await response.json().catch(() => null)
-    if (!response.ok) throw new Error(body?.error?.message ?? `Story request failed: ${response.status}`)
+    const body = await response.json().catch(() => null) as ApiErrorBody | AdminApiResponse<T> | null
+    const apiError = body && 'error' in body ? body.error : undefined
+    if (!response.ok) throw new Error((typeof apiError === 'string' ? apiError : apiError?.message) ?? `Story request failed: ${response.status}`)
     return (body as AdminApiResponse<T>).data
   }
 

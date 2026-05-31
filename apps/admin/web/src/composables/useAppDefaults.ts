@@ -12,6 +12,15 @@ export interface AppDataPayload {
   version: number
 }
 
+interface ApiErrorBody {
+  error?: { message?: string } | string
+}
+
+function errorMessage(body: ApiErrorBody | AppDataPayload | null, fallback: string): string {
+  const apiError = body && 'error' in body ? body.error : undefined
+  return (typeof apiError === 'string' ? apiError : apiError?.message) ?? fallback
+}
+
 export function useAppDefaults() {
   const { token, config } = useAdminAuth()
   const loading = ref(false)
@@ -29,8 +38,8 @@ export function useAppDefaults() {
       const response = await fetch(`${appBaseUrl()}/${app}/${resource}`, {
         headers: { authorization: `Bearer ${token.value}` },
       })
-      const body = await response.json().catch(() => null)
-      if (!response.ok) throw new Error(body?.error?.message ?? `Could not load ${app} ${resource}: ${response.status}`)
+      const body = await response.json().catch(() => null) as ApiErrorBody | AppDataPayload | null
+      if (!response.ok) throw new Error(errorMessage(body, `Could not load ${app} ${resource}: ${response.status}`))
       return body as AppDataPayload
     } catch (e) {
       error.value = e instanceof Error ? e.message : `Could not load ${app} ${resource}.`
@@ -49,8 +58,8 @@ export function useAppDefaults() {
         headers: { authorization: `Bearer ${token.value}`, 'content-type': 'application/json' },
         body: JSON.stringify({ [resource]: value, version }),
       })
-      const body = await response.json().catch(() => null)
-      if (!response.ok) throw new Error(body?.error?.message ?? `Could not save ${app} ${resource}: ${response.status}`)
+      const body = await response.json().catch(() => null) as ApiErrorBody | AppDataPayload | null
+      if (!response.ok) throw new Error(errorMessage(body, `Could not save ${app} ${resource}: ${response.status}`))
       return body as AppDataPayload
     } catch (e) {
       error.value = e instanceof Error ? e.message : `Could not save ${app} ${resource}.`

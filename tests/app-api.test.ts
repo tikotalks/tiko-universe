@@ -3,6 +3,7 @@ import worker, { hashToken } from '../workers/app-api/src/index'
 import { TikoDataClient, TikoDataError, type AppSettingsResponse, type YesNoSettings } from '@tiko/data'
 
 type Row = Record<string, unknown>
+type JsonBody = Record<string, any>
 
 class MemoryResult {
   constructor(private rows: Row[] = []) {}
@@ -119,7 +120,7 @@ async function fetchJson(path: string, init: RequestInit = {}, testEnv?: Awaited
     headers: { 'content-type': 'application/json', ...(init.headers ?? {}) }
   })
   const response = await worker.fetch(request, (testEnv ?? await env()) as never, {} as never)
-  const body = response.status === 204 ? null : await response.json()
+  const body = response.status === 204 ? {} : await response.json() as JsonBody
   return { response, body }
 }
 

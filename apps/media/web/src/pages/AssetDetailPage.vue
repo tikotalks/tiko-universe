@@ -46,22 +46,21 @@ function formatSize(bytes: number): string {
 }
 
 const downloadFormats = computed(() => {
-  if (!item.value) return []
-  switch (item.value.fileType) {
-    case 'image':
-      return [
+  const currentItem = item.value
+  if (!currentItem) return []
+  const formats = currentItem.fileType === 'image'
+    ? [
         { label: 'PNG', format: 'png' },
         { label: 'JPG', format: 'jpg' },
         { label: 'WebP', format: 'webp' },
       ]
-    case 'audio':
-      return [
-        { label: 'MP3', format: 'mp3' },
-        { label: 'WAV', format: 'wav' },
-      ]
-    default:
-      return []
-  }
+    : currentItem.fileType === 'audio'
+      ? [
+          { label: 'MP3', format: 'mp3' },
+          { label: 'WAV', format: 'wav' },
+        ]
+      : []
+  return formats.filter((format) => format.format !== currentItem.fileExtension)
 })
 </script>
 
@@ -156,7 +155,7 @@ const downloadFormats = computed(() => {
             <div v-if="downloadFormats.length > 1" class="asset-detail__alt-formats">
               <span class="asset-detail__alt-label">Also available as:</span>
               <button
-                v-for="fmt in downloadFormats.filter(f => f.format !== item.fileExtension)"
+                v-for="fmt in downloadFormats"
                 :key="fmt.format"
                 class="asset-detail__dl-btn asset-detail__dl-btn--ghost"
                 @click="downloadAsset(fmt.format)"

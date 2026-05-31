@@ -11,6 +11,10 @@ interface GenerateImageInput {
   tags?: string[]
 }
 
+interface ApiErrorBody {
+  error?: { message?: string } | string
+}
+
 export function useImageGeneration() {
   const { token, config } = useAdminAuth()
 
@@ -24,9 +28,10 @@ export function useImageGeneration() {
       },
       body: JSON.stringify(input),
     })
-    const body = await response.json().catch(() => null)
+    const body = await response.json().catch(() => null) as ApiErrorBody | AdminApiResponse<ImageGenerationResult> | null
     if (!response.ok) {
-      throw new Error(body?.error?.message ?? `Image generation failed: ${response.status}`)
+      const apiError = body && 'error' in body ? body.error : undefined
+      throw new Error((typeof apiError === 'string' ? apiError : apiError?.message) ?? `Image generation failed: ${response.status}`)
     }
     return (body as AdminApiResponse<ImageGenerationResult>).data
   }

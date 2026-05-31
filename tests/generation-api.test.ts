@@ -32,6 +32,7 @@ class MemoryD1 {
           if (sql.includes('WHERE id')) return (this.byId.get(values[0] as string) ?? null) as T | null
           return null
         },
+        all: async <T>() => ({ results: [] as T[] }),
         run: async () => {
           const record: StoredAudioRecord = {
             id: values[0] as string,

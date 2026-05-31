@@ -3,6 +3,7 @@ import worker, { hashToken } from '../workers/identity-api/src/index'
 import { IdentityClient, type SessionBundle } from '@tiko/identity'
 
 type Row = Record<string, unknown>
+type JsonBody = Record<string, any>
 
 class MemoryResult {
   constructor(private rows: Row[] = [], private meta: Record<string, unknown> = {}) {}
@@ -155,7 +156,7 @@ async function fetchJson(path: string, init: RequestInit = {}, testEnv = env()) 
     headers: { 'content-type': 'application/json', ...(init.headers ?? {}) }
   })
   const response = await worker.fetch(request, testEnv as never, {} as never)
-  const body = response.status === 204 ? null : await response.json()
+  const body = response.status === 204 ? {} : await response.json() as JsonBody
   return { response, body, env: testEnv }
 }
 

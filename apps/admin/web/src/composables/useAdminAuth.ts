@@ -9,6 +9,10 @@ const config = ref<AdminConfig | null>(null)
 const loading = ref(false)
 const error = ref<string | null>(null)
 
+interface ApiErrorBody {
+  error?: { message?: string } | string
+}
+
 function adminApiBaseUrl(): string {
   const env = (import.meta as ImportMeta & { env?: Record<string, string | undefined> }).env
   return (env?.VITE_ADMIN_API_URL ?? 'https://dev.admin.tikoapi.org/v1/admin').replace(/\/$/, '')
@@ -18,9 +22,10 @@ async function adminFetch<T>(path: string): Promise<T> {
   const response = await fetch(`${adminApiBaseUrl()}${path}`, {
     headers: { authorization: `Bearer ${token.value}` },
   })
-  const body = await response.json().catch(() => null)
+  const body = await response.json().catch(() => null) as ApiErrorBody | AdminApiResponse<T> | null
   if (!response.ok) {
-    throw new Error(body?.error?.message ?? `Admin API error: ${response.status}`)
+    const apiError = body && 'error' in body ? body.error : undefined
+    throw new Error((typeof apiError === 'string' ? apiError : apiError?.message) ?? `Admin API error: ${response.status}`)
   }
   return (body as AdminApiResponse<T>).data
 }
