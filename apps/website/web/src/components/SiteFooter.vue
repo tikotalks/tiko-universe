@@ -57,7 +57,7 @@ const bemm = useBemm('site-footer', { return: 'string', includeBaseClass: true }
 
 <style lang="scss">
 .site-footer {
-  background: var(--text-primary);
+  background: #111111;
   color: rgba(255,255,255,0.7);
   padding-top: clamp(var(--sp-12), 8vw, var(--sp-20));
   padding-bottom: var(--sp-8);
