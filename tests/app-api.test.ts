@@ -126,6 +126,20 @@ async function fetchJson(path: string, init: RequestInit = {}, testEnv?: Awaited
 const auth = { authorization: 'Bearer session-token' }
 
 describe('app-api settings/state endpoints', () => {
+  it('allows only configured origins in CORS preflight responses', async () => {
+    const allowed = await fetchJson('/v1/apps/yes-no/settings', {
+      method: 'OPTIONS',
+      headers: { origin: 'https://yesno.tiko.test' }
+    })
+    const denied = await fetchJson('/v1/apps/yes-no/settings', {
+      method: 'OPTIONS',
+      headers: { origin: 'https://evil.example' }
+    })
+
+    expect(allowed.response.headers.get('access-control-allow-origin')).toBe('https://yesno.tiko.test')
+    expect(denied.response.headers.get('access-control-allow-origin')).toBeNull()
+  })
+
   it('rejects requests without a bearer session', async () => {
     const { response, body } = await fetchJson('/v1/apps/yes-no/settings')
 

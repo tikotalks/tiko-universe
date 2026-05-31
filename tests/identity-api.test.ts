@@ -172,6 +172,20 @@ describe('identity-api token handling', () => {
 })
 
 describe('identity-api endpoints', () => {
+  it('allows only configured origins in CORS preflight responses', async () => {
+    const allowed = await fetchJson('/v1/identity/device', {
+      method: 'OPTIONS',
+      headers: { origin: 'https://app.tiko.test' }
+    })
+    const denied = await fetchJson('/v1/identity/device', {
+      method: 'OPTIONS',
+      headers: { origin: 'https://evil.example' }
+    })
+
+    expect(allowed.response.headers.get('access-control-allow-origin')).toBe('https://app.tiko.test')
+    expect(denied.response.headers.get('access-control-allow-origin')).toBeNull()
+  })
+
   it('bootstraps a device user and stores only hashed session/device secrets', async () => {
     const testEnv = env()
     const { response, body } = await fetchJson('/v1/identity/device', {
