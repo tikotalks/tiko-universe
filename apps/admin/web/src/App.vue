@@ -18,6 +18,7 @@ const navItems = [
   { to: '/images', label: 'Images', icon: '🖼' },
   { to: '/stories', label: 'Stories', icon: '♪' },
   { to: '/library', label: 'Library', icon: '☰' },
+  { to: '/defaults', label: 'Defaults', icon: '▦' },
 ]
 
 onMounted(() => {

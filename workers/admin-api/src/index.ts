@@ -17,6 +17,7 @@ export interface Env extends AuthEnv {
   AUTH_DB: D1Database
   TOKEN_PEPPER: string
   ADMIN_EMAIL?: string
+  APP_API_URL?: string
   GENERATION_API_URL?: string
   MEDIA_API_URL?: string
 }
@@ -56,6 +57,7 @@ export default {
     if (path === '/v1/admin/config' && request.method === 'GET') {
       return json({
         data: {
+          appApiUrl: (env.APP_API_URL ?? 'https://dev.api.tikoapi.org/v1/apps').replace(/\/$/, ''),
           generationApiUrl: (env.GENERATION_API_URL ?? 'https://dev.api.tikoapi.org/v1/generation').replace(/\/$/, ''),
           mediaApiUrl: (env.MEDIA_API_URL ?? 'https://media.tikoapi.org/v1').replace(/\/$/, ''),
         },

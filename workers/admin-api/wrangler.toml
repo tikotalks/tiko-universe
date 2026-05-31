@@ -13,6 +13,7 @@ database_id = "036a1726-ac16-48a9-ab76-22c3a88ca7ae"
 TIKO_ENVIRONMENT = "development"
 ADMIN_EMAIL = "me@sil.mt"
 IDENTITY_BASE_URL = "https://api.tikoapi.org/v1"
+APP_API_URL = "https://dev.api.tikoapi.org/v1/apps"
 GENERATION_API_URL = "https://dev.api.tikoapi.org/v1/generation"
 MEDIA_API_URL = "https://media.tikoapi.org/v1"
 

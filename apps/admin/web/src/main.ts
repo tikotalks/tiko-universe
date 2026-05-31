@@ -8,6 +8,7 @@ const routes: RouteRecordRaw[] = [
   { path: '/images', name: 'images', component: () => import('./pages/ImageGeneratorPage.vue') },
   { path: '/stories', name: 'stories', component: () => import('./pages/StoryNarratorPage.vue') },
   { path: '/library', name: 'library', component: () => import('./pages/MediaLibraryPage.vue') },
+  { path: '/defaults', name: 'defaults', component: () => import('./pages/AppDefaultsPage.vue') },
 ]
 
 const router = createRouter({

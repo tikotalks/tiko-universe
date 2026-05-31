@@ -5,6 +5,7 @@ export interface AdminUser {
 }
 
 export interface AdminConfig {
+  appApiUrl: string
   generationApiUrl: string
   mediaApiUrl: string
 }
