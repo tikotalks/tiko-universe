@@ -26,3 +26,26 @@ export interface ImageGenerationResult {
   fileSizeBytes: number
   createdAt: string
 }
+
+export interface StorySegmentInput {
+  id: string
+  text: string
+  pauseAfterMs: number
+}
+
+export interface StoryTryoutResult {
+  id: string
+  audioUrl: string
+  contentType: string
+  fileSizeBytes: number
+}
+
+export interface StoryRenderResult {
+  id: string
+  title: string
+  audioUrl: string
+  voice: string
+  speed: number
+  fileSizeBytes: number
+  createdAt: string
+}

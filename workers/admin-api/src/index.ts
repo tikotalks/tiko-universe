@@ -94,7 +94,7 @@ function normalizeEmail(value: string): string {
 }
 
 async function hashToken(token: string, pepper: string): Promise<string> {
-  const data = new TextEncoder().encode(`${token}.${pepper}`)
+  const data = new TextEncoder().encode(`${pepper}:${token}`)
   const digest = await crypto.subtle.digest('SHA-256', data)
   return Array.from(new Uint8Array(digest)).map((byte) => byte.toString(16).padStart(2, '0')).join('')
 }
