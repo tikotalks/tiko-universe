@@ -54,6 +54,21 @@
   --tiko-app-primary-text: var(--color-warning-text);
 }
 
+[data-app-color="radio"] {
+  --tiko-app-primary: #e84057;
+  --tiko-app-primary-text: #fff;
+}
+
+[data-app-color="media"] {
+  --tiko-app-primary: #2dd4bf;
+  --tiko-app-primary-text: #17131c;
+}
+
+[data-app-color="admin"] {
+  --tiko-app-primary: #8b5cf6;
+  --tiko-app-primary-text: #fff;
+}
+
 [data-app-color="tiko"] {
   --tiko-app-primary: var(--color-error);
   --tiko-app-primary-text: var(--color-error-text);
