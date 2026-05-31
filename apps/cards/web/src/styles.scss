@@ -1,0 +1,295 @@
+body { margin: 0; }
+button, textarea, select, input { font: inherit; }
+button:disabled { cursor: not-allowed; opacity: .45; }
+
+.cards-app {
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+  overflow: hidden;
+}
+
+/* ------------------------------------------------------------------ */
+/* Breadcrumbs                                                        */
+/* ------------------------------------------------------------------ */
+
+.cards-app__breadcrumbs {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  padding: .35rem .75rem;
+  font-weight: 700;
+  font-size: .9rem;
+  flex-shrink: 0;
+}
+
+.cards-app__back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: .25rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-weight: 800;
+  color: inherit;
+  padding: .25rem .5rem;
+  border-radius: .5rem;
+}
+
+.cards-app__back-btn:hover {
+  background: color-mix(in srgb, var(--tiko-surface), var(--color-foreground) 6%);
+}
+
+.cards-app__breadcrumb {
+  color: var(--tiko-foreground-accent);
+}
+
+.cards-app__breadcrumb:not(:last-child)::after {
+  content: ' /';
+  margin-left: .15rem;
+  opacity: .6;
+}
+
+/* ------------------------------------------------------------------ */
+/* Pagination                                                          */
+/* ------------------------------------------------------------------ */
+
+.cards-app__pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: .75rem;
+  padding: .25rem 0;
+  flex-shrink: 0;
+}
+
+.cards-app__page-btn {
+  width: 2.4rem;
+  height: 2.4rem;
+  border: none;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--tiko-surface), var(--color-foreground) 6%);
+  color: inherit;
+  font-size: 1.2rem;
+  font-weight: 800;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cards-app__page-btn:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--tiko-surface), var(--color-foreground) 12%);
+}
+
+.cards-app__page-info {
+  font-weight: 700;
+  min-width: 3rem;
+}
+
+/* ------------------------------------------------------------------ */
+/* Grid — 2-col square tiles (mobile), 3-col (wider)                  */
+/* ------------------------------------------------------------------ */
+
+.cards-app .tiko-choice-grid {
+  display: grid !important;
+  grid-template-columns: repeat(2, 1fr) !important;
+  gap: .75rem !important;
+  align-items: start !important;
+  padding: 0 !important;
+  width: 100%;
+}
+
+/* Square 1:1 tile tiles */
+.cards-app .tiko-answer-button {
+  width: 100%;
+}
+
+.cards-app .tiko-answer-button .button__container,
+.cards-app .tiko-answer-button .button__text {
+  aspect-ratio: 1 / 1;
+  display: grid !important;
+  place-items: center;
+  width: 100%;
+}
+
+.cards-app .tiko-answer-button__tile {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  min-height: 0 !important;
+  margin-bottom: .25rem;
+}
+
+/* Image variant: fill the square tile */
+.cards-app .tiko-answer-button--image .tiko-answer-button__tile {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  height: auto;
+}
+
+/* 3 columns on wider screens */
+@media (min-width: 600px) {
+  .cards-app .tiko-choice-grid {
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 1rem !important;
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/* Empty state                                                         */
+/* ------------------------------------------------------------------ */
+
+.cards-app__empty {
+  color: var(--tiko-foreground-accent);
+  font-weight: 700;
+  padding: 1rem;
+  opacity: .7;
+}
+
+/* ------------------------------------------------------------------ */
+/* TTS status                                                          */
+/* ------------------------------------------------------------------ */
+
+.cards-app__status {
+  margin: .5rem auto 0;
+  max-width: 36rem;
+  padding: .5rem 1rem;
+  border-radius: 1rem;
+  background: var(--tiko-panel);
+  font-weight: 700;
+  font-size: .85rem;
+  flex-shrink: 0;
+}
+
+.cards-app__status--error {
+  background: color-mix(in srgb, var(--tiko-answer-secondary), transparent 80%);
+  color: var(--tiko-foreground);
+}
+
+/* ------------------------------------------------------------------ */
+/* Edit bar                                                            */
+/* ------------------------------------------------------------------ */
+
+.cards-app__edit-bar {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  padding: .5rem .75rem;
+  flex-shrink: 0;
+}
+
+.cards-app__edit-input {
+  flex: 1;
+  padding: .5rem .75rem;
+  border: 2px solid color-mix(in srgb, var(--tiko-surface), var(--color-foreground) 15%);
+  border-radius: .75rem;
+  background: var(--tiko-surface);
+  color: inherit;
+  font-size: 1rem;
+  min-width: 0;
+}
+
+.cards-app__edit-input:focus {
+  outline: none;
+  border-color: var(--tiko-answer-primary);
+}
+
+.cards-app__edit-add {
+  border-radius: .75rem;
+  font-weight: 800;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+/* ------------------------------------------------------------------ */
+/* Edit actions (delete/hide overlay)                                  */
+/* ------------------------------------------------------------------ */
+
+.cards-app__edit-actions {
+  display: flex;
+  justify-content: center;
+  gap: .25rem;
+  padding: .25rem 0 .5rem;
+  flex-shrink: 0;
+}
+
+.cards-app__delete-btn {
+  width: 2rem;
+  height: 2rem;
+  border: none;
+  border-radius: 50%;
+  background: color-mix(in srgb, #e84057, transparent 20%);
+  color: #e84057;
+  font-size: 1.1rem;
+  font-weight: 800;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+.cards-app__delete-btn:hover {
+  background: #e84057;
+  color: #fff;
+}
+
+/* ------------------------------------------------------------------ */
+/* Settings                                                            */
+/* ------------------------------------------------------------------ */
+
+.cards-app__settings-extra {
+  text-align: center;
+  padding: .75rem;
+}
+
+.cards-app__restore-btn {
+  border-radius: .75rem;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.cards-app__restore-confirm {
+  font-size: .8rem;
+  opacity: .6;
+  margin-top: .35rem;
+}
+
+/* ------------------------------------------------------------------ */
+/* Answer button images                                                */
+/* ------------------------------------------------------------------ */
+
+.cards-app .tiko-answer-button--image .tiko-answer-button__tile {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  height: auto;
+  border-radius: 0.5rem;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tiko-answer-button__image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 0.5rem;
+}
+
+/* ------------------------------------------------------------------ */
+/* Dark mode overrides                                                  */
+/* ------------------------------------------------------------------ */
+
+.cards-app[data-color-mode="dark"] .cards-app__edit-input {
+  border-color: color-mix(in srgb, var(--tiko-surface), var(--color-foreground) 10%);
+  background: color-mix(in srgb, var(--tiko-surface), var(--color-foreground) 4%);
+}
+
+.cards-app[data-color-mode="dark"] .cards-app__back-btn:hover {
+  background: color-mix(in srgb, var(--tiko-surface), var(--color-foreground) 10%);
+}
+
+.cards-app[data-color-mode="dark"] .cards-app__page-btn:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--tiko-surface), var(--color-foreground) 10%);
+}
