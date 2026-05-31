@@ -1,0 +1,23 @@
+@use '@sil/ui/defaults' with ($project-colors: (
+  'primary': #8b5cf6,
+  'secondary': #2dd4bf,
+  'tertiary': #2488ff,
+  'accent': #ff8a1f,
+  'success': #93ee3f,
+  'warning': #f8c22e,
+  'error': #ef405d,
+  'dark': #17131c,
+  'light': #f8f6f1,
+));
+
+@use '@sil/ui/styles/main.scss';
+
+:root {
+  --tiko-admin-sidebar: color-mix(in srgb, var(--color-background), var(--color-foreground) 5%);
+  --tiko-admin-card: color-mix(in srgb, var(--color-background), var(--color-foreground) 4%);
+  --tiko-admin-border: color-mix(in srgb, var(--color-foreground), transparent 86%);
+  --tiko-admin-muted: color-mix(in srgb, var(--color-foreground), transparent 45%);
+}
+
+html { height: initial !important; scroll-snap-type: none !important; }
+body { overflow: visible !important; display: block !important; }
