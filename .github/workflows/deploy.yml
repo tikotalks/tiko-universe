@@ -24,6 +24,8 @@ jobs:
       environment: ${{ steps.detect.outputs.environment }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Detect changed paths
         id: detect
@@ -38,12 +40,15 @@ jobs:
           # Get changed files vs previous commit (or merge base for PRs)
           if [[ "${{ github.event_name }}" == "push" ]]; then
             PREVIOUS="${{ github.event.before }}"
-            # Handle initial push or force push
-            if ! git rev-parse "$PREVIOUS" >/dev/null 2>&1; then
-              PREVIOUS=$(git rev-list --max-parents=0 HEAD)
+            # Handle initial push or force push (all-zero sha)
+            if [[ "$PREVIOUS" == "0000000000000000000000000000000000000000" ]] || ! git rev-parse "$PREVIOUS" >/dev/null 2>&1; then
+              echo "⚠️ Cannot resolve previous commit — deploying everything"
+              CHANGES=$(git diff --name-only $(git rev-list --max-parents=0 HEAD) "$GITHUB_SHA")
+            else
+              CHANGES=$(git diff --name-only "$PREVIOUS" "$GITHUB_SHA")
             fi
-            CHANGES=$(git diff --name-only "$PREVIOUS" "$GITHUB_SHA")
           else
+            git fetch origin ${{ github.base_ref }}
             CHANGES=$(git diff --name-only origin/${{ github.base_ref }}...HEAD)
           fi
 
