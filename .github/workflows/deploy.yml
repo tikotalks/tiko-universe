@@ -11,6 +11,10 @@ concurrency:
 env:
   CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID || '8cef251b5fdcf6c6f63db98b7aa49f9a' }}
   CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+  CLOUDFLARE_PAGES_PROJECT_DEV: ${{ vars.CLOUDFLARE_PAGES_PROJECT_DEV }}
+  CLOUDFLARE_PAGES_PROJECT_PROD: ${{ vars.CLOUDFLARE_PAGES_PROJECT_PROD }}
+  CLOUDFLARE_PAGES_PROJECT_WEBSITE_DEV: ${{ vars.CLOUDFLARE_PAGES_PROJECT_WEBSITE_DEV }}
+  CLOUDFLARE_PAGES_PROJECT_WEBSITE_PROD: ${{ vars.CLOUDFLARE_PAGES_PROJECT_WEBSITE_PROD }}
 
 jobs:
   detect-changes:
@@ -55,15 +59,16 @@ jobs:
           echo "Changed files:"
           echo "$CHANGES"
 
-          # App directories
-          APPS="cards clock docs radio sequence timer todo type website yes-no"
+          # Deployable app workspaces. Keep this aligned with apps/*/web package directories
+          # that have real Cloudflare Pages projects.
+          APPS="admin cards media radio sequence timer todo type website yes-no"
           # Worker directories
           WORKERS="admin-api app-api content-api generation-api identity-api media-api tts-api"
           # Shared package paths
           SHARED_PATHS="packages/ workers/shared/"
 
-          apps_changed=""
-          workers_changed=""
+          apps_changed=()
+          workers_changed=()
           shared_changed="false"
 
           # Check shared packages first
@@ -75,34 +80,29 @@ jobs:
           done
 
           # Also check root config changes as shared
-          if echo "$CHANGES" | grep -qE "^(package\.json|package-lock\.json|tsconfig|vitest|playwright)"; then
+          if echo "$CHANGES" | grep -qE "^(package\.json|package-lock\.json|tsconfig|vitest|playwright|\.github/workflows/deploy\.yml)"; then
             shared_changed="true"
           fi
 
           # Detect changed apps
           for app in $APPS; do
             if echo "$CHANGES" | grep -q "^apps/$app/"; then
-              if [[ -n "$apps_changed" ]]; then
-                apps_changed="$apps_changed,$app"
-              else
-                apps_changed="$app"
-              fi
+              apps_changed+=("$app")
             fi
           done
 
           # Detect changed workers
           for worker in $WORKERS; do
             if echo "$CHANGES" | grep -q "^workers/$worker/"; then
-              if [[ -n "$workers_changed" ]]; then
-                workers_changed="$workers_changed,$worker"
-              else
-                workers_changed="$worker"
-              fi
+              workers_changed+=("$worker")
             fi
           done
 
-          echo "apps-changed=$apps_changed" >> "$GITHUB_OUTPUT"
-          echo "workers-changed=$workers_changed" >> "$GITHUB_OUTPUT"
+          apps_json=$(node -e "console.log(JSON.stringify(process.argv.slice(1).filter(Boolean)))" "${apps_changed[@]}")
+          workers_json=$(node -e "console.log(JSON.stringify(process.argv.slice(1).filter(Boolean)))" "${workers_changed[@]}")
+
+          echo "apps-changed=$apps_json" >> "$GITHUB_OUTPUT"
+          echo "workers-changed=$workers_json" >> "$GITHUB_OUTPUT"
           echo "shared-changed=$shared_changed" >> "$GITHUB_OUTPUT"
 
           if [[ "$shared_changed" == "true" ]]; then
@@ -110,19 +110,19 @@ jobs:
             echo "📋 Shared packages changed — will deploy all apps and workers"
           else
             echo "deploy-all=false" >> "$GITHUB_OUTPUT"
-            echo "🎯 Selective deploy — apps: [$apps_changed] workers: [$workers_changed]"
+            echo "🎯 Selective deploy — apps: $apps_json workers: $workers_json"
           fi
 
   deploy-apps:
     name: Deploy Apps
     needs: detect-changes
-    if: needs.detect-changes.outputs.apps-changed != '' || needs.detect-changes.outputs.deploy-all == 'true'
+    if: needs.detect-changes.outputs.apps-changed != '[]' || needs.detect-changes.outputs.deploy-all == 'true'
     runs-on: ubuntu-latest
     environment: ${{ needs.detect-changes.outputs.environment }}
     strategy:
       fail-fast: false
       matrix:
-        app: ${{ fromJSON(needs.detect-changes.outputs.deploy-all == 'true' && '["cards","clock","docs","radio","sequence","timer","todo","type","website","yes-no"]' || format('["{0}"]', needs.detect-changes.outputs.apps-changed)) }}
+        app: ${{ fromJSON(needs.detect-changes.outputs.deploy-all == 'true' && '["admin","cards","media","radio","sequence","timer","todo","type","website","yes-no"]' || needs.detect-changes.outputs.apps-changed) }}
     steps:
       - uses: actions/checkout@v4
 
@@ -142,7 +142,15 @@ jobs:
           ENV="${{ needs.detect-changes.outputs.environment }}"
 
           # Determine Pages project name
-          if [[ "$ENV" == "production" ]]; then
+          if [[ "$APP" == "website" ]]; then
+            if [[ "$ENV" == "production" ]]; then
+              PROJECT="${CLOUDFLARE_PAGES_PROJECT_WEBSITE_PROD:-${CLOUDFLARE_PAGES_PROJECT_PROD:-tikotalks}}"
+              BRANCH="main"
+            else
+              PROJECT="${CLOUDFLARE_PAGES_PROJECT_WEBSITE_DEV:-${CLOUDFLARE_PAGES_PROJECT_DEV:-tikotalks-dev}}"
+              BRANCH="development"
+            fi
+          elif [[ "$ENV" == "production" ]]; then
             PROJECT="tiko-${APP}"
             BRANCH="main"
           else
@@ -160,13 +168,13 @@ jobs:
   deploy-workers:
     name: Deploy Workers
     needs: detect-changes
-    if: needs.detect-changes.outputs.workers-changed != '' || needs.detect-changes.outputs.deploy-all == 'true'
+    if: needs.detect-changes.outputs.workers-changed != '[]' || needs.detect-changes.outputs.deploy-all == 'true'
     runs-on: ubuntu-latest
     environment: ${{ needs.detect-changes.outputs.environment }}
     strategy:
       fail-fast: false
       matrix:
-        worker: ${{ fromJSON(needs.detect-changes.outputs.deploy-all == 'true' && '["admin-api","app-api","content-api","generation-api","identity-api","media-api","tts-api"]' || format('["{0}"]', needs.detect-changes.outputs.workers-changed)) }}
+        worker: ${{ fromJSON(needs.detect-changes.outputs.deploy-all == 'true' && '["admin-api","app-api","content-api","generation-api","identity-api","media-api","tts-api"]' || needs.detect-changes.outputs.workers-changed) }}
     steps:
       - uses: actions/checkout@v4
 
@@ -183,19 +191,15 @@ jobs:
           ENV="${{ needs.detect-changes.outputs.environment }}"
 
           # Check if worker has actual deploy capability (not scaffold-only)
-          SCRIPTS=$(node -e "
+          DEPLOY_DRY=$(node -e "
             try {
               const pkg = require('./workers/${WORKER}/package.json');
-              console.log(JSON.stringify(Object.keys(pkg.scripts || {})));
-            } catch(e) { console.log('[]'); }
+              const script = pkg.scripts && pkg.scripts['deploy:dry-run'];
+              console.log(script && !script.includes('scaffold-only') ? 'true' : 'false');
+            } catch(e) { console.log('false'); }
           ")
 
-          DEPLOY_DRY=$(echo "$SCRIPTS" | node -e "
-            const keys = JSON.parse(require('fs').readFileSync('/dev/stdin','utf8'));
-            process.exit(keys.includes('deploy:dry-run') ? 0 : 1);
-          " 2>/dev/null)
-
-          if [[ "$DEPLOY_DRY" -ne 0 ]]; then
+          if [[ "$DEPLOY_DRY" != "true" ]]; then
             echo "⏭️ $WORKER is scaffold-only, skipping deploy"
             exit 0
           fi
@@ -205,10 +209,11 @@ jobs:
 
           if [[ "$ENV" == "production" ]]; then
             echo "🚀 Deploying $WORKER to production"
-            npx wrangler deploy
+            npx wrangler deploy --env production
           else
             echo "🧪 Deploying $WORKER to development (dry-run to verify, then deploy)"
             npx wrangler deploy --dry-run --outdir dist 2>&1 || true
             # Actual dev deploy
             npx wrangler deploy
           fi
+
