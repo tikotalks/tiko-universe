@@ -125,6 +125,11 @@ function parseStringArray(value: unknown): string[] {
   }
 }
 
+function firstCategory(value: unknown): string | undefined {
+  const categories = parseStringArray(value)
+  return categories[0]
+}
+
 function rowToMediaItem(row: Record<string, unknown>): MediaItem {
   return {
     id: String(row.id),
@@ -136,7 +141,7 @@ function rowToMediaItem(row: Record<string, unknown>): MediaItem {
     alt_text: nullableString(row.alt_text),
     title: nullableString(row.title),
     description: nullableString(row.description),
-    folder: nullableString(row.folder),
+    folder: firstCategory(row.folder),
     tags: parseStringArray(row.tags),
     is_private: Boolean(row.is_private),
     original_url: String(row.original_url),
@@ -503,16 +508,16 @@ async function handleListMedia(request: Request, env: Env): Promise<Response> {
     const values: unknown[] = []
 
     if (search) {
-      clauses.push('(title LIKE ? OR description LIKE ? OR alt_text LIKE ?)')
-      values.push(`%${search}%`, `%${search}%`, `%${search}%`)
+      clauses.push('(title LIKE ? OR description LIKE ? OR name LIKE ? OR filename LIKE ?)')
+      values.push(`%${search}%`, `%${search}%`, `%${search}%`, `%${search}%`)
     }
     if (type) {
       clauses.push('mime_type LIKE ?')
       values.push(`${type}/%`)
     }
     if (category) {
-      clauses.push('folder = ?')
-      values.push(category)
+      clauses.push('categories LIKE ?')
+      values.push(`%"${category}"%`)
     }
     if (tags?.length) {
       for (const tag of tags) {
@@ -524,8 +529,8 @@ async function handleListMedia(request: Request, env: Env): Promise<Response> {
     const where = `WHERE ${clauses.join(' AND ')}`
 
     const rows = await env.MEDIA_DB.prepare(
-      `SELECT id, file_name, file_size, mime_type, width, height, alt_text, title,
-              description, folder, tags, is_private, original_url, created_at, updated_at
+      `SELECT id, filename AS file_name, file_size, mime_type, width, height, '' AS alt_text, title,
+              description, categories AS folder, tags, is_private, original_url, created_at, updated_at
        FROM media
        ${where}
        ORDER BY ${safeSort} ${order}
@@ -561,8 +566,8 @@ async function handleListMedia(request: Request, env: Env): Promise<Response> {
 async function handleGetMedia(request: Request, env: Env, id: string): Promise<Response> {
   try {
     const row = await env.MEDIA_DB.prepare(
-      `SELECT id, file_name, file_size, mime_type, width, height, alt_text, title,
-              description, folder, tags, is_private, original_url, created_at, updated_at
+      `SELECT id, filename AS file_name, file_size, mime_type, width, height, '' AS alt_text, title,
+              description, categories AS folder, tags, is_private, original_url, created_at, updated_at
        FROM media WHERE id = ? LIMIT 1`,
     )
       .bind(id)
@@ -582,7 +587,7 @@ async function handleGetMedia(request: Request, env: Env, id: string): Promise<R
 async function handleMediaDownload(request: Request, env: Env, id: string): Promise<Response> {
   try {
     const row = await env.MEDIA_DB.prepare(
-      'SELECT file_name, mime_type, original_url FROM media WHERE id = ? LIMIT 1',
+      'SELECT filename AS file_name, mime_type, original_url FROM media WHERE id = ? LIMIT 1',
     )
       .bind(id)
       .first<{ file_name: string; mime_type: string; original_url: string }>()
@@ -804,12 +809,12 @@ export default {
     if (resource === 'media') {
       if (request.method === 'POST' && id === 'upload') {
         const authed = await authenticate(request, env)
-        if (!authed.ok) return withCors(authed.response)
+        if (authed.ok === false) return withCors(authed.response)
         return withCors(await handleMediaUpload(request, env))
       }
       if (request.method === 'POST' && id === 'analyze') {
         const authed = await authenticate(request, env)
-        if (!authed.ok) return withCors(authed.response)
+        if (authed.ok === false) return withCors(authed.response)
         return withCors(await handleMediaAnalyze(request, env))
       }
       if (request.method === 'GET' && !id) return handleListMedia(request, env)
@@ -823,7 +828,7 @@ export default {
     if (resource === 'assets') {
       if (request.method === 'POST' && id === 'upload') {
         const authed = await authenticate(request, env)
-        if (!authed.ok) return withCors(authed.response)
+        if (authed.ok === false) return withCors(authed.response)
         return withCors(await handleAssetUpload(request, env))
       }
       if (request.method === 'GET' && !id) return handleListAssets(request, env)

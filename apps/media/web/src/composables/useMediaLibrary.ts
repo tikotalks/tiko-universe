@@ -11,7 +11,7 @@ import type {
  */
 function resolveApiBaseUrl(): string {
   const env = (import.meta as ImportMeta & { env?: Record<string, string | undefined> }).env
-  return (env?.VITE_MEDIA_API_URL ?? 'https://media-api.tikotalks.com/v1').replace(/\/$/, '')
+  return (env?.VITE_MEDIA_API_URL ?? 'https://media.tikoapi.org/v1').replace(/\/$/, '')
 }
 
 function asRecord(value: unknown): Record<string, unknown> {

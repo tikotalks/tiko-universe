@@ -85,35 +85,16 @@ private struct CollectionTile: View {
     let thumbnailURL: URL?
 
     var body: some View {
-        ZStack(alignment: .bottom) {
-            RoundedRectangle(cornerRadius: 24, style: .continuous)
-                .fill(Color(hex: collection.colorHex).opacity(0.72))
-
+        TikoSquareTile(
+            title: collection.title,
+            subtitle: "\(collection.cards.count)",
+            background: Color(hex: collection.colorHex).opacity(0.72)
+        ) {
             if let thumbnailURL {
                 CachedCardImage(url: thumbnailURL)
-                    .clipShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
                     .overlay(Color.black.opacity(0.16))
             }
-
-            VStack(spacing: 6) {
-                Spacer()
-                Text(collection.title)
-                    .font(.system(.headline, design: .rounded).weight(.heavy))
-                    .foregroundStyle(.white)
-                    .multilineTextAlignment(.center)
-                    .lineLimit(2)
-                    .minimumScaleFactor(0.72)
-                    .shadow(color: .black.opacity(0.35), radius: 5, x: 0, y: 2)
-
-                Text("\(collection.cards.count)")
-                    .font(.system(.caption2, design: .rounded).weight(.black))
-                    .foregroundStyle(.white.opacity(0.9))
-            }
-            .padding(10)
         }
-        .aspectRatio(1, contentMode: .fit)
-        .contentShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
-        .shadow(color: .black.opacity(0.10), radius: 8, x: 0, y: 5)
     }
 }
 
@@ -164,36 +145,16 @@ private struct CommunicationCardTile: View {
 
     var body: some View {
         Button(action: onSpeak) {
-            ZStack(alignment: .bottom) {
-                RoundedRectangle(cornerRadius: 24, style: .continuous)
-                    .fill(Color(hex: card.colorHex).opacity(card.imageURL == nil ? 0.82 : 0.45))
-
+            TikoSquareTile(
+                title: card.title,
+                background: Color(hex: card.colorHex).opacity(card.imageURL == nil ? 0.82 : 0.45),
+                isActive: isSpeaking
+            ) {
                 if let imageURL = card.imageURL {
                     CachedCardImage(url: imageURL)
-                        .clipShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
                         .overlay(Color.black.opacity(0.08))
                 }
-
-                Text(card.title)
-                    .font(.system(.title3, design: .rounded).weight(.heavy))
-                    .foregroundStyle(.white)
-                    .multilineTextAlignment(.center)
-                    .lineLimit(2)
-                    .minimumScaleFactor(0.62)
-                    .padding(.horizontal, 8)
-                    .padding(.vertical, 7)
-                    .frame(maxWidth: .infinity)
-                    .background(.black.opacity(card.imageURL == nil ? 0.18 : 0.34), in: RoundedRectangle(cornerRadius: 18, style: .continuous))
-                    .shadow(color: .black.opacity(0.32), radius: 4, x: 0, y: 2)
             }
-            .aspectRatio(1, contentMode: .fit)
-            .overlay {
-                RoundedRectangle(cornerRadius: 24, style: .continuous)
-                    .stroke(isSpeaking ? Color(hex: 0xff8a1f) : .white.opacity(0.28), lineWidth: isSpeaking ? 5 : 1)
-            }
-            .shadow(color: .black.opacity(isSpeaking ? 0.18 : 0.08), radius: isSpeaking ? 13 : 8, x: 0, y: isSpeaking ? 9 : 5)
-            .scaleEffect(isSpeaking ? 1.04 : 1)
-            .animation(.spring(response: 0.24, dampingFraction: 0.72), value: isSpeaking)
         }
         .buttonStyle(.plain)
         .accessibilityLabel(card.speech)

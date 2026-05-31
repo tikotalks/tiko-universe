@@ -9,6 +9,7 @@ struct RadioTrack: Identifiable, Codable, Equatable, Sendable {
     let audioUrl: String?
     let thumbnailUrl: String?
     let duration: TimeInterval?
+    let categoryId: String?
     let addedAt: String?
 
     init(
@@ -20,6 +21,7 @@ struct RadioTrack: Identifiable, Codable, Equatable, Sendable {
         audioUrl: String? = nil,
         thumbnailUrl: String? = nil,
         duration: TimeInterval? = nil,
+        categoryId: String? = nil,
         addedAt: String? = nil
     ) {
         self.id = id
@@ -30,7 +32,25 @@ struct RadioTrack: Identifiable, Codable, Equatable, Sendable {
         self.audioUrl = audioUrl
         self.thumbnailUrl = thumbnailUrl
         self.duration = duration
+        self.categoryId = categoryId
         self.addedAt = addedAt ?? ISO8601DateFormatter().string(from: Date())
+    }
+}
+
+extension RadioTrack {
+    func withCategory(_ categoryId: String?) -> RadioTrack {
+        RadioTrack(
+            id: id,
+            title: title,
+            artist: artist,
+            source: source,
+            youtubeVideoId: youtubeVideoId,
+            audioUrl: audioUrl,
+            thumbnailUrl: thumbnailUrl,
+            duration: duration,
+            categoryId: categoryId,
+            addedAt: addedAt
+        )
     }
 }
 
@@ -45,6 +65,8 @@ struct RadioCategory: Identifiable, Codable, Equatable, Sendable {
     var title: String
     var symbol: String
     var colorHex: UInt32
+
+    var colorName: String { String(format: "#%06X", colorHex) }
 }
 
 struct RadioLibrarySnapshot: Codable, Equatable, Sendable {
@@ -64,6 +86,12 @@ enum YouTubeVideoIDParser {
 
         if host.contains("youtu.be") {
             return components.path.trimmingCharacters(in: CharacterSet(charactersIn: "/"))
+        }
+
+        let pathParts = components.path.split(separator: "/").map(String.init)
+        if let markerIndex = pathParts.firstIndex(where: { ["shorts", "embed", "live"].contains($0) }),
+           pathParts.indices.contains(markerIndex + 1) {
+            return pathParts[markerIndex + 1]
         }
 
         return components.queryItems?.first(where: { $0.name == "v" })?.value ?? trimmed
