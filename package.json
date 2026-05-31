@@ -19,7 +19,7 @@
     "test:services": "npm run test:contracts",
     "build": "npm run build --workspaces --if-present",
     "audit:doctrine": "node tools/check-doctrine.mjs",
-    "deploy:dry-run:tts": "npm --workspace @tiko-universe/tts-api run deploy:dry-run",
+    "deploy:dry-run:tts": "npm --workspace @tiko-worker/tts-api run deploy:dry-run",
     "deploy:dry-run:generation": "npm --workspace @tiko-worker/generation-api run deploy:dry-run"
   },
   "dependencies": {

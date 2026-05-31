@@ -1,0 +1,145 @@
+name: iOS CI
+
+on:
+  push:
+    branches: [development, main]
+    paths:
+      - 'apps/*/ios/**'
+      - 'packages/tikokit-ios/**'
+      - '.github/workflows/ios-ci.yml'
+  pull_request:
+    branches: [development, main]
+    paths:
+      - 'apps/*/ios/**'
+      - 'packages/tikokit-ios/**'
+      - '.github/workflows/ios-ci.yml'
+  workflow_dispatch:
+    inputs:
+      app:
+        description: 'App to build: changed, all, yes-no, cards, radio, timer, type'
+        required: false
+        default: changed
+
+concurrency:
+  group: ios-ci-${{ github.ref }}-${{ github.event.inputs.app || 'auto' }}
+  cancel-in-progress: true
+
+jobs:
+  discover:
+    name: Discover iOS apps
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.matrix.outputs.matrix }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - id: matrix
+        name: Build app matrix
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          requested="${{ github.event.inputs.app || 'changed' }}"
+
+          app_json() {
+            case "$1" in
+              yes-no) printf '{"app":"yes-no","path":"apps/yes-no/ios","scheme":"TikoYesNo"}' ;;
+              cards) printf '{"app":"cards","path":"apps/cards/ios","scheme":"TikoCards"}' ;;
+              radio) printf '{"app":"radio","path":"apps/radio/ios","scheme":"TikoRadio"}' ;;
+              timer) printf '{"app":"timer","path":"apps/timer/ios","scheme":"TikoTimer"}' ;;
+              type) printf '{"app":"type","path":"apps/type/ios","scheme":"TikoType"}' ;;
+              *) return 1 ;;
+            esac
+          }
+
+          all_apps=(yes-no cards radio timer type)
+
+          if [[ "$requested" != "changed" && "$requested" != "all" ]]; then
+            apps=("$requested")
+          elif [[ "$requested" == "all" ]]; then
+            apps=("${all_apps[@]}")
+          else
+            if [[ "${{ github.event_name }}" == "pull_request" ]]; then
+              base="origin/${{ github.base_ref }}"
+            else
+              base="${{ github.event.before }}"
+              if [[ -z "$base" || "$base" =~ ^0+$ ]]; then
+                base="HEAD~1"
+              fi
+            fi
+
+            changed_files="$(git diff --name-only "$base" HEAD || true)"
+            apps=()
+
+            if echo "$changed_files" | grep -qE '^(packages/tikokit-ios/|\.github/workflows/ios-ci\.yml)'; then
+              apps=("${all_apps[@]}")
+            else
+              for app in "${all_apps[@]}"; do
+                if echo "$changed_files" | grep -qE "^apps/${app}/ios/"; then
+                  apps+=("$app")
+                fi
+              done
+            fi
+          fi
+
+          items=()
+          for app in "${apps[@]}"; do
+            if [[ -f "apps/${app}/ios/Project.yml" ]]; then
+              items+=("$(app_json "$app")")
+            fi
+          done
+
+          if [[ ${#items[@]} -eq 0 ]]; then
+            matrix='{"include":[]}'
+          else
+            joined=$(IFS=,; echo "${items[*]}")
+            matrix="{\"include\":[${joined}]}"
+          fi
+
+          echo "matrix=$matrix" >> "$GITHUB_OUTPUT"
+          echo "$matrix"
+
+  build:
+    name: Build ${{ matrix.app }} iOS
+    needs: discover
+    if: ${{ fromJson(needs.discover.outputs.matrix).include[0] != null }}
+    runs-on: macos-latest
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJson(needs.discover.outputs.matrix) }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Select Xcode
+        run: |
+          sudo xcode-select -s /Applications/Xcode.app
+          xcodebuild -version
+
+      - name: Install XcodeGen
+        run: brew install xcodegen
+
+      - name: Generate project
+        working-directory: ${{ matrix.path }}
+        run: xcodegen generate
+
+      - name: Pick simulator
+        id: simulator
+        shell: bash
+        run: |
+          set -euo pipefail
+          device=$(xcrun simctl list devices available | grep -E 'iPhone (15|16)' | grep -v unavailable | head -1 | sed -E 's/^[[:space:]]*([^\(]+).*/\1/' | xargs)
+          if [[ -z "$device" ]]; then
+            device=$(xcrun simctl list devices available | grep -E 'iPhone' | grep -v unavailable | head -1 | sed -E 's/^[[:space:]]*([^\(]+).*/\1/' | xargs)
+          fi
+          echo "device=$device" >> "$GITHUB_OUTPUT"
+          echo "Using simulator: $device"
+
+      - name: Build and test
+        working-directory: ${{ matrix.path }}
+        run: |
+          xcodebuild test \
+            -scheme '${{ matrix.scheme }}' \
+            -destination 'platform=iOS Simulator,name=${{ steps.simulator.outputs.device }}' \
+            CODE_SIGNING_ALLOWED=NO

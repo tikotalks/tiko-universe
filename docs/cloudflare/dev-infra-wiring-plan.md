@@ -164,7 +164,7 @@ npm run deploy:dry-run:tts
 Worker-local command:
 
 ```bash
-npm --workspace @tiko-universe/tts-api run deploy:dry-run
+npm --workspace @tiko-worker/tts-api run deploy:dry-run
 ```
 
 Future implemented Workers should follow the same pattern:

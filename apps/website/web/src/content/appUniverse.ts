@@ -2,9 +2,9 @@ export type TikoWebsiteAppSlug = 'yes-no' | 'type' | 'cards' | 'sequence' | 'tim
 
 export type TikoWebsiteAppStatus = 'available' | 'planned'
 export type AppStatus = TikoWebsiteAppStatus
-export type StableRoute = '/' | '/tools' | '/how-it-works' | '/caregivers' | '/faq'
+export type StableRoute = '/' | '/tools' | '/how-it-works' | '/caregivers' | '/faq' | '/docs' | '/docs/philosophy' | '/docs/architecture' | '/docs/apis'
 
-export const stableRoutes: StableRoute[] = ['/', '/tools', '/how-it-works', '/caregivers', '/faq']
+export const stableRoutes: StableRoute[] = ['/', '/tools', '/how-it-works', '/caregivers', '/faq', '/docs', '/docs/philosophy', '/docs/architecture', '/docs/apis']
 
 export interface TikoWebsiteAppMetadata {
   slug: TikoWebsiteAppSlug

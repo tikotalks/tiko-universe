@@ -3,6 +3,7 @@ import worker, { hashToken } from '../workers/identity-api/src/index'
 import { IdentityClient, type SessionBundle } from '@tiko/identity'
 
 type Row = Record<string, unknown>
+type JsonBody = Record<string, any>
 
 class MemoryResult {
   constructor(private rows: Row[] = [], private meta: Record<string, unknown> = {}) {}
@@ -155,7 +156,7 @@ async function fetchJson(path: string, init: RequestInit = {}, testEnv = env()) 
     headers: { 'content-type': 'application/json', ...(init.headers ?? {}) }
   })
   const response = await worker.fetch(request, testEnv as never, {} as never)
-  const body = response.status === 204 ? null : await response.json()
+  const body = response.status === 204 ? {} : await response.json() as JsonBody
   return { response, body, env: testEnv }
 }
 
@@ -172,6 +173,20 @@ describe('identity-api token handling', () => {
 })
 
 describe('identity-api endpoints', () => {
+  it('allows only configured origins in CORS preflight responses', async () => {
+    const allowed = await fetchJson('/v1/identity/device', {
+      method: 'OPTIONS',
+      headers: { origin: 'https://app.tiko.test' }
+    })
+    const denied = await fetchJson('/v1/identity/device', {
+      method: 'OPTIONS',
+      headers: { origin: 'https://evil.example' }
+    })
+
+    expect(allowed.response.headers.get('access-control-allow-origin')).toBe('https://app.tiko.test')
+    expect(denied.response.headers.get('access-control-allow-origin')).toBeNull()
+  })
+
   it('bootstraps a device user and stores only hashed session/device secrets', async () => {
     const testEnv = env()
     const { response, body } = await fetchJson('/v1/identity/device', {

@@ -1,8 +1,10 @@
 import SwiftUI
 import TikoKit
+import UIKit
 
 struct YesNoView: View {
     private let defaultSentence = "Do you want to go eat?"
+    private let speechService = YesNoSpeechService()
 
     @AppStorage("yesno.sentence") private var sentence = ""
     @AppStorage("yesno.latestAnswer") private var latestAnswerRaw = ""
@@ -110,17 +112,19 @@ struct YesNoView: View {
     }
 
     private func selectChoice(_ choice: TikoAnswerChoice) {
+        UIImpactFeedbackGenerator(style: choice.id == "yes" ? .medium : .rigid).impactOccurred()
         latestAnswerRaw = choice.label
         history.insert(choice.label, at: 0)
         if history.count > 5 {
             history.removeLast()
         }
         saveHistory()
-        // TODO: call the shared TTS API once identity/API clients are in place.
+        speechService.speak(choice.label)
     }
 
     private func speakSentence() {
-        // TODO: call the shared TTS API once identity/API clients are in place.
+        UIImpactFeedbackGenerator(style: .light).impactOccurred()
+        speechService.speak(effectiveSentence)
     }
 
     private func loadHistory() {

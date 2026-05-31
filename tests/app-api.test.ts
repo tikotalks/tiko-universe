@@ -3,6 +3,7 @@ import worker, { hashToken } from '../workers/app-api/src/index'
 import { TikoDataClient, TikoDataError, type AppSettingsResponse, type YesNoSettings } from '@tiko/data'
 
 type Row = Record<string, unknown>
+type JsonBody = Record<string, any>
 
 class MemoryResult {
   constructor(private rows: Row[] = []) {}
@@ -119,13 +120,27 @@ async function fetchJson(path: string, init: RequestInit = {}, testEnv?: Awaited
     headers: { 'content-type': 'application/json', ...(init.headers ?? {}) }
   })
   const response = await worker.fetch(request, (testEnv ?? await env()) as never, {} as never)
-  const body = response.status === 204 ? null : await response.json()
+  const body = response.status === 204 ? {} : await response.json() as JsonBody
   return { response, body }
 }
 
 const auth = { authorization: 'Bearer session-token' }
 
 describe('app-api settings/state endpoints', () => {
+  it('allows only configured origins in CORS preflight responses', async () => {
+    const allowed = await fetchJson('/v1/apps/yes-no/settings', {
+      method: 'OPTIONS',
+      headers: { origin: 'https://yesno.tiko.test' }
+    })
+    const denied = await fetchJson('/v1/apps/yes-no/settings', {
+      method: 'OPTIONS',
+      headers: { origin: 'https://evil.example' }
+    })
+
+    expect(allowed.response.headers.get('access-control-allow-origin')).toBe('https://yesno.tiko.test')
+    expect(denied.response.headers.get('access-control-allow-origin')).toBeNull()
+  })
+
   it('rejects requests without a bearer session', async () => {
     const { response, body } = await fetchJson('/v1/apps/yes-no/settings')
 

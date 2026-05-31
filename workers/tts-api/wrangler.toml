@@ -19,3 +19,29 @@ bucket_name = "tiko-generated-audio-dev"
 [vars]
 TIKO_ENVIRONMENT = "development"
 TTS_PUBLIC_ROUTE = "https://dev.tts.tikoapi.org"
+
+# ── Production environment ──────────────────────────────────────
+# Temporary production route for Yes No compatibility.
+# Deploy with: npx wrangler deploy --env production
+# Remove after Yes No web/iOS migrate to generation-api.
+
+[env.production]
+name = "tiko-tts-api"
+workers_dev = false
+
+[env.production.vars]
+TIKO_ENVIRONMENT = "production"
+TTS_PUBLIC_ROUTE = "https://tts.tikoapi.org"
+
+[[env.production.d1_databases]]
+binding = "TTS_DB"
+database_name = "tiko-tts-db"
+database_id = "9ec91ef0-a12c-44c7-9a0a-bc4dbc5a4b74"
+
+[[env.production.r2_buckets]]
+binding = "AUDIO_BUCKET"
+bucket_name = "tiko-generated-audio"
+
+[[env.production.routes]]
+pattern = "tts.tikoapi.org"
+custom_domain = true

@@ -26,6 +26,7 @@ const storageKey = 'tiko:radio'
 const identityStorageKey = 'tiko:identity:device-session'
 const appId = 'radio' as const
 const apiBaseUrl = resolveApiBaseUrl()
+const generationApiBaseUrl = resolveGenerationApiBaseUrl()
 
 // ---- Interfaces -----------------------------------------------------------
 interface PersistedState {
@@ -45,10 +46,27 @@ interface StoredIdentity {
   expiresAt?: string
 }
 
+interface GeneratedStoryItem {
+  id: string
+  title: string
+  description?: string | null
+  audioUrl: string
+  durationSeconds?: number | null
+  fileSizeBytes?: number | null
+  category?: string
+  tags?: string[]
+  createdAt: string
+}
+
 // ---- Utility functions ----------------------------------------------------
 function resolveApiBaseUrl() {
   const env = (import.meta as ImportMeta & { env?: Record<string, string | undefined> }).env
   return (env?.VITE_TIKO_API_BASE_URL ?? 'https://api.tikoapi.org/v1').replace(/\/$/, '')
+}
+
+function resolveGenerationApiBaseUrl() {
+  const env = (import.meta as ImportMeta & { env?: Record<string, string | undefined> }).env
+  return (env?.VITE_GENERATION_API_URL ?? 'https://dev.api.tikoapi.org/v1/generation').replace(/\/$/, '')
 }
 
 function readJson<T>(key: string, fallback: T): T {
@@ -369,6 +387,34 @@ function seedDefaultCategories() {
   }
 }
 
+function absoluteGenerationUrl(url: string) {
+  if (url.startsWith('http')) return url
+  return `${generationApiBaseUrl}${url.replace('/v1/generation', '')}`
+}
+
+async function syncGeneratedStories() {
+  try {
+    const response = await fetch(`${generationApiBaseUrl}/stories?limit=50`)
+    if (!response.ok) return
+    const body = await response.json() as { data?: GeneratedStoryItem[] }
+    const storyTracks: RadioTrack[] = (body.data ?? [])
+      .filter(story => story.audioUrl)
+      .map(story => ({
+        id: `generated-story:${story.id}`,
+        title: story.title,
+        artist: 'Tiko Story Narrator',
+        source: 'r2',
+        audioUrl: absoluteGenerationUrl(story.audioUrl),
+        categoryId: 'stories',
+        duration: typeof story.durationSeconds === 'number' ? story.durationSeconds : undefined,
+        addedAt: story.createdAt,
+      }))
+    if (storyTracks.length > 0) library.mergeTracks(storyTracks)
+  } catch {
+    // Generated stories are additive; radio remains usable if the generation API is offline.
+  }
+}
+
 // ---- Watchers --------------------------------------------------------------
 watch(language, (value) => {
   i18n.setLanguage(value)
@@ -436,6 +482,7 @@ onMounted(async () => {
     bootstrapped.value = true
     saveLocalFallback()
     seedDefaultCategories()
+    void syncGeneratedStories()
   }
 })
 
@@ -484,8 +531,8 @@ function openSettingsPopup() {
     props: { language: language.value, colorMode: colorMode.value },
     config: { position: 'center', canClose: true, background: true, width: '24rem' },
     on: {
-      'update:language': (value: string) => { language.value = value as TikoLanguage },
-      'update:colorMode': (value: string) => { colorMode.value = value as TikoColorMode },
+      'update:language': (...args: unknown[]) => { language.value = args[0] as TikoLanguage },
+      'update:colorMode': (...args: unknown[]) => { colorMode.value = args[0] as TikoColorMode },
     },
   })
 }
@@ -497,7 +544,8 @@ function openPinPopup() {
     props: { existingHash: pinHash.value },
     config: { position: 'center', canClose: true, background: true, width: '22rem' },
     on: {
-      set: (hash: string) => {
+      set: (...args: unknown[]) => {
+        const hash = args[0] as string
         if (!pinHash.value) {
           // First time: save PIN hash, switch to child mode
           pinHash.value = hash
@@ -560,7 +608,7 @@ function openLoginPopup() {
           if (!email.value.trim()) return
           loading.value = true
           try {
-            await identityClient.value.requestRecoveryEmail({ email: email.value.trim() })
+            await identityClient.requestRecoveryEmail({ email: email.value.trim() })
             sent.value = true
           } catch {
             // will wire up error handling when identity worker is live
@@ -739,11 +787,9 @@ function handleCreateCategory() {
   if (!name) return
   const id = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')
   categories.addCategory({
-    id,
     name,
     icon: '📁',
     color: `hsl(${Math.floor(Math.random() * 360)}, 70%, 60%)`,
-    order: categories.categories.value.length,
   })
   newCategoryName.value = ''
   newCategoryOpen.value = false

@@ -5,7 +5,7 @@ export interface Env {
 }
 
 export interface D1DatabaseLike {
-  prepare(sql: string): { bind(...values: unknown[]): { first<T>(): Promise<T | null>; run(): Promise<unknown> } }
+  prepare(sql: string): { bind(...values: unknown[]): { first<T>(): Promise<T | null>; all<T>(): Promise<{ results: T[] }>; run(): Promise<unknown> } }
 }
 
 export interface R2BucketLike {
@@ -73,6 +73,13 @@ export default {
     const url = new URL(request.url)
     if (url.pathname === '/v1/generation/tts' && request.method === 'POST') return generateTts(request, env)
     if (url.pathname.startsWith('/v1/generation/audio/') && request.method === 'GET') return getAudio(url.pathname, env)
+    if (url.pathname === '/v1/generation/image' && request.method === 'POST') return generateImage(request, env)
+    if (url.pathname.startsWith('/v1/generation/images/') && url.pathname.endsWith('/binary') && request.method === 'GET') return getImage(url.pathname, env)
+    if (url.pathname === '/v1/generation/images' && request.method === 'GET') return listImages(request, env)
+    if (url.pathname === '/v1/generation/stories/tryout' && request.method === 'POST') return generateStoryTryout(request, env)
+    if (url.pathname === '/v1/generation/stories/render' && request.method === 'POST') return renderStory(request, env)
+    if (url.pathname.startsWith('/v1/generation/stories/') && url.pathname.endsWith('/audio') && request.method === 'GET') return getStoryAudio(url.pathname, env)
+    if (url.pathname === '/v1/generation/stories' && request.method === 'GET') return listStories(request, env)
 
     return apiError('not_found', 'Route not found.', 404)
   },
@@ -271,6 +278,390 @@ function providerSafeMessage(code: string) {
     case 'tts_provider_failed': return 'TTS provider failed.'
     default: return 'TTS generation failed.'
   }
+}
+
+// ── Story narration (multi-segment TTS) ───────────────────────────
+
+interface StorySegment {
+  id?: string
+  text: string
+  pauseAfterMs?: number
+}
+
+interface StoryTryoutRequest {
+  text: string
+  language?: string
+  voice?: string
+  model?: string
+  speed?: number
+}
+
+interface StoryRenderRequest {
+  title: string
+  description?: string
+  language?: string
+  voice?: string
+  model?: string
+  speed?: number
+  segments: StorySegment[]
+  category?: string
+  tags?: string[]
+}
+
+interface StoryRecord {
+  id: string
+  title: string
+  description: string | null
+  voice: string
+  speed: number
+  segments: string
+  status: 'draft' | 'rendering' | 'complete' | 'error'
+  audio_url: string | null
+  r2_key: string | null
+  duration_seconds: number | null
+  file_size_bytes: number | null
+  category: string
+  tags: string
+  is_public: number
+  created_at: string
+  updated_at: string
+}
+
+async function generateStoryTryout(request: Request, env: Env): Promise<Response> {
+  let body: StoryTryoutRequest
+  try { body = await request.json() as StoryTryoutRequest } catch { return apiError('invalid_json', 'Request body must be valid JSON.', 400) }
+
+  if (!body.text || typeof body.text !== 'string' || !body.text.trim()) return apiError('missing_text', 'Text is required.', 400, 'text')
+  if (body.text.length > 800) return apiError('text_too_long', 'Tryout text must be 800 characters or fewer.', 400, 'text')
+
+  const normalized = normalizeTtsRequest({ text: body.text, language: body.language || 'en', provider: 'openai', voice: body.voice, model: body.model, speed: body.speed })
+  const generated = await generateAudioBytes(normalized, env)
+  if (generated.success === false) return apiError(generated.error, providerSafeMessage(generated.error), generated.status ?? 503)
+
+  const id = crypto.randomUUID()
+  const r2Key = `story-tryouts/${id}.mp3`
+  const audioUrl = `/v1/generation/stories/tryouts/${id}/audio`
+  await env.GENERATED_MEDIA_BUCKET.put(r2Key, generated.bytes, { httpMetadata: { contentType: generated.contentType, cacheControl: 'private, max-age=3600' } })
+
+  return json({ data: { id, audioUrl, contentType: generated.contentType, fileSizeBytes: generated.bytes.byteLength }, meta: { schemaVersion: 1 } }, 201)
+}
+
+async function renderStory(request: Request, env: Env): Promise<Response> {
+  let body: StoryRenderRequest
+  try { body = await request.json() as StoryRenderRequest } catch { return apiError('invalid_json', 'Request body must be valid JSON.', 400) }
+
+  if (!body.title?.trim()) return apiError('missing_title', 'Story title is required.', 400, 'title')
+  if (!Array.isArray(body.segments) || body.segments.length === 0) return apiError('missing_segments', 'At least one story segment is required.', 400, 'segments')
+  if (body.segments.length > 40) return apiError('too_many_segments', 'Stories can have at most 40 segments.', 400, 'segments')
+
+  const cleanSegments = body.segments.map((segment, index) => ({ id: segment.id || `segment-${index + 1}`, text: String(segment.text || '').trim(), pauseAfterMs: clamp(Number(segment.pauseAfterMs ?? 350), 0, 5000) }))
+  if (cleanSegments.some(segment => !segment.text)) return apiError('empty_segment', 'Every segment needs text.', 400, 'segments')
+  if (cleanSegments.reduce((sum, segment) => sum + segment.text.length, 0) > 12000) return apiError('story_too_long', 'Story text must be 12000 characters or fewer.', 400, 'segments')
+
+  const voice = body.voice && OPENAI_VOICES.has(body.voice) ? body.voice : 'nova'
+  const speed = clamp(body.speed ?? 1, 0.25, 4)
+  const chunks: Uint8Array[] = []
+
+  for (const segment of cleanSegments) {
+    const generated = await generateAudioBytes(normalizeTtsRequest({ text: segment.text, language: body.language || 'en', provider: 'openai', voice, model: body.model || 'tts-1', speed }), env)
+    if (generated.success === false) return apiError(generated.error, providerSafeMessage(generated.error), generated.status ?? 503)
+    chunks.push(generated.bytes)
+    if (segment.pauseAfterMs > 0) chunks.push(makeSilentMp3Padding())
+  }
+
+  const audioBytes = concatBytes(chunks)
+  const id = crypto.randomUUID()
+  const r2Key = `stories/${id}.mp3`
+  const audioUrl = `/v1/generation/stories/${id}/audio`
+  const now = new Date().toISOString()
+
+  await env.GENERATED_MEDIA_BUCKET.put(r2Key, audioBytes, { httpMetadata: { contentType: 'audio/mpeg', cacheControl: 'public, max-age=31536000, immutable' } })
+
+  await env.GENERATION_DB.prepare(`INSERT INTO stories (
+    id, title, description, voice, speed, segments, status, audio_url, r2_key,
+    duration_seconds, file_size_bytes, category, tags, is_public, created_at, updated_at
+  ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`).bind(
+    id, body.title.trim(), body.description?.trim() || null, voice, speed, JSON.stringify(cleanSegments), 'complete', audioUrl, r2Key,
+    null, audioBytes.byteLength, body.category || 'story', JSON.stringify(body.tags || []), 1, now, now,
+  ).run()
+
+  return json({ data: { id, title: body.title.trim(), audioUrl, voice, speed, fileSizeBytes: audioBytes.byteLength, createdAt: now }, meta: { schemaVersion: 1, segmentCount: cleanSegments.length } }, 201)
+}
+
+async function getStoryAudio(pathname: string, env: Env): Promise<Response> {
+  if (pathname.startsWith('/v1/generation/stories/tryouts/')) {
+    const id = decodeURIComponent(pathname.replace('/v1/generation/stories/tryouts/', '').replace('/audio', ''))
+    if (!isSafeId(id)) return apiError('invalid_tryout_id', 'Tryout id is invalid.', 400)
+    const object = await env.GENERATED_MEDIA_BUCKET.get(`story-tryouts/${id}.mp3`)
+    if (!object) return apiError('tryout_not_found', 'Tryout audio not found.', 404)
+    return audioResponse(object, 'private, max-age=3600')
+  }
+
+  const id = decodeURIComponent(pathname.replace('/v1/generation/stories/', '').replace('/audio', ''))
+  if (!isSafeId(id)) return apiError('invalid_story_id', 'Story id is invalid.', 400)
+  const record = await env.GENERATION_DB.prepare('SELECT r2_key FROM stories WHERE id = ? LIMIT 1').bind(id).first<{ r2_key: string | null }>()
+  if (!record?.r2_key) return apiError('story_not_found', 'Story not found.', 404)
+  const object = await env.GENERATED_MEDIA_BUCKET.get(record.r2_key)
+  if (!object) return apiError('story_not_found', 'Story audio not found.', 404)
+  return audioResponse(object, 'public, max-age=31536000, immutable')
+}
+
+async function listStories(request: Request, env: Env): Promise<Response> {
+  const url = new URL(request.url)
+  const page = Math.max(parseInt(url.searchParams.get('page') || '1'), 1)
+  const limit = Math.min(Math.max(parseInt(url.searchParams.get('limit') || '20'), 1), 100)
+  const offset = (page - 1) * limit
+  const rows = await env.GENERATION_DB.prepare(`SELECT id, title, description, voice, speed, segments, status, audio_url, r2_key,
+      duration_seconds, file_size_bytes, category, tags, is_public, created_at, updated_at
+    FROM stories WHERE is_public = 1 ORDER BY created_at DESC LIMIT ? OFFSET ?`).bind(limit, offset).all<StoryRecord>()
+  const countRow = await env.GENERATION_DB.prepare('SELECT COUNT(*) AS count FROM stories WHERE is_public = 1').bind().first<{ count: number }>()
+  const total = countRow?.count ?? 0
+  return json({
+    data: rows.results.map(row => ({ id: row.id, title: row.title, description: row.description, voice: row.voice, speed: row.speed, segmentCount: JSON.parse(row.segments || '[]').length, status: row.status, audioUrl: row.audio_url, fileSizeBytes: row.file_size_bytes, category: row.category, tags: JSON.parse(row.tags || '[]'), createdAt: row.created_at })),
+    meta: { total, page, limit, totalPages: Math.ceil(total / limit) },
+  })
+}
+
+function audioResponse(object: { body: BodyInit; httpMetadata?: { contentType?: string } }, cacheControl: string): Response {
+  return new Response(object.body, { headers: { ...CORS_HEADERS, 'Content-Type': object.httpMetadata?.contentType ?? 'audio/mpeg', 'Cache-Control': cacheControl } })
+}
+
+function concatBytes(chunks: Uint8Array[]): Uint8Array {
+  const total = chunks.reduce((sum, chunk) => sum + chunk.byteLength, 0)
+  const out = new Uint8Array(total)
+  let offset = 0
+  for (const chunk of chunks) {
+    out.set(chunk, offset)
+    offset += chunk.byteLength
+  }
+  return out
+}
+
+function makeSilentMp3Padding(): Uint8Array {
+  return new Uint8Array(0)
+}
+
+// ── Image generation (DALL-E 3) ──────────────────────────────────
+
+interface ImageGenerationRequest {
+  prompt: string
+  size?: '1024x1024' | '1024x1792' | '1792x1024'
+  quality?: 'standard' | 'hd'
+  style?: 'vivid' | 'natural'
+  title?: string
+  category?: string
+  tags?: string[]
+}
+
+interface GeneratedImageRecord {
+  id: string
+  prompt: string
+  revised_prompt: string | null
+  model: string
+  size: string
+  quality: string
+  style: string
+  image_url: string | null
+  r2_key: string
+  content_type: string
+  file_size_bytes: number | null
+  width: number | null
+  height: number | null
+  category: string
+  tags: string
+  title: string | null
+  description: string | null
+  is_public: number
+  created_at: string
+  updated_at: string
+}
+
+const ALLOWED_IMAGE_SIZES = new Set(['1024x1024', '1024x1792', '1792x1024'])
+
+async function generateImage(request: Request, env: Env): Promise<Response> {
+  let body: ImageGenerationRequest
+  try {
+    body = await request.json() as ImageGenerationRequest
+  } catch {
+    return apiError('invalid_json', 'Request body must be valid JSON.', 400)
+  }
+
+  if (!body.prompt || typeof body.prompt !== 'string' || !body.prompt.trim()) {
+    return apiError('missing_prompt', 'Prompt is required.', 400, 'prompt')
+  }
+  if (body.prompt.length > 4000) {
+    return apiError('prompt_too_long', 'Prompt must be 4000 characters or fewer.', 400, 'prompt')
+  }
+  if (body.size && !ALLOWED_IMAGE_SIZES.has(body.size)) {
+    return apiError('invalid_size', 'Size must be 1024x1024, 1024x1792, or 1792x1024.', 400, 'size')
+  }
+  if (!env.OPENAI_API_KEY) {
+    return apiError('image_generation_not_configured', 'Image generation is not configured.', 503)
+  }
+
+  const size = body.size || '1024x1024'
+  const quality = body.quality === 'hd' ? 'hd' : 'standard'
+  const style = body.style === 'natural' ? 'natural' : 'vivid'
+
+  const response = await fetch('https://api.openai.com/v1/images/generations', {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${env.OPENAI_API_KEY}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      model: 'dall-e-3',
+      prompt: body.prompt.trim(),
+      n: 1,
+      size,
+      quality,
+      style,
+      response_format: 'b64_json',
+    }),
+  })
+
+  if (!response.ok) {
+    const errorText = await response.text()
+    let detail = errorText
+    try { detail = JSON.parse(errorText).error?.message || errorText } catch { /* keep raw */ }
+    return apiError('image_provider_failed', `Image generation failed: ${detail}`, 502)
+  }
+
+  const data = await response.json() as {
+    data: Array<{ b64_json: string; revised_prompt?: string }>
+  }
+
+  const imageData = data.data[0]
+  if (!imageData?.b64_json) {
+    return apiError('image_provider_failed', 'No image data returned from provider.', 502)
+  }
+
+  const imageBytes = Uint8Array.from(atob(imageData.b64_json), c => c.charCodeAt(0))
+  const id = crypto.randomUUID()
+  const r2Key = `images/${id}.png`
+  const now = new Date().toISOString()
+
+  await env.GENERATED_MEDIA_BUCKET.put(r2Key, imageBytes, {
+    httpMetadata: { contentType: 'image/png', cacheControl: 'public, max-age=31536000, immutable' },
+  })
+
+  const dims = parseImageSize(size)
+  const imageUrl = `/v1/generation/images/${id}/binary`
+
+  await env.GENERATION_DB.prepare(`INSERT INTO generated_images (
+    id, prompt, revised_prompt, model, size, quality, style, image_url, r2_key,
+    content_type, file_size_bytes, width, height, category, tags, title, description,
+    is_public, created_at, updated_at
+  ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`).bind(
+    id,
+    body.prompt.trim(),
+    imageData.revised_prompt || null,
+    'dall-e-3',
+    size,
+    quality,
+    style,
+    imageUrl,
+    r2Key,
+    'image/png',
+    imageBytes.byteLength,
+    dims.width,
+    dims.height,
+    body.category || 'generated',
+    JSON.stringify(body.tags || []),
+    body.title || null,
+    null,
+    1,
+    now,
+    now,
+  ).run()
+
+  return json({
+    data: {
+      id,
+      imageUrl,
+      prompt: body.prompt.trim(),
+      revisedPrompt: imageData.revised_prompt || null,
+      size,
+      quality,
+      style,
+      width: dims.width,
+      height: dims.height,
+      fileSizeBytes: imageBytes.byteLength,
+      createdAt: now,
+    },
+    meta: { cached: false, schemaVersion: 1 },
+  }, 201)
+}
+
+async function getImage(pathname: string, env: Env): Promise<Response> {
+  const parts = pathname.replace('/v1/generation/images/', '').replace('/binary', '')
+  const id = decodeURIComponent(parts)
+  if (!isSafeId(id)) return apiError('invalid_image_id', 'Image id is invalid.', 400)
+
+  const record = await env.GENERATION_DB.prepare(
+    'SELECT r2_key, content_type FROM generated_images WHERE id = ? LIMIT 1',
+  ).bind(id).first<{ r2_key: string; content_type: string }>()
+
+  if (!record) return apiError('image_not_found', 'Image not found.', 404)
+
+  const object = await env.GENERATED_MEDIA_BUCKET.get(record.r2_key)
+  if (!object) return apiError('image_not_found', 'Image not found.', 404)
+
+  return new Response(object.body, {
+    headers: {
+      ...CORS_HEADERS,
+      'Content-Type': object.httpMetadata?.contentType ?? record.content_type ?? 'image/png',
+      'Cache-Control': 'public, max-age=31536000, immutable',
+    },
+  })
+}
+
+async function listImages(request: Request, env: Env): Promise<Response> {
+  const url = new URL(request.url)
+  const page = Math.max(parseInt(url.searchParams.get('page') || '1'), 1)
+  const limit = Math.min(Math.max(parseInt(url.searchParams.get('limit') || '20'), 1), 100)
+  const offset = (page - 1) * limit
+
+  const rows = await env.GENERATION_DB.prepare(
+    `SELECT id, prompt, revised_prompt, model, size, quality, style, image_url, r2_key,
+            content_type, file_size_bytes, width, height, category, tags, title, description,
+            is_public, created_at, updated_at
+     FROM generated_images
+     WHERE is_public = 1
+     ORDER BY created_at DESC
+     LIMIT ? OFFSET ?`,
+  ).bind(limit, offset).all<GeneratedImageRecord>()
+
+  const countRow = await env.GENERATION_DB.prepare(
+    'SELECT COUNT(*) AS count FROM generated_images WHERE is_public = 1',
+  ).bind().first<{ count: number }>()
+
+  const total = countRow?.count ?? 0
+
+  return json({
+    data: rows.results.map(r => ({
+      id: r.id,
+      imageUrl: r.image_url,
+      prompt: r.prompt,
+      revisedPrompt: r.revised_prompt,
+      size: r.size,
+      quality: r.quality,
+      style: r.style,
+      width: r.width,
+      height: r.height,
+      fileSizeBytes: r.file_size_bytes,
+      title: r.title,
+      category: r.category,
+      tags: JSON.parse(r.tags || '[]'),
+      createdAt: r.created_at,
+    })),
+    meta: { total, page, limit, totalPages: Math.ceil(total / limit) },
+  })
+}
+
+function parseImageSize(size: string): { width: number; height: number } {
+  const [w, h] = size.split('x').map(Number)
+  return { width: w || 1024, height: h || 1024 }
 }
 
 function clamp(value: number, min: number, max: number) {

@@ -1,0 +1,9 @@
+/robots.txt
+  Content-Type: text/plain
+  X-Robots-Tag: noindex
+
+/sitemap.xml
+  Content-Type: application/xml
+
+/llms.txt
+  Content-Type: text/plain

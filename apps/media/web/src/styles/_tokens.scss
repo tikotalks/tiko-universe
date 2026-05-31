@@ -1,0 +1,29 @@
+@use '@sil/ui/defaults' with ($project-colors: (
+  'primary': #2dd4bf,
+  'secondary': #2488ff,
+  'tertiary': #9b3fbd,
+  'accent': #ff8a1f,
+  'success': #93ee3f,
+  'warning': #f8c22e,
+  'error': #ef405d,
+  'dark': #17131c,
+  'light': #f8f6f1,
+));
+
+@use '@sil/ui/styles/main.scss';
+
+:root {
+  --tiko-app-primary: var(--color-primary);
+  --tiko-app-primary-text: var(--color-primary-text);
+  --tiko-app-primary-deep: color-mix(in srgb, var(--tiko-app-primary), var(--color-foreground) 42%);
+  --tiko-surface: var(--color-background);
+  --tiko-surface-raised: color-mix(in srgb, var(--color-background), var(--color-foreground) 4%);
+  --tiko-foreground: var(--color-foreground);
+  --tiko-foreground-accent: color-mix(in srgb, var(--color-foreground), var(--tiko-app-primary) 34%);
+  --tiko-border: color-mix(in srgb, var(--color-foreground), transparent 86%);
+  --tiko-shadow: color-mix(in srgb, var(--color-foreground), transparent 84%);
+}
+
+// Undo sil/ui scroll lock for media gallery (needs scrolling)
+html { height: initial !important; scroll-snap-type: none !important; }
+body { overflow: visible !important; display: block !important; }

@@ -2,18 +2,21 @@
 import { Button, Icon } from '@sil/ui'
 import { useBemm } from 'bemm'
 import { computed, watchEffect } from 'vue'
-import { faqs, platformNotes, routes, tools, trustPrinciples } from './siteContent'
+import { getDocsPage } from './docsContent'
+import { docsPages, faqs, platformNotes, routes, tools, trustPrinciples } from './siteContent'
 
 const bemm = useBemm('tiko-talks', { includeBaseClass: true, return: 'string' })
 
 const currentRoute = computed(() => {
   const path = typeof window === 'undefined' ? '/' : window.location.pathname
   if (path === '/apps' || path.startsWith('/apps/')) return routes.find((route) => route.id === 'tools') ?? routes[0]
+  if (path === '/docs' || path.startsWith('/docs/')) return routes.find((route) => route.id === 'docs') ?? routes[0]
   return routes.find((route) => route.path === path) ?? routes[0]
 })
 
 const availableTool = computed(() => tools.find((tool) => tool.href) ?? tools[0])
 const pageTestId = computed(() => `${currentRoute.value.id === 'how-it-works' ? 'how' : currentRoute.value.id}-page`)
+const currentDocsPage = computed(() => getDocsPage(typeof window === 'undefined' ? '/docs' : window.location.pathname) ?? docsPages[0])
 
 watchEffect(() => {
   if (typeof document === 'undefined') return
@@ -87,14 +90,20 @@ watchEffect(() => {
           <p>Tiko is not one giant app. It is a set of small tools that can be opened when a moment needs support.</p>
         </div>
         <div :class="bemm('app-grid')">
-          <article v-for="tool in tools" :key="tool.id" :class="bemm('app-card')" :style="{ '--app-color': tool.accent }">
+          <a
+            v-for="tool in tools"
+            :key="tool.id"
+            :class="bemm('app-card')"
+            :href="tool.href ?? '/tools'"
+            :style="{ '--app-color': tool.accent }"
+          >
             <div :class="bemm('app-card-top')">
               <span :class="bemm('app-icon')" aria-hidden="true" />
               <span :class="bemm('status')">{{ tool.status }}</span>
             </div>
             <h3>{{ tool.name }}</h3>
             <p>{{ tool.summary }}</p>
-          </article>
+          </a>
         </div>
       </section>
 
@@ -134,7 +143,13 @@ watchEffect(() => {
         <p>Tiko is not one giant app. It is a set of small tools that can be opened when a moment needs support.</p>
       </div>
       <div :class="bemm('app-grid')">
-        <article v-for="tool in tools" :key="tool.id" :class="bemm('app-card')" :style="{ '--app-color': tool.accent }">
+        <a
+          v-for="tool in tools"
+          :key="tool.id"
+          :class="[bemm('app-card'), bemm('app-card', 'detail')]"
+          :href="tool.href ?? '/tools'"
+          :style="{ '--app-color': tool.accent }"
+        >
           <div :class="bemm('app-card-top')">
             <span :class="bemm('app-icon')" aria-hidden="true" />
             <span :class="bemm('status')">{{ tool.status }}</span>
@@ -146,7 +161,7 @@ watchEffect(() => {
           <ul>
             <li v-for="moment in tool.useWhen" :key="moment">{{ moment }}</li>
           </ul>
-        </article>
+        </a>
       </div>
     </section>
 
@@ -187,6 +202,48 @@ watchEffect(() => {
         <article v-for="item in faqs" :key="item.question" :class="bemm('faq-item')">
           <h2>{{ item.question }}</h2>
           <p>{{ item.answer }}</p>
+        </article>
+      </div>
+    </section>
+
+    <section v-if="currentRoute.id === 'docs'" :class="[bemm('section'), bemm('docs')]" :data-test="pageTestId" aria-labelledby="docs-title">
+      <div :class="bemm('docs-layout')">
+        <aside :class="bemm('docs-nav')" aria-label="Documentation pages">
+          <p :class="bemm('eyebrow')">Docs</p>
+          <a
+            v-for="page in docsPages"
+            :key="page.id"
+            :href="page.path"
+            :aria-current="currentDocsPage.id === page.id ? 'page' : undefined"
+          >
+            <strong>{{ page.label }}</strong>
+            <span>{{ page.summary }}</span>
+          </a>
+        </aside>
+
+        <article :class="bemm('docs-article')">
+          <header :class="bemm('docs-hero')">
+            <p :class="bemm('eyebrow')">Tiko platform docs</p>
+            <h1 id="docs-title">{{ currentDocsPage.title }}</h1>
+            <p :class="bemm('lede')">{{ currentDocsPage.lede }}</p>
+          </header>
+
+          <div v-if="currentDocsPage.callouts?.length" :class="bemm('docs-callouts')">
+            <article v-for="callout in currentDocsPage.callouts" :key="callout.title" :class="bemm('platform-card')">
+              <strong>{{ callout.title }}</strong>
+              <p>{{ callout.body }}</p>
+            </article>
+          </div>
+
+          <section v-for="section in currentDocsPage.sections" :key="section.title" :class="bemm('docs-section')">
+            <p v-if="section.eyebrow" :class="bemm('eyebrow')">{{ section.eyebrow }}</p>
+            <h2>{{ section.title }}</h2>
+            <p v-for="paragraph in section.body" :key="paragraph">{{ paragraph }}</p>
+            <ul v-if="section.bullets?.length">
+              <li v-for="bullet in section.bullets" :key="bullet">{{ bullet }}</li>
+            </ul>
+            <pre v-if="section.code"><code>{{ section.code }}</code></pre>
+          </section>
         </article>
       </div>
     </section>

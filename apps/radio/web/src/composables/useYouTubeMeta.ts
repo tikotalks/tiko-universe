@@ -7,6 +7,11 @@ export interface YouTubeVideoMeta {
   duration: number // seconds, estimated from oEmbed if available, 0 if unknown
 }
 
+interface NoembedResponse {
+  title?: string
+  error?: string
+}
+
 export function useYouTubeMeta() {
   const loading = ref(false)
   const error = ref<string | null>(null)
@@ -18,7 +23,7 @@ export function useYouTubeMeta() {
       const url = `https://noembed.com/embed?url=https://www.youtube.com/watch?v=${videoId}`
       const response = await fetch(url)
       if (!response.ok) throw new Error(`HTTP ${response.status}`)
-      const data = await response.json()
+      const data = await response.json() as NoembedResponse
       if (data.error) throw new Error(data.error)
       return {
         videoId,

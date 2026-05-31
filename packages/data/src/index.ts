@@ -1,4 +1,4 @@
-export type TikoAppId = 'yes-no' | 'type' | 'cards' | 'sequence' | 'timer' | 'radio'
+export type TikoAppId = 'yes-no' | 'type' | 'cards' | 'sequence' | 'timer' | 'radio' | 'todo'
 export type JsonValue = null | boolean | number | string | JsonValue[] | { [key: string]: JsonValue }
 export type JsonObject = { [key: string]: JsonValue | undefined }
 
@@ -48,10 +48,64 @@ export interface TypeState extends JsonObject {
   completedPrompts?: string[]
 }
 
-export type CardsSettings = JsonObject
-export type CardsState = JsonObject
-export type SequenceSettings = JsonObject
-export type SequenceState = JsonObject
+export interface CardsTile {
+  id: string
+  title: string
+  type: string
+  speech: string
+  image?: string
+  color?: string
+}
+
+export interface CardsCollection {
+  id: string
+  title: string
+  color: string
+  order: number
+  icon?: string
+  image?: string
+  tiles: CardsTile[]
+}
+
+export interface CardsSettings {
+  language?: string
+  colorMode?: 'light' | 'dark' | 'system'
+  hiddenDefaults?: string[]
+  collectionOverrides?: Record<string, Partial<{ title: string; icon: string; color: string; image: string; order: number }>>
+  tileOverrides?: Record<string, Partial<{ title: string; speech: string; color: string; image: string }>>
+  [key: string]: unknown
+}
+
+export interface CardsState {
+  collections?: CardsCollection[]
+  navPath?: string[]
+  editMode?: boolean
+  [key: string]: unknown
+}
+
+export interface SequenceSettings {
+  language?: string
+  colorMode?: 'light' | 'dark' | 'system'
+  [key: string]: unknown
+}
+
+export interface SequenceState {
+  items?: unknown[]
+  playingId?: string | null
+  currentStep?: number
+  [key: string]: unknown
+}
+
+export interface TodoSettings {
+  language?: string
+  colorMode?: 'light' | 'dark' | 'system'
+  [key: string]: unknown
+}
+
+export interface TodoState {
+  items?: unknown[]
+  [key: string]: unknown
+}
 export interface TimerSettings extends JsonObject {
   language?: string
   colorMode?: 'light' | 'dark' | 'system'
@@ -115,6 +169,7 @@ export interface AppSettingsById {
   sequence: SequenceSettings
   timer: TimerSettings
   radio: RadioSettings
+  todo: TodoSettings
 }
 
 export interface AppStateById {
@@ -124,6 +179,7 @@ export interface AppStateById {
   sequence: SequenceState
   timer: TimerState
   radio: RadioState
+  todo: TodoState
 }
 
 export class TikoDataClient {

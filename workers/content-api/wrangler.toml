@@ -1,0 +1,43 @@
+name = "tiko-content-api-dev"
+main = "src/index.ts"
+compatibility_date = "2026-05-27"
+account_id = "8cef251b5fdcf6c6f63db98b7aa49f9a"
+workers_dev = true
+
+[vars]
+ALLOWED_ORIGINS = "https://tiko.mt,https://www.tiko.mt,https://tiko.tikoapps.org,https://cards.tikoapps.org,https://sequence.tikoapps.org,https://type.tikoapps.org,https://timer.tikoapps.org,https://admin.tikoapps.org,https://dev.tiko.tikoapps.org,https://dev.cards.tikoapps.org,https://dev.sequence.tikoapps.org,https://dev.type.tikoapps.org,https://dev.timer.tikoapps.org,https://dev.admin.tikoapps.org,http://localhost:5173,http://localhost:4173"
+
+[[d1_databases]]
+binding = "CONTENT_DB"
+database_name = "tiko-content-db-dev"
+database_id = "3728ab72-c9b8-4717-ac8b-17ec81ed1811"
+migrations_dir = "migrations"
+
+[[kv_namespaces]]
+binding = "CONTENT_CACHE"
+id = "a969d8d9f895433c8053baeb8cdd7405"
+preview_id = "a969d8d9f895433c8053baeb8cdd7405"
+
+# ── Production environment ──────────────────────────────────────
+# Deploy with: npx wrangler deploy --env production
+
+[env.production]
+name = "tiko-content-api"
+workers_dev = false
+
+[env.production.vars]
+ALLOWED_ORIGINS = "https://tiko.mt,https://www.tiko.mt,https://tiko.tikoapps.org,https://cards.tikoapps.org,https://sequence.tikoapps.org,https://type.tikoapps.org,https://timer.tikoapps.org,https://admin.tikoapps.org,http://localhost:5173,http://localhost:4173"
+
+[[env.production.d1_databases]]
+binding = "CONTENT_DB"
+database_name = "tiko-content-db"
+database_id = "3728ab72-c9b8-4717-ac8b-17ec81ed1811"
+migrations_dir = "migrations"
+
+[[env.production.kv_namespaces]]
+binding = "CONTENT_CACHE"
+id = "a969d8d9f895433c8053baeb8cdd7405"
+
+[[env.production.routes]]
+pattern = "api.tikoapi.org/v1/content/*"
+zone_name = "tikoapi.org"

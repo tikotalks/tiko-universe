@@ -1,7 +1,8 @@
 import { mount } from '@vue/test-utils'
 import { afterEach, describe, expect, it } from 'vitest'
 import App from './App.vue'
-import { appUniverse, stableRoutes } from './content/appUniverse'
+import { appUniverse } from './content/appUniverse'
+import { docsPages, routes } from './siteContent'
 
 function mountAt(path: string) {
   window.history.pushState({}, '', path)
@@ -27,7 +28,7 @@ describe('TikoTalks website', () => {
   it('has stable navigation for the implemented static pages', () => {
     const wrapper = mountAt('/')
 
-    for (const path of stableRoutes) {
+    for (const path of routes.map((route) => route.path)) {
       expect(wrapper.find(`a[href="${path}"]`).exists()).toBe(true)
     }
     expect(wrapper.find('a[href="/login"]').exists()).toBe(false)
@@ -49,6 +50,19 @@ describe('TikoTalks website', () => {
     expect(mountAt('/how-it-works').text()).toContain('How Tiko works')
     expect(mountAt('/caregivers').text()).toContain('For caregivers')
     expect(mountAt('/faq').text()).toContain('Plain answers')
+  })
+
+  it('renders the public docs overview and subpages', () => {
+    for (const page of docsPages) {
+      const wrapper = mountAt(page.path)
+      expect(wrapper.text()).toContain(page.title)
+      expect(wrapper.text()).toContain(page.lede)
+      expect(wrapper.find('[data-test="docs-page"]').exists()).toBe(true)
+    }
+
+    expect(mountAt('/docs/philosophy').text()).toContain('No passwords and no login walls before use.')
+    expect(mountAt('/docs/architecture').text()).toContain('identity-api')
+    expect(mountAt('/docs/apis').text()).toContain('POST /v1/identity/device')
   })
 
   it('maps app detail paths to the tools content', () => {

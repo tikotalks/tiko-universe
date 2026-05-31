@@ -1,0 +1,45 @@
+name = "tiko-admin-api-dev"
+main = "src/index.ts"
+compatibility_date = "2026-05-27"
+account_id = "8cef251b5fdcf6c6f63db98b7aa49f9a"
+workers_dev = true
+
+[[d1_databases]]
+binding = "AUTH_DB"
+database_name = "tiko-identity"
+database_id = "0b5e035d-6420-451e-8e54-0af5829cc95c"
+
+[vars]
+TIKO_ENVIRONMENT = "development"
+ADMIN_EMAIL = "me@sil.mt"
+IDENTITY_BASE_URL = "https://api.tikoapi.org/v1"
+APP_API_URL = "https://dev.api.tikoapi.org/v1/apps"
+GENERATION_API_URL = "https://dev.api.tikoapi.org/v1/generation"
+MEDIA_API_URL = "https://media.tikoapi.org/v1"
+
+# Secrets:
+# TOKEN_PEPPER — same pepper as identity-api, required for email hash verification
+
+# ── Production environment ──────────────────────────────────────
+# Deploy with: npx wrangler deploy --env production
+
+[env.production]
+name = "tiko-admin-api"
+workers_dev = false
+
+[[env.production.d1_databases]]
+binding = "AUTH_DB"
+database_name = "tiko-identity"
+database_id = "0b5e035d-6420-451e-8e54-0af5829cc95c"
+
+[env.production.vars]
+TIKO_ENVIRONMENT = "production"
+ADMIN_EMAIL = "me@sil.mt"
+IDENTITY_BASE_URL = "https://api.tikoapi.org/v1"
+APP_API_URL = "https://api.tikoapi.org/v1/apps"
+GENERATION_API_URL = "https://api.tikoapi.org/v1/generation"
+MEDIA_API_URL = "https://media.tikoapi.org/v1"
+
+[[env.production.routes]]
+pattern = "admin.tikoapi.org"
+custom_domain = true

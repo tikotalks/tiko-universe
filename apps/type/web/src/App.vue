@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, onMounted, ref, watch } from 'vue'
-import { Button } from '@sil/ui'
+import { Icon } from '@sil/ui'
 import { IdentityClient, type SessionBundle } from '@tiko/identity'
 import { TikoDataClient, type TypeSettings, type TypeState } from '@tiko/data'
 import { createI18n, defaultLanguage, tikoI18nKeys, tikoLanguages, type TikoLanguage } from '@tiko/i18n'
@@ -66,6 +66,7 @@ const colorMode = ref<TikoColorMode>(toColorMode(stored.colorMode))
 const keyboardLayout = ref<'qwerty' | 'azerty' | 'abc'>(stored.keyboardLayout ?? 'abc')
 const text = ref(stored.text ?? '')
 const completedPrompts = ref<string[]>(stored.completedPrompts ?? [])
+const phrasesOpen = ref(false)
 const settingsOpen = ref(false)
 const settingsVersion = ref<number | undefined>()
 const stateVersion = ref<number | undefined>()
@@ -310,10 +311,15 @@ function savePhrase() {
 
 function loadPhrase(phrase: string) {
   text.value = phrase
+  phrasesOpen.value = false
 }
 
 function removePhrase(phrase: string) {
   completedPrompts.value = completedPrompts.value.filter(p => p !== phrase)
+}
+
+function preventNativeKeyboard(event: FocusEvent) {
+  ;(event.target as HTMLTextAreaElement).blur()
 }
 
 function headerAction(id: string) {
@@ -332,88 +338,109 @@ function headerAction(id: string) {
     <section class="type-app" :data-color-mode="colorMode">
       <!-- Compose area -->
       <div class="type-app__compose">
-        <label for="type-textarea">{{ labels.composeLabel }}</label>
+        <div class="type-app__compose-header">
+          <label for="type-textarea">{{ labels.composeLabel }}</label>
+          <div class="type-app__actions" aria-label="Compose actions">
+            <button
+              class="type-app__icon-btn type-app__icon-btn--primary"
+              type="button"
+              :aria-label="labels.speak"
+              :title="labels.speak"
+              :disabled="!text.trim()"
+              @click="handleSpeak"
+            >
+              <Icon name="media/volume-up" size="small" aria-hidden="true" />
+            </button>
+            <button
+              class="type-app__icon-btn"
+              type="button"
+              :aria-label="labels.clear"
+              :title="labels.clear"
+              :disabled="!text"
+              @click="handleClear"
+            >
+              <Icon name="ui/clear" size="small" aria-hidden="true" />
+            </button>
+            <button
+              class="type-app__icon-btn"
+              type="button"
+              aria-label="Save phrase"
+              title="Save phrase"
+              :disabled="!text.trim()"
+              @click="savePhrase"
+            >
+              <Icon name="ui/save" size="small" aria-hidden="true" />
+            </button>
+            <button
+              class="type-app__icon-btn"
+              type="button"
+              :aria-label="labels.phrasesTitle"
+              :title="labels.phrasesTitle"
+              @click="phrasesOpen = true"
+            >
+              <Icon name="ui/list" size="small" aria-hidden="true" />
+            </button>
+          </div>
+        </div>
         <textarea
           id="type-textarea"
           v-model="text"
           class="type-app__textarea"
           :placeholder="labels.composePlaceholder"
+          inputmode="none"
+          readonly
+          @focus="preventNativeKeyboard"
         />
+      </div>
 
-        <!-- Action buttons -->
-        <div class="type-app__actions">
-          <Button
-            class="type-app__action-btn"
-            variant="primary"
-            icon="media/volume-up"
-            :disabled="!text.trim()"
-            @click="handleSpeak"
-          >
-            {{ labels.speak }}
-          </Button>
-          <Button
-            class="type-app__action-btn"
-            variant="secondary"
-            icon="ui/clear"
-            :disabled="!text"
-            @click="handleClear"
-          >
-            {{ labels.clear }}
-          </Button>
-          <Button
-            class="type-app__action-btn"
-            variant="secondary"
-            icon="ui/save"
-            :disabled="!text.trim()"
-            @click="savePhrase"
-          >
-            Save
-          </Button>
-        </div>
+      <!-- Saved phrases popup -->
+      <div v-if="phrasesOpen" class="type-app__phrases-backdrop" @click.self="phrasesOpen = false">
+        <section class="type-app__phrases-popup" role="dialog" aria-modal="true" :aria-label="labels.phrasesTitle">
+          <div class="type-app__phrases-header">
+            <h2>{{ labels.phrasesTitle }}</h2>
+            <button class="type-app__icon-btn" type="button" aria-label="Close" @click="phrasesOpen = false">×</button>
+          </div>
+          <ul v-if="completedPrompts.length" class="type-app__phrases-list">
+            <li v-for="phrase in completedPrompts" :key="phrase" class="type-app__phrase-row">
+              <button class="type-app__phrase-item" type="button" @click="loadPhrase(phrase)">{{ phrase }}</button>
+              <button class="type-app__phrase-remove" type="button" aria-label="Remove phrase" @click="removePhrase(phrase)">×</button>
+            </li>
+          </ul>
+          <p v-else class="type-app__phrases-empty">{{ labels.phrasesEmpty }}</p>
+        </section>
       </div>
 
       <!-- Virtual keyboard -->
-      <div class="type-app__keyboard-toggle">
-        <button @click="toggleKeyboardLayout">
-          {{ keyboardToggleLabel }}
-        </button>
-      </div>
-      <div class="type-app__keyboard">
-        <template v-for="(row, rowIndex) in keyboardRows" :key="rowIndex">
-          <button
-            v-for="key in row"
-            :key="key"
-            class="type-app__key"
-            @click="handleKeyInput(key)"
-          >
-            {{ key.toUpperCase() }}
+      <div class="type-app__keyboard-panel">
+        <div class="type-app__keyboard-toggle">
+          <button type="button" @click="toggleKeyboardLayout">
+            {{ keyboardLayout.toUpperCase() }} → {{ keyboardToggleLabel }}
           </button>
-          <!-- Add space and backspace on last row -->
-          <template v-if="rowIndex === keyboardRows.length - 1">
-            <button class="type-app__key type-app__key--space" @click="handleSpace">
+        </div>
+        <div class="type-app__keyboard" :data-layout="keyboardLayout">
+          <div v-for="(row, rowIndex) in keyboardRows" :key="rowIndex" class="type-app__keyboard-row">
+            <button
+              v-for="key in row"
+              :key="key"
+              type="button"
+              class="type-app__key"
+              @click="handleKeyInput(key)"
+            >
+              {{ key.toUpperCase() }}
+            </button>
+          </div>
+          <div class="type-app__keyboard-row type-app__keyboard-row--controls">
+            <button class="type-app__key type-app__key--wide" type="button" @click="toggleKeyboardLayout">
+              {{ keyboardToggleLabel }}
+            </button>
+            <button class="type-app__key type-app__key--space" type="button" @click="handleSpace">
               Space
             </button>
-            <button class="type-app__key type-app__key--wide" @click="handleBackspace">
-              &larr;
+            <button class="type-app__key type-app__key--wide" type="button" aria-label="Backspace" @click="handleBackspace">
+              ←
             </button>
-          </template>
-        </template>
-      </div>
-
-      <!-- Saved phrases -->
-      <div class="type-app__phrases">
-        <div class="type-app__phrases-title">{{ labels.phrasesTitle }}</div>
-        <ul v-if="completedPrompts.length" class="type-app__phrases-list">
-          <li
-            v-for="phrase in completedPrompts"
-            :key="phrase"
-            class="type-app__phrase-item"
-            @click="loadPhrase(phrase)"
-          >
-            {{ phrase }}
-          </li>
-        </ul>
-        <p v-else>{{ labels.phrasesEmpty }}</p>
+          </div>
+        </div>
       </div>
 
       <!-- Settings panel -->

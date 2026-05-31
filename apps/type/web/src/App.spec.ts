@@ -67,7 +67,7 @@ describe('Type App', () => {
   it('speak button exists', () => {
     const { wrapper } = mountApp()
     const allBtns = wrapper.findAll('button')
-    const speakBtn = allBtns.find(b => b.text().includes('Speak'))
+    const speakBtn = allBtns.find(b => b.attributes('aria-label') === 'Speak')
     expect(speakBtn).toBeTruthy()
   })
 
@@ -79,12 +79,12 @@ describe('Type App', () => {
     await nextTick()
 
     // Find and click clear button
-    const clearBtn = wrapper.findAll('button').find(b => b.text().includes('Clear'))
+    const clearBtn = wrapper.findAll('button').find(b => b.attributes('aria-label') === 'Clear')
     expect(clearBtn).toBeTruthy()
     await clearBtn!.trigger('click')
     await nextTick()
 
-    expect(wrapper.find('.type-app__textarea').element.value).toBe('')
+    expect((wrapper.find('.type-app__textarea').element as HTMLTextAreaElement).value).toBe('')
   })
 
   it('virtual keyboard buttons insert characters', async () => {
@@ -98,13 +98,17 @@ describe('Type App', () => {
     await nextTick()
 
     const textarea = wrapper.find('.type-app__textarea')
-    expect(textarea.element.value.length).toBeGreaterThan(0)
+    expect((textarea.element as HTMLTextAreaElement).value.length).toBeGreaterThan(0)
   })
 
-  it('phrases section is displayed', () => {
+  it('phrases section is displayed', async () => {
     const { wrapper } = mountApp()
-    expect(wrapper.find('.type-app__phrases').exists()).toBe(true)
-    expect(wrapper.find('.type-app__phrases-title').exists()).toBe(true)
+    const phrasesBtn = wrapper.findAll('.type-app__actions button')[3]
+    expect(phrasesBtn).toBeTruthy()
+    await phrasesBtn!.trigger('click')
+    await nextTick()
+    expect(wrapper.find('.type-app__phrases-popup').exists()).toBe(true)
+    expect(wrapper.find('.type-app__phrases-header').exists()).toBe(true)
   })
 
   it('localStorage persistence works', async () => {
@@ -149,9 +153,14 @@ describe('Type App', () => {
     await textarea.setValue('hello phrase')
     await nextTick()
 
-    const saveBtn = wrapper.findAll('button').find(b => b.text().includes('Save'))
+    const saveBtn = wrapper.findAll('button').find(b => b.attributes('aria-label') === 'Save phrase')
     expect(saveBtn).toBeTruthy()
     await saveBtn!.trigger('click')
+    await nextTick()
+
+    const phrasesBtn = wrapper.findAll('.type-app__actions button')[3]
+    expect(phrasesBtn).toBeTruthy()
+    await phrasesBtn!.trigger('click')
     await nextTick()
 
     const phrasesList = wrapper.find('.type-app__phrases-list')
