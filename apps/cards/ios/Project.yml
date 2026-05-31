@@ -1,0 +1,30 @@
+name: TikoCards
+options:
+  bundleIdPrefix: mt.tiko
+  deploymentTarget:
+    iOS: "17.0"
+settings:
+  base:
+    DEVELOPMENT_TEAM: ""
+packages:
+  TikoKit:
+    path: ../../../packages/tikokit-ios
+targets:
+  TikoCards:
+    type: application
+    platform: iOS
+    sources:
+      - Sources
+    dependencies:
+      - package: TikoKit
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: mt.tiko.cards
+        INFOPLIST_FILE: Sources/Info.plist
+  TikoCardsTests:
+    type: bundle.unit-test
+    platform: iOS
+    sources:
+      - Tests
+    dependencies:
+      - target: TikoCards
