@@ -1,5 +1,5 @@
 {
-  "name": "@tiko-universe/tts-api",
+  "name": "@tiko-worker/tts-api",
   "private": true,
   "version": "0.0.0",
   "type": "module",

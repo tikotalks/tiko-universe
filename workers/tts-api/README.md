@@ -36,5 +36,5 @@ This Worker keeps the old routes during one transition window only:
 ## Validation
 
 ```bash
-npm run typecheck -w @tiko-universe/tts-api
+npm run typecheck -w @tiko-worker/tts-api
 ```
