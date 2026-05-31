@@ -14,6 +14,63 @@ function resolveApiBaseUrl(): string {
   return (env?.VITE_MEDIA_API_URL ?? 'https://media.tikoapi.org/v1').replace(/\/$/, '')
 }
 
+function asRecord(value: unknown): Record<string, unknown> {
+  return typeof value === 'object' && value !== null ? value as Record<string, unknown> : {}
+}
+
+function stringValue(value: unknown, fallback = ''): string {
+  return typeof value === 'string' ? value : fallback
+}
+
+function numberValue(value: unknown): number | undefined {
+  return typeof value === 'number' ? value : undefined
+}
+
+function arrayValue(value: unknown): string[] {
+  return Array.isArray(value) ? value.filter((item): item is string => typeof item === 'string') : []
+}
+
+function mediaTypeFromMime(mimeType: string): MediaType {
+  if (mimeType.startsWith('audio/')) return 'audio'
+  if (mimeType.startsWith('video/')) return 'video'
+  return 'image'
+}
+
+function extensionFromName(fileName: string): string {
+  const match = /\.([^.]+)$/.exec(fileName)
+  return match?.[1]?.toLowerCase() ?? ''
+}
+
+function normalizeMediaItem(raw: unknown): MediaItem {
+  const row = asRecord(raw)
+  const fileName = stringValue(row.fileName, stringValue(row.file_name, stringValue(row.filename, String(row.id ?? 'media'))))
+  const mimeType = stringValue(row.mimeType, stringValue(row.mime_type, 'application/octet-stream'))
+  const fileType = stringValue(row.fileType, stringValue(row.type)) as MediaType | ''
+  const originalUrl = stringValue(row.url, stringValue(row.original_url, stringValue(row.imageUrl)))
+  return {
+    id: stringValue(row.id, fileName),
+    title: stringValue(row.title, fileName),
+    description: stringValue(row.description) || undefined,
+    fileName,
+    fileType: fileType || mediaTypeFromMime(mimeType),
+    mimeType,
+    fileExtension: stringValue(row.fileExtension, extensionFromName(fileName)),
+    fileSizeBytes: numberValue(row.fileSizeBytes) ?? numberValue(row.file_size) ?? 0,
+    url: originalUrl,
+    thumbnailUrl: stringValue(row.thumbnailUrl, stringValue(row.thumbnail_url, originalUrl)) || undefined,
+    width: numberValue(row.width),
+    height: numberValue(row.height),
+    durationSeconds: numberValue(row.durationSeconds) ?? numberValue(row.duration),
+    category: stringValue(row.category, stringValue(row.folder, 'media')),
+    tags: arrayValue(row.tags),
+    isPublic: typeof row.isPublic === 'boolean' ? row.isPublic : !Boolean(row.is_private),
+    source: stringValue(row.source, 'upload') as MediaItem['source'],
+    generationPrompt: stringValue(row.generationPrompt, stringValue(row.prompt)) || undefined,
+    createdAt: stringValue(row.createdAt, stringValue(row.created_at)),
+    updatedAt: stringValue(row.updatedAt, stringValue(row.updated_at, stringValue(row.created_at))),
+  }
+}
+
 /**
  * Composable for browsing and searching the media library.
  * Provides reactive state for pagination, filtering, and search.
@@ -80,8 +137,8 @@ export function useMediaLibrary() {
         throw new Error(`API error: ${response.status} ${response.statusText}`)
       }
 
-      const body = await response.json() as MediaListResponse
-      items.value = body.data
+      const body = await response.json() as MediaListResponse | { data: unknown[]; meta: MediaListResponse['meta'] }
+      items.value = Array.isArray(body.data) ? body.data.map(normalizeMediaItem) : []
       total.value = body.meta.total
       totalPages.value = body.meta.totalPages
     } catch (e) {
@@ -100,8 +157,8 @@ export function useMediaLibrary() {
       if (!response.ok) {
         throw new Error(`API error: ${response.status}`)
       }
-      const body = await response.json() as MediaDetailResponse
-      return body.data
+      const body = await response.json() as MediaDetailResponse | { data: unknown }
+      return normalizeMediaItem(body.data)
     } catch (e) {
       error.value = e instanceof Error ? e.message : 'Failed to fetch media item'
       return null
