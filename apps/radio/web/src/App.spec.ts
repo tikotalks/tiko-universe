@@ -8,12 +8,14 @@ import App from './App.vue'
 function createLocalStorageMock(initialData?: Record<string, string>) {
   const store: Record<string, string> = { ...initialData }
   return {
+    length: Object.keys(store).length,
     getItem: vi.fn((key: string) => store[key] ?? null),
     setItem: vi.fn((key: string, value: string) => { store[key] = value }),
     removeItem: vi.fn((key: string) => { delete store[key] }),
     clear: vi.fn(() => { Object.keys(store).forEach(k => delete store[k]) }),
+    key: vi.fn((index: number) => Object.keys(store)[index] ?? null),
     get store() { return store }
-  }
+  } satisfies Storage
 }
 
 function seedTracks(ls: ReturnType<typeof createLocalStorageMock>) {
@@ -181,7 +183,7 @@ describe('Radio App (unified layout)', () => {
     await nextTick()
 
     // In kid mode, clicking add-video action should not open popup
-    const actions = wrapper.vm.headerActions as Array<{ id: string }>
+    const actions = (wrapper.vm as any).headerActions as Array<{ id: string }>
     const addVideoAction = actions.find(a => a.id === 'add-video')
     // The action is still visible but handler returns early in child mode
     expect(addVideoAction).toBeDefined()

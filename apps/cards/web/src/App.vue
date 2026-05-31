@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, h, inject, markRaw, nextTick, onMounted, onUnmounted, ref, watch } from 'vue'
-import { Button, Icon, Popup, ContextMenu, type ContextMenuItem } from '@sil/ui'
+import { Button, Icon, Popup, ContextMenu, type ContextMenuItem, type PopupService } from '@sil/ui'
 import { IdentityClient, type SessionBundle, type UserKind } from '@tiko/identity'
 import { TikoDataClient, type CardsSettings, type CardsState, type CardsCollection, type CardsTile } from '@tiko/data'
 import { useTikoMedia, COLLECTION_CATEGORY_MAP, type TikoMedia } from '@tiko/media'
@@ -529,7 +529,7 @@ const currentCollection = computed<CardsCollection | null>(() => {
   const allCollections = rootCollections.value
   let current: CardsCollection | null = null
   for (const id of navPath.value) {
-    const search = current ? current.tiles.filter((t): t is CardsTile & { type: 'group' } => t.type === 'group') as unknown as CardsCollection[] : allCollections
+    const search: CardsCollection[] = current ? current.tiles.filter((t): t is CardsTile & { type: 'group' } => t.type === 'group') as unknown as CardsCollection[] : allCollections
     // For nested groups, look for a tile that acts as a sub-collection
     // For now, we only support one level of navigation into root collections
     current = search.find((c: CardsCollection) => c.id === id) ?? null
@@ -569,6 +569,7 @@ const allChoices = computed(() => {
         label: override?.title ?? col.title,
         color: override?.color ?? col.color,
         imageSrc: cdnUrl(override?.image || colThumbMap.value[col.id] || col.image),
+        speechText: col.title,
       }
     })
   }
@@ -613,7 +614,7 @@ const headerActions = computed(() => {
     actions.push({ id: 'back', label: 'Back', icon: 'ui/arrow-left', visible: true })
   }
 
-  actions.push({ id: 'manage', label: 'Add', icon: 'ui/plus', round: true })
+  actions.push({ id: 'manage', label: 'Add', icon: 'ui/plus' })
   return actions
 })
 
@@ -929,13 +930,15 @@ function extractDominantColor(src: string): void {
 // Watch for new imageSrcs and extract colors (use cdnUrl for cache key matching)
 watch(tileMediaMap, (map) => {
   for (const src of Object.values(map)) {
-    extractDominantColor(cdnUrl(src))
+    const url = cdnUrl(src)
+    if (url) extractDominantColor(url)
   }
 }, { deep: true })
 
 watch(colThumbMap, (map) => {
   for (const src of Object.values(map)) {
-    extractDominantColor(cdnUrl(src))
+    const url = cdnUrl(src)
+    if (url) extractDominantColor(url)
   }
 }, { deep: true })
 
@@ -1133,7 +1136,7 @@ function onTileContextmenu(e: MouseEvent, choiceId: string) {
   e.preventDefault()
   e.stopPropagation()
   contextMenuChoiceId.value = choiceId
-  contextMenuRef.value?.open({ x: e.clientX, y: e.clientY })
+  contextMenuRef.value?.open()
 }
 
 const editContextMenuConfig = {
@@ -1243,7 +1246,7 @@ function openEditPopup(choiceId: string) {
         },
       }),
       title: 'Pick an Image',
-      config: { position: 'center', canClose: true, background: true, width: '90vw', maxWidth: '28rem' },
+      config: { position: 'center', canClose: true, background: true, width: '28rem' },
     })
   }
 
@@ -1377,7 +1380,7 @@ function openEditPopup(choiceId: string) {
       },
     }),
     title: 'Edit Card',
-    config: { position: 'center', canClose: true, background: true, width: '90vw', maxWidth: '22rem' },
+    config: { position: 'center', canClose: true, background: true, width: '22rem' },
   })
 }
 
@@ -1544,14 +1547,14 @@ onUnmounted(() => {
         <div
           class="cards-pager__track"
           :class="{ 'cards-pager__track--dragging': isDragging }"
-          :style="{ transform: 'translateX(' + pagerOffset + 'px)', width: ((pagerWidth || window.innerWidth) * allPages.length) + 'px' }"
+          :style="{ transform: 'translateX(' + pagerOffset + 'px)', width: ((pagerWidth || 390) * allPages.length) + 'px' }"
         >
           <div
             v-for="(page, pi) in allPages"
             :key="'page-' + pi"
             class="cards-grid"
             :class="'cards-grid--cols-' + columns"
-            :style="{ width: (pagerWidth || window.innerWidth) + 'px', minWidth: (pagerWidth || window.innerWidth) + 'px' }"
+            :style="{ width: (pagerWidth || 390) + 'px', minWidth: (pagerWidth || 390) + 'px' }"
           >
             <div
               v-for="choice in page"

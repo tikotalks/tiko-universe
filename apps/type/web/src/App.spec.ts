@@ -84,7 +84,7 @@ describe('Type App', () => {
     await clearBtn!.trigger('click')
     await nextTick()
 
-    expect(wrapper.find('.type-app__textarea').element.value).toBe('')
+    expect((wrapper.find('.type-app__textarea').element as HTMLTextAreaElement).value).toBe('')
   })
 
   it('virtual keyboard buttons insert characters', async () => {
@@ -98,7 +98,7 @@ describe('Type App', () => {
     await nextTick()
 
     const textarea = wrapper.find('.type-app__textarea')
-    expect(textarea.element.value.length).toBeGreaterThan(0)
+    expect((textarea.element as HTMLTextAreaElement).value.length).toBeGreaterThan(0)
   })
 
   it('phrases section is displayed', () => {
