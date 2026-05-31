@@ -1,8 +1,13 @@
 import SwiftUI
 import TikoKit
+import UIKit
 
 struct CardsView: View {
     private let collections = defaultCardCollections
+    private let speechService = CardsSpeechService()
+
+    @State private var speakingCardID: String?
+
     private let columns = [
         GridItem(.adaptive(minimum: 140, maximum: 220), spacing: 16)
     ]
@@ -22,7 +27,11 @@ struct CardsView: View {
                     LazyVGrid(columns: columns, spacing: 16) {
                         ForEach(collections) { collection in
                             NavigationLink {
-                                CollectionDetailView(collection: collection)
+                                CollectionDetailView(
+                                    collection: collection,
+                                    speakingCardID: speakingCardID,
+                                    onSpeak: speak
+                                )
                             } label: {
                                 CollectionTile(collection: collection)
                             }
@@ -33,6 +42,19 @@ struct CardsView: View {
                 }
                 .navigationTitle("Choose a board")
                 .navigationBarTitleDisplayMode(.inline)
+            }
+        }
+    }
+
+    private func speak(_ card: CommunicationCard) {
+        UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+        speakingCardID = card.id
+        speechService.speak(card.speech)
+
+        Task { @MainActor in
+            try? await Task.sleep(nanoseconds: 450_000_000)
+            if speakingCardID == card.id {
+                speakingCardID = nil
             }
         }
     }
@@ -70,6 +92,8 @@ private struct CollectionTile: View {
 
 private struct CollectionDetailView: View {
     let collection: CardCollection
+    let speakingCardID: String?
+    let onSpeak: (CommunicationCard) -> Void
 
     private let columns = [
         GridItem(.adaptive(minimum: 128, maximum: 200), spacing: 14)
@@ -79,7 +103,11 @@ private struct CollectionDetailView: View {
         ScrollView {
             LazyVGrid(columns: columns, spacing: 14) {
                 ForEach(collection.cards) { card in
-                    CommunicationCardTile(card: card)
+                    CommunicationCardTile(
+                        card: card,
+                        isSpeaking: speakingCardID == card.id,
+                        onSpeak: { onSpeak(card) }
+                    )
                 }
             }
             .padding(20)
@@ -91,28 +119,35 @@ private struct CollectionDetailView: View {
 
 private struct CommunicationCardTile: View {
     let card: CommunicationCard
+    let isSpeaking: Bool
+    let onSpeak: () -> Void
 
     var body: some View {
-        VStack(spacing: 12) {
-            if let symbol = card.symbol {
-                Image(systemName: symbol)
-                    .font(.system(size: 42, weight: .heavy))
-                    .foregroundStyle(.white)
-                    .frame(width: 88, height: 88)
-                    .background(Color(hex: card.colorHex))
-                    .clipShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
-            }
+        Button(action: onSpeak) {
+            VStack(spacing: 12) {
+                if let symbol = card.symbol {
+                    Image(systemName: symbol)
+                        .font(.system(size: 42, weight: .heavy))
+                        .foregroundStyle(.white)
+                        .frame(width: 88, height: 88)
+                        .background(Color(hex: card.colorHex))
+                        .clipShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
+                }
 
-            Text(card.title)
-                .font(.system(.title2, design: .rounded).weight(.heavy))
-                .foregroundStyle(Color(hex: 0x0b5a7a))
-                .multilineTextAlignment(.center)
+                Text(card.title)
+                    .font(.system(.title2, design: .rounded).weight(.heavy))
+                    .foregroundStyle(Color(hex: 0x0b5a7a))
+                    .multilineTextAlignment(.center)
+            }
+            .frame(maxWidth: .infinity, minHeight: 162)
+            .padding(14)
+            .background(isSpeaking ? Color(hex: 0xff8a1f).opacity(0.22) : .white.opacity(0.76))
+            .clipShape(RoundedRectangle(cornerRadius: 26, style: .continuous))
+            .shadow(color: .black.opacity(isSpeaking ? 0.16 : 0.08), radius: isSpeaking ? 14 : 10, x: 0, y: isSpeaking ? 10 : 7)
+            .scaleEffect(isSpeaking ? 1.04 : 1)
+            .animation(.spring(response: 0.24, dampingFraction: 0.72), value: isSpeaking)
         }
-        .frame(maxWidth: .infinity, minHeight: 162)
-        .padding(14)
-        .background(.white.opacity(0.76))
-        .clipShape(RoundedRectangle(cornerRadius: 26, style: .continuous))
-        .shadow(color: .black.opacity(0.08), radius: 10, x: 0, y: 7)
+        .buttonStyle(.plain)
         .accessibilityLabel(card.speech)
     }
 }
