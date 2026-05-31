@@ -28,4 +28,20 @@ final class TikoRadioTests: XCTestCase {
         let decoded = try JSONDecoder().decode([RadioTrack].self, from: data)
         XCTAssertEqual(decoded, tracks)
     }
+
+    @MainActor
+    func testRadioLibraryStorePersistsTracks() {
+        let suiteName = "TikoRadioTests.\(UUID().uuidString)"
+        let defaults = UserDefaults(suiteName: suiteName)!
+        defer { defaults.removePersistentDomain(forName: suiteName) }
+
+        let store = RadioLibraryStore()
+        store.replaceTracks([], userDefaults: defaults)
+        store.addTrack(RadioTrack(title: "Song", artist: "Artist", source: .youtube, youtubeVideoId: "abc123XYZ"), userDefaults: defaults)
+
+        let reloaded = RadioLibraryStore()
+        reloaded.load(userDefaults: defaults)
+        XCTAssertEqual(reloaded.tracks.count, 1)
+        XCTAssertEqual(reloaded.tracks.first?.title, "Song")
+    }
 }

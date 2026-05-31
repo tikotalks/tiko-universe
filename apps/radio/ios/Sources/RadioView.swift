@@ -122,12 +122,12 @@ struct AddTrackSheet: View {
 
 struct RadioView: View {
     // Persistence
-    @AppStorage("radio.tracks") private var tracksData: Data = Data()
     @AppStorage("radio.currentTrackIndex") private var currentTrackIndex = 0
     @AppStorage("radio.shuffleEnabled") private var shuffleEnabled = false
     @AppStorage("radio.repeatEnabled") private var repeatEnabled = false
 
     // State
+    @State private var library = RadioLibraryStore()
     @State private var isPlaying = false
     @State private var showingSettings = false
     @State private var progress: Double = 0
@@ -139,14 +139,13 @@ struct RadioView: View {
 
     // MARK: - Computed Properties
 
-    private var decodedTracks: [RadioTrack] {
-        (try? JSONDecoder().decode([RadioTrack].self, from: tracksData)) ?? []
+    private var tracks: [RadioTrack] {
+        library.tracks
     }
 
     private var currentTrack: RadioTrack? {
-        let tracks = decodedTracks
         guard !tracks.isEmpty else { return nil }
-        let index = currentTrackIndex %% tracks.count
+        let index = currentTrackIndex % tracks.count
         return tracks[index]
     }
 
@@ -283,7 +282,7 @@ struct RadioView: View {
                         .font(.system(.headline, design: .rounded).weight(.heavy))
                         .foregroundStyle(.white)
 
-                    if decodedTracks.isEmpty {
+                    if tracks.isEmpty {
                         Text("No tracks yet. Add music to get started.")
                             .font(.system(.subheadline, design: .rounded))
                             .foregroundStyle(.white.opacity(0.5))
@@ -291,7 +290,7 @@ struct RadioView: View {
                     } else {
                         ScrollView {
                             LazyVStack(spacing: 4) {
-                                ForEach(Array(decodedTracks.enumerated()), id: \.element.id) { index, track in
+                                ForEach(Array(tracks.enumerated()), id: \.element.id) { index, track in
                                     Button(action: { selectTrack(index) }) {
                                         HStack {
                                             VStack(alignment: .leading, spacing: 2) {
@@ -345,6 +344,9 @@ struct RadioView: View {
                 addTrack(newTrack)
             }
         }
+        .onAppear {
+            library.load()
+        }
         .onDisappear {
             stopPlayback()
         }
@@ -352,23 +354,15 @@ struct RadioView: View {
 
     // MARK: - Track Management
 
-    private func decodedTracksBinding() -> [RadioTrack] {
-        (try? JSONDecoder().decode([RadioTrack].self, from: tracksData)) ?? []
-    }
-
     private func addTrack(_ track: RadioTrack) {
-        var tracks = decodedTracksBinding()
-        tracks.append(track)
-        if let data = try? JSONEncoder().encode(tracks) {
-            tracksData = data
-        }
-        if decodedTracksBinding().count == 1 {
+        let wasEmpty = tracks.isEmpty
+        library.addTrack(track)
+        if wasEmpty {
             selectTrack(0)
         }
     }
 
     private func selectTrack(_ index: Int) {
-        let tracks = decodedTracksBinding()
         guard index >= 0, index < tracks.count else { return }
         currentTrackIndex = index
         progress = 0
@@ -438,7 +432,6 @@ struct RadioView: View {
     }
 
     private func nextTrack() {
-        let tracks = decodedTracksBinding()
         guard !tracks.isEmpty else { return }
         if shuffleEnabled {
             var newIndex = Int.random(in: 0..<tracks.count)
@@ -455,7 +448,6 @@ struct RadioView: View {
     }
 
     private func previousTrack() {
-        let tracks = decodedTracksBinding()
         guard !tracks.isEmpty else { return }
         if shuffleEnabled {
             var newIndex = Int.random(in: 0..<tracks.count)
