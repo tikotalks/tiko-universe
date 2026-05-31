@@ -87,14 +87,20 @@ watchEffect(() => {
           <p>Tiko is not one giant app. It is a set of small tools that can be opened when a moment needs support.</p>
         </div>
         <div :class="bemm('app-grid')">
-          <article v-for="tool in tools" :key="tool.id" :class="bemm('app-card')" :style="{ '--app-color': tool.accent }">
+          <a
+            v-for="tool in tools"
+            :key="tool.id"
+            :class="bemm('app-card')"
+            :href="tool.href ?? '/tools'"
+            :style="{ '--app-color': tool.accent }"
+          >
             <div :class="bemm('app-card-top')">
               <span :class="bemm('app-icon')" aria-hidden="true" />
               <span :class="bemm('status')">{{ tool.status }}</span>
             </div>
             <h3>{{ tool.name }}</h3>
             <p>{{ tool.summary }}</p>
-          </article>
+          </a>
         </div>
       </section>
 
@@ -134,7 +140,13 @@ watchEffect(() => {
         <p>Tiko is not one giant app. It is a set of small tools that can be opened when a moment needs support.</p>
       </div>
       <div :class="bemm('app-grid')">
-        <article v-for="tool in tools" :key="tool.id" :class="bemm('app-card')" :style="{ '--app-color': tool.accent }">
+        <a
+          v-for="tool in tools"
+          :key="tool.id"
+          :class="[bemm('app-card'), bemm('app-card', 'detail')]"
+          :href="tool.href ?? '/tools'"
+          :style="{ '--app-color': tool.accent }"
+        >
           <div :class="bemm('app-card-top')">
             <span :class="bemm('app-icon')" aria-hidden="true" />
             <span :class="bemm('status')">{{ tool.status }}</span>
@@ -146,7 +158,7 @@ watchEffect(() => {
           <ul>
             <li v-for="moment in tool.useWhen" :key="moment">{{ moment }}</li>
           </ul>
-        </article>
+        </a>
       </div>
     </section>
 

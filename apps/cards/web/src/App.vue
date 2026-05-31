@@ -1069,6 +1069,7 @@ function cdnUrl(originalUrl: string | undefined): string | undefined {
 const touchStartX = ref(0)
 const touchDeltaX = ref(0)
 const isDragging = ref(false)
+const activePointerId = ref<number | null>(null)
 const pagerWidth = ref(typeof window !== 'undefined' ? window.innerWidth : 390)
 
 function updatePagerWidth() {
@@ -1086,22 +1087,26 @@ const pagerOffset = computed(() => {
 
 function onPointerDown(e: PointerEvent) {
   updatePagerWidth()
+  activePointerId.value = e.pointerId
   touchStartX.value = e.clientX
   touchDeltaX.value = 0
   isDragging.value = false
+  ;(e.currentTarget as HTMLElement).setPointerCapture?.(e.pointerId)
 }
 
 function onPointerMove(e: PointerEvent) {
-  // Ignore hover — only respond when pointer button is pressed
-  if (!isDragging.value && e.pressure === 0) return
+  if (activePointerId.value !== e.pointerId) return
+  if (e.pointerType === 'mouse' && e.buttons !== 1) return
+
   const dx = e.clientX - touchStartX.value
-  // Only start dragging after 5px of movement — lets clicks through
+  // Only start dragging after 5px of movement — lets taps through.
   if (!isDragging.value && Math.abs(dx) > 5) {
     isDragging.value = true
-    ;(e.currentTarget as HTMLElement).setPointerCapture(e.pointerId)
   }
   if (!isDragging.value) return
-  // Apply rubber-band at edges
+
+  e.preventDefault()
+  // Apply rubber-band at edges.
   let clamped = dx
   if ((currentPage.value <= 1 && dx > 0) || (currentPage.value >= totalPages.value && dx < 0)) {
     clamped = dx * 0.3
@@ -1109,8 +1114,11 @@ function onPointerMove(e: PointerEvent) {
   touchDeltaX.value = clamped
 }
 
-function onPointerUp() {
+function onPointerUp(e?: PointerEvent) {
+  if (e && activePointerId.value !== e.pointerId) return
+  activePointerId.value = null
   if (!isDragging.value) return
+
   const threshold = pagerWidth.value * 0.2
   if (touchDeltaX.value < -threshold && currentPage.value < totalPages.value) {
     currentPage.value++
