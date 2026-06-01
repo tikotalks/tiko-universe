@@ -34,11 +34,9 @@ onMounted(async () => {
   // Silently re-verify stored token — don't show errors for stale sessions
   if (token.value) {
     await verify()
-    // If verify failed, clear the error so the login form shows clean
+    // If verify failed, silently clear stale credentials
     if (!isAuthed.value) {
-      error.value = null
-      token.value = ''
-      localStorage.removeItem(ADMIN_TOKEN_KEY)
+      logout()
     }
   }
 })

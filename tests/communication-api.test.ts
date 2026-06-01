@@ -110,7 +110,7 @@ async function fetchJson(path: string, init: RequestInit = {}, testEnv = env()) 
     ...init,
     headers: { 'content-type': 'application/json', ...(init.headers ?? {}) }
   })
-  const response = await worker.fetch(request, testEnv as never, {} as never)
+  const response = await worker.fetch(request, testEnv as never)
   const body = response.status === 204 ? {} : await response.json() as JsonBody
   return { response, body, env: testEnv }
 }
