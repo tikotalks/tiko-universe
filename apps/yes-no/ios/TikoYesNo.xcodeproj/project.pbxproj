@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		05A0DFBE3E8BEF5F79148D2B /* TikoYesNoTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C1243037126C3062F4D62D8 /* TikoYesNoTests.swift */; };
+		2BF1E91528BDF2CC5A5DD228 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C29DD0F7C2038B0621DDB76E /* Assets.xcassets */; };
 		2EE9175E29F28F467782D280 /* TikoKit in Frameworks */ = {isa = PBXBuildFile; productRef = D7247D1EFCE9E72267767EB4 /* TikoKit */; };
 		A28C1B0D174587280817DCA0 /* YesNoSpeechService.swift in Sources */ = {isa = PBXBuildFile; fileRef = ACA4B1596AEF26381F6234C3 /* YesNoSpeechService.swift */; };
 		AEF826E4C08B5590BC419989 /* YesNoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C99E9A160668D93E2D88752 /* YesNoView.swift */; };
@@ -31,6 +32,7 @@
 		7357E5FCD5F592CEE258CE95 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		7C99E9A160668D93E2D88752 /* YesNoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YesNoView.swift; sourceTree = "<group>"; };
 		ACA4B1596AEF26381F6234C3 /* YesNoSpeechService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YesNoSpeechService.swift; sourceTree = "<group>"; };
+		C29DD0F7C2038B0621DDB76E /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		EF6BBD658EE7F2E3FFB60F4D /* TikoYesNoApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TikoYesNoApp.swift; sourceTree = "<group>"; };
 		FB09AA6545AC873DBC2EE38E /* TikoYesNo.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = TikoYesNo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -68,6 +70,7 @@
 		6F252DBBC82FABF459FB1F38 /* Sources */ = {
 			isa = PBXGroup;
 			children = (
+				C29DD0F7C2038B0621DDB76E /* Assets.xcassets */,
 				7357E5FCD5F592CEE258CE95 /* Info.plist */,
 				EF6BBD658EE7F2E3FFB60F4D /* TikoYesNoApp.swift */,
 				ACA4B1596AEF26381F6234C3 /* YesNoSpeechService.swift */,
@@ -101,6 +104,7 @@
 			buildConfigurationList = 1CC911E99D93E97D67E743F8 /* Build configuration list for PBXNativeTarget "TikoYesNo" */;
 			buildPhases = (
 				059454E0AA96941EDF1905D6 /* Sources */,
+				D0B4EE4E65E41C9A3CB6D756 /* Resources */,
 				7066D60C661A2D55122E7378 /* Frameworks */,
 			);
 			buildRules = (
@@ -172,6 +176,17 @@
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		D0B4EE4E65E41C9A3CB6D756 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2BF1E91528BDF2CC5A5DD228 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		059454E0AA96941EDF1905D6 /* Sources */ = {
@@ -327,6 +342,7 @@
 		840FBAB12BB94FAB542F87A0 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				INFOPLIST_FILE = Sources/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -374,6 +390,7 @@
 		C56264099708FF92B9401BAD /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				INFOPLIST_FILE = Sources/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (

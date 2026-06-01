@@ -39,6 +39,13 @@ final class TikoKitTests: XCTestCase {
         XCTAssertEqual(TikoColorMode.dark.title, "Dark")
     }
 
+    func testChoiceStylesExposeSettingsLabels() {
+        XCTAssertEqual(TikoChoiceStyle.allCases, [.tiles, .buttons, .compact])
+        XCTAssertEqual(TikoChoiceStyle.tiles.title, "Tiles")
+        XCTAssertEqual(TikoChoiceStyle.buttons.icon, "rectangle.roundedtop.fill")
+        XCTAssertEqual(TikoChoiceStyle.compact.rawValue, "compact")
+    }
+
     func testRecoverableUserRequiresVerifiedEmail() {
         let deviceOnly = TikoUser(id: "user-device")
         let unverifiedEmail = TikoUser(id: "user-email", email: "sil@example.com", emailVerified: false)
