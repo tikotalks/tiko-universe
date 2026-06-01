@@ -10,10 +10,14 @@
 		15FAE225F184B9D39B355C7E /* TikoKit in Frameworks */ = {isa = PBXBuildFile; productRef = B20D2B2A0E9CCE351AF793B1 /* TikoKit */; };
 		21153A4DF82A8D00EE5FDC21 /* TikoCardsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59DD41843CC3101D47DCA6D8 /* TikoCardsTests.swift */; };
 		3C508D24ABEA832402D0E2E0 /* CardsSpeechService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88155D1FB1BE44E213E7DB3F /* CardsSpeechService.swift */; };
+		451F1AF25BE73DD4F8BC91E6 /* CardsImageCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3992ADC372502C3CF3EB431 /* CardsImageCache.swift */; };
 		5EBE9C3308BE11EFD67702F1 /* CardsDefaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0C8F33C9BB9324491B5711F /* CardsDefaults.swift */; };
 		645AF976521D81281F153392 /* CardsModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 752D7B95F673E108C9D9D5A1 /* CardsModels.swift */; };
 		6AC686C92CEB4CE025CF8FFF /* CardsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F976EA464A8D7FD09CFC50E /* CardsView.swift */; };
 		ABE08360C6F7E9C38471E301 /* TikoCardsApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 524C104FBEF1095D1213B1BC /* TikoCardsApp.swift */; };
+		BD465427281F4B31F8A20D40 /* CardsMediaClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 207A42348432F2BFF126FFBE /* CardsMediaClient.swift */; };
+		C10DDF329DCF42F8DE76218D /* CardsStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBAEDE295147575574F99882 /* CardsStore.swift */; };
+		CFA37503A1451C2C7EBCACD2 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = EAABAA67B164E6D6DD4EF4DD /* Assets.xcassets */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -28,6 +32,7 @@
 
 /* Begin PBXFileReference section */
 		1F976EA464A8D7FD09CFC50E /* CardsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardsView.swift; sourceTree = "<group>"; };
+		207A42348432F2BFF126FFBE /* CardsMediaClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardsMediaClient.swift; sourceTree = "<group>"; };
 		440E1EA00776E4B4C4B2BF15 /* TikoCards.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = TikoCards.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		524C104FBEF1095D1213B1BC /* TikoCardsApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TikoCardsApp.swift; sourceTree = "<group>"; };
 		59DD41843CC3101D47DCA6D8 /* TikoCardsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TikoCardsTests.swift; sourceTree = "<group>"; };
@@ -37,6 +42,9 @@
 		9696034586F8E01566BDD1DC /* TikoCardsTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = TikoCardsTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		A0C8F33C9BB9324491B5711F /* CardsDefaults.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardsDefaults.swift; sourceTree = "<group>"; };
 		BA81DB944EFAC2BEB232F5E5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		E3992ADC372502C3CF3EB431 /* CardsImageCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardsImageCache.swift; sourceTree = "<group>"; };
+		EAABAA67B164E6D6DD4EF4DD /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		EBAEDE295147575574F99882 /* CardsStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardsStore.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -89,9 +97,13 @@
 		A14ACF2362BE6753BB8D7AA0 /* Sources */ = {
 			isa = PBXGroup;
 			children = (
+				EAABAA67B164E6D6DD4EF4DD /* Assets.xcassets */,
 				A0C8F33C9BB9324491B5711F /* CardsDefaults.swift */,
+				E3992ADC372502C3CF3EB431 /* CardsImageCache.swift */,
+				207A42348432F2BFF126FFBE /* CardsMediaClient.swift */,
 				752D7B95F673E108C9D9D5A1 /* CardsModels.swift */,
 				88155D1FB1BE44E213E7DB3F /* CardsSpeechService.swift */,
+				EBAEDE295147575574F99882 /* CardsStore.swift */,
 				1F976EA464A8D7FD09CFC50E /* CardsView.swift */,
 				BA81DB944EFAC2BEB232F5E5 /* Info.plist */,
 				524C104FBEF1095D1213B1BC /* TikoCardsApp.swift */,
@@ -107,6 +119,7 @@
 			buildConfigurationList = B6653A4BBA3FD6EB8A1955C3 /* Build configuration list for PBXNativeTarget "TikoCards" */;
 			buildPhases = (
 				3C4002D8B4F8FF4E700E1B14 /* Sources */,
+				39D491820EE78ED97CE2AAF5 /* Resources */,
 				1403706615A5B537CF9A0FE3 /* Frameworks */,
 			);
 			buildRules = (
@@ -179,14 +192,28 @@
 		};
 /* End PBXProject section */
 
+/* Begin PBXResourcesBuildPhase section */
+		39D491820EE78ED97CE2AAF5 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CFA37503A1451C2C7EBCACD2 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		3C4002D8B4F8FF4E700E1B14 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 				5EBE9C3308BE11EFD67702F1 /* CardsDefaults.swift in Sources */,
+				451F1AF25BE73DD4F8BC91E6 /* CardsImageCache.swift in Sources */,
+				BD465427281F4B31F8A20D40 /* CardsMediaClient.swift in Sources */,
 				645AF976521D81281F153392 /* CardsModels.swift in Sources */,
 				3C508D24ABEA832402D0E2E0 /* CardsSpeechService.swift in Sources */,
+				C10DDF329DCF42F8DE76218D /* CardsStore.swift in Sources */,
 				6AC686C92CEB4CE025CF8FFF /* CardsView.swift in Sources */,
 				ABE08360C6F7E9C38471E301 /* TikoCardsApp.swift in Sources */,
 			);
@@ -214,6 +241,7 @@
 		09B08A0B0DE64FE73DDB0ED0 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				INFOPLIST_FILE = Sources/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -350,6 +378,7 @@
 		5992F4C20B61C1A6F8F12D1E /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				INFOPLIST_FILE = Sources/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
