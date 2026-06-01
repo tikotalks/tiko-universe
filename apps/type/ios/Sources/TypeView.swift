@@ -21,6 +21,7 @@ struct TypeView: View {
         TikoAppShell(
             appName: "Type",
             appIcon: "text.cursor",
+            appIconMediaCategory: "letters",
             appColor: .type,
             settingsContent: {
                 TikoSettingsSection(title: "Type") {

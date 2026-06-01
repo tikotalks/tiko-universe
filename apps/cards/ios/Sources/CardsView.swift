@@ -13,6 +13,7 @@ struct CardsView: View {
         TikoAppShell(
             appName: "Cards",
             appIcon: "square.grid.2x2.fill",
+            appIconMediaCategory: "animals",
             appColor: .cards,
             actions: [
                 TikoHeaderAction(id: "edit", label: "Edit cards", systemImage: "pencil"),

@@ -59,6 +59,7 @@ struct TimerView: View {
         TikoAppShell(
             appName: "Timer",
             appIcon: "timer",
+            appIconMediaCategory: "transport",
             appColor: .timer,
             settingsContent: {
                 TikoSettingsSection(title: "Timer") {

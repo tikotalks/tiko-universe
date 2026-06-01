@@ -8,7 +8,10 @@ struct YesNoView: View {
 
     @AppStorage("yesno.sentence") private var sentence = ""
     @AppStorage("yesno.speechEnabled") private var speechEnabled = true
+    @AppStorage("yesno.choiceStyle") private var choiceStyleRawValue = TikoChoiceStyle.tiles.rawValue
+    @AppStorage("tiko.colorMode") private var colorModeRawValue = TikoColorMode.light.rawValue
     @State private var showingHistory = false
+    @State private var showingChoiceStyle = false
     @AppStorage("yesno.questionHistory") private var historyData = Data()
 
     @State private var history: [String] = []
@@ -22,6 +25,30 @@ struct YesNoView: View {
         feedbackBackground ?? Color(red: 0.973, green: 0.965, blue: 0.945)
     }
 
+    private var darkShellBackground: Color {
+        feedbackBackground ?? Color(red: 0.08, green: 0.055, blue: 0.095)
+    }
+
+    private var effectiveColorScheme: ColorScheme {
+        (TikoColorMode(rawValue: colorModeRawValue) ?? .light) == .dark ? .dark : .light
+    }
+
+    private var fieldBackground: Color {
+        effectiveColorScheme == .dark ? .white.opacity(0.12) : .white.opacity(0.68)
+    }
+
+    private var clearButtonForeground: Color {
+        effectiveColorScheme == .dark ? .white.opacity(0.72) : Color(hex: 0x0b5a7a).opacity(0.65)
+    }
+
+    private var clearButtonBackground: Color {
+        effectiveColorScheme == .dark ? .white.opacity(0.12) : .white.opacity(0.36)
+    }
+
+    private var choiceStyle: TikoChoiceStyle {
+        TikoChoiceStyle(rawValue: choiceStyleRawValue) ?? .tiles
+    }
+
     private let choices = [
         TikoAnswerChoice(id: "yes", label: "Yes", icon: .systemName("checkmark"), tone: .primary),
         TikoAnswerChoice(id: "no", label: "No", icon: .systemName("xmark"), tone: .secondary)
@@ -31,8 +58,10 @@ struct YesNoView: View {
         TikoAppShell(
             appName: "Yes No",
             appIcon: "checkmark.circle",
+            appIconMediaCategory: "emotions",
             appColor: .yesNo,
             backgroundColor: shellBackground,
+            darkBackgroundColor: darkShellBackground,
             actions: [
                 TikoHeaderAction(id: "history", label: "History", systemImage: "clock", isActive: showingHistory)
             ],
@@ -40,6 +69,14 @@ struct YesNoView: View {
             settingsContent: {
                 TikoSettingsSection(title: "Yes No") {
                     TikoSettingsToggleRow(title: "Speak answers", icon: "speaker.wave.2.fill", appColor: .yesNo, isOn: $speechEnabled)
+                    TikoSettingsActionRow(
+                        title: "Answer style",
+                        value: choiceStyle.title,
+                        icon: choiceStyle.icon,
+                        appColor: .yesNo
+                    ) {
+                        showingChoiceStyle = true
+                    }
                 }
             }
         ) {
@@ -49,7 +86,8 @@ struct YesNoView: View {
                     .multilineTextAlignment(.center)
                     .padding(.horizontal, 18)
                     .padding(.vertical, 12)
-                    .background(.white.opacity(0.68))
+                    .foregroundStyle(.primary)
+                    .background(fieldBackground)
                     .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
                     .padding(.horizontal, 24)
 
@@ -67,16 +105,16 @@ struct YesNoView: View {
                     Button(action: { sentence = "" }) {
                         Image(systemName: "xmark")
                             .font(.system(size: 16, weight: .heavy))
-                            .foregroundStyle(Color(hex: 0x0b5a7a).opacity(0.65))
+                            .foregroundStyle(clearButtonForeground)
                             .frame(width: 44, height: 44)
-                            .background(.white.opacity(0.36))
+                            .background(clearButtonBackground)
                             .clipShape(Circle())
                     }
                     .buttonStyle(.plain)
                     .accessibilityLabel("Clear sentence")
                 }
 
-                TikoChoiceGrid(choices: choices, onSelect: selectChoice)
+                TikoChoiceGrid(choices: choices, style: choiceStyle, onSelect: selectChoice)
             }
             .padding(.top, 18)
         }
@@ -86,6 +124,14 @@ struct YesNoView: View {
         .tikoPopup(isPresented: $showingHistory) {
             QuestionHistorySheet(questions: history) {
                 showingHistory = false
+            }
+        }
+        .tikoPopup(isPresented: $showingChoiceStyle) {
+            ChoiceStyleSheet(selectedStyle: choiceStyle) { style in
+                choiceStyleRawValue = style.rawValue
+                showingChoiceStyle = false
+            } onClose: {
+                showingChoiceStyle = false
             }
         }
     }
@@ -129,8 +175,8 @@ struct YesNoView: View {
 
     private func flashBackground(for choice: TikoAnswerChoice) {
         let color = choice.id == "yes"
-            ? Color(hex: 0x93ee3f).opacity(0.24)
-            : Color(hex: 0xef405d).opacity(0.22)
+            ? Color(hex: 0x93ee3f).opacity(effectiveColorScheme == .dark ? 0.18 : 0.24)
+            : Color(hex: 0xef405d).opacity(effectiveColorScheme == .dark ? 0.18 : 0.22)
 
         withAnimation(.easeInOut(duration: 0.18)) {
             feedbackBackground = color
@@ -154,6 +200,59 @@ struct YesNoView: View {
 
     private func saveHistory() {
         historyData = (try? JSONEncoder().encode(history)) ?? Data()
+    }
+}
+
+private struct ChoiceStyleSheet: View {
+    let selectedStyle: TikoChoiceStyle
+    let onSelect: (TikoChoiceStyle) -> Void
+    let onClose: () -> Void
+
+    var body: some View {
+        TikoPopupCard(
+            title: "Answer style",
+            subtitle: "Choose how the Yes and No buttons appear.",
+            icon: "square.grid.2x2.fill",
+            appColor: .yesNo,
+            onClose: onClose
+        ) {
+            VStack(spacing: 12) {
+                ForEach(TikoChoiceStyle.allCases, id: \.rawValue) { style in
+                    Button {
+                        onSelect(style)
+                    } label: {
+                        HStack(spacing: 12) {
+                            Image(systemName: style.icon)
+                                .font(.system(size: 18, weight: .bold))
+                                .foregroundStyle(TikoAppColor.yesNo.palette.primary)
+                                .frame(width: 40, height: 40)
+                                .background(TikoAppColor.yesNo.palette.primary.opacity(0.12))
+                                .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+
+                            Text(style.title)
+                                .font(.system(size: 17, weight: .heavy, design: .rounded))
+                                .foregroundStyle(.primary)
+
+                            Spacer()
+
+                            if style == selectedStyle {
+                                Image(systemName: "checkmark.circle.fill")
+                                    .font(.system(size: 20, weight: .bold))
+                                    .foregroundStyle(TikoAppColor.yesNo.palette.primary)
+                            }
+                        }
+                        .padding(14)
+                        .background(Color(.systemBackground))
+                        .overlay {
+                            RoundedRectangle(cornerRadius: 18, style: .continuous)
+                                .stroke(Color.primary.opacity(0.08), lineWidth: 1)
+                        }
+                        .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
+                    }
+                    .buttonStyle(.plain)
+                }
+            }
+        }
     }
 }
 

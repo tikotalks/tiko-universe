@@ -31,6 +31,19 @@ struct RadioView: View {
         return tracks.first { $0.id == selectedTrackID }
     }
 
+    private var headerIcon: String {
+        selectedTrack != nil || library.selectedCategoryID != nil ? "chevron.left" : "antenna.radiowaves.left.and.right"
+    }
+
+    private var headerIconAction: (() -> Void)? {
+        if selectedTrack != nil {
+            return { selectedTrackID = nil }
+        } else if library.selectedCategoryID != nil {
+            return { library.selectedCategoryID = nil; selectedTrackID = nil }
+        }
+        return nil
+    }
+
     private var relatedTracks: [RadioTrack] {
         guard let track = selectedTrack else { return [] }
         return tracks.filter { $0.categoryId == track.categoryId && $0.id != track.id }
@@ -52,7 +65,9 @@ struct RadioView: View {
     var body: some View {
         TikoAppShell(
             appName: "Radio",
-            appIcon: "antenna.radiowaves.left.and.right",
+            appIcon: headerIcon,
+            appIconMediaCategory: "music",
+            onIconTap: headerIconAction,
             appColor: .radio,
             backgroundColor: shellBackground,
             actions: parentMode ? [

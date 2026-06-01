@@ -17,7 +17,10 @@ public struct TikoHeaderAction: Identifiable, Sendable {
 public struct TikoAppHeader: View {
     private let appName: String
     private let appIcon: String
+    private let appIconURL: URL?
+    private let onIconTap: (() -> Void)?
     private let avatar: String
+    private let avatarURL: URL?
     private let appColor: TikoAppColor
     private let actions: [TikoHeaderAction]
     private let isSettingsActive: Bool
@@ -28,7 +31,10 @@ public struct TikoAppHeader: View {
     public init(
         appName: String,
         appIcon: String = "checkmark.circle",
+        appIconURL: URL? = nil,
+        onIconTap: (() -> Void)? = nil,
         avatar: String = "person.crop.circle.fill",
+        avatarURL: URL? = nil,
         appColor: TikoAppColor,
         actions: [TikoHeaderAction] = [],
         isSettingsActive: Bool = false,
@@ -38,7 +44,10 @@ public struct TikoAppHeader: View {
     ) {
         self.appName = appName
         self.appIcon = appIcon
+        self.appIconURL = appIconURL
+        self.onIconTap = onIconTap
         self.avatar = avatar
+        self.avatarURL = avatarURL
         self.appColor = appColor
         self.actions = actions
         self.isSettingsActive = isSettingsActive
@@ -47,14 +56,69 @@ public struct TikoAppHeader: View {
         self.onAccount = onAccount
     }
 
-    public var body: some View {
-        HStack(spacing: 12) {
+    @ViewBuilder
+    private var appIconContent: some View {
+        if onIconTap != nil {
+            Image(systemName: "chevron.left")
+                .font(.system(size: 20, weight: .bold))
+                .foregroundStyle(.white)
+                .frame(width: 48, height: 48)
+                .background(.white.opacity(0.28))
+                .clipShape(Circle())
+        } else if let appIconURL {
+            AsyncImage(url: appIconURL) { image in
+                image.resizable().scaledToFill()
+            } placeholder: {
+                Image(systemName: appIcon)
+                    .font(.system(size: 20, weight: .bold))
+                    .foregroundStyle(.white)
+            }
+            .frame(width: 48, height: 48)
+            .background(.white.opacity(0.28))
+            .clipShape(Circle())
+        } else {
             Image(systemName: appIcon)
                 .font(.system(size: 20, weight: .bold))
                 .foregroundStyle(.white)
                 .frame(width: 48, height: 48)
                 .background(.white.opacity(0.28))
                 .clipShape(Circle())
+        }
+    }
+
+    @ViewBuilder
+    private var avatarContent: some View {
+        if let avatarURL {
+            AsyncImage(url: avatarURL) { image in
+                image.resizable().scaledToFill()
+            } placeholder: {
+                Image(systemName: avatar)
+                    .font(.system(size: 20, weight: .bold))
+                    .foregroundStyle(.white)
+            }
+            .frame(width: 48, height: 48)
+            .background(.white.opacity(0.28))
+            .clipShape(Circle())
+        } else {
+            Image(systemName: avatar)
+                .font(.system(size: 20, weight: .bold))
+                .foregroundStyle(.white)
+                .frame(width: 48, height: 48)
+                .background(.white.opacity(0.28))
+                .clipShape(Circle())
+        }
+    }
+
+    public var body: some View {
+        HStack(spacing: 12) {
+            if let onIconTap {
+                Button(action: onIconTap) {
+                    appIconContent
+                }
+                .buttonStyle(.plain)
+            } else {
+                appIconContent
+            }
 
             Text(appName)
                 .font(.system(.title3, design: .rounded).weight(.heavy))
@@ -74,12 +138,7 @@ public struct TikoAppHeader: View {
                     .accessibilityLabel("Settings")
 
                 Button(action: onAccount) {
-                    Image(systemName: avatar)
-                        .font(.system(size: 20, weight: .bold))
-                        .foregroundStyle(.white)
-                        .frame(width: 48, height: 48)
-                        .background(.white.opacity(0.28))
-                        .clipShape(Circle())
+                    avatarContent
                 }
                 .buttonStyle(.plain)
                 .accessibilityLabel("Account")
@@ -89,7 +148,6 @@ public struct TikoAppHeader: View {
         .padding(.horizontal, 8)
         .background(appColor.palette.primary)
         .clipShape(Capsule())
-        .shadow(color: .black.opacity(0.12), radius: 0, x: 0, y: 4)
         .padding(.horizontal, 16)
         .padding(.top, 10)
     }
@@ -110,9 +168,12 @@ public struct TikoAppHeader: View {
 public struct TikoAppShell<Content: View, SettingsContent: View>: View {
     private let appName: String
     private let appIcon: String
+    private let appIconMediaCategory: String?
+    private let onIconTap: (() -> Void)?
     private let avatar: String
     private let appColor: TikoAppColor
     private let backgroundColor: Color
+    private let darkBackgroundColor: Color
     private let actions: [TikoHeaderAction]
     private let onAction: (String) -> Void
     private let content: Content
@@ -121,15 +182,21 @@ public struct TikoAppShell<Content: View, SettingsContent: View>: View {
     @AppStorage("tiko.colorMode") private var colorModeRawValue = TikoColorMode.light.rawValue
     @AppStorage("tiko.userName") private var userName = ""
     @AppStorage("tiko.userEmail") private var userEmail = ""
+    @AppStorage("tiko.avatarURL") private var storedAvatarURLString = ""
     @State private var showingAccount = false
     @State private var showingSettings = false
+    @State private var fetchedIconURL: URL? = nil
+    @State private var fetchedAvatarURL: URL? = nil
 
     public init(
         appName: String,
         appIcon: String = "checkmark.circle",
+        appIconMediaCategory: String? = nil,
+        onIconTap: (() -> Void)? = nil,
         avatar: String = "person.crop.circle.fill",
         appColor: TikoAppColor,
         backgroundColor: Color = Color(red: 0.973, green: 0.965, blue: 0.945),
+        darkBackgroundColor: Color = Color(red: 0.08, green: 0.055, blue: 0.095),
         actions: [TikoHeaderAction] = [],
         onAction: @escaping (String) -> Void = { _ in },
         @ViewBuilder settingsContent: () -> SettingsContent,
@@ -137,9 +204,12 @@ public struct TikoAppShell<Content: View, SettingsContent: View>: View {
     ) {
         self.appName = appName
         self.appIcon = appIcon
+        self.appIconMediaCategory = appIconMediaCategory
+        self.onIconTap = onIconTap
         self.avatar = avatar
         self.appColor = appColor
         self.backgroundColor = backgroundColor
+        self.darkBackgroundColor = darkBackgroundColor
         self.actions = actions.filter { $0.id != "settings" }
         self.onAction = onAction
         self.settingsContent = settingsContent()
@@ -151,7 +221,10 @@ public struct TikoAppShell<Content: View, SettingsContent: View>: View {
             TikoAppHeader(
                 appName: appName,
                 appIcon: appIcon,
+                appIconURL: fetchedIconURL,
+                onIconTap: onIconTap,
                 avatar: avatar,
+                avatarURL: fetchedAvatarURL,
                 appColor: appColor,
                 actions: actions,
                 isSettingsActive: showingSettings,
@@ -163,7 +236,7 @@ public struct TikoAppShell<Content: View, SettingsContent: View>: View {
             content
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
-        .background(backgroundColor)
+        .background(selectedColorScheme == .dark ? darkBackgroundColor : backgroundColor)
         .preferredColorScheme(selectedColorScheme)
         .tikoSettingsPopup(
             isPresented: $showingSettings,
@@ -174,6 +247,10 @@ public struct TikoAppShell<Content: View, SettingsContent: View>: View {
             settingsContent
         }
         .tikoAccountPopup(isPresented: $showingAccount, appName: appName, appColor: appColor)
+        .task {
+            await fetchIconIfNeeded()
+            await fetchAvatarIfNeeded()
+        }
     }
 
     private var selectedColorScheme: ColorScheme {
@@ -193,15 +270,60 @@ public struct TikoAppShell<Content: View, SettingsContent: View>: View {
             showingAccount = true
         }
     }
+
+    private func fetchIconIfNeeded() async {
+        guard let category = appIconMediaCategory else { return }
+        let key = "tiko.icon.\(appName.lowercased())"
+        if let stored = UserDefaults.standard.string(forKey: key), let url = URL(string: stored) {
+            fetchedIconURL = url
+            return
+        }
+        if let url = await fetchMediaImage(urlString: "https://media-api.tikotalks.com/v1/media?type=image&category=\(category)&limit=20", random: false) {
+            UserDefaults.standard.set(url.absoluteString, forKey: key)
+            fetchedIconURL = url
+        }
+    }
+
+    private func fetchAvatarIfNeeded() async {
+        if !storedAvatarURLString.isEmpty, let url = URL(string: storedAvatarURLString) {
+            fetchedAvatarURL = url
+            return
+        }
+        if let url = await fetchMediaImage(urlString: "https://media-api.tikotalks.com/v1/media?type=image&limit=100", random: true) {
+            storedAvatarURLString = url.absoluteString
+            fetchedAvatarURL = url
+        }
+    }
+
+    private func fetchMediaImage(urlString: String, random: Bool) async -> URL? {
+        guard let url = URL(string: urlString),
+              let (data, response) = try? await URLSession.shared.data(from: url),
+              let http = response as? HTTPURLResponse, (200..<300).contains(http.statusCode),
+              let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
+              let items = json["data"] as? [[String: Any]],
+              !items.isEmpty else { return nil }
+        let item = random ? items.randomElement()! : items[0]
+        guard let urlString = item["original_url"] as? String,
+              let imageURL = URL(string: urlString) else { return nil }
+        return resizedCDNURL(imageURL, size: 100)
+    }
+
+    private func resizedCDNURL(_ url: URL, size: Int) -> URL {
+        guard url.host == "data.tikocdn.org", url.path.hasPrefix("/uploads/") else { return url }
+        return URL(string: "https://data.tikocdn.org/cdn-cgi/image/width=\(size),quality=80,f=auto\(url.path)") ?? url
+    }
 }
 
 public extension TikoAppShell where SettingsContent == EmptyView {
     init(
         appName: String,
         appIcon: String = "checkmark.circle",
+        appIconMediaCategory: String? = nil,
+        onIconTap: (() -> Void)? = nil,
         avatar: String = "person.crop.circle.fill",
         appColor: TikoAppColor,
         backgroundColor: Color = Color(red: 0.973, green: 0.965, blue: 0.945),
+        darkBackgroundColor: Color = Color(red: 0.08, green: 0.055, blue: 0.095),
         actions: [TikoHeaderAction] = [],
         onAction: @escaping (String) -> Void = { _ in },
         @ViewBuilder content: () -> Content
@@ -209,9 +331,12 @@ public extension TikoAppShell where SettingsContent == EmptyView {
         self.init(
             appName: appName,
             appIcon: appIcon,
+            appIconMediaCategory: appIconMediaCategory,
+            onIconTap: onIconTap,
             avatar: avatar,
             appColor: appColor,
             backgroundColor: backgroundColor,
+            darkBackgroundColor: darkBackgroundColor,
             actions: actions,
             onAction: onAction,
             settingsContent: { EmptyView() },
