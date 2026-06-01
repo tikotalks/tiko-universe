@@ -129,23 +129,23 @@ onMounted(() => {
   <section :class="bemm('hero')">
     <div :class="[bemm('hero-inner'), 'container']">
       <div :class="bemm('hero-copy')">
-        <p class="eyebrow">Small free apps. No ads. Ever.</p>
+        <p class="eyebrow">Free. Beautiful. Any language.</p>
         <h1 :class="['display-1', bemm('hero-heading')]">
-          Tiko exists because support should be available in the moment.
+          Tiny apps for everyday moments.
         </h1>
         <p :class="['body-lg', bemm('hero-lede')]">
-          Tiko is a family of small, free apps that help children answer, choose, type, follow routines,
-          and understand time. No ads. No account wall. No payment step. Just simple tools that open when they are needed.
+          Tiko is a collection of small, beautiful communication apps. Each one does one clear thing,
+          opens instantly, and works in any language — with no account, no ads, and nothing in the way.
         </p>
         <div :class="bemm('hero-actions')">
           <RouterLink to="/apps/yes-no" :class="bemm('hero-btn', 'primary')">
             Try Yes No — it's free
           </RouterLink>
-          <RouterLink to="/why-tiko" :class="bemm('hero-btn', 'outline')">
-            Why Tiko exists
+          <RouterLink to="/apps" :class="bemm('hero-btn', 'outline')">
+            See all five apps
           </RouterLink>
         </div>
-        <p :class="bemm('hero-note')">Free, always. No ads, ever. Works on any device.</p>
+        <p :class="bemm('hero-note')">Free forever. No ads. Works on any device, in any language.</p>
       </div>
 
       <div :class="bemm('hero-visual')" aria-hidden="true">
@@ -180,11 +180,11 @@ onMounted(() => {
   <section :class="[bemm('why'), 'section']">
     <div class="container">
       <div :class="bemm('why-header')">
-        <p class="eyebrow">Why Tiko exists</p>
-        <h2 class="display-2">Everyday support should not depend on setup, payment, or ads.</h2>
+        <p class="eyebrow">What makes Tiko different</p>
+        <h2 class="display-2">Simple, beautiful, and built for every child.</h2>
         <p class="body-lg">
-          A child may need a way to say yes or no, ask for food, choose an activity, or understand what happens next.
-          Those moments should not wait behind an account form, a subscription decision, or a complicated control panel.
+          Communication shouldn't have a waiting room. Every Tiko app opens in seconds, speaks any language,
+          and gets out of the way — so the moment between a child and their choice is as short as possible.
         </p>
       </div>
       <div :class="bemm('why-grid')">

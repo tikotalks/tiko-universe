@@ -15,7 +15,7 @@ const bemm = useBemm('site-footer', { return: 'string', includeBaseClass: true }
             <span :class="bemm('brand-mark')" aria-hidden="true">T</span>
             <span :class="bemm('brand-text')">TikoTalks</span>
           </RouterLink>
-          <p :class="bemm('tagline')">Small free apps for everyday support.<br />No ads. Ever.</p>
+          <p :class="bemm('tagline')">Tiny apps. Every language. No ads. Ever.</p>
         </div>
 
         <nav :class="bemm('col')" aria-label="Apps">

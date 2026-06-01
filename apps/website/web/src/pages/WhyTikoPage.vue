@@ -11,11 +11,11 @@ const bemm = useBemm('why-page', { return: 'string', includeBaseClass: true })
     <header :class="[bemm('hero'), 'section']">
       <div class="container">
         <p class="eyebrow">Why Tiko exists</p>
-        <h1 :class="['display-1', bemm('heading')]">Support should be available in the moment.</h1>
+        <h1 :class="['display-1', bemm('heading')]">Fun, simple, and in every language.</h1>
         <p :class="['body-lg', bemm('lede')]">
-          Tiko is a family of small, free, no-ad apps for children who need a simpler way to answer,
-          choose, type, follow a routine, or understand time. It exists because the first step should be help,
-          not setup.
+          Tiko is a family of small, beautiful, free apps that help children communicate, choose,
+          follow routines, and understand time. Every app opens in seconds, works in any language,
+          and never asks for an account — because the first step should be using the tool, not setting it up.
         </p>
       </div>
     </header>
@@ -24,11 +24,11 @@ const bemm = useBemm('why-page', { return: 'string', includeBaseClass: true })
       <div class="container">
         <div :class="bemm('statement')">
           <p class="eyebrow">What Tiko is</p>
-          <h2 class="display-2">Tiny tools for everyday support.</h2>
+          <h2 class="display-2">One universe of tiny apps.</h2>
           <p class="body-lg">
-            Tiko is not one big control panel. It is a universe of small apps that each do one clear thing:
-            Yes No for simple answers, Type for spoken messages, Cards for visual choices, Sequence for routines,
-            and Timer for making time visible.
+            Tiko is not one big control panel. It is a universe of small, focused apps that each do one clear thing:
+            Yes No for quick answers, Type for spoken messages, Cards for visual choices, Sequence for routines,
+            and Timer for making time visible. Each one is beautiful, fast, and multilingual.
           </p>
         </div>
       </div>
@@ -52,10 +52,10 @@ const bemm = useBemm('why-page', { return: 'string', includeBaseClass: true })
         <div :class="bemm('free-layout')">
           <div :class="bemm('free-copy')">
             <p class="eyebrow">Why free?</p>
-            <h2 class="display-2">Because basic support should not wait behind payment.</h2>
+            <h2 class="display-2">Because access shouldn’t have a price tag.</h2>
             <p class="body-lg">
-              Tiko’s child-facing core is free, always. It is not a trial, not a teaser, and not an upgrade funnel.
-              The point is access in real moments, without hesitation or pressure.
+              Tiko’s core apps are free, always. Not a trial, not a teaser, not an upgrade funnel.
+              Every child should be able to open a Tiko app right now — without a payment decision getting in the way.
             </p>
           </div>
           <div :class="bemm('free-cards')">

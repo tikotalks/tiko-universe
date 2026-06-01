@@ -36,7 +36,7 @@ describe('TikoTalks website', () => {
   it('renders the homepage with child-first copy and no account CTA', async () => {
     const wrapper = await mountAt('/')
 
-    expect(wrapper.text()).toContain('Tiko exists because support should be available in the moment')
+    expect(wrapper.text()).toContain('Tiny apps for everyday moments')
     expect(wrapper.text()).toContain('No ads. Ever.')
     expect(wrapper.text()).toContain('Free, always.')
     expect(wrapper.text()).not.toContain('Start free trial')

@@ -16,7 +16,7 @@ const sections = [
   },
   {
     title: 'No medical claims',
-    body: 'Tiko is a set of communication and support tools. It does not diagnose, treat, or promise outcomes. Caregivers and professionals decide whether a tool is appropriate for their situation.',
+    body: 'Tiko is a set of communication and daily-life tools. It does not diagnose, treat, or promise outcomes. Caregivers and professionals decide whether a tool fits their situation.',
   },
   {
     title: 'Optional recovery only',

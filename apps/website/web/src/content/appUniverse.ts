@@ -35,14 +35,14 @@ export const tikoWebsiteAppUniverse = [
   {
     slug: 'yes-no',
     appName: 'Yes No',
-    shortSummary: 'Big yes and no choices for quick, clear answers.',
+    shortSummary: 'Two giant buttons. One clear answer. Instantly.',
     headline: 'One clear question. One clear answer.',
     description: 'Yes No gives children two giant, unmissable choices on a single screen. No clutter, no scrolling, no account. Open it, see the question, tap the answer.',
     route: '/apps/yes-no',
     appUrl: 'https://yesno.tikoapps.org',
     status: 'available',
     availability: 'available',
-    platformNotes: 'Open on the web now. Native iOS and Android paths should keep the same simple two-choice shape.',
+    platformNotes: 'Open on the web now. iOS and Android keep the same simple two-choice shape.',
     color: '#9b3fbd',
     colorLight: '#f3e8ff',
     useWhen: [
@@ -50,7 +50,7 @@ export const tikoWebsiteAppUniverse = [
       'a caregiver wants a simple prompt',
       'speech or tapping should happen without a complicated screen'
     ],
-    moment: 'Sometimes the kindest support is asking less: one question, two huge answers, and no extra screen to understand.',
+    moment: 'The simplest possible moment — one question, two giant choices, and nothing between the child and the answer.',
     whySmall: 'Yes No stays tiny because two choices are the whole point. It should not become a survey, control panel, or behaviour tracker.',
     calmDetail: 'Large targets, strong contrast, speech output, and no account step keep the answer moment focused on the child.',
     features: [
@@ -63,22 +63,22 @@ export const tikoWebsiteAppUniverse = [
   {
     slug: 'type',
     appName: 'Type',
-    shortSummary: 'A quiet place to type a message and speak it aloud.',
+    shortSummary: 'Type a thought and hear it spoken aloud — instantly.',
     headline: 'Type a thought. Hear it spoken.',
     description: 'Type is a distraction-free text input for moments when a child wants to communicate in writing. Every message can be spoken aloud at the tap of a button.',
     route: '/apps/type',
     appUrl: 'https://type.tikoapps.org',
     status: 'planned',
     availability: 'planned',
-    platformNotes: 'Coming to the web first, then native paths from the same child-first text and speech contract.',
+    platformNotes: 'Coming to the web first, then native iOS and Android.',
     color: '#2488ff',
     colorLight: '#dbeafe',
     useWhen: [
       'a child wants to type a message',
-      'saved phrases may help later',
-      'spoken output should stay simple and accessible'
+      'saved phrases would help',
+      'spoken output should stay simple and easy to reach'
     ],
-    moment: 'Some thoughts need words, and some typed words need a voice in the room.',
+    moment: 'Some thoughts are easier typed than spoken — and some typed thoughts deserve a voice in the room.',
     whySmall: 'Type keeps writing and speaking in one quiet place instead of becoming a document editor or messaging product.',
     calmDetail: 'The app should make text entry obvious, keep speech one tap away, and avoid controls that compete with the sentence.',
     features: [
@@ -91,22 +91,22 @@ export const tikoWebsiteAppUniverse = [
   {
     slug: 'cards',
     appName: 'Cards',
-    shortSummary: 'Visual choices and familiar items that stay easy to tap.',
+    shortSummary: 'Beautiful picture cards. Tap one and hear it speak.',
     headline: 'Pictures that speak for themselves.',
     description: 'Cards shows familiar images in a simple grid. Tap a card to hear its name spoken. Choose from built-in categories or build a custom set for any routine or context.',
     route: '/apps/cards',
     appUrl: 'https://cards.tikoapps.org',
     status: 'planned',
     availability: 'planned',
-    platformNotes: 'Coming as a small card experience before any caregiver sync or transfer layer is added.',
+    platformNotes: 'Coming as a focused card experience — beautiful images, one tap to speak.',
     color: '#ff8a1f',
     colorLight: '#fff3e0',
     useWhen: [
-      'images or symbols help more than text alone',
-      'choices should be visible and tappable',
-      'a small library is enough'
+      'pictures communicate faster than text',
+      'choices should be visible and easy to tap',
+      'a ready-made image library saves setup time'
     ],
-    moment: 'When words are hard to reach, a familiar picture can make a choice possible.',
+    moment: 'A familiar picture makes a choice feel easy. Tap it, hear it, move on.',
     whySmall: 'Cards focuses on visible choices, not a complex content-management system in front of the child.',
     calmDetail: 'Square cards, clear labels, and recognizable images make scanning and tapping feel predictable.',
     features: [
@@ -119,22 +119,22 @@ export const tikoWebsiteAppUniverse = [
   {
     slug: 'sequence',
     appName: 'Sequence',
-    shortSummary: 'Ordered steps for routines that need calm structure.',
+    shortSummary: 'Step-by-step routines. Always clear, always moving forward.',
     headline: 'One step at a time, always clear.',
     description: 'Sequence turns any routine into a clear list of steps. The current step is always large and central. Tap to move forward. No guessing what comes next.',
     route: '/apps/sequence',
     appUrl: 'https://sequence.tikoapps.org',
     status: 'planned',
     availability: 'planned',
-    platformNotes: 'Coming for web and native with the next step always visible and without heavy system framing.',
+    platformNotes: 'Coming for web and native — the next step always visible, always one tap forward.',
     color: '#16b8a6',
     colorLight: '#ccfbf1',
     useWhen: [
-      'a routine needs a simple order',
-      'the next step should be visible',
-      'predictability matters'
+      'a routine needs a clear order',
+      'the next step should always be visible',
+      'predictability makes transitions easier'
     ],
-    moment: 'Transitions are easier when the next step is visible instead of held in someone else’s head.',
+    moment: 'Every routine is easier when the next step is already visible instead of held in someone else\'s head.',
     whySmall: 'Sequence is not a project planner. It shows the current step, the next movement, and enough progress to feel oriented.',
     calmDetail: 'One step stays central, progress stays simple, and images can make the routine easier to recognize.',
     features: [
@@ -147,22 +147,22 @@ export const tikoWebsiteAppUniverse = [
   {
     slug: 'timer',
     appName: 'Timer',
-    shortSummary: 'A readable timer for seeing time pass.',
+    shortSummary: 'A big, clear countdown. See exactly how much time is left.',
     headline: 'Time you can actually see.',
     description: 'Timer makes the passage of time visible and calm. A large countdown shows exactly how much is left. No anxiety-inducing beeps, just a quiet visual end.',
     route: '/apps/timer',
     appUrl: 'https://timer.tikoapps.org',
     status: 'planned',
     availability: 'planned',
-    platformNotes: 'Coming as a focused screen that does one thing on web, iOS, and Android.',
+    platformNotes: 'Coming as a focused screen — one thing, done beautifully, on web, iOS, and Android.',
     color: '#f8c22e',
     colorLight: '#fef9c3',
     useWhen: [
-      'transitions need a visible end',
-      'waiting should feel less abstract',
+      'transitions need a visible end point',
+      'waiting feels less abstract when time is on screen',
       'the screen should do one thing only'
     ],
-    moment: 'Waiting can feel endless when time is invisible. Timer makes the end easier to see.',
+    moment: 'Time feels real when you can see it shrinking.',
     whySmall: 'Timer stays focused on the countdown instead of becoming a calendar, alarm suite, or productivity app.',
     calmDetail: 'A large number, visible progress, and a gentle ending keep time concrete without adding anxiety.',
     features: [
