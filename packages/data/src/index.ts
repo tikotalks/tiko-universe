@@ -188,7 +188,7 @@ export class TikoDataClient {
 
   constructor(options: DataClientOptions) {
     this.baseUrl = options.baseUrl.replace(/\/$/, '')
-    this.fetcher = options.fetch ?? fetch
+    this.fetcher = options.fetch ?? globalThis.fetch.bind(globalThis)
   }
 
   getSettings<TApp extends TikoAppId>(app: TApp, sessionToken: string): Promise<AppSettingsResponse<AppSettingsById[TApp]>> {
