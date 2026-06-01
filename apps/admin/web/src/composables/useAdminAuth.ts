@@ -177,6 +177,7 @@ export function useAdminAuth() {
     user.value = null
     config.value = null
     loginMessage.value = null
+    error.value = null
     localStorage.removeItem(ADMIN_TOKEN_KEY)
     localStorage.removeItem(ADMIN_IDENTITY_KEY)
   }
