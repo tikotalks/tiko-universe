@@ -453,6 +453,35 @@ border-radius: 0.75rem;
     font-size: 0.85rem;
     color: color-mix(in srgb, var(--color-foreground) 50%, transparent);
   }
+
+  &__otp {
+    font-size: 2rem;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    text-align: center;
+    font-family: monospace;
+  }
+
+  &__error {
+    font-size: 0.8rem;
+    color: var(--color-error, #e84057);
+    margin-bottom: 0.5rem;
+  }
+
+  &__back {
+    display: block;
+    width: 100%;
+    margin-top: 0.5rem;
+    padding: 0.4rem;
+    border: none;
+    background: none;
+    color: color-mix(in srgb, var(--color-foreground) 55%, transparent);
+    font-size: 0.8rem;
+    cursor: pointer;
+    text-align: center;
+
+    &:hover { text-decoration: underline; }
+  }
 }
 
 // ---- Account popup (logged in) -----------------------------------------------

@@ -601,17 +601,36 @@ function openLoginPopup() {
     component: markRaw({
       setup() {
         const email = ref('')
+        const code = ref('')
         const sent = ref(false)
         const loading = ref(false)
+        const verifyError = ref('')
 
-        async function sendMagicLink() {
+        async function sendCode() {
           if (!email.value.trim()) return
           loading.value = true
+          verifyError.value = ''
           try {
             await identityClient.requestRecoveryEmail({ email: email.value.trim() })
             sent.value = true
           } catch {
-            // will wire up error handling when identity worker is live
+            verifyError.value = 'Could not send the code. Please try again.'
+          } finally {
+            loading.value = false
+          }
+        }
+
+        async function verifyCode() {
+          const digits = code.value.replace(/\s/g, '')
+          if (digits.length !== 6) return
+          loading.value = true
+          verifyError.value = ''
+          try {
+            const bundle = await identityClient.verifyOtp(digits)
+            saveIdentity(bundle)
+            popup.closeAllPopups()
+          } catch {
+            verifyError.value = 'Invalid or expired code. Try again or resend.'
           } finally {
             loading.value = false
           }
@@ -620,26 +639,50 @@ function openLoginPopup() {
         return () => h('div', { class: 'radio-app__login-popup' }, [
           h('h3', { class: 'radio-app__login-popup__title' }, 'Log in'),
           sent.value
-            ? h('div', { class: 'radio-app__login-popup__sent' }, [
-                h('p', { class: 'radio-app__login-popup__sent-text' }, 'Check your email!'),
-                h('p', { class: 'radio-app__login-popup__sent-hint' }, `We sent a magic link to ${email.value}`),
-              ])
+            ? [
+                h('p', { class: 'radio-app__login-popup__sent-text' }, `Code sent to ${email.value}`),
+                h('label', { class: 'radio-app__login-popup__label' }, [
+                  'Sign-in code',
+                  h('input', {
+                    type: 'text',
+                    inputmode: 'numeric',
+                    autocomplete: 'one-time-code',
+                    value: code.value,
+                    maxlength: 7,
+                    placeholder: '123 456',
+                    class: 'radio-app__login-popup__otp',
+                    onInput: (e: Event) => { code.value = (e.target as HTMLInputElement).value.replace(/\D/g, '').slice(0, 6) },
+                    onKeydown: (e: KeyboardEvent) => { if (e.key === 'Enter') verifyCode() },
+                  }),
+                ]),
+                verifyError.value ? h('p', { class: 'radio-app__login-popup__error' }, verifyError.value) : null,
+                h('button', {
+                  class: 'radio-app__login-popup__submit',
+                  disabled: code.value.replace(/\s/g, '').length !== 6 || loading.value,
+                  onClick: verifyCode,
+                }, loading.value ? 'Checking…' : 'Verify code'),
+                h('button', {
+                  class: 'radio-app__login-popup__back',
+                  onClick: () => { sent.value = false; code.value = ''; verifyError.value = '' },
+                }, 'Use a different email'),
+              ]
             : [
                 h('label', { class: 'radio-app__login-popup__label' }, [
                   'Email',
                   h('input', {
                     type: 'email',
                     value: email.value,
-                    'onUpdate:modelValue': (v: string) => { email.value = v },
+                    onInput: (e: Event) => { email.value = (e.target as HTMLInputElement).value },
                     placeholder: 'you@example.com',
-                    onKeydown: (e: KeyboardEvent) => { if (e.key === 'Enter') sendMagicLink() },
+                    onKeydown: (e: KeyboardEvent) => { if (e.key === 'Enter') sendCode() },
                   }),
                 ]),
+                verifyError.value ? h('p', { class: 'radio-app__login-popup__error' }, verifyError.value) : null,
                 h('button', {
                   class: 'radio-app__login-popup__submit',
                   disabled: !email.value.trim() || loading.value,
-                  onClick: sendMagicLink,
-                }, loading.value ? 'Sending…' : 'Send magic link'),
+                  onClick: sendCode,
+                }, loading.value ? 'Sending…' : 'Send sign-in code'),
               ],
         ])
       },
