@@ -3,6 +3,7 @@ import { RouterLink, useRoute } from 'vue-router'
 import { ref, onMounted } from 'vue'
 import { useBemm } from 'bemm'
 import { ThemeToggle } from '@sil/ui'
+import { TikoLogo } from '@tiko/ui'
 
 const bemm = useBemm('site-header', { return: 'string', includeBaseClass: true })
 
@@ -71,8 +72,7 @@ onMounted(() => {
   <header :class="bemm('')">
     <div :class="[bemm('inner'), 'container']">
       <RouterLink :class="bemm('brand')" to="/" aria-label="TikoTalks home" @click="closeMobile">
-        <span :class="bemm('brand-mark')" aria-hidden="true">T</span>
-        <span :class="bemm('brand-text')">TikoTalks</span>
+        <TikoLogo />
       </RouterLink>
 
       <nav :class="bemm('nav', { open: mobileOpen })" aria-label="Site navigation">
@@ -135,29 +135,9 @@ onMounted(() => {
   &__brand {
     display: flex;
     align-items: center;
-    gap: 10px;
     text-decoration: none;
     flex-shrink: 0;
-  }
-
-  &__brand-mark {
-    display: grid;
-    place-items: center;
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    background: #f6c85f;
-    font-family: var(--font-family-heading);
-    font-weight: 900;
-    font-size: 0.9rem;
-    color: #111111;
-    flex-shrink: 0;
-  }
-
-  &__brand-text {
-    font-family: var(--font-family-heading);
-    font-weight: 800;
-    font-size: 1rem;
+    font-size: 36px;
     color: var(--color-foreground);
   }
 

@@ -17,7 +17,8 @@ let package = Package(
             name: "TikoKit",
             dependencies: [
                 .product(name: "PopupView", package: "PopupView")
-            ]
+            ],
+            resources: [.process("Resources")]
         ),
         .testTarget(name: "TikoKitTests", dependencies: ["TikoKit"])
     ]

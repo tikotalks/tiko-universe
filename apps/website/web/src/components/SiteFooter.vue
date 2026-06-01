@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { RouterLink } from 'vue-router'
 import { useBemm } from 'bemm'
+import { TikoLogo } from '@tiko/ui'
 import { tikoApps } from '../content/appUniverse'
 
 const bemm = useBemm('site-footer', { return: 'string', includeBaseClass: true })
@@ -12,8 +13,7 @@ const bemm = useBemm('site-footer', { return: 'string', includeBaseClass: true }
       <div :class="bemm('top')">
         <div :class="bemm('brand-col')">
           <RouterLink :class="bemm('brand')" to="/" aria-label="TikoTalks home">
-            <span :class="bemm('brand-mark')" aria-hidden="true">T</span>
-            <span :class="bemm('brand-text')">TikoTalks</span>
+            <TikoLogo />
           </RouterLink>
           <p :class="bemm('tagline')">Tiny apps. Every language. No ads. Ever.</p>
         </div>
@@ -76,33 +76,17 @@ const bemm = useBemm('site-footer', { return: 'string', includeBaseClass: true }
   }
 
   &__brand {
-    display: flex;
-    align-items: center;
-    gap: 10px;
+    display: block;
     text-decoration: none;
     margin-bottom: var(--space);
-  }
-
-  &__brand-mark {
-    display: grid;
-    place-items: center;
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    background: #f6c85f;
-    font-family: var(--font-family-heading);
-    font-weight: 900;
-    font-size: 1rem;
-    color: #111111;
-    flex-shrink: 0;
-  }
-
-  &__brand-text {
-    font-family: var(--font-family-heading);
-    font-weight: 800;
-    font-size: 1.05rem;
+    font-size: 48px;
     color: white;
-    letter-spacing: 0;
+    opacity: 0.85;
+    transition: opacity 0.15s;
+
+    &:hover {
+      opacity: 1;
+    }
   }
 
   &__tagline {

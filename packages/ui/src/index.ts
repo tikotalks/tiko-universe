@@ -1,4 +1,5 @@
 import { defineComponent, h, watch } from 'vue'
+export { default as TikoLogo } from './TikoLogo.vue'
 import type { GenerationTtsRequest, LegacyTtsResponse } from '@tiko/media'
 import { generationTtsCacheKey, isGenerationTtsResponse } from '@tiko/media'
 import { Button, Icon } from '@sil/ui'
