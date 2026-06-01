@@ -85,7 +85,7 @@ export const docsPages: readonly DocsPage[] = [
     summary: 'The non-negotiables behind every architecture choice.',
     callouts: [
       { title: 'Immediate', body: 'Apps open and work immediately. The first screen is never a login form.' },
-      { title: 'Small', body: 'Each app does one clear job instead of becoming a dashboard.' },
+      { title: 'Small', body: 'Each app does one clear job instead of becoming a control panel.' },
       { title: 'Recoverable', body: 'Device-first sessions can later become recoverable through caregiver email magic links.' }
     ],
     sections: [
@@ -194,8 +194,8 @@ export const docsPages: readonly DocsPage[] = [
           '`tikotalks.com`: public TikoTalks documentation/brand surface for these pages.',
           '`*.tikoapps.org`: app runtime family such as yesno, type, cards, sequence, timer, media, and admin.',
           '`id.tiko.mt`: device-first identity origin.',
-          '`api.tikoapi.org/v1/*`: consolidated API route family where practical.',
-          '`media.tikoapi.org`, `admin.tikoapi.org`, `tts.tikoapi.org`: dedicated service subdomains where separation is useful.',
+          '`api.tikotalks.com/v1/*`: consolidated API route family where practical.',
+          '`media-api.tikotalks.com`, `admin-api.tikotalks.com`, `tts.tikotalks.com`: dedicated service subdomains where separation is useful.',
           '`*.tikocdn.org`: byte delivery only, not application logic.'
         ]
       }

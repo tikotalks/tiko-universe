@@ -1,0 +1,33 @@
+name = "tiko-translations-api-dev"
+main = "src/index.ts"
+compatibility_date = "2026-06-01"
+account_id = "8cef251b5fdcf6c6f63db98b7aa49f9a"
+workers_dev = true
+
+# ── KV Namespaces ─────────────────────────────────────────────────────────────
+# Create with: npx wrangler kv namespace create TRANSLATIONS_KV
+# Then replace the id below with the output.
+
+[[kv_namespaces]]
+binding = "TRANSLATIONS_KV"
+id = "e879d6eab766463c8e4095720311bb28"
+
+# ── Secrets (set via `wrangler secret put`) ────────────────────────────────────
+# npx wrangler secret put LEZU_API_KEY
+# npx wrangler secret put LEZU_PROJECT_ID
+# npx wrangler secret put WEBHOOK_SECRET   ← optional, secures /v1/sync
+
+# ── Production environment ────────────────────────────────────────────────────
+
+[env.production]
+name = "tiko-translations-api"
+account_id = "dc2b7d14a69351375cab6de9a13ddee9"
+workers_dev = false
+
+[[env.production.kv_namespaces]]
+binding = "TRANSLATIONS_KV"
+id = "de333f79ba2240d1811fe696e7b8c51d"
+
+[[env.production.routes]]
+pattern = "translations.tikoapi.org/*"
+zone_name = "tikoapi.org"

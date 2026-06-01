@@ -1,0 +1,453 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		05A0DFBE3E8BEF5F79148D2B /* TikoYesNoTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C1243037126C3062F4D62D8 /* TikoYesNoTests.swift */; };
+		2BF1E91528BDF2CC5A5DD228 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C29DD0F7C2038B0621DDB76E /* Assets.xcassets */; };
+		2EE9175E29F28F467782D280 /* TikoKit in Frameworks */ = {isa = PBXBuildFile; productRef = D7247D1EFCE9E72267767EB4 /* TikoKit */; };
+		A28C1B0D174587280817DCA0 /* YesNoSpeechService.swift in Sources */ = {isa = PBXBuildFile; fileRef = ACA4B1596AEF26381F6234C3 /* YesNoSpeechService.swift */; };
+		AEF826E4C08B5590BC419989 /* YesNoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C99E9A160668D93E2D88752 /* YesNoView.swift */; };
+		EC6CE986289B68B4B9EF34F6 /* TikoYesNoApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF6BBD658EE7F2E3FFB60F4D /* TikoYesNoApp.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		026E40E9D6AB9AAFCF4D1C77 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = C63585DBACC3A18EB0C3AA33 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 0286DE3209637543114F6F4E;
+			remoteInfo = TikoYesNo;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		0A03A3830F9E9D0D41C10399 /* tikokit-ios */ = {isa = PBXFileReference; lastKnownFileType = folder; name = "tikokit-ios"; path = "../../../packages/tikokit-ios"; sourceTree = SOURCE_ROOT; };
+		216C3B420E05057458B4A8FF /* TikoYesNoTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = TikoYesNoTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		3C1243037126C3062F4D62D8 /* TikoYesNoTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TikoYesNoTests.swift; sourceTree = "<group>"; };
+		7357E5FCD5F592CEE258CE95 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		7C99E9A160668D93E2D88752 /* YesNoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YesNoView.swift; sourceTree = "<group>"; };
+		ACA4B1596AEF26381F6234C3 /* YesNoSpeechService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YesNoSpeechService.swift; sourceTree = "<group>"; };
+		C29DD0F7C2038B0621DDB76E /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		EF6BBD658EE7F2E3FFB60F4D /* TikoYesNoApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TikoYesNoApp.swift; sourceTree = "<group>"; };
+		FB09AA6545AC873DBC2EE38E /* TikoYesNo.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = TikoYesNo.app; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		7066D60C661A2D55122E7378 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2EE9175E29F28F467782D280 /* TikoKit in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		0EAE49D8484A026F1CD71404 /* Packages */ = {
+			isa = PBXGroup;
+			children = (
+				0A03A3830F9E9D0D41C10399 /* tikokit-ios */,
+			);
+			name = Packages;
+			sourceTree = "<group>";
+		};
+		21352231F089C15BC4F30088 = {
+			isa = PBXGroup;
+			children = (
+				0EAE49D8484A026F1CD71404 /* Packages */,
+				6F252DBBC82FABF459FB1F38 /* Sources */,
+				738A4A9C7946C7DC6C91EE50 /* Tests */,
+				D161094920912CD4DE1A244F /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		6F252DBBC82FABF459FB1F38 /* Sources */ = {
+			isa = PBXGroup;
+			children = (
+				C29DD0F7C2038B0621DDB76E /* Assets.xcassets */,
+				7357E5FCD5F592CEE258CE95 /* Info.plist */,
+				EF6BBD658EE7F2E3FFB60F4D /* TikoYesNoApp.swift */,
+				ACA4B1596AEF26381F6234C3 /* YesNoSpeechService.swift */,
+				7C99E9A160668D93E2D88752 /* YesNoView.swift */,
+			);
+			path = Sources;
+			sourceTree = "<group>";
+		};
+		738A4A9C7946C7DC6C91EE50 /* Tests */ = {
+			isa = PBXGroup;
+			children = (
+				3C1243037126C3062F4D62D8 /* TikoYesNoTests.swift */,
+			);
+			path = Tests;
+			sourceTree = "<group>";
+		};
+		D161094920912CD4DE1A244F /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				FB09AA6545AC873DBC2EE38E /* TikoYesNo.app */,
+				216C3B420E05057458B4A8FF /* TikoYesNoTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		0286DE3209637543114F6F4E /* TikoYesNo */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 1CC911E99D93E97D67E743F8 /* Build configuration list for PBXNativeTarget "TikoYesNo" */;
+			buildPhases = (
+				059454E0AA96941EDF1905D6 /* Sources */,
+				D0B4EE4E65E41C9A3CB6D756 /* Resources */,
+				7066D60C661A2D55122E7378 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = TikoYesNo;
+			packageProductDependencies = (
+				D7247D1EFCE9E72267767EB4 /* TikoKit */,
+			);
+			productName = TikoYesNo;
+			productReference = FB09AA6545AC873DBC2EE38E /* TikoYesNo.app */;
+			productType = "com.apple.product-type.application";
+		};
+		23B4F9754A956BEBA2CFFA61 /* TikoYesNoTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 7C743DB268798AD33A7C3F8D /* Build configuration list for PBXNativeTarget "TikoYesNoTests" */;
+			buildPhases = (
+				D4E2B013E56ABB9074B2D920 /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				431611DAB23667B59FA959F2 /* PBXTargetDependency */,
+			);
+			name = TikoYesNoTests;
+			packageProductDependencies = (
+			);
+			productName = TikoYesNoTests;
+			productReference = 216C3B420E05057458B4A8FF /* TikoYesNoTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		C63585DBACC3A18EB0C3AA33 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1430;
+				TargetAttributes = {
+					0286DE3209637543114F6F4E = {
+						DevelopmentTeam = "";
+					};
+					23B4F9754A956BEBA2CFFA61 = {
+						DevelopmentTeam = "";
+					};
+				};
+			};
+			buildConfigurationList = 676F314800A5D68895D75953 /* Build configuration list for PBXProject "TikoYesNo" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = 21352231F089C15BC4F30088;
+			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				E0F946F340B00437C6A255AA /* XCLocalSwiftPackageReference "../../../packages/tikokit-ios" */,
+			);
+			preferredProjectObjectVersion = 77;
+			productRefGroup = D161094920912CD4DE1A244F /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				0286DE3209637543114F6F4E /* TikoYesNo */,
+				23B4F9754A956BEBA2CFFA61 /* TikoYesNoTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		D0B4EE4E65E41C9A3CB6D756 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2BF1E91528BDF2CC5A5DD228 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		059454E0AA96941EDF1905D6 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				EC6CE986289B68B4B9EF34F6 /* TikoYesNoApp.swift in Sources */,
+				A28C1B0D174587280817DCA0 /* YesNoSpeechService.swift in Sources */,
+				AEF826E4C08B5590BC419989 /* YesNoView.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D4E2B013E56ABB9074B2D920 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				05A0DFBE3E8BEF5F79148D2B /* TikoYesNoTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		431611DAB23667B59FA959F2 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 0286DE3209637543114F6F4E /* TikoYesNo */;
+			targetProxy = 026E40E9D6AB9AAFCF4D1C77 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		1B0251FE5A87E81B3D164678 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = "";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		72C20CB92C4A1844A889B48D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = "";
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		840FBAB12BB94FAB542F87A0 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				INFOPLIST_FILE = Sources/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = mt.tiko.yesno;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		88B423E681D72549EB315679 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = mt.tiko.TikoYesNoTests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/TikoYesNo.app/TikoYesNo";
+			};
+			name = Release;
+		};
+		AB89881C7BF90ACB2E09FCE4 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = mt.tiko.TikoYesNoTests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/TikoYesNo.app/TikoYesNo";
+			};
+			name = Debug;
+		};
+		C56264099708FF92B9401BAD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				INFOPLIST_FILE = Sources/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = mt.tiko.yesno;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		1CC911E99D93E97D67E743F8 /* Build configuration list for PBXNativeTarget "TikoYesNo" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C56264099708FF92B9401BAD /* Debug */,
+				840FBAB12BB94FAB542F87A0 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		676F314800A5D68895D75953 /* Build configuration list for PBXProject "TikoYesNo" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				72C20CB92C4A1844A889B48D /* Debug */,
+				1B0251FE5A87E81B3D164678 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		7C743DB268798AD33A7C3F8D /* Build configuration list for PBXNativeTarget "TikoYesNoTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				AB89881C7BF90ACB2E09FCE4 /* Debug */,
+				88B423E681D72549EB315679 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCLocalSwiftPackageReference section */
+		E0F946F340B00437C6A255AA /* XCLocalSwiftPackageReference "../../../packages/tikokit-ios" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = "../../../packages/tikokit-ios";
+		};
+/* End XCLocalSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		D7247D1EFCE9E72267767EB4 /* TikoKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = TikoKit;
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = C63585DBACC3A18EB0C3AA33 /* Project object */;
+}

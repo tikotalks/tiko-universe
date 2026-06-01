@@ -1,0 +1,42 @@
+name = "tiko-communication-api-dev"
+main = "src/index.ts"
+compatibility_date = "2026-05-27"
+account_id = "dc2b7d14a69351375cab6de9a13ddee9"
+workers_dev = true
+
+[vars]
+ALLOWED_ORIGINS = "https://admin.tikoapps.org,https://dev.admin.tikoapps.org,http://localhost:5173,http://localhost:4173"
+MAGIC_LINK_FROM_EMAIL = "Tiko <noreply@tikotalks.com>"
+# Set COMMUNICATION_API_KEY with `wrangler secret put COMMUNICATION_API_KEY`; service callers use it as a bearer token.
+# Set RESEND_API_KEY with `wrangler secret put RESEND_API_KEY`; do not commit real API keys.
+
+[[d1_databases]]
+binding = "COMMUNICATION_DB"
+database_name = "tiko-db"
+database_id = "f99b61ae-6a78-4670-bb9c-cdc4f634264a"
+migrations_dir = "migrations"
+
+[[routes]]
+pattern = "dev.api.tikotalks.com/v1/communication/*"
+zone_name = "tikotalks.com"
+
+# ── Production environment ──────────────────────────────────────
+# Deploy with: npx wrangler deploy --env production
+
+[env.production]
+name = "tiko-communication-api"
+workers_dev = false
+
+[env.production.vars]
+ALLOWED_ORIGINS = "https://admin.tikoapps.org"
+MAGIC_LINK_FROM_EMAIL = "Tiko <noreply@tikotalks.com>"
+
+[[env.production.d1_databases]]
+binding = "COMMUNICATION_DB"
+database_name = "tiko-db"
+database_id = "f99b61ae-6a78-4670-bb9c-cdc4f634264a"
+migrations_dir = "migrations"
+
+[[env.production.routes]]
+pattern = "api.tikotalks.com/v1/communication/*"
+zone_name = "tikotalks.com"

@@ -39,5 +39,5 @@ binding = "CONTENT_CACHE"
 id = "a969d8d9f895433c8053baeb8cdd7405"
 
 [[env.production.routes]]
-pattern = "api.tikoapi.org/v1/content/*"
-zone_name = "tikoapi.org"
+pattern = "api.tikotalks.com/v1/content/*"
+zone_name = "tikotalks.com"

@@ -1,24 +1,26 @@
 name = "tiko-admin-api-dev"
 main = "src/index.ts"
 compatibility_date = "2026-05-27"
-account_id = "8cef251b5fdcf6c6f63db98b7aa49f9a"
+account_id = "dc2b7d14a69351375cab6de9a13ddee9"
 workers_dev = true
 
 [[d1_databases]]
 binding = "AUTH_DB"
 database_name = "tiko-identity"
-database_id = "0b5e035d-6420-451e-8e54-0af5829cc95c"
+database_id = "036a1726-ac16-48a9-ab76-22c3a88ca7ae"
 
 [vars]
 TIKO_ENVIRONMENT = "development"
 ADMIN_EMAIL = "me@sil.mt"
-IDENTITY_BASE_URL = "https://api.tikoapi.org/v1"
-APP_API_URL = "https://dev.api.tikoapi.org/v1/apps"
-GENERATION_API_URL = "https://dev.api.tikoapi.org/v1/generation"
-MEDIA_API_URL = "https://media.tikoapi.org/v1"
+IDENTITY_BASE_URL = "https://api.tikotalks.com/v1"
+APP_API_URL = "https://dev.api.tikotalks.com/v1/apps"
+GENERATION_API_URL = "https://dev.api.tikotalks.com/v1/generation"
+MEDIA_API_URL = "https://media-api.tikotalks.com/v1"
+COMMUNICATION_API_URL = "https://dev.api.tikotalks.com/v1/communication"
 
 # Secrets:
 # TOKEN_PEPPER — same pepper as identity-api, required for email hash verification
+# COMMUNICATION_API_KEY — service key for communication-api proxy calls
 
 # ── Production environment ──────────────────────────────────────
 # Deploy with: npx wrangler deploy --env production
@@ -30,16 +32,17 @@ workers_dev = false
 [[env.production.d1_databases]]
 binding = "AUTH_DB"
 database_name = "tiko-identity"
-database_id = "0b5e035d-6420-451e-8e54-0af5829cc95c"
+database_id = "036a1726-ac16-48a9-ab76-22c3a88ca7ae"
 
 [env.production.vars]
 TIKO_ENVIRONMENT = "production"
 ADMIN_EMAIL = "me@sil.mt"
-IDENTITY_BASE_URL = "https://api.tikoapi.org/v1"
-APP_API_URL = "https://api.tikoapi.org/v1/apps"
-GENERATION_API_URL = "https://api.tikoapi.org/v1/generation"
-MEDIA_API_URL = "https://media.tikoapi.org/v1"
+IDENTITY_BASE_URL = "https://api.tikotalks.com/v1"
+APP_API_URL = "https://api.tikotalks.com/v1/apps"
+GENERATION_API_URL = "https://api.tikotalks.com/v1/generation"
+MEDIA_API_URL = "https://media-api.tikotalks.com/v1"
+COMMUNICATION_API_URL = "https://api.tikotalks.com/v1/communication"
 
 [[env.production.routes]]
-pattern = "admin.tikoapi.org"
+pattern = "admin-api.tikotalks.com"
 custom_domain = true

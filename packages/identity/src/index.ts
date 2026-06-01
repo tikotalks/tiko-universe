@@ -54,7 +54,8 @@ export interface RecoveryEmailResponse {
 }
 
 export interface MagicLinkVerifyRequest {
-  token: string
+  token?: string
+  otp?: string
 }
 
 export interface IdentityClientOptions {
@@ -108,10 +109,15 @@ export class IdentityClient {
   }
 
   verifyMagicLink(input: MagicLinkVerifyRequest): Promise<SessionBundle> {
+    if (!input.token && !input.otp) throw new Error('token or otp is required')
     return this.request<SessionBundle>('/identity/magic-links/verify', {
       method: 'POST',
       body: JSON.stringify(input)
     })
+  }
+
+  verifyOtp(otp: string): Promise<SessionBundle> {
+    return this.verifyMagicLink({ otp })
   }
 
   async logout(sessionToken: string): Promise<void> {

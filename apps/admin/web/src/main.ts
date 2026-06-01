@@ -3,12 +3,31 @@ import { popupService } from '@sil/ui'
 import { createRouter, createWebHistory, type RouteRecordRaw } from 'vue-router'
 import App from './App.vue'
 
+void unregisterLegacyServiceWorkers()
+
+async function unregisterLegacyServiceWorkers(): Promise<void> {
+  if (!('serviceWorker' in navigator)) return
+
+  try {
+    const registrations = await navigator.serviceWorker.getRegistrations()
+    await Promise.all(registrations.map((registration) => registration.unregister()))
+
+    if ('caches' in window) {
+      const cacheNames = await caches.keys()
+      await Promise.all(cacheNames.map((cacheName) => caches.delete(cacheName)))
+    }
+  } catch (error) {
+    console.warn('Unable to clear legacy admin service worker cache', error)
+  }
+}
+
 const routes: RouteRecordRaw[] = [
   { path: '/', redirect: '/images' },
   { path: '/images', name: 'images', component: () => import('./pages/ImageGeneratorPage.vue') },
   { path: '/stories', name: 'stories', component: () => import('./pages/StoryNarratorPage.vue') },
   { path: '/library', name: 'library', component: () => import('./pages/MediaLibraryPage.vue') },
   { path: '/defaults', name: 'defaults', component: () => import('./pages/AppDefaultsPage.vue') },
+  { path: '/support', name: 'support', component: () => import('./pages/CommunicationInboxPage.vue') },
 ]
 
 const router = createRouter({

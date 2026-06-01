@@ -20,6 +20,8 @@ export interface Env extends AuthEnv {
   APP_API_URL?: string
   GENERATION_API_URL?: string
   MEDIA_API_URL?: string
+  COMMUNICATION_API_URL?: string
+  COMMUNICATION_API_KEY?: string
 }
 
 interface AdminSession {
@@ -57,11 +59,16 @@ export default {
     if (path === '/v1/admin/config' && request.method === 'GET') {
       return json({
         data: {
-          appApiUrl: (env.APP_API_URL ?? 'https://dev.api.tikoapi.org/v1/apps').replace(/\/$/, ''),
-          generationApiUrl: (env.GENERATION_API_URL ?? 'https://dev.api.tikoapi.org/v1/generation').replace(/\/$/, ''),
-          mediaApiUrl: (env.MEDIA_API_URL ?? 'https://media.tikoapi.org/v1').replace(/\/$/, ''),
+          appApiUrl: (env.APP_API_URL ?? 'https://dev.api.tikotalks.com/v1/apps').replace(/\/$/, ''),
+          generationApiUrl: (env.GENERATION_API_URL ?? 'https://dev.api.tikotalks.com/v1/generation').replace(/\/$/, ''),
+          mediaApiUrl: (env.MEDIA_API_URL ?? 'https://media-api.tikotalks.com/v1').replace(/\/$/, ''),
+          communicationApiUrl: (env.COMMUNICATION_API_URL ?? 'https://dev.api.tikotalks.com/v1/communication').replace(/\/$/, ''),
         },
       })
+    }
+
+    if (path === '/v1/admin/communication/inbox' && request.method === 'GET') {
+      return withCors(await proxyCommunicationInbox(request, env))
     }
 
     return apiError('not_found', 'Route not found.', 404)
@@ -89,6 +96,28 @@ async function requireAdmin(request: Request, env: Env): Promise<AdminSession | 
   }
 
   return { userId: row.id, emailHash: adminEmailHash, email: adminEmail }
+}
+
+async function proxyCommunicationInbox(request: Request, env: Env): Promise<Response> {
+  if (!env.COMMUNICATION_API_KEY) {
+    return apiError('communication_not_configured', 'Communication service is not configured.', 503)
+  }
+  const incomingUrl = new URL(request.url)
+  const baseUrl = (env.COMMUNICATION_API_URL ?? 'https://dev.api.tikotalks.com/v1/communication').replace(/\/$/, '')
+  const url = new URL(`${baseUrl}/inbox`)
+  const status = incomingUrl.searchParams.get('status')
+  const limit = incomingUrl.searchParams.get('limit')
+  if (status) url.searchParams.set('status', status)
+  if (limit) url.searchParams.set('limit', limit)
+
+  const response = await fetch(url, {
+    headers: { authorization: `Bearer ${env.COMMUNICATION_API_KEY}` }
+  })
+  const body = await response.text()
+  return new Response(body, {
+    status: response.status,
+    headers: { ...CORS_HEADERS, 'Content-Type': response.headers.get('content-type') ?? 'application/json' }
+  })
 }
 
 function normalizeEmail(value: string): string {

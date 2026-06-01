@@ -1,7 +1,7 @@
 import { appUniverse, stableRoutes, type StableRoute } from './content/appUniverse'
 import { docsPages } from './docsContent'
 
-export type WebsiteRouteId = 'home' | 'tools' | 'how-it-works' | 'caregivers' | 'faq' | 'docs'
+export type WebsiteRouteId = 'home' | 'apps' | 'tools' | 'why-tiko' | 'how-it-works' | 'caregivers' | 'faq' | 'docs'
 
 export interface WebsiteRoute {
   id: WebsiteRouteId
@@ -22,13 +22,19 @@ export interface TikoTool {
   useWhen: readonly string[]
 }
 
+export interface ContentPillar {
+  title: string
+  body: string
+}
+
 export const routes: WebsiteRoute[] = [
-  { id: 'home', path: '/', label: 'Home', title: 'TikoTalks', description: 'A calm front door for Tiko tools.' },
-  { id: 'tools', path: '/tools', label: 'Tools', title: 'Tiny apps, each with one clear job.', description: 'A simple look at the first Tiko tools.' },
+  { id: 'home', path: '/', label: 'Home', title: 'TikoTalks', description: 'Beautiful, free communication apps for every child. No ads, no account, any language.' },
+  { id: 'apps', path: '/tools', label: 'Apps', title: 'Five tiny apps. One clear job each.', description: 'A simple look at the Tiko app universe.' },
+  { id: 'why-tiko', path: '/why-tiko', label: 'Why Tiko', title: 'Why Tiko exists.', description: 'Why Tiko is small, free, beautiful, and built for every language.' },
   { id: 'how-it-works', path: '/how-it-works', label: 'How it works', title: 'One Tiko, many screens.', description: 'Tiko starts on the web and keeps native paths aligned.' },
-  { id: 'caregivers', path: '/caregivers', label: 'Caregivers', title: 'Built so the first moment is not an account form.', description: 'Plain trust principles for adults choosing tools.' },
-  { id: 'faq', path: '/faq', label: 'FAQ', title: 'Plain answers before setup.', description: 'Short answers about accounts, claims, platforms, and data.' },
-  { id: 'docs', path: '/docs', label: 'Docs', title: 'Tiko Universe docs.', description: 'Architecture, philosophy, and API docs for the Tiko platform.' }
+  { id: 'caregivers', path: '/caregivers', label: 'Caregivers', title: 'Built so the first moment is not an account form.', description: 'Plain trust principles for adults choosing tools for children.' },
+  { id: 'faq', path: '/faq', label: 'FAQ', title: 'Quick answers.', description: 'Short answers about accounts, ads, platforms, and what Tiko is.' },
+  { id: 'docs', path: '/docs', label: 'Docs', title: 'Tiko Universe docs.', description: 'Technical architecture, product doctrine, and API docs for builders.' }
 ]
 
 export const tools: TikoTool[] = appUniverse.map((app) => ({
@@ -45,13 +51,49 @@ export const tools: TikoTool[] = appUniverse.map((app) => ({
 export const tikoApps = tools
 export { docsPages, stableRoutes }
 
+export const whyTikoPillars: ContentPillar[] = [
+  {
+    title: 'Open instantly. No setup.',
+    body: 'Tiko apps are ready the moment you need them. No account form, no download, no tutorial — just open and use.'
+  },
+  {
+    title: 'One app, one clear job.',
+    body: 'Each Tiko app does exactly one thing. The screen stays simple, calm, and easy to trust — for the child and the adult beside them.'
+  },
+  {
+    title: 'Every language, built in.',
+    body: 'Tiko is multilingual from the ground up, not as an afterthought. Every app speaks the child\'s language — because communication tools that only work in one language leave too many people out.'
+  },
+  {
+    title: 'Free and ad-free, always.',
+    body: 'No trial. No premium gate. No ads. No attention tracking. The tools work the same on day one as they do on day one thousand.'
+  }
+]
+
+export const whyFreePillars: ContentPillar[] = [
+  {
+    title: 'No hesitation.',
+    body: 'Open a tool and try it with a child right now — without deciding whether the moment is worth paying for.'
+  },
+  {
+    title: 'No pressure.',
+    body: 'Tiko doesn\'t use urgency, shame, ads, or upgrade prompts. Nothing turns communication into a transaction.'
+  },
+  {
+    title: 'No hidden bargain.',
+    body: 'Free doesn\'t mean ad-funded. Tiko is not trading a child\'s attention or data for access.'
+  }
+]
+
 export const platformNotes = [
-  { label: 'Web', copy: 'The first place to try Tiko apps, because a link is the fastest way to open a tool.' },
-  { label: 'iOS', copy: 'A native path planned around the same child-first contracts.' },
-  { label: 'Android', copy: 'Android should follow the same small-tool behavior.' }
+  { label: 'Web', copy: 'The fastest way to try Tiko. A link is all it takes — no app store, no download required.' },
+  { label: 'iOS', copy: 'Native iOS apps planned with the same simple, focused experience as the web.' },
+  { label: 'Android', copy: 'Android follows the same approach — small tools, one job each, consistent behaviour.' }
 ]
 
 export const trustPrinciples = [
+  'Free, always.',
+  'No ads. Ever.',
   'No passwords.',
   'No login walls before use.',
   'No child-facing account ceremony.',
@@ -61,27 +103,51 @@ export const trustPrinciples = [
 
 export const faqs = [
   {
+    question: 'What is Tiko?',
+    answer: 'Tiko is a collection of small, free, and beautiful apps that help children communicate, make choices, follow routines, and understand time. Each app does one clear thing and opens instantly — in any language, on any device, without needing an account.'
+  },
+  {
+    question: 'Why does Tiko exist?',
+    answer: 'Because communication should be joyful and immediate. Every child deserves a tool that opens the moment they need it — not after a signup flow, not behind a paywall, and not in only one language.'
+  },
+  {
+    question: 'Is Tiko really free?',
+    answer: 'Yes. The core Tiko apps are free, always. They are not a temporary preview, not a teaser, and not an upgrade funnel.'
+  },
+  {
+    question: 'Will Tiko show ads?',
+    answer: 'No. No ads, ever. Tiko should be safe to open beside a child without commercial content, sponsored prompts, or attention extraction.'
+  },
+  {
     question: 'Do I need an account to use Tiko?',
-    answer: 'No. Tiko apps are designed to open and work without a login wall. Optional caregiver recovery may come later through email magic links, but the child-facing app should not start with account setup.'
+    answer: 'No. Tiko apps open and work without a login wall. Optional caregiver recovery may come later through email magic links, but the child-facing app never starts with account setup.'
   },
   {
     question: 'Is Tiko a therapy or medical product?',
-    answer: 'No. Tiko is a set of communication and learning support tools. It may be useful in care, family, classroom, or support contexts, but it does not diagnose, treat, or promise outcomes.'
+    answer: 'No. Tiko is a set of communication and daily-life tools. They may be useful in care, classroom, or home contexts, but Tiko does not diagnose, treat, or promise outcomes. Caregivers and professionals decide whether a tool fits their situation.'
   },
   {
     question: 'Which app should I start with?',
-    answer: 'Start with the smallest tool that matches the moment. Use Yes No for simple answers, Type for written messages, Cards for visual choices, Sequence for ordered steps, and Timer for visible time.'
-  },
-  {
-    question: 'Does Tiko work on phones and tablets?',
-    answer: 'The web experience should work well on phones and tablets first. Native iOS and Android clients are part of the platform direction, using the same API contracts as the web apps.'
-  },
-  {
-    question: 'What happens to data?',
-    answer: 'Tiko is device-first by default. Apps should work immediately, and caregiver recovery or syncing should be optional. Durable platform data belongs behind documented APIs, not hidden browser-only behavior.'
+    answer: 'Start with the simplest tool that fits the moment. Yes No for quick answers, Type for spoken messages, Cards for visual choices, Sequence for step-by-step routines, and Timer for making time visible.'
   },
   {
     question: 'Why separate tiny apps instead of one big app?',
-    answer: 'Children and caregivers often need one clear thing in the moment. Separate tiny apps keep screens simpler, reduce setup, and make each tool easier to trust.'
+    answer: 'One clear thing on the screen is easier to understand and trust than a complicated panel. Separate tiny apps keep each moment focused, reduce setup, and make each tool simpler to pick up and put down.'
+  },
+  {
+    question: 'Does Tiko work in my language?',
+    answer: 'Tiko is built multilingual from the start, not as a bolt-on. Every app ships with multilingual text and speech support — because communication tools that only work in one language leave too many people out.'
+  },
+  {
+    question: 'Does Tiko work on phones and tablets?',
+    answer: 'The web experience works well on phones and tablets first. Native iOS and Android apps are part of the plan, using the same API contracts as the web apps.'
+  },
+  {
+    question: 'What happens to data?',
+    answer: 'Tiko is device-first by default. Apps work immediately without an account. Caregiver recovery and syncing are optional and always transparent.'
+  },
+  {
+    question: 'How does the media library work in Cards?',
+    answer: 'Cards includes built-in image categories served from the Tiko media library. Thousands of clear, colourful images are ready to use — no upload or setup needed.'
   }
 ]

@@ -9,8 +9,17 @@ let package = Package(
     products: [
         .library(name: "TikoKit", targets: ["TikoKit"])
     ],
+    dependencies: [
+        .package(url: "https://github.com/exyte/PopupView.git", from: "4.0.0")
+    ],
     targets: [
-        .target(name: "TikoKit"),
+        .target(
+            name: "TikoKit",
+            dependencies: [
+                .product(name: "PopupView", package: "PopupView")
+            ],
+            resources: [.process("Resources")]
+        ),
         .testTarget(name: "TikoKitTests", dependencies: ["TikoKit"])
     ]
 )

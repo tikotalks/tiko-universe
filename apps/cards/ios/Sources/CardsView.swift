@@ -3,51 +3,77 @@ import TikoKit
 import UIKit
 
 struct CardsView: View {
-    private let collections = defaultCardCollections
+    @StateObject private var store = CardsStore()
     private let speechService = CardsSpeechService()
 
+    @AppStorage("cards.speechEnabled") private var speechEnabled = true
+    @AppStorage("tiko.language") private var languageCode = "en"
+    @StateObject private var i18n = TikoI18n(app: .cards)
     @State private var speakingCardID: String?
-
-    private let columns = [
-        GridItem(.adaptive(minimum: 140, maximum: 220), spacing: 16)
-    ]
 
     var body: some View {
         TikoAppShell(
-            appName: "Cards",
+            appName: i18n.t("cards.appName"),
             appIcon: "square.grid.2x2.fill",
+            appIconMediaCategory: "animals",
             appColor: .cards,
             actions: [
-                TikoHeaderAction(id: "edit", label: "Edit cards", systemImage: "pencil"),
-                TikoHeaderAction(id: "speak", label: "Speech settings", systemImage: "speaker.wave.2.fill")
-            ]
+                TikoHeaderAction(id: "edit", label: i18n.t("cards.tiles.addNew"), systemImage: "pencil"),
+                TikoHeaderAction(id: "speak", label: i18n.t("common.settings"), systemImage: "speaker.wave.2.fill")
+            ],
+            settingsContent: {
+                TikoSettingsSection(title: i18n.t("cards.settings.title")) {
+                    TikoSettingsToggleRow(title: i18n.t("cards.settings.parentMode"), icon: "speaker.wave.2.fill", appColor: .cards, isOn: $speechEnabled)
+                }
+            }
         ) {
             NavigationStack {
-                ScrollView {
-                    LazyVGrid(columns: columns, spacing: 16) {
-                        ForEach(collections) { collection in
-                            NavigationLink {
-                                CollectionDetailView(
-                                    collection: collection,
-                                    speakingCardID: speakingCardID,
-                                    onSpeak: speak
-                                )
-                            } label: {
-                                CollectionTile(collection: collection)
+                GeometryReader { geometry in
+                    ScrollView {
+                        LazyVGrid(columns: gridColumns(for: geometry.size.width), spacing: 12) {
+                            ForEach(store.collections) { collection in
+                                NavigationLink {
+                                    CollectionDetailView(
+                                        collection: collection,
+                                        isLoadingMedia: store.loadingCollectionIDs.contains(collection.id),
+                                        speakingCardID: speakingCardID,
+                                        onSpeak: speak
+                                    )
+                                    .task {
+                                        await store.hydrateMedia(for: collection.id)
+                                    }
+                                } label: {
+                                    CollectionTile(
+                                        collection: collection,
+                                        thumbnailURL: store.collectionThumbnails[collection.id]
+                                    )
+                                }
+                                .buttonStyle(.plain)
                             }
-                            .buttonStyle(.plain)
                         }
+                        .padding(12)
                     }
-                    .padding(20)
+                    .navigationTitle("Choose a board")
+                    .navigationBarTitleDisplayMode(.inline)
                 }
-                .navigationTitle("Choose a board")
-                .navigationBarTitleDisplayMode(.inline)
+            }
+            .task {
+                await store.hydrateRootThumbnails()
             }
         }
+        .environmentObject(i18n)
+        .onAppear { i18n.setLanguage(languageCode) }
+        .onChange(of: languageCode) { _, code in i18n.setLanguage(code) }
+    }
+
+    private func gridColumns(for width: CGFloat) -> [GridItem] {
+        let count = width >= 640 ? 5 : (width >= 480 ? 4 : 3)
+        return Array(repeating: GridItem(.flexible(), spacing: 12), count: count)
     }
 
     private func speak(_ card: CommunicationCard) {
         UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+        guard speechEnabled else { return }
         speakingCardID = card.id
         speechService.speak(card.speech)
 
@@ -62,58 +88,59 @@ struct CardsView: View {
 
 private struct CollectionTile: View {
     let collection: CardCollection
+    let thumbnailURL: URL?
 
     var body: some View {
-        VStack(spacing: 14) {
-            Image(systemName: collection.symbol)
-                .font(.system(size: 42, weight: .heavy))
-                .foregroundStyle(.white)
-                .frame(width: 84, height: 84)
-                .background(Color(hex: collection.colorHex))
-                .clipShape(RoundedRectangle(cornerRadius: 22, style: .continuous))
-
-            VStack(spacing: 4) {
-                Text(collection.title)
-                    .font(.system(.title3, design: .rounded).weight(.heavy))
-                    .foregroundStyle(Color(hex: 0x0b5a7a))
-
-                Text("\(collection.cards.count) cards")
-                    .font(.system(.caption, design: .rounded).weight(.bold))
-                    .foregroundStyle(.secondary)
+        TikoSquareTile(
+            title: collection.title,
+            subtitle: "\(collection.cards.count)",
+            background: Color(hex: collection.colorHex).opacity(0.72)
+        ) {
+            if let thumbnailURL {
+                CachedCardImage(url: thumbnailURL)
+                    .overlay(Color.black.opacity(0.16))
             }
         }
-        .frame(maxWidth: .infinity, minHeight: 178)
-        .padding(16)
-        .background(.white.opacity(0.72))
-        .clipShape(RoundedRectangle(cornerRadius: 28, style: .continuous))
-        .shadow(color: .black.opacity(0.10), radius: 12, x: 0, y: 8)
     }
 }
 
 private struct CollectionDetailView: View {
     let collection: CardCollection
+    let isLoadingMedia: Bool
     let speakingCardID: String?
     let onSpeak: (CommunicationCard) -> Void
 
-    private let columns = [
-        GridItem(.adaptive(minimum: 128, maximum: 200), spacing: 14)
-    ]
-
     var body: some View {
-        ScrollView {
-            LazyVGrid(columns: columns, spacing: 14) {
-                ForEach(collection.cards) { card in
-                    CommunicationCardTile(
-                        card: card,
-                        isSpeaking: speakingCardID == card.id,
-                        onSpeak: { onSpeak(card) }
-                    )
+        GeometryReader { geometry in
+            ScrollView {
+                LazyVGrid(columns: gridColumns(for: geometry.size.width), spacing: 12) {
+                    ForEach(collection.cards) { card in
+                        CommunicationCardTile(
+                            card: card,
+                            isSpeaking: speakingCardID == card.id,
+                            onSpeak: { onSpeak(card) }
+                        )
+                    }
+                }
+                .padding(12)
+            }
+            .overlay(alignment: .top) {
+                if isLoadingMedia {
+                    ProgressView("Loading pictures…")
+                        .font(.system(.caption, design: .rounded).weight(.bold))
+                        .padding(10)
+                        .background(.ultraThinMaterial, in: Capsule())
+                        .padding(.top, 8)
                 }
             }
-            .padding(20)
         }
         .navigationTitle(collection.title)
         .navigationBarTitleDisplayMode(.inline)
+    }
+
+    private func gridColumns(for width: CGFloat) -> [GridItem] {
+        let count = width >= 640 ? 5 : (width >= 480 ? 4 : 3)
+        return Array(repeating: GridItem(.flexible(), spacing: 12), count: count)
     }
 }
 
@@ -124,31 +151,42 @@ private struct CommunicationCardTile: View {
 
     var body: some View {
         Button(action: onSpeak) {
-            VStack(spacing: 12) {
-                if let symbol = card.symbol {
-                    Image(systemName: symbol)
-                        .font(.system(size: 42, weight: .heavy))
-                        .foregroundStyle(.white)
-                        .frame(width: 88, height: 88)
-                        .background(Color(hex: card.colorHex))
-                        .clipShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
+            TikoSquareTile(
+                title: card.title,
+                background: Color(hex: card.colorHex).opacity(card.imageURL == nil ? 0.82 : 0.45),
+                isActive: isSpeaking
+            ) {
+                if let imageURL = card.imageURL {
+                    CachedCardImage(url: imageURL)
+                        .overlay(Color.black.opacity(0.08))
                 }
-
-                Text(card.title)
-                    .font(.system(.title2, design: .rounded).weight(.heavy))
-                    .foregroundStyle(Color(hex: 0x0b5a7a))
-                    .multilineTextAlignment(.center)
             }
-            .frame(maxWidth: .infinity, minHeight: 162)
-            .padding(14)
-            .background(isSpeaking ? Color(hex: 0xff8a1f).opacity(0.22) : .white.opacity(0.76))
-            .clipShape(RoundedRectangle(cornerRadius: 26, style: .continuous))
-            .shadow(color: .black.opacity(isSpeaking ? 0.16 : 0.08), radius: isSpeaking ? 14 : 10, x: 0, y: isSpeaking ? 10 : 7)
-            .scaleEffect(isSpeaking ? 1.04 : 1)
-            .animation(.spring(response: 0.24, dampingFraction: 0.72), value: isSpeaking)
         }
         .buttonStyle(.plain)
         .accessibilityLabel(card.speech)
+    }
+}
+
+private struct CachedCardImage: View {
+    let url: URL
+    @State private var image: UIImage?
+
+    var body: some View {
+        Group {
+            if let image {
+                Image(uiImage: image)
+                    .resizable()
+                    .scaledToFill()
+            } else {
+                ProgressView()
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .background(.white.opacity(0.18))
+            }
+        }
+        .clipped()
+        .task(id: url) {
+            image = await CardsImageCache.shared.image(for: url)
+        }
     }
 }
 

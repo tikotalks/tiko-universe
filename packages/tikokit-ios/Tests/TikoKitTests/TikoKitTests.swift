@@ -32,4 +32,47 @@ final class TikoKitTests: XCTestCase {
         XCTAssertEqual(TikoAnswerChoice.Icon.text("A"), .text("A"))
         XCTAssertNotEqual(TikoAnswerChoice.Icon.systemName("A"), .text("A"))
     }
+
+    func testColorModeIsExplicitLightDarkOnly() {
+        XCTAssertEqual(TikoColorMode.allCases, [.light, .dark])
+        XCTAssertEqual(TikoColorMode.light.title, "Light")
+        XCTAssertEqual(TikoColorMode.dark.title, "Dark")
+    }
+
+    func testChoiceStylesExposeSettingsLabels() {
+        XCTAssertEqual(TikoChoiceStyle.allCases, [.tiles, .buttons, .compact])
+        XCTAssertEqual(TikoChoiceStyle.tiles.title, "Tiles")
+        XCTAssertEqual(TikoChoiceStyle.buttons.icon, "rectangle.roundedtop.fill")
+        XCTAssertEqual(TikoChoiceStyle.compact.rawValue, "compact")
+    }
+
+    func testRecoverableUserRequiresVerifiedEmail() {
+        let deviceOnly = TikoUser(id: "user-device")
+        let unverifiedEmail = TikoUser(id: "user-email", email: "sil@example.com", emailVerified: false)
+        let recoverable = TikoUser(id: "user-recoverable", email: "sil@example.com", emailVerified: true)
+
+        XCTAssertFalse(deviceOnly.isRecoverable)
+        XCTAssertFalse(unverifiedEmail.isRecoverable)
+        XCTAssertTrue(recoverable.isRecoverable)
+        XCTAssertEqual(TikoIdentityState.from(user: recoverable), .recoverableUser(recoverable))
+    }
+
+    func testDeviceSessionStoreRoundTripsSession() {
+        let suiteName = "TikoKitTests.\(UUID().uuidString)"
+        let defaults = UserDefaults(suiteName: suiteName)!
+        defer { defaults.removePersistentDomain(forName: suiteName) }
+
+        let store = TikoDeviceSessionStore(defaults: defaults, namespace: "test")
+        let session = TikoIdentitySession(
+            user: TikoUser(id: "user-1", displayName: "Sil"),
+            device: TikoIdentityDevice(id: "device-1"),
+            session: TikoIdentitySessionTokens(accessToken: "access", refreshToken: "refresh")
+        )
+
+        store.save(session)
+        XCTAssertEqual(store.load(), session)
+
+        store.clear()
+        XCTAssertNil(store.load())
+    }
 }

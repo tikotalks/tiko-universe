@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest'
+import { afterEach, describe, expect, it, vi } from 'vitest'
 import worker, { hashToken } from '../workers/identity-api/src/index'
 import { IdentityClient, type SessionBundle } from '@tiko/identity'
 
@@ -114,17 +114,25 @@ class MemoryD1Database {
     }
 
     if (normalized.startsWith('INSERT INTO magic_links')) {
-      const [id, userId, emailHash, tokenHash, purpose, expiresAt, createdAt, consumedAt] = values
-      this.magicLinks.set(String(id), { id, user_id: userId, email_hash: emailHash, token_hash: tokenHash, purpose, expires_at: expiresAt, created_at: createdAt, consumed_at: consumedAt })
+      const [id, userId, emailHash, tokenHash, otpHash, purpose, expiresAt, createdAt, consumedAt] = values
+      this.magicLinks.set(String(id), { id, user_id: userId, email_hash: emailHash, token_hash: tokenHash, otp_hash: otpHash, purpose, expires_at: expiresAt, created_at: createdAt, consumed_at: consumedAt })
       return new MemoryResult()
     }
     if (normalized.startsWith('UPDATE magic_links SET consumed_at')) {
-      const [consumedAt, tokenHash] = values
-      const link = [...this.magicLinks.values()].find((row) => row.token_hash === tokenHash)
+      const [consumedAt, hashValue] = values
+      const link = [...this.magicLinks.values()].find(
+        (row) => row.token_hash === hashValue || row.otp_hash === hashValue
+      )
       if (link) link.consumed_at = consumedAt
       return new MemoryResult()
     }
-    if (normalized.startsWith('SELECT id, user_id, email_hash FROM magic_links')) {
+    if (normalized.startsWith('SELECT id, user_id, email_hash, otp_hash FROM magic_links WHERE otp_hash')) {
+      const otpHash = values[0]
+      const now = values[1]
+      const link = [...this.magicLinks.values()].find((row) => row.otp_hash === otpHash && !row.consumed_at && String(row.expires_at) > String(now))
+      return new MemoryResult(link ? [link] : [])
+    }
+    if (normalized.startsWith('SELECT id, user_id, email_hash, otp_hash FROM magic_links WHERE token_hash')) {
       const tokenHash = values[0]
       const now = values[1]
       const link = [...this.magicLinks.values()].find((row) => row.token_hash === tokenHash && !row.consumed_at && String(row.expires_at) > String(now))
@@ -146,9 +154,13 @@ function env(db = new MemoryD1Database()) {
     TOKEN_PEPPER: 'test-pepper',
     MAGIC_LINK_BASE_URL: 'https://example.test/magic',
     ALLOWED_ORIGINS: 'https://app.tiko.test,tiko://native',
-    MAGIC_LINK_TEST_SINK: [] as Array<{ email: string; token: string; url: string }>
+    MAGIC_LINK_TEST_SINK: [] as Array<{ email: string; token: string; otp: string; url: string; webUrl: string }>
   }
 }
+
+afterEach(() => {
+  vi.restoreAllMocks()
+})
 
 async function fetchJson(path: string, init: RequestInit = {}, testEnv = env()) {
   const request = new Request(`https://identity.test${path}`, {
@@ -264,6 +276,47 @@ describe('identity-api endpoints', () => {
     expect(known.body.message).not.toMatch(/exist|found|missing/i)
   })
 
+  it('requests known-user magic-link delivery through communication-api when configured', async () => {
+    const communicationFetch = vi.spyOn(globalThis, 'fetch').mockResolvedValue(new Response(JSON.stringify({ data: { accepted: true, messageId: 'msg_1' } }), { status: 202 }))
+    const testEnv = { ...env(), COMMUNICATION_API_URL: 'https://communication.test/v1/communication', COMMUNICATION_API_KEY: 'comm_test_key' }
+    const created = await fetchJson('/v1/identity/device', { method: 'POST', body: JSON.stringify({}) }, testEnv)
+    const token = (created.body as SessionBundle).session.token
+
+    const response = await fetchJson('/v1/identity/email', {
+      method: 'POST',
+      headers: { authorization: `Bearer ${token}` },
+      body: JSON.stringify({ email: 'caregiver@example.test' })
+    }, testEnv)
+
+    expect(response.response.status).toBe(202)
+    expect(communicationFetch).toHaveBeenCalledTimes(1)
+    expect(communicationFetch).toHaveBeenCalledWith('https://communication.test/v1/communication/email/magic-link', expect.objectContaining({
+      method: 'POST',
+      headers: expect.objectContaining({
+        authorization: 'Bearer comm_test_key',
+        'content-type': 'application/json'
+      })
+    }))
+    const body = JSON.parse(String((communicationFetch.mock.calls[0][1] as RequestInit).body))
+    expect(body).toMatchObject({ to: 'caregiver@example.test' })
+    expect(body.magicLinkUrl).toContain(testEnv.MAGIC_LINK_TEST_SINK[0].token)
+    expect(body.otp).toBe(testEnv.MAGIC_LINK_TEST_SINK[0].otp)
+    expect(body.otp).toMatch(/^\d{6}$/)
+  })
+
+  it('does not request delivery for unknown recovery addresses', async () => {
+    const communicationFetch = vi.spyOn(globalThis, 'fetch').mockResolvedValue(new Response(JSON.stringify({ data: { accepted: true } }), { status: 202 }))
+    const testEnv = { ...env(), COMMUNICATION_API_URL: 'https://communication.test/v1/communication', COMMUNICATION_API_KEY: 'comm_test_key' }
+
+    const response = await fetchJson('/v1/identity/email', {
+      method: 'POST',
+      body: JSON.stringify({ email: 'unknown@example.test' })
+    }, testEnv)
+
+    expect(response.response.status).toBe(202)
+    expect(communicationFetch).not.toHaveBeenCalled()
+  })
+
   it('rejects bad magic-link tokens and consumes valid tokens', async () => {
     const testEnv = env()
     const created = await fetchJson('/v1/identity/device', { method: 'POST', body: JSON.stringify({}) }, testEnv)
@@ -292,6 +345,31 @@ describe('identity-api endpoints', () => {
     const replay = await fetchJson('/v1/identity/magic-links/verify', {
       method: 'POST',
       body: JSON.stringify({ token: magicToken })
+    }, testEnv)
+    expect(replay.response.status).toBe(401)
+  })
+
+  it('verifies magic link via OTP code', async () => {
+    const testEnv = env()
+    const created = await fetchJson('/v1/identity/device', { method: 'POST', body: JSON.stringify({}) }, testEnv)
+    const token = (created.body as SessionBundle).session.token
+    await fetchJson('/v1/identity/email', {
+      method: 'POST',
+      headers: { authorization: `Bearer ${token}` },
+      body: JSON.stringify({ email: 'caregiver@example.test' })
+    }, testEnv)
+    const otp = testEnv.MAGIC_LINK_TEST_SINK[0].otp
+
+    const good = await fetchJson('/v1/identity/magic-links/verify', {
+      method: 'POST',
+      body: JSON.stringify({ otp })
+    }, testEnv)
+    expect(good.response.status).toBe(200)
+    expect((good.body as SessionBundle).user.kind).toBe('recoverable')
+
+    const replay = await fetchJson('/v1/identity/magic-links/verify', {
+      method: 'POST',
+      body: JSON.stringify({ otp })
     }, testEnv)
     expect(replay.response.status).toBe(401)
   })

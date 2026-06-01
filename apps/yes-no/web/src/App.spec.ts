@@ -72,7 +72,7 @@ describe('Yes No web app', () => {
     expect(wrapper.text()).not.toContain('Password')
 
     await flushPromises()
-    expect(fetch).toHaveBeenCalledWith('https://api.tikoapi.org/v1/identity/device', expect.objectContaining({ method: 'POST' }))
+    expect(fetch).toHaveBeenCalledWith('https://api.tikotalks.com/v1/identity/device', expect.objectContaining({ method: 'POST' }))
   })
 
   it('hydrates settings and answer state from the API after device bootstrap', async () => {
@@ -105,7 +105,7 @@ describe('Yes No web app', () => {
     await wrapper.get('textarea').setValue('Tu veux manger?')
 
     await vi.waitFor(() => {
-      expect(fetchMock).toHaveBeenCalledWith('https://api.tikoapi.org/v1/apps/yes-no/settings', expect.objectContaining({ method: 'PUT' }))
+      expect(fetchMock).toHaveBeenCalledWith('https://api.tikotalks.com/v1/apps/yes-no/settings', expect.objectContaining({ method: 'PUT' }))
     })
     expect(window.localStorage.getItem('tiko:yes-no')).toContain('Tu veux manger?')
     await vi.waitFor(() => {
@@ -125,12 +125,12 @@ describe('Yes No web app', () => {
 
     expect(wrapper.text()).toContain('Latest answer: Yes')
     expect(wrapper.text()).toContain('History')
-    expect(fetchMock).toHaveBeenCalledWith('https://api.tikoapi.org/v1/generation/tts', expect.objectContaining({
+    expect(fetchMock).toHaveBeenCalledWith('https://api.tikotalks.com/v1/generation/tts', expect.objectContaining({
       method: 'POST',
       body: expect.stringContaining('Yes')
     }))
     await vi.waitFor(() => {
-      expect(fetchMock).toHaveBeenCalledWith('https://api.tikoapi.org/v1/apps/yes-no/state', expect.objectContaining({
+      expect(fetchMock).toHaveBeenCalledWith('https://api.tikotalks.com/v1/apps/yes-no/state', expect.objectContaining({
         method: 'PUT',
         body: expect.stringContaining('"answerHistory":["yes"]')
       }))
@@ -153,7 +153,7 @@ describe('Yes No web app', () => {
     await wrapper.get('textarea').setValue('Do you want music?')
     await wrapper.get('.yes-no-app__speak').trigger('click')
 
-    expect(fetch).toHaveBeenCalledWith('https://api.tikoapi.org/v1/generation/tts', expect.objectContaining({
+    expect(fetch).toHaveBeenCalledWith('https://api.tikotalks.com/v1/generation/tts', expect.objectContaining({
       body: expect.stringContaining('Do you want music?')
     }))
     expect(window.localStorage.getItem('tiko:yes-no')).toContain('Do you want music?')

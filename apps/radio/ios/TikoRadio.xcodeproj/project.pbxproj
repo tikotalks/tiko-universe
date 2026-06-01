@@ -1,0 +1,469 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		3CEB20E474AC7A4755794223 /* RadioSupportViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59529CBA793A9109D0A98D4C /* RadioSupportViews.swift */; };
+		3E791C15BEC079CF6FC7E59E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 75E41645927137FAEBA203E8 /* Assets.xcassets */; };
+		4714C61492F287F7C3C0C019 /* YouTubePlaybackBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C73BBE6FEDFFA5DE99385BC /* YouTubePlaybackBridge.swift */; };
+		654F2A20607027BDDA8B3BE6 /* TikoRadioApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18B4D8C1E3F12BD0E675A7AA /* TikoRadioApp.swift */; };
+		65C078326585EB201431867D /* TikoKit in Frameworks */ = {isa = PBXBuildFile; productRef = 6D03E6727B5D6130BEC614CC /* TikoKit */; };
+		6A4B14D0B5A456E7C99F9962 /* RadioView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D554990F8B6D5214203045EF /* RadioView.swift */; };
+		795955A8BBCF0D6FBF9E276E /* RadioLibraryStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DC2F0CE35E3A79F4815DE3D /* RadioLibraryStore.swift */; };
+		7E8CCD072CB513BCC46CF3A1 /* RadioPlaybackService.swift in Sources */ = {isa = PBXBuildFile; fileRef = D79EE4617893EC2DA91D30CC /* RadioPlaybackService.swift */; };
+		8FA44C8F5278E6B7304ACCCF /* TikoRadioTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C10F4D15A1B9E163D45B6C7E /* TikoRadioTests.swift */; };
+		974158368AEA9ED06A3260D9 /* RadioModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = F03EEB0E43F08257135FD2ED /* RadioModels.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		A083EBDB82BF8B2E82839A70 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D3FE3C4442AC74025175806C /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 9DE0C920168534855696A955;
+			remoteInfo = TikoRadio;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		03715B4CD12D3D040F425685 /* TikoRadioTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = TikoRadioTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		18B4D8C1E3F12BD0E675A7AA /* TikoRadioApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TikoRadioApp.swift; sourceTree = "<group>"; };
+		2DC2F0CE35E3A79F4815DE3D /* RadioLibraryStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RadioLibraryStore.swift; sourceTree = "<group>"; };
+		3F8B67EBA4AAB2F3AF4067C6 /* tikokit-ios */ = {isa = PBXFileReference; lastKnownFileType = folder; name = "tikokit-ios"; path = "../../../packages/tikokit-ios"; sourceTree = SOURCE_ROOT; };
+		59529CBA793A9109D0A98D4C /* RadioSupportViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RadioSupportViews.swift; sourceTree = "<group>"; };
+		75E41645927137FAEBA203E8 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		7F3786B8F2D3DF95A603F404 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		88B1A13F79D6851C959281CE /* TikoRadio.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = TikoRadio.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		8C73BBE6FEDFFA5DE99385BC /* YouTubePlaybackBridge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YouTubePlaybackBridge.swift; sourceTree = "<group>"; };
+		C10F4D15A1B9E163D45B6C7E /* TikoRadioTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TikoRadioTests.swift; sourceTree = "<group>"; };
+		D554990F8B6D5214203045EF /* RadioView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RadioView.swift; sourceTree = "<group>"; };
+		D79EE4617893EC2DA91D30CC /* RadioPlaybackService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RadioPlaybackService.swift; sourceTree = "<group>"; };
+		F03EEB0E43F08257135FD2ED /* RadioModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RadioModels.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		F6CE61FC27D040FC2E9E7254 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				65C078326585EB201431867D /* TikoKit in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		0EE901F1FBD37E65360E953C = {
+			isa = PBXGroup;
+			children = (
+				D8B103984FF8DAF4C4B7A3DB /* Packages */,
+				0FAF6FBA6C8BAE4E9E4E53CC /* Sources */,
+				CC7B8F8170919DD2F6C4A2DB /* Tests */,
+				33686173E62ED79ABC7F801D /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		0FAF6FBA6C8BAE4E9E4E53CC /* Sources */ = {
+			isa = PBXGroup;
+			children = (
+				75E41645927137FAEBA203E8 /* Assets.xcassets */,
+				7F3786B8F2D3DF95A603F404 /* Info.plist */,
+				2DC2F0CE35E3A79F4815DE3D /* RadioLibraryStore.swift */,
+				F03EEB0E43F08257135FD2ED /* RadioModels.swift */,
+				D79EE4617893EC2DA91D30CC /* RadioPlaybackService.swift */,
+				59529CBA793A9109D0A98D4C /* RadioSupportViews.swift */,
+				D554990F8B6D5214203045EF /* RadioView.swift */,
+				18B4D8C1E3F12BD0E675A7AA /* TikoRadioApp.swift */,
+				8C73BBE6FEDFFA5DE99385BC /* YouTubePlaybackBridge.swift */,
+			);
+			path = Sources;
+			sourceTree = "<group>";
+		};
+		33686173E62ED79ABC7F801D /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				88B1A13F79D6851C959281CE /* TikoRadio.app */,
+				03715B4CD12D3D040F425685 /* TikoRadioTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		CC7B8F8170919DD2F6C4A2DB /* Tests */ = {
+			isa = PBXGroup;
+			children = (
+				C10F4D15A1B9E163D45B6C7E /* TikoRadioTests.swift */,
+			);
+			path = Tests;
+			sourceTree = "<group>";
+		};
+		D8B103984FF8DAF4C4B7A3DB /* Packages */ = {
+			isa = PBXGroup;
+			children = (
+				3F8B67EBA4AAB2F3AF4067C6 /* tikokit-ios */,
+			);
+			name = Packages;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		445BD80438A57C23FFC7B6CC /* TikoRadioTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F8CBB58E71E83D4DECAED284 /* Build configuration list for PBXNativeTarget "TikoRadioTests" */;
+			buildPhases = (
+				B4703BE5DFB1A04F40765E5A /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				D7952073E63B1B9658922DD2 /* PBXTargetDependency */,
+			);
+			name = TikoRadioTests;
+			packageProductDependencies = (
+			);
+			productName = TikoRadioTests;
+			productReference = 03715B4CD12D3D040F425685 /* TikoRadioTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		9DE0C920168534855696A955 /* TikoRadio */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 1FEC512A2D4630069370A6E4 /* Build configuration list for PBXNativeTarget "TikoRadio" */;
+			buildPhases = (
+				4BFB0CBBFAF7E121DC408F1A /* Sources */,
+				4E8A79E308E0DB7216F5477C /* Resources */,
+				F6CE61FC27D040FC2E9E7254 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = TikoRadio;
+			packageProductDependencies = (
+				6D03E6727B5D6130BEC614CC /* TikoKit */,
+			);
+			productName = TikoRadio;
+			productReference = 88B1A13F79D6851C959281CE /* TikoRadio.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		D3FE3C4442AC74025175806C /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1430;
+				TargetAttributes = {
+					445BD80438A57C23FFC7B6CC = {
+						DevelopmentTeam = "";
+					};
+					9DE0C920168534855696A955 = {
+						DevelopmentTeam = "";
+					};
+				};
+			};
+			buildConfigurationList = C3F8ED7C018EA6BAA682B946 /* Build configuration list for PBXProject "TikoRadio" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = 0EE901F1FBD37E65360E953C;
+			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				2F4FFCBAF8A8ECE55D923CD6 /* XCLocalSwiftPackageReference "../../../packages/tikokit-ios" */,
+			);
+			preferredProjectObjectVersion = 77;
+			productRefGroup = 33686173E62ED79ABC7F801D /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				9DE0C920168534855696A955 /* TikoRadio */,
+				445BD80438A57C23FFC7B6CC /* TikoRadioTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		4E8A79E308E0DB7216F5477C /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3E791C15BEC079CF6FC7E59E /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		4BFB0CBBFAF7E121DC408F1A /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				795955A8BBCF0D6FBF9E276E /* RadioLibraryStore.swift in Sources */,
+				974158368AEA9ED06A3260D9 /* RadioModels.swift in Sources */,
+				7E8CCD072CB513BCC46CF3A1 /* RadioPlaybackService.swift in Sources */,
+				3CEB20E474AC7A4755794223 /* RadioSupportViews.swift in Sources */,
+				6A4B14D0B5A456E7C99F9962 /* RadioView.swift in Sources */,
+				654F2A20607027BDDA8B3BE6 /* TikoRadioApp.swift in Sources */,
+				4714C61492F287F7C3C0C019 /* YouTubePlaybackBridge.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B4703BE5DFB1A04F40765E5A /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8FA44C8F5278E6B7304ACCCF /* TikoRadioTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		D7952073E63B1B9658922DD2 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 9DE0C920168534855696A955 /* TikoRadio */;
+			targetProxy = A083EBDB82BF8B2E82839A70 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		7009ADF475690C411130AC4B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = mt.tiko.TikoRadioTests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/TikoRadio.app/TikoRadio";
+			};
+			name = Release;
+		};
+		7A4068E5B8BD9634977E263F /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = "";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		B4197C9DC7770D92AB59B5FD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = "";
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		C4B37271B76D9AE9CE191F0F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				INFOPLIST_FILE = Sources/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = mt.tiko.radio;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		D7CBC5ECF5805C95EA37F330 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				INFOPLIST_FILE = Sources/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = mt.tiko.radio;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		FEEAFD3D539CB4DA35B2113E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = mt.tiko.TikoRadioTests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/TikoRadio.app/TikoRadio";
+			};
+			name = Debug;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		1FEC512A2D4630069370A6E4 /* Build configuration list for PBXNativeTarget "TikoRadio" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C4B37271B76D9AE9CE191F0F /* Debug */,
+				D7CBC5ECF5805C95EA37F330 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		C3F8ED7C018EA6BAA682B946 /* Build configuration list for PBXProject "TikoRadio" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B4197C9DC7770D92AB59B5FD /* Debug */,
+				7A4068E5B8BD9634977E263F /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		F8CBB58E71E83D4DECAED284 /* Build configuration list for PBXNativeTarget "TikoRadioTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				FEEAFD3D539CB4DA35B2113E /* Debug */,
+				7009ADF475690C411130AC4B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCLocalSwiftPackageReference section */
+		2F4FFCBAF8A8ECE55D923CD6 /* XCLocalSwiftPackageReference "../../../packages/tikokit-ios" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = "../../../packages/tikokit-ios";
+		};
+/* End XCLocalSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		6D03E6727B5D6130BEC614CC /* TikoKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = TikoKit;
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = D3FE3C4442AC74025175806C /* Project object */;
+}

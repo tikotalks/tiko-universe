@@ -1,4 +1,5 @@
 import { defineComponent, h, watch } from 'vue'
+export { default as TikoLogo } from './TikoLogo.vue'
 import type { GenerationTtsRequest, LegacyTtsResponse } from '@tiko/media'
 import { generationTtsCacheKey, isGenerationTtsResponse } from '@tiko/media'
 import { Button, Icon } from '@sil/ui'
@@ -107,7 +108,7 @@ function createBrowserFallback(fallbackUsed = false, error?: string): TikoTtsRes
 }
 
 export function createTikoTtsClient(options: TikoTtsClientOptions = {}) {
-  const workerUrl = normalizeBaseUrl(options.workerUrl ?? 'https://api.tikoapi.org/v1')
+  const workerUrl = normalizeBaseUrl(options.workerUrl ?? 'https://api.tikotalks.com/v1')
   const cdnUrl = normalizeBaseUrl(options.cdnUrl ?? 'https://tts.tikocdn.org')
   const fetcher = options.fetcher ?? globalThis.fetch
   const memoryCache = new Map<string, TikoTtsResponse>()
@@ -120,7 +121,7 @@ export function createTikoTtsClient(options: TikoTtsClientOptions = {}) {
     if (workerUrl.endsWith('/generate')) return workerUrl
     if (workerUrl.endsWith('/v1')) return `${workerUrl}/generation/tts`
     if (workerUrl.endsWith('/v1/generation')) return `${workerUrl}/tts`
-    if (workerUrl.includes('tts.tikoapi.org')) return `${workerUrl}/generate`
+    if (workerUrl.includes('tts.tikotalks.com')) return `${workerUrl}/generate`
     return `${workerUrl}/v1/generation/tts`
   }
 

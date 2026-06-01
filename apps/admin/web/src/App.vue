@@ -7,8 +7,9 @@ import { useAdminAuth } from './composables/useAdminAuth'
 
 const route = useRoute()
 const router = useRouter()
-const { token, user, loading, error, isAuthed, verify, logout } = useAdminAuth()
-const tokenInput = ref(token.value)
+const { token, user, loading, error, loginMessage, isAuthed, verify, requestMagicLink, verifyMagicLink, logout } = useAdminAuth()
+const emailInput = ref('')
+const magicLinkInput = ref('')
 
 const actions: TikoHeaderAction[] = [
   { id: 'logout', label: 'Logout', icon: 'ui/logout' },
@@ -19,21 +20,41 @@ const navItems = [
   { to: '/stories', label: 'Stories', icon: '♪' },
   { to: '/library', label: 'Library', icon: '☰' },
   { to: '/defaults', label: 'Defaults', icon: '▦' },
+  { to: '/support', label: 'Support', icon: '@' },
 ]
 
-onMounted(() => {
-  if (token.value) verify()
+onMounted(async () => {
+  // Check for magic link token in URL first (user clicked email link)
+  const urlToken = route.query.token as string | undefined
+  if (urlToken) {
+    await verifyMagicLink(urlToken)
+    await router.replace({ query: {} })
+    return
+  }
+  // Silently re-verify stored token — don't show errors for stale sessions
+  if (token.value) {
+    await verify()
+    // If verify failed, silently clear stale credentials
+    if (!isAuthed.value) {
+      logout()
+    }
+  }
 })
 
 function onHeaderAction(id: string) {
   if (id === 'logout') {
     logout()
-    tokenInput.value = ''
+    emailInput.value = ''
+    magicLinkInput.value = ''
   }
 }
 
-async function unlock() {
-  await verify(tokenInput.value)
+async function sendMagicLink() {
+  await requestMagicLink(emailInput.value)
+}
+
+async function unlockWithMagicLink() {
+  await verifyMagicLink(magicLinkInput.value)
 }
 </script>
 
@@ -49,18 +70,32 @@ async function unlock() {
       <section v-if="!isAuthed" class="admin-login">
         <div class="admin-login__card">
           <h1>Admin dashboard</h1>
-          <p>Only the configured Tiko admin account can unlock this dashboard.</p>
+          <p>Use the configured admin email. The dashboard unlocks after the magic link verifies your Tiko identity session.</p>
           <label class="admin-login__field">
-            <span>Session token</span>
-            <textarea
-              v-model="tokenInput"
-              placeholder="Paste Tiko identity bearer token…"
-              rows="4"
+            <span>Email</span>
+            <input
+              v-model="emailInput"
+              type="email"
+              autocomplete="email"
+              placeholder="your@email.com"
             />
           </label>
+          <button class="admin-login__button" :disabled="loading" @click="sendMagicLink">
+            {{ loading ? 'Sending…' : 'Send magic link' }}
+          </button>
+
+          <label class="admin-login__field">
+            <span>Sign-in code or magic link</span>
+            <textarea
+              v-model="magicLinkInput"
+              placeholder="Enter the 6-digit code, or paste the link from your email…"
+              rows="3"
+            />
+          </label>
+          <p v-if="loginMessage" class="admin-login__message">{{ loginMessage }}</p>
           <p v-if="error" class="admin-login__error">{{ error }}</p>
-          <button class="admin-login__button" :disabled="loading" @click="unlock">
-            {{ loading ? 'Checking…' : 'Unlock dashboard' }}
+          <button class="admin-login__button admin-login__button--secondary" :disabled="loading" @click="unlockWithMagicLink">
+            {{ loading ? 'Checking…' : 'Verify and unlock' }}
           </button>
         </div>
       </section>
@@ -186,6 +221,7 @@ async function unlock() {
     font-size: 0.85rem;
   }
 
+  input,
   textarea {
     width: 100%;
     box-sizing: border-box;
@@ -194,7 +230,16 @@ async function unlock() {
     padding: 0.75rem;
     background: var(--color-background);
     color: var(--color-foreground);
+  }
+
+  textarea {
     resize: vertical;
+  }
+
+  &__message {
+    color: var(--color-success);
+    font-size: 0.85rem;
+    font-weight: 700;
   }
 
   &__error {
@@ -214,6 +259,11 @@ async function unlock() {
     cursor: pointer;
 
     &:disabled { opacity: 0.6; cursor: wait; }
+
+    &--secondary {
+      margin-top: 0.65rem;
+      background: color-mix(in srgb, var(--tiko-app-primary), var(--color-background) 22%);
+    }
   }
 }
 </style>

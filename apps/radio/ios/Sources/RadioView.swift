@@ -1,341 +1,434 @@
 import SwiftUI
 import TikoKit
-import WebKit
-
-// MARK: - WebViewRepresentable
-
-private struct HiddenWebView: UIViewRepresentable {
-    let controller: YouTubePlaybackBridge
-
-    func makeUIView(context: Context) -> WKWebView {
-        controller.webView
-    }
-
-    func updateUIView(_ uiView: WKWebView, context: Context) {}
-}
-
-// MARK: - AddTrackSheet
-
-struct AddTrackSheet: View {
-    @State private var youtubeUrl = ""
-    @State private var trackTitle = ""
-    @State private var trackArtist = ""
-    @Environment(\.dismiss) private var dismiss
-    var onAdd: (RadioTrack) -> Void
-
-    var body: some View {
-        NavigationStack {
-            Form {
-                Section("Add from YouTube") {
-                    TextField("YouTube URL or Video ID", text: $youtubeUrl)
-                        .textInputAutocapitalization(.never)
-                        .autocorrectionDisabled()
-
-                    TextField("Title (optional — auto-filled from URL)", text: $trackTitle)
-                    TextField("Artist (optional)", text: $trackArtist)
-
-                    Button(action: addYouTubeTrack) {
-                        HStack {
-                            Image(systemName: "link")
-                            Text("Add YouTube Track")
-                        }
-                    }
-                    .disabled(youtubeUrl.trimmingCharacters(in: .whitespaces).isEmpty)
-                }
-
-                Section("Upload Audio File") {
-                    Button(action: { /* DocumentPicker would be wired here */ }) {
-                        HStack {
-                            Image(systemName: "doc.badge.plus")
-                            Text("Choose Audio File")
-                        }
-                    }
-                    Text("File uploads require R2 storage configuration.")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                }
-            }
-            .navigationTitle("Add Track")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel") { dismiss() }
-                }
-            }
-        }
-    }
-
-    private func addYouTubeTrack() {
-        let videoId = YouTubeVideoIDParser.parse(youtubeUrl)
-
-        let title = trackTitle.trimmingCharacters(in: .whitespaces).isEmpty
-            ? "YouTube Track (\(videoId.prefix(8)))"
-            : trackTitle.trimmingCharacters(in: .whitespaces)
-        let artist = trackArtist.trimmingCharacters(in: .whitespaces).isEmpty
-            ? nil
-            : trackArtist.trimmingCharacters(in: .whitespaces)
-
-        let track = RadioTrack(
-            title: title,
-            artist: artist,
-            source: .youtube,
-            youtubeVideoId: videoId
-        )
-        onAdd(track)
-        dismiss()
-    }
-}
-
-// MARK: - RadioView
 
 struct RadioView: View {
-    // Persistence
+    @Environment(\.colorScheme) private var colorScheme
+    @AppStorage("tiko.colorMode") private var colorModeRawValue = TikoColorMode.light.rawValue
+    @AppStorage("tiko.language") private var languageCode = "en"
+
     @AppStorage("radio.currentTrackIndex") private var currentTrackIndex = 0
     @AppStorage("radio.shuffleEnabled") private var shuffleEnabled = false
     @AppStorage("radio.repeatEnabled") private var repeatEnabled = false
+    @AppStorage("radio.parentMode") private var parentMode = true
 
-    // State
+    @StateObject private var i18n = TikoI18n(app: .radio)
+
     @State private var library = RadioLibraryStore()
     @State private var playback = RadioPlaybackService()
-    @State private var showingSettings = false
     @State private var showAddSheet = false
+    @State private var selectedTrackID: RadioTrack.ID?
+    @State private var editTarget: RadioEditTarget?
 
-    // MARK: - Computed Properties
-
-    private var tracks: [RadioTrack] {
-        library.tracks
-    }
+    private var tracks: [RadioTrack] { library.tracks }
+    private var selectedCategoryTracks: [RadioTrack] { library.tracks(in: library.selectedCategoryID) }
+    private var visibleTracks: [RadioTrack] { library.selectedCategoryID == nil ? tracks : selectedCategoryTracks }
 
     private var currentTrack: RadioTrack? {
         guard !tracks.isEmpty else { return nil }
-        let index = currentTrackIndex % tracks.count
+        let index = min(max(currentTrackIndex, 0), tracks.count - 1)
         return tracks[index]
     }
 
-    private var currentDisplayTrack: RadioTrack? {
-        playback.currentTrack ?? currentTrack
+    private var selectedTrack: RadioTrack? {
+        guard let selectedTrackID else { return nil }
+        return tracks.first { $0.id == selectedTrackID }
     }
 
-    private var currentTrackTitle: String {
-        currentDisplayTrack?.title ?? "No Track Selected"
+    private var headerTitle: String {
+        if selectedTrack != nil {
+            return library.selectedCategory?.title ?? i18n.t("radio.appName")
+        } else if library.selectedCategoryID != nil {
+            return i18n.t("radio.collections.title")
+        }
+        return i18n.t("radio.appName")
     }
 
-    private var currentTrackArtist: String? {
-        currentDisplayTrack?.artist
+    private var headerIcon: String {
+        selectedTrack != nil || library.selectedCategoryID != nil ? "chevron.left" : "antenna.radiowaves.left.and.right"
     }
 
-    private var timeDisplay: String {
-        let current = Int(playback.currentTime)
-        let minutes = current / 60
-        let seconds = current % 60
-        let duration = Int(playback.duration ?? currentDisplayTrack?.duration ?? 0)
-        let durMin = duration / 60
-        let durSec = duration % 60
-        return String(format: "%d:%02d / %d:%02d", minutes, seconds, durMin, durSec)
+    private var headerIconAction: (() -> Void)? {
+        if selectedTrack != nil {
+            return { selectedTrackID = nil }
+        } else if library.selectedCategoryID != nil {
+            return { library.selectedCategoryID = nil; selectedTrackID = nil }
+        }
+        return nil
     }
 
-    // MARK: - Body
+    private var relatedTracks: [RadioTrack] {
+        guard let track = selectedTrack else { return [] }
+        return tracks.filter { $0.categoryId == track.categoryId && $0.id != track.id }
+    }
+
+    private var effectiveColorScheme: ColorScheme {
+        (TikoColorMode(rawValue: colorModeRawValue) ?? .light) == .dark ? .dark : .light
+    }
+
+    private var shellBackground: Color {
+        effectiveColorScheme == .dark ? Color(red: 0.08, green: 0.055, blue: 0.095) : Color(red: 0.973, green: 0.965, blue: 0.945)
+    }
+
+    private var radioPrimary: Color { TikoAppColor.radio.palette.primary }
+    private var radioDark: Color { effectiveColorScheme == .dark ? .white : TikoAppColor.radio.palette.dark }
+    private var cardBackground: Color { effectiveColorScheme == .dark ? .white.opacity(0.10) : .white.opacity(0.78) }
+    private var subtleBackground: Color { effectiveColorScheme == .dark ? .white.opacity(0.08) : radioPrimary.opacity(0.12) }
 
     var body: some View {
         TikoAppShell(
-            appName: "Radio",
-            appIcon: "antenna.radiowaves.left.and.right",
+            appName: headerTitle,
+            appIcon: headerIcon,
+            appIconMediaCategory: "music",
+            onIconTap: headerIconAction,
             appColor: .radio,
-            actions: [
-                TikoHeaderAction(id: "settings", label: "Settings", systemImage: "slider.horizontal.3", isActive: showingSettings)
-            ],
-            onAction: { id in
-                if id == "settings" { showingSettings.toggle() }
+            backgroundColor: shellBackground,
+            actions: parentMode ? [
+                TikoHeaderAction(id: "add", label: "Add", systemImage: "plus")
+            ] : [],
+            onAction: { action in
+                if action == "add" { showAddSheet = true }
+            },
+            settingsContent: {
+                TikoSettingsSection(title: i18n.t("radio.settings.title")) {
+                    TikoSettingsToggleRow(title: i18n.t("radio.settings.parentMode"), icon: "lock.open.fill", appColor: .radio, isOn: $parentMode)
+                    TikoSettingsToggleRow(title: i18n.t("radio.settings.shuffle"), icon: "shuffle", appColor: .radio, isOn: $shuffleEnabled)
+                    TikoSettingsToggleRow(title: i18n.t("radio.settings.repeat"), icon: "repeat", appColor: .radio, isOn: $repeatEnabled)
+                }
             }
         ) {
-            VStack(spacing: 20) {
-                // Now Playing
-                VStack(spacing: 8) {
-                    Text(currentTrackTitle)
-                        .font(.system(.title2, design: .rounded).weight(.heavy))
-                        .foregroundStyle(.white)
-                        .lineLimit(1)
-
-                    if let artist = currentTrackArtist, !artist.isEmpty {
-                        Text(artist)
-                            .font(.system(.subheadline, design: .rounded).weight(.medium))
-                            .foregroundStyle(.white.opacity(0.7))
-                            .lineLimit(1)
-                    }
-
-                    // Progress bar
-                    GeometryReader { geo in
-                        ZStack(alignment: .leading) {
-                            Capsule().fill(.white.opacity(0.2))
-                            Capsule().fill(.white).frame(width: geo.size.width * playback.progress)
-                        }
-                    }
-                    .frame(height: 6)
-                    .padding(.horizontal, 32)
-
-                    Text(timeDisplay)
-                        .font(.system(.caption, design: .monospaced).weight(.semibold))
-                        .foregroundStyle(.white.opacity(0.6))
-                }
-                .padding(.top, 24)
-
-                // Transport controls
-                HStack(spacing: 20) {
-                    Button(action: previousTrack) {
-                        Image(systemName: "backward.fill")
-                            .font(.title2.weight(.bold))
-                            .foregroundStyle(.white)
-                            .frame(width: 50, height: 50)
-                            .background(Color.white.opacity(0.18))
-                            .clipShape(Circle())
-                    }
-                    .accessibilityLabel("Previous")
-
-                    Button(action: togglePlay) {
-                        Image(systemName: playback.isPlaying ? "pause.fill" : "play.fill")
-                            .font(.title.weight(.bold))
-                            .foregroundStyle(.white)
-                            .frame(width: 64, height: 64)
-                            .background(Color.white.opacity(0.28))
-                            .clipShape(Circle())
-                    }
-                    .accessibilityLabel(playback.isPlaying ? "Pause" : "Play")
-
-                    Button(action: nextTrack) {
-                        Image(systemName: "forward.fill")
-                            .font(.title2.weight(.bold))
-                            .foregroundStyle(.white)
-                            .frame(width: 50, height: 50)
-                            .background(Color.white.opacity(0.18))
-                            .clipShape(Circle())
-                    }
-                    .accessibilityLabel("Next")
-                }
-
-                // Shuffle + Repeat
-                HStack(spacing: 16) {
-                    Button(action: { shuffleEnabled.toggle() }) {
-                        Image(systemName: "shuffle")
-                            .font(.body.weight(.bold))
-                            .foregroundStyle(shuffleEnabled ? .white : .white.opacity(0.5))
-                            .padding(8)
-                            .background(shuffleEnabled ? Color.white.opacity(0.28) : Color.white.opacity(0.1))
-                            .clipShape(Capsule())
-                    }
-                    .accessibilityLabel("Shuffle")
-
-                    Button(action: { repeatEnabled.toggle() }) {
-                        Image(systemName: "repeat")
-                            .font(.body.weight(.bold))
-                            .foregroundStyle(repeatEnabled ? .white : .white.opacity(0.5))
-                            .padding(8)
-                            .background(repeatEnabled ? Color.white.opacity(0.28) : Color.white.opacity(0.1))
-                            .clipShape(Capsule())
-                    }
-                    .accessibilityLabel("Repeat")
-                }
-
-                // Add Track Button
-                Button(action: { showAddSheet = true }) {
-                    Image(systemName: "plus.circle.fill")
-                        .font(.title3)
-                        .foregroundStyle(.white)
-                }
-                .padding(.top, 4)
-
-                // Library
-                VStack(spacing: 6) {
-                    Text("Library")
-                        .font(.system(.headline, design: .rounded).weight(.heavy))
-                        .foregroundStyle(.white)
-
-                    if tracks.isEmpty {
-                        Text("No tracks yet. Add music to get started.")
-                            .font(.system(.subheadline, design: .rounded))
-                            .foregroundStyle(.white.opacity(0.5))
-                            .padding()
-                    } else {
-                        ScrollView {
-                            LazyVStack(spacing: 4) {
-                                ForEach(Array(tracks.enumerated()), id: \.element.id) { index, track in
-                                    Button(action: { selectTrack(index) }) {
-                                        HStack {
-                                            VStack(alignment: .leading, spacing: 2) {
-                                                Text(track.title)
-                                                    .font(.system(.body, design: .rounded).weight(currentTrackIndex == index ? .heavy : .regular))
-                                                    .foregroundStyle(.white)
-                                                    .lineLimit(1)
-                                                if let artist = track.artist {
-                                                    Text(artist)
-                                                        .font(.system(.caption, design: .rounded))
-                                                        .foregroundStyle(.white.opacity(0.6))
-                                                        .lineLimit(1)
-                                                }
-                                            }
-                                            Spacer()
-                                            if currentTrackIndex == index {
-                                                Image(systemName: "speaker.wave.2.fill")
-                                                    .foregroundStyle(.white)
-                                                    .font(.caption)
-                                            }
-                                        }
-                                        .padding(.vertical, 8)
-                                        .padding(.horizontal, 12)
-                                        .background(currentTrackIndex == index ? Color.white.opacity(0.28) : Color.white.opacity(0.1))
-                                        .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-                .padding(.horizontal, 20)
-
-                // Settings placeholder
-                if showingSettings {
-                    Text("Settings: Language and color mode synced via API.")
-                        .font(.system(.body, design: .rounded).weight(.semibold))
-                        .padding()
-                        .background(.white.opacity(0.35))
-                        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
-                        .padding(.horizontal, 20)
-                }
-            }
+            content
+                .background(
+                    WebViewWindowAttacher(webView: playback.youtubeBridge.webView)
+                )
         }
-        // Hidden WebView for YouTube playback
-        HiddenWebView(controller: playback.youtubeBridge)
-            .frame(width: 1, height: 1)
-            .hidden()
-        .sheet(isPresented: $showAddSheet) {
-            AddTrackSheet { newTrack in
-                addTrack(newTrack)
-            }
+        .tikoPopup(isPresented: $showAddSheet) {
+            AddTrackPopup(
+                categories: library.categories,
+                initialCategoryID: library.selectedCategoryID,
+                onAddTrack: addTrack,
+                onAddCategory: { name in library.addCategory(title: name) },
+                onDismiss: { showAddSheet = false }
+            )
         }
+        .sheet(item: $editTarget) { target in
+            renameSheet(for: target)
+        }
+        .environmentObject(i18n)
         .onAppear {
+            i18n.setLanguage(languageCode)
             library.load()
         }
+        .onChange(of: languageCode) { _, code in
+            i18n.setLanguage(code)
+        }
         .onDisappear {
+            playback.youtubeBridge.webView.removeFromSuperview()
             playback.stop()
         }
     }
 
-    // MARK: - Track Management
+    @ViewBuilder
+    private var content: some View {
+        if let selectedTrack {
+            playerDetail(track: selectedTrack)
+        } else if library.selectedCategoryID != nil {
+            collectionDetail
+        } else {
+            collectionsHome
+        }
+    }
+
+    private var collectionsHome: some View {
+        ScrollView {
+            VStack(alignment: .leading, spacing: 18) {
+                Text(i18n.t("radio.collections.title"))
+                    .font(.system(.largeTitle, design: .rounded).weight(.heavy))
+                    .foregroundStyle(radioDark)
+                    .padding(.horizontal, 20)
+
+                LazyVGrid(columns: [GridItem(.adaptive(minimum: 145), spacing: 14)], spacing: 14) {
+                    ForEach(library.collectionsWithTracks) { category in
+                        collectionTile(category)
+                    }
+                }
+                .padding(.horizontal, 20)
+            }
+            .padding(.vertical, 20)
+        }
+    }
+
+    private var collectionDetail: some View {
+        ScrollView {
+            VStack(alignment: .leading, spacing: 16) {
+                HStack(alignment: .firstTextBaseline) {
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text(library.selectedCategory?.title ?? i18n.t("radio.collections.title"))
+                            .font(.system(.largeTitle, design: .rounded).weight(.heavy))
+                        Text(i18n.t("radio.collections.songs", ["count": visibleTracks.count]))
+                            .font(.system(.subheadline, design: .rounded).weight(.semibold))
+                            .foregroundStyle(radioDark.opacity(0.64))
+                    }
+                    Spacer()
+                }
+                .foregroundStyle(radioDark)
+                .padding(.horizontal, 20)
+
+                if visibleTracks.isEmpty {
+                    emptyState
+                } else {
+                    LazyVGrid(columns: [GridItem(.adaptive(minimum: 142), spacing: 14)], spacing: 14) {
+                        ForEach(visibleTracks) { track in
+                            trackTile(track)
+                        }
+                    }
+                    .padding(.horizontal, 20)
+                }
+            }
+            .padding(.vertical, 20)
+        }
+    }
+
+    private func collectionTile(_ category: RadioCategory) -> some View {
+        let count = library.tracks(in: category.id).count
+        return Button(action: {
+            library.selectedCategoryID = category.id
+            selectedTrackID = nil
+        }) {
+            TikoSquareTile(
+                title: category.title,
+                subtitle: "\(count) songs",
+                background: Color(hex: category.colorHex)
+            ) {
+                Image(systemName: category.symbol)
+                    .font(.system(size: 52, weight: .heavy))
+                    .foregroundStyle(.white)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+            }
+        }
+        .buttonStyle(.plain)
+        .contextMenu {
+            if parentMode {
+                Button { editTarget = .category(category.id) } label: {
+                    Label(i18n.t("radio.management.renameCollection"), systemImage: "pencil")
+                }
+                Button(role: .destructive) { library.removeCategory(id: category.id) } label: {
+                    Label(i18n.t("radio.management.deleteCollection"), systemImage: "trash")
+                }
+            }
+        }
+    }
+
+    private func trackTile(_ track: RadioTrack) -> some View {
+        TikoTile(
+            title: track.title,
+            subtitle: track.artist,
+            minHeight: 170,
+            background: cardBackground,
+            titleColor: radioDark,
+            subtitleColor: radioDark.opacity(0.62),
+            action: {
+                selectedTrackID = track.id
+                selectTrack(track)
+            }
+        ) {
+            artwork(track: track)
+                .frame(height: 112)
+                .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
+        }
+        .contextMenu {
+            if parentMode {
+                Button { editTarget = .track(track.id) } label: {
+                    Label(i18n.t("radio.management.renameSong"), systemImage: "pencil")
+                }
+                Menu(i18n.t("radio.management.moveTo")) {
+                    ForEach(library.categories) { category in
+                        Button(category.title) { library.moveTrack(track, to: category.id) }
+                    }
+                }
+                Button(role: .destructive) { library.removeTrack(id: track.id) } label: {
+                    Label(i18n.t("radio.management.deleteSong"), systemImage: "trash")
+                }
+            }
+        }
+    }
+
+    private func playerDetail(track: RadioTrack) -> some View {
+        ScrollView {
+            VStack(spacing: 18) {
+                Color.clear
+                    .aspectRatio(1, contentMode: .fit)
+                    .frame(maxHeight: 280)
+                    .overlay { artwork(track: track) }
+                    .clipped()
+                    .clipShape(RoundedRectangle(cornerRadius: 32, style: .continuous))
+                    .shadow(color: .black.opacity(effectiveColorScheme == .dark ? 0.35 : 0.12), radius: 18, y: 10)
+
+                VStack(spacing: 6) {
+                    Text(track.title)
+                        .font(.system(.title2, design: .rounded).weight(.heavy))
+                        .foregroundStyle(radioDark)
+                        .multilineTextAlignment(.center)
+                    if let artist = track.artist, !artist.isEmpty {
+                        Text(artist)
+                            .font(.system(.headline, design: .rounded).weight(.semibold))
+                            .foregroundStyle(radioDark.opacity(0.68))
+                    }
+                }
+
+                progressAndControls
+
+                if !relatedTracks.isEmpty {
+                    VStack(alignment: .leading, spacing: 10) {
+                        Text(i18n.t("radio.collections.moreInCollection"))
+                            .font(.system(.headline, design: .rounded).weight(.heavy))
+                            .foregroundStyle(radioDark)
+                        ForEach(relatedTracks) { related in
+                            Button(action: {
+                                selectedTrackID = related.id
+                                selectTrack(related)
+                            }) {
+                                HStack(spacing: 12) {
+                                    artwork(track: related)
+                                        .frame(width: 54, height: 54)
+                                        .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+                                    Text(related.title)
+                                        .font(.system(.body, design: .rounded).weight(.bold))
+                                        .foregroundStyle(radioDark)
+                                        .lineLimit(1)
+                                    Spacer()
+                                }
+                                .padding(10)
+                                .background(cardBackground)
+                                .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
+                            }
+                        }
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                }
+            }
+            .padding(20)
+        }
+    }
+
+    private var progressAndControls: some View {
+        VStack(spacing: 14) {
+            GeometryReader { geo in
+                ZStack(alignment: .leading) {
+                    Capsule().fill(radioPrimary.opacity(effectiveColorScheme == .dark ? 0.26 : 0.18))
+                    Capsule().fill(radioPrimary).frame(width: geo.size.width * playback.progress)
+                }
+            }
+            .frame(height: 7)
+
+            HStack(spacing: 20) {
+                controlButton("backward.fill", size: 50, action: previousTrack)
+                controlButton(playback.isPlaying ? "pause.fill" : "play.fill", size: 66, action: togglePlay)
+                controlButton("forward.fill", size: 50, action: nextTrack)
+            }
+
+            HStack(spacing: 14) {
+                togglePill("shuffle", active: shuffleEnabled) { shuffleEnabled.toggle() }
+                togglePill("repeat", active: repeatEnabled) { repeatEnabled.toggle() }
+            }
+        }
+    }
+
+    private func controlButton(_ symbol: String, size: CGFloat, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            Image(systemName: symbol)
+                .font(.system(size: size > 60 ? 28 : 21, weight: .heavy))
+                .foregroundStyle(radioDark)
+                .frame(width: size, height: size)
+                .background(subtleBackground)
+                .clipShape(Circle())
+        }
+    }
+
+    private func togglePill(_ symbol: String, active: Bool, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            Image(systemName: symbol)
+                .font(.body.weight(.bold))
+                .foregroundStyle(active ? radioDark : radioDark.opacity(0.48))
+                .padding(.horizontal, 14)
+                .padding(.vertical, 9)
+                .background(active ? radioPrimary.opacity(0.22) : subtleBackground)
+                .clipShape(Capsule())
+        }
+    }
+
+    private var emptyState: some View {
+        VStack(spacing: 12) {
+            Image(systemName: "music.note.list")
+                .font(.system(size: 42, weight: .bold))
+                .foregroundStyle(radioDark.opacity(0.55))
+            Text(i18n.t("radio.collections.empty"))
+                .font(.system(.title3, design: .rounded).weight(.heavy))
+                .foregroundStyle(radioDark)
+            Text(i18n.t("radio.collections.addHint"))
+                .font(.system(.body, design: .rounded).weight(.semibold))
+                .foregroundStyle(radioDark.opacity(0.62))
+                .multilineTextAlignment(.center)
+        }
+        .padding(24)
+        .frame(maxWidth: .infinity)
+        .background(cardBackground)
+        .clipShape(RoundedRectangle(cornerRadius: 26, style: .continuous))
+        .padding(.horizontal, 20)
+    }
+
+    @ViewBuilder
+    private func artwork(track: RadioTrack) -> some View {
+        if let thumbnailUrl = track.thumbnailUrl, let url = URL(string: thumbnailUrl) {
+            AsyncImage(url: url) { image in
+                image.resizable().scaledToFill()
+            } placeholder: {
+                ZStack { subtleBackground; ProgressView() }
+            }
+        } else {
+            ZStack {
+                LinearGradient(colors: [radioPrimary.opacity(0.85), radioPrimary.opacity(0.35)], startPoint: .topLeading, endPoint: .bottomTrailing)
+                Image(systemName: "music.note")
+                    .font(.system(size: 40, weight: .heavy))
+                    .foregroundStyle(.white)
+            }
+        }
+    }
+
+    @ViewBuilder
+    private func renameSheet(for target: RadioEditTarget) -> some View {
+        switch target {
+        case .category(let id):
+            let category = library.categories.first { $0.id == id }
+            RenameSheet(
+                title: i18n.t("radio.renameCollection.title"),
+                label: i18n.t("radio.renameCollection.label"),
+                value: category?.title ?? ""
+            ) { newName in
+                library.renameCategory(id: id, title: newName)
+            }
+        case .track(let id):
+            let track = tracks.first { $0.id == id }
+            RenameSheet(
+                title: i18n.t("radio.renameSong.title"),
+                label: i18n.t("radio.renameSong.label"),
+                value: track?.title ?? ""
+            ) { newTitle in
+                library.renameTrack(id: id, title: newTitle)
+            }
+        }
+    }
 
     private func addTrack(_ track: RadioTrack) {
         let wasEmpty = tracks.isEmpty
         library.addTrack(track)
-        if wasEmpty {
-            selectTrack(0)
-        }
+        if wasEmpty { selectTrack(track) }
     }
 
-    private func selectTrack(_ index: Int) {
-        guard index >= 0, index < tracks.count else { return }
+    private func selectTrack(_ track: RadioTrack) {
+        guard let index = tracks.firstIndex(where: { $0.id == track.id }) else { return }
         currentTrackIndex = index
         playCurrentTrack()
     }
-
-    // MARK: - Playback
 
     private func playCurrentTrack() {
         guard let track = currentTrack else { return }
@@ -355,32 +448,44 @@ struct RadioView: View {
     private func nextTrack() {
         guard !tracks.isEmpty else { return }
         if shuffleEnabled {
-            var newIndex = Int.random(in: 0..<tracks.count)
-            while newIndex == currentTrackIndex % tracks.count && tracks.count > 1 {
-                newIndex = Int.random(in: 0..<tracks.count)
-            }
-            currentTrackIndex = newIndex
+            currentTrackIndex = Int.random(in: 0..<tracks.count)
         } else {
             currentTrackIndex = (currentTrackIndex + 1) % tracks.count
         }
+        selectedTrackID = currentTrack?.id
         playCurrentTrack()
     }
 
     private func previousTrack() {
         guard !tracks.isEmpty else { return }
         if shuffleEnabled {
-            var newIndex = Int.random(in: 0..<tracks.count)
-            while newIndex == currentTrackIndex % tracks.count && tracks.count > 1 {
-                newIndex = Int.random(in: 0..<tracks.count)
-            }
-            currentTrackIndex = newIndex
+            currentTrackIndex = Int.random(in: 0..<tracks.count)
         } else {
             currentTrackIndex = (currentTrackIndex - 1 + tracks.count) % tracks.count
         }
+        selectedTrackID = currentTrack?.id
         playCurrentTrack()
     }
 }
 
-#Preview {
-    RadioView()
+private enum RadioEditTarget: Identifiable {
+    case category(String)
+    case track(String)
+
+    var id: String {
+        switch self {
+        case .category(let id):
+            return "category:\(id)"
+        case .track(let id):
+            return "track:\(id)"
+        }
+    }
 }
+
+
+struct RadioView_Previews: PreviewProvider {
+    static var previews: some View {
+        RadioView()
+    }
+}
+
