@@ -3,19 +3,23 @@ import TikoKit
 import UIKit
 
 struct YesNoView: View {
-    private let defaultSentence = "Do you want to go eat?"
     private let speechService = YesNoSpeechService()
 
     @AppStorage("yesno.sentence") private var sentence = ""
     @AppStorage("yesno.speechEnabled") private var speechEnabled = true
     @AppStorage("yesno.choiceStyle") private var choiceStyleRawValue = TikoChoiceStyle.tiles.rawValue
     @AppStorage("tiko.colorMode") private var colorModeRawValue = TikoColorMode.light.rawValue
+    @AppStorage("tiko.language") private var languageCode = "en"
     @State private var showingHistory = false
     @State private var showingChoiceStyle = false
     @AppStorage("yesno.questionHistory") private var historyData = Data()
 
+    @StateObject private var i18n = TikoI18n(app: .yesNo)
+
     @State private var history: [String] = []
     @State private var feedbackBackground: Color?
+
+    private var defaultSentence: String { i18n.t("yesNo.sentence.default") }
 
     private var effectiveSentence: String {
         sentence.isEmpty ? defaultSentence : sentence
@@ -49,28 +53,30 @@ struct YesNoView: View {
         TikoChoiceStyle(rawValue: choiceStyleRawValue) ?? .tiles
     }
 
-    private let choices = [
-        TikoAnswerChoice(id: "yes", label: "Yes", icon: .systemName("checkmark"), tone: .primary),
-        TikoAnswerChoice(id: "no", label: "No", icon: .systemName("xmark"), tone: .secondary)
-    ]
+    private var localizedChoices: [TikoAnswerChoice] {
+        [
+            TikoAnswerChoice(id: "yes", label: i18n.t("yesNo.answers.yes"), icon: .systemName("checkmark"), tone: .primary),
+            TikoAnswerChoice(id: "no", label: i18n.t("yesNo.answers.no"), icon: .systemName("xmark"), tone: .secondary)
+        ]
+    }
 
     var body: some View {
         TikoAppShell(
-            appName: "Yes No",
+            appName: i18n.t("yesNo.settings.title"),
             appIcon: "checkmark.circle",
             appIconMediaCategory: "emotions",
             appColor: .yesNo,
             backgroundColor: shellBackground,
             darkBackgroundColor: darkShellBackground,
             actions: [
-                TikoHeaderAction(id: "history", label: "History", systemImage: "clock", isActive: showingHistory)
+                TikoHeaderAction(id: "history", label: i18n.t("yesNo.history.title"), systemImage: "clock", isActive: showingHistory)
             ],
             onAction: handleHeaderAction,
             settingsContent: {
-                TikoSettingsSection(title: "Yes No") {
-                    TikoSettingsToggleRow(title: "Speak answers", icon: "speaker.wave.2.fill", appColor: .yesNo, isOn: $speechEnabled)
+                TikoSettingsSection(title: i18n.t("yesNo.settings.title")) {
+                    TikoSettingsToggleRow(title: i18n.t("yesNo.settings.speakAnswers"), icon: "speaker.wave.2.fill", appColor: .yesNo, isOn: $speechEnabled)
                     TikoSettingsActionRow(
-                        title: "Answer style",
+                        title: i18n.t("yesNo.settings.answerStyle"),
                         value: choiceStyle.title,
                         icon: choiceStyle.icon,
                         appColor: .yesNo
@@ -114,12 +120,17 @@ struct YesNoView: View {
                     .accessibilityLabel("Clear sentence")
                 }
 
-                TikoChoiceGrid(choices: choices, style: choiceStyle, onSelect: selectChoice)
+                TikoChoiceGrid(choices: localizedChoices, style: choiceStyle, onSelect: selectChoice)
             }
             .padding(.top, 18)
         }
+        .environmentObject(i18n)
         .onAppear {
+            i18n.setLanguage(languageCode)
             loadHistory()
+        }
+        .onChange(of: languageCode) { _, code in
+            i18n.setLanguage(code)
         }
         .tikoPopup(isPresented: $showingHistory) {
             QuestionHistorySheet(questions: history) {
@@ -208,10 +219,12 @@ private struct ChoiceStyleSheet: View {
     let onSelect: (TikoChoiceStyle) -> Void
     let onClose: () -> Void
 
+    @EnvironmentObject private var i18n: TikoI18n
+
     var body: some View {
         TikoPopupCard(
-            title: "Answer style",
-            subtitle: "Choose how the Yes and No buttons appear.",
+            title: i18n.t("yesNo.answerStyle.popup.title"),
+            subtitle: i18n.t("yesNo.answerStyle.popup.subtitle"),
             icon: "square.grid.2x2.fill",
             appColor: .yesNo,
             onClose: onClose
@@ -260,10 +273,12 @@ private struct QuestionHistorySheet: View {
     let questions: [String]
     let onClose: () -> Void
 
+    @EnvironmentObject private var i18n: TikoI18n
+
     var body: some View {
         TikoPopupCard(
-            title: "Question history",
-            subtitle: "Recently typed questions.",
+            title: i18n.t("yesNo.history.popup.title"),
+            subtitle: i18n.t("yesNo.history.popup.subtitle"),
             icon: "clock",
             appColor: .yesNo,
             onClose: onClose
@@ -273,10 +288,10 @@ private struct QuestionHistorySheet: View {
                     Image(systemName: "text.bubble")
                         .font(.system(size: 34, weight: .bold))
                         .foregroundStyle(Color(hex: 0x0b5a7a).opacity(0.45))
-                    Text("No questions yet")
+                    Text(i18n.t("yesNo.question.empty"))
                         .font(.system(size: 17, weight: .heavy, design: .rounded))
                         .foregroundStyle(.primary)
-                    Text("Questions appear here after you ask them with Yes or No.")
+                    Text(i18n.t("yesNo.question.hint"))
                         .font(.system(size: 13, weight: .semibold, design: .rounded))
                         .foregroundStyle(.secondary)
                         .multilineTextAlignment(.center)

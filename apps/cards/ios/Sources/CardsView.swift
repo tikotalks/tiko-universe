@@ -7,21 +7,23 @@ struct CardsView: View {
     private let speechService = CardsSpeechService()
 
     @AppStorage("cards.speechEnabled") private var speechEnabled = true
+    @AppStorage("tiko.language") private var languageCode = "en"
+    @StateObject private var i18n = TikoI18n(app: .cards)
     @State private var speakingCardID: String?
 
     var body: some View {
         TikoAppShell(
-            appName: "Cards",
+            appName: i18n.t("cards.appName"),
             appIcon: "square.grid.2x2.fill",
             appIconMediaCategory: "animals",
             appColor: .cards,
             actions: [
-                TikoHeaderAction(id: "edit", label: "Edit cards", systemImage: "pencil"),
-                TikoHeaderAction(id: "speak", label: "Speech settings", systemImage: "speaker.wave.2.fill")
+                TikoHeaderAction(id: "edit", label: i18n.t("cards.tiles.addNew"), systemImage: "pencil"),
+                TikoHeaderAction(id: "speak", label: i18n.t("common.settings"), systemImage: "speaker.wave.2.fill")
             ],
             settingsContent: {
-                TikoSettingsSection(title: "Cards") {
-                    TikoSettingsToggleRow(title: "Speak cards", icon: "speaker.wave.2.fill", appColor: .cards, isOn: $speechEnabled)
+                TikoSettingsSection(title: i18n.t("cards.settings.title")) {
+                    TikoSettingsToggleRow(title: i18n.t("cards.settings.parentMode"), icon: "speaker.wave.2.fill", appColor: .cards, isOn: $speechEnabled)
                 }
             }
         ) {
@@ -59,6 +61,9 @@ struct CardsView: View {
                 await store.hydrateRootThumbnails()
             }
         }
+        .environmentObject(i18n)
+        .onAppear { i18n.setLanguage(languageCode) }
+        .onChange(of: languageCode) { _, code in i18n.setLanguage(code) }
     }
 
     private func gridColumns(for width: CGFloat) -> [GridItem] {

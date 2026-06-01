@@ -4,11 +4,14 @@ import TikoKit
 struct RadioView: View {
     @Environment(\.colorScheme) private var colorScheme
     @AppStorage("tiko.colorMode") private var colorModeRawValue = TikoColorMode.light.rawValue
+    @AppStorage("tiko.language") private var languageCode = "en"
 
     @AppStorage("radio.currentTrackIndex") private var currentTrackIndex = 0
     @AppStorage("radio.shuffleEnabled") private var shuffleEnabled = false
     @AppStorage("radio.repeatEnabled") private var repeatEnabled = false
     @AppStorage("radio.parentMode") private var parentMode = true
+
+    @StateObject private var i18n = TikoI18n(app: .radio)
 
     @State private var library = RadioLibraryStore()
     @State private var playback = RadioPlaybackService()
@@ -33,11 +36,11 @@ struct RadioView: View {
 
     private var headerTitle: String {
         if selectedTrack != nil {
-            return library.selectedCategory?.title ?? "Radio"
+            return library.selectedCategory?.title ?? i18n.t("radio.appName")
         } else if library.selectedCategoryID != nil {
-            return "Collections"
+            return i18n.t("radio.collections.title")
         }
-        return "Radio"
+        return i18n.t("radio.appName")
     }
 
     private var headerIcon: String {
@@ -86,10 +89,10 @@ struct RadioView: View {
                 if action == "add" { showAddSheet = true }
             },
             settingsContent: {
-                TikoSettingsSection(title: "Radio") {
-                    TikoSettingsToggleRow(title: "Parent mode", icon: "lock.open.fill", appColor: .radio, isOn: $parentMode)
-                    TikoSettingsToggleRow(title: "Shuffle", icon: "shuffle", appColor: .radio, isOn: $shuffleEnabled)
-                    TikoSettingsToggleRow(title: "Repeat", icon: "repeat", appColor: .radio, isOn: $repeatEnabled)
+                TikoSettingsSection(title: i18n.t("radio.settings.title")) {
+                    TikoSettingsToggleRow(title: i18n.t("radio.settings.parentMode"), icon: "lock.open.fill", appColor: .radio, isOn: $parentMode)
+                    TikoSettingsToggleRow(title: i18n.t("radio.settings.shuffle"), icon: "shuffle", appColor: .radio, isOn: $shuffleEnabled)
+                    TikoSettingsToggleRow(title: i18n.t("radio.settings.repeat"), icon: "repeat", appColor: .radio, isOn: $repeatEnabled)
                 }
             }
         ) {
@@ -110,7 +113,14 @@ struct RadioView: View {
         .sheet(item: $editTarget) { target in
             renameSheet(for: target)
         }
-        .onAppear { library.load() }
+        .environmentObject(i18n)
+        .onAppear {
+            i18n.setLanguage(languageCode)
+            library.load()
+        }
+        .onChange(of: languageCode) { _, code in
+            i18n.setLanguage(code)
+        }
         .onDisappear {
             playback.youtubeBridge.webView.removeFromSuperview()
             playback.stop()
@@ -131,7 +141,7 @@ struct RadioView: View {
     private var collectionsHome: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 18) {
-                Text("Collections")
+                Text(i18n.t("radio.collections.title"))
                     .font(.system(.largeTitle, design: .rounded).weight(.heavy))
                     .foregroundStyle(radioDark)
                     .padding(.horizontal, 20)
@@ -152,9 +162,9 @@ struct RadioView: View {
             VStack(alignment: .leading, spacing: 16) {
                 HStack(alignment: .firstTextBaseline) {
                     VStack(alignment: .leading, spacing: 4) {
-                        Text(library.selectedCategory?.title ?? "Collection")
+                        Text(library.selectedCategory?.title ?? i18n.t("radio.collections.title"))
                             .font(.system(.largeTitle, design: .rounded).weight(.heavy))
-                        Text("\(visibleTracks.count) songs")
+                        Text(i18n.t("radio.collections.songs", ["count": visibleTracks.count]))
                             .font(.system(.subheadline, design: .rounded).weight(.semibold))
                             .foregroundStyle(radioDark.opacity(0.64))
                     }
@@ -199,10 +209,10 @@ struct RadioView: View {
         .contextMenu {
             if parentMode {
                 Button { editTarget = .category(category.id) } label: {
-                    Label("Rename collection", systemImage: "pencil")
+                    Label(i18n.t("radio.management.renameCollection"), systemImage: "pencil")
                 }
                 Button(role: .destructive) { library.removeCategory(id: category.id) } label: {
-                    Label("Delete collection", systemImage: "trash")
+                    Label(i18n.t("radio.management.deleteCollection"), systemImage: "trash")
                 }
             }
         }
@@ -228,15 +238,15 @@ struct RadioView: View {
         .contextMenu {
             if parentMode {
                 Button { editTarget = .track(track.id) } label: {
-                    Label("Rename song", systemImage: "pencil")
+                    Label(i18n.t("radio.management.renameSong"), systemImage: "pencil")
                 }
-                Menu("Move to") {
+                Menu(i18n.t("radio.management.moveTo")) {
                     ForEach(library.categories) { category in
                         Button(category.title) { library.moveTrack(track, to: category.id) }
                     }
                 }
                 Button(role: .destructive) { library.removeTrack(id: track.id) } label: {
-                    Label("Delete song", systemImage: "trash")
+                    Label(i18n.t("radio.management.deleteSong"), systemImage: "trash")
                 }
             }
         }
@@ -269,7 +279,7 @@ struct RadioView: View {
 
                 if !relatedTracks.isEmpty {
                     VStack(alignment: .leading, spacing: 10) {
-                        Text("More in this collection")
+                        Text(i18n.t("radio.collections.moreInCollection"))
                             .font(.system(.headline, design: .rounded).weight(.heavy))
                             .foregroundStyle(radioDark)
                         ForEach(relatedTracks) { related in
@@ -351,10 +361,10 @@ struct RadioView: View {
             Image(systemName: "music.note.list")
                 .font(.system(size: 42, weight: .bold))
                 .foregroundStyle(radioDark.opacity(0.55))
-            Text("No songs yet")
+            Text(i18n.t("radio.collections.empty"))
                 .font(.system(.title3, design: .rounded).weight(.heavy))
                 .foregroundStyle(radioDark)
-            Text("Use the + button in the header to add YouTube songs to this collection.")
+            Text(i18n.t("radio.collections.addHint"))
                 .font(.system(.body, design: .rounded).weight(.semibold))
                 .foregroundStyle(radioDark.opacity(0.62))
                 .multilineTextAlignment(.center)
@@ -389,12 +399,20 @@ struct RadioView: View {
         switch target {
         case .category(let id):
             let category = library.categories.first { $0.id == id }
-            RenameSheet(title: "Rename collection", label: "Collection name", value: category?.title ?? "") { newName in
+            RenameSheet(
+                title: i18n.t("radio.renameCollection.title"),
+                label: i18n.t("radio.renameCollection.label"),
+                value: category?.title ?? ""
+            ) { newName in
                 library.renameCategory(id: id, title: newName)
             }
         case .track(let id):
             let track = tracks.first { $0.id == id }
-            RenameSheet(title: "Rename song", label: "Song title", value: track?.title ?? "") { newTitle in
+            RenameSheet(
+                title: i18n.t("radio.renameSong.title"),
+                label: i18n.t("radio.renameSong.label"),
+                value: track?.title ?? ""
+            ) { newTitle in
                 library.renameTrack(id: id, title: newTitle)
             }
         }

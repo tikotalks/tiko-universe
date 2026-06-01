@@ -31,6 +31,8 @@ struct AddTrackPopup: View {
     let onAddCategory: (String) -> RadioCategory
     let onDismiss: () -> Void
 
+    @EnvironmentObject private var i18n: TikoI18n
+
     @State private var urlOrVideoId = ""
     @State private var title = ""
     @State private var artist = ""
@@ -56,25 +58,25 @@ struct AddTrackPopup: View {
     }
 
     var body: some View {
-        TikoPopupCard(title: "Add song", icon: "music.note.list", appColor: .radio, onClose: onDismiss) {
+        TikoPopupCard(title: i18n.t("radio.library.addSong"), icon: "music.note.list", appColor: .radio, onClose: onDismiss) {
             VStack(alignment: .leading, spacing: 14) {
                 VStack(alignment: .leading, spacing: 8) {
-                    TextField("YouTube URL or video ID", text: $urlOrVideoId)
+                    TextField(i18n.t("radio.library.addFromYouTube"), text: $urlOrVideoId)
                         .textFieldStyle(.roundedBorder)
                         .textInputAutocapitalization(.never)
                         .autocorrectionDisabled()
 
                     if isFetchingMeta {
-                        HStack { ProgressView(); Text("Fetching info…").font(.caption).foregroundStyle(.secondary) }
+                        HStack { ProgressView(); Text(i18n.t("radio.library.fetchingInfo")).font(.caption).foregroundStyle(.secondary) }
                     } else {
-                        TextField("Song title", text: $title)
+                        TextField(i18n.t("radio.library.songTitle"), text: $title)
                             .textFieldStyle(.roundedBorder)
-                        TextField("Artist", text: $artist)
+                        TextField(i18n.t("radio.library.artist"), text: $artist)
                             .textFieldStyle(.roundedBorder)
                     }
                 }
 
-                Text("Collection")
+                Text(i18n.t("radio.library.collection"))
                     .font(.system(.subheadline, design: .rounded).weight(.bold))
                     .foregroundStyle(.secondary)
 
@@ -116,7 +118,7 @@ struct AddTrackPopup: View {
 
                 if showNewCollection {
                     HStack(spacing: 8) {
-                        TextField("New collection name", text: $newCollectionName)
+                        TextField(i18n.t("radio.library.newCollectionName"), text: $newCollectionName)
                             .textFieldStyle(.roundedBorder)
                         Button(action: addCollection) {
                             Image(systemName: "checkmark.circle.fill")
@@ -128,7 +130,7 @@ struct AddTrackPopup: View {
                 }
 
                 Button(action: addTrack) {
-                    Text("Add song")
+                    Text(i18n.t("radio.library.addSong"))
                         .font(.system(.body, design: .rounded).weight(.bold))
                         .foregroundStyle(.white)
                         .frame(maxWidth: .infinity)

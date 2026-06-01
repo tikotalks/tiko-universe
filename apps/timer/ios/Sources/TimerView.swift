@@ -8,6 +8,9 @@ struct TimerView: View {
     @AppStorage("timer.targetMs") private var persistedTargetMs = 0.0
     @AppStorage("timer.remainingMs") private var persistedRemainingMs = 0.0
     @AppStorage("timer.soundEnabled") private var soundEnabled = true
+    @AppStorage("tiko.language") private var languageCode = "en"
+
+    @StateObject private var i18n = TikoI18n(app: .timer)
 
     @State private var mode: TimerMode = .idle
     @State private var targetDate = Date()
@@ -17,12 +20,14 @@ struct TimerView: View {
 
     private let timer = Timer.publish(every: 0.25, on: .main, in: .common).autoconnect()
 
-    private let presets: [(label: String, ms: Double)] = [
-        ("1 min", 60_000),
-        ("3 min", 180_000),
-        ("5 min", 300_000),
-        ("10 min", 600_000),
-    ]
+    private var presets: [(label: String, ms: Double)] {
+        [
+            (i18n.t("timer.presets.oneMin"), 60_000),
+            (i18n.t("timer.presets.threeMin"), 180_000),
+            (i18n.t("timer.presets.fiveMin"), 300_000),
+            (i18n.t("timer.presets.tenMin"), 600_000),
+        ]
+    }
 
     private enum TimerMode: String {
         case idle, running, paused, expired
@@ -57,13 +62,13 @@ struct TimerView: View {
 
     var body: some View {
         TikoAppShell(
-            appName: "Timer",
+            appName: i18n.t("timer.appName"),
             appIcon: "timer",
             appIconMediaCategory: "transport",
             appColor: .timer,
             settingsContent: {
-                TikoSettingsSection(title: "Timer") {
-                    TikoSettingsToggleRow(title: "Sound when done", icon: "bell.fill", appColor: .timer, isOn: $soundEnabled)
+                TikoSettingsSection(title: i18n.t("timer.settings.title")) {
+                    TikoSettingsToggleRow(title: i18n.t("timer.settings.sound"), icon: "bell.fill", appColor: .timer, isOn: $soundEnabled)
                 }
             }
         ) {
@@ -87,7 +92,7 @@ struct TimerView: View {
                             .monospacedDigit()
 
                         if mode == .expired {
-                            Text("Time is up!")
+                            Text(i18n.t("timer.display.expired"))
                                 .font(.system(.headline, design: .rounded).weight(.heavy))
                                 .foregroundStyle(timerDark.opacity(0.82))
                         }
@@ -164,8 +169,13 @@ struct TimerView: View {
                 }
             }
         }
+        .environmentObject(i18n)
         .onAppear {
+            i18n.setLanguage(languageCode)
             restoreFromPersisted()
+        }
+        .onChange(of: languageCode) { _, code in
+            i18n.setLanguage(code)
         }
         .onReceive(timer) { _ in
             guard mode == .running else { return }

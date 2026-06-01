@@ -107,9 +107,23 @@ public struct TikoLanguage: Identifiable, Codable, Equatable, Sendable {
 
     public static let defaultLanguages: [TikoLanguage] = [
         TikoLanguage(id: "en", title: "English", nativeTitle: "English"),
+        TikoLanguage(id: "nl", title: "Dutch", nativeTitle: "Nederlands"),
+        TikoLanguage(id: "fr", title: "French", nativeTitle: "Français"),
+        TikoLanguage(id: "de", title: "German", nativeTitle: "Deutsch"),
+        TikoLanguage(id: "es", title: "Spanish", nativeTitle: "Español"),
+        TikoLanguage(id: "pt", title: "Portuguese", nativeTitle: "Português"),
+        TikoLanguage(id: "it", title: "Italian", nativeTitle: "Italiano"),
         TikoLanguage(id: "mt", title: "Maltese", nativeTitle: "Malti"),
-        TikoLanguage(id: "nl", title: "Dutch", nativeTitle: "Nederlands")
+        TikoLanguage(id: "ja", title: "Japanese", nativeTitle: "日本語"),
+        TikoLanguage(id: "zh", title: "Chinese", nativeTitle: "中文"),
+        TikoLanguage(id: "ko", title: "Korean", nativeTitle: "한국어"),
+        TikoLanguage(id: "ar", title: "Arabic", nativeTitle: "العربية"),
+        TikoLanguage(id: "hy", title: "Armenian", nativeTitle: "Հայերեն"),
     ]
+
+    public static var supportedLanguageCodes: [String] {
+        defaultLanguages.map(\.id)
+    }
 }
 
 public struct TikoSettingsSection<Content: View>: View {

@@ -5,6 +5,8 @@ struct TypeView: View {
     @AppStorage("type.text") private var text = ""
     @AppStorage("type.phrases") private var phrasesData = Data()
     @AppStorage("type.speechEnabled") private var speechEnabled = true
+    @AppStorage("tiko.language") private var languageCode = "en"
+    @StateObject private var i18n = TikoI18n(app: .type)
     @State private var phrases: [String] = []
 
     private let layouts: [(label: String, keys: [[String]])] = [
@@ -19,13 +21,13 @@ struct TypeView: View {
 
     var body: some View {
         TikoAppShell(
-            appName: "Type",
+            appName: i18n.t("type.appName"),
             appIcon: "text.cursor",
             appIconMediaCategory: "letters",
             appColor: .type,
             settingsContent: {
-                TikoSettingsSection(title: "Type") {
-                    TikoSettingsToggleRow(title: "Speak typed text", icon: "speaker.wave.2.fill", appColor: .type, isOn: $speechEnabled)
+                TikoSettingsSection(title: i18n.t("type.settings.title")) {
+                    TikoSettingsToggleRow(title: i18n.t("type.settings.parentMode"), icon: "speaker.wave.2.fill", appColor: .type, isOn: $speechEnabled)
                 }
             }
         ) {
@@ -116,7 +118,7 @@ struct TypeView: View {
                 // Saved phrases
                 if !phrases.isEmpty {
                     VStack(spacing: 6) {
-                        Text("Saved phrases")
+                        Text(i18n.t("type.phrases.title"))
                             .font(.system(.headline, design: .rounded).weight(.heavy))
                         ForEach(phrases, id: \.self) { phrase in
                             Text(phrase)
@@ -130,7 +132,12 @@ struct TypeView: View {
             }
             .padding(.top, 18)
         }
-        .onAppear { loadPhrases() }
+        .environmentObject(i18n)
+        .onAppear {
+            i18n.setLanguage(languageCode)
+            loadPhrases()
+        }
+        .onChange(of: languageCode) { _, code in i18n.setLanguage(code) }
     }
 
     private func speakText() {
