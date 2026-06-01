@@ -31,6 +31,15 @@ struct RadioView: View {
         return tracks.first { $0.id == selectedTrackID }
     }
 
+    private var headerTitle: String {
+        if selectedTrack != nil {
+            return library.selectedCategory?.title ?? "Radio"
+        } else if library.selectedCategoryID != nil {
+            return "Collections"
+        }
+        return "Radio"
+    }
+
     private var headerIcon: String {
         selectedTrack != nil || library.selectedCategoryID != nil ? "chevron.left" : "antenna.radiowaves.left.and.right"
     }
@@ -64,7 +73,7 @@ struct RadioView: View {
 
     var body: some View {
         TikoAppShell(
-            appName: "Radio",
+            appName: headerTitle,
             appIcon: headerIcon,
             appIconMediaCategory: "music",
             onIconTap: headerIconAction,
@@ -84,12 +93,10 @@ struct RadioView: View {
                 }
             }
         ) {
-            ZStack {
-                content
-                HiddenWebView(controller: playback.youtubeBridge)
-                    .frame(width: 1, height: 1)
-                    .allowsHitTesting(false)
-            }
+            content
+                .background(
+                    WebViewWindowAttacher(webView: playback.youtubeBridge.webView)
+                )
         }
         .tikoPopup(isPresented: $showAddSheet) {
             AddTrackPopup(
@@ -104,7 +111,10 @@ struct RadioView: View {
             renameSheet(for: target)
         }
         .onAppear { library.load() }
-        .onDisappear { playback.stop() }
+        .onDisappear {
+            playback.youtubeBridge.webView.removeFromSuperview()
+            playback.stop()
+        }
     }
 
     @ViewBuilder
@@ -235,9 +245,11 @@ struct RadioView: View {
     private func playerDetail(track: RadioTrack) -> some View {
         ScrollView {
             VStack(spacing: 18) {
-                artwork(track: track)
+                Color.clear
                     .aspectRatio(1, contentMode: .fit)
                     .frame(maxHeight: 280)
+                    .overlay { artwork(track: track) }
+                    .clipped()
                     .clipShape(RoundedRectangle(cornerRadius: 32, style: .continuous))
                     .shadow(color: .black.opacity(effectiveColorScheme == .dark ? 0.35 : 0.12), radius: 18, y: 10)
 

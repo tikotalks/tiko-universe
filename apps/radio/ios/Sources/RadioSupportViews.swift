@@ -2,19 +2,26 @@ import SwiftUI
 import WebKit
 import TikoKit
 
-struct HiddenWebView: UIViewRepresentable {
-    let controller: YouTubePlaybackBridge
+// Attaches the WKWebView directly to the UIWindow at an off-screen position.
+// WKWebView renders through a separate GPU compositor layer that bypasses
+// UIKit's clipsToBounds — the only reliable fix is to keep it out of the
+// SwiftUI layout tree entirely.
+struct WebViewWindowAttacher: UIViewRepresentable {
+    let webView: WKWebView
 
     func makeUIView(context: Context) -> UIView {
-        let container = UIView()
-        container.backgroundColor = .clear
-        container.clipsToBounds = true
-        controller.webView.frame = CGRect(x: 0, y: 0, width: 1, height: 1)
-        container.addSubview(controller.webView)
-        return container
+        let v = UIView()
+        v.isHidden = true
+        v.backgroundColor = .clear
+        return v
     }
 
-    func updateUIView(_ uiView: UIView, context: Context) {}
+    func updateUIView(_ uiView: UIView, context: Context) {
+        guard webView.superview == nil, let window = uiView.window else { return }
+        webView.frame = CGRect(x: -1000, y: -1000, width: 1, height: 1)
+        window.addSubview(webView)
+        window.sendSubviewToBack(webView)
+    }
 }
 
 struct AddTrackPopup: View {
