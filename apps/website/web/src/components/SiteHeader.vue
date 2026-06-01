@@ -14,6 +14,7 @@ const colorMode = ref<ColorMode>('system')
 
 const navLinks = [
   { label: 'Apps', path: '/apps' },
+  { label: 'Why Tiko', path: '/why-tiko' },
   { label: 'How it works', path: '/how-it-works' },
   { label: 'Caregivers', path: '/caregivers' },
   { label: 'Docs', path: '/docs' },
@@ -93,7 +94,7 @@ onMounted(() => {
           :class="bemm('cta')"
           @click="closeMobile"
         >
-          Try Tiko Now
+          Try Yes No
         </RouterLink>
       </nav>
 
@@ -123,11 +124,11 @@ onMounted(() => {
   -webkit-backdrop-filter: blur(16px);
 
   &__inner {
-    display: flex;
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
     align-items: center;
-    justify-content: space-between;
     height: var(--header-height);
-    gap: var(--space);
+    gap: clamp(var(--space-s), 2vw, var(--space));
     min-width: 0;
   }
 
@@ -163,7 +164,7 @@ onMounted(() => {
   &__nav {
     display: flex;
     align-items: center;
-    gap: var(--space-xs);
+    gap: clamp(4px, 0.7vw, var(--space-xs));
     flex: 1 1 auto;
     justify-content: flex-end;
     min-width: 0;
@@ -171,7 +172,7 @@ onMounted(() => {
   }
 
   &__nav-link {
-    padding: 6px 12px;
+    padding: 6px clamp(8px, 1vw, 12px);
     border-radius: 8px;
     font-size: 0.875rem;
     font-weight: 600;
@@ -187,11 +188,12 @@ onMounted(() => {
 
     &--active {
       color: var(--color-foreground);
+      background: var(--surface-ink-wash);
     }
   }
 
   &__cta {
-    padding: 8px 18px;
+    padding: 8px clamp(14px, 1.5vw, 18px);
     border-radius: 999px;
     background: var(--app-yes-no);
     color: white;
@@ -237,7 +239,7 @@ onMounted(() => {
   }
 }
 
-@media (max-width: 1024px) {
+@media (max-width: 1120px) {
   .site-header {
     &__nav {
       display: none;
@@ -250,7 +252,8 @@ onMounted(() => {
       gap: 0;
       padding: calc(var(--space) * 0.75);
       background: var(--surface-card);
-      box-shadow: var(--shadow-m);
+      z-index: 1;
+      border-radius: 0 0 20px 20px;
 
       &--open {
         display: flex;
@@ -272,6 +275,8 @@ onMounted(() => {
 
     &__toggle {
       display: flex;
+      grid-column: 3;
+      justify-self: end;
     }
   }
 }

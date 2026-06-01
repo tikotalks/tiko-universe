@@ -2,9 +2,9 @@ export type TikoWebsiteAppSlug = 'yes-no' | 'type' | 'cards' | 'sequence' | 'tim
 
 export type TikoWebsiteAppStatus = 'available' | 'planned'
 export type AppStatus = TikoWebsiteAppStatus
-export type StableRoute = '/' | '/tools' | '/how-it-works' | '/caregivers' | '/faq' | '/docs' | '/docs/philosophy' | '/docs/architecture' | '/docs/apis'
+export type StableRoute = '/' | '/tools' | '/why-tiko' | '/how-it-works' | '/caregivers' | '/faq' | '/docs' | '/docs/philosophy' | '/docs/architecture' | '/docs/apis'
 
-export const stableRoutes: StableRoute[] = ['/', '/tools', '/how-it-works', '/caregivers', '/faq', '/docs', '/docs/philosophy', '/docs/architecture', '/docs/apis']
+export const stableRoutes: StableRoute[] = ['/', '/tools', '/why-tiko', '/how-it-works', '/caregivers', '/faq', '/docs', '/docs/philosophy', '/docs/architecture', '/docs/apis']
 
 export interface AppFeature {
   title: string
@@ -25,6 +25,9 @@ export interface TikoWebsiteAppMetadata {
   color: string
   colorLight: string
   useWhen: readonly string[]
+  moment: string
+  whySmall: string
+  calmDetail: string
   features: readonly AppFeature[]
 }
 
@@ -47,6 +50,9 @@ export const tikoWebsiteAppUniverse = [
       'a caregiver wants a simple prompt',
       'speech or tapping should happen without a complicated screen'
     ],
+    moment: 'Sometimes the kindest support is asking less: one question, two huge answers, and no extra screen to understand.',
+    whySmall: 'Yes No stays tiny because two choices are the whole point. It should not become a survey, control panel, or behaviour tracker.',
+    calmDetail: 'Large targets, strong contrast, speech output, and no account step keep the answer moment focused on the child.',
     features: [
       { title: 'Two giant buttons', body: 'Yes and No fill the screen. Impossible to miss, easy to tap.' },
       { title: 'Speech output', body: 'Each answer is spoken aloud so everyone in the room hears it.' },
@@ -72,6 +78,9 @@ export const tikoWebsiteAppUniverse = [
       'saved phrases may help later',
       'spoken output should stay simple and accessible'
     ],
+    moment: 'Some thoughts need words, and some typed words need a voice in the room.',
+    whySmall: 'Type keeps writing and speaking in one quiet place instead of becoming a document editor or messaging product.',
+    calmDetail: 'The app should make text entry obvious, keep speech one tap away, and avoid controls that compete with the sentence.',
     features: [
       { title: 'Clean text input', body: 'One field, one button. Type a message and speak it without menus.' },
       { title: 'Phrase library', body: 'Save phrases that come up often so they are one tap away.' },
@@ -97,6 +106,9 @@ export const tikoWebsiteAppUniverse = [
       'choices should be visible and tappable',
       'a small library is enough'
     ],
+    moment: 'When words are hard to reach, a familiar picture can make a choice possible.',
+    whySmall: 'Cards focuses on visible choices, not a complex content-management system in front of the child.',
+    calmDetail: 'Square cards, clear labels, and recognizable images make scanning and tapping feel predictable.',
     features: [
       { title: 'Image cards', body: 'Tap a card to hear its name. Images make choices faster to recognise.' },
       { title: 'Built-in categories', body: 'Animals, food, emotions, body, shapes, colours, transport, numbers, and letters ready to use.' },
@@ -122,6 +134,9 @@ export const tikoWebsiteAppUniverse = [
       'the next step should be visible',
       'predictability matters'
     ],
+    moment: 'Transitions are easier when the next step is visible instead of held in someone else’s head.',
+    whySmall: 'Sequence is not a project planner. It shows the current step, the next movement, and enough progress to feel oriented.',
+    calmDetail: 'One step stays central, progress stays simple, and images can make the routine easier to recognize.',
     features: [
       { title: 'One step, full screen', body: 'The current step is always the largest thing on the screen.' },
       { title: 'Progress bar', body: 'A simple visual shows how far along the routine has gone.' },
@@ -147,6 +162,9 @@ export const tikoWebsiteAppUniverse = [
       'waiting should feel less abstract',
       'the screen should do one thing only'
     ],
+    moment: 'Waiting can feel endless when time is invisible. Timer makes the end easier to see.',
+    whySmall: 'Timer stays focused on the countdown instead of becoming a calendar, alarm suite, or productivity app.',
+    calmDetail: 'A large number, visible progress, and a gentle ending keep time concrete without adding anxiety.',
     features: [
       { title: 'Large countdown', body: 'Time fills the screen. No small numbers, no hidden clocks.' },
       { title: 'Visual progress', body: 'A ring or bar shrinks as time passes, making time feel concrete.' },
@@ -170,6 +188,9 @@ export const tikoApps = tikoWebsiteAppUniverse.map((app) => ({
   summary: app.shortSummary,
   platformNotes: app.platformNotes,
   useWhen: [...app.useWhen],
+  moment: app.moment,
+  whySmall: app.whySmall,
+  calmDetail: app.calmDetail,
   features: [...app.features]
 }))
 

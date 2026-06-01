@@ -250,6 +250,28 @@ const APP_FALLBACK_EMOJI: Record<string, Array<{ emoji: string; label: string }>
       </div>
     </section>
 
+    <!-- Human moment -->
+    <section :class="[bemm('moment'), 'section']">
+      <div class="container">
+        <div :class="bemm('moment-layout')">
+          <div :class="bemm('moment-copy')">
+            <p class="eyebrow">The human moment</p>
+            <h2 class="display-2">{{ app.moment }}</h2>
+          </div>
+          <div :class="bemm('moment-cards')">
+            <article :class="bemm('moment-card')">
+              <h3 :class="bemm('moment-card-title')">Why it stays small</h3>
+              <p class="body-sm">{{ app.whySmall }}</p>
+            </article>
+            <article :class="bemm('moment-card')">
+              <h3 :class="bemm('moment-card-title')">How it stays calm</h3>
+              <p class="body-sm">{{ app.calmDetail }}</p>
+            </article>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <!-- Use when -->
     <section :class="[bemm('use'), 'section']">
       <div class="container">
@@ -679,6 +701,44 @@ const APP_FALLBACK_EMOJI: Record<string, Array<{ emoji: string; label: string }>
   }
 
   // Use when
+  &__moment {
+    background: var(--surface-subtle);
+  }
+
+  &__moment-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+    gap: clamp(2rem, 6vw, 5rem);
+    align-items: start;
+  }
+
+  &__moment-copy {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space);
+  }
+
+  &__moment-cards {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space);
+  }
+
+  &__moment-card {
+    padding: calc(var(--space) * 1.25);
+    background: var(--surface-card);
+    border-radius: 18px;
+    box-shadow: var(--shadow-s);
+  }
+
+  &__moment-card-title {
+    font-family: var(--font-family-heading);
+    font-size: 1rem;
+    font-weight: 850;
+    color: var(--color-foreground);
+    margin-bottom: calc(var(--space) * 0.75);
+  }
+
   &__use-layout {
     display: grid;
     grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
@@ -760,6 +820,7 @@ const APP_FALLBACK_EMOJI: Record<string, Array<{ emoji: string; label: string }>
     display: none;
   }
 
+  .app-detail__moment-layout,
   .app-detail__use-layout {
     grid-template-columns: 1fr;
   }
@@ -774,6 +835,10 @@ const APP_FALLBACK_EMOJI: Record<string, Array<{ emoji: string; label: string }>
 }
 
 @media (max-width: 640px) {
+  .app-detail__moment-cards {
+    grid-template-columns: 1fr;
+  }
+
   .app-detail__media-grid,
   .app-detail__media-loading {
     grid-template-columns: repeat(2, 1fr);

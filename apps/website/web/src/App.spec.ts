@@ -12,6 +12,7 @@ async function mountAt(path: string) {
     routes: [
       { path: '/', component: () => import('./pages/HomePage.vue') },
       { path: '/tools', redirect: '/apps' },
+      { path: '/why-tiko', component: () => import('./pages/WhyTikoPage.vue') },
       { path: '/apps', component: () => import('./pages/AppListPage.vue') },
       { path: '/apps/:slug', component: () => import('./pages/AppDetailPage.vue') },
       { path: '/how-it-works', component: () => import('./pages/HowItWorksPage.vue') },
@@ -35,8 +36,9 @@ describe('TikoTalks website', () => {
   it('renders the homepage with child-first copy and no account CTA', async () => {
     const wrapper = await mountAt('/')
 
-    expect(wrapper.text()).toContain('Small tools for big moments')
-    expect(wrapper.text()).toContain('No passwords')
+    expect(wrapper.text()).toContain('Tiko exists because support should be available in the moment')
+    expect(wrapper.text()).toContain('No ads. Ever.')
+    expect(wrapper.text()).toContain('Free, always.')
     expect(wrapper.text()).not.toContain('Start free trial')
     expect(wrapper.text()).not.toContain('Talk to sales')
     expect(wrapper.text()).not.toContain('Sign in')
@@ -48,6 +50,7 @@ describe('TikoTalks website', () => {
 
     expect(header.exists()).toBe(true)
     expect(header.find('a[href="/apps"]').exists()).toBe(true)
+    expect(header.find('a[href="/why-tiko"]').exists()).toBe(true)
     expect(header.find('a[href="/how-it-works"]').exists()).toBe(true)
     expect(header.find('a[href="/caregivers"]').exists()).toBe(true)
     expect(header.find('a[href="/docs"]').exists()).toBe(true)
@@ -74,6 +77,7 @@ describe('TikoTalks website', () => {
   })
 
   it('renders the stable placeholder route pages', async () => {
+    expect((await mountAt('/why-tiko')).text()).toContain('No ads. Ever.')
     expect((await mountAt('/how-it-works')).text()).toContain('How Tiko works')
     expect((await mountAt('/caregivers')).text()).toContain('For caregivers')
     expect((await mountAt('/faq')).text()).toContain('Plain answers')

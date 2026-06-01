@@ -85,7 +85,7 @@ export const docsPages: readonly DocsPage[] = [
     summary: 'The non-negotiables behind every architecture choice.',
     callouts: [
       { title: 'Immediate', body: 'Apps open and work immediately. The first screen is never a login form.' },
-      { title: 'Small', body: 'Each app does one clear job instead of becoming a dashboard.' },
+      { title: 'Small', body: 'Each app does one clear job instead of becoming a control panel.' },
       { title: 'Recoverable', body: 'Device-first sessions can later become recoverable through caregiver email magic links.' }
     ],
     sections: [

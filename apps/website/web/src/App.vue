@@ -9,7 +9,8 @@ const route = useRoute()
 watchEffect(() => {
   if (typeof document === 'undefined') return
   const titles: Record<string, string> = {
-    '/': 'TikoTalks — Small tools for big moments',
+    '/': 'TikoTalks — Free no-ad support apps',
+    '/why-tiko': 'Why Tiko exists — TikoTalks',
     '/apps': 'Apps — TikoTalks',
     '/how-it-works': 'How it works — TikoTalks',
     '/caregivers': 'For caregivers — TikoTalks',

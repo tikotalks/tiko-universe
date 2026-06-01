@@ -8,6 +8,7 @@ const router = createRouter({
   routes: [
     { path: '/', component: () => import('./pages/HomePage.vue') },
     { path: '/tools', redirect: '/apps' },
+    { path: '/why-tiko', component: () => import('./pages/WhyTikoPage.vue') },
     { path: '/apps', component: () => import('./pages/AppListPage.vue') },
     { path: '/apps/:slug', component: () => import('./pages/AppDetailPage.vue') },
     { path: '/how-it-works', component: () => import('./pages/HowItWorksPage.vue') },

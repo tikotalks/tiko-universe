@@ -15,7 +15,7 @@ const bemm = useBemm('site-footer', { return: 'string', includeBaseClass: true }
             <span :class="bemm('brand-mark')" aria-hidden="true">T</span>
             <span :class="bemm('brand-text')">TikoTalks</span>
           </RouterLink>
-          <p :class="bemm('tagline')">Small tools for big moments.<br />No passwords. No account ceremony.</p>
+          <p :class="bemm('tagline')">Small free apps for everyday support.<br />No ads. Ever.</p>
         </div>
 
         <nav :class="bemm('col')" aria-label="Apps">
@@ -33,6 +33,7 @@ const bemm = useBemm('site-footer', { return: 'string', includeBaseClass: true }
 
         <nav :class="bemm('col')" aria-label="Platform">
           <p :class="bemm('col-label')">Platform</p>
+          <RouterLink to="/why-tiko" :class="bemm('link')">Why Tiko</RouterLink>
           <RouterLink to="/how-it-works" :class="bemm('link')">How it works</RouterLink>
           <RouterLink to="/docs" :class="bemm('link')">Documentation</RouterLink>
           <RouterLink to="/docs/architecture" :class="bemm('link')">Architecture</RouterLink>

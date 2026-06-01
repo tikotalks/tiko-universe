@@ -3,7 +3,7 @@ import { RouterLink } from 'vue-router'
 import { ref, onMounted } from 'vue'
 import { useBemm } from 'bemm'
 import { tikoApps } from '../content/appUniverse'
-import { trustPrinciples, platformNotes } from '../siteContent'
+import { trustPrinciples, platformNotes, whyTikoPillars, whyFreePillars } from '../siteContent'
 
 const bemm = useBemm('home', { return: 'string', includeBaseClass: true })
 
@@ -96,24 +96,23 @@ onMounted(() => {
   <section :class="bemm('hero')">
     <div :class="[bemm('hero-inner'), 'container']">
       <div :class="bemm('hero-copy')">
-        <p class="eyebrow">Small tools for big moments</p>
+        <p class="eyebrow">Small free apps. No ads. Ever.</p>
         <h1 :class="['display-1', bemm('hero-heading')]">
-          Tiko helps children<br />communicate calmly.
+          Tiko exists because support should be available in the moment.
         </h1>
         <p :class="['body-lg', bemm('hero-lede')]">
-          Open a tiny app, use it right away.
-          No passwords, no login walls, no setup ceremony —
-          just clear tools for everyday moments.
+          Tiko is a family of small, free apps that help children answer, choose, type, follow routines,
+          and understand time. No ads. No account wall. No payment step. Just simple tools that open when they are needed.
         </p>
         <div :class="bemm('hero-actions')">
           <RouterLink to="/apps/yes-no" :class="bemm('hero-btn', 'primary')">
             Try Yes No — it's free
           </RouterLink>
-          <RouterLink to="/apps" :class="bemm('hero-btn', 'outline')">
-            See all apps
+          <RouterLink to="/why-tiko" :class="bemm('hero-btn', 'outline')">
+            Why Tiko exists
           </RouterLink>
         </div>
-        <p :class="bemm('hero-note')">Works on any device. No account required.</p>
+        <p :class="bemm('hero-note')">Free, always. No ads, ever. Works on any device.</p>
       </div>
 
       <div :class="bemm('hero-visual')" aria-hidden="true">
@@ -144,13 +143,33 @@ onMounted(() => {
     </div>
   </section>
 
+  <!-- Why Tiko exists -->
+  <section :class="[bemm('why'), 'section section--tight']">
+    <div class="container">
+      <div :class="bemm('why-header')">
+        <p class="eyebrow">Why Tiko exists</p>
+        <h2 class="display-2">Everyday support should not depend on setup, payment, or ads.</h2>
+        <p class="body-lg">
+          A child may need a way to say yes or no, ask for food, choose an activity, or understand what happens next.
+          Those moments should not wait behind an account form, a subscription decision, or a complicated control panel.
+        </p>
+      </div>
+      <div :class="bemm('why-grid')">
+        <article v-for="pillar in whyTikoPillars" :key="pillar.title" :class="bemm('why-card')">
+          <h3 :class="bemm('why-card-title')">{{ pillar.title }}</h3>
+          <p class="body-sm">{{ pillar.body }}</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
   <!-- App universe strip -->
   <section class="section section--tight">
     <div class="container">
       <div :class="bemm('apps-header')">
         <div>
           <p class="eyebrow">The app universe</p>
-          <h2 class="display-2">Tiny apps.<br />One clear job each.</h2>
+          <h2 class="display-2">One everyday moment.<br />One tiny app.</h2>
         </div>
         <RouterLink to="/apps" :class="bemm('apps-see-all')">
           View all apps →
@@ -193,7 +212,7 @@ onMounted(() => {
       <div :class="bemm('trust-layout')">
         <div :class="bemm('trust-copy')">
           <p class="eyebrow">Caregiver trust</p>
-          <h2 class="display-2">Built so the first moment is not an account form.</h2>
+          <h2 class="display-2">Built so the first moment is help, not an account form.</h2>
           <p class="body-lg">
             You should be able to try a tool before trusting it.
             Tiko is designed so a caregiver can open an app, see whether it helps,
@@ -216,8 +235,9 @@ onMounted(() => {
   <!-- Media images section -->
   <section :class="[bemm('media'), 'section section--tight']">
     <div class="container">
-      <p class="eyebrow">Built-in media library</p>
-      <h2 :class="['display-2', bemm('media-heading')]">Hundreds of 4K images,<br />ready to use.</h2>
+      <p class="eyebrow">Familiar pictures help</p>
+      <h2 :class="['display-2', bemm('media-heading')]">Images make choices easier to understand.</h2>
+      <p :class="['body-lg', bemm('media-lede')]">Cards can use simple, recognizable images so children can choose without needing the right words first.</p>
       <div :class="bemm('media-grid')">
         <template v-if="mediaImages.length">
           <div
@@ -241,6 +261,28 @@ onMounted(() => {
             :style="{ background: color }"
           />
         </template>
+      </div>
+    </div>
+  </section>
+
+  <!-- Why free -->
+  <section :class="[bemm('free'), 'section']">
+    <div class="container">
+      <div :class="bemm('free-layout')">
+        <div :class="bemm('free-copy')">
+          <p class="eyebrow">Why free?</p>
+          <h2 class="display-2">Because basic support should not wait behind payment.</h2>
+          <p class="body-lg">
+            Tiko is free, always, because the first job is access. The child-facing core is not a trial,
+            a teaser, an ad-supported bargain, or an upgrade funnel. It should open when it is needed.
+          </p>
+        </div>
+        <div :class="bemm('free-grid')">
+          <article v-for="pillar in whyFreePillars" :key="pillar.title" :class="bemm('free-card')">
+            <h3 :class="bemm('free-card-title')">{{ pillar.title }}</h3>
+            <p class="body-sm">{{ pillar.body }}</p>
+          </article>
+        </div>
       </div>
     </div>
   </section>
@@ -272,7 +314,7 @@ onMounted(() => {
         <div :class="bemm('cta-copy')">
           <h2 class="display-3" style="color:white">Ready to try?</h2>
           <p style="color:rgba(255,255,255,0.75);font-size:1rem;line-height:1.65">
-            Yes No is live on the web right now. No account, no setup.
+            Yes No is live on the web right now. Free, no ads, no account, no setup.
           </p>
         </div>
         <div :class="bemm('cta-actions')">
@@ -281,6 +323,9 @@ onMounted(() => {
           </a>
           <RouterLink to="/apps" :class="bemm('cta-btn', 'ghost')">
             See all apps
+          </RouterLink>
+          <RouterLink to="/why-tiko" :class="bemm('cta-btn', 'ghost')">
+            Why Tiko exists
           </RouterLink>
         </div>
       </div>
@@ -447,6 +492,41 @@ onMounted(() => {
     display: block;
   }
 
+  // Why
+  &__why {
+    background: var(--surface-subtle);
+  }
+
+  &__why-header {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space);
+    max-width: 68ch;
+    margin-bottom: var(--space-l);
+  }
+
+  &__why-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: var(--space);
+  }
+
+  &__why-card {
+    padding: calc(var(--space) * 1.25);
+    background: var(--surface-card);
+    border-radius: 20px;
+    box-shadow: var(--shadow-s);
+  }
+
+  &__why-card-title {
+    font-family: var(--font-family-heading);
+    font-size: 1rem;
+    font-weight: 850;
+    line-height: 1.2;
+    color: var(--color-foreground);
+    margin-bottom: calc(var(--space) * 0.75);
+  }
+
   // App grid
   &__apps-header {
     display: flex;
@@ -586,6 +666,11 @@ onMounted(() => {
   &__media-heading {
     max-width: 22ch;
     margin-top: var(--space-s);
+    margin-bottom: var(--space);
+  }
+
+  &__media-lede {
+    max-width: 52ch;
     margin-bottom: var(--space-l);
   }
 
@@ -610,6 +695,47 @@ onMounted(() => {
     width: 100%;
     height: 100%;
     object-fit: cover;
+  }
+
+  // Free
+  &__free {
+    background: var(--color-background);
+  }
+
+  &__free-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 0.8fr) minmax(0, 1fr);
+    gap: clamp(calc(var(--space) * 2), 6vw, calc(var(--space) * 4));
+    align-items: start;
+  }
+
+  &__free-copy {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space);
+    max-width: 56ch;
+  }
+
+  &__free-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--space);
+  }
+
+  &__free-card {
+    padding: calc(var(--space) * 1.25);
+    background: var(--surface-card);
+    border-radius: 20px;
+    box-shadow: var(--shadow-s);
+  }
+
+  &__free-card-title {
+    font-family: var(--font-family-heading);
+    font-size: 1rem;
+    font-weight: 850;
+    line-height: 1.2;
+    color: var(--color-foreground);
+    margin-bottom: calc(var(--space) * 0.75);
   }
 
   // Platform
@@ -694,6 +820,7 @@ onMounted(() => {
 
 // Responsive
 @media (max-width: 900px) {
+  .home__why-grid,
   .home__apps-grid {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
@@ -712,6 +839,7 @@ onMounted(() => {
     display: none;
   }
 
+  .home__free-layout,
   .home__trust-layout {
     grid-template-columns: 1fr;
   }
@@ -723,8 +851,17 @@ onMounted(() => {
 }
 
 @media (max-width: 560px) {
+  .home__why-grid,
+  .home__free-grid,
   .home__apps-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 420px) {
+  .home__why-grid,
+  .home__free-grid {
+    grid-template-columns: 1fr;
   }
 }
 </style>
