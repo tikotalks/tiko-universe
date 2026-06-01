@@ -41,6 +41,10 @@ function storeIdentity(bundle: SessionBundle) {
   localStorage.setItem(ADMIN_TOKEN_KEY, bundle.session.token)
 }
 
+function isOtpCode(value: string): boolean {
+  return /^\d{6}$/.test(value.replace(/\s/g, ''))
+}
+
 function tokenFromMagicLink(value: string): string {
   const trimmed = value.trim()
   if (!trimmed) return ''
@@ -143,22 +147,25 @@ export function useAdminAuth() {
   }
 
   async function verifyMagicLink(value: string) {
-    const magicToken = tokenFromMagicLink(value)
-    if (!magicToken) {
-      error.value = 'Paste the magic link or verification token from your email.'
+    const trimmed = value.trim()
+    if (!trimmed) {
+      error.value = 'Enter the sign-in code or paste the magic link from your email.'
       return false
     }
 
     loading.value = true
     error.value = null
     try {
-      const bundle = await identityClient.verifyMagicLink({ token: magicToken })
+      const request = isOtpCode(trimmed)
+        ? { otp: trimmed.replace(/\s/g, '') }
+        : { token: tokenFromMagicLink(trimmed) }
+      const bundle = await identityClient.verifyMagicLink(request)
       storeIdentity(bundle)
       return verify(bundle.session.token)
     } catch (e) {
       user.value = null
       config.value = null
-      error.value = e instanceof Error ? e.message : 'Magic link verification failed.'
+      error.value = e instanceof Error ? e.message : 'Sign-in verification failed.'
       return false
     } finally {
       loading.value = false

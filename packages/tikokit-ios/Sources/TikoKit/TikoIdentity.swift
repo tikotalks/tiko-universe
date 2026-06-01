@@ -3,68 +3,52 @@ import Foundation
 import FoundationNetworking
 #endif
 
+// MARK: - Types
+
 public struct TikoUser: Identifiable, Codable, Equatable, Sendable {
     public let id: String
     public var displayName: String?
-    public var email: String?
-    public var emailVerified: Bool
+    public let kind: String
+    public let recoverable: Bool
 
-    public init(id: String, displayName: String? = nil, email: String? = nil, emailVerified: Bool = false) {
+    public var isRecoverable: Bool { recoverable }
+
+    public init(id: String, displayName: String? = nil, kind: String = "device", recoverable: Bool = false) {
         self.id = id
         self.displayName = displayName
-        self.email = email
-        self.emailVerified = emailVerified
-    }
-
-    public var isRecoverable: Bool {
-        guard let email, !email.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { return false }
-        return emailVerified
-    }
-}
-
-public enum TikoIdentityState: Equatable, Sendable {
-    case loading
-    case deviceUser(TikoUser)
-    case recoverableUser(TikoUser)
-    case signedOutDeviceUser(TikoUser)
-    case error(String)
-
-    public var user: TikoUser? {
-        switch self {
-        case .deviceUser(let user), .recoverableUser(let user), .signedOutDeviceUser(let user):
-            user
-        case .loading, .error:
-            nil
-        }
-    }
-
-    public static func from(user: TikoUser) -> TikoIdentityState {
-        user.isRecoverable ? .recoverableUser(user) : .deviceUser(user)
+        self.kind = kind
+        self.recoverable = recoverable
     }
 }
 
 public struct TikoIdentityDevice: Codable, Equatable, Sendable {
     public let id: String
+    public var name: String?
+    public var secret: String?
 
-    public init(id: String) {
+    public init(id: String, name: String? = nil, secret: String? = nil) {
         self.id = id
+        self.name = name
+        self.secret = secret
     }
 }
 
 public struct TikoIdentitySessionTokens: Codable, Equatable, Sendable {
-    public let accessToken: String
-    public let refreshToken: String?
+    public let token: String
+    public let expiresAt: String
 
-    public init(accessToken: String, refreshToken: String? = nil) {
-        self.accessToken = accessToken
-        self.refreshToken = refreshToken
+    public init(token: String, expiresAt: String) {
+        self.token = token
+        self.expiresAt = expiresAt
     }
 }
 
-public struct TikoIdentitySession: Codable, Equatable, Sendable {
+public struct TikoIdentityBundle: Codable, Equatable, Sendable {
     public let user: TikoUser
     public let device: TikoIdentityDevice
     public let session: TikoIdentitySessionTokens
+
+    public var accessToken: String { session.token }
 
     public init(user: TikoUser, device: TikoIdentityDevice, session: TikoIdentitySessionTokens) {
         self.user = user
@@ -73,55 +57,85 @@ public struct TikoIdentitySession: Codable, Equatable, Sendable {
     }
 }
 
+public enum TikoIdentityState: Equatable, Sendable {
+    case loading
+    case deviceUser(TikoUser)
+    case recoverableUser(TikoUser)
+    case error(String)
+
+    public var user: TikoUser? {
+        switch self {
+        case .deviceUser(let u), .recoverableUser(let u): u
+        case .loading, .error: nil
+        }
+    }
+
+    public static func from(user: TikoUser) -> TikoIdentityState {
+        user.isRecoverable ? .recoverableUser(user) : .deviceUser(user)
+    }
+}
+
 public enum TikoIdentityClientError: Error, Equatable, Sendable {
-    case missingAccessToken
     case invalidResponse
     case server(statusCode: Int, body: String)
 }
 
+// MARK: - Client
+
 public actor TikoIdentityClient {
+    /// Base URL for the identity API. Set once at app startup.
+    /// Defaults to the production Tiko identity worker.
+    public static var identityBaseURL: String = "https://api.tikotalks.com/v1"
+
     private let baseURL: URL
     private let urlSession: URLSession
     private let decoder = JSONDecoder()
     private let encoder = JSONEncoder()
 
-    public init(baseURL: URL = URL(string: "https://id.tiko.mt")!, urlSession: URLSession = .shared) {
-        self.baseURL = baseURL
+    public init(baseURL: URL? = nil, urlSession: URLSession = .shared) {
+        let resolved = baseURL ?? URL(string: TikoIdentityClient.identityBaseURL) ?? URL(string: "https://api.tikotalks.com/v1")!
+        self.baseURL = resolved
         self.urlSession = urlSession
     }
 
-    public func bootstrapDevice(deviceName: String, platform: String = "ios", app: String) async throws -> TikoIdentitySession {
-        let body = BootstrapDeviceRequest(deviceName: deviceName, platform: platform, app: app)
-        return try await send(path: "/api/identity/device", method: "POST", body: body, accessToken: nil)
+    // MARK: - Device bootstrap
+
+    public func bootstrapDevice(id: String? = nil, secret: String? = nil, name: String? = nil, platform: String = "ios") async throws -> TikoIdentityBundle {
+        let body = BootstrapDeviceRequest(device: .init(id: id, secret: secret, name: name, platform: platform))
+        return try await send(path: "/identity/device", method: "POST", body: body, accessToken: nil)
     }
 
-    public func updateProfile(name: String?, accessToken: String) async throws -> TikoUser {
-        let response: ProfileResponse = try await send(
-            path: "/api/identity/profile",
-            method: "PATCH",
-            body: UpdateProfileRequest(displayName: name),
-            accessToken: accessToken
-        )
-        return response.user
+    // MARK: - Session
+
+    public func getSession(accessToken: String) async throws -> TikoIdentityBundle {
+        try await send(path: "/identity/session", method: "GET", body: Optional<String>.none, accessToken: accessToken)
     }
 
-    public func requestMagicLink(name: String?, email: String, redirectURL: String, accessToken: String) async throws {
-        let body = EmailRequest(email: email, displayName: name, redirectURL: redirectURL)
-        let _: EmptyOKResponse = try await send(path: "/api/identity/email", method: "POST", body: body, accessToken: accessToken)
+    // MARK: - Recovery email
+
+    public func requestRecoveryEmail(email: String, accessToken: String? = nil) async throws {
+        let body = RecoveryEmailRequest(email: email)
+        let _: RecoveryEmailResponse = try await send(path: "/identity/email", method: "POST", body: body, accessToken: accessToken)
     }
 
-    public func recoverAccount(email: String, redirectURL: String) async throws {
-        let body = RecoverRequest(email: email, redirectURL: redirectURL)
-        let _: EmptyOKResponse = try await send(path: "/api/identity/recover", method: "POST", body: body, accessToken: nil)
+    // MARK: - Magic link / OTP verification
+
+    public func verifyMagicLink(token: String) async throws -> TikoIdentityBundle {
+        try await send(path: "/identity/magic-links/verify", method: "POST", body: VerifyRequest(token: token, otp: nil), accessToken: nil)
     }
 
-    public func verifyMagicLink(token: String) async throws -> TikoIdentitySession {
-        try await send(path: "/api/identity/verify-magic-link", method: "POST", body: VerifyMagicLinkRequest(token: token), accessToken: nil)
+    public func verifyOtp(otp: String) async throws -> TikoIdentityBundle {
+        let sanitized = otp.filter(\.isNumber)
+        return try await send(path: "/identity/magic-links/verify", method: "POST", body: VerifyRequest(token: nil, otp: sanitized), accessToken: nil)
     }
 
-    public func revokeCurrentSession(accessToken: String) async throws {
-        let _: EmptyOKResponse = try await send(path: "/api/identity/session", method: "DELETE", body: Optional<String>.none, accessToken: accessToken)
+    // MARK: - Logout
+
+    public func logout(accessToken: String) async throws {
+        let _: EmptyResponse = try await send(path: "/identity/logout", method: "POST", body: Optional<String>.none, accessToken: accessToken)
     }
+
+    // MARK: - Private
 
     private func send<Response: Decodable, Body: Encodable>(path: String, method: String, body: Body, accessToken: String?) async throws -> Response {
         let url = baseURL.appendingPathComponent(path.trimmingCharacters(in: CharacterSet(charactersIn: "/")))
@@ -131,25 +145,26 @@ public actor TikoIdentityClient {
         if let accessToken {
             request.setValue("Bearer \(accessToken)", forHTTPHeaderField: "Authorization")
         }
-
         if !(body is Optional<String>) {
             request.setValue("application/json", forHTTPHeaderField: "Content-Type")
             request.httpBody = try encoder.encode(body)
         }
 
         let (data, response) = try await urlSession.data(for: request)
-        guard let httpResponse = response as? HTTPURLResponse else {
+        guard let http = response as? HTTPURLResponse else {
             throw TikoIdentityClientError.invalidResponse
         }
-        guard (200..<300).contains(httpResponse.statusCode) else {
-            throw TikoIdentityClientError.server(statusCode: httpResponse.statusCode, body: String(data: data, encoding: .utf8) ?? "")
+        if http.statusCode == 204 {
+            return EmptyResponse() as! Response
         }
-        if Response.self == EmptyOKResponse.self, data.isEmpty {
-            return EmptyOKResponse(ok: true) as! Response
+        guard (200..<300).contains(http.statusCode) else {
+            throw TikoIdentityClientError.server(statusCode: http.statusCode, body: String(data: data, encoding: .utf8) ?? "")
         }
         return try decoder.decode(Response.self, from: data)
     }
 }
+
+// MARK: - Session store
 
 public final class TikoDeviceSessionStore: @unchecked Sendable {
     private let defaults: UserDefaults
@@ -157,16 +172,16 @@ public final class TikoDeviceSessionStore: @unchecked Sendable {
 
     public init(defaults: UserDefaults = .standard, namespace: String = "tiko") {
         self.defaults = defaults
-        self.sessionKey = "\(namespace).identitySession"
+        self.sessionKey = "\(namespace).identityBundle"
     }
 
-    public func load() -> TikoIdentitySession? {
+    public func load() -> TikoIdentityBundle? {
         guard let data = defaults.data(forKey: sessionKey) else { return nil }
-        return try? JSONDecoder().decode(TikoIdentitySession.self, from: data)
+        return try? JSONDecoder().decode(TikoIdentityBundle.self, from: data)
     }
 
-    public func save(_ session: TikoIdentitySession) {
-        let data = try? JSONEncoder().encode(session)
+    public func save(_ bundle: TikoIdentityBundle) {
+        let data = try? JSONEncoder().encode(bundle)
         defaults.set(data, forKey: sessionKey)
     }
 
@@ -175,35 +190,30 @@ public final class TikoDeviceSessionStore: @unchecked Sendable {
     }
 }
 
+// MARK: - Request / response types
+
 private struct BootstrapDeviceRequest: Encodable {
-    let deviceName: String
-    let platform: String
-    let app: String
+    let device: DeviceInput
+
+    struct DeviceInput: Encodable {
+        let id: String?
+        let secret: String?
+        let name: String?
+        let platform: String?
+    }
 }
 
-private struct UpdateProfileRequest: Encodable {
-    let displayName: String?
-}
-
-private struct EmailRequest: Encodable {
+private struct RecoveryEmailRequest: Encodable {
     let email: String
-    let displayName: String?
-    let redirectURL: String
 }
 
-private struct RecoverRequest: Encodable {
-    let email: String
-    let redirectURL: String
+private struct RecoveryEmailResponse: Decodable {
+    let message: String?
 }
 
-private struct VerifyMagicLinkRequest: Encodable {
-    let token: String
+private struct VerifyRequest: Encodable {
+    let token: String?
+    let otp: String?
 }
 
-private struct ProfileResponse: Decodable {
-    let user: TikoUser
-}
-
-private struct EmptyOKResponse: Codable {
-    let ok: Bool
-}
+private struct EmptyResponse: Codable {}

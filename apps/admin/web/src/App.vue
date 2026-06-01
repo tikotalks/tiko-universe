@@ -85,10 +85,10 @@ async function unlockWithMagicLink() {
           </button>
 
           <label class="admin-login__field">
-            <span>Magic link or verification token</span>
+            <span>Sign-in code or magic link</span>
             <textarea
               v-model="magicLinkInput"
-              placeholder="Paste the link from your email…"
+              placeholder="Enter the 6-digit code, or paste the link from your email…"
               rows="3"
             />
           </label>

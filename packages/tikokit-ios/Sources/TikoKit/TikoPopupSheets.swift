@@ -480,6 +480,14 @@ public struct TikoAccountSheet: View {
     @AppStorage("tiko.accountSetupDismissed") private var accountSetupDismissed = false
     @State private var showingEmail = false
     @State private var showingRecovery = false
+    @State private var emailSent = false
+    @State private var otpCode = ""
+    @State private var isLoading = false
+    @State private var identityError: String? = nil
+    @State private var savedBundle: TikoIdentityBundle? = nil
+
+    private let identityClient = TikoIdentityClient()
+    private let sessionStore = TikoDeviceSessionStore()
 
     public init(appName: String, appColor: TikoAppColor, onClose: @escaping () -> Void) {
         self.appName = appName
@@ -531,42 +539,91 @@ public struct TikoAccountSheet: View {
             }
 
             if showingEmail || !userEmail.isEmpty {
-                VStack(alignment: .leading, spacing: 7) {
-                    Text("Email for recovery")
-                        .font(.system(size: 13, weight: .heavy, design: .rounded))
-                        .foregroundStyle(.secondary)
-                    TextField("you@example.com", text: $userEmail)
-                        .font(.system(size: 17, weight: .semibold, design: .rounded))
-                        .keyboardType(.emailAddress)
-                        .textInputAutocapitalization(.never)
-                        .autocorrectionDisabled()
-                        .padding(15)
-                        .background(Color(.systemBackground))
-                        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+                if emailSent {
+                    otpEntryBlock
+                } else {
+                    VStack(alignment: .leading, spacing: 7) {
+                        Text("Email for recovery")
+                            .font(.system(size: 13, weight: .heavy, design: .rounded))
+                            .foregroundStyle(.secondary)
+                        TextField("you@example.com", text: $userEmail)
+                            .font(.system(size: 17, weight: .semibold, design: .rounded))
+                            .keyboardType(.emailAddress)
+                            .textInputAutocapitalization(.never)
+                            .autocorrectionDisabled()
+                            .padding(15)
+                            .background(Color(.systemBackground))
+                            .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+                    }
                 }
             }
 
-            Button {
-                if showingEmail || !userEmail.isEmpty {
-                    // Backend magic-link exchange plugs into TikoIdentityClient; keep the UX no-password now.
-                    onClose()
-                } else {
-                    showingEmail = true
-                }
-            } label: {
-                Text(showingEmail || !userEmail.isEmpty ? "Send magic link" : "Continue")
+            if let msg = identityError {
+                Text(msg)
+                    .font(.system(size: 13, weight: .semibold))
+                    .foregroundStyle(.red)
+                    .multilineTextAlignment(.center)
+            }
+
+            if emailSent {
+                Button {
+                    Task { await submitOtp() }
+                } label: {
+                    Group {
+                        if isLoading {
+                            ProgressView().tint(.white)
+                        } else {
+                            Text("Verify code")
+                        }
+                    }
                     .font(.system(size: 17, weight: .heavy, design: .rounded))
                     .foregroundStyle(.white)
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 15)
                     .background(appColor.palette.primary)
                     .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
-            }
-            .buttonStyle(.plain)
+                }
+                .buttonStyle(.plain)
+                .disabled(isLoading || otpCode.filter(\.isNumber).count != 6)
 
-            Button("Recover account") { showingRecovery = true }
+                Button("Resend email") {
+                    emailSent = false
+                    otpCode = ""
+                    identityError = nil
+                }
                 .font(.system(size: 14, weight: .heavy, design: .rounded))
                 .foregroundStyle(appColor.palette.primary)
+            } else {
+                Button {
+                    if showingEmail || !userEmail.isEmpty {
+                        Task { await sendMagicLink() }
+                    } else {
+                        showingEmail = true
+                    }
+                } label: {
+                    Group {
+                        if isLoading {
+                            ProgressView().tint(.white)
+                        } else {
+                            Text(showingEmail || !userEmail.isEmpty ? "Send sign-in code" : "Continue")
+                        }
+                    }
+                    .font(.system(size: 17, weight: .heavy, design: .rounded))
+                    .foregroundStyle(.white)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 15)
+                    .background(appColor.palette.primary)
+                    .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
+                }
+                .buttonStyle(.plain)
+                .disabled(isLoading)
+            }
+
+            if !emailSent {
+                Button("Recover account") { showingRecovery = true }
+                    .font(.system(size: 14, weight: .heavy, design: .rounded))
+                    .foregroundStyle(appColor.palette.primary)
+            }
 
             Button("Use without account for now") {
                 accountSetupDismissed = true
@@ -580,38 +637,144 @@ public struct TikoAccountSheet: View {
 
     private var recoveryContent: some View {
         VStack(spacing: 12) {
-            VStack(alignment: .leading, spacing: 7) {
-                Text("Email")
-                    .font(.system(size: 13, weight: .heavy, design: .rounded))
-                    .foregroundStyle(.secondary)
-                TextField("you@example.com", text: $userEmail)
-                    .font(.system(size: 17, weight: .semibold, design: .rounded))
-                    .keyboardType(.emailAddress)
-                    .textInputAutocapitalization(.never)
-                    .autocorrectionDisabled()
-                    .padding(15)
-                    .background(Color(.systemBackground))
-                    .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
-            }
+            if emailSent {
+                otpEntryBlock
 
-            Button {
-                // Tiko identity API must return a generic success message here.
-                onClose()
-            } label: {
-                Text("Send magic link")
+                if let msg = identityError {
+                    Text(msg)
+                        .font(.system(size: 13, weight: .semibold))
+                        .foregroundStyle(.red)
+                        .multilineTextAlignment(.center)
+                }
+
+                Button {
+                    Task { await submitOtp() }
+                } label: {
+                    Group {
+                        if isLoading { ProgressView().tint(.white) }
+                        else { Text("Verify code") }
+                    }
                     .font(.system(size: 17, weight: .heavy, design: .rounded))
                     .foregroundStyle(.white)
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 15)
                     .background(appColor.palette.primary)
                     .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
-            }
-            .buttonStyle(.plain)
+                }
+                .buttonStyle(.plain)
+                .disabled(isLoading || otpCode.filter(\.isNumber).count != 6)
 
-            Button("Back to setup") { showingRecovery = false }
+                Button("Resend email") {
+                    emailSent = false
+                    otpCode = ""
+                    identityError = nil
+                }
                 .font(.system(size: 14, weight: .heavy, design: .rounded))
                 .foregroundStyle(appColor.palette.primary)
+            } else {
+                VStack(alignment: .leading, spacing: 7) {
+                    Text("Email")
+                        .font(.system(size: 13, weight: .heavy, design: .rounded))
+                        .foregroundStyle(.secondary)
+                    TextField("you@example.com", text: $userEmail)
+                        .font(.system(size: 17, weight: .semibold, design: .rounded))
+                        .keyboardType(.emailAddress)
+                        .textInputAutocapitalization(.never)
+                        .autocorrectionDisabled()
+                        .padding(15)
+                        .background(Color(.systemBackground))
+                        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+                }
+
+                if let msg = identityError {
+                    Text(msg)
+                        .font(.system(size: 13, weight: .semibold))
+                        .foregroundStyle(.red)
+                        .multilineTextAlignment(.center)
+                }
+
+                Button {
+                    Task { await sendMagicLink() }
+                } label: {
+                    Group {
+                        if isLoading { ProgressView().tint(.white) }
+                        else { Text("Send sign-in code") }
+                    }
+                    .font(.system(size: 17, weight: .heavy, design: .rounded))
+                    .foregroundStyle(.white)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 15)
+                    .background(appColor.palette.primary)
+                    .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
+                }
+                .buttonStyle(.plain)
+                .disabled(isLoading)
+            }
+
+            Button("Back to setup") {
+                showingRecovery = false
+                emailSent = false
+                otpCode = ""
+                identityError = nil
+            }
+            .font(.system(size: 14, weight: .heavy, design: .rounded))
+            .foregroundStyle(appColor.palette.primary)
         }
+    }
+
+    private var otpEntryBlock: some View {
+        VStack(alignment: .leading, spacing: 7) {
+            Text("Sign-in code")
+                .font(.system(size: 13, weight: .heavy, design: .rounded))
+                .foregroundStyle(.secondary)
+            Text("Check your email for the 6-digit code.")
+                .font(.system(size: 13))
+                .foregroundStyle(.secondary)
+            TextField("123 456", text: $otpCode)
+                .font(.system(size: 28, weight: .heavy, design: .monospaced))
+                .keyboardType(.numberPad)
+                .multilineTextAlignment(.center)
+                .padding(15)
+                .background(Color(.systemBackground))
+                .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+                .onChange(of: otpCode) { _, new in
+                    let digits = new.filter(\.isNumber)
+                    if digits.count > 6 { otpCode = String(digits.prefix(6)) }
+                    else { otpCode = digits }
+                }
+        }
+    }
+
+    private func sendMagicLink() async {
+        let email = userEmail.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+        guard !email.isEmpty, email.contains("@") else {
+            identityError = "Enter a valid email address."
+            return
+        }
+        isLoading = true
+        identityError = nil
+        do {
+            try await identityClient.requestRecoveryEmail(email: email)
+            emailSent = true
+        } catch {
+            identityError = "Could not send the code. Please try again."
+        }
+        isLoading = false
+    }
+
+    private func submitOtp() async {
+        let digits = otpCode.filter(\.isNumber)
+        guard digits.count == 6 else { return }
+        isLoading = true
+        identityError = nil
+        do {
+            let bundle = try await identityClient.verifyOtp(otp: digits)
+            sessionStore.save(bundle)
+            onClose()
+        } catch {
+            identityError = "Invalid or expired code. Try again or resend."
+        }
+        isLoading = false
     }
 }
 
