@@ -539,7 +539,7 @@ struct RadioView: View {
         VStack(spacing: 14) {
             GeometryReader { geo in
                 ZStack(alignment: .leading) {
-                    Capsule().fill(radioPrimary.opacity(colorScheme == .dark ? 0.26 : 0.18))
+                    Capsule().fill(radioPrimary.opacity(effectiveColorScheme == .dark ? 0.26 : 0.18))
                     Capsule().fill(radioPrimary).frame(width: geo.size.width * playback.progress)
                 }
             }
