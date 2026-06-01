@@ -94,9 +94,22 @@ describe('TikoTalks website', () => {
     expect((await mountAt('/docs/apis')).text()).toContain('POST /v1/identity/device')
   })
 
-  it('shows app detail for yes-no', async () => {
+  it('shows app detail for yes-no without the Cards media library section', async () => {
     const wrapper = await mountAt('/apps/yes-no')
     expect(wrapper.text()).toContain('Yes No')
     expect(wrapper.text()).toContain('One clear question. One clear answer.')
+    expect(wrapper.text()).not.toContain('Built-in image library')
+    expect(wrapper.find('.app-detail__media').exists()).toBe(false)
+  })
+
+  it('shows the Cards media section with Tiko Media images and no emoji fallback', async () => {
+    const wrapper = await mountAt('/apps/cards')
+
+    expect(wrapper.text()).toContain('Built-in image library')
+    expect(wrapper.text()).toContain('Tiko Media images, ready for Cards.')
+    expect(wrapper.find('a[href="https://media.tikoapps.org"]').exists()).toBe(true)
+    expect(wrapper.findAll('.app-detail__media-img').length).toBeGreaterThan(0)
+    expect(wrapper.find('.app-detail__media-emoji').exists()).toBe(false)
+    expect(wrapper.text()).not.toMatch(/[\u{1F300}-\u{1FAFF}]/u)
   })
 })

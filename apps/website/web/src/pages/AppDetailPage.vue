@@ -14,21 +14,56 @@ interface MediaImage {
   id: string
   title: string
   original_url: string
+  file_name?: string
   tags?: string[]
+}
+
+interface MediaApiResponse {
+  data?: MediaImage[]
+}
+
+interface MediaSectionConfig {
+  category: string
+  eyebrow: string
+  heading: string
+  lede: string
 }
 
 const mediaImages = ref<MediaImage[]>([])
 const mediaLoading = ref(false)
 
-const API_BASE = 'https://api.tikotalks.com/v1'
+const MEDIA_API_BASE = 'https://media.tikoapi.org/v1'
+const MEDIA_SITE_URL = 'https://media.tikoapps.org'
 const CDN_ORIGIN = 'data.tikocdn.org'
 
-const APP_MEDIA_CATEGORY: Record<string, string> = {
-  'yes-no': 'emotions',
-  'type': 'letters',
-  'cards': 'animals',
-  'sequence': 'food',
-  'timer': 'transport',
+const APP_MEDIA_SECTION: Partial<Record<string, MediaSectionConfig>> = {
+  cards: {
+    category: 'animals',
+    eyebrow: 'Built-in image library',
+    heading: 'Tiko Media images, ready for Cards.',
+    lede: 'Cards can start with clear, recognizable images from Tiko Media. Browse the public library or use them directly inside card sets.',
+  },
+}
+
+const FALLBACK_CARD_MEDIA: MediaImage[] = [
+  { id: 'aefee19f-c8fb-4910-baa9-82706e1950fe', title: 'Indigo Bird', original_url: 'https://data.tikocdn.org/uploads/1756901949615-indigo-bird.png' },
+  { id: '02e4604a-637b-4c31-9fdf-4bc22a85cf0e', title: 'Red Velvet Mite', original_url: 'https://data.tikocdn.org/uploads/1756293164075-red-velvet-mite.png' },
+  { id: '527fb7eb-2b1e-4cd0-b7fd-29d1c1521faf', title: 'Brine Shrimp', original_url: 'https://data.tikocdn.org/uploads/1756293081692-brine-shrimp.png' },
+  { id: '00ea4b86-1c2f-451a-84c1-9826baf15595', title: 'Koi Fish', original_url: 'https://data.tikocdn.org/uploads/1756293057193-koi-fish.png' },
+  { id: 'b8bd1648-8758-469d-828e-ed1af48cf040', title: 'Oyster Pearl', original_url: 'https://data.tikocdn.org/uploads/1756293036779-oyster-pearl.png' },
+  { id: '2598e9fc-e3c5-4fdd-8c84-e4602c288a30', title: 'Frog', original_url: 'https://data.tikocdn.org/uploads/1756291805861-frog.png' },
+  { id: '2bc04576-d96b-4e97-b550-0a40479f97b6', title: 'Toad', original_url: 'https://data.tikocdn.org/uploads/1756291794903-toad.png' },
+  { id: 'fcf423bc-5538-4d98-9a57-166b2fed55bf', title: 'Froglet', original_url: 'https://data.tikocdn.org/uploads/1756291782509-froglet.png' },
+  { id: '0d29c4fe-161f-4628-9425-1cd8e6374953', title: 'Tadpole', original_url: 'https://data.tikocdn.org/uploads/1756291773294-tadpole.png' },
+]
+
+const mediaSection = computed(() => APP_MEDIA_SECTION[slug.value])
+const hasMediaSection = computed(() => Boolean(mediaSection.value))
+const visibleMediaImages = computed(() => mediaImages.value.length ? mediaImages.value : FALLBACK_CARD_MEDIA)
+const cardMockupImages = computed(() => visibleMediaImages.value.slice(0, 6))
+
+function resolveOriginalUrl(item: MediaImage): string {
+  return item.original_url || (item.file_name ? `https://${CDN_ORIGIN}/${item.file_name}` : '')
 }
 
 function cdnUrl(originalUrl: string, width = 400): string {
@@ -40,19 +75,38 @@ function cdnUrl(originalUrl: string, width = 400): string {
   }
 }
 
+function normalizeMediaImages(items: MediaImage[]): MediaImage[] {
+  return items
+    .map((item): MediaImage | null => {
+      const originalUrl = resolveOriginalUrl(item)
+      if (!originalUrl) return null
+      return {
+        ...item,
+        title: item.title || 'Tiko Media image',
+        original_url: originalUrl,
+      }
+    })
+    .filter((item): item is MediaImage => item !== null)
+}
+
 async function loadMedia(appSlug: string) {
-  const category = APP_MEDIA_CATEGORY[appSlug]
-  if (!category) return
-  mediaLoading.value = true
+  const config = APP_MEDIA_SECTION[appSlug]
   mediaImages.value = []
+  if (!config) {
+    mediaLoading.value = false
+    return
+  }
+
+  mediaLoading.value = true
   try {
-    const res = await fetch(`${API_BASE}/media?category=${category}&limit=9&type=image`)
+    const res = await fetch(`${MEDIA_API_BASE}/media?category=${config.category}&limit=9&type=image`)
     if (res.ok) {
-      const json = await res.json() as { data?: MediaImage[] }
-      mediaImages.value = (json.data ?? []).slice(0, 9)
+      const json = await res.json() as MediaApiResponse | MediaImage[]
+      const items = Array.isArray(json) ? json : (json.data ?? [])
+      mediaImages.value = normalizeMediaImages(items).slice(0, 9)
     }
   } catch {
-    // silently fail — fallback shown
+    // Keep the checked-in Tiko Media image fallback.
   } finally {
     mediaLoading.value = false
   }
@@ -65,34 +119,6 @@ onMounted(() => {
 watch(slug, (newSlug) => {
   loadMedia(newSlug)
 })
-
-const APP_FALLBACK_EMOJI: Record<string, Array<{ emoji: string; label: string }>> = {
-  'yes-no': [
-    { emoji: '😊', label: 'Happy' }, { emoji: '😢', label: 'Sad' }, { emoji: '😡', label: 'Angry' },
-    { emoji: '😴', label: 'Tired' }, { emoji: '🤔', label: 'Thinking' }, { emoji: '😲', label: 'Surprised' },
-    { emoji: '🥰', label: 'Love' }, { emoji: '😰', label: 'Worried' }, { emoji: '😌', label: 'Calm' },
-  ],
-  'type': [
-    { emoji: '🔤', label: 'ABC' }, { emoji: '💬', label: 'Message' }, { emoji: '📢', label: 'Speak' },
-    { emoji: '✏️', label: 'Write' }, { emoji: '🔊', label: 'Voice' }, { emoji: '📝', label: 'Notes' },
-    { emoji: '💡', label: 'Idea' }, { emoji: '🗣️', label: 'Talk' }, { emoji: '📖', label: 'Words' },
-  ],
-  'cards': [
-    { emoji: '🐶', label: 'Dog' }, { emoji: '🐱', label: 'Cat' }, { emoji: '🐦', label: 'Bird' },
-    { emoji: '🐠', label: 'Fish' }, { emoji: '🐸', label: 'Frog' }, { emoji: '🦋', label: 'Butterfly' },
-    { emoji: '🍎', label: 'Apple' }, { emoji: '🥦', label: 'Broccoli' }, { emoji: '😊', label: 'Happy' },
-  ],
-  'sequence': [
-    { emoji: '1️⃣', label: 'Step 1' }, { emoji: '2️⃣', label: 'Step 2' }, { emoji: '3️⃣', label: 'Step 3' },
-    { emoji: '🍳', label: 'Cook' }, { emoji: '🧼', label: 'Wash' }, { emoji: '👕', label: 'Dress' },
-    { emoji: '🎒', label: 'Pack' }, { emoji: '🚌', label: 'Go' }, { emoji: '✅', label: 'Done' },
-  ],
-  'timer': [
-    { emoji: '⏰', label: 'Timer' }, { emoji: '⌚', label: 'Watch' }, { emoji: '⏳', label: 'Waiting' },
-    { emoji: '🚗', label: 'Car' }, { emoji: '🚌', label: 'Bus' }, { emoji: '✈️', label: 'Plane' },
-    { emoji: '🚂', label: 'Train' }, { emoji: '🚲', label: 'Bike' }, { emoji: '🏃', label: 'Run' },
-  ],
-}
 </script>
 
 <template>
@@ -101,7 +127,7 @@ const APP_FALLBACK_EMOJI: Record<string, Array<{ emoji: string; label: string }>
       <p class="eyebrow">Not found</p>
       <h1 class="display-2">App not found.</h1>
       <p class="body-lg">There is no Tiko app with that name.</p>
-      <RouterLink to="/apps" :class="bemm('404-link')">← Back to all apps</RouterLink>
+      <RouterLink to="/apps" :class="bemm('404-link')">Back to all apps</RouterLink>
     </div>
   </div>
 
@@ -113,7 +139,7 @@ const APP_FALLBACK_EMOJI: Record<string, Array<{ emoji: string; label: string }>
     >
       <div :class="[bemm('hero-inner'), 'container']">
         <div :class="bemm('hero-copy')">
-          <RouterLink to="/apps" :class="bemm('back')">← All apps</RouterLink>
+          <RouterLink to="/apps" :class="bemm('back')">All apps</RouterLink>
           <p class="eyebrow" :style="{ color: app.color }">Tiko</p>
           <h1 :class="['display-1', bemm('name')]">{{ app.name }}</h1>
           <p :class="bemm('headline')">{{ app.headline }}</p>
@@ -127,7 +153,7 @@ const APP_FALLBACK_EMOJI: Record<string, Array<{ emoji: string; label: string }>
               rel="noopener"
               :style="{ background: app.color }"
             >
-              Open {{ app.name }} →
+              Open {{ app.name }}
             </a>
             <span v-else :class="bemm('btn', 'coming')">Coming soon</span>
             <span
@@ -157,7 +183,18 @@ const APP_FALLBACK_EMOJI: Record<string, Array<{ emoji: string; label: string }>
             <template v-else-if="slug === 'cards'">
               <p :class="bemm('mockup-label')">Choose a card</p>
               <div :class="bemm('mockup-cards')">
-                <span v-for="label in ['🐶', '🐱', '🐦', '🐠', '🐸', '🦋']" :key="label" :class="bemm('mockup-card')">{{ label }}</span>
+                <span
+                  v-for="img in cardMockupImages"
+                  :key="img.id"
+                  :class="bemm('mockup-card')"
+                >
+                  <img
+                    :src="cdnUrl(resolveOriginalUrl(img), 160)"
+                    :alt="img.title"
+                    loading="lazy"
+                    :class="bemm('mockup-card-img')"
+                  />
+                </span>
               </div>
             </template>
             <!-- Type mockup -->
@@ -165,7 +202,7 @@ const APP_FALLBACK_EMOJI: Record<string, Array<{ emoji: string; label: string }>
               <div :class="bemm('mockup-type')">
                 <span :class="bemm('mockup-type-text')">I want a drink of water</span>
               </div>
-              <button :class="bemm('mockup-speak')" :style="{ background: app.color }">Speak ▶</button>
+              <button :class="bemm('mockup-speak')" :style="{ background: app.color }">Speak</button>
             </template>
             <!-- Sequence mockup -->
             <template v-else-if="slug === 'sequence'">
@@ -210,16 +247,18 @@ const APP_FALLBACK_EMOJI: Record<string, Array<{ emoji: string; label: string }>
       </div>
     </section>
 
-    <!-- Media images — all apps -->
-    <section :class="[bemm('media'), 'section']">
+    <!-- Media images -->
+    <section v-if="hasMediaSection && mediaSection" :class="[bemm('media'), 'section']">
       <div class="container">
-        <p class="eyebrow">Built-in library</p>
-        <h2 :class="['display-2', bemm('media-heading')]">Hundreds of 4K images, ready to use.</h2>
+        <p class="eyebrow">{{ mediaSection.eyebrow }}</p>
+        <h2 :class="['display-2', bemm('media-heading')]">{{ mediaSection.heading }}</h2>
         <p :class="['body-lg', bemm('media-lede')]">
-          Animals, food, emotions, shapes, colours, transport, numbers, and letters —
-          all included and served in full quality.
+          {{ mediaSection.lede }}
         </p>
-        <div v-if="mediaLoading" :class="bemm('media-loading')">
+        <a :href="MEDIA_SITE_URL" :class="bemm('media-link')" target="_blank" rel="noopener">
+          Browse Tiko Media
+        </a>
+        <div v-if="mediaLoading && !visibleMediaImages.length" :class="bemm('media-loading')">
           <div v-for="i in 9" :key="i" :class="bemm('media-placeholder')" />
         </div>
         <div v-else-if="mediaImages.length" :class="bemm('media-grid')">
@@ -229,7 +268,7 @@ const APP_FALLBACK_EMOJI: Record<string, Array<{ emoji: string; label: string }>
             :class="bemm('media-item')"
           >
             <img
-              :src="cdnUrl(img.original_url, 300)"
+              :src="cdnUrl(resolveOriginalUrl(img), 300)"
               :alt="img.title"
               loading="lazy"
               :class="bemm('media-img')"
@@ -239,12 +278,17 @@ const APP_FALLBACK_EMOJI: Record<string, Array<{ emoji: string; label: string }>
         </div>
         <div v-else :class="bemm('media-grid')">
           <div
-            v-for="item in APP_FALLBACK_EMOJI[slug] ?? APP_FALLBACK_EMOJI['cards']"
-            :key="item.label"
-            :class="[bemm('media-item'), bemm('media-item', 'fallback')]"
+            v-for="img in visibleMediaImages"
+            :key="img.id"
+            :class="bemm('media-item')"
           >
-            <span :class="bemm('media-emoji')">{{ item.emoji }}</span>
-            <span :class="bemm('media-caption')">{{ item.label }}</span>
+            <img
+              :src="cdnUrl(resolveOriginalUrl(img), 300)"
+              :alt="img.title"
+              loading="lazy"
+              :class="bemm('media-img')"
+            />
+            <span :class="bemm('media-caption')">{{ img.title }}</span>
           </div>
         </div>
       </div>
@@ -313,10 +357,10 @@ const APP_FALLBACK_EMOJI: Record<string, Array<{ emoji: string; label: string }>
               rel="noopener"
               :style="{ background: app.color }"
             >
-              Open {{ app.name }} →
+              Open {{ app.name }}
             </a>
             <RouterLink to="/apps" :class="bemm('btn', 'outline')">
-              ← All apps
+              All apps
             </RouterLink>
           </div>
         </div>
@@ -504,8 +548,14 @@ const APP_FALLBACK_EMOJI: Record<string, Array<{ emoji: string; label: string }>
     aspect-ratio: 1;
     background: var(--app-color-light);
     border-radius: 10px;
-    font-size: 1.4rem;
+    overflow: hidden;
     cursor: pointer;
+  }
+
+  &__mockup-card-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
   }
 
   &__mockup-type {
@@ -643,7 +693,26 @@ const APP_FALLBACK_EMOJI: Record<string, Array<{ emoji: string; label: string }>
 
   &__media-lede {
     max-width: 48ch;
+    margin-bottom: var(--space);
+  }
+
+  &__media-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     margin-bottom: var(--space-l);
+    padding: 10px 18px;
+    border-radius: 999px;
+    background: var(--color-foreground);
+    color: var(--color-background);
+    font-weight: 800;
+    text-decoration: none;
+    transition: transform 0.15s ease, opacity 0.15s ease;
+
+    &:hover {
+      transform: translateY(-2px);
+      opacity: 0.9;
+    }
   }
 
   &__media-grid {
@@ -672,24 +741,12 @@ const APP_FALLBACK_EMOJI: Record<string, Array<{ emoji: string; label: string }>
     background: var(--surface-card);
     border-radius: 16px;
     overflow: hidden;
-
-    &--fallback {
-      align-items: center;
-      justify-content: center;
-      aspect-ratio: 1;
-      padding: var(--space);
-    }
   }
 
   &__media-img {
     width: 100%;
     aspect-ratio: 1;
     object-fit: cover;
-  }
-
-  &__media-emoji {
-    font-size: 3rem;
-    line-height: 1;
   }
 
   &__media-caption {
