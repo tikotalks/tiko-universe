@@ -24,7 +24,7 @@ export interface Env {
   COMMUNICATION_API_URL?: string
   COMMUNICATION_API_KEY?: string
   ALLOWED_ORIGINS?: string
-  MAGIC_LINK_TEST_SINK?: Array<{ email: string; token: string; url: string }>
+  MAGIC_LINK_TEST_SINK?: Array<{ email: string; token: string; otp: string; url: string; webUrl: string }>
 }
 
 interface UserRow {
@@ -56,6 +56,7 @@ interface MagicLinkRow {
   id: string
   user_id: string
   email_hash: string
+  otp_hash: string | null
 }
 
 const SESSION_TTL_MS = 1000 * 60 * 60 * 24 * 180
@@ -161,12 +162,15 @@ async function requestRecoveryEmail(request: Request, env: Env): Promise<Respons
 
     if (userId) {
       const magicToken = token('tml')
+      const otp = generateOtp()
       const magicHash = await hashToken(magicToken, env.TOKEN_PEPPER)
+      const otpHash = await hashToken(otp, env.TOKEN_PEPPER)
       const expiresAt = new Date(now.getTime() + MAGIC_LINK_TTL_MS).toISOString()
-      await run(env.IDENTITY_DB.prepare('INSERT INTO magic_links (id, user_id, email_hash, token_hash, purpose, expires_at, created_at, consumed_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)').bind(id('mlk'), userId, emailHash, magicHash, 'recovery', expiresAt, now.toISOString(), null))
+      await run(env.IDENTITY_DB.prepare('INSERT INTO magic_links (id, user_id, email_hash, token_hash, otp_hash, purpose, expires_at, created_at, consumed_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)').bind(id('mlk'), userId, emailHash, magicHash, otpHash, 'recovery', expiresAt, now.toISOString(), null))
       const url = magicLinkUrl(env, magicToken)
-      env.MAGIC_LINK_TEST_SINK?.push({ email, token: magicToken, url })
-      await requestMagicLinkDelivery(env, email, url)
+      const webUrl = webMagicLinkUrl(magicToken)
+      env.MAGIC_LINK_TEST_SINK?.push({ email, token: magicToken, otp, url, webUrl })
+      await requestMagicLinkDelivery(env, email, { magicLinkUrl: url, webLinkUrl: url !== webUrl ? webUrl : undefined, otp })
     }
   }
 
@@ -174,14 +178,23 @@ async function requestRecoveryEmail(request: Request, env: Env): Promise<Respons
 }
 
 async function verifyMagicLink(request: Request, env: Env): Promise<Response> {
-  const body = await readJson<{ token?: string }>(request)
-  const magicToken = requiredString(body.token, 'token')
-  const tokenHash = await hashToken(magicToken, env.TOKEN_PEPPER)
+  const body = await readJson<{ token?: string; otp?: string }>(request)
   const now = new Date()
-  const link = await first<MagicLinkRow>(env.IDENTITY_DB.prepare('SELECT id, user_id, email_hash FROM magic_links WHERE token_hash = ? AND consumed_at IS NULL AND expires_at > ?').bind(tokenHash, now.toISOString()))
-  if (!link) throw new HttpError(401, 'invalid_magic_link', 'Magic link is invalid or expired.')
+  let link: MagicLinkRow | null = null
 
-  await run(env.IDENTITY_DB.prepare('UPDATE magic_links SET consumed_at = ? WHERE token_hash = ?').bind(now.toISOString(), tokenHash))
+  if (body.otp) {
+    const otp = body.otp.replace(/\s+/g, '').trim()
+    const otpHash = await hashToken(otp, env.TOKEN_PEPPER)
+    link = await first<MagicLinkRow>(env.IDENTITY_DB.prepare('SELECT id, user_id, email_hash, otp_hash FROM magic_links WHERE otp_hash = ? AND consumed_at IS NULL AND expires_at > ?').bind(otpHash, now.toISOString()))
+    if (!link) throw new HttpError(401, 'invalid_magic_link', 'Sign-in code is invalid or expired.')
+    await run(env.IDENTITY_DB.prepare('UPDATE magic_links SET consumed_at = ? WHERE otp_hash = ?').bind(now.toISOString(), otpHash))
+  } else {
+    const magicToken = requiredString(body.token, 'token')
+    const tokenHash = await hashToken(magicToken, env.TOKEN_PEPPER)
+    link = await first<MagicLinkRow>(env.IDENTITY_DB.prepare('SELECT id, user_id, email_hash, otp_hash FROM magic_links WHERE token_hash = ? AND consumed_at IS NULL AND expires_at > ?').bind(tokenHash, now.toISOString()))
+    if (!link) throw new HttpError(401, 'invalid_magic_link', 'Magic link is invalid or expired.')
+    await run(env.IDENTITY_DB.prepare('UPDATE magic_links SET consumed_at = ? WHERE token_hash = ?').bind(now.toISOString(), tokenHash))
+  }
   await run(env.IDENTITY_DB.prepare('UPDATE users SET kind = ?, email_hash = ?, updated_at = ? WHERE id = ?').bind('recoverable', link.email_hash, now.toISOString(), link.user_id))
   await writeEvent(env, link.user_id, null, 'magic_link_verified', now.toISOString())
 
@@ -259,7 +272,7 @@ async function writeEvent(env: Env, userId: string, deviceId: string | null, typ
   await run(env.IDENTITY_DB.prepare('INSERT INTO user_profile_events (id, user_id, device_id, type, payload_json, created_at) VALUES (?, ?, ?, ?, ?, ?)').bind(id('evt'), userId, deviceId, type, '{}', createdAt))
 }
 
-async function requestMagicLinkDelivery(env: Env, email: string, magicLinkUrl: string): Promise<void> {
+async function requestMagicLinkDelivery(env: Env, email: string, params: { magicLinkUrl: string; webLinkUrl?: string; otp: string }): Promise<void> {
   if (!env.COMMUNICATION_API_KEY) return
 
   const baseUrl = (env.COMMUNICATION_API_URL ?? DEFAULT_COMMUNICATION_API_URL).replace(/\/$/, '')
@@ -271,7 +284,9 @@ async function requestMagicLinkDelivery(env: Env, email: string, magicLinkUrl: s
     },
     body: JSON.stringify({
       to: email,
-      magicLinkUrl
+      magicLinkUrl: params.magicLinkUrl,
+      webLinkUrl: params.webLinkUrl,
+      otp: params.otp,
     })
   })
 
@@ -331,6 +346,19 @@ function magicLinkUrl(env: Env, magicToken: string): string {
   const url = new URL(base)
   url.searchParams.set('token', magicToken)
   return url.toString()
+}
+
+function webMagicLinkUrl(magicToken: string): string {
+  const url = new URL('https://admin.tikoapps.org')
+  url.searchParams.set('token', magicToken)
+  return url.toString()
+}
+
+function generateOtp(): string {
+  const bytes = new Uint8Array(4)
+  crypto.getRandomValues(bytes)
+  const num = ((bytes[0] << 24) | (bytes[1] << 16) | (bytes[2] << 8) | bytes[3]) >>> 0
+  return (num % 1000000).toString().padStart(6, '0')
 }
 
 function requiredString(value: unknown, field: string): string {

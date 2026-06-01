@@ -92,17 +92,20 @@ export async function handleRequest(request: Request, env: Env): Promise<Respons
 }
 
 async function sendMagicLinkEmail(request: Request, env: Env): Promise<Response> {
-  const body = await readJson<{ to?: string; magicLinkUrl?: string; relatedUserId?: string; relatedApp?: string }>(request)
+  const body = await readJson<{ to?: string; magicLinkUrl?: string; webLinkUrl?: string; otp?: string; relatedUserId?: string; relatedApp?: string }>(request)
   const to = normalizeEmail(body.to)
   const magicLinkUrl = requiredUrl(body.magicLinkUrl, 'magicLinkUrl')
+  const webLinkUrl = body.webLinkUrl ? requiredUrl(body.webLinkUrl, 'webLinkUrl') : undefined
+  const otp = optionalString(body.otp)
   if (!to) throw new HttpError(400, 'invalid_email', 'to must be a valid email address.', 'to')
 
   const now = new Date().toISOString()
   const messageId = id('msg')
   const from = env.MAGIC_LINK_FROM_EMAIL ?? DEFAULT_MAGIC_LINK_FROM_EMAIL
-  const subject = 'Your Tiko magic link'
-  const text = `Open this link to continue with Tiko:\n\n${magicLinkUrl}\n\nThis link expires in 15 minutes.`
-  const html = magicLinkHtml(magicLinkUrl)
+  const subject = otp ? `${formatOtp(otp)} is your Tiko sign-in code` : 'Your Tiko sign-in link'
+  const otpLine = otp ? `Your sign-in code: ${formatOtp(otp)}\n\n` : ''
+  const text = `${otpLine}Open this link to sign in to Tiko:\n\n${magicLinkUrl}\n\nThis link and code expire in 15 minutes.\n\nIf you did not request this, you can ignore this email.`
+  const html = magicLinkHtml(magicLinkUrl, { otp, webLinkUrl })
 
   await insertMessage(env, {
     id: messageId,
@@ -276,18 +279,118 @@ function requireServiceAuth(request: Request, env: Env): void {
   }
 }
 
-function magicLinkHtml(magicLinkUrl: string): string {
+function formatOtp(otp: string): string {
+  const digits = otp.replace(/\D/g, '')
+  return digits.length === 6 ? `${digits.slice(0, 3)} ${digits.slice(3)}` : otp
+}
+
+function magicLinkHtml(magicLinkUrl: string, opts: { otp?: string | null; webLinkUrl?: string }): string {
   const escapedUrl = escapeHtml(magicLinkUrl)
-  return `
-    <div style="font-family: Arial, sans-serif; max-width: 520px; color: #17131c;">
-      <h1 style="font-size: 22px; margin: 0 0 12px;">Your Tiko magic link</h1>
-      <p style="font-size: 16px; line-height: 1.45;">Use this link to continue with Tiko. It expires in 15 minutes.</p>
-      <p style="margin: 24px 0;">
-        <a href="${escapedUrl}" style="display: inline-block; background: #8b5cf6; color: #ffffff; text-decoration: none; font-weight: 700; padding: 12px 18px; border-radius: 999px;">Open Tiko</a>
-      </p>
-      <p style="font-size: 13px; line-height: 1.45; color: #5f5768;">If the button does not work, paste this link into your browser:<br><a href="${escapedUrl}">${escapedUrl}</a></p>
-    </div>
-  `
+  const escapedWebUrl = opts.webLinkUrl ? escapeHtml(opts.webLinkUrl) : null
+  const otpFormatted = opts.otp ? formatOtp(opts.otp) : null
+
+  const logoSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 923.92 575.6" width="120" height="75" style="display:block;">
+    <path fill="#ffffff" d="M539.9,183.54c-6.2,37.3-19.96,125.76-19.96,125.76s40.81-38.99,56.5-49.23c29.55-19.28,59.86,4.73,50.27,38.27c-6.44,22.5-70.24,63.18-70.24,63.18l47.1,36.52c23.72-4.7,45.23,17.03,35.56,41.01c-7.07,17.53-21.73,34.45-52.58,26.57c-27.51-7.03-74.93-56.05-74.93-56.05s-2.46,29.11-5.67,39c-7.3,22.46-36.76,37.2-57.09,21.74c-11.52-8.77-12.89-20.2-12.08-33.9c3.05-51.87,17.54-106.74,21.25-158.66c12.54-65.07,8.98-117.57,52.55-127.32C536.17,144.7,543.5,161.88,539.9,183.54z"/>
+    <path fill="#ffffff" d="M276.59,268.89c0,0,46.66-7.44,54.36,1.53c19.16,22.33,2.08,64.16-24.7,71.14c-6.33,1.65-43.47,10.98-43.47,10.98s-3.19,16.97-6.39,47.75c-0.58,5.59-1.62,12.37-1.12,17.86c1.26,13.72,15.87,21.81,33.13,22.96c46.09,3.07,19.47,80.86-60.38,58.74c-60.39-16.74-49.76-54.99-43.57-103.05c1.22-9.47,3.68-39.15,3.68-39.15s-85.18,12.57-90.07,11.6c-32.9-6.55-27.97-49.41-6.23-65.76c9.05-6.81,109.02-27.29,109.02-27.29s10.42-64.66,12.05-70.64c8.92-32.63,61.93-37.21,69.28-0.33C282.98,209.31,276.59,268.89,276.59,268.89z"/>
+    <path fill="#ffffff" d="M824.58,270.85c-65.75-61.74-171.61,4.21-175.47,85.9c-4.2,88.77,92.75,122.16,157.94,71.97C852.93,393.41,869.64,313.16,824.58,270.85z M762.42,377.09c-26.79,12.07-51.03-12.57-36.45-38.45c9.6-17.05,38.37-24.85,50.79-6.97C787.42,347.02,778.74,369.73,762.42,377.09z"/>
+    <path fill="#ffffff" d="M396.51,265.15c18.27-2.46,33.62,8.94,38.16,26.33c-4.55,44.93-10,90.3-16.74,135.01c-3.06,20.3-2.99,40.72-22.26,52.81c-10.55,6.62-27.19,9.45-38.44,3.61c-20.21-10.5-14.45-34.96-12.35-53.38c4.09-35.89,9.51-74.22,15-110.01C363.52,295.81,367.04,269.12,396.51,265.15z"/>
+    <path fill="#ffffff" d="M381.43,73.95c20.95-8.54,24.59,16.01,30.11,75.36c5.89,63.38,2.72,82.93-17.02,86.6c-24.09,4.48-31.01-12.49-32.49-76.15C360.54,95.83,359.67,82.82,381.43,73.95z"/>
+    <path fill="#ffffff" d="M325.61,101.65c14.81-18.39,28.68-6.21,74.73,31.64c49.18,40.42,64.34,59.45,49.55,73.03c-18.42,16.93-30.7,13.24-76.97-30.5C326.45,131.88,310.88,119.95,325.61,101.65z"/>
+    <path fill="#ffffff" d="M450.49,115.02c13.78,19.17-1.66,29.3-50.39,63.61c-52.05,36.64-74.43,46.18-83.59,28.32c-11.42-22.27-4.59-33.11,49.89-66.07C421.12,107.77,436.77,95.94,450.49,115.02z"/>
+  </svg>`
+
+  const otpBlock = otpFormatted ? `
+    <table width="100%" cellpadding="0" cellspacing="0" style="margin: 28px 0;">
+      <tr>
+        <td align="center">
+          <table cellpadding="0" cellspacing="0" style="background: #f3f0ff; border-radius: 16px; padding: 24px 40px;">
+            <tr>
+              <td align="center">
+                <p style="margin: 0 0 6px; font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: #7c3aed;">Sign-in code</p>
+                <p style="margin: 0; font-size: 44px; font-weight: 800; letter-spacing: 0.18em; color: #17131c; font-family: 'Courier New', Courier, monospace;">${escapeHtml(otpFormatted)}</p>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+  ` : ''
+
+  const webLinkBlock = escapedWebUrl ? `
+    <p style="margin: 0; font-size: 14px; color: #7c6f88; text-align: center;">
+      Or <a href="${escapedWebUrl}" style="color: #7c3aed; text-decoration: underline;">open in your browser</a>
+    </p>
+  ` : ''
+
+  return `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign in to Tiko</title>
+</head>
+<body style="margin: 0; padding: 0; background-color: #f5f4f7; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #f5f4f7; padding: 40px 16px;">
+    <tr>
+      <td align="center">
+        <table width="100%" cellpadding="0" cellspacing="0" style="max-width: 520px;">
+
+          <!-- Header -->
+          <tr>
+            <td align="center" style="background: linear-gradient(135deg, #7c3aed 0%, #a855f7 100%); border-radius: 20px 20px 0 0; padding: 32px 40px;">
+              ${logoSvg}
+            </td>
+          </tr>
+
+          <!-- Body -->
+          <tr>
+            <td style="background: #ffffff; border-radius: 0 0 20px 20px; padding: 36px 40px;">
+              <h1 style="margin: 0 0 10px; font-size: 24px; font-weight: 700; color: #17131c; text-align: center;">Sign in to Tiko</h1>
+              <p style="margin: 0 0 4px; font-size: 15px; line-height: 1.55; color: #5f5768; text-align: center;">
+                ${otpFormatted ? 'Enter the code below or click the button to sign in.' : 'Click the button below to sign in to your account.'}
+              </p>
+              <p style="margin: 0 0 24px; font-size: 13px; color: #9c8faa; text-align: center;">Expires in 15 minutes.</p>
+
+              ${otpBlock}
+
+              <!-- Button -->
+              <table width="100%" cellpadding="0" cellspacing="0" style="margin: 0 0 16px;">
+                <tr>
+                  <td align="center">
+                    <a href="${escapedUrl}" style="display: inline-block; background: linear-gradient(135deg, #7c3aed 0%, #a855f7 100%); color: #ffffff; text-decoration: none; font-size: 16px; font-weight: 700; padding: 14px 36px; border-radius: 999px; letter-spacing: 0.01em;">Open Tiko</a>
+                  </td>
+                </tr>
+              </table>
+
+              ${webLinkBlock}
+
+              <!-- Fallback URL -->
+              <p style="margin: 28px 0 0; font-size: 12px; line-height: 1.6; color: #9c8faa; text-align: center; border-top: 1px solid #f0eef5; padding-top: 24px;">
+                If the button does not work, copy and paste this link:<br>
+                <a href="${escapedUrl}" style="color: #7c3aed; word-break: break-all;">${escapedUrl}</a>
+              </p>
+              <p style="margin: 16px 0 0; font-size: 12px; color: #c4bace; text-align: center;">
+                If you did not request this, you can safely ignore this email.
+              </p>
+            </td>
+          </tr>
+
+          <!-- Footer -->
+          <tr>
+            <td align="center" style="padding: 20px 0 0;">
+              <p style="margin: 0; font-size: 12px; color: #c4bace;">
+                Tiko &mdash; Communication tools for everyone<br>
+                <a href="https://tikotalks.com" style="color: #c4bace; text-decoration: none;">tikotalks.com</a>
+              </p>
+            </td>
+          </tr>
+
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>`
 }
 
 async function readJson<T>(request: Request): Promise<T> {
