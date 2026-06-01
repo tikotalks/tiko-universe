@@ -140,13 +140,6 @@ struct RadioView: View {
     private var collectionDetail: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 16) {
-                Button(action: { library.selectedCategoryID = nil }) {
-                    Label("Collections", systemImage: "chevron.left")
-                        .font(.system(.body, design: .rounded).weight(.bold))
-                }
-                .foregroundStyle(radioDark)
-                .padding(.horizontal, 20)
-
                 HStack(alignment: .firstTextBaseline) {
                     VStack(alignment: .leading, spacing: 4) {
                         Text(library.selectedCategory?.title ?? "Collection")
@@ -242,15 +235,6 @@ struct RadioView: View {
     private func playerDetail(track: RadioTrack) -> some View {
         ScrollView {
             VStack(spacing: 18) {
-                HStack {
-                    Button(action: { selectedTrackID = nil }) {
-                        Label(library.selectedCategory?.title ?? "Back", systemImage: "chevron.left")
-                            .font(.system(.body, design: .rounded).weight(.bold))
-                    }
-                    Spacer()
-                }
-                .foregroundStyle(radioDark)
-
                 artwork(track: track)
                     .aspectRatio(1, contentMode: .fit)
                     .frame(maxHeight: 280)
