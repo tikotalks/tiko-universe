@@ -177,7 +177,7 @@ onMounted(() => {
   </section>
 
   <!-- Why Tiko exists -->
-  <section :class="[bemm('why'), 'section section--tight']">
+  <section :class="[bemm('why'), 'section']">
     <div class="container">
       <div :class="bemm('why-header')">
         <p class="eyebrow">Why Tiko exists</p>
@@ -197,7 +197,7 @@ onMounted(() => {
   </section>
 
   <!-- App universe strip -->
-  <section class="section section--tight">
+  <section class="section">
     <div class="container">
       <div :class="bemm('apps-header')">
         <div>
@@ -266,7 +266,7 @@ onMounted(() => {
   </section>
 
   <!-- Media images section -->
-  <section :class="[bemm('media'), 'section section--tight']">
+  <section :class="[bemm('media'), 'section']">
     <div class="container">
       <div :class="bemm('media-header')">
         <div :class="bemm('media-copy')">
@@ -350,7 +350,7 @@ onMounted(() => {
   </section>
 
   <!-- CTA banner -->
-  <section :class="[bemm('cta'), 'section--tight']">
+  <section :class="[bemm('cta'), 'section']">
     <div class="container">
       <div :class="bemm('cta-inner')">
         <div :class="bemm('cta-copy')">
@@ -860,8 +860,9 @@ onMounted(() => {
 
   // CTA
   &__cta {
-    background: var(--app-yes-no);
-    margin-top: clamp(calc(var(--space) * 3), 10vw, calc(var(--space) * 6));
+    --section-container-background: var(--app-yes-no);
+
+    --section-container-padding: var(--spacing);
   }
 
   &__cta-inner {
@@ -870,7 +871,6 @@ onMounted(() => {
     justify-content: space-between;
     flex-wrap: wrap;
     gap: calc(var(--space) * 1.5);
-    padding-block: clamp(calc(var(--space) * 2.5), 7vw, var(--space-xl));
   }
 
   &__cta-copy {

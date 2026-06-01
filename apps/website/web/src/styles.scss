@@ -124,19 +124,13 @@ code, pre {
   width: 100%;
   max-width: var(--max-width);
   margin-inline: auto;
-  padding-inline: clamp(1rem, 5vw, 3rem);
+  padding: var(--section-container-padding, 0);
+  background-color: var(--section-container-background, transparent);
+  border-radius: var(--section-container-border-radius, var(--border-radius-xl));
 }
 
 .section {
-  padding-block: clamp(calc(var(--space) * 3), 10vw, calc(var(--space) * 6));
-}
-
-.section--tight {
-  padding-block: clamp(var(--space-l), 6vw, var(--space-xl));
-}
-
-.section--flush-top {
-  padding-top: 0;
+  padding: var(--spacing);
 }
 
 // ─── Typography helpers ────────────────────────────────────────────────────────
