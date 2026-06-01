@@ -93,10 +93,16 @@ async function exportFromLezu(language: string, env: Env): Promise<Record<string
 
   const raw = await response.json() as unknown
   if (raw && typeof raw === 'object') {
-    // Handle both direct flat-JSON and { data: {...} } wrappers
+    // Lezu export currently returns { data: { content: {...} }, meta: {...} }.
+    // Keep support for older/direct flat-JSON shapes too.
     const obj = raw as Record<string, unknown>
-    if (obj['data'] && typeof obj['data'] === 'object') {
-      return obj['data'] as Record<string, string>
+    const data = obj['data']
+    if (data && typeof data === 'object') {
+      const dataObj = data as Record<string, unknown>
+      if (dataObj['content'] && typeof dataObj['content'] === 'object') {
+        return dataObj['content'] as Record<string, string>
+      }
+      return dataObj as Record<string, string>
     }
     return raw as Record<string, string>
   }
