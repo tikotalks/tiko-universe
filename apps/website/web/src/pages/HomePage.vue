@@ -13,6 +13,10 @@ interface MediaImage {
   original_url: string
 }
 
+interface MediaStreamImage extends MediaImage {
+  style: string
+}
+
 interface MediaApiImage {
   id: string
   title?: string
@@ -20,7 +24,7 @@ interface MediaApiImage {
   file_name?: string
 }
 
-const mediaImages = ref<MediaImage[]>([])
+const mediaImages = ref<MediaStreamImage[]>([])
 
 const appImages: Record<string, MediaImage> = {
   'yes-no': {
@@ -61,29 +65,58 @@ function cdnUrl(originalUrl: string, width = 200): string {
   }
 }
 
+function normalizeMediaImages(items: MediaApiImage[]): MediaImage[] {
+  return items
+    .map((item): MediaImage | null => {
+      const originalUrl = item.original_url
+        ?? (item.file_name ? `https://${CDN_ORIGIN}/${item.file_name}` : '')
+      if (!originalUrl) return null
+
+      return {
+        id: item.id,
+        title: item.title ?? 'Tiko media image',
+        original_url: originalUrl,
+      }
+    })
+    .filter((item): item is MediaImage => item !== null)
+}
+
+function shuffled<T>(items: T[]): T[] {
+  return [...items].sort(() => Math.random() - 0.5)
+}
+
+function buildMediaStreamImages(images: MediaImage[]): MediaStreamImage[] {
+  const source = images.length ? shuffled(images) : shuffled(Object.values(appImages))
+
+  return Array.from({ length: 50 }, (_, index) => {
+    const image = source[index % source.length]
+    const size = 96 + Math.round(Math.random() * 104)
+    const lift = Math.round((Math.random() - 0.5) * 36)
+    const rotate = Math.round((Math.random() - 0.5) * 8)
+
+    return {
+      ...image,
+      id: `${image.id}-${index}`,
+      style: `--tile-size: ${size}px; --tile-lift: ${lift}px; --tile-rotate: ${rotate}deg;`,
+    }
+  })
+}
+
 async function loadHomeImages() {
   try {
-    const res = await fetch('https://media.tikoapi.org/v1/media?category=animals&limit=8&type=image')
+    const res = await fetch('https://media.tikoapi.org/v1/media?limit=50&type=image')
     if (res.ok) {
-      const json = await res.json() as { data?: MediaApiImage[] }
-      mediaImages.value = (json.data ?? [])
-        .map((item): MediaImage | null => {
-          const originalUrl = item.original_url
-            ?? (item.file_name ? `https://${CDN_ORIGIN}/${item.file_name}` : '')
-          if (!originalUrl) return null
-
-          return {
-            id: item.id,
-            title: item.title ?? 'Tiko media image',
-            original_url: originalUrl,
-          }
-        })
-        .filter((item): item is MediaImage => item !== null)
-        .slice(0, 8)
+      const json = await res.json() as { data?: MediaApiImage[] } | MediaApiImage[]
+      const items = Array.isArray(json) ? json : (json.data ?? [])
+      const normalized = normalizeMediaImages(items)
+      mediaImages.value = buildMediaStreamImages(normalized)
+      return
     }
   } catch {
-    // silently fail — fallback tiles shown
+    // silently fail — fallback stream shown
   }
+
+  mediaImages.value = buildMediaStreamImages([])
 }
 
 onMounted(() => {
@@ -235,32 +268,41 @@ onMounted(() => {
   <!-- Media images section -->
   <section :class="[bemm('media'), 'section section--tight']">
     <div class="container">
-      <p class="eyebrow">Familiar pictures help</p>
-      <h2 :class="['display-2', bemm('media-heading')]">Images make choices easier to understand.</h2>
-      <p :class="['body-lg', bemm('media-lede')]">Cards can use simple, recognizable images so children can choose without needing the right words first.</p>
-      <div :class="bemm('media-grid')">
-        <template v-if="mediaImages.length">
+      <div :class="bemm('media-header')">
+        <div :class="bemm('media-copy')">
+          <p class="eyebrow">Familiar pictures help</p>
+          <h2 :class="['display-2', bemm('media-heading')]">Images make choices easier to understand.</h2>
+          <p :class="['body-lg', bemm('media-lede')]">
+            Cards can use simple, recognizable images so children can choose without needing the right words first.
+            The shared media library keeps those pictures ready across Tiko.
+          </p>
+        </div>
+        <a
+          href="https://media.tikoapps.org"
+          :class="bemm('media-link')"
+          target="_blank"
+          rel="noopener"
+        >
+          Open Tiko Media →
+        </a>
+      </div>
+
+      <div :class="bemm('media-stream')" aria-label="A moving stream of Tiko Media images">
+        <div :class="bemm('media-track')">
           <div
-            v-for="img in mediaImages"
-            :key="img.id"
+            v-for="(img, index) in [...mediaImages, ...mediaImages]"
+            :key="`${img.id}-loop-${index}`"
             :class="bemm('media-item')"
+            :style="img.style"
           >
             <img
-              :src="cdnUrl(img.original_url, 280)"
+              :src="cdnUrl(img.original_url, 320)"
               :alt="img.title"
               loading="lazy"
               :class="bemm('media-img')"
             />
           </div>
-        </template>
-        <template v-else>
-          <div
-            v-for="(color, i) in ['#9b3fbd','#2488ff','#ff8a1f','#16b8a6','#f8c22e','#9b3fbd','#2488ff','#ff8a1f']"
-            :key="i"
-            :class="[bemm('media-item'), bemm('media-item', 'placeholder')]"
-            :style="{ background: color }"
-          />
-        </template>
+        </div>
       </div>
     </div>
   </section>
@@ -661,6 +703,19 @@ onMounted(() => {
   // Media
   &__media {
     background: var(--surface-subtle);
+    overflow: hidden;
+  }
+
+  &__media-header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: calc(var(--space) * 1.5);
+    margin-bottom: var(--space-l);
+  }
+
+  &__media-copy {
+    max-width: 58ch;
   }
 
   &__media-heading {
@@ -670,25 +725,61 @@ onMounted(() => {
   }
 
   &__media-lede {
-    max-width: 52ch;
-    margin-bottom: var(--space-l);
+    max-width: 56ch;
   }
 
-  &__media-grid {
-    display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: calc(var(--space) * 0.75);
+  &__media-link {
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 22px;
+    border-radius: 999px;
+    background: var(--color-primary);
+    color: white;
+    font-size: 0.95rem;
+    font-weight: 800;
+    text-decoration: none;
+    box-shadow: var(--shadow-s);
+    transition: transform 0.15s, box-shadow 0.15s, opacity 0.15s;
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-m);
+      opacity: 0.92;
+    }
+  }
+
+  &__media-stream {
+    position: relative;
+    width: 100vw;
+    margin-left: calc(50% - 50vw);
+    overflow: hidden;
+    padding-block: 42px;
+    mask-image: linear-gradient(90deg, transparent, black 8%, black 92%, transparent);
+  }
+
+  &__media-track {
+    display: flex;
+    align-items: center;
+    width: max-content;
+    gap: calc(var(--space) * 0.9);
+    animation: home-media-drift 86s linear infinite;
+  }
+
+  &__media-stream:hover &__media-track {
+    animation-play-state: paused;
   }
 
   &__media-item {
-    aspect-ratio: 1;
-    border-radius: 16px;
+    flex: 0 0 auto;
+    width: var(--tile-size, 144px);
+    height: var(--tile-size, 144px);
+    transform: translateY(var(--tile-lift, 0)) rotate(var(--tile-rotate, 0));
+    border-radius: 24px;
     overflow: hidden;
     background: var(--surface-card);
-
-    &--placeholder {
-      opacity: 0.6;
-    }
+    box-shadow: 0 18px 42px color-mix(in srgb, var(--color-foreground), transparent 88%);
   }
 
   &__media-img {
@@ -825,8 +916,9 @@ onMounted(() => {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
-  .home__media-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+  .home__media-header {
+    align-items: flex-start;
+    flex-direction: column;
   }
 }
 
@@ -862,6 +954,21 @@ onMounted(() => {
   .home__why-grid,
   .home__free-grid {
     grid-template-columns: 1fr;
+  }
+}
+@keyframes home-media-drift {
+  from {
+    transform: translateX(0);
+  }
+
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .home__media-track {
+    animation-duration: 220s;
   }
 }
 </style>
