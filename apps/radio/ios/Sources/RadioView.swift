@@ -73,15 +73,16 @@ struct RadioView: View {
                 content
                 HiddenWebView(controller: playback.youtubeBridge)
                     .frame(width: 1, height: 1)
-                    .hidden()
+                    .opacity(0.001)
             }
         }
-        .sheet(isPresented: $showAddSheet) {
-            AddTrackSheet(
+        .tikoPopup(isPresented: $showAddSheet) {
+            AddTrackPopup(
                 categories: library.categories,
                 initialCategoryID: library.selectedCategoryID,
                 onAddTrack: addTrack,
-                onAddCategory: { name in library.addCategory(title: name) }
+                onAddCategory: { name in library.addCategory(title: name) },
+                onDismiss: { showAddSheet = false }
             )
         }
         .sheet(item: $editTarget) { target in
@@ -111,7 +112,7 @@ struct RadioView: View {
                     .padding(.horizontal, 20)
 
                 LazyVGrid(columns: [GridItem(.adaptive(minimum: 145), spacing: 14)], spacing: 14) {
-                    ForEach(library.categories) { category in
+                    ForEach(library.collectionsWithTracks) { category in
                         collectionTile(category)
                     }
                 }
@@ -161,28 +162,22 @@ struct RadioView: View {
 
     private func collectionTile(_ category: RadioCategory) -> some View {
         let count = library.tracks(in: category.id).count
-        return TikoTile(
-            title: category.title,
-            subtitle: "\(count) songs",
-            minHeight: 150,
-            background: cardBackground,
-            titleColor: radioDark,
-            subtitleColor: radioDark.opacity(0.58),
-            action: {
-                library.selectedCategoryID = category.id
-                selectedTrackID = nil
-            }
-        ) {
-            VStack(alignment: .leading, spacing: 12) {
+        return Button(action: {
+            library.selectedCategoryID = category.id
+            selectedTrackID = nil
+        }) {
+            TikoSquareTile(
+                title: category.title,
+                subtitle: "\(count) songs",
+                background: Color(hex: category.colorHex)
+            ) {
                 Image(systemName: category.symbol)
-                    .font(.system(size: 30, weight: .heavy))
+                    .font(.system(size: 52, weight: .heavy))
                     .foregroundStyle(.white)
-                    .frame(width: 58, height: 58)
-                    .background(Color(hex: category.colorHex))
-                    .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
-                Spacer(minLength: 6)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
         }
+        .buttonStyle(.plain)
         .contextMenu {
             if parentMode {
                 Button { editTarget = .category(category.id) } label: {
@@ -242,8 +237,8 @@ struct RadioView: View {
                 .foregroundStyle(radioDark)
 
                 artwork(track: track)
-                    .frame(maxWidth: .infinity)
                     .aspectRatio(1, contentMode: .fit)
+                    .frame(maxHeight: 280)
                     .clipShape(RoundedRectangle(cornerRadius: 32, style: .continuous))
                     .shadow(color: .black.opacity(effectiveColorScheme == .dark ? 0.35 : 0.12), radius: 18, y: 10)
 
@@ -458,14 +453,6 @@ private enum RadioEditTarget: Identifiable {
     }
 }
 
-private extension Color {
-    init(hex: UInt32) {
-        let r = Double((hex >> 16) & 0xFF) / 255.0
-        let g = Double((hex >> 8) & 0xFF) / 255.0
-        let b = Double(hex & 0xFF) / 255.0
-        self.init(red: r, green: g, blue: b)
-    }
-}
 
 struct RadioView_Previews: PreviewProvider {
     static var previews: some View {

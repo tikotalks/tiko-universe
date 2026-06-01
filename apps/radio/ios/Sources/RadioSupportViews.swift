@@ -1,5 +1,6 @@
 import SwiftUI
 import WebKit
+import TikoKit
 
 struct HiddenWebView: UIViewRepresentable {
     let controller: YouTubePlaybackBridge
@@ -11,101 +12,158 @@ struct HiddenWebView: UIViewRepresentable {
     func updateUIView(_ uiView: WKWebView, context: Context) {}
 }
 
-struct AddTrackSheet: View {
+struct AddTrackPopup: View {
     let categories: [RadioCategory]
     let initialCategoryID: String?
     let onAddTrack: (RadioTrack) -> Void
     let onAddCategory: (String) -> RadioCategory
+    let onDismiss: () -> Void
 
-    @Environment(\.dismiss) private var dismiss
     @State private var urlOrVideoId = ""
     @State private var title = ""
-    @State private var artist = "YouTube"
+    @State private var artist = ""
     @State private var selectedCategoryID: String
     @State private var newCollectionName = ""
+    @State private var isFetchingMeta = false
+    @State private var lastFetchedVideoId = ""
 
     init(
         categories: [RadioCategory],
         initialCategoryID: String?,
         onAddTrack: @escaping (RadioTrack) -> Void,
-        onAddCategory: @escaping (String) -> RadioCategory
+        onAddCategory: @escaping (String) -> RadioCategory,
+        onDismiss: @escaping () -> Void
     ) {
         self.categories = categories
         self.initialCategoryID = initialCategoryID
         self.onAddTrack = onAddTrack
         self.onAddCategory = onAddCategory
+        self.onDismiss = onDismiss
         _selectedCategoryID = State(initialValue: initialCategoryID ?? categories.first?.id ?? defaultUncategorizedCategoryID)
     }
 
     var body: some View {
-        NavigationStack {
-            Form {
-                Section("YouTube") {
+        TikoPopupCard(title: "Add song", icon: "music.note.list", appColor: .radio, onClose: onDismiss) {
+            VStack(alignment: .leading, spacing: 14) {
+                VStack(alignment: .leading, spacing: 8) {
                     TextField("YouTube URL or video ID", text: $urlOrVideoId)
+                        .textFieldStyle(.roundedBorder)
                         .textInputAutocapitalization(.never)
                         .autocorrectionDisabled()
-                    TextField("Song title", text: $title)
-                    TextField("Artist", text: $artist)
-                }
 
-                Section("Collection") {
-                    Picker("Collection", selection: $selectedCategoryID) {
-                        ForEach(categories) { category in
-                            Text(category.title).tag(category.id)
-                        }
-                    }
-
-                    HStack {
-                        TextField("New collection", text: $newCollectionName)
-                        Button("Add") {
-                            let cleaned = newCollectionName.trimmingCharacters(in: .whitespacesAndNewlines)
-                            guard !cleaned.isEmpty else { return }
-                            let category = onAddCategory(cleaned)
-                            selectedCategoryID = category.id
-                            newCollectionName = ""
-                        }
+                    if isFetchingMeta {
+                        HStack { ProgressView(); Text("Fetching info…").font(.caption).foregroundStyle(.secondary) }
+                    } else {
+                        TextField("Song title", text: $title)
+                            .textFieldStyle(.roundedBorder)
+                        TextField("Artist", text: $artist)
+                            .textFieldStyle(.roundedBorder)
                     }
                 }
-            }
-            .navigationTitle("Add song")
-            .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel") { dismiss() }
+
+                Text("Collection")
+                    .font(.system(.subheadline, design: .rounded).weight(.bold))
+                    .foregroundStyle(.secondary)
+
+                LazyVGrid(columns: [GridItem(.adaptive(minimum: 78), spacing: 10)], spacing: 10) {
+                    ForEach(categories) { category in
+                        Button(action: { selectedCategoryID = category.id }) {
+                            TikoSquareTile(
+                                title: category.title,
+                                background: Color(hex: category.colorHex),
+                                isActive: selectedCategoryID == category.id
+                            ) {
+                                Image(systemName: category.symbol)
+                                    .font(.system(size: 26, weight: .heavy))
+                                    .foregroundStyle(.white)
+                                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                            }
+                        }
+                        .buttonStyle(.plain)
+                    }
+
+                    if !newCollectionName.isEmpty || categories.count < 6 {
+                        HStack(spacing: 6) {
+                            TextField("New…", text: $newCollectionName)
+                                .textFieldStyle(.roundedBorder)
+                                .font(.system(.caption, design: .rounded))
+                            Button(action: addCollection) {
+                                Image(systemName: "plus.circle.fill")
+                                    .foregroundStyle(Color(hex: 0xe84057))
+                            }
+                            .disabled(newCollectionName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+                        }
+                    }
                 }
-                ToolbarItem(placement: .confirmationAction) {
-                    Button("Add") { addTrack() }
-                        .disabled(!canAdd)
+
+                Button(action: addTrack) {
+                    Text("Add song")
+                        .font(.system(.body, design: .rounded).weight(.bold))
+                        .foregroundStyle(.white)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 14)
+                        .background(canAdd ? Color(hex: 0xe84057) : Color.primary.opacity(0.15))
+                        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
                 }
+                .disabled(!canAdd)
             }
-            .onChange(of: urlOrVideoId) { _, newValue in
-                if title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-                    title = YouTubeVideoIDParser.parse(newValue)
-                }
-            }
+        }
+        .onChange(of: urlOrVideoId) { _, newValue in
+            fetchMeta(for: newValue)
         }
     }
 
     private var canAdd: Bool {
-        !YouTubeVideoIDParser.parse(urlOrVideoId).isEmpty && !title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+        !YouTubeVideoIDParser.parse(urlOrVideoId).isEmpty &&
+        !title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty &&
+        !isFetchingMeta
+    }
+
+    private func fetchMeta(for input: String) {
+        let videoId = YouTubeVideoIDParser.parse(input)
+        guard !videoId.isEmpty, videoId != lastFetchedVideoId else { return }
+        lastFetchedVideoId = videoId
+        isFetchingMeta = true
+        title = ""
+        artist = ""
+        Task {
+            let urlStr = "https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=\(videoId)&format=json"
+            guard let url = URL(string: urlStr),
+                  let (data, _) = try? await URLSession.shared.data(from: url),
+                  let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any] else {
+                await MainActor.run { isFetchingMeta = false }
+                return
+            }
+            await MainActor.run {
+                if let fetched = json["title"] as? String { title = fetched }
+                if let fetched = json["author_name"] as? String { artist = fetched }
+                isFetchingMeta = false
+            }
+        }
+    }
+
+    private func addCollection() {
+        let cleaned = newCollectionName.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !cleaned.isEmpty else { return }
+        let category = onAddCategory(cleaned)
+        selectedCategoryID = category.id
+        newCollectionName = ""
     }
 
     private func addTrack() {
         let videoId = YouTubeVideoIDParser.parse(urlOrVideoId)
         let cleanedTitle = title.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !videoId.isEmpty, !cleanedTitle.isEmpty else { return }
-
         let cleanedArtist = artist.trimmingCharacters(in: .whitespacesAndNewlines)
-        onAddTrack(
-            RadioTrack(
-                title: cleanedTitle,
-                artist: cleanedArtist.isEmpty ? nil : cleanedArtist,
-                source: .youtube,
-                youtubeVideoId: videoId,
-                thumbnailUrl: "https://img.youtube.com/vi/\(videoId)/hqdefault.jpg",
-                categoryId: selectedCategoryID
-            )
-        )
-        dismiss()
+        onAddTrack(RadioTrack(
+            title: cleanedTitle,
+            artist: cleanedArtist.isEmpty ? nil : cleanedArtist,
+            source: .youtube,
+            youtubeVideoId: videoId,
+            thumbnailUrl: "https://img.youtube.com/vi/\(videoId)/hqdefault.jpg",
+            categoryId: selectedCategoryID
+        ))
+        onDismiss()
     }
 }
 
