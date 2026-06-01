@@ -1,4 +1,5 @@
 import SwiftUI
+import TikoKit
 
 struct RadioView: View {
     @Environment(\.colorScheme) private var colorScheme
@@ -440,6 +441,20 @@ struct RadioView: View {
         }
         selectedTrackID = currentTrack?.id
         playCurrentTrack()
+    }
+}
+
+private enum RadioEditTarget: Identifiable {
+    case category(String)
+    case track(String)
+
+    var id: String {
+        switch self {
+        case .category(let id):
+            return "category:\(id)"
+        case .track(let id):
+            return "track:\(id)"
+        }
     }
 }
 
