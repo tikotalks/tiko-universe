@@ -73,7 +73,7 @@ struct RadioView: View {
                 content
                 HiddenWebView(controller: playback.youtubeBridge)
                     .frame(width: 1, height: 1)
-                    .opacity(0.001)
+                    .allowsHitTesting(false)
             }
         }
         .tikoPopup(isPresented: $showAddSheet) {

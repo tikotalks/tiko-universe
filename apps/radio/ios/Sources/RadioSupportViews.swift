@@ -5,11 +5,16 @@ import TikoKit
 struct HiddenWebView: UIViewRepresentable {
     let controller: YouTubePlaybackBridge
 
-    func makeUIView(context: Context) -> WKWebView {
-        controller.webView
+    func makeUIView(context: Context) -> UIView {
+        let container = UIView()
+        container.backgroundColor = .clear
+        container.clipsToBounds = true
+        controller.webView.frame = CGRect(x: 0, y: 0, width: 1, height: 1)
+        container.addSubview(controller.webView)
+        return container
     }
 
-    func updateUIView(_ uiView: WKWebView, context: Context) {}
+    func updateUIView(_ uiView: UIView, context: Context) {}
 }
 
 struct AddTrackPopup: View {
@@ -24,6 +29,7 @@ struct AddTrackPopup: View {
     @State private var artist = ""
     @State private var selectedCategoryID: String
     @State private var newCollectionName = ""
+    @State private var showNewCollection = false
     @State private var isFetchingMeta = false
     @State private var lastFetchedVideoId = ""
 
@@ -65,34 +71,52 @@ struct AddTrackPopup: View {
                     .font(.system(.subheadline, design: .rounded).weight(.bold))
                     .foregroundStyle(.secondary)
 
-                LazyVGrid(columns: [GridItem(.adaptive(minimum: 78), spacing: 10)], spacing: 10) {
-                    ForEach(categories) { category in
-                        Button(action: { selectedCategoryID = category.id }) {
-                            TikoSquareTile(
-                                title: category.title,
-                                background: Color(hex: category.colorHex),
-                                isActive: selectedCategoryID == category.id
-                            ) {
-                                Image(systemName: category.symbol)
-                                    .font(.system(size: 26, weight: .heavy))
-                                    .foregroundStyle(.white)
-                                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack(spacing: 10) {
+                        ForEach(sortedCategories) { category in
+                            Button(action: { selectedCategoryID = category.id }) {
+                                TikoSquareTile(
+                                    title: category.title,
+                                    background: Color(hex: category.colorHex),
+                                    isActive: selectedCategoryID == category.id
+                                ) {
+                                    Image(systemName: category.symbol)
+                                        .font(.system(size: 30, weight: .heavy))
+                                        .foregroundStyle(.white)
+                                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                                }
+                                .frame(width: 100, height: 100)
                             }
+                            .buttonStyle(.plain)
+                        }
+
+                        Button(action: { showNewCollection = true }) {
+                            RoundedRectangle(cornerRadius: 20, style: .continuous)
+                                .fill(Color.primary.opacity(0.07))
+                                .overlay {
+                                    Image(systemName: "plus")
+                                        .font(.system(size: 26, weight: .heavy))
+                                        .foregroundStyle(Color.primary.opacity(0.35))
+                                }
+                                .frame(width: 100, height: 100)
                         }
                         .buttonStyle(.plain)
                     }
+                    .padding(.vertical, 2)
+                }
+                .padding(.horizontal, -20)
+                .padding(.leading, 20)
 
-                    if !newCollectionName.isEmpty || categories.count < 6 {
-                        HStack(spacing: 6) {
-                            TextField("New…", text: $newCollectionName)
-                                .textFieldStyle(.roundedBorder)
-                                .font(.system(.caption, design: .rounded))
-                            Button(action: addCollection) {
-                                Image(systemName: "plus.circle.fill")
-                                    .foregroundStyle(Color(hex: 0xe84057))
-                            }
-                            .disabled(newCollectionName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+                if showNewCollection {
+                    HStack(spacing: 8) {
+                        TextField("New collection name", text: $newCollectionName)
+                            .textFieldStyle(.roundedBorder)
+                        Button(action: addCollection) {
+                            Image(systemName: "checkmark.circle.fill")
+                                .font(.title2)
+                                .foregroundStyle(Color(hex: 0xe84057))
                         }
+                        .disabled(newCollectionName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
                     }
                 }
 
@@ -111,6 +135,15 @@ struct AddTrackPopup: View {
         .onChange(of: urlOrVideoId) { _, newValue in
             fetchMeta(for: newValue)
         }
+    }
+
+    private var sortedCategories: [RadioCategory] {
+        var sorted = categories
+        if let idx = sorted.firstIndex(where: { $0.id == selectedCategoryID }), idx != 0 {
+            let item = sorted.remove(at: idx)
+            sorted.insert(item, at: 0)
+        }
+        return sorted
     }
 
     private var canAdd: Bool {
@@ -148,6 +181,7 @@ struct AddTrackPopup: View {
         let category = onAddCategory(cleaned)
         selectedCategoryID = category.id
         newCollectionName = ""
+        showNewCollection = false
     }
 
     private func addTrack() {
