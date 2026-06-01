@@ -1,6 +1,7 @@
 import { createApp } from 'vue'
 import { createRouter, createWebHistory } from 'vue-router'
 import App from './App.vue'
+import { installWebsiteVersionRefresh } from './utils/versionRefresh'
 import './styles.scss'
 
 const router = createRouter({
@@ -23,4 +24,5 @@ const router = createRouter({
   },
 })
 
+installWebsiteVersionRefresh()
 createApp(App).use(router).mount('#app')
