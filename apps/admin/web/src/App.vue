@@ -9,7 +9,8 @@ const route = useRoute()
 const router = useRouter()
 const { token, user, loading, error, loginMessage, isAuthed, verify, requestMagicLink, verifyMagicLink, logout } = useAdminAuth()
 const emailInput = ref('')
-const magicLinkInput = ref('')
+const codeInput = ref('')
+const codeSent = ref(false)
 
 const actions: TikoHeaderAction[] = [
   { id: 'logout', label: 'Logout', icon: 'ui/logout' },
@@ -45,16 +46,23 @@ function onHeaderAction(id: string) {
   if (id === 'logout') {
     logout()
     emailInput.value = ''
-    magicLinkInput.value = ''
+    codeInput.value = ''
+    codeSent.value = false
   }
 }
 
 async function sendMagicLink() {
-  await requestMagicLink(emailInput.value)
+  const ok = await requestMagicLink(emailInput.value)
+  if (ok) codeSent.value = true
 }
 
-async function unlockWithMagicLink() {
-  await verifyMagicLink(magicLinkInput.value)
+async function verifyCode() {
+  await verifyMagicLink(codeInput.value)
+}
+
+function resetLogin() {
+  codeSent.value = false
+  codeInput.value = ''
 }
 </script>
 
@@ -70,33 +78,48 @@ async function unlockWithMagicLink() {
       <section v-if="!isAuthed" class="admin-login">
         <div class="admin-login__card">
           <h1>Admin dashboard</h1>
-          <p>Use the configured admin email. The dashboard unlocks after the magic link verifies your Tiko identity session.</p>
-          <label class="admin-login__field">
-            <span>Email</span>
-            <input
-              v-model="emailInput"
-              type="email"
-              autocomplete="email"
-              placeholder="your@email.com"
-            />
-          </label>
-          <button class="admin-login__button" :disabled="loading" @click="sendMagicLink">
-            {{ loading ? 'Sending…' : 'Send magic link' }}
-          </button>
 
-          <label class="admin-login__field">
-            <span>Sign-in code or magic link</span>
-            <textarea
-              v-model="magicLinkInput"
-              placeholder="Enter the 6-digit code, or paste the link from your email…"
-              rows="3"
-            />
-          </label>
-          <p v-if="loginMessage" class="admin-login__message">{{ loginMessage }}</p>
-          <p v-if="error" class="admin-login__error">{{ error }}</p>
-          <button class="admin-login__button admin-login__button--secondary" :disabled="loading" @click="unlockWithMagicLink">
-            {{ loading ? 'Checking…' : 'Verify and unlock' }}
-          </button>
+          <template v-if="!codeSent">
+            <p>Enter your admin email and we'll send a sign-in code.</p>
+            <label class="admin-login__field">
+              <span>Email</span>
+              <input
+                v-model="emailInput"
+                type="email"
+                autocomplete="email"
+                placeholder="your@email.com"
+                @keyup.enter="sendMagicLink"
+              />
+            </label>
+            <p v-if="error" class="admin-login__error">{{ error }}</p>
+            <button class="admin-login__button" :disabled="loading" @click="sendMagicLink">
+              {{ loading ? 'Sending…' : 'Send sign-in code' }}
+            </button>
+          </template>
+
+          <template v-else>
+            <p class="admin-login__message">{{ loginMessage }}</p>
+            <label class="admin-login__field">
+              <span>6-digit sign-in code</span>
+              <input
+                v-model="codeInput"
+                type="text"
+                inputmode="numeric"
+                autocomplete="one-time-code"
+                placeholder="123 456"
+                maxlength="7"
+                class="admin-login__otp"
+                @keyup.enter="verifyCode"
+              />
+            </label>
+            <p v-if="error" class="admin-login__error">{{ error }}</p>
+            <button class="admin-login__button" :disabled="loading || codeInput.replace(/\s/g, '').length !== 6" @click="verifyCode">
+              {{ loading ? 'Checking…' : 'Verify and unlock' }}
+            </button>
+            <button class="admin-login__link" @click="resetLogin">
+              Use a different email
+            </button>
+          </template>
         </div>
       </section>
 
@@ -247,6 +270,14 @@ async function unlockWithMagicLink() {
     font-size: 0.85rem;
   }
 
+  &__otp {
+    font-size: 2rem;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-align: center;
+    font-family: monospace;
+  }
+
   &__button {
     margin-top: 1rem;
     width: 100%;
@@ -258,12 +289,22 @@ async function unlockWithMagicLink() {
     font-weight: 700;
     cursor: pointer;
 
-    &:disabled { opacity: 0.6; cursor: wait; }
+    &:disabled { opacity: 0.6; cursor: not-allowed; }
+  }
 
-    &--secondary {
-      margin-top: 0.65rem;
-      background: color-mix(in srgb, var(--tiko-app-primary), var(--color-background) 22%);
-    }
+  &__link {
+    display: block;
+    margin-top: 0.75rem;
+    width: 100%;
+    border: none;
+    background: none;
+    color: var(--tiko-app-primary);
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    text-align: center;
+
+    &:hover { text-decoration: underline; }
   }
 }
 </style>
