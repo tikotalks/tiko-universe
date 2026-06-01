@@ -533,6 +533,40 @@ export function createLezuTranslationLoader(options: CreateLezuTranslationLoader
   }
 }
 
+export const TIKO_TRANSLATIONS_BASE_URL = 'https://translations.tikoapi.org'
+
+/**
+ * Ready-to-use loader that fetches from the Tiko translations-api Worker.
+ * No API key needed — the worker keeps credentials server-side.
+ *
+ * Usage:
+ *   const loader = createTikoTranslationLoader()
+ *   const bundle = await loader({ app: 'radio', language: 'nl' })
+ *   i18n.addBundle(bundle)
+ */
+export function createTikoTranslationLoader(
+  baseUrl: string = TIKO_TRANSLATIONS_BASE_URL,
+): TranslationLoader {
+  return async (request: TranslationLoaderRequest): Promise<TranslationBundle> => {
+    const { app, language } = request
+    try {
+      const response = await fetch(`${baseUrl}/v1/${app}/${language}`)
+      if (!response.ok) {
+        return createTranslationBundle({ app, language, source: 'lezu', translations: {} })
+      }
+      const data = await response.json() as { translations?: TranslationMap }
+      return createTranslationBundle({
+        app,
+        language,
+        source: 'lezu',
+        translations: data.translations ?? {},
+      })
+    } catch {
+      return createTranslationBundle({ app, language, source: 'lezu', translations: {} })
+    }
+  }
+}
+
 export function createI18n(options: CreateI18nOptions): TikoI18n {
   let currentLanguage = options.language ?? defaultLanguage
   const fallbackLanguage = options.fallbackLanguage ?? defaultLanguage

@@ -21,14 +21,19 @@ public final class TikoI18n: ObservableObject {
 
     private let fallback = "en"
     private var bundles: [String: [String: String]] = [:]
+    private var fetchedLanguages: Set<String> = []
 
-    /// Set a Lezu project ID to enable remote translation fetching.
-    public static var lezuProjectId: String? = nil
+    /// Base URL of the Tiko translations-api Worker.
+    /// Set once at app startup: `TikoI18n.translationsBaseURL = "https://translations.tikoapi.org"`
+    public static var translationsBaseURL: String? = nil
 
     public init(app: TikoAppKey, languageCode: String = "en") {
         self.app = app
         self.languageCode = languageCode
         loadLocalBundles()
+        if TikoI18n.translationsBaseURL != nil {
+            Task { await self.fetchTranslations() }
+        }
     }
 
     // MARK: - Public API
@@ -40,6 +45,10 @@ public final class TikoI18n: ObservableObject {
 
     public func setLanguage(_ code: String) {
         languageCode = code
+        // Fetch new language from worker if not already loaded remotely
+        if TikoI18n.translationsBaseURL != nil, !fetchedLanguages.contains(code) {
+            Task { await self.fetchRemoteBundle(language: code) }
+        }
     }
 
     public func addBundle(languageCode: String, translations: [String: String]) {
@@ -51,13 +60,13 @@ public final class TikoI18n: ObservableObject {
         }
     }
 
-    public func fetchLezuTranslations() async {
-        guard let projectId = TikoI18n.lezuProjectId else { return }
-        let langs = TikoLanguage.supportedLanguageCodes
-        await withTaskGroup(of: Void.self) { group in
-            for lang in langs {
-                group.addTask { await self.fetchLezuBundle(projectId: projectId, languageCode: lang) }
-            }
+    /// Fetch remote translations from the Tiko translations-api Worker.
+    /// Called automatically on init; call again to force a refresh.
+    public func fetchTranslations() async {
+        guard TikoI18n.translationsBaseURL != nil else { return }
+        let langs = Set([languageCode, "en"])
+        for lang in langs {
+            await fetchRemoteBundle(language: lang)
         }
     }
 
@@ -84,14 +93,22 @@ public final class TikoI18n: ObservableObject {
 
     private func bundleKey(_ app: String, _ lang: String) -> String { "\(app):\(lang)" }
 
-    private func fetchLezuBundle(projectId: String, languageCode: String) async {
-        let urlString = "https://api.lezu.io/v1/projects/\(projectId)/translations/\(app.rawValue)/\(languageCode)"
+    private struct TranslationsResponse: Decodable {
+        let translations: [String: String]
+    }
+
+    private func fetchRemoteBundle(language: String) async {
+        guard let base = TikoI18n.translationsBaseURL else { return }
+        let urlString = "\(base)/v1/\(app.rawValue)/\(language)"
         guard let url = URL(string: urlString),
               let (data, response) = try? await URLSession.shared.data(from: url),
               let http = response as? HTTPURLResponse, (200..<300).contains(http.statusCode),
-              let json = try? JSONSerialization.jsonObject(with: data) as? [String: String]
+              let result = try? JSONDecoder().decode(TranslationsResponse.self, from: data)
         else { return }
-        await MainActor.run { addBundle(languageCode: languageCode, translations: json) }
+        await MainActor.run {
+            fetchedLanguages.insert(language)
+            addBundle(languageCode: language, translations: result.translations)
+        }
     }
 }
 

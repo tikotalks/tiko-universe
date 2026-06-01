@@ -1,0 +1,18 @@
+{
+  "name": "@tiko/translations-api",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "deploy:production": "wrangler deploy --env production",
+    "kv:create:dev": "wrangler kv namespace create TRANSLATIONS_KV",
+    "kv:create:prod": "wrangler kv namespace create TRANSLATIONS_KV --env production",
+    "secret:lezu-key": "wrangler secret put LEZU_API_KEY",
+    "secret:lezu-project": "wrangler secret put LEZU_PROJECT_ID",
+    "secret:webhook": "wrangler secret put WEBHOOK_SECRET"
+  },
+  "devDependencies": {
+    "wrangler": "^3.0.0"
+  }
+}
