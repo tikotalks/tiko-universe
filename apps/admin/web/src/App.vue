@@ -23,8 +23,24 @@ const navItems = [
   { to: '/support', label: 'Support', icon: '@' },
 ]
 
-onMounted(() => {
-  if (token.value) verify()
+onMounted(async () => {
+  // Check for magic link token in URL first (user clicked email link)
+  const urlToken = route.query.token as string | undefined
+  if (urlToken) {
+    await verifyMagicLink(urlToken)
+    await router.replace({ query: {} })
+    return
+  }
+  // Silently re-verify stored token — don't show errors for stale sessions
+  if (token.value) {
+    await verify()
+    // If verify failed, clear the error so the login form shows clean
+    if (!isAuthed.value) {
+      error.value = null
+      token.value = ''
+      localStorage.removeItem(ADMIN_TOKEN_KEY)
+    }
+  }
 })
 
 function onHeaderAction(id: string) {
@@ -63,7 +79,7 @@ async function unlockWithMagicLink() {
               v-model="emailInput"
               type="email"
               autocomplete="email"
-              placeholder="me@sil.mt"
+              placeholder="your@email.com"
             />
           </label>
           <button class="admin-login__button" :disabled="loading" @click="sendMagicLink">
