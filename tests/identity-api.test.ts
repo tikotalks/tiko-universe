@@ -1,4 +1,4 @@
-import { describe, expect, it, vi } from 'vitest'
+import { afterEach, describe, expect, it, vi } from 'vitest'
 import worker, { hashToken } from '../workers/identity-api/src/index'
 import { IdentityClient, type SessionBundle } from '@tiko/identity'
 
@@ -150,6 +150,10 @@ function env(db = new MemoryD1Database()) {
   }
 }
 
+afterEach(() => {
+  vi.restoreAllMocks()
+})
+
 async function fetchJson(path: string, init: RequestInit = {}, testEnv = env()) {
   const request = new Request(`https://identity.test${path}`, {
     ...init,
@@ -262,38 +266,47 @@ describe('identity-api endpoints', () => {
     expect(unknown.response.status).toBe(202)
     expect(known.body).toEqual(unknown.body)
     expect(known.body.message).not.toMatch(/exist|found|missing/i)
-    expect(testEnv.MAGIC_LINK_TEST_SINK[0].url).toContain(encodeURIComponent(testEnv.MAGIC_LINK_TEST_SINK[0].token))
   })
 
-  it('sends magic links through Resend when email delivery is configured', async () => {
-    const fetchMock = vi.fn(async () => new Response(JSON.stringify({ id: 'email_123' }), { status: 200 }))
-    const originalFetch = globalThis.fetch
-    globalThis.fetch = fetchMock as typeof fetch
-    try {
-      const testEnv = {
-        ...env(),
-        RESEND_API_KEY: 'resend-test-key',
-        MAGIC_LINK_FROM_EMAIL: 'Tiko <login@example.test>'
-      }
-      const created = await fetchJson('/v1/identity/device', { method: 'POST', body: JSON.stringify({}) }, testEnv)
-      const token = (created.body as SessionBundle).session.token
+  it('requests known-user magic-link delivery through communication-api when configured', async () => {
+    const communicationFetch = vi.spyOn(globalThis, 'fetch').mockResolvedValue(new Response(JSON.stringify({ data: { accepted: true, messageId: 'msg_1' } }), { status: 202 }))
+    const testEnv = { ...env(), COMMUNICATION_API_URL: 'https://communication.test/v1/communication', COMMUNICATION_API_KEY: 'comm_test_key' }
+    const created = await fetchJson('/v1/identity/device', { method: 'POST', body: JSON.stringify({}) }, testEnv)
+    const token = (created.body as SessionBundle).session.token
 
-      const response = await fetchJson('/v1/identity/email', {
-        method: 'POST',
-        headers: { authorization: `Bearer ${token}` },
-        body: JSON.stringify({ email: 'caregiver@example.test' })
-      }, testEnv)
+    const response = await fetchJson('/v1/identity/email', {
+      method: 'POST',
+      headers: { authorization: `Bearer ${token}` },
+      body: JSON.stringify({ email: 'caregiver@example.test' })
+    }, testEnv)
 
-      expect(response.response.status).toBe(202)
-      expect(fetchMock).toHaveBeenCalledWith('https://api.resend.com/emails', expect.objectContaining({ method: 'POST' }))
-      const resendCalls = fetchMock.mock.calls as unknown as Array<[string, RequestInit]>
-      const resendBody = JSON.parse(resendCalls[0][1].body as string)
-      expect(resendBody.to).toEqual(['caregiver@example.test'])
-      expect(resendBody.from).toBe('Tiko <login@example.test>')
-      expect(resendBody.text).toContain(testEnv.MAGIC_LINK_TEST_SINK[0].token)
-    } finally {
-      globalThis.fetch = originalFetch
-    }
+    expect(response.response.status).toBe(202)
+    expect(communicationFetch).toHaveBeenCalledTimes(1)
+    expect(communicationFetch).toHaveBeenCalledWith('https://communication.test/v1/communication/email/magic-link', expect.objectContaining({
+      method: 'POST',
+      headers: expect.objectContaining({
+        authorization: 'Bearer comm_test_key',
+        'content-type': 'application/json'
+      })
+    }))
+    const body = JSON.parse(String((communicationFetch.mock.calls[0][1] as RequestInit).body))
+    expect(body).toMatchObject({
+      to: 'caregiver@example.test',
+    })
+    expect(body.magicLinkUrl).toContain(testEnv.MAGIC_LINK_TEST_SINK[0].token)
+  })
+
+  it('does not request delivery for unknown recovery addresses', async () => {
+    const communicationFetch = vi.spyOn(globalThis, 'fetch').mockResolvedValue(new Response(JSON.stringify({ data: { accepted: true } }), { status: 202 }))
+    const testEnv = { ...env(), COMMUNICATION_API_URL: 'https://communication.test/v1/communication', COMMUNICATION_API_KEY: 'comm_test_key' }
+
+    const response = await fetchJson('/v1/identity/email', {
+      method: 'POST',
+      body: JSON.stringify({ email: 'unknown@example.test' })
+    }, testEnv)
+
+    expect(response.response.status).toBe(202)
+    expect(communicationFetch).not.toHaveBeenCalled()
   })
 
   it('rejects bad magic-link tokens and consumes valid tokens', async () => {

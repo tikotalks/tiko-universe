@@ -8,6 +8,7 @@ export interface AdminConfig {
   appApiUrl: string
   generationApiUrl: string
   mediaApiUrl: string
+  communicationApiUrl: string
 }
 
 export interface AdminApiResponse<T> {
@@ -49,4 +50,23 @@ export interface StoryRenderResult {
   speed: number
   fileSizeBytes: number
   createdAt: string
+}
+
+export interface CommunicationMessage {
+  id: string
+  direction: 'inbound' | 'outbound'
+  channel: 'email'
+  type: string
+  status: string
+  from: string | null
+  to: string | null
+  subject: string | null
+  text: string | null
+  html: string | null
+  provider: string | null
+  providerMessageId: string | null
+  relatedUserId: string | null
+  relatedApp: string | null
+  createdAt: string
+  updatedAt: string
 }

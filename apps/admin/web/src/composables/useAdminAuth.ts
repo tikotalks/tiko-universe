@@ -1,123 +1,117 @@
 import { computed, ref } from 'vue'
+import { IdentityClient, type SessionBundle } from '@tiko/identity'
 import type { AdminApiResponse, AdminConfig, AdminUser } from '../types/admin'
 
-const ADMIN_SESSION_KEY = 'tiko_admin_identity_session'
-const ADMIN_EMAIL = 'me@sil.mt'
+const ADMIN_TOKEN_KEY = 'tiko_admin_token'
+const ADMIN_IDENTITY_KEY = 'tiko_admin_identity'
+
+const token = ref(localStorage.getItem(ADMIN_TOKEN_KEY) ?? '')
+const user = ref<AdminUser | null>(null)
+const config = ref<AdminConfig | null>(null)
+const loading = ref(false)
+const error = ref<string | null>(null)
+const loginMessage = ref<string | null>(null)
 
 interface ApiErrorBody {
   error?: { message?: string } | string
 }
 
-interface IdentitySessionBundle {
-  user: {
-    id: string
-    displayName?: string
-    kind: 'device' | 'recoverable'
-    recoverable: boolean
-  }
-  device: {
-    id: string
-    name?: string
-    secret?: string
-  }
-  session: {
-    token: string
-    expiresAt: string
-  }
-}
-
-const token = ref(readStoredSession()?.session.token ?? '')
-const user = ref<AdminUser | null>(null)
-const config = ref<AdminConfig | null>(null)
-const loading = ref(false)
-const emailSent = ref(false)
-const error = ref<string | null>(null)
-
 function adminApiBaseUrl(): string {
   const env = (import.meta as ImportMeta & { env?: Record<string, string | undefined> }).env
-  return (env?.VITE_ADMIN_API_URL ?? 'https://admin-api.tikotalks.com/v1/admin').replace(/\/$/, '')
+  return (env?.VITE_ADMIN_API_URL ?? 'https://dev.admin-api.tikotalks.com/v1/admin').replace(/\/$/, '')
 }
 
-function identityBaseUrl(): string {
+function identityApiBaseUrl(): string {
   const env = (import.meta as ImportMeta & { env?: Record<string, string | undefined> }).env
-  return (env?.VITE_IDENTITY_API_URL ?? 'https://api.tikotalks.com/v1/identity').replace(/\/$/, '')
+  return (env?.VITE_TIKO_API_BASE_URL ?? env?.VITE_IDENTITY_API_URL ?? 'https://api.tikotalks.com/v1').replace(/\/$/, '')
 }
 
-function readStoredSession(): IdentitySessionBundle | null {
+function readStoredIdentity(): SessionBundle | null {
   try {
-    const raw = localStorage.getItem(ADMIN_SESSION_KEY)
-    if (!raw) return null
-    const bundle = JSON.parse(raw) as IdentitySessionBundle
-    if (!bundle?.session?.token || !bundle?.session?.expiresAt) return null
-    if (new Date(bundle.session.expiresAt).getTime() <= Date.now()) return null
-    return bundle
+    const value = localStorage.getItem(ADMIN_IDENTITY_KEY)
+    return value ? JSON.parse(value) as SessionBundle : null
   } catch {
     return null
   }
 }
 
-function storeSession(bundle: IdentitySessionBundle) {
-  localStorage.setItem(ADMIN_SESSION_KEY, JSON.stringify(bundle))
+function storeIdentity(bundle: SessionBundle) {
   token.value = bundle.session.token
+  localStorage.setItem(ADMIN_IDENTITY_KEY, JSON.stringify(bundle))
+  localStorage.setItem(ADMIN_TOKEN_KEY, bundle.session.token)
 }
 
-async function readJsonResponse<T>(response: Response): Promise<T | ApiErrorBody | null> {
-  return response.json().catch(() => null) as Promise<T | ApiErrorBody | null>
-}
-
-function errorMessage(body: ApiErrorBody | null, fallback: string): string {
-  const apiError = body && 'error' in body ? body.error : undefined
-  return (typeof apiError === 'string' ? apiError : apiError?.message) ?? fallback
+function tokenFromMagicLink(value: string): string {
+  const trimmed = value.trim()
+  if (!trimmed) return ''
+  try {
+    const url = new URL(trimmed)
+    return url.searchParams.get('token')?.trim() ?? trimmed
+  } catch {
+    return trimmed
+  }
 }
 
 async function adminFetch<T>(path: string): Promise<T> {
   const response = await fetch(`${adminApiBaseUrl()}${path}`, {
     headers: { authorization: `Bearer ${token.value}` },
   })
-  const body = await readJsonResponse<AdminApiResponse<T>>(response)
-  if (!response.ok) throw new Error(errorMessage(body as ApiErrorBody | null, `Admin API error: ${response.status}`))
-  return (body as AdminApiResponse<T>).data
-}
-
-async function identityFetch<T>(path: string, init: RequestInit): Promise<T> {
-  const response = await fetch(`${identityBaseUrl()}${path}`, init)
-  const body = await readJsonResponse<T>(response)
-  if (!response.ok) throw new Error(errorMessage(body as ApiErrorBody | null, `Identity API error: ${response.status}`))
-  return body as T
-}
-
-async function ensureDeviceSession(): Promise<IdentitySessionBundle> {
-  const stored = readStoredSession()
-  if (stored) {
-    token.value = stored.session.token
-    return stored
+  const body = await response.json().catch(() => null) as ApiErrorBody | AdminApiResponse<T> | null
+  if (!response.ok) {
+    const apiError = body && 'error' in body ? body.error : undefined
+    throw new Error((typeof apiError === 'string' ? apiError : apiError?.message) ?? `Admin API error: ${response.status}`)
   }
-
-  const bundle = await identityFetch<IdentitySessionBundle>('/device', {
-    method: 'POST',
-    headers: { 'content-type': 'application/json' },
-    body: JSON.stringify({ device: { name: 'Tiko Admin', platform: 'web' } }),
-  })
-  storeSession(bundle)
-  return bundle
+  return (body as AdminApiResponse<T>).data
 }
 
 export function useAdminAuth() {
   const isAuthed = computed(() => Boolean(user.value))
-  const adminEmail = ADMIN_EMAIL
+  const identityClient = new IdentityClient({ baseUrl: identityApiBaseUrl() })
 
-  async function verifyStoredSession() {
-    if (!token.value) return false
+  async function ensureDeviceSession(): Promise<SessionBundle> {
+    const stored = readStoredIdentity()
+    if (stored?.session.token) {
+      try {
+        const current = await identityClient.getSession(stored.session.token)
+        const restored = { ...current, device: { ...current.device, secret: stored.device.secret } }
+        storeIdentity(restored)
+        return restored
+      } catch {
+        localStorage.removeItem(ADMIN_IDENTITY_KEY)
+        localStorage.removeItem(ADMIN_TOKEN_KEY)
+        token.value = ''
+      }
+    }
+
+    const bundle = await identityClient.bootstrapDevice({
+      device: {
+        name: 'Tiko Admin web',
+        platform: 'web'
+      }
+    })
+    storeIdentity(bundle)
+    return bundle
+  }
+
+  async function verify(candidateToken?: string) {
+    if (candidateToken !== undefined) token.value = candidateToken.trim()
+    if (!token.value) {
+      error.value = 'Paste your Tiko session token to unlock the dashboard.'
+      return false
+    }
 
     loading.value = true
     error.value = null
     try {
       user.value = await adminFetch<AdminUser>('/me')
       config.value = await adminFetch<AdminConfig>('/config')
+      localStorage.setItem(ADMIN_TOKEN_KEY, token.value)
+      loginMessage.value = null
       return true
     } catch (e) {
       user.value = null
       config.value = null
+      localStorage.removeItem(ADMIN_TOKEN_KEY)
       error.value = e instanceof Error ? e.message : 'Admin verification failed.'
       return false
     } finally {
@@ -125,47 +119,42 @@ export function useAdminAuth() {
     }
   }
 
-  async function requestMagicLink() {
+  async function requestMagicLink(email: string) {
+    const normalizedEmail = email.trim().toLowerCase()
+    if (!normalizedEmail || !normalizedEmail.includes('@')) {
+      error.value = 'Enter the admin email address.'
+      return false
+    }
+
     loading.value = true
     error.value = null
-    emailSent.value = false
+    loginMessage.value = null
     try {
-      const session = await ensureDeviceSession()
-      await identityFetch('/email', {
-        method: 'POST',
-        headers: {
-          authorization: `Bearer ${session.session.token}`,
-          'content-type': 'application/json',
-        },
-        body: JSON.stringify({ email: adminEmail }),
-      })
-      emailSent.value = true
+      const bundle = await ensureDeviceSession()
+      const response = await identityClient.requestRecoveryEmail({ email: normalizedEmail }, bundle.session.token)
+      loginMessage.value = response.message || 'Check your email for the magic link.'
       return true
     } catch (e) {
-      error.value = e instanceof Error ? e.message : `Could not send a magic link to ${adminEmail}.`
+      error.value = e instanceof Error ? e.message : 'Could not request a magic link.'
       return false
     } finally {
       loading.value = false
     }
   }
 
-  async function verifyMagicLink(magicToken: string) {
-    const cleanToken = magicToken.trim()
-    if (!cleanToken) {
-      error.value = 'Magic link token is missing or expired.'
+  async function verifyMagicLink(value: string) {
+    const magicToken = tokenFromMagicLink(value)
+    if (!magicToken) {
+      error.value = 'Paste the magic link or verification token from your email.'
       return false
     }
 
     loading.value = true
     error.value = null
     try {
-      const bundle = await identityFetch<IdentitySessionBundle>('/magic-links/verify', {
-        method: 'POST',
-        headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ token: cleanToken }),
-      })
-      storeSession(bundle)
-      return verifyStoredSession()
+      const bundle = await identityClient.verifyMagicLink({ token: magicToken })
+      storeIdentity(bundle)
+      return verify(bundle.session.token)
     } catch (e) {
       user.value = null
       config.value = null
@@ -180,8 +169,9 @@ export function useAdminAuth() {
     token.value = ''
     user.value = null
     config.value = null
-    emailSent.value = false
-    localStorage.removeItem(ADMIN_SESSION_KEY)
+    loginMessage.value = null
+    localStorage.removeItem(ADMIN_TOKEN_KEY)
+    localStorage.removeItem(ADMIN_IDENTITY_KEY)
   }
 
   return {
@@ -190,12 +180,11 @@ export function useAdminAuth() {
     config,
     loading,
     error,
-    emailSent,
+    loginMessage,
     isAuthed,
-    adminEmail,
+    verify,
     requestMagicLink,
     verifyMagicLink,
-    verifyStoredSession,
-    logout,
+    logout
   }
 }

@@ -1,19 +1,20 @@
 name = "tiko-identity-api-dev"
 main = "src/index.ts"
 compatibility_date = "2026-05-27"
-account_id = "8cef251b5fdcf6c6f63db98b7aa49f9a"
+account_id = "dc2b7d14a69351375cab6de9a13ddee9"
 workers_dev = true
 
 [vars]
 ALLOWED_ORIGINS = "https://tiko.mt,https://www.tiko.mt,https://tiko.tikoapps.org,https://yesno.tikoapps.org,https://cards.tikoapps.org,https://sequence.tikoapps.org,https://type.tikoapps.org,https://timer.tikoapps.org,https://admin.tikoapps.org,https://dev.tiko.tikoapps.org,https://dev.yesno.tikoapps.org,https://dev.cards.tikoapps.org,https://dev.sequence.tikoapps.org,https://dev.type.tikoapps.org,https://dev.timer.tikoapps.org,https://dev.admin.tikoapps.org,http://localhost:5173,http://localhost:4173,capacitor://localhost,ionic://localhost,tiko://native"
-MAGIC_LINK_BASE_URL = "https://dev.admin.tikoapps.org"
-MAGIC_LINK_FROM_EMAIL = "Tiko <login@tiko.mt>"
-# Set TOKEN_PEPPER and RESEND_API_KEY with `wrangler secret put`; do not commit real secrets.
+MAGIC_LINK_BASE_URL = "https://api.tikotalks.com/v1/identity/magic"
+COMMUNICATION_API_URL = "https://dev.api.tikotalks.com/v1/communication"
+# Set TOKEN_PEPPER with `wrangler secret put TOKEN_PEPPER`; do not commit real token peppers.
+# Set COMMUNICATION_API_KEY with `wrangler secret put COMMUNICATION_API_KEY`; do not commit real service keys.
 
 [[d1_databases]]
 binding = "IDENTITY_DB"
 database_name = "tiko-identity"
-database_id = "0b5e035d-6420-451e-8e54-0af5829cc95c"
+database_id = "036a1726-ac16-48a9-ab76-22c3a88ca7ae"
 migrations_dir = "migrations"
 
 # ── Production environment ──────────────────────────────────────
@@ -25,15 +26,19 @@ workers_dev = false
 
 [env.production.vars]
 ALLOWED_ORIGINS = "https://tiko.mt,https://www.tiko.mt,https://tiko.tikoapps.org,https://yesno.tikoapps.org,https://cards.tikoapps.org,https://sequence.tikoapps.org,https://type.tikoapps.org,https://timer.tikoapps.org,https://admin.tikoapps.org,http://localhost:5173,http://localhost:4173,capacitor://localhost,ionic://localhost,tiko://native"
-MAGIC_LINK_BASE_URL = "https://admin.tikoapps.org"
-MAGIC_LINK_FROM_EMAIL = "Tiko <login@tiko.mt>"
+MAGIC_LINK_BASE_URL = "https://api.tikotalks.com/v1/identity/magic"
+COMMUNICATION_API_URL = "https://api.tikotalks.com/v1/communication"
 
 [[env.production.d1_databases]]
 binding = "IDENTITY_DB"
 database_name = "tiko-identity"
-database_id = "0b5e035d-6420-451e-8e54-0af5829cc95c"
+database_id = "036a1726-ac16-48a9-ab76-22c3a88ca7ae"
 migrations_dir = "migrations"
 
 [[env.production.routes]]
 pattern = "api.tikotalks.com/v1/identity/*"
 zone_name = "tikotalks.com"
+
+[[env.production.routes]]
+pattern = "id.tiko.mt/*"
+zone_name = "tiko.mt"

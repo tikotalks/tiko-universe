@@ -21,9 +21,9 @@ export interface Env {
   IDENTITY_DB: D1Database
   TOKEN_PEPPER: string
   MAGIC_LINK_BASE_URL?: string
+  COMMUNICATION_API_URL?: string
+  COMMUNICATION_API_KEY?: string
   ALLOWED_ORIGINS?: string
-  RESEND_API_KEY?: string
-  MAGIC_LINK_FROM_EMAIL?: string
   MAGIC_LINK_TEST_SINK?: Array<{ email: string; token: string; url: string }>
 }
 
@@ -61,6 +61,7 @@ interface MagicLinkRow {
 const SESSION_TTL_MS = 1000 * 60 * 60 * 24 * 180
 const MAGIC_LINK_TTL_MS = 1000 * 60 * 15
 const GENERIC_RECOVERY_MESSAGE = 'If recovery is available, a link will be sent.'
+const DEFAULT_COMMUNICATION_API_URL = 'https://api.tikotalks.com/v1/communication'
 const DEFAULT_ALLOWED_ORIGINS = 'https://tiko.mt,https://www.tiko.mt,https://tiko.tikoapps.org,https://yesno.tikoapps.org,https://cards.tikoapps.org,https://sequence.tikoapps.org,https://type.tikoapps.org,https://timer.tikoapps.org,https://admin.tikoapps.org,https://dev.tiko.tikoapps.org,https://dev.yesno.tikoapps.org,https://dev.cards.tikoapps.org,https://dev.sequence.tikoapps.org,https://dev.type.tikoapps.org,https://dev.timer.tikoapps.org,https://dev.admin.tikoapps.org,http://localhost:5173,http://localhost:4173,capacitor://localhost,ionic://localhost,tiko://native'
 
 export default {
@@ -165,7 +166,7 @@ async function requestRecoveryEmail(request: Request, env: Env): Promise<Respons
       await run(env.IDENTITY_DB.prepare('INSERT INTO magic_links (id, user_id, email_hash, token_hash, purpose, expires_at, created_at, consumed_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)').bind(id('mlk'), userId, emailHash, magicHash, 'recovery', expiresAt, now.toISOString(), null))
       const url = magicLinkUrl(env, magicToken)
       env.MAGIC_LINK_TEST_SINK?.push({ email, token: magicToken, url })
-      await sendMagicLinkEmail(env, email, url)
+      await requestMagicLinkDelivery(env, email, url)
     }
   }
 
@@ -258,6 +259,27 @@ async function writeEvent(env: Env, userId: string, deviceId: string | null, typ
   await run(env.IDENTITY_DB.prepare('INSERT INTO user_profile_events (id, user_id, device_id, type, payload_json, created_at) VALUES (?, ?, ?, ?, ?, ?)').bind(id('evt'), userId, deviceId, type, '{}', createdAt))
 }
 
+async function requestMagicLinkDelivery(env: Env, email: string, magicLinkUrl: string): Promise<void> {
+  if (!env.COMMUNICATION_API_KEY) return
+
+  const baseUrl = (env.COMMUNICATION_API_URL ?? DEFAULT_COMMUNICATION_API_URL).replace(/\/$/, '')
+  const response = await fetch(`${baseUrl}/email/magic-link`, {
+    method: 'POST',
+    headers: {
+      authorization: `Bearer ${env.COMMUNICATION_API_KEY}`,
+      'content-type': 'application/json'
+    },
+    body: JSON.stringify({
+      to: email,
+      magicLinkUrl
+    })
+  })
+
+  if (!response.ok) {
+    throw new HttpError(502, 'communication_send_failed', 'Could not request recovery email delivery.')
+  }
+}
+
 export async function hashToken(value: string, pepper: string): Promise<string> {
   const data = new TextEncoder().encode(`${pepper}:${value}`)
   const digest = await crypto.subtle.digest('SHA-256', data)
@@ -309,36 +331,6 @@ function magicLinkUrl(env: Env, magicToken: string): string {
   const url = new URL(base)
   url.searchParams.set('token', magicToken)
   return url.toString()
-}
-
-async function sendMagicLinkEmail(env: Env, email: string, url: string): Promise<void> {
-  if (!env.RESEND_API_KEY) return
-
-  const response = await fetch('https://api.resend.com/emails', {
-    method: 'POST',
-    headers: {
-      authorization: `Bearer ${env.RESEND_API_KEY}`,
-      'content-type': 'application/json',
-    },
-    body: JSON.stringify({
-      from: env.MAGIC_LINK_FROM_EMAIL ?? 'Tiko <login@tiko.mt>',
-      to: [email],
-      subject: 'Your Tiko admin sign-in link',
-      html: `<p>Open this link to sign in to Tiko Admin:</p><p><a href="${escapeHtml(url)}">Sign in to Tiko Admin</a></p><p>This link expires in 15 minutes.</p>`,
-      text: `Open this link to sign in to Tiko Admin:\n\n${url}\n\nThis link expires in 15 minutes.`,
-    }),
-  })
-
-  if (!response.ok) throw new HttpError(502, 'email_delivery_failed', 'Could not send the magic link email.')
-}
-
-function escapeHtml(value: string): string {
-  return value
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#39;')
 }
 
 function requiredString(value: unknown, field: string): string {

@@ -7,7 +7,9 @@ Cloudflare Worker for Tiko's device-first identity foundation.
 - Durable data lives in D1 through the `IDENTITY_DB` binding.
 - `TOKEN_PEPPER` is required and must be set as a Wrangler secret; it is used to hash session, device, email, and magic-link tokens before storage.
 - `ALLOWED_ORIGINS` is an optional comma-separated CORS allowlist. `*` is allowed for local/dev defaults.
-- `MAGIC_LINK_BASE_URL` controls the app URL used when a future email provider sends recovery links.
+- `MAGIC_LINK_BASE_URL` controls the app URL used in recovery links.
+- `COMMUNICATION_API_URL` points at `communication-api`, which owns email delivery and communication logging.
+- `COMMUNICATION_API_KEY` is optional for local tests but required in deployed environments to request magic-link delivery.
 
 ## Endpoints
 

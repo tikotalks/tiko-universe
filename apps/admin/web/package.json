@@ -9,6 +9,7 @@
     "test": "echo scaffold-only:@tiko-web/admin"
   },
   "dependencies": {
+    "@tiko/identity": "file:../../../packages/identity",
     "@tiko/ui": "file:../../../packages/ui",
     "@vitejs/plugin-vue": "^6.0.1",
     "vite": "^7.2.4",

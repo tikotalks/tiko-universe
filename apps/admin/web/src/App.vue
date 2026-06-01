@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted } from 'vue'
+import { onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { TikoAppShell } from '@tiko/ui'
 import type { TikoHeaderAction } from '@tiko/ui'
@@ -7,18 +7,9 @@ import { useAdminAuth } from './composables/useAdminAuth'
 
 const route = useRoute()
 const router = useRouter()
-const {
-  user,
-  loading,
-  error,
-  emailSent,
-  isAuthed,
-  adminEmail,
-  requestMagicLink,
-  verifyMagicLink,
-  verifyStoredSession,
-  logout,
-} = useAdminAuth()
+const { token, user, loading, error, loginMessage, isAuthed, verify, requestMagicLink, verifyMagicLink, logout } = useAdminAuth()
+const emailInput = ref('')
+const magicLinkInput = ref('')
 
 const actions: TikoHeaderAction[] = [
   { id: 'logout', label: 'Logout', icon: 'ui/logout' },
@@ -29,26 +20,27 @@ const navItems = [
   { to: '/stories', label: 'Stories', icon: '♪' },
   { to: '/library', label: 'Library', icon: '☰' },
   { to: '/defaults', label: 'Defaults', icon: '▦' },
+  { to: '/support', label: 'Support', icon: '@' },
 ]
 
-const callbackToken = computed(() => {
-  const value = route.query.token
-  if (typeof value === 'string') return value
-  if (Array.isArray(value)) return value[0] ?? ''
-  return ''
-})
-
-onMounted(async () => {
-  if (callbackToken.value) {
-    const verified = await verifyMagicLink(callbackToken.value)
-    if (verified) await router.replace({ path: route.path, query: {} })
-    return
-  }
-  await verifyStoredSession()
+onMounted(() => {
+  if (token.value) verify()
 })
 
 function onHeaderAction(id: string) {
-  if (id === 'logout') logout()
+  if (id === 'logout') {
+    logout()
+    emailInput.value = ''
+    magicLinkInput.value = ''
+  }
+}
+
+async function sendMagicLink() {
+  await requestMagicLink(emailInput.value)
+}
+
+async function unlockWithMagicLink() {
+  await verifyMagicLink(magicLinkInput.value)
 }
 </script>
 
@@ -63,18 +55,33 @@ function onHeaderAction(id: string) {
     <div class="admin-app">
       <section v-if="!isAuthed" class="admin-login">
         <div class="admin-login__card">
-          <p class="admin-login__eyebrow">Tiko Admin</p>
-          <h1>Sign in with your email</h1>
-          <p>
-            This dashboard is restricted to <strong>{{ adminEmail }}</strong>.
-            We’ll send a magic link — no passwords and no bearer-token pasting.
-          </p>
-          <p v-if="emailSent" class="admin-login__success">
-            Magic link requested for {{ adminEmail }}. Open it on this device to unlock the dashboard.
-          </p>
+          <h1>Admin dashboard</h1>
+          <p>Use the configured admin email. The dashboard unlocks after the magic link verifies your Tiko identity session.</p>
+          <label class="admin-login__field">
+            <span>Email</span>
+            <input
+              v-model="emailInput"
+              type="email"
+              autocomplete="email"
+              placeholder="me@sil.mt"
+            />
+          </label>
+          <button class="admin-login__button" :disabled="loading" @click="sendMagicLink">
+            {{ loading ? 'Sending…' : 'Send magic link' }}
+          </button>
+
+          <label class="admin-login__field">
+            <span>Magic link or verification token</span>
+            <textarea
+              v-model="magicLinkInput"
+              placeholder="Paste the link from your email…"
+              rows="3"
+            />
+          </label>
+          <p v-if="loginMessage" class="admin-login__message">{{ loginMessage }}</p>
           <p v-if="error" class="admin-login__error">{{ error }}</p>
-          <button class="admin-login__button" :disabled="loading" @click="requestMagicLink">
-            {{ loading ? 'Sending…' : `Send magic link to ${adminEmail}` }}
+          <button class="admin-login__button admin-login__button--secondary" :disabled="loading" @click="unlockWithMagicLink">
+            {{ loading ? 'Checking…' : 'Verify and unlock' }}
           </button>
         </div>
       </section>
@@ -185,28 +192,40 @@ function onHeaderAction(id: string) {
   width: 100%;
 
   &__card {
-    width: min(30rem, 100%);
+    width: min(28rem, 100%);
     padding: 1.25rem;
     border: 1px solid var(--tiko-admin-border);
     border-radius: 1rem;
     background: var(--tiko-admin-card);
   }
 
-  &__eyebrow {
-    margin: 0 0 0.35rem;
-    color: var(--tiko-admin-muted);
-    font-size: 0.8rem;
-    font-weight: 700;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
+  &__field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    margin-top: 1rem;
+    font-size: 0.85rem;
   }
 
-  &__success {
+  input,
+  textarea {
+    width: 100%;
+    box-sizing: border-box;
+    border: 1px solid var(--tiko-admin-border);
     border-radius: 0.75rem;
-    background: color-mix(in srgb, var(--tiko-app-primary) 12%, transparent);
-    color: var(--color-foreground);
     padding: 0.75rem;
-    font-size: 0.9rem;
+    background: var(--color-background);
+    color: var(--color-foreground);
+  }
+
+  textarea {
+    resize: vertical;
+  }
+
+  &__message {
+    color: var(--color-success);
+    font-size: 0.85rem;
+    font-weight: 700;
   }
 
   &__error {
@@ -226,6 +245,11 @@ function onHeaderAction(id: string) {
     cursor: pointer;
 
     &:disabled { opacity: 0.6; cursor: wait; }
+
+    &--secondary {
+      margin-top: 0.65rem;
+      background: color-mix(in srgb, var(--tiko-app-primary), var(--color-background) 22%);
+    }
   }
 }
 </style>
