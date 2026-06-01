@@ -234,6 +234,7 @@ onMounted(() => {
       background: var(--surface-card);
       z-index: 1;
       border-radius: 0 0 20px 20px;
+      box-shadow: var(--shadow-m);
 
       &--open {
         display: flex;

@@ -82,6 +82,7 @@ const bemm = useBemm('site-footer', { return: 'string', includeBaseClass: true }
     font-size: 48px;
     color: white;
     opacity: 0.85;
+    letter-spacing: 0;
     transition: opacity 0.15s;
 
     &:hover {
