@@ -49,8 +49,7 @@ const bemm = useBemm('site-footer', { return: 'string', includeBaseClass: true }
       </div>
 
       <div :class="bemm('bottom')">
-        <p :class="bemm('copy')">© 2026 TikoTalks. Not a medical or diagnostic product.</p>
-        <p :class="bemm('note')">Tiko does not make therapy or outcome claims.</p>
+        <p :class="bemm('copy')">© 2026 TikoTalks</p>
       </div>
     </div>
   </footer>
