@@ -170,7 +170,7 @@ async function requestRecoveryEmail(request: Request, env: Env): Promise<Respons
       const url = magicLinkUrl(env, magicToken)
       const webUrl = webMagicLinkUrl(magicToken)
       env.MAGIC_LINK_TEST_SINK?.push({ email, token: magicToken, otp, url, webUrl })
-      await requestMagicLinkDelivery(env, email, { magicLinkUrl: url, webLinkUrl: url !== webUrl ? webUrl : undefined, otp })
+      await requestMagicLinkDelivery(env, email, { magicLinkUrl: webUrl, webLinkUrl: url !== webUrl ? url : undefined, otp })
     }
   }
 

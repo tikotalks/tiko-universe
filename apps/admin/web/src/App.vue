@@ -64,6 +64,7 @@ function resetLogin() {
   codeSent.value = false
   codeInput.value = ''
 }
+
 </script>
 
 <template>

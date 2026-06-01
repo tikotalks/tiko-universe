@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import worker from '../workers/communication-api/src/index'
+import { handleRequest } from '../workers/communication-api/src/index'
 
 type Row = Record<string, unknown>
 type JsonBody = Record<string, any>
@@ -110,7 +110,7 @@ async function fetchJson(path: string, init: RequestInit = {}, testEnv = env()) 
     ...init,
     headers: { 'content-type': 'application/json', ...(init.headers ?? {}) }
   })
-  const response = await worker.fetch(request, testEnv as never)
+  const response = await handleRequest(request, testEnv as never)
   const body = response.status === 204 ? {} : await response.json() as JsonBody
   return { response, body, env: testEnv }
 }
