@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { RouterLink } from 'vue-router'
-import { ref, onMounted } from 'vue'
+import { nextTick, onMounted, onUnmounted, ref } from 'vue'
 import { useBemm } from 'bemm'
 import { tikoApps } from '../content/appUniverse'
 import { trustPrinciples, platformNotes, whyTikoPillars, whyFreePillars } from '../siteContent'
@@ -32,7 +32,17 @@ interface MediaApiResponse {
 }
 
 const mediaImages = ref<MediaStreamImage[]>([])
-const mediaStreamStyle = ref<Record<string, string>>({ '--media-duration': '86s' })
+const mediaStream = ref<HTMLElement | null>(null)
+const mediaTrack = ref<HTMLElement | null>(null)
+const mediaTrackStyle = ref<Record<string, string>>({ transform: 'translateX(0px)' })
+
+let mediaAnimationFrame = 0
+let mediaLastFrame = 0
+let mediaOffset = 0
+let mediaVelocity = -28
+let mediaLoopWidth = 0
+let mediaPointerX: number | null = null
+let mediaPointerY: number | null = null
 
 const appImages: Record<string, MediaImage> = {
   'yes-no': {
@@ -148,6 +158,8 @@ async function loadHomeImages() {
       const uniqueItems = Array.from(new Map(items.map((item) => [item.id, item])).values())
       const normalized = normalizeMediaImages(shuffled(uniqueItems).slice(0, 50))
       mediaImages.value = buildMediaStreamImages(normalized)
+      await nextTick()
+      refreshMediaLoopWidth()
       return
     }
   } catch {
@@ -155,21 +167,94 @@ async function loadHomeImages() {
   }
 
   mediaImages.value = buildMediaStreamImages([])
+  await nextTick()
+  refreshMediaLoopWidth()
+}
+
+function refreshMediaLoopWidth() {
+  mediaLoopWidth = Math.max(1, (mediaTrack.value?.scrollWidth ?? 0) / 2)
+}
+
+function wrapMediaOffset() {
+  if (!mediaLoopWidth) return
+  while (mediaOffset <= -mediaLoopWidth) mediaOffset += mediaLoopWidth
+  while (mediaOffset > 0) mediaOffset -= mediaLoopWidth
+}
+
+function setMediaTrackTransform() {
+  mediaTrackStyle.value = { transform: `translateX(${mediaOffset}px)` }
+}
+
+function updateMediaTileInfluence() {
+  const stream = mediaStream.value
+  const pointerX = mediaPointerX
+  const pointerY = mediaPointerY
+  if (!stream || pointerX === null || pointerY === null) return
+
+  const influenceRadius = 260
+  stream.querySelectorAll<HTMLElement>('.home__media-item').forEach((item) => {
+    const rect = item.getBoundingClientRect()
+    const centerX = rect.left + (rect.width / 2)
+    const centerY = rect.top + (rect.height / 2)
+    const distance = Math.hypot(pointerX - centerX, pointerY - centerY)
+    const influence = Math.max(0, 1 - (distance / influenceRadius)) ** 1.8
+    item.style.setProperty('--tile-hover-scale', (1 + (influence * 0.2)).toFixed(3))
+    item.style.setProperty('--tile-hover-lift', `${Math.round(influence * -14)}px`)
+    item.style.zIndex = `${Math.round(influence * 20)}`
+  })
+}
+
+function resetMediaTileInfluence() {
+  const stream = mediaStream.value
+  if (!stream) return
+
+  stream.querySelectorAll<HTMLElement>('.home__media-item').forEach((item) => {
+    item.style.removeProperty('--tile-hover-scale')
+    item.style.removeProperty('--tile-hover-lift')
+    item.style.removeProperty('z-index')
+  })
+}
+
+function animateMediaStream(frameTime: number) {
+  if (!mediaLastFrame) mediaLastFrame = frameTime
+  const deltaSeconds = Math.min(0.05, (frameTime - mediaLastFrame) / 1000)
+  mediaLastFrame = frameTime
+
+  refreshMediaLoopWidth()
+  mediaOffset += mediaVelocity * deltaSeconds
+  wrapMediaOffset()
+  setMediaTrackTransform()
+  updateMediaTileInfluence()
+
+  mediaAnimationFrame = window.requestAnimationFrame(animateMediaStream)
 }
 
 function onMediaStreamPointerMove(event: PointerEvent) {
+  mediaPointerX = event.clientX
+  mediaPointerY = event.clientY
+
   const rect = (event.currentTarget as HTMLElement).getBoundingClientRect()
   const xRatio = Math.min(1, Math.max(0, (event.clientX - rect.left) / rect.width))
-  const duration = Math.round(70 - (xRatio * 48))
-  mediaStreamStyle.value = { '--media-duration': `${duration}s` }
+  const distanceFromCenter = Math.abs(xRatio - 0.5) * 2
+  const speed = 18 + (distanceFromCenter * 86)
+  mediaVelocity = xRatio < 0.5 ? speed : -speed
+  updateMediaTileInfluence()
 }
 
 function onMediaStreamPointerLeave() {
-  mediaStreamStyle.value = { '--media-duration': '86s' }
+  mediaPointerX = null
+  mediaPointerY = null
+  mediaVelocity = -28
+  resetMediaTileInfluence()
 }
 
 onMounted(() => {
   loadHomeImages()
+  mediaAnimationFrame = window.requestAnimationFrame(animateMediaStream)
+})
+
+onUnmounted(() => {
+  window.cancelAnimationFrame(mediaAnimationFrame)
 })
 </script>
 
@@ -337,13 +422,13 @@ onMounted(() => {
       </div>
 
       <div
+        ref="mediaStream"
         :class="bemm('media-stream')"
-        :style="mediaStreamStyle"
         aria-label="A moving stream of random Tiko Media images"
         @pointermove="onMediaStreamPointerMove"
         @pointerleave="onMediaStreamPointerLeave"
       >
-        <div :class="bemm('media-track')">
+        <div ref="mediaTrack" :class="bemm('media-track')" :style="mediaTrackStyle">
           <div
             v-for="(img, index) in [...mediaImages, ...mediaImages]"
             :key="`${img.id}-loop-${index}`"
@@ -819,14 +904,16 @@ onMounted(() => {
     align-items: center;
     width: max-content;
     gap: calc(var(--space) * 0.9);
-    animation: home-media-drift var(--media-duration, 86s) linear infinite;
+    will-change: transform;
   }
 
   &__media-item {
     flex: 0 0 auto;
     width: var(--tile-size, 144px);
     height: var(--tile-size, 144px);
-    transform: translateY(var(--tile-lift, 0)) rotate(var(--tile-rotate, 0));
+    transform: translateY(calc(var(--tile-lift, 0px) + var(--tile-hover-lift, 0px))) rotate(var(--tile-rotate, 0)) scale(var(--tile-hover-scale, 1));
+    transform-origin: center;
+    transition: transform 140ms ease-out;
     border-radius: 24px;
     overflow: hidden;
     background: var(--surface-card);
@@ -1007,19 +1094,9 @@ onMounted(() => {
     grid-template-columns: 1fr;
   }
 }
-@keyframes home-media-drift {
-  from {
-    transform: translateX(0);
-  }
-
-  to {
-    transform: translateX(-50%);
-  }
-}
-
 @media (prefers-reduced-motion: reduce) {
   .home__media-track {
-    animation-duration: 220s;
+    transition: none;
   }
 }
 </style>
