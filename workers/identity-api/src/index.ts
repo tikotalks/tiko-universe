@@ -22,6 +22,8 @@ export interface Env {
   TOKEN_PEPPER: string
   MAGIC_LINK_BASE_URL?: string
   ALLOWED_ORIGINS?: string
+  RESEND_API_KEY?: string
+  MAGIC_LINK_FROM_EMAIL?: string
   MAGIC_LINK_TEST_SINK?: Array<{ email: string; token: string; url: string }>
 }
 
@@ -161,8 +163,9 @@ async function requestRecoveryEmail(request: Request, env: Env): Promise<Respons
       const magicHash = await hashToken(magicToken, env.TOKEN_PEPPER)
       const expiresAt = new Date(now.getTime() + MAGIC_LINK_TTL_MS).toISOString()
       await run(env.IDENTITY_DB.prepare('INSERT INTO magic_links (id, user_id, email_hash, token_hash, purpose, expires_at, created_at, consumed_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)').bind(id('mlk'), userId, emailHash, magicHash, 'recovery', expiresAt, now.toISOString(), null))
-      const url = `${env.MAGIC_LINK_BASE_URL ?? 'https://api.tikotalks.com/v1/identity/magic'}?token=${encodeURIComponent(magicToken)}`
+      const url = magicLinkUrl(env, magicToken)
       env.MAGIC_LINK_TEST_SINK?.push({ email, token: magicToken, url })
+      await sendMagicLinkEmail(env, email, url)
     }
   }
 
@@ -299,6 +302,43 @@ function normalizeEmail(value: unknown): string | null {
 
 function optionalString(value: unknown): string | null {
   return typeof value === 'string' && value.trim() ? value.trim() : null
+}
+
+function magicLinkUrl(env: Env, magicToken: string): string {
+  const base = env.MAGIC_LINK_BASE_URL ?? 'https://admin.tikoapps.org'
+  const url = new URL(base)
+  url.searchParams.set('token', magicToken)
+  return url.toString()
+}
+
+async function sendMagicLinkEmail(env: Env, email: string, url: string): Promise<void> {
+  if (!env.RESEND_API_KEY) return
+
+  const response = await fetch('https://api.resend.com/emails', {
+    method: 'POST',
+    headers: {
+      authorization: `Bearer ${env.RESEND_API_KEY}`,
+      'content-type': 'application/json',
+    },
+    body: JSON.stringify({
+      from: env.MAGIC_LINK_FROM_EMAIL ?? 'Tiko <login@tiko.mt>',
+      to: [email],
+      subject: 'Your Tiko admin sign-in link',
+      html: `<p>Open this link to sign in to Tiko Admin:</p><p><a href="${escapeHtml(url)}">Sign in to Tiko Admin</a></p><p>This link expires in 15 minutes.</p>`,
+      text: `Open this link to sign in to Tiko Admin:\n\n${url}\n\nThis link expires in 15 minutes.`,
+    }),
+  })
+
+  if (!response.ok) throw new HttpError(502, 'email_delivery_failed', 'Could not send the magic link email.')
+}
+
+function escapeHtml(value: string): string {
+  return value
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;')
 }
 
 function requiredString(value: unknown, field: string): string {

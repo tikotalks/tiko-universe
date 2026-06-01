@@ -6,8 +6,9 @@ workers_dev = true
 
 [vars]
 ALLOWED_ORIGINS = "https://tiko.mt,https://www.tiko.mt,https://tiko.tikoapps.org,https://yesno.tikoapps.org,https://cards.tikoapps.org,https://sequence.tikoapps.org,https://type.tikoapps.org,https://timer.tikoapps.org,https://admin.tikoapps.org,https://dev.tiko.tikoapps.org,https://dev.yesno.tikoapps.org,https://dev.cards.tikoapps.org,https://dev.sequence.tikoapps.org,https://dev.type.tikoapps.org,https://dev.timer.tikoapps.org,https://dev.admin.tikoapps.org,http://localhost:5173,http://localhost:4173,capacitor://localhost,ionic://localhost,tiko://native"
-MAGIC_LINK_BASE_URL = "https://api.tikotalks.com/v1/identity/magic"
-# Set TOKEN_PEPPER with `wrangler secret put TOKEN_PEPPER`; do not commit real token peppers.
+MAGIC_LINK_BASE_URL = "https://dev.admin.tikoapps.org"
+MAGIC_LINK_FROM_EMAIL = "Tiko <login@tiko.mt>"
+# Set TOKEN_PEPPER and RESEND_API_KEY with `wrangler secret put`; do not commit real secrets.
 
 [[d1_databases]]
 binding = "IDENTITY_DB"
@@ -24,7 +25,8 @@ workers_dev = false
 
 [env.production.vars]
 ALLOWED_ORIGINS = "https://tiko.mt,https://www.tiko.mt,https://tiko.tikoapps.org,https://yesno.tikoapps.org,https://cards.tikoapps.org,https://sequence.tikoapps.org,https://type.tikoapps.org,https://timer.tikoapps.org,https://admin.tikoapps.org,http://localhost:5173,http://localhost:4173,capacitor://localhost,ionic://localhost,tiko://native"
-MAGIC_LINK_BASE_URL = "https://api.tikotalks.com/v1/identity/magic"
+MAGIC_LINK_BASE_URL = "https://admin.tikoapps.org"
+MAGIC_LINK_FROM_EMAIL = "Tiko <login@tiko.mt>"
 
 [[env.production.d1_databases]]
 binding = "IDENTITY_DB"
