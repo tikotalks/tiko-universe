@@ -24,7 +24,15 @@ interface MediaApiImage {
   file_name?: string
 }
 
+interface MediaApiResponse {
+  data?: MediaApiImage[]
+  meta?: {
+    total?: number
+  }
+}
+
 const mediaImages = ref<MediaStreamImage[]>([])
+const mediaStreamStyle = ref<Record<string, string>>({ '--media-duration': '86s' })
 
 const appImages: Record<string, MediaImage> = {
   'yes-no': {
@@ -82,7 +90,21 @@ function normalizeMediaImages(items: MediaApiImage[]): MediaImage[] {
 }
 
 function shuffled<T>(items: T[]): T[] {
-  return [...items].sort(() => Math.random() - 0.5)
+  const copy = [...items]
+  for (let index = copy.length - 1; index > 0; index -= 1) {
+    const swapIndex = Math.floor(Math.random() * (index + 1))
+    ;[copy[index], copy[swapIndex]] = [copy[swapIndex], copy[index]]
+  }
+  return copy
+}
+
+function randomUniqueNumbers(count: number, maxInclusive: number): number[] {
+  const picked = new Set<number>()
+  const target = Math.min(count, maxInclusive)
+  while (picked.size < target) {
+    picked.add(1 + Math.floor(Math.random() * maxInclusive))
+  }
+  return Array.from(picked)
 }
 
 function buildMediaStreamImages(images: MediaImage[]): MediaStreamImage[] {
@@ -104,11 +126,27 @@ function buildMediaStreamImages(images: MediaImage[]): MediaStreamImage[] {
 
 async function loadHomeImages() {
   try {
-    const res = await fetch('https://media.tikoapi.org/v1/media?limit=50&type=image')
-    if (res.ok) {
-      const json = await res.json() as { data?: MediaApiImage[] } | MediaApiImage[]
-      const items = Array.isArray(json) ? json : (json.data ?? [])
-      const normalized = normalizeMediaImages(items)
+    const pageSize = 12
+    const seedRes = await fetch('https://media.tikoapi.org/v1/media?limit=1&type=image&page=1')
+
+    if (seedRes.ok) {
+      const seedJson = await seedRes.json() as MediaApiResponse | MediaApiImage[]
+      const meta = Array.isArray(seedJson) ? undefined : seedJson.meta
+      const totalItems = meta?.total ?? 50
+      const totalPages = Math.max(1, Math.ceil(totalItems / pageSize))
+      const pages = randomUniqueNumbers(8, totalPages)
+      const responses = await Promise.all(
+        pages.map((pageNumber) =>
+          fetch(`https://media.tikoapi.org/v1/media?limit=${pageSize}&type=image&page=${pageNumber}`),
+        ),
+      )
+
+      const pagePayloads = await Promise.all(
+        responses.filter((response) => response.ok).map((response) => response.json() as Promise<MediaApiResponse | MediaApiImage[]>),
+      )
+      const items = pagePayloads.flatMap((payload) => (Array.isArray(payload) ? payload : (payload.data ?? [])))
+      const uniqueItems = Array.from(new Map(items.map((item) => [item.id, item])).values())
+      const normalized = normalizeMediaImages(shuffled(uniqueItems).slice(0, 50))
       mediaImages.value = buildMediaStreamImages(normalized)
       return
     }
@@ -117,6 +155,17 @@ async function loadHomeImages() {
   }
 
   mediaImages.value = buildMediaStreamImages([])
+}
+
+function onMediaStreamPointerMove(event: PointerEvent) {
+  const rect = (event.currentTarget as HTMLElement).getBoundingClientRect()
+  const xRatio = Math.min(1, Math.max(0, (event.clientX - rect.left) / rect.width))
+  const duration = Math.round(70 - (xRatio * 48))
+  mediaStreamStyle.value = { '--media-duration': `${duration}s` }
+}
+
+function onMediaStreamPointerLeave() {
+  mediaStreamStyle.value = { '--media-duration': '86s' }
 }
 
 onMounted(() => {
@@ -287,7 +336,13 @@ onMounted(() => {
         </a>
       </div>
 
-      <div :class="bemm('media-stream')" aria-label="A moving stream of Tiko Media images">
+      <div
+        :class="bemm('media-stream')"
+        :style="mediaStreamStyle"
+        aria-label="A moving stream of random Tiko Media images"
+        @pointermove="onMediaStreamPointerMove"
+        @pointerleave="onMediaStreamPointerLeave"
+      >
         <div :class="bemm('media-track')">
           <div
             v-for="(img, index) in [...mediaImages, ...mediaImages]"
@@ -764,11 +819,7 @@ onMounted(() => {
     align-items: center;
     width: max-content;
     gap: calc(var(--space) * 0.9);
-    animation: home-media-drift 86s linear infinite;
-  }
-
-  &__media-stream:hover &__media-track {
-    animation-play-state: paused;
+    animation: home-media-drift var(--media-duration, 86s) linear infinite;
   }
 
   &__media-item {
