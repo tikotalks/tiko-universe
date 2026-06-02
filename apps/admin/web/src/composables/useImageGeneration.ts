@@ -42,7 +42,7 @@ export function useImageGeneration() {
   const { token, config } = useAdminAuth()
 
   function baseUrl() {
-    return (config.value?.generationApiUrl ?? 'https://dev.api.tikotalks.com/v1/generation').replace(/\/$/, '')
+    return (config.value?.generationApiUrl ?? 'https://generation.tikoapi.org/v1/generation').replace(/\/$/, '')
   }
 
   function authHeaders(extra: Record<string, string> = {}): Record<string, string> {

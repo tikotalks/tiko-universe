@@ -8,7 +8,7 @@ interface ApiErrorBody {
 
 function adminApiBaseUrl(): string {
   const env = (import.meta as ImportMeta & { env?: Record<string, string | undefined> }).env
-  return (env?.VITE_ADMIN_API_URL ?? 'https://dev.admin-api.tikotalks.com/v1/admin').replace(/\/$/, '')
+  return (env?.VITE_ADMIN_API_URL ?? 'https://admin.tikoapi.org/v1/admin').replace(/\/$/, '')
 }
 
 export function useCommunicationInbox() {

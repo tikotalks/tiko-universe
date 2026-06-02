@@ -4,7 +4,7 @@ actor CardsMediaClient {
     private let baseURL: URL
     private let session: URLSession
 
-    init(baseURL: URL = URL(string: "https://media-api.tikotalks.com/v1")!, session: URLSession = .shared) {
+    init(baseURL: URL = URL(string: "https://media.tikoapi.org/v1")!, session: URLSession = .shared) {
         self.baseURL = baseURL
         self.session = session
     }

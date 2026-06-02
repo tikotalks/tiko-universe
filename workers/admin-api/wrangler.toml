@@ -45,11 +45,15 @@ service = "tiko-identity-api"
 [env.production.vars]
 TIKO_ENVIRONMENT = "production"
 ADMIN_EMAIL = "me@sil.mt"
-IDENTITY_BASE_URL = "https://api.tikotalks.com/v1"
-APP_API_URL = "https://api.tikotalks.com/v1/apps"
-GENERATION_API_URL = "https://api.tikotalks.com/v1/generation"
-MEDIA_API_URL = "https://media-api.tikotalks.com/v1"
-COMMUNICATION_API_URL = "https://api.tikotalks.com/v1/communication"
+IDENTITY_BASE_URL = "https://identity.tikoapi.org/v1"
+APP_API_URL = "https://app.tikoapi.org/v1/apps"
+GENERATION_API_URL = "https://generation.tikoapi.org/v1/generation"
+MEDIA_API_URL = "https://media.tikoapi.org/v1"
+COMMUNICATION_API_URL = "https://communication.tikoapi.org/v1/communication"
+
+[[env.production.routes]]
+pattern = "admin.tikoapi.org"
+custom_domain = true
 
 [[env.production.routes]]
 pattern = "admin-api.tikotalks.com"

@@ -85,7 +85,7 @@ public enum TikoIdentityClientError: Error, Equatable, Sendable {
 public actor TikoIdentityClient {
     /// Base URL for the identity API. Set once at app startup.
     /// Defaults to the production Tiko identity worker.
-    public static var identityBaseURL: String = "https://api.tikotalks.com/v1"
+    public static var identityBaseURL: String = "https://identity.tikoapi.org/v1"
 
     private let baseURL: URL
     private let urlSession: URLSession
@@ -93,7 +93,7 @@ public actor TikoIdentityClient {
     private let encoder = JSONEncoder()
 
     public init(baseURL: URL? = nil, urlSession: URLSession = .shared) {
-        let resolved = baseURL ?? URL(string: TikoIdentityClient.identityBaseURL) ?? URL(string: "https://api.tikotalks.com/v1")!
+        let resolved = baseURL ?? URL(string: TikoIdentityClient.identityBaseURL) ?? URL(string: "https://identity.tikoapi.org/v1")!
         self.baseURL = resolved
         self.urlSession = urlSession
     }

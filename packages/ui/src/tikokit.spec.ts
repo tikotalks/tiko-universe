@@ -102,7 +102,7 @@ describe('TikoKit component contract', () => {
 
     const result = await client.speak({ text: 'Yes', language: 'en', provider: 'auto' })
 
-    expect(fetcher).toHaveBeenCalledWith('https://api.tikotalks.com/v1/generation/tts', expect.objectContaining({ method: 'POST' }))
+    expect(fetcher).toHaveBeenCalledWith('https://generation.tikoapi.org/v1/generation/tts', expect.objectContaining({ method: 'POST' }))
     expect(result.audioUrl).toBe('https://tts.tikocdn.org/audio/yes.mp3')
     expect(play).toHaveBeenCalledTimes(1)
   })
@@ -126,7 +126,7 @@ describe('TikoKit component contract', () => {
     const result = await client.getAudio({ text: 'Yes', language: 'en' })
 
     expect(result.success).toBe(true)
-    expect(result.audioUrl).toBe('https://api.tikotalks.com/v1/generation/audio/asset-1')
+    expect(result.audioUrl).toBe('https://generation.tikoapi.org/v1/generation/audio/asset-1')
     expect(result.cached).toBe(true)
     expect(result.metadata).toMatchObject({ id: 'asset-1', provider: 'openai', schemaVersion: 1 })
   })

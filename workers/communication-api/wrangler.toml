@@ -38,5 +38,9 @@ database_id = "f99b61ae-6a78-4670-bb9c-cdc4f634264a"
 migrations_dir = "migrations"
 
 [[env.production.routes]]
+pattern = "communication.tikoapi.org"
+custom_domain = true
+
+[[env.production.routes]]
 pattern = "api.tikotalks.com/v1/communication/*"
 zone_name = "tikotalks.com"

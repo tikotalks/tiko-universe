@@ -46,5 +46,9 @@ binding = "GENERATED_MEDIA_BUCKET"
 bucket_name = "tiko-generated-media"
 
 [[env.production.routes]]
+pattern = "generation.tikoapi.org"
+custom_domain = true
+
+[[env.production.routes]]
 pattern = "api.tikotalks.com/v1/generation/*"
 zone_name = "tikotalks.com"

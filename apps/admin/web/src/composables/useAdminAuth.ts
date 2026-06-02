@@ -20,12 +20,12 @@ interface ApiErrorBody {
 
 function adminApiBaseUrl(): string {
   const env = (import.meta as ImportMeta & { env?: Record<string, string | undefined> }).env
-  return (env?.VITE_ADMIN_API_URL ?? 'https://admin-api.tikotalks.com/v1/admin').replace(/\/$/, '')
+  return (env?.VITE_ADMIN_API_URL ?? 'https://admin.tikoapi.org/v1/admin').replace(/\/$/, '')
 }
 
 function identityApiBaseUrl(): string {
   const env = (import.meta as ImportMeta & { env?: Record<string, string | undefined> }).env
-  return (env?.VITE_TIKO_API_BASE_URL ?? env?.VITE_IDENTITY_API_URL ?? 'https://api.tikotalks.com/v1').replace(/\/$/, '')
+  return (env?.VITE_TIKO_API_BASE_URL ?? env?.VITE_IDENTITY_API_URL ?? 'https://identity.tikoapi.org/v1').replace(/\/$/, '')
 }
 
 function readStoredIdentity(): SessionBundle | null {

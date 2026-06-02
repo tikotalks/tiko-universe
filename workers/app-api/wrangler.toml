@@ -41,5 +41,9 @@ database_name = "tiko-identity"
 database_id = "036a1726-ac16-48a9-ab76-22c3a88ca7ae"
 
 [[env.production.routes]]
+pattern = "app.tikoapi.org"
+custom_domain = true
+
+[[env.production.routes]]
 pattern = "api.tikotalks.com/v1/apps/*"
 zone_name = "tikotalks.com"

@@ -278,7 +278,7 @@ public struct TikoAppShell<Content: View, SettingsContent: View>: View {
             fetchedIconURL = url
             return
         }
-        if let url = await fetchMediaImage(urlString: "https://media-api.tikotalks.com/v1/media?type=image&category=\(category)&limit=20", random: false) {
+        if let url = await fetchMediaImage(urlString: "https://media.tikoapi.org/v1/media?type=image&category=\(category)&limit=20", random: false) {
             UserDefaults.standard.set(url.absoluteString, forKey: key)
             fetchedIconURL = url
         }
@@ -289,7 +289,7 @@ public struct TikoAppShell<Content: View, SettingsContent: View>: View {
             fetchedAvatarURL = url
             return
         }
-        if let url = await fetchMediaImage(urlString: "https://media-api.tikotalks.com/v1/media?type=image&limit=100", random: true) {
+        if let url = await fetchMediaImage(urlString: "https://media.tikoapi.org/v1/media?type=image&limit=100", random: true) {
             storedAvatarURLString = url.absoluteString
             fetchedAvatarURL = url
         }
