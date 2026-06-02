@@ -93,7 +93,7 @@ describe('admin OTP sign-in', () => {
 
     cy.wait('@bootstrapDevice')
     cy.wait('@requestCode')
-    cy.contains('Check your email for the sign-in code.').should('be.visible')
+    cy.contains('Check your email for the 6-digit code.').should('be.visible')
 
     cy.get('input[inputmode="numeric"]').type('123 456')
     cy.contains('button', 'Verify and sign in').click()
