@@ -24,7 +24,7 @@ export class TikoMediaClient {
 
   constructor(options: MediaClientOptions) {
     this.baseUrl = options.baseUrl.replace(/\/$/, '')
-    this.fetcher = options.fetch ?? fetch
+    this.fetcher = options.fetch ?? globalThis.fetch.bind(globalThis)
   }
 
   /** Upload an audio file to R2 */

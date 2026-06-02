@@ -83,7 +83,7 @@ export class IdentityClient {
 
   constructor(options: IdentityClientOptions) {
     this.baseUrl = options.baseUrl.replace(/\/$/, '')
-    this.fetcher = options.fetch ?? fetch
+    this.fetcher = options.fetch ?? globalThis.fetch.bind(globalThis)
   }
 
   bootstrapDevice(input: DeviceBootstrapRequest = {}): Promise<SessionBundle> {
