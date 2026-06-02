@@ -17,6 +17,10 @@ database_name = "tiko-identity"
 database_id = "036a1726-ac16-48a9-ab76-22c3a88ca7ae"
 migrations_dir = "migrations"
 
+[[services]]
+binding = "COMMUNICATION_SERVICE"
+service = "tiko-communication-api-dev"
+
 # ── Production environment ──────────────────────────────────────
 # Deploy with: npx wrangler deploy --env production
 
@@ -34,6 +38,10 @@ binding = "IDENTITY_DB"
 database_name = "tiko-identity"
 database_id = "036a1726-ac16-48a9-ab76-22c3a88ca7ae"
 migrations_dir = "migrations"
+
+[[env.production.services]]
+binding = "COMMUNICATION_SERVICE"
+service = "tiko-communication-api"
 
 [[env.production.routes]]
 pattern = "api.tikotalks.com/v1/identity/*"

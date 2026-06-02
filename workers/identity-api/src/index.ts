@@ -17,12 +17,17 @@ interface D1Database {
   prepare(sql: string): D1PreparedStatement
 }
 
+interface ServiceBinding {
+  fetch(input: Request | string, init?: RequestInit): Promise<Response>
+}
+
 export interface Env {
   IDENTITY_DB: D1Database
   TOKEN_PEPPER: string
   MAGIC_LINK_BASE_URL?: string
   COMMUNICATION_API_URL?: string
   COMMUNICATION_API_KEY?: string
+  COMMUNICATION_SERVICE?: ServiceBinding
   ALLOWED_ORIGINS?: string
   MAGIC_LINK_TEST_SINK?: Array<{ email: string; token: string; otp: string; url: string; webUrl: string }>
 }
@@ -276,7 +281,8 @@ async function requestMagicLinkDelivery(env: Env, email: string, params: { magic
   if (!env.COMMUNICATION_API_KEY) return
 
   const baseUrl = (env.COMMUNICATION_API_URL ?? DEFAULT_COMMUNICATION_API_URL).replace(/\/$/, '')
-  const response = await fetch(`${baseUrl}/email/magic-link`, {
+  const url = `${baseUrl}/email/magic-link`
+  const init: RequestInit = {
     method: 'POST',
     headers: {
       authorization: `Bearer ${env.COMMUNICATION_API_KEY}`,
@@ -288,7 +294,11 @@ async function requestMagicLinkDelivery(env: Env, email: string, params: { magic
       webLinkUrl: params.webLinkUrl,
       otp: params.otp,
     })
-  })
+  }
+
+  const response = env.COMMUNICATION_SERVICE
+    ? await env.COMMUNICATION_SERVICE.fetch(url, init)
+    : await fetch(url, init)
 
   if (!response.ok) {
     throw new HttpError(502, 'communication_send_failed', 'Could not request recovery email delivery.')
