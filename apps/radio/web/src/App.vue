@@ -61,12 +61,12 @@ interface GeneratedStoryItem {
 // ---- Utility functions ----------------------------------------------------
 function resolveApiBaseUrl() {
   const env = (import.meta as ImportMeta & { env?: Record<string, string | undefined> }).env
-  return (env?.VITE_TIKO_API_BASE_URL ?? 'https://api.tikotalks.com/v1').replace(/\/$/, '')
+  return (env?.VITE_TIKO_API_BASE_URL ?? 'https://identity.tikoapi.org/v1').replace(/\/$/, '')
 }
 
 function resolveGenerationApiBaseUrl() {
   const env = (import.meta as ImportMeta & { env?: Record<string, string | undefined> }).env
-  return (env?.VITE_GENERATION_API_URL ?? 'https://dev.api.tikotalks.com/v1/generation').replace(/\/$/, '')
+  return (env?.VITE_GENERATION_API_URL ?? 'https://generation.tikoapi.org/v1/generation').replace(/\/$/, '')
 }
 
 function readJson<T>(key: string, fallback: T): T {

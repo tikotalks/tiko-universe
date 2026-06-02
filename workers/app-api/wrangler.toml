@@ -1,22 +1,23 @@
-name = "tiko-app-api"
+name = "tiko-app-api-dev"
 main = "src/index.ts"
 compatibility_date = "2026-05-27"
-account_id = "8cef251b5fdcf6c6f63db98b7aa49f9a"
+account_id = "dc2b7d14a69351375cab6de9a13ddee9"
+workers_dev = true
 
 [vars]
-ALLOWED_ORIGINS = "https://tiko.mt,https://www.tiko.mt,https://tiko.tikoapps.org,https://yesno.tikoapps.org,https://cards.tikoapps.org,https://sequence.tikoapps.org,https://type.tikoapps.org,https://timer.tikoapps.org,https://admin.tikoapps.org,https://dev.tiko.tikoapps.org,https://dev.yesno.tikoapps.org,https://dev.cards.tikoapps.org,https://dev.sequence.tikoapps.org,https://dev.type.tikoapps.org,https://dev.timer.tikoapps.org,https://dev.admin.tikoapps.org,http://localhost:5173,http://localhost:4173,capacitor://localhost,ionic://localhost,tiko://native"
+ALLOWED_ORIGINS = "https://tiko.mt,https://www.tiko.mt,https://tiko.tikoapps.org,https://yesno.tikoapps.org,https://cards.tikoapps.org,https://sequence.tikoapps.org,https://type.tikoapps.org,https://timer.tikoapps.org,https://admin.tikoapps.org,https://dev.tiko.tikoapps.org,https://dev.yesno.tikoapps.org,https://dev.cards.tikoapps.org,https://dev.sequence.tikoapps.org,https://dev.type.tikoapps.org,https://dev.timer.tikoapps.org,https://dev.admin.tikoapps.org,http://localhost:3060,http://localhost:3061,http://localhost:3062,http://localhost:3063,http://localhost:3064,http://localhost:3065,http://localhost:5173,http://localhost:4173,capacitor://localhost,ionic://localhost,tiko://native"
 # Set TOKEN_PEPPER with `wrangler secret put TOKEN_PEPPER`; it must match identity-api.
 
 [[d1_databases]]
 binding = "APP_DB"
-database_name = "tiko-app-data"
-database_id = "8e53c13d-6f59-4b03-b75e-9d4df338dd05"
+database_name = "tiko-db"
+database_id = "f99b61ae-6a78-4670-bb9c-cdc4f634264a"
 migrations_dir = "migrations"
 
 [[d1_databases]]
 binding = "IDENTITY_DB"
 database_name = "tiko-identity"
-database_id = "0b5e035d-6420-451e-8e54-0af5829cc95c"
+database_id = "036a1726-ac16-48a9-ab76-22c3a88ca7ae"
 
 # ── Production environment ──────────────────────────────────────
 # Deploy with: npx wrangler deploy --env production
@@ -26,18 +27,22 @@ name = "tiko-app-api"
 workers_dev = false
 
 [env.production.vars]
-ALLOWED_ORIGINS = "https://tiko.mt,https://www.tiko.mt,https://tiko.tikoapps.org,https://yesno.tikoapps.org,https://cards.tikoapps.org,https://sequence.tikoapps.org,https://type.tikoapps.org,https://timer.tikoapps.org,https://admin.tikoapps.org,http://localhost:5173,http://localhost:4173,capacitor://localhost,ionic://localhost,tiko://native"
+ALLOWED_ORIGINS = "https://tiko.mt,https://www.tiko.mt,https://tiko.tikoapps.org,https://yesno.tikoapps.org,https://cards.tikoapps.org,https://sequence.tikoapps.org,https://type.tikoapps.org,https://timer.tikoapps.org,https://admin.tikoapps.org,http://localhost:3060,http://localhost:3061,http://localhost:3062,http://localhost:3063,http://localhost:3064,http://localhost:3065,http://localhost:5173,http://localhost:4173,capacitor://localhost,ionic://localhost,tiko://native"
 
 [[env.production.d1_databases]]
 binding = "APP_DB"
-database_name = "tiko-app-data"
-database_id = "8e53c13d-6f59-4b03-b75e-9d4df338dd05"
+database_name = "tiko-db"
+database_id = "f99b61ae-6a78-4670-bb9c-cdc4f634264a"
 migrations_dir = "migrations"
 
 [[env.production.d1_databases]]
 binding = "IDENTITY_DB"
 database_name = "tiko-identity"
-database_id = "0b5e035d-6420-451e-8e54-0af5829cc95c"
+database_id = "036a1726-ac16-48a9-ab76-22c3a88ca7ae"
+
+[[env.production.routes]]
+pattern = "app.tikoapi.org"
+custom_domain = true
 
 [[env.production.routes]]
 pattern = "api.tikotalks.com/v1/apps/*"

@@ -1,25 +1,28 @@
 name = "tiko-generation-api-dev"
 main = "src/index.ts"
 compatibility_date = "2026-05-27"
-account_id = "8cef251b5fdcf6c6f63db98b7aa49f9a"
+account_id = "dc2b7d14a69351375cab6de9a13ddee9"
 workers_dev = true
 
-# P0 generation service. TTS is the first supported generation contract.
-# Replace placeholder database_id before the first real deployment.
+# P0 generation service. TTS, image generation, and story narration.
 
 [[d1_databases]]
 binding = "GENERATION_DB"
-database_name = "tiko-generation-db-dev"
-database_id = "230d0e88-5090-4281-86b4-29c88aaafd92"
+database_name = "tiko-image-generation"
+database_id = "ab7cdbd1-e50a-4862-b8eb-681d263c3f66"
 migrations_dir = "migrations"
 
 [[r2_buckets]]
 binding = "GENERATED_MEDIA_BUCKET"
-bucket_name = "tiko-generated-media-dev"
+bucket_name = "tiko-generated-media"
 
 [vars]
 TIKO_ENVIRONMENT = "development"
 GENERATION_PUBLIC_ROUTE = "https://dev.api.tikotalks.com/v1/generation"
+
+[[routes]]
+pattern = "dev.api.tikotalks.com/v1/generation/*"
+zone_name = "tikotalks.com"
 
 # ── Production environment ──────────────────────────────────────
 # Deploy with: npx wrangler deploy --env production
@@ -34,13 +37,17 @@ GENERATION_PUBLIC_ROUTE = "https://api.tikotalks.com/v1/generation"
 
 [[env.production.d1_databases]]
 binding = "GENERATION_DB"
-database_name = "tiko-generation-db"
-database_id = "230d0e88-5090-4281-86b4-29c88aaafd92"
+database_name = "tiko-image-generation"
+database_id = "ab7cdbd1-e50a-4862-b8eb-681d263c3f66"
 migrations_dir = "migrations"
 
 [[env.production.r2_buckets]]
 binding = "GENERATED_MEDIA_BUCKET"
 bucket_name = "tiko-generated-media"
+
+[[env.production.routes]]
+pattern = "generation.tikoapi.org"
+custom_domain = true
 
 [[env.production.routes]]
 pattern = "api.tikotalks.com/v1/generation/*"

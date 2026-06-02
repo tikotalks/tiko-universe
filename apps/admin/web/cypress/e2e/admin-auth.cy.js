@@ -35,7 +35,7 @@ const adminBundle = {
 
 describe('admin OTP sign-in', () => {
   beforeEach(() => {
-    cy.intercept('POST', 'https://api.tikotalks.com/v1/identity/device', (req) => {
+    cy.intercept('POST', 'https://identity.tikoapi.org/v1/identity/device', (req) => {
       expect(req.body).to.deep.include({
         device: {
           name: 'Tiko Admin web',
@@ -45,18 +45,18 @@ describe('admin OTP sign-in', () => {
       req.reply(deviceBundle)
     }).as('bootstrapDevice')
 
-    cy.intercept('POST', 'https://api.tikotalks.com/v1/identity/email', (req) => {
+    cy.intercept('POST', 'https://identity.tikoapi.org/v1/identity/email', (req) => {
       expect(req.headers.authorization).to.equal('Bearer device-session-token')
       expect(req.body).to.deep.equal({ email: 'sil@example.com' })
       req.reply({ message: 'Check your email for the 6-digit code.' })
     }).as('requestCode')
 
-    cy.intercept('POST', 'https://api.tikotalks.com/v1/identity/magic-links/verify', (req) => {
+    cy.intercept('POST', 'https://identity.tikoapi.org/v1/identity/magic-links/verify', (req) => {
       expect(req.body).to.deep.equal({ otp: '123456' })
       req.reply(adminBundle)
     }).as('verifyOtp')
 
-    cy.intercept('GET', 'https://admin-api.tikotalks.com/v1/admin/me', (req) => {
+    cy.intercept('GET', 'https://admin.tikoapi.org/v1/admin/me', (req) => {
       expect(req.headers.authorization).to.equal('Bearer admin-session-token')
       req.reply({
         data: {
@@ -67,14 +67,14 @@ describe('admin OTP sign-in', () => {
       })
     }).as('adminMe')
 
-    cy.intercept('GET', 'https://admin-api.tikotalks.com/v1/admin/config', (req) => {
+    cy.intercept('GET', 'https://admin.tikoapi.org/v1/admin/config', (req) => {
       expect(req.headers.authorization).to.equal('Bearer admin-session-token')
       req.reply({
         data: {
-          appApiUrl: 'https://app-api.tikotalks.com',
-          generationApiUrl: 'https://generation-api.tikotalks.com',
-          mediaApiUrl: 'https://media-api.tikotalks.com',
-          communicationApiUrl: 'https://communication-api.tikotalks.com',
+          appApiUrl: 'https://app.tikoapi.org/v1/apps',
+          generationApiUrl: 'https://generation.tikoapi.org/v1/generation',
+          mediaApiUrl: 'https://media.tikoapi.org/v1',
+          communicationApiUrl: 'https://communication.tikoapi.org/v1/communication',
         },
       })
     }).as('adminConfig')
@@ -87,22 +87,22 @@ describe('admin OTP sign-in', () => {
       },
     })
 
-    cy.contains('h1', 'Admin dashboard').should('be.visible')
-    cy.contains('label', 'Email').find('input').type('Sil@Example.com')
+    cy.contains('h1', 'Tiko Admin').should('be.visible')
+    cy.get('input[type="email"]').type('Sil@Example.com')
     cy.contains('button', 'Send sign-in code').click()
 
     cy.wait('@bootstrapDevice')
     cy.wait('@requestCode')
     cy.contains('Check your email for the 6-digit code.').should('be.visible')
 
-    cy.contains('label', '6-digit sign-in code').find('input').type('123 456')
-    cy.contains('button', 'Verify and unlock').click()
+    cy.get('input[inputmode="numeric"]').type('123 456')
+    cy.contains('button', 'Verify and sign in').click()
 
     cy.wait('@verifyOtp')
     cy.wait('@adminMe')
     cy.wait('@adminConfig')
 
     cy.contains('sil@example.com').should('be.visible')
-    cy.contains('button', 'Images').should('be.visible')
+    cy.contains('Images').should('be.visible')
   })
 })

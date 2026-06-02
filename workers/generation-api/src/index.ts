@@ -5,12 +5,13 @@ export interface Env {
 }
 
 export interface D1DatabaseLike {
-  prepare(sql: string): { bind(...values: unknown[]): { first<T>(): Promise<T | null>; all<T>(): Promise<{ results: T[] }>; run(): Promise<unknown> } }
+  prepare(sql: string): { bind(...values: unknown[]): { first<T>(): Promise<T | null>; all<T>(): Promise<{ results: T[] }>; run(): Promise<{ meta?: { changes?: number } }> } }
 }
 
 export interface R2BucketLike {
   get(key: string): Promise<{ body: BodyInit; httpMetadata?: { contentType?: string } } | null>
   put(key: string, value: ArrayBuffer | Uint8Array, options?: Record<string, unknown>): Promise<unknown>
+  delete(key: string): Promise<unknown>
 }
 
 export type TtsProvider = 'openai' | 'azure' | 'auto'
@@ -75,10 +76,14 @@ export default {
     if (url.pathname.startsWith('/v1/generation/audio/') && request.method === 'GET') return getAudio(url.pathname, env)
     if (url.pathname === '/v1/generation/image' && request.method === 'POST') return generateImage(request, env)
     if (url.pathname.startsWith('/v1/generation/images/') && url.pathname.endsWith('/binary') && request.method === 'GET') return getImage(url.pathname, env)
+    if (url.pathname.startsWith('/v1/generation/images/') && url.pathname.endsWith('/promote') && request.method === 'POST') return promoteImage(url.pathname, env)
+    if (url.pathname.startsWith('/v1/generation/images/') && request.method === 'DELETE') return deleteImage(url.pathname, env)
     if (url.pathname === '/v1/generation/images' && request.method === 'GET') return listImages(request, env)
     if (url.pathname === '/v1/generation/stories/tryout' && request.method === 'POST') return generateStoryTryout(request, env)
     if (url.pathname === '/v1/generation/stories/render' && request.method === 'POST') return renderStory(request, env)
     if (url.pathname.startsWith('/v1/generation/stories/') && url.pathname.endsWith('/audio') && request.method === 'GET') return getStoryAudio(url.pathname, env)
+    if (url.pathname.startsWith('/v1/generation/stories/') && url.pathname.endsWith('/promote') && request.method === 'POST') return promoteStory(url.pathname, env)
+    if (url.pathname.startsWith('/v1/generation/stories/') && request.method === 'DELETE') return deleteStory(url.pathname, env)
     if (url.pathname === '/v1/generation/stories' && request.method === 'GET') return listStories(request, env)
 
     return apiError('not_found', 'Route not found.', 404)
@@ -382,7 +387,7 @@ async function renderStory(request: Request, env: Env): Promise<Response> {
     duration_seconds, file_size_bytes, category, tags, is_public, created_at, updated_at
   ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`).bind(
     id, body.title.trim(), body.description?.trim() || null, voice, speed, JSON.stringify(cleanSegments), 'complete', audioUrl, r2Key,
-    null, audioBytes.byteLength, body.category || 'story', JSON.stringify(body.tags || []), 1, now, now,
+    null, audioBytes.byteLength, body.category || 'story', JSON.stringify(body.tags || []), 0, now, now,
   ).run()
 
   return json({ data: { id, title: body.title.trim(), audioUrl, voice, speed, fileSizeBytes: audioBytes.byteLength, createdAt: now }, meta: { schemaVersion: 1, segmentCount: cleanSegments.length } }, 201)
@@ -411,15 +416,46 @@ async function listStories(request: Request, env: Env): Promise<Response> {
   const page = Math.max(parseInt(url.searchParams.get('page') || '1'), 1)
   const limit = Math.min(Math.max(parseInt(url.searchParams.get('limit') || '20'), 1), 100)
   const offset = (page - 1) * limit
+  const status = url.searchParams.get('status') || 'promoted'
+  const isPublic = status === 'draft' ? 0 : 1
+
   const rows = await env.GENERATION_DB.prepare(`SELECT id, title, description, voice, speed, segments, status, audio_url, r2_key,
       duration_seconds, file_size_bytes, category, tags, is_public, created_at, updated_at
-    FROM stories WHERE is_public = 1 ORDER BY created_at DESC LIMIT ? OFFSET ?`).bind(limit, offset).all<StoryRecord>()
-  const countRow = await env.GENERATION_DB.prepare('SELECT COUNT(*) AS count FROM stories WHERE is_public = 1').bind().first<{ count: number }>()
+    FROM stories WHERE is_public = ? ORDER BY created_at DESC LIMIT ? OFFSET ?`).bind(isPublic, limit, offset).all<StoryRecord>()
+  const countRow = await env.GENERATION_DB.prepare('SELECT COUNT(*) AS count FROM stories WHERE is_public = ?').bind(isPublic).first<{ count: number }>()
   const total = countRow?.count ?? 0
   return json({
-    data: rows.results.map(row => ({ id: row.id, title: row.title, description: row.description, voice: row.voice, speed: row.speed, segmentCount: JSON.parse(row.segments || '[]').length, status: row.status, audioUrl: row.audio_url, fileSizeBytes: row.file_size_bytes, category: row.category, tags: JSON.parse(row.tags || '[]'), createdAt: row.created_at })),
-    meta: { total, page, limit, totalPages: Math.ceil(total / limit) },
+    data: rows.results.map(row => ({ id: row.id, title: row.title, description: row.description, voice: row.voice, speed: row.speed, segmentCount: JSON.parse(row.segments || '[]').length, status: row.is_public === 1 ? 'promoted' : 'draft', renderStatus: row.status, audioUrl: row.audio_url, fileSizeBytes: row.file_size_bytes, category: row.category, tags: JSON.parse(row.tags || '[]'), createdAt: row.created_at })),
+    meta: { total, page, limit, totalPages: Math.ceil(total / limit), status },
   })
+}
+
+async function promoteStory(pathname: string, env: Env): Promise<Response> {
+  const id = pathname.replace('/v1/generation/stories/', '').replace('/promote', '')
+  if (!isSafeId(id)) return apiError('invalid_story_id', 'Story id is invalid.', 400)
+
+  const now = new Date().toISOString()
+  const result = await env.GENERATION_DB.prepare(
+    'UPDATE stories SET is_public = 1, updated_at = ? WHERE id = ?',
+  ).bind(now, id).run()
+
+  if (!result.meta?.changes) return apiError('story_not_found', 'Story not found.', 404)
+  return json({ data: { id, status: 'promoted', updatedAt: now } })
+}
+
+async function deleteStory(pathname: string, env: Env): Promise<Response> {
+  const id = pathname.replace('/v1/generation/stories/', '')
+  if (!isSafeId(id)) return apiError('invalid_story_id', 'Story id is invalid.', 400)
+
+  const record = await env.GENERATION_DB.prepare(
+    'SELECT r2_key FROM stories WHERE id = ? LIMIT 1',
+  ).bind(id).first<{ r2_key: string | null }>()
+
+  if (!record) return apiError('story_not_found', 'Story not found.', 404)
+  if (record.r2_key) await env.GENERATED_MEDIA_BUCKET.delete(record.r2_key).catch(() => null)
+  await env.GENERATION_DB.prepare('DELETE FROM stories WHERE id = ?').bind(id).run()
+
+  return json({ data: { id, deleted: true } })
 }
 
 function audioResponse(object: { body: BodyInit; httpMetadata?: { contentType?: string } }, cacheControl: string): Response {
@@ -570,7 +606,7 @@ async function generateImage(request: Request, env: Env): Promise<Response> {
     JSON.stringify(body.tags || []),
     body.title || null,
     null,
-    1,
+    0,
     now,
     now,
   ).run()
@@ -621,20 +657,22 @@ async function listImages(request: Request, env: Env): Promise<Response> {
   const page = Math.max(parseInt(url.searchParams.get('page') || '1'), 1)
   const limit = Math.min(Math.max(parseInt(url.searchParams.get('limit') || '20'), 1), 100)
   const offset = (page - 1) * limit
+  const status = url.searchParams.get('status') || 'promoted'
+  const isPublic = status === 'draft' ? 0 : 1
 
   const rows = await env.GENERATION_DB.prepare(
     `SELECT id, prompt, revised_prompt, model, size, quality, style, image_url, r2_key,
             content_type, file_size_bytes, width, height, category, tags, title, description,
             is_public, created_at, updated_at
      FROM generated_images
-     WHERE is_public = 1
+     WHERE is_public = ?
      ORDER BY created_at DESC
      LIMIT ? OFFSET ?`,
-  ).bind(limit, offset).all<GeneratedImageRecord>()
+  ).bind(isPublic, limit, offset).all<GeneratedImageRecord>()
 
   const countRow = await env.GENERATION_DB.prepare(
-    'SELECT COUNT(*) AS count FROM generated_images WHERE is_public = 1',
-  ).bind().first<{ count: number }>()
+    'SELECT COUNT(*) AS count FROM generated_images WHERE is_public = ?',
+  ).bind(isPublic).first<{ count: number }>()
 
   const total = countRow?.count ?? 0
 
@@ -653,10 +691,40 @@ async function listImages(request: Request, env: Env): Promise<Response> {
       title: r.title,
       category: r.category,
       tags: JSON.parse(r.tags || '[]'),
+      status: r.is_public === 1 ? 'promoted' : 'draft',
       createdAt: r.created_at,
     })),
-    meta: { total, page, limit, totalPages: Math.ceil(total / limit) },
+    meta: { total, page, limit, totalPages: Math.ceil(total / limit), status },
   })
+}
+
+async function promoteImage(pathname: string, env: Env): Promise<Response> {
+  const id = pathname.replace('/v1/generation/images/', '').replace('/promote', '')
+  if (!isSafeId(id)) return apiError('invalid_image_id', 'Image id is invalid.', 400)
+
+  const now = new Date().toISOString()
+  const result = await env.GENERATION_DB.prepare(
+    'UPDATE generated_images SET is_public = 1, updated_at = ? WHERE id = ?',
+  ).bind(now, id).run()
+
+  if (!result.meta?.changes) return apiError('image_not_found', 'Image not found.', 404)
+  return json({ data: { id, status: 'promoted', updatedAt: now } })
+}
+
+async function deleteImage(pathname: string, env: Env): Promise<Response> {
+  const id = pathname.replace('/v1/generation/images/', '')
+  if (!isSafeId(id)) return apiError('invalid_image_id', 'Image id is invalid.', 400)
+
+  const record = await env.GENERATION_DB.prepare(
+    'SELECT r2_key FROM generated_images WHERE id = ? LIMIT 1',
+  ).bind(id).first<{ r2_key: string }>()
+
+  if (!record) return apiError('image_not_found', 'Image not found.', 404)
+
+  await env.GENERATED_MEDIA_BUCKET.delete(record.r2_key).catch(() => null)
+  await env.GENERATION_DB.prepare('DELETE FROM generated_images WHERE id = ?').bind(id).run()
+
+  return json({ data: { id, deleted: true } })
 }
 
 function parseImageSize(size: string): { width: number; height: number } {

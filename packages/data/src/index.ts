@@ -187,7 +187,13 @@ export class TikoDataClient {
   private readonly fetcher: typeof fetch
 
   constructor(options: DataClientOptions) {
-    this.baseUrl = options.baseUrl.replace(/\/$/, '')
+    // Tikoapi.org splits APIs per-service subdomain. If the caller hands us
+    // `identity.tikoapi.org` (the shared "Tiko API base" they use for
+    // IdentityClient), rewrite it to `app.tikoapi.org` since apps state lives
+    // there. Legacy `api.tikotalks.com` style stays as-is.
+    this.baseUrl = options.baseUrl
+      .replace(/\/$/, '')
+      .replace('//identity.tikoapi.org/', '//app.tikoapi.org/')
     this.fetcher = options.fetch ?? globalThis.fetch.bind(globalThis)
   }
 

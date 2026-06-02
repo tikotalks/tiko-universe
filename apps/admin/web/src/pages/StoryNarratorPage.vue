@@ -1,11 +1,26 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
-import { useStoryNarration } from '../composables/useStoryNarration'
-import type { StoryRenderResult, StorySegmentInput, StoryTryoutResult } from '../types/admin'
+import { computed, onMounted, ref, watch } from 'vue'
+import { useBemm } from 'bemm'
+import { Button, InputRange, InputText, InputTextArea } from '@sil/ui'
+import { useStoryNarration, type StoryGalleryItem } from '../composables/useStoryNarration'
+import type { StorySegmentInput, StoryTryoutResult } from '../types/admin'
+
+type Tab = 'library' | 'drafts' | 'create'
+
+const page = useBemm('story-page', { return: 'string', includeBaseClass: true })
+const card = useBemm('story-card', { return: 'string', includeBaseClass: true })
+const segment = useBemm('segment-card', { return: 'string', includeBaseClass: true })
 
 const voices = ['alloy', 'ash', 'ballad', 'coral', 'echo', 'fable', 'nova', 'onyx', 'sage', 'shimmer', 'verse']
 
-const { tryout, render, audioSrc } = useStoryNarration()
+const { tryout, render: renderStory, audioSrc, listStories, promoteStory, deleteStory } = useStoryNarration()
+
+const activeTab = ref<Tab>('library')
+
+const libraryItems = ref<StoryGalleryItem[]>([])
+const draftItems = ref<StoryGalleryItem[]>([])
+const galleryLoading = ref(false)
+const galleryError = ref<string | null>(null)
 
 const title = ref('')
 const description = ref('')
@@ -21,54 +36,53 @@ const segments = ref<StorySegmentInput[]>([
 const selectedSegmentId = ref(segments.value[0].id)
 const tryoutLoading = ref(false)
 const renderLoading = ref(false)
-const error = ref<string | null>(null)
+const formError = ref<string | null>(null)
 const tryoutResult = ref<StoryTryoutResult | null>(null)
-const renderResults = ref<StoryRenderResult[]>([])
 
-const selectedSegment = computed(() => segments.value.find(segment => segment.id === selectedSegmentId.value) ?? segments.value[0])
-const totalCharacters = computed(() => segments.value.reduce((sum, segment) => sum + segment.text.length, 0))
-const canRender = computed(() => title.value.trim() && segments.value.some(segment => segment.text.trim()))
+const selectedSegment = computed(() => segments.value.find(s => s.id === selectedSegmentId.value) ?? segments.value[0])
+const totalCharacters = computed(() => segments.value.reduce((sum, s) => sum + s.text.length, 0))
+const canRender = computed(() => title.value.trim() && segments.value.some(s => s.text.trim()))
 
-function tags(): string[] {
+function parseTags(): string[] {
   return tagsText.value.split(',').map(tag => tag.trim()).filter(Boolean)
 }
 
 function addSegment() {
-  const segment = { id: crypto.randomUUID(), text: '', pauseAfterMs: 350 }
-  segments.value.push(segment)
-  selectedSegmentId.value = segment.id
+  const next = { id: crypto.randomUUID(), text: '', pauseAfterMs: 350 }
+  segments.value.push(next)
+  selectedSegmentId.value = next.id
 }
 
 function removeSegment(id: string) {
   if (segments.value.length === 1) return
-  segments.value = segments.value.filter(segment => segment.id !== id)
+  segments.value = segments.value.filter(s => s.id !== id)
   if (selectedSegmentId.value === id) selectedSegmentId.value = segments.value[0].id
 }
 
-function duplicateSegment(segment: StorySegmentInput) {
-  const copy = { ...segment, id: crypto.randomUUID() }
-  const index = segments.value.findIndex(item => item.id === segment.id)
+function duplicateSegment(target: StorySegmentInput) {
+  const copy = { ...target, id: crypto.randomUUID() }
+  const index = segments.value.findIndex(item => item.id === target.id)
   segments.value.splice(index + 1, 0, copy)
   selectedSegmentId.value = copy.id
 }
 
-async function onTryout(segment = selectedSegment.value) {
-  if (!segment?.text.trim()) {
-    error.value = 'Add text to the selected segment first.'
+async function onTryout(target = selectedSegment.value) {
+  if (!target?.text.trim()) {
+    formError.value = 'Add text to the selected segment first.'
     return
   }
   tryoutLoading.value = true
-  error.value = null
+  formError.value = null
   try {
     tryoutResult.value = await tryout({
-      text: segment.text,
+      text: target.text,
       language: language.value,
       voice: voice.value,
       model: model.value,
       speed: speed.value,
     })
   } catch (e) {
-    error.value = e instanceof Error ? e.message : 'Tryout failed.'
+    formError.value = e instanceof Error ? e.message : 'Tryout failed.'
   } finally {
     tryoutLoading.value = false
   }
@@ -76,26 +90,26 @@ async function onTryout(segment = selectedSegment.value) {
 
 async function onRender() {
   if (!canRender.value) {
-    error.value = 'Add a title and at least one segment first.'
+    formError.value = 'Add a title and at least one segment first.'
     return
   }
   renderLoading.value = true
-  error.value = null
+  formError.value = null
   try {
-    const result = await render({
+    await renderStory({
       title: title.value,
       description: description.value,
       language: language.value,
       voice: voice.value,
       model: model.value,
       speed: speed.value,
-      segments: segments.value.filter(segment => segment.text.trim()),
+      segments: segments.value.filter(s => s.text.trim()),
       category: category.value,
-      tags: tags(),
+      tags: parseTags(),
     })
-    renderResults.value.unshift(result)
+    activeTab.value = 'drafts'
   } catch (e) {
-    error.value = e instanceof Error ? e.message : 'Story render failed.'
+    formError.value = e instanceof Error ? e.message : 'Story render failed.'
   } finally {
     renderLoading.value = false
   }
@@ -115,223 +129,586 @@ function loadTemplate(kind: 'short' | 'radio') {
       ]
   selectedSegmentId.value = segments.value[0].id
 }
+
+async function loadLibrary() {
+  galleryLoading.value = true
+  galleryError.value = null
+  try {
+    const result = await listStories('promoted', 1, 60)
+    libraryItems.value = result.data
+  } catch (e) {
+    galleryError.value = e instanceof Error ? e.message : 'Could not load stories.'
+  } finally {
+    galleryLoading.value = false
+  }
+}
+
+async function loadDrafts() {
+  galleryLoading.value = true
+  galleryError.value = null
+  try {
+    const result = await listStories('draft', 1, 60)
+    draftItems.value = result.data
+  } catch (e) {
+    galleryError.value = e instanceof Error ? e.message : 'Could not load drafts.'
+  } finally {
+    galleryLoading.value = false
+  }
+}
+
+async function onPromote(item: StoryGalleryItem) {
+  try {
+    await promoteStory(item.id)
+    draftItems.value = draftItems.value.filter(i => i.id !== item.id)
+  } catch (e) {
+    galleryError.value = e instanceof Error ? e.message : 'Could not promote story.'
+  }
+}
+
+async function onDelete(item: StoryGalleryItem, list: 'library' | 'drafts') {
+  if (!confirm(`Delete "${item.title}"? This cannot be undone.`)) return
+  try {
+    await deleteStory(item.id)
+    if (list === 'library') libraryItems.value = libraryItems.value.filter(i => i.id !== item.id)
+    else draftItems.value = draftItems.value.filter(i => i.id !== item.id)
+  } catch (e) {
+    galleryError.value = e instanceof Error ? e.message : 'Could not delete story.'
+  }
+}
+
+watch(activeTab, async () => {
+  if (activeTab.value === 'library') await loadLibrary()
+  if (activeTab.value === 'drafts') await loadDrafts()
+})
+
+onMounted(() => { void loadLibrary() })
 </script>
 
 <template>
-  <section class="story-narrator">
-    <header class="story-narrator__header">
-      <div>
-        <h1>Story Narrator</h1>
-        <p>Try voices segment-by-segment, then render the full story for Tiko Radio.</p>
+  <section :class="page('')">
+    <header :class="page('header')">
+      <div :class="page('intro')">
+        <h1 :class="page('title')">Stories</h1>
+        <p :class="page('subtitle')">
+          Browse Tiko's narrated story library, review drafts, and create new ones.
+        </p>
       </div>
-      <div class="story-narrator__templates">
-        <button @click="loadTemplate('short')">Short tryout</button>
-        <button @click="loadTemplate('radio')">Radio story</button>
-      </div>
+      <Button v-if="activeTab !== 'create'" @click="activeTab = 'create'">Create new story</Button>
     </header>
 
-    <div class="story-narrator__layout">
-      <form class="story-narrator__panel" @submit.prevent="onRender">
-        <div class="story-narrator__two-col">
-          <label class="story-narrator__field">
-            <span>Title</span>
-            <input v-model="title" placeholder="Story title" />
-          </label>
-          <label class="story-narrator__field">
-            <span>Language</span>
-            <input v-model="language" placeholder="en" />
-          </label>
+    <nav :class="page('tabs')" aria-label="Story sections">
+      <button type="button" :class="page('tab', { active: activeTab === 'library' })" @click="activeTab = 'library'">
+        <span>Library</span>
+        <span :class="page('tab-count')">{{ libraryItems.length }}</span>
+      </button>
+      <button type="button" :class="page('tab', { active: activeTab === 'drafts' })" @click="activeTab = 'drafts'">
+        <span>Drafts</span>
+        <span :class="page('tab-count')">{{ draftItems.length }}</span>
+      </button>
+      <button type="button" :class="page('tab', { active: activeTab === 'create' })" @click="activeTab = 'create'">
+        Create
+      </button>
+    </nav>
+
+    <p v-if="galleryError" :class="page('error')">{{ galleryError }}</p>
+
+    <section v-if="activeTab === 'library'" :class="page('panel')">
+      <header :class="page('panel-head')">
+        <div :class="page('panel-intro')">
+          <h2 :class="page('panel-title')">Tiko Radio stories</h2>
+          <p :class="page('panel-meta')">Stories promoted from drafts. Available to Tiko Radio.</p>
+        </div>
+        <Button variant="outline" :loading="galleryLoading" :disabled="galleryLoading" @click="loadLibrary">Reload</Button>
+      </header>
+
+      <div v-if="galleryLoading && libraryItems.length === 0" :class="page('empty')">Loading library…</div>
+      <div v-else-if="libraryItems.length === 0" :class="page('empty')">
+        No stories promoted yet. <button type="button" :class="page('inline-link')" @click="activeTab = 'create'">Create one</button>.
+      </div>
+      <div v-else :class="page('grid')">
+        <article v-for="item in libraryItems" :key="item.id" :class="card('')">
+          <header :class="card('head')">
+            <h3 :class="card('title')">{{ item.title }}</h3>
+            <p :class="card('meta')">{{ item.voice }} · {{ item.segmentCount }} segments</p>
+          </header>
+          <p v-if="item.description" :class="card('description')">{{ item.description }}</p>
+          <audio v-if="item.audioUrl" :class="card('audio')" :src="audioSrc(item.audioUrl)" controls />
+          <div :class="card('actions')">
+            <Button variant="ghost" size="small" @click="onDelete(item, 'library')">Delete</Button>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section v-else-if="activeTab === 'drafts'" :class="page('panel')">
+      <header :class="page('panel-head')">
+        <div :class="page('panel-intro')">
+          <h2 :class="page('panel-title')">Generated drafts</h2>
+          <p :class="page('panel-meta')">Render output stays here until promoted to Tiko Radio.</p>
+        </div>
+        <Button variant="outline" :loading="galleryLoading" :disabled="galleryLoading" @click="loadDrafts">Reload</Button>
+      </header>
+
+      <div v-if="galleryLoading && draftItems.length === 0" :class="page('empty')">Loading drafts…</div>
+      <div v-else-if="draftItems.length === 0" :class="page('empty')">
+        No drafts yet. <button type="button" :class="page('inline-link')" @click="activeTab = 'create'">Create one</button>.
+      </div>
+      <div v-else :class="page('grid')">
+        <article v-for="item in draftItems" :key="item.id" :class="card('', { draft: true })">
+          <header :class="card('head')">
+            <h3 :class="card('title')">{{ item.title }}</h3>
+            <p :class="card('meta')">{{ item.voice }} · {{ item.segmentCount }} segments</p>
+          </header>
+          <p v-if="item.description" :class="card('description')">{{ item.description }}</p>
+          <audio v-if="item.audioUrl" :class="card('audio')" :src="audioSrc(item.audioUrl)" controls />
+          <div :class="card('actions')">
+            <Button size="small" @click="onPromote(item)">Promote</Button>
+            <Button variant="ghost" size="small" @click="onDelete(item, 'drafts')">Delete</Button>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section v-else :class="page('create')">
+      <form :class="page('form')" @submit.prevent="onRender">
+        <header :class="page('form-head')">
+          <h2 :class="page('panel-title')">Create new story</h2>
+          <div :class="page('templates')">
+            <Button type="button" variant="outline" size="small" @click="loadTemplate('short')">Short tryout</Button>
+            <Button type="button" variant="outline" size="small" @click="loadTemplate('radio')">Radio story</Button>
+          </div>
+        </header>
+
+        <div :class="page('two-col')">
+          <InputText v-model="title" label="Title" placeholder="Story title" />
+          <InputText v-model="language" label="Language" placeholder="en" />
         </div>
 
-        <label class="story-narrator__field">
-          <span>Description</span>
-          <textarea v-model="description" rows="2" placeholder="Optional description" />
-        </label>
+        <InputTextArea v-model="description" label="Description" :min-rows="2" :max-rows="6" :allow-resize="true" placeholder="Optional description" />
 
-        <div class="story-narrator__controls">
-          <label class="story-narrator__field">
-            <span>Voice</span>
-            <select v-model="voice">
+        <div :class="page('controls')">
+          <label :class="page('label')">
+            <span :class="page('label-text')">Voice</span>
+            <select :class="page('select')" v-model="voice">
               <option v-for="option in voices" :key="option" :value="option">{{ option }}</option>
             </select>
           </label>
-          <label class="story-narrator__field">
-            <span>Model</span>
-            <select v-model="model">
+          <label :class="page('label')">
+            <span :class="page('label-text')">Model</span>
+            <select :class="page('select')" v-model="model">
               <option value="tts-1">tts-1</option>
               <option value="tts-1-hd">tts-1-hd</option>
               <option value="gpt-4o-mini-tts">gpt-4o-mini-tts</option>
             </select>
           </label>
-          <label class="story-narrator__field">
-            <span>Speed {{ speed.toFixed(2) }}×</span>
-            <input v-model.number="speed" type="range" min="0.5" max="1.5" step="0.05" />
-          </label>
+          <InputRange v-model="speed" :label="`Speed ${speed.toFixed(2)}x`" :min="0.5" :max="1.5" :step="0.05" />
         </div>
 
-        <div class="story-narrator__two-col">
-          <label class="story-narrator__field">
-            <span>Category</span>
-            <input v-model="category" />
-          </label>
-          <label class="story-narrator__field">
-            <span>Tags</span>
-            <input v-model="tagsText" placeholder="comma, separated" />
-          </label>
+        <div :class="page('two-col')">
+          <InputText v-model="category" label="Category" />
+          <InputText v-model="tagsText" label="Tags" placeholder="comma, separated" />
         </div>
 
-        <section class="segments">
-          <header>
-            <h2>Segments</h2>
-            <button type="button" @click="addSegment">+ Add segment</button>
+        <section :class="page('segments')">
+          <header :class="page('segments-header')">
+            <h3 :class="page('segments-title')">Segments</h3>
+            <Button type="button" variant="outline" size="small" @click="addSegment">Add segment</Button>
           </header>
 
           <article
-            v-for="(segment, index) in segments"
-            :key="segment.id"
-            class="segment-card"
-            :class="{ 'segment-card--active': selectedSegmentId === segment.id }"
-            @click="selectedSegmentId = segment.id"
+            v-for="(item, index) in segments"
+            :key="item.id"
+            :class="segment('', { active: selectedSegmentId === item.id })"
+            @click="selectedSegmentId = item.id"
           >
-            <div class="segment-card__header">
-              <strong>Segment {{ index + 1 }}</strong>
-              <div>
-                <button type="button" @click.stop="duplicateSegment(segment)">Copy</button>
-                <button type="button" :disabled="segments.length === 1" @click.stop="removeSegment(segment.id)">Remove</button>
+            <div :class="segment('header')">
+              <strong :class="segment('label')">Segment {{ index + 1 }}</strong>
+              <div :class="segment('actions')">
+                <Button type="button" variant="ghost" size="small" @click.stop="duplicateSegment(item)">Copy</Button>
+                <Button type="button" variant="ghost" size="small" :disabled="segments.length === 1" @click.stop="removeSegment(item.id)">Remove</Button>
               </div>
             </div>
-            <textarea v-model="segment.text" rows="4" placeholder="Narration text…" />
-            <label class="story-narrator__field story-narrator__field--compact">
-              <span>Pause after: {{ segment.pauseAfterMs }}ms</span>
-              <input v-model.number="segment.pauseAfterMs" type="range" min="0" max="2000" step="50" />
-            </label>
-            <button type="button" class="segment-card__try" :disabled="tryoutLoading" @click.stop="onTryout(segment)">
-              {{ tryoutLoading && selectedSegmentId === segment.id ? 'Rendering…' : 'Try this segment' }}
-            </button>
+            <InputTextArea v-model="item.text" :min-rows="3" :max-rows="8" :allow-resize="true" placeholder="Narration text…" />
+            <InputRange v-model="item.pauseAfterMs" :label="`Pause after: ${item.pauseAfterMs}ms`" :min="0" :max="2000" :step="50" suffix="ms" />
+            <Button
+              type="button"
+              variant="outline"
+              size="small"
+              :loading="tryoutLoading && selectedSegmentId === item.id"
+              :disabled="tryoutLoading"
+              @click.stop="onTryout(item)"
+            >
+              {{ tryoutLoading && selectedSegmentId === item.id ? 'Rendering…' : 'Try this segment' }}
+            </Button>
           </article>
         </section>
 
-        <p class="story-narrator__meta">{{ segments.length }} segments · {{ totalCharacters }} characters</p>
-        <p v-if="error" class="story-narrator__error">{{ error }}</p>
+        <p :class="page('meta')">{{ segments.length }} segments · {{ totalCharacters }} characters</p>
+        <p v-if="formError" :class="page('error')">{{ formError }}</p>
 
-        <button class="story-narrator__submit" :disabled="renderLoading || !canRender" type="submit">
+        <Button :loading="renderLoading" :disabled="renderLoading || !canRender" type="submit" block>
           {{ renderLoading ? 'Rendering full story…' : 'Render full story' }}
-        </button>
+        </Button>
+
+        <p :class="page('hint')">Rendered stories appear in <button type="button" :class="page('inline-link')" @click="activeTab = 'drafts'">Drafts</button> until you promote them.</p>
       </form>
 
-      <aside class="story-narrator__panel story-narrator__preview">
-        <h2>Preview</h2>
-        <section class="preview-card">
-          <strong>Selected voice</strong>
-          <p>{{ voice }} · {{ model }} · {{ speed.toFixed(2) }}×</p>
-        </section>
-
-        <section class="preview-card">
-          <strong>Tryout audio</strong>
-          <audio v-if="tryoutResult" :src="audioSrc(tryoutResult.audioUrl)" controls />
-          <p v-else>Try a segment to hear it here.</p>
-        </section>
-
-        <section class="preview-card">
-          <strong>Rendered stories</strong>
-          <div v-if="renderResults.length === 0" class="story-narrator__empty">Full renders will appear here.</div>
-          <article v-for="result in renderResults" :key="result.id" class="render-result">
-            <div>
-              <strong>{{ result.title }}</strong>
-              <p>{{ result.voice }} · {{ Math.round(result.fileSizeBytes / 1024) }} KB</p>
-            </div>
-            <audio :src="audioSrc(result.audioUrl)" controls />
-            <a :href="audioSrc(result.audioUrl)" target="_blank" rel="noreferrer">Open audio</a>
-          </article>
-        </section>
+      <aside v-if="tryoutResult" :class="page('preview')">
+        <h3 :class="page('panel-title')">Tryout</h3>
+        <p :class="page('preview-meta')">{{ voice }} · {{ model }} · {{ speed.toFixed(2) }}×</p>
+        <audio :class="page('preview-audio')" :src="audioSrc(tryoutResult.audioUrl)" controls />
       </aside>
-    </div>
+    </section>
   </section>
 </template>
 
-<style lang="scss" scoped>
-.story-narrator {
+<style lang="scss">
+.story-page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-m);
+
   &__header {
     display: flex;
     justify-content: space-between;
-    gap: 1rem;
     align-items: flex-start;
-    margin-bottom: 1rem;
+    gap: var(--space-m);
+    flex-wrap: wrap;
+  }
 
-    h1 { margin: 0; font-size: 1.4rem; }
-    p { margin: 0.25rem 0 0; color: var(--tiko-admin-muted); }
+  &__intro {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+  }
+
+  &__title {
+    font-size: var(--font-size-xl);
+    font-weight: 700;
+    color: var(--admin-text);
+  }
+
+  &__subtitle {
+    color: var(--admin-text-muted);
+    font-size: var(--font-size-s);
+  }
+
+  &__tabs {
+    display: flex;
+    gap: var(--space-xs);
+    background: var(--admin-surface);
+    border: 1px solid var(--admin-border);
+    border-radius: var(--border-radius-s);
+    padding: var(--space-xs);
+    width: max-content;
+  }
+
+  &__tab {
+    display: flex;
+    align-items: center;
+    gap: var(--space-xs);
+    padding: var(--space-s);
+    border: 0;
+    background: transparent;
+    color: var(--admin-text-muted);
+    font-size: var(--font-size-s);
+    font-weight: 500;
+    border-radius: var(--border-radius-xs);
+    cursor: pointer;
+
+    &:hover {
+      background: var(--admin-nav-hover);
+      color: var(--admin-text);
+    }
+
+    &--active {
+      background: var(--admin-nav-active);
+      color: var(--admin-text);
+    }
+  }
+
+  &__tab-count {
+    color: var(--admin-text-muted);
+    background: var(--admin-page-bg);
+    border-radius: var(--border-radius-round);
+    padding: 0 var(--space-xs);
+    font-size: var(--font-size-xs);
+  }
+
+  &__error {
+    color: var(--color-error);
+    font-size: var(--font-size-s);
+    font-weight: 600;
+  }
+
+  &__panel {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-m);
+  }
+
+  &__panel-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: var(--space-m);
+    flex-wrap: wrap;
+  }
+
+  &__panel-intro {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+  }
+
+  &__panel-title {
+    font-size: var(--font-size-m);
+    font-weight: 600;
+    color: var(--admin-text);
+  }
+
+  &__panel-meta {
+    color: var(--admin-text-muted);
+    font-size: var(--font-size-s);
+  }
+
+  &__empty {
+    background: var(--admin-surface);
+    border: 1px dashed var(--admin-border-strong);
+    border-radius: var(--border-radius-s);
+    padding: var(--space-l);
+    text-align: center;
+    color: var(--admin-text-muted);
+    font-size: var(--font-size-s);
+  }
+
+  &__inline-link {
+    border: 0;
+    background: transparent;
+    color: var(--color-primary);
+    font: inherit;
+    cursor: pointer;
+    padding: 0;
+    text-decoration: underline;
+  }
+
+  &__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(calc(var(--space) * 18), 1fr));
+    gap: var(--space-s);
+  }
+
+  &__create {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) calc(var(--space) * 18);
+    gap: var(--space-m);
+
+    @media (max-width: 900px) {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  &__form {
+    background: var(--admin-surface);
+    border: 1px solid var(--admin-border);
+    border-radius: var(--border-radius-s);
+    padding: var(--space-m);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-s);
+  }
+
+  &__form-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--space-s);
+    flex-wrap: wrap;
   }
 
   &__templates {
     display: flex;
-    gap: 0.4rem;
+    gap: var(--space-xs);
     flex-wrap: wrap;
-
-    button { border: 1px solid var(--tiko-admin-border); border-radius: 999px; background: var(--color-background); color: var(--color-foreground); padding: 0.4rem 0.75rem; cursor: pointer; }
   }
 
-  &__layout { display: grid; grid-template-columns: minmax(0, 1fr) minmax(18rem, 0.65fr); gap: 1rem; }
-  &__panel { border: 1px solid var(--tiko-admin-border); border-radius: 1rem; background: var(--tiko-admin-card); padding: 1rem; }
-  &__field { display: flex; flex-direction: column; gap: 0.35rem; font-size: 0.85rem; font-weight: 700; margin-bottom: 0.75rem; }
-  &__field--compact { margin: 0.5rem 0; }
-  &__two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
-  &__controls { display: grid; grid-template-columns: 1fr 1fr 1.2fr; gap: 0.75rem; }
-  &__meta { color: var(--tiko-admin-muted); font-size: 0.85rem; }
-  &__error { color: var(--color-error); font-size: 0.85rem; }
-  &__submit { width: 100%; border: none; border-radius: 999px; padding: 0.8rem 1rem; background: var(--tiko-app-primary); color: var(--tiko-app-primary-text); font-weight: 800; cursor: pointer; }
-  &__submit:disabled { opacity: 0.55; cursor: not-allowed; }
-  &__empty { color: var(--tiko-admin-muted); font-size: 0.85rem; padding: 0.75rem 0; }
+  &__two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-s);
+  }
 
-  textarea,
-  input,
-  select { width: 100%; box-sizing: border-box; border: 1px solid var(--tiko-admin-border); border-radius: 0.7rem; padding: 0.65rem 0.75rem; background: var(--color-background); color: var(--color-foreground); font: inherit; }
-  textarea { resize: vertical; line-height: 1.45; }
+  &__controls {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1.2fr;
+    gap: var(--space-s);
+  }
+
+  &__label {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+  }
+
+  &__label-text {
+    font-size: var(--font-size-xs);
+    font-weight: 600;
+    color: var(--admin-text-muted);
+  }
+
+  &__select {
+    width: 100%;
+    box-sizing: border-box;
+    border: 1px solid var(--admin-border);
+    border-radius: var(--border-radius-s);
+    padding: var(--space-s);
+    background: var(--admin-page-bg);
+    color: var(--admin-text);
+    font: inherit;
+  }
+
+  &__segments {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-s);
+  }
+
+  &__segments-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--space-m);
+  }
+
+  &__segments-title {
+    font-size: var(--font-size-s);
+    font-weight: 600;
+    color: var(--admin-text);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  &__meta,
+  &__hint {
+    color: var(--admin-text-muted);
+    font-size: var(--font-size-xs);
+  }
+
+  &__preview {
+    background: var(--admin-surface);
+    border: 1px solid var(--admin-border);
+    border-radius: var(--border-radius-s);
+    padding: var(--space-m);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-s);
+    align-self: start;
+  }
+
+  &__preview-meta {
+    color: var(--admin-text-muted);
+    font-size: var(--font-size-xs);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  &__preview-audio {
+    width: 100%;
+  }
 
   @media (max-width: 980px) {
-    &__layout,
     &__two-col,
-    &__controls { grid-template-columns: 1fr; }
+    &__controls {
+      grid-template-columns: 1fr;
+    }
   }
 }
 
-.segments {
-  header { display: flex; justify-content: space-between; align-items: center; margin: 1rem 0 0.5rem; }
-  h2 { margin: 0; font-size: 1rem; }
-  header button { border: 1px solid var(--tiko-admin-border); border-radius: 999px; background: transparent; color: var(--color-foreground); padding: 0.4rem 0.75rem; cursor: pointer; }
+.story-card {
+  background: var(--admin-surface);
+  border: 1px solid var(--admin-border);
+  border-radius: var(--border-radius-s);
+  padding: var(--space-m);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-s);
+
+  &--draft {
+    border-color: color-mix(in srgb, var(--color-warning), transparent 60%);
+  }
+
+  &__head {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+  }
+
+  &__title {
+    color: var(--admin-text);
+    font-size: var(--font-size-m);
+    font-weight: 600;
+  }
+
+  &__meta {
+    color: var(--admin-text-muted);
+    font-size: var(--font-size-xs);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  &__description {
+    color: var(--admin-text);
+    font-size: var(--font-size-s);
+    line-height: 1.4;
+  }
+
+  &__audio {
+    width: 100%;
+  }
+
+  &__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-xs);
+  }
 }
 
 .segment-card {
-  border: 1px solid var(--tiko-admin-border);
-  border-radius: 0.85rem;
-  padding: 0.75rem;
-  margin-bottom: 0.75rem;
-  background: color-mix(in srgb, var(--color-background), transparent 10%);
+  border: 1px solid var(--admin-border);
+  border-radius: var(--border-radius-s);
+  padding: var(--space-s);
+  background: var(--admin-page-bg);
   cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-s);
+  transition: border-color 0.12s ease;
 
-  &--active { border-color: var(--tiko-app-primary); box-shadow: 0 0 0 2px color-mix(in srgb, var(--tiko-app-primary), transparent 78%); }
-  &__header { display: flex; justify-content: space-between; gap: 0.75rem; margin-bottom: 0.5rem; }
-  &__header button,
-  &__try { border: 1px solid var(--tiko-admin-border); border-radius: 999px; background: transparent; color: var(--color-foreground); padding: 0.35rem 0.6rem; cursor: pointer; }
-  &__try { width: 100%; margin-top: 0.35rem; }
-}
+  &:hover {
+    border-color: var(--admin-border-strong);
+  }
 
-.preview-card {
-  border: 1px solid var(--tiko-admin-border);
-  border-radius: 0.85rem;
-  padding: 0.75rem;
-  margin-bottom: 0.75rem;
-  background: var(--color-background);
+  &--active {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 1px var(--color-primary);
+  }
 
-  p { color: var(--tiko-admin-muted); margin: 0.35rem 0; }
-  audio { width: 100%; margin-top: 0.5rem; }
-}
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--space-s);
+  }
 
-.render-result {
-  border-top: 1px solid var(--tiko-admin-border);
-  padding-top: 0.75rem;
-  margin-top: 0.75rem;
+  &__label {
+    color: var(--admin-text);
+    font-weight: 600;
+    font-size: var(--font-size-s);
+  }
 
-  p { margin: 0.25rem 0; color: var(--tiko-admin-muted); font-size: 0.82rem; }
-  a { color: var(--tiko-app-primary); font-size: 0.85rem; }
+  &__actions {
+    display: flex;
+    gap: var(--space-xs);
+  }
 }
 </style>

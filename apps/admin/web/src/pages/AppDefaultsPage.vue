@@ -1,190 +1,255 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, ref, watch } from 'vue'
+import { useBemm } from 'bemm'
+import { Button } from '@sil/ui'
 import { useAppDefaults, type AppResource, type TikoManagedApp } from '../composables/useAppDefaults'
+import CardsEditor from '../components/defaults/CardsEditor.vue'
+import YesNoEditor from '../components/defaults/YesNoEditor.vue'
+import SequenceEditor from '../components/defaults/SequenceEditor.vue'
+import TypeEditor from '../components/defaults/TypeEditor.vue'
+import TimerEditor from '../components/defaults/TimerEditor.vue'
+
+const bemm = useBemm('app-defaults', { return: 'string', includeBaseClass: true })
 
 const apps: Array<{ id: TikoManagedApp; label: string; hint: string }> = [
-  { id: 'cards', label: 'Cards', hint: 'Default tile collections and card decks.' },
-  { id: 'yes-no', label: 'Yes-No', hint: 'Default prompts/options for yes-no choices.' },
-  { id: 'sequence', label: 'Sequence', hint: 'Default ordered steps and sequence sets.' },
-  { id: 'type', label: 'Type', hint: 'Default typing prompts and keyboard setup.' },
-  { id: 'timer', label: 'Timer', hint: 'Default timer durations and presets.' },
+  { id: 'cards', label: 'Cards', hint: 'Tile collections and decks' },
+  { id: 'yes-no', label: 'Yes-No', hint: 'Prompts and options' },
+  { id: 'sequence', label: 'Sequence', hint: 'Ordered steps' },
+  { id: 'type', label: 'Type', hint: 'Typing prompts' },
+  { id: 'timer', label: 'Timer', hint: 'Duration presets' },
 ]
+
+const editorByApp = {
+  cards: CardsEditor,
+  'yes-no': YesNoEditor,
+  sequence: SequenceEditor,
+  type: TypeEditor,
+  timer: TimerEditor,
+} as const
 
 const { loading, saving, error, read, write } = useAppDefaults()
 const selectedApp = ref<TikoManagedApp>('cards')
-const resource = ref<AppResource>('state')
-const jsonText = ref('{}')
+const stateValue = ref<Record<string, unknown>>({})
 const version = ref(0)
 const updatedAt = ref<string | null>(null)
 const savedMessage = ref<string | null>(null)
+const dirty = ref(false)
 
 const selectedMeta = computed(() => apps.find(app => app.id === selectedApp.value)!)
-
-const templates: Record<TikoManagedApp, Record<AppResource, Record<string, unknown>>> = {
-  cards: {
-    settings: { language: 'en', colorMode: 'system' },
-    state: {
-      collections: [
-        {
-          id: 'daily-routine',
-          title: 'Daily routine',
-          tiles: [
-            { id: 'brush-teeth', label: 'Brush teeth', emoji: '🪥' },
-            { id: 'get-dressed', label: 'Get dressed', emoji: '👕' },
-            { id: 'breakfast', label: 'Breakfast', emoji: '🥣' },
-          ],
-        },
-      ],
-    },
-  },
-  'yes-no': {
-    settings: { language: 'en', colorMode: 'system', spokenPrompt: 'Make a choice.' },
-    state: { prompt: 'Yes or no?', options: [{ id: 'yes', label: 'Yes' }, { id: 'no', label: 'No' }] },
-  },
-  sequence: {
-    settings: { language: 'en', colorMode: 'system' },
-    state: { sequences: [{ id: 'morning', title: 'Morning', steps: ['Wake up', 'Get dressed', 'Eat breakfast'] }] },
-  },
-  type: {
-    settings: { language: 'en', colorMode: 'system', keyboardLayout: 'qwerty' },
-    state: { prompts: ['hello', 'thank you', 'I need help'], completedPrompts: [] },
-  },
-  timer: {
-    settings: { language: 'en', colorMode: 'system' },
-    state: { presets: [{ id: 'one-minute', label: '1 minute', seconds: 60 }, { id: 'five-minutes', label: '5 minutes', seconds: 300 }] },
-  },
-}
+const currentEditor = computed(() => editorByApp[selectedApp.value])
 
 async function loadCurrent() {
   savedMessage.value = null
-  const payload = await read(selectedApp.value, resource.value)
-  const value = resource.value === 'settings' ? payload.settings : payload.state
-  jsonText.value = JSON.stringify(value ?? {}, null, 2)
+  const payload = await read(selectedApp.value, 'state' satisfies AppResource)
+  stateValue.value = (payload.state ?? {}) as Record<string, unknown>
   version.value = payload.version
   updatedAt.value = payload.updatedAt
-}
-
-function applyTemplate() {
-  jsonText.value = JSON.stringify(templates[selectedApp.value][resource.value], null, 2)
-  savedMessage.value = null
-}
-
-async function saveCurrent() {
-  savedMessage.value = null
-  let parsed: unknown
-  try {
-    parsed = JSON.parse(jsonText.value)
-  } catch (e) {
-    throw new Error(`Invalid JSON: ${e instanceof Error ? e.message : 'parse failed'}`)
-  }
-  if (typeof parsed !== 'object' || parsed === null || Array.isArray(parsed)) {
-    throw new Error('JSON must be an object.')
-  }
-  const payload = await write(selectedApp.value, resource.value, parsed as Record<string, unknown>, version.value)
-  version.value = payload.version
-  updatedAt.value = payload.updatedAt
-  savedMessage.value = `Saved ${selectedApp.value} ${resource.value}.`
+  dirty.value = false
 }
 
 async function onSave() {
+  savedMessage.value = null
   try {
-    await saveCurrent()
+    const payload = await write(selectedApp.value, 'state', stateValue.value, version.value)
+    version.value = payload.version
+    updatedAt.value = payload.updatedAt
+    savedMessage.value = `Saved ${selectedApp.value} defaults.`
+    dirty.value = false
   } catch (e) {
     savedMessage.value = null
-    alert(e instanceof Error ? e.message : 'Could not save JSON.')
+    alert(e instanceof Error ? e.message : 'Could not save.')
   }
 }
+
+function onValueUpdate(next: Record<string, unknown>) {
+  stateValue.value = next
+  dirty.value = true
+}
+
+watch(selectedApp, () => {
+  void loadCurrent()
+}, { immediate: true })
 </script>
 
 <template>
-  <section class="app-defaults">
-    <header class="app-defaults__header">
-      <div>
-        <h1>App Defaults</h1>
-        <p>Manage default tiles, collections, prompts, sequences, and presets through existing app settings/state.</p>
+  <section :class="bemm('')">
+    <header :class="bemm('header')">
+      <div :class="bemm('intro')">
+        <h1 :class="bemm('title')">App defaults</h1>
+        <p :class="bemm('subtitle')">
+          Choose an app and edit its starter content. Defaults are loaded on first install.
+        </p>
       </div>
-      <button :disabled="loading" @click="loadCurrent">Load current</button>
     </header>
 
-    <section class="app-defaults__chooser">
+    <nav :class="bemm('apps')" aria-label="Choose app">
       <button
         v-for="app in apps"
         :key="app.id"
-        :class="{ 'app-defaults__app--active': selectedApp === app.id }"
+        type="button"
+        :class="bemm('app-tab', { active: selectedApp === app.id })"
         @click="selectedApp = app.id"
       >
-        <strong>{{ app.label }}</strong>
-        <small>{{ app.hint }}</small>
+        <strong :class="bemm('app-tab-label')">{{ app.label }}</strong>
+        <span :class="bemm('app-tab-hint')">{{ app.hint }}</span>
       </button>
-    </section>
+    </nav>
 
-    <section class="app-defaults__editor">
-      <aside>
-        <h2>{{ selectedMeta.label }}</h2>
-        <p>{{ selectedMeta.hint }}</p>
+    <div :class="bemm('panel')">
+      <header :class="bemm('panel-head')">
+        <div :class="bemm('panel-intro')">
+          <h2 :class="bemm('panel-title')">{{ selectedMeta.label }} defaults</h2>
+          <p :class="bemm('panel-meta')">
+            Version {{ version }} · Updated {{ updatedAt || 'never' }}
+          </p>
+        </div>
+        <div :class="bemm('panel-actions')">
+          <Button variant="outline" :loading="loading" :disabled="loading" @click="loadCurrent">
+            {{ loading ? 'Loading…' : 'Reload' }}
+          </Button>
+          <Button :loading="saving" :disabled="saving || !dirty" @click="onSave">
+            {{ saving ? 'Saving…' : 'Save changes' }}
+          </Button>
+        </div>
+      </header>
 
-        <label>
-          <span>Resource</span>
-          <select v-model="resource">
-            <option value="settings">Settings</option>
-            <option value="state">State / content</option>
-          </select>
-        </label>
+      <p v-if="error" :class="bemm('error')">{{ error }}</p>
+      <p v-if="savedMessage" :class="bemm('success')">{{ savedMessage }}</p>
 
-        <dl>
-          <div><dt>Version</dt><dd>{{ version }}</dd></div>
-          <div><dt>Updated</dt><dd>{{ updatedAt || 'default / never saved' }}</dd></div>
-        </dl>
-
-        <button @click="applyTemplate">Apply starter template</button>
-        <button :disabled="loading" @click="loadCurrent">Reload current</button>
-        <button class="app-defaults__save" :disabled="saving" @click="onSave">{{ saving ? 'Saving…' : 'Save JSON' }}</button>
-      </aside>
-
-      <main>
-        <textarea v-model="jsonText" spellcheck="false" />
-        <p v-if="error" class="app-defaults__error">{{ error }}</p>
-        <p v-if="savedMessage" class="app-defaults__success">{{ savedMessage }}</p>
-      </main>
-    </section>
+      <component
+        :is="currentEditor"
+        :model-value="stateValue"
+        @update:model-value="onValueUpdate"
+      />
+    </div>
   </section>
 </template>
 
-<style lang="scss" scoped>
+<style lang="scss">
 .app-defaults {
-  &__header { display: flex; justify-content: space-between; gap: 1rem; align-items: flex-start; margin-bottom: 1rem; }
-  h1 { margin: 0; font-size: 1.4rem; }
-  h2 { margin: 0 0 0.25rem; }
-  p { margin: 0.25rem 0 0; color: var(--tiko-admin-muted); }
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-m);
 
-  button { border: 1px solid var(--tiko-admin-border); border-radius: 0.8rem; background: var(--color-background); color: var(--color-foreground); padding: 0.65rem 0.85rem; cursor: pointer; text-align: left; }
-  button:disabled { opacity: 0.55; cursor: wait; }
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: var(--space-m);
+  }
 
-  &__chooser { display: grid; grid-template-columns: repeat(5, 1fr); gap: 0.6rem; margin-bottom: 1rem; }
-  &__chooser button { display: flex; flex-direction: column; gap: 0.25rem; min-height: 5rem; }
-  &__chooser small { color: var(--tiko-admin-muted); line-height: 1.25; }
-  &__app--active { border-color: var(--tiko-app-primary) !important; box-shadow: 0 0 0 2px color-mix(in srgb, var(--tiko-app-primary), transparent 80%); }
+  &__intro {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+  }
 
-  &__editor { display: grid; grid-template-columns: 17rem minmax(0, 1fr); gap: 1rem; }
-  aside,
-  main { border: 1px solid var(--tiko-admin-border); border-radius: 1rem; background: var(--tiko-admin-card); padding: 1rem; }
-  aside { display: flex; flex-direction: column; gap: 0.75rem; align-self: start; }
+  &__title {
+    font-size: var(--font-size-xl);
+    font-weight: 700;
+    color: var(--admin-text);
+  }
 
-  label { display: flex; flex-direction: column; gap: 0.35rem; font-size: 0.85rem; font-weight: 700; }
-  select { width: 100%; border: 1px solid var(--tiko-admin-border); border-radius: 0.7rem; padding: 0.65rem 0.75rem; background: var(--color-background); color: var(--color-foreground); }
-  textarea { width: 100%; min-height: 33rem; box-sizing: border-box; border: 1px solid var(--tiko-admin-border); border-radius: 0.85rem; padding: 1rem; background: var(--color-background); color: var(--color-foreground); font: 0.9rem/1.5 ui-monospace, SFMono-Regular, Menlo, monospace; resize: vertical; }
+  &__subtitle {
+    color: var(--admin-text-muted);
+    font-size: var(--font-size-s);
+  }
 
-  dl { margin: 0; display: grid; gap: 0.4rem; }
-  dl div { display: grid; gap: 0.15rem; }
-  dt { color: var(--tiko-admin-muted); font-size: 0.75rem; text-transform: uppercase; }
-  dd { margin: 0; font-size: 0.85rem; word-break: break-word; }
-  &__save { background: var(--tiko-app-primary) !important; color: var(--tiko-app-primary-text) !important; font-weight: 800; text-align: center !important; }
-  &__error { color: var(--color-error) !important; }
-  &__success { color: var(--color-success) !important; }
+  &__apps {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(calc(var(--space) * 10), 1fr));
+    gap: var(--space-xs);
+    background: var(--admin-surface);
+    border: 1px solid var(--admin-border);
+    border-radius: var(--border-radius-s);
+    padding: var(--space-xs);
+  }
 
-  @media (max-width: 920px) {
-    &__chooser { grid-template-columns: 1fr 1fr; }
-    &__editor { grid-template-columns: 1fr; }
+  &__app-tab {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+    padding: var(--space-s);
+    background: transparent;
+    border: 0;
+    border-radius: var(--border-radius-xs);
+    color: var(--admin-text-muted);
+    text-align: left;
+    cursor: pointer;
+    transition: background 0.12s ease, color 0.12s ease;
+
+    &:hover {
+      background: var(--admin-nav-hover);
+      color: var(--admin-text);
+    }
+
+    &--active {
+      background: var(--admin-nav-active);
+      color: var(--admin-text);
+    }
+  }
+
+  &__app-tab-label {
+    font-size: var(--font-size-s);
+    font-weight: 600;
+  }
+
+  &__app-tab-hint {
+    font-size: var(--font-size-xs);
+    color: var(--admin-text-muted);
+    line-height: 1.3;
+  }
+
+  &__panel {
+    background: var(--admin-surface);
+    border: 1px solid var(--admin-border);
+    border-radius: var(--border-radius-s);
+    padding: var(--space-m);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-m);
+  }
+
+  &__panel-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: var(--space-m);
+    flex-wrap: wrap;
+  }
+
+  &__panel-intro {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+  }
+
+  &__panel-title {
+    font-size: var(--font-size-m);
+    font-weight: 600;
+    color: var(--admin-text);
+  }
+
+  &__panel-meta {
+    color: var(--admin-text-muted);
+    font-size: var(--font-size-xs);
+  }
+
+  &__panel-actions {
+    display: flex;
+    gap: var(--space-s);
+  }
+
+  &__error {
+    color: var(--color-error);
+    font-size: var(--font-size-s);
+    font-weight: 600;
+  }
+
+  &__success {
+    color: var(--color-success);
+    font-size: var(--font-size-s);
+    font-weight: 600;
   }
 }
 </style>

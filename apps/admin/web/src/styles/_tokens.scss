@@ -3,21 +3,42 @@
   'secondary': #2dd4bf,
   'tertiary': #2488ff,
   'accent': #ff8a1f,
-  'success': #93ee3f,
+  'success': #22c55e,
   'warning': #f8c22e,
-  'error': #ef405d,
-  'dark': #17131c,
+  'error': #ef4444,
+  'dark': #0a0a0c,
   'light': #f8f6f1,
 ));
 
 @use '@sil/ui/styles/main.scss';
 
 :root {
-  --tiko-admin-sidebar: color-mix(in srgb, var(--color-background), var(--color-foreground) 5%);
-  --tiko-admin-card: color-mix(in srgb, var(--color-background), var(--color-foreground) 4%);
-  --tiko-admin-border: color-mix(in srgb, var(--color-foreground), transparent 86%);
-  --tiko-admin-muted: color-mix(in srgb, var(--color-foreground), transparent 45%);
+  --admin-page-bg: var(--color-background);
+  --admin-sidebar-bg: color-mix(in srgb, var(--color-background), black 35%);
+  --admin-surface: color-mix(in srgb, var(--color-background), var(--color-foreground) 4%);
+  --admin-surface-hover: color-mix(in srgb, var(--color-background), var(--color-foreground) 8%);
+  --admin-border: color-mix(in srgb, var(--color-foreground), transparent 90%);
+  --admin-border-strong: color-mix(in srgb, var(--color-foreground), transparent 80%);
+  --admin-text: var(--color-foreground);
+  --admin-text-muted: color-mix(in srgb, var(--color-foreground), transparent 45%);
+  --admin-text-dim: color-mix(in srgb, var(--color-foreground), transparent 65%);
+  --admin-nav-hover: color-mix(in srgb, var(--color-foreground), transparent 94%);
+  --admin-nav-active: color-mix(in srgb, var(--color-foreground), transparent 88%);
+
+  /* Legacy aliases kept for pages still referencing them */
+  --tiko-admin-sidebar: var(--admin-sidebar-bg);
+  --tiko-admin-card: var(--admin-surface);
+  --tiko-admin-border: var(--admin-border);
+  --tiko-admin-muted: var(--admin-text-muted);
 }
 
-html { height: initial !important; scroll-snap-type: none !important; }
-body { overflow: visible !important; display: block !important; }
+html {
+  color-scheme: dark;
+  background: var(--admin-page-bg);
+}
+
+body {
+  background: var(--admin-page-bg);
+  color: var(--admin-text);
+  font-family: 'Nunito', -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+}

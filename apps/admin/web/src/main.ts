@@ -22,7 +22,7 @@ async function unregisterLegacyServiceWorkers(): Promise<void> {
 }
 
 const routes: RouteRecordRaw[] = [
-  { path: '/', redirect: '/images' },
+  { path: '/', name: 'home', component: () => import('./pages/HomePage.vue') },
   { path: '/images', name: 'images', component: () => import('./pages/ImageGeneratorPage.vue') },
   { path: '/stories', name: 'stories', component: () => import('./pages/StoryNarratorPage.vue') },
   { path: '/library', name: 'library', component: () => import('./pages/MediaLibraryPage.vue') },
