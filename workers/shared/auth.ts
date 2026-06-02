@@ -39,6 +39,14 @@ export interface AuthEnv {
   API_KEYS?: string
   /** Base URL of the identity service (e.g. https://api.tikotalks.com/v1) */
   IDENTITY_BASE_URL?: string
+  /**
+   * Service binding to the identity-api worker. When set, session validation uses
+   * a direct Worker-to-Worker call instead of an HTTP fetch — required when both
+   * workers live on the same Cloudflare zone (where public-URL subrequests hang).
+   */
+  IDENTITY_SERVICE?: {
+    fetch(input: Request | string, init?: RequestInit): Promise<Response>
+  }
 }
 
 // ── In-memory key cache ──────────────────────────────────────
@@ -129,17 +137,21 @@ async function isApiKey(token: string, env: AuthEnv): Promise<boolean> {
 
 async function validateSession(
   token: string,
-  identityBaseUrl: string | undefined,
+  env: AuthEnv,
 ): Promise<{ userId: string } | null> {
-  const baseUrl = (identityBaseUrl ?? 'https://api.tikotalks.com/v1').replace(/\/$/, '')
+  const baseUrl = (env.IDENTITY_BASE_URL ?? 'https://api.tikotalks.com/v1').replace(/\/$/, '')
+  const url = `${baseUrl}/identity/session`
+  const init: RequestInit = {
+    method: 'GET',
+    headers: {
+      authorization: `Bearer ${token}`,
+      'content-type': 'application/json',
+    },
+  }
   try {
-    const response = await fetch(`${baseUrl}/identity/session`, {
-      method: 'GET',
-      headers: {
-        authorization: `Bearer ${token}`,
-        'content-type': 'application/json',
-      },
-    })
+    const response = env.IDENTITY_SERVICE
+      ? await env.IDENTITY_SERVICE.fetch(url, init)
+      : await fetch(url, init)
     if (!response.ok) return null
     const body = (await response.json()) as SessionBundle
     return { userId: body.user.id }
@@ -173,7 +185,7 @@ export async function authenticate(
   }
 
   // 2. Validate as session token against identity service
-  const session = await validateSession(token, env.IDENTITY_BASE_URL)
+  const session = await validateSession(token, env)
   if (session) {
     return { ok: true, method: 'session', userId: session.userId }
   }

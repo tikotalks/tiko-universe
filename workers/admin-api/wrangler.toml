@@ -9,6 +9,10 @@ binding = "AUTH_DB"
 database_name = "tiko-identity"
 database_id = "036a1726-ac16-48a9-ab76-22c3a88ca7ae"
 
+[[services]]
+binding = "IDENTITY_SERVICE"
+service = "tiko-identity-api-dev"
+
 [vars]
 TIKO_ENVIRONMENT = "development"
 ADMIN_EMAIL = "me@sil.mt"
@@ -33,6 +37,10 @@ workers_dev = false
 binding = "AUTH_DB"
 database_name = "tiko-identity"
 database_id = "036a1726-ac16-48a9-ab76-22c3a88ca7ae"
+
+[[env.production.services]]
+binding = "IDENTITY_SERVICE"
+service = "tiko-identity-api"
 
 [env.production.vars]
 TIKO_ENVIRONMENT = "production"

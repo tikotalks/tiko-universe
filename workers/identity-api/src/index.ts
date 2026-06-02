@@ -66,7 +66,7 @@ interface MagicLinkRow {
 
 const SESSION_TTL_MS = 1000 * 60 * 60 * 24 * 180
 const MAGIC_LINK_TTL_MS = 1000 * 60 * 15
-const GENERIC_RECOVERY_MESSAGE = 'If recovery is available, a link will be sent.'
+const GENERIC_RECOVERY_MESSAGE = 'Check your email for the sign-in code.'
 const DEFAULT_COMMUNICATION_API_URL = 'https://api.tikotalks.com/v1/communication'
 const DEFAULT_ALLOWED_ORIGINS = 'https://tiko.mt,https://www.tiko.mt,https://tiko.tikoapps.org,https://yesno.tikoapps.org,https://cards.tikoapps.org,https://sequence.tikoapps.org,https://type.tikoapps.org,https://timer.tikoapps.org,https://admin.tikoapps.org,https://dev.tiko.tikoapps.org,https://dev.yesno.tikoapps.org,https://dev.cards.tikoapps.org,https://dev.sequence.tikoapps.org,https://dev.type.tikoapps.org,https://dev.timer.tikoapps.org,https://dev.admin.tikoapps.org,http://localhost:3060,http://localhost:3061,http://localhost:3062,http://localhost:3063,http://localhost:3064,http://localhost:3065,http://localhost:5173,http://localhost:4173,capacitor://localhost,ionic://localhost,tiko://native'
 
@@ -163,7 +163,7 @@ async function requestRecoveryEmail(request: Request, env: Env): Promise<Respons
     const bearer = getBearer(request)
     const session = bearer ? await sessionByToken(env, bearer) : null
     const existingUser = await first<UserRow>(env.IDENTITY_DB.prepare('SELECT id, kind, email_hash, display_name FROM users WHERE email_hash = ?').bind(emailHash))
-    const userId = session?.user_id ?? existingUser?.id
+    const userId = existingUser?.id ?? session?.user_id
 
     if (userId) {
       const magicToken = token('tml')
@@ -200,10 +200,14 @@ async function verifyMagicLink(request: Request, env: Env): Promise<Response> {
     if (!link) throw new HttpError(401, 'invalid_magic_link', 'Magic link is invalid or expired.')
     await run(env.IDENTITY_DB.prepare('UPDATE magic_links SET consumed_at = ? WHERE token_hash = ?').bind(now.toISOString(), tokenHash))
   }
-  await run(env.IDENTITY_DB.prepare('UPDATE users SET kind = ?, email_hash = ?, updated_at = ? WHERE id = ?').bind('recoverable', link.email_hash, now.toISOString(), link.user_id))
-  await writeEvent(env, link.user_id, null, 'magic_link_verified', now.toISOString())
+  const emailOwner = await first<UserRow>(env.IDENTITY_DB.prepare('SELECT id, kind, email_hash, display_name FROM users WHERE email_hash = ?').bind(link.email_hash))
+  const userId = emailOwner && emailOwner.id !== link.user_id ? emailOwner.id : link.user_id
+  if (!emailOwner || emailOwner.id === link.user_id) {
+    await run(env.IDENTITY_DB.prepare('UPDATE users SET kind = ?, email_hash = ?, updated_at = ? WHERE id = ?').bind('recoverable', link.email_hash, now.toISOString(), link.user_id))
+  }
+  await writeEvent(env, userId, null, 'magic_link_verified', now.toISOString())
 
-  const user = await requireUser(env, link.user_id)
+  const user = await requireUser(env, userId)
   const deviceId = id('dev')
   const deviceSecret = token('tds')
   const deviceSecretHash = await hashToken(deviceSecret, env.TOKEN_PEPPER)
