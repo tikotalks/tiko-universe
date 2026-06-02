@@ -35,9 +35,10 @@ onMounted(async () => {
   }
   // Silently re-verify stored token — don't show errors for stale sessions
   if (token.value) {
-    await verify()
-    // If verify failed, silently clear stale credentials
-    if (!isAuthed.value) {
+    await verify(undefined, { silent: true })
+    if (isAuthed.value) {
+      if (route.path === '/') router.replace('/images')
+    } else {
       logout()
     }
   }

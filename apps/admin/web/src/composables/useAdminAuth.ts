@@ -106,14 +106,14 @@ export function useAdminAuth() {
     return deviceSessionPromise
   }
 
-  async function verify(candidateToken?: string) {
+  async function verify(candidateToken?: string, { silent = false } = {}) {
     if (candidateToken !== undefined) token.value = candidateToken.trim()
     if (!token.value) {
-      error.value = 'Paste your Tiko session token to unlock the dashboard.'
+      if (!silent) error.value = 'Paste your Tiko session token to unlock the dashboard.'
       return false
     }
 
-    loading.value = true
+    if (!silent) loading.value = true
     error.value = null
     try {
       user.value = await adminFetch<AdminUser>('/me')
@@ -125,10 +125,10 @@ export function useAdminAuth() {
       user.value = null
       config.value = null
       localStorage.removeItem(ADMIN_TOKEN_KEY)
-      error.value = e instanceof Error ? e.message : 'Admin verification failed.'
+      if (!silent) error.value = e instanceof Error ? e.message : 'Admin verification failed.'
       return false
     } finally {
-      loading.value = false
+      if (!silent) loading.value = false
     }
   }
 
