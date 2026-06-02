@@ -113,13 +113,21 @@ export function createTikoTtsClient(options: TikoTtsClientOptions = {}) {
   const fetcher = options.fetcher ?? globalThis.fetch
   const memoryCache = new Map<string, TikoTtsResponse>()
 
+  // Tikoapi.org splits APIs per-service subdomain. When the caller hands us
+  // identity.tikoapi.org we still need to reach generation.tikoapi.org for
+  // TTS — rewrite the host. Legacy hosts like api.tikotalks.com share a
+  // single root so the existing `${workerUrl}/generation/tts` style works.
+  function generationBase(): string {
+    return workerUrl.replace('//identity.tikoapi.org/', '//generation.tikoapi.org/')
+  }
+
   function cacheKey(request: TikoTtsRequest) {
     return generationTtsCacheKey(request)
   }
 
   function ttsEndpoint() {
     if (workerUrl.endsWith('/generate')) return workerUrl
-    if (workerUrl.endsWith('/v1')) return `${workerUrl}/generation/tts`
+    if (workerUrl.endsWith('/v1')) return `${generationBase()}/generation/tts`
     if (workerUrl.endsWith('/v1/generation')) return `${workerUrl}/tts`
     if (workerUrl.includes('tts.tikotalks.com')) return `${workerUrl}/generate`
     return `${workerUrl}/v1/generation/tts`
@@ -129,7 +137,7 @@ export function createTikoTtsClient(options: TikoTtsClientOptions = {}) {
     if (audioUrl.startsWith('http')) return audioUrl
     const key = audioUrl.match(/key=([^&]+)/)?.[1]
     if (key) return `${cdnUrl}/${decodeURIComponent(key)}`
-    if (audioUrl.startsWith('/v1/generation/audio/')) return `${workerUrl.replace(/\/v1$/, '')}${audioUrl}`
+    if (audioUrl.startsWith('/v1/generation/audio/')) return `${generationBase().replace(/\/v1$/, '')}${audioUrl}`
     return `${cdnUrl}${audioUrl.startsWith('/') ? '' : '/'}${audioUrl}`
   }
 

@@ -52,7 +52,7 @@ class MemoryD1 {
           }
           this.byHash.set(record.request_hash, record)
           this.byId.set(record.id, record)
-          return { success: true }
+          return { success: true, meta: { changes: 1 } }
         }
       })
     }
@@ -71,6 +71,10 @@ class MemoryR2 {
       body: value instanceof ArrayBuffer ? value : value.slice().buffer,
       httpMetadata: (options?.httpMetadata as { contentType?: string } | undefined) ?? { contentType: 'audio/mpeg' }
     })
+  }
+
+  async delete(key: string) {
+    this.objects.delete(key)
   }
 }
 

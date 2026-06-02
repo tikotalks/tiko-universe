@@ -25,8 +25,8 @@ const props = defineProps<{ modelValue: Record<string, unknown> }>()
 const emit = defineEmits<{ 'update:modelValue': [value: Record<string, unknown>] }>()
 
 const state = computed<CardsState>(() => {
-  const value = props.modelValue
-  const collections = Array.isArray((value as CardsState)?.collections) ? (value as CardsState).collections : []
+  const value = props.modelValue as Partial<CardsState> | null | undefined
+  const collections = Array.isArray(value?.collections) ? value!.collections : []
   return { collections }
 })
 

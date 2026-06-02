@@ -77,7 +77,7 @@ function removePreset(index: number) {
           label="Seconds"
           :min="1"
           :max="86400"
-          @update:model-value="(v: number) => updatePreset(i, { seconds: v })"
+          @update:model-value="(v: unknown) => updatePreset(i, { seconds: Number(v) })"
         />
         <Button variant="ghost" size="small" @click="removePreset(i)">Remove</Button>
       </div>

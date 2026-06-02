@@ -60,7 +60,7 @@ export function useStoryNarration() {
   async function readJson<T>(response: Response, fallback: string): Promise<T> {
     const body = await response.json().catch(() => null) as ApiErrorBody | T | null
     if (!response.ok) {
-      const apiError = body && 'error' in body ? (body as ApiErrorBody).error : undefined
+      const apiError = body && typeof body === 'object' && 'error' in body ? (body as ApiErrorBody).error : undefined
       throw new Error((typeof apiError === 'string' ? apiError : apiError?.message) ?? `${fallback}: ${response.status}`)
     }
     return body as T
