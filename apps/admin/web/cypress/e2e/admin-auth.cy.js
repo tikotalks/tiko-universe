@@ -87,22 +87,22 @@ describe('admin OTP sign-in', () => {
       },
     })
 
-    cy.contains('h1', 'Admin dashboard').should('be.visible')
+    cy.contains('h1', 'Tiko Admin').should('be.visible')
     cy.contains('label', 'Email').find('input').type('Sil@Example.com')
     cy.contains('button', 'Send sign-in code').click()
 
     cy.wait('@bootstrapDevice')
     cy.wait('@requestCode')
-    cy.contains('Check your email for the 6-digit code.').should('be.visible')
+    cy.contains('Check your email for the sign-in code.').should('be.visible')
 
-    cy.contains('label', '6-digit sign-in code').find('input').type('123 456')
-    cy.contains('button', 'Verify and unlock').click()
+    cy.contains('label', '6-digit code').find('input').type('123 456')
+    cy.contains('button', 'Verify and sign in').click()
 
     cy.wait('@verifyOtp')
     cy.wait('@adminMe')
     cy.wait('@adminConfig')
 
     cy.contains('sil@example.com').should('be.visible')
-    cy.contains('button', 'Images').should('be.visible')
+    cy.contains('Images').should('be.visible')
   })
 })
