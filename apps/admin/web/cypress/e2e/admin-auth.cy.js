@@ -88,14 +88,14 @@ describe('admin OTP sign-in', () => {
     })
 
     cy.contains('h1', 'Tiko Admin').should('be.visible')
-    cy.contains('label', 'Email').find('input').type('Sil@Example.com')
+    cy.get('input[type="email"]').type('Sil@Example.com')
     cy.contains('button', 'Send sign-in code').click()
 
     cy.wait('@bootstrapDevice')
     cy.wait('@requestCode')
     cy.contains('Check your email for the sign-in code.').should('be.visible')
 
-    cy.contains('label', '6-digit code').find('input').type('123 456')
+    cy.get('input[inputmode="numeric"]').type('123 456')
     cy.contains('button', 'Verify and sign in').click()
 
     cy.wait('@verifyOtp')
