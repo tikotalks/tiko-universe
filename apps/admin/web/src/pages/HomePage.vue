@@ -8,36 +8,11 @@ const router = useRouter()
 const { user } = useAdminAuth()
 
 const quickLinks = [
-  {
-    to: '/images',
-    title: 'Generate images',
-    description: 'Create child-friendly images with the Tiko visual style.',
-    icon: 'ui/image',
-  },
-  {
-    to: '/stories',
-    title: 'Narrate stories',
-    description: 'Generate narrated stories and save them to the library.',
-    icon: 'ui/music-note-single',
-  },
-  {
-    to: '/library',
-    title: 'Media library',
-    description: 'Browse and edit every image, story, and asset in Tiko.',
-    icon: 'ui/folder',
-  },
-  {
-    to: '/defaults',
-    title: 'App defaults',
-    description: 'Set the starter content each Tiko app loads on first run.',
-    icon: 'ui/board-multi-dashboard',
-  },
-  {
-    to: '/support',
-    title: 'Support inbox',
-    description: 'See incoming user emails and reply from one place.',
-    icon: 'ui/at-sign',
-  },
+  { to: '/images', title: 'Generate images', description: 'Create child-friendly images with the Tiko visual style.' },
+  { to: '/stories', title: 'Narrate stories', description: 'Generate narrated stories and save them to the library.' },
+  { to: '/library', title: 'Media library', description: 'Browse and edit every image, story, and asset in Tiko.' },
+  { to: '/defaults', title: 'App defaults', description: 'Set the starter content each Tiko app loads on first run.' },
+  { to: '/support', title: 'Support inbox', description: 'See incoming user emails and reply from one place.' },
 ]
 </script>
 
@@ -87,47 +62,42 @@ const quickLinks = [
 
 <style lang="scss">
 .home-page {
-  max-width: 1100px;
-  margin: 0 auto;
-  padding: 2.5rem 2.5rem 4rem;
   display: flex;
   flex-direction: column;
-  gap: 2.5rem;
+  gap: var(--space-l);
 
   &__header {
     display: flex;
     flex-direction: column;
-    gap: 0.25rem;
+    gap: var(--space-xs);
   }
 
   &__title {
-    margin: 0;
-    font-size: 1.875rem;
+    font-size: var(--font-size-xl);
     font-weight: 700;
     color: var(--admin-text);
   }
 
   &__greeting {
-    margin: 0;
     color: var(--admin-text-muted);
-    font-size: 0.95rem;
+    font-size: var(--font-size-s);
   }
 
   &__grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-    gap: 0.75rem;
+    grid-template-columns: repeat(auto-fill, minmax(calc(var(--space) * 17), 1fr));
+    gap: var(--space-s);
   }
 
   &__card {
     display: flex;
     align-items: flex-start;
-    gap: 0.875rem;
-    padding: 1rem;
+    gap: var(--space-s);
+    padding: var(--space-m);
     text-align: left;
     background: var(--admin-surface);
     border: 1px solid var(--admin-border);
-    border-radius: 12px;
+    border-radius: var(--border-radius-s);
     color: var(--admin-text);
     cursor: pointer;
     transition: background 0.12s ease, border-color 0.12s ease, transform 0.12s ease;
@@ -143,39 +113,37 @@ const quickLinks = [
   }
 
   &__card-icon {
-    width: 36px;
-    height: 36px;
-    border-radius: 9px;
-    background: linear-gradient(135deg, rgba(139, 92, 246, 0.25), rgba(168, 85, 247, 0.18));
-    border: 1px solid rgba(139, 92, 246, 0.35);
+    width: calc(var(--space) * 2.25);
+    height: calc(var(--space) * 2.25);
+    border-radius: var(--border-radius-xs);
+    background: color-mix(in srgb, var(--color-primary), transparent 80%);
+    border: 1px solid color-mix(in srgb, var(--color-primary), transparent 65%);
     display: grid;
     place-items: center;
-    color: #c4b5fd;
+    color: var(--color-primary);
     flex-shrink: 0;
   }
 
   &__card-icon-inner {
     font-weight: 700;
-    font-size: 0.95rem;
+    font-size: var(--font-size-m);
   }
 
   &__card-body {
     display: flex;
     flex-direction: column;
-    gap: 0.2rem;
+    gap: var(--space-xs);
     min-width: 0;
   }
 
   &__card-title {
-    margin: 0;
-    font-size: 0.95rem;
+    font-size: var(--font-size-m);
     font-weight: 600;
     color: var(--admin-text);
   }
 
   &__card-description {
-    margin: 0;
-    font-size: 0.825rem;
+    font-size: var(--font-size-s);
     color: var(--admin-text-muted);
     line-height: 1.4;
   }
@@ -183,39 +151,31 @@ const quickLinks = [
   &__panel {
     background: var(--admin-surface);
     border: 1px solid var(--admin-border);
-    border-radius: 12px;
-    padding: 1.5rem 1.75rem;
+    border-radius: var(--border-radius-s);
+    padding: var(--space-m) var(--space-l);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-m);
   }
 
   &__panel-title {
-    margin: 0 0 1rem;
-    font-size: 1rem;
+    font-size: var(--font-size-m);
     font-weight: 600;
     color: var(--admin-text);
   }
 
   &__steps {
-    margin: 0;
-    padding-left: 1.1rem;
+    padding-left: var(--space-m);
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
+    gap: var(--space-s);
     color: var(--admin-text-muted);
-    font-size: 0.9rem;
+    font-size: var(--font-size-s);
     line-height: 1.5;
 
     strong {
       color: var(--admin-text);
       font-weight: 600;
-    }
-  }
-
-  @media (max-width: 760px) {
-    padding: 1.5rem 1rem 3rem;
-    gap: 1.5rem;
-
-    &__title {
-      font-size: 1.5rem;
     }
   }
 }

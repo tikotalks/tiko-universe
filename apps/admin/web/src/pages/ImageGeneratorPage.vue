@@ -1,8 +1,13 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
+import { useBemm } from 'bemm'
+import { Button, InputText, InputTextArea } from '@sil/ui'
 import { useAdminAuth } from '../composables/useAdminAuth'
 import { useImageGeneration } from '../composables/useImageGeneration'
 import type { ImageGenerationResult } from '../types/admin'
+
+const page = useBemm('image-generator', { return: 'string', includeBaseClass: true })
+const card = useBemm('image-result', { return: 'string', includeBaseClass: true })
 
 const { config } = useAdminAuth()
 const { generateImage } = useImageGeneration()
@@ -92,95 +97,86 @@ function useTemplate(kind: 'character' | 'scene' | 'object') {
 </script>
 
 <template>
-  <section class="image-generator">
-    <header class="image-generator__header">
-      <div>
-        <h1>Image Generator</h1>
-        <p>Create Tiko-style images and save them into generated media.</p>
+  <section :class="page('')">
+    <header :class="page('header')">
+      <div :class="page('intro')">
+        <h1 :class="page('title')">Image generator</h1>
+        <p :class="page('subtitle')">Create Tiko-style images. Generated images stay in a draft pool until you promote them.</p>
       </div>
-      <div class="image-generator__templates">
-        <button @click="useTemplate('character')">Character</button>
-        <button @click="useTemplate('scene')">Story scene</button>
-        <button @click="useTemplate('object')">Object</button>
+      <div :class="page('templates')">
+        <Button variant="outline" size="small" @click="useTemplate('character')">Character</Button>
+        <Button variant="outline" size="small" @click="useTemplate('scene')">Story scene</Button>
+        <Button variant="outline" size="small" @click="useTemplate('object')">Object</Button>
       </div>
     </header>
 
-    <div class="image-generator__layout">
-      <form class="image-generator__form" @submit.prevent="onGenerate">
-        <label class="image-generator__field">
-          <span>Prompt</span>
-          <textarea
-            v-model="prompt"
-            rows="6"
-            placeholder="Describe the image to generate…"
-          />
-        </label>
+    <div :class="page('layout')">
+      <form :class="page('form')" @submit.prevent="onGenerate">
+        <InputTextArea
+          v-model="prompt"
+          label="Prompt"
+          :min-rows="6"
+          :max-rows="12"
+          :allow-resize="true"
+          placeholder="Describe the image to generate…"
+        />
 
-        <details class="image-generator__style" open>
-          <summary>Tiko style suffix</summary>
-          <p>{{ tikoStylePrompt }}</p>
+        <details :class="page('style-info')" open>
+          <summary :class="page('style-summary')">Tiko style suffix</summary>
+          <p :class="page('style-body')">{{ tikoStylePrompt }}</p>
         </details>
 
-        <label class="image-generator__field">
-          <span>Title</span>
-          <input v-model="title" placeholder="Optional media title" />
-        </label>
+        <InputText v-model="title" label="Title" placeholder="Optional media title" />
 
-        <div class="image-generator__two-col">
-          <label class="image-generator__field">
-            <span>Category</span>
-            <input v-model="category" />
-          </label>
-          <label class="image-generator__field">
-            <span>Tags</span>
-            <input v-model="tagsText" placeholder="comma, separated" />
-          </label>
+        <div :class="page('two-col')">
+          <InputText v-model="category" label="Category" />
+          <InputText v-model="tagsText" label="Tags" placeholder="comma, separated" />
         </div>
 
-        <div class="image-generator__controls">
-          <label class="image-generator__field">
-            <span>Size</span>
-            <select v-model="size">
+        <div :class="page('controls')">
+          <label :class="page('label')">
+            <span :class="page('label-text')">Size</span>
+            <select :class="page('select')" v-model="size">
               <option value="1024x1024">Square</option>
               <option value="1024x1792">Portrait</option>
               <option value="1792x1024">Landscape</option>
             </select>
           </label>
-          <label class="image-generator__field">
-            <span>Quality</span>
-            <select v-model="quality">
+          <label :class="page('label')">
+            <span :class="page('label-text')">Quality</span>
+            <select :class="page('select')" v-model="quality">
               <option value="standard">Standard</option>
               <option value="hd">HD</option>
             </select>
           </label>
-          <label class="image-generator__field">
-            <span>Style</span>
-            <select v-model="style">
+          <label :class="page('label')">
+            <span :class="page('label-text')">Style</span>
+            <select :class="page('select')" v-model="style">
               <option value="vivid">Vivid</option>
               <option value="natural">Natural</option>
             </select>
           </label>
         </div>
 
-        <p v-if="error" class="image-generator__error">{{ error }}</p>
+        <p v-if="error" :class="page('error')">{{ error }}</p>
 
-        <button class="image-generator__submit" :disabled="loading" type="submit">
+        <Button :loading="loading" :disabled="loading" type="submit" block>
           {{ loading ? 'Generating…' : 'Generate image' }}
-        </button>
+        </Button>
       </form>
 
-      <section class="image-generator__results">
-        <div v-if="results.length === 0" class="image-generator__empty">
+      <section :class="page('results')">
+        <div v-if="results.length === 0" :class="page('empty')">
           Generated images will appear here.
         </div>
-        <article v-for="result in results" :key="result.id" class="image-result">
-          <img :src="imageSrc(result)" :alt="result.prompt" />
-          <div class="image-result__body">
-            <strong>{{ result.size }} · {{ result.quality }} · {{ result.style }}</strong>
-            <p>{{ result.revisedPrompt || result.prompt }}</p>
-            <div class="image-result__actions">
-              <button @click="download(result)">↓ Download</button>
-              <a :href="imageSrc(result)" target="_blank" rel="noreferrer">Open</a>
+        <article v-for="result in results" :key="result.id" :class="card('')">
+          <img :class="card('image')" :src="imageSrc(result)" :alt="result.prompt" />
+          <div :class="card('body')">
+            <strong :class="card('meta')">{{ result.size }} · {{ result.quality }} · {{ result.style }}</strong>
+            <p :class="card('prompt')">{{ result.revisedPrompt || result.prompt }}</p>
+            <div :class="card('actions')">
+              <Button variant="outline" size="small" @click="download(result)">Download</Button>
+              <Button variant="ghost" size="small" :href="imageSrc(result)" target="_blank" rel="noreferrer">Open</Button>
             </div>
           </div>
         </article>
@@ -189,129 +185,155 @@ function useTemplate(kind: 'character' | 'scene' | 'object') {
   </section>
 </template>
 
-<style lang="scss" scoped>
+<style lang="scss">
 .image-generator {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-m);
+
   &__header {
     display: flex;
     justify-content: space-between;
-    gap: 1rem;
     align-items: flex-start;
-    margin-bottom: 1rem;
+    gap: var(--space-m);
+    flex-wrap: wrap;
+  }
 
-    h1 { margin: 0; font-size: 1.4rem; }
-    p { margin: 0.25rem 0 0; color: var(--tiko-admin-muted); }
+  &__intro {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+  }
+
+  &__title {
+    font-size: var(--font-size-xl);
+    font-weight: 700;
+    color: var(--admin-text);
+  }
+
+  &__subtitle {
+    color: var(--admin-text-muted);
+    font-size: var(--font-size-s);
   }
 
   &__templates {
     display: flex;
-    gap: 0.4rem;
+    gap: var(--space-xs);
     flex-wrap: wrap;
-
-    button {
-      border: 1px solid var(--tiko-admin-border);
-      border-radius: 999px;
-      background: var(--color-background);
-      color: var(--color-foreground);
-      padding: 0.4rem 0.75rem;
-      cursor: pointer;
-    }
   }
 
   &__layout {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(18rem, 0.8fr);
-    gap: 1rem;
+    grid-template-columns: minmax(0, 1fr) minmax(calc(var(--space) * 18), 0.8fr);
+    gap: var(--space-m);
 
-    @media (max-width: 900px) { grid-template-columns: 1fr; }
+    @media (max-width: 900px) {
+      grid-template-columns: 1fr;
+    }
   }
 
-  &__form,
-  &__results {
-    border: 1px solid var(--tiko-admin-border);
-    border-radius: 1rem;
-    background: var(--tiko-admin-card);
-    padding: 1rem;
-  }
-
-  &__field {
+  &__form {
+    background: var(--admin-surface);
+    border: 1px solid var(--admin-border);
+    border-radius: var(--border-radius-s);
+    padding: var(--space-m);
     display: flex;
     flex-direction: column;
-    gap: 0.35rem;
-    font-size: 0.85rem;
+    gap: var(--space-s);
+  }
+
+  &__style-info {
+    color: var(--admin-text-muted);
+    font-size: var(--font-size-xs);
+    background: var(--admin-page-bg);
+    border: 1px solid var(--admin-border);
+    border-radius: var(--border-radius-s);
+    padding: var(--space-s);
+  }
+
+  &__style-summary {
+    cursor: pointer;
     font-weight: 600;
-    margin-bottom: 0.75rem;
+    color: var(--admin-text);
   }
 
-  textarea,
-  input,
-  select {
-    width: 100%;
-    box-sizing: border-box;
-    border: 1px solid var(--tiko-admin-border);
-    border-radius: 0.7rem;
-    padding: 0.65rem 0.75rem;
-    background: var(--color-background);
-    color: var(--color-foreground);
-    font: inherit;
-  }
-
-  textarea { resize: vertical; line-height: 1.45; }
-
-  &__style {
-    margin-bottom: 0.75rem;
-    color: var(--tiko-admin-muted);
-    font-size: 0.82rem;
-
-    summary { cursor: pointer; font-weight: 700; color: var(--color-foreground); }
-    p { margin: 0.4rem 0 0; line-height: 1.45; }
+  &__style-body {
+    line-height: 1.45;
+    padding-top: var(--space-xs);
   }
 
   &__two-col,
   &__controls {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 0.75rem;
+    gap: var(--space-s);
 
-    @media (max-width: 640px) { grid-template-columns: 1fr; }
+    @media (max-width: 640px) {
+      grid-template-columns: 1fr;
+    }
   }
 
-  &__controls { grid-template-columns: repeat(3, 1fr); }
+  &__controls {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  &__label {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+  }
+
+  &__label-text {
+    font-size: var(--font-size-xs);
+    font-weight: 600;
+    color: var(--admin-text-muted);
+  }
+
+  &__select {
+    width: 100%;
+    box-sizing: border-box;
+    border: 1px solid var(--admin-border);
+    border-radius: var(--border-radius-s);
+    padding: var(--space-s);
+    background: var(--admin-page-bg);
+    color: var(--admin-text);
+    font: inherit;
+  }
 
   &__error {
     color: var(--color-error);
-    font-size: 0.85rem;
+    font-size: var(--font-size-s);
   }
 
-  &__submit {
-    width: 100%;
-    border: none;
-    border-radius: 999px;
-    padding: 0.8rem 1rem;
-    background: var(--tiko-app-primary);
-    color: var(--tiko-app-primary-text);
-    font-weight: 800;
-    cursor: pointer;
-
-    &:disabled { opacity: 0.6; cursor: wait; }
+  &__results {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-s);
   }
 
   &__empty {
-    min-height: 16rem;
+    min-height: calc(var(--space) * 16);
     display: grid;
     place-items: center;
-    color: var(--tiko-admin-muted);
+    color: var(--admin-text-muted);
     text-align: center;
+    background: var(--admin-surface);
+    border: 1px dashed var(--admin-border-strong);
+    border-radius: var(--border-radius-s);
+    padding: var(--space-l);
+    font-size: var(--font-size-s);
   }
 }
 
 .image-result {
+  background: var(--admin-surface);
+  border: 1px solid var(--admin-border);
+  border-radius: var(--border-radius-s);
   overflow: hidden;
-  border: 1px solid var(--tiko-admin-border);
-  border-radius: 1rem;
-  background: var(--color-background);
-  margin-bottom: 1rem;
+  display: flex;
+  flex-direction: column;
 
-  img {
+  &__image {
     width: 100%;
     display: block;
     aspect-ratio: 1;
@@ -320,33 +342,31 @@ function useTemplate(kind: 'character' | 'scene' | 'object') {
   }
 
   &__body {
-    padding: 0.75rem;
+    padding: var(--space-s);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+  }
 
-    p {
-      color: var(--tiko-admin-muted);
-      font-size: 0.8rem;
-      line-height: 1.4;
-      max-height: 5.5rem;
-      overflow: auto;
-    }
+  &__meta {
+    color: var(--admin-text-muted);
+    font-size: var(--font-size-xs);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  &__prompt {
+    color: var(--admin-text);
+    font-size: var(--font-size-s);
+    line-height: 1.4;
+    max-height: calc(var(--space) * 6);
+    overflow: auto;
   }
 
   &__actions {
     display: flex;
-    gap: 0.5rem;
+    gap: var(--space-s);
     align-items: center;
-
-    button,
-    a {
-      border: 1px solid var(--tiko-admin-border);
-      border-radius: 999px;
-      padding: 0.4rem 0.75rem;
-      background: transparent;
-      color: var(--color-foreground);
-      text-decoration: none;
-      font-size: 0.82rem;
-      cursor: pointer;
-    }
   }
 }
 </style>

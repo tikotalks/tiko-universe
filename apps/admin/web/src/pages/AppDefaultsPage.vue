@@ -1,6 +1,10 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
+import { useBemm } from 'bemm'
+import { Button, InputTextArea } from '@sil/ui'
 import { useAppDefaults, type AppResource, type TikoManagedApp } from '../composables/useAppDefaults'
+
+const bemm = useBemm('app-defaults', { return: 'string', includeBaseClass: true })
 
 const apps: Array<{ id: TikoManagedApp; label: string; hint: string }> = [
   { id: 'cards', label: 'Cards', hint: 'Default tile collections and card decks.' },
@@ -97,94 +101,266 @@ async function onSave() {
 </script>
 
 <template>
-  <section class="app-defaults">
-    <header class="app-defaults__header">
-      <div>
-        <h1>App Defaults</h1>
-        <p>Manage default tiles, collections, prompts, sequences, and presets through existing app settings/state.</p>
+  <section :class="bemm('')">
+    <header :class="bemm('header')">
+      <div :class="bemm('intro')">
+        <h1 :class="bemm('title')">App defaults</h1>
+        <p :class="bemm('subtitle')">
+          Manage default tiles, collections, prompts, sequences, and presets through existing app settings/state.
+        </p>
       </div>
-      <button :disabled="loading" @click="loadCurrent">Load current</button>
+      <Button :loading="loading" :disabled="loading" @click="loadCurrent">Load current</Button>
     </header>
 
-    <section class="app-defaults__chooser">
+    <section :class="bemm('chooser')">
       <button
         v-for="app in apps"
         :key="app.id"
-        :class="{ 'app-defaults__app--active': selectedApp === app.id }"
+        type="button"
+        :class="bemm('app-tile', { active: selectedApp === app.id })"
         @click="selectedApp = app.id"
       >
-        <strong>{{ app.label }}</strong>
-        <small>{{ app.hint }}</small>
+        <strong :class="bemm('app-tile-label')">{{ app.label }}</strong>
+        <small :class="bemm('app-tile-hint')">{{ app.hint }}</small>
       </button>
     </section>
 
-    <section class="app-defaults__editor">
-      <aside>
-        <h2>{{ selectedMeta.label }}</h2>
-        <p>{{ selectedMeta.hint }}</p>
+    <section :class="bemm('editor')">
+      <aside :class="bemm('aside')">
+        <header :class="bemm('aside-header')">
+          <h2 :class="bemm('aside-title')">{{ selectedMeta.label }}</h2>
+          <p :class="bemm('aside-hint')">{{ selectedMeta.hint }}</p>
+        </header>
 
-        <label>
-          <span>Resource</span>
-          <select v-model="resource">
+        <label :class="bemm('label')">
+          <span :class="bemm('label-text')">Resource</span>
+          <select :class="bemm('select')" v-model="resource">
             <option value="settings">Settings</option>
             <option value="state">State / content</option>
           </select>
         </label>
 
-        <dl>
-          <div><dt>Version</dt><dd>{{ version }}</dd></div>
-          <div><dt>Updated</dt><dd>{{ updatedAt || 'default / never saved' }}</dd></div>
+        <dl :class="bemm('meta')">
+          <div :class="bemm('meta-row')">
+            <dt :class="bemm('meta-term')">Version</dt>
+            <dd :class="bemm('meta-value')">{{ version }}</dd>
+          </div>
+          <div :class="bemm('meta-row')">
+            <dt :class="bemm('meta-term')">Updated</dt>
+            <dd :class="bemm('meta-value')">{{ updatedAt || 'default / never saved' }}</dd>
+          </div>
         </dl>
 
-        <button @click="applyTemplate">Apply starter template</button>
-        <button :disabled="loading" @click="loadCurrent">Reload current</button>
-        <button class="app-defaults__save" :disabled="saving" @click="onSave">{{ saving ? 'Saving…' : 'Save JSON' }}</button>
+        <div :class="bemm('aside-actions')">
+          <Button variant="outline" @click="applyTemplate">Apply starter template</Button>
+          <Button variant="outline" :loading="loading" :disabled="loading" @click="loadCurrent">Reload current</Button>
+          <Button :loading="saving" :disabled="saving" @click="onSave">{{ saving ? 'Saving…' : 'Save JSON' }}</Button>
+        </div>
       </aside>
 
-      <main>
-        <textarea v-model="jsonText" spellcheck="false" />
-        <p v-if="error" class="app-defaults__error">{{ error }}</p>
-        <p v-if="savedMessage" class="app-defaults__success">{{ savedMessage }}</p>
-      </main>
+      <section :class="bemm('json-panel')">
+        <InputTextArea
+          v-model="jsonText"
+          :class="bemm('json')"
+          :min-rows="22"
+          :max-rows="36"
+          :allow-resize="true"
+          :spellcheck="false"
+        />
+        <p v-if="error" :class="bemm('error')">{{ error }}</p>
+        <p v-if="savedMessage" :class="bemm('success')">{{ savedMessage }}</p>
+      </section>
     </section>
   </section>
 </template>
 
-<style lang="scss" scoped>
+<style lang="scss">
 .app-defaults {
-  &__header { display: flex; justify-content: space-between; gap: 1rem; align-items: flex-start; margin-bottom: 1rem; }
-  h1 { margin: 0; font-size: 1.4rem; }
-  h2 { margin: 0 0 0.25rem; }
-  p { margin: 0.25rem 0 0; color: var(--tiko-admin-muted); }
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-m);
 
-  button { border: 1px solid var(--tiko-admin-border); border-radius: 0.8rem; background: var(--color-background); color: var(--color-foreground); padding: 0.65rem 0.85rem; cursor: pointer; text-align: left; }
-  button:disabled { opacity: 0.55; cursor: wait; }
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: var(--space-m);
+  }
 
-  &__chooser { display: grid; grid-template-columns: repeat(5, 1fr); gap: 0.6rem; margin-bottom: 1rem; }
-  &__chooser button { display: flex; flex-direction: column; gap: 0.25rem; min-height: 5rem; }
-  &__chooser small { color: var(--tiko-admin-muted); line-height: 1.25; }
-  &__app--active { border-color: var(--tiko-app-primary) !important; box-shadow: 0 0 0 2px color-mix(in srgb, var(--tiko-app-primary), transparent 80%); }
+  &__intro {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+  }
 
-  &__editor { display: grid; grid-template-columns: 17rem minmax(0, 1fr); gap: 1rem; }
-  aside,
-  main { border: 1px solid var(--tiko-admin-border); border-radius: 1rem; background: var(--tiko-admin-card); padding: 1rem; }
-  aside { display: flex; flex-direction: column; gap: 0.75rem; align-self: start; }
+  &__title {
+    font-size: var(--font-size-xl);
+    font-weight: 700;
+    color: var(--admin-text);
+  }
 
-  label { display: flex; flex-direction: column; gap: 0.35rem; font-size: 0.85rem; font-weight: 700; }
-  select { width: 100%; border: 1px solid var(--tiko-admin-border); border-radius: 0.7rem; padding: 0.65rem 0.75rem; background: var(--color-background); color: var(--color-foreground); }
-  textarea { width: 100%; min-height: 33rem; box-sizing: border-box; border: 1px solid var(--tiko-admin-border); border-radius: 0.85rem; padding: 1rem; background: var(--color-background); color: var(--color-foreground); font: 0.9rem/1.5 ui-monospace, SFMono-Regular, Menlo, monospace; resize: vertical; }
+  &__subtitle {
+    color: var(--admin-text-muted);
+    font-size: var(--font-size-s);
+  }
 
-  dl { margin: 0; display: grid; gap: 0.4rem; }
-  dl div { display: grid; gap: 0.15rem; }
-  dt { color: var(--tiko-admin-muted); font-size: 0.75rem; text-transform: uppercase; }
-  dd { margin: 0; font-size: 0.85rem; word-break: break-word; }
-  &__save { background: var(--tiko-app-primary) !important; color: var(--tiko-app-primary-text) !important; font-weight: 800; text-align: center !important; }
-  &__error { color: var(--color-error) !important; }
-  &__success { color: var(--color-success) !important; }
+  &__chooser {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(calc(var(--space) * 11), 1fr));
+    gap: var(--space-s);
+  }
+
+  &__app-tile {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+    padding: var(--space-m);
+    background: var(--admin-surface);
+    border: 1px solid var(--admin-border);
+    border-radius: var(--border-radius-s);
+    color: var(--admin-text);
+    text-align: left;
+    cursor: pointer;
+    transition: background 0.12s ease, border-color 0.12s ease;
+
+    &:hover {
+      background: var(--admin-surface-hover);
+      border-color: var(--admin-border-strong);
+    }
+
+    &--active {
+      border-color: var(--color-primary);
+      box-shadow: 0 0 0 1px var(--color-primary);
+    }
+  }
+
+  &__app-tile-label {
+    font-size: var(--font-size-m);
+    font-weight: 600;
+    color: var(--admin-text);
+  }
+
+  &__app-tile-hint {
+    color: var(--admin-text-muted);
+    font-size: var(--font-size-xs);
+    line-height: 1.4;
+  }
+
+  &__editor {
+    display: grid;
+    grid-template-columns: calc(var(--space) * 17) minmax(0, 1fr);
+    gap: var(--space-m);
+  }
+
+  &__aside {
+    background: var(--admin-surface);
+    border: 1px solid var(--admin-border);
+    border-radius: var(--border-radius-s);
+    padding: var(--space-m);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-m);
+    align-self: start;
+  }
+
+  &__aside-header {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+  }
+
+  &__aside-title {
+    font-size: var(--font-size-m);
+    font-weight: 600;
+    color: var(--admin-text);
+  }
+
+  &__aside-hint {
+    color: var(--admin-text-muted);
+    font-size: var(--font-size-xs);
+    line-height: 1.4;
+  }
+
+  &__aside-actions {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-s);
+  }
+
+  &__label {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+    font-size: var(--font-size-xs);
+    font-weight: 600;
+    color: var(--admin-text-muted);
+  }
+
+  &__select {
+    width: 100%;
+    border: 1px solid var(--admin-border);
+    border-radius: var(--border-radius-s);
+    padding: var(--space-s);
+    background: var(--admin-page-bg);
+    color: var(--admin-text);
+    font: inherit;
+  }
+
+  &__meta {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-s);
+  }
+
+  &__meta-row {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+  }
+
+  &__meta-term {
+    color: var(--admin-text-muted);
+    font-size: var(--font-size-xs);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  &__meta-value {
+    font-size: var(--font-size-s);
+    color: var(--admin-text);
+    word-break: break-word;
+  }
+
+  &__json-panel {
+    background: var(--admin-surface);
+    border: 1px solid var(--admin-border);
+    border-radius: var(--border-radius-s);
+    padding: var(--space-m);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-s);
+  }
+
+  &__json {
+    font: var(--font-size-s)/1.5 ui-monospace, SFMono-Regular, Menlo, monospace;
+  }
+
+  &__error {
+    color: var(--color-error);
+    font-size: var(--font-size-s);
+    font-weight: 600;
+  }
+
+  &__success {
+    color: var(--color-success);
+    font-size: var(--font-size-s);
+    font-weight: 600;
+  }
 
   @media (max-width: 920px) {
-    &__chooser { grid-template-columns: 1fr 1fr; }
-    &__editor { grid-template-columns: 1fr; }
+    &__editor {
+      grid-template-columns: 1fr;
+    }
   }
 }
 </style>

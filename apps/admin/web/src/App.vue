@@ -211,7 +211,9 @@ function navigateTo(path: string) {
     </aside>
 
     <main :class="shell('main')">
-      <router-view />
+      <div :class="shell('content')">
+        <router-view />
+      </div>
     </main>
   </div>
 </template>
@@ -222,7 +224,6 @@ function navigateTo(path: string) {
 html, body {
   background: var(--admin-page-bg);
   color: var(--admin-text);
-  margin: 0;
   min-height: 100dvh;
 }
 
@@ -238,13 +239,14 @@ html, body {
   color: var(--admin-text);
 
   &__sidebar {
-    width: 240px;
+    width: calc(var(--space) * 15);
     flex-shrink: 0;
     background: var(--admin-sidebar-bg);
     border-right: 1px solid var(--admin-border);
     display: flex;
     flex-direction: column;
-    padding: 1rem 0.75rem;
+    gap: var(--space-s);
+    padding: var(--space-m) var(--space-s);
     position: sticky;
     top: 0;
     height: 100dvh;
@@ -253,22 +255,21 @@ html, body {
   &__brand {
     display: flex;
     align-items: center;
-    gap: 0.625rem;
-    padding: 0.5rem 0.5rem 1rem;
+    gap: var(--space-s);
+    padding: var(--space-s);
     border-bottom: 1px solid var(--admin-border);
-    margin-bottom: 0.75rem;
   }
 
   &__brand-mark {
-    width: 28px;
-    height: 28px;
-    border-radius: 8px;
-    background: linear-gradient(135deg, #8b5cf6, #a855f7);
+    width: calc(var(--space) * 1.75);
+    height: calc(var(--space) * 1.75);
+    border-radius: var(--border-radius-s);
+    background: var(--color-primary);
     display: grid;
     place-items: center;
-    color: white;
+    color: var(--color-primary-text);
     font-weight: 800;
-    font-size: 0.85rem;
+    font-size: var(--font-size-s);
   }
 
   &__brand-text {
@@ -279,12 +280,12 @@ html, body {
 
   &__brand-name {
     font-weight: 700;
-    font-size: 0.95rem;
+    font-size: var(--font-size-m);
     color: var(--admin-text);
   }
 
   &__brand-label {
-    font-size: 0.7rem;
+    font-size: var(--font-size-xs);
     color: var(--admin-text-muted);
     text-transform: uppercase;
     letter-spacing: 0.06em;
@@ -293,7 +294,7 @@ html, body {
   &__nav {
     display: flex;
     flex-direction: column;
-    gap: 2px;
+    gap: var(--space-xs);
     flex: 1;
     overflow-y: auto;
   }
@@ -301,12 +302,12 @@ html, body {
   &__nav-item {
     display: flex;
     align-items: center;
-    gap: 0.625rem;
-    padding: 0.5rem 0.625rem;
-    border-radius: 8px;
+    gap: var(--space-s);
+    padding: var(--space-s);
+    border-radius: var(--border-radius-s);
     color: var(--admin-text-muted);
     text-decoration: none;
-    font-size: 0.875rem;
+    font-size: var(--font-size-s);
     font-weight: 500;
     transition: background 0.12s ease, color 0.12s ease;
 
@@ -319,28 +320,21 @@ html, body {
       background: var(--admin-nav-active);
       color: var(--admin-text);
     }
-
-    .icon, svg {
-      width: 16px;
-      height: 16px;
-      flex-shrink: 0;
-    }
   }
 
   &__user-wrapper {
     position: relative;
-    margin-top: 0.5rem;
     border-top: 1px solid var(--admin-border);
-    padding-top: 0.75rem;
+    padding-top: var(--space-s);
   }
 
   &__user {
     display: flex;
     align-items: center;
-    gap: 0.625rem;
+    gap: var(--space-s);
     width: 100%;
-    padding: 0.5rem;
-    border-radius: 8px;
+    padding: var(--space-s);
+    border-radius: var(--border-radius-s);
     border: 0;
     background: transparent;
     color: inherit;
@@ -355,15 +349,15 @@ html, body {
   }
 
   &__user-avatar {
-    width: 30px;
-    height: 30px;
-    border-radius: 8px;
-    background: linear-gradient(135deg, #8b5cf6, #a855f7);
+    width: calc(var(--space) * 1.875);
+    height: calc(var(--space) * 1.875);
+    border-radius: var(--border-radius-s);
+    background: var(--color-primary);
     display: grid;
     place-items: center;
-    color: white;
+    color: var(--color-primary-text);
     font-weight: 700;
-    font-size: 0.85rem;
+    font-size: var(--font-size-s);
     flex-shrink: 0;
   }
 
@@ -377,7 +371,7 @@ html, body {
 
   &__user-name {
     color: var(--admin-text);
-    font-size: 0.8rem;
+    font-size: var(--font-size-s);
     font-weight: 600;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -386,46 +380,46 @@ html, body {
 
   &__user-role {
     color: var(--admin-text-muted);
-    font-size: 0.7rem;
+    font-size: var(--font-size-xs);
     text-transform: lowercase;
   }
 
   &__user-chevron {
     color: var(--admin-text-muted);
-    font-size: 1rem;
+    font-size: var(--font-size-m);
     line-height: 1;
-    padding: 0 0.25rem;
+    padding: 0 var(--space-xs);
   }
 
   &__user-menu {
     position: absolute;
-    left: 0.25rem;
-    right: 0.25rem;
-    bottom: calc(100% + 0.25rem);
+    left: var(--space-xs);
+    right: var(--space-xs);
+    bottom: calc(100% + var(--space-xs));
     background: var(--admin-surface);
     border: 1px solid var(--admin-border-strong);
-    border-radius: 10px;
-    padding: 0.25rem;
-    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.45);
+    border-radius: var(--border-radius-s);
+    padding: var(--space-xs);
+    box-shadow: 0 12px 28px color-mix(in srgb, var(--color-dark), transparent 55%);
     z-index: 50;
     display: flex;
     flex-direction: column;
-    gap: 1px;
+    gap: var(--space-xs);
   }
 
   &__user-menu-item {
     display: flex;
     align-items: center;
-    gap: 0.625rem;
+    gap: var(--space-s);
     width: 100%;
-    padding: 0.5rem 0.625rem;
+    padding: var(--space-s);
     border: 0;
     background: transparent;
     color: var(--admin-text);
-    font-size: 0.85rem;
+    font-size: var(--font-size-s);
     font-weight: 500;
     text-align: left;
-    border-radius: 6px;
+    border-radius: var(--border-radius-xs);
     cursor: pointer;
     transition: background 0.12s ease;
 
@@ -434,10 +428,10 @@ html, body {
     }
 
     &--danger {
-      color: #f87171;
+      color: var(--color-error);
 
       &:hover {
-        background: rgba(239, 68, 68, 0.12);
+        background: color-mix(in srgb, var(--color-error), transparent 88%);
       }
     }
   }
@@ -445,7 +439,6 @@ html, body {
   &__user-menu-divider {
     height: 1px;
     background: var(--admin-border);
-    margin: 0.25rem 0;
   }
 
   &__main {
@@ -453,6 +446,16 @@ html, body {
     min-width: 0;
     background: var(--admin-page-bg);
     overflow-x: hidden;
+  }
+
+  &__content {
+    width: 100%;
+    max-width: calc(var(--space) * 70);
+    margin: 0 auto;
+    padding: var(--space-l) var(--space-l) var(--space-xl);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-l);
   }
 
   @media (max-width: 760px) {
@@ -463,8 +466,7 @@ html, body {
       height: auto;
       position: static;
       flex-direction: row;
-      padding: 0.5rem;
-      gap: 0.5rem;
+      padding: var(--space-s);
       align-items: center;
       border-right: 0;
       border-bottom: 1px solid var(--admin-border);
@@ -472,8 +474,7 @@ html, body {
 
     &__brand {
       border: 0;
-      margin: 0;
-      padding: 0.25rem 0.5rem;
+      padding: var(--space-xs) var(--space-s);
     }
 
     &__nav {
@@ -482,10 +483,14 @@ html, body {
       overflow-x: auto;
     }
 
+    &__content {
+      padding: var(--space-m);
+      gap: var(--space-m);
+    }
+
     &__user-wrapper {
       border: 0;
       padding: 0;
-      margin: 0;
     }
 
     &__user-meta {
@@ -494,10 +499,10 @@ html, body {
 
     &__user-menu {
       bottom: auto;
-      top: calc(100% + 0.5rem);
+      top: calc(100% + var(--space-s));
       left: auto;
-      right: 0.5rem;
-      width: 200px;
+      right: var(--space-s);
+      width: calc(var(--space) * 12);
     }
   }
 }
@@ -506,49 +511,44 @@ html, body {
   min-height: 100dvh;
   display: grid;
   place-items: center;
-  padding: 2rem;
+  padding: var(--space-l);
   background: var(--admin-page-bg);
 
   &__card {
-    width: min(26rem, 100%);
-    padding: 2.5rem 2rem;
+    width: min(calc(var(--space) * 24), 100%);
+    padding: var(--space-l);
     background: var(--admin-sidebar-bg);
     border: 1px solid var(--admin-border);
-    border-radius: 16px;
+    border-radius: var(--border-radius-l);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-s);
   }
 
   &__title {
-    margin: 0 0 0.25rem;
-    font-size: 1.5rem;
+    font-size: var(--font-size-xl);
     font-weight: 700;
     color: var(--admin-text);
   }
 
   &__subtitle {
-    margin: 0 0 1.5rem;
     color: var(--admin-text-muted);
-    font-size: 0.9rem;
-  }
-
-  &__field {
-    margin-top: 0.75rem;
+    font-size: var(--font-size-s);
   }
 
   &__message {
-    margin: 0 0 0.5rem;
     color: var(--color-success);
-    font-size: 0.85rem;
+    font-size: var(--font-size-s);
     font-weight: 600;
   }
 
   &__error {
-    margin: 0.5rem 0 0;
     color: var(--color-error);
-    font-size: 0.85rem;
+    font-size: var(--font-size-s);
   }
 
   &__otp input {
-    font-size: 1.5rem;
+    font-size: var(--font-size-l);
     font-weight: 700;
     letter-spacing: 0.15em;
     text-align: center;
@@ -556,17 +556,15 @@ html, body {
   }
 
   &__submit {
-    margin-top: 1rem;
     width: 100%;
   }
 
   &__back {
-    display: block;
-    margin: 0.75rem auto 0;
+    align-self: center;
     border: 0;
     background: none;
     color: var(--admin-text-muted);
-    font-size: 0.85rem;
+    font-size: var(--font-size-s);
     cursor: pointer;
 
     &:hover {

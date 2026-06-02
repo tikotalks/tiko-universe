@@ -13,20 +13,19 @@
 @use '@sil/ui/styles/main.scss';
 
 :root {
-  --admin-page-bg: #0e0e10;
-  --admin-sidebar-bg: #08080a;
-  --admin-surface: #131316;
-  --admin-surface-hover: #1a1a1f;
-  --admin-border: rgba(255, 255, 255, 0.08);
-  --admin-border-strong: rgba(255, 255, 255, 0.14);
-  --admin-text: #f6f6f7;
-  --admin-text-muted: rgba(246, 246, 247, 0.5);
-  --admin-text-dim: rgba(246, 246, 247, 0.35);
-  --admin-nav-active: rgba(255, 255, 255, 0.08);
-  --admin-nav-hover: rgba(255, 255, 255, 0.04);
-  --admin-accent: #8b5cf6;
+  --admin-page-bg: var(--color-background);
+  --admin-sidebar-bg: color-mix(in srgb, var(--color-background), black 35%);
+  --admin-surface: color-mix(in srgb, var(--color-background), var(--color-foreground) 4%);
+  --admin-surface-hover: color-mix(in srgb, var(--color-background), var(--color-foreground) 8%);
+  --admin-border: color-mix(in srgb, var(--color-foreground), transparent 90%);
+  --admin-border-strong: color-mix(in srgb, var(--color-foreground), transparent 80%);
+  --admin-text: var(--color-foreground);
+  --admin-text-muted: color-mix(in srgb, var(--color-foreground), transparent 45%);
+  --admin-text-dim: color-mix(in srgb, var(--color-foreground), transparent 65%);
+  --admin-nav-hover: color-mix(in srgb, var(--color-foreground), transparent 94%);
+  --admin-nav-active: color-mix(in srgb, var(--color-foreground), transparent 88%);
 
-  /* Legacy tokens kept for pages that still reference them */
+  /* Legacy aliases kept for pages still referencing them */
   --tiko-admin-sidebar: var(--admin-sidebar-bg);
   --tiko-admin-card: var(--admin-surface);
   --tiko-admin-border: var(--admin-border);
