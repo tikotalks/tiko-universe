@@ -12,6 +12,8 @@ const loading = ref(false)
 const error = ref<string | null>(null)
 const loginMessage = ref<string | null>(null)
 
+let deviceSessionPromise: Promise<SessionBundle> | null = null
+
 interface ApiErrorBody {
   error?: { message?: string } | string
 }
@@ -88,13 +90,20 @@ export function useAdminAuth() {
     }
 
     const bundle = await identityClient.bootstrapDevice({
-      device: {
-        name: 'Tiko Admin web',
-        platform: 'web'
-      }
+      device: { name: 'Tiko Admin web', platform: 'web' }
     })
     storeIdentity(bundle)
     return bundle
+  }
+
+  function warmDeviceSession() {
+    if (!deviceSessionPromise) {
+      deviceSessionPromise = ensureDeviceSession().catch(() => {
+        deviceSessionPromise = null
+        return Promise.reject(new Error('Device session failed'))
+      })
+    }
+    return deviceSessionPromise
   }
 
   async function verify(candidateToken?: string) {
@@ -134,11 +143,12 @@ export function useAdminAuth() {
     error.value = null
     loginMessage.value = null
     try {
-      const bundle = await ensureDeviceSession()
+      const bundle = await warmDeviceSession()
       const response = await identityClient.requestRecoveryEmail({ email: normalizedEmail }, bundle.session.token)
       loginMessage.value = response.message || 'Check your email for the magic link.'
       return true
     } catch (e) {
+      deviceSessionPromise = null
       error.value = e instanceof Error ? e.message : 'Could not request a magic link.'
       return false
     } finally {
@@ -191,6 +201,7 @@ export function useAdminAuth() {
     loginMessage,
     isAuthed,
     verify,
+    warmDeviceSession,
     requestMagicLink,
     verifyMagicLink,
     logout

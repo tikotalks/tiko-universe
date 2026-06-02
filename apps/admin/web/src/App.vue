@@ -3,11 +3,12 @@ import { onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { TikoAppShell } from '@tiko/ui'
 import type { TikoHeaderAction } from '@tiko/ui'
+import { Button, Card, InputText } from '@sil/ui'
 import { useAdminAuth } from './composables/useAdminAuth'
 
 const route = useRoute()
 const router = useRouter()
-const { token, user, loading, error, loginMessage, isAuthed, verify, requestMagicLink, verifyMagicLink, logout } = useAdminAuth()
+const { token, user, loading, error, loginMessage, isAuthed, verify, warmDeviceSession, requestMagicLink, verifyMagicLink, logout } = useAdminAuth()
 const emailInput = ref('')
 const codeInput = ref('')
 const codeSent = ref(false)
@@ -40,6 +41,10 @@ onMounted(async () => {
       logout()
     }
   }
+  // Pre-warm the device session so it's ready when the user clicks "Send sign-in code"
+  if (!isAuthed.value) {
+    warmDeviceSession()
+  }
 })
 
 function onHeaderAction(id: string) {
@@ -52,8 +57,10 @@ function onHeaderAction(id: string) {
 }
 
 async function sendMagicLink() {
+  if (!emailInput.value.trim()) return
+  codeSent.value = true
   const ok = await requestMagicLink(emailInput.value)
-  if (ok) codeSent.value = true
+  if (!ok) codeSent.value = false
 }
 
 async function verifyCode() {
@@ -69,75 +76,69 @@ function resetLogin() {
 
 <template>
   <TikoAppShell
-    app-name="Media Admin"
-    app-icon="ui/settings"
+    app-name="Dashboard"
+    app-icon="food-drinks/espresso-machine"
     app-color="admin"
     :actions="isAuthed ? actions : []"
     @header-action="onHeaderAction"
   >
     <div class="admin-app">
       <section v-if="!isAuthed" class="admin-login">
-        <div class="admin-login__card">
-          <h1>Admin dashboard</h1>
+        <Card class="admin-login__card" :title="'Dashboard'">
 
           <template v-if="!codeSent">
-            <p>Enter your admin email and we'll send a sign-in code.</p>
-            <label class="admin-login__field">
-              <span>Email</span>
-              <input
-                v-model="emailInput"
-                type="email"
-                autocomplete="email"
-                placeholder="your@email.com"
-                @keyup.enter="sendMagicLink"
-              />
-            </label>
+            <InputText
+              v-model="emailInput"
+              class="admin-login__field"
+              label="Email"
+              type="email"
+              auto-complete="email"
+              placeholder="your@email.com"
+            />
             <p v-if="error" class="admin-login__error">{{ error }}</p>
-            <button class="admin-login__button" :disabled="loading" @click="sendMagicLink">
+            <Button class="admin-login__button" :loading="loading" :disabled="loading" block @click="sendMagicLink">
               {{ loading ? 'Sending…' : 'Send sign-in code' }}
-            </button>
+            </Button>
           </template>
 
           <template v-else>
             <p class="admin-login__message">{{ loginMessage }}</p>
-            <label class="admin-login__field">
-              <span>6-digit sign-in code</span>
-              <input
-                v-model="codeInput"
-                type="text"
-                inputmode="numeric"
-                autocomplete="one-time-code"
-                placeholder="123 456"
-                maxlength="7"
-                class="admin-login__otp"
-                @keyup.enter="verifyCode"
-              />
-            </label>
+            <InputText
+              v-model="codeInput"
+              class="admin-login__field admin-login__otp"
+              label="6-digit sign-in code"
+              type="text"
+              inputmode="numeric"
+              auto-complete="one-time-code"
+              placeholder="123 456"
+              :maxlength="7"
+            />
             <p v-if="error" class="admin-login__error">{{ error }}</p>
-            <button class="admin-login__button" :disabled="loading || codeInput.replace(/\s/g, '').length !== 6" @click="verifyCode">
+            <Button class="admin-login__button" :loading="loading" :disabled="loading || codeInput.replace(/\s/g, '').length !== 6" block @click="verifyCode">
               {{ loading ? 'Checking…' : 'Verify and unlock' }}
-            </button>
-            <button class="admin-login__link" @click="resetLogin">
+            </Button>
+            <Button class="admin-login__link" variant="ghost" @click="resetLogin">
               Use a different email
-            </button>
+            </Button>
           </template>
-        </div>
+        </Card>
       </section>
 
       <template v-else>
         <aside class="admin-app__sidebar">
           <div class="admin-app__user">{{ user?.email }}</div>
           <nav class="admin-app__nav">
-            <button
+            <Button
               v-for="item in navItems"
               :key="item.to"
               class="admin-app__nav-item"
+              variant="ghost"
               :class="{ 'admin-app__nav-item--active': route.path === item.to }"
               @click="router.push(item.to)"
             >
               <span>{{ item.icon }}</span>
               <span>{{ item.label }}</span>
-            </button>
+            </Button>
           </nav>
         </aside>
         <main class="admin-app__main">
@@ -185,16 +186,8 @@ function resetLogin() {
   }
 
   &__nav-item {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.55rem 0.65rem;
-    border: none;
-    border-radius: 0.65rem;
-    background: transparent;
-    color: var(--color-foreground);
-    cursor: pointer;
-    text-align: left;
+    width: 100%;
+    justify-content: flex-start;
 
     &:hover,
     &--active {
@@ -231,33 +224,14 @@ function resetLogin() {
 
   &__card {
     width: min(28rem, 100%);
-    padding: 1.25rem;
-    border: 1px solid var(--tiko-admin-border);
-    border-radius: 1rem;
-    background: var(--tiko-admin-card);
+    --card-border-color: transparent;
+    --card-content-padding: var(--space-l);
+    --card-radius: var(--border-radius-l);
+   --card-background-color: color-mix(in srgb, var(--color-foreground), transparent 95%);
   }
 
   &__field {
-    display: flex;
-    flex-direction: column;
-    gap: 0.35rem;
     margin-top: 1rem;
-    font-size: 0.85rem;
-  }
-
-  input,
-  textarea {
-    width: 100%;
-    box-sizing: border-box;
-    border: 1px solid var(--tiko-admin-border);
-    border-radius: 0.75rem;
-    padding: 0.75rem;
-    background: var(--color-background);
-    color: var(--color-foreground);
-  }
-
-  textarea {
-    resize: vertical;
   }
 
   &__message {
