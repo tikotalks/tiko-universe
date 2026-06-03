@@ -27,6 +27,7 @@ const identityStorageKey = 'tiko:identity:device-session'
 const appId = 'radio' as const
 const apiBaseUrl = resolveApiBaseUrl()
 const generationApiBaseUrl = resolveGenerationApiBaseUrl()
+const mediaApiBaseUrl = resolveMediaApiBaseUrl()
 
 // ---- Interfaces -----------------------------------------------------------
 interface PersistedState {
@@ -58,6 +59,22 @@ interface GeneratedStoryItem {
   createdAt: string
 }
 
+interface PublicAudioTrack {
+  id: string
+  title: string
+  artist?: string | null
+  audioUrl?: string | null
+  durationSeconds?: number | null
+  position?: number
+}
+
+interface PublicAudioAlbum {
+  id: string
+  title: string
+  radioEnabled?: boolean
+  tracks?: PublicAudioTrack[]
+}
+
 // ---- Utility functions ----------------------------------------------------
 function resolveApiBaseUrl() {
   const env = (import.meta as ImportMeta & { env?: Record<string, string | undefined> }).env
@@ -67,6 +84,11 @@ function resolveApiBaseUrl() {
 function resolveGenerationApiBaseUrl() {
   const env = (import.meta as ImportMeta & { env?: Record<string, string | undefined> }).env
   return (env?.VITE_GENERATION_API_URL ?? 'https://generation.tikoapi.org/v1/generation').replace(/\/$/, '')
+}
+
+function resolveMediaApiBaseUrl() {
+  const env = (import.meta as ImportMeta & { env?: Record<string, string | undefined> }).env
+  return (env?.VITE_MEDIA_API_URL ?? 'https://media.tikoapi.org/v1').replace(/\/$/, '')
 }
 
 function readJson<T>(key: string, fallback: T): T {
@@ -392,6 +414,35 @@ function absoluteGenerationUrl(url: string) {
   return `${generationApiBaseUrl}${url.replace('/v1/generation', '')}`
 }
 
+function absoluteMediaUrl(url: string) {
+  if (url.startsWith('http')) return url
+  return `${mediaApiBaseUrl}${url.replace('/v1', '')}`
+}
+
+async function syncPublicAudioAlbums() {
+  try {
+    const response = await fetch(`${mediaApiBaseUrl}/audio/albums?radioEnabled=true`)
+    if (!response.ok) return
+    const body = await response.json() as { data?: PublicAudioAlbum[] }
+    const albumTracks: RadioTrack[] = (body.data ?? [])
+      .flatMap(album => (album.tracks ?? [])
+        .filter(track => track.audioUrl)
+        .map(track => ({
+          id: `audio-library:${album.id}:${track.id}`,
+          title: track.title,
+          artist: track.artist ?? album.title,
+          source: 'r2' as const,
+          audioUrl: absoluteMediaUrl(track.audioUrl ?? ''),
+          categoryId: 'stories',
+          duration: typeof track.durationSeconds === 'number' ? track.durationSeconds : undefined,
+          addedAt: new Date().toISOString(),
+        })))
+    if (albumTracks.length > 0) library.mergeTracks(albumTracks)
+  } catch {
+    // Public albums are additive; keep local/generated fallback when Media API is offline.
+  }
+}
+
 async function syncGeneratedStories() {
   try {
     const response = await fetch(`${generationApiBaseUrl}/stories?limit=50`)
@@ -482,6 +533,7 @@ onMounted(async () => {
     bootstrapped.value = true
     saveLocalFallback()
     seedDefaultCategories()
+    void syncPublicAudioAlbums()
     void syncGeneratedStories()
   }
 })

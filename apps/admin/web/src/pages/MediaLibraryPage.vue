@@ -3,19 +3,34 @@ import { onMounted, ref } from 'vue'
 import { useBemm } from 'bemm'
 import { Button, InputSearch } from '@sil/ui'
 import { useAdminMediaLibrary } from '../composables/useAdminMediaLibrary'
-import type { AdminMediaItem } from '../composables/useAdminMediaLibrary'
+import type { AdminMediaItem, AudioLibraryAlbum } from '../composables/useAdminMediaLibrary'
 
 const bemm = useBemm('media-library', { return: 'string', includeBaseClass: true })
 
-const { items, total, page, totalPages, loading, uploading, error, list, upload, itemUrl } = useAdminMediaLibrary()
+const { items, total, page, totalPages, loading, uploading, error, list, upload, itemUrl, listAudioAlbums, createAudioAlbum, addAudioTrack } = useAdminMediaLibrary()
 
 const search = ref('')
 const type = ref('')
 const selectedFile = ref<File | null>(null)
 const selectedThumbnail = ref<File | null>(null)
 const uploadResult = ref<string | null>(null)
+const lastUploadedMediaId = ref<string | null>(null)
+const audioAlbums = ref<AudioLibraryAlbum[]>([])
+const audioAlbumTitle = ref('')
+const audioAlbumDescription = ref('')
+const audioAlbumCoverMediaId = ref('')
+const audioAlbumVisibility = ref<'public' | 'private'>('public')
+const audioAlbumRadioEnabled = ref(true)
+const selectedAlbumId = ref('')
+const selectedAudioMediaId = ref('')
+const selectedTrackTitle = ref('')
+const audioLibraryLoading = ref(false)
+const audioLibraryError = ref<string | null>(null)
 
-onMounted(() => list())
+onMounted(() => {
+  void list()
+  void loadAudioAlbums()
+})
 
 function onFileChange(event: Event) {
   selectedFile.value = (event.target as HTMLInputElement).files?.[0] ?? null
@@ -36,9 +51,76 @@ async function go(delta: number) {
 async function onUpload() {
   if (!selectedFile.value) return
   const result = await upload(selectedFile.value, { thumbnail: selectedThumbnail.value })
-  uploadResult.value = `Uploaded ${result.filename}`
+  uploadResult.value = `Uploaded ${result.filename}${result.id ? ` · Media ID ${result.id}` : ''}`
+  lastUploadedMediaId.value = result.id ?? null
+  if (result.id && result.type === 'audio') {
+    selectedAudioMediaId.value = result.id
+    selectedTrackTitle.value = result.filename
+  }
   selectedFile.value = null
   selectedThumbnail.value = null
+}
+
+async function loadAudioAlbums() {
+  audioLibraryLoading.value = true
+  audioLibraryError.value = null
+  try {
+    audioAlbums.value = await listAudioAlbums()
+  } catch (e) {
+    audioLibraryError.value = e instanceof Error ? e.message : 'Could not load audio albums.'
+  } finally {
+    audioLibraryLoading.value = false
+  }
+}
+
+async function onCreateAudioAlbum() {
+  if (!audioAlbumTitle.value.trim()) {
+    audioLibraryError.value = 'Add an album title first.'
+    return
+  }
+  audioLibraryLoading.value = true
+  audioLibraryError.value = null
+  try {
+    const album = await createAudioAlbum({
+      title: audioAlbumTitle.value.trim(),
+      description: audioAlbumDescription.value.trim() || undefined,
+      coverMediaId: audioAlbumCoverMediaId.value.trim() || undefined,
+      visibility: audioAlbumVisibility.value,
+      radioEnabled: audioAlbumRadioEnabled.value,
+      sortMode: 'manual',
+    })
+    audioAlbums.value = [album, ...audioAlbums.value.filter(item => item.id !== album.id)]
+    selectedAlbumId.value = album.id
+    audioAlbumTitle.value = ''
+    audioAlbumDescription.value = ''
+    audioAlbumCoverMediaId.value = ''
+  } catch (e) {
+    audioLibraryError.value = e instanceof Error ? e.message : 'Could not create audio album.'
+  } finally {
+    audioLibraryLoading.value = false
+  }
+}
+
+async function onAddAudioTrack() {
+  if (!selectedAlbumId.value || !selectedAudioMediaId.value.trim()) {
+    audioLibraryError.value = 'Choose an album and provide an audio media ID.'
+    return
+  }
+  audioLibraryLoading.value = true
+  audioLibraryError.value = null
+  try {
+    const track = await addAudioTrack(selectedAlbumId.value, {
+      mediaId: selectedAudioMediaId.value.trim(),
+      title: selectedTrackTitle.value.trim() || selectedAudioMediaId.value.trim(),
+    })
+    audioAlbums.value = audioAlbums.value.map(album => album.id === selectedAlbumId.value ? { ...album, tracks: [...album.tracks, track] } : album)
+    selectedAudioMediaId.value = ''
+    selectedTrackTitle.value = ''
+  } catch (e) {
+    audioLibraryError.value = e instanceof Error ? e.message : 'Could not add audio track.'
+  } finally {
+    audioLibraryLoading.value = false
+  }
 }
 
 function mediaKind(item: AdminMediaItem): string {
@@ -85,6 +167,76 @@ function formatSize(size?: number): string {
         Selected: {{ selectedFile.name }} · {{ formatSize(selectedFile.size) }}
       </p>
       <p v-if="uploadResult" :class="bemm('success')">{{ uploadResult }}</p>
+      <p v-if="lastUploadedMediaId" :class="bemm('hint')">Use this media ID for covers/tracks: {{ lastUploadedMediaId }}</p>
+    </section>
+
+    <section :class="bemm('panel')">
+      <header :class="bemm('panel-head')">
+        <div>
+          <h2 :class="bemm('panel-title')">Audio albums for Radio</h2>
+          <p :class="bemm('hint')">Create albums, publish them to Radio, and attach uploaded audio media.</p>
+        </div>
+        <Button variant="outline" :loading="audioLibraryLoading" :disabled="audioLibraryLoading" @click="loadAudioAlbums">Reload albums</Button>
+      </header>
+
+      <div :class="bemm('audio-grid')">
+        <label :class="bemm('label')">
+          <span :class="bemm('label-text')">Album title</span>
+          <input :class="bemm('input')" v-model="audioAlbumTitle" placeholder="Bedtime stories" />
+        </label>
+        <label :class="bemm('label')">
+          <span :class="bemm('label-text')">Description</span>
+          <input :class="bemm('input')" v-model="audioAlbumDescription" placeholder="Optional" />
+        </label>
+        <label :class="bemm('label')">
+          <span :class="bemm('label-text')">Cover media ID</span>
+          <input :class="bemm('input')" v-model="audioAlbumCoverMediaId" placeholder="Optional image media ID" />
+        </label>
+        <label :class="bemm('label')">
+          <span :class="bemm('label-text')">Visibility</span>
+          <select :class="bemm('select')" v-model="audioAlbumVisibility">
+            <option value="public">Public</option>
+            <option value="private">Private</option>
+          </select>
+        </label>
+        <label :class="bemm('check')">
+          <input type="checkbox" v-model="audioAlbumRadioEnabled" />
+          <span>Available in Radio</span>
+        </label>
+        <Button :loading="audioLibraryLoading" :disabled="audioLibraryLoading || !audioAlbumTitle" @click="onCreateAudioAlbum">Create album</Button>
+      </div>
+
+      <div :class="bemm('audio-grid')">
+        <label :class="bemm('label')">
+          <span :class="bemm('label-text')">Album</span>
+          <select :class="bemm('select')" v-model="selectedAlbumId">
+            <option value="">Choose album</option>
+            <option v-for="album in audioAlbums" :key="album.id" :value="album.id">{{ album.title }}</option>
+          </select>
+        </label>
+        <label :class="bemm('label')">
+          <span :class="bemm('label-text')">Audio media ID</span>
+          <input :class="bemm('input')" v-model="selectedAudioMediaId" placeholder="Paste uploaded audio media ID" />
+        </label>
+        <label :class="bemm('label')">
+          <span :class="bemm('label-text')">Track title</span>
+          <input :class="bemm('input')" v-model="selectedTrackTitle" placeholder="Optional track title" />
+        </label>
+        <Button :loading="audioLibraryLoading" :disabled="audioLibraryLoading || !selectedAlbumId || !selectedAudioMediaId" @click="onAddAudioTrack">Add track</Button>
+      </div>
+
+      <p v-if="audioLibraryError" :class="bemm('error')">{{ audioLibraryError }}</p>
+      <div v-if="audioAlbums.length === 0" :class="bemm('empty')">No audio albums yet.</div>
+      <div v-else :class="bemm('album-list')">
+        <article v-for="album in audioAlbums" :key="album.id" :class="bemm('album-card')">
+          <h3>{{ album.title }}</h3>
+          <p :class="bemm('hint')">{{ album.visibility }} · {{ album.radioEnabled ? 'Radio enabled' : 'Radio hidden' }} · {{ album.tracks.length }} tracks</p>
+          <p v-if="album.description" :class="bemm('hint')">{{ album.description }}</p>
+          <ol>
+            <li v-for="track in album.tracks" :key="track.id">{{ track.title }} <span v-if="track.artist">— {{ track.artist }}</span></li>
+          </ol>
+        </article>
+      </div>
     </section>
 
     <section :class="bemm('toolbar')">
@@ -206,6 +358,14 @@ function formatSize(size?: number): string {
     color: var(--admin-text);
   }
 
+  &__panel-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: var(--space-m);
+    flex-wrap: wrap;
+  }
+
   &__upload-grid {
     display: grid;
     grid-template-columns: 1fr 1fr auto;
@@ -223,6 +383,42 @@ function formatSize(size?: number): string {
     padding: var(--space-m);
   }
 
+  &__audio-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(calc(var(--space) * 12), 1fr));
+    gap: var(--space-s);
+    align-items: end;
+  }
+
+  &__check {
+    display: flex;
+    gap: var(--space-xs);
+    align-items: center;
+    color: var(--admin-text);
+    font-size: var(--font-size-s);
+  }
+
+  &__album-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(calc(var(--space) * 16), 1fr));
+    gap: var(--space-s);
+  }
+
+  &__album-card {
+    border: 1px solid var(--admin-border);
+    border-radius: var(--border-radius-s);
+    padding: var(--space-s);
+    background: var(--admin-page-bg);
+    color: var(--admin-text);
+
+    ol {
+      margin: var(--space-xs) 0 0;
+      padding-inline-start: var(--space-m);
+      color: var(--admin-text-muted);
+      font-size: var(--font-size-s);
+    }
+  }
+
   &__label {
     display: flex;
     flex-direction: column;
@@ -233,6 +429,7 @@ function formatSize(size?: number): string {
   }
 
   &__file-input,
+  &__input,
   &__select {
     width: 100%;
     box-sizing: border-box;

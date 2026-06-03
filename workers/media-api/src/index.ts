@@ -17,6 +17,7 @@ interface Env {
   AUTH_DB?: {
     prepare(sql: string): { bind(...values: unknown[]): { first<T>(): Promise<T | null>; all(): Promise<{ results: unknown[] }> } }
   }
+  API_KEYS?: string
   OPENAI_API_KEY?: string
   IDENTITY_BASE_URL?: string
 }
@@ -76,6 +77,36 @@ interface ImageMetadata {
   description: string
   tags: string[]
   categories: string[]
+}
+
+interface AudioAlbumRow {
+  id: string
+  title: string
+  description?: string | null
+  cover_media_id?: string | null
+  visibility: 'public' | 'private'
+  radio_enabled: number
+  sort_mode: 'manual' | 'created_desc' | 'title_asc'
+  settings: string
+  created_at: string
+  updated_at: string
+}
+
+interface AudioTrackRow {
+  track_id: string
+  album_id: string
+  media_id: string
+  title: string
+  artist?: string | null
+  duration_seconds?: number | null
+  position: number
+  created_at: string
+  updated_at: string
+  original_url?: string
+  mime_type?: string
+  file_name?: string
+  filename?: string
+  media_title?: string | null
 }
 
 // ── CORS helpers ───────────────────────────────────────────────
@@ -169,6 +200,49 @@ function rowToAsset(row: Record<string, unknown>): AssetRecord {
     is_public: Boolean(row.is_public),
     user_id: nullableString(row.user_id),
     created_at: String(row.created_at),
+  }
+}
+
+function parseJsonObject(value: unknown): Record<string, unknown> {
+  if (typeof value !== 'string' || !value) return {}
+  try {
+    const parsed = JSON.parse(value)
+    return parsed && typeof parsed === 'object' && !Array.isArray(parsed) ? parsed as Record<string, unknown> : {}
+  } catch {
+    return {}
+  }
+}
+
+function rowToAudioTrack(row: AudioTrackRow) {
+  return {
+    id: row.track_id,
+    albumId: row.album_id,
+    mediaId: row.media_id,
+    title: row.title || row.media_title || 'Untitled track',
+    artist: row.artist ?? undefined,
+    durationSeconds: row.duration_seconds ?? undefined,
+    position: row.position,
+    audioUrl: row.original_url,
+    mimeType: row.mime_type,
+    fileName: row.file_name ?? row.filename,
+    createdAt: row.created_at,
+    updatedAt: row.updated_at,
+  }
+}
+
+function rowToAudioAlbum(row: AudioAlbumRow, tracks: AudioTrackRow[] = []) {
+  return {
+    id: row.id,
+    title: row.title,
+    description: row.description ?? undefined,
+    coverMediaId: row.cover_media_id ?? undefined,
+    visibility: row.visibility,
+    radioEnabled: Boolean(row.radio_enabled),
+    sortMode: row.sort_mode,
+    settings: parseJsonObject(row.settings),
+    tracks: tracks.map(rowToAudioTrack),
+    createdAt: row.created_at,
+    updatedAt: row.updated_at,
   }
 }
 
@@ -423,7 +497,41 @@ async function handleMediaUpload(request: Request, env: Env): Promise<Response> 
         .replace(/\b\w/g, (l) => l.toUpperCase())
     }
 
+    const id = crypto.randomUUID()
+    const now = new Date().toISOString()
+    const width = widthParam ? parseInt(widthParam) : undefined
+    const height = heightParam ? parseInt(heightParam) : undefined
+    const isPrivate = formData.get('isPrivate') === 'true'
+
+    try {
+      await env.MEDIA_DB.prepare(
+        `INSERT INTO media (
+          id, filename, file_size, mime_type, width, height, title, description,
+          categories, tags, is_private, original_url, created_at, updated_at
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      ).bind(
+        id,
+        baseKey,
+        file.size,
+        file.type,
+        width ?? null,
+        height ?? null,
+        metadata.title,
+        metadata.description || null,
+        JSON.stringify(metadata.categories),
+        JSON.stringify(metadata.tags),
+        isPrivate ? 1 : 0,
+        baseUrl,
+        now,
+        now,
+      ).run()
+    } catch (dbError) {
+      try { await env.MEDIA_BUCKET.delete(baseKey) } catch { /* ignore cleanup failure */ }
+      return json({ success: false, error: 'Failed to save media metadata', details: (dbError as Error).message }, 500)
+    }
+
     return ok({
+      id,
       filename: baseKey,
       url: baseUrl,
       thumbnail: isImage ? `${baseUrl}?width=200` : (thumbnailUrl || baseUrl),
@@ -434,8 +542,8 @@ async function handleMediaUpload(request: Request, env: Env): Promise<Response> 
       ...(isVideo && {
         thumbnailUrl,
         duration: duration ? parseFloat(duration) : undefined,
-        width: widthParam ? parseInt(widthParam) : undefined,
-        height: heightParam ? parseInt(heightParam) : undefined,
+        width,
+        height,
       }),
       _meta: {
         timestamp: new Date().toISOString(),
@@ -788,6 +896,114 @@ async function handleGetAsset(request: Request, env: Env, id: string): Promise<R
   }
 }
 
+// GET /v1/audio/albums — list public radio-ready audio albums with tracks
+async function handleListAudioAlbums(request: Request, env: Env): Promise<Response> {
+  try {
+    const url = new URL(request.url)
+    const radioOnly = url.searchParams.get('radioEnabled') === 'true'
+    const clauses = ['visibility = ?']
+    const values: unknown[] = ['public']
+    if (radioOnly) { clauses.push('radio_enabled = 1') }
+    const rows = await env.MEDIA_DB.prepare(
+      `SELECT id, title, description, cover_media_id, visibility, radio_enabled, sort_mode, settings, created_at, updated_at
+       FROM audio_albums
+       WHERE ${clauses.join(' AND ')}
+       ORDER BY created_at DESC`,
+    ).bind(...values).all<AudioAlbumRow>()
+
+    const data = []
+    for (const album of rows.results) {
+      const tracks = await env.MEDIA_DB.prepare(
+        `SELECT t.id AS track_id, t.album_id, t.media_id, t.title, t.artist, t.duration_seconds,
+                t.position, t.created_at, t.updated_at,
+                m.original_url, m.mime_type, m.filename AS file_name, m.title AS media_title
+         FROM audio_tracks t
+         JOIN media m ON m.id = t.media_id
+         WHERE t.album_id = ?
+         ORDER BY t.position ASC, t.created_at ASC`,
+      ).bind(album.id).all<AudioTrackRow>()
+      data.push(rowToAudioAlbum(album, tracks.results))
+    }
+
+    return json({ data, meta: { total: data.length, schemaVersion: 1 } })
+  } catch (error) {
+    return json({ success: false, error: 'Failed to list audio albums', details: (error as Error).message }, 500)
+  }
+}
+
+async function handleCreateAudioAlbum(request: Request, env: Env): Promise<Response> {
+  try {
+    const body = await request.json() as Record<string, unknown>
+    const title = typeof body.title === 'string' ? body.title.trim() : ''
+    if (!title) return err('Album title is required')
+    const visibility = body.visibility === 'private' ? 'private' : 'public'
+    const sortMode = body.sortMode === 'created_desc' || body.sortMode === 'title_asc' ? body.sortMode : 'manual'
+    const id = crypto.randomUUID()
+    const now = new Date().toISOString()
+    const row: AudioAlbumRow = {
+      id,
+      title,
+      description: typeof body.description === 'string' ? body.description : null,
+      cover_media_id: typeof body.coverMediaId === 'string' ? body.coverMediaId : null,
+      visibility,
+      radio_enabled: body.radioEnabled === false ? 0 : 1,
+      sort_mode: sortMode,
+      settings: JSON.stringify(body.settings && typeof body.settings === 'object' ? body.settings : {}),
+      created_at: now,
+      updated_at: now,
+    }
+
+    await env.MEDIA_DB.prepare(
+      `INSERT INTO audio_albums (id, title, description, cover_media_id, visibility, radio_enabled, sort_mode, settings, created_at, updated_at)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+    ).bind(row.id, row.title, row.description, row.cover_media_id, row.visibility, row.radio_enabled, row.sort_mode, row.settings, row.created_at, row.updated_at).run()
+
+    return json({ data: rowToAudioAlbum(row), meta: { schemaVersion: 1 } }, 201)
+  } catch (error) {
+    return json({ success: false, error: 'Failed to create audio album', details: (error as Error).message }, 500)
+  }
+}
+
+async function handleAddAudioTrack(request: Request, env: Env, albumId: string): Promise<Response> {
+  try {
+    const album = await env.MEDIA_DB.prepare('SELECT id, title, description, cover_media_id, visibility, radio_enabled, sort_mode, settings, created_at, updated_at FROM audio_albums WHERE id = ? LIMIT 1')
+      .bind(albumId).first<AudioAlbumRow>()
+    if (!album) return err('Audio album not found', 404)
+
+    const body = await request.json() as Record<string, unknown>
+    const mediaId = typeof body.mediaId === 'string' ? body.mediaId.trim() : ''
+    if (!mediaId) return err('Track mediaId is required')
+    const title = typeof body.title === 'string' && body.title.trim() ? body.title.trim() : 'Untitled track'
+    const id = crypto.randomUUID()
+    const now = new Date().toISOString()
+    const position = typeof body.position === 'number' ? body.position : Date.now()
+    const durationSeconds = typeof body.durationSeconds === 'number' ? body.durationSeconds : null
+    const artist = typeof body.artist === 'string' ? body.artist : null
+
+    await env.MEDIA_DB.prepare(
+      `INSERT INTO audio_tracks (id, album_id, media_id, title, artist, duration_seconds, position, created_at, updated_at)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+    ).bind(id, albumId, mediaId, title, artist, durationSeconds, position, now, now).run()
+
+    return json({
+      data: {
+        id,
+        albumId,
+        mediaId,
+        title,
+        artist: artist ?? undefined,
+        durationSeconds: durationSeconds ?? undefined,
+        position,
+        createdAt: now,
+        updatedAt: now,
+      },
+      meta: { schemaVersion: 1 },
+    }, 201)
+  } catch (error) {
+    return json({ success: false, error: 'Failed to add audio track', details: (error as Error).message }, 500)
+  }
+}
+
 // ── Router ─────────────────────────────────────────────────────
 
 export default {
@@ -804,6 +1020,23 @@ export default {
     const id = segments[2]        // optional UUID
 
     if (version !== 'v1') return err('Not found', 404)
+
+    // ── Audio library routes (admin writes, public radio reads) ──
+    if (resource === 'audio' && id === 'albums') {
+      const albumId = segments[3]
+      const child = segments[4]
+      if (request.method === 'GET' && !albumId) return handleListAudioAlbums(request, env)
+      if (request.method === 'POST' && !albumId) {
+        const authed = await authenticate(request, env)
+        if (authed.ok === false) return withCors(authed.response)
+        return withCors(await handleCreateAudioAlbum(request, env))
+      }
+      if (request.method === 'POST' && albumId && child === 'tracks') {
+        const authed = await authenticate(request, env)
+        if (authed.ok === false) return withCors(authed.response)
+        return withCors(await handleAddAudioTrack(request, env, albumId))
+      }
+    }
 
     // ── Media routes (write operations require auth, reads are public) ──
     if (resource === 'media') {
