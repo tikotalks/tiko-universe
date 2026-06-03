@@ -4,8 +4,8 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "typecheck": "echo scaffold-only:media-api",
-    "test": "echo scaffold-only:media-api",
-    "deploy:dry-run": "echo scaffold-only:media-api"
+    "typecheck": "tsc --noEmit --target ES2022 --lib ES2022,WebWorker --module ESNext --moduleResolution Bundler --strict --skipLibCheck src/index.ts",
+    "test": "vitest run --root ../.. tests/media-api.test.ts",
+    "deploy:dry-run": "npx -y -p node@22 -p wrangler wrangler deploy --dry-run --outdir dist"
   }
 }
