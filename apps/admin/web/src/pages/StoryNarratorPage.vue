@@ -2,7 +2,8 @@
 import { computed, onMounted, ref, watch } from 'vue'
 import { useBemm } from 'bemm'
 import { Button, InputRange, InputText, InputTextArea } from '@sil/ui'
-import { useStoryNarration, type StoryGalleryItem } from '../composables/useStoryNarration'
+import { useStoryNarration, type StoryDraft, type StoryGalleryItem, type VoiceSample } from '../composables/useStoryNarration'
+import { useAdminMediaLibrary, type AudioLibraryAlbum } from '../composables/useAdminMediaLibrary'
 import type { StorySegmentInput, StoryTryoutResult } from '../types/admin'
 
 type Tab = 'library' | 'drafts' | 'create'
@@ -11,9 +12,10 @@ const page = useBemm('story-page', { return: 'string', includeBaseClass: true })
 const card = useBemm('story-card', { return: 'string', includeBaseClass: true })
 const segment = useBemm('segment-card', { return: 'string', includeBaseClass: true })
 
-const voices = ['alloy', 'ash', 'ballad', 'coral', 'echo', 'fable', 'nova', 'onyx', 'sage', 'shimmer', 'verse']
+const fallbackVoices = ['alloy', 'ash', 'ballad', 'coral', 'echo', 'fable', 'nova', 'onyx', 'sage', 'shimmer', 'verse']
 
-const { tryout, render: renderStory, audioSrc, listStories, promoteStory, deleteStory } = useStoryNarration()
+const { tryout, render: renderStory, audioSrc, listStories, listVoices, createDraft, listDrafts, promoteStory, deleteStory } = useStoryNarration()
+const { listAudioAlbums } = useAdminMediaLibrary()
 
 const activeTab = ref<Tab>('library')
 
@@ -21,6 +23,10 @@ const libraryItems = ref<StoryGalleryItem[]>([])
 const draftItems = ref<StoryGalleryItem[]>([])
 const galleryLoading = ref(false)
 const galleryError = ref<string | null>(null)
+const voiceSamples = ref<VoiceSample[]>([])
+const savedDrafts = ref<StoryDraft[]>([])
+const audioAlbums = ref<AudioLibraryAlbum[]>([])
+const creatorLoading = ref(false)
 
 const title = ref('')
 const description = ref('')
@@ -30,6 +36,8 @@ const model = ref('tts-1')
 const speed = ref(1)
 const category = ref('story')
 const tagsText = ref('tiko-radio, story')
+const coverMediaId = ref('')
+const targetAlbumId = ref('')
 const segments = ref<StorySegmentInput[]>([
   { id: crypto.randomUUID(), text: '', pauseAfterMs: 350 },
 ])
@@ -42,6 +50,7 @@ const tryoutResult = ref<StoryTryoutResult | null>(null)
 const selectedSegment = computed(() => segments.value.find(s => s.id === selectedSegmentId.value) ?? segments.value[0])
 const totalCharacters = computed(() => segments.value.reduce((sum, s) => sum + s.text.length, 0))
 const canRender = computed(() => title.value.trim() && segments.value.some(s => s.text.trim()))
+const voiceOptions = computed(() => voiceSamples.value.length ? voiceSamples.value : fallbackVoices.map(id => ({ id, label: id, provider: 'openai', model: 'tts-1', sampleUrl: `/v1/generation/voice-samples/${id}` })))
 
 function parseTags(): string[] {
   return tagsText.value.split(',').map(tag => tag.trim()).filter(Boolean)
@@ -115,6 +124,39 @@ async function onRender() {
   }
 }
 
+async function onSaveCreatorDraft() {
+  if (!canRender.value) {
+    formError.value = 'Add a title and at least one chapter first.'
+    return
+  }
+  creatorLoading.value = true
+  formError.value = null
+  try {
+    const draft = await createDraft({
+      title: title.value,
+      description: description.value || undefined,
+      coverMediaId: coverMediaId.value || undefined,
+      targetAlbumId: targetAlbumId.value || undefined,
+      defaultVoice: voice.value,
+      defaultSpeed: speed.value,
+      chapters: segments.value.filter(s => s.text.trim()).map((item, index) => ({
+        id: item.id,
+        title: `Chapter ${index + 1}`,
+        text: item.text,
+        voice: voice.value,
+        speed: speed.value,
+        position: index + 1,
+      })),
+    })
+    savedDrafts.value = [draft, ...savedDrafts.value.filter(item => item.id !== draft.id)]
+    activeTab.value = 'drafts'
+  } catch (e) {
+    formError.value = e instanceof Error ? e.message : 'Could not save story draft.'
+  } finally {
+    creatorLoading.value = false
+  }
+}
+
 function loadTemplate(kind: 'short' | 'radio') {
   title.value = kind === 'short' ? 'Tiko Good Morning' : 'Tiko Radio Adventure'
   description.value = kind === 'short' ? 'Short narrated greeting for Tiko.' : 'A calm multi-part story for Tiko Radio.'
@@ -147,12 +189,29 @@ async function loadDrafts() {
   galleryLoading.value = true
   galleryError.value = null
   try {
-    const result = await listStories('draft', 1, 60)
-    draftItems.value = result.data
+    const [renderedResult, creatorDrafts] = await Promise.all([
+      listStories('draft', 1, 60),
+      listDrafts().catch(() => []),
+    ])
+    draftItems.value = renderedResult.data
+    savedDrafts.value = creatorDrafts
   } catch (e) {
     galleryError.value = e instanceof Error ? e.message : 'Could not load drafts.'
   } finally {
     galleryLoading.value = false
+  }
+}
+
+async function loadCreatorResources() {
+  try {
+    const [voices, albums] = await Promise.all([
+      listVoices().catch(() => []),
+      listAudioAlbums().catch(() => []),
+    ])
+    voiceSamples.value = voices
+    audioAlbums.value = albums
+  } catch (e) {
+    formError.value = e instanceof Error ? e.message : 'Could not load story creator options.'
   }
 }
 
@@ -179,9 +238,13 @@ async function onDelete(item: StoryGalleryItem, list: 'library' | 'drafts') {
 watch(activeTab, async () => {
   if (activeTab.value === 'library') await loadLibrary()
   if (activeTab.value === 'drafts') await loadDrafts()
+  if (activeTab.value === 'create') await loadCreatorResources()
 })
 
-onMounted(() => { void loadLibrary() })
+onMounted(() => {
+  void loadLibrary()
+  void loadCreatorResources()
+})
 </script>
 
 <template>
@@ -203,7 +266,7 @@ onMounted(() => { void loadLibrary() })
       </button>
       <button type="button" :class="page('tab', { active: activeTab === 'drafts' })" @click="activeTab = 'drafts'">
         <span>Drafts</span>
-        <span :class="page('tab-count')">{{ draftItems.length }}</span>
+        <span :class="page('tab-count')">{{ draftItems.length + savedDrafts.length }}</span>
       </button>
       <button type="button" :class="page('tab', { active: activeTab === 'create' })" @click="activeTab = 'create'">
         Create
@@ -243,10 +306,34 @@ onMounted(() => { void loadLibrary() })
     <section v-else-if="activeTab === 'drafts'" :class="page('panel')">
       <header :class="page('panel-head')">
         <div :class="page('panel-intro')">
+          <h2 :class="page('panel-title')">Story creator drafts</h2>
+          <p :class="page('panel-meta')">Chapter plans with voice, cover, and target Radio album settings.</p>
+        </div>
+        <Button variant="outline" :loading="galleryLoading" :disabled="galleryLoading" @click="loadDrafts">Reload</Button>
+      </header>
+
+      <div v-if="savedDrafts.length === 0" :class="page('empty')">
+        No creator drafts yet. <button type="button" :class="page('inline-link')" @click="activeTab = 'create'">Plan one</button>.
+      </div>
+      <div v-else :class="page('grid')">
+        <article v-for="draft in savedDrafts" :key="draft.id" :class="card('', { draft: true })">
+          <header :class="card('head')">
+            <h3 :class="card('title')">{{ draft.title }}</h3>
+            <p :class="card('meta')">{{ draft.defaultVoice }} · {{ draft.chapters.length }} chapters · {{ draft.status }}</p>
+          </header>
+          <p v-if="draft.description" :class="card('description')">{{ draft.description }}</p>
+          <p :class="card('description')">
+            Cover: {{ draft.coverMediaId || 'not assigned' }}<br />
+            Radio album: {{ audioAlbums.find(album => album.id === draft.targetAlbumId)?.title || draft.targetAlbumId || 'not assigned' }}
+          </p>
+        </article>
+      </div>
+
+      <header :class="page('panel-head')">
+        <div :class="page('panel-intro')">
           <h2 :class="page('panel-title')">Generated drafts</h2>
           <p :class="page('panel-meta')">Render output stays here until promoted to Tiko Radio.</p>
         </div>
-        <Button variant="outline" :loading="galleryLoading" :disabled="galleryLoading" @click="loadDrafts">Reload</Button>
       </header>
 
       <div v-if="galleryLoading && draftItems.length === 0" :class="page('empty')">Loading drafts…</div>
@@ -290,7 +377,7 @@ onMounted(() => { void loadLibrary() })
           <label :class="page('label')">
             <span :class="page('label-text')">Voice</span>
             <select :class="page('select')" v-model="voice">
-              <option v-for="option in voices" :key="option" :value="option">{{ option }}</option>
+              <option v-for="option in voiceOptions" :key="option.id" :value="option.id">{{ option.label }}</option>
             </select>
           </label>
           <label :class="page('label')">
@@ -308,6 +395,27 @@ onMounted(() => { void loadLibrary() })
           <InputText v-model="category" label="Category" />
           <InputText v-model="tagsText" label="Tags" placeholder="comma, separated" />
         </div>
+
+        <div :class="page('two-col')">
+          <InputText v-model="coverMediaId" label="Cover media ID" placeholder="Optional media catalog id" />
+          <label :class="page('label')">
+            <span :class="page('label-text')">Target Radio album</span>
+            <select :class="page('select')" v-model="targetAlbumId">
+              <option value="">No album assigned</option>
+              <option v-for="album in audioAlbums" :key="album.id" :value="album.id">{{ album.title }}</option>
+            </select>
+          </label>
+        </div>
+
+        <section :class="page('voice-grid')" aria-label="Voice samples">
+          <article v-for="option in voiceOptions" :key="option.id" :class="page('voice-card', { active: voice === option.id })">
+            <button type="button" :class="page('voice-button')" @click="voice = option.id">
+              <strong>{{ option.label }}</strong>
+              <span>{{ option.provider }} · {{ option.model }}</span>
+            </button>
+            <audio :src="audioSrc(option.sampleUrl)" controls />
+          </article>
+        </section>
 
         <section :class="page('segments')">
           <header :class="page('segments-header')">
@@ -346,11 +454,16 @@ onMounted(() => { void loadLibrary() })
         <p :class="page('meta')">{{ segments.length }} segments · {{ totalCharacters }} characters</p>
         <p v-if="formError" :class="page('error')">{{ formError }}</p>
 
-        <Button :loading="renderLoading" :disabled="renderLoading || !canRender" type="submit" block>
-          {{ renderLoading ? 'Rendering full story…' : 'Render full story' }}
-        </Button>
+        <div :class="page('actions')">
+          <Button :loading="creatorLoading" :disabled="creatorLoading || !canRender" type="button" variant="outline" @click="onSaveCreatorDraft">
+            {{ creatorLoading ? 'Saving draft…' : 'Save creator draft' }}
+          </Button>
+          <Button :loading="renderLoading" :disabled="renderLoading || !canRender" type="submit">
+            {{ renderLoading ? 'Rendering full story…' : 'Render full story' }}
+          </Button>
+        </div>
 
-        <p :class="page('hint')">Rendered stories appear in <button type="button" :class="page('inline-link')" @click="activeTab = 'drafts'">Drafts</button> until you promote them.</p>
+        <p :class="page('hint')">Save keeps chapter/cover/album settings. Rendered stories appear in <button type="button" :class="page('inline-link')" @click="activeTab = 'drafts'">Drafts</button> until you promote them.</p>
       </form>
 
       <aside v-if="tryoutResult" :class="page('preview')">
@@ -542,6 +655,54 @@ onMounted(() => { void loadLibrary() })
     display: grid;
     grid-template-columns: 1fr 1fr 1.2fr;
     gap: var(--space-s);
+  }
+
+  &__voice-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(calc(var(--space) * 13), 1fr));
+    gap: var(--space-xs);
+  }
+
+  &__voice-card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+    border: 1px solid var(--admin-border);
+    border-radius: var(--border-radius-s);
+    padding: var(--space-s);
+    background: var(--admin-page-bg);
+
+    &--active {
+      border-color: var(--color-primary);
+      box-shadow: 0 0 0 1px var(--color-primary);
+    }
+
+    audio {
+      width: 100%;
+    }
+  }
+
+  &__voice-button {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+    border: 0;
+    background: transparent;
+    color: var(--admin-text);
+    text-align: left;
+    cursor: pointer;
+    padding: 0;
+
+    span {
+      color: var(--admin-text-muted);
+      font-size: var(--font-size-xs);
+    }
+  }
+
+  &__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-xs);
   }
 
   &__label {

@@ -1,7 +1,14 @@
+import { authenticate } from '../../shared/auth'
+
 export interface Env {
   GENERATION_DB: D1DatabaseLike
   GENERATED_MEDIA_BUCKET: R2BucketLike
   OPENAI_API_KEY?: string
+  API_KEYS?: string
+  AUTH_DB?: {
+    prepare(sql: string): { bind(...values: unknown[]): { first<T>(): Promise<T | null>; all(): Promise<{ results: unknown[] }> } }
+  }
+  IDENTITY_BASE_URL?: string
 }
 
 export interface D1DatabaseLike {
@@ -60,11 +67,18 @@ interface GenerateAudioFailure {
 
 const CORS_HEADERS = {
   'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+  'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
   'Access-Control-Allow-Headers': 'Content-Type, Authorization',
 }
-
 const OPENAI_VOICES = new Set(['alloy', 'ash', 'ballad', 'coral', 'echo', 'fable', 'nova', 'onyx', 'sage', 'shimmer', 'verse'])
+const VOICE_CATALOG = Array.from(OPENAI_VOICES).map((id) => ({
+  id,
+  provider: 'openai',
+  model: 'tts-1',
+  label: id.charAt(0).toUpperCase() + id.slice(1),
+  sampleUrl: `/v1/generation/voice-samples/${id}`,
+}))
+
 const AUDIO_KEY_RE = /^audio\/[a-f0-9]{32}\.mp3$/
 
 export default {
@@ -72,22 +86,165 @@ export default {
     if (request.method === 'OPTIONS') return new Response(null, { headers: CORS_HEADERS })
 
     const url = new URL(request.url)
+    if (url.pathname === '/v1/generation/health' && request.method === 'GET') return generationHealth()
+    if (url.pathname === '/v1/generation/voices' && request.method === 'GET') return json({ data: { voices: VOICE_CATALOG }, meta: { schemaVersion: 1 } })
     if (url.pathname === '/v1/generation/tts' && request.method === 'POST') return generateTts(request, env)
     if (url.pathname.startsWith('/v1/generation/audio/') && request.method === 'GET') return getAudio(url.pathname, env)
-    if (url.pathname === '/v1/generation/image' && request.method === 'POST') return generateImage(request, env)
+    if (url.pathname === '/v1/generation/image' && request.method === 'POST') return requireAuth(request, env, () => generateImage(request, env))
     if (url.pathname.startsWith('/v1/generation/images/') && url.pathname.endsWith('/binary') && request.method === 'GET') return getImage(url.pathname, env)
-    if (url.pathname.startsWith('/v1/generation/images/') && url.pathname.endsWith('/promote') && request.method === 'POST') return promoteImage(url.pathname, env)
-    if (url.pathname.startsWith('/v1/generation/images/') && request.method === 'DELETE') return deleteImage(url.pathname, env)
+    if (url.pathname.startsWith('/v1/generation/images/') && url.pathname.endsWith('/promote') && request.method === 'POST') return requireAuth(request, env, () => promoteImage(url.pathname, env))
+    if (url.pathname.startsWith('/v1/generation/images/') && request.method === 'DELETE') return requireAuth(request, env, () => deleteImage(url.pathname, env))
     if (url.pathname === '/v1/generation/images' && request.method === 'GET') return listImages(request, env)
-    if (url.pathname === '/v1/generation/stories/tryout' && request.method === 'POST') return generateStoryTryout(request, env)
-    if (url.pathname === '/v1/generation/stories/render' && request.method === 'POST') return renderStory(request, env)
+    if (url.pathname === '/v1/generation/stories/tryout' && request.method === 'POST') return requireAuth(request, env, () => generateStoryTryout(request, env))
+    if (url.pathname === '/v1/generation/stories/render' && request.method === 'POST') return requireAuth(request, env, () => renderStory(request, env))
+    if (url.pathname === '/v1/generation/story-drafts' && request.method === 'POST') return requireAuth(request, env, () => createStoryDraft(request, env))
+    if (url.pathname === '/v1/generation/story-drafts' && request.method === 'GET') return listStoryDrafts(env)
     if (url.pathname.startsWith('/v1/generation/stories/') && url.pathname.endsWith('/audio') && request.method === 'GET') return getStoryAudio(url.pathname, env)
-    if (url.pathname.startsWith('/v1/generation/stories/') && url.pathname.endsWith('/promote') && request.method === 'POST') return promoteStory(url.pathname, env)
-    if (url.pathname.startsWith('/v1/generation/stories/') && request.method === 'DELETE') return deleteStory(url.pathname, env)
+    if (url.pathname.startsWith('/v1/generation/stories/') && url.pathname.endsWith('/promote') && request.method === 'POST') return requireAuth(request, env, () => promoteStory(url.pathname, env))
+    if (url.pathname.startsWith('/v1/generation/stories/') && request.method === 'DELETE') return requireAuth(request, env, () => deleteStory(url.pathname, env))
     if (url.pathname === '/v1/generation/stories' && request.method === 'GET') return listStories(request, env)
 
     return apiError('not_found', 'Route not found.', 404)
   },
+}
+
+function generationHealth(): Response {
+  return json({
+    data: {
+      service: 'generation-api',
+      status: 'ok',
+      capabilities: ['tts', 'image', 'story-drafts', 'story-render', 'voice-samples'],
+    },
+    meta: { schemaVersion: 1 },
+  })
+}
+
+async function requireAuth(request: Request, env: Env, handler: () => Promise<Response>): Promise<Response> {
+  const authed = await authenticate(request, env)
+  if (authed.ok === false) {
+    const headers = new Headers(authed.response.headers)
+    for (const [key, value] of Object.entries(CORS_HEADERS)) headers.set(key, value)
+    return new Response(authed.response.body, { status: authed.response.status, statusText: authed.response.statusText, headers })
+  }
+  return handler()
+}
+
+interface StoryDraftChapter {
+  id?: string
+  title?: string
+  text?: string
+  voice?: string
+  speed?: number
+  position?: number
+}
+
+interface StoryDraftRow {
+  id: string
+  title: string
+  description?: string | null
+  cover_media_id?: string | null
+  default_voice: string
+  default_speed: number
+  target_album_id?: string | null
+  status: string
+  chapters: string
+  settings: string
+  created_at: string
+  updated_at: string
+}
+
+function rowToStoryDraft(row: StoryDraftRow) {
+  return {
+    id: row.id,
+    title: row.title,
+    description: row.description ?? undefined,
+    coverMediaId: row.cover_media_id ?? undefined,
+    defaultVoice: row.default_voice,
+    defaultSpeed: row.default_speed,
+    targetAlbumId: row.target_album_id ?? undefined,
+    status: row.status,
+    chapters: parseJsonArray(row.chapters),
+    settings: parseJsonObject(row.settings),
+    createdAt: row.created_at,
+    updatedAt: row.updated_at,
+  }
+}
+
+function parseJsonArray(value: unknown): unknown[] {
+  if (typeof value !== 'string') return []
+  try {
+    const parsed = JSON.parse(value)
+    return Array.isArray(parsed) ? parsed : []
+  } catch {
+    return []
+  }
+}
+
+function parseJsonObject(value: unknown): Record<string, unknown> {
+  if (typeof value !== 'string') return {}
+  try {
+    const parsed = JSON.parse(value)
+    return parsed && typeof parsed === 'object' && !Array.isArray(parsed) ? parsed as Record<string, unknown> : {}
+  } catch {
+    return {}
+  }
+}
+
+async function createStoryDraft(request: Request, env: Env): Promise<Response> {
+  let body: Record<string, unknown>
+  try {
+    body = await request.json() as Record<string, unknown>
+  } catch {
+    return apiError('invalid_json', 'Request body must be valid JSON.', 400)
+  }
+
+  const title = typeof body.title === 'string' ? body.title.trim() : ''
+  if (!title) return apiError('missing_title', 'Story title is required.', 400, 'title')
+  const defaultVoice = typeof body.defaultVoice === 'string' && OPENAI_VOICES.has(body.defaultVoice) ? body.defaultVoice : 'nova'
+  const defaultSpeed = typeof body.defaultSpeed === 'number' ? clamp(body.defaultSpeed, 0.25, 4) : 1
+  const chapters = Array.isArray(body.chapters) ? body.chapters.map((chapter, index) => normalizeDraftChapter(chapter as StoryDraftChapter, index, defaultVoice, defaultSpeed)) : []
+  const now = new Date().toISOString()
+  const row: StoryDraftRow = {
+    id: crypto.randomUUID(),
+    title,
+    description: typeof body.description === 'string' ? body.description : null,
+    cover_media_id: typeof body.coverMediaId === 'string' ? body.coverMediaId : null,
+    default_voice: defaultVoice,
+    default_speed: defaultSpeed,
+    target_album_id: typeof body.targetAlbumId === 'string' ? body.targetAlbumId : null,
+    status: 'draft',
+    chapters: JSON.stringify(chapters),
+    settings: JSON.stringify(body.settings && typeof body.settings === 'object' ? body.settings : {}),
+    created_at: now,
+    updated_at: now,
+  }
+
+  await env.GENERATION_DB.prepare(
+    `INSERT INTO story_drafts (id, title, description, cover_media_id, default_voice, default_speed, target_album_id, status, chapters, settings, created_at, updated_at)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+  ).bind(row.id, row.title, row.description, row.cover_media_id, row.default_voice, row.default_speed, row.target_album_id, row.status, row.chapters, row.settings, row.created_at, row.updated_at).run()
+
+  return json({ data: rowToStoryDraft(row), meta: { schemaVersion: 1 } }, 201)
+}
+
+function normalizeDraftChapter(chapter: StoryDraftChapter, index: number, defaultVoice: string, defaultSpeed: number) {
+  const voice = typeof chapter.voice === 'string' && OPENAI_VOICES.has(chapter.voice) ? chapter.voice : defaultVoice
+  return {
+    id: typeof chapter.id === 'string' ? chapter.id : crypto.randomUUID(),
+    title: typeof chapter.title === 'string' && chapter.title.trim() ? chapter.title.trim() : `Chapter ${index + 1}`,
+    text: typeof chapter.text === 'string' ? chapter.text.trim() : '',
+    voice,
+    speed: typeof chapter.speed === 'number' ? clamp(chapter.speed, 0.25, 4) : defaultSpeed,
+    position: typeof chapter.position === 'number' ? chapter.position : index + 1,
+  }
+}
+
+async function listStoryDrafts(env: Env): Promise<Response> {
+  const rows = await env.GENERATION_DB.prepare(
+    `SELECT id, title, description, cover_media_id, default_voice, default_speed, target_album_id, status, chapters, settings, created_at, updated_at
+     FROM story_drafts ORDER BY updated_at DESC`,
+  ).bind().all<StoryDraftRow>()
+  return json({ data: rows.results.map(rowToStoryDraft), meta: { total: rows.results.length, schemaVersion: 1 } })
 }
 
 async function generateTts(request: Request, env: Env): Promise<Response> {

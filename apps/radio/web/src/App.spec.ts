@@ -74,6 +74,11 @@ function mountApp(existingLs?: ReturnType<typeof createLocalStorageMock>) {
   return { wrapper, ls }
 }
 
+async function flushAsync() {
+  for (let i = 0; i < 6; i += 1) await Promise.resolve()
+  await nextTick()
+}
+
 function restoreLocalStorage() {
   // Restore if possible
   try { Object.defineProperty(globalThis, 'localStorage', { value: undefined, writable: true, configurable: true }) } catch { /* */ }
@@ -208,6 +213,46 @@ describe('Radio App (unified layout)', () => {
 
     // Only 2 animal tracks
     expect(wrapper.findAll('.radio-app__track-card').length).toBe(2)
+  })
+
+  it('loads public audio albums from the media library before generated-story fallback', async () => {
+    const ls = createLocalStorageMock()
+    vi.stubGlobal('fetch', vi.fn((url: string) => {
+      if (String(url).includes('/audio/albums')) {
+        return Promise.resolve({
+          ok: true,
+          json: () => Promise.resolve({
+            data: [
+              {
+                id: 'album-bedtime',
+                title: 'Bedtime stories',
+                radioEnabled: true,
+                tracks: [
+                  {
+                    id: 'track-rabbit',
+                    title: 'The Sleepy Rabbit',
+                    artist: 'Tiko Story Narrator',
+                    audioUrl: 'https://media.tikoapi.org/v1/media/audio-rabbit/download',
+                    durationSeconds: 180,
+                    position: 1,
+                  },
+                ],
+              },
+            ],
+          }),
+        })
+      }
+      if (String(url).includes('/stories')) {
+        return Promise.resolve({ ok: true, json: () => Promise.resolve({ data: [] }) })
+      }
+      return Promise.resolve({ ok: false, status: 0, json: () => Promise.resolve({}) })
+    }))
+
+    const { wrapper } = mountApp(ls)
+    await flushAsync()
+
+    expect(globalThis.fetch).toHaveBeenCalledWith('https://media.tikoapi.org/v1/audio/albums?radioEnabled=true')
+    expect(wrapper.findAll('.radio-app__track-card').some(card => card.text().includes('The Sleepy Rabbit'))).toBe(true)
   })
 
   it('shows empty state when no tracks exist', async () => {

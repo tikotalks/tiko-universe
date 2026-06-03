@@ -30,6 +30,7 @@ interface MediaListResponse {
 }
 
 interface UploadResponse {
+  id?: string
   success: boolean
   filename: string
   url: string
@@ -47,6 +48,33 @@ interface UploadResponse {
 
 interface ApiErrorBody {
   error?: { message?: string } | string
+}
+
+export interface AudioLibraryTrack {
+  id: string
+  albumId: string
+  mediaId: string
+  title: string
+  artist?: string
+  durationSeconds?: number
+  position: number
+  audioUrl?: string
+  mimeType?: string
+  fileName?: string
+}
+
+export interface AudioLibraryAlbum {
+  id: string
+  title: string
+  description?: string
+  coverMediaId?: string
+  visibility: 'public' | 'private'
+  radioEnabled: boolean
+  sortMode: 'manual' | 'created_desc' | 'title_asc'
+  settings: Record<string, unknown>
+  tracks: AudioLibraryTrack[]
+  createdAt: string
+  updatedAt: string
 }
 
 export function useAdminMediaLibrary() {
@@ -112,9 +140,43 @@ export function useAdminMediaLibrary() {
     }
   }
 
+  async function listAudioAlbums(params: { radioEnabled?: boolean } = {}): Promise<AudioLibraryAlbum[]> {
+    const url = new URL(`${mediaBaseUrl()}/audio/albums`)
+    if (params.radioEnabled !== undefined) url.searchParams.set('radioEnabled', String(params.radioEnabled))
+    const response = await fetch(url, { headers: { authorization: `Bearer ${token.value}` } })
+    const body = await response.json().catch(() => null) as ApiErrorBody | { data: AudioLibraryAlbum[] } | null
+    const apiError = body && 'error' in body ? body.error : undefined
+    if (!response.ok) throw new Error((typeof apiError === 'string' ? apiError : apiError?.message) ?? `Audio albums failed: ${response.status}`)
+    return (body as { data: AudioLibraryAlbum[] }).data
+  }
+
+  async function createAudioAlbum(input: { title: string; description?: string; coverMediaId?: string; visibility?: 'public' | 'private'; radioEnabled?: boolean; sortMode?: 'manual' | 'created_desc' | 'title_asc' }): Promise<AudioLibraryAlbum> {
+    const response = await fetch(`${mediaBaseUrl()}/audio/albums`, {
+      method: 'POST',
+      headers: { authorization: `Bearer ${token.value}`, 'content-type': 'application/json' },
+      body: JSON.stringify(input),
+    })
+    const body = await response.json().catch(() => null) as ApiErrorBody | { data: AudioLibraryAlbum } | null
+    const apiError = body && 'error' in body ? body.error : undefined
+    if (!response.ok) throw new Error((typeof apiError === 'string' ? apiError : apiError?.message) ?? `Create album failed: ${response.status}`)
+    return (body as { data: AudioLibraryAlbum }).data
+  }
+
+  async function addAudioTrack(albumId: string, input: { mediaId: string; title: string; artist?: string; durationSeconds?: number }): Promise<AudioLibraryTrack> {
+    const response = await fetch(`${mediaBaseUrl()}/audio/albums/${encodeURIComponent(albumId)}/tracks`, {
+      method: 'POST',
+      headers: { authorization: `Bearer ${token.value}`, 'content-type': 'application/json' },
+      body: JSON.stringify(input),
+    })
+    const body = await response.json().catch(() => null) as ApiErrorBody | { data: AudioLibraryTrack } | null
+    const apiError = body && 'error' in body ? body.error : undefined
+    if (!response.ok) throw new Error((typeof apiError === 'string' ? apiError : apiError?.message) ?? `Add track failed: ${response.status}`)
+    return (body as { data: AudioLibraryTrack }).data
+  }
+
   function itemUrl(item: AdminMediaItem): string {
     return item.url || item.thumbnailUrl || `${mediaBaseUrl()}/media/${item.id}/download`
   }
 
-  return { items, total, page, totalPages, loading, uploading, error, list, upload, itemUrl }
+  return { items, total, page, totalPages, loading, uploading, error, list, upload, itemUrl, listAudioAlbums, createAudioAlbum, addAudioTrack }
 }

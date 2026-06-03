@@ -23,17 +23,40 @@ interface StoredAudioRecord {
 class MemoryD1 {
   byHash = new Map<string, StoredAudioRecord>()
   byId = new Map<string, StoredAudioRecord>()
+  storyDrafts = new Map<string, Record<string, unknown>>()
 
   prepare(sql: string) {
     return {
       bind: (...values: unknown[]) => ({
         first: async <T>() => {
           if (sql.includes('WHERE request_hash')) return (this.byHash.get(values[0] as string) ?? null) as T | null
+          if (sql.includes('FROM story_drafts') && sql.includes('WHERE id')) return (this.storyDrafts.get(values[0] as string) ?? null) as T | null
           if (sql.includes('WHERE id')) return (this.byId.get(values[0] as string) ?? null) as T | null
           return null
         },
-        all: async <T>() => ({ results: [] as T[] }),
+        all: async <T>() => {
+          if (sql.includes('FROM story_drafts')) return { results: Array.from(this.storyDrafts.values()) as T[] }
+          return { results: [] as T[] }
+        },
         run: async () => {
+          if (sql.includes('INSERT INTO story_drafts')) {
+            const record = {
+              id: values[0],
+              title: values[1],
+              description: values[2],
+              cover_media_id: values[3],
+              default_voice: values[4],
+              default_speed: values[5],
+              target_album_id: values[6],
+              status: values[7],
+              chapters: values[8],
+              settings: values[9],
+              created_at: values[10],
+              updated_at: values[11],
+            }
+            this.storyDrafts.set(record.id as string, record)
+            return { success: true, meta: { changes: 1 } }
+          }
           const record: StoredAudioRecord = {
             id: values[0] as string,
             request_hash: values[1] as string,
@@ -87,6 +110,7 @@ function makeEnv(overrides: Partial<Env> = {}): Env & { db: MemoryD1; bucket: Me
     GENERATION_DB: db,
     GENERATED_MEDIA_BUCKET: bucket,
     OPENAI_API_KEY: 'test-key',
+    API_KEYS: 'test-api-key',
     ...overrides,
   }
 }
@@ -184,5 +208,48 @@ describe('generation-api TTS contract', () => {
     env.db.byId.set('bad-key', { ...env.db.byId.values().next().value!, id: 'bad-key', r2_key: '../secret' })
     const unsafeResponse = await worker.fetch(new Request('https://api.test/v1/generation/audio/bad-key'), env)
     expect(unsafeResponse.status).toBe(404)
+  })
+
+  it('exposes health and sampled voice catalog for the story creator', async () => {
+    const env = makeEnv()
+    const health = await worker.fetch(new Request('https://api.test/v1/generation/health'), env)
+    const voices = await worker.fetch(new Request('https://api.test/v1/generation/voices'), env)
+
+    expect(health.status).toBe(200)
+    await expect(json(health)).resolves.toMatchObject({ data: { service: 'generation-api', status: 'ok' } })
+    expect(voices.status).toBe(200)
+    const voiceBody = await json(voices)
+    expect(voiceBody.data.voices).toEqual(expect.arrayContaining([expect.objectContaining({ id: 'nova', sampleUrl: expect.stringContaining('/voice-samples/nova') })]))
+  })
+
+  it('requires auth for story render mutations but allows authenticated story drafts with chapters and cover assignment', async () => {
+    const env = makeEnv()
+
+    const unauthenticated = await worker.fetch(new Request('https://api.test/v1/generation/stories/render', {
+      method: 'POST',
+      body: JSON.stringify({ title: 'Nope', segments: [] }),
+    }), env)
+    expect(unauthenticated.status).toBe(401)
+
+    const createDraft = await worker.fetch(new Request('https://api.test/v1/generation/story-drafts', {
+      method: 'POST',
+      headers: { authorization: 'Bearer test-api-key', 'content-type': 'application/json' },
+      body: JSON.stringify({
+        title: 'The Mountain',
+        description: 'A bedtime story',
+        coverMediaId: 'cover_1',
+        targetAlbumId: 'album_1',
+        defaultVoice: 'nova',
+        chapters: [
+          { title: 'Climb', text: 'Up we go', voice: 'nova', position: 1 },
+          { title: 'Home', text: 'Back we go', voice: 'fable', position: 2 },
+        ],
+      }),
+    }), env)
+    const draftBody = await json(createDraft)
+
+    expect(createDraft.status).toBe(201)
+    expect(draftBody.data).toMatchObject({ title: 'The Mountain', coverMediaId: 'cover_1', targetAlbumId: 'album_1', defaultVoice: 'nova' })
+    expect(draftBody.data.chapters).toHaveLength(2)
   })
 })
