@@ -37,6 +37,8 @@ class MemoryStatement {
 class MemoryD1 {
   media: Row[] = []
   assets: Row[] = []
+  audioAlbums: Row[] = []
+  audioTracks: Row[] = []
 
   prepare(sql: string): MemoryStatement {
     return new MemoryStatement(this, sql)
@@ -45,6 +47,29 @@ class MemoryD1 {
   execute(sql: string, values: unknown[]): MemoryResult {
     const normalized = sql.replace(/\s+/g, ' ').trim()
 
+    if (normalized.startsWith('INSERT INTO media')) {
+      const row = {
+        id: values[0],
+        filename: values[1],
+        file_name: values[1],
+        file_size: values[2],
+        mime_type: values[3],
+        width: values[4],
+        height: values[5],
+        title: values[6],
+        description: values[7],
+        categories: values[8],
+        folder: values[8],
+        tags: values[9],
+        is_private: values[10],
+        original_url: values[11],
+        created_at: values[12],
+        updated_at: values[13],
+      }
+      this.media.push(row)
+      return new MemoryResult()
+    }
+
     if (normalized.includes('FROM media')) {
       if (normalized.includes('COUNT(*)')) return new MemoryResult([{ count: this.media.filter(row => row.is_private === 0).length }])
       if (normalized.includes('WHERE id = ?')) {
@@ -52,6 +77,52 @@ class MemoryD1 {
         return new MemoryResult(this.media.filter(row => row.id === id))
       }
       return new MemoryResult(this.media.filter(row => row.is_private === 0))
+    }
+
+    if (normalized.startsWith('INSERT INTO audio_albums')) {
+      const row = {
+        id: values[0],
+        title: values[1],
+        description: values[2],
+        cover_media_id: values[3],
+        visibility: values[4],
+        radio_enabled: values[5],
+        sort_mode: values[6],
+        settings: values[7],
+        created_at: values[8],
+        updated_at: values[9],
+      }
+      this.audioAlbums.push(row)
+      return new MemoryResult()
+    }
+
+    if (normalized.startsWith('INSERT INTO audio_tracks')) {
+      const row = {
+        id: values[0],
+        album_id: values[1],
+        media_id: values[2],
+        title: values[3],
+        artist: values[4],
+        duration_seconds: values[5],
+        position: values[6],
+        created_at: values[7],
+        updated_at: values[8],
+      }
+      this.audioTracks.push(row)
+      return new MemoryResult()
+    }
+
+    if (normalized.includes('FROM audio_albums')) {
+      if (normalized.includes('COUNT(*)')) return new MemoryResult([{ count: this.audioAlbums.filter(row => row.visibility === 'public' && row.radio_enabled === 1).length }])
+      if (normalized.includes('WHERE id = ?')) return new MemoryResult(this.audioAlbums.filter(row => row.id === values[0]))
+      return new MemoryResult(this.audioAlbums.filter(row => row.visibility === 'public' && row.radio_enabled === 1))
+    }
+
+    if (normalized.includes('FROM audio_tracks')) {
+      return new MemoryResult(this.audioTracks.filter(row => row.album_id === values[0]).map(track => {
+        const media = this.media.find(row => row.id === track.media_id) ?? {}
+        return { ...media, ...track, track_id: track.id, media_id: track.media_id, media_title: media.title }
+      }))
     }
 
     if (normalized.includes('FROM assets')) {
@@ -207,7 +278,7 @@ describe('media-api worker', () => {
     expect(body.error.code).toBe('unauthorized')
   })
 
-  it('uploads media with API key auth and skips Vision when no OpenAI key is configured', async () => {
+  it('uploads media with API key auth, persists catalog metadata, and skips Vision when no OpenAI key is configured', async () => {
     const env = makeEnv()
     const form = new FormData()
     form.set('file', new Blob(['hello'], { type: 'image/jpeg' }), 'Family Photo.JPG')
@@ -221,10 +292,19 @@ describe('media-api worker', () => {
 
     expect(response.status).toBe(200)
     expect(body.success).toBe(true)
+    expect(body.id).toEqual(expect.any(String))
     expect(body.filename).toMatch(/^uploads\/\d+-blob$/)
     expect(body.title).toBe('Blob')
     expect(body._meta.visionAttempted).toBe(false)
     expect(env.MEDIA_BUCKET.objects.size).toBe(1)
+    expect(env.MEDIA_DB.media).toHaveLength(2)
+    expect(env.MEDIA_DB.media[1]).toMatchObject({
+      id: body.id,
+      mime_type: 'image/jpeg',
+      title: 'Blob',
+      original_url: body.url,
+      is_private: 0,
+    })
   })
 
   it('lists and reads assets', async () => {
@@ -236,5 +316,36 @@ describe('media-api worker', () => {
     expect((await parseJson(list)).assets[0]).toMatchObject({ id: 'asset_1', categories: ['animals'], tags: ['cat'] })
     expect(get.status).toBe(200)
     expect((await parseJson(get)).asset.title).toBe('Card Cat')
+  })
+
+  it('creates audio albums and exposes radio-enabled public albums with tracks', async () => {
+    const env = makeEnv()
+    env.MEDIA_DB.media.push(mediaRow({ id: 'audio_1', file_name: 'story.mp3', filename: 'story.mp3', mime_type: 'audio/mpeg', title: 'Bedtime Story', original_url: 'https://data.tikocdn.org/uploads/story.mp3' }))
+
+    const createAlbum = await worker.fetch(new Request('https://media.test/v1/audio/albums', {
+      method: 'POST',
+      headers: { authorization: 'Bearer test-api-key', 'content-type': 'application/json' },
+      body: JSON.stringify({ title: 'Stories', description: 'Generated stories', visibility: 'public', radioEnabled: true, sortMode: 'manual', settings: { autoplay: false } }),
+    }), env as never)
+    const albumBody = await parseJson(createAlbum)
+
+    expect(createAlbum.status).toBe(201)
+    expect(albumBody.data).toMatchObject({ title: 'Stories', visibility: 'public', radioEnabled: true })
+
+    const addTrack = await worker.fetch(new Request(`https://media.test/v1/audio/albums/${albumBody.data.id}/tracks`, {
+      method: 'POST',
+      headers: { authorization: 'Bearer test-api-key', 'content-type': 'application/json' },
+      body: JSON.stringify({ mediaId: 'audio_1', title: 'Chapter 1', artist: 'Tiko Story Creator', durationSeconds: 42 }),
+    }), env as never)
+
+    expect(addTrack.status).toBe(201)
+    expect((await parseJson(addTrack)).data).toMatchObject({ albumId: albumBody.data.id, mediaId: 'audio_1', title: 'Chapter 1' })
+
+    const publicList = await worker.fetch(new Request('https://media.test/v1/audio/albums?radioEnabled=true'), env as never)
+    const publicBody = await parseJson(publicList)
+
+    expect(publicList.status).toBe(200)
+    expect(publicBody.data).toHaveLength(1)
+    expect(publicBody.data[0]).toMatchObject({ id: albumBody.data.id, title: 'Stories', tracks: [expect.objectContaining({ title: 'Chapter 1', mediaId: 'audio_1', audioUrl: 'https://data.tikocdn.org/uploads/story.mp3' })] })
   })
 })

@@ -21,6 +21,47 @@ interface RenderStoryInput {
   tags?: string[]
 }
 
+export interface VoiceSample {
+  id: string
+  label: string
+  provider: string
+  model: string
+  sampleUrl: string
+}
+
+export interface StoryDraftChapterInput {
+  id: string
+  title: string
+  text: string
+  voice: string
+  speed: number
+  position: number
+}
+
+export interface CreateStoryDraftInput {
+  title: string
+  description?: string
+  coverMediaId?: string
+  targetAlbumId?: string
+  defaultVoice: string
+  defaultSpeed: number
+  chapters: StoryDraftChapterInput[]
+}
+
+export interface StoryDraft {
+  id: string
+  title: string
+  description?: string
+  coverMediaId?: string
+  defaultVoice: string
+  defaultSpeed: number
+  targetAlbumId?: string
+  status: string
+  chapters: StoryDraftChapterInput[]
+  createdAt: string
+  updatedAt: string
+}
+
 export interface StoryGalleryItem {
   id: string
   title: string
@@ -95,6 +136,22 @@ export function useStoryNarration() {
     return readJson<StoryListResponse>(response, 'Could not load stories')
   }
 
+  async function listVoices(): Promise<VoiceSample[]> {
+    const response = await fetch(`${generationBaseUrl()}/voices`, { headers: authHeaders() })
+    const body = await readJson<AdminApiResponse<{ voices: VoiceSample[] }>>(response, 'Could not load voices')
+    return body.data.voices
+  }
+
+  async function createDraft(input: CreateStoryDraftInput): Promise<StoryDraft> {
+    return post<StoryDraft>('/story-drafts', input)
+  }
+
+  async function listDrafts(): Promise<StoryDraft[]> {
+    const response = await fetch(`${generationBaseUrl()}/story-drafts`, { headers: authHeaders() })
+    const body = await readJson<AdminApiResponse<StoryDraft[]>>(response, 'Could not load story drafts')
+    return body.data
+  }
+
   async function promoteStory(id: string): Promise<void> {
     const response = await fetch(`${generationBaseUrl()}/stories/${encodeURIComponent(id)}/promote`, {
       method: 'POST',
@@ -111,5 +168,5 @@ export function useStoryNarration() {
     await readJson(response, 'Could not delete story')
   }
 
-  return { tryout, render, audioSrc, listStories, promoteStory, deleteStory }
+  return { tryout, render, audioSrc, listStories, listVoices, createDraft, listDrafts, promoteStory, deleteStory }
 }
