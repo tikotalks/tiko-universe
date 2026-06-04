@@ -21,6 +21,7 @@ public struct TikoAppHeader: View {
     private let onIconTap: (() -> Void)?
     private let avatar: String
     private let avatarURL: URL?
+    private let avatarBackground: Color?
     private let appColor: TikoAppColor
     private let actions: [TikoHeaderAction]
     private let isSettingsActive: Bool
@@ -36,6 +37,7 @@ public struct TikoAppHeader: View {
         onIconTap: (() -> Void)? = nil,
         avatar: String = "person.crop.circle.fill",
         avatarURL: URL? = nil,
+        avatarBackground: Color? = nil,
         appColor: TikoAppColor,
         actions: [TikoHeaderAction] = [],
         isSettingsActive: Bool = false,
@@ -50,6 +52,7 @@ public struct TikoAppHeader: View {
         self.onIconTap = onIconTap
         self.avatar = avatar
         self.avatarURL = avatarURL
+        self.avatarBackground = avatarBackground
         self.appColor = appColor
         self.actions = actions
         self.isSettingsActive = isSettingsActive
@@ -91,25 +94,26 @@ public struct TikoAppHeader: View {
 
     @ViewBuilder
     private var avatarContent: some View {
-        if let avatarURL {
-            AsyncImage(url: avatarURL) { image in
-                image.resizable().scaledToFill()
-            } placeholder: {
+        ZStack {
+            (avatarBackground ?? .white.opacity(0.28))
+            if let avatarURL {
+                AsyncImage(url: avatarURL) { phase in
+                    if case .success(let image) = phase {
+                        image.resizable().scaledToFit()
+                    } else {
+                        Image(systemName: avatar)
+                            .font(.system(size: 20, weight: .bold))
+                            .foregroundStyle(.white)
+                    }
+                }
+            } else {
                 Image(systemName: avatar)
                     .font(.system(size: 20, weight: .bold))
                     .foregroundStyle(.white)
             }
-            .frame(width: 48, height: 48)
-            .background(.white.opacity(0.28))
-            .clipShape(Circle())
-        } else {
-            Image(systemName: avatar)
-                .font(.system(size: 20, weight: .bold))
-                .foregroundStyle(.white)
-                .frame(width: 48, height: 48)
-                .background(.white.opacity(0.28))
-                .clipShape(Circle())
         }
+        .frame(width: 48, height: 48)
+        .clipShape(Circle())
     }
 
     public var body: some View {
@@ -190,6 +194,7 @@ public struct TikoAppShell<Content: View, SettingsContent: View>: View {
     @AppStorage("tiko.avatarURL") private var storedAvatarURLString = ""
     @AppStorage("tiko.parentMode") private var parentMode = true
     @AppStorage("tiko.parentCodeHash") private var parentCodeHash = ""
+    @AppStorage("tiko.favoriteColor") private var favoriteColorHex = ""
     @State private var showingAccount = false
     @State private var showingSettings = false
     @State private var showingProfileMenu = false
@@ -240,6 +245,7 @@ public struct TikoAppShell<Content: View, SettingsContent: View>: View {
                     onIconTap: onIconTap,
                     avatar: avatar,
                     avatarURL: fetchedAvatarURL,
+                    avatarBackground: colorFromHex(favoriteColorHex),
                     appColor: appColor,
                     actions: parentMode ? actions : [],
                     isSettingsActive: showingSettings,
@@ -305,6 +311,9 @@ public struct TikoAppShell<Content: View, SettingsContent: View>: View {
                     .transition(.opacity)
             }
         }
+        .onChange(of: storedAvatarURLString) { _, newValue in
+            fetchedAvatarURL = URL(string: newValue)
+        }
         .task {
             await fetchIconIfNeeded()
             await fetchAvatarIfNeeded()
@@ -312,6 +321,16 @@ public struct TikoAppShell<Content: View, SettingsContent: View>: View {
             try? await Task.sleep(nanoseconds: 500_000_000)
             withAnimation(.easeOut(duration: 0.4)) { splashVisible = false }
         }
+    }
+
+    private func colorFromHex(_ hex: String) -> Color? {
+        let h = hex.trimmingCharacters(in: CharacterSet.alphanumerics.inverted)
+        guard h.count == 6, let value = UInt64(h, radix: 16) else { return nil }
+        return Color(
+            red:   Double((value >> 16) & 0xFF) / 255,
+            green: Double((value >> 8)  & 0xFF) / 255,
+            blue:  Double(value         & 0xFF) / 255
+        )
     }
 
     private var selectedColorScheme: ColorScheme {

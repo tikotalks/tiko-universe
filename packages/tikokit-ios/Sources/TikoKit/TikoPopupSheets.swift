@@ -478,6 +478,7 @@ public struct TikoAccountSheet: View {
     @AppStorage("tiko.userName") private var userName = ""
     @AppStorage("tiko.userEmail") private var userEmail = ""
     @AppStorage("tiko.avatarURL") private var storedAvatarURLString = ""
+    @AppStorage("tiko.favoriteColor") private var favoriteColorHex = ""
 
     // Session state — drives which screen is shown
     @State private var isSignedIn = false
@@ -536,25 +537,28 @@ public struct TikoAccountSheet: View {
             onClose: onClose
         ) {
             VStack(spacing: 12) {
-                // Avatar
+                // Avatar — favourite colour background + image on top
                 Button { showingAvatarPicker = true } label: {
                     ZStack(alignment: .bottomTrailing) {
-                        Group {
+                        ZStack {
+                            // Background: favourite colour or default
+                            Circle().fill(profileFavoriteColor ?? appColor.palette.primary.opacity(0.18))
+
+                            // Image (assumed transparent background, sits on the colour)
                             if let url = URL(string: storedAvatarURLString), !storedAvatarURLString.isEmpty {
                                 AsyncImage(url: url) { phase in
                                     if case .success(let image) = phase {
-                                        image.resizable().scaledToFill()
+                                        image.resizable().scaledToFit()
                                     } else {
-                                        Circle().fill(appColor.palette.primary.opacity(0.18))
+                                        Image(systemName: "person.crop.circle.fill")
+                                            .font(.system(size: 46))
+                                            .foregroundStyle(.white.opacity(0.6))
                                     }
                                 }
                             } else {
-                                Circle().fill(appColor.palette.primary.opacity(0.18))
-                                    .overlay {
-                                        Image(systemName: "person.crop.circle.fill")
-                                            .font(.system(size: 46))
-                                            .foregroundStyle(appColor.palette.primary.opacity(0.5))
-                                    }
+                                Image(systemName: "person.crop.circle.fill")
+                                    .font(.system(size: 46))
+                                    .foregroundStyle(.white.opacity(0.6))
                             }
                         }
                         .frame(width: 80, height: 80)
@@ -604,6 +608,32 @@ public struct TikoAccountSheet: View {
                         .background(Color(.systemBackground))
                         .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
                 }
+
+                // Favourite colour
+                HStack(spacing: 12) {
+                    RoundedRectangle(cornerRadius: 12, style: .continuous)
+                        .fill(profileFavoriteColor ?? appColor.palette.primary.opacity(0.4))
+                        .frame(width: 40, height: 40)
+                        .overlay {
+                            Image(systemName: "paintpalette.fill")
+                                .font(.system(size: 16, weight: .bold))
+                                .foregroundStyle(.white)
+                        }
+                    Text("Favourite colour")
+                        .font(.system(size: 16, weight: .heavy, design: .rounded))
+                        .foregroundStyle(.primary)
+                    Spacer()
+                    ColorPicker("", selection: favoriteColorBinding, supportsOpacity: false)
+                        .labelsHidden()
+                        .frame(width: 36, height: 36)
+                }
+                .padding(14)
+                .background(Color(.systemBackground))
+                .overlay {
+                    RoundedRectangle(cornerRadius: 18, style: .continuous)
+                        .stroke(Color.primary.opacity(0.08), lineWidth: 1)
+                }
+                .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
 
                 // Sign out
                 Button {
@@ -749,6 +779,31 @@ public struct TikoAccountSheet: View {
                 .foregroundStyle(.secondary)
             }
         }
+    }
+
+    // MARK: - Colour helpers
+
+    private var profileFavoriteColor: Color? {
+        let h = favoriteColorHex.trimmingCharacters(in: CharacterSet.alphanumerics.inverted)
+        guard h.count == 6, let v = UInt64(h, radix: 16) else { return nil }
+        return Color(
+            red:   Double((v >> 16) & 0xFF) / 255,
+            green: Double((v >> 8)  & 0xFF) / 255,
+            blue:  Double(v         & 0xFF) / 255
+        )
+    }
+
+    private var favoriteColorBinding: Binding<Color> {
+        Binding(
+            get: { profileFavoriteColor ?? .orange },
+            set: { color in
+                let c = UIColor(color)
+                var r: CGFloat = 0, g: CGFloat = 0, b: CGFloat = 0
+                c.getRed(&r, green: &g, blue: &b, alpha: nil)
+                favoriteColorHex = String(format: "%02X%02X%02X",
+                                          Int(r * 255), Int(g * 255), Int(b * 255))
+            }
+        )
     }
 
     // MARK: - Actions
