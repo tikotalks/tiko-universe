@@ -3,7 +3,6 @@ import { computed, ref, watch } from 'vue'
 import { useBemm } from 'bemm'
 import { Button } from '@sil/ui'
 import { useAppDefaults, type AppResource, type TikoManagedApp } from '../composables/useAppDefaults'
-import { useCardsDefaults, type CardsCollection } from '../composables/useCardsDefaults'
 import CardsEditor from '../components/defaults/CardsEditor.vue'
 import YesNoEditor from '../components/defaults/YesNoEditor.vue'
 import SequenceEditor from '../components/defaults/SequenceEditor.vue'
@@ -28,8 +27,7 @@ const editorByApp = {
   timer: TimerEditor,
 } as const
 
-const { loading, saving, error, read, write } = useAppDefaults()
-const cardsDefaults = useCardsDefaults()
+const { loading, saving, error, readDefaults, writeDefaults } = useAppDefaults()
 const selectedApp = ref<TikoManagedApp>('cards')
 const stateValue = ref<Record<string, unknown>>({})
 const version = ref(0)
@@ -39,41 +37,23 @@ const dirty = ref(false)
 
 const selectedMeta = computed(() => apps.find(app => app.id === selectedApp.value)!)
 const currentEditor = computed(() => editorByApp[selectedApp.value])
-const isLoading = computed(() =>
-  selectedApp.value === 'cards' ? cardsDefaults.loading.value : loading.value,
-)
-const isSaving = computed(() =>
-  selectedApp.value === 'cards' ? cardsDefaults.saving.value : saving.value,
-)
 
 async function loadCurrent() {
   savedMessage.value = null
-  if (selectedApp.value === 'cards') {
-    const payload = await cardsDefaults.read()
-    stateValue.value = { collections: payload.collections }
-    version.value = 0
-    updatedAt.value = null
-  } else {
-    const payload = await read(selectedApp.value, 'state' satisfies AppResource)
-    stateValue.value = (payload.state ?? {}) as Record<string, unknown>
-    version.value = payload.version
-    updatedAt.value = payload.updatedAt
-  }
+  const payload = await readDefaults(selectedApp.value, 'state' satisfies AppResource)
+  stateValue.value = (payload.state ?? {}) as Record<string, unknown>
+  version.value = payload.version
+  updatedAt.value = payload.updatedAt
   dirty.value = false
 }
 
 async function onSave() {
   savedMessage.value = null
   try {
-    if (selectedApp.value === 'cards') {
-      await cardsDefaults.write(stateValue.value.collections as CardsCollection[])
-      savedMessage.value = 'Saved cards defaults.'
-    } else {
-      const payload = await write(selectedApp.value, 'state', stateValue.value, version.value)
-      version.value = payload.version
-      updatedAt.value = payload.updatedAt
-      savedMessage.value = `Saved ${selectedApp.value} defaults.`
-    }
+    const payload = await writeDefaults(selectedApp.value, 'state', stateValue.value, version.value)
+    version.value = payload.version
+    updatedAt.value = payload.updatedAt
+    savedMessage.value = `Saved ${selectedApp.value} defaults.`
     dirty.value = false
   } catch (e) {
     savedMessage.value = null
@@ -124,11 +104,11 @@ watch(selectedApp, () => {
           </p>
         </div>
         <div :class="bemm('panel-actions')">
-          <Button variant="outline" :loading="isLoading" :disabled="isLoading" @click="loadCurrent">
-            {{ isLoading ? 'Loading…' : 'Reload' }}
+          <Button variant="outline" :loading="loading" :disabled="loading" @click="loadCurrent">
+            {{ loading ? 'Loading…' : 'Reload' }}
           </Button>
-          <Button :loading="isSaving" :disabled="isSaving || !dirty" @click="onSave">
-            {{ isSaving ? 'Saving…' : 'Save changes' }}
+          <Button :loading="saving" :disabled="saving || !dirty" @click="onSave">
+            {{ saving ? 'Saving…' : 'Save changes' }}
           </Button>
         </div>
       </header>

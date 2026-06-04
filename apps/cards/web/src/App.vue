@@ -438,6 +438,7 @@ const navPath = ref<string[]>(stored.navPath ?? [])
 const hiddenDefaults = ref<string[]>(stored.hiddenDefaults ?? [])
 const collectionOverrides = ref<Record<string, Partial<{ title: string; icon: string; color: string; image: string; order: number }>>>(stored.collectionOverrides ?? {})
 const tileOverrides = ref<Record<string, Partial<{ title: string; speech: string; color: string; image: string }>>>(stored.tileOverrides ?? {})
+const remoteDefaults = ref<CardsCollection[]>([])
 const editMode = ref(false)
 const settingsOpen = ref(false)
 const speakStatus = ref<SpeakStatus>('idle')
@@ -526,7 +527,8 @@ function applyOverrides(collection: CardsCollection): CardsCollection {
 }
 
 const rootCollections = computed<CardsCollection[]>(() => {
-  const defaults = VIRTUAL_DEFAULTS
+  const baseDefaults = remoteDefaults.value.length > 0 ? remoteDefaults.value : VIRTUAL_DEFAULTS
+  const defaults = baseDefaults
     .filter((c) => !hiddenDefaults.value.includes(c.id))
     .map(applyOverrides)
   const all = [...defaults, ...userCollections.value]
@@ -724,12 +726,18 @@ function applyState(state: CardsState, version?: number) {
 
 async function hydrateRemoteData() {
   if (!sessionToken.value) return
-  const [settings, state] = await Promise.all([
+  const [settings, state, defaults] = await Promise.all([
     dataClient.getSettings(appId, sessionToken.value),
     dataClient.getState(appId, sessionToken.value),
+    dataClient.getAppDefaults(appId, 'state').catch(() => null),
   ])
   applySettings(settings.settings, settings.version)
   applyState(state.state, state.version)
+
+  // Use remote defaults if available, fall back to built-in VIRTUAL_DEFAULTS
+  if (defaults?.state?.collections && Array.isArray(defaults.state.collections)) {
+    remoteDefaults.value = defaults.state.collections as CardsCollection[]
+  }
 
   // Load parent code from user profile
   try {
@@ -799,7 +807,8 @@ async function fetchMediaForCollection(collectionId: string) {
     }
 
     // Find the default collection and match tiles to media
-    const collection = VIRTUAL_DEFAULTS.find((c) => c.id === collectionId)
+    const baseDefaults = remoteDefaults.value.length > 0 ? remoteDefaults.value : VIRTUAL_DEFAULTS
+    const collection = baseDefaults.find((c) => c.id === collectionId)
     if (!collection) return
 
     const updates: Record<string, string> = {}
@@ -1675,7 +1684,7 @@ onMounted(async () => {
     bootstrapped.value = true
     saveLocalFallback()
     // Fetch tiko media images for all visible default collections
-    const visibleDefaults = VIRTUAL_DEFAULTS.filter((c) => !hiddenDefaults.value.includes(c.id))
+    const visibleDefaults = (remoteDefaults.value.length > 0 ? remoteDefaults.value : VIRTUAL_DEFAULTS).filter((c) => !hiddenDefaults.value.includes(c.id))
     for (const col of visibleDefaults) {
       fetchMediaForCollection(col.id).catch(() => {})
     }

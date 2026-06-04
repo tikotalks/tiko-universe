@@ -49,6 +49,7 @@ class MemoryD1Database {
   sessions = new Map<string, Row>()
   settings = new Map<string, Row>()
   state = new Map<string, Row>()
+  defaults = new Map<string, Row>()
 
   prepare(sql: string): MemoryStatement {
     return new MemoryStatement(this, sql)
@@ -85,6 +86,18 @@ class MemoryD1Database {
     if (normalized.startsWith('INSERT INTO app_state')) {
       const [userId, app, dataJson, updatedAt, version] = values
       this.state.set(`${userId}:${app}`, { user_id: userId, app, data_json: dataJson, updated_at: updatedAt, version })
+      return new MemoryResult()
+    }
+
+    // app_defaults table (global defaults)
+    if (normalized.includes('FROM app_defaults') && normalized.startsWith('SELECT data_json')) {
+      const key = `${values[0]}:${values[1]}`
+      const row = this.defaults.get(key)
+      return new MemoryResult(row ? [row] : [])
+    }
+    if (normalized.startsWith('INSERT INTO app_defaults')) {
+      const [app, resource, dataJson, updatedAt, version] = values
+      this.defaults.set(`${app}:${resource}`, { app, resource, data_json: dataJson, updated_at: updatedAt, version })
       return new MemoryResult()
     }
 
@@ -241,5 +254,85 @@ describe('@tiko/data client', () => {
     })
 
     await expect(client.getSettings('yes-no', 'session-token')).rejects.toMatchObject({ status: 409, code: 'version_conflict', field: 'version' })
+  })
+})
+
+describe('global defaults endpoints', () => {
+  it('returns built-in defaults when no global defaults are stored', async () => {
+    const { response, body } = await fetchJson('/v1/apps/defaults/cards/state', { headers: auth })
+    expect(response.status).toBe(200)
+    expect(body.version).toBe(0)
+    expect(body.updatedAt).toBeNull()
+    expect(body.state).toEqual({})
+  })
+
+  it('requires authentication for GET', async () => {
+    const { response } = await fetchJson('/v1/apps/defaults/yes-no/settings')
+    expect(response.status).toBe(401)
+  })
+
+  it('writes and reads back global defaults', async () => {
+    const testEnv = await env()
+
+    const write = await fetchJson('/v1/apps/defaults/cards/state', {
+      method: 'PUT',
+      headers: auth,
+      body: JSON.stringify({ state: { collections: [{ id: 'animals', title: 'Animals', tiles: [{ id: 'dog', title: 'Dog', speech: 'Dog', type: 'item' }] }] }, version: 0 })
+    }, testEnv)
+    expect(write.response.status).toBe(200)
+    expect(write.body.version).toBe(1)
+    expect(write.body.state.collections[0].title).toBe('Animals')
+
+    const read = await fetchJson('/v1/apps/defaults/cards/state', { headers: auth }, testEnv)
+    expect(read.response.status).toBe(200)
+    expect(read.body.state.collections[0].tiles[0].speech).toBe('Dog')
+  })
+
+  it('requires authentication for PUT', async () => {
+    const { response } = await fetchJson('/v1/apps/defaults/cards/state', {
+      method: 'PUT',
+      body: JSON.stringify({ state: { collections: [] }, version: 0 })
+    })
+    expect(response.status).toBe(401)
+  })
+
+  it('enforces version conflict on defaults', async () => {
+    const testEnv = await env()
+
+    const write1 = await fetchJson('/v1/apps/defaults/cards/state', {
+      method: 'PUT',
+      headers: auth,
+      body: JSON.stringify({ state: { collections: [] }, version: 0 })
+    }, testEnv)
+    expect(write1.body.version).toBe(1)
+
+    const conflict = await fetchJson('/v1/apps/defaults/cards/state', {
+      method: 'PUT',
+      headers: auth,
+      body: JSON.stringify({ state: { collections: [] }, version: 0 })
+    }, testEnv)
+    expect(conflict.response.status).toBe(409)
+  })
+
+  it('per-user data is independent of global defaults', async () => {
+    const testEnv = await env()
+
+    await fetchJson('/v1/apps/defaults/cards/state', {
+      method: 'PUT',
+      headers: auth,
+      body: JSON.stringify({ state: { collections: [{ id: 'global', title: 'Global' }] }, version: 0 })
+    }, testEnv)
+
+    await fetchJson('/v1/apps/cards/state', {
+      method: 'PUT',
+      headers: auth,
+      body: JSON.stringify({ state: { collections: [{ id: 'user', title: 'User' }] }, version: 0 })
+    }, testEnv)
+
+    const global = await fetchJson('/v1/apps/defaults/cards/state', { headers: auth }, testEnv)
+    const user = await fetchJson('/v1/apps/cards/state', { headers: auth }, testEnv)
+
+    expect(global.body.state.collections[0].id).toBe('global')
+    expect(user.body.state.collections[0].id).toBe('user')
   })
 })
