@@ -786,6 +786,17 @@ interface GeneratedImageRecord {
 }
 
 const ALLOWED_IMAGE_SIZES = new Set(['1024x1024', '1024x1792', '1792x1024'])
+const OPENAI_IMAGE_MODEL = 'gpt-image-1'
+
+function toOpenAiImageSize(size: string): string {
+  if (size === '1024x1792') return '1024x1536'
+  if (size === '1792x1024') return '1536x1024'
+  return size
+}
+
+function toOpenAiImageQuality(quality: string): string {
+  return quality === 'hd' ? 'high' : 'medium'
+}
 
 async function generateImage(request: Request, env: Env): Promise<Response> {
   let body: ImageGenerationRequest
@@ -811,6 +822,8 @@ async function generateImage(request: Request, env: Env): Promise<Response> {
   const size = body.size || '1024x1024'
   const quality = body.quality === 'hd' ? 'hd' : 'standard'
   const style = body.style === 'natural' ? 'natural' : 'vivid'
+  const providerSize = toOpenAiImageSize(size)
+  const providerQuality = toOpenAiImageQuality(quality)
 
   const response = await fetch('https://api.openai.com/v1/images/generations', {
     method: 'POST',
@@ -819,11 +832,11 @@ async function generateImage(request: Request, env: Env): Promise<Response> {
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      model: 'dall-e-3',
+      model: OPENAI_IMAGE_MODEL,
       prompt: body.prompt.trim(),
       n: 1,
-      size,
-      quality,
+      size: providerSize,
+      quality: providerQuality,
     }),
   })
 
@@ -872,7 +885,7 @@ async function generateImage(request: Request, env: Env): Promise<Response> {
     id,
     body.prompt.trim(),
     imageData.revised_prompt || null,
-    'dall-e-3',
+    OPENAI_IMAGE_MODEL,
     size,
     quality,
     style,
