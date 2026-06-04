@@ -1,3 +1,4 @@
+import { readFileSync } from 'node:fs'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import worker, { internals } from '../workers/generation-api/src/index'
 import type { Env } from '../workers/generation-api/src/index'
@@ -110,7 +111,9 @@ function makeEnv(overrides: Partial<Env> = {}): Env & { db: MemoryD1; bucket: Me
     GENERATION_DB: db,
     GENERATED_MEDIA_BUCKET: bucket,
     OPENAI_API_KEY: 'test-key',
+    ELEVENLABS_API_KEY: 'test-eleven-key',
     API_KEYS: 'test-api-key',
+    IDENTITY_BASE_URL: 'https://identity.test/v1',
     ...overrides,
   }
 }
@@ -140,7 +143,7 @@ describe('generation-api TTS contract', () => {
   it('returns a D1-backed cache hit without calling the provider', async () => {
     const normalized = internals.normalizeTtsRequest({ text: ' Yes ', language: 'EN', provider: 'auto' })
     const requestHash = await internals.generateRequestHash(normalized)
-    const env = makeEnv({ OPENAI_API_KEY: undefined })
+    const env = makeEnv({ OPENAI_API_KEY: undefined, ELEVENLABS_API_KEY: undefined })
     env.db.byHash.set(requestHash, {
       id: 'cached-audio',
       request_hash: requestHash,
@@ -173,7 +176,7 @@ describe('generation-api TTS contract', () => {
   })
 
   it('returns a safe missing-provider-key error on cache miss', async () => {
-    const env = makeEnv({ OPENAI_API_KEY: undefined })
+    const env = makeEnv({ OPENAI_API_KEY: undefined, ELEVENLABS_API_KEY: undefined })
     const response = await worker.fetch(new Request('https://api.test/v1/generation/tts', {
       method: 'POST',
       body: JSON.stringify({ text: 'Hello', language: 'en' }),
@@ -181,7 +184,7 @@ describe('generation-api TTS contract', () => {
 
     expect(response.status).toBe(503)
     await expect(json(response)).resolves.toMatchObject({
-      error: { code: 'tts_generation_not_configured', message: 'TTS generation is not configured.' }
+      error: { code: 'elevenlabs_tts_not_configured', message: 'ElevenLabs TTS is not configured.' }
     })
   })
 
@@ -239,7 +242,7 @@ describe('generation-api TTS contract', () => {
         description: 'A bedtime story',
         coverMediaId: 'cover_1',
         targetAlbumId: 'album_1',
-        defaultVoice: 'nova',
+        defaultVoice: '21m00Tcm4TlvDq8ikWAM',
         chapters: [
           { title: 'Climb', text: 'Up we go', voice: 'nova', position: 1 },
           { title: 'Home', text: 'Back we go', voice: 'fable', position: 2 },
@@ -249,7 +252,44 @@ describe('generation-api TTS contract', () => {
     const draftBody = await json(createDraft)
 
     expect(createDraft.status).toBe(201)
-    expect(draftBody.data).toMatchObject({ title: 'The Mountain', coverMediaId: 'cover_1', targetAlbumId: 'album_1', defaultVoice: 'nova' })
+    expect(draftBody.data).toMatchObject({ title: 'The Mountain', coverMediaId: 'cover_1', targetAlbumId: 'album_1', defaultVoice: '21m00Tcm4TlvDq8ikWAM' })
     expect(draftBody.data.chapters).toHaveLength(2)
+  })
+
+  it('uses the identity service binding for session-authenticated mutations', async () => {
+    const identityFetch = vi.fn(async (input: Request | string) => {
+      expect(String(input)).toBe('https://identity.test/v1/identity/session')
+      return new Response(JSON.stringify({ subject: { id: 'sub_admin' } }), {
+        status: 200,
+        headers: { 'content-type': 'application/json' },
+      })
+    })
+    const env = makeEnv({
+      API_KEYS: undefined,
+      OPENAI_API_KEY: undefined,
+      IDENTITY_SERVICE: { fetch: identityFetch },
+    } as Partial<Env>)
+
+    const response = await worker.fetch(new Request('https://api.test/v1/generation/image', {
+      method: 'POST',
+      headers: { authorization: 'Bearer session-token', 'content-type': 'application/json' },
+      body: JSON.stringify({ prompt: 'A friendly robot' }),
+    }), env)
+
+    expect(identityFetch).toHaveBeenCalledTimes(1)
+    expect(response.status).toBe(503)
+    await expect(json(response)).resolves.toMatchObject({
+      error: { code: 'image_generation_not_configured' }
+    })
+  })
+
+  it('declares identity service bindings for generation-api deployments', () => {
+    const wrangler = readFileSync('workers/generation-api/wrangler.toml', 'utf8')
+
+    expect(wrangler).toContain('binding = "IDENTITY_SERVICE"')
+    expect(wrangler).toContain('service = "tiko-identity-api-dev"')
+    expect(wrangler).toContain('service = "tiko-identity-api"')
+    expect(wrangler).toContain('IDENTITY_BASE_URL = "https://api.tikotalks.com/v1"')
+    expect(wrangler).toContain('IDENTITY_BASE_URL = "https://identity.tikoapi.org/v1"')
   })
 })

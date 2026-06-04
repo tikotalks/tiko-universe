@@ -4,11 +4,15 @@ export interface Env {
   GENERATION_DB: D1DatabaseLike
   GENERATED_MEDIA_BUCKET: R2BucketLike
   OPENAI_API_KEY?: string
+  ELEVENLABS_API_KEY?: string
   API_KEYS?: string
   AUTH_DB?: {
     prepare(sql: string): { bind(...values: unknown[]): { first<T>(): Promise<T | null>; all(): Promise<{ results: unknown[] }> } }
   }
   IDENTITY_BASE_URL?: string
+  IDENTITY_SERVICE?: {
+    fetch(input: Request | string, init?: RequestInit): Promise<Response>
+  }
 }
 
 export interface D1DatabaseLike {
@@ -21,7 +25,7 @@ export interface R2BucketLike {
   delete(key: string): Promise<unknown>
 }
 
-export type TtsProvider = 'openai' | 'azure' | 'auto'
+export type TtsProvider = 'openai' | 'azure' | 'elevenlabs' | 'auto'
 
 export interface GenerationTtsRequest {
   text: string
@@ -71,15 +75,39 @@ const CORS_HEADERS = {
   'Access-Control-Allow-Headers': 'Content-Type, Authorization',
 }
 const OPENAI_VOICES = new Set(['alloy', 'ash', 'ballad', 'coral', 'echo', 'fable', 'nova', 'onyx', 'sage', 'shimmer', 'verse'])
-const VOICE_CATALOG = Array.from(OPENAI_VOICES).map((id) => ({
+const DEFAULT_ELEVENLABS_MODEL = 'eleven_multilingual_v2'
+const DEFAULT_ELEVENLABS_VOICE = '21m00Tcm4TlvDq8ikWAM'
+const ELEVENLABS_MODELS = new Set(['eleven_multilingual_v2', 'eleven_turbo_v2_5', 'eleven_flash_v2_5'])
+const ELEVENLABS_VOICE_ID_RE = /^[a-zA-Z0-9_-]{6,64}$/
+const DEFAULT_ELEVENLABS_VOICES = [
+  { id: DEFAULT_ELEVENLABS_VOICE, label: 'Rachel' },
+  { id: 'AZnzlk1XvdvUeBnXmlld', label: 'Domi' },
+  { id: 'EXAVITQu4vr4xnSDxMaL', label: 'Bella' },
+  { id: 'ErXwobaYiN019PkySvjV', label: 'Antoni' },
+  { id: 'MF3mGyEYCl7XYWbV9V6O', label: 'Elli' },
+  { id: 'TxGEqnHWrfWFTfGW9XjX', label: 'Josh' },
+  { id: 'VR6AewLTigWG4xSOukaG', label: 'Arnold' },
+  { id: 'pNInz6obpgDQGcFmaJgB', label: 'Adam' },
+  { id: 'yoZ06aMxZJJ28mfd3POQ', label: 'Sam' },
+]
+const OPENAI_VOICE_CATALOG = Array.from(OPENAI_VOICES).map((id) => ({
   id,
-  provider: 'openai',
+  provider: 'openai' as const,
   model: 'tts-1',
   label: id.charAt(0).toUpperCase() + id.slice(1),
-  sampleUrl: `/v1/generation/voice-samples/${id}`,
+  sampleUrl: `/v1/generation/voice-samples/${id}?provider=openai&model=tts-1`,
 }))
+const ELEVENLABS_VOICE_CATALOG = DEFAULT_ELEVENLABS_VOICES.map((voice) => ({
+  id: voice.id,
+  provider: 'elevenlabs' as const,
+  model: DEFAULT_ELEVENLABS_MODEL,
+  label: voice.label,
+  sampleUrl: `/v1/generation/voice-samples/${voice.id}?provider=elevenlabs&model=${DEFAULT_ELEVENLABS_MODEL}`,
+}))
+const VOICE_CATALOG = [...ELEVENLABS_VOICE_CATALOG, ...OPENAI_VOICE_CATALOG]
 
 const AUDIO_KEY_RE = /^audio\/[a-f0-9]{32}\.mp3$/
+const VOICE_SAMPLE_KEY_RE = /^voice-samples\/[a-z0-9._-]+\/[a-zA-Z0-9_-]{6,64}\.mp3$/
 
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
@@ -87,8 +115,9 @@ export default {
 
     const url = new URL(request.url)
     if (url.pathname === '/v1/generation/health' && request.method === 'GET') return generationHealth()
-    if (url.pathname === '/v1/generation/voices' && request.method === 'GET') return json({ data: { voices: VOICE_CATALOG }, meta: { schemaVersion: 1 } })
+    if (url.pathname === '/v1/generation/voices' && request.method === 'GET') return listVoices(url, env)
     if (url.pathname === '/v1/generation/tts' && request.method === 'POST') return generateTts(request, env)
+    if (url.pathname.startsWith('/v1/generation/voice-samples/') && request.method === 'GET') return getVoiceSample(url, env)
     if (url.pathname.startsWith('/v1/generation/audio/') && request.method === 'GET') return getAudio(url.pathname, env)
     if (url.pathname === '/v1/generation/image' && request.method === 'POST') return requireAuth(request, env, () => generateImage(request, env))
     if (url.pathname.startsWith('/v1/generation/images/') && url.pathname.endsWith('/binary') && request.method === 'GET') return getImage(url.pathname, env)
@@ -106,6 +135,37 @@ export default {
 
     return apiError('not_found', 'Route not found.', 404)
   },
+}
+
+async function listVoices(url: URL, env: Env): Promise<Response> {
+  const requestedModel = url.searchParams.get('model')?.trim()
+  const provider = url.searchParams.get('provider')?.trim()
+  const dynamicElevenLabsVoices = await fetchElevenLabsVoices(env).catch(() => ELEVENLABS_VOICE_CATALOG)
+  let voices = [...dynamicElevenLabsVoices, ...OPENAI_VOICE_CATALOG]
+  if (provider) voices = voices.filter((voice) => voice.provider === provider)
+  if (requestedModel) {
+    const modelProvider = requestedModel.startsWith('eleven_') ? 'elevenlabs' : 'openai'
+    voices = voices.filter((voice) => voice.provider === modelProvider).map((voice) => ({ ...voice, model: requestedModel }))
+  }
+  return json({ data: { voices }, meta: { schemaVersion: 1 } })
+}
+
+async function fetchElevenLabsVoices(env: Env) {
+  if (!env.ELEVENLABS_API_KEY) return ELEVENLABS_VOICE_CATALOG
+  const response = await fetch('https://api.elevenlabs.io/v1/voices', { headers: { 'xi-api-key': env.ELEVENLABS_API_KEY } })
+  if (!response.ok) return ELEVENLABS_VOICE_CATALOG
+  const body = await response.json() as { voices?: Array<{ voice_id?: string; name?: string; labels?: Record<string, string> }> }
+  const voices = (body.voices ?? [])
+    .filter((voice) => voice.voice_id && ELEVENLABS_VOICE_ID_RE.test(voice.voice_id))
+    .map((voice) => ({
+      id: voice.voice_id!,
+      provider: 'elevenlabs' as const,
+      model: DEFAULT_ELEVENLABS_MODEL,
+      label: voice.name || voice.voice_id!,
+      labels: voice.labels ?? {},
+      sampleUrl: `/v1/generation/voice-samples/${voice.voice_id}?provider=elevenlabs&model=${DEFAULT_ELEVENLABS_MODEL}`,
+    }))
+  return voices.length ? voices : ELEVENLABS_VOICE_CATALOG
 }
 
 function generationHealth(): Response {
@@ -200,7 +260,7 @@ async function createStoryDraft(request: Request, env: Env): Promise<Response> {
 
   const title = typeof body.title === 'string' ? body.title.trim() : ''
   if (!title) return apiError('missing_title', 'Story title is required.', 400, 'title')
-  const defaultVoice = typeof body.defaultVoice === 'string' && OPENAI_VOICES.has(body.defaultVoice) ? body.defaultVoice : 'nova'
+  const defaultVoice = typeof body.defaultVoice === 'string' && ELEVENLABS_VOICE_ID_RE.test(body.defaultVoice) ? body.defaultVoice : DEFAULT_ELEVENLABS_VOICE
   const defaultSpeed = typeof body.defaultSpeed === 'number' ? clamp(body.defaultSpeed, 0.25, 4) : 1
   const chapters = Array.isArray(body.chapters) ? body.chapters.map((chapter, index) => normalizeDraftChapter(chapter as StoryDraftChapter, index, defaultVoice, defaultSpeed)) : []
   const now = new Date().toISOString()
@@ -356,15 +416,20 @@ function ttsResponseFromRecord(record: GenerationAudioRecord, cached: boolean) {
 }
 
 export function normalizeTtsRequest(body: GenerationTtsRequest): NormalizedTtsRequest {
-  const provider = body.provider === 'azure' ? 'azure' : body.provider === 'openai' ? 'openai' : 'auto'
-  const voice = body.voice && OPENAI_VOICES.has(body.voice) ? body.voice : 'nova'
+  const requestedModel = body.model?.trim()
+  const modelProvider = requestedModel?.startsWith('eleven_') ? 'elevenlabs' : requestedModel?.startsWith('tts-') || requestedModel === 'gpt-4o-mini-tts' ? 'openai' : null
+  const provider = body.provider === 'azure' ? 'azure' : body.provider === 'openai' ? 'openai' : body.provider === 'elevenlabs' ? 'elevenlabs' : modelProvider ?? 'elevenlabs'
+  const voice = provider === 'openai'
+    ? (body.voice && OPENAI_VOICES.has(body.voice) ? body.voice : 'nova')
+    : (body.voice && ELEVENLABS_VOICE_ID_RE.test(body.voice) ? body.voice : DEFAULT_ELEVENLABS_VOICE)
+  const model = requestedModel || (provider === 'openai' ? 'tts-1' : DEFAULT_ELEVENLABS_MODEL)
 
   return {
     text: body.text.trim(),
     language: body.language.trim().toLowerCase(),
     provider,
     voice,
-    model: body.model?.trim() || 'tts-1',
+    model,
     speed: clamp(body.speed ?? 1, 0.25, 4),
     pitch: clamp(body.pitch ?? 0, -20, 20),
   }
@@ -411,6 +476,7 @@ async function findAudioById(id: string, env: Env): Promise<GenerationAudioRecor
 
 async function generateAudioBytes(input: NormalizedTtsRequest, env: Env): Promise<GenerateAudioSuccess | GenerateAudioFailure> {
   if (input.provider === 'azure') return { success: false, error: 'azure_tts_not_configured', status: 501 }
+  if (input.provider === 'elevenlabs') return generateElevenLabsAudioBytes(input, env)
   if (!env.OPENAI_API_KEY) return { success: false, error: 'tts_generation_not_configured', status: 503 }
 
   const response = await fetch('https://api.openai.com/v1/audio/speech', {
@@ -433,10 +499,60 @@ async function generateAudioBytes(input: NormalizedTtsRequest, env: Env): Promis
   return { success: true, bytes: new Uint8Array(await response.arrayBuffer()), contentType: 'audio/mpeg' }
 }
 
+async function generateElevenLabsAudioBytes(input: NormalizedTtsRequest, env: Env): Promise<GenerateAudioSuccess | GenerateAudioFailure> {
+  if (!env.ELEVENLABS_API_KEY) return { success: false, error: 'elevenlabs_tts_not_configured', status: 503 }
+  const model = ELEVENLABS_MODELS.has(input.model) ? input.model : DEFAULT_ELEVENLABS_MODEL
+  const response = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${encodeURIComponent(input.voice)}?output_format=mp3_44100_128`, {
+    method: 'POST',
+    headers: {
+      'xi-api-key': env.ELEVENLABS_API_KEY,
+      'Content-Type': 'application/json',
+      Accept: 'audio/mpeg',
+    },
+    body: JSON.stringify({
+      text: input.text,
+      model_id: model,
+      voice_settings: { stability: 0.5, similarity_boost: 0.75, style: 0, use_speaker_boost: true, speed: input.speed },
+      apply_text_normalization: 'auto',
+    }),
+  })
+  if (!response.ok) return { success: false, error: 'tts_provider_failed', status: 502 }
+  return { success: true, bytes: new Uint8Array(await response.arrayBuffer()), contentType: 'audio/mpeg' }
+}
+
+async function getVoiceSample(url: URL, env: Env): Promise<Response> {
+  const voiceId = decodeURIComponent(url.pathname.replace('/v1/generation/voice-samples/', ''))
+  if (!ELEVENLABS_VOICE_ID_RE.test(voiceId) && !OPENAI_VOICES.has(voiceId)) return apiError('invalid_voice_id', 'Voice id is invalid.', 400)
+  const provider = url.searchParams.get('provider') === 'openai' ? 'openai' : 'elevenlabs'
+  const model = url.searchParams.get('model') || (provider === 'openai' ? 'tts-1' : DEFAULT_ELEVENLABS_MODEL)
+  const safeModel = model.replace(/[^a-zA-Z0-9._-]/g, '') || (provider === 'openai' ? 'tts-1' : DEFAULT_ELEVENLABS_MODEL)
+  const r2Key = `voice-samples/${safeModel}/${voiceId}.mp3`
+  if (!VOICE_SAMPLE_KEY_RE.test(r2Key)) return apiError('invalid_voice_sample', 'Voice sample path is invalid.', 400)
+  const existing = await env.GENERATED_MEDIA_BUCKET.get(r2Key)
+  if (existing) return audioResponse(existing, 'public, max-age=31536000, immutable')
+  const generated = await generateAudioBytes(normalizeTtsRequest({
+    text: 'Hello from Tiko. This is how this voice sounds.',
+    language: 'en',
+    provider,
+    voice: voiceId,
+    model: safeModel,
+  }), env)
+  if (generated.success === false) return apiError(generated.error, providerSafeMessage(generated.error), generated.status ?? 503)
+  await env.GENERATED_MEDIA_BUCKET.put(r2Key, generated.bytes, { httpMetadata: { contentType: generated.contentType, cacheControl: 'public, max-age=31536000, immutable' } })
+  return new Response(bytesBody(generated.bytes), { headers: { ...CORS_HEADERS, 'Content-Type': generated.contentType, 'Cache-Control': 'public, max-age=31536000, immutable' } })
+}
+
+function bytesBody(bytes: Uint8Array): ArrayBuffer {
+  const body = new ArrayBuffer(bytes.byteLength)
+  new Uint8Array(body).set(bytes)
+  return body
+}
+
 function providerSafeMessage(code: string) {
   switch (code) {
     case 'azure_tts_not_configured': return 'Azure TTS is not configured.'
     case 'tts_generation_not_configured': return 'TTS generation is not configured.'
+    case 'elevenlabs_tts_not_configured': return 'ElevenLabs TTS is not configured.'
     case 'tts_provider_failed': return 'TTS provider failed.'
     default: return 'TTS generation failed.'
   }
@@ -496,7 +612,7 @@ async function generateStoryTryout(request: Request, env: Env): Promise<Response
   if (!body.text || typeof body.text !== 'string' || !body.text.trim()) return apiError('missing_text', 'Text is required.', 400, 'text')
   if (body.text.length > 800) return apiError('text_too_long', 'Tryout text must be 800 characters or fewer.', 400, 'text')
 
-  const normalized = normalizeTtsRequest({ text: body.text, language: body.language || 'en', provider: 'openai', voice: body.voice, model: body.model, speed: body.speed })
+  const normalized = normalizeTtsRequest({ text: body.text, language: body.language || 'en', provider: 'elevenlabs', voice: body.voice, model: body.model, speed: body.speed })
   const generated = await generateAudioBytes(normalized, env)
   if (generated.success === false) return apiError(generated.error, providerSafeMessage(generated.error), generated.status ?? 503)
 
@@ -520,12 +636,12 @@ async function renderStory(request: Request, env: Env): Promise<Response> {
   if (cleanSegments.some(segment => !segment.text)) return apiError('empty_segment', 'Every segment needs text.', 400, 'segments')
   if (cleanSegments.reduce((sum, segment) => sum + segment.text.length, 0) > 12000) return apiError('story_too_long', 'Story text must be 12000 characters or fewer.', 400, 'segments')
 
-  const voice = body.voice && OPENAI_VOICES.has(body.voice) ? body.voice : 'nova'
+  const voice = body.voice && ELEVENLABS_VOICE_ID_RE.test(body.voice) ? body.voice : DEFAULT_ELEVENLABS_VOICE
   const speed = clamp(body.speed ?? 1, 0.25, 4)
   const chunks: Uint8Array[] = []
 
   for (const segment of cleanSegments) {
-    const generated = await generateAudioBytes(normalizeTtsRequest({ text: segment.text, language: body.language || 'en', provider: 'openai', voice, model: body.model || 'tts-1', speed }), env)
+    const generated = await generateAudioBytes(normalizeTtsRequest({ text: segment.text, language: body.language || 'en', provider: 'elevenlabs', voice, model: body.model || DEFAULT_ELEVENLABS_MODEL, speed }), env)
     if (generated.success === false) return apiError(generated.error, providerSafeMessage(generated.error), generated.status ?? 503)
     chunks.push(generated.bytes)
     if (segment.pauseAfterMs > 0) chunks.push(makeSilentMp3Padding())

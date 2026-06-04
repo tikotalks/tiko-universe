@@ -81,7 +81,9 @@ export default {
     }
 
     if (path === '/v1/admin/users' && request.method === 'GET') {
-      return json({ data: { users: await listUsers(env.AUTH_DB, url.searchParams.get('q') ?? '') } })
+      const query = url.searchParams.get('q') ?? ''
+      const users = await listUsers(env.AUTH_DB, query)
+      return json({ data: { users: await ensureAdminInUsers(env.AUTH_DB, users, admin, query) } })
     }
 
     const assignRoleMatch = path.match(/^\/v1\/admin\/users\/([^/]+)\/roles$/)
@@ -169,14 +171,55 @@ async function listUsers(db: D1Database, query: string): Promise<AdminUserListIt
     .bind(PRODUCT, PRODUCT, q, q, q, q)
     .all<{ id: string; kind: string; email: string | null; created_at: string; updated_at: string; roles: string | null }>()
 
-  return results.map((row) => ({
+  return results.map(normalizeUserRow)
+}
+
+async function ensureAdminInUsers(db: D1Database, users: AdminUserListItem[], admin: AdminSession, query: string): Promise<AdminUserListItem[]> {
+  if (users.some((user) => user.id === admin.userId)) return users
+  if (!matchesAdminQuery(admin, query)) return users
+
+  const row = await db.prepare(`
+    SELECT s.id, s.kind, a.email_plain AS email, s.created_at, s.updated_at,
+      COALESCE(json_group_array(r.role) FILTER (WHERE r.role IS NOT NULL), '[]') AS roles
+    FROM identity_subjects s
+    LEFT JOIN identity_accounts a ON a.subject_id = s.id AND a.disabled_at IS NULL
+    LEFT JOIN identity_role_assignments r ON r.subject_id = s.id AND r.product = ? AND r.revoked_at IS NULL
+    WHERE s.id = ? AND s.disabled_at IS NULL
+    GROUP BY s.id, s.kind, a.email_plain, s.created_at, s.updated_at
+    LIMIT 1
+  `)
+    .bind(PRODUCT, admin.userId)
+    .first<{ id: string; kind: string; email: string | null; created_at: string; updated_at: string; roles: string | null }>()
+
+  const adminUser = row
+    ? normalizeUserRow(row)
+    : {
+        id: admin.userId,
+        kind: 'account',
+        email: admin.email,
+        roles: admin.roles as AdminUserListItem['roles'],
+        createdAt: '',
+        updatedAt: '',
+      }
+
+  return [adminUser, ...users]
+}
+
+function matchesAdminQuery(admin: AdminSession, query: string): boolean {
+  const normalized = query.trim().toLowerCase()
+  if (!normalized) return true
+  return [admin.userId, admin.email, ...admin.roles].some((value) => value.toLowerCase().includes(normalized))
+}
+
+function normalizeUserRow(row: { id: string; kind: string; email: string | null; created_at: string; updated_at: string; roles: string | null }): AdminUserListItem {
+  return {
     id: row.id,
     kind: row.kind,
     email: row.email,
     roles: parseRoles(row.roles),
     createdAt: row.created_at,
     updatedAt: row.updated_at,
-  }))
+  }
 }
 
 async function assignUserRole(request: Request, db: D1Database, admin: AdminSession, subjectId: string): Promise<Response> {
