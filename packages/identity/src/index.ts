@@ -65,6 +65,7 @@ export interface EmailVerifyRequest {
 export interface IdentityClientOptions {
   baseUrl: string
   fetch?: typeof fetch
+  credentials?: RequestCredentials
 }
 
 export class IdentityApiError extends Error {
@@ -82,10 +83,12 @@ export class IdentityApiError extends Error {
 export class IdentityClient {
   private readonly baseUrl: string
   private readonly fetcher: typeof fetch
+  private readonly credentials?: RequestCredentials
 
   constructor(options: IdentityClientOptions) {
     this.baseUrl = options.baseUrl.replace(/\/$/, '')
     this.fetcher = options.fetch ?? globalThis.fetch.bind(globalThis)
+    this.credentials = options.credentials
   }
 
   bootstrapDevice(input: DeviceBootstrapRequest = {}): Promise<IdentityBundle> {
@@ -99,6 +102,12 @@ export class IdentityClient {
     return this.request<IdentityBundle>('/identity/session', {
       method: 'GET',
       headers: bearerHeaders(sessionToken)
+    })
+  }
+
+  getCookieSession(): Promise<IdentityBundle> {
+    return this.request<IdentityBundle>('/identity/session', {
+      method: 'GET'
     })
   }
 
@@ -141,7 +150,7 @@ export class IdentityClient {
       'content-type': 'application/json',
       ...(init.headers as Record<string, string> | undefined)
     }
-    const response = await this.fetcher(`${this.baseUrl}${path}`, { ...init, headers })
+    const response = await this.fetcher(`${this.baseUrl}${path}`, { ...init, headers, credentials: this.credentials })
     if (response.status === 204) return undefined as T
     const body = await response.json()
     if (!response.ok) {

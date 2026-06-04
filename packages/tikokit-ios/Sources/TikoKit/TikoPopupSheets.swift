@@ -769,7 +769,7 @@ public struct TikoAccountSheet: View {
         identityError = nil
         do {
             let bundle = try await identityClient.verifyOtp(otp: digits)
-            sessionStore.save(bundle)
+            try sessionStore.save(bundle)
             onClose()
         } catch {
             identityError = "Invalid or expired code. Try again or resend."

@@ -54,3 +54,7 @@ zone_name = "tikotalks.com"
 [[env.production.routes]]
 pattern = "id.tiko.mt/*"
 zone_name = "tiko.mt"
+
+[[env.production.routes]]
+pattern = "id.tikoapps.org"
+custom_domain = true

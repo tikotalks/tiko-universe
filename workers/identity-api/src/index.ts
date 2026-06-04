@@ -31,9 +31,10 @@ const baseConfig = {
   basePath: '/v1/identity',
   session: {
     bearer: true,
-    cookie: false,
+    cookie: true,
     ttlDays: SESSION_TTL_DAYS,
-    rotateOnRefresh: true
+    rotateOnRefresh: true,
+    cookieName: 'tiko_session'
   },
   device: {
     required: true,
@@ -69,13 +70,51 @@ export default {
     }).fetch(request, {
       ...env,
       ANKORE_TOKEN_PEPPER: env.ANKORE_TOKEN_PEPPER ?? env.TOKEN_PEPPER
-    })
+    }).then(response => withBrowserSessionCookie(request, response))
   }
 }
 
 function configForEnv(env: Env): AnkoreConfig {
   const allowedOrigins = (env.ALLOWED_ORIGINS ?? DEFAULT_ALLOWED_ORIGINS).split(',').map(entry => entry.trim()).filter(Boolean)
   return { ...baseConfig, cors: { allowedOrigins } }
+}
+
+async function withBrowserSessionCookie(request: Request, response: Response): Promise<Response> {
+  const headers = new Headers(response.headers)
+  headers.set('Access-Control-Allow-Credentials', 'true')
+
+  const url = new URL(request.url)
+  const isTikoAppsIdentityHost = url.hostname === 'id.tikoapps.org' || url.hostname.endsWith('.id.tikoapps.org')
+  const shouldClearCookie = request.method === 'POST' && url.pathname.replace(/\/$/, '') === '/v1/identity/logout'
+
+  if (shouldClearCookie && isTikoAppsIdentityHost) {
+    headers.append('Set-Cookie', browserCookie('', 0))
+    return new Response(response.body, { status: response.status, statusText: response.statusText, headers })
+  }
+
+  if (!isTikoAppsIdentityHost || response.status < 200 || response.status >= 300 || !response.headers.get('content-type')?.includes('application/json')) {
+    return new Response(response.body, { status: response.status, statusText: response.statusText, headers })
+  }
+
+  const clone = response.clone()
+  const body = await clone.json().catch(() => null) as { session?: { token?: string; expiresAt?: string } } | null
+  const token = body?.session?.token
+  if (token) {
+    const maxAge = body.session?.expiresAt ? maxAgeSeconds(body.session.expiresAt) : SESSION_TTL_DAYS * 24 * 60 * 60
+    headers.append('Set-Cookie', browserCookie(token, maxAge))
+  }
+
+  return new Response(response.body, { status: response.status, statusText: response.statusText, headers })
+}
+
+function browserCookie(value: string, maxAge: number): string {
+  const encoded = encodeURIComponent(value)
+  return `tiko_session=${encoded}; Max-Age=${maxAge}; Domain=.tikoapps.org; Path=/; HttpOnly; Secure; SameSite=Lax`
+}
+
+function maxAgeSeconds(expiresAt: string): number {
+  const seconds = Math.floor((new Date(expiresAt).getTime() - Date.now()) / 1000)
+  return Math.max(0, seconds)
 }
 
 async function requestMagicLinkDelivery(env: Env, message: EmailMessage): Promise<void> {

@@ -16,6 +16,7 @@ const storageKey = 'tiko:sequence'
 const identityStorageKey = 'tiko:identity:device-session'
 const appId = 'sequence' as const
 const apiBaseUrl = resolveApiBaseUrl()
+const identityBaseUrl = resolveIdentityBaseUrl()
 
 interface SequenceItem {
   id: string
@@ -42,6 +43,11 @@ interface StoredIdentity {
 function resolveApiBaseUrl() {
   const env = (import.meta as ImportMeta & { env?: Record<string, string | undefined> }).env
   return (env?.VITE_TIKO_API_BASE_URL ?? 'https://identity.tikoapi.org/v1').replace(/\/$/, '')
+}
+
+function resolveIdentityBaseUrl() {
+  const env = (import.meta as ImportMeta & { env?: Record<string, string | undefined> }).env
+  return (env?.VITE_IDENTITY_API_URL ?? env?.VITE_TIKO_IDENTITY_BASE_URL ?? 'https://id.tikoapps.org/v1').replace(/\/$/, '')
 }
 
 function readJson<T>(key: string, fallback: T): T {
@@ -85,7 +91,7 @@ const loadError = ref(false)
 const sessionToken = ref('')
 const bootstrapped = ref(false)
 const tts = createTikoTtsClient()
-const identityClient = new IdentityClient({ baseUrl: apiBaseUrl })
+const identityClient = new IdentityClient({ baseUrl: identityBaseUrl, credentials: 'include' })
 const dataClient = new TikoDataClient({ baseUrl: apiBaseUrl })
 
 const labels = computed(() => {
@@ -148,6 +154,14 @@ function saveIdentity(bundle: IdentityBundle) {
 
 async function bootstrapIdentity() {
   const storedIdentity = readJson<StoredIdentity>(identityStorageKey, {})
+
+  try {
+    const bundle = await identityClient.getCookieSession()
+    saveIdentity(bundle)
+    return
+  } catch {
+    // Fall through to local bearer/device fallback when the shared app-family cookie is missing or expired.
+  }
 
   if (storedIdentity.sessionToken) {
     try {

@@ -210,7 +210,7 @@ function env(db = new MemoryD1Database()) {
     IDENTITY_DB: db,
     TOKEN_PEPPER: 'test-pepper',
     MAGIC_LINK_BASE_URL: 'https://example.test/magic',
-    ALLOWED_ORIGINS: 'https://app.tiko.test,tiko://native',
+    ALLOWED_ORIGINS: 'https://app.tiko.test,https://yesno.tikoapps.org,https://cards.tikoapps.org,tiko://native',
     MAGIC_LINK_TEST_SINK: [] as Array<{ email: string; token: string; otp: string; url: string; webUrl: string }>
   }
 }
@@ -237,7 +237,7 @@ describe('identity-api Ankore contract', () => {
     expect(identityConfig.databaseBinding).toBe('IDENTITY_DB')
     expect(identityConfig.basePath).toBe('/v1/identity')
     expect(identityConfig.tablePrefix).toBe('identity_')
-    expect(identityConfig.session).toMatchObject({ bearer: true, cookie: false, ttlDays: 180, rotateOnRefresh: true })
+    expect(identityConfig.session).toMatchObject({ bearer: true, cookie: true, ttlDays: 180, rotateOnRefresh: true, cookieName: 'tiko_session' })
     expect(identityConfig.device).toMatchObject({ required: true, autoCreateSubject: true })
     expect(identityConfig.email).toMatchObject({ enabled: true, storage: 'hash', purposes: ['recover'] })
     expect(identityConfig.cors.allowedOrigins).toContain('https://admin.tikoapps.org')
@@ -283,6 +283,48 @@ describe('identity-api endpoints', () => {
     expect(storedSession.token_hash).not.toBe(bundle.session?.token)
     expect(String(storedSession.token_hash)).toMatch(/^sha256:/)
     expect(String(storedDevice.secret_hash)).toMatch(/^sha256:/)
+  })
+
+  it('sets a shared tikoapps.org HttpOnly session cookie on browser identity hosts', async () => {
+    const testEnv = env()
+    const request = new Request('https://id.tikoapps.org/v1/identity/device', {
+      method: 'POST',
+      headers: { origin: 'https://yesno.tikoapps.org', 'content-type': 'application/json' },
+      body: JSON.stringify({ device: { platform: 'web' } })
+    })
+
+    const response = await worker.fetch(request, testEnv as never, {} as never)
+    const body = await response.json() as IdentityBundle
+    const cookie = response.headers.get('set-cookie') ?? ''
+
+    expect(response.status).toBe(201)
+    expect(body.session?.token).toMatch(/^ank_/)
+    expect(cookie).toContain('tiko_session=')
+    expect(cookie).toContain('Domain=.tikoapps.org')
+    expect(cookie).toContain('HttpOnly')
+    expect(cookie).toContain('Secure')
+    expect(cookie).toContain('SameSite=Lax')
+    expect(response.headers.get('access-control-allow-origin')).toBe('https://yesno.tikoapps.org')
+    expect(response.headers.get('access-control-allow-credentials')).toBe('true')
+  })
+
+  it('restores a browser session from the shared tikoapps.org cookie without bearer auth', async () => {
+    const testEnv = env()
+    const created = await worker.fetch(new Request('https://id.tikoapps.org/v1/identity/device', {
+      method: 'POST',
+      headers: { origin: 'https://yesno.tikoapps.org', 'content-type': 'application/json' },
+      body: JSON.stringify({ device: { platform: 'web' } })
+    }), testEnv as never, {} as never)
+    const createdBundle = await created.json() as IdentityBundle
+    const cookie = created.headers.get('set-cookie')?.split(';')[0] ?? ''
+
+    const restored = await worker.fetch(new Request('https://id.tikoapps.org/v1/identity/session', {
+      headers: { origin: 'https://cards.tikoapps.org', cookie }
+    }), testEnv as never, {} as never)
+    const restoredBundle = await restored.json() as IdentityBundle
+
+    expect(restored.status).toBe(200)
+    expect(restoredBundle.subject.id).toBe(createdBundle.subject.id)
   })
 
   it('restores the same device with device credentials and creates a fresh session', async () => {
@@ -434,5 +476,23 @@ describe('@tiko/identity client', () => {
 
     expect(calls[0].url).toBe('https://identity.test/v1/identity/session')
     expect((calls[0].init.headers as Record<string, string>).authorization).toBe('Bearer session-token')
+  })
+
+  it('can call browser cookie session contracts with credentials included and no bearer token', async () => {
+    const calls: Array<{ url: string; init: RequestInit }> = []
+    const client = new IdentityClient({
+      baseUrl: 'https://id.tikoapps.org/v1',
+      credentials: 'include',
+      fetch: async (url, init) => {
+        calls.push({ url: String(url), init: init ?? {} })
+        return new Response(JSON.stringify({ subject: { id: 'sub_1', kind: 'anonymous', product: 'tiko' }, device: { id: 'dev_1' }, session: { id: 'ses_1', token: 'tok_1', transport: 'cookie', expiresAt: '2030-01-01T00:00:00.000Z' } }), { status: 200 })
+      }
+    })
+
+    await client.getCookieSession()
+
+    expect(calls[0].url).toBe('https://id.tikoapps.org/v1/identity/session')
+    expect(calls[0].init.credentials).toBe('include')
+    expect((calls[0].init.headers as Record<string, string>).authorization).toBeUndefined()
   })
 })
