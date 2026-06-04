@@ -19,9 +19,7 @@ struct CardsView: View {
             appIconMediaCategory: selectedCollection == nil ? "animals" : nil,
             onIconTap: selectedCollection != nil ? { selectedCollection = nil } : nil,
             appColor: .cards,
-            actions: selectedCollection == nil ? [
-                TikoHeaderAction(id: "edit", label: i18n.t("cards.tiles.addNew"), systemImage: "pencil")
-            ] : []
+            actions: []
         ) {
             Group {
                 if let collection = selectedCollection {

@@ -409,7 +409,7 @@ private struct TikoSplashOverlay: View {
                     .resizable()
                     .scaledToFit()
                     .frame(width: geo.size.width * 0.3)
-                    .foregroundStyle(.white.opacity(0.25))
+                    .foregroundStyle(.white.opacity(0.4))
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
         }
