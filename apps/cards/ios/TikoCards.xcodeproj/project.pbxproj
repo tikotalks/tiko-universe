@@ -18,6 +18,7 @@
 		BD465427281F4B31F8A20D40 /* CardsMediaClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 207A42348432F2BFF126FFBE /* CardsMediaClient.swift */; };
 		C10DDF329DCF42F8DE76218D /* CardsStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBAEDE295147575574F99882 /* CardsStore.swift */; };
 		CFA37503A1451C2C7EBCACD2 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = EAABAA67B164E6D6DD4EF4DD /* Assets.xcassets */; };
+		E0C38A9E661265F40153CF99 /* CardsContentClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89B173082F6A106521659C40 /* CardsContentClient.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -39,6 +40,7 @@
 		752D7B95F673E108C9D9D5A1 /* CardsModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardsModels.swift; sourceTree = "<group>"; };
 		7B6E301FF11FAE6720EC82A5 /* tikokit-ios */ = {isa = PBXFileReference; lastKnownFileType = folder; name = "tikokit-ios"; path = "../../../packages/tikokit-ios"; sourceTree = SOURCE_ROOT; };
 		88155D1FB1BE44E213E7DB3F /* CardsSpeechService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardsSpeechService.swift; sourceTree = "<group>"; };
+		89B173082F6A106521659C40 /* CardsContentClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardsContentClient.swift; sourceTree = "<group>"; };
 		9696034586F8E01566BDD1DC /* TikoCardsTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = TikoCardsTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		A0C8F33C9BB9324491B5711F /* CardsDefaults.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardsDefaults.swift; sourceTree = "<group>"; };
 		BA81DB944EFAC2BEB232F5E5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
@@ -98,6 +100,7 @@
 			isa = PBXGroup;
 			children = (
 				EAABAA67B164E6D6DD4EF4DD /* Assets.xcassets */,
+				89B173082F6A106521659C40 /* CardsContentClient.swift */,
 				A0C8F33C9BB9324491B5711F /* CardsDefaults.swift */,
 				E3992ADC372502C3CF3EB431 /* CardsImageCache.swift */,
 				207A42348432F2BFF126FFBE /* CardsMediaClient.swift */,
@@ -208,6 +211,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E0C38A9E661265F40153CF99 /* CardsContentClient.swift in Sources */,
 				5EBE9C3308BE11EFD67702F1 /* CardsDefaults.swift in Sources */,
 				451F1AF25BE73DD4F8BC91E6 /* CardsImageCache.swift in Sources */,
 				BD465427281F4B31F8A20D40 /* CardsMediaClient.swift in Sources */,
