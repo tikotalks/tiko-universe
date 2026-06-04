@@ -824,7 +824,6 @@ async function generateImage(request: Request, env: Env): Promise<Response> {
       n: 1,
       size,
       quality,
-      style,
       response_format: 'b64_json',
     }),
   })

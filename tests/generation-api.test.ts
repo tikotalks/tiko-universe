@@ -58,6 +58,9 @@ class MemoryD1 {
             this.storyDrafts.set(record.id as string, record)
             return { success: true, meta: { changes: 1 } }
           }
+          if (sql.includes('INSERT INTO generated_images')) {
+            return { success: true, meta: { changes: 1 } }
+          }
           const record: StoredAudioRecord = {
             id: values[0] as string,
             request_hash: values[1] as string,
@@ -254,6 +257,28 @@ describe('generation-api TTS contract', () => {
     expect(createDraft.status).toBe(201)
     expect(draftBody.data).toMatchObject({ title: 'The Mountain', coverMediaId: 'cover_1', targetAlbumId: 'album_1', defaultVoice: '21m00Tcm4TlvDq8ikWAM' })
     expect(draftBody.data.chapters).toHaveLength(2)
+  })
+
+  it('omits provider parameters rejected by the current OpenAI images API', async () => {
+    const env = makeEnv()
+    const png = Uint8Array.from([137, 80, 78, 71, 13, 10, 26, 10])
+    const b64 = btoa(String.fromCharCode(...png))
+    const fetchSpy = vi.spyOn(globalThis, 'fetch').mockResolvedValue(new Response(JSON.stringify({
+      data: [{ b64_json: b64, revised_prompt: 'A friendly robot' }]
+    }), { status: 200, headers: { 'content-type': 'application/json' } }))
+
+    const response = await worker.fetch(new Request('https://api.test/v1/generation/image', {
+      method: 'POST',
+      headers: { authorization: 'Bearer test-api-key', 'content-type': 'application/json' },
+      body: JSON.stringify({ prompt: 'A friendly robot', style: 'natural' }),
+    }), env)
+    const generated = await json(response)
+    const providerBody = JSON.parse(fetchSpy.mock.calls[0]![1]!.body as string)
+
+    expect(response.status).toBe(201)
+    expect(providerBody).toMatchObject({ model: 'dall-e-3', prompt: 'A friendly robot', n: 1, size: '1024x1024', quality: 'standard' })
+    expect(providerBody).not.toHaveProperty('style')
+    expect(generated.data.imageUrl).toMatch(/^\/v1\/generation\/images\/.+\/binary$/)
   })
 
   it('uses the identity service binding for session-authenticated mutations', async () => {
