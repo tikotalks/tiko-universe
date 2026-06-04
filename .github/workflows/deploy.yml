@@ -9,8 +9,7 @@ concurrency:
   cancel-in-progress: false
 
 env:
-  # Do not force a single account globally: Tiko workers are split across
-  # Cloudflare accounts and each wrangler.toml declares its own account_id.
+  CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID || 'dc2b7d14a69351375cab6de9a13ddee9' }}
   CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
   CLOUDFLARE_PAGES_PROJECT_DEV: ${{ vars.CLOUDFLARE_PAGES_PROJECT_DEV }}
   CLOUDFLARE_PAGES_PROJECT_PROD: ${{ vars.CLOUDFLARE_PAGES_PROJECT_PROD }}
@@ -211,6 +210,11 @@ jobs:
 
           # For dev: use dev worker name from wrangler.toml or fallback
           cd "workers/${WORKER}"
+
+          # Workers are split across Cloudflare accounts; each wrangler.toml
+          # declares the correct account_id. Keep CLOUDFLARE_ACCOUNT_ID for
+          # Pages jobs, but do not override Worker account selection here.
+          unset CLOUDFLARE_ACCOUNT_ID
 
           if [[ "$ENV" == "production" ]]; then
             echo "🚀 Deploying $WORKER to production"
