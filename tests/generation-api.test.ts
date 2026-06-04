@@ -110,6 +110,7 @@ function makeEnv(overrides: Partial<Env> = {}): Env & { db: MemoryD1; bucket: Me
     GENERATION_DB: db,
     GENERATED_MEDIA_BUCKET: bucket,
     OPENAI_API_KEY: 'test-key',
+    ELEVENLABS_API_KEY: 'test-eleven-key',
     API_KEYS: 'test-api-key',
     ...overrides,
   }
@@ -140,7 +141,7 @@ describe('generation-api TTS contract', () => {
   it('returns a D1-backed cache hit without calling the provider', async () => {
     const normalized = internals.normalizeTtsRequest({ text: ' Yes ', language: 'EN', provider: 'auto' })
     const requestHash = await internals.generateRequestHash(normalized)
-    const env = makeEnv({ OPENAI_API_KEY: undefined })
+    const env = makeEnv({ OPENAI_API_KEY: undefined, ELEVENLABS_API_KEY: undefined })
     env.db.byHash.set(requestHash, {
       id: 'cached-audio',
       request_hash: requestHash,
@@ -173,7 +174,7 @@ describe('generation-api TTS contract', () => {
   })
 
   it('returns a safe missing-provider-key error on cache miss', async () => {
-    const env = makeEnv({ OPENAI_API_KEY: undefined })
+    const env = makeEnv({ OPENAI_API_KEY: undefined, ELEVENLABS_API_KEY: undefined })
     const response = await worker.fetch(new Request('https://api.test/v1/generation/tts', {
       method: 'POST',
       body: JSON.stringify({ text: 'Hello', language: 'en' }),
@@ -181,7 +182,7 @@ describe('generation-api TTS contract', () => {
 
     expect(response.status).toBe(503)
     await expect(json(response)).resolves.toMatchObject({
-      error: { code: 'tts_generation_not_configured', message: 'TTS generation is not configured.' }
+      error: { code: 'elevenlabs_tts_not_configured', message: 'ElevenLabs TTS is not configured.' }
     })
   })
 
@@ -239,7 +240,7 @@ describe('generation-api TTS contract', () => {
         description: 'A bedtime story',
         coverMediaId: 'cover_1',
         targetAlbumId: 'album_1',
-        defaultVoice: 'nova',
+        defaultVoice: '21m00Tcm4TlvDq8ikWAM',
         chapters: [
           { title: 'Climb', text: 'Up we go', voice: 'nova', position: 1 },
           { title: 'Home', text: 'Back we go', voice: 'fable', position: 2 },
@@ -249,7 +250,7 @@ describe('generation-api TTS contract', () => {
     const draftBody = await json(createDraft)
 
     expect(createDraft.status).toBe(201)
-    expect(draftBody.data).toMatchObject({ title: 'The Mountain', coverMediaId: 'cover_1', targetAlbumId: 'album_1', defaultVoice: 'nova' })
+    expect(draftBody.data).toMatchObject({ title: 'The Mountain', coverMediaId: 'cover_1', targetAlbumId: 'album_1', defaultVoice: '21m00Tcm4TlvDq8ikWAM' })
     expect(draftBody.data.chapters).toHaveLength(2)
   })
 })
