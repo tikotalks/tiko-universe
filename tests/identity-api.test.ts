@@ -53,6 +53,8 @@ class MemoryD1Database {
   emailChallenges = new Map<string, Row>()
   apiKeys = new Map<string, Row>()
   entitlements = new Map<string, Row>()
+  roles: Row[] = []
+  managedCredentials = new Map<string, Row>()
   auditEvents: Row[] = []
 
   prepare(sql: string): MemoryStatement {
@@ -168,6 +170,25 @@ class MemoryD1Database {
       const [id, subjectId, product, key, valueJson, source, createdAt, expiresAt, revokedAt] = values
       this.entitlements.set(String(id), { id, subject_id: subjectId, product, key, value_json: valueJson, source, created_at: createdAt, expires_at: expiresAt, revoked_at: revokedAt })
       return new MemoryResult()
+    }
+
+    if (normalized.startsWith('SELECT role FROM identity_role_assignments')) {
+      return new MemoryResult(this.roles.filter((row) => row.subject_id === values[0] && row.product === values[1] && !row.revoked_at))
+    }
+    if (normalized.startsWith('INSERT INTO identity_role_assignments')) {
+      const [id, subjectId, product, role, source, actorSubjectId, createdAt, revokedAt, metadataJson] = values
+      this.roles.push({ id, subject_id: subjectId, product, role, source, actor_subject_id: actorSubjectId, created_at: createdAt, revoked_at: revokedAt, metadata_json: metadataJson })
+      return new MemoryResult()
+    }
+
+    if (normalized.startsWith('INSERT INTO identity_managed_credentials')) {
+      const [id, subjectId, managerSubjectId, product, handle, handleNorm, codeHash, displayName, createdAt, revokedAt, metadataJson] = values
+      this.managedCredentials.set(String(id), { id, subject_id: subjectId, manager_subject_id: managerSubjectId, product, handle, handle_norm: handleNorm, code_hash: codeHash, display_name: displayName, created_at: createdAt, revoked_at: revokedAt, metadata_json: metadataJson })
+      return new MemoryResult()
+    }
+    if (normalized.startsWith('SELECT * FROM identity_managed_credentials')) {
+      const row = Array.from(this.managedCredentials.values()).find((credential) => credential.product === values[0] && credential.handle_norm === values[1] && !credential.revoked_at)
+      return new MemoryResult(row ? [row] : [])
     }
 
     if (normalized.startsWith('INSERT INTO identity_api_keys')) {
@@ -458,6 +479,44 @@ describe('identity-api endpoints', () => {
       body: JSON.stringify({ otp })
     }, testEnv)
     expect(otpGood.response.status).toBe(200)
+  })
+
+  it('creates managed child credentials and logs the child in with a stable access code', async () => {
+    const testEnv = env()
+    const manager = await fetchJson('/v1/identity/device', { method: 'POST', body: JSON.stringify({}) }, testEnv)
+    const managerBundle = manager.body as IdentityBundle
+    const managerToken = managerBundle.session?.token ?? ''
+
+    const created = await fetchJson('/v1/identity/managed/children', {
+      method: 'POST',
+      headers: { authorization: `Bearer ${managerToken}` },
+      body: JSON.stringify({ handle: 'Mila', accessCode: '4829', displayName: 'Mila' })
+    }, testEnv)
+
+    expect(created.response.status).toBe(201)
+    expect(created.body.child).toMatchObject({ managerSubjectId: managerBundle.subject.id, handle: 'Mila', displayName: 'Mila', roles: ['child'] })
+    expect(testEnv.IDENTITY_DB.roles.some((role) => role.subject_id === created.body.child.subjectId && role.role === 'child')).toBe(true)
+    const storedCredential = Array.from(testEnv.IDENTITY_DB.managedCredentials.values())[0]
+    expect(storedCredential.code_hash).not.toBe('4829')
+    expect(String(storedCredential.code_hash)).toMatch(/^sha256:/)
+
+    const badLogin = await fetchJson('/v1/identity/managed/login', {
+      method: 'POST',
+      body: JSON.stringify({ handle: 'Mila', accessCode: '0000' })
+    }, testEnv)
+    expect(badLogin.response.status).toBe(401)
+    expect(badLogin.body.error).toBe('invalid_managed_login')
+
+    const login = await fetchJson('/v1/identity/managed/login', {
+      method: 'POST',
+      body: JSON.stringify({ handle: 'Mila', accessCode: '4829' })
+    }, testEnv)
+
+    expect(login.response.status).toBe(200)
+    expect(login.body.subject.id).toBe(created.body.child.subjectId)
+    expect(login.body.session.token).toMatch(/^ank_/)
+    expect(login.body.roles).toContain('child')
+    expect(login.body.managed).toMatchObject({ handle: 'Mila', displayName: 'Mila', managerSubjectId: managerBundle.subject.id })
   })
 })
 

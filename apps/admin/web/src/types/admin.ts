@@ -2,6 +2,7 @@ export interface AdminUser {
   userId: string
   email: string
   role: 'admin'
+  roles: string[]
 }
 
 export interface AdminConfig {
