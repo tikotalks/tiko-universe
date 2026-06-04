@@ -28,10 +28,6 @@ public struct TikoPopupCard<Content: View>: View {
 
     public var body: some View {
         VStack(spacing: 18) {
-            Capsule()
-                .fill(Color.primary.opacity(0.16))
-                .frame(width: 46, height: 5)
-
             ZStack {
                 HStack {
                     Button(action: onClose) {

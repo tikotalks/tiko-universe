@@ -40,10 +40,12 @@ struct CardsView: View {
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
                 } else {
                     GeometryReader { geometry in
-                        let cols = columnCount(for: geometry.size.width)
-                        let cardSize = cardDimension(width: geometry.size.width, cols: cols)
+                        let sideInset = max(geometry.safeAreaInsets.leading, geometry.safeAreaInsets.trailing)
+                        let usableWidth = geometry.size.width - geometry.safeAreaInsets.leading - geometry.safeAreaInsets.trailing
+                        let cols = columnCount(width: usableWidth, height: geometry.size.height - geometry.safeAreaInsets.top - geometry.safeAreaInsets.bottom)
+                        let cardSize = cardDimension(usableWidth: usableWidth, cols: cols)
                         let usableHeight = geometry.size.height - geometry.safeAreaInsets.top - geometry.safeAreaInsets.bottom
-                        let rows = max(1, Int((usableHeight - 24 + 12) / (cardSize + 12)))
+                        let rows = max(1, Int((usableHeight - 40) / (cardSize + 12)))
                         let perPage = cols * rows
                         let pages = store.collections.chunked(into: perPage)
 
@@ -67,7 +69,8 @@ struct CardsView: View {
                                         }
                                     }
                                     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-                                    .padding(.horizontal, 12)
+                                    .padding(.leading, 12 + sideInset)
+                                    .padding(.trailing, 12 + sideInset)
                                     .padding(.top, 12)
                                     .padding(.bottom, pages.count > 1 ? 40 : 12)
                                     .tag(pageIndex)
@@ -93,12 +96,16 @@ struct CardsView: View {
         .onChange(of: languageCode) { _, code in i18n.setLanguage(code) }
     }
 
-    private func columnCount(for width: CGFloat) -> Int {
-        width >= 640 ? 5 : (width >= 480 ? 4 : 3)
+    private func columnCount(width: CGFloat, height: CGFloat) -> Int {
+        // In landscape on phones, use more columns to keep cards small enough for 2+ rows
+        if width > height * 1.4 {
+            return width >= 800 ? 7 : 6
+        }
+        return width >= 640 ? 5 : (width >= 480 ? 4 : 3)
     }
 
-    private func cardDimension(width: CGFloat, cols: Int) -> CGFloat {
-        (width - 24 - CGFloat(cols - 1) * 12) / CGFloat(cols)
+    private func cardDimension(usableWidth: CGFloat, cols: Int) -> CGFloat {
+        (usableWidth - 24 - CGFloat(cols - 1) * 12) / CGFloat(cols)
     }
 
     private func speak(_ card: CommunicationCard) {
@@ -141,10 +148,12 @@ private struct CollectionDetailView: View {
 
     var body: some View {
         GeometryReader { geometry in
-            let cols = columnCount(for: geometry.size.width)
-            let cardSize = (geometry.size.width - 24 - CGFloat(cols - 1) * 12) / CGFloat(cols)
+            let sideInset = max(geometry.safeAreaInsets.leading, geometry.safeAreaInsets.trailing)
+            let usableWidth = geometry.size.width - geometry.safeAreaInsets.leading - geometry.safeAreaInsets.trailing
             let usableHeight = geometry.size.height - geometry.safeAreaInsets.top - geometry.safeAreaInsets.bottom
-            let rows = max(1, Int((usableHeight - 24 + 12) / (cardSize + 12)))
+            let cols = columnCount(width: usableWidth, height: usableHeight)
+            let cardSize = (usableWidth - 24 - CGFloat(cols - 1) * 12) / CGFloat(cols)
+            let rows = max(1, Int((usableHeight - 40) / (cardSize + 12)))
             let perPage = cols * rows
             let pages = collection.cards.chunked(into: perPage)
 
@@ -164,7 +173,8 @@ private struct CollectionDetailView: View {
                             }
                         }
                         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-                        .padding(.horizontal, 12)
+                        .padding(.leading, 12 + sideInset)
+                        .padding(.trailing, 12 + sideInset)
                         .padding(.top, 12)
                         .padding(.bottom, pages.count > 1 ? 40 : 12)
                         .tag(pageIndex)
@@ -189,8 +199,9 @@ private struct CollectionDetailView: View {
         }
     }
 
-    private func columnCount(for width: CGFloat) -> Int {
-        width >= 640 ? 5 : (width >= 480 ? 4 : 3)
+    private func columnCount(width: CGFloat, height: CGFloat) -> Int {
+        if width > height * 1.4 { return width >= 800 ? 7 : 6 }
+        return width >= 640 ? 5 : (width >= 480 ? 4 : 3)
     }
 }
 
