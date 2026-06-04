@@ -1025,7 +1025,7 @@ private func tikoHashPin(_ pin: String) -> String {
     return hash.compactMap { String(format: "%02x", $0) }.joined()
 }
 
-private extension View {
+extension View {
     func tikoSettingsRowSurface() -> some View {
         padding(14)
             .background(Color(.systemBackground))
