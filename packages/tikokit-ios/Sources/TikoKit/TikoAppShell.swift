@@ -401,18 +401,17 @@ private struct TikoSplashOverlay: View {
     let appColor: TikoAppColor
 
     var body: some View {
-        GeometryReader { geo in
-            ZStack {
-                appColor.palette.primary
-
-                Image(systemName: appIcon)
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: geo.size.width * 0.3)
-                    .foregroundStyle(.white.opacity(0.4))
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+        appColor.palette.primary
+            .overlay {
+                GeometryReader { geo in
+                    Image(systemName: appIcon)
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: geo.size.width * 0.3, height: geo.size.width * 0.3)
+                        .foregroundStyle(.white.opacity(0.5))
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                }
             }
-        }
     }
 }
 

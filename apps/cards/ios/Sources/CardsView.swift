@@ -127,7 +127,7 @@ private struct CollectionTile: View {
     var body: some View {
         TikoSquareTile(
             title: collection.title,
-            background: Color(hex: collection.colorHex).opacity(0.72)
+            background: Color(hex: collection.colorHex)
         ) {
             if let thumbnailURL {
                 CachedCardImage(url: thumbnailURL)
@@ -212,7 +212,7 @@ private struct CommunicationCardTile: View {
         Button(action: onSpeak) {
             TikoSquareTile(
                 title: card.title,
-                background: Color(hex: card.colorHex).opacity(card.imageURL == nil ? 0.82 : 0.45),
+                background: Color(hex: card.colorHex),
                 isActive: isSpeaking
             ) {
                 if let imageURL = card.imageURL {

@@ -477,10 +477,12 @@ public struct TikoAccountSheet: View {
 
     @AppStorage("tiko.userName") private var userName = ""
     @AppStorage("tiko.userEmail") private var userEmail = ""
+    @AppStorage("tiko.avatarURL") private var storedAvatarURLString = ""
 
     // Session state — drives which screen is shown
     @State private var isSignedIn = false
     @State private var signedInEmail: String? = nil
+    @State private var showingAvatarPicker = false
 
     // Login flow state
     @State private var emailInput = ""
@@ -515,6 +517,13 @@ public struct TikoAccountSheet: View {
                 signedInEmail = bundle.account?.email
             }
         }
+        .tikoMediaPickerPopup(
+            isPresented: $showingAvatarPicker,
+            appColor: appColor,
+            title: "Choose avatar"
+        ) { url in
+            storedAvatarURLString = url.absoluteString
+        }
     }
 
     // MARK: - Profile (signed-in state)
@@ -527,6 +536,39 @@ public struct TikoAccountSheet: View {
             onClose: onClose
         ) {
             VStack(spacing: 12) {
+                // Avatar
+                Button { showingAvatarPicker = true } label: {
+                    ZStack(alignment: .bottomTrailing) {
+                        Group {
+                            if let url = URL(string: storedAvatarURLString), !storedAvatarURLString.isEmpty {
+                                AsyncImage(url: url) { phase in
+                                    if case .success(let image) = phase {
+                                        image.resizable().scaledToFill()
+                                    } else {
+                                        Circle().fill(appColor.palette.primary.opacity(0.18))
+                                    }
+                                }
+                            } else {
+                                Circle().fill(appColor.palette.primary.opacity(0.18))
+                                    .overlay {
+                                        Image(systemName: "person.crop.circle.fill")
+                                            .font(.system(size: 46))
+                                            .foregroundStyle(appColor.palette.primary.opacity(0.5))
+                                    }
+                            }
+                        }
+                        .frame(width: 80, height: 80)
+                        .clipShape(Circle())
+
+                        Image(systemName: "camera.circle.fill")
+                            .font(.system(size: 26))
+                            .foregroundStyle(appColor.palette.primary)
+                            .background(.regularMaterial, in: Circle())
+                    }
+                }
+                .buttonStyle(.plain)
+                .frame(maxWidth: .infinity)
+
                 // Verified email row
                 HStack(spacing: 12) {
                     Image(systemName: "envelope.fill")
