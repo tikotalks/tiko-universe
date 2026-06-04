@@ -1,3 +1,4 @@
+import { readFileSync } from 'node:fs'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import worker, { internals } from '../workers/generation-api/src/index'
 import type { Env } from '../workers/generation-api/src/index'
@@ -111,6 +112,7 @@ function makeEnv(overrides: Partial<Env> = {}): Env & { db: MemoryD1; bucket: Me
     GENERATED_MEDIA_BUCKET: bucket,
     OPENAI_API_KEY: 'test-key',
     API_KEYS: 'test-api-key',
+    IDENTITY_BASE_URL: 'https://identity.test/v1',
     ...overrides,
   }
 }
@@ -251,5 +253,42 @@ describe('generation-api TTS contract', () => {
     expect(createDraft.status).toBe(201)
     expect(draftBody.data).toMatchObject({ title: 'The Mountain', coverMediaId: 'cover_1', targetAlbumId: 'album_1', defaultVoice: 'nova' })
     expect(draftBody.data.chapters).toHaveLength(2)
+  })
+
+  it('uses the identity service binding for session-authenticated mutations', async () => {
+    const identityFetch = vi.fn(async (input: Request | string) => {
+      expect(String(input)).toBe('https://identity.test/v1/identity/session')
+      return new Response(JSON.stringify({ subject: { id: 'sub_admin' } }), {
+        status: 200,
+        headers: { 'content-type': 'application/json' },
+      })
+    })
+    const env = makeEnv({
+      API_KEYS: undefined,
+      OPENAI_API_KEY: undefined,
+      IDENTITY_SERVICE: { fetch: identityFetch },
+    } as Partial<Env>)
+
+    const response = await worker.fetch(new Request('https://api.test/v1/generation/image', {
+      method: 'POST',
+      headers: { authorization: 'Bearer session-token', 'content-type': 'application/json' },
+      body: JSON.stringify({ prompt: 'A friendly robot' }),
+    }), env)
+
+    expect(identityFetch).toHaveBeenCalledTimes(1)
+    expect(response.status).toBe(503)
+    await expect(json(response)).resolves.toMatchObject({
+      error: { code: 'image_generation_not_configured' }
+    })
+  })
+
+  it('declares identity service bindings for generation-api deployments', () => {
+    const wrangler = readFileSync('workers/generation-api/wrangler.toml', 'utf8')
+
+    expect(wrangler).toContain('binding = "IDENTITY_SERVICE"')
+    expect(wrangler).toContain('service = "tiko-identity-api-dev"')
+    expect(wrangler).toContain('service = "tiko-identity-api"')
+    expect(wrangler).toContain('IDENTITY_BASE_URL = "https://api.tikotalks.com/v1"')
+    expect(wrangler).toContain('IDENTITY_BASE_URL = "https://identity.tikoapi.org/v1"')
   })
 })
