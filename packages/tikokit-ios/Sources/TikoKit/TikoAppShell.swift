@@ -299,7 +299,7 @@ public struct TikoAppShell<Content: View, SettingsContent: View>: View {
         }
         .overlay {
             if splashVisible {
-                TikoSplashOverlay(appIcon: appIcon, appColor: appColor)
+                TikoSplashOverlay(appColor: appColor)
                     .ignoresSafeArea()
                     .allowsHitTesting(false)
                     .transition(.opacity)
@@ -397,18 +397,18 @@ public struct TikoAppShell<Content: View, SettingsContent: View>: View {
 }
 
 private struct TikoSplashOverlay: View {
-    let appIcon: String
     let appColor: TikoAppColor
 
     var body: some View {
         appColor.palette.primary
             .overlay {
                 GeometryReader { geo in
-                    Image(systemName: appIcon)
+                    Image("TikoLogo")
                         .resizable()
+                        .renderingMode(.template)
                         .scaledToFit()
                         .frame(width: geo.size.width * 0.3, height: geo.size.width * 0.3)
-                        .foregroundStyle(.white.opacity(0.5))
+                        .foregroundColor(.white.opacity(0.5))
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
                 }
             }

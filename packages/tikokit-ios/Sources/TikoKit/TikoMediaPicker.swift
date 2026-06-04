@@ -32,7 +32,7 @@ public struct TikoMediaPickerSheet: View {
             VStack(spacing: 12) {
                 // Search bar
                 HStack(spacing: 8) {
-                    TextField("Search library (e.g. animals, food)…", text: $query)
+                    TextField("Search images (e.g. banana, elephant)…", text: $query)
                         .font(.system(size: 15, weight: .semibold, design: .rounded))
                         .padding(12)
                         .background(Color(.systemBackground))
@@ -136,7 +136,7 @@ public struct TikoMediaPickerSheet: View {
         defer { isSearching = false }
 
         let encoded = q.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? q
-        let urlString = "https://media.tikoapi.org/v1/media?type=image&category=\(encoded)&limit=30"
+        let urlString = "https://media.tikoapi.org/v1/media?type=image&search=\(encoded)&limit=30"
         guard let url = URL(string: urlString),
               let (data, response) = try? await URLSession.shared.data(from: url),
               let http = response as? HTTPURLResponse, (200..<300).contains(http.statusCode),
