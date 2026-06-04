@@ -1,5 +1,8 @@
 import { defineComponent, h, watch } from 'vue'
 export { default as TikoLogo } from './TikoLogo.vue'
+export { default as TikoProfileMenu } from './TikoProfileMenu.vue'
+export { default as TikoPinPopup } from './TikoPinPopup.vue'
+export { useParentMode, type ParentModeDeps } from './parent-mode'
 import type { GenerationTtsRequest, LegacyTtsResponse } from '@tiko/media'
 import { generationTtsCacheKey, isGenerationTtsResponse } from '@tiko/media'
 import { Button, Icon } from '@sil/ui'
@@ -241,14 +244,21 @@ export const TikoAppHeader = defineComponent({
     appIcon: { type: String, default: 'ui/check-fat' },
     avatar: { type: String, default: '' },
     appColor: { type: String as () => TikoAppColor, default: 'yes-no' },
-    actions: { type: Array as () => TikoHeaderAction[], default: () => [] }
+    actions: { type: Array as () => TikoHeaderAction[], default: () => [] },
+    showBack: { type: Boolean, default: false },
   },
-    emits: ['action', 'avatar-click'],
-    setup(props, { emit }) {
-      return () => h('header', { class: 'tiko-app-header', 'data-test': 'tiko-app-header', 'data-app-color': props.appColor }, [
+  emits: ['action', 'avatar-click', 'back-click', 'title-click'],
+  setup(props, { emit }) {
+    return () => h('header', { class: ['tiko-app-header', props.showBack ? 'tiko-app-header--has-back' : ''], 'data-test': 'tiko-app-header', 'data-app-color': props.appColor }, [
       h('div', { class: 'tiko-app-header__brand' }, [
-        h('span', { class: 'tiko-app-header__app-icon', 'aria-hidden': 'true' }, [iconSpan(props.appIcon)]),
-        h('span', { class: 'tiko-app-header__title', 'data-test': 'tiko-shell-title' }, props.appName)
+        props.showBack
+          ? h('button', {
+              class: 'tiko-app-header__back-btn',
+              'aria-label': 'Back',
+              onClick: () => emit('back-click'),
+            }, [iconSpan('arrows/arrow-left')])
+          : h('span', { class: 'tiko-app-header__app-icon', 'aria-hidden': 'true' }, [iconSpan(props.appIcon)]),
+        h('span', { class: 'tiko-app-header__title', 'data-test': 'tiko-shell-title', onClick: () => emit('title-click') }, props.appName)
       ]),
       h('div', { class: 'tiko-app-header__actions' }, [
         ...props.actions.filter(a => a.visible !== false).map(action => h(Button, {
@@ -278,9 +288,10 @@ export const TikoAppShell = defineComponent({
     appIcon: { type: String, default: 'ui/check-fat' },
     appColor: { type: String as () => TikoAppColor, default: 'yes-no' },
     avatar: { type: String, default: '' },
-    actions: { type: Array as () => TikoHeaderAction[], default: () => [] }
+    actions: { type: Array as () => TikoHeaderAction[], default: () => [] },
+    showBack: { type: Boolean, default: false },
   },
-  emits: ['headerAction', 'avatar-click'],
+  emits: ['headerAction', 'avatar-click', 'back-click', 'title-click'],
   setup(props, { slots, emit }) {
     return () => h('div', { class: 'tiko-app-shell', 'data-app-color': props.appColor }, [
       h(TikoAppHeader, {
@@ -289,8 +300,11 @@ export const TikoAppShell = defineComponent({
         avatar: props.avatar,
         appColor: props.appColor,
         actions: props.actions,
+        showBack: props.showBack,
         onAction: (id: string) => emit('headerAction', id),
         onAvatarClick: () => emit('avatar-click'),
+        onBackClick: () => emit('back-click'),
+        onTitleClick: () => emit('title-click'),
       }),
       h('main', { class: 'tiko-app-shell__main' }, slots.default?.())
     ])
