@@ -68,7 +68,13 @@ public struct TikoMediaPickerSheet: View {
                             .font(.system(size: 12, weight: .bold))
                             .foregroundStyle(.secondary)
                     }
-                    .tikoSettingsRowSurface()
+                    .padding(14)
+                    .background(Color(.systemBackground))
+                    .overlay {
+                        RoundedRectangle(cornerRadius: 18, style: .continuous)
+                            .stroke(Color.primary.opacity(0.08), lineWidth: 1)
+                    }
+                    .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
                 }
                 .buttonStyle(.plain)
                 .onChange(of: photoItem) { _, item in
