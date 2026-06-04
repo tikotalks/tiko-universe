@@ -31,8 +31,7 @@ type JsonValue = null | boolean | number | string | JsonValue[] | { [key: string
 
 interface SessionJoinRow {
   user_id: string
-  user_kind: 'device' | 'recoverable'
-  device_id: string
+  device_id: string | null
   expires_at: string
 }
 
@@ -146,10 +145,9 @@ async function requireSession(request: Request, env: Env): Promise<SessionJoinRo
   const sessionToken = requireBearer(request)
   const tokenHash = await hashToken(sessionToken, env.TOKEN_PEPPER)
   const row = await first<SessionJoinRow>(env.IDENTITY_DB.prepare(`
-    SELECT s.user_id, u.kind AS user_kind, s.device_id, s.expires_at
-    FROM sessions s
-    JOIN users u ON u.id = s.user_id
-    JOIN devices d ON d.id = s.device_id
+    SELECT s.subject_id AS user_id, s.device_id, s.expires_at
+    FROM identity_sessions s
+    JOIN identity_subjects u ON u.id = s.subject_id
     WHERE s.token_hash = ? AND s.revoked_at IS NULL AND s.expires_at > ?
   `).bind(tokenHash, new Date().toISOString()))
   if (!row) throw new HttpError(401, 'unauthorized', 'Session is invalid or expired.')
@@ -157,9 +155,9 @@ async function requireSession(request: Request, env: Env): Promise<SessionJoinRo
 }
 
 export async function hashToken(value: string, pepper: string): Promise<string> {
-  const data = new TextEncoder().encode(`${pepper}:${value}`)
+  const data = new TextEncoder().encode(`tiko:session:${pepper}:${value}`)
   const digest = await crypto.subtle.digest('SHA-256', data)
-  return Array.from(new Uint8Array(digest)).map((byte) => byte.toString(16).padStart(2, '0')).join('')
+  return `sha256:${Array.from(new Uint8Array(digest)).map((byte) => byte.toString(16).padStart(2, '0')).join('')}`
 }
 
 function parseApp(value: string): TikoAppId {

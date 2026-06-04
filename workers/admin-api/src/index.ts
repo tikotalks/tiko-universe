@@ -87,7 +87,7 @@ async function requireAdmin(request: Request, env: Env): Promise<AdminSession | 
 
   const adminEmail = normalizeEmail(env.ADMIN_EMAIL || ADMIN_EMAIL)
   const adminEmailHash = await hashToken(adminEmail, env.TOKEN_PEPPER)
-  const row = await env.AUTH_DB.prepare('SELECT id, email_hash FROM users WHERE id = ? LIMIT 1')
+  const row = await env.AUTH_DB.prepare('SELECT subject_id AS id, email_hash FROM identity_accounts WHERE subject_id = ? AND disabled_at IS NULL LIMIT 1')
     .bind(authed.userId)
     .first<{ id: string; email_hash: string | null }>()
 
@@ -125,9 +125,9 @@ function normalizeEmail(value: string): string {
 }
 
 async function hashToken(token: string, pepper: string): Promise<string> {
-  const data = new TextEncoder().encode(`${pepper}:${token}`)
+  const data = new TextEncoder().encode(`tiko:email:${pepper}:${token}`)
   const digest = await crypto.subtle.digest('SHA-256', data)
-  return Array.from(new Uint8Array(digest)).map((byte) => byte.toString(16).padStart(2, '0')).join('')
+  return `sha256:${Array.from(new Uint8Array(digest)).map((byte) => byte.toString(16).padStart(2, '0')).join('')}`
 }
 
 function apiError(code: string, message: string, status = 400): Response {

@@ -1,39 +1,41 @@
-export type UserKind = 'device' | 'recoverable'
+export type SubjectKind = 'anonymous' | 'device' | 'account' | 'service'
 
-export interface User {
+export interface IdentitySubject {
   id: string
-  displayName?: string
-  kind: UserKind
-  recoverable: boolean
+  kind: SubjectKind
+  product: string
 }
 
-export interface Device {
+export interface IdentityDevice {
   id: string
-  name?: string
   secret?: string
 }
 
-export interface Session {
+export interface IdentityAccount {
+  id: string
+  subjectId: string
+  emailVerified: boolean
+  email?: string | null
+}
+
+export interface IdentitySession {
+  id: string
   token: string
+  transport: 'bearer' | 'cookie'
   expiresAt: string
 }
 
-export interface SessionBundle {
-  user: User
-  device: Device
-  session: Session
+export interface IdentityBundle {
+  subject: IdentitySubject
+  device?: IdentityDevice | null
+  account?: IdentityAccount | null
+  session?: IdentitySession
+  entitlements?: unknown[]
 }
 
 export interface ApiErrorEnvelope {
-  error: {
-    code: string
-    message: string
-    field?: string
-    retryAfterSeconds?: number
-  }
-  meta?: {
-    requestId?: string
-  }
+  error: string
+  message?: string
 }
 
 export interface DeviceBootstrapRequest {
@@ -45,15 +47,17 @@ export interface DeviceBootstrapRequest {
   }
 }
 
-export interface RecoveryEmailRequest {
+export interface EmailChallengeRequest {
   email: string
+  purpose?: 'verify_email' | 'recover' | 'link_account' | 'admin_login'
 }
 
-export interface RecoveryEmailResponse {
+export interface EmailChallengeResponse {
+  ok: true
   message: string
 }
 
-export interface MagicLinkVerifyRequest {
+export interface EmailVerifyRequest {
   token?: string
   otp?: string
 }
@@ -66,14 +70,12 @@ export interface IdentityClientOptions {
 export class IdentityApiError extends Error {
   readonly status: number
   readonly code: string
-  readonly field?: string
 
   constructor(status: number, envelope: ApiErrorEnvelope) {
-    super(envelope.error.message)
+    super(envelope.message ?? envelope.error)
     this.name = 'IdentityApiError'
     this.status = status
-    this.code = envelope.error.code
-    this.field = envelope.error.field
+    this.code = envelope.error
   }
 }
 
@@ -86,38 +88,45 @@ export class IdentityClient {
     this.fetcher = options.fetch ?? globalThis.fetch.bind(globalThis)
   }
 
-  bootstrapDevice(input: DeviceBootstrapRequest = {}): Promise<SessionBundle> {
-    return this.request<SessionBundle>('/identity/device', {
+  bootstrapDevice(input: DeviceBootstrapRequest = {}): Promise<IdentityBundle> {
+    return this.request<IdentityBundle>('/identity/device', {
       method: 'POST',
       body: JSON.stringify(input)
     })
   }
 
-  getSession(sessionToken: string): Promise<SessionBundle> {
-    return this.request<SessionBundle>('/identity/session', {
+  getSession(sessionToken: string): Promise<IdentityBundle> {
+    return this.request<IdentityBundle>('/identity/session', {
       method: 'GET',
       headers: bearerHeaders(sessionToken)
     })
   }
 
-  requestRecoveryEmail(input: RecoveryEmailRequest, sessionToken?: string): Promise<RecoveryEmailResponse> {
-    return this.request<RecoveryEmailResponse>('/identity/email', {
+  refreshSession(sessionToken: string): Promise<IdentityBundle> {
+    return this.request<IdentityBundle>('/identity/session/refresh', {
+      method: 'POST',
+      headers: bearerHeaders(sessionToken)
+    })
+  }
+
+  createEmailChallenge(input: EmailChallengeRequest, sessionToken?: string): Promise<EmailChallengeResponse> {
+    return this.request<EmailChallengeResponse>('/identity/email/challenge', {
       method: 'POST',
       headers: sessionToken ? bearerHeaders(sessionToken) : undefined,
       body: JSON.stringify(input)
     })
   }
 
-  verifyMagicLink(input: MagicLinkVerifyRequest): Promise<SessionBundle> {
+  verifyEmail(input: EmailVerifyRequest): Promise<IdentityBundle> {
     if (!input.token && !input.otp) throw new Error('token or otp is required')
-    return this.request<SessionBundle>('/identity/magic-links/verify', {
+    return this.request<IdentityBundle>('/identity/email/verify', {
       method: 'POST',
       body: JSON.stringify(input)
     })
   }
 
-  verifyOtp(otp: string): Promise<SessionBundle> {
-    return this.verifyMagicLink({ otp })
+  verifyOtp(otp: string): Promise<IdentityBundle> {
+    return this.verifyEmail({ otp })
   }
 
   async logout(sessionToken: string): Promise<void> {

@@ -2,7 +2,7 @@
 import { computed, onMounted, ref, watch, nextTick, inject, markRaw, h } from 'vue'
 import { Button, Popup } from '@sil/ui'
 import type { PopupService } from '@sil/ui'
-import { IdentityClient, type SessionBundle } from '@tiko/identity'
+import { IdentityClient, type IdentityBundle } from '@tiko/identity'
 import { TikoDataClient, type RadioSettings, type RadioState } from '@tiko/data'
 import type { RadioTrack, RadioCategory } from '@tiko/data'
 import { createI18n, defaultLanguage, tikoI18nKeys, tikoLanguages, type TikoLanguage } from '@tiko/i18n'
@@ -271,14 +271,15 @@ function saveLocalFallback() {
   })
 }
 
-function saveIdentity(bundle: SessionBundle) {
+function saveIdentity(bundle: IdentityBundle) {
+  if (!bundle.session?.token) throw new Error('Identity response did not include a session token.')
   sessionToken.value = bundle.session.token
-  userId.value = bundle.user.id
-  isRecoverable.value = bundle.user.kind === 'recoverable'
+  userId.value = bundle.subject.id
+  isRecoverable.value = Boolean(bundle.account?.emailVerified)
   writeJson(identityStorageKey, {
-    userId: bundle.user.id,
-    deviceId: bundle.device.id,
-    deviceSecret: bundle.device.secret,
+    userId: bundle.subject.id,
+    deviceId: bundle.device?.id,
+    deviceSecret: bundle.device?.secret,
     sessionToken: bundle.session.token,
     expiresAt: bundle.session.expiresAt,
   } satisfies StoredIdentity)
@@ -663,7 +664,7 @@ function openLoginPopup() {
           loading.value = true
           verifyError.value = ''
           try {
-            await identityClient.requestRecoveryEmail({ email: email.value.trim() })
+            await identityClient.createEmailChallenge({ email: email.value.trim(), purpose: 'recover' })
             sent.value = true
           } catch {
             verifyError.value = 'Could not send the code. Please try again.'
