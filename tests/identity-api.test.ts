@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import worker, { hashToken } from '../workers/identity-api/src/index'
+import worker, { hashToken, identityConfig } from '../workers/identity-api/src/index'
 import { IdentityClient, type SessionBundle } from '@tiko/identity'
 
 type Row = Record<string, unknown>
@@ -171,6 +171,20 @@ async function fetchJson(path: string, init: RequestInit = {}, testEnv = env()) 
   const body = response.status === 204 ? {} : await response.json() as JsonBody
   return { response, body, env: testEnv }
 }
+
+describe('identity-api Ankore contract', () => {
+  it('normalizes the Tiko identity contract through the published Ankore package', () => {
+    expect(identityConfig.product).toBe('tiko')
+    expect(identityConfig.databaseBinding).toBe('IDENTITY_DB')
+    expect(identityConfig.basePath).toBe('/v1/identity')
+    expect(identityConfig.tablePrefix).toBe('')
+    expect(identityConfig.session).toMatchObject({ bearer: true, cookie: false, ttlDays: 180 })
+    expect(identityConfig.device).toMatchObject({ required: true, autoCreateSubject: true })
+    expect(identityConfig.email).toMatchObject({ enabled: true, storage: 'hash', purposes: ['recover'] })
+    expect(identityConfig.cors.allowedOrigins).toContain('https://admin.tikoapps.org')
+    expect(identityConfig.cors.allowedOrigins).toContain('tiko://native')
+  })
+})
 
 describe('identity-api token handling', () => {
   it('hashes tokens with the configured pepper without returning the raw token hash', async () => {
