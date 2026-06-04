@@ -28,9 +28,12 @@ interface AdminSession {
   userId: string
   emailHash: string
   email: string
+  roles: string[]
 }
 
 const ADMIN_EMAIL = 'me@sil.mt'
+const PRODUCT = 'tiko'
+const ADMIN_ROLE = 'admin'
 
 const CORS_HEADERS = {
   'Access-Control-Allow-Origin': '*',
@@ -53,7 +56,7 @@ export default {
     if (admin instanceof Response) return withCors(admin)
 
     if (path === '/v1/admin/me' && request.method === 'GET') {
-      return json({ data: { userId: admin.userId, email: admin.email, role: 'admin' } })
+      return json({ data: { userId: admin.userId, email: admin.email, role: 'admin', roles: admin.roles } })
     }
 
     if (path === '/v1/admin/config' && request.method === 'GET') {
@@ -85,17 +88,44 @@ async function requireAdmin(request: Request, env: Env): Promise<AdminSession | 
     return apiError('admin_session_required', 'Admin access requires a user session.', 403)
   }
 
-  const adminEmail = normalizeEmail(env.ADMIN_EMAIL || ADMIN_EMAIL)
-  const adminEmailHash = await hashToken(adminEmail, env.TOKEN_PEPPER)
-  const row = await env.AUTH_DB.prepare('SELECT subject_id AS id, email_hash FROM identity_accounts WHERE subject_id = ? AND disabled_at IS NULL LIMIT 1')
+  const row = await env.AUTH_DB.prepare('SELECT subject_id AS id, email_hash, email_plain FROM identity_accounts WHERE subject_id = ? AND disabled_at IS NULL LIMIT 1')
     .bind(authed.userId)
-    .first<{ id: string; email_hash: string | null }>()
+    .first<{ id: string; email_hash: string | null; email_plain: string | null }>()
 
-  if (!row || row.email_hash !== adminEmailHash) {
+  if (!row) {
+    return apiError('forbidden', 'This dashboard is only available to Tiko admins.', 403)
+  }
+
+  const roles = await activeRoles(env.AUTH_DB, row.id)
+  if (!roles.includes(ADMIN_ROLE) && await canBootstrapAdmin(env, row)) {
+    await assignRole(env.AUTH_DB, row.id, ADMIN_ROLE, 'bootstrap', null)
+    roles.push(ADMIN_ROLE)
+  }
+
+  if (!roles.includes(ADMIN_ROLE)) {
     return apiError('forbidden', 'This dashboard is only available to the configured Tiko admin.', 403)
   }
 
-  return { userId: row.id, emailHash: adminEmailHash, email: adminEmail }
+  return { userId: row.id, emailHash: row.email_hash ?? '', email: normalizeEmail(row.email_plain ?? env.ADMIN_EMAIL ?? ADMIN_EMAIL), roles }
+}
+
+async function activeRoles(db: D1Database, subjectId: string): Promise<string[]> {
+  const { results } = await db.prepare('SELECT role FROM identity_role_assignments WHERE subject_id = ? AND product = ? AND revoked_at IS NULL')
+    .bind(subjectId, PRODUCT)
+    .all<{ role: string }>()
+  return Array.from(new Set(results.map((row) => row.role).filter(Boolean))).sort()
+}
+
+async function canBootstrapAdmin(env: Env, row: { email_hash: string | null }): Promise<boolean> {
+  const adminEmail = normalizeEmail(env.ADMIN_EMAIL || ADMIN_EMAIL)
+  const adminEmailHash = await hashToken(adminEmail, env.TOKEN_PEPPER)
+  return row.email_hash === adminEmailHash
+}
+
+async function assignRole(db: D1Database, subjectId: string, role: string, source: string, actorSubjectId: string | null): Promise<void> {
+  await db.prepare('INSERT INTO identity_role_assignments (id, subject_id, product, role, source, actor_subject_id, created_at, revoked_at, metadata_json) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)')
+    .bind(`role_${crypto.randomUUID().replace(/-/g, '')}`, subjectId, PRODUCT, role, source, actorSubjectId, new Date().toISOString(), null, '{}')
+    .run()
 }
 
 async function proxyCommunicationInbox(request: Request, env: Env): Promise<Response> {

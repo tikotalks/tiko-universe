@@ -75,7 +75,7 @@ function mountApp(existingLs?: ReturnType<typeof createLocalStorageMock>) {
 }
 
 async function flushAsync() {
-  for (let i = 0; i < 6; i += 1) await Promise.resolve()
+  for (let i = 0; i < 20; i += 1) await Promise.resolve()
   await nextTick()
 }
 
@@ -218,6 +218,23 @@ describe('Radio App (unified layout)', () => {
   it('loads public audio albums from the media library before generated-story fallback', async () => {
     const ls = createLocalStorageMock()
     vi.stubGlobal('fetch', vi.fn((url: string) => {
+      if (String(url).endsWith('/identity/session') || String(url).endsWith('/identity/device')) {
+        return Promise.resolve({
+          ok: true,
+          json: () => Promise.resolve({
+            subject: { id: 'user-device', kind: 'device', product: 'tiko' },
+            device: { id: 'device-1', secret: 'device-secret' },
+            account: null,
+            session: { id: 'session-1', token: 'session-token', transport: 'bearer', expiresAt: '2099-01-01T00:00:00.000Z' }
+          })
+        })
+      }
+      if (String(url).includes('/apps/radio/settings')) {
+        return Promise.resolve({ ok: true, json: () => Promise.resolve({ app: 'radio', updatedAt: null, version: 1, settings: {} }) })
+      }
+      if (String(url).includes('/apps/radio/state')) {
+        return Promise.resolve({ ok: true, json: () => Promise.resolve({ app: 'radio', updatedAt: null, version: 1, state: {} }) })
+      }
       if (String(url).includes('/audio/albums')) {
         return Promise.resolve({
           ok: true,
