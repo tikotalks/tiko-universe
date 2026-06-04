@@ -30,10 +30,14 @@ final class TikoCardsTests: XCTestCase {
     }
 
     func testMediaCategoryMapMatchesWebCardsContract() {
-        XCTAssertEqual(defaultCollectionCategoryMap["__default_animals"], ["animals"])
-        XCTAssertEqual(defaultCollectionCategoryMap["__default_food"], ["food", "food-drinks"])
-        XCTAssertEqual(defaultCollectionCategoryMap["__default_emotions"], ["emotions", "feelings"])
-        XCTAssertEqual(defaultCollectionCategoryMap["__default_letters"], ["letters", "alphabet"])
+        let animals = defaultCardCollections.first { $0.id == "__default_animals" }
+        XCTAssertEqual(animals?.mediaCategories, ["animals"])
+        let food = defaultCardCollections.first { $0.id == "__default_food" }
+        XCTAssertEqual(food?.mediaCategories, ["food", "food-drinks"])
+        let emotions = defaultCardCollections.first { $0.id == "__default_emotions" }
+        XCTAssertEqual(emotions?.mediaCategories, ["emotions", "feelings"])
+        let letters = defaultCardCollections.first { $0.id == "__default_letters" }
+        XCTAssertEqual(letters?.mediaCategories, ["letters", "alphabet"])
     }
 
     func testCDNURLUsesImageResizingForTikoUploads() throws {
