@@ -271,13 +271,13 @@ describe('generation-api TTS contract', () => {
     const response = await worker.fetch(new Request('https://api.test/v1/generation/image', {
       method: 'POST',
       headers: { authorization: 'Bearer test-api-key', 'content-type': 'application/json' },
-      body: JSON.stringify({ prompt: 'A friendly robot', style: 'natural' }),
+      body: JSON.stringify({ prompt: 'A friendly robot', style: 'natural', size: '1024x1792', quality: 'hd' }),
     }), env)
     const generated = await json(response)
     const providerBody = JSON.parse(fetchSpy.mock.calls[0]![1]!.body as string)
 
     expect(response.status).toBe(201)
-    expect(providerBody).toMatchObject({ model: 'dall-e-3', prompt: 'A friendly robot', n: 1, size: '1024x1024', quality: 'standard' })
+    expect(providerBody).toMatchObject({ model: 'gpt-image-1', prompt: 'A friendly robot', n: 1, size: '1024x1536', quality: 'high' })
     expect(providerBody).not.toHaveProperty('style')
     expect(providerBody).not.toHaveProperty('response_format')
     expect(fetchSpy.mock.calls[1]![0]).toBe('https://provider.test/generated.png')
