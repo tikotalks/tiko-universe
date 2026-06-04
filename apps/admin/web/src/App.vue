@@ -10,7 +10,7 @@ const login = useBemm('admin-login', { return: 'string', includeBaseClass: true 
 
 const route = useRoute()
 const router = useRouter()
-const { token, user, loading, error, loginMessage, isAuthed, verify, warmDeviceSession, requestMagicLink, verifyMagicLink, logout } = useAdminAuth()
+const { token, user, loading, error, loginMessage, isAuthed, verify, warmDeviceSession, requestMagicLink, verifyEmailChallenge, logout } = useAdminAuth()
 const emailInput = ref('')
 const codeInput = ref('')
 const codeSent = ref(false)
@@ -46,7 +46,7 @@ onMounted(async () => {
 
   const urlToken = route.query.token as string | undefined
   if (urlToken) {
-    await verifyMagicLink(urlToken)
+    await verifyEmailChallenge(urlToken)
     await router.replace({ query: {} })
     return
   }
@@ -72,7 +72,7 @@ async function sendMagicLink() {
 }
 
 async function verifyCode() {
-  await verifyMagicLink(codeInput.value)
+  await verifyEmailChallenge(codeInput.value)
 }
 
 function resetLogin() {

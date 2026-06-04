@@ -3,9 +3,10 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 import App from './App.vue'
 
 const sessionBundle = {
-  user: { id: 'user-device', kind: 'device', recoverable: false },
+  subject: { id: 'user-device', kind: 'device', product: 'tiko' },
   device: { id: 'device-1', secret: 'device-secret' },
-  session: { token: 'session-token', expiresAt: '2099-01-01T00:00:00.000Z' }
+  account: null,
+  session: { id: 'session-1', token: 'session-token', transport: 'bearer', expiresAt: '2099-01-01T00:00:00.000Z' }
 }
 
 function jsonResponse(body: unknown, status = 200) {

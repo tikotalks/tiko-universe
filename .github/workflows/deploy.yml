@@ -27,7 +27,7 @@ jobs:
       deploy-all: ${{ steps.detect.outputs.deploy-all }}
       environment: ${{ steps.detect.outputs.environment }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           fetch-depth: 0
 
@@ -124,9 +124,9 @@ jobs:
       matrix:
         app: ${{ fromJSON(needs.detect-changes.outputs.deploy-all == 'true' && '["admin","cards","media","radio","sequence","timer","todo","type","website","yes-no"]' || needs.detect-changes.outputs.apps-changed) }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v6
         with:
           node-version: 22
           cache: npm
@@ -180,9 +180,9 @@ jobs:
       matrix:
         worker: ${{ fromJSON(needs.detect-changes.outputs.deploy-all == 'true' && '["admin-api","app-api","content-api","generation-api","identity-api","media-api","tts-api"]' || needs.detect-changes.outputs.workers-changed) }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v6
         with:
           node-version: 22
           cache: npm

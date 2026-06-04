@@ -5,7 +5,10 @@
   "type": "module",
   "scripts": {
     "typecheck": "tsc --noEmit -p tsconfig.json",
-    "test": "vitest run ../../tests/identity-api.test.ts",
+    "test": "cd ../.. && vitest run tests/identity-api.test.ts",
     "deploy:dry-run": "wrangler deploy --dry-run"
+  },
+  "dependencies": {
+    "ankore": "^0.2.0"
   }
 }

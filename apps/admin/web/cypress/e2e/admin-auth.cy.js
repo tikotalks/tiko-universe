@@ -1,34 +1,44 @@
 const deviceBundle = {
-  user: {
+  subject: {
     id: 'device-user',
     kind: 'device',
-    recoverable: false,
+    product: 'tiko',
   },
   device: {
     id: 'device-1',
     name: 'Tiko Admin web',
     secret: 'device-secret',
   },
+  account: null,
   session: {
+    id: 'device-session',
     token: 'device-session-token',
+    transport: 'bearer',
     expiresAt: '2099-01-01T00:00:00.000Z',
   },
 }
 
 const adminBundle = {
-  user: {
+  subject: {
     id: 'admin-user',
-    displayName: 'Admin',
-    kind: 'recoverable',
-    recoverable: true,
+    kind: 'account',
+    product: 'tiko',
   },
   device: {
     id: 'device-1',
     name: 'Tiko Admin web',
     secret: 'device-secret',
   },
+  account: {
+    id: 'account-1',
+    subjectId: 'admin-user',
+    emailVerified: true,
+    email: 'sil@example.com',
+  },
   session: {
+    id: 'admin-session',
     token: 'admin-session-token',
+    transport: 'bearer',
     expiresAt: '2099-01-01T00:00:00.000Z',
   },
 }
@@ -45,13 +55,13 @@ describe('admin OTP sign-in', () => {
       req.reply(deviceBundle)
     }).as('bootstrapDevice')
 
-    cy.intercept('POST', 'https://identity.tikoapi.org/v1/identity/email', (req) => {
+    cy.intercept('POST', 'https://identity.tikoapi.org/v1/identity/email/challenge', (req) => {
       expect(req.headers.authorization).to.equal('Bearer device-session-token')
-      expect(req.body).to.deep.equal({ email: 'sil@example.com' })
-      req.reply({ message: 'Check your email for the 6-digit code.' })
+      expect(req.body).to.deep.equal({ email: 'sil@example.com', purpose: 'recover' })
+      req.reply({ ok: true, message: 'Check your email for the 6-digit code.' })
     }).as('requestCode')
 
-    cy.intercept('POST', 'https://identity.tikoapi.org/v1/identity/magic-links/verify', (req) => {
+    cy.intercept('POST', 'https://identity.tikoapi.org/v1/identity/email/verify', (req) => {
       expect(req.body).to.deep.equal({ otp: '123456' })
       req.reply(adminBundle)
     }).as('verifyOtp')

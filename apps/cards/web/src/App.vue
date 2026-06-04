@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, h, inject, markRaw, nextTick, onMounted, onUnmounted, ref, watch } from 'vue'
 import { Button, Icon, Popup, ContextMenu, type ContextMenuItem, type PopupService } from '@sil/ui'
-import { IdentityClient, type SessionBundle, type UserKind } from '@tiko/identity'
+import { IdentityClient, type IdentityBundle } from '@tiko/identity'
 import { TikoDataClient, type CardsSettings, type CardsState, type CardsCollection, type CardsTile } from '@tiko/data'
 import { useTikoMedia, COLLECTION_CATEGORY_MAP, type TikoMedia } from '@tiko/media'
 import { createI18n, defaultLanguage, tikoI18nKeys, tikoLanguages, type TikoLanguage } from '@tiko/i18n'
@@ -460,7 +460,7 @@ const tts = createTikoTtsClient()
 const identityClient = new IdentityClient({ baseUrl: apiBaseUrl })
 const dataClient = new TikoDataClient({ baseUrl: apiBaseUrl })
 const newItemName = ref('')
-const userKind = ref<UserKind>('device')
+const userKind = ref<'anonymous' | 'account'>('anonymous')
 
 // ---------------------------------------------------------------------------
 // Media integration (Supabase images for default collections)
@@ -645,13 +645,14 @@ function saveLocalFallback() {
   })
 }
 
-function saveIdentity(bundle: SessionBundle) {
+function saveIdentity(bundle: IdentityBundle) {
+  if (!bundle.session?.token) throw new Error('Identity response did not include a session token.')
   sessionToken.value = bundle.session.token
-  userKind.value = bundle.user.kind
+  userKind.value = bundle.account?.emailVerified ? 'account' : 'anonymous'
   writeJson(identityStorageKey, {
-    userId: bundle.user.id,
-    deviceId: bundle.device.id,
-    deviceSecret: bundle.device.secret,
+    userId: bundle.subject.id,
+    deviceId: bundle.device?.id,
+    deviceSecret: bundle.device?.secret,
     sessionToken: bundle.session.token,
     expiresAt: bundle.session.expiresAt,
   } satisfies StoredIdentity)
@@ -1137,7 +1138,7 @@ function onPointerUp(e?: PointerEvent) {
 const contextMenuRef = ref<InstanceType<typeof ContextMenu> | null>(null)
 const contextMenuChoiceId = ref<string>('')
 
-const canEditTiles = computed(() => userKind.value === 'recoverable')
+const canEditTiles = computed(() => userKind.value === 'account')
 
 function onTileContextmenu(e: MouseEvent, choiceId: string) {
   if (!canEditTiles.value) return
@@ -1457,7 +1458,7 @@ function openLoginPopup() {
           loading.value = true
           verifyError.value = ''
           try {
-            await identityClient.requestRecoveryEmail({ email: email.value.trim() })
+            await identityClient.createEmailChallenge({ email: email.value.trim(), purpose: 'recover' })
             sent.value = true
           } catch {
             verifyError.value = 'Could not send the code. Please try again.'
