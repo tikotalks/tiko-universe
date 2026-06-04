@@ -24,6 +24,7 @@ public struct TikoAppHeader: View {
     private let appColor: TikoAppColor
     private let actions: [TikoHeaderAction]
     private let isSettingsActive: Bool
+    private let showSettingsButton: Bool
     private let onAction: (String) -> Void
     private let onSettings: () -> Void
     private let onAccount: () -> Void
@@ -38,6 +39,7 @@ public struct TikoAppHeader: View {
         appColor: TikoAppColor,
         actions: [TikoHeaderAction] = [],
         isSettingsActive: Bool = false,
+        showSettingsButton: Bool = true,
         onAction: @escaping (String) -> Void = { _ in },
         onSettings: @escaping () -> Void = {},
         onAccount: @escaping () -> Void = {}
@@ -51,6 +53,7 @@ public struct TikoAppHeader: View {
         self.appColor = appColor
         self.actions = actions
         self.isSettingsActive = isSettingsActive
+        self.showSettingsButton = showSettingsButton
         self.onAction = onAction
         self.onSettings = onSettings
         self.onAccount = onAccount
@@ -134,8 +137,10 @@ public struct TikoAppHeader: View {
                     .accessibilityLabel(action.label)
                 }
 
-                headerButton(systemImage: "gearshape.fill", isActive: isSettingsActive, action: onSettings)
-                    .accessibilityLabel("Settings")
+                if showSettingsButton {
+                    headerButton(systemImage: "gearshape.fill", isActive: isSettingsActive, action: onSettings)
+                        .accessibilityLabel("Settings")
+                }
 
                 Button(action: onAccount) {
                     avatarContent
@@ -183,8 +188,13 @@ public struct TikoAppShell<Content: View, SettingsContent: View>: View {
     @AppStorage("tiko.userName") private var userName = ""
     @AppStorage("tiko.userEmail") private var userEmail = ""
     @AppStorage("tiko.avatarURL") private var storedAvatarURLString = ""
+    @AppStorage("tiko.parentMode") private var parentMode = true
+    @AppStorage("tiko.parentCodeHash") private var parentCodeHash = ""
     @State private var showingAccount = false
     @State private var showingSettings = false
+    @State private var showingProfileMenu = false
+    @State private var showingParentCodeEntry = false
+    @State private var showingCreateParentCode = false
     @State private var fetchedIconURL: URL? = nil
     @State private var fetchedAvatarURL: URL? = nil
 
@@ -217,27 +227,34 @@ public struct TikoAppShell<Content: View, SettingsContent: View>: View {
     }
 
     public var body: some View {
-        VStack(spacing: 0) {
-            TikoAppHeader(
-                appName: appName,
-                appIcon: appIcon,
-                appIconURL: fetchedIconURL,
-                onIconTap: onIconTap,
-                avatar: avatar,
-                avatarURL: fetchedAvatarURL,
-                appColor: appColor,
-                actions: actions,
-                isSettingsActive: showingSettings,
-                onAction: onAction,
-                onSettings: { showingSettings = true },
-                onAccount: { showingAccount = true }
-            )
-
-            content
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-        }
-        .background(selectedColorScheme == .dark ? darkBackgroundColor : backgroundColor)
-        .preferredColorScheme(selectedColorScheme)
+        content
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .background(selectedColorScheme == .dark ? darkBackgroundColor : backgroundColor)
+            .preferredColorScheme(selectedColorScheme)
+            .safeAreaInset(edge: .top, spacing: 0) {
+                TikoAppHeader(
+                    appName: appName,
+                    appIcon: appIcon,
+                    appIconURL: fetchedIconURL,
+                    onIconTap: onIconTap,
+                    avatar: avatar,
+                    avatarURL: fetchedAvatarURL,
+                    appColor: appColor,
+                    actions: parentMode ? actions : [],
+                    isSettingsActive: showingSettings,
+                    showSettingsButton: parentMode,
+                    onAction: onAction,
+                    onSettings: { showingSettings = true },
+                    onAccount: {
+                        if parentMode {
+                            showingProfileMenu = true
+                        } else {
+                            showingParentCodeEntry = true
+                        }
+                    }
+                )
+                .background(selectedColorScheme == .dark ? darkBackgroundColor : backgroundColor)
+            }
         .tikoSettingsPopup(
             isPresented: $showingSettings,
             appColor: appColor,
@@ -247,9 +264,42 @@ public struct TikoAppShell<Content: View, SettingsContent: View>: View {
             settingsContent
         }
         .tikoAccountPopup(isPresented: $showingAccount, appName: appName, appColor: appColor)
+        .tikoPopup(isPresented: $showingProfileMenu) {
+            TikoProfileMenuSheet(
+                appColor: appColor,
+                onProfile: {
+                    showingProfileMenu = false
+                    Task { @MainActor in
+                        try? await Task.sleep(nanoseconds: 250_000_000)
+                        showingAccount = true
+                    }
+                },
+                onChildMode: {
+                    handleChildModeRequest()
+                },
+                onLogOut: {
+                    try? TikoDeviceSessionStore().clearAll()
+                    showingProfileMenu = false
+                },
+                onClose: { showingProfileMenu = false }
+            )
+        }
+        .tikoPopup(isPresented: $showingParentCodeEntry) {
+            TikoParentCodeEntrySheet(
+                appColor: appColor,
+                onClose: { showingParentCodeEntry = false }
+            )
+        }
+        .tikoPopup(isPresented: $showingCreateParentCode) {
+            TikoCreateParentCodeSheet(
+                appColor: appColor,
+                onClose: { showingCreateParentCode = false }
+            )
+        }
         .task {
             await fetchIconIfNeeded()
             await fetchAvatarIfNeeded()
+            await loadParentCodeHashFromProfile()
         }
     }
 
@@ -268,6 +318,27 @@ public struct TikoAppShell<Content: View, SettingsContent: View>: View {
         Task { @MainActor in
             try? await Task.sleep(nanoseconds: 250_000_000)
             showingAccount = true
+        }
+    }
+
+    private func handleChildModeRequest() {
+        showingProfileMenu = false
+        Task { @MainActor in
+            try? await Task.sleep(nanoseconds: 250_000_000)
+            if parentCodeHash.isEmpty {
+                showingCreateParentCode = true
+            } else {
+                parentMode = false
+            }
+        }
+    }
+
+    private func loadParentCodeHashFromProfile() async {
+        guard parentCodeHash.isEmpty else { return }
+        guard let token = (try? TikoDeviceSessionStore().load())?.accessToken else { return }
+        if let profile = try? await TikoIdentityClient().getProfile(accessToken: token),
+           let hash = profile.parentCodeHash, !hash.isEmpty {
+            parentCodeHash = hash
         }
     }
 

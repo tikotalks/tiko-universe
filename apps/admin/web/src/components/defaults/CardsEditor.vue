@@ -3,34 +3,48 @@ import { computed } from 'vue'
 import { useBemm } from 'bemm'
 import { Button, InputText } from '@sil/ui'
 
-interface Tile {
+interface Card {
   id: string
-  label: string
-  emoji?: string
+  title: string
+  speech: string
+  colorHex: number
 }
 
 interface Collection {
   id: string
   title: string
-  tiles: Tile[]
+  colorHex: number
+  order: number
+  mediaCategories: string[]
+  cards: Card[]
 }
 
-interface CardsState {
+interface CardsDefaultsPayload {
   collections: Collection[]
 }
+
+const DEFAULT_COLLECTION_COLOR = 0xff8a1f
 
 const bemm = useBemm('cards-editor', { return: 'string', includeBaseClass: true })
 
 const props = defineProps<{ modelValue: Record<string, unknown> }>()
 const emit = defineEmits<{ 'update:modelValue': [value: Record<string, unknown>] }>()
 
-const state = computed<CardsState>(() => {
-  const value = props.modelValue as Partial<CardsState> | null | undefined
-  const collections = Array.isArray(value?.collections) ? value!.collections : []
+function hexToNumber(hex: string): number {
+  return parseInt(hex.replace('#', ''), 16)
+}
+
+function numberToHex(n: number): string {
+  return `#${n.toString(16).padStart(6, '0')}`
+}
+
+const state = computed<CardsDefaultsPayload>(() => {
+  const value = props.modelValue as Partial<CardsDefaultsPayload> | null | undefined
+  const collections = Array.isArray(value?.collections) ? (value!.collections as Collection[]) : []
   return { collections }
 })
 
-function update(next: CardsState) {
+function update(next: CardsDefaultsPayload) {
   emit('update:modelValue', { ...props.modelValue, ...next })
 }
 
@@ -39,10 +53,18 @@ function makeId(prefix: string) {
 }
 
 function addCollection() {
+  const order = state.value.collections.length
   update({
     collections: [
       ...state.value.collections,
-      { id: makeId('collection'), title: 'New collection', tiles: [] },
+      {
+        id: makeId('collection'),
+        title: 'New collection',
+        colorHex: DEFAULT_COLLECTION_COLOR,
+        order,
+        mediaCategories: [],
+        cards: [],
+      },
     ],
   })
 }
@@ -64,28 +86,45 @@ function moveCollection(index: number, delta: number) {
   update({ collections })
 }
 
-function addTile(collectionIndex: number) {
+function addCard(collectionIndex: number) {
+  const collection = state.value.collections[collectionIndex]
+  const order = collection.cards.length
+  const newCard: Card = {
+    id: makeId('card'),
+    title: 'New card',
+    speech: 'New card',
+    colorHex: collection.colorHex,
+    order,
+  } as Card & { order: number }
   const collections = state.value.collections.map((c, i) =>
-    i === collectionIndex ? { ...c, tiles: [...c.tiles, { id: makeId('tile'), label: 'New tile', emoji: '✨' }] } : c,
+    i === collectionIndex ? { ...c, cards: [...c.cards, newCard] } : c,
   )
   update({ collections })
 }
 
-function updateTile(collectionIndex: number, tileIndex: number, patch: Partial<Tile>) {
+function updateCard(collectionIndex: number, cardIndex: number, patch: Partial<Card>) {
   const collections = state.value.collections.map((c, i) => {
     if (i !== collectionIndex) return c
-    const tiles = c.tiles.map((t, ti) => (ti === tileIndex ? { ...t, ...patch } : t))
-    return { ...c, tiles }
+    const cards = c.cards.map((card, ci) => (ci === cardIndex ? { ...card, ...patch } : card))
+    return { ...c, cards }
   })
   update({ collections })
 }
 
-function removeTile(collectionIndex: number, tileIndex: number) {
+function removeCard(collectionIndex: number, cardIndex: number) {
   const collections = state.value.collections.map((c, i) => {
     if (i !== collectionIndex) return c
-    return { ...c, tiles: c.tiles.filter((_, ti) => ti !== tileIndex) }
+    return { ...c, cards: c.cards.filter((_, ci) => ci !== cardIndex) }
   })
   update({ collections })
+}
+
+function updateMediaCategories(index: number, raw: string) {
+  const mediaCategories = raw
+    .split(',')
+    .map(s => s.trim())
+    .filter(Boolean)
+  updateCollection(index, { mediaCategories })
 }
 </script>
 
@@ -115,6 +154,21 @@ function removeTile(collectionIndex: number, tileIndex: number) {
             placeholder="kebab-case-id"
             @update:model-value="(v: string) => updateCollection(ci, { id: v })"
           />
+          <div :class="bemm('color-field')">
+            <label :class="bemm('color-label')">Color</label>
+            <input
+              type="color"
+              :class="bemm('color-input')"
+              :value="numberToHex(collection.colorHex)"
+              @input="(e) => updateCollection(ci, { colorHex: hexToNumber((e.target as HTMLInputElement).value) })"
+            />
+          </div>
+          <InputText
+            :model-value="collection.mediaCategories.join(', ')"
+            label="Media categories"
+            placeholder="e.g. animals, food"
+            @update:model-value="(v: string) => updateMediaCategories(ci, v)"
+          />
         </div>
         <div :class="bemm('collection-actions')">
           <Button variant="ghost" size="small" :disabled="ci === 0" @click="moveCollection(ci, -1)">↑</Button>
@@ -123,35 +177,44 @@ function removeTile(collectionIndex: number, tileIndex: number) {
         </div>
       </header>
 
-      <div :class="bemm('tiles')">
-        <header :class="bemm('tiles-head')">
-          <h4 :class="bemm('tiles-title')">Tiles</h4>
-          <Button variant="outline" size="small" @click="addTile(ci)">Add tile</Button>
+      <div :class="bemm('cards')">
+        <header :class="bemm('cards-head')">
+          <h4 :class="bemm('cards-title')">Cards</h4>
+          <Button variant="outline" size="small" @click="addCard(ci)">Add card</Button>
         </header>
 
-        <div v-if="collection.tiles.length === 0" :class="bemm('tiles-empty')">No tiles yet.</div>
+        <div v-if="collection.cards.length === 0" :class="bemm('cards-empty')">No cards yet.</div>
 
-        <div v-else :class="bemm('tile-grid')">
-          <div v-for="(tile, ti) in collection.tiles" :key="tile.id" :class="bemm('tile')">
+        <div v-else :class="bemm('card-grid')">
+          <div v-for="(card, ki) in collection.cards" :key="card.id" :class="bemm('card')">
             <InputText
-              :model-value="tile.emoji ?? ''"
-              label="Emoji"
-              placeholder="✨"
-              @update:model-value="(v: string) => updateTile(ci, ti, { emoji: v })"
+              :model-value="card.title"
+              label="Title"
+              placeholder="Card title"
+              @update:model-value="(v: string) => updateCard(ci, ki, { title: v })"
             />
             <InputText
-              :model-value="tile.label"
-              label="Label"
-              placeholder="Tile label"
-              @update:model-value="(v: string) => updateTile(ci, ti, { label: v })"
+              :model-value="card.speech"
+              label="Speech"
+              placeholder="What gets spoken aloud"
+              @update:model-value="(v: string) => updateCard(ci, ki, { speech: v })"
             />
             <InputText
-              :model-value="tile.id"
+              :model-value="card.id"
               label="ID"
               placeholder="kebab-case-id"
-              @update:model-value="(v: string) => updateTile(ci, ti, { id: v })"
+              @update:model-value="(v: string) => updateCard(ci, ki, { id: v })"
             />
-            <Button variant="ghost" size="small" @click="removeTile(ci, ti)">Remove tile</Button>
+            <div :class="bemm('color-field')">
+              <label :class="bemm('color-label')">Color</label>
+              <input
+                type="color"
+                :class="bemm('color-input')"
+                :value="numberToHex(card.colorHex)"
+                @input="(e) => updateCard(ci, ki, { colorHex: hexToNumber((e.target as HTMLInputElement).value) })"
+              />
+            </div>
+            <Button variant="ghost" size="small" @click="removeCard(ci, ki)">Remove card</Button>
           </div>
         </div>
       </div>
@@ -179,7 +242,7 @@ function removeTile(collectionIndex: number, tileIndex: number) {
   }
 
   &__empty,
-  &__tiles-empty {
+  &__cards-empty {
     background: var(--admin-page-bg);
     border: 1px dashed var(--admin-border-strong);
     border-radius: var(--border-radius-s);
@@ -208,8 +271,9 @@ function removeTile(collectionIndex: number, tileIndex: number) {
 
   &__collection-fields {
     display: grid;
-    grid-template-columns: 2fr 1fr;
+    grid-template-columns: 2fr 1fr auto 2fr;
     gap: var(--space-s);
+    align-items: end;
   }
 
   &__collection-actions {
@@ -218,20 +282,44 @@ function removeTile(collectionIndex: number, tileIndex: number) {
     align-items: center;
   }
 
-  &__tiles {
+  &__color-field {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+  }
+
+  &__color-label {
+    font-size: var(--font-size-xs);
+    font-weight: 600;
+    color: var(--admin-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  &__color-input {
+    width: 2.5rem;
+    height: 2.5rem;
+    padding: 0.1rem;
+    border: 1px solid var(--admin-border);
+    border-radius: var(--border-radius-xs);
+    background: var(--admin-surface);
+    cursor: pointer;
+  }
+
+  &__cards {
     display: flex;
     flex-direction: column;
     gap: var(--space-s);
   }
 
-  &__tiles-head {
+  &__cards-head {
     display: flex;
     justify-content: space-between;
     align-items: center;
     gap: var(--space-s);
   }
 
-  &__tiles-title {
+  &__cards-title {
     font-size: var(--font-size-s);
     font-weight: 600;
     color: var(--admin-text);
@@ -239,13 +327,13 @@ function removeTile(collectionIndex: number, tileIndex: number) {
     letter-spacing: 0.04em;
   }
 
-  &__tile-grid {
+  &__card-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(calc(var(--space) * 16), 1fr));
     gap: var(--space-s);
   }
 
-  &__tile {
+  &__card {
     background: var(--admin-surface);
     border: 1px solid var(--admin-border);
     border-radius: var(--border-radius-s);

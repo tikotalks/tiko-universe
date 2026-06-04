@@ -5,6 +5,8 @@ interface Env {
   CONTENT_DB: D1Database
   CONTENT_CACHE?: KVNamespace
   ALLOWED_ORIGINS?: string
+  APP_API_URL?: string      // e.g. https://app.tikoapi.org  — for fetching user state
+  ADMIN_SECRET?: string     // Bearer token required for admin mutation endpoints
 }
 
 interface D1Database {
@@ -15,6 +17,7 @@ interface D1PreparedStatement {
   bind(...values: unknown[]): D1PreparedStatement
   first<T = Record<string, unknown>>(): Promise<T | null>
   all<T = Record<string, unknown>>(): Promise<{ results: T[] }>
+  run(): Promise<{ success: boolean }>
 }
 
 interface KVNamespace {
@@ -39,6 +42,23 @@ type QueryMethod =
 interface ContentQuery {
   method?: QueryMethod
   params?: JsonRecord
+}
+
+interface CardTile {
+  id: string
+  title: string
+  speech: string
+  colorHex: number
+  order: number
+}
+
+interface CardCollection {
+  id: string
+  title: string
+  colorHex: number
+  order: number
+  mediaCategories: string[]
+  cards: CardTile[]
 }
 
 const DEFAULT_ALLOWED_ORIGINS = [
@@ -72,7 +92,7 @@ function allowedOrigins(env: Env): string[] {
 function corsHeaders(request: Request, env: Env): HeadersInit {
   const origin = request.headers.get('Origin')
   const headers: Record<string, string> = {
-    'Access-Control-Allow-Methods': 'GET,POST,OPTIONS',
+    'Access-Control-Allow-Methods': 'GET,POST,PUT,OPTIONS',
     'Access-Control-Allow-Headers': 'Content-Type,Authorization',
     'Access-Control-Max-Age': '86400',
     Vary: 'Origin',
@@ -283,11 +303,166 @@ async function executeQuery(env: Env, query: ContentQuery): Promise<unknown> {
   }
 }
 
+// ---------------------------------------------------------------------------
+// Cards
+// ---------------------------------------------------------------------------
+
+interface CardsCollectionRow {
+  id: string
+  title: string
+  color_hex: number
+  display_order: number
+  media_categories: string | null
+}
+
+interface CardsTileRow {
+  id: string
+  collection_id: string
+  title: string
+  speech: string
+  color_hex: number
+  display_order: number
+}
+
+async function getCardsCollections(env: Env, sessionToken?: string): Promise<{ collections: CardCollection[] }> {
+  const { results: collectionRows } = await env.CONTENT_DB.prepare(
+    `SELECT id, title, color_hex, display_order, media_categories
+     FROM cards_collections
+     WHERE is_active = 1
+     ORDER BY display_order ASC`,
+  ).all<CardsCollectionRow>()
+
+  const { results: tileRows } = await env.CONTENT_DB.prepare(
+    `SELECT id, collection_id, title, speech, color_hex, display_order
+     FROM cards_tiles
+     ORDER BY collection_id, display_order ASC`,
+  ).all<CardsTileRow>()
+
+  const tilesByCollection = new Map<string, CardTile[]>()
+  for (const row of tileRows) {
+    const tile: CardTile = {
+      id: row.id,
+      title: row.title,
+      speech: row.speech,
+      colorHex: row.color_hex,
+      order: row.display_order,
+    }
+    const existing = tilesByCollection.get(row.collection_id)
+    if (existing) {
+      existing.push(tile)
+    } else {
+      tilesByCollection.set(row.collection_id, [tile])
+    }
+  }
+
+  const defaults: CardCollection[] = collectionRows.map((row) => ({
+    id: row.id,
+    title: row.title,
+    colorHex: row.color_hex,
+    order: row.display_order,
+    mediaCategories: parseJsonArray(row.media_categories) as string[],
+    cards: tilesByCollection.get(row.id) ?? [],
+  }))
+
+  if (!sessionToken || !env.APP_API_URL) {
+    return { collections: defaults }
+  }
+
+  try {
+    const resp = await fetch(`${env.APP_API_URL}/v1/apps/cards/state`, {
+      headers: { Authorization: `Bearer ${sessionToken}` },
+    })
+    if (resp.ok) {
+      const body = (await resp.json()) as { state?: { collections?: unknown[] } }
+      const userCollections = body?.state?.collections
+      if (Array.isArray(userCollections) && userCollections.length > 0) {
+        const merged = new Map<string, CardCollection>()
+        for (const col of defaults) merged.set(col.id, col)
+        for (const col of userCollections as CardCollection[]) merged.set(col.id, col)
+        return { collections: Array.from(merged.values()) }
+      }
+    }
+  } catch {
+    // silently fall through to defaults
+  }
+
+  return { collections: defaults }
+}
+
+async function putAdminCardsCollections(
+  env: Env,
+  collections: CardCollection[],
+): Promise<{ success: boolean; count: number }> {
+  if (!Array.isArray(collections) || collections.length === 0) {
+    throw new Error('collections must be a non-empty array')
+  }
+
+  await env.CONTENT_DB.prepare(`DELETE FROM cards_collections`).run()
+
+  for (const col of collections) {
+    await env.CONTENT_DB.prepare(
+      `INSERT INTO cards_collections (id, title, color_hex, display_order, media_categories, language_code, is_active)
+       VALUES (?, ?, ?, ?, ?, 'en', 1)`,
+    )
+      .bind(
+        col.id,
+        col.title,
+        col.colorHex ?? 0,
+        col.order ?? 0,
+        JSON.stringify(col.mediaCategories ?? []),
+      )
+      .run()
+
+    if (Array.isArray(col.cards)) {
+      for (const tile of col.cards) {
+        await env.CONTENT_DB.prepare(
+          `INSERT INTO cards_tiles (id, collection_id, title, speech, color_hex, display_order)
+           VALUES (?, ?, ?, ?, ?, ?)`,
+        )
+          .bind(tile.id, col.id, tile.title, tile.speech, tile.colorHex ?? 0, tile.order ?? 0)
+          .run()
+      }
+    }
+  }
+
+  return { success: true, count: collections.length }
+}
+
+function requireAdminSecret(request: Request, env: Env): Response | null {
+  const authHeader = request.headers.get('Authorization') ?? ''
+  const token = authHeader.startsWith('Bearer ') ? authHeader.slice(7) : ''
+  if (!env.ADMIN_SECRET || token !== env.ADMIN_SECRET) {
+    return new Response(JSON.stringify({ success: false, error: { code: 'unauthorized', message: 'Unauthorized' } }), {
+      status: 401,
+      headers: { ...corsHeaders(request, env), 'Content-Type': 'application/json; charset=utf-8' },
+    })
+  }
+  return null
+}
+
+// ---------------------------------------------------------------------------
+// Routing
+// ---------------------------------------------------------------------------
+
 async function handleGet(request: Request, env: Env, segments: string[]): Promise<Response> {
   if (segments.length === 0) return json(request, env, { success: true, service: 'content-api' })
   if (segments[0] !== 'v1') return error(request, env, 'not_found', 'Not found', 404)
 
   const resource = segments[1]
+
+  if (resource === 'cards' && segments[2] === 'collections') {
+    const authHeader = request.headers.get('Authorization') ?? ''
+    const sessionToken = authHeader.startsWith('Bearer ') ? authHeader.slice(7) : undefined
+
+    if (sessionToken) {
+      const data = await getCardsCollections(env, sessionToken)
+      return json(request, env, { success: true, data }, 200, { 'Cache-Control': 'no-store' })
+    }
+
+    const data = await cached(request, env, 'cards:collections', () => getCardsCollections(env))
+    return json(request, env, { success: true, data })
+  }
+
   if (resource === 'projects' && segments.length === 2) {
     const data = await cached(request, env, 'projects', () => getProjects(env))
     return json(request, env, { success: true, data })
@@ -348,6 +523,23 @@ export default {
     if (request.method === 'GET') return handleGet(request, env, segments)
     if (request.method === 'POST' && (url.pathname === '/v1/query' || url.pathname === '/query')) return handleQuery(request, env)
 
+    if (request.method === 'PUT' && url.pathname === '/v1/admin/cards/collections') {
+      const authError = requireAdminSecret(request, env)
+      if (authError) return authError
+      let body: { collections?: unknown }
+      try {
+        body = (await request.json()) as { collections?: unknown }
+      } catch {
+        return error(request, env, 'bad_request', 'Request body must be valid JSON', 400)
+      }
+      try {
+        const result = await putAdminCardsCollections(env, body.collections as CardCollection[])
+        return json(request, env, result)
+      } catch (err) {
+        return error(request, env, 'bad_request', err instanceof Error ? err.message : 'Failed to update collections', 400)
+      }
+    }
+
     return error(request, env, 'method_not_allowed', 'Method not allowed', 405)
   },
 }
@@ -363,4 +555,6 @@ export const internals = {
   getItems,
   getItem,
   normalizeRow,
+  getCardsCollections,
+  putAdminCardsCollections,
 }

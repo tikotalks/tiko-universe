@@ -1,5 +1,6 @@
 import SwiftUI
 import PopupView
+import CryptoKit
 
 public struct TikoPopupCard<Content: View>: View {
     private let title: String
@@ -776,6 +777,237 @@ public struct TikoAccountSheet: View {
         }
         isLoading = false
     }
+}
+
+public struct TikoProfileMenuSheet: View {
+    private let appColor: TikoAppColor
+    private let onProfile: () -> Void
+    private let onChildMode: () -> Void
+    private let onLogOut: () -> Void
+    private let onClose: () -> Void
+
+    public init(
+        appColor: TikoAppColor,
+        onProfile: @escaping () -> Void,
+        onChildMode: @escaping () -> Void,
+        onLogOut: @escaping () -> Void,
+        onClose: @escaping () -> Void
+    ) {
+        self.appColor = appColor
+        self.onProfile = onProfile
+        self.onChildMode = onChildMode
+        self.onLogOut = onLogOut
+        self.onClose = onClose
+    }
+
+    public var body: some View {
+        TikoPopupCard(
+            title: "Profile",
+            icon: "person.crop.circle",
+            appColor: appColor,
+            onClose: onClose
+        ) {
+            VStack(spacing: 10) {
+                TikoSettingsActionRow(
+                    title: "Profile",
+                    icon: "person.crop.circle",
+                    appColor: appColor,
+                    action: onProfile
+                )
+                TikoSettingsActionRow(
+                    title: "Child mode",
+                    icon: "figure.child",
+                    appColor: appColor,
+                    action: onChildMode
+                )
+                TikoSettingsActionRow(
+                    title: "Log out",
+                    icon: "rectangle.portrait.and.arrow.right",
+                    appColor: appColor,
+                    action: onLogOut
+                )
+            }
+        }
+    }
+}
+
+public struct TikoParentCodeEntrySheet: View {
+    private let appColor: TikoAppColor
+    private let onClose: () -> Void
+
+    @AppStorage("tiko.parentMode") private var parentMode = true
+    @AppStorage("tiko.parentCodeHash") private var storedCodeHash = ""
+    @State private var enteredCode = ""
+    @State private var error: String? = nil
+
+    public init(appColor: TikoAppColor, onClose: @escaping () -> Void) {
+        self.appColor = appColor
+        self.onClose = onClose
+    }
+
+    public var body: some View {
+        TikoPopupCard(
+            title: "Parent mode",
+            subtitle: "Enter your 4-digit PIN to enable parent mode.",
+            icon: "lock.fill",
+            appColor: appColor,
+            onClose: onClose
+        ) {
+            VStack(spacing: 12) {
+                TextField("••••", text: $enteredCode)
+                    .font(.system(size: 28, weight: .heavy, design: .monospaced))
+                    .multilineTextAlignment(.center)
+                    .keyboardType(.numberPad)
+                    .padding(15)
+                    .background(Color(.systemBackground))
+                    .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+                    .onChange(of: enteredCode) { _, new in
+                        let filtered = String(new.filter { $0.isNumber }.prefix(4))
+                        if filtered != new { enteredCode = filtered }
+                    }
+
+                if let error {
+                    Text(error)
+                        .font(.system(size: 13, weight: .semibold))
+                        .foregroundStyle(.red)
+                        .multilineTextAlignment(.center)
+                }
+
+                Button {
+                    verifyCode()
+                } label: {
+                    Text("Enable parent mode")
+                        .font(.system(size: 17, weight: .heavy, design: .rounded))
+                        .foregroundStyle(.white)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 15)
+                        .background(appColor.palette.primary)
+                        .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
+                }
+                .buttonStyle(.plain)
+                .disabled(enteredCode.count != 4)
+            }
+        }
+    }
+
+    private func verifyCode() {
+        if tikoHashPin(enteredCode) == storedCodeHash {
+            parentMode = true
+            onClose()
+        } else {
+            error = "Incorrect PIN. Please try again."
+            enteredCode = ""
+        }
+    }
+}
+
+public struct TikoCreateParentCodeSheet: View {
+    private let appColor: TikoAppColor
+    private let onClose: () -> Void
+
+    @AppStorage("tiko.parentMode") private var parentMode = true
+    @AppStorage("tiko.parentCodeHash") private var storedCodeHash = ""
+    @State private var code = ""
+    @State private var confirmCode = ""
+    @State private var error: String? = nil
+
+    public init(appColor: TikoAppColor, onClose: @escaping () -> Void) {
+        self.appColor = appColor
+        self.onClose = onClose
+    }
+
+    public var body: some View {
+        TikoPopupCard(
+            title: "Create parent PIN",
+            subtitle: "Set a 4-digit PIN to protect parent mode.",
+            icon: "lock.fill",
+            appColor: appColor,
+            onClose: onClose
+        ) {
+            VStack(spacing: 12) {
+                VStack(alignment: .leading, spacing: 7) {
+                    Text("PIN")
+                        .font(.system(size: 13, weight: .heavy, design: .rounded))
+                        .foregroundStyle(.secondary)
+                    TextField("••••", text: $code)
+                        .font(.system(size: 28, weight: .heavy, design: .monospaced))
+                        .multilineTextAlignment(.center)
+                        .keyboardType(.numberPad)
+                        .padding(15)
+                        .background(Color(.systemBackground))
+                        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+                        .onChange(of: code) { _, new in
+                            let filtered = String(new.filter { $0.isNumber }.prefix(4))
+                            if filtered != new { code = filtered }
+                        }
+                }
+
+                VStack(alignment: .leading, spacing: 7) {
+                    Text("Confirm PIN")
+                        .font(.system(size: 13, weight: .heavy, design: .rounded))
+                        .foregroundStyle(.secondary)
+                    TextField("••••", text: $confirmCode)
+                        .font(.system(size: 28, weight: .heavy, design: .monospaced))
+                        .multilineTextAlignment(.center)
+                        .keyboardType(.numberPad)
+                        .padding(15)
+                        .background(Color(.systemBackground))
+                        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+                        .onChange(of: confirmCode) { _, new in
+                            let filtered = String(new.filter { $0.isNumber }.prefix(4))
+                            if filtered != new { confirmCode = filtered }
+                        }
+                }
+
+                if let error {
+                    Text(error)
+                        .font(.system(size: 13, weight: .semibold))
+                        .foregroundStyle(.red)
+                        .multilineTextAlignment(.center)
+                }
+
+                Button {
+                    saveCode()
+                } label: {
+                    Text("Save and enter child mode")
+                        .font(.system(size: 17, weight: .heavy, design: .rounded))
+                        .foregroundStyle(.white)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 15)
+                        .background(appColor.palette.primary)
+                        .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
+                }
+                .buttonStyle(.plain)
+                .disabled(code.count != 4 || confirmCode.count != 4)
+            }
+        }
+    }
+
+    private func saveCode() {
+        guard code.count == 4, confirmCode.count == 4 else { return }
+        guard code == confirmCode else {
+            error = "PINs don't match. Please try again."
+            return
+        }
+        let hash = tikoHashPin(code)
+        storedCodeHash = hash
+        parentMode = false
+        onClose()
+        Task {
+            guard let token = (try? TikoDeviceSessionStore().load())?.accessToken else { return }
+            try? await TikoIdentityClient().updateProfile(
+                accessToken: token,
+                patch: TikoIdentityProfile(parentCodeHash: hash)
+            )
+        }
+    }
+}
+
+/// Matches the web: SHA-256("tiko:parent-code:{pin}") as lowercase hex.
+private func tikoHashPin(_ pin: String) -> String {
+    let data = Data("tiko:parent-code:\(pin)".utf8)
+    let hash = SHA256.hash(data: data)
+    return hash.compactMap { String(format: "%02x", $0) }.joined()
 }
 
 private extension View {

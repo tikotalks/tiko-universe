@@ -71,3 +71,29 @@ CREATE INDEX IF NOT EXISTS idx_content_pages_published ON content_pages(is_publi
 CREATE INDEX IF NOT EXISTS idx_content_page_sections_page ON content_page_sections(page_id);
 CREATE INDEX IF NOT EXISTS idx_content_items_slug ON content_items(slug);
 CREATE INDEX IF NOT EXISTS idx_content_items_template ON content_items(template_id);
+
+-- Cards app: default collections and cards served to all clients
+CREATE TABLE IF NOT EXISTS cards_collections (
+  id TEXT PRIMARY KEY,
+  title TEXT NOT NULL,
+  color_hex INTEGER NOT NULL DEFAULT 0,
+  display_order INTEGER NOT NULL DEFAULT 0,
+  media_categories TEXT,                   -- JSON array e.g. '["animals"]'
+  language_code TEXT NOT NULL DEFAULT 'en',
+  is_active INTEGER NOT NULL DEFAULT 1,
+  created_at TEXT NOT NULL DEFAULT (datetime('now')),
+  updated_at TEXT NOT NULL DEFAULT (datetime('now'))
+);
+
+CREATE TABLE IF NOT EXISTS cards_tiles (
+  id TEXT PRIMARY KEY,
+  collection_id TEXT NOT NULL,
+  title TEXT NOT NULL,
+  speech TEXT NOT NULL,
+  color_hex INTEGER NOT NULL DEFAULT 0,
+  display_order INTEGER NOT NULL DEFAULT 0,
+  FOREIGN KEY (collection_id) REFERENCES cards_collections(id) ON DELETE CASCADE
+);
+
+CREATE INDEX IF NOT EXISTS idx_cards_collections_order ON cards_collections(display_order, language_code);
+CREATE INDEX IF NOT EXISTS idx_cards_tiles_collection ON cards_tiles(collection_id, display_order);

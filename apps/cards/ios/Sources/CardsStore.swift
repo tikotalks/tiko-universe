@@ -2,22 +2,37 @@ import Foundation
 
 @MainActor
 final class CardsStore: ObservableObject {
-    @Published private(set) var collections: [CardCollection]
+    @Published private(set) var collections: [CardCollection] = []
     @Published private(set) var collectionThumbnails: [String: URL] = [:]
     @Published private(set) var loadingCollectionIDs: Set<String> = []
+    @Published private(set) var isLoading = false
 
     private let mediaClient: CardsMediaClient
     private let imageCache: CardsImageCache
+    private let contentClient = CardsContentClient()
     private var fetchedCollectionIDs = Set<String>()
 
     init(
-        collections: [CardCollection] = defaultCardCollections,
         mediaClient: CardsMediaClient = CardsMediaClient(),
         imageCache: CardsImageCache = .shared
     ) {
-        self.collections = collections.sorted { $0.order < $1.order }
         self.mediaClient = mediaClient
         self.imageCache = imageCache
+    }
+
+    func load() async {
+        isLoading = true
+        defer { isLoading = false }
+
+        let token = try? TikoDeviceSessionStore().load()?.accessToken
+        do {
+            let fetched = try await contentClient.fetchCollections(sessionToken: token)
+            collections = fetched.sorted { $0.order < $1.order }
+        } catch {
+            if collections.isEmpty {
+                collections = defaultCardCollections.sorted { $0.order < $1.order }
+            }
+        }
     }
 
     func hydrateRootThumbnails() async {
@@ -28,7 +43,9 @@ final class CardsStore: ObservableObject {
     }
 
     func hydrateMedia(for collectionID: String, prefetchCards: Bool = true) async {
-        guard let categories = defaultCollectionCategoryMap[collectionID], !categories.isEmpty else { return }
+        guard let collection = collections.first(where: { $0.id == collectionID }) else { return }
+        let categories = collection.mediaCategories
+        guard !categories.isEmpty else { return }
         guard !fetchedCollectionIDs.contains(collectionID) else { return }
 
         fetchedCollectionIDs.insert(collectionID)
