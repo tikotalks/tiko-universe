@@ -30,6 +30,21 @@ class AdminMemoryD1 {
       const row = Array.from(this.accounts.values()).find((account) => account.subject_id === values[0] && !account.disabled_at)
       return new MemoryResult(row ? [{ id: row.subject_id, email_hash: row.email_hash, email_plain: row.email_plain }] : [])
     }
+    if (normalized.startsWith('SELECT s.id, s.kind') && normalized.includes('WHERE s.id = ?')) {
+      const subjectId = String(values[1])
+      const subject = this.subjects.get(subjectId)
+      if (!subject || subject.disabled_at) return new MemoryResult([])
+      const account = Array.from(this.accounts.values()).find((candidate) => candidate.subject_id === subject.id && !candidate.disabled_at)
+      const roles = this.roles.filter((role) => role.subject_id === subject.id && role.product === 'tiko' && !role.revoked_at).map((role) => role.role).sort()
+      return new MemoryResult([{
+        id: subject.id,
+        kind: subject.kind,
+        email: account?.email_plain ?? null,
+        created_at: subject.created_at,
+        updated_at: subject.updated_at,
+        roles: JSON.stringify(roles),
+      }])
+    }
     if (normalized.startsWith('SELECT s.id, s.kind')) {
       const product = String(values[1] ?? 'tiko')
       const query = String(values[2] ?? '').replace(/%/g, '').toLowerCase()
@@ -155,6 +170,27 @@ describe('admin-api role based access', () => {
     expect(response.status).toBe(200)
     expect(body.data.users).toHaveLength(1)
     expect(body.data.users[0]).toMatchObject({ id: 'sub_child', email: 'child@example.test', roles: ['child'] })
+  })
+
+  it('keeps the signed-in admin visible in the default and matching user list', async () => {
+    const testEnv = await makeEnv()
+    testEnv.AUTH_DB.subjects.get('sub_admin')!.product = 'other'
+    testEnv.AUTH_DB.roles.push({ id: 'role_admin', subject_id: 'sub_admin', product: 'tiko', role: 'admin', source: 'manual', actor_subject_id: null, created_at: '2026-01-01T00:00:00.000Z', revoked_at: null, metadata_json: '{}' })
+
+    const defaultResponse = await fetchAdmin('/v1/admin/users', testEnv)
+    const defaultBody = await defaultResponse.json() as { data: { users: Array<{ id: string; email: string | null; roles: string[] }> } }
+    expect(defaultResponse.status).toBe(200)
+    expect(defaultBody.data.users[0]).toMatchObject({ id: 'sub_admin', email: 'me@sil.mt', roles: ['admin'] })
+
+    const matchingResponse = await fetchAdmin('/v1/admin/users?q=me@sil.mt', testEnv)
+    const matchingBody = await matchingResponse.json() as { data: { users: Array<{ id: string; email: string | null; roles: string[] }> } }
+    expect(matchingResponse.status).toBe(200)
+    expect(matchingBody.data.users[0]?.id).toBe('sub_admin')
+
+    const unrelatedResponse = await fetchAdmin('/v1/admin/users?q=child', testEnv)
+    const unrelatedBody = await unrelatedResponse.json() as { data: { users: Array<{ id: string }> } }
+    expect(unrelatedResponse.status).toBe(200)
+    expect(unrelatedBody.data.users).toHaveLength(0)
   })
 
   it('assigns and revokes roles while preventing removal of the final active admin', async () => {
