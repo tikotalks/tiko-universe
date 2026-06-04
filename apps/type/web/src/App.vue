@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, onMounted, ref, watch } from 'vue'
 import { Icon } from '@sil/ui'
-import { IdentityClient, type SessionBundle } from '@tiko/identity'
+import { IdentityClient, type IdentityBundle } from '@tiko/identity'
 import { TikoDataClient, type TypeSettings, type TypeState } from '@tiko/data'
 import { createI18n, defaultLanguage, tikoI18nKeys, tikoLanguages, type TikoLanguage } from '@tiko/i18n'
 import {
@@ -140,12 +140,13 @@ function saveLocalFallback() {
   })
 }
 
-function saveIdentity(bundle: SessionBundle) {
+function saveIdentity(bundle: IdentityBundle) {
+  if (!bundle.session?.token) throw new Error('Identity response did not include a session token.')
   sessionToken.value = bundle.session.token
   writeJson(identityStorageKey, {
-    userId: bundle.user.id,
-    deviceId: bundle.device.id,
-    deviceSecret: bundle.device.secret,
+    userId: bundle.subject.id,
+    deviceId: bundle.device?.id,
+    deviceSecret: bundle.device?.secret,
     sessionToken: bundle.session.token,
     expiresAt: bundle.session.expiresAt
   } satisfies StoredIdentity)

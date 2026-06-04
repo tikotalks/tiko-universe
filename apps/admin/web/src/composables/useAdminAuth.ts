@@ -1,5 +1,5 @@
 import { computed, ref } from 'vue'
-import { IdentityClient, type SessionBundle } from '@tiko/identity'
+import { IdentityClient, type IdentityBundle } from '@tiko/identity'
 import type { AdminApiResponse, AdminConfig, AdminUser } from '../types/admin'
 
 const ADMIN_TOKEN_KEY = 'tiko_admin_token'
@@ -12,7 +12,7 @@ const loading = ref(false)
 const error = ref<string | null>(null)
 const loginMessage = ref<string | null>(null)
 
-let deviceSessionPromise: Promise<SessionBundle> | null = null
+let deviceSessionPromise: Promise<IdentityBundle> | null = null
 
 interface ApiErrorBody {
   error?: { message?: string } | string
@@ -28,19 +28,25 @@ function identityApiBaseUrl(): string {
   return (env?.VITE_TIKO_API_BASE_URL ?? env?.VITE_IDENTITY_API_URL ?? 'https://identity.tikoapi.org/v1').replace(/\/$/, '')
 }
 
-function readStoredIdentity(): SessionBundle | null {
+function readStoredIdentity(): IdentityBundle | null {
   try {
     const value = localStorage.getItem(ADMIN_IDENTITY_KEY)
-    return value ? JSON.parse(value) as SessionBundle : null
+    return value ? JSON.parse(value) as IdentityBundle : null
   } catch {
     return null
   }
 }
 
-function storeIdentity(bundle: SessionBundle) {
-  token.value = bundle.session.token
+function storeIdentity(bundle: IdentityBundle) {
+  const sessionToken = requireSessionToken(bundle)
+  token.value = sessionToken
   localStorage.setItem(ADMIN_IDENTITY_KEY, JSON.stringify(bundle))
-  localStorage.setItem(ADMIN_TOKEN_KEY, bundle.session.token)
+  localStorage.setItem(ADMIN_TOKEN_KEY, sessionToken)
+}
+
+function requireSessionToken(bundle: IdentityBundle): string {
+  if (!bundle.session?.token) throw new Error('Identity response did not include a session token.')
+  return bundle.session.token
 }
 
 function isOtpCode(value: string): boolean {
@@ -74,12 +80,12 @@ export function useAdminAuth() {
   const isAuthed = computed(() => Boolean(user.value))
   const identityClient = new IdentityClient({ baseUrl: identityApiBaseUrl() })
 
-  async function ensureDeviceSession(): Promise<SessionBundle> {
+  async function ensureDeviceSession(): Promise<IdentityBundle> {
     const stored = readStoredIdentity()
-    if (stored?.session.token) {
+    if (stored?.session?.token) {
       try {
         const current = await identityClient.getSession(stored.session.token)
-        const restored = { ...current, device: { ...current.device, secret: stored.device.secret } }
+        const restored: IdentityBundle = { ...current, device: current.device ? { ...current.device, secret: stored.device?.secret } : null, session: stored.session }
         storeIdentity(restored)
         return restored
       } catch {
@@ -144,7 +150,7 @@ export function useAdminAuth() {
     loginMessage.value = null
     try {
       const bundle = await warmDeviceSession()
-      const response = await identityClient.requestRecoveryEmail({ email: normalizedEmail }, bundle.session.token)
+      const response = await identityClient.createEmailChallenge({ email: normalizedEmail, purpose: 'recover' }, requireSessionToken(bundle))
       loginMessage.value = response.message || 'Check your email for the magic link.'
       return true
     } catch (e) {
@@ -156,7 +162,7 @@ export function useAdminAuth() {
     }
   }
 
-  async function verifyMagicLink(value: string) {
+  async function verifyEmailChallenge(value: string) {
     const trimmed = value.trim()
     if (!trimmed) {
       error.value = 'Enter the sign-in code or paste the magic link from your email.'
@@ -169,9 +175,9 @@ export function useAdminAuth() {
       const request = isOtpCode(trimmed)
         ? { otp: trimmed.replace(/\s/g, '') }
         : { token: tokenFromMagicLink(trimmed) }
-      const bundle = await identityClient.verifyMagicLink(request)
+      const bundle = await identityClient.verifyEmail(request)
       storeIdentity(bundle)
-      return verify(bundle.session.token)
+      return verify(requireSessionToken(bundle))
     } catch (e) {
       user.value = null
       config.value = null
@@ -203,7 +209,7 @@ export function useAdminAuth() {
     verify,
     warmDeviceSession,
     requestMagicLink,
-    verifyMagicLink,
+    verifyEmailChallenge,
     logout
   }
 }

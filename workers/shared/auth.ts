@@ -65,9 +65,9 @@ const CACHE_TTL_MS = 5 * 60 * 1000 // 5 minutes
 
 // ── Session validation response from identity-api ────────────
 
-interface SessionBundle {
-  user: { id: string }
-  session: { token: string; expiresAt: string }
+interface IdentitySessionBody {
+  subject: { id: string }
+  session?: { token: string; expiresAt: string }
 }
 
 // ── Helpers ──────────────────────────────────────────────────
@@ -153,8 +153,8 @@ async function validateSession(
       ? await env.IDENTITY_SERVICE.fetch(url, init)
       : await fetch(url, init)
     if (!response.ok) return null
-    const body = (await response.json()) as SessionBundle
-    return { userId: body.user.id }
+    const body = (await response.json()) as IdentitySessionBody
+    return { userId: body.subject.id }
   } catch {
     return null
   }

@@ -174,7 +174,7 @@ export const docsPages: readonly DocsPage[] = [
           'Each Worker has a narrow job. That makes authorization, migrations, rate limiting, and deploy risk easier to reason about.'
         ],
         bullets: [
-          '`identity-api`: users, devices, sessions, magic links, and recovery.',
+          '`identity-api`: Ankore subjects, devices, sessions, accounts, and email challenges.',
           '`app-api`: per-user app settings and app state.',
           '`content-api`: published content, CMS-like records, and cacheable read models.',
           '`media-api`: upload authorization, media metadata, ownership, and R2 access.',
@@ -238,11 +238,11 @@ export const docsPages: readonly DocsPage[] = [
         bullets: [
           '`POST /v1/identity/device` — create or restore a device-first session.',
           '`GET /v1/identity/session` — validate and return the current session bundle.',
-          '`POST /v1/identity/email` — request or attach recovery email with a generic accepted response.',
-          '`POST /v1/identity/magic-links/verify` — verify a magic link and return a session bundle.',
+          '`POST /v1/identity/email/challenge` — request a recovery email challenge with a generic accepted response.',
+          '`POST /v1/identity/email/verify` — verify a magic link token or OTP and return an Ankore identity bundle.',
           '`POST /v1/identity/logout` — revoke the current bearer session.'
         ],
-        code: `interface SessionBundle {\n  user: { id: string; kind: 'device' | 'recoverable'; recoverable: boolean }\n  device: { id: string; name?: string; secret?: string }\n  session: { token: string; expiresAt: string }\n}`
+        code: `interface IdentityBundle {\n  subject: { id: string; kind: 'anonymous' | 'device' | 'account' | 'service'; product: string }\n  device?: { id: string; secret?: string } | null\n  account?: { id: string; subjectId: string; emailVerified: boolean } | null\n  session?: { id: string; token: string; transport: 'bearer' | 'cookie'; expiresAt: string }\n}`
       },
       {
         eyebrow: 'App data',

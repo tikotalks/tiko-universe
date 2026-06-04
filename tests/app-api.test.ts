@@ -45,8 +45,7 @@ class MemoryStatement {
 }
 
 class MemoryD1Database {
-  users = new Map<string, Row>()
-  devices = new Map<string, Row>()
+  subjects = new Map<string, Row>()
   sessions = new Map<string, Row>()
   settings = new Map<string, Row>()
   state = new Map<string, Row>()
@@ -58,14 +57,14 @@ class MemoryD1Database {
   execute(sql: string, values: unknown[]): MemoryResult {
     const normalized = sql.replace(/\s+/g, ' ').trim()
 
-    if (normalized.startsWith('SELECT s.user_id')) {
+    if (normalized.startsWith('SELECT s.subject_id AS user_id')) {
       const tokenHash = values[0]
       const now = values[1]
       const session = [...this.sessions.values()].find((row) => row.token_hash === tokenHash && !row.revoked_at && String(row.expires_at) > String(now))
       if (!session) return new MemoryResult()
-      const user = this.users.get(String(session.user_id))
-      if (!user) return new MemoryResult()
-      return new MemoryResult([{ user_id: session.user_id, user_kind: user.kind, device_id: session.device_id, expires_at: session.expires_at }])
+      const subject = this.subjects.get(String(session.subject_id))
+      if (!subject) return new MemoryResult()
+      return new MemoryResult([{ user_id: session.subject_id, device_id: session.device_id, expires_at: session.expires_at }])
     }
 
     if (normalized.includes('FROM app_settings') && normalized.startsWith('SELECT data_json')) {
@@ -95,11 +94,10 @@ class MemoryD1Database {
 
 async function env() {
   const identity = new MemoryD1Database()
-  identity.users.set('usr_1', { id: 'usr_1', kind: 'device', email_hash: null, display_name: null })
-  identity.devices.set('dev_1', { id: 'dev_1', user_id: 'usr_1', name: null })
+  identity.subjects.set('sub_1', { id: 'sub_1', kind: 'anonymous', product: 'tiko' })
   identity.sessions.set('ses_1', {
     id: 'ses_1',
-    user_id: 'usr_1',
+    subject_id: 'sub_1',
     device_id: 'dev_1',
     token_hash: await hashToken('session-token', 'test-pepper'),
     expires_at: '2999-01-01T00:00:00.000Z',

@@ -1,3 +1,2 @@
--- Add OTP support to magic_links
-ALTER TABLE magic_links ADD COLUMN otp_hash TEXT;
-CREATE INDEX IF NOT EXISTS idx_magic_links_otp_hash ON magic_links(otp_hash);
+-- OTP verification is part of the Ankore identity_email_challenges schema in 0001_identity.sql.
+-- Kept as a no-op so existing D1 migration histories that already applied 0002 remain linear.
