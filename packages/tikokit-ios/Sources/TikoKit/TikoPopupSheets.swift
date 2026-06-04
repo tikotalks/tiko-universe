@@ -373,38 +373,41 @@ public struct TikoLanguagePickerSheet: View {
     public var body: some View {
         TikoPopupCard(title: "Language", subtitle: "Choose the language for Tiko apps.", icon: "globe", appColor: appColor, onClose: onClose) {
             VStack(spacing: 12) {
-                if languages.count > 8 {
-                    TextField("Search languages", text: $query)
-                        .font(.system(size: 16, weight: .semibold, design: .rounded))
-                        .padding(14)
-                        .background(Color(.systemBackground))
-                        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
-                }
+                TextField("Search languages", text: $query)
+                    .font(.system(size: 16, weight: .semibold, design: .rounded))
+                    .padding(14)
+                    .background(Color(.systemBackground))
+                    .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
 
-                ForEach(filteredLanguages) { language in
-                    Button {
-                        onSelect(language)
-                    } label: {
-                        HStack(spacing: 12) {
-                            VStack(alignment: .leading, spacing: 3) {
-                                Text(language.nativeTitle)
-                                    .font(.system(size: 17, weight: .heavy, design: .rounded))
-                                    .foregroundStyle(.primary)
-                                Text(language.title)
-                                    .font(.system(size: 13, weight: .semibold, design: .rounded))
-                                    .foregroundStyle(.secondary)
+                ScrollView {
+                    VStack(spacing: 8) {
+                        ForEach(filteredLanguages) { language in
+                            Button {
+                                onSelect(language)
+                            } label: {
+                                HStack(spacing: 12) {
+                                    VStack(alignment: .leading, spacing: 3) {
+                                        Text(language.nativeTitle)
+                                            .font(.system(size: 17, weight: .heavy, design: .rounded))
+                                            .foregroundStyle(.primary)
+                                        Text(language.title)
+                                            .font(.system(size: 13, weight: .semibold, design: .rounded))
+                                            .foregroundStyle(.secondary)
+                                    }
+                                    Spacer()
+                                    if language.id == selectedLanguageID {
+                                        Image(systemName: "checkmark.circle.fill")
+                                            .font(.system(size: 20, weight: .bold))
+                                            .foregroundStyle(appColor.palette.primary)
+                                    }
+                                }
+                                .tikoSettingsRowSurface()
                             }
-                            Spacer()
-                            if language.id == selectedLanguageID {
-                                Image(systemName: "checkmark.circle.fill")
-                                    .font(.system(size: 20, weight: .bold))
-                                    .foregroundStyle(appColor.palette.primary)
-                            }
+                            .buttonStyle(.plain)
                         }
-                        .tikoSettingsRowSurface()
                     }
-                    .buttonStyle(.plain)
                 }
+                .frame(maxHeight: 300)
             }
         }
     }
@@ -771,11 +774,16 @@ public struct TikoAccountSheet: View {
         do {
             let bundle = try await identityClient.verifyOtp(otp: digits)
             try sessionStore.save(bundle)
+            if let name = bundle.account?.email?.components(separatedBy: "@").first {
+                if userName.isEmpty { userName = name }
+            }
+            isLoading = false
             onClose()
         } catch {
-            identityError = "Invalid or expired code. Try again or resend."
+            otpCode = ""
+            identityError = "Incorrect code — please try again or resend."
+            isLoading = false
         }
-        isLoading = false
     }
 }
 

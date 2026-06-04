@@ -197,6 +197,7 @@ public struct TikoAppShell<Content: View, SettingsContent: View>: View {
     @State private var showingCreateParentCode = false
     @State private var fetchedIconURL: URL? = nil
     @State private var fetchedAvatarURL: URL? = nil
+    @State private var splashVisible = true
 
     public init(
         appName: String,
@@ -296,10 +297,20 @@ public struct TikoAppShell<Content: View, SettingsContent: View>: View {
                 onClose: { showingCreateParentCode = false }
             )
         }
+        .overlay {
+            if splashVisible {
+                TikoSplashOverlay(appIcon: appIcon, appColor: appColor)
+                    .ignoresSafeArea()
+                    .allowsHitTesting(false)
+                    .transition(.opacity)
+            }
+        }
         .task {
             await fetchIconIfNeeded()
             await fetchAvatarIfNeeded()
             await loadParentCodeHashFromProfile()
+            try? await Task.sleep(nanoseconds: 500_000_000)
+            withAnimation(.easeOut(duration: 0.4)) { splashVisible = false }
         }
     }
 
@@ -382,6 +393,26 @@ public struct TikoAppShell<Content: View, SettingsContent: View>: View {
     private func resizedCDNURL(_ url: URL, size: Int) -> URL {
         guard url.host == "data.tikocdn.org", url.path.hasPrefix("/uploads/") else { return url }
         return URL(string: "https://data.tikocdn.org/cdn-cgi/image/width=\(size),quality=80,f=auto\(url.path)") ?? url
+    }
+}
+
+private struct TikoSplashOverlay: View {
+    let appIcon: String
+    let appColor: TikoAppColor
+
+    var body: some View {
+        GeometryReader { geo in
+            ZStack {
+                appColor.palette.primary
+
+                Image(systemName: appIcon)
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: geo.size.width * 0.3)
+                    .foregroundStyle(.white.opacity(0.25))
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+            }
+        }
     }
 }
 
