@@ -31,9 +31,19 @@ interface AdminSession {
   roles: string[]
 }
 
+interface AdminUserListItem {
+  id: string
+  kind: string
+  email: string | null
+  roles: string[]
+  createdAt: string
+  updatedAt: string
+}
+
 const ADMIN_EMAIL = 'me@sil.mt'
 const PRODUCT = 'tiko'
 const ADMIN_ROLE = 'admin'
+const VALID_ROLES = new Set(['guest', 'user', 'child', 'profile_manager', 'content_editor', 'admin'])
 
 const CORS_HEADERS = {
   'Access-Control-Allow-Origin': '*',
@@ -68,6 +78,20 @@ export default {
           communicationApiUrl: (env.COMMUNICATION_API_URL ?? 'https://dev.api.tikotalks.com/v1/communication').replace(/\/$/, ''),
         },
       })
+    }
+
+    if (path === '/v1/admin/users' && request.method === 'GET') {
+      return json({ data: { users: await listUsers(env.AUTH_DB, url.searchParams.get('q') ?? '') } })
+    }
+
+    const assignRoleMatch = path.match(/^\/v1\/admin\/users\/([^/]+)\/roles$/)
+    if (assignRoleMatch && request.method === 'POST') {
+      return assignUserRole(request, env.AUTH_DB, admin, decodeURIComponent(assignRoleMatch[1]))
+    }
+
+    const revokeRoleMatch = path.match(/^\/v1\/admin\/users\/([^/]+)\/roles\/([^/]+)$/)
+    if (revokeRoleMatch && request.method === 'DELETE') {
+      return revokeUserRole(env.AUTH_DB, decodeURIComponent(revokeRoleMatch[1]), decodeURIComponent(revokeRoleMatch[2]))
     }
 
     if (path === '/v1/admin/communication/inbox' && request.method === 'GET') {
@@ -126,6 +150,79 @@ async function assignRole(db: D1Database, subjectId: string, role: string, sourc
   await db.prepare('INSERT INTO identity_role_assignments (id, subject_id, product, role, source, actor_subject_id, created_at, revoked_at, metadata_json) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)')
     .bind(`role_${crypto.randomUUID().replace(/-/g, '')}`, subjectId, PRODUCT, role, source, actorSubjectId, new Date().toISOString(), null, '{}')
     .run()
+}
+
+async function listUsers(db: D1Database, query: string): Promise<AdminUserListItem[]> {
+  const q = `%${query.trim().toLowerCase()}%`
+  const { results } = await db.prepare(`
+    SELECT s.id, s.kind, a.email_plain AS email, s.created_at, s.updated_at,
+      COALESCE(json_group_array(r.role) FILTER (WHERE r.role IS NOT NULL), '[]') AS roles
+    FROM identity_subjects s
+    LEFT JOIN identity_accounts a ON a.subject_id = s.id AND a.disabled_at IS NULL
+    LEFT JOIN identity_role_assignments r ON r.subject_id = s.id AND r.product = ? AND r.revoked_at IS NULL
+    WHERE s.product = ? AND s.disabled_at IS NULL
+      AND (? = '%%' OR lower(s.id) LIKE ? OR lower(s.kind) LIKE ? OR lower(COALESCE(a.email_plain, '')) LIKE ?)
+    GROUP BY s.id, s.kind, a.email_plain, s.created_at, s.updated_at
+    ORDER BY s.created_at DESC
+    LIMIT 100
+  `)
+    .bind(PRODUCT, PRODUCT, q, q, q, q)
+    .all<{ id: string; kind: string; email: string | null; created_at: string; updated_at: string; roles: string | null }>()
+
+  return results.map((row) => ({
+    id: row.id,
+    kind: row.kind,
+    email: row.email,
+    roles: parseRoles(row.roles),
+    createdAt: row.created_at,
+    updatedAt: row.updated_at,
+  }))
+}
+
+async function assignUserRole(request: Request, db: D1Database, admin: AdminSession, subjectId: string): Promise<Response> {
+  let body: { role?: unknown }
+  try {
+    body = await request.json()
+  } catch {
+    return apiError('invalid_json', 'Request body must be valid JSON.', 400)
+  }
+
+  const role = typeof body.role === 'string' ? body.role : ''
+  if (!VALID_ROLES.has(role)) return apiError('invalid_role', 'Role is not assignable.', 400)
+
+  await assignRole(db, subjectId, role, 'manual', admin.userId)
+  return json({ data: { subjectId, roles: await activeRoles(db, subjectId) } })
+}
+
+async function revokeUserRole(db: D1Database, subjectId: string, role: string): Promise<Response> {
+  if (!VALID_ROLES.has(role)) return apiError('invalid_role', 'Role is not assignable.', 400)
+
+  if (role === ADMIN_ROLE) {
+    const adminCount = await activeRoleCount(db, ADMIN_ROLE)
+    if (adminCount <= 1) return apiError('last_admin_role', 'Cannot revoke the final active admin role.', 409)
+  }
+
+  await db.prepare('UPDATE identity_role_assignments SET revoked_at = ? WHERE subject_id = ? AND product = ? AND role = ? AND revoked_at IS NULL')
+    .bind(new Date().toISOString(), subjectId, PRODUCT, role)
+    .run()
+  return json({ data: { subjectId, roles: await activeRoles(db, subjectId) } })
+}
+
+async function activeRoleCount(db: D1Database, role: string): Promise<number> {
+  const row = await db.prepare('SELECT COUNT(*) AS count FROM identity_role_assignments WHERE product = ? AND role = ? AND revoked_at IS NULL')
+    .bind(PRODUCT, role)
+    .first<{ count: number }>()
+  return row?.count ?? 0
+}
+
+function parseRoles(raw: string | null): string[] {
+  if (!raw) return []
+  try {
+    const parsed = JSON.parse(raw)
+    return Array.isArray(parsed) ? Array.from(new Set(parsed.filter((role): role is string => typeof role === 'string' && role.length > 0))).sort() : []
+  } catch {
+    return []
+  }
 }
 
 async function proxyCommunicationInbox(request: Request, env: Env): Promise<Response> {
