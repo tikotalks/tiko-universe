@@ -2,23 +2,29 @@
 import { computed, onMounted, ref } from 'vue'
 import { Button, InputSearch } from '@sil/ui'
 import { useBemm } from 'bemm'
+import { useRoute, useRouter } from 'vue-router'
 import { assignableRoles, useAdminUsers } from '../composables/useAdminUsers'
 import type { AdminManagedUser, TikoRole } from '../types/admin'
 
 const bemm = useBemm('users-page', { return: 'string', includeBaseClass: true })
+const route = useRoute()
+const router = useRouter()
 const { users, loading, saving, error, list, assignRole, revokeRole } = useAdminUsers()
-const query = ref('')
+const query = ref(typeof route.query.q === 'string' ? route.query.q : '')
 const selectedUserId = ref<string | null>(null)
 
 const selectedUser = computed(() => users.value.find((user) => user.id === selectedUserId.value) ?? users.value[0] ?? null)
 const filteredRoles = computed(() => assignableRoles)
 
 onMounted(async () => {
-  await list()
+  await list(query.value)
+  selectedUserId.value = users.value[0]?.id ?? null
 })
 
 async function search() {
-  await list(query.value)
+  const trimmed = query.value.trim()
+  await router.replace({ path: '/users', query: trimmed ? { q: trimmed } : {} })
+  await list(trimmed)
   selectedUserId.value = users.value[0]?.id ?? null
 }
 

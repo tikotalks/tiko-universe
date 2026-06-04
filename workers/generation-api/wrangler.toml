@@ -19,6 +19,11 @@ bucket_name = "tiko-generated-media"
 [vars]
 TIKO_ENVIRONMENT = "development"
 GENERATION_PUBLIC_ROUTE = "https://dev.api.tikotalks.com/v1/generation"
+IDENTITY_BASE_URL = "https://api.tikotalks.com/v1"
+
+[[services]]
+binding = "IDENTITY_SERVICE"
+service = "tiko-identity-api-dev"
 
 [[routes]]
 pattern = "dev.api.tikotalks.com/v1/generation/*"
@@ -34,6 +39,11 @@ workers_dev = false
 [env.production.vars]
 TIKO_ENVIRONMENT = "production"
 GENERATION_PUBLIC_ROUTE = "https://api.tikotalks.com/v1/generation"
+IDENTITY_BASE_URL = "https://identity.tikoapi.org/v1"
+
+[[env.production.services]]
+binding = "IDENTITY_SERVICE"
+service = "tiko-identity-api"
 
 [[env.production.d1_databases]]
 binding = "GENERATION_DB"

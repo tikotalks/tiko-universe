@@ -1,3 +1,4 @@
+import { authenticate, type AuthEnv } from '../../shared/auth'
 type D1Value = string | number | boolean | null
 
 interface D1Result<T = unknown> {
@@ -17,10 +18,10 @@ interface D1Database {
   prepare(sql: string): D1PreparedStatement
 }
 
-export interface Env {
+export interface Env extends AuthEnv {
   APP_DB: D1Database
-  IDENTITY_DB: D1Database
-  TOKEN_PEPPER: string
+  IDENTITY_DB?: D1Database
+  TOKEN_PEPPER?: string
   ALLOWED_ORIGINS?: string
 }
 
@@ -142,16 +143,28 @@ function payload(app: TikoAppId, resource: AppResource, value: JsonValue, update
 }
 
 async function requireSession(request: Request, env: Env): Promise<SessionJoinRow> {
-  const sessionToken = requireBearer(request)
-  const tokenHash = await hashToken(sessionToken, env.TOKEN_PEPPER)
-  const row = await first<SessionJoinRow>(env.IDENTITY_DB.prepare(`
-    SELECT s.subject_id AS user_id, s.device_id, s.expires_at
-    FROM identity_sessions s
-    JOIN identity_subjects u ON u.id = s.subject_id
-    WHERE s.token_hash = ? AND s.revoked_at IS NULL AND s.expires_at > ?
-  `).bind(tokenHash, new Date().toISOString()))
-  if (!row) throw new HttpError(401, 'unauthorized', 'Session is invalid or expired.')
-  return row
+  const authed = await authenticate(request, env)
+  if (authed.ok && authed.method === 'session' && authed.userId) {
+    return { user_id: authed.userId, device_id: null, expires_at: '' }
+  }
+
+  // Backward-compatible local fallback for older deployments/tests that validate
+  // app sessions directly from D1. Production should use identity-api validation
+  // through IDENTITY_SERVICE so app-api does not need a copied TOKEN_PEPPER secret.
+  if (env.IDENTITY_DB && env.TOKEN_PEPPER) {
+    const sessionToken = requireBearer(request)
+    const tokenHash = await hashToken(sessionToken, env.TOKEN_PEPPER)
+    const row = await first<SessionJoinRow>(env.IDENTITY_DB.prepare(`
+      SELECT s.subject_id AS user_id, s.device_id, s.expires_at
+      FROM identity_sessions s
+      JOIN identity_subjects u ON u.id = s.subject_id
+      WHERE s.token_hash = ? AND s.revoked_at IS NULL AND s.expires_at > ?
+    `).bind(tokenHash, new Date().toISOString()))
+    if (row) return row
+  }
+
+  if (authed.ok && authed.method === 'api_key') throw new HttpError(403, 'session_required', 'A Tiko user session is required.')
+  throw new HttpError(401, 'unauthorized', 'Session is invalid or expired.')
 }
 
 export async function hashToken(value: string, pepper: string): Promise<string> {

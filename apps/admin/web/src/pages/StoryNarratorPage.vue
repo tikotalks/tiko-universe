@@ -12,7 +12,11 @@ const page = useBemm('story-page', { return: 'string', includeBaseClass: true })
 const card = useBemm('story-card', { return: 'string', includeBaseClass: true })
 const segment = useBemm('segment-card', { return: 'string', includeBaseClass: true })
 
-const fallbackVoices = ['alloy', 'ash', 'ballad', 'coral', 'echo', 'fable', 'nova', 'onyx', 'sage', 'shimmer', 'verse']
+const fallbackVoices = [
+  { id: '21m00Tcm4TlvDq8ikWAM', label: 'Rachel', provider: 'elevenlabs', model: 'eleven_multilingual_v2' },
+  { id: 'AZnzlk1XvdvUeBnXmlld', label: 'Domi', provider: 'elevenlabs', model: 'eleven_multilingual_v2' },
+  { id: 'EXAVITQu4vr4xnSDxMaL', label: 'Bella', provider: 'elevenlabs', model: 'eleven_multilingual_v2' },
+]
 
 const { tryout, render: renderStory, audioSrc, listStories, listVoices, createDraft, listDrafts, promoteStory, deleteStory } = useStoryNarration()
 const { listAudioAlbums } = useAdminMediaLibrary()
@@ -31,8 +35,8 @@ const creatorLoading = ref(false)
 const title = ref('')
 const description = ref('')
 const language = ref('en')
-const voice = ref('nova')
-const model = ref('tts-1')
+const voice = ref('21m00Tcm4TlvDq8ikWAM')
+const model = ref('eleven_multilingual_v2')
 const speed = ref(1)
 const category = ref('story')
 const tagsText = ref('tiko-radio, story')
@@ -50,7 +54,11 @@ const tryoutResult = ref<StoryTryoutResult | null>(null)
 const selectedSegment = computed(() => segments.value.find(s => s.id === selectedSegmentId.value) ?? segments.value[0])
 const totalCharacters = computed(() => segments.value.reduce((sum, s) => sum + s.text.length, 0))
 const canRender = computed(() => title.value.trim() && segments.value.some(s => s.text.trim()))
-const voiceOptions = computed(() => voiceSamples.value.length ? voiceSamples.value : fallbackVoices.map(id => ({ id, label: id, provider: 'openai', model: 'tts-1', sampleUrl: `/v1/generation/voice-samples/${id}` })))
+const voiceOptions = computed(() => {
+  const selectedProvider = model.value.startsWith('eleven_') ? 'elevenlabs' : 'openai'
+  const source = voiceSamples.value.length ? voiceSamples.value : fallbackVoices.map(item => ({ ...item, sampleUrl: `/v1/generation/voice-samples/${item.id}?provider=${item.provider}&model=${item.model}` }))
+  return source.filter(option => option.provider === selectedProvider).map(option => ({ ...option, model: model.value }))
+})
 
 function parseTags(): string[] {
   return tagsText.value.split(',').map(tag => tag.trim()).filter(Boolean)
@@ -235,6 +243,14 @@ async function onDelete(item: StoryGalleryItem, list: 'library' | 'drafts') {
   }
 }
 
+
+watch(model, () => {
+  const firstVoice = voiceOptions.value[0]
+  if (firstVoice && !voiceOptions.value.some(option => option.id === voice.value)) {
+    voice.value = firstVoice.id
+  }
+})
+
 watch(activeTab, async () => {
   if (activeTab.value === 'library') await loadLibrary()
   if (activeTab.value === 'drafts') await loadDrafts()
@@ -383,9 +399,12 @@ onMounted(() => {
           <label :class="page('label')">
             <span :class="page('label-text')">Model</span>
             <select :class="page('select')" v-model="model">
-              <option value="tts-1">tts-1</option>
-              <option value="tts-1-hd">tts-1-hd</option>
-              <option value="gpt-4o-mini-tts">gpt-4o-mini-tts</option>
+              <option value="eleven_multilingual_v2">ElevenLabs multilingual v2</option>
+              <option value="eleven_turbo_v2_5">ElevenLabs turbo v2.5</option>
+              <option value="eleven_flash_v2_5">ElevenLabs flash v2.5</option>
+              <option value="tts-1">OpenAI tts-1</option>
+              <option value="tts-1-hd">OpenAI tts-1-hd</option>
+              <option value="gpt-4o-mini-tts">OpenAI gpt-4o-mini-tts</option>
             </select>
           </label>
           <InputRange v-model="speed" :label="`Speed ${speed.toFixed(2)}x`" :min="0.5" :max="1.5" :step="0.05" />
