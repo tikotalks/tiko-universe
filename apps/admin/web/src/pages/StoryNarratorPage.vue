@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, onMounted, ref, watch } from 'vue'
 import { useBemm } from 'bemm'
-import { Button, InputRange, InputText, InputTextArea } from '@sil/ui'
+import { Button, Icon, InputRange, InputText, InputTextArea } from '@sil/ui'
 import { useStoryNarration, type StoryDraft, type StoryGalleryItem, type VoiceSample } from '../composables/useStoryNarration'
 import { useAdminMediaLibrary, type AudioLibraryAlbum } from '../composables/useAdminMediaLibrary'
 import type { StorySegmentInput, StoryTryoutResult } from '../types/admin'
@@ -59,6 +59,17 @@ const voiceOptions = computed(() => {
   const source = voiceSamples.value.length ? voiceSamples.value : fallbackVoices.map(item => ({ ...item, sampleUrl: `/v1/generation/voice-samples/${item.id}?provider=${item.provider}&model=${item.model}` }))
   return source.filter(option => option.provider === selectedProvider).map(option => ({ ...option, model: model.value }))
 })
+
+const selectedVoiceOption = computed(() => voiceOptions.value.find(option => option.id === voice.value))
+const selectedPreviewAudioUrl = computed(() => tryoutResult.value?.audioUrl || selectedVoiceOption.value?.sampleUrl || '')
+const selectedVoiceDescription = computed(() => {
+  const label = selectedVoiceOption.value?.label || ''
+  if (label.toLowerCase().includes('rachel')) return 'Warm, gentle, comforting'
+  if (label.toLowerCase().includes('domi')) return 'Playful, bright, upbeat'
+  if (label.toLowerCase().includes('bella')) return 'Soft, calm, soothing'
+  return selectedVoiceOption.value?.provider === 'elevenlabs' ? 'Expressive child-friendly narration' : 'Clear narration voice'
+})
+const estimatedMinutes = computed(() => Math.max(1, Math.ceil(totalCharacters.value / 900)))
 
 function parseTags(): string[] {
   return tagsText.value.split(',').map(tag => tag.trim()).filter(Boolean)
@@ -375,73 +386,56 @@ onMounted(() => {
     <section v-else :class="page('create')">
       <form :class="page('form')" @submit.prevent="onRender">
         <header :class="page('form-head')">
-          <h2 :class="page('panel-title')">Create new story</h2>
-          <div :class="page('templates')">
-            <Button type="button" variant="outline" size="small" @click="loadTemplate('short')">Short tryout</Button>
-            <Button type="button" variant="outline" size="small" @click="loadTemplate('radio')">Radio story</Button>
+          <div :class="page('form-title-row')">
+            <span :class="page('section-icon')" aria-hidden="true">
+              <Icon name="media/music-note" size="small" />
+            </span>
+            <div :class="page('panel-intro')">
+              <h2 :class="page('panel-title')">New story</h2>
+              <p :class="page('panel-meta')">Write your story and bring it to life.</p>
+            </div>
+          </div>
+          <div :class="page('templates')" role="group" aria-label="Story templates">
+            <button type="button" :class="page('chip', { active: segments.length === 1 })" @click="loadTemplate('short')">Short tryout</button>
+            <button type="button" :class="page('chip')" @click="loadTemplate('radio')">Radio story</button>
           </div>
         </header>
 
-        <div :class="page('two-col')">
-          <InputText v-model="title" label="Title" placeholder="Story title" />
-          <InputText v-model="language" label="Language" placeholder="en" />
-        </div>
+        <label :class="page('field')">
+          <span :class="page('label-text')">Title</span>
+          <span :class="page('input-wrap')">
+            <input v-model="title" :class="page('input')" type="text" maxlength="120" placeholder="The Sleepy Turtle" />
+            <span :class="page('counter')">{{ title.length }} / 120</span>
+          </span>
+        </label>
 
-        <InputTextArea v-model="description" label="Description" :min-rows="2" :max-rows="6" :allow-resize="true" placeholder="Optional description" />
-
-        <div :class="page('controls')">
-          <label :class="page('label')">
-            <span :class="page('label-text')">Voice</span>
-            <select :class="page('select')" v-model="voice">
-              <option v-for="option in voiceOptions" :key="option.id" :value="option.id">{{ option.label }}</option>
-            </select>
-          </label>
-          <label :class="page('label')">
-            <span :class="page('label-text')">Model</span>
-            <select :class="page('select')" v-model="model">
-              <option value="eleven_multilingual_v2">ElevenLabs multilingual v2</option>
-              <option value="eleven_turbo_v2_5">ElevenLabs turbo v2.5</option>
-              <option value="eleven_flash_v2_5">ElevenLabs flash v2.5</option>
-              <option value="tts-1">OpenAI tts-1</option>
-              <option value="tts-1-hd">OpenAI tts-1-hd</option>
-              <option value="gpt-4o-mini-tts">OpenAI gpt-4o-mini-tts</option>
-            </select>
-          </label>
-          <InputRange v-model="speed" :label="`Speed ${speed.toFixed(2)}x`" :min="0.5" :max="1.5" :step="0.05" />
-        </div>
-
-        <div :class="page('two-col')">
-          <InputText v-model="category" label="Category" />
-          <InputText v-model="tagsText" label="Tags" placeholder="comma, separated" />
-        </div>
-
-        <div :class="page('two-col')">
+        <label :class="page('field')">
+          <span :class="page('label-text')">Cover image</span>
+          <button type="button" :class="page('upload')">
+            <Icon name="arrows/arrow-headed-upload" size="medium" />
+            <strong>Upload an image</strong>
+            <span>PNG or JPG up to 5MB</span>
+          </button>
           <InputText v-model="coverMediaId" label="Cover media ID" placeholder="Optional media catalog id" />
-          <label :class="page('label')">
-            <span :class="page('label-text')">Target Radio album</span>
-            <select :class="page('select')" v-model="targetAlbumId">
-              <option value="">No album assigned</option>
-              <option v-for="album in audioAlbums" :key="album.id" :value="album.id">{{ album.title }}</option>
-            </select>
-          </label>
-        </div>
+        </label>
 
-        <section :class="page('voice-grid')" aria-label="Voice samples">
-          <article v-for="option in voiceOptions" :key="option.id" :class="page('voice-card', { active: voice === option.id })">
-            <button type="button" :class="page('voice-button')" @click="voice = option.id">
-              <strong>{{ option.label }}</strong>
-              <span>{{ option.provider }} · {{ option.model }}</span>
-            </button>
-            <audio :src="audioSrc(option.sampleUrl)" controls />
-          </article>
+        <section :class="page('editor')" aria-label="Story text editor">
+          <div :class="page('editor-toolbar')" aria-hidden="true">
+            <span>B</span>
+            <span><em>I</em></span>
+            <Icon name="ui/text-detail-list" size="small" />
+            <Icon name="ui/text-align-left-ordered" size="small" />
+            <span>↶</span>
+            <span>↷</span>
+            <span :class="page('toolbar-spacer')"></span>
+            <span>Tt⌄</span>
+          </div>
+          <InputTextArea v-model="selectedSegment.text" label="Story text" :min-rows="10" :max-rows="18" :allow-resize="true" placeholder="Once upon a time…" />
         </section>
 
-        <section :class="page('segments')">
-          <header :class="page('segments-header')">
-            <h3 :class="page('segments-title')">Segments</h3>
-            <Button type="button" variant="outline" size="small" @click="addSegment">Add segment</Button>
-          </header>
+        <button type="button" :class="page('add-paragraph')" @click="addSegment">+ Add paragraph</button>
 
+        <section :class="page('segments')" aria-label="Story paragraphs">
           <article
             v-for="(item, index) in segments"
             :key="item.id"
@@ -449,47 +443,114 @@ onMounted(() => {
             @click="selectedSegmentId = item.id"
           >
             <div :class="segment('header')">
-              <strong :class="segment('label')">Segment {{ index + 1 }}</strong>
+              <strong :class="segment('label')">Paragraph {{ index + 1 }}</strong>
               <div :class="segment('actions')">
-                <Button type="button" variant="ghost" size="small" @click.stop="duplicateSegment(item)">Copy</Button>
-                <Button type="button" variant="ghost" size="small" :disabled="segments.length === 1" @click.stop="removeSegment(item.id)">Remove</Button>
+                <button type="button" :class="page('text-action')" @click.stop="duplicateSegment(item)">Copy</button>
+                <button type="button" :class="page('text-action')" :disabled="segments.length === 1" @click.stop="removeSegment(item.id)">Remove</button>
               </div>
             </div>
-            <InputTextArea v-model="item.text" :min-rows="3" :max-rows="8" :allow-resize="true" placeholder="Narration text…" />
-            <InputRange v-model="item.pauseAfterMs" :label="`Pause after: ${item.pauseAfterMs}ms`" :min="0" :max="2000" :step="50" suffix="ms" />
-            <Button
-              type="button"
-              variant="outline"
-              size="small"
-              :loading="tryoutLoading && selectedSegmentId === item.id"
-              :disabled="tryoutLoading"
-              @click.stop="onTryout(item)"
-            >
-              {{ tryoutLoading && selectedSegmentId === item.id ? 'Rendering…' : 'Try this segment' }}
-            </Button>
           </article>
         </section>
 
-        <p :class="page('meta')">{{ segments.length }} segments · {{ totalCharacters }} characters</p>
+        <footer :class="page('form-meta')">
+          <span><Icon name="ui/clock" size="small" /> Estimated length <strong>~{{ estimatedMinutes }} min</strong></span>
+          <span>Characters <strong>{{ totalCharacters }}</strong></span>
+        </footer>
+
         <p v-if="formError" :class="page('error')">{{ formError }}</p>
-
-        <div :class="page('actions')">
-          <Button :loading="creatorLoading" :disabled="creatorLoading || !canRender" type="button" variant="outline" @click="onSaveCreatorDraft">
-            {{ creatorLoading ? 'Saving draft…' : 'Save creator draft' }}
-          </Button>
-          <Button :loading="renderLoading" :disabled="renderLoading || !canRender" type="submit">
-            {{ renderLoading ? 'Rendering full story…' : 'Render full story' }}
-          </Button>
-        </div>
-
-        <p :class="page('hint')">Save keeps chapter/cover/album settings. Rendered stories appear in <button type="button" :class="page('inline-link')" @click="activeTab = 'drafts'">Drafts</button> until you promote them.</p>
       </form>
 
-      <aside v-if="tryoutResult" :class="page('preview')">
-        <h3 :class="page('panel-title')">Tryout</h3>
-        <p :class="page('preview-meta')">{{ voice }} · {{ model }} · {{ speed.toFixed(2) }}×</p>
-        <audio :class="page('preview-audio')" :src="audioSrc(tryoutResult.audioUrl)" controls />
+      <aside :class="page('sidebar')">
+        <section :class="page('side-card')">
+          <header :class="page('side-head')">
+            <Icon name="media/music-note-single" size="small" />
+            <div>
+              <h3 :class="page('panel-title')">Voice</h3>
+              <p :class="page('panel-meta')">Choose the voice for your story.</p>
+            </div>
+          </header>
+
+          <div :class="page('voice-list')">
+            <article v-for="option in voiceOptions" :key="option.id" :class="page('voice-row', { active: voice === option.id })">
+              <button type="button" :class="page('voice-select')" @click="voice = option.id">
+                <span :class="page('voice-radio')" aria-hidden="true">{{ voice === option.id ? '✓' : '' }}</span>
+                <span :class="page('voice-copy')">
+                  <strong>{{ option.label }}</strong>
+                  <span>{{ option.id === voice ? selectedVoiceDescription : (option.provider === 'elevenlabs' ? 'Expressive narration' : option.model) }}</span>
+                </span>
+              </button>
+              <button type="button" :class="page('play-button')" :aria-label="`Preview ${option.label}`" @click="voice = option.id; onTryout()">
+                <Icon name="media/playback-play" size="small" />
+              </button>
+            </article>
+          </div>
+          <a :class="page('manage-link')" href="https://elevenlabs.io/app/voice-library" target="_blank" rel="noreferrer">Manage voices ↗</a>
+        </section>
+
+        <section :class="page('side-card')">
+          <header :class="page('side-head')">
+            <Icon name="media/headphones" size="small" />
+            <div>
+              <h3 :class="page('panel-title')">Preview</h3>
+              <p :class="page('panel-meta')">Listen to how your story sounds.</p>
+            </div>
+          </header>
+          <div :class="page('player')">
+            <button type="button" :class="page('player-button')" :loading="tryoutLoading" :disabled="tryoutLoading || !selectedSegment.text.trim()" @click="onTryout()">
+              <Icon name="media/playback-play" size="small" />
+            </button>
+            <span>0:00</span>
+            <div :class="page('player-track')"><span></span></div>
+            <span>2:48</span>
+          </div>
+          <audio v-if="selectedPreviewAudioUrl" :class="page('preview-audio')" :src="audioSrc(selectedPreviewAudioUrl)" controls />
+        </section>
+
+        <section :class="page('side-card')">
+          <header :class="page('side-head')">
+            <Icon name="ui/on-target" size="small" />
+            <div>
+              <h3 :class="page('panel-title')">Publish settings</h3>
+              <p :class="page('panel-meta')">Choose where and how to publish.</p>
+            </div>
+          </header>
+          <label :class="page('label')">
+            <span :class="page('label-text')">Target Radio album</span>
+            <select :class="page('select')" v-model="targetAlbumId">
+              <option value="">No album assigned</option>
+              <option v-for="album in audioAlbums" :key="album.id" :value="album.id">{{ album.title }}</option>
+            </select>
+          </label>
+          <div :class="page('two-col')">
+            <label :class="page('label')">
+              <span :class="page('label-text')">Language</span>
+              <input v-model="language" :class="page('input')" type="text" placeholder="en" />
+            </label>
+            <label :class="page('label')">
+              <span :class="page('label-text')">Speed {{ speed.toFixed(2) }}×</span>
+              <InputRange v-model="speed" :min="0.5" :max="1.5" :step="0.05" />
+            </label>
+          </div>
+          <div :class="page('two-col')">
+            <InputText v-model="category" label="Category" />
+            <InputText v-model="tagsText" label="Tags" placeholder="comma, separated" />
+          </div>
+          <p :class="page('status-row')"><span>Draft</span> Only you can see this.</p>
+        </section>
       </aside>
+
+      <footer :class="page('footer-bar')">
+        <Button :loading="creatorLoading" :disabled="creatorLoading || !canRender" type="button" variant="outline" @click="onSaveCreatorDraft">
+          Save draft
+        </Button>
+        <Button :loading="tryoutLoading" :disabled="tryoutLoading || !selectedSegment.text.trim()" type="button" variant="outline" @click="onTryout()">
+          Preview story
+        </Button>
+        <Button :loading="renderLoading" :disabled="renderLoading || !canRender" type="submit" @click="onRender">
+          Render full story
+        </Button>
+        <p :class="page('hint')"><Icon name="misc/shield-check" size="small" /> Your draft is saved automatically.</p>
+      </footer>
     </section>
   </section>
 </template>
@@ -891,4 +952,487 @@ onMounted(() => {
     gap: var(--space-xs);
   }
 }
+
+
+/* Reference-inspired Stories creator */
+.story-page {
+  max-width: min(calc(var(--space) * 62), 100%);
+  margin: 0 auto;
+  gap: calc(var(--space) * 1.2);
+
+  &__header {
+    max-width: calc(var(--space) * 34);
+  }
+
+  &__intro {
+    position: relative;
+    padding-left: calc(var(--space) * 2.8);
+
+    &::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: calc(var(--space) * 0.2);
+      width: calc(var(--space) * 1.9);
+      height: calc(var(--space) * 1.9);
+      border-radius: var(--border-radius-s);
+      background: color-mix(in srgb, var(--color-foreground), transparent 88%);
+      box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--color-foreground), transparent 82%);
+    }
+  }
+
+  &__title {
+    font-size: clamp(2rem, 3vw, 2.8rem);
+    line-height: 1;
+    letter-spacing: 0;
+  }
+
+  &__subtitle {
+    font-size: var(--font-size-m);
+  }
+
+  &__tabs {
+    width: min(calc(var(--space) * 18), 100%);
+    padding: 0;
+    gap: 0;
+    overflow: hidden;
+    border-radius: var(--border-radius-s);
+    background: color-mix(in srgb, var(--color-background), var(--color-foreground) 5%);
+  }
+
+  &__tab {
+    position: relative;
+    flex: 1;
+    justify-content: center;
+    min-width: calc(var(--space) * 5.8);
+    padding: var(--space-s) var(--space-m);
+    border-radius: 0;
+
+    &--active {
+      background: color-mix(in srgb, var(--color-background), var(--color-foreground) 9%);
+
+      &::after {
+        content: '';
+        position: absolute;
+        left: 25%;
+        right: 25%;
+        bottom: 0;
+        height: 2px;
+        border-radius: 999px;
+        background: currentColor;
+      }
+    }
+  }
+
+  &__tab-count {
+    display: none;
+  }
+
+  &__create {
+    grid-template-columns: minmax(0, 1.45fr) minmax(calc(var(--space) * 19), 0.95fr);
+    grid-template-areas:
+      'form sidebar'
+      'footer footer';
+    align-items: start;
+    gap: var(--space-m);
+  }
+
+  &__form,
+  &__side-card,
+  &__footer-bar {
+    background: color-mix(in srgb, var(--color-background), var(--color-foreground) 5%);
+    border: 1px solid color-mix(in srgb, var(--color-foreground), transparent 88%);
+    border-radius: var(--border-radius-m);
+    box-shadow: 0 24px 80px color-mix(in srgb, var(--color-foreground), transparent 95%);
+  }
+
+  &__form {
+    grid-area: form;
+    padding: 0;
+    gap: 0;
+    overflow: hidden;
+  }
+
+  &__form-head,
+  &__field,
+  &__editor,
+  &__segments,
+  &__form-meta,
+  &__error {
+    padding-left: calc(var(--space) * 1.35);
+    padding-right: calc(var(--space) * 1.35);
+  }
+
+  &__form-head {
+    padding-top: calc(var(--space) * 1.35);
+    padding-bottom: var(--space-m);
+  }
+
+  &__form-title-row,
+  &__side-head {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-s);
+  }
+
+  &__section-icon,
+  &__side-head > .icon {
+    width: calc(var(--space) * 1.8);
+    height: calc(var(--space) * 1.8);
+    display: grid;
+    place-items: center;
+    flex: 0 0 auto;
+    color: color-mix(in srgb, var(--color-foreground), transparent 12%);
+    --icon-stroke-color: currentColor;
+  }
+
+  &__panel-title {
+    font-size: var(--font-size-m);
+    line-height: 1.1;
+  }
+
+  &__chip,
+  &__add-paragraph,
+  &__text-action {
+    border: 1px solid color-mix(in srgb, var(--color-foreground), transparent 88%);
+    background: color-mix(in srgb, var(--color-background), var(--color-foreground) 3%);
+    color: var(--admin-text-muted);
+    border-radius: 999px;
+    padding: var(--space-xs) var(--space-s);
+    font: inherit;
+    font-size: var(--font-size-s);
+    cursor: pointer;
+  }
+
+  &__chip--active,
+  &__add-paragraph:hover,
+  &__text-action:hover:not(:disabled) {
+    color: var(--admin-text);
+    background: color-mix(in srgb, var(--color-background), var(--color-foreground) 10%);
+  }
+
+  &__field,
+  &__label {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+  }
+
+  &__input-wrap {
+    position: relative;
+    display: block;
+  }
+
+  &__input,
+  &__select {
+    min-height: calc(var(--space) * 2.35);
+    background: color-mix(in srgb, var(--color-background), var(--color-foreground) 2%);
+    border: 1px solid color-mix(in srgb, var(--color-foreground), transparent 86%);
+    border-radius: var(--border-radius-s);
+    color: var(--admin-text);
+    -webkit-text-fill-color: var(--admin-text);
+    padding: var(--space-s) var(--space-m);
+  }
+
+  &__input {
+    width: 100%;
+    box-sizing: border-box;
+    font: inherit;
+  }
+
+  &__counter {
+    position: absolute;
+    right: var(--space-s);
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--admin-text-muted);
+    font-size: var(--font-size-xs);
+  }
+
+  &__upload {
+    min-height: calc(var(--space) * 7.6);
+    border: 1px dashed color-mix(in srgb, var(--color-foreground), transparent 72%);
+    border-radius: var(--border-radius-m);
+    background: color-mix(in srgb, var(--color-background), transparent 20%);
+    color: var(--admin-text);
+    display: grid;
+    place-items: center;
+    align-content: center;
+    gap: var(--space-xs);
+    cursor: pointer;
+
+    .icon {
+      color: var(--admin-text-muted);
+      --icon-stroke-color: currentColor;
+    }
+
+    span {
+      color: var(--admin-text-muted);
+      font-size: var(--font-size-xs);
+    }
+  }
+
+  &__editor {
+    padding-top: var(--space-m);
+  }
+
+  &__editor-toolbar {
+    min-height: calc(var(--space) * 2.6);
+    border: 1px solid color-mix(in srgb, var(--color-foreground), transparent 86%);
+    border-bottom: 0;
+    border-radius: var(--border-radius-s) var(--border-radius-s) 0 0;
+    background: color-mix(in srgb, var(--color-background), var(--color-foreground) 2%);
+    color: var(--admin-text-muted);
+    display: flex;
+    align-items: center;
+    gap: var(--space-m);
+    padding: 0 var(--space-m);
+  }
+
+  &__toolbar-spacer {
+    flex: 1;
+  }
+
+  &__editor :deep(.input-textarea__label) {
+    display: none;
+  }
+
+  &__editor :deep(textarea) {
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+    min-height: calc(var(--space) * 15);
+    line-height: 1.85;
+    background: color-mix(in srgb, var(--color-background), var(--color-foreground) 2%);
+  }
+
+  &__add-paragraph {
+    width: max-content;
+    margin: var(--space-s) calc(var(--space) * 1.35);
+    color: var(--admin-text);
+  }
+
+  &__segments {
+    padding-bottom: var(--space-m);
+  }
+
+  &__form-meta {
+    border-top: 1px solid color-mix(in srgb, var(--color-foreground), transparent 90%);
+    padding-top: var(--space-m);
+    padding-bottom: calc(var(--space) * 1.35);
+    display: flex;
+    justify-content: space-between;
+    gap: var(--space-m);
+    color: var(--admin-text-muted);
+    font-size: var(--font-size-s);
+
+    span {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-xs);
+    }
+
+    strong {
+      color: var(--admin-text);
+      font-weight: 600;
+    }
+  }
+
+  &__sidebar {
+    grid-area: sidebar;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-m);
+  }
+
+  &__side-card {
+    padding: calc(var(--space) * 1.25);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-m);
+  }
+
+  &__voice-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+  }
+
+  &__voice-row {
+    display: flex;
+    align-items: center;
+    gap: var(--space-xs);
+    border: 1px solid color-mix(in srgb, var(--color-foreground), transparent 90%);
+    border-radius: var(--border-radius-s);
+    background: color-mix(in srgb, var(--color-background), var(--color-foreground) 2%);
+    padding: var(--space-xs);
+
+    &--active {
+      border-color: color-mix(in srgb, var(--color-foreground), transparent 45%);
+      background: color-mix(in srgb, var(--color-background), var(--color-foreground) 8%);
+    }
+  }
+
+  &__voice-select {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: var(--space-s);
+    text-align: left;
+    border: 0;
+    background: transparent;
+    color: inherit;
+    cursor: pointer;
+    padding: var(--space-xs);
+  }
+
+  &__voice-radio {
+    width: calc(var(--space) * 1.05);
+    height: calc(var(--space) * 1.05);
+    border-radius: 50%;
+    border: 1px solid color-mix(in srgb, var(--color-foreground), transparent 65%);
+    display: grid;
+    place-items: center;
+    font-size: var(--font-size-xs);
+    color: var(--admin-text);
+  }
+
+  &__voice-copy {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+
+    strong {
+      color: var(--admin-text);
+      font-size: var(--font-size-s);
+    }
+
+    span {
+      color: var(--admin-text-muted);
+      font-size: var(--font-size-xs);
+    }
+  }
+
+  &__play-button,
+  &__player-button {
+    width: calc(var(--space) * 2.2);
+    height: calc(var(--space) * 2.2);
+    border-radius: 50%;
+    border: 1px solid color-mix(in srgb, var(--color-foreground), transparent 78%);
+    background: color-mix(in srgb, var(--color-background), var(--color-foreground) 8%);
+    color: var(--admin-text);
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+  }
+
+  &__manage-link {
+    color: var(--admin-text);
+    font-size: var(--font-size-s);
+    text-decoration: none;
+  }
+
+  &__player {
+    min-height: calc(var(--space) * 3);
+    border: 1px solid color-mix(in srgb, var(--color-foreground), transparent 90%);
+    border-radius: var(--border-radius-s);
+    background: color-mix(in srgb, var(--color-background), var(--color-foreground) 4%);
+    display: flex;
+    align-items: center;
+    gap: var(--space-s);
+    padding: var(--space-s);
+    color: var(--admin-text-muted);
+    font-size: var(--font-size-xs);
+  }
+
+  &__player-track {
+    flex: 1;
+    height: 2px;
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--color-foreground), transparent 88%);
+
+    span {
+      display: block;
+      width: 18%;
+      height: 100%;
+      border-radius: inherit;
+      background: currentColor;
+    }
+  }
+
+  &__status-row {
+    color: var(--admin-text-muted);
+    font-size: var(--font-size-s);
+    display: flex;
+    align-items: center;
+    gap: var(--space-s);
+
+    span {
+      border: 1px solid color-mix(in srgb, var(--color-foreground), transparent 80%);
+      border-radius: var(--border-radius-s);
+      padding: var(--space-xs) var(--space-s);
+      color: var(--admin-text);
+      background: color-mix(in srgb, var(--color-background), var(--color-foreground) 6%);
+    }
+  }
+
+  &__footer-bar {
+    grid-area: footer;
+    padding: var(--space-m) calc(var(--space) * 1.35);
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: var(--space-s);
+    align-items: center;
+
+    .button,
+    .sil-button {
+      border-radius: var(--border-radius-s);
+      min-height: calc(var(--space) * 2.8);
+    }
+  }
+
+  &__hint {
+    grid-column: 1 / -1;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    gap: var(--space-xs);
+  }
+
+  @media (max-width: 1120px) {
+    &__create {
+      grid-template-columns: 1fr;
+      grid-template-areas:
+        'form'
+        'sidebar'
+        'footer';
+    }
+  }
+
+  @media (max-width: 720px) {
+    max-width: 100%;
+
+    &__footer-bar {
+      grid-template-columns: 1fr;
+    }
+
+    &__form-meta {
+      flex-direction: column;
+    }
+  }
+}
+
+.segment-card {
+  padding: var(--space-s) 0;
+  background: transparent;
+  border-color: transparent;
+  border-top-color: color-mix(in srgb, var(--color-foreground), transparent 92%);
+  border-radius: 0;
+
+  &:hover,
+  &--active {
+    border-color: color-mix(in srgb, var(--color-foreground), transparent 86%);
+    box-shadow: none;
+  }
+}
+
 </style>
