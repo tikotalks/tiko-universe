@@ -9,6 +9,6 @@
     "deploy:dry-run": "wrangler deploy --dry-run"
   },
   "dependencies": {
-    "ankore": "file:../../../ankore"
+    "ankore": "^0.4.0"
   }
 }
