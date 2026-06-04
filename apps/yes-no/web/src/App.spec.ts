@@ -17,13 +17,19 @@ function createFetchMock(options: {
   settings?: Record<string, unknown>
   state?: Record<string, unknown>
   failBootstrap?: boolean
+  failCookieSession?: boolean
   failTts?: boolean
 } = {}) {
   return vi.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
     const url = String(input)
     const method = init?.method ?? 'GET'
 
-    if (url.endsWith('/identity/session')) return jsonResponse(sessionBundle)
+    if (url.endsWith('/identity/session')) {
+      if (options.failCookieSession && !(init?.headers as Record<string, string> | undefined)?.authorization) {
+        return jsonResponse({ error: { code: 'unauthorized', message: 'unauthorized' } }, 401)
+      }
+      return jsonResponse(sessionBundle)
+    }
     if (url.endsWith('/identity/device')) {
       if (options.failBootstrap) return jsonResponse({ error: { code: 'offline', message: 'offline' } }, 503)
       return jsonResponse(sessionBundle)
@@ -73,7 +79,17 @@ describe('Yes No web app', () => {
     expect(wrapper.text()).not.toContain('Password')
 
     await flushPromises()
-    expect(fetch).toHaveBeenCalledWith('https://identity.tikoapi.org/v1/identity/device', expect.objectContaining({ method: 'POST' }))
+    expect(fetch).toHaveBeenCalledWith('https://id.tikoapps.org/v1/identity/session', expect.objectContaining({ method: 'GET', credentials: 'include' }))
+  })
+
+  it('falls back to device bootstrap on the browser identity origin when the shared cookie is missing', async () => {
+    const fetchMock = createFetchMock({ failCookieSession: true })
+    vi.stubGlobal('fetch', fetchMock)
+    mount(App)
+    await flushPromises()
+
+    expect(fetchMock).toHaveBeenCalledWith('https://id.tikoapps.org/v1/identity/session', expect.objectContaining({ method: 'GET', credentials: 'include' }))
+    expect(fetchMock).toHaveBeenCalledWith('https://id.tikoapps.org/v1/identity/device', expect.objectContaining({ method: 'POST', credentials: 'include' }))
   })
 
   it('hydrates settings and answer state from the API after device bootstrap', async () => {
