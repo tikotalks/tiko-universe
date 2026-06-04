@@ -824,7 +824,6 @@ async function generateImage(request: Request, env: Env): Promise<Response> {
       n: 1,
       size,
       quality,
-      response_format: 'b64_json',
     }),
   })
 
@@ -836,15 +835,24 @@ async function generateImage(request: Request, env: Env): Promise<Response> {
   }
 
   const data = await response.json() as {
-    data: Array<{ b64_json: string; revised_prompt?: string }>
+    data: Array<{ b64_json?: string; url?: string; revised_prompt?: string }>
   }
 
   const imageData = data.data[0]
-  if (!imageData?.b64_json) {
-    return apiError('image_provider_failed', 'No image data returned from provider.', 502)
+  let imageBytes: Uint8Array | null = null
+  if (imageData?.b64_json) {
+    imageBytes = Uint8Array.from(atob(imageData.b64_json), c => c.charCodeAt(0))
+  } else if (imageData?.url) {
+    const imageResponse = await fetch(imageData.url)
+    if (!imageResponse.ok) {
+      return apiError('image_provider_failed', 'Generated image could not be downloaded from provider.', 502)
+    }
+    imageBytes = new Uint8Array(await imageResponse.arrayBuffer())
   }
 
-  const imageBytes = Uint8Array.from(atob(imageData.b64_json), c => c.charCodeAt(0))
+  if (!imageBytes) {
+    return apiError('image_provider_failed', 'No image data returned from provider.', 502)
+  }
   const id = crypto.randomUUID()
   const r2Key = `images/${id}.png`
   const now = new Date().toISOString()

@@ -259,13 +259,14 @@ describe('generation-api TTS contract', () => {
     expect(draftBody.data.chapters).toHaveLength(2)
   })
 
-  it('omits provider parameters rejected by the current OpenAI images API', async () => {
+  it('omits provider parameters rejected by the current OpenAI images API and stores URL image responses', async () => {
     const env = makeEnv()
     const png = Uint8Array.from([137, 80, 78, 71, 13, 10, 26, 10])
-    const b64 = btoa(String.fromCharCode(...png))
-    const fetchSpy = vi.spyOn(globalThis, 'fetch').mockResolvedValue(new Response(JSON.stringify({
-      data: [{ b64_json: b64, revised_prompt: 'A friendly robot' }]
-    }), { status: 200, headers: { 'content-type': 'application/json' } }))
+    const fetchSpy = vi.spyOn(globalThis, 'fetch')
+      .mockResolvedValueOnce(new Response(JSON.stringify({
+        data: [{ url: 'https://provider.test/generated.png', revised_prompt: 'A friendly robot' }]
+      }), { status: 200, headers: { 'content-type': 'application/json' } }))
+      .mockResolvedValueOnce(new Response(png, { status: 200, headers: { 'content-type': 'image/png' } }))
 
     const response = await worker.fetch(new Request('https://api.test/v1/generation/image', {
       method: 'POST',
@@ -278,7 +279,10 @@ describe('generation-api TTS contract', () => {
     expect(response.status).toBe(201)
     expect(providerBody).toMatchObject({ model: 'dall-e-3', prompt: 'A friendly robot', n: 1, size: '1024x1024', quality: 'standard' })
     expect(providerBody).not.toHaveProperty('style')
+    expect(providerBody).not.toHaveProperty('response_format')
+    expect(fetchSpy.mock.calls[1]![0]).toBe('https://provider.test/generated.png')
     expect(generated.data.imageUrl).toMatch(/^\/v1\/generation\/images\/.+\/binary$/)
+    expect(generated.data.fileSizeBytes).toBe(8)
   })
 
   it('uses the identity service binding for session-authenticated mutations', async () => {
