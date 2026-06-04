@@ -5,6 +5,17 @@ export interface AdminUser {
   roles: string[]
 }
 
+export type TikoRole = 'guest' | 'user' | 'child' | 'profile_manager' | 'content_editor' | 'admin'
+
+export interface AdminManagedUser {
+  id: string
+  kind: string
+  email: string | null
+  roles: TikoRole[]
+  createdAt: string
+  updatedAt: string
+}
+
 export interface AdminConfig {
   appApiUrl: string
   generationApiUrl: string

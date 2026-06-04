@@ -11,6 +11,7 @@ const quickLinks = [
   { to: '/images', title: 'Generate images', description: 'Create child-friendly images with the Tiko visual style.' },
   { to: '/stories', title: 'Narrate stories', description: 'Generate narrated stories and save them to the library.' },
   { to: '/library', title: 'Media library', description: 'Browse and edit every image, story, and asset in Tiko.' },
+  { to: '/users', title: 'Users and roles', description: 'Manage product-scoped roles for admins, editors, managers, and child profiles.' },
   { to: '/defaults', title: 'App defaults', description: 'Set the starter content each Tiko app loads on first run.' },
   { to: '/support', title: 'Support inbox', description: 'See incoming user emails and reply from one place.' },
 ]
