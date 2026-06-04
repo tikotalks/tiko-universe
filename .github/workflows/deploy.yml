@@ -211,6 +211,11 @@ jobs:
           # For dev: use dev worker name from wrangler.toml or fallback
           cd "workers/${WORKER}"
 
+          # Workers are split across Cloudflare accounts; each wrangler.toml
+          # declares the correct account_id. Keep CLOUDFLARE_ACCOUNT_ID for
+          # Pages jobs, but do not override Worker account selection here.
+          unset CLOUDFLARE_ACCOUNT_ID
+
           if [[ "$ENV" == "production" ]]; then
             echo "🚀 Deploying $WORKER to production"
             npx wrangler deploy --env production
