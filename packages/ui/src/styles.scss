@@ -134,6 +134,24 @@ body {
 .tiko-app-header__title {
   font-size: 1.45rem;
   font-weight: 800;
+  cursor: pointer;
+}
+
+.tiko-app-header__back-btn {
+  display: grid;
+  place-items: center;
+  width: 3rem;
+  height: 3rem;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--tiko-app-primary-text), transparent 72%);
+  color: var(--tiko-app-primary-text);
+  font-size: 2rem;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.15s ease;
+
+  &:hover { transform: scale(1.05); }
+  &:active { transform: scale(0.95); }
 }
 
 .tiko-app-header__action {

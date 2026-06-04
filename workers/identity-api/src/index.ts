@@ -125,6 +125,8 @@ async function handleManagedIdentity(request: Request, env: Env): Promise<Respon
   const path = url.pathname.replace(/\/$/, '')
   if (path === '/v1/identity/managed/children' && request.method === 'POST') return createManagedChild(request, env)
   if (path === '/v1/identity/managed/login' && request.method === 'POST') return loginManagedChild(request, env)
+  if (path === '/v1/identity/profile' && request.method === 'GET') return getProfile(request, env)
+  if (path === '/v1/identity/profile' && request.method === 'PUT') return updateProfile(request, env)
   return null
 }
 
@@ -187,6 +189,38 @@ async function loginManagedChild(request: Request, env: Env): Promise<Response> 
     roles: await activeRoles(env.IDENTITY_DB, subject.id),
     managed: { handle: row.handle, displayName: row.display_name, managerSubjectId: row.manager_subject_id }
   }, { status: 200 })
+}
+
+async function getProfile(request: Request, env: Env): Promise<Response> {
+  const auth = await requireIdentitySession(request, env)
+  if (!auth) return Response.json({ error: 'invalid_session' }, { status: 401 })
+
+  const row = await env.IDENTITY_DB.prepare('SELECT metadata_json FROM identity_subjects WHERE id = ?')
+    .bind(auth.subjectId)
+    .first<{ metadata_json: string }>()
+  const metadata = row ? JSON.parse(row.metadata_json || '{}') : {}
+  return Response.json({ profile: metadata })
+}
+
+async function updateProfile(request: Request, env: Env): Promise<Response> {
+  const auth = await requireIdentitySession(request, env)
+  if (!auth) return Response.json({ error: 'invalid_session' }, { status: 401 })
+
+  const body = await request.json().catch(() => ({})) as Record<string, unknown>
+  if (!body || typeof body !== 'object') return Response.json({ error: 'invalid_body' }, { status: 400 })
+
+  // Read current metadata, merge with incoming, write back
+  const row = await env.IDENTITY_DB.prepare('SELECT metadata_json FROM identity_subjects WHERE id = ?')
+    .bind(auth.subjectId)
+    .first<{ metadata_json: string }>()
+  const current = row ? JSON.parse(row.metadata_json || '{}') : {}
+  const merged = { ...current, ...body }
+
+  await env.IDENTITY_DB.prepare('UPDATE identity_subjects SET metadata_json = ?, updated_at = ? WHERE id = ?')
+    .bind(JSON.stringify(merged), new Date().toISOString(), auth.subjectId)
+    .run()
+
+  return Response.json({ profile: merged })
 }
 
 async function requireIdentitySession(request: Request, env: Env): Promise<{ subjectId: string } | null> {

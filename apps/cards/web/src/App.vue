@@ -8,6 +8,8 @@ import { createI18n, defaultLanguage, tikoI18nKeys, tikoLanguages, type TikoLang
 import {
   TikoAppShell,
   TikoSettingsPanel,
+  TikoProfileMenu,
+  TikoPinPopup,
   createTikoTtsClient,
   type TikoColorMode
 } from '@tiko/ui'
@@ -469,6 +471,13 @@ const newItemName = ref('')
 const userKind = ref<'anonymous' | 'account'>('anonymous')
 
 // ---------------------------------------------------------------------------
+// Parent mode state
+// ---------------------------------------------------------------------------
+const parentMode = ref(true)
+const parentCodeHash = ref<string | undefined>()
+const hasCode = computed(() => Boolean(parentCodeHash.value))
+
+// ---------------------------------------------------------------------------
 // Media integration (Supabase images for default collections)
 // ---------------------------------------------------------------------------
 
@@ -615,12 +624,9 @@ const hasHiddenDefaults = computed(() => hiddenDefaults.value.length > 0)
 const headerActions = computed(() => {
   const actions: Array<{ id: string; label: string; icon: string; active?: boolean; visible?: boolean }> = []
 
-  // Back button when inside a collection
-  if (navPath.value.length > 0) {
-    actions.push({ id: 'back', label: 'Back', icon: 'ui/arrow-left', visible: true })
+  if (parentMode.value) {
+    actions.push({ id: 'manage', label: 'Add', icon: 'ui/plus' })
   }
-
-  actions.push({ id: 'manage', label: 'Add', icon: 'ui/plus' })
   return actions
 })
 
@@ -724,6 +730,14 @@ async function hydrateRemoteData() {
   ])
   applySettings(settings.settings, settings.version)
   applyState(state.state, state.version)
+
+  // Load parent code from user profile
+  try {
+    const { profile } = await identityClient.getProfile(sessionToken.value)
+    if (typeof profile.parentCodeHash === 'string') {
+      parentCodeHash.value = profile.parentCodeHash
+    }
+  } catch { /* not logged in or profile not available */ }
 }
 
 async function persistSettingsRemote() {
@@ -1557,6 +1571,93 @@ function openLoginPopup() {
 function handleAvatarClick() {
   if (!sessionToken.value) {
     openLoginPopup()
+    return
+  }
+  openProfileMenu()
+}
+
+function openProfileMenu() {
+  popup.showPopup({
+    component: markRaw(TikoProfileMenu),
+    title: '',
+    props: {
+      parentMode: parentMode.value,
+      hasCode: hasCode.value,
+      isLoggedIn: Boolean(sessionToken.value),
+    },
+    config: { position: 'bottom-right', canClose: true, background: false, width: 'auto' },
+    on: {
+      profile: () => {},
+      logout: () => doLogout(),
+      login: () => openLoginPopup(),
+      'enter-parent-mode': () => openParentCodePopup(),
+      'enter-child-mode': () => openChildModeFlow(),
+      close: () => popup.closeAllPopups(),
+    },
+  })
+}
+
+async function doLogout() {
+  if (!sessionToken.value) return
+  try {
+    await identityClient.logout(sessionToken.value)
+  } catch { /* ignore */ }
+  window.localStorage.removeItem('tiko-cards-identity')
+  window.location.reload()
+}
+
+function openParentCodePopup() {
+  popup.showPopup({
+    component: markRaw(TikoPinPopup),
+    title: '',
+    props: { existingHash: parentCodeHash.value },
+    config: { position: 'center', canClose: true, background: true, width: '22rem' },
+    on: {
+      set: () => {
+        parentMode.value = true
+        popup.closeAllPopups()
+      },
+      cancel: () => popup.closeAllPopups(),
+    },
+  })
+}
+
+function openChildModeFlow() {
+  if (!hasCode.value) {
+    // First time: show code creation
+    popup.showPopup({
+      component: markRaw(TikoPinPopup),
+      title: '',
+      props: { existingHash: undefined },
+      config: { position: 'center', canClose: true, background: true, width: '22rem' },
+      on: {
+        set: async (...args: unknown[]) => {
+          const hash = args[0] as string
+          parentCodeHash.value = hash
+          parentMode.value = false
+          if (sessionToken.value) {
+            try { await identityClient.updateProfile(sessionToken.value, { parentCodeHash: hash }) } catch { /* ignore */ }
+          }
+          popup.closeAllPopups()
+        },
+        cancel: () => popup.closeAllPopups(),
+      },
+    })
+  } else {
+    // Code exists: verify
+    popup.showPopup({
+      component: markRaw(TikoPinPopup),
+      title: '',
+      props: { existingHash: parentCodeHash.value },
+      config: { position: 'center', canClose: true, background: true, width: '22rem' },
+      on: {
+        set: () => {
+          parentMode.value = false
+          popup.closeAllPopups()
+        },
+        cancel: () => popup.closeAllPopups(),
+      },
+    })
   }
 }
 
@@ -1595,9 +1696,11 @@ onUnmounted(() => {
     app-icon="education/book-2"
     app-color="cards"
     avatar="ui/avatar"
+    :show-back="navPath.length > 0"
     :actions="headerActions"
     @header-action="headerAction"
     @avatar-click="handleAvatarClick"
+    @back-click="navigateBack"
     @title-click="goHome"
   >
     <section class="cards-app" :data-color-mode="colorMode">
@@ -1822,7 +1925,7 @@ onUnmounted(() => {
   font-weight: 600;
   color: #fff;
   text-align: center;
-  background: linear-gradient(transparent, rgba(0,0,0,0.6));
+  text-shadow: 0 1px 4px rgba(0,0,0,0.6), 0 0 12px rgba(0,0,0,0.3);
   border-radius: 0 0 16px 16px;
   pointer-events: none;
 }
