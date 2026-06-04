@@ -396,10 +396,299 @@ Run weekly:
 
 ---
 
+## Type Sharing Strategy
+
+Shared types live in a dedicated package: `packages/talk-types/`. This matches the `@tiko/data` and `@tiko/identity` pattern — no worker exports types directly to frontend apps.
+
+```
+packages/talk-types/
+├── src/
+│   └── index.ts          # All exported interfaces (WordTile, Category, Template, etc.)
+├── package.json          # name: "@tiko/talk-types"
+└── tsconfig.json
+```
+
+Both `workers/sentence-api/` and `apps/talk/web/` add `"@tiko/talk-types": "workspace:*"` to their dependencies.
+
+The `types.ts` files in each package are thin re-exports:
+```typescript
+// workers/sentence-api/src/types.ts
+export type * from '@tiko/talk-types'
+// apps/talk/web/src/types.ts
+export type * from '@tiko/talk-types'
+```
+
+---
+
+## i18n Namespace
+
+Talk registers its strings under the `talk.*` namespace in `@tiko/i18n`, matching the pattern used by `yesNo.*`, `cards.*`, `radio.*`.
+
+**Minimum v1 strings:**
+```typescript
+// packages/i18n/src/namespaces/talk.ts
+export const talk = {
+  'talk.speak': 'Speak',
+  'talk.clear': 'Clear',
+  'talk.save': 'Save phrase',
+  'talk.saved': 'Saved',
+  'talk.phrases': 'Saved phrases',
+  'talk.templates': 'Templates',
+  'talk.buildSentence': 'Build a sentence',
+  'talk.tapToSpeak': 'Tap a word to start',
+  'talk.offline': 'Working offline',
+  'talk.offlineNote': 'Limited vocabulary available',
+  'talk.speakError': 'Could not play audio. Try again.',
+}
+```
+
+---
+
+## Language Pack Bootstrap
+
+The v1 English pack is seeded into D1 at deployment time via a migration SQL file.
+
+### Pack location in repo
+
+```
+workers/sentence-api/
+├── src/
+│   └── ...
+├── db/
+│   ├── schema.sql             # Table creation (already defined above)
+│   ├── seed-en.sql            # English pack seed (words + templates + grammar)
+│   └── queries.ts
+```
+
+### Seed format
+
+`seed-en.sql` inserts one row into `language_packs` with the full pack JSON, then populates `word_inventory` and `templates` from it:
+
+```sql
+-- 1. Insert pack metadata
+INSERT INTO language_packs (id, locale, version, pack_data, source, status, created_at, updated_at)
+VALUES (
+  'en-v1',
+  'en',
+  1,
+  '{ "locale": "en", "version": 1, "words": [...], "templates": [...], "grammar": {...} }',
+  'curated',
+  'active',
+  '2024-01-01T00:00:00Z',
+  '2024-01-01T00:00:00Z'
+);
+
+-- 2. Populate denormalized word_inventory
+INSERT INTO word_inventory (id, locale, word, pos, category, frequency, icon, inflections, pack_version)
+VALUES
+  ('en-i',    'en', 'I',     'pron', 'pronouns', 10, NULL, NULL, 1),
+  ('en-you',  'en', 'you',   'pron', 'pronouns', 10, NULL, NULL, 1),
+  ('en-want', 'en', 'want',  'verb', 'actions',  10, 'hand-point-right', '{"1sg":"want","3sg":"wants"}', 1),
+  -- ... ~250 total rows
+  ;
+
+-- 3. Populate templates
+INSERT INTO templates (id, locale, pattern, slot_defs, category, icon, sort_order)
+VALUES
+  ('en-t1', 'en', 'I want ___',     '[{"acceptedPos":["noun"],"categoryFilter":null}]', 'request',  NULL, 1),
+  ('en-t2', 'en', 'I feel ___',     '[{"acceptedPos":["adj"]}]',                        'feeling',  NULL, 2),
+  -- ...
+  ;
+
+-- 4. Seed initial transitions (from pack grammar rules)
+INSERT INTO transitions (id, locale, from_pos_sequence, to_pos, suggested_words, weight, source, updated_at)
+VALUES
+  ('en-tr1', 'en', '[]',           'pron', '["en-i","en-you","en-he","en-she"]', 1.0, 'pack', '2024-01-01T00:00:00Z'),
+  ('en-tr2', 'en', '["pron"]',     'verb', '["en-want","en-need","en-feel","en-am"]', 1.0, 'pack', '2024-01-01T00:00:00Z'),
+  ('en-tr3', 'en', '["pron","verb"]', 'noun', '["en-juice","en-water","en-food"]', 1.0, 'pack', '2024-01-01T00:00:00Z'),
+  -- ...
+  ;
+```
+
+### Deployment procedure
+
+```bash
+# Apply schema (first deploy only)
+wrangler d1 execute sentence-db --file=db/schema.sql
+
+# Seed English pack
+wrangler d1 execute sentence-db --file=db/seed-en.sql
+
+# Verify
+wrangler d1 execute sentence-db --command="SELECT locale, COUNT(*) as words FROM word_inventory GROUP BY locale"
+```
+
+---
+
+## Offline Fallback Pack
+
+`apps/talk/web/src/data/fallback-pack-en.json` is a stripped-down subset of the English pack. It uses **the same schema** as the server-side `LanguagePack` type — no separate format.
+
+**Contents:**
+- ~50 highest-frequency words (frequency ≥ 8 only)
+- ~5 core templates ("I want ___", "I feel ___", "I need help")
+- Grammar rules (word order, valid transitions for the 50 words only)
+
+**Maintenance rule:** The fallback pack is generated from the English seed at build time via a script — it is never hand-edited:
+
+```
+workers/sentence-api/scripts/generate-fallback.ts
+```
+
+This script reads `seed-en.sql`, filters to frequency ≥ 8, writes `fallback-pack-en.json`. Run it any time the English pack changes.
+
+**Frontend fallback logic (in `useSentenceApi.ts`):**
+```typescript
+async function fetchNext(currentWords: string[]) {
+  try {
+    return await apiClient.postNext(currentWords)
+  } catch (e) {
+    if (!navigator.onLine) {
+      return computeLocalNext(currentWords, fallbackPack)
+    }
+    throw e
+  }
+}
+```
+
+---
+
+## Cron Jobs
+
+Cloudflare Workers cron triggers are defined in `wrangler.toml`:
+
+```toml
+[triggers]
+crons = [
+  "0 3 * * *",    # daily at 03:00 UTC — weight recalculation
+  "0 4 * * 0"     # weekly on Sunday at 04:00 UTC — template discovery
+]
+```
+
+The worker entry handles cron events:
+
+```typescript
+// workers/sentence-api/src/index.ts
+export default {
+  async scheduled(event: ScheduledEvent, env: Env, ctx: ExecutionContext) {
+    if (event.cron === '0 3 * * *') {
+      ctx.waitUntil(recalculateWeights(env))
+    }
+    if (event.cron === '0 4 * * 0') {
+      ctx.waitUntil(discoverTemplates(env))
+    }
+  },
+  async fetch(request: Request, env: Env, ctx: ExecutionContext) {
+    // ... route handling
+  }
+}
+```
+
+Weight recalculation flushes affected KV cache keys after updating `transitions`.
+
+---
+
+## Error Handling
+
+### TTS failure (Speak button)
+
+If `generation-api` returns an error or times out:
+1. Frontend shows an inline error message (`talk.speakError` i18n string) below the sentence strip
+2. The Speak button becomes re-tappable immediately (no lockout)
+3. The sentence strip is NOT cleared — the child can try again
+
+```typescript
+// SpeakButton.vue
+async function speak() {
+  speakError.value = false
+  try {
+    const result = await api.complete(strip.wordIds)
+    await audioPlayer.play(result.audioUrl)
+    strip.clear()
+  } catch (e) {
+    speakError.value = true  // renders "talk.speakError" string
+  }
+}
+```
+
+### API unavailable (building sentences)
+
+If `/next` fails while building:
+- If offline: fall back to local pack computation (see Offline Fallback Pack above)
+- If online but error: show no suggestions (suggestion bar empty), allow the child to continue browsing the full grid manually
+
+The sentence strip continues to function — the child can still add words from the grid; they just won't get smart suggestions.
+
+---
+
+## Monorepo Integration
+
+### Workspace registration
+
+Add to root `pnpm-workspace.yaml` (or equivalent):
+```
+packages/talk-types
+workers/sentence-api
+apps/talk/web
+```
+
+### Turborepo pipeline
+
+`workers/sentence-api` and `apps/talk/web` follow the same pipeline entries as other workers and apps:
+
+```json
+// turbo.json (additions)
+{
+  "pipeline": {
+    "build": {
+      "dependsOn": ["^build"]
+    }
+  }
+}
+```
+
+`apps/talk/web` depends on `@tiko/talk-types` → `@tiko/ui` → `@tiko/identity`. Turborepo resolves this automatically from `package.json` workspace references.
+
+### Wrangler binding conventions
+
+Following existing worker naming conventions:
+
+```toml
+# workers/sentence-api/wrangler.toml
+name = "tiko-sentence-api-dev"
+
+[[d1_databases]]
+binding = "DB"                          # use "DB" not "SENTENCE_DB" — matches generation-api
+database_name = "tiko-sentence-db-dev"
+database_id = "<dev-id>"
+
+[[kv_namespaces]]
+binding = "CACHE"                       # use "CACHE" not "SENTENCE_CACHE"
+id = "<dev-kv-id>"
+
+[[services]]
+binding = "IDENTITY_SERVICE"
+service = "tiko-identity-api-dev"
+
+[[services]]
+binding = "GENERATION_SERVICE"
+service = "tiko-generation-api-dev"
+
+[env.production]
+name = "tiko-sentence-api"
+[[env.production.d1_databases]]
+binding = "DB"
+database_name = "tiko-sentence-db"
+database_id = "<prod-id>"
+```
+
+---
+
 ## TypeScript Types
 
 ```typescript
 // Core domain types — shared between worker and frontend
+// Source of truth: packages/talk-types/src/index.ts
 
 interface WordTile {
   id: string
