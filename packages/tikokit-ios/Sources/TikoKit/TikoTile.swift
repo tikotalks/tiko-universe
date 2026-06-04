@@ -93,9 +93,9 @@ public struct TikoSquareTile<Content: View>: View {
             // Image at 60% tile size, centre at 33% from top / 50% horizontal
             GeometryReader { geo in
                 content()
-                    .frame(width: geo.size.width * 0.6, height: geo.size.width * 0.6)
+                    .frame(width: geo.size.width * 0.75, height: geo.size.width * 0.75)
                     .clipShape(RoundedRectangle(cornerRadius: cornerRadius * 0.55, style: .continuous))
-                    .position(x: geo.size.width * 0.5, y: geo.size.height * 0.33)
+                    .position(x: geo.size.width * 0.5, y: geo.size.height * 0.45)
             }
 
             // Label: adaptive pill — dark text/light bg in light mode, inverse in dark
