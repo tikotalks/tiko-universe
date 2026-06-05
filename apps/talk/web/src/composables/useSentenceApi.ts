@@ -1,7 +1,9 @@
 import { computed, ref, type Ref } from 'vue'
 import type {
   Category,
+  DeleteSentencePhraseResponse,
   SavedPhrase,
+  SaveSentencePhraseResponse,
   SentenceCompleteResponse,
   SentenceNextRequest,
   SentenceNextResponse,
@@ -194,6 +196,24 @@ export function useSentenceApi(options: SentenceApiOptions) {
     return data
   }
 
+  async function savePhrase(wordIds: string[], label?: string) {
+    const data = await requestJson<SaveSentencePhraseResponse>('/v1/sentence/phrases', {
+      method: 'POST',
+      body: JSON.stringify({ locale: options.language.value, wordIds, label }),
+    })
+    await loadPhrases()
+    return data.phrase
+  }
+
+  async function deletePhrase(phraseId: string) {
+    const params = new URLSearchParams({ locale: options.language.value })
+    const data = await requestJson<DeleteSentencePhraseResponse>(`/v1/sentence/phrases/${encodeURIComponent(phraseId)}?${params.toString()}`, {
+      method: 'DELETE',
+    })
+    await loadPhrases()
+    return data
+  }
+
   function wordsForPhrase(phrase: SavedPhrase) {
     return phrase.wordIds.map((id) => wordsById.value.get(id)).filter((word): word is WordTile => Boolean(word))
   }
@@ -216,6 +236,8 @@ export function useSentenceApi(options: SentenceApiOptions) {
     loadVocabulary,
     loadPhrases,
     complete,
+    savePhrase,
+    deletePhrase,
     wordsForPhrase,
   }
 }

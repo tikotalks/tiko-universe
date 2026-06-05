@@ -18,6 +18,8 @@ const identityStorageKey = 'tiko:identity:device-session'
 const activeCategoryId = ref('')
 const speechStatus = ref<'idle' | 'speaking' | 'ready' | 'fallback' | 'error'>('idle')
 const speechError = ref<string | null>(null)
+const phraseStatus = ref<'idle' | 'saving' | 'saved' | 'deleting' | 'error'>('idle')
+const phraseError = ref<string | null>(null)
 const settingsOpen = ref(false)
 const identityStatus = ref<'offline' | 'bootstrapping' | 'ready' | 'error'>('offline')
 const identityError = ref<string | null>(null)
@@ -97,6 +99,8 @@ function selectTemplate(template: Template) {
 function selectPhrase(phrase: SavedPhrase) {
   strip.setWords(sentenceApi.wordsForPhrase(phrase))
   speechStatus.value = 'idle'
+  phraseStatus.value = 'idle'
+  phraseError.value = null
   void sentenceApi.next(strip.wordIds.value)
 }
 
@@ -167,6 +171,34 @@ async function speakSentence() {
     speechError.value = error instanceof Error ? error.message : 'speech_failed'
   }
 }
+
+async function saveCurrentPhrase() {
+  if (!strip.wordIds.value.length || sentenceApi.isOffline.value) return
+
+  phraseStatus.value = 'saving'
+  phraseError.value = null
+  try {
+    await sentenceApi.savePhrase(strip.wordIds.value, strip.display.value)
+    phraseStatus.value = 'saved'
+  } catch (error) {
+    phraseStatus.value = 'error'
+    phraseError.value = error instanceof Error ? error.message : 'phrase_save_failed'
+  }
+}
+
+async function deleteSavedPhrase(phrase: SavedPhrase) {
+  if (sentenceApi.isOffline.value) return
+
+  phraseStatus.value = 'deleting'
+  phraseError.value = null
+  try {
+    await sentenceApi.deletePhrase(phrase.id)
+    phraseStatus.value = 'idle'
+  } catch (error) {
+    phraseStatus.value = 'error'
+    phraseError.value = error instanceof Error ? error.message : 'phrase_delete_failed'
+  }
+}
 </script>
 
 <template>
@@ -208,6 +240,14 @@ async function speakSentence() {
           loading-label="Speaking"
           @speak="speakSentence"
         />
+        <button
+          class="talk-app__save-phrase"
+          type="button"
+          :disabled="!strip.wordIds.value.length || sentenceApi.isOffline.value || phraseStatus === 'saving'"
+          @click="saveCurrentPhrase"
+        >
+          {{ phraseStatus === 'saving' ? 'Saving phrase' : 'Save phrase' }}
+        </button>
       </section>
 
       <SentenceStrip
@@ -220,6 +260,8 @@ async function speakSentence() {
       <p v-if="statusText" class="talk-app__status" :class="{ 'talk-app__status--error': sentenceApi.mode.value === 'error' }">{{ statusText }}</p>
       <p v-if="speechStatus === 'fallback'" class="talk-app__status">Using the device voice while cached audio is unavailable.</p>
       <p v-else-if="speechError" class="talk-app__status talk-app__status--error">Speech could not start: {{ speechError }}</p>
+      <p v-if="phraseStatus === 'saved'" class="talk-app__status">Phrase saved for this user.</p>
+      <p v-else-if="phraseError" class="talk-app__status talk-app__status--error">Phrase could not update: {{ phraseError }}</p>
 
       <div class="talk-app__columns">
         <div class="talk-app__main-column">
@@ -234,7 +276,11 @@ async function speakSentence() {
         </div>
         <aside class="talk-app__side-column" aria-label="Talk shortcuts">
           <TemplatePicker :templates="sentenceApi.templates.value" @select="selectTemplate" />
-          <SavedPhrases :phrases="sentenceApi.savedPhrases.value" @select="selectPhrase" />
+          <SavedPhrases
+            :phrases="sentenceApi.savedPhrases.value"
+            @select="selectPhrase"
+            @delete="deleteSavedPhrase"
+          />
         </aside>
       </div>
     </div>

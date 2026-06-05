@@ -126,9 +126,11 @@ button {
 .talk-strip__word,
 .talk-strip__clear,
 .talk-speak-button,
+.talk-app__save-phrase,
 .talk-word-grid__tab,
 .talk-template-picker__item,
-.talk-saved-phrases__item {
+.talk-saved-phrases__select,
+.talk-saved-phrases__delete {
   border: 1px solid color-mix(in srgb, var(--color-foreground), transparent 86%);
   background: var(--color-background);
   color: var(--color-foreground);
@@ -167,6 +169,7 @@ button {
 }
 
 .talk-speak-button:disabled,
+.talk-app__save-phrase:disabled,
 .talk-strip__clear:disabled {
   cursor: not-allowed;
   opacity: 0.55;
@@ -259,13 +262,37 @@ button {
 }
 
 .talk-template-picker__item,
-.talk-saved-phrases__item {
+.talk-saved-phrases__item,
+.talk-saved-phrases__select {
   width: 100%;
   padding: 0.85rem 1rem;
   border-radius: 1rem;
   display: grid;
   gap: 0.2rem;
   text-align: left;
+}
+
+.talk-saved-phrases__item {
+  padding: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: stretch;
+  gap: 0.5rem;
+}
+
+.talk-saved-phrases__select {
+  border-radius: 1rem;
+}
+
+.talk-saved-phrases__delete,
+.talk-app__save-phrase {
+  padding: 0.75rem 1rem;
+  font-weight: 800;
+}
+
+.talk-saved-phrases__delete {
+  min-width: 4.5rem;
+  color: color-mix(in srgb, var(--color-foreground), transparent 18%);
 }
 
 @media (max-width: 860px) {

@@ -99,4 +99,57 @@ describe('useSentenceApi', () => {
     expect(api.suggestions.value.some((word) => word.id === 'en-i')).toBe(false)
     expect(completed.sentence).toBe('I want water.')
   })
+
+  it('saves and deletes manual phrases through the authenticated sentence API contract', async () => {
+    const requests: Array<{ url: string, method: string, body?: unknown, authorization: string | null }> = []
+    const savedPhrase: SavedPhrase = { id: 'phrase_new', sentence: 'I want water.', wordIds: ['i', 'want', 'water'], isAuto: false, usageCount: 1, label: 'Water please' }
+    const fetcher = vi.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
+      const url = String(input)
+      requests.push({
+        url,
+        method: init?.method ?? 'GET',
+        body: init?.body ? JSON.parse(String(init.body)) : undefined,
+        authorization: new Headers(init?.headers).get('Authorization'),
+      })
+      if (url.includes('/v1/sentence/phrases/phrase_new')) return json({ deleted: true })
+      if (url.includes('/v1/sentence/phrases') && init?.method === 'POST') return json({ phrase: savedPhrase }, 201)
+      if (url.includes('/v1/sentence/phrases')) return json({ phrases: [savedPhrase] })
+      throw new Error(`unexpected ${url}`)
+    }) as unknown as typeof fetch
+
+    const api = useSentenceApi({ language: ref('en'), sessionToken: ref('session-token'), fetcher, baseUrl: 'https://sentence.test' })
+
+    const saved = await api.savePhrase(['i', 'want', 'water'], 'Water please')
+    const deleted = await api.deletePhrase('phrase_new')
+
+    expect(saved).toEqual(savedPhrase)
+    expect(deleted).toEqual({ deleted: true })
+    expect(api.savedPhrases.value).toEqual([savedPhrase])
+    expect(requests).toEqual([
+      {
+        url: 'https://sentence.test/v1/sentence/phrases',
+        method: 'POST',
+        body: { locale: 'en', wordIds: ['i', 'want', 'water'], label: 'Water please' },
+        authorization: 'Bearer session-token',
+      },
+      {
+        url: 'https://sentence.test/v1/sentence/phrases?locale=en',
+        method: 'GET',
+        body: undefined,
+        authorization: 'Bearer session-token',
+      },
+      {
+        url: 'https://sentence.test/v1/sentence/phrases/phrase_new?locale=en',
+        method: 'DELETE',
+        body: undefined,
+        authorization: 'Bearer session-token',
+      },
+      {
+        url: 'https://sentence.test/v1/sentence/phrases?locale=en',
+        method: 'GET',
+        body: undefined,
+        authorization: 'Bearer session-token',
+      },
+    ])
+  })
 })
