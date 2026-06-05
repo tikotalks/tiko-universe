@@ -31,6 +31,7 @@ class MemoryD1Database {
     { id: 'en-v1:pronoun:verb', pack_id: 'en-v1', locale: 'en', from_pos: 'pronoun', to_pos: 'verb', weight: 10, source: 'curated' },
     { id: 'en-v1:verb:noun', pack_id: 'en-v1', locale: 'en', from_pos: 'verb', to_pos: 'noun', weight: 9, source: 'curated' },
   ]
+  word_predictions: Row[] = []
   prepare(sql: string): MemoryStatement { return new MemoryStatement(this, sql) }
 
   execute(sql: string, values: unknown[]): MemoryResult {
@@ -103,6 +104,49 @@ class MemoryD1Database {
     if (normalized.startsWith('DELETE FROM talk_user_phrases')) {
       const [id, subjectId, locale] = values
       this.phrases = this.phrases.filter((phrase) => !(phrase.id === id && phrase.subject_id === subjectId && phrase.locale === locale))
+      return new MemoryResult()
+    }
+
+    if (normalized.startsWith('SELECT w.id, w.text, w.pos, w.category, w.icon, w.image, w.frequency, w.inflections_json, p.final_score FROM talk_word_predictions p JOIN talk_word_inventory w')) {
+      // No stored predictions in tests — always return empty so AI/fallback path runs
+      return new MemoryResult()
+    }
+
+    if (normalized.startsWith('INSERT INTO talk_word_predictions')) {
+      const [id, packId, locale, seqHash, seqText, wordId, aiScore, finalScore] = values
+      const existing = this.word_predictions.find((r) => r.pack_id === packId && r.sequence_hash === seqHash && r.word_id === wordId)
+      if (!existing) this.word_predictions.push({ id, pack_id: packId, locale, sequence_hash: seqHash, sequence_text: seqText, word_id: wordId, ai_score: aiScore, click_count: 0, final_score: finalScore })
+      return new MemoryResult()
+    }
+
+    if (normalized.startsWith('UPDATE talk_word_predictions SET click_count')) {
+      const [packId, seqHash, wordId] = values
+      const row = this.word_predictions.find((r) => r.pack_id === packId && r.sequence_hash === seqHash && r.word_id === wordId)
+      if (row) row.click_count = Number(row.click_count) + 1
+      return new MemoryResult()
+    }
+
+    if (normalized.startsWith('SELECT pack_id, sequence_hash, SUM(click_count) as total_clicks FROM talk_word_predictions')) {
+      const groups = new Map<string, number>()
+      for (const r of this.word_predictions) {
+        const key = `${String(r.pack_id)}|${String(r.sequence_hash)}`
+        groups.set(key, (groups.get(key) ?? 0) + Number(r.click_count))
+      }
+      return new MemoryResult(Array.from(groups.entries()).map(([key, total_clicks]) => {
+        const [pack_id, sequence_hash] = key.split('|')
+        return { pack_id, sequence_hash, total_clicks }
+      }).filter((r) => r.total_clicks > 0))
+    }
+
+    if (normalized.startsWith('SELECT word_id, ai_score, click_count, final_score FROM talk_word_predictions WHERE pack_id = ? AND sequence_hash = ?')) {
+      const [packId, seqHash] = values.map(String)
+      return new MemoryResult(this.word_predictions.filter((r) => r.pack_id === packId && r.sequence_hash === seqHash))
+    }
+
+    if (normalized.startsWith('UPDATE talk_word_predictions SET final_score')) {
+      const [finalScore, packId, seqHash, wordId] = values
+      const row = this.word_predictions.find((r) => r.pack_id === packId && r.sequence_hash === seqHash && r.word_id === wordId)
+      if (row) row.final_score = Number(finalScore)
       return new MemoryResult()
     }
 

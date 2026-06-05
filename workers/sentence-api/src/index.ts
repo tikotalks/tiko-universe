@@ -366,7 +366,7 @@ async function nextSentence(request: Request, env: Env): Promise<Response> {
   }
 
   const response: SentenceNextResponse = {
-    suggestions: suggestions.slice(0, 50).map(toWordTile),
+    suggestions: suggestions.map(toWordTile),
     categories,
     words,
     stripState,
@@ -584,13 +584,13 @@ async function generateAndStorePredictions(
     scored.sort((a, b) => b.score - a.score)
 
     await storePredictions(env.DB, pack.id, locale, sequenceHash, sequenceText,
-      scored.slice(0, 50).map((s) => ({ wordId: s.word.id, probability: s.score })))
+      scored.map((s) => ({ wordId: s.word.id, probability: s.score })))
 
-    return scored.slice(0, 50).map((s) => s.word)
+    return scored.map((s) => s.word)
   }
 
   // AI unavailable — store grammar-ranked order with descending scores
-  const fallback = rankSuggestions(candidateWords, validNext, orderedSelected).slice(0, 50)
+  const fallback = rankSuggestions(candidateWords, validNext, orderedSelected)
   const count = fallback.length
   await storePredictions(env.DB, pack.id, locale, sequenceHash, sequenceText,
     fallback.map((w, i) => ({ wordId: w.id, probability: Math.max(0.01, 1 - i / count) })))
