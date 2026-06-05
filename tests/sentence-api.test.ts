@@ -27,7 +27,7 @@ class MemoryStatement {
 class MemoryD1Database {
   phrases: Row[] = []
   usage: Row[] = []
-  transitions: Row[] = [
+  talk_transitions: Row[] = [
     { id: 'en-v1:pronoun:verb', pack_id: 'en-v1', locale: 'en', from_pos: 'pronoun', to_pos: 'verb', weight: 10, source: 'curated' },
     { id: 'en-v1:verb:noun', pack_id: 'en-v1', locale: 'en', from_pos: 'verb', to_pos: 'noun', weight: 9, source: 'curated' },
   ]
@@ -36,40 +36,40 @@ class MemoryD1Database {
   execute(sql: string, values: unknown[]): MemoryResult {
     const normalized = sql.replace(/\s+/g, ' ').trim()
 
-    if (normalized.startsWith('SELECT id, locale, version, grammar_json FROM language_packs')) {
+    if (normalized.startsWith('SELECT id, locale, version, grammar_json FROM talk_language_packs')) {
       const locale = String(values[0])
       if (locale !== pack.locale) return new MemoryResult()
       return new MemoryResult([{ id: 'en-v1', locale: 'en', version: 1, grammar_json: JSON.stringify(pack.grammar) }])
     }
 
-    if (normalized.startsWith('SELECT id, text, pos, category, icon, image, frequency, inflections_json FROM word_inventory WHERE pack_id = ? AND id IN')) {
+    if (normalized.startsWith('SELECT id, text, pos, category, icon, image, frequency, inflections_json FROM talk_word_inventory WHERE pack_id = ? AND id IN')) {
       const ids = new Set(values.slice(1).map(String))
       return new MemoryResult(pack.words.filter((word) => ids.has(word.id)).map(wordRow))
     }
 
-    if (normalized.startsWith('SELECT id, text, pos, category, icon, image, frequency, inflections_json FROM word_inventory WHERE pack_id = ? AND pos IN')) {
+    if (normalized.startsWith('SELECT id, text, pos, category, icon, image, frequency, inflections_json FROM talk_word_inventory WHERE pack_id = ? AND pos IN')) {
       const pos = new Set(values.slice(1).map(String))
       return new MemoryResult(pack.words.filter((word) => pos.has(word.pos)).sort((a, b) => b.frequency - a.frequency || a.text.localeCompare(b.text)).map(wordRow))
     }
 
-    if (normalized.startsWith('SELECT id, text, pos, category, icon, image, frequency, inflections_json FROM word_inventory WHERE pack_id = ?')) {
+    if (normalized.startsWith('SELECT id, text, pos, category, icon, image, frequency, inflections_json FROM talk_word_inventory WHERE pack_id = ?')) {
       let words = [...pack.words]
       if (normalized.includes('category = ?')) words = words.filter((word) => word.category === String(values[1]))
       if (normalized.includes('pos = ?')) words = words.filter((word) => word.pos === String(values[normalized.includes('category = ?') ? 2 : 1]))
       return new MemoryResult(words.sort((a, b) => a.category.localeCompare(b.category) || b.frequency - a.frequency || a.text.localeCompare(b.text)).map(wordRow))
     }
 
-    if (normalized.startsWith('SELECT id, pattern, category, icon, slots_json FROM templates')) {
+    if (normalized.startsWith('SELECT id, pattern, category, icon, slots_json FROM talk_templates')) {
       return new MemoryResult(pack.templates.map(templateRow))
     }
 
-    if (normalized.startsWith('SELECT id, sentence, word_ids_json, is_auto, usage_count, label FROM user_phrases')) {
+    if (normalized.startsWith('SELECT id, sentence, word_ids_json, is_auto, usage_count, label FROM talk_user_phrases')) {
       const [subjectId, locale] = values.map(String)
       return new MemoryResult(this.phrases.filter((phrase) => phrase.subject_id === subjectId && phrase.locale === locale))
     }
 
 
-    if (normalized.startsWith('INSERT INTO sentence_usage')) {
+    if (normalized.startsWith('INSERT INTO talk_sentence_usage')) {
       const [id, locale, packId, posSequenceJson, wordSequenceHash, wordCount] = values
       const existing = this.usage.find((row) => row.locale === locale && row.word_sequence_hash === wordSequenceHash)
       if (existing) existing.usage_count = Number(existing.usage_count) + 1
@@ -77,30 +77,30 @@ class MemoryD1Database {
       return new MemoryResult()
     }
 
-    if (normalized.startsWith('SELECT id, locale, pack_id, pos_sequence_json, usage_count FROM sentence_usage')) {
+    if (normalized.startsWith('SELECT id, locale, pack_id, pos_sequence_json, usage_count FROM talk_sentence_usage')) {
       return new MemoryResult(this.usage)
     }
 
-    if (normalized.startsWith('SELECT from_pos, to_pos, weight FROM transitions')) {
+    if (normalized.startsWith('SELECT from_pos, to_pos, weight FROM talk_transitions')) {
       const [packId] = values
-      return new MemoryResult(this.transitions.filter((row) => row.pack_id === packId && row.source === 'curated'))
+      return new MemoryResult(this.talk_transitions.filter((row) => row.pack_id === packId && row.source === 'curated'))
     }
 
-    if (normalized.startsWith('INSERT INTO transitions')) {
+    if (normalized.startsWith('INSERT INTO talk_transitions')) {
       const [id, packId, locale, fromPos, toPos, weight] = values
-      const existing = this.transitions.find((row) => row.pack_id === packId && row.from_pos === fromPos && row.to_pos === toPos && row.source === 'learned')
+      const existing = this.talk_transitions.find((row) => row.pack_id === packId && row.from_pos === fromPos && row.to_pos === toPos && row.source === 'learned')
       if (existing) existing.weight = Number(weight)
-      else this.transitions.push({ id, pack_id: packId, locale, from_pos: fromPos, to_pos: toPos, weight, source: 'learned' })
+      else this.talk_transitions.push({ id, pack_id: packId, locale, from_pos: fromPos, to_pos: toPos, weight, source: 'learned' })
       return new MemoryResult()
     }
 
-    if (normalized.startsWith('INSERT INTO user_phrases')) {
+    if (normalized.startsWith('INSERT INTO talk_user_phrases')) {
       const [id, subjectId, locale, sentence, wordIdsJson, label] = values
       this.phrases.push({ id, subject_id: subjectId, locale, sentence, word_ids_json: wordIdsJson, label, is_auto: 0, usage_count: 1 })
       return new MemoryResult()
     }
 
-    if (normalized.startsWith('DELETE FROM user_phrases')) {
+    if (normalized.startsWith('DELETE FROM talk_user_phrases')) {
       const [id, subjectId, locale] = values
       this.phrases = this.phrases.filter((phrase) => !(phrase.id === id && phrase.subject_id === subjectId && phrase.locale === locale))
       return new MemoryResult()
@@ -366,7 +366,7 @@ describe('sentence-api foundation', () => {
 
     await (worker as any).scheduled({ cron: '0 2 * * *' }, testEnv, {} as never)
 
-    const learned = db.transitions.filter((row) => row.source === 'learned')
+    const learned = db.talk_transitions.filter((row) => row.source === 'learned')
     expect(learned.find((row) => row.from_pos === 'pronoun' && row.to_pos === 'verb')?.weight).toBeCloseTo(10)
     expect(learned.find((row) => row.from_pos === 'verb' && row.to_pos === 'noun')?.weight).toBeCloseTo(9.7)
     expect(cache.deletes).toEqual(['sentence:next:en:anon:i,want'])

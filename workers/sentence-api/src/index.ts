@@ -194,7 +194,7 @@ async function handleScheduled(_event: { cron: string }, env: Env): Promise<void
 async function recalculateLearnedTransitions(env: Env): Promise<void> {
   const usageRows = await all<{ id: string, locale: string, pack_id: string | null, pos_sequence_json: string, usage_count: number }>(env.DB.prepare(`
     SELECT id, locale, pack_id, pos_sequence_json, usage_count
-    FROM sentence_usage
+    FROM talk_sentence_usage
     WHERE pack_id IS NOT NULL
     ORDER BY locale ASC, pack_id ASC
   `))
@@ -224,7 +224,7 @@ async function mergePackTransitions(db: D1Database, packId: string, locale: stri
   if (counts.size === 0) return
   const curatedRows = await all<{ from_pos: string, to_pos: string, weight: number }>(db.prepare(`
     SELECT from_pos, to_pos, weight
-    FROM transitions
+    FROM talk_transitions
     WHERE pack_id = ? AND source = 'curated'
   `).bind(packId))
   const curatedWeights = new Map(curatedRows.map((row) => [`${row.from_pos}\u0000${row.to_pos}`, Number(row.weight)]))
@@ -241,7 +241,7 @@ async function mergePackTransitions(db: D1Database, packId: string, locale: stri
     const packWeight = curatedWeights.get(key) ?? learnedWeight
     const mergedWeight = (packWeight * 0.3) + (learnedWeight * 0.7)
     await run(db.prepare(`
-      INSERT INTO transitions (id, pack_id, locale, from_pos, to_pos, weight, source, updated_at)
+      INSERT INTO talk_transitions (id, pack_id, locale, from_pos, to_pos, weight, source, updated_at)
       VALUES (?, ?, ?, ?, ?, ?, 'learned', CURRENT_TIMESTAMP)
       ON CONFLICT(pack_id, from_pos, to_pos, source) DO UPDATE SET
         weight = excluded.weight,
@@ -432,7 +432,7 @@ async function deletePhrase(request: Request, env: Env, url: URL, path: string):
   const locale = readLocale(url)
   const subjectId = await requireSubjectId(request, env, url.searchParams.get('userId'))
   await run(env.DB.prepare(`
-    DELETE FROM user_phrases
+    DELETE FROM talk_user_phrases
     WHERE id = ? AND subject_id = ? AND locale = ?
   `).bind(phraseId, subjectId, locale))
   await env.CACHE.delete(`sentence:phrases:${locale}:${hashCacheKey(subjectId)}`)
@@ -443,7 +443,7 @@ async function deletePhrase(request: Request, env: Env, url: URL, path: string):
 async function loadActivePack(db: D1Database, locale: string): Promise<LanguagePackRow & { grammar: GrammarRules }> {
   const row = await first<LanguagePackRow>(db.prepare(`
     SELECT id, locale, version, grammar_json
-    FROM language_packs
+    FROM talk_language_packs
     WHERE locale = ? AND status = 'active'
     ORDER BY version DESC
     LIMIT 1
@@ -456,7 +456,7 @@ async function loadActivePack(db: D1Database, locale: string): Promise<LanguageP
 async function loadWords(db: D1Database, packId: string): Promise<PackWord[]> {
   const rows = await all<WordRow>(db.prepare(`
     SELECT id, text, pos, category, icon, image, frequency, inflections_json
-    FROM word_inventory
+    FROM talk_word_inventory
     WHERE pack_id = ?
     ORDER BY category ASC, frequency DESC, text ASC
   `).bind(packId))
@@ -468,7 +468,7 @@ async function loadWordsByIds(db: D1Database, packId: string, ids: string[]): Pr
   const placeholders = ids.map(() => '?').join(', ')
   const rows = await all<WordRow>(db.prepare(`
     SELECT id, text, pos, category, icon, image, frequency, inflections_json
-    FROM word_inventory
+    FROM talk_word_inventory
     WHERE pack_id = ? AND id IN (${placeholders})
   `).bind(packId, ...ids))
   return rows.map(toPackWord)
@@ -479,7 +479,7 @@ async function loadSuggestedWords(db: D1Database, packId: string, posTypes: stri
   const placeholders = posTypes.map(() => '?').join(', ')
   const rows = await all<WordRow>(db.prepare(`
     SELECT id, text, pos, category, icon, image, frequency, inflections_json
-    FROM word_inventory
+    FROM talk_word_inventory
     WHERE pack_id = ? AND pos IN (${placeholders})
     ORDER BY frequency DESC, text ASC
   `).bind(packId, ...posTypes))
@@ -520,7 +520,7 @@ async function loadVocabularyWords(db: D1Database, packId: string, category: str
   }
   const rows = await all<WordRow>(db.prepare(`
     SELECT id, text, pos, category, icon, image, frequency, inflections_json
-    FROM word_inventory
+    FROM talk_word_inventory
     WHERE ${clauses.join(' AND ')}
     ORDER BY category ASC, frequency DESC, text ASC
   `).bind(...values))
@@ -530,7 +530,7 @@ async function loadVocabularyWords(db: D1Database, packId: string, category: str
 async function loadTemplates(db: D1Database, packId: string): Promise<PackTemplate[]> {
   const rows = await all<TemplateRow>(db.prepare(`
     SELECT id, pattern, category, icon, slots_json
-    FROM templates
+    FROM talk_templates
     WHERE pack_id = ?
     ORDER BY priority DESC, id ASC
   `).bind(packId))
@@ -546,7 +546,7 @@ async function loadTemplates(db: D1Database, packId: string): Promise<PackTempla
 async function loadSavedPhrases(db: D1Database, locale: string, subjectId: string): Promise<SavedPhrase[]> {
   const rows = await all<PhraseRow>(db.prepare(`
     SELECT id, sentence, word_ids_json, is_auto, usage_count, label
-    FROM user_phrases
+    FROM talk_user_phrases
     WHERE subject_id = ? AND locale = ?
     ORDER BY usage_count DESC, updated_at DESC
     LIMIT 12
@@ -667,7 +667,7 @@ async function logUsageAggregate(db: D1Database, locale: string, packId: string,
   const hash = await hashText(`${locale} ${words.map((word) => word.id).join(' ')}`)
   const id = `usage_${hash.slice(0, 24)}`
   await run(db.prepare(`
-    INSERT INTO sentence_usage (id, locale, pack_id, pos_sequence_json, word_sequence_hash, word_count, usage_count, first_seen_at, last_seen_at)
+    INSERT INTO talk_sentence_usage (id, locale, pack_id, pos_sequence_json, word_sequence_hash, word_count, usage_count, first_seen_at, last_seen_at)
     VALUES (?, ?, ?, ?, ?, ?, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
     ON CONFLICT(locale, word_sequence_hash) DO UPDATE SET
       usage_count = usage_count + 1,
@@ -680,7 +680,7 @@ async function persistPhrase(db: D1Database, locale: string, subjectId: string, 
   const wordIds = words.map((word) => word.id)
   const id = `phrase_${crypto.randomUUID()}`
   await run(db.prepare(`
-    INSERT INTO user_phrases (id, subject_id, locale, sentence, word_ids_json, label, is_auto, usage_count, created_at, updated_at)
+    INSERT INTO talk_user_phrases (id, subject_id, locale, sentence, word_ids_json, label, is_auto, usage_count, created_at, updated_at)
     VALUES (?, ?, ?, ?, ?, ?, 0, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
   `).bind(id, subjectId, locale, sentence, JSON.stringify(wordIds), label?.trim() || null))
   return { id, sentence, wordIds, isAuto: false, usageCount: 1, ...(label?.trim() ? { label: label.trim() } : {}) }

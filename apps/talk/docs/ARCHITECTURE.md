@@ -263,6 +263,8 @@ AI-generate a new language pack from an existing one.
 
 ### D1 Tables
 
+Development deploys reuse the existing shared `tiko-db` D1 database because the Cloudflare account is at its D1 database limit. To avoid collisions with other Tiko domains, the implemented physical table names use the `talk_` namespace: `talk_language_packs`, `talk_word_inventory`, `talk_transitions`, `talk_sentence_usage`, `talk_user_phrases`, and `talk_templates`.
+
 #### `language_packs`
 
 | Column | Type | Description |

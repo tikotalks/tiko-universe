@@ -1,7 +1,7 @@
 -- Talk sentence-api D1 schema.
 -- D1 is the source of truth. KV is cache only.
 
-CREATE TABLE IF NOT EXISTS language_packs (
+CREATE TABLE IF NOT EXISTS talk_language_packs (
   id TEXT PRIMARY KEY,
   locale TEXT NOT NULL,
   version INTEGER NOT NULL,
@@ -15,9 +15,9 @@ CREATE TABLE IF NOT EXISTS language_packs (
   UNIQUE (locale, version)
 );
 
-CREATE TABLE IF NOT EXISTS word_inventory (
+CREATE TABLE IF NOT EXISTS talk_word_inventory (
   id TEXT PRIMARY KEY,
-  pack_id TEXT NOT NULL REFERENCES language_packs(id) ON DELETE CASCADE,
+  pack_id TEXT NOT NULL REFERENCES talk_language_packs(id) ON DELETE CASCADE,
   locale TEXT NOT NULL,
   text TEXT NOT NULL,
   normalized_text TEXT NOT NULL,
@@ -32,12 +32,12 @@ CREATE TABLE IF NOT EXISTS word_inventory (
   updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE INDEX IF NOT EXISTS idx_word_inventory_locale_category ON word_inventory(locale, category, frequency DESC);
-CREATE INDEX IF NOT EXISTS idx_word_inventory_pack_pos ON word_inventory(pack_id, pos, frequency DESC);
+CREATE INDEX IF NOT EXISTS idx_talk_word_inventory_locale_category ON talk_word_inventory(locale, category, frequency DESC);
+CREATE INDEX IF NOT EXISTS idx_talk_word_inventory_pack_pos ON talk_word_inventory(pack_id, pos, frequency DESC);
 
-CREATE TABLE IF NOT EXISTS transitions (
+CREATE TABLE IF NOT EXISTS talk_transitions (
   id TEXT PRIMARY KEY,
-  pack_id TEXT NOT NULL REFERENCES language_packs(id) ON DELETE CASCADE,
+  pack_id TEXT NOT NULL REFERENCES talk_language_packs(id) ON DELETE CASCADE,
   locale TEXT NOT NULL,
   from_pos TEXT NOT NULL,
   to_pos TEXT NOT NULL,
@@ -47,12 +47,12 @@ CREATE TABLE IF NOT EXISTS transitions (
   UNIQUE (pack_id, from_pos, to_pos, source)
 );
 
-CREATE INDEX IF NOT EXISTS idx_transitions_locale_from ON transitions(locale, from_pos, weight DESC);
+CREATE INDEX IF NOT EXISTS idx_talk_transitions_locale_from ON talk_transitions(locale, from_pos, weight DESC);
 
-CREATE TABLE IF NOT EXISTS sentence_usage (
+CREATE TABLE IF NOT EXISTS talk_sentence_usage (
   id TEXT PRIMARY KEY,
   locale TEXT NOT NULL,
-  pack_id TEXT REFERENCES language_packs(id) ON DELETE SET NULL,
+  pack_id TEXT REFERENCES talk_language_packs(id) ON DELETE SET NULL,
   pos_sequence_json TEXT NOT NULL CHECK (json_valid(pos_sequence_json)),
   word_sequence_hash TEXT NOT NULL,
   word_count INTEGER NOT NULL CHECK (word_count > 0),
@@ -63,9 +63,9 @@ CREATE TABLE IF NOT EXISTS sentence_usage (
   UNIQUE (locale, word_sequence_hash)
 );
 
-CREATE INDEX IF NOT EXISTS idx_sentence_usage_locale_last_seen ON sentence_usage(locale, last_seen_at DESC);
+CREATE INDEX IF NOT EXISTS idx_talk_sentence_usage_locale_last_seen ON talk_sentence_usage(locale, last_seen_at DESC);
 
-CREATE TABLE IF NOT EXISTS user_phrases (
+CREATE TABLE IF NOT EXISTS talk_user_phrases (
   id TEXT PRIMARY KEY,
   subject_id TEXT NOT NULL,
   locale TEXT NOT NULL,
@@ -78,11 +78,11 @@ CREATE TABLE IF NOT EXISTS user_phrases (
   updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE INDEX IF NOT EXISTS idx_user_phrases_subject_locale_usage ON user_phrases(subject_id, locale, usage_count DESC, updated_at DESC);
+CREATE INDEX IF NOT EXISTS idx_talk_user_phrases_subject_locale_usage ON talk_user_phrases(subject_id, locale, usage_count DESC, updated_at DESC);
 
-CREATE TABLE IF NOT EXISTS templates (
+CREATE TABLE IF NOT EXISTS talk_templates (
   id TEXT PRIMARY KEY,
-  pack_id TEXT NOT NULL REFERENCES language_packs(id) ON DELETE CASCADE,
+  pack_id TEXT NOT NULL REFERENCES talk_language_packs(id) ON DELETE CASCADE,
   locale TEXT NOT NULL,
   pattern TEXT NOT NULL,
   category TEXT NOT NULL,
@@ -93,4 +93,4 @@ CREATE TABLE IF NOT EXISTS templates (
   updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE INDEX IF NOT EXISTS idx_templates_locale_category ON templates(locale, category, priority DESC);
+CREATE INDEX IF NOT EXISTS idx_talk_templates_locale_category ON talk_templates(locale, category, priority DESC);

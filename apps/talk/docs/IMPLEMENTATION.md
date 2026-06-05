@@ -50,7 +50,7 @@ These items now track source and deployment readiness.
 
 ### Tasks
 
-1. **`db/schema.sql`** — create all 6 tables: `language_packs`, `word_inventory`, `transitions`, `sentence_usage`, `user_phrases`, `templates`
+1. **`db/schema.sql`** — create all 6 physical tables with the shared-D1 `talk_` namespace: `talk_language_packs`, `talk_word_inventory`, `talk_transitions`, `talk_sentence_usage`, `talk_user_phrases`, `talk_templates`
 
 2. **`db/seed-en.sql`** — English pack seed (this is the most time-intensive task in the whole project)
    - ~250 words across all POS categories
