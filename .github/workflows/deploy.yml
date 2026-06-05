@@ -162,6 +162,16 @@ jobs:
           # existing projects fail the create command, then deploy verifies the real state.
           npx wrangler pages project create "$PROJECT" --production-branch="$BRANCH" || true
 
+          # Existing Pages projects keep their configured production branch; deploying
+          # to another branch only creates a preview deployment, leaving custom domains
+          # on stale assets. Keep the project production branch aligned before deploy.
+          curl --fail-with-body --silent --show-error \
+            --request PATCH \
+            --header "Authorization: Bearer ${CLOUDFLARE_API_TOKEN}" \
+            --header "Content-Type: application/json" \
+            --data "{\"production_branch\":\"${BRANCH}\"}" \
+            "https://api.cloudflare.com/client/v4/accounts/${CLOUDFLARE_ACCOUNT_ID}/pages/projects/${PROJECT}"
+
           # Deploy via Wrangler Pages
           npx wrangler pages deploy apps/${APP}/web/dist \
             --project-name="$PROJECT" \
