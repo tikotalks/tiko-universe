@@ -7,7 +7,7 @@
   "types": "src/index.ts",
   "scripts": {
     "typecheck": "tsc --noEmit --target ES2022 --lib ES2022,WebWorker --module ESNext --moduleResolution Bundler --strict --skipLibCheck src/index.ts",
-    "test": "vitest run ../../tests/generation-api.test.ts",
-    "deploy:dry-run": "npx -y wrangler@latest deploy --dry-run --outdir dist"
+    "test": "cd ../.. && vitest run tests/generation-api.test.ts",
+    "deploy:dry-run": "npx -y -p wrangler@latest wrangler deploy --dry-run --outdir dist"
   }
 }
