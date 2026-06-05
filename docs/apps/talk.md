@@ -61,21 +61,25 @@ This app bridges the gap between single-word labeling (Cards) and letter-by-lett
 - Architecture: `apps/talk/docs/ARCHITECTURE.md`
 - Domain ADR: `docs/adrs/2026-06-05-talk-app-and-sentence-api-domains.md`
 
-## Migration checklist
+## Current implementation status
 
-- [ ] English language pack defined (≥200 words, ≥20 templates)
-- [ ] D1 schema written and provisioned
-- [ ] `workers/sentence-api/` core endpoints implemented
-- [ ] Transition engine with KV caching working
-- [ ] Usage logging and weight calculation working
-- [ ] Web app implemented against Sentence API
+Talk is implemented in source on `development`, but live operation depends on Cloudflare deployment and domain provisioning.
+
+- [x] English language pack seed defined (`workers/sentence-api/db/seed-en.sql`)
+- [x] D1 schema written (`workers/sentence-api/schema.sql`)
+- [x] `workers/sentence-api/` core endpoints implemented
+- [x] Transition engine with KV caching covered by tests
+- [x] Usage logging and scheduled learning hooks implemented
+- [x] Web app implemented against Sentence API
+- [x] i18n keys mapped (`talk.*`)
+- [x] Offline fallback pack bundled (`apps/talk/web/src/data/fallback-pack-en.json`)
+- [x] Local/CI smoke coverage for Talk package, worker, and web build paths
+- [ ] D1 schema provisioned on live dev/prod Cloudflare databases
+- [ ] App domain provisioned: `talk.tikoapps.org`
+- [ ] Dev app domain provisioned: `dev.talk.tikoapps.org`
+- [ ] Sentence API custom domain provisioned: `sentence.tikoapi.org`
+- [ ] Dev sentence API custom domain provisioned: `dev.sentence.tikoapi.org`
+- [ ] Pages project deployment verified: `tiko-talk` / `tiko-talk-dev`
+- [ ] Live browser smoke passed against the deployed app and API
 - [ ] iOS contract/client planned
 - [ ] Android contract/client planned
-- [ ] i18n keys mapped (`talk.*`)
-- [ ] App domain provisioned: `talk.tikoapps.org`
-- [ ] Dev app domain: `dev.talk.tikoapps.org`
-- [ ] Sentence API domain provisioned: `sentence.tikoapi.org`
-- [ ] Dev sentence API domain: `dev.sentence.tikoapi.org`
-- [ ] Pages project: `tiko-talk`
-- [ ] Smoke tests passing
-- [ ] Offline fallback pack bundled

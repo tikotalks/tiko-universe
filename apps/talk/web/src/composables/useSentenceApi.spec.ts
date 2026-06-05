@@ -27,9 +27,9 @@ function json(data: unknown, status = 200) {
 }
 
 describe('useSentenceApi', () => {
-  it('defaults to the sentence API family and sends the Ankore session bearer token', async () => {
+  it('defaults to the Tiko API family and sends the Ankore session bearer token', async () => {
     const fetcher = vi.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
-      expect(String(input)).toBe('https://sentence.tikoapi.org/v1/sentence/start?locale=en')
+      expect(String(input)).toBe('https://api.tikotalks.com/v1/sentence/start?locale=en')
       expect(new Headers(init?.headers).get('Authorization')).toBe('Bearer session-token')
       return json({ templates, initialCategories: categories, initialWords: words, savedPhrases: phrases, stripState: { words: [], validNext: ['pronoun'], canComplete: false } })
     }) as unknown as typeof fetch
@@ -39,6 +39,24 @@ describe('useSentenceApi', () => {
     await api.start()
 
     expect(api.mode.value).toBe('online')
+  })
+
+  it('uses the dev API family when loaded on a dev app hostname', async () => {
+    const originalLocation = window.location
+    Object.defineProperty(window, 'location', { configurable: true, value: { ...originalLocation, hostname: 'dev.talk.tikoapps.org' } })
+
+    const fetcher = vi.fn(async (input: RequestInfo | URL) => {
+      expect(String(input)).toBe('https://dev.api.tikotalks.com/v1/sentence/start?locale=en')
+      return json({ templates, initialCategories: categories, initialWords: words, savedPhrases: phrases, stripState: { words: [], validNext: ['pronoun'], canComplete: false } })
+    }) as unknown as typeof fetch
+
+    try {
+      const api = useSentenceApi({ language: ref('en'), sessionToken: ref(''), fetcher })
+      await api.start()
+      expect(api.mode.value).toBe('online')
+    } finally {
+      Object.defineProperty(window, 'location', { configurable: true, value: originalLocation })
+    }
   })
 
   it('runs online start -> next -> complete and plays returned audio', async () => {

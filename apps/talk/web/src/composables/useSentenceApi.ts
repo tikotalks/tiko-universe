@@ -42,7 +42,14 @@ const fallbackPack: FallbackPack = {
 
 function resolveSentenceBaseUrl() {
   const env = (import.meta as ImportMeta & { env?: Record<string, string | undefined> }).env
-  return (env?.VITE_SENTENCE_API_URL ?? env?.VITE_TIKO_SENTENCE_API_URL ?? 'https://sentence.tikoapi.org').replace(/\/$/, '')
+  const configured = env?.VITE_SENTENCE_API_URL ?? env?.VITE_TIKO_SENTENCE_API_URL
+  if (configured) return configured.replace(/\/$/, '')
+
+  if (typeof window !== 'undefined' && window.location.hostname.startsWith('dev.')) {
+    return 'https://dev.api.tikotalks.com'
+  }
+
+  return 'https://api.tikotalks.com'
 }
 
 function sentenceDisplay(words: WordTile[]) {

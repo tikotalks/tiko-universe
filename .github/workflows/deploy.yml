@@ -61,9 +61,9 @@ jobs:
 
           # Deployable app workspaces. Keep this aligned with apps/*/web package directories
           # that have real Cloudflare Pages projects.
-          APPS="admin cards media radio sequence timer todo type website yes-no"
+          APPS="admin cards media radio sequence talk timer todo type website yes-no"
           # Worker directories
-          WORKERS="admin-api app-api atlas-api content-api generation-api identity-api media-api tts-api"
+          WORKERS="admin-api app-api atlas-api content-api generation-api identity-api media-api sentence-api tts-api"
           # Shared package paths
           SHARED_PATHS="packages/ workers/shared/"
 
@@ -122,7 +122,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        app: ${{ fromJSON(needs.detect-changes.outputs.deploy-all == 'true' && '["admin","cards","media","radio","sequence","timer","todo","type","website","yes-no"]' || needs.detect-changes.outputs.apps-changed) }}
+        app: ${{ fromJSON(needs.detect-changes.outputs.deploy-all == 'true' && '["admin","cards","media","radio","sequence","talk","timer","todo","type","website","yes-no"]' || needs.detect-changes.outputs.apps-changed) }}
     steps:
       - uses: actions/checkout@v6
 
@@ -178,7 +178,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        worker: ${{ fromJSON(needs.detect-changes.outputs.deploy-all == 'true' && '["admin-api","app-api","atlas-api","content-api","generation-api","identity-api","media-api","tts-api"]' || needs.detect-changes.outputs.workers-changed) }}
+        worker: ${{ fromJSON(needs.detect-changes.outputs.deploy-all == 'true' && '["admin-api","app-api","atlas-api","content-api","generation-api","identity-api","media-api","sentence-api","tts-api"]' || needs.detect-changes.outputs.workers-changed) }}
     steps:
       - uses: actions/checkout@v6
 

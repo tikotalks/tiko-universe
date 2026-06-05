@@ -6,41 +6,41 @@
 
 ## Status
 
-**Current state:** Documentation only. No source files exist.
+**Current state:** Source implementation exists on `development`: shared Talk types, English seed pack, D1 schema, Sentence API Worker, Talk web app, generation-api TTS contract, offline fallback pack, and targeted tests/builds. The app is not yet certified live-operational because Cloudflare Pages/Worker deployment and custom-domain provisioning still need live verification.
 
-**Target:** Shippable v1 — English language pack, sentence building, TTS, saved phrases, offline fallback.
+**Target:** Shippable v1 — English language pack, sentence building, TTS, saved phrases, offline fallback, live dev/prod domains, and browser smoke against the deployed app.
 
 ---
 
 ## Pre-Build Checklist
 
-These must be resolved before writing the first line of implementation code.
+These items now track source and deployment readiness.
 
 ### P0 — Blocking
 
-- [ ] **Complete domain ADR and doc readiness fixes** — `docs/adrs/2026-06-05-talk-app-and-sentence-api-domains.md` must exist before provisioning `talk.tikoapps.org`, `dev.talk.tikoapps.org`, `sentence.tikoapi.org`, or `dev.sentence.tikoapi.org`. ARCHITECTURE.md must use `DB`/`CACHE` binding names and the privacy model must avoid readable raw sentence logs in `sentence_usage`.
+- [x] **Complete domain ADR and doc readiness fixes** — `docs/adrs/2026-06-05-talk-app-and-sentence-api-domains.md` exists. Architecture uses the `DB`/`CACHE` binding model and privacy keeps child-facing runtime away from raw indefinite sentence storage.
 
-- [ ] **Create `packages/talk-types/`** — shared TypeScript interfaces for `WordTile`, `Category`, `Template`, `SavedPhrase`, `StripState`, `LanguagePack`, etc. Both the worker and the frontend depend on this package. See ARCHITECTURE.md → Type Sharing Strategy.
+- [x] **Create `packages/talk-types/`** — shared TypeScript interfaces for `WordTile`, `Category`, `Template`, `SavedPhrase`, `StripState`, `LanguagePack`, etc. Both the worker and the frontend depend on this package.
 
-- [ ] **Write the English language pack seed** (`workers/sentence-api/db/seed-en.sql`) — without this, the worker has nothing to serve and v1 cannot ship. Minimum: 200+ words, 20+ templates, initial transition seeds. See ARCHITECTURE.md → Language Pack Bootstrap.
+- [x] **Write the English language pack seed** (`workers/sentence-api/db/seed-en.sql`) — curated English seed exists with word inventory, templates, and initial transitions.
 
-- [ ] **Register `talk.*` i18n namespace** in `@tiko/i18n` — Talk UI strings must be declared before the frontend can be built. See ARCHITECTURE.md → i18n Namespace.
+- [x] **Register `talk.*` i18n namespace** in `@tiko/i18n` — Talk UI strings and tests exist.
 
 ### P1 — Required before first deploy
 
-- [ ] **Scaffold `workers/sentence-api/`** with `wrangler.toml`, `package.json`, `tsconfig.json`, entry `src/index.ts`. Follow binding naming conventions (`DB`, `CACHE`, `IDENTITY_SERVICE`, `GENERATION_SERVICE`). Provision D1 and KV namespaces in Cloudflare dashboard.
+- [x] **Scaffold `workers/sentence-api/`** with `wrangler.toml`, `package.json`, `tsconfig.json`, entry `src/index.ts`. Binding names follow `DB`, `CACHE`, `IDENTITY_SERVICE`, `GENERATION_SERVICE`.
 
-- [ ] **Apply D1 schema** (`db/schema.sql`) to dev first (`tiko-sentence-db-dev`), then prod only during approved production promotion (`tiko-sentence-db`).
+- [ ] **Apply D1 schema** (`workers/sentence-api/schema.sql`) to dev first (`tiko-sentence-db-dev`), then prod only during approved production promotion (`tiko-sentence-db`). Source schema exists; live application must be verified against Cloudflare D1.
 
-- [ ] **Write the fallback pack generator script** (`workers/sentence-api/scripts/generate-fallback.ts`) — filters English seed to frequency ≥ 8, writes `apps/talk/web/src/data/fallback-pack-en.json`. Must run before any frontend build.
+- [x] **Bundle fallback pack** (`apps/talk/web/src/data/fallback-pack-en.json`) — scoped English offline fallback is checked in for the web app.
 
-- [ ] **Register Talk in Turborepo pipeline** — add `packages/talk-types`, `workers/sentence-api`, `apps/talk/web` to workspace and Turborepo build graph.
+- [x] **Register Talk in workspace/deploy graph** — package workspaces include Talk paths; deployment workflow includes `talk` and `sentence-api`.
 
 ### P2 — Required before user testing
 
-- [ ] **Wire up Cloudflare cron triggers** in `wrangler.toml` (daily weight recalculation, weekly template discovery).
+- [x] **Wire up Cloudflare cron triggers** in `wrangler.toml` (daily weight recalculation, weekly template discovery).
 
-- [ ] **Set up Cloudflare Pages project** `tiko-talk` with deploy hooks for `apps/talk/web/`.
+- [ ] **Set up and verify Cloudflare Pages projects** `tiko-talk` / `tiko-talk-dev` with deploy hooks for `apps/talk/web/`.
 
 ---
 
