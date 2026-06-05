@@ -18,7 +18,7 @@ bucket_name = "tiko-generated-media"
 
 [vars]
 TIKO_ENVIRONMENT = "development"
-GENERATION_PUBLIC_ROUTE = "https://dev.api.tikotalks.com/v1/generation"
+GENERATION_PUBLIC_ROUTE = "https://dev-api.tikotalks.com/v1/generation"
 IDENTITY_BASE_URL = "https://api.tikotalks.com/v1"
 
 [[services]]
@@ -26,7 +26,7 @@ binding = "IDENTITY_SERVICE"
 service = "tiko-identity-api-dev"
 
 [[routes]]
-pattern = "dev.api.tikotalks.com/v1/generation/*"
+pattern = "dev-api.tikotalks.com/v1/generation/*"
 zone_name = "tikotalks.com"
 
 # ── Production environment ──────────────────────────────────────

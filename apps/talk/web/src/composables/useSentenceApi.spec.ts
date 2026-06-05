@@ -61,6 +61,7 @@ describe('useSentenceApi', () => {
 
   it('runs online start -> next -> complete and plays returned audio', async () => {
     const play = vi.fn(async () => {})
+    const audioFactory = vi.fn(() => ({ play }))
     const requests: string[] = []
     const fetcher = vi.fn(async (input: RequestInfo | URL) => {
       const url = String(input)
@@ -73,7 +74,7 @@ describe('useSentenceApi', () => {
       throw new Error(`unexpected ${url}`)
     }) as unknown as typeof fetch
 
-    const api = useSentenceApi({ language: ref('en'), sessionToken: ref('token'), fetcher, baseUrl: 'https://sentence.test', audioFactory: () => ({ play }) })
+    const api = useSentenceApi({ language: ref('en'), sessionToken: ref('token'), fetcher, baseUrl: 'https://sentence.test', audioFactory })
 
     await api.start()
     await api.next(['i', 'want'])
@@ -82,7 +83,8 @@ describe('useSentenceApi', () => {
     expect(api.mode.value).toBe('online')
     expect(api.templates.value).toEqual(templates)
     expect(api.suggestions.value).toEqual([words[2]])
-    expect(completed).toMatchObject({ sentence: 'I want water.', audioCached: true })
+    expect(completed).toMatchObject({ sentence: 'I want water.', audioUrl: 'https://sentence.test/v1/generation/audio/1', audioCached: true })
+    expect(audioFactory).toHaveBeenCalledWith('https://sentence.test/v1/generation/audio/1')
     expect(play).toHaveBeenCalledOnce()
     expect(requests.some((url) => url.includes('/v1/sentence/phrases'))).toBe(true)
   })

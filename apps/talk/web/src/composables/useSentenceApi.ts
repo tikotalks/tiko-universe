@@ -74,6 +74,11 @@ function normalizeSentence(value: string) {
   return /[.!?]$/.test(capitalized) ? capitalized : `${capitalized}.`
 }
 
+function resolveApiAssetUrl(baseUrl: string, assetUrl: string) {
+  if (!assetUrl || assetUrl.startsWith('http')) return assetUrl
+  return `${baseUrl}${assetUrl.startsWith('/') ? '' : '/'}${assetUrl}`
+}
+
 export function useSentenceApi(options: SentenceApiOptions) {
   const fetcher = options.fetcher ?? fetch
   const baseUrl = options.baseUrl ?? resolveSentenceBaseUrl()
@@ -197,10 +202,11 @@ export function useSentenceApi(options: SentenceApiOptions) {
       method: 'POST',
       body: JSON.stringify({ locale: options.language.value, wordIds: currentWords, autoSave: true }),
     })
-    lastCompletion.value = data
-    if (data.audioUrl) await audioFactory(data.audioUrl).play()
+    const completion = { ...data, audioUrl: resolveApiAssetUrl(baseUrl, data.audioUrl) }
+    lastCompletion.value = completion
+    if (completion.audioUrl) await audioFactory(completion.audioUrl).play()
     if (data.savedPhraseId) await loadPhrases()
-    return data
+    return completion
   }
 
   async function savePhrase(wordIds: string[], label?: string) {

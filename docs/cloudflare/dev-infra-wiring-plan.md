@@ -103,7 +103,7 @@ Long-term generation bindings:
 Routes/domains:
 
 - Temporary compatibility route: `https://dev.tts.tikotalks.com/*`.
-- Long-term route: `https://dev.api.tikotalks.com/v1/generation/*`.
+- Long-term route: `https://dev-api.tikotalks.com/v1/generation/*`.
 - Keep `tts.tikotalks.com` production compatibility out of this dev-only task.
 
 Create commands for missing dev resources when approved:

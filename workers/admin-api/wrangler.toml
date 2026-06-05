@@ -18,7 +18,7 @@ TIKO_ENVIRONMENT = "development"
 ADMIN_EMAIL = "me@sil.mt"
 IDENTITY_BASE_URL = "https://api.tikotalks.com/v1"
 APP_API_URL = "https://dev.api.tikotalks.com/v1/apps"
-GENERATION_API_URL = "https://dev.api.tikotalks.com/v1/generation"
+GENERATION_API_URL = "https://dev-api.tikotalks.com/v1/generation"
 MEDIA_API_URL = "https://media-api.tikotalks.com/v1"
 COMMUNICATION_API_URL = "https://dev.api.tikotalks.com/v1/communication"
 
