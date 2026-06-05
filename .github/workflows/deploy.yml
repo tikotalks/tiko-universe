@@ -144,7 +144,11 @@ jobs:
           # Determine Pages project name
           if [[ "$APP" == "website" ]]; then
             if [[ "$ENV" == "production" ]]; then
-              PROJECT="${CLOUDFLARE_PAGES_PROJECT_WEBSITE_PROD:-${CLOUDFLARE_PAGES_PROJECT_PROD:-tikotalks}}"
+              # Production public TikoTalks domains (tiko.mt/tikotalks.com)
+              # are attached to the tiko-marketing Pages project in the
+              # zone-owning Cloudflare account. Deploying to the old fallback
+              # tikotalks project only updates an unbound generated Pages URL.
+              PROJECT="${CLOUDFLARE_PAGES_PROJECT_WEBSITE_PROD:-${CLOUDFLARE_PAGES_PROJECT_PROD:-tiko-marketing}}"
               BRANCH="main"
             else
               PROJECT="${CLOUDFLARE_PAGES_PROJECT_WEBSITE_DEV:-${CLOUDFLARE_PAGES_PROJECT_DEV:-tikotalks-dev}}"
