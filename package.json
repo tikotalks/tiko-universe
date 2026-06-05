@@ -20,7 +20,8 @@
     "build": "npm run build --workspaces --if-present",
     "audit:doctrine": "node tools/check-doctrine.mjs",
     "deploy:dry-run:tts": "npm --workspace @tiko-worker/tts-api run deploy:dry-run",
-    "deploy:dry-run:generation": "npm --workspace @tiko-worker/generation-api run deploy:dry-run"
+    "deploy:dry-run:generation": "npm --workspace @tiko-worker/generation-api run deploy:dry-run",
+    "deploy:dry-run:sentence": "npm --workspace @tiko-worker/sentence-api run deploy:dry-run"
   },
   "dependencies": {
     "@sil/ui": "^2.6.0",
