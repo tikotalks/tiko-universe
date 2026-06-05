@@ -86,30 +86,33 @@ public struct TikoSquareTile<Content: View>: View {
     }
 
     public var body: some View {
-        ZStack(alignment: .bottom) {
+        ZStack {
             RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
                 .fill(background)
 
-            content()
-                .clipShape(RoundedRectangle(cornerRadius: cornerRadius, style: .continuous))
+            // Image at 60% tile size, centre at 33% from top / 50% horizontal
+            GeometryReader { geo in
+                content()
+                    .frame(width: geo.size.width * 0.75, height: geo.size.width * 0.75)
+                    .clipShape(RoundedRectangle(cornerRadius: cornerRadius * 0.55, style: .continuous))
+                    .position(x: geo.size.width * 0.5, y: geo.size.height * 0.45)
+            }
 
-            VStack(spacing: 6) {
+            // Label: adaptive pill — dark text/light bg in light mode, inverse in dark
+            VStack(spacing: 0) {
                 Spacer()
                 Text(title)
-                    .font(.system(.headline, design: .rounded).weight(.heavy))
-                    .foregroundStyle(.white)
+                    .font(.system(.caption, design: .rounded).weight(.heavy))
+                    .foregroundStyle(Color.primary)
                     .multilineTextAlignment(.center)
                     .lineLimit(2)
-                    .minimumScaleFactor(0.62)
-                    .shadow(color: .black.opacity(0.35), radius: 5, x: 0, y: 2)
-
-                if let subtitle, !subtitle.isEmpty {
-                    Text(subtitle)
-                        .font(.system(.caption2, design: .rounded).weight(.black))
-                        .foregroundStyle(.white.opacity(0.9))
-                }
+                    .minimumScaleFactor(0.65)
+                    .padding(.horizontal, 7)
+                    .padding(.vertical, 4)
+                    .background(.regularMaterial)
+                    .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
             }
-            .padding(10)
+            .padding(8)
         }
         .aspectRatio(1, contentMode: .fit)
         .contentShape(RoundedRectangle(cornerRadius: cornerRadius, style: .continuous))
@@ -120,6 +123,6 @@ public struct TikoSquareTile<Content: View>: View {
         .shadow(color: .black.opacity(isActive ? 0.18 : 0.10), radius: isActive ? 13 : 8, x: 0, y: isActive ? 9 : 5)
         .scaleEffect(isActive ? 1.04 : 1)
         .animation(.spring(response: 0.24, dampingFraction: 0.72), value: isActive)
-        .accessibilityLabel(subtitle.map { "\(title), \($0)" } ?? title)
+        .accessibilityLabel(title)
     }
 }

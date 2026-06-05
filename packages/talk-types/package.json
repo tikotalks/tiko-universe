@@ -1,0 +1,12 @@
+{
+  "name": "@tiko/talk-types",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "scripts": {
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "test": "cd ../.. && vitest run packages/talk-types/src/index.spec.ts"
+  }
+}

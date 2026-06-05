@@ -52,7 +52,7 @@ These workers share a single consolidated API domain with path-based routing. A 
 | --- | --- |
 | identity-api | `dev.api.tikotalks.com/v1/identity/*` |
 | app-api | `dev.api.tikotalks.com/v1/apps/*` |
-| generation-api | `dev.api.tikotalks.com/v1/generation/*` |
+| generation-api | `dev-api.tikotalks.com/v1/generation/*` |
 | media-api | `media-api.tikotalks.com/*` (uses `-dev` suffix worker name) |
 | content-api | `dev.api.tikotalks.com/v1/content/*` |
 | admin-api | `dev.admin-api.tikotalks.com/*` |

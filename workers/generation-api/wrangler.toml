@@ -18,15 +18,20 @@ bucket_name = "tiko-generated-media"
 
 [vars]
 TIKO_ENVIRONMENT = "development"
-GENERATION_PUBLIC_ROUTE = "https://dev.api.tikotalks.com/v1/generation"
+GENERATION_PUBLIC_ROUTE = "https://dev-api.tikotalks.com/v1/generation"
 IDENTITY_BASE_URL = "https://api.tikotalks.com/v1"
+ATLAS_BASE_URL = "https://api.tikotalks.com/v1/atlas"
+
+[[services]]
+binding = "ATLAS_SERVICE"
+service = "tiko-atlas-api-dev"
 
 [[services]]
 binding = "IDENTITY_SERVICE"
 service = "tiko-identity-api-dev"
 
 [[routes]]
-pattern = "dev.api.tikotalks.com/v1/generation/*"
+pattern = "dev-api.tikotalks.com/v1/generation/*"
 zone_name = "tikotalks.com"
 
 # ── Production environment ──────────────────────────────────────
@@ -40,6 +45,11 @@ workers_dev = false
 TIKO_ENVIRONMENT = "production"
 GENERATION_PUBLIC_ROUTE = "https://api.tikotalks.com/v1/generation"
 IDENTITY_BASE_URL = "https://identity.tikoapi.org/v1"
+ATLAS_BASE_URL = "https://api.tikotalks.com/v1/atlas"
+
+[[env.production.services]]
+binding = "ATLAS_SERVICE"
+service = "tiko-atlas-api"
 
 [[env.production.services]]
 binding = "IDENTITY_SERVICE"

@@ -225,6 +225,18 @@ export class TikoDataClient {
     })
   }
 
+  getAppDefaults<TApp extends TikoAppId>(app: TApp, resource: 'settings' | 'state'): Promise<AppStateResponse<AppStateById[TApp]>> {
+    return this.request<AppStateResponse<AppStateById[TApp]>>(`/apps/defaults/${app}/${resource}`, {})
+  }
+
+  putAppDefaults<TApp extends TikoAppId>(app: TApp, sessionToken: string, resource: 'settings' | 'state', data: Record<string, unknown>, options: WriteOptions = {}): Promise<{ app: TApp; updatedAt: string | null; version: number }> {
+    return this.request<{ app: TApp; updatedAt: string | null; version: number }>(`/apps/defaults/${app}/${resource}`, {
+      method: 'PUT',
+      headers: jsonBearerHeaders(sessionToken),
+      body: JSON.stringify({ [resource]: data, ...versionBody(options) })
+    })
+  }
+
   private async request<T>(path: string, init: RequestInit): Promise<T> {
     const response = await this.fetcher(`${this.baseUrl}${path}`, init)
     if (!response.ok) {

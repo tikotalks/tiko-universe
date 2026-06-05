@@ -1,0 +1,14 @@
+{
+  "name": "@tiko-worker/sentence-api",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "test": "cd ../.. && vitest run tests/sentence-api.test.ts tests/sentence-pack.test.ts",
+    "deploy:dry-run": "wrangler deploy --dry-run"
+  },
+  "dependencies": {
+    "@tiko/talk-types": "file:../../packages/talk-types"
+  }
+}

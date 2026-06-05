@@ -73,7 +73,7 @@ export default {
       return json({
         data: {
           appApiUrl: (env.APP_API_URL ?? 'https://dev.api.tikotalks.com/v1/apps').replace(/\/$/, ''),
-          generationApiUrl: (env.GENERATION_API_URL ?? 'https://dev.api.tikotalks.com/v1/generation').replace(/\/$/, ''),
+          generationApiUrl: (env.GENERATION_API_URL ?? 'https://dev-api.tikotalks.com/v1/generation').replace(/\/$/, ''),
           mediaApiUrl: (env.MEDIA_API_URL ?? 'https://media-api.tikotalks.com/v1').replace(/\/$/, ''),
           communicationApiUrl: (env.COMMUNICATION_API_URL ?? 'https://dev.api.tikotalks.com/v1/communication').replace(/\/$/, ''),
         },

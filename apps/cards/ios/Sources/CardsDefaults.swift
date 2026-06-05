@@ -6,6 +6,7 @@ let defaultCardCollections: [CardCollection] = [
         title: "Animals",
         colorHex: 0xFFB347,
         order: 0,
+        mediaCategories: ["animals"],
         cards: [
             CommunicationCard(id: "animal_dog", title: "Dog", speech: "Dog", imageURL: nil, colorHex: 0xFFB347),
             CommunicationCard(id: "animal_cat", title: "Cat", speech: "Cat", imageURL: nil, colorHex: 0xFFB347),
@@ -53,6 +54,7 @@ let defaultCardCollections: [CardCollection] = [
         title: "Colors",
         colorHex: 0xFF6B6B,
         order: 1,
+        mediaCategories: ["colors"],
         cards: [
             CommunicationCard(id: "color_red", title: "Red", speech: "Red", imageURL: nil, colorHex: 0xFF6B6B),
             CommunicationCard(id: "color_orange", title: "Orange", speech: "Orange", imageURL: nil, colorHex: 0xFF6B6B),
@@ -85,6 +87,7 @@ let defaultCardCollections: [CardCollection] = [
         title: "Food & Drinks",
         colorHex: 0x4ECDC4,
         order: 2,
+        mediaCategories: ["food", "food-drinks"],
         cards: [
             CommunicationCard(id: "food_apple", title: "Apple", speech: "Apple", imageURL: nil, colorHex: 0x4ECDC4),
             CommunicationCard(id: "food_banana", title: "Banana", speech: "Banana", imageURL: nil, colorHex: 0x4ECDC4),
@@ -146,6 +149,7 @@ let defaultCardCollections: [CardCollection] = [
         title: "Body Parts",
         colorHex: 0xA8E6CF,
         order: 3,
+        mediaCategories: ["body", "body-parts"],
         cards: [
             CommunicationCard(id: "body_head", title: "Head", speech: "Head", imageURL: nil, colorHex: 0xA8E6CF),
             CommunicationCard(id: "body_hair", title: "Hair", speech: "Hair", imageURL: nil, colorHex: 0xA8E6CF),
@@ -181,6 +185,7 @@ let defaultCardCollections: [CardCollection] = [
         title: "Shapes",
         colorHex: 0xDDA0DD,
         order: 4,
+        mediaCategories: ["shapes"],
         cards: [
             CommunicationCard(id: "shape_circle", title: "Circle", speech: "Circle", imageURL: nil, colorHex: 0xDDA0DD),
             CommunicationCard(id: "shape_square", title: "Square", speech: "Square", imageURL: nil, colorHex: 0xDDA0DD),
@@ -207,6 +212,7 @@ let defaultCardCollections: [CardCollection] = [
         title: "Emotions",
         colorHex: 0xFFD93D,
         order: 5,
+        mediaCategories: ["emotions", "feelings"],
         cards: [
             CommunicationCard(id: "emotion_happy", title: "Happy", speech: "Happy", imageURL: nil, colorHex: 0xFFD93D),
             CommunicationCard(id: "emotion_sad", title: "Sad", speech: "Sad", imageURL: nil, colorHex: 0xFFD93D),
@@ -235,6 +241,7 @@ let defaultCardCollections: [CardCollection] = [
         title: "Transport",
         colorHex: 0x82B1FF,
         order: 6,
+        mediaCategories: ["transport", "vehicles"],
         cards: [
             CommunicationCard(id: "transport_car", title: "Car", speech: "Car", imageURL: nil, colorHex: 0x82B1FF),
             CommunicationCard(id: "transport_bus", title: "Bus", speech: "Bus", imageURL: nil, colorHex: 0x82B1FF),
@@ -267,6 +274,7 @@ let defaultCardCollections: [CardCollection] = [
         title: "Numbers",
         colorHex: 0x87CEEB,
         order: 7,
+        mediaCategories: ["numbers"],
         cards: [
             CommunicationCard(id: "num_1", title: "One", speech: "One", imageURL: nil, colorHex: 0x87CEEB),
             CommunicationCard(id: "num_2", title: "Two", speech: "Two", imageURL: nil, colorHex: 0x87CEEB),
@@ -295,6 +303,7 @@ let defaultCardCollections: [CardCollection] = [
         title: "Letters",
         colorHex: 0x98D8C8,
         order: 8,
+        mediaCategories: ["letters", "alphabet"],
         cards: [
             CommunicationCard(id: "letter_a", title: "A", speech: "A", imageURL: nil, colorHex: 0x98D8C8),
             CommunicationCard(id: "letter_b", title: "B", speech: "B", imageURL: nil, colorHex: 0x98D8C8),
@@ -324,16 +333,4 @@ let defaultCardCollections: [CardCollection] = [
             CommunicationCard(id: "letter_z", title: "Z", speech: "Z", imageURL: nil, colorHex: 0x98D8C8),
         ]
     ),
-]
-
-let defaultCollectionCategoryMap: [String: [String]] = [
-    "__default_animals": ["animals"],
-    "__default_colors": ["colors"],
-    "__default_food": ["food", "food-drinks"],
-    "__default_body": ["body", "body-parts"],
-    "__default_shapes": ["shapes"],
-    "__default_emotions": ["emotions", "feelings"],
-    "__default_transport": ["transport", "vehicles"],
-    "__default_numbers": ["numbers"],
-    "__default_letters": ["letters", "alphabet"],
 ]

@@ -5,7 +5,34 @@ struct CardCollection: Identifiable, Codable, Equatable, Sendable {
     var title: String
     var colorHex: UInt32
     var order: Int
+    var mediaCategories: [String]
     var cards: [CommunicationCard]
+
+    init(
+        id: String,
+        title: String,
+        colorHex: UInt32,
+        order: Int,
+        mediaCategories: [String] = [],
+        cards: [CommunicationCard]
+    ) {
+        self.id = id
+        self.title = title
+        self.colorHex = colorHex
+        self.order = order
+        self.mediaCategories = mediaCategories
+        self.cards = cards
+    }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        id = try container.decode(String.self, forKey: .id)
+        title = try container.decode(String.self, forKey: .title)
+        colorHex = try container.decode(UInt32.self, forKey: .colorHex)
+        order = try container.decode(Int.self, forKey: .order)
+        mediaCategories = try container.decodeIfPresent([String].self, forKey: .mediaCategories) ?? []
+        cards = try container.decode([CommunicationCard].self, forKey: .cards)
+    }
 }
 
 struct CommunicationCard: Identifiable, Codable, Equatable, Sendable {

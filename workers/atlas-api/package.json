@@ -1,0 +1,13 @@
+{
+  "name": "@tiko-worker/atlas-api",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "scripts": {
+    "typecheck": "tsc --noEmit --target ES2022 --lib ES2022,WebWorker --module ESNext --moduleResolution Bundler --strict --skipLibCheck src/index.ts",
+    "test": "vitest run --root ../.. tests/atlas-api.test.ts",
+    "deploy:dry-run": "npx -y -p node@22 -p wrangler wrangler deploy --dry-run --outdir dist"
+  }
+}

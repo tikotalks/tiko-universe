@@ -61,9 +61,9 @@ jobs:
 
           # Deployable app workspaces. Keep this aligned with apps/*/web package directories
           # that have real Cloudflare Pages projects.
-          APPS="admin cards media radio sequence timer todo type website yes-no"
+          APPS="admin cards media radio sequence talk timer todo type website yes-no"
           # Worker directories
-          WORKERS="admin-api app-api content-api generation-api identity-api media-api tts-api"
+          WORKERS="admin-api app-api atlas-api content-api generation-api identity-api media-api sentence-api tts-api"
           # Shared package paths
           SHARED_PATHS="packages/ workers/shared/"
 
@@ -122,7 +122,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        app: ${{ fromJSON(needs.detect-changes.outputs.deploy-all == 'true' && '["admin","cards","media","radio","sequence","timer","todo","type","website","yes-no"]' || needs.detect-changes.outputs.apps-changed) }}
+        app: ${{ fromJSON(needs.detect-changes.outputs.deploy-all == 'true' && '["admin","cards","media","radio","sequence","talk","timer","todo","type","website","yes-no"]' || needs.detect-changes.outputs.apps-changed) }}
     steps:
       - uses: actions/checkout@v6
 
@@ -178,7 +178,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        worker: ${{ fromJSON(needs.detect-changes.outputs.deploy-all == 'true' && '["admin-api","app-api","content-api","generation-api","identity-api","media-api","tts-api"]' || needs.detect-changes.outputs.workers-changed) }}
+        worker: ${{ fromJSON(needs.detect-changes.outputs.deploy-all == 'true' && '["admin-api","app-api","atlas-api","content-api","generation-api","identity-api","media-api","sentence-api","tts-api"]' || needs.detect-changes.outputs.workers-changed) }}
     steps:
       - uses: actions/checkout@v6
 
@@ -193,6 +193,11 @@ jobs:
         run: |
           WORKER="${{ matrix.worker }}"
           ENV="${{ needs.detect-changes.outputs.environment }}"
+
+          if [[ "$WORKER" == "sentence-api" && "$ENV" == "development" ]]; then
+            echo "🔧 Provisioning Talk dev Cloudflare resources"
+            node scripts/cloudflare/provision-talk-dev.mjs
+          fi
 
           # Check if worker has actual deploy capability (not scaffold-only)
           DEPLOY_DRY=$(node -e "
@@ -221,6 +226,10 @@ jobs:
             npx wrangler deploy --env production
           else
             echo "🧪 Deploying $WORKER to development (dry-run to verify, then deploy)"
+            if [[ "$WORKER" == "sentence-api" ]]; then
+              npx wrangler d1 execute tiko-db --remote --file schema.sql
+              npx wrangler d1 execute tiko-db --remote --file db/seed-en.sql
+            fi
             npx wrangler deploy --dry-run --outdir dist 2>&1 || true
             # Actual dev deploy
             npx wrangler deploy

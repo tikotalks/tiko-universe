@@ -1,5 +1,6 @@
 import SwiftUI
 import PopupView
+import CryptoKit
 
 public struct TikoPopupCard<Content: View>: View {
     private let title: String
@@ -27,10 +28,6 @@ public struct TikoPopupCard<Content: View>: View {
 
     public var body: some View {
         VStack(spacing: 18) {
-            Capsule()
-                .fill(Color.primary.opacity(0.16))
-                .frame(width: 46, height: 5)
-
             ZStack {
                 HStack {
                     Button(action: onClose) {
@@ -372,38 +369,41 @@ public struct TikoLanguagePickerSheet: View {
     public var body: some View {
         TikoPopupCard(title: "Language", subtitle: "Choose the language for Tiko apps.", icon: "globe", appColor: appColor, onClose: onClose) {
             VStack(spacing: 12) {
-                if languages.count > 8 {
-                    TextField("Search languages", text: $query)
-                        .font(.system(size: 16, weight: .semibold, design: .rounded))
-                        .padding(14)
-                        .background(Color(.systemBackground))
-                        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
-                }
+                TextField("Search languages", text: $query)
+                    .font(.system(size: 16, weight: .semibold, design: .rounded))
+                    .padding(14)
+                    .background(Color(.systemBackground))
+                    .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
 
-                ForEach(filteredLanguages) { language in
-                    Button {
-                        onSelect(language)
-                    } label: {
-                        HStack(spacing: 12) {
-                            VStack(alignment: .leading, spacing: 3) {
-                                Text(language.nativeTitle)
-                                    .font(.system(size: 17, weight: .heavy, design: .rounded))
-                                    .foregroundStyle(.primary)
-                                Text(language.title)
-                                    .font(.system(size: 13, weight: .semibold, design: .rounded))
-                                    .foregroundStyle(.secondary)
+                ScrollView {
+                    VStack(spacing: 8) {
+                        ForEach(filteredLanguages) { language in
+                            Button {
+                                onSelect(language)
+                            } label: {
+                                HStack(spacing: 12) {
+                                    VStack(alignment: .leading, spacing: 3) {
+                                        Text(language.nativeTitle)
+                                            .font(.system(size: 17, weight: .heavy, design: .rounded))
+                                            .foregroundStyle(.primary)
+                                        Text(language.title)
+                                            .font(.system(size: 13, weight: .semibold, design: .rounded))
+                                            .foregroundStyle(.secondary)
+                                    }
+                                    Spacer()
+                                    if language.id == selectedLanguageID {
+                                        Image(systemName: "checkmark.circle.fill")
+                                            .font(.system(size: 20, weight: .bold))
+                                            .foregroundStyle(appColor.palette.primary)
+                                    }
+                                }
+                                .tikoSettingsRowSurface()
                             }
-                            Spacer()
-                            if language.id == selectedLanguageID {
-                                Image(systemName: "checkmark.circle.fill")
-                                    .font(.system(size: 20, weight: .bold))
-                                    .foregroundStyle(appColor.palette.primary)
-                            }
+                            .buttonStyle(.plain)
                         }
-                        .tikoSettingsRowSurface()
                     }
-                    .buttonStyle(.plain)
                 }
+                .frame(maxHeight: 300)
             }
         }
     }
@@ -477,14 +477,20 @@ public struct TikoAccountSheet: View {
 
     @AppStorage("tiko.userName") private var userName = ""
     @AppStorage("tiko.userEmail") private var userEmail = ""
-    @AppStorage("tiko.accountSetupDismissed") private var accountSetupDismissed = false
-    @State private var showingEmail = false
-    @State private var showingRecovery = false
+    @AppStorage("tiko.avatarURL") private var storedAvatarURLString = ""
+    @AppStorage("tiko.favoriteColor") private var favoriteColorHex = ""
+
+    // Session state — drives which screen is shown
+    @State private var isSignedIn = false
+    @State private var signedInEmail: String? = nil
+    @State private var showingAvatarPicker = false
+
+    // Login flow state
+    @State private var emailInput = ""
     @State private var emailSent = false
     @State private var otpCode = ""
     @State private var isLoading = false
     @State private var identityError: String? = nil
-    @State private var savedBundle: TikoIdentityBundle? = nil
 
     private let identityClient = TikoIdentityClient()
     private let sessionStore = TikoDeviceSessionStore()
@@ -496,187 +502,178 @@ public struct TikoAccountSheet: View {
     }
 
     public var body: some View {
+        Group {
+            if isSignedIn {
+                profileCard
+            } else if emailSent {
+                otpCard
+            } else {
+                loginCard
+            }
+        }
+        .task {
+            if let bundle = try? sessionStore.load(),
+               bundle.account?.emailVerified == true {
+                isSignedIn = true
+                signedInEmail = bundle.account?.email
+            }
+        }
+        .tikoMediaPickerPopup(
+            isPresented: $showingAvatarPicker,
+            appColor: appColor,
+            title: "Choose avatar"
+        ) { url in
+            storedAvatarURLString = url.absoluteString
+        }
+    }
+
+    // MARK: - Profile (signed-in state)
+
+    private var profileCard: some View {
         TikoPopupCard(
-            title: title,
-            subtitle: subtitle,
-            icon: "person.crop.circle",
+            title: "Your account",
+            icon: "person.crop.circle.fill",
             appColor: appColor,
             onClose: onClose
         ) {
             VStack(spacing: 12) {
-                if showingRecovery {
-                    recoveryContent
-                } else {
-                    accountContent
-                }
-            }
-        }
-    }
+                // Avatar — favourite colour background + image on top
+                Button { showingAvatarPicker = true } label: {
+                    ZStack(alignment: .bottomTrailing) {
+                        ZStack {
+                            // Background: favourite colour or default
+                            Circle().fill(profileFavoriteColor ?? appColor.palette.primary.opacity(0.18))
 
-    private var title: String {
-        if showingRecovery { return "Recover account" }
-        return userName.isEmpty ? "Welcome to \(appName)" : "Your Tiko account"
-    }
-
-    private var subtitle: String {
-        if showingRecovery { return "Enter your email and we’ll send a magic link." }
-        if showingEmail || !userEmail.isEmpty { return "Email is only for recovery and using this profile elsewhere." }
-        return "Start with a name. Email is optional for recovery."
-    }
-
-    private var accountContent: some View {
-        VStack(spacing: 12) {
-            VStack(alignment: .leading, spacing: 7) {
-                Text("Name")
-                    .font(.system(size: 13, weight: .heavy, design: .rounded))
-                    .foregroundStyle(.secondary)
-                TextField("Name", text: $userName)
-                    .font(.system(size: 17, weight: .semibold, design: .rounded))
-                    .textInputAutocapitalization(.words)
-                    .padding(15)
-                    .background(Color(.systemBackground))
-                    .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
-            }
-
-            if showingEmail || !userEmail.isEmpty {
-                if emailSent {
-                    otpEntryBlock
-                } else {
-                    VStack(alignment: .leading, spacing: 7) {
-                        Text("Email for recovery")
-                            .font(.system(size: 13, weight: .heavy, design: .rounded))
-                            .foregroundStyle(.secondary)
-                        TextField("you@example.com", text: $userEmail)
-                            .font(.system(size: 17, weight: .semibold, design: .rounded))
-                            .keyboardType(.emailAddress)
-                            .textInputAutocapitalization(.never)
-                            .autocorrectionDisabled()
-                            .padding(15)
-                            .background(Color(.systemBackground))
-                            .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
-                    }
-                }
-            }
-
-            if let msg = identityError {
-                Text(msg)
-                    .font(.system(size: 13, weight: .semibold))
-                    .foregroundStyle(.red)
-                    .multilineTextAlignment(.center)
-            }
-
-            if emailSent {
-                Button {
-                    Task { await submitOtp() }
-                } label: {
-                    Group {
-                        if isLoading {
-                            ProgressView().tint(.white)
-                        } else {
-                            Text("Verify code")
+                            // Image (assumed transparent background, sits on the colour)
+                            if let url = URL(string: storedAvatarURLString), !storedAvatarURLString.isEmpty {
+                                AsyncImage(url: url) { phase in
+                                    if case .success(let image) = phase {
+                                        image.resizable().scaledToFit()
+                                    } else {
+                                        Image(systemName: "person.crop.circle.fill")
+                                            .font(.system(size: 46))
+                                            .foregroundStyle(.white.opacity(0.6))
+                                    }
+                                }
+                            } else {
+                                Image(systemName: "person.crop.circle.fill")
+                                    .font(.system(size: 46))
+                                    .foregroundStyle(.white.opacity(0.6))
+                            }
                         }
+                        .frame(width: 80, height: 80)
+                        .clipShape(Circle())
+
+                        Image(systemName: "camera.circle.fill")
+                            .font(.system(size: 26))
+                            .foregroundStyle(appColor.palette.primary)
+                            .background(.regularMaterial, in: Circle())
                     }
-                    .font(.system(size: 17, weight: .heavy, design: .rounded))
-                    .foregroundStyle(.white)
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, 15)
-                    .background(appColor.palette.primary)
-                    .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
                 }
                 .buttonStyle(.plain)
-                .disabled(isLoading || otpCode.filter(\.isNumber).count != 6)
+                .frame(maxWidth: .infinity)
 
-                Button("Resend email") {
+                // Verified email row
+                HStack(spacing: 12) {
+                    Image(systemName: "envelope.fill")
+                        .font(.system(size: 16, weight: .bold))
+                        .foregroundStyle(appColor.palette.primary)
+                        .frame(width: 40, height: 40)
+                        .background(appColor.palette.primary.opacity(0.12))
+                        .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text(signedInEmail ?? userEmail)
+                            .font(.system(size: 15, weight: .semibold, design: .rounded))
+                            .foregroundStyle(.primary)
+                        Text("Verified account")
+                            .font(.system(size: 12, weight: .semibold, design: .rounded))
+                            .foregroundStyle(appColor.palette.primary)
+                    }
+                    Spacer()
+                    Image(systemName: "checkmark.seal.fill")
+                        .foregroundStyle(appColor.palette.primary)
+                }
+                .tikoSettingsRowSurface()
+
+                // Editable display name
+                VStack(alignment: .leading, spacing: 7) {
+                    Text("Display name")
+                        .font(.system(size: 13, weight: .heavy, design: .rounded))
+                        .foregroundStyle(.secondary)
+                    TextField("Your name", text: $userName)
+                        .font(.system(size: 17, weight: .semibold, design: .rounded))
+                        .textInputAutocapitalization(.words)
+                        .padding(15)
+                        .background(Color(.systemBackground))
+                        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+                }
+
+                // Favourite colour
+                HStack(spacing: 12) {
+                    RoundedRectangle(cornerRadius: 12, style: .continuous)
+                        .fill(profileFavoriteColor ?? appColor.palette.primary.opacity(0.4))
+                        .frame(width: 40, height: 40)
+                        .overlay {
+                            Image(systemName: "paintpalette.fill")
+                                .font(.system(size: 16, weight: .bold))
+                                .foregroundStyle(.white)
+                        }
+                    Text("Favourite colour")
+                        .font(.system(size: 16, weight: .heavy, design: .rounded))
+                        .foregroundStyle(.primary)
+                    Spacer()
+                    ColorPicker("", selection: favoriteColorBinding, supportsOpacity: false)
+                        .labelsHidden()
+                        .frame(width: 36, height: 36)
+                }
+                .padding(14)
+                .background(Color(.systemBackground))
+                .overlay {
+                    RoundedRectangle(cornerRadius: 18, style: .continuous)
+                        .stroke(Color.primary.opacity(0.08), lineWidth: 1)
+                }
+                .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
+
+                // Sign out
+                Button {
+                    try? sessionStore.clearAll()
+                    isSignedIn = false
+                    signedInEmail = nil
+                    emailInput = ""
                     emailSent = false
                     otpCode = ""
                     identityError = nil
-                }
-                .font(.system(size: 14, weight: .heavy, design: .rounded))
-                .foregroundStyle(appColor.palette.primary)
-            } else {
-                Button {
-                    if showingEmail || !userEmail.isEmpty {
-                        Task { await sendMagicLink() }
-                    } else {
-                        showingEmail = true
-                    }
                 } label: {
-                    Group {
-                        if isLoading {
-                            ProgressView().tint(.white)
-                        } else {
-                            Text(showingEmail || !userEmail.isEmpty ? "Send sign-in code" : "Continue")
-                        }
-                    }
-                    .font(.system(size: 17, weight: .heavy, design: .rounded))
-                    .foregroundStyle(.white)
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, 15)
-                    .background(appColor.palette.primary)
-                    .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
-                }
-                .buttonStyle(.plain)
-                .disabled(isLoading)
-            }
-
-            if !emailSent {
-                Button("Recover account") { showingRecovery = true }
-                    .font(.system(size: 14, weight: .heavy, design: .rounded))
-                    .foregroundStyle(appColor.palette.primary)
-            }
-
-            Button("Use without account for now") {
-                accountSetupDismissed = true
-                onClose()
-            }
-            .font(.system(size: 14, weight: .heavy, design: .rounded))
-            .foregroundStyle(appColor.palette.primary)
-            .padding(.top, 2)
-        }
-    }
-
-    private var recoveryContent: some View {
-        VStack(spacing: 12) {
-            if emailSent {
-                otpEntryBlock
-
-                if let msg = identityError {
-                    Text(msg)
-                        .font(.system(size: 13, weight: .semibold))
+                    Text("Sign out")
+                        .font(.system(size: 16, weight: .heavy, design: .rounded))
                         .foregroundStyle(.red)
-                        .multilineTextAlignment(.center)
-                }
-
-                Button {
-                    Task { await submitOtp() }
-                } label: {
-                    Group {
-                        if isLoading { ProgressView().tint(.white) }
-                        else { Text("Verify code") }
-                    }
-                    .font(.system(size: 17, weight: .heavy, design: .rounded))
-                    .foregroundStyle(.white)
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, 15)
-                    .background(appColor.palette.primary)
-                    .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 14)
+                        .background(Color.red.opacity(0.08))
+                        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
                 }
                 .buttonStyle(.plain)
-                .disabled(isLoading || otpCode.filter(\.isNumber).count != 6)
+            }
+        }
+    }
 
-                Button("Resend email") {
-                    emailSent = false
-                    otpCode = ""
-                    identityError = nil
-                }
-                .font(.system(size: 14, weight: .heavy, design: .rounded))
-                .foregroundStyle(appColor.palette.primary)
-            } else {
+    // MARK: - Email input (start login)
+
+    private var loginCard: some View {
+        TikoPopupCard(
+            title: "Sign in",
+            subtitle: "Enter your email to receive a sign-in code.",
+            icon: "envelope.fill",
+            appColor: appColor,
+            onClose: onClose
+        ) {
+            VStack(spacing: 12) {
                 VStack(alignment: .leading, spacing: 7) {
                     Text("Email")
                         .font(.system(size: 13, weight: .heavy, design: .rounded))
                         .foregroundStyle(.secondary)
-                    TextField("you@example.com", text: $userEmail)
+                    TextField("you@example.com", text: $emailInput)
                         .font(.system(size: 17, weight: .semibold, design: .rounded))
                         .keyboardType(.emailAddress)
                         .textInputAutocapitalization(.never)
@@ -708,45 +705,111 @@ public struct TikoAccountSheet: View {
                     .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
                 }
                 .buttonStyle(.plain)
-                .disabled(isLoading)
-            }
+                .disabled(isLoading || emailInput.trimmingCharacters(in: .whitespaces).isEmpty)
 
-            Button("Back to setup") {
-                showingRecovery = false
-                emailSent = false
-                otpCode = ""
-                identityError = nil
+                Button("Skip for now") { onClose() }
+                    .font(.system(size: 14, weight: .heavy, design: .rounded))
+                    .foregroundStyle(.secondary)
             }
-            .font(.system(size: 14, weight: .heavy, design: .rounded))
-            .foregroundStyle(appColor.palette.primary)
         }
     }
 
-    private var otpEntryBlock: some View {
-        VStack(alignment: .leading, spacing: 7) {
-            Text("Sign-in code")
-                .font(.system(size: 13, weight: .heavy, design: .rounded))
-                .foregroundStyle(.secondary)
-            Text("Check your email for the 6-digit code.")
-                .font(.system(size: 13))
-                .foregroundStyle(.secondary)
-            TextField("123 456", text: $otpCode)
-                .font(.system(size: 28, weight: .heavy, design: .monospaced))
-                .keyboardType(.numberPad)
-                .multilineTextAlignment(.center)
-                .padding(15)
-                .background(Color(.systemBackground))
-                .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
-                .onChange(of: otpCode) { _, new in
-                    let digits = new.filter(\.isNumber)
-                    if digits.count > 6 { otpCode = String(digits.prefix(6)) }
-                    else { otpCode = digits }
+    // MARK: - OTP verification
+
+    private var otpCard: some View {
+        TikoPopupCard(
+            title: "Check your email",
+            subtitle: "We sent a 6-digit code to \(emailInput).",
+            icon: "envelope.badge.fill",
+            appColor: appColor,
+            onClose: onClose
+        ) {
+            VStack(spacing: 12) {
+                TextField("123 456", text: $otpCode)
+                    .font(.system(size: 32, weight: .heavy, design: .monospaced))
+                    .keyboardType(.numberPad)
+                    .multilineTextAlignment(.center)
+                    .padding(15)
+                    .background(Color(.systemBackground))
+                    .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+                    .onChange(of: otpCode) { _, new in
+                        let digits = new.filter(\.isNumber)
+                        otpCode = digits.count > 6 ? String(digits.prefix(6)) : digits
+                    }
+
+                if let msg = identityError {
+                    Text(msg)
+                        .font(.system(size: 13, weight: .semibold))
+                        .foregroundStyle(.red)
+                        .multilineTextAlignment(.center)
                 }
+
+                Button {
+                    Task { await submitOtp() }
+                } label: {
+                    Group {
+                        if isLoading { ProgressView().tint(.white) }
+                        else { Text("Verify code") }
+                    }
+                    .font(.system(size: 17, weight: .heavy, design: .rounded))
+                    .foregroundStyle(.white)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 15)
+                    .background(appColor.palette.primary)
+                    .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
+                }
+                .buttonStyle(.plain)
+                .disabled(isLoading || otpCode.filter(\.isNumber).count != 6)
+
+                Button("Resend code") {
+                    emailSent = false
+                    otpCode = ""
+                    identityError = nil
+                }
+                .font(.system(size: 14, weight: .heavy, design: .rounded))
+                .foregroundStyle(appColor.palette.primary)
+
+                Button("Use a different email") {
+                    emailSent = false
+                    otpCode = ""
+                    emailInput = ""
+                    identityError = nil
+                }
+                .font(.system(size: 14, weight: .heavy, design: .rounded))
+                .foregroundStyle(.secondary)
+            }
         }
     }
+
+    // MARK: - Colour helpers
+
+    private var profileFavoriteColor: Color? {
+        let h = favoriteColorHex.trimmingCharacters(in: CharacterSet.alphanumerics.inverted)
+        guard h.count == 6, let v = UInt64(h, radix: 16) else { return nil }
+        return Color(
+            red:   Double((v >> 16) & 0xFF) / 255,
+            green: Double((v >> 8)  & 0xFF) / 255,
+            blue:  Double(v         & 0xFF) / 255
+        )
+    }
+
+    private var favoriteColorBinding: Binding<Color> {
+        Binding(
+            get: { profileFavoriteColor ?? .orange },
+            set: { color in
+                let c = UIColor(color)
+                var r: CGFloat = 0, g: CGFloat = 0, b: CGFloat = 0
+                c.getRed(&r, green: &g, blue: &b, alpha: nil)
+                favoriteColorHex = String(format: "%02X%02X%02X",
+                                          Int(r * 255), Int(g * 255), Int(b * 255))
+            }
+        )
+    }
+
+    // MARK: - Actions
 
     private func sendMagicLink() async {
-        let email = userEmail.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+        let email = emailInput.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
         guard !email.isEmpty, email.contains("@") else {
             identityError = "Enter a valid email address."
             return
@@ -755,6 +818,7 @@ public struct TikoAccountSheet: View {
         identityError = nil
         do {
             try await identityClient.requestRecoveryEmail(email: email)
+            userEmail = email
             emailSent = true
         } catch {
             identityError = "Could not send the code. Please try again."
@@ -770,15 +834,253 @@ public struct TikoAccountSheet: View {
         do {
             let bundle = try await identityClient.verifyOtp(otp: digits)
             try sessionStore.save(bundle)
-            onClose()
+            if userName.isEmpty, let name = bundle.account?.email?.components(separatedBy: "@").first {
+                userName = name
+            }
+            isLoading = false
+            // Show profile instead of silently closing
+            signedInEmail = bundle.account?.email ?? emailInput
+            isSignedIn = true
         } catch {
-            identityError = "Invalid or expired code. Try again or resend."
+            otpCode = ""
+            identityError = "Incorrect code — please try again or resend."
+            isLoading = false
         }
-        isLoading = false
     }
 }
 
-private extension View {
+public struct TikoProfileMenuSheet: View {
+    private let appColor: TikoAppColor
+    private let onProfile: () -> Void
+    private let onChildMode: () -> Void
+    private let onLogOut: () -> Void
+    private let onClose: () -> Void
+
+    public init(
+        appColor: TikoAppColor,
+        onProfile: @escaping () -> Void,
+        onChildMode: @escaping () -> Void,
+        onLogOut: @escaping () -> Void,
+        onClose: @escaping () -> Void
+    ) {
+        self.appColor = appColor
+        self.onProfile = onProfile
+        self.onChildMode = onChildMode
+        self.onLogOut = onLogOut
+        self.onClose = onClose
+    }
+
+    public var body: some View {
+        TikoPopupCard(
+            title: "Profile",
+            icon: "person.crop.circle",
+            appColor: appColor,
+            onClose: onClose
+        ) {
+            VStack(spacing: 10) {
+                TikoSettingsActionRow(
+                    title: "Profile",
+                    icon: "person.crop.circle",
+                    appColor: appColor,
+                    action: onProfile
+                )
+                TikoSettingsActionRow(
+                    title: "Child mode",
+                    icon: "figure.child",
+                    appColor: appColor,
+                    action: onChildMode
+                )
+                TikoSettingsActionRow(
+                    title: "Log out",
+                    icon: "rectangle.portrait.and.arrow.right",
+                    appColor: appColor,
+                    action: onLogOut
+                )
+            }
+        }
+    }
+}
+
+public struct TikoParentCodeEntrySheet: View {
+    private let appColor: TikoAppColor
+    private let onClose: () -> Void
+
+    @AppStorage("tiko.parentMode") private var parentMode = true
+    @AppStorage("tiko.parentCodeHash") private var storedCodeHash = ""
+    @State private var enteredCode = ""
+    @State private var error: String? = nil
+
+    public init(appColor: TikoAppColor, onClose: @escaping () -> Void) {
+        self.appColor = appColor
+        self.onClose = onClose
+    }
+
+    public var body: some View {
+        TikoPopupCard(
+            title: "Parent mode",
+            subtitle: "Enter your 4-digit PIN to enable parent mode.",
+            icon: "lock.fill",
+            appColor: appColor,
+            onClose: onClose
+        ) {
+            VStack(spacing: 12) {
+                TextField("••••", text: $enteredCode)
+                    .font(.system(size: 28, weight: .heavy, design: .monospaced))
+                    .multilineTextAlignment(.center)
+                    .keyboardType(.numberPad)
+                    .padding(15)
+                    .background(Color(.systemBackground))
+                    .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+                    .onChange(of: enteredCode) { _, new in
+                        let filtered = String(new.filter { $0.isNumber }.prefix(4))
+                        if filtered != new { enteredCode = filtered }
+                    }
+
+                if let error {
+                    Text(error)
+                        .font(.system(size: 13, weight: .semibold))
+                        .foregroundStyle(.red)
+                        .multilineTextAlignment(.center)
+                }
+
+                Button {
+                    verifyCode()
+                } label: {
+                    Text("Enable parent mode")
+                        .font(.system(size: 17, weight: .heavy, design: .rounded))
+                        .foregroundStyle(.white)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 15)
+                        .background(appColor.palette.primary)
+                        .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
+                }
+                .buttonStyle(.plain)
+                .disabled(enteredCode.count != 4)
+            }
+        }
+    }
+
+    private func verifyCode() {
+        if tikoHashPin(enteredCode) == storedCodeHash {
+            parentMode = true
+            onClose()
+        } else {
+            error = "Incorrect PIN. Please try again."
+            enteredCode = ""
+        }
+    }
+}
+
+public struct TikoCreateParentCodeSheet: View {
+    private let appColor: TikoAppColor
+    private let onClose: () -> Void
+
+    @AppStorage("tiko.parentMode") private var parentMode = true
+    @AppStorage("tiko.parentCodeHash") private var storedCodeHash = ""
+    @State private var code = ""
+    @State private var confirmCode = ""
+    @State private var error: String? = nil
+
+    public init(appColor: TikoAppColor, onClose: @escaping () -> Void) {
+        self.appColor = appColor
+        self.onClose = onClose
+    }
+
+    public var body: some View {
+        TikoPopupCard(
+            title: "Create parent PIN",
+            subtitle: "Set a 4-digit PIN to protect parent mode.",
+            icon: "lock.fill",
+            appColor: appColor,
+            onClose: onClose
+        ) {
+            VStack(spacing: 12) {
+                VStack(alignment: .leading, spacing: 7) {
+                    Text("PIN")
+                        .font(.system(size: 13, weight: .heavy, design: .rounded))
+                        .foregroundStyle(.secondary)
+                    TextField("••••", text: $code)
+                        .font(.system(size: 28, weight: .heavy, design: .monospaced))
+                        .multilineTextAlignment(.center)
+                        .keyboardType(.numberPad)
+                        .padding(15)
+                        .background(Color(.systemBackground))
+                        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+                        .onChange(of: code) { _, new in
+                            let filtered = String(new.filter { $0.isNumber }.prefix(4))
+                            if filtered != new { code = filtered }
+                        }
+                }
+
+                VStack(alignment: .leading, spacing: 7) {
+                    Text("Confirm PIN")
+                        .font(.system(size: 13, weight: .heavy, design: .rounded))
+                        .foregroundStyle(.secondary)
+                    TextField("••••", text: $confirmCode)
+                        .font(.system(size: 28, weight: .heavy, design: .monospaced))
+                        .multilineTextAlignment(.center)
+                        .keyboardType(.numberPad)
+                        .padding(15)
+                        .background(Color(.systemBackground))
+                        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+                        .onChange(of: confirmCode) { _, new in
+                            let filtered = String(new.filter { $0.isNumber }.prefix(4))
+                            if filtered != new { confirmCode = filtered }
+                        }
+                }
+
+                if let error {
+                    Text(error)
+                        .font(.system(size: 13, weight: .semibold))
+                        .foregroundStyle(.red)
+                        .multilineTextAlignment(.center)
+                }
+
+                Button {
+                    saveCode()
+                } label: {
+                    Text("Save and enter child mode")
+                        .font(.system(size: 17, weight: .heavy, design: .rounded))
+                        .foregroundStyle(.white)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 15)
+                        .background(appColor.palette.primary)
+                        .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
+                }
+                .buttonStyle(.plain)
+                .disabled(code.count != 4 || confirmCode.count != 4)
+            }
+        }
+    }
+
+    private func saveCode() {
+        guard code.count == 4, confirmCode.count == 4 else { return }
+        guard code == confirmCode else {
+            error = "PINs don't match. Please try again."
+            return
+        }
+        let hash = tikoHashPin(code)
+        storedCodeHash = hash
+        parentMode = false
+        onClose()
+        Task {
+            guard let token = (try? TikoDeviceSessionStore().load())?.accessToken else { return }
+            try? await TikoIdentityClient().updateProfile(
+                accessToken: token,
+                patch: TikoIdentityProfile(parentCodeHash: hash)
+            )
+        }
+    }
+}
+
+/// Matches the web: SHA-256("tiko:parent-code:{pin}") as lowercase hex.
+private func tikoHashPin(_ pin: String) -> String {
+    let data = Data("tiko:parent-code:\(pin)".utf8)
+    let hash = SHA256.hash(data: data)
+    return hash.compactMap { String(format: "%02x", $0) }.joined()
+}
+
+extension View {
     func tikoSettingsRowSurface() -> some View {
         padding(14)
             .background(Color(.systemBackground))

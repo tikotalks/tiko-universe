@@ -6,58 +6,86 @@ struct CardsView: View {
     @StateObject private var store = CardsStore()
     private let speechService = CardsSpeechService()
 
-    @AppStorage("cards.speechEnabled") private var speechEnabled = true
     @AppStorage("tiko.language") private var languageCode = "en"
     @StateObject private var i18n = TikoI18n(app: .cards)
     @State private var speakingCardID: String?
+    @State private var selectedCollection: CardCollection?
+    @State private var collectionsPage = 0
 
     var body: some View {
         TikoAppShell(
-            appName: i18n.t("cards.appName"),
+            appName: selectedCollection?.title ?? i18n.t("cards.appName"),
             appIcon: "square.grid.2x2.fill",
-            appIconMediaCategory: "animals",
+            appIconMediaCategory: selectedCollection == nil ? "animals" : nil,
+            onIconTap: selectedCollection != nil ? { selectedCollection = nil } : nil,
             appColor: .cards,
-            actions: [
-                TikoHeaderAction(id: "edit", label: i18n.t("cards.tiles.addNew"), systemImage: "pencil"),
-                TikoHeaderAction(id: "speak", label: i18n.t("common.settings"), systemImage: "speaker.wave.2.fill")
-            ],
-            settingsContent: {
-                TikoSettingsSection(title: i18n.t("cards.settings.title")) {
-                    TikoSettingsToggleRow(title: i18n.t("cards.settings.parentMode"), icon: "speaker.wave.2.fill", appColor: .cards, isOn: $speechEnabled)
-                }
-            }
+            actions: []
         ) {
-            NavigationStack {
-                GeometryReader { geometry in
-                    ScrollView {
-                        LazyVGrid(columns: gridColumns(for: geometry.size.width), spacing: 12) {
-                            ForEach(store.collections) { collection in
-                                NavigationLink {
-                                    CollectionDetailView(
-                                        collection: collection,
-                                        isLoadingMedia: store.loadingCollectionIDs.contains(collection.id),
-                                        speakingCardID: speakingCardID,
-                                        onSpeak: speak
-                                    )
-                                    .task {
-                                        await store.hydrateMedia(for: collection.id)
+            Group {
+                if let collection = selectedCollection {
+                    CollectionDetailView(
+                        collection: collection,
+                        isLoadingMedia: store.loadingCollectionIDs.contains(collection.id),
+                        speakingCardID: speakingCardID,
+                        onSpeak: speak
+                    )
+                    .id(collection.id)
+                    .task(id: collection.id) {
+                        await store.hydrateMedia(for: collection.id)
+                    }
+                } else if store.isLoading && store.collections.isEmpty {
+                    ProgressView()
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                } else {
+                    GeometryReader { geometry in
+                        let sideInset = max(geometry.safeAreaInsets.leading, geometry.safeAreaInsets.trailing)
+                        let usableWidth = geometry.size.width - geometry.safeAreaInsets.leading - geometry.safeAreaInsets.trailing
+                        let cols = columnCount(width: usableWidth, height: geometry.size.height - geometry.safeAreaInsets.top - geometry.safeAreaInsets.bottom)
+                        let cardSize = cardDimension(usableWidth: usableWidth, cols: cols)
+                        let usableHeight = geometry.size.height - geometry.safeAreaInsets.top - geometry.safeAreaInsets.bottom
+                        let rows = max(1, Int((usableHeight - 40) / (cardSize + 12)))
+                        let perPage = cols * rows
+                        let pages = store.collections.chunked(into: perPage)
+
+                        ZStack(alignment: .bottom) {
+                            TabView(selection: $collectionsPage) {
+                                ForEach(Array(pages.enumerated()), id: \.offset) { pageIndex, page in
+                                    LazyVGrid(
+                                        columns: Array(repeating: GridItem(.flexible(), spacing: 12), count: cols),
+                                        spacing: 12
+                                    ) {
+                                        ForEach(page) { collection in
+                                            Button {
+                                                selectedCollection = collection
+                                            } label: {
+                                                CollectionTile(
+                                                    collection: collection,
+                                                    thumbnailURL: store.collectionThumbnails[collection.id]
+                                                )
+                                            }
+                                            .buttonStyle(.plain)
+                                        }
                                     }
-                                } label: {
-                                    CollectionTile(
-                                        collection: collection,
-                                        thumbnailURL: store.collectionThumbnails[collection.id]
-                                    )
+                                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+                                    .padding(.leading, 12 + sideInset)
+                                    .padding(.trailing, 12 + sideInset)
+                                    .padding(.top, 12)
+                                    .padding(.bottom, pages.count > 1 ? 40 : 12)
+                                    .tag(pageIndex)
                                 }
-                                .buttonStyle(.plain)
+                            }
+                            .tabViewStyle(.page(indexDisplayMode: .never))
+
+                            if pages.count > 1 {
+                                PageDots(count: pages.count, current: collectionsPage)
+                                    .padding(.bottom, 14)
                             }
                         }
-                        .padding(12)
                     }
-                    .navigationTitle("Choose a board")
-                    .navigationBarTitleDisplayMode(.inline)
                 }
             }
             .task {
+                await store.load()
                 await store.hydrateRootThumbnails()
             }
         }
@@ -66,14 +94,20 @@ struct CardsView: View {
         .onChange(of: languageCode) { _, code in i18n.setLanguage(code) }
     }
 
-    private func gridColumns(for width: CGFloat) -> [GridItem] {
-        let count = width >= 640 ? 5 : (width >= 480 ? 4 : 3)
-        return Array(repeating: GridItem(.flexible(), spacing: 12), count: count)
+    private func columnCount(width: CGFloat, height: CGFloat) -> Int {
+        // In landscape on phones, use more columns to keep cards small enough for 2+ rows
+        if width > height * 1.4 {
+            return width >= 800 ? 7 : 6
+        }
+        return width >= 640 ? 5 : (width >= 480 ? 4 : 3)
+    }
+
+    private func cardDimension(usableWidth: CGFloat, cols: Int) -> CGFloat {
+        (usableWidth - 24 - CGFloat(cols - 1) * 12) / CGFloat(cols)
     }
 
     private func speak(_ card: CommunicationCard) {
         UIImpactFeedbackGenerator(style: .medium).impactOccurred()
-        guard speechEnabled else { return }
         speakingCardID = card.id
         speechService.speak(card.speech)
 
@@ -93,12 +127,10 @@ private struct CollectionTile: View {
     var body: some View {
         TikoSquareTile(
             title: collection.title,
-            subtitle: "\(collection.cards.count)",
-            background: Color(hex: collection.colorHex).opacity(0.72)
+            background: Color(hex: collection.colorHex)
         ) {
             if let thumbnailURL {
                 CachedCardImage(url: thumbnailURL)
-                    .overlay(Color.black.opacity(0.16))
             }
         }
     }
@@ -110,19 +142,48 @@ private struct CollectionDetailView: View {
     let speakingCardID: String?
     let onSpeak: (CommunicationCard) -> Void
 
+    @State private var currentPage = 0
+
     var body: some View {
         GeometryReader { geometry in
-            ScrollView {
-                LazyVGrid(columns: gridColumns(for: geometry.size.width), spacing: 12) {
-                    ForEach(collection.cards) { card in
-                        CommunicationCardTile(
-                            card: card,
-                            isSpeaking: speakingCardID == card.id,
-                            onSpeak: { onSpeak(card) }
-                        )
+            let sideInset = max(geometry.safeAreaInsets.leading, geometry.safeAreaInsets.trailing)
+            let usableWidth = geometry.size.width - geometry.safeAreaInsets.leading - geometry.safeAreaInsets.trailing
+            let usableHeight = geometry.size.height - geometry.safeAreaInsets.top - geometry.safeAreaInsets.bottom
+            let cols = columnCount(width: usableWidth, height: usableHeight)
+            let cardSize = (usableWidth - 24 - CGFloat(cols - 1) * 12) / CGFloat(cols)
+            let rows = max(1, Int((usableHeight - 40) / (cardSize + 12)))
+            let perPage = cols * rows
+            let pages = collection.cards.chunked(into: perPage)
+
+            ZStack(alignment: .bottom) {
+                TabView(selection: $currentPage) {
+                    ForEach(Array(pages.enumerated()), id: \.offset) { pageIndex, pageCards in
+                        LazyVGrid(
+                            columns: Array(repeating: GridItem(.flexible(), spacing: 12), count: cols),
+                            spacing: 12
+                        ) {
+                            ForEach(pageCards) { card in
+                                CommunicationCardTile(
+                                    card: card,
+                                    isSpeaking: speakingCardID == card.id,
+                                    onSpeak: { onSpeak(card) }
+                                )
+                            }
+                        }
+                        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+                        .padding(.leading, 12 + sideInset)
+                        .padding(.trailing, 12 + sideInset)
+                        .padding(.top, 12)
+                        .padding(.bottom, pages.count > 1 ? 40 : 12)
+                        .tag(pageIndex)
                     }
                 }
-                .padding(12)
+                .tabViewStyle(.page(indexDisplayMode: .never))
+
+                if pages.count > 1 {
+                    PageDots(count: pages.count, current: currentPage)
+                        .padding(.bottom, 14)
+                }
             }
             .overlay(alignment: .top) {
                 if isLoadingMedia {
@@ -134,13 +195,11 @@ private struct CollectionDetailView: View {
                 }
             }
         }
-        .navigationTitle(collection.title)
-        .navigationBarTitleDisplayMode(.inline)
     }
 
-    private func gridColumns(for width: CGFloat) -> [GridItem] {
-        let count = width >= 640 ? 5 : (width >= 480 ? 4 : 3)
-        return Array(repeating: GridItem(.flexible(), spacing: 12), count: count)
+    private func columnCount(width: CGFloat, height: CGFloat) -> Int {
+        if width > height * 1.4 { return width >= 800 ? 7 : 6 }
+        return width >= 640 ? 5 : (width >= 480 ? 4 : 3)
     }
 }
 
@@ -153,12 +212,11 @@ private struct CommunicationCardTile: View {
         Button(action: onSpeak) {
             TikoSquareTile(
                 title: card.title,
-                background: Color(hex: card.colorHex).opacity(card.imageURL == nil ? 0.82 : 0.45),
+                background: Color(hex: card.colorHex),
                 isActive: isSpeaking
             ) {
                 if let imageURL = card.imageURL {
                     CachedCardImage(url: imageURL)
-                        .overlay(Color.black.opacity(0.08))
                 }
             }
         }
@@ -186,6 +244,34 @@ private struct CachedCardImage: View {
         .clipped()
         .task(id: url) {
             image = await CardsImageCache.shared.image(for: url)
+        }
+    }
+}
+
+private struct PageDots: View {
+    let count: Int
+    let current: Int
+
+    var body: some View {
+        HStack(spacing: 7) {
+            ForEach(0..<count, id: \.self) { i in
+                Circle()
+                    .fill(i == current ? Color.primary.opacity(0.55) : Color.primary.opacity(0.18))
+                    .frame(width: i == current ? 8 : 6, height: i == current ? 8 : 6)
+                    .animation(.spring(response: 0.28, dampingFraction: 0.7), value: current)
+            }
+        }
+        .padding(.horizontal, 14)
+        .padding(.vertical, 8)
+        .background(.regularMaterial, in: Capsule())
+    }
+}
+
+private extension Array {
+    func chunked(into size: Int) -> [[Element]] {
+        guard size > 0 else { return [self] }
+        return stride(from: 0, to: count, by: size).map {
+            Array(self[$0..<Swift.min($0 + size, count)])
         }
     }
 }

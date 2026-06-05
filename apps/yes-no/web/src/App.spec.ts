@@ -142,7 +142,7 @@ describe('Yes No web app', () => {
 
     expect(wrapper.text()).toContain('Latest answer: Yes')
     expect(wrapper.text()).toContain('History')
-    expect(fetchMock).toHaveBeenCalledWith('https://generation.tikoapi.org/v1/generation/tts', expect.objectContaining({
+    expect(fetchMock).toHaveBeenCalledWith('https://tiko-atlas-api-dev.silvandiepen.workers.dev/v1/atlas/speech', expect.objectContaining({
       method: 'POST',
       body: expect.stringContaining('Yes')
     }))
@@ -170,7 +170,7 @@ describe('Yes No web app', () => {
     await wrapper.get('textarea').setValue('Do you want music?')
     await wrapper.get('.yes-no-app__speak').trigger('click')
 
-    expect(fetch).toHaveBeenCalledWith('https://generation.tikoapi.org/v1/generation/tts', expect.objectContaining({
+    expect(fetch).toHaveBeenCalledWith('https://tiko-atlas-api-dev.silvandiepen.workers.dev/v1/atlas/speech', expect.objectContaining({
       body: expect.stringContaining('Do you want music?')
     }))
     expect(window.localStorage.getItem('tiko:yes-no')).toContain('Do you want music?')

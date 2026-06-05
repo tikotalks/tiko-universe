@@ -75,6 +75,18 @@ export async function handleRequest(request: Request, env: Env): Promise<Respons
   try {
     const url = new URL(request.url)
     const path = url.pathname.replace(/\/$/, '')
+
+    // Global defaults endpoints — session-protected GET & PUT
+    const defaultsMatch = /^\/v1\/apps\/defaults\/([^/]+)\/(settings|state)$/.exec(path)
+    if (defaultsMatch) {
+      await requireSession(request, env)
+      const app = parseApp(defaultsMatch[1])
+      const resource = defaultsMatch[2] as AppResource
+      if (request.method === 'GET') return withCors(await readDefaults(env, app, resource), cors)
+      if (request.method === 'PUT') return withCors(await writeDefaults(request, env, app, resource), cors)
+      return withCors(jsonError('method_not_allowed', 'Method not allowed.', 405), cors)
+    }
+
     const match = /^\/v1\/apps\/([^/]+)\/(settings|state)$/.exec(path)
 
     if (!match) return withCors(jsonError('not_found', 'Route not found.', 404), cors)
@@ -134,6 +146,49 @@ async function writeAppData(request: Request, env: Env, userId: string, app: Tik
       updated_at = excluded.updated_at,
       version = excluded.version
   `).bind(userId, app, JSON.stringify(value), now, nextVersion))
+
+  return json(payload(app, resource, value as JsonValue, now, nextVersion))
+}
+
+// ---------------------------------------------------------------------------
+// Global defaults (admin-editable, public-read)
+// ---------------------------------------------------------------------------
+
+async function readDefaults(env: Env, app: TikoAppId, resource: AppResource): Promise<Response> {
+  const row = await first<AppDataRow>(env.APP_DB.prepare(
+    'SELECT data_json, updated_at, version FROM app_defaults WHERE app = ? AND resource = ?'
+  ).bind(app, resource))
+
+  if (!row) return json(payload(app, resource, cloneDefault(app, resource), null, 0))
+
+  return json(payload(app, resource, parseStoredJson(row.data_json), row.updated_at, Number(row.version)))
+}
+
+async function writeDefaults(request: Request, env: Env, app: TikoAppId, resource: AppResource): Promise<Response> {
+  const body = await readJson<Record<string, unknown>>(request)
+  const key = resource
+  const value = body[key]
+  if (!isJsonObject(value)) throw new HttpError(400, 'invalid_request', `${key} must be a JSON object.`, key)
+
+  const expectedVersion = optionalVersion(body.version)
+  const existing = await first<AppDataRow>(env.APP_DB.prepare(
+    'SELECT data_json, updated_at, version FROM app_defaults WHERE app = ? AND resource = ?'
+  ).bind(app, resource))
+  const currentVersion = existing ? Number(existing.version) : 0
+  if (expectedVersion !== null && expectedVersion !== currentVersion) {
+    throw new HttpError(409, 'version_conflict', 'Stored version does not match requested version.', 'version')
+  }
+
+  const now = new Date().toISOString()
+  const nextVersion = currentVersion + 1
+  await run(env.APP_DB.prepare(
+    `INSERT INTO app_defaults (app, resource, data_json, updated_at, version)
+     VALUES (?, ?, ?, ?, ?)
+     ON CONFLICT(app, resource) DO UPDATE SET
+       data_json = excluded.data_json,
+       updated_at = excluded.updated_at,
+       version = excluded.version`
+  ).bind(app, resource, JSON.stringify(value), now, nextVersion))
 
   return json(payload(app, resource, value as JsonValue, now, nextVersion))
 }

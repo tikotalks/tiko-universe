@@ -1,0 +1,36 @@
+:root {
+  color: #202431;
+  background: #fbf7ef;
+  font-family: Nunito, Inter, ui-rounded, system-ui, sans-serif;
+  font-synthesis: none;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#app {
+  width: 100%;
+  min-width: 320px;
+  min-height: 100%;
+  margin: 0;
+}
+
+body {
+  min-height: 100dvh;
+  overflow: hidden;
+  background: #fbf7ef;
+}
+
+button {
+  font: inherit;
+  -webkit-tap-highlight-color: transparent;
+}
+
+@media (max-width: 760px) {
+  body {
+    overflow: auto;
+  }
+}

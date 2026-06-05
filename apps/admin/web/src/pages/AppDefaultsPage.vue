@@ -27,7 +27,7 @@ const editorByApp = {
   timer: TimerEditor,
 } as const
 
-const { loading, saving, error, read, write } = useAppDefaults()
+const { loading, saving, error, readDefaults, writeDefaults } = useAppDefaults()
 const selectedApp = ref<TikoManagedApp>('cards')
 const stateValue = ref<Record<string, unknown>>({})
 const version = ref(0)
@@ -40,7 +40,7 @@ const currentEditor = computed(() => editorByApp[selectedApp.value])
 
 async function loadCurrent() {
   savedMessage.value = null
-  const payload = await read(selectedApp.value, 'state' satisfies AppResource)
+  const payload = await readDefaults(selectedApp.value, 'state' satisfies AppResource)
   stateValue.value = (payload.state ?? {}) as Record<string, unknown>
   version.value = payload.version
   updatedAt.value = payload.updatedAt
@@ -50,7 +50,7 @@ async function loadCurrent() {
 async function onSave() {
   savedMessage.value = null
   try {
-    const payload = await write(selectedApp.value, 'state', stateValue.value, version.value)
+    const payload = await writeDefaults(selectedApp.value, 'state', stateValue.value, version.value)
     version.value = payload.version
     updatedAt.value = payload.updatedAt
     savedMessage.value = `Saved ${selectedApp.value} defaults.`

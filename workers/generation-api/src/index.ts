@@ -13,6 +13,10 @@ export interface Env {
   IDENTITY_SERVICE?: {
     fetch(input: Request | string, init?: RequestInit): Promise<Response>
   }
+  ATLAS_SERVICE?: {
+    fetch(input: Request | string, init?: RequestInit): Promise<Response>
+  }
+  ATLAS_BASE_URL?: string
 }
 
 export interface D1DatabaseLike {
@@ -67,6 +71,32 @@ interface GenerateAudioFailure {
   success: false
   error: string
   status?: number
+}
+
+interface AtlasSpeechResponse {
+  data?: {
+    id?: string
+    audioUrl?: string
+    contentType?: string
+    cached?: boolean
+    provider?: { name?: string; model?: string; voice?: string }
+  }
+  meta?: { cached?: boolean; schemaVersion?: number; requestId?: string }
+  error?: { code?: string; message?: string }
+}
+
+interface AtlasImageResponse {
+  data?: {
+    images?: Array<{
+      id?: string
+      mediaUrl?: string
+      contentType?: string
+      revisedPrompt?: string | null
+      provider?: { name?: string; model?: string }
+    }>
+  }
+  meta?: { cached?: boolean; schemaVersion?: number; requestId?: string }
+  error?: { code?: string; message?: string }
 }
 
 const CORS_HEADERS = {
@@ -323,6 +353,9 @@ async function generateTts(request: Request, env: Env): Promise<Response> {
   const existing = await findAudioByHash(requestHash, env)
   if (existing) return json(ttsResponseFromRecord(existing, true))
 
+  const atlasResponse = await synthesizeWithAtlas(normalized, env, body.provider)
+  if (atlasResponse) return atlasResponse
+
   const generated = await generateAudioBytes(normalized, env)
   if (generated.success === false) {
     return apiError(generated.error, providerSafeMessage(generated.error), generated.status ?? 503)
@@ -413,6 +446,58 @@ function ttsResponseFromRecord(record: GenerationAudioRecord, cached: boolean) {
       schemaVersion: 1,
     },
   }
+}
+
+async function synthesizeWithAtlas(input: NormalizedTtsRequest, env: Env, requestedProvider?: TtsProvider): Promise<Response | null> {
+  if (!env.ATLAS_SERVICE) return null
+
+  const atlasUrl = `${(env.ATLAS_BASE_URL ?? 'https://tiko-atlas-api-dev.silvandiepen.workers.dev/v1/atlas').replace(/\/$/, '')}/speech`
+  const atlasProvider = requestedProvider && requestedProvider !== 'azure' ? requestedProvider : 'auto'
+  const atlasPayload: Record<string, unknown> = {
+    app: 'generation-api',
+    purpose: 'compatibility-tts',
+    text: input.text,
+    language: input.language,
+    provider: atlasProvider,
+    speed: input.speed,
+  }
+  if (atlasProvider !== 'auto') {
+    atlasPayload.voice = input.voice
+    atlasPayload.model = input.model
+  }
+
+  const response = await env.ATLAS_SERVICE.fetch(new Request(atlasUrl, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(atlasPayload),
+  }))
+  const body = await response.json().catch(() => null) as AtlasSpeechResponse | null
+
+  if (!response.ok) {
+    return apiError(body?.error?.code ?? 'atlas_tts_failed', body?.error?.message ?? 'Atlas TTS request failed.', response.status)
+  }
+
+  const data = body?.data
+  if (!data?.id || !data.audioUrl) {
+    return apiError('atlas_tts_invalid_response', 'Atlas returned an invalid TTS response.', 502)
+  }
+
+  return json({
+    data: {
+      id: data.id,
+      audioUrl: data.audioUrl,
+      contentType: data.contentType ?? 'audio/mpeg',
+      provider: data.provider?.name ?? input.provider,
+      language: input.language,
+      voice: data.provider?.voice ?? input.voice,
+      model: data.provider?.model ?? input.model,
+    },
+    meta: {
+      cached: body?.meta?.cached ?? data.cached ?? false,
+      schemaVersion: 1,
+      atlasRequestId: body?.meta?.requestId,
+    },
+  }, 201)
 }
 
 export function normalizeTtsRequest(body: GenerationTtsRequest): NormalizedTtsRequest {
@@ -822,6 +907,10 @@ async function generateImage(request: Request, env: Env): Promise<Response> {
   const size = body.size || '1024x1024'
   const quality = body.quality === 'hd' ? 'hd' : 'standard'
   const style = body.style === 'natural' ? 'natural' : 'vivid'
+
+  const atlasResponse = await generateImageWithAtlas(body, { size, quality, style }, env)
+  if (atlasResponse) return atlasResponse
+
   const providerSize = toOpenAiImageSize(size)
   const providerQuality = toOpenAiImageQuality(quality)
 
@@ -920,6 +1009,104 @@ async function generateImage(request: Request, env: Env): Promise<Response> {
     },
     meta: { cached: false, schemaVersion: 1 },
   }, 201)
+}
+
+async function generateImageWithAtlas(body: ImageGenerationRequest, normalized: { size: string; quality: string; style: string }, env: Env): Promise<Response | null> {
+  if (!env.ATLAS_SERVICE) return null
+
+  const atlasBase = (env.ATLAS_BASE_URL ?? 'https://tiko-atlas-api-dev.silvandiepen.workers.dev/v1/atlas').replace(/\/$/, '')
+  const response = await env.ATLAS_SERVICE.fetch(new Request(`${atlasBase}/images`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      app: 'generation-api',
+      purpose: 'compatibility-image-generation',
+      prompt: body.prompt.trim(),
+      size: toAtlasImageSize(normalized.size),
+      count: 1,
+      provider: 'openai',
+      model: OPENAI_IMAGE_MODEL,
+    }),
+  }))
+  const atlasBody = await response.json().catch(() => null) as AtlasImageResponse | null
+  if (!response.ok) {
+    return apiError(atlasBody?.error?.code ?? 'atlas_image_failed', atlasBody?.error?.message ?? 'Atlas image request failed.', response.status)
+  }
+
+  const image = atlasBody?.data?.images?.[0]
+  if (!image?.mediaUrl) return apiError('atlas_image_invalid_response', 'Atlas returned an invalid image response.', 502)
+
+  const assetResponse = await fetchAtlasImageAsset(image.mediaUrl, env, atlasBase)
+  if (!assetResponse.ok) return apiError('atlas_image_asset_failed', 'Atlas image asset could not be read.', 502)
+
+  const imageBytes = new Uint8Array(await assetResponse.arrayBuffer())
+  const id = crypto.randomUUID()
+  const r2Key = `images/${id}.png`
+  const now = new Date().toISOString()
+  const contentType = assetResponse.headers.get('content-type') ?? image.contentType ?? 'image/png'
+
+  await env.GENERATED_MEDIA_BUCKET.put(r2Key, imageBytes, {
+    httpMetadata: { contentType, cacheControl: 'public, max-age=31536000, immutable' },
+  })
+
+  const dims = parseImageSize(normalized.size)
+  const imageUrl = `/v1/generation/images/${id}/binary`
+  await env.GENERATION_DB.prepare(`INSERT INTO generated_images (
+    id, prompt, revised_prompt, model, size, quality, style, image_url, r2_key,
+    content_type, file_size_bytes, width, height, category, tags, title, description,
+    is_public, created_at, updated_at
+  ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`).bind(
+    id,
+    body.prompt.trim(),
+    image.revisedPrompt || null,
+    image.provider?.model ?? OPENAI_IMAGE_MODEL,
+    normalized.size,
+    normalized.quality,
+    normalized.style,
+    imageUrl,
+    r2Key,
+    contentType,
+    imageBytes.byteLength,
+    dims.width,
+    dims.height,
+    body.category || 'generated',
+    JSON.stringify(body.tags || []),
+    body.title || null,
+    null,
+    0,
+    now,
+    now,
+  ).run()
+
+  return json({
+    data: {
+      id,
+      imageUrl,
+      prompt: body.prompt.trim(),
+      revisedPrompt: image.revisedPrompt || null,
+      size: normalized.size,
+      quality: normalized.quality,
+      style: normalized.style,
+      width: dims.width,
+      height: dims.height,
+      fileSizeBytes: imageBytes.byteLength,
+      createdAt: now,
+    },
+    meta: { cached: atlasBody?.meta?.cached ?? false, schemaVersion: 1, atlasRequestId: atlasBody?.meta?.requestId },
+  }, 201)
+}
+
+async function fetchAtlasImageAsset(mediaUrl: string, env: Env, atlasBase: string): Promise<Response> {
+  if (/^https?:\/\//i.test(mediaUrl)) return fetch(mediaUrl)
+  if (!env.ATLAS_SERVICE) return new Response('Atlas service unavailable', { status: 503 })
+  const origin = new URL(atlasBase).origin
+  return env.ATLAS_SERVICE.fetch(new Request(`${origin}${mediaUrl.startsWith('/') ? mediaUrl : `/${mediaUrl}`}`))
+}
+
+function toAtlasImageSize(size: string): 'square' | 'portrait' | 'landscape' {
+  if (size === '1024x1792') return 'portrait'
+  if (size === '1792x1024') return 'landscape'
+  return 'square'
 }
 
 async function getImage(pathname: string, env: Env): Promise<Response> {

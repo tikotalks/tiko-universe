@@ -21,9 +21,11 @@ public struct TikoAppHeader: View {
     private let onIconTap: (() -> Void)?
     private let avatar: String
     private let avatarURL: URL?
+    private let avatarBackground: Color?
     private let appColor: TikoAppColor
     private let actions: [TikoHeaderAction]
     private let isSettingsActive: Bool
+    private let showSettingsButton: Bool
     private let onAction: (String) -> Void
     private let onSettings: () -> Void
     private let onAccount: () -> Void
@@ -35,9 +37,11 @@ public struct TikoAppHeader: View {
         onIconTap: (() -> Void)? = nil,
         avatar: String = "person.crop.circle.fill",
         avatarURL: URL? = nil,
+        avatarBackground: Color? = nil,
         appColor: TikoAppColor,
         actions: [TikoHeaderAction] = [],
         isSettingsActive: Bool = false,
+        showSettingsButton: Bool = true,
         onAction: @escaping (String) -> Void = { _ in },
         onSettings: @escaping () -> Void = {},
         onAccount: @escaping () -> Void = {}
@@ -48,9 +52,11 @@ public struct TikoAppHeader: View {
         self.onIconTap = onIconTap
         self.avatar = avatar
         self.avatarURL = avatarURL
+        self.avatarBackground = avatarBackground
         self.appColor = appColor
         self.actions = actions
         self.isSettingsActive = isSettingsActive
+        self.showSettingsButton = showSettingsButton
         self.onAction = onAction
         self.onSettings = onSettings
         self.onAccount = onAccount
@@ -88,25 +94,26 @@ public struct TikoAppHeader: View {
 
     @ViewBuilder
     private var avatarContent: some View {
-        if let avatarURL {
-            AsyncImage(url: avatarURL) { image in
-                image.resizable().scaledToFill()
-            } placeholder: {
+        ZStack {
+            (avatarBackground ?? .white.opacity(0.28))
+            if let avatarURL {
+                AsyncImage(url: avatarURL) { phase in
+                    if case .success(let image) = phase {
+                        image.resizable().scaledToFit()
+                    } else {
+                        Image(systemName: avatar)
+                            .font(.system(size: 20, weight: .bold))
+                            .foregroundStyle(.white)
+                    }
+                }
+            } else {
                 Image(systemName: avatar)
                     .font(.system(size: 20, weight: .bold))
                     .foregroundStyle(.white)
             }
-            .frame(width: 48, height: 48)
-            .background(.white.opacity(0.28))
-            .clipShape(Circle())
-        } else {
-            Image(systemName: avatar)
-                .font(.system(size: 20, weight: .bold))
-                .foregroundStyle(.white)
-                .frame(width: 48, height: 48)
-                .background(.white.opacity(0.28))
-                .clipShape(Circle())
         }
+        .frame(width: 48, height: 48)
+        .clipShape(Circle())
     }
 
     public var body: some View {
@@ -134,8 +141,10 @@ public struct TikoAppHeader: View {
                     .accessibilityLabel(action.label)
                 }
 
-                headerButton(systemImage: "gearshape.fill", isActive: isSettingsActive, action: onSettings)
-                    .accessibilityLabel("Settings")
+                if showSettingsButton {
+                    headerButton(systemImage: "gearshape.fill", isActive: isSettingsActive, action: onSettings)
+                        .accessibilityLabel("Settings")
+                }
 
                 Button(action: onAccount) {
                     avatarContent
@@ -183,10 +192,17 @@ public struct TikoAppShell<Content: View, SettingsContent: View>: View {
     @AppStorage("tiko.userName") private var userName = ""
     @AppStorage("tiko.userEmail") private var userEmail = ""
     @AppStorage("tiko.avatarURL") private var storedAvatarURLString = ""
+    @AppStorage("tiko.parentMode") private var parentMode = true
+    @AppStorage("tiko.parentCodeHash") private var parentCodeHash = ""
+    @AppStorage("tiko.favoriteColor") private var favoriteColorHex = ""
     @State private var showingAccount = false
     @State private var showingSettings = false
+    @State private var showingProfileMenu = false
+    @State private var showingParentCodeEntry = false
+    @State private var showingCreateParentCode = false
     @State private var fetchedIconURL: URL? = nil
     @State private var fetchedAvatarURL: URL? = nil
+    @State private var splashVisible = true
 
     public init(
         appName: String,
@@ -217,27 +233,35 @@ public struct TikoAppShell<Content: View, SettingsContent: View>: View {
     }
 
     public var body: some View {
-        VStack(spacing: 0) {
-            TikoAppHeader(
-                appName: appName,
-                appIcon: appIcon,
-                appIconURL: fetchedIconURL,
-                onIconTap: onIconTap,
-                avatar: avatar,
-                avatarURL: fetchedAvatarURL,
-                appColor: appColor,
-                actions: actions,
-                isSettingsActive: showingSettings,
-                onAction: onAction,
-                onSettings: { showingSettings = true },
-                onAccount: { showingAccount = true }
-            )
-
-            content
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-        }
-        .background(selectedColorScheme == .dark ? darkBackgroundColor : backgroundColor)
-        .preferredColorScheme(selectedColorScheme)
+        content
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .background(selectedColorScheme == .dark ? darkBackgroundColor : backgroundColor)
+            .preferredColorScheme(selectedColorScheme)
+            .safeAreaInset(edge: .top, spacing: 0) {
+                TikoAppHeader(
+                    appName: appName,
+                    appIcon: appIcon,
+                    appIconURL: fetchedIconURL,
+                    onIconTap: onIconTap,
+                    avatar: avatar,
+                    avatarURL: fetchedAvatarURL,
+                    avatarBackground: colorFromHex(favoriteColorHex),
+                    appColor: appColor,
+                    actions: parentMode ? actions : [],
+                    isSettingsActive: showingSettings,
+                    showSettingsButton: parentMode,
+                    onAction: onAction,
+                    onSettings: { showingSettings = true },
+                    onAccount: {
+                        if parentMode {
+                            showingProfileMenu = true
+                        } else {
+                            showingParentCodeEntry = true
+                        }
+                    }
+                )
+                .background(selectedColorScheme == .dark ? darkBackgroundColor : backgroundColor)
+            }
         .tikoSettingsPopup(
             isPresented: $showingSettings,
             appColor: appColor,
@@ -247,10 +271,66 @@ public struct TikoAppShell<Content: View, SettingsContent: View>: View {
             settingsContent
         }
         .tikoAccountPopup(isPresented: $showingAccount, appName: appName, appColor: appColor)
+        .tikoPopup(isPresented: $showingProfileMenu) {
+            TikoProfileMenuSheet(
+                appColor: appColor,
+                onProfile: {
+                    showingProfileMenu = false
+                    Task { @MainActor in
+                        try? await Task.sleep(nanoseconds: 250_000_000)
+                        showingAccount = true
+                    }
+                },
+                onChildMode: {
+                    handleChildModeRequest()
+                },
+                onLogOut: {
+                    try? TikoDeviceSessionStore().clearAll()
+                    showingProfileMenu = false
+                },
+                onClose: { showingProfileMenu = false }
+            )
+        }
+        .tikoPopup(isPresented: $showingParentCodeEntry) {
+            TikoParentCodeEntrySheet(
+                appColor: appColor,
+                onClose: { showingParentCodeEntry = false }
+            )
+        }
+        .tikoPopup(isPresented: $showingCreateParentCode) {
+            TikoCreateParentCodeSheet(
+                appColor: appColor,
+                onClose: { showingCreateParentCode = false }
+            )
+        }
+        .overlay {
+            if splashVisible {
+                TikoSplashOverlay(appColor: appColor)
+                    .ignoresSafeArea()
+                    .allowsHitTesting(false)
+                    .transition(.opacity)
+            }
+        }
+        .onChange(of: storedAvatarURLString) { _, newValue in
+            fetchedAvatarURL = URL(string: newValue)
+        }
         .task {
             await fetchIconIfNeeded()
             await fetchAvatarIfNeeded()
+            await loadParentCodeHashFromProfile()
+            try? await Task.sleep(nanoseconds: 500_000_000)
+            withAnimation(.easeOut(duration: 0.4)) { splashVisible = false }
         }
+    }
+
+    private func colorFromHex(_ hex: String) -> Color? {
+        let h = hex.trimmingCharacters(in: CharacterSet.alphanumerics.inverted)
+        guard h.count == 6, let value = UInt64(h, radix: 16) else { return nil }
+        return Color(
+            red:   Double((value >> 16) & 0xFF) / 255,
+            green: Double((value >> 8)  & 0xFF) / 255,
+            blue:  Double(value         & 0xFF) / 255
+        )
     }
 
     private var selectedColorScheme: ColorScheme {
@@ -268,6 +348,27 @@ public struct TikoAppShell<Content: View, SettingsContent: View>: View {
         Task { @MainActor in
             try? await Task.sleep(nanoseconds: 250_000_000)
             showingAccount = true
+        }
+    }
+
+    private func handleChildModeRequest() {
+        showingProfileMenu = false
+        Task { @MainActor in
+            try? await Task.sleep(nanoseconds: 250_000_000)
+            if parentCodeHash.isEmpty {
+                showingCreateParentCode = true
+            } else {
+                parentMode = false
+            }
+        }
+    }
+
+    private func loadParentCodeHashFromProfile() async {
+        guard parentCodeHash.isEmpty else { return }
+        guard let token = (try? TikoDeviceSessionStore().load())?.accessToken else { return }
+        if let profile = try? await TikoIdentityClient().getProfile(accessToken: token),
+           let hash = profile.parentCodeHash, !hash.isEmpty {
+            parentCodeHash = hash
         }
     }
 
@@ -311,6 +412,25 @@ public struct TikoAppShell<Content: View, SettingsContent: View>: View {
     private func resizedCDNURL(_ url: URL, size: Int) -> URL {
         guard url.host == "data.tikocdn.org", url.path.hasPrefix("/uploads/") else { return url }
         return URL(string: "https://data.tikocdn.org/cdn-cgi/image/width=\(size),quality=80,f=auto\(url.path)") ?? url
+    }
+}
+
+private struct TikoSplashOverlay: View {
+    let appColor: TikoAppColor
+
+    var body: some View {
+        appColor.palette.primary
+            .overlay {
+                GeometryReader { geo in
+                    Image("TikoLogo")
+                        .resizable()
+                        .renderingMode(.template)
+                        .scaledToFit()
+                        .frame(width: geo.size.width * 0.3, height: geo.size.width * 0.3)
+                        .foregroundColor(.white.opacity(0.5))
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                }
+            }
     }
 }
 

@@ -101,6 +101,20 @@ public enum TikoIdentityClientError: Error, Equatable, Sendable {
     case missingSessionToken
 }
 
+// MARK: - Profile
+
+public struct TikoIdentityProfile: Codable, Sendable {
+    public var parentCodeHash: String?
+
+    public init(parentCodeHash: String? = nil) {
+        self.parentCodeHash = parentCodeHash
+    }
+}
+
+private struct ProfileResponse: Codable {
+    let profile: TikoIdentityProfile
+}
+
 // MARK: - Client
 
 public actor TikoIdentityClient {
@@ -147,6 +161,16 @@ public actor TikoIdentityClient {
 
     public func logout(accessToken: String) async throws {
         let _: EmptyResponse = try await send(path: "/identity/logout", method: "POST", body: EmptyBody?.none, accessToken: accessToken)
+    }
+
+    public func getProfile(accessToken: String) async throws -> TikoIdentityProfile {
+        let response: ProfileResponse = try await send(path: "/identity/profile", method: "GET", body: EmptyBody?.none, accessToken: accessToken)
+        return response.profile
+    }
+
+    public func updateProfile(accessToken: String, patch: TikoIdentityProfile) async throws -> TikoIdentityProfile {
+        let response: ProfileResponse = try await send(path: "/identity/profile", method: "PUT", body: patch, accessToken: accessToken)
+        return response.profile
     }
 
     // Backward-compatible naming for existing TikoKit sheets.

@@ -145,6 +145,20 @@ export class IdentityClient {
     })
   }
 
+  getProfile(sessionToken: string): Promise<{ profile: Record<string, unknown> }> {
+    return this.request<{ profile: Record<string, unknown> }>('/identity/profile', {
+      headers: bearerHeaders(sessionToken)
+    })
+  }
+
+  updateProfile(sessionToken: string, data: Record<string, unknown>): Promise<{ profile: Record<string, unknown> }> {
+    return this.request<{ profile: Record<string, unknown> }>('/identity/profile', {
+      method: 'PUT',
+      headers: bearerHeaders(sessionToken),
+      body: JSON.stringify(data)
+    })
+  }
+
   private async request<T>(path: string, init: RequestInit): Promise<T> {
     const headers = {
       'content-type': 'application/json',

@@ -64,7 +64,8 @@ jobs:
         with:
           working-directory: apps/admin/web
           install: false
-          start: npm run dev
+          build: npm run build
+          start: npm run preview
           wait-on: http://127.0.0.1:3062
           config-file: cypress.config.mjs
           spec: cypress/e2e/admin-auth.cy.js
