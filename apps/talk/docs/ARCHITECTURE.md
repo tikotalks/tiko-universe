@@ -511,10 +511,10 @@ VALUES
 
 ```bash
 # Apply schema (first deploy only)
-wrangler d1 execute tiko-sentence-db-dev --file=db/schema.sql
+wrangler d1 execute tiko-sentence-db-dev --file=workers/sentence-api/schema.sql
 
 # Seed English pack
-wrangler d1 execute tiko-sentence-db-dev --file=db/seed-en.sql
+wrangler d1 execute tiko-sentence-db-dev --file=workers/sentence-api/db/seed-en.sql
 
 # Verify
 wrangler d1 execute tiko-sentence-db-dev --command="SELECT locale, COUNT(*) as words FROM word_inventory GROUP BY locale"
