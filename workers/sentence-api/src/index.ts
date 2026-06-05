@@ -42,6 +42,7 @@ interface KVNamespace {
   get(key: string): Promise<string | null>
   put(key: string, value: string, options?: { expirationTtl?: number }): Promise<void>
   delete(key: string): Promise<void>
+  list?(options?: { prefix?: string, cursor?: string }): Promise<{ keys: Array<{ name: string }>, cursor?: string, list_complete?: boolean }>
 }
 
 interface ServiceBinding {
@@ -117,6 +118,10 @@ const CONTEXTUAL_SUGGESTION_RANKS: Record<string, string[]> = {
 export default {
   fetch(request: Request, env: Env, _ctx?: unknown): Promise<Response> {
     return handleRequest(request, env)
+  },
+
+  async scheduled(event: { cron: string }, env: Env, _ctx?: unknown): Promise<void> {
+    await handleScheduled(event, env)
   }
 }
 
@@ -167,6 +172,11 @@ export async function handleRequest(request: Request, env: Env): Promise<Respons
       return withCors(await deletePhrase(request, env, url, path), cors)
     }
 
+    if (path === '/v1/sentence-admin/generate-pack') {
+      if (request.method !== 'POST') return withCors(jsonError('method_not_allowed', 'Method not allowed.', 405), cors)
+      return withCors(await generatePackShell(request, env), cors)
+    }
+
     return withCors(jsonError('not_found', 'Route not found.', 404), cors)
   } catch (error) {
     if (error instanceof HttpError) {
@@ -174,6 +184,94 @@ export async function handleRequest(request: Request, env: Env): Promise<Respons
     }
     return withCors(jsonError('internal_error', 'Unexpected server error.', 500), cors)
   }
+}
+
+async function handleScheduled(_event: { cron: string }, env: Env): Promise<void> {
+  await recalculateLearnedTransitions(env)
+  await discoverTemplateCandidates(env)
+}
+
+async function recalculateLearnedTransitions(env: Env): Promise<void> {
+  const usageRows = await all<{ id: string, locale: string, pack_id: string | null, pos_sequence_json: string, usage_count: number }>(env.DB.prepare(`
+    SELECT id, locale, pack_id, pos_sequence_json, usage_count
+    FROM sentence_usage
+    WHERE pack_id IS NOT NULL
+    ORDER BY locale ASC, pack_id ASC
+  `))
+  const countsByPack = new Map<string, { locale: string, counts: Map<string, number> }>()
+
+  for (const row of usageRows) {
+    if (!row.pack_id) continue
+    const sequence = parseJson<string[]>(row.pos_sequence_json, 'pos_sequence_json')
+    const bucket = countsByPack.get(row.pack_id) ?? { locale: row.locale, counts: new Map<string, number>() }
+    for (let index = 0; index < sequence.length - 1; index += 1) {
+      const from = sequence[index]
+      const to = sequence[index + 1]
+      if (!from || !to) continue
+      const key = `${from}\u0000${to}`
+      bucket.counts.set(key, (bucket.counts.get(key) ?? 0) + Number(row.usage_count))
+    }
+    countsByPack.set(row.pack_id, bucket)
+  }
+
+  for (const [packId, bucket] of Array.from(countsByPack.entries())) {
+    await mergePackTransitions(env.DB, packId, bucket.locale, bucket.counts)
+    await deleteCachePrefix(env.CACHE, `sentence:next:${bucket.locale}:`)
+  }
+}
+
+async function mergePackTransitions(db: D1Database, packId: string, locale: string, counts: Map<string, number>): Promise<void> {
+  if (counts.size === 0) return
+  const curatedRows = await all<{ from_pos: string, to_pos: string, weight: number }>(db.prepare(`
+    SELECT from_pos, to_pos, weight
+    FROM transitions
+    WHERE pack_id = ? AND source = 'curated'
+  `).bind(packId))
+  const curatedWeights = new Map(curatedRows.map((row) => [`${row.from_pos}\u0000${row.to_pos}`, Number(row.weight)]))
+  const maxByFrom = new Map<string, number>()
+  for (const [key, count] of Array.from(counts.entries())) {
+    const [from] = key.split('\u0000')
+    maxByFrom.set(from, Math.max(maxByFrom.get(from) ?? 0, count))
+  }
+
+  for (const [key, count] of Array.from(counts.entries())) {
+    const [from, to] = key.split('\u0000')
+    const maxForFrom = maxByFrom.get(from) ?? count
+    const learnedWeight = maxForFrom > 0 ? (count / maxForFrom) * 10 : 0
+    const packWeight = curatedWeights.get(key) ?? learnedWeight
+    const mergedWeight = (packWeight * 0.3) + (learnedWeight * 0.7)
+    await run(db.prepare(`
+      INSERT INTO transitions (id, pack_id, locale, from_pos, to_pos, weight, source, updated_at)
+      VALUES (?, ?, ?, ?, ?, ?, 'learned', CURRENT_TIMESTAMP)
+      ON CONFLICT(pack_id, from_pos, to_pos, source) DO UPDATE SET
+        weight = excluded.weight,
+        updated_at = CURRENT_TIMESTAMP
+    `).bind(`learned:${packId}:${from}:${to}`, packId, locale, from, to, Number(mergedWeight.toFixed(4))))
+  }
+}
+
+async function deleteCachePrefix(cache: KVNamespace, prefix: string): Promise<void> {
+  if (!cache.list) return
+  let cursor: string | undefined
+  do {
+    const page = await cache.list({ prefix, cursor })
+    await Promise.all(page.keys.map((key) => cache.delete(key.name)))
+    cursor = page.cursor
+    if (page.list_complete !== false) break
+  } while (cursor)
+}
+
+async function discoverTemplateCandidates(_env: Env): Promise<void> {
+  // Weekly template discovery is intentionally a shell for v1c: it can be safely
+  // scheduled without child-facing LLM/runtime generation until the admin provider
+  // and review workflow are explicitly configured.
+}
+
+async function generatePackShell(request: Request, env: Env): Promise<Response> {
+  await requireAdmin(request, env)
+  const body = await readJson<{ locale?: string }>(request)
+  normalizeLocale(body.locale ?? '')
+  throw new HttpError(501, 'pack_generation_provider_unconfigured', 'Admin pack generation needs a configured provider and review workflow before it can run.')
 }
 
 async function startSentence(request: Request, env: Env, url: URL): Promise<Response> {
@@ -592,6 +690,23 @@ async function requireSubjectId(request: Request, env: Env, explicitSubjectId?: 
   const subjectId = await resolveSubjectId(request, env, explicitSubjectId)
   if (!subjectId) throw new HttpError(401, 'identity_required', 'A Tiko identity session is required for saved phrases.', 'Authorization')
   return subjectId
+}
+
+async function requireAdmin(request: Request, env: Env): Promise<void> {
+  const auth = request.headers.get('Authorization')
+  if (!auth?.startsWith('Bearer ')) throw new HttpError(401, 'identity_required', 'An admin identity session is required.', 'Authorization')
+  try {
+    const response = await env.IDENTITY_SERVICE.fetch(new Request('https://identity.internal/v1/identity/me', {
+      headers: { Authorization: auth },
+    }))
+    if (!response.ok) throw new HttpError(403, 'admin_required', 'An admin role is required.', 'Authorization')
+    const body = await response.json() as { roles?: string[], data?: { roles?: string[] }, subject?: { roles?: string[] } }
+    const roles = body.roles ?? body.data?.roles ?? body.subject?.roles ?? []
+    if (!roles.includes('admin')) throw new HttpError(403, 'admin_required', 'An admin role is required.', 'Authorization')
+  } catch (error) {
+    if (error instanceof HttpError) throw error
+    throw new HttpError(403, 'admin_required', 'An admin role is required.', 'Authorization')
+  }
 }
 
 function hashCacheKey(value: string): string {

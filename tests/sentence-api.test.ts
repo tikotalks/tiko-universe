@@ -27,6 +27,10 @@ class MemoryStatement {
 class MemoryD1Database {
   phrases: Row[] = []
   usage: Row[] = []
+  transitions: Row[] = [
+    { id: 'en-v1:pronoun:verb', pack_id: 'en-v1', locale: 'en', from_pos: 'pronoun', to_pos: 'verb', weight: 10, source: 'curated' },
+    { id: 'en-v1:verb:noun', pack_id: 'en-v1', locale: 'en', from_pos: 'verb', to_pos: 'noun', weight: 9, source: 'curated' },
+  ]
   prepare(sql: string): MemoryStatement { return new MemoryStatement(this, sql) }
 
   execute(sql: string, values: unknown[]): MemoryResult {
@@ -73,6 +77,23 @@ class MemoryD1Database {
       return new MemoryResult()
     }
 
+    if (normalized.startsWith('SELECT id, locale, pack_id, pos_sequence_json, usage_count FROM sentence_usage')) {
+      return new MemoryResult(this.usage)
+    }
+
+    if (normalized.startsWith('SELECT from_pos, to_pos, weight FROM transitions')) {
+      const [packId] = values
+      return new MemoryResult(this.transitions.filter((row) => row.pack_id === packId && row.source === 'curated'))
+    }
+
+    if (normalized.startsWith('INSERT INTO transitions')) {
+      const [id, packId, locale, fromPos, toPos, weight] = values
+      const existing = this.transitions.find((row) => row.pack_id === packId && row.from_pos === fromPos && row.to_pos === toPos && row.source === 'learned')
+      if (existing) existing.weight = Number(weight)
+      else this.transitions.push({ id, pack_id: packId, locale, from_pos: fromPos, to_pos: toPos, weight, source: 'learned' })
+      return new MemoryResult()
+    }
+
     if (normalized.startsWith('INSERT INTO user_phrases')) {
       const [id, subjectId, locale, sentence, wordIdsJson, label] = values
       this.phrases.push({ id, subject_id: subjectId, locale, sentence, word_ids_json: wordIdsJson, label, is_auto: 0, usage_count: 1 })
@@ -92,6 +113,7 @@ class MemoryD1Database {
 class MemoryKVNamespace {
   reads: string[] = []
   writes: string[] = []
+  deletes: string[] = []
   values = new Map<string, string>()
 
   async get(key: string): Promise<string | null> {
@@ -102,10 +124,16 @@ class MemoryKVNamespace {
     this.writes.push(key)
     this.values.set(key, value)
   }
-  async delete(key: string): Promise<void> { this.values.delete(key) }
+  async delete(key: string): Promise<void> { this.deletes.push(key); this.values.delete(key) }
+  async list(options: { prefix?: string } = {}): Promise<{ keys: Array<{ name: string }>, list_complete: true }> {
+    const keys = Array.from(this.values.keys())
+      .filter((name) => !options.prefix || name.startsWith(options.prefix))
+      .map((name) => ({ name }))
+    return { keys, list_complete: true }
+  }
 }
 
-function service(options: { ttsOk?: boolean } = {}) {
+function service(options: { ttsOk?: boolean, roles?: string[] } = {}) {
   return {
     fetch: async (request: Request) => {
       const url = new URL(request.url)
@@ -113,7 +141,7 @@ function service(options: { ttsOk?: boolean } = {}) {
         if (options.ttsOk === false) return new Response(JSON.stringify({ error: { code: 'provider_unavailable' } }), { status: 503, headers: { 'content-type': 'application/json' } })
         return new Response(JSON.stringify({ data: { audioUrl: '/v1/generation/audio/test-audio' }, meta: { cached: true } }), { status: 200, headers: { 'content-type': 'application/json' } })
       }
-      return new Response(JSON.stringify({ subject: { id: 'sub_from_service' } }), { headers: { 'content-type': 'application/json' } })
+      return new Response(JSON.stringify({ subject: { id: 'sub_from_service' }, roles: options.roles ?? ['user'] }), { headers: { 'content-type': 'application/json' } })
     }
   }
 }
@@ -325,5 +353,45 @@ describe('sentence-api foundation', () => {
     expect(missing.body.error.code).toBe('not_found')
     expect(wrongMethod.response.status).toBe(405)
     expect(wrongMethod.body.error.code).toBe('method_not_allowed')
+  })
+
+  it('scheduled recalculation merges pack and learned transition weights and only flushes affected next caches', async () => {
+    const { testEnv, db, cache } = env()
+    db.usage.push(
+      { id: 'u1', locale: 'en', pack_id: 'en-v1', pos_sequence_json: JSON.stringify(['pronoun', 'verb', 'noun']), usage_count: 10 },
+      { id: 'u2', locale: 'en', pack_id: 'en-v1', pos_sequence_json: JSON.stringify(['pronoun', 'verb']), usage_count: 2 },
+    )
+    cache.values.set('sentence:next:en:anon:i,want', '{}')
+    cache.values.set('sentence:start:en:anon', '{}')
+
+    await (worker as any).scheduled({ cron: '0 2 * * *' }, testEnv, {} as never)
+
+    const learned = db.transitions.filter((row) => row.source === 'learned')
+    expect(learned.find((row) => row.from_pos === 'pronoun' && row.to_pos === 'verb')?.weight).toBeCloseTo(10)
+    expect(learned.find((row) => row.from_pos === 'verb' && row.to_pos === 'noun')?.weight).toBeCloseTo(9.7)
+    expect(cache.deletes).toEqual(['sentence:next:en:anon:i,want'])
+    expect(cache.values.has('sentence:start:en:anon')).toBe(true)
+  })
+
+  it('keeps admin pack generation shell behind an admin role gate', async () => {
+    const userEnv = env().testEnv
+    const forbidden = await fetchJson('/v1/sentence-admin/generate-pack', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json', authorization: 'Bearer user-token' },
+      body: JSON.stringify({ locale: 'en' }),
+    }, userEnv)
+
+    const { testEnv: adminEnv } = env()
+    adminEnv.IDENTITY_SERVICE = service({ roles: ['admin'] })
+    const accepted = await fetchJson('/v1/sentence-admin/generate-pack', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json', authorization: 'Bearer admin-token' },
+      body: JSON.stringify({ locale: 'en' }),
+    }, adminEnv)
+
+    expect(forbidden.response.status).toBe(403)
+    expect(forbidden.body.error.code).toBe('admin_required')
+    expect(accepted.response.status).toBe(501)
+    expect(accepted.body.error.code).toBe('pack_generation_provider_unconfigured')
   })
 })
