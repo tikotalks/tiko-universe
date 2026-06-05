@@ -8,13 +8,13 @@ workers_dev = true
 
 [[d1_databases]]
 binding = "ATLAS_DB"
-database_name = "tiko-atlas"
-database_id = "00000000-0000-0000-0000-000000000000"
+database_name = "tiko-db"
+database_id = "f99b61ae-6a78-4670-bb9c-cdc4f634264a"
 migrations_dir = "migrations"
 
 [[kv_namespaces]]
 binding = "ATLAS_CACHE"
-id = "00000000000000000000000000000000"
+id = "d93208b9745e420cbd26d2dba9427d50"
 
 [[r2_buckets]]
 binding = "ATLAS_ASSETS_BUCKET"
@@ -43,6 +43,9 @@ zone_name = "tikotalks.com"
 name = "tiko-atlas-api"
 workers_dev = false
 
+[env.production.ai]
+binding = "AI"
+
 [env.production.vars]
 TIKO_ENVIRONMENT = "production"
 ATLAS_PUBLIC_ROUTE = "https://api.tikotalks.com/v1/atlas"
@@ -54,13 +57,13 @@ service = "tiko-identity-api"
 
 [[env.production.d1_databases]]
 binding = "ATLAS_DB"
-database_name = "tiko-atlas"
-database_id = "00000000-0000-0000-0000-000000000000"
+database_name = "tiko-db"
+database_id = "f99b61ae-6a78-4670-bb9c-cdc4f634264a"
 migrations_dir = "migrations"
 
 [[env.production.kv_namespaces]]
 binding = "ATLAS_CACHE"
-id = "00000000000000000000000000000000"
+id = "8d14d5480f274c5390fdf9a79ae21dd1"
 
 [[env.production.r2_buckets]]
 binding = "ATLAS_ASSETS_BUCKET"
