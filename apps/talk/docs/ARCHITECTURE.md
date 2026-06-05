@@ -82,8 +82,8 @@ New Cloudflare Worker. Owns all sentence intelligence.
 - Store raw sentence logs indefinitely
 
 **Bindings:**
-- D1: `SENTENCE_DB` — persistent relational data
-- KV: `SENTENCE_CACHE` — hot transition/suggestion cache
+- D1: `DB` — persistent relational data (follows existing worker convention)
+- KV: `CACHE` — hot transition/suggestion cache (follows existing worker convention)
 
 ### 2. Frontend (`apps/talk/web/`)
 
@@ -108,10 +108,11 @@ Thin Vue 3 SPA. Renders what the API returns.
 
 ### 3. `workers/generation-api/` — TTS (Existing)
 
-Already built. Talk uses the existing TTS pipeline:
-- `POST /v1/generation/tts` with the completed sentence text
-- Returns cached audio URL or generates new
-- Talk does not rebuild this; it consumes it
+Already built. Talk uses the existing TTS pipeline through the `GENERATION_SERVICE` Worker service binding:
+- Sentence API sends the completed sentence text to the generation worker's TTS handler.
+- The public route equivalent is `POST /v1/generation/tts`, but Worker-to-Worker calls should use the service binding, not a browser-facing HTTP dependency.
+- Returns cached audio URL or generates new audio.
+- Talk does not rebuild this; it consumes it.
 
 ---
 
@@ -121,7 +122,7 @@ Already built. Talk uses the existing TTS pipeline:
 
 Start a new sentence session. Returns initial state.
 
-**Query params:** `locale` (required), `userId` (optional, for personalized suggestions)
+**Query params:** `locale` (required), `userId` (optional — Ankore subject ID for personalized suggestions)
 
 **Response:**
 ```typescript
@@ -147,7 +148,7 @@ Get suggestions and valid next words after adding a word to the strip.
 {
   currentWords: string[],   // word IDs currently in the strip
   locale: string,
-  userId?: string
+  userId?: string           // Ankore subject ID
 }
 ```
 
@@ -174,7 +175,7 @@ Finalize and speak a sentence.
 {
   wordIds: string[],        // ordered word IDs from the strip
   locale: string,
-  userId?: string,
+  userId?: string,          // Ankore subject ID
   autoSave?: boolean        // save to user phrases?
 }
 ```
@@ -209,7 +210,7 @@ Browse full vocabulary for a locale.
 
 Get user's saved/frequent phrases.
 
-**Query params:** `locale` (required), `userId` (required)
+**Query params:** `locale` (required), `userId` (required — Ankore subject ID)
 
 **Response:**
 ```typescript
@@ -227,7 +228,7 @@ Save a phrase manually.
 {
   wordIds: string[],
   locale: string,
-  userId: string,
+  userId: string,           // Ankore subject ID
   label?: string            // optional custom label
 }
 ```
@@ -308,16 +309,16 @@ Pre-computed and learned transition weights.
 
 #### `sentence_usage`
 
-Aggregated usage statistics. No raw sentence content stored long-term.
+Aggregated usage statistics. This table intentionally stores pattern aggregates, not per-child sentence logs. `word_sequence_hash` is derived from normalized word IDs plus locale and a server-side salt/pepper so the system can count repeated patterns without retaining readable sentence text.
 
 | Column | Type | Description |
 |--------|------|-------------|
 | id | TEXT PK | UUID |
 | locale | TEXT | Locale code |
 | pos_sequence | TEXT | JSON array of POS tags |
-| word_sequence | TEXT | JSON array of word texts |
+| word_sequence_hash | TEXT | Hash of normalized word IDs + locale + server-side salt; no readable sentence text |
 | word_count | INTEGER | Number of words in sentence |
-| usage_count | INTEGER | How many times this sequence was built |
+| usage_count | INTEGER | How many times this pattern was built |
 | first_seen | TEXT | ISO timestamp |
 | last_seen | TEXT | ISO timestamp |
 
@@ -352,7 +353,7 @@ Per-user saved and auto-saved phrases.
 
 ### KV Cache
 
-**Namespace:** `SENTENCE_CACHE`
+**Binding:** `CACHE` (Cloudflare KV namespace named `sentence-cache` / `tiko-sentence-cache-dev`)
 
 **Keys:**
 - `next:{locale}:{word_ids_hash}` → cached `/next` response (TTL: 1 hour)
@@ -373,14 +374,15 @@ Per-user saved and auto-saved phrases.
 ### At completion time (synchronous)
 
 When `/complete` is called:
-1. Parse the POS sequence and word sequence
-2. Upsert into `sentence_usage`: increment `usage_count`, update `last_seen`
-3. Check if this completes a frequent pattern → auto-save as user phrase if threshold met (e.g. used 5+ times)
+1. Parse the POS sequence and normalized word IDs
+2. Hash the normalized word ID sequence with locale and a server-side salt/pepper
+3. Upsert into `sentence_usage`: increment `usage_count`, update `last_seen`
+4. Check if this completes a frequent pattern → auto-save as user phrase if threshold met (e.g. used 5+ times)
 
 ### Weight recalculation (periodic, via cron or on-demand)
 
 Run daily or when usage crosses a threshold:
-1. For each locale, query `sentence_usage` grouped by `from_pos_sequence` → `to_pos`
+1. For each locale, query `sentence_usage` grouped by POS transitions and hashed word sequence patterns
 2. Calculate learned weights based on frequency and recency
 3. Merge with pack-derived weights: `final = pack_weight * 0.3 + learned_weight * 0.7` (weights configurable)
 4. Update `transitions` table with hybrid weights
@@ -389,8 +391,8 @@ Run daily or when usage crosses a threshold:
 ### Template discovery (periodic)
 
 Run weekly:
-1. Find word sequences with high usage_count across multiple users
-2. Generalize to POS patterns
+1. Find hashed sequence patterns and POS patterns with high usage_count across multiple subjects
+2. Generalize to POS patterns; use pack/template metadata rather than readable raw logs
 3. If a pattern matches a candidate template (e.g. "I want [NOUN]" appears 500+ times), surface for admin review
 4. Admin approves → promoted to template
 
@@ -474,8 +476,8 @@ VALUES (
   '{ "locale": "en", "version": 1, "words": [...], "templates": [...], "grammar": {...} }',
   'curated',
   'active',
-  '2024-01-01T00:00:00Z',
-  '2024-01-01T00:00:00Z'
+  CURRENT_TIMESTAMP,
+  CURRENT_TIMESTAMP
 );
 
 -- 2. Populate denormalized word_inventory
@@ -498,9 +500,9 @@ VALUES
 -- 4. Seed initial transitions (from pack grammar rules)
 INSERT INTO transitions (id, locale, from_pos_sequence, to_pos, suggested_words, weight, source, updated_at)
 VALUES
-  ('en-tr1', 'en', '[]',           'pron', '["en-i","en-you","en-he","en-she"]', 1.0, 'pack', '2024-01-01T00:00:00Z'),
-  ('en-tr2', 'en', '["pron"]',     'verb', '["en-want","en-need","en-feel","en-am"]', 1.0, 'pack', '2024-01-01T00:00:00Z'),
-  ('en-tr3', 'en', '["pron","verb"]', 'noun', '["en-juice","en-water","en-food"]', 1.0, 'pack', '2024-01-01T00:00:00Z'),
+  ('en-tr1', 'en', '[]',           'pron', '["en-i","en-you","en-he","en-she"]', 1.0, 'pack', CURRENT_TIMESTAMP),
+  ('en-tr2', 'en', '["pron"]',     'verb', '["en-want","en-need","en-feel","en-am"]', 1.0, 'pack', CURRENT_TIMESTAMP),
+  ('en-tr3', 'en', '["pron","verb"]', 'noun', '["en-juice","en-water","en-food"]', 1.0, 'pack', CURRENT_TIMESTAMP),
   -- ...
   ;
 ```
@@ -509,13 +511,13 @@ VALUES
 
 ```bash
 # Apply schema (first deploy only)
-wrangler d1 execute sentence-db --file=db/schema.sql
+wrangler d1 execute tiko-sentence-db-dev --file=db/schema.sql
 
 # Seed English pack
-wrangler d1 execute sentence-db --file=db/seed-en.sql
+wrangler d1 execute tiko-sentence-db-dev --file=db/seed-en.sql
 
 # Verify
-wrangler d1 execute sentence-db --command="SELECT locale, COUNT(*) as words FROM word_inventory GROUP BY locale"
+wrangler d1 execute tiko-sentence-db-dev --command="SELECT locale, COUNT(*) as words FROM word_inventory GROUP BY locale"
 ```
 
 ---
@@ -625,16 +627,16 @@ The sentence strip continues to function — the child can still add words from 
 
 ### Workspace registration
 
-Add to root `pnpm-workspace.yaml` (or equivalent):
+Add to the root npm workspace configuration:
 ```
 packages/talk-types
 workers/sentence-api
 apps/talk/web
 ```
 
-### Turborepo pipeline
+### Build/check pipeline
 
-`workers/sentence-api` and `apps/talk/web` follow the same pipeline entries as other workers and apps:
+`workers/sentence-api` and `apps/talk/web` follow the same npm workspace build/check shape as other workers and apps. If a Turborepo pipeline is present, add equivalent entries:
 
 ```json
 // turbo.json (additions)
@@ -647,7 +649,7 @@ apps/talk/web
 }
 ```
 
-`apps/talk/web` depends on `@tiko/talk-types` → `@tiko/ui` → `@tiko/identity`. Turborepo resolves this automatically from `package.json` workspace references.
+`apps/talk/web` depends on `@tiko/talk-types` → `@tiko/ui` → `@tiko/identity`. The npm workspace graph resolves this from `package.json` workspace references.
 
 ### Wrangler binding conventions
 
@@ -656,14 +658,24 @@ Following existing worker naming conventions:
 ```toml
 # workers/sentence-api/wrangler.toml
 name = "tiko-sentence-api-dev"
+main = "src/index.ts"
+compatibility_date = "2026-06-05"
+
+# Development custom-domain routes under tikoapi.org require deploying in the
+# account that owns the tikoapi.org zone while that zone remains there.
+# If dev is intentionally left on workers.dev, omit this route until DNS is ready.
+account_id = "dc2b7d14a69351375cab6de9a13ddee9"
+routes = [
+  { pattern = "dev.sentence.tikoapi.org/*", zone_name = "tikoapi.org" }
+]
 
 [[d1_databases]]
-binding = "DB"                          # use "DB" not "SENTENCE_DB" — matches generation-api
+binding = "DB"                          # matches existing worker convention
 database_name = "tiko-sentence-db-dev"
 database_id = "<dev-id>"
 
 [[kv_namespaces]]
-binding = "CACHE"                       # use "CACHE" not "SENTENCE_CACHE"
+binding = "CACHE"                       # matches existing worker convention
 id = "<dev-kv-id>"
 
 [[services]]
@@ -676,11 +688,30 @@ service = "tiko-generation-api-dev"
 
 [env.production]
 name = "tiko-sentence-api"
+account_id = "dc2b7d14a69351375cab6de9a13ddee9"
+routes = [
+  { pattern = "sentence.tikoapi.org/*", zone_name = "tikoapi.org" }
+]
+
 [[env.production.d1_databases]]
 binding = "DB"
 database_name = "tiko-sentence-db"
 database_id = "<prod-id>"
+
+[[env.production.kv_namespaces]]
+binding = "CACHE"
+id = "<prod-kv-id>"
+
+[[env.production.services]]
+binding = "IDENTITY_SERVICE"
+service = "tiko-identity-api"
+
+[[env.production.services]]
+binding = "GENERATION_SERVICE"
+service = "tiko-generation-api"
 ```
+
+Account note: while `tikoapi.org`/`tikoapps.org` live in the older production-domain Cloudflare account, custom-domain Worker and Pages bindings for Talk must target that account. Generated `*.workers.dev` / `*.pages.dev` previews may still exist in the newer clean-rebuild account, but they are not the canonical custom-domain surfaces.
 
 ---
 
@@ -894,7 +925,7 @@ workers/sentence-api/
    → Backend:
      a. Format sentence: "I want juice."
      b. Call generation-api TTS → audio URL (or cache hit)
-     c. Upsert sentence_usage: { pos: ["pron","verb","noun"], words: ["I","want","juice"], count++ }
+     c. Upsert sentence_usage: { pos: ["pron","verb","noun"], word_sequence_hash, count++ }
      d. Check auto-save threshold
    → Response: { sentence: "I want juice.", audioUrl: "https://...", audioCached: true }
    → Frontend plays audio
@@ -909,19 +940,21 @@ workers/sentence-api/
 ## Deployment
 
 - **Worker:** `workers/sentence-api/` deployed to Cloudflare Workers
-- **D1:** `sentence-db` — provision once, apply `schema.sql` migration
-- **KV:** `sentence-cache` — provision once
+- **D1:** `tiko-sentence-db-dev` / `tiko-sentence-db` — provision once per environment, apply `schema.sql` migration
+- **KV:** `tiko-sentence-cache-dev` / `sentence-cache` — provision once per environment
 - **Frontend:** `apps/talk/web/` deployed to Cloudflare Pages
-- **Domain:** `talk.tikoapps.org` (production), `dev.talk.tikoapps.org` (development)
+- **App domain:** `talk.tikoapps.org` (production), `dev.talk.tikoapps.org` (development)
+- **API domain:** `sentence.tikoapi.org` (production), `dev.sentence.tikoapi.org` (development if custom dev route is provisioned)
 - **Pages project:** `tiko-talk`
-- **TTS:** Uses existing `generation-api` — no new TTS infrastructure
+- **Domain ADR:** `docs/adrs/2026-06-05-talk-app-and-sentence-api-domains.md`
+- **TTS:** Uses existing `generation-api` via `GENERATION_SERVICE` — no new TTS infrastructure
 
 ---
 
 ## Security & Privacy
 
 - Session validation via Ankore identity (shared `TOKEN_PEPPER`)
-- No raw sentence content stored beyond aggregation
+- No readable raw sentence content stored in shared usage aggregates; `sentence_usage` uses hashed word sequence patterns plus POS aggregates
 - Per-user data limited to saved phrases and frequency counts
 - No cross-user sentence sharing
 - Admin endpoints gated by identity role

@@ -23,7 +23,7 @@ This app bridges the gap between single-word labeling (Cards) and letter-by-lett
 ## Initial API needs
 
 - device identity bootstrap
-- new `workers/sentence-api/` (D1 + KV)
+- new `workers/sentence-api/` (D1 + KV) exposed at `sentence.tikoapi.org` / `dev.sentence.tikoapi.org` once provisioned
 - existing `generation-api` TTS for sentence audio
 - app settings/state via `@tiko/data`
 
@@ -59,6 +59,7 @@ This app bridges the gap between single-word labeling (Cards) and letter-by-lett
 - Doctrine: `apps/talk/docs/DOCTRINE.md`
 - Product spec: `apps/talk/docs/SPEC.md`
 - Architecture: `apps/talk/docs/ARCHITECTURE.md`
+- Domain ADR: `docs/adrs/2026-06-05-talk-app-and-sentence-api-domains.md`
 
 ## Migration checklist
 
@@ -71,8 +72,10 @@ This app bridges the gap between single-word labeling (Cards) and letter-by-lett
 - [ ] iOS contract/client planned
 - [ ] Android contract/client planned
 - [ ] i18n keys mapped (`talk.*`)
-- [ ] Domain provisioned: `talk.tikoapps.org`
-- [ ] Dev domain: `dev.talk.tikoapps.org`
+- [ ] App domain provisioned: `talk.tikoapps.org`
+- [ ] Dev app domain: `dev.talk.tikoapps.org`
+- [ ] Sentence API domain provisioned: `sentence.tikoapi.org`
+- [ ] Dev sentence API domain: `dev.sentence.tikoapi.org`
 - [ ] Pages project: `tiko-talk`
 - [ ] Smoke tests passing
 - [ ] Offline fallback pack bundled

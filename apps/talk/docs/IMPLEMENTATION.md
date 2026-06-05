@@ -18,6 +18,8 @@ These must be resolved before writing the first line of implementation code.
 
 ### P0 — Blocking
 
+- [ ] **Complete domain ADR and doc readiness fixes** — `docs/adrs/2026-06-05-talk-app-and-sentence-api-domains.md` must exist before provisioning `talk.tikoapps.org`, `dev.talk.tikoapps.org`, `sentence.tikoapi.org`, or `dev.sentence.tikoapi.org`. ARCHITECTURE.md must use `DB`/`CACHE` binding names and the privacy model must avoid readable raw sentence logs in `sentence_usage`.
+
 - [ ] **Create `packages/talk-types/`** — shared TypeScript interfaces for `WordTile`, `Category`, `Template`, `SavedPhrase`, `StripState`, `LanguagePack`, etc. Both the worker and the frontend depend on this package. See ARCHITECTURE.md → Type Sharing Strategy.
 
 - [ ] **Write the English language pack seed** (`workers/sentence-api/db/seed-en.sql`) — without this, the worker has nothing to serve and v1 cannot ship. Minimum: 200+ words, 20+ templates, initial transition seeds. See ARCHITECTURE.md → Language Pack Bootstrap.
@@ -28,7 +30,7 @@ These must be resolved before writing the first line of implementation code.
 
 - [ ] **Scaffold `workers/sentence-api/`** with `wrangler.toml`, `package.json`, `tsconfig.json`, entry `src/index.ts`. Follow binding naming conventions (`DB`, `CACHE`, `IDENTITY_SERVICE`, `GENERATION_SERVICE`). Provision D1 and KV namespaces in Cloudflare dashboard.
 
-- [ ] **Apply D1 schema** (`db/schema.sql`) to both dev and prod databases.
+- [ ] **Apply D1 schema** (`db/schema.sql`) to dev first (`tiko-sentence-db-dev`), then prod only during approved production promotion (`tiko-sentence-db`).
 
 - [ ] **Write the fallback pack generator script** (`workers/sentence-api/scripts/generate-fallback.ts`) — filters English seed to frequency ≥ 8, writes `apps/talk/web/src/data/fallback-pack-en.json`. Must run before any frontend build.
 
@@ -67,7 +69,7 @@ These must be resolved before writing the first line of implementation code.
 
 8. **`routes/next.ts`** — `POST /v1/sentence/next` → run transition engine, cache result, return suggestions
 
-9. **Auth** — wire `workers/shared/auth.ts` into all routes (userId extraction, not hard auth wall)
+9. **Auth** — validate/extract the Ankore session subject into `userId` where available; do not use a legacy user id and do not create a login wall
 
 **Done when:** `curl`ing `/start` and `/next` returns plausible data; KV caching works on second request.
 
