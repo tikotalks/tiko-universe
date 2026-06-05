@@ -177,6 +177,7 @@ jobs:
     environment: ${{ needs.detect-changes.outputs.environment }}
     strategy:
       fail-fast: false
+      max-parallel: 1
       matrix:
         worker: ${{ fromJSON(needs.detect-changes.outputs.deploy-all == 'true' && '["admin-api","app-api","atlas-api","content-api","generation-api","identity-api","media-api","sentence-api","tts-api"]' || needs.detect-changes.outputs.workers-changed) }}
     steps:
@@ -211,6 +212,23 @@ jobs:
           if [[ "$DEPLOY_DRY" != "true" ]]; then
             echo "⏭️ $WORKER is scaffold-only, skipping deploy"
             exit 0
+          fi
+
+          if [[ "$ENV" == "production" ]]; then
+            if [[ "$WORKER" == "sentence-api" ]]; then
+              echo "⏭️ sentence-api production bindings are still placeholders; skipping production deploy until Cloudflare resources are provisioned"
+              exit 0
+            fi
+
+            if [[ "$WORKER" == "content-api" ]]; then
+              echo "⏭️ content-api production route/account ownership is not aligned in wrangler.toml; skipping production deploy instead of failing the whole release"
+              exit 0
+            fi
+
+            if [[ "$WORKER" == "tts-api" ]]; then
+              echo "⏭️ tts-api compatibility custom domain is not provisioned; skipping production deploy instead of failing the whole release"
+              exit 0
+            fi
           fi
 
           # For dev: use dev worker name from wrangler.toml or fallback
