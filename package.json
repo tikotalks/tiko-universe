@@ -12,6 +12,8 @@
   ],
   "scripts": {
     "check": "npm run lint && npm run typecheck && npm run test",
+    "generate:app-configs": "node tools/generate-app-configs.mjs",
+    "prebuild": "npm run generate:app-configs || true",
     "lint": "node tools/check-placeholders.mjs",
     "typecheck": "vue-tsc --noEmit -p tsconfig.json",
     "test": "vitest run",

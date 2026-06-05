@@ -25,7 +25,7 @@ export interface Env extends AuthEnv {
   ALLOWED_ORIGINS?: string
 }
 
-export type TikoAppId = 'yes-no' | 'type' | 'cards' | 'sequence' | 'timer'
+export type TikoAppId = 'yes-no' | 'type' | 'cards' | 'sequence' | 'timer' | 'radio' | 'media' | 'admin' | 'tiko' | 'todo' | 'talk'
 type AppResource = 'settings' | 'state'
 
 type JsonValue = null | boolean | number | string | JsonValue[] | { [key: string]: JsonValue }
@@ -44,7 +44,7 @@ interface AppDataRow {
   version: number
 }
 
-const APPS = ['yes-no', 'type', 'cards', 'sequence', 'timer'] as const
+const APPS = ['yes-no', 'type', 'cards', 'sequence', 'timer', 'radio', 'media', 'admin', 'tiko', 'todo', 'talk'] as const
 const DEFAULTS: Record<TikoAppId, Record<AppResource, JsonValue>> = {
   'yes-no': {
     settings: { language: 'en', colorMode: 'system', spokenPrompt: 'Make a choice.' },
@@ -56,7 +56,49 @@ const DEFAULTS: Record<TikoAppId, Record<AppResource, JsonValue>> = {
   },
   cards: { settings: {}, state: {} },
   sequence: { settings: {}, state: {} },
-  timer: { settings: {}, state: {} }
+  timer: { settings: {}, state: {} },
+  radio: { settings: {}, state: {} },
+  media: { settings: {}, state: {} },
+  admin: { settings: {}, state: {} },
+  tiko: { settings: {}, state: {} },
+  todo: { settings: {}, state: {} },
+  talk: { settings: {}, state: {} }
+}
+
+interface AppConfigRow {
+  app: string
+  title: string
+  app_color: string
+  app_icon: string
+  app_icon_media_category: string | null
+  app_icon_image_url: string | null
+  theme_color: string | null
+  updated_at: string
+  version: number
+}
+
+const DEFAULT_APP_CONFIGS: Record<TikoAppId, AppConfigPayload> = {
+  'yes-no': { id: 'yes-no', title: 'Yes No', appColor: 'yes-no', appIcon: 'ui/check-fat', appIconMediaCategory: 'emotions', themeColor: '#9b3fbd' },
+  type: { id: 'type', title: 'Type', appColor: 'type', appIcon: 'ui/type', appIconMediaCategory: 'letters', themeColor: '#2488ff' },
+  cards: { id: 'cards', title: 'Cards', appColor: 'cards', appIcon: 'education/book-2', appIconMediaCategory: 'animals', themeColor: '#ff8a1f' },
+  sequence: { id: 'sequence', title: 'Sequence', appColor: 'sequence', appIcon: 'ui/list', appIconMediaCategory: 'routines', themeColor: '#16b8a6' },
+  timer: { id: 'timer', title: 'Timer', appColor: 'timer', appIcon: 'ui/timer', appIconMediaCategory: 'transport', themeColor: '#f8c22e' },
+  radio: { id: 'radio', title: 'Radio', appColor: 'radio', appIcon: 'media/headphones', appIconMediaCategory: 'music', themeColor: '#e84057' },
+  media: { id: 'media', title: 'Media', appColor: 'media', appIcon: 'media/image', appIconMediaCategory: 'art', themeColor: '#2dd4bf' },
+  admin: { id: 'admin', title: 'Admin', appColor: 'admin', appIcon: 'ui/settings', appIconMediaCategory: 'tools', themeColor: '#8b5cf6' },
+  tiko: { id: 'tiko', title: 'Tiko', appColor: 'tiko', appIcon: 'ui/heart', appIconMediaCategory: 'tiko', themeColor: '#ef4f8f' },
+  todo: { id: 'todo', title: 'Todo', appColor: 'todo', appIcon: 'ui/check-list', appIconMediaCategory: 'routines', themeColor: '#2488ff' },
+  talk: { id: 'talk', title: 'Talk', appColor: 'talk', appIcon: 'ui/talk', appIconMediaCategory: 'communication', themeColor: '#17131c' }
+}
+
+interface AppConfigPayload {
+  id: TikoAppId
+  title: string
+  appColor: TikoAppId
+  appIcon: string
+  appIconMediaCategory?: string
+  appIconImageUrl?: string
+  themeColor?: string
 }
 
 export default {
@@ -75,6 +117,15 @@ export async function handleRequest(request: Request, env: Env): Promise<Respons
   try {
     const url = new URL(request.url)
     const path = url.pathname.replace(/\/$/, '')
+
+    // Public app config endpoints — values are admin-managed with static fallbacks.
+    if (path === '/v1/apps/config' && request.method === 'GET') return withCors(await readAppConfigs(env), cors)
+    const configMatch = /^\/v1\/apps\/config\/([^/]+)$/.exec(path)
+    if (configMatch) {
+      const app = parseApp(configMatch[1])
+      if (request.method === 'GET') return withCors(await readAppConfig(env, app), cors)
+      return withCors(jsonError('method_not_allowed', 'Method not allowed.', 405), cors)
+    }
 
     // Global defaults endpoints — session-protected GET & PUT
     const defaultsMatch = /^\/v1\/apps\/defaults\/([^/]+)\/(settings|state)$/.exec(path)
@@ -105,6 +156,41 @@ export async function handleRequest(request: Request, env: Env): Promise<Respons
     }
     return withCors(jsonError('internal_error', 'Unexpected server error.', 500), cors)
   }
+}
+
+
+async function readAppConfigs(env: Env): Promise<Response> {
+  const { results } = await env.APP_DB.prepare('SELECT app, title, app_color, app_icon, app_icon_media_category, app_icon_image_url, theme_color, updated_at, version FROM app_config').all<AppConfigRow>()
+  const rows = new Map((results ?? []).map((row) => [row.app, row]))
+  const configs = Object.fromEntries(APPS.map((app) => [app, rowToConfig(app, rows.get(app) ?? null)]))
+  return json({ configs, updatedAt: latestUpdatedAt(results ?? []) })
+}
+
+async function readAppConfig(env: Env, app: TikoAppId): Promise<Response> {
+  const row = await first<AppConfigRow>(env.APP_DB.prepare('SELECT app, title, app_color, app_icon, app_icon_media_category, app_icon_image_url, theme_color, updated_at, version FROM app_config WHERE app = ?').bind(app))
+  return json({ config: rowToConfig(app, row), updatedAt: row?.updated_at ?? null, version: row ? Number(row.version) : 0 })
+}
+
+function rowToConfig(app: TikoAppId, row: AppConfigRow | null): AppConfigPayload {
+  const fallback = DEFAULT_APP_CONFIGS[app]
+  if (!row) return fallback
+  return {
+    id: app,
+    title: row.title || fallback.title,
+    appColor: parseConfigColor(row.app_color, fallback.appColor),
+    appIcon: row.app_icon || fallback.appIcon,
+    ...(row.app_icon_media_category ? { appIconMediaCategory: row.app_icon_media_category } : fallback.appIconMediaCategory ? { appIconMediaCategory: fallback.appIconMediaCategory } : {}),
+    ...(row.app_icon_image_url ? { appIconImageUrl: row.app_icon_image_url } : fallback.appIconImageUrl ? { appIconImageUrl: fallback.appIconImageUrl } : {}),
+    ...(row.theme_color ? { themeColor: row.theme_color } : fallback.themeColor ? { themeColor: fallback.themeColor } : {})
+  }
+}
+
+function parseConfigColor(value: string, fallback: TikoAppId): TikoAppId {
+  return (APPS as readonly string[]).includes(value) ? value as TikoAppId : fallback
+}
+
+function latestUpdatedAt(rows: AppConfigRow[]): string | null {
+  return rows.reduce<string | null>((latest, row) => !latest || row.updated_at > latest ? row.updated_at : latest, null)
 }
 
 async function readAppData(env: Env, userId: string, app: TikoAppId, resource: AppResource): Promise<Response> {
