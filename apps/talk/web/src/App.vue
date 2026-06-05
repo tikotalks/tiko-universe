@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, onMounted, ref, watch } from 'vue'
 import { IdentityClient, type IdentityBundle } from '@tiko/identity'
-import { TikoAppShell, TikoSettingsPanel, createTikoTtsClient, type TikoColorMode } from '@tiko/ui'
+import { TikoAppShell, TikoSettingsPanel, type TikoColorMode } from '@tiko/ui'
 import type { SavedPhrase, Template, WordTile } from '@tiko/talk-types'
 import SentenceStrip from './components/SentenceStrip.vue'
 import SpeakButton from './components/SpeakButton.vue'
@@ -9,13 +9,13 @@ import SuggestionBar from './components/SuggestionBar.vue'
 import TemplatePicker from './components/TemplatePicker.vue'
 import WordGrid from './components/WordGrid.vue'
 import SavedPhrases from './components/SavedPhrases.vue'
-import { mockCategories, mockSavedPhrases, mockTemplates, mockWords } from './fixtures/mockTalkData'
 import { useSentenceStrip } from './composables/useSentenceStrip'
+import { useSentenceApi } from './composables/useSentenceApi'
 
 const appName = 'Talk'
 const storageKey = 'tiko:talk'
 const identityStorageKey = 'tiko:identity:device-session'
-const activeCategoryId = ref(mockCategories[0]?.id ?? 'people')
+const activeCategoryId = ref('')
 const speechStatus = ref<'idle' | 'speaking' | 'ready' | 'fallback' | 'error'>('idle')
 const speechError = ref<string | null>(null)
 const settingsOpen = ref(false)
@@ -67,37 +67,37 @@ const stored = readJson<PersistedTalkState>(storageKey, {})
 const language = ref(detectLanguage(stored.language))
 const colorMode = ref<TikoColorMode>(toColorMode(stored.colorMode))
 const identityClient = new IdentityClient({ baseUrl: resolveIdentityBaseUrl(), credentials: 'include' })
-const tts = createTikoTtsClient()
+const sentenceApi = useSentenceApi({ language, sessionToken })
+const strip = useSentenceStrip({ allWords: sentenceApi.words })
 
-const strip = useSentenceStrip({ allWords: mockWords })
-
-const suggestions = computed(() => {
-  const used = new Set(strip.wordIds.value)
-  const preferred = strip.words.value.at(-1)?.category ?? activeCategoryId.value
-  return mockWords
-    .filter((word) => word.category === preferred && !used.has(word.id))
-    .slice(0, 5)
+const canSpeak = computed(() => strip.canSpeak.value && speechStatus.value !== 'speaking' && !sentenceApi.loading.value)
+const cached = computed(() => sentenceApi.lastCompletion.value?.audioCached === true)
+const statusText = computed(() => {
+  if (sentenceApi.loading.value) return 'Loading Talk words.'
+  if (sentenceApi.isOffline.value) return 'Offline words active.'
+  if (sentenceApi.error.value) return sentenceApi.error.value
+  return null
 })
-
-const canSpeak = computed(() => strip.canSpeak.value && speechStatus.value !== 'speaking')
-const cached = computed(() => speechStatus.value === 'ready')
 
 function selectWord(word: WordTile) {
   strip.addWord(word)
   activeCategoryId.value = word.category
   speechStatus.value = 'idle'
   speechError.value = null
+  void sentenceApi.next(strip.wordIds.value)
 }
 
 function selectTemplate(template: Template) {
   strip.applyTemplate(template)
   activeCategoryId.value = template.category
   speechStatus.value = 'idle'
+  void sentenceApi.next(strip.wordIds.value)
 }
 
 function selectPhrase(phrase: SavedPhrase) {
-  strip.applyPhrase(phrase)
+  strip.setWords(sentenceApi.wordsForPhrase(phrase))
   speechStatus.value = 'idle'
+  void sentenceApi.next(strip.wordIds.value)
 }
 
 function persistIdentity(bundle: IdentityBundle) {
@@ -140,23 +140,32 @@ watch([language, colorMode], () => {
   writeJson(storageKey, { language: language.value, colorMode: colorMode.value })
 }, { deep: true })
 
+watch(language, () => {
+  strip.clear()
+  void sentenceApi.start()
+})
+
+watch(sentenceApi.categories, (categories) => {
+  if (!activeCategoryId.value && categories[0]) activeCategoryId.value = categories[0].id
+}, { immediate: true })
+
 onMounted(() => {
   void bootstrapIdentity()
+  void sentenceApi.start()
 })
 
 async function speakSentence() {
-  const text = strip.display.value.trim()
-  if (!text) return
+  if (!strip.wordIds.value.length) return
 
   speechStatus.value = 'speaking'
   speechError.value = null
-  const result = await tts.speak({ text, language: language.value })
-  if (result.error) {
-    speechStatus.value = result.metadata?.fallbackUsed ? 'fallback' : 'error'
-    speechError.value = result.error
-    return
+  try {
+    const result = await sentenceApi.complete(strip.wordIds.value)
+    speechStatus.value = result.audioUrl ? 'ready' : 'fallback'
+  } catch (error) {
+    speechStatus.value = 'error'
+    speechError.value = error instanceof Error ? error.message : 'speech_failed'
   }
-  speechStatus.value = result.cached ? 'ready' : 'idle'
 }
 </script>
 
@@ -208,23 +217,24 @@ async function speakSentence() {
         @clear="strip.clear"
       />
 
+      <p v-if="statusText" class="talk-app__status" :class="{ 'talk-app__status--error': sentenceApi.mode.value === 'error' }">{{ statusText }}</p>
       <p v-if="speechStatus === 'fallback'" class="talk-app__status">Using the device voice while cached audio is unavailable.</p>
       <p v-else-if="speechError" class="talk-app__status talk-app__status--error">Speech could not start: {{ speechError }}</p>
 
       <div class="talk-app__columns">
         <div class="talk-app__main-column">
-          <SuggestionBar :suggestions="suggestions" @select="selectWord" />
+          <SuggestionBar :suggestions="sentenceApi.suggestions.value" @select="selectWord" />
           <WordGrid
-            :categories="mockCategories"
-            :words="mockWords"
+            :categories="sentenceApi.categories.value"
+            :words="sentenceApi.words.value"
             :active-category-id="activeCategoryId"
-            @category-change="activeCategoryId = $event"
+            @category-change="activeCategoryId = $event; sentenceApi.loadVocabulary($event)"
             @select="selectWord"
           />
         </div>
         <aside class="talk-app__side-column" aria-label="Talk shortcuts">
-          <TemplatePicker :templates="mockTemplates" @select="selectTemplate" />
-          <SavedPhrases :phrases="mockSavedPhrases" @select="selectPhrase" />
+          <TemplatePicker :templates="sentenceApi.templates.value" @select="selectTemplate" />
+          <SavedPhrases :phrases="sentenceApi.savedPhrases.value" @select="selectPhrase" />
         </aside>
       </div>
     </div>
