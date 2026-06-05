@@ -1594,7 +1594,7 @@ function openProfileMenu() {
       hasCode: hasCode.value,
       isLoggedIn: Boolean(sessionToken.value),
     },
-    config: { position: 'bottom-right', canClose: true, background: false, width: 'auto' },
+    config: { position: 'bottom', canClose: true, background: false, width: 'auto' },
     on: {
       profile: () => {},
       logout: () => doLogout(),

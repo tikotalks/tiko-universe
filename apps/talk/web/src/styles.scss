@@ -1,0 +1,286 @@
+:root {
+  color: var(--color-foreground);
+  background: var(--color-background);
+  font-family: Inter, Nunito, system-ui, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+  background: var(--color-background);
+}
+
+button {
+  font: inherit;
+}
+
+.talk-app .tiko-app-shell__main {
+  padding: 0;
+}
+
+.talk-app__workspace {
+  min-height: calc(100dvh - 5rem);
+  padding: clamp(1rem, 3vw, 2rem);
+  display: flex;
+  flex-direction: column;
+  gap: clamp(1rem, 2vw, 1.5rem);
+  background:
+    radial-gradient(circle at top left, color-mix(in srgb, var(--color-foreground), transparent 92%), transparent 34rem),
+    var(--color-background);
+}
+
+.talk-app__hero,
+.talk-app__settings,
+.talk-strip,
+.talk-suggestions,
+.talk-word-grid,
+.talk-template-picker,
+.talk-saved-phrases {
+  border: 1px solid color-mix(in srgb, var(--color-foreground), transparent 88%);
+  background: color-mix(in srgb, var(--color-background), var(--color-foreground) 3%);
+  border-radius: 1.5rem;
+  box-shadow: 0 1rem 3rem color-mix(in srgb, var(--color-foreground), transparent 94%);
+}
+
+.talk-app__hero {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: clamp(1rem, 3vw, 1.5rem);
+}
+
+.talk-app__settings {
+  display: grid;
+  gap: 0.75rem;
+  padding: clamp(1rem, 3vw, 1.25rem);
+}
+
+.talk-app__identity-status {
+  margin: 0;
+  color: color-mix(in srgb, var(--color-foreground), transparent 34%);
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.talk-app__hero h1,
+.talk-word-grid h2,
+.talk-suggestions h2,
+.talk-template-picker h2,
+.talk-saved-phrases h2 {
+  margin: 0;
+  color: var(--color-foreground);
+}
+
+.talk-app__hero p {
+  margin: 0.35rem 0 0;
+  color: color-mix(in srgb, var(--color-foreground), transparent 32%);
+}
+
+.talk-app__eyebrow {
+  margin: 0;
+  font-size: 0.8rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--color-foreground), var(--color-background) 28%);
+}
+
+.talk-app__columns {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(18rem, 0.38fr);
+  gap: clamp(1rem, 2vw, 1.5rem);
+  align-items: start;
+}
+
+.talk-app__main-column,
+.talk-app__side-column {
+  display: grid;
+  gap: clamp(1rem, 2vw, 1.5rem);
+}
+
+.talk-strip {
+  padding: 0.85rem;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.talk-strip__words {
+  min-height: 4rem;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  padding: 0.6rem;
+  border-radius: 1rem;
+  background: color-mix(in srgb, var(--color-background), var(--color-foreground) 5%);
+}
+
+.talk-strip__word,
+.talk-strip__clear,
+.talk-speak-button,
+.talk-word-grid__tab,
+.talk-template-picker__item,
+.talk-saved-phrases__item {
+  border: 1px solid color-mix(in srgb, var(--color-foreground), transparent 86%);
+  background: var(--color-background);
+  color: var(--color-foreground);
+  border-radius: 999px;
+  cursor: pointer;
+}
+
+.talk-strip__word {
+  padding: 0.75rem 1rem;
+  font-weight: 800;
+  background: color-mix(in srgb, var(--color-foreground), var(--color-background) 18%);
+  color: var(--color-background);
+}
+
+.talk-strip__placeholder,
+.talk-suggestions__empty,
+.talk-template-picker__empty,
+.talk-saved-phrases__empty,
+.talk-word-tile__pos,
+.talk-saved-phrases__item span {
+  color: color-mix(in srgb, var(--color-foreground), transparent 42%);
+}
+
+.talk-strip__clear,
+.talk-speak-button {
+  padding: 0.75rem 1rem;
+  font-weight: 800;
+}
+
+.talk-speak-button {
+  min-width: 10rem;
+  display: grid;
+  gap: 0.15rem;
+  background: color-mix(in srgb, var(--color-foreground), var(--color-background) 18%);
+  color: var(--color-background);
+}
+
+.talk-speak-button:disabled,
+.talk-strip__clear:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.talk-speak-button__status {
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+.talk-app__status {
+  margin: 0;
+  padding: 0.8rem 1rem;
+  border-radius: 1rem;
+  background: color-mix(in srgb, var(--color-background), var(--color-foreground) 6%);
+  color: color-mix(in srgb, var(--color-foreground), transparent 25%);
+}
+
+.talk-app__status--error {
+  color: var(--color-error);
+}
+
+.talk-suggestions,
+.talk-word-grid,
+.talk-template-picker,
+.talk-saved-phrases {
+  padding: clamp(1rem, 2vw, 1.25rem);
+}
+
+.talk-suggestions__row,
+.talk-word-grid__tiles,
+.talk-word-grid__tabs,
+.talk-template-picker__list,
+.talk-saved-phrases__list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 0.85rem;
+}
+
+.talk-word-grid__header {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.talk-word-grid__tab {
+  padding: 0.55rem 0.8rem;
+  font-weight: 800;
+}
+
+.talk-word-grid__tab--active {
+  background: color-mix(in srgb, var(--color-foreground), var(--color-background) 22%);
+  color: var(--color-background);
+}
+
+.talk-word-tile {
+  min-width: 8rem;
+  min-height: 7rem;
+  padding: 0.9rem;
+  border: 1px solid color-mix(in srgb, var(--color-foreground), transparent 86%);
+  border-radius: 1.2rem;
+  display: grid;
+  gap: 0.35rem;
+  place-items: center;
+  background: var(--color-background);
+  color: var(--color-foreground);
+  cursor: pointer;
+}
+
+.talk-word-tile__icon {
+  min-width: 2.25rem;
+  min-height: 2.25rem;
+  display: grid;
+  place-items: center;
+  border-radius: 0.8rem;
+  background: color-mix(in srgb, var(--color-foreground), transparent 90%);
+  font-size: 0.75rem;
+  font-weight: 900;
+}
+
+.talk-word-tile__text {
+  font-size: 1.2rem;
+  font-weight: 900;
+}
+
+.talk-word-tile__pos {
+  font-size: 0.72rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.talk-template-picker__item,
+.talk-saved-phrases__item {
+  width: 100%;
+  padding: 0.85rem 1rem;
+  border-radius: 1rem;
+  display: grid;
+  gap: 0.2rem;
+  text-align: left;
+}
+
+@media (max-width: 860px) {
+  .talk-app__hero,
+  .talk-strip {
+    grid-template-columns: 1fr;
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .talk-app__columns {
+    grid-template-columns: 1fr;
+  }
+
+  .talk-word-tile {
+    min-width: min(9rem, calc(50vw - 2rem));
+  }
+}

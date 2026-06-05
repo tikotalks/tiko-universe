@@ -11,7 +11,7 @@ import './styles.scss'
 export { Button as SilButton, Icon as SilIcon } from '@sil/ui'
 
 export type TikoChoiceTone = 'primary' | 'secondary' | 'success' | 'danger'
-export type TikoAppColor = 'yes-no' | 'type' | 'cards' | 'sequence' | 'timer' | 'radio' | 'media' | 'admin' | 'tiko' | 'todo'
+export type TikoAppColor = 'yes-no' | 'type' | 'cards' | 'sequence' | 'timer' | 'radio' | 'media' | 'admin' | 'tiko' | 'todo' | 'talk'
 export type TikoColorMode = 'light' | 'dark' | 'system'
 export type { TikoTtsProvider } from '@tiko/media'
 
@@ -25,7 +25,8 @@ export const tikoAppColors: Record<TikoAppColor, { label: string; primary: strin
   media: { label: 'Media', primary: '#2dd4bf', dark: 'color-mix(in srgb, #2dd4bf, var(--color-foreground) 42%)' },
   admin: { label: 'Admin', primary: '#8b5cf6', dark: 'color-mix(in srgb, #8b5cf6, var(--color-foreground) 42%)' },
   tiko: { label: 'Tiko', primary: 'var(--color-error)', dark: 'color-mix(in srgb, var(--color-error), var(--color-foreground) 42%)' },
-  todo: { label: 'Todo', primary: 'var(--color-info)', dark: 'color-mix(in srgb, var(--color-info), var(--color-foreground) 42%)' }
+  todo: { label: 'Todo', primary: 'var(--color-info)', dark: 'color-mix(in srgb, var(--color-info), var(--color-foreground) 42%)' },
+  talk: { label: 'Talk', primary: 'color-mix(in srgb, var(--color-foreground), var(--color-background) 30%)', dark: 'color-mix(in srgb, var(--color-foreground), var(--color-background) 18%)' }
 }
 
 export interface TikoChoiceInput {
