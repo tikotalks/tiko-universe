@@ -232,7 +232,7 @@ describe('Yes No web app', () => {
     await accountButton.trigger('click')
 
     expect(popupService.showPopup).toHaveBeenCalledWith(expect.objectContaining({
-      props: expect.objectContaining({ parentMode: true, isLoggedIn: true })
+      props: expect.objectContaining({ parentMode: true })
     }))
     const popupConfig = popupService.showPopup.mock.calls[0][0] as { component: { __name?: string } }
     expect(popupConfig.component.__name).toBe('TikoProfileMenu')

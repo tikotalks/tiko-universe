@@ -355,13 +355,11 @@ function openProfileMenu() {
     props: {
       parentMode: parentMode.value,
       hasCode: hasParentCode.value,
-      isLoggedIn: Boolean(sessionToken.value),
     },
     config: { position: 'center', canClose: true, background: true, width: 'min(34rem, calc(100vw - 2rem))' },
     on: {
       profile: () => { popup.closeAllPopups(); window.setTimeout(openAccountPopup, 180) },
       logout: () => void doLogout(),
-      login: () => { popup.closeAllPopups(); window.setTimeout(openAccountPopup, 180) },
       'enter-parent-mode': () => openParentCodePopup(),
       'enter-child-mode': () => openChildModeFlow(),
       close: () => popup.closeAllPopups(),

@@ -4,7 +4,6 @@ interface Props {
   /** Kept for the shared app-shell contract; the iOS-style menu is shown only while parent mode is active. */
   parentMode: boolean
   hasCode: boolean
-  isLoggedIn: boolean
 }
 
 defineProps<Props>()
@@ -14,7 +13,6 @@ const emit = defineEmits<{
   (e: 'logout'): void
   (e: 'enter-parent-mode'): void
   (e: 'enter-child-mode'): void
-  (e: 'login'): void
   (e: 'close'): void
 }>()
 </script>
@@ -38,14 +36,9 @@ const emit = defineEmits<{
         <span>Child mode</span>
         <span class="tiko-profile-menu__chevron" aria-hidden="true">›</span>
       </button>
-      <button v-if="isLoggedIn" class="tiko-profile-menu__item" type="button" @click="emit('logout')">
+      <button class="tiko-profile-menu__item" type="button" @click="emit('logout')">
         <span class="tiko-profile-menu__icon"><Icon name="arrows/arrow-right" /></span>
         <span>Log out</span>
-        <span class="tiko-profile-menu__chevron" aria-hidden="true">›</span>
-      </button>
-      <button v-else class="tiko-profile-menu__item" type="button" @click="emit('login')">
-        <span class="tiko-profile-menu__icon"><Icon name="ui/key" /></span>
-        <span>Log in</span>
         <span class="tiko-profile-menu__chevron" aria-hidden="true">›</span>
       </button>
     </div>
