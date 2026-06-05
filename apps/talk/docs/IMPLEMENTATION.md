@@ -34,7 +34,7 @@ These items now track source and deployment readiness.
 
 - [x] **Bundle fallback pack** (`apps/talk/web/src/data/fallback-pack-en.json`) — scoped English offline fallback is checked in for the web app.
 
-- [x] **Register Talk in workspace/deploy graph** — package workspaces include Talk paths; deployment workflow includes `talk` and `sentence-api`.
+- [x] **Register Talk in workspace/deploy graph** — package workspaces include Talk paths; deployment workflow includes `talk`; `sentence-api` remains scaffold-only for deployment until Cloudflare D1/KV binding IDs are provisioned.
 
 ### P2 — Required before user testing
 
