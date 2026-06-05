@@ -1,6 +1,5 @@
 -- Curated English v1 seed for Talk sentence-api.
 -- Generated from workers/sentence-api/data/en-v1.json; keep JSON as the source of review.
-BEGIN TRANSACTION;
 INSERT OR REPLACE INTO talk_language_packs (id, locale, version, status, source, grammar_json, metadata_json, published_at) VALUES ('en-v1', 'en', 1, 'active', 'curated', '{"wordOrder":"subject-verb-object","validTransitions":{"pronoun":["verb","noun","adjective"],"determiner":["noun","adjective"],"verb":["determiner","noun","adjective","preposition","social"],"noun":["verb","preposition","conjunction","social"],"adjective":["noun","social","conjunction"],"question":["verb","pronoun","determiner"],"preposition":["determiner","noun","verb"],"conjunction":["pronoun","determiner","noun","verb"],"social":["noun","verb"]},"articles":{"default":{"beforeConsonant":"a","beforeVowel":"an"}},"negation":{"position":"before-verb","words":["not"]}}', '{"fallbackGenerator": {"minFrequency": 8, "targetWords": 50, "targetTemplates": 5, "schema": "LanguagePack"}, "counts": {"words": 295, "talk_templates": 24}}', CURRENT_TIMESTAMP);
 INSERT OR REPLACE INTO talk_word_inventory (id, pack_id, locale, text, normalized_text, pos, category, icon, image, frequency, inflections_json) VALUES ('i', 'en-v1', 'en', 'I', 'i', 'pronoun', 'people', 'user', NULL, 10, '{}');
 INSERT OR REPLACE INTO talk_word_inventory (id, pack_id, locale, text, normalized_text, pos, category, icon, image, frequency, inflections_json) VALUES ('you', 'en-v1', 'en', 'you', 'you', 'pronoun', 'people', 'user', NULL, 10, '{}');
@@ -350,4 +349,3 @@ INSERT OR REPLACE INTO talk_transitions (id, pack_id, locale, from_pos, to_pos, 
 INSERT OR REPLACE INTO talk_transitions (id, pack_id, locale, from_pos, to_pos, weight, source) VALUES ('en-v1:conjunction:verb', 'en-v1', 'en', 'conjunction', 'verb', 7.00, 'curated');
 INSERT OR REPLACE INTO talk_transitions (id, pack_id, locale, from_pos, to_pos, weight, source) VALUES ('en-v1:social:noun', 'en-v1', 'en', 'social', 'noun', 10.00, 'curated');
 INSERT OR REPLACE INTO talk_transitions (id, pack_id, locale, from_pos, to_pos, weight, source) VALUES ('en-v1:social:verb', 'en-v1', 'en', 'social', 'verb', 9.00, 'curated');
-COMMIT;
