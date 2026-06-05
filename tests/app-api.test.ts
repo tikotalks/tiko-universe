@@ -50,6 +50,7 @@ class MemoryD1Database {
   settings = new Map<string, Row>()
   state = new Map<string, Row>()
   defaults = new Map<string, Row>()
+  appConfig = new Map<string, Row>()
 
   prepare(sql: string): MemoryStatement {
     return new MemoryStatement(this, sql)
@@ -99,6 +100,15 @@ class MemoryD1Database {
       const [app, resource, dataJson, updatedAt, version] = values
       this.defaults.set(`${app}:${resource}`, { app, resource, data_json: dataJson, updated_at: updatedAt, version })
       return new MemoryResult()
+    }
+
+    // app_config table (admin-managed app identity)
+    if (normalized.includes('FROM app_config') && normalized.startsWith('SELECT app, title')) {
+      if (normalized.includes('WHERE app = ?')) {
+        const row = this.appConfig.get(String(values[0]))
+        return new MemoryResult(row ? [row] : [])
+      }
+      return new MemoryResult([...this.appConfig.values()])
     }
 
     throw new Error(`Unhandled SQL in test fake: ${normalized}`)
@@ -159,8 +169,37 @@ describe('app-api settings/state endpoints', () => {
     expect(body.error.code).toBe('unauthorized')
   })
 
+  it('returns public app config with static fallbacks', async () => {
+    const { response, body } = await fetchJson('/v1/apps/config')
+
+    expect(response.status).toBe(200)
+    expect(body.configs.cards).toMatchObject({ id: 'cards', title: 'Cards', appColor: 'cards' })
+    expect(body.configs.talk).toMatchObject({ id: 'talk', title: 'Talk', appColor: 'talk' })
+  })
+
+  it('returns stored public app config overrides', async () => {
+    const testEnv = await env()
+    testEnv.APP_DB.appConfig.set('cards', {
+      app: 'cards',
+      title: 'Tiles',
+      app_color: 'cards',
+      app_icon: 'custom/icon',
+      app_icon_media_category: 'custom-media',
+      app_icon_image_url: null,
+      theme_color: '#123456',
+      updated_at: '2026-01-01T00:00:00.000Z',
+      version: 2
+    })
+
+    const { response, body } = await fetchJson('/v1/apps/config/cards', {}, testEnv)
+
+    expect(response.status).toBe(200)
+    expect(body.config).toMatchObject({ id: 'cards', title: 'Tiles', appIcon: 'custom/icon', themeColor: '#123456' })
+    expect(body.version).toBe(2)
+  })
+
   it('rejects unknown apps before reading app data', async () => {
-    const { response, body } = await fetchJson('/v1/apps/radio/settings', { headers: auth })
+    const { response, body } = await fetchJson('/v1/apps/not-an-app/settings', { headers: auth })
 
     expect(response.status).toBe(404)
     expect(body.error.code).toBe('unknown_app')

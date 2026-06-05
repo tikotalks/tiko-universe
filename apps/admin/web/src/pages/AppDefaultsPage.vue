@@ -1,7 +1,9 @@
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue'
+import { computed, onMounted, reactive, ref, watch } from 'vue'
 import { useBemm } from 'bemm'
-import { Button } from '@sil/ui'
+import { Button, Icon, InputText } from '@sil/ui'
+import { tikoAppConfigs, tikoAppColors, type TikoAppColor, type TikoAppConfig } from '@tiko/ui'
+import { useAdminAppConfig, type AdminManagedAppConfig } from '../composables/useAdminAppConfig'
 import { useAppDefaults, type AppResource, type TikoManagedApp } from '../composables/useAppDefaults'
 import CardsEditor from '../components/defaults/CardsEditor.vue'
 import YesNoEditor from '../components/defaults/YesNoEditor.vue'
@@ -9,195 +11,337 @@ import SequenceEditor from '../components/defaults/SequenceEditor.vue'
 import TypeEditor from '../components/defaults/TypeEditor.vue'
 import TimerEditor from '../components/defaults/TimerEditor.vue'
 
-const bemm = useBemm('app-defaults', { return: 'string', includeBaseClass: true })
+const bemm = useBemm('apps-page', { return: 'string', includeBaseClass: true })
 
-const apps: Array<{ id: TikoManagedApp; label: string; hint: string }> = [
-  { id: 'cards', label: 'Cards', hint: 'Tile collections and decks' },
-  { id: 'yes-no', label: 'Yes-No', hint: 'Prompts and options' },
-  { id: 'sequence', label: 'Sequence', hint: 'Ordered steps' },
-  { id: 'type', label: 'Type', hint: 'Typing prompts' },
-  { id: 'timer', label: 'Timer', hint: 'Duration presets' },
-]
+const appOrder: TikoAppColor[] = ['yes-no', 'type', 'cards', 'sequence', 'timer', 'radio', 'talk', 'todo', 'media', 'admin', 'tiko']
+const editableDefaultsApps = ['cards', 'yes-no', 'sequence', 'type', 'timer', 'radio', 'todo', 'talk'] as const
 
-const editorByApp = {
+type DefaultsApp = typeof editableDefaultsApps[number]
+
+const editorByApp: Partial<Record<DefaultsApp, unknown>> = {
   cards: CardsEditor,
   'yes-no': YesNoEditor,
   sequence: SequenceEditor,
   type: TypeEditor,
   timer: TimerEditor,
-} as const
+}
 
-const { loading, saving, error, readDefaults, writeDefaults } = useAppDefaults()
-const selectedApp = ref<TikoManagedApp>('cards')
+const configApi = useAdminAppConfig()
+const defaultsApi = useAppDefaults()
+const selectedApp = ref<TikoAppColor>('cards')
+const configs = ref<Record<TikoAppColor, AdminManagedAppConfig>>({ ...tikoAppConfigs })
+const configDraft = reactive<TikoAppConfig>({ ...tikoAppConfigs.cards })
+const configDirty = ref(false)
+const configSavedMessage = ref<string | null>(null)
+
 const stateValue = ref<Record<string, unknown>>({})
-const version = ref(0)
-const updatedAt = ref<string | null>(null)
-const savedMessage = ref<string | null>(null)
-const dirty = ref(false)
+const defaultsVersion = ref(0)
+const defaultsUpdatedAt = ref<string | null>(null)
+const defaultsSavedMessage = ref<string | null>(null)
+const defaultsDirty = ref(false)
 
-const selectedMeta = computed(() => apps.find(app => app.id === selectedApp.value)!)
-const currentEditor = computed(() => editorByApp[selectedApp.value])
+const selectedConfig = computed(() => configs.value[selectedApp.value] ?? tikoAppConfigs[selectedApp.value])
+const selectedColor = computed(() => tikoAppColors[selectedConfig.value.appColor] ?? tikoAppColors[selectedApp.value])
+const defaultsApp = computed<DefaultsApp | null>(() => editableDefaultsApps.includes(selectedApp.value as DefaultsApp) ? selectedApp.value as DefaultsApp : null)
+const currentEditor = computed(() => defaultsApp.value ? editorByApp[defaultsApp.value] ?? null : null)
+const canEditDefaults = computed(() => Boolean(defaultsApp.value))
 
-async function loadCurrent() {
-  savedMessage.value = null
-  const payload = await readDefaults(selectedApp.value, 'state' satisfies AppResource)
-  stateValue.value = (payload.state ?? {}) as Record<string, unknown>
-  version.value = payload.version
-  updatedAt.value = payload.updatedAt
-  dirty.value = false
+function syncDraft(config: TikoAppConfig) {
+  Object.assign(configDraft, {
+    id: config.id,
+    title: config.title,
+    appColor: config.appColor,
+    appIcon: config.appIcon,
+    appIconMediaCategory: config.appIconMediaCategory ?? '',
+    appIconImageUrl: config.appIconImageUrl ?? '',
+    themeColor: config.themeColor ?? '',
+  })
+  configDirty.value = false
 }
 
-async function onSave() {
-  savedMessage.value = null
-  try {
-    const payload = await writeDefaults(selectedApp.value, 'state', stateValue.value, version.value)
-    version.value = payload.version
-    updatedAt.value = payload.updatedAt
-    savedMessage.value = `Saved ${selectedApp.value} defaults.`
-    dirty.value = false
-  } catch (e) {
-    savedMessage.value = null
-    alert(e instanceof Error ? e.message : 'Could not save.')
+function onConfigInput() {
+  configDirty.value = true
+  configSavedMessage.value = null
+}
+
+async function loadConfigs() {
+  const next = await configApi.readConfigs()
+  configs.value = { ...tikoAppConfigs, ...next }
+  syncDraft(configs.value[selectedApp.value])
+}
+
+async function saveConfig() {
+  configSavedMessage.value = null
+  const normalized: TikoAppConfig = {
+    id: selectedApp.value,
+    title: configDraft.title,
+    appColor: configDraft.appColor,
+    appIcon: configDraft.appIcon,
+    ...(configDraft.appIconMediaCategory ? { appIconMediaCategory: configDraft.appIconMediaCategory } : {}),
+    ...(configDraft.appIconImageUrl ? { appIconImageUrl: configDraft.appIconImageUrl } : {}),
+    ...(configDraft.themeColor ? { themeColor: configDraft.themeColor } : {}),
   }
+  const saved = await configApi.writeConfig(selectedApp.value, normalized, configs.value[selectedApp.value]?.version ?? 0)
+  configs.value = { ...configs.value, [selectedApp.value]: { ...saved.config, updatedAt: saved.updatedAt, version: saved.version } }
+  syncDraft(configs.value[selectedApp.value])
+  configSavedMessage.value = `Saved ${saved.config.title} app config.`
 }
 
-function onValueUpdate(next: Record<string, unknown>) {
+async function loadDefaults() {
+  defaultsSavedMessage.value = null
+  stateValue.value = {}
+  defaultsVersion.value = 0
+  defaultsUpdatedAt.value = null
+  defaultsDirty.value = false
+  if (!defaultsApp.value) return
+
+  const payload = await defaultsApi.readDefaults(defaultsApp.value as TikoManagedApp, 'state' satisfies AppResource)
+  stateValue.value = (payload.state ?? {}) as Record<string, unknown>
+  defaultsVersion.value = payload.version
+  defaultsUpdatedAt.value = payload.updatedAt
+}
+
+async function saveDefaults() {
+  if (!defaultsApp.value) return
+  defaultsSavedMessage.value = null
+  const payload = await defaultsApi.writeDefaults(defaultsApp.value as TikoManagedApp, 'state', stateValue.value, defaultsVersion.value)
+  defaultsVersion.value = payload.version
+  defaultsUpdatedAt.value = payload.updatedAt
+  defaultsSavedMessage.value = `Saved ${selectedConfig.value.title} defaults.`
+  defaultsDirty.value = false
+}
+
+function onDefaultsUpdate(next: Record<string, unknown>) {
   stateValue.value = next
-  dirty.value = true
+  defaultsDirty.value = true
+}
+
+function selectApp(app: TikoAppColor) {
+  selectedApp.value = app
 }
 
 watch(selectedApp, () => {
-  void loadCurrent()
-}, { immediate: true })
+  syncDraft(selectedConfig.value)
+  void loadDefaults()
+})
+
+onMounted(async () => {
+  await loadConfigs()
+  await loadDefaults()
+})
 </script>
 
 <template>
   <section :class="bemm('')">
     <header :class="bemm('header')">
       <div :class="bemm('intro')">
-        <h1 :class="bemm('title')">App defaults</h1>
+        <p :class="bemm('eyebrow')">Admin</p>
+        <h1 :class="bemm('title')">Apps</h1>
         <p :class="bemm('subtitle')">
-          Choose an app and edit its starter content. Defaults are loaded on first install.
+          Manage each app’s title, color, icon, media icon category, and starter defaults.
         </p>
       </div>
     </header>
 
-    <nav :class="bemm('apps')" aria-label="Choose app">
-      <button
-        v-for="app in apps"
-        :key="app.id"
-        type="button"
-        :class="bemm('app-tab', { active: selectedApp === app.id })"
-        @click="selectedApp = app.id"
-      >
-        <strong :class="bemm('app-tab-label')">{{ app.label }}</strong>
-        <span :class="bemm('app-tab-hint')">{{ app.hint }}</span>
-      </button>
-    </nav>
+    <div :class="bemm('layout')">
+      <nav :class="bemm('app-list')" aria-label="Apps">
+        <button
+          v-for="app in appOrder"
+          :key="app"
+          type="button"
+          :class="bemm('app-card', { active: selectedApp === app })"
+          :style="{ '--app-accent': (configs[app]?.themeColor || tikoAppColors[app]?.primary) }"
+          @click="selectApp(app)"
+        >
+          <span :class="bemm('app-icon')">
+            <Icon v-if="(configs[app]?.appIcon || '').includes('/')" :name="configs[app]?.appIcon" size="medium" />
+            <span v-else>{{ configs[app]?.appIcon || app.charAt(0).toUpperCase() }}</span>
+          </span>
+          <span :class="bemm('app-copy')">
+            <strong :class="bemm('app-title')">{{ configs[app]?.title || app }}</strong>
+            <span :class="bemm('app-meta')">{{ configs[app]?.appColor || app }}</span>
+          </span>
+        </button>
+      </nav>
 
-    <div :class="bemm('panel')">
-      <header :class="bemm('panel-head')">
-        <div :class="bemm('panel-intro')">
-          <h2 :class="bemm('panel-title')">{{ selectedMeta.label }} defaults</h2>
-          <p :class="bemm('panel-meta')">
-            Version {{ version }} · Updated {{ updatedAt || 'never' }}
-          </p>
-        </div>
-        <div :class="bemm('panel-actions')">
-          <Button variant="outline" :loading="loading" :disabled="loading" @click="loadCurrent">
-            {{ loading ? 'Loading…' : 'Reload' }}
-          </Button>
-          <Button :loading="saving" :disabled="saving || !dirty" @click="onSave">
-            {{ saving ? 'Saving…' : 'Save changes' }}
-          </Button>
-        </div>
-      </header>
+      <div :class="bemm('workspace')">
+        <section :class="bemm('panel')" :style="{ '--app-accent': configDraft.themeColor || selectedColor.primary }">
+          <header :class="bemm('panel-head')">
+            <div :class="bemm('panel-intro')">
+              <h2 :class="bemm('panel-title')">App config</h2>
+              <p :class="bemm('panel-meta')">
+                Saved in Admin. Build scripts can export this into each app’s `appConfig.ts`.
+              </p>
+            </div>
+            <div :class="bemm('panel-actions')">
+              <Button variant="outline" :loading="configApi.loading.value" :disabled="configApi.loading.value" @click="loadConfigs">
+                Reload
+              </Button>
+              <Button :loading="configApi.saving.value" :disabled="configApi.saving.value || !configDirty" @click="saveConfig">
+                Save app config
+              </Button>
+            </div>
+          </header>
 
-      <p v-if="error" :class="bemm('error')">{{ error }}</p>
-      <p v-if="savedMessage" :class="bemm('success')">{{ savedMessage }}</p>
+          <p v-if="configApi.error.value" :class="bemm('error')">{{ configApi.error.value }}</p>
+          <p v-if="configSavedMessage" :class="bemm('success')">{{ configSavedMessage }}</p>
 
-      <component
-        :is="currentEditor"
-        :model-value="stateValue"
-        @update:model-value="onValueUpdate"
-      />
+          <div :class="bemm('config-form')">
+            <InputText v-model="configDraft.title" label="Title" @update:model-value="onConfigInput" />
+            <label :class="bemm('field')">
+              <span>App color</span>
+              <select v-model="configDraft.appColor" :class="bemm('select')" @change="onConfigInput">
+                <option v-for="app in appOrder" :key="app" :value="app">{{ app }}</option>
+              </select>
+            </label>
+            <InputText v-model="configDraft.themeColor" label="Theme color" placeholder="#2488ff" @update:model-value="onConfigInput" />
+            <InputText v-model="configDraft.appIcon" label="Icon" placeholder="ui/check-fat" @update:model-value="onConfigInput" />
+            <InputText v-model="configDraft.appIconMediaCategory" label="Media icon category" placeholder="animals" @update:model-value="onConfigInput" />
+            <InputText v-model="configDraft.appIconImageUrl" label="Icon image URL" placeholder="https://…" @update:model-value="onConfigInput" />
+          </div>
+        </section>
+
+        <section :class="bemm('panel')">
+          <header :class="bemm('panel-head')">
+            <div :class="bemm('panel-intro')">
+              <h2 :class="bemm('panel-title')">{{ selectedConfig.title }} defaults</h2>
+              <p :class="bemm('panel-meta')">
+                <template v-if="canEditDefaults">
+                  Version {{ defaultsVersion }} · Updated {{ defaultsUpdatedAt || 'never' }}
+                </template>
+                <template v-else>
+                  Defaults are not enabled for this app yet.
+                </template>
+              </p>
+            </div>
+            <div v-if="canEditDefaults" :class="bemm('panel-actions')">
+              <Button variant="outline" :loading="defaultsApi.loading.value" :disabled="defaultsApi.loading.value" @click="loadDefaults">
+                Reload
+              </Button>
+              <Button :loading="defaultsApi.saving.value" :disabled="defaultsApi.saving.value || !defaultsDirty || !currentEditor" @click="saveDefaults">
+                Save defaults
+              </Button>
+            </div>
+          </header>
+
+          <p v-if="defaultsApi.error.value" :class="bemm('error')">{{ defaultsApi.error.value }}</p>
+          <p v-if="defaultsSavedMessage" :class="bemm('success')">{{ defaultsSavedMessage }}</p>
+
+          <component
+            v-if="currentEditor"
+            :is="currentEditor"
+            :model-value="stateValue"
+            @update:model-value="onDefaultsUpdate"
+          />
+          <div v-else :class="bemm('empty')">
+            <Icon name="ui/info" size="large" />
+            <p>App config can be edited now. A custom defaults editor still needs to be added for this app.</p>
+          </div>
+        </section>
+      </div>
     </div>
   </section>
 </template>
 
 <style lang="scss">
-.app-defaults {
+.apps-page {
   display: flex;
   flex-direction: column;
-  gap: var(--space-m);
+  gap: var(--space-l);
 
-  &__header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    gap: var(--space-m);
-  }
-
-  &__intro {
+  &__header,
+  &__intro,
+  &__workspace,
+  &__panel,
+  &__panel-intro,
+  &__app-copy {
     display: flex;
     flex-direction: column;
-    gap: var(--space-xs);
+  }
+
+  &__intro { gap: var(--space-xs); }
+  &__workspace { gap: var(--space-m); min-width: 0; }
+  &__panel { gap: var(--space-m); }
+  &__app-copy { gap: 2px; min-width: 0; }
+
+  &__eyebrow {
+    color: var(--color-primary);
+    font-size: var(--font-size-xs);
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
   }
 
   &__title {
+    color: var(--admin-text);
     font-size: var(--font-size-xl);
     font-weight: 700;
-    color: var(--admin-text);
   }
 
-  &__subtitle {
+  &__subtitle,
+  &__panel-meta,
+  &__app-meta {
     color: var(--admin-text-muted);
     font-size: var(--font-size-s);
   }
 
-  &__apps {
+  &__layout {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(calc(var(--space) * 10), 1fr));
-    gap: var(--space-xs);
-    background: var(--admin-surface);
-    border: 1px solid var(--admin-border);
-    border-radius: var(--border-radius-s);
-    padding: var(--space-xs);
+    grid-template-columns: minmax(calc(var(--space) * 16), calc(var(--space) * 20)) minmax(0, 1fr);
+    gap: var(--space-l);
+    align-items: start;
   }
 
-  &__app-tab {
+  &__app-list {
     display: flex;
     flex-direction: column;
     gap: var(--space-xs);
+    position: sticky;
+    top: var(--space-m);
+  }
+
+  &__app-card {
+    display: grid;
+    grid-template-columns: calc(var(--space) * 2.5) minmax(0, 1fr);
+    align-items: center;
+    gap: var(--space-s);
+    width: 100%;
     padding: var(--space-s);
-    background: transparent;
-    border: 0;
-    border-radius: var(--border-radius-xs);
-    color: var(--admin-text-muted);
+    background: var(--admin-surface);
+    border: 1px solid var(--admin-border);
+    border-radius: var(--border-radius-s);
+    color: var(--admin-text);
     text-align: left;
     cursor: pointer;
-    transition: background 0.12s ease, color 0.12s ease;
 
     &:hover {
-      background: var(--admin-nav-hover);
-      color: var(--admin-text);
+      background: var(--admin-surface-hover);
+      border-color: var(--admin-border-strong);
     }
 
     &--active {
-      background: var(--admin-nav-active);
-      color: var(--admin-text);
+      border-color: var(--app-accent);
+      background: color-mix(in srgb, var(--app-accent), transparent 90%);
     }
   }
 
-  &__app-tab-label {
-    font-size: var(--font-size-s);
-    font-weight: 600;
+  &__app-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: calc(var(--space) * 2.5);
+    height: calc(var(--space) * 2.5);
+    border-radius: var(--border-radius-xs);
+    background: color-mix(in srgb, var(--app-accent), transparent 86%);
+    color: var(--app-accent);
+    font-weight: 700;
   }
 
-  &__app-tab-hint {
-    font-size: var(--font-size-xs);
-    color: var(--admin-text-muted);
-    line-height: 1.3;
+  &__app-title,
+  &__panel-title {
+    color: var(--admin-text);
+    font-size: var(--font-size-m);
+    font-weight: 700;
   }
 
   &__panel {
@@ -205,9 +349,6 @@ watch(selectedApp, () => {
     border: 1px solid var(--admin-border);
     border-radius: var(--border-radius-s);
     padding: var(--space-m);
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-m);
   }
 
   &__panel-head {
@@ -218,26 +359,33 @@ watch(selectedApp, () => {
     flex-wrap: wrap;
   }
 
-  &__panel-intro {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-xs);
-  }
-
-  &__panel-title {
-    font-size: var(--font-size-m);
-    font-weight: 600;
-    color: var(--admin-text);
-  }
-
-  &__panel-meta {
-    color: var(--admin-text-muted);
-    font-size: var(--font-size-xs);
-  }
-
   &__panel-actions {
     display: flex;
     gap: var(--space-s);
+  }
+
+  &__config-form {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-s);
+  }
+
+  &__field {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+    color: var(--admin-text-muted);
+    font-size: var(--font-size-xs);
+    font-weight: 600;
+  }
+
+  &__select {
+    min-height: calc(var(--space) * 2.75);
+    padding: 0 var(--space-s);
+    border: 1px solid var(--admin-border);
+    border-radius: var(--border-radius-xs);
+    background: var(--admin-surface);
+    color: var(--admin-text);
   }
 
   &__error {
@@ -250,6 +398,29 @@ watch(selectedApp, () => {
     color: var(--color-success);
     font-size: var(--font-size-s);
     font-weight: 600;
+  }
+
+  &__empty {
+    display: flex;
+    gap: var(--space-s);
+    align-items: center;
+    padding: var(--space-m);
+    border: 1px dashed var(--admin-border);
+    border-radius: var(--border-radius-s);
+    color: var(--admin-text-muted);
+  }
+
+  @media (max-width: 960px) {
+    &__layout { grid-template-columns: 1fr; }
+    &__app-list {
+      position: static;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(calc(var(--space) * 12), 1fr));
+    }
+  }
+
+  @media (max-width: 720px) {
+    &__config-form { grid-template-columns: 1fr; }
   }
 }
 </style>
