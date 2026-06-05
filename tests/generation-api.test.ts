@@ -183,13 +183,16 @@ describe('generation-api TTS contract', () => {
     const atlasFetch = vi.fn(async (input: Request | string) => {
       const request = input instanceof Request ? input : new Request(input)
       expect(new URL(request.url).pathname).toBe('/v1/atlas/speech')
-      expect(await request.json()).toMatchObject({
+      const atlasBody = await request.json() as Record<string, unknown>
+      expect(atlasBody).toMatchObject({
         app: 'generation-api',
         purpose: 'compatibility-tts',
         text: 'Hello',
         language: 'en',
         provider: 'auto',
       })
+      expect(atlasBody).not.toHaveProperty('voice')
+      expect(atlasBody).not.toHaveProperty('model')
       return new Response(JSON.stringify({
         data: {
           id: 'atlas-audio-1',

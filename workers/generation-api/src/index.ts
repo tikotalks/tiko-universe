@@ -452,19 +452,24 @@ async function synthesizeWithAtlas(input: NormalizedTtsRequest, env: Env, reques
   if (!env.ATLAS_SERVICE) return null
 
   const atlasUrl = `${(env.ATLAS_BASE_URL ?? 'https://tiko-atlas-api-dev.silvandiepen.workers.dev/v1/atlas').replace(/\/$/, '')}/speech`
+  const atlasProvider = requestedProvider && requestedProvider !== 'azure' ? requestedProvider : 'auto'
+  const atlasPayload: Record<string, unknown> = {
+    app: 'generation-api',
+    purpose: 'compatibility-tts',
+    text: input.text,
+    language: input.language,
+    provider: atlasProvider,
+    speed: input.speed,
+  }
+  if (atlasProvider !== 'auto') {
+    atlasPayload.voice = input.voice
+    atlasPayload.model = input.model
+  }
+
   const response = await env.ATLAS_SERVICE.fetch(new Request(atlasUrl, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      app: 'generation-api',
-      purpose: 'compatibility-tts',
-      text: input.text,
-      language: input.language,
-      provider: requestedProvider === 'azure' ? 'auto' : requestedProvider ?? input.provider,
-      voice: input.voice,
-      model: input.model,
-      speed: input.speed,
-    }),
+    body: JSON.stringify(atlasPayload),
   }))
   const body = await response.json().catch(() => null) as AtlasSpeechResponse | null
 
