@@ -123,11 +123,10 @@ function resolvePositions(
 ): PositionedWordNode[] {
   if (!nodes.length) return []
 
-  const centerX = width / 2
-  const centerY = height / 2
-  // Slightly wider than tall to use horizontal space better
-  const radiusX = Math.max(80, width * 0.46)
-  const radiusY = Math.max(80, height * 0.44)
+  const centerX = width * 0.5
+  const centerY = height * 0.6
+  const radiusX = Math.max(80, width * 0.54)
+  const radiusY = Math.max(80, height * 0.68)
   const count = nodes.length
 
   // Size: high-score words are larger. Range 44–102px for up to 50 words.
@@ -184,11 +183,10 @@ function resolvePositions(
 
   return items.map(({ node, x, y, size }) => {
     const score = Math.min(1, Math.max(0.12, node.score))
-    const pad = size / 2 + 4
     return {
       ...node,
-      x: Math.round(Math.min(width - pad, Math.max(pad, x))),
-      y: Math.round(Math.min(height - pad, Math.max(pad, y))),
+      x: Math.round(x),
+      y: Math.round(y),
       size,
       zIndex: Math.round(score * 100),
     }

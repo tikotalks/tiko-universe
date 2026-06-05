@@ -1,17 +1,8 @@
-<template>
-  <button
-    class="talk-speak-button"
-    type="button"
-    :disabled="disabled || loading"
-    :aria-busy="loading"
-    @click="$emit('speak')"
-  >
-    <span class="talk-speak-button__label">{{ loading ? loadingLabel : label }}</span>
-    <span v-if="cached" class="talk-speak-button__status">{{ cachedLabel }}</span>
-  </button>
-</template>
-
 <script setup lang="ts">
+import { useBemm } from 'bemm'
+
+const bemm = useBemm('speak-button', { return: 'string', includeBaseClass: true })
+
 withDefaults(defineProps<{
   disabled?: boolean
   loading?: boolean
@@ -29,3 +20,16 @@ defineEmits<{
   speak: []
 }>()
 </script>
+
+<template>
+  <button
+    :class="bemm('')"
+    type="button"
+    :disabled="disabled || loading"
+    :aria-busy="loading"
+    @click="$emit('speak')"
+  >
+    <span :class="bemm('label')">{{ loading ? loadingLabel : label }}</span>
+    <span v-if="cached" :class="bemm('status')">{{ cachedLabel }}</span>
+  </button>
+</template>
