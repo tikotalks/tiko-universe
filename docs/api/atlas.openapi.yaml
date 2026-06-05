@@ -1,0 +1,460 @@
+openapi: 3.1.0
+info:
+  title: Tiko Atlas API
+  version: 0.1.0
+  description: Atlas is Tiko's unified gateway for data, knowledge, generation, and provider-backed intelligence.
+servers:
+  - url: https://api.tikotalks.com/v1/atlas
+    description: Production Atlas API through the Tiko API gateway
+  - url: https://dev.api.tikotalks.com/v1/atlas
+    description: Development Atlas API through the Tiko API gateway
+paths:
+  /health:
+    get:
+      summary: Return Atlas service health
+      responses:
+        '200':
+          description: Atlas health
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AtlasHealthResponse'
+  /capabilities:
+    get:
+      summary: Return Atlas capability registry
+      responses:
+        '200':
+          description: Capability registry
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AtlasCapabilitiesResponse'
+  /run:
+    post:
+      summary: Resolve and execute an Atlas capability request
+      description: Generic internal endpoint. Product clients should prefer typed endpoints as they are added.
+      security:
+        - bearerSession: []
+        - serviceToken: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AtlasRunRequest'
+      responses:
+        '200':
+          description: Capability response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AtlasRunResponse'
+        default:
+          $ref: '#/components/responses/AtlasError'
+  /speech:
+    post:
+      summary: Synthesize speech through Atlas
+      description: Planned typed endpoint for TTS and narration. Not implemented in the P0 scaffold.
+      security:
+        - bearerSession: []
+        - serviceToken: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AtlasSpeechRequest'
+      responses:
+        '200':
+          description: Synthesized speech asset
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AtlasSpeechResponse'
+        default:
+          $ref: '#/components/responses/AtlasError'
+  /images:
+    post:
+      summary: Generate images through Atlas
+      description: Planned typed endpoint for generated images. Not implemented in the P0 scaffold.
+      security:
+        - serviceToken: []
+        - bearerSession: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AtlasImageRequest'
+      responses:
+        '200':
+          description: Generated image assets
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AtlasImageResponse'
+        default:
+          $ref: '#/components/responses/AtlasError'
+  /text:
+    post:
+      summary: Generate text through Atlas
+      description: Planned typed endpoint for model-backed text tasks. Not implemented in the P0 scaffold.
+      security:
+        - serviceToken: []
+        - bearerSession: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AtlasTextRequest'
+      responses:
+        '200':
+          description: Generated text
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AtlasTextResponse'
+        default:
+          $ref: '#/components/responses/AtlasError'
+  /data/fetch:
+    post:
+      summary: Fetch provider-backed data through Atlas
+      description: Planned typed endpoint for source/operation based data requests. Not implemented in the P0 scaffold.
+      security:
+        - serviceToken: []
+        - bearerSession: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AtlasDataFetchRequest'
+      responses:
+        '200':
+          description: Provider-backed data response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AtlasDataFetchResponse'
+        default:
+          $ref: '#/components/responses/AtlasError'
+components:
+  securitySchemes:
+    bearerSession:
+      type: http
+      scheme: bearer
+      bearerFormat: Tiko session token
+    serviceToken:
+      type: http
+      scheme: bearer
+      bearerFormat: Tiko service token
+  responses:
+    AtlasError:
+      description: Normalized Atlas error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/AtlasErrorResponse'
+  schemas:
+    AtlasCapability:
+      type: string
+      enum:
+        - speech.synthesize
+        - image.generate
+        - text.generate
+        - text.classify
+        - data.fetch
+        - metadata.lookup
+    AtlasProvider:
+      type: string
+      enum:
+        - tiko
+        - cloudflare-workers-ai
+        - openai
+        - elevenlabs
+        - youtube
+        - url-metadata
+        - internal
+        - noop
+    AtlasHealthResponse:
+      type: object
+      required: [data, meta]
+      properties:
+        data:
+          type: object
+          required: [service, status, capabilities]
+          properties:
+            service:
+              const: atlas-api
+            status:
+              type: string
+              enum: [ok, degraded]
+            capabilities:
+              type: array
+              items:
+                $ref: '#/components/schemas/AtlasCapabilityStatus'
+        meta:
+          $ref: '#/components/schemas/AtlasMeta'
+    AtlasCapabilityStatus:
+      type: object
+      required: [capability, enabled, status]
+      properties:
+        capability:
+          $ref: '#/components/schemas/AtlasCapability'
+        enabled:
+          type: boolean
+        status:
+          type: string
+          enum: [ok, degraded, disabled]
+        defaultProvider:
+          $ref: '#/components/schemas/AtlasProvider'
+    AtlasCapabilitiesResponse:
+      type: object
+      required: [data, meta]
+      properties:
+        data:
+          type: object
+          required: [capabilities]
+          properties:
+            capabilities:
+              type: array
+              items:
+                $ref: '#/components/schemas/AtlasCapabilityDescriptor'
+        meta:
+          $ref: '#/components/schemas/AtlasMeta'
+    AtlasCapabilityDescriptor:
+      type: object
+      required: [capability, enabled, allowedApps, allowedPurposes, defaultRoute, accepts, returns, cacheable, costClass]
+      properties:
+        capability:
+          $ref: '#/components/schemas/AtlasCapability'
+        enabled:
+          type: boolean
+        allowedApps:
+          type: array
+          items:
+            type: string
+        allowedPurposes:
+          type: array
+          items:
+            type: string
+        defaultRoute:
+          type: object
+          required: [provider]
+          properties:
+            provider:
+              $ref: '#/components/schemas/AtlasProvider'
+            model:
+              type: string
+        accepts:
+          type: array
+          items:
+            type: string
+        returns:
+          type: array
+          items:
+            type: string
+        cacheable:
+          type: boolean
+        costClass:
+          type: string
+          enum: [free, low, medium, high]
+    AtlasRunRequest:
+      type: object
+      required: [capability, app, purpose, input]
+      properties:
+        capability:
+          $ref: '#/components/schemas/AtlasCapability'
+        app:
+          type: string
+        purpose:
+          type: string
+        input: {}
+        routing:
+          type: object
+          properties:
+            providerHint:
+              $ref: '#/components/schemas/AtlasProvider'
+            modelHint:
+              type: string
+            quality:
+              type: string
+              enum: [fast, balanced, best]
+            allowFallback:
+              type: boolean
+        cache:
+          type: object
+          properties:
+            mode:
+              type: string
+              enum: [default, bypass, refresh]
+            key:
+              type: string
+        metadata:
+          type: object
+          additionalProperties: true
+    AtlasRunResponse:
+      type: object
+      required: [data, meta]
+      properties:
+        data: {}
+        meta:
+          allOf:
+            - $ref: '#/components/schemas/AtlasMeta'
+            - type: object
+              required: [capability, provider, cached]
+              properties:
+                capability:
+                  $ref: '#/components/schemas/AtlasCapability'
+                provider:
+                  $ref: '#/components/schemas/AtlasProvider'
+                model:
+                  type: string
+                cached:
+                  type: boolean
+    AtlasSpeechRequest:
+      type: object
+      required: [text, locale, app, purpose]
+      properties:
+        text:
+          type: string
+        locale:
+          type: string
+        app:
+          type: string
+        purpose:
+          type: string
+        format:
+          type: string
+          enum: [mp3, ogg, wav]
+        voice:
+          type: string
+    AtlasSpeechResponse:
+      type: object
+      required: [data, meta]
+      properties:
+        data:
+          type: object
+          required: [id, audioUrl, contentType, cached, provider]
+          properties:
+            id:
+              type: string
+            audioUrl:
+              type: string
+            contentType:
+              type: string
+            cached:
+              type: boolean
+            provider:
+              type: object
+        meta:
+          $ref: '#/components/schemas/AtlasMeta'
+    AtlasImageRequest:
+      type: object
+      required: [prompt, app, purpose]
+      properties:
+        prompt:
+          type: string
+        app:
+          type: string
+        purpose:
+          type: string
+        size:
+          type: string
+          enum: [square, portrait, landscape]
+        count:
+          type: integer
+          minimum: 1
+          maximum: 4
+    AtlasImageResponse:
+      type: object
+      required: [data, meta]
+      properties:
+        data:
+          type: object
+          required: [images]
+          properties:
+            images:
+              type: array
+              items:
+                type: object
+        meta:
+          $ref: '#/components/schemas/AtlasMeta'
+    AtlasTextRequest:
+      type: object
+      required: [input, app, purpose]
+      properties:
+        input:
+          type: string
+        app:
+          type: string
+        purpose:
+          type: string
+        outputFormat:
+          type: string
+          enum: [plain, markdown, json]
+    AtlasTextResponse:
+      type: object
+      required: [data, meta]
+      properties:
+        data:
+          type: object
+          required: [output, format, provider]
+          properties:
+            output:
+              type: string
+            format:
+              type: string
+            provider:
+              type: object
+        meta:
+          $ref: '#/components/schemas/AtlasMeta'
+    AtlasDataFetchRequest:
+      type: object
+      required: [source, operation, app, purpose, input]
+      properties:
+        source:
+          type: string
+        operation:
+          type: string
+        app:
+          type: string
+        purpose:
+          type: string
+        input:
+          type: object
+          additionalProperties: true
+    AtlasDataFetchResponse:
+      type: object
+      required: [data, meta]
+      properties:
+        data: {}
+        meta:
+          $ref: '#/components/schemas/AtlasMeta'
+    AtlasMeta:
+      type: object
+      required: [schemaVersion, requestId]
+      properties:
+        schemaVersion:
+          type: integer
+          const: 1
+        requestId:
+          type: string
+    AtlasErrorResponse:
+      type: object
+      required: [error, meta]
+      properties:
+        error:
+          type: object
+          required: [code, message]
+          properties:
+            code:
+              type: string
+            message:
+              type: string
+            details:
+              type: object
+              additionalProperties: true
+        meta:
+          $ref: '#/components/schemas/AtlasMeta'

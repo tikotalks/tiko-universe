@@ -1,0 +1,71 @@
+name = "tiko-atlas-api-dev"
+main = "src/index.ts"
+compatibility_date = "2026-06-05"
+account_id = "dc2b7d14a69351375cab6de9a13ddee9"
+workers_dev = true
+
+# Atlas is Tiko's unified gateway for data, knowledge, generation, and provider-backed intelligence.
+
+[[d1_databases]]
+binding = "ATLAS_DB"
+database_name = "tiko-atlas"
+database_id = "00000000-0000-0000-0000-000000000000"
+migrations_dir = "migrations"
+
+[[kv_namespaces]]
+binding = "ATLAS_CACHE"
+id = "00000000000000000000000000000000"
+
+[[r2_buckets]]
+binding = "ATLAS_ASSETS_BUCKET"
+bucket_name = "tiko-atlas-assets"
+
+[ai]
+binding = "AI"
+
+[vars]
+TIKO_ENVIRONMENT = "development"
+ATLAS_PUBLIC_ROUTE = "https://dev.api.tikotalks.com/v1/atlas"
+IDENTITY_BASE_URL = "https://api.tikotalks.com/v1"
+
+[[services]]
+binding = "IDENTITY_SERVICE"
+service = "tiko-identity-api-dev"
+
+[[routes]]
+pattern = "dev.api.tikotalks.com/v1/atlas/*"
+zone_name = "tikotalks.com"
+
+# ── Production environment ──────────────────────────────────────
+# Deploy with: npx wrangler deploy --env production
+
+[env.production]
+name = "tiko-atlas-api"
+workers_dev = false
+
+[env.production.vars]
+TIKO_ENVIRONMENT = "production"
+ATLAS_PUBLIC_ROUTE = "https://api.tikotalks.com/v1/atlas"
+IDENTITY_BASE_URL = "https://api.tikotalks.com/v1"
+
+[[env.production.services]]
+binding = "IDENTITY_SERVICE"
+service = "tiko-identity-api"
+
+[[env.production.d1_databases]]
+binding = "ATLAS_DB"
+database_name = "tiko-atlas"
+database_id = "00000000-0000-0000-0000-000000000000"
+migrations_dir = "migrations"
+
+[[env.production.kv_namespaces]]
+binding = "ATLAS_CACHE"
+id = "00000000000000000000000000000000"
+
+[[env.production.r2_buckets]]
+binding = "ATLAS_ASSETS_BUCKET"
+bucket_name = "tiko-atlas-assets"
+
+[[env.production.routes]]
+pattern = "api.tikotalks.com/v1/atlas/*"
+zone_name = "tikotalks.com"

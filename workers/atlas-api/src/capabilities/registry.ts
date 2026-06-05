@@ -1,0 +1,78 @@
+import type { AtlasCapability, AtlasCapabilityDescriptor } from '../types'
+
+export const ATLAS_CAPABILITIES: AtlasCapabilityDescriptor[] = [
+  {
+    capability: 'speech.synthesize',
+    enabled: false,
+    allowedApps: ['*'],
+    allowedPurposes: ['child-button', 'sentence-speak', 'story-narration', 'voice-sample', 'admin-preview'],
+    defaultRoute: { provider: 'openai', model: 'tts-1' },
+    accepts: ['text', 'locale', 'format', 'voice'],
+    returns: ['audioUrl', 'contentType', 'provider', 'usage'],
+    cacheable: true,
+    costClass: 'low',
+  },
+  {
+    capability: 'image.generate',
+    enabled: false,
+    allowedApps: ['admin', 'media', 'radio', 'cards'],
+    allowedPurposes: ['story-cover', 'card-image', 'website-illustration', 'admin-preview', 'media-library'],
+    defaultRoute: { provider: 'openai', model: 'gpt-image-1' },
+    accepts: ['prompt', 'size', 'style', 'count'],
+    returns: ['images', 'provider', 'usage'],
+    cacheable: false,
+    costClass: 'high',
+  },
+  {
+    capability: 'text.generate',
+    enabled: false,
+    allowedApps: ['admin', 'media', 'radio'],
+    allowedPurposes: ['admin-draft', 'story-draft', 'support-rewrite', 'internal-summary'],
+    defaultRoute: { provider: 'cloudflare-workers-ai', model: '@cf/meta/llama-3.1-8b-instruct' },
+    accepts: ['input', 'outputFormat', 'constraints'],
+    returns: ['output', 'format', 'provider', 'usage'],
+    cacheable: false,
+    costClass: 'medium',
+  },
+  {
+    capability: 'text.classify',
+    enabled: false,
+    allowedApps: ['*'],
+    allowedPurposes: ['classification', 'moderation-assist', 'routing'],
+    defaultRoute: { provider: 'cloudflare-workers-ai', model: '@cf/meta/llama-3.1-8b-instruct' },
+    accepts: ['input', 'labels'],
+    returns: ['label', 'confidence', 'provider', 'usage'],
+    cacheable: false,
+    costClass: 'low',
+  },
+  {
+    capability: 'data.fetch',
+    enabled: false,
+    allowedApps: ['*'],
+    allowedPurposes: ['metadata', 'add-track', 'lookup'],
+    defaultRoute: { provider: 'tiko' },
+    accepts: ['source', 'operation', 'input'],
+    returns: ['data', 'source', 'provider', 'cached'],
+    cacheable: true,
+    costClass: 'low',
+  },
+  {
+    capability: 'metadata.lookup',
+    enabled: false,
+    allowedApps: ['*'],
+    allowedPurposes: ['media-metadata', 'url-preview'],
+    defaultRoute: { provider: 'url-metadata' },
+    accepts: ['url', 'source'],
+    returns: ['metadata', 'provider', 'cached'],
+    cacheable: true,
+    costClass: 'low',
+  },
+]
+
+export function listCapabilities(): AtlasCapabilityDescriptor[] {
+  return ATLAS_CAPABILITIES
+}
+
+export function findCapability(capability: AtlasCapability): AtlasCapabilityDescriptor | null {
+  return ATLAS_CAPABILITIES.find((item) => item.capability === capability) ?? null
+}
