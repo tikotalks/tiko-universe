@@ -1,8 +1,8 @@
-import { computed, ref } from 'vue'
+import { computed, ref, unref, type MaybeRef } from 'vue'
 import type { SavedPhrase, Template, WordTile } from '@tiko/talk-types'
 
 export interface SentenceStripOptions {
-  allWords: WordTile[]
+  allWords: MaybeRef<WordTile[]>
 }
 
 export function useSentenceStrip(options: SentenceStripOptions) {
@@ -42,7 +42,7 @@ export function useSentenceStrip(options: SentenceStripOptions) {
   }
 
   function applyPhrase(phrase: SavedPhrase) {
-    const byId = new Map(options.allWords.map((word) => [word.id, word]))
+    const byId = new Map(unref(options.allWords).map((word) => [word.id, word]))
     setWords(phrase.wordIds.map((id) => byId.get(id)).filter((word): word is WordTile => Boolean(word)))
   }
 
@@ -50,7 +50,7 @@ export function useSentenceStrip(options: SentenceStripOptions) {
     const fixedWords = template.pattern
       .split(' ')
       .filter((part) => part !== '___' && !part.startsWith('['))
-      .map((part) => options.allWords.find((word) => word.text.toLowerCase() === part.toLowerCase()))
+      .map((part) => unref(options.allWords).find((word) => word.text.toLowerCase() === part.toLowerCase()))
       .filter((word): word is WordTile => Boolean(word))
 
     setWords(fixedWords)
