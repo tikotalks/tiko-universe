@@ -261,6 +261,7 @@ export const TikoAppHeader = defineComponent({
     appColor: { type: String as () => TikoAppColor, default: 'yes-no' },
     actions: { type: Array as () => TikoHeaderAction[], default: () => [] },
     showBack: { type: Boolean, default: false },
+    showSettingsButton: { type: Boolean, default: true },
   },
   emits: ['action', 'avatar-click', 'back-click', 'title-click'],
   setup(props, { emit }) {
@@ -276,7 +277,7 @@ export const TikoAppHeader = defineComponent({
         h('span', { class: 'tiko-app-header__title', 'data-test': 'tiko-shell-title', onClick: () => emit('title-click') }, props.appName)
       ]),
       h('div', { class: 'tiko-app-header__actions' }, [
-        ...props.actions.filter(a => a.visible !== false).map(action => h(Button, {
+        ...(props.showSettingsButton ? props.actions : []).filter(a => a.visible !== false).map(action => h(Button, {
           class: ['tiko-app-header__action', action.active ? 'tiko-app-header__action--active' : '', action.round ? 'tiko-app-header__action--round' : ''],
           variant: 'ghost',
           iconOnly: true,
@@ -305,6 +306,7 @@ export const TikoAppShell = defineComponent({
     avatar: { type: String, default: '' },
     actions: { type: Array as () => TikoHeaderAction[], default: () => [] },
     showBack: { type: Boolean, default: false },
+    showSettingsButton: { type: Boolean, default: true },
   },
   emits: ['headerAction', 'avatar-click', 'back-click', 'title-click'],
   setup(props, { slots, emit }) {
@@ -316,6 +318,7 @@ export const TikoAppShell = defineComponent({
         appColor: props.appColor,
         actions: props.actions,
         showBack: props.showBack,
+        showSettingsButton: props.showSettingsButton,
         onAction: (id: string) => emit('headerAction', id),
         onAvatarClick: () => emit('avatar-click'),
         onBackClick: () => emit('back-click'),

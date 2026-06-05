@@ -13,6 +13,26 @@ function jsonResponse(body: unknown, status = 200) {
   return new Response(JSON.stringify(body), { status, headers: { 'content-type': 'application/json' } })
 }
 
+
+function createPopupServiceMock() {
+  return {
+    showPopup: vi.fn(() => 'popup-id'),
+    closePopup: vi.fn(),
+    closeAllPopups: vi.fn(),
+    popups: { value: [] }
+  }
+}
+
+function mountApp() {
+  const popupService = createPopupServiceMock()
+  const wrapper = mount(App, {
+    global: {
+      provide: { popupService }
+    }
+  })
+  return { wrapper, popupService }
+}
+
 function createFetchMock(options: {
   settings?: Record<string, unknown>
   state?: Record<string, unknown>
@@ -30,6 +50,18 @@ function createFetchMock(options: {
       }
       return jsonResponse(sessionBundle)
     }
+    if (url.endsWith('/identity/profile') && method === 'GET') {
+      return jsonResponse({ profile: {} })
+    }
+
+    if (url.endsWith('/identity/profile') && method === 'PUT') {
+      return jsonResponse({ profile: JSON.parse(String(init?.body)) })
+    }
+
+    if (url.endsWith('/identity/logout')) {
+      return new Response(null, { status: 204 })
+    }
+
     if (url.endsWith('/identity/device')) {
       if (options.failBootstrap) return jsonResponse({ error: { code: 'offline', message: 'offline' } }, 503)
       return jsonResponse(sessionBundle)
@@ -70,7 +102,7 @@ beforeEach(() => {
 
 describe('Yes No web app', () => {
   it('opens immediately with Yes and No choices and no login wall while bootstrapping identity in the background', async () => {
-    const wrapper = mount(App)
+    const { wrapper } = mountApp()
 
     expect(wrapper.text()).toContain('Yes No')
     expect(wrapper.text()).toContain('Yes')
@@ -85,7 +117,7 @@ describe('Yes No web app', () => {
   it('falls back to device bootstrap on the browser identity origin when the shared cookie is missing', async () => {
     const fetchMock = createFetchMock({ failCookieSession: true })
     vi.stubGlobal('fetch', fetchMock)
-    mount(App)
+    mountApp()
     await flushPromises()
 
     expect(fetchMock).toHaveBeenCalledWith('https://id.tikoapps.org/v1/identity/session', expect.objectContaining({ method: 'GET', credentials: 'include' }))
@@ -98,7 +130,7 @@ describe('Yes No web app', () => {
       state: { lastAnswer: 'no', answerHistory: ['no', 'yes'] }
     }))
 
-    const wrapper = mount(App)
+    const { wrapper } = mountApp()
     await flushPromises()
 
     await vi.waitFor(() => {
@@ -113,7 +145,7 @@ describe('Yes No web app', () => {
   it('persists settings through @tiko/data and keeps a local fallback copy', async () => {
     const fetchMock = createFetchMock()
     vi.stubGlobal('fetch', fetchMock)
-    const wrapper = mount(App)
+    const { wrapper } = mountApp()
     await flushPromises()
 
     await wrapper.get('[data-test="tiko-header-action-settings"]').trigger('click')
@@ -134,7 +166,7 @@ describe('Yes No web app', () => {
   it('records the latest answer and history through @tiko/data after a choice is tapped and speaks it', async () => {
     const fetchMock = createFetchMock()
     vi.stubGlobal('fetch', fetchMock)
-    const wrapper = mount(App)
+    const { wrapper } = mountApp()
     await flushPromises()
 
     await wrapper.findAll('[data-test="tiko-answer-button"]').find((button) => button.text().includes('Yes'))!.trigger('click')
@@ -155,7 +187,7 @@ describe('Yes No web app', () => {
   })
 
   it('keeps setup/recovery chrome out of the first-use play flow', () => {
-    const wrapper = mount(App)
+    const { wrapper } = mountApp()
 
     expect(wrapper.text()).not.toContain('Setup user')
     expect(wrapper.text()).not.toContain('optional setup')
@@ -164,7 +196,7 @@ describe('Yes No web app', () => {
   })
 
   it('allows custom sentence speech and stores it in the local fallback', async () => {
-    const wrapper = mount(App)
+    const { wrapper } = mountApp()
     await flushPromises()
 
     await wrapper.get('textarea').setValue('Do you want music?')
@@ -178,7 +210,7 @@ describe('Yes No web app', () => {
 
   it('falls back to the local child-facing flow if identity bootstrap is unavailable', async () => {
     vi.stubGlobal('fetch', createFetchMock({ failBootstrap: true, failTts: true }))
-    const wrapper = mount(App)
+    const { wrapper } = mountApp()
     await flushPromises()
 
     await wrapper.findAll('[data-test="tiko-answer-button"]').find((button) => button.text().includes('No'))!.trigger('click')
@@ -190,19 +222,25 @@ describe('Yes No web app', () => {
     expect(wrapper.text()).not.toContain('Log in')
   })
 
-  it('keeps the account avatar in the header and opens caregiver settings from it', async () => {
-    const wrapper = mount(App)
+  it('keeps the account avatar in the header and opens the iOS-style profile menu from it', async () => {
+    const { wrapper, popupService } = mountApp()
 
+    await flushPromises()
     const accountButton = wrapper.get('button[aria-label="Account"]')
     expect(accountButton.find('[data-icon="ui/avatar"]').exists()).toBe(true)
 
     await accountButton.trigger('click')
 
-    expect(wrapper.find('[data-test="tiko-settings-panel"]').exists()).toBe(true)
+    expect(popupService.showPopup).toHaveBeenCalledWith(expect.objectContaining({
+      props: expect.objectContaining({ parentMode: true, isLoggedIn: true })
+    }))
+    const popupConfig = popupService.showPopup.mock.calls[0][0]
+    expect(popupConfig.component.__name).toBe('TikoProfileMenu')
+    expect(wrapper.find('[data-test="tiko-settings-panel"]').exists()).toBe(false)
   })
 
   it('renders open-icon names instead of emoji glyphs for visible app and choice icons', () => {
-    const wrapper = mount(App)
+    const { wrapper } = mountApp()
 
     expect(wrapper.find('[data-icon="ui/check-fat"]').exists()).toBe(true)
     expect(wrapper.find('[data-icon="wayfinding/cross"]').exists()).toBe(true)
