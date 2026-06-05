@@ -74,6 +74,16 @@
   --tiko-app-primary-text: var(--color-error-text);
 }
 
+[data-app-color="todo"] {
+  --tiko-app-primary: var(--color-info);
+  --tiko-app-primary-text: var(--color-info-text);
+}
+
+[data-app-color="talk"] {
+  --tiko-app-primary: color-mix(in srgb, var(--color-foreground), var(--color-background) 30%);
+  --tiko-app-primary-text: var(--color-background);
+}
+
 body {
   background: var(--tiko-surface);
 }
