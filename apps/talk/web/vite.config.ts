@@ -14,6 +14,6 @@ export default defineConfig({
     },
   },
   optimizeDeps: {
-    include: ['highlight.js/lib/core'],
+    include: ['highlight.js/lib/core', 'motion-v'],
   },
 })

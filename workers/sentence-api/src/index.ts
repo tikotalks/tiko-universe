@@ -292,7 +292,7 @@ async function startSentence(request: Request, env: Env, url: URL): Promise<Resp
   const initialWords = words
     .filter((word) => STARTER_POS.includes(word.pos))
     .sort((a, b) => b.frequency - a.frequency || a.text.localeCompare(b.text))
-    .slice(0, 24)
+    .slice(0, 50)
     .map(toWordTile)
 
   const response: SentenceStartResponse = {

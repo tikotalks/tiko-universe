@@ -95,18 +95,18 @@ export function useTalkPresentation(options: {
 
     return source
       .filter((word) => !selected.has(word.id))
-      .slice(0, 18)
+      .slice(0, 50)
       .map((word, index) => {
         const category = normalizeCategoryId(word.category)
         const suggestionBoost = suggestionIds.has(word.id) ? 1 : 0
-        const score = Math.max(0.18, 1 - index * 0.045 + suggestionBoost * 0.18)
+        const score = Math.max(0.12, 1 - index * 0.018 + suggestionBoost * 0.14)
         return {
           id: word.id,
           label: word.text,
           icon: wordIcon(word),
           color: presentationColor(category, index),
           category,
-          weight: score > 0.86 ? 'high' : score > 0.62 ? 'medium' : 'low',
+          weight: score > 0.82 ? 'high' : score > 0.55 ? 'medium' : 'low',
           score,
           word,
         }
@@ -114,6 +114,85 @@ export function useTalkPresentation(options: {
   })
 
   return { shortcuts, cloudWords }
+}
+
+function resolvePositions(
+  nodes: VisualWordNode[],
+  width: number,
+  height: number,
+): PositionedWordNode[] {
+  if (!nodes.length) return []
+
+  const centerX = width / 2
+  const centerY = height / 2
+  // Slightly wider than tall to use horizontal space better
+  const radiusX = Math.max(80, width * 0.46)
+  const radiusY = Math.max(80, height * 0.44)
+  const count = nodes.length
+
+  // Size: high-score words are larger. Range 44–102px for up to 50 words.
+  function sizeFor(score: number) {
+    return Math.round(44 + score * 58)
+  }
+
+  // Assign each word to a stable slot using its ID hash so the same word
+  // always lands in a similar part of the cloud regardless of list order.
+  // We still place by score-rank (index) but jitter angle by hash.
+  const items = nodes.map((node, index) => {
+    const score = Math.min(1, Math.max(0.12, node.score))
+    const size = sizeFor(score)
+    const hash = stableHash(node.id)
+    // Golden-angle base angle + small hash-derived jitter per word
+    const baseAngle = index * 2.399963229728653
+    const jitter = ((hash % 64) - 32) / 64 * 0.6
+    const angle = baseAngle + jitter
+    // Spiral from near-center (index 0 = highest score) outward
+    const rank = count <= 1 ? 0.5 : index / (count - 1)
+    const ring = 0.06 + 0.88 * Math.sqrt(rank)
+    const x = centerX + Math.cos(angle) * radiusX * ring
+    const y = centerY + Math.sin(angle) * radiusY * ring
+    return { node, x, y, size }
+  })
+
+  // Anti-overlap: push overlapping circles apart. Higher-priority (lower index)
+  // words resist movement more; lower-priority words give way.
+  for (let iter = 0; iter < 20; iter++) {
+    for (let i = 0; i < items.length; i++) {
+      for (let j = i + 1; j < items.length; j++) {
+        const a = items[i]!
+        const b = items[j]!
+        const gap = 6
+        const minDist = (a.size + b.size) / 2 + gap
+        const dx = b.x - a.x
+        const dy = b.y - a.y
+        const dist = Math.sqrt(dx * dx + dy * dy) || 0.001
+        if (dist < minDist) {
+          const push = (minDist - dist) / 2
+          const nx = dx / dist
+          const ny = dy / dist
+          // Higher-index (lower score) items absorb more of the push
+          const weightA = 0.32
+          const weightB = 0.68
+          a.x -= nx * push * weightA
+          a.y -= ny * push * weightA
+          b.x += nx * push * weightB
+          b.y += ny * push * weightB
+        }
+      }
+    }
+  }
+
+  return items.map(({ node, x, y, size }) => {
+    const score = Math.min(1, Math.max(0.12, node.score))
+    const pad = size / 2 + 4
+    return {
+      ...node,
+      x: Math.round(Math.min(width - pad, Math.max(pad, x))),
+      y: Math.round(Math.min(height - pad, Math.max(pad, y))),
+      size,
+      zIndex: Math.round(score * 100),
+    }
+  })
 }
 
 export function useWordCloudLayout(nodes: Ref<VisualWordNode[]>) {
@@ -138,32 +217,7 @@ export function useWordCloudLayout(nodes: Ref<VisualWordNode[]>) {
   const positionedNodes = computed<PositionedWordNode[]>(() => {
     const width = Math.max(bounds.value.width, 320)
     const height = Math.max(bounds.value.height, 320)
-    const centerX = width / 2
-    const centerY = height / 2
-    const radiusX = Math.max(80, width * 0.42)
-    const radiusY = Math.max(80, height * 0.36)
-    const count = Math.max(nodes.value.length, 1)
-
-    return nodes.value.map((node, index) => {
-      const rank = count === 1 ? 0 : index / (count - 1)
-      const hash = stableHash(node.id)
-      const angle = index * 2.399963229728653 + (hash % 360) * Math.PI / 1800
-      const ring = Math.sqrt(rank) * (0.28 + (hash % 100) / 250)
-      const score = Math.min(1, Math.max(0.18, node.score))
-      const size = Math.round(82 + score * 72)
-      const wobbleX = ((hash % 41) - 20) / 100
-      const wobbleY = (((hash >> 8) % 41) - 20) / 100
-      const x = Math.round(centerX + Math.cos(angle) * radiusX * ring + radiusX * wobbleX * 0.12)
-      const y = Math.round(centerY + Math.sin(angle) * radiusY * ring + radiusY * wobbleY * 0.12)
-
-      return {
-        ...node,
-        x: Math.min(width - size / 2, Math.max(size / 2, x)),
-        y: Math.min(height - size / 2, Math.max(size / 2, y)),
-        size,
-        zIndex: Math.round(score * 100),
-      }
-    })
+    return resolvePositions(nodes.value, width, height)
   })
 
   return { cloudEl, positionedNodes }

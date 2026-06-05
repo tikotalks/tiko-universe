@@ -96,6 +96,7 @@ export function useSentenceApi(options: SentenceApiOptions) {
   const lastCompletion = ref<SentenceCompleteResponse | null>(null)
 
   const wordsById = computed(() => new Map(words.value.map((word) => [word.id, word])))
+  const prefetchCache = new Map<string, SentenceNextResponse>()
   const activeWordsByCategory = computed(() => wordsByCategory(words.value))
   const isOffline = computed(() => mode.value === 'offline')
 
@@ -116,33 +117,61 @@ export function useSentenceApi(options: SentenceApiOptions) {
     templates.value = fallbackPack.templates
     categories.value = fallbackPack.categories
     words.value = fallbackPack.words
-    suggestions.value = fallbackPack.words.slice(0, 5)
+    suggestions.value = fallbackPack.words.slice(0, 50)
     savedPhrases.value = fallbackPack.savedPhrases
     stripState.value = { display: '', validNext: [], canComplete: false }
   }
 
   async function start() {
-    loading.value = true
     error.value = null
+
+    // Show fallback words immediately so the cloud is never empty
+    activateFallback()
+    loading.value = true
+
+    // Race the API against a 6-second hard timeout
+    const controller = new AbortController()
+    const timeoutId = setTimeout(() => controller.abort(), 6000)
+
     try {
       const params = new URLSearchParams({ locale: options.language.value })
-      const data = await requestJson<SentenceStartResponse>(`/v1/sentence/start?${params.toString()}`)
+      const data = await requestJson<SentenceStartResponse>(
+        `/v1/sentence/start?${params.toString()}`,
+        { signal: controller.signal },
+      )
+      clearTimeout(timeoutId)
       templates.value = data.templates
       categories.value = data.initialCategories
       words.value = data.initialWords
-      suggestions.value = data.initialWords.slice(0, 5)
+      suggestions.value = data.initialWords
       savedPhrases.value = data.savedPhrases
       stripState.value = { display: '', validNext: data.stripState.validNext, canComplete: data.stripState.canComplete }
       mode.value = 'online'
-      await loadVocabulary()
+      void loadVocabulary()
     } catch (currentError) {
-      activateFallback(currentError)
+      clearTimeout(timeoutId)
+      // Already showing fallback; just record the error if it wasn't a deliberate abort
+      if (!(currentError instanceof DOMException && currentError.name === 'AbortError')) {
+        error.value = currentError instanceof Error ? currentError.message : null
+      }
     } finally {
       loading.value = false
     }
   }
 
   async function next(currentWords: string[]) {
+    const cacheKey = currentWords.join(',')
+    const cached = prefetchCache.get(cacheKey)
+    if (cached && !isOffline.value) {
+      prefetchCache.delete(cacheKey)
+      suggestions.value = cached.suggestions
+      categories.value = cached.categories.length ? cached.categories : categories.value
+      const merged = new Map(words.value.map((w) => [w.id, w]))
+      Object.values(cached.words).flat().forEach((w) => merged.set(w.id, w))
+      words.value = Array.from(merged.values())
+      stripState.value = cached.stripState
+      return
+    }
     if (isOffline.value) {
       const used = new Set(currentWords)
       suggestions.value = fallbackPack.words.filter((word) => !used.has(word.id)).slice(0, 5)
@@ -161,6 +190,23 @@ export function useSentenceApi(options: SentenceApiOptions) {
       stripState.value = data.stripState
     } catch (currentError) {
       error.value = currentError instanceof Error ? currentError.message : 'sentence_next_failed'
+    }
+  }
+
+  async function prefetchNext(scenarios: string[][]) {
+    for (const wordIds of scenarios) {
+      const key = wordIds.join(',')
+      if (prefetchCache.has(key) || isOffline.value) continue
+      try {
+        const body: SentenceNextRequest = { locale: options.language.value, currentWords: wordIds }
+        const data = await requestJson<SentenceNextResponse>('/v1/sentence/next', { method: 'POST', body: JSON.stringify(body) })
+        prefetchCache.set(key, data)
+        const merged = new Map(words.value.map((w) => [w.id, w]))
+        Object.values(data.words).flat().forEach((w) => merged.set(w.id, w))
+        words.value = Array.from(merged.values())
+      } catch {
+        // silently ignore prefetch failures
+      }
     }
   }
 
@@ -246,6 +292,7 @@ export function useSentenceApi(options: SentenceApiOptions) {
     isOffline,
     start,
     next,
+    prefetchNext,
     loadVocabulary,
     loadPhrases,
     complete,

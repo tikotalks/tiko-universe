@@ -127,6 +127,7 @@ export function useTalkApp() {
     strip.clear()
     await sentenceApi.start()
     activeCategoryId.value = presentation.shortcuts.value[0]?.id ?? null
+    void sentenceApi.prefetchNext(sentenceApi.suggestions.value.slice(0, 8).map((w) => [w.id]))
   }
 
   function selectWordNode(node: VisualWordNode) {
@@ -134,7 +135,12 @@ export function useTalkApp() {
     activeCategoryId.value = normalizeCategoryId(node.word.category)
     speechStatus.value = 'idle'
     speechError.value = null
-    void sentenceApi.next(strip.wordIds.value)
+    const currentIds = [...strip.wordIds.value]
+    sentenceApi.next(currentIds).then(() => {
+      void sentenceApi.prefetchNext(
+        sentenceApi.suggestions.value.slice(0, 6).map((w) => [...currentIds, w.id])
+      )
+    })
   }
 
   function selectCategory(category: CategoryShortcut) {
