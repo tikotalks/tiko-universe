@@ -137,21 +137,21 @@ Optional service domain if needed:
 https://atlas.tikoapi.org/v1/*
 ```
 
-P0 routes:
+Implemented routes:
 
 ```txt
 GET  /v1/atlas/health
 GET  /v1/atlas/capabilities
 POST /v1/atlas/run
-```
-
-Planned typed routes:
-
-```txt
 POST /v1/atlas/speech
 POST /v1/atlas/images
 POST /v1/atlas/text
 POST /v1/atlas/data/fetch
+GET  /v1/atlas/assets/{id}
+GET  /v1/atlas/admin/usage
+GET  /v1/atlas/admin/usage/by-provider
+GET  /v1/atlas/admin/provider-status
+GET  /v1/atlas/admin/requests/{id}
 ```
 
 Typed routes are preferred for product/client code. `/run` exists for internal service orchestration and future advanced capability calls.
@@ -179,7 +179,9 @@ Callers may provide routing hints only when policy allows them. Atlas may ignore
 
 ## Observability
 
-Every non-health request should eventually write an `atlas_requests` row with:
+Every non-health request now writes a best-effort `atlas_requests` row and a structured runtime log event. Audit logging must never break the product request.
+
+Current audit fields:
 
 - request id
 - app
@@ -190,21 +192,34 @@ Every non-health request should eventually write an `atlas_requests` row with:
 - model
 - status
 - cache status
-- duration
-- estimated cost
+- request hash when available
+- total duration
+- provider duration when available
+- input/output units
+- estimated cost when pricing is deterministic
 - redacted input/output metadata
-- normalized error code
+- normalized error code/message
+
+Atlas also maintains `atlas_provider_status` from observed provider calls and exposes service-token-only admin routes for usage rows, provider aggregates, request details, and provider status.
+
+Redaction rules:
+
+- Secret-like fields (`token`, `key`, `secret`, `authorization`, `cookie`, etc.) become `[REDACTED]`.
+- Long text/prompt/output fields are summarized before storage.
+- URL query strings and fragments are removed before audit storage.
+
+Remaining hardening: wire subject/session attribution from shared identity validation and replace estimated costs with provider billing-grade accounting where vendors expose exact usage.
 
 ## Migration Plan
 
-1. Scaffold Atlas docs, worker, D1 schema, and `@tiko/atlas` client.
-2. Implement health/capability routes.
-3. Implement `POST /v1/atlas/run` with validation and policy rejection only.
-4. Move speech/TTS into Atlas first because it proves routing, caching, assets, and provider policy.
-5. Move admin image generation next.
-6. Move text generation/classification tasks to Cloudflare Workers AI/OpenAI routing.
-7. Add provider-backed metadata/data fetches such as Radio YouTube metadata.
-8. Deprecate direct app calls to `tts-api` and generation-specific provider routes once callers use Atlas.
+1. Scaffold Atlas docs, worker, D1 schema, and `@tiko/atlas` client. **Done.**
+2. Implement health/capability routes. **Done.**
+3. Implement `POST /v1/atlas/run` with validation and dispatch. **Done.**
+4. Implement speech/TTS in Atlas because it proves routing, caching, assets, and provider policy. **Done for OpenAI/ElevenLabs provider calls and R2/D1 cache.**
+5. Implement admin image generation. **Done for OpenAI image generation and R2 storage when base64 output is returned.**
+6. Implement text generation/classification tasks to Cloudflare Workers AI/OpenAI routing. **Done for basic generation/classification dispatch.**
+7. Implement provider-backed metadata/data fetches. **Done for YouTube oEmbed metadata and basic URL metadata.**
+8. Migrate existing Tiko callers off direct `tts-api`/generation routes and onto `@tiko/atlas`. **Next slice.**
 
 ## Naming Doctrine
 

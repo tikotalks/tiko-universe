@@ -3,7 +3,7 @@ import type { AtlasCapability, AtlasCapabilityDescriptor } from '../types'
 export const ATLAS_CAPABILITIES: AtlasCapabilityDescriptor[] = [
   {
     capability: 'speech.synthesize',
-    enabled: false,
+    enabled: true,
     allowedApps: ['*'],
     allowedPurposes: ['child-button', 'sentence-speak', 'story-narration', 'voice-sample', 'admin-preview'],
     defaultRoute: { provider: 'openai', model: 'tts-1' },
@@ -14,7 +14,7 @@ export const ATLAS_CAPABILITIES: AtlasCapabilityDescriptor[] = [
   },
   {
     capability: 'image.generate',
-    enabled: false,
+    enabled: true,
     allowedApps: ['admin', 'media', 'radio', 'cards'],
     allowedPurposes: ['story-cover', 'card-image', 'website-illustration', 'admin-preview', 'media-library'],
     defaultRoute: { provider: 'openai', model: 'gpt-image-1' },
@@ -25,7 +25,7 @@ export const ATLAS_CAPABILITIES: AtlasCapabilityDescriptor[] = [
   },
   {
     capability: 'text.generate',
-    enabled: false,
+    enabled: true,
     allowedApps: ['admin', 'media', 'radio'],
     allowedPurposes: ['admin-draft', 'story-draft', 'support-rewrite', 'internal-summary'],
     defaultRoute: { provider: 'cloudflare-workers-ai', model: '@cf/meta/llama-3.1-8b-instruct' },
@@ -36,7 +36,7 @@ export const ATLAS_CAPABILITIES: AtlasCapabilityDescriptor[] = [
   },
   {
     capability: 'text.classify',
-    enabled: false,
+    enabled: true,
     allowedApps: ['*'],
     allowedPurposes: ['classification', 'moderation-assist', 'routing'],
     defaultRoute: { provider: 'cloudflare-workers-ai', model: '@cf/meta/llama-3.1-8b-instruct' },
@@ -47,7 +47,7 @@ export const ATLAS_CAPABILITIES: AtlasCapabilityDescriptor[] = [
   },
   {
     capability: 'data.fetch',
-    enabled: false,
+    enabled: true,
     allowedApps: ['*'],
     allowedPurposes: ['metadata', 'add-track', 'lookup'],
     defaultRoute: { provider: 'tiko' },
@@ -58,7 +58,7 @@ export const ATLAS_CAPABILITIES: AtlasCapabilityDescriptor[] = [
   },
   {
     capability: 'metadata.lookup',
-    enabled: false,
+    enabled: true,
     allowedApps: ['*'],
     allowedPurposes: ['media-metadata', 'url-preview'],
     defaultRoute: { provider: 'url-metadata' },
