@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, onMounted, ref, watch } from 'vue'
-import { Button, InputTextArea } from '@sil/ui'
+import { Icon } from '@sil/ui'
 import { IdentityClient, type IdentityBundle } from '@tiko/identity'
 import { TikoDataClient, type YesNoSettings, type YesNoState } from '@tiko/data'
 import { createI18n, defaultLanguage, tikoI18nKeys, tikoLanguages, type TikoLanguage } from '@tiko/i18n'
@@ -322,7 +322,7 @@ function resetSentence() {
   >
     <section class="yes-no-app" :data-color-mode="colorMode">
       <section class="yes-no-app__sentence" :aria-label="labels.sentenceLabel">
-        <InputTextArea
+        <textarea
           id="yes-no-sentence"
           v-model="sentence"
           class="yes-no-app__sentence-input"
@@ -331,8 +331,23 @@ function resetSentence() {
           :aria-label="labels.sentenceLabel"
         />
         <div class="yes-no-app__sentence-actions">
-          <Button class="yes-no-app__speak" variant="primary" icon="media/volume-iii" icon-only :disabled="!canSpeakSentence" :aria-label="labels.speak" @click="speak(sentence)" />
-          <Button class="yes-no-app__reset" variant="primary" @click="resetSentence">{{ labels.reset }}</Button>
+          <button
+            class="yes-no-app__round-control yes-no-app__speak"
+            type="button"
+            :disabled="!canSpeakSentence"
+            :aria-label="labels.speak"
+            @click="speak(sentence)"
+          >
+            <Icon name="media/volume-iii" size="large" aria-hidden="true" />
+          </button>
+          <button
+            class="yes-no-app__round-control yes-no-app__reset"
+            type="button"
+            :aria-label="labels.reset"
+            @click="resetSentence"
+          >
+            <Icon name="wayfinding/cross" size="medium" aria-hidden="true" />
+          </button>
         </div>
       </section>
 
