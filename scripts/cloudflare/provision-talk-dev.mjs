@@ -110,7 +110,9 @@ function replaceTomlValueAfterMarker(source, marker, key, value) {
   return `${before}${after}`
 }
 
-const devDbId = await ensureD1('tiko-sentence-db-dev')
+// The Cloudflare account is at its D1 database limit. Reuse the existing shared
+// dev app database and keep Talk isolated through sentence-api table names.
+const devDbId = await ensureD1('tiko-db')
 const devKvId = await ensureKv('tiko-sentence-cache-dev')
 
 let wrangler = await readFile(WORKER_WRANGLER, 'utf8')
@@ -119,7 +121,7 @@ wrangler = replaceFirstTomlValue(wrangler, 'id', devKvId)
 wrangler = replaceFirstTomlValue(wrangler, 'preview_id', devKvId)
 
 if (process.env.TIKO_PROVISION_PRODUCTION === 'true') {
-  const prodDbId = await ensureD1('tiko-sentence-db')
+  const prodDbId = await ensureD1('tiko-db')
   const prodKvId = await ensureKv('tiko-sentence-cache')
   wrangler = replaceTomlValueAfterMarker(wrangler, '[env.production]', 'database_id', prodDbId)
   wrangler = replaceTomlValueAfterMarker(wrangler, '[env.production]', 'id', prodKvId)
