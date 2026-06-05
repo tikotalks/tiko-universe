@@ -46,10 +46,10 @@ function resolveSentenceBaseUrl() {
   if (configured) return configured.replace(/\/$/, '')
 
   if (typeof window !== 'undefined' && window.location.hostname.startsWith('dev.')) {
-    return 'https://dev.api.tikotalks.com'
+    return 'https://dev.sentence.tikoapi.org'
   }
 
-  return 'https://api.tikotalks.com'
+  return 'https://sentence.tikoapi.org'
 }
 
 function sentenceDisplay(words: WordTile[]) {

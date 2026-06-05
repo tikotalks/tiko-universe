@@ -5,6 +5,9 @@ import { fileURLToPath, URL } from 'node:url'
 
 export default defineConfig({
   plugins: [vue(), ui()],
+  server: {
+    allowedHosts: ['dev.talk.tikoapps.org'],
+  },
   resolve: {
     alias: {
       '@tiko/ui': fileURLToPath(new URL('../../../packages/ui/src/index.ts', import.meta.url)),

@@ -74,7 +74,10 @@ Talk is implemented in source on `development`, but live operation depends on Cl
 - [x] i18n keys mapped (`talk.*`)
 - [x] Offline fallback pack bundled (`apps/talk/web/src/data/fallback-pack-en.json`)
 - [x] Local/CI smoke coverage for Talk package, worker, and web build paths
+- [x] Development deploy workflow includes Talk web (`tiko-talk-dev`) and sentence-api (`tiko-sentence-api-dev`)
+- [x] Sentence API dry-run deployment script enabled (`npm run deploy:dry-run:sentence`)
 - [ ] D1 schema provisioned on live dev/prod Cloudflare databases
+- [ ] Dev D1/KV IDs confirmed in `workers/sentence-api/wrangler.toml` (currently named `tiko-sentence-db-dev` / `CACHE`, with placeholder IDs until Cloudflare inventory access is available)
 - [ ] App domain provisioned: `talk.tikoapps.org`
 - [ ] Dev app domain provisioned: `dev.talk.tikoapps.org`
 - [ ] Sentence API custom domain provisioned: `sentence.tikoapi.org`

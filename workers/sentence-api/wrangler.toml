@@ -31,8 +31,8 @@ binding = "GENERATION_SERVICE"
 service = "tiko-generation-api-dev"
 
 [[routes]]
-pattern = "dev.api.tikotalks.com/v1/sentence/*"
-zone_name = "tikotalks.com"
+pattern = "dev.sentence.tikoapi.org"
+custom_domain = true
 
 # ── Production environment ──────────────────────────────────────
 # Deploy with: npx wrangler deploy --env production after explicit approval.
