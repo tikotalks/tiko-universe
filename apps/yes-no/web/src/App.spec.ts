@@ -190,6 +190,17 @@ describe('Yes No web app', () => {
     expect(wrapper.text()).not.toContain('Log in')
   })
 
+  it('keeps the account avatar in the header and opens caregiver settings from it', async () => {
+    const wrapper = mount(App)
+
+    const accountButton = wrapper.get('button[aria-label="Account"]')
+    expect(accountButton.find('[data-icon="ui/avatar"]').exists()).toBe(true)
+
+    await accountButton.trigger('click')
+
+    expect(wrapper.find('[data-test="tiko-settings-panel"]').exists()).toBe(true)
+  })
+
   it('renders open-icon names instead of emoji glyphs for visible app and choice icons', () => {
     const wrapper = mount(App)
 

@@ -307,6 +307,11 @@ function headerAction(id: string) {
   if (id === 'history') historyOpen.value = !historyOpen.value
 }
 
+function handleAvatarClick() {
+  historyOpen.value = false
+  settingsOpen.value = true
+}
+
 function resetSentence() {
   sentence.value = defaultSentence.value
 }
@@ -317,8 +322,10 @@ function resetSentence() {
     :app-name="labels.appName"
     app-icon="ui/check-fat"
     app-color="yes-no"
+    avatar="ui/avatar"
     :actions="headerActions"
     @header-action="headerAction"
+    @avatar-click="handleAvatarClick"
   >
     <section class="yes-no-app" :data-color-mode="colorMode">
       <section class="yes-no-app__sentence" :aria-label="labels.sentenceLabel">
