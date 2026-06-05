@@ -18,7 +18,7 @@ export const tikoLanguages = [
 
 export type TikoLanguage = typeof tikoLanguages[number]
 
-export const tikoAppKeys = ['yes-no', 'type', 'timer', 'radio', 'cards', 'sequence', 'todo'] as const
+export const tikoAppKeys = ['yes-no', 'type', 'timer', 'radio', 'cards', 'sequence', 'todo', 'talk'] as const
 
 export type TikoAppKey = typeof tikoAppKeys[number]
 
@@ -286,6 +286,44 @@ export const tikoI18nKeys = {
       retry: 'todo.status.retry',
     },
   },
+  talk: {
+    appName: 'talk.appName',
+    sentence: {
+      label: 'talk.sentence.label',
+      placeholder: 'talk.sentence.placeholder',
+      speak: 'talk.sentence.speak',
+      clear: 'talk.sentence.clear',
+      complete: 'talk.sentence.complete',
+    },
+    templates: {
+      title: 'talk.templates.title',
+      empty: 'talk.templates.empty',
+    },
+    suggestions: {
+      title: 'talk.suggestions.title',
+      empty: 'talk.suggestions.empty',
+    },
+    categories: {
+      title: 'talk.categories.title',
+      all: 'talk.categories.all',
+    },
+    phrases: {
+      title: 'talk.phrases.title',
+      empty: 'talk.phrases.empty',
+      save: 'talk.phrases.save',
+      saved: 'talk.phrases.saved',
+      remove: 'talk.phrases.remove',
+    },
+    status: {
+      loading: 'talk.status.loading',
+      offline: 'talk.status.offline',
+      listening: 'talk.status.listening',
+      audioCached: 'talk.status.audioCached',
+      speechError: 'talk.status.speechError',
+      loadError: 'talk.status.loadError',
+      retry: 'talk.status.retry',
+    },
+  },
   common: {
     settings: 'common.settings',
   },
@@ -467,6 +505,33 @@ const todoEnglish: TranslationMap = {
   [tikoI18nKeys.common.settings]: 'Settings',
 }
 
+const talkEnglish: TranslationMap = {
+  [tikoI18nKeys.talk.appName]: 'Talk',
+  [tikoI18nKeys.talk.sentence.label]: 'Sentence',
+  [tikoI18nKeys.talk.sentence.placeholder]: 'Build a sentence',
+  [tikoI18nKeys.talk.sentence.speak]: 'Speak',
+  [tikoI18nKeys.talk.sentence.clear]: 'Clear',
+  [tikoI18nKeys.talk.sentence.complete]: 'Complete sentence',
+  [tikoI18nKeys.talk.templates.title]: 'Sentence starters',
+  [tikoI18nKeys.talk.templates.empty]: 'No starters available yet.',
+  [tikoI18nKeys.talk.suggestions.title]: 'Next words',
+  [tikoI18nKeys.talk.suggestions.empty]: 'Pick another word to continue.',
+  [tikoI18nKeys.talk.categories.title]: 'Word groups',
+  [tikoI18nKeys.talk.categories.all]: 'All words',
+  [tikoI18nKeys.talk.phrases.title]: 'Saved phrases',
+  [tikoI18nKeys.talk.phrases.empty]: 'No saved phrases yet.',
+  [tikoI18nKeys.talk.phrases.save]: 'Save phrase',
+  [tikoI18nKeys.talk.phrases.saved]: 'Phrase saved',
+  [tikoI18nKeys.talk.phrases.remove]: 'Remove phrase',
+  [tikoI18nKeys.talk.status.loading]: 'Loading words',
+  [tikoI18nKeys.talk.status.offline]: 'Offline words active',
+  [tikoI18nKeys.talk.status.listening]: 'Ready to speak',
+  [tikoI18nKeys.talk.status.audioCached]: 'Audio ready',
+  [tikoI18nKeys.talk.status.speechError]: 'Could not speak yet. Try again.',
+  [tikoI18nKeys.talk.status.loadError]: 'Could not load Talk yet.',
+  [tikoI18nKeys.talk.status.retry]: 'Retry',
+}
+
 const localTranslationBundles = [
   createTranslationBundle({ app: 'yes-no', language: 'en', translations: yesNoEnglish }),
   createTranslationBundle({ app: 'yes-no', language: 'fr', translations: yesNoFrench }),
@@ -478,6 +543,7 @@ const localTranslationBundles = [
   createTranslationBundle({ app: 'todo', language: 'en', translations: todoEnglish }),
   createTranslationBundle({ app: 'timer', language: 'en', translations: timerEnglish }),
   createTranslationBundle({ app: 'radio', language: 'en', translations: radioEnglish }),
+  createTranslationBundle({ app: 'talk', language: 'en', translations: talkEnglish }),
 ]
 
 export function createTranslationBundle<App extends TikoAppKey, Language extends TikoLanguage>(

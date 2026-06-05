@@ -14,7 +14,7 @@ describe('@tiko/i18n fallback contract', () => {
   it('loads initial typed Yes No and Type keys from the local English fallback bundle', () => {
     const i18n = createI18n({ app: 'yes-no', language: defaultLanguage })
 
-    expect(tikoAppKeys).toEqual(['yes-no', 'type', 'timer', 'radio', 'cards', 'sequence', 'todo'])
+    expect(tikoAppKeys).toEqual(['yes-no', 'type', 'timer', 'radio', 'cards', 'sequence', 'todo', 'talk'])
     expect(tikoI18nKeys.yesNo.answers.yes).toBe('yesNo.answers.yes')
     expect(i18n.t(tikoI18nKeys.yesNo.appName)).toBe('Yes No')
     expect(i18n.t(tikoI18nKeys.yesNo.answers.yes)).toBe('Yes')
@@ -24,6 +24,11 @@ describe('@tiko/i18n fallback contract', () => {
     const typeI18n = createI18n({ app: 'type', language: 'en' })
     expect(typeI18n.t(tikoI18nKeys.type.appName)).toBe('Type')
     expect(typeI18n.t(tikoI18nKeys.type.compose.placeholder)).toBe('Type what you want to say')
+
+    const talkI18n = createI18n({ app: 'talk', language: 'en' })
+    expect(talkI18n.t(tikoI18nKeys.talk.appName)).toBe('Talk')
+    expect(talkI18n.t(tikoI18nKeys.talk.sentence.placeholder)).toBe('Build a sentence')
+    expect(talkI18n.t(tikoI18nKeys.talk.status.offline)).toBe('Offline words active')
   })
 
   it('falls back from the selected language to English and keeps track of missing keys', () => {

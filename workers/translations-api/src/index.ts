@@ -49,6 +49,7 @@ const APP_PREFIXES: Record<string, string[]> = {
   'cards':    ['cards.',    'common.'],
   'sequence': ['sequence.', 'common.'],
   'todo':     ['todo.',     'common.'],
+  'talk':     ['talk.',     'common.'],
   'website':  ['website.',  'common.'],
   'admin':    ['admin.',    'common.'],
 }
