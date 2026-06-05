@@ -54,8 +54,16 @@ export interface Env {
   CACHE: KVNamespace
   IDENTITY_SERVICE: ServiceBinding
   GENERATION_SERVICE: ServiceBinding
+  ATLAS_SERVICE?: ServiceBinding
   ALLOWED_ORIGINS?: string
   TIKO_ENVIRONMENT?: string
+}
+
+interface PredictionRow {
+  word_id: string
+  ai_score: number
+  click_count: number
+  final_score: number
 }
 
 interface LanguagePackRow {
@@ -108,11 +116,10 @@ const START_CACHE_TTL = 900
 const NEXT_CACHE_TTL = 3600
 const STARTER_POS = ['pronoun', 'question', 'social']
 const COMPLETABLE_POS = new Set(['noun', 'adjective', 'social'])
-const CONTEXTUAL_SUGGESTION_RANKS: Record<string, string[]> = {
-  want: ['water', 'toilet', 'food', 'help-please', 'break', 'hug', 'quiet-time', 'space'],
-  need: ['help-please', 'water', 'toilet', 'medicine', 'break', 'quiet-time'],
-  feel: ['happy', 'sad', 'angry', 'scared', 'tired', 'sick'],
-  go: ['home', 'school', 'outside', 'bathroom', 'bed'],
+const LOCALE_LANGUAGE_NAMES: Record<string, string> = {
+  en: 'English', nl: 'Dutch', fr: 'French', de: 'German', es: 'Spanish',
+  it: 'Italian', pt: 'Portuguese', sv: 'Swedish', no: 'Norwegian', da: 'Danish',
+  fi: 'Finnish', pl: 'Polish', tr: 'Turkish', ar: 'Arabic', ja: 'Japanese', zh: 'Chinese',
 }
 
 export default {
@@ -149,6 +156,11 @@ export async function handleRequest(request: Request, env: Env): Promise<Respons
     if (path === '/v1/sentence/next') {
       if (request.method !== 'POST') return withCors(jsonError('method_not_allowed', 'Method not allowed.', 405), cors)
       return withCors(await nextSentence(request, env), cors)
+    }
+
+    if (path === '/v1/sentence/select') {
+      if (request.method !== 'POST') return withCors(jsonError('method_not_allowed', 'Method not allowed.', 405), cors)
+      return withCors(await selectWord(request, env), cors)
     }
 
     if (path === '/v1/sentence/complete') {
@@ -188,6 +200,7 @@ export async function handleRequest(request: Request, env: Env): Promise<Respons
 
 async function handleScheduled(_event: { cron: string }, env: Env): Promise<void> {
   await recalculateLearnedTransitions(env)
+  await recalculatePredictionScores(env)
   await discoverTemplateCandidates(env)
 }
 
@@ -333,17 +346,27 @@ async function nextSentence(request: Request, env: Env): Promise<Response> {
   }
 
   const validNext = validNextFor(pack.grammar, orderedSelected)
-  const suggestions = rankSuggestions(await loadSuggestedWords(env.DB, pack.id, validNext), validNext, orderedSelected)
+  const sequenceHash = await hashText(currentWords.join(','))
+  const sequenceText = orderedSelected.map((word) => word.text).join(' ')
+
+  // Check for stored AI predictions — first serve from DB if available
+  let suggestions = await loadPredictedWords(env.DB, pack.id, sequenceHash, validNext)
+
+  if (suggestions.length < 10) {
+    // No predictions yet — generate via AI, fall back to grammar ranking
+    suggestions = await generateAndStorePredictions(env, pack, locale, sequenceHash, sequenceText, orderedSelected, validNext)
+  }
+
   const categories = buildCategories(suggestions)
   const words = groupWords(suggestions)
   const stripState: StripState = {
-    display: orderedSelected.map((word) => word.text).join(' '),
+    display: sequenceText,
     validNext,
     canComplete: orderedSelected.length > 0 && COMPLETABLE_POS.has(orderedSelected[orderedSelected.length - 1].pos),
   }
 
   const response: SentenceNextResponse = {
-    suggestions: suggestions.slice(0, 12).map(toWordTile),
+    suggestions: suggestions.slice(0, 50).map(toWordTile),
     categories,
     words,
     stripState,
@@ -351,6 +374,19 @@ async function nextSentence(request: Request, env: Env): Promise<Response> {
 
   await writeCache(env, cacheKey, response, NEXT_CACHE_TTL)
   return json(response)
+}
+
+async function selectWord(request: Request, env: Env): Promise<Response> {
+  const body = await readJson<{ locale: string, currentWordIds?: unknown, selectedWordId?: unknown }>(request)
+  const locale = normalizeLocale(body.locale)
+  const currentWordIds = Array.isArray(body.currentWordIds) ? body.currentWordIds.filter((id): id is string => typeof id === 'string') : []
+  const selectedWordId = typeof body.selectedWordId === 'string' ? body.selectedWordId.trim() : ''
+  if (!selectedWordId) throw new HttpError(400, 'missing_selected_word', 'selectedWordId is required.', 'selectedWordId')
+
+  const pack = await loadActivePack(env.DB, locale)
+  const sequenceHash = await hashText(currentWordIds.join(','))
+  await trackWordSelection(env.DB, pack.id, sequenceHash, selectedWordId)
+  return json({ ok: true })
 }
 
 
@@ -486,24 +522,208 @@ async function loadSuggestedWords(db: D1Database, packId: string, posTypes: stri
   return rows.map(toPackWord)
 }
 
-function rankSuggestions(words: PackWord[], posTypes: string[], selected: PackWord[]): PackWord[] {
+function rankSuggestions(words: PackWord[], posTypes: string[], _selected: PackWord[]): PackWord[] {
   const posRank = new Map(posTypes.map((pos, index) => [pos, index]))
-  const contextualRank = new Map<string, number>()
-  for (const selectedWord of selected) {
-    const rankedIds = CONTEXTUAL_SUGGESTION_RANKS[selectedWord.id] ?? []
-    rankedIds.forEach((wordId, index) => {
-      contextualRank.set(wordId, Math.min(contextualRank.get(wordId) ?? Number.POSITIVE_INFINITY, index))
-    })
+  return [...words].sort((a, b) =>
+    (posRank.get(a.pos) ?? 99) - (posRank.get(b.pos) ?? 99)
+    || b.frequency - a.frequency
+    || a.text.localeCompare(b.text),
+  )
+}
+
+async function loadPredictedWords(db: D1Database, packId: string, sequenceHash: string, validNext: string[]): Promise<PackWord[]> {
+  try {
+    const rows = await all<WordRow & { final_score: number }>(db.prepare(`
+      SELECT w.id, w.text, w.pos, w.category, w.icon, w.image, w.frequency, w.inflections_json,
+             p.final_score
+      FROM talk_word_predictions p
+      JOIN talk_word_inventory w ON w.id = p.word_id AND w.pack_id = p.pack_id
+      WHERE p.pack_id = ? AND p.sequence_hash = ?
+      ORDER BY p.final_score DESC
+      LIMIT 50
+    `).bind(packId, sequenceHash))
+
+    const validPosSet = new Set(validNext)
+    return rows
+      .filter((row) => validPosSet.size === 0 || validPosSet.has(row.pos))
+      .map((row) => toPackWord(row))
+  } catch {
+    return []
+  }
+}
+
+async function generateAndStorePredictions(
+  env: Env,
+  pack: { id: string, grammar: GrammarRules },
+  locale: string,
+  sequenceHash: string,
+  sequenceText: string,
+  orderedSelected: PackWord[],
+  validNext: string[],
+): Promise<PackWord[]> {
+  const candidatePosTypes = validNext.length ? validNext : STARTER_POS
+  const candidateWords = await loadSuggestedWords(env.DB, pack.id, candidatePosTypes)
+
+  const aiPredictions = await fetchAiPredictions(env, candidateWords, sequenceText, locale)
+
+  if (aiPredictions && aiPredictions.length > 0) {
+    const wordMap = new Map(candidateWords.map((w) => [w.id, w]))
+    const scored: Array<{ word: PackWord, score: number }> = []
+    const aiWordIds = new Set<string>()
+
+    for (const { wordId, probability } of aiPredictions) {
+      const word = wordMap.get(wordId)
+      if (!word) continue
+      aiWordIds.add(wordId)
+      scored.push({ word, score: Math.max(0, Math.min(1, probability)) })
+    }
+    // Fill in any valid words the AI didn't mention with a minimal score
+    for (const word of candidateWords) {
+      if (!aiWordIds.has(word.id)) scored.push({ word, score: 0.01 })
+    }
+    scored.sort((a, b) => b.score - a.score)
+
+    await storePredictions(env.DB, pack.id, locale, sequenceHash, sequenceText,
+      scored.slice(0, 50).map((s) => ({ wordId: s.word.id, probability: s.score })))
+
+    return scored.slice(0, 50).map((s) => s.word)
   }
 
-  return [...words].sort((a, b) => {
-    const aContext = contextualRank.get(a.id) ?? Number.POSITIVE_INFINITY
-    const bContext = contextualRank.get(b.id) ?? Number.POSITIVE_INFINITY
-    return aContext - bContext
-      || (posRank.get(a.pos) ?? 99) - (posRank.get(b.pos) ?? 99)
-      || b.frequency - a.frequency
-      || a.text.localeCompare(b.text)
-  })
+  // AI unavailable — store grammar-ranked order with descending scores
+  const fallback = rankSuggestions(candidateWords, validNext, orderedSelected).slice(0, 50)
+  const count = fallback.length
+  await storePredictions(env.DB, pack.id, locale, sequenceHash, sequenceText,
+    fallback.map((w, i) => ({ wordId: w.id, probability: Math.max(0.01, 1 - i / count) })))
+
+  return fallback
+}
+
+async function fetchAiPredictions(
+  env: Env,
+  candidateWords: PackWord[],
+  sequenceText: string,
+  locale: string,
+): Promise<Array<{ wordId: string, probability: number }> | null> {
+  if (!env.ATLAS_SERVICE) return null
+
+  const language = LOCALE_LANGUAGE_NAMES[locale.split('-')[0].toLowerCase()] ?? locale
+  const context = sequenceText.trim() ? `"${sequenceText}"` : 'the start of a sentence'
+  const wordList = candidateWords.slice(0, 120).map((w) => `${w.id}|${w.text}|${w.pos}`).join('\n')
+
+  const prompt = `You are an AAC (Augmentative and Alternative Communication) vocabulary assistant for children.
+
+Language: ${language}
+Sentence so far: ${context}
+
+From the vocabulary list below, select the 50 most likely next words a child would say in ${language} to complete their sentence. Assign each a probability from 0.0 to 1.0 (1.0 = almost certain next word).
+
+Vocabulary (id|text|part-of-speech):
+${wordList}
+
+Return ONLY a JSON array, no explanation:
+[{"wordId":"id-here","probability":0.95},...]`
+
+  try {
+    const response = await env.ATLAS_SERVICE.fetch(new Request('https://atlas.internal/v1/atlas/text', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        input: prompt,
+        app: 'talk',
+        purpose: 'word-prediction',
+        outputFormat: 'json',
+        temperature: 0.2,
+        maxTokens: 1500,
+      }),
+    }))
+
+    if (!response.ok) return null
+    const result = await response.json() as { data?: { output?: string } }
+    const rawText = (result.data?.output ?? '').trim()
+    const match = rawText.match(/\[[\s\S]*\]/)
+    if (!match) return null
+    const parsed = JSON.parse(match[0]) as unknown
+    if (!Array.isArray(parsed)) return null
+
+    return parsed.filter(
+      (item): item is { wordId: string, probability: number } =>
+        typeof item === 'object' && item !== null
+        && typeof (item as Record<string, unknown>).wordId === 'string'
+        && typeof (item as Record<string, unknown>).probability === 'number',
+    )
+  } catch {
+    return null
+  }
+}
+
+async function storePredictions(
+  db: D1Database,
+  packId: string,
+  locale: string,
+  sequenceHash: string,
+  sequenceText: string,
+  predictions: Array<{ wordId: string, probability: number }>,
+): Promise<void> {
+  for (const { wordId, probability } of predictions) {
+    const id = `pred:${packId}:${sequenceHash.slice(0, 16)}:${wordId}`
+    try {
+      await run(db.prepare(`
+        INSERT INTO talk_word_predictions
+          (id, pack_id, locale, sequence_hash, sequence_text, word_id, ai_score, final_score)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        ON CONFLICT(pack_id, sequence_hash, word_id) DO NOTHING
+      `).bind(id, packId, locale, sequenceHash, sequenceText, wordId, probability, probability))
+    } catch {
+      // Ignore individual insert failures (e.g. foreign key constraints)
+    }
+  }
+}
+
+async function trackWordSelection(db: D1Database, packId: string, sequenceHash: string, wordId: string): Promise<void> {
+  try {
+    await run(db.prepare(`
+      UPDATE talk_word_predictions
+      SET click_count = click_count + 1, updated_at = CURRENT_TIMESTAMP
+      WHERE pack_id = ? AND sequence_hash = ? AND word_id = ?
+    `).bind(packId, sequenceHash, wordId))
+  } catch {
+    // Click tracking is best-effort
+  }
+}
+
+async function recalculatePredictionScores(env: Env): Promise<void> {
+  const sequences = await all<{ pack_id: string, sequence_hash: string, total_clicks: number }>(env.DB.prepare(`
+    SELECT pack_id, sequence_hash, SUM(click_count) as total_clicks
+    FROM talk_word_predictions
+    WHERE click_count > 0
+    GROUP BY pack_id, sequence_hash
+  `))
+
+  for (const { pack_id, sequence_hash, total_clicks } of sequences) {
+    if (!total_clicks) continue
+
+    const predictions = await all<PredictionRow>(env.DB.prepare(`
+      SELECT word_id, ai_score, click_count, final_score
+      FROM talk_word_predictions
+      WHERE pack_id = ? AND sequence_hash = ?
+    `).bind(pack_id, sequence_hash))
+
+    // Weight of learned data grows from 0 (no clicks) to 1 (200+ clicks)
+    const learnedWeight = Math.min(1, total_clicks / 200)
+    const maxClicks = Math.max(1, ...predictions.map((p) => p.click_count))
+
+    for (const pred of predictions) {
+      const learnedScore = pred.click_count / maxClicks
+      const finalScore = Number((pred.ai_score * (1 - learnedWeight) + learnedScore * learnedWeight).toFixed(4))
+      await run(env.DB.prepare(`
+        UPDATE talk_word_predictions
+        SET final_score = ?, updated_at = CURRENT_TIMESTAMP
+        WHERE pack_id = ? AND sequence_hash = ? AND word_id = ?
+      `).bind(finalScore, pack_id, sequence_hash, pred.word_id))
+    }
+
+    await deleteCachePrefix(env.CACHE, `sentence:next:`)
+  }
 }
 
 

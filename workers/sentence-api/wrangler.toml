@@ -5,7 +5,7 @@ account_id = "dc2b7d14a69351375cab6de9a13ddee9"
 workers_dev = true
 
 # Talk sentence-building API. Backend owns language packs, grammar, suggestions,
-# saved phrases, and privacy-safe aggregate learning. Do not call LLMs at runtime.
+# saved phrases, and AI-powered word predictions with usage-based score blending.
 
 [vars]
 TIKO_ENVIRONMENT = "development"
@@ -29,6 +29,10 @@ service = "tiko-identity-api-dev"
 [[services]]
 binding = "GENERATION_SERVICE"
 service = "tiko-generation-api-dev"
+
+[[services]]
+binding = "ATLAS_SERVICE"
+service = "tiko-atlas-api-dev"
 
 [[routes]]
 pattern = "dev-api.tikotalks.com/v1/sentence/*"
@@ -62,6 +66,10 @@ service = "tiko-identity-api"
 [[env.production.services]]
 binding = "GENERATION_SERVICE"
 service = "tiko-generation-api"
+
+[[env.production.services]]
+binding = "ATLAS_SERVICE"
+service = "tiko-atlas-api"
 
 [[env.production.routes]]
 pattern = "sentence.tikoapi.org"

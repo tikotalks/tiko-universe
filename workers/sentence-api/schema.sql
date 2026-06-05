@@ -94,3 +94,24 @@ CREATE TABLE IF NOT EXISTS talk_templates (
 );
 
 CREATE INDEX IF NOT EXISTS idx_talk_templates_locale_category ON talk_templates(locale, category, priority DESC);
+
+-- AI-powered word predictions per sequence, with usage-based score blending.
+-- sequence_hash = sha256 of the ordered word IDs joined by comma (empty string for start).
+-- ai_score is set once by the LLM. final_score is recalculated by the scheduled job
+-- as a blend of ai_score and the observed click-through rate for this (sequence, word) pair.
+CREATE TABLE IF NOT EXISTS talk_word_predictions (
+  id TEXT PRIMARY KEY,
+  pack_id TEXT NOT NULL REFERENCES talk_language_packs(id) ON DELETE CASCADE,
+  locale TEXT NOT NULL,
+  sequence_hash TEXT NOT NULL,
+  sequence_text TEXT NOT NULL DEFAULT '',
+  word_id TEXT NOT NULL REFERENCES talk_word_inventory(id) ON DELETE CASCADE,
+  ai_score REAL NOT NULL DEFAULT 0 CHECK (ai_score >= 0 AND ai_score <= 1),
+  click_count INTEGER NOT NULL DEFAULT 0 CHECK (click_count >= 0),
+  final_score REAL NOT NULL DEFAULT 0 CHECK (final_score >= 0 AND final_score <= 1),
+  created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  UNIQUE (pack_id, sequence_hash, word_id)
+);
+
+CREATE INDEX IF NOT EXISTS idx_talk_word_predictions_seq ON talk_word_predictions(pack_id, sequence_hash, final_score DESC);

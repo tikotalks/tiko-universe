@@ -159,6 +159,18 @@ export function useSentenceApi(options: SentenceApiOptions) {
     }
   }
 
+  async function select(previousWordIds: string[], selectedWordId: string) {
+    if (isOffline.value) return
+    try {
+      await requestJson<{ ok: boolean }>('/v1/sentence/select', {
+        method: 'POST',
+        body: JSON.stringify({ locale: options.language.value, currentWordIds: previousWordIds, selectedWordId }),
+      })
+    } catch {
+      // click tracking is best-effort
+    }
+  }
+
   async function next(currentWords: string[]) {
     const cacheKey = currentWords.join(',')
     const cached = prefetchCache.get(cacheKey)
@@ -292,6 +304,7 @@ export function useSentenceApi(options: SentenceApiOptions) {
     isOffline,
     start,
     next,
+    select,
     prefetchNext,
     loadVocabulary,
     loadPhrases,

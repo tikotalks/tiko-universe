@@ -131,10 +131,13 @@ export function useTalkApp() {
   }
 
   function selectWordNode(node: VisualWordNode) {
+    const previousIds = [...strip.wordIds.value]
     strip.addWord(node.word)
     activeCategoryId.value = normalizeCategoryId(node.word.category)
     speechStatus.value = 'idle'
     speechError.value = null
+    // Track the click so the scheduled job can blend AI scores with usage data
+    void sentenceApi.select(previousIds, node.word.id)
     const currentIds = [...strip.wordIds.value]
     sentenceApi.next(currentIds).then(() => {
       void sentenceApi.prefetchNext(
