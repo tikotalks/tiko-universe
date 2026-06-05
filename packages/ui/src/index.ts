@@ -112,7 +112,7 @@ function createBrowserFallback(fallbackUsed = false, error?: string): TikoTtsRes
 }
 
 export function createTikoTtsClient(options: TikoTtsClientOptions = {}) {
-  const workerUrl = normalizeBaseUrl(options.workerUrl ?? 'https://api.tikotalks.com/v1')
+  const workerUrl = normalizeBaseUrl(options.workerUrl ?? 'https://tiko-atlas-api-dev.silvandiepen.workers.dev/v1')
   const cdnUrl = normalizeBaseUrl(options.cdnUrl ?? 'https://tts.tikocdn.org')
   const fetcher = options.fetcher ?? globalThis.fetch
   const memoryCache = new Map<string, TikoTtsResponse>()
