@@ -26,6 +26,7 @@ class MemoryStatement {
 
 class MemoryD1Database {
   phrases: Row[] = []
+  usage: Row[] = []
   prepare(sql: string): MemoryStatement { return new MemoryStatement(this, sql) }
 
   execute(sql: string, values: unknown[]): MemoryResult {
@@ -48,7 +49,10 @@ class MemoryD1Database {
     }
 
     if (normalized.startsWith('SELECT id, text, pos, category, icon, image, frequency, inflections_json FROM word_inventory WHERE pack_id = ?')) {
-      return new MemoryResult([...pack.words].sort((a, b) => a.category.localeCompare(b.category) || b.frequency - a.frequency || a.text.localeCompare(b.text)).map(wordRow))
+      let words = [...pack.words]
+      if (normalized.includes('category = ?')) words = words.filter((word) => word.category === String(values[1]))
+      if (normalized.includes('pos = ?')) words = words.filter((word) => word.pos === String(values[normalized.includes('category = ?') ? 2 : 1]))
+      return new MemoryResult(words.sort((a, b) => a.category.localeCompare(b.category) || b.frequency - a.frequency || a.text.localeCompare(b.text)).map(wordRow))
     }
 
     if (normalized.startsWith('SELECT id, pattern, category, icon, slots_json FROM templates')) {
@@ -58,6 +62,27 @@ class MemoryD1Database {
     if (normalized.startsWith('SELECT id, sentence, word_ids_json, is_auto, usage_count, label FROM user_phrases')) {
       const [subjectId, locale] = values.map(String)
       return new MemoryResult(this.phrases.filter((phrase) => phrase.subject_id === subjectId && phrase.locale === locale))
+    }
+
+
+    if (normalized.startsWith('INSERT INTO sentence_usage')) {
+      const [id, locale, packId, posSequenceJson, wordSequenceHash, wordCount] = values
+      const existing = this.usage.find((row) => row.locale === locale && row.word_sequence_hash === wordSequenceHash)
+      if (existing) existing.usage_count = Number(existing.usage_count) + 1
+      else this.usage.push({ id, locale, pack_id: packId, pos_sequence_json: posSequenceJson, word_sequence_hash: wordSequenceHash, word_count: wordCount, usage_count: 1 })
+      return new MemoryResult()
+    }
+
+    if (normalized.startsWith('INSERT INTO user_phrases')) {
+      const [id, subjectId, locale, sentence, wordIdsJson, label] = values
+      this.phrases.push({ id, subject_id: subjectId, locale, sentence, word_ids_json: wordIdsJson, label, is_auto: 0, usage_count: 1 })
+      return new MemoryResult()
+    }
+
+    if (normalized.startsWith('DELETE FROM user_phrases')) {
+      const [id, subjectId, locale] = values
+      this.phrases = this.phrases.filter((phrase) => !(phrase.id === id && phrase.subject_id === subjectId && phrase.locale === locale))
+      return new MemoryResult()
     }
 
     throw new Error(`Unhandled SQL in test fake: ${normalized}`)
@@ -80,7 +105,18 @@ class MemoryKVNamespace {
   async delete(key: string): Promise<void> { this.values.delete(key) }
 }
 
-const service = { fetch: async () => new Response(JSON.stringify({ subject: { id: 'sub_from_service' } }), { headers: { 'content-type': 'application/json' } }) }
+function service(options: { ttsOk?: boolean } = {}) {
+  return {
+    fetch: async (request: Request) => {
+      const url = new URL(request.url)
+      if (url.pathname === '/v1/generation/tts') {
+        if (options.ttsOk === false) return new Response(JSON.stringify({ error: { code: 'provider_unavailable' } }), { status: 503, headers: { 'content-type': 'application/json' } })
+        return new Response(JSON.stringify({ data: { audioUrl: '/v1/generation/audio/test-audio' }, meta: { cached: true } }), { status: 200, headers: { 'content-type': 'application/json' } })
+      }
+      return new Response(JSON.stringify({ subject: { id: 'sub_from_service' } }), { headers: { 'content-type': 'application/json' } })
+    }
+  }
+}
 
 function wordRow(word: PackWord): Row {
   return {
@@ -122,8 +158,8 @@ function env() {
   const testEnv: Env = {
     DB: db,
     CACHE: cache,
-    IDENTITY_SERVICE: service,
-    GENERATION_SERVICE: service,
+    IDENTITY_SERVICE: service(),
+    GENERATION_SERVICE: service(),
     ALLOWED_ORIGINS: 'https://talk.tiko.test',
     TIKO_ENVIRONMENT: 'test',
   }
@@ -203,6 +239,75 @@ describe('sentence-api foundation', () => {
     expect(Object.keys(first.body.words).length).toBeGreaterThan(0)
     expect(second.body).toEqual(first.body)
     expect(cache.writes).toContain('sentence:next:en:anon:i,want')
+  })
+
+
+  it('completes a sentence, calls TTS, logs aggregate usage, and can auto-save', async () => {
+    const { testEnv, db } = env()
+    const { response, body } = await fetchJson('/v1/sentence/complete', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ locale: 'en', userId: 'sub_1', wordIds: ['i', 'want', 'water'], autoSave: true }),
+    }, testEnv)
+
+    expect(response.status).toBe(200)
+    expect(body).toMatchObject({ sentence: 'I want water.', audioUrl: '/v1/generation/audio/test-audio', audioCached: true })
+    expect(body.savedPhraseId).toMatch(/^phrase_/)
+    expect(db.usage).toHaveLength(1)
+    expect(db.usage[0]).toMatchObject({ locale: 'en', pack_id: 'en-v1', word_count: 3, usage_count: 1 })
+    expect(String(db.usage[0].word_sequence_hash)).toMatch(/^[a-f0-9]{64}$/)
+    expect(JSON.stringify(db.usage)).not.toContain('I want water')
+  })
+
+  it('returns a child-safe TTS error without storing raw sentence text in usage rows', async () => {
+    const { testEnv, db } = env()
+    testEnv.GENERATION_SERVICE = service({ ttsOk: false })
+    const { response, body } = await fetchJson('/v1/sentence/complete', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ locale: 'en', wordIds: ['i', 'want', 'juice'] }),
+    }, testEnv)
+
+    expect(response.status).toBe(502)
+    expect(body.error.code).toBe('tts_generation_failed')
+    expect(db.usage).toHaveLength(1)
+    expect(JSON.stringify(db.usage)).not.toContain('juice')
+  })
+
+  it('returns vocabulary filtered by category and POS with KV caching', async () => {
+    const { testEnv, cache } = env()
+    const first = await fetchJson('/v1/sentence/vocabulary?locale=en&category=drinks&pos=noun', {}, testEnv)
+    const second = await fetchJson('/v1/sentence/vocabulary?locale=en&category=drinks&pos=noun', {}, testEnv)
+
+    expect(first.response.status).toBe(200)
+    expect(first.body.totalWords).toBeGreaterThan(0)
+    expect(first.body.words.every((word: JsonBody) => word.category === 'drinks' && word.pos === 'noun')).toBe(true)
+    expect(second.body).toEqual(first.body)
+    expect(cache.writes).toContain('sentence:vocabulary:en:drinks:noun')
+  })
+
+  it('requires identity for phrases and enforces ownership on save/delete', async () => {
+    const { testEnv, db } = env()
+    const anonymous = await fetchJson('/v1/sentence/phrases?locale=en', {}, testEnv)
+    expect(anonymous.response.status).toBe(401)
+
+    const listed = await fetchJson('/v1/sentence/phrases?locale=en&userId=sub_1', {}, testEnv)
+    expect(listed.response.status).toBe(200)
+    expect(listed.body.phrases[0]).toMatchObject({ id: 'phrase_1', sentence: 'I want water.' })
+
+    const saved = await fetchJson('/v1/sentence/phrases', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ locale: 'en', userId: 'sub_1', wordIds: ['i', 'want', 'juice'], label: 'Juice' }),
+    }, testEnv)
+    expect(saved.response.status).toBe(201)
+    expect(saved.body.phrase).toMatchObject({ sentence: 'I want juice.', label: 'Juice', usageCount: 1 })
+    expect(db.phrases.some((phrase) => phrase.id === saved.body.phrase.id && phrase.subject_id === 'sub_1')).toBe(true)
+
+    const deleted = await fetchJson(`/v1/sentence/phrases/${saved.body.phrase.id}?locale=en&userId=sub_1`, { method: 'DELETE' }, testEnv)
+    expect(deleted.response.status).toBe(200)
+    expect(deleted.body).toEqual({ deleted: true })
+    expect(db.phrases.some((phrase) => phrase.id === saved.body.phrase.id)).toBe(false)
   })
 
   it('rejects unknown words and returns JSON 404/method errors', async () => {

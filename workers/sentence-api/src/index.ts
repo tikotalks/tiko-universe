@@ -3,10 +3,17 @@ import type {
   GrammarRules,
   PackTemplate,
   PackWord,
+  DeleteSentencePhraseResponse,
   SavedPhrase,
+  SaveSentencePhraseRequest,
+  SaveSentencePhraseResponse,
+  SentenceCompleteRequest,
+  SentenceCompleteResponse,
   SentenceNextRequest,
   SentenceNextResponse,
+  SentencePhrasesResponse,
   SentenceStartResponse,
+  SentenceVocabularyResponse,
   StripState,
   Template,
   WordTile,
@@ -139,6 +146,27 @@ export async function handleRequest(request: Request, env: Env): Promise<Respons
       return withCors(await nextSentence(request, env), cors)
     }
 
+    if (path === '/v1/sentence/complete') {
+      if (request.method !== 'POST') return withCors(jsonError('method_not_allowed', 'Method not allowed.', 405), cors)
+      return withCors(await completeSentence(request, env), cors)
+    }
+
+    if (path === '/v1/sentence/vocabulary') {
+      if (request.method !== 'GET') return withCors(jsonError('method_not_allowed', 'Method not allowed.', 405), cors)
+      return withCors(await vocabulary(env, url), cors)
+    }
+
+    if (path === '/v1/sentence/phrases') {
+      if (request.method === 'GET') return withCors(await listPhrases(request, env, url), cors)
+      if (request.method === 'POST') return withCors(await savePhrase(request, env), cors)
+      return withCors(jsonError('method_not_allowed', 'Method not allowed.', 405), cors)
+    }
+
+    if (path.startsWith('/v1/sentence/phrases/')) {
+      if (request.method !== 'DELETE') return withCors(jsonError('method_not_allowed', 'Method not allowed.', 405), cors)
+      return withCors(await deletePhrase(request, env, url, path), cors)
+    }
+
     return withCors(jsonError('not_found', 'Route not found.', 404), cors)
   } catch (error) {
     if (error instanceof HttpError) {
@@ -227,6 +255,93 @@ async function nextSentence(request: Request, env: Env): Promise<Response> {
   return json(response)
 }
 
+
+async function completeSentence(request: Request, env: Env): Promise<Response> {
+  const body = await readJson<SentenceCompleteRequest>(request)
+  const locale = normalizeLocale(body.locale)
+  const wordIds = validateWordIds(body.wordIds, 'wordIds')
+  const subjectId = await resolveSubjectId(request, env, body.userId)
+  const pack = await loadActivePack(env.DB, locale)
+  const selectedWords = await loadWordsByIds(env.DB, pack.id, wordIds)
+  const orderedWords = orderWordsOrThrow(wordIds, selectedWords)
+  const sentence = formatSentence(orderedWords)
+
+  await logUsageAggregate(env.DB, locale, pack.id, orderedWords)
+
+  let savedPhraseId: string | undefined
+  if (body.autoSave && subjectId) {
+    const phrase = await persistPhrase(env.DB, locale, subjectId, orderedWords)
+    savedPhraseId = phrase.id
+  }
+
+  const audio = await generateSpeech(env, sentence, locale)
+  const response: SentenceCompleteResponse = {
+    sentence,
+    audioUrl: audio.audioUrl,
+    audioCached: audio.cached,
+    ...(savedPhraseId ? { savedPhraseId } : {}),
+  }
+  return json(response)
+}
+
+async function vocabulary(env: Env, url: URL): Promise<Response> {
+  const locale = readLocale(url)
+  const category = url.searchParams.get('category')?.trim() || null
+  const pos = url.searchParams.get('pos')?.trim() || null
+  const cacheKey = `sentence:vocabulary:${locale}:${category ?? 'all'}:${pos ?? 'all'}`
+  const cached = await readCache<SentenceVocabularyResponse>(env, cacheKey)
+  if (cached) return json(cached)
+
+  const pack = await loadActivePack(env.DB, locale)
+  const words = await loadVocabularyWords(env.DB, pack.id, category, pos)
+  const response: SentenceVocabularyResponse = {
+    words: words.map(toWordTile),
+    categories: buildCategories(words),
+    totalWords: words.length,
+  }
+  await writeCache(env, cacheKey, response, 21600)
+  return json(response)
+}
+
+async function listPhrases(request: Request, env: Env, url: URL): Promise<Response> {
+  const locale = readLocale(url)
+  const subjectId = await requireSubjectId(request, env, url.searchParams.get('userId'))
+  const cacheKey = `sentence:phrases:${locale}:${hashCacheKey(subjectId)}`
+  const cached = await readCache<SentencePhrasesResponse>(env, cacheKey)
+  if (cached) return json(cached)
+
+  const response: SentencePhrasesResponse = { phrases: await loadSavedPhrases(env.DB, locale, subjectId) }
+  await writeCache(env, cacheKey, response, 900)
+  return json(response)
+}
+
+async function savePhrase(request: Request, env: Env): Promise<Response> {
+  const body = await readJson<SaveSentencePhraseRequest>(request)
+  const locale = normalizeLocale(body.locale)
+  const subjectId = await requireSubjectId(request, env, body.userId)
+  const wordIds = validateWordIds(body.wordIds, 'wordIds')
+  const pack = await loadActivePack(env.DB, locale)
+  const words = await loadWordsByIds(env.DB, pack.id, wordIds)
+  const phrase = await persistPhrase(env.DB, locale, subjectId, orderWordsOrThrow(wordIds, words), body.label)
+  await env.CACHE.delete(`sentence:phrases:${locale}:${hashCacheKey(subjectId)}`)
+  const response: SaveSentencePhraseResponse = { phrase }
+  return json(response, 201)
+}
+
+async function deletePhrase(request: Request, env: Env, url: URL, path: string): Promise<Response> {
+  const phraseId = decodeURIComponent(path.replace('/v1/sentence/phrases/', ''))
+  if (!phraseId) throw new HttpError(400, 'missing_phrase_id', 'Phrase id is required.', 'phraseId')
+  const locale = readLocale(url)
+  const subjectId = await requireSubjectId(request, env, url.searchParams.get('userId'))
+  await run(env.DB.prepare(`
+    DELETE FROM user_phrases
+    WHERE id = ? AND subject_id = ? AND locale = ?
+  `).bind(phraseId, subjectId, locale))
+  await env.CACHE.delete(`sentence:phrases:${locale}:${hashCacheKey(subjectId)}`)
+  const response: DeleteSentencePhraseResponse = { deleted: true }
+  return json(response)
+}
+
 async function loadActivePack(db: D1Database, locale: string): Promise<LanguagePackRow & { grammar: GrammarRules }> {
   const row = await first<LanguagePackRow>(db.prepare(`
     SELECT id, locale, version, grammar_json
@@ -291,6 +406,27 @@ function rankSuggestions(words: PackWord[], posTypes: string[], selected: PackWo
       || b.frequency - a.frequency
       || a.text.localeCompare(b.text)
   })
+}
+
+
+async function loadVocabularyWords(db: D1Database, packId: string, category: string | null, pos: string | null): Promise<PackWord[]> {
+  const clauses = ['pack_id = ?']
+  const values: D1Value[] = [packId]
+  if (category) {
+    clauses.push('category = ?')
+    values.push(category)
+  }
+  if (pos) {
+    clauses.push('pos = ?')
+    values.push(pos)
+  }
+  const rows = await all<WordRow>(db.prepare(`
+    SELECT id, text, pos, category, icon, image, frequency, inflections_json
+    FROM word_inventory
+    WHERE ${clauses.join(' AND ')}
+    ORDER BY category ASC, frequency DESC, text ASC
+  `).bind(...values))
+  return rows.map(toPackWord)
 }
 
 async function loadTemplates(db: D1Database, packId: string): Promise<PackTemplate[]> {
@@ -388,6 +524,92 @@ function validNextFor(grammar: GrammarRules, selected: PackWord[]): string[] {
   if (selected.length === 0) return STARTER_POS
   const last = selected[selected.length - 1]
   return grammar.validTransitions[last.pos] ?? []
+}
+
+
+function validateWordIds(value: unknown, field: string): string[] {
+  if (!Array.isArray(value) || value.length === 0) {
+    throw new HttpError(400, 'missing_word_ids', 'At least one word id is required.', field)
+  }
+  if (value.some((wordId) => typeof wordId !== 'string' || !wordId.trim())) {
+    throw new HttpError(400, 'invalid_word_ids', 'Word ids must be non-empty strings.', field)
+  }
+  return value.map((wordId) => wordId.trim())
+}
+
+function orderWordsOrThrow(wordIds: string[], words: PackWord[]): PackWord[] {
+  const byId = new Map(words.map((word) => [word.id, word]))
+  const ordered = wordIds.map((wordId) => byId.get(wordId)).filter((word): word is PackWord => Boolean(word))
+  if (ordered.length !== wordIds.length) {
+    throw new HttpError(404, 'unknown_word', 'One or more word ids are not in the active language pack.', 'wordIds')
+  }
+  return ordered
+}
+
+function formatSentence(words: PackWord[]): string {
+  const text = words.map((word) => word.text).join(' ').replace(/\s+/g, ' ').trim()
+  const capitalized = text.charAt(0).toUpperCase() + text.slice(1)
+  return /[.!?]$/.test(capitalized) ? capitalized : `${capitalized}.`
+}
+
+async function generateSpeech(env: Env, sentence: string, locale: string): Promise<{ audioUrl: string, cached: boolean }> {
+  const response = await env.GENERATION_SERVICE.fetch(new Request('https://generation.internal/v1/generation/tts', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ text: sentence, language: locale, provider: 'auto' }),
+  }))
+  if (!response.ok) throw new HttpError(502, 'tts_generation_failed', 'Could not generate speech audio yet.')
+  const body = await response.json() as { data?: { audioUrl?: string }, meta?: { cached?: boolean }, audioUrl?: string, cached?: boolean }
+  const audioUrl = body.data?.audioUrl ?? body.audioUrl
+  if (!audioUrl) throw new HttpError(502, 'tts_generation_failed', 'Generation service did not return audio.')
+  return { audioUrl, cached: body.meta?.cached ?? body.cached ?? false }
+}
+
+async function logUsageAggregate(db: D1Database, locale: string, packId: string, words: PackWord[]): Promise<void> {
+  const hash = await hashText(`${locale} ${words.map((word) => word.id).join(' ')}`)
+  const id = `usage_${hash.slice(0, 24)}`
+  await run(db.prepare(`
+    INSERT INTO sentence_usage (id, locale, pack_id, pos_sequence_json, word_sequence_hash, word_count, usage_count, first_seen_at, last_seen_at)
+    VALUES (?, ?, ?, ?, ?, ?, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+    ON CONFLICT(locale, word_sequence_hash) DO UPDATE SET
+      usage_count = usage_count + 1,
+      last_seen_at = CURRENT_TIMESTAMP
+  `).bind(id, locale, packId, JSON.stringify(words.map((word) => word.pos)), hash, words.length))
+}
+
+async function persistPhrase(db: D1Database, locale: string, subjectId: string, words: PackWord[], label?: string): Promise<SavedPhrase> {
+  const sentence = formatSentence(words)
+  const wordIds = words.map((word) => word.id)
+  const id = `phrase_${crypto.randomUUID()}`
+  await run(db.prepare(`
+    INSERT INTO user_phrases (id, subject_id, locale, sentence, word_ids_json, label, is_auto, usage_count, created_at, updated_at)
+    VALUES (?, ?, ?, ?, ?, ?, 0, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+  `).bind(id, subjectId, locale, sentence, JSON.stringify(wordIds), label?.trim() || null))
+  return { id, sentence, wordIds, isAuto: false, usageCount: 1, ...(label?.trim() ? { label: label.trim() } : {}) }
+}
+
+async function requireSubjectId(request: Request, env: Env, explicitSubjectId?: string | null): Promise<string> {
+  const subjectId = await resolveSubjectId(request, env, explicitSubjectId)
+  if (!subjectId) throw new HttpError(401, 'identity_required', 'A Tiko identity session is required for saved phrases.', 'Authorization')
+  return subjectId
+}
+
+function hashCacheKey(value: string): string {
+  let hash = 0
+  for (let index = 0; index < value.length; index += 1) {
+    hash = ((hash << 5) - hash + value.charCodeAt(index)) | 0
+  }
+  return Math.abs(hash).toString(36)
+}
+
+async function hashText(value: string): Promise<string> {
+  const bytes = new TextEncoder().encode(value)
+  const digest = await crypto.subtle.digest('SHA-256', bytes)
+  return Array.from(new Uint8Array(digest)).map((byte) => byte.toString(16).padStart(2, '0')).join('')
+}
+
+async function run(statement: D1PreparedStatement): Promise<D1Result> {
+  return await statement.run()
 }
 
 async function resolveSubjectId(request: Request, env: Env, explicitSubjectId?: string | null): Promise<string | null> {
