@@ -26,7 +26,7 @@ Talk uses these canonical domains:
 - Production app: `talk.tikoapps.org`
 - Development app: `dev.talk.tikoapps.org`
 - Production Sentence API: `sentence.tikoapi.org`
-- Development Sentence API: `dev.sentence.tikoapi.org`
+- Development Sentence API: `dev-api.tikotalks.com/v1/sentence/*`
 - Pages project: `tiko-talk`
 - Worker project: `tiko-sentence-api` / `tiko-sentence-api-dev`
 
@@ -36,7 +36,7 @@ The frontend must call the Sentence API through the configured API base URL. The
 
 - Talk keeps a clean app/API split: app runtime under `tikoapps.org`, API authority under `tikoapi.org`.
 - The Sentence API can evolve independently of clients; suggestions and packs improve without app updates.
-- `dev.sentence.tikoapi.org` requires custom-domain DNS/route provisioning in the zone-owning Cloudflare account. If that is unavailable during early development, workers.dev may be used only as a temporary preview URL and must not be documented as canonical.
+- Development uses `dev-api.tikotalks.com` rather than `dev.api.tikotalks.com` because Cloudflare Universal SSL covers `*.tikotalks.com` but not the nested `*.*.tikotalks.com` hostname shape.
 - Production binding to `talk.tikoapps.org` or `sentence.tikoapi.org` is not part of implementation unless Sil explicitly approves production promotion.
 - No new CDN domain is needed for Talk v1. TTS audio remains owned by the existing generation/audio delivery pipeline.
 

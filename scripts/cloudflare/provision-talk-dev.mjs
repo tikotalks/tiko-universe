@@ -138,7 +138,7 @@ await ensurePagesDomain('tiko-talk-dev', 'dev.talk.tikoapps.org')
 await ensureDnsCname({ zone: 'tikoapps.org', name: 'dev.talk.tikoapps.org', content: 'tiko-talk-dev.pages.dev' })
 await ensureDnsCname({
   zone: 'tikotalks.com',
-  name: 'dev.api.tikotalks.com',
+  name: 'dev-api.tikotalks.com',
   content: 'tiko-generation-api-dev.silvandiepen.workers.dev',
 })
 

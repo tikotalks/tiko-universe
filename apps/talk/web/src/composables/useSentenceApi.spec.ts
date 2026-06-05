@@ -46,7 +46,7 @@ describe('useSentenceApi', () => {
     Object.defineProperty(window, 'location', { configurable: true, value: { ...originalLocation, hostname: 'dev.talk.tikoapps.org' } })
 
     const fetcher = vi.fn(async (input: RequestInfo | URL) => {
-      expect(String(input)).toBe('https://dev.api.tikotalks.com/v1/sentence/start?locale=en')
+      expect(String(input)).toBe('https://dev-api.tikotalks.com/v1/sentence/start?locale=en')
       return json({ templates, initialCategories: categories, initialWords: words, savedPhrases: phrases, stripState: { words: [], validNext: ['pronoun'], canComplete: false } })
     }) as unknown as typeof fetch
 

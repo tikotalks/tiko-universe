@@ -31,7 +31,7 @@ binding = "GENERATION_SERVICE"
 service = "tiko-generation-api-dev"
 
 [[routes]]
-pattern = "dev.api.tikotalks.com/v1/sentence/*"
+pattern = "dev-api.tikotalks.com/v1/sentence/*"
 zone_name = "tikotalks.com"
 
 # ── Production environment ──────────────────────────────────────

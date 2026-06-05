@@ -46,7 +46,7 @@ function resolveSentenceBaseUrl() {
   if (configured) return configured.replace(/\/$/, '')
 
   if (typeof window !== 'undefined' && window.location.hostname.startsWith('dev.')) {
-    return 'https://dev.api.tikotalks.com'
+    return 'https://dev-api.tikotalks.com'
   }
 
   return 'https://api.tikotalks.com'
