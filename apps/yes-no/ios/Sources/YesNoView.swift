@@ -62,10 +62,8 @@ struct YesNoView: View {
 
     var body: some View {
         TikoAppShell(
+            appConfig: YesNoAppConfig.app,
             appName: i18n.t("yesNo.settings.title"),
-            appIcon: "checkmark.circle",
-            appIconMediaCategory: "emotions",
-            appColor: .yesNo,
             backgroundColor: shellBackground,
             darkBackgroundColor: darkShellBackground,
             actions: [

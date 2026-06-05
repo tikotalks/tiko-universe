@@ -13,6 +13,7 @@ import {
   createTikoTtsClient,
   type TikoColorMode
 } from '@tiko/ui'
+import { appConfig } from './appConfig'
 import './styles.scss'
 
 // ---------------------------------------------------------------------------
@@ -1702,8 +1703,9 @@ onUnmounted(() => {
 <template>
   <TikoAppShell
     :app-name="currentCollection?.title ?? labels.appName"
-    app-icon="education/book-2"
-    app-color="cards"
+    :app-icon="appConfig.appIcon"
+    :app-icon-media-category="appConfig.appIconMediaCategory"
+    :app-color="appConfig.appColor"
     avatar="ui/avatar"
     :show-back="navPath.length > 0"
     :actions="headerActions"

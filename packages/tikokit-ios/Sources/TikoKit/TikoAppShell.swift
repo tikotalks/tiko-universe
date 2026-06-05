@@ -62,58 +62,61 @@ public struct TikoAppHeader: View {
         self.onAccount = onAccount
     }
 
+    private let iconSize: CGFloat = 40
+    private var squircle: RoundedRectangle { RoundedRectangle(cornerRadius: 10, style: .continuous) }
+
     @ViewBuilder
     private var appIconContent: some View {
         if onIconTap != nil {
             Image(systemName: "chevron.left")
-                .font(.system(size: 20, weight: .bold))
+                .font(.system(size: 18, weight: .bold))
                 .foregroundStyle(.white)
-                .frame(width: 48, height: 48)
-                .background(.white.opacity(0.28))
-                .clipShape(Circle())
+                .frame(width: iconSize, height: iconSize)
+                .background(appColor.palette.primary)
+                .clipShape(squircle)
         } else if let appIconURL {
             AsyncImage(url: appIconURL) { image in
                 image.resizable().scaledToFill()
             } placeholder: {
                 Image(systemName: appIcon)
-                    .font(.system(size: 20, weight: .bold))
+                    .font(.system(size: 18, weight: .bold))
                     .foregroundStyle(.white)
             }
-            .frame(width: 48, height: 48)
-            .background(.white.opacity(0.28))
-            .clipShape(Circle())
+            .frame(width: iconSize, height: iconSize)
+            .background(appColor.palette.primary)
+            .clipShape(squircle)
         } else {
             Image(systemName: appIcon)
-                .font(.system(size: 20, weight: .bold))
+                .font(.system(size: 18, weight: .bold))
                 .foregroundStyle(.white)
-                .frame(width: 48, height: 48)
-                .background(.white.opacity(0.28))
-                .clipShape(Circle())
+                .frame(width: iconSize, height: iconSize)
+                .background(appColor.palette.primary)
+                .clipShape(squircle)
         }
     }
 
     @ViewBuilder
     private var avatarContent: some View {
         ZStack {
-            (avatarBackground ?? .white.opacity(0.28))
+            (avatarBackground ?? appColor.palette.primary)
             if let avatarURL {
                 AsyncImage(url: avatarURL) { phase in
                     if case .success(let image) = phase {
                         image.resizable().scaledToFit()
                     } else {
                         Image(systemName: avatar)
-                            .font(.system(size: 20, weight: .bold))
+                            .font(.system(size: 18, weight: .bold))
                             .foregroundStyle(.white)
                     }
                 }
             } else {
                 Image(systemName: avatar)
-                    .font(.system(size: 20, weight: .bold))
+                    .font(.system(size: 18, weight: .bold))
                     .foregroundStyle(.white)
             }
         }
-        .frame(width: 48, height: 48)
-        .clipShape(Circle())
+        .frame(width: iconSize, height: iconSize)
+        .clipShape(squircle)
     }
 
     public var body: some View {
@@ -129,7 +132,7 @@ public struct TikoAppHeader: View {
 
             Text(appName)
                 .font(.system(.title3, design: .rounded).weight(.heavy))
-                .foregroundStyle(.white)
+                .foregroundStyle(appColor.palette.primary)
 
             Spacer(minLength: 8)
 
@@ -153,10 +156,7 @@ public struct TikoAppHeader: View {
                 .accessibilityLabel("Account")
             }
         }
-        .padding(.vertical, 6)
-        .padding(.horizontal, 8)
-        .background(appColor.palette.primary)
-        .clipShape(Capsule())
+        .padding(.vertical, 8)
         .padding(.horizontal, 16)
         .padding(.top, 10)
     }
@@ -164,11 +164,11 @@ public struct TikoAppHeader: View {
     private func headerButton(systemImage: String, isActive: Bool, action: @escaping () -> Void) -> some View {
         Button(action: action) {
             Image(systemName: systemImage)
-                .font(.system(size: 18, weight: .bold))
+                .font(.system(size: 16, weight: .bold))
                 .foregroundStyle(.white)
                 .frame(width: 36, height: 36)
-                .background(appColor.palette.dark.opacity(isActive ? 0.88 : 0.56))
-                .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+                .background(appColor.palette.primary.opacity(isActive ? 1.0 : 0.7))
+                .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
         }
         .buttonStyle(.plain)
     }
@@ -203,6 +203,35 @@ public struct TikoAppShell<Content: View, SettingsContent: View>: View {
     @State private var fetchedIconURL: URL? = nil
     @State private var fetchedAvatarURL: URL? = nil
     @State private var splashVisible = true
+
+
+    public init(
+        appConfig: TikoAppConfig,
+        appName: String? = nil,
+        onIconTap: (() -> Void)? = nil,
+        avatar: String = "person.crop.circle.fill",
+        backgroundColor: Color = Color(red: 0.973, green: 0.965, blue: 0.945),
+        darkBackgroundColor: Color = Color(red: 0.08, green: 0.055, blue: 0.095),
+        actions: [TikoHeaderAction] = [],
+        onAction: @escaping (String) -> Void = { _ in },
+        @ViewBuilder settingsContent: () -> SettingsContent,
+        @ViewBuilder content: () -> Content
+    ) {
+        self.init(
+            appName: appName ?? appConfig.title,
+            appIcon: appConfig.appIconSystemName,
+            appIconMediaCategory: appConfig.appIconMediaCategory,
+            onIconTap: onIconTap,
+            avatar: avatar,
+            appColor: appConfig.appColor,
+            backgroundColor: backgroundColor,
+            darkBackgroundColor: darkBackgroundColor,
+            actions: actions,
+            onAction: onAction,
+            settingsContent: settingsContent,
+            content: content
+        )
+    }
 
     public init(
         appName: String,

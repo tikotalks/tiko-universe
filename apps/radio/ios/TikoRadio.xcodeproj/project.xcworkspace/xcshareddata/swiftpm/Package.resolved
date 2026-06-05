@@ -1,4 +1,5 @@
 {
+  "originHash" : "d61d49314d78152932c58bb34a8fbe6c8647945eddcc9fcdc63a4452260be127",
   "pins" : [
     {
       "identity" : "popupview",
@@ -10,5 +11,5 @@
       }
     }
   ],
-  "version" : 2
+  "version" : 3
 }

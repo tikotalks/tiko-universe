@@ -76,11 +76,9 @@ struct RadioView: View {
 
     var body: some View {
         TikoAppShell(
+            appConfig: RadioAppConfig.app,
             appName: headerTitle,
-            appIcon: headerIcon,
-            appIconMediaCategory: "music",
             onIconTap: headerIconAction,
-            appColor: .radio,
             backgroundColor: shellBackground,
             actions: parentMode ? [
                 TikoHeaderAction(id: "add", label: "Add", systemImage: "plus")

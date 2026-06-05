@@ -10,6 +10,42 @@ public enum TikoAppColor: String, CaseIterable, Sendable {
     case tiko
 }
 
+
+public struct TikoAppConfig: Sendable {
+    public let id: TikoAppColor
+    public let title: String
+    public let appColor: TikoAppColor
+    public let appIconSystemName: String
+    public let appIconMediaCategory: String?
+    public let themeColorHex: UInt32
+
+    public init(
+        id: TikoAppColor,
+        title: String,
+        appColor: TikoAppColor,
+        appIconSystemName: String,
+        appIconMediaCategory: String? = nil,
+        themeColorHex: UInt32
+    ) {
+        self.id = id
+        self.title = title
+        self.appColor = appColor
+        self.appIconSystemName = appIconSystemName
+        self.appIconMediaCategory = appIconMediaCategory
+        self.themeColorHex = themeColorHex
+    }
+}
+
+public extension TikoAppConfig {
+    static let yesNo = TikoAppConfig(id: .yesNo, title: "Yes No", appColor: .yesNo, appIconSystemName: "checkmark.circle", appIconMediaCategory: "emotions", themeColorHex: 0x9b3fbd)
+    static let type = TikoAppConfig(id: .type, title: "Type", appColor: .type, appIconSystemName: "textformat", appIconMediaCategory: "letters", themeColorHex: 0x2488ff)
+    static let cards = TikoAppConfig(id: .cards, title: "Cards", appColor: .cards, appIconSystemName: "rectangle.grid.2x2.fill", appIconMediaCategory: "animals", themeColorHex: 0xff8a1f)
+    static let sequence = TikoAppConfig(id: .sequence, title: "Sequence", appColor: .sequence, appIconSystemName: "list.bullet.rectangle.fill", appIconMediaCategory: "routines", themeColorHex: 0x16b8a6)
+    static let timer = TikoAppConfig(id: .timer, title: "Timer", appColor: .timer, appIconSystemName: "timer", appIconMediaCategory: "transport", themeColorHex: 0xf8c22e)
+    static let radio = TikoAppConfig(id: .radio, title: "Radio", appColor: .radio, appIconSystemName: "headphones", appIconMediaCategory: "music", themeColorHex: 0xe84057)
+    static let tiko = TikoAppConfig(id: .tiko, title: "Tiko", appColor: .tiko, appIconSystemName: "heart.fill", appIconMediaCategory: "tiko", themeColorHex: 0xef4f8f)
+}
+
 public struct TikoAppPalette {
     public let label: String
     public let primary: Color

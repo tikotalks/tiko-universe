@@ -10,6 +10,7 @@ import {
   createTikoTtsClient,
   type TikoColorMode
 } from '@tiko/ui'
+import { appConfig } from './appConfig'
 import './styles.scss'
 
 const storageKey = 'tiko:todo'
@@ -321,8 +322,9 @@ async function retry() {
 <template>
   <TikoAppShell
     :app-name="labels.appName"
-    app-icon="ui/check-list"
-    app-color="todo"
+    :app-icon="appConfig.appIcon"
+    :app-icon-media-category="appConfig.appIconMediaCategory"
+    :app-color="appConfig.appColor"
     :actions="headerActions"
     @header-action="headerAction"
   >

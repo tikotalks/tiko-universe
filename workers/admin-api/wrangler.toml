@@ -9,6 +9,12 @@ binding = "AUTH_DB"
 database_name = "tiko-identity"
 database_id = "036a1726-ac16-48a9-ab76-22c3a88ca7ae"
 
+[[d1_databases]]
+binding = "APP_DB"
+database_name = "tiko-db"
+database_id = "f99b61ae-6a78-4670-bb9c-cdc4f634264a"
+migrations_dir = "../app-api/migrations"
+
 [[services]]
 binding = "IDENTITY_SERVICE"
 service = "tiko-identity-api-dev"
@@ -37,6 +43,12 @@ workers_dev = false
 binding = "AUTH_DB"
 database_name = "tiko-identity"
 database_id = "036a1726-ac16-48a9-ab76-22c3a88ca7ae"
+
+[[env.production.d1_databases]]
+binding = "APP_DB"
+database_name = "tiko-db"
+database_id = "f99b61ae-6a78-4670-bb9c-cdc4f634264a"
+migrations_dir = "../app-api/migrations"
 
 [[env.production.services]]
 binding = "IDENTITY_SERVICE"

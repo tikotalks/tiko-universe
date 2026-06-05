@@ -21,10 +21,8 @@ struct TypeView: View {
 
     var body: some View {
         TikoAppShell(
+            appConfig: TypeAppConfig.app,
             appName: i18n.t("type.appName"),
-            appIcon: "text.cursor",
-            appIconMediaCategory: "letters",
-            appColor: .type,
             settingsContent: {
                 TikoSettingsSection(title: i18n.t("type.settings.title")) {
                     TikoSettingsToggleRow(title: i18n.t("type.settings.parentMode"), icon: "speaker.wave.2.fill", appColor: .type, isOn: $speechEnabled)

@@ -8,6 +8,7 @@ import {
   createTikoChoice,
   createTikoTtsClient,
   tikoAppColors,
+  tikoAppConfigs,
   tikoKitComponents
 } from './index'
 
@@ -19,7 +20,8 @@ describe('TikoKit component contract', () => {
       'TikoAnswerButton',
       'TikoChoiceGrid',
       'TikoSettingsPanel',
-      'tikoAppColors'
+      'tikoAppColors',
+      'tikoAppConfigs'
     ])
   })
 
@@ -37,6 +39,17 @@ describe('TikoKit component contract', () => {
 
     expect(tikoAppColors['yes-no'].primary).toBe('var(--color-primary)')
     expect(new Set(primaryColors).size).toBe(primaryColors.length)
+  })
+
+  it('defines shared app metadata for shell icons across web and native apps', () => {
+    expect(tikoAppConfigs['yes-no']).toMatchObject({
+      title: 'Yes No',
+      appColor: 'yes-no',
+      appIcon: 'ui/check-fat',
+      appIconMediaCategory: 'emotions'
+    })
+    expect(tikoAppConfigs.radio.appIconMediaCategory).toBe('music')
+    expect(tikoAppConfigs.timer.appIconMediaCategory).toBe('transport')
   })
 
   it('renders the design header with open-icon action names and app color token', async () => {

@@ -2,6 +2,28 @@ import { authenticate, type AuthEnv } from '../../shared/auth'
 
 type D1Value = string | number | boolean | null
 
+type TikoAppId = 'yes-no' | 'type' | 'cards' | 'sequence' | 'timer' | 'radio' | 'media' | 'admin' | 'tiko' | 'todo' | 'talk'
+interface TikoAppConfigPayload {
+  id: TikoAppId
+  title: string
+  appColor: TikoAppId
+  appIcon: string
+  appIconMediaCategory?: string
+  appIconImageUrl?: string
+  themeColor?: string
+}
+interface AppConfigRow {
+  app: string
+  title: string
+  app_color: string
+  app_icon: string
+  app_icon_media_category: string | null
+  app_icon_image_url: string | null
+  theme_color: string | null
+  updated_at: string
+  version: number
+}
+
 interface D1PreparedStatement {
   bind(...values: D1Value[]): D1PreparedStatement
   first<T = unknown>(): Promise<T | null>
@@ -15,6 +37,7 @@ interface D1Database {
 
 export interface Env extends AuthEnv {
   AUTH_DB: D1Database
+  APP_DB: D1Database
   TOKEN_PEPPER: string
   ADMIN_EMAIL?: string
   APP_API_URL?: string
@@ -44,6 +67,20 @@ const ADMIN_EMAIL = 'me@sil.mt'
 const PRODUCT = 'tiko'
 const ADMIN_ROLE = 'admin'
 const VALID_ROLES = new Set(['guest', 'user', 'child', 'profile_manager', 'content_editor', 'admin'])
+const APPS = ['yes-no', 'type', 'cards', 'sequence', 'timer', 'radio', 'media', 'admin', 'tiko', 'todo', 'talk'] as const
+const DEFAULT_APP_CONFIGS: Record<TikoAppId, TikoAppConfigPayload> = {
+  'yes-no': { id: 'yes-no', title: 'Yes No', appColor: 'yes-no', appIcon: 'ui/check-fat', appIconMediaCategory: 'emotions', themeColor: '#9b3fbd' },
+  type: { id: 'type', title: 'Type', appColor: 'type', appIcon: 'ui/type', appIconMediaCategory: 'letters', themeColor: '#2488ff' },
+  cards: { id: 'cards', title: 'Cards', appColor: 'cards', appIcon: 'education/book-2', appIconMediaCategory: 'animals', themeColor: '#ff8a1f' },
+  sequence: { id: 'sequence', title: 'Sequence', appColor: 'sequence', appIcon: 'ui/list', appIconMediaCategory: 'routines', themeColor: '#16b8a6' },
+  timer: { id: 'timer', title: 'Timer', appColor: 'timer', appIcon: 'ui/timer', appIconMediaCategory: 'transport', themeColor: '#f8c22e' },
+  radio: { id: 'radio', title: 'Radio', appColor: 'radio', appIcon: 'media/headphones', appIconMediaCategory: 'music', themeColor: '#e84057' },
+  media: { id: 'media', title: 'Media', appColor: 'media', appIcon: 'media/image', appIconMediaCategory: 'art', themeColor: '#2dd4bf' },
+  admin: { id: 'admin', title: 'Admin', appColor: 'admin', appIcon: 'ui/settings', appIconMediaCategory: 'tools', themeColor: '#8b5cf6' },
+  tiko: { id: 'tiko', title: 'Tiko', appColor: 'tiko', appIcon: 'ui/heart', appIconMediaCategory: 'tiko', themeColor: '#ef4f8f' },
+  todo: { id: 'todo', title: 'Todo', appColor: 'todo', appIcon: 'ui/check-list', appIconMediaCategory: 'routines', themeColor: '#2488ff' },
+  talk: { id: 'talk', title: 'Talk', appColor: 'talk', appIcon: 'ui/talk', appIconMediaCategory: 'communication', themeColor: '#17131c' }
+}
 
 const CORS_HEADERS = {
   'Access-Control-Allow-Origin': '*',
@@ -80,6 +117,15 @@ export default {
       })
     }
 
+    if (path === '/v1/admin/apps/config' && request.method === 'GET') {
+      return listAppConfigs(env.APP_DB)
+    }
+
+    const appConfigMatch = path.match(/^\/v1\/admin\/apps\/config\/([^/]+)$/)
+    if (appConfigMatch && request.method === 'PUT') {
+      return writeAppConfig(request, env.APP_DB, decodeURIComponent(appConfigMatch[1]))
+    }
+
     if (path === '/v1/admin/users' && request.method === 'GET') {
       const query = url.searchParams.get('q') ?? ''
       const users = await listUsers(env.AUTH_DB, query)
@@ -102,6 +148,101 @@ export default {
 
     return apiError('not_found', 'Route not found.', 404)
   },
+}
+
+
+async function listAppConfigs(db: D1Database): Promise<Response> {
+  const { results } = await db.prepare('SELECT app, title, app_color, app_icon, app_icon_media_category, app_icon_image_url, theme_color, updated_at, version FROM app_config').all<AppConfigRow>()
+  const rows = new Map((results ?? []).map((row) => [row.app, row]))
+  const configs = Object.fromEntries(APPS.map((app) => [app, rowToConfig(app, rows.get(app) ?? null)]))
+  return json({ data: { configs } })
+}
+
+async function writeAppConfig(request: Request, db: D1Database, rawApp: string): Promise<Response> {
+  let app: TikoAppId
+  try {
+    app = parseApp(rawApp)
+  } catch {
+    return apiError('unknown_app', 'App is not registered for shared config.', 404)
+  }
+  const body = await readJson<{ config?: Partial<TikoAppConfigPayload>, version?: number }>(request)
+  const next = normalizeAppConfig(app, body.config ?? {})
+  const existing = await db.prepare('SELECT version FROM app_config WHERE app = ?').bind(app).first<{ version: number }>()
+  const currentVersion = existing ? Number(existing.version) : 0
+  if (typeof body.version === 'number' && body.version !== currentVersion) {
+    return apiError('version_conflict', 'Stored app config version does not match requested version.', 409)
+  }
+  const now = new Date().toISOString()
+  const version = currentVersion + 1
+  await db.prepare(
+    `INSERT INTO app_config (app, title, app_color, app_icon, app_icon_media_category, app_icon_image_url, theme_color, updated_at, version)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+     ON CONFLICT(app) DO UPDATE SET
+       title = excluded.title,
+       app_color = excluded.app_color,
+       app_icon = excluded.app_icon,
+       app_icon_media_category = excluded.app_icon_media_category,
+       app_icon_image_url = excluded.app_icon_image_url,
+       theme_color = excluded.theme_color,
+       updated_at = excluded.updated_at,
+       version = excluded.version`
+  ).bind(app, next.title, next.appColor, next.appIcon, next.appIconMediaCategory ?? null, next.appIconImageUrl ?? null, next.themeColor ?? null, now, version).run()
+  return json({ data: { config: next, updatedAt: now, version } })
+}
+
+function rowToConfig(app: TikoAppId, row: AppConfigRow | null): TikoAppConfigPayload & { updatedAt: string | null, version: number } {
+  const fallback = DEFAULT_APP_CONFIGS[app]
+  if (!row) return { ...fallback, updatedAt: null, version: 0 }
+  return {
+    id: app,
+    title: row.title || fallback.title,
+    appColor: parseAppColor(row.app_color, fallback.appColor),
+    appIcon: row.app_icon || fallback.appIcon,
+    ...(row.app_icon_media_category ? { appIconMediaCategory: row.app_icon_media_category } : fallback.appIconMediaCategory ? { appIconMediaCategory: fallback.appIconMediaCategory } : {}),
+    ...(row.app_icon_image_url ? { appIconImageUrl: row.app_icon_image_url } : fallback.appIconImageUrl ? { appIconImageUrl: fallback.appIconImageUrl } : {}),
+    ...(row.theme_color ? { themeColor: row.theme_color } : fallback.themeColor ? { themeColor: fallback.themeColor } : {}),
+    updatedAt: row.updated_at,
+    version: Number(row.version)
+  }
+}
+
+function normalizeAppConfig(app: TikoAppId, value: Partial<TikoAppConfigPayload>): TikoAppConfigPayload {
+  const fallback = DEFAULT_APP_CONFIGS[app]
+  return {
+    id: app,
+    title: cleanString(value.title, fallback.title),
+    appColor: parseAppColor(value.appColor, fallback.appColor),
+    appIcon: cleanString(value.appIcon, fallback.appIcon),
+    ...(cleanOptionalString(value.appIconMediaCategory) ? { appIconMediaCategory: cleanOptionalString(value.appIconMediaCategory) } : {}),
+    ...(cleanOptionalString(value.appIconImageUrl) ? { appIconImageUrl: cleanOptionalString(value.appIconImageUrl) } : {}),
+    ...(cleanOptionalString(value.themeColor) ? { themeColor: cleanOptionalString(value.themeColor) } : {})
+  }
+}
+
+function parseApp(value: string): TikoAppId {
+  if ((APPS as readonly string[]).includes(value)) return value as TikoAppId
+  throw new Error('unknown_app')
+}
+
+function parseAppColor(value: unknown, fallback: TikoAppId): TikoAppId {
+  return typeof value === 'string' && (APPS as readonly string[]).includes(value) ? value as TikoAppId : fallback
+}
+
+function cleanString(value: unknown, fallback: string): string {
+  return typeof value === 'string' && value.trim() ? value.trim().slice(0, 80) : fallback
+}
+
+function cleanOptionalString(value: unknown): string | undefined {
+  return typeof value === 'string' && value.trim() ? value.trim().slice(0, 240) : undefined
+}
+
+async function readJson<T>(request: Request): Promise<T> {
+  if (!request.body) return {} as T
+  try {
+    return await request.json() as T
+  } catch {
+    return {} as T
+  }
 }
 
 async function requireAdmin(request: Request, env: Env): Promise<AdminSession | Response> {

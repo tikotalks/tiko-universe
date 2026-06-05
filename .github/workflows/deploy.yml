@@ -144,7 +144,11 @@ jobs:
           # Determine Pages project name
           if [[ "$APP" == "website" ]]; then
             if [[ "$ENV" == "production" ]]; then
-              PROJECT="${CLOUDFLARE_PAGES_PROJECT_WEBSITE_PROD:-${CLOUDFLARE_PAGES_PROJECT_PROD:-tikotalks}}"
+              # Production public TikoTalks domains (tiko.mt/tikotalks.com)
+              # are attached to the tiko-marketing Pages project in the
+              # zone-owning Cloudflare account. Deploying to the old fallback
+              # tikotalks project only updates an unbound generated Pages URL.
+              PROJECT="${CLOUDFLARE_PAGES_PROJECT_WEBSITE_PROD:-${CLOUDFLARE_PAGES_PROJECT_PROD:-tiko-marketing}}"
               BRANCH="main"
             else
               PROJECT="${CLOUDFLARE_PAGES_PROJECT_WEBSITE_DEV:-${CLOUDFLARE_PAGES_PROJECT_DEV:-tikotalks-dev}}"
@@ -251,12 +255,20 @@ jobs:
 
           if [[ "$ENV" == "production" ]]; then
             echo "🚀 Deploying $WORKER to production"
+            if [[ "$WORKER" == "app-api" ]]; then
+              echo "🗄️ Applying app-api production D1 migrations"
+              npx wrangler d1 migrations apply tiko-db --remote --env production
+            fi
             npx wrangler deploy --env production
           else
             echo "🧪 Deploying $WORKER to development (dry-run to verify, then deploy)"
             if [[ "$WORKER" == "sentence-api" ]]; then
               npx wrangler d1 execute tiko-db --remote --file schema.sql
               npx wrangler d1 execute tiko-db --remote --file db/seed-en.sql
+            fi
+            if [[ "$WORKER" == "app-api" ]]; then
+              echo "🗄️ Applying app-api development D1 migrations"
+              npx wrangler d1 migrations apply tiko-db --remote
             fi
             npx wrangler deploy --dry-run --outdir dist 2>&1 || true
             # Actual dev deploy
