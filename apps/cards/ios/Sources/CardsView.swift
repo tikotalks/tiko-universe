@@ -14,11 +14,9 @@ struct CardsView: View {
 
     var body: some View {
         TikoAppShell(
+            appConfig: CardsAppConfig.app,
             appName: selectedCollection?.title ?? i18n.t("cards.appName"),
-            appIcon: "square.grid.2x2.fill",
-            appIconMediaCategory: selectedCollection == nil ? "animals" : nil,
             onIconTap: selectedCollection != nil ? { selectedCollection = nil } : nil,
-            appColor: .cards,
             actions: []
         ) {
             Group {

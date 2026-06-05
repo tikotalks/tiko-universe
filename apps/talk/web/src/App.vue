@@ -5,6 +5,7 @@ import { TikoAppShell, TikoSettingsPanel } from '@tiko/ui'
 import TalkSentenceBar from './components/TalkSentenceBar.vue'
 import TalkWordCloud from './components/TalkWordCloud.vue'
 import { useTalkApp } from './composables/useTalkApp'
+import { appConfig } from './appConfig'
 
 const bemm = useBemm('talk-screen', { return: 'string', includeBaseClass: true })
 
@@ -22,9 +23,10 @@ onMounted(() => {
 
 <template>
   <TikoAppShell
-    app-name="Talk"
-    app-icon="ui/talk"
-    app-color="talk"
+    :app-name="appConfig.title"
+    :app-icon="appConfig.appIcon"
+    :app-icon-media-category="appConfig.appIconMediaCategory"
+    :app-color="appConfig.appColor"
     :actions="headerActions"
     @header-action="(id) => { if (id === 'settings') talk.settingsOpen.value = !talk.settingsOpen.value }"
     @avatar-click="talk.bootstrapIdentity()"

@@ -204,6 +204,35 @@ public struct TikoAppShell<Content: View, SettingsContent: View>: View {
     @State private var fetchedAvatarURL: URL? = nil
     @State private var splashVisible = true
 
+
+    public init(
+        appConfig: TikoAppConfig,
+        appName: String? = nil,
+        onIconTap: (() -> Void)? = nil,
+        avatar: String = "person.crop.circle.fill",
+        backgroundColor: Color = Color(red: 0.973, green: 0.965, blue: 0.945),
+        darkBackgroundColor: Color = Color(red: 0.08, green: 0.055, blue: 0.095),
+        actions: [TikoHeaderAction] = [],
+        onAction: @escaping (String) -> Void = { _ in },
+        @ViewBuilder settingsContent: () -> SettingsContent,
+        @ViewBuilder content: () -> Content
+    ) {
+        self.init(
+            appName: appName ?? appConfig.title,
+            appIcon: appConfig.appIconSystemName,
+            appIconMediaCategory: appConfig.appIconMediaCategory,
+            onIconTap: onIconTap,
+            avatar: avatar,
+            appColor: appConfig.appColor,
+            backgroundColor: backgroundColor,
+            darkBackgroundColor: darkBackgroundColor,
+            actions: actions,
+            onAction: onAction,
+            settingsContent: settingsContent,
+            content: content
+        )
+    }
+
     public init(
         appName: String,
         appIcon: String = "checkmark.circle",

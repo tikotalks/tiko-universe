@@ -1,4 +1,4 @@
-import { defineComponent, h, watch } from 'vue'
+import { defineComponent, h, onMounted, ref, watch } from 'vue'
 export { default as TikoLogo } from './TikoLogo.vue'
 export { default as TikoProfileMenu } from './TikoProfileMenu.vue'
 export { default as TikoPinPopup } from './TikoPinPopup.vue'
@@ -14,6 +14,31 @@ export type TikoChoiceTone = 'primary' | 'secondary' | 'success' | 'danger'
 export type TikoAppColor = 'yes-no' | 'type' | 'cards' | 'sequence' | 'timer' | 'radio' | 'media' | 'admin' | 'tiko' | 'todo' | 'talk'
 export type TikoColorMode = 'light' | 'dark' | 'system'
 export type { TikoTtsProvider } from '@tiko/media'
+
+export interface TikoAppConfig {
+  id: TikoAppColor
+  title: string
+  appColor: TikoAppColor
+  appIcon: string
+  appIconMediaCategory?: string
+  appIconImageUrl?: string
+  themeColor?: string
+}
+
+export const tikoAppConfigs: Record<TikoAppColor, TikoAppConfig> = {
+  'yes-no': { id: 'yes-no', title: 'Yes No', appColor: 'yes-no', appIcon: 'ui/check-fat', appIconMediaCategory: 'emotions', themeColor: '#9b3fbd' },
+  type: { id: 'type', title: 'Type', appColor: 'type', appIcon: 'ui/type', appIconMediaCategory: 'letters', themeColor: '#2488ff' },
+  cards: { id: 'cards', title: 'Cards', appColor: 'cards', appIcon: 'education/book-2', appIconMediaCategory: 'animals', themeColor: '#ff8a1f' },
+  sequence: { id: 'sequence', title: 'Sequence', appColor: 'sequence', appIcon: 'ui/list', appIconMediaCategory: 'routines', themeColor: '#16b8a6' },
+  timer: { id: 'timer', title: 'Timer', appColor: 'timer', appIcon: 'ui/timer', appIconMediaCategory: 'transport', themeColor: '#f8c22e' },
+  radio: { id: 'radio', title: 'Radio', appColor: 'radio', appIcon: 'media/headphones', appIconMediaCategory: 'music', themeColor: '#e84057' },
+  media: { id: 'media', title: 'Media', appColor: 'media', appIcon: 'media/image', appIconMediaCategory: 'art', themeColor: '#2dd4bf' },
+  admin: { id: 'admin', title: 'Admin', appColor: 'admin', appIcon: 'ui/settings', appIconMediaCategory: 'tools', themeColor: '#8b5cf6' },
+  tiko: { id: 'tiko', title: 'Tiko', appColor: 'tiko', appIcon: 'ui/heart', appIconMediaCategory: 'tiko', themeColor: '#ef4f8f' },
+  todo: { id: 'todo', title: 'Todo', appColor: 'todo', appIcon: 'ui/check-list', appIconMediaCategory: 'routines', themeColor: '#2488ff' },
+  talk: { id: 'talk', title: 'Talk', appColor: 'talk', appIcon: 'ui/talk', appIconMediaCategory: 'communication', themeColor: '#17131c' }
+}
+
 
 export const tikoAppColors: Record<TikoAppColor, { label: string; primary: string; dark: string }> = {
   'yes-no': { label: 'Yes No', primary: 'var(--color-primary)', dark: 'color-mix(in srgb, var(--color-primary), var(--color-foreground) 42%)' },
@@ -83,7 +108,8 @@ export const tikoKitComponents = [
   'TikoAnswerButton',
   'TikoChoiceGrid',
   'TikoSettingsPanel',
-  'tikoAppColors'
+  'tikoAppColors',
+  'tikoAppConfigs'
 ]
 
 export function createTikoChoice(input: TikoChoiceInput): TikoChoice {
@@ -245,7 +271,38 @@ export function createTikoTtsClient(options: TikoTtsClientOptions = {}) {
   return { getAudio, speak, clearCache: () => memoryCache.clear(), cacheSize: () => memoryCache.size }
 }
 
-function iconSpan(icon: string) {
+function isImageSource(value: string) {
+  return /^(https?:|data:|blob:)/.test(value) || /\.(avif|gif|jpe?g|png|svg|webp)(\?|#|$)/i.test(value)
+}
+
+function resizedTikoMediaUrl(url: string, size = 96) {
+  try {
+    const parsed = new URL(url)
+    if (parsed.host === 'data.tikocdn.org' && parsed.pathname.startsWith('/uploads/')) {
+      return `https://data.tikocdn.org/cdn-cgi/image/width=${size},height=${size},fit=cover,quality=85,f=auto${parsed.pathname}`
+    }
+  } catch {
+    // Keep non-URL values as-is; callers already validated source shape.
+  }
+  return url
+}
+
+async function fetchTikoMediaIcon(category: string): Promise<string> {
+  const endpoint = `https://media.tikoapi.org/v1/media?type=image&category=${encodeURIComponent(category)}&limit=20`
+  const response = await fetch(endpoint)
+  if (!response.ok) return ''
+  const payload = await response.json() as { data?: Array<{ original_url?: string; url?: string }> }
+  const item = payload.data?.find((entry) => entry.original_url || entry.url)
+  const url = item?.original_url ?? item?.url ?? ''
+  return url ? resizedTikoMediaUrl(url) : ''
+}
+
+function imageSpan(src: string, alt = '') {
+  return h('img', { class: 'tiko-icon tiko-icon--image', src, alt, loading: 'lazy', decoding: 'async', 'aria-hidden': alt ? undefined : 'true' })
+}
+
+function iconSpan(icon: string, alt = '') {
+  if (isImageSource(icon)) return imageSpan(icon, alt)
   if (icon.includes('/')) {
     return h(Icon, { class: 'tiko-icon', name: icon, size: 'medium', 'aria-hidden': 'true', 'data-icon': icon })
   }
@@ -257,6 +314,8 @@ export const TikoAppHeader = defineComponent({
   props: {
     appName: { type: String, required: true },
     appIcon: { type: String, default: 'ui/check-fat' },
+    appIconImageUrl: { type: String, default: '' },
+    appIconMediaCategory: { type: String, default: '' },
     avatar: { type: String, default: '' },
     appColor: { type: String as () => TikoAppColor, default: 'yes-no' },
     actions: { type: Array as () => TikoHeaderAction[], default: () => [] },
@@ -265,6 +324,31 @@ export const TikoAppHeader = defineComponent({
   },
   emits: ['action', 'avatar-click', 'back-click', 'title-click'],
   setup(props, { emit }) {
+    const mediaIconUrl = ref('')
+
+    async function resolveMediaIcon() {
+      mediaIconUrl.value = ''
+      if (!props.appIconMediaCategory || typeof fetch === 'undefined') return
+      const storageKey = `tiko:app-icon:${props.appColor}:${props.appIconMediaCategory}`
+      try {
+        const stored = typeof localStorage !== 'undefined' ? localStorage.getItem(storageKey) : ''
+        if (stored) {
+          mediaIconUrl.value = stored
+          return
+        }
+        const url = await fetchTikoMediaIcon(props.appIconMediaCategory)
+        if (url) {
+          mediaIconUrl.value = url
+          if (typeof localStorage !== 'undefined') localStorage.setItem(storageKey, url)
+        }
+      } catch {
+        mediaIconUrl.value = ''
+      }
+    }
+
+    onMounted(resolveMediaIcon)
+    watch(() => [props.appColor, props.appIconMediaCategory], resolveMediaIcon)
+
     return () => h('header', { class: ['tiko-app-header', props.showBack ? 'tiko-app-header--has-back' : ''], 'data-test': 'tiko-app-header', 'data-app-color': props.appColor }, [
       h('div', { class: 'tiko-app-header__brand' }, [
         props.showBack
@@ -273,7 +357,7 @@ export const TikoAppHeader = defineComponent({
               'aria-label': 'Back',
               onClick: () => emit('back-click'),
             }, [iconSpan('arrows/arrow-left')])
-          : h('span', { class: 'tiko-app-header__app-icon', 'aria-hidden': 'true' }, [iconSpan(props.appIcon)]),
+          : h('span', { class: ['tiko-app-header__app-icon', (props.appIconImageUrl || mediaIconUrl.value) ? 'tiko-app-header__app-icon--image' : ''], 'aria-hidden': 'true' }, [iconSpan(props.appIconImageUrl || mediaIconUrl.value || props.appIcon, props.appName)]),
         h('span', { class: 'tiko-app-header__title', 'data-test': 'tiko-shell-title', onClick: () => emit('title-click') }, props.appName)
       ]),
       h('div', { class: 'tiko-app-header__actions' }, [
@@ -291,7 +375,7 @@ export const TikoAppHeader = defineComponent({
           class: 'tiko-app-header__avatar',
           'aria-label': 'Account',
           onClick: () => emit('avatar-click'),
-        }, [iconSpan(props.avatar)]) : null
+        }, [iconSpan(props.avatar, 'Account')]) : null
       ])
     ])
   }
@@ -302,6 +386,8 @@ export const TikoAppShell = defineComponent({
   props: {
     appName: { type: String, required: true },
     appIcon: { type: String, default: 'ui/check-fat' },
+    appIconImageUrl: { type: String, default: '' },
+    appIconMediaCategory: { type: String, default: '' },
     appColor: { type: String as () => TikoAppColor, default: 'yes-no' },
     avatar: { type: String, default: '' },
     actions: { type: Array as () => TikoHeaderAction[], default: () => [] },
@@ -314,6 +400,8 @@ export const TikoAppShell = defineComponent({
       h(TikoAppHeader, {
         appName: props.appName,
         appIcon: props.appIcon,
+        appIconImageUrl: props.appIconImageUrl,
+        appIconMediaCategory: props.appIconMediaCategory,
         avatar: props.avatar,
         appColor: props.appColor,
         actions: props.actions,

@@ -16,6 +16,7 @@ import { useCategories } from './composables/useCategories'
 import AddAudioPopup from './components/AddAudioPopup.vue'
 import SettingsPopup from './components/SettingsPopup.vue'
 import PinPopup from './components/PinPopup.vue'
+import { appConfig } from './appConfig'
 import './styles.scss'
 
 // ---- popupService (provided in main.ts) ------------------------------------
@@ -909,8 +910,9 @@ function handleCreateCategory() {
 <template>
   <TikoAppShell
     :app-name="labels.appName"
-    app-icon="media/headphones"
-    app-color="radio"
+    :app-icon="appConfig.appIcon"
+    :app-icon-media-category="appConfig.appIconMediaCategory"
+    :app-color="appConfig.appColor"
     avatar="ui/circle-user"
     :actions="headerActions"
     @header-action="headerAction"

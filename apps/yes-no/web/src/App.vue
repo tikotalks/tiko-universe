@@ -14,6 +14,7 @@ import {
   createTikoTtsClient,
   type TikoColorMode
 } from '@tiko/ui'
+import { appConfig } from './appConfig'
 import './styles.scss'
 
 const popup = inject<PopupService>('popupService')!
@@ -466,8 +467,9 @@ function resetSentence() {
 <template>
   <TikoAppShell
     :app-name="labels.appName"
-    app-icon="ui/check-fat"
-    app-color="yes-no"
+    :app-icon="appConfig.appIcon"
+    :app-icon-media-category="appConfig.appIconMediaCategory"
+    :app-color="appConfig.appColor"
     avatar="ui/avatar"
     :actions="headerActions"
     :show-settings-button="parentMode"

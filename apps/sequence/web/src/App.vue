@@ -10,6 +10,7 @@ import {
   createTikoTtsClient,
   type TikoColorMode
 } from '@tiko/ui'
+import { appConfig } from './appConfig'
 import './styles.scss'
 
 const storageKey = 'tiko:sequence'
@@ -325,8 +326,9 @@ async function retry() {
 <template>
   <TikoAppShell
     :app-name="labels.appName"
-    app-icon="ui/list"
-    app-color="sequence"
+    :app-icon="appConfig.appIcon"
+    :app-icon-media-category="appConfig.appIconMediaCategory"
+    :app-color="appConfig.appColor"
     :actions="headerActions"
     @header-action="headerAction"
   >

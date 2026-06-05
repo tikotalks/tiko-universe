@@ -16,7 +16,7 @@ function jsonResponse(body: unknown, status = 200) {
 
 function createPopupServiceMock() {
   return {
-    showPopup: vi.fn(() => 'popup-id'),
+    showPopup: vi.fn((_config: unknown) => 'popup-id'),
     closePopup: vi.fn(),
     closeAllPopups: vi.fn(),
     popups: { value: [] }
@@ -234,7 +234,7 @@ describe('Yes No web app', () => {
     expect(popupService.showPopup).toHaveBeenCalledWith(expect.objectContaining({
       props: expect.objectContaining({ parentMode: true, isLoggedIn: true })
     }))
-    const popupConfig = popupService.showPopup.mock.calls[0][0]
+    const popupConfig = popupService.showPopup.mock.calls[0][0] as { component: { __name?: string } }
     expect(popupConfig.component.__name).toBe('TikoProfileMenu')
     expect(wrapper.find('[data-test="tiko-settings-panel"]').exists()).toBe(false)
   })

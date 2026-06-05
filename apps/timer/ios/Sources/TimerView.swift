@@ -62,10 +62,8 @@ struct TimerView: View {
 
     var body: some View {
         TikoAppShell(
+            appConfig: TimerAppConfig.app,
             appName: i18n.t("timer.appName"),
-            appIcon: "timer",
-            appIconMediaCategory: "transport",
-            appColor: .timer,
             settingsContent: {
                 TikoSettingsSection(title: i18n.t("timer.settings.title")) {
                     TikoSettingsToggleRow(title: i18n.t("timer.settings.sound"), icon: "bell.fill", appColor: .timer, isOn: $soundEnabled)
