@@ -109,6 +109,44 @@ export interface AtlasDataFetchRequest {
   cache?: { mode?: 'default' | 'bypass' | 'refresh'; ttlSeconds?: number }
 }
 
+
+export interface AtlasUsageRow {
+  id: string
+  capability: AtlasCapability
+  app: string
+  purpose: string
+  provider: AtlasProvider
+  model?: string | null
+  status: 'success' | 'error'
+  cacheStatus: 'none' | 'hit' | 'miss'
+  requestHash?: string | null
+  errorCode?: string | null
+  errorMessage?: string | null
+  inputUnits?: number | null
+  outputUnits?: number | null
+  estimatedCostUsd?: number | null
+  durationMs?: number | null
+  providerDurationMs?: number | null
+  createdAt: string
+}
+
+export interface AtlasProviderUsageSummary {
+  provider: AtlasProvider
+  requests: number
+  errors: number
+  estimatedCostUsd: number
+  averageDurationMs: number | null
+}
+
+export interface AtlasProviderStatus {
+  provider: AtlasProvider
+  enabled: boolean
+  status: string
+  lastCheckedAt?: string | null
+  lastError?: string | null
+  metadata?: unknown
+}
+
 export interface AtlasMeta {
   schemaVersion: 1
   requestId: string

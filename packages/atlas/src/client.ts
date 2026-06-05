@@ -10,6 +10,9 @@ import {
   type AtlasSpeechResponse,
   type AtlasTextRequest,
   type AtlasTextResponse,
+  type AtlasProviderStatus,
+  type AtlasProviderUsageSummary,
+  type AtlasUsageRow,
 } from './types'
 
 export interface AtlasClient {
@@ -26,12 +29,19 @@ export interface AtlasClient {
   data: {
     fetch<T = unknown>(request: AtlasDataFetchRequest): Promise<AtlasRunResponse<T>>
   }
+  admin: {
+    usage(params?: { app?: string; capability?: string; limit?: number }): Promise<{ data: { requests: AtlasUsageRow[] }; meta: { schemaVersion: 1; requestId: string } }>
+    usageByProvider(): Promise<{ data: { providers: AtlasProviderUsageSummary[] }; meta: { schemaVersion: 1; requestId: string } }>
+    providerStatus(): Promise<{ data: { providers: AtlasProviderStatus[] }; meta: { schemaVersion: 1; requestId: string } }>
+    request(id: string): Promise<{ data: { request: AtlasUsageRow }; meta: { schemaVersion: 1; requestId: string } }>
+  }
 }
 
 export function createAtlasClient(options: AtlasClientOptions): AtlasClient {
   const baseUrl = options.baseUrl.replace(/\/$/, '')
   const fetcher = options.fetcher ?? globalThis.fetch.bind(globalThis)
-  const post = <T>(path: string, body: unknown) => requestJson<T>({ fetcher, url: `${baseUrl}${path}`, getSessionToken: options.getSessionToken, body })
+  const post = <T>(path: string, body: unknown) => requestJson<T>({ fetcher, url: `${baseUrl}${path}`, method: 'POST', getSessionToken: options.getSessionToken, body })
+  const get = <T>(path: string) => requestJson<T>({ fetcher, url: `${baseUrl}${path}`, method: 'GET', getSessionToken: options.getSessionToken })
 
   return {
     async run<T = unknown>(request: AtlasRunRequest): Promise<AtlasRunResponse<T>> {
@@ -57,6 +67,25 @@ export function createAtlasClient(options: AtlasClientOptions): AtlasClient {
         return post<AtlasRunResponse<T>>('/data/fetch', request)
       },
     },
+    admin: {
+      usage(params = {}) {
+        const search = new URLSearchParams()
+        if (params.app) search.set('app', params.app)
+        if (params.capability) search.set('capability', params.capability)
+        if (params.limit) search.set('limit', String(params.limit))
+        const suffix = search.toString() ? `?${search}` : ''
+        return get(`/admin/usage${suffix}`)
+      },
+      usageByProvider() {
+        return get('/admin/usage/by-provider')
+      },
+      providerStatus() {
+        return get('/admin/provider-status')
+      },
+      request(id: string) {
+        return get(`/admin/requests/${encodeURIComponent(id)}`)
+      },
+    },
   }
 }
 
@@ -64,16 +93,17 @@ async function requestJson<T>(params: {
   fetcher: typeof fetch
   url: string
   getSessionToken?: AtlasClientOptions['getSessionToken']
-  body: unknown
+  method: 'GET' | 'POST'
+  body?: unknown
 }): Promise<T> {
   const headers = new Headers({ 'Content-Type': 'application/json' })
   const token = await params.getSessionToken?.()
   if (token) headers.set('Authorization', `Bearer ${token}`)
 
   const response = await params.fetcher(params.url, {
-    method: 'POST',
+    method: params.method,
     headers,
-    body: JSON.stringify(params.body),
+    ...(params.body === undefined ? {} : { body: JSON.stringify(params.body) }),
   })
 
   const parsed = await response.json().catch(() => null) as T | AtlasErrorPayload | null

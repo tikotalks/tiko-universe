@@ -139,6 +139,84 @@ paths:
                 $ref: '#/components/schemas/AtlasDataFetchResponse'
         default:
           $ref: '#/components/responses/AtlasError'
+  /admin/usage:
+    get:
+      summary: List recent Atlas request audit rows
+      description: Admin/service-token endpoint for debugging usage, cache behavior, provider routing, redacted payloads, units, cost estimates, and latency.
+      security:
+        - serviceToken: []
+      parameters:
+        - name: app
+          in: query
+          schema:
+            type: string
+        - name: capability
+          in: query
+          schema:
+            $ref: '#/components/schemas/AtlasCapability'
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 200
+      responses:
+        '200':
+          description: Recent Atlas usage rows
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AtlasUsageResponse'
+        default:
+          $ref: '#/components/responses/AtlasError'
+  /admin/usage/by-provider:
+    get:
+      summary: Aggregate Atlas usage by provider
+      security:
+        - serviceToken: []
+      responses:
+        '200':
+          description: Usage aggregates grouped by provider
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AtlasProviderUsageResponse'
+        default:
+          $ref: '#/components/responses/AtlasError'
+  /admin/provider-status:
+    get:
+      summary: Return observed provider status rows
+      security:
+        - serviceToken: []
+      responses:
+        '200':
+          description: Provider status rows
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AtlasProviderStatusResponse'
+        default:
+          $ref: '#/components/responses/AtlasError'
+  /admin/requests/{id}:
+    get:
+      summary: Return one Atlas request audit row
+      security:
+        - serviceToken: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Atlas request audit row
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AtlasUsageDetailResponse'
+        default:
+          $ref: '#/components/responses/AtlasError'
 components:
   securitySchemes:
     bearerSession:
@@ -440,6 +518,137 @@ components:
           type: integer
           const: 1
         requestId:
+          type: string
+    AtlasUsageResponse:
+      type: object
+      required: [data, meta]
+      properties:
+        data:
+          type: object
+          required: [requests]
+          properties:
+            requests:
+              type: array
+              items:
+                $ref: '#/components/schemas/AtlasUsageRow'
+        meta:
+          $ref: '#/components/schemas/AtlasMeta'
+    AtlasUsageDetailResponse:
+      type: object
+      required: [data, meta]
+      properties:
+        data:
+          type: object
+          required: [request]
+          properties:
+            request:
+              $ref: '#/components/schemas/AtlasUsageRow'
+        meta:
+          $ref: '#/components/schemas/AtlasMeta'
+    AtlasProviderUsageResponse:
+      type: object
+      required: [data, meta]
+      properties:
+        data:
+          type: object
+          required: [providers]
+          properties:
+            providers:
+              type: array
+              items:
+                type: object
+                required: [provider, requests, errors, estimatedCostUsd, averageDurationMs]
+                properties:
+                  provider:
+                    $ref: '#/components/schemas/AtlasProvider'
+                  requests:
+                    type: integer
+                  errors:
+                    type: integer
+                  estimatedCostUsd:
+                    type: number
+                  averageDurationMs:
+                    type: integer
+                    nullable: true
+        meta:
+          $ref: '#/components/schemas/AtlasMeta'
+    AtlasProviderStatusResponse:
+      type: object
+      required: [data, meta]
+      properties:
+        data:
+          type: object
+          required: [providers]
+          properties:
+            providers:
+              type: array
+              items:
+                type: object
+                required: [provider, enabled, status]
+                properties:
+                  provider:
+                    $ref: '#/components/schemas/AtlasProvider'
+                  enabled:
+                    type: boolean
+                  status:
+                    type: string
+                  lastCheckedAt:
+                    type: string
+                    nullable: true
+                  lastError:
+                    type: string
+                    nullable: true
+                  metadata: {}
+        meta:
+          $ref: '#/components/schemas/AtlasMeta'
+    AtlasUsageRow:
+      type: object
+      required: [id, capability, app, purpose, provider, status, cacheStatus, createdAt]
+      properties:
+        id:
+          type: string
+        capability:
+          $ref: '#/components/schemas/AtlasCapability'
+        app:
+          type: string
+        purpose:
+          type: string
+        provider:
+          $ref: '#/components/schemas/AtlasProvider'
+        model:
+          type: string
+          nullable: true
+        status:
+          type: string
+          enum: [success, error]
+        cacheStatus:
+          type: string
+          enum: [none, hit, miss]
+        requestHash:
+          type: string
+          nullable: true
+        errorCode:
+          type: string
+          nullable: true
+        errorMessage:
+          type: string
+          nullable: true
+        inputUnits:
+          type: integer
+          nullable: true
+        outputUnits:
+          type: integer
+          nullable: true
+        estimatedCostUsd:
+          type: number
+          nullable: true
+        durationMs:
+          type: integer
+          nullable: true
+        providerDurationMs:
+          type: integer
+          nullable: true
+        createdAt:
           type: string
     AtlasErrorResponse:
       type: object

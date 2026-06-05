@@ -45,6 +45,10 @@ export async function synthesizeSpeech(input: SpeechRequest, env: Env): Promise<
       provider: existing.provider === 'elevenlabs' ? 'elevenlabs' : 'openai',
       model: existing.model ?? normalized.model,
       cached: true,
+      requestHash,
+      inputUnits: normalized.text.length,
+      outputUnits: existing.byte_size ?? null,
+      estimatedCostUsd: 0,
       data: {
         id: existing.id,
         audioUrl: existing.public_url,
@@ -56,9 +60,11 @@ export async function synthesizeSpeech(input: SpeechRequest, env: Env): Promise<
     }
   }
 
+  const providerStarted = Date.now()
   const generated = normalized.provider === 'elevenlabs'
     ? await generateElevenLabsSpeech(normalized, env)
     : await generateOpenAiSpeech(normalized, env)
+  const providerDurationMs = Date.now() - providerStarted
 
   const id = crypto.randomUUID()
   const r2Key = `speech/${requestHash}.mp3`
@@ -85,6 +91,10 @@ export async function synthesizeSpeech(input: SpeechRequest, env: Env): Promise<
     cached: false,
     status: 201,
     usage: { inputCharacters: normalized.text.length },
+    requestHash,
+    inputUnits: normalized.text.length,
+    outputUnits: generated.bytes.byteLength,
+    providerDurationMs,
     data: {
       id,
       audioUrl: publicUrl,
@@ -104,6 +114,8 @@ export async function generateImage(input: ImageRequest, env: Env): Promise<Atla
   const size = imageSize(input.size ?? 'square')
   const count = clampInt(input.count ?? 1, 1, 4)
   const model = input.model || 'gpt-image-1'
+  const requestHash = await sha256Hex({ capability: 'image.generate', prompt: input.prompt.trim(), size, count, model })
+  const providerStarted = Date.now()
   const response = await fetch('https://api.openai.com/v1/images/generations', {
     method: 'POST',
     headers: { Authorization: `Bearer ${env.OPENAI_API_KEY}`, 'Content-Type': 'application/json' },
@@ -111,6 +123,7 @@ export async function generateImage(input: ImageRequest, env: Env): Promise<Atla
   })
   if (!response.ok) throw capabilityError('image_provider_failed', 502)
   const body = await response.json() as { data?: Array<{ b64_json?: string; url?: string; revised_prompt?: string }> }
+  const providerDurationMs = Date.now() - providerStarted
   const images = []
   for (const item of body.data ?? []) {
     const id = crypto.randomUUID()
@@ -124,7 +137,7 @@ export async function generateImage(input: ImageRequest, env: Env): Promise<Atla
       images.push({ id, mediaUrl: item.url, provider: { name: 'openai', model }, status: 'generated', revisedPrompt: item.revised_prompt })
     }
   }
-  return { provider: 'openai', model, cached: false, data: { images } }
+  return { provider: 'openai', model, cached: false, requestHash, inputUnits: input.prompt.trim().length, outputUnits: images.length, providerDurationMs, data: { images } }
 }
 
 export async function generateText(input: TextRequest, env: Env): Promise<AtlasExecutionResult> {
@@ -132,10 +145,13 @@ export async function generateText(input: TextRequest, env: Env): Promise<AtlasE
   if (input.input.length > 12000) throw capabilityError('input_too_long', 400)
   const provider = input.provider === 'openai' ? 'openai' : input.provider === 'cloudflare-workers-ai' ? 'cloudflare-workers-ai' : env.AI ? 'cloudflare-workers-ai' : 'openai'
   const model = input.model || (provider === 'cloudflare-workers-ai' ? '@cf/meta/llama-3.1-8b-instruct' : 'gpt-4o-mini')
+  const requestHash = await sha256Hex({ capability: 'text.generate', provider, model, input: input.input, maxTokens: input.maxTokens, temperature: input.temperature })
+  const providerStarted = Date.now()
   const output = provider === 'cloudflare-workers-ai'
     ? await runWorkersAiText(env, model, input.input)
     : await runOpenAiText(env, model, input.input, input)
-  return { provider, model, cached: false, data: { output, format: input.outputFormat ?? 'plain', provider: { name: provider, model } } }
+  const providerDurationMs = Date.now() - providerStarted
+  return { provider, model, cached: false, requestHash, inputUnits: Math.ceil(input.input.length / 4), outputUnits: Math.ceil(output.length / 4), providerDurationMs, data: { output, format: input.outputFormat ?? 'plain', provider: { name: provider, model } } }
 }
 
 export async function classifyText(input: TextRequest, env: Env): Promise<AtlasExecutionResult> {
@@ -146,16 +162,20 @@ export async function classifyText(input: TextRequest, env: Env): Promise<AtlasE
 export async function fetchAtlasData(input: DataFetchRequest, env: Env): Promise<AtlasExecutionResult> {
   if (!input.source || typeof input.source !== 'string') throw capabilityError('missing_source', 400)
   if (!input.operation || typeof input.operation !== 'string') throw capabilityError('missing_operation', 400)
-  const cacheKey = `atlas:data:${await sha256Hex({ source: input.source, operation: input.operation, input: input.input })}`
+  const requestHash = await sha256Hex({ source: input.source, operation: input.operation, input: input.input })
+  const cacheKey = `atlas:data:${requestHash}`
+  const provider = providerForSource(input.source)
   if (input.cache?.mode !== 'bypass') {
     const cached = await getCachedJson<unknown>(env, cacheKey)
-    if (cached) return { provider: providerForSource(input.source), cached: true, data: cached }
+    if (cached) return { provider, cached: true, requestHash, inputUnits: 1, outputUnits: 1, estimatedCostUsd: 0, data: cached }
   }
+  const providerStarted = Date.now()
   const data = input.source === 'youtube'
     ? await fetchYoutubeMetadata(input)
     : await fetchUrlMetadata(input)
+  const providerDurationMs = Date.now() - providerStarted
   await putCachedJson(env, cacheKey, data, input.cache?.ttlSeconds ?? 3600)
-  return { provider: providerForSource(input.source), cached: false, data }
+  return { provider, cached: false, requestHash, inputUnits: 1, outputUnits: 1, estimatedCostUsd: 0, providerDurationMs, data }
 }
 
 export async function getAtlasAsset(pathname: string, env: Env): Promise<Response | null> {

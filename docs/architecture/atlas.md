@@ -148,6 +148,10 @@ POST /v1/atlas/images
 POST /v1/atlas/text
 POST /v1/atlas/data/fetch
 GET  /v1/atlas/assets/{id}
+GET  /v1/atlas/admin/usage
+GET  /v1/atlas/admin/usage/by-provider
+GET  /v1/atlas/admin/provider-status
+GET  /v1/atlas/admin/requests/{id}
 ```
 
 Typed routes are preferred for product/client code. `/run` exists for internal service orchestration and future advanced capability calls.
@@ -175,7 +179,9 @@ Callers may provide routing hints only when policy allows them. Atlas may ignore
 
 ## Observability
 
-Every non-health request should eventually write an `atlas_requests` row with:
+Every non-health request now writes a best-effort `atlas_requests` row and a structured runtime log event. Audit logging must never break the product request.
+
+Current audit fields:
 
 - request id
 - app
@@ -186,10 +192,23 @@ Every non-health request should eventually write an `atlas_requests` row with:
 - model
 - status
 - cache status
-- duration
-- estimated cost
+- request hash when available
+- total duration
+- provider duration when available
+- input/output units
+- estimated cost when pricing is deterministic
 - redacted input/output metadata
-- normalized error code
+- normalized error code/message
+
+Atlas also maintains `atlas_provider_status` from observed provider calls and exposes service-token-only admin routes for usage rows, provider aggregates, request details, and provider status.
+
+Redaction rules:
+
+- Secret-like fields (`token`, `key`, `secret`, `authorization`, `cookie`, etc.) become `[REDACTED]`.
+- Long text/prompt/output fields are summarized before storage.
+- URL query strings and fragments are removed before audit storage.
+
+Remaining hardening: wire subject/session attribution from shared identity validation and replace estimated costs with provider billing-grade accounting where vendors expose exact usage.
 
 ## Migration Plan
 

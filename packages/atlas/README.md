@@ -54,3 +54,14 @@ await atlas.run({
   },
 })
 ```
+
+## Admin observability
+
+Admin helpers call service-token-only Atlas endpoints. Configure `getSessionToken` with a service token for these calls.
+
+```ts
+const usage = await atlas.admin.usage({ app: 'radio', limit: 50 })
+const byProvider = await atlas.admin.usageByProvider()
+const providers = await atlas.admin.providerStatus()
+const request = await atlas.admin.request('req_abc123')
+```

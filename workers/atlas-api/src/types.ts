@@ -137,4 +137,9 @@ export interface AtlasExecutionResult {
   cached?: boolean
   status?: number
   usage?: Record<string, unknown>
+  requestHash?: string
+  inputUnits?: number | null
+  outputUnits?: number | null
+  estimatedCostUsd?: number | null
+  providerDurationMs?: number | null
 }
