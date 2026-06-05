@@ -15,6 +15,11 @@ const headerActions = computed(() => [
   { id: 'settings', label: 'Settings', icon: 'ui/settings-dual', active: talk.settingsOpen.value }
 ])
 
+function openAccount() {
+  talk.settingsOpen.value = true
+  void talk.bootstrapIdentity()
+}
+
 onMounted(() => {
   void talk.bootstrapIdentity()
   void talk.start()
@@ -25,11 +30,11 @@ onMounted(() => {
   <TikoAppShell
     :app-name="appConfig.title"
     :app-icon="appConfig.appIcon"
-    :app-icon-media-category="appConfig.appIconMediaCategory"
     :app-color="appConfig.appColor"
+    avatar="ui/circle-user"
     :actions="headerActions"
     @header-action="(id) => { if (id === 'settings') talk.settingsOpen.value = !talk.settingsOpen.value }"
-    @avatar-click="talk.bootstrapIdentity()"
+    @avatar-click="openAccount"
   >
     <div :class="bemm('')" :data-color-mode="talk.colorMode.value">
       <section v-if="talk.settingsOpen.value" :class="bemm('settings')" aria-label="Talk settings">
@@ -86,23 +91,30 @@ onMounted(() => {
   --color-foreground: #202431;
   --talk-ink: var(--color-foreground);
   --talk-muted: color-mix(in srgb, var(--color-foreground) 55%, transparent);
-  --talk-bg: var(--color-background);
+  --talk-bg: #17131c;
   --talk-orange: #ff7f18;
   --talk-orange-dark: color-mix(in srgb, var(--talk-orange) 82%, var(--color-foreground));
   --talk-shadow: color-mix(in srgb, var(--color-foreground) 14%, transparent);
   --talk-shadow-soft: color-mix(in srgb, var(--color-foreground) 9%, transparent);
 
   position: relative;
-  flex: 1;
+  flex: 1 1 auto;
+  display: flex;
+  height: 100%;
   min-height: 0;
   width: 100%;
   overflow: hidden;
   color: var(--talk-ink);
+  background: var(--talk-bg);
 
   &__stage {
     position: absolute;
     inset: 0;
     z-index: 0;
+    display: flex;
+    min-height: 0;
+    width: 100%;
+    height: 100%;
   }
 
   &__sentence {

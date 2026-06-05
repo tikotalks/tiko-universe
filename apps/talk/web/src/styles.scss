@@ -1,6 +1,6 @@
 :root {
   color: #202431;
-  background: #fbf7ef;
+  background: #17131c;
   font-family: Nunito, Inter, ui-rounded, system-ui, sans-serif;
   font-synthesis: none;
 }
@@ -15,13 +15,14 @@ body,
   width: 100%;
   min-width: 320px;
   min-height: 100%;
+  height: 100%;
   margin: 0;
 }
 
 body {
   min-height: 100dvh;
   overflow: hidden;
-  background: #fbf7ef;
+  background: #17131c;
 }
 
 button {
@@ -31,6 +32,6 @@ button {
 
 @media (max-width: 760px) {
   body {
-    overflow: auto;
+    overflow: hidden;
   }
 }
