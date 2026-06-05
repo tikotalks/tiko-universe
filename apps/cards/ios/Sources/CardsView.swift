@@ -41,7 +41,7 @@ struct CardsView: View {
                         let cols = columnCount(width: usableWidth, height: geometry.size.height - geometry.safeAreaInsets.top - geometry.safeAreaInsets.bottom)
                         let cardSize = cardDimension(usableWidth: usableWidth, cols: cols)
                         let usableHeight = geometry.size.height - geometry.safeAreaInsets.top - geometry.safeAreaInsets.bottom
-                        let rows = max(1, Int((usableHeight - 40) / (cardSize + 12)))
+                        let rows = max(1, Int((usableHeight - 24) / (cardSize + 12)))
                         let perPage = cols * rows
                         let pages = store.collections.chunked(into: perPage)
 
@@ -68,7 +68,7 @@ struct CardsView: View {
                                     .padding(.leading, 12 + sideInset)
                                     .padding(.trailing, 12 + sideInset)
                                     .padding(.top, 12)
-                                    .padding(.bottom, pages.count > 1 ? 40 : 12)
+                                    .padding(.bottom, pages.count > 1 ? 24 : 8)
                                     .tag(pageIndex)
                                 }
                             }
@@ -76,7 +76,7 @@ struct CardsView: View {
 
                             if pages.count > 1 {
                                 PageDots(count: pages.count, current: collectionsPage)
-                                    .padding(.bottom, 14)
+                                    .padding(.bottom, 4)
                             }
                         }
                     }
@@ -93,7 +93,6 @@ struct CardsView: View {
     }
 
     private func columnCount(width: CGFloat, height: CGFloat) -> Int {
-        // In landscape on phones, use more columns to keep cards small enough for 2+ rows
         if width > height * 1.4 {
             return width >= 800 ? 7 : 6
         }
@@ -149,7 +148,7 @@ private struct CollectionDetailView: View {
             let usableHeight = geometry.size.height - geometry.safeAreaInsets.top - geometry.safeAreaInsets.bottom
             let cols = columnCount(width: usableWidth, height: usableHeight)
             let cardSize = (usableWidth - 24 - CGFloat(cols - 1) * 12) / CGFloat(cols)
-            let rows = max(1, Int((usableHeight - 40) / (cardSize + 12)))
+            let rows = max(1, Int((usableHeight - 24) / (cardSize + 12)))
             let perPage = cols * rows
             let pages = collection.cards.chunked(into: perPage)
 
@@ -172,7 +171,7 @@ private struct CollectionDetailView: View {
                         .padding(.leading, 12 + sideInset)
                         .padding(.trailing, 12 + sideInset)
                         .padding(.top, 12)
-                        .padding(.bottom, pages.count > 1 ? 40 : 12)
+                        .padding(.bottom, pages.count > 1 ? 24 : 8)
                         .tag(pageIndex)
                     }
                 }
@@ -180,7 +179,7 @@ private struct CollectionDetailView: View {
 
                 if pages.count > 1 {
                     PageDots(count: pages.count, current: currentPage)
-                        .padding(.bottom, 14)
+                        .padding(.bottom, 4)
                 }
             }
             .overlay(alignment: .top) {
