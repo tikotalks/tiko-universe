@@ -63,8 +63,9 @@ async function ensureZoneId(name) {
 
 async function ensureDnsCname({ zone, name, content, proxied = true }) {
   const zoneId = await ensureZoneId(zone)
-  const records = await cf(`/zones/${zoneId}/dns_records?type=CNAME&name=${encodeURIComponent(name)}`)
-  const existing = records.find((record) => record.name === name)
+  const records = await cf(`/zones/${zoneId}/dns_records?name=${encodeURIComponent(name)}`)
+  const exactRecords = records.filter((record) => record.name === name)
+  const existing = exactRecords.find((record) => record.type === 'CNAME')
   const body = { type: 'CNAME', name, content, proxied, ttl: 1 }
 
   if (existing) {
@@ -74,6 +75,10 @@ async function ensureDnsCname({ zone, name, content, proxied = true }) {
       body: JSON.stringify(body),
     })
     return updated.id
+  }
+
+  for (const staleRecord of exactRecords) {
+    await cf(`/zones/${zoneId}/dns_records/${staleRecord.id}`, { method: 'DELETE' })
   }
 
   const created = await cf(`/zones/${zoneId}/dns_records`, {
