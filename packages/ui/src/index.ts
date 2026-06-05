@@ -112,15 +112,22 @@ function createBrowserFallback(fallbackUsed = false, error?: string): TikoTtsRes
 }
 
 export function createTikoTtsClient(options: TikoTtsClientOptions = {}) {
-  const workerUrl = normalizeBaseUrl(options.workerUrl ?? 'https://identity.tikoapi.org/v1')
+  const workerUrl = normalizeBaseUrl(options.workerUrl ?? 'https://api.tikotalks.com/v1')
   const cdnUrl = normalizeBaseUrl(options.cdnUrl ?? 'https://tts.tikocdn.org')
   const fetcher = options.fetcher ?? globalThis.fetch
   const memoryCache = new Map<string, TikoTtsResponse>()
 
-  // Tikoapi.org splits APIs per-service subdomain. When the caller hands us
-  // identity.tikoapi.org we still need to reach generation.tikoapi.org for
-  // TTS — rewrite the host. Legacy hosts like api.tikotalks.com share a
-  // single root so the existing `${workerUrl}/generation/tts` style works.
+  // Tikoapi.org splits APIs per-service subdomain. Existing callers may still
+  // pass identity/generation bases; normalize those to the Atlas gateway so TTS
+  // routing stays centralized.
+  function atlasBase(): string {
+    return workerUrl
+      .replace('//identity.tikoapi.org/', '//api.tikotalks.com/')
+      .replace('//generation.tikoapi.org/', '//api.tikotalks.com/')
+      .replace(/\/v1\/generation$/, '/v1')
+      .replace(/\/generate$/, '')
+  }
+
   function generationBase(): string {
     return workerUrl.replace('//identity.tikoapi.org/', '//generation.tikoapi.org/')
   }
@@ -130,34 +137,39 @@ export function createTikoTtsClient(options: TikoTtsClientOptions = {}) {
   }
 
   function ttsEndpoint() {
-    if (workerUrl.endsWith('/generate')) return workerUrl
-    if (workerUrl.endsWith('/v1')) return `${generationBase()}/generation/tts`
-    if (workerUrl.endsWith('/v1/generation')) return `${workerUrl}/tts`
-    if (workerUrl.includes('tts.tikotalks.com')) return `${workerUrl}/generate`
-    return `${workerUrl}/v1/generation/tts`
+    const base = atlasBase()
+    if (base.endsWith('/v1/atlas')) return `${base}/speech`
+    if (base.endsWith('/v1')) return `${base}/atlas/speech`
+    return `${base}/v1/atlas/speech`
   }
 
   function toCdnUrl(audioUrl: string) {
     if (audioUrl.startsWith('http')) return audioUrl
     const key = audioUrl.match(/key=([^&]+)/)?.[1]
     if (key) return `${cdnUrl}/${decodeURIComponent(key)}`
+    if (audioUrl.startsWith('/v1/atlas/assets/')) return `${atlasBase().replace(/\/v1(?:\/atlas)?$/, '')}${audioUrl}`
     if (audioUrl.startsWith('/v1/generation/audio/')) return `${generationBase().replace(/\/v1$/, '')}${audioUrl}`
     return `${cdnUrl}${audioUrl.startsWith('/') ? '' : '/'}${audioUrl}`
   }
 
   function normalizeTtsResponse(data: unknown): TikoTtsResponse {
     if (isGenerationTtsResponse(data)) {
+      const provider = typeof data.data.provider === 'object' && data.data.provider !== null
+        ? data.data.provider as { name?: string; model?: string; voice?: string }
+        : { name: data.data.provider as string | undefined, model: data.data.model, voice: data.data.voice }
+      const meta = data.meta as { cached?: boolean; schemaVersion?: number; requestId?: string } | undefined
       return {
         success: true,
         audioUrl: toCdnUrl(data.data.audioUrl),
         cached: data.meta?.cached ?? false,
         metadata: {
           id: data.data.id,
-          provider: data.data.provider,
+          provider: provider.name,
           language: data.data.language,
-          voice: data.data.voice,
-          model: data.data.model,
-          schemaVersion: data.meta?.schemaVersion
+          voice: provider.voice ?? data.data.voice,
+          model: provider.model ?? data.data.model,
+          schemaVersion: meta?.schemaVersion,
+          requestId: meta?.requestId
         }
       }
     }
@@ -178,6 +190,8 @@ export function createTikoTtsClient(options: TikoTtsClientOptions = {}) {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
+          app: 'tiko-ui',
+          purpose: 'speech-playback',
           text: request.text,
           language: request.language,
           provider: request.provider,

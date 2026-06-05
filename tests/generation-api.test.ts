@@ -178,6 +178,57 @@ describe('generation-api TTS contract', () => {
     })
   })
 
+
+  it('routes compatibility TTS generation through Atlas instead of calling providers directly', async () => {
+    const atlasFetch = vi.fn(async (input: Request | string) => {
+      const request = input instanceof Request ? input : new Request(input)
+      expect(new URL(request.url).pathname).toBe('/v1/atlas/speech')
+      expect(await request.json()).toMatchObject({
+        app: 'generation-api',
+        purpose: 'compatibility-tts',
+        text: 'Hello',
+        language: 'en',
+        provider: 'auto',
+      })
+      return new Response(JSON.stringify({
+        data: {
+          id: 'atlas-audio-1',
+          audioUrl: '/v1/atlas/assets/atlas-audio-1',
+          contentType: 'audio/mpeg',
+          cached: false,
+          provider: { name: 'openai', model: 'tts-1', voice: 'nova' },
+        },
+        meta: { cached: false, schemaVersion: 1, requestId: 'atlas-req-1' },
+      }), { status: 200, headers: { 'content-type': 'application/json' } })
+    })
+    const providerFetch = vi.spyOn(globalThis, 'fetch')
+    const env = makeEnv({
+      ATLAS_SERVICE: { fetch: atlasFetch },
+      OPENAI_API_KEY: undefined,
+      ELEVENLABS_API_KEY: undefined,
+    } as Partial<Env> & Record<string, unknown>)
+
+    const response = await worker.fetch(new Request('https://api.test/v1/generation/tts', {
+      method: 'POST',
+      body: JSON.stringify({ text: 'Hello', language: 'en', provider: 'auto' }),
+    }), env)
+    const generated = await json(response)
+
+    expect(response.status).toBe(201)
+    expect(atlasFetch).toHaveBeenCalledTimes(1)
+    expect(providerFetch).not.toHaveBeenCalled()
+    expect(generated).toMatchObject({
+      data: {
+        id: 'atlas-audio-1',
+        audioUrl: '/v1/atlas/assets/atlas-audio-1',
+        provider: 'openai',
+        voice: 'nova',
+        model: 'tts-1',
+      },
+      meta: { cached: false, schemaVersion: 1, atlasRequestId: 'atlas-req-1' },
+    })
+  })
+
   it('returns a safe missing-provider-key error on cache miss', async () => {
     const env = makeEnv({ OPENAI_API_KEY: undefined, ELEVENLABS_API_KEY: undefined })
     const response = await worker.fetch(new Request('https://api.test/v1/generation/tts', {
@@ -259,14 +310,33 @@ describe('generation-api TTS contract', () => {
     expect(draftBody.data.chapters).toHaveLength(2)
   })
 
-  it('omits provider parameters rejected by the current OpenAI images API and stores URL image responses', async () => {
-    const env = makeEnv()
+  it('routes image generation through Atlas and stores the returned asset locally', async () => {
     const png = Uint8Array.from([137, 80, 78, 71, 13, 10, 26, 10])
-    const fetchSpy = vi.spyOn(globalThis, 'fetch')
-      .mockResolvedValueOnce(new Response(JSON.stringify({
-        data: [{ url: 'https://provider.test/generated.png', revised_prompt: 'A friendly robot' }]
-      }), { status: 200, headers: { 'content-type': 'application/json' } }))
-      .mockResolvedValueOnce(new Response(png, { status: 200, headers: { 'content-type': 'image/png' } }))
+    const atlasFetch = vi.fn(async (input: Request | string) => {
+      const request = input instanceof Request ? input : new Request(input)
+      const url = new URL(request.url)
+      if (url.pathname === '/v1/atlas/images') {
+        const payload = await request.json() as Record<string, unknown>
+        expect(payload).toMatchObject({
+          app: 'generation-api',
+          purpose: 'compatibility-image-generation',
+          prompt: 'A friendly robot',
+          size: 'portrait',
+          provider: 'openai',
+          model: 'gpt-image-1',
+        })
+        return new Response(JSON.stringify({
+          data: {
+            images: [{ id: 'atlas-image-1', mediaUrl: '/v1/atlas/assets/atlas-image-1', contentType: 'image/png', revisedPrompt: 'A friendly robot', provider: { name: 'openai', model: 'gpt-image-1' } }]
+          },
+          meta: { requestId: 'atlas-req-image' },
+        }), { status: 200, headers: { 'content-type': 'application/json' } })
+      }
+      if (url.pathname === '/v1/atlas/assets/atlas-image-1') return new Response(png, { status: 200, headers: { 'content-type': 'image/png' } })
+      return new Response('not found', { status: 404 })
+    })
+    const providerFetch = vi.spyOn(globalThis, 'fetch')
+    const env = makeEnv({ ATLAS_SERVICE: { fetch: atlasFetch } } as Partial<Env>)
 
     const response = await worker.fetch(new Request('https://api.test/v1/generation/image', {
       method: 'POST',
@@ -274,15 +344,13 @@ describe('generation-api TTS contract', () => {
       body: JSON.stringify({ prompt: 'A friendly robot', style: 'natural', size: '1024x1792', quality: 'hd' }),
     }), env)
     const generated = await json(response)
-    const providerBody = JSON.parse(fetchSpy.mock.calls[0]![1]!.body as string)
 
     expect(response.status).toBe(201)
-    expect(providerBody).toMatchObject({ model: 'gpt-image-1', prompt: 'A friendly robot', n: 1, size: '1024x1536', quality: 'high' })
-    expect(providerBody).not.toHaveProperty('style')
-    expect(providerBody).not.toHaveProperty('response_format')
-    expect(fetchSpy.mock.calls[1]![0]).toBe('https://provider.test/generated.png')
+    expect(atlasFetch).toHaveBeenCalledTimes(2)
+    expect(providerFetch).not.toHaveBeenCalled()
+    expect(generated.data).toMatchObject({ revisedPrompt: 'A friendly robot', size: '1024x1792', quality: 'hd', style: 'natural', width: 1024, height: 1792, fileSizeBytes: 8 })
     expect(generated.data.imageUrl).toMatch(/^\/v1\/generation\/images\/.+\/binary$/)
-    expect(generated.data.fileSizeBytes).toBe(8)
+    expect(generated.meta).toMatchObject({ atlasRequestId: 'atlas-req-image' })
   })
 
   it('uses the identity service binding for session-authenticated mutations', async () => {
@@ -315,6 +383,9 @@ describe('generation-api TTS contract', () => {
   it('declares identity service bindings for generation-api deployments', () => {
     const wrangler = readFileSync('workers/generation-api/wrangler.toml', 'utf8')
 
+    expect(wrangler).toContain('binding = "ATLAS_SERVICE"')
+    expect(wrangler).toContain('service = "tiko-atlas-api-dev"')
+    expect(wrangler).toContain('service = "tiko-atlas-api"')
     expect(wrangler).toContain('binding = "IDENTITY_SERVICE"')
     expect(wrangler).toContain('service = "tiko-identity-api-dev"')
     expect(wrangler).toContain('service = "tiko-identity-api"')

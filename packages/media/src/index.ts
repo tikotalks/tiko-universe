@@ -1,4 +1,4 @@
-export type TikoTtsProvider = 'openai' | 'azure' | 'browser' | 'auto'
+export type TikoTtsProvider = 'openai' | 'azure' | 'elevenlabs' | 'browser' | 'auto'
 
 export interface GenerationTtsRequest {
   text: string
@@ -16,7 +16,7 @@ export interface GenerationTtsAudioAsset {
   contentType: string
   fileSizeBytes?: number
   generatedAt: string
-  provider: string
+  provider: string | { name?: string; model?: string; voice?: string }
   language: string
   voice: string
   model: string
@@ -27,6 +27,7 @@ export interface GenerationTtsResponse {
   meta?: {
     cached?: boolean
     schemaVersion?: number
+    requestId?: string
   }
 }
 
