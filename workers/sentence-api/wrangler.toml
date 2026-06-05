@@ -1,0 +1,72 @@
+name = "tiko-sentence-api-dev"
+main = "src/index.ts"
+compatibility_date = "2026-05-27"
+account_id = "dc2b7d14a69351375cab6de9a13ddee9"
+workers_dev = true
+
+# Talk sentence-building API. Backend owns language packs, grammar, suggestions,
+# saved phrases, and privacy-safe aggregate learning. Do not call LLMs at runtime.
+
+[vars]
+TIKO_ENVIRONMENT = "development"
+ALLOWED_ORIGINS = "https://talk.tikoapps.org,https://dev.talk.tikoapps.org,http://localhost:3066,http://localhost:5173,http://localhost:4173,capacitor://localhost,ionic://localhost,tiko://native"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "tiko-sentence-db-dev"
+database_id = "00000000-0000-0000-0000-000000000000"
+migrations_dir = "migrations"
+
+[[kv_namespaces]]
+binding = "CACHE"
+id = "00000000000000000000000000000000"
+preview_id = "00000000000000000000000000000000"
+
+[[services]]
+binding = "IDENTITY_SERVICE"
+service = "tiko-identity-api-dev"
+
+[[services]]
+binding = "GENERATION_SERVICE"
+service = "tiko-generation-api-dev"
+
+[[routes]]
+pattern = "dev.api.tikotalks.com/v1/sentence/*"
+zone_name = "tikotalks.com"
+
+# ── Production environment ──────────────────────────────────────
+# Deploy with: npx wrangler deploy --env production after explicit approval.
+
+[env.production]
+name = "tiko-sentence-api"
+workers_dev = false
+
+[env.production.vars]
+TIKO_ENVIRONMENT = "production"
+ALLOWED_ORIGINS = "https://talk.tikoapps.org,capacitor://localhost,ionic://localhost,tiko://native"
+
+[[env.production.d1_databases]]
+binding = "DB"
+database_name = "tiko-sentence-db"
+database_id = "00000000-0000-0000-0000-000000000000"
+migrations_dir = "migrations"
+
+[[env.production.kv_namespaces]]
+binding = "CACHE"
+id = "00000000000000000000000000000000"
+
+[[env.production.services]]
+binding = "IDENTITY_SERVICE"
+service = "tiko-identity-api"
+
+[[env.production.services]]
+binding = "GENERATION_SERVICE"
+service = "tiko-generation-api"
+
+[[env.production.routes]]
+pattern = "sentence.tikoapi.org"
+custom_domain = true
+
+[[env.production.routes]]
+pattern = "api.tikotalks.com/v1/sentence/*"
+zone_name = "tikotalks.com"
