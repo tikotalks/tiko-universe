@@ -160,21 +160,20 @@ export async function classifyText(input: TextRequest, env: Env): Promise<AtlasE
 }
 
 export async function fetchAtlasData(input: DataFetchRequest, env: Env): Promise<AtlasExecutionResult> {
-  if (!input.source || typeof input.source !== 'string') throw capabilityError('missing_source', 400)
-  if (!input.operation || typeof input.operation !== 'string') throw capabilityError('missing_operation', 400)
-  const requestHash = await sha256Hex({ source: input.source, operation: input.operation, input: input.input })
+  const normalized = normalizeDataFetchRequest(input)
+  const requestHash = await sha256Hex({ source: normalized.source, operation: normalized.operation, input: normalized.input })
   const cacheKey = `atlas:data:${requestHash}`
-  const provider = providerForSource(input.source)
-  if (input.cache?.mode !== 'bypass') {
+  const provider = providerForSource(normalized.source)
+  if (normalized.cache?.mode !== 'bypass') {
     const cached = await getCachedJson<unknown>(env, cacheKey)
     if (cached) return { provider, cached: true, requestHash, inputUnits: 1, outputUnits: 1, estimatedCostUsd: 0, data: cached }
   }
   const providerStarted = Date.now()
-  const data = input.source === 'youtube'
-    ? await fetchYoutubeMetadata(input)
-    : await fetchUrlMetadata(input)
+  const data = normalized.source === 'youtube'
+    ? await fetchYoutubeMetadata(normalized)
+    : await fetchUrlMetadata(normalized)
   const providerDurationMs = Date.now() - providerStarted
-  await putCachedJson(env, cacheKey, data, input.cache?.ttlSeconds ?? 3600)
+  await putCachedJson(env, cacheKey, data, Math.max(normalized.cache?.ttlSeconds ?? 3600, 60))
   return { provider, cached: false, requestHash, inputUnits: 1, outputUnits: 1, estimatedCostUsd: 0, providerDurationMs, data }
 }
 
@@ -226,6 +225,39 @@ async function runOpenAiText(env: Env, model: string, input: string, params: Tex
   if (!response.ok) throw capabilityError('text_provider_failed', 502)
   const body = await response.json() as { choices?: Array<{ message?: { content?: string } }> }
   return body.choices?.[0]?.message?.content ?? ''
+}
+
+
+function normalizeDataFetchRequest(input: DataFetchRequest): DataFetchRequest {
+  const source = typeof input.source === 'string' ? input.source.trim() : ''
+  const operation = typeof input.operation === 'string' ? input.operation.trim() : ''
+  const requestInput = asRecord(input.input)
+  const topLevelUrl = typeof (input as unknown as { url?: unknown }).url === 'string' ? String((input as unknown as { url?: unknown }).url).trim() : ''
+  const sourceUrl = /^https?:\/\//i.test(source) ? source : ''
+  const url = String(requestInput.url || requestInput.videoUrl || topLevelUrl || sourceUrl || '').trim()
+
+  if (!source && !url) throw capabilityError('missing_source', 400)
+  if (!operation && !url) throw capabilityError('missing_operation', 400)
+  if (url && !/^https?:\/\//i.test(url)) throw capabilityError('missing_url', 400)
+
+  if (sourceUrl || topLevelUrl) {
+    return {
+      ...input,
+      source: isYoutubeUrl(url) ? 'youtube' : 'url-metadata',
+      operation: operation && operation !== 'fetch' ? operation : isYoutubeUrl(url) ? 'video.metadata' : 'url.metadata',
+      input: { ...requestInput, url },
+    }
+  }
+
+  if (!source) throw capabilityError('missing_source', 400)
+  if (!operation) throw capabilityError('missing_operation', 400)
+  if (Object.keys(requestInput).length === 0) throw capabilityError('missing_input', 400)
+
+  return { ...input, source, operation, input: requestInput }
+}
+
+function isYoutubeUrl(url: string): boolean {
+  return /(^https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\//i.test(url)
 }
 
 async function fetchYoutubeMetadata(input: DataFetchRequest): Promise<unknown> {

@@ -179,6 +179,20 @@ describe('atlas-api', () => {
     expect(fetchSpy).toHaveBeenCalledTimes(1)
   })
 
+  it('normalizes URL-shaped data fetch requests instead of throwing internal errors', async () => {
+    const env = makeEnv()
+    vi.spyOn(globalThis, 'fetch').mockResolvedValue(new Response('<html><title>Example</title></html>', { status: 200, headers: { 'Content-Type': 'text/html' } }))
+    const body = { source: 'https://example.com', operation: 'fetch', app: 'atlas-test', purpose: 'metadata' }
+
+    const response = await worker.fetch(new Request('https://api.test/v1/atlas/data/fetch', { method: 'POST', body: JSON.stringify(body) }), env)
+
+    expect(response.status).toBe(200)
+    await expect(json(response)).resolves.toMatchObject({
+      data: { source: 'url-metadata', operation: 'url.metadata', metadata: { title: 'Example' } },
+      meta: { provider: 'url-metadata', cached: false },
+    })
+  })
+
 
   it('records redacted usage rows and exposes admin observability endpoints', async () => {
     const env = makeEnv({ ELEVENLABS_API_KEY: undefined, SERVICE_API_KEYS: 'service-token' })
