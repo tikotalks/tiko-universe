@@ -6,7 +6,7 @@
   "scripts": {
     "typecheck": "tsc --noEmit -p tsconfig.json",
     "test": "cd ../.. && vitest run tests/sentence-api.test.ts tests/sentence-pack.test.ts",
-    "deploy:dry-run": "echo scaffold-only: Cloudflare D1/KV bindings pending"
+    "deploy:dry-run": "wrangler deploy --dry-run"
   },
   "dependencies": {
     "@tiko/talk-types": "file:../../packages/talk-types"
