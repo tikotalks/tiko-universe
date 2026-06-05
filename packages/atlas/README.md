@@ -12,6 +12,37 @@ const atlas = createAtlasClient({
   getSessionToken,
 })
 
+await atlas.speech.synthesize({
+  text: 'Yes',
+  locale: 'en',
+  app: 'yes-no',
+  purpose: 'child-button',
+})
+
+await atlas.images.generate({
+  prompt: 'A soft illustrated bedtime story cover',
+  app: 'admin',
+  purpose: 'story-cover',
+})
+
+await atlas.text.generate({
+  input: 'Summarize this draft for an admin.',
+  app: 'admin',
+  purpose: 'internal-summary',
+})
+
+await atlas.data.fetch({
+  source: 'youtube',
+  operation: 'video.metadata',
+  app: 'radio',
+  purpose: 'add-track',
+  input: { url },
+})
+```
+
+The generic `run` method remains available for internal worker orchestration:
+
+```ts
 await atlas.run({
   capability: 'data.fetch',
   app: 'radio',
@@ -23,5 +54,3 @@ await atlas.run({
   },
 })
 ```
-
-P0 exposes only the generic `run` client. Typed helpers for speech, images, text, and data should be added with their implementation slices.

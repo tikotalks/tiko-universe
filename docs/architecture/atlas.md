@@ -137,21 +137,17 @@ Optional service domain if needed:
 https://atlas.tikoapi.org/v1/*
 ```
 
-P0 routes:
+Implemented routes:
 
 ```txt
 GET  /v1/atlas/health
 GET  /v1/atlas/capabilities
 POST /v1/atlas/run
-```
-
-Planned typed routes:
-
-```txt
 POST /v1/atlas/speech
 POST /v1/atlas/images
 POST /v1/atlas/text
 POST /v1/atlas/data/fetch
+GET  /v1/atlas/assets/{id}
 ```
 
 Typed routes are preferred for product/client code. `/run` exists for internal service orchestration and future advanced capability calls.
@@ -197,14 +193,14 @@ Every non-health request should eventually write an `atlas_requests` row with:
 
 ## Migration Plan
 
-1. Scaffold Atlas docs, worker, D1 schema, and `@tiko/atlas` client.
-2. Implement health/capability routes.
-3. Implement `POST /v1/atlas/run` with validation and policy rejection only.
-4. Move speech/TTS into Atlas first because it proves routing, caching, assets, and provider policy.
-5. Move admin image generation next.
-6. Move text generation/classification tasks to Cloudflare Workers AI/OpenAI routing.
-7. Add provider-backed metadata/data fetches such as Radio YouTube metadata.
-8. Deprecate direct app calls to `tts-api` and generation-specific provider routes once callers use Atlas.
+1. Scaffold Atlas docs, worker, D1 schema, and `@tiko/atlas` client. **Done.**
+2. Implement health/capability routes. **Done.**
+3. Implement `POST /v1/atlas/run` with validation and dispatch. **Done.**
+4. Implement speech/TTS in Atlas because it proves routing, caching, assets, and provider policy. **Done for OpenAI/ElevenLabs provider calls and R2/D1 cache.**
+5. Implement admin image generation. **Done for OpenAI image generation and R2 storage when base64 output is returned.**
+6. Implement text generation/classification tasks to Cloudflare Workers AI/OpenAI routing. **Done for basic generation/classification dispatch.**
+7. Implement provider-backed metadata/data fetches. **Done for YouTube oEmbed metadata and basic URL metadata.**
+8. Migrate existing Tiko callers off direct `tts-api`/generation routes and onto `@tiko/atlas`. **Next slice.**
 
 ## Naming Doctrine
 

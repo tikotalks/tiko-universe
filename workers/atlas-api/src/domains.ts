@@ -1,0 +1,276 @@
+import { bytesBody, getCachedJson, putCachedJson, sha256Hex } from './cache'
+import type { AtlasExecutionResult, AtlasRunRequest, DataFetchRequest, Env, ImageRequest, SpeechRequest, TextRequest } from './types'
+
+interface CachedAssetRow {
+  id: string
+  public_url: string
+  r2_key: string
+  content_type: string
+  provider: string
+  model?: string | null
+  byte_size?: number | null
+}
+
+export async function executeAtlasCapability(request: AtlasRunRequest, env: Env): Promise<AtlasExecutionResult> {
+  switch (request.capability) {
+    case 'speech.synthesize': return synthesizeSpeech({ ...(asRecord(request.input)), app: request.app, purpose: request.purpose } as SpeechRequest, env)
+    case 'image.generate': return generateImage({ ...(asRecord(request.input)), app: request.app, purpose: request.purpose } as ImageRequest, env)
+    case 'text.generate': return generateText({ ...(asRecord(request.input)), app: request.app, purpose: request.purpose } as TextRequest, env)
+    case 'text.classify': return classifyText({ ...(asRecord(request.input)), app: request.app, purpose: request.purpose } as TextRequest, env)
+    case 'data.fetch': return fetchAtlasData({ ...(asRecord(request.input)), app: request.app, purpose: request.purpose } as DataFetchRequest, env)
+    case 'metadata.lookup': return fetchAtlasData({ source: 'url-metadata', operation: 'url.metadata', input: asRecord(request.input), app: request.app, purpose: request.purpose }, env)
+  }
+}
+
+export async function synthesizeSpeech(input: SpeechRequest, env: Env): Promise<AtlasExecutionResult> {
+  const validation = validateSpeech(input)
+  if (validation) throw capabilityError(validation, 400)
+
+  const normalized = {
+    text: input.text.trim(),
+    locale: (input.locale ?? input.language ?? 'en').trim().toLowerCase(),
+    provider: input.provider === 'elevenlabs' ? 'elevenlabs' : input.provider === 'openai' ? 'openai' : env.ELEVENLABS_API_KEY ? 'elevenlabs' : 'openai',
+    model: input.model?.trim() || (input.provider === 'elevenlabs' ? 'eleven_multilingual_v2' : 'tts-1'),
+    voice: input.voice?.trim() || (input.provider === 'elevenlabs' ? '21m00Tcm4TlvDq8ikWAM' : 'nova'),
+    speed: clamp(input.speed ?? 1, 0.25, 4),
+    format: 'mp3' as const,
+  }
+  if (normalized.provider === 'elevenlabs' && normalized.model === 'tts-1') normalized.model = 'eleven_multilingual_v2'
+  if (normalized.provider === 'openai' && normalized.model.startsWith('eleven_')) normalized.model = 'tts-1'
+
+  const requestHash = await sha256Hex({ capability: 'speech.synthesize', ...normalized })
+  const existing = await findCachedAsset(env, requestHash)
+  if (existing) {
+    return {
+      provider: existing.provider === 'elevenlabs' ? 'elevenlabs' : 'openai',
+      model: existing.model ?? normalized.model,
+      cached: true,
+      data: {
+        id: existing.id,
+        audioUrl: existing.public_url,
+        contentType: existing.content_type,
+        cached: true,
+        provider: { name: existing.provider, model: existing.model ?? normalized.model, voice: normalized.voice },
+        usage: { inputCharacters: normalized.text.length },
+      },
+    }
+  }
+
+  const generated = normalized.provider === 'elevenlabs'
+    ? await generateElevenLabsSpeech(normalized, env)
+    : await generateOpenAiSpeech(normalized, env)
+
+  const id = crypto.randomUUID()
+  const r2Key = `speech/${requestHash}.mp3`
+  const publicUrl = `/v1/atlas/assets/${id}`
+  await env.ATLAS_ASSETS_BUCKET?.put(r2Key, generated.bytes, {
+    httpMetadata: { contentType: generated.contentType, cacheControl: 'public, max-age=31536000, immutable' },
+  })
+  await storeCachedAsset(env, {
+    id,
+    capability: 'speech.synthesize',
+    requestHash,
+    provider: normalized.provider,
+    model: normalized.model,
+    r2Key,
+    publicUrl,
+    contentType: generated.contentType,
+    byteSize: generated.bytes.byteLength,
+    metadata: { locale: normalized.locale, voice: normalized.voice, speed: normalized.speed },
+  })
+
+  return {
+    provider: normalized.provider as 'openai' | 'elevenlabs',
+    model: normalized.model,
+    cached: false,
+    status: 201,
+    usage: { inputCharacters: normalized.text.length },
+    data: {
+      id,
+      audioUrl: publicUrl,
+      contentType: generated.contentType,
+      cached: false,
+      provider: { name: normalized.provider, model: normalized.model, voice: normalized.voice },
+      usage: { inputCharacters: normalized.text.length },
+    },
+  }
+}
+
+export async function generateImage(input: ImageRequest, env: Env): Promise<AtlasExecutionResult> {
+  if (!input.prompt || typeof input.prompt !== 'string' || !input.prompt.trim()) throw capabilityError('missing_prompt', 400)
+  if (input.prompt.length > 4000) throw capabilityError('prompt_too_long', 400)
+  if (!env.OPENAI_API_KEY) throw capabilityError('openai_image_not_configured', 503)
+
+  const size = imageSize(input.size ?? 'square')
+  const count = clampInt(input.count ?? 1, 1, 4)
+  const model = input.model || 'gpt-image-1'
+  const response = await fetch('https://api.openai.com/v1/images/generations', {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${env.OPENAI_API_KEY}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ model, prompt: input.prompt.trim(), size, n: count }),
+  })
+  if (!response.ok) throw capabilityError('image_provider_failed', 502)
+  const body = await response.json() as { data?: Array<{ b64_json?: string; url?: string; revised_prompt?: string }> }
+  const images = []
+  for (const item of body.data ?? []) {
+    const id = crypto.randomUUID()
+    if (item.b64_json && env.ATLAS_ASSETS_BUCKET) {
+      const bytes = base64ToBytes(item.b64_json)
+      const r2Key = `images/${id}.png`
+      await env.ATLAS_ASSETS_BUCKET.put(r2Key, bytes, { httpMetadata: { contentType: 'image/png', cacheControl: 'public, max-age=31536000, immutable' } })
+      images.push({ id, mediaUrl: `/v1/atlas/assets/${id}`, contentType: 'image/png', provider: { name: 'openai', model }, status: 'stored', revisedPrompt: item.revised_prompt })
+      await storeCachedAsset(env, { id, capability: 'image.generate', requestHash: id, provider: 'openai', model, r2Key, publicUrl: `/v1/atlas/assets/${id}`, contentType: 'image/png', byteSize: bytes.byteLength, metadata: { purpose: input.purpose } })
+    } else if (item.url) {
+      images.push({ id, mediaUrl: item.url, provider: { name: 'openai', model }, status: 'generated', revisedPrompt: item.revised_prompt })
+    }
+  }
+  return { provider: 'openai', model, cached: false, data: { images } }
+}
+
+export async function generateText(input: TextRequest, env: Env): Promise<AtlasExecutionResult> {
+  if (!input.input || typeof input.input !== 'string' || !input.input.trim()) throw capabilityError('missing_input', 400)
+  if (input.input.length > 12000) throw capabilityError('input_too_long', 400)
+  const provider = input.provider === 'openai' ? 'openai' : input.provider === 'cloudflare-workers-ai' ? 'cloudflare-workers-ai' : env.AI ? 'cloudflare-workers-ai' : 'openai'
+  const model = input.model || (provider === 'cloudflare-workers-ai' ? '@cf/meta/llama-3.1-8b-instruct' : 'gpt-4o-mini')
+  const output = provider === 'cloudflare-workers-ai'
+    ? await runWorkersAiText(env, model, input.input)
+    : await runOpenAiText(env, model, input.input, input)
+  return { provider, model, cached: false, data: { output, format: input.outputFormat ?? 'plain', provider: { name: provider, model } } }
+}
+
+export async function classifyText(input: TextRequest, env: Env): Promise<AtlasExecutionResult> {
+  const result = await generateText({ ...input, outputFormat: 'json' }, env)
+  return { ...result, data: { label: String((result.data as { output?: unknown }).output ?? '').slice(0, 120), confidence: null, provider: (result.data as { provider?: unknown }).provider } }
+}
+
+export async function fetchAtlasData(input: DataFetchRequest, env: Env): Promise<AtlasExecutionResult> {
+  if (!input.source || typeof input.source !== 'string') throw capabilityError('missing_source', 400)
+  if (!input.operation || typeof input.operation !== 'string') throw capabilityError('missing_operation', 400)
+  const cacheKey = `atlas:data:${await sha256Hex({ source: input.source, operation: input.operation, input: input.input })}`
+  if (input.cache?.mode !== 'bypass') {
+    const cached = await getCachedJson<unknown>(env, cacheKey)
+    if (cached) return { provider: providerForSource(input.source), cached: true, data: cached }
+  }
+  const data = input.source === 'youtube'
+    ? await fetchYoutubeMetadata(input)
+    : await fetchUrlMetadata(input)
+  await putCachedJson(env, cacheKey, data, input.cache?.ttlSeconds ?? 3600)
+  return { provider: providerForSource(input.source), cached: false, data }
+}
+
+export async function getAtlasAsset(pathname: string, env: Env): Promise<Response | null> {
+  const id = decodeURIComponent(pathname.replace('/v1/atlas/assets/', '').replace('/assets/', ''))
+  if (!/^[a-zA-Z0-9_-]{6,80}$/.test(id)) return new Response('Invalid asset id', { status: 400 })
+  const row = await env.ATLAS_DB?.prepare('SELECT r2_key, content_type FROM atlas_cached_assets WHERE id = ? LIMIT 1').bind(id).first<{ r2_key: string; content_type: string }>()
+  if (!row || !env.ATLAS_ASSETS_BUCKET) return new Response('Asset not found', { status: 404 })
+  const object = await env.ATLAS_ASSETS_BUCKET.get(row.r2_key)
+  if (!object) return new Response('Asset not found', { status: 404 })
+  return new Response(object.body, { headers: { 'Content-Type': object.httpMetadata?.contentType ?? row.content_type, 'Cache-Control': 'public, max-age=31536000, immutable' } })
+}
+
+async function generateOpenAiSpeech(input: { text: string; model: string; voice: string; speed: number }, env: Env) {
+  if (!env.OPENAI_API_KEY) throw capabilityError('openai_tts_not_configured', 503)
+  const response = await fetch('https://api.openai.com/v1/audio/speech', {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${env.OPENAI_API_KEY}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ model: input.model, voice: input.voice, input: input.text, response_format: 'mp3', speed: input.speed }),
+  })
+  if (!response.ok) throw capabilityError('tts_provider_failed', 502)
+  return { bytes: new Uint8Array(await response.arrayBuffer()), contentType: 'audio/mpeg' }
+}
+
+async function generateElevenLabsSpeech(input: { text: string; model: string; voice: string; speed: number }, env: Env) {
+  if (!env.ELEVENLABS_API_KEY) throw capabilityError('elevenlabs_tts_not_configured', 503)
+  const response = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${encodeURIComponent(input.voice)}?output_format=mp3_44100_128`, {
+    method: 'POST',
+    headers: { 'xi-api-key': env.ELEVENLABS_API_KEY, 'Content-Type': 'application/json', Accept: 'audio/mpeg' },
+    body: JSON.stringify({ text: input.text, model_id: input.model, voice_settings: { stability: 0.5, similarity_boost: 0.75, speed: input.speed }, apply_text_normalization: 'auto' }),
+  })
+  if (!response.ok) throw capabilityError('tts_provider_failed', 502)
+  return { bytes: new Uint8Array(await response.arrayBuffer()), contentType: 'audio/mpeg' }
+}
+
+async function runWorkersAiText(env: Env, model: string, input: string): Promise<string> {
+  if (!env.AI) throw capabilityError('workers_ai_not_configured', 503)
+  const result = await env.AI.run(model, { messages: [{ role: 'user', content: input }] }) as { response?: string; result?: { response?: string } }
+  return result.response ?? result.result?.response ?? JSON.stringify(result)
+}
+
+async function runOpenAiText(env: Env, model: string, input: string, params: TextRequest): Promise<string> {
+  if (!env.OPENAI_API_KEY) throw capabilityError('openai_text_not_configured', 503)
+  const response = await fetch('https://api.openai.com/v1/chat/completions', {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${env.OPENAI_API_KEY}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ model, messages: [{ role: 'user', content: input }], max_tokens: params.maxTokens ?? 800, temperature: params.temperature ?? 0.4 }),
+  })
+  if (!response.ok) throw capabilityError('text_provider_failed', 502)
+  const body = await response.json() as { choices?: Array<{ message?: { content?: string } }> }
+  return body.choices?.[0]?.message?.content ?? ''
+}
+
+async function fetchYoutubeMetadata(input: DataFetchRequest): Promise<unknown> {
+  const url = String(input.input.url ?? input.input.videoUrl ?? '')
+  if (!url) throw capabilityError('missing_url', 400)
+  const response = await fetch(`https://www.youtube.com/oembed?format=json&url=${encodeURIComponent(url)}`)
+  if (!response.ok) throw capabilityError('youtube_metadata_failed', 502)
+  return { source: 'youtube', operation: input.operation, metadata: await response.json() }
+}
+
+async function fetchUrlMetadata(input: DataFetchRequest): Promise<unknown> {
+  const url = String(input.input.url ?? '')
+  if (!url || !/^https?:\/\//.test(url)) throw capabilityError('missing_url', 400)
+  const response = await fetch(url, { headers: { Accept: 'text/html,application/xhtml+xml' } })
+  if (!response.ok) throw capabilityError('url_metadata_failed', 502)
+  const html = await response.text()
+  const title = html.match(/<title[^>]*>([^<]*)<\/title>/i)?.[1]?.trim() ?? null
+  const description = html.match(/<meta[^>]+name=["']description["'][^>]+content=["']([^"']*)["'][^>]*>/i)?.[1]?.trim() ?? null
+  return { source: 'url-metadata', operation: input.operation, metadata: { url, title, description } }
+}
+
+async function findCachedAsset(env: Env, requestHash: string): Promise<CachedAssetRow | null> {
+  return env.ATLAS_DB?.prepare('SELECT id, public_url, r2_key, content_type, provider, model, byte_size FROM atlas_cached_assets WHERE request_hash = ? LIMIT 1').bind(requestHash).first<CachedAssetRow>() ?? null
+}
+
+async function storeCachedAsset(env: Env, params: { id: string; capability: string; requestHash: string; provider: string; model?: string; r2Key: string; publicUrl: string; contentType: string; byteSize?: number; metadata?: unknown }) {
+  if (!env.ATLAS_DB) return
+  await env.ATLAS_DB.prepare(`INSERT INTO atlas_cached_assets (
+    id, capability, request_hash, provider, model, r2_key, public_url, content_type, byte_size, metadata_json, created_at, expires_at
+  ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`).bind(
+    params.id, params.capability, params.requestHash, params.provider, params.model ?? null, params.r2Key,
+    params.publicUrl, params.contentType, params.byteSize ?? null, JSON.stringify(params.metadata ?? {}), new Date().toISOString(), null,
+  ).run()
+}
+
+function validateSpeech(input: SpeechRequest): string | null {
+  if (!input.text || typeof input.text !== 'string' || !input.text.trim()) return 'missing_text'
+  if (input.text.length > 5000) return 'text_too_long'
+  if (input.speed !== undefined && (typeof input.speed !== 'number' || Number.isNaN(input.speed))) return 'invalid_speed'
+  return null
+}
+
+function imageSize(size: 'square' | 'portrait' | 'landscape'): string {
+  if (size === 'portrait') return '1024x1536'
+  if (size === 'landscape') return '1536x1024'
+  return '1024x1024'
+}
+
+function providerForSource(source: string) {
+  if (source === 'youtube') return 'youtube' as const
+  if (source === 'url-metadata') return 'url-metadata' as const
+  return 'tiko' as const
+}
+
+function asRecord(value: unknown): Record<string, unknown> {
+  return value && typeof value === 'object' && !Array.isArray(value) ? value as Record<string, unknown> : {}
+}
+
+function clamp(value: number, min: number, max: number) { return Math.min(max, Math.max(min, value)) }
+function clampInt(value: number, min: number, max: number) { return Math.round(clamp(value, min, max)) }
+function base64ToBytes(value: string): Uint8Array { return Uint8Array.from(atob(value), (char) => char.charCodeAt(0)) }
+
+export function capabilityError(code: string, status = 400): Error & { code: string; status: number } {
+  const error = new Error(code) as Error & { code: string; status: number }
+  error.code = code
+  error.status = status
+  return error
+}

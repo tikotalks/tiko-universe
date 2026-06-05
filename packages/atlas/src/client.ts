@@ -1,21 +1,61 @@
-import { AtlasClientError, type AtlasClientOptions, type AtlasRunRequest, type AtlasRunResponse } from './types'
+import {
+  AtlasClientError,
+  type AtlasClientOptions,
+  type AtlasDataFetchRequest,
+  type AtlasImageRequest,
+  type AtlasImageResponse,
+  type AtlasRunRequest,
+  type AtlasRunResponse,
+  type AtlasSpeechRequest,
+  type AtlasSpeechResponse,
+  type AtlasTextRequest,
+  type AtlasTextResponse,
+} from './types'
 
 export interface AtlasClient {
   run<T = unknown>(request: AtlasRunRequest): Promise<AtlasRunResponse<T>>
+  speech: {
+    synthesize(request: AtlasSpeechRequest): Promise<AtlasRunResponse<AtlasSpeechResponse>>
+  }
+  images: {
+    generate(request: AtlasImageRequest): Promise<AtlasRunResponse<AtlasImageResponse>>
+  }
+  text: {
+    generate(request: AtlasTextRequest): Promise<AtlasRunResponse<AtlasTextResponse>>
+  }
+  data: {
+    fetch<T = unknown>(request: AtlasDataFetchRequest): Promise<AtlasRunResponse<T>>
+  }
 }
 
 export function createAtlasClient(options: AtlasClientOptions): AtlasClient {
   const baseUrl = options.baseUrl.replace(/\/$/, '')
   const fetcher = options.fetcher ?? globalThis.fetch.bind(globalThis)
+  const post = <T>(path: string, body: unknown) => requestJson<T>({ fetcher, url: `${baseUrl}${path}`, getSessionToken: options.getSessionToken, body })
 
   return {
     async run<T = unknown>(request: AtlasRunRequest): Promise<AtlasRunResponse<T>> {
-      return requestJson<AtlasRunResponse<T>>({
-        fetcher,
-        url: `${baseUrl}/run`,
-        getSessionToken: options.getSessionToken,
-        body: request,
-      })
+      return post<AtlasRunResponse<T>>('/run', request)
+    },
+    speech: {
+      synthesize(request: AtlasSpeechRequest) {
+        return post<AtlasRunResponse<AtlasSpeechResponse>>('/speech', request)
+      },
+    },
+    images: {
+      generate(request: AtlasImageRequest) {
+        return post<AtlasRunResponse<AtlasImageResponse>>('/images', request)
+      },
+    },
+    text: {
+      generate(request: AtlasTextRequest) {
+        return post<AtlasRunResponse<AtlasTextResponse>>('/text', request)
+      },
+    },
+    data: {
+      fetch<T = unknown>(request: AtlasDataFetchRequest) {
+        return post<AtlasRunResponse<T>>('/data/fetch', request)
+      },
     },
   }
 }

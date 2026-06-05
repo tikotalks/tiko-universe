@@ -51,11 +51,54 @@ export interface AtlasRunRequest {
   metadata?: Record<string, unknown>
 }
 
+export interface SpeechRequest {
+  text: string
+  locale?: string
+  language?: string
+  app: string
+  purpose: string
+  format?: 'mp3'
+  voice?: string
+  model?: string
+  speed?: number
+  provider?: 'openai' | 'elevenlabs' | 'auto'
+}
+
+export interface ImageRequest {
+  prompt: string
+  app: string
+  purpose: string
+  size?: 'square' | 'portrait' | 'landscape'
+  count?: number
+  model?: string
+  provider?: 'openai' | 'auto'
+}
+
+export interface TextRequest {
+  input: string
+  app: string
+  purpose: string
+  outputFormat?: 'plain' | 'markdown' | 'json'
+  model?: string
+  provider?: 'cloudflare-workers-ai' | 'openai' | 'auto'
+  maxTokens?: number
+  temperature?: number
+}
+
+export interface DataFetchRequest {
+  source: 'youtube' | 'url-metadata' | 'custom' | string
+  operation: string
+  app: string
+  purpose: string
+  input: Record<string, unknown>
+  cache?: { mode?: 'default' | 'bypass' | 'refresh'; ttlSeconds?: number }
+}
+
 export interface Env {
   ATLAS_DB?: D1DatabaseLike
   ATLAS_CACHE?: KVNamespaceLike
   ATLAS_ASSETS_BUCKET?: R2BucketLike
-  AI?: unknown
+  AI?: { run(model: string, input: unknown): Promise<unknown> }
   OPENAI_API_KEY?: string
   ELEVENLABS_API_KEY?: string
   YOUTUBE_API_KEY?: string
@@ -85,4 +128,13 @@ export interface R2BucketLike {
   get(key: string): Promise<{ body: BodyInit; httpMetadata?: { contentType?: string } } | null>
   put(key: string, value: ArrayBuffer | Uint8Array, options?: Record<string, unknown>): Promise<unknown>
   delete(key: string): Promise<unknown>
+}
+
+export interface AtlasExecutionResult {
+  data: unknown
+  provider: AtlasProvider
+  model?: string
+  cached?: boolean
+  status?: number
+  usage?: Record<string, unknown>
 }
