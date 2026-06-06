@@ -61,8 +61,8 @@ describe('admin OTP sign-in', () => {
       req.reply({ ok: true, message: 'Check your email for the 6-digit code.' })
     }).as('requestCode')
 
-    cy.intercept('POST', 'https://identity.tikoapi.org/v1/identity/email/verify', (req) => {
-      expect(req.body).to.deep.equal({ otp: '123456' })
+    cy.intercept('POST', 'https://identity.tikoapi.org/v1/identity/otp/verify', (req) => {
+      expect(req.body).to.deep.equal({ code: '123456' })
       req.reply(adminBundle)
     }).as('verifyOtp')
 
