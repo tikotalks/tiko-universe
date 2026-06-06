@@ -18,7 +18,7 @@ final class TikoTalkTests: XCTestCase {
           "savedPhrases": [],
           "stripState": {"words": [], "validNext": ["pronoun"], "canComplete": false}
         }
-        """.data(using: .utf8)!
+        """#.data(using: .utf8)!
 
         let decoded = try JSONDecoder().decode(TalkSentenceStartResponse.self, from: json)
 
@@ -35,12 +35,12 @@ final class TikoTalkTests: XCTestCase {
           "categories": [{"id":"drinks","label":"Drinks","icon":"drop.fill","posTypes":["noun"],"wordCount":1}],
           "totalWords": 1
         }
-        """.data(using: .utf8)!
+        """#.data(using: .utf8)!
         let phrasesJSON = #"""
         {
           "phrases": [{"id":"p1","sentence":"I want juice","wordIds":["i","want","juice"],"isAuto":false,"usageCount":2,"label":"Juice"}]
         }
-        """.data(using: .utf8)!
+        """#.data(using: .utf8)!
 
         let vocabulary = try JSONDecoder().decode(TalkSentenceVocabularyResponse.self, from: vocabularyJSON)
         let phrases = try JSONDecoder().decode(TalkSentencePhrasesResponse.self, from: phrasesJSON)
