@@ -16,16 +16,17 @@ This document replaces the older profile-based model. Normal Tiko accounts do no
 - Verified accounts use OTP or magic-link login. No passwords.
 - Child Accounts use a name/identifier plus a 4-digit code set by a Profile Manager.
 - Profile Manager Account status can only be assigned by an admin.
+- Only Temporary Accounts are automatically deleted after 30 days of inactivity.
 - Account deletion must never leave the app in a logged-out dead end; after deletion, the app creates a fresh Temporary Account.
 
 ## Terms
 
 | Term | Meaning |
 | --- | --- |
-| Temporary Account | Auto-created account for first launch. Parent Mode only. Deleted after 30 days inactivity if not verified. |
-| Verified Account | Normal account with verified email. Can use Parent Mode and Child Mode after PIN setup. |
-| Profile Manager Account | Admin-promoted verified account that can create/manage separate Child Accounts. |
-| Child Account | Separate child-only account created by a Profile Manager. Logs in with name/identifier plus 4-digit code. |
+| Temporary Account | Auto-created account for first launch. Parent Mode only. Only this account type auto-deletes after 30 days inactivity. |
+| Verified Account | Normal account with verified email. Can use Parent Mode and Child Mode after PIN setup. Not auto-deleted for inactivity. |
+| Profile Manager Account | Admin-promoted verified account that can create/manage separate Child Accounts. Not auto-deleted for inactivity. |
+| Child Account | Separate child-only account created by a Profile Manager. Logs in with name/identifier plus 4-digit code. Not auto-deleted for inactivity. |
 | Parent Mode | Management mode for account, app settings, recovery, PIN, deletion, and manager tools. |
 | Child Mode | Locked child-facing mode for using apps. |
 | PIN | Parent Mode/Child Mode gate for verified/profile-manager accounts. |
@@ -35,12 +36,12 @@ This document replaces the older profile-based model. Normal Tiko accounts do no
 
 ## Account types
 
-| Account type | Parent Mode | Child Mode | Login | Can create Child Accounts |
-| --- | --- | --- | --- | --- |
-| Temporary | Yes | No | Automatic device/session bootstrap | No |
-| Verified | Yes | Yes, after PIN setup | OTP or magic link | No |
-| Profile Manager | Yes | Yes, after PIN setup | OTP or magic link | Yes |
-| Child Account | No | Yes | Name/identifier + 4-digit code | No |
+| Account type | Parent Mode | Child Mode | Login | Can create Child Accounts | Inactivity auto-delete |
+| --- | --- | --- | --- | --- | --- |
+| Temporary | Yes | No | Automatic device/session bootstrap | No | Yes, after 30 days |
+| Verified | Yes | Yes, after PIN setup | OTP or magic link | No | No |
+| Profile Manager | Yes | Yes, after PIN setup | OTP or magic link | Yes | No |
+| Child Account | No | Yes | Name/identifier + 4-digit code | No | No |
 
 ## Required current contracts
 
@@ -97,6 +98,7 @@ Rules:
 - No required email before use.
 - Child Mode is disabled for Temporary Accounts.
 - Temporary Accounts auto-delete after 30 days inactivity.
+- Verified Accounts, Profile Manager Accounts, and Child Accounts do not auto-delete because of inactivity.
 
 ## Temporary to Verified flow
 
@@ -206,6 +208,7 @@ Rules:
 - Profile Managers can delete Child Accounts.
 - Profile Managers do not switch into Child Accounts from inside one session.
 - To use a Child Account, the current user logs out and logs in as that Child Account.
+- Profile Manager Accounts do not auto-delete because of inactivity.
 
 ## Child Account behavior
 
@@ -222,6 +225,7 @@ Rules:
 - It has no recovery flow.
 - It cannot see settings, recovery, delete, or profile manager UI.
 - It cannot delete itself.
+- It does not auto-delete because of inactivity.
 
 ## Child Account login flow
 
@@ -266,6 +270,8 @@ Temporary Accounts are deleted automatically after 30 days inactivity.
 
 ### Verified Account
 
+Verified Accounts are never deleted automatically because of inactivity.
+
 1. User opens Parent Mode.
 2. User chooses `Delete Account`.
 3. If PIN is configured, require PIN.
@@ -277,6 +283,8 @@ Temporary Accounts are deleted automatically after 30 days inactivity.
 
 ### Profile Manager Account
 
+Profile Manager Accounts are never deleted automatically because of inactivity.
+
 Same as Verified Account, but existing Child Accounts must be handled explicitly.
 
 Rules:
@@ -285,6 +293,8 @@ Rules:
 - Product/admin policy must decide whether children are deleted, transferred, or deletion is blocked until handled.
 
 ### Child Account
+
+Child Accounts are never deleted automatically because of inactivity.
 
 Child Accounts cannot self-delete. The Profile Manager deletes them.
 
@@ -313,6 +323,7 @@ Do not use these concepts in new implementation:
 
 - First launch creates a Temporary Account and opens Parent Mode.
 - Temporary Accounts cannot enter Child Mode.
+- Only Temporary Accounts auto-delete after 30 days inactivity.
 - Email verification upgrades Temporary to Verified.
 - Verified accounts can enable Child Mode only after PIN setup.
 - Child Mode hides all account/settings/recovery/deletion UI.
