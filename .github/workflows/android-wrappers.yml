@@ -1,0 +1,72 @@
+name: Android Wrappers
+
+on:
+  pull_request:
+    branches: [development, main]
+    paths:
+      - 'apps/*/android/**'
+      - 'tools/android-wrappers.mjs'
+      - 'package.json'
+      - 'package-lock.json'
+      - '.github/workflows/android-wrappers.yml'
+  workflow_dispatch:
+    inputs:
+      app:
+        description: Android wrapper to build
+        required: true
+        default: all
+        type: choice
+        options:
+          - all
+          - yes-no
+          - cards
+          - type
+          - sequence
+          - timer
+          - todo
+          - radio
+          - talk
+
+concurrency:
+  group: android-wrappers-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Build ${{ matrix.app }} debug APK
+    runs-on: ubuntu-latest
+    if: github.event_name != 'workflow_dispatch' || inputs.app == 'all' || inputs.app == matrix.app
+    strategy:
+      fail-fast: false
+      matrix:
+        app: [yes-no, cards, type, sequence, timer, todo, radio, talk]
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: npm
+
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Install Android platform
+        run: yes | sdkmanager 'platforms;android-36' 'build-tools;36.0.0'
+
+      - run: npm ci
+
+      - name: Build wrapper
+        run: npm run android:build -- ${{ matrix.app }}
+
+      - name: Upload debug APK
+        uses: actions/upload-artifact@v6
+        with:
+          name: tiko-${{ matrix.app }}-debug-apk
+          path: apps/${{ matrix.app }}/android/android/app/build/outputs/apk/debug/*.apk
+          if-no-files-found: error

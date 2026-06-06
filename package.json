@@ -20,6 +20,9 @@
     "test:contracts": "vitest run tests/identity-api.test.ts tests/app-api.test.ts tests/generation-api.test.ts tests/atlas-api.test.ts tests/testing-contract.test.ts",
     "test:services": "npm run test:contracts",
     "build": "npm run build --workspaces --if-present",
+    "android:list": "node tools/android-wrappers.mjs list",
+    "android:sync": "node tools/android-wrappers.mjs sync",
+    "android:build": "node tools/android-wrappers.mjs build-android",
     "audit:doctrine": "node tools/check-doctrine.mjs",
     "deploy:dry-run:tts": "npm --workspace @tiko-worker/tts-api run deploy:dry-run",
     "deploy:dry-run:generation": "npm --workspace @tiko-worker/generation-api run deploy:dry-run",
@@ -40,6 +43,9 @@
     "vue-tsc": "^3.1.5"
   },
   "devDependencies": {
+    "@capacitor/android": "^8.4.0",
+    "@capacitor/cli": "^8.4.0",
+    "@capacitor/core": "^8.4.0",
     "@types/node": "^25.9.1"
   }
 }

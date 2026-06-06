@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Tiko Radio</string>
+    <string name="title_activity_main">Tiko Radio</string>
+    <string name="package_name">org.tikoapps.radio</string>
+    <string name="custom_url_scheme">org.tikoapps.radio</string>
+</resources>
