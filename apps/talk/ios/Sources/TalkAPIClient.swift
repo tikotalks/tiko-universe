@@ -1,5 +1,15 @@
 import Foundation
 
+protocol TalkSentenceAPI: Sendable {
+    func start(locale: String, userId: String?, sessionToken: String?) async throws -> TalkSentenceStartResponse
+    func next(currentWords: [String], locale: String, userId: String?, sessionToken: String?) async throws -> TalkSentenceNextResponse
+    func complete(wordIds: [String], locale: String, autoSave: Bool, userId: String?, sessionToken: String?) async throws -> TalkSentenceCompleteResponse
+    func vocabulary(locale: String, category: String?, pos: String?, sessionToken: String?) async throws -> TalkSentenceVocabularyResponse
+    func phrases(locale: String, userId: String, sessionToken: String?) async throws -> TalkSentencePhrasesResponse
+    func savePhrase(locale: String, userId: String, wordIds: [String], label: String?, sessionToken: String?) async throws -> TalkSaveSentencePhraseResponse
+    func deletePhrase(phraseId: String, locale: String, userId: String, sessionToken: String?) async throws -> TalkDeleteSentencePhraseResponse
+}
+
 enum TalkAPIError: Error, Equatable, LocalizedError {
     case invalidURL
     case invalidResponse
@@ -17,7 +27,7 @@ enum TalkAPIError: Error, Equatable, LocalizedError {
     }
 }
 
-actor TalkAPIClient {
+actor TalkAPIClient: TalkSentenceAPI {
     enum Environment: Sendable, Equatable {
         case development
         case production
@@ -63,6 +73,42 @@ actor TalkAPIClient {
     func complete(wordIds: [String], locale: String, autoSave: Bool = true, userId: String? = nil, sessionToken: String? = nil) async throws -> TalkSentenceCompleteResponse {
         let body = TalkSentenceCompleteRequest(locale: locale, userId: userId, wordIds: wordIds, autoSave: autoSave)
         let request = try makeJSONRequest(path: "complete", body: body, sessionToken: sessionToken)
+        return try await send(request)
+    }
+
+    func vocabulary(locale: String, category: String? = nil, pos: String? = nil, sessionToken: String? = nil) async throws -> TalkSentenceVocabularyResponse {
+        var items = [URLQueryItem(name: "locale", value: locale)]
+        if let category, !category.isEmpty {
+            items.append(URLQueryItem(name: "category", value: category))
+        }
+        if let pos, !pos.isEmpty {
+            items.append(URLQueryItem(name: "pos", value: pos))
+        }
+        let request = try makeRequest(path: "vocabulary", method: "GET", queryItems: items, sessionToken: sessionToken)
+        return try await send(request)
+    }
+
+    func phrases(locale: String, userId: String, sessionToken: String? = nil) async throws -> TalkSentencePhrasesResponse {
+        let items = [
+            URLQueryItem(name: "locale", value: locale),
+            URLQueryItem(name: "userId", value: userId)
+        ]
+        let request = try makeRequest(path: "phrases", method: "GET", queryItems: items, sessionToken: sessionToken)
+        return try await send(request)
+    }
+
+    func savePhrase(locale: String, userId: String, wordIds: [String], label: String? = nil, sessionToken: String? = nil) async throws -> TalkSaveSentencePhraseResponse {
+        let body = TalkSaveSentencePhraseRequest(locale: locale, userId: userId, wordIds: wordIds, label: label)
+        let request = try makeJSONRequest(path: "phrases", body: body, sessionToken: sessionToken)
+        return try await send(request)
+    }
+
+    func deletePhrase(phraseId: String, locale: String, userId: String, sessionToken: String? = nil) async throws -> TalkDeleteSentencePhraseResponse {
+        let items = [
+            URLQueryItem(name: "locale", value: locale),
+            URLQueryItem(name: "userId", value: userId)
+        ]
+        let request = try makeRequest(path: "phrases/\(phraseId)", method: "DELETE", queryItems: items, sessionToken: sessionToken)
         return try await send(request)
     }
 
