@@ -6,10 +6,13 @@ These documents are product contracts, not suggestions. Every current and future
 
 ## Why this exists
 
-Tiko apps are small and app-specific, but users must not relearn account, recovery, profile, settings, offline, deletion, or safety behavior for every app. The API contracts define what clients can call. These flow contracts define what users see and what clients must do.
+Tiko apps are small and app-specific, but users must not relearn account, recovery, settings, offline, deletion, or safety behavior for every app. The API contracts define what clients can call. These flow contracts define what users see and what clients must do.
+
+Basic users should not see profile management. They have one implicit primary profile and stay in child mode by default. Profile management exists only for explicit profile-manager mode.
 
 ## Required shared flows
 
+- `user-modes.md` — basic user mode, child mode, caregiver mode, profile-manager mode, and managed child profile behavior.
 - `identity-and-profiles.md` — user/profile states, what tapping the user/profile entry shows, PIN, recovery, deletion, and account contracts.
 - `startup-and-session.md` — first launch, returning user, session restoration, session expiry, and no-login-wall rules.
 - `settings-and-app-state.md` — shared settings structure, app settings, app state, sync, and local fallback.
@@ -24,11 +27,13 @@ Tiko apps are small and app-specific, but users must not relearn account, recove
 3. No login wall.
 4. Device-first identity is created or restored silently.
 5. Caregiver recovery uses email magic links.
-6. Profile and recovery UI is caregiver-facing, not child-blocking.
-7. Account deletion must be available from inside every app that exposes account creation or recovery.
-8. Web, iOS, and Android share the same behavior and contracts.
-9. Platform-specific behavior may only change presentation, not product meaning.
-10. Offline mode must preserve the child-facing core function wherever technically possible.
+6. Basic users do not see profile management by default.
+7. Child profiles always open in child mode.
+8. Profile management is caregiver-only and only appears in profile-manager mode.
+9. Account deletion must be available from inside every app that exposes account creation or recovery.
+10. Web, iOS, and Android share the same behavior and contracts.
+11. Platform-specific behavior may only change presentation, not product meaning.
+12. Offline mode must preserve the child-facing core function wherever technically possible.
 
 ## App documentation requirement
 
