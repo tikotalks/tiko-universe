@@ -72,7 +72,7 @@ export const identityConfig: NormalizedAnkoreConfig = normalizeConfig(baseConfig
 
 export default {
   async fetch(request: Request, env: Env, _ctx?: unknown): Promise<Response> {
-    const contractRequest = request.clone()
+    const contractRequest = request.clone() as AnyRequest
     const canonical = await handleCanonicalIdentity(request, env)
     if (canonical) return withBrowserSessionCookie(contractRequest, await withTikoSessionContract(contractRequest, env, canonical))
 
@@ -98,8 +98,9 @@ function configForEnv(env: Env): AnkoreConfig {
 type AccountType = 'temporary' | 'verified' | 'profile_manager' | 'child_account'
 type RuntimeMode = 'parent' | 'child'
 type LoginMethod = 'device' | 'otp' | 'magic_link' | 'child_code'
+type AnyRequest = Request<any, any>
 
-async function handleCanonicalIdentity(request: Request, env: Env): Promise<Response | null> {
+async function handleCanonicalIdentity(request: AnyRequest, env: Env): Promise<Response | null> {
   const url = new URL(request.url)
   const path = url.pathname.replace(/\/$/, '')
   if (request.method !== 'POST') return null
@@ -128,7 +129,7 @@ function normalizeEmailPurpose(purpose: string | undefined): 'verify_email' | 'r
   return 'recover'
 }
 
-function fetchAnkoreRoute(request: Request, env: Env, pathname: string, body: unknown): Promise<Response> {
+function fetchAnkoreRoute(request: AnyRequest, env: Env, pathname: string, body: unknown): Promise<Response> {
   const url = new URL(request.url)
   url.pathname = pathname
   const headers = new Headers(request.headers)
@@ -327,7 +328,7 @@ function id(prefix: string): string {
   return `${prefix}_${crypto.randomUUID().replace(/-/g, '')}`
 }
 
-async function withTikoSessionContract(request: Request, env: Env, response: Response): Promise<Response> {
+async function withTikoSessionContract(request: AnyRequest, env: Env, response: Response): Promise<Response> {
   const contentType = response.headers.get('content-type') ?? ''
   if (response.status < 200 || response.status >= 300 || !contentType.includes('application/json')) return response
 
@@ -385,7 +386,7 @@ function deriveCapabilities(accountType: AccountType, runtime: { mode: RuntimeMo
   }
 }
 
-async function deriveLoginMethod(request: Request, body: Record<string, any>, accountType: AccountType): Promise<LoginMethod> {
+async function deriveLoginMethod(request: AnyRequest, body: Record<string, any>, accountType: AccountType): Promise<LoginMethod> {
   const path = new URL(request.url).pathname
   if (accountType === 'child_account' || path.endsWith('/managed/login') || path.endsWith('/child-accounts/login')) return 'child_code'
   if (path.includes('/email/verify') || path.includes('/magic-links/verify') || path.includes('/otp/verify')) {
@@ -397,7 +398,7 @@ async function deriveLoginMethod(request: Request, body: Record<string, any>, ac
   return 'device'
 }
 
-async function withBrowserSessionCookie(request: Request, response: Response): Promise<Response> {
+async function withBrowserSessionCookie(request: AnyRequest, response: Response): Promise<Response> {
   const headers = new Headers(response.headers)
   headers.set('Access-Control-Allow-Credentials', 'true')
 

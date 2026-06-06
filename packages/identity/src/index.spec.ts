@@ -25,6 +25,6 @@ describe('IdentityClient', () => {
 
     await expect(client.createEmailChallenge({ email: 'sil@example.com', purpose: 'recover' })).resolves.toEqual({ ok: true, message: 'ok' })
     expect(calls).toHaveLength(1)
-    expect(calls[0].input).toBe('https://api.test/v1/identity/email/challenge')
+    expect(calls[0].input).toBe('https://api.test/v1/identity/email')
   })
 })
