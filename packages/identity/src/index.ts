@@ -109,6 +109,47 @@ export interface EmailVerifyRequest {
   otp?: string
 }
 
+export interface PinRequest {
+  pin: string
+  currentPin?: string
+}
+
+export interface PinVerifyRequest {
+  pin: string
+  purpose?: 'parent_mode' | 'settings' | 'child_accounts' | string
+}
+
+export interface PinGrant {
+  token: string
+  purpose: string
+  expiresAt: string
+}
+
+export interface ChildAccountSummary {
+  id: string
+  subjectId: string
+  managerSubjectId: string
+  handle: string
+  name: string
+  displayName: string
+}
+
+export interface ChildAccountRequest {
+  name: string
+  code: string
+  language?: string
+}
+
+export interface ChildAccountUpdateRequest {
+  name: string
+  language?: string
+}
+
+export interface ChildAccountLoginRequest {
+  name: string
+  code: string
+}
+
 export interface IdentityClientOptions {
   baseUrl: string
   fetch?: typeof fetch
@@ -216,6 +257,97 @@ export class IdentityClient {
     await this.request<void>('/identity/me', {
       method: 'DELETE',
       headers: bearerHeaders(sessionToken)
+    })
+  }
+
+  setPin(sessionToken: string, input: PinRequest): Promise<IdentityBundle> {
+    return this.request<IdentityBundle>('/identity/pin', {
+      method: 'POST',
+      headers: bearerHeaders(sessionToken),
+      body: JSON.stringify(input)
+    })
+  }
+
+  verifyPin(sessionToken: string, input: PinVerifyRequest): Promise<{ ok: true; grant: PinGrant }> {
+    return this.request<{ ok: true; grant: PinGrant }>('/identity/pin/verify', {
+      method: 'POST',
+      headers: bearerHeaders(sessionToken),
+      body: JSON.stringify(input)
+    })
+  }
+
+  async removePin(sessionToken: string, pin: string): Promise<IdentityBundle> {
+    return this.request<IdentityBundle>('/identity/pin', {
+      method: 'DELETE',
+      headers: bearerHeaders(sessionToken),
+      body: JSON.stringify({ pin })
+    })
+  }
+
+  enableChildMode(sessionToken: string): Promise<IdentityBundle> {
+    return this.request<IdentityBundle>('/identity/mode/child/enable', {
+      method: 'POST',
+      headers: bearerHeaders(sessionToken)
+    })
+  }
+
+  enterChildMode(sessionToken: string): Promise<IdentityBundle> {
+    return this.request<IdentityBundle>('/identity/mode/child', {
+      method: 'POST',
+      headers: bearerHeaders(sessionToken)
+    })
+  }
+
+  enterParentMode(sessionToken: string, pin?: string): Promise<IdentityBundle> {
+    return this.request<IdentityBundle>('/identity/mode/parent', {
+      method: 'POST',
+      headers: bearerHeaders(sessionToken),
+      body: JSON.stringify(pin ? { pin } : {})
+    })
+  }
+
+  listChildAccounts(sessionToken: string): Promise<{ childAccounts: ChildAccountSummary[] }> {
+    return this.request<{ childAccounts: ChildAccountSummary[] }>('/identity/child-accounts', {
+      method: 'GET',
+      headers: bearerHeaders(sessionToken)
+    })
+  }
+
+  createChildAccount(sessionToken: string, input: ChildAccountRequest): Promise<{ child: ChildAccountSummary }> {
+    return this.request<{ child: ChildAccountSummary }>('/identity/child-accounts', {
+      method: 'POST',
+      headers: bearerHeaders(sessionToken),
+      body: JSON.stringify(input)
+    })
+  }
+
+  updateChildAccount(sessionToken: string, childAccountId: string, input: ChildAccountUpdateRequest): Promise<{ child: ChildAccountSummary }> {
+    return this.request<{ child: ChildAccountSummary }>(`/identity/child-accounts/${encodeURIComponent(childAccountId)}`, {
+      method: 'PUT',
+      headers: bearerHeaders(sessionToken),
+      body: JSON.stringify(input)
+    })
+  }
+
+  resetChildAccountCode(sessionToken: string, childAccountId: string, code: string): Promise<{ child: ChildAccountSummary }> {
+    return this.request<{ child: ChildAccountSummary }>(`/identity/child-accounts/${encodeURIComponent(childAccountId)}/code/reset`, {
+      method: 'POST',
+      headers: bearerHeaders(sessionToken),
+      body: JSON.stringify({ code })
+    })
+  }
+
+  async deleteChildAccount(sessionToken: string, childAccountId: string): Promise<void> {
+    await this.request<void>(`/identity/child-accounts/${encodeURIComponent(childAccountId)}`, {
+      method: 'DELETE',
+      headers: bearerHeaders(sessionToken)
+    })
+  }
+
+  loginChildAccount(input: ChildAccountLoginRequest): Promise<IdentityBundle> {
+    return this.request<IdentityBundle>('/identity/child-accounts/login', {
+      method: 'POST',
+      body: JSON.stringify(input)
     })
   }
 

@@ -138,6 +138,12 @@ class MemoryD1Database {
       if (row && row.product === product) Object.assign(row, { disabled_at: disabledAt, updated_at: updatedAt })
       return new MemoryResult()
     }
+    if (normalized.startsWith('UPDATE identity_subjects SET metadata_json')) {
+      const [metadataJson, updatedAt, id] = values
+      const row = this.subjects.get(String(id))
+      if (row) Object.assign(row, { metadata_json: metadataJson, updated_at: updatedAt })
+      return new MemoryResult()
+    }
 
     if (normalized.startsWith('INSERT INTO identity_accounts')) {
       const [id, subjectId, product, emailHash, emailPlain, emailVerifiedAt, createdAt, updatedAt, disabledAt, metadataJson] = values
@@ -221,9 +227,34 @@ class MemoryD1Database {
       this.managedCredentials.set(String(id), { id, subject_id: subjectId, manager_subject_id: managerSubjectId, product, handle, handle_norm: handleNorm, code_hash: codeHash, display_name: displayName, created_at: createdAt, revoked_at: revokedAt, metadata_json: metadataJson })
       return new MemoryResult()
     }
+    if (normalized.startsWith('SELECT * FROM identity_managed_credentials WHERE product =') && normalized.includes('manager_subject_id =')) {
+      const rows = Array.from(this.managedCredentials.values()).filter((credential) => credential.product === values[0] && credential.manager_subject_id === values[1] && !credential.revoked_at)
+      return new MemoryResult(rows)
+    }
+    if (normalized.startsWith('SELECT * FROM identity_managed_credentials WHERE manager_subject_id =') && normalized.includes('subject_id =')) {
+      const row = Array.from(this.managedCredentials.values()).find((credential) => credential.manager_subject_id === values[0] && credential.product === values[1] && credential.subject_id === values[2] && !credential.revoked_at)
+      return new MemoryResult(row ? [row] : [])
+    }
+    if (normalized.startsWith('SELECT * FROM identity_managed_credentials WHERE manager_subject_id =')) {
+      let rows = Array.from(this.managedCredentials.values()).filter((credential) => credential.manager_subject_id === values[0] && credential.product === values[1] && !credential.revoked_at)
+      if (rows.length === 0) rows = Array.from(this.managedCredentials.values()).filter((credential) => credential.product === values[1] && !credential.revoked_at)
+      return new MemoryResult(rows)
+    }
     if (normalized.startsWith('SELECT * FROM identity_managed_credentials')) {
       const row = Array.from(this.managedCredentials.values()).find((credential) => credential.product === values[0] && credential.handle_norm === values[1] && !credential.revoked_at)
       return new MemoryResult(row ? [row] : [])
+    }
+    if (normalized.startsWith('UPDATE identity_managed_credentials SET display_name')) {
+      const [displayName, metadataJson, id, managerSubjectId, product] = values
+      const row = this.managedCredentials.get(String(id))
+      if (row && row.manager_subject_id === managerSubjectId && row.product === product && !row.revoked_at) Object.assign(row, { display_name: displayName, metadata_json: metadataJson })
+      return new MemoryResult()
+    }
+    if (normalized.startsWith('UPDATE identity_managed_credentials SET code_hash')) {
+      const [codeHash, id, managerSubjectId, product] = values
+      const row = this.managedCredentials.get(String(id))
+      if (row && row.manager_subject_id === managerSubjectId && row.product === product && !row.revoked_at) row.code_hash = codeHash
+      return new MemoryResult()
     }
     if (normalized.startsWith('UPDATE identity_managed_credentials SET revoked_at')) {
       const [revokedAt, subjectId, product] = values
@@ -281,6 +312,20 @@ function env(db = new MemoryD1Database()) {
 afterEach(() => {
   vi.restoreAllMocks()
 })
+
+async function assignTestRole(db: MemoryD1Database, subjectId: string, role: string) {
+  db.roles.push({
+    id: `role_test_${db.roles.length + 1}`,
+    subject_id: subjectId,
+    product: 'tiko',
+    role,
+    source: 'test',
+    actor_subject_id: null,
+    created_at: new Date().toISOString(),
+    revoked_at: null,
+    metadata_json: '{}'
+  })
+}
 
 async function fetchJson(path: string, init: RequestInit = {}, testEnv = env()) {
   const request = new Request(`https://identity.test${path}`, {
@@ -609,16 +654,153 @@ describe('identity-api endpoints', () => {
     expect((otpVerified.body as IdentityBundle).session?.loginMethod).toBe('otp')
   })
 
-  it('creates managed child credentials and logs the child in with a stable access code', async () => {
+  it('enforces PIN-backed child and parent runtime modes for verified accounts', async () => {
+    const testEnv = env()
+    const temporary = await fetchJson('/v1/identity/device', { method: 'POST', body: JSON.stringify({}) }, testEnv)
+    const temporaryToken = (temporary.body as IdentityBundle).session?.token ?? ''
+
+    const temporaryPin = await fetchJson('/v1/identity/pin', {
+      method: 'POST',
+      headers: { authorization: `Bearer ${temporaryToken}` },
+      body: JSON.stringify({ pin: '1234' })
+    }, testEnv)
+    expect(temporaryPin.response.status).toBe(403)
+    expect(temporaryPin.body.error).toBe('pin_not_allowed')
+
+    await fetchJson('/v1/identity/email', {
+      method: 'POST',
+      headers: { authorization: `Bearer ${temporaryToken}` },
+      body: JSON.stringify({ email: 'pin@example.test', purpose: 'recovery' })
+    }, testEnv)
+    const magicToken = testEnv.MAGIC_LINK_TEST_SINK[0]?.token ?? ''
+    const verified = await fetchJson('/v1/identity/email/verify', {
+      method: 'POST',
+      body: JSON.stringify({ token: magicToken })
+    }, testEnv)
+    expect(verified.response.status).toBe(200)
+    const verifiedToken = (verified.body as IdentityBundle).session?.token ?? ''
+
+    const enableBeforePin = await fetchJson('/v1/identity/mode/child/enable', { method: 'POST', headers: { authorization: `Bearer ${verifiedToken}` } }, testEnv)
+    expect(enableBeforePin.response.status).toBe(409)
+    expect(enableBeforePin.body.error).toBe('pin_required')
+
+    const setPin = await fetchJson('/v1/identity/pin', {
+      method: 'POST',
+      headers: { authorization: `Bearer ${verifiedToken}` },
+      body: JSON.stringify({ pin: '2468' })
+    }, testEnv)
+    expect(setPin.response.status).toBe(200)
+    expect((setPin.body as IdentityBundle).runtime).toEqual({ mode: 'parent', childModeEnabled: false, pinConfigured: true })
+    expect(JSON.stringify(testEnv.IDENTITY_DB.subjects.get((verified.body as IdentityBundle).subject.id))).not.toContain('2468')
+
+    const enable = await fetchJson('/v1/identity/mode/child/enable', { method: 'POST', headers: { authorization: `Bearer ${verifiedToken}` } }, testEnv)
+    expect(enable.response.status).toBe(200)
+    expect((enable.body as IdentityBundle).runtime).toEqual({ mode: 'parent', childModeEnabled: true, pinConfigured: true })
+
+    const child = await fetchJson('/v1/identity/mode/child', { method: 'POST', headers: { authorization: `Bearer ${verifiedToken}` } }, testEnv)
+    expect(child.response.status).toBe(200)
+    expect((child.body as IdentityBundle).runtime).toEqual({ mode: 'child', childModeEnabled: true, pinConfigured: true })
+
+    const badExit = await fetchJson('/v1/identity/mode/parent', {
+      method: 'POST',
+      headers: { authorization: `Bearer ${verifiedToken}` },
+      body: JSON.stringify({ pin: '0000' })
+    }, testEnv)
+    expect(badExit.response.status).toBe(403)
+
+    const grant = await fetchJson('/v1/identity/pin/verify', {
+      method: 'POST',
+      headers: { authorization: `Bearer ${verifiedToken}` },
+      body: JSON.stringify({ pin: '2468', purpose: 'parent_mode' })
+    }, testEnv)
+    expect(grant.response.status).toBe(200)
+    expect(grant.body.grant.token).toMatch(/^grt_/)
+
+    const parent = await fetchJson('/v1/identity/mode/parent', {
+      method: 'POST',
+      headers: { authorization: `Bearer ${verifiedToken}` },
+      body: JSON.stringify({ pin: '2468' })
+    }, testEnv)
+    expect(parent.response.status).toBe(200)
+    expect((parent.body as IdentityBundle).runtime?.mode).toBe('parent')
+  })
+
+  it('supports canonical Profile Manager child-account management endpoints', async () => {
     const testEnv = env()
     const manager = await fetchJson('/v1/identity/device', { method: 'POST', body: JSON.stringify({}) }, testEnv)
     const managerBundle = manager.body as IdentityBundle
     const managerToken = managerBundle.session?.token ?? ''
 
-    const created = await fetchJson('/v1/identity/managed/children', {
+    const denied = await fetchJson('/v1/identity/child-accounts', {
       method: 'POST',
       headers: { authorization: `Bearer ${managerToken}` },
-      body: JSON.stringify({ handle: 'Mila', accessCode: '4829', displayName: 'Mila' })
+      body: JSON.stringify({ name: 'Nope', code: '1234' })
+    }, testEnv)
+    expect(denied.response.status).toBe(403)
+
+    await assignTestRole(testEnv.IDENTITY_DB, managerBundle.subject.id, 'profile_manager')
+    const invalidCode = await fetchJson('/v1/identity/child-accounts', {
+      method: 'POST',
+      headers: { authorization: `Bearer ${managerToken}` },
+      body: JSON.stringify({ name: 'Mila', code: '12345' })
+    }, testEnv)
+    expect(invalidCode.response.status).toBe(400)
+
+    const created = await fetchJson('/v1/identity/child-accounts', {
+      method: 'POST',
+      headers: { authorization: `Bearer ${managerToken}` },
+      body: JSON.stringify({ name: 'Mila', code: '4829' })
+    }, testEnv)
+    expect(created.response.status).toBe(201)
+    expect(testEnv.IDENTITY_DB.managedCredentials.size).toBe(1)
+    const childId = created.body.child.id
+
+    const listed = await fetchJson('/v1/identity/child-accounts', { headers: { authorization: `Bearer ${managerToken}` } }, testEnv)
+    expect(listed.response.status).toBe(200)
+    expect(listed.body.childAccounts).toHaveLength(1)
+    expect(listed.body.childAccounts[0]).toMatchObject({ id: childId, name: 'Mila' })
+
+    const updated = await fetchJson(`/v1/identity/child-accounts/${childId}`, {
+      method: 'PUT',
+      headers: { authorization: `Bearer ${managerToken}` },
+      body: JSON.stringify({ name: 'Mila Updated' })
+    }, testEnv)
+    expect(updated.response.status).toBe(200)
+    expect(updated.body.child.name).toBe('Mila Updated')
+
+    const reset = await fetchJson(`/v1/identity/child-accounts/${childId}/code/reset`, {
+      method: 'POST',
+      headers: { authorization: `Bearer ${managerToken}` },
+      body: JSON.stringify({ code: '8642' })
+    }, testEnv)
+    expect(reset.response.status).toBe(200)
+    const storedCredential = Array.from(testEnv.IDENTITY_DB.managedCredentials.values())[0]
+    expect(JSON.stringify(storedCredential)).not.toContain('8642')
+
+    const oldCodeLogin = await fetchJson('/v1/identity/child-accounts/login', { method: 'POST', body: JSON.stringify({ name: 'Mila', code: '4829' }) }, testEnv)
+    expect(oldCodeLogin.response.status).toBe(401)
+    const login = await fetchJson('/v1/identity/child-accounts/login', { method: 'POST', body: JSON.stringify({ name: 'Mila', code: '8642' }) }, testEnv)
+    expect(login.response.status).toBe(200)
+    expect((login.body as IdentityBundle).user?.accountType).toBe('child_account')
+    expect((login.body as IdentityBundle).runtime?.mode).toBe('child')
+
+    const deleted = await fetchJson(`/v1/identity/child-accounts/${childId}`, { method: 'DELETE', headers: { authorization: `Bearer ${managerToken}` } }, testEnv)
+    expect(deleted.response.status).toBe(204)
+    const afterDeleteLogin = await fetchJson('/v1/identity/child-accounts/login', { method: 'POST', body: JSON.stringify({ name: 'Mila', code: '8642' }) }, testEnv)
+    expect(afterDeleteLogin.response.status).toBe(401)
+  })
+
+  it('creates managed child credentials and logs the child in with a stable access code', async () => {
+    const testEnv = env()
+    const manager = await fetchJson('/v1/identity/device', { method: 'POST', body: JSON.stringify({}) }, testEnv)
+    const managerBundle = manager.body as IdentityBundle
+    const managerToken = managerBundle.session?.token ?? ''
+    await assignTestRole(testEnv.IDENTITY_DB, managerBundle.subject.id, 'profile_manager')
+
+    const created = await fetchJson('/v1/identity/child-accounts', {
+      method: 'POST',
+      headers: { authorization: `Bearer ${managerToken}` },
+      body: JSON.stringify({ name: 'Mila', code: '4829', language: 'en' })
     }, testEnv)
 
     expect(created.response.status).toBe(201)
