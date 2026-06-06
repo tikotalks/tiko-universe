@@ -55,7 +55,7 @@ describe('admin OTP sign-in', () => {
       req.reply(deviceBundle)
     }).as('bootstrapDevice')
 
-    cy.intercept('POST', 'https://identity.tikoapi.org/v1/identity/email/challenge', (req) => {
+    cy.intercept('POST', 'https://identity.tikoapi.org/v1/identity/email', (req) => {
       expect(req.headers.authorization).to.equal('Bearer device-session-token')
       expect(req.body).to.deep.equal({ email: 'sil@example.com', purpose: 'recover' })
       req.reply({ ok: true, message: 'Check your email for the 6-digit code.' })
