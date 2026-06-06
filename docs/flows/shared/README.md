@@ -4,6 +4,14 @@ This directory defines the shared user-facing flows that every Tiko app must fol
 
 These documents are product contracts, not suggestions. Every current and future app must use the same shared flows unless a platform-specific difference is explicitly documented.
 
+## Visual source of truth
+
+The shared visual flow board is maintained in Figma/FigJam:
+
+- [Tiko Platform Flows v2](https://www.figma.com/board/9svfiBJIfnIIhqwCzHNpjl)
+
+The written docs are the implementation contract. The FigJam board is the visual explanation of the same contract. If they disagree, update both before implementation.
+
 ## Why this exists
 
 Tiko apps are small and app-specific, but users must not relearn account, recovery, settings, offline, deletion, or safety behavior for every app. The API contracts define what clients can call. These flow contracts define what users see and what clients must do.
