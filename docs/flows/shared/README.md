@@ -12,6 +12,14 @@ The shared visual flow board is maintained in Figma/FigJam:
 
 The written docs are the implementation contract. The FigJam board is the visual explanation of the same contract. If they disagree, update both before implementation.
 
+## Data source of truth
+
+The canonical data model is defined in:
+
+- `docs/architecture/data-model.md`
+
+All apps, APIs, reset flows, deletion flows, sync behavior, manager tools, exports, and future AI features must classify data using that model.
+
 ## Why this exists
 
 Tiko apps are small and app-specific, but users must not relearn account, recovery, settings, offline, deletion, or safety behavior for every app. The API contracts define what clients can call. These flow contracts define what users see and what clients must do.
@@ -57,6 +65,7 @@ Child Account: Child Mode only
 17. Web, iOS, and Android share the same behavior and contracts.
 18. Platform-specific behavior may only change presentation, not product meaning.
 19. Offline mode must preserve the child-facing core function wherever technically possible.
+20. Tiko does not implement app blocking or allowed-app lists. Child Accounts can use all Tiko apps available on the device, browser, or deployment environment.
 
 ## Removed concepts
 
@@ -68,6 +77,8 @@ Do not use these concepts in new implementation:
 - managed child profile
 - profile-manager mode
 - child profile selection
+- allowed apps
+- blocked apps
 
 ## App documentation requirement
 
@@ -80,6 +91,7 @@ Every app in `docs/flows/apps/` must document:
 - app-specific settings/state contracts
 - offline behavior
 - deletion impact
+- data categories used from `docs/architecture/data-model.md`
 - platform notes
 - smoke checklist
 
