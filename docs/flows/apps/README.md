@@ -7,15 +7,10 @@ Use `../shared/app-flow-template.md` for each app.
 ## Current app flow contracts
 
 - `yes-no.md` — first proof app.
-
-## Required next app flow contracts
-
-Create these before implementation/migration work expands:
-
-- `type.md`
-- `cards.md`
-- `sequence.md`
-- `timer.md`
+- `type.md` — typing and speech communication app.
+- `cards.md` — visual card/board communication app.
+- `sequence.md` — ordered steps, routines, and learning flow app.
+- `timer.md` — visual timer and preset app.
 
 ## Rules
 

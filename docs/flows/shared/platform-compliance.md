@@ -35,7 +35,7 @@ Implementation requirement:
 
 - Every app must include a Privacy Policy link in the app.
 - The privacy policy must describe collected data, use, sharing, retention/deletion, and how to request deletion.
-- Profile Overview or Settings must include the link.
+- Parent Mode account/settings UI must include the link.
 
 ### Data minimization
 
@@ -43,7 +43,7 @@ Implementation requirement:
 
 - Do not collect name, birth date, location, contacts, microphone, photos, or tracking identifiers unless needed for an explicit feature.
 - Recovery email must be optional.
-- Profile name should be free-form and may use nicknames.
+- Display name should be free-form and may use nicknames.
 - Avoid analytics in child-facing flows.
 
 ### Kids Category risk
