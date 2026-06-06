@@ -11,11 +11,16 @@ export interface IdentityDevice {
   secret?: string
 }
 
+export type AccountType = 'temporary' | 'verified' | 'profile_manager' | 'child_account'
+export type RuntimeMode = 'parent' | 'child'
+export type LoginMethod = 'device' | 'otp' | 'magic_link' | 'child_code'
+
 export interface IdentityAccount {
   id: string
   subjectId: string
   emailVerified: boolean
   email?: string | null
+  accountType?: AccountType
 }
 
 export interface IdentitySession {
@@ -23,14 +28,56 @@ export interface IdentitySession {
   token: string
   transport: 'bearer' | 'cookie'
   expiresAt: string
+  loginMethod?: LoginMethod
 }
 
-export interface IdentityBundle {
+export interface TikoUser {
+  id: string
+  displayName?: string
+  email?: string | null
+  accountType: AccountType
+  mode?: RuntimeMode
+  recoverable: boolean
+  emailVerified?: boolean
+  temporaryExpiresAt?: string
+  lastActiveAt?: string
+}
+
+export interface RuntimeSummary {
+  mode: RuntimeMode
+  childModeEnabled: boolean
+  pinConfigured: boolean
+}
+
+export interface UserCapabilities {
+  canVerifyEmail: boolean
+  canUseParentMode: boolean
+  canUseChildMode: boolean
+  canManageChildAccounts: boolean
+  canDeleteAccount: boolean
+}
+
+export interface SessionBundle {
+  user: TikoUser
+  device: IdentityDevice | null
+  session: IdentitySession
+  runtime: RuntimeSummary
+  capabilities: UserCapabilities
+  account?: IdentityAccount | null
+}
+
+export interface IdentityBundle extends Partial<SessionBundle> {
   subject: IdentitySubject
   device?: IdentityDevice | null
   account?: IdentityAccount | null
   session?: IdentitySession
   entitlements?: unknown[]
+  roles?: string[]
+  managed?: {
+    handle?: string
+    displayName?: string | null
+    managerSubjectId?: string
+  }
 }
 
 export interface ApiErrorEnvelope {
@@ -49,7 +96,7 @@ export interface DeviceBootstrapRequest {
 
 export interface EmailChallengeRequest {
   email: string
-  purpose?: 'verify_email' | 'recover' | 'link_account' | 'admin_login'
+  purpose?: 'verify_email' | 'recover' | 'recovery' | 'link_account' | 'admin_login' | 'login' | 'reset_pin' | 'confirm_deletion'
 }
 
 export interface EmailChallengeResponse {
@@ -118,24 +165,44 @@ export class IdentityClient {
     })
   }
 
-  createEmailChallenge(input: EmailChallengeRequest, sessionToken?: string): Promise<EmailChallengeResponse> {
-    return this.request<EmailChallengeResponse>('/identity/email/challenge', {
+  requestEmailVerification(input: EmailChallengeRequest, sessionToken?: string): Promise<EmailChallengeResponse> {
+    return this.request<EmailChallengeResponse>('/identity/email', {
       method: 'POST',
       headers: sessionToken ? bearerHeaders(sessionToken) : undefined,
       body: JSON.stringify(input)
     })
   }
 
-  verifyEmail(input: EmailVerifyRequest): Promise<IdentityBundle> {
-    if (!input.token && !input.otp) throw new Error('token or otp is required')
-    return this.request<IdentityBundle>('/identity/email/verify', {
+  requestOtp(input: EmailChallengeRequest, sessionToken?: string): Promise<EmailChallengeResponse> {
+    return this.request<EmailChallengeResponse>('/identity/otp/request', {
       method: 'POST',
+      headers: sessionToken ? bearerHeaders(sessionToken) : undefined,
       body: JSON.stringify(input)
     })
   }
 
+  createEmailChallenge(input: EmailChallengeRequest, sessionToken?: string): Promise<EmailChallengeResponse> {
+    return this.requestEmailVerification(input, sessionToken)
+  }
+
+  verifyMagicLink(token: string): Promise<IdentityBundle> {
+    return this.request<IdentityBundle>('/identity/magic-links/verify', {
+      method: 'POST',
+      body: JSON.stringify({ token })
+    })
+  }
+
+  verifyEmail(input: EmailVerifyRequest): Promise<IdentityBundle> {
+    if (!input.token && !input.otp) throw new Error('token or otp is required')
+    if (input.token) return this.verifyMagicLink(input.token)
+    return this.verifyOtp(input.otp ?? '')
+  }
+
   verifyOtp(otp: string): Promise<IdentityBundle> {
-    return this.verifyEmail({ otp })
+    return this.request<IdentityBundle>('/identity/otp/verify', {
+      method: 'POST',
+      body: JSON.stringify({ code: otp })
+    })
   }
 
   async logout(sessionToken: string): Promise<void> {

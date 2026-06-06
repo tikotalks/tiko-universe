@@ -72,21 +72,77 @@ export const identityConfig: NormalizedAnkoreConfig = normalizeConfig(baseConfig
 
 export default {
   async fetch(request: Request, env: Env, _ctx?: unknown): Promise<Response> {
-    const managed = await handleManagedIdentity(request, env)
-    if (managed) return withBrowserSessionCookie(request, managed)
+    const contractRequest = request.clone()
+    const canonical = await handleCanonicalIdentity(request, env)
+    if (canonical) return withBrowserSessionCookie(contractRequest, await withTikoSessionContract(contractRequest, env, canonical))
 
-    return createIdentityWorker(configForEnv(env), {
+    const managed = await handleManagedIdentity(request, env)
+    if (managed) return withBrowserSessionCookie(contractRequest, await withTikoSessionContract(contractRequest, env, managed))
+
+    const ankoreResponse = await createIdentityWorker(configForEnv(env), {
       sendEmail: message => requestMagicLinkDelivery(env, message)
     }).fetch(request, {
       ...env,
       ANKORE_TOKEN_PEPPER: env.ANKORE_TOKEN_PEPPER ?? env.TOKEN_PEPPER
-    }).then(response => withBrowserSessionCookie(request, response))
+    })
+
+    return withBrowserSessionCookie(contractRequest, await withTikoSessionContract(contractRequest, env, ankoreResponse))
   }
 }
 
 function configForEnv(env: Env): AnkoreConfig {
   const allowedOrigins = (env.ALLOWED_ORIGINS ?? DEFAULT_ALLOWED_ORIGINS).split(',').map(entry => entry.trim()).filter(Boolean)
   return { ...baseConfig, cors: { allowedOrigins } }
+}
+
+type AccountType = 'temporary' | 'verified' | 'profile_manager' | 'child_account'
+type RuntimeMode = 'parent' | 'child'
+type LoginMethod = 'device' | 'otp' | 'magic_link' | 'child_code'
+
+async function handleCanonicalIdentity(request: Request, env: Env): Promise<Response | null> {
+  const url = new URL(request.url)
+  const path = url.pathname.replace(/\/$/, '')
+  if (request.method !== 'POST') return null
+
+  if (path === '/v1/identity/email' || path === '/v1/identity/otp/request') {
+    const body = await request.json().catch(() => ({})) as { email?: string; purpose?: string }
+    const rewrittenBody = { email: body.email, purpose: normalizeEmailPurpose(body.purpose) }
+    return fetchAnkoreRoute(request, env, '/v1/identity/email/challenge', rewrittenBody)
+  }
+
+  if (path === '/v1/identity/otp/verify') {
+    const body = await request.json().catch(() => ({})) as { code?: string; otp?: string; token?: string }
+    return fetchAnkoreRoute(request, env, '/v1/identity/email/verify', { otp: body.code ?? body.otp, token: body.token })
+  }
+
+  if (path === '/v1/identity/magic-links/verify') {
+    const body = await request.json().catch(() => ({})) as { token?: string }
+    return fetchAnkoreRoute(request, env, '/v1/identity/email/verify', { token: body.token })
+  }
+
+  return null
+}
+
+function normalizeEmailPurpose(purpose: string | undefined): 'verify_email' | 'recover' | 'link_account' | 'admin_login' {
+  if (purpose === 'verify_email' || purpose === 'link_account' || purpose === 'admin_login') return purpose
+  return 'recover'
+}
+
+function fetchAnkoreRoute(request: Request, env: Env, pathname: string, body: unknown): Promise<Response> {
+  const url = new URL(request.url)
+  url.pathname = pathname
+  const headers = new Headers(request.headers)
+  headers.set('content-type', 'application/json')
+  return createIdentityWorker(configForEnv(env), {
+    sendEmail: message => requestMagicLinkDelivery(env, message)
+  }).fetch(new Request(url.toString(), {
+    method: 'POST',
+    headers,
+    body: JSON.stringify(body)
+  }), {
+    ...env,
+    ANKORE_TOKEN_PEPPER: env.ANKORE_TOKEN_PEPPER ?? env.TOKEN_PEPPER
+  })
 }
 
 interface ManagedCredentialRow {
@@ -269,6 +325,76 @@ function randomToken(prefix = ''): string {
 
 function id(prefix: string): string {
   return `${prefix}_${crypto.randomUUID().replace(/-/g, '')}`
+}
+
+async function withTikoSessionContract(request: Request, env: Env, response: Response): Promise<Response> {
+  const contentType = response.headers.get('content-type') ?? ''
+  if (response.status < 200 || response.status >= 300 || !contentType.includes('application/json')) return response
+
+  const clone = response.clone()
+  const body = await clone.json().catch(() => null) as Record<string, any> | null
+  if (!body?.subject?.id || !body.session) return response
+
+  const roles = Array.isArray(body.roles) ? body.roles.map(String) : await activeRoles(env.IDENTITY_DB, String(body.subject.id)).catch(() => [])
+  const accountType = deriveAccountType(body, roles)
+  const runtime = deriveRuntime(body, accountType)
+  const capabilities = deriveCapabilities(accountType, runtime)
+  const displayName = typeof body.managed?.displayName === 'string'
+    ? body.managed.displayName
+    : typeof body.subject?.metadata?.displayName === 'string'
+      ? body.subject.metadata.displayName
+      : undefined
+  const emailVerified = Boolean(body.account?.emailVerified)
+  const user = {
+    id: String(body.subject.id),
+    ...(displayName ? { displayName } : {}),
+    ...(body.account?.email ? { email: body.account.email } : {}),
+    accountType,
+    mode: runtime.mode,
+    recoverable: emailVerified,
+    emailVerified
+  }
+  const session = { ...body.session, loginMethod: await deriveLoginMethod(request, body, accountType) }
+  const account = body.account ? { ...body.account, accountType } : body.account ?? null
+  const nextBody = { ...body, user, account, session, runtime, capabilities }
+  const headers = new Headers(response.headers)
+  headers.set('content-type', 'application/json')
+  return new Response(JSON.stringify(nextBody), { status: response.status, statusText: response.statusText, headers })
+}
+
+function deriveAccountType(body: Record<string, any>, roles: string[]): AccountType {
+  if (roles.includes('child') || body.managed) return 'child_account'
+  if (roles.includes('profile_manager')) return 'profile_manager'
+  if (body.account?.emailVerified) return 'verified'
+  return 'temporary'
+}
+
+function deriveRuntime(body: Record<string, any>, accountType: AccountType): { mode: RuntimeMode; childModeEnabled: boolean; pinConfigured: boolean } {
+  const pinConfigured = Boolean(body.runtime?.pinConfigured)
+  if (accountType === 'child_account') return { mode: 'child', childModeEnabled: true, pinConfigured: false }
+  return { mode: 'parent', childModeEnabled: Boolean(body.runtime?.childModeEnabled), pinConfigured }
+}
+
+function deriveCapabilities(accountType: AccountType, runtime: { mode: RuntimeMode; pinConfigured: boolean }) {
+  return {
+    canVerifyEmail: accountType === 'temporary',
+    canUseParentMode: accountType !== 'child_account',
+    canUseChildMode: (accountType === 'verified' || accountType === 'profile_manager') && runtime.pinConfigured || accountType === 'child_account',
+    canManageChildAccounts: accountType === 'profile_manager' && runtime.mode === 'parent',
+    canDeleteAccount: accountType !== 'child_account'
+  }
+}
+
+async function deriveLoginMethod(request: Request, body: Record<string, any>, accountType: AccountType): Promise<LoginMethod> {
+  const path = new URL(request.url).pathname
+  if (accountType === 'child_account' || path.endsWith('/managed/login') || path.endsWith('/child-accounts/login')) return 'child_code'
+  if (path.includes('/email/verify') || path.includes('/magic-links/verify') || path.includes('/otp/verify')) {
+    const requestBody = await request.clone().json().catch(() => ({})) as { token?: unknown; otp?: unknown; code?: unknown }
+    if (requestBody.token) return 'magic_link'
+    if (requestBody.otp || requestBody.code) return 'otp'
+    return 'otp'
+  }
+  return 'device'
 }
 
 async function withBrowserSessionCookie(request: Request, response: Response): Promise<Response> {

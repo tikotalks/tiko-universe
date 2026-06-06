@@ -335,6 +335,22 @@ describe('identity-api endpoints', () => {
     expect(response.status).toBe(201)
     const bundle = body as IdentityBundle
     expect(bundle.subject.kind).toBe('anonymous')
+    expect(bundle.user).toMatchObject({
+      id: bundle.subject.id,
+      accountType: 'temporary',
+      mode: 'parent',
+      recoverable: false,
+      emailVerified: false
+    })
+    expect(bundle.runtime).toEqual({ mode: 'parent', childModeEnabled: false, pinConfigured: false })
+    expect(bundle.capabilities).toEqual({
+      canVerifyEmail: true,
+      canUseParentMode: true,
+      canUseChildMode: false,
+      canManageChildAccounts: false,
+      canDeleteAccount: true
+    })
+    expect(bundle.session?.loginMethod).toBe('device')
     expect(bundle.session?.token).toMatch(/^ank_/)
 
     const db = testEnv.IDENTITY_DB
@@ -534,6 +550,9 @@ describe('identity-api endpoints', () => {
     }, testEnv)
     expect(good.response.status).toBe(200)
     expect((good.body as IdentityBundle).account?.emailVerified).toBe(true)
+    expect((good.body as IdentityBundle).user).toMatchObject({ accountType: 'verified', mode: 'parent', recoverable: true, emailVerified: true })
+    expect((good.body as IdentityBundle).account?.accountType).toBe('verified')
+    expect((good.body as IdentityBundle).session?.loginMethod).toBe('magic_link')
 
     const replay = await fetchJson('/v1/identity/email/verify', {
       method: 'POST',
@@ -551,6 +570,43 @@ describe('identity-api endpoints', () => {
       body: JSON.stringify({ otp })
     }, testEnv)
     expect(otpGood.response.status).toBe(200)
+    expect((otpGood.body as IdentityBundle).session?.loginMethod).toBe('otp')
+  })
+
+  it('supports canonical email, OTP, and magic-link endpoint aliases over Ankore challenges', async () => {
+    const testEnv = env()
+    const created = await fetchJson('/v1/identity/device', { method: 'POST', body: JSON.stringify({}) }, testEnv)
+    const token = (created.body as IdentityBundle).session?.token ?? ''
+
+    const requested = await fetchJson('/v1/identity/email', {
+      method: 'POST',
+      headers: { authorization: `Bearer ${token}` },
+      body: JSON.stringify({ email: 'canonical@example.test', purpose: 'recovery' })
+    }, testEnv)
+    expect(requested.response.status).toBe(202)
+    expect(requested.body.message).not.toMatch(/exist|found|missing/i)
+
+    const magicToken = testEnv.MAGIC_LINK_TEST_SINK[0]?.token ?? ''
+    const magic = await fetchJson('/v1/identity/magic-links/verify', {
+      method: 'POST',
+      body: JSON.stringify({ token: magicToken })
+    }, testEnv)
+    expect(magic.response.status).toBe(200)
+    expect((magic.body as IdentityBundle).session?.loginMethod).toBe('magic_link')
+    expect((magic.body as IdentityBundle).user?.accountType).toBe('verified')
+
+    const otpRequested = await fetchJson('/v1/identity/otp/request', {
+      method: 'POST',
+      body: JSON.stringify({ email: 'canonical-otp@example.test', purpose: 'login' })
+    }, testEnv)
+    expect(otpRequested.response.status).toBe(202)
+    const otp = testEnv.MAGIC_LINK_TEST_SINK[1]?.otp ?? ''
+    const otpVerified = await fetchJson('/v1/identity/otp/verify', {
+      method: 'POST',
+      body: JSON.stringify({ email: 'canonical-otp@example.test', code: otp, purpose: 'login' })
+    }, testEnv)
+    expect(otpVerified.response.status).toBe(200)
+    expect((otpVerified.body as IdentityBundle).session?.loginMethod).toBe('otp')
   })
 
   it('creates managed child credentials and logs the child in with a stable access code', async () => {
@@ -588,6 +644,22 @@ describe('identity-api endpoints', () => {
     expect(login.body.subject.id).toBe(created.body.child.subjectId)
     expect(login.body.session.token).toMatch(/^ank_/)
     expect(login.body.roles).toContain('child')
+    expect(login.body.user).toMatchObject({
+      id: created.body.child.subjectId,
+      displayName: 'Mila',
+      accountType: 'child_account',
+      mode: 'child',
+      recoverable: false
+    })
+    expect(login.body.runtime).toEqual({ mode: 'child', childModeEnabled: true, pinConfigured: false })
+    expect(login.body.capabilities).toMatchObject({
+      canVerifyEmail: false,
+      canUseParentMode: false,
+      canUseChildMode: true,
+      canManageChildAccounts: false,
+      canDeleteAccount: false
+    })
+    expect(login.body.session.loginMethod).toBe('child_code')
     expect(login.body.managed).toMatchObject({ handle: 'Mila', displayName: 'Mila', managerSubjectId: managerBundle.subject.id })
   })
 })
@@ -625,5 +697,36 @@ describe('@tiko/identity client', () => {
     expect(calls[0].url).toBe('https://id.tikoapps.org/v1/identity/session')
     expect(calls[0].init.credentials).toBe('include')
     expect((calls[0].init.headers as Record<string, string>).authorization).toBeUndefined()
+  })
+
+  it('uses canonical email, OTP, and magic-link client paths', async () => {
+    const calls: Array<{ url: string; init: RequestInit }> = []
+    const client = new IdentityClient({
+      baseUrl: 'https://identity.test/v1',
+      fetch: async (url, init) => {
+        calls.push({ url: String(url), init: init ?? {} })
+        return new Response(JSON.stringify({
+          subject: { id: 'sub_1', kind: 'anonymous', product: 'tiko' },
+          user: { id: 'sub_1', accountType: 'verified', recoverable: true },
+          device: null,
+          session: { id: 'ses_1', token: 'tok_1', transport: 'bearer', expiresAt: '2030-01-01T00:00:00.000Z' },
+          runtime: { mode: 'parent', childModeEnabled: false, pinConfigured: false },
+          capabilities: { canVerifyEmail: false, canUseParentMode: true, canUseChildMode: false, canManageChildAccounts: false, canDeleteAccount: true }
+        }), { status: 200 })
+      }
+    })
+
+    await client.requestEmailVerification({ email: 'caregiver@example.test', purpose: 'recovery' }, 'session-token')
+    await client.requestOtp({ email: 'caregiver@example.test', purpose: 'login' })
+    await client.verifyMagicLink('magic-token')
+    await client.verifyOtp('123456')
+
+    expect(calls.map((call) => call.url)).toEqual([
+      'https://identity.test/v1/identity/email',
+      'https://identity.test/v1/identity/otp/request',
+      'https://identity.test/v1/identity/magic-links/verify',
+      'https://identity.test/v1/identity/otp/verify'
+    ])
+    expect((calls[0].init.headers as Record<string, string>).authorization).toBe('Bearer session-token')
   })
 })
