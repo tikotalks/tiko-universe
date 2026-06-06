@@ -6,9 +6,13 @@ const CODE_LENGTH = 4
 interface Props {
   /** Existing code hash — if undefined, this is first-time setup */
   existingHash?: string
+  /** Hash namespace for backward-compatible app-local codes. */
+  hashNamespace?: string
 }
 
-const props = defineProps<Props>()
+const props = withDefaults(defineProps<Props>(), {
+  hashNamespace: 'parent-code'
+})
 
 const emit = defineEmits<{
   (e: 'set', hash: string): void
@@ -55,7 +59,7 @@ function onDigitInput(index: number, event: Event) {
     ? confirmDigits.value
     : digits.value
 
-  if (currentDigits.every(d => d !== '')) {
+  if (currentDigits.length === CODE_LENGTH && currentDigits.every(d => d !== '')) {
     setTimeout(() => handleSubmit(), 200)
   }
 }
@@ -79,6 +83,8 @@ async function handleSubmit() {
   const currentDigits = mode.value === 'setup' && step.value === 'confirm'
     ? confirmDigits.value
     : digits.value
+
+  if (currentDigits.length !== CODE_LENGTH || !currentDigits.every(digit => digit !== '')) return
 
   const code = currentDigits.join('')
 
@@ -123,7 +129,7 @@ function resetConfirm() {
 
 async function hashCode(code: string): Promise<string> {
   const encoder = new TextEncoder()
-  const data = encoder.encode(`tiko:parent-code:${code}`)
+  const data = encoder.encode(`tiko:${props.hashNamespace}:${code}`)
   const buffer = await crypto.subtle.digest('SHA-256', data)
   return Array.from(new Uint8Array(buffer))
     .map(b => b.toString(16).padStart(2, '0'))
@@ -204,7 +210,7 @@ async function hashCode(code: string): Promise<string> {
   </div>
 </template>
 
-<style scoped lang="scss">
+<style lang="scss">
 .tiko-pin-popup {
   display: flex;
   flex-direction: column;
@@ -249,15 +255,15 @@ async function hashCode(code: string): Promise<string> {
     font-family: inherit;
     border: 2px solid color-mix(in srgb, var(--color-foreground), transparent 15%);
     border-radius: 0.75rem;
-    background: color-mix(in srgb, var(--tiko-surface, #fff), var(--color-foreground) 4%);
+    background: color-mix(in srgb, var(--color-background), var(--color-foreground) 4%);
     color: var(--color-foreground);
-    caret-color: var(--tiko-app-primary);
+    caret-color: currentColor;
     transition: border-color 0.15s ease, box-shadow 0.15s ease;
 
     &:focus {
       outline: none;
-      border-color: var(--tiko-app-primary);
-      box-shadow: 0 0 0 3px color-mix(in srgb, var(--tiko-app-primary), transparent 75%);
+      border-color: color-mix(in srgb, var(--color-foreground), transparent 5%);
+      box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-foreground), transparent 82%);
     }
 
     &::-webkit-outer-spin-button,

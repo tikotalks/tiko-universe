@@ -1496,7 +1496,7 @@ function openLoginPopup() {
           loading.value = true
           verifyError.value = ''
           try {
-            await identityClient.createEmailChallenge({ email: email.value.trim(), purpose: 'recover' })
+            await identityClient.createEmailChallenge({ email: email.value.trim(), purpose: 'recover' }, sessionToken.value || undefined)
             sent.value = true
           } catch {
             verifyError.value = 'Could not send the code. Please try again.'
@@ -1594,17 +1594,30 @@ function openProfileMenu() {
       parentMode: parentMode.value,
       hasCode: hasCode.value,
       isLoggedIn: Boolean(sessionToken.value),
+      isRecoverable: userKind.value === 'account',
+      userLabel: userKind.value === 'account' ? 'Verified user' : 'Device user',
     },
     config: { position: 'bottom', canClose: true, background: false, width: 'auto' },
     on: {
-      profile: () => {},
+      profile: () => { popup.closeAllPopups(); openLoginPopup() },
       logout: () => doLogout(),
-      login: () => openLoginPopup(),
+      login: () => { popup.closeAllPopups(); openLoginPopup() },
+      'delete-account': () => void deleteCurrentUser(),
       'enter-parent-mode': () => openParentCodePopup(),
       'enter-child-mode': () => openChildModeFlow(),
       close: () => popup.closeAllPopups(),
     },
   })
+}
+
+async function deleteCurrentUser() {
+  if (!sessionToken.value || userKind.value !== 'account') return
+  if (!window.confirm('Delete this Tiko user? This removes the account and sessions.')) return
+  try {
+    await identityClient.deleteSelf(sessionToken.value)
+  } catch { /* local cleanup still makes the device usable */ }
+  window.localStorage.removeItem('tiko-cards-identity')
+  window.location.reload()
 }
 
 async function doLogout() {
