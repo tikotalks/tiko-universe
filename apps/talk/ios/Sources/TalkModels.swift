@@ -93,8 +93,42 @@ struct TalkSentenceCompleteResponse: Codable, Equatable, Sendable {
     let templateMatch: String?
 }
 
+struct TalkSentenceVocabularyResponse: Codable, Equatable, Sendable {
+    let words: [TalkWordTile]
+    let categories: [TalkCategory]
+    let totalWords: Int
+}
+
+struct TalkSentencePhrasesResponse: Codable, Equatable, Sendable {
+    let phrases: [TalkSavedPhrase]
+}
+
+struct TalkSaveSentencePhraseRequest: Codable, Equatable, Sendable {
+    let locale: String
+    let userId: String
+    let wordIds: [String]
+    let label: String?
+}
+
+struct TalkSaveSentencePhraseResponse: Codable, Equatable, Sendable {
+    let phrase: TalkSavedPhrase
+}
+
+struct TalkDeleteSentencePhraseResponse: Codable, Equatable, Sendable {
+    let deleted: Bool
+}
+
 extension Array where Element == TalkWordTile {
     var talkSentenceText: String {
         map(\.text).joined(separator: " ").trimmingCharacters(in: .whitespacesAndNewlines)
+    }
+
+    func deduplicatedById() -> [TalkWordTile] {
+        var seen = Set<String>()
+        return filter { word in
+            if seen.contains(word.id) { return false }
+            seen.insert(word.id)
+            return true
+        }
     }
 }
