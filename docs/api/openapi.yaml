@@ -2,7 +2,7 @@ openapi: 3.1.0
 info:
   title: Tiko Universe API
   version: 0.1.0
-  description: Initial API-first contract for Tiko web, iOS, and Android clients. Identity account-type and mode details are defined in docs/api/identity-user-modes-profile-manager-contract.md and must be treated as authoritative for implementation.
+  description: Initial API-first contract for Tiko web, iOS, and Android clients. Identity account-type and mode details are defined in docs/api/identity-user-modes-profile-manager-contract.md and the canonical data categories are defined in docs/architecture/data-model.md.
 servers:
   - url: https://api.tikotalks.com/v1
     description: Future production API gateway
@@ -225,6 +225,27 @@ paths:
                 $ref: '#/components/schemas/RuntimeSummary'
         default:
           $ref: '#/components/responses/ApiError'
+  /identity/reset:
+    post:
+      summary: Reset current account data according to the shared data model
+      description: Supports Reset my data. Keeps Identity and deletes Preferences, App State, User Content, Progress, and Insights for the current account.
+      security:
+        - bearerSession: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ResetAccountDataRequest'
+      responses:
+        '202':
+          description: Reset request accepted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResetRequest'
+        default:
+          $ref: '#/components/responses/ApiError'
   /identity/child-accounts:
     get:
       summary: List Child Accounts managed by the current Profile Manager account
@@ -278,7 +299,7 @@ paths:
           $ref: '#/components/responses/ApiError'
   /identity/child-accounts/{childAccountId}:
     put:
-      summary: Update Child Account name/preferences; Profile Manager only
+      summary: Update Child Account name, avatar, or preferences; Profile Manager only
       security:
         - bearerSession: []
       parameters:
@@ -331,6 +352,28 @@ paths:
                 $ref: '#/components/schemas/ChildAccount'
         default:
           $ref: '#/components/responses/ApiError'
+  /identity/child-accounts/{childAccountId}/progress/reset:
+    post:
+      summary: Reset Child Account progress and derived insights; Profile Manager only
+      security:
+        - bearerSession: []
+      parameters:
+        - $ref: '#/components/parameters/ChildAccountId'
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ResetProgressRequest'
+      responses:
+        '202':
+          description: Child progress reset accepted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResetRequest'
+        default:
+          $ref: '#/components/responses/ApiError'
   /identity/deletion-requests:
     post:
       summary: Create account, local-device, or Child Account deletion request
@@ -381,12 +424,20 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/AppSettings'
+        default:
+          $ref: '#/components/responses/ApiError'
     put:
       summary: Save app settings for the current account/session
       security:
         - bearerSession: []
       parameters:
         - $ref: '#/components/parameters/AppName'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AppSettings'
       responses:
         '200':
           description: Saved app settings
@@ -394,6 +445,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/AppSettings'
+        default:
+          $ref: '#/components/responses/ApiError'
   /apps/{app}/state:
     get:
       summary: Read app state for the current account/session
@@ -408,12 +461,20 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/AppState'
+        default:
+          $ref: '#/components/responses/ApiError'
     put:
       summary: Save app state for the current account/session
       security:
         - bearerSession: []
       parameters:
         - $ref: '#/components/parameters/AppName'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AppState'
       responses:
         '200':
           description: Saved app state
@@ -421,6 +482,89 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/AppState'
+        default:
+          $ref: '#/components/responses/ApiError'
+  /apps/{app}/progress:
+    get:
+      summary: Read app progress for the current account/session
+      security:
+        - bearerSession: []
+      parameters:
+        - $ref: '#/components/parameters/AppName'
+      responses:
+        '200':
+          description: App progress
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppProgress'
+        default:
+          $ref: '#/components/responses/ApiError'
+    put:
+      summary: Save app progress for the current account/session
+      security:
+        - bearerSession: []
+      parameters:
+        - $ref: '#/components/parameters/AppName'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AppProgress'
+      responses:
+        '200':
+          description: Saved app progress
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppProgress'
+        default:
+          $ref: '#/components/responses/ApiError'
+  /apps/{app}/resets/app:
+    post:
+      summary: Reset app state for one app while keeping identity, preferences, content, and progress
+      security:
+        - bearerSession: []
+      parameters:
+        - $ref: '#/components/parameters/AppName'
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ResetAppRequest'
+      responses:
+        '202':
+          description: App reset accepted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResetRequest'
+        default:
+          $ref: '#/components/responses/ApiError'
+  /apps/{app}/resets/progress:
+    post:
+      summary: Reset app progress and derived insights while keeping identity, preferences, state, and content
+      security:
+        - bearerSession: []
+      parameters:
+        - $ref: '#/components/parameters/AppName'
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ResetProgressRequest'
+      responses:
+        '202':
+          description: App progress reset accepted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResetRequest'
+        default:
+          $ref: '#/components/responses/ApiError'
   /generation/tts:
     post:
       summary: Generate or fetch cached text-to-speech audio
@@ -509,6 +653,9 @@ components:
     LoginMethod:
       type: string
       enum: [device, otp, magic_link, child_code]
+    DataCategory:
+      type: string
+      enum: [identity, preferences, app_state, user_content, progress, insights]
     DeviceBootstrapRequest:
       type: object
       properties:
@@ -560,7 +707,7 @@ components:
           format: email
         code:
           type: string
-          pattern: '^\\d{4,8}$'
+          pattern: '^\d{4,8}$'
         purpose:
           type: string
           enum: [login, verify_email, reset_pin, confirm_deletion]
@@ -585,7 +732,7 @@ components:
           type: string
         purpose:
           type: string
-          enum: [reset_pin, confirm_deletion, remove_pin, manage_child_accounts]
+          enum: [reset_pin, confirm_deletion, remove_pin, manage_child_accounts, reset_data]
         expiresAt:
           type: string
           format: date-time
@@ -680,7 +827,7 @@ components:
       properties:
         pin:
           type: string
-          pattern: '^\\d{4,8}$'
+          pattern: '^\d{4,8}$'
         currentPinGrantToken:
           type: string
         recoveryGrantToken:
@@ -691,10 +838,10 @@ components:
       properties:
         pin:
           type: string
-          pattern: '^\\d{4,8}$'
+          pattern: '^\d{4,8}$'
         purpose:
           type: string
-          enum: [enter_parent_mode, delete_account, remove_pin, manage_child_accounts]
+          enum: [enter_parent_mode, delete_account, remove_pin, manage_child_accounts, reset_data]
     VerifyPinResponse:
       type: object
       required: [verified]
@@ -708,7 +855,7 @@ components:
       properties:
         pin:
           type: string
-          pattern: '^\\d{4,8}$'
+          pattern: '^\d{4,8}$'
         pinGrantToken:
           type: string
     ChildAccount:
@@ -719,6 +866,9 @@ components:
           type: string
         name:
           type: string
+        avatarMediaId:
+          type: string
+          description: Optional media reference for the child avatar.
         language:
           type: string
         createdAt:
@@ -743,13 +893,17 @@ components:
           type: string
         code:
           type: string
-          pattern: '^\\d{4}$'
+          pattern: '^\d{4}$'
+        avatarMediaId:
+          type: string
         language:
           type: string
     UpdateChildAccountRequest:
       type: object
       properties:
         name:
+          type: string
+        avatarMediaId:
           type: string
         language:
           type: string
@@ -759,7 +913,7 @@ components:
       properties:
         code:
           type: string
-          pattern: '^\\d{4}$'
+          pattern: '^\d{4}$'
     ChildAccountLoginRequest:
       type: object
       required: [identifier, code]
@@ -769,7 +923,46 @@ components:
           description: Child Account name or stable identifier.
         code:
           type: string
-          pattern: '^\\d{4}$'
+          pattern: '^\d{4}$'
+    ResetAccountDataRequest:
+      type: object
+      properties:
+        pinGrantToken:
+          type: string
+        confirmation:
+          type: string
+          enum: [reset_my_data]
+    ResetAppRequest:
+      type: object
+      properties:
+        confirmation:
+          type: string
+          enum: [reset_app]
+    ResetProgressRequest:
+      type: object
+      properties:
+        confirmation:
+          type: string
+          enum: [reset_progress]
+    ResetRequest:
+      type: object
+      required: [id, status, categoriesAffected, createdAt]
+      properties:
+        id:
+          type: string
+        status:
+          type: string
+          enum: [requested, processing, completed, failed]
+        categoriesAffected:
+          type: array
+          items:
+            $ref: '#/components/schemas/DataCategory'
+        createdAt:
+          type: string
+          format: date-time
+        completedAt:
+          type: string
+          format: date-time
     CreateDeletionRequest:
       type: object
       required: [scope]
@@ -896,5 +1089,8 @@ components:
       type: object
       additionalProperties: true
     AppState:
+      type: object
+      additionalProperties: true
+    AppProgress:
       type: object
       additionalProperties: true
