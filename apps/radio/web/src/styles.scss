@@ -484,36 +484,6 @@ border-radius: 0.75rem;
   }
 }
 
-// ---- Account popup (logged in) -----------------------------------------------
-.radio-app__account-popup {
-  padding: 1rem;
-  text-align: center;
-
-  &__info {
-    font-size: 0.9rem;
-    font-weight: 600;
-    margin-bottom: 0.75rem;
-  }
-
-  &__logout {
-    display: inline-block;
-    padding: 0.5rem 1.25rem;
-border-radius: 2rem;
-    border: 2px solid #e84057;
-    background: transparent;
-    color: #e84057;
-    font-size: 0.85rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.15s ease;
-
-    &:hover {
-      background: #e84057;
-      color: #fff;
-    }
-  }
-}
-
 // ---- Settings panel override ---------------------------------------------------
 .tiko-settings-panel {
   margin-top: 1rem;

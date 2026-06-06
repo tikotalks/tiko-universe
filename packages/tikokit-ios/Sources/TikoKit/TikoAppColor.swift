@@ -7,6 +7,7 @@ public enum TikoAppColor: String, CaseIterable, Sendable {
     case sequence
     case timer
     case radio
+    case talk
     case tiko
 }
 
@@ -43,6 +44,7 @@ public extension TikoAppConfig {
     static let sequence = TikoAppConfig(id: .sequence, title: "Sequence", appColor: .sequence, appIconSystemName: "list.bullet.rectangle.fill", appIconMediaCategory: "routines", themeColorHex: 0x16b8a6)
     static let timer = TikoAppConfig(id: .timer, title: "Timer", appColor: .timer, appIconSystemName: "timer", appIconMediaCategory: "transport", themeColorHex: 0xf8c22e)
     static let radio = TikoAppConfig(id: .radio, title: "Radio", appColor: .radio, appIconSystemName: "headphones", appIconMediaCategory: "music", themeColorHex: 0xe84057)
+    static let talk = TikoAppConfig(id: .talk, title: "Talk", appColor: .talk, appIconSystemName: "bubble.left.and.bubble.right.fill", appIconMediaCategory: "communication", themeColorHex: 0x2f80ed)
     static let tiko = TikoAppConfig(id: .tiko, title: "Tiko", appColor: .tiko, appIconSystemName: "heart.fill", appIconMediaCategory: "tiko", themeColorHex: 0xef4f8f)
 }
 
@@ -73,6 +75,8 @@ public extension TikoAppColor {
             TikoAppPalette(label: "Timer", primary: Color(hex: 0xf8c22e), dark: Color(hex: 0x8a5d00))
         case .radio:
             TikoAppPalette(label: "Radio", primary: Color(hex: 0xe84057), dark: Color(hex: 0x7a1e2d))
+        case .talk:
+            TikoAppPalette(label: "Talk", primary: Color(hex: 0x2f80ed), dark: Color(hex: 0x123f7a))
         case .tiko:
             TikoAppPalette(label: "Tiko", primary: Color(hex: 0xef4f8f), dark: Color(hex: 0x8d1c4f))
         }

@@ -125,7 +125,38 @@ async function handleManagedIdentity(request: Request, env: Env): Promise<Respon
   const path = url.pathname.replace(/\/$/, '')
   if (path === '/v1/identity/managed/children' && request.method === 'POST') return createManagedChild(request, env)
   if (path === '/v1/identity/managed/login' && request.method === 'POST') return loginManagedChild(request, env)
+  if (path === '/v1/identity/me' && request.method === 'DELETE') return deleteCurrentIdentity(request, env)
   return null
+}
+
+async function deleteCurrentIdentity(request: Request, env: Env): Promise<Response> {
+  const session = await requireIdentitySession(request, env)
+  if (!session) return Response.json({ error: 'invalid_session' }, { status: 401 })
+
+  const at = new Date().toISOString()
+  await env.IDENTITY_DB.prepare('UPDATE identity_subjects SET disabled_at = ?, updated_at = ? WHERE id = ? AND product = ?')
+    .bind(at, at, session.subjectId, 'tiko')
+    .run()
+  await env.IDENTITY_DB.prepare('UPDATE identity_accounts SET disabled_at = ?, updated_at = ? WHERE subject_id = ? AND product = ? AND disabled_at IS NULL')
+    .bind(at, at, session.subjectId, 'tiko')
+    .run()
+  await env.IDENTITY_DB.prepare('UPDATE identity_sessions SET revoked_at = ? WHERE subject_id = ? AND product = ? AND revoked_at IS NULL')
+    .bind(at, session.subjectId, 'tiko')
+    .run()
+  await env.IDENTITY_DB.prepare('UPDATE identity_devices SET revoked_at = ? WHERE subject_id = ? AND product = ? AND revoked_at IS NULL')
+    .bind(at, session.subjectId, 'tiko')
+    .run()
+  await env.IDENTITY_DB.prepare('UPDATE identity_role_assignments SET revoked_at = ? WHERE subject_id = ? AND product = ? AND revoked_at IS NULL')
+    .bind(at, session.subjectId, 'tiko')
+    .run()
+  await env.IDENTITY_DB.prepare('UPDATE identity_managed_credentials SET revoked_at = ? WHERE subject_id = ? AND product = ? AND revoked_at IS NULL')
+    .bind(at, session.subjectId, 'tiko')
+    .run()
+  await env.IDENTITY_DB.prepare('INSERT INTO identity_audit_events (id, subject_id, actor_subject_id, product, type, created_at, ip_hash, user_agent_hash, metadata_json) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)')
+    .bind(id('aud'), session.subjectId, session.subjectId, 'tiko', 'identity.deleted_self', at, null, null, '{}')
+    .run()
+
+  return new Response(null, { status: 204 })
 }
 
 async function createManagedChild(request: Request, env: Env): Promise<Response> {
@@ -246,7 +277,8 @@ async function withBrowserSessionCookie(request: Request, response: Response): P
 
   const url = new URL(request.url)
   const isTikoAppsIdentityHost = url.hostname === 'id.tikoapps.org' || url.hostname.endsWith('.id.tikoapps.org')
-  const shouldClearCookie = request.method === 'POST' && url.pathname.replace(/\/$/, '') === '/v1/identity/logout'
+  const path = url.pathname.replace(/\/$/, '')
+  const shouldClearCookie = (request.method === 'POST' && path === '/v1/identity/logout') || (request.method === 'DELETE' && path === '/v1/identity/me')
 
   if (shouldClearCookie && isTikoAppsIdentityHost) {
     headers.append('Set-Cookie', browserCookie('', 0))

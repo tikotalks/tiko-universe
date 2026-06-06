@@ -491,6 +491,7 @@ public struct TikoAccountSheet: View {
     @State private var otpCode = ""
     @State private var isLoading = false
     @State private var identityError: String? = nil
+    @State private var showDeleteConfirmation = false
 
     private let identityClient = TikoIdentityClient()
     private let sessionStore = TikoDeviceSessionStore()
@@ -524,6 +525,12 @@ public struct TikoAccountSheet: View {
             title: "Choose avatar"
         ) { url in
             storedAvatarURLString = url.absoluteString
+        }
+        .alert("Delete this Tiko user?", isPresented: $showDeleteConfirmation) {
+            Button("Delete", role: .destructive) { Task { await deleteAccount() } }
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text("This removes the account and sessions.")
         }
     }
 
@@ -634,6 +641,32 @@ public struct TikoAccountSheet: View {
                         .stroke(Color.primary.opacity(0.08), lineWidth: 1)
                 }
                 .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
+
+                Button {
+                    Task { await saveProfileName() }
+                } label: {
+                    Text("Save profile")
+                        .font(.system(size: 16, weight: .heavy, design: .rounded))
+                        .foregroundStyle(.white)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 14)
+                        .background(appColor.palette.primary)
+                        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+                }
+                .buttonStyle(.plain)
+
+                Button {
+                    showDeleteConfirmation = true
+                } label: {
+                    Text("Delete account")
+                        .font(.system(size: 16, weight: .heavy, design: .rounded))
+                        .foregroundStyle(.red)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 14)
+                        .background(Color.red.opacity(0.08))
+                        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+                }
+                .buttonStyle(.plain)
 
                 // Sign out
                 Button {
@@ -817,13 +850,51 @@ public struct TikoAccountSheet: View {
         isLoading = true
         identityError = nil
         do {
-            try await identityClient.requestRecoveryEmail(email: email)
+            let accessToken = (try? sessionStore.load())?.accessToken
+            try await identityClient.requestRecoveryEmail(email: email, accessToken: accessToken)
             userEmail = email
             emailSent = true
         } catch {
             identityError = "Could not send the code. Please try again."
         }
         isLoading = false
+    }
+
+    private func saveProfileName() async {
+        guard let accessToken = (try? sessionStore.load())?.accessToken else { return }
+        do {
+            _ = try await identityClient.updateProfile(
+                accessToken: accessToken,
+                patch: TikoIdentityProfile(displayName: userName.trimmingCharacters(in: .whitespacesAndNewlines))
+            )
+            identityError = nil
+        } catch {
+            identityError = "Could not save the profile. Please try again."
+        }
+    }
+
+    private func deleteAccount() async {
+        guard let accessToken = (try? sessionStore.load())?.accessToken else { return }
+        isLoading = true
+        identityError = nil
+        do {
+            try await identityClient.deleteSelf(accessToken: accessToken)
+            try? sessionStore.clearAll()
+            isSignedIn = false
+            signedInEmail = nil
+            userName = ""
+            userEmail = ""
+            storedAvatarURLString = ""
+            favoriteColorHex = ""
+            emailInput = ""
+            emailSent = false
+            otpCode = ""
+            isLoading = false
+            onClose()
+        } catch {
+            identityError = "Could not delete the account. Please try again."
+            isLoading = false
+        }
     }
 
     private func submitOtp() async {

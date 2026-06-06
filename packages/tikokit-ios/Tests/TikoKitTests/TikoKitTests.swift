@@ -7,6 +7,12 @@ final class TikoKitTests: XCTestCase {
 
         XCTAssertEqual(Set(rawValues).count, rawValues.count)
         XCTAssertEqual(TikoAppColor.yesNo.palette.label, "Yes No")
+        XCTAssertTrue(TikoAppColor.allCases.contains(.talk))
+        XCTAssertEqual(TikoAppColor.talk.rawValue, "talk")
+        XCTAssertEqual(TikoAppColor.talk.palette.label, "Talk")
+        XCTAssertEqual(TikoAppConfig.talk.id, .talk)
+        XCTAssertEqual(TikoAppConfig.talk.title, "Talk")
+        XCTAssertEqual(TikoAppConfig.talk.themeColorHex, 0x2f80ed)
     }
 
     func testAnswerChoiceWithSystemName() {

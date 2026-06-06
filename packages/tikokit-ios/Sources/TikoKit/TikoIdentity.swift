@@ -105,9 +105,11 @@ public enum TikoIdentityClientError: Error, Equatable, Sendable {
 
 public struct TikoIdentityProfile: Codable, Sendable {
     public var parentCodeHash: String?
+    public var displayName: String?
 
-    public init(parentCodeHash: String? = nil) {
+    public init(parentCodeHash: String? = nil, displayName: String? = nil) {
         self.parentCodeHash = parentCodeHash
+        self.displayName = displayName
     }
 }
 
@@ -161,6 +163,10 @@ public actor TikoIdentityClient {
 
     public func logout(accessToken: String) async throws {
         let _: EmptyResponse = try await send(path: "/identity/logout", method: "POST", body: EmptyBody?.none, accessToken: accessToken)
+    }
+
+    public func deleteSelf(accessToken: String) async throws {
+        let _: EmptyResponse = try await send(path: "/identity/me", method: "DELETE", body: EmptyBody?.none, accessToken: accessToken)
     }
 
     public func getProfile(accessToken: String) async throws -> TikoIdentityProfile {

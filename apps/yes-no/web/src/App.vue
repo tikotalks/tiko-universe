@@ -110,6 +110,7 @@ const sessionToken = ref<string>('')
 const userId = ref<string>('')
 const accountEmail = ref<string>('')
 const accountEmailVerified = ref(false)
+const displayName = ref('')
 const parentMode = ref(readJson<boolean>(parentModeStorageKey, true))
 const parentCodeHash = ref<string | undefined>()
 const hasParentCode = computed(() => Boolean(parentCodeHash.value))
@@ -335,6 +336,7 @@ async function loadParentCodeHash() {
   try {
     const { profile } = await identityClient.getProfile(sessionToken.value)
     if (typeof profile.parentCodeHash === 'string') parentCodeHash.value = profile.parentCodeHash
+    if (typeof profile.displayName === 'string') displayName.value = profile.displayName
   } catch {
     // Keep local parent mode available if profile is not reachable.
   }
@@ -355,11 +357,16 @@ function openProfileMenu() {
     props: {
       parentMode: parentMode.value,
       hasCode: hasParentCode.value,
+      isLoggedIn: Boolean(sessionToken.value),
+      isRecoverable: accountEmailVerified.value,
+      userLabel: displayName.value || accountEmail.value || userId.value || 'Device user',
     },
     config: { position: 'center', canClose: true, background: true, width: 'min(34rem, calc(100vw - 2rem))' },
     on: {
       profile: () => { popup.closeAllPopups(); window.setTimeout(openAccountPopup, 180) },
+      login: () => { popup.closeAllPopups(); window.setTimeout(openAccountPopup, 180) },
       logout: () => void doLogout(),
+      'delete-account': () => void deleteCurrentUser(),
       'enter-parent-mode': () => openParentCodePopup(),
       'enter-child-mode': () => openChildModeFlow(),
       close: () => popup.closeAllPopups(),
@@ -371,24 +378,98 @@ function openAccountPopup() {
   popup.showPopup({
     component: markRaw({
       setup() {
-        const displayName = accountEmail.value ? accountEmail.value.split('@')[0] : 'Tiko user'
+        const nameInput = ref(displayName.value)
+        const emailInput = ref(accountEmail.value)
+        const codeInput = ref('')
+        const sent = ref(false)
+        const loading = ref(false)
+        const error = ref('')
+
+        async function saveAndSendCode() {
+          const email = emailInput.value.trim().toLowerCase()
+          if (!sessionToken.value || !email.includes('@')) return
+          loading.value = true
+          error.value = ''
+          try {
+            if (nameInput.value.trim()) {
+              displayName.value = nameInput.value.trim()
+              await identityClient.updateProfile(sessionToken.value, { displayName: displayName.value })
+            }
+            await identityClient.createEmailChallenge({ email, purpose: 'recover' }, sessionToken.value)
+            accountEmail.value = email
+            sent.value = true
+          } catch {
+            error.value = 'Could not send the code. Please try again.'
+          } finally {
+            loading.value = false
+          }
+        }
+
+        async function verifyCode() {
+          const otp = codeInput.value.replace(/\D/g, '')
+          if (otp.length !== 6) return
+          loading.value = true
+          error.value = ''
+          try {
+            const bundle = await identityClient.verifyOtp(otp)
+            saveIdentity(bundle)
+            accountEmailVerified.value = true
+            popup.closeAllPopups()
+          } catch {
+            error.value = 'Invalid or expired code. Try again or resend.'
+          } finally {
+            loading.value = false
+          }
+        }
+
         return () => h('div', { class: 'yes-no-profile-popup yes-no-account-popup', 'data-test': 'yes-no-account-popup' }, [
           h('div', { class: 'yes-no-profile-popup__header' }, [
             h(Icon, { class: 'yes-no-profile-popup__icon', name: 'ui/avatar', 'aria-hidden': 'true' }),
-            h('h2', { class: 'yes-no-profile-popup__title' }, 'Your account'),
+            h('h2', { class: 'yes-no-profile-popup__title' }, accountEmailVerified.value ? 'Your account' : 'Set up user'),
           ]),
           h('div', { class: 'yes-no-account-popup__avatar', 'aria-hidden': 'true' }, [h(Icon, { name: 'ui/avatar' })]),
           h('div', { class: 'yes-no-account-popup__row' }, [
             h(Icon, { class: 'yes-no-account-popup__row-icon', name: 'media/icon_mail', 'aria-hidden': 'true' }),
             h('span', { class: 'yes-no-account-popup__row-copy' }, [
-              h('strong', accountEmail.value || userId.value || 'Device session'),
-              h('small', accountEmailVerified.value ? 'Verified account' : 'Local device session'),
+              h('strong', accountEmail.value || userId.value || 'Temporary device user'),
+              h('small', accountEmailVerified.value ? 'Verified account' : 'Add email to recover this user'),
             ]),
             accountEmailVerified.value ? h(Icon, { class: 'yes-no-account-popup__verified', name: 'ui/check-fat', 'aria-label': 'Verified' }) : null,
           ]),
           h('label', { class: 'yes-no-account-popup__label' }, 'Display name'),
-          h('div', { class: 'yes-no-account-popup__field' }, displayName),
-          h('button', { class: 'yes-no-account-popup__signout', type: 'button', onClick: doLogout }, 'Sign out'),
+          h('input', {
+            class: 'yes-no-account-popup__field',
+            value: nameInput.value,
+            placeholder: 'Your name',
+            onInput: (event: Event) => { nameInput.value = (event.target as HTMLInputElement).value }
+          }),
+          !accountEmailVerified.value ? h('label', { class: 'yes-no-account-popup__label' }, 'Email') : null,
+          !accountEmailVerified.value ? h('input', {
+            class: 'yes-no-account-popup__field',
+            type: 'email',
+            value: emailInput.value,
+            placeholder: 'you@example.com',
+            onInput: (event: Event) => { emailInput.value = (event.target as HTMLInputElement).value }
+          }) : null,
+          sent.value ? h('input', {
+            class: 'yes-no-account-popup__field yes-no-account-popup__field--otp',
+            inputmode: 'numeric',
+            autocomplete: 'one-time-code',
+            maxlength: 7,
+            value: codeInput.value,
+            placeholder: '123 456',
+            onInput: (event: Event) => { codeInput.value = (event.target as HTMLInputElement).value.replace(/\D/g, '').slice(0, 6) },
+            onKeydown: (event: KeyboardEvent) => { if (event.key === 'Enter') void verifyCode() }
+          }) : null,
+          error.value ? h('p', { class: 'yes-no-account-popup__error' }, error.value) : null,
+          !accountEmailVerified.value ? h('button', {
+            class: 'yes-no-account-popup__signout yes-no-account-popup__primary',
+            type: 'button',
+            disabled: loading.value || !emailInput.value.trim().includes('@'),
+            onClick: sent.value ? verifyCode : saveAndSendCode,
+          }, loading.value ? 'Please wait…' : sent.value ? 'Verify code' : 'Send magic link') : null,
+          accountEmailVerified.value ? h('button', { class: 'yes-no-account-popup__signout', type: 'button', onClick: doLogout }, 'Sign out') : null,
+          accountEmailVerified.value ? h('button', { class: 'yes-no-account-popup__delete', type: 'button', onClick: deleteCurrentUser }, 'Delete account') : null,
         ])
       },
     }),
@@ -396,6 +477,23 @@ function openAccountPopup() {
     config: { position: 'center', canClose: true, background: true, width: 'min(34rem, calc(100vw - 2rem))' },
     onClose: () => {},
   })
+}
+
+async function deleteCurrentUser() {
+  if (!sessionToken.value || !accountEmailVerified.value) return
+  if (!window.confirm('Delete this Tiko user? This removes the account and sessions.')) return
+  try { await identityClient.deleteSelf(sessionToken.value) } catch { /* local cleanup still makes the device usable */ }
+  sessionToken.value = ''
+  userId.value = ''
+  accountEmail.value = ''
+  accountEmailVerified.value = false
+  displayName.value = ''
+  parentCodeHash.value = undefined
+  parentMode.value = true
+  writeJson(parentModeStorageKey, true)
+  window.localStorage.removeItem(identityStorageKey)
+  popup.closeAllPopups()
+  await bootstrapIdentity().catch(() => undefined)
 }
 
 async function doLogout() {
@@ -406,6 +504,7 @@ async function doLogout() {
   userId.value = ''
   accountEmail.value = ''
   accountEmailVerified.value = false
+  displayName.value = ''
   parentMode.value = true
   writeJson(parentModeStorageKey, true)
   window.localStorage.removeItem(identityStorageKey)

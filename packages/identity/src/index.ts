@@ -145,6 +145,13 @@ export class IdentityClient {
     })
   }
 
+  async deleteSelf(sessionToken: string): Promise<void> {
+    await this.request<void>('/identity/me', {
+      method: 'DELETE',
+      headers: bearerHeaders(sessionToken)
+    })
+  }
+
   getProfile(sessionToken: string): Promise<{ profile: Record<string, unknown> }> {
     return this.request<{ profile: Record<string, unknown> }>('/identity/profile', {
       headers: bearerHeaders(sessionToken)

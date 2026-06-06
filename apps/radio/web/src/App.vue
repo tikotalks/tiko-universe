@@ -9,13 +9,14 @@ import { createI18n, defaultLanguage, tikoI18nKeys, tikoLanguages, type TikoLang
 import {
   TikoAppShell,
   TikoColorMode,
+  TikoPinPopup,
+  TikoProfileMenu,
 } from '@tiko/ui'
 import { useAudioPlayer } from './composables/useAudioPlayer'
 import { useTrackLibrary } from './composables/useTrackLibrary'
 import { useCategories } from './composables/useCategories'
 import AddAudioPopup from './components/AddAudioPopup.vue'
 import SettingsPopup from './components/SettingsPopup.vue'
-import PinPopup from './components/PinPopup.vue'
 import { appConfig } from './appConfig'
 import './styles.scss'
 
@@ -607,9 +608,9 @@ function openSettingsPopup() {
 
 function openPinPopup() {
   popup.showPopup({
-    component: markRaw(PinPopup),
+    component: markRaw(TikoPinPopup),
     title: '',
-    props: { existingHash: pinHash.value },
+    props: { existingHash: pinHash.value, hashNamespace: 'radio:pin' },
     config: { position: 'center', canClose: true, background: true, width: '22rem' },
     on: {
       set: (...args: unknown[]) => {
@@ -679,7 +680,7 @@ function openLoginPopup() {
           loading.value = true
           verifyError.value = ''
           try {
-            await identityClient.createEmailChallenge({ email: email.value.trim(), purpose: 'recover' })
+            await identityClient.createEmailChallenge({ email: email.value.trim(), purpose: 'recover' }, sessionToken.value || undefined)
             sent.value = true
           } catch {
             verifyError.value = 'Could not send the code. Please try again.'
@@ -772,32 +773,52 @@ function handleAvatarClick() {
 
 function openAccountPopup() {
   popup.showPopup({
-    component: markRaw({
-      emits: ['logout'],
-      setup(_: any, { emit }: any) {
-        return () => h('div', { class: 'radio-app__account-popup' }, [
-          h('p', { class: 'radio-app__account-popup__info' }, `Logged in as ${userId.value}`),
-          h('button', {
-            class: 'radio-app__account-popup__logout',
-            onClick: () => {
-              emit('logout')
-            },
-          }, 'Log out'),
-        ])
-      },
-    }),
+    component: markRaw(TikoProfileMenu),
     title: '',
-    config: { position: 'center', canClose: true, background: true, width: '16rem' },
-    on: {
-      logout: () => {
-        sessionToken.value = ''
-        userId.value = ''
-        parentMode.value = false
-        localStorage.removeItem(identityStorageKey)
-      },
+    props: {
+      parentMode: parentMode.value,
+      hasCode: Boolean(pinHash.value),
+      isLoggedIn: Boolean(sessionToken.value),
+      isRecoverable: isRecoverable.value,
+      userLabel: isRecoverable.value ? userId.value || 'Verified user' : 'Device user',
     },
-    onClose: () => {},
+    config: { position: 'center', canClose: true, background: true, width: 'min(34rem, calc(100vw - 2rem))' },
+    on: {
+      profile: () => { popup.closeAllPopups(); window.setTimeout(openLoginPopup, 180) },
+      login: () => { popup.closeAllPopups(); window.setTimeout(openLoginPopup, 180) },
+      logout: () => doLogout(),
+      'delete-account': () => void deleteCurrentUser(),
+      'enter-parent-mode': () => openPinPopup(),
+      'enter-child-mode': () => { popup.closeAllPopups(); window.setTimeout(openPinPopup, 180) },
+      close: () => popup.closeAllPopups(),
+    },
   })
+}
+
+async function deleteCurrentUser() {
+  if (!sessionToken.value || !isRecoverable.value) return
+  if (!window.confirm('Delete this Tiko user? This removes the account and sessions.')) return
+  try { await identityClient.deleteSelf(sessionToken.value) } catch { /* local cleanup still makes the device usable */ }
+  sessionToken.value = ''
+  userId.value = ''
+  isRecoverable.value = false
+  pinHash.value = undefined
+  parentMode.value = true
+  localStorage.removeItem(identityStorageKey)
+  popup.closeAllPopups()
+  await bootstrapIdentity().catch(() => undefined)
+}
+
+async function doLogout() {
+  if (sessionToken.value) {
+    try { await identityClient.logout(sessionToken.value) } catch { /* ignore */ }
+  }
+  sessionToken.value = ''
+  userId.value = ''
+  isRecoverable.value = false
+  parentMode.value = true
+  localStorage.removeItem(identityStorageKey)
+  popup.closeAllPopups()
 }
 
 // ---- Event handlers --------------------------------------------------------

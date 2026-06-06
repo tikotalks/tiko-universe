@@ -93,8 +93,15 @@ class MemoryD1Database {
       return new MemoryResult()
     }
     if (normalized.startsWith('UPDATE identity_devices SET revoked_at')) {
-      const [revokedAt, id] = values
-      Object.assign(this.devices.get(String(id)) ?? {}, { revoked_at: revokedAt })
+      if (normalized.includes('WHERE subject_id =')) {
+        const [revokedAt, subjectId, product] = values
+        for (const row of this.devices.values()) {
+          if (row.subject_id === subjectId && row.product === product && !row.revoked_at) row.revoked_at = revokedAt
+        }
+      } else {
+        const [revokedAt, id] = values
+        Object.assign(this.devices.get(String(id)) ?? {}, { revoked_at: revokedAt })
+      }
       return new MemoryResult()
     }
 
@@ -113,8 +120,22 @@ class MemoryD1Database {
       return new MemoryResult()
     }
     if (normalized.startsWith('UPDATE identity_sessions SET revoked_at')) {
-      const [revokedAt, id] = values
-      Object.assign(this.sessions.get(String(id)) ?? {}, { revoked_at: revokedAt })
+      if (normalized.includes('WHERE subject_id =')) {
+        const [revokedAt, subjectId, product] = values
+        for (const row of this.sessions.values()) {
+          if (row.subject_id === subjectId && row.product === product && !row.revoked_at) row.revoked_at = revokedAt
+        }
+      } else {
+        const [revokedAt, id] = values
+        Object.assign(this.sessions.get(String(id)) ?? {}, { revoked_at: revokedAt })
+      }
+      return new MemoryResult()
+    }
+
+    if (normalized.startsWith('UPDATE identity_subjects SET disabled_at')) {
+      const [disabledAt, updatedAt, id, product] = values
+      const row = this.subjects.get(String(id))
+      if (row && row.product === product) Object.assign(row, { disabled_at: disabledAt, updated_at: updatedAt })
       return new MemoryResult()
     }
 
@@ -134,6 +155,13 @@ class MemoryD1Database {
     if (normalized.startsWith('UPDATE identity_accounts SET email_verified_at')) {
       const [verifiedAt, updatedAt, id] = values
       Object.assign(this.accounts.get(String(id)) ?? {}, { email_verified_at: verifiedAt, updated_at: updatedAt })
+      return new MemoryResult()
+    }
+    if (normalized.startsWith('UPDATE identity_accounts SET disabled_at')) {
+      const [disabledAt, updatedAt, subjectId, product] = values
+      for (const row of this.accounts.values()) {
+        if (row.subject_id === subjectId && row.product === product && !row.disabled_at) Object.assign(row, { disabled_at: disabledAt, updated_at: updatedAt })
+      }
       return new MemoryResult()
     }
 
@@ -180,6 +208,13 @@ class MemoryD1Database {
       this.roles.push({ id, subject_id: subjectId, product, role, source, actor_subject_id: actorSubjectId, created_at: createdAt, revoked_at: revokedAt, metadata_json: metadataJson })
       return new MemoryResult()
     }
+    if (normalized.startsWith('UPDATE identity_role_assignments SET revoked_at')) {
+      const [revokedAt, subjectId, product] = values
+      for (const row of this.roles) {
+        if (row.subject_id === subjectId && row.product === product && !row.revoked_at) row.revoked_at = revokedAt
+      }
+      return new MemoryResult()
+    }
 
     if (normalized.startsWith('INSERT INTO identity_managed_credentials')) {
       const [id, subjectId, managerSubjectId, product, handle, handleNorm, codeHash, displayName, createdAt, revokedAt, metadataJson] = values
@@ -189,6 +224,13 @@ class MemoryD1Database {
     if (normalized.startsWith('SELECT * FROM identity_managed_credentials')) {
       const row = Array.from(this.managedCredentials.values()).find((credential) => credential.product === values[0] && credential.handle_norm === values[1] && !credential.revoked_at)
       return new MemoryResult(row ? [row] : [])
+    }
+    if (normalized.startsWith('UPDATE identity_managed_credentials SET revoked_at')) {
+      const [revokedAt, subjectId, product] = values
+      for (const row of this.managedCredentials.values()) {
+        if (row.subject_id === subjectId && row.product === product && !row.revoked_at) row.revoked_at = revokedAt
+      }
+      return new MemoryResult()
     }
 
     if (normalized.startsWith('INSERT INTO identity_api_keys')) {
@@ -386,6 +428,36 @@ describe('identity-api endpoints', () => {
     const afterLogout = await fetchJson('/v1/identity/session', { headers: { authorization: `Bearer ${refreshedToken}` } }, testEnv)
     expect(afterLogout.response.status).toBe(401)
     expect(afterLogout.body.error).toBe('invalid_session')
+  })
+
+  it('lets a signed-in user delete itself and revokes its sessions/devices/account rows', async () => {
+    const testEnv = env()
+    const created = await fetchJson('/v1/identity/device', { method: 'POST', body: JSON.stringify({}) }, testEnv)
+    const bundle = created.body as IdentityBundle
+    const token = bundle.session?.token ?? ''
+    await fetchJson('/v1/identity/email/challenge', {
+      method: 'POST',
+      headers: { authorization: `Bearer ${token}` },
+      body: JSON.stringify({ email: 'caregiver@example.test', purpose: 'recover' })
+    }, testEnv)
+    const magicToken = testEnv.MAGIC_LINK_TEST_SINK[0]?.token ?? ''
+    const verified = await fetchJson('/v1/identity/email/verify', {
+      method: 'POST',
+      body: JSON.stringify({ token: magicToken })
+    }, testEnv)
+    const verifiedBundle = verified.body as IdentityBundle
+    const verifiedToken = verifiedBundle.session?.token ?? ''
+    const subjectId = verifiedBundle.subject.id
+
+    const deleted = await fetchJson('/v1/identity/me', { method: 'DELETE', headers: { authorization: `Bearer ${verifiedToken}` } }, testEnv)
+
+    expect(deleted.response.status).toBe(204)
+    expect(testEnv.IDENTITY_DB.subjects.get(subjectId)?.disabled_at).toBeTruthy()
+    expect([...testEnv.IDENTITY_DB.sessions.values()].filter((row) => row.subject_id === subjectId).every((row) => row.revoked_at)).toBe(true)
+    expect([...testEnv.IDENTITY_DB.devices.values()].filter((row) => row.subject_id === subjectId).every((row) => row.revoked_at)).toBe(true)
+    expect([...testEnv.IDENTITY_DB.accounts.values()].filter((row) => row.subject_id === subjectId).every((row) => row.disabled_at)).toBe(true)
+    const afterDelete = await fetchJson('/v1/identity/session', { headers: { authorization: `Bearer ${verifiedToken}` } }, testEnv)
+    expect(afterDelete.response.status).toBe(401)
   })
 
   it('always returns a generic response for recovery email requests', async () => {
