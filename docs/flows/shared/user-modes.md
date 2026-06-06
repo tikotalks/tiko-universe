@@ -36,14 +36,16 @@ Child Account
   -> Child Mode only
 ```
 
+Only Temporary Accounts are automatically deleted after 30 days of inactivity. Verified Accounts, Profile Manager Accounts, and Child Accounts are not inactivity-deleted.
+
 ## Account types
 
 | Account type | Created by | Login | Can use Parent Mode | Can use Child Mode | Notes |
 | --- | --- | --- | --- | --- | --- |
-| Temporary | Automatically on first launch | Device/session bootstrap | Yes | No | Deleted after 30 days inactivity if not verified. |
-| Verified | Temporary account after email verification, or login by email | OTP or magic link | Yes | Yes, after PIN setup | Normal user account. No child accounts. |
-| Profile Manager | Admin promotes a verified account | OTP or magic link | Yes | Yes, after PIN setup | Can create and manage separate Child Accounts. |
-| Child Account | Profile Manager creates it | Name/identifier + 4-digit code | No | Yes | Separate child-only account. No email, recovery, settings, or account management. |
+| Temporary | Automatically on first launch | Device/session bootstrap | Yes | No | Only this account type auto-deletes after 30 days of inactivity. |
+| Verified | Temporary account after email verification, or login by email | OTP or magic link | Yes | Yes, after PIN setup | Normal user account. No child accounts. Not auto-deleted for inactivity. |
+| Profile Manager | Admin promotes a verified account | OTP or magic link | Yes | Yes, after PIN setup | Can create and manage separate Child Accounts. Not auto-deleted for inactivity. |
+| Child Account | Profile Manager creates it | Name/identifier + 4-digit code | No | Yes | Separate child-only account. No email, recovery, settings, or account management. Not auto-deleted for inactivity. |
 
 ## Temporary account rules
 
@@ -59,6 +61,7 @@ Rules:
 - The account cannot set the Child Mode PIN.
 - The account cannot create Child Accounts.
 - The account is automatically deleted after 30 days of inactivity.
+- This inactivity deletion applies only to Temporary Accounts.
 - Inactivity must be based on `lastActiveAt`, not `createdAt`.
 
 ## Verified account rules
@@ -73,6 +76,7 @@ Rules:
 - Child Mode can be enabled only after verification and PIN setup.
 - The same account can switch between Parent Mode and Child Mode.
 - The account can be deleted from Parent Mode.
+- The account is not automatically deleted because of inactivity.
 - After deletion, the client returns to first launch and automatically creates a fresh Temporary Account.
 
 ## Profile Manager account rules
@@ -88,6 +92,7 @@ Rules:
 - Profile Managers can delete Child Accounts.
 - Profile Managers do not switch into child accounts from inside one session.
 - To use another Child Account, the user logs out and logs in as that Child Account.
+- The account is not automatically deleted because of inactivity.
 
 ## Child Account rules
 
@@ -104,6 +109,7 @@ Rules:
 - It cannot see profile/account/settings management.
 - It cannot delete itself.
 - It can only be edited, reset, or deleted by its Profile Manager.
+- The account is not automatically deleted because of inactivity.
 
 ## Runtime modes
 
@@ -189,6 +195,8 @@ Flow:
 6. Redirect/restart into first launch.
 7. Create a fresh Temporary Account automatically.
 
+Verified Accounts are not automatically deleted because of inactivity.
+
 ### Profile Manager Account
 
 Profile Manager deletion must account for existing Child Accounts.
@@ -197,10 +205,13 @@ Rules:
 
 - If Child Accounts exist, deletion must either delete or transfer them according to an explicit admin/product policy.
 - Do not silently orphan Child Accounts.
+- Profile Manager Accounts are not automatically deleted because of inactivity.
 
 ### Child Account
 
 Child Accounts cannot self-delete. They are deleted by their Profile Manager.
+
+Child Accounts are not automatically deleted because of inactivity.
 
 ## Removed concepts
 
@@ -215,6 +226,7 @@ Do not use these concepts in new implementation:
 ## Acceptance criteria
 
 - Temporary accounts open in Parent Mode only.
+- Only Temporary Accounts are automatically deleted after 30 days of inactivity.
 - Verified accounts can switch between Parent Mode and Child Mode after PIN setup.
 - Only admin-promoted Profile Managers can create Child Accounts.
 - Child Accounts are separate accounts and Child Mode only.
