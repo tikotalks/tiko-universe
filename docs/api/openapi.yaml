@@ -2,7 +2,7 @@ openapi: 3.1.0
 info:
   title: Tiko Universe API
   version: 0.1.0
-  description: Initial API-first contract for Tiko web, iOS, and Android clients.
+  description: Initial API-first contract for Tiko web, iOS, and Android clients. Identity account-type and mode details are defined in docs/api/identity-user-modes-profile-manager-contract.md and must be treated as authoritative for implementation.
 servers:
   - url: https://api.tikotalks.com/v1
     description: Future production API gateway
@@ -12,6 +12,7 @@ paths:
   /identity/device:
     post:
       summary: Create or restore a device-first user session
+      description: First launch creates or restores the current account according to the account-type contract.
       requestBody:
         required: false
         content:
@@ -43,7 +44,7 @@ paths:
           $ref: '#/components/responses/ApiError'
   /identity/email:
     post:
-      summary: Attach or request recovery email magic link with generic response
+      summary: Attach or request recovery or verification email with generic response
       description: Always returns the same accepted response for syntactically valid requests and never reveals whether an email exists.
       security:
         - bearerSession: []
@@ -93,7 +94,7 @@ paths:
           $ref: '#/components/responses/ApiError'
   /apps/{app}/settings:
     get:
-      summary: Read app settings
+      summary: Read app settings for the current account/session
       security:
         - bearerSession: []
       parameters:
@@ -106,7 +107,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/AppSettings'
     put:
-      summary: Save app settings
+      summary: Save app settings for the current account/session
       security:
         - bearerSession: []
       parameters:
@@ -120,7 +121,7 @@ paths:
                 $ref: '#/components/schemas/AppSettings'
   /apps/{app}/state:
     get:
-      summary: Read app state
+      summary: Read app state for the current account/session
       security:
         - bearerSession: []
       parameters:
@@ -133,7 +134,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/AppState'
     put:
-      summary: Save app state
+      summary: Save app state for the current account/session
       security:
         - bearerSession: []
       parameters:
@@ -258,15 +259,18 @@ components:
           $ref: '#/components/schemas/Session'
     User:
       type: object
-      required: [id, kind, recoverable]
+      required: [id, accountType, recoverable]
       properties:
         id:
           type: string
         displayName:
           type: string
-        kind:
+        accountType:
           type: string
-          enum: [device, recoverable]
+          enum: [temporary, verified, profile_manager, child_account]
+        mode:
+          type: string
+          enum: [parent, child]
         recoverable:
           type: boolean
     Device:
@@ -300,7 +304,6 @@ components:
         language:
           type: string
           minLength: 1
-          description: BCP-47 language code requested by the client.
         provider:
           type: string
           enum: [openai, azure, auto]
@@ -341,13 +344,9 @@ components:
           type: string
         audioUrl:
           type: string
-          description: Relative API URL for `GET /generation/audio/{id}` or an absolute signed/read URL in a future contract.
         contentType:
           type: string
           enum: [audio/mpeg]
-        fileSizeBytes:
-          type: integer
-          minimum: 0
         generatedAt:
           type: string
           format: date-time
