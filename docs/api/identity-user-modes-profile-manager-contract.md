@@ -1,342 +1,280 @@
-# Identity User Modes and Profile Manager API Contract
+# Identity Account Types and Modes API Contract
 
 ## Purpose
 
-Define the API-facing identity model for Tiko's user modes, implicit primary profile, profile-manager mode, child profiles, PIN, recovery, and deletion.
+Define the API-facing identity model for Tiko account types, runtime modes, OTP/magic-link login, PIN, Child Mode, Profile Manager accounts, Child Accounts, and deletion.
 
-This document complements `docs/api/openapi.yaml`. OpenAPI must be extended from this contract before implementation.
+This document complements `docs/api/openapi.yaml`. OpenAPI must stay aligned with this contract.
 
 ## Core model
 
-Basic Tiko usage is single-profile, but the API still needs a stable internal profile scope for settings and state.
-
 ```text
-User
-├── devices
-├── sessions
-├── optional recovery email
-├── optional caregiver PIN
-├── implicit primary profile
-└── optional profile-manager capability
-    └── managed child profiles
+Temporary Account
+  -> Verified Account
+      -> Profile Manager Account (admin promotion only)
+
+Profile Manager Account
+  -> creates Child Accounts
+
+Verified/Profile Manager Account
+  <-> Parent Mode / Child Mode
+
+Child Account
+  -> Child Mode only
 ```
 
-## User modes
+## Types
 
 ```ts
-type UserMode = 'basic' | 'profile-manager'
-type RuntimeMode = 'child' | 'caregiver'
-type ProfileMode = 'implicit-primary' | 'managed-child'
+type AccountType = 'temporary' | 'verified' | 'profile_manager' | 'child_account'
+type RuntimeMode = 'parent' | 'child'
+type LoginMethod = 'device' | 'otp' | 'magic_link' | 'child_code'
 ```
 
-Rules:
+## Rules
 
-- Basic users have exactly one implicit primary profile.
-- Basic users do not see profile management UI.
-- Profile managers may create and manage child profiles.
-- Managed child profiles always run in child mode.
-- Caregiver mode is required for profile management, recovery, PIN, deletion, and account actions.
+- First launch creates/restores a Temporary Account.
+- Temporary Accounts run in Parent Mode only.
+- Temporary Accounts become Verified Accounts by email verification.
+- Verified/Profile Manager login uses OTP or magic link.
+- Verified/Profile Manager accounts can enable Child Mode only after PIN setup.
+- Profile Manager status is assigned only by admin.
+- Profile Manager accounts can create separate Child Accounts.
+- Child Accounts log in with name/identifier plus a 4-digit code.
+- Child Accounts are Child Mode only.
+- There is no profile switching or active profile selection.
 
 ## Session bundle extension
-
-Current `SessionBundle` should be extended with profile and capability summary.
 
 ```ts
 interface SessionBundle {
   user: User
   device: Device
   session: Session
-  activeProfile: ActiveProfileSummary
+  account: AccountSummary
+  runtime: RuntimeSummary
   capabilities: UserCapabilities
+}
+
+interface AccountSummary {
+  id: string
+  accountType: AccountType
+  displayName?: string
+  emailVerified: boolean
+  temporaryExpiresAt?: string
+  lastActiveAt: string
+}
+
+interface RuntimeSummary {
+  mode: RuntimeMode
+  childModeEnabled: boolean
+  pinConfigured: boolean
 }
 
 interface UserCapabilities {
-  userMode: UserMode
-  profileManager: boolean
-  recovery: boolean
-  pin: boolean
-}
-
-interface ActiveProfileSummary {
-  id: string
-  mode: ProfileMode
-  displayName?: string
-  language?: string
-  colorMode?: 'light' | 'dark' | 'system'
+  canVerifyEmail: boolean
+  canUseParentMode: boolean
+  canUseChildMode: boolean
+  canManageChildAccounts: boolean
+  canDeleteAccount: boolean
 }
 ```
 
-## Profile contract
+## User schema
 
 ```ts
-interface TikoProfile {
+interface User {
   id: string
-  mode: ProfileMode
+  accountType: AccountType
   displayName?: string
-  avatarMediaId?: string
-  language?: string
-  colorMode?: 'light' | 'dark' | 'system'
-  accessibility?: {
-    textSize?: 'normal' | 'large' | 'extra-large'
-    reduceMotion?: boolean
-    highContrast?: boolean
-    audioFeedback?: boolean
-  }
+  email?: string
+  emailVerified: boolean
+  recoverable: boolean
   createdAt: string
   updatedAt: string
-  deletedAt?: string
+  lastActiveAt: string
 }
 ```
 
-## Profile endpoints
+## Identity endpoints
 
-### `GET /v1/identity/profiles`
+### `POST /v1/identity/device`
 
-Returns profiles visible to the current caregiver context.
+Creates or restores a device-first session. If no existing account exists, creates a Temporary Account.
 
-Behavior:
+Response: `SessionBundle`.
 
-- Basic user: returns only the implicit primary profile.
-- Profile manager: returns managed child profiles and the implicit primary profile if still present.
-- Child runtime mode must not call or expose this endpoint directly from child-facing UI.
+### `GET /v1/identity/session`
 
-Response:
+Returns current account type, runtime mode, session, and capabilities.
 
-```ts
-interface ProfilesResponse {
-  profiles: TikoProfile[]
-  activeProfileId: string
-  capabilities: UserCapabilities
-}
-```
+### `POST /v1/identity/email`
 
-### `POST /v1/identity/profiles`
-
-Creates a managed child profile.
+Starts email verification or recovery with a generic response.
 
 Rules:
 
-- Requires profile-manager capability.
-- Requires caregiver mode.
-- Requires PIN verification if PIN is configured.
-- If the user is basic, the client must first enable profile-manager mode.
+- Must not reveal whether an email exists.
+- For Temporary Accounts, successful verification upgrades the same account to Verified.
+
+### `POST /v1/identity/otp/request`
+
+Requests an OTP for login or verification.
 
 Request:
 
 ```ts
-interface CreateProfileRequest {
-  displayName?: string
-  language?: string
-  colorMode?: 'light' | 'dark' | 'system'
+interface OtpRequest {
+  email: string
+  purpose: 'login' | 'verify_email' | 'reset_pin' | 'confirm_deletion'
 }
 ```
 
-### `PUT /v1/identity/profiles/{profileId}`
+Response must be generic.
 
-Updates profile display/preferences.
+### `POST /v1/identity/otp/verify`
 
-Rules:
+Verifies OTP and returns `SessionBundle` or a grant token depending on purpose.
 
-- Basic user may update the implicit primary profile from caregiver mode.
-- Profile manager may update managed child profiles from caregiver mode.
-- Child mode must not expose this action.
+### `POST /v1/identity/magic-links/verify`
 
-### `DELETE /v1/identity/profiles/{profileId}`
+Verifies magic link and returns `SessionBundle` or a grant token depending on purpose.
 
-Deletes a managed child profile.
+### `POST /v1/identity/logout`
 
-Rules:
-
-- Requires caregiver mode.
-- Requires PIN verification if PIN is configured.
-- Cannot delete the last usable profile unless the operation is account deletion or full local reset.
-- Basic users should use local reset/account deletion, not profile deletion UI.
-
-### `PUT /v1/identity/active-profile`
-
-Sets the active child profile for this device/session.
-
-Request:
-
-```ts
-interface SetActiveProfileRequest {
-  profileId: string
-}
-```
-
-Rules:
-
-- Basic users should not see profile switching.
-- Profile managers can switch profiles only from caregiver mode.
-- After switching, the selected child profile opens in child mode.
-
-## Profile manager endpoints
-
-### `POST /v1/identity/profile-manager/enable`
-
-Enables profile-manager mode.
-
-Request:
-
-```ts
-interface EnableProfileManagerRequest {
-  keepImplicitPrimaryAsChildProfile?: boolean
-}
-```
-
-Rules:
-
-- Requires caregiver mode.
-- Requires PIN verification if PIN is configured.
-- Recommended P0 behavior: keep the implicit primary profile as the first managed child profile.
-
-### `POST /v1/identity/profile-manager/disable`
-
-Disables profile-manager mode.
-
-Rules:
-
-- Allowed only when one usable profile remains, or after extra child profiles are deleted.
-- Must not silently merge profiles.
-- Requires caregiver mode and PIN if configured.
+Revokes the current session. Logout is not deletion.
 
 ## PIN endpoints
 
 ### `POST /v1/identity/pin`
 
-Sets or changes caregiver PIN metadata.
+Sets or changes the PIN used to exit Child Mode and authorize sensitive Parent Mode actions.
 
 Rules:
 
-- PIN is a caregiver gate, not a password.
+- Only Verified/Profile Manager accounts can configure PIN.
+- Temporary Accounts cannot configure PIN.
 - Do not store raw PIN server-side.
-- Server may store only salted verifier metadata if server verification is needed.
-- Local secure verification is preferred for offline gating.
-
-Request:
-
-```ts
-interface SetPinRequest {
-  verifier: string
-  algorithm: 'local-secure-hash' | 'server-verifier'
-}
-```
+- PIN is not a normal account password.
 
 ### `POST /v1/identity/pin/verify`
 
-Verifies caregiver PIN when server verification is required.
-
-Request:
-
-```ts
-interface VerifyPinRequest {
-  proof: string
-}
-```
-
-Response:
-
-```ts
-interface VerifyPinResponse {
-  verified: true
-  caregiverGrantToken?: string
-  expiresAt?: string
-}
-```
+Verifies PIN and optionally returns a short-lived grant for sensitive actions.
 
 ### `DELETE /v1/identity/pin`
 
-Removes caregiver PIN.
+Removes PIN. Requires PIN verification or recovery grant.
+
+## Runtime mode endpoints
+
+### `POST /v1/identity/mode/child/enable`
+
+Enables Child Mode for a Verified/Profile Manager account.
 
 Rules:
 
-- Requires existing PIN verification or recovery verification.
-- Must not block child-facing app use if it fails.
+- Account must be verified.
+- PIN must be configured.
+- Temporary Accounts cannot enable Child Mode.
 
-## Recovery endpoints
+### `POST /v1/identity/mode/child`
 
-Existing recovery endpoints:
+Enters Child Mode.
 
-- `POST /v1/identity/email`
-- `POST /v1/identity/magic-links/verify`
+### `POST /v1/identity/mode/parent`
 
-Additional recovery flow aliases for `id.tikotalks.com`:
+Returns to Parent Mode. Requires PIN verification when leaving Child Mode.
 
-### `POST /v1/identity/recovery/start`
+## Child Account endpoints
 
-Starts recovery or PIN reset from `id.tikotalks.com`.
+Child Account management is available only to Profile Manager accounts.
 
-Request:
+### `GET /v1/identity/child-accounts`
 
-```ts
-interface RecoveryStartRequest {
-  email: string
-  purpose: 'restore-session' | 'reset-pin' | 'confirm-deletion' | 'change-email'
-}
-```
+Lists Child Accounts owned/managed by the Profile Manager account.
 
-Response must be generic and must not reveal whether the email exists.
+### `POST /v1/identity/child-accounts`
 
-### `POST /v1/identity/recovery/complete`
-
-Completes recovery using a magic-link token.
+Creates a Child Account.
 
 Request:
 
 ```ts
-interface RecoveryCompleteRequest {
-  token: string
-  purpose: 'restore-session' | 'reset-pin' | 'confirm-deletion' | 'change-email'
+interface CreateChildAccountRequest {
+  name: string
+  code: string
+  language?: string
 }
 ```
 
-Response:
+Rules:
 
-```ts
-interface RecoveryCompleteResponse {
-  session?: SessionBundle
-  recoveryGrantToken?: string
-  expiresAt: string
-}
-```
+- `code` must be 4 digits.
+- Requires Profile Manager account.
+- Requires Parent Mode.
+- Requires PIN verification if configured.
+
+### `PUT /v1/identity/child-accounts/{childAccountId}`
+
+Updates Child Account name or preferences.
+
+### `POST /v1/identity/child-accounts/{childAccountId}/code/reset`
+
+Resets a Child Account 4-digit code.
+
+### `DELETE /v1/identity/child-accounts/{childAccountId}`
+
+Deletes a Child Account.
+
+### `POST /v1/identity/child-accounts/login`
+
+Logs in as a Child Account using name/identifier plus 4-digit code.
+
+Response: `SessionBundle` with `accountType: child_account` and `runtime.mode: child`.
+
+## Admin-only Profile Manager endpoints
+
+These belong in `admin-api`, not normal app UI.
+
+### `POST /v1/admin/users/{userId}/promote-profile-manager`
+
+Promotes a Verified Account to Profile Manager.
+
+### `POST /v1/admin/users/{userId}/demote-profile-manager`
+
+Demotes a Profile Manager account if policy allows.
+
+Rules:
+
+- No public app endpoint can self-promote to Profile Manager.
+- Existing Child Accounts must be handled explicitly before demotion.
 
 ## Deletion endpoints
 
 ### `POST /v1/identity/deletion-requests`
 
-Creates an account/user deletion request.
+Creates an account deletion request.
 
 Request:
 
 ```ts
 interface CreateDeletionRequest {
-  scope: 'local-device' | 'user-account'
-  reason?: string
-  caregiverGrantToken?: string
+  scope: 'local-device' | 'account' | 'child_account'
+  childAccountId?: string
+  pinGrantToken?: string
+  recoveryGrantToken?: string
 }
 ```
 
 Rules:
 
-- `local-device` can clear local app/device data but must not claim server deletion.
-- `user-account` deletes or anonymizes synced user data.
-- Requires caregiver mode.
-- Requires PIN if configured.
-- Requires recovery confirmation if recoverable identity exists.
-
-Response:
-
-```ts
-interface DeletionRequest {
-  id: string
-  scope: 'local-device' | 'user-account'
-  status: 'requested' | 'awaiting-verification' | 'processing' | 'completed' | 'failed' | 'cancelled'
-  createdAt: string
-  updatedAt: string
-  completedAt?: string
-  canCancel?: boolean
-}
-```
+- Temporary Accounts can be locally reset or auto-deleted after inactivity.
+- Verified/Profile Manager account deletion starts in Parent Mode.
+- If PIN is configured, deletion requires PIN.
+- If PIN is not configured, explicit confirmation is enough.
+- After Verified/Profile Manager deletion, client creates a fresh Temporary Account.
+- Child Accounts cannot self-delete. Profile Manager deletes them.
+- Profile Manager deletion must not silently orphan Child Accounts.
 
 ### `GET /v1/identity/deletion-requests/{requestId}`
 
@@ -344,62 +282,27 @@ Returns deletion status.
 
 ### `POST /v1/identity/deletion-requests/{requestId}/cancel`
 
-Cancels deletion where allowed.
-
-Rules:
-
-- Not all deletion jobs are cancellable.
-- Cancellation must be explicit and caregiver-confirmed.
-
-## Runtime mode rules
-
-Runtime mode is primarily client-side UX state, but backend-sensitive operations require caregiver authorization.
-
-Child mode can:
-
-- use app core features
-- read local/cached settings
-- write safe app state
-- use active profile context
-
-Child mode cannot:
-
-- list profiles
-- switch profiles
-- edit recovery email
-- change PIN
-- delete account/profile
-- export data
-
-Caregiver mode can:
-
-- manage recovery
-- manage PIN
-- manage app settings
-- enable profile-manager mode
-- manage child profiles if enabled
-- delete/reset data
+Cancels deletion where policy allows.
 
 ## OpenAPI update checklist
 
-Before implementation, add these to `docs/api/openapi.yaml`:
+`docs/api/openapi.yaml` must include:
 
-- `UserMode`, `RuntimeMode`, `ProfileMode` enums.
-- `UserCapabilities` schema.
-- `ActiveProfileSummary` schema.
-- `TikoProfile` schema.
-- Profile endpoints.
-- Profile-manager enable/disable endpoints.
+- `AccountType`, `RuntimeMode`, `LoginMethod` enums.
+- `AccountSummary`, `RuntimeSummary`, `UserCapabilities` schemas.
+- Extended `SessionBundle`.
+- OTP request/verify endpoints.
 - PIN endpoints.
-- Recovery start/complete endpoints.
+- Runtime mode endpoints.
+- Child Account management/login endpoints.
 - Deletion request endpoints.
-- Extend `SessionBundle` with `activeProfile` and `capabilities`.
+- Admin promotion endpoints or references to admin-api.
 
 ## Acceptance criteria
 
-- Basic users remain single-profile in UI.
-- API still provides an internal profile scope for app settings/state.
-- Profile manager mode is explicit.
-- Child profiles never expose management UI.
-- PIN, recovery, deletion, and profile-manager actions require caregiver context.
-- Server deletion and local reset remain separate operations.
+- API does not expose active profile selection.
+- API does not expose profile switching.
+- Temporary to Verified is an upgrade of the same account.
+- Profile Manager can only be assigned by admin.
+- Child Accounts are separate accounts and Child Mode only.
+- Verified/Profile Manager account deletion returns the client to a fresh Temporary Account.
