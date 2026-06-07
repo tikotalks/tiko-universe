@@ -476,8 +476,9 @@ const userKind = ref<'anonymous' | 'account'>('anonymous')
 // Parent mode state
 // ---------------------------------------------------------------------------
 const parentMode = ref(true)
-const parentCodeHash = ref<string | undefined>()
-const hasCode = computed(() => Boolean(parentCodeHash.value))
+const childModeEnabled = ref(false)
+const pinConfigured = ref(false)
+const hasCode = computed(() => pinConfigured.value)
 
 // ---------------------------------------------------------------------------
 // Media integration (Supabase images for default collections)
@@ -660,10 +661,17 @@ function saveLocalFallback() {
   })
 }
 
+function applyIdentityRuntime(bundle: IdentityBundle) {
+  parentMode.value = bundle.runtime?.mode !== 'child'
+  childModeEnabled.value = Boolean(bundle.runtime?.childModeEnabled)
+  pinConfigured.value = Boolean(bundle.runtime?.pinConfigured)
+}
+
 function saveIdentity(bundle: IdentityBundle) {
   if (!bundle.session?.token) throw new Error('Identity response did not include a session token.')
   sessionToken.value = bundle.session.token
   userKind.value = bundle.account?.emailVerified ? 'account' : 'anonymous'
+  applyIdentityRuntime(bundle)
   writeJson(identityStorageKey, {
     userId: bundle.subject.id,
     deviceId: bundle.device?.id,
@@ -740,13 +748,6 @@ async function hydrateRemoteData() {
     remoteDefaults.value = defaults.state.collections as CardsCollection[]
   }
 
-  // Load parent code from user profile
-  try {
-    const { profile } = await identityClient.getProfile(sessionToken.value)
-    if (typeof profile.parentCodeHash === 'string') {
-      parentCodeHash.value = profile.parentCodeHash
-    }
-  } catch { /* not logged in or profile not available */ }
 }
 
 async function persistSettingsRemote() {
@@ -1633,11 +1634,22 @@ function openParentCodePopup() {
   popup.showPopup({
     component: markRaw(TikoPinPopup),
     title: '',
-    props: { existingHash: parentCodeHash.value },
+    props: {
+      mode: 'verify',
+      verifyCode: async (pin: string) => {
+        if (!sessionToken.value) return false
+        try {
+          const bundle = await identityClient.enterParentMode(sessionToken.value, pin)
+          saveIdentity(bundle)
+          return true
+        } catch {
+          return false
+        }
+      },
+    },
     config: { position: 'center', canClose: true, background: true, width: '22rem' },
     on: {
       set: () => {
-        parentMode.value = true
         popup.closeAllPopups()
       },
       cancel: () => popup.closeAllPopups(),
@@ -1646,8 +1658,13 @@ function openParentCodePopup() {
 }
 
 function openChildModeFlow() {
+  popup.closeAllPopups()
+  if (!sessionToken.value || userKind.value !== 'account') {
+    window.setTimeout(openLoginPopup, 180)
+    return
+  }
+
   if (!hasCode.value) {
-    // First time: show code creation
     popup.showPopup({
       component: markRaw(TikoPinPopup),
       title: '',
@@ -1655,32 +1672,29 @@ function openChildModeFlow() {
       config: { position: 'center', canClose: true, background: true, width: '22rem' },
       on: {
         set: async (...args: unknown[]) => {
-          const hash = args[0] as string
-          parentCodeHash.value = hash
-          parentMode.value = false
-          if (sessionToken.value) {
-            try { await identityClient.updateProfile(sessionToken.value, { parentCodeHash: hash }) } catch { /* ignore */ }
+          const pin = typeof args[1] === 'string' ? args[1] : ''
+          if (!pin || !sessionToken.value) return
+          try {
+            saveIdentity(await identityClient.setPin(sessionToken.value, { pin }))
+            if (!childModeEnabled.value) saveIdentity(await identityClient.enableChildMode(sessionToken.value))
+            saveIdentity(await identityClient.enterChildMode(sessionToken.value))
+            popup.closeAllPopups()
+          } catch {
+            // Keep the menu open on API failure; the PIN is not stored locally.
           }
-          popup.closeAllPopups()
         },
         cancel: () => popup.closeAllPopups(),
       },
     })
   } else {
-    // Code exists: verify
-    popup.showPopup({
-      component: markRaw(TikoPinPopup),
-      title: '',
-      props: { existingHash: parentCodeHash.value },
-      config: { position: 'center', canClose: true, background: true, width: '22rem' },
-      on: {
-        set: () => {
-          parentMode.value = false
-          popup.closeAllPopups()
-        },
-        cancel: () => popup.closeAllPopups(),
-      },
-    })
+    void (async () => {
+      try {
+        if (!childModeEnabled.value) saveIdentity(await identityClient.enableChildMode(sessionToken.value))
+        saveIdentity(await identityClient.enterChildMode(sessionToken.value))
+      } catch {
+        // Keep parent mode if the API rejects the transition.
+      }
+    })()
   }
 }
 
