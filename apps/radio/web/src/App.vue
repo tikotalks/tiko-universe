@@ -2,16 +2,15 @@
 import { computed, onMounted, ref, watch, nextTick, inject, markRaw, h } from 'vue'
 import { Button, Popup } from '@sil/ui'
 import type { PopupService } from '@sil/ui'
-import { IdentityClient, type IdentityBundle } from '@tiko/identity'
+import { IdentityClient } from '@tiko/identity'
 import { TikoDataClient, type RadioSettings, type RadioState } from '@tiko/data'
 import type { RadioTrack, RadioCategory } from '@tiko/data'
 import { createI18n, defaultLanguage, tikoI18nKeys, tikoLanguages, type TikoLanguage } from '@tiko/i18n'
 import {
   TikoAppShell,
   TikoColorMode,
-  TikoPinPopup,
-  TikoProfileMenu,
-  TikoChildAccountsPanel,
+  useIdentityRuntime,
+  type IdentityRuntimeState,
 } from '@tiko/ui'
 import { useAudioPlayer } from './composables/useAudioPlayer'
 import { useTrackLibrary } from './composables/useTrackLibrary'
@@ -26,7 +25,6 @@ const popup = inject<PopupService>('popupService')!
 
 // ---- Constants ------------------------------------------------------------
 const storageKey = 'tiko:radio'
-const identityStorageKey = 'tiko:identity:device-session'
 const appId = 'radio' as const
 const apiBaseUrl = resolveApiBaseUrl()
 const identityBaseUrl = resolveIdentityBaseUrl()
@@ -41,14 +39,6 @@ interface PersistedState {
   shuffleEnabled?: boolean
   repeatEnabled?: boolean
   currentTrackIndex?: number
-}
-
-interface StoredIdentity {
-  userId?: string
-  deviceId?: string
-  deviceSecret?: string
-  sessionToken?: string
-  expiresAt?: string
 }
 
 interface GeneratedStoryItem {
@@ -139,20 +129,33 @@ const repeatEnabled = ref(stored.repeatEnabled ?? false)
 const currentTrackIndex = ref(stored.currentTrackIndex ?? -1)
 const settingsVersion = ref<number | undefined>()
 const stateVersion = ref<number | undefined>()
-const sessionToken = ref<string>('')
 const bootstrapped = ref(false)
 const identityClient = new IdentityClient({ baseUrl: identityBaseUrl, credentials: 'include' })
 const dataClient = new TikoDataClient({ baseUrl: apiBaseUrl })
 
-// ---- Kid / parent mode ----------------------------------------------------
-const parentMode = ref(true)
-const childModeEnabled = ref(false)
-const pinConfigured = ref(false)
+// ---- Identity runtime (composable) ----------------------------------------
+const runtimeState: IdentityRuntimeState = {
+  sessionToken: ref(''),
+  userId: ref(''),
+  accountEmail: ref(''),
+  accountEmailVerified: ref(false),
+  displayName: ref(''),
+  parentMode: ref(true),
+  childModeEnabled: ref(false),
+  pinConfigured: ref(false),
+}
+const runtime = useIdentityRuntime({
+  identityClient,
+  state: runtimeState,
+  deviceName: 'Radio web',
+  storageKey: 'tiko:identity:device-session',
+})
+
+// ---- Kid / parent mode (aliases into runtimeState) -------------------------
+const parentMode = runtimeState.parentMode
 const selectedCategoryId = ref<string | null>(null)
 const newCategoryName = ref('')
 const newCategoryOpen = ref(false)
-const userId = ref<string>('')
-const isRecoverable = ref(false)
 
 // ---- Composables ----------------------------------------------------------
 const player = useAudioPlayer()
@@ -180,11 +183,6 @@ const labels = computed(() => {
     createCategory: i18n.t(tikoI18nKeys.radio.management.createCategory),
     removeTrack: i18n.t(tikoI18nKeys.radio.library.removeTrack),
     uploadFile: i18n.t(tikoI18nKeys.radio.library.uploadFile),
-    login: 'Log in',
-    magicLinkSent: 'Check your email!',
-    magicLinkHint: 'We sent a magic link to',
-    sendMagicLink: 'Send magic link',
-    logout: 'Log out',
   }
 })
 
@@ -211,7 +209,7 @@ const headerActions = computed(() => {
   ]
 
   // Child/parent mode toggle – only when logged in with a PIN set
-  if (sessionToken.value && pinConfigured.value) {
+  if (runtimeState.sessionToken.value && runtimeState.pinConfigured.value) {
     actions.push({
       id: 'toggle-mode',
       label: parentMode.value ? 'Child mode' : 'Parent mode',
@@ -281,59 +279,6 @@ function saveLocalFallback() {
   })
 }
 
-function applyIdentityRuntime(bundle: IdentityBundle) {
-  parentMode.value = bundle.runtime?.mode !== 'child'
-  childModeEnabled.value = Boolean(bundle.runtime?.childModeEnabled)
-  pinConfigured.value = Boolean(bundle.runtime?.pinConfigured)
-}
-
-function saveIdentity(bundle: IdentityBundle) {
-  if (!bundle.session?.token) throw new Error('Identity response did not include a session token.')
-  sessionToken.value = bundle.session.token
-  userId.value = bundle.subject.id
-  isRecoverable.value = Boolean(bundle.account?.emailVerified)
-  applyIdentityRuntime(bundle)
-  writeJson(identityStorageKey, {
-    userId: bundle.subject.id,
-    deviceId: bundle.device?.id,
-    deviceSecret: bundle.device?.secret,
-    sessionToken: bundle.session.token,
-    expiresAt: bundle.session.expiresAt,
-  } satisfies StoredIdentity)
-}
-
-async function bootstrapIdentity() {
-  const storedIdentity = readJson<StoredIdentity>(identityStorageKey, {})
-
-  try {
-    const bundle = await identityClient.getCookieSession()
-    saveIdentity(bundle)
-    return
-  } catch {
-    // Fall through to local bearer/device fallback when the shared app-family cookie is missing or expired.
-  }
-
-  if (storedIdentity.sessionToken) {
-    try {
-      const bundle = await identityClient.getSession(storedIdentity.sessionToken)
-      saveIdentity(bundle)
-      return
-    } catch {
-      // Fall through to device bootstrap with the known device id/secret.
-    }
-  }
-
-  const bundle = await identityClient.bootstrapDevice({
-    device: {
-      id: storedIdentity.deviceId,
-      secret: storedIdentity.deviceSecret,
-      name: 'Radio web',
-      platform: 'web',
-    },
-  })
-  saveIdentity(bundle)
-}
-
 function applySettings(settings: RadioSettings, version?: number) {
   language.value = toLanguage(settings.language)
   colorMode.value = toColorMode(settings.colorMode)
@@ -367,21 +312,21 @@ function applyState(state: RadioState, version?: number) {
 }
 
 async function hydrateRemoteData() {
-  if (!sessionToken.value) return
+  if (!runtimeState.sessionToken.value) return
   const [settings, state] = await Promise.all([
-    dataClient.getSettings(appId, sessionToken.value),
-    dataClient.getState(appId, sessionToken.value),
+    dataClient.getSettings(appId, runtimeState.sessionToken.value),
+    dataClient.getState(appId, runtimeState.sessionToken.value),
   ])
   applySettings(settings.settings, settings.version)
   applyState(state.state, state.version)
 }
 
 async function persistSettingsRemote() {
-  if (!bootstrapped.value || !sessionToken.value) return
+  if (!bootstrapped.value || !runtimeState.sessionToken.value) return
   try {
     const response = await dataClient.putSettings(
       appId,
-      sessionToken.value,
+      runtimeState.sessionToken.value,
       {
         language: language.value,
         colorMode: colorMode.value,
@@ -396,11 +341,11 @@ async function persistSettingsRemote() {
 }
 
 async function persistStateRemote() {
-  if (!bootstrapped.value || !sessionToken.value) return
+  if (!bootstrapped.value || !runtimeState.sessionToken.value) return
   try {
     const response = await dataClient.putState(
       appId,
-      sessionToken.value,
+      runtimeState.sessionToken.value,
       {
         currentTrackIndex: currentTrackIndex.value,
         tracks: library.tracks.value,
@@ -547,8 +492,9 @@ watch(player.isPlaying, (playing, wasPlaying) => {
 // ---- Lifecycle -------------------------------------------------------------
 onMounted(async () => {
   try {
-    await bootstrapIdentity()
+    await runtime.bootstrapIdentity()
     await hydrateRemoteData()
+    void runtime.loadProfile()
   } catch {
     // Keep the child-facing local flow available when API bootstrap is offline.
   } finally {
@@ -611,83 +557,11 @@ function openSettingsPopup() {
   })
 }
 
-function openPinPopup() {
-  popup.showPopup({
-    component: markRaw(TikoPinPopup),
-    title: '',
-    props: { mode: 'verify' as const, hashNamespace: 'radio:pin',
-      verifyCode: async (pin: string) => {
-        if (!sessionToken.value) return false
-        try {
-          const bundle = await identityClient.enterParentMode(sessionToken.value, pin)
-          saveIdentity(bundle)
-          return true
-        } catch {
-          return false
-        }
-      },
-    },
-    config: { position: 'center', canClose: true, background: true, width: '22rem' },
-    on: {
-      set: () => {
-        // Verification passed via verifyCode callback — parentMode already updated by applyIdentityRuntime
-      },
-      cancel: () => {},
-    },
-  })
-}
-
-function openChildModeFlow() {
-  popup.closeAllPopups()
-  if (!sessionToken.value || !isRecoverable.value) {
-    // Anonymous users need to log in before setting up child mode
-    window.setTimeout(openLoginPopup, 180)
-    return
-  }
-
-  if (!pinConfigured.value) {
-    // First time: set a PIN, enable child mode, then enter child mode
-    popup.showPopup({
-      component: markRaw(TikoPinPopup),
-      title: '',
-      props: { mode: 'set' as const, hashNamespace: 'radio:pin' },
-      config: { position: 'center', canClose: true, background: true, width: '22rem' },
-      on: {
-        set: (...args: unknown[]) => {
-          const pin = typeof args[1] === 'string' ? args[1] : ''
-          if (!pin || !sessionToken.value) return
-          void (async () => {
-            try {
-              saveIdentity(await identityClient.setPin(sessionToken.value, { pin }))
-              if (!childModeEnabled.value) saveIdentity(await identityClient.enableChildMode(sessionToken.value))
-              saveIdentity(await identityClient.enterChildMode(sessionToken.value))
-              popup.closeAllPopups()
-            } catch {
-              // Keep the popup open on API failure
-            }
-          })()
-        },
-        cancel: () => {},
-      },
-    })
-  } else {
-    // PIN already configured: enter child mode directly
-    void (async () => {
-      try {
-        if (!childModeEnabled.value) saveIdentity(await identityClient.enableChildMode(sessionToken.value))
-        saveIdentity(await identityClient.enterChildMode(sessionToken.value))
-      } catch {
-        // Silently fail — user stays in parent mode
-      }
-    })()
-  }
-}
-
 function openAddAudioPopup() {
   popup.showPopup({
     component: markRaw(AddAudioPopup),
     title: '',
-    props: { hasEmail: isRecoverable.value },
+    props: { hasEmail: runtimeState.accountEmailVerified.value },
     config: { position: 'center', canClose: true, background: true, width: '28rem' },
     on: {
       add: (track: unknown) => {
@@ -718,198 +592,6 @@ function openAddAudioPopup() {
   })
 }
 
-function openChildAccounts() {
-  popup.showPopup({
-    component: markRaw(TikoChildAccountsPanel),
-    title: '',
-    props: {
-      onLoad: async () => {
-        const { childAccounts } = await identityClient.listChildAccounts(sessionToken.value!)
-        return childAccounts.map(c => ({ id: c.id, name: c.name, code: '****' }))
-      },
-      onCreate: async (name: string, code: string) => {
-        const { child } = await identityClient.createChildAccount(sessionToken.value!, { name, code })
-        return { id: child.id, name: child.name, code: '****' }
-      },
-      onUpdate: async (id: string, name: string) => {
-        const { child } = await identityClient.updateChildAccount(sessionToken.value!, id, { name })
-        return { id: child.id, name: child.name, code: '****' }
-      },
-      onResetCode: async (id: string, code: string) => {
-        const { child } = await identityClient.resetChildAccountCode(sessionToken.value!, id, code)
-        return { id: child.id, name: child.name, code: '****' }
-      },
-      onDelete: async (id: string) => {
-        await identityClient.deleteChildAccount(sessionToken.value!, id)
-      },
-    },
-    config: { position: 'center', canClose: true, background: true, width: 'min(34rem, calc(100vw - 2rem))' },
-    on: {
-      close: () => popup.closeAllPopups(),
-    },
-  })
-}
-
-function openLoginPopup() {
-  popup.showPopup({
-    component: markRaw({
-      setup() {
-        const email = ref('')
-        const code = ref('')
-        const sent = ref(false)
-        const loading = ref(false)
-        const verifyError = ref('')
-
-        async function sendCode() {
-          if (!email.value.trim()) return
-          loading.value = true
-          verifyError.value = ''
-          try {
-            await identityClient.createEmailChallenge({ email: email.value.trim(), purpose: 'recover' }, sessionToken.value || undefined)
-            sent.value = true
-          } catch {
-            verifyError.value = 'Could not send the code. Please try again.'
-          } finally {
-            loading.value = false
-          }
-        }
-
-        async function verifyCode() {
-          const digits = code.value.replace(/\s/g, '')
-          if (digits.length !== 6) return
-          loading.value = true
-          verifyError.value = ''
-          try {
-            const bundle = await identityClient.verifyOtp(digits)
-            saveIdentity(bundle)
-            popup.closeAllPopups()
-          } catch {
-            verifyError.value = 'Invalid or expired code. Try again or resend.'
-          } finally {
-            loading.value = false
-          }
-        }
-
-        return () => h('div', { class: 'radio-app__login-popup' }, [
-          h('h3', { class: 'radio-app__login-popup__title' }, 'Log in'),
-          sent.value
-            ? [
-                h('p', { class: 'radio-app__login-popup__sent-text' }, `Code sent to ${email.value}`),
-                h('label', { class: 'radio-app__login-popup__label' }, [
-                  'Sign-in code',
-                  h('input', {
-                    type: 'text',
-                    inputmode: 'numeric',
-                    autocomplete: 'one-time-code',
-                    value: code.value,
-                    maxlength: 7,
-                    placeholder: '123 456',
-                    class: 'radio-app__login-popup__otp',
-                    onInput: (e: Event) => { code.value = (e.target as HTMLInputElement).value.replace(/\D/g, '').slice(0, 6) },
-                    onKeydown: (e: KeyboardEvent) => { if (e.key === 'Enter') verifyCode() },
-                  }),
-                ]),
-                verifyError.value ? h('p', { class: 'radio-app__login-popup__error' }, verifyError.value) : null,
-                h('button', {
-                  class: 'radio-app__login-popup__submit',
-                  disabled: code.value.replace(/\s/g, '').length !== 6 || loading.value,
-                  onClick: verifyCode,
-                }, loading.value ? 'Checking…' : 'Verify code'),
-                h('button', {
-                  class: 'radio-app__login-popup__back',
-                  onClick: () => { sent.value = false; code.value = ''; verifyError.value = '' },
-                }, 'Use a different email'),
-              ]
-            : [
-                h('label', { class: 'radio-app__login-popup__label' }, [
-                  'Email',
-                  h('input', {
-                    type: 'email',
-                    value: email.value,
-                    onInput: (e: Event) => { email.value = (e.target as HTMLInputElement).value },
-                    placeholder: 'you@example.com',
-                    onKeydown: (e: KeyboardEvent) => { if (e.key === 'Enter') sendCode() },
-                  }),
-                ]),
-                verifyError.value ? h('p', { class: 'radio-app__login-popup__error' }, verifyError.value) : null,
-                h('button', {
-                  class: 'radio-app__login-popup__submit',
-                  disabled: !email.value.trim() || loading.value,
-                  onClick: sendCode,
-                }, loading.value ? 'Sending…' : 'Send sign-in code'),
-              ],
-        ])
-      },
-    }),
-    title: '',
-    config: { position: 'center', canClose: true, background: true, width: '22rem' },
-    onClose: () => {},
-  })
-}
-
-// ---- Avatar click (login / account) ----------------------------------------
-function handleAvatarClick() {
-  if (!sessionToken.value) {
-    openLoginPopup()
-  } else {
-    openAccountPopup()
-  }
-}
-
-function openAccountPopup() {
-  popup.showPopup({
-    component: markRaw(TikoProfileMenu),
-    title: '',
-    props: {
-      parentMode: parentMode.value,
-      hasCode: pinConfigured.value,
-      isLoggedIn: Boolean(sessionToken.value),
-      isRecoverable: isRecoverable.value,
-      userLabel: isRecoverable.value ? userId.value || 'Verified user' : 'Device user',
-    },
-    config: { position: 'center', canClose: true, background: true, width: 'min(34rem, calc(100vw - 2rem))' },
-    on: {
-      profile: () => { popup.closeAllPopups(); window.setTimeout(openLoginPopup, 180) },
-      login: () => { popup.closeAllPopups(); window.setTimeout(openLoginPopup, 180) },
-      logout: () => doLogout(),
-      'delete-account': () => void deleteCurrentUser(),
-      'enter-parent-mode': () => openPinPopup(),
-      'enter-child-mode': () => openChildModeFlow(),
-      'child-accounts': () => { popup.closeAllPopups(); window.setTimeout(openChildAccounts, 180) },
-      close: () => popup.closeAllPopups(),
-    },
-  })
-}
-
-async function deleteCurrentUser() {
-  if (!sessionToken.value || !isRecoverable.value) return
-  if (!window.confirm('Delete this Tiko user? This removes the account and sessions.')) return
-  try { await identityClient.createDeletionRequest(sessionToken.value, { scope: 'account' }) } catch { /* local cleanup still makes the device usable */ }
-  sessionToken.value = ''
-  userId.value = ''
-  isRecoverable.value = false
-  parentMode.value = true
-  childModeEnabled.value = false
-  pinConfigured.value = false
-  localStorage.removeItem(identityStorageKey)
-  popup.closeAllPopups()
-  await bootstrapIdentity().catch(() => undefined)
-}
-
-async function doLogout() {
-  if (sessionToken.value) {
-    try { await identityClient.logout(sessionToken.value) } catch { /* ignore */ }
-  }
-  sessionToken.value = ''
-  userId.value = ''
-  isRecoverable.value = false
-  parentMode.value = true
-  childModeEnabled.value = false
-  pinConfigured.value = false
-  localStorage.removeItem(identityStorageKey)
-  popup.closeAllPopups()
-}
-
 // ---- Event handlers --------------------------------------------------------
 function headerAction(id: string) {
   if (id === 'settings') {
@@ -919,7 +601,7 @@ function headerAction(id: string) {
     openVolumePopup()
   }
   if (id === 'toggle-mode') {
-    openPinPopup()
+    runtime.openParentCodePopup()
   }
   if (id === 'add-video') {
     if (!parentMode.value) return // Can't add in child mode
@@ -1026,7 +708,7 @@ function handleCreateCategory() {
     avatar="ui/circle-user"
     :actions="headerActions"
     @header-action="headerAction"
-    @avatar-click="handleAvatarClick"
+    @avatar-click="runtime.handleAvatarClick"
   >
     <section class="radio-app" :data-color-mode="colorMode">
 

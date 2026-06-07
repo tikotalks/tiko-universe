@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, onMounted } from 'vue'
 import { useBemm } from 'bemm'
+import { Popup } from '@sil/ui'
 import { TikoAppShell, TikoSettingsPanel } from '@tiko/ui'
 import TalkSentenceBar from './components/TalkSentenceBar.vue'
 import TalkWordCloud from './components/TalkWordCloud.vue'
@@ -11,9 +12,9 @@ const bemm = useBemm('talk-screen', { return: 'string', includeBaseClass: true }
 
 const talk = useTalkApp()
 
-const headerActions = computed(() => [
+const headerActions = computed(() => talk.parentMode.value ? [
   { id: 'settings', label: 'Settings', icon: 'ui/settings-dual', active: talk.settingsOpen.value }
-])
+] : [])
 
 function openAccount() {
   talk.settingsOpen.value = true
@@ -31,12 +32,13 @@ onMounted(() => {
     :app-name="appConfig.title"
     :app-icon="appConfig.appIcon"
     :app-color="appConfig.appColor"
-    avatar="ui/circle-user"
+    avatar="ui/avatar"
     :actions="headerActions"
     @header-action="(id) => { if (id === 'settings') talk.settingsOpen.value = !talk.settingsOpen.value }"
-    @avatar-click="openAccount"
+    @avatar-click="talk.runtime.handleAvatarClick"
   >
     <div :class="bemm('')" :data-color-mode="talk.colorMode.value">
+      <Popup />
       <section v-if="talk.settingsOpen.value" :class="bemm('settings')" aria-label="Talk settings">
         <TikoSettingsPanel
           :language="talk.language.value"

@@ -1,13 +1,15 @@
 <script setup lang="ts">
 import { computed, onMounted, ref, watch } from 'vue'
-import { Button } from '@sil/ui'
+import { Button, Popup } from '@sil/ui'
 import { IdentityClient, type IdentityBundle } from '@tiko/identity'
 import { TikoDataClient, type TimerSettings, type TimerState } from '@tiko/data'
 import { createI18n, defaultLanguage, tikoI18nKeys, tikoLanguages, type TikoLanguage } from '@tiko/i18n'
 import {
   TikoAppShell,
   TikoSettingsPanel,
-  TikoColorMode
+  TikoColorMode,
+  useIdentityRuntime,
+  type IdentityRuntimeState
 } from '@tiko/ui'
 import { useTimer, type TimerMode } from './composables/useTimer'
 import { appConfig } from './appConfig'
@@ -30,13 +32,7 @@ interface PersistedState {
   startedAt?: number | null
 }
 
-interface StoredIdentity {
-  userId?: string
-  deviceId?: string
-  deviceSecret?: string
-  sessionToken?: string
-  expiresAt?: string
-}
+
 
 function resolveApiBaseUrl() {
   const env = (import.meta as ImportMeta & { env?: Record<string, string | undefined> }).env
@@ -80,9 +76,22 @@ const settingsOpen = ref(false)
 const settingsVersion = ref<number | undefined>()
 const stateVersion = ref<number | undefined>()
 const sessionToken = ref<string>('')
+const userId = ref('')
+const accountEmail = ref('')
+const accountEmailVerified = ref(false)
+const displayName = ref('')
+const parentMode = ref(true)
+const childModeEnabled = ref(false)
+const pinConfigured = ref(false)
 const bootstrapped = ref(false)
 const identityClient = new IdentityClient({ baseUrl: identityBaseUrl, credentials: 'include' })
 const dataClient = new TikoDataClient({ baseUrl: apiBaseUrl })
+
+const runtimeState: IdentityRuntimeState = {
+  sessionToken, userId, accountEmail, accountEmailVerified, displayName,
+  parentMode, childModeEnabled, pinConfigured,
+}
+const runtime = useIdentityRuntime({ identityClient, state: runtimeState, deviceName: 'Timer web' })
 
 const timer = useTimer()
 
@@ -132,9 +141,9 @@ const presetLabels = computed(() => [
   labels.value.tenMin
 ])
 
-const headerActions = computed(() => [
+const headerActions = computed(() => parentMode.value ? [
   { id: 'settings', label: 'Settings', icon: 'ui/settings-dual', active: settingsOpen.value }
-])
+] : [])
 
 const isIdle = computed(() => timer.mode.value === 'idle')
 const isRunning = computed(() => timer.mode.value === 'running')
@@ -164,47 +173,11 @@ function saveLocalFallback() {
 }
 
 function saveIdentity(bundle: IdentityBundle) {
-  if (!bundle.session?.token) throw new Error('Identity response did not include a session token.')
-  sessionToken.value = bundle.session.token
-  writeJson(identityStorageKey, {
-    userId: bundle.subject.id,
-    deviceId: bundle.device?.id,
-    deviceSecret: bundle.device?.secret,
-    sessionToken: bundle.session.token,
-    expiresAt: bundle.session.expiresAt
-  } satisfies StoredIdentity)
+  runtime.saveIdentity(bundle)
 }
 
 async function bootstrapIdentity() {
-  const storedIdentity = readJson<StoredIdentity>(identityStorageKey, {})
-
-  try {
-    const bundle = await identityClient.getCookieSession()
-    saveIdentity(bundle)
-    return
-  } catch {
-    // Fall through to local bearer/device fallback when the shared app-family cookie is missing or expired.
-  }
-
-  if (storedIdentity.sessionToken) {
-    try {
-      const bundle = await identityClient.getSession(storedIdentity.sessionToken)
-      saveIdentity(bundle)
-      return
-    } catch {
-      // Fall through to device bootstrap with the known device id/secret.
-    }
-  }
-
-  const bundle = await identityClient.bootstrapDevice({
-    device: {
-      id: storedIdentity.deviceId,
-      secret: storedIdentity.deviceSecret,
-      name: 'Timer web',
-      platform: 'web'
-    }
-  })
-  saveIdentity(bundle)
+  return runtime.bootstrapIdentity()
 }
 
 function applySettings(settings: TimerSettings, version?: number) {
@@ -294,7 +267,8 @@ watch(timer.mode, () => {
 
 onMounted(async () => {
   try {
-    await bootstrapIdentity()
+    await runtime.bootstrapIdentity()
+    await runtime.loadProfile()
     await hydrateRemoteData()
   } catch {
     // Keep the child-facing local flow available when API bootstrap is offline.
@@ -345,10 +319,13 @@ function headerAction(id: string) {
     :app-icon="appConfig.appIcon"
     :app-icon-media-category="appConfig.appIconMediaCategory"
     :app-color="appConfig.appColor"
+    avatar="ui/avatar"
     :actions="headerActions"
     @header-action="headerAction"
+    @avatar-click="runtime.handleAvatarClick"
   >
     <section class="timer-app" :data-color-mode="colorMode">
+      <Popup />
       <!-- Countdown ring -->
       <div class="timer-app__ring-wrap">
         <svg class="timer-app__ring-svg" viewBox="0 0 180 180">
