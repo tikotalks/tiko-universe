@@ -23,6 +23,7 @@ const emit = defineEmits<{
   (e: 'delete-account'): void
   (e: 'enter-parent-mode'): void
   (e: 'enter-child-mode'): void
+  (e: 'child-accounts'): void
   (e: 'close'): void
 }>()
 </script>
@@ -64,6 +65,15 @@ const emit = defineEmits<{
         <span class="tiko-profile-menu__copy">
           <strong>Child mode</strong>
           <small>{{ props.hasCode ? 'Hide parent controls' : 'Create a 4-digit code' }}</small>
+        </span>
+        <span class="tiko-profile-menu__chevron" aria-hidden="true">›</span>
+      </button>
+
+      <button v-if="props.isRecoverable" class="tiko-profile-menu__item" type="button" @click="emit('child-accounts')">
+        <span class="tiko-profile-menu__icon"><Icon name="ui/users" /></span>
+        <span class="tiko-profile-menu__copy">
+          <strong>Child Accounts</strong>
+          <small>Manage child profiles and login codes</small>
         </span>
         <span class="tiko-profile-menu__chevron" aria-hidden="true">›</span>
       </button>

@@ -1,5 +1,6 @@
 import { defineComponent, h, onMounted, ref, watch } from 'vue'
 export { default as TikoLogo } from './TikoLogo.vue'
+export { default as TikoChildAccountsPanel } from './TikoChildAccountsPanel.vue'
 export { default as TikoProfileMenu } from './TikoProfileMenu.vue'
 export { default as TikoPinPopup } from './TikoPinPopup.vue'
 export { useParentMode, type ParentModeDeps } from './parent-mode'
