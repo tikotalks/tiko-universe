@@ -1,9 +1,9 @@
 import { computed, h, inject, markRaw, ref } from 'vue'
 import { Icon, type PopupService } from '@sil/ui'
 import type { IdentityClient, IdentityBundle } from '@tiko/identity'
-import { TikoProfileMenu } from './TikoProfileMenu.vue'
-import { TikoPinPopup } from './TikoPinPopup.vue'
-import { TikoChildAccountsPanel } from './TikoChildAccountsPanel.vue'
+import TikoProfileMenu from './TikoProfileMenu.vue'
+import TikoPinPopup from './TikoPinPopup.vue'
+import TikoChildAccountsPanel from './TikoChildAccountsPanel.vue'
 
 // ---------------------------------------------------------------------------
 // Types
