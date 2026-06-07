@@ -1615,7 +1615,7 @@ async function deleteCurrentUser() {
   if (!sessionToken.value || userKind.value !== 'account') return
   if (!window.confirm('Delete this Tiko user? This removes the account and sessions.')) return
   try {
-    await identityClient.deleteSelf(sessionToken.value)
+    await identityClient.createDeletionRequest(sessionToken.value, { scope: 'account' })
   } catch { /* local cleanup still makes the device usable */ }
   window.localStorage.removeItem('tiko-cards-identity')
   window.location.reload()

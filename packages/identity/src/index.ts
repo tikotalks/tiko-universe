@@ -150,6 +150,48 @@ export interface ChildAccountLoginRequest {
   code: string
 }
 
+export type DataCategory = 'identity' | 'preferences' | 'app_state' | 'user_content' | 'progress' | 'insights'
+
+export interface ResetRequest {
+  id: string
+  status: 'requested' | 'processing' | 'completed' | 'failed'
+  categoriesAffected: DataCategory[]
+  createdAt: string
+  completedAt?: string
+}
+
+export interface ResetAccountDataRequest {
+  pinGrantToken?: string
+  confirmation: 'reset_my_data'
+}
+
+export interface ResetProgressRequest {
+  confirmation: 'reset_progress'
+}
+
+export interface ResetAppRequest {
+  confirmation: 'reset_app'
+}
+
+export type DeletionScope = 'local-device' | 'account' | 'child_account'
+
+export interface CreateDeletionRequest {
+  scope: DeletionScope
+  childAccountId?: string
+  pinGrantToken?: string
+  recoveryGrantToken?: string
+}
+
+export interface DeletionRequest {
+  id: string
+  scope: DeletionScope
+  status: 'requested' | 'awaiting-verification' | 'processing' | 'completed' | 'failed' | 'cancelled'
+  createdAt: string
+  updatedAt: string
+  completedAt?: string
+  canCancel: boolean
+}
+
 export interface IdentityClientOptions {
   baseUrl: string
   fetch?: typeof fetch
@@ -253,13 +295,6 @@ export class IdentityClient {
     })
   }
 
-  async deleteSelf(sessionToken: string): Promise<void> {
-    await this.request<void>('/identity/me', {
-      method: 'DELETE',
-      headers: bearerHeaders(sessionToken)
-    })
-  }
-
   setPin(sessionToken: string, input: PinRequest): Promise<IdentityBundle> {
     return this.request<IdentityBundle>('/identity/pin', {
       method: 'POST',
@@ -348,6 +383,46 @@ export class IdentityClient {
     return this.request<IdentityBundle>('/identity/child-accounts/login', {
       method: 'POST',
       body: JSON.stringify(input)
+    })
+  }
+
+  // ─── Reset & Deletion ───────────────────────────────────────────────
+
+  resetAccountData(sessionToken: string, input: ResetAccountDataRequest): Promise<ResetRequest> {
+    return this.request<ResetRequest>('/identity/reset', {
+      method: 'POST',
+      headers: bearerHeaders(sessionToken),
+      body: JSON.stringify(input)
+    })
+  }
+
+  resetChildAccountProgress(sessionToken: string, childAccountId: string, input: ResetProgressRequest): Promise<ResetRequest> {
+    return this.request<ResetRequest>(`/identity/child-accounts/${encodeURIComponent(childAccountId)}/progress/reset`, {
+      method: 'POST',
+      headers: bearerHeaders(sessionToken),
+      body: JSON.stringify(input)
+    })
+  }
+
+  createDeletionRequest(sessionToken: string, input: CreateDeletionRequest): Promise<DeletionRequest> {
+    return this.request<DeletionRequest>('/identity/deletion-requests', {
+      method: 'POST',
+      headers: bearerHeaders(sessionToken),
+      body: JSON.stringify(input)
+    })
+  }
+
+  getDeletionRequest(sessionToken: string, requestId: string): Promise<DeletionRequest> {
+    return this.request<DeletionRequest>(`/identity/deletion-requests/${encodeURIComponent(requestId)}`, {
+      headers: bearerHeaders(sessionToken)
+    })
+  }
+
+  /** @deprecated Use createDeletionRequest({ scope: 'account' }) instead */
+  async deleteSelf(sessionToken: string): Promise<void> {
+    await this.request<void>('/identity/me', {
+      method: 'DELETE',
+      headers: bearerHeaders(sessionToken)
     })
   }
 

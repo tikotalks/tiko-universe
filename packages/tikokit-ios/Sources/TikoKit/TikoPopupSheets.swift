@@ -878,7 +878,7 @@ public struct TikoAccountSheet: View {
         isLoading = true
         identityError = nil
         do {
-            try await identityClient.deleteSelf(accessToken: accessToken)
+            _ = try await identityClient.createDeletionRequest(accessToken: accessToken, scope: .account)
             try? sessionStore.clearAll()
             isSignedIn = false
             signedInEmail = nil
