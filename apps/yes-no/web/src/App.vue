@@ -10,6 +10,7 @@ import {
   TikoSettingsPanel,
   TikoProfileMenu,
   TikoPinPopup,
+  TikoChildAccountsPanel,
   createTikoChoice,
   createTikoTtsClient,
   type TikoColorMode
@@ -376,6 +377,7 @@ function openProfileMenu() {
       'delete-account': () => void deleteCurrentUser(),
       'enter-parent-mode': () => openParentCodePopup(),
       'enter-child-mode': () => openChildModeFlow(),
+      'child-accounts': () => { popup.closeAllPopups(); window.setTimeout(openChildAccounts, 180) },
       close: () => popup.closeAllPopups(),
     },
   })
@@ -585,6 +587,38 @@ function openChildModeFlow() {
       }
     })()
   }
+}
+
+function openChildAccounts() {
+  popup.showPopup({
+    component: markRaw(TikoChildAccountsPanel),
+    title: '',
+    props: {
+      onLoad: async () => {
+        const { childAccounts } = await identityClient.listChildAccounts(sessionToken.value!)
+        return childAccounts.map(c => ({ id: c.id, name: c.name, code: '****' }))
+      },
+      onCreate: async (name: string, code: string) => {
+        const { child } = await identityClient.createChildAccount(sessionToken.value!, { name, code })
+        return { id: child.id, name: child.name, code: '****' }
+      },
+      onUpdate: async (id: string, name: string) => {
+        const { child } = await identityClient.updateChildAccount(sessionToken.value!, id, { name })
+        return { id: child.id, name: child.name, code: '****' }
+      },
+      onResetCode: async (id: string, code: string) => {
+        const { child } = await identityClient.resetChildAccountCode(sessionToken.value!, id, code)
+        return { id: child.id, name: child.name, code: '****' }
+      },
+      onDelete: async (id: string) => {
+        await identityClient.deleteChildAccount(sessionToken.value!, id)
+      },
+    },
+    config: { position: 'center', canClose: true, background: true, width: 'min(34rem, calc(100vw - 2rem))' },
+    on: {
+      close: () => popup.closeAllPopups(),
+    },
+  })
 }
 
 function resetSentence() {
