@@ -192,9 +192,8 @@ public struct TikoAppShell<Content: View, SettingsContent: View>: View {
     @AppStorage("tiko.userName") private var userName = ""
     @AppStorage("tiko.userEmail") private var userEmail = ""
     @AppStorage("tiko.avatarURL") private var storedAvatarURLString = ""
-    @AppStorage("tiko.parentMode") private var parentMode = true
-    @AppStorage("tiko.parentCodeHash") private var parentCodeHash = ""
     @AppStorage("tiko.favoriteColor") private var favoriteColorHex = ""
+    @State private var identityBundle: TikoIdentityBundle?
     @State private var showingAccount = false
     @State private var showingSettings = false
     @State private var showingProfileMenu = false
@@ -203,6 +202,9 @@ public struct TikoAppShell<Content: View, SettingsContent: View>: View {
     @State private var fetchedIconURL: URL? = nil
     @State private var fetchedAvatarURL: URL? = nil
     @State private var splashVisible = true
+
+    /// Derived from API-backed runtime — parent mode means NOT in child mode.
+    private var parentMode: Bool { !(identityBundle?.isChildMode ?? false) }
 
 
     public init(
@@ -323,12 +325,20 @@ public struct TikoAppShell<Content: View, SettingsContent: View>: View {
         .tikoPopup(isPresented: $showingParentCodeEntry) {
             TikoParentCodeEntrySheet(
                 appColor: appColor,
+                onParentMode: { bundle in
+                    identityBundle = bundle
+                    showingParentCodeEntry = false
+                },
                 onClose: { showingParentCodeEntry = false }
             )
         }
         .tikoPopup(isPresented: $showingCreateParentCode) {
             TikoCreateParentCodeSheet(
                 appColor: appColor,
+                onChildMode: { bundle in
+                    identityBundle = bundle
+                    showingCreateParentCode = false
+                },
                 onClose: { showingCreateParentCode = false }
             )
         }
@@ -346,7 +356,8 @@ public struct TikoAppShell<Content: View, SettingsContent: View>: View {
         .task {
             await fetchIconIfNeeded()
             await fetchAvatarIfNeeded()
-            await loadParentCodeHashFromProfile()
+            // Load identity bundle from session store for runtime-aware mode
+            identityBundle = try? TikoDeviceSessionStore().load()
             try? await Task.sleep(nanoseconds: 500_000_000)
             withAnimation(.easeOut(duration: 0.4)) { splashVisible = false }
         }
@@ -384,20 +395,20 @@ public struct TikoAppShell<Content: View, SettingsContent: View>: View {
         showingProfileMenu = false
         Task { @MainActor in
             try? await Task.sleep(nanoseconds: 250_000_000)
-            if parentCodeHash.isEmpty {
-                showingCreateParentCode = true
+            if identityBundle?.isPinConfigured == true {
+                // PIN already set — enter child mode via API
+                guard let token = identityBundle?.accessToken else { return }
+                do {
+                    let bundle = try await TikoIdentityClient().enterChildMode(accessToken: token)
+                    try TikoDeviceSessionStore().save(bundle)
+                    identityBundle = bundle
+                } catch {
+                    // Silent fail — stay in parent mode
+                }
             } else {
-                parentMode = false
+                // No PIN yet — show create flow
+                showingCreateParentCode = true
             }
-        }
-    }
-
-    private func loadParentCodeHashFromProfile() async {
-        guard parentCodeHash.isEmpty else { return }
-        guard let token = (try? TikoDeviceSessionStore().load())?.accessToken else { return }
-        if let profile = try? await TikoIdentityClient().getProfile(accessToken: token),
-           let hash = profile.parentCodeHash, !hash.isEmpty {
-            parentCodeHash = hash
         }
     }
 

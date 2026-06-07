@@ -1,6 +1,5 @@
 import SwiftUI
 import PopupView
-import CryptoKit
 
 public struct TikoPopupCard<Content: View>: View {
     private let title: String
@@ -974,15 +973,19 @@ public struct TikoProfileMenuSheet: View {
 
 public struct TikoParentCodeEntrySheet: View {
     private let appColor: TikoAppColor
+    private let onParentMode: (TikoIdentityBundle) -> Void
     private let onClose: () -> Void
 
-    @AppStorage("tiko.parentMode") private var parentMode = true
-    @AppStorage("tiko.parentCodeHash") private var storedCodeHash = ""
     @State private var enteredCode = ""
+    @State private var isLoading = false
     @State private var error: String? = nil
 
-    public init(appColor: TikoAppColor, onClose: @escaping () -> Void) {
+    private let identityClient = TikoIdentityClient()
+    private let sessionStore = TikoDeviceSessionStore()
+
+    public init(appColor: TikoAppColor, onParentMode: @escaping (TikoIdentityBundle) -> Void, onClose: @escaping () -> Void) {
         self.appColor = appColor
+        self.onParentMode = onParentMode
         self.onClose = onClose
     }
 
@@ -1015,45 +1018,62 @@ public struct TikoParentCodeEntrySheet: View {
                 }
 
                 Button {
-                    verifyCode()
+                    Task { await verifyCode() }
                 } label: {
-                    Text("Enable parent mode")
-                        .font(.system(size: 17, weight: .heavy, design: .rounded))
-                        .foregroundStyle(.white)
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 15)
-                        .background(appColor.palette.primary)
-                        .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
+                    Group {
+                        if isLoading { ProgressView().tint(.white) }
+                        else { Text("Enable parent mode") }
+                    }
+                    .font(.system(size: 17, weight: .heavy, design: .rounded))
+                    .foregroundStyle(.white)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 15)
+                    .background(appColor.palette.primary)
+                    .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
                 }
                 .buttonStyle(.plain)
-                .disabled(enteredCode.count != 4)
+                .disabled(enteredCode.count != 4 || isLoading)
             }
         }
     }
 
-    private func verifyCode() {
-        if tikoHashPin(enteredCode) == storedCodeHash {
-            parentMode = true
-            onClose()
-        } else {
+    private func verifyCode() async {
+        guard enteredCode.count == 4 else { return }
+        isLoading = true
+        error = nil
+        do {
+            guard let token = try sessionStore.load()?.accessToken else {
+                error = "No active session."
+                isLoading = false
+                return
+            }
+            let bundle = try await identityClient.enterParentMode(accessToken: token, pin: enteredCode)
+            try sessionStore.save(bundle)
+            onParentMode(bundle)
+        } catch {
             error = "Incorrect PIN. Please try again."
             enteredCode = ""
         }
+        isLoading = false
     }
 }
 
 public struct TikoCreateParentCodeSheet: View {
     private let appColor: TikoAppColor
+    private let onChildMode: (TikoIdentityBundle) -> Void
     private let onClose: () -> Void
 
-    @AppStorage("tiko.parentMode") private var parentMode = true
-    @AppStorage("tiko.parentCodeHash") private var storedCodeHash = ""
     @State private var code = ""
     @State private var confirmCode = ""
+    @State private var isLoading = false
     @State private var error: String? = nil
 
-    public init(appColor: TikoAppColor, onClose: @escaping () -> Void) {
+    private let identityClient = TikoIdentityClient()
+    private let sessionStore = TikoDeviceSessionStore()
+
+    public init(appColor: TikoAppColor, onChildMode: @escaping (TikoIdentityBundle) -> Void, onClose: @escaping () -> Void) {
         self.appColor = appColor
+        self.onChildMode = onChildMode
         self.onClose = onClose
     }
 
@@ -1108,47 +1128,56 @@ public struct TikoCreateParentCodeSheet: View {
                 }
 
                 Button {
-                    saveCode()
+                    Task { await saveCode() }
                 } label: {
-                    Text("Save and enter child mode")
-                        .font(.system(size: 17, weight: .heavy, design: .rounded))
-                        .foregroundStyle(.white)
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 15)
-                        .background(appColor.palette.primary)
-                        .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
+                    Group {
+                        if isLoading { ProgressView().tint(.white) }
+                        else { Text("Save and enter child mode") }
+                    }
+                    .font(.system(size: 17, weight: .heavy, design: .rounded))
+                    .foregroundStyle(.white)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 15)
+                    .background(appColor.palette.primary)
+                    .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
                 }
                 .buttonStyle(.plain)
-                .disabled(code.count != 4 || confirmCode.count != 4)
+                .disabled(code.count != 4 || confirmCode.count != 4 || isLoading)
             }
         }
     }
 
-    private func saveCode() {
+    private func saveCode() async {
         guard code.count == 4, confirmCode.count == 4 else { return }
         guard code == confirmCode else {
             error = "PINs don't match. Please try again."
             return
         }
-        let hash = tikoHashPin(code)
-        storedCodeHash = hash
-        parentMode = false
-        onClose()
-        Task {
-            guard let token = (try? TikoDeviceSessionStore().load())?.accessToken else { return }
-            try? await TikoIdentityClient().updateProfile(
-                accessToken: token,
-                patch: TikoIdentityProfile(parentCodeHash: hash)
-            )
+        isLoading = true
+        error = nil
+        do {
+            guard let token = try sessionStore.load()?.accessToken else {
+                error = "No active session."
+                isLoading = false
+                return
+            }
+            // Set PIN on the server
+            var bundle = try await identityClient.setPin(accessToken: token, pin: code)
+            try sessionStore.save(bundle)
+            // Enable child mode (one-time opt-in)
+            if !(bundle.isChildModeEnabled) {
+                bundle = try await identityClient.enableChildMode(accessToken: token)
+                try sessionStore.save(bundle)
+            }
+            // Enter child mode
+            bundle = try await identityClient.enterChildMode(accessToken: token)
+            try sessionStore.save(bundle)
+            onChildMode(bundle)
+        } catch {
+            self.error = "Could not save PIN. Please try again."
         }
+        isLoading = false
     }
-}
-
-/// Matches the web: SHA-256("tiko:parent-code:{pin}") as lowercase hex.
-private func tikoHashPin(_ pin: String) -> String {
-    let data = Data("tiko:parent-code:\(pin)".utf8)
-    let hash = SHA256.hash(data: data)
-    return hash.compactMap { String(format: "%02x", $0) }.joined()
 }
 
 extension View {
