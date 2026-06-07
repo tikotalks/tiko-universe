@@ -60,20 +60,92 @@ public struct TikoIdentitySession: Identifiable, Codable, Equatable, Sendable {
     }
 }
 
+// MARK: - Runtime & capability types
+
+public enum TikoRuntimeMode: String, Codable, Sendable {
+    case parent
+    case child
+}
+
+public struct TikoRuntimeSummary: Codable, Equatable, Sendable {
+    public let mode: TikoRuntimeMode
+    public let childModeEnabled: Bool
+    public let pinConfigured: Bool
+
+    public init(mode: TikoRuntimeMode = .parent, childModeEnabled: Bool = false, pinConfigured: Bool = false) {
+        self.mode = mode
+        self.childModeEnabled = childModeEnabled
+        self.pinConfigured = pinConfigured
+    }
+}
+
+public struct TikoUserCapabilities: Codable, Equatable, Sendable {
+    public let canVerifyEmail: Bool
+    public let canUseParentMode: Bool
+    public let canUseChildMode: Bool
+    public let canManageChildAccounts: Bool
+    public let canDeleteAccount: Bool
+
+    public init(
+        canVerifyEmail: Bool = false,
+        canUseParentMode: Bool = false,
+        canUseChildMode: Bool = false,
+        canManageChildAccounts: Bool = false,
+        canDeleteAccount: Bool = true
+    ) {
+        self.canVerifyEmail = canVerifyEmail
+        self.canUseParentMode = canUseParentMode
+        self.canUseChildMode = canUseChildMode
+        self.canManageChildAccounts = canManageChildAccounts
+        self.canDeleteAccount = canDeleteAccount
+    }
+}
+
+public struct TikoChildAccountSummary: Identifiable, Codable, Equatable, Sendable {
+    public let id: String
+    public let subjectId: String
+    public let managerSubjectId: String
+    public let handle: String
+    public let name: String
+    public let displayName: String
+}
+
+public struct TikoPinGrant: Codable, Equatable, Sendable {
+    public let token: String
+    public let purpose: String
+    public let expiresAt: String
+}
+
+// MARK: - Identity bundle
+
 public struct TikoIdentityBundle: Codable, Equatable, Sendable {
     public let subject: TikoIdentitySubject
     public let device: TikoIdentityDevice?
     public let account: TikoIdentityAccount?
     public let session: TikoIdentitySession?
+    public let runtime: TikoRuntimeSummary?
+    public let capabilities: TikoUserCapabilities?
 
     public var accessToken: String? { session?.token }
     public var isRecoverable: Bool { account?.emailVerified == true }
+    public var isChildMode: Bool { runtime?.mode == .child }
+    public var isPinConfigured: Bool { runtime?.pinConfigured ?? false }
+    public var isChildModeEnabled: Bool { runtime?.childModeEnabled ?? false }
 
-    public init(subject: TikoIdentitySubject, device: TikoIdentityDevice? = nil, account: TikoIdentityAccount? = nil, session: TikoIdentitySession? = nil) {
+    public init(
+        subject: TikoIdentitySubject,
+        device: TikoIdentityDevice? = nil,
+        account: TikoIdentityAccount? = nil,
+        session: TikoIdentitySession? = nil,
+        runtime: TikoRuntimeSummary? = nil,
+        capabilities: TikoUserCapabilities? = nil
+    ) {
         self.subject = subject
         self.device = device
         self.account = account
         self.session = session
+        self.runtime = runtime
+        self.capabilities = capabilities
     }
 }
 
@@ -104,11 +176,9 @@ public enum TikoIdentityClientError: Error, Equatable, Sendable {
 // MARK: - Profile
 
 public struct TikoIdentityProfile: Codable, Sendable {
-    public var parentCodeHash: String?
     public var displayName: String?
 
-    public init(parentCodeHash: String? = nil, displayName: String? = nil) {
-        self.parentCodeHash = parentCodeHash
+    public init(displayName: String? = nil) {
         self.displayName = displayName
     }
 }
@@ -188,6 +258,80 @@ public actor TikoIdentityClient {
         try await verifyEmail(token: token)
     }
 
+    // MARK: - PIN management
+
+    public func setPin(accessToken: String, pin: String, currentPin: String? = nil) async throws -> TikoIdentityBundle {
+        try await send(path: "/identity/pin", method: "POST", body: PinRequest(pin: pin, currentPin: currentPin), accessToken: accessToken)
+    }
+
+    public func verifyPin(accessToken: String, pin: String, purpose: String = "parent_mode") async throws -> TikoPinVerifyResponse {
+        try await send(path: "/identity/pin/verify", method: "POST", body: PinVerifyRequest(pin: pin, purpose: purpose), accessToken: accessToken)
+    }
+
+    public func removePin(accessToken: String, pin: String) async throws -> TikoIdentityBundle {
+        try await send(path: "/identity/pin", method: "DELETE", body: PinRemoveRequest(pin: pin), accessToken: accessToken)
+    }
+
+    // MARK: - Runtime mode transitions
+
+    public func enableChildMode(accessToken: String) async throws -> TikoIdentityBundle {
+        try await send(path: "/identity/mode/child/enable", method: "POST", body: EmptyBody?.none, accessToken: accessToken)
+    }
+
+    public func enterChildMode(accessToken: String) async throws -> TikoIdentityBundle {
+        try await send(path: "/identity/mode/child", method: "POST", body: EmptyBody?.none, accessToken: accessToken)
+    }
+
+    public func enterParentMode(accessToken: String, pin: String? = nil) async throws -> TikoIdentityBundle {
+        let body: PinModeRequest? = pin.map { PinModeRequest(pin: $0) }
+        return try await send(path: "/identity/mode/parent", method: "POST", body: body, accessToken: accessToken)
+    }
+
+    // MARK: - Child accounts
+
+    public func listChildAccounts(accessToken: String) async throws -> [TikoChildAccountSummary] {
+        let response: ChildAccountListResponse = try await send(path: "/identity/child-accounts", method: "GET", body: EmptyBody?.none, accessToken: accessToken)
+        return response.childAccounts
+    }
+
+    public func createChildAccount(accessToken: String, name: String, code: String, language: String? = nil) async throws -> TikoChildAccountSummary {
+        let response: ChildAccountItemResponse = try await send(
+            path: "/identity/child-accounts", method: "POST",
+            body: ChildAccountCreateRequest(name: name, code: code, language: language),
+            accessToken: accessToken
+        )
+        return response.child
+    }
+
+    public func updateChildAccount(accessToken: String, childAccountId: String, name: String, language: String? = nil) async throws -> TikoChildAccountSummary {
+        let response: ChildAccountItemResponse = try await send(
+            path: "/identity/child-accounts/\(childAccountId)", method: "PUT",
+            body: ChildAccountUpdateRequest(name: name, language: language),
+            accessToken: accessToken
+        )
+        return response.child
+    }
+
+    public func resetChildAccountCode(accessToken: String, childAccountId: String, code: String) async throws -> TikoChildAccountSummary {
+        let response: ChildAccountItemResponse = try await send(
+            path: "/identity/child-accounts/\(childAccountId)/code/reset", method: "POST",
+            body: ChildAccountCodeResetRequest(code: code),
+            accessToken: accessToken
+        )
+        return response.child
+    }
+
+    public func deleteChildAccount(accessToken: String, childAccountId: String) async throws {
+        let _: EmptyResponse = try await send(
+            path: "/identity/child-accounts/\(childAccountId)", method: "DELETE",
+            body: EmptyBody?.none, accessToken: accessToken
+        )
+    }
+
+    public func loginChildAccount(name: String, code: String) async throws -> TikoIdentityBundle {
+        try await send(path: "/identity/child-accounts/login", method: "POST", body: ChildAccountLoginRequest(name: name, code: code), accessToken: nil)
+    }
+
     private func send<Response: Decodable, Body: Encodable>(path: String, method: String, body: Body, accessToken: String?) async throws -> Response {
         let url = baseURL.appendingPathComponent(path.trimmingCharacters(in: CharacterSet(charactersIn: "/")))
         var request = URLRequest(url: url)
@@ -248,7 +392,7 @@ public final class TikoDeviceSessionStore: TikoIdentityStorage, @unchecked Senda
 
     public func clearSessionKeepingDevice() throws {
         guard let bundle = try load() else { return }
-        try save(TikoIdentityBundle(subject: bundle.subject, device: bundle.device, account: bundle.account, session: nil))
+        try save(TikoIdentityBundle(subject: bundle.subject, device: bundle.device, account: bundle.account, session: nil, runtime: bundle.runtime, capabilities: bundle.capabilities))
     }
 
     public func clearAll() throws {
@@ -294,7 +438,7 @@ public final class TikoKeychainIdentityStore: TikoIdentityStorage, @unchecked Se
 
     public func clearSessionKeepingDevice() throws {
         guard let bundle = try load() else { return }
-        try save(TikoIdentityBundle(subject: bundle.subject, device: bundle.device, account: bundle.account, session: nil))
+        try save(TikoIdentityBundle(subject: bundle.subject, device: bundle.device, account: bundle.account, session: nil, runtime: bundle.runtime, capabilities: bundle.capabilities))
     }
 
     public func clearAll() throws {
@@ -348,3 +492,58 @@ private struct VerifyRequest: Encodable {
 
 private struct EmptyBody: Codable {}
 private struct EmptyResponse: Codable {}
+
+// MARK: - PIN & mode request types
+
+private struct PinRequest: Encodable {
+    let pin: String
+    let currentPin: String?
+}
+
+private struct PinVerifyRequest: Encodable {
+    let pin: String
+    let purpose: String
+}
+
+private struct PinRemoveRequest: Encodable {
+    let pin: String
+}
+
+private struct PinModeRequest: Encodable {
+    let pin: String
+}
+
+public struct TikoPinVerifyResponse: Decodable, Equatable, Sendable {
+    public let ok: Bool
+    public let grant: TikoPinGrant
+}
+
+// MARK: - Child account request/response types
+
+private struct ChildAccountCreateRequest: Encodable {
+    let name: String
+    let code: String
+    let language: String?
+}
+
+private struct ChildAccountUpdateRequest: Encodable {
+    let name: String
+    let language: String?
+}
+
+private struct ChildAccountCodeResetRequest: Encodable {
+    let code: String
+}
+
+private struct ChildAccountLoginRequest: Encodable {
+    let name: String
+    let code: String
+}
+
+private struct ChildAccountListResponse: Decodable {
+    let childAccounts: [TikoChildAccountSummary]
+}
+
+private struct ChildAccountItemResponse: Decodable {
+    let child: TikoChildAccountSummary
+}

@@ -9,7 +9,6 @@ struct RadioView: View {
     @AppStorage("radio.currentTrackIndex") private var currentTrackIndex = 0
     @AppStorage("radio.shuffleEnabled") private var shuffleEnabled = false
     @AppStorage("radio.repeatEnabled") private var repeatEnabled = false
-    @AppStorage("radio.parentMode") private var parentMode = true
 
     @StateObject private var i18n = TikoI18n(app: .radio)
 
@@ -80,15 +79,14 @@ struct RadioView: View {
             appName: headerTitle,
             onIconTap: headerIconAction,
             backgroundColor: shellBackground,
-            actions: parentMode ? [
+            actions: [
                 TikoHeaderAction(id: "add", label: "Add", systemImage: "plus")
-            ] : [],
+            ],
             onAction: { action in
                 if action == "add" { showAddSheet = true }
             },
             settingsContent: {
                 TikoSettingsSection(title: i18n.t("radio.settings.title")) {
-                    TikoSettingsToggleRow(title: i18n.t("radio.settings.parentMode"), icon: "lock.open.fill", appColor: .radio, isOn: $parentMode)
                     TikoSettingsToggleRow(title: i18n.t("radio.settings.shuffle"), icon: "shuffle", appColor: .radio, isOn: $shuffleEnabled)
                     TikoSettingsToggleRow(title: i18n.t("radio.settings.repeat"), icon: "repeat", appColor: .radio, isOn: $repeatEnabled)
                 }
@@ -205,13 +203,11 @@ struct RadioView: View {
         }
         .buttonStyle(.plain)
         .contextMenu {
-            if parentMode {
-                Button { editTarget = .category(category.id) } label: {
-                    Label(i18n.t("radio.management.renameCollection"), systemImage: "pencil")
-                }
-                Button(role: .destructive) { library.removeCategory(id: category.id) } label: {
-                    Label(i18n.t("radio.management.deleteCollection"), systemImage: "trash")
-                }
+            Button { editTarget = .category(category.id) } label: {
+                Label(i18n.t("radio.management.renameCollection"), systemImage: "pencil")
+            }
+            Button(role: .destructive) { library.removeCategory(id: category.id) } label: {
+                Label(i18n.t("radio.management.deleteCollection"), systemImage: "trash")
             }
         }
     }
@@ -234,18 +230,16 @@ struct RadioView: View {
                 .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
         }
         .contextMenu {
-            if parentMode {
-                Button { editTarget = .track(track.id) } label: {
-                    Label(i18n.t("radio.management.renameSong"), systemImage: "pencil")
+            Button { editTarget = .track(track.id) } label: {
+                Label(i18n.t("radio.management.renameSong"), systemImage: "pencil")
+            }
+            Menu(i18n.t("radio.management.moveTo")) {
+                ForEach(library.categories) { category in
+                    Button(category.title) { library.moveTrack(track, to: category.id) }
                 }
-                Menu(i18n.t("radio.management.moveTo")) {
-                    ForEach(library.categories) { category in
-                        Button(category.title) { library.moveTrack(track, to: category.id) }
-                    }
-                }
-                Button(role: .destructive) { library.removeTrack(id: track.id) } label: {
-                    Label(i18n.t("radio.management.deleteSong"), systemImage: "trash")
-                }
+            }
+            Button(role: .destructive) { library.removeTrack(id: track.id) } label: {
+                Label(i18n.t("radio.management.deleteSong"), systemImage: "trash")
             }
         }
     }
