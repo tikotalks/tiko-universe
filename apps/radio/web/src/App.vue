@@ -145,7 +145,8 @@ const dataClient = new TikoDataClient({ baseUrl: apiBaseUrl })
 
 // ---- Kid / parent mode ----------------------------------------------------
 const parentMode = ref(true)
-const pinHash = ref<string | undefined>()
+const childModeEnabled = ref(false)
+const pinConfigured = ref(false)
 const selectedCategoryId = ref<string | null>(null)
 const newCategoryName = ref('')
 const newCategoryOpen = ref(false)
@@ -209,7 +210,7 @@ const headerActions = computed(() => {
   ]
 
   // Child/parent mode toggle – only when logged in with a PIN set
-  if (sessionToken.value && pinHash.value) {
+  if (sessionToken.value && pinConfigured.value) {
     actions.push({
       id: 'toggle-mode',
       label: parentMode.value ? 'Child mode' : 'Parent mode',
@@ -279,11 +280,18 @@ function saveLocalFallback() {
   })
 }
 
+function applyIdentityRuntime(bundle: IdentityBundle) {
+  parentMode.value = bundle.runtime?.mode !== 'child'
+  childModeEnabled.value = Boolean(bundle.runtime?.childModeEnabled)
+  pinConfigured.value = Boolean(bundle.runtime?.pinConfigured)
+}
+
 function saveIdentity(bundle: IdentityBundle) {
   if (!bundle.session?.token) throw new Error('Identity response did not include a session token.')
   sessionToken.value = bundle.session.token
   userId.value = bundle.subject.id
   isRecoverable.value = Boolean(bundle.account?.emailVerified)
+  applyIdentityRuntime(bundle)
   writeJson(identityStorageKey, {
     userId: bundle.subject.id,
     deviceId: bundle.device?.id,
@@ -331,9 +339,6 @@ function applySettings(settings: RadioSettings, version?: number) {
   if (typeof settings.volume === 'number' && settings.volume >= 0 && settings.volume <= 1) {
     volume.value = settings.volume
   }
-  if (typeof settings.pinHash === 'string' && settings.pinHash) {
-    pinHash.value = settings.pinHash
-  }
   settingsVersion.value = version
 }
 
@@ -380,7 +385,6 @@ async function persistSettingsRemote() {
         language: language.value,
         colorMode: colorMode.value,
         volume: volume.value,
-        pinHash: pinHash.value,
       },
       { version: settingsVersion.value },
     )
@@ -610,24 +614,72 @@ function openPinPopup() {
   popup.showPopup({
     component: markRaw(TikoPinPopup),
     title: '',
-    props: { existingHash: pinHash.value, hashNamespace: 'radio:pin' },
+    props: { mode: 'verify' as const, hashNamespace: 'radio:pin',
+      verifyCode: async (pin: string) => {
+        if (!sessionToken.value) return false
+        try {
+          const bundle = await identityClient.enterParentMode(sessionToken.value, pin)
+          saveIdentity(bundle)
+          return true
+        } catch {
+          return false
+        }
+      },
+    },
     config: { position: 'center', canClose: true, background: true, width: '22rem' },
     on: {
-      set: (...args: unknown[]) => {
-        const hash = args[0] as string
-        if (!pinHash.value) {
-          // First time: save PIN hash, switch to child mode
-          pinHash.value = hash
-          parentMode.value = false
-          persistSettingsRemote()
-        } else {
-          // Verification passed: toggle mode
-          parentMode.value = !parentMode.value
-        }
+      set: () => {
+        // Verification passed via verifyCode callback — parentMode already updated by applyIdentityRuntime
       },
       cancel: () => {},
     },
   })
+}
+
+function openChildModeFlow() {
+  popup.closeAllPopups()
+  if (!sessionToken.value || !isRecoverable.value) {
+    // Anonymous users need to log in before setting up child mode
+    window.setTimeout(openLoginPopup, 180)
+    return
+  }
+
+  if (!pinConfigured.value) {
+    // First time: set a PIN, enable child mode, then enter child mode
+    popup.showPopup({
+      component: markRaw(TikoPinPopup),
+      title: '',
+      props: { mode: 'set' as const, hashNamespace: 'radio:pin' },
+      config: { position: 'center', canClose: true, background: true, width: '22rem' },
+      on: {
+        set: (...args: unknown[]) => {
+          const pin = typeof args[1] === 'string' ? args[1] : ''
+          if (!pin || !sessionToken.value) return
+          void (async () => {
+            try {
+              saveIdentity(await identityClient.setPin(sessionToken.value, { pin }))
+              if (!childModeEnabled.value) saveIdentity(await identityClient.enableChildMode(sessionToken.value))
+              saveIdentity(await identityClient.enterChildMode(sessionToken.value))
+              popup.closeAllPopups()
+            } catch {
+              // Keep the popup open on API failure
+            }
+          })()
+        },
+        cancel: () => {},
+      },
+    })
+  } else {
+    // PIN already configured: enter child mode directly
+    void (async () => {
+      try {
+        if (!childModeEnabled.value) saveIdentity(await identityClient.enableChildMode(sessionToken.value))
+        saveIdentity(await identityClient.enterChildMode(sessionToken.value))
+      } catch {
+        // Silently fail — user stays in parent mode
+      }
+    })()
+  }
 }
 
 function openAddAudioPopup() {
@@ -777,7 +829,7 @@ function openAccountPopup() {
     title: '',
     props: {
       parentMode: parentMode.value,
-      hasCode: Boolean(pinHash.value),
+      hasCode: pinConfigured.value,
       isLoggedIn: Boolean(sessionToken.value),
       isRecoverable: isRecoverable.value,
       userLabel: isRecoverable.value ? userId.value || 'Verified user' : 'Device user',
@@ -789,7 +841,7 @@ function openAccountPopup() {
       logout: () => doLogout(),
       'delete-account': () => void deleteCurrentUser(),
       'enter-parent-mode': () => openPinPopup(),
-      'enter-child-mode': () => { popup.closeAllPopups(); window.setTimeout(openPinPopup, 180) },
+      'enter-child-mode': () => openChildModeFlow(),
       close: () => popup.closeAllPopups(),
     },
   })
@@ -802,8 +854,9 @@ async function deleteCurrentUser() {
   sessionToken.value = ''
   userId.value = ''
   isRecoverable.value = false
-  pinHash.value = undefined
   parentMode.value = true
+  childModeEnabled.value = false
+  pinConfigured.value = false
   localStorage.removeItem(identityStorageKey)
   popup.closeAllPopups()
   await bootstrapIdentity().catch(() => undefined)
@@ -817,6 +870,8 @@ async function doLogout() {
   userId.value = ''
   isRecoverable.value = false
   parentMode.value = true
+  childModeEnabled.value = false
+  pinConfigured.value = false
   localStorage.removeItem(identityStorageKey)
   popup.closeAllPopups()
 }
