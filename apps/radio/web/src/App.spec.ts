@@ -314,4 +314,31 @@ describe('Radio App (unified layout)', () => {
     expect(wrapper.find('.radio-app__new-cat-form').exists()).toBe(false)
     expect(wrapper.find('.radio-app__category-card--add').exists()).toBe(false)
   })
+
+  it('uses identity runtime APIs and does not store pinHash locally', async () => {
+    const fs = await import('node:fs')
+    const path = await import('node:path')
+    const candidates = [
+      path.resolve(__dirname, 'App.vue'),
+      path.resolve(__dirname, '../../src/App.vue'),
+    ]
+    const sourcePath = candidates.find(p => fs.existsSync(p))
+    expect(sourcePath).toBeTruthy()
+    const source = fs.readFileSync(sourcePath!, 'utf-8')
+
+    // Must use identity runtime SDK methods for mode transitions
+    expect(source).toContain('identityClient.enterParentMode')
+    expect(source).toContain('identityClient.enterChildMode')
+    expect(source).toContain('identityClient.enableChildMode')
+    expect(source).toContain('identityClient.setPin')
+    expect(source).toContain('applyIdentityRuntime')
+
+    // Must NOT store pinHash locally
+    expect(source).not.toContain('pinHash')
+    expect(source).not.toContain('pinHash.value')
+
+    // Must use runtime-driven refs
+    expect(source).toContain('childModeEnabled')
+    expect(source).toContain('pinConfigured')
+  })
 })
