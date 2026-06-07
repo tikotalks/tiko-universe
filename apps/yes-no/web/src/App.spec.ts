@@ -4,9 +4,16 @@ import App from './App.vue'
 
 const sessionBundle = {
   subject: { id: 'user-device', kind: 'device', product: 'tiko' },
+  user: { id: 'user-device', accountType: 'temporary', recoverable: false },
   device: { id: 'device-1', secret: 'device-secret' },
   account: null,
-  session: { id: 'session-1', token: 'session-token', transport: 'bearer', expiresAt: '2099-01-01T00:00:00.000Z' }
+  session: { id: 'session-1', token: 'session-token', transport: 'bearer', expiresAt: '2099-01-01T00:00:00.000Z' },
+  runtime: { mode: 'parent', childModeEnabled: false, pinConfigured: false },
+  capabilities: { canVerifyEmail: true, canUseParentMode: false, canUseChildMode: false, canManageChildAccounts: false, canDeleteAccount: false }
+}
+
+function identityBundle(overrides: Record<string, unknown> = {}) {
+  return { ...sessionBundle, ...overrides }
 }
 
 function jsonResponse(body: unknown, status = 200) {
@@ -39,6 +46,7 @@ function createFetchMock(options: {
   failBootstrap?: boolean
   failCookieSession?: boolean
   failTts?: boolean
+  identity?: Record<string, unknown>
 } = {}) {
   return vi.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
     const url = String(input)
@@ -48,7 +56,7 @@ function createFetchMock(options: {
       if (options.failCookieSession && !(init?.headers as Record<string, string> | undefined)?.authorization) {
         return jsonResponse({ error: { code: 'unauthorized', message: 'unauthorized' } }, 401)
       }
-      return jsonResponse(sessionBundle)
+      return jsonResponse(identityBundle(options.identity))
     }
     if (url.endsWith('/identity/profile') && method === 'GET') {
       return jsonResponse({ profile: {} })
@@ -64,7 +72,25 @@ function createFetchMock(options: {
 
     if (url.endsWith('/identity/device')) {
       if (options.failBootstrap) return jsonResponse({ error: { code: 'offline', message: 'offline' } }, 503)
-      return jsonResponse(sessionBundle)
+      return jsonResponse(identityBundle(options.identity))
+    }
+
+    if (url.endsWith('/identity/pin') && method === 'POST') {
+      return jsonResponse(identityBundle({ runtime: { mode: 'parent', childModeEnabled: false, pinConfigured: true } }))
+    }
+
+    if (url.endsWith('/identity/mode/child/enable') && method === 'POST') {
+      return jsonResponse(identityBundle({ runtime: { mode: 'parent', childModeEnabled: true, pinConfigured: true } }))
+    }
+
+    if (url.endsWith('/identity/mode/child') && method === 'POST') {
+      return jsonResponse(identityBundle({ runtime: { mode: 'child', childModeEnabled: true, pinConfigured: true } }))
+    }
+
+    if (url.endsWith('/identity/mode/parent') && method === 'POST') {
+      const body = JSON.parse(String(init?.body ?? '{}')) as { pin?: string }
+      if (body.pin !== '1234') return jsonResponse({ error: { code: 'invalid_pin', message: 'Wrong PIN' } }, 401)
+      return jsonResponse(identityBundle({ runtime: { mode: 'parent', childModeEnabled: true, pinConfigured: true } }))
     }
 
     if (url.endsWith('/apps/yes-no/settings') && method === 'GET') {
@@ -237,6 +263,38 @@ describe('Yes No web app', () => {
     const popupConfig = popupService.showPopup.mock.calls[0][0] as { component: { __name?: string } }
     expect(popupConfig.component.__name).toBe('TikoProfileMenu')
     expect(wrapper.find('[data-test="tiko-settings-panel"]').exists()).toBe(false)
+  })
+
+  it('sets the API-backed parent PIN and enters child mode without local parent-code storage', async () => {
+    const verifiedBundle = identityBundle({
+      user: { id: 'user-device', accountType: 'verified', recoverable: true, emailVerified: true },
+      account: { id: 'account-1', subjectId: 'user-device', email: 'parent@example.com', emailVerified: true },
+      runtime: { mode: 'parent', childModeEnabled: false, pinConfigured: false }
+    })
+    const fetchMock = createFetchMock({ identity: verifiedBundle })
+    vi.stubGlobal('fetch', fetchMock)
+    window.localStorage.setItem('tiko:identity:device-session', JSON.stringify({ sessionToken: 'session-token', accountEmail: 'parent@example.com', accountEmailVerified: true }))
+
+    const { wrapper, popupService } = mountApp()
+    await flushPromises()
+    await wrapper.get('button[aria-label="Account"]').trigger('click')
+
+    const menuCall = popupService.showPopup.mock.calls[popupService.showPopup.mock.calls.length - 1]
+    const menuConfig = menuCall[0] as { on: Record<string, () => unknown> }
+    menuConfig.on['enter-child-mode']()
+    const pinCall = popupService.showPopup.mock.calls[popupService.showPopup.mock.calls.length - 1]
+    const pinConfig = pinCall[0] as { on: Record<string, (...args: unknown[]) => unknown> }
+    await pinConfig.on.set('legacy-hash-not-used', '1234')
+    await flushPromises()
+
+    expect(fetchMock).toHaveBeenCalledWith('https://id.tikoapps.org/v1/identity/pin', expect.objectContaining({
+      method: 'POST',
+      body: expect.stringContaining('"pin":"1234"')
+    }))
+    expect(fetchMock).toHaveBeenCalledWith('https://id.tikoapps.org/v1/identity/mode/child/enable', expect.objectContaining({ method: 'POST' }))
+    expect(fetchMock).toHaveBeenCalledWith('https://id.tikoapps.org/v1/identity/mode/child', expect.objectContaining({ method: 'POST' }))
+    expect(window.localStorage.getItem('tiko:parent-mode')).toBeNull()
+    expect(JSON.stringify([...fetchMock.mock.calls])).not.toContain('parentCodeHash')
   })
 
   it('renders open-icon names instead of emoji glyphs for visible app and choice icons', () => {

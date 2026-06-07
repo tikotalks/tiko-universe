@@ -21,7 +21,6 @@ const popup = inject<PopupService>('popupService')!
 
 const storageKey = 'tiko:yes-no'
 const identityStorageKey = 'tiko:identity:device-session'
-const parentModeStorageKey = 'tiko:parent-mode'
 const appId = 'yes-no' as const
 const apiBaseUrl = resolveApiBaseUrl()
 const identityBaseUrl = resolveIdentityBaseUrl()
@@ -111,9 +110,10 @@ const userId = ref<string>('')
 const accountEmail = ref<string>('')
 const accountEmailVerified = ref(false)
 const displayName = ref('')
-const parentMode = ref(readJson<boolean>(parentModeStorageKey, true))
-const parentCodeHash = ref<string | undefined>()
-const hasParentCode = computed(() => Boolean(parentCodeHash.value))
+const parentMode = ref(true)
+const childModeEnabled = ref(false)
+const pinConfigured = ref(false)
+const hasParentCode = computed(() => pinConfigured.value)
 const bootstrapped = ref(false)
 const tts = createTikoTtsClient()
 const identityClient = new IdentityClient({ baseUrl: identityBaseUrl, credentials: 'include' })
@@ -169,12 +169,20 @@ function saveLocalFallback() {
   })
 }
 
+function applyIdentityRuntime(bundle: IdentityBundle) {
+  parentMode.value = bundle.runtime?.mode !== 'child'
+  childModeEnabled.value = Boolean(bundle.runtime?.childModeEnabled)
+  pinConfigured.value = Boolean(bundle.runtime?.pinConfigured)
+}
+
 function saveIdentity(bundle: IdentityBundle) {
   if (!bundle.session?.token) throw new Error('Identity response did not include a session token.')
   sessionToken.value = bundle.session.token
   userId.value = bundle.account?.email ?? bundle.subject.id
-  accountEmail.value = bundle.account?.email ?? ''
-  accountEmailVerified.value = Boolean(bundle.account?.emailVerified)
+  accountEmail.value = bundle.account?.email ?? bundle.user?.email ?? ''
+  accountEmailVerified.value = Boolean(bundle.account?.emailVerified ?? bundle.user?.emailVerified)
+  displayName.value = bundle.user?.displayName ?? displayName.value
+  applyIdentityRuntime(bundle)
   writeJson(identityStorageKey, {
     userId: bundle.subject.id,
     deviceId: bundle.device?.id,
@@ -295,7 +303,7 @@ watch([latestAnswerId, answerHistory], () => {
 onMounted(async () => {
   try {
     await bootstrapIdentity()
-    await loadParentCodeHash()
+    await loadProfile()
     await hydrateRemoteData()
   } catch {
     // Keep the child-facing local flow available when API bootstrap is offline.
@@ -331,14 +339,13 @@ function headerAction(id: string) {
   if (id === 'history') historyOpen.value = !historyOpen.value
 }
 
-async function loadParentCodeHash() {
+async function loadProfile() {
   if (!sessionToken.value) return
   try {
     const { profile } = await identityClient.getProfile(sessionToken.value)
-    if (typeof profile.parentCodeHash === 'string') parentCodeHash.value = profile.parentCodeHash
     if (typeof profile.displayName === 'string') displayName.value = profile.displayName
   } catch {
-    // Keep local parent mode available if profile is not reachable.
+    // Keep the local child-facing flow available if profile is not reachable.
   }
 }
 
@@ -488,9 +495,9 @@ async function deleteCurrentUser() {
   accountEmail.value = ''
   accountEmailVerified.value = false
   displayName.value = ''
-  parentCodeHash.value = undefined
+  childModeEnabled.value = false
+  pinConfigured.value = false
   parentMode.value = true
-  writeJson(parentModeStorageKey, true)
   window.localStorage.removeItem(identityStorageKey)
   popup.closeAllPopups()
   await bootstrapIdentity().catch(() => undefined)
@@ -505,8 +512,9 @@ async function doLogout() {
   accountEmail.value = ''
   accountEmailVerified.value = false
   displayName.value = ''
+  childModeEnabled.value = false
+  pinConfigured.value = false
   parentMode.value = true
-  writeJson(parentModeStorageKey, true)
   window.localStorage.removeItem(identityStorageKey)
   popup.closeAllPopups()
 }
@@ -515,12 +523,22 @@ function openParentCodePopup() {
   popup.showPopup({
     component: markRaw(TikoPinPopup),
     title: '',
-    props: { existingHash: parentCodeHash.value },
+    props: {
+      mode: 'verify',
+      verifyCode: async (pin: string) => {
+        if (!sessionToken.value) return false
+        try {
+          const bundle = await identityClient.enterParentMode(sessionToken.value, pin)
+          saveIdentity(bundle)
+          return true
+        } catch {
+          return false
+        }
+      }
+    },
     config: { position: 'center', canClose: true, background: true, width: 'min(30rem, calc(100vw - 2rem))' },
     on: {
       set: () => {
-        parentMode.value = true
-        writeJson(parentModeStorageKey, true)
         popup.closeAllPopups()
       },
       cancel: () => popup.closeAllPopups(),
@@ -530,6 +548,11 @@ function openParentCodePopup() {
 
 function openChildModeFlow() {
   popup.closeAllPopups()
+  if (!sessionToken.value || !accountEmailVerified.value) {
+    window.setTimeout(openAccountPopup, 180)
+    return
+  }
+
   if (!hasParentCode.value) {
     popup.showPopup({
       component: markRaw(TikoPinPopup),
@@ -538,21 +561,29 @@ function openChildModeFlow() {
       config: { position: 'center', canClose: true, background: true, width: 'min(30rem, calc(100vw - 2rem))' },
       on: {
         set: async (...args: unknown[]) => {
-          const hash = args[0] as string
-          parentCodeHash.value = hash
-          parentMode.value = false
-          writeJson(parentModeStorageKey, false)
-          if (sessionToken.value) {
-            try { await identityClient.updateProfile(sessionToken.value, { parentCodeHash: hash }) } catch { /* ignore */ }
+          const pin = typeof args[1] === 'string' ? args[1] : ''
+          if (!pin || !sessionToken.value) return
+          try {
+            saveIdentity(await identityClient.setPin(sessionToken.value, { pin }))
+            if (!childModeEnabled.value) saveIdentity(await identityClient.enableChildMode(sessionToken.value))
+            saveIdentity(await identityClient.enterChildMode(sessionToken.value))
+            popup.closeAllPopups()
+          } catch {
+            // Keep the menu open on API failure; the PIN is not stored locally.
           }
-          popup.closeAllPopups()
         },
         cancel: () => popup.closeAllPopups(),
       },
     })
   } else {
-    parentMode.value = false
-    writeJson(parentModeStorageKey, false)
+    void (async () => {
+      try {
+        if (!childModeEnabled.value) saveIdentity(await identityClient.enableChildMode(sessionToken.value))
+        saveIdentity(await identityClient.enterChildMode(sessionToken.value))
+      } catch {
+        // Keep parent mode if the API rejects the transition.
+      }
+    })()
   }
 }
 
