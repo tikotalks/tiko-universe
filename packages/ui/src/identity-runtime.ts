@@ -207,9 +207,9 @@ export function useIdentityRuntime(options: UseIdentityRuntimeOptions) {
     popup.showPopup({
       component: markRaw({
         setup() {
-          const nameInput = ref(state.displayName.value)
-          const emailInput = ref(state.accountEmail.value)
-          const codeInput = ref('')
+          const nameInput = ref<string>(state.displayName.value)
+          const emailInput = ref<string>(state.accountEmail.value)
+          const codeInput = ref<string>('')
           const sent = ref(false)
           const loading = ref(false)
           const error = ref('')
