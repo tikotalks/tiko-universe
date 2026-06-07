@@ -167,6 +167,8 @@ export function useIdentityRuntime(options: UseIdentityRuntimeOptions) {
   // ---- Avatar click (entry point for profile menu) ----
 
   function handleAvatarClick() {
+    // Graceful no-op when popup provider is absent (test env)
+    if (popup == null) return
     if (state.parentMode.value) {
       openProfileMenu()
     } else {
@@ -388,11 +390,12 @@ export function useIdentityRuntime(options: UseIdentityRuntimeOptions) {
         },
       })
     } else {
-      if (!state.sessionToken.value) return
+      const token = state.sessionToken.value
+      if (!token) return
       void (async () => {
         try {
-          if (!state.childModeEnabled.value) saveIdentity(await identityClient.enableChildMode(state.sessionToken.value))
-          saveIdentity(await identityClient.enterChildMode(state.sessionToken.value))
+          if (!state.childModeEnabled.value) saveIdentity(await identityClient.enableChildMode(token))
+          saveIdentity(await identityClient.enterChildMode(token))
         } catch {
           // Keep parent mode if the API rejects the transition.
         }

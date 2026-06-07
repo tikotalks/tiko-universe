@@ -12,11 +12,12 @@ if (!appPath) throw new Error('Could not locate Cards App.vue')
 const appSource = readFileSync(appPath, 'utf8')
 
 describe('Cards identity runtime', () => {
-  it('uses identity runtime APIs instead of legacy parent code metadata', () => {
-    expect(appSource).toContain('identityClient.setPin')
-    expect(appSource).toContain('identityClient.enableChildMode')
-    expect(appSource).toContain('identityClient.enterChildMode')
-    expect(appSource).toContain('identityClient.enterParentMode')
+  it('uses identity runtime composable instead of legacy parent code metadata', () => {
+    // Must import and call the shared identity runtime composable
+    expect(appSource).toContain('useIdentityRuntime')
+    expect(appSource).toContain('runtime.handleAvatarClick')
+
+    // Must NOT store pinHash locally
     expect(appSource).not.toContain('parentCodeHash')
     expect(appSource).not.toContain('identityClient.updateProfile(sessionToken.value, { parentCodeHash')
   })

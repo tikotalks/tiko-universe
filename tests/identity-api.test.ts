@@ -17,8 +17,8 @@ class MemoryResult {
     return { results: this.rows as T[], success: true, meta: this.meta }
   }
 
-  run(): { success: true; meta: Record<string, unknown> } {
-    return { success: true, meta: this.meta }
+  run(): Promise<{ success: true; meta: Record<string, unknown> }> {
+    return Promise.resolve({ success: true, meta: this.meta })
   }
 }
 
@@ -55,6 +55,7 @@ class MemoryD1Database {
   entitlements = new Map<string, Row>()
   roles: Row[] = []
   managedCredentials = new Map<string, Row>()
+  deletionRequests = new Map<string, Row>()
   auditEvents: Row[] = []
 
   prepare(sql: string): MemoryStatement {
@@ -286,6 +287,25 @@ class MemoryD1Database {
     if (normalized.startsWith('UPDATE identity_api_keys SET last_used_at')) {
       const [lastUsedAt, id] = values
       Object.assign(this.apiKeys.get(String(id)) ?? {}, { last_used_at: lastUsedAt })
+      return new MemoryResult()
+    }
+
+    if (normalized.startsWith('INSERT INTO identity_deletion_requests')) {
+      const [id, subjectId, scope, status, childAccountId, pinGrantToken, createdAt, updatedAt, completedAt, metadataJson] = values
+      this.deletionRequests.set(String(id), { id, subject_id: subjectId, scope, status, child_account_id: childAccountId, pin_grant_token: pinGrantToken, created_at: createdAt, updated_at: updatedAt, completed_at: completedAt, metadata_json: metadataJson })
+      return new MemoryResult()
+    }
+    if (normalized.startsWith('SELECT * FROM identity_deletion_requests WHERE id =')) {
+      const req = this.deletionRequests.get(String(values[0]))
+      return new MemoryResult(req ? [req] : [])
+    }
+    if (normalized.startsWith('UPDATE identity_deletion_requests SET')) {
+      const id = String(values[values.length - 1])
+      const existing = this.deletionRequests.get(id)
+      if (existing) {
+        if (normalized.includes('status =')) Object.assign(existing, { status: values[0], updated_at: values[1] ?? existing.updated_at })
+        if (normalized.includes('completed_at')) Object.assign(existing, { completed_at: values[0], updated_at: values[1] ?? existing.updated_at })
+      }
       return new MemoryResult()
     }
 
