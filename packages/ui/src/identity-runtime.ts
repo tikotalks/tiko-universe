@@ -207,9 +207,9 @@ export function useIdentityRuntime(options: UseIdentityRuntimeOptions) {
     popup.showPopup({
       component: markRaw({
         setup() {
-          const nameInput = ref<string>(state.displayName.value)
-          const emailInput = ref<string>(state.accountEmail.value)
-          const codeInput = ref<string>('')
+          const nameInput = ref<string>(state.displayName.value ?? '')
+          const emailInput = ref<string>(state.accountEmail.value ?? '')
+          const codeInput = ref('')
           const sent = ref(false)
           const loading = ref(false)
           const error = ref('')
@@ -388,6 +388,7 @@ export function useIdentityRuntime(options: UseIdentityRuntimeOptions) {
         },
       })
     } else {
+      if (!state.sessionToken.value) return
       void (async () => {
         try {
           if (!state.childModeEnabled.value) saveIdentity(await identityClient.enableChildMode(state.sessionToken.value))

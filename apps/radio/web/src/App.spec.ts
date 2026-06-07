@@ -315,7 +315,7 @@ describe('Radio App (unified layout)', () => {
     expect(wrapper.find('.radio-app__category-card--add').exists()).toBe(false)
   })
 
-  it('uses identity runtime APIs and does not store pinHash locally', async () => {
+  it('uses identity runtime composable and does not store pinHash locally', async () => {
     const fs = await import('node:fs')
     const path = await import('node:path')
     const candidates = [
@@ -326,12 +326,10 @@ describe('Radio App (unified layout)', () => {
     expect(sourcePath).toBeTruthy()
     const source = fs.readFileSync(sourcePath!, 'utf-8')
 
-    // Must use identity runtime SDK methods for mode transitions
-    expect(source).toContain('identityClient.enterParentMode')
-    expect(source).toContain('identityClient.enterChildMode')
-    expect(source).toContain('identityClient.enableChildMode')
-    expect(source).toContain('identityClient.setPin')
-    expect(source).toContain('applyIdentityRuntime')
+    // Must use the shared identity runtime composable
+    expect(source).toContain('useIdentityRuntime')
+    expect(source).toContain('runtime.handleAvatarClick')
+    expect(source).toContain('runtimeState')
 
     // Must NOT store pinHash locally
     expect(source).not.toContain('pinHash')
