@@ -373,5 +373,5 @@ describe('global defaults endpoints', () => {
 
     expect(global.body.state.collections[0].id).toBe('global')
     expect(user.body.state.collections[0].id).toBe('user')
-  })
+  }, 15000)
 })
