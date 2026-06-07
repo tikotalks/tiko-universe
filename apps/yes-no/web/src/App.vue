@@ -489,7 +489,7 @@ function openAccountPopup() {
 async function deleteCurrentUser() {
   if (!sessionToken.value || !accountEmailVerified.value) return
   if (!window.confirm('Delete this Tiko user? This removes the account and sessions.')) return
-  try { await identityClient.deleteSelf(sessionToken.value) } catch { /* local cleanup still makes the device usable */ }
+  try { await identityClient.createDeletionRequest(sessionToken.value, { scope: 'account' }) } catch { /* local cleanup still makes the device usable */ }
   sessionToken.value = ''
   userId.value = ''
   accountEmail.value = ''

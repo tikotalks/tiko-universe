@@ -187,6 +187,32 @@ private struct ProfileResponse: Codable {
     let profile: TikoIdentityProfile
 }
 
+// MARK: - Deletion & Reset Types
+
+public enum TikoDeletionScope: String, Codable, Sendable {
+    case localDevice = "local-device"
+    case account
+    case childAccount = "child_account"
+}
+
+public struct TikoDeletionRequest: Codable, Sendable {
+    public let id: String
+    public let scope: TikoDeletionScope
+    public let status: String
+    public let createdAt: String
+    public let updatedAt: String
+    public let completedAt: String?
+    public let canCancel: Bool
+}
+
+public struct TikoResetRequest: Codable, Sendable {
+    public let id: String
+    public let status: String
+    public let categoriesAffected: [String]
+    public let createdAt: String
+    public let completedAt: String?
+}
+
 // MARK: - Client
 
 public actor TikoIdentityClient {
@@ -235,8 +261,33 @@ public actor TikoIdentityClient {
         let _: EmptyResponse = try await send(path: "/identity/logout", method: "POST", body: EmptyBody?.none, accessToken: accessToken)
     }
 
+    /// Legacy endpoint — prefer createDeletionRequest(scope: .account)
+    @available(*, deprecated, message: "Use createDeletionRequest(scope: .account) instead")
     public func deleteSelf(accessToken: String) async throws {
         let _: EmptyResponse = try await send(path: "/identity/me", method: "DELETE", body: EmptyBody?.none, accessToken: accessToken)
+    }
+
+    // MARK: - Deletion & Reset
+
+    public func createDeletionRequest(accessToken: String, scope: TikoDeletionScope, childAccountId: String? = nil, pinGrantToken: String? = nil) async throws -> TikoDeletionRequest {
+        var body: [String: Any] = ["scope": scope.rawValue]
+        if let childAccountId { body["childAccountId"] = childAccountId }
+        if let pinGrantToken { body["pinGrantToken"] = pinGrantToken }
+        return try await send(path: "/identity/deletion-requests", method: "POST", body: body, accessToken: accessToken)
+    }
+
+    public func getDeletionRequest(accessToken: String, requestId: String) async throws -> TikoDeletionRequest {
+        return try await send(path: "/identity/deletion-requests/\(requestId)", method: "GET", body: EmptyBody?.none, accessToken: accessToken)
+    }
+
+    public func resetAccountData(accessToken: String, pinGrantToken: String? = nil) async throws -> TikoResetRequest {
+        var body: [String: Any] = ["confirmation": "reset_my_data"]
+        if let pinGrantToken { body["pinGrantToken"] = pinGrantToken }
+        return try await send(path: "/identity/reset", method: "POST", body: body, accessToken: accessToken)
+    }
+
+    public func resetChildAccountProgress(accessToken: String, childAccountId: String) async throws -> TikoResetRequest {
+        return try await send(path: "/identity/child-accounts/\(childAccountId)/progress/reset", method: "POST", body: ["confirmation": "reset_progress"], accessToken: accessToken)
     }
 
     public func getProfile(accessToken: String) async throws -> TikoIdentityProfile {
