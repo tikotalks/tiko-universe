@@ -6,7 +6,8 @@ const identityBundle = {
   subject: { id: 'talk-device', kind: 'device', product: 'tiko' },
   device: { id: 'device-1', secret: 'device-secret' },
   account: null,
-  session: { id: 'session-1', token: 'session-token', transport: 'bearer', expiresAt: '2099-01-01T00:00:00.000Z' }
+  session: { id: 'session-1', token: 'session-token', transport: 'bearer', expiresAt: '2099-01-01T00:00:00.000Z' },
+  runtime: { mode: 'parent', childModeEnabled: false, pinConfigured: false },
 }
 
 function jsonResponse(body: unknown, status = 200) {
@@ -39,7 +40,7 @@ describe('Talk web app', () => {
     expect(wrapper.text()).toContain('Talk')
 
     const accountButton = wrapper.get('button[aria-label="Account"]')
-    expect(accountButton.find('[data-icon="ui/circle-user"]').exists()).toBe(true)
+    expect(accountButton.find('[data-icon="ui/avatar"]').exists()).toBe(true)
 
     await flushPromises()
 
@@ -48,13 +49,13 @@ describe('Talk web app', () => {
     expect(wrapper.findAll('.word-cloud__bubble').length).toBeGreaterThan(0)
   })
 
-  it('opens the account/settings surface when the avatar is tapped', async () => {
+  it('opens the profile menu when the avatar is tapped', async () => {
     const wrapper = mount(App)
 
     await wrapper.get('button[aria-label="Account"]').trigger('click')
     await flushPromises()
 
-    expect(wrapper.find('[data-test="tiko-settings-panel"]').exists()).toBe(true)
-    expect(wrapper.text()).toContain('Identity:')
+    // The identity runtime opens the profile menu popup
+    expect(wrapper.find('[data-test="tiko-profile-menu"]').exists()).toBe(true)
   })
 })
