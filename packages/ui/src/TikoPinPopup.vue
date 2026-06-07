@@ -4,10 +4,14 @@ import { ref, computed } from 'vue'
 const CODE_LENGTH = 4
 
 interface Props {
-  /** Existing code hash — if undefined, this is first-time setup */
+  /** Existing code hash — if undefined, this is first-time setup unless mode is forced. */
   existingHash?: string
   /** Hash namespace for backward-compatible app-local codes. */
   hashNamespace?: string
+  /** Force setup/verify mode when the PIN is verified by the identity API instead of an app-local hash. */
+  mode?: 'setup' | 'verify'
+  /** Optional async verifier for API-backed PIN flows. Return false to keep the popup open with an error. */
+  verifyCode?: (code: string) => boolean | Promise<boolean>
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -15,17 +19,18 @@ const props = withDefaults(defineProps<Props>(), {
 })
 
 const emit = defineEmits<{
-  (e: 'set', hash: string): void
+  (e: 'set', hash: string, code: string): void
   (e: 'cancel'): void
 }>()
 
-const mode = computed(() => props.existingHash ? 'verify' : 'setup')
+const mode = computed(() => props.mode ?? (props.existingHash ? 'verify' : 'setup'))
 
 const step = ref<'enter' | 'confirm'>('enter')
 const digits = ref<string[]>([])
 const confirmDigits = ref<string[]>([])
 const error = ref('')
 const shake = ref(false)
+const loading = ref(false)
 
 const inputRefs = ref<(HTMLInputElement | null)[]>([])
 
@@ -80,6 +85,7 @@ function onKeydown(index: number, event: KeyboardEvent) {
 }
 
 async function handleSubmit() {
+  if (loading.value) return
   const currentDigits = mode.value === 'setup' && step.value === 'confirm'
     ? confirmDigits.value
     : digits.value
@@ -102,19 +108,36 @@ async function handleSubmit() {
         focusDigit(0)
       } else {
         const hash = await hashCode(code)
-        emit('set', hash)
+        emit('set', hash, code)
       }
     }
   } else {
     const hash = await hashCode(code)
-    if (hash === props.existingHash) {
-      emit('set', hash)
-    } else {
+    loading.value = true
+    try {
+      const verified = props.verifyCode
+        ? await props.verifyCode(code)
+        : props.existingHash
+          ? hash === props.existingHash
+          : true
+
+      if (verified) {
+        emit('set', hash, code)
+      } else {
+        error.value = 'Wrong code'
+        shake.value = true
+        digits.value = []
+        setTimeout(() => { shake.value = false }, 400)
+        focusDigit(0)
+      }
+    } catch {
       error.value = 'Wrong code'
       shake.value = true
       digits.value = []
       setTimeout(() => { shake.value = false }, 400)
       focusDigit(0)
+    } finally {
+      loading.value = false
     }
   }
 }
