@@ -413,7 +413,8 @@ describe('identity-api endpoints', () => {
       canUseParentMode: true,
       canUseChildMode: false,
       canManageChildAccounts: false,
-      canDeleteAccount: true
+      canDeleteAccount: true,
+      canEditContent: false
     })
     expect(bundle.session?.loginMethod).toBe('device')
     expect(bundle.session?.token).toMatch(/^ank_/)
