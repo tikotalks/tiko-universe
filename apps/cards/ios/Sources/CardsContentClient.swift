@@ -42,7 +42,7 @@ actor CardsContentClient {
     }
 
     /// Creates a new user collection and persists it server-side.
-    func createCollection(id: String, title: String, colorHex: UInt32, order: Int, sessionToken: String) async throws -> CardCollection {
+    func createCollection(id: String, title: String, colorHex: UInt32, order: Int, imageURL: URL? = nil, sessionToken: String) async throws -> CardCollection {
         guard let url = URL(string: "\(Self.baseURL)/cards/collections") else {
             throw URLError(.badURL)
         }
@@ -51,7 +51,8 @@ actor CardsContentClient {
         request.timeoutInterval = 15
         request.setValue("Bearer \(sessionToken)", forHTTPHeaderField: "Authorization")
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        let payload: [String: Any] = ["id": id, "title": title, "colorHex": colorHex, "order": order]
+        var payload: [String: Any] = ["id": id, "title": title, "colorHex": colorHex, "order": order]
+        if let imageURL, !imageURL.isFileURL { payload["imageURL"] = imageURL.absoluteString }
         request.httpBody = try JSONSerialization.data(withJSONObject: payload)
         let (data, response) = try await URLSession.shared.data(for: request)
         guard let http = response as? HTTPURLResponse, (200..<300).contains(http.statusCode) else {
@@ -61,7 +62,7 @@ actor CardsContentClient {
     }
 
     /// Adds a card to a user collection and persists it server-side.
-    func createCard(id: String, title: String, speech: String, colorHex: UInt32, order: Int, collectionID: String, sessionToken: String) async throws -> CommunicationCard {
+    func createCard(id: String, title: String, speech: String, colorHex: UInt32, order: Int, imageURL: URL? = nil, collectionID: String, sessionToken: String) async throws -> CommunicationCard {
         guard let url = URL(string: "\(Self.baseURL)/cards/collections/\(collectionID)/cards") else {
             throw URLError(.badURL)
         }
@@ -70,7 +71,8 @@ actor CardsContentClient {
         request.timeoutInterval = 15
         request.setValue("Bearer \(sessionToken)", forHTTPHeaderField: "Authorization")
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        let payload: [String: Any] = ["id": id, "title": title, "speech": speech, "colorHex": colorHex, "order": order]
+        var payload: [String: Any] = ["id": id, "title": title, "speech": speech, "colorHex": colorHex, "order": order]
+        if let imageURL, !imageURL.isFileURL { payload["imageURL"] = imageURL.absoluteString }
         request.httpBody = try JSONSerialization.data(withJSONObject: payload)
         let (data, response) = try await URLSession.shared.data(for: request)
         guard let http = response as? HTTPURLResponse, (200..<300).contains(http.statusCode) else {

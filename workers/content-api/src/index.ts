@@ -50,6 +50,7 @@ interface CardTile {
   speech: string
   colorHex: number
   order: number
+  imageURL?: string
 }
 
 interface CardCollection {
@@ -58,6 +59,7 @@ interface CardCollection {
   colorHex: number
   order: number
   mediaCategories: string[]
+  imageURL?: string
   cards: CardTile[]
 }
 
@@ -481,7 +483,7 @@ async function handlePostCards(request: Request, env: Env, segments: string[]): 
 
   // POST /v1/cards/collections
   if (segments[2] === 'collections' && segments.length === 3) {
-    let body: { id?: unknown; title?: unknown; colorHex?: unknown; order?: unknown }
+    let body: { id?: unknown; title?: unknown; colorHex?: unknown; order?: unknown; imageURL?: unknown }
     try { body = (await request.json()) as typeof body } catch {
       return error(request, env, 'bad_request', 'Request body must be valid JSON', 400)
     }
@@ -495,7 +497,8 @@ async function handlePostCards(request: Request, env: Env, segments: string[]): 
     const id = typeof body.id === 'string' && body.id.startsWith('user_') ? body.id : `user_${crypto.randomUUID()}`
     const colorHex = typeof body.colorHex === 'number' ? body.colorHex : colors[current.state.collections.length % colors.length]
     const order = typeof body.order === 'number' ? body.order : current.state.collections.length
-    const newCollection: CardCollection = { id, title, colorHex, order, mediaCategories: [], cards: [] }
+    const imageURL = typeof body.imageURL === 'string' && body.imageURL ? body.imageURL : undefined
+    const newCollection: CardCollection = { id, title, colorHex, order, mediaCategories: [], ...(imageURL ? { imageURL } : {}), cards: [] }
 
     const existing = current.state.collections.find(c => c.id === id)
     const updated: UserCardsState = {
@@ -510,7 +513,7 @@ async function handlePostCards(request: Request, env: Env, segments: string[]): 
   // POST /v1/cards/collections/:id/cards
   if (segments[2] === 'collections' && segments[4] === 'cards' && segments.length === 5) {
     const collectionId = segments[3]
-    let body: { id?: unknown; title?: unknown; speech?: unknown; colorHex?: unknown; order?: unknown }
+    let body: { id?: unknown; title?: unknown; speech?: unknown; colorHex?: unknown; order?: unknown; imageURL?: unknown }
     try { body = (await request.json()) as typeof body } catch {
       return error(request, env, 'bad_request', 'Request body must be valid JSON', 400)
     }
@@ -528,7 +531,8 @@ async function handlePostCards(request: Request, env: Env, segments: string[]): 
     const id = typeof body.id === 'string' && body.id.startsWith('user_') ? body.id : `user_${crypto.randomUUID()}`
     const colorHex = typeof body.colorHex === 'number' ? body.colorHex : collection.colorHex
     const order = typeof body.order === 'number' ? body.order : collection.cards.length
-    const newCard: CardTile = { id, title, speech, colorHex, order }
+    const imageURL = typeof body.imageURL === 'string' && body.imageURL ? body.imageURL : undefined
+    const newCard: CardTile = { id, title, speech, colorHex, order, ...(imageURL ? { imageURL } : {}) }
 
     const alreadyExists = collection.cards.some(c => c.id === id)
     const updatedCollection = { ...collection, cards: alreadyExists ? collection.cards : [...collection.cards, newCard] }

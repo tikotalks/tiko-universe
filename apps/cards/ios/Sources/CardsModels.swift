@@ -6,6 +6,7 @@ struct CardCollection: Identifiable, Codable, Equatable, Sendable {
     var colorHex: UInt32
     var order: Int
     var mediaCategories: [String]
+    var imageURL: URL?
     var cards: [CommunicationCard]
 
     init(
@@ -14,6 +15,7 @@ struct CardCollection: Identifiable, Codable, Equatable, Sendable {
         colorHex: UInt32,
         order: Int,
         mediaCategories: [String] = [],
+        imageURL: URL? = nil,
         cards: [CommunicationCard]
     ) {
         self.id = id
@@ -21,6 +23,7 @@ struct CardCollection: Identifiable, Codable, Equatable, Sendable {
         self.colorHex = colorHex
         self.order = order
         self.mediaCategories = mediaCategories
+        self.imageURL = imageURL
         self.cards = cards
     }
 
@@ -31,6 +34,7 @@ struct CardCollection: Identifiable, Codable, Equatable, Sendable {
         colorHex = try container.decode(UInt32.self, forKey: .colorHex)
         order = try container.decode(Int.self, forKey: .order)
         mediaCategories = try container.decodeIfPresent([String].self, forKey: .mediaCategories) ?? []
+        imageURL = try container.decodeIfPresent(URL.self, forKey: .imageURL)
         cards = try container.decode([CommunicationCard].self, forKey: .cards)
     }
 }
