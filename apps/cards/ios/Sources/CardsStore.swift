@@ -95,6 +95,21 @@ final class CardsStore: ObservableObject {
         Task { await persistCard(id: id, title: trimmed, speech: spokenText, colorHex: colorHex, order: order, collectionID: collectionID) }
     }
 
+    func reorderCollection(draggingID: String, targetID: String) {
+        guard draggingID != targetID,
+              let from = collections.firstIndex(where: { $0.id == draggingID }),
+              let to = collections.firstIndex(where: { $0.id == targetID }) else { return }
+        collections.move(fromOffsets: IndexSet(integer: from), toOffset: to > from ? to + 1 : to)
+    }
+
+    func reorderCard(draggingID: String, targetID: String, inCollectionID: String) {
+        guard draggingID != targetID,
+              let ci = collections.firstIndex(where: { $0.id == inCollectionID }),
+              let from = collections[ci].cards.firstIndex(where: { $0.id == draggingID }),
+              let to = collections[ci].cards.firstIndex(where: { $0.id == targetID }) else { return }
+        collections[ci].cards.move(fromOffsets: IndexSet(integer: from), toOffset: to > from ? to + 1 : to)
+    }
+
     private func persistCollection(id: String, title: String, colorHex: UInt32, order: Int) async {
         guard let token = try? TikoDeviceSessionStore().load()?.accessToken else { return }
         _ = try? await contentClient.createCollection(id: id, title: title, colorHex: colorHex, order: order, sessionToken: token)

@@ -13,6 +13,9 @@ struct CardsView: View {
     @State private var selectedCollection: CardCollection?
     @State private var collectionsPage = 0
     @State private var showingAdd = false
+    @State private var isEditing = false
+    @State private var draggingCollectionID: String?
+    @State private var draggingCardID: String?
 
     private var visibleCollections: [CardCollection] {
         hideDefaultCollections
@@ -20,13 +23,32 @@ struct CardsView: View {
             : store.collections
     }
 
+    private var liveSelectedCollection: CardCollection? {
+        guard let id = selectedCollection?.id else { return nil }
+        return store.collections.first { $0.id == id }
+    }
+
     var body: some View {
         TikoAppShell(
             appConfig: CardsAppConfig.app,
             appName: selectedCollection?.title ?? i18n.t("cards.appName"),
-            onIconTap: selectedCollection != nil ? { selectedCollection = nil } : nil,
-            actions: [TikoHeaderAction(id: "add", label: "Add", systemImage: "plus")],
-            onAction: { id in if id == "add" { showingAdd = true } },
+            onIconTap: selectedCollection != nil ? {
+                if isEditing {
+                    withAnimation(.spring(response: 0.25)) { isEditing = false }
+                } else {
+                    selectedCollection = nil
+                }
+            } : nil,
+            actions: isEditing
+                ? [TikoHeaderAction(id: "done", label: "Done", systemImage: "checkmark")]
+                : [TikoHeaderAction(id: "add", label: "Add", systemImage: "plus")],
+            onAction: { id in
+                switch id {
+                case "add": showingAdd = true
+                case "done": withAnimation(.spring(response: 0.25)) { isEditing = false }
+                default: break
+                }
+            },
             settingsContent: {
                 TikoSettingsSection(title: "Collections") {
                     TikoSettingsToggleRow(
@@ -41,9 +63,12 @@ struct CardsView: View {
             Group {
                 if let collection = selectedCollection {
                     CollectionDetailView(
-                        collection: collection,
+                        collection: liveSelectedCollection ?? collection,
                         isLoadingMedia: store.loadingCollectionIDs.contains(collection.id),
                         speakingCardID: speakingCardID,
+                        isEditing: $isEditing,
+                        draggingCardID: $draggingCardID,
+                        store: store,
                         onSpeak: speak
                     )
                     .id(collection.id)
@@ -72,15 +97,35 @@ struct CardsView: View {
                                         spacing: 12
                                     ) {
                                         ForEach(page) { collection in
-                                            Button {
-                                                selectedCollection = collection
-                                            } label: {
-                                                CollectionTile(
-                                                    collection: collection,
-                                                    thumbnailURL: store.collectionThumbnails[collection.id]
-                                                )
+                                            CollectionTile(
+                                                collection: collection,
+                                                thumbnailURL: store.collectionThumbnails[collection.id]
+                                            )
+                                            .scaleEffect(isEditing ? 0.92 : 1.0)
+                                            .opacity(draggingCollectionID == collection.id ? 0.5 : 1.0)
+                                            .animation(.spring(response: 0.25), value: isEditing)
+                                            .if(isEditing) { view in
+                                                view
+                                                    .onDrag {
+                                                        draggingCollectionID = collection.id
+                                                        return NSItemProvider(object: collection.id as NSString)
+                                                    }
+                                                    .onDrop(of: [.text], delegate: CollectionDropDelegate(
+                                                        targetID: collection.id,
+                                                        store: store,
+                                                        draggingID: $draggingCollectionID
+                                                    ))
                                             }
-                                            .buttonStyle(.plain)
+                                            .onTapGesture {
+                                                guard !isEditing else { return }
+                                                selectedCollection = collection
+                                            }
+                                            .onLongPressGesture(minimumDuration: 0.5) {
+                                                let isChild = (try? TikoDeviceSessionStore().load())?.isChildMode ?? false
+                                                guard !isChild else { return }
+                                                UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+                                                withAnimation(.spring(response: 0.25)) { isEditing = true }
+                                            }
                                         }
                                     }
                                     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
@@ -116,6 +161,9 @@ struct CardsView: View {
         .environmentObject(i18n)
         .onAppear { i18n.setLanguage(languageCode) }
         .onChange(of: languageCode) { _, code in i18n.setLanguage(code) }
+        .onChange(of: selectedCollection) { _, _ in
+            if isEditing { withAnimation(.spring(response: 0.25)) { isEditing = false } }
+        }
     }
 
     private func columnCount(width: CGFloat, height: CGFloat) -> Int {
@@ -143,6 +191,51 @@ struct CardsView: View {
     }
 }
 
+private struct CollectionDropDelegate: DropDelegate {
+    let targetID: String
+    let store: CardsStore
+    @Binding var draggingID: String?
+
+    func performDrop(info: DropInfo) -> Bool {
+        draggingID = nil
+        return true
+    }
+
+    func dropEntered(info: DropInfo) {
+        guard let dragID = draggingID, dragID != targetID else { return }
+        withAnimation(.spring(response: 0.3)) {
+            store.reorderCollection(draggingID: dragID, targetID: targetID)
+        }
+    }
+
+    func dropUpdated(info: DropInfo) -> DropProposal? {
+        DropProposal(operation: .move)
+    }
+}
+
+private struct CardDropDelegate: DropDelegate {
+    let targetID: String
+    let collectionID: String
+    let store: CardsStore
+    @Binding var draggingID: String?
+
+    func performDrop(info: DropInfo) -> Bool {
+        draggingID = nil
+        return true
+    }
+
+    func dropEntered(info: DropInfo) {
+        guard let dragID = draggingID, dragID != targetID else { return }
+        withAnimation(.spring(response: 0.3)) {
+            store.reorderCard(draggingID: dragID, targetID: targetID, inCollectionID: collectionID)
+        }
+    }
+
+    func dropUpdated(info: DropInfo) -> DropProposal? {
+        DropProposal(operation: .move)
+    }
+}
+
 private struct CollectionTile: View {
     let collection: CardCollection
     let thumbnailURL: URL?
@@ -163,6 +256,9 @@ private struct CollectionDetailView: View {
     let collection: CardCollection
     let isLoadingMedia: Bool
     let speakingCardID: String?
+    @Binding var isEditing: Bool
+    @Binding var draggingCardID: String?
+    let store: CardsStore
     let onSpeak: (CommunicationCard) -> Void
 
     @State private var currentPage = 0
@@ -189,8 +285,29 @@ private struct CollectionDetailView: View {
                                 CommunicationCardTile(
                                     card: card,
                                     isSpeaking: speakingCardID == card.id,
+                                    isEditing: isEditing,
+                                    isDragging: draggingCardID == card.id,
                                     onSpeak: { onSpeak(card) }
                                 )
+                                .if(isEditing) { view in
+                                    view
+                                        .onDrag {
+                                            draggingCardID = card.id
+                                            return NSItemProvider(object: card.id as NSString)
+                                        }
+                                        .onDrop(of: [.text], delegate: CardDropDelegate(
+                                            targetID: card.id,
+                                            collectionID: collection.id,
+                                            store: store,
+                                            draggingID: $draggingCardID
+                                        ))
+                                }
+                                .onLongPressGesture(minimumDuration: 0.5) {
+                                    let isChild = (try? TikoDeviceSessionStore().load())?.isChildMode ?? false
+                                    guard !isChild else { return }
+                                    UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+                                    withAnimation(.spring(response: 0.25)) { isEditing = true }
+                                }
                             }
                         }
                         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
@@ -229,10 +346,12 @@ private struct CollectionDetailView: View {
 private struct CommunicationCardTile: View {
     let card: CommunicationCard
     let isSpeaking: Bool
+    let isEditing: Bool
+    let isDragging: Bool
     let onSpeak: () -> Void
 
     var body: some View {
-        Button(action: onSpeak) {
+        Button(action: { if !isEditing { onSpeak() } }) {
             TikoSquareTile(
                 title: card.title,
                 background: Color(hex: card.colorHex),
@@ -244,6 +363,9 @@ private struct CommunicationCardTile: View {
             }
         }
         .buttonStyle(.plain)
+        .scaleEffect(isEditing ? 0.92 : 1.0)
+        .opacity(isDragging ? 0.5 : 1.0)
+        .animation(.spring(response: 0.25), value: isEditing)
         .accessibilityLabel(card.speech)
     }
 }
@@ -353,6 +475,13 @@ private struct AddCardSheet: View {
                 }
             }
         }
+    }
+}
+
+private extension View {
+    @ViewBuilder
+    func `if`<T: View>(_ condition: Bool, apply: (Self) -> T) -> some View {
+        if condition { apply(self) } else { self }
     }
 }
 
