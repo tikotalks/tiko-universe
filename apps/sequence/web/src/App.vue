@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, onMounted, ref, watch } from 'vue'
-import { Button, InputTextArea } from '@sil/ui'
+import { Button, InputTextArea, Popup } from '@sil/ui'
 import { IdentityClient, type IdentityBundle } from '@tiko/identity'
 import { TikoDataClient, type SequenceSettings, type SequenceState } from '@tiko/data'
 import { createI18n, defaultLanguage, tikoI18nKeys, tikoLanguages, type TikoLanguage } from '@tiko/i18n'
@@ -8,6 +8,8 @@ import {
   TikoAppShell,
   TikoSettingsPanel,
   createTikoTtsClient,
+  useIdentityRuntime,
+  type IdentityRuntimeState,
   type TikoColorMode
 } from '@tiko/ui'
 import { appConfig } from './appConfig'
@@ -33,13 +35,7 @@ interface PersistedState {
   currentStep?: number
 }
 
-interface StoredIdentity {
-  userId?: string
-  deviceId?: string
-  deviceSecret?: string
-  sessionToken?: string
-  expiresAt?: string
-}
+
 
 function resolveApiBaseUrl() {
   const env = (import.meta as ImportMeta & { env?: Record<string, string | undefined> }).env
@@ -90,10 +86,23 @@ const newName = ref('')
 const newSteps = ref<string[]>([''])
 const loadError = ref(false)
 const sessionToken = ref('')
+const userId = ref('')
+const accountEmail = ref('')
+const accountEmailVerified = ref(false)
+const displayName = ref('')
+const parentMode = ref(true)
+const childModeEnabled = ref(false)
+const pinConfigured = ref(false)
 const bootstrapped = ref(false)
 const tts = createTikoTtsClient()
 const identityClient = new IdentityClient({ baseUrl: identityBaseUrl, credentials: 'include' })
 const dataClient = new TikoDataClient({ baseUrl: apiBaseUrl })
+
+const runtimeState: IdentityRuntimeState = {
+  sessionToken, userId, accountEmail, accountEmailVerified, displayName,
+  parentMode, childModeEnabled, pinConfigured,
+}
+const runtime = useIdentityRuntime({ identityClient, state: runtimeState, deviceName: 'Sequence web' })
 
 const labels = computed(() => {
   void language.value
@@ -116,10 +125,10 @@ const labels = computed(() => {
   }
 })
 
-const headerActions = computed(() => [
+const headerActions = computed(() => parentMode.value ? [
   { id: 'add', label: labels.value.emptyCreate, icon: 'ui/plus' },
   { id: 'settings', label: 'Settings', icon: 'ui/settings-dual', active: settingsOpen.value },
-])
+] : [])
 
 const playingItem = computed(() =>
   playingId.value ? items.value.find(item => item.id === playingId.value) : null
@@ -142,47 +151,11 @@ function saveLocal() {
 }
 
 function saveIdentity(bundle: IdentityBundle) {
-  if (!bundle.session?.token) throw new Error('Identity response did not include a session token.')
-  sessionToken.value = bundle.session.token
-  writeJson(identityStorageKey, {
-    userId: bundle.subject.id,
-    deviceId: bundle.device?.id,
-    deviceSecret: bundle.device?.secret,
-    sessionToken: bundle.session.token,
-    expiresAt: bundle.session.expiresAt,
-  } satisfies StoredIdentity)
+  runtime.saveIdentity(bundle)
 }
 
 async function bootstrapIdentity() {
-  const storedIdentity = readJson<StoredIdentity>(identityStorageKey, {})
-
-  try {
-    const bundle = await identityClient.getCookieSession()
-    saveIdentity(bundle)
-    return
-  } catch {
-    // Fall through to local bearer/device fallback when the shared app-family cookie is missing or expired.
-  }
-
-  if (storedIdentity.sessionToken) {
-    try {
-      const bundle = await identityClient.getSession(storedIdentity.sessionToken)
-      saveIdentity(bundle)
-      return
-    } catch {
-      // Fall through to device bootstrap
-    }
-  }
-
-  const bundle = await identityClient.bootstrapDevice({
-    device: {
-      id: storedIdentity.deviceId,
-      secret: storedIdentity.deviceSecret,
-      name: 'Sequence web',
-      platform: 'web',
-    },
-  })
-  saveIdentity(bundle)
+  return runtime.bootstrapIdentity()
 }
 
 function applySettings(settings: SequenceSettings) {
@@ -232,7 +205,8 @@ watch([language, colorMode, items], () => {
 
 onMounted(async () => {
   try {
-    await bootstrapIdentity()
+    await runtime.bootstrapIdentity()
+    await runtime.loadProfile()
   } catch {
     // Identity unavailable — app works locally
   }
@@ -311,7 +285,7 @@ async function speakStep(text: string) {
 async function retry() {
   loadError.value = false
   try {
-    await bootstrapIdentity()
+    await runtime.bootstrapIdentity()
   } catch {
     // Identity still unavailable
   }
@@ -329,10 +303,13 @@ async function retry() {
     :app-icon="appConfig.appIcon"
     :app-icon-media-category="appConfig.appIconMediaCategory"
     :app-color="appConfig.appColor"
+    avatar="ui/avatar"
     :actions="headerActions"
     @header-action="headerAction"
+    @avatar-click="runtime.handleAvatarClick"
   >
     <section class="sequence-app" :data-color-mode="colorMode">
+      <Popup />
       <!-- Error state with fallback to create -->
       <section v-if="loadError && items.length === 0 && !createOpen" class="sequence-app__error" role="alert">
         <p class="sequence-app__error-text">{{ labels.loadError }}</p>

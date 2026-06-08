@@ -4,24 +4,33 @@ import { ref, computed } from 'vue'
 const CODE_LENGTH = 4
 
 interface Props {
-  /** Existing code hash — if undefined, this is first-time setup */
+  /** Existing code hash — if undefined, this is first-time setup unless mode is forced. */
   existingHash?: string
+  /** Hash namespace for backward-compatible app-local codes. */
+  hashNamespace?: string
+  /** Force setup/verify mode when the PIN is verified by the identity API instead of an app-local hash. */
+  mode?: 'setup' | 'verify'
+  /** Optional async verifier for API-backed PIN flows. Return false to keep the popup open with an error. */
+  verifyCode?: (code: string) => boolean | Promise<boolean>
 }
 
-const props = defineProps<Props>()
+const props = withDefaults(defineProps<Props>(), {
+  hashNamespace: 'parent-code'
+})
 
 const emit = defineEmits<{
-  (e: 'set', hash: string): void
+  (e: 'set', hash: string, code: string): void
   (e: 'cancel'): void
 }>()
 
-const mode = computed(() => props.existingHash ? 'verify' : 'setup')
+const mode = computed(() => props.mode ?? (props.existingHash ? 'verify' : 'setup'))
 
 const step = ref<'enter' | 'confirm'>('enter')
 const digits = ref<string[]>([])
 const confirmDigits = ref<string[]>([])
 const error = ref('')
 const shake = ref(false)
+const loading = ref(false)
 
 const inputRefs = ref<(HTMLInputElement | null)[]>([])
 
@@ -55,7 +64,7 @@ function onDigitInput(index: number, event: Event) {
     ? confirmDigits.value
     : digits.value
 
-  if (currentDigits.every(d => d !== '')) {
+  if (currentDigits.length === CODE_LENGTH && currentDigits.every(d => d !== '')) {
     setTimeout(() => handleSubmit(), 200)
   }
 }
@@ -76,9 +85,12 @@ function onKeydown(index: number, event: KeyboardEvent) {
 }
 
 async function handleSubmit() {
+  if (loading.value) return
   const currentDigits = mode.value === 'setup' && step.value === 'confirm'
     ? confirmDigits.value
     : digits.value
+
+  if (currentDigits.length !== CODE_LENGTH || !currentDigits.every(digit => digit !== '')) return
 
   const code = currentDigits.join('')
 
@@ -96,19 +108,36 @@ async function handleSubmit() {
         focusDigit(0)
       } else {
         const hash = await hashCode(code)
-        emit('set', hash)
+        emit('set', hash, code)
       }
     }
   } else {
     const hash = await hashCode(code)
-    if (hash === props.existingHash) {
-      emit('set', hash)
-    } else {
+    loading.value = true
+    try {
+      const verified = props.verifyCode
+        ? await props.verifyCode(code)
+        : props.existingHash
+          ? hash === props.existingHash
+          : true
+
+      if (verified) {
+        emit('set', hash, code)
+      } else {
+        error.value = 'Wrong code'
+        shake.value = true
+        digits.value = []
+        setTimeout(() => { shake.value = false }, 400)
+        focusDigit(0)
+      }
+    } catch {
       error.value = 'Wrong code'
       shake.value = true
       digits.value = []
       setTimeout(() => { shake.value = false }, 400)
       focusDigit(0)
+    } finally {
+      loading.value = false
     }
   }
 }
@@ -123,7 +152,7 @@ function resetConfirm() {
 
 async function hashCode(code: string): Promise<string> {
   const encoder = new TextEncoder()
-  const data = encoder.encode(`tiko:parent-code:${code}`)
+  const data = encoder.encode(`tiko:${props.hashNamespace}:${code}`)
   const buffer = await crypto.subtle.digest('SHA-256', data)
   return Array.from(new Uint8Array(buffer))
     .map(b => b.toString(16).padStart(2, '0'))
@@ -204,7 +233,7 @@ async function hashCode(code: string): Promise<string> {
   </div>
 </template>
 
-<style scoped lang="scss">
+<style lang="scss">
 .tiko-pin-popup {
   display: flex;
   flex-direction: column;
@@ -249,15 +278,15 @@ async function hashCode(code: string): Promise<string> {
     font-family: inherit;
     border: 2px solid color-mix(in srgb, var(--color-foreground), transparent 15%);
     border-radius: 0.75rem;
-    background: color-mix(in srgb, var(--tiko-surface, #fff), var(--color-foreground) 4%);
+    background: color-mix(in srgb, var(--color-background), var(--color-foreground) 4%);
     color: var(--color-foreground);
-    caret-color: var(--tiko-app-primary);
+    caret-color: currentColor;
     transition: border-color 0.15s ease, box-shadow 0.15s ease;
 
     &:focus {
       outline: none;
-      border-color: var(--tiko-app-primary);
-      box-shadow: 0 0 0 3px color-mix(in srgb, var(--tiko-app-primary), transparent 75%);
+      border-color: color-mix(in srgb, var(--color-foreground), transparent 5%);
+      box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-foreground), transparent 82%);
     }
 
     &::-webkit-outer-spin-button,

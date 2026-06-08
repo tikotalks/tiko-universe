@@ -1,15 +1,15 @@
 <script setup lang="ts">
 import { computed, h, inject, markRaw, nextTick, onMounted, onUnmounted, ref, watch } from 'vue'
-import { Button, Icon, Popup, ContextMenu, type ContextMenuItem, type PopupService } from '@sil/ui'
-import { IdentityClient, type IdentityBundle } from '@tiko/identity'
+import { Button, Popup, ContextMenu, type ContextMenuItem, type PopupService } from '@sil/ui'
+import { IdentityClient } from '@tiko/identity'
 import { TikoDataClient, type CardsSettings, type CardsState, type CardsCollection, type CardsTile } from '@tiko/data'
 import { useTikoMedia, COLLECTION_CATEGORY_MAP, type TikoMedia } from '@tiko/media'
 import { createI18n, defaultLanguage, tikoI18nKeys, tikoLanguages, type TikoLanguage } from '@tiko/i18n'
 import {
   TikoAppShell,
   TikoSettingsPanel,
-  TikoProfileMenu,
-  TikoPinPopup,
+  useIdentityRuntime,
+  type IdentityRuntimeState,
   createTikoTtsClient,
   type TikoColorMode
 } from '@tiko/ui'
@@ -26,7 +26,6 @@ const popup = inject<PopupService>('popupService')!
 // ---------------------------------------------------------------------------
 
 const storageKey = 'tiko:cards'
-const identityStorageKey = 'tiko:identity:device-session'
 const appId = 'cards' as const
 const apiBaseUrl = resolveApiBaseUrl()
 const identityBaseUrl = resolveIdentityBaseUrl()
@@ -42,14 +41,6 @@ interface PersistedState {
   collectionOverrides?: Record<string, Partial<{ title: string; icon: string; color: string; image: string; order: number }>>
   tileOverrides?: Record<string, Partial<{ title: string; speech: string; color: string; image: string }>>
   editMode?: boolean
-}
-
-interface StoredIdentity {
-  userId?: string
-  deviceId?: string
-  deviceSecret?: string
-  sessionToken?: string
-  expiresAt?: string
 }
 
 // ---------------------------------------------------------------------------
@@ -409,11 +400,6 @@ function readJson<T>(key: string, fallback: T): T {
   }
 }
 
-function writeJson(key: string, value: unknown) {
-  if (typeof window === 'undefined') return
-  window.localStorage.setItem(key, JSON.stringify(value))
-}
-
 function toLanguage(value: string | undefined): TikoLanguage {
   return tikoLanguages.includes(value as TikoLanguage) ? value as TikoLanguage : defaultLanguage
 }
@@ -464,20 +450,32 @@ const itemsPerPage = computed(() => {
 })
 const settingsVersion = ref<number | undefined>()
 const stateVersion = ref<number | undefined>()
-const sessionToken = ref<string>('')
 const bootstrapped = ref(false)
 const tts = createTikoTtsClient()
 const identityClient = new IdentityClient({ baseUrl: identityBaseUrl, credentials: 'include' })
 const dataClient = new TikoDataClient({ baseUrl: apiBaseUrl })
 const newItemName = ref('')
-const userKind = ref<'anonymous' | 'account'>('anonymous')
 
 // ---------------------------------------------------------------------------
-// Parent mode state
+// Identity runtime
 // ---------------------------------------------------------------------------
-const parentMode = ref(true)
-const parentCodeHash = ref<string | undefined>()
-const hasCode = computed(() => Boolean(parentCodeHash.value))
+
+const identityState: IdentityRuntimeState = {
+  sessionToken: ref(''),
+  userId: ref(''),
+  accountEmail: ref(''),
+  accountEmailVerified: ref(false),
+  displayName: ref(''),
+  parentMode: ref(true),
+  childModeEnabled: ref(false),
+  pinConfigured: ref(false),
+}
+
+const runtime = useIdentityRuntime({
+  identityClient,
+  state: identityState,
+  deviceName: 'Cards web',
+})
 
 // ---------------------------------------------------------------------------
 // Media integration (Supabase images for default collections)
@@ -627,7 +625,7 @@ const hasHiddenDefaults = computed(() => hiddenDefaults.value.length > 0)
 const headerActions = computed(() => {
   const actions: Array<{ id: string; label: string; icon: string; active?: boolean; visible?: boolean }> = []
 
-  if (parentMode.value) {
+  if (identityState.parentMode.value) {
     actions.push({ id: 'manage', label: 'Add', icon: 'ui/plus' })
   }
   return actions
@@ -648,7 +646,7 @@ function resolveColorMode(mode: TikoColorMode) {
 // ---------------------------------------------------------------------------
 
 function saveLocalFallback() {
-  writeJson(storageKey, {
+  runtime.writeJson(storageKey, {
     language: language.value,
     colorMode: colorMode.value,
     collections: userCollections.value,
@@ -658,55 +656,6 @@ function saveLocalFallback() {
     tileOverrides: tileOverrides.value,
     editMode: editMode.value,
   })
-}
-
-function saveIdentity(bundle: IdentityBundle) {
-  if (!bundle.session?.token) throw new Error('Identity response did not include a session token.')
-  sessionToken.value = bundle.session.token
-  userKind.value = bundle.account?.emailVerified ? 'account' : 'anonymous'
-  writeJson(identityStorageKey, {
-    userId: bundle.subject.id,
-    deviceId: bundle.device?.id,
-    deviceSecret: bundle.device?.secret,
-    sessionToken: bundle.session.token,
-    expiresAt: bundle.session.expiresAt,
-  } satisfies StoredIdentity)
-}
-
-// ---------------------------------------------------------------------------
-// Bootstrap: identity + remote data
-// ---------------------------------------------------------------------------
-
-async function bootstrapIdentity() {
-  const storedIdentity = readJson<StoredIdentity>(identityStorageKey, {})
-
-  try {
-    const bundle = await identityClient.getCookieSession()
-    saveIdentity(bundle)
-    return
-  } catch {
-    // Fall through to local bearer/device fallback when the shared app-family cookie is missing or expired.
-  }
-
-  if (storedIdentity.sessionToken) {
-    try {
-      const bundle = await identityClient.getSession(storedIdentity.sessionToken)
-      saveIdentity(bundle)
-      return
-    } catch {
-      // Fall through to device bootstrap.
-    }
-  }
-
-  const bundle = await identityClient.bootstrapDevice({
-    device: {
-      id: storedIdentity.deviceId,
-      secret: storedIdentity.deviceSecret,
-      name: 'Cards web',
-      platform: 'web',
-    },
-  })
-  saveIdentity(bundle)
 }
 
 function applySettings(settings: CardsSettings, version?: number) {
@@ -726,10 +675,10 @@ function applyState(state: CardsState, version?: number) {
 }
 
 async function hydrateRemoteData() {
-  if (!sessionToken.value) return
+  if (!identityState.sessionToken.value) return
   const [settings, state, defaults] = await Promise.all([
-    dataClient.getSettings(appId, sessionToken.value),
-    dataClient.getState(appId, sessionToken.value),
+    dataClient.getSettings(appId, identityState.sessionToken.value),
+    dataClient.getState(appId, identityState.sessionToken.value),
     dataClient.getAppDefaults(appId, 'state').catch(() => null),
   ])
   applySettings(settings.settings, settings.version)
@@ -740,19 +689,12 @@ async function hydrateRemoteData() {
     remoteDefaults.value = defaults.state.collections as CardsCollection[]
   }
 
-  // Load parent code from user profile
-  try {
-    const { profile } = await identityClient.getProfile(sessionToken.value)
-    if (typeof profile.parentCodeHash === 'string') {
-      parentCodeHash.value = profile.parentCodeHash
-    }
-  } catch { /* not logged in or profile not available */ }
 }
 
 async function persistSettingsRemote() {
-  if (!bootstrapped.value || !sessionToken.value) return
+  if (!bootstrapped.value || !identityState.sessionToken.value) return
   try {
-    const response = await dataClient.putSettings(appId, sessionToken.value, {
+    const response = await dataClient.putSettings(appId, identityState.sessionToken.value, {
       language: language.value,
       colorMode: colorMode.value,
       hiddenDefaults: hiddenDefaults.value,
@@ -766,9 +708,9 @@ async function persistSettingsRemote() {
 }
 
 async function persistStateRemote() {
-  if (!bootstrapped.value || !sessionToken.value) return
+  if (!bootstrapped.value || !identityState.sessionToken.value) return
   try {
-    const response = await dataClient.putState(appId, sessionToken.value, {
+    const response = await dataClient.putState(appId, identityState.sessionToken.value, {
       collections: userCollections.value,
       navPath: navPath.value,
       editMode: editMode.value,
@@ -1176,7 +1118,7 @@ function onPointerUp(e?: PointerEvent) {
 const contextMenuRef = ref<InstanceType<typeof ContextMenu> | null>(null)
 const contextMenuChoiceId = ref<string>('')
 
-const canEditTiles = computed(() => userKind.value === 'account')
+const canEditTiles = computed(() => identityState.accountEmailVerified.value)
 
 function onTileContextmenu(e: MouseEvent, choiceId: string) {
   if (!canEditTiles.value) return
@@ -1479,205 +1421,12 @@ function openSettingsPopup() {
 }
 
 // ---------------------------------------------------------------------------
-// Login popup (OTP sign-in)
-// ---------------------------------------------------------------------------
-function openLoginPopup() {
-  popup.showPopup({
-    component: markRaw({
-      setup() {
-        const email = ref('')
-        const code = ref('')
-        const sent = ref(false)
-        const loading = ref(false)
-        const verifyError = ref('')
-
-        async function sendCode() {
-          if (!email.value.trim()) return
-          loading.value = true
-          verifyError.value = ''
-          try {
-            await identityClient.createEmailChallenge({ email: email.value.trim(), purpose: 'recover' })
-            sent.value = true
-          } catch {
-            verifyError.value = 'Could not send the code. Please try again.'
-          } finally {
-            loading.value = false
-          }
-        }
-
-        async function verifyCode() {
-          const digits = code.value.replace(/\s/g, '')
-          if (digits.length !== 6) return
-          loading.value = true
-          verifyError.value = ''
-          try {
-            const bundle = await identityClient.verifyOtp(digits)
-            saveIdentity(bundle)
-            popup.closeAllPopups()
-          } catch {
-            verifyError.value = 'Invalid or expired code. Try again or resend.'
-          } finally {
-            loading.value = false
-          }
-        }
-
-        return () => h('div', { class: 'cards-app__login-popup' }, [
-          h('h3', { class: 'cards-app__login-popup__title' }, 'Log in'),
-          sent.value
-            ? [
-                h('p', { class: 'cards-app__login-popup__sent-text' }, `Code sent to ${email.value}`),
-                h('label', { class: 'cards-app__login-popup__label' }, [
-                  'Sign-in code',
-                  h('input', {
-                    type: 'text',
-                    inputmode: 'numeric',
-                    autocomplete: 'one-time-code',
-                    value: code.value,
-                    maxlength: 7,
-                    placeholder: '123 456',
-                    class: 'cards-app__login-popup__otp',
-                    onInput: (e: Event) => { code.value = (e.target as HTMLInputElement).value.replace(/\D/g, '').slice(0, 6) },
-                    onKeydown: (e: KeyboardEvent) => { if (e.key === 'Enter') verifyCode() },
-                  }),
-                ]),
-                verifyError.value ? h('p', { class: 'cards-app__login-popup__error' }, verifyError.value) : null,
-                h('button', {
-                  class: 'cards-app__login-popup__submit',
-                  disabled: code.value.replace(/\s/g, '').length !== 6 || loading.value,
-                  onClick: verifyCode,
-                }, loading.value ? 'Checking…' : 'Verify code'),
-                h('button', {
-                  class: 'cards-app__login-popup__back',
-                  onClick: () => { sent.value = false; code.value = ''; verifyError.value = '' },
-                }, 'Use a different email'),
-              ]
-            : [
-                h('label', { class: 'cards-app__login-popup__label' }, [
-                  'Email',
-                  h('input', {
-                    type: 'email',
-                    value: email.value,
-                    onInput: (e: Event) => { email.value = (e.target as HTMLInputElement).value },
-                    placeholder: 'you@example.com',
-                    onKeydown: (e: KeyboardEvent) => { if (e.key === 'Enter') sendCode() },
-                  }),
-                ]),
-                verifyError.value ? h('p', { class: 'cards-app__login-popup__error' }, verifyError.value) : null,
-                h('button', {
-                  class: 'cards-app__login-popup__submit',
-                  disabled: !email.value.trim() || loading.value,
-                  onClick: sendCode,
-                }, loading.value ? 'Sending…' : 'Send sign-in code'),
-              ],
-        ])
-      },
-    }),
-    title: '',
-    config: { position: 'center', canClose: true, background: true, width: '22rem' },
-    onClose: () => {},
-  })
-}
-
-function handleAvatarClick() {
-  if (!sessionToken.value) {
-    openLoginPopup()
-    return
-  }
-  openProfileMenu()
-}
-
-function openProfileMenu() {
-  popup.showPopup({
-    component: markRaw(TikoProfileMenu),
-    title: '',
-    props: {
-      parentMode: parentMode.value,
-      hasCode: hasCode.value,
-      isLoggedIn: Boolean(sessionToken.value),
-    },
-    config: { position: 'bottom', canClose: true, background: false, width: 'auto' },
-    on: {
-      profile: () => {},
-      logout: () => doLogout(),
-      login: () => openLoginPopup(),
-      'enter-parent-mode': () => openParentCodePopup(),
-      'enter-child-mode': () => openChildModeFlow(),
-      close: () => popup.closeAllPopups(),
-    },
-  })
-}
-
-async function doLogout() {
-  if (!sessionToken.value) return
-  try {
-    await identityClient.logout(sessionToken.value)
-  } catch { /* ignore */ }
-  window.localStorage.removeItem('tiko-cards-identity')
-  window.location.reload()
-}
-
-function openParentCodePopup() {
-  popup.showPopup({
-    component: markRaw(TikoPinPopup),
-    title: '',
-    props: { existingHash: parentCodeHash.value },
-    config: { position: 'center', canClose: true, background: true, width: '22rem' },
-    on: {
-      set: () => {
-        parentMode.value = true
-        popup.closeAllPopups()
-      },
-      cancel: () => popup.closeAllPopups(),
-    },
-  })
-}
-
-function openChildModeFlow() {
-  if (!hasCode.value) {
-    // First time: show code creation
-    popup.showPopup({
-      component: markRaw(TikoPinPopup),
-      title: '',
-      props: { existingHash: undefined },
-      config: { position: 'center', canClose: true, background: true, width: '22rem' },
-      on: {
-        set: async (...args: unknown[]) => {
-          const hash = args[0] as string
-          parentCodeHash.value = hash
-          parentMode.value = false
-          if (sessionToken.value) {
-            try { await identityClient.updateProfile(sessionToken.value, { parentCodeHash: hash }) } catch { /* ignore */ }
-          }
-          popup.closeAllPopups()
-        },
-        cancel: () => popup.closeAllPopups(),
-      },
-    })
-  } else {
-    // Code exists: verify
-    popup.showPopup({
-      component: markRaw(TikoPinPopup),
-      title: '',
-      props: { existingHash: parentCodeHash.value },
-      config: { position: 'center', canClose: true, background: true, width: '22rem' },
-      on: {
-        set: () => {
-          parentMode.value = false
-          popup.closeAllPopups()
-        },
-        cancel: () => popup.closeAllPopups(),
-      },
-    })
-  }
-}
-
-// ---------------------------------------------------------------------------
 // Bootstrap lifecycle
 // ---------------------------------------------------------------------------
 
 onMounted(async () => {
   try {
-    await bootstrapIdentity()
+    await runtime.bootstrapIdentity()
     await hydrateRemoteData()
   } catch {
     // Keep the local flow available when API bootstrap is offline.
@@ -1710,7 +1459,7 @@ onUnmounted(() => {
     :show-back="navPath.length > 0"
     :actions="headerActions"
     @header-action="headerAction"
-    @avatar-click="handleAvatarClick"
+    @avatar-click="runtime.handleAvatarClick"
     @back-click="navigateBack"
     @title-click="goHome"
   >

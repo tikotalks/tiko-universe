@@ -14,6 +14,7 @@
 		5EBE9C3308BE11EFD67702F1 /* CardsDefaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0C8F33C9BB9324491B5711F /* CardsDefaults.swift */; };
 		645AF976521D81281F153392 /* CardsModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 752D7B95F673E108C9D9D5A1 /* CardsModels.swift */; };
 		6AC686C92CEB4CE025CF8FFF /* CardsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F976EA464A8D7FD09CFC50E /* CardsView.swift */; };
+		86ABF5ED50BB5062BFF3D7BB /* CardsAppConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9CB42D014C3BD083A309E34 /* CardsAppConfig.swift */; };
 		ABE08360C6F7E9C38471E301 /* TikoCardsApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 524C104FBEF1095D1213B1BC /* TikoCardsApp.swift */; };
 		BD465427281F4B31F8A20D40 /* CardsMediaClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 207A42348432F2BFF126FFBE /* CardsMediaClient.swift */; };
 		C10DDF329DCF42F8DE76218D /* CardsStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBAEDE295147575574F99882 /* CardsStore.swift */; };
@@ -45,6 +46,7 @@
 		A0C8F33C9BB9324491B5711F /* CardsDefaults.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardsDefaults.swift; sourceTree = "<group>"; };
 		BA81DB944EFAC2BEB232F5E5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		E3992ADC372502C3CF3EB431 /* CardsImageCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardsImageCache.swift; sourceTree = "<group>"; };
+		E9CB42D014C3BD083A309E34 /* CardsAppConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardsAppConfig.swift; sourceTree = "<group>"; };
 		EAABAA67B164E6D6DD4EF4DD /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		EBAEDE295147575574F99882 /* CardsStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardsStore.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -100,6 +102,7 @@
 			isa = PBXGroup;
 			children = (
 				EAABAA67B164E6D6DD4EF4DD /* Assets.xcassets */,
+				E9CB42D014C3BD083A309E34 /* CardsAppConfig.swift */,
 				89B173082F6A106521659C40 /* CardsContentClient.swift */,
 				A0C8F33C9BB9324491B5711F /* CardsDefaults.swift */,
 				E3992ADC372502C3CF3EB431 /* CardsImageCache.swift */,
@@ -211,6 +214,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				86ABF5ED50BB5062BFF3D7BB /* CardsAppConfig.swift in Sources */,
 				E0C38A9E661265F40153CF99 /* CardsContentClient.swift in Sources */,
 				5EBE9C3308BE11EFD67702F1 /* CardsDefaults.swift in Sources */,
 				451F1AF25BE73DD4F8BC91E6 /* CardsImageCache.swift in Sources */,

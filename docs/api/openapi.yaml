@@ -2,7 +2,7 @@ openapi: 3.1.0
 info:
   title: Tiko Universe API
   version: 0.1.0
-  description: Initial API-first contract for Tiko web, iOS, and Android clients.
+  description: Initial API-first contract for Tiko web, iOS, and Android clients. Identity account-type and mode details are defined in docs/api/identity-user-modes-profile-manager-contract.md and the canonical data categories are defined in docs/architecture/data-model.md.
 servers:
   - url: https://api.tikotalks.com/v1
     description: Future production API gateway
@@ -12,6 +12,7 @@ paths:
   /identity/device:
     post:
       summary: Create or restore a device-first user session
+      description: First launch creates or restores the current account according to the account-type contract.
       requestBody:
         required: false
         content:
@@ -43,7 +44,7 @@ paths:
           $ref: '#/components/responses/ApiError'
   /identity/email:
     post:
-      summary: Attach or request recovery email magic link with generic response
+      summary: Attach or request recovery or verification email with generic response
       description: Always returns the same accepted response for syntactically valid requests and never reveals whether an email exists.
       security:
         - bearerSession: []
@@ -63,9 +64,45 @@ paths:
                 $ref: '#/components/schemas/RecoveryEmailResponse'
         default:
           $ref: '#/components/responses/ApiError'
+  /identity/otp/request:
+    post:
+      summary: Request OTP for login, email verification, PIN reset, or deletion confirmation
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OtpRequest'
+      responses:
+        '202':
+          description: Generic accepted response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RecoveryEmailResponse'
+        default:
+          $ref: '#/components/responses/ApiError'
+  /identity/otp/verify:
+    post:
+      summary: Verify OTP and return session or grant
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OtpVerifyRequest'
+      responses:
+        '200':
+          description: OTP verified
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthVerificationResponse'
+        default:
+          $ref: '#/components/responses/ApiError'
   /identity/magic-links/verify:
     post:
-      summary: Verify a magic link and return a session bundle
+      summary: Verify a magic link and return a session bundle or grant
       requestBody:
         required: true
         content:
@@ -74,11 +111,11 @@ paths:
               $ref: '#/components/schemas/MagicLinkVerifyRequest'
       responses:
         '200':
-          description: Session bundle
+          description: Magic link verified
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/SessionBundle'
+                $ref: '#/components/schemas/AuthVerificationResponse'
         default:
           $ref: '#/components/responses/ApiError'
   /identity/logout:
@@ -91,9 +128,291 @@ paths:
           description: Session revoked
         default:
           $ref: '#/components/responses/ApiError'
+  /identity/pin:
+    post:
+      summary: Set or change PIN for Child Mode exit and sensitive Parent Mode actions
+      security:
+        - bearerSession: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SetPinRequest'
+      responses:
+        '200':
+          description: PIN configured
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RuntimeSummary'
+        default:
+          $ref: '#/components/responses/ApiError'
+    delete:
+      summary: Remove PIN using PIN verification or recovery grant
+      security:
+        - bearerSession: []
+      responses:
+        '204':
+          description: PIN removed
+        default:
+          $ref: '#/components/responses/ApiError'
+  /identity/pin/verify:
+    post:
+      summary: Verify PIN and optionally return short-lived grant
+      security:
+        - bearerSession: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VerifyPinRequest'
+      responses:
+        '200':
+          description: PIN verified
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VerifyPinResponse'
+        default:
+          $ref: '#/components/responses/ApiError'
+  /identity/mode/child/enable:
+    post:
+      summary: Enable Child Mode for a Verified/Profile Manager account after PIN setup
+      security:
+        - bearerSession: []
+      responses:
+        '200':
+          description: Child Mode enabled
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RuntimeSummary'
+        default:
+          $ref: '#/components/responses/ApiError'
+  /identity/mode/child:
+    post:
+      summary: Enter Child Mode
+      security:
+        - bearerSession: []
+      responses:
+        '200':
+          description: Runtime mode changed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RuntimeSummary'
+        default:
+          $ref: '#/components/responses/ApiError'
+  /identity/mode/parent:
+    post:
+      summary: Return to Parent Mode, requiring PIN when leaving Child Mode
+      security:
+        - bearerSession: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EnterParentModeRequest'
+      responses:
+        '200':
+          description: Runtime mode changed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RuntimeSummary'
+        default:
+          $ref: '#/components/responses/ApiError'
+  /identity/reset:
+    post:
+      summary: Reset current account data according to the shared data model
+      description: Supports Reset my data. Keeps Identity and deletes Preferences, App State, User Content, Progress, and Insights for the current account.
+      security:
+        - bearerSession: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ResetAccountDataRequest'
+      responses:
+        '202':
+          description: Reset request accepted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResetRequest'
+        default:
+          $ref: '#/components/responses/ApiError'
+  /identity/child-accounts:
+    get:
+      summary: List Child Accounts managed by the current Profile Manager account
+      security:
+        - bearerSession: []
+      responses:
+        '200':
+          description: Child Account list
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChildAccountListResponse'
+        default:
+          $ref: '#/components/responses/ApiError'
+    post:
+      summary: Create a Child Account; Profile Manager only
+      security:
+        - bearerSession: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateChildAccountRequest'
+      responses:
+        '201':
+          description: Child Account created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChildAccount'
+        default:
+          $ref: '#/components/responses/ApiError'
+  /identity/child-accounts/login:
+    post:
+      summary: Log in as a Child Account using name or identifier plus 4-digit code
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ChildAccountLoginRequest'
+      responses:
+        '200':
+          description: Child Account session
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SessionBundle'
+        default:
+          $ref: '#/components/responses/ApiError'
+  /identity/child-accounts/{childAccountId}:
+    put:
+      summary: Update Child Account name, avatar, or preferences; Profile Manager only
+      security:
+        - bearerSession: []
+      parameters:
+        - $ref: '#/components/parameters/ChildAccountId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateChildAccountRequest'
+      responses:
+        '200':
+          description: Child Account updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChildAccount'
+        default:
+          $ref: '#/components/responses/ApiError'
+    delete:
+      summary: Delete Child Account; Profile Manager only
+      security:
+        - bearerSession: []
+      parameters:
+        - $ref: '#/components/parameters/ChildAccountId'
+      responses:
+        '204':
+          description: Child Account deleted
+        default:
+          $ref: '#/components/responses/ApiError'
+  /identity/child-accounts/{childAccountId}/code/reset:
+    post:
+      summary: Reset Child Account 4-digit code; Profile Manager only
+      security:
+        - bearerSession: []
+      parameters:
+        - $ref: '#/components/parameters/ChildAccountId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ResetChildAccountCodeRequest'
+      responses:
+        '200':
+          description: Child Account code reset
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChildAccount'
+        default:
+          $ref: '#/components/responses/ApiError'
+  /identity/child-accounts/{childAccountId}/progress/reset:
+    post:
+      summary: Reset Child Account progress and derived insights; Profile Manager only
+      security:
+        - bearerSession: []
+      parameters:
+        - $ref: '#/components/parameters/ChildAccountId'
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ResetProgressRequest'
+      responses:
+        '202':
+          description: Child progress reset accepted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResetRequest'
+        default:
+          $ref: '#/components/responses/ApiError'
+  /identity/deletion-requests:
+    post:
+      summary: Create account, local-device, or Child Account deletion request
+      security:
+        - bearerSession: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateDeletionRequest'
+      responses:
+        '202':
+          description: Deletion request accepted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeletionRequest'
+        default:
+          $ref: '#/components/responses/ApiError'
+  /identity/deletion-requests/{requestId}:
+    get:
+      summary: Get deletion request status
+      security:
+        - bearerSession: []
+      parameters:
+        - $ref: '#/components/parameters/RequestId'
+      responses:
+        '200':
+          description: Deletion request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeletionRequest'
+        default:
+          $ref: '#/components/responses/ApiError'
   /apps/{app}/settings:
     get:
-      summary: Read app settings
+      summary: Read app settings for the current account/session
       security:
         - bearerSession: []
       parameters:
@@ -105,12 +424,20 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/AppSettings'
+        default:
+          $ref: '#/components/responses/ApiError'
     put:
-      summary: Save app settings
+      summary: Save app settings for the current account/session
       security:
         - bearerSession: []
       parameters:
         - $ref: '#/components/parameters/AppName'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AppSettings'
       responses:
         '200':
           description: Saved app settings
@@ -118,9 +445,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/AppSettings'
+        default:
+          $ref: '#/components/responses/ApiError'
   /apps/{app}/state:
     get:
-      summary: Read app state
+      summary: Read app state for the current account/session
       security:
         - bearerSession: []
       parameters:
@@ -132,12 +461,20 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/AppState'
+        default:
+          $ref: '#/components/responses/ApiError'
     put:
-      summary: Save app state
+      summary: Save app state for the current account/session
       security:
         - bearerSession: []
       parameters:
         - $ref: '#/components/parameters/AppName'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AppState'
       responses:
         '200':
           description: Saved app state
@@ -145,6 +482,89 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/AppState'
+        default:
+          $ref: '#/components/responses/ApiError'
+  /apps/{app}/progress:
+    get:
+      summary: Read app progress for the current account/session
+      security:
+        - bearerSession: []
+      parameters:
+        - $ref: '#/components/parameters/AppName'
+      responses:
+        '200':
+          description: App progress
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppProgress'
+        default:
+          $ref: '#/components/responses/ApiError'
+    put:
+      summary: Save app progress for the current account/session
+      security:
+        - bearerSession: []
+      parameters:
+        - $ref: '#/components/parameters/AppName'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AppProgress'
+      responses:
+        '200':
+          description: Saved app progress
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppProgress'
+        default:
+          $ref: '#/components/responses/ApiError'
+  /apps/{app}/resets/app:
+    post:
+      summary: Reset app state for one app while keeping identity, preferences, content, and progress
+      security:
+        - bearerSession: []
+      parameters:
+        - $ref: '#/components/parameters/AppName'
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ResetAppRequest'
+      responses:
+        '202':
+          description: App reset accepted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResetRequest'
+        default:
+          $ref: '#/components/responses/ApiError'
+  /apps/{app}/resets/progress:
+    post:
+      summary: Reset app progress and derived insights while keeping identity, preferences, state, and content
+      security:
+        - bearerSession: []
+      parameters:
+        - $ref: '#/components/parameters/AppName'
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ResetProgressRequest'
+      responses:
+        '202':
+          description: App progress reset accepted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResetRequest'
+        default:
+          $ref: '#/components/responses/ApiError'
   /generation/tts:
     post:
       summary: Generate or fetch cached text-to-speech audio
@@ -204,6 +624,18 @@ components:
       schema:
         type: string
         enum: [yes-no, type, cards, sequence, timer]
+    ChildAccountId:
+      name: childAccountId
+      in: path
+      required: true
+      schema:
+        type: string
+    RequestId:
+      name: requestId
+      in: path
+      required: true
+      schema:
+        type: string
   responses:
     ApiError:
       description: API error
@@ -212,6 +644,18 @@ components:
           schema:
             $ref: '#/components/schemas/ApiErrorEnvelope'
   schemas:
+    AccountType:
+      type: string
+      enum: [temporary, verified, profile_manager, child_account]
+    RuntimeMode:
+      type: string
+      enum: [parent, child]
+    LoginMethod:
+      type: string
+      enum: [device, otp, magic_link, child_code]
+    DataCategory:
+      type: string
+      enum: [identity, preferences, app_state, user_content, progress, insights]
     DeviceBootstrapRequest:
       type: object
       properties:
@@ -234,21 +678,67 @@ components:
         email:
           type: string
           format: email
+        purpose:
+          type: string
+          enum: [verify_email, recovery, reset_pin, confirm_deletion]
+          default: verify_email
     RecoveryEmailResponse:
       type: object
       required: [message]
       properties:
         message:
           type: string
+    OtpRequest:
+      type: object
+      required: [email, purpose]
+      properties:
+        email:
+          type: string
+          format: email
+        purpose:
+          type: string
+          enum: [login, verify_email, reset_pin, confirm_deletion]
+    OtpVerifyRequest:
+      type: object
+      required: [email, code, purpose]
+      properties:
+        email:
+          type: string
+          format: email
+        code:
+          type: string
+          pattern: '^\d{4,8}$'
+        purpose:
+          type: string
+          enum: [login, verify_email, reset_pin, confirm_deletion]
     MagicLinkVerifyRequest:
       type: object
       required: [token]
       properties:
         token:
           type: string
+    AuthVerificationResponse:
+      type: object
+      properties:
+        session:
+          $ref: '#/components/schemas/SessionBundle'
+        grant:
+          $ref: '#/components/schemas/Grant'
+    Grant:
+      type: object
+      required: [token, purpose, expiresAt]
+      properties:
+        token:
+          type: string
+        purpose:
+          type: string
+          enum: [reset_pin, confirm_deletion, remove_pin, manage_child_accounts, reset_data]
+        expiresAt:
+          type: string
+          format: date-time
     SessionBundle:
       type: object
-      required: [user, device, session]
+      required: [user, device, session, runtime, capabilities]
       properties:
         user:
           $ref: '#/components/schemas/User'
@@ -256,18 +746,58 @@ components:
           $ref: '#/components/schemas/Device'
         session:
           $ref: '#/components/schemas/Session'
+        runtime:
+          $ref: '#/components/schemas/RuntimeSummary'
+        capabilities:
+          $ref: '#/components/schemas/UserCapabilities'
     User:
       type: object
-      required: [id, kind, recoverable]
+      required: [id, accountType, recoverable]
       properties:
         id:
           type: string
         displayName:
           type: string
-        kind:
+        email:
           type: string
-          enum: [device, recoverable]
+          format: email
+        accountType:
+          $ref: '#/components/schemas/AccountType'
+        mode:
+          $ref: '#/components/schemas/RuntimeMode'
         recoverable:
+          type: boolean
+        emailVerified:
+          type: boolean
+        temporaryExpiresAt:
+          type: string
+          format: date-time
+        lastActiveAt:
+          type: string
+          format: date-time
+    RuntimeSummary:
+      type: object
+      required: [mode, childModeEnabled, pinConfigured]
+      properties:
+        mode:
+          $ref: '#/components/schemas/RuntimeMode'
+        childModeEnabled:
+          type: boolean
+        pinConfigured:
+          type: boolean
+    UserCapabilities:
+      type: object
+      required: [canVerifyEmail, canUseParentMode, canUseChildMode, canManageChildAccounts, canDeleteAccount]
+      properties:
+        canVerifyEmail:
+          type: boolean
+        canUseParentMode:
+          type: boolean
+        canUseChildMode:
+          type: boolean
+        canManageChildAccounts:
+          type: boolean
+        canDeleteAccount:
           type: boolean
     Device:
       type: object
@@ -289,6 +819,186 @@ components:
         expiresAt:
           type: string
           format: date-time
+        loginMethod:
+          $ref: '#/components/schemas/LoginMethod'
+    SetPinRequest:
+      type: object
+      required: [pin]
+      properties:
+        pin:
+          type: string
+          pattern: '^\d{4,8}$'
+        currentPinGrantToken:
+          type: string
+        recoveryGrantToken:
+          type: string
+    VerifyPinRequest:
+      type: object
+      required: [pin]
+      properties:
+        pin:
+          type: string
+          pattern: '^\d{4,8}$'
+        purpose:
+          type: string
+          enum: [enter_parent_mode, delete_account, remove_pin, manage_child_accounts, reset_data]
+    VerifyPinResponse:
+      type: object
+      required: [verified]
+      properties:
+        verified:
+          type: boolean
+        grant:
+          $ref: '#/components/schemas/Grant'
+    EnterParentModeRequest:
+      type: object
+      properties:
+        pin:
+          type: string
+          pattern: '^\d{4,8}$'
+        pinGrantToken:
+          type: string
+    ChildAccount:
+      type: object
+      required: [id, name, createdAt, updatedAt]
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        avatarMediaId:
+          type: string
+          description: Optional media reference for the child avatar.
+        language:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+    ChildAccountListResponse:
+      type: object
+      required: [children]
+      properties:
+        children:
+          type: array
+          items:
+            $ref: '#/components/schemas/ChildAccount'
+    CreateChildAccountRequest:
+      type: object
+      required: [name, code]
+      properties:
+        name:
+          type: string
+        code:
+          type: string
+          pattern: '^\d{4}$'
+        avatarMediaId:
+          type: string
+        language:
+          type: string
+    UpdateChildAccountRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        avatarMediaId:
+          type: string
+        language:
+          type: string
+    ResetChildAccountCodeRequest:
+      type: object
+      required: [code]
+      properties:
+        code:
+          type: string
+          pattern: '^\d{4}$'
+    ChildAccountLoginRequest:
+      type: object
+      required: [identifier, code]
+      properties:
+        identifier:
+          type: string
+          description: Child Account name or stable identifier.
+        code:
+          type: string
+          pattern: '^\d{4}$'
+    ResetAccountDataRequest:
+      type: object
+      properties:
+        pinGrantToken:
+          type: string
+        confirmation:
+          type: string
+          enum: [reset_my_data]
+    ResetAppRequest:
+      type: object
+      properties:
+        confirmation:
+          type: string
+          enum: [reset_app]
+    ResetProgressRequest:
+      type: object
+      properties:
+        confirmation:
+          type: string
+          enum: [reset_progress]
+    ResetRequest:
+      type: object
+      required: [id, status, categoriesAffected, createdAt]
+      properties:
+        id:
+          type: string
+        status:
+          type: string
+          enum: [requested, processing, completed, failed]
+        categoriesAffected:
+          type: array
+          items:
+            $ref: '#/components/schemas/DataCategory'
+        createdAt:
+          type: string
+          format: date-time
+        completedAt:
+          type: string
+          format: date-time
+    CreateDeletionRequest:
+      type: object
+      required: [scope]
+      properties:
+        scope:
+          type: string
+          enum: [local-device, account, child_account]
+        childAccountId:
+          type: string
+        pinGrantToken:
+          type: string
+        recoveryGrantToken:
+          type: string
+    DeletionRequest:
+      type: object
+      required: [id, scope, status, createdAt, updatedAt]
+      properties:
+        id:
+          type: string
+        scope:
+          type: string
+          enum: [local-device, account, child_account]
+        status:
+          type: string
+          enum: [requested, awaiting-verification, processing, completed, failed, cancelled]
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+        completedAt:
+          type: string
+          format: date-time
+        canCancel:
+          type: boolean
     GenerationTtsRequest:
       type: object
       required: [text, language]
@@ -300,7 +1010,6 @@ components:
         language:
           type: string
           minLength: 1
-          description: BCP-47 language code requested by the client.
         provider:
           type: string
           enum: [openai, azure, auto]
@@ -341,13 +1050,9 @@ components:
           type: string
         audioUrl:
           type: string
-          description: Relative API URL for `GET /generation/audio/{id}` or an absolute signed/read URL in a future contract.
         contentType:
           type: string
           enum: [audio/mpeg]
-        fileSizeBytes:
-          type: integer
-          minimum: 0
         generatedAt:
           type: string
           format: date-time
@@ -384,5 +1089,8 @@ components:
       type: object
       additionalProperties: true
     AppState:
+      type: object
+      additionalProperties: true
+    AppProgress:
       type: object
       additionalProperties: true

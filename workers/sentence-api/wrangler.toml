@@ -14,13 +14,13 @@ ALLOWED_ORIGINS = "https://talk.tikoapps.org,https://dev.talk.tikoapps.org,http:
 [[d1_databases]]
 binding = "DB"
 database_name = "tiko-db"
-database_id = "00000000-0000-0000-0000-000000000000"
+database_id = "f99b61ae-6a78-4670-bb9c-cdc4f634264a"
 migrations_dir = "migrations"
 
 [[kv_namespaces]]
 binding = "CACHE"
-id = "00000000000000000000000000000000"
-preview_id = "00000000000000000000000000000000"
+id = "126846bedae445ccb8fd60db72873c19"
+preview_id = "126846bedae445ccb8fd60db72873c19"
 
 [[services]]
 binding = "IDENTITY_SERVICE"
@@ -52,12 +52,12 @@ ALLOWED_ORIGINS = "https://talk.tikoapps.org,capacitor://localhost,ionic://local
 [[env.production.d1_databases]]
 binding = "DB"
 database_name = "tiko-sentence-db"
-database_id = "00000000-0000-0000-0000-000000000000"
+database_id = "f99b61ae-6a78-4670-bb9c-cdc4f634264a"
 migrations_dir = "migrations"
 
 [[env.production.kv_namespaces]]
 binding = "CACHE"
-id = "00000000000000000000000000000000"
+id = "126846bedae445ccb8fd60db72873c19"
 
 [[env.production.services]]
 binding = "IDENTITY_SERVICE"

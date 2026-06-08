@@ -67,6 +67,7 @@ public struct TikoSquareTile<Content: View>: View {
     public let cornerRadius: CGFloat
     public let background: Color
     public let isActive: Bool
+    public let labelFont: Font
     public let content: () -> Content
 
     public init(
@@ -75,6 +76,7 @@ public struct TikoSquareTile<Content: View>: View {
         cornerRadius: CGFloat = 24,
         background: Color,
         isActive: Bool = false,
+        labelFont: Font = Font.system(.caption, design: .rounded).weight(.heavy),
         @ViewBuilder content: @escaping () -> Content
     ) {
         self.title = title
@@ -82,6 +84,7 @@ public struct TikoSquareTile<Content: View>: View {
         self.cornerRadius = cornerRadius
         self.background = background
         self.isActive = isActive
+        self.labelFont = labelFont
         self.content = content
     }
 
@@ -102,7 +105,7 @@ public struct TikoSquareTile<Content: View>: View {
             VStack(spacing: 0) {
                 Spacer()
                 Text(title)
-                    .font(.system(.caption, design: .rounded).weight(.heavy))
+                    .font(labelFont)
                     .foregroundStyle(Color.primary)
                     .multilineTextAlignment(.center)
                     .lineLimit(2)

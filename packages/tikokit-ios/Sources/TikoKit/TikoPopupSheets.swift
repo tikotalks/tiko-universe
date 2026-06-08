@@ -1,6 +1,5 @@
 import SwiftUI
 import PopupView
-import CryptoKit
 
 public struct TikoPopupCard<Content: View>: View {
     private let title: String
@@ -235,11 +234,181 @@ public struct TikoSettingsToggleRow: View {
     }
 }
 
+public struct TikoColorSwatchPicker: View {
+    public static let colors: [UInt32] = [
+        0xFF6B6B, 0xFF922B, 0xFFD43B, 0x69DB7C,
+        0x4DABF7, 0x748FFC, 0xCC5DE8, 0xF783AC,
+        0x63E6BE, 0xA9E34B, 0x868E96, 0x2C2C2E,
+    ]
+
+    private let appColor: TikoAppColor
+    @Binding private var hexValue: String
+
+    public init(appColor: TikoAppColor, hexValue: Binding<String>) {
+        self.appColor = appColor
+        self._hexValue = hexValue
+    }
+
+    public var body: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            HStack(spacing: 14) {
+                RoundedRectangle(cornerRadius: 12, style: .continuous)
+                    .fill(selectedColor ?? appColor.palette.primary.opacity(0.4))
+                    .frame(width: 40, height: 40)
+                    .overlay {
+                        Image(systemName: "paintpalette.fill")
+                            .font(.system(size: 16, weight: .bold))
+                            .foregroundStyle(.white)
+                    }
+                Text("Favourite colour")
+                    .font(.system(size: 16, weight: .heavy, design: .rounded))
+                    .foregroundStyle(.primary)
+                Spacer()
+                if !hexValue.isEmpty {
+                    Button {
+                        withAnimation(.spring(response: 0.2)) { hexValue = "" }
+                    } label: {
+                        Text("None")
+                            .font(.system(size: 13, weight: .heavy, design: .rounded))
+                            .foregroundStyle(.secondary)
+                    }
+                    .buttonStyle(.plain)
+                }
+            }
+
+            LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 10), count: 6), spacing: 10) {
+                ForEach(Self.colors, id: \.self) { color in
+                    let hex = String(format: "%06X", color)
+                    ZStack {
+                        Circle().fill(Color(hex: color))
+                        if hexValue.uppercased() == hex {
+                            Circle().strokeBorder(Color.white, lineWidth: 2.5)
+                            Image(systemName: "checkmark")
+                                .font(.system(size: 11, weight: .black))
+                                .foregroundStyle(.white)
+                        }
+                    }
+                    .frame(height: 38)
+                    .onTapGesture {
+                        withAnimation(.spring(response: 0.2)) { hexValue = hex }
+                    }
+                }
+            }
+        }
+        .padding(14)
+        .background(Color(.systemBackground))
+        .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
+        .overlay {
+            RoundedRectangle(cornerRadius: 18, style: .continuous)
+                .stroke(Color.primary.opacity(0.08), lineWidth: 1)
+        }
+    }
+
+    private var selectedColor: Color? {
+        let h = hexValue.trimmingCharacters(in: CharacterSet.alphanumerics.inverted)
+        guard h.count == 6, let v = UInt64(h, radix: 16) else { return nil }
+        return Color(
+            red:   Double((v >> 16) & 0xFF) / 255,
+            green: Double((v >> 8)  & 0xFF) / 255,
+            blue:  Double(v         & 0xFF) / 255
+        )
+    }
+}
+
+public struct TikoSettingsSegmentedRow: View {
+    private let title: String
+    private let icon: String
+    private let appColor: TikoAppColor
+    private let options: [String]
+    @Binding private var selectedIndex: Int
+
+    public init(title: String, icon: String, appColor: TikoAppColor, options: [String], selectedIndex: Binding<Int>) {
+        self.title = title
+        self.icon = icon
+        self.appColor = appColor
+        self.options = options
+        self._selectedIndex = selectedIndex
+    }
+
+    public var body: some View {
+        HStack(spacing: 14) {
+            Image(systemName: icon)
+                .font(.system(size: 18, weight: .bold))
+                .foregroundStyle(appColor.palette.primary)
+                .frame(width: 40, height: 40)
+                .background(appColor.palette.primary.opacity(0.12))
+                .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+
+            Text(title)
+                .font(.system(size: 16, weight: .heavy, design: .rounded))
+                .foregroundStyle(.primary)
+
+            Spacer()
+
+            Picker(title, selection: $selectedIndex) {
+                ForEach(Array(options.enumerated()), id: \.offset) { i, label in
+                    Text(label).tag(i)
+                }
+            }
+            .pickerStyle(.segmented)
+            .frame(width: 150)
+        }
+        .tikoSettingsRowSurface()
+    }
+}
+
+public struct TikoSettingsSizeRow: View {
+    private let title: String
+    private let icon: String
+    private let appColor: TikoAppColor
+    @Binding private var selectedIndex: Int
+
+    public init(title: String, icon: String, appColor: TikoAppColor, selectedIndex: Binding<Int>) {
+        self.title = title
+        self.icon = icon
+        self.appColor = appColor
+        self._selectedIndex = selectedIndex
+    }
+
+    public var body: some View {
+        HStack(spacing: 14) {
+            Image(systemName: icon)
+                .font(.system(size: 18, weight: .bold))
+                .foregroundStyle(appColor.palette.primary)
+                .frame(width: 40, height: 40)
+                .background(appColor.palette.primary.opacity(0.12))
+                .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+
+            Text(title)
+                .font(.system(size: 16, weight: .heavy, design: .rounded))
+                .foregroundStyle(.primary)
+
+            Spacer()
+
+            HStack(spacing: 0) {
+                ForEach(0..<3, id: \.self) { i in
+                    Button {
+                        withAnimation(.spring(response: 0.2)) { selectedIndex = i }
+                    } label: {
+                        Text("A")
+                            .font(.system(i == 0 ? .caption2 : i == 1 ? .callout : .title3, design: .rounded).weight(.heavy))
+                            .frame(width: 44, height: 34)
+                            .background(selectedIndex == i ? appColor.palette.primary : Color.clear)
+                            .foregroundStyle(selectedIndex == i ? .white : .primary)
+                    }
+                    .buttonStyle(.plain)
+                }
+            }
+            .background(Color(.systemFill))
+            .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+        }
+        .tikoSettingsRowSurface()
+    }
+}
+
 public struct TikoSettingsSheet<AppSettings: View>: View {
     private let appColor: TikoAppColor
-    private let accountTitle: String
     private let onClose: () -> Void
-    private let onOpenAccount: () -> Void
     private let appSettings: AppSettings
 
     @AppStorage("tiko.language") private var languageID = "en"
@@ -249,15 +418,11 @@ public struct TikoSettingsSheet<AppSettings: View>: View {
 
     public init(
         appColor: TikoAppColor,
-        accountTitle: String = "Setup user",
         onClose: @escaping () -> Void,
-        onOpenAccount: @escaping () -> Void,
         @ViewBuilder appSettings: () -> AppSettings
     ) {
         self.appColor = appColor
-        self.accountTitle = accountTitle
         self.onClose = onClose
-        self.onOpenAccount = onOpenAccount
         self.appSettings = appSettings()
     }
 
@@ -271,14 +436,6 @@ public struct TikoSettingsSheet<AppSettings: View>: View {
         ) {
             VStack(spacing: 16) {
                 TikoSettingsSection(title: "Tiko") {
-                    TikoSettingsActionRow(
-                        title: "Account",
-                        value: accountTitle,
-                        icon: "person.crop.circle",
-                        appColor: appColor,
-                        action: onOpenAccount
-                    )
-
                     TikoSettingsActionRow(
                         title: "Language",
                         value: selectedLanguageTitle,
@@ -332,15 +489,8 @@ public struct TikoSettingsSheet<AppSettings: View>: View {
 }
 
 public extension TikoSettingsSheet where AppSettings == EmptyView {
-    init(
-        appColor: TikoAppColor,
-        accountTitle: String = "Setup user",
-        onClose: @escaping () -> Void,
-        onOpenAccount: @escaping () -> Void
-    ) {
-        self.init(appColor: appColor, accountTitle: accountTitle, onClose: onClose, onOpenAccount: onOpenAccount) {
-            EmptyView()
-        }
+    init(appColor: TikoAppColor, onClose: @escaping () -> Void) {
+        self.init(appColor: appColor, onClose: onClose) { EmptyView() }
     }
 }
 
@@ -484,6 +634,7 @@ public struct TikoAccountSheet: View {
     @State private var isSignedIn = false
     @State private var signedInEmail: String? = nil
     @State private var showingAvatarPicker = false
+    @State private var currentIdentityBundle: TikoIdentityBundle?
 
     // Login flow state
     @State private var emailInput = ""
@@ -491,6 +642,7 @@ public struct TikoAccountSheet: View {
     @State private var otpCode = ""
     @State private var isLoading = false
     @State private var identityError: String? = nil
+    @State private var showDeleteConfirmation = false
 
     private let identityClient = TikoIdentityClient()
     private let sessionStore = TikoDeviceSessionStore()
@@ -514,8 +666,11 @@ public struct TikoAccountSheet: View {
         .task {
             if let bundle = try? sessionStore.load(),
                bundle.account?.emailVerified == true {
+                currentIdentityBundle = bundle
                 isSignedIn = true
                 signedInEmail = bundle.account?.email
+                if let email = bundle.account?.email { userEmail = email }
+                await refreshIdentityBundle(accessToken: bundle.accessToken)
             }
         }
         .tikoMediaPickerPopup(
@@ -524,6 +679,12 @@ public struct TikoAccountSheet: View {
             title: "Choose avatar"
         ) { url in
             storedAvatarURLString = url.absoluteString
+        }
+        .alert("Delete this Tiko user?", isPresented: $showDeleteConfirmation) {
+            Button("Delete", role: .destructive) { Task { await deleteAccount() } }
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text("This removes the account and sessions.")
         }
     }
 
@@ -589,6 +750,15 @@ public struct TikoAccountSheet: View {
                         Text("Verified account")
                             .font(.system(size: 12, weight: .semibold, design: .rounded))
                             .foregroundStyle(appColor.palette.primary)
+                        if let accountRoleTitle {
+                            Text(accountRoleTitle)
+                                .font(.system(size: 11, weight: .heavy, design: .rounded))
+                                .foregroundStyle(.white)
+                                .padding(.horizontal, 8)
+                                .padding(.vertical, 3)
+                                .background(appColor.palette.primary, in: Capsule())
+                                .padding(.top, 2)
+                        }
                     }
                     Spacer()
                     Image(systemName: "checkmark.seal.fill")
@@ -610,50 +780,88 @@ public struct TikoAccountSheet: View {
                 }
 
                 // Favourite colour
-                HStack(spacing: 12) {
-                    RoundedRectangle(cornerRadius: 12, style: .continuous)
-                        .fill(profileFavoriteColor ?? appColor.palette.primary.opacity(0.4))
-                        .frame(width: 40, height: 40)
-                        .overlay {
-                            Image(systemName: "paintpalette.fill")
-                                .font(.system(size: 16, weight: .bold))
-                                .foregroundStyle(.white)
-                        }
-                    Text("Favourite colour")
-                        .font(.system(size: 16, weight: .heavy, design: .rounded))
-                        .foregroundStyle(.primary)
-                    Spacer()
-                    ColorPicker("", selection: favoriteColorBinding, supportsOpacity: false)
-                        .labelsHidden()
-                        .frame(width: 36, height: 36)
-                }
-                .padding(14)
-                .background(Color(.systemBackground))
-                .overlay {
-                    RoundedRectangle(cornerRadius: 18, style: .continuous)
-                        .stroke(Color.primary.opacity(0.08), lineWidth: 1)
-                }
-                .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
+                TikoColorSwatchPicker(appColor: appColor, hexValue: $favoriteColorHex)
 
-                // Sign out
                 Button {
-                    try? sessionStore.clearAll()
-                    isSignedIn = false
-                    signedInEmail = nil
-                    emailInput = ""
-                    emailSent = false
-                    otpCode = ""
-                    identityError = nil
+                    Task { await saveProfileName() }
                 } label: {
-                    Text("Sign out")
+                    Text("Save profile")
                         .font(.system(size: 16, weight: .heavy, design: .rounded))
-                        .foregroundStyle(.red)
+                        .foregroundStyle(.white)
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 14)
-                        .background(Color.red.opacity(0.08))
+                        .background(appColor.palette.primary)
                         .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
                 }
                 .buttonStyle(.plain)
+
+                // Account section
+                VStack(alignment: .leading, spacing: 6) {
+                    Text("Account")
+                        .font(.system(size: 13, weight: .semibold, design: .rounded))
+                        .foregroundStyle(.secondary)
+                        .padding(.leading, 4)
+
+                    Button {
+                        try? sessionStore.clearAll()
+                        isSignedIn = false
+                        signedInEmail = nil
+                        emailInput = ""
+                        emailSent = false
+                        otpCode = ""
+                        identityError = nil
+                    } label: {
+                        HStack(spacing: 12) {
+                            Image(systemName: "rectangle.portrait.and.arrow.right")
+                                .font(.system(size: 16, weight: .semibold))
+                                .foregroundStyle(.secondary)
+                                .frame(width: 28)
+                            Text("Sign out")
+                                .font(.system(size: 16, weight: .semibold, design: .rounded))
+                                .foregroundStyle(.primary)
+                            Spacer()
+                            Image(systemName: "chevron.right")
+                                .font(.system(size: 13, weight: .semibold))
+                                .foregroundStyle(.tertiary)
+                        }
+                        .padding(.horizontal, 16)
+                        .padding(.vertical, 14)
+                        .background(Color(uiColor: .systemBackground))
+                        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+                    }
+                    .buttonStyle(.plain)
+                }
+
+                // Danger zone section
+                VStack(alignment: .leading, spacing: 6) {
+                    Text("Danger zone")
+                        .font(.system(size: 13, weight: .semibold, design: .rounded))
+                        .foregroundStyle(.secondary)
+                        .padding(.leading, 4)
+
+                    Button {
+                        showDeleteConfirmation = true
+                    } label: {
+                        HStack(spacing: 12) {
+                            Image(systemName: "trash.fill")
+                                .font(.system(size: 16, weight: .semibold))
+                                .foregroundStyle(.red)
+                                .frame(width: 28)
+                            Text("Delete account")
+                                .font(.system(size: 16, weight: .semibold, design: .rounded))
+                                .foregroundStyle(.red)
+                            Spacer()
+                            Image(systemName: "chevron.right")
+                                .font(.system(size: 13, weight: .semibold))
+                                .foregroundStyle(.tertiary)
+                        }
+                        .padding(.horizontal, 16)
+                        .padding(.vertical, 14)
+                        .background(Color(uiColor: .systemBackground))
+                        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+                    }
+                    .buttonStyle(.plain)
+                }
             }
         }
     }
@@ -806,6 +1014,31 @@ public struct TikoAccountSheet: View {
         )
     }
 
+    private var accountRoleTitle: String? {
+        guard let bundle = currentIdentityBundle ?? (try? sessionStore.load()) else { return nil }
+        if bundle.roles?.contains("admin") == true { return "Admin" }
+        if bundle.roles?.contains("content_editor") == true { return "Content editor" }
+        if bundle.capabilities?.canEditContent == true { return "Admin" }
+        if bundle.account?.accountType == "profile_manager" || bundle.capabilities?.canManageChildAccounts == true {
+            return "Profile manager"
+        }
+        return nil
+    }
+
+    private func refreshIdentityBundle(accessToken: String?) async {
+        guard let accessToken else { return }
+        let existing = try? sessionStore.load()
+        do {
+            let refreshed = try await identityClient.getSession(accessToken: accessToken)
+            let merged = existing.map { refreshed.preservingSession(from: $0) } ?? refreshed
+            try sessionStore.save(merged)
+            currentIdentityBundle = merged
+            isSignedIn = merged.account?.emailVerified == true
+            signedInEmail = merged.account?.email
+            if let email = merged.account?.email { userEmail = email }
+        } catch {}
+    }
+
     // MARK: - Actions
 
     private func sendMagicLink() async {
@@ -817,13 +1050,51 @@ public struct TikoAccountSheet: View {
         isLoading = true
         identityError = nil
         do {
-            try await identityClient.requestRecoveryEmail(email: email)
+            let accessToken = (try? sessionStore.load())?.accessToken
+            try await identityClient.requestRecoveryEmail(email: email, accessToken: accessToken)
             userEmail = email
             emailSent = true
         } catch {
             identityError = "Could not send the code. Please try again."
         }
         isLoading = false
+    }
+
+    private func saveProfileName() async {
+        guard let accessToken = (try? sessionStore.load())?.accessToken else { return }
+        do {
+            _ = try await identityClient.updateProfile(
+                accessToken: accessToken,
+                patch: TikoIdentityProfile(displayName: userName.trimmingCharacters(in: .whitespacesAndNewlines))
+            )
+            identityError = nil
+        } catch {
+            identityError = "Could not save the profile. Please try again."
+        }
+    }
+
+    private func deleteAccount() async {
+        guard let accessToken = (try? sessionStore.load())?.accessToken else { return }
+        isLoading = true
+        identityError = nil
+        do {
+            _ = try await identityClient.createDeletionRequest(accessToken: accessToken, scope: .account)
+            try? sessionStore.clearAll()
+            isSignedIn = false
+            signedInEmail = nil
+            userName = ""
+            userEmail = ""
+            storedAvatarURLString = ""
+            favoriteColorHex = ""
+            emailInput = ""
+            emailSent = false
+            otpCode = ""
+            isLoading = false
+            onClose()
+        } catch {
+            identityError = "Could not delete the account. Please try again."
+            isLoading = false
+        }
     }
 
     private func submitOtp() async {
@@ -837,10 +1108,9 @@ public struct TikoAccountSheet: View {
             if userName.isEmpty, let name = bundle.account?.email?.components(separatedBy: "@").first {
                 userName = name
             }
+            userEmail = bundle.account?.email ?? emailInput
             isLoading = false
-            // Show profile instead of silently closing
-            signedInEmail = bundle.account?.email ?? emailInput
-            isSignedIn = true
+            onClose()
         } catch {
             otpCode = ""
             identityError = "Incorrect code — please try again or resend."
@@ -853,20 +1123,17 @@ public struct TikoProfileMenuSheet: View {
     private let appColor: TikoAppColor
     private let onProfile: () -> Void
     private let onChildMode: () -> Void
-    private let onLogOut: () -> Void
     private let onClose: () -> Void
 
     public init(
         appColor: TikoAppColor,
         onProfile: @escaping () -> Void,
         onChildMode: @escaping () -> Void,
-        onLogOut: @escaping () -> Void,
         onClose: @escaping () -> Void
     ) {
         self.appColor = appColor
         self.onProfile = onProfile
         self.onChildMode = onChildMode
-        self.onLogOut = onLogOut
         self.onClose = onClose
     }
 
@@ -890,12 +1157,6 @@ public struct TikoProfileMenuSheet: View {
                     appColor: appColor,
                     action: onChildMode
                 )
-                TikoSettingsActionRow(
-                    title: "Log out",
-                    icon: "rectangle.portrait.and.arrow.right",
-                    appColor: appColor,
-                    action: onLogOut
-                )
             }
         }
     }
@@ -903,15 +1164,19 @@ public struct TikoProfileMenuSheet: View {
 
 public struct TikoParentCodeEntrySheet: View {
     private let appColor: TikoAppColor
+    private let onParentMode: (TikoIdentityBundle) -> Void
     private let onClose: () -> Void
 
-    @AppStorage("tiko.parentMode") private var parentMode = true
-    @AppStorage("tiko.parentCodeHash") private var storedCodeHash = ""
     @State private var enteredCode = ""
+    @State private var isLoading = false
     @State private var error: String? = nil
 
-    public init(appColor: TikoAppColor, onClose: @escaping () -> Void) {
+    private let identityClient = TikoIdentityClient()
+    private let sessionStore = TikoDeviceSessionStore()
+
+    public init(appColor: TikoAppColor, onParentMode: @escaping (TikoIdentityBundle) -> Void, onClose: @escaping () -> Void) {
         self.appColor = appColor
+        self.onParentMode = onParentMode
         self.onClose = onClose
     }
 
@@ -944,45 +1209,62 @@ public struct TikoParentCodeEntrySheet: View {
                 }
 
                 Button {
-                    verifyCode()
+                    Task { await verifyCode() }
                 } label: {
-                    Text("Enable parent mode")
-                        .font(.system(size: 17, weight: .heavy, design: .rounded))
-                        .foregroundStyle(.white)
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 15)
-                        .background(appColor.palette.primary)
-                        .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
+                    Group {
+                        if isLoading { ProgressView().tint(.white) }
+                        else { Text("Enable parent mode") }
+                    }
+                    .font(.system(size: 17, weight: .heavy, design: .rounded))
+                    .foregroundStyle(.white)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 15)
+                    .background(appColor.palette.primary)
+                    .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
                 }
                 .buttonStyle(.plain)
-                .disabled(enteredCode.count != 4)
+                .disabled(enteredCode.count != 4 || isLoading)
             }
         }
     }
 
-    private func verifyCode() {
-        if tikoHashPin(enteredCode) == storedCodeHash {
-            parentMode = true
-            onClose()
-        } else {
+    private func verifyCode() async {
+        guard enteredCode.count == 4 else { return }
+        isLoading = true
+        error = nil
+        do {
+            guard let token = try sessionStore.load()?.accessToken else {
+                error = "No active session."
+                isLoading = false
+                return
+            }
+            let bundle = try await identityClient.enterParentMode(accessToken: token, pin: enteredCode)
+            try sessionStore.save(bundle)
+            onParentMode(bundle)
+        } catch _ {
             error = "Incorrect PIN. Please try again."
             enteredCode = ""
         }
+        isLoading = false
     }
 }
 
 public struct TikoCreateParentCodeSheet: View {
     private let appColor: TikoAppColor
+    private let onChildMode: (TikoIdentityBundle) -> Void
     private let onClose: () -> Void
 
-    @AppStorage("tiko.parentMode") private var parentMode = true
-    @AppStorage("tiko.parentCodeHash") private var storedCodeHash = ""
     @State private var code = ""
     @State private var confirmCode = ""
+    @State private var isLoading = false
     @State private var error: String? = nil
 
-    public init(appColor: TikoAppColor, onClose: @escaping () -> Void) {
+    private let identityClient = TikoIdentityClient()
+    private let sessionStore = TikoDeviceSessionStore()
+
+    public init(appColor: TikoAppColor, onChildMode: @escaping (TikoIdentityBundle) -> Void, onClose: @escaping () -> Void) {
         self.appColor = appColor
+        self.onChildMode = onChildMode
         self.onClose = onClose
     }
 
@@ -1037,47 +1319,63 @@ public struct TikoCreateParentCodeSheet: View {
                 }
 
                 Button {
-                    saveCode()
+                    Task { await saveCode() }
                 } label: {
-                    Text("Save and enter child mode")
-                        .font(.system(size: 17, weight: .heavy, design: .rounded))
-                        .foregroundStyle(.white)
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 15)
-                        .background(appColor.palette.primary)
-                        .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
+                    Group {
+                        if isLoading { ProgressView().tint(.white) }
+                        else { Text("Save and enter child mode") }
+                    }
+                    .font(.system(size: 17, weight: .heavy, design: .rounded))
+                    .foregroundStyle(.white)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 15)
+                    .background(appColor.palette.primary)
+                    .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
                 }
                 .buttonStyle(.plain)
-                .disabled(code.count != 4 || confirmCode.count != 4)
+                .disabled(code.count != 4 || confirmCode.count != 4 || isLoading)
             }
         }
     }
 
-    private func saveCode() {
+    private func saveCode() async {
         guard code.count == 4, confirmCode.count == 4 else { return }
         guard code == confirmCode else {
             error = "PINs don't match. Please try again."
             return
         }
-        let hash = tikoHashPin(code)
-        storedCodeHash = hash
-        parentMode = false
-        onClose()
-        Task {
-            guard let token = (try? TikoDeviceSessionStore().load())?.accessToken else { return }
-            try? await TikoIdentityClient().updateProfile(
-                accessToken: token,
-                patch: TikoIdentityProfile(parentCodeHash: hash)
-            )
+        isLoading = true
+        error = nil
+        do {
+            guard let token = try sessionStore.load()?.accessToken else {
+                error = "No active session."
+                isLoading = false
+                return
+            }
+            var bundle: TikoIdentityBundle
+            do {
+                // Set PIN on the server
+                bundle = try await identityClient.setPin(accessToken: token, pin: code)
+            } catch TikoIdentityClientError.server(let statusCode, let body)
+                where statusCode == 403 && body.contains("invalid_pin") {
+                bundle = try await identityClient.getSession(accessToken: token)
+                guard bundle.isPinConfigured else { throw TikoIdentityClientError.server(statusCode: statusCode, body: body) }
+            }
+            try sessionStore.save(bundle)
+            // Enable child mode (one-time opt-in)
+            if !(bundle.isChildModeEnabled) {
+                bundle = try await identityClient.enableChildMode(accessToken: token)
+                try sessionStore.save(bundle)
+            }
+            // Enter child mode
+            bundle = try await identityClient.enterChildMode(accessToken: token)
+            try sessionStore.save(bundle)
+            onChildMode(bundle)
+        } catch {
+            self.error = "Could not save PIN. Please try again."
         }
+        isLoading = false
     }
-}
-
-/// Matches the web: SHA-256("tiko:parent-code:{pin}") as lowercase hex.
-private func tikoHashPin(_ pin: String) -> String {
-    let data = Data("tiko:parent-code:\(pin)".utf8)
-    let hash = SHA256.hash(data: data)
-    return hash.compactMap { String(format: "%02x", $0) }.joined()
 }
 
 extension View {
@@ -1116,35 +1414,19 @@ public extension View {
     func tikoSettingsPopup<SettingsContent: View>(
         isPresented: Binding<Bool>,
         appColor: TikoAppColor,
-        accountTitle: String = "Setup user",
-        onOpenAccount: @escaping () -> Void = {},
         @ViewBuilder appSettings: @escaping () -> SettingsContent
     ) -> some View {
         tikoPopup(isPresented: isPresented) {
             TikoSettingsSheet(
                 appColor: appColor,
-                accountTitle: accountTitle,
                 onClose: { isPresented.wrappedValue = false },
-                onOpenAccount: onOpenAccount,
                 appSettings: appSettings
             )
         }
     }
 
-    func tikoSettingsPopup(
-        isPresented: Binding<Bool>,
-        appColor: TikoAppColor,
-        accountTitle: String = "Setup user",
-        onOpenAccount: @escaping () -> Void = {}
-    ) -> some View {
-        tikoSettingsPopup(
-            isPresented: isPresented,
-            appColor: appColor,
-            accountTitle: accountTitle,
-            onOpenAccount: onOpenAccount
-        ) {
-            EmptyView()
-        }
+    func tikoSettingsPopup(isPresented: Binding<Bool>, appColor: TikoAppColor) -> some View {
+        tikoSettingsPopup(isPresented: isPresented, appColor: appColor) { EmptyView() }
     }
 
     func tikoAccountPopup(isPresented: Binding<Bool>, appName: String, appColor: TikoAppColor) -> some View {

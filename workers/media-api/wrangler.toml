@@ -1,7 +1,7 @@
 name = "tiko-media-api-dev"
 main = "src/index.ts"
 compatibility_date = "2026-05-27"
-account_id = "8cef251b5fdcf6c6f63db98b7aa49f9a"
+account_id = "dc2b7d14a69351375cab6de9a13ddee9"
 workers_dev = true
 
 # Unified media-api worker combining:
@@ -14,12 +14,12 @@ workers_dev = true
 [[d1_databases]]
 binding = "MEDIA_DB"
 database_name = "tiko-media"
-database_id = "cc80e3db-b6c4-4446-aab5-fcb67b950a0e"
+database_id = "f984707d-04a1-4266-bf9d-012164ccde85"
 
 [[d1_databases]]
 binding = "ASSETS_DB"
 database_name = "tiko-assets-db-dev"
-database_id = "35b4e4f4-f9aa-447c-a7d7-f4d58a08420a"
+database_id = "85e07dfc-d7d5-4b95-9489-268a50a95f3a"
 
 # ── R2 Buckets ────────────────────────────────────────────────
 
@@ -42,7 +42,7 @@ bucket_name = "user-media"
 [[d1_databases]]
 binding = "AUTH_DB"
 database_name = "tiko-identity"
-database_id = "0b5e035d-6420-451e-8e54-0af5829cc95c"
+database_id = "036a1726-ac16-48a9-ab76-22c3a88ca7ae"
 
 # ── Production environment ──────────────────────────────────────
 # Deploy with: npx wrangler deploy --env production

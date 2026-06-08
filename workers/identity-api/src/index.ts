@@ -20,6 +20,7 @@ export interface Env {
   IDENTITY_DB: D1Database
   TOKEN_PEPPER: string
   ANKORE_TOKEN_PEPPER?: string
+  ADMIN_EMAIL?: string
   MAGIC_LINK_BASE_URL?: string
   COMMUNICATION_API_URL?: string
   COMMUNICATION_API_KEY?: string
@@ -29,6 +30,8 @@ export interface Env {
 }
 
 const SESSION_TTL_DAYS = 180
+const ADMIN_EMAIL = 'me@sil.mt'
+const ADMIN_ROLE = 'admin'
 const DEFAULT_COMMUNICATION_API_URL = 'https://api.tikotalks.com/v1/communication'
 const DEFAULT_ALLOWED_ORIGINS = 'https://tiko.mt,https://www.tiko.mt,https://tiko.tikoapps.org,https://yesno.tikoapps.org,https://cards.tikoapps.org,https://sequence.tikoapps.org,https://type.tikoapps.org,https://timer.tikoapps.org,https://admin.tikoapps.org,https://dev.tiko.tikoapps.org,https://dev.yesno.tikoapps.org,https://dev.cards.tikoapps.org,https://dev.sequence.tikoapps.org,https://dev.type.tikoapps.org,https://dev.timer.tikoapps.org,https://dev.admin.tikoapps.org,http://localhost:3056,http://localhost:3057,http://localhost:3058,http://localhost:3059,http://localhost:3060,http://localhost:3061,http://localhost:3062,http://localhost:3063,http://localhost:3064,http://localhost:3065,http://localhost:3066,http://localhost:5173,http://localhost:4173,capacitor://localhost,ionic://localhost,tiko://native'
 
@@ -72,21 +75,78 @@ export const identityConfig: NormalizedAnkoreConfig = normalizeConfig(baseConfig
 
 export default {
   async fetch(request: Request, env: Env, _ctx?: unknown): Promise<Response> {
-    const managed = await handleManagedIdentity(request, env)
-    if (managed) return withBrowserSessionCookie(request, managed)
+    const contractRequest = request.clone() as AnyRequest
+    const canonical = await handleCanonicalIdentity(request, env)
+    if (canonical) return withBrowserSessionCookie(contractRequest, await withTikoSessionContract(contractRequest, env, canonical))
 
-    return createIdentityWorker(configForEnv(env), {
+    const managed = await handleManagedIdentity(request, env)
+    if (managed) return withBrowserSessionCookie(contractRequest, await withTikoSessionContract(contractRequest, env, managed))
+
+    const ankoreResponse = await createIdentityWorker(configForEnv(env), {
       sendEmail: message => requestMagicLinkDelivery(env, message)
     }).fetch(request, {
       ...env,
       ANKORE_TOKEN_PEPPER: env.ANKORE_TOKEN_PEPPER ?? env.TOKEN_PEPPER
-    }).then(response => withBrowserSessionCookie(request, response))
+    })
+
+    return withBrowserSessionCookie(contractRequest, await withTikoSessionContract(contractRequest, env, ankoreResponse))
   }
 }
 
 function configForEnv(env: Env): AnkoreConfig {
   const allowedOrigins = (env.ALLOWED_ORIGINS ?? DEFAULT_ALLOWED_ORIGINS).split(',').map(entry => entry.trim()).filter(Boolean)
   return { ...baseConfig, cors: { allowedOrigins } }
+}
+
+type AccountType = 'temporary' | 'verified' | 'profile_manager' | 'child_account'
+type RuntimeMode = 'parent' | 'child'
+type LoginMethod = 'device' | 'otp' | 'magic_link' | 'child_code'
+type AnyRequest = Request
+
+async function handleCanonicalIdentity(request: AnyRequest, env: Env): Promise<Response | null> {
+  const url = new URL(request.url)
+  const path = url.pathname.replace(/\/$/, '')
+  if (request.method !== 'POST') return null
+
+  if (path === '/v1/identity/email' || path === '/v1/identity/otp/request') {
+    const body = await request.json().catch(() => ({})) as { email?: string; purpose?: string }
+    const rewrittenBody = { email: body.email, purpose: normalizeEmailPurpose(body.purpose) }
+    return fetchAnkoreRoute(request, env, '/v1/identity/email/challenge', rewrittenBody)
+  }
+
+  if (path === '/v1/identity/otp/verify') {
+    const body = await request.json().catch(() => ({})) as { code?: string; otp?: string; token?: string }
+    return fetchAnkoreRoute(request, env, '/v1/identity/email/verify', { otp: body.code ?? body.otp, token: body.token })
+  }
+
+  if (path === '/v1/identity/magic-links/verify') {
+    const body = await request.json().catch(() => ({})) as { token?: string }
+    return fetchAnkoreRoute(request, env, '/v1/identity/email/verify', { token: body.token })
+  }
+
+  return null
+}
+
+function normalizeEmailPurpose(purpose: string | undefined): 'verify_email' | 'recover' | 'link_account' | 'admin_login' {
+  if (purpose === 'verify_email' || purpose === 'link_account' || purpose === 'admin_login') return purpose
+  return 'recover'
+}
+
+function fetchAnkoreRoute(request: AnyRequest, env: Env, pathname: string, body: unknown): Promise<Response> {
+  const url = new URL(request.url)
+  url.pathname = pathname
+  const headers = new Headers(request.headers)
+  headers.set('content-type', 'application/json')
+  return createIdentityWorker(configForEnv(env), {
+    sendEmail: message => requestMagicLinkDelivery(env, message)
+  }).fetch(new Request(url.toString(), {
+    method: 'POST',
+    headers,
+    body: JSON.stringify(body)
+  }), {
+    ...env,
+    ANKORE_TOKEN_PEPPER: env.ANKORE_TOKEN_PEPPER ?? env.TOKEN_PEPPER
+  })
 }
 
 interface ManagedCredentialRow {
@@ -120,44 +180,484 @@ interface SessionRow {
   revoked_at: string | null
 }
 
+interface AccountRow {
+  id: string
+  subject_id: string
+  product: string
+  email_verified_at: string | null
+  email_plain: string | null
+  disabled_at: string | null
+}
+
+interface RuntimeState {
+  mode: RuntimeMode
+  childModeEnabled: boolean
+  pinHash?: string
+}
+
 async function handleManagedIdentity(request: Request, env: Env): Promise<Response | null> {
   const url = new URL(request.url)
   const path = url.pathname.replace(/\/$/, '')
+  if (path === '/v1/identity/pin' && request.method === 'POST') return setPin(request, env)
+  if (path === '/v1/identity/pin/verify' && request.method === 'POST') return verifyPin(request, env)
+  if (path === '/v1/identity/pin' && request.method === 'DELETE') return removePin(request, env)
+  if (path === '/v1/identity/mode/child/enable' && request.method === 'POST') return enableChildMode(request, env)
+  if (path === '/v1/identity/mode/child' && request.method === 'POST') return enterChildMode(request, env)
+  if (path === '/v1/identity/mode/parent' && request.method === 'POST') return enterParentMode(request, env)
+  if (path === '/v1/identity/child-accounts' && request.method === 'GET') return listManagedChildren(request, env)
+  if (path === '/v1/identity/child-accounts' && request.method === 'POST') return createManagedChild(request, env)
   if (path === '/v1/identity/managed/children' && request.method === 'POST') return createManagedChild(request, env)
+  if (path === '/v1/identity/child-accounts/login' && request.method === 'POST') return loginManagedChild(request, env)
   if (path === '/v1/identity/managed/login' && request.method === 'POST') return loginManagedChild(request, env)
+  const childMatch = path.match(/^\/v1\/identity\/child-accounts\/([^/]+)(?:\/(code\/reset|progress\/reset))?$/)
+  if (childMatch && request.method === 'PUT') return updateManagedChild(request, env, childMatch[1])
+  if (childMatch && request.method === 'POST' && childMatch[2] === 'code/reset') return resetManagedChildCode(request, env, childMatch[1])
+  if (childMatch && request.method === 'POST' && childMatch[2] === 'progress/reset') return resetManagedChildProgress(request, env, childMatch[1])
+  if (childMatch && request.method === 'DELETE') return deleteManagedChild(request, env, childMatch[1])
+  if (path === '/v1/identity/reset' && request.method === 'POST') return resetAccountData(request, env)
+  if (path === '/v1/identity/deletion-requests' && request.method === 'POST') return createDeletionRequest(request, env)
+  const deletionMatch = path.match(/^\/v1\/identity\/deletion-requests\/([^/]+)$/)
+  if (deletionMatch && request.method === 'GET') return getDeletionRequest(request, env, deletionMatch[1])
+  if (path === '/v1/identity/me' && request.method === 'DELETE') return deleteCurrentIdentity(request, env)
   return null
+}
+
+async function setPin(request: Request, env: Env): Promise<Response> {
+  const session = await requireIdentitySession(request, env)
+  if (!session) return Response.json({ error: 'invalid_session' }, { status: 401 })
+  const accountType = await accountTypeForSubject(env, session.subjectId)
+  if (accountType === 'temporary' || accountType === 'child_account') return Response.json({ error: 'pin_not_allowed' }, { status: 403 })
+
+  const body = await request.json().catch(() => ({})) as { pin?: string; currentPin?: string }
+  const pin = String(body.pin ?? '')
+  if (!/^\d{4}$/.test(pin)) return Response.json({ error: 'invalid_pin' }, { status: 400 })
+  const currentRuntime = await runtimeStateForSubject(env, session.subjectId)
+  if (currentRuntime.pinHash && currentRuntime.pinHash !== await hashSecret(String(body.currentPin ?? ''), env, 'pin')) {
+    return Response.json({ error: 'invalid_pin' }, { status: 403 })
+  }
+
+  const nextRuntime = { ...currentRuntime, pinHash: await hashSecret(pin, env, 'pin') }
+  await updateRuntimeState(env, session.subjectId, nextRuntime)
+  return sessionResponse(request, env)
+}
+
+async function verifyPin(request: Request, env: Env): Promise<Response> {
+  const session = await requireIdentitySession(request, env)
+  if (!session) return Response.json({ error: 'invalid_session' }, { status: 401 })
+  const body = await request.json().catch(() => ({})) as { pin?: string; purpose?: string }
+  const runtime = await runtimeStateForSubject(env, session.subjectId)
+  if (!runtime.pinHash || runtime.pinHash !== await hashSecret(String(body.pin ?? ''), env, 'pin')) {
+    return Response.json({ error: 'invalid_pin' }, { status: 403 })
+  }
+  const expiresAt = new Date(Date.now() + 10 * 60 * 1000).toISOString()
+  return Response.json({ ok: true, grant: { token: randomToken('grt_'), purpose: body.purpose ?? 'parent_mode', expiresAt } })
+}
+
+async function removePin(request: Request, env: Env): Promise<Response> {
+  const session = await requireIdentitySession(request, env)
+  if (!session) return Response.json({ error: 'invalid_session' }, { status: 401 })
+  const accountType = await accountTypeForSubject(env, session.subjectId)
+  if (accountType === 'temporary' || accountType === 'child_account') return Response.json({ error: 'pin_not_allowed' }, { status: 403 })
+  const body = await request.json().catch(() => ({})) as { pin?: string }
+  const runtime = await runtimeStateForSubject(env, session.subjectId)
+  if (runtime.pinHash && runtime.pinHash !== await hashSecret(String(body.pin ?? ''), env, 'pin')) return Response.json({ error: 'invalid_pin' }, { status: 403 })
+  await updateRuntimeState(env, session.subjectId, { mode: 'parent', childModeEnabled: false })
+  return sessionResponse(request, env)
+}
+
+async function enableChildMode(request: Request, env: Env): Promise<Response> {
+  const session = await requireIdentitySession(request, env)
+  if (!session) return Response.json({ error: 'invalid_session' }, { status: 401 })
+  const accountType = await accountTypeForSubject(env, session.subjectId)
+  if (accountType !== 'verified' && accountType !== 'profile_manager') return Response.json({ error: 'child_mode_not_allowed' }, { status: 403 })
+  const runtime = await runtimeStateForSubject(env, session.subjectId)
+  if (!runtime.pinHash) return Response.json({ error: 'pin_required' }, { status: 409 })
+  await updateRuntimeState(env, session.subjectId, { ...runtime, childModeEnabled: true })
+  return sessionResponse(request, env)
+}
+
+async function enterChildMode(request: Request, env: Env): Promise<Response> {
+  const session = await requireIdentitySession(request, env)
+  if (!session) return Response.json({ error: 'invalid_session' }, { status: 401 })
+  const accountType = await accountTypeForSubject(env, session.subjectId)
+  if (accountType === 'child_account') return sessionResponse(request, env)
+  if (accountType !== 'verified' && accountType !== 'profile_manager') return Response.json({ error: 'child_mode_not_allowed' }, { status: 403 })
+  const runtime = await runtimeStateForSubject(env, session.subjectId)
+  if (!runtime.pinHash || !runtime.childModeEnabled) return Response.json({ error: 'child_mode_not_enabled' }, { status: 409 })
+  await updateRuntimeState(env, session.subjectId, { ...runtime, mode: 'child' })
+  return sessionResponse(request, env)
+}
+
+async function enterParentMode(request: Request, env: Env): Promise<Response> {
+  const session = await requireIdentitySession(request, env)
+  if (!session) return Response.json({ error: 'invalid_session' }, { status: 401 })
+  const accountType = await accountTypeForSubject(env, session.subjectId)
+  if (accountType === 'child_account') return Response.json({ error: 'parent_mode_not_allowed' }, { status: 403 })
+  const runtime = await runtimeStateForSubject(env, session.subjectId)
+  if (runtime.mode === 'child') {
+    const body = await request.json().catch(() => ({})) as { pin?: string }
+    if (!runtime.pinHash || runtime.pinHash !== await hashSecret(String(body.pin ?? ''), env, 'pin')) return Response.json({ error: 'invalid_pin' }, { status: 403 })
+  }
+  await updateRuntimeState(env, session.subjectId, { ...runtime, mode: 'parent' })
+  return sessionResponse(request, env)
+}
+
+async function deleteCurrentIdentity(request: Request, env: Env): Promise<Response> {
+  // Legacy endpoint — delegates to the deletion-request contract
+  const session = await requireIdentitySession(request, env)
+  if (!session) return Response.json({ error: 'invalid_session' }, { status: 401 })
+
+  const requestId = id('del')
+  const at = new Date().toISOString()
+
+  await env.IDENTITY_DB.prepare(
+    'INSERT INTO identity_deletion_requests (id, subject_id, scope, status, child_account_id, pin_grant_token, created_at, updated_at, completed_at, metadata_json) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
+  ).bind(requestId, session.subjectId, 'account', 'requested', null, null, at, at, null, '{"legacy":true}').run()
+    .catch(async () => {
+      await env.IDENTITY_DB.prepare(
+        'CREATE TABLE IF NOT EXISTS identity_deletion_requests (id TEXT PRIMARY KEY, subject_id TEXT NOT NULL, scope TEXT NOT NULL, status TEXT NOT NULL DEFAULT \'requested\', child_account_id TEXT, pin_grant_token TEXT, created_at TEXT NOT NULL, updated_at TEXT NOT NULL, completed_at TEXT, metadata_json TEXT DEFAULT \'{}\')'
+      ).run()
+      await env.IDENTITY_DB.prepare(
+        'INSERT INTO identity_deletion_requests (id, subject_id, scope, status, child_account_id, pin_grant_token, created_at, updated_at, completed_at, metadata_json) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
+      ).bind(requestId, session.subjectId, 'account', 'requested', null, null, at, at, null, '{"legacy":true}').run()
+    })
+
+  await executeAccountDeletion(env, session.subjectId)
+  const completedAt = new Date().toISOString()
+  await env.IDENTITY_DB.prepare('UPDATE identity_deletion_requests SET status = ?, completed_at = ?, updated_at = ? WHERE id = ?')
+    .bind('completed', completedAt, completedAt, requestId).run()
+
+  return new Response(null, { status: 204 })
 }
 
 async function createManagedChild(request: Request, env: Env): Promise<Response> {
   const manager = await requireIdentitySession(request, env)
   if (!manager) return Response.json({ error: 'invalid_session' }, { status: 401 })
-  if (await hasRole(env.IDENTITY_DB, manager.subjectId, 'child')) return Response.json({ error: 'forbidden' }, { status: 403 })
+  if (!await canManageChildren(request, env, manager.subjectId)) return Response.json({ error: 'forbidden' }, { status: 403 })
 
-  const body = await request.json().catch(() => ({})) as { handle?: string; accessCode?: string; displayName?: string }
-  const handle = normalizeHandle(body.handle)
-  const accessCode = String(body.accessCode ?? '')
-  if (!handle || accessCode.length < 4) return Response.json({ error: 'invalid_managed_child' }, { status: 400 })
+  const body = await request.json().catch(() => ({})) as { handle?: string; name?: string; accessCode?: string; code?: string; displayName?: string; language?: string }
+  const handle = normalizeHandle(body.handle ?? body.name)
+  const accessCode = String(body.accessCode ?? body.code ?? '')
+  if (!handle || !/^\d{4}$/.test(accessCode)) return Response.json({ error: 'invalid_child_account' }, { status: 400 })
 
   const at = new Date().toISOString()
   const subjectId = id('sub')
   const credentialId = id('mcr')
-  const displayName = typeof body.displayName === 'string' && body.displayName.trim() ? body.displayName.trim() : handle
+  const displayName = typeof (body.displayName ?? body.name) === 'string' && String(body.displayName ?? body.name).trim() ? String(body.displayName ?? body.name).trim() : handle
 
   await env.IDENTITY_DB.prepare('INSERT INTO identity_subjects (id, product, kind, created_at, updated_at, disabled_at, metadata_json) VALUES (?, ?, ?, ?, ?, ?, ?)')
-    .bind(subjectId, 'tiko', 'account', at, at, null, JSON.stringify({ managed: true, managerSubjectId: manager.subjectId }))
+    .bind(subjectId, 'tiko', 'account', at, at, null, JSON.stringify({ managed: true, managerSubjectId: manager.subjectId, displayName, language: body.language }))
     .run()
   await assignRole(env.IDENTITY_DB, subjectId, 'child', 'managed_login', manager.subjectId)
   await env.IDENTITY_DB.prepare('INSERT INTO identity_managed_credentials (id, subject_id, manager_subject_id, product, handle, handle_norm, code_hash, display_name, created_at, revoked_at, metadata_json) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)')
-    .bind(credentialId, subjectId, manager.subjectId, 'tiko', handle, handle.toLowerCase(), await hashSecret(accessCode, env, 'managed-code'), displayName, at, null, '{}')
+    .bind(credentialId, subjectId, manager.subjectId, 'tiko', handle, handle.toLowerCase(), await hashSecret(accessCode, env, 'managed-code'), displayName, at, null, JSON.stringify({ language: body.language }))
     .run()
 
-  return Response.json({ child: { subjectId, managerSubjectId: manager.subjectId, handle, displayName, roles: ['child'] } }, { status: 201 })
+  return Response.json({ child: { id: subjectId, subjectId, managerSubjectId: manager.subjectId, handle, name: displayName, displayName, roles: ['child'] } }, { status: 201 })
+}
+
+async function listManagedChildren(request: Request, env: Env): Promise<Response> {
+  const manager = await requireIdentitySession(request, env)
+  if (!manager) return Response.json({ error: 'invalid_session' }, { status: 401 })
+  if (!await canManageChildren(request, env, manager.subjectId)) return Response.json({ error: 'forbidden' }, { status: 403 })
+  const { results } = await env.IDENTITY_DB.prepare('SELECT * FROM identity_managed_credentials WHERE product = ? AND manager_subject_id = ? AND revoked_at IS NULL')
+    .bind('tiko', manager.subjectId)
+    .all<ManagedCredentialRow>()
+  return Response.json({ childAccounts: results.map(childAccountFromRow) })
+}
+
+async function updateManagedChild(request: Request, env: Env, childAccountId: string | undefined): Promise<Response> {
+  const manager = await requireIdentitySession(request, env)
+  if (!manager || !childAccountId) return Response.json({ error: 'invalid_session' }, { status: 401 })
+  if (!await canManageChildren(request, env, manager.subjectId)) return Response.json({ error: 'forbidden' }, { status: 403 })
+  const body = await request.json().catch(() => ({})) as { name?: string; displayName?: string; language?: string }
+  const displayName = String(body.displayName ?? body.name ?? '').trim()
+  if (!displayName) return Response.json({ error: 'invalid_child_account' }, { status: 400 })
+  const row = await managedChildForManager(env, manager.subjectId, childAccountId)
+  if (!row) return Response.json({ error: 'not_found' }, { status: 404 })
+  const metadata = parseJson(row.metadata_json)
+  await env.IDENTITY_DB.prepare('UPDATE identity_managed_credentials SET display_name = ?, metadata_json = ? WHERE id = ? AND manager_subject_id = ? AND product = ? AND revoked_at IS NULL')
+    .bind(displayName, JSON.stringify({ ...metadata, language: body.language ?? metadata.language }), row.id, manager.subjectId, 'tiko')
+    .run()
+  return Response.json({ child: { ...childAccountFromRow(row), name: displayName, displayName } })
+}
+
+async function resetManagedChildCode(request: Request, env: Env, childAccountId: string | undefined): Promise<Response> {
+  const manager = await requireIdentitySession(request, env)
+  if (!manager || !childAccountId) return Response.json({ error: 'invalid_session' }, { status: 401 })
+  if (!await canManageChildren(request, env, manager.subjectId)) return Response.json({ error: 'forbidden' }, { status: 403 })
+  const body = await request.json().catch(() => ({})) as { code?: string }
+  const code = String(body.code ?? '')
+  if (!/^\d{4}$/.test(code)) return Response.json({ error: 'invalid_child_code' }, { status: 400 })
+  const row = await managedChildForManager(env, manager.subjectId, childAccountId)
+  if (!row) return Response.json({ error: 'not_found' }, { status: 404 })
+  await env.IDENTITY_DB.prepare('UPDATE identity_managed_credentials SET code_hash = ? WHERE id = ? AND manager_subject_id = ? AND product = ? AND revoked_at IS NULL')
+    .bind(await hashSecret(code, env, 'managed-code'), row.id, manager.subjectId, 'tiko')
+    .run()
+  return Response.json({ child: childAccountFromRow(row) })
+}
+
+async function deleteManagedChild(request: Request, env: Env, childAccountId: string | undefined): Promise<Response> {
+  const manager = await requireIdentitySession(request, env)
+  if (!manager || !childAccountId) return Response.json({ error: 'invalid_session' }, { status: 401 })
+  if (!await canManageChildren(request, env, manager.subjectId)) return Response.json({ error: 'forbidden' }, { status: 403 })
+  const row = await managedChildForManager(env, manager.subjectId, childAccountId)
+  if (!row) return Response.json({ error: 'not_found' }, { status: 404 })
+  const at = new Date().toISOString()
+  await env.IDENTITY_DB.prepare('UPDATE identity_managed_credentials SET revoked_at = ? WHERE subject_id = ? AND product = ? AND revoked_at IS NULL')
+    .bind(at, row.subject_id, 'tiko')
+    .run()
+  await env.IDENTITY_DB.prepare('UPDATE identity_sessions SET revoked_at = ? WHERE subject_id = ? AND product = ? AND revoked_at IS NULL')
+    .bind(at, row.subject_id, 'tiko')
+    .run()
+  await env.IDENTITY_DB.prepare('UPDATE identity_subjects SET disabled_at = ?, updated_at = ? WHERE id = ? AND product = ?')
+    .bind(at, at, row.subject_id, 'tiko')
+    .run()
+  return new Response(null, { status: 204 })
+}
+
+// ─── Account data reset ────────────────────────────────────────────────
+
+type DataCategory = 'identity' | 'preferences' | 'app_state' | 'user_content' | 'progress' | 'insights'
+
+async function resetAccountData(request: Request, env: Env): Promise<Response> {
+  const session = await requireIdentitySession(request, env)
+  if (!session) return Response.json({ error: 'invalid_session' }, { status: 401 })
+
+  const body = await request.json().catch(() => ({})) as { pinGrantToken?: string; confirmation?: string }
+  if (body.confirmation !== 'reset_my_data') return Response.json({ error: 'confirmation_required' }, { status: 400 })
+
+  // If PIN is configured, require a grant token
+  const runtime = await runtimeStateForSubject(env, session.subjectId)
+  if (runtime.pinHash && !body.pinGrantToken) {
+    return Response.json({ error: 'pin_grant_required' }, { status: 403 })
+  }
+
+  const requestId = id('rst')
+  const categories: DataCategory[] = ['preferences', 'app_state', 'user_content', 'progress', 'insights']
+
+  // Reset runtime state to clean parent mode (keep PIN so parent can still enter child mode)
+  await updateRuntimeState(env, session.subjectId, { mode: 'parent', childModeEnabled: runtime.childModeEnabled, ...(runtime.pinHash ? { pinHash: runtime.pinHash } : {}) })
+
+  const at = new Date().toISOString()
+  await env.IDENTITY_DB.prepare('INSERT INTO identity_audit_events (id, subject_id, actor_subject_id, product, type, created_at, ip_hash, user_agent_hash, metadata_json) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)')
+    .bind(id('aud'), session.subjectId, session.subjectId, 'tiko', 'identity.data_reset', at, null, null, JSON.stringify({ requestId, categories }))
+    .run()
+
+  return Response.json({
+    id: requestId,
+    status: 'completed',
+    categoriesAffected: categories,
+    createdAt: at,
+    completedAt: at
+  }, { status: 202 })
+}
+
+// ─── Deletion requests ─────────────────────────────────────────────────
+
+interface DeletionRequestRow {
+  id: string
+  subject_id: string
+  scope: 'local-device' | 'account' | 'child_account'
+  status: 'requested' | 'awaiting-verification' | 'processing' | 'completed' | 'failed' | 'cancelled'
+  child_account_id: string | null
+  pin_grant_token: string | null
+  created_at: string
+  updated_at: string
+  completed_at: string | null
+  metadata_json: string
+}
+
+async function createDeletionRequest(request: Request, env: Env): Promise<Response> {
+  const session = await requireIdentitySession(request, env)
+  if (!session) return Response.json({ error: 'invalid_session' }, { status: 401 })
+
+  const body = await request.json().catch(() => ({})) as { scope?: string; childAccountId?: string; pinGrantToken?: string; recoveryGrantToken?: string }
+  const scope = body.scope
+  if (scope !== 'local-device' && scope !== 'account' && scope !== 'child_account') {
+    return Response.json({ error: 'invalid_scope' }, { status: 400 })
+  }
+
+  const accountType = await accountTypeForSubject(env, session.subjectId)
+  if (scope === 'account' && accountType === 'child_account') {
+    return Response.json({ error: 'forbidden' }, { status: 403 })
+  }
+
+  // If PIN is configured, require a grant token for destructive scopes
+  const runtime = await runtimeStateForSubject(env, session.subjectId)
+  if (runtime.pinHash && scope !== 'local-device' && !body.pinGrantToken) {
+    return Response.json({ error: 'pin_grant_required' }, { status: 403 })
+  }
+
+  if (scope === 'child_account') {
+    if (!body.childAccountId) return Response.json({ error: 'child_account_id_required' }, { status: 400 })
+    const childRow = await managedChildForManager(env, session.subjectId, body.childAccountId)
+    if (!childRow) return Response.json({ error: 'not_found' }, { status: 404 })
+  }
+
+  const requestId = id('del')
+  const at = new Date().toISOString()
+
+  await env.IDENTITY_DB.prepare(
+    'INSERT INTO identity_deletion_requests (id, subject_id, scope, status, child_account_id, pin_grant_token, created_at, updated_at, completed_at, metadata_json) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
+  ).bind(
+    requestId, session.subjectId, scope, 'requested',
+    body.childAccountId ?? null, body.pinGrantToken ?? null,
+    at, at, null, '{}'
+  ).run().catch(async () => {
+    // Table might not exist yet — create it and retry
+    await env.IDENTITY_DB.prepare(
+      'CREATE TABLE IF NOT EXISTS identity_deletion_requests (id TEXT PRIMARY KEY, subject_id TEXT NOT NULL, scope TEXT NOT NULL, status TEXT NOT NULL DEFAULT \'requested\', child_account_id TEXT, pin_grant_token TEXT, created_at TEXT NOT NULL, updated_at TEXT NOT NULL, completed_at TEXT, metadata_json TEXT DEFAULT \'{}\')'
+    ).run()
+    await env.IDENTITY_DB.prepare(
+      'INSERT INTO identity_deletion_requests (id, subject_id, scope, status, child_account_id, pin_grant_token, created_at, updated_at, completed_at, metadata_json) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
+    ).bind(
+      requestId, session.subjectId, scope, 'requested',
+      body.childAccountId ?? null, body.pinGrantToken ?? null,
+      at, at, null, '{}'
+    ).run()
+  })
+
+  await env.IDENTITY_DB.prepare('INSERT INTO identity_audit_events (id, subject_id, actor_subject_id, product, type, created_at, ip_hash, user_agent_hash, metadata_json) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)')
+    .bind(id('aud'), session.subjectId, session.subjectId, 'tiko', 'identity.deletion_requested', at, null, null, JSON.stringify({ requestId, scope }))
+    .run()
+
+  // For account scope: execute the deletion immediately (synchronous for now)
+  if (scope === 'account') {
+    await executeAccountDeletion(env, session.subjectId)
+    const completedAt = new Date().toISOString()
+    await env.IDENTITY_DB.prepare('UPDATE identity_deletion_requests SET status = ?, completed_at = ?, updated_at = ? WHERE id = ?')
+      .bind('completed', completedAt, completedAt, requestId)
+      .run()
+    return Response.json({
+      id: requestId, scope, status: 'completed',
+      createdAt: at, updatedAt: completedAt, completedAt, canCancel: false
+    }, { status: 202 })
+  }
+
+  // For child_account scope: execute child deletion immediately
+  if (scope === 'child_account' && body.childAccountId) {
+    const childRow = await managedChildForManager(env, session.subjectId, body.childAccountId)
+    if (childRow) {
+      const childAt = new Date().toISOString()
+      await env.IDENTITY_DB.prepare('UPDATE identity_managed_credentials SET revoked_at = ? WHERE subject_id = ? AND product = ? AND revoked_at IS NULL')
+        .bind(childAt, childRow.subject_id, 'tiko').run()
+      await env.IDENTITY_DB.prepare('UPDATE identity_sessions SET revoked_at = ? WHERE subject_id = ? AND product = ? AND revoked_at IS NULL')
+        .bind(childAt, childRow.subject_id, 'tiko').run()
+      await env.IDENTITY_DB.prepare('UPDATE identity_subjects SET disabled_at = ?, updated_at = ? WHERE id = ? AND product = ?')
+        .bind(childAt, childAt, childRow.subject_id, 'tiko').run()
+    }
+    const completedAt = new Date().toISOString()
+    await env.IDENTITY_DB.prepare('UPDATE identity_deletion_requests SET status = ?, completed_at = ?, updated_at = ? WHERE id = ?')
+      .bind('completed', completedAt, completedAt, requestId)
+      .run()
+    return Response.json({
+      id: requestId, scope, status: 'completed',
+      createdAt: at, updatedAt: completedAt, completedAt, canCancel: false
+    }, { status: 202 })
+  }
+
+  // For local-device: just mark completed (client handles local cleanup)
+  if (scope === 'local-device') {
+    const completedAt = new Date().toISOString()
+    await env.IDENTITY_DB.prepare('UPDATE identity_deletion_requests SET status = ?, completed_at = ?, updated_at = ? WHERE id = ?')
+      .bind('completed', completedAt, completedAt, requestId)
+      .run()
+    return Response.json({
+      id: requestId, scope, status: 'completed',
+      createdAt: at, updatedAt: completedAt, completedAt, canCancel: false
+    }, { status: 202 })
+  }
+
+  return Response.json({
+    id: requestId, scope, status: 'requested',
+    createdAt: at, updatedAt: at, canCancel: true
+  }, { status: 202 })
+}
+
+async function getDeletionRequest(request: Request, env: Env, requestId: string | undefined): Promise<Response> {
+  const session = await requireIdentitySession(request, env)
+  if (!session || !requestId) return Response.json({ error: 'invalid_session' }, { status: 401 })
+
+  const row = await env.IDENTITY_DB.prepare('SELECT * FROM identity_deletion_requests WHERE id = ? AND subject_id = ? LIMIT 1')
+    .bind(requestId, session.subjectId)
+    .first<DeletionRequestRow>()
+    .catch(() => null)
+
+  if (!row) return Response.json({ error: 'not_found' }, { status: 404 })
+
+  return Response.json({
+    id: row.id,
+    scope: row.scope,
+    status: row.status,
+    createdAt: row.created_at,
+    updatedAt: row.updated_at,
+    completedAt: row.completed_at,
+    canCancel: row.status === 'requested' || row.status === 'awaiting-verification'
+  })
+}
+
+async function executeAccountDeletion(env: Env, subjectId: string): Promise<void> {
+  const at = new Date().toISOString()
+  await env.IDENTITY_DB.prepare('UPDATE identity_subjects SET disabled_at = ?, updated_at = ? WHERE id = ? AND product = ?')
+    .bind(at, at, subjectId, 'tiko').run()
+  await env.IDENTITY_DB.prepare('UPDATE identity_accounts SET disabled_at = ?, updated_at = ? WHERE subject_id = ? AND product = ? AND disabled_at IS NULL')
+    .bind(at, at, subjectId, 'tiko').run()
+  await env.IDENTITY_DB.prepare('UPDATE identity_sessions SET revoked_at = ? WHERE subject_id = ? AND product = ? AND revoked_at IS NULL')
+    .bind(at, subjectId, 'tiko').run()
+  await env.IDENTITY_DB.prepare('UPDATE identity_devices SET revoked_at = ? WHERE subject_id = ? AND product = ? AND revoked_at IS NULL')
+    .bind(at, subjectId, 'tiko').run()
+  await env.IDENTITY_DB.prepare('UPDATE identity_role_assignments SET revoked_at = ? WHERE subject_id = ? AND product = ? AND revoked_at IS NULL')
+    .bind(at, subjectId, 'tiko').run()
+  await env.IDENTITY_DB.prepare('UPDATE identity_managed_credentials SET revoked_at = ? WHERE subject_id = ? AND product = ? AND revoked_at IS NULL')
+    .bind(at, subjectId, 'tiko').run()
+  await env.IDENTITY_DB.prepare('INSERT INTO identity_audit_events (id, subject_id, actor_subject_id, product, type, created_at, ip_hash, user_agent_hash, metadata_json) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)')
+    .bind(id('aud'), subjectId, subjectId, 'tiko', 'identity.deleted_self', at, null, null, '{}').run()
+}
+
+// ─── Child progress reset ──────────────────────────────────────────────
+
+async function resetManagedChildProgress(request: Request, env: Env, childAccountId: string | undefined): Promise<Response> {
+  const manager = await requireIdentitySession(request, env)
+  if (!manager || !childAccountId) return Response.json({ error: 'invalid_session' }, { status: 401 })
+  if (!await canManageChildren(request, env, manager.subjectId)) return Response.json({ error: 'forbidden' }, { status: 403 })
+
+  const body = await request.json().catch(() => ({})) as { confirmation?: string }
+  if (body.confirmation !== 'reset_progress') return Response.json({ error: 'confirmation_required' }, { status: 400 })
+
+  const row = await managedChildForManager(env, manager.subjectId, childAccountId)
+  if (!row) return Response.json({ error: 'not_found' }, { status: 404 })
+
+  const requestId = id('rst')
+  const at = new Date().toISOString()
+
+  await env.IDENTITY_DB.prepare('INSERT INTO identity_audit_events (id, subject_id, actor_subject_id, product, type, created_at, ip_hash, user_agent_hash, metadata_json) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)')
+    .bind(id('aud'), row.subject_id, manager.subjectId, 'tiko', 'identity.child_progress_reset', at, null, null, JSON.stringify({ requestId, childAccountId: row.subject_id }))
+    .run()
+
+  return Response.json({
+    id: requestId,
+    status: 'completed',
+    categoriesAffected: ['progress', 'insights'],
+    createdAt: at,
+    completedAt: at
+  }, { status: 202 })
+}
+
+function childAccountFromRow(row: ManagedCredentialRow) {
+  return { id: row.subject_id, subjectId: row.subject_id, managerSubjectId: row.manager_subject_id, handle: row.handle, name: row.display_name ?? row.handle, displayName: row.display_name ?? row.handle }
+}
+
+async function managedChildForManager(env: Env, managerSubjectId: string, childAccountId: string): Promise<ManagedCredentialRow | null> {
+  return env.IDENTITY_DB.prepare('SELECT * FROM identity_managed_credentials WHERE manager_subject_id = ? AND product = ? AND subject_id = ? AND revoked_at IS NULL LIMIT 1')
+    .bind(managerSubjectId, 'tiko', childAccountId)
+    .first<ManagedCredentialRow>()
 }
 
 async function loginManagedChild(request: Request, env: Env): Promise<Response> {
-  const body = await request.json().catch(() => ({})) as { handle?: string; accessCode?: string; managerSubjectId?: string }
-  const handle = normalizeHandle(body.handle)
-  const accessCode = String(body.accessCode ?? '')
+  const body = await request.json().catch(() => ({})) as { handle?: string; name?: string; accessCode?: string; code?: string; managerSubjectId?: string }
+  const handle = normalizeHandle(body.handle ?? body.name)
+  const accessCode = String(body.accessCode ?? body.code ?? '')
   if (!handle || !accessCode) return Response.json({ error: 'invalid_managed_login' }, { status: 401 })
 
   const row = await env.IDENTITY_DB.prepare('SELECT * FROM identity_managed_credentials WHERE product = ? AND handle_norm = ? AND revoked_at IS NULL LIMIT 1')
@@ -199,11 +699,110 @@ async function requireIdentitySession(request: Request, env: Env): Promise<{ sub
   return { subjectId: session.subject_id }
 }
 
+async function sessionResponse(request: Request, env: Env): Promise<Response> {
+  const url = new URL(request.url)
+  url.pathname = '/v1/identity/session'
+  const ankoreResponse = await createIdentityWorker(configForEnv(env), {
+    sendEmail: message => requestMagicLinkDelivery(env, message)
+  }).fetch(new Request(url.toString(), { method: 'GET', headers: request.headers }), {
+    ...env,
+    ANKORE_TOKEN_PEPPER: env.ANKORE_TOKEN_PEPPER ?? env.TOKEN_PEPPER
+  })
+  const response = await withTikoSessionContract(request, env, ankoreResponse)
+  const body = await response.clone().json().catch(() => null) as Record<string, any> | null
+  if (body?.runtime) return response
+  const session = await requireIdentitySession(request, env)
+  if (!session) return response
+  const accountType = await accountTypeForSubject(env, session.subjectId)
+  const runtime = await deriveRuntime(env, session.subjectId, accountType)
+  return Response.json({
+    ...(body ?? {}),
+    subject: body?.subject ?? { id: session.subjectId },
+    runtime,
+    user: { accountType, mode: runtime.mode, recoverable: accountType !== 'temporary', emailVerified: accountType !== 'temporary' }
+  }, { status: response.status, headers: response.headers })
+}
+
+async function accountTypeForSubject(env: Env, subjectId: string): Promise<AccountType> {
+  const roles = await activeRoles(env.IDENTITY_DB, subjectId)
+  if (roles.includes('child')) return 'child_account'
+  if (roles.includes('profile_manager')) return 'profile_manager'
+  const account = await env.IDENTITY_DB.prepare('SELECT * FROM identity_accounts WHERE subject_id = ? AND product = ? AND disabled_at IS NULL LIMIT 1')
+    .bind(subjectId, 'tiko')
+    .first<AccountRow>()
+  if (account?.email_verified_at) return 'verified'
+  return 'temporary'
+}
+
+async function canManageChildren(request: Request, env: Env, subjectId: string): Promise<boolean> {
+  if (!await hasRole(env.IDENTITY_DB, subjectId, 'profile_manager')) return false
+  const runtime = await runtimeStateForSubject(env, subjectId)
+  return runtime.mode === 'parent'
+}
+
+async function runtimeStateForSubject(env: Env, subjectId: string): Promise<RuntimeState> {
+  const subject = await env.IDENTITY_DB.prepare('SELECT * FROM identity_subjects WHERE id = ? LIMIT 1')
+    .bind(subjectId)
+    .first<SubjectRow & { metadata_json?: string }>()
+  const metadata = parseJson(subject?.metadata_json)
+  const rawRuntime = parseRecord(metadata.tikoRuntime)
+  return {
+    mode: rawRuntime.mode === 'child' ? 'child' : 'parent',
+    childModeEnabled: rawRuntime.childModeEnabled === true,
+    ...(typeof rawRuntime.pinHash === 'string' ? { pinHash: rawRuntime.pinHash } : {})
+  }
+}
+
+async function updateRuntimeState(env: Env, subjectId: string, runtime: RuntimeState): Promise<void> {
+  const subject = await env.IDENTITY_DB.prepare('SELECT * FROM identity_subjects WHERE id = ? LIMIT 1')
+    .bind(subjectId)
+    .first<SubjectRow & { metadata_json?: string }>()
+  const metadata = parseJson(subject?.metadata_json)
+  const nextRuntime = {
+    mode: runtime.mode,
+    childModeEnabled: runtime.childModeEnabled,
+    ...(runtime.pinHash ? { pinHash: runtime.pinHash } : {})
+  }
+  await env.IDENTITY_DB.prepare('UPDATE identity_subjects SET metadata_json = ?, updated_at = ? WHERE id = ?')
+    .bind(JSON.stringify({ ...metadata, tikoRuntime: nextRuntime }), new Date().toISOString(), subjectId)
+    .run()
+}
+
+function parseJson(value: unknown): Record<string, unknown> {
+  if (typeof value !== 'string' || !value) return {}
+  try {
+    return parseRecord(JSON.parse(value))
+  } catch {
+    return {}
+  }
+}
+
+function parseRecord(value: unknown): Record<string, any> {
+  return value && typeof value === 'object' && !Array.isArray(value) ? value as Record<string, any> : {}
+}
+
 async function activeRoles(db: D1Database, subjectId: string): Promise<string[]> {
   const { results } = await db.prepare('SELECT role FROM identity_role_assignments WHERE subject_id = ? AND product = ? AND revoked_at IS NULL')
     .bind(subjectId, 'tiko')
     .all<{ role: string }>()
   return Array.from(new Set(results.map((row) => row.role).filter(Boolean))).sort()
+}
+
+async function activeRolesWithBootstrap(env: Env, subjectId: string, existingRoles?: string[]): Promise<string[]> {
+  const dbRoles = await activeRoles(env.IDENTITY_DB, subjectId).catch(() => [])
+  const roles = Array.from(new Set([...(existingRoles ?? []), ...dbRoles])).sort()
+  if (roles.includes(ADMIN_ROLE)) return roles
+  if (!await canBootstrapAdmin(env, subjectId)) return roles
+  await assignRole(env.IDENTITY_DB, subjectId, ADMIN_ROLE, 'bootstrap', null).catch(() => {})
+  return Array.from(new Set([...roles, ADMIN_ROLE])).sort()
+}
+
+async function canBootstrapAdmin(env: Env, subjectId: string): Promise<boolean> {
+  const row = await env.IDENTITY_DB.prepare('SELECT email_hash FROM identity_accounts WHERE subject_id = ? AND product = ? AND disabled_at IS NULL LIMIT 1')
+    .bind(subjectId, 'tiko')
+    .first<{ email_hash: string | null }>()
+  if (!row?.email_hash) return false
+  return row.email_hash === await hashEmail(normalizeEmail(env.ADMIN_EMAIL ?? ADMIN_EMAIL), env.TOKEN_PEPPER)
 }
 
 async function hasRole(db: D1Database, subjectId: string, role: string): Promise<boolean> {
@@ -228,6 +827,15 @@ async function hashSecret(secret: string, env: Env, purpose: string): Promise<st
   return `sha256:${Array.from(new Uint8Array(digest)).map((byte) => byte.toString(16).padStart(2, '0')).join('')}`
 }
 
+function normalizeEmail(value: string): string {
+  return value.trim().toLowerCase()
+}
+
+async function hashEmail(email: string, pepper: string): Promise<string> {
+  const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(`tiko:email:${pepper}:${email}`))
+  return `sha256:${Array.from(new Uint8Array(digest)).map((byte) => byte.toString(16).padStart(2, '0')).join('')}`
+}
+
 function randomToken(prefix = ''): string {
   const bytes = new Uint8Array(32)
   crypto.getRandomValues(bytes)
@@ -240,13 +848,88 @@ function id(prefix: string): string {
   return `${prefix}_${crypto.randomUUID().replace(/-/g, '')}`
 }
 
-async function withBrowserSessionCookie(request: Request, response: Response): Promise<Response> {
+async function withTikoSessionContract(request: AnyRequest, env: Env, response: Response): Promise<Response> {
+  const contentType = response.headers.get('content-type') ?? ''
+  if (response.status < 200 || response.status >= 300 || !contentType.includes('application/json')) return response
+
+  const clone = response.clone()
+  const body = await clone.json().catch(() => null) as Record<string, any> | null
+  if (!body?.subject?.id) return response
+
+  const initialRoles = Array.isArray(body.roles) ? body.roles.map(String) : await activeRoles(env.IDENTITY_DB, String(body.subject.id)).catch(() => [])
+  const roles = await activeRolesWithBootstrap(env, String(body.subject.id), initialRoles).catch(() => initialRoles)
+  const accountType = deriveAccountType(body, roles)
+  const runtime = await deriveRuntime(env, String(body.subject.id), accountType)
+  const capabilities = deriveCapabilities(accountType, runtime, roles)
+  const displayName = typeof body.managed?.displayName === 'string'
+    ? body.managed.displayName
+    : typeof body.subject?.metadata?.displayName === 'string'
+      ? body.subject.metadata.displayName
+      : undefined
+  const emailVerified = Boolean(body.account?.emailVerified)
+  const user = {
+    id: String(body.subject.id),
+    ...(displayName ? { displayName } : {}),
+    ...(body.account?.email ? { email: body.account.email } : {}),
+    accountType,
+    mode: runtime.mode,
+    recoverable: emailVerified,
+    emailVerified
+  }
+  const account = body.account ? { ...body.account, accountType } : body.account ?? null
+  const nextBody: Record<string, any> = { ...body, roles, user, account, runtime, capabilities }
+  if (body.session) {
+    nextBody.session = { ...body.session, loginMethod: await deriveLoginMethod(request, body, accountType) }
+  }
+  const headers = new Headers(response.headers)
+  headers.set('content-type', 'application/json')
+  return new Response(JSON.stringify(nextBody), { status: response.status, statusText: response.statusText, headers })
+}
+
+function deriveAccountType(body: Record<string, any>, roles: string[]): AccountType {
+  if (roles.includes('child') || body.managed) return 'child_account'
+  if (roles.includes('profile_manager')) return 'profile_manager'
+  if (body.account?.emailVerified) return 'verified'
+  return 'temporary'
+}
+
+async function deriveRuntime(env: Env, subjectId: string, accountType: AccountType): Promise<{ mode: RuntimeMode; childModeEnabled: boolean; pinConfigured: boolean }> {
+  if (accountType === 'child_account') return { mode: 'child', childModeEnabled: true, pinConfigured: false }
+  const runtime = await runtimeStateForSubject(env, subjectId).catch(() => ({ mode: 'parent', childModeEnabled: false } as RuntimeState))
+  return { mode: runtime.mode, childModeEnabled: runtime.childModeEnabled, pinConfigured: Boolean(runtime.pinHash) }
+}
+
+function deriveCapabilities(accountType: AccountType, runtime: { mode: RuntimeMode; pinConfigured: boolean }, roles: string[]) {
+  return {
+    canVerifyEmail: accountType === 'temporary',
+    canUseParentMode: accountType !== 'child_account',
+    canUseChildMode: (accountType === 'verified' || accountType === 'profile_manager') && runtime.pinConfigured || accountType === 'child_account',
+    canManageChildAccounts: accountType === 'profile_manager' && runtime.mode === 'parent',
+    canEditContent: roles.includes('admin') || roles.includes('content_editor'),
+    canDeleteAccount: accountType !== 'child_account'
+  }
+}
+
+async function deriveLoginMethod(request: AnyRequest, body: Record<string, any>, accountType: AccountType): Promise<LoginMethod> {
+  const path = new URL(request.url).pathname
+  if (accountType === 'child_account' || path.endsWith('/managed/login') || path.endsWith('/child-accounts/login')) return 'child_code'
+  if (path.includes('/email/verify') || path.includes('/magic-links/verify') || path.includes('/otp/verify')) {
+    const requestBody = await request.clone().json().catch(() => ({})) as { token?: unknown; otp?: unknown; code?: unknown }
+    if (requestBody.token) return 'magic_link'
+    if (requestBody.otp || requestBody.code) return 'otp'
+    return 'otp'
+  }
+  return 'device'
+}
+
+async function withBrowserSessionCookie(request: AnyRequest, response: Response): Promise<Response> {
   const headers = new Headers(response.headers)
   headers.set('Access-Control-Allow-Credentials', 'true')
 
   const url = new URL(request.url)
   const isTikoAppsIdentityHost = url.hostname === 'id.tikoapps.org' || url.hostname.endsWith('.id.tikoapps.org')
-  const shouldClearCookie = request.method === 'POST' && url.pathname.replace(/\/$/, '') === '/v1/identity/logout'
+  const path = url.pathname.replace(/\/$/, '')
+  const shouldClearCookie = (request.method === 'POST' && path === '/v1/identity/logout') || (request.method === 'DELETE' && path === '/v1/identity/me') || (request.method === 'POST' && path === '/v1/identity/deletion-requests')
 
   if (shouldClearCookie && isTikoAppsIdentityHost) {
     headers.append('Set-Cookie', browserCookie('', 0))

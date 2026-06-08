@@ -26,7 +26,7 @@ export interface Env extends AuthEnv {
 }
 
 export type TikoAppId = 'yes-no' | 'type' | 'cards' | 'sequence' | 'timer' | 'radio' | 'media' | 'admin' | 'tiko' | 'todo' | 'talk'
-type AppResource = 'settings' | 'state'
+type AppResource = 'settings' | 'state' | 'progress'
 
 type JsonValue = null | boolean | number | string | JsonValue[] | { [key: string]: JsonValue }
 
@@ -48,21 +48,23 @@ const APPS = ['yes-no', 'type', 'cards', 'sequence', 'timer', 'radio', 'media', 
 const DEFAULTS: Record<TikoAppId, Record<AppResource, JsonValue>> = {
   'yes-no': {
     settings: { language: 'en', colorMode: 'system', spokenPrompt: 'Make a choice.' },
-    state: { prompt: 'Yes or no?', lastAnswer: null }
+    state: { prompt: 'Yes or no?', lastAnswer: null },
+    progress: {}
   },
   type: {
     settings: { language: 'en', colorMode: 'system', keyboardLayout: 'qwerty' },
-    state: { text: '', completedPrompts: [] }
+    state: { text: '', completedPrompts: [] },
+    progress: {}
   },
-  cards: { settings: {}, state: {} },
-  sequence: { settings: {}, state: {} },
-  timer: { settings: {}, state: {} },
-  radio: { settings: {}, state: {} },
-  media: { settings: {}, state: {} },
-  admin: { settings: {}, state: {} },
-  tiko: { settings: {}, state: {} },
-  todo: { settings: {}, state: {} },
-  talk: { settings: {}, state: {} }
+  cards: { settings: {}, state: {}, progress: {} },
+  sequence: { settings: {}, state: {}, progress: {} },
+  timer: { settings: {}, state: {}, progress: {} },
+  radio: { settings: {}, state: {}, progress: {} },
+  media: { settings: {}, state: {}, progress: {} },
+  admin: { settings: {}, state: {}, progress: {} },
+  tiko: { settings: {}, state: {}, progress: {} },
+  todo: { settings: {}, state: {}, progress: {} },
+  talk: { settings: {}, state: {}, progress: {} }
 }
 
 interface AppConfigRow {
@@ -138,9 +140,21 @@ export async function handleRequest(request: Request, env: Env): Promise<Respons
       return withCors(jsonError('method_not_allowed', 'Method not allowed.', 405), cors)
     }
 
-    const match = /^\/v1\/apps\/([^/]+)\/(settings|state)$/.exec(path)
+    const match = /^\/v1\/apps\/([^/]+)\/(settings|state|progress)$/.exec(path)
 
-    if (!match) return withCors(jsonError('not_found', 'Route not found.', 404), cors)
+    if (!match) {
+      // Reset endpoints
+      const resetMatch = /^\/v1\/apps\/([^/]+)\/resets\/(app|progress)$/.exec(path)
+      if (resetMatch) {
+        const app = parseApp(resetMatch[1])
+        const resetType = resetMatch[2]
+        const session = await requireSession(request, env)
+        if (request.method !== 'POST') return withCors(jsonError('method_not_allowed', 'Method not allowed.', 405), cors)
+        if (resetType === 'app') return withCors(await resetApp(env, session.user_id, app, request), cors)
+        return withCors(await resetAppProgress(env, session.user_id, app, request), cors)
+      }
+      return withCors(jsonError('not_found', 'Route not found.', 404), cors)
+    }
 
     const app = parseApp(match[1])
     const resource = match[2] as AppResource
@@ -148,6 +162,7 @@ export async function handleRequest(request: Request, env: Env): Promise<Respons
 
     if (request.method === 'GET') return withCors(await readAppData(env, session.user_id, app, resource), cors)
     if (request.method === 'PUT') return withCors(await writeAppData(request, env, session.user_id, app, resource), cors)
+    if (request.method === 'DELETE' && resource === 'progress') return withCors(await clearAppProgress(env, session.user_id, app), cors)
 
     return withCors(jsonError('method_not_allowed', 'Method not allowed.', 405), cors)
   } catch (error) {
@@ -283,6 +298,53 @@ function payload(app: TikoAppId, resource: AppResource, value: JsonValue, update
   return { app, [resource]: value, updatedAt, version }
 }
 
+// ---------------------------------------------------------------------------
+// App reset endpoints
+// ---------------------------------------------------------------------------
+
+async function resetApp(env: Env, userId: string, app: TikoAppId, request: Request): Promise<Response> {
+  const body = await readJson<Record<string, unknown>>(request).catch(() => ({} as Record<string, unknown>))
+  if ((body as { confirmation?: string }).confirmation !== 'reset_app') {
+    return jsonError('confirmation_required', 'Confirmation string "reset_app" is required.', 400)
+  }
+  const now = new Date().toISOString()
+  const settingsDefault = cloneDefault(app, 'settings')
+  const stateDefault = cloneDefault(app, 'state')
+  const progressDefault = cloneDefault(app, 'progress')
+  await run(env.APP_DB.prepare('INSERT INTO app_settings (user_id, app, data_json, updated_at, version) VALUES (?, ?, ?, ?, 1) ON CONFLICT(user_id, app) DO UPDATE SET data_json = excluded.data_json, updated_at = excluded.updated_at, version = version + 1')
+    .bind(userId, app, JSON.stringify(settingsDefault), now))
+  await run(env.APP_DB.prepare('INSERT INTO app_state (user_id, app, data_json, updated_at, version) VALUES (?, ?, ?, ?, 1) ON CONFLICT(user_id, app) DO UPDATE SET data_json = excluded.data_json, updated_at = excluded.updated_at, version = version + 1')
+    .bind(userId, app, JSON.stringify(stateDefault), now))
+  await run(env.APP_DB.prepare('INSERT INTO app_progress (user_id, app, data_json, updated_at, version) VALUES (?, ?, ?, ?, 1) ON CONFLICT(user_id, app) DO UPDATE SET data_json = excluded.data_json, updated_at = excluded.updated_at, version = version + 1')
+    .bind(userId, app, JSON.stringify(progressDefault), now))
+  return json({ app, reset: 'app', status: 'completed', categoriesAffected: ['preferences', 'app_state', 'progress'], resetAt: now }, 202)
+}
+
+async function resetAppProgress(env: Env, userId: string, app: TikoAppId, request: Request): Promise<Response> {
+  const body = await readJson<Record<string, unknown>>(request).catch(() => ({} as Record<string, unknown>))
+  if ((body as { confirmation?: string }).confirmation !== 'reset_progress') {
+    return jsonError('confirmation_required', 'Confirmation string "reset_progress" is required.', 400)
+  }
+  const now = new Date().toISOString()
+  const progressDefault = cloneDefault(app, 'progress')
+  await run(env.APP_DB.prepare('INSERT INTO app_progress (user_id, app, data_json, updated_at, version) VALUES (?, ?, ?, ?, 1) ON CONFLICT(user_id, app) DO UPDATE SET data_json = excluded.data_json, updated_at = excluded.updated_at, version = version + 1')
+    .bind(userId, app, JSON.stringify(progressDefault), now))
+  return json({ app, reset: 'progress', status: 'completed', categoriesAffected: ['progress'], resetAt: now }, 202)
+}
+
+// ---------------------------------------------------------------------------
+// Progress clear (DELETE /apps/{app}/progress)
+// ---------------------------------------------------------------------------
+
+async function clearAppProgress(env: Env, userId: string, app: TikoAppId): Promise<Response> {
+  const now = new Date().toISOString()
+  const empty = JSON.stringify({})
+  await run(env.APP_DB.prepare(
+    'INSERT INTO app_progress (user_id, app, data_json, updated_at, version) VALUES (?, ?, ?, ?, 1) ON CONFLICT(user_id, app) DO UPDATE SET data_json = excluded.data_json, updated_at = excluded.updated_at, version = version + 1'
+  ).bind(userId, app, empty, now))
+  return json({ app, progress: {}, updatedAt: now, version: 1 })
+}
+
 async function requireSession(request: Request, env: Env): Promise<SessionJoinRow> {
   const authed = await authenticate(request, env)
   if (authed.ok && authed.method === 'session' && authed.userId) {
@@ -319,8 +381,10 @@ function parseApp(value: string): TikoAppId {
   throw new HttpError(404, 'unknown_app', 'App is not registered for shared data.', 'app')
 }
 
-function tableName(resource: AppResource): 'app_settings' | 'app_state' {
-  return resource === 'settings' ? 'app_settings' : 'app_state'
+function tableName(resource: AppResource): 'app_settings' | 'app_state' | 'app_progress' {
+  if (resource === 'settings') return 'app_settings'
+  if (resource === 'state') return 'app_state'
+  return 'app_progress'
 }
 
 function cloneDefault(app: TikoAppId, resource: AppResource): JsonValue {
@@ -385,7 +449,7 @@ function corsHeaders(request: Request, env: Env): Headers {
   } else if (allowedOrigins.includes('*')) {
     headers.set('access-control-allow-origin', '*')
   }
-  headers.set('access-control-allow-methods', 'GET,PUT,OPTIONS')
+  headers.set('access-control-allow-methods', 'GET,PUT,POST,DELETE,OPTIONS')
   headers.set('access-control-allow-headers', 'authorization,content-type')
   headers.set('access-control-max-age', '86400')
   return headers
