@@ -234,6 +234,87 @@ public struct TikoSettingsToggleRow: View {
     }
 }
 
+public struct TikoColorSwatchPicker: View {
+    public static let colors: [UInt32] = [
+        0xFF6B6B, 0xFF922B, 0xFFD43B, 0x69DB7C,
+        0x4DABF7, 0x748FFC, 0xCC5DE8, 0xF783AC,
+        0x63E6BE, 0xA9E34B, 0x868E96, 0x2C2C2E,
+    ]
+
+    private let appColor: TikoAppColor
+    @Binding private var hexValue: String
+
+    public init(appColor: TikoAppColor, hexValue: Binding<String>) {
+        self.appColor = appColor
+        self._hexValue = hexValue
+    }
+
+    public var body: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            HStack(spacing: 14) {
+                RoundedRectangle(cornerRadius: 12, style: .continuous)
+                    .fill(selectedColor ?? appColor.palette.primary.opacity(0.4))
+                    .frame(width: 40, height: 40)
+                    .overlay {
+                        Image(systemName: "paintpalette.fill")
+                            .font(.system(size: 16, weight: .bold))
+                            .foregroundStyle(.white)
+                    }
+                Text("Favourite colour")
+                    .font(.system(size: 16, weight: .heavy, design: .rounded))
+                    .foregroundStyle(.primary)
+                Spacer()
+                if !hexValue.isEmpty {
+                    Button {
+                        withAnimation(.spring(response: 0.2)) { hexValue = "" }
+                    } label: {
+                        Text("None")
+                            .font(.system(size: 13, weight: .heavy, design: .rounded))
+                            .foregroundStyle(.secondary)
+                    }
+                    .buttonStyle(.plain)
+                }
+            }
+
+            LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 10), count: 6), spacing: 10) {
+                ForEach(Self.colors, id: \.self) { color in
+                    let hex = String(format: "%06X", color)
+                    ZStack {
+                        Circle().fill(Color(hex: color))
+                        if hexValue.uppercased() == hex {
+                            Circle().strokeBorder(Color.white, lineWidth: 2.5)
+                            Image(systemName: "checkmark")
+                                .font(.system(size: 11, weight: .black))
+                                .foregroundStyle(.white)
+                        }
+                    }
+                    .frame(height: 38)
+                    .onTapGesture {
+                        withAnimation(.spring(response: 0.2)) { hexValue = hex }
+                    }
+                }
+            }
+        }
+        .padding(14)
+        .background(Color(.systemBackground))
+        .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
+        .overlay {
+            RoundedRectangle(cornerRadius: 18, style: .continuous)
+                .stroke(Color.primary.opacity(0.08), lineWidth: 1)
+        }
+    }
+
+    private var selectedColor: Color? {
+        let h = hexValue.trimmingCharacters(in: CharacterSet.alphanumerics.inverted)
+        guard h.count == 6, let v = UInt64(h, radix: 16) else { return nil }
+        return Color(
+            red:   Double((v >> 16) & 0xFF) / 255,
+            green: Double((v >> 8)  & 0xFF) / 255,
+            blue:  Double(v         & 0xFF) / 255
+        )
+    }
+}
+
 public struct TikoSettingsSegmentedRow: View {
     private let title: String
     private let icon: String
@@ -638,30 +719,7 @@ public struct TikoAccountSheet: View {
                 }
 
                 // Favourite colour
-                HStack(spacing: 12) {
-                    RoundedRectangle(cornerRadius: 12, style: .continuous)
-                        .fill(profileFavoriteColor ?? appColor.palette.primary.opacity(0.4))
-                        .frame(width: 40, height: 40)
-                        .overlay {
-                            Image(systemName: "paintpalette.fill")
-                                .font(.system(size: 16, weight: .bold))
-                                .foregroundStyle(.white)
-                        }
-                    Text("Favourite colour")
-                        .font(.system(size: 16, weight: .heavy, design: .rounded))
-                        .foregroundStyle(.primary)
-                    Spacer()
-                    ColorPicker("", selection: favoriteColorBinding, supportsOpacity: false)
-                        .labelsHidden()
-                        .frame(width: 36, height: 36)
-                }
-                .padding(14)
-                .background(Color(.systemBackground))
-                .overlay {
-                    RoundedRectangle(cornerRadius: 18, style: .continuous)
-                        .stroke(Color.primary.opacity(0.08), lineWidth: 1)
-                }
-                .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
+                TikoColorSwatchPicker(appColor: appColor, hexValue: $favoriteColorHex)
 
                 Button {
                     Task { await saveProfileName() }

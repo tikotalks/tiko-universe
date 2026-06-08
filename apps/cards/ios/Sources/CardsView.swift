@@ -603,6 +603,9 @@ private struct AddCategorySheet: View {
 
                 VStack(alignment: .leading, spacing: 7) {
                     fieldLabel("Image")
+                    MediaSuggestionRow(query: title, selectedURL: selectedImageURL) { url in
+                        selectedImageURL = url
+                    }
                     ImagePickerButton(selectedURL: selectedImageURL, appColor: .cards) {
                         showingImagePicker = true
                     }
@@ -664,6 +667,9 @@ private struct AddCardSheet: View {
 
                 VStack(alignment: .leading, spacing: 7) {
                     fieldLabel("Image")
+                    MediaSuggestionRow(query: title, selectedURL: selectedImageURL) { url in
+                        selectedImageURL = url
+                    }
                     ImagePickerButton(selectedURL: selectedImageURL, appColor: .cards) {
                         showingImagePicker = true
                     }
@@ -728,6 +734,9 @@ private struct EditCollectionSheet: View {
 
                 VStack(alignment: .leading, spacing: 7) {
                     fieldLabel("Image")
+                    MediaSuggestionRow(query: title, selectedURL: selectedImageURL) { url in
+                        selectedImageURL = url
+                    }
                     ImagePickerButton(selectedURL: selectedImageURL, appColor: .cards) {
                         showingImagePicker = true
                     }
@@ -798,6 +807,9 @@ private struct EditCardSheet: View {
 
                 VStack(alignment: .leading, spacing: 7) {
                     fieldLabel("Image")
+                    MediaSuggestionRow(query: title, selectedURL: selectedImageURL) { url in
+                        selectedImageURL = url
+                    }
                     ImagePickerButton(selectedURL: selectedImageURL, appColor: .cards) {
                         showingImagePicker = true
                     }
@@ -901,6 +913,96 @@ private struct CardColorPicker: View {
             RoundedRectangle(cornerRadius: 18, style: .continuous)
                 .stroke(Color.primary.opacity(0.06), lineWidth: 1)
         }
+    }
+}
+
+// MARK: - Media suggestions
+
+private struct MediaSuggestionRow: View {
+    let query: String
+    let selectedURL: URL?
+    let onSelect: (URL) -> Void
+
+    @State private var results: [URL] = []
+    @State private var isLoading = false
+
+    var body: some View {
+        let trimmed = query.trimmingCharacters(in: .whitespaces)
+        if !trimmed.isEmpty && (!results.isEmpty || isLoading) {
+            VStack(alignment: .leading, spacing: 7) {
+                fieldLabel("Suggestions from Tiko")
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack(spacing: 8) {
+                        if isLoading && results.isEmpty {
+                            ForEach(0..<4, id: \.self) { _ in
+                                RoundedRectangle(cornerRadius: 10, style: .continuous)
+                                    .fill(Color(.systemFill))
+                                    .frame(width: 64, height: 64)
+                            }
+                        } else {
+                            ForEach(results, id: \.self) { url in
+                                Button {
+                                    withAnimation(.spring(response: 0.2)) { onSelect(url) }
+                                } label: {
+                                    ZStack(alignment: .topTrailing) {
+                                        AsyncImage(url: url) { phase in
+                                            if case .success(let img) = phase {
+                                                img.resizable().scaledToFill()
+                                            } else {
+                                                Color(.systemFill)
+                                            }
+                                        }
+                                        .frame(width: 64, height: 64)
+                                        .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+
+                                        if selectedURL == url {
+                                            Image(systemName: "checkmark.circle.fill")
+                                                .font(.system(size: 16, weight: .bold))
+                                                .foregroundStyle(TikoAppColor.cards.palette.primary)
+                                                .background(.white, in: Circle())
+                                                .padding(3)
+                                        }
+                                    }
+                                }
+                                .buttonStyle(.plain)
+                            }
+                        }
+                    }
+                    .padding(.horizontal, 14)
+                    .padding(.vertical, 10)
+                }
+                .background(Color(.systemBackground))
+                .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+                .overlay {
+                    RoundedRectangle(cornerRadius: 16, style: .continuous)
+                        .stroke(Color.primary.opacity(0.06), lineWidth: 1)
+                }
+            }
+            .task(id: trimmed) {
+                try? await Task.sleep(nanoseconds: 500_000_000)
+                await fetchSuggestions(query: trimmed)
+            }
+        } else {
+            EmptyView()
+                .task(id: trimmed) {
+                    guard !trimmed.isEmpty else { results = []; return }
+                    try? await Task.sleep(nanoseconds: 500_000_000)
+                    await fetchSuggestions(query: trimmed)
+                }
+        }
+    }
+
+    private func fetchSuggestions(query: String) async {
+        guard let encoded = query.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed),
+              let url = URL(string: "https://media.tikoapi.org/v1/media?type=image&search=\(encoded)&limit=6")
+        else { return }
+        isLoading = true
+        do {
+            let (data, _) = try await URLSession.shared.data(from: url)
+            let items = try JSONDecoder().decode(TikoMediaListResponse.self, from: data).data
+            results = items.map { CardsMediaMatcher.resizedCDNURL($0.originalURL) }
+        } catch {}
+        isLoading = false
     }
 }
 
