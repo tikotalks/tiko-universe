@@ -69,6 +69,7 @@ export interface ImageRequest {
   app: string
   purpose: string
   size?: 'square' | 'portrait' | 'landscape'
+  transparent?: boolean
   count?: number
   model?: string
   provider?: 'openai' | 'auto'
@@ -78,6 +79,7 @@ export interface TextRequest {
   input: string
   app: string
   purpose: string
+  system?: string
   outputFormat?: 'plain' | 'markdown' | 'json'
   model?: string
   provider?: 'cloudflare-workers-ai' | 'openai' | 'auto'

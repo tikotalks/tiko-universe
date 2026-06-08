@@ -837,11 +837,15 @@ function makeSilentMp3Padding(): Uint8Array {
 
 // ── Image generation (DALL-E 3) ──────────────────────────────────
 
+type ImageMode = 'icon' | 'coloring' | 'background'
+
 interface ImageGenerationRequest {
   prompt: string
+  mode?: ImageMode
   size?: '1024x1024' | '1024x1792' | '1792x1024'
   quality?: 'standard' | 'hd'
   style?: 'vivid' | 'natural'
+  transparent?: boolean
   title?: string
   category?: string
   tags?: string[]
@@ -871,16 +875,177 @@ interface GeneratedImageRecord {
 }
 
 const ALLOWED_IMAGE_SIZES = new Set(['1024x1024', '1024x1792', '1792x1024'])
-const OPENAI_IMAGE_MODEL = 'gpt-image-1'
 
-function toOpenAiImageSize(size: string): string {
-  if (size === '1024x1792') return '1024x1536'
-  if (size === '1792x1024') return '1536x1024'
-  return size
+const IMAGE_STYLE_SPECS: Record<ImageMode, object> = {
+  icon: {
+    task: "Generate a 3D icon in a soft, stylized, contemporary look (playful but mature). Absolutely no leaves, foliage, plant elements, or text/letters unless explicitly described in icon_idea.",
+    style_reference: "Soft 3D icon style with smooth rounded forms, crisper edges, slightly richer saturation, and calm, balanced proportions. UI-friendly and readable at small sizes; professional product-icon vibe.",
+    icon_idea: null,
+    render_style: {
+      materials: "Satin–matte. Minimal subject-specific micro-texture only where needed to suggest material; otherwise smooth. Avoid gloss and strong reflections.",
+      shapes: "Rounded but not chubby: tighter corner radii, controlled bevels, clean planes. No toy-like bulges; maintain confident geometry.",
+      colors: "Refined, punchier palette. Use 2–3 core colors plus one subtle accent. Slightly richer saturation than pastel, avoid candy/neon or rainbow mixes.",
+      lighting: "Soft studio lighting with a gentle key–fill ratio (a bit more contrast than before) and a faint rim/edge light for pop. Subtle grounded shadow. No harsh speculars.",
+      background: "transparent"
+    },
+    composition: {
+      camera: "Orthographic or slight 3/4 top-front",
+      layout: "Single centered subject, grounded shadow or soft float. No decorative stars, dots, or clutter.",
+      aspect_ratio: "1:1 square format, minimum 1024x1024px",
+      file_format: "High-res PNG"
+    },
+    surface_texture: {
+      enable: true,
+      texture_strength: "minimal",
+      texture_scale: "micro",
+      rules: "Only apply subtle, subject-aware micro-texture to avoid flatness; keep large areas smooth. No generic grain; texture must be barely perceptible at 100%."
+    },
+    material_hints: {
+      animal: "Ultra-fine short flocking only on edges and silhouette—no visible strands.",
+      plant: "Very light velvety bloom on leaves; bark hints only where it aids silhouette.",
+      fabric: "Tight felt/woven suggestion, barely visible.",
+      metal: "Fine powder-coat or brushed hint; no bright streaks.",
+      plastic: "Smooth satin polymer; micro-speckle only on grazing angles."
+    },
+    details: {
+      expression: "Neutral; no faces unless specified.",
+      structure: "Clear, mature proportions; stylized but not cute or distorted.",
+      pose: "Clean silhouette for icon use; instantly recognizable at small sizes.",
+      style_constraints: "No oversized features, blush, sparkles, heavy gloss, visible grain, leaves, foliage, vines, plant parts, text, letters, numbers, or typographic elements unless explicitly requested."
+    }
+  },
+  coloring: {
+    task: "Generate a black-and-white coloring page (clean line art only). The subject must be fully contained within the frame with no parts cut off. CRITICAL: Absolutely NO border lines, frames, or rectangles around the edge of the image.",
+    style_reference: "Crisp, closed outlines with consistent stroke weight; pure black lines on white; no shading, gradients, textures, halftones, or colors. Subject fully visible with generous padding from edges. The edge of the image must be pure white with no lines.",
+    icon_idea: null,
+    render_style: {
+      materials: "None (ink line art). Do not simulate materials.",
+      shapes: "Fully closed shapes that form clear 'panels' for coloring. Avoid gaps and feathered edges.",
+      colors: "Monochrome only: black outlines (#000) on white (#FFF). No gray.",
+      lighting: "None. Do not imply light/shadow.",
+      background: "Pure white. No border lines, frames, or decorative elements around the edges."
+    },
+    composition: {
+      camera: "Orthographic, straight-on or slight 3/4 if needed for clarity.",
+      layout: "Single centered subject with 10-15% padding from all edges. Complete subject visible, no cropping. No border lines or frames.",
+      aspect_ratio: "1:1 square, minimum 1024x1024px (vector look acceptable).",
+      file_format: "High-res PNG or SVG"
+    },
+    surface_texture: {
+      enable: false,
+      texture_strength: "none",
+      texture_scale: "none",
+      rules: "No hatching, stipple, halftone, or line-weight shading."
+    },
+    material_hints: {
+      animal: "Use contour outlines only; no fur strokes beyond silhouette-defining lines.",
+      plant: "Use simple vein lines; keep fills empty.",
+      fabric: "Seam lines allowed; no fabric shading.",
+      metal: "No reflections; outline only.",
+      plastic: "Outline only."
+    },
+    details: {
+      expression: "Neutral unless specified.",
+      structure: "Clear, readable proportions; simplified forms to ease coloring.",
+      pose: "Strong, readable silhouette. Ensure all parts fit comfortably within frame.",
+      style_constraints: "No gradients, noise, shadows, grayscale, or border lines. Keep stroke weight consistent (eg 3–6 px at 1024px). No lines touching or extending to image edges."
+    },
+    stroke_rules: {
+      weight: "Uniform stroke weight; thicker outer contour, optionally slightly thinner inner details.",
+      joins_caps: "Round joins and caps preferred; no feathering.",
+      closure: "All panels must be watertight (no open paths).",
+      borders: "No border lines or frames around the image. Subject should float freely in white space."
+    },
+    export_rules: {
+      vector_priority: "Prefer SVG with paths; if raster, ensure 2-color (1-bit) output.",
+      cleanup: "No anti-aliased edges; crisp pixels. No border artifacts."
+    }
+  },
+  background: {
+    task: "Generate a stylized background scene with soft 3D elements. Create a cohesive environment with less crowded center area suitable for UI overlays or content placement.",
+    style_reference: "Soft 3D background style matching icon aesthetics - smooth rounded forms, calm balanced composition with breathing room in the center. Same refined palette and lighting as icons.",
+    icon_idea: null,
+    render_style: {
+      materials: "Satin-matte surfaces matching icon style. Smooth with minimal texture.",
+      shapes: "Rounded environmental elements, architectural or natural forms. Distributed to frame rather than fill the center.",
+      colors: "Cohesive palette using 2-3 main colors plus accents. Match icon saturation levels. Gradient-friendly.",
+      lighting: "Soft ambient with directional key light. Atmospheric perspective for depth. Subtle volumetric effects allowed.",
+      background: "Full scene with sky/environment. Gradient or soft color transitions."
+    },
+    composition: {
+      camera: "Wide angle, slight elevation. Environmental perspective.",
+      layout: "Elements concentrated in corners/edges, sparse center. Rule of thirds. Create natural frame or vignette effect.",
+      aspect_ratio: "Variable based on mode - landscape (3:2), portrait (2:3), or square (1:1)",
+      file_format: "High-res PNG"
+    },
+    surface_texture: {
+      enable: true,
+      texture_strength: "minimal",
+      texture_scale: "micro",
+      rules: "Match icon texture approach. Very subtle, barely perceptible."
+    },
+    material_hints: {
+      clouds: "Soft volumetric forms, no hard edges.",
+      terrain: "Smooth rolling forms, stylized not realistic.",
+      architecture: "Simplified geometric structures with rounded edges.",
+      foliage: "Abstracted shapes, avoid detailed leaves unless specified.",
+      water: "Smooth stylized surfaces, minimal ripples."
+    },
+    details: {
+      density: "30-40% coverage, leaving center area relatively open.",
+      depth_layers: "Foreground elements at edges, midground sparse, background atmospheric.",
+      focal_point: "Avoid strong focal points in center third of image.",
+      style_constraints: "No photo-realism, maintain soft 3D icon aesthetic throughout. No text or UI elements."
+    }
+  }
 }
 
-function toOpenAiImageQuality(quality: string): string {
-  return quality === 'hd' ? 'high' : 'medium'
+const ART_DIRECTOR_SYSTEM_PROMPTS: Record<ImageMode, string> = {
+  icon: `You are a senior art director. Convert the user's JSON style spec into a single, explicit, 180–300 word image brief for an image-generation model.
+Rules:
+- Do not use any wording or letters in the images.
+- Keep ONE consistent visual style across outputs (soft 3D, rounded forms, pastel accents).
+- Include: subject, camera, composition, lighting, palette, materials, textures, surface detail, silhouettes, dos/don'ts.
+- Be directive, not optional. No meta talk. No lists. No JSON.`,
+  coloring: `You are a senior art director. Convert the user's JSON style spec into a single, explicit, 180–300 word image brief for an image-generation model producing a coloring page.
+Rules:
+- EMPHASIZE no border lines or frames at the image edges. The image must have a pure white background that extends to the edges with no black lines forming a border or frame.
+- Pure black outlines on white only. No shading, no gray, no color.
+- Include: subject, composition, stroke style, closure rules, padding, dos/don'ts.
+- Be directive, not optional. No meta talk. No lists. No JSON.`,
+  background: `You are a senior art director. Convert the user's JSON style spec into a single, explicit, 180–300 word image brief for an image-generation model producing a stylized background scene.
+Rules:
+- Do not use any wording or letters in the images.
+- Keep ONE consistent visual style (soft 3D, matching the icon aesthetic).
+- Keep the center area sparse — elements should frame, not fill.
+- Include: scene description, depth layers, camera, composition, lighting, palette, materials, dos/don'ts.
+- Be directive, not optional. No meta talk. No lists. No JSON.`
+}
+
+async function boostPrompt(subject: string, mode: ImageMode, env: Env): Promise<string> {
+  if (!env.ATLAS_SERVICE) throw new Error('Atlas service not available for prompt boost')
+
+  const spec = { ...IMAGE_STYLE_SPECS[mode], icon_idea: subject }
+  const atlasBase = (env.ATLAS_BASE_URL ?? 'https://tiko-atlas-api-dev.silvandiepen.workers.dev/v1/atlas').replace(/\/$/, '')
+  const response = await env.ATLAS_SERVICE!.fetch(new Request(`${atlasBase}/run`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      capability: 'text.generate',
+      app: 'generation-api',
+      purpose: 'image-art-director',
+      input: { input: JSON.stringify(spec, null, 2), system: ART_DIRECTOR_SYSTEM_PROMPTS[mode] },
+    }),
+  }))
+
+  if (!response.ok) {
+    const errorText = await response.text()
+    let detail = errorText
+    try { detail = JSON.parse(errorText).error?.message || errorText } catch { /* keep raw */ }
+    throw new Error(`Prompt boost failed: ${detail}`)
+  }
+  const data = await response.json() as { data?: { output?: string } }
+  return (data.data?.output ?? '').trim()
 }
 
 async function generateImage(request: Request, env: Env): Promise<Response> {
@@ -900,137 +1065,37 @@ async function generateImage(request: Request, env: Env): Promise<Response> {
   if (body.size && !ALLOWED_IMAGE_SIZES.has(body.size)) {
     return apiError('invalid_size', 'Size must be 1024x1024, 1024x1792, or 1792x1024.', 400, 'size')
   }
-  if (!env.OPENAI_API_KEY) {
-    return apiError('image_generation_not_configured', 'Image generation is not configured.', 503)
-  }
 
   const size = body.size || '1024x1024'
   const quality = body.quality === 'hd' ? 'hd' : 'standard'
   const style = body.style === 'natural' ? 'natural' : 'vivid'
+  const mode: ImageMode = body.mode === 'coloring' || body.mode === 'background' ? body.mode : 'icon'
+  const transparent = body.transparent !== undefined ? body.transparent : (mode === 'icon')
 
-  const atlasResponse = await generateImageWithAtlas(body, { size, quality, style }, env)
-  if (atlasResponse) return atlasResponse
-
-  const providerSize = toOpenAiImageSize(size)
-  const providerQuality = toOpenAiImageQuality(quality)
-
-  const response = await fetch('https://api.openai.com/v1/images/generations', {
-    method: 'POST',
-    headers: {
-      Authorization: `Bearer ${env.OPENAI_API_KEY}`,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      model: OPENAI_IMAGE_MODEL,
-      prompt: body.prompt.trim(),
-      n: 1,
-      size: providerSize,
-      quality: providerQuality,
-    }),
-  })
-
-  if (!response.ok) {
-    const errorText = await response.text()
-    let detail = errorText
-    try { detail = JSON.parse(errorText).error?.message || errorText } catch { /* keep raw */ }
-    return apiError('image_provider_failed', `Image generation failed: ${detail}`, 502)
+  // Expand the user's subject into a detailed art brief via atlas
+  let artBrief: string
+  try {
+    artBrief = await boostPrompt(body.prompt.trim(), mode, env)
+  } catch (err) {
+    return apiError('prompt_boost_failed', `Failed to expand prompt: ${(err as Error).message}`, 502)
   }
 
-  const data = await response.json() as {
-    data: Array<{ b64_json?: string; url?: string; revised_prompt?: string }>
-  }
-
-  const imageData = data.data[0]
-  let imageBytes: Uint8Array | null = null
-  if (imageData?.b64_json) {
-    imageBytes = Uint8Array.from(atob(imageData.b64_json), c => c.charCodeAt(0))
-  } else if (imageData?.url) {
-    const imageResponse = await fetch(imageData.url)
-    if (!imageResponse.ok) {
-      return apiError('image_provider_failed', 'Generated image could not be downloaded from provider.', 502)
-    }
-    imageBytes = new Uint8Array(await imageResponse.arrayBuffer())
-  }
-
-  if (!imageBytes) {
-    return apiError('image_provider_failed', 'No image data returned from provider.', 502)
-  }
-  const id = crypto.randomUUID()
-  const r2Key = `images/${id}.png`
-  const now = new Date().toISOString()
-
-  await env.GENERATED_MEDIA_BUCKET.put(r2Key, imageBytes, {
-    httpMetadata: { contentType: 'image/png', cacheControl: 'public, max-age=31536000, immutable' },
-  })
-
-  const dims = parseImageSize(size)
-  const imageUrl = `/v1/generation/images/${id}/binary`
-
-  await env.GENERATION_DB.prepare(`INSERT INTO generated_images (
-    id, prompt, revised_prompt, model, size, quality, style, image_url, r2_key,
-    content_type, file_size_bytes, width, height, category, tags, title, description,
-    is_public, created_at, updated_at
-  ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`).bind(
-    id,
-    body.prompt.trim(),
-    imageData.revised_prompt || null,
-    OPENAI_IMAGE_MODEL,
-    size,
-    quality,
-    style,
-    imageUrl,
-    r2Key,
-    'image/png',
-    imageBytes.byteLength,
-    dims.width,
-    dims.height,
-    body.category || 'generated',
-    JSON.stringify(body.tags || []),
-    body.title || null,
-    null,
-    0,
-    now,
-    now,
-  ).run()
-
-  return json({
-    data: {
-      id,
-      imageUrl,
-      prompt: body.prompt.trim(),
-      revisedPrompt: imageData.revised_prompt || null,
-      size,
-      quality,
-      style,
-      width: dims.width,
-      height: dims.height,
-      fileSizeBytes: imageBytes.byteLength,
-      createdAt: now,
-    },
-    meta: { cached: false, schemaVersion: 1 },
-  }, 201)
-}
-
-async function generateImageWithAtlas(body: ImageGenerationRequest, normalized: { size: string; quality: string; style: string }, env: Env): Promise<Response | null> {
-  if (!env.ATLAS_SERVICE) return null
-
+  // Generate the image via atlas
   const atlasBase = (env.ATLAS_BASE_URL ?? 'https://tiko-atlas-api-dev.silvandiepen.workers.dev/v1/atlas').replace(/\/$/, '')
-  const response = await env.ATLAS_SERVICE.fetch(new Request(`${atlasBase}/images`, {
+  const atlasResponse = await env.ATLAS_SERVICE!.fetch(new Request(`${atlasBase}/run`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
+      capability: 'image.generate',
       app: 'generation-api',
-      purpose: 'compatibility-image-generation',
-      prompt: body.prompt.trim(),
-      size: toAtlasImageSize(normalized.size),
-      count: 1,
-      provider: 'openai',
-      model: OPENAI_IMAGE_MODEL,
+      purpose: 'image-generation',
+      input: { prompt: artBrief, size: toAtlasImageSize(size), transparent, count: 1 },
     }),
   }))
-  const atlasBody = await response.json().catch(() => null) as AtlasImageResponse | null
-  if (!response.ok) {
-    return apiError(atlasBody?.error?.code ?? 'atlas_image_failed', atlasBody?.error?.message ?? 'Atlas image request failed.', response.status)
+
+  const atlasBody = await atlasResponse.json().catch(() => null) as AtlasImageResponse | null
+  if (!atlasResponse.ok) {
+    return apiError(atlasBody?.error?.code ?? 'atlas_image_failed', atlasBody?.error?.message ?? 'Atlas image request failed.', atlasResponse.status)
   }
 
   const image = atlasBody?.data?.images?.[0]
@@ -1049,7 +1114,7 @@ async function generateImageWithAtlas(body: ImageGenerationRequest, normalized: 
     httpMetadata: { contentType, cacheControl: 'public, max-age=31536000, immutable' },
   })
 
-  const dims = parseImageSize(normalized.size)
+  const dims = parseImageSize(size)
   const imageUrl = `/v1/generation/images/${id}/binary`
   await env.GENERATION_DB.prepare(`INSERT INTO generated_images (
     id, prompt, revised_prompt, model, size, quality, style, image_url, r2_key,
@@ -1059,10 +1124,10 @@ async function generateImageWithAtlas(body: ImageGenerationRequest, normalized: 
     id,
     body.prompt.trim(),
     image.revisedPrompt || null,
-    image.provider?.model ?? OPENAI_IMAGE_MODEL,
-    normalized.size,
-    normalized.quality,
-    normalized.style,
+    image.provider?.model ?? 'gpt-image-1',
+    size,
+    quality,
+    style,
     imageUrl,
     r2Key,
     contentType,
@@ -1084,9 +1149,9 @@ async function generateImageWithAtlas(body: ImageGenerationRequest, normalized: 
       imageUrl,
       prompt: body.prompt.trim(),
       revisedPrompt: image.revisedPrompt || null,
-      size: normalized.size,
-      quality: normalized.quality,
-      style: normalized.style,
+      size,
+      quality,
+      style,
       width: dims.width,
       height: dims.height,
       fileSizeBytes: imageBytes.byteLength,

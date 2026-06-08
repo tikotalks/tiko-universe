@@ -318,22 +318,22 @@ describe('generation-api TTS contract', () => {
     const atlasFetch = vi.fn(async (input: Request | string) => {
       const request = input instanceof Request ? input : new Request(input)
       const url = new URL(request.url)
-      if (url.pathname === '/v1/atlas/images') {
+      if (url.pathname === '/v1/atlas/run') {
         const payload = await request.json() as Record<string, unknown>
-        expect(payload).toMatchObject({
-          app: 'generation-api',
-          purpose: 'compatibility-image-generation',
-          prompt: 'A friendly robot',
-          size: 'portrait',
-          provider: 'openai',
-          model: 'gpt-image-1',
-        })
-        return new Response(JSON.stringify({
-          data: {
-            images: [{ id: 'atlas-image-1', mediaUrl: '/v1/atlas/assets/atlas-image-1', contentType: 'image/png', revisedPrompt: 'A friendly robot', provider: { name: 'openai', model: 'gpt-image-1' } }]
-          },
-          meta: { requestId: 'atlas-req-image' },
-        }), { status: 200, headers: { 'content-type': 'application/json' } })
+        if (payload.capability === 'text.generate') {
+          return new Response(JSON.stringify({
+            data: { output: 'An art-directed prompt for a friendly robot' },
+            meta: { requestId: 'atlas-req-text' },
+          }), { status: 200, headers: { 'content-type': 'application/json' } })
+        }
+        if (payload.capability === 'image.generate') {
+          return new Response(JSON.stringify({
+            data: {
+              images: [{ id: 'atlas-image-1', mediaUrl: '/v1/atlas/assets/atlas-image-1', contentType: 'image/png', revisedPrompt: 'A friendly robot', provider: { name: 'openai', model: 'gpt-image-1' } }]
+            },
+            meta: { requestId: 'atlas-req-image' },
+          }), { status: 200, headers: { 'content-type': 'application/json' } })
+        }
       }
       if (url.pathname === '/v1/atlas/assets/atlas-image-1') return new Response(png, { status: 200, headers: { 'content-type': 'image/png' } })
       return new Response('not found', { status: 404 })
@@ -349,7 +349,7 @@ describe('generation-api TTS contract', () => {
     const generated = await json(response)
 
     expect(response.status).toBe(201)
-    expect(atlasFetch).toHaveBeenCalledTimes(2)
+    expect(atlasFetch).toHaveBeenCalledTimes(3) // text boost + image generate + asset fetch
     expect(providerFetch).not.toHaveBeenCalled()
     expect(generated.data).toMatchObject({ revisedPrompt: 'A friendly robot', size: '1024x1792', quality: 'hd', style: 'natural', width: 1024, height: 1792, fileSizeBytes: 8 })
     expect(generated.data.imageUrl).toMatch(/^\/v1\/generation\/images\/.+\/binary$/)
@@ -377,9 +377,9 @@ describe('generation-api TTS contract', () => {
     }), env)
 
     expect(identityFetch).toHaveBeenCalledTimes(1)
-    expect(response.status).toBe(503)
+    expect(response.status).toBe(502)
     await expect(json(response)).resolves.toMatchObject({
-      error: { code: 'image_generation_not_configured' }
+      error: { code: 'prompt_boost_failed' }
     })
   })
 
