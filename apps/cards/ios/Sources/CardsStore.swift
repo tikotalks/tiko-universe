@@ -7,6 +7,7 @@ final class CardsStore: ObservableObject {
     @Published private(set) var collectionThumbnails: [String: URL] = [:]
     @Published private(set) var loadingCollectionIDs: Set<String> = []
     @Published private(set) var isLoading = false
+    @Published var lastPersistError: String?
 
     private let mediaClient: CardsMediaClient
     private let imageCache: CardsImageCache
@@ -117,6 +118,7 @@ final class CardsStore: ObservableObject {
         collections[i].title = title
         collections[i].colorHex = colorHex
         collections[i].imageURL = imageURL.flatMap { Self.persistLocalImageIfNeeded($0) }
+        Task { await persistUpdateCollection(id: id, title: title, colorHex: colorHex, imageURL: collections[i].imageURL) }
     }
 
     func updateCard(id: String, title: String, speech: String, colorHex: UInt32, imageURL: URL?, inCollectionID: String) {
@@ -126,6 +128,7 @@ final class CardsStore: ObservableObject {
         collections[ci].cards[ji].speech = speech
         collections[ci].cards[ji].colorHex = colorHex
         collections[ci].cards[ji].imageURL = imageURL.flatMap { Self.persistLocalImageIfNeeded($0) }
+        Task { await persistUpdateCard(id: id, title: title, speech: speech, colorHex: colorHex, imageURL: collections[ci].cards[ji].imageURL, collectionID: inCollectionID) }
     }
 
     func reorderCard(draggingID: String, targetID: String, inCollectionID: String) {
@@ -144,5 +147,101 @@ final class CardsStore: ObservableObject {
     private func persistCard(id: String, title: String, speech: String, colorHex: UInt32, order: Int, imageURL: URL?, collectionID: String) async {
         guard let token = try? TikoDeviceSessionStore().load()?.accessToken else { return }
         _ = try? await contentClient.createCard(id: id, title: title, speech: speech, colorHex: colorHex, order: order, imageURL: imageURL, collectionID: collectionID, sessionToken: token)
+    }
+
+    private func persistUpdateCollection(id: String, title: String, colorHex: UInt32, imageURL: URL?) async {
+        guard let token = try? TikoDeviceSessionStore().load()?.accessToken else {
+            lastPersistError = "No session token"
+            return
+        }
+        do {
+            _ = try await contentClient.updateCollection(id: id, title: title, colorHex: colorHex, imageURL: imageURL, sessionToken: token)
+        } catch {
+            lastPersistError = "Failed to save collection: \(error.localizedDescription)"
+            print("[CardsStore] persistUpdateCollection error: \(error)")
+        }
+    }
+
+    private func persistUpdateCard(id: String, title: String, speech: String, colorHex: UInt32, imageURL: URL?, collectionID: String) async {
+        guard let token = try? TikoDeviceSessionStore().load()?.accessToken else {
+            lastPersistError = "No session token"
+            return
+        }
+        do {
+            _ = try await contentClient.updateCard(id: id, title: title, speech: speech, colorHex: colorHex, imageURL: imageURL, collectionID: collectionID, sessionToken: token)
+        } catch {
+            lastPersistError = "Failed to save card: \(error.localizedDescription)"
+            print("[CardsStore] persistUpdateCard error: \(error)")
+        }
+    }
+
+    func deleteCollection(id: String) {
+        collections.removeAll { $0.id == id }
+        collectionThumbnails.removeValue(forKey: id)
+        Task { await persistDeleteCollection(id: id) }
+    }
+
+    func deleteCard(id: String, inCollectionID: String) {
+        guard let ci = collections.firstIndex(where: { $0.id == inCollectionID }) else { return }
+        collections[ci].cards.removeAll { $0.id == id }
+        Task { await persistDeleteCard(id: id, collectionID: inCollectionID) }
+    }
+
+    func promoteCollectionToDefault(_ collection: CardCollection) {
+        guard let ci = collections.firstIndex(where: { $0.id == collection.id }) else { return }
+        let newId = collection.id.hasPrefix("user_") ? String(collection.id.dropFirst(5)) : collection.id
+        let promoted = CardCollection(
+            id: newId,
+            title: collection.title,
+            colorHex: collection.colorHex,
+            order: collection.order,
+            mediaCategories: collection.mediaCategories,
+            imageURL: collection.imageURL,
+            cards: collection.cards
+        )
+        collections[ci] = promoted
+        if let url = collectionThumbnails.removeValue(forKey: collection.id) {
+            collectionThumbnails[newId] = url
+        }
+        Task { await persistPromoteCollection(promoted) }
+    }
+
+    private func persistDeleteCollection(id: String) async {
+        guard let token = try? TikoDeviceSessionStore().load()?.accessToken else {
+            lastPersistError = "No session token"
+            return
+        }
+        do {
+            try await contentClient.deleteCollection(id: id, sessionToken: token)
+        } catch {
+            lastPersistError = "Failed to delete collection: \(error.localizedDescription)"
+            print("[CardsStore] persistDeleteCollection error: \(error)")
+        }
+    }
+
+    private func persistDeleteCard(id: String, collectionID: String) async {
+        guard let token = try? TikoDeviceSessionStore().load()?.accessToken else {
+            lastPersistError = "No session token"
+            return
+        }
+        do {
+            try await contentClient.deleteCard(id: id, collectionID: collectionID, sessionToken: token)
+        } catch {
+            lastPersistError = "Failed to delete card: \(error.localizedDescription)"
+            print("[CardsStore] persistDeleteCard error: \(error)")
+        }
+    }
+
+    private func persistPromoteCollection(_ collection: CardCollection) async {
+        guard let token = try? TikoDeviceSessionStore().load()?.accessToken else {
+            lastPersistError = "No session token"
+            return
+        }
+        do {
+            try await contentClient.promoteCollection(collection, sessionToken: token)
+        } catch {
+            lastPersistError = "Failed to promote collection: \(error.localizedDescription)"
+            print("[CardsStore] persistPromoteCollection error: \(error)")
+        }
     }
 }

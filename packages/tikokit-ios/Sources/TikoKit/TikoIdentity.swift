@@ -37,12 +37,14 @@ public struct TikoIdentityAccount: Identifiable, Codable, Equatable, Sendable {
     public let subjectId: String
     public let emailVerified: Bool
     public let email: String?
+    public let accountType: String?
 
-    public init(id: String, subjectId: String, emailVerified: Bool, email: String? = nil) {
+    public init(id: String, subjectId: String, emailVerified: Bool, email: String? = nil, accountType: String? = nil) {
         self.id = id
         self.subjectId = subjectId
         self.emailVerified = emailVerified
         self.email = email
+        self.accountType = accountType
     }
 }
 
@@ -84,6 +86,7 @@ public struct TikoUserCapabilities: Codable, Equatable, Sendable {
     public let canUseParentMode: Bool
     public let canUseChildMode: Bool
     public let canManageChildAccounts: Bool
+    public let canEditContent: Bool
     public let canDeleteAccount: Bool
 
     public init(
@@ -91,12 +94,14 @@ public struct TikoUserCapabilities: Codable, Equatable, Sendable {
         canUseParentMode: Bool = false,
         canUseChildMode: Bool = false,
         canManageChildAccounts: Bool = false,
+        canEditContent: Bool = false,
         canDeleteAccount: Bool = true
     ) {
         self.canVerifyEmail = canVerifyEmail
         self.canUseParentMode = canUseParentMode
         self.canUseChildMode = canUseChildMode
         self.canManageChildAccounts = canManageChildAccounts
+        self.canEditContent = canEditContent
         self.canDeleteAccount = canDeleteAccount
     }
 }
@@ -125,6 +130,7 @@ public struct TikoIdentityBundle: Codable, Equatable, Sendable {
     public let session: TikoIdentitySession?
     public let runtime: TikoRuntimeSummary?
     public let capabilities: TikoUserCapabilities?
+    public let roles: [String]?
 
     public var accessToken: String? { session?.token }
     public var isRecoverable: Bool { account?.emailVerified == true }
@@ -138,7 +144,8 @@ public struct TikoIdentityBundle: Codable, Equatable, Sendable {
         account: TikoIdentityAccount? = nil,
         session: TikoIdentitySession? = nil,
         runtime: TikoRuntimeSummary? = nil,
-        capabilities: TikoUserCapabilities? = nil
+        capabilities: TikoUserCapabilities? = nil,
+        roles: [String]? = nil
     ) {
         self.subject = subject
         self.device = device
@@ -146,6 +153,19 @@ public struct TikoIdentityBundle: Codable, Equatable, Sendable {
         self.session = session
         self.runtime = runtime
         self.capabilities = capabilities
+        self.roles = roles
+    }
+
+    public func preservingSession(from existing: TikoIdentityBundle) -> TikoIdentityBundle {
+        TikoIdentityBundle(
+            subject: subject,
+            device: device ?? existing.device,
+            account: account,
+            session: session ?? existing.session,
+            runtime: runtime ?? existing.runtime,
+            capabilities: capabilities ?? existing.capabilities,
+            roles: roles ?? existing.roles
+        )
     }
 }
 
@@ -443,7 +463,7 @@ public final class TikoDeviceSessionStore: TikoIdentityStorage, @unchecked Senda
 
     public func clearSessionKeepingDevice() throws {
         guard let bundle = try load() else { return }
-        try save(TikoIdentityBundle(subject: bundle.subject, device: bundle.device, account: bundle.account, session: nil, runtime: bundle.runtime, capabilities: bundle.capabilities))
+        try save(TikoIdentityBundle(subject: bundle.subject, device: bundle.device, account: bundle.account, session: nil, runtime: bundle.runtime, capabilities: bundle.capabilities, roles: bundle.roles))
     }
 
     public func clearAll() throws {
@@ -489,7 +509,7 @@ public final class TikoKeychainIdentityStore: TikoIdentityStorage, @unchecked Se
 
     public func clearSessionKeepingDevice() throws {
         guard let bundle = try load() else { return }
-        try save(TikoIdentityBundle(subject: bundle.subject, device: bundle.device, account: bundle.account, session: nil, runtime: bundle.runtime, capabilities: bundle.capabilities))
+        try save(TikoIdentityBundle(subject: bundle.subject, device: bundle.device, account: bundle.account, session: nil, runtime: bundle.runtime, capabilities: bundle.capabilities, roles: bundle.roles))
     }
 
     public func clearAll() throws {

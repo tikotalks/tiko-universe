@@ -357,6 +357,55 @@ public struct TikoSettingsSegmentedRow: View {
     }
 }
 
+public struct TikoSettingsSizeRow: View {
+    private let title: String
+    private let icon: String
+    private let appColor: TikoAppColor
+    @Binding private var selectedIndex: Int
+
+    public init(title: String, icon: String, appColor: TikoAppColor, selectedIndex: Binding<Int>) {
+        self.title = title
+        self.icon = icon
+        self.appColor = appColor
+        self._selectedIndex = selectedIndex
+    }
+
+    public var body: some View {
+        HStack(spacing: 14) {
+            Image(systemName: icon)
+                .font(.system(size: 18, weight: .bold))
+                .foregroundStyle(appColor.palette.primary)
+                .frame(width: 40, height: 40)
+                .background(appColor.palette.primary.opacity(0.12))
+                .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+
+            Text(title)
+                .font(.system(size: 16, weight: .heavy, design: .rounded))
+                .foregroundStyle(.primary)
+
+            Spacer()
+
+            HStack(spacing: 0) {
+                ForEach(0..<3, id: \.self) { i in
+                    Button {
+                        withAnimation(.spring(response: 0.2)) { selectedIndex = i }
+                    } label: {
+                        Text("A")
+                            .font(.system(i == 0 ? .caption2 : i == 1 ? .callout : .title3, design: .rounded).weight(.heavy))
+                            .frame(width: 44, height: 34)
+                            .background(selectedIndex == i ? appColor.palette.primary : Color.clear)
+                            .foregroundStyle(selectedIndex == i ? .white : .primary)
+                    }
+                    .buttonStyle(.plain)
+                }
+            }
+            .background(Color(.systemFill))
+            .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+        }
+        .tikoSettingsRowSurface()
+    }
+}
+
 public struct TikoSettingsSheet<AppSettings: View>: View {
     private let appColor: TikoAppColor
     private let onClose: () -> Void
@@ -585,6 +634,7 @@ public struct TikoAccountSheet: View {
     @State private var isSignedIn = false
     @State private var signedInEmail: String? = nil
     @State private var showingAvatarPicker = false
+    @State private var currentIdentityBundle: TikoIdentityBundle?
 
     // Login flow state
     @State private var emailInput = ""
@@ -616,9 +666,11 @@ public struct TikoAccountSheet: View {
         .task {
             if let bundle = try? sessionStore.load(),
                bundle.account?.emailVerified == true {
+                currentIdentityBundle = bundle
                 isSignedIn = true
                 signedInEmail = bundle.account?.email
                 if let email = bundle.account?.email { userEmail = email }
+                await refreshIdentityBundle(accessToken: bundle.accessToken)
             }
         }
         .tikoMediaPickerPopup(
@@ -698,6 +750,15 @@ public struct TikoAccountSheet: View {
                         Text("Verified account")
                             .font(.system(size: 12, weight: .semibold, design: .rounded))
                             .foregroundStyle(appColor.palette.primary)
+                        if let accountRoleTitle {
+                            Text(accountRoleTitle)
+                                .font(.system(size: 11, weight: .heavy, design: .rounded))
+                                .foregroundStyle(.white)
+                                .padding(.horizontal, 8)
+                                .padding(.vertical, 3)
+                                .background(appColor.palette.primary, in: Capsule())
+                                .padding(.top, 2)
+                        }
                     }
                     Spacer()
                     Image(systemName: "checkmark.seal.fill")
@@ -951,6 +1012,31 @@ public struct TikoAccountSheet: View {
                                           Int(r * 255), Int(g * 255), Int(b * 255))
             }
         )
+    }
+
+    private var accountRoleTitle: String? {
+        guard let bundle = currentIdentityBundle ?? (try? sessionStore.load()) else { return nil }
+        if bundle.roles?.contains("admin") == true { return "Admin" }
+        if bundle.roles?.contains("content_editor") == true { return "Content editor" }
+        if bundle.capabilities?.canEditContent == true { return "Admin" }
+        if bundle.account?.accountType == "profile_manager" || bundle.capabilities?.canManageChildAccounts == true {
+            return "Profile manager"
+        }
+        return nil
+    }
+
+    private func refreshIdentityBundle(accessToken: String?) async {
+        guard let accessToken else { return }
+        let existing = try? sessionStore.load()
+        do {
+            let refreshed = try await identityClient.getSession(accessToken: accessToken)
+            let merged = existing.map { refreshed.preservingSession(from: $0) } ?? refreshed
+            try sessionStore.save(merged)
+            currentIdentityBundle = merged
+            isSignedIn = merged.account?.emailVerified == true
+            signedInEmail = merged.account?.email
+            if let email = merged.account?.email { userEmail = email }
+        } catch {}
     }
 
     // MARK: - Actions
@@ -1266,8 +1352,15 @@ public struct TikoCreateParentCodeSheet: View {
                 isLoading = false
                 return
             }
-            // Set PIN on the server
-            var bundle = try await identityClient.setPin(accessToken: token, pin: code)
+            var bundle: TikoIdentityBundle
+            do {
+                // Set PIN on the server
+                bundle = try await identityClient.setPin(accessToken: token, pin: code)
+            } catch TikoIdentityClientError.server(let statusCode, let body)
+                where statusCode == 403 && body.contains("invalid_pin") {
+                bundle = try await identityClient.getSession(accessToken: token)
+                guard bundle.isPinConfigured else { throw TikoIdentityClientError.server(statusCode: statusCode, body: body) }
+            }
             try sessionStore.save(bundle)
             // Enable child mode (one-time opt-in)
             if !(bundle.isChildModeEnabled) {

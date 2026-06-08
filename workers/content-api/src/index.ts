@@ -7,6 +7,7 @@ interface Env {
   ALLOWED_ORIGINS?: string
   APP_API_URL?: string      // e.g. https://app.tikoapi.org  — for fetching user state
   ADMIN_SECRET?: string     // Bearer token required for admin mutation endpoints
+  IDENTITY_API_URL?: string // e.g. https://identity.tikoapi.org/v1 — for verifying admin role from session tokens
 }
 
 interface D1Database {
@@ -513,6 +514,7 @@ async function handlePostCards(request: Request, env: Env, segments: string[]): 
   // POST /v1/cards/collections/:id/cards
   if (segments[2] === 'collections' && segments[4] === 'cards' && segments.length === 5) {
     const collectionId = segments[3]
+    const isDefault = !collectionId.startsWith('user_')
     let body: { id?: unknown; title?: unknown; speech?: unknown; colorHex?: unknown; order?: unknown; imageURL?: unknown }
     try { body = (await request.json()) as typeof body } catch {
       return error(request, env, 'bad_request', 'Request body must be valid JSON', 400)
@@ -520,6 +522,20 @@ async function handlePostCards(request: Request, env: Env, segments: string[]): 
     const title = typeof body.title === 'string' ? body.title.trim() : ''
     if (!title) return error(request, env, 'bad_request', 'title is required', 400)
     const speech = typeof body.speech === 'string' && body.speech.trim() ? body.speech.trim() : title
+    const colorHex = typeof body.colorHex === 'number' ? body.colorHex : 0
+    const order = typeof body.order === 'number' ? body.order : 0
+
+    if (isDefault) {
+      if (!(await verifyAdminFromSession(env, sessionToken))) {
+        return error(request, env, 'forbidden', 'Admin role required to add cards to default collections', 403)
+      }
+      const id = `__default_${crypto.randomUUID().replace(/-/g, '')}`
+      await env.CONTENT_DB.prepare(
+        'INSERT INTO cards_tiles (id, collection_id, title, speech, color_hex, display_order) VALUES (?, ?, ?, ?, ?, ?)',
+      ).bind(id, collectionId, title, speech, colorHex, order).run()
+      const newCard: CardTile = { id, title, speech, colorHex, order }
+      return json(request, env, { success: true, data: newCard }, 201)
+    }
 
     const current = await getUserCardsState(env, sessionToken)
     if (!current) return error(request, env, 'unauthorized', 'Unauthorized', 401)
@@ -529,10 +545,10 @@ async function handlePostCards(request: Request, env: Env, segments: string[]): 
 
     const collection = current.state.collections[collectionIndex]
     const id = typeof body.id === 'string' && body.id.startsWith('user_') ? body.id : `user_${crypto.randomUUID()}`
-    const colorHex = typeof body.colorHex === 'number' ? body.colorHex : collection.colorHex
-    const order = typeof body.order === 'number' ? body.order : collection.cards.length
+    const resolvedColor = colorHex || collection.colorHex
+    const resolvedOrder = order || collection.cards.length
     const imageURL = typeof body.imageURL === 'string' && body.imageURL ? body.imageURL : undefined
-    const newCard: CardTile = { id, title, speech, colorHex, order, ...(imageURL ? { imageURL } : {}) }
+    const newCard: CardTile = { id, title, speech, colorHex: resolvedColor, order: resolvedOrder, ...(imageURL ? { imageURL } : {}) }
 
     const alreadyExists = collection.cards.some(c => c.id === id)
     const updatedCollection = { ...collection, cards: alreadyExists ? collection.cards : [...collection.cards, newCard] }
@@ -643,6 +659,10 @@ export default {
     if (request.method === 'POST' && (url.pathname === '/v1/query' || url.pathname === '/query')) return handleQuery(request, env)
     if (request.method === 'POST' && segments[0] === 'v1' && segments[1] === 'cards') return handlePostCards(request, env, segments)
 
+    if (request.method === 'PUT' && segments[0] === 'v1' && segments[1] === 'cards') return handlePutCards(request, env, segments)
+    if (request.method === 'DELETE' && segments[0] === 'v1' && segments[1] === 'cards') return handleDeleteCards(request, env, segments)
+    if (request.method === 'POST' && segments[0] === 'v1' && segments[1] === 'admin' && segments[2] === 'cards' && segments[3] === 'promote') return handlePromoteCollection(request, env, segments)
+
     if (request.method === 'PUT' && url.pathname === '/v1/admin/cards/collections') {
       const authError = requireAdminSecret(request, env)
       if (authError) return authError
@@ -662,6 +682,208 @@ export default {
 
     return error(request, env, 'method_not_allowed', 'Method not allowed', 405)
   },
+}
+
+async function verifyAdminFromSession(env: Env, sessionToken: string): Promise<boolean> {
+  const baseURL = env.IDENTITY_API_URL ?? 'https://identity.tikoapi.org/v1'
+  try {
+    const resp = await fetch(`${baseURL}/identity/session`, {
+      headers: { Authorization: `Bearer ${sessionToken}`, Accept: 'application/json' },
+    })
+    if (!resp.ok) return false
+    const body = (await resp.json()) as { roles?: string[]; capabilities?: { canEditContent?: boolean } }
+    if (Array.isArray(body.roles) && (body.roles.includes('admin') || body.roles.includes('content_editor'))) return true
+    if (body.capabilities?.canEditContent === true) return true
+    return false
+  } catch {
+    return false
+  }
+}
+
+async function handlePutCards(request: Request, env: Env, segments: string[]): Promise<Response> {
+  const authHeader = request.headers.get('Authorization') ?? ''
+  const sessionToken = authHeader.startsWith('Bearer ') ? authHeader.slice(7) : undefined
+  if (!sessionToken) return error(request, env, 'unauthorized', 'Authorization required', 401)
+
+  // PUT /v1/cards/collections/:id
+  if (segments[2] === 'collections' && segments.length === 4) {
+    const collectionId = segments[3]
+    const isDefault = !collectionId.startsWith('user_')
+
+    let body: { title?: unknown; colorHex?: unknown; imageURL?: unknown }
+    try { body = (await request.json()) as typeof body } catch {
+      return error(request, env, 'bad_request', 'Request body must be valid JSON', 400)
+    }
+    const title = typeof body.title === 'string' ? body.title.trim() : ''
+    if (!title) return error(request, env, 'bad_request', 'title is required', 400)
+    if (typeof body.colorHex !== 'number') return error(request, env, 'bad_request', 'colorHex is required', 400)
+    const colorHex = body.colorHex
+    const imageURL = typeof body.imageURL === 'string' && body.imageURL ? body.imageURL : undefined
+
+    if (isDefault) {
+      if (!(await verifyAdminFromSession(env, sessionToken))) {
+        return error(request, env, 'forbidden', 'Admin role required to edit default collections', 403)
+      }
+      const sets: string[] = ['title = ?', 'color_hex = ?']
+      const values: unknown[] = [title, colorHex]
+      if (imageURL !== undefined) { sets.push('media_categories = ?') && values.push(JSON.stringify([imageURL])) }
+      values.push(collectionId)
+      await env.CONTENT_DB.prepare(`UPDATE cards_collections SET ${sets.join(', ')} WHERE id = ?`).bind(...values).run()
+      const updated: CardCollection = { id: collectionId, title, colorHex, order: 0, mediaCategories: imageURL ? [imageURL] : [], ...(imageURL ? { imageURL } : {}), cards: [] }
+      return json(request, env, { success: true, data: updated })
+    }
+
+    const current = await getUserCardsState(env, sessionToken)
+    if (!current) return error(request, env, 'unauthorized', 'Unauthorized', 401)
+    const idx = current.state.collections.findIndex(c => c.id === collectionId)
+    if (idx === -1) return error(request, env, 'not_found', 'Collection not found', 404)
+    const existing = current.state.collections[idx]
+    const updatedCollection: CardCollection = { ...existing, title, ...(colorHex !== undefined ? { colorHex } : {}), ...(imageURL ? { imageURL } : {}) }
+    const updatedCollections = [...current.state.collections]
+    updatedCollections[idx] = updatedCollection
+    const ok = await putUserCardsState(env, sessionToken, { collections: updatedCollections }, current.version)
+    if (!ok) return error(request, env, 'internal_error', 'Failed to save collection', 500)
+    return json(request, env, { success: true, data: updatedCollection })
+  }
+
+  // PUT /v1/cards/collections/:collectionId/cards/:cardId
+  if (segments[2] === 'collections' && segments[4] === 'cards' && segments.length === 6) {
+    const collectionId = segments[3]
+    const cardId = segments[5]
+    const isDefault = !collectionId.startsWith('user_')
+
+    let body: { title?: unknown; speech?: unknown; colorHex?: unknown; imageURL?: unknown }
+    try { body = (await request.json()) as typeof body } catch {
+      return error(request, env, 'bad_request', 'Request body must be valid JSON', 400)
+    }
+    const title = typeof body.title === 'string' ? body.title.trim() : ''
+    if (!title) return error(request, env, 'bad_request', 'title is required', 400)
+    const speech = typeof body.speech === 'string' && body.speech.trim() ? body.speech.trim() : title
+    if (typeof body.colorHex !== 'number') return error(request, env, 'bad_request', 'colorHex is required', 400)
+    const colorHex = body.colorHex
+
+    if (isDefault) {
+      if (!(await verifyAdminFromSession(env, sessionToken))) {
+        return error(request, env, 'forbidden', 'Admin role required to edit default cards', 403)
+      }
+      await env.CONTENT_DB.prepare('UPDATE cards_tiles SET title = ?, speech = ?, color_hex = ? WHERE id = ?').bind(title, speech, colorHex, cardId).run()
+      const updatedCard: CardTile = { id: cardId, title, speech, colorHex, order: 0 }
+      return json(request, env, { success: true, data: updatedCard })
+    }
+
+    const current = await getUserCardsState(env, sessionToken)
+    if (!current) return error(request, env, 'unauthorized', 'Unauthorized', 401)
+    const collIdx = current.state.collections.findIndex(c => c.id === collectionId)
+    if (collIdx === -1) return error(request, env, 'not_found', 'Collection not found', 404)
+    const collection = current.state.collections[collIdx]
+    const cardIdx = collection.cards.findIndex(c => c.id === cardId)
+    if (cardIdx === -1) return error(request, env, 'not_found', 'Card not found', 404)
+    const existingCard = collection.cards[cardIdx]
+    const updatedCard: CardTile = { ...existingCard, title, speech, ...(colorHex !== undefined ? { colorHex } : {}) }
+    const updatedCards = [...collection.cards]
+    updatedCards[cardIdx] = updatedCard
+    const updatedCollection: CardCollection = { ...collection, cards: updatedCards }
+    const updatedCollections = [...current.state.collections]
+    updatedCollections[collIdx] = updatedCollection
+    const ok = await putUserCardsState(env, sessionToken, { collections: updatedCollections }, current.version)
+    if (!ok) return error(request, env, 'internal_error', 'Failed to save card', 500)
+    return json(request, env, { success: true, data: updatedCard })
+  }
+
+  return error(request, env, 'not_found', 'Not found', 404)
+}
+
+async function handleDeleteCards(request: Request, env: Env, segments: string[]): Promise<Response> {
+  const authHeader = request.headers.get('Authorization') ?? ''
+  const sessionToken = authHeader.startsWith('Bearer ') ? authHeader.slice(7) : undefined
+  if (!sessionToken) return error(request, env, 'unauthorized', 'Authorization required', 401)
+
+  // DELETE /v1/cards/collections/:id
+  if (segments[2] === 'collections' && segments.length === 4) {
+    const collectionId = segments[3]
+    const isDefault = !collectionId.startsWith('user_')
+
+    if (isDefault) {
+      if (!(await verifyAdminFromSession(env, sessionToken))) {
+        return error(request, env, 'forbidden', 'Admin role required to delete default collections', 403)
+      }
+      await env.CONTENT_DB.prepare('DELETE FROM cards_tiles WHERE collection_id = ?').bind(collectionId).run()
+      await env.CONTENT_DB.prepare('DELETE FROM cards_collections WHERE id = ?').bind(collectionId).run()
+      return json(request, env, { success: true })
+    }
+
+    const current = await getUserCardsState(env, sessionToken)
+    if (!current) return error(request, env, 'unauthorized', 'Unauthorized', 401)
+    const idx = current.state.collections.findIndex(c => c.id === collectionId)
+    if (idx === -1) return error(request, env, 'not_found', 'Collection not found', 404)
+    const updatedCollections = current.state.collections.filter(c => c.id !== collectionId)
+    const ok = await putUserCardsState(env, sessionToken, { collections: updatedCollections }, current.version)
+    if (!ok) return error(request, env, 'internal_error', 'Failed to delete collection', 500)
+    return json(request, env, { success: true })
+  }
+
+  // DELETE /v1/cards/collections/:collectionId/cards/:cardId
+  if (segments[2] === 'collections' && segments[4] === 'cards' && segments.length === 6) {
+    const collectionId = segments[3]
+    const cardId = segments[5]
+    const isDefault = !collectionId.startsWith('user_')
+
+    if (isDefault) {
+      if (!(await verifyAdminFromSession(env, sessionToken))) {
+        return error(request, env, 'forbidden', 'Admin role required to delete default cards', 403)
+      }
+      await env.CONTENT_DB.prepare('DELETE FROM cards_tiles WHERE id = ? AND collection_id = ?').bind(cardId, collectionId).run()
+      return json(request, env, { success: true })
+    }
+
+    const current = await getUserCardsState(env, sessionToken)
+    if (!current) return error(request, env, 'unauthorized', 'Unauthorized', 401)
+    const collIdx = current.state.collections.findIndex(c => c.id === collectionId)
+    if (collIdx === -1) return error(request, env, 'not_found', 'Collection not found', 404)
+    const collection = current.state.collections[collIdx]
+    const cardIdx = collection.cards.findIndex(c => c.id === cardId)
+    if (cardIdx === -1) return error(request, env, 'not_found', 'Card not found', 404)
+    const updatedCards = collection.cards.filter(c => c.id !== cardId)
+    const updatedCollection: CardCollection = { ...collection, cards: updatedCards }
+    const updatedCollections = [...current.state.collections]
+    updatedCollections[collIdx] = updatedCollection
+    const ok = await putUserCardsState(env, sessionToken, { collections: updatedCollections }, current.version)
+    if (!ok) return error(request, env, 'internal_error', 'Failed to delete card', 500)
+    return json(request, env, { success: true })
+  }
+
+  return error(request, env, 'not_found', 'Not found', 404)
+}
+
+async function handlePromoteCollection(request: Request, env: Env, _segments: string[]): Promise<Response> {
+  const authHeader = request.headers.get('Authorization') ?? ''
+  const sessionToken = authHeader.startsWith('Bearer ') ? authHeader.slice(7) : undefined
+  if (!sessionToken) return error(request, env, 'unauthorized', 'Authorization required', 401)
+  if (!(await verifyAdminFromSession(env, sessionToken))) {
+    return error(request, env, 'forbidden', 'Admin role required to promote collections', 403)
+  }
+
+  let body: { collection?: unknown }
+  try { body = (await request.json()) as { collection?: unknown } } catch {
+    return error(request, env, 'bad_request', 'Request body must be valid JSON', 400)
+  }
+  const col = body.collection as CardCollection | undefined
+  if (!col?.id || !col.title) return error(request, env, 'bad_request', 'collection with id and title is required', 400)
+
+  const id = !col.id.startsWith('user_') ? col.id : col.id.replace(/^user_/, '')
+  await env.CONTENT_DB.prepare(
+    'INSERT OR REPLACE INTO cards_collections (id, title, color_hex, display_order, media_categories, language_code, is_active) VALUES (?, ?, ?, ?, ?, ?, 1)',
+  ).bind(id, col.title, col.colorHex ?? 0, col.order ?? 0, JSON.stringify(col.mediaCategories ?? []), 'en').run()
+
+  if (Array.isArray(col.cards)) {
+    for (const tile of col.cards) {
+      await env.CONTENT_DB.prepare(
+        'INSERT OR REPLACE INTO cards_tiles (id, collection_id, title, speech, color_hex, display_order) VALUES (?, ?, ?, ?, ?, ?)',
+      ).bind(tile.id, id, tile.title, tile.speech, tile.colorHex ?? 0, tile.order ?? 0).run()
+    }
+  }
+
+  return json(request, env, { success: true, data: { ...col, id } })
 }
 
 export const internals = {

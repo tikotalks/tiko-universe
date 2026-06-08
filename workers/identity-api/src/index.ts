@@ -20,6 +20,7 @@ export interface Env {
   IDENTITY_DB: D1Database
   TOKEN_PEPPER: string
   ANKORE_TOKEN_PEPPER?: string
+  ADMIN_EMAIL?: string
   MAGIC_LINK_BASE_URL?: string
   COMMUNICATION_API_URL?: string
   COMMUNICATION_API_KEY?: string
@@ -29,6 +30,8 @@ export interface Env {
 }
 
 const SESSION_TTL_DAYS = 180
+const ADMIN_EMAIL = 'me@sil.mt'
+const ADMIN_ROLE = 'admin'
 const DEFAULT_COMMUNICATION_API_URL = 'https://api.tikotalks.com/v1/communication'
 const DEFAULT_ALLOWED_ORIGINS = 'https://tiko.mt,https://www.tiko.mt,https://tiko.tikoapps.org,https://yesno.tikoapps.org,https://cards.tikoapps.org,https://sequence.tikoapps.org,https://type.tikoapps.org,https://timer.tikoapps.org,https://admin.tikoapps.org,https://dev.tiko.tikoapps.org,https://dev.yesno.tikoapps.org,https://dev.cards.tikoapps.org,https://dev.sequence.tikoapps.org,https://dev.type.tikoapps.org,https://dev.timer.tikoapps.org,https://dev.admin.tikoapps.org,http://localhost:3056,http://localhost:3057,http://localhost:3058,http://localhost:3059,http://localhost:3060,http://localhost:3061,http://localhost:3062,http://localhost:3063,http://localhost:3064,http://localhost:3065,http://localhost:3066,http://localhost:5173,http://localhost:4173,capacitor://localhost,ionic://localhost,tiko://native'
 
@@ -98,7 +101,7 @@ function configForEnv(env: Env): AnkoreConfig {
 type AccountType = 'temporary' | 'verified' | 'profile_manager' | 'child_account'
 type RuntimeMode = 'parent' | 'child'
 type LoginMethod = 'device' | 'otp' | 'magic_link' | 'child_code'
-type AnyRequest = Request<any, any>
+type AnyRequest = Request
 
 async function handleCanonicalIdentity(request: AnyRequest, env: Env): Promise<Response | null> {
   const url = new URL(request.url)
@@ -785,6 +788,23 @@ async function activeRoles(db: D1Database, subjectId: string): Promise<string[]>
   return Array.from(new Set(results.map((row) => row.role).filter(Boolean))).sort()
 }
 
+async function activeRolesWithBootstrap(env: Env, subjectId: string, existingRoles?: string[]): Promise<string[]> {
+  const dbRoles = await activeRoles(env.IDENTITY_DB, subjectId).catch(() => [])
+  const roles = Array.from(new Set([...(existingRoles ?? []), ...dbRoles])).sort()
+  if (roles.includes(ADMIN_ROLE)) return roles
+  if (!await canBootstrapAdmin(env, subjectId)) return roles
+  await assignRole(env.IDENTITY_DB, subjectId, ADMIN_ROLE, 'bootstrap', null).catch(() => {})
+  return Array.from(new Set([...roles, ADMIN_ROLE])).sort()
+}
+
+async function canBootstrapAdmin(env: Env, subjectId: string): Promise<boolean> {
+  const row = await env.IDENTITY_DB.prepare('SELECT email_hash FROM identity_accounts WHERE subject_id = ? AND product = ? AND disabled_at IS NULL LIMIT 1')
+    .bind(subjectId, 'tiko')
+    .first<{ email_hash: string | null }>()
+  if (!row?.email_hash) return false
+  return row.email_hash === await hashEmail(normalizeEmail(env.ADMIN_EMAIL ?? ADMIN_EMAIL), env.TOKEN_PEPPER)
+}
+
 async function hasRole(db: D1Database, subjectId: string, role: string): Promise<boolean> {
   return (await activeRoles(db, subjectId)).includes(role)
 }
@@ -807,6 +827,15 @@ async function hashSecret(secret: string, env: Env, purpose: string): Promise<st
   return `sha256:${Array.from(new Uint8Array(digest)).map((byte) => byte.toString(16).padStart(2, '0')).join('')}`
 }
 
+function normalizeEmail(value: string): string {
+  return value.trim().toLowerCase()
+}
+
+async function hashEmail(email: string, pepper: string): Promise<string> {
+  const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(`tiko:email:${pepper}:${email}`))
+  return `sha256:${Array.from(new Uint8Array(digest)).map((byte) => byte.toString(16).padStart(2, '0')).join('')}`
+}
+
 function randomToken(prefix = ''): string {
   const bytes = new Uint8Array(32)
   crypto.getRandomValues(bytes)
@@ -825,12 +854,13 @@ async function withTikoSessionContract(request: AnyRequest, env: Env, response: 
 
   const clone = response.clone()
   const body = await clone.json().catch(() => null) as Record<string, any> | null
-  if (!body?.subject?.id || !body.session) return response
+  if (!body?.subject?.id) return response
 
-  const roles = Array.isArray(body.roles) ? body.roles.map(String) : await activeRoles(env.IDENTITY_DB, String(body.subject.id)).catch(() => [])
+  const initialRoles = Array.isArray(body.roles) ? body.roles.map(String) : await activeRoles(env.IDENTITY_DB, String(body.subject.id)).catch(() => [])
+  const roles = await activeRolesWithBootstrap(env, String(body.subject.id), initialRoles).catch(() => initialRoles)
   const accountType = deriveAccountType(body, roles)
   const runtime = await deriveRuntime(env, String(body.subject.id), accountType)
-  const capabilities = deriveCapabilities(accountType, runtime)
+  const capabilities = deriveCapabilities(accountType, runtime, roles)
   const displayName = typeof body.managed?.displayName === 'string'
     ? body.managed.displayName
     : typeof body.subject?.metadata?.displayName === 'string'
@@ -846,9 +876,11 @@ async function withTikoSessionContract(request: AnyRequest, env: Env, response: 
     recoverable: emailVerified,
     emailVerified
   }
-  const session = { ...body.session, loginMethod: await deriveLoginMethod(request, body, accountType) }
   const account = body.account ? { ...body.account, accountType } : body.account ?? null
-  const nextBody = { ...body, user, account, session, runtime, capabilities }
+  const nextBody: Record<string, any> = { ...body, roles, user, account, runtime, capabilities }
+  if (body.session) {
+    nextBody.session = { ...body.session, loginMethod: await deriveLoginMethod(request, body, accountType) }
+  }
   const headers = new Headers(response.headers)
   headers.set('content-type', 'application/json')
   return new Response(JSON.stringify(nextBody), { status: response.status, statusText: response.statusText, headers })
@@ -867,12 +899,13 @@ async function deriveRuntime(env: Env, subjectId: string, accountType: AccountTy
   return { mode: runtime.mode, childModeEnabled: runtime.childModeEnabled, pinConfigured: Boolean(runtime.pinHash) }
 }
 
-function deriveCapabilities(accountType: AccountType, runtime: { mode: RuntimeMode; pinConfigured: boolean }) {
+function deriveCapabilities(accountType: AccountType, runtime: { mode: RuntimeMode; pinConfigured: boolean }, roles: string[]) {
   return {
     canVerifyEmail: accountType === 'temporary',
     canUseParentMode: accountType !== 'child_account',
     canUseChildMode: (accountType === 'verified' || accountType === 'profile_manager') && runtime.pinConfigured || accountType === 'child_account',
     canManageChildAccounts: accountType === 'profile_manager' && runtime.mode === 'parent',
+    canEditContent: roles.includes('admin') || roles.includes('content_editor'),
     canDeleteAccount: accountType !== 'child_account'
   }
 }

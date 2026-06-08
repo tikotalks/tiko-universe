@@ -346,7 +346,7 @@ public struct TikoAppShell<Content: View, SettingsContent: View>: View {
             await fetchIconIfNeeded()
             await fetchAvatarIfNeeded()
             // Load identity bundle from session store for runtime-aware mode
-            identityBundle = try? TikoDeviceSessionStore().load()
+            identityBundle = await refreshIdentityBundle()
             try? await Task.sleep(nanoseconds: 500_000_000)
             withAnimation(.easeOut(duration: 0.4)) { splashVisible = false }
         }
@@ -370,13 +370,19 @@ public struct TikoAppShell<Content: View, SettingsContent: View>: View {
         showingProfileMenu = false
         Task { @MainActor in
             try? await Task.sleep(nanoseconds: 250_000_000)
-            if identityBundle?.isPinConfigured == true {
-                // PIN already set — enter child mode via API
-                guard let token = identityBundle?.accessToken else { return }
+            let storedBundle = (try? TikoDeviceSessionStore().load()) ?? identityBundle
+            if storedBundle?.isPinConfigured == true {
+                guard let token = storedBundle?.accessToken else { return }
                 do {
-                    let bundle = try await TikoIdentityClient().enterChildMode(accessToken: token)
-                    try TikoDeviceSessionStore().save(bundle)
-                    identityBundle = bundle
+                    let client = TikoIdentityClient()
+                    var bundle = storedBundle!
+                    if !bundle.isChildModeEnabled {
+                        bundle = try await client.enableChildMode(accessToken: token)
+                        try TikoDeviceSessionStore().save(bundle)
+                    }
+                    let childBundle = try await client.enterChildMode(accessToken: bundle.accessToken ?? token)
+                    try TikoDeviceSessionStore().save(childBundle)
+                    identityBundle = childBundle
                 } catch {
                     // Silent fail — stay in parent mode
                 }
@@ -384,6 +390,20 @@ public struct TikoAppShell<Content: View, SettingsContent: View>: View {
                 // No PIN yet — show create flow
                 showingCreateParentCode = true
             }
+        }
+    }
+
+    private func refreshIdentityBundle() async -> TikoIdentityBundle? {
+        let sessionStore = TikoDeviceSessionStore()
+        guard let bundle = try? sessionStore.load() else { return nil }
+        guard let token = bundle.accessToken else { return bundle }
+        do {
+            let refreshed = try await TikoIdentityClient().getSession(accessToken: token)
+            let merged = refreshed.preservingSession(from: bundle)
+            try sessionStore.save(merged)
+            return merged
+        } catch {
+            return bundle
         }
     }
 

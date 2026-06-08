@@ -14,6 +14,8 @@ public struct TikoMediaPickerSheet: View {
     @State private var searchError: String? = nil
     @State private var photoItem: PhotosPickerItem? = nil
     @State private var isProcessingPhoto = false
+    @State private var searchTask: Task<Void, Never>?
+    @State private var loadedQuery = ""
 
     public init(
         appColor: TikoAppColor,
@@ -38,6 +40,9 @@ public struct TikoMediaPickerSheet: View {
                         .background(Color(.systemBackground))
                         .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
                         .onSubmit { Task { await search() } }
+                        .onChange(of: query) { _, value in
+                            scheduleSearch(for: value)
+                        }
 
                     Button { Task { await search() } } label: {
                         Image(systemName: isSearching ? "clock" : "magnifyingglass")
@@ -83,11 +88,11 @@ public struct TikoMediaPickerSheet: View {
                 }
 
                 // Results
-                if isSearching {
+                if isSearching && results.isEmpty {
                     ProgressView()
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 24)
-                } else if let error = searchError {
+                } else if let error = searchError, results.isEmpty {
                     Text(error)
                         .font(.system(size: 13, weight: .semibold))
                         .foregroundStyle(.secondary)
@@ -104,13 +109,8 @@ public struct TikoMediaPickerSheet: View {
                                     onSelect(item.url)
                                     onClose()
                                 } label: {
-                                    AsyncImage(url: thumbnailURL(item.url)) { phase in
-                                        switch phase {
-                                        case .success(let image):
-                                            image.resizable().scaledToFill()
-                                        default:
-                                            Color(.systemFill)
-                                        }
+                                    TikoCachedRemoteImage(url: thumbnailURL(item.url)) {
+                                        Color(.systemFill)
                                     }
                                     .frame(maxWidth: .infinity)
                                     .aspectRatio(1, contentMode: .fit)
@@ -121,15 +121,41 @@ public struct TikoMediaPickerSheet: View {
                         }
                     }
                     .frame(maxHeight: 280)
+                    .overlay(alignment: .topTrailing) {
+                        if isSearching && loadedQuery != query.trimmingCharacters(in: .whitespaces) {
+                            ProgressView()
+                                .scaleEffect(0.8)
+                                .padding(10)
+                                .background(.regularMaterial, in: Circle())
+                                .padding(8)
+                        }
+                    }
                 }
             }
+        }
+        .onDisappear {
+            searchTask?.cancel()
         }
     }
 
     // MARK: - Helpers
 
-    private func search() async {
-        let q = query.trimmingCharacters(in: .whitespaces)
+    private func scheduleSearch(for value: String) {
+        searchTask?.cancel()
+        let q = value.trimmingCharacters(in: .whitespaces)
+        guard !q.isEmpty else { return }
+        searchTask = Task {
+            try? await Task.sleep(nanoseconds: 650_000_000)
+            guard !Task.isCancelled else { return }
+            await search(queryOverride: q, cancelPendingSearch: false)
+        }
+    }
+
+    private func search(queryOverride: String? = nil, cancelPendingSearch: Bool = true) async {
+        if cancelPendingSearch {
+            searchTask?.cancel()
+        }
+        let q = queryOverride ?? query.trimmingCharacters(in: .whitespaces)
         guard !q.isEmpty else { return }
         isSearching = true
         searchError = nil
@@ -146,11 +172,17 @@ public struct TikoMediaPickerSheet: View {
             return
         }
 
-        results = items.compactMap { dict -> PickerItem? in
+        guard !Task.isCancelled else { return }
+        let nextResults = items.compactMap { dict -> PickerItem? in
             guard let id = dict["id"] as? String,
                   let urlStr = dict["original_url"] as? String,
                   let url = URL(string: urlStr) else { return nil }
             return PickerItem(id: id, url: url)
+        }
+        if !nextResults.isEmpty {
+            results = nextResults
+            loadedQuery = q
+            Task { await TikoRemoteImageCache.shared.prefetch(nextResults.map { thumbnailURL($0.url) }) }
         }
     }
 
