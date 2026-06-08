@@ -7,11 +7,18 @@ struct CardsView: View {
     private let speechService = CardsSpeechService()
 
     @AppStorage("tiko.language") private var languageCode = "en"
+    @AppStorage("cards.hideDefaultCollections") private var hideDefaultCollections = false
     @StateObject private var i18n = TikoI18n(app: .cards)
     @State private var speakingCardID: String?
     @State private var selectedCollection: CardCollection?
     @State private var collectionsPage = 0
     @State private var showingAdd = false
+
+    private var visibleCollections: [CardCollection] {
+        hideDefaultCollections
+            ? store.collections.filter { $0.id.hasPrefix("user_") }
+            : store.collections
+    }
 
     var body: some View {
         TikoAppShell(
@@ -19,7 +26,17 @@ struct CardsView: View {
             appName: selectedCollection?.title ?? i18n.t("cards.appName"),
             onIconTap: selectedCollection != nil ? { selectedCollection = nil } : nil,
             actions: [TikoHeaderAction(id: "add", label: "Add", systemImage: "plus")],
-            onAction: { id in if id == "add" { showingAdd = true } }
+            onAction: { id in if id == "add" { showingAdd = true } },
+            settingsContent: {
+                TikoSettingsSection(title: "Collections") {
+                    TikoSettingsToggleRow(
+                        title: "Hide default sets",
+                        icon: "eye.slash.fill",
+                        appColor: .cards,
+                        isOn: $hideDefaultCollections
+                    )
+                }
+            }
         ) {
             Group {
                 if let collection = selectedCollection {
@@ -33,7 +50,7 @@ struct CardsView: View {
                     .task(id: collection.id) {
                         await store.hydrateMedia(for: collection.id)
                     }
-                } else if store.isLoading && store.collections.isEmpty {
+                } else if store.isLoading && visibleCollections.isEmpty {
                     ProgressView()
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
                 } else {
@@ -45,7 +62,7 @@ struct CardsView: View {
                         let usableHeight = geometry.size.height - geometry.safeAreaInsets.top - geometry.safeAreaInsets.bottom
                         let rows = max(1, Int((usableHeight - 24) / (cardSize + 12)))
                         let perPage = cols * rows
-                        let pages = store.collections.chunked(into: perPage)
+                        let pages = visibleCollections.chunked(into: perPage)
 
                         ZStack(alignment: .bottom) {
                             TabView(selection: $collectionsPage) {
