@@ -293,12 +293,7 @@ public struct TikoAppShell<Content: View, SettingsContent: View>: View {
                 )
                 .background(selectedColorScheme == .dark ? darkBackgroundColor : backgroundColor)
             }
-        .tikoSettingsPopup(
-            isPresented: $showingSettings,
-            appColor: appColor,
-            accountTitle: accountRowTitle,
-            onOpenAccount: openAccountFromSettings
-        ) {
+        .tikoSettingsPopup(isPresented: $showingSettings, appColor: appColor) {
             settingsContent
         }
         .tikoAccountPopup(isPresented: $showingAccount, appName: appName, appColor: appColor)
@@ -312,13 +307,7 @@ public struct TikoAppShell<Content: View, SettingsContent: View>: View {
                         showingAccount = true
                     }
                 },
-                onChildMode: {
-                    handleChildModeRequest()
-                },
-                onLogOut: {
-                    try? TikoDeviceSessionStore().clearAll()
-                    showingProfileMenu = false
-                },
+                onChildMode: { handleChildModeRequest() },
                 onClose: { showingProfileMenu = false }
             )
         }
@@ -375,20 +364,6 @@ public struct TikoAppShell<Content: View, SettingsContent: View>: View {
 
     private var selectedColorScheme: ColorScheme {
         (TikoColorMode(rawValue: colorModeRawValue) ?? .light) == .dark ? .dark : .light
-    }
-
-    private var accountRowTitle: String {
-        if !userEmail.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty { return "Account" }
-        if !userName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty { return "Add recovery email" }
-        return "Setup user"
-    }
-
-    private func openAccountFromSettings() {
-        showingSettings = false
-        Task { @MainActor in
-            try? await Task.sleep(nanoseconds: 250_000_000)
-            showingAccount = true
-        }
     }
 
     private func handleChildModeRequest() {
@@ -475,6 +450,31 @@ private struct TikoSplashOverlay: View {
 }
 
 public extension TikoAppShell where SettingsContent == EmptyView {
+    init(
+        appConfig: TikoAppConfig,
+        appName: String? = nil,
+        onIconTap: (() -> Void)? = nil,
+        avatar: String = "person.crop.circle.fill",
+        backgroundColor: Color = Color(red: 0.973, green: 0.965, blue: 0.945),
+        darkBackgroundColor: Color = Color(red: 0.08, green: 0.055, blue: 0.095),
+        actions: [TikoHeaderAction] = [],
+        onAction: @escaping (String) -> Void = { _ in },
+        @ViewBuilder content: () -> Content
+    ) {
+        self.init(
+            appConfig: appConfig,
+            appName: appName,
+            onIconTap: onIconTap,
+            avatar: avatar,
+            backgroundColor: backgroundColor,
+            darkBackgroundColor: darkBackgroundColor,
+            actions: actions,
+            onAction: onAction,
+            settingsContent: { EmptyView() },
+            content: content
+        )
+    }
+
     init(
         appName: String,
         appIcon: String = "checkmark.circle",

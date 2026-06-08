@@ -428,6 +428,121 @@ async function putAdminCardsCollections(
   return { success: true, count: collections.length }
 }
 
+// ---------------------------------------------------------------------------
+// User cards state helpers (reads/writes via app-api state blob)
+// ---------------------------------------------------------------------------
+
+interface UserCardsState {
+  collections: CardCollection[]
+}
+
+async function getUserCardsState(
+  env: Env,
+  sessionToken: string,
+): Promise<{ state: UserCardsState; version: number } | null> {
+  if (!env.APP_API_URL) return null
+  try {
+    const resp = await fetch(`${env.APP_API_URL}/v1/apps/cards/state`, {
+      headers: { Authorization: `Bearer ${sessionToken}` },
+    })
+    if (!resp.ok) return null
+    const body = (await resp.json()) as { state?: { collections?: unknown[] }; version?: number }
+    return {
+      state: { collections: Array.isArray(body?.state?.collections) ? (body.state!.collections as CardCollection[]) : [] },
+      version: typeof body?.version === 'number' ? body.version : 0,
+    }
+  } catch {
+    return null
+  }
+}
+
+async function putUserCardsState(env: Env, sessionToken: string, state: UserCardsState, version: number): Promise<boolean> {
+  if (!env.APP_API_URL) return false
+  try {
+    const resp = await fetch(`${env.APP_API_URL}/v1/apps/cards/state`, {
+      method: 'PUT',
+      headers: { Authorization: `Bearer ${sessionToken}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ state, version }),
+    })
+    return resp.ok
+  } catch {
+    return false
+  }
+}
+
+// ---------------------------------------------------------------------------
+// User cards mutation handlers
+// ---------------------------------------------------------------------------
+
+async function handlePostCards(request: Request, env: Env, segments: string[]): Promise<Response> {
+  const authHeader = request.headers.get('Authorization') ?? ''
+  const sessionToken = authHeader.startsWith('Bearer ') ? authHeader.slice(7) : undefined
+  if (!sessionToken) return error(request, env, 'unauthorized', 'Authorization required', 401)
+
+  // POST /v1/cards/collections
+  if (segments[2] === 'collections' && segments.length === 3) {
+    let body: { id?: unknown; title?: unknown; colorHex?: unknown; order?: unknown }
+    try { body = (await request.json()) as typeof body } catch {
+      return error(request, env, 'bad_request', 'Request body must be valid JSON', 400)
+    }
+    const title = typeof body.title === 'string' ? body.title.trim() : ''
+    if (!title) return error(request, env, 'bad_request', 'title is required', 400)
+
+    const current = await getUserCardsState(env, sessionToken)
+    if (!current) return error(request, env, 'unauthorized', 'Unauthorized', 401)
+
+    const colors = [0xFF6B6B, 0xFFD93D, 0x6BCB77, 0x4D96FF, 0xFF922B, 0xCC5DE8]
+    const id = typeof body.id === 'string' && body.id.startsWith('user_') ? body.id : `user_${crypto.randomUUID()}`
+    const colorHex = typeof body.colorHex === 'number' ? body.colorHex : colors[current.state.collections.length % colors.length]
+    const order = typeof body.order === 'number' ? body.order : current.state.collections.length
+    const newCollection: CardCollection = { id, title, colorHex, order, mediaCategories: [], cards: [] }
+
+    const existing = current.state.collections.find(c => c.id === id)
+    const updated: UserCardsState = {
+      collections: existing ? current.state.collections : [...current.state.collections, newCollection],
+    }
+    const ok = await putUserCardsState(env, sessionToken, updated, current.version)
+    if (!ok) return error(request, env, 'internal_error', 'Failed to save collection', 500)
+
+    return json(request, env, { success: true, data: newCollection }, 201)
+  }
+
+  // POST /v1/cards/collections/:id/cards
+  if (segments[2] === 'collections' && segments[4] === 'cards' && segments.length === 5) {
+    const collectionId = segments[3]
+    let body: { id?: unknown; title?: unknown; speech?: unknown; colorHex?: unknown; order?: unknown }
+    try { body = (await request.json()) as typeof body } catch {
+      return error(request, env, 'bad_request', 'Request body must be valid JSON', 400)
+    }
+    const title = typeof body.title === 'string' ? body.title.trim() : ''
+    if (!title) return error(request, env, 'bad_request', 'title is required', 400)
+    const speech = typeof body.speech === 'string' && body.speech.trim() ? body.speech.trim() : title
+
+    const current = await getUserCardsState(env, sessionToken)
+    if (!current) return error(request, env, 'unauthorized', 'Unauthorized', 401)
+
+    const collectionIndex = current.state.collections.findIndex(c => c.id === collectionId)
+    if (collectionIndex === -1) return error(request, env, 'not_found', 'Collection not found', 404)
+
+    const collection = current.state.collections[collectionIndex]
+    const id = typeof body.id === 'string' && body.id.startsWith('user_') ? body.id : `user_${crypto.randomUUID()}`
+    const colorHex = typeof body.colorHex === 'number' ? body.colorHex : collection.colorHex
+    const order = typeof body.order === 'number' ? body.order : collection.cards.length
+    const newCard: CardTile = { id, title, speech, colorHex, order }
+
+    const alreadyExists = collection.cards.some(c => c.id === id)
+    const updatedCollection = { ...collection, cards: alreadyExists ? collection.cards : [...collection.cards, newCard] }
+    const updatedCollections = [...current.state.collections]
+    updatedCollections[collectionIndex] = updatedCollection
+    const ok = await putUserCardsState(env, sessionToken, { collections: updatedCollections }, current.version)
+    if (!ok) return error(request, env, 'internal_error', 'Failed to save card', 500)
+
+    return json(request, env, { success: true, data: newCard }, 201)
+  }
+
+  return error(request, env, 'not_found', 'Not found', 404)
+}
+
 function requireAdminSecret(request: Request, env: Env): Response | null {
   const authHeader = request.headers.get('Authorization') ?? ''
   const token = authHeader.startsWith('Bearer ') ? authHeader.slice(7) : ''
@@ -522,6 +637,7 @@ export default {
     }
     if (request.method === 'GET') return handleGet(request, env, segments)
     if (request.method === 'POST' && (url.pathname === '/v1/query' || url.pathname === '/query')) return handleQuery(request, env)
+    if (request.method === 'POST' && segments[0] === 'v1' && segments[1] === 'cards') return handlePostCards(request, env, segments)
 
     if (request.method === 'PUT' && url.pathname === '/v1/admin/cards/collections') {
       const authError = requireAdminSecret(request, env)

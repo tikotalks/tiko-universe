@@ -11,13 +11,15 @@ struct CardsView: View {
     @State private var speakingCardID: String?
     @State private var selectedCollection: CardCollection?
     @State private var collectionsPage = 0
+    @State private var showingAdd = false
 
     var body: some View {
         TikoAppShell(
             appConfig: CardsAppConfig.app,
             appName: selectedCollection?.title ?? i18n.t("cards.appName"),
             onIconTap: selectedCollection != nil ? { selectedCollection = nil } : nil,
-            actions: []
+            actions: [TikoHeaderAction(id: "add", label: "Add", systemImage: "plus")],
+            onAction: { id in if id == "add" { showingAdd = true } }
         ) {
             Group {
                 if let collection = selectedCollection {
@@ -85,6 +87,13 @@ struct CardsView: View {
             .task {
                 await store.load()
                 await store.hydrateRootThumbnails()
+            }
+        }
+        .sheet(isPresented: $showingAdd) {
+            if let collection = selectedCollection {
+                AddCardSheet(collection: collection, store: store, isPresented: $showingAdd)
+            } else {
+                AddCategorySheet(store: store, isPresented: $showingAdd)
             }
         }
         .environmentObject(i18n)
@@ -261,6 +270,72 @@ private struct PageDots: View {
         .padding(.horizontal, 14)
         .padding(.vertical, 8)
         .background(.regularMaterial, in: Capsule())
+    }
+}
+
+private struct AddCategorySheet: View {
+    let store: CardsStore
+    @Binding var isPresented: Bool
+    @State private var title = ""
+
+    var body: some View {
+        NavigationStack {
+            Form {
+                Section("Category name") {
+                    TextField("e.g. Food", text: $title)
+                }
+            }
+            .navigationTitle("New category")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Cancel") { isPresented = false }
+                }
+                ToolbarItem(placement: .confirmationAction) {
+                    Button("Add") {
+                        store.addCollection(title: title)
+                        isPresented = false
+                    }
+                    .disabled(title.trimmingCharacters(in: .whitespaces).isEmpty)
+                }
+            }
+        }
+    }
+}
+
+private struct AddCardSheet: View {
+    let collection: CardCollection
+    let store: CardsStore
+    @Binding var isPresented: Bool
+    @State private var title = ""
+    @State private var speech = ""
+
+    var body: some View {
+        NavigationStack {
+            Form {
+                Section("Card name") {
+                    TextField("e.g. Apple", text: $title)
+                        .onChange(of: title) { _, v in if speech.isEmpty || speech == title { speech = v } }
+                }
+                Section("Spoken text") {
+                    TextField("What should be spoken", text: $speech)
+                }
+            }
+            .navigationTitle("New card")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Cancel") { isPresented = false }
+                }
+                ToolbarItem(placement: .confirmationAction) {
+                    Button("Add") {
+                        store.addCard(title: title, speech: speech, to: collection.id)
+                        isPresented = false
+                    }
+                    .disabled(title.trimmingCharacters(in: .whitespaces).isEmpty)
+                }
+            }
+        }
     }
 }
 

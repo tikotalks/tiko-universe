@@ -270,7 +270,7 @@ public actor TikoIdentityClient {
     // MARK: - Deletion & Reset
 
     public func createDeletionRequest(accessToken: String, scope: TikoDeletionScope, childAccountId: String? = nil, pinGrantToken: String? = nil) async throws -> TikoDeletionRequest {
-        var body: [String: Any] = ["scope": scope.rawValue]
+        var body: [String: String] = ["scope": scope.rawValue]
         if let childAccountId { body["childAccountId"] = childAccountId }
         if let pinGrantToken { body["pinGrantToken"] = pinGrantToken }
         return try await send(path: "/identity/deletion-requests", method: "POST", body: body, accessToken: accessToken)
@@ -281,7 +281,7 @@ public actor TikoIdentityClient {
     }
 
     public func resetAccountData(accessToken: String, pinGrantToken: String? = nil) async throws -> TikoResetRequest {
-        var body: [String: Any] = ["confirmation": "reset_my_data"]
+        var body: [String: String] = ["confirmation": "reset_my_data"]
         if let pinGrantToken { body["pinGrantToken"] = pinGrantToken }
         return try await send(path: "/identity/reset", method: "POST", body: body, accessToken: accessToken)
     }

@@ -69,4 +69,39 @@ final class CardsStore: ObservableObject {
             // Defaults remain fully usable offline as text/color cards if media is unreachable.
         }
     }
+
+    func addCollection(title: String) {
+        let trimmed = title.trimmingCharacters(in: .whitespaces)
+        guard !trimmed.isEmpty else { return }
+        let id = "user_\(UUID().uuidString.lowercased())"
+        let colors: [UInt32] = [0xFF6B6B, 0xFFD93D, 0x6BCB77, 0x4D96FF, 0xFF922B, 0xCC5DE8]
+        let color = colors[collections.count % colors.count]
+        let order = collections.count
+        let collection = CardCollection(id: id, title: trimmed, colorHex: color, order: order, cards: [])
+        collections.append(collection)
+        Task { await persistCollection(id: id, title: trimmed, colorHex: color, order: order) }
+    }
+
+    func addCard(title: String, speech: String, to collectionID: String) {
+        let trimmed = title.trimmingCharacters(in: .whitespaces)
+        guard !trimmed.isEmpty,
+              let index = collections.firstIndex(where: { $0.id == collectionID }) else { return }
+        let id = "user_\(UUID().uuidString.lowercased())"
+        let spokenText = speech.trimmingCharacters(in: .whitespaces).isEmpty ? trimmed : speech.trimmingCharacters(in: .whitespaces)
+        let colorHex = collections[index].colorHex
+        let order = collections[index].cards.count
+        let card = CommunicationCard(id: id, title: trimmed, speech: spokenText, imageURL: nil, colorHex: colorHex)
+        collections[index].cards.append(card)
+        Task { await persistCard(id: id, title: trimmed, speech: spokenText, colorHex: colorHex, order: order, collectionID: collectionID) }
+    }
+
+    private func persistCollection(id: String, title: String, colorHex: UInt32, order: Int) async {
+        guard let token = try? TikoDeviceSessionStore().load()?.accessToken else { return }
+        _ = try? await contentClient.createCollection(id: id, title: title, colorHex: colorHex, order: order, sessionToken: token)
+    }
+
+    private func persistCard(id: String, title: String, speech: String, colorHex: UInt32, order: Int, collectionID: String) async {
+        guard let token = try? TikoDeviceSessionStore().load()?.accessToken else { return }
+        _ = try? await contentClient.createCard(id: id, title: title, speech: speech, colorHex: colorHex, order: order, collectionID: collectionID, sessionToken: token)
+    }
 }

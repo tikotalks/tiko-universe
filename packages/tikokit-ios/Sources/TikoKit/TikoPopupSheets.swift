@@ -236,9 +236,7 @@ public struct TikoSettingsToggleRow: View {
 
 public struct TikoSettingsSheet<AppSettings: View>: View {
     private let appColor: TikoAppColor
-    private let accountTitle: String
     private let onClose: () -> Void
-    private let onOpenAccount: () -> Void
     private let appSettings: AppSettings
 
     @AppStorage("tiko.language") private var languageID = "en"
@@ -248,15 +246,11 @@ public struct TikoSettingsSheet<AppSettings: View>: View {
 
     public init(
         appColor: TikoAppColor,
-        accountTitle: String = "Setup user",
         onClose: @escaping () -> Void,
-        onOpenAccount: @escaping () -> Void,
         @ViewBuilder appSettings: () -> AppSettings
     ) {
         self.appColor = appColor
-        self.accountTitle = accountTitle
         self.onClose = onClose
-        self.onOpenAccount = onOpenAccount
         self.appSettings = appSettings()
     }
 
@@ -270,14 +264,6 @@ public struct TikoSettingsSheet<AppSettings: View>: View {
         ) {
             VStack(spacing: 16) {
                 TikoSettingsSection(title: "Tiko") {
-                    TikoSettingsActionRow(
-                        title: "Account",
-                        value: accountTitle,
-                        icon: "person.crop.circle",
-                        appColor: appColor,
-                        action: onOpenAccount
-                    )
-
                     TikoSettingsActionRow(
                         title: "Language",
                         value: selectedLanguageTitle,
@@ -331,15 +317,8 @@ public struct TikoSettingsSheet<AppSettings: View>: View {
 }
 
 public extension TikoSettingsSheet where AppSettings == EmptyView {
-    init(
-        appColor: TikoAppColor,
-        accountTitle: String = "Setup user",
-        onClose: @escaping () -> Void,
-        onOpenAccount: @escaping () -> Void
-    ) {
-        self.init(appColor: appColor, accountTitle: accountTitle, onClose: onClose, onOpenAccount: onOpenAccount) {
-            EmptyView()
-        }
+    init(appColor: TikoAppColor, onClose: @escaping () -> Void) {
+        self.init(appColor: appColor, onClose: onClose) { EmptyView() }
     }
 }
 
@@ -654,38 +633,73 @@ public struct TikoAccountSheet: View {
                 }
                 .buttonStyle(.plain)
 
-                Button {
-                    showDeleteConfirmation = true
-                } label: {
-                    Text("Delete account")
-                        .font(.system(size: 16, weight: .heavy, design: .rounded))
-                        .foregroundStyle(.red)
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 14)
-                        .background(Color.red.opacity(0.08))
-                        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
-                }
-                .buttonStyle(.plain)
+                // Account section
+                VStack(alignment: .leading, spacing: 6) {
+                    Text("Account")
+                        .font(.system(size: 13, weight: .semibold, design: .rounded))
+                        .foregroundStyle(.secondary)
+                        .padding(.leading, 4)
 
-                // Sign out
-                Button {
-                    try? sessionStore.clearAll()
-                    isSignedIn = false
-                    signedInEmail = nil
-                    emailInput = ""
-                    emailSent = false
-                    otpCode = ""
-                    identityError = nil
-                } label: {
-                    Text("Sign out")
-                        .font(.system(size: 16, weight: .heavy, design: .rounded))
-                        .foregroundStyle(.red)
-                        .frame(maxWidth: .infinity)
+                    Button {
+                        try? sessionStore.clearAll()
+                        isSignedIn = false
+                        signedInEmail = nil
+                        emailInput = ""
+                        emailSent = false
+                        otpCode = ""
+                        identityError = nil
+                    } label: {
+                        HStack(spacing: 12) {
+                            Image(systemName: "rectangle.portrait.and.arrow.right")
+                                .font(.system(size: 16, weight: .semibold))
+                                .foregroundStyle(.secondary)
+                                .frame(width: 28)
+                            Text("Sign out")
+                                .font(.system(size: 16, weight: .semibold, design: .rounded))
+                                .foregroundStyle(.primary)
+                            Spacer()
+                            Image(systemName: "chevron.right")
+                                .font(.system(size: 13, weight: .semibold))
+                                .foregroundStyle(.tertiary)
+                        }
+                        .padding(.horizontal, 16)
                         .padding(.vertical, 14)
-                        .background(Color.red.opacity(0.08))
+                        .background(Color(uiColor: .systemBackground))
                         .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+                    }
+                    .buttonStyle(.plain)
                 }
-                .buttonStyle(.plain)
+
+                // Danger zone section
+                VStack(alignment: .leading, spacing: 6) {
+                    Text("Danger zone")
+                        .font(.system(size: 13, weight: .semibold, design: .rounded))
+                        .foregroundStyle(.secondary)
+                        .padding(.leading, 4)
+
+                    Button {
+                        showDeleteConfirmation = true
+                    } label: {
+                        HStack(spacing: 12) {
+                            Image(systemName: "trash.fill")
+                                .font(.system(size: 16, weight: .semibold))
+                                .foregroundStyle(.red)
+                                .frame(width: 28)
+                            Text("Delete account")
+                                .font(.system(size: 16, weight: .semibold, design: .rounded))
+                                .foregroundStyle(.red)
+                            Spacer()
+                            Image(systemName: "chevron.right")
+                                .font(.system(size: 13, weight: .semibold))
+                                .foregroundStyle(.tertiary)
+                        }
+                        .padding(.horizontal, 16)
+                        .padding(.vertical, 14)
+                        .background(Color(uiColor: .systemBackground))
+                        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+                    }
+                    .buttonStyle(.plain)
+                }
             }
         }
     }
@@ -923,20 +937,17 @@ public struct TikoProfileMenuSheet: View {
     private let appColor: TikoAppColor
     private let onProfile: () -> Void
     private let onChildMode: () -> Void
-    private let onLogOut: () -> Void
     private let onClose: () -> Void
 
     public init(
         appColor: TikoAppColor,
         onProfile: @escaping () -> Void,
         onChildMode: @escaping () -> Void,
-        onLogOut: @escaping () -> Void,
         onClose: @escaping () -> Void
     ) {
         self.appColor = appColor
         self.onProfile = onProfile
         self.onChildMode = onChildMode
-        self.onLogOut = onLogOut
         self.onClose = onClose
     }
 
@@ -959,12 +970,6 @@ public struct TikoProfileMenuSheet: View {
                     icon: "figure.child",
                     appColor: appColor,
                     action: onChildMode
-                )
-                TikoSettingsActionRow(
-                    title: "Log out",
-                    icon: "rectangle.portrait.and.arrow.right",
-                    appColor: appColor,
-                    action: onLogOut
                 )
             }
         }
@@ -1050,7 +1055,7 @@ public struct TikoParentCodeEntrySheet: View {
             let bundle = try await identityClient.enterParentMode(accessToken: token, pin: enteredCode)
             try sessionStore.save(bundle)
             onParentMode(bundle)
-        } catch {
+        } catch _ {
             error = "Incorrect PIN. Please try again."
             enteredCode = ""
         }
@@ -1216,35 +1221,19 @@ public extension View {
     func tikoSettingsPopup<SettingsContent: View>(
         isPresented: Binding<Bool>,
         appColor: TikoAppColor,
-        accountTitle: String = "Setup user",
-        onOpenAccount: @escaping () -> Void = {},
         @ViewBuilder appSettings: @escaping () -> SettingsContent
     ) -> some View {
         tikoPopup(isPresented: isPresented) {
             TikoSettingsSheet(
                 appColor: appColor,
-                accountTitle: accountTitle,
                 onClose: { isPresented.wrappedValue = false },
-                onOpenAccount: onOpenAccount,
                 appSettings: appSettings
             )
         }
     }
 
-    func tikoSettingsPopup(
-        isPresented: Binding<Bool>,
-        appColor: TikoAppColor,
-        accountTitle: String = "Setup user",
-        onOpenAccount: @escaping () -> Void = {}
-    ) -> some View {
-        tikoSettingsPopup(
-            isPresented: isPresented,
-            appColor: appColor,
-            accountTitle: accountTitle,
-            onOpenAccount: onOpenAccount
-        ) {
-            EmptyView()
-        }
+    func tikoSettingsPopup(isPresented: Binding<Bool>, appColor: TikoAppColor) -> some View {
+        tikoSettingsPopup(isPresented: isPresented, appColor: appColor) { EmptyView() }
     }
 
     func tikoAccountPopup(isPresented: Binding<Bool>, appName: String, appColor: TikoAppColor) -> some View {
