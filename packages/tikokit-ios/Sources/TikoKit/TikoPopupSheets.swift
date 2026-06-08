@@ -234,6 +234,48 @@ public struct TikoSettingsToggleRow: View {
     }
 }
 
+public struct TikoSettingsSegmentedRow: View {
+    private let title: String
+    private let icon: String
+    private let appColor: TikoAppColor
+    private let options: [String]
+    @Binding private var selectedIndex: Int
+
+    public init(title: String, icon: String, appColor: TikoAppColor, options: [String], selectedIndex: Binding<Int>) {
+        self.title = title
+        self.icon = icon
+        self.appColor = appColor
+        self.options = options
+        self._selectedIndex = selectedIndex
+    }
+
+    public var body: some View {
+        HStack(spacing: 14) {
+            Image(systemName: icon)
+                .font(.system(size: 18, weight: .bold))
+                .foregroundStyle(appColor.palette.primary)
+                .frame(width: 40, height: 40)
+                .background(appColor.palette.primary.opacity(0.12))
+                .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+
+            Text(title)
+                .font(.system(size: 16, weight: .heavy, design: .rounded))
+                .foregroundStyle(.primary)
+
+            Spacer()
+
+            Picker(title, selection: $selectedIndex) {
+                ForEach(Array(options.enumerated()), id: \.offset) { i, label in
+                    Text(label).tag(i)
+                }
+            }
+            .pickerStyle(.segmented)
+            .frame(width: 150)
+        }
+        .tikoSettingsRowSurface()
+    }
+}
+
 public struct TikoSettingsSheet<AppSettings: View>: View {
     private let appColor: TikoAppColor
     private let onClose: () -> Void
@@ -495,6 +537,7 @@ public struct TikoAccountSheet: View {
                bundle.account?.emailVerified == true {
                 isSignedIn = true
                 signedInEmail = bundle.account?.email
+                if let email = bundle.account?.email { userEmail = email }
             }
         }
         .tikoMediaPickerPopup(
@@ -921,10 +964,9 @@ public struct TikoAccountSheet: View {
             if userName.isEmpty, let name = bundle.account?.email?.components(separatedBy: "@").first {
                 userName = name
             }
+            userEmail = bundle.account?.email ?? emailInput
             isLoading = false
-            // Show profile instead of silently closing
-            signedInEmail = bundle.account?.email ?? emailInput
-            isSignedIn = true
+            onClose()
         } catch {
             otpCode = ""
             identityError = "Incorrect code — please try again or resend."

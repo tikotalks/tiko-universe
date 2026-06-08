@@ -112,6 +112,22 @@ final class CardsStore: ObservableObject {
         collections.move(fromOffsets: IndexSet(integer: from), toOffset: to > from ? to + 1 : to)
     }
 
+    func updateCollection(id: String, title: String, colorHex: UInt32, imageURL: URL?) {
+        guard let i = collections.firstIndex(where: { $0.id == id }) else { return }
+        collections[i].title = title
+        collections[i].colorHex = colorHex
+        collections[i].imageURL = imageURL.flatMap { Self.persistLocalImageIfNeeded($0) }
+    }
+
+    func updateCard(id: String, title: String, speech: String, colorHex: UInt32, imageURL: URL?, inCollectionID: String) {
+        guard let ci = collections.firstIndex(where: { $0.id == inCollectionID }),
+              let ji = collections[ci].cards.firstIndex(where: { $0.id == id }) else { return }
+        collections[ci].cards[ji].title = title
+        collections[ci].cards[ji].speech = speech
+        collections[ci].cards[ji].colorHex = colorHex
+        collections[ci].cards[ji].imageURL = imageURL.flatMap { Self.persistLocalImageIfNeeded($0) }
+    }
+
     func reorderCard(draggingID: String, targetID: String, inCollectionID: String) {
         guard draggingID != targetID,
               let ci = collections.firstIndex(where: { $0.id == inCollectionID }),

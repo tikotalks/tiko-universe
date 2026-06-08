@@ -132,7 +132,7 @@ public struct TikoAppHeader: View {
 
             Text(appName)
                 .font(.system(.title3, design: .rounded).weight(.heavy))
-                .foregroundStyle(appColor.palette.primary)
+                .foregroundStyle(.primary)
 
             Spacer(minLength: 8)
 
