@@ -129,14 +129,16 @@ export async function handleRequest(request: Request, env: Env): Promise<Respons
       return withCors(jsonError('method_not_allowed', 'Method not allowed.', 405), cors)
     }
 
-    // Global defaults endpoints — session or admin-protected GET & PUT
+    // Global defaults endpoints — public GET, admin-protected PUT
     const defaultsMatch = /^\/v1\/apps\/defaults\/([^/]+)\/(settings|state)$/.exec(path)
     if (defaultsMatch) {
-      await requireAnyAuth(request, env)
       const app = parseApp(defaultsMatch[1])
       const resource = defaultsMatch[2] as AppResource
       if (request.method === 'GET') return withCors(await readDefaults(env, app, resource), cors)
-      if (request.method === 'PUT') return withCors(await writeDefaults(request, env, app, resource), cors)
+      if (request.method === 'PUT') {
+        await requireAnyAuth(request, env)
+        return withCors(await writeDefaults(request, env, app, resource), cors)
+      }
       return withCors(jsonError('method_not_allowed', 'Method not allowed.', 405), cors)
     }
 

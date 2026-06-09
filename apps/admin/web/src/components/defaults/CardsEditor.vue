@@ -2,6 +2,7 @@
 import { computed } from 'vue'
 import { useBemm } from 'bemm'
 import { Button, InputText } from '@sil/ui'
+import ColorSwatchPicker from '../ColorSwatchPicker.vue'
 
 interface Tile {
   id: string
@@ -143,12 +144,13 @@ function updateMediaCategories(index: number, raw: string) {
             placeholder="kebab-case-id"
             @update:model-value="(v: string) => updateCollection(ci, { id: v })"
           />
-          <InputText
-            :model-value="collection.color ?? ''"
-            label="Color"
-            placeholder="#4ECDC4"
-            @update:model-value="(v: string) => updateCollection(ci, { color: v })"
-          />
+          <div :class="bemm('color-field')">
+            <span :class="bemm('color-label')">Color</span>
+            <ColorSwatchPicker
+              :model-value="collection.color ?? ''"
+              @update:model-value="(v: string) => updateCollection(ci, { color: v })"
+            />
+          </div>
           <InputText
             :model-value="(collection.mediaCategories ?? []).join(', ')"
             label="Media categories"
@@ -192,12 +194,13 @@ function updateMediaCategories(index: number, raw: string) {
                 placeholder="item"
                 @update:model-value="(v: string) => updateTile(ci, ti, { type: v || 'item' })"
               />
-              <InputText
-                :model-value="tile.color ?? ''"
-                label="Color"
-                placeholder="#FF6B6B"
-                @update:model-value="(v: string) => updateTile(ci, ti, { color: v || undefined })"
-              />
+              <div :class="bemm('color-field')">
+                <span :class="bemm('color-label')">Color</span>
+                <ColorSwatchPicker
+                  :model-value="tile.color ?? ''"
+                  @update:model-value="(v: string) => updateTile(ci, ti, { color: v || undefined })"
+                />
+              </div>
             </div>
             <InputText
               :model-value="tile.id"
@@ -308,6 +311,18 @@ function updateMediaCategories(index: number, raw: string) {
     display: flex;
     flex-direction: column;
     gap: var(--space-xs);
+  }
+
+  &__color-field {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+  }
+
+  &__color-label {
+    font-size: var(--font-size-xs);
+    font-weight: 600;
+    color: var(--admin-text-muted);
   }
 
   &__tile-row {

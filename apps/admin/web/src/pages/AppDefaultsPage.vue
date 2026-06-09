@@ -6,6 +6,7 @@ import { tikoAppConfigs, tikoAppColors, type TikoAppColor, type TikoAppConfig } 
 import { useAdminAppConfig, type AdminManagedAppConfig } from '../composables/useAdminAppConfig'
 import { useAppDefaults, type AppResource, type TikoManagedApp } from '../composables/useAppDefaults'
 import MediaPicker from '../components/MediaPicker.vue'
+import ColorSwatchPicker from '../components/ColorSwatchPicker.vue'
 import CardsEditor from '../components/defaults/CardsEditor.vue'
 import YesNoEditor from '../components/defaults/YesNoEditor.vue'
 import SequenceEditor from '../components/defaults/SequenceEditor.vue'
@@ -204,12 +205,10 @@ onMounted(async () => {
             </div>
             <div :class="bemm('field')">
               <span :class="bemm('field-label')">App colors</span>
-              <div :class="bemm('color-swatch-row')">
-                <div v-for="app in appOrder" :key="app" :class="bemm('color-swatch', { active: configDraft.appColor === app })" :style="{ '--swatch-color': configs[app]?.themeColor || tikoAppColors[app]?.primary }" :title="app" @click="() => { configDraft.appColor = app; configDraft.themeColor = configs[app]?.themeColor || tikoAppColors[app]?.primary; onConfigInput() }">
-                  <span :class="bemm('color-swatch-dot')"></span>
-                  <span :class="bemm('color-swatch-label')">{{ configs[app]?.title || app }}</span>
-                </div>
-              </div>
+              <ColorSwatchPicker
+                :model-value="configDraft.themeColor || tikoAppConfigs[selectedApp]?.themeColor || ''"
+                @update:model-value="(v: string) => { configDraft.themeColor = v; onConfigInput() }"
+              />
             </div>
           </div>
         </section>
@@ -412,47 +411,6 @@ onMounted(async () => {
     padding: 2px;
     cursor: pointer;
     background: transparent;
-  }
-
-  &__color-swatch-row {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-xs);
-  }
-
-  &__color-swatch {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 4px;
-    padding: var(--space-xs);
-    border: 2px solid var(--admin-border);
-    border-radius: var(--border-radius-xs);
-    cursor: pointer;
-    min-width: calc(var(--space) * 6);
-    transition: border-color 0.12s;
-
-    &:hover {
-      border-color: var(--admin-border-strong);
-    }
-
-    &--active {
-      border-color: var(--swatch-color);
-      background: color-mix(in srgb, var(--swatch-color), transparent 90%);
-    }
-  }
-
-  &__color-swatch-dot {
-    width: calc(var(--space) * 2);
-    height: calc(var(--space) * 2);
-    border-radius: var(--border-radius-round);
-    background: var(--swatch-color);
-  }
-
-  &__color-swatch-label {
-    font-size: var(--font-size-xs);
-    color: var(--admin-text);
-    font-weight: 500;
   }
 
   &__select {
