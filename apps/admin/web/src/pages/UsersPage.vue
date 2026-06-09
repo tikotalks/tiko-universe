@@ -48,6 +48,19 @@ function formatRole(role: string) {
   return assignableRoles.find((item) => item.value === role)?.label ?? role
 }
 
+function formatRelativeTime(iso: string | null): string {
+  if (!iso) return 'Never'
+  const diff = Date.now() - new Date(iso).getTime()
+  const mins = Math.floor(diff / 60000)
+  if (mins < 1) return 'Just now'
+  if (mins < 60) return `${mins}m ago`
+  const hours = Math.floor(mins / 60)
+  if (hours < 24) return `${hours}h ago`
+  const days = Math.floor(hours / 24)
+  if (days < 30) return `${days}d ago`
+  return `${Math.floor(days / 30)}mo ago`
+}
+
 function userLabel(user: AdminManagedUser) {
   return user.email || user.id
 }
@@ -82,8 +95,9 @@ function userLabel(user: AdminManagedUser) {
           <span :class="bemm('avatar')">{{ userLabel(user).charAt(0).toUpperCase() }}</span>
           <span :class="bemm('user-summary')">
             <strong>{{ userLabel(user) }}</strong>
-            <small>{{ user.kind }} · {{ user.id }}</small>
+            <small>{{ user.kind }} · {{ formatRelativeTime(user.lastSeenAt) }}</small>
           </span>
+          <span :class="bemm('data-dot', { active: user.hasData })" title="Has data" />
           <span :class="bemm('role-count')">{{ user.roles.length }}</span>
         </button>
 
@@ -96,6 +110,7 @@ function userLabel(user: AdminManagedUser) {
             <div>
               <h2 :class="bemm('detail-title')">{{ userLabel(selectedUser) }}</h2>
               <p :class="bemm('detail-meta')">{{ selectedUser.kind }} · {{ selectedUser.id }}</p>
+              <p :class="bemm('detail-meta')">Last seen {{ formatRelativeTime(selectedUser.lastSeenAt) }} · {{ selectedUser.hasData ? 'Has data' : 'No data' }}</p>
             </div>
             <div :class="bemm('role-pills')">
               <span v-for="role in selectedUser.roles" :key="role" :class="bemm('pill')">{{ formatRole(role) }}</span>
@@ -244,8 +259,19 @@ function userLabel(user: AdminManagedUser) {
     }
   }
 
+  &__data-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 999px;
+    flex-shrink: 0;
+    background: color-mix(in srgb, var(--color-background), var(--color-foreground) 15%);
+
+    &--active {
+      background: var(--color-success, #22c55e);
+    }
+  }
+
   &__role-count {
-    margin-left: auto;
     min-width: calc(var(--space) * 1.5);
     text-align: center;
     border-radius: 999px;
