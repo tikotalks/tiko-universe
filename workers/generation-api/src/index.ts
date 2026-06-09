@@ -10,6 +10,7 @@ export interface Env {
     prepare(sql: string): { bind(...values: unknown[]): { first<T>(): Promise<T | null>; all(): Promise<{ results: unknown[] }> } }
   }
   IDENTITY_BASE_URL?: string
+  GENERATION_PUBLIC_ROUTE?: string
   IDENTITY_SERVICE?: {
     fetch(input: Request | string, init?: RequestInit): Promise<Response>
   }
@@ -152,6 +153,7 @@ export default {
     if (url.pathname === '/v1/generation/image' && request.method === 'POST') return requireAuth(request, env, () => generateImage(request, env))
     if (url.pathname.startsWith('/v1/generation/images/') && url.pathname.endsWith('/binary') && request.method === 'GET') return getImage(url.pathname, env)
     if (url.pathname.startsWith('/v1/generation/images/') && url.pathname.endsWith('/promote') && request.method === 'POST') return requireAuth(request, env, () => promoteImage(url.pathname, env))
+    if (url.pathname.startsWith('/v1/generation/images/') && url.pathname.endsWith('/enrich') && request.method === 'POST') return requireAuth(request, env, () => enrichImage(url.pathname, env))
     if (url.pathname.startsWith('/v1/generation/images/') && request.method === 'DELETE') return requireAuth(request, env, () => deleteImage(url.pathname, env))
     if (url.pathname === '/v1/generation/images' && request.method === 'GET') return listImages(request, env)
     if (url.pathname === '/v1/generation/stories/tryout' && request.method === 'POST') return requireAuth(request, env, () => generateStoryTryout(request, env))
@@ -1073,11 +1075,13 @@ async function generateImage(request: Request, env: Env): Promise<Response> {
   const transparent = body.transparent !== undefined ? body.transparent : (mode === 'icon')
 
   // Expand the user's subject into a detailed art brief via atlas
+  // Fall back to the original prompt if boost fails rather than returning a 502.
   let artBrief: string
   try {
-    artBrief = await boostPrompt(body.prompt.trim(), mode, env)
-  } catch (err) {
-    return apiError('prompt_boost_failed', `Failed to expand prompt: ${(err as Error).message}`, 502)
+    const boosted = await boostPrompt(body.prompt.trim(), mode, env)
+    artBrief = boosted || body.prompt.trim()
+  } catch {
+    artBrief = body.prompt.trim()
   }
 
   // Generate the image via atlas
@@ -1234,6 +1238,7 @@ async function listImages(request: Request, env: Env): Promise<Response> {
       height: r.height,
       fileSizeBytes: r.file_size_bytes,
       title: r.title,
+      description: r.description,
       category: r.category,
       tags: JSON.parse(r.tags || '[]'),
       status: r.is_public === 1 ? 'promoted' : 'draft',
@@ -1254,6 +1259,97 @@ async function promoteImage(pathname: string, env: Env): Promise<Response> {
 
   if (!result.meta?.changes) return apiError('image_not_found', 'Image not found.', 404)
   return json({ data: { id, status: 'promoted', updatedAt: now } })
+}
+
+async function enrichImage(pathname: string, env: Env): Promise<Response> {
+  const id = pathname.replace('/v1/generation/images/', '').replace('/enrich', '')
+  if (!isSafeId(id)) return apiError('invalid_image_id', 'Image id is invalid.', 400)
+  if (!env.OPENAI_API_KEY) return apiError('openai_not_configured', 'OpenAI is not configured.', 503)
+
+  const record = await env.GENERATION_DB.prepare(
+    'SELECT id, title, prompt FROM generated_images WHERE id = ? LIMIT 1',
+  ).bind(id).first<{ id: string; title: string | null; prompt: string }>()
+
+  if (!record) return apiError('image_not_found', 'Image not found.', 404)
+
+  const publicBase = (env.GENERATION_PUBLIC_ROUTE ?? '').replace(/\/$/, '')
+  const imageUrl = `${publicBase}/images/${id}/binary`
+  const hint = record.title || record.prompt
+
+  const visionResponse = await fetch('https://api.openai.com/v1/chat/completions', {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${env.OPENAI_API_KEY}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      model: 'gpt-4o',
+      messages: [{ role: 'user', content: [
+        { type: 'text', text: buildImageVisionPrompt(hint) },
+        { type: 'image_url', image_url: { url: imageUrl } },
+      ] }],
+      max_tokens: 500,
+    }),
+  })
+
+  if (!visionResponse.ok) {
+    return apiError('vision_failed', `Vision analysis failed: ${visionResponse.status}`, 502)
+  }
+
+  const visionData = await visionResponse.json() as { choices: Array<{ message: { content: string } }> }
+  const content = visionData.choices[0]?.message?.content ?? ''
+  const parsed = parseImageVisionResponse(content)
+  if (!parsed) return apiError('vision_parse_failed', 'Could not parse vision response.', 502)
+
+  const now = new Date().toISOString()
+  await env.GENERATION_DB.prepare(
+    `UPDATE generated_images
+     SET title = CASE WHEN ? != '' THEN ? ELSE title END,
+         description = ?,
+         tags = ?,
+         category = CASE WHEN ? != '' THEN ? ELSE category END,
+         updated_at = ?
+     WHERE id = ?`,
+  ).bind(
+    parsed.title, parsed.title,
+    parsed.description,
+    JSON.stringify(parsed.tags),
+    parsed.categories[0] ?? '', parsed.categories[0] ?? '',
+    now,
+    id,
+  ).run()
+
+  return json({ data: { id, title: parsed.title || record.title, description: parsed.description, tags: parsed.tags, categories: parsed.categories, updatedAt: now } })
+}
+
+function buildImageVisionPrompt(hint?: string | null): string {
+  return `Analyze this image and return JSON metadata.${hint ? `\n\nContext: The image represents "${hint}".` : ''}
+
+Rules:
+- Do NOT mention it is an image, illustration, drawing, or art style.
+- Focus only on what the subject IS, not how it looks or is styled.
+- Use simple, child-friendly language suitable for young children.
+
+Return only this JSON object:
+{
+  "title": "Short factual name of the subject, e.g. 'Lion' or 'Fire Truck'. No adjectives or style words.",
+  "description": "2-3 short sentences about what it is, what it does, or where it comes from.",
+  "tags": ["10-15 search keywords, no style words like 'cute' or 'cartoon'"],
+  "categories": ["5-8 broad categories like 'animals', 'food', 'vehicles', 'nature', 'plants', 'people', 'tools'"]
+}
+
+Return only the JSON. No markdown, no explanation.`
+}
+
+function parseImageVisionResponse(content: string): { title: string; description: string; tags: string[]; categories: string[] } | null {
+  try {
+    const match = content.match(/\{[\s\S]*\}/)
+    if (!match) return null
+    const parsed = JSON.parse(match[0])
+    return {
+      title: typeof parsed.title === 'string' ? parsed.title : '',
+      description: typeof parsed.description === 'string' ? parsed.description : '',
+      tags: Array.isArray(parsed.tags) ? parsed.tags : [],
+      categories: Array.isArray(parsed.categories) ? parsed.categories : [],
+    }
+  } catch { return null }
 }
 
 async function deleteImage(pathname: string, env: Env): Promise<Response> {

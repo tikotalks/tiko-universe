@@ -23,6 +23,7 @@ export interface ImageGalleryItem {
   height: number | null
   fileSizeBytes: number | null
   title: string | null
+  description: string | null
   category: string
   tags: string[]
   status: 'draft' | 'promoted'
@@ -43,6 +44,10 @@ export function useImageGeneration() {
 
   function baseUrl() {
     return (config.value?.generationApiUrl ?? 'https://generation.tikoapi.org/v1/generation').replace(/\/$/, '')
+  }
+
+  function mediaBaseUrl() {
+    return (config.value?.mediaApiUrl ?? 'https://media.tikoapi.org/v1/media').replace(/\/$/, '')
   }
 
   function authHeaders(extra: Record<string, string> = {}): Record<string, string> {
@@ -74,12 +79,37 @@ export function useImageGeneration() {
     return readJson<ImageListResponse>(response, 'Could not load images')
   }
 
-  async function promoteImage(id: string): Promise<void> {
+  function imageSrc(item: { imageUrl: string }): string {
+    if (item.imageUrl.startsWith('http')) return item.imageUrl
+    return `${baseUrl()}${item.imageUrl.replace('/v1/generation', '')}`
+  }
+
+  async function pushToMedia(item: ImageGalleryItem): Promise<void> {
+    const imageUrl = imageSrc(item)
+    const imageResponse = await fetch(imageUrl)
+    if (!imageResponse.ok) return
+
+    const blob = await imageResponse.blob()
+    const safeName = (item.title || item.category || item.id).replace(/[^a-z0-9_-]/gi, '_')
+    const filename = `${safeName}.png`
+
+    const form = new FormData()
+    form.append('file', new File([blob], filename, { type: 'image/png' }))
+
+    await fetch(`${mediaBaseUrl()}/upload`, {
+      method: 'POST',
+      headers: { authorization: `Bearer ${token.value}` },
+      body: form,
+    })
+  }
+
+  async function promoteImage(id: string, item?: ImageGalleryItem): Promise<void> {
     const response = await fetch(`${baseUrl()}/images/${encodeURIComponent(id)}/promote`, {
       method: 'POST',
       headers: authHeaders(),
     })
     await readJson(response, 'Could not promote image')
+    if (item) void pushToMedia(item)
   }
 
   async function deleteImage(id: string): Promise<void> {
@@ -90,10 +120,14 @@ export function useImageGeneration() {
     await readJson(response, 'Could not delete image')
   }
 
-  function imageSrc(item: { imageUrl: string }): string {
-    if (item.imageUrl.startsWith('http')) return item.imageUrl
-    return `${baseUrl()}${item.imageUrl.replace('/v1/generation', '')}`
+  async function enrichImage(id: string): Promise<{ title: string | null; description: string | null; tags: string[]; categories: string[] }> {
+    const response = await fetch(`${baseUrl()}/images/${encodeURIComponent(id)}/enrich`, {
+      method: 'POST',
+      headers: authHeaders(),
+    })
+    const body = await readJson<{ data: { title: string | null; description: string | null; tags: string[]; categories: string[] } }>(response, 'Could not enrich image')
+    return body.data
   }
 
-  return { generateImage, listImages, promoteImage, deleteImage, imageSrc }
+  return { generateImage, listImages, promoteImage, deleteImage, enrichImage, imageSrc }
 }
