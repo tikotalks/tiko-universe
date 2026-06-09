@@ -73,6 +73,8 @@ watch(open, (v) => { if (v) loadMedia() })
 </template>
 
 <style lang="scss">
+@use '../styles/mixins' as *;
+
 .media-picker {
   display: flex;
   flex-direction: column;
@@ -90,6 +92,8 @@ watch(open, (v) => { if (v) loadMedia() })
     object-fit: cover;
     border-radius: var(--border-radius-xs);
     border: 1px solid var(--admin-border);
+    --block-size: 0.5em;
+    @include checkeredBackground;
   }
 
   &__modal {
@@ -168,6 +172,8 @@ watch(open, (v) => { if (v) loadMedia() })
       aspect-ratio: 1;
       object-fit: cover;
       border-radius: 2px;
+      --block-size: 0.5em;
+      @include checkeredBackground;
     }
 
     span {

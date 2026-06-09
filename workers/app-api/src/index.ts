@@ -136,7 +136,7 @@ export async function handleRequest(request: Request, env: Env): Promise<Respons
       const resource = defaultsMatch[2] as AppResource
       if (request.method === 'GET') return withCors(await readDefaults(env, app, resource), cors)
       if (request.method === 'PUT') {
-        await requireSession(request, env)
+        await requireAdminSession(request, env)
         return withCors(await writeDefaults(request, env, app, resource), cors)
       }
       return withCors(jsonError('method_not_allowed', 'Method not allowed.', 405), cors)
@@ -370,6 +370,25 @@ async function requireSession(request: Request, env: Env): Promise<SessionJoinRo
 
   if (authed.ok && authed.method === 'api_key') throw new HttpError(403, 'session_required', 'A Tiko user session is required.')
   throw new HttpError(401, 'unauthorized', 'Session is invalid or expired.')
+}
+
+async function requireAdminSession(request: Request, env: Env): Promise<void> {
+  await requireSession(request, env)
+  const token = requireBearer(request)
+  const baseUrl = (env.IDENTITY_BASE_URL ?? 'https://api.tikotalks.com/v1').replace(/\/$/, '')
+  const url = `${baseUrl}/identity/session`
+  const init: RequestInit = { headers: { authorization: `Bearer ${token}`, 'content-type': 'application/json' } }
+  try {
+    const response = env.IDENTITY_SERVICE ? await env.IDENTITY_SERVICE.fetch(url, init) : await fetch(url, init)
+    if (!response.ok) throw new HttpError(403, 'forbidden', 'Admin access required.')
+    const body = (await response.json()) as { roles?: string[]; capabilities?: { canEditContent?: boolean } }
+    const isAdmin = (Array.isArray(body.roles) && (body.roles.includes('admin') || body.roles.includes('content_editor')))
+      || body.capabilities?.canEditContent === true
+    if (!isAdmin) throw new HttpError(403, 'forbidden', 'Admin access required.')
+  } catch (e) {
+    if (e instanceof HttpError) throw e
+    throw new HttpError(403, 'forbidden', 'Admin access required.')
+  }
 }
 
 async function requireAnyAuth(request: Request, env: Env): Promise<void> {

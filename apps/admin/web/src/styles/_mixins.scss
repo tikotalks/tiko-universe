@@ -1,0 +1,7 @@
+@mixin checkeredBackground {
+  --int-block-size: var(--block-size, 1em);
+
+  background:
+    repeating-conic-gradient(color-mix(in srgb, var(--color-background), transparent 90%) 0 25%, color-mix(in srgb, var(--color-foreground), transparent 90%) 0 50%)
+      50% / var(--int-block-size) var(--int-block-size);
+}

@@ -81,7 +81,7 @@ actor CardsContentClient {
         return try JSONDecoder().decode(SingleCardResponse.self, from: data).data
     }
 
-    func updateCollection(id: String, title: String, colorHex: UInt32, imageURL: URL? = nil, sessionToken: String) async throws -> CardCollection {
+    func updateCollection(id: String, title: String, colorHex: UInt32, imageURL: URL? = nil, saveAsDefault: Bool = false, sessionToken: String) async throws -> CardCollection {
         guard let url = URL(string: "\(Self.baseURL)/cards/collections/\(id)") else {
             throw URLError(.badURL)
         }
@@ -90,7 +90,7 @@ actor CardsContentClient {
         request.timeoutInterval = 15
         request.setValue("Bearer \(sessionToken)", forHTTPHeaderField: "Authorization")
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        var payload: [String: Any] = ["title": title, "colorHex": colorHex]
+        var payload: [String: Any] = ["title": title, "colorHex": colorHex, "saveAsDefault": saveAsDefault]
         if let imageURL, !imageURL.isFileURL { payload["imageURL"] = imageURL.absoluteString }
         request.httpBody = try JSONSerialization.data(withJSONObject: payload)
         let (data, response) = try await URLSession.shared.data(for: request)
@@ -110,7 +110,18 @@ actor CardsContentClient {
         request.setValue("Bearer \(sessionToken)", forHTTPHeaderField: "Authorization")
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         var payload: [String: Any] = ["title": title, "speech": speech, "colorHex": colorHex]
-        if let imageURL, !imageURL.isFileURL { payload["imageURL"] = imageURL.absoluteString }
+        if let imageURL, !imageURL.isFileURL {
+            if collectionID.hasPrefix("user_") {
+                payload["imageURL"] = imageURL.absoluteString
+            } else {
+                do {
+                    let imageId = try await uploadImage(imageURL: imageURL, sessionToken: sessionToken)
+                    payload["imageRef"] = imageId
+                } catch {
+                    print("[CardsContentClient] uploadImage failed: \(error)")
+                }
+            }
+        }
         request.httpBody = try JSONSerialization.data(withJSONObject: payload)
         let (data, response) = try await URLSession.shared.data(for: request)
         guard let http = response as? HTTPURLResponse, (200..<300).contains(http.statusCode) else {
@@ -176,5 +187,54 @@ actor CardsContentClient {
         guard let http = response as? HTTPURLResponse, (200..<300).contains(http.statusCode) else {
             throw URLError(.badServerResponse)
         }
+    }
+
+    private struct UploadResponse: Decodable {
+        let success: Bool
+        let data: UploadData
+
+        struct UploadData: Decodable {
+            let id: String
+            let url: String
+        }
+    }
+
+    func uploadImage(imageURL: URL, sessionToken: String) async throws -> String {
+        guard let url = URL(string: "\(Self.baseURL)/images") else {
+            throw URLError(.badURL)
+        }
+        let (imageData, _) = try await URLSession.shared.data(from: imageURL)
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.timeoutInterval = 30
+        request.setValue("Bearer \(sessionToken)", forHTTPHeaderField: "Authorization")
+        let form = MultipartFormData()
+        form.addFile(data: imageData, name: "file", fileName: "image.png", mimeType: "image/png")
+        request.httpBody = form.finalize()
+        request.setValue(form.contentType, forHTTPHeaderField: "Content-Type")
+        let (data, response) = try await URLSession.shared.data(for: request)
+        guard let http = response as? HTTPURLResponse, (200..<300).contains(http.statusCode) else {
+            throw URLError(.badServerResponse)
+        }
+        return try JSONDecoder().decode(UploadResponse.self, from: data).data.id
+    }
+}
+
+private final class MultipartFormData {
+    private let boundary = "Boundary-\(UUID().uuidString)"
+    private var body = Data()
+    var contentType: String { "multipart/form-data; boundary=\(boundary)" }
+
+    func addFile(data: Data, name: String, fileName: String, mimeType: String) {
+        body.append("--\(boundary)\r\n".data(using: .utf8)!)
+        body.append("Content-Disposition: form-data; name=\"\(name)\"; filename=\"\(fileName)\"\r\n".data(using: .utf8)!)
+        body.append("Content-Type: \(mimeType)\r\n\r\n".data(using: .utf8)!)
+        body.append(data)
+        body.append("\r\n".data(using: .utf8)!)
+    }
+
+    func finalize() -> Data {
+        body.append("--\(boundary)--\r\n".data(using: .utf8)!)
+        return body
     }
 }

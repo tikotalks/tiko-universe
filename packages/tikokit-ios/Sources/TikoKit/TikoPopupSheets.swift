@@ -620,6 +620,40 @@ public struct TikoColorModePickerSheet: View {
     }
 }
 
+@MainActor
+public final class TikoProfilePreferences: ObservableObject {
+    @Published public var avatarURL: String = ""
+    @Published public var favoriteColor: String = ""
+
+    private var subjectId: String?
+
+    public init() {}
+
+    public func load(for subjectId: String?) {
+        guard self.subjectId != subjectId else { return }
+        self.subjectId = subjectId
+        guard let id = subjectId, !id.isEmpty else {
+            avatarURL = ""
+            favoriteColor = ""
+            return
+        }
+        avatarURL = UserDefaults.standard.string(forKey: "tiko.avatarURL.\(id)") ?? ""
+        favoriteColor = UserDefaults.standard.string(forKey: "tiko.favoriteColor.\(id)") ?? ""
+    }
+
+    public func setAvatarURL(_ url: String) {
+        avatarURL = url
+        guard let id = subjectId, !id.isEmpty else { return }
+        UserDefaults.standard.set(url, forKey: "tiko.avatarURL.\(id)")
+    }
+
+    public func setFavoriteColor(_ color: String) {
+        favoriteColor = color
+        guard let id = subjectId, !id.isEmpty else { return }
+        UserDefaults.standard.set(color, forKey: "tiko.favoriteColor.\(id)")
+    }
+}
+
 public struct TikoAccountSheet: View {
     private let appName: String
     private let appColor: TikoAppColor
@@ -627,8 +661,7 @@ public struct TikoAccountSheet: View {
 
     @AppStorage("tiko.userName") private var userName = ""
     @AppStorage("tiko.userEmail") private var userEmail = ""
-    @AppStorage("tiko.avatarURL") private var storedAvatarURLString = ""
-    @AppStorage("tiko.favoriteColor") private var favoriteColorHex = ""
+    @ObservedObject private var profilePrefs: TikoProfilePreferences
 
     // Session state — drives which screen is shown
     @State private var isSignedIn = false
@@ -647,9 +680,10 @@ public struct TikoAccountSheet: View {
     private let identityClient = TikoIdentityClient()
     private let sessionStore = TikoDeviceSessionStore()
 
-    public init(appName: String, appColor: TikoAppColor, onClose: @escaping () -> Void) {
+    public init(appName: String, appColor: TikoAppColor, profilePrefs: TikoProfilePreferences, onClose: @escaping () -> Void) {
         self.appName = appName
         self.appColor = appColor
+        self._profilePrefs = ObservedObject(wrappedValue: profilePrefs)
         self.onClose = onClose
     }
 
@@ -678,7 +712,7 @@ public struct TikoAccountSheet: View {
             appColor: appColor,
             title: "Choose avatar"
         ) { url in
-            storedAvatarURLString = url.absoluteString
+            profilePrefs.setAvatarURL(url.absoluteString)
         }
         .alert("Delete this Tiko user?", isPresented: $showDeleteConfirmation) {
             Button("Delete", role: .destructive) { Task { await deleteAccount() } }
@@ -706,7 +740,7 @@ public struct TikoAccountSheet: View {
                             Circle().fill(profileFavoriteColor ?? appColor.palette.primary.opacity(0.18))
 
                             // Image (assumed transparent background, sits on the colour)
-                            if let url = URL(string: storedAvatarURLString), !storedAvatarURLString.isEmpty {
+                            if let url = URL(string: profilePrefs.avatarURL), !profilePrefs.avatarURL.isEmpty {
                                 AsyncImage(url: url) { phase in
                                     if case .success(let image) = phase {
                                         image.resizable().scaledToFit()
@@ -780,7 +814,10 @@ public struct TikoAccountSheet: View {
                 }
 
                 // Favourite colour
-                TikoColorSwatchPicker(appColor: appColor, hexValue: $favoriteColorHex)
+                TikoColorSwatchPicker(appColor: appColor, hexValue: Binding(
+                    get: { profilePrefs.favoriteColor },
+                    set: { profilePrefs.setFavoriteColor($0) }
+                ))
 
                 Button {
                     Task { await saveProfileName() }
@@ -992,25 +1029,12 @@ public struct TikoAccountSheet: View {
     // MARK: - Colour helpers
 
     private var profileFavoriteColor: Color? {
-        let h = favoriteColorHex.trimmingCharacters(in: CharacterSet.alphanumerics.inverted)
+        let h = profilePrefs.favoriteColor.trimmingCharacters(in: CharacterSet.alphanumerics.inverted)
         guard h.count == 6, let v = UInt64(h, radix: 16) else { return nil }
         return Color(
             red:   Double((v >> 16) & 0xFF) / 255,
             green: Double((v >> 8)  & 0xFF) / 255,
             blue:  Double(v         & 0xFF) / 255
-        )
-    }
-
-    private var favoriteColorBinding: Binding<Color> {
-        Binding(
-            get: { profileFavoriteColor ?? .orange },
-            set: { color in
-                let c = UIColor(color)
-                var r: CGFloat = 0, g: CGFloat = 0, b: CGFloat = 0
-                c.getRed(&r, green: &g, blue: &b, alpha: nil)
-                favoriteColorHex = String(format: "%02X%02X%02X",
-                                          Int(r * 255), Int(g * 255), Int(b * 255))
-            }
         )
     }
 
@@ -1068,6 +1092,7 @@ public struct TikoAccountSheet: View {
                 patch: TikoIdentityProfile(displayName: userName.trimmingCharacters(in: .whitespacesAndNewlines))
             )
             identityError = nil
+            onClose()
         } catch {
             identityError = "Could not save the profile. Please try again."
         }
@@ -1084,8 +1109,8 @@ public struct TikoAccountSheet: View {
             signedInEmail = nil
             userName = ""
             userEmail = ""
-            storedAvatarURLString = ""
-            favoriteColorHex = ""
+            profilePrefs.setAvatarURL("")
+            profilePrefs.setFavoriteColor("")
             emailInput = ""
             emailSent = false
             otpCode = ""
@@ -1429,9 +1454,9 @@ public extension View {
         tikoSettingsPopup(isPresented: isPresented, appColor: appColor) { EmptyView() }
     }
 
-    func tikoAccountPopup(isPresented: Binding<Bool>, appName: String, appColor: TikoAppColor) -> some View {
+    func tikoAccountPopup(isPresented: Binding<Bool>, appName: String, appColor: TikoAppColor, profilePrefs: TikoProfilePreferences) -> some View {
         tikoPopup(isPresented: isPresented) {
-            TikoAccountSheet(appName: appName, appColor: appColor) {
+            TikoAccountSheet(appName: appName, appColor: appColor, profilePrefs: profilePrefs) {
                 isPresented.wrappedValue = false
             }
         }

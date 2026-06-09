@@ -92,8 +92,22 @@ CREATE TABLE IF NOT EXISTS cards_tiles (
   speech TEXT NOT NULL,
   color_hex INTEGER NOT NULL DEFAULT 0,
   display_order INTEGER NOT NULL DEFAULT 0,
+  image_ref TEXT,
   FOREIGN KEY (collection_id) REFERENCES cards_collections(id) ON DELETE CASCADE
 );
 
 CREATE INDEX IF NOT EXISTS idx_cards_collections_order ON cards_collections(display_order, language_code);
 CREATE INDEX IF NOT EXISTS idx_cards_tiles_collection ON cards_tiles(collection_id, display_order);
+
+CREATE TABLE IF NOT EXISTS user_images (
+  id TEXT PRIMARY KEY,
+  r2_key TEXT NOT NULL,
+  content_type TEXT NOT NULL DEFAULT 'image/png',
+  file_size_bytes INTEGER,
+  width INTEGER,
+  height INTEGER,
+  uploaded_by TEXT,
+  created_at TEXT NOT NULL DEFAULT (datetime('now'))
+);
+
+CREATE INDEX IF NOT EXISTS idx_user_images_uploaded_by ON user_images(uploaded_by);

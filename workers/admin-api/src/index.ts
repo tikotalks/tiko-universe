@@ -37,7 +37,7 @@ interface D1Database {
 
 export interface Env extends AuthEnv {
   AUTH_DB: D1Database
-  APP_DB: D1Database
+  APP_DB?: D1Database
   TOKEN_PEPPER: string
   ADMIN_EMAIL?: string
   APP_API_URL?: string
@@ -61,6 +61,8 @@ interface AdminUserListItem {
   roles: string[]
   createdAt: string
   updatedAt: string
+  lastSeenAt: string | null
+  hasData: boolean
 }
 
 const ADMIN_EMAIL = 'me@sil.mt'
@@ -111,25 +113,27 @@ export default {
         data: {
           appApiUrl: (env.APP_API_URL ?? 'https://dev.api.tikotalks.com/v1/apps').replace(/\/$/, ''),
           generationApiUrl: (env.GENERATION_API_URL ?? 'https://dev-api.tikotalks.com/v1/generation').replace(/\/$/, ''),
-          mediaApiUrl: (env.MEDIA_API_URL ?? 'https://media-api.tikotalks.com/v1').replace(/\/$/, ''),
+          mediaApiUrl: (env.MEDIA_API_URL ?? 'https://media.tikoapi.org/v1').replace(/\/$/, ''),
           communicationApiUrl: (env.COMMUNICATION_API_URL ?? 'https://dev.api.tikotalks.com/v1/communication').replace(/\/$/, ''),
         },
       })
     }
 
     if (path === '/v1/admin/apps/config' && request.method === 'GET') {
-      return listAppConfigs(env.APP_DB)
+      const appDb = requireAppDb(env)
+      return listAppConfigs(appDb)
     }
 
     const appConfigMatch = path.match(/^\/v1\/admin\/apps\/config\/([^/]+)$/)
     if (appConfigMatch && request.method === 'PUT') {
-      return writeAppConfig(request, env.APP_DB, decodeURIComponent(appConfigMatch[1]))
+      const appDb = requireAppDb(env)
+      return writeAppConfig(request, appDb, decodeURIComponent(appConfigMatch[1]))
     }
 
     if (path === '/v1/admin/users' && request.method === 'GET') {
       const query = url.searchParams.get('q') ?? ''
-      const users = await listUsers(env.AUTH_DB, query)
-      return json({ data: { users: await ensureAdminInUsers(env.AUTH_DB, users, admin, query) } })
+      const users = await listUsers(env.AUTH_DB, env.APP_DB, query)
+      return json({ data: { users: await ensureAdminInUsers(env.AUTH_DB, env.APP_DB, users, admin, query) } })
     }
 
     const assignRoleMatch = path.match(/^\/v1\/admin\/users\/([^/]+)\/roles$/)
@@ -147,6 +151,10 @@ export default {
     }
 
     return apiError('not_found', 'Route not found.', 404)
+  },
+
+  async scheduled(_event: { cron: string }, env: Env): Promise<void> {
+    await cleanupAnonymousSubjects(env)
   },
 }
 
@@ -295,53 +303,53 @@ async function assignRole(db: D1Database, subjectId: string, role: string, sourc
     .run()
 }
 
-async function listUsers(db: D1Database, query: string): Promise<AdminUserListItem[]> {
+async function listUsers(authDb: D1Database, appDb: D1Database | undefined, query: string): Promise<AdminUserListItem[]> {
   const q = `%${query.trim().toLowerCase()}%`
-  const { results } = await db.prepare(`
+  const { results } = await authDb.prepare(`
     SELECT s.id, s.kind, a.email_plain AS email, s.created_at, s.updated_at,
+      MAX(COALESCE(sess.last_seen_at, sess.created_at)) AS last_seen_at,
       COALESCE(json_group_array(r.role) FILTER (WHERE r.role IS NOT NULL), '[]') AS roles
     FROM identity_subjects s
-    LEFT JOIN identity_accounts a ON a.subject_id = s.id AND a.disabled_at IS NULL
+    INNER JOIN identity_accounts a ON a.subject_id = s.id AND a.disabled_at IS NULL AND a.email_hash IS NOT NULL
+    LEFT JOIN identity_sessions sess ON sess.subject_id = s.id AND sess.revoked_at IS NULL
     LEFT JOIN identity_role_assignments r ON r.subject_id = s.id AND r.product = ? AND r.revoked_at IS NULL
     WHERE s.product = ? AND s.disabled_at IS NULL
       AND (? = '%%' OR lower(s.id) LIKE ? OR lower(s.kind) LIKE ? OR lower(COALESCE(a.email_plain, '')) LIKE ?)
     GROUP BY s.id, s.kind, a.email_plain, s.created_at, s.updated_at
-    ORDER BY s.created_at DESC
+    ORDER BY last_seen_at DESC, s.created_at DESC
     LIMIT 100
   `)
     .bind(PRODUCT, PRODUCT, q, q, q, q)
-    .all<{ id: string; kind: string; email: string | null; created_at: string; updated_at: string; roles: string | null }>()
+    .all<{ id: string; kind: string; email: string | null; created_at: string; updated_at: string; last_seen_at: string | null; roles: string | null }>()
 
-  return results.map(normalizeUserRow)
+  const users = results.map(normalizeUserRow)
+  const dataSet = await subjectsWithData(appDb, users.map((u) => u.id))
+  return users.map((u) => ({ ...u, hasData: dataSet.has(u.id) }))
 }
 
-async function ensureAdminInUsers(db: D1Database, users: AdminUserListItem[], admin: AdminSession, query: string): Promise<AdminUserListItem[]> {
+async function ensureAdminInUsers(authDb: D1Database, appDb: D1Database | undefined, users: AdminUserListItem[], admin: AdminSession, query: string): Promise<AdminUserListItem[]> {
   if (users.some((user) => user.id === admin.userId)) return users
   if (!matchesAdminQuery(admin, query)) return users
 
-  const row = await db.prepare(`
+  const row = await authDb.prepare(`
     SELECT s.id, s.kind, a.email_plain AS email, s.created_at, s.updated_at,
+      MAX(COALESCE(sess.last_seen_at, sess.created_at)) AS last_seen_at,
       COALESCE(json_group_array(r.role) FILTER (WHERE r.role IS NOT NULL), '[]') AS roles
     FROM identity_subjects s
     LEFT JOIN identity_accounts a ON a.subject_id = s.id AND a.disabled_at IS NULL
+    LEFT JOIN identity_sessions sess ON sess.subject_id = s.id AND sess.revoked_at IS NULL
     LEFT JOIN identity_role_assignments r ON r.subject_id = s.id AND r.product = ? AND r.revoked_at IS NULL
     WHERE s.id = ? AND s.disabled_at IS NULL
     GROUP BY s.id, s.kind, a.email_plain, s.created_at, s.updated_at
     LIMIT 1
   `)
     .bind(PRODUCT, admin.userId)
-    .first<{ id: string; kind: string; email: string | null; created_at: string; updated_at: string; roles: string | null }>()
+    .first<{ id: string; kind: string; email: string | null; created_at: string; updated_at: string; last_seen_at: string | null; roles: string | null }>()
 
+  const dataSet = row ? await subjectsWithData(appDb, [admin.userId]) : new Set<string>()
   const adminUser = row
-    ? normalizeUserRow(row)
-    : {
-        id: admin.userId,
-        kind: 'account',
-        email: admin.email,
-        roles: admin.roles as AdminUserListItem['roles'],
-        createdAt: '',
-        updatedAt: '',
-      }
+    ? { ...normalizeUserRow(row), hasData: dataSet.has(admin.userId) }
+    : { id: admin.userId, kind: 'account', email: admin.email, roles: admin.roles as AdminUserListItem['roles'], createdAt: '', updatedAt: '', lastSeenAt: null, hasData: false }
 
   return [adminUser, ...users]
 }
@@ -352,7 +360,7 @@ function matchesAdminQuery(admin: AdminSession, query: string): boolean {
   return [admin.userId, admin.email, ...admin.roles].some((value) => value.toLowerCase().includes(normalized))
 }
 
-function normalizeUserRow(row: { id: string; kind: string; email: string | null; created_at: string; updated_at: string; roles: string | null }): AdminUserListItem {
+function normalizeUserRow(row: { id: string; kind: string; email: string | null; created_at: string; updated_at: string; last_seen_at?: string | null; roles: string | null }): AdminUserListItem {
   return {
     id: row.id,
     kind: row.kind,
@@ -360,7 +368,74 @@ function normalizeUserRow(row: { id: string; kind: string; email: string | null;
     roles: parseRoles(row.roles),
     createdAt: row.created_at,
     updatedAt: row.updated_at,
+    lastSeenAt: row.last_seen_at ?? null,
+    hasData: false,
   }
+}
+
+async function subjectsWithData(db: D1Database | undefined, subjectIds: string[]): Promise<Set<string>> {
+  if (!db || subjectIds.length === 0) return new Set()
+  const placeholders = subjectIds.map(() => '?').join(',')
+  const { results } = await db.prepare(`
+    SELECT DISTINCT user_id FROM app_settings WHERE user_id IN (${placeholders})
+    UNION SELECT DISTINCT user_id FROM app_state WHERE user_id IN (${placeholders})
+    UNION SELECT DISTINCT user_id FROM app_progress WHERE user_id IN (${placeholders})
+  `).bind(...subjectIds, ...subjectIds, ...subjectIds).all<{ user_id: string }>()
+  return new Set(results.map((r) => r.user_id))
+}
+
+async function cleanupAnonymousSubjects(env: Env): Promise<void> {
+  if (!env.APP_DB) return
+  const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString()
+  const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString()
+
+  // Find unverified subjects whose last session is older than 30 days (we'll tighten per-subject below)
+  const { results } = await env.AUTH_DB.prepare(`
+    SELECT s.id, MAX(COALESCE(sess.last_seen_at, sess.created_at, s.created_at)) AS last_seen
+    FROM identity_subjects s
+    LEFT JOIN identity_accounts a ON a.subject_id = s.id AND a.disabled_at IS NULL
+    LEFT JOIN identity_sessions sess ON sess.subject_id = s.id AND sess.revoked_at IS NULL
+    WHERE s.product = ? AND s.disabled_at IS NULL
+      AND NOT EXISTS (
+        SELECT 1 FROM identity_accounts ia
+        WHERE ia.subject_id = s.id AND ia.email_verified_at IS NOT NULL AND ia.disabled_at IS NULL
+      )
+    GROUP BY s.id
+    HAVING MAX(COALESCE(sess.last_seen_at, sess.created_at, s.created_at)) < ? OR MAX(COALESCE(sess.last_seen_at, sess.created_at, s.created_at)) IS NULL
+  `).bind(PRODUCT, thirtyDaysAgo).all<{ id: string; last_seen: string | null }>()
+
+  if (results.length === 0) return
+
+  const dataSet = await subjectsWithData(env.APP_DB, results.map((r) => r.id))
+
+  for (const { id, last_seen } of results) {
+    const hasData = dataSet.has(id)
+    const threshold = hasData ? thirtyDaysAgo : oneDayAgo
+    if (!last_seen || last_seen < threshold) {
+      await deleteSubjectData(env.APP_DB, id)
+      await deleteSubjectIdentity(env.AUTH_DB, id)
+    }
+  }
+}
+
+function requireAppDb(env: Env): D1Database {
+  if (!env.APP_DB) throw new Error('app_db_not_configured')
+  return env.APP_DB
+}
+
+async function deleteSubjectData(db: D1Database, subjectId: string): Promise<void> {
+  await db.prepare('DELETE FROM app_settings WHERE user_id = ?').bind(subjectId).run()
+  await db.prepare('DELETE FROM app_state WHERE user_id = ?').bind(subjectId).run()
+  await db.prepare('DELETE FROM app_progress WHERE user_id = ?').bind(subjectId).run()
+}
+
+async function deleteSubjectIdentity(db: D1Database, subjectId: string): Promise<void> {
+  await db.prepare('DELETE FROM identity_role_assignments WHERE subject_id = ?').bind(subjectId).run()
+  await db.prepare('DELETE FROM identity_sessions WHERE subject_id = ?').bind(subjectId).run()
+  await db.prepare('DELETE FROM identity_email_challenges WHERE subject_id = ?').bind(subjectId).run()
+  await db.prepare('DELETE FROM identity_accounts WHERE subject_id = ?').bind(subjectId).run()
+  await db.prepare('DELETE FROM identity_devices WHERE subject_id = ?').bind(subjectId).run()
+  await db.prepare('DELETE FROM identity_subjects WHERE id = ?').bind(subjectId).run()
 }
 
 async function assignUserRole(request: Request, db: D1Database, admin: AdminSession, subjectId: string): Promise<Response> {

@@ -612,7 +612,7 @@ private struct AddCategorySheet: View {
     @EnvironmentObject private var i18n: TikoI18n
 
     @State private var title = ""
-    @State private var selectedColor: UInt32 = CardColorPicker.colors[0]
+    @State private var selectedColor: UInt32 = TikoColors.allHex[0]
     @State private var selectedImageURL: URL?
     @State private var showingImagePicker = false
 
@@ -828,7 +828,7 @@ private struct EditCollectionSheet: View {
                     if isDefault && isAdmin {
                         showingDefaultConfirmation = true
                     } else {
-                        saveChanges()
+                        saveChanges(asDefault: false)
                     }
                 }
             }
@@ -837,7 +837,8 @@ private struct EditCollectionSheet: View {
             selectedImageURL = url
         }
         .alert("Update default collection?", isPresented: $showingDefaultConfirmation) {
-            Button("Update for everyone", role: .destructive) { saveChanges() }
+            Button("Update for everyone", role: .destructive) { saveChanges(asDefault: true) }
+            Button("Just for me") { saveChanges(asDefault: false) }
             Button("Cancel", role: .cancel) {}
         } message: {
             Text("This changes the default \"\(collection.title)\" collection for all users.")
@@ -858,12 +859,13 @@ private struct EditCollectionSheet: View {
         }
     }
 
-    private func saveChanges() {
+    private func saveChanges(asDefault: Bool) {
         store.updateCollection(
             id: collection.id,
             title: title.trimmingCharacters(in: .whitespaces),
             colorHex: selectedColor,
-            imageURL: selectedImageURL
+            imageURL: selectedImageURL,
+            saveAsDefault: asDefault
         )
         onClose()
     }
@@ -1071,20 +1073,14 @@ private func defaultWarningBanner() -> some View {
 // MARK: - Color picker
 
 private struct CardColorPicker: View {
-    static let colors: [UInt32] = [
-        0xFF6B6B, 0xFF922B, 0xFFD43B, 0x69DB7C,
-        0x4DABF7, 0x748FFC, 0xCC5DE8, 0xF783AC,
-        0x63E6BE, 0xA9E34B, 0x868E96, 0x2C2C2E,
-    ]
-
     @Binding var selectedColor: UInt32
 
     var body: some View {
         LazyVGrid(
-            columns: Array(repeating: GridItem(.flexible(), spacing: 10), count: 6),
+            columns: Array(repeating: GridItem(.flexible(), spacing: 10), count: 5),
             spacing: 10
         ) {
-            ForEach(Self.colors, id: \.self) { color in
+            ForEach(TikoColors.allHex, id: \.self) { color in
                 ZStack {
                     Circle()
                         .fill(Color(hex: color))

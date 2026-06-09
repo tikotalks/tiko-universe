@@ -45,7 +45,7 @@ interface QueueItem {
 const page = useBemm('image-page', { return: 'string', includeBaseClass: true })
 const card = useBemm('image-card', { return: 'string', includeBaseClass: true })
 
-const { generateImage, listImages, promoteImage, deleteImage, enrichImage, editImage, upscaleImage, imageSrc } = useImageGeneration()
+const { generateImage, listImages, promoteImage, pushToMedia, deleteImage, enrichImage, editImage, upscaleImage, imageSrc } = useImageGeneration()
 
 const activeTab = ref<Tab>('library')
 
@@ -62,6 +62,7 @@ const size = ref<'1024x1024' | '1024x1792' | '1792x1024'>('1024x1024')
 const quality = ref<'standard' | 'hd'>('standard')
 const style = ref<'vivid' | 'natural'>('vivid')
 const upscalingId = ref<string | null>(null)
+const pushingToMediaIds = ref<Set<string>>(new Set())
 
 const queue = ref<QueueItem[]>([])
 const isProcessingQueue = ref(false)
@@ -132,6 +133,20 @@ async function onPromote(item: ImageGalleryItem) {
     draftItems.value = draftItems.value.filter(i => i.id !== item.id)
   } catch (e) {
     galleryError.value = e instanceof Error ? e.message : 'Could not promote image.'
+  }
+}
+
+async function onPushToMedia(item: ImageGalleryItem) {
+  pushingToMediaIds.value = new Set([...pushingToMediaIds.value, item.id])
+  galleryError.value = null
+  try {
+    await pushToMedia(item)
+  } catch (e) {
+    galleryError.value = e instanceof Error ? e.message : 'Could not send image to Tiko Media.'
+  } finally {
+    const next = new Set(pushingToMediaIds.value)
+    next.delete(item.id)
+    pushingToMediaIds.value = next
   }
 }
 
@@ -467,6 +482,7 @@ onMounted(() => { void loadLibrary() })
             <p v-if="item.description" :class="card('description')">{{ item.description }}</p>
             <p v-else :class="card('prompt')">{{ item.revisedPrompt || item.prompt }}</p>
             <div :class="card('actions')">
+              <Button size="small" :loading="pushingToMediaIds.has(item.id)" :disabled="pushingToMediaIds.has(item.id)" @click="onPushToMedia(item)">Send to Tiko Media</Button>
               <Button size="small" variant="outline" :loading="enrichingIds.has(item.id)" @click="onEnrich(item, 'library')">Enrich</Button>
               <Button size="small" variant="outline" @click="openEdit(item)">Edit</Button>
               <Button variant="ghost" size="small" :href="imageSrc(item)" target="_blank" rel="noreferrer">Open</Button>
@@ -681,6 +697,8 @@ onMounted(() => { void loadLibrary() })
 </template>
 
 <style lang="scss">
+@use '../styles/mixins' as *;
+
 .image-page {
   display: flex;
   flex-direction: column;
@@ -951,6 +969,8 @@ onMounted(() => { void loadLibrary() })
     object-fit: cover;
     border-radius: var(--border-radius-xs);
     flex-shrink: 0;
+    --block-size: 0.5em;
+    @include checkeredBackground;
   }
 
   &__form {
@@ -1056,7 +1076,7 @@ onMounted(() => { void loadLibrary() })
     aspect-ratio: 1;
     object-fit: cover;
     border-radius: var(--border-radius-xs);
-    background: color-mix(in srgb, var(--color-foreground), transparent 92%);
+    @include checkeredBackground;
   }
 
   &__preview-meta {
@@ -1092,8 +1112,8 @@ onMounted(() => { void loadLibrary() })
     width: 100%;
     aspect-ratio: 1;
     object-fit: cover;
-    background: color-mix(in srgb, var(--color-foreground), transparent 92%);
     display: block;
+    @include checkeredBackground;
   }
 
   &__badge {
@@ -1236,7 +1256,7 @@ onMounted(() => { void loadLibrary() })
     position: relative;
     border-radius: var(--border-radius-s);
     overflow: hidden;
-    background: color-mix(in srgb, var(--color-foreground), transparent 92%);
+    @include checkeredBackground;
   }
 
   &__image {

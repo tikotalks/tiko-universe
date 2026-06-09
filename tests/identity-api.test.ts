@@ -159,6 +159,13 @@ class MemoryD1Database {
       const account = [...this.accounts.values()].find((row) => row.product === values[0] && row.email_hash === values[1] && !row.disabled_at)
       return new MemoryResult(account ? [account] : [])
     }
+    if (normalized.startsWith('UPDATE identity_accounts SET email_plain')) {
+      const [emailPlain, subjectId, product] = values
+      for (const row of this.accounts.values()) {
+        if (row.subject_id === subjectId && row.product === product && !row.disabled_at) Object.assign(row, { email_plain: emailPlain })
+      }
+      return new MemoryResult()
+    }
     if (normalized.startsWith('UPDATE identity_accounts SET email_verified_at')) {
       const [verifiedAt, updatedAt, id] = values
       Object.assign(this.accounts.get(String(id)) ?? {}, { email_verified_at: verifiedAt, updated_at: updatedAt })
@@ -367,7 +374,7 @@ describe('identity-api Ankore contract', () => {
     expect(identityConfig.tablePrefix).toBe('identity_')
     expect(identityConfig.session).toMatchObject({ bearer: true, cookie: true, ttlDays: 180, rotateOnRefresh: true, cookieName: 'tiko_session' })
     expect(identityConfig.device).toMatchObject({ required: true, autoCreateSubject: true })
-    expect(identityConfig.email).toMatchObject({ enabled: true, storage: 'hash', purposes: ['recover'] })
+    expect(identityConfig.email).toMatchObject({ enabled: true, storage: 'plain', purposes: ['recover'] })
     expect(identityConfig.cors.allowedOrigins).toContain('https://admin.tikoapps.org')
     expect(identityConfig.cors.allowedOrigins).toContain('tiko://native')
   })

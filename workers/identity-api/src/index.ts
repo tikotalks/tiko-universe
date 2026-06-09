@@ -52,7 +52,7 @@ const baseConfig = {
   },
   email: {
     enabled: true,
-    storage: 'hash',
+    storage: 'plain',
     purposes: ['recover']
   },
   accounts: {
@@ -877,6 +877,15 @@ async function withTikoSessionContract(request: AnyRequest, env: Env, response: 
     emailVerified
   }
   const account = body.account ? { ...body.account, accountType } : body.account ?? null
+
+  // Persist plain email so admin user lookup can display/search by email.
+  // Ankore normalises emails before hashing and never stores plain text — we capture it here on each session.
+  if (body.account?.email && body.subject?.id) {
+    env.IDENTITY_DB.prepare(
+      'UPDATE identity_accounts SET email_plain = ? WHERE subject_id = ? AND product = ? AND disabled_at IS NULL'
+    ).bind(String(body.account.email), String(body.subject.id), 'tiko').run().catch(() => {})
+  }
+
   const nextBody: Record<string, any> = { ...body, roles, user, account, runtime, capabilities }
   if (body.session) {
     nextBody.session = { ...body.session, loginMethod: await deriveLoginMethod(request, body, accountType) }

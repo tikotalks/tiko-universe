@@ -14,6 +14,8 @@ export interface AdminManagedUser {
   roles: TikoRole[]
   createdAt: string
   updatedAt: string
+  lastSeenAt: string | null
+  hasData: boolean
 }
 
 export interface AdminConfig {

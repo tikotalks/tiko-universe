@@ -44,6 +44,7 @@ struct CommunicationCard: Identifiable, Codable, Equatable, Sendable {
     var title: String
     var speech: String
     var imageURL: URL?
+    var imageRef: String?
     var colorHex: UInt32
 }
 

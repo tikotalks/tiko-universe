@@ -15,6 +15,7 @@ public enum TikoAppKey: String, Sendable {
 
 // MARK: - TikoI18n
 
+@MainActor
 public final class TikoI18n: ObservableObject {
     public let app: TikoAppKey
     @Published public private(set) var languageCode: String
@@ -105,10 +106,8 @@ public final class TikoI18n: ObservableObject {
               let http = response as? HTTPURLResponse, (200..<300).contains(http.statusCode),
               let result = try? JSONDecoder().decode(TranslationsResponse.self, from: data)
         else { return }
-        await MainActor.run {
-            fetchedLanguages.insert(language)
-            addBundle(languageCode: language, translations: result.translations)
-        }
+        fetchedLanguages.insert(language)
+        addBundle(languageCode: language, translations: result.translations)
     }
 }
 
