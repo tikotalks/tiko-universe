@@ -84,6 +84,11 @@ const DEFAULT_ALLOWED_ORIGINS = [
 ]
 
 const CACHE_TTL_SECONDS = 300
+const CACHE_KEY_CARDS_COLLECTIONS = 'cards:collections'
+
+async function invalidateCardsCache(env: Env): Promise<void> {
+  if (env.CONTENT_CACHE) await (env.CONTENT_CACHE as KVNamespace & { delete(key: string): Promise<void> }).delete(CACHE_KEY_CARDS_COLLECTIONS)
+}
 
 function allowedOrigins(env: Env): string[] {
   return (env.ALLOWED_ORIGINS ?? DEFAULT_ALLOWED_ORIGINS.join(','))
@@ -533,6 +538,7 @@ async function handlePostCards(request: Request, env: Env, segments: string[]): 
       await env.CONTENT_DB.prepare(
         'INSERT INTO cards_tiles (id, collection_id, title, speech, color_hex, display_order) VALUES (?, ?, ?, ?, ?, ?)',
       ).bind(id, collectionId, title, speech, colorHex, order).run()
+      await invalidateCardsCache(env)
       const newCard: CardTile = { id, title, speech, colorHex, order }
       return json(request, env, { success: true, data: newCard }, 201)
     }
@@ -594,7 +600,7 @@ async function handleGet(request: Request, env: Env, segments: string[]): Promis
       return json(request, env, { success: true, data }, 200, { 'Cache-Control': 'no-store' })
     }
 
-    const data = await cached(request, env, 'cards:collections', () => getCardsCollections(env))
+    const data = await cached(request, env, CACHE_KEY_CARDS_COLLECTIONS, () => getCardsCollections(env))
     return json(request, env, { success: true, data })
   }
 
@@ -674,6 +680,7 @@ export default {
       }
       try {
         const result = await putAdminCardsCollections(env, body.collections as CardCollection[])
+        await invalidateCardsCache(env)
         return json(request, env, result)
       } catch (err) {
         return error(request, env, 'bad_request', err instanceof Error ? err.message : 'Failed to update collections', 400)
@@ -729,6 +736,7 @@ async function handlePutCards(request: Request, env: Env, segments: string[]): P
       if (imageURL !== undefined) { sets.push('media_categories = ?') && values.push(JSON.stringify([imageURL])) }
       values.push(collectionId)
       await env.CONTENT_DB.prepare(`UPDATE cards_collections SET ${sets.join(', ')} WHERE id = ?`).bind(...values).run()
+      await invalidateCardsCache(env)
       const updated: CardCollection = { id: collectionId, title, colorHex, order: 0, mediaCategories: imageURL ? [imageURL] : [], ...(imageURL ? { imageURL } : {}), cards: [] }
       return json(request, env, { success: true, data: updated })
     }
@@ -767,6 +775,7 @@ async function handlePutCards(request: Request, env: Env, segments: string[]): P
         return error(request, env, 'forbidden', 'Admin role required to edit default cards', 403)
       }
       await env.CONTENT_DB.prepare('UPDATE cards_tiles SET title = ?, speech = ?, color_hex = ? WHERE id = ?').bind(title, speech, colorHex, cardId).run()
+      await invalidateCardsCache(env)
       const updatedCard: CardTile = { id: cardId, title, speech, colorHex, order: 0 }
       return json(request, env, { success: true, data: updatedCard })
     }
@@ -809,6 +818,7 @@ async function handleDeleteCards(request: Request, env: Env, segments: string[])
       }
       await env.CONTENT_DB.prepare('DELETE FROM cards_tiles WHERE collection_id = ?').bind(collectionId).run()
       await env.CONTENT_DB.prepare('DELETE FROM cards_collections WHERE id = ?').bind(collectionId).run()
+      await invalidateCardsCache(env)
       return json(request, env, { success: true })
     }
 
@@ -833,6 +843,7 @@ async function handleDeleteCards(request: Request, env: Env, segments: string[])
         return error(request, env, 'forbidden', 'Admin role required to delete default cards', 403)
       }
       await env.CONTENT_DB.prepare('DELETE FROM cards_tiles WHERE id = ? AND collection_id = ?').bind(cardId, collectionId).run()
+      await invalidateCardsCache(env)
       return json(request, env, { success: true })
     }
 
@@ -883,6 +894,7 @@ async function handlePromoteCollection(request: Request, env: Env, _segments: st
     }
   }
 
+  await invalidateCardsCache(env)
   return json(request, env, { success: true, data: { ...col, id } })
 }
 
