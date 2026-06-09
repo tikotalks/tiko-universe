@@ -156,6 +156,17 @@ function parseStringArray(value: unknown): string[] {
   }
 }
 
+function parseFormStringArray(value: FormDataEntryValue | null): string[] {
+  if (typeof value !== 'string') return []
+  try {
+    const parsed = JSON.parse(value)
+    if (Array.isArray(parsed)) return parsed.map(String).map(item => item.trim()).filter(Boolean)
+  } catch {
+    return value.split(',').map(item => item.trim()).filter(Boolean)
+  }
+  return []
+}
+
 function firstCategory(value: unknown): string | undefined {
   const categories = parseStringArray(value)
   return categories[0]
@@ -454,6 +465,10 @@ async function handleMediaUpload(request: Request, env: Env): Promise<Response> 
     const duration = formData.get('duration') as string | null
     const widthParam = formData.get('width') as string | null
     const heightParam = formData.get('height') as string | null
+    const titleParam = (formData.get('title') as string | null)?.trim()
+    const descriptionParam = (formData.get('description') as string | null)?.trim()
+    const categoriesParam = parseFormStringArray(formData.get('categories'))
+    const tagsParam = parseFormStringArray(formData.get('tags'))
 
     if (!file) return err('No file provided')
 
@@ -491,6 +506,11 @@ async function handleMediaUpload(request: Request, env: Env): Promise<Response> 
     }
 
     // Fallback title
+    if (titleParam) metadata.title = titleParam
+    if (descriptionParam) metadata.description = descriptionParam
+    if (categoriesParam.length) metadata.categories = categoriesParam
+    if (tagsParam.length) metadata.tags = tagsParam
+
     if (!metadata.title) {
       metadata.title = nameWithoutExt
         .replace(/[-_]/g, ' ')

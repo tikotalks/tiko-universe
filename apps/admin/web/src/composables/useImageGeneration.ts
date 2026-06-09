@@ -50,7 +50,7 @@ export function useImageGeneration() {
   }
 
   function mediaBaseUrl() {
-    return (config.value?.mediaApiUrl ?? 'https://media.tikoapi.org/v1/media').replace(/\/$/, '')
+    return (config.value?.mediaApiUrl ?? 'https://media.tikoapi.org/v1').replace(/\/$/, '')
   }
 
   function authHeaders(extra: Record<string, string> = {}): Record<string, string> {
@@ -103,6 +103,12 @@ export function useImageGeneration() {
 
     const form = new FormData()
     form.append('file', new File([blob], filename, { type: 'image/png' }))
+    if (item.title) form.append('title', item.title)
+    if (item.description) form.append('description', item.description)
+    if (item.category) form.append('categories', JSON.stringify([item.category]))
+    if (item.tags.length) form.append('tags', JSON.stringify(item.tags))
+    if (item.width) form.append('width', String(item.width))
+    if (item.height) form.append('height', String(item.height))
 
     const uploadUrl = `${mediaBaseUrl()}/media/upload`
     const uploadResponse = await fetch(uploadUrl, {
@@ -164,5 +170,5 @@ export function useImageGeneration() {
     return body.data
   }
 
-  return { generateImage, listImages, promoteImage, deleteImage, enrichImage, editImage, upscaleImage, imageSrc }
+  return { generateImage, listImages, promoteImage, pushToMedia, deleteImage, enrichImage, editImage, upscaleImage, imageSrc }
 }

@@ -1,7 +1,8 @@
 -- Media table (ported from media-cache / media-upload)
 CREATE TABLE IF NOT EXISTS media (
   id TEXT PRIMARY KEY,
-  file_name TEXT NOT NULL,
+  name TEXT,
+  filename TEXT NOT NULL,
   file_size INTEGER NOT NULL,
   mime_type TEXT NOT NULL,
   width INTEGER,
@@ -9,10 +10,12 @@ CREATE TABLE IF NOT EXISTS media (
   alt_text TEXT,
   title TEXT,
   description TEXT,
-  folder TEXT,
+  categories TEXT NOT NULL DEFAULT '[]',
   tags TEXT NOT NULL DEFAULT '[]',
   is_private INTEGER NOT NULL DEFAULT 0 CHECK (is_private IN (0, 1)),
   original_url TEXT NOT NULL,
+  thumbnail_url TEXT,
+  medium_url TEXT,
   created_at TEXT NOT NULL,
   updated_at TEXT NOT NULL
 );
