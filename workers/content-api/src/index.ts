@@ -886,7 +886,7 @@ async function handlePutCards(request: Request, env: Env, segments: string[]): P
     const collectionId = segments[3]
     const isDefault = !collectionId.startsWith('user_')
 
-    let body: { title?: unknown; colorHex?: unknown; imageURL?: unknown }
+    let body: { title?: unknown; colorHex?: unknown; imageURL?: unknown; saveAsDefault?: unknown }
     try { body = (await request.json()) as typeof body } catch {
       return error(request, env, 'bad_request', 'Request body must be valid JSON', 400)
     }
@@ -895,10 +895,13 @@ async function handlePutCards(request: Request, env: Env, segments: string[]): P
     if (typeof body.colorHex !== 'number') return error(request, env, 'bad_request', 'colorHex is required', 400)
     const colorHex = body.colorHex
     const imageURL = typeof body.imageURL === 'string' && body.imageURL ? body.imageURL : undefined
+    const saveAsDefault = body.saveAsDefault === true
 
     if (isDefault) {
-      if (!(await verifyAdminFromSession(env, sessionToken))) {
-        // Non-admin: store override in user state so it persists and is merged on next load
+      const isAdmin = saveAsDefault && await verifyAdminFromSession(env, sessionToken)
+
+      if (!isAdmin) {
+        // Non-admin or "just for me": store override in user state so it persists and is merged on next load
         const current = await getUserCardsState(env, sessionToken)
         if (!current) return error(request, env, 'unauthorized', 'Unauthorized', 401)
 
@@ -925,14 +928,28 @@ async function handlePutCards(request: Request, env: Env, segments: string[]): P
         if (!ok) return error(request, env, 'internal_error', 'Failed to save collection', 500)
         return json(request, env, { success: true, data: updated })
       }
-      // Admin: update global defaults in content-DB
-      const sets: string[] = ['title = ?', 'color_hex = ?']
-      const values: unknown[] = [title, colorHex]
-      if (imageURL !== undefined) { sets.push('media_categories = ?') && values.push(JSON.stringify([imageURL])) }
-      values.push(collectionId)
-      await env.CONTENT_DB.prepare(`UPDATE cards_collections SET ${sets.join(', ')} WHERE id = ?`).bind(...values).run()
+
+      // Admin "update for everyone": update global defaults via app-api
+      if (!env.APP_API_URL) return error(request, env, 'not_configured', 'APP_API_URL not set', 503)
+      const appBase = env.APP_API_URL.replace(/\/$/, '')
+      const defaultsResp = await fetch(`${appBase}/v1/apps/defaults/cards/state`)
+      const defaultsBody = defaultsResp.ok ? (await defaultsResp.json() as { state?: { collections?: unknown[] }; version?: number }) : null
+      const existingDefaults = Array.isArray(defaultsBody?.state?.collections) ? (defaultsBody!.state!.collections as Array<Record<string, unknown>>) : []
+      const existingVersion = typeof defaultsBody?.version === 'number' ? defaultsBody!.version : 0
+
+      const updatedDefaults = existingDefaults.map(c =>
+        c.id === collectionId ? { ...c, title, color: `#${colorHex.toString(16).padStart(6, '0')}`, ...(imageURL !== undefined ? { image: imageURL } : {}) } : c
+      )
+
+      const putResp = await fetch(`${appBase}/v1/apps/defaults/cards/state`, {
+        method: 'PUT',
+        headers: { Authorization: `Bearer ${sessionToken}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ state: { collections: updatedDefaults }, version: existingVersion }),
+      })
+      if (!putResp.ok) return error(request, env, 'internal_error', 'Failed to update global defaults', 500)
       await invalidateCardsCache(env)
-      const updated: CardCollection = { id: collectionId, title, colorHex, order: 0, mediaCategories: imageURL ? [imageURL] : [], ...(imageURL ? { imageURL } : {}), cards: [] }
+
+      const updated: CardCollection = { id: collectionId, title, colorHex, order: 0, mediaCategories: [], ...(imageURL ? { imageURL } : {}), cards: [] }
       return json(request, env, { success: true, data: updated })
     }
 

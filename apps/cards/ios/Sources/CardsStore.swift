@@ -113,12 +113,12 @@ final class CardsStore: ObservableObject {
         collections.move(fromOffsets: IndexSet(integer: from), toOffset: to > from ? to + 1 : to)
     }
 
-    func updateCollection(id: String, title: String, colorHex: UInt32, imageURL: URL?) {
+    func updateCollection(id: String, title: String, colorHex: UInt32, imageURL: URL?, saveAsDefault: Bool = false) {
         guard let i = collections.firstIndex(where: { $0.id == id }) else { return }
         collections[i].title = title
         collections[i].colorHex = colorHex
         collections[i].imageURL = imageURL.flatMap { Self.persistLocalImageIfNeeded($0) }
-        Task { await persistUpdateCollection(id: id, title: title, colorHex: colorHex, imageURL: collections[i].imageURL) }
+        Task { await persistUpdateCollection(id: id, title: title, colorHex: colorHex, imageURL: collections[i].imageURL, saveAsDefault: saveAsDefault) }
     }
 
     func updateCard(id: String, title: String, speech: String, colorHex: UInt32, imageURL: URL?, inCollectionID: String) {
@@ -149,13 +149,13 @@ final class CardsStore: ObservableObject {
         _ = try? await contentClient.createCard(id: id, title: title, speech: speech, colorHex: colorHex, order: order, imageURL: imageURL, collectionID: collectionID, sessionToken: token)
     }
 
-    private func persistUpdateCollection(id: String, title: String, colorHex: UInt32, imageURL: URL?) async {
+    private func persistUpdateCollection(id: String, title: String, colorHex: UInt32, imageURL: URL?, saveAsDefault: Bool = false) async {
         guard let token = try? TikoDeviceSessionStore().load()?.accessToken else {
             lastPersistError = "No session token"
             return
         }
         do {
-            _ = try await contentClient.updateCollection(id: id, title: title, colorHex: colorHex, imageURL: imageURL, sessionToken: token)
+            _ = try await contentClient.updateCollection(id: id, title: title, colorHex: colorHex, imageURL: imageURL, saveAsDefault: saveAsDefault, sessionToken: token)
         } catch {
             lastPersistError = "Failed to save collection: \(error.localizedDescription)"
             print("[CardsStore] persistUpdateCollection error: \(error)")

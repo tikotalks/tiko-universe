@@ -81,7 +81,7 @@ actor CardsContentClient {
         return try JSONDecoder().decode(SingleCardResponse.self, from: data).data
     }
 
-    func updateCollection(id: String, title: String, colorHex: UInt32, imageURL: URL? = nil, sessionToken: String) async throws -> CardCollection {
+    func updateCollection(id: String, title: String, colorHex: UInt32, imageURL: URL? = nil, saveAsDefault: Bool = false, sessionToken: String) async throws -> CardCollection {
         guard let url = URL(string: "\(Self.baseURL)/cards/collections/\(id)") else {
             throw URLError(.badURL)
         }
@@ -90,7 +90,7 @@ actor CardsContentClient {
         request.timeoutInterval = 15
         request.setValue("Bearer \(sessionToken)", forHTTPHeaderField: "Authorization")
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        var payload: [String: Any] = ["title": title, "colorHex": colorHex]
+        var payload: [String: Any] = ["title": title, "colorHex": colorHex, "saveAsDefault": saveAsDefault]
         if let imageURL, !imageURL.isFileURL { payload["imageURL"] = imageURL.absoluteString }
         request.httpBody = try JSONSerialization.data(withJSONObject: payload)
         let (data, response) = try await URLSession.shared.data(for: request)

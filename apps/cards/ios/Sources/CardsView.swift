@@ -828,7 +828,7 @@ private struct EditCollectionSheet: View {
                     if isDefault && isAdmin {
                         showingDefaultConfirmation = true
                     } else {
-                        saveChanges()
+                        saveChanges(asDefault: false)
                     }
                 }
             }
@@ -837,7 +837,8 @@ private struct EditCollectionSheet: View {
             selectedImageURL = url
         }
         .alert("Update default collection?", isPresented: $showingDefaultConfirmation) {
-            Button("Update for everyone", role: .destructive) { saveChanges() }
+            Button("Update for everyone", role: .destructive) { saveChanges(asDefault: true) }
+            Button("Just for me") { saveChanges(asDefault: false) }
             Button("Cancel", role: .cancel) {}
         } message: {
             Text("This changes the default \"\(collection.title)\" collection for all users.")
@@ -858,12 +859,13 @@ private struct EditCollectionSheet: View {
         }
     }
 
-    private func saveChanges() {
+    private func saveChanges(asDefault: Bool) {
         store.updateCollection(
             id: collection.id,
             title: title.trimmingCharacters(in: .whitespaces),
             colorHex: selectedColor,
-            imageURL: selectedImageURL
+            imageURL: selectedImageURL,
+            saveAsDefault: asDefault
         )
         onClose()
     }
