@@ -198,12 +198,21 @@ export interface IdentityClientOptions {
   credentials?: RequestCredentials
 }
 
+const IDENTITY_ERROR_MESSAGES: Record<string, string> = {
+  invalid_or_expired_challenge: 'The sign-in code has expired or is invalid. Please request a new one.',
+  invalid_session: 'Your session has expired. Please sign in again.',
+  invalid_managed_login: 'Incorrect code. Please try again.',
+  pin_required: 'A PIN is required to access this account.',
+  pin_not_allowed: 'PIN sign-in is not available for this account.',
+  too_many_attempts: 'Too many failed attempts. Please wait a moment and try again.',
+}
+
 export class IdentityApiError extends Error {
   readonly status: number
   readonly code: string
 
   constructor(status: number, envelope: ApiErrorEnvelope) {
-    super(envelope.message ?? envelope.error)
+    super(envelope.message ?? IDENTITY_ERROR_MESSAGES[envelope.error] ?? envelope.error)
     this.name = 'IdentityApiError'
     this.status = status
     this.code = envelope.error
