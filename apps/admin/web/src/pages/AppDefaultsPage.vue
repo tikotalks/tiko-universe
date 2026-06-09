@@ -67,9 +67,13 @@ function onConfigInput() {
 }
 
 async function loadConfigs() {
-  const next = await configApi.readConfigs()
-  configs.value = { ...tikoAppConfigs, ...next }
-  syncDraft(configs.value[selectedApp.value])
+  try {
+    const next = await configApi.readConfigs()
+    configs.value = { ...tikoAppConfigs, ...next }
+    syncDraft(configs.value[selectedApp.value])
+  } catch {
+    // error is surfaced via configApi.error.value
+  }
 }
 
 async function saveConfig() {
@@ -83,10 +87,14 @@ async function saveConfig() {
     ...(configDraft.appIconImageUrl ? { appIconImageUrl: configDraft.appIconImageUrl } : {}),
     ...(configDraft.themeColor ? { themeColor: configDraft.themeColor } : {}),
   }
-  const saved = await configApi.writeConfig(selectedApp.value, normalized, configs.value[selectedApp.value]?.version ?? 0)
-  configs.value = { ...configs.value, [selectedApp.value]: { ...saved.config, updatedAt: saved.updatedAt, version: saved.version } }
-  syncDraft(configs.value[selectedApp.value])
-  configSavedMessage.value = `Saved ${saved.config.title} app config.`
+  try {
+    const saved = await configApi.writeConfig(selectedApp.value, normalized, configs.value[selectedApp.value]?.version ?? 0)
+    configs.value = { ...configs.value, [selectedApp.value]: { ...saved.config, updatedAt: saved.updatedAt, version: saved.version } }
+    syncDraft(configs.value[selectedApp.value])
+    configSavedMessage.value = `Saved ${saved.config.title} app config.`
+  } catch {
+    // error is surfaced via configApi.error.value
+  }
 }
 
 async function loadDefaults() {
@@ -97,20 +105,28 @@ async function loadDefaults() {
   defaultsDirty.value = false
   if (!defaultsApp.value) return
 
-  const payload = await defaultsApi.readDefaults(defaultsApp.value as TikoManagedApp, 'state' satisfies AppResource)
-  stateValue.value = (payload.state ?? {}) as Record<string, unknown>
-  defaultsVersion.value = payload.version
-  defaultsUpdatedAt.value = payload.updatedAt
+  try {
+    const payload = await defaultsApi.readDefaults(defaultsApp.value as TikoManagedApp, 'state' satisfies AppResource)
+    stateValue.value = (payload.state ?? {}) as Record<string, unknown>
+    defaultsVersion.value = payload.version
+    defaultsUpdatedAt.value = payload.updatedAt
+  } catch {
+    // error is already surfaced via defaultsApi.error.value
+  }
 }
 
 async function saveDefaults() {
   if (!defaultsApp.value) return
   defaultsSavedMessage.value = null
-  const payload = await defaultsApi.writeDefaults(defaultsApp.value as TikoManagedApp, 'state', stateValue.value, defaultsVersion.value)
-  defaultsVersion.value = payload.version
-  defaultsUpdatedAt.value = payload.updatedAt
-  defaultsSavedMessage.value = `Saved ${selectedConfig.value.title} defaults.`
-  defaultsDirty.value = false
+  try {
+    const payload = await defaultsApi.writeDefaults(defaultsApp.value as TikoManagedApp, 'state', stateValue.value, defaultsVersion.value)
+    defaultsVersion.value = payload.version
+    defaultsUpdatedAt.value = payload.updatedAt
+    defaultsSavedMessage.value = `Saved ${selectedConfig.value.title} defaults.`
+    defaultsDirty.value = false
+  } catch {
+    // error is already surfaced via defaultsApi.error.value
+  }
 }
 
 function onDefaultsUpdate(next: Record<string, unknown>) {
