@@ -407,14 +407,19 @@ async function getCardsCollections(env: Env, sessionToken?: string): Promise<{ c
     }
   }
 
-  const defaults: CardCollection[] = collectionRows.map((row) => ({
-    id: row.id,
-    title: row.title,
-    colorHex: row.color_hex,
-    order: row.display_order,
-    mediaCategories: parseJsonArray(row.media_categories) as string[],
-    cards: tilesByCollection.get(row.id) ?? [],
-  }))
+  const defaults: CardCollection[] = collectionRows.map((row) => {
+    const cats = parseJsonArray(row.media_categories) as string[]
+    const imageURL = cats.find(c => c.startsWith('http'))
+    return {
+      id: row.id,
+      title: row.title,
+      colorHex: row.color_hex,
+      order: row.display_order,
+      mediaCategories: cats.filter(c => !c.startsWith('http')),
+      ...(imageURL ? { imageURL } : {}),
+      cards: tilesByCollection.get(row.id) ?? [],
+    }
+  })
 
   if (!sessionToken || !env.APP_API_URL) {
     return { collections: defaults }

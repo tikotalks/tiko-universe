@@ -80,14 +80,20 @@ export interface TikoMedia {
 
 export const COLLECTION_CATEGORY_MAP: Record<string, string[]> = {
   __default_animals: ['animals'],
+  __default_food: ['food'],
+  __default_snacks: ['snacks', 'food-snacks'],
+  __default_drinks: ['drinks'],
   __default_colors: ['colors'],
-  __default_food: ['food', 'food-drinks'],
-  __default_body: ['body', 'body-parts'],
-  __default_shapes: ['shapes'],
   __default_emotions: ['emotions', 'feelings'],
   __default_transport: ['transport', 'vehicles'],
+  __default_body: ['body', 'body-parts'],
   __default_numbers: ['numbers'],
   __default_letters: ['letters', 'alphabet'],
+  __default_actions: ['actions', 'verbs'],
+  __default_people: ['people', 'family'],
+  __default_places: ['places', 'locations'],
+  __default_clothing: ['clothing', 'clothes'],
+  __default_nature: ['nature', 'weather'],
 }
 
 export function useTikoMedia() {

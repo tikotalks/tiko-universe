@@ -3,7 +3,7 @@ import { computed, h, inject, markRaw, nextTick, onMounted, onUnmounted, ref, wa
 import { Button, Popup, ContextMenu, type ContextMenuItem, type PopupService } from '@sil/ui'
 import { IdentityClient } from '@tiko/identity'
 import { TikoDataClient, type CardsSettings, type CardsState, type CardsCollection, type CardsTile } from '@tiko/data'
-import { useTikoMedia, COLLECTION_CATEGORY_MAP, type TikoMedia } from '@tiko/media'
+import { useTikoMedia, type TikoMedia } from '@tiko/media'
 import { createI18n, defaultLanguage, tikoI18nKeys, tikoLanguages, type TikoLanguage } from '@tiko/i18n'
 import {
   TikoAppShell,
@@ -44,338 +44,6 @@ interface PersistedState {
 }
 
 // ---------------------------------------------------------------------------
-// Virtual default collections (hardcoded, never stored in DB)
-// ---------------------------------------------------------------------------
-
-function makeTile(id: string, title: string, speech: string): CardsTile {
-  return { id, title, type: 'card', speech }
-}
-
-const VIRTUAL_DEFAULTS: CardsCollection[] = [
-  {
-    id: '__default_animals',
-    title: 'Animals',
-    color: '#FFB347',
-    order: 0,
-    tiles: [
-      makeTile('animal_dog', 'Dog', 'Dog'),
-      makeTile('animal_cat', 'Cat', 'Cat'),
-      makeTile('animal_bird', 'Bird', 'Bird'),
-      makeTile('animal_fish', 'Fish', 'Fish'),
-      makeTile('animal_horse', 'Horse', 'Horse'),
-      makeTile('animal_cow', 'Cow', 'Cow'),
-      makeTile('animal_pig', 'Pig', 'Pig'),
-      makeTile('animal_chicken', 'Chicken', 'Chicken'),
-      makeTile('animal_duck', 'Duck', 'Duck'),
-      makeTile('animal_sheep', 'Sheep', 'Sheep'),
-      makeTile('animal_rabbit', 'Rabbit', 'Rabbit'),
-      makeTile('animal_mouse', 'Mouse', 'Mouse'),
-      makeTile('animal_frog', 'Frog', 'Frog'),
-      makeTile('animal_butterfly', 'Butterfly', 'Butterfly'),
-      makeTile('animal_snake', 'Snake', 'Snake'),
-      makeTile('animal_turtle', 'Turtle', 'Turtle'),
-      makeTile('animal_lion', 'Lion', 'Lion'),
-      makeTile('animal_elephant', 'Elephant', 'Elephant'),
-      makeTile('animal_giraffe', 'Giraffe', 'Giraffe'),
-      makeTile('animal_monkey', 'Monkey', 'Monkey'),
-      makeTile('animal_penguin', 'Penguin', 'Penguin'),
-      makeTile('animal_bear', 'Bear', 'Bear'),
-      makeTile('animal_zebra', 'Zebra', 'Zebra'),
-      makeTile('animal_owl', 'Owl', 'Owl'),
-      makeTile('animal_bee', 'Bee', 'Bee'),
-      makeTile('animal_ant', 'Ant', 'Ant'),
-      makeTile('animal_spider', 'Spider', 'Spider'),
-      makeTile('animal_dolphin', 'Dolphin', 'Dolphin'),
-      makeTile('animal_shark', 'Shark', 'Shark'),
-      makeTile('animal_whale', 'Whale', 'Whale'),
-      makeTile('animal_crab', 'Crab', 'Crab'),
-      makeTile('animal_octopus', 'Octopus', 'Octopus'),
-      makeTile('animal_parrot', 'Parrot', 'Parrot'),
-      makeTile('animal_eagle', 'Eagle', 'Eagle'),
-      makeTile('animal_flamingo', 'Flamingo', 'Flamingo'),
-      makeTile('animal_fox', 'Fox', 'Fox'),
-      makeTile('animal_deer', 'Deer', 'Deer'),
-      makeTile('animal_wolf', 'Wolf', 'Wolf'),
-      makeTile('animal_crocodile', 'Crocodile', 'Crocodile'),
-    ],
-  },
-  {
-    id: '__default_colors',
-    title: 'Colors',
-    color: '#FF6B6B',
-    order: 1,
-    tiles: [
-      makeTile('color_red', 'Red', 'Red'),
-      makeTile('color_orange', 'Orange', 'Orange'),
-      makeTile('color_yellow', 'Yellow', 'Yellow'),
-      makeTile('color_green', 'Green', 'Green'),
-      makeTile('color_blue', 'Blue', 'Blue'),
-      makeTile('color_purple', 'Purple', 'Purple'),
-      makeTile('color_pink', 'Pink', 'Pink'),
-      makeTile('color_brown', 'Brown', 'Brown'),
-      makeTile('color_black', 'Black', 'Black'),
-      makeTile('color_white', 'White', 'White'),
-      makeTile('color_gray', 'Gray', 'Gray'),
-      makeTile('color_gold', 'Gold', 'Gold'),
-      makeTile('color_silver', 'Silver', 'Silver'),
-      makeTile('color_beige', 'Beige', 'Beige'),
-      makeTile('color_maroon', 'Maroon', 'Maroon'),
-      makeTile('color_navy', 'Navy', 'Navy'),
-      makeTile('color_teal', 'Teal', 'Teal'),
-      makeTile('color_coral', 'Coral', 'Coral'),
-      makeTile('color_lime', 'Lime', 'Lime'),
-      makeTile('color_lavender', 'Lavender', 'Lavender'),
-      makeTile('color_cyan', 'Cyan', 'Cyan'),
-      makeTile('color_magenta', 'Magenta', 'Magenta'),
-      makeTile('color_olive', 'Olive', 'Olive'),
-      makeTile('color_peach', 'Peach', 'Peach'),
-    ],
-  },
-  {
-    id: '__default_food',
-    title: 'Food & Drinks',
-    color: '#4ECDC4',
-    order: 2,
-    tiles: [
-      makeTile('food_apple', 'Apple', 'Apple'),
-      makeTile('food_banana', 'Banana', 'Banana'),
-      makeTile('food_bread', 'Bread', 'Bread'),
-      makeTile('food_milk', 'Milk', 'Milk'),
-      makeTile('food_water', 'Water', 'Water'),
-      makeTile('food_juice', 'Juice', 'Juice'),
-      makeTile('food_cheese', 'Cheese', 'Cheese'),
-      makeTile('food_rice', 'Rice', 'Rice'),
-      makeTile('food_pizza', 'Pizza', 'Pizza'),
-      makeTile('food_cake', 'Cake', 'Cake'),
-      makeTile('food_egg', 'Egg', 'Egg'),
-      makeTile('food_grape', 'Grape', 'Grape'),
-      makeTile('food_strawberry', 'Strawberry', 'Strawberry'),
-      makeTile('food_carrot', 'Carrot', 'Carrot'),
-      makeTile('food_tomato', 'Tomato', 'Tomato'),
-      makeTile('food_potato', 'Potato', 'Potato'),
-      makeTile('food_corn', 'Corn', 'Corn'),
-      makeTile('food_onion', 'Onion', 'Onion'),
-      makeTile('food_mushroom', 'Mushroom', 'Mushroom'),
-      makeTile('food_broccoli', 'Broccoli', 'Broccoli'),
-      makeTile('food_soup', 'Soup', 'Soup'),
-      makeTile('food_pasta', 'Pasta', 'Pasta'),
-      makeTile('food_burger', 'Burger', 'Burger'),
-      makeTile('food_hotdog', 'Hot Dog', 'Hot Dog'),
-      makeTile('food_icecream', 'Ice Cream', 'Ice Cream'),
-      makeTile('food_cookie', 'Cookie', 'Cookie'),
-      makeTile('food_chocolate', 'Chocolate', 'Chocolate'),
-      makeTile('food_donut', 'Donut', 'Donut'),
-      makeTile('food_pancake', 'Pancake', 'Pancake'),
-      makeTile('food_cereal', 'Cereal', 'Cereal'),
-      makeTile('food_popcorn', 'Popcorn', 'Popcorn'),
-      makeTile('food_watermelon', 'Watermelon', 'Watermelon'),
-      makeTile('food_lemon', 'Lemon', 'Lemon'),
-      makeTile('food_pineapple', 'Pineapple', 'Pineapple'),
-      makeTile('food_mango', 'Mango', 'Mango'),
-      makeTile('food_cherry', 'Cherry', 'Cherry'),
-      makeTile('food_pear', 'Pear', 'Pear'),
-      makeTile('food_orange_fruit', 'Orange', 'Orange'),
-      makeTile('food_grapefruit', 'Grapefruit', 'Grapefruit'),
-      makeTile('food_kiwi', 'Kiwi', 'Kiwi'),
-      makeTile('food_peach_fruit', 'Peach', 'Peach'),
-      makeTile('food_plum', 'Plum', 'Plum'),
-      makeTile('food_cucumber', 'Cucumber', 'Cucumber'),
-      makeTile('food_pepper', 'Pepper', 'Pepper'),
-      makeTile('food_avocado', 'Avocado', 'Avocado'),
-      makeTile('food_sandwich', 'Sandwich', 'Sandwich'),
-      makeTile('food_taco', 'Taco', 'Taco'),
-      makeTile('food_sushi', 'Sushi', 'Sushi'),
-      makeTile('food_noodles', 'Noodles', 'Noodles'),
-      makeTile('food_sausage', 'Sausage', 'Sausage'),
-      makeTile('food_tea', 'Tea', 'Tea'),
-      makeTile('food_coffee', 'Coffee', 'Coffee'),
-      makeTile('food_smoothie', 'Smoothie', 'Smoothie'),
-    ],
-  },
-  {
-    id: '__default_body',
-    title: 'Body Parts',
-    color: '#A8E6CF',
-    order: 3,
-    tiles: [
-      makeTile('body_head', 'Head', 'Head'),
-      makeTile('body_hair', 'Hair', 'Hair'),
-      makeTile('body_face', 'Face', 'Face'),
-      makeTile('body_eyes', 'Eyes', 'Eyes'),
-      makeTile('body_nose', 'Nose', 'Nose'),
-      makeTile('body_mouth', 'Mouth', 'Mouth'),
-      makeTile('body_ears', 'Ears', 'Ears'),
-      makeTile('body_teeth', 'Teeth', 'Teeth'),
-      makeTile('body_tongue', 'Tongue', 'Tongue'),
-      makeTile('body_chin', 'Chin', 'Chin'),
-      makeTile('body_neck', 'Neck', 'Neck'),
-      makeTile('body_shoulders', 'Shoulders', 'Shoulders'),
-      makeTile('body_chest', 'Chest', 'Chest'),
-      makeTile('body_back', 'Back', 'Back'),
-      makeTile('body_stomach', 'Stomach', 'Stomach'),
-      makeTile('body_hands', 'Hands', 'Hands'),
-      makeTile('body_fingers', 'Fingers', 'Fingers'),
-      makeTile('body_thumb', 'Thumb', 'Thumb'),
-      makeTile('body_wrist', 'Wrist', 'Wrist'),
-      makeTile('body_arms', 'Arms', 'Arms'),
-      makeTile('body_elbow', 'Elbow', 'Elbow'),
-      makeTile('body_legs', 'Legs', 'Legs'),
-      makeTile('body_knees', 'Knees', 'Knees'),
-      makeTile('body_feet', 'Feet', 'Feet'),
-      makeTile('body_toes', 'Toes', 'Toes'),
-      makeTile('body_ankle', 'Ankle', 'Ankle'),
-      makeTile('body_heel', 'Heel', 'Heel'),
-    ],
-  },
-  {
-    id: '__default_shapes',
-    title: 'Shapes',
-    color: '#DDA0DD',
-    order: 4,
-    tiles: [
-      makeTile('shape_circle', 'Circle', 'Circle'),
-      makeTile('shape_square', 'Square', 'Square'),
-      makeTile('shape_triangle', 'Triangle', 'Triangle'),
-      makeTile('shape_rectangle', 'Rectangle', 'Rectangle'),
-      makeTile('shape_oval', 'Oval', 'Oval'),
-      makeTile('shape_star', 'Star', 'Star'),
-      makeTile('shape_heart', 'Heart', 'Heart'),
-      makeTile('shape_diamond', 'Diamond', 'Diamond'),
-      makeTile('shape_hexagon', 'Hexagon', 'Hexagon'),
-      makeTile('shape_pentagon', 'Pentagon', 'Pentagon'),
-      makeTile('shape_crescent', 'Crescent', 'Crescent'),
-      makeTile('shape_cross', 'Cross', 'Cross'),
-      makeTile('shape_arrow', 'Arrow', 'Arrow'),
-      makeTile('shape_sphere', 'Sphere', 'Sphere'),
-      makeTile('shape_cube', 'Cube', 'Cube'),
-      makeTile('shape_pyramid', 'Pyramid', 'Pyramid'),
-      makeTile('shape_cylinder', 'Cylinder', 'Cylinder'),
-      makeTile('shape_cone', 'Cone', 'Cone'),
-    ],
-  },
-  {
-    id: '__default_emotions',
-    title: 'Emotions',
-    color: '#FFD93D',
-    order: 5,
-    tiles: [
-      makeTile('emotion_happy', 'Happy', 'Happy'),
-      makeTile('emotion_sad', 'Sad', 'Sad'),
-      makeTile('emotion_angry', 'Angry', 'Angry'),
-      makeTile('emotion_scared', 'Scared', 'Scared'),
-      makeTile('emotion_surprised', 'Surprised', 'Surprised'),
-      makeTile('emotion_tired', 'Tired', 'Tired'),
-      makeTile('emotion_excited', 'Excited', 'Excited'),
-      makeTile('emotion_calm', 'Calm', 'Calm'),
-      makeTile('emotion_confused', 'Confused', 'Confused'),
-      makeTile('emotion_shy', 'Shy', 'Shy'),
-      makeTile('emotion_proud', 'Proud', 'Proud'),
-      makeTile('emotion_grumpy', 'Grumpy', 'Grumpy'),
-      makeTile('emotion_brave', 'Brave', 'Brave'),
-      makeTile('emotion_curious', 'Curious', 'Curious'),
-      makeTile('emotion_lonely', 'Lonely', 'Lonely'),
-      makeTile('emotion_grateful', 'Grateful', 'Grateful'),
-      makeTile('emotion_nervous', 'Nervous', 'Nervous'),
-      makeTile('emotion_silly', 'Silly', 'Silly'),
-      makeTile('emotion_love', 'Love', 'Love'),
-      makeTile('emotion_bored', 'Bored', 'Bored'),
-    ],
-  },
-  {
-    id: '__default_transport',
-    title: 'Transport',
-    color: '#82B1FF',
-    order: 6,
-    tiles: [
-      makeTile('transport_car', 'Car', 'Car'),
-      makeTile('transport_bus', 'Bus', 'Bus'),
-      makeTile('transport_train', 'Train', 'Train'),
-      makeTile('transport_truck', 'Truck', 'Truck'),
-      makeTile('transport_airplane', 'Airplane', 'Airplane'),
-      makeTile('transport_helicopter', 'Helicopter', 'Helicopter'),
-      makeTile('transport_boat', 'Boat', 'Boat'),
-      makeTile('transport_ship', 'Ship', 'Ship'),
-      makeTile('transport_bicycle', 'Bicycle', 'Bicycle'),
-      makeTile('transport_motorcycle', 'Motorcycle', 'Motorcycle'),
-      makeTile('transport_scooter', 'Scooter', 'Scooter'),
-      makeTile('transport_taxi', 'Taxi', 'Taxi'),
-      makeTile('transport_ambulance', 'Ambulance', 'Ambulance'),
-      makeTile('transport_firetruck', 'Fire Truck', 'Fire Truck'),
-      makeTile('transport_policecar', 'Police Car', 'Police Car'),
-      makeTile('transport_tractor', 'Tractor', 'Tractor'),
-      makeTile('transport_rocket', 'Rocket', 'Rocket'),
-      makeTile('transport_submarine', 'Submarine', 'Submarine'),
-      makeTile('transport_balloon', 'Hot Air Balloon', 'Hot Air Balloon'),
-      makeTile('transport_skateboard', 'Skateboard', 'Skateboard'),
-      makeTile('transport_rollercoaster', 'Roller Coaster', 'Roller Coaster'),
-      makeTile('transport_jeep', 'Jeep', 'Jeep'),
-      makeTile('transport_van', 'Van', 'Van'),
-      makeTile('transport_canoe', 'Canoe', 'Canoe'),
-    ],
-  },
-  {
-    id: '__default_numbers',
-    title: 'Numbers',
-    color: '#87CEEB',
-    order: 7,
-    tiles: [
-      makeTile('num_1', 'One', 'One'),
-      makeTile('num_2', 'Two', 'Two'),
-      makeTile('num_3', 'Three', 'Three'),
-      makeTile('num_4', 'Four', 'Four'),
-      makeTile('num_5', 'Five', 'Five'),
-      makeTile('num_6', 'Six', 'Six'),
-      makeTile('num_7', 'Seven', 'Seven'),
-      makeTile('num_8', 'Eight', 'Eight'),
-      makeTile('num_9', 'Nine', 'Nine'),
-      makeTile('num_10', 'Ten', 'Ten'),
-      makeTile('num_11', 'Eleven', 'Eleven'),
-      makeTile('num_12', 'Twelve', 'Twelve'),
-      makeTile('num_13', 'Thirteen', 'Thirteen'),
-      makeTile('num_14', 'Fourteen', 'Fourteen'),
-      makeTile('num_15', 'Fifteen', 'Fifteen'),
-      makeTile('num_16', 'Sixteen', 'Sixteen'),
-      makeTile('num_17', 'Seventeen', 'Seventeen'),
-      makeTile('num_18', 'Eighteen', 'Eighteen'),
-      makeTile('num_19', 'Nineteen', 'Nineteen'),
-      makeTile('num_20', 'Twenty', 'Twenty'),
-    ],
-  },
-  {
-    id: '__default_letters',
-    title: 'Letters',
-    color: '#98D8C8',
-    order: 8,
-    tiles: [
-      makeTile('letter_a', 'A', 'A'),
-      makeTile('letter_b', 'B', 'B'),
-      makeTile('letter_c', 'C', 'C'),
-      makeTile('letter_d', 'D', 'D'),
-      makeTile('letter_e', 'E', 'E'),
-      makeTile('letter_f', 'F', 'F'),
-      makeTile('letter_g', 'G', 'G'),
-      makeTile('letter_h', 'H', 'H'),
-      makeTile('letter_i', 'I', 'I'),
-      makeTile('letter_j', 'J', 'J'),
-      makeTile('letter_k', 'K', 'K'),
-      makeTile('letter_l', 'L', 'L'),
-      makeTile('letter_m', 'M', 'M'),
-      makeTile('letter_n', 'N', 'N'),
-      makeTile('letter_o', 'O', 'O'),
-      makeTile('letter_p', 'P', 'P'),
-      makeTile('letter_q', 'Q', 'Q'),
-      makeTile('letter_r', 'R', 'R'),
-      makeTile('letter_s', 'S', 'S'),
-      makeTile('letter_t', 'T', 'T'),
-      makeTile('letter_u', 'U', 'U'),
-      makeTile('letter_v', 'V', 'V'),
-      makeTile('letter_w', 'W', 'W'),
-      makeTile('letter_x', 'X', 'X'),
-      makeTile('letter_y', 'Y', 'Y'),
-      makeTile('letter_z', 'Z', 'Z'),
-    ],
-  },
-]
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -526,8 +194,7 @@ function applyOverrides(collection: CardsCollection): CardsCollection {
 }
 
 const rootCollections = computed<CardsCollection[]>(() => {
-  const baseDefaults = remoteDefaults.value.length > 0 ? remoteDefaults.value : VIRTUAL_DEFAULTS
-  const defaults = baseDefaults
+  const defaults = remoteDefaults.value
     .filter((c) => !hiddenDefaults.value.includes(c.id))
     .map(applyOverrides)
   const all = [...defaults, ...userCollections.value]
@@ -684,7 +351,6 @@ async function hydrateRemoteData() {
   applySettings(settings.settings, settings.version)
   applyState(state.state, state.version)
 
-  // Use remote defaults if available, fall back to built-in VIRTUAL_DEFAULTS
   if (defaults?.state?.collections && Array.isArray(defaults.state.collections)) {
     remoteDefaults.value = defaults.state.collections as CardsCollection[]
   }
@@ -726,18 +392,14 @@ async function persistStateRemote() {
 // ---------------------------------------------------------------------------
 
 async function fetchMediaForCollection(collectionId: string) {
-  const categories = COLLECTION_CATEGORY_MAP[collectionId]
-  console.log('[Cards] fetchMediaForCollection:', collectionId, 'categories:', categories)
-  if (!categories || fetchedCollections.value.has(collectionId)) {
-    console.log('[Cards] skip:', !categories ? 'no categories' : 'already fetched')
-    return
-  }
+  const collection = remoteDefaults.value.find((c) => c.id === collectionId)
+  const categories = collection?.mediaCategories
+  if (!categories?.length || fetchedCollections.value.has(collectionId)) return
 
   fetchedCollections.value.add(collectionId)
   try {
     const results = await fetchByCategory(categories, { limit: 50 })
-    console.log('[Cards] fetched:', results.length, 'media items')
-    if (results.length === 0) { console.log('[Cards] no results, returning'); return }
+    if (results.length === 0) return
 
     // Build a map from media name/title keywords to original_url
     const mediaByUrl = new Map<string, TikoMedia>()
@@ -746,12 +408,8 @@ async function fetchMediaForCollection(collectionId: string) {
       mediaByUrl.set(m.original_url, m)
       mediaByName.set(m.name.toLowerCase(), m)
       mediaByName.set(m.title.toLowerCase(), m)
-      // Also index by each tag and category for fuzzy matching
     }
 
-    // Find the default collection and match tiles to media
-    const baseDefaults = remoteDefaults.value.length > 0 ? remoteDefaults.value : VIRTUAL_DEFAULTS
-    const collection = baseDefaults.find((c) => c.id === collectionId)
     if (!collection) return
 
     const updates: Record<string, string> = {}
@@ -1434,7 +1092,7 @@ onMounted(async () => {
     bootstrapped.value = true
     saveLocalFallback()
     // Fetch tiko media images for all visible default collections
-    const visibleDefaults = (remoteDefaults.value.length > 0 ? remoteDefaults.value : VIRTUAL_DEFAULTS).filter((c) => !hiddenDefaults.value.includes(c.id))
+    const visibleDefaults = remoteDefaults.value.filter((c) => !hiddenDefaults.value.includes(c.id))
     for (const col of visibleDefaults) {
       fetchMediaForCollection(col.id).catch(() => {})
     }

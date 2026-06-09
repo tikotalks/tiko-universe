@@ -114,8 +114,12 @@ actor CardsContentClient {
             if collectionID.hasPrefix("user_") {
                 payload["imageURL"] = imageURL.absoluteString
             } else {
-                let imageId = try? await uploadImage(imageURL: imageURL, sessionToken: sessionToken)
-                if let imageId { payload["imageRef"] = imageId }
+                do {
+                    let imageId = try await uploadImage(imageURL: imageURL, sessionToken: sessionToken)
+                    payload["imageRef"] = imageId
+                } catch {
+                    print("[CardsContentClient] uploadImage failed: \(error)")
+                }
             }
         }
         request.httpBody = try JSONSerialization.data(withJSONObject: payload)
@@ -199,7 +203,7 @@ actor CardsContentClient {
         guard let url = URL(string: "\(Self.baseURL)/images") else {
             throw URLError(.badURL)
         }
-        let imageData = try Data(contentsOf: imageURL)
+        let (imageData, _) = try await URLSession.shared.data(from: imageURL)
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         request.timeoutInterval = 30

@@ -64,6 +64,7 @@ export interface CardsCollection {
   order: number
   icon?: string
   image?: string
+  mediaCategories?: string[]
   tiles: CardsTile[]
 }
 

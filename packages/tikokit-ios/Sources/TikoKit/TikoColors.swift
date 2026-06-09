@@ -1,0 +1,40 @@
+import SwiftUI
+
+public struct TikoColor: Sendable {
+    public let name: String
+    public let hex: UInt32
+
+    public var color: Color { Color(hex: hex) }
+}
+
+public enum TikoColors {
+    public static let red     = TikoColor(name: "red",     hex: 0xE03131)
+    public static let orange  = TikoColor(name: "orange",  hex: 0xF76707)
+    public static let yellow  = TikoColor(name: "yellow",  hex: 0xFCC419)
+    public static let green   = TikoColor(name: "green",   hex: 0x2F9E44)
+    public static let blue    = TikoColor(name: "blue",    hex: 0x1971C2)
+    public static let purple  = TikoColor(name: "purple",  hex: 0x9C36B5)
+    public static let pink    = TikoColor(name: "pink",    hex: 0xF06595)
+    public static let brown   = TikoColor(name: "brown",   hex: 0x964B00)
+    public static let black   = TikoColor(name: "black",   hex: 0x1A1A1A)
+    public static let white   = TikoColor(name: "white",   hex: 0xF8F9FA)
+    public static let gray    = TikoColor(name: "gray",    hex: 0x868E96)
+    public static let beige   = TikoColor(name: "beige",   hex: 0xF5DEB3)
+    public static let cyan    = TikoColor(name: "cyan",    hex: 0x22B8CF)
+    public static let teal    = TikoColor(name: "teal",    hex: 0x0CA678)
+    public static let navy    = TikoColor(name: "navy",    hex: 0x1E3A5F)
+    public static let lime    = TikoColor(name: "lime",    hex: 0x82C91E)
+    public static let magenta = TikoColor(name: "magenta", hex: 0xE64980)
+    public static let maroon  = TikoColor(name: "maroon",  hex: 0x92140C)
+    public static let gold    = TikoColor(name: "gold",    hex: 0xFAB005)
+    public static let silver  = TikoColor(name: "silver",  hex: 0xC0C0C0)
+
+    public static let all: [TikoColor] = [
+        red, orange, yellow, green, blue,
+        purple, pink, brown, black, white,
+        gray, beige, cyan, teal, navy,
+        lime, magenta, maroon, gold, silver,
+    ]
+
+    public static let allHex: [UInt32] = all.map(\.hex)
+}

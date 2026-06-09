@@ -23,6 +23,7 @@ const navItems = [
   { to: '/stories', label: 'Stories', icon: 'ui/music-note-single' },
   { to: '/library', label: 'Library', icon: 'ui/folder' },
   { to: '/users', label: 'Users', icon: 'ui/user' },
+  { to: '/cards', label: 'Cards', icon: 'education/book-2' },
   { to: '/apps', label: 'Apps', icon: 'ui/board-multi-dashboard' },
   { to: '/support', label: 'Support', icon: 'ui/at-sign' },
 ]
