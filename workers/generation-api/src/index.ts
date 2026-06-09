@@ -155,6 +155,7 @@ export default {
     if (url.pathname.startsWith('/v1/generation/images/') && url.pathname.endsWith('/promote') && request.method === 'POST') return requireAuth(request, env, () => promoteImage(url.pathname, env))
     if (url.pathname.startsWith('/v1/generation/images/') && url.pathname.endsWith('/enrich') && request.method === 'POST') return requireAuth(request, env, () => enrichImage(url.pathname, env))
     if (url.pathname.startsWith('/v1/generation/images/') && url.pathname.endsWith('/edit') && request.method === 'POST') return requireAuth(request, env, () => editImageVariant(url.pathname, request, env))
+    if (url.pathname.startsWith('/v1/generation/images/') && url.pathname.endsWith('/upscale') && request.method === 'POST') return requireAuth(request, env, () => upscaleImage(url.pathname, request, env))
     if (url.pathname.startsWith('/v1/generation/images/') && request.method === 'DELETE') return requireAuth(request, env, () => deleteImage(url.pathname, env))
     if (url.pathname === '/v1/generation/images' && request.method === 'GET') return listImages(request, env)
     if (url.pathname === '/v1/generation/stories/tryout' && request.method === 'POST') return requireAuth(request, env, () => generateStoryTryout(request, env))
@@ -852,6 +853,7 @@ interface ImageGenerationRequest {
   title?: string
   category?: string
   tags?: string[]
+  count?: number
 }
 
 interface GeneratedImageRecord {
@@ -1070,6 +1072,7 @@ async function generateImage(request: Request, env: Env): Promise<Response> {
     return apiError('invalid_size', 'Size must be 1024x1024, 1024x1792, or 1792x1024.', 400, 'size')
   }
 
+  const count = typeof body.count === 'number' && body.count >= 1 && body.count <= 4 ? body.count : 1
   const size = body.size || '1024x1024'
   const quality = body.quality === 'hd' ? 'hd' : 'standard'
   const style = body.style === 'natural' ? 'natural' : 'vivid'
@@ -1096,7 +1099,7 @@ async function generateImage(request: Request, env: Env): Promise<Response> {
       capability: 'image.generate',
       app: 'generation-api',
       purpose: 'image-generation',
-      input: { prompt: artBrief, size: toAtlasImageSize(size), transparent, count: 1 },
+      input: { prompt: artBrief, size: toAtlasImageSize(size), transparent, count },
     }),
   }))
 
@@ -1106,59 +1109,62 @@ async function generateImage(request: Request, env: Env): Promise<Response> {
     return apiError(atlasBody?.error?.code ?? 'atlas_image_failed', atlasBody?.error?.message ?? 'Atlas image request failed.', atlasResponse.status)
   }
 
-  const image = atlasBody?.data?.images?.[0]
-  if (!image?.mediaUrl) {
+  const atlasImages = atlasBody?.data?.images ?? []
+  if (!atlasImages.length || !atlasImages[0]?.mediaUrl) {
     console.error('[generate] Atlas returned no image', { atlasBody })
     return apiError('atlas_image_invalid_response', 'Atlas returned an invalid image response.', 502)
   }
 
-  const assetResponse = await fetchAtlasImageAsset(image.mediaUrl, env, atlasBase)
-  if (!assetResponse.ok) {
-    console.error('[generate] Atlas asset fetch failed', { status: assetResponse.status, mediaUrl: image.mediaUrl })
-    return apiError('atlas_image_asset_failed', 'Atlas image asset could not be read.', 502)
-  }
-
-  const imageBytes = new Uint8Array(await assetResponse.arrayBuffer())
-  const id = crypto.randomUUID()
-  const r2Key = `images/${id}.png`
+  const results: Array<{ id: string; imageUrl: string; prompt: string; revisedPrompt: string | null; size: string; quality: string; style: string; width: number; height: number; fileSizeBytes: number; createdAt: string }> = []
   const now = new Date().toISOString()
-  const contentType = assetResponse.headers.get('content-type') ?? image.contentType ?? 'image/png'
 
-  await env.GENERATED_MEDIA_BUCKET.put(r2Key, imageBytes, {
-    httpMetadata: { contentType, cacheControl: 'public, max-age=31536000, immutable' },
-  })
+  for (const image of atlasImages) {
+    if (!image?.mediaUrl) continue
+    const assetResponse = await fetchAtlasImageAsset(image.mediaUrl, env, atlasBase)
+    if (!assetResponse.ok) {
+      console.error('[generate] Atlas asset fetch failed', { status: assetResponse.status, mediaUrl: image.mediaUrl })
+      continue
+    }
 
-  const dims = parseImageSize(size)
-  const imageUrl = `/v1/generation/images/${id}/binary`
-  await env.GENERATION_DB.prepare(`INSERT INTO generated_images (
-    id, prompt, revised_prompt, model, size, quality, style, image_url, r2_key,
-    content_type, file_size_bytes, width, height, category, tags, title, description,
-    is_public, created_at, updated_at
-  ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`).bind(
-    id,
-    body.prompt.trim(),
-    image.revisedPrompt || null,
-    image.provider?.model ?? 'gpt-image-1',
-    size,
-    quality,
-    style,
-    imageUrl,
-    r2Key,
-    contentType,
-    imageBytes.byteLength,
-    dims.width,
-    dims.height,
-    body.category || 'generated',
-    JSON.stringify(body.tags || []),
-    body.title || null,
-    null,
-    0,
-    now,
-    now,
-  ).run()
+    const imageBytes = new Uint8Array(await assetResponse.arrayBuffer())
+    const id = crypto.randomUUID()
+    const r2Key = `images/${id}.png`
+    const contentType = assetResponse.headers.get('content-type') ?? image.contentType ?? 'image/png'
 
-  return json({
-    data: {
+    await env.GENERATED_MEDIA_BUCKET.put(r2Key, imageBytes, {
+      httpMetadata: { contentType, cacheControl: 'public, max-age=31536000, immutable' },
+    })
+
+    const dims = parseImageSize(size)
+    const imageUrl = `/v1/generation/images/${id}/binary`
+    await env.GENERATION_DB.prepare(`INSERT INTO generated_images (
+      id, prompt, revised_prompt, model, size, quality, style, image_url, r2_key,
+      content_type, file_size_bytes, width, height, category, tags, title, description,
+      is_public, created_at, updated_at
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`).bind(
+      id,
+      body.prompt.trim(),
+      image.revisedPrompt || null,
+      image.provider?.model ?? 'gpt-image-2',
+      size,
+      quality,
+      style,
+      imageUrl,
+      r2Key,
+      contentType,
+      imageBytes.byteLength,
+      dims.width,
+      dims.height,
+      body.category || 'generated',
+      JSON.stringify(body.tags || []),
+      body.title || null,
+      null,
+      0,
+      now,
+      now,
+    ).run()
+
+    results.push({
       id,
       imageUrl,
       prompt: body.prompt.trim(),
@@ -1170,8 +1176,21 @@ async function generateImage(request: Request, env: Env): Promise<Response> {
       height: dims.height,
       fileSizeBytes: imageBytes.byteLength,
       createdAt: now,
-    },
-    meta: { cached: atlasBody?.meta?.cached ?? false, schemaVersion: 1, atlasRequestId: atlasBody?.meta?.requestId },
+    })
+  }
+
+  if (!results.length) return apiError('atlas_image_asset_failed', 'No images could be saved from Atlas response.', 502)
+
+  if (results.length === 1) {
+    return json({
+      data: results[0],
+      meta: { cached: atlasBody?.meta?.cached ?? false, schemaVersion: 1, atlasRequestId: atlasBody?.meta?.requestId },
+    }, 201)
+  }
+
+  return json({
+    data: results,
+    meta: { cached: atlasBody?.meta?.cached ?? false, schemaVersion: 1, atlasRequestId: atlasBody?.meta?.requestId, count: results.length },
   }, 201)
 }
 
@@ -1391,7 +1410,7 @@ async function editImageVariant(pathname: string, request: Request, env: Env): P
   const imageBuffer = await new Response(object.body).arrayBuffer()
 
   const form = new FormData()
-  form.append('model', 'gpt-image-1')
+  form.append('model', 'gpt-image-2')
   form.append('prompt', prompt)
   form.append('n', '1')
   form.append('size', size)
@@ -1447,7 +1466,7 @@ async function editImageVariant(pathname: string, request: Request, env: Env): P
     content_type, file_size_bytes, width, height, category, tags, title, description,
     is_public, created_at, updated_at
   ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`).bind(
-    newId, prompt, null, 'gpt-image-1', size, 'standard', 'vivid', imageUrl, r2Key,
+    newId, prompt, null, 'gpt-image-2', size, 'standard', 'vivid', imageUrl, r2Key,
     'image/png', newImageBytes.byteLength, dims.width, dims.height,
     record.category || 'generated', record.tags || '[]', record.title || null, null,
     0, now, now,
@@ -1476,6 +1495,107 @@ function base64ToBytes(base64: string): Uint8Array {
   const bytes = new Uint8Array(binary.length)
   for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i)
   return bytes
+}
+
+async function upscaleImage(pathname: string, request: Request, env: Env): Promise<Response> {
+  const id = pathname.replace('/v1/generation/images/', '').replace('/upscale', '')
+  if (!isSafeId(id)) return apiError('invalid_image_id', 'Image id is invalid.', 400)
+  if (!env.OPENAI_API_KEY) return apiError('openai_not_configured', 'OpenAI is not configured.', 503)
+
+  let body: { size?: unknown; quality?: unknown }
+  try {
+    body = await request.json() as { size?: unknown; quality?: unknown }
+  } catch {
+    body = {}
+  }
+
+  const size = typeof body.size === 'string' && ALLOWED_IMAGE_SIZES.has(body.size) ? body.size as '1024x1024' | '1024x1792' | '1792x1024' : '1024x1024'
+  const quality = typeof body.quality === 'string' && ['low', 'medium', 'high'].includes(body.quality) ? body.quality as 'low' | 'medium' | 'high' : 'medium'
+
+  const record = await env.GENERATION_DB.prepare(
+    'SELECT id, r2_key, prompt, category, tags, title FROM generated_images WHERE id = ? LIMIT 1',
+  ).bind(id).first<{ id: string; r2_key: string; prompt: string; category: string; tags: string; title: string | null }>()
+  if (!record) return apiError('image_not_found', 'Image not found.', 404)
+
+  const object = await env.GENERATED_MEDIA_BUCKET.get(record.r2_key)
+  if (!object) return apiError('image_not_found', 'Image not found in storage.', 404)
+  const imageBuffer = await new Response(object.body).arrayBuffer()
+
+  const form = new FormData()
+  form.append('model', 'gpt-image-2')
+  form.append('prompt', `Upscale and enhance this image to high quality at ${size} resolution. Preserve the exact same subject, composition, and style.`)
+  form.append('n', '1')
+  form.append('size', size)
+  form.append('quality', quality)
+  form.append('image', new Blob([imageBuffer], { type: 'image/png' }), 'image.png')
+
+  const editResponse = await fetch('https://api.openai.com/v1/images/edits', {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${env.OPENAI_API_KEY}` },
+    body: form,
+  })
+
+  if (!editResponse.ok) {
+    const errBody = await editResponse.text().catch(() => '')
+    console.error('[upscale] OpenAI images/edits failed', { status: editResponse.status, body: errBody, sourceId: id })
+    return apiError('image_upscale_failed', `Image upscale failed: ${editResponse.status}`, editResponse.status >= 500 ? 502 : editResponse.status)
+  }
+
+  const editData = await editResponse.json() as { data?: Array<{ b64_json?: string; url?: string }> }
+  const imageItem = editData.data?.[0]
+  if (!imageItem) {
+    console.error('[upscale] OpenAI returned no image data', { editData, sourceId: id })
+    return apiError('image_upscale_invalid_response', 'Image upscale returned no data.', 502)
+  }
+
+  let newImageBytes: Uint8Array
+  if (imageItem.b64_json) {
+    newImageBytes = base64ToBytes(imageItem.b64_json)
+  } else if (imageItem.url) {
+    const urlRes = await fetch(imageItem.url)
+    if (!urlRes.ok) return apiError('image_upscale_asset_failed', 'Could not fetch upscaled image asset.', 502)
+    newImageBytes = new Uint8Array(await urlRes.arrayBuffer())
+  } else {
+    return apiError('image_upscale_invalid_response', 'Image upscale returned no image data.', 502)
+  }
+
+  const newId = crypto.randomUUID()
+  const r2Key = `images/${newId}.png`
+  const now = new Date().toISOString()
+  const imageUrl = `/v1/generation/images/${newId}/binary`
+  const dims = parseImageSize(size)
+
+  await env.GENERATED_MEDIA_BUCKET.put(r2Key, newImageBytes, {
+    httpMetadata: { contentType: 'image/png', cacheControl: 'public, max-age=31536000, immutable' },
+  })
+
+  await env.GENERATION_DB.prepare(`INSERT INTO generated_images (
+    id, prompt, revised_prompt, model, size, quality, style, image_url, r2_key,
+    content_type, file_size_bytes, width, height, category, tags, title, description,
+    is_public, created_at, updated_at
+  ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`).bind(
+    newId, record.prompt, null, 'gpt-image-2', size, quality, 'vivid', imageUrl, r2Key,
+    'image/png', newImageBytes.byteLength, dims.width, dims.height,
+    record.category || 'generated', record.tags || '[]', record.title || null, null,
+    0, now, now,
+  ).run()
+
+  return json({
+    data: {
+      id: newId,
+      imageUrl,
+      prompt: record.prompt,
+      revisedPrompt: null,
+      size,
+      quality,
+      style: 'vivid',
+      width: dims.width,
+      height: dims.height,
+      fileSizeBytes: newImageBytes.byteLength,
+      createdAt: now,
+    },
+    meta: { schemaVersion: 1, upscaledFrom: id },
+  }, 201)
 }
 
 async function deleteImage(pathname: string, env: Env): Promise<Response> {

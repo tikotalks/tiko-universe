@@ -16,6 +16,7 @@ interface GenerateInput {
   title?: string
   category?: string
   tags?: string[]
+  count?: number
 }
 
 interface EditInput {
@@ -31,14 +32,14 @@ interface QueueItem {
   label: string
   input: GenerateInput | EditInput
   status: 'pending' | 'generating' | 'done' | 'error'
-  result: ImageGenerationResult | null
+  result: ImageGenerationResult | ImageGenerationResult[] | null
   error: string | null
 }
 
 const page = useBemm('image-page', { return: 'string', includeBaseClass: true })
 const card = useBemm('image-card', { return: 'string', includeBaseClass: true })
 
-const { generateImage, listImages, promoteImage, deleteImage, enrichImage, editImage, imageSrc } = useImageGeneration()
+const { generateImage, listImages, promoteImage, deleteImage, enrichImage, editImage, upscaleImage, imageSrc } = useImageGeneration()
 
 const activeTab = ref<Tab>('library')
 
@@ -55,6 +56,7 @@ const size = ref<'1024x1024' | '1024x1792' | '1792x1024'>('1024x1024')
 const quality = ref<'standard' | 'hd'>('standard')
 const style = ref<'vivid' | 'natural'>('vivid')
 const enrichingId = ref<string | null>(null)
+const upscalingId = ref<string | null>(null)
 
 const queue = ref<QueueItem[]>([])
 const isProcessingQueue = ref(false)
@@ -145,6 +147,37 @@ async function onEnrich(item: ImageGalleryItem, list: 'library' | 'drafts') {
   }
 }
 
+async function onUpscale(item: ImageGalleryItem) {
+  upscalingId.value = item.id
+  galleryError.value = null
+  try {
+    const result = await upscaleImage(item.id, item.size || '1024x1024', 'medium')
+    draftItems.value = draftItems.value.filter(i => i.id !== item.id)
+    draftItems.value.unshift({
+      id: result.id,
+      imageUrl: result.imageUrl,
+      prompt: result.prompt,
+      revisedPrompt: result.revisedPrompt,
+      size: result.size,
+      quality: result.quality,
+      style: result.style,
+      width: result.width,
+      height: result.height,
+      fileSizeBytes: result.fileSizeBytes,
+      title: item.title,
+      description: item.description,
+      category: item.category,
+      tags: item.tags,
+      status: 'draft',
+      createdAt: result.createdAt,
+    })
+  } catch (e) {
+    galleryError.value = e instanceof Error ? e.message : 'Could not upscale image.'
+  } finally {
+    upscalingId.value = null
+  }
+}
+
 async function onDelete(item: ImageGalleryItem, list: 'library' | 'drafts') {
   if (!confirm(`Delete "${item.title || item.id}"? This cannot be undone.`)) return
   try {
@@ -173,6 +206,7 @@ function onGenerate() {
       size: size.value,
       quality: quality.value,
       style: style.value,
+      count: 4,
     },
     status: 'pending',
     result: null,
@@ -195,6 +229,16 @@ async function processQueue() {
           pending.result = await editImage(pending.input.sourceId, pending.input.prompt, pending.input.maskBase64, pending.input.size)
         } else {
           pending.result = await generateImage(pending.input)
+        }
+        const results = Array.isArray(pending.result) ? pending.result : [pending.result]
+        for (const res of results) {
+          if (res?.id) {
+            try {
+              await enrichImage(res.id)
+            } catch (e) {
+              console.warn('[queue] Auto-enrich failed for', pending.label, e)
+            }
+          }
         }
         pending.status = 'done'
       } catch (e) {
@@ -436,6 +480,7 @@ onMounted(() => { void loadLibrary() })
             <p v-else :class="card('prompt')">{{ item.revisedPrompt || item.prompt }}</p>
             <div :class="card('actions')">
               <Button size="small" @click="onPromote(item)">Promote</Button>
+              <Button size="small" variant="outline" :loading="upscalingId === item.id" :disabled="upscalingId !== null" @click="onUpscale(item)">Upscale</Button>
               <Button size="small" variant="outline" :loading="enrichingId === item.id" :disabled="enrichingId !== null" @click="onEnrich(item, 'drafts')">Enrich</Button>
               <Button size="small" variant="outline" @click="openEdit(item)">Edit</Button>
               <Button variant="ghost" size="small" :href="imageSrc(item)" target="_blank" rel="noreferrer">Open</Button>
@@ -505,7 +550,7 @@ onMounted(() => { void loadLibrary() })
 
         <Button :disabled="!prompt.trim()" type="submit" block>Add to queue</Button>
 
-        <p :class="page('hint')">Generated images appear in <button type="button" :class="page('inline-link')" @click="viewDrafts">Drafts</button> until you promote them.</p>
+        <p :class="page('hint')">Each generation creates 4 previews in <button type="button" :class="page('inline-link')" @click="viewDrafts">Drafts</button>. Pick one and Upscale it to full quality.</p>
       </form>
 
       <aside :class="page('queue')">
@@ -530,9 +575,12 @@ onMounted(() => { void loadLibrary() })
               <strong :class="page('queue-label')">{{ item.label }}</strong>
               <span v-if="item.status === 'generating'" :class="page('queue-sub')">Generating…</span>
               <span v-else-if="item.status === 'error'" :class="page('queue-error')" :title="item.error ?? undefined">{{ item.error }}</span>
-              <span v-else-if="item.status === 'done'" :class="page('queue-sub')">Done — check Drafts</span>
+              <span v-else-if="item.status === 'done'" :class="page('queue-sub')">{{ Array.isArray(item.result) ? `${item.result.length} images — check Drafts` : 'Done — check Drafts' }}</span>
             </div>
-            <img v-if="item.result" :class="page('queue-thumb')" :src="imageSrc(item.result)" :alt="item.label" />
+            <img v-if="item.result && !Array.isArray(item.result)" :class="page('queue-thumb')" :src="imageSrc(item.result)" :alt="item.label" />
+            <div v-else-if="Array.isArray(item.result)" style="display:flex;gap:2px;">
+              <img v-for="r in item.result.slice(0, 4)" :key="r.id" :class="page('queue-thumb')" :src="imageSrc(r)" :alt="item.label" />
+            </div>
             <button v-if="item.status === 'error'" type="button" :class="page('queue-retry')" @click="retryQueueItem(item)">Retry</button>
           </li>
         </ul>

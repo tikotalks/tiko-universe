@@ -9,6 +9,7 @@ interface GenerateImageInput {
   title?: string
   category?: string
   tags?: string[]
+  count?: number
 }
 
 export interface ImageGalleryItem {
@@ -65,14 +66,17 @@ export function useImageGeneration() {
     return body as T
   }
 
-  async function generateImage(input: GenerateImageInput): Promise<ImageGenerationResult> {
+  async function generateImage(input: GenerateImageInput): Promise<ImageGenerationResult | ImageGenerationResult[]> {
     const response = await fetch(`${baseUrl()}/image`, {
       method: 'POST',
       headers: authHeaders({ 'content-type': 'application/json' }),
       body: JSON.stringify(input),
     })
-    const body = await readJson<AdminApiResponse<ImageGenerationResult>>(response, 'Image generation failed')
-    return body.data
+    const body = await readJson<AdminApiResponse<ImageGenerationResult> | { data: ImageGenerationResult[]; meta: Record<string, unknown> }>(response, 'Image generation failed')
+    if (Array.isArray((body as { data: ImageGenerationResult[] }).data)) {
+      return (body as { data: ImageGenerationResult[] }).data
+    }
+    return (body as AdminApiResponse<ImageGenerationResult>).data
   }
 
   async function listImages(status: 'draft' | 'promoted', page = 1, limit = 24): Promise<ImageListResponse> {
@@ -88,8 +92,8 @@ export function useImageGeneration() {
 
   async function pushToMedia(item: ImageGalleryItem): Promise<void> {
     const imageUrl = imageSrc(item)
-    const imageResponse = await fetch(imageUrl)
-    if (!imageResponse.ok) return
+    const imageResponse = await fetch(imageUrl, { headers: authHeaders() })
+    if (!imageResponse.ok) throw new Error(`Failed to download image for media upload: ${imageResponse.status}`)
 
     const blob = await imageResponse.blob()
     const safeName = (item.title || item.category || item.id).replace(/[^a-z0-9_-]/gi, '_')
@@ -111,7 +115,7 @@ export function useImageGeneration() {
       headers: authHeaders(),
     })
     await readJson(response, 'Could not promote image')
-    if (item) void pushToMedia(item)
+    if (item) await pushToMedia(item)
   }
 
   async function deleteImage(id: string): Promise<void> {
@@ -143,5 +147,15 @@ export function useImageGeneration() {
     return body.data
   }
 
-  return { generateImage, listImages, promoteImage, deleteImage, enrichImage, editImage, imageSrc }
+  async function upscaleImage(id: string, size: string = '1024x1024', quality: string = 'medium'): Promise<ImageGenerationResult> {
+    const response = await fetch(`${baseUrl()}/images/${encodeURIComponent(id)}/upscale`, {
+      method: 'POST',
+      headers: authHeaders({ 'content-type': 'application/json' }),
+      body: JSON.stringify({ size, quality }),
+    })
+    const body = await readJson<AdminApiResponse<ImageGenerationResult>>(response, 'Image upscale failed')
+    return body.data
+  }
+
+  return { generateImage, listImages, promoteImage, deleteImage, enrichImage, editImage, upscaleImage, imageSrc }
 }
