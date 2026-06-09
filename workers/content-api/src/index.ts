@@ -898,8 +898,34 @@ async function handlePutCards(request: Request, env: Env, segments: string[]): P
 
     if (isDefault) {
       if (!(await verifyAdminFromSession(env, sessionToken))) {
-        return error(request, env, 'forbidden', 'Admin role required to edit default collections', 403)
+        // Non-admin: store override in user state so it persists and is merged on next load
+        const current = await getUserCardsState(env, sessionToken)
+        if (!current) return error(request, env, 'unauthorized', 'Unauthorized', 401)
+
+        const allDefaults = await getDefaultCollections(env)
+        const defaultCol = allDefaults.find(c => c.id === collectionId)
+        const existingIdx = current.state.collections.findIndex(c => c.id === collectionId)
+        const base = existingIdx >= 0 ? current.state.collections[existingIdx] : defaultCol
+
+        const updated: CardCollection = {
+          id: collectionId,
+          mediaCategories: base?.mediaCategories ?? [],
+          cards: base?.cards ?? [],
+          order: base?.order ?? 0,
+          title,
+          colorHex,
+          ...(imageURL !== undefined ? { imageURL } : {}),
+        }
+
+        const updatedCollections = existingIdx >= 0
+          ? current.state.collections.map((c, i) => i === existingIdx ? updated : c)
+          : [...current.state.collections, updated]
+
+        const ok = await putUserCardsState(env, sessionToken, { collections: updatedCollections }, current.version)
+        if (!ok) return error(request, env, 'internal_error', 'Failed to save collection', 500)
+        return json(request, env, { success: true, data: updated })
       }
+      // Admin: update global defaults in content-DB
       const sets: string[] = ['title = ?', 'color_hex = ?']
       const values: unknown[] = [title, colorHex]
       if (imageURL !== undefined) { sets.push('media_categories = ?') && values.push(JSON.stringify([imageURL])) }

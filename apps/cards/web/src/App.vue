@@ -335,7 +335,7 @@ function applySettings(settings: CardsSettings, version?: number) {
 }
 
 function applyState(state: CardsState, version?: number) {
-  userCollections.value = state.collections ?? []
+  userCollections.value = (state.collections ?? []).filter((c) => !c.id.startsWith('__default_'))
   navPath.value = state.navPath ?? []
   editMode.value = state.editMode ?? false
   stateVersion.value = version
