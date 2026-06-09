@@ -4,10 +4,12 @@
 interface Env {
   CONTENT_DB: D1Database
   CONTENT_CACHE?: KVNamespace
+  USER_IMAGES?: R2Bucket
   ALLOWED_ORIGINS?: string
-  APP_API_URL?: string      // e.g. https://app.tikoapi.org  — for fetching user state
-  ADMIN_SECRET?: string     // Bearer token required for admin mutation endpoints
-  IDENTITY_API_URL?: string // e.g. https://identity.tikoapi.org/v1 — for verifying admin role from session tokens
+  APP_API_URL?: string
+  ADMIN_SECRET?: string
+  IDENTITY_API_URL?: string
+  MEDIA_API_URL?: string
 }
 
 interface D1Database {
@@ -24,6 +26,23 @@ interface D1PreparedStatement {
 interface KVNamespace {
   get(key: string): Promise<string | null>
   put(key: string, value: string, options?: { expirationTtl?: number }): Promise<void>
+  delete(key: string): Promise<void>
+}
+
+interface R2Bucket {
+  get(key: string): Promise<R2ObjectBody | null>
+  put(key: string, value: ArrayBuffer | ReadableStream | Blob, options?: { httpMetadata?: { contentType?: string; cacheControl?: string } }): Promise<R2Object>
+}
+
+interface R2ObjectBody extends R2Object {
+  body: ReadableStream
+  arrayBuffer(): Promise<ArrayBuffer>
+}
+
+interface R2Object {
+  key: string
+  size: number
+  httpMetadata?: { contentType?: string; cacheControl?: string }
 }
 
 type JsonRecord = Record<string, unknown>
@@ -51,7 +70,7 @@ interface CardTile {
   speech: string
   colorHex: number
   order: number
-  imageURL?: string
+  imageRef?: string
 }
 
 interface CardCollection {
@@ -87,7 +106,30 @@ const CACHE_TTL_SECONDS = 300
 const CACHE_KEY_CARDS_COLLECTIONS = 'cards:collections'
 
 async function invalidateCardsCache(env: Env): Promise<void> {
-  if (env.CONTENT_CACHE) await (env.CONTENT_CACHE as KVNamespace & { delete(key: string): Promise<void> }).delete(CACHE_KEY_CARDS_COLLECTIONS)
+  if (env.CONTENT_CACHE) await env.CONTENT_CACHE.delete(CACHE_KEY_CARDS_COLLECTIONS)
+}
+
+interface UserImageRow {
+  id: string
+  r2_key: string
+  content_type: string
+  file_size_bytes: number | null
+  width: number | null
+  height: number | null
+  uploaded_by: string | null
+}
+
+async function resolveImageRef(imageRef: string | null | undefined, env: Env): Promise<string | null> {
+  if (!imageRef) return null
+  const row = await env.CONTENT_DB.prepare('SELECT id, r2_key FROM user_images WHERE id = ?').bind(imageRef).first<{ id: string; r2_key: string }>()
+  if (row) return `/v1/content/images/${row.id}`
+  const mediaBase = (env.MEDIA_API_URL ?? 'https://media.tikoapi.org/v1').replace(/\/$/, '')
+  const mediaResp = await fetch(`${mediaBase}/media/${encodeURIComponent(imageRef)}`, { headers: { Accept: 'application/json' } })
+  if (mediaResp.ok) {
+    const body = await mediaResp.json() as { original_url?: string }
+    return body.original_url ?? null
+  }
+  return null
 }
 
 function allowedOrigins(env: Env): string[] {
@@ -330,6 +372,7 @@ interface CardsTileRow {
   speech: string
   color_hex: number
   display_order: number
+  image_ref: string | null
 }
 
 async function getCardsCollections(env: Env, sessionToken?: string): Promise<{ collections: CardCollection[] }> {
@@ -341,7 +384,7 @@ async function getCardsCollections(env: Env, sessionToken?: string): Promise<{ c
   ).all<CardsCollectionRow>()
 
   const { results: tileRows } = await env.CONTENT_DB.prepare(
-    `SELECT id, collection_id, title, speech, color_hex, display_order
+    `SELECT id, collection_id, title, speech, color_hex, display_order, image_ref
      FROM cards_tiles
      ORDER BY collection_id, display_order ASC`,
   ).all<CardsTileRow>()
@@ -354,6 +397,7 @@ async function getCardsCollections(env: Env, sessionToken?: string): Promise<{ c
       speech: row.speech,
       colorHex: row.color_hex,
       order: row.display_order,
+      imageRef: row.image_ref ?? undefined,
     }
     const existing = tilesByCollection.get(row.collection_id)
     if (existing) {
@@ -520,7 +564,7 @@ async function handlePostCards(request: Request, env: Env, segments: string[]): 
   if (segments[2] === 'collections' && segments[4] === 'cards' && segments.length === 5) {
     const collectionId = segments[3]
     const isDefault = !collectionId.startsWith('user_')
-    let body: { id?: unknown; title?: unknown; speech?: unknown; colorHex?: unknown; order?: unknown; imageURL?: unknown }
+    let body: { id?: unknown; title?: unknown; speech?: unknown; colorHex?: unknown; order?: unknown; imageURL?: unknown; imageRef?: unknown }
     try { body = (await request.json()) as typeof body } catch {
       return error(request, env, 'bad_request', 'Request body must be valid JSON', 400)
     }
@@ -535,11 +579,12 @@ async function handlePostCards(request: Request, env: Env, segments: string[]): 
         return error(request, env, 'forbidden', 'Admin role required to add cards to default collections', 403)
       }
       const id = `__default_${crypto.randomUUID().replace(/-/g, '')}`
+      const imageRef = typeof body.imageRef === 'string' && body.imageRef ? body.imageRef : null
       await env.CONTENT_DB.prepare(
-        'INSERT INTO cards_tiles (id, collection_id, title, speech, color_hex, display_order) VALUES (?, ?, ?, ?, ?, ?)',
-      ).bind(id, collectionId, title, speech, colorHex, order).run()
+        'INSERT INTO cards_tiles (id, collection_id, title, speech, color_hex, display_order, image_ref) VALUES (?, ?, ?, ?, ?, ?, ?)',
+      ).bind(id, collectionId, title, speech, colorHex, order, imageRef).run()
       await invalidateCardsCache(env)
-      const newCard: CardTile = { id, title, speech, colorHex, order }
+      const newCard: CardTile = { id, title, speech, colorHex, order, ...(imageRef ? { imageRef } : {}) }
       return json(request, env, { success: true, data: newCard }, 201)
     }
 
@@ -582,6 +627,56 @@ function requireAdminSecret(request: Request, env: Env): Response | null {
 }
 
 // ---------------------------------------------------------------------------
+// User image upload & serving
+// ---------------------------------------------------------------------------
+
+async function handleUploadUserImage(request: Request, env: Env): Promise<Response> {
+  if (!env.USER_IMAGES) return error(request, env, 'not_configured', 'Image storage not configured.', 503)
+  const authHeader = request.headers.get('Authorization') ?? ''
+  const sessionToken = authHeader.startsWith('Bearer ') ? authHeader.slice(7) : undefined
+  if (!sessionToken) return error(request, env, 'unauthorized', 'Authorization required', 401)
+  if (!(await verifyAdminFromSession(env, sessionToken))) {
+    return error(request, env, 'forbidden', 'Admin role required to upload images', 403)
+  }
+
+  const formData = await request.formData()
+  const file = formData.get('file')
+  if (!file || !(file instanceof File)) return error(request, env, 'bad_request', 'file is required', 400)
+
+  const id = crypto.randomUUID()
+  const r2Key = `images/${id}.png`
+  const arrayBuffer = await file.arrayBuffer()
+
+  await env.USER_IMAGES.put(r2Key, arrayBuffer, {
+    httpMetadata: { contentType: file.type || 'image/png', cacheControl: 'public, max-age=31536000, immutable' },
+  })
+
+  await env.CONTENT_DB.prepare(
+    'INSERT INTO user_images (id, r2_key, content_type, file_size_bytes) VALUES (?, ?, ?, ?)',
+  ).bind(id, r2Key, file.type || 'image/png', arrayBuffer.byteLength).run()
+
+  return json(request, env, { success: true, data: { id, url: `/v1/content/images/${id}` } }, 201)
+}
+
+async function handleGetUserImage(env: Env, imageId: string): Promise<Response> {
+  if (!env.USER_IMAGES) return new Response('Not found', { status: 404 })
+
+  const row = await env.CONTENT_DB.prepare('SELECT r2_key, content_type FROM user_images WHERE id = ?').bind(imageId).first<{ r2_key: string; content_type: string }>()
+  if (!row) return new Response('Not found', { status: 404 })
+
+  const object = await env.USER_IMAGES.get(row.r2_key)
+  if (!object) return new Response('Not found', { status: 404 })
+
+  return new Response(object.body, {
+    headers: {
+      'Content-Type': row.content_type || 'image/png',
+      'Cache-Control': 'public, max-age=31536000, immutable',
+      'Access-Control-Allow-Origin': '*',
+    },
+  })
+}
+
+// ---------------------------------------------------------------------------
 // Routing
 // ---------------------------------------------------------------------------
 
@@ -602,6 +697,11 @@ async function handleGet(request: Request, env: Env, segments: string[]): Promis
 
     const data = await cached(request, env, CACHE_KEY_CARDS_COLLECTIONS, () => getCardsCollections(env))
     return json(request, env, { success: true, data })
+  }
+
+  // GET /v1/content/images/:id — serve user-uploaded image binary
+  if (resource === 'content' && segments[2] === 'images' && segments.length === 4) {
+    return handleGetUserImage(env, segments[3])
   }
 
   if (resource === 'projects' && segments.length === 2) {
@@ -668,6 +768,7 @@ export default {
     if (request.method === 'PUT' && segments[0] === 'v1' && segments[1] === 'cards') return handlePutCards(request, env, segments)
     if (request.method === 'DELETE' && segments[0] === 'v1' && segments[1] === 'cards') return handleDeleteCards(request, env, segments)
     if (request.method === 'POST' && segments[0] === 'v1' && segments[1] === 'admin' && segments[2] === 'cards' && segments[3] === 'promote') return handlePromoteCollection(request, env, segments)
+    if (request.method === 'POST' && segments[0] === 'v1' && segments[1] === 'images') return handleUploadUserImage(request, env)
 
     if (request.method === 'PUT' && url.pathname === '/v1/admin/cards/collections') {
       const authError = requireAdminSecret(request, env)
@@ -760,7 +861,7 @@ async function handlePutCards(request: Request, env: Env, segments: string[]): P
     const cardId = segments[5]
     const isDefault = !collectionId.startsWith('user_')
 
-    let body: { title?: unknown; speech?: unknown; colorHex?: unknown; imageURL?: unknown }
+    let body: { title?: unknown; speech?: unknown; colorHex?: unknown; imageRef?: unknown }
     try { body = (await request.json()) as typeof body } catch {
       return error(request, env, 'bad_request', 'Request body must be valid JSON', 400)
     }
@@ -774,9 +875,10 @@ async function handlePutCards(request: Request, env: Env, segments: string[]): P
       if (!(await verifyAdminFromSession(env, sessionToken))) {
         return error(request, env, 'forbidden', 'Admin role required to edit default cards', 403)
       }
-      await env.CONTENT_DB.prepare('UPDATE cards_tiles SET title = ?, speech = ?, color_hex = ? WHERE id = ?').bind(title, speech, colorHex, cardId).run()
+      const imageRef = typeof body.imageRef === 'string' && body.imageRef ? body.imageRef : null
+      await env.CONTENT_DB.prepare('UPDATE cards_tiles SET title = ?, speech = ?, color_hex = ?, image_ref = ? WHERE id = ?').bind(title, speech, colorHex, imageRef, cardId).run()
       await invalidateCardsCache(env)
-      const updatedCard: CardTile = { id: cardId, title, speech, colorHex, order: 0 }
+      const updatedCard: CardTile = { id: cardId, title, speech, colorHex, order: 0, ...(imageRef ? { imageRef } : {}) }
       return json(request, env, { success: true, data: updatedCard })
     }
 
@@ -889,8 +991,8 @@ async function handlePromoteCollection(request: Request, env: Env, _segments: st
   if (Array.isArray(col.cards)) {
     for (const tile of col.cards) {
       await env.CONTENT_DB.prepare(
-        'INSERT OR REPLACE INTO cards_tiles (id, collection_id, title, speech, color_hex, display_order) VALUES (?, ?, ?, ?, ?, ?)',
-      ).bind(tile.id, id, tile.title, tile.speech, tile.colorHex ?? 0, tile.order ?? 0).run()
+        'INSERT OR REPLACE INTO cards_tiles (id, collection_id, title, speech, color_hex, display_order, image_ref) VALUES (?, ?, ?, ?, ?, ?, ?)',
+      ).bind(tile.id, id, tile.title, tile.speech, tile.colorHex ?? 0, tile.order ?? 0, tile.imageRef ?? null).run()
     }
   }
 
