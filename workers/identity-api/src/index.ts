@@ -798,6 +798,12 @@ async function activeRolesWithBootstrap(env: Env, subjectId: string, existingRol
 }
 
 async function canBootstrapAdmin(env: Env, subjectId: string): Promise<boolean> {
+  // Don't bootstrap a second admin — if any non-revoked admin already exists, stop.
+  const existing = await env.IDENTITY_DB.prepare(
+    'SELECT COUNT(*) as count FROM identity_role_assignments WHERE role = ? AND product = ? AND revoked_at IS NULL'
+  ).bind(ADMIN_ROLE, 'tiko').first<{ count: number }>()
+  if ((existing?.count ?? 0) > 0) return false
+
   const row = await env.IDENTITY_DB.prepare('SELECT email_hash FROM identity_accounts WHERE subject_id = ? AND product = ? AND disabled_at IS NULL LIMIT 1')
     .bind(subjectId, 'tiko')
     .first<{ email_hash: string | null }>()
@@ -877,6 +883,15 @@ async function withTikoSessionContract(request: AnyRequest, env: Env, response: 
     emailVerified
   }
   const account = body.account ? { ...body.account, accountType } : body.account ?? null
+
+  // Persist plain email so admin user lookup can display/search by email.
+  // Ankore normalises emails before hashing and never stores plain text — we capture it here on each session.
+  if (body.account?.email && body.subject?.id) {
+    env.IDENTITY_DB.prepare(
+      'UPDATE identity_accounts SET email_plain = ? WHERE subject_id = ? AND product = ? AND disabled_at IS NULL'
+    ).bind(String(body.account.email), String(body.subject.id), 'tiko').run().catch(() => {})
+  }
+
   const nextBody: Record<string, any> = { ...body, roles, user, account, runtime, capabilities }
   if (body.session) {
     nextBody.session = { ...body.session, loginMethod: await deriveLoginMethod(request, body, accountType) }

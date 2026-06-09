@@ -191,8 +191,7 @@ public struct TikoAppShell<Content: View, SettingsContent: View>: View {
     @AppStorage("tiko.colorMode") private var colorModeRawValue = TikoColorMode.light.rawValue
     @AppStorage("tiko.userName") private var userName = ""
     @AppStorage("tiko.userEmail") private var userEmail = ""
-    @AppStorage("tiko.avatarURL") private var storedAvatarURLString = ""
-    @AppStorage("tiko.favoriteColor") private var favoriteColorHex = ""
+    @StateObject private var profilePrefs = TikoProfilePreferences()
     @State private var identityBundle: TikoIdentityBundle?
     @State private var showingAccount = false
     @State private var showingSettings = false
@@ -276,7 +275,7 @@ public struct TikoAppShell<Content: View, SettingsContent: View>: View {
                     onIconTap: onIconTap,
                     avatar: avatar,
                     avatarURL: fetchedAvatarURL,
-                    avatarBackground: colorFromHex(favoriteColorHex),
+                    avatarBackground: colorFromHex(profilePrefs.favoriteColor),
                     appColor: appColor,
                     actions: parentMode ? actions : [],
                     isSettingsActive: showingSettings,
@@ -296,7 +295,7 @@ public struct TikoAppShell<Content: View, SettingsContent: View>: View {
         .tikoSettingsPopup(isPresented: $showingSettings, appColor: appColor) {
             settingsContent
         }
-        .tikoAccountPopup(isPresented: $showingAccount, appName: appName, appColor: appColor)
+        .tikoAccountPopup(isPresented: $showingAccount, appName: appName, appColor: appColor, profilePrefs: profilePrefs)
         .tikoPopup(isPresented: $showingProfileMenu) {
             TikoProfileMenuSheet(
                 appColor: appColor,
@@ -339,14 +338,16 @@ public struct TikoAppShell<Content: View, SettingsContent: View>: View {
                     .transition(.opacity)
             }
         }
-        .onChange(of: storedAvatarURLString) { _, newValue in
+        .onChange(of: profilePrefs.avatarURL) { _, newValue in
             fetchedAvatarURL = URL(string: newValue)
         }
         .task {
             await fetchIconIfNeeded()
-            await fetchAvatarIfNeeded()
-            // Load identity bundle from session store for runtime-aware mode
+            // Load identity first so avatar is scoped to the correct user
             identityBundle = await refreshIdentityBundle()
+            let subjectId = identityBundle?.account?.subjectId ?? identityBundle?.subject.id
+            profilePrefs.load(for: subjectId)
+            await fetchAvatarIfNeeded()
             try? await Task.sleep(nanoseconds: 500_000_000)
             withAnimation(.easeOut(duration: 0.4)) { splashVisible = false }
         }
@@ -421,12 +422,12 @@ public struct TikoAppShell<Content: View, SettingsContent: View>: View {
     }
 
     private func fetchAvatarIfNeeded() async {
-        if !storedAvatarURLString.isEmpty, let url = URL(string: storedAvatarURLString) {
+        if !profilePrefs.avatarURL.isEmpty, let url = URL(string: profilePrefs.avatarURL) {
             fetchedAvatarURL = url
             return
         }
         if let url = await fetchMediaImage(urlString: "https://media.tikoapi.org/v1/media?type=image&limit=100", random: true) {
-            storedAvatarURLString = url.absoluteString
+            profilePrefs.setAvatarURL(url.absoluteString)
             fetchedAvatarURL = url
         }
     }

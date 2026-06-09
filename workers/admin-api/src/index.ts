@@ -284,6 +284,12 @@ async function activeRoles(db: D1Database, subjectId: string): Promise<string[]>
 }
 
 async function canBootstrapAdmin(env: Env, row: { email_hash: string | null }): Promise<boolean> {
+  // Don't bootstrap a second admin — if any non-revoked admin already exists, stop.
+  const existing = await env.AUTH_DB.prepare(
+    'SELECT COUNT(*) as count FROM identity_role_assignments WHERE role = ? AND product = ? AND revoked_at IS NULL'
+  ).bind(ADMIN_ROLE, PRODUCT).first<{ count: number }>()
+  if ((existing?.count ?? 0) > 0) return false
+
   const adminEmail = normalizeEmail(env.ADMIN_EMAIL || ADMIN_EMAIL)
   const adminEmailHash = await hashToken(adminEmail, env.TOKEN_PEPPER)
   return row.email_hash === adminEmailHash
