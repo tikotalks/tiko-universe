@@ -198,7 +198,9 @@ async function processQueue() {
         }
         pending.status = 'done'
       } catch (e) {
-        pending.error = e instanceof Error ? e.message : 'Generation failed.'
+        const errMsg = e instanceof Error ? e.message : 'Generation failed.'
+        console.error('[queue] Item failed:', pending.label, errMsg, e)
+        pending.error = errMsg
         pending.status = 'error'
       }
     }
@@ -315,6 +317,12 @@ function onAddEditToQueue() {
 watch(editMode, (mode) => {
   if (mode === 'selection') void nextTick(() => { syncCanvasDimensions(); clearEditCanvas() })
 })
+
+function retryQueueItem(item: QueueItem) {
+  item.status = 'pending'
+  item.error = null
+  void processQueue()
+}
 
 function clearQueue() {
   queue.value = queue.value.filter(i => i.status === 'pending' || i.status === 'generating')
@@ -521,10 +529,11 @@ onMounted(() => { void loadLibrary() })
             <div :class="page('queue-info')">
               <strong :class="page('queue-label')">{{ item.label }}</strong>
               <span v-if="item.status === 'generating'" :class="page('queue-sub')">Generating…</span>
-              <span v-else-if="item.status === 'error'" :class="page('queue-error')">{{ item.error }}</span>
+              <span v-else-if="item.status === 'error'" :class="page('queue-error')" :title="item.error ?? undefined">{{ item.error }}</span>
               <span v-else-if="item.status === 'done'" :class="page('queue-sub')">Done — check Drafts</span>
             </div>
             <img v-if="item.result" :class="page('queue-thumb')" :src="imageSrc(item.result)" :alt="item.label" />
+            <button v-if="item.status === 'error'" type="button" :class="page('queue-retry')" @click="retryQueueItem(item)">Retry</button>
           </li>
         </ul>
       </aside>
@@ -840,6 +849,29 @@ onMounted(() => { void loadLibrary() })
   &__queue-error {
     font-size: var(--font-size-xs);
     color: var(--color-error);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 200px;
+  }
+
+  &__queue-retry {
+    flex-shrink: 0;
+    border: 1px solid var(--admin-border);
+    background: var(--admin-page-bg);
+    color: var(--admin-text);
+    font: inherit;
+    font-size: var(--font-size-xs);
+    font-weight: 500;
+    padding: 2px var(--space-s);
+    border-radius: var(--border-radius-xs);
+    cursor: pointer;
+    white-space: nowrap;
+
+    &:hover {
+      border-color: var(--admin-border-strong);
+      background: var(--admin-nav-hover);
+    }
   }
 
   &__queue-thumb {

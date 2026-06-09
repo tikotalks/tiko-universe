@@ -58,7 +58,9 @@ export function useImageGeneration() {
     const body = await response.json().catch(() => null) as ApiErrorBody | T | null
     if (!response.ok) {
       const apiError = body && typeof body === 'object' && 'error' in body ? (body as ApiErrorBody).error : undefined
-      throw new Error((typeof apiError === 'string' ? apiError : apiError?.message) ?? `${fallback}: ${response.status}`)
+      const message = (typeof apiError === 'string' ? apiError : apiError?.message) ?? `${fallback}: ${response.status}`
+      console.error('[api] Request failed', { status: response.status, url: response.url, body })
+      throw new Error(message)
     }
     return body as T
   }

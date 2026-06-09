@@ -1045,6 +1045,7 @@ async function boostPrompt(subject: string, mode: ImageMode, env: Env): Promise<
     const errorText = await response.text()
     let detail = errorText
     try { detail = JSON.parse(errorText).error?.message || errorText } catch { /* keep raw */ }
+    console.error('[boost] Atlas prompt boost failed', { status: response.status, detail })
     throw new Error(`Prompt boost failed: ${detail}`)
   }
   const data = await response.json() as { data?: { output?: string } }
@@ -1101,14 +1102,21 @@ async function generateImage(request: Request, env: Env): Promise<Response> {
 
   const atlasBody = await atlasResponse.json().catch(() => null) as AtlasImageResponse | null
   if (!atlasResponse.ok) {
+    console.error('[generate] Atlas image.generate failed', { status: atlasResponse.status, error: atlasBody?.error })
     return apiError(atlasBody?.error?.code ?? 'atlas_image_failed', atlasBody?.error?.message ?? 'Atlas image request failed.', atlasResponse.status)
   }
 
   const image = atlasBody?.data?.images?.[0]
-  if (!image?.mediaUrl) return apiError('atlas_image_invalid_response', 'Atlas returned an invalid image response.', 502)
+  if (!image?.mediaUrl) {
+    console.error('[generate] Atlas returned no image', { atlasBody })
+    return apiError('atlas_image_invalid_response', 'Atlas returned an invalid image response.', 502)
+  }
 
   const assetResponse = await fetchAtlasImageAsset(image.mediaUrl, env, atlasBase)
-  if (!assetResponse.ok) return apiError('atlas_image_asset_failed', 'Atlas image asset could not be read.', 502)
+  if (!assetResponse.ok) {
+    console.error('[generate] Atlas asset fetch failed', { status: assetResponse.status, mediaUrl: image.mediaUrl })
+    return apiError('atlas_image_asset_failed', 'Atlas image asset could not be read.', 502)
+  }
 
   const imageBytes = new Uint8Array(await assetResponse.arrayBuffer())
   const id = crypto.randomUUID()
@@ -1292,6 +1300,8 @@ async function enrichImage(pathname: string, env: Env): Promise<Response> {
   })
 
   if (!visionResponse.ok) {
+    const errBody = await visionResponse.text().catch(() => '')
+    console.error('[enrich] OpenAI vision failed', { status: visionResponse.status, body: errBody, imageId: id })
     return apiError('vision_failed', `Vision analysis failed: ${visionResponse.status}`, 502)
   }
 
@@ -1399,12 +1409,17 @@ async function editImageVariant(pathname: string, request: Request, env: Env): P
   })
 
   if (!editResponse.ok) {
+    const errBody = await editResponse.text().catch(() => '')
+    console.error('[edit] OpenAI images/edits failed', { status: editResponse.status, body: errBody, sourceId: id, prompt })
     return apiError('image_edit_failed', `Image edit failed: ${editResponse.status}`, editResponse.status >= 500 ? 502 : editResponse.status)
   }
 
   const editData = await editResponse.json() as { data?: Array<{ b64_json?: string; url?: string }> }
   const imageItem = editData.data?.[0]
-  if (!imageItem) return apiError('image_edit_invalid_response', 'Image edit returned no data.', 502)
+  if (!imageItem) {
+    console.error('[edit] OpenAI returned no image data', { editData, sourceId: id })
+    return apiError('image_edit_invalid_response', 'Image edit returned no data.', 502)
+  }
 
   let newImageBytes: Uint8Array
   if (imageItem.b64_json) {
