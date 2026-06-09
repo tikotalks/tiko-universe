@@ -375,7 +375,70 @@ interface CardsTileRow {
   image_ref: string | null
 }
 
-async function getCardsCollections(env: Env, sessionToken?: string): Promise<{ collections: CardCollection[] }> {
+// Map a hex color string ('#4CAF50') or number to a numeric colorHex.
+function parseColorHex(color: unknown, fallback = 0x888888): number {
+  if (typeof color === 'number') return color
+  if (typeof color === 'string') {
+    const hex = color.replace(/^#/, '')
+    const n = parseInt(hex, 16)
+    if (!isNaN(n)) return n
+  }
+  return fallback
+}
+
+// Map app-api CardsCollection format (web) to content-api CardCollection format (iOS).
+interface AppApiCollection {
+  id?: unknown
+  title?: unknown
+  color?: unknown
+  order?: unknown
+  mediaCategories?: unknown
+  image?: unknown
+  tiles?: unknown[]
+}
+
+function mapAppApiCollection(raw: AppApiCollection, index: number): CardCollection {
+  const colorHex = parseColorHex(raw.color)
+  const tiles = Array.isArray(raw.tiles) ? raw.tiles : []
+  return {
+    id: String(raw.id ?? ''),
+    title: String(raw.title ?? ''),
+    colorHex,
+    order: typeof raw.order === 'number' ? raw.order : index,
+    mediaCategories: Array.isArray(raw.mediaCategories) ? (raw.mediaCategories as string[]) : [],
+    ...(typeof raw.image === 'string' && raw.image ? { imageURL: raw.image } : {}),
+    cards: tiles.map((t, i) => {
+      const tile = t as { id?: unknown; title?: unknown; speech?: unknown; color?: unknown }
+      return {
+        id: String(tile.id ?? ''),
+        title: String(tile.title ?? ''),
+        speech: String(tile.speech ?? tile.title ?? ''),
+        colorHex: parseColorHex(tile.color, colorHex),
+        order: i,
+      }
+    }),
+  }
+}
+
+async function getDefaultCollections(env: Env): Promise<CardCollection[]> {
+  // Primary: app-api global defaults (single source of truth shared with web app)
+  if (env.APP_API_URL) {
+    try {
+      const appBase = env.APP_API_URL.replace(/\/$/, '')
+      const resp = await fetch(`${appBase}/v1/apps/defaults/cards/state`)
+      if (resp.ok) {
+        const body = (await resp.json()) as { state?: { collections?: unknown[] } }
+        const cols = body?.state?.collections
+        if (Array.isArray(cols) && cols.length > 0) {
+          return (cols as AppApiCollection[]).map(mapAppApiCollection)
+        }
+      }
+    } catch {
+      // fall through to DB
+    }
+  }
+
+  // Fallback: content-DB cards_collections table
   const { results: collectionRows } = await env.CONTENT_DB.prepare(
     `SELECT id, title, color_hex, display_order, media_categories
      FROM cards_collections
@@ -400,14 +463,10 @@ async function getCardsCollections(env: Env, sessionToken?: string): Promise<{ c
       imageRef: row.image_ref ?? undefined,
     }
     const existing = tilesByCollection.get(row.collection_id)
-    if (existing) {
-      existing.push(tile)
-    } else {
-      tilesByCollection.set(row.collection_id, [tile])
-    }
+    if (existing) { existing.push(tile) } else { tilesByCollection.set(row.collection_id, [tile]) }
   }
 
-  const defaults: CardCollection[] = collectionRows.map((row) => {
+  return collectionRows.map((row) => {
     const cats = parseJsonArray(row.media_categories) as string[]
     const imageURL = cats.find(c => c.startsWith('http'))
     return {
@@ -420,6 +479,10 @@ async function getCardsCollections(env: Env, sessionToken?: string): Promise<{ c
       cards: tilesByCollection.get(row.id) ?? [],
     }
   })
+}
+
+async function getCardsCollections(env: Env, sessionToken?: string): Promise<{ collections: CardCollection[] }> {
+  const defaults = await getDefaultCollections(env)
 
   if (!sessionToken || !env.APP_API_URL) {
     return { collections: defaults }
