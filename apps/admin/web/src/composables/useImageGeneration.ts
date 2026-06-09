@@ -17,6 +17,7 @@ export interface ImageGalleryItem {
   imageUrl: string
   prompt: string
   revisedPrompt: string | null
+  model: string | null
   size: string
   quality: string
   style: string
@@ -28,6 +29,7 @@ export interface ImageGalleryItem {
   category: string
   tags: string[]
   status: 'draft' | 'promoted'
+  isPreview: boolean
   createdAt: string
 }
 
@@ -102,11 +104,16 @@ export function useImageGeneration() {
     const form = new FormData()
     form.append('file', new File([blob], filename, { type: 'image/png' }))
 
-    await fetch(`${mediaBaseUrl()}/upload`, {
+    const uploadUrl = `${mediaBaseUrl()}/media/upload`
+    const uploadResponse = await fetch(uploadUrl, {
       method: 'POST',
       headers: { authorization: `Bearer ${token.value}` },
       body: form,
     })
+    if (!uploadResponse.ok) {
+      const body = await uploadResponse.json().catch(() => null) as { error?: string } | null
+      throw new Error(body?.error ?? `Media upload failed: ${uploadResponse.status}`)
+    }
   }
 
   async function promoteImage(id: string, item?: ImageGalleryItem): Promise<void> {

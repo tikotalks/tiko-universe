@@ -27,10 +27,16 @@ interface EditInput {
   size: '1024x1024' | '1024x1792' | '1792x1024'
 }
 
+interface EnrichInput {
+  type: 'enrich'
+  sourceId: string
+  list: 'library' | 'drafts'
+}
+
 interface QueueItem {
   id: string
   label: string
-  input: GenerateInput | EditInput
+  input: GenerateInput | EditInput | EnrichInput
   status: 'pending' | 'generating' | 'done' | 'error'
   result: ImageGenerationResult | ImageGenerationResult[] | null
   error: string | null
@@ -55,12 +61,17 @@ const tagsText = ref('tiko, child-friendly')
 const size = ref<'1024x1024' | '1024x1792' | '1792x1024'>('1024x1024')
 const quality = ref<'standard' | 'hd'>('standard')
 const style = ref<'vivid' | 'natural'>('vivid')
-const enrichingId = ref<string | null>(null)
 const upscalingId = ref<string | null>(null)
 
 const queue = ref<QueueItem[]>([])
 const isProcessingQueue = ref(false)
 let queueCounter = 0
+
+const enrichingIds = computed(() => new Set(
+  queue.value
+    .filter(i => i.input.type === 'enrich' && (i.status === 'pending' || i.status === 'generating'))
+    .map(i => (i.input as EnrichInput).sourceId),
+))
 
 const editItem = ref<ImageGalleryItem | null>(null)
 const editPrompt = ref('')
@@ -124,40 +135,31 @@ async function onPromote(item: ImageGalleryItem) {
   }
 }
 
-async function onEnrich(item: ImageGalleryItem, list: 'library' | 'drafts') {
-  enrichingId.value = item.id
-  galleryError.value = null
-  try {
-    const result = await enrichImage(item.id)
-    const items = list === 'library' ? libraryItems : draftItems
-    const idx = items.value.findIndex(i => i.id === item.id)
-    if (idx !== -1) {
-      items.value[idx] = {
-        ...items.value[idx],
-        title: result.title || items.value[idx].title,
-        description: result.description,
-        tags: result.tags,
-        category: result.categories[0] ?? items.value[idx].category,
-      }
-    }
-  } catch (e) {
-    galleryError.value = e instanceof Error ? e.message : 'Could not enrich image.'
-  } finally {
-    enrichingId.value = null
-  }
+function onEnrich(item: ImageGalleryItem, list: 'library' | 'drafts') {
+  queueCounter += 1
+  queue.value.push({
+    id: `q${queueCounter}`,
+    label: `Enrich: ${item.title || item.id.slice(0, 8)}`,
+    input: { type: 'enrich', sourceId: item.id, list },
+    status: 'pending',
+    result: null,
+    error: null,
+  })
+  void processQueue()
 }
 
 async function onUpscale(item: ImageGalleryItem) {
   upscalingId.value = item.id
   galleryError.value = null
   try {
-    const result = await upscaleImage(item.id, item.size || '1024x1024', 'medium')
+    const result = await upscaleImage(item.id, '1024x1024', 'medium')
     draftItems.value = draftItems.value.filter(i => i.id !== item.id)
     draftItems.value.unshift({
       id: result.id,
       imageUrl: result.imageUrl,
       prompt: result.prompt,
       revisedPrompt: result.revisedPrompt,
+      model: 'gpt-image-2',
       size: result.size,
       quality: result.quality,
       style: result.style,
@@ -169,6 +171,7 @@ async function onUpscale(item: ImageGalleryItem) {
       category: item.category,
       tags: item.tags,
       status: 'draft',
+      isPreview: false,
       createdAt: result.createdAt,
     })
   } catch (e) {
@@ -225,18 +228,31 @@ async function processQueue() {
       if (!pending) break
       pending.status = 'generating'
       try {
-        if (pending.input.type === 'edit') {
+        if (pending.input.type === 'enrich') {
+          const result = await enrichImage(pending.input.sourceId)
+          const items = pending.input.list === 'library' ? libraryItems : draftItems
+          const idx = items.value.findIndex(i => i.id === (pending.input as EnrichInput).sourceId)
+          if (idx !== -1) {
+            items.value[idx] = {
+              ...items.value[idx],
+              title: result.title || items.value[idx].title,
+              description: result.description,
+              tags: result.tags,
+              category: result.categories[0] ?? items.value[idx].category,
+            }
+          }
+        } else if (pending.input.type === 'edit') {
           pending.result = await editImage(pending.input.sourceId, pending.input.prompt, pending.input.maskBase64, pending.input.size)
         } else {
           pending.result = await generateImage(pending.input)
-        }
-        const results = Array.isArray(pending.result) ? pending.result : [pending.result]
-        for (const res of results) {
-          if (res?.id) {
-            try {
-              await enrichImage(res.id)
-            } catch (e) {
-              console.warn('[queue] Auto-enrich failed for', pending.label, e)
+          const results = Array.isArray(pending.result) ? pending.result : [pending.result]
+          for (const res of results) {
+            if (res?.id) {
+              try {
+                await enrichImage(res.id)
+              } catch (e) {
+                console.warn('[queue] Auto-enrich failed for', pending.label, e)
+              }
             }
           }
         }
@@ -442,13 +458,16 @@ onMounted(() => { void loadLibrary() })
       </div>
       <div v-else :class="page('grid')">
         <article v-for="item in libraryItems" :key="item.id" :class="card('')">
-          <img :class="card('image')" :src="imageSrc(item)" :alt="item.prompt" />
+          <div :class="card('image-wrap')">
+            <img :class="card('image')" :src="imageSrc(item)" :alt="item.prompt" />
+            <span v-if="item.model === 'gpt-image-2'" :class="card('badge', { upscaled: true })">Upscaled</span>
+          </div>
           <div :class="card('body')">
             <strong :class="card('title')">{{ item.title || item.category }}</strong>
             <p v-if="item.description" :class="card('description')">{{ item.description }}</p>
             <p v-else :class="card('prompt')">{{ item.revisedPrompt || item.prompt }}</p>
             <div :class="card('actions')">
-              <Button size="small" variant="outline" :loading="enrichingId === item.id" :disabled="enrichingId !== null" @click="onEnrich(item, 'library')">Enrich</Button>
+              <Button size="small" variant="outline" :loading="enrichingIds.has(item.id)" @click="onEnrich(item, 'library')">Enrich</Button>
               <Button size="small" variant="outline" @click="openEdit(item)">Edit</Button>
               <Button variant="ghost" size="small" :href="imageSrc(item)" target="_blank" rel="noreferrer">Open</Button>
               <Button variant="ghost" size="small" @click="onDelete(item, 'library')">Delete</Button>
@@ -473,15 +492,19 @@ onMounted(() => { void loadLibrary() })
       </div>
       <div v-else :class="page('grid')">
         <article v-for="item in draftItems" :key="item.id" :class="card('', { draft: true })">
-          <img :class="card('image')" :src="imageSrc(item)" :alt="item.prompt" />
+          <div :class="card('image-wrap')">
+            <img :class="card('image')" :src="imageSrc(item)" :alt="item.prompt" />
+            <span v-if="item.isPreview" :class="card('badge', { preview: true })">Preview</span>
+            <span v-else :class="card('badge', { upscaled: true })">Upscaled</span>
+          </div>
           <div :class="card('body')">
             <strong :class="card('title')">{{ item.title || item.category }}</strong>
             <p v-if="item.description" :class="card('description')">{{ item.description }}</p>
             <p v-else :class="card('prompt')">{{ item.revisedPrompt || item.prompt }}</p>
             <div :class="card('actions')">
-              <Button size="small" @click="onPromote(item)">Promote</Button>
-              <Button size="small" variant="outline" :loading="upscalingId === item.id" :disabled="upscalingId !== null" @click="onUpscale(item)">Upscale</Button>
-              <Button size="small" variant="outline" :loading="enrichingId === item.id" :disabled="enrichingId !== null" @click="onEnrich(item, 'drafts')">Enrich</Button>
+              <Button v-if="!item.isPreview" size="small" @click="onPromote(item)">Promote</Button>
+              <Button v-if="item.isPreview" size="small" variant="outline" :loading="upscalingId === item.id" :disabled="upscalingId !== null" @click="onUpscale(item)">Upscale</Button>
+              <Button size="small" variant="outline" :loading="enrichingIds.has(item.id)" @click="onEnrich(item, 'drafts')">Enrich</Button>
               <Button size="small" variant="outline" @click="openEdit(item)">Edit</Button>
               <Button variant="ghost" size="small" :href="imageSrc(item)" target="_blank" rel="noreferrer">Open</Button>
               <Button variant="ghost" size="small" @click="onDelete(item, 'drafts')">Delete</Button>
@@ -575,7 +598,7 @@ onMounted(() => { void loadLibrary() })
               <strong :class="page('queue-label')">{{ item.label }}</strong>
               <span v-if="item.status === 'generating'" :class="page('queue-sub')">Generating…</span>
               <span v-else-if="item.status === 'error'" :class="page('queue-error')" :title="item.error ?? undefined">{{ item.error }}</span>
-              <span v-else-if="item.status === 'done'" :class="page('queue-sub')">{{ Array.isArray(item.result) ? `${item.result.length} images — check Drafts` : 'Done — check Drafts' }}</span>
+              <span v-else-if="item.status === 'done'" :class="page('queue-sub')">{{ item.input.type === 'enrich' ? 'Enriched' : Array.isArray(item.result) ? `${item.result.length} images — check Drafts` : 'Done — check Drafts' }}</span>
             </div>
             <img v-if="item.result && !Array.isArray(item.result)" :class="page('queue-thumb')" :src="imageSrc(item.result)" :alt="item.label" />
             <div v-else-if="Array.isArray(item.result)" style="display:flex;gap:2px;">
@@ -1061,12 +1084,38 @@ onMounted(() => { void loadLibrary() })
     border-color: color-mix(in srgb, var(--color-warning), transparent 60%);
   }
 
+  &__image-wrap {
+    position: relative;
+  }
+
   &__image {
     width: 100%;
     aspect-ratio: 1;
     object-fit: cover;
     background: color-mix(in srgb, var(--color-foreground), transparent 92%);
     display: block;
+  }
+
+  &__badge {
+    position: absolute;
+    top: var(--space-xs);
+    right: var(--space-xs);
+    background: rgba(0, 0, 0, 0.55);
+    color: #fff;
+    font-size: var(--font-size-xs);
+    font-weight: 600;
+    padding: 2px var(--space-s);
+    border-radius: var(--border-radius-xs);
+    letter-spacing: 0.03em;
+    pointer-events: none;
+
+    &--preview {
+      background: rgba(0, 80, 200, 0.72);
+    }
+
+    &--upscaled {
+      background: rgba(20, 130, 60, 0.72);
+    }
   }
 
   &__body {

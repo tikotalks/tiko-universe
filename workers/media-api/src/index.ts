@@ -503,14 +503,18 @@ async function handleMediaUpload(request: Request, env: Env): Promise<Response> 
     const height = heightParam ? parseInt(heightParam) : undefined
     const isPrivate = formData.get('isPrivate') === 'true'
 
+    const thumbnailUrl2 = isImage ? `${baseUrl}?width=200` : (thumbnailUrl || baseUrl)
+    const mediumUrl = isImage ? `${baseUrl}?width=800` : baseUrl
+
     try {
       await env.MEDIA_DB.prepare(
         `INSERT INTO media (
-          id, filename, file_size, mime_type, width, height, title, description,
-          categories, tags, is_private, original_url, created_at, updated_at
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+          id, name, filename, file_size, mime_type, width, height, title, description,
+          categories, tags, is_private, original_url, thumbnail_url, medium_url, created_at, updated_at
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       ).bind(
         id,
+        metadata.title || nameWithoutExt,
         baseKey,
         file.size,
         file.type,
@@ -522,6 +526,8 @@ async function handleMediaUpload(request: Request, env: Env): Promise<Response> 
         JSON.stringify(metadata.tags),
         isPrivate ? 1 : 0,
         baseUrl,
+        thumbnailUrl2,
+        mediumUrl,
         now,
         now,
       ).run()
