@@ -7,10 +7,27 @@ import type { ImageGenerationResult } from '../types/admin'
 
 type Tab = 'library' | 'drafts' | 'create'
 
+interface QueueItem {
+  id: string
+  label: string
+  input: {
+    prompt: string
+    size: '1024x1024' | '1024x1792' | '1792x1024'
+    quality: 'standard' | 'hd'
+    style: 'vivid' | 'natural'
+    title?: string
+    category?: string
+    tags?: string[]
+  }
+  status: 'pending' | 'generating' | 'done' | 'error'
+  result: ImageGenerationResult | null
+  error: string | null
+}
+
 const page = useBemm('image-page', { return: 'string', includeBaseClass: true })
 const card = useBemm('image-card', { return: 'string', includeBaseClass: true })
 
-const { generateImage, listImages, promoteImage, deleteImage, imageSrc } = useImageGeneration()
+const { generateImage, listImages, promoteImage, deleteImage, enrichImage, imageSrc } = useImageGeneration()
 
 const activeTab = ref<Tab>('library')
 
@@ -26,9 +43,11 @@ const tagsText = ref('tiko, child-friendly')
 const size = ref<'1024x1024' | '1024x1792' | '1792x1024'>('1024x1024')
 const quality = ref<'standard' | 'hd'>('standard')
 const style = ref<'vivid' | 'natural'>('vivid')
-const generating = ref(false)
-const generateError = ref<string | null>(null)
-const lastGenerated = ref<ImageGenerationResult | null>(null)
+const enrichingId = ref<string | null>(null)
+
+const queue = ref<QueueItem[]>([])
+const isProcessingQueue = ref(false)
+let queueCounter = 0
 
 const tikoStylePrompt = `
 Use the Tiko visual style: warm, child-friendly, simple readable shapes, rounded forms, soft tactile surfaces, clear subject silhouette, cheerful but not chaotic, suitable for young children, no text, no logos, no scary details.
@@ -77,10 +96,33 @@ async function refresh() {
 
 async function onPromote(item: ImageGalleryItem) {
   try {
-    await promoteImage(item.id)
+    await promoteImage(item.id, item)
     draftItems.value = draftItems.value.filter(i => i.id !== item.id)
   } catch (e) {
     galleryError.value = e instanceof Error ? e.message : 'Could not promote image.'
+  }
+}
+
+async function onEnrich(item: ImageGalleryItem, list: 'library' | 'drafts') {
+  enrichingId.value = item.id
+  galleryError.value = null
+  try {
+    const result = await enrichImage(item.id)
+    const items = list === 'library' ? libraryItems : draftItems
+    const idx = items.value.findIndex(i => i.id === item.id)
+    if (idx !== -1) {
+      items.value[idx] = {
+        ...items.value[idx],
+        title: result.title || items.value[idx].title,
+        description: result.description,
+        tags: result.tags,
+        category: result.categories[0] ?? items.value[idx].category,
+      }
+    }
+  } catch (e) {
+    galleryError.value = e instanceof Error ? e.message : 'Could not enrich image.'
+  } finally {
+    enrichingId.value = null
   }
 }
 
@@ -95,16 +137,15 @@ async function onDelete(item: ImageGalleryItem, list: 'library' | 'drafts') {
   }
 }
 
-async function onGenerate() {
-  if (!prompt.value.trim()) {
-    generateError.value = 'Describe what image to generate first.'
-    return
-  }
+function onGenerate() {
+  if (!prompt.value.trim()) return
 
-  generating.value = true
-  generateError.value = null
-  try {
-    const result = await generateImage({
+  queueCounter += 1
+  const label = title.value.trim() || prompt.value.trim().slice(0, 40)
+  const item: QueueItem = {
+    id: `q${queueCounter}`,
+    label,
+    input: {
       prompt: fullPrompt.value,
       title: title.value.trim() || undefined,
       category: category.value.trim() || 'generated',
@@ -112,14 +153,38 @@ async function onGenerate() {
       size: size.value,
       quality: quality.value,
       style: style.value,
-    })
-    lastGenerated.value = result
-    if (activeTab.value !== 'create') return
-  } catch (e) {
-    generateError.value = e instanceof Error ? e.message : 'Image generation failed.'
-  } finally {
-    generating.value = false
+    },
+    status: 'pending',
+    result: null,
+    error: null,
   }
+  queue.value.push(item)
+  void processQueue()
+}
+
+async function processQueue() {
+  if (isProcessingQueue.value) return
+  isProcessingQueue.value = true
+  try {
+    while (true) {
+      const pending = queue.value.find(i => i.status === 'pending')
+      if (!pending) break
+      pending.status = 'generating'
+      try {
+        pending.result = await generateImage(pending.input)
+        pending.status = 'done'
+      } catch (e) {
+        pending.error = e instanceof Error ? e.message : 'Generation failed.'
+        pending.status = 'error'
+      }
+    }
+  } finally {
+    isProcessingQueue.value = false
+  }
+}
+
+function clearQueue() {
+  queue.value = queue.value.filter(i => i.status === 'pending' || i.status === 'generating')
 }
 
 function useTemplate(kind: 'character' | 'scene' | 'object') {
@@ -195,8 +260,10 @@ onMounted(() => { void loadLibrary() })
           <img :class="card('image')" :src="imageSrc(item)" :alt="item.prompt" />
           <div :class="card('body')">
             <strong :class="card('title')">{{ item.title || item.category }}</strong>
-            <p :class="card('prompt')">{{ item.revisedPrompt || item.prompt }}</p>
+            <p v-if="item.description" :class="card('description')">{{ item.description }}</p>
+            <p v-else :class="card('prompt')">{{ item.revisedPrompt || item.prompt }}</p>
             <div :class="card('actions')">
+              <Button size="small" variant="outline" :loading="enrichingId === item.id" :disabled="enrichingId !== null" @click="onEnrich(item, 'library')">Enrich</Button>
               <Button variant="ghost" size="small" :href="imageSrc(item)" target="_blank" rel="noreferrer">Open</Button>
               <Button variant="ghost" size="small" @click="onDelete(item, 'library')">Delete</Button>
             </div>
@@ -223,9 +290,11 @@ onMounted(() => { void loadLibrary() })
           <img :class="card('image')" :src="imageSrc(item)" :alt="item.prompt" />
           <div :class="card('body')">
             <strong :class="card('title')">{{ item.title || item.category }}</strong>
-            <p :class="card('prompt')">{{ item.revisedPrompt || item.prompt }}</p>
+            <p v-if="item.description" :class="card('description')">{{ item.description }}</p>
+            <p v-else :class="card('prompt')">{{ item.revisedPrompt || item.prompt }}</p>
             <div :class="card('actions')">
               <Button size="small" @click="onPromote(item)">Promote</Button>
+              <Button size="small" variant="outline" :loading="enrichingId === item.id" :disabled="enrichingId !== null" @click="onEnrich(item, 'drafts')">Enrich</Button>
               <Button variant="ghost" size="small" :href="imageSrc(item)" target="_blank" rel="noreferrer">Open</Button>
               <Button variant="ghost" size="small" @click="onDelete(item, 'drafts')">Delete</Button>
             </div>
@@ -291,20 +360,38 @@ onMounted(() => { void loadLibrary() })
           </label>
         </div>
 
-        <p v-if="generateError" :class="page('error')">{{ generateError }}</p>
-
-        <Button :loading="generating" :disabled="generating" type="submit" block>
-          {{ generating ? 'Generating…' : 'Generate image' }}
-        </Button>
+        <Button :disabled="!prompt.trim()" type="submit" block>Add to queue</Button>
 
         <p :class="page('hint')">Generated images appear in <button type="button" :class="page('inline-link')" @click="viewDrafts">Drafts</button> until you promote them.</p>
       </form>
 
-      <aside v-if="lastGenerated" :class="page('preview')">
-        <h3 :class="page('panel-title')">Last generated</h3>
-        <img :class="page('preview-image')" :src="imageSrc(lastGenerated)" :alt="lastGenerated.prompt" />
-        <p :class="page('preview-meta')">{{ lastGenerated.size }} · {{ lastGenerated.quality }} · {{ lastGenerated.style }}</p>
-        <Button variant="outline" size="small" @click="viewDrafts">View in drafts</Button>
+      <aside :class="page('queue')">
+        <header :class="page('queue-head')">
+          <h3 :class="page('panel-title')">Queue <span :class="page('tab-count')">{{ queue.length }}</span></h3>
+          <Button v-if="queue.some(i => i.status === 'done' || i.status === 'error')" variant="ghost" size="small" @click="clearQueue">Clear done</Button>
+        </header>
+
+        <div v-if="queue.length === 0" :class="page('queue-empty')">
+          No items queued. Add a prompt and click "Add to queue".
+        </div>
+
+        <ul v-else :class="page('queue-list')">
+          <li v-for="item in queue" :key="item.id" :class="page('queue-item', { [item.status]: true })">
+            <div :class="page('queue-status')">
+              <span v-if="item.status === 'pending'">⏳</span>
+              <span v-else-if="item.status === 'generating'" :class="page('queue-spinner')">⟳</span>
+              <span v-else-if="item.status === 'done'">✓</span>
+              <span v-else>✕</span>
+            </div>
+            <div :class="page('queue-info')">
+              <strong :class="page('queue-label')">{{ item.label }}</strong>
+              <span v-if="item.status === 'generating'" :class="page('queue-sub')">Generating…</span>
+              <span v-else-if="item.status === 'error'" :class="page('queue-error')">{{ item.error }}</span>
+              <span v-else-if="item.status === 'done'" :class="page('queue-sub')">Done — check Drafts</span>
+            </div>
+            <img v-if="item.result" :class="page('queue-thumb')" :src="imageSrc(item.result)" :alt="item.label" />
+          </li>
+        </ul>
       </aside>
     </section>
   </section>
@@ -449,12 +536,115 @@ onMounted(() => { void loadLibrary() })
 
   &__create {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) calc(var(--space) * 18);
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
     gap: var(--space-m);
+    align-items: start;
 
     @media (max-width: 900px) {
       grid-template-columns: 1fr;
     }
+  }
+
+  &__queue {
+    background: var(--admin-surface);
+    border: 1px solid var(--admin-border);
+    border-radius: var(--border-radius-s);
+    padding: var(--space-m);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-s);
+  }
+
+  &__queue-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--space-s);
+  }
+
+  &__queue-empty {
+    color: var(--admin-text-muted);
+    font-size: var(--font-size-s);
+    text-align: center;
+    padding: var(--space-m) 0;
+  }
+
+  &__queue-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+  }
+
+  &__queue-item {
+    display: flex;
+    align-items: center;
+    gap: var(--space-s);
+    padding: var(--space-s);
+    border-radius: var(--border-radius-xs);
+    background: var(--admin-page-bg);
+    border: 1px solid var(--admin-border);
+
+    &--generating {
+      border-color: var(--color-primary);
+    }
+
+    &--done {
+      border-color: color-mix(in srgb, var(--color-success, green), transparent 60%);
+    }
+
+    &--error {
+      border-color: color-mix(in srgb, var(--color-error), transparent 60%);
+    }
+  }
+
+  &__queue-status {
+    font-size: var(--font-size-m);
+    flex-shrink: 0;
+    width: 1.4em;
+    text-align: center;
+  }
+
+  &__queue-spinner {
+    display: inline-block;
+    animation: spin 1s linear infinite;
+  }
+
+  &__queue-info {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  &__queue-label {
+    font-size: var(--font-size-s);
+    font-weight: 600;
+    color: var(--admin-text);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  &__queue-sub {
+    font-size: var(--font-size-xs);
+    color: var(--admin-text-muted);
+  }
+
+  &__queue-error {
+    font-size: var(--font-size-xs);
+    color: var(--color-error);
+  }
+
+  &__queue-thumb {
+    width: calc(var(--space) * 5);
+    height: calc(var(--space) * 5);
+    object-fit: cover;
+    border-radius: var(--border-radius-xs);
+    flex-shrink: 0;
   }
 
   &__form {
@@ -626,5 +816,21 @@ onMounted(() => { void loadLibrary() })
     flex-wrap: wrap;
     gap: var(--space-xs);
   }
+
+  &__description {
+    color: var(--admin-text-muted);
+    font-size: var(--font-size-xs);
+    line-height: 1.4;
+    max-height: calc(var(--space) * 4);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+  }
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
 }
 </style>
