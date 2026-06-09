@@ -1085,8 +1085,9 @@ async function generateImage(request: Request, env: Env): Promise<Response> {
   }
 
   // Generate the image via atlas
+  if (!env.ATLAS_SERVICE) return apiError('atlas_not_available', 'Atlas service is not available.', 503)
   const atlasBase = (env.ATLAS_BASE_URL ?? 'https://tiko-atlas-api-dev.silvandiepen.workers.dev/v1/atlas').replace(/\/$/, '')
-  const atlasResponse = await env.ATLAS_SERVICE!.fetch(new Request(`${atlasBase}/run`, {
+  const atlasResponse = await env.ATLAS_SERVICE.fetch(new Request(`${atlasBase}/run`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({

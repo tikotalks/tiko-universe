@@ -377,9 +377,9 @@ describe('generation-api TTS contract', () => {
     }), env)
 
     expect(identityFetch).toHaveBeenCalledTimes(1)
-    expect(response.status).toBe(502)
+    expect(response.status).toBe(503)
     await expect(json(response)).resolves.toMatchObject({
-      error: { code: 'prompt_boost_failed' }
+      error: { code: 'atlas_not_available' }
     })
   })
 
