@@ -130,6 +130,11 @@ async function env() {
   return {
     APP_DB: new MemoryD1Database(),
     IDENTITY_DB: identity,
+    IDENTITY_SERVICE: {
+      fetch: async () => new Response(JSON.stringify({ roles: ['admin'], capabilities: { canEditContent: true } }), {
+        headers: { 'content-type': 'application/json' }
+      })
+    },
     TOKEN_PEPPER: 'test-pepper',
     ALLOWED_ORIGINS: 'https://yesno.tiko.test'
   }

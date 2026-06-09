@@ -37,7 +37,7 @@ interface D1Database {
 
 export interface Env extends AuthEnv {
   AUTH_DB: D1Database
-  APP_DB: D1Database
+  APP_DB?: D1Database
   TOKEN_PEPPER: string
   ADMIN_EMAIL?: string
   APP_API_URL?: string
@@ -120,12 +120,14 @@ export default {
     }
 
     if (path === '/v1/admin/apps/config' && request.method === 'GET') {
-      return listAppConfigs(env.APP_DB)
+      const appDb = requireAppDb(env)
+      return listAppConfigs(appDb)
     }
 
     const appConfigMatch = path.match(/^\/v1\/admin\/apps\/config\/([^/]+)$/)
     if (appConfigMatch && request.method === 'PUT') {
-      return writeAppConfig(request, env.APP_DB, decodeURIComponent(appConfigMatch[1]))
+      const appDb = requireAppDb(env)
+      return writeAppConfig(request, appDb, decodeURIComponent(appConfigMatch[1]))
     }
 
     if (path === '/v1/admin/users' && request.method === 'GET') {
@@ -301,7 +303,7 @@ async function assignRole(db: D1Database, subjectId: string, role: string, sourc
     .run()
 }
 
-async function listUsers(authDb: D1Database, appDb: D1Database, query: string): Promise<AdminUserListItem[]> {
+async function listUsers(authDb: D1Database, appDb: D1Database | undefined, query: string): Promise<AdminUserListItem[]> {
   const q = `%${query.trim().toLowerCase()}%`
   const { results } = await authDb.prepare(`
     SELECT s.id, s.kind, a.email_plain AS email, s.created_at, s.updated_at,
@@ -325,7 +327,7 @@ async function listUsers(authDb: D1Database, appDb: D1Database, query: string): 
   return users.map((u) => ({ ...u, hasData: dataSet.has(u.id) }))
 }
 
-async function ensureAdminInUsers(authDb: D1Database, appDb: D1Database, users: AdminUserListItem[], admin: AdminSession, query: string): Promise<AdminUserListItem[]> {
+async function ensureAdminInUsers(authDb: D1Database, appDb: D1Database | undefined, users: AdminUserListItem[], admin: AdminSession, query: string): Promise<AdminUserListItem[]> {
   if (users.some((user) => user.id === admin.userId)) return users
   if (!matchesAdminQuery(admin, query)) return users
 
@@ -371,8 +373,8 @@ function normalizeUserRow(row: { id: string; kind: string; email: string | null;
   }
 }
 
-async function subjectsWithData(db: D1Database, subjectIds: string[]): Promise<Set<string>> {
-  if (subjectIds.length === 0) return new Set()
+async function subjectsWithData(db: D1Database | undefined, subjectIds: string[]): Promise<Set<string>> {
+  if (!db || subjectIds.length === 0) return new Set()
   const placeholders = subjectIds.map(() => '?').join(',')
   const { results } = await db.prepare(`
     SELECT DISTINCT user_id FROM app_settings WHERE user_id IN (${placeholders})
@@ -383,6 +385,7 @@ async function subjectsWithData(db: D1Database, subjectIds: string[]): Promise<S
 }
 
 async function cleanupAnonymousSubjects(env: Env): Promise<void> {
+  if (!env.APP_DB) return
   const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString()
   const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString()
 
@@ -413,6 +416,11 @@ async function cleanupAnonymousSubjects(env: Env): Promise<void> {
       await deleteSubjectIdentity(env.AUTH_DB, id)
     }
   }
+}
+
+function requireAppDb(env: Env): D1Database {
+  if (!env.APP_DB) throw new Error('app_db_not_configured')
+  return env.APP_DB
 }
 
 async function deleteSubjectData(db: D1Database, subjectId: string): Promise<void> {
