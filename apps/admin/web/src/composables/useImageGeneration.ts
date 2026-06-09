@@ -129,5 +129,17 @@ export function useImageGeneration() {
     return body.data
   }
 
-  return { generateImage, listImages, promoteImage, deleteImage, enrichImage, imageSrc }
+  async function editImage(sourceId: string, prompt: string, maskBase64?: string, size?: string): Promise<ImageGenerationResult> {
+    const payload: Record<string, unknown> = { prompt, size: size || '1024x1024' }
+    if (maskBase64) payload.mask_base64 = maskBase64
+    const response = await fetch(`${baseUrl()}/images/${encodeURIComponent(sourceId)}/edit`, {
+      method: 'POST',
+      headers: authHeaders({ 'content-type': 'application/json' }),
+      body: JSON.stringify(payload),
+    })
+    const body = await readJson<AdminApiResponse<ImageGenerationResult>>(response, 'Image edit failed')
+    return body.data
+  }
+
+  return { generateImage, listImages, promoteImage, deleteImage, enrichImage, editImage, imageSrc }
 }

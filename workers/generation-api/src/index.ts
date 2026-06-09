@@ -154,6 +154,7 @@ export default {
     if (url.pathname.startsWith('/v1/generation/images/') && url.pathname.endsWith('/binary') && request.method === 'GET') return getImage(url.pathname, env)
     if (url.pathname.startsWith('/v1/generation/images/') && url.pathname.endsWith('/promote') && request.method === 'POST') return requireAuth(request, env, () => promoteImage(url.pathname, env))
     if (url.pathname.startsWith('/v1/generation/images/') && url.pathname.endsWith('/enrich') && request.method === 'POST') return requireAuth(request, env, () => enrichImage(url.pathname, env))
+    if (url.pathname.startsWith('/v1/generation/images/') && url.pathname.endsWith('/edit') && request.method === 'POST') return requireAuth(request, env, () => editImageVariant(url.pathname, request, env))
     if (url.pathname.startsWith('/v1/generation/images/') && request.method === 'DELETE') return requireAuth(request, env, () => deleteImage(url.pathname, env))
     if (url.pathname === '/v1/generation/images' && request.method === 'GET') return listImages(request, env)
     if (url.pathname === '/v1/generation/stories/tryout' && request.method === 'POST') return requireAuth(request, env, () => generateStoryTryout(request, env))
@@ -1351,6 +1352,115 @@ function parseImageVisionResponse(content: string): { title: string; description
       categories: Array.isArray(parsed.categories) ? parsed.categories : [],
     }
   } catch { return null }
+}
+
+async function editImageVariant(pathname: string, request: Request, env: Env): Promise<Response> {
+  const id = pathname.replace('/v1/generation/images/', '').replace('/edit', '')
+  if (!isSafeId(id)) return apiError('invalid_image_id', 'Image id is invalid.', 400)
+  if (!env.OPENAI_API_KEY) return apiError('openai_not_configured', 'OpenAI is not configured.', 503)
+
+  let body: { prompt?: unknown; mask_base64?: unknown; size?: unknown }
+  try {
+    body = await request.json() as { prompt?: unknown; mask_base64?: unknown; size?: unknown }
+  } catch {
+    return apiError('invalid_json', 'Request body must be valid JSON.', 400)
+  }
+
+  const prompt = typeof body.prompt === 'string' ? body.prompt.trim() : ''
+  if (!prompt) return apiError('missing_prompt', 'Edit prompt is required.', 400, 'prompt')
+  if (prompt.length > 4000) return apiError('prompt_too_long', 'Prompt must be 4000 characters or fewer.', 400, 'prompt')
+  const size = typeof body.size === 'string' && ALLOWED_IMAGE_SIZES.has(body.size) ? body.size as '1024x1024' | '1024x1792' | '1792x1024' : '1024x1024'
+
+  const record = await env.GENERATION_DB.prepare(
+    'SELECT id, r2_key, prompt, category, tags, title FROM generated_images WHERE id = ? LIMIT 1',
+  ).bind(id).first<{ id: string; r2_key: string; prompt: string; category: string; tags: string; title: string | null }>()
+  if (!record) return apiError('image_not_found', 'Image not found.', 404)
+
+  const object = await env.GENERATED_MEDIA_BUCKET.get(record.r2_key)
+  if (!object) return apiError('image_not_found', 'Image not found in storage.', 404)
+  const imageBytes = new Uint8Array(await new Response(object.body).arrayBuffer())
+
+  const form = new FormData()
+  form.append('model', 'gpt-image-1')
+  form.append('prompt', prompt)
+  form.append('n', '1')
+  form.append('size', size)
+  form.append('image', new Blob([imageBytes], { type: 'image/png' }), 'image.png')
+
+  if (typeof body.mask_base64 === 'string' && body.mask_base64) {
+    const maskBytes = base64ToBytes(body.mask_base64)
+    form.append('mask', new Blob([maskBytes], { type: 'image/png' }), 'mask.png')
+  }
+
+  const editResponse = await fetch('https://api.openai.com/v1/images/edits', {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${env.OPENAI_API_KEY}` },
+    body: form,
+  })
+
+  if (!editResponse.ok) {
+    return apiError('image_edit_failed', `Image edit failed: ${editResponse.status}`, editResponse.status >= 500 ? 502 : editResponse.status)
+  }
+
+  const editData = await editResponse.json() as { data?: Array<{ b64_json?: string; url?: string }> }
+  const imageItem = editData.data?.[0]
+  if (!imageItem) return apiError('image_edit_invalid_response', 'Image edit returned no data.', 502)
+
+  let newImageBytes: Uint8Array
+  if (imageItem.b64_json) {
+    newImageBytes = base64ToBytes(imageItem.b64_json)
+  } else if (imageItem.url) {
+    const urlRes = await fetch(imageItem.url)
+    if (!urlRes.ok) return apiError('image_edit_asset_failed', 'Could not fetch edited image asset.', 502)
+    newImageBytes = new Uint8Array(await urlRes.arrayBuffer())
+  } else {
+    return apiError('image_edit_invalid_response', 'Image edit returned no image data.', 502)
+  }
+
+  const newId = crypto.randomUUID()
+  const r2Key = `images/${newId}.png`
+  const now = new Date().toISOString()
+  const imageUrl = `/v1/generation/images/${newId}/binary`
+  const dims = parseImageSize(size)
+
+  await env.GENERATED_MEDIA_BUCKET.put(r2Key, newImageBytes, {
+    httpMetadata: { contentType: 'image/png', cacheControl: 'public, max-age=31536000, immutable' },
+  })
+
+  await env.GENERATION_DB.prepare(`INSERT INTO generated_images (
+    id, prompt, revised_prompt, model, size, quality, style, image_url, r2_key,
+    content_type, file_size_bytes, width, height, category, tags, title, description,
+    is_public, created_at, updated_at
+  ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`).bind(
+    newId, prompt, null, 'gpt-image-1', size, 'standard', 'vivid', imageUrl, r2Key,
+    'image/png', newImageBytes.byteLength, dims.width, dims.height,
+    record.category || 'generated', record.tags || '[]', record.title || null, null,
+    0, now, now,
+  ).run()
+
+  return json({
+    data: {
+      id: newId,
+      imageUrl,
+      prompt,
+      revisedPrompt: null,
+      size,
+      quality: 'standard',
+      style: 'vivid',
+      width: dims.width,
+      height: dims.height,
+      fileSizeBytes: newImageBytes.byteLength,
+      createdAt: now,
+    },
+    meta: { schemaVersion: 1 },
+  }, 201)
+}
+
+function base64ToBytes(base64: string): Uint8Array {
+  const binary = atob(base64)
+  const bytes = new Uint8Array(binary.length)
+  for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i)
+  return bytes
 }
 
 async function deleteImage(pathname: string, env: Env): Promise<Response> {
