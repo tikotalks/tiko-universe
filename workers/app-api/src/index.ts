@@ -136,7 +136,7 @@ export async function handleRequest(request: Request, env: Env): Promise<Respons
       const resource = defaultsMatch[2] as AppResource
       if (request.method === 'GET') return withCors(await readDefaults(env, app, resource), cors)
       if (request.method === 'PUT') {
-        await requireAnyAuth(request, env)
+        await requireSession(request, env)
         return withCors(await writeDefaults(request, env, app, resource), cors)
       }
       return withCors(jsonError('method_not_allowed', 'Method not allowed.', 405), cors)
