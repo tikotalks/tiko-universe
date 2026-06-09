@@ -458,3 +458,4 @@ export class IdentityClient {
 function bearerHeaders(sessionToken: string): Record<string, string> {
   return { authorization: `Bearer ${sessionToken}` }
 }
+
