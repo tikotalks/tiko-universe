@@ -1388,18 +1388,18 @@ async function editImageVariant(pathname: string, request: Request, env: Env): P
 
   const object = await env.GENERATED_MEDIA_BUCKET.get(record.r2_key)
   if (!object) return apiError('image_not_found', 'Image not found in storage.', 404)
-  const imageBytes = new Uint8Array(await new Response(object.body).arrayBuffer())
+  const imageBuffer = await new Response(object.body).arrayBuffer()
 
   const form = new FormData()
   form.append('model', 'gpt-image-1')
   form.append('prompt', prompt)
   form.append('n', '1')
   form.append('size', size)
-  form.append('image', new Blob([imageBytes], { type: 'image/png' }), 'image.png')
+  form.append('image', new Blob([imageBuffer], { type: 'image/png' }), 'image.png')
 
   if (typeof body.mask_base64 === 'string' && body.mask_base64) {
-    const maskBytes = base64ToBytes(body.mask_base64)
-    form.append('mask', new Blob([maskBytes], { type: 'image/png' }), 'mask.png')
+    const maskBuffer = base64ToBytes(body.mask_base64).buffer as ArrayBuffer
+    form.append('mask', new Blob([maskBuffer], { type: 'image/png' }), 'mask.png')
   }
 
   const editResponse = await fetch('https://api.openai.com/v1/images/edits', {
