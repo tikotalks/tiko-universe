@@ -1,3 +1,4 @@
+// @vitest-environment node
 import { describe, expect, it, vi } from 'vitest'
 import worker from '../workers/media-api/src/index'
 
@@ -293,7 +294,6 @@ describe('media-api worker', () => {
     }), env as never)
     const body = await parseJson(response)
 
-    if (response.status !== 200) console.log('[DEBUG upload body]', JSON.stringify(body))
     expect(response.status).toBe(200)
     expect(body.success).toBe(true)
     expect(body.id).toEqual(expect.any(String))
