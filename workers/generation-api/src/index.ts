@@ -885,13 +885,13 @@ const ALLOWED_IMAGE_SIZES = new Set(['1024x1024', '1024x1792', '1792x1024'])
 const IMAGE_STYLE_SPECS: Record<ImageMode, object> = {
   icon: {
     task: "Generate a 3D icon in a soft, stylized, contemporary look (playful but mature). Absolutely no leaves, foliage, plant elements, or text/letters unless explicitly described in icon_idea.",
-    style_reference: "Soft 3D icon style with smooth rounded forms, crisper edges, slightly richer saturation, and calm, balanced proportions. UI-friendly and readable at small sizes; professional product-icon vibe.",
+    style_reference: "Soft 3D icon style in a playful, toy-like aesthetic. Smooth rounded forms, vivid natural color, calm proportions. Think high-quality vinyl toy or clay render — stylized and charming, not realistic. Subtle volumetric hints for depth but never photoreal. UI-friendly and readable at small sizes.",
     icon_idea: null,
     render_style: {
-      materials: "Satin–matte. Minimal subject-specific micro-texture only where needed to suggest material; otherwise smooth. Avoid gloss and strong reflections.",
+      materials: "Soft matte vinyl/clay feel. Suggest material through color and form, not texture maps — a bowl of rice has distinguishable kernels, wood has warm tone variation, fruit has gentle color gradation. Stay stylized, never photorealistic.",
       shapes: "Rounded but not chubby: tighter corner radii, controlled bevels, clean planes. No toy-like bulges; maintain confident geometry.",
-      colors: "Refined, punchier palette. Use 2–3 core colors plus one subtle accent. Slightly richer saturation than pastel, avoid candy/neon or rainbow mixes.",
-      lighting: "Soft studio lighting with a gentle key–fill ratio (a bit more contrast than before) and a faint rim/edge light for pop. Subtle grounded shadow. No harsh speculars.",
+      colors: "Vivid, truthful colors. Objects should look like themselves — green leaves, red tomatoes, golden bread. 2–3 core colors plus one subtle accent. Rich but natural saturation; avoid candy/neon or rainbow mixes.",
+      lighting: "Soft studio lighting with gentle key–fill contrast for a hint of dimension — just enough to lift the subject off the page. Faint rim light for pop. Soft grounded shadow. Think vinyl toy photography, not product photography. No harsh speculars.",
       background: "transparent"
     },
     composition: {
@@ -904,7 +904,7 @@ const IMAGE_STYLE_SPECS: Record<ImageMode, object> = {
       enable: true,
       texture_strength: "minimal",
       texture_scale: "micro",
-      rules: "Only apply subtle, subject-aware micro-texture to avoid flatness; keep large areas smooth. No generic grain; texture must be barely perceptible at 100%."
+      rules: "Suggest material identity through subtle cues, not texture maps. Rice should show individual kernels in a stylized way; wood has warmth but no grain photo-realism; fabric suggests softness through form. Overall feel stays clean and toy-like — detail is a hint, not a feature."
     },
     material_hints: {
       animal: "Ultra-fine short flocking only on edges and silhouette—no visible strands.",
@@ -1010,7 +1010,11 @@ const ART_DIRECTOR_SYSTEM_PROMPTS: Record<ImageMode, string> = {
   icon: `You are a senior art director. Convert the user's JSON style spec into a single, explicit, 180–300 word image brief for an image-generation model.
 Rules:
 - Do not use any wording or letters in the images.
-- Keep ONE consistent visual style across outputs (soft 3D, rounded forms, pastel accents).
+- Keep ONE consistent visual style across outputs (soft 3D toy-like, rounded forms, vivid truthful color).
+- The overall aesthetic is playful and stylized like a high-quality vinyl toy or clay render — NOT photorealistic. Ever.
+- Vivid, honest colors: a leaf is vivid green, rice is cream, a tomato is rich red. Never wash out or desaturate.
+- Subtle hints of dimension: soft shadows, gentle light wrapping. Just enough to not look flat. Not realistic shading.
+- Suggest material identity through form and color cues (rice kernels, wood warmth) — never through photorealistic texture.
 - Include: subject, camera, composition, lighting, palette, materials, textures, surface detail, silhouettes, dos/don'ts.
 - Be directive, not optional. No meta talk. No lists. No JSON.`,
   coloring: `You are a senior art director. Convert the user's JSON style spec into a single, explicit, 180–300 word image brief for an image-generation model producing a coloring page.
