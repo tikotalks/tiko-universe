@@ -1,10 +1,11 @@
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import { ui } from '@sil/ui/vite'
+import { deployInfo } from '../../../tools/vite-plugin-deploy-info.mjs'
 import { fileURLToPath, URL } from 'node:url'
 
 export default defineConfig({
-  plugins: [vue(), ui()],
+  plugins: [vue(), ui(), deployInfo()],
   resolve: {
     alias: {
       '@tiko/ui': fileURLToPath(new URL('../../../packages/ui/src/index.ts', import.meta.url)),

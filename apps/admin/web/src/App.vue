@@ -243,7 +243,6 @@ html, body {
     width: calc(var(--space) * 15);
     flex-shrink: 0;
     background: var(--admin-sidebar-bg);
-    border-right: 1px solid var(--admin-border);
     display: flex;
     flex-direction: column;
     gap: var(--space-s);
@@ -258,7 +257,6 @@ html, body {
     align-items: center;
     gap: var(--space-s);
     padding: var(--space-s);
-    border-bottom: 1px solid var(--admin-border);
   }
 
   &__brand-mark {
@@ -305,7 +303,7 @@ html, body {
     align-items: center;
     gap: var(--space-s);
     padding: var(--space-s);
-    border-radius: var(--border-radius-s);
+    border-radius: var(--border-radius-m);
     color: var(--admin-text-muted);
     text-decoration: none;
     font-size: var(--font-size-s);
@@ -320,12 +318,12 @@ html, body {
     &--active {
       background: var(--admin-nav-active);
       color: var(--admin-text);
+      font-weight: 600;
     }
   }
 
   &__user-wrapper {
     position: relative;
-    border-top: 1px solid var(--admin-border);
     padding-top: var(--space-s);
   }
 
@@ -469,8 +467,6 @@ html, body {
       flex-direction: row;
       padding: var(--space-s);
       align-items: center;
-      border-right: 0;
-      border-bottom: 1px solid var(--admin-border);
     }
 
     &__brand {

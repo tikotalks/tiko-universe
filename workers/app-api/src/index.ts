@@ -36,7 +36,7 @@ interface SessionJoinRow {
   expires_at: string
 }
 
-const DEFAULT_ALLOWED_ORIGINS = 'https://tiko.mt,https://www.tiko.mt,https://tiko.tikoapps.org,https://yesno.tikoapps.org,https://cards.tikoapps.org,https://sequence.tikoapps.org,https://type.tikoapps.org,https://timer.tikoapps.org,https://admin.tikoapps.org,https://dev.tiko.tikoapps.org,https://dev.yesno.tikoapps.org,https://dev.cards.tikoapps.org,https://dev.sequence.tikoapps.org,https://dev.type.tikoapps.org,https://dev.timer.tikoapps.org,https://dev.admin.tikoapps.org,http://localhost:5173,http://localhost:4173,capacitor://localhost,ionic://localhost,tiko://native'
+const DEFAULT_ALLOWED_ORIGINS = 'https://tiko.mt,https://www.tiko.mt,https://tiko.tikoapps.org,https://yesno.tikoapps.org,https://cards.tikoapps.org,https://sequence.tikoapps.org,https://type.tikoapps.org,https://timer.tikoapps.org,https://admin.tikoapps.org,https://admin.tikoapi.org,https://dev.tiko.tikoapps.org,https://dev.yesno.tikoapps.org,https://dev.cards.tikoapps.org,https://dev.sequence.tikoapps.org,https://dev.type.tikoapps.org,https://dev.timer.tikoapps.org,https://dev.admin.tikoapps.org,http://localhost:5173,http://localhost:4173,capacitor://localhost,ionic://localhost,tiko://native'
 
 interface AppDataRow {
   data_json: string
@@ -129,14 +129,16 @@ export async function handleRequest(request: Request, env: Env): Promise<Respons
       return withCors(jsonError('method_not_allowed', 'Method not allowed.', 405), cors)
     }
 
-    // Global defaults endpoints — session-protected GET & PUT
+    // Global defaults endpoints — public GET, admin-protected PUT
     const defaultsMatch = /^\/v1\/apps\/defaults\/([^/]+)\/(settings|state)$/.exec(path)
     if (defaultsMatch) {
-      await requireSession(request, env)
       const app = parseApp(defaultsMatch[1])
       const resource = defaultsMatch[2] as AppResource
       if (request.method === 'GET') return withCors(await readDefaults(env, app, resource), cors)
-      if (request.method === 'PUT') return withCors(await writeDefaults(request, env, app, resource), cors)
+      if (request.method === 'PUT') {
+        await requireSession(request, env)
+        return withCors(await writeDefaults(request, env, app, resource), cors)
+      }
       return withCors(jsonError('method_not_allowed', 'Method not allowed.', 405), cors)
     }
 
@@ -368,6 +370,12 @@ async function requireSession(request: Request, env: Env): Promise<SessionJoinRo
 
   if (authed.ok && authed.method === 'api_key') throw new HttpError(403, 'session_required', 'A Tiko user session is required.')
   throw new HttpError(401, 'unauthorized', 'Session is invalid or expired.')
+}
+
+async function requireAnyAuth(request: Request, env: Env): Promise<void> {
+  const authed = await authenticate(request, env)
+  if (authed.ok) return
+  throw new HttpError(401, 'unauthorized', 'Authentication required.')
 }
 
 export async function hashToken(value: string, pepper: string): Promise<string> {

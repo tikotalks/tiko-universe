@@ -305,9 +305,10 @@ describe('global defaults endpoints', () => {
     expect(body.state).toEqual({})
   })
 
-  it('requires authentication for GET', async () => {
-    const { response } = await fetchJson('/v1/apps/defaults/yes-no/settings')
-    expect(response.status).toBe(401)
+  it('allows unauthenticated GET of defaults', async () => {
+    const { response, body } = await fetchJson('/v1/apps/defaults/yes-no/settings')
+    expect(response.status).toBe(200)
+    expect(body.settings).toBeDefined()
   })
 
   it('writes and reads back global defaults', async () => {

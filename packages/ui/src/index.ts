@@ -104,6 +104,27 @@ export interface TikoTtsClientOptions {
   speechSynthesis?: SpeechSynthesis
 }
 
+export const TIKO_PALETTE: string[] = [
+  '#9b3fbd', // yes-no purple
+  '#2488ff', // type blue
+  '#ff8a1f', // cards orange
+  '#16b8a6', // sequence teal
+  '#f8c22e', // timer yellow
+  '#e84057', // radio red
+  '#2dd4bf', // media cyan
+  '#8b5cf6', // admin violet
+  '#ef4f8f', // tiko pink
+  '#FFB347', // warm orange
+  '#FF6B6B', // coral
+  '#4ECDC4', // turquoise
+  '#A8E6CF', // mint
+  '#DDA0DD', // plum
+  '#FFD93D', // gold
+  '#82B1FF', // periwinkle
+  '#87CEEB', // sky blue
+  '#98D8C8', // seafoam
+]
+
 export const tikoKitComponents = [
   'TikoAppHeader',
   'TikoAppShell',
