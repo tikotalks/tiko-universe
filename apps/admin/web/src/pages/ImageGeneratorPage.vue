@@ -697,6 +697,8 @@ onMounted(() => { void loadLibrary() })
 </template>
 
 <style lang="scss">
+@use '../styles/mixins' as *;
+
 .image-page {
   display: flex;
   flex-direction: column;
@@ -967,6 +969,8 @@ onMounted(() => { void loadLibrary() })
     object-fit: cover;
     border-radius: var(--border-radius-xs);
     flex-shrink: 0;
+    --block-size: 0.5em;
+    @include checkeredBackground;
   }
 
   &__form {
@@ -1072,7 +1076,7 @@ onMounted(() => { void loadLibrary() })
     aspect-ratio: 1;
     object-fit: cover;
     border-radius: var(--border-radius-xs);
-    background: color-mix(in srgb, var(--color-foreground), transparent 92%);
+    @include checkeredBackground;
   }
 
   &__preview-meta {
@@ -1108,8 +1112,8 @@ onMounted(() => { void loadLibrary() })
     width: 100%;
     aspect-ratio: 1;
     object-fit: cover;
-    background: color-mix(in srgb, var(--color-foreground), transparent 92%);
     display: block;
+    @include checkeredBackground;
   }
 
   &__badge {
@@ -1252,7 +1256,7 @@ onMounted(() => { void loadLibrary() })
     position: relative;
     border-radius: var(--border-radius-s);
     overflow: hidden;
-    background: color-mix(in srgb, var(--color-foreground), transparent 92%);
+    @include checkeredBackground;
   }
 
   &__image {

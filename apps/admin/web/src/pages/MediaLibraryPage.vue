@@ -306,6 +306,8 @@ function formatDate(value?: string): string {
 </template>
 
 <style lang="scss">
+@use '../styles/mixins' as *;
+
 .media-library {
   display: flex;
   flex-direction: column;
@@ -503,7 +505,8 @@ function formatDate(value?: string): string {
     border-radius: var(--border-radius-m);
     object-fit: cover;
     flex-shrink: 0;
-    background: color-mix(in srgb, var(--color-foreground), transparent 92%);
+    --block-size: 0.5em;
+    @include checkeredBackground;
 
     &--file {
       display: grid;

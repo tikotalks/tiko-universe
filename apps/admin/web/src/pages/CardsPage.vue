@@ -340,6 +340,8 @@ function deleteCard(idx: number) {
 </template>
 
 <style lang="scss">
+@use '../styles/mixins' as *;
+
 .cards-page {
   display: flex;
   flex-direction: column;
@@ -446,6 +448,8 @@ function deleteCard(idx: number) {
     font-weight: 700;
     font-size: var(--font-size-m);
     overflow: hidden;
+    --block-size: 0.5em;
+    @include checkeredBackground;
 
     img {
       width: 100%;
@@ -652,6 +656,8 @@ function deleteCard(idx: number) {
     font-weight: 700;
     font-size: var(--font-size-xs);
     overflow: hidden;
+    --block-size: 0.4em;
+    @include checkeredBackground;
 
     img {
       width: 100%;
