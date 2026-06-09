@@ -798,12 +798,6 @@ async function activeRolesWithBootstrap(env: Env, subjectId: string, existingRol
 }
 
 async function canBootstrapAdmin(env: Env, subjectId: string): Promise<boolean> {
-  // Don't bootstrap a second admin — if any non-revoked admin already exists, stop.
-  const existing = await env.IDENTITY_DB.prepare(
-    'SELECT COUNT(*) as count FROM identity_role_assignments WHERE role = ? AND product = ? AND revoked_at IS NULL'
-  ).bind(ADMIN_ROLE, 'tiko').first<{ count: number }>()
-  if ((existing?.count ?? 0) > 0) return false
-
   const row = await env.IDENTITY_DB.prepare('SELECT email_hash FROM identity_accounts WHERE subject_id = ? AND product = ? AND disabled_at IS NULL LIMIT 1')
     .bind(subjectId, 'tiko')
     .first<{ email_hash: string | null }>()
