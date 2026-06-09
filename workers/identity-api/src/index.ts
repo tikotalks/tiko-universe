@@ -52,7 +52,7 @@ const baseConfig = {
   },
   email: {
     enabled: true,
-    storage: 'hash',
+    storage: 'plain',
     purposes: ['recover']
   },
   accounts: {

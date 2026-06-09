@@ -301,7 +301,7 @@ async function listUsers(db: D1Database, query: string): Promise<AdminUserListIt
     SELECT s.id, s.kind, a.email_plain AS email, s.created_at, s.updated_at,
       COALESCE(json_group_array(r.role) FILTER (WHERE r.role IS NOT NULL), '[]') AS roles
     FROM identity_subjects s
-    LEFT JOIN identity_accounts a ON a.subject_id = s.id AND a.disabled_at IS NULL
+    INNER JOIN identity_accounts a ON a.subject_id = s.id AND a.disabled_at IS NULL AND a.email_hash IS NOT NULL
     LEFT JOIN identity_role_assignments r ON r.subject_id = s.id AND r.product = ? AND r.revoked_at IS NULL
     WHERE s.product = ? AND s.disabled_at IS NULL
       AND (? = '%%' OR lower(s.id) LIKE ? OR lower(s.kind) LIKE ? OR lower(COALESCE(a.email_plain, '')) LIKE ?)
