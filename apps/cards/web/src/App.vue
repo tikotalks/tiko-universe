@@ -1,15 +1,15 @@
 <script setup lang="ts">
 import { computed, h, inject, markRaw, nextTick, onMounted, onUnmounted, ref, watch } from 'vue'
-import { Button, Icon, Popup, ContextMenu, type ContextMenuItem, type PopupService } from '@sil/ui'
-import { IdentityClient, type IdentityBundle } from '@tiko/identity'
+import { Button, Popup, ContextMenu, type ContextMenuItem, type PopupService } from '@sil/ui'
+import { IdentityClient } from '@tiko/identity'
 import { TikoDataClient, type CardsSettings, type CardsState, type CardsCollection, type CardsTile } from '@tiko/data'
-import { useTikoMedia, COLLECTION_CATEGORY_MAP, type TikoMedia } from '@tiko/media'
+import { useTikoMedia, type TikoMedia } from '@tiko/media'
 import { createI18n, defaultLanguage, tikoI18nKeys, tikoLanguages, type TikoLanguage } from '@tiko/i18n'
 import {
   TikoAppShell,
   TikoSettingsPanel,
-  TikoProfileMenu,
-  TikoPinPopup,
+  useIdentityRuntime,
+  type IdentityRuntimeState,
   createTikoTtsClient,
   type TikoColorMode
 } from '@tiko/ui'
@@ -26,7 +26,6 @@ const popup = inject<PopupService>('popupService')!
 // ---------------------------------------------------------------------------
 
 const storageKey = 'tiko:cards'
-const identityStorageKey = 'tiko:identity:device-session'
 const appId = 'cards' as const
 const apiBaseUrl = resolveApiBaseUrl()
 const identityBaseUrl = resolveIdentityBaseUrl()
@@ -44,347 +43,7 @@ interface PersistedState {
   editMode?: boolean
 }
 
-interface StoredIdentity {
-  userId?: string
-  deviceId?: string
-  deviceSecret?: string
-  sessionToken?: string
-  expiresAt?: string
-}
-
 // ---------------------------------------------------------------------------
-// Virtual default collections (hardcoded, never stored in DB)
-// ---------------------------------------------------------------------------
-
-function makeTile(id: string, title: string, speech: string): CardsTile {
-  return { id, title, type: 'card', speech }
-}
-
-const VIRTUAL_DEFAULTS: CardsCollection[] = [
-  {
-    id: '__default_animals',
-    title: 'Animals',
-    color: '#FFB347',
-    order: 0,
-    tiles: [
-      makeTile('animal_dog', 'Dog', 'Dog'),
-      makeTile('animal_cat', 'Cat', 'Cat'),
-      makeTile('animal_bird', 'Bird', 'Bird'),
-      makeTile('animal_fish', 'Fish', 'Fish'),
-      makeTile('animal_horse', 'Horse', 'Horse'),
-      makeTile('animal_cow', 'Cow', 'Cow'),
-      makeTile('animal_pig', 'Pig', 'Pig'),
-      makeTile('animal_chicken', 'Chicken', 'Chicken'),
-      makeTile('animal_duck', 'Duck', 'Duck'),
-      makeTile('animal_sheep', 'Sheep', 'Sheep'),
-      makeTile('animal_rabbit', 'Rabbit', 'Rabbit'),
-      makeTile('animal_mouse', 'Mouse', 'Mouse'),
-      makeTile('animal_frog', 'Frog', 'Frog'),
-      makeTile('animal_butterfly', 'Butterfly', 'Butterfly'),
-      makeTile('animal_snake', 'Snake', 'Snake'),
-      makeTile('animal_turtle', 'Turtle', 'Turtle'),
-      makeTile('animal_lion', 'Lion', 'Lion'),
-      makeTile('animal_elephant', 'Elephant', 'Elephant'),
-      makeTile('animal_giraffe', 'Giraffe', 'Giraffe'),
-      makeTile('animal_monkey', 'Monkey', 'Monkey'),
-      makeTile('animal_penguin', 'Penguin', 'Penguin'),
-      makeTile('animal_bear', 'Bear', 'Bear'),
-      makeTile('animal_zebra', 'Zebra', 'Zebra'),
-      makeTile('animal_owl', 'Owl', 'Owl'),
-      makeTile('animal_bee', 'Bee', 'Bee'),
-      makeTile('animal_ant', 'Ant', 'Ant'),
-      makeTile('animal_spider', 'Spider', 'Spider'),
-      makeTile('animal_dolphin', 'Dolphin', 'Dolphin'),
-      makeTile('animal_shark', 'Shark', 'Shark'),
-      makeTile('animal_whale', 'Whale', 'Whale'),
-      makeTile('animal_crab', 'Crab', 'Crab'),
-      makeTile('animal_octopus', 'Octopus', 'Octopus'),
-      makeTile('animal_parrot', 'Parrot', 'Parrot'),
-      makeTile('animal_eagle', 'Eagle', 'Eagle'),
-      makeTile('animal_flamingo', 'Flamingo', 'Flamingo'),
-      makeTile('animal_fox', 'Fox', 'Fox'),
-      makeTile('animal_deer', 'Deer', 'Deer'),
-      makeTile('animal_wolf', 'Wolf', 'Wolf'),
-      makeTile('animal_crocodile', 'Crocodile', 'Crocodile'),
-    ],
-  },
-  {
-    id: '__default_colors',
-    title: 'Colors',
-    color: '#FF6B6B',
-    order: 1,
-    tiles: [
-      makeTile('color_red', 'Red', 'Red'),
-      makeTile('color_orange', 'Orange', 'Orange'),
-      makeTile('color_yellow', 'Yellow', 'Yellow'),
-      makeTile('color_green', 'Green', 'Green'),
-      makeTile('color_blue', 'Blue', 'Blue'),
-      makeTile('color_purple', 'Purple', 'Purple'),
-      makeTile('color_pink', 'Pink', 'Pink'),
-      makeTile('color_brown', 'Brown', 'Brown'),
-      makeTile('color_black', 'Black', 'Black'),
-      makeTile('color_white', 'White', 'White'),
-      makeTile('color_gray', 'Gray', 'Gray'),
-      makeTile('color_gold', 'Gold', 'Gold'),
-      makeTile('color_silver', 'Silver', 'Silver'),
-      makeTile('color_beige', 'Beige', 'Beige'),
-      makeTile('color_maroon', 'Maroon', 'Maroon'),
-      makeTile('color_navy', 'Navy', 'Navy'),
-      makeTile('color_teal', 'Teal', 'Teal'),
-      makeTile('color_coral', 'Coral', 'Coral'),
-      makeTile('color_lime', 'Lime', 'Lime'),
-      makeTile('color_lavender', 'Lavender', 'Lavender'),
-      makeTile('color_cyan', 'Cyan', 'Cyan'),
-      makeTile('color_magenta', 'Magenta', 'Magenta'),
-      makeTile('color_olive', 'Olive', 'Olive'),
-      makeTile('color_peach', 'Peach', 'Peach'),
-    ],
-  },
-  {
-    id: '__default_food',
-    title: 'Food & Drinks',
-    color: '#4ECDC4',
-    order: 2,
-    tiles: [
-      makeTile('food_apple', 'Apple', 'Apple'),
-      makeTile('food_banana', 'Banana', 'Banana'),
-      makeTile('food_bread', 'Bread', 'Bread'),
-      makeTile('food_milk', 'Milk', 'Milk'),
-      makeTile('food_water', 'Water', 'Water'),
-      makeTile('food_juice', 'Juice', 'Juice'),
-      makeTile('food_cheese', 'Cheese', 'Cheese'),
-      makeTile('food_rice', 'Rice', 'Rice'),
-      makeTile('food_pizza', 'Pizza', 'Pizza'),
-      makeTile('food_cake', 'Cake', 'Cake'),
-      makeTile('food_egg', 'Egg', 'Egg'),
-      makeTile('food_grape', 'Grape', 'Grape'),
-      makeTile('food_strawberry', 'Strawberry', 'Strawberry'),
-      makeTile('food_carrot', 'Carrot', 'Carrot'),
-      makeTile('food_tomato', 'Tomato', 'Tomato'),
-      makeTile('food_potato', 'Potato', 'Potato'),
-      makeTile('food_corn', 'Corn', 'Corn'),
-      makeTile('food_onion', 'Onion', 'Onion'),
-      makeTile('food_mushroom', 'Mushroom', 'Mushroom'),
-      makeTile('food_broccoli', 'Broccoli', 'Broccoli'),
-      makeTile('food_soup', 'Soup', 'Soup'),
-      makeTile('food_pasta', 'Pasta', 'Pasta'),
-      makeTile('food_burger', 'Burger', 'Burger'),
-      makeTile('food_hotdog', 'Hot Dog', 'Hot Dog'),
-      makeTile('food_icecream', 'Ice Cream', 'Ice Cream'),
-      makeTile('food_cookie', 'Cookie', 'Cookie'),
-      makeTile('food_chocolate', 'Chocolate', 'Chocolate'),
-      makeTile('food_donut', 'Donut', 'Donut'),
-      makeTile('food_pancake', 'Pancake', 'Pancake'),
-      makeTile('food_cereal', 'Cereal', 'Cereal'),
-      makeTile('food_popcorn', 'Popcorn', 'Popcorn'),
-      makeTile('food_watermelon', 'Watermelon', 'Watermelon'),
-      makeTile('food_lemon', 'Lemon', 'Lemon'),
-      makeTile('food_pineapple', 'Pineapple', 'Pineapple'),
-      makeTile('food_mango', 'Mango', 'Mango'),
-      makeTile('food_cherry', 'Cherry', 'Cherry'),
-      makeTile('food_pear', 'Pear', 'Pear'),
-      makeTile('food_orange_fruit', 'Orange', 'Orange'),
-      makeTile('food_grapefruit', 'Grapefruit', 'Grapefruit'),
-      makeTile('food_kiwi', 'Kiwi', 'Kiwi'),
-      makeTile('food_peach_fruit', 'Peach', 'Peach'),
-      makeTile('food_plum', 'Plum', 'Plum'),
-      makeTile('food_cucumber', 'Cucumber', 'Cucumber'),
-      makeTile('food_pepper', 'Pepper', 'Pepper'),
-      makeTile('food_avocado', 'Avocado', 'Avocado'),
-      makeTile('food_sandwich', 'Sandwich', 'Sandwich'),
-      makeTile('food_taco', 'Taco', 'Taco'),
-      makeTile('food_sushi', 'Sushi', 'Sushi'),
-      makeTile('food_noodles', 'Noodles', 'Noodles'),
-      makeTile('food_sausage', 'Sausage', 'Sausage'),
-      makeTile('food_tea', 'Tea', 'Tea'),
-      makeTile('food_coffee', 'Coffee', 'Coffee'),
-      makeTile('food_smoothie', 'Smoothie', 'Smoothie'),
-    ],
-  },
-  {
-    id: '__default_body',
-    title: 'Body Parts',
-    color: '#A8E6CF',
-    order: 3,
-    tiles: [
-      makeTile('body_head', 'Head', 'Head'),
-      makeTile('body_hair', 'Hair', 'Hair'),
-      makeTile('body_face', 'Face', 'Face'),
-      makeTile('body_eyes', 'Eyes', 'Eyes'),
-      makeTile('body_nose', 'Nose', 'Nose'),
-      makeTile('body_mouth', 'Mouth', 'Mouth'),
-      makeTile('body_ears', 'Ears', 'Ears'),
-      makeTile('body_teeth', 'Teeth', 'Teeth'),
-      makeTile('body_tongue', 'Tongue', 'Tongue'),
-      makeTile('body_chin', 'Chin', 'Chin'),
-      makeTile('body_neck', 'Neck', 'Neck'),
-      makeTile('body_shoulders', 'Shoulders', 'Shoulders'),
-      makeTile('body_chest', 'Chest', 'Chest'),
-      makeTile('body_back', 'Back', 'Back'),
-      makeTile('body_stomach', 'Stomach', 'Stomach'),
-      makeTile('body_hands', 'Hands', 'Hands'),
-      makeTile('body_fingers', 'Fingers', 'Fingers'),
-      makeTile('body_thumb', 'Thumb', 'Thumb'),
-      makeTile('body_wrist', 'Wrist', 'Wrist'),
-      makeTile('body_arms', 'Arms', 'Arms'),
-      makeTile('body_elbow', 'Elbow', 'Elbow'),
-      makeTile('body_legs', 'Legs', 'Legs'),
-      makeTile('body_knees', 'Knees', 'Knees'),
-      makeTile('body_feet', 'Feet', 'Feet'),
-      makeTile('body_toes', 'Toes', 'Toes'),
-      makeTile('body_ankle', 'Ankle', 'Ankle'),
-      makeTile('body_heel', 'Heel', 'Heel'),
-    ],
-  },
-  {
-    id: '__default_shapes',
-    title: 'Shapes',
-    color: '#DDA0DD',
-    order: 4,
-    tiles: [
-      makeTile('shape_circle', 'Circle', 'Circle'),
-      makeTile('shape_square', 'Square', 'Square'),
-      makeTile('shape_triangle', 'Triangle', 'Triangle'),
-      makeTile('shape_rectangle', 'Rectangle', 'Rectangle'),
-      makeTile('shape_oval', 'Oval', 'Oval'),
-      makeTile('shape_star', 'Star', 'Star'),
-      makeTile('shape_heart', 'Heart', 'Heart'),
-      makeTile('shape_diamond', 'Diamond', 'Diamond'),
-      makeTile('shape_hexagon', 'Hexagon', 'Hexagon'),
-      makeTile('shape_pentagon', 'Pentagon', 'Pentagon'),
-      makeTile('shape_crescent', 'Crescent', 'Crescent'),
-      makeTile('shape_cross', 'Cross', 'Cross'),
-      makeTile('shape_arrow', 'Arrow', 'Arrow'),
-      makeTile('shape_sphere', 'Sphere', 'Sphere'),
-      makeTile('shape_cube', 'Cube', 'Cube'),
-      makeTile('shape_pyramid', 'Pyramid', 'Pyramid'),
-      makeTile('shape_cylinder', 'Cylinder', 'Cylinder'),
-      makeTile('shape_cone', 'Cone', 'Cone'),
-    ],
-  },
-  {
-    id: '__default_emotions',
-    title: 'Emotions',
-    color: '#FFD93D',
-    order: 5,
-    tiles: [
-      makeTile('emotion_happy', 'Happy', 'Happy'),
-      makeTile('emotion_sad', 'Sad', 'Sad'),
-      makeTile('emotion_angry', 'Angry', 'Angry'),
-      makeTile('emotion_scared', 'Scared', 'Scared'),
-      makeTile('emotion_surprised', 'Surprised', 'Surprised'),
-      makeTile('emotion_tired', 'Tired', 'Tired'),
-      makeTile('emotion_excited', 'Excited', 'Excited'),
-      makeTile('emotion_calm', 'Calm', 'Calm'),
-      makeTile('emotion_confused', 'Confused', 'Confused'),
-      makeTile('emotion_shy', 'Shy', 'Shy'),
-      makeTile('emotion_proud', 'Proud', 'Proud'),
-      makeTile('emotion_grumpy', 'Grumpy', 'Grumpy'),
-      makeTile('emotion_brave', 'Brave', 'Brave'),
-      makeTile('emotion_curious', 'Curious', 'Curious'),
-      makeTile('emotion_lonely', 'Lonely', 'Lonely'),
-      makeTile('emotion_grateful', 'Grateful', 'Grateful'),
-      makeTile('emotion_nervous', 'Nervous', 'Nervous'),
-      makeTile('emotion_silly', 'Silly', 'Silly'),
-      makeTile('emotion_love', 'Love', 'Love'),
-      makeTile('emotion_bored', 'Bored', 'Bored'),
-    ],
-  },
-  {
-    id: '__default_transport',
-    title: 'Transport',
-    color: '#82B1FF',
-    order: 6,
-    tiles: [
-      makeTile('transport_car', 'Car', 'Car'),
-      makeTile('transport_bus', 'Bus', 'Bus'),
-      makeTile('transport_train', 'Train', 'Train'),
-      makeTile('transport_truck', 'Truck', 'Truck'),
-      makeTile('transport_airplane', 'Airplane', 'Airplane'),
-      makeTile('transport_helicopter', 'Helicopter', 'Helicopter'),
-      makeTile('transport_boat', 'Boat', 'Boat'),
-      makeTile('transport_ship', 'Ship', 'Ship'),
-      makeTile('transport_bicycle', 'Bicycle', 'Bicycle'),
-      makeTile('transport_motorcycle', 'Motorcycle', 'Motorcycle'),
-      makeTile('transport_scooter', 'Scooter', 'Scooter'),
-      makeTile('transport_taxi', 'Taxi', 'Taxi'),
-      makeTile('transport_ambulance', 'Ambulance', 'Ambulance'),
-      makeTile('transport_firetruck', 'Fire Truck', 'Fire Truck'),
-      makeTile('transport_policecar', 'Police Car', 'Police Car'),
-      makeTile('transport_tractor', 'Tractor', 'Tractor'),
-      makeTile('transport_rocket', 'Rocket', 'Rocket'),
-      makeTile('transport_submarine', 'Submarine', 'Submarine'),
-      makeTile('transport_balloon', 'Hot Air Balloon', 'Hot Air Balloon'),
-      makeTile('transport_skateboard', 'Skateboard', 'Skateboard'),
-      makeTile('transport_rollercoaster', 'Roller Coaster', 'Roller Coaster'),
-      makeTile('transport_jeep', 'Jeep', 'Jeep'),
-      makeTile('transport_van', 'Van', 'Van'),
-      makeTile('transport_canoe', 'Canoe', 'Canoe'),
-    ],
-  },
-  {
-    id: '__default_numbers',
-    title: 'Numbers',
-    color: '#87CEEB',
-    order: 7,
-    tiles: [
-      makeTile('num_1', 'One', 'One'),
-      makeTile('num_2', 'Two', 'Two'),
-      makeTile('num_3', 'Three', 'Three'),
-      makeTile('num_4', 'Four', 'Four'),
-      makeTile('num_5', 'Five', 'Five'),
-      makeTile('num_6', 'Six', 'Six'),
-      makeTile('num_7', 'Seven', 'Seven'),
-      makeTile('num_8', 'Eight', 'Eight'),
-      makeTile('num_9', 'Nine', 'Nine'),
-      makeTile('num_10', 'Ten', 'Ten'),
-      makeTile('num_11', 'Eleven', 'Eleven'),
-      makeTile('num_12', 'Twelve', 'Twelve'),
-      makeTile('num_13', 'Thirteen', 'Thirteen'),
-      makeTile('num_14', 'Fourteen', 'Fourteen'),
-      makeTile('num_15', 'Fifteen', 'Fifteen'),
-      makeTile('num_16', 'Sixteen', 'Sixteen'),
-      makeTile('num_17', 'Seventeen', 'Seventeen'),
-      makeTile('num_18', 'Eighteen', 'Eighteen'),
-      makeTile('num_19', 'Nineteen', 'Nineteen'),
-      makeTile('num_20', 'Twenty', 'Twenty'),
-    ],
-  },
-  {
-    id: '__default_letters',
-    title: 'Letters',
-    color: '#98D8C8',
-    order: 8,
-    tiles: [
-      makeTile('letter_a', 'A', 'A'),
-      makeTile('letter_b', 'B', 'B'),
-      makeTile('letter_c', 'C', 'C'),
-      makeTile('letter_d', 'D', 'D'),
-      makeTile('letter_e', 'E', 'E'),
-      makeTile('letter_f', 'F', 'F'),
-      makeTile('letter_g', 'G', 'G'),
-      makeTile('letter_h', 'H', 'H'),
-      makeTile('letter_i', 'I', 'I'),
-      makeTile('letter_j', 'J', 'J'),
-      makeTile('letter_k', 'K', 'K'),
-      makeTile('letter_l', 'L', 'L'),
-      makeTile('letter_m', 'M', 'M'),
-      makeTile('letter_n', 'N', 'N'),
-      makeTile('letter_o', 'O', 'O'),
-      makeTile('letter_p', 'P', 'P'),
-      makeTile('letter_q', 'Q', 'Q'),
-      makeTile('letter_r', 'R', 'R'),
-      makeTile('letter_s', 'S', 'S'),
-      makeTile('letter_t', 'T', 'T'),
-      makeTile('letter_u', 'U', 'U'),
-      makeTile('letter_v', 'V', 'V'),
-      makeTile('letter_w', 'W', 'W'),
-      makeTile('letter_x', 'X', 'X'),
-      makeTile('letter_y', 'Y', 'Y'),
-      makeTile('letter_z', 'Z', 'Z'),
-    ],
-  },
-]
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -392,7 +51,7 @@ const VIRTUAL_DEFAULTS: CardsCollection[] = [
 
 function resolveApiBaseUrl() {
   const env = (import.meta as ImportMeta & { env?: Record<string, string | undefined> }).env
-  return (env?.VITE_TIKO_API_BASE_URL ?? 'https://identity.tikoapi.org/v1').replace(/\/$/, '')
+  return (env?.VITE_TIKO_API_BASE_URL ?? 'https://app.tikoapi.org/v1').replace(/\/$/, '')
 }
 
 function resolveIdentityBaseUrl() {
@@ -407,11 +66,6 @@ function readJson<T>(key: string, fallback: T): T {
   } catch {
     return fallback
   }
-}
-
-function writeJson(key: string, value: unknown) {
-  if (typeof window === 'undefined') return
-  window.localStorage.setItem(key, JSON.stringify(value))
 }
 
 function toLanguage(value: string | undefined): TikoLanguage {
@@ -464,20 +118,32 @@ const itemsPerPage = computed(() => {
 })
 const settingsVersion = ref<number | undefined>()
 const stateVersion = ref<number | undefined>()
-const sessionToken = ref<string>('')
 const bootstrapped = ref(false)
 const tts = createTikoTtsClient()
 const identityClient = new IdentityClient({ baseUrl: identityBaseUrl, credentials: 'include' })
 const dataClient = new TikoDataClient({ baseUrl: apiBaseUrl })
 const newItemName = ref('')
-const userKind = ref<'anonymous' | 'account'>('anonymous')
 
 // ---------------------------------------------------------------------------
-// Parent mode state
+// Identity runtime
 // ---------------------------------------------------------------------------
-const parentMode = ref(true)
-const parentCodeHash = ref<string | undefined>()
-const hasCode = computed(() => Boolean(parentCodeHash.value))
+
+const identityState: IdentityRuntimeState = {
+  sessionToken: ref(''),
+  userId: ref(''),
+  accountEmail: ref(''),
+  accountEmailVerified: ref(false),
+  displayName: ref(''),
+  parentMode: ref(true),
+  childModeEnabled: ref(false),
+  pinConfigured: ref(false),
+}
+
+const runtime = useIdentityRuntime({
+  identityClient,
+  state: identityState,
+  deviceName: 'Cards web',
+})
 
 // ---------------------------------------------------------------------------
 // Media integration (Supabase images for default collections)
@@ -528,8 +194,7 @@ function applyOverrides(collection: CardsCollection): CardsCollection {
 }
 
 const rootCollections = computed<CardsCollection[]>(() => {
-  const baseDefaults = remoteDefaults.value.length > 0 ? remoteDefaults.value : VIRTUAL_DEFAULTS
-  const defaults = baseDefaults
+  const defaults = remoteDefaults.value
     .filter((c) => !hiddenDefaults.value.includes(c.id))
     .map(applyOverrides)
   const all = [...defaults, ...userCollections.value]
@@ -627,7 +292,7 @@ const hasHiddenDefaults = computed(() => hiddenDefaults.value.length > 0)
 const headerActions = computed(() => {
   const actions: Array<{ id: string; label: string; icon: string; active?: boolean; visible?: boolean }> = []
 
-  if (parentMode.value) {
+  if (identityState.parentMode.value) {
     actions.push({ id: 'manage', label: 'Add', icon: 'ui/plus' })
   }
   return actions
@@ -648,7 +313,7 @@ function resolveColorMode(mode: TikoColorMode) {
 // ---------------------------------------------------------------------------
 
 function saveLocalFallback() {
-  writeJson(storageKey, {
+  runtime.writeJson(storageKey, {
     language: language.value,
     colorMode: colorMode.value,
     collections: userCollections.value,
@@ -658,55 +323,6 @@ function saveLocalFallback() {
     tileOverrides: tileOverrides.value,
     editMode: editMode.value,
   })
-}
-
-function saveIdentity(bundle: IdentityBundle) {
-  if (!bundle.session?.token) throw new Error('Identity response did not include a session token.')
-  sessionToken.value = bundle.session.token
-  userKind.value = bundle.account?.emailVerified ? 'account' : 'anonymous'
-  writeJson(identityStorageKey, {
-    userId: bundle.subject.id,
-    deviceId: bundle.device?.id,
-    deviceSecret: bundle.device?.secret,
-    sessionToken: bundle.session.token,
-    expiresAt: bundle.session.expiresAt,
-  } satisfies StoredIdentity)
-}
-
-// ---------------------------------------------------------------------------
-// Bootstrap: identity + remote data
-// ---------------------------------------------------------------------------
-
-async function bootstrapIdentity() {
-  const storedIdentity = readJson<StoredIdentity>(identityStorageKey, {})
-
-  try {
-    const bundle = await identityClient.getCookieSession()
-    saveIdentity(bundle)
-    return
-  } catch {
-    // Fall through to local bearer/device fallback when the shared app-family cookie is missing or expired.
-  }
-
-  if (storedIdentity.sessionToken) {
-    try {
-      const bundle = await identityClient.getSession(storedIdentity.sessionToken)
-      saveIdentity(bundle)
-      return
-    } catch {
-      // Fall through to device bootstrap.
-    }
-  }
-
-  const bundle = await identityClient.bootstrapDevice({
-    device: {
-      id: storedIdentity.deviceId,
-      secret: storedIdentity.deviceSecret,
-      name: 'Cards web',
-      platform: 'web',
-    },
-  })
-  saveIdentity(bundle)
 }
 
 function applySettings(settings: CardsSettings, version?: number) {
@@ -719,40 +335,32 @@ function applySettings(settings: CardsSettings, version?: number) {
 }
 
 function applyState(state: CardsState, version?: number) {
-  userCollections.value = state.collections ?? []
+  userCollections.value = (state.collections ?? []).filter((c) => !c.id.startsWith('__default_'))
   navPath.value = state.navPath ?? []
   editMode.value = state.editMode ?? false
   stateVersion.value = version
 }
 
 async function hydrateRemoteData() {
-  if (!sessionToken.value) return
+  if (!identityState.sessionToken.value) return
   const [settings, state, defaults] = await Promise.all([
-    dataClient.getSettings(appId, sessionToken.value),
-    dataClient.getState(appId, sessionToken.value),
+    dataClient.getSettings(appId, identityState.sessionToken.value),
+    dataClient.getState(appId, identityState.sessionToken.value),
     dataClient.getAppDefaults(appId, 'state').catch(() => null),
   ])
   applySettings(settings.settings, settings.version)
   applyState(state.state, state.version)
 
-  // Use remote defaults if available, fall back to built-in VIRTUAL_DEFAULTS
   if (defaults?.state?.collections && Array.isArray(defaults.state.collections)) {
     remoteDefaults.value = defaults.state.collections as CardsCollection[]
   }
 
-  // Load parent code from user profile
-  try {
-    const { profile } = await identityClient.getProfile(sessionToken.value)
-    if (typeof profile.parentCodeHash === 'string') {
-      parentCodeHash.value = profile.parentCodeHash
-    }
-  } catch { /* not logged in or profile not available */ }
 }
 
 async function persistSettingsRemote() {
-  if (!bootstrapped.value || !sessionToken.value) return
+  if (!bootstrapped.value || !identityState.sessionToken.value) return
   try {
-    const response = await dataClient.putSettings(appId, sessionToken.value, {
+    const response = await dataClient.putSettings(appId, identityState.sessionToken.value, {
       language: language.value,
       colorMode: colorMode.value,
       hiddenDefaults: hiddenDefaults.value,
@@ -766,9 +374,9 @@ async function persistSettingsRemote() {
 }
 
 async function persistStateRemote() {
-  if (!bootstrapped.value || !sessionToken.value) return
+  if (!bootstrapped.value || !identityState.sessionToken.value) return
   try {
-    const response = await dataClient.putState(appId, sessionToken.value, {
+    const response = await dataClient.putState(appId, identityState.sessionToken.value, {
       collections: userCollections.value,
       navPath: navPath.value,
       editMode: editMode.value,
@@ -784,18 +392,14 @@ async function persistStateRemote() {
 // ---------------------------------------------------------------------------
 
 async function fetchMediaForCollection(collectionId: string) {
-  const categories = COLLECTION_CATEGORY_MAP[collectionId]
-  console.log('[Cards] fetchMediaForCollection:', collectionId, 'categories:', categories)
-  if (!categories || fetchedCollections.value.has(collectionId)) {
-    console.log('[Cards] skip:', !categories ? 'no categories' : 'already fetched')
-    return
-  }
+  const collection = remoteDefaults.value.find((c) => c.id === collectionId)
+  const categories = collection?.mediaCategories
+  if (!categories?.length || fetchedCollections.value.has(collectionId)) return
 
   fetchedCollections.value.add(collectionId)
   try {
     const results = await fetchByCategory(categories, { limit: 50 })
-    console.log('[Cards] fetched:', results.length, 'media items')
-    if (results.length === 0) { console.log('[Cards] no results, returning'); return }
+    if (results.length === 0) return
 
     // Build a map from media name/title keywords to original_url
     const mediaByUrl = new Map<string, TikoMedia>()
@@ -804,12 +408,8 @@ async function fetchMediaForCollection(collectionId: string) {
       mediaByUrl.set(m.original_url, m)
       mediaByName.set(m.name.toLowerCase(), m)
       mediaByName.set(m.title.toLowerCase(), m)
-      // Also index by each tag and category for fuzzy matching
     }
 
-    // Find the default collection and match tiles to media
-    const baseDefaults = remoteDefaults.value.length > 0 ? remoteDefaults.value : VIRTUAL_DEFAULTS
-    const collection = baseDefaults.find((c) => c.id === collectionId)
     if (!collection) return
 
     const updates: Record<string, string> = {}
@@ -1176,7 +776,7 @@ function onPointerUp(e?: PointerEvent) {
 const contextMenuRef = ref<InstanceType<typeof ContextMenu> | null>(null)
 const contextMenuChoiceId = ref<string>('')
 
-const canEditTiles = computed(() => userKind.value === 'account')
+const canEditTiles = computed(() => identityState.accountEmailVerified.value)
 
 function onTileContextmenu(e: MouseEvent, choiceId: string) {
   if (!canEditTiles.value) return
@@ -1479,218 +1079,12 @@ function openSettingsPopup() {
 }
 
 // ---------------------------------------------------------------------------
-// Login popup (OTP sign-in)
-// ---------------------------------------------------------------------------
-function openLoginPopup() {
-  popup.showPopup({
-    component: markRaw({
-      setup() {
-        const email = ref('')
-        const code = ref('')
-        const sent = ref(false)
-        const loading = ref(false)
-        const verifyError = ref('')
-
-        async function sendCode() {
-          if (!email.value.trim()) return
-          loading.value = true
-          verifyError.value = ''
-          try {
-            await identityClient.createEmailChallenge({ email: email.value.trim(), purpose: 'recover' }, sessionToken.value || undefined)
-            sent.value = true
-          } catch {
-            verifyError.value = 'Could not send the code. Please try again.'
-          } finally {
-            loading.value = false
-          }
-        }
-
-        async function verifyCode() {
-          const digits = code.value.replace(/\s/g, '')
-          if (digits.length !== 6) return
-          loading.value = true
-          verifyError.value = ''
-          try {
-            const bundle = await identityClient.verifyOtp(digits)
-            saveIdentity(bundle)
-            popup.closeAllPopups()
-          } catch {
-            verifyError.value = 'Invalid or expired code. Try again or resend.'
-          } finally {
-            loading.value = false
-          }
-        }
-
-        return () => h('div', { class: 'cards-app__login-popup' }, [
-          h('h3', { class: 'cards-app__login-popup__title' }, 'Log in'),
-          sent.value
-            ? [
-                h('p', { class: 'cards-app__login-popup__sent-text' }, `Code sent to ${email.value}`),
-                h('label', { class: 'cards-app__login-popup__label' }, [
-                  'Sign-in code',
-                  h('input', {
-                    type: 'text',
-                    inputmode: 'numeric',
-                    autocomplete: 'one-time-code',
-                    value: code.value,
-                    maxlength: 7,
-                    placeholder: '123 456',
-                    class: 'cards-app__login-popup__otp',
-                    onInput: (e: Event) => { code.value = (e.target as HTMLInputElement).value.replace(/\D/g, '').slice(0, 6) },
-                    onKeydown: (e: KeyboardEvent) => { if (e.key === 'Enter') verifyCode() },
-                  }),
-                ]),
-                verifyError.value ? h('p', { class: 'cards-app__login-popup__error' }, verifyError.value) : null,
-                h('button', {
-                  class: 'cards-app__login-popup__submit',
-                  disabled: code.value.replace(/\s/g, '').length !== 6 || loading.value,
-                  onClick: verifyCode,
-                }, loading.value ? 'Checking…' : 'Verify code'),
-                h('button', {
-                  class: 'cards-app__login-popup__back',
-                  onClick: () => { sent.value = false; code.value = ''; verifyError.value = '' },
-                }, 'Use a different email'),
-              ]
-            : [
-                h('label', { class: 'cards-app__login-popup__label' }, [
-                  'Email',
-                  h('input', {
-                    type: 'email',
-                    value: email.value,
-                    onInput: (e: Event) => { email.value = (e.target as HTMLInputElement).value },
-                    placeholder: 'you@example.com',
-                    onKeydown: (e: KeyboardEvent) => { if (e.key === 'Enter') sendCode() },
-                  }),
-                ]),
-                verifyError.value ? h('p', { class: 'cards-app__login-popup__error' }, verifyError.value) : null,
-                h('button', {
-                  class: 'cards-app__login-popup__submit',
-                  disabled: !email.value.trim() || loading.value,
-                  onClick: sendCode,
-                }, loading.value ? 'Sending…' : 'Send sign-in code'),
-              ],
-        ])
-      },
-    }),
-    title: '',
-    config: { position: 'center', canClose: true, background: true, width: '22rem' },
-    onClose: () => {},
-  })
-}
-
-function handleAvatarClick() {
-  if (!sessionToken.value) {
-    openLoginPopup()
-    return
-  }
-  openProfileMenu()
-}
-
-function openProfileMenu() {
-  popup.showPopup({
-    component: markRaw(TikoProfileMenu),
-    title: '',
-    props: {
-      parentMode: parentMode.value,
-      hasCode: hasCode.value,
-      isLoggedIn: Boolean(sessionToken.value),
-      isRecoverable: userKind.value === 'account',
-      userLabel: userKind.value === 'account' ? 'Verified user' : 'Device user',
-    },
-    config: { position: 'bottom', canClose: true, background: false, width: 'auto' },
-    on: {
-      profile: () => { popup.closeAllPopups(); openLoginPopup() },
-      logout: () => doLogout(),
-      login: () => { popup.closeAllPopups(); openLoginPopup() },
-      'delete-account': () => void deleteCurrentUser(),
-      'enter-parent-mode': () => openParentCodePopup(),
-      'enter-child-mode': () => openChildModeFlow(),
-      close: () => popup.closeAllPopups(),
-    },
-  })
-}
-
-async function deleteCurrentUser() {
-  if (!sessionToken.value || userKind.value !== 'account') return
-  if (!window.confirm('Delete this Tiko user? This removes the account and sessions.')) return
-  try {
-    await identityClient.deleteSelf(sessionToken.value)
-  } catch { /* local cleanup still makes the device usable */ }
-  window.localStorage.removeItem('tiko-cards-identity')
-  window.location.reload()
-}
-
-async function doLogout() {
-  if (!sessionToken.value) return
-  try {
-    await identityClient.logout(sessionToken.value)
-  } catch { /* ignore */ }
-  window.localStorage.removeItem('tiko-cards-identity')
-  window.location.reload()
-}
-
-function openParentCodePopup() {
-  popup.showPopup({
-    component: markRaw(TikoPinPopup),
-    title: '',
-    props: { existingHash: parentCodeHash.value },
-    config: { position: 'center', canClose: true, background: true, width: '22rem' },
-    on: {
-      set: () => {
-        parentMode.value = true
-        popup.closeAllPopups()
-      },
-      cancel: () => popup.closeAllPopups(),
-    },
-  })
-}
-
-function openChildModeFlow() {
-  if (!hasCode.value) {
-    // First time: show code creation
-    popup.showPopup({
-      component: markRaw(TikoPinPopup),
-      title: '',
-      props: { existingHash: undefined },
-      config: { position: 'center', canClose: true, background: true, width: '22rem' },
-      on: {
-        set: async (...args: unknown[]) => {
-          const hash = args[0] as string
-          parentCodeHash.value = hash
-          parentMode.value = false
-          if (sessionToken.value) {
-            try { await identityClient.updateProfile(sessionToken.value, { parentCodeHash: hash }) } catch { /* ignore */ }
-          }
-          popup.closeAllPopups()
-        },
-        cancel: () => popup.closeAllPopups(),
-      },
-    })
-  } else {
-    // Code exists: verify
-    popup.showPopup({
-      component: markRaw(TikoPinPopup),
-      title: '',
-      props: { existingHash: parentCodeHash.value },
-      config: { position: 'center', canClose: true, background: true, width: '22rem' },
-      on: {
-        set: () => {
-          parentMode.value = false
-          popup.closeAllPopups()
-        },
-        cancel: () => popup.closeAllPopups(),
-      },
-    })
-  }
-}
-
-// ---------------------------------------------------------------------------
 // Bootstrap lifecycle
 // ---------------------------------------------------------------------------
 
 onMounted(async () => {
   try {
-    await bootstrapIdentity()
+    await runtime.bootstrapIdentity()
     await hydrateRemoteData()
   } catch {
     // Keep the local flow available when API bootstrap is offline.
@@ -1698,7 +1092,7 @@ onMounted(async () => {
     bootstrapped.value = true
     saveLocalFallback()
     // Fetch tiko media images for all visible default collections
-    const visibleDefaults = (remoteDefaults.value.length > 0 ? remoteDefaults.value : VIRTUAL_DEFAULTS).filter((c) => !hiddenDefaults.value.includes(c.id))
+    const visibleDefaults = remoteDefaults.value.filter((c) => !hiddenDefaults.value.includes(c.id))
     for (const col of visibleDefaults) {
       fetchMediaForCollection(col.id).catch(() => {})
     }
@@ -1723,7 +1117,7 @@ onUnmounted(() => {
     :show-back="navPath.length > 0"
     :actions="headerActions"
     @header-action="headerAction"
-    @avatar-click="handleAvatarClick"
+    @avatar-click="runtime.handleAvatarClick"
     @back-click="navigateBack"
     @title-click="goHome"
   >

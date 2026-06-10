@@ -1,22 +1,29 @@
 name = "tiko-content-api-dev"
 main = "src/index.ts"
 compatibility_date = "2026-05-27"
-account_id = "8cef251b5fdcf6c6f63db98b7aa49f9a"
+account_id = "dc2b7d14a69351375cab6de9a13ddee9"
 workers_dev = true
 
 [vars]
-ALLOWED_ORIGINS = "https://tiko.mt,https://www.tiko.mt,https://tiko.tikoapps.org,https://cards.tikoapps.org,https://sequence.tikoapps.org,https://type.tikoapps.org,https://timer.tikoapps.org,https://admin.tikoapps.org,https://dev.tiko.tikoapps.org,https://dev.cards.tikoapps.org,https://dev.sequence.tikoapps.org,https://dev.type.tikoapps.org,https://dev.timer.tikoapps.org,https://dev.admin.tikoapps.org,http://localhost:5173,http://localhost:4173"
+ALLOWED_ORIGINS = "https://tiko.mt,https://www.tiko.mt,https://tikoapps.org,https://cards.tikoapps.org,https://sequence.tikoapps.org,https://type.tikoapps.org,https://timer.tikoapps.org,https://admin.tikoapps.org,https://dev.tiko.tikoapps.org,https://dev.cards.tikoapps.org,https://dev.sequence.tikoapps.org,https://dev.type.tikoapps.org,https://dev.timer.tikoapps.org,https://dev.admin.tikoapps.org,http://localhost:5173,http://localhost:4173"
+APP_API_URL = "https://app.tikoapi.org"
+IDENTITY_API_URL = "https://api.tikotalks.com/v1/identity"
+MEDIA_API_URL = "https://media.tikoapi.org/v1"
+
+[[r2_buckets]]
+binding = "USER_IMAGES"
+bucket_name = "tiko-user-images"
 
 [[d1_databases]]
 binding = "CONTENT_DB"
-database_name = "tiko-content-db-dev"
-database_id = "3728ab72-c9b8-4717-ac8b-17ec81ed1811"
+database_name = "tiko-content-staging"
+database_id = "2412c370-9e7c-4991-9995-6eea10b38d90"
 migrations_dir = "migrations"
 
 [[kv_namespaces]]
 binding = "CONTENT_CACHE"
-id = "a969d8d9f895433c8053baeb8cdd7405"
-preview_id = "a969d8d9f895433c8053baeb8cdd7405"
+id = "19e053c7a4c94f16a1ee4a436bfac34a"
+preview_id = "19e053c7a4c94f16a1ee4a436bfac34a"
 
 # ── Production environment ──────────────────────────────────────
 # Deploy with: npx wrangler deploy --env production
@@ -26,18 +33,29 @@ name = "tiko-content-api"
 workers_dev = false
 
 [env.production.vars]
-ALLOWED_ORIGINS = "https://tiko.mt,https://www.tiko.mt,https://tiko.tikoapps.org,https://cards.tikoapps.org,https://sequence.tikoapps.org,https://type.tikoapps.org,https://timer.tikoapps.org,https://admin.tikoapps.org,http://localhost:5173,http://localhost:4173"
+ALLOWED_ORIGINS = "https://tiko.mt,https://www.tiko.mt,https://tikoapps.org,https://cards.tikoapps.org,https://sequence.tikoapps.org,https://type.tikoapps.org,https://timer.tikoapps.org,https://admin.tikoapps.org,http://localhost:5173,http://localhost:4173"
+APP_API_URL = "https://app.tikoapi.org"
+IDENTITY_API_URL = "https://api.tikotalks.com/v1/identity"
+MEDIA_API_URL = "https://media.tikoapi.org/v1"
+
+[[env.production.r2_buckets]]
+binding = "USER_IMAGES"
+bucket_name = "tiko-user-images"
 
 [[env.production.d1_databases]]
 binding = "CONTENT_DB"
-database_name = "tiko-content-db"
-database_id = "3728ab72-c9b8-4717-ac8b-17ec81ed1811"
+database_name = "tiko-content"
+database_id = "e3bd6a85-fd96-4666-8026-2b6592557be4"
 migrations_dir = "migrations"
 
 [[env.production.kv_namespaces]]
 binding = "CONTENT_CACHE"
-id = "a969d8d9f895433c8053baeb8cdd7405"
+id = "19e053c7a4c94f16a1ee4a436bfac34a"
 
 [[env.production.routes]]
 pattern = "api.tikotalks.com/v1/content/*"
 zone_name = "tikotalks.com"
+
+[[env.production.routes]]
+pattern = "content.tikoapi.org"
+custom_domain = true

@@ -1,7 +1,9 @@
 import { defineComponent, h, onMounted, ref, watch } from 'vue'
 export { default as TikoLogo } from './TikoLogo.vue'
+export { default as TikoChildAccountsPanel } from './TikoChildAccountsPanel.vue'
 export { default as TikoProfileMenu } from './TikoProfileMenu.vue'
 export { default as TikoPinPopup } from './TikoPinPopup.vue'
+export { useIdentityRuntime, type UseIdentityRuntimeOptions, type IdentityRuntimeState, type StoredIdentity } from './identity-runtime'
 export { useParentMode, type ParentModeDeps } from './parent-mode'
 import type { GenerationTtsRequest, LegacyTtsResponse } from '@tiko/media'
 import { generationTtsCacheKey, isGenerationTtsResponse } from '@tiko/media'
@@ -101,6 +103,55 @@ export interface TikoTtsClientOptions {
   audioFactory?: (url: string) => { play: () => Promise<void> | void }
   speechSynthesis?: SpeechSynthesis
 }
+
+export const TIKO_PALETTE: string[] = [
+  '#9b3fbd', // yes-no purple
+  '#2488ff', // type blue
+  '#ff8a1f', // cards orange
+  '#16b8a6', // sequence teal
+  '#f8c22e', // timer yellow
+  '#e84057', // radio red
+  '#2dd4bf', // media cyan
+  '#8b5cf6', // admin violet
+  '#ef4f8f', // tiko pink
+  '#FFB347', // warm orange
+  '#FF6B6B', // coral
+  '#4ECDC4', // turquoise
+  '#A8E6CF', // mint
+  '#DDA0DD', // plum
+  '#FFD93D', // gold
+  '#82B1FF', // periwinkle
+  '#87CEEB', // sky blue
+  '#98D8C8', // seafoam
+]
+
+export interface TikoColorEntry {
+  name: string
+  hex: string
+}
+
+export const tikoColors: TikoColorEntry[] = [
+  { name: 'red',     hex: '#E03131' },
+  { name: 'orange',  hex: '#F76707' },
+  { name: 'yellow',  hex: '#FCC419' },
+  { name: 'green',   hex: '#2F9E44' },
+  { name: 'blue',    hex: '#1971C2' },
+  { name: 'purple',  hex: '#9C36B5' },
+  { name: 'pink',    hex: '#F06595' },
+  { name: 'brown',   hex: '#964B00' },
+  { name: 'black',   hex: '#1A1A1A' },
+  { name: 'white',   hex: '#F8F9FA' },
+  { name: 'gray',    hex: '#868E96' },
+  { name: 'beige',   hex: '#F5DEB3' },
+  { name: 'cyan',    hex: '#22B8CF' },
+  { name: 'teal',    hex: '#0CA678' },
+  { name: 'navy',    hex: '#1E3A5F' },
+  { name: 'lime',    hex: '#82C91E' },
+  { name: 'magenta', hex: '#E64980' },
+  { name: 'maroon',  hex: '#92140C' },
+  { name: 'gold',    hex: '#FAB005' },
+  { name: 'silver',  hex: '#C0C0C0' },
+]
 
 export const tikoKitComponents = [
   'TikoAppHeader',

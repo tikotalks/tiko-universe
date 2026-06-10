@@ -156,6 +156,17 @@ function parseStringArray(value: unknown): string[] {
   }
 }
 
+function parseFormStringArray(value: FormDataEntryValue | null): string[] {
+  if (typeof value !== 'string') return []
+  try {
+    const parsed = JSON.parse(value)
+    if (Array.isArray(parsed)) return parsed.map(String).map(item => item.trim()).filter(Boolean)
+  } catch {
+    return value.split(',').map(item => item.trim()).filter(Boolean)
+  }
+  return []
+}
+
 function firstCategory(value: unknown): string | undefined {
   const categories = parseStringArray(value)
   return categories[0]
@@ -454,6 +465,10 @@ async function handleMediaUpload(request: Request, env: Env): Promise<Response> 
     const duration = formData.get('duration') as string | null
     const widthParam = formData.get('width') as string | null
     const heightParam = formData.get('height') as string | null
+    const titleParam = (formData.get('title') as string | null)?.trim()
+    const descriptionParam = (formData.get('description') as string | null)?.trim()
+    const categoriesParam = parseFormStringArray(formData.get('categories'))
+    const tagsParam = parseFormStringArray(formData.get('tags'))
 
     if (!file) return err('No file provided')
 
@@ -491,6 +506,11 @@ async function handleMediaUpload(request: Request, env: Env): Promise<Response> 
     }
 
     // Fallback title
+    if (titleParam) metadata.title = titleParam
+    if (descriptionParam) metadata.description = descriptionParam
+    if (categoriesParam.length) metadata.categories = categoriesParam
+    if (tagsParam.length) metadata.tags = tagsParam
+
     if (!metadata.title) {
       metadata.title = nameWithoutExt
         .replace(/[-_]/g, ' ')
@@ -503,14 +523,18 @@ async function handleMediaUpload(request: Request, env: Env): Promise<Response> 
     const height = heightParam ? parseInt(heightParam) : undefined
     const isPrivate = formData.get('isPrivate') === 'true'
 
+    const thumbnailUrl2 = isImage ? `${baseUrl}?width=200` : (thumbnailUrl || baseUrl)
+    const mediumUrl = isImage ? `${baseUrl}?width=800` : baseUrl
+
     try {
       await env.MEDIA_DB.prepare(
         `INSERT INTO media (
-          id, filename, file_size, mime_type, width, height, title, description,
-          categories, tags, is_private, original_url, created_at, updated_at
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+          id, name, filename, file_size, mime_type, width, height, title, description,
+          categories, tags, is_private, original_url, thumbnail_url, medium_url, created_at, updated_at
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       ).bind(
         id,
+        metadata.title || nameWithoutExt,
         baseKey,
         file.size,
         file.type,
@@ -522,6 +546,8 @@ async function handleMediaUpload(request: Request, env: Env): Promise<Response> 
         JSON.stringify(metadata.tags),
         isPrivate ? 1 : 0,
         baseUrl,
+        thumbnailUrl2,
+        mediumUrl,
         now,
         now,
       ).run()

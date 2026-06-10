@@ -3,7 +3,8 @@
 Cloudflare Worker — caching proxy between Tiko clients (iOS + web) and the Lezu translation platform.
 
 **Production URL:** `https://translations.tikoapi.org`  
-**Lezu project:** `project_a2a9847c-edbd-499e-874f-5a58c0cca80c`
+**Lezu parent project:** `project_a2a9847c-edbd-499e-874f-5a58c0cca80c`  
+**Cards Content child project:** `project_65c64370-13ed-4503-82bc-9a6df8b9a5c8`
 
 ## Endpoints
 
@@ -66,7 +67,7 @@ npm run kv:create:prod   # copy into [env.production.kv_namespaces].id
 ### 2. Set secrets
 
 ```bash
-npm run secret:lezu-key       # paste: lez_user_777bb40cbf0e7dee060ca3dd6424fb16185f41416abd6ffd
+npm run secret:lezu-key       # paste your Lezu user API key
 npm run secret:lezu-project   # paste: project_a2a9847c-edbd-499e-874f-5a58c0cca80c
 npm run secret:webhook        # generate a random string for webhook security
 
@@ -78,10 +79,12 @@ wrangler secret put WEBHOOK_SECRET --env production
 
 ### 3. Seed Lezu with source strings
 
-Run the seed script (from the repo root) to push all English translations from `@tiko/i18n` into Lezu, which then auto-translates them:
+Run the Cards content seed script (from the repo root) to push built-in Cards content into Lezu, which then auto-translates it:
 
 ```bash
-# TODO: seed script (Hermes will build this with the lezu skill)
+LEZU_API_KEY=lez_user_... \
+LEZU_PROJECT_ID=project_65c64370-13ed-4503-82bc-9a6df8b9a5c8 \
+node workers/translations-api/scripts/import-cards-en.mjs
 ```
 
 ### 4. Deploy

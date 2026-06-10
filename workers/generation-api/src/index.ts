@@ -10,6 +10,7 @@ export interface Env {
     prepare(sql: string): { bind(...values: unknown[]): { first<T>(): Promise<T | null>; all(): Promise<{ results: unknown[] }> } }
   }
   IDENTITY_BASE_URL?: string
+  GENERATION_PUBLIC_ROUTE?: string
   IDENTITY_SERVICE?: {
     fetch(input: Request | string, init?: RequestInit): Promise<Response>
   }
@@ -152,6 +153,10 @@ export default {
     if (url.pathname === '/v1/generation/image' && request.method === 'POST') return requireAuth(request, env, () => generateImage(request, env))
     if (url.pathname.startsWith('/v1/generation/images/') && url.pathname.endsWith('/binary') && request.method === 'GET') return getImage(url.pathname, env)
     if (url.pathname.startsWith('/v1/generation/images/') && url.pathname.endsWith('/promote') && request.method === 'POST') return requireAuth(request, env, () => promoteImage(url.pathname, env))
+    if (url.pathname.startsWith('/v1/generation/images/') && url.pathname.endsWith('/media-link') && request.method === 'POST') return requireAuth(request, env, () => linkImageMedia(url.pathname, request, env))
+    if (url.pathname.startsWith('/v1/generation/images/') && url.pathname.endsWith('/enrich') && request.method === 'POST') return requireAuth(request, env, () => enrichImage(url.pathname, env))
+    if (url.pathname.startsWith('/v1/generation/images/') && url.pathname.endsWith('/edit') && request.method === 'POST') return requireAuth(request, env, () => editImageVariant(url.pathname, request, env))
+    if (url.pathname.startsWith('/v1/generation/images/') && url.pathname.endsWith('/upscale') && request.method === 'POST') return requireAuth(request, env, () => upscaleImage(url.pathname, request, env))
     if (url.pathname.startsWith('/v1/generation/images/') && request.method === 'DELETE') return requireAuth(request, env, () => deleteImage(url.pathname, env))
     if (url.pathname === '/v1/generation/images' && request.method === 'GET') return listImages(request, env)
     if (url.pathname === '/v1/generation/stories/tryout' && request.method === 'POST') return requireAuth(request, env, () => generateStoryTryout(request, env))
@@ -837,14 +842,21 @@ function makeSilentMp3Padding(): Uint8Array {
 
 // ── Image generation (DALL-E 3) ──────────────────────────────────
 
+type ImageMode = 'icon' | 'coloring' | 'background'
+type TikoStyle = 'tiko-original' | 'tiko-v2' | 'tiko-natural'
+
 interface ImageGenerationRequest {
   prompt: string
+  mode?: ImageMode
+  tikoStyle?: TikoStyle
   size?: '1024x1024' | '1024x1792' | '1792x1024'
   quality?: 'standard' | 'hd'
   style?: 'vivid' | 'natural'
+  transparent?: boolean
   title?: string
   category?: string
   tags?: string[]
+  count?: number
 }
 
 interface GeneratedImageRecord {
@@ -866,21 +878,296 @@ interface GeneratedImageRecord {
   title: string | null
   description: string | null
   is_public: number
+  is_preview: number
+  media_id: string | null
   created_at: string
   updated_at: string
 }
 
 const ALLOWED_IMAGE_SIZES = new Set(['1024x1024', '1024x1792', '1792x1024'])
-const OPENAI_IMAGE_MODEL = 'gpt-image-1'
 
-function toOpenAiImageSize(size: string): string {
-  if (size === '1024x1792') return '1024x1536'
-  if (size === '1792x1024') return '1536x1024'
-  return size
+const ICON_STYLE_SPECS: Record<TikoStyle, object> = {
+  'tiko-original': {
+    task: "Generate a friendly flat 2D icon in a warm, sticker-like illustration style. Clean, bold, child-friendly.",
+    style_reference: "Flat 2D illustration — like a cheerful sticker or children's book icon. Clean filled shapes with soft outlines. Warm, saturated colors. Minimal shading: flat fills with very subtle edge darkening for form. No 3D rendering, no volumetric lighting.",
+    icon_idea: null,
+    render_style: {
+      materials: "Flat color fills only. Suggest material through color and simple shape — no volumetric rendering, no specular highlights.",
+      shapes: "Bold, clean, simplified. Rounded corners, friendly proportions. Slightly stylized — not ultra-minimal, not overly complex.",
+      colors: "Warm, cheerful, limited palette: 2–3 bold fills. Saturated but not neon. Warm orange, sky blue, leaf green, sun yellow. Objects look like themselves in a friendly sticker way.",
+      lighting: "Flat or very soft inner glow only. No cast shadows, no volumetric lighting.",
+      background: "transparent"
+    },
+    composition: {
+      camera: "Straight front-facing or very slight 3/4.",
+      layout: "Single centered subject. Clean silhouette. Optional very subtle drop shadow for grounding.",
+      aspect_ratio: "1:1 square, minimum 1024x1024px",
+      file_format: "High-res PNG"
+    },
+    surface_texture: {
+      enable: false,
+      texture_strength: "none",
+      texture_scale: "none",
+      rules: "No texture. Flat fills only."
+    },
+    material_hints: {
+      animal: "Flat colored areas with simple outline details.",
+      plant: "Solid green fills, simple vein line if needed.",
+      fabric: "Flat colored panel; seam lines optional.",
+      metal: "Flat color with optional thin highlight line.",
+      plastic: "Flat color, small circular highlight dot."
+    },
+    details: {
+      expression: "Friendly, simple. Faces optional unless specified.",
+      structure: "Bold simplified forms; immediately readable at small sizes.",
+      pose: "Clean silhouette for icon use.",
+      style_constraints: "No 3D rendering, no gradient shading, no complex textures, no text or letters unless explicitly requested."
+    }
+  },
+  'tiko-v2': {
+    task: "Generate a 3D icon in a soft, stylized, contemporary look (playful but mature). Absolutely no leaves, foliage, plant elements, or text/letters unless explicitly described in icon_idea.",
+    style_reference: "Soft 3D icon style in a playful, toy-like aesthetic. Smooth rounded forms, vivid natural color, calm proportions. Think high-quality vinyl toy or clay render — stylized and charming, not realistic. Subtle volumetric hints for depth but never photoreal. UI-friendly and readable at small sizes.",
+    icon_idea: null,
+    render_style: {
+      materials: "Soft matte vinyl/clay feel. Suggest material through color and form, not texture maps — a bowl of rice has distinguishable kernels, wood has warm tone variation, fruit has gentle color gradation. Stay stylized, never photorealistic.",
+      shapes: "Rounded but not chubby: tighter corner radii, controlled bevels, clean planes. No toy-like bulges; maintain confident geometry.",
+      colors: "Truthful colors at natural saturation. Objects look like themselves — green leaves, red tomatoes, golden bread. 2–3 core colors plus one subtle accent. Balanced saturation; avoid candy/neon, rainbow mixes, or oversaturated single-hue dominance.",
+      lighting: "Soft studio lighting with gentle key–fill contrast for a hint of dimension — just enough to lift the subject off the page. Faint rim light for pop. Soft grounded shadow. Think vinyl toy photography, not product photography. No harsh speculars.",
+      background: "transparent"
+    },
+    composition: {
+      camera: "Orthographic or slight 3/4 top-front",
+      layout: "Single centered subject, grounded shadow or soft float. No decorative stars, dots, or clutter.",
+      aspect_ratio: "1:1 square format, minimum 1024x1024px",
+      file_format: "High-res PNG"
+    },
+    surface_texture: {
+      enable: true,
+      texture_strength: "minimal",
+      texture_scale: "micro",
+      rules: "Suggest material identity through subtle cues, not texture maps. Rice should show individual kernels in a stylized way; wood has warmth but no grain photo-realism; fabric suggests softness through form. Overall feel stays clean and toy-like — detail is a hint, not a feature."
+    },
+    material_hints: {
+      animal: "Ultra-fine short flocking only on edges and silhouette—no visible strands.",
+      plant: "Very light velvety bloom on leaves; bark hints only where it aids silhouette.",
+      fabric: "Tight felt/woven suggestion, barely visible.",
+      metal: "Fine powder-coat or brushed hint; no bright streaks.",
+      plastic: "Smooth satin polymer; micro-speckle only on grazing angles."
+    },
+    details: {
+      expression: "Neutral; no faces unless specified.",
+      structure: "Clear, mature proportions; stylized but not cute or distorted.",
+      pose: "Clean silhouette for icon use; instantly recognizable at small sizes.",
+      style_constraints: "No oversized features, blush, sparkles, heavy gloss, visible grain, leaves, foliage, vines, plant parts, text, letters, numbers, or typographic elements unless explicitly requested."
+    }
+  },
+  'tiko-natural': {
+    task: "Generate a soft 3D icon in a natural, balanced style. Same rounded toy-like forms as Tiko V2 but with a calm, grounded color palette — no oversaturation.",
+    style_reference: "Soft 3D icon with natural, balanced colors. Same rounded vinyl-toy aesthetic but with saturation pulled back to feel like matte print, not screen-vivid. Think Scandinavian children's illustration — sage greens, dusty reds, warm beiges, soft powder blues.",
+    icon_idea: null,
+    render_style: {
+      materials: "Same satin-matte vinyl/clay as V2 but colors feel like matte paint on physical objects. Let material warmth come through naturally without pushing saturation.",
+      shapes: "Rounded but confident. Same as V2.",
+      colors: "Natural, mid-saturation palette: 2–3 muted-to-balanced colors. A tomato is warm dusty red, leaves are sage green, bread is warm beige, sky is powder blue. Never neon, never washed-out. Target mid-saturation with warm undertones. When in doubt, choose more muted over more vivid.",
+      lighting: "Same soft studio lighting as V2 but slightly warmer and lower-contrast. Lean toward calm, diffuse light. No harsh speculars.",
+      background: "transparent"
+    },
+    composition: {
+      camera: "Orthographic or slight 3/4 top-front.",
+      layout: "Single centered subject, grounded shadow or soft float. No decorative clutter.",
+      aspect_ratio: "1:1 square, minimum 1024x1024px",
+      file_format: "High-res PNG"
+    },
+    surface_texture: {
+      enable: true,
+      texture_strength: "minimal",
+      texture_scale: "micro",
+      rules: "Same as V2 — suggest material through subtle cues, not texture maps."
+    },
+    material_hints: {
+      animal: "Ultra-fine short flocking only on edges.",
+      plant: "Very light velvety bloom on leaves.",
+      fabric: "Tight felt suggestion, barely visible.",
+      metal: "Fine powder-coat hint.",
+      plastic: "Smooth satin polymer."
+    },
+    details: {
+      expression: "Neutral; no faces unless specified.",
+      structure: "Clear, mature proportions; stylized but not cute or distorted.",
+      pose: "Clean silhouette for icon use.",
+      style_constraints: "No oversaturation, no candy colors, no neon. No sparkles, gloss streaks, or heavy specular. No text or letters unless explicitly requested."
+    }
+  }
 }
 
-function toOpenAiImageQuality(quality: string): string {
-  return quality === 'hd' ? 'high' : 'medium'
+const IMAGE_STYLE_SPECS: Record<ImageMode, object> = {
+  icon: ICON_STYLE_SPECS['tiko-v2'],
+  coloring: {
+    task: "Generate a black-and-white coloring page (clean line art only). The subject must be fully contained within the frame with no parts cut off. CRITICAL: Absolutely NO border lines, frames, or rectangles around the edge of the image.",
+    style_reference: "Crisp, closed outlines with consistent stroke weight; pure black lines on white; no shading, gradients, textures, halftones, or colors. Subject fully visible with generous padding from edges. The edge of the image must be pure white with no lines.",
+    icon_idea: null,
+    render_style: {
+      materials: "None (ink line art). Do not simulate materials.",
+      shapes: "Fully closed shapes that form clear 'panels' for coloring. Avoid gaps and feathered edges.",
+      colors: "Monochrome only: black outlines (#000) on white (#FFF). No gray.",
+      lighting: "None. Do not imply light/shadow.",
+      background: "Pure white. No border lines, frames, or decorative elements around the edges."
+    },
+    composition: {
+      camera: "Orthographic, straight-on or slight 3/4 if needed for clarity.",
+      layout: "Single centered subject with 10-15% padding from all edges. Complete subject visible, no cropping. No border lines or frames.",
+      aspect_ratio: "1:1 square, minimum 1024x1024px (vector look acceptable).",
+      file_format: "High-res PNG or SVG"
+    },
+    surface_texture: {
+      enable: false,
+      texture_strength: "none",
+      texture_scale: "none",
+      rules: "No hatching, stipple, halftone, or line-weight shading."
+    },
+    material_hints: {
+      animal: "Use contour outlines only; no fur strokes beyond silhouette-defining lines.",
+      plant: "Use simple vein lines; keep fills empty.",
+      fabric: "Seam lines allowed; no fabric shading.",
+      metal: "No reflections; outline only.",
+      plastic: "Outline only."
+    },
+    details: {
+      expression: "Neutral unless specified.",
+      structure: "Clear, readable proportions; simplified forms to ease coloring.",
+      pose: "Strong, readable silhouette. Ensure all parts fit comfortably within frame.",
+      style_constraints: "No gradients, noise, shadows, grayscale, or border lines. Keep stroke weight consistent (eg 3–6 px at 1024px). No lines touching or extending to image edges."
+    },
+    stroke_rules: {
+      weight: "Uniform stroke weight; thicker outer contour, optionally slightly thinner inner details.",
+      joins_caps: "Round joins and caps preferred; no feathering.",
+      closure: "All panels must be watertight (no open paths).",
+      borders: "No border lines or frames around the image. Subject should float freely in white space."
+    },
+    export_rules: {
+      vector_priority: "Prefer SVG with paths; if raster, ensure 2-color (1-bit) output.",
+      cleanup: "No anti-aliased edges; crisp pixels. No border artifacts."
+    }
+  },
+  background: {
+    task: "Generate a stylized background scene with soft 3D elements. Create a cohesive environment with less crowded center area suitable for UI overlays or content placement.",
+    style_reference: "Soft 3D background style matching icon aesthetics - smooth rounded forms, calm balanced composition with breathing room in the center. Same refined palette and lighting as icons.",
+    icon_idea: null,
+    render_style: {
+      materials: "Satin-matte surfaces matching icon style. Smooth with minimal texture.",
+      shapes: "Rounded environmental elements, architectural or natural forms. Distributed to frame rather than fill the center.",
+      colors: "Cohesive palette using 2-3 main colors plus accents. Match icon saturation levels. Gradient-friendly.",
+      lighting: "Soft ambient with directional key light. Atmospheric perspective for depth. Subtle volumetric effects allowed.",
+      background: "Full scene with sky/environment. Gradient or soft color transitions."
+    },
+    composition: {
+      camera: "Wide angle, slight elevation. Environmental perspective.",
+      layout: "Elements concentrated in corners/edges, sparse center. Rule of thirds. Create natural frame or vignette effect.",
+      aspect_ratio: "Variable based on mode - landscape (3:2), portrait (2:3), or square (1:1)",
+      file_format: "High-res PNG"
+    },
+    surface_texture: {
+      enable: true,
+      texture_strength: "minimal",
+      texture_scale: "micro",
+      rules: "Match icon texture approach. Very subtle, barely perceptible."
+    },
+    material_hints: {
+      clouds: "Soft volumetric forms, no hard edges.",
+      terrain: "Smooth rolling forms, stylized not realistic.",
+      architecture: "Simplified geometric structures with rounded edges.",
+      foliage: "Abstracted shapes, avoid detailed leaves unless specified.",
+      water: "Smooth stylized surfaces, minimal ripples."
+    },
+    details: {
+      density: "30-40% coverage, leaving center area relatively open.",
+      depth_layers: "Foreground elements at edges, midground sparse, background atmospheric.",
+      focal_point: "Avoid strong focal points in center third of image.",
+      style_constraints: "No photo-realism, maintain soft 3D icon aesthetic throughout. No text or UI elements."
+    }
+  }
+}
+
+const ICON_ART_DIRECTOR_PROMPTS: Record<TikoStyle, string> = {
+  'tiko-original': `You are a senior art director. Convert the user's JSON style spec into a single, explicit, 180–300 word image brief for an image-generation model.
+Rules:
+- Flat 2D illustration only — no 3D rendering, no volumetric lighting, no plastic or vinyl shine.
+- Clean filled shapes with soft outlines; warm, cheerful, limited color palette.
+- Minimal shading: flat fills with at most a very subtle inner glow or edge darkening for form. No cast shadows.
+- Think cheerful sticker art or a friendly children's book illustration — instantly readable, simple, warm.
+- Do not use any text, letters, or numbers in the images.
+- Include: subject, composition, color palette (name specific warm/bold hues), outline style, simplification level, dos/don'ts.
+- Be directive, not optional. No meta talk. No lists. No JSON.`,
+  'tiko-v2': `You are a senior art director. Convert the user's JSON style spec into a single, explicit, 180–300 word image brief for an image-generation model.
+Rules:
+- Do not use any wording or letters in the images.
+- Keep ONE consistent visual style across outputs (soft 3D toy-like, rounded forms, balanced truthful color).
+- The overall aesthetic is playful and stylized like a high-quality vinyl toy or clay render — NOT photorealistic. Ever.
+- Truthful colors at natural saturation: a leaf is green, rice is cream, a tomato is red. Keep saturation balanced — not washed out, not candy-bright. Avoid any single hue dominating the whole image.
+- Subtle hints of dimension: soft shadows, gentle light wrapping. Just enough to not look flat. Not realistic shading.
+- Suggest material identity through form and color cues (rice kernels, wood warmth) — never through photorealistic texture.
+- Include: subject, camera, composition, lighting, palette, materials, textures, surface detail, silhouettes, dos/don'ts.
+- Be directive, not optional. No meta talk. No lists. No JSON.`,
+  'tiko-natural': `You are a senior art director. Convert the user's JSON style spec into a single, explicit, 180–300 word image brief for an image-generation model.
+Rules:
+- Do not use any text or letters in the images.
+- Same soft 3D toy-like style as Tiko V2 — rounded forms, vinyl/clay aesthetic, NOT photorealistic.
+- CRITICAL: use natural, balanced colors. Pull saturation back to feel like matte print, not a screen-vivid render. A tomato is warm dusty red, not bright neon red. Leaves are sage green, not vivid emerald. Bread is warm beige. Sky is powder blue.
+- Target mid-saturation with warm undertones throughout. When choosing between vivid and muted, always choose more muted.
+- Soft studio lighting, same as V2 but slightly warmer and lower-contrast. Lean toward calm diffuse light. No harsh speculars.
+- Suggest material identity through form and color cues — never through photorealistic texture.
+- Include: subject, camera, composition, lighting, palette (with specific muted/warm color names), materials, textures, surface detail, silhouettes, dos/don'ts.
+- Be directive, not optional. No meta talk. No lists. No JSON.`,
+}
+
+const ART_DIRECTOR_SYSTEM_PROMPTS: Record<ImageMode, string> = {
+  icon: ICON_ART_DIRECTOR_PROMPTS['tiko-v2'],
+  coloring: `You are a senior art director. Convert the user's JSON style spec into a single, explicit, 180–300 word image brief for an image-generation model producing a coloring page.
+Rules:
+- EMPHASIZE no border lines or frames at the image edges. The image must have a pure white background that extends to the edges with no black lines forming a border or frame.
+- Pure black outlines on white only. No shading, no gray, no color.
+- Include: subject, composition, stroke style, closure rules, padding, dos/don'ts.
+- Be directive, not optional. No meta talk. No lists. No JSON.`,
+  background: `You are a senior art director. Convert the user's JSON style spec into a single, explicit, 180–300 word image brief for an image-generation model producing a stylized background scene.
+Rules:
+- Do not use any wording or letters in the images.
+- Keep ONE consistent visual style (soft 3D, matching the icon aesthetic).
+- Keep the center area sparse — elements should frame, not fill.
+- Include: scene description, depth layers, camera, composition, lighting, palette, materials, dos/don'ts.
+- Be directive, not optional. No meta talk. No lists. No JSON.`
+}
+
+async function boostPrompt(subject: string, mode: ImageMode, tikoStyle: TikoStyle, env: Env): Promise<string> {
+  if (!env.ATLAS_SERVICE) throw new Error('Atlas service not available for prompt boost')
+
+  const spec = mode === 'icon'
+    ? { ...ICON_STYLE_SPECS[tikoStyle], icon_idea: subject }
+    : { ...IMAGE_STYLE_SPECS[mode], icon_idea: subject }
+  const systemPrompt = mode === 'icon'
+    ? ICON_ART_DIRECTOR_PROMPTS[tikoStyle]
+    : ART_DIRECTOR_SYSTEM_PROMPTS[mode]
+
+  const atlasBase = (env.ATLAS_BASE_URL ?? 'https://tiko-atlas-api-dev.silvandiepen.workers.dev/v1/atlas').replace(/\/$/, '')
+  const response = await env.ATLAS_SERVICE!.fetch(new Request(`${atlasBase}/run`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      capability: 'text.generate',
+      app: 'generation-api',
+      purpose: 'image-art-director',
+      input: { input: JSON.stringify(spec, null, 2), system: systemPrompt },
+    }),
+  }))
+
+  if (!response.ok) {
+    const errorText = await response.text()
+    let detail = errorText
+    try { detail = JSON.parse(errorText).error?.message || errorText } catch { /* keep raw */ }
+    console.error('[boost] Atlas prompt boost failed', { status: response.status, detail })
+    throw new Error(`Prompt boost failed: ${detail}`)
+  }
+  const data = await response.json() as { data?: { output?: string } }
+  return (data.data?.output ?? '').trim()
 }
 
 async function generateImage(request: Request, env: Env): Promise<Response> {
@@ -900,198 +1187,161 @@ async function generateImage(request: Request, env: Env): Promise<Response> {
   if (body.size && !ALLOWED_IMAGE_SIZES.has(body.size)) {
     return apiError('invalid_size', 'Size must be 1024x1024, 1024x1792, or 1792x1024.', 400, 'size')
   }
-  if (!env.OPENAI_API_KEY) {
-    return apiError('image_generation_not_configured', 'Image generation is not configured.', 503)
-  }
 
+  const count = typeof body.count === 'number' && body.count >= 1 && body.count <= 8 ? body.count : 1
   const size = body.size || '1024x1024'
   const quality = body.quality === 'hd' ? 'hd' : 'standard'
   const style = body.style === 'natural' ? 'natural' : 'vivid'
+  const mode: ImageMode = body.mode === 'coloring' || body.mode === 'background' ? body.mode : 'icon'
+  const tikoStyle: TikoStyle = body.tikoStyle === 'tiko-original' || body.tikoStyle === 'tiko-natural' ? body.tikoStyle : 'tiko-v2'
+  const transparent = body.transparent !== undefined ? body.transparent : (mode === 'icon')
 
-  const atlasResponse = await generateImageWithAtlas(body, { size, quality, style }, env)
-  if (atlasResponse) return atlasResponse
-
-  const providerSize = toOpenAiImageSize(size)
-  const providerQuality = toOpenAiImageQuality(quality)
-
-  const response = await fetch('https://api.openai.com/v1/images/generations', {
-    method: 'POST',
-    headers: {
-      Authorization: `Bearer ${env.OPENAI_API_KEY}`,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      model: OPENAI_IMAGE_MODEL,
-      prompt: body.prompt.trim(),
-      n: 1,
-      size: providerSize,
-      quality: providerQuality,
-    }),
-  })
-
-  if (!response.ok) {
-    const errorText = await response.text()
-    let detail = errorText
-    try { detail = JSON.parse(errorText).error?.message || errorText } catch { /* keep raw */ }
-    return apiError('image_provider_failed', `Image generation failed: ${detail}`, 502)
-  }
-
-  const data = await response.json() as {
-    data: Array<{ b64_json?: string; url?: string; revised_prompt?: string }>
-  }
-
-  const imageData = data.data[0]
-  let imageBytes: Uint8Array | null = null
-  if (imageData?.b64_json) {
-    imageBytes = Uint8Array.from(atob(imageData.b64_json), c => c.charCodeAt(0))
-  } else if (imageData?.url) {
-    const imageResponse = await fetch(imageData.url)
-    if (!imageResponse.ok) {
-      return apiError('image_provider_failed', 'Generated image could not be downloaded from provider.', 502)
-    }
-    imageBytes = new Uint8Array(await imageResponse.arrayBuffer())
-  }
-
-  if (!imageBytes) {
-    return apiError('image_provider_failed', 'No image data returned from provider.', 502)
-  }
-  const id = crypto.randomUUID()
-  const r2Key = `images/${id}.png`
-  const now = new Date().toISOString()
-
-  await env.GENERATED_MEDIA_BUCKET.put(r2Key, imageBytes, {
-    httpMetadata: { contentType: 'image/png', cacheControl: 'public, max-age=31536000, immutable' },
-  })
-
-  const dims = parseImageSize(size)
-  const imageUrl = `/v1/generation/images/${id}/binary`
-
-  await env.GENERATION_DB.prepare(`INSERT INTO generated_images (
-    id, prompt, revised_prompt, model, size, quality, style, image_url, r2_key,
-    content_type, file_size_bytes, width, height, category, tags, title, description,
-    is_public, created_at, updated_at
-  ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`).bind(
-    id,
-    body.prompt.trim(),
-    imageData.revised_prompt || null,
-    OPENAI_IMAGE_MODEL,
-    size,
-    quality,
-    style,
-    imageUrl,
-    r2Key,
-    'image/png',
-    imageBytes.byteLength,
-    dims.width,
-    dims.height,
-    body.category || 'generated',
-    JSON.stringify(body.tags || []),
-    body.title || null,
-    null,
-    0,
-    now,
-    now,
-  ).run()
-
-  return json({
-    data: {
-      id,
-      imageUrl,
-      prompt: body.prompt.trim(),
-      revisedPrompt: imageData.revised_prompt || null,
-      size,
-      quality,
-      style,
-      width: dims.width,
-      height: dims.height,
-      fileSizeBytes: imageBytes.byteLength,
-      createdAt: now,
-    },
-    meta: { cached: false, schemaVersion: 1 },
-  }, 201)
-}
-
-async function generateImageWithAtlas(body: ImageGenerationRequest, normalized: { size: string; quality: string; style: string }, env: Env): Promise<Response | null> {
-  if (!env.ATLAS_SERVICE) return null
-
+  if (!env.ATLAS_SERVICE) return apiError('atlas_not_available', 'Atlas service is not available.', 503)
   const atlasBase = (env.ATLAS_BASE_URL ?? 'https://tiko-atlas-api-dev.silvandiepen.workers.dev/v1/atlas').replace(/\/$/, '')
-  const response = await env.ATLAS_SERVICE.fetch(new Request(`${atlasBase}/images`, {
+
+  // Multi-preview mode: boost the prompt once via art director, then generate N images concurrently
+  // with composition-only variation hints (no color-mood hints that cause hue dominance).
+  if (count > 1) {
+    if (!env.OPENAI_API_KEY) return apiError('openai_not_configured', 'OpenAI is not configured.', 503)
+
+    let boostedBrief = body.prompt.trim()
+    try {
+      boostedBrief = await boostPrompt(body.prompt.trim(), mode, tikoStyle, env)
+    } catch {
+      // fall back to raw prompt
+    }
+
+    const variationHints = [
+      'Slight 3/4 top-front angle.',
+      'Straight front-facing, centered.',
+      'Gentle top-down perspective.',
+      'Eye-level view, soft grounded shadow.',
+    ]
+    const now = new Date().toISOString()
+    const calls = Array.from({ length: count }, async (_, i) => {
+      const variedPrompt = `${boostedBrief}\n\nComposition hint: ${variationHints[i % variationHints.length]}`
+      try {
+        const payload: Record<string, unknown> = {
+          model: 'gpt-image-1-mini',
+          prompt: variedPrompt,
+          size,
+          n: 1,
+          quality: 'medium',
+          background: 'transparent',
+        }
+        const openaiResponse = await fetch('https://api.openai.com/v1/images/generations', {
+          method: 'POST',
+          headers: { Authorization: `Bearer ${env.OPENAI_API_KEY}`, 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        })
+        if (!openaiResponse.ok) {
+          const errText = await openaiResponse.text().catch(() => '')
+          console.error('[generate] OpenAI preview failed', { status: openaiResponse.status, body: errText, variation: i })
+          return null
+        }
+        const openaiBody = await openaiResponse.json() as { data?: Array<{ b64_json?: string; url?: string; revised_prompt?: string }> }
+        const imageItem = openaiBody.data?.[0]
+        if (!imageItem) return null
+
+        let imageBytes: Uint8Array
+        if (imageItem.b64_json) {
+          imageBytes = base64ToBytes(imageItem.b64_json)
+        } else if (imageItem.url) {
+          const urlRes = await fetch(imageItem.url)
+          if (!urlRes.ok) return null
+          imageBytes = new Uint8Array(await urlRes.arrayBuffer())
+        } else {
+          return null
+        }
+
+        const id = crypto.randomUUID()
+        const r2Key = `images/${id}.png`
+        await env.GENERATED_MEDIA_BUCKET.put(r2Key, imageBytes, { httpMetadata: { contentType: 'image/png', cacheControl: 'public, max-age=31536000, immutable' } })
+        const dims = parseImageSize(size)
+        const imageUrl = `/v1/generation/images/${id}/binary`
+        await env.GENERATION_DB.prepare(`INSERT INTO generated_images (
+          id, prompt, revised_prompt, model, size, quality, style, image_url, r2_key,
+          content_type, file_size_bytes, width, height, category, tags, title, description,
+          is_public, is_preview, created_at, updated_at
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`).bind(
+          id, body.prompt.trim(), imageItem.revised_prompt || null,
+          'gpt-image-1-mini', size, 'medium', tikoStyle, imageUrl, r2Key,
+          'image/png', imageBytes.byteLength, dims.width, dims.height,
+          body.category || 'generated', JSON.stringify(body.tags || []), body.title || null, null,
+          0, 1, now, now,
+        ).run()
+        return { id, imageUrl, prompt: body.prompt.trim(), revisedPrompt: imageItem.revised_prompt || null, size, quality: 'medium', style: tikoStyle, width: dims.width, height: dims.height, fileSizeBytes: imageBytes.byteLength, isPreview: true, createdAt: now }
+      } catch (e) {
+        console.error('[generate] Variation', i, 'failed', e)
+        return null
+      }
+    })
+    const settled = await Promise.all(calls)
+    const results = settled.filter(Boolean) as Array<{ id: string; imageUrl: string; prompt: string; revisedPrompt: string | null; size: string; quality: string; style: string; width: number; height: number; fileSizeBytes: number; isPreview: boolean; createdAt: string }>
+    if (!results.length) return apiError('openai_failed', 'All image variations failed.', 502)
+    return json({ data: results, meta: { schemaVersion: 1, count: results.length } }, 201)
+  }
+
+  // Single image: use art director boost then generate
+  let artBrief: string
+  try {
+    const boosted = await boostPrompt(body.prompt.trim(), mode, tikoStyle, env)
+    artBrief = boosted || body.prompt.trim()
+  } catch {
+    artBrief = body.prompt.trim()
+  }
+
+  const atlasResponse = await env.ATLAS_SERVICE.fetch(new Request(`${atlasBase}/run`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
+      capability: 'image.generate',
       app: 'generation-api',
-      purpose: 'compatibility-image-generation',
-      prompt: body.prompt.trim(),
-      size: toAtlasImageSize(normalized.size),
-      count: 1,
-      provider: 'openai',
-      model: OPENAI_IMAGE_MODEL,
+      purpose: 'image-generation',
+      input: { prompt: artBrief, size: toAtlasImageSize(size), transparent, count: 1 },
     }),
   }))
-  const atlasBody = await response.json().catch(() => null) as AtlasImageResponse | null
-  if (!response.ok) {
-    return apiError(atlasBody?.error?.code ?? 'atlas_image_failed', atlasBody?.error?.message ?? 'Atlas image request failed.', response.status)
+
+  const atlasBody = await atlasResponse.json().catch(() => null) as AtlasImageResponse | null
+  if (!atlasResponse.ok) {
+    console.error('[generate] Atlas image.generate failed', { status: atlasResponse.status, error: atlasBody?.error })
+    return apiError(atlasBody?.error?.code ?? 'atlas_image_failed', atlasBody?.error?.message ?? 'Atlas image request failed.', atlasResponse.status)
   }
 
-  const image = atlasBody?.data?.images?.[0]
-  if (!image?.mediaUrl) return apiError('atlas_image_invalid_response', 'Atlas returned an invalid image response.', 502)
+  const atlasImages = atlasBody?.data?.images ?? []
+  if (!atlasImages.length || !atlasImages[0]?.mediaUrl) {
+    console.error('[generate] Atlas returned no image', { atlasBody })
+    return apiError('atlas_image_invalid_response', 'Atlas returned an invalid image response.', 502)
+  }
 
-  const assetResponse = await fetchAtlasImageAsset(image.mediaUrl, env, atlasBase)
-  if (!assetResponse.ok) return apiError('atlas_image_asset_failed', 'Atlas image asset could not be read.', 502)
+  const now = new Date().toISOString()
+  const image = atlasImages[0]
+  const assetResponse = await fetchAtlasImageAsset(image.mediaUrl!, env, atlasBase)
+  if (!assetResponse.ok) {
+    console.error('[generate] Atlas asset fetch failed', { status: assetResponse.status, mediaUrl: image.mediaUrl })
+    return apiError('atlas_image_asset_failed', 'Could not fetch image from Atlas.', 502)
+  }
 
   const imageBytes = new Uint8Array(await assetResponse.arrayBuffer())
   const id = crypto.randomUUID()
   const r2Key = `images/${id}.png`
-  const now = new Date().toISOString()
   const contentType = assetResponse.headers.get('content-type') ?? image.contentType ?? 'image/png'
-
-  await env.GENERATED_MEDIA_BUCKET.put(r2Key, imageBytes, {
-    httpMetadata: { contentType, cacheControl: 'public, max-age=31536000, immutable' },
-  })
-
-  const dims = parseImageSize(normalized.size)
+  await env.GENERATED_MEDIA_BUCKET.put(r2Key, imageBytes, { httpMetadata: { contentType, cacheControl: 'public, max-age=31536000, immutable' } })
+  const dims = parseImageSize(size)
   const imageUrl = `/v1/generation/images/${id}/binary`
   await env.GENERATION_DB.prepare(`INSERT INTO generated_images (
     id, prompt, revised_prompt, model, size, quality, style, image_url, r2_key,
     content_type, file_size_bytes, width, height, category, tags, title, description,
     is_public, created_at, updated_at
   ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`).bind(
-    id,
-    body.prompt.trim(),
-    image.revisedPrompt || null,
-    image.provider?.model ?? OPENAI_IMAGE_MODEL,
-    normalized.size,
-    normalized.quality,
-    normalized.style,
-    imageUrl,
-    r2Key,
-    contentType,
-    imageBytes.byteLength,
-    dims.width,
-    dims.height,
-    body.category || 'generated',
-    JSON.stringify(body.tags || []),
-    body.title || null,
-    null,
-    0,
-    now,
-    now,
+    id, body.prompt.trim(), image.revisedPrompt || null, image.provider?.model ?? 'gpt-image-1',
+    size, quality, style, imageUrl, r2Key, contentType, imageBytes.byteLength,
+    dims.width, dims.height, body.category || 'generated', JSON.stringify(body.tags || []),
+    body.title || null, null, 0, now, now,
   ).run()
 
   return json({
-    data: {
-      id,
-      imageUrl,
-      prompt: body.prompt.trim(),
-      revisedPrompt: image.revisedPrompt || null,
-      size: normalized.size,
-      quality: normalized.quality,
-      style: normalized.style,
-      width: dims.width,
-      height: dims.height,
-      fileSizeBytes: imageBytes.byteLength,
-      createdAt: now,
-    },
+    data: { id, imageUrl, prompt: body.prompt.trim(), revisedPrompt: image.revisedPrompt || null, size, quality, style, width: dims.width, height: dims.height, fileSizeBytes: imageBytes.byteLength, createdAt: now },
     meta: { cached: atlasBody?.meta?.cached ?? false, schemaVersion: 1, atlasRequestId: atlasBody?.meta?.requestId },
   }, 201)
 }
@@ -1143,7 +1393,7 @@ async function listImages(request: Request, env: Env): Promise<Response> {
   const rows = await env.GENERATION_DB.prepare(
     `SELECT id, prompt, revised_prompt, model, size, quality, style, image_url, r2_key,
             content_type, file_size_bytes, width, height, category, tags, title, description,
-            is_public, created_at, updated_at
+            is_public, is_preview, media_id, created_at, updated_at
      FROM generated_images
      WHERE is_public = ?
      ORDER BY created_at DESC
@@ -1169,8 +1419,12 @@ async function listImages(request: Request, env: Env): Promise<Response> {
       height: r.height,
       fileSizeBytes: r.file_size_bytes,
       title: r.title,
+      description: r.description,
       category: r.category,
       tags: JSON.parse(r.tags || '[]'),
+      model: r.model,
+      isPreview: r.is_preview === 1,
+      mediaId: r.media_id ?? null,
       status: r.is_public === 1 ? 'promoted' : 'draft',
       createdAt: r.created_at,
     })),
@@ -1182,6 +1436,12 @@ async function promoteImage(pathname: string, env: Env): Promise<Response> {
   const id = pathname.replace('/v1/generation/images/', '').replace('/promote', '')
   if (!isSafeId(id)) return apiError('invalid_image_id', 'Image id is invalid.', 400)
 
+  const record = await env.GENERATION_DB.prepare(
+    'SELECT is_preview FROM generated_images WHERE id = ? LIMIT 1',
+  ).bind(id).first<{ is_preview: number }>()
+  if (!record) return apiError('image_not_found', 'Image not found.', 404)
+  if (record.is_preview === 1) return apiError('preview_cannot_promote', 'Preview images must be upscaled before promoting.', 400)
+
   const now = new Date().toISOString()
   const result = await env.GENERATION_DB.prepare(
     'UPDATE generated_images SET is_public = 1, updated_at = ? WHERE id = ?',
@@ -1189,6 +1449,523 @@ async function promoteImage(pathname: string, env: Env): Promise<Response> {
 
   if (!result.meta?.changes) return apiError('image_not_found', 'Image not found.', 404)
   return json({ data: { id, status: 'promoted', updatedAt: now } })
+}
+
+async function linkImageMedia(pathname: string, request: Request, env: Env): Promise<Response> {
+  const id = pathname.replace('/v1/generation/images/', '').replace('/media-link', '')
+  if (!isSafeId(id)) return apiError('invalid_image_id', 'Image id is invalid.', 400)
+
+  let body: { mediaId?: unknown }
+  try {
+    body = await request.json() as { mediaId?: unknown }
+  } catch {
+    return apiError('invalid_json', 'Request body must be valid JSON.', 400)
+  }
+
+  const mediaId = typeof body.mediaId === 'string' && body.mediaId.trim() ? body.mediaId.trim() : null
+  if (!mediaId) return apiError('missing_media_id', 'mediaId is required.', 400, 'mediaId')
+
+  const now = new Date().toISOString()
+  const result = await env.GENERATION_DB.prepare(
+    'UPDATE generated_images SET media_id = ?, updated_at = ? WHERE id = ?',
+  ).bind(mediaId, now, id).run()
+
+  if (!result.meta?.changes) return apiError('image_not_found', 'Image not found.', 404)
+  return json({ data: { id, mediaId, updatedAt: now } })
+}
+
+async function enrichImage(pathname: string, env: Env): Promise<Response> {
+  const id = pathname.replace('/v1/generation/images/', '').replace('/enrich', '')
+  if (!isSafeId(id)) return apiError('invalid_image_id', 'Image id is invalid.', 400)
+  if (!env.OPENAI_API_KEY) return apiError('openai_not_configured', 'OpenAI is not configured.', 503)
+
+  const record = await env.GENERATION_DB.prepare(
+    'SELECT id, title, prompt FROM generated_images WHERE id = ? LIMIT 1',
+  ).bind(id).first<{ id: string; title: string | null; prompt: string }>()
+
+  if (!record) return apiError('image_not_found', 'Image not found.', 404)
+
+  const publicBase = (env.GENERATION_PUBLIC_ROUTE ?? '').replace(/\/$/, '')
+  const imageUrl = `${publicBase}/images/${id}/binary`
+  const hint = record.title || record.prompt
+
+  const visionResponse = await fetch('https://api.openai.com/v1/chat/completions', {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${env.OPENAI_API_KEY}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      model: 'gpt-4o',
+      messages: [{ role: 'user', content: [
+        { type: 'text', text: buildImageVisionPrompt(hint) },
+        { type: 'image_url', image_url: { url: imageUrl } },
+      ] }],
+      max_tokens: 500,
+    }),
+  })
+
+  if (!visionResponse.ok) {
+    const errBody = await visionResponse.text().catch(() => '')
+    console.error('[enrich] OpenAI vision failed', { status: visionResponse.status, body: errBody, imageId: id })
+    return apiError('vision_failed', `Vision analysis failed: ${visionResponse.status}`, 502)
+  }
+
+  const visionData = await visionResponse.json() as { choices: Array<{ message: { content: string } }> }
+  const content = visionData.choices[0]?.message?.content ?? ''
+  const parsed = parseImageVisionResponse(content)
+  if (!parsed) return apiError('vision_parse_failed', 'Could not parse vision response.', 502)
+
+  const now = new Date().toISOString()
+  await env.GENERATION_DB.prepare(
+    `UPDATE generated_images
+     SET title = CASE WHEN ? != '' THEN ? ELSE title END,
+         description = ?,
+         tags = ?,
+         category = CASE WHEN ? != '' THEN ? ELSE category END,
+         updated_at = ?
+     WHERE id = ?`,
+  ).bind(
+    parsed.title, parsed.title,
+    parsed.description,
+    JSON.stringify(parsed.tags),
+    parsed.categories[0] ?? '', parsed.categories[0] ?? '',
+    now,
+    id,
+  ).run()
+
+  return json({ data: { id, title: parsed.title || record.title, description: parsed.description, tags: parsed.tags, categories: parsed.categories, updatedAt: now } })
+}
+
+function buildImageVisionPrompt(hint?: string | null): string {
+  return `Analyze this image and return JSON metadata.${hint ? `\n\nContext: The image represents "${hint}".` : ''}
+
+Rules:
+- Do NOT mention it is an image, illustration, drawing, or art style.
+- Focus only on what the subject IS, not how it looks or is styled.
+- Use simple, child-friendly language suitable for young children.
+
+Return only this JSON object:
+{
+  "title": "Short factual name of the subject, e.g. 'Lion' or 'Fire Truck'. No adjectives or style words.",
+  "description": "2-3 short sentences about what it is, what it does, or where it comes from.",
+  "tags": ["10-15 search keywords, no style words like 'cute' or 'cartoon'"],
+  "categories": ["5-8 broad categories like 'animals', 'food', 'vehicles', 'nature', 'plants', 'people', 'tools'"]
+}
+
+Return only the JSON. No markdown, no explanation.`
+}
+
+function parseImageVisionResponse(content: string): { title: string; description: string; tags: string[]; categories: string[] } | null {
+  try {
+    const match = content.match(/\{[\s\S]*\}/)
+    if (!match) return null
+    const parsed = JSON.parse(match[0])
+    return {
+      title: typeof parsed.title === 'string' ? parsed.title : '',
+      description: typeof parsed.description === 'string' ? parsed.description : '',
+      tags: Array.isArray(parsed.tags) ? parsed.tags : [],
+      categories: Array.isArray(parsed.categories) ? parsed.categories : [],
+    }
+  } catch { return null }
+}
+
+async function editImageVariant(pathname: string, request: Request, env: Env): Promise<Response> {
+  const id = pathname.replace('/v1/generation/images/', '').replace('/edit', '')
+  if (!isSafeId(id)) return apiError('invalid_image_id', 'Image id is invalid.', 400)
+  if (!env.OPENAI_API_KEY) return apiError('openai_not_configured', 'OpenAI is not configured.', 503)
+
+  let body: { prompt?: unknown; mask_base64?: unknown; size?: unknown }
+  try {
+    body = await request.json() as { prompt?: unknown; mask_base64?: unknown; size?: unknown }
+  } catch {
+    return apiError('invalid_json', 'Request body must be valid JSON.', 400)
+  }
+
+  const prompt = typeof body.prompt === 'string' ? body.prompt.trim() : ''
+  if (!prompt) return apiError('missing_prompt', 'Edit prompt is required.', 400, 'prompt')
+  if (prompt.length > 4000) return apiError('prompt_too_long', 'Prompt must be 4000 characters or fewer.', 400, 'prompt')
+  const size = typeof body.size === 'string' && ALLOWED_IMAGE_SIZES.has(body.size) ? body.size as '1024x1024' | '1024x1792' | '1792x1024' : '1024x1024'
+
+  const record = await env.GENERATION_DB.prepare(
+    'SELECT id, r2_key, prompt, category, tags, title FROM generated_images WHERE id = ? LIMIT 1',
+  ).bind(id).first<{ id: string; r2_key: string; prompt: string; category: string; tags: string; title: string | null }>()
+  if (!record) return apiError('image_not_found', 'Image not found.', 404)
+
+  const object = await env.GENERATED_MEDIA_BUCKET.get(record.r2_key)
+  if (!object) return apiError('image_not_found', 'Image not found in storage.', 404)
+  const imageBuffer = await new Response(object.body).arrayBuffer()
+
+  const hasAlpha = pngHasAlpha(imageBuffer)
+  const editModel = hasAlpha ? 'gpt-image-1' : 'gpt-image-2'
+
+  const form = new FormData()
+  form.append('model', editModel)
+  form.append('prompt', prompt)
+  form.append('n', '1')
+  form.append('size', size)
+  form.append('image', new Blob([imageBuffer], { type: 'image/png' }), 'image.png')
+  if (hasAlpha) form.append('background', 'transparent')
+
+  if (typeof body.mask_base64 === 'string' && body.mask_base64) {
+    const maskBuffer = base64ToBytes(body.mask_base64).buffer as ArrayBuffer
+    form.append('mask', new Blob([maskBuffer], { type: 'image/png' }), 'mask.png')
+  }
+
+  const editResponse = await fetch('https://api.openai.com/v1/images/edits', {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${env.OPENAI_API_KEY}` },
+    body: form,
+  })
+
+  if (!editResponse.ok) {
+    const errBody = await editResponse.text().catch(() => '')
+    console.error('[edit] OpenAI images/edits failed', { status: editResponse.status, body: errBody, sourceId: id, prompt })
+    return apiError('image_edit_failed', `Image edit failed: ${editResponse.status}`, editResponse.status >= 500 ? 502 : editResponse.status)
+  }
+
+  const editData = await editResponse.json() as { data?: Array<{ b64_json?: string; url?: string }> }
+  const imageItem = editData.data?.[0]
+  if (!imageItem) {
+    console.error('[edit] OpenAI returned no image data', { editData, sourceId: id })
+    return apiError('image_edit_invalid_response', 'Image edit returned no data.', 502)
+  }
+
+  let newImageBytes: Uint8Array
+  if (imageItem.b64_json) {
+    newImageBytes = base64ToBytes(imageItem.b64_json)
+  } else if (imageItem.url) {
+    const urlRes = await fetch(imageItem.url)
+    if (!urlRes.ok) return apiError('image_edit_asset_failed', 'Could not fetch edited image asset.', 502)
+    newImageBytes = new Uint8Array(await urlRes.arrayBuffer())
+  } else {
+    return apiError('image_edit_invalid_response', 'Image edit returned no image data.', 502)
+  }
+
+  const newId = crypto.randomUUID()
+  const r2Key = `images/${newId}.png`
+  const now = new Date().toISOString()
+  const imageUrl = `/v1/generation/images/${newId}/binary`
+  const dims = parseImageSize(size)
+
+  await env.GENERATED_MEDIA_BUCKET.put(r2Key, newImageBytes, {
+    httpMetadata: { contentType: 'image/png', cacheControl: 'public, max-age=31536000, immutable' },
+  })
+
+  await env.GENERATION_DB.prepare(`INSERT INTO generated_images (
+    id, prompt, revised_prompt, model, size, quality, style, image_url, r2_key,
+    content_type, file_size_bytes, width, height, category, tags, title, description,
+    is_public, created_at, updated_at
+  ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`).bind(
+    newId, prompt, null, editModel, size, 'standard', 'vivid', imageUrl, r2Key,
+    'image/png', newImageBytes.byteLength, dims.width, dims.height,
+    record.category || 'generated', record.tags || '[]', record.title || null, null,
+    0, now, now,
+  ).run()
+
+  return json({
+    data: {
+      id: newId,
+      imageUrl,
+      prompt,
+      revisedPrompt: null,
+      size,
+      quality: 'standard',
+      style: 'vivid',
+      width: dims.width,
+      height: dims.height,
+      fileSizeBytes: newImageBytes.byteLength,
+      createdAt: now,
+    },
+    meta: { schemaVersion: 1 },
+  }, 201)
+}
+
+function paethPredictor(a: number, b: number, c: number): number {
+  const p = a + b - c
+  const pa = Math.abs(p - a)
+  const pb = Math.abs(p - b)
+  const pc = Math.abs(p - c)
+  return pa <= pb && pa <= pc ? a : pb <= pc ? b : c
+}
+
+function crc32(data: Uint8Array): number {
+  let crc = 0xFFFFFFFF
+  for (let i = 0; i < data.length; i++) {
+    crc ^= data[i]
+    for (let j = 0; j < 8; j++) crc = crc & 1 ? (crc >>> 1) ^ 0xEDB88320 : crc >>> 1
+  }
+  return (crc ^ 0xFFFFFFFF) >>> 0
+}
+
+function pngChunk(type: string, data: Uint8Array): Uint8Array {
+  const chunk = new Uint8Array(12 + data.length)
+  const view = new DataView(chunk.buffer)
+  view.setUint32(0, data.length)
+  for (let i = 0; i < 4; i++) chunk[4 + i] = type.charCodeAt(i)
+  chunk.set(data, 8)
+  const crcInput = new Uint8Array(4 + data.length)
+  for (let i = 0; i < 4; i++) crcInput[i] = type.charCodeAt(i)
+  crcInput.set(data, 4)
+  view.setUint32(8 + data.length, crc32(crcInput))
+  return chunk
+}
+
+async function compressDeflate(data: Uint8Array): Promise<Uint8Array> {
+  const cs = new CompressionStream('deflate')
+  const writer = cs.writable.getWriter()
+  const reader = cs.readable.getReader()
+  writer.write(data.buffer as ArrayBuffer)
+  writer.close()
+  const chunks: Uint8Array[] = []
+  let done = false
+  while (!done) {
+    const { value, done: d } = await reader.read()
+    if (value) chunks.push(value)
+    done = d
+  }
+  const total = chunks.reduce((s, c) => s + c.length, 0)
+  const out = new Uint8Array(total)
+  let pos = 0
+  for (const c of chunks) { out.set(c, pos); pos += c.length }
+  return out
+}
+
+async function encodePng(pixels: Uint8Array, width: number, height: number, colorType: number): Promise<ArrayBuffer> {
+  const bpp = colorType === 6 ? 4 : 3
+  const rowLen = width * bpp
+  const filtered = new Uint8Array(height * (1 + rowLen))
+  for (let y = 0; y < height; y++) {
+    filtered[y * (1 + rowLen)] = 0 // filter type None
+    filtered.set(pixels.subarray(y * rowLen, (y + 1) * rowLen), y * (1 + rowLen) + 1)
+  }
+  const compressed = await compressDeflate(filtered)
+  const ihdrData = new Uint8Array(13)
+  const ihdrView = new DataView(ihdrData.buffer)
+  ihdrView.setUint32(0, width)
+  ihdrView.setUint32(4, height)
+  ihdrData[8] = 8; ihdrData[9] = colorType
+  const sig = new Uint8Array([0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A])
+  const ihdr = pngChunk('IHDR', ihdrData)
+  const idat = pngChunk('IDAT', compressed)
+  const iend = pngChunk('IEND', new Uint8Array(0))
+  const out = new Uint8Array(sig.length + ihdr.length + idat.length + iend.length)
+  let p = 0
+  out.set(sig, p); p += sig.length
+  out.set(ihdr, p); p += ihdr.length
+  out.set(idat, p); p += idat.length
+  out.set(iend, p)
+  return out.buffer
+}
+
+async function splitPngQuadrants(input: ArrayBuffer): Promise<ArrayBuffer[]> {
+  const src = new Uint8Array(input)
+  if (src[0] !== 0x89 || src[1] !== 0x50) throw new Error('Not a PNG')
+
+  let width = 0, height = 0, colorType = 0
+  const idatChunks: Uint8Array[] = []
+  let offset = 8
+  while (offset + 8 < src.length) {
+    const len = (src[offset] << 24 | src[offset + 1] << 16 | src[offset + 2] << 8 | src[offset + 3]) >>> 0
+    const type = String.fromCharCode(src[offset + 4], src[offset + 5], src[offset + 6], src[offset + 7])
+    if (type === 'IHDR') {
+      width = (src[offset + 8] << 24 | src[offset + 9] << 16 | src[offset + 10] << 8 | src[offset + 11]) >>> 0
+      height = (src[offset + 12] << 24 | src[offset + 13] << 16 | src[offset + 14] << 8 | src[offset + 15]) >>> 0
+      colorType = src[offset + 17]
+    } else if (type === 'IDAT') {
+      idatChunks.push(src.slice(offset + 8, offset + 8 + len))
+    } else if (type === 'IEND') {
+      break
+    }
+    offset += 12 + len
+  }
+
+  if (colorType !== 2 && colorType !== 6) throw new Error(`Unsupported PNG color type ${colorType}`)
+  const bpp = colorType === 6 ? 4 : 3
+
+  // Decompress IDAT
+  const combined = new Uint8Array(idatChunks.reduce((s, c) => s + c.length, 0))
+  let cpos = 0
+  for (const c of idatChunks) { combined.set(c, cpos); cpos += c.length }
+  const ds = new DecompressionStream('deflate')
+  const dWriter = ds.writable.getWriter()
+  const dReader = ds.readable.getReader()
+  dWriter.write(combined)
+  dWriter.close()
+  const dChunks: Uint8Array[] = []
+  let done = false
+  while (!done) {
+    const { value, done: d } = await dReader.read()
+    if (value) dChunks.push(value)
+    done = d
+  }
+  const filteredLen = dChunks.reduce((s, c) => s + c.length, 0)
+  const filtered = new Uint8Array(filteredLen)
+  let fp = 0
+  for (const c of dChunks) { filtered.set(c, fp); fp += c.length }
+
+  // Reconstruct pixels (undo PNG row filters)
+  const rowStride = 1 + width * bpp
+  const pixels = new Uint8Array(height * width * bpp)
+  for (let y = 0; y < height; y++) {
+    const fOff = y * rowStride
+    const ft = filtered[fOff]
+    const pOff = y * width * bpp
+    const pPrev = (y - 1) * width * bpp
+    for (let i = 0; i < width * bpp; i++) {
+      const raw = filtered[fOff + 1 + i]
+      const a = i >= bpp ? pixels[pOff + i - bpp] : 0
+      const b = y > 0 ? pixels[pPrev + i] : 0
+      const c = y > 0 && i >= bpp ? pixels[pPrev + i - bpp] : 0
+      let v: number
+      switch (ft) {
+        case 0: v = raw; break
+        case 1: v = raw + a; break
+        case 2: v = raw + b; break
+        case 3: v = raw + Math.floor((a + b) / 2); break
+        case 4: v = raw + paethPredictor(a, b, c); break
+        default: v = raw
+      }
+      pixels[pOff + i] = v & 0xFF
+    }
+  }
+
+  // Split into 4 quadrants (TL, TR, BL, BR)
+  const hw = width >> 1
+  const hh = height >> 1
+  const offsets: [number, number][] = [[0, 0], [hw, 0], [0, hh], [hw, hh]]
+  return Promise.all(offsets.map(async ([qx, qy]) => {
+    const qPixels = new Uint8Array(hh * hw * bpp)
+    for (let y = 0; y < hh; y++) {
+      const srcRow = ((qy + y) * width + qx) * bpp
+      qPixels.set(pixels.subarray(srcRow, srcRow + hw * bpp), y * hw * bpp)
+    }
+    return encodePng(qPixels, hw, hh, colorType)
+  }))
+}
+
+function pngHasAlpha(buffer: ArrayBuffer): boolean {
+  // PNG IHDR color type byte is at offset 25 (8-byte sig + 4 length + 4 type + 4w + 4h + 1 bit-depth)
+  // Color type 4 = grayscale+alpha, 6 = RGBA
+  const view = new Uint8Array(buffer)
+  return view.length >= 26 && (view[25] === 4 || view[25] === 6)
+}
+
+function base64ToBytes(base64: string): Uint8Array {
+  const binary = atob(base64)
+  const bytes = new Uint8Array(binary.length)
+  for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i)
+  return bytes
+}
+
+async function upscaleImage(pathname: string, request: Request, env: Env): Promise<Response> {
+  const id = pathname.replace('/v1/generation/images/', '').replace('/upscale', '')
+  if (!isSafeId(id)) return apiError('invalid_image_id', 'Image id is invalid.', 400)
+  if (!env.OPENAI_API_KEY) return apiError('openai_not_configured', 'OpenAI is not configured.', 503)
+
+  let body: { size?: unknown; quality?: unknown; removeBackground?: unknown }
+  try {
+    body = await request.json() as { size?: unknown; quality?: unknown; removeBackground?: unknown }
+  } catch {
+    body = {}
+  }
+
+  const size = typeof body.size === 'string' && ALLOWED_IMAGE_SIZES.has(body.size) ? body.size as '1024x1024' | '1024x1792' | '1792x1024' : '1024x1024'
+  const quality = 'high'
+  const removeBackground = typeof body.removeBackground === 'boolean' ? body.removeBackground : true
+
+  const record = await env.GENERATION_DB.prepare(
+    'SELECT id, r2_key, prompt, category, tags, title FROM generated_images WHERE id = ? LIMIT 1',
+  ).bind(id).first<{ id: string; r2_key: string; prompt: string; category: string; tags: string; title: string | null }>()
+  if (!record) return apiError('image_not_found', 'Image not found.', 404)
+
+  const object = await env.GENERATED_MEDIA_BUCKET.get(record.r2_key)
+  if (!object) return apiError('image_not_found', 'Image not found in storage.', 404)
+  const imageBuffer = await new Response(object.body).arrayBuffer()
+
+  let upscalePrompt: string
+  if (removeBackground) {
+    upscalePrompt = `Recreate this subject as a high-quality standalone image at ${size} resolution on a clean white background. Remove any existing background. The subject should be centered, well-lit, and professionally rendered.`
+  } else {
+    upscalePrompt = `Upscale and enhance this image to high quality at ${size} resolution. Preserve the exact same subject, composition, and style.`
+  }
+
+  const model = 'gpt-image-1.5'
+
+  const form = new FormData()
+  form.append('model', model)
+  form.append('prompt', upscalePrompt)
+  form.append('n', '1')
+  form.append('size', size)
+  form.append('quality', quality)
+  if (removeBackground) form.append('background', 'transparent')
+  form.append('image', new Blob([imageBuffer], { type: 'image/png' }), 'image.png')
+
+  const editResponse = await fetch('https://api.openai.com/v1/images/edits', {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${env.OPENAI_API_KEY}` },
+    body: form,
+  })
+
+  if (!editResponse.ok) {
+    const errBody = await editResponse.text().catch(() => '')
+    console.error('[upscale] OpenAI images/edits failed', { status: editResponse.status, body: errBody, sourceId: id })
+    return apiError('image_upscale_failed', `Image upscale failed: ${editResponse.status}`, editResponse.status >= 500 ? 502 : editResponse.status)
+  }
+
+  const editData = await editResponse.json() as { data?: Array<{ b64_json?: string; url?: string }> }
+  const imageItem = editData.data?.[0]
+  if (!imageItem) {
+    console.error('[upscale] OpenAI returned no image data', { editData, sourceId: id })
+    return apiError('image_upscale_invalid_response', 'Image upscale returned no data.', 502)
+  }
+
+  let newImageBytes: Uint8Array
+  if (imageItem.b64_json) {
+    newImageBytes = base64ToBytes(imageItem.b64_json)
+  } else if (imageItem.url) {
+    const urlRes = await fetch(imageItem.url)
+    if (!urlRes.ok) return apiError('image_upscale_asset_failed', 'Could not fetch upscaled image asset.', 502)
+    newImageBytes = new Uint8Array(await urlRes.arrayBuffer())
+  } else {
+    return apiError('image_upscale_invalid_response', 'Image upscale returned no image data.', 502)
+  }
+
+  const newId = crypto.randomUUID()
+  const r2Key = `images/${newId}.png`
+  const now = new Date().toISOString()
+  const imageUrl = `/v1/generation/images/${newId}/binary`
+  const dims = parseImageSize(size)
+
+  await env.GENERATED_MEDIA_BUCKET.put(r2Key, newImageBytes, {
+    httpMetadata: { contentType: 'image/png', cacheControl: 'public, max-age=31536000, immutable' },
+  })
+
+  await env.GENERATION_DB.prepare(`INSERT INTO generated_images (
+    id, prompt, revised_prompt, model, size, quality, style, image_url, r2_key,
+    content_type, file_size_bytes, width, height, category, tags, title, description,
+    is_public, is_preview, created_at, updated_at
+  ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`).bind(
+    newId, record.prompt, null, model, size, quality, 'tiko-v2', imageUrl, r2Key,
+    'image/png', newImageBytes.byteLength, dims.width, dims.height,
+    record.category || 'generated', record.tags || '[]', record.title || null, null,
+    0, 0, now, now,
+  ).run()
+
+  return json({
+    data: {
+      id: newId,
+      imageUrl,
+      prompt: record.prompt,
+      revisedPrompt: null,
+      size,
+      quality,
+      style: 'tiko-v2',
+      width: dims.width,
+      height: dims.height,
+      fileSizeBytes: newImageBytes.byteLength,
+      isPreview: false,
+      createdAt: now,
+    },
+    meta: { schemaVersion: 1, upscaledFrom: id },
+  }, 201)
 }
 
 async function deleteImage(pathname: string, env: Env): Promise<Response> {

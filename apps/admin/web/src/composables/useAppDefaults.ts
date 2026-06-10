@@ -1,7 +1,7 @@
 import { ref } from 'vue'
 import { useAdminAuth } from './useAdminAuth'
 
-export type TikoManagedApp = 'yes-no' | 'type' | 'cards' | 'sequence' | 'timer'
+export type TikoManagedApp = 'yes-no' | 'type' | 'cards' | 'sequence' | 'timer' | 'radio' | 'todo' | 'talk'
 export type AppResource = 'settings' | 'state'
 
 export interface AppDataPayload {

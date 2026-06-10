@@ -35,6 +35,12 @@ COMMUNICATION_API_URL = "https://dev.api.tikotalks.com/v1/communication"
 # ── Production environment ──────────────────────────────────────
 # Deploy with: npx wrangler deploy --env production
 
+[triggers]
+crons = ["0 3 * * *"]
+
+# ── Production environment ──────────────────────────────────────
+# Deploy with: npx wrangler deploy --env production
+
 [env.production]
 name = "tiko-admin-api"
 workers_dev = false
@@ -62,6 +68,9 @@ APP_API_URL = "https://app.tikoapi.org/v1/apps"
 GENERATION_API_URL = "https://generation.tikoapi.org/v1/generation"
 MEDIA_API_URL = "https://media.tikoapi.org/v1"
 COMMUNICATION_API_URL = "https://communication.tikoapi.org/v1/communication"
+
+[[env.production.triggers]]
+crons = ["0 3 * * *"]
 
 [[env.production.routes]]
 pattern = "admin.tikoapi.org"

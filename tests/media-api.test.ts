@@ -1,3 +1,4 @@
+// @vitest-environment node
 import { describe, expect, it, vi } from 'vitest'
 import worker from '../workers/media-api/src/index'
 
@@ -50,21 +51,24 @@ class MemoryD1 {
     if (normalized.startsWith('INSERT INTO media')) {
       const row = {
         id: values[0],
-        filename: values[1],
-        file_name: values[1],
-        file_size: values[2],
-        mime_type: values[3],
-        width: values[4],
-        height: values[5],
-        title: values[6],
-        description: values[7],
-        categories: values[8],
-        folder: values[8],
-        tags: values[9],
-        is_private: values[10],
-        original_url: values[11],
-        created_at: values[12],
-        updated_at: values[13],
+        name: values[1],
+        filename: values[2],
+        file_name: values[2],
+        file_size: values[3],
+        mime_type: values[4],
+        width: values[5],
+        height: values[6],
+        title: values[7],
+        description: values[8],
+        categories: values[9],
+        folder: values[9],
+        tags: values[10],
+        is_private: values[11],
+        original_url: values[12],
+        thumbnail_url: values[13],
+        medium_url: values[14],
+        created_at: values[15],
+        updated_at: values[16],
       }
       this.media.push(row)
       return new MemoryResult()
@@ -281,7 +285,7 @@ describe('media-api worker', () => {
   it('uploads media with API key auth, persists catalog metadata, and skips Vision when no OpenAI key is configured', async () => {
     const env = makeEnv()
     const form = new FormData()
-    form.set('file', new Blob(['hello'], { type: 'image/jpeg' }), 'Family Photo.JPG')
+    form.set('file', new File(['hello'], 'blob', { type: 'image/jpeg' }))
 
     const response = await worker.fetch(new Request('https://media.test/v1/media/upload', {
       method: 'POST',

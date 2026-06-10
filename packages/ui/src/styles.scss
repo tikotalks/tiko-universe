@@ -401,3 +401,158 @@ body {
     min-height: 170px;
   }
 }
+
+// ---------------------------------------------------------------------------
+// Shared identity runtime popup styles (used by useIdentityRuntime composable)
+// ---------------------------------------------------------------------------
+
+.tiko-identity-popup {
+  width: min(100%, 31rem);
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: clamp(1.25rem, 4vw, 2rem);
+  border-radius: clamp(1.75rem, 5vw, 2.6rem);
+  background: color-mix(in srgb, var(--color-background), var(--color-foreground) 6%);
+  color: var(--color-foreground);
+  border: 1px solid color-mix(in srgb, var(--color-foreground), transparent 88%);
+  box-shadow: 0 24px 80px color-mix(in srgb, var(--color-foreground), transparent 82%);
+}
+
+.tiko-identity-popup__header {
+  display: grid;
+  grid-template-columns: 4rem 1fr 4rem;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.tiko-identity-popup__icon {
+  grid-column: 3;
+  width: 4rem;
+  height: 4rem;
+  display: inline-grid;
+  place-items: center;
+  border-radius: 1.25rem;
+  background: color-mix(in srgb, var(--color-background), var(--color-foreground) 10%);
+  color: var(--color-foreground);
+}
+
+.tiko-identity-popup__title {
+  grid-column: 2;
+  margin: 0;
+  text-align: center;
+  font-size: clamp(1.65rem, 5vw, 2.25rem);
+  font-weight: 950;
+}
+
+.tiko-account-popup__avatar {
+  width: 7rem;
+  height: 7rem;
+  margin: 0.25rem auto 0.5rem;
+  display: grid;
+  place-items: center;
+  border-radius: 2rem;
+  background: color-mix(in srgb, var(--color-background), var(--color-foreground) 8%);
+  color: var(--color-foreground);
+  box-shadow: 0 16px 34px color-mix(in srgb, var(--color-foreground), transparent 90%);
+}
+
+.tiko-account-popup__row {
+  min-height: 4.5rem;
+  display: grid;
+  grid-template-columns: 3rem 1fr auto;
+  align-items: center;
+  gap: 0.85rem;
+  padding: 0.85rem 1rem;
+  border-radius: 1.25rem;
+  background: color-mix(in srgb, var(--color-background), var(--color-foreground) 4%);
+}
+
+.tiko-account-popup__row-icon,
+.tiko-account-popup__verified {
+  color: var(--color-foreground);
+}
+
+.tiko-account-popup__row-copy {
+  display: grid;
+  gap: 0.2rem;
+  min-width: 0;
+}
+
+.tiko-account-popup__row-copy strong,
+.tiko-account-popup__field {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.tiko-account-popup__row-copy small,
+.tiko-account-popup__label {
+  color: color-mix(in srgb, var(--color-foreground), transparent 42%);
+  font-weight: 800;
+}
+
+.tiko-account-popup__label {
+  margin-top: 0.25rem;
+}
+
+.tiko-account-popup__field {
+  width: 100%;
+  min-height: 3.5rem;
+  display: flex;
+  align-items: center;
+  padding: 0 1rem;
+  border: 1px solid color-mix(in srgb, var(--color-foreground), transparent 88%);
+  border-radius: 1rem;
+  background: color-mix(in srgb, var(--color-background), var(--color-foreground) 4%);
+  color: var(--color-foreground);
+  font: inherit;
+  font-weight: 900;
+  box-sizing: border-box;
+
+  &:focus {
+    outline: 3px solid color-mix(in srgb, var(--color-foreground), transparent 84%);
+  }
+
+  &--otp {
+    justify-content: center;
+    text-align: center;
+    letter-spacing: 0.12em;
+  }
+}
+
+.tiko-account-popup__error {
+  margin: 0;
+  color: var(--color-error, currentColor);
+  font-weight: 800;
+  text-align: center;
+}
+
+.tiko-account-popup__signout {
+  min-height: 3.75rem;
+  border: none;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--color-foreground), transparent 8%);
+  color: var(--color-background);
+  font-weight: 950;
+  cursor: pointer;
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.55;
+  }
+}
+
+.tiko-account-popup__primary {
+  background: color-mix(in srgb, var(--color-foreground), transparent 8%);
+}
+
+.tiko-account-popup__delete {
+  min-height: 3.25rem;
+  border: 1px solid color-mix(in srgb, var(--color-foreground), transparent 85%);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--color-foreground);
+  font-weight: 900;
+  cursor: pointer;
+}

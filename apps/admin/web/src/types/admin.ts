@@ -14,6 +14,8 @@ export interface AdminManagedUser {
   roles: TikoRole[]
   createdAt: string
   updatedAt: string
+  lastSeenAt: string | null
+  hasData: boolean
 }
 
 export interface AdminConfig {
@@ -32,6 +34,7 @@ export interface ImageGenerationResult {
   imageUrl: string
   prompt: string
   revisedPrompt: string | null
+  model?: string | null
   size: string
   quality: string
   style: string

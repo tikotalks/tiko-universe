@@ -114,12 +114,15 @@ export async function generateImage(input: ImageRequest, env: Env): Promise<Atla
   const size = imageSize(input.size ?? 'square')
   const count = clampInt(input.count ?? 1, 1, 4)
   const model = input.model || 'gpt-image-1'
+
   const requestHash = await sha256Hex({ capability: 'image.generate', prompt: input.prompt.trim(), size, count, model })
   const providerStarted = Date.now()
+  const imagePayload: Record<string, unknown> = { model, prompt: input.prompt.trim(), size, n: count }
+  if (input.transparent) imagePayload.background = 'transparent'
   const response = await fetch('https://api.openai.com/v1/images/generations', {
     method: 'POST',
     headers: { Authorization: `Bearer ${env.OPENAI_API_KEY}`, 'Content-Type': 'application/json' },
-    body: JSON.stringify({ model, prompt: input.prompt.trim(), size, n: count }),
+    body: JSON.stringify(imagePayload),
   })
   if (!response.ok) throw capabilityError('image_provider_failed', 502)
   const body = await response.json() as { data?: Array<{ b64_json?: string; url?: string; revised_prompt?: string }> }
@@ -217,10 +220,13 @@ async function runWorkersAiText(env: Env, model: string, input: string): Promise
 
 async function runOpenAiText(env: Env, model: string, input: string, params: TextRequest): Promise<string> {
   if (!env.OPENAI_API_KEY) throw capabilityError('openai_text_not_configured', 503)
+  const messages: Array<{ role: string; content: string }> = []
+  if (params.system) messages.push({ role: 'system', content: params.system })
+  messages.push({ role: 'user', content: input })
   const response = await fetch('https://api.openai.com/v1/chat/completions', {
     method: 'POST',
     headers: { Authorization: `Bearer ${env.OPENAI_API_KEY}`, 'Content-Type': 'application/json' },
-    body: JSON.stringify({ model, messages: [{ role: 'user', content: input }], max_tokens: params.maxTokens ?? 800, temperature: params.temperature ?? 0.4 }),
+    body: JSON.stringify({ model, messages, max_tokens: params.maxTokens ?? 800, temperature: params.temperature ?? 0.4 }),
   })
   if (!response.ok) throw capabilityError('text_provider_failed', 502)
   const body = await response.json() as { choices?: Array<{ message?: { content?: string } }> }

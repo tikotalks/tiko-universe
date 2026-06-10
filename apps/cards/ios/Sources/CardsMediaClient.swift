@@ -56,6 +56,10 @@ struct CardsMediaMatcher {
         }
 
         for card in collection.cards {
+            if let imageRef = card.imageRef {
+                updates[card.id] = URL(string: "\(CardsContentClient.baseURL)/content/images/\(imageRef)")
+                continue
+            }
             if let item = mediaByName[normalize(card.title)] {
                 updates[card.id] = resizedCDNURL(item.originalURL)
                 matchedURLs.insert(item.originalURL)

@@ -1,27 +1,23 @@
 <script setup lang="ts">
-import { computed, h, inject, markRaw, onMounted, ref, watch } from 'vue'
-import { Icon, Popup, type PopupService } from '@sil/ui'
-import { IdentityClient, type IdentityBundle } from '@tiko/identity'
+import { computed, onMounted, ref, watch } from 'vue'
+import { Icon, Popup } from '@sil/ui'
+import { IdentityClient } from '@tiko/identity'
 import { TikoDataClient, type YesNoSettings, type YesNoState } from '@tiko/data'
 import { createI18n, defaultLanguage, tikoI18nKeys, tikoLanguages, type TikoLanguage } from '@tiko/i18n'
 import {
   TikoAppShell,
   TikoChoiceGrid,
   TikoSettingsPanel,
-  TikoProfileMenu,
-  TikoPinPopup,
   createTikoChoice,
   createTikoTtsClient,
+  useIdentityRuntime,
+  type IdentityRuntimeState,
   type TikoColorMode
 } from '@tiko/ui'
 import { appConfig } from './appConfig'
 import './styles.scss'
 
-const popup = inject<PopupService>('popupService')!
-
 const storageKey = 'tiko:yes-no'
-const identityStorageKey = 'tiko:identity:device-session'
-const parentModeStorageKey = 'tiko:parent-mode'
 const appId = 'yes-no' as const
 const apiBaseUrl = resolveApiBaseUrl()
 const identityBaseUrl = resolveIdentityBaseUrl()
@@ -38,19 +34,9 @@ interface PersistedState {
   answerHistory?: string[]
 }
 
-interface StoredIdentity {
-  userId?: string
-  deviceId?: string
-  deviceSecret?: string
-  sessionToken?: string
-  expiresAt?: string
-  accountEmail?: string | null
-  accountEmailVerified?: boolean
-}
-
 function resolveApiBaseUrl() {
   const env = (import.meta as ImportMeta & { env?: Record<string, string | undefined> }).env
-  return (env?.VITE_TIKO_API_BASE_URL ?? 'https://identity.tikoapi.org/v1').replace(/\/$/, '')
+  return (env?.VITE_TIKO_API_BASE_URL ?? 'https://app.tikoapi.org/v1').replace(/\/$/, '')
 }
 
 function resolveIdentityBaseUrl() {
@@ -111,13 +97,25 @@ const userId = ref<string>('')
 const accountEmail = ref<string>('')
 const accountEmailVerified = ref(false)
 const displayName = ref('')
-const parentMode = ref(readJson<boolean>(parentModeStorageKey, true))
-const parentCodeHash = ref<string | undefined>()
-const hasParentCode = computed(() => Boolean(parentCodeHash.value))
+const parentMode = ref(true)
+const childModeEnabled = ref(false)
+const pinConfigured = ref(false)
 const bootstrapped = ref(false)
 const tts = createTikoTtsClient()
 const identityClient = new IdentityClient({ baseUrl: identityBaseUrl, credentials: 'include' })
 const dataClient = new TikoDataClient({ baseUrl: apiBaseUrl })
+
+const runtimeState: IdentityRuntimeState = {
+  sessionToken,
+  userId,
+  accountEmail,
+  accountEmailVerified,
+  displayName,
+  parentMode,
+  childModeEnabled,
+  pinConfigured,
+}
+const runtime = useIdentityRuntime({ identityClient, state: runtimeState, deviceName: 'Yes No web' })
 
 const defaultSentence = computed(() => i18n.t(tikoI18nKeys.yesNo.sentence.default))
 
@@ -167,58 +165,6 @@ function saveLocalFallback() {
     latestAnswerId: latestAnswerId.value || null,
     answerHistory: answerHistory.value
   })
-}
-
-function saveIdentity(bundle: IdentityBundle) {
-  if (!bundle.session?.token) throw new Error('Identity response did not include a session token.')
-  sessionToken.value = bundle.session.token
-  userId.value = bundle.account?.email ?? bundle.subject.id
-  accountEmail.value = bundle.account?.email ?? ''
-  accountEmailVerified.value = Boolean(bundle.account?.emailVerified)
-  writeJson(identityStorageKey, {
-    userId: bundle.subject.id,
-    deviceId: bundle.device?.id,
-    deviceSecret: bundle.device?.secret,
-    sessionToken: bundle.session.token,
-    expiresAt: bundle.session.expiresAt,
-    accountEmail: bundle.account?.email ?? null,
-    accountEmailVerified: Boolean(bundle.account?.emailVerified)
-  } satisfies StoredIdentity)
-}
-
-async function bootstrapIdentity() {
-  const storedIdentity = readJson<StoredIdentity>(identityStorageKey, {})
-  userId.value = storedIdentity.accountEmail || storedIdentity.userId || ''
-  accountEmail.value = storedIdentity.accountEmail ?? ''
-  accountEmailVerified.value = Boolean(storedIdentity.accountEmailVerified)
-
-  try {
-    const bundle = await identityClient.getCookieSession()
-    saveIdentity(bundle)
-    return
-  } catch {
-    // Fall through to local bearer/device fallback when the shared app-family cookie is missing or expired.
-  }
-
-  if (storedIdentity.sessionToken) {
-    try {
-      const bundle = await identityClient.getSession(storedIdentity.sessionToken)
-      saveIdentity(bundle)
-      return
-    } catch {
-      // Fall through to device bootstrap with the known device id/secret.
-    }
-  }
-
-  const bundle = await identityClient.bootstrapDevice({
-    device: {
-      id: storedIdentity.deviceId,
-      secret: storedIdentity.deviceSecret,
-      name: 'Yes No web',
-      platform: 'web'
-    }
-  })
-  saveIdentity(bundle)
 }
 
 function applySettings(settings: YesNoSettings, version?: number) {
@@ -294,8 +240,8 @@ watch([latestAnswerId, answerHistory], () => {
 
 onMounted(async () => {
   try {
-    await bootstrapIdentity()
-    await loadParentCodeHash()
+    await runtime.bootstrapIdentity()
+    await runtime.loadProfile()
     await hydrateRemoteData()
   } catch {
     // Keep the child-facing local flow available when API bootstrap is offline.
@@ -331,231 +277,6 @@ function headerAction(id: string) {
   if (id === 'history') historyOpen.value = !historyOpen.value
 }
 
-async function loadParentCodeHash() {
-  if (!sessionToken.value) return
-  try {
-    const { profile } = await identityClient.getProfile(sessionToken.value)
-    if (typeof profile.parentCodeHash === 'string') parentCodeHash.value = profile.parentCodeHash
-    if (typeof profile.displayName === 'string') displayName.value = profile.displayName
-  } catch {
-    // Keep local parent mode available if profile is not reachable.
-  }
-}
-
-function handleAvatarClick() {
-  if (parentMode.value) {
-    openProfileMenu()
-  } else {
-    openParentCodePopup()
-  }
-}
-
-function openProfileMenu() {
-  popup.showPopup({
-    component: markRaw(TikoProfileMenu),
-    title: '',
-    props: {
-      parentMode: parentMode.value,
-      hasCode: hasParentCode.value,
-      isLoggedIn: Boolean(sessionToken.value),
-      isRecoverable: accountEmailVerified.value,
-      userLabel: displayName.value || accountEmail.value || userId.value || 'Device user',
-    },
-    config: { position: 'center', canClose: true, background: true, width: 'min(34rem, calc(100vw - 2rem))' },
-    on: {
-      profile: () => { popup.closeAllPopups(); window.setTimeout(openAccountPopup, 180) },
-      login: () => { popup.closeAllPopups(); window.setTimeout(openAccountPopup, 180) },
-      logout: () => void doLogout(),
-      'delete-account': () => void deleteCurrentUser(),
-      'enter-parent-mode': () => openParentCodePopup(),
-      'enter-child-mode': () => openChildModeFlow(),
-      close: () => popup.closeAllPopups(),
-    },
-  })
-}
-
-function openAccountPopup() {
-  popup.showPopup({
-    component: markRaw({
-      setup() {
-        const nameInput = ref(displayName.value)
-        const emailInput = ref(accountEmail.value)
-        const codeInput = ref('')
-        const sent = ref(false)
-        const loading = ref(false)
-        const error = ref('')
-
-        async function saveAndSendCode() {
-          const email = emailInput.value.trim().toLowerCase()
-          if (!sessionToken.value || !email.includes('@')) return
-          loading.value = true
-          error.value = ''
-          try {
-            if (nameInput.value.trim()) {
-              displayName.value = nameInput.value.trim()
-              await identityClient.updateProfile(sessionToken.value, { displayName: displayName.value })
-            }
-            await identityClient.createEmailChallenge({ email, purpose: 'recover' }, sessionToken.value)
-            accountEmail.value = email
-            sent.value = true
-          } catch {
-            error.value = 'Could not send the code. Please try again.'
-          } finally {
-            loading.value = false
-          }
-        }
-
-        async function verifyCode() {
-          const otp = codeInput.value.replace(/\D/g, '')
-          if (otp.length !== 6) return
-          loading.value = true
-          error.value = ''
-          try {
-            const bundle = await identityClient.verifyOtp(otp)
-            saveIdentity(bundle)
-            accountEmailVerified.value = true
-            popup.closeAllPopups()
-          } catch {
-            error.value = 'Invalid or expired code. Try again or resend.'
-          } finally {
-            loading.value = false
-          }
-        }
-
-        return () => h('div', { class: 'yes-no-profile-popup yes-no-account-popup', 'data-test': 'yes-no-account-popup' }, [
-          h('div', { class: 'yes-no-profile-popup__header' }, [
-            h(Icon, { class: 'yes-no-profile-popup__icon', name: 'ui/avatar', 'aria-hidden': 'true' }),
-            h('h2', { class: 'yes-no-profile-popup__title' }, accountEmailVerified.value ? 'Your account' : 'Set up user'),
-          ]),
-          h('div', { class: 'yes-no-account-popup__avatar', 'aria-hidden': 'true' }, [h(Icon, { name: 'ui/avatar' })]),
-          h('div', { class: 'yes-no-account-popup__row' }, [
-            h(Icon, { class: 'yes-no-account-popup__row-icon', name: 'media/icon_mail', 'aria-hidden': 'true' }),
-            h('span', { class: 'yes-no-account-popup__row-copy' }, [
-              h('strong', accountEmail.value || userId.value || 'Temporary device user'),
-              h('small', accountEmailVerified.value ? 'Verified account' : 'Add email to recover this user'),
-            ]),
-            accountEmailVerified.value ? h(Icon, { class: 'yes-no-account-popup__verified', name: 'ui/check-fat', 'aria-label': 'Verified' }) : null,
-          ]),
-          h('label', { class: 'yes-no-account-popup__label' }, 'Display name'),
-          h('input', {
-            class: 'yes-no-account-popup__field',
-            value: nameInput.value,
-            placeholder: 'Your name',
-            onInput: (event: Event) => { nameInput.value = (event.target as HTMLInputElement).value }
-          }),
-          !accountEmailVerified.value ? h('label', { class: 'yes-no-account-popup__label' }, 'Email') : null,
-          !accountEmailVerified.value ? h('input', {
-            class: 'yes-no-account-popup__field',
-            type: 'email',
-            value: emailInput.value,
-            placeholder: 'you@example.com',
-            onInput: (event: Event) => { emailInput.value = (event.target as HTMLInputElement).value }
-          }) : null,
-          sent.value ? h('input', {
-            class: 'yes-no-account-popup__field yes-no-account-popup__field--otp',
-            inputmode: 'numeric',
-            autocomplete: 'one-time-code',
-            maxlength: 7,
-            value: codeInput.value,
-            placeholder: '123 456',
-            onInput: (event: Event) => { codeInput.value = (event.target as HTMLInputElement).value.replace(/\D/g, '').slice(0, 6) },
-            onKeydown: (event: KeyboardEvent) => { if (event.key === 'Enter') void verifyCode() }
-          }) : null,
-          error.value ? h('p', { class: 'yes-no-account-popup__error' }, error.value) : null,
-          !accountEmailVerified.value ? h('button', {
-            class: 'yes-no-account-popup__signout yes-no-account-popup__primary',
-            type: 'button',
-            disabled: loading.value || !emailInput.value.trim().includes('@'),
-            onClick: sent.value ? verifyCode : saveAndSendCode,
-          }, loading.value ? 'Please wait…' : sent.value ? 'Verify code' : 'Send magic link') : null,
-          accountEmailVerified.value ? h('button', { class: 'yes-no-account-popup__signout', type: 'button', onClick: doLogout }, 'Sign out') : null,
-          accountEmailVerified.value ? h('button', { class: 'yes-no-account-popup__delete', type: 'button', onClick: deleteCurrentUser }, 'Delete account') : null,
-        ])
-      },
-    }),
-    title: '',
-    config: { position: 'center', canClose: true, background: true, width: 'min(34rem, calc(100vw - 2rem))' },
-    onClose: () => {},
-  })
-}
-
-async function deleteCurrentUser() {
-  if (!sessionToken.value || !accountEmailVerified.value) return
-  if (!window.confirm('Delete this Tiko user? This removes the account and sessions.')) return
-  try { await identityClient.deleteSelf(sessionToken.value) } catch { /* local cleanup still makes the device usable */ }
-  sessionToken.value = ''
-  userId.value = ''
-  accountEmail.value = ''
-  accountEmailVerified.value = false
-  displayName.value = ''
-  parentCodeHash.value = undefined
-  parentMode.value = true
-  writeJson(parentModeStorageKey, true)
-  window.localStorage.removeItem(identityStorageKey)
-  popup.closeAllPopups()
-  await bootstrapIdentity().catch(() => undefined)
-}
-
-async function doLogout() {
-  if (sessionToken.value) {
-    try { await identityClient.logout(sessionToken.value) } catch { /* ignore */ }
-  }
-  sessionToken.value = ''
-  userId.value = ''
-  accountEmail.value = ''
-  accountEmailVerified.value = false
-  displayName.value = ''
-  parentMode.value = true
-  writeJson(parentModeStorageKey, true)
-  window.localStorage.removeItem(identityStorageKey)
-  popup.closeAllPopups()
-}
-
-function openParentCodePopup() {
-  popup.showPopup({
-    component: markRaw(TikoPinPopup),
-    title: '',
-    props: { existingHash: parentCodeHash.value },
-    config: { position: 'center', canClose: true, background: true, width: 'min(30rem, calc(100vw - 2rem))' },
-    on: {
-      set: () => {
-        parentMode.value = true
-        writeJson(parentModeStorageKey, true)
-        popup.closeAllPopups()
-      },
-      cancel: () => popup.closeAllPopups(),
-    },
-  })
-}
-
-function openChildModeFlow() {
-  popup.closeAllPopups()
-  if (!hasParentCode.value) {
-    popup.showPopup({
-      component: markRaw(TikoPinPopup),
-      title: '',
-      props: { existingHash: undefined },
-      config: { position: 'center', canClose: true, background: true, width: 'min(30rem, calc(100vw - 2rem))' },
-      on: {
-        set: async (...args: unknown[]) => {
-          const hash = args[0] as string
-          parentCodeHash.value = hash
-          parentMode.value = false
-          writeJson(parentModeStorageKey, false)
-          if (sessionToken.value) {
-            try { await identityClient.updateProfile(sessionToken.value, { parentCodeHash: hash }) } catch { /* ignore */ }
-          }
-          popup.closeAllPopups()
-        },
-        cancel: () => popup.closeAllPopups(),
-      },
-    })
-  } else {
-    parentMode.value = false
-    writeJson(parentModeStorageKey, false)
-  }
-}
-
 function resetSentence() {
   sentence.value = defaultSentence.value
 }
@@ -571,7 +292,7 @@ function resetSentence() {
     :actions="headerActions"
     :show-settings-button="parentMode"
     @header-action="headerAction"
-    @avatar-click="handleAvatarClick"
+    @avatar-click="runtime.handleAvatarClick"
   >
     <section class="yes-no-app" :data-color-mode="colorMode">
       <Popup />

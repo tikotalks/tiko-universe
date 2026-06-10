@@ -14,9 +14,9 @@ Offline must preserve the core child-facing function wherever technically possib
 | --- | --- | --- |
 | Online synced | Latest known local data is synced. | No warning needed. |
 | Online syncing | Writes or reads are in progress. | Small caregiver-visible sync indicator. |
-| Online unsynced | Writes failed but network exists. | Retry quietly, show in Profile Overview/settings. |
-| Offline clean | Device is offline with no pending writes. | Show offline status only in caregiver/profile UI unless useful. |
-| Offline dirty | Device is offline with pending writes. | Queue writes, show unsynced status in caregiver/profile UI. |
+| Online unsynced | Writes failed but network exists. | Retry quietly, show in Parent Mode account/settings UI. |
+| Offline clean | Device is offline with no pending writes. | Show offline status only in Parent Mode account/settings UI unless useful. |
+| Offline dirty | Device is offline with pending writes. | Queue writes, show unsynced status in Parent Mode account/settings UI. |
 | Reconnecting | Network returned and queued work is being processed. | Non-blocking sync indicator. |
 | Conflict | Local and remote data both changed. | Resolve automatically for safe fields, ask caregiver for destructive cases. |
 
@@ -26,7 +26,7 @@ Offline must preserve the core child-facing function wherever technically possib
 | --- | --- |
 | Child-facing app use | Must keep working from built-in defaults and local cache. |
 | TTS/speech | Use cached generated audio, browser/native speech fallback, or silent fallback depending on app. |
-| Profile switching | Allow cached profile switching. Do not require server roundtrip. |
+| Runtime mode/account restore | Use cached account summary and runtime mode for local use. Do not require server roundtrip for child-facing use. |
 | App settings | Allow local changes and queue sync where safe. |
 | Recovery email | Disabled until online. |
 | Forgotten PIN recovery | Disabled until online unless local destructive reset is chosen. |
@@ -41,9 +41,10 @@ Pending writes must include:
 ```ts
 interface PendingWrite {
   id: string
-  type: 'settings' | 'state' | 'profile' | 'profile-delete' | 'account-delete' | 'media'
+  type: 'settings' | 'state' | 'account-preferences' | 'child-account' | 'child-account-delete' | 'account-delete' | 'media'
   app?: string
-  profileId?: string
+  accountId?: string
+  childAccountId?: string
   payload: unknown
   createdAt: string
   lastTriedAt?: string
@@ -66,7 +67,7 @@ Rules:
 2. Verify or restore session.
 3. Process destructive queued writes first.
 4. Push safe queued local writes.
-5. Fetch latest profile/settings/state.
+5. Fetch latest account summary, app settings, app state, and child-account data where relevant.
 6. Resolve conflicts.
 7. Update local cache and sync state.
 8. Clear completed queue items.
@@ -79,7 +80,7 @@ Rules:
 | Language | Last-write-wins unless app has active unsaved local interaction. |
 | Accessibility settings | Last-write-wins, but never interrupt active session. |
 | App state history | Merge if append-only, otherwise last-write-wins. |
-| Profile delete | Delete wins. |
+| Child Account delete | Delete wins for that Child Account and cancels queued writes scoped to it. |
 | Account delete | Delete wins and cancels all other writes. |
 | Media delete | Delete wins. |
 | PIN changes | Latest verified caregiver action wins. |
@@ -105,6 +106,6 @@ Avoid:
 
 - Every app has a useful offline mode.
 - Every app documents which features degrade offline.
-- Sync state is visible in caregiver/profile UI.
+- Sync state is visible in Parent Mode account/settings UI.
 - Child-facing usage is not interrupted by reconnect or conflict handling.
 - Deletion and recovery never make false claims while offline.

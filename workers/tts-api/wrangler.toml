@@ -1,7 +1,7 @@
 name = "tiko-tts-api-dev"
 main = "src/index.ts"
 compatibility_date = "2026-05-27"
-account_id = "8cef251b5fdcf6c6f63db98b7aa49f9a"
+account_id = "dc2b7d14a69351375cab6de9a13ddee9"
 workers_dev = true
 
 # Temporary compatibility Worker for the Yes No proof app.
@@ -9,12 +9,12 @@ workers_dev = true
 
 [[d1_databases]]
 binding = "TTS_DB"
-database_name = "tiko-tts-db-dev"
-database_id = "9ec91ef0-a12c-44c7-9a0a-bc4dbc5a4b74"
+database_name = "tiko-image-generation"
+database_id = "ab7cdbd1-e50a-4862-b8eb-681d263c3f66"
 
 [[r2_buckets]]
 binding = "AUDIO_BUCKET"
-bucket_name = "tiko-generated-audio-dev"
+bucket_name = "tiko-tts-audio-dev"
 
 [vars]
 TIKO_ENVIRONMENT = "development"
@@ -35,12 +35,12 @@ TTS_PUBLIC_ROUTE = "https://tts.tikotalks.com"
 
 [[env.production.d1_databases]]
 binding = "TTS_DB"
-database_name = "tiko-tts-db"
-database_id = "9ec91ef0-a12c-44c7-9a0a-bc4dbc5a4b74"
+database_name = "tiko-image-generation"
+database_id = "ab7cdbd1-e50a-4862-b8eb-681d263c3f66"
 
 [[env.production.r2_buckets]]
 binding = "AUDIO_BUCKET"
-bucket_name = "tiko-generated-audio"
+bucket_name = "tiko-tts-audio"
 
 [[env.production.routes]]
 pattern = "tts.tikotalks.com"

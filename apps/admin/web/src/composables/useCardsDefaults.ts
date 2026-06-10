@@ -7,6 +7,8 @@ export interface CardsCard {
   speech: string
   colorHex: number
   order: number
+  imageURL?: string
+  imageRef?: string
 }
 
 export interface CardsCollection {
@@ -15,6 +17,7 @@ export interface CardsCollection {
   colorHex: number
   order: number
   mediaCategories: string[]
+  imageURL?: string
   cards: CardsCard[]
 }
 

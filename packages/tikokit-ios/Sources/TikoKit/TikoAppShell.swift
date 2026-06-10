@@ -191,10 +191,8 @@ public struct TikoAppShell<Content: View, SettingsContent: View>: View {
     @AppStorage("tiko.colorMode") private var colorModeRawValue = TikoColorMode.light.rawValue
     @AppStorage("tiko.userName") private var userName = ""
     @AppStorage("tiko.userEmail") private var userEmail = ""
-    @AppStorage("tiko.avatarURL") private var storedAvatarURLString = ""
-    @AppStorage("tiko.parentMode") private var parentMode = true
-    @AppStorage("tiko.parentCodeHash") private var parentCodeHash = ""
-    @AppStorage("tiko.favoriteColor") private var favoriteColorHex = ""
+    @StateObject private var profilePrefs = TikoProfilePreferences()
+    @State private var identityBundle: TikoIdentityBundle?
     @State private var showingAccount = false
     @State private var showingSettings = false
     @State private var showingProfileMenu = false
@@ -203,6 +201,9 @@ public struct TikoAppShell<Content: View, SettingsContent: View>: View {
     @State private var fetchedIconURL: URL? = nil
     @State private var fetchedAvatarURL: URL? = nil
     @State private var splashVisible = true
+
+    /// Derived from API-backed runtime — parent mode means NOT in child mode.
+    private var parentMode: Bool { !(identityBundle?.isChildMode ?? false) }
 
 
     public init(
@@ -274,7 +275,7 @@ public struct TikoAppShell<Content: View, SettingsContent: View>: View {
                     onIconTap: onIconTap,
                     avatar: avatar,
                     avatarURL: fetchedAvatarURL,
-                    avatarBackground: colorFromHex(favoriteColorHex),
+                    avatarBackground: colorFromHex(profilePrefs.favoriteColor),
                     appColor: appColor,
                     actions: parentMode ? actions : [],
                     isSettingsActive: showingSettings,
@@ -291,15 +292,10 @@ public struct TikoAppShell<Content: View, SettingsContent: View>: View {
                 )
                 .background(selectedColorScheme == .dark ? darkBackgroundColor : backgroundColor)
             }
-        .tikoSettingsPopup(
-            isPresented: $showingSettings,
-            appColor: appColor,
-            accountTitle: accountRowTitle,
-            onOpenAccount: openAccountFromSettings
-        ) {
+        .tikoSettingsPopup(isPresented: $showingSettings, appColor: appColor) {
             settingsContent
         }
-        .tikoAccountPopup(isPresented: $showingAccount, appName: appName, appColor: appColor)
+        .tikoAccountPopup(isPresented: $showingAccount, appName: appName, appColor: appColor, profilePrefs: profilePrefs)
         .tikoPopup(isPresented: $showingProfileMenu) {
             TikoProfileMenuSheet(
                 appColor: appColor,
@@ -310,25 +306,27 @@ public struct TikoAppShell<Content: View, SettingsContent: View>: View {
                         showingAccount = true
                     }
                 },
-                onChildMode: {
-                    handleChildModeRequest()
-                },
-                onLogOut: {
-                    try? TikoDeviceSessionStore().clearAll()
-                    showingProfileMenu = false
-                },
+                onChildMode: { handleChildModeRequest() },
                 onClose: { showingProfileMenu = false }
             )
         }
         .tikoPopup(isPresented: $showingParentCodeEntry) {
             TikoParentCodeEntrySheet(
                 appColor: appColor,
+                onParentMode: { bundle in
+                    identityBundle = bundle
+                    showingParentCodeEntry = false
+                },
                 onClose: { showingParentCodeEntry = false }
             )
         }
         .tikoPopup(isPresented: $showingCreateParentCode) {
             TikoCreateParentCodeSheet(
                 appColor: appColor,
+                onChildMode: { bundle in
+                    identityBundle = bundle
+                    showingCreateParentCode = false
+                },
                 onClose: { showingCreateParentCode = false }
             )
         }
@@ -340,13 +338,16 @@ public struct TikoAppShell<Content: View, SettingsContent: View>: View {
                     .transition(.opacity)
             }
         }
-        .onChange(of: storedAvatarURLString) { _, newValue in
+        .onChange(of: profilePrefs.avatarURL) { _, newValue in
             fetchedAvatarURL = URL(string: newValue)
         }
         .task {
             await fetchIconIfNeeded()
+            // Load identity first so avatar is scoped to the correct user
+            identityBundle = await refreshIdentityBundle()
+            let subjectId = identityBundle?.account?.subjectId ?? identityBundle?.subject.id
+            profilePrefs.load(for: subjectId)
             await fetchAvatarIfNeeded()
-            await loadParentCodeHashFromProfile()
             try? await Task.sleep(nanoseconds: 500_000_000)
             withAnimation(.easeOut(duration: 0.4)) { splashVisible = false }
         }
@@ -366,38 +367,51 @@ public struct TikoAppShell<Content: View, SettingsContent: View>: View {
         (TikoColorMode(rawValue: colorModeRawValue) ?? .light) == .dark ? .dark : .light
     }
 
-    private var accountRowTitle: String {
-        if !userEmail.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty { return "Account" }
-        if !userName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty { return "Add recovery email" }
-        return "Setup user"
-    }
-
-    private func openAccountFromSettings() {
-        showingSettings = false
-        Task { @MainActor in
-            try? await Task.sleep(nanoseconds: 250_000_000)
-            showingAccount = true
-        }
-    }
-
     private func handleChildModeRequest() {
         showingProfileMenu = false
         Task { @MainActor in
             try? await Task.sleep(nanoseconds: 250_000_000)
-            if parentCodeHash.isEmpty {
-                showingCreateParentCode = true
+            let storedBundle = (try? TikoDeviceSessionStore().load()) ?? identityBundle
+            // If device is already in child mode (stored state may differ from in-memory),
+            // show the PIN entry to EXIT child mode rather than trying to enter again.
+            if storedBundle?.isChildMode == true {
+                showingParentCodeEntry = true
+                return
+            }
+            if storedBundle?.isPinConfigured == true {
+                guard let token = storedBundle?.accessToken else { return }
+                do {
+                    let client = TikoIdentityClient()
+                    var bundle = storedBundle!
+                    if !bundle.isChildModeEnabled {
+                        bundle = try await client.enableChildMode(accessToken: token)
+                        try TikoDeviceSessionStore().save(bundle.preservingSession(from: storedBundle!))
+                    }
+                    let childBundle = try await client.enterChildMode(accessToken: bundle.accessToken ?? token)
+                    let mergedChild = childBundle.preservingSession(from: storedBundle!)
+                    try TikoDeviceSessionStore().save(mergedChild)
+                    identityBundle = mergedChild
+                } catch {
+                    // Silent fail — stay in parent mode
+                }
             } else {
-                parentMode = false
+                // No PIN yet — show create flow
+                showingCreateParentCode = true
             }
         }
     }
 
-    private func loadParentCodeHashFromProfile() async {
-        guard parentCodeHash.isEmpty else { return }
-        guard let token = (try? TikoDeviceSessionStore().load())?.accessToken else { return }
-        if let profile = try? await TikoIdentityClient().getProfile(accessToken: token),
-           let hash = profile.parentCodeHash, !hash.isEmpty {
-            parentCodeHash = hash
+    private func refreshIdentityBundle() async -> TikoIdentityBundle? {
+        let sessionStore = TikoDeviceSessionStore()
+        guard let bundle = try? sessionStore.load() else { return nil }
+        guard let token = bundle.accessToken else { return bundle }
+        do {
+            let refreshed = try await TikoIdentityClient().getSession(accessToken: token)
+            let merged = refreshed.preservingSession(from: bundle)
+            try sessionStore.save(merged)
+            return merged
+        } catch {
+            return bundle
         }
     }
 
@@ -415,12 +429,12 @@ public struct TikoAppShell<Content: View, SettingsContent: View>: View {
     }
 
     private func fetchAvatarIfNeeded() async {
-        if !storedAvatarURLString.isEmpty, let url = URL(string: storedAvatarURLString) {
+        if !profilePrefs.avatarURL.isEmpty, let url = URL(string: profilePrefs.avatarURL) {
             fetchedAvatarURL = url
             return
         }
         if let url = await fetchMediaImage(urlString: "https://media.tikoapi.org/v1/media?type=image&limit=100", random: true) {
-            storedAvatarURLString = url.absoluteString
+            profilePrefs.setAvatarURL(url.absoluteString)
             fetchedAvatarURL = url
         }
     }
@@ -464,6 +478,31 @@ private struct TikoSplashOverlay: View {
 }
 
 public extension TikoAppShell where SettingsContent == EmptyView {
+    init(
+        appConfig: TikoAppConfig,
+        appName: String? = nil,
+        onIconTap: (() -> Void)? = nil,
+        avatar: String = "person.crop.circle.fill",
+        backgroundColor: Color = Color(red: 0.973, green: 0.965, blue: 0.945),
+        darkBackgroundColor: Color = Color(red: 0.08, green: 0.055, blue: 0.095),
+        actions: [TikoHeaderAction] = [],
+        onAction: @escaping (String) -> Void = { _ in },
+        @ViewBuilder content: () -> Content
+    ) {
+        self.init(
+            appConfig: appConfig,
+            appName: appName,
+            onIconTap: onIconTap,
+            avatar: avatar,
+            backgroundColor: backgroundColor,
+            darkBackgroundColor: darkBackgroundColor,
+            actions: actions,
+            onAction: onAction,
+            settingsContent: { EmptyView() },
+            content: content
+        )
+    }
+
     init(
         appName: String,
         appIcon: String = "checkmark.circle",

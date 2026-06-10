@@ -1,6 +1,6 @@
 import { computed, ref, watch } from 'vue'
-import { IdentityClient, type IdentityBundle } from '@tiko/identity'
-import type { TikoColorMode } from '@tiko/ui'
+import { IdentityClient } from '@tiko/identity'
+import { useIdentityRuntime, type IdentityRuntimeState, type TikoColorMode } from '@tiko/ui'
 import { useSentenceApi } from './useSentenceApi'
 import { useSentenceStrip } from './useSentenceStrip'
 import { normalizeCategoryId, useTalkPresentation, wordIcon, type CategoryShortcut, type VisualWordNode } from './useTalkPresentation'
@@ -10,13 +10,6 @@ type SpeechStatus = 'idle' | 'speaking' | 'ready' | 'fallback' | 'error'
 interface PersistedTalkState {
   language?: string
   colorMode?: TikoColorMode
-}
-
-interface StoredIdentity {
-  deviceId?: string
-  deviceSecret?: string
-  sessionToken?: string
-  expiresAt?: string
 }
 
 const storageKey = 'tiko:talk'
@@ -61,8 +54,21 @@ export function useTalkApp() {
   const identityStatus = ref<'offline' | 'bootstrapping' | 'ready' | 'error'>('offline')
   const identityError = ref<string | null>(null)
   const sessionToken = ref('')
+  const userId = ref('')
+  const accountEmail = ref('')
+  const accountEmailVerified = ref(false)
+  const displayName = ref('')
+  const parentMode = ref(true)
+  const childModeEnabled = ref(false)
+  const pinConfigured = ref(false)
 
   const identityClient = new IdentityClient({ baseUrl: resolveIdentityBaseUrl(), credentials: 'include' })
+
+  const runtimeState: IdentityRuntimeState = {
+    sessionToken, userId, accountEmail, accountEmailVerified, displayName,
+    parentMode, childModeEnabled, pinConfigured,
+  }
+  const runtime = useIdentityRuntime({ identityClient, state: runtimeState, deviceName: 'Talk web' })
   const sentenceApi = useSentenceApi({ language, sessionToken })
   const strip = useSentenceStrip({ allWords: sentenceApi.words })
   const presentation = useTalkPresentation({
@@ -89,33 +95,12 @@ export function useTalkApp() {
     document.documentElement.dataset.theme = effective
   }
 
-  function persistIdentity(bundle: IdentityBundle) {
-    if (bundle.session?.token) sessionToken.value = bundle.session.token
-    writeJson(identityStorageKey, {
-      deviceId: bundle.device?.id,
-      deviceSecret: bundle.device?.secret,
-      sessionToken: bundle.session?.token,
-      expiresAt: bundle.session?.expiresAt,
-    })
-  }
-
   async function bootstrapIdentity() {
     identityStatus.value = 'bootstrapping'
     identityError.value = null
-    const storedIdentity = readJson<StoredIdentity>(identityStorageKey, {})
     try {
-      if (storedIdentity.sessionToken) {
-        persistIdentity(await identityClient.getSession(storedIdentity.sessionToken))
-      } else {
-        persistIdentity(await identityClient.bootstrapDevice({
-          device: {
-            id: storedIdentity.deviceId,
-            secret: storedIdentity.deviceSecret,
-            platform: 'web',
-            name: 'Talk web',
-          },
-        }))
-      }
+      await runtime.bootstrapIdentity()
+      await runtime.loadProfile()
       identityStatus.value = 'ready'
     } catch (error) {
       identityStatus.value = 'error'
@@ -194,6 +179,8 @@ export function useTalkApp() {
     speechError,
     identityStatus,
     identityError,
+    parentMode,
+    runtime,
     sentenceApi,
     strip,
     canSpeak,

@@ -5,6 +5,8 @@ import { Button, Icon, InputText } from '@sil/ui'
 import { tikoAppConfigs, tikoAppColors, type TikoAppColor, type TikoAppConfig } from '@tiko/ui'
 import { useAdminAppConfig, type AdminManagedAppConfig } from '../composables/useAdminAppConfig'
 import { useAppDefaults, type AppResource, type TikoManagedApp } from '../composables/useAppDefaults'
+import MediaPicker from '../components/MediaPicker.vue'
+import ColorSwatchPicker from '../components/ColorSwatchPicker.vue'
 import CardsEditor from '../components/defaults/CardsEditor.vue'
 import YesNoEditor from '../components/defaults/YesNoEditor.vue'
 import SequenceEditor from '../components/defaults/SequenceEditor.vue'
@@ -65,9 +67,13 @@ function onConfigInput() {
 }
 
 async function loadConfigs() {
-  const next = await configApi.readConfigs()
-  configs.value = { ...tikoAppConfigs, ...next }
-  syncDraft(configs.value[selectedApp.value])
+  try {
+    const next = await configApi.readConfigs()
+    configs.value = { ...tikoAppConfigs, ...next }
+    syncDraft(configs.value[selectedApp.value])
+  } catch {
+    // error is surfaced via configApi.error.value
+  }
 }
 
 async function saveConfig() {
@@ -81,10 +87,14 @@ async function saveConfig() {
     ...(configDraft.appIconImageUrl ? { appIconImageUrl: configDraft.appIconImageUrl } : {}),
     ...(configDraft.themeColor ? { themeColor: configDraft.themeColor } : {}),
   }
-  const saved = await configApi.writeConfig(selectedApp.value, normalized, configs.value[selectedApp.value]?.version ?? 0)
-  configs.value = { ...configs.value, [selectedApp.value]: { ...saved.config, updatedAt: saved.updatedAt, version: saved.version } }
-  syncDraft(configs.value[selectedApp.value])
-  configSavedMessage.value = `Saved ${saved.config.title} app config.`
+  try {
+    const saved = await configApi.writeConfig(selectedApp.value, normalized, configs.value[selectedApp.value]?.version ?? 0)
+    configs.value = { ...configs.value, [selectedApp.value]: { ...saved.config, updatedAt: saved.updatedAt, version: saved.version } }
+    syncDraft(configs.value[selectedApp.value])
+    configSavedMessage.value = `Saved ${saved.config.title} app config.`
+  } catch {
+    // error is surfaced via configApi.error.value
+  }
 }
 
 async function loadDefaults() {
@@ -95,20 +105,28 @@ async function loadDefaults() {
   defaultsDirty.value = false
   if (!defaultsApp.value) return
 
-  const payload = await defaultsApi.readDefaults(defaultsApp.value as TikoManagedApp, 'state' satisfies AppResource)
-  stateValue.value = (payload.state ?? {}) as Record<string, unknown>
-  defaultsVersion.value = payload.version
-  defaultsUpdatedAt.value = payload.updatedAt
+  try {
+    const payload = await defaultsApi.readDefaults(defaultsApp.value as TikoManagedApp, 'state' satisfies AppResource)
+    stateValue.value = (payload.state ?? {}) as Record<string, unknown>
+    defaultsVersion.value = payload.version
+    defaultsUpdatedAt.value = payload.updatedAt
+  } catch {
+    // error is already surfaced via defaultsApi.error.value
+  }
 }
 
 async function saveDefaults() {
   if (!defaultsApp.value) return
   defaultsSavedMessage.value = null
-  const payload = await defaultsApi.writeDefaults(defaultsApp.value as TikoManagedApp, 'state', stateValue.value, defaultsVersion.value)
-  defaultsVersion.value = payload.version
-  defaultsUpdatedAt.value = payload.updatedAt
-  defaultsSavedMessage.value = `Saved ${selectedConfig.value.title} defaults.`
-  defaultsDirty.value = false
+  try {
+    const payload = await defaultsApi.writeDefaults(defaultsApp.value as TikoManagedApp, 'state', stateValue.value, defaultsVersion.value)
+    defaultsVersion.value = payload.version
+    defaultsUpdatedAt.value = payload.updatedAt
+    defaultsSavedMessage.value = `Saved ${selectedConfig.value.title} defaults.`
+    defaultsDirty.value = false
+  } catch {
+    // error is already surfaced via defaultsApi.error.value
+  }
 }
 
 function onDefaultsUpdate(next: Record<string, unknown>) {
@@ -188,16 +206,26 @@ onMounted(async () => {
 
           <div :class="bemm('config-form')">
             <InputText v-model="configDraft.title" label="Title" @update:model-value="onConfigInput" />
-            <label :class="bemm('field')">
-              <span>App color</span>
-              <select v-model="configDraft.appColor" :class="bemm('select')" @change="onConfigInput">
-                <option v-for="app in appOrder" :key="app" :value="app">{{ app }}</option>
-              </select>
-            </label>
-            <InputText v-model="configDraft.themeColor" label="Theme color" placeholder="#2488ff" @update:model-value="onConfigInput" />
             <InputText v-model="configDraft.appIcon" label="Icon" placeholder="ui/check-fat" @update:model-value="onConfigInput" />
             <InputText v-model="configDraft.appIconMediaCategory" label="Media icon category" placeholder="animals" @update:model-value="onConfigInput" />
-            <InputText v-model="configDraft.appIconImageUrl" label="Icon image URL" placeholder="https://…" @update:model-value="onConfigInput" />
+            <div :class="bemm('field')">
+              <span :class="bemm('field-label')">Icon image</span>
+              <MediaPicker v-model="configDraft.appIconImageUrl!" @update:model-value="onConfigInput" />
+            </div>
+            <div :class="bemm('field')">
+              <span :class="bemm('field-label')">Theme color</span>
+              <div :class="bemm('color-row')">
+                <input type="color" :class="bemm('color-input')" :value="configDraft.themeColor || tikoAppConfigs[selectedApp]?.themeColor || '#2488ff'" @input="(e: Event) => { configDraft.themeColor = (e.target as HTMLInputElement).value; onConfigInput() }" />
+                <InputText :model-value="configDraft.themeColor || ''" placeholder="#2488ff" @update:model-value="(v: string) => { configDraft.themeColor = v; onConfigInput() }" />
+              </div>
+            </div>
+            <div :class="bemm('field')">
+              <span :class="bemm('field-label')">App colors</span>
+              <ColorSwatchPicker
+                :model-value="configDraft.themeColor || tikoAppConfigs[selectedApp]?.themeColor || ''"
+                @update:model-value="(v: string) => { configDraft.themeColor = v; onConfigInput() }"
+              />
+            </div>
           </div>
         </section>
 
@@ -377,6 +405,28 @@ onMounted(async () => {
     color: var(--admin-text-muted);
     font-size: var(--font-size-xs);
     font-weight: 600;
+  }
+
+  &__field-label {
+    color: var(--admin-text-muted);
+    font-size: var(--font-size-xs);
+    font-weight: 600;
+  }
+
+  &__color-row {
+    display: flex;
+    gap: var(--space-xs);
+    align-items: center;
+  }
+
+  &__color-input {
+    width: calc(var(--space) * 3);
+    height: calc(var(--space) * 3);
+    border: 1px solid var(--admin-border);
+    border-radius: var(--border-radius-xs);
+    padding: 2px;
+    cursor: pointer;
+    background: transparent;
   }
 
   &__select {

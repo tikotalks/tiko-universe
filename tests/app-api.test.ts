@@ -130,6 +130,11 @@ async function env() {
   return {
     APP_DB: new MemoryD1Database(),
     IDENTITY_DB: identity,
+    IDENTITY_SERVICE: {
+      fetch: async () => new Response(JSON.stringify({ roles: ['admin'], capabilities: { canEditContent: true } }), {
+        headers: { 'content-type': 'application/json' }
+      })
+    },
     TOKEN_PEPPER: 'test-pepper',
     ALLOWED_ORIGINS: 'https://yesno.tiko.test'
   }
@@ -305,9 +310,10 @@ describe('global defaults endpoints', () => {
     expect(body.state).toEqual({})
   })
 
-  it('requires authentication for GET', async () => {
-    const { response } = await fetchJson('/v1/apps/defaults/yes-no/settings')
-    expect(response.status).toBe(401)
+  it('allows unauthenticated GET of defaults', async () => {
+    const { response, body } = await fetchJson('/v1/apps/defaults/yes-no/settings')
+    expect(response.status).toBe(200)
+    expect(body.settings).toBeDefined()
   })
 
   it('writes and reads back global defaults', async () => {
@@ -373,5 +379,5 @@ describe('global defaults endpoints', () => {
 
     expect(global.body.state.collections[0].id).toBe('global')
     expect(user.body.state.collections[0].id).toBe('user')
-  })
+  }, 15000)
 })

@@ -234,10 +234,6 @@ jobs:
               exit 0
             fi
 
-            if [[ "$WORKER" == "content-api" ]]; then
-              echo "⏭️ content-api production route/account ownership is not aligned in wrangler.toml; skipping production deploy instead of failing the whole release"
-              exit 0
-            fi
 
             if [[ "$WORKER" == "tts-api" ]]; then
               echo "⏭️ tts-api compatibility custom domain is not provisioned; skipping production deploy instead of failing the whole release"
