@@ -44,6 +44,10 @@ binding = "AUTH_DB"
 database_name = "tiko-identity"
 database_id = "036a1726-ac16-48a9-ab76-22c3a88ca7ae"
 
+[[services]]
+binding = "IDENTITY_SERVICE"
+service = "tiko-identity-api-dev"
+
 # ── Production environment ──────────────────────────────────────
 # Deploy with: npx wrangler deploy --env production
 
@@ -78,6 +82,10 @@ bucket_name = "user-media"
 binding = "AUTH_DB"
 database_name = "tiko-identity"
 database_id = "036a1726-ac16-48a9-ab76-22c3a88ca7ae"
+
+[[env.production.services]]
+binding = "IDENTITY_SERVICE"
+service = "tiko-identity-api"
 
 [[env.production.routes]]
 pattern = "media.tikoapi.org/*"

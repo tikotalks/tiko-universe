@@ -142,8 +142,8 @@ function previewVoice(option: { id: string; sampleUrl?: string }) {
   if (voicePreviewAudio.value) {
     voicePreviewAudio.value.pause()
   }
-  const sampleUrl = option.sampleUrl || `/v1/generation/voice-samples/${option.id}?provider=elevenlabs&model=${model.value}`
-  const audio = new Audio(sampleUrl)
+  const rawUrl = option.sampleUrl || `/v1/generation/voice-samples/${option.id}?provider=elevenlabs&model=${model.value}`
+  const audio = new Audio(audioSrc(rawUrl))
   audio.addEventListener('ended', () => { voicePreviewPlayingId.value = null })
   audio.addEventListener('error', () => { voicePreviewPlayingId.value = null })
   voicePreviewAudio.value = audio

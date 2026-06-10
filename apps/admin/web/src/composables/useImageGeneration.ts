@@ -141,7 +141,14 @@ export function useImageGeneration() {
       headers: authHeaders(),
     })
     await readJson(response, 'Could not promote image')
-    if (item) await pushToMedia(item)
+    if (item) {
+      try {
+        await pushToMedia(item)
+      } catch {
+        // Promote succeeded; media upload is best-effort.
+        // The image is already public in the generation library.
+      }
+    }
   }
 
   async function deleteImage(id: string): Promise<void> {
