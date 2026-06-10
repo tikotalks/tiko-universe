@@ -232,13 +232,8 @@ function kindLabel(kind: string): string {
   &__search {
     align-items: flex-end;
     background: var(--admin-surface);
-<<<<<<< HEAD
     border: 0;
     border-radius: var(--admin-card-radius);
-=======
-    border: 1px solid var(--admin-border);
-    border-radius: var(--border-radius-s);
->>>>>>> feat/admin-users-improvements
     padding: var(--space-s);
   }
 
