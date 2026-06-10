@@ -37,17 +37,31 @@ public struct TikoAnswerChoice: Identifiable, Equatable, Sendable {
 
     public let id: String
     public let label: String
+    public let speech: String
     public let icon: Icon
     public let tone: TikoChoiceTone
+    public let colorHex: UInt32?
+    public let imageURL: URL?
 
-    public init(id: String, label: String, icon: Icon, tone: TikoChoiceTone) {
+    public init(
+        id: String,
+        label: String,
+        speech: String? = nil,
+        icon: Icon,
+        tone: TikoChoiceTone,
+        colorHex: UInt32? = nil,
+        imageURL: URL? = nil
+    ) {
         self.id = id
         self.label = label
+        self.speech = speech ?? label
         self.icon = icon
         self.tone = tone
+        self.colorHex = colorHex
+        self.imageURL = imageURL
     }
 
-    /// Convenience initializer accepting a plain string (treated as .text for backward compatibility).
+    /// Convenience initializer accepting a plain string symbol (backward compatibility).
     public init(id: String, label: String, symbol: String, tone: TikoChoiceTone) {
         self.init(id: id, label: label, icon: .text(symbol), tone: tone)
     }
@@ -77,16 +91,32 @@ public struct TikoAnswerButton: View {
     private var buttonContent: some View {
         switch style {
         case .tiles:
-            VStack(spacing: 8) {
-                iconView
-                    .frame(maxWidth: .infinity, minHeight: 160)
-                    .background(tileColor)
-                    .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
-                    .shadow(color: .black.opacity(0.18), radius: 14, x: 0, y: 18)
+            if choice.colorHex != nil || choice.imageURL != nil {
+                TikoSquareTile(
+                    title: choice.label,
+                    background: choice.colorHex.map { Color(hex: $0) } ?? tileColor
+                ) {
+                    if let url = choice.imageURL {
+                        TikoCachedRemoteImage(url: url) {
+                            ProgressView()
+                                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                                .background(.white.opacity(0.18))
+                        }
+                        .clipped()
+                    }
+                }
+            } else {
+                VStack(spacing: 8) {
+                    iconView
+                        .frame(maxWidth: .infinity, minHeight: 160)
+                        .background(tileColor)
+                        .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
+                        .shadow(color: .black.opacity(0.18), radius: 14, x: 0, y: 18)
 
-                Text(choice.label)
-                    .font(.system(size: 40, weight: .heavy, design: .rounded))
-                    .foregroundStyle(labelColor)
+                    Text(choice.label)
+                        .font(.system(size: 40, weight: .heavy, design: .rounded))
+                        .foregroundStyle(labelColor)
+                }
             }
         case .buttons:
             Text(choice.label)
@@ -135,11 +165,10 @@ public struct TikoAnswerButton: View {
     }
 
     private var tileColor: Color {
+        if let hex = choice.colorHex { return Color(hex: hex) }
         switch choice.tone {
-        case .primary, .success:
-            Color(hex: 0x93ee3f)
-        case .secondary, .danger:
-            Color(hex: 0xef405d)
+        case .primary, .success: return Color(hex: 0x93ee3f)
+        case .secondary, .danger: return Color(hex: 0xef405d)
         }
     }
 
@@ -163,10 +192,14 @@ public struct TikoChoiceGrid: View {
         self.onSelect = onSelect
     }
 
+    private var tileSpacing: CGFloat {
+        choices.allSatisfy { $0.colorHex != nil || $0.imageURL != nil } ? 12 : 40
+    }
+
     public var body: some View {
         Group {
             if style == .tiles {
-                LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 40) {
+                LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: tileSpacing) {
                     answerButtons
                 }
             } else {

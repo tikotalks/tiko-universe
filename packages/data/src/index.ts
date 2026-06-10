@@ -31,10 +31,20 @@ export interface YesNoSettings extends JsonObject {
   spokenPrompt?: string
 }
 
+export interface YesNoAnswerTile extends JsonObject {
+  id: string
+  label: string
+  speech: string
+  color?: string
+  imageURL?: string
+  icon?: string
+}
+
 export interface YesNoState extends JsonObject {
   prompt?: string
   lastAnswer?: 'yes' | 'no' | null
   answerHistory?: Array<'yes' | 'no'>
+  answers?: YesNoAnswerTile[]
 }
 
 export interface TypeSettings extends JsonObject {
