@@ -70,7 +70,7 @@ class AdminMemoryD1 {
           }
         })
         .filter((row): row is NonNullable<typeof row> => row !== null)
-        .filter((row) => !q || String(row.id).toLowerCase().includes(q) || String(row.email ?? '').toLowerCase().includes(q) || String(row.kind).toLowerCase().includes(q) || (row.metadata_json && String(JSON.parse(row.metadata_json).displayName ?? '').toLowerCase().includes(q)))
+        .filter((row) => !q || String(row.id).toLowerCase().includes(q) || String(row.email ?? '').toLowerCase().includes(q) || String(row.kind).toLowerCase().includes(q) || (row.metadata_json && String((JSON.parse(row.metadata_json as string) as { displayName?: string }).displayName ?? '').toLowerCase().includes(q)))
       return new MemoryResult(rows)
     }
     if (normalized.startsWith('SELECT role FROM identity_role_assignments')) {
