@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onBeforeUnmount, onMounted, ref } from 'vue'
+import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useBemm } from 'bemm'
 import { Button, Icon, InputText } from '@sil/ui'
@@ -15,6 +15,7 @@ const emailInput = ref('')
 const codeInput = ref('')
 const codeSent = ref(false)
 const userMenuOpen = ref(false)
+const mobileMenuOpen = ref(false)
 const userMenuRef = ref<HTMLElement | null>(null)
 
 const navItems = [
@@ -25,12 +26,20 @@ const navItems = [
   { to: '/users', label: 'Users', icon: 'ui/user' },
   {
     to: '/apps', label: 'Apps', icon: 'ui/board-multi-dashboard',
-    children: [
-      { to: '/cards', label: 'Cards', icon: 'education/book-2' },
-    ],
   },
   { to: '/support', label: 'Support', icon: 'ui/at-sign' },
 ]
+
+const mobileMenuLabel = computed(() => mobileMenuOpen.value ? 'Close menu' : 'Open menu')
+
+function isNavItemActive(item: (typeof navItems)[number]) {
+  return route.path === item.to || (item.to !== '/' && route.path.startsWith(`${item.to}/`))
+}
+
+watch(() => route.fullPath, () => {
+  mobileMenuOpen.value = false
+  userMenuOpen.value = false
+})
 
 function onDocumentClick(event: MouseEvent) {
   if (!userMenuOpen.value) return
@@ -41,8 +50,9 @@ function onDocumentClick(event: MouseEvent) {
 }
 
 function onDocumentKeydown(event: KeyboardEvent) {
-  if (event.key === 'Escape' && userMenuOpen.value) {
-    userMenuOpen.value = false
+  if (event.key === 'Escape') {
+    if (userMenuOpen.value) userMenuOpen.value = false
+    if (mobileMenuOpen.value) mobileMenuOpen.value = false
   }
 }
 
@@ -156,7 +166,36 @@ function navigateTo(path: string) {
   </section>
 
   <div v-else :class="shell('')">
-    <aside :class="shell('sidebar')">
+    <header :class="shell('mobile-topbar')">
+      <button
+        type="button"
+        :class="shell('mobile-menu-button')"
+        :aria-label="mobileMenuLabel"
+        :aria-expanded="mobileMenuOpen"
+        aria-controls="admin-mobile-menu"
+        @click="mobileMenuOpen = !mobileMenuOpen"
+      >
+        <span :class="shell('mobile-menu-lines')" aria-hidden="true">
+          <span></span>
+          <span></span>
+          <span></span>
+        </span>
+      </button>
+      <div :class="shell('mobile-brand')">
+        <div :class="shell('brand-mark')">T</div>
+        <span :class="shell('brand-name')">Tiko Admin</span>
+      </div>
+    </header>
+
+    <button
+      v-if="mobileMenuOpen"
+      type="button"
+      :class="shell('scrim')"
+      aria-label="Close menu"
+      @click="mobileMenuOpen = false"
+    ></button>
+
+    <aside id="admin-mobile-menu" :class="shell('sidebar', { open: mobileMenuOpen })">
       <div :class="shell('brand')">
         <div :class="shell('brand-mark')">T</div>
         <div :class="shell('brand-text')">
@@ -166,26 +205,15 @@ function navigateTo(path: string) {
       </div>
 
       <nav :class="shell('nav')">
-        <template v-for="item in navItems" :key="item.to">
-          <router-link
-            :to="item.to"
-            :class="shell('nav-item', { active: route.path === item.to || item.children?.some((c) => route.path === c.to) })"
-          >
-            <Icon :name="item.icon" size="small" />
-            <span>{{ item.label }}</span>
-          </router-link>
-          <template v-if="item.children">
-            <router-link
-              v-for="child in item.children"
-              :key="child.to"
-              :to="child.to"
-              :class="shell('nav-item', { active: route.path === child.to, child: true })"
-            >
-              <Icon :name="child.icon" size="small" />
-              <span>{{ child.label }}</span>
-            </router-link>
-          </template>
-        </template>
+        <router-link
+          v-for="item in navItems"
+          :key="item.to"
+          :to="item.to"
+          :class="shell('nav-item', { active: isNavItemActive(item) })"
+        >
+          <Icon :name="item.icon" size="small" />
+          <span>{{ item.label }}</span>
+        </router-link>
       </nav>
 
       <div ref="userMenuRef" :class="shell('user-wrapper')">
@@ -254,6 +282,14 @@ html, body {
   width: 100%;
   background: var(--admin-page-bg);
   color: var(--admin-text);
+
+  &__mobile-topbar {
+    display: none;
+  }
+
+  &__scrim {
+    display: none;
+  }
 
   &__sidebar {
     width: calc(var(--space) * 15);
@@ -420,7 +456,7 @@ html, body {
     border: 1px solid var(--admin-border-strong);
     border-radius: var(--border-radius-s);
     padding: var(--space-xs);
-    box-shadow: 0 12px 28px color-mix(in srgb, var(--color-dark), transparent 55%);
+    box-shadow: 0 12px 28px color-mix(in srgb, var(--color-foreground), transparent 70%);
     z-index: 50;
     display: flex;
     flex-direction: column;
@@ -451,7 +487,7 @@ html, body {
       color: var(--color-error);
 
       &:hover {
-        background: color-mix(in srgb, var(--color-error), transparent 88%);
+        background: color-mix(in srgb, var(--color-background), var(--color-foreground) 8%);
       }
     }
   }
@@ -481,13 +517,80 @@ html, body {
   @media (max-width: 760px) {
     flex-direction: column;
 
-    &__sidebar {
-      width: 100%;
-      height: auto;
-      position: static;
-      flex-direction: row;
-      padding: var(--space-s);
+    &__mobile-topbar {
+      position: sticky;
+      top: 0;
+      z-index: 60;
+      display: flex;
       align-items: center;
+      justify-content: space-between;
+      gap: var(--space-s);
+      min-height: calc(var(--space) * 3.5);
+      padding: var(--space-s);
+      background: var(--admin-sidebar-bg);
+      border-bottom: 1px solid var(--admin-border);
+    }
+
+    &__mobile-brand {
+      display: flex;
+      align-items: center;
+      gap: var(--space-s);
+      min-width: 0;
+    }
+
+    &__mobile-menu-button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: calc(var(--space) * 2.75);
+      height: calc(var(--space) * 2.75);
+      border: 1px solid var(--admin-border);
+      border-radius: var(--border-radius-s);
+      background: var(--admin-surface);
+      color: var(--admin-text);
+      cursor: pointer;
+    }
+
+    &__mobile-menu-lines {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+
+      span {
+        display: block;
+        width: calc(var(--space) * 1.1);
+        height: 2px;
+        border-radius: 999px;
+        background: currentColor;
+      }
+    }
+
+    &__scrim {
+      position: fixed;
+      inset: 0;
+      z-index: 40;
+      display: block;
+      border: 0;
+      background: color-mix(in srgb, var(--color-background), transparent 15%);
+      backdrop-filter: blur(2px);
+    }
+
+    &__sidebar {
+      position: fixed;
+      inset: 0 auto 0 0;
+      z-index: 50;
+      width: min(calc(var(--space) * 18), calc(100vw - var(--space-l)));
+      height: 100dvh;
+      flex-direction: column;
+      padding: var(--space-m) var(--space-s);
+      align-items: stretch;
+      transform: translateX(-100%);
+      transition: transform 0.18s ease;
+      box-shadow: 18px 0 42px color-mix(in srgb, var(--color-foreground), transparent 78%);
+
+      &--open {
+        transform: translateX(0);
+      }
     }
 
     &__brand {
@@ -496,9 +599,15 @@ html, body {
     }
 
     &__nav {
-      flex-direction: row;
+      flex-direction: column;
       flex: 1;
-      overflow-x: auto;
+      overflow-y: auto;
+      overflow-x: hidden;
+      padding-top: var(--space-s);
+    }
+
+    &__nav-item {
+      min-height: calc(var(--space) * 2.75);
     }
 
     &__content {
@@ -508,19 +617,19 @@ html, body {
 
     &__user-wrapper {
       border: 0;
-      padding: 0;
+      padding: var(--space-s) 0 0;
     }
 
     &__user-meta {
-      display: none;
+      display: flex;
     }
 
     &__user-menu {
-      bottom: auto;
-      top: calc(100% + var(--space-s));
-      left: auto;
-      right: var(--space-s);
-      width: calc(var(--space) * 12);
+      bottom: calc(100% + var(--space-xs));
+      top: auto;
+      left: var(--space-xs);
+      right: var(--space-xs);
+      width: auto;
     }
   }
 }
