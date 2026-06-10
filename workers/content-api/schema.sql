@@ -79,6 +79,7 @@ CREATE TABLE IF NOT EXISTS cards_collections (
   color_hex INTEGER NOT NULL DEFAULT 0,
   display_order INTEGER NOT NULL DEFAULT 0,
   media_categories TEXT,                   -- JSON array e.g. '["animals"]'
+  image_url TEXT,
   language_code TEXT NOT NULL DEFAULT 'en',
   is_active INTEGER NOT NULL DEFAULT 1,
   created_at TEXT NOT NULL DEFAULT (datetime('now')),

@@ -23,8 +23,12 @@ const navItems = [
   { to: '/stories', label: 'Stories', icon: 'ui/music-note-single' },
   { to: '/library', label: 'Library', icon: 'ui/folder' },
   { to: '/users', label: 'Users', icon: 'ui/user' },
-  { to: '/cards', label: 'Cards', icon: 'education/book-2' },
-  { to: '/apps', label: 'Apps', icon: 'ui/board-multi-dashboard' },
+  {
+    to: '/apps', label: 'Apps', icon: 'ui/board-multi-dashboard',
+    children: [
+      { to: '/cards', label: 'Cards', icon: 'education/book-2' },
+    ],
+  },
   { to: '/support', label: 'Support', icon: 'ui/at-sign' },
 ]
 
@@ -162,15 +166,26 @@ function navigateTo(path: string) {
       </div>
 
       <nav :class="shell('nav')">
-        <router-link
-          v-for="item in navItems"
-          :key="item.to"
-          :to="item.to"
-          :class="shell('nav-item', { active: route.path === item.to })"
-        >
-          <Icon :name="item.icon" size="small" />
-          <span>{{ item.label }}</span>
-        </router-link>
+        <template v-for="item in navItems" :key="item.to">
+          <router-link
+            :to="item.to"
+            :class="shell('nav-item', { active: route.path === item.to || item.children?.some((c) => route.path === c.to) })"
+          >
+            <Icon :name="item.icon" size="small" />
+            <span>{{ item.label }}</span>
+          </router-link>
+          <template v-if="item.children">
+            <router-link
+              v-for="child in item.children"
+              :key="child.to"
+              :to="child.to"
+              :class="shell('nav-item', { active: route.path === child.to, child: true })"
+            >
+              <Icon :name="child.icon" size="small" />
+              <span>{{ child.label }}</span>
+            </router-link>
+          </template>
+        </template>
       </nav>
 
       <div ref="userMenuRef" :class="shell('user-wrapper')">
@@ -320,6 +335,11 @@ html, body {
       background: var(--admin-nav-active);
       color: var(--admin-text);
       font-weight: 600;
+    }
+
+    &--child {
+      padding-left: calc(var(--space-s) + calc(var(--space) * 1.5));
+      font-size: var(--font-size-xs);
     }
   }
 

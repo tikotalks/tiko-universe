@@ -667,6 +667,7 @@ public struct TikoAccountSheet: View {
     @State private var isSignedIn = false
     @State private var signedInEmail: String? = nil
     @State private var showingAvatarPicker = false
+    @State private var showingAccountActions = false
     @State private var currentIdentityBundle: TikoIdentityBundle?
 
     // Login flow state
@@ -713,6 +714,9 @@ public struct TikoAccountSheet: View {
             title: "Choose avatar"
         ) { url in
             profilePrefs.setAvatarURL(url.absoluteString)
+        }
+        .tikoPopup(isPresented: $showingAccountActions) {
+            accountActionsCard
         }
         .alert("Delete this Tiko user?", isPresented: $showDeleteConfirmation) {
             Button("Delete", role: .destructive) { Task { await deleteAccount() } }
@@ -768,37 +772,41 @@ public struct TikoAccountSheet: View {
                 .buttonStyle(.plain)
                 .frame(maxWidth: .infinity)
 
-                // Verified email row
-                HStack(spacing: 12) {
-                    Image(systemName: "envelope.fill")
-                        .font(.system(size: 16, weight: .bold))
-                        .foregroundStyle(appColor.palette.primary)
-                        .frame(width: 40, height: 40)
-                        .background(appColor.palette.primary.opacity(0.12))
-                        .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
-
-                    VStack(alignment: .leading, spacing: 2) {
-                        Text(signedInEmail ?? userEmail)
-                            .font(.system(size: 15, weight: .semibold, design: .rounded))
-                            .foregroundStyle(.primary)
-                        Text("Verified account")
-                            .font(.system(size: 12, weight: .semibold, design: .rounded))
+                // Verified email row — tap to manage account
+                Button { showingAccountActions = true } label: {
+                    HStack(spacing: 12) {
+                        Image(systemName: "envelope.fill")
+                            .font(.system(size: 16, weight: .bold))
                             .foregroundStyle(appColor.palette.primary)
-                        if let accountRoleTitle {
-                            Text(accountRoleTitle)
-                                .font(.system(size: 11, weight: .heavy, design: .rounded))
-                                .foregroundStyle(.white)
-                                .padding(.horizontal, 8)
-                                .padding(.vertical, 3)
-                                .background(appColor.palette.primary, in: Capsule())
-                                .padding(.top, 2)
+                            .frame(width: 40, height: 40)
+                            .background(appColor.palette.primary.opacity(0.12))
+                            .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text(signedInEmail ?? userEmail)
+                                .font(.system(size: 15, weight: .semibold, design: .rounded))
+                                .foregroundStyle(.primary)
+                            Text("Verified account")
+                                .font(.system(size: 12, weight: .semibold, design: .rounded))
+                                .foregroundStyle(appColor.palette.primary)
+                            if let accountRoleTitle {
+                                Text(accountRoleTitle)
+                                    .font(.system(size: 11, weight: .heavy, design: .rounded))
+                                    .foregroundStyle(.white)
+                                    .padding(.horizontal, 8)
+                                    .padding(.vertical, 3)
+                                    .background(appColor.palette.primary, in: Capsule())
+                                    .padding(.top, 2)
+                            }
                         }
+                        Spacer()
+                        Image(systemName: "chevron.right")
+                            .font(.system(size: 13, weight: .semibold))
+                            .foregroundStyle(.tertiary)
                     }
-                    Spacer()
-                    Image(systemName: "checkmark.seal.fill")
-                        .foregroundStyle(appColor.palette.primary)
+                    .tikoSettingsRowSurface()
                 }
-                .tikoSettingsRowSurface()
+                .buttonStyle(.plain)
 
                 // Editable display name
                 VStack(alignment: .leading, spacing: 7) {
@@ -831,74 +839,66 @@ public struct TikoAccountSheet: View {
                         .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
                 }
                 .buttonStyle(.plain)
+            }
+        }
+    }
 
-                // Account section
-                VStack(alignment: .leading, spacing: 6) {
-                    Text("Account")
-                        .font(.system(size: 13, weight: .semibold, design: .rounded))
-                        .foregroundStyle(.secondary)
-                        .padding(.leading, 4)
+    // MARK: - Account actions sheet (sign out / delete)
 
-                    Button {
-                        try? sessionStore.clearAll()
-                        isSignedIn = false
-                        signedInEmail = nil
-                        emailInput = ""
-                        emailSent = false
-                        otpCode = ""
-                        identityError = nil
-                    } label: {
-                        HStack(spacing: 12) {
-                            Image(systemName: "rectangle.portrait.and.arrow.right")
-                                .font(.system(size: 16, weight: .semibold))
-                                .foregroundStyle(.secondary)
-                                .frame(width: 28)
-                            Text("Sign out")
-                                .font(.system(size: 16, weight: .semibold, design: .rounded))
-                                .foregroundStyle(.primary)
-                            Spacer()
-                            Image(systemName: "chevron.right")
-                                .font(.system(size: 13, weight: .semibold))
-                                .foregroundStyle(.tertiary)
-                        }
-                        .padding(.horizontal, 16)
-                        .padding(.vertical, 14)
-                        .background(Color(uiColor: .systemBackground))
-                        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+    private var accountActionsCard: some View {
+        TikoPopupCard(
+            title: signedInEmail ?? userEmail,
+            icon: "person.crop.circle",
+            appColor: appColor,
+            onClose: { showingAccountActions = false }
+        ) {
+            VStack(spacing: 10) {
+                Button {
+                    showingAccountActions = false
+                    try? sessionStore.clearAll()
+                    isSignedIn = false
+                    signedInEmail = nil
+                    emailInput = ""
+                    emailSent = false
+                    otpCode = ""
+                    identityError = nil
+                } label: {
+                    HStack(spacing: 12) {
+                        Image(systemName: "rectangle.portrait.and.arrow.right")
+                            .font(.system(size: 16, weight: .semibold))
+                            .foregroundStyle(.secondary)
+                            .frame(width: 28)
+                        Text("Sign out")
+                            .font(.system(size: 16, weight: .semibold, design: .rounded))
+                            .foregroundStyle(.primary)
+                        Spacer()
                     }
-                    .buttonStyle(.plain)
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 14)
+                    .background(Color(uiColor: .systemBackground))
+                    .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
                 }
+                .buttonStyle(.plain)
 
-                // Danger zone section
-                VStack(alignment: .leading, spacing: 6) {
-                    Text("Danger zone")
-                        .font(.system(size: 13, weight: .semibold, design: .rounded))
-                        .foregroundStyle(.secondary)
-                        .padding(.leading, 4)
-
-                    Button {
-                        showDeleteConfirmation = true
-                    } label: {
-                        HStack(spacing: 12) {
-                            Image(systemName: "trash.fill")
-                                .font(.system(size: 16, weight: .semibold))
-                                .foregroundStyle(.red)
-                                .frame(width: 28)
-                            Text("Delete account")
-                                .font(.system(size: 16, weight: .semibold, design: .rounded))
-                                .foregroundStyle(.red)
-                            Spacer()
-                            Image(systemName: "chevron.right")
-                                .font(.system(size: 13, weight: .semibold))
-                                .foregroundStyle(.tertiary)
-                        }
-                        .padding(.horizontal, 16)
-                        .padding(.vertical, 14)
-                        .background(Color(uiColor: .systemBackground))
-                        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+                Button {
+                    showDeleteConfirmation = true
+                } label: {
+                    HStack(spacing: 12) {
+                        Image(systemName: "trash.fill")
+                            .font(.system(size: 16, weight: .semibold))
+                            .foregroundStyle(.red)
+                            .frame(width: 28)
+                        Text("Delete account")
+                            .font(.system(size: 16, weight: .semibold, design: .rounded))
+                            .foregroundStyle(.red)
+                        Spacer()
                     }
-                    .buttonStyle(.plain)
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 14)
+                    .background(Color(uiColor: .systemBackground))
+                    .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
                 }
+                .buttonStyle(.plain)
             }
         }
     }
@@ -1258,19 +1258,55 @@ public struct TikoParentCodeEntrySheet: View {
         isLoading = true
         error = nil
         do {
-            guard let token = try sessionStore.load()?.accessToken else {
-                error = "No active session."
+            let storedBundle = try sessionStore.load()
+            var activeBundle = try await recoverParentModeSession(from: storedBundle)
+            if !activeBundle.isChildMode {
+                try sessionStore.save(activeBundle)
+                onParentMode(activeBundle)
                 isLoading = false
                 return
             }
-            let bundle = try await identityClient.enterParentMode(accessToken: token, pin: enteredCode)
-            try sessionStore.save(bundle)
-            onParentMode(bundle)
+            guard let token = activeBundle.accessToken else { throw TikoIdentityClientError.missingSessionToken }
+            let bundle: TikoIdentityBundle
+            do {
+                bundle = try await identityClient.enterParentMode(accessToken: token, pin: enteredCode)
+            } catch TikoIdentityClientError.server(let statusCode, _) where statusCode == 401 {
+                let recoveredBundle = try await recoverParentModeSession(from: storedBundle, usingExistingToken: false)
+                if !recoveredBundle.isChildMode {
+                    try sessionStore.save(recoveredBundle)
+                    onParentMode(recoveredBundle)
+                    isLoading = false
+                    return
+                }
+                guard let recoveredToken = recoveredBundle.accessToken else { throw TikoIdentityClientError.missingSessionToken }
+                activeBundle = recoveredBundle
+                bundle = try await identityClient.enterParentMode(accessToken: recoveredToken, pin: enteredCode)
+            }
+            let merged = bundle.preservingSession(from: activeBundle)
+            try sessionStore.save(merged)
+            onParentMode(merged)
         } catch _ {
             error = "Incorrect PIN. Please try again."
             enteredCode = ""
         }
         isLoading = false
+    }
+
+    private func recoverParentModeSession(from storedBundle: TikoIdentityBundle?, usingExistingToken: Bool = true) async throws -> TikoIdentityBundle {
+        if usingExistingToken, let token = storedBundle?.accessToken, !token.isEmpty {
+            return storedBundle!
+        }
+
+        if let device = storedBundle?.device {
+            let fresh = try await identityClient.bootstrapDevice(id: device.id, secret: device.secret)
+            let merged = storedBundle.map { fresh.preservingSession(from: $0) } ?? fresh
+            try sessionStore.save(merged)
+            return merged
+        }
+
+        let fresh = try await identityClient.bootstrapDevice()
+        try sessionStore.save(fresh)
+        return fresh
     }
 }
 
@@ -1377,6 +1413,7 @@ public struct TikoCreateParentCodeSheet: View {
                 isLoading = false
                 return
             }
+            let initialBundle = try sessionStore.load()!
             var bundle: TikoIdentityBundle
             do {
                 // Set PIN on the server
@@ -1386,16 +1423,17 @@ public struct TikoCreateParentCodeSheet: View {
                 bundle = try await identityClient.getSession(accessToken: token)
                 guard bundle.isPinConfigured else { throw TikoIdentityClientError.server(statusCode: statusCode, body: body) }
             }
-            try sessionStore.save(bundle)
+            try sessionStore.save(bundle.preservingSession(from: initialBundle))
             // Enable child mode (one-time opt-in)
             if !(bundle.isChildModeEnabled) {
                 bundle = try await identityClient.enableChildMode(accessToken: token)
-                try sessionStore.save(bundle)
+                try sessionStore.save(bundle.preservingSession(from: initialBundle))
             }
-            // Enter child mode
+            // Enter child mode — preserve session so exit PIN works without re-auth
             bundle = try await identityClient.enterChildMode(accessToken: token)
-            try sessionStore.save(bundle)
-            onChildMode(bundle)
+            let childBundle = bundle.preservingSession(from: initialBundle)
+            try sessionStore.save(childBundle)
+            onChildMode(childBundle)
         } catch {
             self.error = "Could not save PIN. Please try again."
         }

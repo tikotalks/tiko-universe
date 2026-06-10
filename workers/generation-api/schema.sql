@@ -40,6 +40,7 @@ CREATE TABLE IF NOT EXISTS generated_images (
   description TEXT,
   is_public INTEGER NOT NULL DEFAULT 1 CHECK (is_public IN (0, 1)),
   is_preview INTEGER NOT NULL DEFAULT 0 CHECK (is_preview IN (0, 1)),
+  media_id TEXT,
   created_at TEXT NOT NULL,
   updated_at TEXT NOT NULL
 );
