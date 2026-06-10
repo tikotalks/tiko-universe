@@ -179,74 +179,7 @@ function formatDate(value?: string): string {
       <p v-if="lastUploadedMediaId" :class="bemm('hint')">Media ID for covers/tracks: {{ lastUploadedMediaId }}</p>
     </section>
 
-    <section :class="bemm('panel')">
-      <header :class="bemm('panel-head')">
-        <div>
-          <h2 :class="bemm('panel-title')">Audio albums for Radio</h2>
-          <p :class="bemm('hint')">Create albums, publish them to Radio, and attach uploaded audio media.</p>
-        </div>
-        <Button variant="outline" :loading="audioLibraryLoading" :disabled="audioLibraryLoading" @click="loadAudioAlbums">Reload albums</Button>
-      </header>
 
-      <div :class="bemm('audio-grid')">
-        <label :class="bemm('label')">
-          <span :class="bemm('label-text')">Album title</span>
-          <input :class="bemm('input')" v-model="audioAlbumTitle" placeholder="Bedtime stories" />
-        </label>
-        <label :class="bemm('label')">
-          <span :class="bemm('label-text')">Description</span>
-          <input :class="bemm('input')" v-model="audioAlbumDescription" placeholder="Optional" />
-        </label>
-        <label :class="bemm('label')">
-          <span :class="bemm('label-text')">Cover media ID</span>
-          <input :class="bemm('input')" v-model="audioAlbumCoverMediaId" placeholder="Optional image media ID" />
-        </label>
-        <label :class="bemm('label')">
-          <span :class="bemm('label-text')">Visibility</span>
-          <select :class="bemm('select')" v-model="audioAlbumVisibility">
-            <option value="public">Public</option>
-            <option value="private">Private</option>
-          </select>
-        </label>
-        <label :class="bemm('check')">
-          <input type="checkbox" v-model="audioAlbumRadioEnabled" />
-          <span>Available in Radio</span>
-        </label>
-        <Button :loading="audioLibraryLoading" :disabled="audioLibraryLoading || !audioAlbumTitle" @click="onCreateAudioAlbum">Create album</Button>
-      </div>
-
-      <div :class="bemm('audio-grid')">
-        <label :class="bemm('label')">
-          <span :class="bemm('label-text')">Album</span>
-          <select :class="bemm('select')" v-model="selectedAlbumId">
-            <option value="">Choose album</option>
-            <option v-for="album in audioAlbums" :key="album.id" :value="album.id">{{ album.title }}</option>
-          </select>
-        </label>
-        <label :class="bemm('label')">
-          <span :class="bemm('label-text')">Audio media ID</span>
-          <input :class="bemm('input')" v-model="selectedAudioMediaId" placeholder="Paste uploaded audio media ID" />
-        </label>
-        <label :class="bemm('label')">
-          <span :class="bemm('label-text')">Track title</span>
-          <input :class="bemm('input')" v-model="selectedTrackTitle" placeholder="Optional track title" />
-        </label>
-        <Button :loading="audioLibraryLoading" :disabled="audioLibraryLoading || !selectedAlbumId || !selectedAudioMediaId" @click="onAddAudioTrack">Add track</Button>
-      </div>
-
-      <p v-if="audioLibraryError" :class="bemm('error')">{{ audioLibraryError }}</p>
-      <div v-if="audioAlbums.length === 0" :class="bemm('empty')">No audio albums yet.</div>
-      <div v-else :class="bemm('album-list')">
-        <article v-for="album in audioAlbums" :key="album.id" :class="bemm('album-card')">
-          <h3>{{ album.title }}</h3>
-          <p :class="bemm('hint')">{{ album.visibility }} · {{ album.radioEnabled ? 'Radio enabled' : 'Radio hidden' }} · {{ album.tracks.length }} tracks</p>
-          <p v-if="album.description" :class="bemm('hint')">{{ album.description }}</p>
-          <ol>
-            <li v-for="track in album.tracks" :key="track.id">{{ track.title }} <span v-if="track.artist">— {{ track.artist }}</span></li>
-          </ol>
-        </article>
-      </div>
-    </section>
 
     <section :class="bemm('toolbar')">
       <InputSearch v-model="search" placeholder="Search media…" :search-action="onSearch" @search="onSearch" />
@@ -559,7 +492,7 @@ function formatDate(value?: string): string {
     color: var(--admin-text-muted);
     background: color-mix(in srgb, var(--color-foreground), transparent 90%);
     padding: 2px var(--space-s);
-    border-radius: var(--border-radius-round);
+    border-radius: var(--border-radius-s);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -605,7 +538,7 @@ function formatDate(value?: string): string {
   &__tag {
     display: inline-block;
     background: color-mix(in srgb, var(--color-foreground), transparent 90%);
-    border-radius: var(--border-radius-round);
+    border-radius: var(--border-radius-s);
     padding: 1px var(--space-s);
     font-size: var(--font-size-xs);
     color: var(--admin-text-muted);

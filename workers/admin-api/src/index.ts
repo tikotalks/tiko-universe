@@ -309,17 +309,20 @@ async function assignRole(db: D1Database, subjectId: string, role: string, sourc
 async function listUsers(authDb: D1Database, appDb: D1Database | undefined, query: string): Promise<AdminUserListItem[]> {
   const q = `%${query.trim().toLowerCase()}%`
   const { results } = await authDb.prepare(`
-    SELECT s.id, s.kind, a.email_plain AS email, s.created_at, s.updated_at,
-      MAX(COALESCE(sess.last_seen_at, sess.created_at)) AS last_seen_at,
+    SELECT s.id,
+      CASE WHEN a.email_verified_at IS NOT NULL THEN 'account' ELSE s.kind END AS kind,
+      a.email_plain AS email, s.created_at, s.updated_at,
+      MAX(COALESCE(sess.last_seen_at, sess.created_at, d.last_seen_at)) AS last_seen_at,
       COALESCE(json_group_array(r.role) FILTER (WHERE r.role IS NOT NULL), '[]') AS roles,
       s.metadata_json
     FROM identity_subjects s
     INNER JOIN identity_accounts a ON a.subject_id = s.id AND a.disabled_at IS NULL AND a.email_hash IS NOT NULL
     LEFT JOIN identity_sessions sess ON sess.subject_id = s.id AND sess.revoked_at IS NULL
+    LEFT JOIN identity_devices d ON d.subject_id = s.id AND d.revoked_at IS NULL
     LEFT JOIN identity_role_assignments r ON r.subject_id = s.id AND r.product = ? AND r.revoked_at IS NULL
     WHERE s.product = ? AND s.disabled_at IS NULL
       AND (? = '%%' OR lower(s.id) LIKE ? OR lower(s.kind) LIKE ? OR lower(COALESCE(a.email_plain, '')) LIKE ? OR lower(COALESCE(json_extract(s.metadata_json, '$.displayName'), '')) LIKE ?)
-    GROUP BY s.id, s.kind, a.email_plain, s.created_at, s.updated_at, s.metadata_json
+    GROUP BY s.id, s.kind, a.email_plain, a.email_verified_at, s.created_at, s.updated_at, s.metadata_json
     ORDER BY last_seen_at DESC, s.created_at DESC
     LIMIT 100
   `)

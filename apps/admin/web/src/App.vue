@@ -18,15 +18,23 @@ const userMenuOpen = ref(false)
 const mobileMenuOpen = ref(false)
 const userMenuRef = ref<HTMLElement | null>(null)
 
+const appSubItems = [
+  { to: '/apps/yes-no', label: 'Yes/No', color: '#10b981' },
+  { to: '/apps/type', label: 'Type', color: '#f59e0b' },
+  { to: '/apps/cards', label: 'Cards', color: '#6366f1' },
+  { to: '/apps/sequence', label: 'Sequence', color: '#ec4899' },
+  { to: '/apps/timer', label: 'Timer', color: '#ef4444' },
+  { to: '/apps/radio', label: 'Radio', color: '#8b5cf6' },
+  { to: '/apps/talk', label: 'Talk', color: '#06b6d4' },
+]
+
 const navItems = [
   { to: '/', label: 'Home', icon: 'ui/dashboard' },
   { to: '/images', label: 'Images', icon: 'ui/image' },
   { to: '/stories', label: 'Stories', icon: 'ui/music-note-single' },
   { to: '/library', label: 'Library', icon: 'ui/folder' },
   { to: '/users', label: 'Users', icon: 'ui/user' },
-  {
-    to: '/apps', label: 'Apps', icon: 'ui/board-multi-dashboard',
-  },
+  { to: '/apps', label: 'Apps', icon: 'ui/board-multi-dashboard', children: appSubItems },
   { to: '/support', label: 'Support', icon: 'ui/at-sign' },
 ]
 
@@ -205,15 +213,26 @@ function navigateTo(path: string) {
       </div>
 
       <nav :class="shell('nav')">
-        <router-link
-          v-for="item in navItems"
-          :key="item.to"
-          :to="item.to"
-          :class="shell('nav-item', { active: isNavItemActive(item) })"
-        >
-          <Icon :name="item.icon" size="small" />
-          <span>{{ item.label }}</span>
-        </router-link>
+        <template v-for="item in navItems" :key="item.to">
+          <router-link
+            :to="item.to"
+            :class="shell('nav-item', { active: isNavItemActive(item) })"
+          >
+            <Icon :name="item.icon" size="small" />
+            <span>{{ item.label }}</span>
+          </router-link>
+          <template v-if="'children' in item && item.children && isNavItemActive(item)">
+            <router-link
+              v-for="child in item.children"
+              :key="child.to"
+              :to="child.to"
+              :class="shell('nav-subitem', { active: route.path === child.to })"
+            >
+              <span :class="shell('nav-sub-dot')" :style="{ background: child.color }" />
+              <span>{{ child.label }}</span>
+            </router-link>
+          </template>
+        </template>
       </nav>
 
       <div ref="userMenuRef" :class="shell('user-wrapper')">
@@ -377,6 +396,37 @@ html, body {
       padding-left: calc(var(--space-s) + calc(var(--space) * 1.5));
       font-size: var(--font-size-xs);
     }
+  }
+
+  &__nav-subitem {
+    display: flex;
+    align-items: center;
+    gap: var(--space-xs);
+    padding: calc(var(--space-xs) * 0.6) var(--space-s) calc(var(--space-xs) * 0.6) calc(var(--space-m) + var(--space-s));
+    border-radius: var(--border-radius-s);
+    color: var(--admin-text-muted);
+    text-decoration: none;
+    font-size: var(--font-size-xs);
+    font-weight: 500;
+    transition: background 0.12s ease, color 0.12s ease;
+
+    &:hover {
+      background: var(--admin-nav-hover);
+      color: var(--admin-text);
+    }
+
+    &--active {
+      background: var(--admin-nav-active);
+      color: var(--admin-text);
+      font-weight: 600;
+    }
+  }
+
+  &__nav-sub-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 999px;
+    flex-shrink: 0;
   }
 
   &__user-wrapper {
@@ -571,8 +621,8 @@ html, body {
       z-index: 40;
       display: block;
       border: 0;
-      background: color-mix(in srgb, var(--color-background), transparent 15%);
-      backdrop-filter: blur(2px);
+      background: color-mix(in srgb, var(--color-foreground), transparent 60%);
+      backdrop-filter: blur(4px);
     }
 
     &__sidebar {
@@ -586,7 +636,7 @@ html, body {
       align-items: stretch;
       transform: translateX(-100%);
       transition: transform 0.18s ease;
-      box-shadow: 18px 0 42px color-mix(in srgb, var(--color-foreground), transparent 78%);
+      box-shadow: 8px 0 24px color-mix(in srgb, var(--color-foreground), transparent 85%);
 
       &--open {
         transform: translateX(0);
@@ -645,7 +695,7 @@ html, body {
     width: min(calc(var(--space) * 24), 100%);
     padding: var(--space-l);
     background: var(--admin-sidebar-bg);
-    border: 1px solid var(--admin-border);
+    border: 0;
     border-radius: var(--border-radius-l);
     display: flex;
     flex-direction: column;

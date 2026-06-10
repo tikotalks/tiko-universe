@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useRouter } from 'vue-router'
 import { useBemm } from 'bemm'
+import { Icon } from '@sil/ui'
 import { useAdminAuth } from '../composables/useAdminAuth'
 
 const bemm = useBemm('home-page', { return: 'string', includeBaseClass: true })
@@ -8,12 +9,12 @@ const router = useRouter()
 const { user } = useAdminAuth()
 
 const quickLinks = [
-  { to: '/images', title: 'Generate images', description: 'Create child-friendly images with the Tiko visual style.' },
-  { to: '/stories', title: 'Narrate stories', description: 'Generate narrated stories and save them to the library.' },
-  { to: '/library', title: 'Media library', description: 'Browse and edit every image, story, and asset in Tiko.' },
-  { to: '/users', title: 'Users and roles', description: 'Manage product-scoped roles for admins, editors, managers, and child profiles.' },
-  { to: '/apps', title: 'Apps', description: 'Manage app titles, colors, icons, and starter defaults.' },
-  { to: '/support', title: 'Support inbox', description: 'See incoming user emails and reply from one place.' },
+  { to: '/images', title: 'Generate images', description: 'Create child-friendly images with the Tiko visual style.', icon: 'media/image', color: 'var(--tiko-image)' },
+  { to: '/stories', title: 'Narrate stories', description: 'Generate narrated stories and save them to the library.', icon: 'media/music-note', color: 'var(--tiko-story)' },
+  { to: '/library', title: 'Media library', description: 'Browse and edit every image, story, and asset in Tiko.', icon: 'media/folder-image', color: 'var(--tiko-media)' },
+  { to: '/users', title: 'Users and roles', description: 'Manage product-scoped roles for admins, editors, managers, and child profiles.', icon: 'ui/user', color: 'var(--tiko-users)' },
+  { to: '/apps', title: 'Apps', description: 'Manage app titles, colors, icons, and starter defaults.', icon: 'ui/grid', color: 'var(--tiko-apps)' },
+  { to: '/support', title: 'Support inbox', description: 'See incoming user emails and reply from one place.', icon: 'communication/message', color: 'var(--tiko-support)' },
 ]
 </script>
 
@@ -34,8 +35,8 @@ const quickLinks = [
         :class="bemm('card')"
         @click="router.push(link.to)"
       >
-        <div :class="bemm('card-icon')">
-          <span :class="bemm('card-icon-inner')">{{ link.title.charAt(0) }}</span>
+        <div :class="bemm('card-icon')" :style="{ '--card-color': link.color }">
+          <Icon :name="link.icon" size="medium" />
         </div>
         <div :class="bemm('card-body')">
           <h3 :class="bemm('card-title')">{{ link.title }}</h3>
@@ -93,19 +94,24 @@ const quickLinks = [
   &__card {
     display: flex;
     align-items: flex-start;
-    gap: var(--space-s);
+    gap: var(--space-m);
     padding: var(--space-m);
     text-align: left;
-    background: var(--admin-surface);
-    border: 1px solid var(--admin-border);
-    border-radius: var(--border-radius-s);
+    background: var(--admin-card-bg);
+    border: 0;
+    border-radius: var(--admin-card-radius);
     color: var(--admin-text);
     cursor: pointer;
-    transition: background 0.12s ease, border-color 0.12s ease, transform 0.12s ease;
+    transition: background 0.12s ease, transform 0.12s ease;
 
     &:hover {
-      background: var(--admin-surface-hover);
-      border-color: var(--admin-border-strong);
+      background: var(--admin-card-bg-hover);
+
+      .home-page__card-icon {
+        background: color-mix(in srgb, var(--card-color), transparent 20%);
+        border-color: color-mix(in srgb, var(--card-color), transparent 20%);
+        transform: scale(1.05);
+      }
     }
 
     &:active {
@@ -114,20 +120,20 @@ const quickLinks = [
   }
 
   &__card-icon {
-    width: calc(var(--space) * 2.25);
-    height: calc(var(--space) * 2.25);
-    border-radius: var(--border-radius-xs);
-    background: color-mix(in srgb, var(--color-primary), transparent 80%);
-    border: 1px solid color-mix(in srgb, var(--color-primary), transparent 65%);
+    width: calc(var(--space) * 3);
+    height: calc(var(--space) * 3);
+    border-radius: var(--border-radius-m);
+    background: color-mix(in srgb, var(--card-color), transparent 82%);
+    border: 1px solid color-mix(in srgb, var(--card-color), transparent 70%);
     display: grid;
     place-items: center;
-    color: var(--color-primary);
+    color: var(--card-color);
     flex-shrink: 0;
-  }
+    transition: transform 0.15s ease;
 
-  &__card-icon-inner {
-    font-weight: 700;
-    font-size: var(--font-size-m);
+    .icon {
+      --icon-stroke-color: currentColor;
+    }
   }
 
   &__card-body {
@@ -150,9 +156,9 @@ const quickLinks = [
   }
 
   &__panel {
-    background: var(--admin-surface);
-    border: 1px solid var(--admin-border);
-    border-radius: var(--border-radius-s);
+    background: var(--admin-section-bg);
+    border: 0;
+    border-radius: var(--admin-section-radius);
     padding: var(--space-m) var(--space-l);
     display: flex;
     flex-direction: column;

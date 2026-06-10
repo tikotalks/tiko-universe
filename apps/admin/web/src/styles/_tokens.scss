@@ -25,6 +25,23 @@
   --admin-nav-hover: color-mix(in srgb, var(--color-foreground), transparent 94%);
   --admin-nav-active: color-mix(in srgb, var(--color-foreground), transparent 88%);
 
+  /* Card tokens: borderless, bigger radius */
+  --admin-card-radius: var(--border-radius-l);
+  --admin-card-bg: color-mix(in srgb, var(--color-background), var(--color-foreground) 4%);
+  --admin-card-bg-hover: color-mix(in srgb, var(--color-background), var(--color-foreground) 8%);
+
+  /* Section/panel tokens */
+  --admin-section-radius: var(--border-radius-l);
+  --admin-section-bg: color-mix(in srgb, var(--color-background), var(--color-foreground) 4%);
+
+  /* Tiko accent colors for category cards */
+  --tiko-image: #ff8a1f;
+  --tiko-story: #e84057;
+  --tiko-media: #2dd4bf;
+  --tiko-users: #2488ff;
+  --tiko-apps: #8b5cf6;
+  --tiko-support: #f8c22e;
+
   /* Legacy aliases kept for pages still referencing them */
   --tiko-admin-sidebar: var(--admin-sidebar-bg);
   --tiko-admin-card: var(--admin-surface);

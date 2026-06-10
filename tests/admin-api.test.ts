@@ -30,7 +30,7 @@ class AdminMemoryD1 {
       const row = Array.from(this.accounts.values()).find((account) => account.subject_id === values[0] && !account.disabled_at)
       return new MemoryResult(row ? [{ id: row.subject_id, email_hash: row.email_hash, email_plain: row.email_plain }] : [])
     }
-    if (normalized.startsWith('SELECT s.id, s.kind') && normalized.includes('WHERE s.id = ?')) {
+    if (normalized.startsWith('SELECT s.id') && normalized.includes('WHERE s.id = ?')) {
       const subjectId = String(values[1])
       const subject = this.subjects.get(subjectId)
       if (!subject || subject.disabled_at) return new MemoryResult([])
@@ -38,31 +38,39 @@ class AdminMemoryD1 {
       const roles = this.roles.filter((role) => role.subject_id === subject.id && role.product === 'tiko' && !role.revoked_at).map((role) => role.role).sort()
       return new MemoryResult([{
         id: subject.id,
-        kind: subject.kind,
+        kind: account?.email_verified_at ? 'account' : subject.kind,
         email: account?.email_plain ?? null,
         created_at: subject.created_at,
         updated_at: subject.updated_at,
+        last_seen_at: null,
         roles: JSON.stringify(roles),
+        metadata_json: subject.metadata_json ?? null,
       }])
     }
-    if (normalized.startsWith('SELECT s.id, s.kind')) {
-      const product = String(values[1] ?? 'tiko')
-      const query = String(values[2] ?? '').replace(/%/g, '').toLowerCase()
+    if (normalized.startsWith('SELECT s.id') && normalized.includes('GROUP BY s.id')) {
+      const product = String(values[0] ?? 'tiko')
+      const q = String(values[2] ?? '').replace(/%/g, '').toLowerCase()
       const rows = Array.from(this.subjects.values())
         .filter((subject) => subject.product === product && !subject.disabled_at)
         .map((subject) => {
-          const account = Array.from(this.accounts.values()).find((candidate) => candidate.subject_id === subject.id && !candidate.disabled_at)
-          const roles = this.roles.filter((role) => role.subject_id === subject.id && role.product === 'tiko' && !role.revoked_at).map((role) => role.role).sort()
+          const account = Array.from(this.accounts.values()).find((candidate) => candidate.subject_id === subject.id && !candidate.disabled_at && candidate.email_hash)
+          if (!account) return null
+          const roles = this.roles.filter((role) => role.subject_id === subject.id && role.product === product && !role.revoked_at).map((role) => role.role).sort()
+          const kind = account.email_verified_at ? 'account' : subject.kind
+          const displayName = subject.metadata_json ? JSON.parse(subject.metadata_json as string).displayName ?? '' : ''
           return {
             id: subject.id,
-            kind: subject.kind,
-            email: account?.email_plain ?? null,
+            kind,
+            email: account.email_plain ?? null,
             created_at: subject.created_at,
             updated_at: subject.updated_at,
+            last_seen_at: null,
             roles: JSON.stringify(roles),
+            metadata_json: subject.metadata_json ?? null,
           }
         })
-        .filter((row) => !query || String(row.id).toLowerCase().includes(query) || String(row.email ?? '').toLowerCase().includes(query) || String(row.kind).toLowerCase().includes(query))
+        .filter((row): row is NonNullable<typeof row> => row !== null)
+        .filter((row) => !q || String(row.id).toLowerCase().includes(q) || String(row.email ?? '').toLowerCase().includes(q) || String(row.kind).toLowerCase().includes(q) || (row.metadata_json && String((JSON.parse(row.metadata_json as string) as { displayName?: string }).displayName ?? '').toLowerCase().includes(q)))
       return new MemoryResult(rows)
     }
     if (normalized.startsWith('SELECT role FROM identity_role_assignments')) {

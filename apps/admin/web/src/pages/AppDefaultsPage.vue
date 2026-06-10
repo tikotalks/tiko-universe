@@ -365,9 +365,9 @@ if (!isOverview.value && !routeApp.value) {
     min-height: calc(var(--space) * 9);
     padding: var(--space-m);
     background: var(--admin-surface);
-    border: 1px solid var(--admin-border);
+    border: 0;
     border-left: 4px solid var(--app-accent, var(--admin-border-strong));
-    border-radius: var(--border-radius-s);
+    border-radius: var(--admin-card-radius);
     color: var(--admin-text);
     text-decoration: none;
     transition: background 0.12s ease, border-color 0.12s ease, transform 0.12s ease;
@@ -425,8 +425,8 @@ if (!isOverview.value && !routeApp.value) {
 
   &__panel {
     background: var(--admin-surface);
-    border: 1px solid var(--admin-border);
-    border-radius: var(--border-radius-s);
+    border: 0;
+    border-radius: var(--admin-card-radius);
     padding: var(--space-m);
   }
 
@@ -499,7 +499,7 @@ if (!isOverview.value && !routeApp.value) {
     align-items: center;
     padding: var(--space-m);
     border: 1px dashed var(--admin-border);
-    border-radius: var(--border-radius-s);
+    border-radius: var(--admin-card-radius);
     color: var(--admin-text-muted);
   }
 
