@@ -714,6 +714,9 @@ public struct TikoAccountSheet: View {
             title: "Choose avatar"
         ) { url in
             profilePrefs.setAvatarURL(url.absoluteString)
+            if let token = (try? sessionStore.load())?.accessToken {
+                Task { try? await identityClient.updateProfile(accessToken: token, patch: TikoIdentityProfile(avatarUrl: url.absoluteString)) }
+            }
         }
         .tikoPopup(isPresented: $showingAccountActions) {
             accountActionsCard

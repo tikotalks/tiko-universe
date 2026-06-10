@@ -347,6 +347,9 @@ public struct TikoAppShell<Content: View, SettingsContent: View>: View {
             identityBundle = await refreshIdentityBundle()
             let subjectId = identityBundle?.account?.subjectId ?? identityBundle?.subject.id
             profilePrefs.load(for: subjectId)
+            if let token = identityBundle?.accessToken {
+                await syncAvatarFromProfile(accessToken: token)
+            }
             await fetchAvatarIfNeeded()
             try? await Task.sleep(nanoseconds: 500_000_000)
             withAnimation(.easeOut(duration: 0.4)) { splashVisible = false }
@@ -413,6 +416,12 @@ public struct TikoAppShell<Content: View, SettingsContent: View>: View {
         } catch {
             return bundle
         }
+    }
+
+    private func syncAvatarFromProfile(accessToken: String) async {
+        guard let profile = try? await TikoIdentityClient().getProfile(accessToken: accessToken),
+              let avatarUrl = profile.avatarUrl, !avatarUrl.isEmpty else { return }
+        profilePrefs.setAvatarURL(avatarUrl)
     }
 
     private func fetchIconIfNeeded() async {

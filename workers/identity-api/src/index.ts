@@ -219,6 +219,8 @@ async function handleManagedIdentity(request: Request, env: Env): Promise<Respon
   const deletionMatch = path.match(/^\/v1\/identity\/deletion-requests\/([^/]+)$/)
   if (deletionMatch && request.method === 'GET') return getDeletionRequest(request, env, deletionMatch[1])
   if (path === '/v1/identity/me' && request.method === 'DELETE') return deleteCurrentIdentity(request, env)
+  if (path === '/v1/identity/profile' && request.method === 'GET') return getIdentityProfile(request, env)
+  if (path === '/v1/identity/profile' && request.method === 'PUT') return updateIdentityProfile(request, env)
   return null
 }
 
@@ -687,6 +689,42 @@ async function loginManagedChild(request: Request, env: Env): Promise<Response> 
     roles: await activeRoles(env.IDENTITY_DB, subject.id),
     managed: { handle: row.handle, displayName: row.display_name, managerSubjectId: row.manager_subject_id }
   }, { status: 200 })
+}
+
+async function getIdentityProfile(request: Request, env: Env): Promise<Response> {
+  const session = await requireIdentitySession(request, env)
+  if (!session) return Response.json({ error: 'invalid_session' }, { status: 401 })
+  const row = await env.IDENTITY_DB.prepare('SELECT metadata_json FROM identity_subjects WHERE id = ? LIMIT 1')
+    .bind(session.subjectId).first<{ metadata_json?: string }>()
+  const metadata = parseJson(row?.metadata_json)
+  return Response.json({
+    profile: {
+      displayName: typeof metadata.displayName === 'string' ? metadata.displayName : null,
+      avatarUrl: typeof metadata.avatarUrl === 'string' ? metadata.avatarUrl : null,
+    }
+  })
+}
+
+async function updateIdentityProfile(request: Request, env: Env): Promise<Response> {
+  const session = await requireIdentitySession(request, env)
+  if (!session) return Response.json({ error: 'invalid_session' }, { status: 401 })
+  const raw = await request.json().catch(() => ({})) as Record<string, unknown>
+  // Accept both flat { displayName, avatarUrl } and Ankore-wrapped { profile: { ... } }
+  const fields: Record<string, unknown> = (raw.profile && typeof raw.profile === 'object' ? raw.profile : raw) as Record<string, unknown>
+  const row = await env.IDENTITY_DB.prepare('SELECT metadata_json FROM identity_subjects WHERE id = ? LIMIT 1')
+    .bind(session.subjectId).first<{ metadata_json?: string }>()
+  const metadata: Record<string, unknown> = parseJson(row?.metadata_json)
+  if (typeof fields.displayName === 'string') metadata.displayName = fields.displayName.trim() || null
+  if (typeof fields.avatarUrl === 'string') metadata.avatarUrl = fields.avatarUrl.trim() || null
+  const now = new Date().toISOString()
+  await env.IDENTITY_DB.prepare('UPDATE identity_subjects SET metadata_json = ?, updated_at = ? WHERE id = ?')
+    .bind(JSON.stringify(metadata), now, session.subjectId).run()
+  return Response.json({
+    profile: {
+      displayName: typeof metadata.displayName === 'string' ? metadata.displayName : null,
+      avatarUrl: typeof metadata.avatarUrl === 'string' ? metadata.avatarUrl : null,
+    }
+  })
 }
 
 async function requireIdentitySession(request: Request, env: Env): Promise<{ subjectId: string } | null> {

@@ -197,9 +197,11 @@ public enum TikoIdentityClientError: Error, Equatable, Sendable {
 
 public struct TikoIdentityProfile: Codable, Sendable {
     public var displayName: String?
+    public var avatarUrl: String?
 
-    public init(displayName: String? = nil) {
+    public init(displayName: String? = nil, avatarUrl: String? = nil) {
         self.displayName = displayName
+        self.avatarUrl = avatarUrl
     }
 }
 
