@@ -962,14 +962,14 @@ const ICON_STYLE_SPECS: Record<TikoStyle, object> = {
     }
   },
   'tiko-natural': {
-    task: "Generate a soft 3D icon in a natural, balanced style. Same rounded toy-like forms as Tiko V2 but with a calm, grounded color palette — no oversaturation.",
-    style_reference: "Soft 3D icon with natural, balanced colors. Same rounded vinyl-toy aesthetic but with saturation pulled back to feel like matte print, not screen-vivid. Think Scandinavian children's illustration — sage greens, dusty reds, warm beiges, soft powder blues.",
+    task: "Generate a soft 3D icon in a natural, lively style. Same rounded toy-like forms as Tiko V2 but with a grounded color palette that stays bright and cheerful — not oversaturated, not muted.",
+    style_reference: "Soft 3D icon with natural but vibrant colors. Same rounded vinyl-toy aesthetic but colors feel like fresh matte paint — present and lively without being neon. Think high-quality children's wooden toy or Scandinavian illustration with punchy but natural hues — clear greens, warm reds, golden yellows, sky blues.",
     icon_idea: null,
     render_style: {
-      materials: "Same satin-matte vinyl/clay as V2 but colors feel like matte paint on physical objects. Let material warmth come through naturally without pushing saturation.",
+      materials: "Same satin-matte vinyl/clay as V2. Colors feel like fresh matte paint on physical objects — bright and present, not dull or muddy.",
       shapes: "Rounded but confident. Same as V2.",
-      colors: "Natural, mid-saturation palette: 2–3 muted-to-balanced colors. A tomato is warm dusty red, leaves are sage green, bread is warm beige, sky is powder blue. Never neon, never washed-out. Target mid-saturation with warm undertones. When in doubt, choose more muted over more vivid.",
-      lighting: "Same soft studio lighting as V2 but slightly warmer and lower-contrast. Lean toward calm, diffuse light. No harsh speculars.",
+      colors: "Natural but bright palette: 2–3 colors at medium-high saturation. A tomato is a clear warm red, leaves are a fresh green, bread is a golden yellow, sky is a clear blue. Never neon, never washed-out or muddy. Target medium-high saturation with warm undertones. When in doubt, choose brighter over more muted.",
+      lighting: "Same soft studio lighting as V2 but slightly warmer. Gentle diffuse light that lets the colors read clearly. No harsh speculars.",
       background: "transparent"
     },
     composition: {

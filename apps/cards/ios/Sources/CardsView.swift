@@ -532,8 +532,8 @@ private struct SubCollectionTile: View {
                 .minimumScaleFactor(0.65)
                 .multilineTextAlignment(.center)
                 .padding(.horizontal, 6)
+                .padding(.vertical, 5)
                 .frame(maxWidth: .infinity)
-                .frame(height: 30)
                 .background(colorScheme == .dark ? Color.white : Color(.label))
         }
         .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
