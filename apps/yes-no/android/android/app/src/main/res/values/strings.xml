@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Tiko Yes No</string>
+    <string name="title_activity_main">Tiko Yes No</string>
+    <string name="package_name">org.tikoapps.yesno</string>
+    <string name="custom_url_scheme">org.tikoapps.yesno</string>
+</resources>

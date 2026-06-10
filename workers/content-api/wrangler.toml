@@ -7,7 +7,7 @@ workers_dev = true
 [vars]
 ALLOWED_ORIGINS = "https://tiko.mt,https://www.tiko.mt,https://tikoapps.org,https://cards.tikoapps.org,https://sequence.tikoapps.org,https://type.tikoapps.org,https://timer.tikoapps.org,https://admin.tikoapps.org,https://dev.tiko.tikoapps.org,https://dev.cards.tikoapps.org,https://dev.sequence.tikoapps.org,https://dev.type.tikoapps.org,https://dev.timer.tikoapps.org,https://dev.admin.tikoapps.org,http://localhost:5173,http://localhost:4173"
 APP_API_URL = "https://app.tikoapi.org"
-IDENTITY_API_URL = "https://api.tikotalks.com/v1/identity"
+IDENTITY_API_URL = "https://api.tikotalks.com/v1"
 MEDIA_API_URL = "https://media.tikoapi.org/v1"
 
 [[r2_buckets]]
@@ -35,7 +35,7 @@ workers_dev = false
 [env.production.vars]
 ALLOWED_ORIGINS = "https://tiko.mt,https://www.tiko.mt,https://tikoapps.org,https://cards.tikoapps.org,https://sequence.tikoapps.org,https://type.tikoapps.org,https://timer.tikoapps.org,https://admin.tikoapps.org,http://localhost:5173,http://localhost:4173"
 APP_API_URL = "https://app.tikoapi.org"
-IDENTITY_API_URL = "https://api.tikotalks.com/v1/identity"
+IDENTITY_API_URL = "https://api.tikotalks.com/v1"
 MEDIA_API_URL = "https://media.tikoapi.org/v1"
 
 [[env.production.r2_buckets]]
