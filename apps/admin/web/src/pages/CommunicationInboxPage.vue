@@ -88,8 +88,8 @@ onMounted(() => {
   &__empty {
     padding: var(--space-l);
     background: var(--admin-surface);
-    border: 1px solid var(--admin-border);
-    border-radius: var(--border-radius-s);
+    border: 0;
+    border-radius: var(--admin-card-radius);
     text-align: center;
     color: var(--admin-text-muted);
     font-size: var(--font-size-s);
@@ -105,8 +105,8 @@ onMounted(() => {
 
   &__item {
     background: var(--admin-surface);
-    border: 1px solid var(--admin-border);
-    border-radius: var(--border-radius-s);
+    border: 0;
+    border-radius: var(--admin-card-radius);
     padding: var(--space-m);
     display: flex;
     flex-direction: column;

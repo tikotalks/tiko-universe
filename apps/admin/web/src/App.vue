@@ -645,7 +645,7 @@ html, body {
     width: min(calc(var(--space) * 24), 100%);
     padding: var(--space-l);
     background: var(--admin-sidebar-bg);
-    border: 1px solid var(--admin-border);
+    border: 0;
     border-radius: var(--border-radius-l);
     display: flex;
     flex-direction: column;

@@ -240,8 +240,8 @@ function kindLabel(kind: string): string {
   &__search {
     align-items: flex-end;
     background: var(--admin-surface);
-    border: 1px solid var(--admin-border);
-    border-radius: var(--border-radius-s);
+    border: 0;
+    border-radius: var(--admin-card-radius);
     padding: var(--space-s);
   }
 
@@ -264,8 +264,8 @@ function kindLabel(kind: string): string {
   &__list,
   &__detail {
     background: var(--admin-surface);
-    border: 1px solid var(--admin-border);
-    border-radius: var(--border-radius-s);
+    border: 0;
+    border-radius: var(--admin-card-radius);
   }
 
   &__list {

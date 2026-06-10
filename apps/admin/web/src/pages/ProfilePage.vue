@@ -103,8 +103,8 @@ const roles = computed(() => user.value?.roles?.length ? user.value.roles : ['ad
     flex-direction: column;
     gap: var(--space-xs);
     background: var(--admin-surface);
-    border: 1px solid var(--admin-border);
-    border-radius: var(--border-radius-s);
+    border: 0;
+    border-radius: var(--admin-card-radius);
     padding: var(--space-m);
   }
 

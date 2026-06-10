@@ -581,7 +581,7 @@ function moveCard(idx: number, direction: -1 | 1) {
 
   &__modal-panel {
     background: var(--admin-surface);
-    border: 1px solid var(--admin-border);
+    border: 0;
     border-radius: var(--border-radius-l);
     width: 100%;
     max-width: 720px;

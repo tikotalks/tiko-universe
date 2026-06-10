@@ -825,7 +825,7 @@ onMounted(() => { void loadLibrary() })
   &__empty {
     background: var(--admin-surface);
     border: 1px dashed var(--admin-border-strong);
-    border-radius: var(--border-radius-s);
+    border-radius: var(--admin-card-radius);
     padding: var(--space-l);
     text-align: center;
     color: var(--admin-text-muted);
@@ -861,8 +861,8 @@ onMounted(() => { void loadLibrary() })
 
   &__queue {
     background: var(--admin-surface);
-    border: 1px solid var(--admin-border);
-    border-radius: var(--border-radius-s);
+    border: 0;
+    border-radius: var(--admin-card-radius);
     padding: var(--space-m);
     display: flex;
     flex-direction: column;
@@ -988,8 +988,8 @@ onMounted(() => { void loadLibrary() })
 
   &__form {
     background: var(--admin-surface);
-    border: 1px solid var(--admin-border);
-    border-radius: var(--border-radius-s);
+    border: 0;
+    border-radius: var(--admin-card-radius);
     padding: var(--space-m);
     display: flex;
     flex-direction: column;
@@ -1075,8 +1075,8 @@ onMounted(() => { void loadLibrary() })
 
   &__preview {
     background: var(--admin-surface);
-    border: 1px solid var(--admin-border);
-    border-radius: var(--border-radius-s);
+    border: 0;
+    border-radius: var(--admin-card-radius);
     padding: var(--space-m);
     display: flex;
     flex-direction: column;
