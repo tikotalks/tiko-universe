@@ -18,6 +18,7 @@ public struct TikoAppConfig: Sendable {
     public let appColor: TikoAppColor
     public let appIconSystemName: String
     public let appIconMediaCategory: String?
+    public let appIconImageUrl: String?
     public let themeColorHex: UInt32
 
     public init(
@@ -26,6 +27,7 @@ public struct TikoAppConfig: Sendable {
         appColor: TikoAppColor,
         appIconSystemName: String,
         appIconMediaCategory: String? = nil,
+        appIconImageUrl: String? = nil,
         themeColorHex: UInt32
     ) {
         self.id = id
@@ -33,6 +35,7 @@ public struct TikoAppConfig: Sendable {
         self.appColor = appColor
         self.appIconSystemName = appIconSystemName
         self.appIconMediaCategory = appIconMediaCategory
+        self.appIconImageUrl = appIconImageUrl
         self.themeColorHex = themeColorHex
     }
 }

@@ -1,7 +1,11 @@
 import { createApp } from 'vue'
 import { popupService } from '@sil/ui'
+import { injectAppMeta } from '@tiko/ui'
+import { appConfig } from './appConfig'
 import { createRouter, createWebHistory } from 'vue-router'
 import App from './App.vue'
+
+injectAppMeta(appConfig)
 
 const routes = [
   {

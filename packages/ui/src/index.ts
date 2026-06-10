@@ -321,6 +321,51 @@ function resizedTikoMediaUrl(url: string, size = 96) {
   return url
 }
 
+/**
+ * Inject favicon, apple-touch-icon, and theme-color meta tags from app config.
+ * Call once in each web app's main.ts before mounting.
+ */
+export function injectAppMeta(config: TikoAppConfig): void {
+  const iconUrl = config.appIconImageUrl
+  const color = config.themeColor
+
+  if (iconUrl) {
+    // Cloudflare Image Resizing: 32x32 for favicon, 180x180 for apple-touch-icon
+    const faviconUrl = resizedTikoMediaUrl(iconUrl, 32)
+    const touchIconUrl = resizedTikoMediaUrl(iconUrl, 180)
+
+    // Set or create <link rel="icon">
+    let favicon = document.querySelector<HTMLLinkElement>('link[rel="icon"]')
+    if (!favicon) {
+      favicon = document.createElement('link')
+      favicon.rel = 'icon'
+      document.head.appendChild(favicon)
+    }
+    favicon.type = 'image/png'
+    favicon.href = faviconUrl
+
+    // Set or create <link rel="apple-touch-icon">
+    let touchIcon = document.querySelector<HTMLLinkElement>('link[rel="apple-touch-icon"]')
+    if (!touchIcon) {
+      touchIcon = document.createElement('link')
+      touchIcon.rel = 'apple-touch-icon'
+      document.head.appendChild(touchIcon)
+    }
+    touchIcon.href = touchIconUrl
+  }
+
+  if (color) {
+    // Set or create <meta name="theme-color">
+    let themeColor = document.querySelector<HTMLMetaElement>('meta[name="theme-color"]')
+    if (!themeColor) {
+      themeColor = document.createElement('meta')
+      themeColor.name = 'theme-color'
+      document.head.appendChild(themeColor)
+    }
+    themeColor.content = color
+  }
+}
+
 async function fetchTikoMediaIcon(category: string): Promise<string> {
   const endpoint = `https://media.tikoapi.org/v1/media?type=image&category=${encodeURIComponent(category)}&limit=20`
   const response = await fetch(endpoint)
