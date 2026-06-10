@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue'
-import { Button, InputSearch } from '@sil/ui'
+import { Button, InputSearch, Icon } from '@sil/ui'
 import { useBemm } from 'bemm'
 import { useRoute, useRouter } from 'vue-router'
 import { assignableRoles, useAdminUsers } from '../composables/useAdminUsers'
@@ -13,33 +13,48 @@ const { users, loading, saving, error, list, assignRole, revokeRole } = useAdmin
 const query = ref(typeof route.query.q === 'string' ? route.query.q : '')
 const selectedUserId = ref<string | null>(null)
 
-const selectedUser = computed(() => users.value.find((user) => user.id === selectedUserId.value) ?? users.value[0] ?? null)
-const filteredRoles = computed(() => assignableRoles)
+const selectedUser = computed(() => users.value.find((user) => user.id === selectedUserId.value) ?? null)
+const onlineThreshold = 5 * 60 * 1000 // 5 minutes
 
 onMounted(async () => {
   await list(query.value)
-  selectedUserId.value = users.value[0]?.id ?? null
+  if (users.value.length > 0) selectedUserId.value = users.value[0].id
 })
 
 async function search() {
   const trimmed = query.value.trim()
   await router.replace({ path: '/users', query: trimmed ? { q: trimmed } : {} })
   await list(trimmed)
-  selectedUserId.value = users.value[0]?.id ?? null
+  if (users.value.length > 0) selectedUserId.value = users.value[0].id
 }
 
 function choose(user: AdminManagedUser) {
   selectedUserId.value = user.id
 }
 
-function hasRole(user: AdminManagedUser | null, role: TikoRole) {
-  return Boolean(user?.roles.includes(role))
+function isOnline(user: AdminManagedUser): boolean {
+  if (!user.lastSeenAt) return false
+  return Date.now() - new Date(user.lastSeenAt).getTime() < onlineThreshold
 }
 
-async function toggleRole(user: AdminManagedUser, role: TikoRole) {
-  if (hasRole(user, role)) {
-    await revokeRole(user.id, role)
-  } else {
+function userDisplayName(user: AdminManagedUser): string {
+  return user.displayName || user.email || user.id.slice(0, 12)
+}
+
+function userInitials(user: AdminManagedUser): string {
+  const name = userDisplayName(user)
+  return name.charAt(0).toUpperCase()
+}
+
+async function setSingleRole(user: AdminManagedUser, role: TikoRole) {
+  if (saving.value) return
+  // Revoke all current roles first, then assign the new one
+  const rolesToRevoke = user.roles.filter((r) => r !== role)
+  for (const r of rolesToRevoke) {
+    await revokeRole(user.id, r)
+  }
+  // If the user didn't already have this role, assign it
+  if (!user.roles.includes(role)) {
     await assignRole(user.id, role)
   }
 }
@@ -61,8 +76,14 @@ function formatRelativeTime(iso: string | null): string {
   return `${Math.floor(days / 30)}mo ago`
 }
 
-function userLabel(user: AdminManagedUser) {
-  return user.email || user.id
+function kindLabel(kind: string): string {
+  switch (kind) {
+    case 'account': return 'Account'
+    case 'device': return 'Device'
+    case 'anonymous': return 'Anonymous'
+    case 'service': return 'Service'
+    default: return kind
+  }
 }
 </script>
 
@@ -71,14 +92,16 @@ function userLabel(user: AdminManagedUser) {
     <header :class="bemm('header')">
       <div>
         <h1 :class="bemm('title')">Users</h1>
-        <p :class="bemm('subtitle')">Search Tiko identities and manage product-scoped roles.</p>
+        <p :class="bemm('subtitle')">{{ users.length }} identities · Search by name, email, or ID</p>
       </div>
-      <Button :disabled="loading" :loading="loading" @click="search">Refresh</Button>
+      <Button :disabled="loading" :loading="loading" size="small" @click="search">
+        <Icon name="ui/refresh" size="small" />
+      </Button>
     </header>
 
     <form :class="bemm('search')" @submit.prevent="search">
-      <InputSearch v-model="query" label="Search users" placeholder="Email, subject id, or kind" />
-      <Button type="submit" :loading="loading" :disabled="loading">Search</Button>
+      <InputSearch v-model="query" label="" placeholder="Search by name, email, or ID…" />
+      <Button type="submit" :loading="loading" :disabled="loading" size="small">Search</Button>
     </form>
 
     <p v-if="error" :class="bemm('error')">{{ error }}</p>
@@ -92,13 +115,25 @@ function userLabel(user: AdminManagedUser) {
           :class="bemm('user-card', { active: selectedUser?.id === user.id })"
           @click="choose(user)"
         >
-          <span :class="bemm('avatar')">{{ userLabel(user).charAt(0).toUpperCase() }}</span>
+          <div
+            :class="bemm('avatar')"
+            :style="{
+              ...(user.colorHex ? { background: user.colorHex, color: '#fff' } : {}),
+              ...(user.avatarUrl ? { backgroundImage: `url(${user.avatarUrl})`, backgroundSize: 'cover', backgroundPosition: 'center' } : {}),
+            }"
+          >
+            <span v-if="!user.avatarUrl">{{ userInitials(user) }}</span>
+          </div>
           <span :class="bemm('user-summary')">
-            <strong>{{ userLabel(user) }}</strong>
-            <small>{{ user.kind }} · {{ formatRelativeTime(user.lastSeenAt) }}</small>
+            <strong :class="bemm('user-name')">{{ userDisplayName(user) }}</strong>
+            <small v-if="user.email && user.email !== userDisplayName(user)" :class="bemm('user-email')">{{ user.email }}</small>
+            <small :class="bemm('user-meta')">
+              <span :class="bemm('status-dot', { online: isOnline(user), offline: !isOnline(user) })" />
+              {{ isOnline(user) ? 'Online' : formatRelativeTime(user.lastSeenAt) }}
+              · {{ kindLabel(user.kind) }}
+            </small>
           </span>
-          <span :class="bemm('data-dot', { active: user.hasData })" title="Has data" />
-          <span :class="bemm('role-count')">{{ user.roles.length }}</span>
+          <span v-if="user.roles.length > 0" :class="bemm('role-pill')">{{ formatRole(user.roles[0]) }}</span>
         </button>
 
         <p v-if="!loading && users.length === 0" :class="bemm('empty')">No users found.</p>
@@ -107,36 +142,55 @@ function userLabel(user: AdminManagedUser) {
       <aside :class="bemm('detail')">
         <template v-if="selectedUser">
           <div :class="bemm('detail-header')">
-            <div>
-              <h2 :class="bemm('detail-title')">{{ userLabel(selectedUser) }}</h2>
-              <p :class="bemm('detail-meta')">{{ selectedUser.kind }} · {{ selectedUser.id }}</p>
-              <p :class="bemm('detail-meta')">Last seen {{ formatRelativeTime(selectedUser.lastSeenAt) }} · {{ selectedUser.hasData ? 'Has data' : 'No data' }}</p>
+            <div
+              :class="bemm('detail-avatar')"
+              :style="{
+                ...(selectedUser.colorHex ? { background: selectedUser.colorHex, color: '#fff' } : {}),
+                ...(selectedUser.avatarUrl ? { backgroundImage: `url(${selectedUser.avatarUrl})`, backgroundSize: 'cover', backgroundPosition: 'center' } : {}),
+              }"
+            >
+              <span v-if="!selectedUser.avatarUrl">{{ userInitials(selectedUser) }}</span>
             </div>
-            <div :class="bemm('role-pills')">
-              <span v-for="role in selectedUser.roles" :key="role" :class="bemm('pill')">{{ formatRole(role) }}</span>
-              <span v-if="selectedUser.roles.length === 0" :class="bemm('pill', 'muted')">No roles</span>
+            <div :class="bemm('detail-info')">
+              <h2 :class="bemm('detail-title')">{{ userDisplayName(selectedUser) }}</h2>
+              <p v-if="selectedUser.email" :class="bemm('detail-email')">{{ selectedUser.email }}</p>
+              <div :class="bemm('detail-meta-row')">
+                <span :class="bemm('status-dot', { online: isOnline(selectedUser), offline: !isOnline(selectedUser) })" />
+                <span :class="bemm('detail-meta')">{{ isOnline(selectedUser) ? 'Online now' : `Last seen ${formatRelativeTime(selectedUser.lastSeenAt)}` }}</span>
+                <span :class="bemm('detail-meta')">·</span>
+                <span :class="bemm('detail-meta')">{{ kindLabel(selectedUser.kind) }}</span>
+                <span :class="bemm('detail-meta')">·</span>
+                <span :class="bemm('detail-meta')">{{ selectedUser.hasData ? 'Has data' : 'No data' }}</span>
+              </div>
+              <p :class="bemm('detail-id')">{{ selectedUser.id }}</p>
             </div>
           </div>
 
-          <div :class="bemm('roles')">
-            <button
-              v-for="role in filteredRoles"
-              :key="role.value"
-              type="button"
-              :class="bemm('role-toggle', { active: hasRole(selectedUser, role.value) })"
-              :disabled="saving"
-              @click="toggleRole(selectedUser, role.value)"
-            >
-              <span :class="bemm('role-toggle-mark')">{{ hasRole(selectedUser, role.value) ? '✓' : '+' }}</span>
-              <span :class="bemm('role-toggle-text')">
-                <strong>{{ role.label }}</strong>
-                <small>{{ role.description }}</small>
-              </span>
-            </button>
+          <div :class="bemm('section')">
+            <h3 :class="bemm('section-title')">Role</h3>
+            <p :class="bemm('section-desc')">Each user has exactly one role. Select the appropriate role below.</p>
+            <div :class="bemm('roles')">
+              <button
+                v-for="role in assignableRoles"
+                :key="role.value"
+                type="button"
+                :class="bemm('role-option', { active: selectedUser.roles.includes(role.value) })"
+                :disabled="saving"
+                @click="setSingleRole(selectedUser, role.value)"
+              >
+                <span :class="bemm('role-radio', { checked: selectedUser.roles.includes(role.value) })">
+                  <span v-if="selectedUser.roles.includes(role.value)" :class="bemm('role-radio-dot')" />
+                </span>
+                <span :class="bemm('role-option-text')">
+                  <strong>{{ role.label }}</strong>
+                  <small>{{ role.description }}</small>
+                </span>
+              </button>
+            </div>
           </div>
         </template>
 
-        <p v-else :class="bemm('empty')">Select a user to manage roles.</p>
+        <p v-else :class="bemm('empty')">Select a user to view details.</p>
       </aside>
     </div>
   </section>
@@ -150,8 +204,7 @@ function userLabel(user: AdminManagedUser) {
 
   &__header,
   &__search,
-  &__layout,
-  &__detail-header {
+  &__layout {
     display: flex;
     gap: var(--space-s);
   }
@@ -165,13 +218,23 @@ function userLabel(user: AdminManagedUser) {
     font-size: var(--font-size-xl);
     font-weight: 700;
     color: var(--admin-text);
+    margin: 0;
   }
 
   &__subtitle,
+  &__detail-email,
+  &__detail-id,
   &__detail-meta,
+  &__section-desc,
   &__empty {
     color: var(--admin-text-muted);
     font-size: var(--font-size-s);
+  }
+
+  &__detail-id {
+    font-family: monospace;
+    font-size: var(--font-size-xs);
+    word-break: break-all;
   }
 
   &__search {
@@ -179,7 +242,7 @@ function userLabel(user: AdminManagedUser) {
     background: var(--admin-surface);
     border: 1px solid var(--admin-border);
     border-radius: var(--border-radius-s);
-    padding: var(--space-m);
+    padding: var(--space-s);
   }
 
   &__search > *:first-child {
@@ -223,6 +286,11 @@ function userLabel(user: AdminManagedUser) {
     border-bottom: 1px solid var(--admin-border);
     cursor: pointer;
     text-align: left;
+    transition: background 0.1s ease;
+
+    &:last-child {
+      border-bottom: 0;
+    }
 
     &:hover,
     &--active {
@@ -230,10 +298,9 @@ function userLabel(user: AdminManagedUser) {
     }
   }
 
-  &__avatar,
-  &__role-toggle-mark {
-    width: calc(var(--space) * 2);
-    height: calc(var(--space) * 2);
+  &__avatar {
+    width: calc(var(--space) * 2.5);
+    height: calc(var(--space) * 2.5);
     border-radius: 999px;
     display: grid;
     place-items: center;
@@ -242,43 +309,66 @@ function userLabel(user: AdminManagedUser) {
     border: 1px solid var(--admin-border);
     flex-shrink: 0;
     font-weight: 700;
+    font-size: var(--font-size-m);
   }
 
-  &__user-summary,
-  &__role-toggle-text {
+  &__user-summary {
     display: flex;
     flex-direction: column;
     min-width: 0;
-    gap: calc(var(--space-xs) / 2);
-
-    small {
-      color: var(--admin-text-muted);
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
+    gap: 2px;
+    flex: 1;
   }
 
-  &__data-dot {
-    width: 8px;
-    height: 8px;
+  &__user-name {
+    font-size: var(--font-size-s);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: var(--admin-text);
+  }
+
+  &__user-email {
+    font-size: var(--font-size-xs);
+    color: var(--admin-text-muted);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &__user-meta {
+    display: flex;
+    align-items: center;
+    gap: calc(var(--space-xs) / 2);
+    font-size: var(--font-size-xs);
+    color: var(--admin-text-muted);
+  }
+
+  &__status-dot {
+    width: 6px;
+    height: 6px;
     border-radius: 999px;
     flex-shrink: 0;
-    background: color-mix(in srgb, var(--color-background), var(--color-foreground) 15%);
+    background: color-mix(in srgb, var(--color-background), var(--color-foreground) 20%);
 
-    &--active {
+    &--online {
       background: var(--color-success, #22c55e);
+      box-shadow: 0 0 4px color-mix(in srgb, var(--color-success, #22c55e) 60%, transparent);
+    }
+
+    &--offline {
+      background: color-mix(in srgb, var(--color-background), var(--color-foreground) 20%);
     }
   }
 
-  &__role-count {
-    min-width: calc(var(--space) * 1.5);
-    text-align: center;
+  &__role-pill {
+    border: 1px solid var(--admin-border);
     border-radius: 999px;
-    background: color-mix(in srgb, var(--color-background), var(--color-foreground) 10%);
     color: var(--admin-text-muted);
-    font-size: var(--font-size-xs);
+    background: color-mix(in srgb, var(--color-background), var(--color-foreground) 6%);
     padding: calc(var(--space-xs) / 2) var(--space-xs);
+    font-size: var(--font-size-xs);
+    flex-shrink: 0;
   }
 
   &__detail {
@@ -286,79 +376,154 @@ function userLabel(user: AdminManagedUser) {
     padding: var(--space-m);
     display: flex;
     flex-direction: column;
-    gap: var(--space-m);
+    gap: var(--space-l);
   }
 
   &__detail-header {
-    justify-content: space-between;
+    display: flex;
+    gap: var(--space-m);
     align-items: flex-start;
+  }
+
+  &__detail-avatar {
+    width: calc(var(--space) * 4);
+    height: calc(var(--space) * 4);
+    border-radius: 999px;
+    display: grid;
+    place-items: center;
+    background: color-mix(in srgb, var(--color-background), var(--color-foreground) 10%);
+    color: var(--admin-text);
+    border: 1px solid var(--admin-border);
+    flex-shrink: 0;
+    font-weight: 700;
+    font-size: var(--font-size-l);
+  }
+
+  &__detail-info {
+    display: flex;
+    flex-direction: column;
+    gap: calc(var(--space-xs) / 2);
+    min-width: 0;
   }
 
   &__detail-title {
     font-size: var(--font-size-l);
     font-weight: 700;
     color: var(--admin-text);
+    margin: 0;
   }
 
-  &__role-pills {
+  &__detail-meta-row {
     display: flex;
+    align-items: center;
+    gap: calc(var(--space-xs) / 2);
     flex-wrap: wrap;
-    justify-content: flex-end;
-    gap: var(--space-xs);
   }
 
-  &__pill {
-    border: 1px solid var(--admin-border);
-    border-radius: 999px;
-    color: var(--admin-text);
-    background: color-mix(in srgb, var(--color-background), var(--color-foreground) 8%);
-    padding: calc(var(--space-xs) / 2) var(--space-xs);
-    font-size: var(--font-size-xs);
-
-    &--muted {
-      color: var(--admin-text-muted);
-    }
-  }
-
-  &__roles {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(calc(var(--space) * 15), 1fr));
+  &__section {
+    display: flex;
+    flex-direction: column;
     gap: var(--space-s);
   }
 
-  &__role-toggle {
+  &__section-title {
+    font-size: var(--font-size-m);
+    font-weight: 600;
+    color: var(--admin-text);
+    margin: 0;
+  }
+
+  &__roles {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+  }
+
+  &__role-option {
     display: flex;
     gap: var(--space-s);
     align-items: flex-start;
     text-align: left;
     border: 1px solid var(--admin-border);
     border-radius: var(--border-radius-s);
-    background: color-mix(in srgb, var(--color-background), var(--color-foreground) 4%);
+    background: color-mix(in srgb, var(--color-background), var(--color-foreground) 2%);
     color: var(--admin-text);
     padding: var(--space-s);
     cursor: pointer;
+    transition: background 0.1s ease, border-color 0.1s ease;
 
-    &:hover,
-    &--active {
+    &:hover {
       background: var(--admin-surface-hover);
       border-color: var(--admin-border-strong);
     }
 
+    &--active {
+      background: var(--admin-surface-hover);
+      border-color: var(--color-primary, #6366f1);
+
+      &:hover {
+        border-color: var(--color-primary, #6366f1);
+      }
+    }
+
     &:disabled {
-      opacity: 0.65;
+      opacity: 0.6;
       cursor: wait;
+    }
+  }
+
+  &__role-radio {
+    width: calc(var(--space) * 1.125);
+    height: calc(var(--space) * 1.125);
+    border-radius: 999px;
+    border: 2px solid var(--admin-border-strong);
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    margin-top: 2px;
+    transition: border-color 0.1s ease;
+
+    &--checked {
+      border-color: var(--color-primary, #6366f1);
+    }
+  }
+
+  &__role-radio-dot {
+    width: calc(var(--space) * 0.5);
+    height: calc(var(--space) * 0.5);
+    border-radius: 999px;
+    background: var(--color-primary, #6366f1);
+  }
+
+  &__role-option-text {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+
+    small {
+      color: var(--admin-text-muted);
+      font-size: var(--font-size-xs);
     }
   }
 
   @media (max-width: 900px) {
     &__layout,
-    &__search,
-    &__detail-header {
+    &__search {
       flex-direction: column;
     }
 
     &__list {
       width: 100%;
+    }
+
+    &__detail-header {
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+
+    &__detail-meta-row {
+      justify-content: center;
     }
   }
 }

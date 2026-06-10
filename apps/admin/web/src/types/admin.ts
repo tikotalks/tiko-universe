@@ -16,6 +16,9 @@ export interface AdminManagedUser {
   updatedAt: string
   lastSeenAt: string | null
   hasData: boolean
+  displayName: string | null
+  avatarUrl: string | null
+  colorHex: string | null
 }
 
 export interface AdminConfig {
