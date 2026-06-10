@@ -63,6 +63,9 @@ interface AdminUserListItem {
   updatedAt: string
   lastSeenAt: string | null
   hasData: boolean
+  displayName: string | null
+  avatarUrl: string | null
+  colorHex: string | null
 }
 
 const ADMIN_EMAIL = 'me@sil.mt'
@@ -308,19 +311,20 @@ async function listUsers(authDb: D1Database, appDb: D1Database | undefined, quer
   const { results } = await authDb.prepare(`
     SELECT s.id, s.kind, a.email_plain AS email, s.created_at, s.updated_at,
       MAX(COALESCE(sess.last_seen_at, sess.created_at)) AS last_seen_at,
-      COALESCE(json_group_array(r.role) FILTER (WHERE r.role IS NOT NULL), '[]') AS roles
+      COALESCE(json_group_array(r.role) FILTER (WHERE r.role IS NOT NULL), '[]') AS roles,
+      s.metadata_json
     FROM identity_subjects s
     INNER JOIN identity_accounts a ON a.subject_id = s.id AND a.disabled_at IS NULL AND a.email_hash IS NOT NULL
     LEFT JOIN identity_sessions sess ON sess.subject_id = s.id AND sess.revoked_at IS NULL
     LEFT JOIN identity_role_assignments r ON r.subject_id = s.id AND r.product = ? AND r.revoked_at IS NULL
     WHERE s.product = ? AND s.disabled_at IS NULL
-      AND (? = '%%' OR lower(s.id) LIKE ? OR lower(s.kind) LIKE ? OR lower(COALESCE(a.email_plain, '')) LIKE ?)
-    GROUP BY s.id, s.kind, a.email_plain, s.created_at, s.updated_at
+      AND (? = '%%' OR lower(s.id) LIKE ? OR lower(s.kind) LIKE ? OR lower(COALESCE(a.email_plain, '')) LIKE ? OR lower(COALESCE(json_extract(s.metadata_json, '$.displayName'), '')) LIKE ?)
+    GROUP BY s.id, s.kind, a.email_plain, s.created_at, s.updated_at, s.metadata_json
     ORDER BY last_seen_at DESC, s.created_at DESC
     LIMIT 100
   `)
-    .bind(PRODUCT, PRODUCT, q, q, q, q)
-    .all<{ id: string; kind: string; email: string | null; created_at: string; updated_at: string; last_seen_at: string | null; roles: string | null }>()
+    .bind(PRODUCT, PRODUCT, q, q, q, q, q)
+    .all<{ id: string; kind: string; email: string | null; created_at: string; updated_at: string; last_seen_at: string | null; roles: string | null; metadata_json: string | null }>()
 
   const users = results.map(normalizeUserRow)
   const dataSet = await subjectsWithData(appDb, users.map((u) => u.id))
@@ -334,22 +338,23 @@ async function ensureAdminInUsers(authDb: D1Database, appDb: D1Database | undefi
   const row = await authDb.prepare(`
     SELECT s.id, s.kind, a.email_plain AS email, s.created_at, s.updated_at,
       MAX(COALESCE(sess.last_seen_at, sess.created_at)) AS last_seen_at,
-      COALESCE(json_group_array(r.role) FILTER (WHERE r.role IS NOT NULL), '[]') AS roles
+      COALESCE(json_group_array(r.role) FILTER (WHERE r.role IS NOT NULL), '[]') AS roles,
+      s.metadata_json
     FROM identity_subjects s
     LEFT JOIN identity_accounts a ON a.subject_id = s.id AND a.disabled_at IS NULL
     LEFT JOIN identity_sessions sess ON sess.subject_id = s.id AND sess.revoked_at IS NULL
     LEFT JOIN identity_role_assignments r ON r.subject_id = s.id AND r.product = ? AND r.revoked_at IS NULL
     WHERE s.id = ? AND s.disabled_at IS NULL
-    GROUP BY s.id, s.kind, a.email_plain, s.created_at, s.updated_at
+    GROUP BY s.id, s.kind, a.email_plain, s.created_at, s.updated_at, s.metadata_json
     LIMIT 1
   `)
     .bind(PRODUCT, admin.userId)
-    .first<{ id: string; kind: string; email: string | null; created_at: string; updated_at: string; last_seen_at: string | null; roles: string | null }>()
+    .first<{ id: string; kind: string; email: string | null; created_at: string; updated_at: string; last_seen_at: string | null; roles: string | null; metadata_json: string | null }>()
 
   const dataSet = row ? await subjectsWithData(appDb, [admin.userId]) : new Set<string>()
   const adminUser = row
     ? { ...normalizeUserRow(row), hasData: dataSet.has(admin.userId) }
-    : { id: admin.userId, kind: 'account', email: admin.email, roles: admin.roles as AdminUserListItem['roles'], createdAt: '', updatedAt: '', lastSeenAt: null, hasData: false }
+    : { id: admin.userId, kind: 'account', email: admin.email, roles: admin.roles as AdminUserListItem['roles'], createdAt: '', updatedAt: '', lastSeenAt: null, hasData: false, displayName: null, avatarUrl: null, colorHex: null }
 
   return [adminUser, ...users]
 }
@@ -360,7 +365,8 @@ function matchesAdminQuery(admin: AdminSession, query: string): boolean {
   return [admin.userId, admin.email, ...admin.roles].some((value) => value.toLowerCase().includes(normalized))
 }
 
-function normalizeUserRow(row: { id: string; kind: string; email: string | null; created_at: string; updated_at: string; last_seen_at?: string | null; roles: string | null }): AdminUserListItem {
+function normalizeUserRow(row: { id: string; kind: string; email: string | null; created_at: string; updated_at: string; last_seen_at?: string | null; roles: string | null; metadata_json?: string | null }): AdminUserListItem {
+  const metadata = parseJson(row.metadata_json) as Record<string, unknown> | null
   return {
     id: row.id,
     kind: row.kind,
@@ -370,6 +376,9 @@ function normalizeUserRow(row: { id: string; kind: string; email: string | null;
     updatedAt: row.updated_at,
     lastSeenAt: row.last_seen_at ?? null,
     hasData: false,
+    displayName: typeof metadata?.displayName === 'string' ? metadata.displayName : null,
+    avatarUrl: typeof metadata?.avatarUrl === 'string' ? metadata.avatarUrl : null,
+    colorHex: typeof metadata?.colorHex === 'string' ? metadata.colorHex : null,
   }
 }
 
@@ -472,6 +481,16 @@ async function activeRoleCount(db: D1Database, role: string): Promise<number> {
     .bind(PRODUCT, role)
     .first<{ count: number }>()
   return row?.count ?? 0
+}
+
+function parseJson(raw: string | null | undefined): Record<string, unknown> | null {
+  if (!raw) return null
+  try {
+    const parsed = JSON.parse(raw)
+    return parsed && typeof parsed === 'object' && !Array.isArray(parsed) ? parsed as Record<string, unknown> : null
+  } catch {
+    return null
+  }
 }
 
 function parseRoles(raw: string | null): string[] {

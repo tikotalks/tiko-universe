@@ -120,11 +120,10 @@ export function useImageGeneration() {
       headers: { authorization: `Bearer ${token.value}` },
       body: form,
     })
-    if (!uploadResponse.ok) {
-      const body = await uploadResponse.json().catch(() => null) as { error?: string } | null
-      throw new Error(body?.error ?? `Media upload failed: ${uploadResponse.status}`)
+    const uploadBody = await uploadResponse.json().catch(() => null) as { success?: boolean; id?: string; error?: string; details?: string } | null
+    if (!uploadResponse.ok || !uploadBody?.success) {
+      throw new Error(uploadBody?.error ?? uploadBody?.details ?? `Media upload failed: ${uploadResponse.status}`)
     }
-    const uploadBody = await uploadResponse.json().catch(() => null) as { id?: string } | null
     const mediaId = uploadBody?.id ?? ''
     if (mediaId) {
       await fetch(`${baseUrl()}/images/${encodeURIComponent(item.id)}/media-link`, {

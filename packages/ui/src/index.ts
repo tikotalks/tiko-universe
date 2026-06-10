@@ -3,6 +3,15 @@ export { default as TikoLogo } from './TikoLogo.vue'
 export { default as TikoChildAccountsPanel } from './TikoChildAccountsPanel.vue'
 export { default as TikoProfileMenu } from './TikoProfileMenu.vue'
 export { default as TikoPinPopup } from './TikoPinPopup.vue'
+export { default as TikoSquareTile } from './TikoSquareTile.vue'
+export { default as TikoPagedTileGrid } from './TikoPagedTileGrid.vue'
+export { default as TikoSheet } from './TikoSheet.vue'
+export { default as TikoField } from './TikoField.vue'
+export { default as TikoColorPicker } from './TikoColorPicker.vue'
+export { default as TikoToggleRow } from './TikoToggleRow.vue'
+export { default as TikoSegmentedControl } from './TikoSegmentedControl.vue'
+export { default as TikoSelectionBadge } from './TikoSelectionBadge.vue'
+export { default as TikoEditBadge } from './TikoEditBadge.vue'
 export { useIdentityRuntime, type UseIdentityRuntimeOptions, type IdentityRuntimeState, type StoredIdentity } from './identity-runtime'
 export { useParentMode, type ParentModeDeps } from './parent-mode'
 import type { GenerationTtsRequest, LegacyTtsResponse } from '@tiko/media'
@@ -125,33 +134,7 @@ export const TIKO_PALETTE: string[] = [
   '#98D8C8', // seafoam
 ]
 
-export interface TikoColorEntry {
-  name: string
-  hex: string
-}
-
-export const tikoColors: TikoColorEntry[] = [
-  { name: 'red',     hex: '#E03131' },
-  { name: 'orange',  hex: '#F76707' },
-  { name: 'yellow',  hex: '#FCC419' },
-  { name: 'green',   hex: '#2F9E44' },
-  { name: 'blue',    hex: '#1971C2' },
-  { name: 'purple',  hex: '#9C36B5' },
-  { name: 'pink',    hex: '#F06595' },
-  { name: 'brown',   hex: '#964B00' },
-  { name: 'black',   hex: '#1A1A1A' },
-  { name: 'white',   hex: '#F8F9FA' },
-  { name: 'gray',    hex: '#868E96' },
-  { name: 'beige',   hex: '#F5DEB3' },
-  { name: 'cyan',    hex: '#22B8CF' },
-  { name: 'teal',    hex: '#0CA678' },
-  { name: 'navy',    hex: '#1E3A5F' },
-  { name: 'lime',    hex: '#82C91E' },
-  { name: 'magenta', hex: '#E64980' },
-  { name: 'maroon',  hex: '#92140C' },
-  { name: 'gold',    hex: '#FAB005' },
-  { name: 'silver',  hex: '#C0C0C0' },
-]
+export { tikoColors, type TikoColorEntry } from './tikoColors'
 
 export const tikoKitComponents = [
   'TikoAppHeader',

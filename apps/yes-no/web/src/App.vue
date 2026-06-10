@@ -1,15 +1,16 @@
 <script setup lang="ts">
 import { computed, onMounted, ref, watch } from 'vue'
+import { useBemm } from 'bemm'
 import { Icon, Popup } from '@sil/ui'
 import { IdentityClient } from '@tiko/identity'
 import { TikoDataClient, type YesNoSettings, type YesNoState } from '@tiko/data'
-import { createI18n, defaultLanguage, tikoI18nKeys, tikoLanguages, type TikoLanguage } from '@tiko/i18n'
+import { createI18n, createTikoTranslationLoader, defaultLanguage, tikoI18nKeys, tikoLanguages, type TikoLanguage } from '@tiko/i18n'
 import {
   TikoAppShell,
-  TikoChoiceGrid,
   TikoSettingsPanel,
-  createTikoChoice,
+  TikoSquareTile,
   createTikoTtsClient,
+  tikoColors,
   useIdentityRuntime,
   type IdentityRuntimeState,
   type TikoColorMode
@@ -21,17 +22,27 @@ const storageKey = 'tiko:yes-no'
 const appId = 'yes-no' as const
 const apiBaseUrl = resolveApiBaseUrl()
 const identityBaseUrl = resolveIdentityBaseUrl()
+const bemm = useBemm('yes-no-app', { return: 'string', includeBaseClass: true })
 
-type YesNoAnswer = 'yes' | 'no'
 type SpeakStatus = 'idle' | 'speaking' | 'fallback' | 'error'
+
+interface AnswerTile {
+  id: string
+  label: string
+  speech: string
+  color?: string
+  imageURL?: string
+  icon?: string
+}
 
 interface PersistedState {
   language?: string
   colorMode?: TikoColorMode
   sentence?: string
-  latestAnswer?: YesNoAnswer | string | null
-  latestAnswerId?: YesNoAnswer | null
+  latestAnswer?: string | null
+  latestAnswerId?: string | null
   answerHistory?: string[]
+  answers?: AnswerTile[]
 }
 
 function resolveApiBaseUrl() {
@@ -66,26 +77,37 @@ function toColorMode(value: string | undefined): TikoColorMode {
   return value === 'light' || value === 'dark' || value === 'system' ? value : 'system'
 }
 
-function toAnswer(value: unknown): YesNoAnswer | '' {
-  return value === 'yes' || value === 'no' ? value : ''
+function toAnswerId(value: unknown): string {
+  return typeof value === 'string' ? value : ''
 }
 
-function toHistory(value: unknown): YesNoAnswer[] {
-  return Array.isArray(value) ? value.map(toAnswer).filter((answer): answer is YesNoAnswer => answer !== '').slice(0, 6) : []
+function toHistory(value: unknown): string[] {
+  return Array.isArray(value) ? value.map(toAnswerId).filter(Boolean).slice(0, 6) : []
 }
 
-function answerLabel(answer: YesNoAnswer | '') {
+function colorTokenToHex(color: string | undefined, fallback: string) {
+  if (!color) return fallback
+  if (color.startsWith('#')) return color
+  return tikoColors.find(item => item.name === color)?.hex ?? fallback
+}
+
+function answerLabel(answer: string) {
   if (answer === 'yes') return i18n.t(tikoI18nKeys.yesNo.answers.yes)
   if (answer === 'no') return i18n.t(tikoI18nKeys.yesNo.answers.no)
-  return ''
+  return choices.value.find(choice => choice.id === answer)?.label ?? ''
 }
 
 const stored = readJson<PersistedState>(storageKey, {})
 const i18n = createI18n({ app: appId, language: toLanguage(stored.language) })
+const translationLoader = createTikoTranslationLoader()
+const loadedTranslations = new Set<string>()
+const translationsRevision = ref(0)
 const language = ref<TikoLanguage>(toLanguage(stored.language))
 const colorMode = ref<TikoColorMode>(toColorMode(stored.colorMode))
-const latestAnswerId = ref<YesNoAnswer | ''>(toAnswer(stored.latestAnswerId ?? stored.latestAnswer))
-const answerHistory = ref<YesNoAnswer[]>(toHistory(stored.answerHistory))
+const latestAnswerId = ref<string>(toAnswerId(stored.latestAnswerId ?? stored.latestAnswer))
+const answerHistory = ref<string[]>(toHistory(stored.answerHistory))
+const defaultAnswers = ref<AnswerTile[]>([])
+const customAnswers = ref<AnswerTile[]>(Array.isArray(stored.answers) ? stored.answers : [])
 const settingsOpen = ref(false)
 const historyOpen = ref(false)
 const sentence = ref(stored.sentence || i18n.t(tikoI18nKeys.yesNo.sentence.default))
@@ -117,10 +139,14 @@ const runtimeState: IdentityRuntimeState = {
 }
 const runtime = useIdentityRuntime({ identityClient, state: runtimeState, deviceName: 'Yes No web' })
 
-const defaultSentence = computed(() => i18n.t(tikoI18nKeys.yesNo.sentence.default))
+const defaultSentence = computed(() => {
+  void translationsRevision.value
+  return i18n.t(tikoI18nKeys.yesNo.sentence.default)
+})
 
 const labels = computed(() => {
   void language.value
+  void translationsRevision.value
   return {
     appName: i18n.t(tikoI18nKeys.yesNo.appName),
     sentenceLabel: i18n.t(tikoI18nKeys.yesNo.sentence.label),
@@ -137,10 +163,16 @@ const labels = computed(() => {
   }
 })
 
-const choices = computed(() => [
-  createTikoChoice({ id: 'yes', label: labels.value.yes, tone: 'primary', speechText: labels.value.yes, icon: 'ui/check-fat' }),
-  createTikoChoice({ id: 'no', label: labels.value.no, tone: 'secondary', speechText: labels.value.no, icon: 'wayfinding/cross' })
+const hardcodedAnswers = computed<AnswerTile[]>(() => [
+  { id: 'yes', label: labels.value.yes, speech: labels.value.yes, color: 'green', icon: 'ui/check-fat' },
+  { id: 'no', label: labels.value.no, speech: labels.value.no, color: 'red', icon: 'wayfinding/cross' }
 ])
+
+const choices = computed<AnswerTile[]>(() => {
+  if (customAnswers.value.length) return customAnswers.value
+  if (defaultAnswers.value.length) return defaultAnswers.value
+  return hardcodedAnswers.value
+})
 
 const headerActions = computed(() => parentMode.value ? [
   { id: 'history', label: labels.value.historyTitle, icon: 'ui/clock', active: historyOpen.value },
@@ -163,7 +195,8 @@ function saveLocalFallback() {
     colorMode: colorMode.value,
     sentence: sentence.value,
     latestAnswerId: latestAnswerId.value || null,
-    answerHistory: answerHistory.value
+    answerHistory: answerHistory.value,
+    answers: customAnswers.value
   })
 }
 
@@ -175,19 +208,22 @@ function applySettings(settings: YesNoSettings, version?: number) {
 }
 
 function applyState(state: YesNoState, version?: number) {
-  latestAnswerId.value = toAnswer(state.lastAnswer)
+  latestAnswerId.value = toAnswerId(state.lastAnswer)
   answerHistory.value = toHistory(state.answerHistory)
+  customAnswers.value = Array.isArray(state.answers) ? state.answers as AnswerTile[] : []
   stateVersion.value = version
 }
 
 async function hydrateRemoteData() {
   if (!sessionToken.value) return
-  const [settings, state] = await Promise.all([
+  const [settings, state, defaults] = await Promise.all([
     dataClient.getSettings(appId, sessionToken.value),
-    dataClient.getState(appId, sessionToken.value)
+    dataClient.getState(appId, sessionToken.value),
+    dataClient.getAppDefaults(appId, 'state').catch(() => null)
   ])
   applySettings(settings.settings, settings.version)
   applyState(state.state, state.version)
+  defaultAnswers.value = Array.isArray(defaults?.state.answers) ? defaults.state.answers as AnswerTile[] : []
 }
 
 async function persistSettingsRemote() {
@@ -210,7 +246,8 @@ async function persistStateRemote() {
     const response = await dataClient.putState(appId, sessionToken.value, {
       prompt: sentence.value,
       lastAnswer: latestAnswerId.value || null,
-      answerHistory: answerHistory.value
+      answerHistory: answerHistory.value,
+      answers: customAnswers.value
     }, { version: stateVersion.value })
     stateVersion.value = response.version
   } catch {
@@ -218,8 +255,19 @@ async function persistStateRemote() {
   }
 }
 
+async function loadTranslations(value: TikoLanguage) {
+  if (loadedTranslations.has(value)) return
+  loadedTranslations.add(value)
+  const bundle = await translationLoader({ app: appId, language: value })
+  if (Object.keys(bundle.translations).length > 0) {
+    i18n.addBundle(bundle)
+    translationsRevision.value += 1
+  }
+}
+
 watch(language, (value) => {
   i18n.setLanguage(value)
+  void loadTranslations(value)
 }, { immediate: true })
 
 watch(colorMode, (mode) => {
@@ -264,12 +312,11 @@ async function speak(text: string) {
 }
 
 async function answer(id: string) {
-  const answerId = toAnswer(id)
-  const choice = choices.value.find((item) => item.id === answerId)
-  if (!answerId || !choice) return
-  latestAnswerId.value = answerId
-  answerHistory.value = [answerId, ...answerHistory.value].slice(0, 6)
-  await speak(choice.speechText ?? choice.label)
+  const choice = choices.value.find((item) => item.id === id)
+  if (!choice) return
+  latestAnswerId.value = choice.id
+  answerHistory.value = [choice.id, ...answerHistory.value].slice(0, 6)
+  await speak(choice.speech || choice.label)
 }
 
 function headerAction(id: string) {
@@ -294,20 +341,20 @@ function resetSentence() {
     @header-action="headerAction"
     @avatar-click="runtime.handleAvatarClick"
   >
-    <section class="yes-no-app" :data-color-mode="colorMode">
+    <section :class="bemm('')" :data-color-mode="colorMode">
       <Popup />
-      <section class="yes-no-app__sentence" :aria-label="labels.sentenceLabel">
+      <section :class="bemm('sentence')" :aria-label="labels.sentenceLabel">
         <textarea
           id="yes-no-sentence"
           v-model="sentence"
-          class="yes-no-app__sentence-input"
+          :class="bemm('sentence-input')"
           :rows="2"
           :maxlength="160"
           :aria-label="labels.sentenceLabel"
         />
-        <div class="yes-no-app__sentence-actions">
+        <div :class="bemm('sentence-actions')">
           <button
-            class="yes-no-app__round-control yes-no-app__speak"
+            :class="[bemm('round-control'), bemm('speak')]"
             type="button"
             :disabled="!canSpeakSentence"
             :aria-label="labels.speak"
@@ -316,7 +363,7 @@ function resetSentence() {
             <Icon name="media/volume-iii" size="large" aria-hidden="true" />
           </button>
           <button
-            class="yes-no-app__round-control yes-no-app__reset"
+            :class="[bemm('round-control'), bemm('reset')]"
             type="button"
             :aria-label="labels.reset"
             @click="resetSentence"
@@ -326,8 +373,8 @@ function resetSentence() {
         </div>
       </section>
 
-      <p v-if="speakStatus === 'fallback'" class="yes-no-app__status" role="status">{{ labels.fallback }}</p>
-      <p v-if="speakStatus === 'error'" class="yes-no-app__status yes-no-app__status--error" role="alert">{{ labels.speechError }}</p>
+      <p v-if="speakStatus === 'fallback'" :class="bemm('status')" role="status">{{ labels.fallback }}</p>
+      <p v-if="speakStatus === 'error'" :class="bemm('status', { error: true })" role="alert">{{ labels.speechError }}</p>
 
       <TikoSettingsPanel
         v-if="settingsOpen"
@@ -335,7 +382,7 @@ function resetSentence() {
         v-model:color-mode="colorMode"
       />
 
-      <aside v-if="historyOpen" class="yes-no-app__history" :aria-label="labels.historyLabel">
+      <aside v-if="historyOpen" :class="bemm('history')" :aria-label="labels.historyLabel">
         <strong>{{ labels.historyTitle }}</strong>
         <p v-if="answerHistory.length === 0">{{ labels.historyEmpty }}</p>
         <ol v-else>
@@ -343,8 +390,20 @@ function resetSentence() {
         </ol>
       </aside>
 
-      <TikoChoiceGrid :choices="choices" @answer="answer" />
-      <p v-if="latestAnswerLabel" class="yes-no-app__latest">{{ labels.latest }}: {{ latestAnswerLabel }}</p>
+      <div :class="bemm('answers')" role="list" :aria-label="labels.latest">
+        <TikoSquareTile
+          v-for="choice in choices"
+          :key="choice.id"
+          role="listitem"
+          data-test="tiko-answer-button"
+          :title="choice.label"
+          :background="colorTokenToHex(choice.color, choice.id === 'no' ? '#E03131' : '#2F9E44')"
+          :image-src="choice.imageURL"
+          label-size="large"
+          @press="answer(choice.id)"
+        />
+      </div>
+      <p v-if="latestAnswerLabel" :class="bemm('latest')">{{ labels.latest }}: {{ latestAnswerLabel }}</p>
     </section>
   </TikoAppShell>
 </template>

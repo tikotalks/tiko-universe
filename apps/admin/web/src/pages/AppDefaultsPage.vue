@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { computed, onMounted, reactive, ref, watch } from 'vue'
+import { computed, onMounted, reactive, ref, watch, type Component } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import { useBemm } from 'bemm'
 import { Button, Icon, InputText } from '@sil/ui'
 import { tikoAppConfigs, tikoAppColors, type TikoAppColor, type TikoAppConfig } from '@tiko/ui'
@@ -14,13 +15,15 @@ import TypeEditor from '../components/defaults/TypeEditor.vue'
 import TimerEditor from '../components/defaults/TimerEditor.vue'
 
 const bemm = useBemm('apps-page', { return: 'string', includeBaseClass: true })
+const route = useRoute()
+const router = useRouter()
 
 const appOrder: TikoAppColor[] = ['yes-no', 'type', 'cards', 'sequence', 'timer', 'radio', 'talk', 'todo', 'media', 'admin', 'tiko']
 const editableDefaultsApps = ['cards', 'yes-no', 'sequence', 'type', 'timer', 'radio', 'todo', 'talk'] as const
 
 type DefaultsApp = typeof editableDefaultsApps[number]
 
-const editorByApp: Partial<Record<DefaultsApp, unknown>> = {
+const editorByApp: Partial<Record<DefaultsApp, Component>> = {
   cards: CardsEditor,
   'yes-no': YesNoEditor,
   sequence: SequenceEditor,
@@ -30,7 +33,6 @@ const editorByApp: Partial<Record<DefaultsApp, unknown>> = {
 
 const configApi = useAdminAppConfig()
 const defaultsApi = useAppDefaults()
-const selectedApp = ref<TikoAppColor>('cards')
 const configs = ref<Record<TikoAppColor, AdminManagedAppConfig>>({ ...tikoAppConfigs })
 const configDraft = reactive<TikoAppConfig>({ ...tikoAppConfigs.cards })
 const configDirty = ref(false)
@@ -42,11 +44,26 @@ const defaultsUpdatedAt = ref<string | null>(null)
 const defaultsSavedMessage = ref<string | null>(null)
 const defaultsDirty = ref(false)
 
+const routeApp = computed<TikoAppColor | null>(() => {
+  const param = Array.isArray(route.params.app) ? route.params.app[0] : route.params.app
+  return appOrder.includes(param as TikoAppColor) ? param as TikoAppColor : null
+})
+const isOverview = computed(() => route.name === 'apps' || !routeApp.value)
+const selectedApp = computed<TikoAppColor>(() => routeApp.value ?? 'cards')
 const selectedConfig = computed(() => configs.value[selectedApp.value] ?? tikoAppConfigs[selectedApp.value])
 const selectedColor = computed(() => tikoAppColors[selectedConfig.value.appColor] ?? tikoAppColors[selectedApp.value])
 const defaultsApp = computed<DefaultsApp | null>(() => editableDefaultsApps.includes(selectedApp.value as DefaultsApp) ? selectedApp.value as DefaultsApp : null)
-const currentEditor = computed(() => defaultsApp.value ? editorByApp[defaultsApp.value] ?? null : null)
+const currentEditor = computed<Component | null>(() => defaultsApp.value ? editorByApp[defaultsApp.value] ?? null : null)
 const canEditDefaults = computed(() => Boolean(defaultsApp.value))
+
+function appConfig(app: TikoAppColor) {
+  return configs.value[app] ?? tikoAppConfigs[app]
+}
+
+function appAccent(app: TikoAppColor) {
+  const config = appConfig(app)
+  return config.themeColor || tikoAppConfigs[app]?.themeColor || tikoAppColors[app]?.primary
+}
 
 function syncDraft(config: TikoAppConfig) {
   Object.assign(configDraft, {
@@ -70,7 +87,7 @@ async function loadConfigs() {
   try {
     const next = await configApi.readConfigs()
     configs.value = { ...tikoAppConfigs, ...next }
-    syncDraft(configs.value[selectedApp.value])
+    syncDraft(selectedConfig.value)
   } catch {
     // error is surfaced via configApi.error.value
   }
@@ -103,7 +120,7 @@ async function loadDefaults() {
   defaultsVersion.value = 0
   defaultsUpdatedAt.value = null
   defaultsDirty.value = false
-  if (!defaultsApp.value) return
+  if (!defaultsApp.value || isOverview.value) return
 
   try {
     const payload = await defaultsApi.readDefaults(defaultsApp.value as TikoManagedApp, 'state' satisfies AppResource)
@@ -134,19 +151,23 @@ function onDefaultsUpdate(next: Record<string, unknown>) {
   defaultsDirty.value = true
 }
 
-function selectApp(app: TikoAppColor) {
-  selectedApp.value = app
-}
-
 watch(selectedApp, () => {
   syncDraft(selectedConfig.value)
   void loadDefaults()
 })
 
+watch(isOverview, () => {
+  if (!isOverview.value) void loadDefaults()
+})
+
 onMounted(async () => {
   await loadConfigs()
-  await loadDefaults()
+  if (!isOverview.value) await loadDefaults()
 })
+
+if (!isOverview.value && !routeApp.value) {
+  void router.replace('/apps')
+}
 </script>
 
 <template>
@@ -154,119 +175,130 @@ onMounted(async () => {
     <header :class="bemm('header')">
       <div :class="bemm('intro')">
         <p :class="bemm('eyebrow')">Admin</p>
-        <h1 :class="bemm('title')">Apps</h1>
+        <h1 :class="bemm('title')">{{ isOverview ? 'Apps' : selectedConfig.title }}</h1>
         <p :class="bemm('subtitle')">
-          Manage each app’s title, color, icon, media icon category, and starter defaults.
+          <template v-if="isOverview">
+            Choose an app to manage its settings and starter defaults on a dedicated page.
+          </template>
+          <template v-else>
+            Manage {{ selectedConfig.title }} app settings and starter defaults.
+          </template>
         </p>
       </div>
+      <Button v-if="!isOverview" variant="outline" @click="router.push('/apps')">
+        Back to apps
+      </Button>
     </header>
 
-    <div :class="bemm('layout')">
-      <nav :class="bemm('app-list')" aria-label="Apps">
-        <button
-          v-for="app in appOrder"
-          :key="app"
-          type="button"
-          :class="bemm('app-card', { active: selectedApp === app })"
-          :style="{ '--app-accent': (configs[app]?.themeColor || tikoAppColors[app]?.primary) }"
-          @click="selectApp(app)"
-        >
-          <span :class="bemm('app-icon')">
-            <Icon v-if="(configs[app]?.appIcon || '').includes('/')" :name="configs[app]?.appIcon" size="medium" />
-            <span v-else>{{ configs[app]?.appIcon || app.charAt(0).toUpperCase() }}</span>
+    <section v-if="isOverview" :class="bemm('overview')" aria-label="Apps overview">
+      <router-link
+        v-for="app in appOrder"
+        :key="app"
+        :to="`/apps/${app}`"
+        :class="bemm('overview-card')"
+        :style="{ '--app-accent': appAccent(app) }"
+      >
+        <span :class="bemm('overview-icon')">
+          <Icon v-if="(appConfig(app).appIcon || '').includes('/')" :name="appConfig(app).appIcon" size="medium" />
+          <span v-else>{{ appConfig(app).appIcon || app.charAt(0).toUpperCase() }}</span>
+        </span>
+        <span :class="bemm('overview-copy')">
+          <strong :class="bemm('overview-title')">{{ appConfig(app).title }}</strong>
+          <span :class="bemm('overview-meta')">{{ appConfig(app).appColor }} · {{ appConfig(app).appIconMediaCategory || 'no media category' }}</span>
+        </span>
+        <span :class="bemm('overview-footer')">
+          <span :class="bemm('pill')">Settings</span>
+          <span :class="bemm('pill', { muted: !editableDefaultsApps.includes(app as DefaultsApp) })">
+            {{ editableDefaultsApps.includes(app as DefaultsApp) ? 'Defaults' : 'No defaults' }}
           </span>
-          <span :class="bemm('app-copy')">
-            <strong :class="bemm('app-title')">{{ configs[app]?.title || app }}</strong>
-            <span :class="bemm('app-meta')">{{ configs[app]?.appColor || app }}</span>
-          </span>
-        </button>
-      </nav>
+        </span>
+      </router-link>
+    </section>
 
-      <div :class="bemm('workspace')">
-        <section :class="bemm('panel')" :style="{ '--app-accent': configDraft.themeColor || selectedColor.primary }">
-          <header :class="bemm('panel-head')">
-            <div :class="bemm('panel-intro')">
-              <h2 :class="bemm('panel-title')">App config</h2>
-              <p :class="bemm('panel-meta')">
-                Saved in Admin. Build scripts can export this into each app’s `appConfig.ts`.
-              </p>
-            </div>
-            <div :class="bemm('panel-actions')">
-              <Button variant="outline" :loading="configApi.loading.value" :disabled="configApi.loading.value" @click="loadConfigs">
-                Reload
-              </Button>
-              <Button :loading="configApi.saving.value" :disabled="configApi.saving.value || !configDirty" @click="saveConfig">
-                Save app config
-              </Button>
-            </div>
-          </header>
+    <div v-else :class="bemm('workspace')">
+      <section :class="bemm('panel')" :style="{ '--app-accent': configDraft.themeColor || selectedColor.primary }">
+        <header :class="bemm('panel-head')">
+          <div :class="bemm('panel-intro')">
+            <h2 :class="bemm('panel-title')">App settings</h2>
+            <p :class="bemm('panel-meta')">
+              Saved in Admin. Build scripts can export this into each app’s `appConfig.ts`.
+            </p>
+          </div>
+          <div :class="bemm('panel-actions')">
+            <Button variant="outline" :loading="configApi.loading.value" :disabled="configApi.loading.value" @click="loadConfigs">
+              Reload
+            </Button>
+            <Button :loading="configApi.saving.value" :disabled="configApi.saving.value || !configDirty" @click="saveConfig">
+              Save app settings
+            </Button>
+          </div>
+        </header>
 
-          <p v-if="configApi.error.value" :class="bemm('error')">{{ configApi.error.value }}</p>
-          <p v-if="configSavedMessage" :class="bemm('success')">{{ configSavedMessage }}</p>
+        <p v-if="configApi.error.value" :class="bemm('error')">{{ configApi.error.value }}</p>
+        <p v-if="configSavedMessage" :class="bemm('success')">{{ configSavedMessage }}</p>
 
-          <div :class="bemm('config-form')">
-            <InputText v-model="configDraft.title" label="Title" @update:model-value="onConfigInput" />
-            <InputText v-model="configDraft.appIcon" label="Icon" placeholder="ui/check-fat" @update:model-value="onConfigInput" />
-            <InputText v-model="configDraft.appIconMediaCategory" label="Media icon category" placeholder="animals" @update:model-value="onConfigInput" />
-            <div :class="bemm('field')">
-              <span :class="bemm('field-label')">Icon image</span>
-              <MediaPicker v-model="configDraft.appIconImageUrl!" @update:model-value="onConfigInput" />
-            </div>
-            <div :class="bemm('field')">
-              <span :class="bemm('field-label')">Theme color</span>
-              <div :class="bemm('color-row')">
-                <input type="color" :class="bemm('color-input')" :value="configDraft.themeColor || tikoAppConfigs[selectedApp]?.themeColor || '#2488ff'" @input="(e: Event) => { configDraft.themeColor = (e.target as HTMLInputElement).value; onConfigInput() }" />
-                <InputText :model-value="configDraft.themeColor || ''" placeholder="#2488ff" @update:model-value="(v: string) => { configDraft.themeColor = v; onConfigInput() }" />
-              </div>
-            </div>
-            <div :class="bemm('field')">
-              <span :class="bemm('field-label')">App colors</span>
-              <ColorSwatchPicker
-                :model-value="configDraft.themeColor || tikoAppConfigs[selectedApp]?.themeColor || ''"
-                @update:model-value="(v: string) => { configDraft.themeColor = v; onConfigInput() }"
-              />
+        <div :class="bemm('config-form')">
+          <InputText v-model="configDraft.title" label="Title" @update:model-value="onConfigInput" />
+          <InputText v-model="configDraft.appIcon" label="Icon" placeholder="ui/check-fat" @update:model-value="onConfigInput" />
+          <InputText v-model="configDraft.appIconMediaCategory" label="Media icon category" placeholder="animals" @update:model-value="onConfigInput" />
+          <div :class="bemm('field')">
+            <span :class="bemm('field-label')">Icon image</span>
+            <MediaPicker v-model="configDraft.appIconImageUrl!" @update:model-value="onConfigInput" />
+          </div>
+          <div :class="bemm('field')">
+            <span :class="bemm('field-label')">Theme color</span>
+            <div :class="bemm('color-row')">
+              <input type="color" :class="bemm('color-input')" :value="configDraft.themeColor || tikoAppConfigs[selectedApp]?.themeColor || '#2488ff'" @input="(e: Event) => { configDraft.themeColor = (e.target as HTMLInputElement).value; onConfigInput() }" />
+              <InputText :model-value="configDraft.themeColor || ''" placeholder="#2488ff" @update:model-value="(v: string) => { configDraft.themeColor = v; onConfigInput() }" />
             </div>
           </div>
-        </section>
-
-        <section :class="bemm('panel')">
-          <header :class="bemm('panel-head')">
-            <div :class="bemm('panel-intro')">
-              <h2 :class="bemm('panel-title')">{{ selectedConfig.title }} defaults</h2>
-              <p :class="bemm('panel-meta')">
-                <template v-if="canEditDefaults">
-                  Version {{ defaultsVersion }} · Updated {{ defaultsUpdatedAt || 'never' }}
-                </template>
-                <template v-else>
-                  Defaults are not enabled for this app yet.
-                </template>
-              </p>
-            </div>
-            <div v-if="canEditDefaults" :class="bemm('panel-actions')">
-              <Button variant="outline" :loading="defaultsApi.loading.value" :disabled="defaultsApi.loading.value" @click="loadDefaults">
-                Reload
-              </Button>
-              <Button :loading="defaultsApi.saving.value" :disabled="defaultsApi.saving.value || !defaultsDirty || !currentEditor" @click="saveDefaults">
-                Save defaults
-              </Button>
-            </div>
-          </header>
-
-          <p v-if="defaultsApi.error.value" :class="bemm('error')">{{ defaultsApi.error.value }}</p>
-          <p v-if="defaultsSavedMessage" :class="bemm('success')">{{ defaultsSavedMessage }}</p>
-
-          <component
-            v-if="currentEditor"
-            :is="currentEditor"
-            :model-value="stateValue"
-            @update:model-value="onDefaultsUpdate"
-          />
-          <div v-else :class="bemm('empty')">
-            <Icon name="ui/info" size="large" />
-            <p>App config can be edited now. A custom defaults editor still needs to be added for this app.</p>
+          <div :class="bemm('field')">
+            <span :class="bemm('field-label')">App colors</span>
+            <ColorSwatchPicker
+              :model-value="configDraft.themeColor || tikoAppConfigs[selectedApp]?.themeColor || ''"
+              @update:model-value="(v: string) => { configDraft.themeColor = v; onConfigInput() }"
+            />
           </div>
-        </section>
-      </div>
+        </div>
+      </section>
+
+      <section :class="bemm('panel')">
+        <header :class="bemm('panel-head')">
+          <div :class="bemm('panel-intro')">
+            <h2 :class="bemm('panel-title')">Starter defaults</h2>
+            <p :class="bemm('panel-meta')">
+              <template v-if="canEditDefaults">
+                Version {{ defaultsVersion }} · Updated {{ defaultsUpdatedAt || 'never' }}
+              </template>
+              <template v-else>
+                Defaults are not enabled for this app yet.
+              </template>
+            </p>
+          </div>
+          <div v-if="canEditDefaults" :class="bemm('panel-actions')">
+            <Button variant="outline" :loading="defaultsApi.loading.value" :disabled="defaultsApi.loading.value" @click="loadDefaults">
+              Reload
+            </Button>
+            <Button :loading="defaultsApi.saving.value" :disabled="defaultsApi.saving.value || !defaultsDirty || !currentEditor" @click="saveDefaults">
+              Save defaults
+            </Button>
+          </div>
+        </header>
+
+        <p v-if="defaultsApi.error.value" :class="bemm('error')">{{ defaultsApi.error.value }}</p>
+        <p v-if="defaultsSavedMessage" :class="bemm('success')">{{ defaultsSavedMessage }}</p>
+
+        <component
+          v-if="currentEditor"
+          :is="currentEditor"
+          :model-value="stateValue"
+          @update:model-value="onDefaultsUpdate"
+        />
+        <div v-else :class="bemm('empty')">
+          <Icon name="ui/info" size="large" />
+          <p>App settings can be edited now. A custom defaults editor still needs to be added for this app.</p>
+        </div>
+      </section>
     </div>
   </section>
 </template>
@@ -282,15 +314,22 @@ onMounted(async () => {
   &__workspace,
   &__panel,
   &__panel-intro,
-  &__app-copy {
+  &__overview-copy {
     display: flex;
     flex-direction: column;
+  }
+
+  &__header {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: var(--space-m);
   }
 
   &__intro { gap: var(--space-xs); }
   &__workspace { gap: var(--space-m); min-width: 0; }
   &__panel { gap: var(--space-m); }
-  &__app-copy { gap: 2px; min-width: 0; }
+  &__overview-copy { gap: 2px; min-width: 0; }
 
   &__eyebrow {
     color: var(--color-primary);
@@ -308,68 +347,80 @@ onMounted(async () => {
 
   &__subtitle,
   &__panel-meta,
-  &__app-meta {
+  &__overview-meta {
     color: var(--admin-text-muted);
     font-size: var(--font-size-s);
   }
 
-  &__layout {
+  &__overview {
     display: grid;
-    grid-template-columns: minmax(calc(var(--space) * 16), calc(var(--space) * 20)) minmax(0, 1fr);
-    gap: var(--space-l);
-    align-items: start;
+    grid-template-columns: repeat(auto-fit, minmax(calc(var(--space) * 17), 1fr));
+    gap: var(--space-m);
   }
 
-  &__app-list {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-xs);
-    position: sticky;
-    top: var(--space-m);
-  }
-
-  &__app-card {
+  &__overview-card {
     display: grid;
-    grid-template-columns: calc(var(--space) * 2.5) minmax(0, 1fr);
-    align-items: center;
+    grid-template-columns: calc(var(--space) * 3) minmax(0, 1fr);
     gap: var(--space-s);
-    width: 100%;
-    padding: var(--space-s);
+    min-height: calc(var(--space) * 9);
+    padding: var(--space-m);
     background: var(--admin-surface);
     border: 1px solid var(--admin-border);
+    border-left: 4px solid var(--app-accent, var(--admin-border-strong));
     border-radius: var(--border-radius-s);
     color: var(--admin-text);
-    text-align: left;
-    cursor: pointer;
+    text-decoration: none;
+    transition: background 0.12s ease, border-color 0.12s ease, transform 0.12s ease;
 
     &:hover {
       background: var(--admin-surface-hover);
       border-color: var(--admin-border-strong);
-    }
-
-    &--active {
-      border-color: var(--app-accent);
-      background: color-mix(in srgb, var(--app-accent), transparent 90%);
+      transform: translateY(-1px);
     }
   }
 
-  &__app-icon {
+  &__overview-icon {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: calc(var(--space) * 2.5);
-    height: calc(var(--space) * 2.5);
-    border-radius: var(--border-radius-xs);
-    background: color-mix(in srgb, var(--app-accent), transparent 86%);
-    color: var(--app-accent);
+    width: calc(var(--space) * 3);
+    height: calc(var(--space) * 3);
+    border-radius: var(--border-radius-s);
+    background: var(--admin-surface-hover);
+    color: var(--admin-text);
     font-weight: 700;
   }
 
-  &__app-title,
+  &__overview-title,
   &__panel-title {
     color: var(--admin-text);
     font-size: var(--font-size-m);
     font-weight: 700;
+  }
+
+  &__overview-footer {
+    grid-column: 1 / -1;
+    display: flex;
+    gap: var(--space-xs);
+    flex-wrap: wrap;
+    align-self: end;
+  }
+
+  &__pill {
+    display: inline-flex;
+    align-items: center;
+    min-height: calc(var(--space) * 1.5);
+    padding: 0 var(--space-xs);
+    border-radius: 999px;
+    background: var(--admin-nav-active);
+    color: var(--admin-text);
+    font-size: var(--font-size-xs);
+    font-weight: 600;
+
+    &--muted {
+      background: var(--admin-surface-hover);
+      color: var(--admin-text-muted);
+    }
   }
 
   &__panel {
@@ -390,6 +441,7 @@ onMounted(async () => {
   &__panel-actions {
     display: flex;
     gap: var(--space-s);
+    flex-wrap: wrap;
   }
 
   &__config-form {
@@ -429,15 +481,6 @@ onMounted(async () => {
     background: transparent;
   }
 
-  &__select {
-    min-height: calc(var(--space) * 2.75);
-    padding: 0 var(--space-s);
-    border: 1px solid var(--admin-border);
-    border-radius: var(--border-radius-xs);
-    background: var(--admin-surface);
-    color: var(--admin-text);
-  }
-
   &__error {
     color: var(--color-error);
     font-size: var(--font-size-s);
@@ -460,17 +503,22 @@ onMounted(async () => {
     color: var(--admin-text-muted);
   }
 
-  @media (max-width: 960px) {
-    &__layout { grid-template-columns: 1fr; }
-    &__app-list {
-      position: static;
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(calc(var(--space) * 12), 1fr));
-    }
-  }
-
   @media (max-width: 720px) {
-    &__config-form { grid-template-columns: 1fr; }
+    &__header,
+    &__panel-head,
+    &__panel-actions,
+    &__color-row {
+      flex-direction: column;
+      align-items: stretch;
+    }
+
+    &__overview {
+      grid-template-columns: 1fr;
+    }
+
+    &__config-form {
+      grid-template-columns: 1fr;
+    }
   }
 }
 </style>

@@ -12,6 +12,7 @@
 		2EE9175E29F28F467782D280 /* TikoKit in Frameworks */ = {isa = PBXBuildFile; productRef = D7247D1EFCE9E72267767EB4 /* TikoKit */; };
 		A28C1B0D174587280817DCA0 /* YesNoSpeechService.swift in Sources */ = {isa = PBXBuildFile; fileRef = ACA4B1596AEF26381F6234C3 /* YesNoSpeechService.swift */; };
 		AEF826E4C08B5590BC419989 /* YesNoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C99E9A160668D93E2D88752 /* YesNoView.swift */; };
+		C31BF34E6E940946F38A5CB7 /* YesNoAppConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFF1B4E75F0388887506E441 /* YesNoAppConfig.swift */; };
 		EC6CE986289B68B4B9EF34F6 /* TikoYesNoApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF6BBD658EE7F2E3FFB60F4D /* TikoYesNoApp.swift */; };
 /* End PBXBuildFile section */
 
@@ -33,6 +34,7 @@
 		7C99E9A160668D93E2D88752 /* YesNoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YesNoView.swift; sourceTree = "<group>"; };
 		ACA4B1596AEF26381F6234C3 /* YesNoSpeechService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YesNoSpeechService.swift; sourceTree = "<group>"; };
 		C29DD0F7C2038B0621DDB76E /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		CFF1B4E75F0388887506E441 /* YesNoAppConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YesNoAppConfig.swift; sourceTree = "<group>"; };
 		EF6BBD658EE7F2E3FFB60F4D /* TikoYesNoApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TikoYesNoApp.swift; sourceTree = "<group>"; };
 		FB09AA6545AC873DBC2EE38E /* TikoYesNo.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = TikoYesNo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -73,6 +75,7 @@
 				C29DD0F7C2038B0621DDB76E /* Assets.xcassets */,
 				7357E5FCD5F592CEE258CE95 /* Info.plist */,
 				EF6BBD658EE7F2E3FFB60F4D /* TikoYesNoApp.swift */,
+				CFF1B4E75F0388887506E441 /* YesNoAppConfig.swift */,
 				ACA4B1596AEF26381F6234C3 /* YesNoSpeechService.swift */,
 				7C99E9A160668D93E2D88752 /* YesNoView.swift */,
 			);
@@ -194,6 +197,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				EC6CE986289B68B4B9EF34F6 /* TikoYesNoApp.swift in Sources */,
+				C31BF34E6E940946F38A5CB7 /* YesNoAppConfig.swift in Sources */,
 				A28C1B0D174587280817DCA0 /* YesNoSpeechService.swift in Sources */,
 				AEF826E4C08B5590BC419989 /* YesNoView.swift in Sources */,
 			);

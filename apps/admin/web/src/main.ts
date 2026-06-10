@@ -31,6 +31,7 @@ const routes: RouteRecordRaw[] = [
   { path: '/settings', name: 'settings', component: () => import('./pages/SettingsPage.vue') },
   { path: '/cards', name: 'cards', component: () => import('./pages/CardsPage.vue') },
   { path: '/apps', name: 'apps', component: () => import('./pages/AppDefaultsPage.vue') },
+  { path: '/apps/:app', name: 'app-detail', component: () => import('./pages/AppDefaultsPage.vue') },
   { path: '/defaults', redirect: '/apps' },
   { path: '/support', name: 'support', component: () => import('./pages/CommunicationInboxPage.vue') },
 ]

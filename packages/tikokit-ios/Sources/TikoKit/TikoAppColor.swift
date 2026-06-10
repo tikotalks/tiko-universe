@@ -44,7 +44,6 @@ public extension TikoAppConfig {
     static let sequence = TikoAppConfig(id: .sequence, title: "Sequence", appColor: .sequence, appIconSystemName: "list.bullet.rectangle.fill", appIconMediaCategory: "routines", themeColorHex: 0x16b8a6)
     static let timer = TikoAppConfig(id: .timer, title: "Timer", appColor: .timer, appIconSystemName: "timer", appIconMediaCategory: "transport", themeColorHex: 0xf8c22e)
     static let radio = TikoAppConfig(id: .radio, title: "Radio", appColor: .radio, appIconSystemName: "headphones", appIconMediaCategory: "music", themeColorHex: 0xe84057)
-    static let talk = TikoAppConfig(id: .talk, title: "Talk", appColor: .talk, appIconSystemName: "bubble.left.and.bubble.right.fill", appIconMediaCategory: "communication", themeColorHex: 0x2f80ed)
     static let tiko = TikoAppConfig(id: .tiko, title: "Tiko", appColor: .tiko, appIconSystemName: "heart.fill", appIconMediaCategory: "tiko", themeColorHex: 0xef4f8f)
 }
 
@@ -89,5 +88,11 @@ public extension Color {
         let green = Double((hex & 0x00ff00) >> 8) / 255
         let blue = Double(hex & 0x0000ff) / 255
         self.init(red: red, green: green, blue: blue)
+    }
+
+    init?(hexString: String) {
+        let normalized = hexString.trimmingCharacters(in: .whitespacesAndNewlines).replacingOccurrences(of: "#", with: "")
+        guard normalized.count == 6, let hex = UInt32(normalized, radix: 16) else { return nil }
+        self.init(hex: hex)
     }
 }

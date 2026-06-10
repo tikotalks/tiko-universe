@@ -556,3 +556,326 @@ body {
   font-weight: 900;
   cursor: pointer;
 }
+
+.tiko-square-tile {
+  position: relative;
+  display: flex;
+  width: 100%;
+  height: 100%;
+  align-items: stretch;
+  justify-content: stretch;
+  padding: 0;
+  overflow: hidden;
+  color: #fff;
+  border: 0;
+  border-radius: 20px;
+  box-shadow: 0 8px 18px color-mix(in srgb, #000, transparent 88%);
+  cursor: pointer;
+  transition: transform 0.16s ease, box-shadow 0.16s ease, filter 0.16s ease;
+}
+
+.tiko-square-tile:active {
+  transform: scale(0.96);
+}
+
+.tiko-square-tile--editing {
+  transform: scale(0.92);
+}
+
+.tiko-square-tile--selected {
+  filter: saturate(0.85) brightness(0.86);
+}
+
+.tiko-square-tile--active {
+  box-shadow: 0 0 0 4px color-mix(in srgb, #fff, transparent 35%), 0 12px 24px color-mix(in srgb, #000, transparent 82%);
+}
+
+.tiko-square-tile__image {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.tiko-square-tile__label {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  display: block;
+  padding: 6px 8px;
+  color: #fff;
+  background: color-mix(in srgb, #000, transparent 12%);
+  font-size: 0.84rem;
+  font-weight: 850;
+  line-height: 1.08;
+  text-align: center;
+  text-shadow: 0 1px 3px color-mix(in srgb, #000, transparent 40%);
+}
+
+.tiko-square-tile--label-small .tiko-square-tile__label {
+  font-size: 0.72rem;
+}
+
+.tiko-square-tile--label-large .tiko-square-tile__label {
+  font-size: 0.98rem;
+}
+
+.tiko-paged-tile-grid {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  flex-direction: column;
+  touch-action: pan-y;
+  user-select: none;
+}
+
+.tiko-paged-tile-grid__track {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  transition: transform 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  will-change: transform;
+}
+
+.tiko-paged-tile-grid__track--dragging,
+.tiko-paged-tile-grid__track--reduce-motion {
+  transition: none;
+}
+
+.tiko-paged-tile-grid__page {
+  box-sizing: border-box;
+  display: grid;
+  flex-shrink: 0;
+  align-content: start;
+  gap: 12px;
+  height: 100%;
+  padding: 12px;
+  overflow: hidden;
+}
+
+.tiko-paged-tile-grid__page--cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.tiko-paged-tile-grid__page--cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.tiko-paged-tile-grid__page--cols-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.tiko-paged-tile-grid__page--cols-5 { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+.tiko-paged-tile-grid__page--cols-6 { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+.tiko-paged-tile-grid__page--cols-7 { grid-template-columns: repeat(7, minmax(0, 1fr)); }
+
+.tiko-paged-tile-grid__dots {
+  display: flex;
+  flex-shrink: 0;
+  justify-content: center;
+  gap: 7px;
+  padding: 6px 0 8px;
+}
+
+.tiko-paged-tile-grid__dot {
+  width: 7px;
+  height: 7px;
+  padding: 0;
+  background: color-mix(in srgb, var(--color-foreground), transparent 78%);
+  border: 0;
+  border-radius: 999px;
+  cursor: pointer;
+}
+
+.tiko-paged-tile-grid__dot--active {
+  width: 9px;
+  height: 9px;
+  background: color-mix(in srgb, var(--color-foreground), transparent 40%);
+}
+
+.tiko-sheet {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  min-width: min(100%, 320px);
+}
+
+.tiko-sheet__header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.tiko-sheet__title {
+  margin: 0;
+  font-size: 1.2rem;
+  font-weight: 900;
+}
+
+.tiko-sheet__icon {
+  display: grid;
+  width: 42px;
+  height: 42px;
+  place-items: center;
+  overflow: hidden;
+  color: var(--tiko-app-primary-text);
+  background: var(--tiko-app-primary);
+  border-radius: 12px;
+  font-size: 0.72rem;
+  font-weight: 900;
+}
+
+.tiko-sheet__body {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.tiko-sheet__footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.tiko-field,
+.tiko-color-picker,
+.tiko-segmented-control {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  text-align: left;
+}
+
+.tiko-field__label,
+.tiko-color-picker__label,
+.tiko-segmented-control__label {
+  margin: 0;
+  color: color-mix(in srgb, var(--color-foreground), transparent 32%);
+  font-size: 0.74rem;
+  font-weight: 850;
+  text-transform: uppercase;
+}
+
+.tiko-field__control {
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 42px;
+  padding: 9px 11px;
+  color: var(--color-foreground);
+  background: color-mix(in srgb, var(--color-background), var(--color-foreground) 4%);
+  border: 1px solid color-mix(in srgb, var(--color-foreground), transparent 84%);
+  border-radius: 12px;
+}
+
+.tiko-field__control--multiline {
+  min-height: 76px;
+  resize: vertical;
+}
+
+.tiko-field__control:focus {
+  border-color: var(--tiko-app-primary);
+  outline: 3px solid color-mix(in srgb, var(--tiko-app-primary), transparent 78%);
+}
+
+.tiko-color-picker__swatches {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 8px;
+}
+
+.tiko-color-picker__swatch {
+  aspect-ratio: 1;
+  padding: 0;
+  border: 3px solid transparent;
+  border-radius: 999px;
+  cursor: pointer;
+}
+
+.tiko-color-picker__swatch--active {
+  border-color: color-mix(in srgb, var(--color-foreground), transparent 18%);
+  box-shadow: 0 0 0 3px color-mix(in srgb, #fff, transparent 20%) inset;
+}
+
+.tiko-toggle-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 12px;
+  background: color-mix(in srgb, var(--color-foreground), transparent 94%);
+  border-radius: 14px;
+  font-weight: 800;
+}
+
+.tiko-toggle-row__control {
+  width: 20px;
+  height: 20px;
+}
+
+.tiko-segmented-control__items {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  padding: 4px;
+  background: color-mix(in srgb, var(--color-foreground), transparent 94%);
+  border-radius: 14px;
+}
+
+.tiko-segmented-control__item {
+  min-height: 34px;
+  color: var(--color-foreground);
+  background: transparent;
+  border: 0;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 800;
+}
+
+.tiko-segmented-control__item--active {
+  color: var(--tiko-app-primary-text);
+  background: var(--tiko-app-primary);
+}
+
+.tiko-selection-badge,
+.tiko-edit-badge {
+  position: absolute;
+  z-index: 2;
+  display: grid;
+  width: 28px;
+  height: 28px;
+  place-items: center;
+  padding: 0;
+  border: 0;
+  border-radius: 999px;
+  box-shadow: 0 4px 10px color-mix(in srgb, #000, transparent 78%);
+  cursor: pointer;
+}
+
+.tiko-selection-badge {
+  top: 6px;
+  left: 6px;
+  background: color-mix(in srgb, var(--color-background), transparent 8%);
+}
+
+.tiko-selection-badge::before {
+  width: 16px;
+  height: 16px;
+  content: "";
+  border: 2px solid color-mix(in srgb, var(--color-foreground), transparent 45%);
+  border-radius: inherit;
+}
+
+.tiko-selection-badge--selected {
+  color: var(--tiko-app-primary-text);
+  background: var(--tiko-app-primary);
+}
+
+.tiko-selection-badge--selected::before {
+  display: none;
+}
+
+.tiko-edit-badge {
+  top: 6px;
+  right: 6px;
+  color: #fff;
+  background: #ff922b;
+  font-weight: 900;
+}
+
+.tiko-edit-badge--user-owned {
+  color: var(--tiko-app-primary-text);
+  background: var(--tiko-app-primary);
+}
