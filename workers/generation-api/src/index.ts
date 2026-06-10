@@ -153,6 +153,7 @@ export default {
     if (url.pathname === '/v1/generation/image' && request.method === 'POST') return requireAuth(request, env, () => generateImage(request, env))
     if (url.pathname.startsWith('/v1/generation/images/') && url.pathname.endsWith('/binary') && request.method === 'GET') return getImage(url.pathname, env)
     if (url.pathname.startsWith('/v1/generation/images/') && url.pathname.endsWith('/promote') && request.method === 'POST') return requireAuth(request, env, () => promoteImage(url.pathname, env))
+    if (url.pathname.startsWith('/v1/generation/images/') && url.pathname.endsWith('/media-link') && request.method === 'POST') return requireAuth(request, env, () => linkImageMedia(url.pathname, request, env))
     if (url.pathname.startsWith('/v1/generation/images/') && url.pathname.endsWith('/enrich') && request.method === 'POST') return requireAuth(request, env, () => enrichImage(url.pathname, env))
     if (url.pathname.startsWith('/v1/generation/images/') && url.pathname.endsWith('/edit') && request.method === 'POST') return requireAuth(request, env, () => editImageVariant(url.pathname, request, env))
     if (url.pathname.startsWith('/v1/generation/images/') && url.pathname.endsWith('/upscale') && request.method === 'POST') return requireAuth(request, env, () => upscaleImage(url.pathname, request, env))
@@ -842,10 +843,12 @@ function makeSilentMp3Padding(): Uint8Array {
 // ── Image generation (DALL-E 3) ──────────────────────────────────
 
 type ImageMode = 'icon' | 'coloring' | 'background'
+type TikoStyle = 'tiko-original' | 'tiko-v2' | 'tiko-natural'
 
 interface ImageGenerationRequest {
   prompt: string
   mode?: ImageMode
+  tikoStyle?: TikoStyle
   size?: '1024x1024' | '1024x1792' | '1792x1024'
   quality?: 'standard' | 'hd'
   style?: 'vivid' | 'natural'
@@ -876,21 +879,59 @@ interface GeneratedImageRecord {
   description: string | null
   is_public: number
   is_preview: number
+  media_id: string | null
   created_at: string
   updated_at: string
 }
 
 const ALLOWED_IMAGE_SIZES = new Set(['1024x1024', '1024x1792', '1792x1024'])
 
-const IMAGE_STYLE_SPECS: Record<ImageMode, object> = {
-  icon: {
+const ICON_STYLE_SPECS: Record<TikoStyle, object> = {
+  'tiko-original': {
+    task: "Generate a friendly flat 2D icon in a warm, sticker-like illustration style. Clean, bold, child-friendly.",
+    style_reference: "Flat 2D illustration — like a cheerful sticker or children's book icon. Clean filled shapes with soft outlines. Warm, saturated colors. Minimal shading: flat fills with very subtle edge darkening for form. No 3D rendering, no volumetric lighting.",
+    icon_idea: null,
+    render_style: {
+      materials: "Flat color fills only. Suggest material through color and simple shape — no volumetric rendering, no specular highlights.",
+      shapes: "Bold, clean, simplified. Rounded corners, friendly proportions. Slightly stylized — not ultra-minimal, not overly complex.",
+      colors: "Warm, cheerful, limited palette: 2–3 bold fills. Saturated but not neon. Warm orange, sky blue, leaf green, sun yellow. Objects look like themselves in a friendly sticker way.",
+      lighting: "Flat or very soft inner glow only. No cast shadows, no volumetric lighting.",
+      background: "transparent"
+    },
+    composition: {
+      camera: "Straight front-facing or very slight 3/4.",
+      layout: "Single centered subject. Clean silhouette. Optional very subtle drop shadow for grounding.",
+      aspect_ratio: "1:1 square, minimum 1024x1024px",
+      file_format: "High-res PNG"
+    },
+    surface_texture: {
+      enable: false,
+      texture_strength: "none",
+      texture_scale: "none",
+      rules: "No texture. Flat fills only."
+    },
+    material_hints: {
+      animal: "Flat colored areas with simple outline details.",
+      plant: "Solid green fills, simple vein line if needed.",
+      fabric: "Flat colored panel; seam lines optional.",
+      metal: "Flat color with optional thin highlight line.",
+      plastic: "Flat color, small circular highlight dot."
+    },
+    details: {
+      expression: "Friendly, simple. Faces optional unless specified.",
+      structure: "Bold simplified forms; immediately readable at small sizes.",
+      pose: "Clean silhouette for icon use.",
+      style_constraints: "No 3D rendering, no gradient shading, no complex textures, no text or letters unless explicitly requested."
+    }
+  },
+  'tiko-v2': {
     task: "Generate a 3D icon in a soft, stylized, contemporary look (playful but mature). Absolutely no leaves, foliage, plant elements, or text/letters unless explicitly described in icon_idea.",
     style_reference: "Soft 3D icon style in a playful, toy-like aesthetic. Smooth rounded forms, vivid natural color, calm proportions. Think high-quality vinyl toy or clay render — stylized and charming, not realistic. Subtle volumetric hints for depth but never photoreal. UI-friendly and readable at small sizes.",
     icon_idea: null,
     render_style: {
       materials: "Soft matte vinyl/clay feel. Suggest material through color and form, not texture maps — a bowl of rice has distinguishable kernels, wood has warm tone variation, fruit has gentle color gradation. Stay stylized, never photorealistic.",
       shapes: "Rounded but not chubby: tighter corner radii, controlled bevels, clean planes. No toy-like bulges; maintain confident geometry.",
-      colors: "Vivid, truthful colors. Objects should look like themselves — green leaves, red tomatoes, golden bread. 2–3 core colors plus one subtle accent. Rich but natural saturation; avoid candy/neon or rainbow mixes.",
+      colors: "Truthful colors at natural saturation. Objects look like themselves — green leaves, red tomatoes, golden bread. 2–3 core colors plus one subtle accent. Balanced saturation; avoid candy/neon, rainbow mixes, or oversaturated single-hue dominance.",
       lighting: "Soft studio lighting with gentle key–fill contrast for a hint of dimension — just enough to lift the subject off the page. Faint rim light for pop. Soft grounded shadow. Think vinyl toy photography, not product photography. No harsh speculars.",
       background: "transparent"
     },
@@ -920,6 +961,47 @@ const IMAGE_STYLE_SPECS: Record<ImageMode, object> = {
       style_constraints: "No oversized features, blush, sparkles, heavy gloss, visible grain, leaves, foliage, vines, plant parts, text, letters, numbers, or typographic elements unless explicitly requested."
     }
   },
+  'tiko-natural': {
+    task: "Generate a soft 3D icon in a natural, balanced style. Same rounded toy-like forms as Tiko V2 but with a calm, grounded color palette — no oversaturation.",
+    style_reference: "Soft 3D icon with natural, balanced colors. Same rounded vinyl-toy aesthetic but with saturation pulled back to feel like matte print, not screen-vivid. Think Scandinavian children's illustration — sage greens, dusty reds, warm beiges, soft powder blues.",
+    icon_idea: null,
+    render_style: {
+      materials: "Same satin-matte vinyl/clay as V2 but colors feel like matte paint on physical objects. Let material warmth come through naturally without pushing saturation.",
+      shapes: "Rounded but confident. Same as V2.",
+      colors: "Natural, mid-saturation palette: 2–3 muted-to-balanced colors. A tomato is warm dusty red, leaves are sage green, bread is warm beige, sky is powder blue. Never neon, never washed-out. Target mid-saturation with warm undertones. When in doubt, choose more muted over more vivid.",
+      lighting: "Same soft studio lighting as V2 but slightly warmer and lower-contrast. Lean toward calm, diffuse light. No harsh speculars.",
+      background: "transparent"
+    },
+    composition: {
+      camera: "Orthographic or slight 3/4 top-front.",
+      layout: "Single centered subject, grounded shadow or soft float. No decorative clutter.",
+      aspect_ratio: "1:1 square, minimum 1024x1024px",
+      file_format: "High-res PNG"
+    },
+    surface_texture: {
+      enable: true,
+      texture_strength: "minimal",
+      texture_scale: "micro",
+      rules: "Same as V2 — suggest material through subtle cues, not texture maps."
+    },
+    material_hints: {
+      animal: "Ultra-fine short flocking only on edges.",
+      plant: "Very light velvety bloom on leaves.",
+      fabric: "Tight felt suggestion, barely visible.",
+      metal: "Fine powder-coat hint.",
+      plastic: "Smooth satin polymer."
+    },
+    details: {
+      expression: "Neutral; no faces unless specified.",
+      structure: "Clear, mature proportions; stylized but not cute or distorted.",
+      pose: "Clean silhouette for icon use.",
+      style_constraints: "No oversaturation, no candy colors, no neon. No sparkles, gloss streaks, or heavy specular. No text or letters unless explicitly requested."
+    }
+  }
+}
+
+const IMAGE_STYLE_SPECS: Record<ImageMode, object> = {
+  icon: ICON_STYLE_SPECS['tiko-v2'],
   coloring: {
     task: "Generate a black-and-white coloring page (clean line art only). The subject must be fully contained within the frame with no parts cut off. CRITICAL: Absolutely NO border lines, frames, or rectangles around the edge of the image.",
     style_reference: "Crisp, closed outlines with consistent stroke weight; pure black lines on white; no shading, gradients, textures, halftones, or colors. Subject fully visible with generous padding from edges. The edge of the image must be pure white with no lines.",
@@ -1006,17 +1088,40 @@ const IMAGE_STYLE_SPECS: Record<ImageMode, object> = {
   }
 }
 
-const ART_DIRECTOR_SYSTEM_PROMPTS: Record<ImageMode, string> = {
-  icon: `You are a senior art director. Convert the user's JSON style spec into a single, explicit, 180–300 word image brief for an image-generation model.
+const ICON_ART_DIRECTOR_PROMPTS: Record<TikoStyle, string> = {
+  'tiko-original': `You are a senior art director. Convert the user's JSON style spec into a single, explicit, 180–300 word image brief for an image-generation model.
+Rules:
+- Flat 2D illustration only — no 3D rendering, no volumetric lighting, no plastic or vinyl shine.
+- Clean filled shapes with soft outlines; warm, cheerful, limited color palette.
+- Minimal shading: flat fills with at most a very subtle inner glow or edge darkening for form. No cast shadows.
+- Think cheerful sticker art or a friendly children's book illustration — instantly readable, simple, warm.
+- Do not use any text, letters, or numbers in the images.
+- Include: subject, composition, color palette (name specific warm/bold hues), outline style, simplification level, dos/don'ts.
+- Be directive, not optional. No meta talk. No lists. No JSON.`,
+  'tiko-v2': `You are a senior art director. Convert the user's JSON style spec into a single, explicit, 180–300 word image brief for an image-generation model.
 Rules:
 - Do not use any wording or letters in the images.
-- Keep ONE consistent visual style across outputs (soft 3D toy-like, rounded forms, vivid truthful color).
+- Keep ONE consistent visual style across outputs (soft 3D toy-like, rounded forms, balanced truthful color).
 - The overall aesthetic is playful and stylized like a high-quality vinyl toy or clay render — NOT photorealistic. Ever.
-- Vivid, honest colors: a leaf is vivid green, rice is cream, a tomato is rich red. Never wash out or desaturate.
+- Truthful colors at natural saturation: a leaf is green, rice is cream, a tomato is red. Keep saturation balanced — not washed out, not candy-bright. Avoid any single hue dominating the whole image.
 - Subtle hints of dimension: soft shadows, gentle light wrapping. Just enough to not look flat. Not realistic shading.
 - Suggest material identity through form and color cues (rice kernels, wood warmth) — never through photorealistic texture.
 - Include: subject, camera, composition, lighting, palette, materials, textures, surface detail, silhouettes, dos/don'ts.
 - Be directive, not optional. No meta talk. No lists. No JSON.`,
+  'tiko-natural': `You are a senior art director. Convert the user's JSON style spec into a single, explicit, 180–300 word image brief for an image-generation model.
+Rules:
+- Do not use any text or letters in the images.
+- Same soft 3D toy-like style as Tiko V2 — rounded forms, vinyl/clay aesthetic, NOT photorealistic.
+- CRITICAL: use natural, balanced colors. Pull saturation back to feel like matte print, not a screen-vivid render. A tomato is warm dusty red, not bright neon red. Leaves are sage green, not vivid emerald. Bread is warm beige. Sky is powder blue.
+- Target mid-saturation with warm undertones throughout. When choosing between vivid and muted, always choose more muted.
+- Soft studio lighting, same as V2 but slightly warmer and lower-contrast. Lean toward calm diffuse light. No harsh speculars.
+- Suggest material identity through form and color cues — never through photorealistic texture.
+- Include: subject, camera, composition, lighting, palette (with specific muted/warm color names), materials, textures, surface detail, silhouettes, dos/don'ts.
+- Be directive, not optional. No meta talk. No lists. No JSON.`,
+}
+
+const ART_DIRECTOR_SYSTEM_PROMPTS: Record<ImageMode, string> = {
+  icon: ICON_ART_DIRECTOR_PROMPTS['tiko-v2'],
   coloring: `You are a senior art director. Convert the user's JSON style spec into a single, explicit, 180–300 word image brief for an image-generation model producing a coloring page.
 Rules:
 - EMPHASIZE no border lines or frames at the image edges. The image must have a pure white background that extends to the edges with no black lines forming a border or frame.
@@ -1032,10 +1137,16 @@ Rules:
 - Be directive, not optional. No meta talk. No lists. No JSON.`
 }
 
-async function boostPrompt(subject: string, mode: ImageMode, env: Env): Promise<string> {
+async function boostPrompt(subject: string, mode: ImageMode, tikoStyle: TikoStyle, env: Env): Promise<string> {
   if (!env.ATLAS_SERVICE) throw new Error('Atlas service not available for prompt boost')
 
-  const spec = { ...IMAGE_STYLE_SPECS[mode], icon_idea: subject }
+  const spec = mode === 'icon'
+    ? { ...ICON_STYLE_SPECS[tikoStyle], icon_idea: subject }
+    : { ...IMAGE_STYLE_SPECS[mode], icon_idea: subject }
+  const systemPrompt = mode === 'icon'
+    ? ICON_ART_DIRECTOR_PROMPTS[tikoStyle]
+    : ART_DIRECTOR_SYSTEM_PROMPTS[mode]
+
   const atlasBase = (env.ATLAS_BASE_URL ?? 'https://tiko-atlas-api-dev.silvandiepen.workers.dev/v1/atlas').replace(/\/$/, '')
   const response = await env.ATLAS_SERVICE!.fetch(new Request(`${atlasBase}/run`, {
     method: 'POST',
@@ -1044,7 +1155,7 @@ async function boostPrompt(subject: string, mode: ImageMode, env: Env): Promise<
       capability: 'text.generate',
       app: 'generation-api',
       purpose: 'image-art-director',
-      input: { input: JSON.stringify(spec, null, 2), system: ART_DIRECTOR_SYSTEM_PROMPTS[mode] },
+      input: { input: JSON.stringify(spec, null, 2), system: systemPrompt },
     }),
   }))
 
@@ -1077,36 +1188,45 @@ async function generateImage(request: Request, env: Env): Promise<Response> {
     return apiError('invalid_size', 'Size must be 1024x1024, 1024x1792, or 1792x1024.', 400, 'size')
   }
 
-  const count = typeof body.count === 'number' && body.count >= 1 && body.count <= 4 ? body.count : 1
+  const count = typeof body.count === 'number' && body.count >= 1 && body.count <= 8 ? body.count : 1
   const size = body.size || '1024x1024'
   const quality = body.quality === 'hd' ? 'hd' : 'standard'
   const style = body.style === 'natural' ? 'natural' : 'vivid'
   const mode: ImageMode = body.mode === 'coloring' || body.mode === 'background' ? body.mode : 'icon'
+  const tikoStyle: TikoStyle = body.tikoStyle === 'tiko-original' || body.tikoStyle === 'tiko-natural' ? body.tikoStyle : 'tiko-v2'
   const transparent = body.transparent !== undefined ? body.transparent : (mode === 'icon')
 
   if (!env.ATLAS_SERVICE) return apiError('atlas_not_available', 'Atlas service is not available.', 503)
   const atlasBase = (env.ATLAS_BASE_URL ?? 'https://tiko-atlas-api-dev.silvandiepen.workers.dev/v1/atlas').replace(/\/$/, '')
 
-  // Multi-preview mode: generate N separate images concurrently for true variety.
-  // Calls OpenAI directly with gpt-image-1 for transparent backgrounds at low quality.
+  // Multi-preview mode: boost the prompt once via art director, then generate N images concurrently
+  // with composition-only variation hints (no color-mood hints that cause hue dominance).
   if (count > 1) {
     if (!env.OPENAI_API_KEY) return apiError('openai_not_configured', 'OpenAI is not configured.', 503)
+
+    let boostedBrief = body.prompt.trim()
+    try {
+      boostedBrief = await boostPrompt(body.prompt.trim(), mode, tikoStyle, env)
+    } catch {
+      // fall back to raw prompt
+    }
+
     const variationHints = [
-      'A warm, soft, cozy interpretation.',
-      'A bright, playful, energetic interpretation.',
-      'A calm, gentle, dreamy interpretation.',
-      'A bold, vivid, dynamic interpretation.',
+      'Slight 3/4 top-front angle.',
+      'Straight front-facing, centered.',
+      'Gentle top-down perspective.',
+      'Eye-level view, soft grounded shadow.',
     ]
     const now = new Date().toISOString()
     const calls = Array.from({ length: count }, async (_, i) => {
-      const variedPrompt = `${body.prompt.trim()}\n\nStyle variation: ${variationHints[i % variationHints.length]}`
+      const variedPrompt = `${boostedBrief}\n\nComposition hint: ${variationHints[i % variationHints.length]}`
       try {
         const payload: Record<string, unknown> = {
-          model: 'gpt-image-1',
+          model: 'gpt-image-1-mini',
           prompt: variedPrompt,
           size,
           n: 1,
-          quality: 'low',
+          quality: 'medium',
           background: 'transparent',
         }
         const openaiResponse = await fetch('https://api.openai.com/v1/images/generations', {
@@ -1145,12 +1265,12 @@ async function generateImage(request: Request, env: Env): Promise<Response> {
           is_public, is_preview, created_at, updated_at
         ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`).bind(
           id, body.prompt.trim(), imageItem.revised_prompt || null,
-          'gpt-image-1', size, 'low', style, imageUrl, r2Key,
+          'gpt-image-1-mini', size, 'medium', tikoStyle, imageUrl, r2Key,
           'image/png', imageBytes.byteLength, dims.width, dims.height,
           body.category || 'generated', JSON.stringify(body.tags || []), body.title || null, null,
           0, 1, now, now,
         ).run()
-        return { id, imageUrl, prompt: body.prompt.trim(), revisedPrompt: imageItem.revised_prompt || null, size, quality: 'low', style, width: dims.width, height: dims.height, fileSizeBytes: imageBytes.byteLength, isPreview: true, createdAt: now }
+        return { id, imageUrl, prompt: body.prompt.trim(), revisedPrompt: imageItem.revised_prompt || null, size, quality: 'medium', style: tikoStyle, width: dims.width, height: dims.height, fileSizeBytes: imageBytes.byteLength, isPreview: true, createdAt: now }
       } catch (e) {
         console.error('[generate] Variation', i, 'failed', e)
         return null
@@ -1165,7 +1285,7 @@ async function generateImage(request: Request, env: Env): Promise<Response> {
   // Single image: use art director boost then generate
   let artBrief: string
   try {
-    const boosted = await boostPrompt(body.prompt.trim(), mode, env)
+    const boosted = await boostPrompt(body.prompt.trim(), mode, tikoStyle, env)
     artBrief = boosted || body.prompt.trim()
   } catch {
     artBrief = body.prompt.trim()
@@ -1273,7 +1393,7 @@ async function listImages(request: Request, env: Env): Promise<Response> {
   const rows = await env.GENERATION_DB.prepare(
     `SELECT id, prompt, revised_prompt, model, size, quality, style, image_url, r2_key,
             content_type, file_size_bytes, width, height, category, tags, title, description,
-            is_public, is_preview, created_at, updated_at
+            is_public, is_preview, media_id, created_at, updated_at
      FROM generated_images
      WHERE is_public = ?
      ORDER BY created_at DESC
@@ -1304,6 +1424,7 @@ async function listImages(request: Request, env: Env): Promise<Response> {
       tags: JSON.parse(r.tags || '[]'),
       model: r.model,
       isPreview: r.is_preview === 1,
+      mediaId: r.media_id ?? null,
       status: r.is_public === 1 ? 'promoted' : 'draft',
       createdAt: r.created_at,
     })),
@@ -1328,6 +1449,29 @@ async function promoteImage(pathname: string, env: Env): Promise<Response> {
 
   if (!result.meta?.changes) return apiError('image_not_found', 'Image not found.', 404)
   return json({ data: { id, status: 'promoted', updatedAt: now } })
+}
+
+async function linkImageMedia(pathname: string, request: Request, env: Env): Promise<Response> {
+  const id = pathname.replace('/v1/generation/images/', '').replace('/media-link', '')
+  if (!isSafeId(id)) return apiError('invalid_image_id', 'Image id is invalid.', 400)
+
+  let body: { mediaId?: unknown }
+  try {
+    body = await request.json() as { mediaId?: unknown }
+  } catch {
+    return apiError('invalid_json', 'Request body must be valid JSON.', 400)
+  }
+
+  const mediaId = typeof body.mediaId === 'string' && body.mediaId.trim() ? body.mediaId.trim() : null
+  if (!mediaId) return apiError('missing_media_id', 'mediaId is required.', 400, 'mediaId')
+
+  const now = new Date().toISOString()
+  const result = await env.GENERATION_DB.prepare(
+    'UPDATE generated_images SET media_id = ?, updated_at = ? WHERE id = ?',
+  ).bind(mediaId, now, id).run()
+
+  if (!result.meta?.changes) return apiError('image_not_found', 'Image not found.', 404)
+  return json({ data: { id, mediaId, updatedAt: now } })
 }
 
 async function enrichImage(pathname: string, env: Env): Promise<Response> {
@@ -1724,7 +1868,7 @@ async function upscaleImage(pathname: string, request: Request, env: Env): Promi
   }
 
   const size = typeof body.size === 'string' && ALLOWED_IMAGE_SIZES.has(body.size) ? body.size as '1024x1024' | '1024x1792' | '1792x1024' : '1024x1024'
-  const quality = typeof body.quality === 'string' && ['low', 'medium', 'high'].includes(body.quality) ? body.quality as 'low' | 'medium' | 'high' : 'medium'
+  const quality = 'high'
   const removeBackground = typeof body.removeBackground === 'boolean' ? body.removeBackground : true
 
   const record = await env.GENERATION_DB.prepare(
@@ -1743,16 +1887,15 @@ async function upscaleImage(pathname: string, request: Request, env: Env): Promi
     upscalePrompt = `Upscale and enhance this image to high quality at ${size} resolution. Preserve the exact same subject, composition, and style.`
   }
 
-  // gpt-image-1 supports transparent backgrounds, gpt-image-2 does not
-  const model = removeBackground ? 'gpt-image-1' : 'gpt-image-2'
+  const model = 'gpt-image-1.5'
 
   const form = new FormData()
   form.append('model', model)
   form.append('prompt', upscalePrompt)
   form.append('n', '1')
   form.append('size', size)
+  form.append('quality', quality)
   if (removeBackground) form.append('background', 'transparent')
-  if (!removeBackground) form.append('quality', quality)
   form.append('image', new Blob([imageBuffer], { type: 'image/png' }), 'image.png')
 
   const editResponse = await fetch('https://api.openai.com/v1/images/edits', {
@@ -1800,7 +1943,7 @@ async function upscaleImage(pathname: string, request: Request, env: Env): Promi
     content_type, file_size_bytes, width, height, category, tags, title, description,
     is_public, is_preview, created_at, updated_at
   ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`).bind(
-    newId, record.prompt, null, model, size, quality, 'vivid', imageUrl, r2Key,
+    newId, record.prompt, null, model, size, quality, 'tiko-v2', imageUrl, r2Key,
     'image/png', newImageBytes.byteLength, dims.width, dims.height,
     record.category || 'generated', record.tags || '[]', record.title || null, null,
     0, 0, now, now,
@@ -1814,7 +1957,7 @@ async function upscaleImage(pathname: string, request: Request, env: Env): Promi
       revisedPrompt: null,
       size,
       quality,
-      style: 'vivid',
+      style: 'tiko-v2',
       width: dims.width,
       height: dims.height,
       fileSizeBytes: newImageBytes.byteLength,

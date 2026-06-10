@@ -372,6 +372,12 @@ public struct TikoAppShell<Content: View, SettingsContent: View>: View {
         Task { @MainActor in
             try? await Task.sleep(nanoseconds: 250_000_000)
             let storedBundle = (try? TikoDeviceSessionStore().load()) ?? identityBundle
+            // If device is already in child mode (stored state may differ from in-memory),
+            // show the PIN entry to EXIT child mode rather than trying to enter again.
+            if storedBundle?.isChildMode == true {
+                showingParentCodeEntry = true
+                return
+            }
             if storedBundle?.isPinConfigured == true {
                 guard let token = storedBundle?.accessToken else { return }
                 do {
@@ -379,11 +385,12 @@ public struct TikoAppShell<Content: View, SettingsContent: View>: View {
                     var bundle = storedBundle!
                     if !bundle.isChildModeEnabled {
                         bundle = try await client.enableChildMode(accessToken: token)
-                        try TikoDeviceSessionStore().save(bundle)
+                        try TikoDeviceSessionStore().save(bundle.preservingSession(from: storedBundle!))
                     }
                     let childBundle = try await client.enterChildMode(accessToken: bundle.accessToken ?? token)
-                    try TikoDeviceSessionStore().save(childBundle)
-                    identityBundle = childBundle
+                    let mergedChild = childBundle.preservingSession(from: storedBundle!)
+                    try TikoDeviceSessionStore().save(mergedChild)
+                    identityBundle = mergedChild
                 } catch {
                     // Silent fail — stay in parent mode
                 }

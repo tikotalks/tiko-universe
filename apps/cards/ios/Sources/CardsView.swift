@@ -13,7 +13,7 @@ struct CardsView: View {
     @AppStorage("cards.labelSizeIndex") private var labelSizeIndex = 1
     @StateObject private var i18n = TikoI18n(app: .cards)
     @State private var speakingCardID: String?
-    @State private var selectedCollection: CardCollection?
+    @State private var collectionStack: [CardCollection] = []
     @State private var collectionsPage = 0
     @State private var showingAdd = false
     @State private var isEditing = false
@@ -23,6 +23,11 @@ struct CardsView: View {
     @State private var editingCollection: CardCollection?
     @State private var editingCard: CommunicationCard?
     @State private var editingCardCollectionID: String?
+    @State private var showingEditCollection = false
+    @State private var showingEditCard = false
+    @State private var selectedCollectionIDs: Set<String> = []
+    @State private var showingRootBulkActions = false
+    @State private var showingRootBulkMove = false
 
     @State private var localizedCollections: [CardCollection] = []
 
@@ -32,8 +37,10 @@ struct CardsView: View {
             : localizedCollections
     }
 
-    private var liveSelectedCollection: CardCollection? {
-        guard let id = selectedCollection?.id else { return nil }
+    private var currentCollection: CardCollection? { collectionStack.last }
+
+    private var liveCurrentCollection: CardCollection? {
+        guard let id = currentCollection?.id else { return nil }
         return localizedCollections.first { $0.id == id }
     }
 
@@ -67,14 +74,14 @@ struct CardsView: View {
     var body: some View {
         TikoAppShell(
             appConfig: CardsAppConfig.app,
-            appName: selectedCollection?.title ?? i18n.t("cards.appName"),
-            onIconTap: selectedCollection != nil ? {
+            appName: currentCollection?.title ?? i18n.t("cards.appName"),
+            onIconTap: !collectionStack.isEmpty ? {
                 if isEditing {
                     withAnimation(.spring(response: 0.25)) { isEditing = false }
-                } else if showAnimations {
-                    withAnimation(.spring(response: 0.38, dampingFraction: 0.85)) { selectedCollection = nil }
                 } else {
-                    selectedCollection = nil
+                    withAnimation(.spring(response: 0.38, dampingFraction: 0.85)) {
+                        _ = collectionStack.popLast()
+                    }
                 }
             } : nil,
             actions: isEditing
@@ -82,8 +89,8 @@ struct CardsView: View {
                 : [TikoHeaderAction(id: "add", label: "Add", systemImage: "plus")],
             onAction: { id in
                 switch id {
-                case "add": showingAdd = true
-                case "done": withAnimation(.spring(response: 0.25)) { isEditing = false }
+                case "add":  showingAdd = true
+                case "done": withAnimation(.spring(response: 0.25)) { isEditing = false; selectedCollectionIDs.removeAll() }
                 default: break
                 }
             },
@@ -121,9 +128,10 @@ struct CardsView: View {
             }
         ) {
             Group {
-                if let collection = selectedCollection {
+                if let collection = currentCollection {
+                    let live = liveCurrentCollection ?? collection
                     CollectionDetailView(
-                        collection: liveSelectedCollection ?? collection,
+                        collection: live,
                         isLoadingMedia: store.loadingCollectionIDs.contains(collection.id),
                         speakingCardID: speakingCardID,
                         isAdmin: isAdmin,
@@ -134,6 +142,16 @@ struct CardsView: View {
                         onEdit: { card in
                             editingCard = card
                             editingCardCollectionID = collection.id
+                            showingEditCard = true
+                        },
+                        onEditCollection: { col in
+                            editingCollection = col
+                            showingEditCollection = true
+                        },
+                        onNavigate: { sub in
+                            withAnimation(.spring(response: 0.38, dampingFraction: 0.85)) {
+                                collectionStack.append(sub)
+                            }
                         }
                     )
                     .id(collection.id)
@@ -156,7 +174,8 @@ struct CardsView: View {
                         let usableHeight = geometry.size.height - geometry.safeAreaInsets.top - geometry.safeAreaInsets.bottom
                         let rows = max(1, Int((usableHeight - 24) / (cardSize + 12)))
                         let perPage = cols * rows
-                        let pages = visibleCollections.chunked(into: perPage)
+                        let rootCollections = visibleCollections.filter { $0.parentID == nil }
+                        let pages = rootCollections.chunked(into: perPage)
 
                         ZStack(alignment: .bottom) {
                             TabView(selection: $collectionsPage) {
@@ -167,7 +186,7 @@ struct CardsView: View {
                                     ) {
                                         ForEach(page) { collection in
                                             ZStack(alignment: .topTrailing) {
-                                                CollectionTile(
+                                                SubCollectionTile(
                                                     collection: collection,
                                                     thumbnailURL: collection.imageURL ?? store.collectionThumbnails[collection.id],
                                                     labelFont: labelFont
@@ -179,7 +198,7 @@ struct CardsView: View {
                                                             draggingCollectionID = collection.id
                                                             return NSItemProvider(object: collection.id as NSString)
                                                         } preview: {
-                                                            CollectionTile(
+                                                            SubCollectionTile(
                                                                 collection: collection,
                                                                 thumbnailURL: collection.imageURL ?? store.collectionThumbnails[collection.id]
                                                             )
@@ -194,19 +213,37 @@ struct CardsView: View {
                                                 }
                                                 .onTapGesture {
                                                     guard !isEditing else { return }
-                                                    if showAnimations {
-                                                        withAnimation(.spring(response: 0.38, dampingFraction: 0.85)) {
-                                                            selectedCollection = collection
-                                                        }
-                                                    } else {
-                                                        selectedCollection = collection
+                                                    withAnimation(.spring(response: 0.38, dampingFraction: 0.85)) {
+                                                        collectionStack.append(collection)
                                                     }
                                                 }
 
                                                 if isEditing && (isAdmin || collection.id.hasPrefix("user_")) {
-                                                    editBadge(isUserOwned: collection.id.hasPrefix("user_"))
-                                                        .offset(x: 4, y: -4)
-                                                        .onTapGesture { editingCollection = collection }
+                                                    Button {
+                                                        editingCollection = collection
+                                                        showingEditCollection = true
+                                                    } label: {
+                                                        editBadge(isUserOwned: collection.id.hasPrefix("user_"))
+                                                    }
+                                                    .buttonStyle(.plain)
+                                                    .padding([.top, .trailing], 6)
+                                                    .transition(.scale(scale: 0.3).combined(with: .opacity))
+                                                }
+                                            }
+                                            .overlay(alignment: .topLeading) {
+                                                if isEditing {
+                                                    selectionBadge(selected: selectedCollectionIDs.contains(collection.id))
+                                                        .padding([.top, .leading], 6)
+                                                        .onTapGesture {
+                                                            UIImpactFeedbackGenerator(style: .light).impactOccurred()
+                                                            withAnimation(.spring(response: 0.2)) {
+                                                                if selectedCollectionIDs.contains(collection.id) {
+                                                                    selectedCollectionIDs.remove(collection.id)
+                                                                } else {
+                                                                    selectedCollectionIDs.insert(collection.id)
+                                                                }
+                                                            }
+                                                        }
                                                         .transition(.scale(scale: 0.3).combined(with: .opacity))
                                                 }
                                             }
@@ -234,6 +271,20 @@ struct CardsView: View {
                                 PageDots(count: pages.count, current: collectionsPage)
                                     .padding(.bottom, 4)
                             }
+
+                            if selectedCollectionIDs.count > 0 && isEditing {
+                                BulkActionBar(
+                                    count: selectedCollectionIDs.count,
+                                    onDeselect: {
+                                        withAnimation(.spring(response: 0.25)) { selectedCollectionIDs.removeAll() }
+                                    },
+                                    onActions: { showingRootBulkActions = true }
+                                )
+                                .padding(.horizontal, sideInset + 16)
+                                .padding(.bottom, max(geometry.safeAreaInsets.bottom, 8))
+                                .transition(.move(edge: .bottom).combined(with: .opacity))
+                                .zIndex(2)
+                            }
                         }
                     }
                     .transition(.asymmetric(
@@ -242,7 +293,7 @@ struct CardsView: View {
                     ))
                 }
             }
-            .animation(showAnimations ? .spring(response: 0.38, dampingFraction: 0.85) : .linear(duration: 0), value: selectedCollection?.id)
+            .animation(showAnimations ? .spring(response: 0.38, dampingFraction: 0.85) : .linear(duration: 0), value: currentCollection?.id)
             .task {
                 await store.load()
                 applyLocalizedTitles()
@@ -252,39 +303,66 @@ struct CardsView: View {
             .onChange(of: store.collections) { _, _ in applyLocalizedTitles() }
         }
         .tikoPopup(isPresented: $showingAdd) {
-            if let collection = selectedCollection {
+            if let collection = currentCollection {
                 AddCardSheet(collection: collection, store: store, isPresented: $showingAdd)
                     .environmentObject(i18n)
             } else {
-                AddCategorySheet(store: store, isPresented: $showingAdd)
+                AddCategorySheet(store: store, collections: visibleCollections.filter { $0.parentID == nil }, isPresented: $showingAdd)
                     .environmentObject(i18n)
             }
         }
-        .tikoPopup(isPresented: Binding(
-            get: { editingCollection != nil },
-            set: { if !$0 { editingCollection = nil } }
-        )) {
+        .tikoPopup(isPresented: $showingEditCollection) {
             if let c = editingCollection {
-                EditCollectionSheet(collection: c, store: store, isAdmin: isAdmin, onClose: { editingCollection = nil })
-                    .environmentObject(i18n)
+                EditCollectionSheet(collection: c, allCollections: localizedCollections, store: store, isAdmin: isAdmin, onClose: {
+                    showingEditCollection = false
+                    editingCollection = nil
+                })
+                .environmentObject(i18n)
             }
         }
-        .tikoPopup(isPresented: Binding(
-            get: { editingCard != nil },
-            set: { if !$0 { editingCard = nil; editingCardCollectionID = nil } }
-        )) {
+        .tikoPopup(isPresented: $showingEditCard) {
             if let card = editingCard, let cid = editingCardCollectionID {
                 EditCardSheet(card: card, collectionID: cid, store: store, isAdmin: isAdmin, onClose: {
+                    showingEditCard = false
                     editingCard = nil
                     editingCardCollectionID = nil
                 })
                 .environmentObject(i18n)
             }
         }
+        .tikoPopup(isPresented: $showingRootBulkActions) {
+            BulkActionsSheet(
+                cardCount: 0,
+                collectionCount: selectedCollectionIDs.count,
+                onClose: { showingRootBulkActions = false },
+                onDelete: {
+                    for id in selectedCollectionIDs { store.deleteCollection(id: id) }
+                    withAnimation { selectedCollectionIDs.removeAll() }
+                    showingRootBulkActions = false
+                },
+                onMove: {
+                    showingRootBulkActions = false
+                    showingRootBulkMove = true
+                },
+                onColor: { showingRootBulkActions = false }
+            )
+        }
+        .tikoPopup(isPresented: $showingRootBulkMove) {
+            BulkMoveSheet(
+                sourceCollectionID: "",
+                collections: store.collections,
+                onMove: { targetID in
+                    store.reparentCollections(ids: selectedCollectionIDs, toParentID: targetID)
+                    withAnimation { selectedCollectionIDs.removeAll() }
+                    showingRootBulkMove = false
+                },
+                onClose: { showingRootBulkMove = false }
+            )
+        }
         .environmentObject(i18n)
         .onAppear { i18n.setLanguage(languageCode) }
         .onChange(of: languageCode) { _, code in i18n.setLanguage(code); applyLocalizedTitles() }
-        .onChange(of: selectedCollection) { _, _ in
+        .onChange(of: collectionStack) { _, _ in
             if isEditing { withAnimation(.spring(response: 0.25)) { isEditing = false } }
         }
     }
@@ -337,7 +415,26 @@ struct CardsView: View {
     }
 }
 
-// MARK: - Edit badge
+// MARK: - Edit / selection badges
+
+@ViewBuilder
+private func selectionBadge(selected: Bool) -> some View {
+    ZStack {
+        Circle()
+            .fill(selected ? Color.accentColor : Color(.systemBackground).opacity(0.85))
+            .frame(width: 24, height: 24)
+            .shadow(color: .black.opacity(0.15), radius: 2, x: 0, y: 1)
+        if selected {
+            Image(systemName: "checkmark")
+                .font(.system(size: 11, weight: .bold))
+                .foregroundStyle(.white)
+        } else {
+            Circle()
+                .strokeBorder(Color.secondary.opacity(0.5), lineWidth: 1.5)
+                .frame(width: 24, height: 24)
+        }
+    }
+}
 
 @ViewBuilder
 private func editBadge(isUserOwned: Bool) -> some View {
@@ -407,6 +504,61 @@ private struct CollectionTile: View {
     }
 }
 
+private struct SubCollectionTile: View {
+    let collection: CardCollection
+    let thumbnailURL: URL?
+    let labelFont: Font
+    @Environment(\.colorScheme) private var colorScheme
+
+    init(collection: CardCollection, thumbnailURL: URL?, labelFont: Font = Font.system(.caption, design: .rounded).weight(.heavy)) {
+        self.collection = collection
+        self.thumbnailURL = thumbnailURL
+        self.labelFont = labelFont
+    }
+
+    var body: some View {
+        VStack(spacing: 0) {
+            ZStack {
+                Color(hex: collection.colorHex)
+                if let url = thumbnailURL ?? collection.imageURL {
+                    CachedCardImage(url: url)
+                }
+            }
+
+            Text(collection.title)
+                .font(labelFont)
+                .foregroundStyle(colorScheme == .dark ? Color.black : Color.white)
+                .lineLimit(2)
+                .minimumScaleFactor(0.65)
+                .multilineTextAlignment(.center)
+                .padding(.horizontal, 6)
+                .frame(maxWidth: .infinity)
+                .frame(height: 30)
+                .background(colorScheme == .dark ? Color.white : Color(.label))
+        }
+        .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
+        .aspectRatio(1, contentMode: .fit)
+        .shadow(color: .black.opacity(0.10), radius: 8, x: 0, y: 5)
+        .overlay {
+            RoundedRectangle(cornerRadius: 20, style: .continuous)
+                .strokeBorder(.white.opacity(0.15), lineWidth: 1)
+        }
+        .contentShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
+        .accessibilityLabel(collection.title)
+    }
+}
+
+private enum CollectionItem: Identifiable {
+    case subcollection(CardCollection)
+    case card(CommunicationCard)
+    var id: String {
+        switch self {
+        case .subcollection(let c): return "col_\(c.id)"
+        case .card(let c):          return "card_\(c.id)"
+        }
+    }
+}
+
 private struct CollectionDetailView: View {
     let collection: CardCollection
     let isLoadingMedia: Bool
@@ -417,8 +569,16 @@ private struct CollectionDetailView: View {
     let store: CardsStore
     let onSpeak: (CommunicationCard) -> Void
     let onEdit: (CommunicationCard) -> Void
+    let onEditCollection: (CardCollection) -> Void
+    let onNavigate: (CardCollection) -> Void
 
     @State private var currentPage = 0
+    @State private var selectedCardIDs: Set<String> = []
+    @State private var selectedCollectionIDs: Set<String> = []
+    @State private var fullscreenCard: CommunicationCard?
+    @State private var showingBulkActions = false
+    @State private var showingBulkMove = false
+    @State private var showingBulkColor = false
     @AppStorage("cards.cardSizeIndex") private var cardSizeIndex = 1
     @AppStorage("cards.labelSizeIndex") private var labelSizeIndex = 1
 
@@ -430,6 +590,14 @@ private struct CollectionDetailView: View {
         }
     }
 
+    private var childCollections: [CardCollection] {
+        store.collections.filter { $0.parentID == collection.id }.sorted { $0.order < $1.order }
+    }
+
+    private var allItems: [CollectionItem] {
+        childCollections.map { .subcollection($0) } + collection.cards.map { .card($0) }
+    }
+
     var body: some View {
         GeometryReader { geometry in
             let sideInset = max(geometry.safeAreaInsets.leading, geometry.safeAreaInsets.trailing)
@@ -439,70 +607,139 @@ private struct CollectionDetailView: View {
             let cardSize = (usableWidth - 24 - CGFloat(cols - 1) * 12) / CGFloat(cols)
             let rows = max(1, Int((usableHeight - 24) / (cardSize + 12)))
             let perPage = cols * rows
-            let pages = collection.cards.chunked(into: perPage)
+            let pages = allItems.chunked(into: perPage)
 
             ZStack(alignment: .bottom) {
                 TabView(selection: $currentPage) {
-                    ForEach(Array(pages.enumerated()), id: \.offset) { pageIndex, pageCards in
+                    ForEach(Array(pages.enumerated()), id: \.offset) { pageIndex, pageItems in
                         LazyVGrid(
                             columns: Array(repeating: GridItem(.flexible(), spacing: 12), count: cols),
                             spacing: 12
                         ) {
-                            ForEach(pageCards) { card in
-                                ZStack(alignment: .topTrailing) {
-                                    CommunicationCardTile(
-                                        card: card,
-                                        isSpeaking: speakingCardID == card.id,
-                                        isEditing: isEditing,
-                                        labelFont: labelFont,
-                                        onSpeak: { onSpeak(card) }
-                                    )
-                                    .scaleEffect(isEditing ? 0.92 : 1.0)
-                                    .if(isEditing) { view in
-                                        view
-                                            .onDrag {
-                                                draggingCardID = card.id
-                                                return NSItemProvider(object: card.id as NSString)
-                                            } preview: {
-                                                CommunicationCardTile(
-                                                    card: card,
-                                                    isSpeaking: false,
-                                                    isEditing: false,
-                                                    onSpeak: {}
-                                                )
-                                                .frame(width: 96, height: 96)
-                                                .shadow(color: .black.opacity(0.22), radius: 14, x: 0, y: 8)
-                                            }
-                                            .onDrop(of: [.text], delegate: CardDropDelegate(
-                                                targetID: card.id,
-                                                collectionID: collection.id,
-                                                store: store,
-                                                draggingID: $draggingCardID
-                                            ))
-                                    }
+                            ForEach(pageItems) { item in
+                                switch item {
+                                case .subcollection(let sub):
+                                    ZStack(alignment: .topTrailing) {
+                                        SubCollectionTile(
+                                            collection: sub,
+                                            thumbnailURL: sub.imageURL ?? store.collectionThumbnails[sub.id],
+                                            labelFont: labelFont
+                                        )
+                                        .scaleEffect(isEditing ? 0.92 : 1.0)
+                                        .onTapGesture {
+                                            guard !isEditing else { return }
+                                            onNavigate(sub)
+                                        }
 
-                                    if isEditing && (isAdmin || card.id.hasPrefix("user_")) {
-                                        editBadge(isUserOwned: card.id.hasPrefix("user_"))
-                                            .offset(x: 4, y: -4)
-                                            .onTapGesture { onEdit(card) }
-                                            .transition(.scale(scale: 0.3).combined(with: .opacity))
+                                        if isEditing && (isAdmin || sub.id.hasPrefix("user_")) {
+                                            editBadge(isUserOwned: sub.id.hasPrefix("user_"))
+                                                .padding([.top, .trailing], 6)
+                                                .onTapGesture { onEditCollection(sub) }
+                                                .transition(.scale(scale: 0.3).combined(with: .opacity))
+                                        }
                                     }
+                                    .overlay(alignment: .topLeading) {
+                                        if isEditing {
+                                            selectionBadge(selected: selectedCollectionIDs.contains(sub.id))
+                                                .padding([.top, .leading], 6)
+                                                .onTapGesture {
+                                                    UIImpactFeedbackGenerator(style: .light).impactOccurred()
+                                                    withAnimation(.spring(response: 0.2)) {
+                                                        if selectedCollectionIDs.contains(sub.id) {
+                                                            selectedCollectionIDs.remove(sub.id)
+                                                        } else {
+                                                            selectedCollectionIDs.insert(sub.id)
+                                                        }
+                                                    }
+                                                }
+                                                .transition(.scale(scale: 0.3).combined(with: .opacity))
+                                        }
+                                    }
+                                    .contentShape(Rectangle())
+                                    .simultaneousGesture(LongPressGesture(minimumDuration: 0.5).onEnded { _ in
+                                        let isChild = (try? TikoDeviceSessionStore().load())?.isChildMode ?? false
+                                        guard !isChild else { return }
+                                        UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+                                        withAnimation(.spring(response: 0.25)) { isEditing = true }
+                                    })
+                                    .animation(.spring(response: 0.25), value: isEditing)
+
+                                case .card(let card):
+                                    ZStack(alignment: .topTrailing) {
+                                        CommunicationCardTile(
+                                            card: card,
+                                            isSpeaking: speakingCardID == card.id,
+                                            isEditing: isEditing,
+                                            labelFont: labelFont,
+                                            onSpeak: { onSpeak(card) }
+                                        )
+                                        .scaleEffect(isEditing ? 0.92 : 1.0)
+                                        .if(isEditing) { view in
+                                            view
+                                                .onDrag {
+                                                    draggingCardID = card.id
+                                                    return NSItemProvider(object: card.id as NSString)
+                                                } preview: {
+                                                    CommunicationCardTile(
+                                                        card: card,
+                                                        isSpeaking: false,
+                                                        isEditing: false,
+                                                        onSpeak: {}
+                                                    )
+                                                    .frame(width: 96, height: 96)
+                                                    .shadow(color: .black.opacity(0.22), radius: 14, x: 0, y: 8)
+                                                }
+                                                .onDrop(of: [.text], delegate: CardDropDelegate(
+                                                    targetID: card.id,
+                                                    collectionID: collection.id,
+                                                    store: store,
+                                                    draggingID: $draggingCardID
+                                                ))
+                                        }
+
+                                        if isEditing && (isAdmin || card.id.hasPrefix("user_")) {
+                                            editBadge(isUserOwned: card.id.hasPrefix("user_"))
+                                                .padding([.top, .trailing], 6)
+                                                .onTapGesture { onEdit(card) }
+                                                .transition(.scale(scale: 0.3).combined(with: .opacity))
+                                        }
+                                    }
+                                    .overlay(alignment: .topLeading) {
+                                        if isEditing && (isAdmin || card.id.hasPrefix("user_")) {
+                                            selectionBadge(selected: selectedCardIDs.contains(card.id))
+                                                .padding([.top, .leading], 6)
+                                                .onTapGesture {
+                                                    UIImpactFeedbackGenerator(style: .light).impactOccurred()
+                                                    withAnimation(.spring(response: 0.2)) {
+                                                        if selectedCardIDs.contains(card.id) {
+                                                            selectedCardIDs.remove(card.id)
+                                                        } else {
+                                                            selectedCardIDs.insert(card.id)
+                                                        }
+                                                    }
+                                                }
+                                                .transition(.scale(scale: 0.3).combined(with: .opacity))
+                                        }
+                                    }
+                                    .contentShape(Rectangle())
+                                    .simultaneousGesture(LongPressGesture(minimumDuration: 0.5).onEnded { _ in
+                                        let isChild = (try? TikoDeviceSessionStore().load())?.isChildMode ?? false
+                                        UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+                                        if isChild {
+                                            fullscreenCard = card
+                                        } else {
+                                            withAnimation(.spring(response: 0.25)) { isEditing = true }
+                                        }
+                                    })
+                                    .animation(.spring(response: 0.25), value: isEditing)
                                 }
-                                .contentShape(Rectangle())
-                                .simultaneousGesture(LongPressGesture(minimumDuration: 0.5).onEnded { _ in
-                                    let isChild = (try? TikoDeviceSessionStore().load())?.isChildMode ?? false
-                                    guard !isChild else { return }
-                                    UIImpactFeedbackGenerator(style: .medium).impactOccurred()
-                                    withAnimation(.spring(response: 0.25)) { isEditing = true }
-                                })
-                                .animation(.spring(response: 0.25), value: isEditing)
                             }
                         }
                         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
                         .padding(.leading, 12 + sideInset)
                         .padding(.trailing, 12 + sideInset)
                         .padding(.top, 12)
-                        .padding(.bottom, pages.count > 1 ? 24 : 8)
+                        .padding(.bottom, (!selectedCardIDs.isEmpty || !selectedCollectionIDs.isEmpty) && isEditing ? 84 : (pages.count > 1 ? 24 : 8))
                         .tag(pageIndex)
                     }
                 }
@@ -511,6 +748,24 @@ private struct CollectionDetailView: View {
                 if pages.count > 1 {
                     PageDots(count: pages.count, current: currentPage)
                         .padding(.bottom, 4)
+                }
+
+                let totalSelected = selectedCardIDs.count + selectedCollectionIDs.count
+                if totalSelected > 0 && isEditing {
+                    BulkActionBar(
+                        count: totalSelected,
+                        onDeselect: {
+                            withAnimation(.spring(response: 0.25)) {
+                                selectedCardIDs.removeAll()
+                                selectedCollectionIDs.removeAll()
+                            }
+                        },
+                        onActions: { showingBulkActions = true }
+                    )
+                    .padding(.horizontal, sideInset + 16)
+                    .padding(.bottom, max(geometry.safeAreaInsets.bottom, 8))
+                    .transition(.move(edge: .bottom).combined(with: .opacity))
+                    .zIndex(2)
                 }
             }
             .overlay(alignment: .top) {
@@ -523,6 +778,67 @@ private struct CollectionDetailView: View {
                 }
             }
         }
+        .onChange(of: isEditing) { _, newValue in
+            if !newValue {
+                withAnimation(.spring(response: 0.25)) {
+                    selectedCardIDs.removeAll()
+                    selectedCollectionIDs.removeAll()
+                }
+            }
+        }
+        .tikoPopup(isPresented: $showingBulkActions) {
+            BulkActionsSheet(
+                cardCount: selectedCardIDs.count,
+                collectionCount: selectedCollectionIDs.count,
+                onClose: { showingBulkActions = false },
+                onDelete: {
+                    store.deleteCards(ids: selectedCardIDs, fromCollectionID: collection.id)
+                    for id in selectedCollectionIDs { store.deleteCollection(id: id) }
+                    withAnimation { selectedCardIDs.removeAll(); selectedCollectionIDs.removeAll() }
+                    showingBulkActions = false
+                },
+                onMove: {
+                    showingBulkActions = false
+                    showingBulkMove = true
+                },
+                onColor: {
+                    showingBulkActions = false
+                    showingBulkColor = true
+                }
+            )
+        }
+        .tikoPopup(isPresented: $showingBulkMove) {
+            BulkMoveSheet(
+                sourceCollectionID: collection.id,
+                collections: store.collections,
+                onMove: { targetID in
+                    if !selectedCardIDs.isEmpty {
+                        store.moveCards(ids: selectedCardIDs, fromCollectionID: collection.id, toCollectionID: targetID)
+                    }
+                    if !selectedCollectionIDs.isEmpty {
+                        store.reparentCollections(ids: selectedCollectionIDs, toParentID: targetID)
+                    }
+                    withAnimation { selectedCardIDs.removeAll(); selectedCollectionIDs.removeAll() }
+                    showingBulkMove = false
+                },
+                onClose: { showingBulkMove = false }
+            )
+        }
+        .tikoPopup(isPresented: $showingBulkColor) {
+            BulkColorSheet(
+                onSelect: { colorHex in
+                    store.recolorCards(ids: selectedCardIDs, inCollectionID: collection.id, colorHex: colorHex)
+                    withAnimation { selectedCardIDs.removeAll(); selectedCollectionIDs.removeAll() }
+                    showingBulkColor = false
+                },
+                onClose: { showingBulkColor = false }
+            )
+        }
+        .sheet(item: $fullscreenCard) { card in
+            FullscreenCardView(card: card) { fullscreenCard = nil }
+                .presentationDetents([.large])
+                .presentationDragIndicator(.hidden)
+        }
     }
 
     private func columnCount(width: CGFloat, height: CGFloat) -> Int {
@@ -530,6 +846,169 @@ private struct CollectionDetailView: View {
         if width > height * 1.4 { base = width >= 800 ? 7 : 6 }
         else { base = width >= 640 ? 5 : (width >= 480 ? 4 : 3) }
         return max(2, base + (1 - cardSizeIndex))
+    }
+
+}
+
+// MARK: - Bulk selection
+
+private struct BulkActionBar: View {
+    let count: Int
+    let onDeselect: () -> Void
+    let onActions: () -> Void
+
+    var body: some View {
+        HStack(spacing: 12) {
+            Button(action: onDeselect) {
+                Image(systemName: "xmark.circle.fill")
+                    .font(.system(size: 20, weight: .semibold))
+                    .foregroundStyle(.secondary)
+            }
+            .buttonStyle(.plain)
+
+            Text("\(count) selected")
+                .font(.system(.subheadline, design: .rounded).weight(.semibold))
+                .foregroundStyle(.primary)
+
+            Spacer()
+
+            Button("Actions", action: onActions)
+                .font(.system(.subheadline, design: .rounded).weight(.bold))
+                .buttonStyle(.borderedProminent)
+                .controlSize(.small)
+        }
+        .padding(.horizontal, 16)
+        .padding(.vertical, 12)
+        .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 16, style: .continuous))
+        .overlay {
+            RoundedRectangle(cornerRadius: 16, style: .continuous)
+                .strokeBorder(Color.primary.opacity(0.08), lineWidth: 1)
+        }
+    }
+}
+
+private struct BulkActionsSheet: View {
+    let cardCount: Int
+    let collectionCount: Int
+    let onClose: () -> Void
+    let onDelete: () -> Void
+    let onMove: () -> Void
+    let onColor: () -> Void
+
+    @State private var confirmDelete = false
+
+    private var total: Int { cardCount + collectionCount }
+    private var title: String {
+        var parts: [String] = []
+        if cardCount > 0 { parts.append("\(cardCount) card\(cardCount == 1 ? "" : "s")") }
+        if collectionCount > 0 { parts.append("\(collectionCount) collection\(collectionCount == 1 ? "" : "s")") }
+        return parts.joined(separator: " & ") + " selected"
+    }
+
+    var body: some View {
+        TikoPopupCard(
+            title: title,
+            icon: "checklist",
+            appColor: .cards,
+            onClose: onClose
+        ) {
+            VStack(spacing: 10) {
+                bulkActionRow(label: "Move to Collection", icon: "arrow.right.square", action: onMove)
+                bulkActionRow(label: "Change Color", icon: "paintpalette", action: onColor)
+                Divider()
+                Button(role: .destructive) { confirmDelete = true } label: {
+                    Label("Delete Cards", systemImage: "trash")
+                        .font(.system(size: 16, weight: .semibold, design: .rounded))
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 14)
+                        .background(Color.red.opacity(0.1), in: RoundedRectangle(cornerRadius: 14, style: .continuous))
+                }
+                .buttonStyle(.plain)
+            }
+        }
+        .alert("Delete \(total) item\(total == 1 ? "" : "s")?", isPresented: $confirmDelete) {
+            Button("Delete", role: .destructive, action: onDelete)
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text("This action cannot be undone.")
+        }
+    }
+
+    private func bulkActionRow(label: String, icon: String, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            Label(label, systemImage: icon)
+                .font(.system(size: 16, weight: .semibold, design: .rounded))
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 14)
+                .background(Color.primary.opacity(0.06), in: RoundedRectangle(cornerRadius: 14, style: .continuous))
+        }
+        .buttonStyle(.plain)
+    }
+}
+
+private struct BulkMoveSheet: View {
+    let sourceCollectionID: String
+    let collections: [CardCollection]
+    let onMove: (String) -> Void
+    let onClose: () -> Void
+
+    var body: some View {
+        TikoPopupCard(
+            title: "Move to Collection",
+            icon: "arrow.right.square",
+            appColor: .cards,
+            onClose: onClose
+        ) {
+            ScrollView {
+                VStack(spacing: 8) {
+                    ForEach(collections.filter { $0.id != sourceCollectionID && $0.parentID == nil }) { collection in
+                        Button { onMove(collection.id) } label: {
+                            HStack(spacing: 12) {
+                                RoundedRectangle(cornerRadius: 8, style: .continuous)
+                                    .fill(Color(hex: collection.colorHex))
+                                    .frame(width: 32, height: 32)
+                                Text(collection.title)
+                                    .font(.system(size: 16, weight: .semibold, design: .rounded))
+                                    .foregroundStyle(.primary)
+                                Spacer()
+                                Image(systemName: "chevron.right")
+                                    .font(.caption.weight(.bold))
+                                    .foregroundStyle(.tertiary)
+                            }
+                            .padding(.horizontal, 14)
+                            .padding(.vertical, 12)
+                            .background(Color.primary.opacity(0.05), in: RoundedRectangle(cornerRadius: 14, style: .continuous))
+                        }
+                        .buttonStyle(.plain)
+                    }
+                }
+            }
+            .frame(maxHeight: 320)
+        }
+    }
+}
+
+private struct BulkColorSheet: View {
+    let onSelect: (UInt32) -> Void
+    let onClose: () -> Void
+
+    @State private var pickedColor: UInt32 = TikoColors.allHex[0]
+
+    var body: some View {
+        TikoPopupCard(
+            title: "Change Color",
+            icon: "paintpalette",
+            appColor: .cards,
+            onClose: onClose
+        ) {
+            VStack(spacing: 16) {
+                CardColorPicker(selectedColor: $pickedColor)
+
+                addButton(label: "Apply Color", disabled: false) {
+                    onSelect(pickedColor)
+                }
+            }
+        }
     }
 }
 
@@ -604,16 +1083,95 @@ private struct PageDots: View {
     }
 }
 
+// MARK: - Fullscreen card (child mode)
+
+private struct FullscreenCardView: View {
+    let card: CommunicationCard
+    let onClose: () -> Void
+    @State private var imageScale: CGFloat = 0.82
+    @State private var imageOpacity: CGFloat = 0
+    @State private var textOpacity: CGFloat = 0
+
+    var body: some View {
+        ZStack {
+            Color(hex: card.colorHex).ignoresSafeArea()
+
+            VStack(spacing: 28) {
+                Spacer()
+
+                if let url = card.imageURL {
+                    TikoCachedRemoteImage(url: url) {
+                        RoundedRectangle(cornerRadius: 32, style: .continuous)
+                            .fill(.white.opacity(0.2))
+                    }
+                    .scaledToFit()
+                    .clipShape(RoundedRectangle(cornerRadius: 32, style: .continuous))
+                    .shadow(color: .black.opacity(0.28), radius: 32, x: 0, y: 16)
+                    .padding(.horizontal, 32)
+                    .scaleEffect(imageScale)
+                    .opacity(imageOpacity)
+                } else {
+                    RoundedRectangle(cornerRadius: 32, style: .continuous)
+                        .fill(.white.opacity(0.2))
+                        .aspectRatio(1, contentMode: .fit)
+                        .padding(.horizontal, 40)
+                        .scaleEffect(imageScale)
+                        .opacity(imageOpacity)
+                }
+
+                Text(card.title)
+                    .font(.system(size: 42, weight: .heavy, design: .rounded))
+                    .foregroundStyle(.white)
+                    .multilineTextAlignment(.center)
+                    .shadow(color: .black.opacity(0.2), radius: 4, x: 0, y: 2)
+                    .padding(.horizontal, 40)
+                    .opacity(textOpacity)
+
+                Spacer()
+            }
+
+            VStack {
+                HStack {
+                    Spacer()
+                    Button(action: onClose) {
+                        Image(systemName: "xmark")
+                            .font(.system(size: 16, weight: .bold))
+                            .foregroundStyle(.white)
+                            .frame(width: 44, height: 44)
+                            .background(.black.opacity(0.25))
+                            .clipShape(Circle())
+                    }
+                    .buttonStyle(.plain)
+                    .padding(20)
+                    .opacity(textOpacity)
+                }
+                Spacer()
+            }
+        }
+        .onAppear {
+            withAnimation(.spring(response: 0.5, dampingFraction: 0.72)) {
+                imageScale = 1.0
+                imageOpacity = 1.0
+            }
+            withAnimation(.easeOut(duration: 0.22).delay(0.15)) {
+                textOpacity = 1.0
+            }
+        }
+    }
+}
+
 // MARK: - Add sheets
 
 private struct AddCategorySheet: View {
     let store: CardsStore
+    let collections: [CardCollection]
     @Binding var isPresented: Bool
     @EnvironmentObject private var i18n: TikoI18n
 
     @State private var title = ""
     @State private var selectedColor: UInt32 = TikoColors.allHex[0]
     @State private var selectedImageURL: URL?
+    @State private var selectedParentID: String? = nil
     @State private var showingImagePicker = false
 
     var body: some View {
@@ -629,15 +1187,18 @@ private struct AddCategorySheet: View {
                         .font(.system(size: 16, weight: .semibold, design: .rounded))
                 }
 
-                VStack(alignment: .leading, spacing: 7) {
-                    fieldLabel(i18n.t("cards.add.color"))
-                    CardColorPicker(selectedColor: $selectedColor)
+                if !collections.isEmpty {
+                    CompactParentPicker(selectedParentID: $selectedParentID, collections: collections, label: "Parent Collection (optional)")
                 }
+
+                CompactColorPicker(selectedColor: $selectedColor, label: i18n.t("cards.add.color"))
 
                 VStack(alignment: .leading, spacing: 7) {
                     fieldLabel(i18n.t("cards.add.image"))
-                    MediaSuggestionRow(query: title, selectedURL: selectedImageURL) { url in
-                        selectedImageURL = url
+                    if selectedImageURL == nil {
+                        MediaSuggestionRow(query: title, selectedURL: selectedImageURL) { url in
+                            selectedImageURL = url
+                        }
                     }
                     ImagePickerButton(selectedURL: selectedImageURL, appColor: .cards) {
                         showingImagePicker = true
@@ -645,7 +1206,7 @@ private struct AddCategorySheet: View {
                 }
 
                 addButton(label: i18n.t("cards.add.addCategory"), disabled: title.trimmingCharacters(in: .whitespaces).isEmpty) {
-                    store.addCollection(title: title, colorHex: selectedColor, imageURL: selectedImageURL)
+                    store.addCollection(title: title, colorHex: selectedColor, imageURL: selectedImageURL, parentID: selectedParentID)
                     isPresented = false
                 }
             }
@@ -694,15 +1255,14 @@ private struct AddCardSheet: View {
                         .font(.system(size: 16, weight: .semibold, design: .rounded))
                 }
 
-                VStack(alignment: .leading, spacing: 7) {
-                    fieldLabel(i18n.t("cards.add.color"))
-                    CardColorPicker(selectedColor: $selectedColor)
-                }
+                CompactColorPicker(selectedColor: $selectedColor, label: i18n.t("cards.add.color"))
 
                 VStack(alignment: .leading, spacing: 7) {
                     fieldLabel(i18n.t("cards.add.image"))
-                    MediaSuggestionRow(query: title, selectedURL: selectedImageURL) { url in
-                        selectedImageURL = url
+                    if selectedImageURL == nil {
+                        MediaSuggestionRow(query: title, selectedURL: selectedImageURL) { url in
+                            selectedImageURL = url
+                        }
                     }
                     ImagePickerButton(selectedURL: selectedImageURL, appColor: .cards) {
                         showingImagePicker = true
@@ -731,6 +1291,7 @@ private struct AddCardSheet: View {
 
 private struct EditCollectionSheet: View {
     let collection: CardCollection
+    let allCollections: [CardCollection]
     let store: CardsStore
     let isAdmin: Bool
     let onClose: () -> Void
@@ -738,21 +1299,26 @@ private struct EditCollectionSheet: View {
 
     @State private var title: String
     @State private var selectedColor: UInt32
+    @State private var selectedParentID: String?
     @State private var selectedImageURL: URL?
     @State private var showingImagePicker = false
     @State private var showingDefaultConfirmation = false
-    @State private var showingDeleteConfirmation = false
     @State private var showingPromoteConfirmation = false
 
     private var isDefault: Bool { !collection.id.hasPrefix("user_") }
+    private var eligibleParents: [CardCollection] {
+        allCollections.filter { $0.id != collection.id && $0.parentID != collection.id }
+    }
 
-    init(collection: CardCollection, store: CardsStore, isAdmin: Bool, onClose: @escaping () -> Void) {
+    init(collection: CardCollection, allCollections: [CardCollection], store: CardsStore, isAdmin: Bool, onClose: @escaping () -> Void) {
         self.collection = collection
+        self.allCollections = allCollections
         self.store = store
         self.isAdmin = isAdmin
         self.onClose = onClose
         self._title = State(initialValue: collection.title)
         self._selectedColor = State(initialValue: collection.colorHex)
+        self._selectedParentID = State(initialValue: collection.parentID)
         self._selectedImageURL = State(initialValue: collection.imageURL)
     }
 
@@ -764,20 +1330,41 @@ private struct EditCollectionSheet: View {
             onClose: onClose
         ) {
             VStack(spacing: 14) {
+                HStack {
+                    Spacer()
+                    SubCollectionTile(
+                        collection: CardCollection(
+                            id: collection.id,
+                            title: title.isEmpty ? " " : title,
+                            colorHex: selectedColor,
+                            order: collection.order,
+                            imageURL: selectedImageURL,
+                            cards: []
+                        ),
+                        thumbnailURL: selectedImageURL
+                    )
+                    .frame(width: 88, height: 88)
+                    .allowsHitTesting(false)
+                    Spacer()
+                }
+
                 cardField(label: i18n.t("cards.add.name")) {
                     TextField(i18n.t("cards.add.namePlaceholderCategory"), text: $title)
                         .font(.system(size: 16, weight: .semibold, design: .rounded))
                 }
 
-                VStack(alignment: .leading, spacing: 7) {
-                    fieldLabel(i18n.t("cards.add.color"))
-                    CardColorPicker(selectedColor: $selectedColor)
+                CompactColorPicker(selectedColor: $selectedColor, label: i18n.t("cards.add.color"))
+
+                if !eligibleParents.isEmpty {
+                    CompactParentPicker(selectedParentID: $selectedParentID, collections: eligibleParents, label: "Parent Collection")
                 }
 
                 VStack(alignment: .leading, spacing: 7) {
                     fieldLabel(i18n.t("cards.add.image"))
-                    MediaSuggestionRow(query: title, selectedURL: selectedImageURL) { url in
-                        selectedImageURL = url
+                    if selectedImageURL == nil {
+                        MediaSuggestionRow(query: title, selectedURL: selectedImageURL) { url in
+                            selectedImageURL = url
+                        }
                     }
                     ImagePickerButton(selectedURL: selectedImageURL, appColor: .cards) {
                         showingImagePicker = true
@@ -807,23 +1394,6 @@ private struct EditCollectionSheet: View {
                     defaultWarningBanner()
                 }
 
-                Button(role: .destructive) {
-                    showingDeleteConfirmation = true
-                } label: {
-                    HStack(spacing: 8) {
-                        Image(systemName: "trash")
-                            .font(.system(size: 16, weight: .bold))
-                        Text("Delete collection")
-                            .font(.system(size: 15, weight: .heavy, design: .rounded))
-                        Spacer()
-                    }
-                    .foregroundStyle(.red)
-                    .padding(14)
-                    .background(Color.red.opacity(0.08))
-                    .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
-                }
-                .buttonStyle(.plain)
-
                 addButton(label: i18n.t("cards.add.saveChanges"), disabled: title.trimmingCharacters(in: .whitespaces).isEmpty) {
                     if isDefault && isAdmin {
                         showingDefaultConfirmation = true
@@ -843,14 +1413,6 @@ private struct EditCollectionSheet: View {
         } message: {
             Text("This changes the default \"\(collection.title)\" collection for all users.")
         }
-        .alert("Delete \"\(collection.title)\"?", isPresented: $showingDeleteConfirmation) {
-            Button(isDefault ? "Delete for everyone" : "Delete", role: .destructive) { deleteCollection() }
-            Button("Cancel", role: .cancel) {}
-        } message: {
-            Text(isDefault
-                ? "This permanently deletes the default collection \"\(collection.title)\" for all users."
-                : "Are you sure you want to delete \"\(collection.title)\"?")
-        }
         .alert("Make \"\(collection.title)\" a default?", isPresented: $showingPromoteConfirmation) {
             Button("Make default", role: .destructive) { promoteCollection() }
             Button("Cancel", role: .cancel) {}
@@ -864,14 +1426,10 @@ private struct EditCollectionSheet: View {
             id: collection.id,
             title: title.trimmingCharacters(in: .whitespaces),
             colorHex: selectedColor,
+            parentID: .some(selectedParentID),
             imageURL: selectedImageURL,
             saveAsDefault: asDefault
         )
-        onClose()
-    }
-
-    private func deleteCollection() {
-        store.deleteCollection(id: collection.id)
         onClose()
     }
 
@@ -919,6 +1477,26 @@ private struct EditCardSheet: View {
             onClose: onClose
         ) {
             VStack(spacing: 14) {
+                HStack {
+                    Spacer()
+                    CommunicationCardTile(
+                        card: CommunicationCard(
+                            id: card.id,
+                            title: title.isEmpty ? " " : title,
+                            speech: speech,
+                            imageURL: selectedImageURL,
+                            colorHex: selectedColor
+                        ),
+                        isSpeaking: false,
+                        isEditing: false,
+                        labelFont: Font.system(.caption, design: .rounded).weight(.heavy),
+                        onSpeak: {}
+                    )
+                    .frame(width: 88, height: 88)
+                    .allowsHitTesting(false)
+                    Spacer()
+                }
+
                 cardField(label: i18n.t("cards.add.name")) {
                     TextField(i18n.t("cards.add.namePlaceholderCard"), text: $title)
                         .font(.system(size: 16, weight: .semibold, design: .rounded))
@@ -929,15 +1507,14 @@ private struct EditCardSheet: View {
                         .font(.system(size: 16, weight: .semibold, design: .rounded))
                 }
 
-                VStack(alignment: .leading, spacing: 7) {
-                    fieldLabel(i18n.t("cards.add.color"))
-                    CardColorPicker(selectedColor: $selectedColor)
-                }
+                CompactColorPicker(selectedColor: $selectedColor, label: i18n.t("cards.add.color"))
 
                 VStack(alignment: .leading, spacing: 7) {
                     fieldLabel(i18n.t("cards.add.image"))
-                    MediaSuggestionRow(query: title, selectedURL: selectedImageURL) { url in
-                        selectedImageURL = url
+                    if selectedImageURL == nil {
+                        MediaSuggestionRow(query: title, selectedURL: selectedImageURL) { url in
+                            selectedImageURL = url
+                        }
                     }
                     ImagePickerButton(selectedURL: selectedImageURL, appColor: .cards) {
                         showingImagePicker = true
@@ -1071,6 +1648,150 @@ private func defaultWarningBanner() -> some View {
 }
 
 // MARK: - Color picker
+
+private struct CompactColorPicker: View {
+    @Binding var selectedColor: UInt32
+    let label: String
+    @State private var showingGrid = false
+
+    var body: some View {
+        Button { showingGrid = true } label: {
+            HStack(spacing: 10) {
+                fieldLabel(label)
+                Spacer()
+                Circle()
+                    .fill(Color(hex: selectedColor))
+                    .frame(width: 28, height: 28)
+                    .shadow(color: .black.opacity(0.18), radius: 3, x: 0, y: 1)
+                Image(systemName: "chevron.right")
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(.tertiary)
+            }
+            .padding(14)
+            .background(Color(.systemBackground))
+            .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+            .overlay {
+                RoundedRectangle(cornerRadius: 16, style: .continuous)
+                    .stroke(Color.primary.opacity(0.06), lineWidth: 1)
+            }
+        }
+        .buttonStyle(.plain)
+        .tikoPopup(isPresented: $showingGrid) {
+            TikoPopupCard(title: "Select Color", icon: "paintpalette", appColor: .cards, onClose: { showingGrid = false }) {
+                CardColorPicker(selectedColor: Binding(
+                    get: { selectedColor },
+                    set: { selectedColor = $0; showingGrid = false }
+                ))
+            }
+        }
+    }
+}
+
+private struct CompactParentPicker: View {
+    @Binding var selectedParentID: String?
+    let collections: [CardCollection]
+    let label: String
+    @State private var showingPicker = false
+
+    private var selectedCollection: CardCollection? {
+        collections.first { $0.id == selectedParentID }
+    }
+
+    var body: some View {
+        Button { showingPicker = true } label: {
+            HStack(spacing: 10) {
+                fieldLabel(label)
+                Spacer()
+                if let col = selectedCollection {
+                    RoundedRectangle(cornerRadius: 6, style: .continuous)
+                        .fill(Color(hex: col.colorHex))
+                        .frame(width: 22, height: 22)
+                    Text(col.title)
+                        .font(.system(size: 14, weight: .semibold, design: .rounded))
+                        .foregroundStyle(.primary)
+                        .lineLimit(1)
+                } else {
+                    Text("None")
+                        .font(.system(size: 14, weight: .semibold, design: .rounded))
+                        .foregroundStyle(.secondary)
+                }
+                Image(systemName: "chevron.right")
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(.tertiary)
+            }
+            .padding(14)
+            .background(Color(.systemBackground))
+            .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+            .overlay {
+                RoundedRectangle(cornerRadius: 16, style: .continuous)
+                    .stroke(Color.primary.opacity(0.06), lineWidth: 1)
+            }
+        }
+        .buttonStyle(.plain)
+        .tikoPopup(isPresented: $showingPicker) {
+            TikoPopupCard(title: label, icon: "folder", appColor: .cards, onClose: { showingPicker = false }) {
+                ScrollView {
+                    VStack(spacing: 8) {
+                        Button {
+                            selectedParentID = nil
+                            showingPicker = false
+                        } label: {
+                            HStack(spacing: 12) {
+                                RoundedRectangle(cornerRadius: 8, style: .continuous)
+                                    .fill(Color.primary.opacity(0.08))
+                                    .frame(width: 32, height: 32)
+                                    .overlay {
+                                        Image(systemName: "minus")
+                                            .font(.system(size: 13, weight: .bold))
+                                            .foregroundStyle(.secondary)
+                                    }
+                                Text("None (top level)")
+                                    .font(.system(size: 16, weight: .semibold, design: .rounded))
+                                    .foregroundStyle(.primary)
+                                Spacer()
+                                if selectedParentID == nil {
+                                    Image(systemName: "checkmark")
+                                        .font(.caption.weight(.bold))
+                                        .foregroundStyle(TikoAppColor.cards.palette.primary)
+                                }
+                            }
+                            .padding(.horizontal, 14)
+                            .padding(.vertical, 12)
+                            .background(Color.primary.opacity(0.05), in: RoundedRectangle(cornerRadius: 14, style: .continuous))
+                        }
+                        .buttonStyle(.plain)
+                        ForEach(collections) { col in
+                            Button {
+                                selectedParentID = col.id
+                                showingPicker = false
+                            } label: {
+                                HStack(spacing: 12) {
+                                    RoundedRectangle(cornerRadius: 8, style: .continuous)
+                                        .fill(Color(hex: col.colorHex))
+                                        .frame(width: 32, height: 32)
+                                    Text(col.title)
+                                        .font(.system(size: 16, weight: .semibold, design: .rounded))
+                                        .foregroundStyle(.primary)
+                                    Spacer()
+                                    if selectedParentID == col.id {
+                                        Image(systemName: "checkmark")
+                                            .font(.caption.weight(.bold))
+                                            .foregroundStyle(TikoAppColor.cards.palette.primary)
+                                    }
+                                }
+                                .padding(.horizontal, 14)
+                                .padding(.vertical, 12)
+                                .background(Color.primary.opacity(0.05), in: RoundedRectangle(cornerRadius: 14, style: .continuous))
+                            }
+                            .buttonStyle(.plain)
+                        }
+                    }
+                }
+                .frame(maxHeight: 320)
+            }
+        }
+    }
+}
 
 private struct CardColorPicker: View {
     @Binding var selectedColor: UInt32

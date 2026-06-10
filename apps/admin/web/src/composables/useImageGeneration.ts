@@ -1,11 +1,14 @@
 import type { ImageGenerationResult, AdminApiResponse } from '../types/admin'
 import { useAdminAuth } from './useAdminAuth'
 
+type TikoStyle = 'tiko-original' | 'tiko-v2' | 'tiko-natural'
+
 interface GenerateImageInput {
   prompt: string
   size: '1024x1024' | '1024x1792' | '1792x1024'
   quality: 'standard' | 'hd'
-  style: 'vivid' | 'natural'
+  style?: 'vivid' | 'natural'
+  tikoStyle?: TikoStyle
   title?: string
   category?: string
   tags?: string[]
@@ -30,6 +33,7 @@ export interface ImageGalleryItem {
   tags: string[]
   status: 'draft' | 'promoted'
   isPreview: boolean
+  mediaId: string | null
   createdAt: string
 }
 
@@ -92,7 +96,7 @@ export function useImageGeneration() {
     return `${baseUrl()}${item.imageUrl.replace('/v1/generation', '')}`
   }
 
-  async function pushToMedia(item: ImageGalleryItem): Promise<void> {
+  async function pushToMedia(item: ImageGalleryItem): Promise<string> {
     const imageUrl = imageSrc(item)
     const imageResponse = await fetch(imageUrl, { headers: authHeaders() })
     if (!imageResponse.ok) throw new Error(`Failed to download image for media upload: ${imageResponse.status}`)
@@ -120,6 +124,16 @@ export function useImageGeneration() {
       const body = await uploadResponse.json().catch(() => null) as { error?: string } | null
       throw new Error(body?.error ?? `Media upload failed: ${uploadResponse.status}`)
     }
+    const uploadBody = await uploadResponse.json().catch(() => null) as { id?: string } | null
+    const mediaId = uploadBody?.id ?? ''
+    if (mediaId) {
+      await fetch(`${baseUrl()}/images/${encodeURIComponent(item.id)}/media-link`, {
+        method: 'POST',
+        headers: authHeaders({ 'content-type': 'application/json' }),
+        body: JSON.stringify({ mediaId }),
+      }).catch(() => null)
+    }
+    return mediaId
   }
 
   async function promoteImage(id: string, item?: ImageGalleryItem): Promise<void> {

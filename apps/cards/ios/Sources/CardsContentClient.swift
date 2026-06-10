@@ -42,7 +42,7 @@ actor CardsContentClient {
     }
 
     /// Creates a new user collection and persists it server-side.
-    func createCollection(id: String, title: String, colorHex: UInt32, order: Int, imageURL: URL? = nil, sessionToken: String) async throws -> CardCollection {
+    func createCollection(id: String, title: String, colorHex: UInt32, order: Int, parentID: String? = nil, imageURL: URL? = nil, sessionToken: String) async throws -> CardCollection {
         guard let url = URL(string: "\(Self.baseURL)/cards/collections") else {
             throw URLError(.badURL)
         }
@@ -52,6 +52,7 @@ actor CardsContentClient {
         request.setValue("Bearer \(sessionToken)", forHTTPHeaderField: "Authorization")
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         var payload: [String: Any] = ["id": id, "title": title, "colorHex": colorHex, "order": order]
+        if let parentID { payload["parentID"] = parentID }
         if let imageURL, !imageURL.isFileURL { payload["imageURL"] = imageURL.absoluteString }
         request.httpBody = try JSONSerialization.data(withJSONObject: payload)
         let (data, response) = try await URLSession.shared.data(for: request)
@@ -81,7 +82,7 @@ actor CardsContentClient {
         return try JSONDecoder().decode(SingleCardResponse.self, from: data).data
     }
 
-    func updateCollection(id: String, title: String, colorHex: UInt32, imageURL: URL? = nil, saveAsDefault: Bool = false, sessionToken: String) async throws -> CardCollection {
+    func updateCollection(id: String, title: String, colorHex: UInt32, parentID: String?? = nil, imageURL: URL? = nil, saveAsDefault: Bool = false, sessionToken: String) async throws -> CardCollection {
         guard let url = URL(string: "\(Self.baseURL)/cards/collections/\(id)") else {
             throw URLError(.badURL)
         }
@@ -91,6 +92,7 @@ actor CardsContentClient {
         request.setValue("Bearer \(sessionToken)", forHTTPHeaderField: "Authorization")
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         var payload: [String: Any] = ["title": title, "colorHex": colorHex, "saveAsDefault": saveAsDefault]
+        if let parentID { payload["parentID"] = parentID ?? NSNull() }
         if let imageURL, !imageURL.isFileURL { payload["imageURL"] = imageURL.absoluteString }
         request.httpBody = try JSONSerialization.data(withJSONObject: payload)
         let (data, response) = try await URLSession.shared.data(for: request)

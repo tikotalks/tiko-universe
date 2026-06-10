@@ -5,6 +5,7 @@ struct CardCollection: Identifiable, Codable, Equatable, Sendable {
     var title: String
     var colorHex: UInt32
     var order: Int
+    var parentID: String?
     var mediaCategories: [String]
     var imageURL: URL?
     var cards: [CommunicationCard]
@@ -14,6 +15,7 @@ struct CardCollection: Identifiable, Codable, Equatable, Sendable {
         title: String,
         colorHex: UInt32,
         order: Int,
+        parentID: String? = nil,
         mediaCategories: [String] = [],
         imageURL: URL? = nil,
         cards: [CommunicationCard]
@@ -22,6 +24,7 @@ struct CardCollection: Identifiable, Codable, Equatable, Sendable {
         self.title = title
         self.colorHex = colorHex
         self.order = order
+        self.parentID = parentID
         self.mediaCategories = mediaCategories
         self.imageURL = imageURL
         self.cards = cards
@@ -33,9 +36,10 @@ struct CardCollection: Identifiable, Codable, Equatable, Sendable {
         title = try container.decode(String.self, forKey: .title)
         colorHex = try container.decode(UInt32.self, forKey: .colorHex)
         order = try container.decode(Int.self, forKey: .order)
+        parentID = try container.decodeIfPresent(String.self, forKey: .parentID)
         mediaCategories = try container.decodeIfPresent([String].self, forKey: .mediaCategories) ?? []
         imageURL = try container.decodeIfPresent(URL.self, forKey: .imageURL)
-        cards = try container.decode([CommunicationCard].self, forKey: .cards)
+        cards = try container.decodeIfPresent([CommunicationCard].self, forKey: .cards) ?? []
     }
 }
 

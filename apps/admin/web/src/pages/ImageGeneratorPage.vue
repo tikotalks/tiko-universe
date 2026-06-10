@@ -7,12 +7,14 @@ import type { ImageGenerationResult } from '../types/admin'
 
 type Tab = 'library' | 'drafts' | 'create'
 
+type TikoStyle = 'tiko-original' | 'tiko-v2' | 'tiko-natural'
+
 interface GenerateInput {
   type: 'generate'
   prompt: string
   size: '1024x1024' | '1024x1792' | '1792x1024'
   quality: 'standard' | 'hd'
-  style: 'vivid' | 'natural'
+  tikoStyle: TikoStyle
   title?: string
   category?: string
   tags?: string[]
@@ -60,7 +62,8 @@ const category = ref('generated')
 const tagsText = ref('tiko, child-friendly')
 const size = ref<'1024x1024' | '1024x1792' | '1792x1024'>('1024x1024')
 const quality = ref<'standard' | 'hd'>('standard')
-const style = ref<'vivid' | 'natural'>('vivid')
+const tikoStyle = ref<TikoStyle>('tiko-v2')
+const previewCount = ref(4)
 const upscalingId = ref<string | null>(null)
 const pushingToMediaIds = ref<Set<string>>(new Set())
 
@@ -140,7 +143,11 @@ async function onPushToMedia(item: ImageGalleryItem) {
   pushingToMediaIds.value = new Set([...pushingToMediaIds.value, item.id])
   galleryError.value = null
   try {
-    await pushToMedia(item)
+    const mediaId = await pushToMedia(item)
+    if (mediaId) {
+      const idx = libraryItems.value.findIndex(i => i.id === item.id)
+      if (idx !== -1) libraryItems.value[idx] = { ...libraryItems.value[idx], mediaId }
+    }
   } catch (e) {
     galleryError.value = e instanceof Error ? e.message : 'Could not send image to Tiko Media.'
   } finally {
@@ -187,6 +194,7 @@ async function onUpscale(item: ImageGalleryItem) {
       tags: item.tags,
       status: 'draft',
       isPreview: false,
+      mediaId: null,
       createdAt: result.createdAt,
     })
   } catch (e) {
@@ -223,8 +231,8 @@ function onGenerate() {
       tags: parseTags(),
       size: size.value,
       quality: quality.value,
-      style: style.value,
-      count: 4,
+      tikoStyle: tikoStyle.value,
+      count: previewCount.value,
     },
     status: 'pending',
     result: null,
@@ -482,7 +490,7 @@ onMounted(() => { void loadLibrary() })
             <p v-if="item.description" :class="card('description')">{{ item.description }}</p>
             <p v-else :class="card('prompt')">{{ item.revisedPrompt || item.prompt }}</p>
             <div :class="card('actions')">
-              <Button size="small" :loading="pushingToMediaIds.has(item.id)" :disabled="pushingToMediaIds.has(item.id)" @click="onPushToMedia(item)">Send to Tiko Media</Button>
+              <Button v-if="!item.mediaId" size="small" :loading="pushingToMediaIds.has(item.id)" :disabled="pushingToMediaIds.has(item.id)" @click="onPushToMedia(item)">Send to Tiko Media</Button>
               <Button size="small" variant="outline" :loading="enrichingIds.has(item.id)" @click="onEnrich(item, 'library')">Enrich</Button>
               <Button size="small" variant="outline" @click="openEdit(item)">Edit</Button>
               <Button variant="ghost" size="small" :href="imageSrc(item)" target="_blank" rel="noreferrer">Open</Button>
@@ -564,6 +572,25 @@ onMounted(() => { void loadLibrary() })
 
         <div :class="page('controls')">
           <label :class="page('label')">
+            <span :class="page('label-text')">Style</span>
+            <select :class="page('select')" v-model="tikoStyle">
+              <option value="tiko-original">Tiko Original</option>
+              <option value="tiko-v2">Tiko V2</option>
+              <option value="tiko-natural">Tiko Natural</option>
+            </select>
+          </label>
+          <label :class="page('label')">
+            <span :class="page('label-text')">Previews</span>
+            <select :class="page('select')" v-model.number="previewCount">
+              <option :value="1">1</option>
+              <option :value="2">2</option>
+              <option :value="3">3</option>
+              <option :value="4">4</option>
+              <option :value="6">6</option>
+              <option :value="8">8</option>
+            </select>
+          </label>
+          <label :class="page('label')">
             <span :class="page('label-text')">Size</span>
             <select :class="page('select')" v-model="size">
               <option value="1024x1024">Square</option>
@@ -571,25 +598,11 @@ onMounted(() => { void loadLibrary() })
               <option value="1792x1024">Landscape</option>
             </select>
           </label>
-          <label :class="page('label')">
-            <span :class="page('label-text')">Quality</span>
-            <select :class="page('select')" v-model="quality">
-              <option value="standard">Standard</option>
-              <option value="hd">HD</option>
-            </select>
-          </label>
-          <label :class="page('label')">
-            <span :class="page('label-text')">Style</span>
-            <select :class="page('select')" v-model="style">
-              <option value="vivid">Vivid</option>
-              <option value="natural">Natural</option>
-            </select>
-          </label>
         </div>
 
         <Button :disabled="!prompt.trim()" type="submit" block>Add to queue</Button>
 
-        <p :class="page('hint')">Each generation creates 4 previews in <button type="button" :class="page('inline-link')" @click="viewDrafts">Drafts</button>. Pick one and Upscale it to full quality.</p>
+        <p :class="page('hint')">Generates {{ previewCount }} preview{{ previewCount > 1 ? 's' : '' }} in <button type="button" :class="page('inline-link')" @click="viewDrafts">Drafts</button>. Pick one and Upscale it to full quality.</p>
       </form>
 
       <aside :class="page('queue')">

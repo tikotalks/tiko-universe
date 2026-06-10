@@ -363,6 +363,7 @@ interface CardsCollectionRow {
   color_hex: number
   display_order: number
   media_categories: string | null
+  image_url: string | null
 }
 
 interface CardsTileRow {
@@ -440,7 +441,7 @@ async function getDefaultCollections(env: Env): Promise<CardCollection[]> {
 
   // Fallback: content-DB cards_collections table
   const { results: collectionRows } = await env.CONTENT_DB.prepare(
-    `SELECT id, title, color_hex, display_order, media_categories
+    `SELECT id, title, color_hex, display_order, media_categories, image_url
      FROM cards_collections
      WHERE is_active = 1
      ORDER BY display_order ASC`,
@@ -468,7 +469,7 @@ async function getDefaultCollections(env: Env): Promise<CardCollection[]> {
 
   return collectionRows.map((row) => {
     const cats = parseJsonArray(row.media_categories) as string[]
-    const imageURL = cats.find(c => c.startsWith('http'))
+    const imageURL = row.image_url || cats.find(c => c.startsWith('http'))
     return {
       id: row.id,
       title: row.title,
@@ -521,8 +522,8 @@ async function putAdminCardsCollections(
 
   for (const col of collections) {
     await env.CONTENT_DB.prepare(
-      `INSERT INTO cards_collections (id, title, color_hex, display_order, media_categories, language_code, is_active)
-       VALUES (?, ?, ?, ?, ?, 'en', 1)`,
+      `INSERT INTO cards_collections (id, title, color_hex, display_order, media_categories, image_url, language_code, is_active)
+       VALUES (?, ?, ?, ?, ?, ?, 'en', 1)`,
     )
       .bind(
         col.id,
@@ -530,16 +531,17 @@ async function putAdminCardsCollections(
         col.colorHex ?? 0,
         col.order ?? 0,
         JSON.stringify(col.mediaCategories ?? []),
+        col.imageURL ?? null,
       )
       .run()
 
     if (Array.isArray(col.cards)) {
       for (const tile of col.cards) {
         await env.CONTENT_DB.prepare(
-          `INSERT INTO cards_tiles (id, collection_id, title, speech, color_hex, display_order)
-           VALUES (?, ?, ?, ?, ?, ?)`,
+          `INSERT INTO cards_tiles (id, collection_id, title, speech, color_hex, display_order, image_ref)
+           VALUES (?, ?, ?, ?, ?, ?, ?)`,
         )
-          .bind(tile.id, col.id, tile.title, tile.speech, tile.colorHex ?? 0, tile.order ?? 0)
+          .bind(tile.id, col.id, tile.title, tile.speech, tile.colorHex ?? 0, tile.order ?? 0, tile.imageRef ?? null)
           .run()
       }
     }
