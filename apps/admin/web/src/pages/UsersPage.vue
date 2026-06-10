@@ -168,25 +168,17 @@ function kindLabel(kind: string): string {
 
           <div :class="bemm('section')">
             <h3 :class="bemm('section-title')">Role</h3>
-            <p :class="bemm('section-desc')">Each user has exactly one role. Select the appropriate role below.</p>
-            <div :class="bemm('roles')">
-              <button
-                v-for="role in assignableRoles"
-                :key="role.value"
-                type="button"
-                :class="bemm('role-option', { active: selectedUser.roles.includes(role.value) })"
-                :disabled="saving"
-                @click="setSingleRole(selectedUser, role.value)"
-              >
-                <span :class="bemm('role-radio', { checked: selectedUser.roles.includes(role.value) })">
-                  <span v-if="selectedUser.roles.includes(role.value)" :class="bemm('role-radio-dot')" />
-                </span>
-                <span :class="bemm('role-option-text')">
-                  <strong>{{ role.label }}</strong>
-                  <small>{{ role.description }}</small>
-                </span>
-              </button>
-            </div>
+            <p :class="bemm('section-desc')">Each user has exactly one role.</p>
+            <select
+              :class="bemm('role-select')"
+              :disabled="saving"
+              :value="selectedUser.roles[0] || 'guest'"
+              @change="setSingleRole(selectedUser, ($event.target as HTMLSelectElement).value as TikoRole)"
+            >
+              <option v-for="role in assignableRoles" :key="role.value" :value="role.value">
+                {{ role.label }} — {{ role.description }}
+              </option>
+            </select>
           </div>
         </template>
 
@@ -433,10 +425,21 @@ function kindLabel(kind: string): string {
     margin: 0;
   }
 
-  &__roles {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-xs);
+  &__role-select {
+    width: 100%;
+    box-sizing: border-box;
+    border: 1px solid var(--admin-border);
+    border-radius: var(--border-radius-s);
+    padding: var(--space-s);
+    background: var(--admin-page-bg);
+    color: var(--admin-text);
+    font: inherit;
+    font-size: var(--font-size-s);
+
+    &:disabled {
+      opacity: 0.6;
+      cursor: wait;
+    }
   }
 
   &__role-option {
