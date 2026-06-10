@@ -44,7 +44,6 @@ public extension TikoAppConfig {
     static let sequence = TikoAppConfig(id: .sequence, title: "Sequence", appColor: .sequence, appIconSystemName: "list.bullet.rectangle.fill", appIconMediaCategory: "routines", themeColorHex: 0x16b8a6)
     static let timer = TikoAppConfig(id: .timer, title: "Timer", appColor: .timer, appIconSystemName: "timer", appIconMediaCategory: "transport", themeColorHex: 0xf8c22e)
     static let radio = TikoAppConfig(id: .radio, title: "Radio", appColor: .radio, appIconSystemName: "headphones", appIconMediaCategory: "music", themeColorHex: 0xe84057)
-    static let talk = TikoAppConfig(id: .talk, title: "Talk", appColor: .talk, appIconSystemName: "bubble.left.and.bubble.right.fill", appIconMediaCategory: "communication", themeColorHex: 0x2f80ed)
     static let tiko = TikoAppConfig(id: .tiko, title: "Tiko", appColor: .tiko, appIconSystemName: "heart.fill", appIconMediaCategory: "tiko", themeColorHex: 0xef4f8f)
 }
 

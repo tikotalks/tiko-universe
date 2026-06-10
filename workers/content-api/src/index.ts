@@ -71,6 +71,7 @@ interface CardTile {
   colorHex: number
   order: number
   imageRef?: string
+  imageURL?: string
 }
 
 interface CardCollection {
@@ -80,6 +81,7 @@ interface CardCollection {
   order: number
   mediaCategories: string[]
   imageURL?: string
+  parentID?: string | null
   cards: CardTile[]
 }
 
@@ -364,6 +366,7 @@ interface CardsCollectionRow {
   display_order: number
   media_categories: string | null
   image_url: string | null
+  parent_id: string | null
 }
 
 interface CardsTileRow {
@@ -441,7 +444,7 @@ async function getDefaultCollections(env: Env): Promise<CardCollection[]> {
 
   // Fallback: content-DB cards_collections table
   const { results: collectionRows } = await env.CONTENT_DB.prepare(
-    `SELECT id, title, color_hex, display_order, media_categories, image_url
+    `SELECT id, title, color_hex, display_order, media_categories, image_url, parent_id
      FROM cards_collections
      WHERE is_active = 1
      ORDER BY display_order ASC`,
@@ -455,6 +458,9 @@ async function getDefaultCollections(env: Env): Promise<CardCollection[]> {
 
   const tilesByCollection = new Map<string, CardTile[]>()
   for (const row of tileRows) {
+    const resolvedImageURL = row.image_ref
+      ? `${(env.MEDIA_API_URL ?? 'https://media.tikoapi.org/v1').replace(/\/$/, '')}/media/${encodeURIComponent(row.image_ref)}/download`
+      : undefined
     const tile: CardTile = {
       id: row.id,
       title: row.title,
@@ -462,6 +468,7 @@ async function getDefaultCollections(env: Env): Promise<CardCollection[]> {
       colorHex: row.color_hex,
       order: row.display_order,
       imageRef: row.image_ref ?? undefined,
+      imageURL: resolvedImageURL,
     }
     const existing = tilesByCollection.get(row.collection_id)
     if (existing) { existing.push(tile) } else { tilesByCollection.set(row.collection_id, [tile]) }
@@ -477,6 +484,7 @@ async function getDefaultCollections(env: Env): Promise<CardCollection[]> {
       order: row.display_order,
       mediaCategories: cats.filter(c => !c.startsWith('http')),
       ...(imageURL ? { imageURL } : {}),
+      ...(row.parent_id ? { parentID: row.parent_id } : {}),
       cards: tilesByCollection.get(row.id) ?? [],
     }
   })
