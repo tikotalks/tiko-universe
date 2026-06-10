@@ -19,7 +19,7 @@ const fallbackVoices = [
 ]
 
 const { tryout, render: renderStory, audioSrc, listStories, listVoices, createDraft, listDrafts, promoteStory, deleteStory } = useStoryNarration()
-const { listAudioAlbums } = useAdminMediaLibrary()
+const { listAudioAlbums, list: listMedia, items: mediaItems, loading: mediaLoading, itemUrl } = useAdminMediaLibrary()
 
 const activeTab = ref<Tab>('library')
 
@@ -41,6 +41,8 @@ const speed = ref(1)
 const category = ref('story')
 const tagsText = ref('tiko-radio, story')
 const coverMediaId = ref('')
+const coverMediaSearch = ref('')
+const coverMediaOpen = ref(false)
 const targetAlbumId = ref('')
 const segments = ref<StorySegmentInput[]>([
   { id: crypto.randomUUID(), text: '', pauseAfterMs: 350 },
@@ -50,6 +52,8 @@ const tryoutLoading = ref(false)
 const renderLoading = ref(false)
 const formError = ref<string | null>(null)
 const tryoutResult = ref<StoryTryoutResult | null>(null)
+const voicePreviewAudio = ref<HTMLAudioElement | null>(null)
+const voicePreviewPlayingId = ref<string | null>(null)
 
 const selectedSegment = computed(() => segments.value.find(s => s.id === selectedSegmentId.value) ?? segments.value[0])
 const totalCharacters = computed(() => segments.value.reduce((sum, s) => sum + s.text.length, 0))
@@ -70,9 +74,22 @@ const selectedVoiceDescription = computed(() => {
   return selectedVoiceOption.value?.provider === 'elevenlabs' ? 'Expressive child-friendly narration' : 'Clear narration voice'
 })
 const estimatedMinutes = computed(() => Math.max(1, Math.ceil(totalCharacters.value / 900)))
+const selectedCoverMedia = computed(() => mediaItems.value.find(m => m.id === coverMediaId.value))
 
 function parseTags(): string[] {
   return tagsText.value.split(',').map(tag => tag.trim()).filter(Boolean)
+}
+
+async function toggleCoverPicker() {
+  coverMediaOpen.value = !coverMediaOpen.value
+  if (coverMediaOpen.value && mediaItems.value.length === 0) {
+    await listMedia({ type: 'image', limit: 40 })
+  }
+}
+
+function selectCoverMedia(id: string) {
+  coverMediaId.value = id
+  coverMediaOpen.value = false
 }
 
 function addSegment() {
@@ -114,6 +131,25 @@ async function onTryout(target = selectedSegment.value) {
   } finally {
     tryoutLoading.value = false
   }
+}
+
+function previewVoice(option: { id: string; sampleUrl?: string }) {
+  if (voicePreviewPlayingId.value === option.id) {
+    voicePreviewAudio.value?.pause()
+    voicePreviewPlayingId.value = null
+    return
+  }
+  if (voicePreviewAudio.value) {
+    voicePreviewAudio.value.pause()
+  }
+  const sampleUrl = option.sampleUrl || `/v1/generation/voice-samples/${option.id}?provider=elevenlabs&model=${model.value}`
+  const audio = new Audio(sampleUrl)
+  audio.addEventListener('ended', () => { voicePreviewPlayingId.value = null })
+  audio.addEventListener('error', () => { voicePreviewPlayingId.value = null })
+  voicePreviewAudio.value = audio
+  voicePreviewPlayingId.value = option.id
+  voice.value = option.id
+  audio.play().catch(() => { voicePreviewPlayingId.value = null })
 }
 
 async function onRender() {
@@ -409,27 +445,33 @@ onMounted(() => {
           </span>
         </label>
 
-        <label :class="page('field')">
+        <div :class="page('field')">
           <span :class="page('label-text')">Cover image</span>
-          <button type="button" :class="page('upload')">
+          <div v-if="selectedCoverMedia" :class="page('cover-selected')">
+            <img :src="itemUrl(selectedCoverMedia)" :alt="selectedCoverMedia.title || 'Cover'" :class="page('cover-thumb')" />
+            <div :class="page('cover-info')">
+              <strong>{{ selectedCoverMedia.title || selectedCoverMedia.file_name || 'Selected image' }}</strong>
+              <button type="button" :class="page('text-action')" @click="coverMediaId = ''">Remove</button>
+            </div>
+          </div>
+          <button v-else type="button" :class="page('upload')" @click="toggleCoverPicker">
             <Icon name="arrows/arrow-headed-upload" size="medium" />
-            <strong>Upload an image</strong>
-            <span>PNG or JPG up to 5MB</span>
+            <strong>Select from media library</strong>
+            <span>Choose an existing image</span>
           </button>
-          <InputText v-model="coverMediaId" label="Cover media ID" placeholder="Optional media catalog id" />
-        </label>
+          <div v-if="coverMediaOpen" :class="page('cover-picker')">
+            <input v-model="coverMediaSearch" :class="page('input')" type="text" placeholder="Search images…" @input="listMedia({ type: 'image', search: coverMediaSearch || undefined, limit: 40 })" />
+            <div v-if="mediaLoading" :class="page('empty')">Loading media…</div>
+            <div v-else-if="mediaItems.length === 0" :class="page('empty')">No images found in media library.</div>
+            <div v-else :class="page('cover-grid')">
+              <button v-for="item in mediaItems" :key="item.id" type="button" :class="page('cover-tile', { active: item.id === coverMediaId })" @click="selectCoverMedia(item.id)">
+                <img :src="itemUrl(item)" :alt="item.title || item.file_name || ''" />
+              </button>
+            </div>
+          </div>
+        </div>
 
         <section :class="page('editor')" aria-label="Story text editor">
-          <div :class="page('editor-toolbar')" aria-hidden="true">
-            <span>B</span>
-            <span><em>I</em></span>
-            <Icon name="ui/text-detail-list" size="small" />
-            <Icon name="ui/text-align-left-ordered" size="small" />
-            <span>↶</span>
-            <span>↷</span>
-            <span :class="page('toolbar-spacer')"></span>
-            <span>Tt⌄</span>
-          </div>
           <InputTextArea v-model="selectedSegment.text" label="Story text" :min-rows="10" :max-rows="18" :allow-resize="true" placeholder="Once upon a time…" />
         </section>
 
@@ -479,8 +521,8 @@ onMounted(() => {
                   <span>{{ option.id === voice ? selectedVoiceDescription : (option.provider === 'elevenlabs' ? 'Expressive narration' : option.model) }}</span>
                 </span>
               </button>
-              <button type="button" :class="page('play-button')" :aria-label="`Preview ${option.label}`" @click="voice = option.id; onTryout()">
-                <Icon name="media/playback-play" size="small" />
+              <button type="button" :class="page('play-button')" :aria-label="`Preview ${option.label}`" @click="previewVoice(option)">
+                <Icon :name="voicePreviewPlayingId === option.id ? 'media/playback-pause' : 'media/playback-play'" size="small" />
               </button>
             </article>
           </div>
@@ -1172,25 +1214,77 @@ onMounted(() => {
     }
   }
 
-  &__editor {
-    padding-top: var(--space-m);
-  }
-
-  &__editor-toolbar {
-    min-height: calc(var(--space) * 2.6);
-    border: 1px solid color-mix(in srgb, var(--color-foreground), transparent 86%);
-    border-bottom: 0;
-    border-radius: var(--border-radius-s) var(--border-radius-s) 0 0;
-    background: color-mix(in srgb, var(--color-background), var(--color-foreground) 2%);
-    color: var(--admin-text-muted);
+  &__cover-selected {
     display: flex;
     align-items: center;
-    gap: var(--space-m);
-    padding: 0 var(--space-m);
+    gap: var(--space-s);
+    padding: var(--space-s);
+    border: 1px solid color-mix(in srgb, var(--color-foreground), transparent 86%);
+    border-radius: var(--border-radius-s);
   }
 
-  &__toolbar-spacer {
-    flex: 1;
+  &__cover-thumb {
+    width: calc(var(--space) * 5);
+    height: calc(var(--space) * 5);
+    object-fit: cover;
+    border-radius: var(--border-radius-xs);
+  }
+
+  &__cover-info {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+
+    strong {
+      color: var(--admin-text);
+      font-size: var(--font-size-s);
+    }
+  }
+
+  &__cover-picker {
+    margin-top: var(--space-xs);
+    border: 1px solid color-mix(in srgb, var(--color-foreground), transparent 86%);
+    border-radius: var(--border-radius-s);
+    padding: var(--space-s);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-s);
+    max-height: calc(var(--space) * 25);
+    overflow-y: auto;
+  }
+
+  &__cover-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(calc(var(--space) * 5), 1fr));
+    gap: var(--space-xs);
+  }
+
+  &__cover-tile {
+    aspect-ratio: 1;
+    border: 2px solid transparent;
+    border-radius: var(--border-radius-xs);
+    overflow: hidden;
+    cursor: pointer;
+    padding: 0;
+    background: transparent;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    &--active {
+      border-color: var(--color-primary);
+    }
+
+    &:hover {
+      border-color: color-mix(in srgb, var(--color-foreground), transparent 50%);
+    }
+  }
+
+  &__editor {
+    padding-top: var(--space-m);
   }
 
   &__editor :deep(.input-textarea__label) {
@@ -1198,8 +1292,6 @@ onMounted(() => {
   }
 
   &__editor :deep(textarea) {
-    border-top-left-radius: 0;
-    border-top-right-radius: 0;
     min-height: calc(var(--space) * 15);
     line-height: 1.85;
     background: color-mix(in srgb, var(--color-background), var(--color-foreground) 2%);
