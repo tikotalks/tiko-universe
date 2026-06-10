@@ -2,6 +2,7 @@
 import { computed } from 'vue'
 import { useBemm } from 'bemm'
 import { Button, InputText } from '@sil/ui'
+import { tikoColors } from '@tiko/ui'
 import ColorSwatchPicker from '../ColorSwatchPicker.vue'
 
 interface YesNoAnswerTile {
@@ -23,6 +24,16 @@ const bemm = useBemm('yes-no-editor', { return: 'string', includeBaseClass: true
 const props = defineProps<{ modelValue: Record<string, unknown> }>()
 const emit = defineEmits<{ 'update:modelValue': [value: Record<string, unknown>] }>()
 
+const answerPresets: Array<Omit<YesNoAnswerTile, 'id'>> = [
+  { label: 'Yes', speech: 'Yes', color: 'green', icon: 'checkmark' },
+  { label: 'No', speech: 'No', color: 'red', icon: 'xmark' },
+  { label: 'Maybe', speech: 'Maybe', color: 'yellow', icon: 'questionmark' },
+  { label: 'Help', speech: 'Help', color: 'blue', icon: 'hand.raised.fill' },
+  { label: 'Stop', speech: 'Stop', color: 'orange', icon: 'hand.raised.slash.fill' },
+  { label: 'More', speech: 'More', color: 'teal', icon: 'plus' },
+  { label: 'Finished', speech: 'Finished', color: 'purple', icon: 'checkmark.circle.fill' },
+]
+
 const state = computed<YesNoState>(() => {
   const value = props.modelValue as Partial<YesNoState>
   return {
@@ -39,17 +50,35 @@ function makeId(prefix: string) {
   return `${prefix}-${crypto.randomUUID().slice(0, 8)}`
 }
 
-function addAnswer() {
+function colorTokenToHex(color: string | undefined) {
+  return tikoColors.find(item => item.name === color)?.hex ?? color ?? ''
+}
+
+function normalizeAnswer(answer: YesNoAnswerTile): YesNoAnswerTile {
+  return {
+    id: answer.id,
+    label: answer.label,
+    speech: answer.speech,
+    ...(answer.color ? { color: answer.color } : {}),
+    ...(answer.imageURL ? { imageURL: answer.imageURL } : {}),
+    ...(answer.icon ? { icon: answer.icon } : {}),
+  }
+}
+
+function addAnswer(preset?: Omit<YesNoAnswerTile, 'id'>) {
+  const answer = preset
+    ? { id: makeId('answer'), ...preset }
+    : { id: makeId('answer'), label: 'New answer', speech: 'New answer', color: 'teal' }
   update({
     answers: [
       ...state.value.answers,
-      { id: makeId('answer'), label: 'New answer', speech: 'New answer', color: '#4ECDC4' },
+      normalizeAnswer(answer),
     ],
   })
 }
 
 function updateAnswer(index: number, patch: Partial<YesNoAnswerTile>) {
-  const answers = state.value.answers.map((a, i) => (i === index ? { ...a, ...patch } : a))
+  const answers = state.value.answers.map((a, i) => (i === index ? normalizeAnswer({ ...a, ...patch }) : normalizeAnswer(a)))
   update({ answers })
 }
 
@@ -81,8 +110,22 @@ function moveAnswer(index: number, delta: number) {
         <Button variant="outline" size="small" @click="addAnswer">Add answer</Button>
       </header>
 
+      <div :class="bemm('presets')" aria-label="Preset answers">
+        <button
+          v-for="preset in answerPresets"
+          :key="preset.label"
+          type="button"
+          :class="bemm('preset')"
+          :style="{ '--yes-no-editor-preset-color': colorTokenToHex(preset.color) }"
+          @click="addAnswer(preset)"
+        >
+          <span :class="bemm('preset-swatch')" aria-hidden="true" />
+          <span>{{ preset.label }}</span>
+        </button>
+      </div>
+
       <div v-if="state.answers.length === 0" :class="bemm('empty')">
-        No default answers yet. Add one or leave empty for the built-in Yes / No tiles.
+        Choose a preset, add a custom answer, or leave empty for the built-in Yes / No tiles.
       </div>
 
       <div v-else :class="bemm('list')">
@@ -116,6 +159,7 @@ function moveAnswer(index: number, delta: number) {
               <span :class="bemm('color-label')">Color</span>
               <ColorSwatchPicker
                 :model-value="answer.color ?? ''"
+                mode="name"
                 @update:model-value="(v: string) => updateAnswer(i, { color: v || undefined })"
               />
             </div>
@@ -163,6 +207,39 @@ function moveAnswer(index: number, delta: number) {
     text-align: center;
     color: var(--admin-text-muted);
     font-size: var(--font-size-s);
+  }
+
+  &__presets {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-xs);
+  }
+
+  &__preset {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-xs);
+    border: 1px solid var(--admin-border);
+    border-radius: var(--border-radius-s);
+    background: var(--admin-surface);
+    color: var(--admin-text);
+    padding: var(--space-xs) var(--space-s);
+    font: inherit;
+    font-size: var(--font-size-s);
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  &__preset:hover {
+    border-color: var(--admin-border-strong);
+  }
+
+  &__preset-swatch {
+    width: 0.85rem;
+    height: 0.85rem;
+    border-radius: 999px;
+    background: var(--yes-no-editor-preset-color, var(--admin-border-strong));
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, #000, transparent 84%);
   }
 
   &__list {

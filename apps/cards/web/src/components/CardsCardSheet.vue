@@ -9,6 +9,26 @@ const props = defineProps<{
   mode: 'add' | 'edit'
   collection: CardCollection
   card?: CommunicationCard
+  labels: {
+    newCard: string
+    editCard: string
+    name: string
+    cardNamePlaceholder: string
+    spokenText: string
+    whatShouldBeSpoken: string
+    color: string
+    image: string
+    changeImage: string
+    addImage: string
+    pickImage: string
+    search: string
+    searching: string
+    searchImages: string
+    typeToSearch: string
+    cancel: string
+    addCard: string
+    save: string
+  }
 }>()
 
 const emit = defineEmits<{
@@ -38,15 +58,15 @@ function submit() {
 
 <template>
   <form @submit.prevent="submit">
-    <TikoSheet :title="mode === 'add' ? 'New Card' : 'Edit Card'" icon="card">
-      <TikoField :model-value="title" label="Name" placeholder="Card name" @update:model-value="updateTitle" />
-      <TikoField v-model="speech" label="Spoken Text" placeholder="What should be spoken?" />
-      <TikoColorPicker v-model="colorHex" label="Color" />
-      <CardsImageChooser v-model="imageURL" :query="title" />
+    <TikoSheet :title="mode === 'add' ? labels.newCard : labels.editCard" icon="card">
+      <TikoField :model-value="title" :label="labels.name" :placeholder="labels.cardNamePlaceholder" @update:model-value="updateTitle" />
+      <TikoField v-model="speech" :label="labels.spokenText" :placeholder="labels.whatShouldBeSpoken" />
+      <TikoColorPicker v-model="colorHex" :label="labels.color" />
+      <CardsImageChooser v-model="imageURL" :query="title" :labels="labels" />
       <template #footer>
-        <Button type="button" variant="ghost" @click="emit('cancel')">Cancel</Button>
+        <Button type="button" variant="ghost" @click="emit('cancel')">{{ labels.cancel }}</Button>
         <Button type="submit" variant="primary" :disabled="!title.trim()">
-          {{ mode === 'add' ? 'Add Card' : 'Save' }}
+          {{ mode === 'add' ? labels.addCard : labels.save }}
         </Button>
       </template>
     </TikoSheet>

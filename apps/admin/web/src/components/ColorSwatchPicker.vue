@@ -1,29 +1,37 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useBemm } from 'bemm'
-import { TIKO_PALETTE } from '@tiko/ui'
+import { TIKO_PALETTE, tikoColors, type TikoColorEntry } from '@tiko/ui'
 
 const bemm = useBemm('color-swatch-picker', { return: 'string', includeBaseClass: true })
 
 const props = defineProps<{
   modelValue: string
   colors?: string[]
+  mode?: 'hex' | 'name'
 }>()
 const emit = defineEmits<{ 'update:modelValue': [value: string] }>()
 
-const palette = computed(() => props.colors ?? TIKO_PALETTE)
+const palette = computed<TikoColorEntry[]>(() => {
+  if (props.mode === 'name') return tikoColors
+  return (props.colors ?? TIKO_PALETTE).map(hex => ({ name: hex, hex }))
+})
+
+function colorValue(color: TikoColorEntry) {
+  return props.mode === 'name' ? color.name : color.hex
+}
 </script>
 
 <template>
   <div :class="bemm('')">
     <button
       v-for="color in palette"
-      :key="color"
+      :key="color.name"
       type="button"
-      :class="bemm('dot', { active: modelValue === color })"
-      :style="{ '--c': color }"
-      :title="color"
-      @click="emit('update:modelValue', color)"
+      :class="bemm('dot', { active: modelValue === colorValue(color) })"
+      :style="{ '--c': color.hex }"
+      :title="color.name"
+      @click="emit('update:modelValue', colorValue(color))"
     />
   </div>
 </template>

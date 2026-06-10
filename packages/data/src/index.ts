@@ -31,7 +31,8 @@ export interface YesNoSettings extends JsonObject {
   spokenPrompt?: string
 }
 
-export interface YesNoAnswerTile extends JsonObject {
+export interface YesNoAnswerTile {
+  [key: string]: JsonValue | undefined
   id: string
   label: string
   speech: string
@@ -40,10 +41,11 @@ export interface YesNoAnswerTile extends JsonObject {
   icon?: string
 }
 
-export interface YesNoState extends JsonObject {
+export interface YesNoState {
+  [key: string]: unknown
   prompt?: string
-  lastAnswer?: 'yes' | 'no' | null
-  answerHistory?: Array<'yes' | 'no'>
+  lastAnswer?: string | null
+  answerHistory?: string[]
   answers?: YesNoAnswerTile[]
 }
 

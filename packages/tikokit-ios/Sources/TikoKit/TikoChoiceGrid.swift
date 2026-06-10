@@ -40,6 +40,7 @@ public struct TikoAnswerChoice: Identifiable, Equatable, Sendable {
     public let speech: String
     public let icon: Icon
     public let tone: TikoChoiceTone
+    public let color: String?
     public let colorHex: UInt32?
     public let imageURL: URL?
 
@@ -49,6 +50,7 @@ public struct TikoAnswerChoice: Identifiable, Equatable, Sendable {
         speech: String? = nil,
         icon: Icon,
         tone: TikoChoiceTone,
+        color: String? = nil,
         colorHex: UInt32? = nil,
         imageURL: URL? = nil
     ) {
@@ -57,6 +59,7 @@ public struct TikoAnswerChoice: Identifiable, Equatable, Sendable {
         self.speech = speech ?? label
         self.icon = icon
         self.tone = tone
+        self.color = color
         self.colorHex = colorHex
         self.imageURL = imageURL
     }
@@ -91,31 +94,21 @@ public struct TikoAnswerButton: View {
     private var buttonContent: some View {
         switch style {
         case .tiles:
-            if choice.colorHex != nil || choice.imageURL != nil {
-                TikoSquareTile(
-                    title: choice.label,
-                    background: choice.colorHex.map { Color(hex: $0) } ?? tileColor
-                ) {
-                    if let url = choice.imageURL {
-                        TikoCachedRemoteImage(url: url) {
-                            ProgressView()
-                                .frame(maxWidth: .infinity, maxHeight: .infinity)
-                                .background(.white.opacity(0.18))
-                        }
-                        .clipped()
+            TikoSquareTile(
+                title: choice.label,
+                background: choice.resolvedColor ?? tileColor
+            ) {
+                if let url = choice.imageURL {
+                    TikoCachedRemoteImage(url: url) {
+                        ProgressView()
+                            .frame(maxWidth: .infinity, maxHeight: .infinity)
+                            .background(.white.opacity(0.18))
                     }
-                }
-            } else {
-                VStack(spacing: 8) {
+                    .clipped()
+                } else {
                     iconView
-                        .frame(maxWidth: .infinity, minHeight: 160)
-                        .background(tileColor)
-                        .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
-                        .shadow(color: .black.opacity(0.18), radius: 14, x: 0, y: 18)
-
-                    Text(choice.label)
-                        .font(.system(size: 40, weight: .heavy, design: .rounded))
-                        .foregroundStyle(labelColor)
+                        .foregroundStyle(.white.opacity(0.88))
+                        .font(.system(size: 52, weight: .bold))
                 }
             }
         case .buttons:
@@ -165,6 +158,7 @@ public struct TikoAnswerButton: View {
     }
 
     private var tileColor: Color {
+        if let color = choice.resolvedColor { return color }
         if let hex = choice.colorHex { return Color(hex: hex) }
         switch choice.tone {
         case .primary, .success: return Color(hex: 0x93ee3f)
@@ -174,6 +168,15 @@ public struct TikoAnswerButton: View {
 
     private var labelColor: Color {
         colorScheme == .dark ? .white.opacity(0.92) : Color(hex: 0x0b5a7a)
+    }
+}
+
+private extension TikoAnswerChoice {
+    var resolvedColor: Color? {
+        if let color, let named = TikoColors.color(named: color) { return named }
+        if let color, let parsed = Color(hexString: color) { return parsed }
+        if let colorHex { return Color(hex: colorHex) }
+        return nil
     }
 }
 
@@ -193,7 +196,7 @@ public struct TikoChoiceGrid: View {
     }
 
     private var tileSpacing: CGFloat {
-        choices.allSatisfy { $0.colorHex != nil || $0.imageURL != nil } ? 12 : 40
+        choices.allSatisfy { $0.color != nil || $0.colorHex != nil || $0.imageURL != nil } ? 12 : 40
     }
 
     public var body: some View {

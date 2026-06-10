@@ -8,7 +8,7 @@ struct YesNoAnswerTile: Codable, Identifiable, Equatable {
     var id: String
     var label: String
     var speech: String
-    var colorHex: UInt32
+    var color: String
     var imageURL: URL?
     var icon: String?
 
@@ -19,9 +19,48 @@ struct YesNoAnswerTile: Codable, Identifiable, Equatable {
             speech: speech,
             icon: icon.map { .systemName($0) } ?? .systemName("checkmark"),
             tone: .primary,
-            colorHex: colorHex,
+            color: color,
             imageURL: imageURL
         )
+    }
+
+    init(id: String, label: String, speech: String, color: String, imageURL: URL? = nil, icon: String? = nil) {
+        self.id = id
+        self.label = label
+        self.speech = speech
+        self.color = color
+        self.imageURL = imageURL
+        self.icon = icon
+    }
+
+    private enum CodingKeys: String, CodingKey {
+        case id, label, speech, color, colorHex, imageURL, icon
+    }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        id = try container.decode(String.self, forKey: .id)
+        label = try container.decode(String.self, forKey: .label)
+        speech = try container.decodeIfPresent(String.self, forKey: .speech) ?? label
+        if let color = try container.decodeIfPresent(String.self, forKey: .color) {
+            self.color = color
+        } else if let colorHex = try container.decodeIfPresent(UInt32.self, forKey: .colorHex) {
+            self.color = String(format: "#%06X", colorHex)
+        } else {
+            self.color = TikoColors.teal.name
+        }
+        imageURL = try container.decodeIfPresent(URL.self, forKey: .imageURL)
+        icon = try container.decodeIfPresent(String.self, forKey: .icon)
+    }
+
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(id, forKey: .id)
+        try container.encode(label, forKey: .label)
+        try container.encode(speech, forKey: .speech)
+        try container.encode(color, forKey: .color)
+        try container.encodeIfPresent(imageURL, forKey: .imageURL)
+        try container.encodeIfPresent(icon, forKey: .icon)
     }
 }
 
@@ -271,7 +310,9 @@ struct YesNoView: View {
 
     private func flashBackground(for choice: TikoAnswerChoice) {
         let base: Color
-        if let hex = choice.colorHex {
+        if let color = choice.color, let parsed = TikoColors.color(named: color) ?? Color(hexString: color) {
+            base = parsed
+        } else if let hex = choice.colorHex {
             base = Color(hex: hex)
         } else {
             base = choice.tone == .primary ? Color(hex: 0x93ee3f) : Color(hex: 0xef405d)
@@ -475,7 +516,7 @@ private struct TileEditorSheet: View {
                             id: "answer-\(UUID().uuidString.prefix(8))",
                             label: "Answer",
                             speech: "Answer",
-                            colorHex: 0x4ECDC4
+                            color: TikoColors.teal.name
                         ))
                     } label: {
                         Text(i18n.t("yesNo.tileEditor.addTile"))
@@ -536,7 +577,7 @@ private struct TileEditorSheet: View {
     private func tileRow(tile: YesNoAnswerTile, index: Int) -> some View {
         HStack(spacing: 12) {
             RoundedRectangle(cornerRadius: 10, style: .continuous)
-                .fill(Color(hex: tile.colorHex))
+                .fill(TikoColors.color(named: tile.color) ?? Color(hexString: tile.color) ?? TikoAppColor.yesNo.palette.primary)
                 .frame(width: 36, height: 36)
                 .overlay {
                     if let icon = tile.icon {
@@ -597,7 +638,7 @@ private struct TileDetailEditView: View {
 
     @State private var label: String
     @State private var speech: String
-    @State private var colorHex: UInt32
+    @State private var color: String
     @State private var icon: String
     @Environment(\.dismiss) private var dismiss
 
@@ -606,16 +647,9 @@ private struct TileDetailEditView: View {
         self.onSave = onSave
         _label = State(initialValue: tile.label)
         _speech = State(initialValue: tile.speech)
-        _colorHex = State(initialValue: tile.colorHex)
+        _color = State(initialValue: tile.color)
         _icon = State(initialValue: tile.icon ?? "")
     }
-
-    private static let palette: [UInt32] = [
-        0xFF6B6B, 0xFF922B, 0xFFD43B, 0x69DB7C,
-        0x4DABF7, 0x748FFC, 0xCC5DE8, 0xF783AC,
-        0x63E6BE, 0x93EE3F, 0xEF405D, 0x4ECDC4,
-        0x868E96, 0x2C2C2E
-    ]
 
     var body: some View {
         NavigationStack {
@@ -631,19 +665,19 @@ private struct TileDetailEditView: View {
                 }
                 Section("Color") {
                     LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 10), count: 7), spacing: 10) {
-                        ForEach(Self.palette, id: \.self) { hex in
+                        ForEach(TikoColors.all, id: \.name) { preset in
                             Circle()
-                                .fill(Color(hex: hex))
+                                .fill(preset.color)
                                 .frame(height: 36)
                                 .overlay {
-                                    if colorHex == hex {
+                                    if color == preset.name {
                                         Circle().strokeBorder(.white, lineWidth: 2.5)
                                         Image(systemName: "checkmark")
                                             .font(.system(size: 11, weight: .black))
-                                            .foregroundStyle(.white)
+                                        .foregroundStyle(.white)
                                     }
                                 }
-                                .onTapGesture { colorHex = hex }
+                                .onTapGesture { color = preset.name }
                         }
                     }
                     .padding(.vertical, 6)
@@ -661,7 +695,7 @@ private struct TileDetailEditView: View {
                             id: tile.id,
                             label: label.isEmpty ? "Answer" : label,
                             speech: speech.isEmpty ? label : speech,
-                            colorHex: colorHex,
+                            color: color,
                             imageURL: tile.imageURL,
                             icon: icon.isEmpty ? nil : icon
                         ))

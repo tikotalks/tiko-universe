@@ -15,6 +15,16 @@ defineProps<{
   showAnimations: boolean
   cardSizeIndex: number
   labelSizeIndex: number
+  labels: {
+    settings: string
+    hideDefaultSets: string
+    showAnimations: string
+    cardSize: string
+    labelSize: string
+    small: string
+    medium: string
+    large: string
+  }
 }>()
 
 const emit = defineEmits<{
@@ -28,7 +38,7 @@ const emit = defineEmits<{
 </script>
 
 <template>
-  <TikoSheet title="Settings" icon="settings">
+  <TikoSheet :title="labels.settings" icon="settings">
     <TikoSettingsPanel
       :language="language"
       :color-mode="colorMode"
@@ -37,24 +47,24 @@ const emit = defineEmits<{
     />
     <TikoToggleRow
       :model-value="hideDefaultCollections"
-      label="Hide Default Sets"
+      :label="labels.hideDefaultSets"
       @update:model-value="emit('update:hideDefaultCollections', $event)"
     />
     <TikoToggleRow
       :model-value="showAnimations"
-      label="Show Animations"
+      :label="labels.showAnimations"
       @update:model-value="emit('update:showAnimations', $event)"
     />
     <TikoSegmentedControl
       :model-value="cardSizeIndex"
-      label="Card Size"
-      :options="['Small', 'Medium', 'Large']"
+      :label="labels.cardSize"
+      :options="[labels.small, labels.medium, labels.large]"
       @update:model-value="emit('update:cardSizeIndex', $event)"
     />
     <TikoSegmentedControl
       :model-value="labelSizeIndex"
-      label="Label Size"
-      :options="['Small', 'Medium', 'Large']"
+      :label="labels.labelSize"
+      :options="[labels.small, labels.medium, labels.large]"
       @update:model-value="emit('update:labelSizeIndex', $event)"
     />
   </TikoSheet>

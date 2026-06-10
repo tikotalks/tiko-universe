@@ -5,9 +5,19 @@ import { Button, type PopupService } from '@sil/ui'
 import { resizedCDNURL } from '../composables/cardsMedia'
 import CardsImagePickerSheet from './CardsImagePickerSheet.vue'
 
-defineProps<{
+const props = defineProps<{
   modelValue: string
   query: string
+  labels: {
+    image: string
+    changeImage: string
+    addImage: string
+    pickImage: string
+    search: string
+    searching: string
+    searchImages: string
+    typeToSearch: string
+  }
 }>()
 
 const emit = defineEmits<{
@@ -25,6 +35,7 @@ function openPicker(query: string) {
       setup() {
         return () => h(CardsImagePickerSheet, {
           query,
+          labels: props.labels,
           onSelect: (url: string) => {
             emit('update:modelValue', url)
             popup.closeAllPopups()
@@ -44,13 +55,13 @@ function openPicker(query: string) {
 
 <template>
   <div :class="bemm('')">
-    <span :class="bemm('label')">Image</span>
+    <span :class="bemm('label')">{{ labels.image }}</span>
     <div v-if="modelValue" :class="bemm('preview')">
       <img :src="resizedCDNURL(modelValue)" alt="" loading="lazy">
       <button type="button" @click="emit('update:modelValue', '')">×</button>
     </div>
     <Button type="button" variant="secondary" @click="openPicker(query)">
-      {{ modelValue ? 'Change Image' : 'Browse Images' }}
+      {{ modelValue ? labels.changeImage : labels.addImage }}
     </Button>
   </div>
 </template>

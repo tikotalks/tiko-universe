@@ -11,6 +11,26 @@ const props = defineProps<{
   collection?: CardCollection
   collections: CardCollection[]
   parentID?: string
+  labels: {
+    newCategory: string
+    editCategory: string
+    name: string
+    categoryNamePlaceholder: string
+    parentCollection: string
+    none: string
+    color: string
+    image: string
+    changeImage: string
+    addImage: string
+    pickImage: string
+    search: string
+    searching: string
+    searchImages: string
+    typeToSearch: string
+    cancel: string
+    addCategory: string
+    save: string
+  }
 }>()
 
 const emit = defineEmits<{
@@ -40,23 +60,23 @@ function submit() {
 
 <template>
   <form @submit.prevent="submit">
-    <TikoSheet :title="mode === 'add' ? 'New Category' : 'Edit Category'" icon="grid">
-      <TikoField v-model="title" label="Name" placeholder="Category name" />
+    <TikoSheet :title="mode === 'add' ? labels.newCategory : labels.editCategory" icon="grid">
+      <TikoField v-model="title" :label="labels.name" :placeholder="labels.categoryNamePlaceholder" />
       <label :class="selectBemm('')">
-        <span :class="selectBemm('label')">Parent Collection</span>
+        <span :class="selectBemm('label')">{{ labels.parentCollection }}</span>
         <select v-model="selectedParentID" :class="selectBemm('control')">
-          <option value="">None</option>
+          <option value="">{{ labels.none }}</option>
           <option v-for="candidate in eligibleParents" :key="candidate.id" :value="candidate.id">
             {{ candidate.title }}
           </option>
         </select>
       </label>
-      <TikoColorPicker v-model="colorHex" label="Color" />
-      <CardsImageChooser v-model="imageURL" :query="title" />
+      <TikoColorPicker v-model="colorHex" :label="labels.color" />
+      <CardsImageChooser v-model="imageURL" :query="title" :labels="labels" />
       <template #footer>
-        <Button type="button" variant="ghost" @click="emit('cancel')">Cancel</Button>
+        <Button type="button" variant="ghost" @click="emit('cancel')">{{ labels.cancel }}</Button>
         <Button type="submit" variant="primary" :disabled="!title.trim()">
-          {{ mode === 'add' ? 'Add Category' : 'Save' }}
+          {{ mode === 'add' ? labels.addCategory : labels.save }}
         </Button>
       </template>
     </TikoSheet>

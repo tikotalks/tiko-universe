@@ -9,6 +9,15 @@ import { hexColor } from '../composables/useCardsStore'
 defineProps<{
   count: number
   collections: CardCollection[]
+  labels: {
+    selected: string
+    moveToCollection: string
+    changeColor: string
+    delete: string
+    back: string
+    color: string
+    applyColor: string
+  }
 }>()
 
 const emit = defineEmits<{
@@ -25,15 +34,15 @@ const actionRow = useBemm('cards-action-row', { return: 'string', includeBaseCla
 </script>
 
 <template>
-  <TikoSheet v-if="view === 'actions'" :title="`${count} selected`" icon="check">
+  <TikoSheet v-if="view === 'actions'" :title="`${count} ${labels.selected}`" icon="check">
     <div :class="actionList('')">
-      <button type="button" :class="actionRow('')" @click="view = 'move'">Move to Collection <span>›</span></button>
-      <button type="button" :class="actionRow('')" @click="view = 'color'">Change Color <span>›</span></button>
-      <button type="button" :class="actionRow('', { danger: true })" @click="emit('delete')">Delete <span>×</span></button>
+      <button type="button" :class="actionRow('')" @click="view = 'move'">{{ labels.moveToCollection }} <span>›</span></button>
+      <button type="button" :class="actionRow('')" @click="view = 'color'">{{ labels.changeColor }} <span>›</span></button>
+      <button type="button" :class="actionRow('', { danger: true })" @click="emit('delete')">{{ labels.delete }} <span>×</span></button>
     </div>
   </TikoSheet>
 
-  <TikoSheet v-else-if="view === 'move'" title="Move to Collection" icon="move">
+  <TikoSheet v-else-if="view === 'move'" :title="labels.moveToCollection" icon="move">
     <div :class="actionList('')">
       <button
         v-for="collection in collections"
@@ -48,15 +57,15 @@ const actionRow = useBemm('cards-action-row', { return: 'string', includeBaseCla
       </button>
     </div>
     <template #footer>
-      <Button type="button" variant="ghost" @click="view = 'actions'">Back</Button>
+      <Button type="button" variant="ghost" @click="view = 'actions'">{{ labels.back }}</Button>
     </template>
   </TikoSheet>
 
-  <TikoSheet v-else title="Change Color" icon="color">
-    <TikoColorPicker v-model="colorHex" label="Color" />
+  <TikoSheet v-else :title="labels.changeColor" icon="color">
+    <TikoColorPicker v-model="colorHex" :label="labels.color" />
     <template #footer>
-      <Button type="button" variant="ghost" @click="view = 'actions'">Back</Button>
-      <Button type="button" variant="primary" @click="emit('color', colorHex)">Apply Color</Button>
+      <Button type="button" variant="ghost" @click="view = 'actions'">{{ labels.back }}</Button>
+      <Button type="button" variant="primary" @click="emit('color', colorHex)">{{ labels.applyColor }}</Button>
     </template>
   </TikoSheet>
 </template>

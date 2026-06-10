@@ -8,6 +8,13 @@ import { resizedCDNURL } from '../composables/cardsMedia'
 
 const props = defineProps<{
   query: string
+  labels: {
+    pickImage: string
+    search: string
+    searching: string
+    searchImages: string
+    typeToSearch: string
+  }
 }>()
 
 const emit = defineEmits<{
@@ -35,11 +42,11 @@ void runSearch()
 </script>
 
 <template>
-  <TikoSheet title="Pick an Image" icon="image">
+  <TikoSheet :title="labels.pickImage" icon="image">
     <div :class="bemm('search')">
-      <TikoField v-model="searchQuery" label="Search" placeholder="Search images" />
+      <TikoField v-model="searchQuery" :label="labels.search" :placeholder="labels.searchImages" />
       <Button type="button" variant="primary" :disabled="!searchQuery.trim() || searching" @click="runSearch">
-        {{ searching ? 'Searching' : 'Search' }}
+        {{ searching ? labels.searching : labels.search }}
       </Button>
     </div>
     <div :class="bemm('grid')">
@@ -53,6 +60,6 @@ void runSearch()
         <img :src="resizedCDNURL(item.original_url)" :alt="item.title || item.name" loading="lazy">
       </button>
     </div>
-    <p v-if="!results.length" :class="bemm('empty')">{{ searching ? 'Searching...' : 'Type to search for images' }}</p>
+    <p v-if="!results.length" :class="bemm('empty')">{{ searching ? labels.searching : labels.typeToSearch }}</p>
   </TikoSheet>
 </template>

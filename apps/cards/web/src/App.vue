@@ -3,7 +3,7 @@ import { computed, h, inject, markRaw, onMounted, ref, watch } from 'vue'
 import { useBemm } from 'bemm'
 import { Button, Popup, type PopupService } from '@sil/ui'
 import { IdentityClient } from '@tiko/identity'
-import { createI18n, defaultLanguage, tikoI18nKeys, tikoLanguages, type TikoLanguage } from '@tiko/i18n'
+import { createI18n, createTikoTranslationLoader, defaultLanguage, tikoI18nKeys, tikoLanguages, type TikoLanguage } from '@tiko/i18n'
 import {
   TikoAppShell,
   createTikoTtsClient,
@@ -44,6 +44,9 @@ const speakStatus = ref<SpeakStatus>('idle')
 
 const stored = readStored()
 const i18n = createI18n({ app: 'cards', language: toLanguage(stored.language) })
+const translationLoader = createTikoTranslationLoader()
+const loadedTranslations = new Set<string>()
+const translationsRevision = ref(0)
 const language = ref<TikoLanguage>(toLanguage(stored.language))
 const colorMode = ref<TikoColorMode>(toColorMode(stored.colorMode))
 const hideDefaultCollections = ref(stored.hideDefaultCollections ?? false)
@@ -78,17 +81,66 @@ const cards = useCardsStore({
 
 const labels = computed(() => {
   void language.value
+  void translationsRevision.value
   return {
     appName: i18n.t(tikoI18nKeys.cards.appName),
+    add: i18n.t('cards.addCard'),
+    done: i18n.t('cards.done'),
+    actions: i18n.t('common.actionsLabel'),
+    editCards: i18n.t('common.actions.edit'),
+    settings: i18n.t('common.settings'),
+    loadingCards: i18n.t('cards.loadingCards'),
+    loadingPictures: i18n.t('cards.add.suggestionsFromTiko'),
+    selected: i18n.t('cards.selected'),
     emptyCollections: i18n.t(tikoI18nKeys.cards.collections.empty),
     emptyTiles: i18n.t(tikoI18nKeys.cards.tiles.empty),
     speechError: i18n.t(tikoI18nKeys.cards.status.speechError),
+    sheet: {
+      newCard: i18n.t('cards.add.newCard'),
+      editCard: i18n.t('cards.add.editCard'),
+      newCategory: i18n.t('cards.add.newCategory'),
+      editCategory: i18n.t('cards.add.editCategory'),
+      name: i18n.t('cards.add.name'),
+      cardNamePlaceholder: i18n.t('cards.add.namePlaceholderCard'),
+      categoryNamePlaceholder: i18n.t('cards.add.namePlaceholderCategory'),
+      spokenText: i18n.t('cards.add.spokenText'),
+      whatShouldBeSpoken: i18n.t('cards.add.whatShouldBeSpoken'),
+      color: i18n.t('cards.add.color'),
+      image: i18n.t('cards.add.image'),
+      changeImage: i18n.t('cards.add.changeImage'),
+      addImage: i18n.t('cards.add.addImage'),
+      cancel: i18n.t('common.cancel'),
+      addCard: i18n.t('cards.add.addCard'),
+      addCategory: i18n.t('cards.add.addCategory'),
+      save: i18n.t('cards.add.saveChanges'),
+      parentCollection: i18n.t('cards.settings.collections'),
+      none: i18n.t('common.none'),
+      settings: i18n.t('common.settings'),
+      hideDefaultSets: i18n.t('cards.settings.hideDefaultSets'),
+      showAnimations: i18n.t('cards.settings.showAnimations'),
+      cardSize: i18n.t('cards.settings.cardSize'),
+      labelSize: i18n.t('cards.settings.labelSize'),
+      small: i18n.t('common.size.small'),
+      medium: i18n.t('common.size.medium'),
+      large: i18n.t('common.size.large'),
+      selected: i18n.t('cards.selected'),
+      moveToCollection: i18n.t('cards.settings.collections'),
+      changeColor: i18n.t('cards.add.color'),
+      delete: i18n.t('cards.deleteSelectedCards'),
+      back: i18n.t('common.back'),
+      applyColor: i18n.t('cards.add.saveChanges'),
+      pickImage: i18n.t('cards.add.image'),
+      search: i18n.t('cards.searchCards'),
+      searching: i18n.t('cards.generatingTranslation'),
+      searchImages: i18n.t('cards.suggestImageBasedOn'),
+      typeToSearch: i18n.t('cards.tryDifferentSearch'),
+    },
   }
 })
 
 const headerActions = computed<TikoHeaderAction[]>(() => {
-  if (cards.editMode.value) return [{ id: 'done', label: 'Done', icon: 'ui/check-fat' }]
-  return [{ id: 'add', label: 'Add', icon: 'ui/plus' }]
+  if (cards.editMode.value) return [{ id: 'done', label: labels.value.done, icon: 'ui/check-fat' }]
+  return [{ id: 'add', label: labels.value.add, icon: 'ui/plus' }]
 })
 
 const visibleItems = computed(() => cards.gridItems(hideDefaultCollections.value))
@@ -115,6 +167,31 @@ const itemsPerPage = computed(() => {
 
 const labelSize = computed<'small' | 'medium' | 'large'>(() => labelSizeIndex.value === 0 ? 'small' : labelSizeIndex.value === 2 ? 'large' : 'medium')
 const isAdmin = computed(() => identityState.accountEmailVerified.value === true)
+const appTitle = computed(() => {
+  const collection = cards.currentCollection.value
+  return collection ? translateDefaultCollectionTitle(collection) : labels.value.appName
+})
+
+function translateKey(key: string, fallback: string) {
+  const translated = i18n.t(key)
+  return translated === key ? fallback : translated
+}
+
+function translateDefaultCollectionTitle(collection: CardCollection) {
+  if (isUserOwned(collection.id)) return collection.title
+  return translateKey(`cards.default.${collection.id}`, collection.title)
+}
+
+function translateDefaultCardTitle(card: CommunicationCard) {
+  if (isUserOwned(card.id)) return card.title
+  return translateKey(`cards.default.${card.id}`, card.title)
+}
+
+function translateGridItemTitle(item: CardsGridItem) {
+  return item.kind === 'collection'
+    ? translateDefaultCollectionTitle(item.collection)
+    : translateDefaultCardTitle(item.card)
+}
 
 function activateItem(item: CardsGridItem) {
   if (cards.editMode.value) return
@@ -152,7 +229,8 @@ function headerAction(id: string) {
 }
 
 async function speak(card: CommunicationCard) {
-  const text = card.speech.trim() || card.title.trim()
+  const text = (isUserOwned(card.id) ? card.speech : translateKey(`cards.default.${card.id}`, card.speech)).trim()
+    || translateDefaultCardTitle(card).trim()
   if (!text) return
   speakingCardID.value = card.id
   speakStatus.value = 'speaking'
@@ -193,6 +271,7 @@ function renderPopup(kind: PopupKind) {
       mode: 'add',
       collections: cards.collections.value,
       parentID: cards.currentCollection.value?.id,
+      labels: labels.value.sheet,
       onSubmit: async (value) => {
         await cards.createCollection(value)
         popup.closeAllPopups()
@@ -205,6 +284,7 @@ function renderPopup(kind: PopupKind) {
       mode: 'edit',
       collection: popupContext.value.collection,
       collections: cards.collections.value,
+      labels: labels.value.sheet,
       onSubmit: async (value) => {
         await cards.updateCollection(popupContext.value.collection!.id, value)
         popup.closeAllPopups()
@@ -216,6 +296,7 @@ function renderPopup(kind: PopupKind) {
     return h(CardsCardSheet, {
       mode: 'add',
       collection: popupContext.value.collection,
+      labels: labels.value.sheet,
       onSubmit: async (value) => {
         await cards.createCard(popupContext.value.collection!.id, value)
         popup.closeAllPopups()
@@ -230,6 +311,7 @@ function renderPopup(kind: PopupKind) {
       mode: 'edit',
       collection,
       card: popupContext.value.card,
+      labels: labels.value.sheet,
       onSubmit: async (value) => {
         await cards.updateCard(popupContext.value.collectionID!, popupContext.value.card!.id, value)
         popup.closeAllPopups()
@@ -241,6 +323,7 @@ function renderPopup(kind: PopupKind) {
     return h(CardsBulkActionsSheet, {
       count: cards.selectedCount.value,
       collections: rootCollections.value,
+      labels: labels.value.sheet,
       onDelete: async () => {
         await cards.deleteSelected()
         popup.closeAllPopups()
@@ -263,6 +346,7 @@ function renderPopup(kind: PopupKind) {
     showAnimations: showAnimations.value,
     cardSizeIndex: cardSizeIndex.value,
     labelSizeIndex: labelSizeIndex.value,
+    labels: labels.value.sheet,
     'onUpdate:language': (value: TikoLanguage) => { language.value = value },
     'onUpdate:colorMode': (value: TikoColorMode) => { colorMode.value = value },
     'onUpdate:hideDefaultCollections': (value: boolean) => { hideDefaultCollections.value = value },
@@ -316,7 +400,20 @@ function resolveColorMode(mode: TikoColorMode) {
   return window.matchMedia?.('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
 }
 
-watch(language, value => i18n.setLanguage(value), { immediate: true })
+async function loadTranslations(value: TikoLanguage) {
+  if (loadedTranslations.has(value)) return
+  loadedTranslations.add(value)
+  const bundle = await translationLoader({ app: 'cards', language: value })
+  if (Object.keys(bundle.translations).length > 0) {
+    i18n.addBundle(bundle)
+    translationsRevision.value += 1
+  }
+}
+
+watch(language, value => {
+  i18n.setLanguage(value)
+  void loadTranslations(value)
+}, { immediate: true })
 
 watch(colorMode, mode => {
   const effective = resolveColorMode(mode)
@@ -346,7 +443,7 @@ onMounted(async () => {
 
 <template>
   <TikoAppShell
-    :app-name="cards.currentCollection.value?.title ?? labels.appName"
+    :app-name="appTitle"
     :app-icon="appConfig.appIcon"
     :app-icon-media-category="appConfig.appIconMediaCategory"
     :app-color="appConfig.appColor"
@@ -359,7 +456,7 @@ onMounted(async () => {
     @title-click="cards.goHome"
   >
     <section :class="appBemm('', { editing: cards.editMode.value })">
-      <div v-if="cards.loadingCollections.value && !visibleItems.length" :class="appBemm('loading')">Loading cards...</div>
+      <div v-if="cards.loadingCollections.value && !visibleItems.length" :class="appBemm('loading')">{{ labels.loadingCards }}</div>
       <CardsBoard
         v-else-if="visibleItems.length"
         v-model:page="page"
@@ -375,6 +472,7 @@ onMounted(async () => {
         :collection-thumbnails="cards.collectionThumbnails.value"
         :content-base-url="cards.contentBaseUrl"
         :speaking-card-i-d="speakingCardID"
+        :translate-title="translateGridItemTitle"
         @activate="activateItem"
         @edit="editItem"
         @select="cards.toggleSelection"
@@ -384,17 +482,17 @@ onMounted(async () => {
       />
       <p v-else :class="appBemm('empty')">{{ cards.currentCollection.value ? labels.emptyTiles : labels.emptyCollections }}</p>
 
-      <div v-if="cards.loadingMediaIDs.value.has(cards.currentCollection.value?.id ?? '')" :class="appBemm('status')">Loading pictures...</div>
+      <div v-if="cards.loadingMediaIDs.value.has(cards.currentCollection.value?.id ?? '')" :class="appBemm('status')">{{ labels.loadingPictures }}</div>
       <p v-if="speakStatus === 'error'" :class="appBemm('status', { error: true })" role="alert">{{ labels.speechError }}</p>
 
       <div v-if="cards.editMode.value && cards.selectedCount.value > 0" :class="bulkBemm('')">
         <button type="button" :class="bulkBemm('clear')" @click="cards.selectedCardIDs.value = new Set(); cards.selectedCollectionIDs.value = new Set()">×</button>
-        <span>{{ cards.selectedCount.value }} selected</span>
-        <button type="button" :class="bulkBemm('actions')" @click="showPopup('bulk-actions')">Actions</button>
+        <span>{{ cards.selectedCount.value }} {{ labels.selected }}</span>
+        <button type="button" :class="bulkBemm('actions')" @click="showPopup('bulk-actions')">{{ labels.actions }}</button>
       </div>
 
-      <button v-if="!cards.editMode.value" type="button" :class="fabBemm('', { edit: true })" aria-label="Edit cards" @click="cards.startEditMode">✎</button>
-      <button type="button" :class="fabBemm('', { settings: true })" aria-label="Settings" @click="showPopup('settings')">⚙</button>
+      <button v-if="!cards.editMode.value" type="button" :class="fabBemm('', { edit: true })" :aria-label="labels.editCards" @click="cards.startEditMode">✎</button>
+      <button type="button" :class="fabBemm('', { settings: true })" :aria-label="labels.settings" @click="showPopup('settings')">⚙</button>
 
       <Popup />
     </section>

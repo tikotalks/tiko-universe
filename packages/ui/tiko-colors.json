@@ -1,0 +1,22 @@
+[
+  { "name": "red", "hex": "#E03131" },
+  { "name": "orange", "hex": "#F76707" },
+  { "name": "yellow", "hex": "#FCC419" },
+  { "name": "green", "hex": "#2F9E44" },
+  { "name": "blue", "hex": "#1971C2" },
+  { "name": "purple", "hex": "#9C36B5" },
+  { "name": "pink", "hex": "#F06595" },
+  { "name": "brown", "hex": "#964B00" },
+  { "name": "black", "hex": "#1A1A1A" },
+  { "name": "white", "hex": "#F8F9FA" },
+  { "name": "gray", "hex": "#868E96" },
+  { "name": "beige", "hex": "#F5DEB3" },
+  { "name": "cyan", "hex": "#22B8CF" },
+  { "name": "teal", "hex": "#0CA678" },
+  { "name": "navy", "hex": "#1E3A5F" },
+  { "name": "lime", "hex": "#82C91E" },
+  { "name": "magenta", "hex": "#E64980" },
+  { "name": "maroon", "hex": "#92140C" },
+  { "name": "gold", "hex": "#FAB005" },
+  { "name": "silver", "hex": "#C0C0C0" }
+]

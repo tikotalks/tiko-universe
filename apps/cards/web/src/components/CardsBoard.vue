@@ -25,6 +25,7 @@ const props = defineProps<{
   collectionThumbnails: Record<string, string>
   contentBaseUrl: string
   speakingCardID?: string
+  translateTitle?: (item: CardsGridItem) => string
 }>()
 
 const emit = defineEmits<{
@@ -56,7 +57,7 @@ function canEdit(item: CardsGridItem) {
 }
 
 function title(item: CardsGridItem) {
-  return item.kind === 'collection' ? item.collection.title : item.card.title
+  return props.translateTitle?.(item) ?? (item.kind === 'collection' ? item.collection.title : item.card.title)
 }
 
 function background(item: CardsGridItem) {

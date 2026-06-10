@@ -90,4 +90,10 @@ public extension Color {
         let blue = Double(hex & 0x0000ff) / 255
         self.init(red: red, green: green, blue: blue)
     }
+
+    init?(hexString: String) {
+        let normalized = hexString.trimmingCharacters(in: .whitespacesAndNewlines).replacingOccurrences(of: "#", with: "")
+        guard normalized.count == 6, let hex = UInt32(normalized, radix: 16) else { return nil }
+        self.init(hex: hex)
+    }
 }
