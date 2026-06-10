@@ -24,6 +24,7 @@ interface UiCard {
   speech: string
   color: string
   imageURL: string
+  imageRef: string
   order: number
 }
 
@@ -37,16 +38,31 @@ interface UiCollection {
   order: number
 }
 
+function mediaDownloadUrl(mediaId: string): string {
+  return `https://media.tikoapi.org/v1/media/${encodeURIComponent(mediaId)}/download`
+}
+
+function resolveImageUrl(card: CardsCard): string {
+  if (card.imageURL) return card.imageURL
+  if (card.imageRef) return mediaDownloadUrl(card.imageRef)
+  return ''
+}
+
+function resolveCollectionImageUrl(col: CardsCollection): string {
+  if (col.imageURL) return col.imageURL
+  return ''
+}
+
 function apiToUiCard(c: CardsCard): UiCard {
-  return { id: c.id, title: c.title, speech: c.speech, color: numToHex(c.colorHex), imageURL: c.imageURL ?? '', order: c.order }
+  return { id: c.id, title: c.title, speech: c.speech, color: numToHex(c.colorHex), imageURL: resolveImageUrl(c), imageRef: c.imageRef ?? '', order: c.order }
 }
 
 function apiToUiCollection(c: CardsCollection): UiCollection {
-  return { id: c.id, title: c.title, color: numToHex(c.colorHex), mediaCategories: c.mediaCategories ?? [], imageURL: c.imageURL ?? '', cards: (c.cards ?? []).map(apiToUiCard), order: c.order }
+  return { id: c.id, title: c.title, color: numToHex(c.colorHex), mediaCategories: c.mediaCategories ?? [], imageURL: resolveCollectionImageUrl(c), cards: (c.cards ?? []).map(apiToUiCard), order: c.order }
 }
 
 function uiToApiCard(c: UiCard, index: number): CardsCard {
-  return { id: c.id, title: c.title, speech: c.speech, colorHex: hexToNum(c.color), imageURL: c.imageURL || undefined, order: index }
+  return { id: c.id, title: c.title, speech: c.speech, colorHex: hexToNum(c.color), imageURL: c.imageURL || undefined, imageRef: c.imageRef || undefined, order: index }
 }
 
 function uiToApiCollection(c: UiCollection, index: number): CardsCollection {
@@ -117,12 +133,21 @@ async function deleteCollection(idx: number) {
   await write(collections.value.map((c, i) => uiToApiCollection(c, i)))
 }
 
+async function moveCollection(idx: number, direction: -1 | 1) {
+  const target = idx + direction
+  if (target < 0 || target >= collections.value.length) return
+  const arr = [...collections.value]
+  ;[arr[idx], arr[target]] = [arr[target], arr[idx]]
+  collections.value = arr
+  await write(collections.value.map((c, i) => uiToApiCollection(c, i)))
+}
+
 // ── card modal ──────────────────────────────────────────────────────────────
 const cardForm = ref<UiCard | null>(null)
 const editCardIndex = ref(-1)
 
 function startNewCard() {
-  cardForm.value = { id: `card_${crypto.randomUUID().slice(0, 8)}`, title: '', speech: '', color: '#1971C2', imageURL: '', order: 0 }
+  cardForm.value = { id: `card_${crypto.randomUUID().slice(0, 8)}`, title: '', speech: '', color: '#1971C2', imageURL: '', imageRef: '', order: 0 }
   editCardIndex.value = -1
 }
 
@@ -151,6 +176,15 @@ function saveCard() {
 function deleteCard(idx: number) {
   if (!activeCollection.value) return
   updateActiveCollection({ cards: activeCollection.value.cards.filter((_, i) => i !== idx) })
+}
+
+function moveCard(idx: number, direction: -1 | 1) {
+  if (!activeCollection.value) return
+  const cards = [...activeCollection.value.cards]
+  const target = idx + direction
+  if (target < 0 || target >= cards.length) return
+  ;[cards[idx], cards[target]] = [cards[target], cards[idx]]
+  updateActiveCollection({ cards })
 }
 </script>
 
@@ -198,6 +232,11 @@ function deleteCard(idx: number) {
             <div :class="bemm('row-color')">
               <span :class="bemm('color-dot')" :style="{ background: col.color }" />
             </div>
+          </div>
+
+          <div :class="bemm('row-reorder')">
+            <Button variant="ghost" size="small" :disabled="idx === 0" @click.stop="moveCollection(idx, -1)">Up</Button>
+            <Button variant="ghost" size="small" :disabled="idx === collections.length - 1" @click.stop="moveCollection(idx, 1)">Down</Button>
           </div>
 
           <Button
@@ -285,6 +324,8 @@ function deleteCard(idx: number) {
                 <span :class="bemm('card-speech')">{{ card.speech || '—' }}</span>
               </div>
               <span :class="bemm('card-color')" :style="{ background: card.color }" />
+              <Button variant="ghost" size="small" :disabled="ci === 0" @click="moveCard(ci, -1)">Up</Button>
+              <Button variant="ghost" size="small" :disabled="ci === activeCollection.cards.length - 1" @click="moveCard(ci, 1)">Down</Button>
               <Button variant="ghost" size="small" @click="startEditCard(card, ci)">Edit</Button>
               <Button variant="ghost" size="small" @click="deleteCard(ci)">Delete</Button>
             </li>
@@ -480,6 +521,13 @@ function deleteCard(idx: number) {
     flex-direction: column;
     align-items: flex-end;
     gap: var(--space-xs);
+    flex-shrink: 0;
+  }
+
+  &__row-reorder {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
     flex-shrink: 0;
   }
 
