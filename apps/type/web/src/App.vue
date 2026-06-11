@@ -3,7 +3,7 @@ import { computed, onMounted, ref, watch } from 'vue'
 import { Icon, Popup } from '@sil/ui'
 import { IdentityClient, type IdentityBundle } from '@tiko/identity'
 import { TikoDataClient, type TypeSettings, type TypeState } from '@tiko/data'
-import { createI18n, defaultLanguage, tikoI18nKeys, tikoLanguages, type TikoLanguage } from '@tiko/i18n'
+import { createI18n, defaultLanguage, tikoI18nKeys, tikoLanguageOptions, tikoLanguages, type TikoLanguage } from '@tiko/i18n'
 import {
   TikoAppShell,
   TikoSettingsPanel,
@@ -102,12 +102,21 @@ const labels = computed(() => {
     phrasesTitle: i18n.t(tikoI18nKeys.type.phrases.title),
     phrasesEmpty: i18n.t(tikoI18nKeys.type.phrases.empty),
     browserVoiceFallback: i18n.t(tikoI18nKeys.type.status.browserVoiceFallback),
-    speechError: i18n.t(tikoI18nKeys.type.status.speechError)
+    speechError: i18n.t(tikoI18nKeys.type.status.speechError),
+    settings: i18n.t(tikoI18nKeys.common.settings),
+    settingsPanel: {
+      settings: i18n.t(tikoI18nKeys.common.settings),
+      language: i18n.t(tikoI18nKeys.common.language),
+      colorMode: i18n.t(tikoI18nKeys.common.colorMode),
+      light: i18n.t(tikoI18nKeys.common.colorModeOptions.light),
+      dark: i18n.t(tikoI18nKeys.common.colorModeOptions.dark),
+      system: i18n.t(tikoI18nKeys.common.colorModeOptions.system),
+    }
   }
 })
 
 const headerActions = computed(() => parentMode.value ? [
-  { id: 'settings', label: 'Settings', icon: 'ui/settings-dual', active: settingsOpen.value }
+  { id: 'settings', label: labels.value.settings, icon: 'ui/settings-dual', active: settingsOpen.value }
 ] : [])
 
 const QWERTY_ROWS = [
@@ -444,6 +453,8 @@ function headerAction(id: string) {
         v-if="settingsOpen"
         v-model:language="language"
         v-model:color-mode="colorMode"
+        :languages="tikoLanguageOptions"
+        :labels="labels.settingsPanel"
       />
     </section>
   </TikoAppShell>

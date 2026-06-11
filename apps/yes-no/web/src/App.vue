@@ -4,7 +4,7 @@ import { useBemm } from 'bemm'
 import { Icon, Popup } from '@sil/ui'
 import { IdentityClient } from '@tiko/identity'
 import { TikoDataClient, type YesNoSettings, type YesNoState } from '@tiko/data'
-import { createI18n, createTikoTranslationLoader, defaultLanguage, tikoI18nKeys, tikoLanguages, type TikoLanguage } from '@tiko/i18n'
+import { createI18n, createTikoTranslationLoader, defaultLanguage, tikoI18nKeys, tikoLanguageOptions, tikoLanguages, type TikoLanguage } from '@tiko/i18n'
 import {
   TikoAppShell,
   TikoSettingsPanel,
@@ -30,6 +30,8 @@ interface AnswerTile {
   id: string
   label: string
   speech: string
+  labelTranslations?: Partial<Record<TikoLanguage, string>>
+  speechTranslations?: Partial<Record<TikoLanguage, string>>
   color?: string
   imageURL?: string
   icon?: string
@@ -92,21 +94,13 @@ function colorTokenToHex(color: string | undefined, fallback: string) {
 }
 
 function answerLabel(answer: string) {
-  if (answer === 'yes') return i18n.t(tikoI18nKeys.yesNo.answers.yes)
-  if (answer === 'no') return i18n.t(tikoI18nKeys.yesNo.answers.no)
   return choices.value.find(choice => choice.id === answer)?.label ?? ''
 }
 
 function localizeDefaultAnswer(answer: AnswerTile): AnswerTile {
-  if (answer.id === 'yes') {
-    const label = i18n.t(tikoI18nKeys.yesNo.answers.yes)
-    return { ...answer, label, speech: label }
-  }
-  if (answer.id === 'no') {
-    const label = i18n.t(tikoI18nKeys.yesNo.answers.no)
-    return { ...answer, label, speech: label }
-  }
-  return answer
+  const label = answer.labelTranslations?.[language.value] ?? answer.label
+  const speech = answer.speechTranslations?.[language.value] ?? answer.speech ?? label
+  return { ...answer, label, speech }
 }
 
 const stored = readJson<PersistedState>(storageKey, {})
@@ -171,7 +165,16 @@ const labels = computed(() => {
     historyTitle: i18n.t(tikoI18nKeys.yesNo.history.title),
     historyEmpty: i18n.t(tikoI18nKeys.yesNo.history.empty),
     fallback: i18n.t(tikoI18nKeys.yesNo.status.browserVoiceFallback),
-    speechError: i18n.t(tikoI18nKeys.yesNo.status.speechError)
+    speechError: i18n.t(tikoI18nKeys.yesNo.status.speechError),
+    settings: i18n.t(tikoI18nKeys.common.settings),
+    settingsPanel: {
+      settings: i18n.t(tikoI18nKeys.common.settings),
+      language: i18n.t(tikoI18nKeys.common.language),
+      colorMode: i18n.t(tikoI18nKeys.common.colorMode),
+      light: i18n.t(tikoI18nKeys.common.colorModeOptions.light),
+      dark: i18n.t(tikoI18nKeys.common.colorModeOptions.dark),
+      system: i18n.t(tikoI18nKeys.common.colorModeOptions.system),
+    }
   }
 })
 
@@ -181,6 +184,8 @@ const hardcodedAnswers = computed<AnswerTile[]>(() => [
 ])
 
 const defaultChoices = computed<AnswerTile[]>(() => {
+  void language.value
+  void translationsRevision.value
   if (!defaultAnswers.value.length) return hardcodedAnswers.value
   return defaultAnswers.value.map(localizeDefaultAnswer)
 })
@@ -192,12 +197,20 @@ const choices = computed<AnswerTile[]>(() => {
 
 const headerActions = computed(() => parentMode.value ? [
   { id: 'history', label: labels.value.historyTitle, icon: 'ui/clock', active: historyOpen.value },
-  { id: 'settings', label: 'Settings', icon: 'ui/settings-dual', active: settingsOpen.value }
+  { id: 'settings', label: labels.value.settings, icon: 'ui/settings-dual', active: settingsOpen.value }
 ] : [])
 
 const canSpeakSentence = computed(() => sentence.value.trim().length > 0)
-const latestAnswerLabel = computed(() => answerLabel(latestAnswerId.value))
-const answerHistoryLabels = computed(() => answerHistory.value.map(answerLabel))
+const latestAnswerLabel = computed(() => {
+  void language.value
+  void translationsRevision.value
+  return answerLabel(latestAnswerId.value)
+})
+const answerHistoryLabels = computed(() => {
+  void language.value
+  void translationsRevision.value
+  return answerHistory.value.map(answerLabel)
+})
 
 function resolveColorMode(mode: TikoColorMode) {
   if (mode !== 'system') return mode
@@ -402,6 +415,8 @@ function resetSentence() {
         v-if="settingsOpen"
         v-model:language="language"
         v-model:color-mode="colorMode"
+        :languages="tikoLanguageOptions"
+        :labels="labels.settingsPanel"
       />
 
       <aside v-if="historyOpen" :class="bemm('history')" :aria-label="labels.historyLabel">

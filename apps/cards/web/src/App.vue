@@ -3,7 +3,7 @@ import { computed, h, inject, markRaw, onMounted, ref, watch } from 'vue'
 import { useBemm } from 'bemm'
 import { Button, Popup, type PopupService } from '@sil/ui'
 import { IdentityClient } from '@tiko/identity'
-import { createI18n, createTikoTranslationLoader, defaultLanguage, tikoI18nKeys, tikoLanguages, type TikoLanguage } from '@tiko/i18n'
+import { createI18n, createTikoTranslationLoader, defaultLanguage, tikoI18nKeys, tikoLanguageOptions, tikoLanguages, type TikoLanguage } from '@tiko/i18n'
 import {
   TikoAppShell,
   createTikoTtsClient,
@@ -123,6 +123,14 @@ const labels = computed(() => {
       small: i18n.t('common.size.small'),
       medium: i18n.t('common.size.medium'),
       large: i18n.t('common.size.large'),
+      settingsPanel: {
+        settings: i18n.t(tikoI18nKeys.common.settings),
+        language: i18n.t(tikoI18nKeys.common.language),
+        colorMode: i18n.t(tikoI18nKeys.common.colorMode),
+        light: i18n.t(tikoI18nKeys.common.colorModeOptions.light),
+        dark: i18n.t(tikoI18nKeys.common.colorModeOptions.dark),
+        system: i18n.t(tikoI18nKeys.common.colorModeOptions.system),
+      },
       selected: i18n.t('cards.selected'),
       moveToCollection: i18n.t('cards.settings.collections'),
       changeColor: i18n.t('cards.add.color'),
@@ -346,6 +354,7 @@ function renderPopup(kind: PopupKind) {
     showAnimations: showAnimations.value,
     cardSizeIndex: cardSizeIndex.value,
     labelSizeIndex: labelSizeIndex.value,
+    languages: tikoLanguageOptions,
     labels: labels.value.sheet,
     'onUpdate:language': (value: TikoLanguage) => { language.value = value },
     'onUpdate:colorMode': (value: TikoColorMode) => { colorMode.value = value },

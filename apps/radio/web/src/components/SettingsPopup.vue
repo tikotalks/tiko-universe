@@ -1,11 +1,19 @@
 <script setup lang="ts">
-import { Button, Icon as SilIcon } from '@sil/ui'
+import { computed } from 'vue'
 import type { TikoColorMode } from '@tiko/ui'
-import type { TikoLanguage } from '@tiko/i18n'
+import type { TikoLanguageOption } from '@tiko/i18n'
 
 interface Props {
   language: string
+  languages: TikoLanguageOption[]
   colorMode: string
+  labels: {
+    language: string
+    appearance: string
+    light: string
+    dark: string
+    system: string
+  }
 }
 
 const props = defineProps<Props>()
@@ -15,18 +23,11 @@ const emit = defineEmits<{
   (e: 'update:colorMode', value: string): void
 }>()
 
-const LANGUAGES: { value: TikoLanguage; label: string }[] = [
-  { value: 'en', label: 'English' },
-  { value: 'nl', label: 'Nederlands' },
-  { value: 'fr', label: 'Français' },
-  { value: 'es', label: 'Español' },
-]
-
-const MODES: { value: TikoColorMode; label: string; icon: string }[] = [
-  { value: 'light', label: 'Light', icon: '☀️' },
-  { value: 'dark', label: 'Dark', icon: '🌙' },
-  { value: 'system', label: 'System', icon: '💻' },
-]
+const modes = computed<Array<{ value: TikoColorMode; label: string; icon: string }>>(() => [
+  { value: 'light', label: props.labels.light, icon: '☀️' },
+  { value: 'dark', label: props.labels.dark, icon: '🌙' },
+  { value: 'system', label: props.labels.system, icon: '💻' },
+])
 
 function setLang(value: string) {
   emit('update:language', value)
@@ -40,25 +41,25 @@ function setColorMode(value: string) {
 <template>
   <div class="radio-settings-popup">
     <div class="radio-settings-popup__row">
-      <span class="radio-settings-popup__row-label">Language</span>
+      <span class="radio-settings-popup__row-label">{{ labels.language }}</span>
       <div class="radio-settings-popup__pills">
         <button
-          v-for="lang in LANGUAGES"
+          v-for="lang in languages"
           :key="lang.value"
           class="radio-settings-popup__pill"
           :class="{ 'radio-settings-popup__pill--active': props.language === lang.value }"
           @click="setLang(lang.value)"
         >
-          {{ lang.label }}
+          {{ lang.nativeLabel }}
         </button>
       </div>
     </div>
 
     <div class="radio-settings-popup__row">
-      <span class="radio-settings-popup__row-label">Appearance</span>
+      <span class="radio-settings-popup__row-label">{{ labels.appearance }}</span>
       <div class="radio-settings-popup__pills">
         <button
-          v-for="mode in MODES"
+          v-for="mode in modes"
           :key="mode.value"
           class="radio-settings-popup__pill radio-settings-popup__pill--icon"
           :class="{ 'radio-settings-popup__pill--active': props.colorMode === mode.value }"

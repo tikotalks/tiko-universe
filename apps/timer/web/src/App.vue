@@ -3,7 +3,7 @@ import { computed, onMounted, ref, watch } from 'vue'
 import { Button, Popup } from '@sil/ui'
 import { IdentityClient, type IdentityBundle } from '@tiko/identity'
 import { TikoDataClient, type TimerSettings, type TimerState } from '@tiko/data'
-import { createI18n, defaultLanguage, tikoI18nKeys, tikoLanguages, type TikoLanguage } from '@tiko/i18n'
+import { createI18n, defaultLanguage, tikoI18nKeys, tikoLanguageOptions, tikoLanguages, type TikoLanguage } from '@tiko/i18n'
 import {
   TikoAppShell,
   TikoSettingsPanel,
@@ -130,7 +130,16 @@ const labels = computed(() => {
     tenMin: i18n.t(tikoI18nKeys.timer.presets.tenMin),
     custom: i18n.t(tikoI18nKeys.timer.presets.custom),
     minutes: i18n.t(tikoI18nKeys.timer.settings.minutes),
-    seconds: i18n.t(tikoI18nKeys.timer.settings.seconds)
+    seconds: i18n.t(tikoI18nKeys.timer.settings.seconds),
+    settings: i18n.t(tikoI18nKeys.common.settings),
+    settingsPanel: {
+      settings: i18n.t(tikoI18nKeys.common.settings),
+      language: i18n.t(tikoI18nKeys.common.language),
+      colorMode: i18n.t(tikoI18nKeys.common.colorMode),
+      light: i18n.t(tikoI18nKeys.common.colorModeOptions.light),
+      dark: i18n.t(tikoI18nKeys.common.colorModeOptions.dark),
+      system: i18n.t(tikoI18nKeys.common.colorModeOptions.system),
+    }
   }
 })
 
@@ -142,7 +151,7 @@ const presetLabels = computed(() => [
 ])
 
 const headerActions = computed(() => parentMode.value ? [
-  { id: 'settings', label: 'Settings', icon: 'ui/settings-dual', active: settingsOpen.value }
+  { id: 'settings', label: labels.value.settings, icon: 'ui/settings-dual', active: settingsOpen.value }
 ] : [])
 
 const isIdle = computed(() => timer.mode.value === 'idle')
@@ -427,6 +436,8 @@ function headerAction(id: string) {
         v-if="settingsOpen"
         v-model:language="language"
         v-model:color-mode="colorMode"
+        :languages="tikoLanguageOptions"
+        :labels="labels.settingsPanel"
       />
     </section>
   </TikoAppShell>

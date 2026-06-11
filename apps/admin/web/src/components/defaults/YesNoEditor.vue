@@ -10,6 +10,8 @@ interface YesNoAnswerTile {
   id: string
   label: string
   speech: string
+  labelTranslations?: Record<string, string>
+  speechTranslations?: Record<string, string>
   color?: string
   imageURL?: string
   icon?: string
@@ -38,14 +40,36 @@ const props = defineProps<{ modelValue: Record<string, unknown> }>()
 const emit = defineEmits<{ 'update:modelValue': [value: Record<string, unknown>] }>()
 const setElements = new Map<string, HTMLElement>()
 
+const answerTranslations: Record<string, Record<string, string>> = {
+  yes: { nl: 'Ja', fr: 'Oui', es: 'Sí', mt: 'Iva', de: 'Ja' },
+  no: { nl: 'Nee', fr: 'Non', es: 'No', mt: 'Le', de: 'Nein' },
+  maybe: { nl: 'Misschien', fr: 'Peut-être', es: 'Quizás', mt: 'Forsi', de: 'Vielleicht' },
+  help: { nl: 'Help', fr: 'Aide', es: 'Ayuda', mt: 'Għajnuna', de: 'Hilfe' },
+  stop: { nl: 'Stop', fr: 'Arrêter', es: 'Parar', mt: 'Waqqaf', de: 'Stopp' },
+  more: { nl: 'Meer', fr: 'Encore', es: 'Más', mt: 'Iktar', de: 'Mehr' },
+  finished: { nl: 'Klaar', fr: 'Terminé', es: 'Terminado', mt: 'Lest', de: 'Fertig' },
+  later: { nl: 'Later', fr: 'Plus tard', es: 'Más tarde', mt: 'Aktar tard', de: 'Später' },
+}
+
+function presetAnswer(id: string, label: string, color: string, icon: string): Omit<YesNoAnswerTile, 'id'> {
+  const translations = answerTranslations[id]
+  return {
+    label,
+    speech: label,
+    ...(translations ? { labelTranslations: translations, speechTranslations: translations } : {}),
+    color,
+    icon,
+  }
+}
+
 const answerPresets: Array<Omit<YesNoAnswerTile, 'id'>> = [
-  { label: 'Yes', speech: 'Yes', color: 'green', icon: 'ui/check-fat' },
-  { label: 'No', speech: 'No', color: 'red', icon: 'wayfinding/cross' },
-  { label: 'Maybe', speech: 'Maybe', color: 'yellow', icon: 'ui/question-mark-fat' },
-  { label: 'Help', speech: 'Help', color: 'blue', icon: 'ui/pointer-hand' },
-  { label: 'Stop', speech: 'Stop', color: 'orange', icon: 'ui/pointer-cross' },
-  { label: 'More', speech: 'More', color: 'teal', icon: 'ui/add-fat' },
-  { label: 'Finished', speech: 'Finished', color: 'purple', icon: 'ui/check-fat' },
+  presetAnswer('yes', 'Yes', 'green', 'ui/check-fat'),
+  presetAnswer('no', 'No', 'red', 'wayfinding/cross'),
+  presetAnswer('maybe', 'Maybe', 'yellow', 'ui/question-mark-fat'),
+  presetAnswer('help', 'Help', 'blue', 'ui/pointer-hand'),
+  presetAnswer('stop', 'Stop', 'orange', 'ui/pointer-cross'),
+  presetAnswer('more', 'More', 'teal', 'ui/add-fat'),
+  presetAnswer('finished', 'Finished', 'purple', 'ui/check-fat'),
 ]
 
 const state = computed<YesNoState>(() => {
@@ -82,6 +106,8 @@ function normalizeAnswer(answer: YesNoAnswerTile): YesNoAnswerTile {
     id: answer.id,
     label: answer.label,
     speech: answer.speech,
+    ...(answer.labelTranslations ? { labelTranslations: answer.labelTranslations } : {}),
+    ...(answer.speechTranslations ? { speechTranslations: answer.speechTranslations } : {}),
     ...(answer.color ? { color: answer.color } : {}),
     ...(answer.imageURL ? { imageURL: answer.imageURL } : {}),
     ...(answer.icon && !answer.imageURL ? { icon: tikoNormalizeOpenIcon(answer.icon) } : {}),

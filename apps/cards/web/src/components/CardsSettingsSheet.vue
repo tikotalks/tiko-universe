@@ -6,10 +6,11 @@ import {
   TikoToggleRow,
   type TikoColorMode,
 } from '@tiko/ui'
-import type { TikoLanguage } from '@tiko/i18n'
+import type { TikoLanguage, TikoLanguageOption } from '@tiko/i18n'
 
 defineProps<{
   language: TikoLanguage
+  languages: TikoLanguageOption[]
   colorMode: TikoColorMode
   hideDefaultCollections: boolean
   showAnimations: boolean
@@ -24,6 +25,14 @@ defineProps<{
     small: string
     medium: string
     large: string
+    settingsPanel: {
+      settings: string
+      language: string
+      colorMode: string
+      light: string
+      dark: string
+      system: string
+    }
   }
 }>()
 
@@ -41,7 +50,9 @@ const emit = defineEmits<{
   <TikoSheet :title="labels.settings" icon="settings">
     <TikoSettingsPanel
       :language="language"
+      :languages="languages"
       :color-mode="colorMode"
+      :labels="labels.settingsPanel"
       @update:language="emit('update:language', $event as TikoLanguage)"
       @update:color-mode="emit('update:colorMode', $event as TikoColorMode)"
     />
