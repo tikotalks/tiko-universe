@@ -58,7 +58,7 @@ class MemoryD1 {
     {
       id: 'yes-no-answer-yes', app_id: 'yes-no', type: 'answer_tile', parent_id: 'yes-no-set-yes-no', title: 'Yes',
       subtitle: null, body: null, speech: 'Yes', color_token: 'green',
-      icon: 'ui/check-fat', image_ref: null, sort_order: 0, is_default: 1, is_published: 1,
+      icon: 'ui/check-fat', image_ref: 'media-yes', sort_order: 0, is_default: 1, is_published: 1,
       owner_user_id: null, owner_child_id: null, source_item_id: null, metadata_json: '{"answerId":"yes"}',
     },
     {
@@ -112,7 +112,7 @@ class MemoryD1 {
     }
     if (normalized.includes('FROM content_page_sections')) return new MemoryResult(this.sections.filter(row => row.page_id === values[0]))
     if (normalized.includes('FROM languages')) return new MemoryResult(this.languages)
-    if (normalized.includes('FROM user_images')) return new MemoryResult([])
+    if (normalized.includes('FROM user_images')) return new MemoryResult([{ id: values[0], r2_key: `uploads/${values[0]}.png` }])
     if (normalized.includes('FROM content_item_translations')) {
       return new MemoryResult(this.appTranslations.filter(row => row.locale === values[0]))
     }
@@ -236,7 +236,7 @@ describe('content-api worker', () => {
     expect(body.data.selectedSetId).toBe('yes-no-set-yes-no')
     expect(body.data.answerSets[0]).toMatchObject({ title: 'Iva / Le', description: 'Tweġibiet sempliċi iva u le.' })
     expect(body.data.answerSets[0].answers).toEqual([
-      expect.objectContaining({ id: 'yes', label: 'Iva', speech: 'Iva', color: 'green' }),
+      expect.objectContaining({ id: 'yes', label: 'Iva', speech: 'Iva', color: 'green', imageRef: 'media-yes' }),
       expect.objectContaining({ id: 'no', label: 'Le', speech: 'Le', color: 'red' }),
     ])
   })

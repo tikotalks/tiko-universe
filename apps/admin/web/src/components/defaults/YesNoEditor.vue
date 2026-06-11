@@ -13,7 +13,7 @@ interface YesNoAnswerTile {
   labelTranslations?: Record<string, string>
   speechTranslations?: Record<string, string>
   color?: string
-  imageURL?: string
+  imageRef?: string
   icon?: string
 }
 
@@ -22,7 +22,7 @@ interface YesNoAnswerSet {
   title: string
   description?: string
   color?: string
-  imageURL?: string
+  imageRef?: string
   order?: number
   answers: YesNoAnswerTile[]
 }
@@ -109,8 +109,8 @@ function normalizeAnswer(answer: YesNoAnswerTile): YesNoAnswerTile {
     ...(answer.labelTranslations ? { labelTranslations: answer.labelTranslations } : {}),
     ...(answer.speechTranslations ? { speechTranslations: answer.speechTranslations } : {}),
     ...(answer.color ? { color: answer.color } : {}),
-    ...(answer.imageURL ? { imageURL: answer.imageURL } : {}),
-    ...(answer.icon && !answer.imageURL ? { icon: tikoNormalizeOpenIcon(answer.icon) } : {}),
+    ...(answer.imageRef ? { imageRef: answer.imageRef } : {}),
+    ...(answer.icon && !answer.imageRef ? { icon: tikoNormalizeOpenIcon(answer.icon) } : {}),
   }
 }
 
@@ -120,7 +120,7 @@ function normalizeSet(set: YesNoAnswerSet, order: number): YesNoAnswerSet {
     title: set.title,
     ...(set.description ? { description: set.description } : {}),
     ...(set.color ? { color: set.color } : {}),
-    ...(set.imageURL ? { imageURL: set.imageURL } : {}),
+    ...(set.imageRef ? { imageRef: set.imageRef } : {}),
     order,
     answers: set.answers.map(normalizeAnswer),
   }
@@ -199,19 +199,19 @@ function updateAnswer(setIndex: number, answerIndex: number, patch: Partial<YesN
 }
 
 function updateAnswerIcon(setIndex: number, answerIndex: number, icon: string) {
-  updateAnswer(setIndex, answerIndex, { icon: icon || undefined, imageURL: undefined })
+  updateAnswer(setIndex, answerIndex, { icon: icon || undefined, imageRef: undefined })
 }
 
-function updateAnswerImage(setIndex: number, answerIndex: number, imageURL: string) {
-  updateAnswer(setIndex, answerIndex, { imageURL: imageURL || undefined, icon: undefined })
+function updateAnswerImage(setIndex: number, answerIndex: number, imageRef: string) {
+  updateAnswer(setIndex, answerIndex, { imageRef: imageRef || undefined, icon: undefined })
 }
 
 function useAnswerIcon(setIndex: number, answerIndex: number, answer: YesNoAnswerTile) {
-  updateAnswer(setIndex, answerIndex, { icon: answer.icon || 'ui/question-mark-fat', imageURL: undefined })
+  updateAnswer(setIndex, answerIndex, { icon: answer.icon || 'ui/question-mark-fat', imageRef: undefined })
 }
 
 function useAnswerImage(setIndex: number, answerIndex: number) {
-  updateAnswer(setIndex, answerIndex, { imageURL: '', icon: undefined })
+  updateAnswer(setIndex, answerIndex, { imageRef: '', icon: undefined })
 }
 
 function removeAnswer(setIndex: number, answerIndex: number) {
@@ -299,8 +299,9 @@ function moveAnswer(setIndex: number, answerIndex: number, delta: number) {
             <div :class="bemm('image-field')">
               <span :class="bemm('color-label')">Set image</span>
               <MediaPicker
-                :model-value="set.imageURL ?? ''"
-                @update:model-value="(v: string) => updateSet(si, { imageURL: v || undefined })"
+                :model-value="set.imageRef ?? ''"
+                emit-id
+                @update:model-value="(v: string) => updateSet(si, { imageRef: v || undefined })"
               />
             </div>
             <div :class="bemm('item-actions')">
@@ -337,27 +338,28 @@ function moveAnswer(setIndex: number, answerIndex: number, delta: number) {
                   <div :class="bemm('visual-toggle')" role="group" aria-label="Tile visual type">
                     <button
                       type="button"
-                      :class="bemm('visual-option', { active: !answer.imageURL })"
+                      :class="bemm('visual-option', { active: !answer.imageRef })"
                       @click="useAnswerIcon(si, i, answer)"
                     >
                       Icon
                     </button>
                     <button
                       type="button"
-                      :class="bemm('visual-option', { active: Boolean(answer.imageURL) })"
+                      :class="bemm('visual-option', { active: Boolean(answer.imageRef) })"
                       @click="useAnswerImage(si, i)"
                     >
                       Image
                     </button>
                   </div>
                   <TikoOpenIconPicker
-                    v-if="!answer.imageURL"
+                    v-if="!answer.imageRef"
                     :model-value="answer.icon ?? ''"
                     @update:model-value="(v: string) => updateAnswerIcon(si, i, v)"
                   />
                   <MediaPicker
                     v-else
-                    :model-value="answer.imageURL ?? ''"
+                    :model-value="answer.imageRef ?? ''"
+                    emit-id
                     @update:model-value="(v: string) => updateAnswerImage(si, i, v)"
                   />
                 </div>

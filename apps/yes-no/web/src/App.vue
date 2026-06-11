@@ -37,7 +37,7 @@ interface AnswerTile {
   labelTranslations?: Partial<Record<TikoLanguage, string>>
   speechTranslations?: Partial<Record<TikoLanguage, string>>
   color?: string
-  imageURL?: string
+  imageRef?: string
   icon?: string
 }
 
@@ -119,6 +119,14 @@ function colorTokenToHex(color: string | undefined, fallback: string) {
   if (!color) return fallback
   if (color.startsWith('#')) return color
   return tikoColors.find(item => item.name === color)?.hex ?? fallback
+}
+
+function imageRefURL(imageRef: string) {
+  return `${contentBaseUrl}/content/images/${encodeURIComponent(imageRef)}`
+}
+
+function answerImageSrc(answer: AnswerTile): string {
+  return answer.imageRef ? imageRefURL(answer.imageRef) : ''
 }
 
 function answerLabel(answer: string) {
@@ -549,7 +557,7 @@ function resetSentence() {
           data-test="tiko-answer-button"
           :title="choice.label"
           :background="colorTokenToHex(choice.color, choice.id === 'no' ? '#E03131' : '#2F9E44')"
-          :image-src="choice.imageURL"
+          :image-src="answerImageSrc(choice)"
           label-size="large"
           @press="answer(choice.id)"
         />

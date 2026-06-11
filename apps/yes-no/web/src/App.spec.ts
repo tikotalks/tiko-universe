@@ -196,7 +196,7 @@ describe('Yes No web app', () => {
       settings: { language: 'nl', colorMode: 'system' },
       defaults: {
         answers: [
-          { id: 'yes', label: 'Yes', speech: 'Yes', color: 'green' },
+          { id: 'yes', label: 'Yes', speech: 'Yes', color: 'green', imageRef: 'media-yes' },
           { id: 'no', label: 'No', speech: 'No', color: 'red' }
         ]
       }
@@ -212,6 +212,7 @@ describe('Yes No web app', () => {
       expect(labels).not.toContain('Yes')
       expect(labels).not.toContain('No')
     })
+    expect(wrapper.get('[data-test="tiko-answer-button"] img').attributes('src')).toBe('https://content.tikoapi.org/v1/content/images/media-yes')
   })
 
   it('applies admin-managed app color and icon config at runtime', async () => {

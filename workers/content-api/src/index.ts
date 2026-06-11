@@ -477,6 +477,7 @@ interface YesNoAnswerTile {
   label: string
   speech: string
   color?: string
+  imageRef?: string
   imageURL?: string
   icon?: string
 }
@@ -486,6 +487,7 @@ interface YesNoAnswerSet {
   title: string
   description?: string
   color?: string
+  imageRef?: string
   imageURL?: string
   order: number
   answers: YesNoAnswerTile[]
@@ -672,6 +674,7 @@ async function getYesNoContent(env: Env, language: string): Promise<{ answerSets
         label: answer.title,
         speech: answer.speech ?? answer.title,
         ...(answer.color_token ? { color: answer.color_token } : {}),
+        ...(answer.image_ref ? { imageRef: answer.image_ref } : {}),
         ...(answerImageURL ? { imageURL: answerImageURL } : {}),
         ...(answer.icon ? { icon: answer.icon } : {}),
       })
@@ -683,6 +686,7 @@ async function getYesNoContent(env: Env, language: string): Promise<{ answerSets
       title: set.title,
       ...(set.subtitle ? { description: set.subtitle } : {}),
       ...(set.color_token ? { color: set.color_token } : {}),
+      ...(set.image_ref ? { imageRef: set.image_ref } : {}),
       ...(setImageURL ? { imageURL: setImageURL } : {}),
       order: set.sort_order,
       answers: mappedAnswers,
