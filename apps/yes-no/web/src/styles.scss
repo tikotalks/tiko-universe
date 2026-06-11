@@ -112,6 +112,21 @@ html[data-color-mode="dark"] .tiko-app-shell[data-app-color="yes-no"] {
   box-shadow: 0 12px 24px color-mix(in srgb, var(--tiko-answer-primary), transparent 72%);
 }
 
+.yes-no-app__speak[data-state="playing"] {
+  background: color-mix(in srgb, var(--tiko-answer-primary), #05312d 18%);
+  box-shadow: 0 0 0 0.45rem color-mix(in srgb, var(--tiko-answer-primary), transparent 78%),
+    0 12px 24px color-mix(in srgb, var(--tiko-answer-primary), transparent 72%);
+}
+
+.yes-no-app__spinner {
+  width: 1.75rem;
+  height: 1.75rem;
+  border: 0.22rem solid color-mix(in srgb, #fff, transparent 55%);
+  border-top-color: #fff;
+  border-radius: 999px;
+  animation: yes-no-spin 700ms linear infinite;
+}
+
 .yes-no-app__reset {
   background: color-mix(in srgb, var(--tiko-foreground), transparent 86%);
   color: color-mix(in srgb, var(--tiko-foreground), transparent 30%);
@@ -180,6 +195,12 @@ html[data-color-mode="dark"] .tiko-app-shell[data-app-color="yes-no"] {
 .yes-no-app__history li {
   padding: 0.25rem 0;
   font-weight: 700;
+}
+
+@keyframes yes-no-spin {
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 

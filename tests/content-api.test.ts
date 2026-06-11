@@ -79,6 +79,12 @@ class MemoryD1 {
       icon: null, image_ref: 'media-apple', sort_order: 0, is_default: 1, is_published: 1,
       owner_user_id: null, owner_child_id: null, source_item_id: null, metadata_json: '{"imagePrompt":"two red apples","imageRefs":["media-apple","media-apple"]}',
     },
+    {
+      id: 'sequence_counting-apples_nine-apples', app_id: 'sequence', type: 'sequence_step', parent_id: 'sequence_counting-apples', title: '9 apples',
+      subtitle: null, body: null, speech: '9 apples', color_token: null,
+      icon: null, image_ref: 'media-apple', sort_order: 1, is_default: 1, is_published: 1,
+      owner_user_id: null, owner_child_id: null, source_item_id: null, metadata_json: '{"imagePrompt":"nine red apples","imageRefs":["media-apple","media-apple","media-apple","media-apple","media-apple","media-apple","media-apple","media-apple","media-apple"]}',
+    },
   ]
   appTranslations: Row[] = [
     { item_id: '__default_animals', locale: 'mt', title: 'Annimali', subtitle: null, body: null, speech: null, metadata_json: null },
@@ -251,6 +257,12 @@ describe('content-api worker', () => {
       text: '2 tuffiħiet',
       imageRef: 'media-apple',
       imageRefs: ['media-apple', 'media-apple'],
+    })
+    expect(body.data.sequences[0].steps[1]).toMatchObject({
+      label: '9 apples',
+      text: '9 apples',
+      imageRef: 'media-apple',
+      imageRefs: Array.from({ length: 9 }, () => 'media-apple'),
     })
   })
 

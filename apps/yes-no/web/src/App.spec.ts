@@ -1,3 +1,4 @@
+import { nextTick } from 'vue'
 import { flushPromises, mount } from '@vue/test-utils'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import App from './App.vue'
@@ -301,6 +302,51 @@ describe('Yes No web app', () => {
       body: expect.stringContaining('Do you want music?')
     }))
     expect(window.localStorage.getItem('tiko:yes-no')).toContain('Do you want music?')
+  })
+
+  it('shows generating and playing states while speaking a custom sentence', async () => {
+    const baseFetch = createFetchMock()
+    let resolveTts: ((response: Response) => void) | undefined
+    vi.stubGlobal('fetch', vi.fn((input: RequestInfo | URL, init?: RequestInit) => {
+      const url = String(input)
+      if (url.endsWith('/v1/atlas/speech')) {
+        return new Promise<Response>((resolve) => { resolveTts = resolve })
+      }
+      return baseFetch(input, init)
+    }))
+
+    let finishAudio: (() => void) | undefined
+    vi.stubGlobal('Audio', vi.fn(function AudioMock() {
+      const listeners: Record<string, () => void> = {}
+      finishAudio = () => listeners.ended?.()
+      return {
+        play: vi.fn(async () => undefined),
+        addEventListener: vi.fn((event: string, listener: () => void) => { listeners[event] = listener }),
+      }
+    }))
+
+    const { wrapper } = mountApp()
+    await flushPromises()
+
+    await wrapper.get('textarea').setValue('Do you want music?')
+    void wrapper.get('.yes-no-app__speak').trigger('click')
+    await nextTick()
+
+    expect(wrapper.get('.yes-no-app__speak').attributes('data-state')).toBe('generating')
+    expect(wrapper.get('.yes-no-app__speak').attributes('aria-busy')).toBe('true')
+    expect(wrapper.get('.yes-no-app__speak').attributes()).toHaveProperty('disabled')
+
+    resolveTts?.(jsonResponse({ success: true, audioUrl: '/audio?key=audio%2Fsentence.mp3' }))
+    await flushPromises()
+
+    expect(wrapper.get('.yes-no-app__speak').attributes('data-state')).toBe('playing')
+    expect(wrapper.get('.yes-no-app__speak').attributes()).toHaveProperty('disabled')
+
+    finishAudio?.()
+    await flushPromises()
+
+    expect(wrapper.get('.yes-no-app__speak').attributes('data-state')).toBe('idle')
+    expect(wrapper.get('.yes-no-app__speak').attributes()).not.toHaveProperty('disabled')
   })
 
   it('falls back to the local child-facing flow if identity bootstrap is unavailable', async () => {

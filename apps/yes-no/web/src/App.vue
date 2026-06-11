@@ -420,12 +420,11 @@ async function speak(text: string) {
   }
 }
 
-function waitForAudioEnd(audio: { addEventListener?: (type: string, listener: () => void, options?: { once?: boolean }) => void }): Promise<void> {
-  if (!audio.addEventListener) return Promise.resolve()
+function waitForAudioEnd(audio: Pick<EventTarget, 'addEventListener'>): Promise<void> {
   return new Promise((resolve) => {
     const done = () => resolve()
-    audio.addEventListener?.('ended', done, { once: true })
-    audio.addEventListener?.('error', done, { once: true })
+    audio.addEventListener('ended', done, { once: true })
+    audio.addEventListener('error', done, { once: true })
   })
 }
 
@@ -438,10 +437,9 @@ async function speakSentence() {
     const result = await tts.getAudio({ text: trimmed, language: language.value, provider: 'narakeet' })
     if (result.audioUrl) {
       const audio = new Audio(result.audioUrl)
-      const ended = waitForAudioEnd(audio)
       sentenceSpeechState.value = 'playing'
       await audio.play()
-      await ended
+      await waitForAudioEnd(audio)
       speakStatus.value = result.metadata?.fallbackUsed ? 'fallback' : 'idle'
       return
     }
