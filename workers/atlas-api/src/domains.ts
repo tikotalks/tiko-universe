@@ -35,7 +35,7 @@ export async function synthesizeSpeech(input: SpeechRequest, env: Env): Promise<
     locale: (input.locale ?? input.language ?? 'en').trim().toLowerCase(),
     provider,
     model: input.model?.trim() || defaultSpeechModel(provider),
-    voice: input.voice?.trim() || defaultSpeechVoice(provider),
+    voice: input.voice?.trim() || defaultSpeechVoice(provider, (input.locale ?? input.language ?? 'en').trim().toLowerCase()),
     speed: clamp(input.speed ?? 1, 0.25, 4),
     format: 'mp3' as const,
   }
@@ -270,10 +270,19 @@ function defaultSpeechModel(provider: SpeechProvider) {
   return 'tts-1'
 }
 
-function defaultSpeechVoice(provider: SpeechProvider) {
-  if (provider === 'narakeet') return 'Raymond'
+function defaultSpeechVoice(provider: SpeechProvider, locale = 'en') {
+  if (provider === 'narakeet') return defaultNarakeetVoice(locale)
   if (provider === 'elevenlabs') return '21m00Tcm4TlvDq8ikWAM'
   return 'nova'
+}
+
+function defaultNarakeetVoice(locale: string) {
+  const normalizedLocale = locale.trim().toLowerCase()
+  const language = normalizedLocale.split('-')[0]
+  switch (language) {
+    case 'nl': return 'famke'
+    default: return 'Raymond'
+  }
 }
 
 function toSpeechProvider(provider: string): SpeechProvider {

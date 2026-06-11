@@ -162,12 +162,12 @@ describe('atlas-api', () => {
 
     expect(first.status).toBe(201)
     await expect(json(first)).resolves.toMatchObject({
-      data: { cached: false, provider: { name: 'narakeet', model: 'narakeet-mp3', voice: 'Raymond' } },
+      data: { cached: false, provider: { name: 'narakeet', model: 'narakeet-mp3', voice: 'famke' } },
       meta: { capability: 'speech.synthesize', provider: 'narakeet', cached: false },
     })
     expect(fetchSpy).toHaveBeenCalledTimes(1)
     expect(fetchSpy).toHaveBeenCalledWith(
-      'https://api.narakeet.com/text-to-speech/mp3?voice=Raymond',
+      'https://api.narakeet.com/text-to-speech/mp3?voice=famke',
       expect.objectContaining({
         method: 'POST',
         body: 'Ik wil drinken',
@@ -181,14 +181,14 @@ describe('atlas-api', () => {
       locale: 'nl-nl',
       language: 'nl-nl',
       provider: 'narakeet',
-      voice: 'Raymond',
+      voice: 'famke',
       model: 'narakeet-mp3',
       speed: 1,
       format: 'mp3',
       durationSeconds: 2,
       settings: {
         provider: 'narakeet',
-        voice: 'Raymond',
+        voice: 'famke',
         model: 'narakeet-mp3',
         speed: 1,
         format: 'mp3',
@@ -200,7 +200,7 @@ describe('atlas-api', () => {
       body: JSON.stringify(body),
     }), env)
     expect(second.status).toBe(200)
-    await expect(json(second)).resolves.toMatchObject({ data: { cached: true, provider: { name: 'narakeet', voice: 'Raymond' } }, meta: { cached: true } })
+    await expect(json(second)).resolves.toMatchObject({ data: { cached: true, provider: { name: 'narakeet', voice: 'famke' } }, meta: { cached: true } })
     expect(fetchSpy).toHaveBeenCalledTimes(1)
   })
 
