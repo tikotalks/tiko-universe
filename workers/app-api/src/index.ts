@@ -93,7 +93,44 @@ const DEFAULTS: Record<TikoAppId, Record<AppResource, JsonValue>> = {
   media: { settings: {}, state: {}, progress: {} },
   admin: { settings: {}, state: {}, progress: {} },
   tiko: { settings: {}, state: {}, progress: {} },
-  todo: { settings: {}, state: {}, progress: {} },
+  todo: {
+    settings: { language: 'en', colorMode: 'system' },
+    state: {
+      items: [
+        {
+          id: 'morning-routine',
+          name: 'Morning routine',
+          done: false,
+          steps: [
+            { name: 'Brush teeth', done: false },
+            { name: 'Get dressed', done: false },
+            { name: 'Pack bag', done: false }
+          ]
+        },
+        {
+          id: 'after-school',
+          name: 'After school',
+          done: false,
+          steps: [
+            { name: 'Hang up coat', done: false },
+            { name: 'Wash hands', done: false },
+            { name: 'Choose a snack', done: false }
+          ]
+        },
+        {
+          id: 'bedtime',
+          name: 'Bedtime',
+          done: false,
+          steps: [
+            { name: 'Put on pajamas', done: false },
+            { name: 'Brush teeth', done: false },
+            { name: 'Choose a story', done: false }
+          ]
+        }
+      ]
+    },
+    progress: {}
+  },
   talk: { settings: {}, state: {}, progress: {} }
 }
 

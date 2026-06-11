@@ -215,6 +215,8 @@ describe('app-api settings/state endpoints', () => {
     const settings = await fetchJson('/v1/apps/yes-no/settings', { headers: auth }, testEnv)
     const state = await fetchJson('/v1/apps/type/state', { headers: auth }, testEnv)
     const radioState = await fetchJson('/v1/apps/radio/state', { headers: auth }, testEnv)
+    const todoSettings = await fetchJson('/v1/apps/todo/settings', { headers: auth }, testEnv)
+    const todoState = await fetchJson('/v1/apps/todo/state', { headers: auth }, testEnv)
 
     expect(settings.response.status).toBe(200)
     expect(settings.body).toMatchObject({ app: 'yes-no', version: 0, updatedAt: null })
@@ -225,6 +227,20 @@ describe('app-api settings/state endpoints', () => {
     expect(radioState.response.status).toBe(200)
     expect(radioState.body.state.categories[0].icon).toBe('animals/cat-head')
     expect(radioState.body.state.categories[3].icon).toBe('media/music-note')
+    expect(todoSettings.response.status).toBe(200)
+    expect(todoSettings.body.settings).toEqual({ language: 'en', colorMode: 'system' })
+    expect(todoState.response.status).toBe(200)
+    expect(todoState.body.state.items).toHaveLength(3)
+    expect(todoState.body.state.items[0]).toMatchObject({
+      id: 'morning-routine',
+      name: 'Morning routine',
+      done: false,
+      steps: [
+        { name: 'Brush teeth', done: false },
+        { name: 'Get dressed', done: false },
+        { name: 'Pack bag', done: false }
+      ]
+    })
   })
 
   it('writes and reads back settings and state with version increments', async () => {
