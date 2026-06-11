@@ -8,6 +8,10 @@ Tiko is a child-first universe of small, focused AAC (Augmentative and Alternati
 
 **Read the doctrine first**: `docs/doctrine/DOCTRINE.md` and `docs/doctrine/IDEOLOGY.md`. These define non-negotiable product and engineering constraints.
 
+## Engineering Rules
+
+- Do not add compatibility fallbacks, legacy decode paths, or silent data-shape conversions unless the user explicitly asks for them or an approved migration plan requires them. In most cases, fix the source contract and update the callers instead of carrying technical debt forward.
+
 ## Commands
 
 ### Web / TypeScript (run from repo root)

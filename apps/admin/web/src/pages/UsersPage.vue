@@ -118,7 +118,7 @@ function kindLabel(kind: string): string {
           <div
             :class="bemm('avatar')"
             :style="{
-              ...(user.colorHex ? { background: user.colorHex, color: '#fff' } : {}),
+              ...(user.color ? { background: user.color, color: '#fff' } : {}),
               ...(user.avatarUrl ? { backgroundImage: `url(${user.avatarUrl})`, backgroundSize: 'cover', backgroundPosition: 'center' } : {}),
             }"
           >
@@ -145,7 +145,7 @@ function kindLabel(kind: string): string {
             <div
               :class="bemm('detail-avatar')"
               :style="{
-                ...(selectedUser.colorHex ? { background: selectedUser.colorHex, color: '#fff' } : {}),
+                ...(selectedUser.color ? { background: selectedUser.color, color: '#fff' } : {}),
                 ...(selectedUser.avatarUrl ? { backgroundImage: `url(${selectedUser.avatarUrl})`, backgroundSize: 'cover', backgroundPosition: 'center' } : {}),
               }"
             >

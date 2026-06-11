@@ -7,8 +7,7 @@ import { createCardsApi, resolveContentBaseUrl } from './cardsApi'
 import { matchCardsMedia } from './cardsMedia'
 
 const colorNames = new Set<TikoColorName>(tikoColors.map(color => color.name as TikoColorName))
-const colorHexByName = new Map<TikoColorName, string>(tikoColors.map(color => [color.name as TikoColorName, color.hex]))
-const colorNameByHex = new Map<string, TikoColorName>(tikoColors.map(color => [color.hex.toLowerCase(), color.name as TikoColorName]))
+const colorValueByName = new Map<TikoColorName, string>(tikoColors.map(color => [color.name as TikoColorName, color.hex]))
 const fallbackColors = ['red', 'yellow', 'green', 'blue', 'orange', 'purple'] as const
 
 export interface UseCardsStoreOptions {
@@ -385,7 +384,7 @@ export function useCardsStore(options: UseCardsStoreOptions) {
 }
 
 export function normalizeCollection(collection: CardCollection): CardCollection {
-  const collectionColor = normalizeColor(collection.color ?? collection.colorHex, 'orange')
+  const collectionColor = normalizeColor(collection.color, 'orange')
   return {
     ...collection,
     color: collectionColor,
@@ -394,7 +393,7 @@ export function normalizeCollection(collection: CardCollection): CardCollection 
     cards: (collection.cards ?? []).map((card, index) => ({
       ...card,
       speech: card.speech || card.title,
-      color: normalizeColor(card.color ?? card.colorHex, collectionColor),
+      color: normalizeColor(card.color, collectionColor),
       order: card.order ?? index,
     })),
   }
@@ -405,18 +404,12 @@ export function isUserOwned(id: string) {
 }
 
 export function colorValue(color: TikoColorName) {
-  return colorHexByName.get(color) ?? colorHexByName.get('gray') ?? 'currentColor'
+  return colorValueByName.get(color) ?? colorValueByName.get('gray') ?? 'currentColor'
 }
 
 function normalizeColor(value: unknown, fallback: TikoColorName): TikoColorName {
   if (typeof value === 'string') {
     if (colorNames.has(value as TikoColorName)) return value as TikoColorName
-    const fromHex = colorNameByHex.get(value.toLowerCase())
-    if (fromHex) return fromHex
-  }
-  if (typeof value === 'number') {
-    const fromHex = colorNameByHex.get(`#${Math.max(0, value).toString(16).padStart(6, '0').slice(-6)}`.toLowerCase())
-    if (fromHex) return fromHex
   }
   return fallback
 }

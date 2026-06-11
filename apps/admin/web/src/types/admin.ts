@@ -18,7 +18,7 @@ export interface AdminManagedUser {
   hasData: boolean
   displayName: string | null
   avatarUrl: string | null
-  colorHex: string | null
+  color: string | null
 }
 
 export interface AdminConfig {

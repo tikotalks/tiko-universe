@@ -62,7 +62,6 @@ CREATE TABLE IF NOT EXISTS content_items (
   body TEXT,
   speech TEXT,
   color_token TEXT,
-  color_hex INTEGER,
   icon TEXT,
   image_ref TEXT,
   sort_order INTEGER NOT NULL DEFAULT 0,

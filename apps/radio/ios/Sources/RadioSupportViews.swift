@@ -86,7 +86,7 @@ struct AddTrackPopup: View {
                             Button(action: { selectedCategoryID = category.id }) {
                                 TikoSquareTile(
                                     title: category.title,
-                                    background: Color(hex: category.colorHex),
+                                    background: TikoColors.color(named: category.color) ?? TikoColors.color(named: "gray")!,
                                     isActive: selectedCategoryID == category.id
                                 ) {
                                     Image(systemName: category.symbol)

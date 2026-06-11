@@ -40,7 +40,6 @@ public struct TikoAnswerChoice: Identifiable, Equatable, Sendable {
     public let icon: Icon
     public let tone: TikoChoiceTone
     public let color: String?
-    public let colorHex: UInt32?
     public let imageURL: URL?
     public let imageURLs: [URL]
 
@@ -51,7 +50,6 @@ public struct TikoAnswerChoice: Identifiable, Equatable, Sendable {
         icon: Icon,
         tone: TikoChoiceTone,
         color: String? = nil,
-        colorHex: UInt32? = nil,
         imageURL: URL? = nil,
         imageURLs: [URL] = []
     ) {
@@ -61,7 +59,6 @@ public struct TikoAnswerChoice: Identifiable, Equatable, Sendable {
         self.icon = icon
         self.tone = tone
         self.color = color
-        self.colorHex = colorHex
         self.imageURL = imageURL
         self.imageURLs = imageURLs
     }
@@ -159,7 +156,6 @@ public struct TikoAnswerButton: View {
 
     private var tileColor: Color {
         if let color = choice.resolvedColor { return color }
-        if let hex = choice.colorHex { return Color(hex: hex) }
         switch choice.tone {
         case .primary, .success: return Color(hex: 0x93ee3f)
         case .secondary, .danger: return Color(hex: 0xef405d)
@@ -177,8 +173,6 @@ private extension TikoAnswerChoice {
 
     var resolvedColor: Color? {
         if let color, let named = TikoColors.color(named: color) { return named }
-        if let color, let parsed = Color(hexString: color) { return parsed }
-        if let colorHex { return Color(hex: colorHex) }
         return nil
     }
 }
@@ -199,7 +193,7 @@ public struct TikoChoiceGrid: View {
     }
 
     private var tileSpacing: CGFloat {
-        choices.allSatisfy { $0.color != nil || $0.colorHex != nil || !$0.resolvedImageURLs.isEmpty } ? 12 : 40
+        choices.allSatisfy { $0.color != nil || !$0.resolvedImageURLs.isEmpty } ? 12 : 40
     }
 
     public var body: some View {

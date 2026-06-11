@@ -8,7 +8,6 @@ export interface CardCollection {
   id: string
   title: string
   color: TikoColorName
-  colorHex?: number
   order: number
   parentID?: string | null
   mediaCategories: string[]
@@ -24,7 +23,6 @@ export interface CommunicationCard {
   imageURL?: string
   imageRef?: string
   color: TikoColorName
-  colorHex?: number
   order?: number
 }
 

@@ -486,7 +486,7 @@ private struct CollectionTile: View {
     var body: some View {
         TikoSquareTile(
             title: collection.title,
-            background: Color(hex: collection.colorHex),
+            background: cardColor(collection.color),
             labelFont: labelFont
         ) {
             if let thumbnailURL {
@@ -511,7 +511,7 @@ private struct SubCollectionTile: View {
     var body: some View {
         VStack(spacing: 0) {
             ZStack {
-                Color(hex: collection.colorHex)
+                cardColor(collection.color)
                 if let url = thumbnailURL ?? collection.imageURL {
                     CachedCardImage(url: url)
                 }
@@ -818,8 +818,8 @@ private struct CollectionDetailView: View {
         }
         .tikoPopup(isPresented: $showingBulkColor) {
             BulkColorSheet(
-                onSelect: { colorHex in
-                    store.recolorCards(ids: selectedCardIDs, inCollectionID: collection.id, colorHex: colorHex)
+                onSelect: { color in
+                    store.recolorCards(ids: selectedCardIDs, inCollectionID: collection.id, color: color)
                     withAnimation { selectedCardIDs.removeAll(); selectedCollectionIDs.removeAll() }
                     showingBulkColor = false
                 },
@@ -957,7 +957,7 @@ private struct BulkMoveSheet: View {
                         Button { onMove(collection.id) } label: {
                             HStack(spacing: 12) {
                                 RoundedRectangle(cornerRadius: 8, style: .continuous)
-                                    .fill(Color(hex: collection.colorHex))
+                                    .fill(cardColor(collection.color))
                                     .frame(width: 32, height: 32)
                                 Text(collection.title)
                                     .font(.system(size: 16, weight: .semibold, design: .rounded))
@@ -981,10 +981,10 @@ private struct BulkMoveSheet: View {
 }
 
 private struct BulkColorSheet: View {
-    let onSelect: (UInt32) -> Void
+    let onSelect: (String) -> Void
     let onClose: () -> Void
 
-    @State private var pickedColor: UInt32 = TikoColors.allHex[0]
+    @State private var pickedColor = TikoColors.all[0].name
 
     var body: some View {
         TikoPopupCard(
@@ -1029,7 +1029,7 @@ private struct CommunicationCardTile: View {
         Button(action: { if !isEditing { onSpeak() } }) {
             TikoSquareTile(
                 title: card.title,
-                background: Color(hex: card.colorHex),
+                background: cardColor(card.color),
                 isActive: isSpeaking,
                 labelFont: labelFont
             ) {
@@ -1086,7 +1086,7 @@ private struct FullscreenCardView: View {
 
     var body: some View {
         ZStack {
-            Color(hex: card.colorHex).ignoresSafeArea()
+            cardColor(card.color).ignoresSafeArea()
 
             VStack(spacing: 28) {
                 Spacer()
@@ -1161,7 +1161,7 @@ private struct AddCategorySheet: View {
     @EnvironmentObject private var i18n: TikoI18n
 
     @State private var title = ""
-    @State private var selectedColor: UInt32 = TikoColors.allHex[0]
+    @State private var selectedColor = TikoColors.all[0].name
     @State private var selectedImageURL: URL?
     @State private var selectedParentID: String? = nil
     @State private var showingImagePicker = false
@@ -1198,7 +1198,7 @@ private struct AddCategorySheet: View {
                 }
 
                 addButton(label: i18n.t("cards.add.addCategory"), disabled: title.trimmingCharacters(in: .whitespaces).isEmpty) {
-                    store.addCollection(title: title, colorHex: selectedColor, imageURL: selectedImageURL, parentID: selectedParentID)
+                    store.addCollection(title: title, color: selectedColor, imageURL: selectedImageURL, parentID: selectedParentID)
                     isPresented = false
                 }
             }
@@ -1217,7 +1217,7 @@ private struct AddCardSheet: View {
 
     @State private var title = ""
     @State private var speech = ""
-    @State private var selectedColor: UInt32
+    @State private var selectedColor: String
     @State private var selectedImageURL: URL?
     @State private var showingImagePicker = false
 
@@ -1225,7 +1225,7 @@ private struct AddCardSheet: View {
         self.collection = collection
         self.store = store
         self._isPresented = isPresented
-        self._selectedColor = State(initialValue: collection.colorHex)
+        self._selectedColor = State(initialValue: collection.color)
     }
 
     var body: some View {
@@ -1265,7 +1265,7 @@ private struct AddCardSheet: View {
                     store.addCard(
                         title: title,
                         speech: speech,
-                        colorHex: selectedColor,
+                        color: selectedColor,
                         imageURL: selectedImageURL,
                         to: collection.id
                     )
@@ -1290,7 +1290,7 @@ private struct EditCollectionSheet: View {
     @EnvironmentObject private var i18n: TikoI18n
 
     @State private var title: String
-    @State private var selectedColor: UInt32
+    @State private var selectedColor: String
     @State private var selectedParentID: String?
     @State private var selectedImageURL: URL?
     @State private var showingImagePicker = false
@@ -1309,7 +1309,7 @@ private struct EditCollectionSheet: View {
         self.isAdmin = isAdmin
         self.onClose = onClose
         self._title = State(initialValue: collection.title)
-        self._selectedColor = State(initialValue: collection.colorHex)
+        self._selectedColor = State(initialValue: collection.color)
         self._selectedParentID = State(initialValue: collection.parentID)
         self._selectedImageURL = State(initialValue: collection.imageURL)
     }
@@ -1328,7 +1328,7 @@ private struct EditCollectionSheet: View {
                         collection: CardCollection(
                             id: collection.id,
                             title: title.isEmpty ? " " : title,
-                            colorHex: selectedColor,
+                            color: selectedColor,
                             order: collection.order,
                             imageURL: selectedImageURL,
                             cards: []
@@ -1417,7 +1417,7 @@ private struct EditCollectionSheet: View {
         store.updateCollection(
             id: collection.id,
             title: title.trimmingCharacters(in: .whitespaces),
-            colorHex: selectedColor,
+            color: selectedColor,
             parentID: .some(selectedParentID),
             imageURL: selectedImageURL,
             saveAsDefault: asDefault
@@ -1441,7 +1441,7 @@ private struct EditCardSheet: View {
 
     @State private var title: String
     @State private var speech: String
-    @State private var selectedColor: UInt32
+    @State private var selectedColor: String
     @State private var selectedImageURL: URL?
     @State private var showingImagePicker = false
     @State private var showingDefaultConfirmation = false
@@ -1457,7 +1457,7 @@ private struct EditCardSheet: View {
         self.onClose = onClose
         self._title = State(initialValue: card.title)
         self._speech = State(initialValue: card.speech)
-        self._selectedColor = State(initialValue: card.colorHex)
+        self._selectedColor = State(initialValue: card.color)
         self._selectedImageURL = State(initialValue: card.imageURL)
     }
 
@@ -1477,7 +1477,7 @@ private struct EditCardSheet: View {
                             title: title.isEmpty ? " " : title,
                             speech: speech,
                             imageURL: selectedImageURL,
-                            colorHex: selectedColor
+                            color: selectedColor
                         ),
                         isSpeaking: false,
                         isEditing: false,
@@ -1569,7 +1569,7 @@ private struct EditCardSheet: View {
             id: card.id,
             title: trimmedTitle,
             speech: trimmedSpeech.isEmpty ? trimmedTitle : trimmedSpeech,
-            colorHex: selectedColor,
+            color: selectedColor,
             imageURL: selectedImageURL,
             inCollectionID: collectionID
         )
@@ -1642,7 +1642,7 @@ private func defaultWarningBanner() -> some View {
 // MARK: - Color picker
 
 private struct CompactColorPicker: View {
-    @Binding var selectedColor: UInt32
+    @Binding var selectedColor: String
     let label: String
     @State private var showingGrid = false
 
@@ -1652,7 +1652,7 @@ private struct CompactColorPicker: View {
                 fieldLabel(label)
                 Spacer()
                 Circle()
-                    .fill(Color(hex: selectedColor))
+                    .fill(cardColor(selectedColor))
                     .frame(width: 28, height: 28)
                     .shadow(color: .black.opacity(0.18), radius: 3, x: 0, y: 1)
                 Image(systemName: "chevron.right")
@@ -1696,7 +1696,7 @@ private struct CompactParentPicker: View {
                 Spacer()
                 if let col = selectedCollection {
                     RoundedRectangle(cornerRadius: 6, style: .continuous)
-                        .fill(Color(hex: col.colorHex))
+                        .fill(cardColor(col.color))
                         .frame(width: 22, height: 22)
                     Text(col.title)
                         .font(.system(size: 14, weight: .semibold, design: .rounded))
@@ -1759,7 +1759,7 @@ private struct CompactParentPicker: View {
                             } label: {
                                 HStack(spacing: 12) {
                                     RoundedRectangle(cornerRadius: 8, style: .continuous)
-                                        .fill(Color(hex: col.colorHex))
+                                        .fill(cardColor(col.color))
                                         .frame(width: 32, height: 32)
                                     Text(col.title)
                                         .font(.system(size: 16, weight: .semibold, design: .rounded))
@@ -1786,18 +1786,18 @@ private struct CompactParentPicker: View {
 }
 
 private struct CardColorPicker: View {
-    @Binding var selectedColor: UInt32
+    @Binding var selectedColor: String
 
     var body: some View {
         LazyVGrid(
             columns: Array(repeating: GridItem(.flexible(), spacing: 10), count: 5),
             spacing: 10
         ) {
-            ForEach(TikoColors.allHex, id: \.self) { color in
+            ForEach(TikoColors.all, id: \.name) { color in
                 ZStack {
                     Circle()
-                        .fill(Color(hex: color))
-                    if selectedColor == color {
+                        .fill(Color(hex: color.hex))
+                    if selectedColor == color.name {
                         Circle().strokeBorder(Color.white, lineWidth: 2.5)
                         Image(systemName: "checkmark")
                             .font(.system(size: 11, weight: .black))
@@ -1806,7 +1806,7 @@ private struct CardColorPicker: View {
                 }
                 .frame(height: 38)
                 .onTapGesture {
-                    withAnimation(.spring(response: 0.2)) { selectedColor = color }
+                    withAnimation(.spring(response: 0.2)) { selectedColor = color.name }
                 }
             }
         }
@@ -1984,6 +1984,10 @@ private struct ImagePickerButton: View {
 }
 
 // MARK: - Utilities
+
+private func cardColor(_ color: String) -> Color {
+    TikoColors.color(named: color) ?? TikoColors.color(named: "gray")!
+}
 
 private extension View {
     @ViewBuilder

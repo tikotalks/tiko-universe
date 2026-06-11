@@ -77,7 +77,7 @@ interface AdminUserListItem {
   hasData: boolean
   displayName: string | null
   avatarUrl: string | null
-  colorHex: string | null
+  color: string | null
 }
 
 const ADMIN_EMAIL = 'me@sil.mt'
@@ -476,7 +476,7 @@ async function ensureAdminInUsers(authDb: D1Database, appDb: D1Database | undefi
   const dataSet = row ? await subjectsWithData(appDb, [admin.userId]) : new Set<string>()
   const adminUser = row
     ? { ...normalizeUserRow(row), hasData: dataSet.has(admin.userId) }
-    : { id: admin.userId, kind: 'account', email: admin.email, roles: admin.roles as AdminUserListItem['roles'], createdAt: '', updatedAt: '', lastSeenAt: null, hasData: false, displayName: null, avatarUrl: null, colorHex: null }
+    : { id: admin.userId, kind: 'account', email: admin.email, roles: admin.roles as AdminUserListItem['roles'], createdAt: '', updatedAt: '', lastSeenAt: null, hasData: false, displayName: null, avatarUrl: null, color: null }
 
   return [adminUser, ...users]
 }
@@ -500,7 +500,7 @@ function normalizeUserRow(row: { id: string; kind: string; email: string | null;
     hasData: false,
     displayName: typeof metadata?.displayName === 'string' ? metadata.displayName : null,
     avatarUrl: typeof metadata?.avatarUrl === 'string' ? metadata.avatarUrl : null,
-    colorHex: typeof metadata?.colorHex === 'string' ? metadata.colorHex : null,
+    color: typeof metadata?.color === 'string' ? metadata.color : null,
   }
 }
 

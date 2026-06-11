@@ -64,9 +64,9 @@ struct RadioCategory: Identifiable, Codable, Equatable, Sendable {
     let id: String
     var title: String
     var symbol: String
-    var colorHex: UInt32
+    var color: String
 
-    var colorName: String { String(format: "#%06X", colorHex) }
+    var colorName: String { color }
 }
 
 struct RadioLibrarySnapshot: Codable, Equatable, Sendable {

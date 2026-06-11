@@ -47,7 +47,7 @@ struct YesNoAnswerTile: Codable, Identifiable, Equatable {
     }
 
     private enum CodingKeys: String, CodingKey {
-        case id, label, speech, labelTranslations, speechTranslations, color, colorHex, imageURL, icon
+        case id, label, speech, labelTranslations, speechTranslations, color, imageURL, icon
     }
 
     init(from decoder: Decoder) throws {
@@ -57,13 +57,7 @@ struct YesNoAnswerTile: Codable, Identifiable, Equatable {
         speech = try container.decodeIfPresent(String.self, forKey: .speech) ?? label
         labelTranslations = try container.decodeIfPresent([String: String].self, forKey: .labelTranslations)
         speechTranslations = try container.decodeIfPresent([String: String].self, forKey: .speechTranslations)
-        if let color = try container.decodeIfPresent(String.self, forKey: .color) {
-            self.color = color
-        } else if let colorHex = try container.decodeIfPresent(UInt32.self, forKey: .colorHex) {
-            self.color = String(format: "#%06X", colorHex)
-        } else {
-            self.color = TikoColors.teal.name
-        }
+        color = try container.decodeIfPresent(String.self, forKey: .color) ?? TikoColors.teal.name
         imageURL = try container.decodeIfPresent(URL.self, forKey: .imageURL)
         icon = try container.decodeIfPresent(String.self, forKey: .icon)
     }
@@ -461,10 +455,8 @@ struct YesNoView: View {
 
     private func flashBackground(for choice: TikoAnswerChoice) {
         let base: Color
-        if let color = choice.color, let parsed = TikoColors.color(named: color) ?? Color(hexString: color) {
+        if let color = choice.color, let parsed = TikoColors.color(named: color) {
             base = parsed
-        } else if let hex = choice.colorHex {
-            base = Color(hex: hex)
         } else {
             base = choice.tone == .primary ? Color(hex: 0x93ee3f) : Color(hex: 0xef405d)
         }

@@ -74,12 +74,14 @@ ${swiftStatics}
 ${swiftAll}
     ]
 
-    public static let allHex: [UInt32] = all.map(\\.hex)
-
     public static let allNames: [String] = all.map(\\.name)
 
     public static func named(_ name: String) -> TikoColor? {
         all.first { $0.name == name }
+    }
+
+    public static func hex(named name: String, fallback: UInt32 = gray.hex) -> UInt32 {
+        named(name)?.hex ?? fallback
     }
 
     public static func color(named name: String) -> Color? {

@@ -195,7 +195,7 @@ const labels = computed(() => {
     },
   }
 })
-const colorHexByName = new Map(tikoColors.map(color => [color.name, color.hex]))
+const colorValueByName = new Map(tikoColors.map(color => [color.name, color.hex]))
 const categoryColorNames = ['red', 'orange', 'yellow', 'green', 'blue', 'purple', 'pink', 'cyan', 'teal', 'lime'] as const
 
 // ---- Volume icon ----------------------------------------------------------
@@ -389,7 +389,7 @@ function seedDefaultCategories() {
 }
 
 function categoryColor(category: RadioCategory) {
-  return colorHexByName.get(category.color) ?? colorHexByName.get('gray') ?? 'currentColor'
+  return colorValueByName.get(category.color) ?? colorValueByName.get('gray') ?? 'currentColor'
 }
 
 function absoluteGenerationUrl(url: string) {

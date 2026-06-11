@@ -1,11 +1,12 @@
 import { ref } from 'vue'
+import type { TikoColorName } from '@tiko/data'
 import { useAdminAuth } from './useAdminAuth'
 
 export interface CardsCard {
   id: string
   title: string
   speech: string
-  colorHex: number
+  color: TikoColorName
   order: number
   imageURL?: string
   imageRef?: string
@@ -14,7 +15,7 @@ export interface CardsCard {
 export interface CardsCollection {
   id: string
   title: string
-  colorHex: number
+  color: TikoColorName
   order: number
   mediaCategories: string[]
   imageRef?: string

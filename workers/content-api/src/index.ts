@@ -70,7 +70,6 @@ interface CardTile {
   title: string
   speech: string
   color: string
-  colorHex?: number
   order: number
   imageRef?: string
   imageURL?: string
@@ -80,7 +79,6 @@ interface CardCollection {
   id: string
   title: string
   color: string
-  colorHex?: number
   order: number
   mediaCategories: string[]
   imageRef?: string
@@ -90,29 +88,6 @@ interface CardCollection {
 }
 
 const TIKO_COLOR_NAMES = new Set(['red', 'orange', 'yellow', 'green', 'blue', 'purple', 'pink', 'brown', 'black', 'white', 'gray', 'beige', 'cyan', 'teal', 'navy', 'lime', 'magenta', 'maroon', 'gold', 'silver'])
-const TIKO_COLOR_HEX_NAMES = new Map<number, string>([
-  [0xE03131, 'red'],
-  [0xF76707, 'orange'],
-  [0xFCC419, 'yellow'],
-  [0x2F9E44, 'green'],
-  [0x1971C2, 'blue'],
-  [0x9C36B5, 'purple'],
-  [0xF06595, 'pink'],
-  [0x964B00, 'brown'],
-  [0x1A1A1A, 'black'],
-  [0xF8F9FA, 'white'],
-  [0x868E96, 'gray'],
-  [0xF5DEB3, 'beige'],
-  [0x22B8CF, 'cyan'],
-  [0x0CA678, 'teal'],
-  [0x1E3A5F, 'navy'],
-  [0x82C91E, 'lime'],
-  [0xE64980, 'magenta'],
-  [0x92140C, 'maroon'],
-  [0xFAB005, 'gold'],
-  [0xC0C0C0, 'silver'],
-])
-
 const DEFAULT_ALLOWED_ORIGINS = [
   'https://tiko.mt',
   'https://www.tiko.mt',
@@ -473,7 +448,6 @@ interface AppContentItemRow {
   body: string | null
   speech: string | null
   color_token: string | null
-  color_hex: number | null
   icon: string | null
   image_ref: string | null
   sort_order: number
@@ -559,14 +533,6 @@ function asColorToken(value: unknown, fallback = 'orange'): string {
   if (typeof value === 'string') {
     const normalized = value.trim().toLowerCase()
     if (TIKO_COLOR_NAMES.has(normalized)) return normalized
-    if (/^#[0-9a-f]{6}$/i.test(normalized)) {
-      const fromHex = TIKO_COLOR_HEX_NAMES.get(Number.parseInt(normalized.slice(1), 16))
-      if (fromHex) return fromHex
-    }
-  }
-  if (typeof value === 'number') {
-    const fromHex = TIKO_COLOR_HEX_NAMES.get(value)
-    if (fromHex) return fromHex
   }
   return fallback
 }
@@ -577,7 +543,7 @@ function fallbackCardColor(index: number): string {
 }
 
 function normalizeCardsCollection(collection: CardCollection): CardCollection {
-  const collectionColor = asColorToken(collection.color ?? collection.colorHex, 'orange')
+  const collectionColor = asColorToken(collection.color, 'orange')
   return {
     ...collection,
     color: collectionColor,
@@ -586,7 +552,7 @@ function normalizeCardsCollection(collection: CardCollection): CardCollection {
     cards: (collection.cards ?? []).map((card, index) => ({
       ...card,
       speech: card.speech || card.title,
-      color: asColorToken(card.color ?? card.colorHex, collectionColor),
+      color: asColorToken(card.color, collectionColor),
       order: typeof card.order === 'number' ? card.order : index,
     })),
   }
@@ -594,7 +560,7 @@ function normalizeCardsCollection(collection: CardCollection): CardCollection {
 
 async function getLocalizedContentItems(env: Env, appId: string, language: string): Promise<LocalizedContentItem[]> {
   const { results: rows } = await env.CONTENT_DB.prepare(
-    `SELECT id, app_id, type, parent_id, title, subtitle, body, speech, color_token, color_hex,
+    `SELECT id, app_id, type, parent_id, title, subtitle, body, speech, color_token,
             icon, image_ref, sort_order, is_default, is_published, owner_user_id,
             owner_child_id, source_item_id, metadata_json
      FROM content_items
@@ -659,7 +625,7 @@ async function mapCardsContentItems(items: LocalizedContentItem[], env: Env): Pr
         id: card.id,
         title: card.title,
         speech: card.speech ?? card.title,
-        color: asColorToken(card.color_token ?? card.color_hex, asColorToken(collection.color_token ?? collection.color_hex)),
+        color: asColorToken(card.color_token, asColorToken(collection.color_token)),
         order: card.sort_order,
         ...(card.image_ref ? { imageRef: card.image_ref } : {}),
         ...(cardImageURL ? { imageURL: cardImageURL } : {}),
@@ -669,7 +635,7 @@ async function mapCardsContentItems(items: LocalizedContentItem[], env: Env): Pr
     result.push({
       id: collection.id,
       title: collection.title,
-      color: asColorToken(collection.color_token ?? collection.color_hex),
+      color: asColorToken(collection.color_token),
       order: collection.sort_order,
       mediaCategories,
       ...(collection.image_ref ? { imageRef: collection.image_ref } : {}),
@@ -1003,7 +969,7 @@ async function handlePostCards(request: Request, env: Env, segments: string[]): 
 
   // POST /v1/cards/collections
   if (segments[2] === 'collections' && segments.length === 3) {
-    let body: { id?: unknown; title?: unknown; color?: unknown; colorHex?: unknown; order?: unknown; imageRef?: unknown }
+    let body: { id?: unknown; title?: unknown; color?: unknown; order?: unknown; imageRef?: unknown }
     try { body = (await request.json()) as typeof body } catch {
       return error(request, env, 'bad_request', 'Request body must be valid JSON', 400)
     }
@@ -1014,7 +980,7 @@ async function handlePostCards(request: Request, env: Env, segments: string[]): 
     if (!current) return error(request, env, 'unauthorized', 'Unauthorized', 401)
 
     const id = typeof body.id === 'string' && body.id.startsWith('user_') ? body.id : `user_${crypto.randomUUID()}`
-    const color = asColorToken(body.color ?? body.colorHex, fallbackCardColor(current.state.collections.length))
+    const color = asColorToken(body.color, fallbackCardColor(current.state.collections.length))
     const order = typeof body.order === 'number' ? body.order : current.state.collections.length
     const imageRef = asImageRef(body.imageRef)
     const newCollection: CardCollection = { id, title, color, order, mediaCategories: [], ...(imageRef ? { imageRef } : {}), cards: [] }
@@ -1033,14 +999,14 @@ async function handlePostCards(request: Request, env: Env, segments: string[]): 
   if (segments[2] === 'collections' && segments[4] === 'cards' && segments.length === 5) {
     const collectionId = segments[3]
     const isDefault = !collectionId.startsWith('user_')
-    let body: { id?: unknown; title?: unknown; speech?: unknown; color?: unknown; colorHex?: unknown; order?: unknown; imageRef?: unknown }
+    let body: { id?: unknown; title?: unknown; speech?: unknown; color?: unknown; order?: unknown; imageRef?: unknown }
     try { body = (await request.json()) as typeof body } catch {
       return error(request, env, 'bad_request', 'Request body must be valid JSON', 400)
     }
     const title = typeof body.title === 'string' ? body.title.trim() : ''
     if (!title) return error(request, env, 'bad_request', 'title is required', 400)
     const speech = typeof body.speech === 'string' && body.speech.trim() ? body.speech.trim() : title
-    const color = asColorToken(body.color ?? body.colorHex, 'orange')
+    const color = asColorToken(body.color, 'orange')
     const order = typeof body.order === 'number' ? body.order : 0
 
     if (isDefault) {
@@ -1082,7 +1048,7 @@ async function handlePostCards(request: Request, env: Env, segments: string[]): 
 
     const collection = current.state.collections[collectionIndex]
     const id = typeof body.id === 'string' && body.id.startsWith('user_') ? body.id : `user_${crypto.randomUUID()}`
-    const resolvedColor = asColorToken(body.color ?? body.colorHex, collection.color)
+    const resolvedColor = asColorToken(body.color, collection.color)
     const resolvedOrder = order || collection.cards.length
     const imageRef = asImageRef(body.imageRef)
     const newCard: CardTile = { id, title, speech, color: resolvedColor, order: resolvedOrder, ...(imageRef ? { imageRef } : {}) }
@@ -1359,13 +1325,13 @@ async function handlePutCards(request: Request, env: Env, segments: string[]): P
     const collectionId = segments[3]
     const isDefault = !collectionId.startsWith('user_')
 
-    let body: { title?: unknown; color?: unknown; colorHex?: unknown; imageRef?: unknown; saveAsDefault?: unknown }
+    let body: { title?: unknown; color?: unknown; imageRef?: unknown; saveAsDefault?: unknown }
     try { body = (await request.json()) as typeof body } catch {
       return error(request, env, 'bad_request', 'Request body must be valid JSON', 400)
     }
     const title = typeof body.title === 'string' ? body.title.trim() : ''
     if (!title) return error(request, env, 'bad_request', 'title is required', 400)
-    const color = asColorToken(body.color ?? body.colorHex)
+    const color = asColorToken(body.color)
     const imageRef = asImageRef(body.imageRef)
     const saveAsDefault = body.saveAsDefault === true
 
@@ -1403,7 +1369,7 @@ async function handlePutCards(request: Request, env: Env, segments: string[]): P
 
       await env.CONTENT_DB.prepare(
         `UPDATE content_items
-         SET title = ?, speech = ?, color_token = ?, color_hex = NULL, image_ref = ?, updated_at = datetime('now')
+         SET title = ?, speech = ?, color_token = ?, image_ref = ?, updated_at = datetime('now')
          WHERE id = ? AND app_id = 'cards' AND type = 'collection'`,
       ).bind(title, title, color, imageRef ?? null, collectionId).run()
       await invalidateCardsCache(env)
@@ -1431,14 +1397,14 @@ async function handlePutCards(request: Request, env: Env, segments: string[]): P
     const cardId = segments[5]
     const isDefault = !collectionId.startsWith('user_')
 
-    let body: { title?: unknown; speech?: unknown; color?: unknown; colorHex?: unknown; imageRef?: unknown }
+    let body: { title?: unknown; speech?: unknown; color?: unknown; imageRef?: unknown }
     try { body = (await request.json()) as typeof body } catch {
       return error(request, env, 'bad_request', 'Request body must be valid JSON', 400)
     }
     const title = typeof body.title === 'string' ? body.title.trim() : ''
     if (!title) return error(request, env, 'bad_request', 'title is required', 400)
     const speech = typeof body.speech === 'string' && body.speech.trim() ? body.speech.trim() : title
-    const color = asColorToken(body.color ?? body.colorHex)
+    const color = asColorToken(body.color)
 
     if (isDefault) {
       if (!(await verifyAdminFromSession(env, sessionToken))) {
@@ -1447,7 +1413,7 @@ async function handlePutCards(request: Request, env: Env, segments: string[]): P
       const imageRef = asImageRef(body.imageRef) ?? null
       await env.CONTENT_DB.prepare(
         `UPDATE content_items
-         SET title = ?, speech = ?, color_token = ?, color_hex = NULL, image_ref = ?, updated_at = datetime('now')
+         SET title = ?, speech = ?, color_token = ?, image_ref = ?, updated_at = datetime('now')
          WHERE id = ? AND app_id = 'cards' AND type = 'card'`,
       ).bind(title, speech, color, imageRef, cardId).run()
       await invalidateCardsCache(env)
