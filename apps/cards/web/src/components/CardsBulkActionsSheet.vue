@@ -3,8 +3,9 @@ import { ref } from 'vue'
 import { useBemm } from 'bemm'
 import { Button } from '@sil/ui'
 import { TikoColorPicker, TikoSheet } from '@tiko/ui'
+import type { TikoColorName } from '@tiko/data'
 import type { CardCollection } from '../types'
-import { hexColor } from '../composables/useCardsStore'
+import { colorValue } from '../composables/useCardsStore'
 
 defineProps<{
   count: number
@@ -24,11 +25,11 @@ const emit = defineEmits<{
   close: []
   delete: []
   move: [collectionID: string]
-  color: [colorHex: number]
+  color: [color: TikoColorName]
 }>()
 
 const view = ref<'actions' | 'move' | 'color'>('actions')
-const colorHex = ref(0xFF922B)
+const color = ref<TikoColorName>('orange')
 const actionList = useBemm('cards-action-list', { return: 'string', includeBaseClass: true })
 const actionRow = useBemm('cards-action-row', { return: 'string', includeBaseClass: true })
 </script>
@@ -51,7 +52,7 @@ const actionRow = useBemm('cards-action-row', { return: 'string', includeBaseCla
         :class="actionRow('')"
         @click="emit('move', collection.id)"
       >
-        <span :class="actionRow('swatch')" :style="{ backgroundColor: hexColor(collection.colorHex) }" />
+        <span :class="actionRow('swatch')" :style="{ backgroundColor: colorValue(collection.color) }" />
         {{ collection.title }}
         <span>›</span>
       </button>
@@ -62,10 +63,10 @@ const actionRow = useBemm('cards-action-row', { return: 'string', includeBaseCla
   </TikoSheet>
 
   <TikoSheet v-else :title="labels.changeColor" icon="color">
-    <TikoColorPicker v-model="colorHex" :label="labels.color" />
+    <TikoColorPicker v-model="color" value-mode="name" :label="labels.color" />
     <template #footer>
       <Button type="button" variant="ghost" @click="view = 'actions'">{{ labels.back }}</Button>
-      <Button type="button" variant="primary" @click="emit('color', colorHex)">{{ labels.applyColor }}</Button>
+      <Button type="button" variant="primary" @click="emit('color', color)">{{ labels.applyColor }}</Button>
     </template>
   </TikoSheet>
 </template>

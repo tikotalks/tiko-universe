@@ -328,8 +328,8 @@ function renderPopup(kind: PopupKind) {
         await cards.moveSelected(collectionID)
         popup.closeAllPopups()
       },
-      onColor: async (colorHex: number) => {
-        await cards.recolorSelected(colorHex)
+      onColor: async (color) => {
+        await cards.recolorSelected(color)
         popup.closeAllPopups()
       },
       onClose: popup.closeAllPopups,

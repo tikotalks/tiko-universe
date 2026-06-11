@@ -39,7 +39,7 @@ const emit = defineEmits<{
 }>()
 
 const title = ref(props.collection?.title ?? '')
-const colorHex = ref(props.collection?.colorHex ?? 0xFF922B)
+const color = ref(props.collection?.color ?? 'orange')
 const selectedParentID = ref(props.collection?.parentID ?? props.parentID ?? '')
 const imageRef = ref(props.collection?.imageRef ?? '')
 const selectBemm = useBemm('cards-select-field', { return: 'string', includeBaseClass: true })
@@ -51,7 +51,7 @@ const eligibleParents = computed(() => props.collections.filter(collection =>
 function submit() {
   emit('submit', {
     title: title.value,
-    colorHex: colorHex.value,
+    color: color.value,
     parentID: selectedParentID.value || null,
     imageRef: imageRef.value || undefined,
   })
@@ -71,7 +71,7 @@ function submit() {
           </option>
         </select>
       </label>
-      <TikoColorPicker v-model="colorHex" :label="labels.color" />
+      <TikoColorPicker v-model="color" value-mode="name" :label="labels.color" />
       <CardsImageChooser v-model="imageRef" :query="title" :labels="labels" />
       <template #footer>
         <Button type="button" variant="ghost" @click="emit('cancel')">{{ labels.cancel }}</Button>

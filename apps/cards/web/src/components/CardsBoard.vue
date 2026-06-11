@@ -8,7 +8,7 @@ import {
   TikoSquareTile,
 } from '@tiko/ui'
 import type { CardCollection, CardsGridItem, CommunicationCard } from '../types'
-import { hexColor, isUserOwned } from '../composables/useCardsStore'
+import { colorValue, isUserOwned } from '../composables/useCardsStore'
 import { imageForCard, imageForCollection } from '../composables/cardsMedia'
 
 const props = defineProps<{
@@ -61,7 +61,7 @@ function title(item: CardsGridItem) {
 }
 
 function background(item: CardsGridItem) {
-  return hexColor(item.kind === 'collection' ? item.collection.colorHex : item.card.colorHex)
+  return colorValue(item.kind === 'collection' ? item.collection.color : item.card.color)
 }
 
 function image(item: CardsGridItem) {

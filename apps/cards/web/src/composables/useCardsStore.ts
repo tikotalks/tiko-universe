@@ -1,8 +1,15 @@
 import { computed, ref, type Ref } from 'vue'
 import { useTikoMedia } from '@tiko/media'
+import type { TikoColorName } from '@tiko/data'
+import { tikoColors } from '@tiko/ui'
 import type { CardCollection, CardsCardInput, CardsCollectionInput, CardsGridItem, CommunicationCard, PersistedCards } from '../types'
 import { createCardsApi, resolveContentBaseUrl } from './cardsApi'
-import { imageRefURL, matchCardsMedia } from './cardsMedia'
+import { matchCardsMedia } from './cardsMedia'
+
+const colorNames = new Set<TikoColorName>(tikoColors.map(color => color.name as TikoColorName))
+const colorHexByName = new Map<TikoColorName, string>(tikoColors.map(color => [color.name as TikoColorName, color.hex]))
+const colorNameByHex = new Map<string, TikoColorName>(tikoColors.map(color => [color.hex.toLowerCase(), color.name as TikoColorName]))
+const fallbackColors = ['red', 'yellow', 'green', 'blue', 'orange', 'purple'] as const
 
 export interface UseCardsStoreOptions {
   storageKey: string
@@ -60,7 +67,7 @@ export function useCardsStore(options: UseCardsStoreOptions) {
     options.writeStored({
       ...stored,
       ...extra,
-      collections: collections.value,
+      collections: collections.value.map(collectionForStorage),
       collectionStack: collectionStack.value,
     })
   }
@@ -92,7 +99,7 @@ export function useCardsStore(options: UseCardsStoreOptions) {
     const optimistic: CardCollection = {
       id,
       title,
-      colorHex: input.colorHex,
+      color: input.color,
       order: collections.value.filter(collection => (collection.parentID ?? '') === (input.parentID ?? '')).length,
       parentID: input.parentID ?? null,
       mediaCategories: [],
@@ -114,7 +121,6 @@ export function useCardsStore(options: UseCardsStoreOptions) {
     replaceCollection({
       ...current,
       ...input,
-      ...(input.imageRef !== undefined ? { imageURL: imageRefURL(input.imageRef, api.baseUrl) } : {}),
       title: input.title.trim() || current.title,
     })
     try {
@@ -143,7 +149,7 @@ export function useCardsStore(options: UseCardsStoreOptions) {
       id: createUserID(),
       title,
       speech: input.speech.trim() || title,
-      colorHex: input.colorHex,
+      color: input.color,
       order: collection.cards.length,
       imageRef: input.imageRef,
     }
@@ -167,7 +173,6 @@ export function useCardsStore(options: UseCardsStoreOptions) {
       ? {
           ...card,
           ...input,
-          ...(input.imageRef !== undefined ? { imageURL: imageRefURL(input.imageRef, api.baseUrl) } : {}),
           title: input.title.trim() || card.title,
         }
       : card)
@@ -290,11 +295,11 @@ export function useCardsStore(options: UseCardsStoreOptions) {
     clearEditMode()
   }
 
-  async function recolorSelected(colorHex: number) {
+  async function recolorSelected(color: TikoColorName) {
     if (!currentCollection.value) return
     for (const id of selectedCardIDs.value) {
       const card = currentCollection.value.cards.find(item => item.id === id)
-      if (card) await updateCard(currentCollection.value.id, id, { ...card, colorHex })
+      if (card) await updateCard(currentCollection.value.id, id, { ...card, color })
     }
     clearEditMode()
   }
@@ -380,15 +385,16 @@ export function useCardsStore(options: UseCardsStoreOptions) {
 }
 
 export function normalizeCollection(collection: CardCollection): CardCollection {
+  const collectionColor = normalizeColor(collection.color ?? collection.colorHex, 'orange')
   return {
     ...collection,
-    colorHex: typeof collection.colorHex === 'number' ? collection.colorHex : 0x888888,
+    color: collectionColor,
     parentID: collection.parentID ?? null,
     mediaCategories: Array.isArray(collection.mediaCategories) ? collection.mediaCategories : [],
     cards: (collection.cards ?? []).map((card, index) => ({
       ...card,
       speech: card.speech || card.title,
-      colorHex: typeof card.colorHex === 'number' ? card.colorHex : collection.colorHex,
+      color: normalizeColor(card.color ?? card.colorHex, collectionColor),
       order: card.order ?? index,
     })),
   }
@@ -398,8 +404,36 @@ export function isUserOwned(id: string) {
   return id.startsWith('user_')
 }
 
-export function hexColor(value: number) {
-  return `#${Math.max(0, value).toString(16).padStart(6, '0').slice(-6).toUpperCase()}`
+export function colorValue(color: TikoColorName) {
+  return colorHexByName.get(color) ?? colorHexByName.get('gray') ?? 'currentColor'
+}
+
+function normalizeColor(value: unknown, fallback: TikoColorName): TikoColorName {
+  if (typeof value === 'string') {
+    if (colorNames.has(value as TikoColorName)) return value as TikoColorName
+    const fromHex = colorNameByHex.get(value.toLowerCase())
+    if (fromHex) return fromHex
+  }
+  if (typeof value === 'number') {
+    const fromHex = colorNameByHex.get(`#${Math.max(0, value).toString(16).padStart(6, '0').slice(-6)}`.toLowerCase())
+    if (fromHex) return fromHex
+  }
+  return fallback
+}
+
+export function fallbackColor(index: number): TikoColorName {
+  return fallbackColors[index % fallbackColors.length]
+}
+
+function collectionForStorage(collection: CardCollection): CardCollection {
+  const { imageURL: _imageURL, ...storedCollection } = collection
+  return {
+    ...storedCollection,
+    cards: collection.cards.map(card => {
+      const { imageURL: _cardImageURL, ...storedCard } = card
+      return storedCard
+    }),
+  }
 }
 
 function createUserID() {

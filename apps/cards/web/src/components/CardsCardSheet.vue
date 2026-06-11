@@ -38,7 +38,7 @@ const emit = defineEmits<{
 
 const title = ref(props.card?.title ?? '')
 const speech = ref(props.card?.speech ?? '')
-const colorHex = ref(props.card?.colorHex ?? props.collection.colorHex)
+const color = ref(props.card?.color ?? props.collection.color)
 const imageRef = ref(props.card?.imageRef ?? '')
 
 function updateTitle(value: string) {
@@ -50,7 +50,7 @@ function submit() {
   emit('submit', {
     title: title.value,
     speech: speech.value || title.value,
-    colorHex: colorHex.value,
+    color: color.value,
     imageRef: imageRef.value || undefined,
   })
 }
@@ -61,7 +61,7 @@ function submit() {
     <TikoSheet :title="mode === 'add' ? labels.newCard : labels.editCard" icon="card">
       <TikoField :model-value="title" :label="labels.name" :placeholder="labels.cardNamePlaceholder" @update:model-value="updateTitle" />
       <TikoField v-model="speech" :label="labels.spokenText" :placeholder="labels.whatShouldBeSpoken" />
-      <TikoColorPicker v-model="colorHex" :label="labels.color" />
+      <TikoColorPicker v-model="color" value-mode="name" :label="labels.color" />
       <CardsImageChooser v-model="imageRef" :query="title" :labels="labels" />
       <template #footer>
         <Button type="button" variant="ghost" @click="emit('cancel')">{{ labels.cancel }}</Button>

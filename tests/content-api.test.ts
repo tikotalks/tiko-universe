@@ -39,13 +39,13 @@ class MemoryD1 {
   appItems: Row[] = [
     {
       id: '__default_animals', app_id: 'cards', type: 'collection', parent_id: null, title: 'Animals',
-      subtitle: null, body: null, speech: 'Animals', color_token: null, color_hex: 0x4CAF50,
+      subtitle: null, body: null, speech: 'Animals', color_token: 'green', color_hex: null,
       icon: null, image_ref: null, sort_order: 1, is_default: 1, is_published: 1,
       owner_user_id: null, owner_child_id: null, source_item_id: null, metadata_json: '{"mediaCategories":["animals"]}',
     },
     {
       id: '__default_animals_dog', app_id: 'cards', type: 'card', parent_id: '__default_animals', title: 'Dog',
-      subtitle: null, body: null, speech: 'Dog', color_token: null, color_hex: 0x4CAF50,
+      subtitle: null, body: null, speech: 'Dog', color_token: 'green', color_hex: null,
       icon: null, image_ref: null, sort_order: 1, is_default: 1, is_published: 1,
       owner_user_id: null, owner_child_id: null, source_item_id: null, metadata_json: '{"collectionId":"__default_animals"}',
     },
