@@ -224,6 +224,7 @@ struct YesNoView: View {
     @State private var showingHistory = false
     @State private var showingChoiceStyle = false
     @State private var showingTileEditor = false
+    @State private var sentenceSpeechState: YesNoSpeechPlaybackState = .idle
 
     private var defaultSentence: String { i18n.t("yesNo.sentence.default") }
 
@@ -253,6 +254,35 @@ struct YesNoView: View {
 
     private var clearButtonBackground: Color {
         effectiveColorScheme == .dark ? .white.opacity(0.12) : .white.opacity(0.36)
+    }
+
+    private var speakButtonBackground: Color {
+        switch sentenceSpeechState {
+        case .idle:
+            return Color(hex: 0x93ee3f)
+        case .generating:
+            return Color(hex: 0x0b5a7a)
+        case .playing:
+            return Color(hex: 0x006c67)
+        }
+    }
+
+    @ViewBuilder
+    private var speakButtonContent: some View {
+        switch sentenceSpeechState {
+        case .generating:
+            ProgressView()
+                .progressViewStyle(.circular)
+                .tint(.white)
+        case .playing:
+            Image(systemName: "waveform")
+                .font(.title2.weight(.bold))
+                .foregroundStyle(.white)
+        case .idle:
+            Image(systemName: "speaker.wave.2.fill")
+                .font(.title2.weight(.bold))
+                .foregroundStyle(.white)
+        }
     }
 
     private var choiceStyle: TikoChoiceStyle {
@@ -335,14 +365,19 @@ struct YesNoView: View {
 
                 HStack(spacing: 12) {
                     Button(action: speakSentence) {
-                        Image(systemName: "speaker.wave.2.fill")
-                            .font(.title2.weight(.bold))
-                            .foregroundStyle(.white)
+                        speakButtonContent
                             .frame(width: 56, height: 56)
-                            .background(Color(hex: 0x93ee3f))
+                            .background(speakButtonBackground)
                             .clipShape(Circle())
+                            .shadow(
+                                color: speakButtonBackground.opacity(sentenceSpeechState == .idle ? 0.0 : 0.32),
+                                radius: sentenceSpeechState == .idle ? 0 : 10,
+                                y: sentenceSpeechState == .idle ? 0 : 4
+                            )
                     }
+                    .disabled(!speechEnabled || sentenceSpeechState != .idle || effectiveSentence.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
                     .accessibilityLabel("Speak sentence")
+                    .accessibilityValue(sentenceSpeechState == .generating ? "Generating" : sentenceSpeechState == .playing ? "Playing" : "")
 
                     Button(action: { sentence = "" }) {
                         Image(systemName: "xmark")
@@ -437,10 +472,11 @@ struct YesNoView: View {
     }
 
     private func speakSentence() {
+        guard speechEnabled, sentenceSpeechState == .idle else { return }
         UIImpactFeedbackGenerator(style: .light).impactOccurred()
         rememberCurrentQuestion()
-        if speechEnabled {
-            speechService.speak(effectiveSentence, languageCode: languageCode)
+        speechService.speak(effectiveSentence, languageCode: languageCode) { state in
+            sentenceSpeechState = state
         }
     }
 
