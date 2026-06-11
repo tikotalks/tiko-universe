@@ -547,7 +547,8 @@ export function useIdentityRuntime(options: UseIdentityRuntimeOptions) {
         props: { existingHash: undefined, labels: labels.value.pin },
         config: { position: 'center', canClose: true, background: true, width: 'min(30rem, calc(100vw - 2rem))' },
         on: {
-          set: async (pin: string) => {
+          set: async (...args: unknown[]) => {
+            const pin = typeof args[1] === 'string' ? args[1] : ''
             if (!pin || !state.sessionToken.value) return
             try {
               saveIdentity(await identityClient.setPin(state.sessionToken.value, { pin }))
