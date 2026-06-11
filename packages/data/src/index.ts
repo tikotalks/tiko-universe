@@ -138,6 +138,7 @@ export interface TimerState extends JsonObject {
   remainingMs?: number
   startedAt?: number | null
   lastPresets?: number[]
+  presets?: { id: string; label: string; seconds: number }[]
 }
 
 export type TrackSource = 'youtube' | 'r2' | 'upload'

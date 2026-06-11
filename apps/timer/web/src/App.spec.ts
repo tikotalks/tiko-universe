@@ -77,6 +77,19 @@ describe('Timer App', () => {
     expect(presetBtns.length).toBe(4)
   })
 
+  it('renders timer presets from persisted/default state', () => {
+    const { wrapper } = mountApp({
+      'tiko:timer': JSON.stringify({
+        presets: [
+          { id: 'short', label: 'Short break', seconds: 30 },
+          { id: 'focus', label: 'Focus', seconds: 900 },
+        ],
+      }),
+    })
+    const presetBtns = wrapper.findAll('.timer-app__preset-btn')
+    expect(presetBtns.map(button => button.text())).toEqual(['Short break', 'Focus'])
+  })
+
   it('start button is visible when idle', () => {
     const { wrapper } = mountApp()
     const startBtn = wrapper.findAll('.timer-app__control-btn').find(b => b.text().includes('Start'))

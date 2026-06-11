@@ -58,7 +58,18 @@ const DEFAULTS: Record<TikoAppId, Record<AppResource, JsonValue>> = {
   },
   cards: { settings: { language: 'en', colorMode: 'system' }, state: {}, progress: {} },
   sequence: { settings: {}, state: {}, progress: {} },
-  timer: { settings: {}, state: {}, progress: {} },
+  timer: {
+    settings: {},
+    state: {
+      presets: [
+        { id: '1m', label: '1 min', seconds: 60 },
+        { id: '3m', label: '3 min', seconds: 180 },
+        { id: '5m', label: '5 min', seconds: 300 },
+        { id: '10m', label: '10 min', seconds: 600 }
+      ]
+    },
+    progress: {}
+  },
   radio: {
     settings: { language: 'en', colorMode: 'system', volume: 0.8 },
     state: {
