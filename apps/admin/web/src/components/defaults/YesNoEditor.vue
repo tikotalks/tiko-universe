@@ -180,6 +180,14 @@ function updateAnswerImage(setIndex: number, answerIndex: number, imageURL: stri
   updateAnswer(setIndex, answerIndex, { imageURL: imageURL || undefined, icon: undefined })
 }
 
+function useAnswerIcon(setIndex: number, answerIndex: number, answer: YesNoAnswerTile) {
+  updateAnswer(setIndex, answerIndex, { icon: answer.icon || 'ui/question-mark-fat', imageURL: undefined })
+}
+
+function useAnswerImage(setIndex: number, answerIndex: number) {
+  updateAnswer(setIndex, answerIndex, { imageURL: '', icon: undefined })
+}
+
 function removeAnswer(setIndex: number, answerIndex: number) {
   const sets = state.value.answerSets.map((set, i) => i === setIndex ? { ...set, answers: set.answers.filter((_, ai) => ai !== answerIndex) } : set)
   updateSets(sets)
@@ -298,16 +306,31 @@ function moveAnswer(setIndex: number, answerIndex: number, delta: number) {
                   placeholder="What to say when tapped"
                   @update:model-value="(v: string) => updateAnswer(si, i, { speech: v })"
                 />
-                <div :class="bemm('icon-field')">
-                  <span :class="bemm('color-label')">Icon</span>
+                <div :class="bemm('visual-field')">
+                  <span :class="bemm('color-label')">Visual</span>
+                  <div :class="bemm('visual-toggle')" role="group" aria-label="Tile visual type">
+                    <button
+                      type="button"
+                      :class="bemm('visual-option', { active: !answer.imageURL })"
+                      @click="useAnswerIcon(si, i, answer)"
+                    >
+                      Icon
+                    </button>
+                    <button
+                      type="button"
+                      :class="bemm('visual-option', { active: Boolean(answer.imageURL) })"
+                      @click="useAnswerImage(si, i)"
+                    >
+                      Image
+                    </button>
+                  </div>
                   <TikoOpenIconPicker
+                    v-if="!answer.imageURL"
                     :model-value="answer.icon ?? ''"
                     @update:model-value="(v: string) => updateAnswerIcon(si, i, v)"
                   />
-                </div>
-                <div :class="bemm('image-field')">
-                  <span :class="bemm('color-label')">Image</span>
                   <MediaPicker
+                    v-else
                     :model-value="answer.imageURL ?? ''"
                     @update:model-value="(v: string) => updateAnswerImage(si, i, v)"
                   />
@@ -449,7 +472,7 @@ function moveAnswer(setIndex: number, answerIndex: number, delta: number) {
 
   &__item-fields {
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr 1.5fr 1fr;
+    grid-template-columns: 1fr 1fr minmax(18rem, 2fr) 1fr;
     gap: var(--space-s);
     align-items: start;
   }
@@ -461,11 +484,36 @@ function moveAnswer(setIndex: number, answerIndex: number, delta: number) {
   }
 
   &__color-field,
-  &__icon-field,
-  &__image-field {
+  &__image-field,
+  &__visual-field {
     display: flex;
     flex-direction: column;
     gap: var(--space-xs);
+  }
+
+  &__visual-toggle {
+    display: inline-flex;
+    align-self: flex-start;
+    border: 1px solid var(--admin-border);
+    border-radius: var(--border-radius-xs);
+    overflow: hidden;
+    background: var(--admin-surface);
+  }
+
+  &__visual-option {
+    border: 0;
+    background: transparent;
+    color: var(--admin-text-muted);
+    font: inherit;
+    font-size: var(--font-size-xs);
+    font-weight: 700;
+    padding: 0.35rem 0.6rem;
+    cursor: pointer;
+
+    &--active {
+      background: var(--color-primary);
+      color: var(--color-primary-text, #fff);
+    }
   }
 
   &__color-label {
