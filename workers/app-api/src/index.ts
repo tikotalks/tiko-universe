@@ -53,7 +53,11 @@ const DEFAULTS: Record<TikoAppId, Record<AppResource, JsonValue>> = {
   },
   type: {
     settings: { language: 'en', colorMode: 'system', keyboardLayout: 'qwerty' },
-    state: { text: '', completedPrompts: [] },
+    state: {
+      text: '',
+      prompts: ['I need help', 'I want a break', 'I am finished', 'Thank you'],
+      completedPrompts: []
+    },
     progress: {}
   },
   cards: { settings: { language: 'en', colorMode: 'system' }, state: {}, progress: {} },

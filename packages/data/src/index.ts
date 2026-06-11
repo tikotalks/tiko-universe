@@ -62,6 +62,7 @@ export interface TypeSettings extends JsonObject {
 
 export interface TypeState extends JsonObject {
   text?: string
+  prompts?: string[]
   completedPrompts?: string[]
 }
 

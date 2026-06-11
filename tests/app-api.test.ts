@@ -219,6 +219,7 @@ describe('app-api settings/state endpoints', () => {
     expect(settings.body).toMatchObject({ app: 'yes-no', version: 0, updatedAt: null })
     expect(settings.body.settings.spokenPrompt).toBe('Make a choice.')
     expect(state.response.status).toBe(200)
+    expect(state.body.state.prompts).toEqual(['I need help', 'I want a break', 'I am finished', 'Thank you'])
     expect(state.body.state.completedPrompts).toEqual([])
   })
 
