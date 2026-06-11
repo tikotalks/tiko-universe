@@ -28,3 +28,6 @@ targets:
       - Tests
     dependencies:
       - target: TikoYesNo
+    settings:
+      base:
+        GENERATE_INFOPLIST_FILE: YES
