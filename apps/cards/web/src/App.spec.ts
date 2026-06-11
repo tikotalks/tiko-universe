@@ -1,6 +1,8 @@
 import { describe, expect, it } from 'vitest'
+import { mount } from '@vue/test-utils'
 import { existsSync, readFileSync } from 'node:fs'
 import { resolve } from 'node:path'
+import CardsBoard from './components/CardsBoard.vue'
 
 const appPath = [
   resolve(process.cwd(), 'apps/cards/web/src/App.vue'),
@@ -67,5 +69,50 @@ describe('Cards web iOS parity architecture', () => {
     expect(stylesSource).toContain('.popup--stack-cards-add-card')
     expect(stylesSource).toContain('--popup-border-radius')
     expect(stylesSource).toContain('--popup-container-background')
+  })
+
+  it('renders tile colors and images through the shared Tiko square tile', () => {
+    const wrapper = mount(CardsBoard, {
+      props: {
+        items: [
+          {
+            id: 'collection-food',
+            kind: 'collection',
+            collection: {
+              id: '__default_food',
+              title: 'Food',
+              colorHex: 0xFF9800,
+              order: 0,
+              mediaCategories: [],
+              imageURL: 'https://data.tikocdn.org/uploads/food.png',
+              cards: []
+            }
+          }
+        ],
+        columns: 3,
+        itemsPerPage: 6,
+        page: 0,
+        reduceMotion: false,
+        editing: false,
+        isAdmin: false,
+        labelSize: 'medium',
+        selectedCollectionIds: new Set<string>(),
+        selectedCardIds: new Set<string>(),
+        collectionThumbnails: {},
+        contentBaseUrl: 'https://content.tikoapi.org/v1',
+      },
+      global: {
+        stubs: {
+          TikoPagedTileGrid: {
+            props: ['items'],
+            template: '<div><slot v-for="item in items" name="item" :item="item" /></div>'
+          }
+        }
+      }
+    })
+
+    const tile = wrapper.get('.tiko-square-tile')
+    expect(tile.attributes('style')).toContain('background-color: rgb(255, 152, 0)')
+    expect(tile.get('img').attributes('src')).toBe('https://data.tikocdn.org/cdn-cgi/image/width=300,quality=80,f=auto/uploads/food.png')
   })
 })
