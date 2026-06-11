@@ -398,27 +398,40 @@ interface AppApiCollection {
   order?: unknown
   mediaCategories?: unknown
   image?: unknown
+  imageURL?: unknown
+  imageUrl?: unknown
+  image_url?: unknown
   tiles?: unknown[]
+}
+
+function stringImageValue(...values: unknown[]): string | undefined {
+  const value = values.find((item): item is string => typeof item === 'string' && item.trim().length > 0)
+  return value?.trim()
 }
 
 function mapAppApiCollection(raw: AppApiCollection, index: number): CardCollection {
   const colorHex = parseColorHex(raw.color)
   const tiles = Array.isArray(raw.tiles) ? raw.tiles : []
+  const imageURL = stringImageValue(raw.imageURL, raw.imageUrl, raw.image_url, raw.image)
   return {
     id: String(raw.id ?? ''),
     title: String(raw.title ?? ''),
     colorHex,
     order: typeof raw.order === 'number' ? raw.order : index,
     mediaCategories: Array.isArray(raw.mediaCategories) ? (raw.mediaCategories as string[]) : [],
-    ...(typeof raw.image === 'string' && raw.image ? { imageURL: raw.image } : {}),
+    ...(imageURL ? { imageURL } : {}),
     cards: tiles.map((t, i) => {
-      const tile = t as { id?: unknown; title?: unknown; speech?: unknown; color?: unknown }
+      const tile = t as { id?: unknown; title?: unknown; speech?: unknown; color?: unknown; image?: unknown; imageURL?: unknown; imageUrl?: unknown; image_url?: unknown; imageRef?: unknown; image_ref?: unknown }
+      const tileImageURL = stringImageValue(tile.imageURL, tile.imageUrl, tile.image_url, tile.image)
+      const imageRef = stringImageValue(tile.imageRef, tile.image_ref)
       return {
         id: String(tile.id ?? ''),
         title: String(tile.title ?? ''),
         speech: String(tile.speech ?? tile.title ?? ''),
         colorHex: parseColorHex(tile.color, colorHex),
         order: i,
+        ...(tileImageURL ? { imageURL: tileImageURL } : {}),
+        ...(imageRef ? { imageRef } : {}),
       }
     }),
   }
@@ -459,7 +472,9 @@ async function getDefaultCollections(env: Env): Promise<CardCollection[]> {
   const tilesByCollection = new Map<string, CardTile[]>()
   for (const row of tileRows) {
     const resolvedImageURL = row.image_ref
-      ? `${(env.MEDIA_API_URL ?? 'https://media.tikoapi.org/v1').replace(/\/$/, '')}/media/${encodeURIComponent(row.image_ref)}/download`
+      ? row.image_ref.startsWith('http')
+        ? row.image_ref
+        : `${(env.MEDIA_API_URL ?? 'https://media.tikoapi.org/v1').replace(/\/$/, '')}/media/${encodeURIComponent(row.image_ref)}/download`
       : undefined
     const tile: CardTile = {
       id: row.id,
@@ -549,7 +564,7 @@ async function putAdminCardsCollections(
           `INSERT INTO cards_tiles (id, collection_id, title, speech, color_hex, display_order, image_ref)
            VALUES (?, ?, ?, ?, ?, ?, ?)`,
         )
-          .bind(tile.id, col.id, tile.title, tile.speech, tile.colorHex ?? 0, tile.order ?? 0, tile.imageRef ?? null)
+          .bind(tile.id, col.id, tile.title, tile.speech, tile.colorHex ?? 0, tile.order ?? 0, tile.imageRef ?? tile.imageURL ?? null)
           .run()
       }
     }
@@ -657,12 +672,16 @@ async function handlePostCards(request: Request, env: Env, segments: string[]): 
         return error(request, env, 'forbidden', 'Admin role required to add cards to default collections', 403)
       }
       const id = `__default_${crypto.randomUUID().replace(/-/g, '')}`
-      const imageRef = typeof body.imageRef === 'string' && body.imageRef ? body.imageRef : null
+      const imageRef = typeof body.imageRef === 'string' && body.imageRef
+        ? body.imageRef
+        : typeof body.imageURL === 'string' && body.imageURL
+          ? body.imageURL
+          : null
       await env.CONTENT_DB.prepare(
         'INSERT INTO cards_tiles (id, collection_id, title, speech, color_hex, display_order, image_ref) VALUES (?, ?, ?, ?, ?, ?, ?)',
       ).bind(id, collectionId, title, speech, colorHex, order, imageRef).run()
       await invalidateCardsCache(env)
-      const newCard: CardTile = { id, title, speech, colorHex, order, ...(imageRef ? { imageRef } : {}) }
+      const newCard: CardTile = { id, title, speech, colorHex, order, ...(imageRef ? { imageRef, imageURL: imageRef.startsWith('http') ? imageRef : undefined } : {}) }
       return json(request, env, { success: true, data: newCard }, 201)
     }
 
@@ -982,7 +1001,7 @@ async function handlePutCards(request: Request, env: Env, segments: string[]): P
     const cardId = segments[5]
     const isDefault = !collectionId.startsWith('user_')
 
-    let body: { title?: unknown; speech?: unknown; colorHex?: unknown; imageRef?: unknown }
+    let body: { title?: unknown; speech?: unknown; colorHex?: unknown; imageRef?: unknown; imageURL?: unknown }
     try { body = (await request.json()) as typeof body } catch {
       return error(request, env, 'bad_request', 'Request body must be valid JSON', 400)
     }
@@ -996,10 +1015,14 @@ async function handlePutCards(request: Request, env: Env, segments: string[]): P
       if (!(await verifyAdminFromSession(env, sessionToken))) {
         return error(request, env, 'forbidden', 'Admin role required to edit default cards', 403)
       }
-      const imageRef = typeof body.imageRef === 'string' && body.imageRef ? body.imageRef : null
+      const imageRef = typeof body.imageRef === 'string' && body.imageRef
+        ? body.imageRef
+        : typeof body.imageURL === 'string' && body.imageURL
+          ? body.imageURL
+          : null
       await env.CONTENT_DB.prepare('UPDATE cards_tiles SET title = ?, speech = ?, color_hex = ?, image_ref = ? WHERE id = ?').bind(title, speech, colorHex, imageRef, cardId).run()
       await invalidateCardsCache(env)
-      const updatedCard: CardTile = { id: cardId, title, speech, colorHex, order: 0, ...(imageRef ? { imageRef } : {}) }
+      const updatedCard: CardTile = { id: cardId, title, speech, colorHex, order: 0, ...(imageRef ? { imageRef, imageURL: imageRef.startsWith('http') ? imageRef : undefined } : {}) }
       return json(request, env, { success: true, data: updatedCard })
     }
 
