@@ -44,23 +44,8 @@ struct CardsView: View {
         return localizedCollections.first { $0.id == id }
     }
 
-    private func applyLocalizedTitles() {
-        localizedCollections = store.collections.map { collection in
-            var c = collection
-            if !collection.id.hasPrefix("user_") {
-                let tk = "cards.default.\(collection.id)"
-                let tt = i18n.t(tk)
-                if tt != tk { c.title = tt }
-                c.cards = collection.cards.map { card in
-                    if card.id.hasPrefix("user_") { return card }
-                    let ck = "cards.default.\(card.id)"
-                    let ct = i18n.t(ck)
-                    guard ct != ck else { return card }
-                    var mc = card; mc.title = ct; mc.speech = ct; return mc
-                }
-            }
-            return c
-        }
+    private func syncCollectionsFromStore() {
+        localizedCollections = store.collections
     }
 
     private var labelFont: Font {
@@ -74,7 +59,7 @@ struct CardsView: View {
     var body: some View {
         TikoAppShell(
             appConfig: CardsAppConfig.app,
-            appName: currentCollection?.title ?? i18n.t("cards.appName"),
+            appName: liveCurrentCollection?.title ?? i18n.t("cards.appName"),
             onIconTap: !collectionStack.isEmpty ? {
                 if isEditing {
                     withAnimation(.spring(response: 0.25)) { isEditing = false }
@@ -295,12 +280,12 @@ struct CardsView: View {
             }
             .animation(showAnimations ? .spring(response: 0.38, dampingFraction: 0.85) : .linear(duration: 0), value: currentCollection?.id)
             .task {
-                await store.load()
-                applyLocalizedTitles()
+                await store.load(languageCode: languageCode)
+                syncCollectionsFromStore()
                 await store.hydrateRootThumbnails()
                 await refreshAdminState()
             }
-            .onChange(of: store.collections) { _, _ in applyLocalizedTitles() }
+            .onChange(of: store.collections) { _, _ in syncCollectionsFromStore() }
         }
         .tikoPopup(isPresented: $showingAdd) {
             if let collection = currentCollection {
@@ -361,7 +346,14 @@ struct CardsView: View {
         }
         .environmentObject(i18n)
         .onAppear { i18n.setLanguage(languageCode) }
-        .onChange(of: languageCode) { _, code in i18n.setLanguage(code); applyLocalizedTitles() }
+        .onChange(of: languageCode) { _, code in
+            i18n.setLanguage(code)
+            Task {
+                await store.load(languageCode: code)
+                syncCollectionsFromStore()
+                await store.hydrateRootThumbnails()
+            }
+        }
         .onChange(of: collectionStack) { _, _ in
             if isEditing { withAnimation(.spring(response: 0.25)) { isEditing = false } }
         }

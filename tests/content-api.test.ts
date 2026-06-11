@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest'
+import { afterEach, describe, expect, it, vi } from 'vitest'
 import worker from '../workers/content-api/src/index'
 
 type Row = Record<string, unknown>
@@ -36,6 +36,14 @@ class MemoryD1 {
     id: 'item_1', template_id: 'card', title: 'Cat', slug: 'cat', status: 'published', language_code: 'en',
     tags: '["animal"]', categories: '["cards"]', data: '{"emoji":"🐱"}',
   }]
+  cardCollections: Row[] = [{
+    id: '__default_animals', title: 'Animals', color_hex: 0x4CAF50, display_order: 1,
+    media_categories: '["animals"]', image_url: null, parent_id: null,
+  }]
+  cardTiles: Row[] = [{
+    id: 'animal_dog', collection_id: '__default_animals', title: 'Dog', speech: 'Dog',
+    color_hex: 0x4CAF50, display_order: 1, image_ref: null,
+  }]
 
   prepare(sql: string) { return new MemoryStatement(this, sql) }
 
@@ -58,6 +66,8 @@ class MemoryD1 {
       if (normalized.includes('slug = ?')) return new MemoryResult(this.items.filter(row => row.slug === values[0]))
       return new MemoryResult(this.items)
     }
+    if (normalized.includes('FROM cards_collections')) return new MemoryResult(this.cardCollections)
+    if (normalized.includes('FROM cards_tiles')) return new MemoryResult(this.cardTiles)
     throw new Error(`Unhandled SQL in content-api fake: ${normalized}`)
   }
 }
@@ -66,6 +76,7 @@ class MemoryKV {
   values = new Map<string, string>()
   async get(key: string) { return this.values.get(key) ?? null }
   async put(key: string, value: string) { this.values.set(key, value) }
+  async delete(key: string) { this.values.delete(key) }
 }
 
 function makeEnv() {
@@ -73,12 +84,17 @@ function makeEnv() {
     CONTENT_DB: new MemoryD1(),
     CONTENT_CACHE: new MemoryKV(),
     ALLOWED_ORIGINS: 'https://cards.tikoapps.org,http://localhost:5173',
+    TRANSLATIONS_API_URL: 'https://translations.test/v1',
   }
 }
 
 async function parseJson(response: Response) {
   return response.json() as Promise<Record<string, any>>
 }
+
+afterEach(() => {
+  vi.unstubAllGlobals()
+})
 
 describe('content-api worker', () => {
   it('serves health without cache', async () => {
@@ -147,6 +163,27 @@ describe('content-api worker', () => {
     expect(response.status).toBe(200)
     expect(body.success).toBe(true)
     expect(body.data).toMatchObject({ id: 'item_1', slug: 'cat', tags: ['animal'], data: { emoji: '🐱' } })
+  })
+
+  it('localizes default cards collections in the API response', async () => {
+    vi.stubGlobal('fetch', vi.fn(async (url: string) => {
+      if (url === 'https://translations.test/v1/cards/mt') {
+        return Response.json({
+          translations: {
+            'cards.default.__default_animals': 'Annimali',
+            'cards.default.animal_dog': 'Kelb',
+          },
+        })
+      }
+      return Response.json({ translations: {} })
+    }))
+
+    const response = await worker.fetch(new Request('https://content.test/v1/cards/collections?language=mt'), makeEnv() as never)
+    const body = await parseJson(response)
+
+    expect(response.status).toBe(200)
+    expect(body.data.collections[0].title).toBe('Annimali')
+    expect(body.data.collections[0].cards[0]).toMatchObject({ title: 'Kelb', speech: 'Kelb' })
   })
 
   it('rejects malformed query requests', async () => {

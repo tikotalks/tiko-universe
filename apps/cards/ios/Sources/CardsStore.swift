@@ -22,13 +22,13 @@ final class CardsStore: ObservableObject {
         self.imageCache = imageCache
     }
 
-    func load() async {
+    func load(languageCode: String = "en") async {
         isLoading = true
         defer { isLoading = false }
 
         let token = try? TikoDeviceSessionStore().load()?.accessToken
         do {
-            let fetched = try await contentClient.fetchCollections(sessionToken: token)
+            let fetched = try await contentClient.fetchCollections(sessionToken: token, languageCode: languageCode)
             collections = fetched.sorted { $0.order < $1.order }
         } catch {
             if collections.isEmpty {

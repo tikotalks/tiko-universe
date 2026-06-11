@@ -25,8 +25,10 @@ actor CardsContentClient {
 
     /// Fetches collections from the Content API.
     /// Passes the session token so the API can merge user-specific data.
-    func fetchCollections(sessionToken: String?) async throws -> [CardCollection] {
-        guard let url = URL(string: "\(Self.baseURL)/cards/collections") else {
+    func fetchCollections(sessionToken: String?, languageCode: String) async throws -> [CardCollection] {
+        var components = URLComponents(string: "\(Self.baseURL)/cards/collections")
+        components?.queryItems = [URLQueryItem(name: "language", value: languageCode)]
+        guard let url = components?.url else {
             throw URLError(.badURL)
         }
         var request = URLRequest(url: url)

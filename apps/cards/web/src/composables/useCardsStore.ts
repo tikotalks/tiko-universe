@@ -65,10 +65,10 @@ export function useCardsStore(options: UseCardsStoreOptions) {
     })
   }
 
-  async function loadCollections() {
+  async function loadCollections(language?: string) {
     loadingCollections.value = true
     try {
-      collections.value = (await api.fetchCollections()).map(normalizeCollection).sort((a, b) => a.order - b.order)
+      collections.value = (await api.fetchCollections(language)).map(normalizeCollection).sort((a, b) => a.order - b.order)
     } catch {
       if (!collections.value.length) collections.value = []
     } finally {

@@ -56,7 +56,7 @@ const DEFAULTS: Record<TikoAppId, Record<AppResource, JsonValue>> = {
     state: { text: '', completedPrompts: [] },
     progress: {}
   },
-  cards: { settings: {}, state: {}, progress: {} },
+  cards: { settings: { language: 'en', colorMode: 'system' }, state: {}, progress: {} },
   sequence: { settings: {}, state: {}, progress: {} },
   timer: { settings: {}, state: {}, progress: {} },
   radio: { settings: {}, state: {}, progress: {} },

@@ -9,6 +9,7 @@ ALLOWED_ORIGINS = "https://tiko.mt,https://www.tiko.mt,https://tikoapps.org,http
 APP_API_URL = "https://app.tikoapi.org"
 IDENTITY_API_URL = "https://api.tikotalks.com/v1"
 MEDIA_API_URL = "https://media.tikoapi.org/v1"
+TRANSLATIONS_API_URL = "https://translations.tikoapi.org/v1"
 
 [[r2_buckets]]
 binding = "USER_IMAGES"
@@ -37,6 +38,7 @@ ALLOWED_ORIGINS = "https://tiko.mt,https://www.tiko.mt,https://tikoapps.org,http
 APP_API_URL = "https://app.tikoapi.org"
 IDENTITY_API_URL = "https://api.tikotalks.com/v1"
 MEDIA_API_URL = "https://media.tikoapi.org/v1"
+TRANSLATIONS_API_URL = "https://translations.tikoapi.org/v1"
 
 [[env.production.r2_buckets]]
 binding = "USER_IMAGES"

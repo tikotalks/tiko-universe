@@ -10,6 +10,7 @@ interface Env {
   ADMIN_SECRET?: string
   IDENTITY_API_URL?: string
   MEDIA_API_URL?: string
+  TRANSLATIONS_API_URL?: string
 }
 
 interface D1Database {
@@ -106,9 +107,12 @@ const DEFAULT_ALLOWED_ORIGINS = [
 
 const CACHE_TTL_SECONDS = 300
 const CACHE_KEY_CARDS_COLLECTIONS = 'cards:collections'
+const CARDS_CACHE_LANGUAGES = ['en', 'nl', 'fr', 'es', 'de', 'mt', 'it', 'pt', 'pt-br', 'ar']
 
 async function invalidateCardsCache(env: Env): Promise<void> {
-  if (env.CONTENT_CACHE) await env.CONTENT_CACHE.delete(CACHE_KEY_CARDS_COLLECTIONS)
+  if (!env.CONTENT_CACHE) return
+  await env.CONTENT_CACHE.delete(CACHE_KEY_CARDS_COLLECTIONS)
+  await Promise.all(CARDS_CACHE_LANGUAGES.map(language => env.CONTENT_CACHE!.delete(`${CACHE_KEY_CARDS_COLLECTIONS}:${language}`)))
 }
 
 interface UserImageRow {
@@ -193,6 +197,78 @@ function parseJsonArray(value: unknown): unknown[] {
   } catch {
     return []
   }
+}
+
+function normalizeLanguage(value: string | null | undefined): string | undefined {
+  const normalized = value?.trim().toLowerCase().replace('_', '-')
+  if (!normalized) return undefined
+  return /^[a-z]{2,3}(?:-[a-z0-9]{2,8})*$/.test(normalized) ? normalized : undefined
+}
+
+function languageFromAcceptLanguage(header: string | null): string | undefined {
+  return normalizeLanguage(header?.split(',')[0]?.split(';')[0])
+}
+
+function languageFromRequest(request: Request): string | undefined {
+  const url = new URL(request.url)
+  return normalizeLanguage(url.searchParams.get('language') ?? url.searchParams.get('locale') ?? url.searchParams.get('lang'))
+    ?? languageFromAcceptLanguage(request.headers.get('Accept-Language'))
+}
+
+async function languageFromUserSettings(env: Env, sessionToken: string | undefined): Promise<string | undefined> {
+  if (!sessionToken || !env.APP_API_URL) return undefined
+  try {
+    const appBase = env.APP_API_URL.replace(/\/$/, '')
+    const resp = await fetch(`${appBase}/v1/apps/cards/settings`, {
+      headers: { Authorization: `Bearer ${sessionToken}`, Accept: 'application/json' },
+    })
+    if (!resp.ok) return undefined
+    const body = await resp.json() as { settings?: { language?: unknown } }
+    return normalizeLanguage(typeof body.settings?.language === 'string' ? body.settings.language : undefined)
+  } catch {
+    return undefined
+  }
+}
+
+async function effectiveCardsLanguage(request: Request, env: Env, sessionToken: string | undefined): Promise<string> {
+  return languageFromRequest(request)
+    ?? await languageFromUserSettings(env, sessionToken)
+    ?? 'en'
+}
+
+async function fetchCardsTranslations(env: Env, language: string): Promise<Record<string, string>> {
+  if (language === 'en') return {}
+  try {
+    const base = (env.TRANSLATIONS_API_URL ?? 'https://translations.tikoapi.org/v1').replace(/\/$/, '')
+    const response = await fetch(`${base}/cards/${encodeURIComponent(language)}`, {
+      headers: { Accept: 'application/json' },
+    })
+    if (!response.ok) return {}
+    const body = await response.json() as { translations?: Record<string, unknown> }
+    return Object.fromEntries(
+      Object.entries(body.translations ?? {}).filter((entry): entry is [string, string] => typeof entry[1] === 'string'),
+    )
+  } catch {
+    return {}
+  }
+}
+
+function translateDefaultCollections(collections: CardCollection[], translations: Record<string, string>): CardCollection[] {
+  if (Object.keys(translations).length === 0) return collections
+  return collections.map((collection) => {
+    if (collection.id.startsWith('user_')) return collection
+    const collectionTitle = translations[`cards.default.${collection.id}`] ?? collection.title
+    return {
+      ...collection,
+      title: collectionTitle,
+      cards: collection.cards.map((card) => {
+        if (card.id.startsWith('user_')) return card
+        const translated = translations[`cards.default.${card.id}`]
+        if (!translated) return card
+        return { ...card, title: translated, speech: translated }
+      }),
+    }
+  })
 }
 
 function normalizeRow(row: JsonRecord): JsonRecord {
@@ -505,11 +581,13 @@ async function getDefaultCollections(env: Env): Promise<CardCollection[]> {
   })
 }
 
-async function getCardsCollections(env: Env, sessionToken?: string): Promise<{ collections: CardCollection[] }> {
+async function getCardsCollections(env: Env, language: string, sessionToken?: string): Promise<{ collections: CardCollection[] }> {
   const defaults = await getDefaultCollections(env)
+  const translations = await fetchCardsTranslations(env, language)
+  const localizedDefaults = translateDefaultCollections(defaults, translations)
 
   if (!sessionToken || !env.APP_API_URL) {
-    return { collections: defaults }
+    return { collections: localizedDefaults }
   }
 
   try {
@@ -521,7 +599,7 @@ async function getCardsCollections(env: Env, sessionToken?: string): Promise<{ c
       const userCollections = body?.state?.collections
       if (Array.isArray(userCollections) && userCollections.length > 0) {
         const merged = new Map<string, CardCollection>()
-        for (const col of defaults) merged.set(col.id, col)
+        for (const col of localizedDefaults) merged.set(col.id, col)
         for (const col of userCollections as CardCollection[]) merged.set(col.id, col)
         return { collections: Array.from(merged.values()) }
       }
@@ -530,7 +608,7 @@ async function getCardsCollections(env: Env, sessionToken?: string): Promise<{ c
     // silently fall through to defaults
   }
 
-  return { collections: defaults }
+  return { collections: localizedDefaults }
 }
 
 async function putAdminCardsCollections(
@@ -786,13 +864,14 @@ async function handleGet(request: Request, env: Env, segments: string[]): Promis
   if (resource === 'cards' && segments[2] === 'collections') {
     const authHeader = request.headers.get('Authorization') ?? ''
     const sessionToken = authHeader.startsWith('Bearer ') ? authHeader.slice(7) : undefined
+    const language = await effectiveCardsLanguage(request, env, sessionToken)
 
     if (sessionToken) {
-      const data = await getCardsCollections(env, sessionToken)
+      const data = await getCardsCollections(env, language, sessionToken)
       return json(request, env, { success: true, data }, 200, { 'Cache-Control': 'no-store' })
     }
 
-    const data = await cached(request, env, CACHE_KEY_CARDS_COLLECTIONS, () => getCardsCollections(env))
+    const data = await cached(request, env, `${CACHE_KEY_CARDS_COLLECTIONS}:${language}`, () => getCardsCollections(env, language))
     return json(request, env, { success: true, data })
   }
 
