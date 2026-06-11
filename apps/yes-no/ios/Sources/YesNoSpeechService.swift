@@ -88,7 +88,7 @@ final class YesNoSpeechService {
             purpose: "speech-playback",
             text: text,
             language: languageCode,
-            provider: "elevenlabs"
+            provider: "narakeet"
         ))
 
         let (data, response) = try await URLSession.shared.data(for: request)

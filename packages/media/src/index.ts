@@ -1,4 +1,4 @@
-export type TikoTtsProvider = 'openai' | 'azure' | 'elevenlabs' | 'browser' | 'auto'
+export type TikoTtsProvider = 'openai' | 'azure' | 'elevenlabs' | 'narakeet' | 'browser' | 'auto'
 
 export interface GenerationTtsRequest {
   text: string

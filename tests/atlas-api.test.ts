@@ -98,6 +98,7 @@ function makeEnv(overrides: Partial<Env> = {}): Env & { db: MemoryD1; bucket: Me
     ATLAS_ASSETS_BUCKET: bucket,
     OPENAI_API_KEY: 'openai-key',
     ELEVENLABS_API_KEY: 'eleven-key',
+    NARAKEET_API_KEY: 'narakeet-key',
     AI: { run: vi.fn(async () => ({ response: 'Workers AI answer' })) },
     ...overrides,
   }
@@ -123,7 +124,7 @@ describe('atlas-api', () => {
   })
 
   it('synthesizes speech, stores it in R2, then serves the cached asset', async () => {
-    const env = makeEnv({ ELEVENLABS_API_KEY: undefined })
+    const env = makeEnv({ ELEVENLABS_API_KEY: undefined, NARAKEET_API_KEY: undefined })
     vi.spyOn(globalThis, 'fetch').mockResolvedValue(new Response(new Uint8Array([1, 2, 3]), { status: 200 }))
 
     const response = await worker.fetch(new Request('https://api.test/v1/atlas/speech', {
@@ -147,6 +148,60 @@ describe('atlas-api', () => {
     const asset = await worker.fetch(new Request(`https://api.test${generated.data.audioUrl}`), env)
     expect(asset.status).toBe(200)
     expect(new Uint8Array(await asset.arrayBuffer())).toEqual(new Uint8Array([1, 2, 3]))
+  })
+
+  it('uses Narakeet by default and stores phrase lookup metadata before serving cached audio', async () => {
+    const env = makeEnv()
+    const fetchSpy = vi.spyOn(globalThis, 'fetch').mockResolvedValue(new Response(new Uint8Array([4, 5, 6]), { status: 200, headers: { 'x-duration-seconds': '2' } }))
+
+    const body = { text: 'Ik wil drinken', locale: 'nl-NL', app: 'yes-no', purpose: 'child-button' }
+    const first = await worker.fetch(new Request('https://api.test/v1/atlas/speech', {
+      method: 'POST',
+      body: JSON.stringify(body),
+    }), env)
+
+    expect(first.status).toBe(201)
+    await expect(json(first)).resolves.toMatchObject({
+      data: { cached: false, provider: { name: 'narakeet', model: 'narakeet-mp3', voice: 'Raymond' } },
+      meta: { capability: 'speech.synthesize', provider: 'narakeet', cached: false },
+    })
+    expect(fetchSpy).toHaveBeenCalledTimes(1)
+    expect(fetchSpy).toHaveBeenCalledWith(
+      'https://api.narakeet.com/text-to-speech/mp3?voice=Raymond',
+      expect.objectContaining({
+        method: 'POST',
+        body: 'Ik wil drinken',
+        headers: expect.objectContaining({ 'x-api-key': 'narakeet-key', 'Content-Type': 'text/plain' }),
+      }),
+    )
+
+    const cachedAsset = Array.from(env.db.assets.values())[0]
+    expect(JSON.parse(String(cachedAsset.metadata_json))).toMatchObject({
+      phrase: 'Ik wil drinken',
+      locale: 'nl-nl',
+      language: 'nl-nl',
+      provider: 'narakeet',
+      voice: 'Raymond',
+      model: 'narakeet-mp3',
+      speed: 1,
+      format: 'mp3',
+      durationSeconds: 2,
+      settings: {
+        provider: 'narakeet',
+        voice: 'Raymond',
+        model: 'narakeet-mp3',
+        speed: 1,
+        format: 'mp3',
+      },
+    })
+
+    const second = await worker.fetch(new Request('https://api.test/v1/atlas/speech', {
+      method: 'POST',
+      body: JSON.stringify(body),
+    }), env)
+    expect(second.status).toBe(200)
+    await expect(json(second)).resolves.toMatchObject({ data: { cached: true, provider: { name: 'narakeet', voice: 'Raymond' } }, meta: { cached: true } })
+    expect(fetchSpy).toHaveBeenCalledTimes(1)
   })
 
   it('routes text generation to Workers AI by default', async () => {
@@ -195,7 +250,7 @@ describe('atlas-api', () => {
 
 
   it('records redacted usage rows and exposes admin observability endpoints', async () => {
-    const env = makeEnv({ ELEVENLABS_API_KEY: undefined, SERVICE_API_KEYS: 'service-token' })
+    const env = makeEnv({ ELEVENLABS_API_KEY: undefined, NARAKEET_API_KEY: undefined, SERVICE_API_KEYS: 'service-token' })
     vi.spyOn(globalThis, 'fetch').mockResolvedValue(new Response(new Uint8Array([1, 2, 3]), { status: 200 }))
 
     const generated = await worker.fetch(new Request('https://api.test/v1/atlas/speech', {
