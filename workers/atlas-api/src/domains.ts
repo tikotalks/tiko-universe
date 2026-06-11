@@ -259,9 +259,9 @@ async function generateNarakeetSpeech(input: { text: string; voice: string; spee
 }
 
 async function loadSpeechServiceConfig(env: Env): Promise<AtlasSpeechServiceConfig> {
-  const row = await env.ATLAS_DB?.prepare('SELECT data_json FROM atlas_service_config WHERE service = ? LIMIT 1').bind('speech').first<{ data_json: string }>()
-  if (!row?.data_json) return DEFAULT_ATLAS_SPEECH_CONFIG
   try {
+    const row = await env.ATLAS_DB?.prepare('SELECT data_json FROM atlas_service_config WHERE service = ? LIMIT 1').bind('speech').first<{ data_json: string }>()
+    if (!row?.data_json) return DEFAULT_ATLAS_SPEECH_CONFIG
     return normalizeSpeechServiceConfig(JSON.parse(row.data_json))
   } catch {
     return DEFAULT_ATLAS_SPEECH_CONFIG
