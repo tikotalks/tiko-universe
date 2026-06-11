@@ -12,7 +12,7 @@ const props = defineProps<{
 }>()
 const emit = defineEmits<{ 'update:modelValue': [value: string] }>()
 
-const palette = computed<TikoColorEntry[]>(() => {
+const palette = computed<readonly TikoColorEntry[]>(() => {
   if (props.mode === 'name') return tikoColors
   return (props.colors ?? TIKO_PALETTE).map(hex => ({ name: hex, hex }))
 })

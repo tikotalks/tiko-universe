@@ -40,6 +40,7 @@ const newCatIcon = ref('')
 const newCatOpen = ref(false)
 
 const EMOJI_OPTIONS = ['🎵', '📖', '🐾', '🌙', '🎨', '🌟', '🚗', '🌈', '🎪', '🏠', '🦁', 'ABC']
+const CATEGORY_COLORS = ['red', 'orange', 'yellow', 'green', 'blue', 'purple', 'pink', 'cyan', 'teal', 'lime'] as const
 
 function pickRandomEmoji() {
   const used = new Set(categories.categories.value.map(c => c.icon))
@@ -51,8 +52,7 @@ function handleNewCat() {
   const name = newCatName.value.trim()
   if (!name) return
   const icon = newCatIcon.value.trim() || pickRandomEmoji()
-  const hue = Math.floor(Math.random() * 360)
-  const color = `hsl(${hue}, 65%, 70%)`
+  const color = CATEGORY_COLORS[categories.categories.value.length % CATEGORY_COLORS.length]
   const cat = categories.addCategory({ name, icon, color })
   addVideoCategoryId.value = cat.id
   newCatName.value = ''

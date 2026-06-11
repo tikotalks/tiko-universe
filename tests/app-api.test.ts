@@ -304,10 +304,13 @@ describe('@tiko/data client', () => {
 describe('global defaults endpoints', () => {
   it('returns built-in defaults when no global defaults are stored', async () => {
     const { response, body } = await fetchJson('/v1/apps/defaults/cards/state', { headers: auth })
+    const radio = await fetchJson('/v1/apps/defaults/radio/state', { headers: auth })
+
     expect(response.status).toBe(200)
     expect(body.version).toBe(0)
     expect(body.updatedAt).toBeNull()
     expect(body.state).toEqual({})
+    expect(radio.body.state.categories.map((category: { id: string }) => category.id)).toEqual(['animals', 'stories', 'bedtime', 'songs'])
   })
 
   it('allows unauthenticated GET of defaults', async () => {
@@ -380,4 +383,20 @@ describe('global defaults endpoints', () => {
     expect(global.body.state.collections[0].id).toBe('global')
     expect(user.body.state.collections[0].id).toBe('user')
   }, 15000)
+
+  it('uses global defaults for new user app data', async () => {
+    const testEnv = await env()
+
+    await fetchJson('/v1/apps/defaults/radio/state', {
+      method: 'PUT',
+      headers: auth,
+      body: JSON.stringify({ state: { categories: [{ id: 'stories', name: 'Stories', icon: 'book', color: 'purple', order: 0 }] }, version: 0 })
+    }, testEnv)
+
+    const read = await fetchJson('/v1/apps/radio/state', { headers: auth }, testEnv)
+
+    expect(read.response.status).toBe(200)
+    expect(read.body.version).toBe(0)
+    expect(read.body.state.categories[0]).toMatchObject({ id: 'stories', name: 'Stories' })
+  })
 })

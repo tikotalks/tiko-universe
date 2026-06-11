@@ -29,8 +29,8 @@ function seedTracks(ls: ReturnType<typeof createLocalStorageMock>) {
 
 function seedCategories(ls: ReturnType<typeof createLocalStorageMock>) {
   const categories = [
-    { id: 'animals', name: 'Animals', icon: '🐾', color: '#FFD93D', order: 0, trackIds: ['t1', 't2'] },
-    { id: 'songs', name: 'Songs', icon: '🎵', color: '#FFB3C1', order: 1, trackIds: ['t3'] },
+    { id: 'animals', name: 'Animals', icon: '🐾', color: 'yellow', order: 0, trackIds: ['t1', 't2'] },
+    { id: 'songs', name: 'Songs', icon: '🎵', color: 'pink', order: 1, trackIds: ['t3'] },
   ]
   ls.store['tiko:radio:categories'] = JSON.stringify(categories)
 }

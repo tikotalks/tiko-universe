@@ -6,7 +6,7 @@ export interface TikoColorEntry {
   hex: string
 }
 
-export const tikoColors: TikoColorEntry[] = [
+export const tikoColors = [
   {
     "name": "red",
     "hex": "#E03131"
@@ -87,4 +87,6 @@ export const tikoColors: TikoColorEntry[] = [
     "name": "silver",
     "hex": "#C0C0C0"
   }
-]
+] as const
+
+export type TikoColorName = typeof tikoColors[number]['name']

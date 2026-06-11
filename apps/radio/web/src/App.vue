@@ -9,6 +9,7 @@ import { createI18n, createTikoIdentityLabels, defaultLanguage, tikoI18nKeys, ti
 import {
   TikoAppShell,
   TikoColorMode,
+  tikoColors,
   useIdentityRuntime,
   type IdentityRuntimeState,
 } from '@tiko/ui'
@@ -194,6 +195,8 @@ const labels = computed(() => {
     },
   }
 })
+const colorHexByName = new Map(tikoColors.map(color => [color.name, color.hex]))
+const categoryColorNames = ['red', 'orange', 'yellow', 'green', 'blue', 'purple', 'pink', 'cyan', 'teal', 'lime'] as const
 
 // ---- Volume icon ----------------------------------------------------------
 const volumeIcon = computed(() => {
@@ -374,15 +377,19 @@ async function persistStateRemote() {
 function seedDefaultCategories() {
   if (categories.isEmpty.value) {
     const defaults: RadioCategory[] = [
-      { id: 'animals', name: 'Animals', icon: '🐾', color: '#FFD93D', order: 0 },
-      { id: 'stories', name: 'Stories', icon: '📖', color: '#C3AED6', order: 1 },
-      { id: 'bedtime', name: 'Bedtime', icon: '🌙', color: '#A8D8EA', order: 2 },
-      { id: 'songs', name: 'Songs', icon: '🎵', color: '#FFB3C1', order: 3 },
+      { id: 'animals', name: 'Animals', icon: '🐾', color: 'yellow', order: 0 },
+      { id: 'stories', name: 'Stories', icon: '📖', color: 'purple', order: 1 },
+      { id: 'bedtime', name: 'Bedtime', icon: '🌙', color: 'cyan', order: 2 },
+      { id: 'songs', name: 'Songs', icon: '🎵', color: 'pink', order: 3 },
     ]
     for (const cat of defaults) {
       categories.addCategory(cat)
     }
   }
+}
+
+function categoryColor(category: RadioCategory) {
+  return colorHexByName.get(category.color) ?? colorHexByName.get('gray') ?? 'currentColor'
 }
 
 function absoluteGenerationUrl(url: string) {
@@ -701,7 +708,7 @@ function handleCreateCategory() {
   categories.addCategory({
     name,
     icon: '📁',
-    color: `hsl(${Math.floor(Math.random() * 360)}, 70%, 60%)`,
+    color: categoryColorNames[categories.categories.value.length % categoryColorNames.length],
   })
   newCategoryName.value = ''
   newCategoryOpen.value = false
@@ -736,7 +743,7 @@ function handleCreateCategory() {
             :key="cat.id"
             class="radio-app__category-card"
             :class="{ 'radio-app__category-card--active': selectedCategoryId === cat.id }"
-            :style="{ '--cat-color': cat.color }"
+            :style="{ '--cat-color': categoryColor(cat) }"
             @click="selectCategory(cat.id)"
           >
             <span class="radio-app__category-card__icon">{{ cat.icon }}</span>

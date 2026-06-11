@@ -15,13 +15,15 @@ import YesNoEditor from '../components/defaults/YesNoEditor.vue'
 import SequenceEditor from '../components/defaults/SequenceEditor.vue'
 import TypeEditor from '../components/defaults/TypeEditor.vue'
 import TimerEditor from '../components/defaults/TimerEditor.vue'
+import RadioEditor from '../components/defaults/RadioEditor.vue'
+import TodoEditor from '../components/defaults/TodoEditor.vue'
 
 const bemm = useBemm('apps-page', { return: 'string', includeBaseClass: true })
 const route = useRoute()
 const router = useRouter()
 
 const appOrder: TikoAppColor[] = ['yes-no', 'type', 'cards', 'sequence', 'timer', 'radio', 'talk', 'todo', 'media', 'admin', 'tiko']
-const editableDefaultsApps = ['cards', 'yes-no', 'sequence', 'type', 'timer', 'radio', 'todo', 'talk'] as const
+const editableDefaultsApps = ['cards', 'yes-no', 'sequence', 'type', 'timer', 'radio', 'todo'] as const
 
 type DefaultsApp = typeof editableDefaultsApps[number]
 
@@ -31,6 +33,8 @@ const editorByApp: Partial<Record<DefaultsApp, Component>> = {
   sequence: SequenceEditor,
   type: TypeEditor,
   timer: TimerEditor,
+  radio: RadioEditor,
+  todo: TodoEditor,
 }
 
 const configApi = useAdminAppConfig()
