@@ -20,9 +20,10 @@ const bemm = useBemm('tiko-segmented-control', { return: 'string', includeBaseCl
     <div :class="bemm('items')">
       <button
         v-for="(option, index) in options"
-        :key="option"
+        :key="index"
         type="button"
         :class="bemm('item', { active: index === modelValue })"
+        :aria-pressed="index === modelValue ? 'true' : 'false'"
         @click="emit('update:modelValue', index)"
       >
         {{ option }}

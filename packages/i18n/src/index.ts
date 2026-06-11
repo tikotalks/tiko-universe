@@ -1,3 +1,5 @@
+import { shallowRef, triggerRef, type Ref } from '@vue/reactivity'
+
 export const defaultLanguage = 'en' as const
 
 export const tikoLanguages = [
@@ -99,6 +101,8 @@ export interface TikoI18n {
   setLanguage: (language: TikoLanguage) => void
   addBundle: (bundle: TranslationBundle) => void
   missingKeys: () => string[]
+  /** @internal Reactive revision counter for Vue computed invalidation. */
+  _revision: Ref<number>
 }
 
 export const tikoI18nKeys = {
@@ -1069,8 +1073,9 @@ export function createTikoTranslationLoader(
         source: 'lezu',
         translations: data.translations ?? {},
       })
-    } catch {
-      return createTranslationBundle({ app, language, source: 'lezu', translations: {} })
+    } catch (error) {
+      const bundle = createTranslationBundle({ app, language, source: 'lezu', translations: {} })
+      return Object.assign(bundle, { _loadError: error instanceof Error ? error.message : 'fetch_failed' })
     }
   }
 }
@@ -1161,7 +1166,8 @@ export function createTikoIdentityLabels(t: (key: string) => string) {
 }
 
 export function createI18n(options: CreateI18nOptions): TikoI18n {
-  let currentLanguage = options.language ?? defaultLanguage
+  const currentLanguage = shallowRef(options.language ?? defaultLanguage)
+  const revision = shallowRef(0)
   const fallbackLanguage = options.fallbackLanguage ?? defaultLanguage
   const missing = new Set<string>()
   const bundles = new Map<string, TranslationBundle>()
@@ -1179,28 +1185,32 @@ export function createI18n(options: CreateI18nOptions): TikoI18n {
     fallbackLanguage,
     language: {
       get value() {
-        return currentLanguage
+        return currentLanguage.value
       },
     },
     t(key: string, params?: TranslationParams): string {
-      const text = resolveTranslation(bundles, options.app, currentLanguage, fallbackLanguage, key)
+      void revision.value
+      const text = resolveTranslation(bundles, options.app, currentLanguage.value, fallbackLanguage, key)
 
       if (text === undefined) {
-        missing.add(key)
+        missing.add(`${currentLanguage.value}:${key}`)
         return key
       }
 
       return interpolate(text, params)
     },
     setLanguage(language: TikoLanguage) {
-      currentLanguage = language
+      currentLanguage.value = language
+      triggerRef(revision)
     },
     addBundle(bundle: TranslationBundle) {
       upsertBundle(bundles, bundle)
+      triggerRef(revision)
     },
     missingKeys() {
       return Array.from(missing)
     },
+    _revision: revision,
   } satisfies TikoI18n
 
   return state

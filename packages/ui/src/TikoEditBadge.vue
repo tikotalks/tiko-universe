@@ -3,8 +3,10 @@ import { useBemm } from 'bemm'
 
 withDefaults(defineProps<{
   userOwned?: boolean
+  editLabel?: string
 }>(), {
   userOwned: true,
+  editLabel: 'Edit',
 })
 
 const emit = defineEmits<{
@@ -18,7 +20,7 @@ const bemm = useBemm('tiko-edit-badge', { return: 'string', includeBaseClass: tr
   <button
     type="button"
     :class="bemm('', { 'user-owned': userOwned, default: !userOwned })"
-    aria-label="Edit"
+    :aria-label="editLabel"
     @click.stop="emit('press')"
   >
     {{ userOwned ? '✎' : '✦' }}

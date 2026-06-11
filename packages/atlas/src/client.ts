@@ -72,7 +72,7 @@ export function createAtlasClient(options: AtlasClientOptions): AtlasClient {
         const search = new URLSearchParams()
         if (params.app) search.set('app', params.app)
         if (params.capability) search.set('capability', params.capability)
-        if (params.limit) search.set('limit', String(params.limit))
+        if (params.limit !== undefined) search.set('limit', String(params.limit))
         const suffix = search.toString() ? `?${search}` : ''
         return get(`/admin/usage${suffix}`)
       },
@@ -116,6 +116,14 @@ async function requestJson<T>(params: {
       status: response.status,
       details: errorPayload?.error?.details,
       requestId: errorPayload?.meta?.requestId,
+    })
+  }
+
+  if (parsed === null) {
+    throw new AtlasClientError({
+      code: 'atlas_invalid_json',
+      message: 'Response body was not valid JSON.',
+      status: response.status,
     })
   }
 
