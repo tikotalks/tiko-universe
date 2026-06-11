@@ -13,13 +13,7 @@ interface LegacyTile {
   speech?: string
   type?: string
   color?: string
-  image?: string
-  imageUrl?: string
-  imageURL?: string
   imageRef?: string
-  original_url?: string
-  thumbnailUrl?: string
-  thumbnail_url?: string
   order?: number
 }
 
@@ -29,7 +23,6 @@ interface CardItem {
   speech: string
   color: TikoColorName
   order: number
-  imageURL?: string
   imageRef?: string
 }
 
@@ -40,7 +33,6 @@ interface Collection {
   order: number
   parentID?: string | null
   mediaCategories: string[]
-  imageURL?: string
   imageRef?: string
   cards: CardItem[]
   tiles?: LegacyTile[]
@@ -97,8 +89,9 @@ function mediaDownloadUrl(mediaId: string): string {
   return `https://media.tikoapi.org/v1/media/${encodeURIComponent(mediaId)}/download`
 }
 
-function resizedMediaUrl(url: string | undefined, size = 96): string {
-  if (!url) return ''
+function mediaPreviewUrl(imageRef: string | undefined, size = 96): string {
+  if (!imageRef) return ''
+  const url = mediaDownloadUrl(imageRef)
   try {
     const parsed = new URL(url)
     if (parsed.host === 'data.tikocdn.org' && parsed.pathname.startsWith('/uploads/')) {
@@ -114,32 +107,20 @@ function firstImageValue(...values: unknown[]): string | undefined {
   return values.find((value): value is string => typeof value === 'string' && value.trim().length > 0)?.trim()
 }
 
-function resolvedImageURL(source: Record<string, unknown>): string | undefined {
-  const url = firstImageValue(
-    source.imageURL,
-    source.imageUrl,
-    source.image,
-    source.original_url,
-    source.thumbnailUrl,
-    source.thumbnail_url,
-  )
-  if (url) return url
+function imageRefFrom(source: Record<string, unknown>): string | undefined {
   const imageRef = firstImageValue(source.imageRef, source.image_ref)
-  if (!imageRef) return undefined
-  return imageRef.startsWith('http') ? imageRef : mediaDownloadUrl(imageRef)
+  return imageRef && !/^https?:\/\//i.test(imageRef) ? imageRef : undefined
 }
 
 function normalizeCard(card: LegacyTile, order: number, fallbackColor: TikoColorName): CardItem {
   const rawCard = card as Record<string, unknown>
-  const imageURL = resolvedImageURL(rawCard)
-  const imageRef = firstImageValue(rawCard.imageRef, rawCard.image_ref)
+  const imageRef = imageRefFrom(rawCard)
   return {
     id: card.id || makeId('card'),
     title: card.title || 'New card',
     speech: card.speech || card.title || 'New card',
     color: colorName(card.color, fallbackColor),
     order: typeof card.order === 'number' ? card.order : order,
-    ...(imageURL ? { imageURL } : {}),
     ...(imageRef ? { imageRef } : {}),
   }
 }
@@ -147,8 +128,7 @@ function normalizeCard(card: LegacyTile, order: number, fallbackColor: TikoColor
 function normalizeCollection(collection: Collection, order = 0): Collection {
   const rawCollection = collection as Collection & Record<string, unknown>
   const color = colorName(rawCollection.color, 'cyan')
-  const imageURL = resolvedImageURL(rawCollection)
-  const imageRef = firstImageValue(rawCollection.imageRef, rawCollection.image_ref)
+  const imageRef = imageRefFrom(rawCollection)
   const sourceCards = Array.isArray(collection.cards) ? collection.cards : Array.isArray(collection.tiles) ? collection.tiles : []
   return {
     id: collection.id || makeId('col'),
@@ -157,7 +137,6 @@ function normalizeCollection(collection: Collection, order = 0): Collection {
     order: typeof collection.order === 'number' ? collection.order : order,
     parentID: collection.parentID ?? null,
     mediaCategories: Array.isArray(collection.mediaCategories) ? collection.mediaCategories : [],
-    ...(imageURL ? { imageURL } : {}),
     ...(imageRef ? { imageRef } : {}),
     cards: sourceCards.map((card, index) => normalizeCard(card, index, color)).sort((a, b) => a.order - b.order),
   }
@@ -263,14 +242,12 @@ function updateCard(index: number, patch: Partial<CardItem>) {
 function updateActiveImageRef(value: string) {
   patchActive({
     imageRef: value || undefined,
-    imageURL: value ? mediaDownloadUrl(value) : undefined,
   })
 }
 
 function updateCardImageRef(index: number, value: string) {
   updateCard(index, {
     imageRef: value || undefined,
-    imageURL: value ? mediaDownloadUrl(value) : undefined,
   })
 }
 
@@ -310,8 +287,8 @@ function moveCard(index: number, delta: number) {
         :class="bemm('collection-row')"
         @click="openCollection(collection, ci)"
       >
-        <span :class="bemm('thumb')" :style="{ background: collection.imageURL ? 'transparent' : colorValue(collection.color) }">
-          <img v-if="collection.imageURL" :src="resizedMediaUrl(collection.imageURL, 96)" :alt="collection.title" loading="lazy" decoding="async">
+        <span :class="bemm('thumb')" :style="{ background: collection.imageRef ? 'transparent' : colorValue(collection.color) }">
+          <img v-if="collection.imageRef" :src="mediaPreviewUrl(collection.imageRef, 96)" :alt="collection.title" loading="lazy" decoding="async">
           <span v-else>{{ collection.title.charAt(0).toUpperCase() }}</span>
         </span>
 
@@ -396,8 +373,8 @@ function moveCard(index: number, delta: number) {
 
           <ul v-else :class="bemm('card-list')">
             <li v-for="(card, cardIndex) in activeCollection.cards" :key="card.id" :class="bemm('card-row')">
-              <span :class="bemm('card-thumb')" :style="{ background: card.imageURL ? 'transparent' : colorValue(card.color, activeCollection.color) }">
-                <img v-if="card.imageURL" :src="resizedMediaUrl(card.imageURL, 96)" :alt="card.title" loading="lazy" decoding="async">
+              <span :class="bemm('card-thumb')" :style="{ background: card.imageRef ? 'transparent' : colorValue(card.color, activeCollection.color) }">
+                <img v-if="card.imageRef" :src="mediaPreviewUrl(card.imageRef, 96)" :alt="card.title" loading="lazy" decoding="async">
                 <span v-else>{{ card.title.charAt(0).toUpperCase() || '?' }}</span>
               </span>
 

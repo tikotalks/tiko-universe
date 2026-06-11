@@ -35,7 +35,6 @@ interface UiCard {
   title: string
   speech: string
   color: TikoColorName
-  imageURL: string
   imageRef: string
   order: number
 }
@@ -45,7 +44,6 @@ interface UiCollection {
   title: string
   color: TikoColorName
   mediaCategories: string[]
-  imageURL: string
   imageRef: string
   cards: UiCard[]
   order: number
@@ -67,32 +65,24 @@ function resizedMediaUrl(url: string, size = 96): string {
   return url
 }
 
-function resolveImageUrl(card: CardsCard): string {
-  if (card.imageURL) return card.imageURL
-  if (card.imageRef) return mediaDownloadUrl(card.imageRef)
-  return ''
-}
-
-function resolveCollectionImageUrl(col: CardsCollection): string {
-  if (col.imageURL) return col.imageURL
-  if (col.imageRef) return mediaDownloadUrl(col.imageRef)
-  return ''
+function mediaPreviewUrl(imageRef: string, size = 96): string {
+  return imageRef ? resizedMediaUrl(mediaDownloadUrl(imageRef), size) : ''
 }
 
 function apiToUiCard(c: CardsCard): UiCard {
-  return { id: c.id, title: c.title, speech: c.speech, color: colorName(c.color, 'orange'), imageURL: resolveImageUrl(c), imageRef: c.imageRef ?? '', order: c.order }
+  return { id: c.id, title: c.title, speech: c.speech, color: colorName(c.color, 'orange'), imageRef: c.imageRef ?? '', order: c.order }
 }
 
 function apiToUiCollection(c: CardsCollection): UiCollection {
-  return { id: c.id, title: c.title, color: colorName(c.color, 'cyan'), mediaCategories: c.mediaCategories ?? [], imageURL: resolveCollectionImageUrl(c), imageRef: c.imageRef ?? '', cards: (c.cards ?? []).map(apiToUiCard), order: c.order }
+  return { id: c.id, title: c.title, color: colorName(c.color, 'cyan'), mediaCategories: c.mediaCategories ?? [], imageRef: c.imageRef ?? '', cards: (c.cards ?? []).map(apiToUiCard), order: c.order }
 }
 
 function uiToApiCard(c: UiCard, index: number): CardsCard {
-  return { id: c.id, title: c.title, speech: c.speech, color: c.color, imageURL: c.imageURL || undefined, imageRef: c.imageRef || undefined, order: index }
+  return { id: c.id, title: c.title, speech: c.speech, color: c.color, imageRef: c.imageRef || undefined, order: index }
 }
 
 function uiToApiCollection(c: UiCollection, index: number): CardsCollection {
-  return { id: c.id, title: c.title, color: c.color, order: index, mediaCategories: c.mediaCategories, imageURL: c.imageURL || undefined, imageRef: c.imageRef || undefined, cards: c.cards.map((card, i) => uiToApiCard(card, i)) }
+  return { id: c.id, title: c.title, color: c.color, order: index, mediaCategories: c.mediaCategories, imageRef: c.imageRef || undefined, cards: c.cards.map((card, i) => uiToApiCard(card, i)) }
 }
 
 // ── collections list ────────────────────────────────────────────────────────
@@ -132,14 +122,12 @@ function updateActiveCollectionColor(value: string) {
 function updateActiveCollectionImageRef(value: string) {
   updateActiveCollection({
     imageRef: value,
-    imageURL: value ? mediaDownloadUrl(value) : '',
   })
 }
 
 function updateCardFormImageRef(value: string) {
   if (!cardForm.value) return
   cardForm.value.imageRef = value
-  cardForm.value.imageURL = value ? mediaDownloadUrl(value) : ''
 }
 
 function updateMediaCats(raw: string) {
@@ -165,7 +153,6 @@ function startNewCollection() {
     title: 'New collection',
     color: 'green',
     mediaCategories: [],
-    imageURL: '',
     imageRef: '',
     cards: [],
     order: collections.value.length,
@@ -192,7 +179,7 @@ const cardForm = ref<UiCard | null>(null)
 const editCardIndex = ref(-1)
 
 function startNewCard() {
-  cardForm.value = { id: `card_${crypto.randomUUID().slice(0, 8)}`, title: '', speech: '', color: 'blue', imageURL: '', imageRef: '', order: 0 }
+  cardForm.value = { id: `card_${crypto.randomUUID().slice(0, 8)}`, title: '', speech: '', color: 'blue', imageRef: '', order: 0 }
   editCardIndex.value = -1
 }
 
@@ -260,8 +247,8 @@ function moveCard(idx: number, direction: -1 | 1) {
           :class="bemm('row')"
           @click="openCollection(col, idx)"
         >
-          <div :class="bemm('row-thumb')" :style="{ background: col.imageURL ? 'transparent' : colorValue(col.color) }">
-            <img v-if="col.imageURL" :src="resizedMediaUrl(col.imageURL, 96)" :alt="col.title" />
+          <div :class="bemm('row-thumb')" :style="{ background: col.imageRef ? 'transparent' : colorValue(col.color) }">
+            <img v-if="col.imageRef" :src="mediaPreviewUrl(col.imageRef, 96)" :alt="col.title" />
             <span v-else>{{ col.title.charAt(0).toUpperCase() }}</span>
           </div>
 
@@ -361,8 +348,8 @@ function moveCard(idx: number, direction: -1 | 1) {
               :key="card.id"
               :class="bemm('card-row')"
             >
-              <div :class="bemm('card-thumb')" :style="{ background: card.imageURL ? 'transparent' : colorValue(card.color) }">
-                <img v-if="card.imageURL" :src="resizedMediaUrl(card.imageURL, 96)" :alt="card.title" />
+              <div :class="bemm('card-thumb')" :style="{ background: card.imageRef ? 'transparent' : colorValue(card.color) }">
+                <img v-if="card.imageRef" :src="mediaPreviewUrl(card.imageRef, 96)" :alt="card.title" />
                 <span v-else>{{ card.title.charAt(0).toUpperCase() || '?' }}</span>
               </div>
               <div :class="bemm('card-body')">

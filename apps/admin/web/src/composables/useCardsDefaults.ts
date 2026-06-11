@@ -8,7 +8,6 @@ export interface CardsCard {
   speech: string
   color: TikoColorName
   order: number
-  imageURL?: string
   imageRef?: string
 }
 
@@ -19,7 +18,6 @@ export interface CardsCollection {
   order: number
   mediaCategories: string[]
   imageRef?: string
-  imageURL?: string
   cards: CardsCard[]
 }
 
@@ -44,13 +42,11 @@ function errorMessage(body: ApiErrorBody | null, fallback: string): string {
 
 function sanitizeCollection(collection: CardsCollection): CardsCollection {
   const cleanCollection = { ...collection }
-  delete cleanCollection.imageURL
   if (cleanCollection.imageRef && /^https?:\/\//i.test(cleanCollection.imageRef)) delete cleanCollection.imageRef
   return {
     ...cleanCollection,
     cards: collection.cards.map((card) => {
       const cleanCard = { ...card }
-      delete cleanCard.imageURL
       if (cleanCard.imageRef && /^https?:\/\//i.test(cleanCard.imageRef)) delete cleanCard.imageRef
       return cleanCard
     }),
