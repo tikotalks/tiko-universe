@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, onUnmounted } from 'vue'
 
 const CODE_LENGTH = 4
+const EMPTY_DIGITS = () => Array<string>(CODE_LENGTH).fill('')
 
 interface Props {
   /** Existing code hash — if undefined, this is first-time setup unless mode is forced. */
@@ -52,8 +53,8 @@ const emit = defineEmits<{
 const mode = computed(() => props.mode ?? (props.existingHash ? 'verify' : 'setup'))
 
 const step = ref<'enter' | 'confirm'>('enter')
-const digits = ref<string[]>([])
-const confirmDigits = ref<string[]>([])
+const digits = ref<string[]>(EMPTY_DIGITS())
+const confirmDigits = ref<string[]>(EMPTY_DIGITS())
 const error = ref('')
 const shake = ref(false)
 const loading = ref(false)
@@ -67,9 +68,18 @@ function focusDigit(index: number) {
 function onDigitInput(index: number, event: Event) {
   const target = event.target as HTMLInputElement
   const value = target.value.replace(/[^0-9]/g, '')
+  const arr = mode.value === 'setup' && step.value === 'confirm'
+    ? confirmDigits.value
+    : digits.value
 
-  if (mode.value === 'setup') {
-    const arr = step.value === 'enter' ? digits.value : confirmDigits.value
+  if (value.length > 1) {
+    const distributed = value.replace(/[^0-9]/g, '').slice(0, CODE_LENGTH).split('')
+    for (let di = 0; di < distributed.length; di++) {
+      if (index + di < CODE_LENGTH) arr[index + di] = distributed[di]
+    }
+    const nextIndex = Math.min(index + distributed.length, CODE_LENGTH - 1)
+    focusDigit(nextIndex)
+  } else if (mode.value === 'setup') {
     if (value.length === 1) {
       arr[index] = value
       if (index < CODE_LENGTH - 1) focusDigit(index + 1)
@@ -78,7 +88,7 @@ function onDigitInput(index: number, event: Event) {
       if (index > 0) focusDigit(index - 1)
     }
   } else {
-    digits.value[index] = value.length === 1 ? value : ''
+    arr[index] = value.length === 1 ? value : ''
     if (value.length === 1 && index < CODE_LENGTH - 1) focusDigit(index + 1)
     else if (value.length === 0 && index > 0) focusDigit(index - 1)
   }
@@ -90,8 +100,8 @@ function onDigitInput(index: number, event: Event) {
     ? confirmDigits.value
     : digits.value
 
-  if (currentDigits.length === CODE_LENGTH && currentDigits.every(d => d !== '')) {
-    setTimeout(() => handleSubmit(), 200)
+  if (currentDigits.filter(d => d !== '').length === CODE_LENGTH) {
+    autoSubmitTimer = window.setTimeout(() => handleSubmit(), 200)
   }
 }
 
@@ -116,7 +126,7 @@ async function handleSubmit() {
     ? confirmDigits.value
     : digits.value
 
-  if (currentDigits.length !== CODE_LENGTH || !currentDigits.every(digit => digit !== '')) return
+  if (currentDigits.filter(digit => digit !== '').length !== CODE_LENGTH) return
 
   const code = currentDigits.join('')
 
@@ -129,8 +139,8 @@ async function handleSubmit() {
       if (code !== original) {
         error.value = props.labels.codesDontMatch
         shake.value = true
-        confirmDigits.value = []
-        setTimeout(() => { shake.value = false }, 400)
+        confirmDigits.value = EMPTY_DIGITS()
+        shakeTimer = window.setTimeout(() => { shake.value = false }, 400)
         focusDigit(0)
       } else {
         const hash = await hashCode(code)
@@ -145,22 +155,22 @@ async function handleSubmit() {
         ? await props.verifyCode(code)
         : props.existingHash
           ? hash === props.existingHash
-          : true
+          : false
 
       if (verified) {
         emit('set', hash, code)
       } else {
         error.value = props.labels.wrongCode
         shake.value = true
-        digits.value = []
-        setTimeout(() => { shake.value = false }, 400)
+        digits.value = EMPTY_DIGITS()
+        shakeTimer = window.setTimeout(() => { shake.value = false }, 400)
         focusDigit(0)
       }
     } catch {
       error.value = props.labels.wrongCode
       shake.value = true
-      digits.value = []
-      setTimeout(() => { shake.value = false }, 400)
+      digits.value = EMPTY_DIGITS()
+      shakeTimer = window.setTimeout(() => { shake.value = false }, 400)
       focusDigit(0)
     } finally {
       loading.value = false
@@ -170,11 +180,19 @@ async function handleSubmit() {
 
 function resetConfirm() {
   step.value = 'enter'
-  confirmDigits.value = []
-  digits.value = []
+  confirmDigits.value = EMPTY_DIGITS()
+  digits.value = EMPTY_DIGITS()
   error.value = ''
   focusDigit(0)
 }
+
+let autoSubmitTimer: number | undefined
+let shakeTimer: number | undefined
+
+onUnmounted(() => {
+  if (autoSubmitTimer !== undefined) clearTimeout(autoSubmitTimer)
+  if (shakeTimer !== undefined) clearTimeout(shakeTimer)
+})
 
 async function hashCode(code: string): Promise<string> {
   const encoder = new TextEncoder()
@@ -219,6 +237,7 @@ async function hashCode(code: string): Promise<string> {
           :value="confirmDigits[i - 1]"
           @input="onDigitInput(i - 1, $event)"
           @keydown="onKeydown(i - 1, $event)"
+          :aria-label="`Digit ${i} of ${CODE_LENGTH}`"
           autocomplete="off"
         />
       </template>
@@ -234,6 +253,7 @@ async function hashCode(code: string): Promise<string> {
           :value="digits[i - 1]"
           @input="onDigitInput(i - 1, $event)"
           @keydown="onKeydown(i - 1, $event)"
+          :aria-label="`Digit ${i} of ${CODE_LENGTH}`"
           autocomplete="off"
         />
       </template>
