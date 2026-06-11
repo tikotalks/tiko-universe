@@ -154,6 +154,37 @@ body {
   object-fit: cover;
 }
 
+.tiko-open-icon-picker {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(2.35rem, 1fr));
+  gap: 0.35rem;
+}
+
+.tiko-open-icon-picker__item {
+  display: grid;
+  place-items: center;
+  aspect-ratio: 1;
+  min-width: 2.35rem;
+  min-height: 2.35rem;
+  border: 1px solid color-mix(in srgb, var(--color-foreground), transparent 82%);
+  border-radius: var(--border-radius-xs, 6px);
+  background: color-mix(in srgb, var(--color-background), var(--color-foreground) 4%);
+  color: currentColor;
+  cursor: pointer;
+  padding: 0;
+
+  &:hover {
+    border-color: color-mix(in srgb, var(--color-foreground), transparent 62%);
+  }
+
+  &--active {
+    background: color-mix(in srgb, var(--tiko-app-primary, var(--color-primary)), var(--color-background) 78%);
+    border-color: var(--tiko-app-primary, var(--color-primary));
+    outline: 2px solid color-mix(in srgb, var(--tiko-app-primary, var(--color-primary)), transparent 58%);
+    outline-offset: 1px;
+  }
+}
+
 .tiko-app-header__title {
   font-size: 1.45rem;
   font-weight: 800;

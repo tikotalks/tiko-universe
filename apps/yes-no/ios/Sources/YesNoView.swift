@@ -17,7 +17,7 @@ struct YesNoAnswerTile: Codable, Identifiable, Equatable {
             id: id,
             label: label,
             speech: speech,
-            icon: icon.map { .systemName($0) } ?? .systemName("checkmark"),
+            icon: .openIcon(icon ?? "ui/check-fat"),
             tone: .primary,
             color: color,
             imageURL: imageURL
@@ -92,8 +92,8 @@ private let builtInAnswerSets: [YesNoAnswerSet] = [
         color: TikoColors.green.name,
         order: 0,
         answers: [
-            YesNoAnswerTile(id: "yes", label: "Yes", speech: "Yes", color: TikoColors.green.name, icon: "checkmark"),
-            YesNoAnswerTile(id: "no", label: "No", speech: "No", color: TikoColors.red.name, icon: "xmark")
+            YesNoAnswerTile(id: "yes", label: "Yes", speech: "Yes", color: TikoColors.green.name, icon: "ui/check-fat"),
+            YesNoAnswerTile(id: "no", label: "No", speech: "No", color: TikoColors.red.name, icon: "wayfinding/cross")
         ]
     ),
     YesNoAnswerSet(
@@ -103,10 +103,10 @@ private let builtInAnswerSets: [YesNoAnswerSet] = [
         color: TikoColors.teal.name,
         order: 1,
         answers: [
-            YesNoAnswerTile(id: "help", label: "Help", speech: "Help", color: TikoColors.blue.name, icon: "hand.raised.fill"),
-            YesNoAnswerTile(id: "more", label: "More", speech: "More", color: TikoColors.teal.name, icon: "plus"),
-            YesNoAnswerTile(id: "stop", label: "Stop", speech: "Stop", color: TikoColors.orange.name, icon: "hand.raised.slash.fill"),
-            YesNoAnswerTile(id: "finished", label: "Finished", speech: "Finished", color: TikoColors.purple.name, icon: "checkmark.circle.fill")
+            YesNoAnswerTile(id: "help", label: "Help", speech: "Help", color: TikoColors.blue.name, icon: "ui/pointer-hand"),
+            YesNoAnswerTile(id: "more", label: "More", speech: "More", color: TikoColors.teal.name, icon: "ui/add-fat"),
+            YesNoAnswerTile(id: "stop", label: "Stop", speech: "Stop", color: TikoColors.orange.name, icon: "ui/pointer-cross"),
+            YesNoAnswerTile(id: "finished", label: "Finished", speech: "Finished", color: TikoColors.purple.name, icon: "ui/check-fat")
         ]
     ),
     YesNoAnswerSet(
@@ -116,10 +116,10 @@ private let builtInAnswerSets: [YesNoAnswerSet] = [
         color: TikoColors.yellow.name,
         order: 2,
         answers: [
-            YesNoAnswerTile(id: "yes", label: "Yes", speech: "Yes", color: TikoColors.green.name, icon: "checkmark"),
-            YesNoAnswerTile(id: "no", label: "No", speech: "No", color: TikoColors.red.name, icon: "xmark"),
-            YesNoAnswerTile(id: "maybe", label: "Maybe", speech: "Maybe", color: TikoColors.yellow.name, icon: "questionmark"),
-            YesNoAnswerTile(id: "later", label: "Later", speech: "Later", color: TikoColors.purple.name, icon: "clock")
+            YesNoAnswerTile(id: "yes", label: "Yes", speech: "Yes", color: TikoColors.green.name, icon: "ui/check-fat"),
+            YesNoAnswerTile(id: "no", label: "No", speech: "No", color: TikoColors.red.name, icon: "wayfinding/cross"),
+            YesNoAnswerTile(id: "maybe", label: "Maybe", speech: "Maybe", color: TikoColors.yellow.name, icon: "ui/question-mark-fat"),
+            YesNoAnswerTile(id: "later", label: "Later", speech: "Later", color: TikoColors.purple.name, icon: "ui/clock")
         ]
     )
 ]
@@ -224,8 +224,8 @@ struct YesNoView: View {
 
     private var hardcodedChoices: [TikoAnswerChoice] {
         [
-            TikoAnswerChoice(id: "yes", label: i18n.t("yesNo.answers.yes"), icon: .systemName("checkmark"), tone: .primary),
-            TikoAnswerChoice(id: "no", label: i18n.t("yesNo.answers.no"), icon: .systemName("xmark"), tone: .secondary)
+            TikoAnswerChoice(id: "yes", label: i18n.t("yesNo.answers.yes"), icon: .openIcon("ui/check-fat"), tone: .primary),
+            TikoAnswerChoice(id: "no", label: i18n.t("yesNo.answers.no"), icon: .openIcon("wayfinding/cross"), tone: .secondary)
         ]
     }
 
@@ -666,7 +666,6 @@ private struct TileEditorSheet: View {
                 if let i = sets.firstIndex(where: { $0.id == updated.id }) {
                     sets[i] = updated
                 }
-                editingSet = nil
             }
         }
         .sheet(item: $editingTile) { selection in
@@ -675,7 +674,6 @@ private struct TileEditorSheet: View {
                    let i = sets[selection.setIndex].answers.firstIndex(where: { $0.id == updated.id }) {
                     sets[selection.setIndex].answers[i] = updated
                 }
-                editingTile = nil
             }
         }
     }
@@ -807,9 +805,8 @@ private struct TileEditorSheet: View {
                         .fill(tileColor)
                         .overlay {
                             if let icon = tile.icon {
-                        Image(systemName: icon)
-                            .font(.system(size: 14, weight: .bold))
-                            .foregroundStyle(.white)
+                                TikoOpenIconView(icon)
+                                    .frame(width: 20, height: 20)
                             }
                     }
                 }
@@ -995,8 +992,13 @@ private struct TileDetailEditView: View {
                 Section("Spoken text") {
                     TextField("What to say when tapped", text: $speech)
                 }
-                Section("Icon (SF Symbol)") {
-                    TextField("e.g. checkmark", text: $icon)
+                Section("Icon") {
+                    TikoOpenIconPicker(selection: $icon)
+                        .onChange(of: icon) { _, newValue in
+                            if !newValue.isEmpty {
+                                imageURL = nil
+                            }
+                        }
                 }
                 Section("Image") {
                     if let imageURL {
@@ -1045,7 +1047,7 @@ private struct TileDetailEditView: View {
                             speech: speech.isEmpty ? label : speech,
                             color: color,
                             imageURL: imageURL,
-                            icon: icon.isEmpty ? nil : icon
+                            icon: imageURL == nil && !icon.isEmpty ? icon : nil
                         ))
                         dismiss()
                     }
@@ -1055,6 +1057,7 @@ private struct TileDetailEditView: View {
         }
         .tikoMediaPickerPopup(isPresented: $showingMediaPicker, appColor: .yesNo, title: "Choose tile image") { url in
             imageURL = url
+            icon = ""
         }
     }
 }

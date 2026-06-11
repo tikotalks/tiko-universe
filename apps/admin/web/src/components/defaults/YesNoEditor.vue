@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, nextTick } from 'vue'
 import { useBemm } from 'bemm'
 import { Button, InputText } from '@sil/ui'
-import { tikoColors } from '@tiko/ui'
+import { TikoOpenIconPicker, tikoColors, tikoNormalizeOpenIcon } from '@tiko/ui'
 import ColorSwatchPicker from '../ColorSwatchPicker.vue'
 import MediaPicker from '../MediaPicker.vue'
 
@@ -36,55 +36,16 @@ const bemm = useBemm('yes-no-editor', { return: 'string', includeBaseClass: true
 
 const props = defineProps<{ modelValue: Record<string, unknown> }>()
 const emit = defineEmits<{ 'update:modelValue': [value: Record<string, unknown>] }>()
+const setElements = new Map<string, HTMLElement>()
 
 const answerPresets: Array<Omit<YesNoAnswerTile, 'id'>> = [
-  { label: 'Yes', speech: 'Yes', color: 'green', icon: 'checkmark' },
-  { label: 'No', speech: 'No', color: 'red', icon: 'xmark' },
-  { label: 'Maybe', speech: 'Maybe', color: 'yellow', icon: 'questionmark' },
-  { label: 'Help', speech: 'Help', color: 'blue', icon: 'hand.raised.fill' },
-  { label: 'Stop', speech: 'Stop', color: 'orange', icon: 'hand.raised.slash.fill' },
-  { label: 'More', speech: 'More', color: 'teal', icon: 'plus' },
-  { label: 'Finished', speech: 'Finished', color: 'purple', icon: 'checkmark.circle.fill' },
-]
-
-const defaultAnswerSets: YesNoAnswerSet[] = [
-  {
-    id: 'yes-no',
-    title: 'Yes / No',
-    description: 'Simple yes and no answers.',
-    color: 'green',
-    order: 0,
-    answers: [
-      { id: 'yes', label: 'Yes', speech: 'Yes', color: 'green', icon: 'checkmark' },
-      { id: 'no', label: 'No', speech: 'No', color: 'red', icon: 'xmark' },
-    ],
-  },
-  {
-    id: 'basic-needs',
-    title: 'Basic needs',
-    description: 'Common needs and requests.',
-    color: 'teal',
-    order: 1,
-    answers: [
-      { id: 'help', label: 'Help', speech: 'Help', color: 'blue', icon: 'hand.raised.fill' },
-      { id: 'more', label: 'More', speech: 'More', color: 'teal', icon: 'plus' },
-      { id: 'stop', label: 'Stop', speech: 'Stop', color: 'orange', icon: 'hand.raised.slash.fill' },
-      { id: 'finished', label: 'Finished', speech: 'Finished', color: 'purple', icon: 'checkmark.circle.fill' },
-    ],
-  },
-  {
-    id: 'quick-choices',
-    title: 'Quick choices',
-    description: 'Fast everyday responses.',
-    color: 'yellow',
-    order: 2,
-    answers: [
-      { id: 'yes', label: 'Yes', speech: 'Yes', color: 'green', icon: 'checkmark' },
-      { id: 'no', label: 'No', speech: 'No', color: 'red', icon: 'xmark' },
-      { id: 'maybe', label: 'Maybe', speech: 'Maybe', color: 'yellow', icon: 'questionmark' },
-      { id: 'later', label: 'Later', speech: 'Later', color: 'purple', icon: 'clock' },
-    ],
-  },
+  { label: 'Yes', speech: 'Yes', color: 'green', icon: 'ui/check-fat' },
+  { label: 'No', speech: 'No', color: 'red', icon: 'wayfinding/cross' },
+  { label: 'Maybe', speech: 'Maybe', color: 'yellow', icon: 'ui/question-mark-fat' },
+  { label: 'Help', speech: 'Help', color: 'blue', icon: 'ui/pointer-hand' },
+  { label: 'Stop', speech: 'Stop', color: 'orange', icon: 'ui/pointer-cross' },
+  { label: 'More', speech: 'More', color: 'teal', icon: 'ui/add-fat' },
+  { label: 'Finished', speech: 'Finished', color: 'purple', icon: 'ui/check-fat' },
 ]
 
 const state = computed<YesNoState>(() => {
@@ -94,7 +55,7 @@ const state = computed<YesNoState>(() => {
     ? (value.answerSets as YesNoAnswerSet[])
     : legacyAnswers.length
       ? [{ id: 'custom', title: 'Custom answers', color: 'teal', order: 0, answers: legacyAnswers }]
-      : defaultAnswerSets
+      : []
   return {
     prompt: typeof value?.prompt === 'string' ? value.prompt : '',
     answers: legacyAnswers,
@@ -123,7 +84,7 @@ function normalizeAnswer(answer: YesNoAnswerTile): YesNoAnswerTile {
     speech: answer.speech,
     ...(answer.color ? { color: answer.color } : {}),
     ...(answer.imageURL ? { imageURL: answer.imageURL } : {}),
-    ...(answer.icon ? { icon: answer.icon } : {}),
+    ...(answer.icon && !answer.imageURL ? { icon: tikoNormalizeOpenIcon(answer.icon) } : {}),
   }
 }
 
@@ -147,16 +108,35 @@ function updateSets(sets: YesNoAnswerSet[], selectedSetId = state.value.selected
 
 function addSet() {
   const sets = state.value.answerSets
+  const id = makeId('set')
   updateSets([
     ...sets,
     {
-      id: makeId('set'),
+      id,
       title: 'New set',
       color: 'teal',
       order: sets.length,
       answers: [],
     },
   ])
+  void focusSetTitle(id)
+}
+
+function setSetElement(id: string, element: unknown) {
+  if (element instanceof HTMLElement) {
+    setElements.set(id, element)
+    return
+  }
+  setElements.delete(id)
+}
+
+async function focusSetTitle(id: string) {
+  await nextTick()
+  const element = setElements.get(id)
+  const input = element?.querySelector<HTMLInputElement>('input')
+  element?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+  input?.focus()
+  input?.select()
 }
 
 function updateSet(index: number, patch: Partial<YesNoAnswerSet>) {
@@ -190,6 +170,14 @@ function updateAnswer(setIndex: number, answerIndex: number, patch: Partial<YesN
     return { ...set, answers }
   })
   updateSets(sets)
+}
+
+function updateAnswerIcon(setIndex: number, answerIndex: number, icon: string) {
+  updateAnswer(setIndex, answerIndex, { icon: icon || undefined, imageURL: undefined })
+}
+
+function updateAnswerImage(setIndex: number, answerIndex: number, imageURL: string) {
+  updateAnswer(setIndex, answerIndex, { imageURL: imageURL || undefined, icon: undefined })
 }
 
 function removeAnswer(setIndex: number, answerIndex: number) {
@@ -241,7 +229,12 @@ function moveAnswer(setIndex: number, answerIndex: number, delta: number) {
       </div>
 
       <div v-else :class="bemm('list')">
-        <article v-for="(set, si) in state.answerSets" :key="set.id" :class="bemm('set')">
+        <article
+          v-for="(set, si) in state.answerSets"
+          :key="set.id"
+          :ref="(element) => setSetElement(set.id, element)"
+          :class="bemm('set')"
+        >
           <header :class="bemm('set-head')">
             <InputText
               :model-value="set.title"
@@ -305,17 +298,18 @@ function moveAnswer(setIndex: number, answerIndex: number, delta: number) {
                   placeholder="What to say when tapped"
                   @update:model-value="(v: string) => updateAnswer(si, i, { speech: v })"
                 />
-                <InputText
-                  :model-value="answer.icon ?? ''"
-                  label="Icon (SF symbol)"
-                  placeholder="checkmark"
-                  @update:model-value="(v: string) => updateAnswer(si, i, { icon: v || undefined })"
-                />
+                <div :class="bemm('icon-field')">
+                  <span :class="bemm('color-label')">Icon</span>
+                  <TikoOpenIconPicker
+                    :model-value="answer.icon ?? ''"
+                    @update:model-value="(v: string) => updateAnswerIcon(si, i, v)"
+                  />
+                </div>
                 <div :class="bemm('image-field')">
                   <span :class="bemm('color-label')">Image</span>
                   <MediaPicker
                     :model-value="answer.imageURL ?? ''"
-                    @update:model-value="(v: string) => updateAnswer(si, i, { imageURL: v || undefined })"
+                    @update:model-value="(v: string) => updateAnswerImage(si, i, v)"
                   />
                 </div>
                 <div :class="bemm('color-field')">
@@ -467,6 +461,7 @@ function moveAnswer(setIndex: number, answerIndex: number, delta: number) {
   }
 
   &__color-field,
+  &__icon-field,
   &__image-field {
     display: flex;
     flex-direction: column;
