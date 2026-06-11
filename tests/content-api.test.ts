@@ -41,7 +41,7 @@ class MemoryD1 {
     media_categories: '["animals"]', image_url: null, parent_id: null,
   }]
   cardTiles: Row[] = [{
-    id: 'animal_dog', collection_id: '__default_animals', title: 'Dog', speech: 'Dog',
+    id: '__default_animals_dog', collection_id: '__default_animals', title: 'Dog', speech: 'Dog',
     color_hex: 0x4CAF50, display_order: 1, image_ref: null,
   }]
 

@@ -257,18 +257,48 @@ function translateDefaultCollections(collections: CardCollection[], translations
   if (Object.keys(translations).length === 0) return collections
   return collections.map((collection) => {
     if (collection.id.startsWith('user_')) return collection
-    const collectionTitle = translations[`cards.default.${collection.id}`] ?? collection.title
+    const collectionTitle = translateDefaultTitle(collection.id, translations) ?? collection.title
     return {
       ...collection,
       title: collectionTitle,
       cards: collection.cards.map((card) => {
         if (card.id.startsWith('user_')) return card
-        const translated = translations[`cards.default.${card.id}`]
+        const translated = translateDefaultTitle(card.id, translations)
         if (!translated) return card
         return { ...card, title: translated, speech: translated }
       }),
     }
   })
+}
+
+function translateDefaultTitle(id: string, translations: Record<string, string>): string | undefined {
+  for (const key of defaultTranslationKeys(id)) {
+    const translated = translations[key]
+    if (translated) return translated
+  }
+  return undefined
+}
+
+function defaultTranslationKeys(id: string): string[] {
+  const keys = [`cards.default.${id}`]
+  const match = /^__default_([^_]+)_(.+)$/.exec(id)
+  if (!match) return keys
+
+  const [, rawGroup, item] = match
+  const groupAliases: Record<string, string> = {
+    animals: 'animal',
+    body: 'body',
+    colors: 'color',
+    emotions: 'emotion',
+    food: 'food',
+    letters: 'letter',
+    numbers: 'num',
+    shapes: 'shape',
+    transport: 'transport',
+  }
+  const alias = groupAliases[rawGroup] ?? rawGroup
+  keys.push(`cards.default.${alias}_${item}`)
+  return keys
 }
 
 function normalizeRow(row: JsonRecord): JsonRecord {
