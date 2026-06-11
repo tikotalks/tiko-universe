@@ -14,21 +14,132 @@ interface CachedAssetRow {
 type SpeechProvider = 'openai' | 'elevenlabs' | 'narakeet'
 type GeneratedSpeech = { bytes: Uint8Array; contentType: string; durationSeconds?: number }
 
-const DEFAULT_NARAKEET_VOICE_BY_LANGUAGE: Record<string, string> = {
-  en: 'raymond',
-  de: 'andreas',
-  es: 'alejandra',
-  fr: 'marion',
-  nl: 'famke',
-  pt: 'lurdes',
-  ja: 'hideaki',
-  zh: 'yifei',
-  ko: 'dong-min',
-  mt: 'corazon',
-  it: 'vittorio',
-  ar: 'farah',
-  hy: 'nune',
+const DEFAULT_NARAKEET_VOICE_BY_LOCALE: Record<string, string> = {
+  'en-us': 'raymond',
+  'en-gb': 'beatrice',
+  'en-ca': 'ryan',
+  'en-au': 'graham',
+  'en-nz': 'keith',
+  'en-ie': 'cillian',
+  'en-in': 'neerja',
+  'en-za': 'aletta',
+  'en-ng': 'obinna',
+  'en-ph': 'manny',
+  'en-sg': 'ava',
+  'af-za': 'rolanda',
+  'sq-al': 'arben',
+  'am-et': 'girum',
+  'ar-xa': 'farah',
+  'hy-am': 'nune',
+  'as-in': 'jahnu',
+  'az-az': 'tofiq',
+  'bn-bd': 'mahiya',
+  'bn-in': 'arpita',
+  'eu-es': 'aitor',
+  'bs-ba': 'mujo',
+  'bg-bg': 'desislava',
+  'my-mm': 'zeya',
+  'ca-es': 'silvia',
+  'cmn-cn': 'yifei',
+  'cmn-tw': 'yili',
+  'cmn-hk': 'man-chi',
+  'hr-hr': 'jasna',
+  'cs-cz': 'ladislav',
+  'da-dk': 'iben',
+  'nl-nl': 'famke',
+  'nl-be': 'koen',
+  'et-ee': 'pille',
+  'fi-fi': 'juha',
+  'fil-ph': 'piolo',
+  'fr-fr': 'marion',
+  'fr-ca': 'audrey',
+  'fr-be': 'laetitia',
+  'fr-ch': 'matthieu',
+  'gl-es': 'gonzalo',
+  'de-de': 'andreas',
+  'de-ch': 'heidi',
+  'de-at': 'fritzi',
+  'ka-ge': 'tornike',
+  'el-gr': 'afroditi',
+  'gu-in': 'pratik',
+  'he-il': 'ayelet',
+  'hi-in': 'amitabh',
+  'hu-hu': 'eszter',
+  'is-is': 'steinunn',
+  'it-it': 'vittorio',
+  'id-id': 'agung',
+  'ga-ie': 'aoife',
+  'ja-jp': 'hideaki',
+  'jv-id': 'riyanto',
+  'kn-in': 'bhavana',
+  'kk-kz': 'gulshat',
+  'km-kh': 'sovath',
+  'ko-kr': 'dong-min',
+  'lo-la': 'tonkham',
+  'lv-lv': 'kristaps',
+  'lt-lt': 'jurga',
+  'mk-mk': 'vlatko',
+  'ml-in': 'ajay',
+  'ms-my': 'taufan',
+  'mt-mt': 'corazon',
+  'mr-in': 'shahana',
+  'mn-mn': 'ganbaatar',
+  'nr-za': 'dumisani',
+  'ne-np': 'lhakpa',
+  'nb-no': 'aksel',
+  'or-in': 'baisali',
+  'ps-af': 'dilawar',
+  'fa-ir': 'reza',
+  'pl-pl': 'danuta',
+  'pt-pt': 'lurdes',
+  'pt-br': 'gisele',
+  'pa-in': 'inderjit',
+  'ro-ro': 'alina',
+  'ru-ru': 'irina',
+  'si-lk': 'sanath',
+  'ssw-za': 'nomcebo',
+  'nso-za': 'mpho',
+  'sr-rs': 'lazar',
+  'st-za': 'palesa',
+  'sk-sk': 'juraj',
+  'sl-si': 'mojca',
+  'so-so': 'cabdi',
+  'es-es': 'alejandra',
+  'es-us': 'hector',
+  'es-mx': 'ramona',
+  'es-pr': 'margarita',
+  'su-id': 'atep',
+  'sv-se': 'elsa',
+  'sw-ke': 'ngina',
+  'ta-in': 'aparna',
+  'te-in': 'ramakrishna',
+  'th-th': 'somsak',
+  'tn-za': 'bokang',
+  'ven-za': 'mulalo',
+  'tr-tr': 'murat',
+  'uk-ua': 'oleksandr',
+  'ur-pk': 'imran',
+  'uz-uz': 'shavkat',
+  'vi-vn': 'nga',
+  'cy-gb': 'rhys',
+  'tso-za': 'basetsana',
+  'xh-za': 'thabo',
+  'zu-za': 'nandi',
 }
+
+const NARAKEET_LOCALE_ALIASES: Record<string, string> = {
+  zh: 'cmn-cn',
+  'zh-cn': 'cmn-cn',
+  'zh-tw': 'cmn-tw',
+  'zh-hk': 'cmn-hk',
+}
+
+const DEFAULT_NARAKEET_VOICE_BY_LANGUAGE = Object.entries(DEFAULT_NARAKEET_VOICE_BY_LOCALE)
+  .reduce<Record<string, string>>((voices, [locale, voice]) => {
+    const language = locale.split('-')[0]
+    voices[language] ??= voice
+    return voices
+  }, { zh: DEFAULT_NARAKEET_VOICE_BY_LOCALE['cmn-cn'] })
 
 export async function executeAtlasCapability(request: AtlasRunRequest, env: Env): Promise<AtlasExecutionResult> {
   switch (request.capability) {
@@ -293,9 +404,12 @@ function defaultSpeechVoice(provider: SpeechProvider, locale = 'en') {
 }
 
 function defaultNarakeetVoice(locale: string) {
-  const normalizedLocale = locale.trim().toLowerCase()
-  const language = normalizedLocale.split('-')[0]
-  return DEFAULT_NARAKEET_VOICE_BY_LANGUAGE[language] ?? DEFAULT_NARAKEET_VOICE_BY_LANGUAGE.en
+  const normalizedLocale = locale.trim().toLowerCase().replace(/_/g, '-')
+  const aliasedLocale = NARAKEET_LOCALE_ALIASES[normalizedLocale] ?? normalizedLocale
+  const language = aliasedLocale.split('-')[0]
+  return DEFAULT_NARAKEET_VOICE_BY_LOCALE[aliasedLocale]
+    ?? DEFAULT_NARAKEET_VOICE_BY_LANGUAGE[language]
+    ?? DEFAULT_NARAKEET_VOICE_BY_LANGUAGE.en
 }
 
 function toSpeechProvider(provider: string): SpeechProvider {
