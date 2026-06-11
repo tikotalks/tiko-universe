@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, ref, watch } from 'vue'
+import { ref, watch } from 'vue'
 import { useBemm } from 'bemm'
 import { Button, InputText } from '@sil/ui'
 import { useAdminMediaLibrary, type AdminMediaItem } from '../composables/useAdminMediaLibrary'
@@ -14,10 +14,12 @@ const emit = defineEmits<{
 }>()
 
 const bemm = useBemm('media-picker', { return: 'string', includeBaseClass: true })
-const { items, loading, list, itemUrl } = useAdminMediaLibrary()
+const { items, loading, uploading, list, upload, itemUrl, itemPreviewUrl, previewUrl } = useAdminMediaLibrary()
 
 const open = ref(false)
 const search = ref('')
+const fileInput = ref<HTMLInputElement | null>(null)
+let searchTimer: number | undefined
 
 function select(item: AdminMediaItem) {
   emit('update:modelValue', itemUrl(item))
@@ -29,17 +31,34 @@ function clear() {
 }
 
 function loadMedia() {
-  void list({ search: search.value || undefined, type: 'image', limit: 40 })
+  void list({ search: search.value || undefined, type: 'image', limit: 24 })
 }
 
-watch(search, () => { loadMedia() })
+async function uploadFile(event: Event) {
+  const input = event.target as HTMLInputElement
+  const file = input.files?.[0]
+  if (!file) return
+  try {
+    const result = await upload(file)
+    emit('update:modelValue', result.url)
+    open.value = false
+  } finally {
+    input.value = ''
+  }
+}
+
+watch(search, () => {
+  if (!open.value) return
+  if (searchTimer) window.clearTimeout(searchTimer)
+  searchTimer = window.setTimeout(loadMedia, 250)
+})
 watch(open, (v) => { if (v) loadMedia() })
 </script>
 
 <template>
   <div :class="bemm('')">
     <div :class="bemm('preview')" v-if="modelValue">
-      <img :class="bemm('image')" :src="modelValue" alt="Selected icon" />
+      <img :class="bemm('image')" :src="previewUrl(modelValue, 96)" alt="Selected icon" decoding="async" />
       <Button size="small" variant="ghost" @click="clear">Remove</Button>
     </div>
     <Button size="small" variant="outline" @click="open = true">
@@ -53,6 +72,12 @@ watch(open, (v) => { if (v) loadMedia() })
           <button type="button" :class="bemm('modal-close')" @click="open = false">✕</button>
         </header>
         <InputText v-model="search" label="Search" placeholder="Search media…" />
+        <div :class="bemm('upload-row')">
+          <input ref="fileInput" type="file" accept="image/*" :class="bemm('file-input')" @change="uploadFile">
+          <Button size="small" variant="outline" :loading="uploading" :disabled="uploading" @click="fileInput?.click()">
+            Upload image
+          </Button>
+        </div>
         <div v-if="loading" :class="bemm('modal-loading')">Loading…</div>
         <div v-else-if="items.length === 0" :class="bemm('modal-empty')">No images found.</div>
         <div v-else :class="bemm('modal-grid')">
@@ -63,7 +88,7 @@ watch(open, (v) => { if (v) loadMedia() })
             :class="[bemm('modal-item'), { [bemm('modal-item--selected')]: itemUrl(item) === modelValue }]"
             @click="select(item)"
           >
-            <img :src="item.thumbnailUrl || itemUrl(item)" :alt="item.title || item.file_name" />
+            <img :src="itemPreviewUrl(item, 180)" :alt="item.title || item.file_name" loading="lazy" decoding="async" />
             <span>{{ item.title || item.category || item.file_name }}</span>
           </button>
         </div>
@@ -148,6 +173,15 @@ watch(open, (v) => { if (v) loadMedia() })
     font-size: var(--font-size-s);
     text-align: center;
     padding: var(--space-m);
+  }
+
+  &__upload-row {
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  &__file-input {
+    display: none;
   }
 
   &__modal-grid {

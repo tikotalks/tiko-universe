@@ -12,7 +12,10 @@ export interface AdminMediaItem {
   category?: string
   tags?: string[]
   url?: string
+  original_url?: string
   thumbnailUrl?: string
+  thumbnail_url?: string
+  medium_url?: string
   created_at?: string
   createdAt?: string
 }
@@ -174,9 +177,29 @@ export function useAdminMediaLibrary() {
     return (body as { data: AudioLibraryTrack }).data
   }
 
-  function itemUrl(item: AdminMediaItem): string {
-    return item.url || item.thumbnailUrl || `${mediaBaseUrl()}/media/${item.id}/download`
+  function resizedMediaUrl(url: string, size = 160): string {
+    try {
+      const parsed = new URL(url)
+      if (parsed.host === 'data.tikocdn.org' && parsed.pathname.startsWith('/uploads/')) {
+        return `https://data.tikocdn.org/cdn-cgi/image/width=${size},height=${size},fit=cover,quality=80,f=auto${parsed.pathname}`
+      }
+    } catch {
+      // Keep non-URL values as-is.
+    }
+    return url
   }
 
-  return { items, total, page, totalPages, loading, uploading, error, list, upload, itemUrl, listAudioAlbums, createAudioAlbum, addAudioTrack }
+  function itemUrl(item: AdminMediaItem): string {
+    return item.url || item.original_url || item.medium_url || item.thumbnailUrl || item.thumbnail_url || `${mediaBaseUrl()}/media/${item.id}/download`
+  }
+
+  function itemPreviewUrl(item: AdminMediaItem, size = 160): string {
+    return resizedMediaUrl(item.thumbnailUrl || item.thumbnail_url || item.medium_url || item.url || item.original_url || itemUrl(item), size)
+  }
+
+  function previewUrl(url: string, size = 160): string {
+    return resizedMediaUrl(url, size)
+  }
+
+  return { items, total, page, totalPages, loading, uploading, error, list, upload, itemUrl, itemPreviewUrl, previewUrl, listAudioAlbums, createAudioAlbum, addAudioTrack }
 }

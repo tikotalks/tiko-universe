@@ -4,6 +4,7 @@ import { useBemm } from 'bemm'
 import { Button, InputText } from '@sil/ui'
 import { tikoColors } from '@tiko/ui'
 import ColorSwatchPicker from '../ColorSwatchPicker.vue'
+import MediaPicker from '../MediaPicker.vue'
 
 interface YesNoAnswerTile {
   id: string
@@ -14,9 +15,21 @@ interface YesNoAnswerTile {
   icon?: string
 }
 
+interface YesNoAnswerSet {
+  id: string
+  title: string
+  description?: string
+  color?: string
+  imageURL?: string
+  order?: number
+  answers: YesNoAnswerTile[]
+}
+
 interface YesNoState {
   prompt: string
   answers: YesNoAnswerTile[]
+  answerSets: YesNoAnswerSet[]
+  selectedSetId?: string
 }
 
 const bemm = useBemm('yes-no-editor', { return: 'string', includeBaseClass: true })
@@ -34,16 +47,65 @@ const answerPresets: Array<Omit<YesNoAnswerTile, 'id'>> = [
   { label: 'Finished', speech: 'Finished', color: 'purple', icon: 'checkmark.circle.fill' },
 ]
 
+const defaultAnswerSets: YesNoAnswerSet[] = [
+  {
+    id: 'yes-no',
+    title: 'Yes / No',
+    description: 'Simple yes and no answers.',
+    color: 'green',
+    order: 0,
+    answers: [
+      { id: 'yes', label: 'Yes', speech: 'Yes', color: 'green', icon: 'checkmark' },
+      { id: 'no', label: 'No', speech: 'No', color: 'red', icon: 'xmark' },
+    ],
+  },
+  {
+    id: 'basic-needs',
+    title: 'Basic needs',
+    description: 'Common needs and requests.',
+    color: 'teal',
+    order: 1,
+    answers: [
+      { id: 'help', label: 'Help', speech: 'Help', color: 'blue', icon: 'hand.raised.fill' },
+      { id: 'more', label: 'More', speech: 'More', color: 'teal', icon: 'plus' },
+      { id: 'stop', label: 'Stop', speech: 'Stop', color: 'orange', icon: 'hand.raised.slash.fill' },
+      { id: 'finished', label: 'Finished', speech: 'Finished', color: 'purple', icon: 'checkmark.circle.fill' },
+    ],
+  },
+  {
+    id: 'quick-choices',
+    title: 'Quick choices',
+    description: 'Fast everyday responses.',
+    color: 'yellow',
+    order: 2,
+    answers: [
+      { id: 'yes', label: 'Yes', speech: 'Yes', color: 'green', icon: 'checkmark' },
+      { id: 'no', label: 'No', speech: 'No', color: 'red', icon: 'xmark' },
+      { id: 'maybe', label: 'Maybe', speech: 'Maybe', color: 'yellow', icon: 'questionmark' },
+      { id: 'later', label: 'Later', speech: 'Later', color: 'purple', icon: 'clock' },
+    ],
+  },
+]
+
 const state = computed<YesNoState>(() => {
   const value = props.modelValue as Partial<YesNoState>
+  const legacyAnswers = Array.isArray(value?.answers) ? (value.answers as YesNoAnswerTile[]) : []
+  const answerSets = Array.isArray(value?.answerSets)
+    ? (value.answerSets as YesNoAnswerSet[])
+    : legacyAnswers.length
+      ? [{ id: 'custom', title: 'Custom answers', color: 'teal', order: 0, answers: legacyAnswers }]
+      : defaultAnswerSets
   return {
     prompt: typeof value?.prompt === 'string' ? value.prompt : '',
-    answers: Array.isArray(value?.answers) ? (value.answers as YesNoAnswerTile[]) : [],
+    answers: legacyAnswers,
+    answerSets,
+    selectedSetId: typeof value?.selectedSetId === 'string' ? value.selectedSetId : answerSets[0]?.id,
   }
 })
 
 function update(next: Partial<YesNoState>) {
-  emit('update:modelValue', { ...props.modelValue, ...next })
+  const merged = { ...props.modelValue, ...next }
+  emit('update:modelValue', merged)
 }
 
 function makeId(prefix: string) {
@@ -65,33 +127,83 @@ function normalizeAnswer(answer: YesNoAnswerTile): YesNoAnswerTile {
   }
 }
 
-function addAnswer(preset?: Omit<YesNoAnswerTile, 'id'>) {
+function normalizeSet(set: YesNoAnswerSet, order: number): YesNoAnswerSet {
+  return {
+    id: set.id,
+    title: set.title,
+    ...(set.description ? { description: set.description } : {}),
+    ...(set.color ? { color: set.color } : {}),
+    ...(set.imageURL ? { imageURL: set.imageURL } : {}),
+    order,
+    answers: set.answers.map(normalizeAnswer),
+  }
+}
+
+function updateSets(sets: YesNoAnswerSet[], selectedSetId = state.value.selectedSetId) {
+  const normalized = sets.map(normalizeSet)
+  const selected = normalized.some(set => set.id === selectedSetId) ? selectedSetId : normalized[0]?.id
+  update({ answerSets: normalized, selectedSetId: selected, answers: normalized[0]?.answers ?? [] })
+}
+
+function addSet() {
+  const sets = state.value.answerSets
+  updateSets([
+    ...sets,
+    {
+      id: makeId('set'),
+      title: 'New set',
+      color: 'teal',
+      order: sets.length,
+      answers: [],
+    },
+  ])
+}
+
+function updateSet(index: number, patch: Partial<YesNoAnswerSet>) {
+  updateSets(state.value.answerSets.map((set, i) => (i === index ? { ...set, ...patch } : set)))
+}
+
+function removeSet(index: number) {
+  updateSets(state.value.answerSets.filter((_, i) => i !== index))
+}
+
+function moveSet(index: number, delta: number) {
+  const target = index + delta
+  if (target < 0 || target >= state.value.answerSets.length) return
+  const sets = [...state.value.answerSets]
+  ;[sets[index], sets[target]] = [sets[target], sets[index]]
+  updateSets(sets)
+}
+
+function addAnswer(setIndex: number, preset?: Omit<YesNoAnswerTile, 'id'>) {
   const answer = preset
     ? { id: makeId('answer'), ...preset }
     : { id: makeId('answer'), label: 'New answer', speech: 'New answer', color: 'teal' }
-  update({
-    answers: [
-      ...state.value.answers,
-      normalizeAnswer(answer),
-    ],
+  const sets = state.value.answerSets.map((set, i) => i === setIndex ? { ...set, answers: [...set.answers, normalizeAnswer(answer)] } : set)
+  updateSets(sets)
+}
+
+function updateAnswer(setIndex: number, answerIndex: number, patch: Partial<YesNoAnswerTile>) {
+  const sets = state.value.answerSets.map((set, i) => {
+    if (i !== setIndex) return set
+    const answers = set.answers.map((a, ai) => (ai === answerIndex ? normalizeAnswer({ ...a, ...patch }) : normalizeAnswer(a)))
+    return { ...set, answers }
   })
+  updateSets(sets)
 }
 
-function updateAnswer(index: number, patch: Partial<YesNoAnswerTile>) {
-  const answers = state.value.answers.map((a, i) => (i === index ? normalizeAnswer({ ...a, ...patch }) : normalizeAnswer(a)))
-  update({ answers })
+function removeAnswer(setIndex: number, answerIndex: number) {
+  const sets = state.value.answerSets.map((set, i) => i === setIndex ? { ...set, answers: set.answers.filter((_, ai) => ai !== answerIndex) } : set)
+  updateSets(sets)
 }
 
-function removeAnswer(index: number) {
-  update({ answers: state.value.answers.filter((_, i) => i !== index) })
-}
-
-function moveAnswer(index: number, delta: number) {
-  const target = index + delta
-  if (target < 0 || target >= state.value.answers.length) return
-  const answers = [...state.value.answers]
-  ;[answers[index], answers[target]] = [answers[target], answers[index]]
-  update({ answers })
+function moveAnswer(setIndex: number, answerIndex: number, delta: number) {
+  const set = state.value.answerSets[setIndex]
+  const target = answerIndex + delta
+  if (!set || target < 0 || target >= set.answers.length) return
+  const answers = [...set.answers]
+  ;[answers[answerIndex], answers[target]] = [answers[target], answers[answerIndex]]
+  updateSet(setIndex, { answers })
 }
 </script>
 
@@ -106,8 +218,8 @@ function moveAnswer(index: number, delta: number) {
 
     <section :class="bemm('answers')">
       <header :class="bemm('answers-head')">
-        <h3 :class="bemm('title')">Default answers</h3>
-        <Button variant="outline" size="small" @click="addAnswer">Add answer</Button>
+        <h3 :class="bemm('title')">Answer sets</h3>
+        <Button variant="outline" size="small" @click="addSet">Add set</Button>
       </header>
 
       <div :class="bemm('presets')" aria-label="Preset answers">
@@ -117,59 +229,112 @@ function moveAnswer(index: number, delta: number) {
           type="button"
           :class="bemm('preset')"
           :style="{ '--yes-no-editor-preset-color': colorTokenToHex(preset.color) }"
-          @click="addAnswer(preset)"
+          @click="addAnswer(0, preset)"
         >
           <span :class="bemm('preset-swatch')" aria-hidden="true" />
           <span>{{ preset.label }}</span>
         </button>
       </div>
 
-      <div v-if="state.answers.length === 0" :class="bemm('empty')">
-        Choose a preset, add a custom answer, or leave empty for the built-in Yes / No tiles.
+      <div v-if="state.answerSets.length === 0" :class="bemm('empty')">
+        Add a set to define the answer tiles shown in the app.
       </div>
 
       <div v-else :class="bemm('list')">
-        <div v-for="(answer, i) in state.answers" :key="answer.id" :class="bemm('item')">
-          <div :class="bemm('item-fields')">
+        <article v-for="(set, si) in state.answerSets" :key="set.id" :class="bemm('set')">
+          <header :class="bemm('set-head')">
             <InputText
-              :model-value="answer.label"
-              label="Label"
-              placeholder="Yes"
-              @update:model-value="(v: string) => updateAnswer(i, { label: v })"
+              :model-value="set.title"
+              label="Set title"
+              placeholder="Yes / No"
+              @update:model-value="(v: string) => updateSet(si, { title: v })"
             />
             <InputText
-              :model-value="answer.speech"
-              label="Spoken text"
-              placeholder="What to say when tapped"
-              @update:model-value="(v: string) => updateAnswer(i, { speech: v })"
+              :model-value="set.id"
+              label="ID"
+              placeholder="kebab-case"
+              @update:model-value="(v: string) => updateSet(si, { id: v })"
             />
             <InputText
-              :model-value="answer.icon ?? ''"
-              label="Icon (SF symbol)"
-              placeholder="checkmark"
-              @update:model-value="(v: string) => updateAnswer(i, { icon: v || undefined })"
-            />
-            <InputText
-              :model-value="answer.imageURL ?? ''"
-              label="Image URL"
-              placeholder="https://…"
-              @update:model-value="(v: string) => updateAnswer(i, { imageURL: v || undefined })"
+              :model-value="set.description ?? ''"
+              label="Description"
+              placeholder="Short helper text"
+              @update:model-value="(v: string) => updateSet(si, { description: v || undefined })"
             />
             <div :class="bemm('color-field')">
               <span :class="bemm('color-label')">Color</span>
               <ColorSwatchPicker
-                :model-value="answer.color ?? ''"
+                :model-value="set.color ?? ''"
                 mode="name"
-                @update:model-value="(v: string) => updateAnswer(i, { color: v || undefined })"
+                @update:model-value="(v: string) => updateSet(si, { color: v || undefined })"
               />
             </div>
+            <div :class="bemm('image-field')">
+              <span :class="bemm('color-label')">Set image</span>
+              <MediaPicker
+                :model-value="set.imageURL ?? ''"
+                @update:model-value="(v: string) => updateSet(si, { imageURL: v || undefined })"
+              />
+            </div>
+            <div :class="bemm('item-actions')">
+              <Button variant="ghost" size="small" :disabled="si === 0" @click="moveSet(si, -1)">&#8593;</Button>
+              <Button variant="ghost" size="small" :disabled="si === state.answerSets.length - 1" @click="moveSet(si, 1)">&#8595;</Button>
+              <Button variant="ghost" size="small" @click="removeSet(si)">Remove</Button>
+            </div>
+          </header>
+
+          <div :class="bemm('answers-head')">
+            <h4 :class="bemm('subtitle')">Tiles ({{ set.answers.length }})</h4>
+            <Button variant="outline" size="small" @click="addAnswer(si)">Add tile</Button>
           </div>
-          <div :class="bemm('item-actions')">
-            <Button variant="ghost" size="small" :disabled="i === 0" @click="moveAnswer(i, -1)">↑</Button>
-            <Button variant="ghost" size="small" :disabled="i === state.answers.length - 1" @click="moveAnswer(i, 1)">↓</Button>
-            <Button variant="ghost" size="small" @click="removeAnswer(i)">Remove</Button>
+
+          <div v-if="set.answers.length === 0" :class="bemm('empty')">No tiles yet.</div>
+
+          <div v-else :class="bemm('tile-list')">
+            <div v-for="(answer, i) in set.answers" :key="answer.id" :class="bemm('item')">
+              <div :class="bemm('item-fields')">
+                <InputText
+                  :model-value="answer.label"
+                  label="Label"
+                  placeholder="Yes"
+                  @update:model-value="(v: string) => updateAnswer(si, i, { label: v })"
+                />
+                <InputText
+                  :model-value="answer.speech"
+                  label="Spoken text"
+                  placeholder="What to say when tapped"
+                  @update:model-value="(v: string) => updateAnswer(si, i, { speech: v })"
+                />
+                <InputText
+                  :model-value="answer.icon ?? ''"
+                  label="Icon (SF symbol)"
+                  placeholder="checkmark"
+                  @update:model-value="(v: string) => updateAnswer(si, i, { icon: v || undefined })"
+                />
+                <div :class="bemm('image-field')">
+                  <span :class="bemm('color-label')">Image</span>
+                  <MediaPicker
+                    :model-value="answer.imageURL ?? ''"
+                    @update:model-value="(v: string) => updateAnswer(si, i, { imageURL: v || undefined })"
+                  />
+                </div>
+                <div :class="bemm('color-field')">
+                  <span :class="bemm('color-label')">Color</span>
+                  <ColorSwatchPicker
+                    :model-value="answer.color ?? ''"
+                    mode="name"
+                    @update:model-value="(v: string) => updateAnswer(si, i, { color: v || undefined })"
+                  />
+                </div>
+              </div>
+              <div :class="bemm('item-actions')">
+                <Button variant="ghost" size="small" :disabled="i === 0" @click="moveAnswer(si, i, -1)">&#8593;</Button>
+                <Button variant="ghost" size="small" :disabled="i === set.answers.length - 1" @click="moveAnswer(si, i, 1)">&#8595;</Button>
+                <Button variant="ghost" size="small" @click="removeAnswer(si, i)">Remove</Button>
+              </div>
+            </div>
           </div>
-        </div>
+        </article>
       </div>
     </section>
   </div>
@@ -196,6 +361,12 @@ function moveAnswer(index: number, delta: number) {
   &__title {
     font-size: var(--font-size-m);
     font-weight: 600;
+    color: var(--admin-text);
+  }
+
+  &__subtitle {
+    font-size: var(--font-size-s);
+    font-weight: 700;
     color: var(--admin-text);
   }
 
@@ -259,11 +430,34 @@ function moveAnswer(index: number, delta: number) {
     border-radius: var(--border-radius-s);
   }
 
+  &__set {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-s);
+    padding: var(--space-m);
+    background: var(--admin-page-bg);
+    border: 1px solid var(--admin-border);
+    border-radius: var(--border-radius-s);
+  }
+
+  &__set-head {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1.5fr 1fr 1.5fr auto;
+    gap: var(--space-s);
+    align-items: start;
+  }
+
+  &__tile-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-s);
+  }
+
   &__item-fields {
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr 2fr 1fr;
+    grid-template-columns: 1fr 1fr 1fr 1.5fr 1fr;
     gap: var(--space-s);
-    align-items: end;
+    align-items: start;
   }
 
   &__item-actions {
@@ -272,7 +466,8 @@ function moveAnswer(index: number, delta: number) {
     gap: var(--space-xs);
   }
 
-  &__color-field {
+  &__color-field,
+  &__image-field {
     display: flex;
     flex-direction: column;
     gap: var(--space-xs);
@@ -282,6 +477,19 @@ function moveAnswer(index: number, delta: number) {
     font-size: var(--font-size-xs);
     font-weight: 600;
     color: var(--admin-text-muted);
+  }
+
+  @media (max-width: 980px) {
+    &__set-head,
+    &__item,
+    &__item-fields {
+      grid-template-columns: 1fr;
+    }
+
+    &__item-actions {
+      flex-direction: row;
+      flex-wrap: wrap;
+    }
   }
 }
 </style>

@@ -3,7 +3,7 @@ import { computed, onMounted, reactive, ref, watch, type Component } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useBemm } from 'bemm'
 import { Button, Icon, InputText } from '@sil/ui'
-import { tikoAppConfigs, tikoAppColors, type TikoAppColor, type TikoAppConfig } from '@tiko/ui'
+import { TikoAppHeader, tikoAppConfigs, tikoAppColors, type TikoAppColor, type TikoAppConfig } from '@tiko/ui'
 import { useAdminAppConfig, type AdminManagedAppConfig } from '../composables/useAdminAppConfig'
 import { useAppDefaults, type AppResource, type TikoManagedApp } from '../composables/useAppDefaults'
 import MediaPicker from '../components/MediaPicker.vue'
@@ -52,9 +52,15 @@ const isOverview = computed(() => route.name === 'apps' || !routeApp.value)
 const selectedApp = computed<TikoAppColor>(() => routeApp.value ?? 'cards')
 const selectedConfig = computed(() => configs.value[selectedApp.value] ?? tikoAppConfigs[selectedApp.value])
 const selectedColor = computed(() => tikoAppColors[selectedConfig.value.appColor] ?? tikoAppColors[selectedApp.value])
+const previewAccent = computed(() => configDraft.themeColor || tikoAppConfigs[selectedApp.value]?.themeColor || selectedColor.value.primary)
+const previewIcon = computed(() => configDraft.appIconImageUrl || configDraft.appIcon || selectedApp.value.charAt(0).toUpperCase())
 const defaultsApp = computed<DefaultsApp | null>(() => editableDefaultsApps.includes(selectedApp.value as DefaultsApp) ? selectedApp.value as DefaultsApp : null)
 const currentEditor = computed<Component | null>(() => defaultsApp.value ? editorByApp[defaultsApp.value] ?? null : null)
 const canEditDefaults = computed(() => Boolean(defaultsApp.value))
+
+function isImageSource(value: string | undefined) {
+  return Boolean(value && (/^(https?:|data:|blob:)/.test(value) || /\.(avif|gif|jpe?g|png|svg|webp)(\?|#|$)/i.test(value)))
+}
 
 function appConfig(app: TikoAppColor) {
   return configs.value[app] ?? tikoAppConfigs[app]
@@ -106,8 +112,10 @@ async function saveConfig() {
   }
   try {
     const saved = await configApi.writeConfig(selectedApp.value, normalized, configs.value[selectedApp.value]?.version ?? 0)
-    configs.value = { ...configs.value, [selectedApp.value]: { ...saved.config, updatedAt: saved.updatedAt, version: saved.version } }
+    const savedConfig = { ...saved.config, updatedAt: saved.updatedAt, version: saved.version }
+    configs.value = { ...configs.value, [selectedApp.value]: savedConfig }
     syncDraft(configs.value[selectedApp.value])
+    window.dispatchEvent(new CustomEvent('tiko-admin-app-config-updated', { detail: { app: selectedApp.value, config: savedConfig } }))
     configSavedMessage.value = `Saved ${saved.config.title} app config.`
   } catch {
     // error is surfaced via configApi.error.value
@@ -198,8 +206,14 @@ if (!isOverview.value && !routeApp.value) {
         :class="bemm('overview-card')"
         :style="{ '--app-accent': appAccent(app) }"
       >
-        <span :class="bemm('overview-icon')">
-          <Icon v-if="(appConfig(app).appIcon || '').includes('/')" :name="appConfig(app).appIcon" size="medium" />
+        <span :class="bemm('overview-icon')" :style="{ '--app-accent': appAccent(app) }">
+          <img
+            v-if="appConfig(app).appIconImageUrl || isImageSource(appConfig(app).appIcon)"
+            :class="bemm('overview-icon-image')"
+            :src="appConfig(app).appIconImageUrl || appConfig(app).appIcon"
+            :alt="`${appConfig(app).title} icon`"
+          >
+          <Icon v-else-if="(appConfig(app).appIcon || '').includes('/')" :name="appConfig(app).appIcon" size="medium" />
           <span v-else>{{ appConfig(app).appIcon || app.charAt(0).toUpperCase() }}</span>
         </span>
         <span :class="bemm('overview-copy')">
@@ -216,7 +230,7 @@ if (!isOverview.value && !routeApp.value) {
     </section>
 
     <div v-else :class="bemm('workspace')">
-      <section :class="bemm('panel')" :style="{ '--app-accent': configDraft.themeColor || selectedColor.primary }">
+      <section :class="bemm('panel')" :style="{ '--app-accent': previewAccent }">
         <header :class="bemm('panel-head')">
           <div :class="bemm('panel-intro')">
             <h2 :class="bemm('panel-title')">App settings</h2>
@@ -237,28 +251,59 @@ if (!isOverview.value && !routeApp.value) {
         <p v-if="configApi.error.value" :class="bemm('error')">{{ configApi.error.value }}</p>
         <p v-if="configSavedMessage" :class="bemm('success')">{{ configSavedMessage }}</p>
 
-        <div :class="bemm('config-form')">
-          <InputText v-model="configDraft.title" label="Title" @update:model-value="onConfigInput" />
-          <InputText v-model="configDraft.appIcon" label="Icon" placeholder="ui/check-fat" @update:model-value="onConfigInput" />
-          <InputText v-model="configDraft.appIconMediaCategory" label="Media icon category" placeholder="animals" @update:model-value="onConfigInput" />
-          <div :class="bemm('field')">
-            <span :class="bemm('field-label')">Icon image</span>
-            <MediaPicker v-model="configDraft.appIconImageUrl!" @update:model-value="onConfigInput" />
-          </div>
-          <div :class="bemm('field')">
-            <span :class="bemm('field-label')">Theme color</span>
-            <div :class="bemm('color-row')">
-              <input type="color" :class="bemm('color-input')" :value="configDraft.themeColor || tikoAppConfigs[selectedApp]?.themeColor || '#2488ff'" @input="(e: Event) => { configDraft.themeColor = (e.target as HTMLInputElement).value; onConfigInput() }" />
-              <InputText :model-value="configDraft.themeColor || ''" placeholder="#2488ff" @update:model-value="(v: string) => { configDraft.themeColor = v; onConfigInput() }" />
+        <div :class="bemm('config-layout')">
+          <div :class="bemm('config-form')">
+            <InputText v-model="configDraft.title" label="Title" @update:model-value="onConfigInput" />
+            <InputText v-model="configDraft.appIcon" label="Icon" placeholder="ui/check-fat" @update:model-value="onConfigInput" />
+            <InputText v-model="configDraft.appIconMediaCategory" label="Media icon category" placeholder="animals" @update:model-value="onConfigInput" />
+            <div :class="bemm('field')">
+              <span :class="bemm('field-label')">Icon image</span>
+              <MediaPicker v-model="configDraft.appIconImageUrl!" @update:model-value="onConfigInput" />
+            </div>
+            <div :class="bemm('field')">
+              <span :class="bemm('field-label')">Theme color</span>
+              <div :class="bemm('color-row')">
+                <input type="color" :class="bemm('color-input')" :value="previewAccent" @input="(e: Event) => { configDraft.themeColor = (e.target as HTMLInputElement).value; onConfigInput() }" />
+                <InputText :model-value="configDraft.themeColor || ''" placeholder="#2488ff" @update:model-value="(v: string) => { configDraft.themeColor = v; onConfigInput() }" />
+              </div>
+            </div>
+            <div :class="bemm('field')">
+              <span :class="bemm('field-label')">App colors</span>
+              <ColorSwatchPicker
+                :model-value="configDraft.themeColor || tikoAppConfigs[selectedApp]?.themeColor || ''"
+                @update:model-value="(v: string) => { configDraft.themeColor = v; onConfigInput() }"
+              />
             </div>
           </div>
-          <div :class="bemm('field')">
-            <span :class="bemm('field-label')">App colors</span>
-            <ColorSwatchPicker
-              :model-value="configDraft.themeColor || tikoAppConfigs[selectedApp]?.themeColor || ''"
-              @update:model-value="(v: string) => { configDraft.themeColor = v; onConfigInput() }"
+
+          <aside :class="bemm('preview')" :style="{ '--tiko-app-primary': previewAccent, '--app-accent': previewAccent }" aria-label="App icon preview">
+            <span :class="bemm('field-label')">Preview</span>
+            <TikoAppHeader
+              :app-name="configDraft.title || selectedConfig.title"
+              :app-icon="configDraft.appIcon || selectedConfig.appIcon"
+              :app-icon-image-url="configDraft.appIconImageUrl || ''"
+              :app-icon-media-category="configDraft.appIconMediaCategory || ''"
+              :app-color="configDraft.appColor"
+              :show-settings-button="false"
             />
-          </div>
+            <div :class="bemm('preview-tile')">
+              <span :class="bemm('preview-icon')">
+                <img
+                  v-if="isImageSource(previewIcon)"
+                  :class="bemm('preview-icon-image')"
+                  :src="previewIcon"
+                  :alt="`${configDraft.title || selectedConfig.title} icon`"
+                >
+                <Icon v-else-if="previewIcon.includes('/')" :name="previewIcon" size="large" />
+                <span v-else>{{ previewIcon }}</span>
+              </span>
+              <span :class="bemm('preview-name')">{{ configDraft.title || selectedConfig.title }}</span>
+            </div>
+            <p :class="bemm('preview-meta')">
+              {{ configDraft.appIconImageUrl ? 'Custom image' : configDraft.appIconMediaCategory ? `Media category: ${configDraft.appIconMediaCategory}` : configDraft.appIcon || 'Text icon' }}
+            </p>
+            <p :class="bemm('preview-meta')">{{ previewAccent }}</p>
+          </aside>
         </div>
       </section>
 
@@ -389,6 +434,14 @@ if (!isOverview.value && !routeApp.value) {
     background: var(--admin-surface-hover);
     color: var(--admin-text);
     font-weight: 700;
+    overflow: hidden;
+  }
+
+  &__overview-icon-image {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
   }
 
   &__overview-title,
@@ -444,6 +497,13 @@ if (!isOverview.value && !routeApp.value) {
     flex-wrap: wrap;
   }
 
+  &__config-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(calc(var(--space) * 18), calc(var(--space) * 24));
+    gap: var(--space-m);
+    align-items: start;
+  }
+
   &__config-form {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -481,6 +541,80 @@ if (!isOverview.value && !routeApp.value) {
     background: transparent;
   }
 
+  &__preview {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-s);
+    min-width: 0;
+    padding: var(--space-s);
+    border: 1px solid var(--admin-border);
+    border-radius: var(--admin-card-radius);
+    background: color-mix(in srgb, var(--color-background), var(--color-foreground) 5%);
+
+    .tiko-app-header {
+      position: static;
+      padding: 0;
+      min-width: 0;
+    }
+
+    .tiko-app-header__title {
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      color: var(--admin-text);
+      font-size: var(--font-size-m);
+    }
+  }
+
+  &__preview-tile {
+    display: grid;
+    grid-template-columns: calc(var(--space) * 5) minmax(0, 1fr);
+    gap: var(--space-s);
+    align-items: center;
+    min-height: calc(var(--space) * 6);
+    padding: var(--space-s);
+    border-radius: var(--border-radius-s);
+    background: color-mix(in srgb, var(--app-accent), var(--color-background) 82%);
+  }
+
+  &__preview-icon {
+    display: grid;
+    place-items: center;
+    width: calc(var(--space) * 5);
+    height: calc(var(--space) * 5);
+    overflow: hidden;
+    border-radius: var(--border-radius-s);
+    background: var(--app-accent);
+    color: #fff;
+    font-size: var(--font-size-xl);
+    font-weight: 800;
+  }
+
+  &__preview-icon-image {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  &__preview-name {
+    min-width: 0;
+    overflow: hidden;
+    color: var(--admin-text);
+    font-size: var(--font-size-m);
+    font-weight: 700;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &__preview-meta {
+    color: var(--admin-text-muted);
+    font-size: var(--font-size-xs);
+    line-height: 1.35;
+    overflow-wrap: anywhere;
+  }
+
   &__error {
     color: var(--color-error);
     font-size: var(--font-size-s);
@@ -516,6 +650,7 @@ if (!isOverview.value && !routeApp.value) {
       grid-template-columns: 1fr;
     }
 
+    &__config-layout,
     &__config-form {
       grid-template-columns: 1fr;
     }
