@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, onMounted, ref, watch, nextTick, inject, markRaw, h } from 'vue'
-import { Button, Popup } from '@sil/ui'
+import { Button, Icon as SilIcon, Popup } from '@sil/ui'
 import type { PopupService } from '@sil/ui'
 import { IdentityClient } from '@tiko/identity'
 import { TikoDataClient, type RadioSettings, type RadioState } from '@tiko/data'
@@ -377,10 +377,10 @@ async function persistStateRemote() {
 function seedDefaultCategories() {
   if (categories.isEmpty.value) {
     const defaults: RadioCategory[] = [
-      { id: 'animals', name: 'Animals', icon: '🐾', color: 'yellow', order: 0 },
-      { id: 'stories', name: 'Stories', icon: '📖', color: 'purple', order: 1 },
-      { id: 'bedtime', name: 'Bedtime', icon: '🌙', color: 'cyan', order: 2 },
-      { id: 'songs', name: 'Songs', icon: '🎵', color: 'pink', order: 3 },
+      { id: 'animals', name: 'Animals', icon: 'animals/cat-head', color: 'yellow', order: 0 },
+      { id: 'stories', name: 'Stories', icon: 'ui/books', color: 'purple', order: 1 },
+      { id: 'bedtime', name: 'Bedtime', icon: 'media/headphones', color: 'cyan', order: 2 },
+      { id: 'songs', name: 'Songs', icon: 'media/music-note', color: 'pink', order: 3 },
     ]
     for (const cat of defaults) {
       categories.addCategory(cat)
@@ -707,7 +707,7 @@ function handleCreateCategory() {
   const id = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')
   categories.addCategory({
     name,
-    icon: '📁',
+    icon: 'media/headphones',
     color: categoryColorNames[categories.categories.value.length % categoryColorNames.length],
   })
   newCategoryName.value = ''
@@ -746,7 +746,9 @@ function handleCreateCategory() {
             :style="{ '--cat-color': categoryColor(cat) }"
             @click="selectCategory(cat.id)"
           >
-            <span class="radio-app__category-card__icon">{{ cat.icon }}</span>
+            <span class="radio-app__category-card__icon">
+              <SilIcon :name="cat.icon" size="large" />
+            </span>
             <span class="radio-app__category-card__label">{{ cat.name }}</span>
           </button>
           <!-- Parent mode: add category button -->

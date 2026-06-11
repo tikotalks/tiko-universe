@@ -39,19 +39,19 @@ const newCatName = ref('')
 const newCatIcon = ref('')
 const newCatOpen = ref(false)
 
-const EMOJI_OPTIONS = ['🎵', '📖', '🐾', '🌙', '🎨', '🌟', '🚗', '🌈', '🎪', '🏠', '🦁', 'ABC']
+const ICON_OPTIONS = ['media/music-note', 'ui/books', 'animals/cat-head', 'media/headphones', 'media/image', 'ui/home-location', 'ui/globe']
 const CATEGORY_COLORS = ['red', 'orange', 'yellow', 'green', 'blue', 'purple', 'pink', 'cyan', 'teal', 'lime'] as const
 
-function pickRandomEmoji() {
+function pickCategoryIcon() {
   const used = new Set(categories.categories.value.map(c => c.icon))
-  const available = EMOJI_OPTIONS.filter(e => !used.has(e))
-  return available.length > 0 ? available[Math.floor(Math.random() * available.length)] : '🎵'
+  const available = ICON_OPTIONS.filter(icon => !used.has(icon))
+  return available.length > 0 ? available[Math.floor(Math.random() * available.length)] : 'media/music-note'
 }
 
 function handleNewCat() {
   const name = newCatName.value.trim()
   if (!name) return
-  const icon = newCatIcon.value.trim() || pickRandomEmoji()
+  const icon = newCatIcon.value.trim() || pickCategoryIcon()
   const color = CATEGORY_COLORS[categories.categories.value.length % CATEGORY_COLORS.length]
   const cat = categories.addCategory({ name, icon, color })
   addVideoCategoryId.value = cat.id
@@ -146,7 +146,9 @@ function handleFileUpload(event: Event) {
           :style="{ '--chip-color': cat.color }"
           @click="addVideoCategoryId = addVideoCategoryId === cat.id ? '' : cat.id"
         >
-          <span class="radio-add-popup__category-chip-icon">{{ cat.icon }}</span>
+          <span class="radio-add-popup__category-chip-icon">
+            <SilIcon :name="cat.icon" size="small" />
+          </span>
           <span class="radio-add-popup__category-chip-name">{{ cat.name }}</span>
         </button>
         <button
@@ -167,9 +169,8 @@ function handleFileUpload(event: Event) {
       />
       <input
         v-model="newCatIcon"
-        placeholder="Emoji (optional)"
+        placeholder="Icon name (optional)"
         class="radio-add-popup__new-cat-icon"
-        maxlength="4"
       />
       <Button
         variant="primary"

@@ -78,10 +78,10 @@ const DEFAULTS: Record<TikoAppId, Record<AppResource, JsonValue>> = {
     settings: { language: 'en', colorMode: 'system', volume: 0.8 },
     state: {
       categories: [
-        { id: 'animals', name: 'Animals', icon: '🐾', color: 'yellow', order: 0 },
-        { id: 'stories', name: 'Stories', icon: '📖', color: 'purple', order: 1 },
-        { id: 'bedtime', name: 'Bedtime', icon: '🌙', color: 'cyan', order: 2 },
-        { id: 'songs', name: 'Songs', icon: '🎵', color: 'pink', order: 3 }
+        { id: 'animals', name: 'Animals', icon: 'animals/cat-head', color: 'yellow', order: 0 },
+        { id: 'stories', name: 'Stories', icon: 'ui/books', color: 'purple', order: 1 },
+        { id: 'bedtime', name: 'Bedtime', icon: 'media/headphones', color: 'cyan', order: 2 },
+        { id: 'songs', name: 'Songs', icon: 'media/music-note', color: 'pink', order: 3 }
       ],
       tracks: [],
       currentTrackIndex: 0,

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, watch, computed, inject, nextTick } from 'vue'
+import { Icon as SilIcon } from '@sil/ui'
 import type { PopupService } from '@sil/ui'
 import { useYouTubeMeta } from '../composables/useYouTubeMeta'
 import { useCategories } from '../composables/useCategories'
@@ -226,7 +227,7 @@ function formatTime(seconds: number): string {
             class="add-audio__collections-item"
           >
             <div class="add-audio__collections-item-icon" :style="{ background: cat.color }">
-              {{ cat.icon }}
+              <SilIcon :name="cat.icon" size="small" />
             </div>
             <span class="add-audio__collections-item-name">{{ cat.name }}</span>
             <span class="add-audio__collections-item-count">
@@ -297,7 +298,9 @@ function formatTime(seconds: number): string {
             :style="selectedCategoryId === cat.id ? { '--chip-color': cat.color } : {}"
             @click="selectedCategoryId = selectedCategoryId === cat.id ? '' : cat.id"
           >
-            <span class="add-audio__chip-icon">{{ cat.icon }}</span>
+            <span class="add-audio__chip-icon">
+              <SilIcon :name="cat.icon" size="small" />
+            </span>
             <span class="add-audio__chip-name">{{ cat.name }}</span>
           </button>
         </div>
@@ -351,7 +354,9 @@ function formatTime(seconds: number): string {
             :style="selectedCategoryId === cat.id ? { '--chip-color': cat.color } : {}"
             @click="selectedCategoryId = selectedCategoryId === cat.id ? '' : cat.id"
           >
-            <span class="add-audio__chip-icon">{{ cat.icon }}</span>
+            <span class="add-audio__chip-icon">
+              <SilIcon :name="cat.icon" size="small" />
+            </span>
             <span class="add-audio__chip-name">{{ cat.name }}</span>
           </button>
         </div>

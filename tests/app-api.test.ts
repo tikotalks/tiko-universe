@@ -214,6 +214,7 @@ describe('app-api settings/state endpoints', () => {
     const testEnv = await env()
     const settings = await fetchJson('/v1/apps/yes-no/settings', { headers: auth }, testEnv)
     const state = await fetchJson('/v1/apps/type/state', { headers: auth }, testEnv)
+    const radioState = await fetchJson('/v1/apps/radio/state', { headers: auth }, testEnv)
 
     expect(settings.response.status).toBe(200)
     expect(settings.body).toMatchObject({ app: 'yes-no', version: 0, updatedAt: null })
@@ -221,6 +222,9 @@ describe('app-api settings/state endpoints', () => {
     expect(state.response.status).toBe(200)
     expect(state.body.state.prompts).toEqual(['I need help', 'I want a break', 'I am finished', 'Thank you'])
     expect(state.body.state.completedPrompts).toEqual([])
+    expect(radioState.response.status).toBe(200)
+    expect(radioState.body.state.categories[0].icon).toBe('animals/cat-head')
+    expect(radioState.body.state.categories[3].icon).toBe('media/music-note')
   })
 
   it('writes and reads back settings and state with version increments', async () => {
