@@ -31,7 +31,10 @@ onMounted(() => {
   <TikoAppShell
     :app-name="appConfig.title"
     :app-icon="appConfig.appIcon"
+    :app-icon-image-url="appConfig.appIconImageUrl"
+    :app-icon-media-category="appConfig.appIconMediaCategory"
     :app-color="appConfig.appColor"
+    :theme-color="appConfig.themeColor"
     avatar="ui/avatar"
     :actions="headerActions"
     @header-action="(id) => { if (id === 'settings') talk.settingsOpen.value = !talk.settingsOpen.value }"

@@ -703,8 +703,10 @@ function handleCreateCategory() {
   <TikoAppShell
     :app-name="labels.appName"
     :app-icon="appConfig.appIcon"
+    :app-icon-image-url="appConfig.appIconImageUrl"
     :app-icon-media-category="appConfig.appIconMediaCategory"
     :app-color="appConfig.appColor"
+    :theme-color="appConfig.themeColor"
     avatar="ui/circle-user"
     :actions="headerActions"
     @header-action="headerAction"

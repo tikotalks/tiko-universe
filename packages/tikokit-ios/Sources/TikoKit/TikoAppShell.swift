@@ -132,7 +132,7 @@ public struct TikoAppHeader: View {
 
             Text(appName)
                 .font(.system(.title3, design: .rounded).weight(.heavy))
-                .foregroundStyle(appColor.palette.primary)
+                .foregroundStyle(.primary)
 
             Spacer(minLength: 8)
 
@@ -177,6 +177,7 @@ public struct TikoAppHeader: View {
 public struct TikoAppShell<Content: View, SettingsContent: View>: View {
     private let appName: String
     private let appIcon: String
+    private let appIconImageUrl: String?
     private let appIconMediaCategory: String?
     private let onIconTap: (() -> Void)?
     private let avatar: String
@@ -221,6 +222,7 @@ public struct TikoAppShell<Content: View, SettingsContent: View>: View {
         self.init(
             appName: appName ?? appConfig.title,
             appIcon: appConfig.appIconSystemName,
+            appIconImageUrl: appConfig.appIconImageUrl,
             appIconMediaCategory: appConfig.appIconMediaCategory,
             onIconTap: onIconTap,
             avatar: avatar,
@@ -237,6 +239,7 @@ public struct TikoAppShell<Content: View, SettingsContent: View>: View {
     public init(
         appName: String,
         appIcon: String = "checkmark.circle",
+        appIconImageUrl: String? = nil,
         appIconMediaCategory: String? = nil,
         onIconTap: (() -> Void)? = nil,
         avatar: String = "person.crop.circle.fill",
@@ -250,6 +253,7 @@ public struct TikoAppShell<Content: View, SettingsContent: View>: View {
     ) {
         self.appName = appName
         self.appIcon = appIcon
+        self.appIconImageUrl = appIconImageUrl
         self.appIconMediaCategory = appIconMediaCategory
         self.onIconTap = onIconTap
         self.avatar = avatar
@@ -425,6 +429,10 @@ public struct TikoAppShell<Content: View, SettingsContent: View>: View {
     }
 
     private func fetchIconIfNeeded() async {
+        if let iconUrl = appIconImageUrl, let url = URL(string: iconUrl), !iconUrl.isEmpty {
+            fetchedIconURL = resizedCDNURL(url, size: 100)
+            return
+        }
         guard let category = appIconMediaCategory else { return }
         let key = "tiko.icon.\(appName.lowercased())"
         if let stored = UserDefaults.standard.string(forKey: key), let url = URL(string: stored) {
@@ -515,6 +523,7 @@ public extension TikoAppShell where SettingsContent == EmptyView {
     init(
         appName: String,
         appIcon: String = "checkmark.circle",
+        appIconImageUrl: String? = nil,
         appIconMediaCategory: String? = nil,
         onIconTap: (() -> Void)? = nil,
         avatar: String = "person.crop.circle.fill",
@@ -528,6 +537,7 @@ public extension TikoAppShell where SettingsContent == EmptyView {
         self.init(
             appName: appName,
             appIcon: appIcon,
+            appIconImageUrl: appIconImageUrl,
             appIconMediaCategory: appIconMediaCategory,
             onIconTap: onIconTap,
             avatar: avatar,

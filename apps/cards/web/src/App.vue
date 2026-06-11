@@ -449,8 +449,10 @@ onMounted(async () => {
   <TikoAppShell
     :app-name="appTitle"
     :app-icon="appConfig.appIcon"
+    :app-icon-image-url="appConfig.appIconImageUrl"
     :app-icon-media-category="appConfig.appIconMediaCategory"
     :app-color="appConfig.appColor"
+    :theme-color="appConfig.themeColor"
     avatar="ui/avatar"
     :show-back="cards.collectionStack.value.length > 0"
     :actions="headerActions"

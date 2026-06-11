@@ -5,6 +5,7 @@ export const appConfig = {
   "title": "Radio",
   "appColor": "radio",
   "appIcon": "media/headphones",
+  "appIconImageUrl": "",
   "appIconMediaCategory": "music",
   "themeColor": "#e84057"
 } satisfies TikoAppConfig

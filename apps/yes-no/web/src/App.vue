@@ -353,8 +353,10 @@ function resetSentence() {
   <TikoAppShell
     :app-name="labels.appName"
     :app-icon="appConfig.appIcon"
+    :app-icon-image-url="appConfig.appIconImageUrl"
     :app-icon-media-category="appConfig.appIconMediaCategory"
     :app-color="appConfig.appColor"
+    :theme-color="appConfig.themeColor"
     avatar="ui/avatar"
     :actions="headerActions"
     :show-settings-button="parentMode"

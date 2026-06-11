@@ -20,6 +20,7 @@ const fallbackConfigs = {
 }
 
 const webApps = ['yes-no', 'type', 'cards', 'sequence', 'timer', 'radio', 'todo', 'talk']
+const iosSharedApps = ['yes-no', 'type', 'cards', 'sequence', 'timer', 'radio', 'talk', 'tiko']
 const iosApps = {
   'yes-no': 'YesNoAppConfig.swift',
   type: 'TypeAppConfig.swift',
@@ -61,8 +62,8 @@ async function writeWebConfig(app, config) {
     title: config.title,
     appColor: config.appColor,
     appIcon: config.appIcon,
+    appIconImageUrl: config.appIconImageUrl ?? '',
     ...(config.appIconMediaCategory ? { appIconMediaCategory: config.appIconMediaCategory } : {}),
-    ...(config.appIconImageUrl ? { appIconImageUrl: config.appIconImageUrl } : {}),
     ...(config.themeColor ? { themeColor: config.themeColor } : {}),
   }
   const content = `import type { TikoAppConfig } from '@tiko/ui'\n\nexport const appConfig = ${JSON.stringify(payload, null, 2)} satisfies TikoAppConfig\n`
@@ -72,11 +73,21 @@ async function writeWebConfig(app, config) {
 async function writeIosSharedConfig(configs) {
   const file = resolve(root, 'packages/tikokit-ios/Sources/TikoKit/TikoAppColor.swift')
   let content = await readFile(file, 'utf8')
-  const block = Object.entries(configs)
-    .filter(([app]) => ['yes-no', 'type', 'cards', 'sequence', 'timer', 'radio', 'tiko'].includes(app))
-    .map(([app, config]) => `    static let ${swiftStaticName(app)} = TikoAppConfig(id: .${swiftCase(app)}, title: "${escapeSwift(config.title)}", appColor: .${swiftCase(config.appColor)}, appIconSystemName: "${escapeSwift(config.iosIcon ?? fallbackConfigs[app]?.iosIcon ?? 'app')}", appIconMediaCategory: ${swiftOptionalString(config.appIconMediaCategory)}, themeColorHex: ${swiftHex(config.themeColor ?? fallbackConfigs[app]?.themeColor)})`)
+  const iosConfigs = Object.entries(configs).filter(([app]) => iosSharedApps.includes(app))
+  const block = iosConfigs
+    .map(([app, config]) => `    static let ${swiftStaticName(app)} = TikoAppConfig(id: .${swiftCase(app)}, title: "${escapeSwift(config.title)}", appColor: .${swiftCase(config.appColor)}, appIconSystemName: "${escapeSwift(config.iosIcon ?? fallbackConfigs[app]?.iosIcon ?? 'app')}", appIconMediaCategory: ${swiftOptionalString(config.appIconMediaCategory)}, appIconImageUrl: ${swiftOptionalString(config.appIconImageUrl)}, themeColorHex: ${swiftHex(config.themeColor ?? fallbackConfigs[app]?.themeColor)})`)
+    .join('\n')
+  const paletteBlock = iosConfigs
+    .map(([app, config]) => {
+      const themeColor = config.themeColor ?? fallbackConfigs[app]?.themeColor
+      return `        case .${swiftCase(app)}:\n            TikoAppPalette(label: "${escapeSwift(config.title)}", primary: Color(hex: ${swiftHex(themeColor)}), dark: Color(hex: ${swiftDarkHex(themeColor)}))`
+    })
     .join('\n')
   content = content.replace(/public extension TikoAppConfig \{[\s\S]*?\n\}/, `public extension TikoAppConfig {\n${block}\n}`)
+  content = content.replace(
+    /public extension TikoAppColor \{\n    var palette: TikoAppPalette \{\n        switch self \{[\s\S]*?\n        \}\n    \}\n\}/,
+    `public extension TikoAppColor {\n    var palette: TikoAppPalette {\n        switch self {\n${paletteBlock}\n        }\n    }\n}`
+  )
   await writeIfChanged(file, content)
 }
 
@@ -113,6 +124,15 @@ function swiftOptionalString(value) {
 function swiftHex(value) {
   const hex = String(value ?? '#000000').replace('#', '')
   return `0x${/^[0-9a-fA-F]{6}$/.test(hex) ? hex.toLowerCase() : '000000'}`
+}
+
+function swiftDarkHex(value) {
+  const hex = String(value ?? '#000000').replace('#', '')
+  if (!/^[0-9a-fA-F]{6}$/.test(hex)) return '0x000000'
+  const red = Math.max(0, Math.round(Number.parseInt(hex.slice(0, 2), 16) * 0.52))
+  const green = Math.max(0, Math.round(Number.parseInt(hex.slice(2, 4), 16) * 0.52))
+  const blue = Math.max(0, Math.round(Number.parseInt(hex.slice(4, 6), 16) * 0.52))
+  return `0x${[red, green, blue].map((part) => part.toString(16).padStart(2, '0')).join('')}`
 }
 
 main().catch((error) => {
