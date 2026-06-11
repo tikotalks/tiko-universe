@@ -204,6 +204,47 @@ describe('atlas-api', () => {
     expect(fetchSpy).toHaveBeenCalledTimes(1)
   })
 
+  it('selects a native Narakeet voice for each supported Tiko language', async () => {
+    const cases = [
+      ['en', 'raymond'],
+      ['de', 'andreas'],
+      ['es', 'alejandra'],
+      ['fr', 'marion'],
+      ['nl', 'famke'],
+      ['pt', 'lurdes'],
+      ['ja', 'hideaki'],
+      ['zh', 'yifei'],
+      ['ko', 'dong-min'],
+      ['mt', 'corazon'],
+      ['it', 'vittorio'],
+      ['ar', 'farah'],
+      ['hy', 'nune'],
+    ] as const
+
+    const fetchSpy = vi.spyOn(globalThis, 'fetch').mockImplementation(async () => new Response(new Uint8Array([4, 5, 6]), { status: 200 }))
+
+    for (const [locale, voice] of cases) {
+      const env = makeEnv()
+      const response = await worker.fetch(new Request('https://api.test/v1/atlas/speech', {
+        method: 'POST',
+        body: JSON.stringify({ text: `Phrase ${locale}`, locale, app: 'yes-no', purpose: 'child-button' }),
+      }), env)
+
+      expect(response.status).toBe(201)
+      await expect(json(response)).resolves.toMatchObject({
+        data: { provider: { name: 'narakeet', model: 'narakeet-mp3', voice } },
+      })
+      expect(fetchSpy).toHaveBeenLastCalledWith(
+        `https://api.narakeet.com/text-to-speech/mp3?voice=${encodeURIComponent(voice)}`,
+        expect.objectContaining({
+          method: 'POST',
+          body: `Phrase ${locale}`,
+          headers: expect.objectContaining({ 'x-api-key': 'narakeet-key', 'Content-Type': 'text/plain' }),
+        }),
+      )
+    }
+  })
+
   it('routes text generation to Workers AI by default', async () => {
     const env = makeEnv()
     const response = await worker.fetch(new Request('https://api.test/v1/atlas/text', {

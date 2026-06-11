@@ -14,6 +14,22 @@ interface CachedAssetRow {
 type SpeechProvider = 'openai' | 'elevenlabs' | 'narakeet'
 type GeneratedSpeech = { bytes: Uint8Array; contentType: string; durationSeconds?: number }
 
+const DEFAULT_NARAKEET_VOICE_BY_LANGUAGE: Record<string, string> = {
+  en: 'raymond',
+  de: 'andreas',
+  es: 'alejandra',
+  fr: 'marion',
+  nl: 'famke',
+  pt: 'lurdes',
+  ja: 'hideaki',
+  zh: 'yifei',
+  ko: 'dong-min',
+  mt: 'corazon',
+  it: 'vittorio',
+  ar: 'farah',
+  hy: 'nune',
+}
+
 export async function executeAtlasCapability(request: AtlasRunRequest, env: Env): Promise<AtlasExecutionResult> {
   switch (request.capability) {
     case 'speech.synthesize': return synthesizeSpeech({ ...(asRecord(request.input)), app: request.app, purpose: request.purpose } as SpeechRequest, env)
@@ -279,10 +295,7 @@ function defaultSpeechVoice(provider: SpeechProvider, locale = 'en') {
 function defaultNarakeetVoice(locale: string) {
   const normalizedLocale = locale.trim().toLowerCase()
   const language = normalizedLocale.split('-')[0]
-  switch (language) {
-    case 'nl': return 'famke'
-    default: return 'Raymond'
-  }
+  return DEFAULT_NARAKEET_VOICE_BY_LANGUAGE[language] ?? DEFAULT_NARAKEET_VOICE_BY_LANGUAGE.en
 }
 
 function toSpeechProvider(provider: string): SpeechProvider {
