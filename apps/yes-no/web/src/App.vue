@@ -37,6 +37,17 @@ interface AnswerTile {
   icon?: string
 }
 
+interface AnswerSet {
+  id: string
+  answers?: AnswerTile[]
+}
+
+interface DefaultsState {
+  answers?: AnswerTile[]
+  answerSets?: AnswerSet[]
+  selectedSetId?: string
+}
+
 interface PersistedState {
   language?: string
   colorMode?: TikoColorMode
@@ -98,9 +109,26 @@ function answerLabel(answer: string) {
 }
 
 function localizeDefaultAnswer(answer: AnswerTile): AnswerTile {
-  const label = answer.labelTranslations?.[language.value] ?? answer.label
-  const speech = answer.speechTranslations?.[language.value] ?? answer.speech ?? label
+  const semanticLabel = answer.id === 'yes'
+    ? labels.value.yes
+    : answer.id === 'no'
+      ? labels.value.no
+      : undefined
+  const label = answer.labelTranslations?.[language.value] ?? semanticLabel ?? answer.label
+  const speech = answer.speechTranslations?.[language.value] ?? semanticLabel ?? answer.speech ?? label
   return { ...answer, label, speech }
+}
+
+function defaultsAnswers(state: unknown): AnswerTile[] {
+  const value = state as DefaultsState | undefined
+  if (Array.isArray(value?.answerSets)) {
+    const selected = typeof value?.selectedSetId === 'string'
+      ? value.answerSets.find(set => set.id === value.selectedSetId)
+      : undefined
+    const activeSet = selected ?? value.answerSets[0]
+    return Array.isArray(activeSet?.answers) ? activeSet.answers : []
+  }
+  return Array.isArray(value?.answers) ? value.answers : []
 }
 
 const stored = readJson<PersistedState>(storageKey, {})
@@ -252,7 +280,7 @@ async function hydrateRemoteData() {
   ])
   applySettings(settings.settings, settings.version)
   applyState(state.state, state.version)
-  defaultAnswers.value = Array.isArray(defaults?.state.answers) ? defaults.state.answers as AnswerTile[] : []
+  defaultAnswers.value = defaultsAnswers(defaults?.state)
 }
 
 async function persistSettingsRemote() {

@@ -20,6 +20,7 @@ describe('TikoKit component contract', () => {
       'TikoAnswerButton',
       'TikoChoiceGrid',
       'TikoSettingsPanel',
+      'TikoOpenIconPicker',
       'tikoAppColors',
       'tikoAppConfigs'
     ])
