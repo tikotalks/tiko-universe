@@ -27,6 +27,7 @@ const routes: RouteRecordRaw[] = [
   { path: '/stories', name: 'stories', component: () => import('./pages/StoryNarratorPage.vue') },
   { path: '/library', name: 'library', component: () => import('./pages/MediaLibraryPage.vue') },
   { path: '/users', name: 'users', component: () => import('./pages/UsersPage.vue') },
+  { path: '/services', name: 'services', component: () => import('./pages/ServicesPage.vue') },
   { path: '/profile', name: 'profile', component: () => import('./pages/ProfilePage.vue') },
   { path: '/settings', name: 'settings', component: () => import('./pages/SettingsPage.vue') },
   { path: '/cards', name: 'cards', component: () => import('./pages/CardsPage.vue') },

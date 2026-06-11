@@ -1,4 +1,7 @@
+import type { TikoColorName } from './tikoColors'
+
 export type TikoAppId = 'yes-no' | 'type' | 'cards' | 'sequence' | 'timer' | 'radio' | 'todo'
+export type { TikoColorName } from './tikoColors'
 export type JsonValue = null | boolean | number | string | JsonValue[] | { [key: string]: JsonValue }
 export type JsonObject = { [key: string]: JsonValue | undefined }
 
@@ -59,6 +62,7 @@ export interface TypeSettings extends JsonObject {
 
 export interface TypeState extends JsonObject {
   text?: string
+  prompts?: string[]
   completedPrompts?: string[]
 }
 
@@ -135,6 +139,7 @@ export interface TimerState extends JsonObject {
   remainingMs?: number
   startedAt?: number | null
   lastPresets?: number[]
+  presets?: { id: string; label: string; seconds: number }[]
 }
 
 export type TrackSource = 'youtube' | 'r2' | 'upload'
@@ -142,8 +147,8 @@ export type TrackSource = 'youtube' | 'r2' | 'upload'
 export interface RadioCategory {
   id: string
   name: string
-  icon: string      // e.g. 'animals', 'farm', 'bedtime', 'songs'
-  color: string     // e.g. '#FFD93D' (yellow), '#6BCB77' (green), etc.
+  icon: string
+  color: TikoColorName
   order: number
 }
 

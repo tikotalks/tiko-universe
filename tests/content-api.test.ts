@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest'
+import { afterEach, describe, expect, it, vi } from 'vitest'
 import worker from '../workers/content-api/src/index'
 
 type Row = Record<string, unknown>
@@ -36,6 +36,65 @@ class MemoryD1 {
     id: 'item_1', template_id: 'card', title: 'Cat', slug: 'cat', status: 'published', language_code: 'en',
     tags: '["animal"]', categories: '["cards"]', data: '{"emoji":"🐱"}',
   }]
+  appItems: Row[] = [
+    {
+      id: '__default_animals', app_id: 'cards', type: 'collection', parent_id: null, title: 'Animals',
+      subtitle: null, body: null, speech: 'Animals', color_token: 'green',
+      icon: null, image_ref: null, sort_order: 1, is_default: 1, is_published: 1,
+      owner_user_id: null, owner_child_id: null, source_item_id: null, metadata_json: '{"mediaCategories":["animals"]}',
+    },
+    {
+      id: '__default_animals_dog', app_id: 'cards', type: 'card', parent_id: '__default_animals', title: 'Dog',
+      subtitle: null, body: null, speech: 'Dog', color_token: 'green',
+      icon: null, image_ref: null, sort_order: 1, is_default: 1, is_published: 1,
+      owner_user_id: null, owner_child_id: null, source_item_id: null, metadata_json: '{"collectionId":"__default_animals"}',
+    },
+    {
+      id: 'yes-no-set-yes-no', app_id: 'yes-no', type: 'answer_set', parent_id: null, title: 'Yes / No',
+      subtitle: 'Simple yes and no answers.', body: null, speech: null, color_token: 'green',
+      icon: null, image_ref: null, sort_order: 0, is_default: 1, is_published: 1,
+      owner_user_id: null, owner_child_id: null, source_item_id: null, metadata_json: '{}',
+    },
+    {
+      id: 'yes-no-answer-yes', app_id: 'yes-no', type: 'answer_tile', parent_id: 'yes-no-set-yes-no', title: 'Yes',
+      subtitle: null, body: null, speech: 'Yes', color_token: 'green',
+      icon: 'ui/check-fat', image_ref: 'media-yes', sort_order: 0, is_default: 1, is_published: 1,
+      owner_user_id: null, owner_child_id: null, source_item_id: null, metadata_json: '{"answerId":"yes"}',
+    },
+    {
+      id: 'yes-no-answer-no', app_id: 'yes-no', type: 'answer_tile', parent_id: 'yes-no-set-yes-no', title: 'No',
+      subtitle: null, body: null, speech: 'No', color_token: 'red',
+      icon: 'wayfinding/cross', image_ref: null, sort_order: 1, is_default: 1, is_published: 1,
+      owner_user_id: null, owner_child_id: null, source_item_id: null, metadata_json: '{"answerId":"no"}',
+    },
+    {
+      id: 'sequence_counting-apples', app_id: 'sequence', type: 'sequence', parent_id: null, title: 'Counting Apples',
+      subtitle: null, body: null, speech: 'Counting Apples', color_token: 'learning',
+      icon: null, image_ref: 'media-sequence', sort_order: 0, is_default: 1, is_published: 1,
+      owner_user_id: null, owner_child_id: null, source_item_id: null, metadata_json: '{"category":"learning"}',
+    },
+    {
+      id: 'sequence_counting-apples_two-apples', app_id: 'sequence', type: 'sequence_step', parent_id: 'sequence_counting-apples', title: '2 apples',
+      subtitle: null, body: null, speech: '2 apples', color_token: null,
+      icon: null, image_ref: 'media-apple', sort_order: 0, is_default: 1, is_published: 1,
+      owner_user_id: null, owner_child_id: null, source_item_id: null, metadata_json: '{"imagePrompt":"two red apples","imageRefs":["media-apple","media-apple"]}',
+    },
+    {
+      id: 'sequence_counting-apples_nine-apples', app_id: 'sequence', type: 'sequence_step', parent_id: 'sequence_counting-apples', title: '9 apples',
+      subtitle: null, body: null, speech: '9 apples', color_token: null,
+      icon: null, image_ref: 'media-apple', sort_order: 1, is_default: 1, is_published: 1,
+      owner_user_id: null, owner_child_id: null, source_item_id: null, metadata_json: '{"imagePrompt":"nine red apples","imageRefs":["media-apple","media-apple","media-apple","media-apple","media-apple","media-apple","media-apple","media-apple","media-apple"]}',
+    },
+  ]
+  appTranslations: Row[] = [
+    { item_id: '__default_animals', locale: 'mt', title: 'Annimali', subtitle: null, body: null, speech: null, metadata_json: null },
+    { item_id: '__default_animals_dog', locale: 'mt', title: 'Kelb', subtitle: null, body: null, speech: 'Kelb', metadata_json: null },
+    { item_id: 'yes-no-set-yes-no', locale: 'mt', title: 'Iva / Le', subtitle: 'Tweġibiet sempliċi iva u le.', body: null, speech: null, metadata_json: null },
+    { item_id: 'yes-no-answer-yes', locale: 'mt', title: 'Iva', subtitle: null, body: null, speech: 'Iva', metadata_json: null },
+    { item_id: 'yes-no-answer-no', locale: 'mt', title: 'Le', subtitle: null, body: null, speech: 'Le', metadata_json: null },
+    { item_id: 'sequence_counting-apples', locale: 'mt', title: 'Ngħoddu t-Tuffieħ', subtitle: null, body: null, speech: null, metadata_json: null },
+    { item_id: 'sequence_counting-apples_two-apples', locale: 'mt', title: '2 tuffiħiet', subtitle: null, body: null, speech: '2 tuffiħiet', metadata_json: null },
+  ]
 
   prepare(sql: string) { return new MemoryStatement(this, sql) }
 
@@ -53,7 +112,12 @@ class MemoryD1 {
     }
     if (normalized.includes('FROM content_page_sections')) return new MemoryResult(this.sections.filter(row => row.page_id === values[0]))
     if (normalized.includes('FROM languages')) return new MemoryResult(this.languages)
+    if (normalized.includes('FROM user_images')) return new MemoryResult([{ id: values[0], r2_key: `uploads/${values[0]}.png` }])
+    if (normalized.includes('FROM content_item_translations')) {
+      return new MemoryResult(this.appTranslations.filter(row => row.locale === values[0]))
+    }
     if (normalized.includes('FROM content_items')) {
+      if (normalized.includes('app_id = ?')) return new MemoryResult(this.appItems.filter(row => row.app_id === values[0]))
       if (normalized.includes('id = ?')) return new MemoryResult(this.items.filter(row => row.id === values[0]))
       if (normalized.includes('slug = ?')) return new MemoryResult(this.items.filter(row => row.slug === values[0]))
       return new MemoryResult(this.items)
@@ -66,6 +130,7 @@ class MemoryKV {
   values = new Map<string, string>()
   async get(key: string) { return this.values.get(key) ?? null }
   async put(key: string, value: string) { this.values.set(key, value) }
+  async delete(key: string) { this.values.delete(key) }
 }
 
 function makeEnv() {
@@ -73,12 +138,17 @@ function makeEnv() {
     CONTENT_DB: new MemoryD1(),
     CONTENT_CACHE: new MemoryKV(),
     ALLOWED_ORIGINS: 'https://cards.tikoapps.org,http://localhost:5173',
+    TRANSLATIONS_API_URL: 'https://translations.test/v1',
   }
 }
 
 async function parseJson(response: Response) {
   return response.json() as Promise<Record<string, any>>
 }
+
+afterEach(() => {
+  vi.unstubAllGlobals()
+})
 
 describe('content-api worker', () => {
   it('serves health without cache', async () => {
@@ -147,6 +217,53 @@ describe('content-api worker', () => {
     expect(response.status).toBe(200)
     expect(body.success).toBe(true)
     expect(body.data).toMatchObject({ id: 'item_1', slug: 'cat', tags: ['animal'], data: { emoji: '🐱' } })
+  })
+
+  it('localizes default cards collections from content item translations', async () => {
+    const response = await worker.fetch(new Request('https://content.test/v1/cards/collections?language=mt'), makeEnv() as never)
+    const body = await parseJson(response)
+
+    expect(response.status).toBe(200)
+    expect(body.data.collections[0].title).toBe('Annimali')
+    expect(body.data.collections[0].cards[0]).toMatchObject({ title: 'Kelb', speech: 'Kelb' })
+  })
+
+  it('serves localized Yes No default content from generic content items', async () => {
+    const response = await worker.fetch(new Request('https://content.test/v1/yes-no/content?language=mt'), makeEnv() as never)
+    const body = await parseJson(response)
+
+    expect(response.status).toBe(200)
+    expect(body.data.selectedSetId).toBe('yes-no-set-yes-no')
+    expect(body.data.answerSets[0]).toMatchObject({ title: 'Iva / Le', description: 'Tweġibiet sempliċi iva u le.' })
+    expect(body.data.answerSets[0].answers).toEqual([
+      expect.objectContaining({ id: 'yes', label: 'Iva', speech: 'Iva', color: 'green', imageRef: 'media-yes' }),
+      expect.objectContaining({ id: 'no', label: 'Le', speech: 'Le', color: 'red' }),
+    ])
+  })
+
+  it('serves localized Sequence defaults with media ID image refs', async () => {
+    const response = await worker.fetch(new Request('https://content.test/v1/sequence/content?language=mt'), makeEnv() as never)
+    const body = await parseJson(response)
+
+    expect(response.status).toBe(200)
+    expect(body.data.sequences[0]).toMatchObject({
+      id: 'sequence_counting-apples',
+      name: 'Ngħoddu t-Tuffieħ',
+      category: 'learning',
+      imageRef: 'media-sequence',
+    })
+    expect(body.data.sequences[0].steps[0]).toMatchObject({
+      label: '2 tuffiħiet',
+      text: '2 tuffiħiet',
+      imageRef: 'media-apple',
+      imageRefs: ['media-apple', 'media-apple'],
+    })
+    expect(body.data.sequences[0].steps[1]).toMatchObject({
+      label: '9 apples',
+      text: '9 apples',
+      imageRef: 'media-apple',
+      imageRefs: Array.from({ length: 9 }, () => 'media-apple'),
+    })
   })
 
   it('rejects malformed query requests', async () => {

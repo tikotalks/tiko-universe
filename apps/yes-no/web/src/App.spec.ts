@@ -1,3 +1,4 @@
+import { nextTick } from 'vue'
 import { flushPromises, mount } from '@vue/test-utils'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import App from './App.vue'
@@ -44,6 +45,7 @@ function createFetchMock(options: {
   settings?: Record<string, unknown>
   state?: Record<string, unknown>
   defaults?: Record<string, unknown>
+  appConfig?: Record<string, unknown>
   failBootstrap?: boolean
   failCookieSession?: boolean
   failTts?: boolean
@@ -59,6 +61,22 @@ function createFetchMock(options: {
       }
       return jsonResponse(identityBundle(options.identity))
     }
+
+    if (url.endsWith('/apps/config/yes-no') && method === 'GET') {
+      return jsonResponse({
+        config: options.appConfig ?? {
+          id: 'yes-no',
+          title: 'Yes No',
+          appColor: 'yes-no',
+          appIcon: 'ui/check-fat',
+          appIconMediaCategory: 'emotions',
+          themeColor: '#9b3fbd',
+        },
+        updatedAt: null,
+        version: 0,
+      })
+    }
+
     if (url.endsWith('/identity/profile') && method === 'GET') {
       return jsonResponse({ profile: {} })
     }
@@ -102,8 +120,8 @@ function createFetchMock(options: {
       return jsonResponse({ app: 'yes-no', updatedAt: null, version: 3, state: options.state ?? {} })
     }
 
-    if (url.endsWith('/apps/defaults/yes-no/state') && method === 'GET') {
-      return jsonResponse({ app: 'yes-no', updatedAt: null, version: 1, state: options.defaults ?? {} })
+    if (url.includes('/yes-no/content') && method === 'GET') {
+      return jsonResponse({ success: true, data: options.defaults ?? {} })
     }
 
     if (url.endsWith('/apps/yes-no/settings') && method === 'PUT') {
@@ -178,7 +196,7 @@ describe('Yes No web app', () => {
       settings: { language: 'nl', colorMode: 'system' },
       defaults: {
         answers: [
-          { id: 'yes', label: 'Yes', speech: 'Yes', color: 'green' },
+          { id: 'yes', label: 'Yes', speech: 'Yes', color: 'green', imageRef: 'media-yes' },
           { id: 'no', label: 'No', speech: 'No', color: 'red' }
         ]
       }
@@ -194,6 +212,31 @@ describe('Yes No web app', () => {
       expect(labels).not.toContain('Yes')
       expect(labels).not.toContain('No')
     })
+    expect(wrapper.get('[data-test="tiko-answer-button"] img').attributes('src')).toBe('https://content.tikoapi.org/v1/content/images/media-yes')
+  })
+
+  it('applies admin-managed app color and icon config at runtime', async () => {
+    vi.stubGlobal('fetch', createFetchMock({
+      appConfig: {
+        id: 'yes-no',
+        title: 'Custom Yes No',
+        appColor: 'yes-no',
+        appIcon: 'ui/question-mark-fat',
+        appIconImageUrl: 'https://data.tikocdn.org/uploads/custom-icon.png',
+        appIconMediaCategory: 'feelings',
+        themeColor: '#123456',
+      }
+    }))
+
+    const { wrapper } = mountApp()
+    await flushPromises()
+
+    await vi.waitFor(() => {
+      expect(wrapper.text()).toContain('Custom Yes No')
+      expect(wrapper.get('.tiko-app-shell').attributes('style')).toContain('#123456')
+      expect(wrapper.get('.tiko-app-header__app-icon img').attributes('src')).toContain('custom-icon.png')
+    })
+    expect(document.querySelector<HTMLMetaElement>('meta[name="theme-color"]')?.content).toBe('#123456')
   })
 
   it('persists settings through @tiko/data and keeps a local fallback copy', async () => {
@@ -260,6 +303,51 @@ describe('Yes No web app', () => {
       body: expect.stringContaining('Do you want music?')
     }))
     expect(window.localStorage.getItem('tiko:yes-no')).toContain('Do you want music?')
+  })
+
+  it('shows generating and playing states while speaking a custom sentence', async () => {
+    const baseFetch = createFetchMock()
+    let resolveTts: ((response: Response) => void) | undefined
+    vi.stubGlobal('fetch', vi.fn((input: RequestInfo | URL, init?: RequestInit) => {
+      const url = String(input)
+      if (url.endsWith('/v1/atlas/speech')) {
+        return new Promise<Response>((resolve) => { resolveTts = resolve })
+      }
+      return baseFetch(input, init)
+    }))
+
+    let finishAudio: (() => void) | undefined
+    vi.stubGlobal('Audio', vi.fn(function AudioMock() {
+      const listeners: Record<string, () => void> = {}
+      finishAudio = () => listeners.ended?.()
+      return {
+        play: vi.fn(async () => undefined),
+        addEventListener: vi.fn((event: string, listener: () => void) => { listeners[event] = listener }),
+      }
+    }))
+
+    const { wrapper } = mountApp()
+    await flushPromises()
+
+    await wrapper.get('textarea').setValue('Do you want music?')
+    void wrapper.get('.yes-no-app__speak').trigger('click')
+    await nextTick()
+
+    expect(wrapper.get('.yes-no-app__speak').attributes('data-state')).toBe('generating')
+    expect(wrapper.get('.yes-no-app__speak').attributes('aria-busy')).toBe('true')
+    expect(wrapper.get('.yes-no-app__speak').attributes()).toHaveProperty('disabled')
+
+    resolveTts?.(jsonResponse({ success: true, audioUrl: '/audio?key=audio%2Fsentence.mp3' }))
+    await flushPromises()
+
+    expect(wrapper.get('.yes-no-app__speak').attributes('data-state')).toBe('playing')
+    expect(wrapper.get('.yes-no-app__speak').attributes()).toHaveProperty('disabled')
+
+    finishAudio?.()
+    await flushPromises()
+
+    expect(wrapper.get('.yes-no-app__speak').attributes('data-state')).toBe('idle')
+    expect(wrapper.get('.yes-no-app__speak').attributes()).not.toHaveProperty('disabled')
   })
 
   it('falls back to the local child-facing flow if identity bootstrap is unavailable', async () => {

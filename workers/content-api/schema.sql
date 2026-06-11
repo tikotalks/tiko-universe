@@ -54,8 +54,39 @@ CREATE TABLE IF NOT EXISTS content_items (
   tags TEXT,
   categories TEXT,
   data TEXT,
+  app_id TEXT,
+  type TEXT,
+  parent_id TEXT,
+  source_locale TEXT NOT NULL DEFAULT 'en',
+  subtitle TEXT,
+  body TEXT,
+  speech TEXT,
+  color_token TEXT,
+  icon TEXT,
+  image_ref TEXT,
+  sort_order INTEGER NOT NULL DEFAULT 0,
+  is_default INTEGER NOT NULL DEFAULT 0,
+  is_published INTEGER NOT NULL DEFAULT 1,
+  owner_user_id TEXT,
+  owner_child_id TEXT,
+  source_item_id TEXT,
+  metadata_json TEXT,
   created_at TEXT NOT NULL DEFAULT (datetime('now')),
   updated_at TEXT NOT NULL DEFAULT (datetime('now'))
+);
+
+CREATE TABLE IF NOT EXISTS content_item_translations (
+  item_id TEXT NOT NULL,
+  locale TEXT NOT NULL,
+  title TEXT,
+  subtitle TEXT,
+  body TEXT,
+  speech TEXT,
+  metadata_json TEXT,
+  created_at TEXT NOT NULL DEFAULT (datetime('now')),
+  updated_at TEXT NOT NULL DEFAULT (datetime('now')),
+  PRIMARY KEY (item_id, locale),
+  FOREIGN KEY (item_id) REFERENCES content_items(id) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS languages (
@@ -71,34 +102,10 @@ CREATE INDEX IF NOT EXISTS idx_content_pages_published ON content_pages(is_publi
 CREATE INDEX IF NOT EXISTS idx_content_page_sections_page ON content_page_sections(page_id);
 CREATE INDEX IF NOT EXISTS idx_content_items_slug ON content_items(slug);
 CREATE INDEX IF NOT EXISTS idx_content_items_template ON content_items(template_id);
-
--- Cards app: default collections and cards served to all clients
-CREATE TABLE IF NOT EXISTS cards_collections (
-  id TEXT PRIMARY KEY,
-  title TEXT NOT NULL,
-  color_hex INTEGER NOT NULL DEFAULT 0,
-  display_order INTEGER NOT NULL DEFAULT 0,
-  media_categories TEXT,                   -- JSON array e.g. '["animals"]'
-  image_url TEXT,
-  language_code TEXT NOT NULL DEFAULT 'en',
-  is_active INTEGER NOT NULL DEFAULT 1,
-  created_at TEXT NOT NULL DEFAULT (datetime('now')),
-  updated_at TEXT NOT NULL DEFAULT (datetime('now'))
-);
-
-CREATE TABLE IF NOT EXISTS cards_tiles (
-  id TEXT PRIMARY KEY,
-  collection_id TEXT NOT NULL,
-  title TEXT NOT NULL,
-  speech TEXT NOT NULL,
-  color_hex INTEGER NOT NULL DEFAULT 0,
-  display_order INTEGER NOT NULL DEFAULT 0,
-  image_ref TEXT,
-  FOREIGN KEY (collection_id) REFERENCES cards_collections(id) ON DELETE CASCADE
-);
-
-CREATE INDEX IF NOT EXISTS idx_cards_collections_order ON cards_collections(display_order, language_code);
-CREATE INDEX IF NOT EXISTS idx_cards_tiles_collection ON cards_tiles(collection_id, display_order);
+CREATE INDEX IF NOT EXISTS idx_content_items_app ON content_items(app_id, type, parent_id, sort_order);
+CREATE INDEX IF NOT EXISTS idx_content_items_owner ON content_items(owner_user_id, owner_child_id, app_id);
+CREATE INDEX IF NOT EXISTS idx_content_items_source ON content_items(source_item_id);
+CREATE INDEX IF NOT EXISTS idx_content_item_translations_locale ON content_item_translations(locale);
 
 CREATE TABLE IF NOT EXISTS user_images (
   id TEXT PRIMARY KEY,

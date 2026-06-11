@@ -2,6 +2,8 @@
 import { computed, ref } from 'vue'
 import { useBemm } from 'bemm'
 import { Button, InputText } from '@sil/ui'
+import { tikoColors } from '@tiko/ui'
+import type { TikoColorName } from '@tiko/data'
 import ColorDotPicker from '../ColorDotPicker.vue'
 import MediaPicker from '../MediaPicker.vue'
 
@@ -11,15 +13,7 @@ interface LegacyTile {
   speech?: string
   type?: string
   color?: string
-  image?: string
-  imageUrl?: string
-  image_url?: string
-  imageURL?: string
   imageRef?: string
-  original_url?: string
-  thumbnailUrl?: string
-  thumbnail_url?: string
-  colorHex?: number
   order?: number
 }
 
@@ -27,20 +21,18 @@ interface CardItem {
   id: string
   title: string
   speech: string
-  colorHex: number
+  color: TikoColorName
   order: number
-  imageURL?: string
   imageRef?: string
 }
 
 interface Collection {
   id: string
   title: string
-  colorHex: number
+  color: TikoColorName
   order: number
   parentID?: string | null
   mediaCategories: string[]
-  imageURL?: string
   imageRef?: string
   cards: CardItem[]
   tiles?: LegacyTile[]
@@ -57,6 +49,9 @@ const emit = defineEmits<{ 'update:modelValue': [value: Record<string, unknown>]
 
 const activeIndex = ref(-1)
 const activeCollection = ref<Collection | null>(null)
+const colorNames = new Set<TikoColorName>(tikoColors.map(color => color.name as TikoColorName))
+const colorValueByName = new Map<TikoColorName, string>(tikoColors.map(color => [color.name as TikoColorName, color.hex]))
+const colorNameByValue = new Map<string, TikoColorName>(tikoColors.map(color => [color.hex.toLowerCase(), color.name as TikoColorName]))
 
 const state = computed<CardsDefaultsPayload>(() => {
   const value = props.modelValue as Partial<CardsDefaultsPayload> | null | undefined
@@ -72,79 +67,78 @@ function makeId(prefix: string) {
   return `${prefix}_${crypto.randomUUID().slice(0, 8)}`
 }
 
-function numToHex(value: number | undefined, fallback = '#888888') {
-  if (typeof value !== 'number' || Number.isNaN(value)) return fallback
-  return `#${Math.max(0, value).toString(16).padStart(6, '0').slice(-6).toUpperCase()}`
+function colorValue(color: TikoColorName | undefined, fallback: TikoColorName = 'gray') {
+  return colorValueByName.get(color ?? fallback) ?? colorValueByName.get(fallback) ?? '#888888'
 }
 
-function hexToNum(value: string | undefined, fallback = 0x888888) {
-  if (!value) return fallback
-  const normalized = value.startsWith('#') ? value.slice(1) : value
-  const parsed = parseInt(normalized, 16)
-  return Number.isNaN(parsed) ? fallback : parsed
+function colorName(value: unknown, fallback: TikoColorName): TikoColorName {
+  if (typeof value === 'string') {
+    const normalized = value.trim().toLowerCase()
+    if (colorNames.has(normalized as TikoColorName)) return normalized as TikoColorName
+    const fromValue = colorNameByValue.get(normalized)
+    if (fromValue) return fromValue
+  }
+  return fallback
 }
 
-function colorToHex(value: string | undefined, fallback: number) {
-  if (!value) return fallback
-  return value.startsWith('#') ? hexToNum(value, fallback) : fallback
+function colorFromPicker(value: string, fallback: TikoColorName) {
+  return colorName(value, fallback)
 }
 
 function mediaDownloadUrl(mediaId: string): string {
   return `https://media.tikoapi.org/v1/media/${encodeURIComponent(mediaId)}/download`
 }
 
+function mediaPreviewUrl(imageRef: string | undefined, size = 96): string {
+  if (!imageRef) return ''
+  const url = mediaDownloadUrl(imageRef)
+  try {
+    const parsed = new URL(url)
+    if (parsed.host === 'data.tikocdn.org' && parsed.pathname.startsWith('/uploads/')) {
+      return `https://data.tikocdn.org/cdn-cgi/image/width=${size},height=${size},fit=cover,quality=80,f=auto${parsed.pathname}`
+    }
+  } catch {
+    // Non-URL values are returned unchanged.
+  }
+  return url
+}
+
 function firstImageValue(...values: unknown[]): string | undefined {
   return values.find((value): value is string => typeof value === 'string' && value.trim().length > 0)?.trim()
 }
 
-function resolvedImageURL(source: Record<string, unknown>): string | undefined {
-  const url = firstImageValue(
-    source.imageURL,
-    source.imageUrl,
-    source.image_url,
-    source.image,
-    source.original_url,
-    source.thumbnailUrl,
-    source.thumbnail_url,
-  )
-  if (url) return url
+function imageRefFrom(source: Record<string, unknown>): string | undefined {
   const imageRef = firstImageValue(source.imageRef, source.image_ref)
-  if (!imageRef) return undefined
-  return imageRef.startsWith('http') ? imageRef : mediaDownloadUrl(imageRef)
+  return imageRef && !/^https?:\/\//i.test(imageRef) ? imageRef : undefined
 }
 
-function normalizeCard(card: LegacyTile, order: number, fallbackColor: number): CardItem {
-  const colorHex = typeof card.colorHex === 'number' ? card.colorHex : colorToHex(card.color, fallbackColor)
-  const imageURL = resolvedImageURL(card as Record<string, unknown>)
+function normalizeCard(card: LegacyTile, order: number, fallbackColor: TikoColorName): CardItem {
+  const rawCard = card as Record<string, unknown>
+  const imageRef = imageRefFrom(rawCard)
   return {
     id: card.id || makeId('card'),
     title: card.title || 'New card',
     speech: card.speech || card.title || 'New card',
-    colorHex,
+    color: colorName(card.color, fallbackColor),
     order: typeof card.order === 'number' ? card.order : order,
-    ...(imageURL ? { imageURL } : {}),
-    ...(card.imageRef ? { imageRef: card.imageRef } : {}),
+    ...(imageRef ? { imageRef } : {}),
   }
 }
 
 function normalizeCollection(collection: Collection, order = 0): Collection {
   const rawCollection = collection as Collection & Record<string, unknown>
-  const legacyColor = typeof rawCollection.color === 'string'
-    ? rawCollection.color
-    : undefined
-  const colorHex = typeof collection.colorHex === 'number' ? collection.colorHex : colorToHex(legacyColor, 0x4ECDC4)
-  const imageURL = resolvedImageURL(rawCollection)
+  const color = colorName(rawCollection.color, 'cyan')
+  const imageRef = imageRefFrom(rawCollection)
   const sourceCards = Array.isArray(collection.cards) ? collection.cards : Array.isArray(collection.tiles) ? collection.tiles : []
   return {
     id: collection.id || makeId('col'),
     title: collection.title || 'New collection',
-    colorHex,
+    color,
     order: typeof collection.order === 'number' ? collection.order : order,
     parentID: collection.parentID ?? null,
     mediaCategories: Array.isArray(collection.mediaCategories) ? collection.mediaCategories : [],
-    ...(imageURL ? { imageURL } : {}),
-    ...(collection.imageRef ? { imageRef: collection.imageRef } : {}),
-    cards: sourceCards.map((card, index) => normalizeCard(card, index, colorHex)).sort((a, b) => a.order - b.order),
+    ...(imageRef ? { imageRef } : {}),
+    cards: sourceCards.map((card, index) => normalizeCard(card, index, color)).sort((a, b) => a.order - b.order),
   }
 }
 
@@ -161,7 +155,7 @@ function addCollection() {
   const next: Collection = {
     id: makeId('col'),
     title: 'New collection',
-    colorHex: 0x4ECDC4,
+    color: 'cyan',
     order: collections.length,
     parentID: null,
     mediaCategories: [],
@@ -231,7 +225,7 @@ function addCard() {
         id: makeId('card'),
         title: 'New card',
         speech: 'New card',
-        colorHex: activeCollection.value.colorHex,
+        color: activeCollection.value.color,
         order: activeCollection.value.cards.length,
       },
     ],
@@ -241,7 +235,19 @@ function addCard() {
 function updateCard(index: number, patch: Partial<CardItem>) {
   if (!activeCollection.value) return
   patchActive({
-    cards: activeCollection.value.cards.map((card, i) => i === index ? normalizeCard({ ...card, ...patch }, i, activeCollection.value!.colorHex) : card),
+    cards: activeCollection.value.cards.map((card, i) => i === index ? normalizeCard({ ...card, ...patch }, i, activeCollection.value!.color) : card),
+  })
+}
+
+function updateActiveImageRef(value: string) {
+  patchActive({
+    imageRef: value || undefined,
+  })
+}
+
+function updateCardImageRef(index: number, value: string) {
+  updateCard(index, {
+    imageRef: value || undefined,
   })
 }
 
@@ -281,8 +287,8 @@ function moveCard(index: number, delta: number) {
         :class="bemm('collection-row')"
         @click="openCollection(collection, ci)"
       >
-        <span :class="bemm('thumb')" :style="{ background: collection.imageURL ? 'transparent' : numToHex(collection.colorHex) }">
-          <img v-if="collection.imageURL" :src="collection.imageURL" :alt="collection.title" loading="lazy" decoding="async">
+        <span :class="bemm('thumb')" :style="{ background: collection.imageRef ? 'transparent' : colorValue(collection.color) }">
+          <img v-if="collection.imageRef" :src="mediaPreviewUrl(collection.imageRef, 96)" :alt="collection.title" loading="lazy" decoding="async">
           <span v-else>{{ collection.title.charAt(0).toUpperCase() }}</span>
         </span>
 
@@ -298,8 +304,8 @@ function moveCard(index: number, delta: number) {
 
         <span :class="bemm('row-color')" @click.stop>
           <ColorDotPicker
-            :model-value="numToHex(collection.colorHex)"
-            @update:model-value="(value: string) => updateCollection(ci, { colorHex: hexToNum(value, collection.colorHex) })"
+            :model-value="colorValue(collection.color)"
+            @update:model-value="(value: string) => updateCollection(ci, { color: colorFromPicker(value, collection.color) })"
           />
         </span>
 
@@ -316,8 +322,8 @@ function moveCard(index: number, delta: number) {
         <header :class="bemm('modal-head')">
           <div :class="bemm('modal-title-row')">
             <ColorDotPicker
-              :model-value="numToHex(activeCollection.colorHex)"
-              @update:model-value="(value: string) => patchActive({ colorHex: hexToNum(value, activeCollection?.colorHex) })"
+              :model-value="colorValue(activeCollection.color)"
+              @update:model-value="(value: string) => patchActive({ color: colorFromPicker(value, activeCollection?.color ?? 'cyan') })"
             />
             <input
               :class="bemm('title-input')"
@@ -348,8 +354,9 @@ function moveCard(index: number, delta: number) {
           <div :class="bemm('media-field')">
             <span :class="bemm('field-label')">Cover image</span>
             <MediaPicker
-              :model-value="activeCollection.imageURL ?? ''"
-              @update:model-value="(value: string) => patchActive({ imageURL: value || undefined })"
+              :model-value="activeCollection.imageRef ?? ''"
+              emit-id
+              @update:model-value="updateActiveImageRef"
             />
           </div>
         </div>
@@ -366,8 +373,8 @@ function moveCard(index: number, delta: number) {
 
           <ul v-else :class="bemm('card-list')">
             <li v-for="(card, cardIndex) in activeCollection.cards" :key="card.id" :class="bemm('card-row')">
-              <span :class="bemm('card-thumb')" :style="{ background: card.imageURL ? 'transparent' : numToHex(card.colorHex, numToHex(activeCollection.colorHex)) }">
-                <img v-if="card.imageURL" :src="card.imageURL" :alt="card.title" loading="lazy" decoding="async">
+              <span :class="bemm('card-thumb')" :style="{ background: card.imageRef ? 'transparent' : colorValue(card.color, activeCollection.color) }">
+                <img v-if="card.imageRef" :src="mediaPreviewUrl(card.imageRef, 96)" :alt="card.title" loading="lazy" decoding="async">
                 <span v-else>{{ card.title.charAt(0).toUpperCase() || '?' }}</span>
               </span>
 
@@ -394,12 +401,13 @@ function moveCard(index: number, delta: number) {
 
               <div :class="bemm('card-tools')">
                 <ColorDotPicker
-                  :model-value="numToHex(card.colorHex, numToHex(activeCollection.colorHex))"
-                  @update:model-value="(value: string) => updateCard(cardIndex, { colorHex: hexToNum(value, card.colorHex) })"
+                  :model-value="colorValue(card.color, activeCollection.color)"
+                  @update:model-value="(value: string) => updateCard(cardIndex, { color: colorFromPicker(value, card.color) })"
                 />
                 <MediaPicker
-                  :model-value="card.imageURL ?? ''"
-                  @update:model-value="(value: string) => updateCard(cardIndex, { imageURL: value || undefined })"
+                  :model-value="card.imageRef ?? ''"
+                  emit-id
+                  @update:model-value="(value: string) => updateCardImageRef(cardIndex, value)"
                 />
                 <div :class="bemm('card-actions')">
                   <Button variant="ghost" size="small" :disabled="cardIndex === 0" @click="moveCard(cardIndex, -1)">Up</Button>

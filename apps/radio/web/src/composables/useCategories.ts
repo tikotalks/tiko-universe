@@ -1,23 +1,38 @@
 import { ref, watch, computed, type ComputedRef } from 'vue'
-import type { RadioCategory } from '@tiko/data'
+import { tikoColors } from '@tiko/ui'
+import type { RadioCategory, TikoColorName } from '@tiko/data'
 
-const DEFAULT_CATEGORIES: RadioCategory[] = [
-  { id: 'animals', name: 'Animals', icon: '🐾', color: '#FFD93D', order: 0 },
-  { id: 'stories', name: 'Stories', icon: '📖', color: '#C3AED6', order: 1 },
-  { id: 'bedtime', name: 'Bedtime', icon: '🌙', color: '#A8D8EA', order: 2 },
-  { id: 'songs', name: 'Songs', icon: '🎵', color: '#FFB3C1', order: 3 },
-]
+const colorNames = new Set<TikoColorName>(tikoColors.map(color => color.name as TikoColorName))
+const colorByHex = new Map<string, TikoColorName>(tikoColors.map(color => [color.hex.toLowerCase(), color.name as TikoColorName]))
+
+function normalizeColor(value: unknown): TikoColorName {
+  if (typeof value !== 'string') return 'red'
+  const color = value.trim().toLowerCase()
+  if (colorNames.has(color as TikoColorName)) return color as TikoColorName
+  return colorByHex.get(color) ?? 'red'
+}
+
+function normalizeCategory(category: Partial<RadioCategory>, order = 0): RadioCategory {
+  const name = typeof category.name === 'string' && category.name.trim() ? category.name : 'Category'
+  return {
+    id: typeof category.id === 'string' && category.id.trim() ? category.id : name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, ''),
+    name,
+    icon: typeof category.icon === 'string' && category.icon.trim() ? category.icon : 'media/headphones',
+    color: normalizeColor(category.color),
+    order: typeof category.order === 'number' ? category.order : order,
+  }
+}
 
 export function useCategories(storageKey: string = 'tiko:radio:categories') {
   const categories = ref<RadioCategory[]>(loadCategories())
 
   function loadCategories(): RadioCategory[] {
-    if (typeof window === 'undefined') return [...DEFAULT_CATEGORIES]
+    if (typeof window === 'undefined') return []
     try {
       const raw = window.localStorage.getItem(storageKey)
-      if (raw) return JSON.parse(raw)
+      if (raw) return (JSON.parse(raw) as Partial<RadioCategory>[]).map(normalizeCategory)
     } catch { /* ignore */ }
-    return [...DEFAULT_CATEGORIES]
+    return []
   }
 
   function saveCategories() {
@@ -32,7 +47,7 @@ export function useCategories(storageKey: string = 'tiko:radio:categories') {
   function addCategory(category: Omit<RadioCategory, 'id' | 'order'>): RadioCategory {
     const id = category.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')
     const maxOrder = categories.value.reduce((max, c) => Math.max(max, c.order), -1)
-    const newCat: RadioCategory = { ...category, id, order: maxOrder + 1 }
+    const newCat: RadioCategory = normalizeCategory({ ...category, id, order: maxOrder + 1 }, maxOrder + 1)
     categories.value = [...categories.value, newCat]
     return newCat
   }

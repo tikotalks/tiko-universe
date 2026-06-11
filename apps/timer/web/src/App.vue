@@ -3,7 +3,7 @@ import { computed, onMounted, ref, watch } from 'vue'
 import { Button, Popup } from '@sil/ui'
 import { IdentityClient, type IdentityBundle } from '@tiko/identity'
 import { TikoDataClient, type TimerSettings, type TimerState } from '@tiko/data'
-import { createI18n, defaultLanguage, tikoI18nKeys, tikoLanguageOptions, tikoLanguages, type TikoLanguage } from '@tiko/i18n'
+import { createI18n, createTikoIdentityLabels, defaultLanguage, tikoI18nKeys, tikoLanguageOptions, tikoLanguages, type TikoLanguage } from '@tiko/i18n'
 import {
   TikoAppShell,
   TikoSettingsPanel,
@@ -30,9 +30,21 @@ interface PersistedState {
   targetMs?: number
   remainingMs?: number
   startedAt?: number | null
+  presets?: TimerPreset[]
 }
 
+interface TimerPreset {
+  id: string
+  label: string
+  seconds: number
+}
 
+const defaultPresets: TimerPreset[] = [
+  { id: '1m', label: '1 min', seconds: 60 },
+  { id: '3m', label: '3 min', seconds: 180 },
+  { id: '5m', label: '5 min', seconds: 300 },
+  { id: '10m', label: '10 min', seconds: 600 },
+]
 
 function resolveApiBaseUrl() {
   const env = (import.meta as ImportMeta & { env?: Record<string, string | undefined> }).env
@@ -66,12 +78,32 @@ function toColorMode(value: string | undefined): TikoColorMode {
   return value === 'light' || value === 'dark' || value === 'system' ? value : 'system'
 }
 
+function normalizePreset(value: unknown, index: number): TimerPreset | null {
+  if (!value || typeof value !== 'object') return null
+  const preset = value as Partial<TimerPreset>
+  const seconds = Number(preset.seconds)
+  if (!Number.isFinite(seconds) || seconds <= 0) return null
+  const label = typeof preset.label === 'string' && preset.label.trim() ? preset.label.trim() : `${Math.round(seconds)} sec`
+  return {
+    id: typeof preset.id === 'string' && preset.id.trim() ? preset.id.trim() : `preset-${index + 1}`,
+    label,
+    seconds: Math.round(seconds),
+  }
+}
+
+function normalizePresets(value: unknown): TimerPreset[] {
+  if (!Array.isArray(value)) return defaultPresets
+  const presets = value.map(normalizePreset).filter((preset): preset is TimerPreset => preset !== null)
+  return presets.length > 0 ? presets : defaultPresets
+}
+
 const stored = readJson<PersistedState>(storageKey, {})
 const i18n = createI18n({ app: appId, language: toLanguage(stored.language) })
 const language = ref<TikoLanguage>(toLanguage(stored.language))
 const colorMode = ref<TikoColorMode>(toColorMode(stored.colorMode))
 const customMinutes = ref(stored.customMinutes ?? 5)
 const customSeconds = ref(stored.customSeconds ?? 0)
+const presets = ref<TimerPreset[]>(normalizePresets(stored.presets))
 const settingsOpen = ref(false)
 const settingsVersion = ref<number | undefined>()
 const stateVersion = ref<number | undefined>()
@@ -91,7 +123,7 @@ const runtimeState: IdentityRuntimeState = {
   sessionToken, userId, accountEmail, accountEmailVerified, displayName,
   parentMode, childModeEnabled, pinConfigured,
 }
-const runtime = useIdentityRuntime({ identityClient, state: runtimeState, deviceName: 'Timer web' })
+const runtime = useIdentityRuntime({ identityClient, state: runtimeState, deviceName: 'Timer web', labels: () => createTikoIdentityLabels(i18n.t) })
 
 const timer = useTimer()
 
@@ -105,13 +137,6 @@ if (stored.timerMode && stored.timerMode !== 'idle') {
   })
 }
 
-const presets = [
-  { id: '1m', ms: 60_000 },
-  { id: '3m', ms: 180_000 },
-  { id: '5m', ms: 300_000 },
-  { id: '10m', ms: 600_000 }
-] as const
-
 const RING_CIRCUMFERENCE = 2 * Math.PI * 80
 
 const labels = computed(() => {
@@ -124,10 +149,6 @@ const labels = computed(() => {
     resume: i18n.t(tikoI18nKeys.timer.controls.resume),
     reset: i18n.t(tikoI18nKeys.timer.controls.reset),
     presetsLabel: i18n.t(tikoI18nKeys.timer.presets.label),
-    oneMin: i18n.t(tikoI18nKeys.timer.presets.oneMin),
-    threeMin: i18n.t(tikoI18nKeys.timer.presets.threeMin),
-    fiveMin: i18n.t(tikoI18nKeys.timer.presets.fiveMin),
-    tenMin: i18n.t(tikoI18nKeys.timer.presets.tenMin),
     custom: i18n.t(tikoI18nKeys.timer.presets.custom),
     minutes: i18n.t(tikoI18nKeys.timer.settings.minutes),
     seconds: i18n.t(tikoI18nKeys.timer.settings.seconds),
@@ -142,13 +163,6 @@ const labels = computed(() => {
     }
   }
 })
-
-const presetLabels = computed(() => [
-  labels.value.oneMin,
-  labels.value.threeMin,
-  labels.value.fiveMin,
-  labels.value.tenMin
-])
 
 const headerActions = computed(() => parentMode.value ? [
   { id: 'settings', label: labels.value.settings, icon: 'ui/settings-dual', active: settingsOpen.value }
@@ -177,6 +191,7 @@ function saveLocalFallback() {
     colorMode: colorMode.value,
     customMinutes: customMinutes.value,
     customSeconds: customSeconds.value,
+    presets: presets.value,
     ...timer.getState()
   })
 }
@@ -202,6 +217,9 @@ function applySettings(settings: TimerSettings, version?: number) {
 }
 
 function applyState(state: TimerState, version?: number) {
+  if (Array.isArray(state.presets)) {
+    presets.value = normalizePresets(state.presets)
+  }
   if (state.mode && state.mode !== 'idle') {
     timer.restoreFromState({
       mode: state.mode,
@@ -246,7 +264,8 @@ async function persistStateRemote() {
       mode: timerState.mode,
       targetMs: timerState.targetMs,
       remainingMs: timerState.remainingMs,
-      startedAt: timerState.startedAt
+      startedAt: timerState.startedAt,
+      presets: presets.value
     }, { version: stateVersion.value })
     stateVersion.value = response.version
   } catch {
@@ -287,9 +306,9 @@ onMounted(async () => {
   }
 })
 
-function selectPreset(ms: number) {
+function selectPreset(preset: TimerPreset) {
   timer.reset()
-  timer.start(ms)
+  timer.start(preset.seconds * 1000)
 }
 
 function startCustom() {
@@ -359,13 +378,13 @@ function headerAction(id: string) {
       <!-- Preset buttons -->
       <div v-if="isIdle" class="timer-app__presets" :aria-label="labels.presetsLabel">
         <Button
-          v-for="(preset, index) in presets"
+          v-for="preset in presets"
           :key="preset.id"
           class="timer-app__preset-btn"
           variant="primary"
-          @click="selectPreset(preset.ms)"
+          @click="selectPreset(preset)"
         >
-          {{ presetLabels[index] }}
+          {{ preset.label }}
         </Button>
       </div>
 

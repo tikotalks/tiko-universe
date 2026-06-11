@@ -44,7 +44,7 @@ describe('Cards web iOS parity architecture', () => {
     expect(apiSource).toContain('/cards/collections')
     expect(apiSource).not.toContain('getAppDefaults')
     expect(apiSource).not.toContain('/v1/apps/defaults/cards/state')
-    expect(typesSource).toContain('colorHex: number')
+    expect(typesSource).toContain('color: TikoColorName')
     expect(typesSource).toContain('parentID?: string | null')
     expect(typesSource).toContain('cards: CommunicationCard[]')
     expect(typesSource).not.toContain('tiles:')
@@ -81,7 +81,7 @@ describe('Cards web iOS parity architecture', () => {
             collection: {
               id: '__default_food',
               title: 'Food',
-              colorHex: 0xFF9800,
+              color: 'orange',
               order: 0,
               mediaCategories: [],
               imageURL: 'https://data.tikocdn.org/uploads/food.png',
@@ -112,7 +112,7 @@ describe('Cards web iOS parity architecture', () => {
     })
 
     const tile = wrapper.get('.tiko-square-tile')
-    expect(tile.attributes('style')).toContain('background-color: rgb(255, 152, 0)')
+    expect(tile.attributes('style')).toContain('background-color: rgb(247, 103, 7)')
     expect(tile.get('img').attributes('src')).toBe('https://data.tikocdn.org/cdn-cgi/image/width=300,quality=80,f=auto/uploads/food.png')
   })
 })

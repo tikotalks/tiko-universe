@@ -1,4 +1,5 @@
 import { authenticate, type AuthEnv } from '../../shared/auth'
+import { DEFAULT_ATLAS_SPEECH_CONFIG, DEFAULT_NARAKEET_VOICE_BY_LOCALE, normalizeSpeechServiceConfig, type AtlasSpeechServiceConfig } from '../../shared/atlas-speech-config'
 
 type D1Value = string | number | boolean | null
 
@@ -29,6 +30,12 @@ interface AppConfigRow {
 }
 
 interface AppDefaultsRow {
+  data_json: string
+  updated_at: string
+  version: number
+}
+
+interface ServiceConfigRow {
   data_json: string
   updated_at: string
   version: number
@@ -77,7 +84,7 @@ interface AdminUserListItem {
   hasData: boolean
   displayName: string | null
   avatarUrl: string | null
-  colorHex: string | null
+  color: string | null
 }
 
 const ADMIN_EMAIL = 'me@sil.mt'
@@ -148,6 +155,16 @@ export default {
     if (path === '/v1/admin/tiko/settings' && request.method === 'PUT') {
       const appDb = requireAppDb(env)
       return writeTikoSettings(request, appDb, env)
+    }
+
+    if (path === '/v1/admin/services/speech' && request.method === 'GET') {
+      const appDb = requireAppDb(env)
+      return readSpeechServiceConfig(appDb)
+    }
+
+    if (path === '/v1/admin/services/speech' && request.method === 'PUT') {
+      const appDb = requireAppDb(env)
+      return writeSpeechServiceConfig(request, appDb)
     }
 
     const appConfigMatch = path.match(/^\/v1\/admin\/apps\/config\/([^/]+)$/)
@@ -286,6 +303,52 @@ async function writeTikoSettings(request: Request, db: D1Database, env: Env): Pr
   ).bind('tiko', 'settings', JSON.stringify(next), now, version).run()
   await syncLezuLanguages(db, env)
   return json({ data: { settings: next, updatedAt: now, version } })
+}
+
+async function readSpeechServiceConfig(db: D1Database): Promise<Response> {
+  const row = await db.prepare('SELECT data_json, updated_at, version FROM atlas_service_config WHERE service = ? LIMIT 1').bind('speech').first<ServiceConfigRow>()
+  const settings = speechConfigFromRow(row)
+  return json({
+    data: {
+      settings,
+      defaults: {
+        narakeetVoices: DEFAULT_NARAKEET_VOICE_BY_LOCALE,
+        models: DEFAULT_ATLAS_SPEECH_CONFIG.models,
+      },
+      updatedAt: row?.updated_at ?? null,
+      version: row ? Number(row.version) : 0,
+    },
+  })
+}
+
+async function writeSpeechServiceConfig(request: Request, db: D1Database): Promise<Response> {
+  const body = await readJson<{ settings?: AtlasSpeechServiceConfig, version?: number }>(request)
+  const next = normalizeSpeechServiceConfig(body.settings ?? {})
+  const existing = await db.prepare('SELECT version FROM atlas_service_config WHERE service = ? LIMIT 1').bind('speech').first<{ version: number }>()
+  const currentVersion = existing ? Number(existing.version) : 0
+  if (typeof body.version === 'number' && body.version !== currentVersion) {
+    return apiError('version_conflict', 'Stored speech service version does not match requested version.', 409)
+  }
+  const now = new Date().toISOString()
+  const version = currentVersion + 1
+  await db.prepare(
+    `INSERT INTO atlas_service_config (service, data_json, updated_at, version)
+     VALUES (?, ?, ?, ?)
+     ON CONFLICT(service) DO UPDATE SET
+       data_json = excluded.data_json,
+       updated_at = excluded.updated_at,
+       version = excluded.version`
+  ).bind('speech', JSON.stringify(next), now, version).run()
+  return json({ data: { settings: next, updatedAt: now, version } })
+}
+
+function speechConfigFromRow(row: ServiceConfigRow | null): AtlasSpeechServiceConfig {
+  if (!row) return DEFAULT_ATLAS_SPEECH_CONFIG
+  try {
+    return normalizeSpeechServiceConfig(JSON.parse(row.data_json))
+  } catch {
+    return DEFAULT_ATLAS_SPEECH_CONFIG
+  }
 }
 
 function tikoSettingsFromRow(row: AppDefaultsRow | null): Record<string, unknown> {
@@ -476,7 +539,7 @@ async function ensureAdminInUsers(authDb: D1Database, appDb: D1Database | undefi
   const dataSet = row ? await subjectsWithData(appDb, [admin.userId]) : new Set<string>()
   const adminUser = row
     ? { ...normalizeUserRow(row), hasData: dataSet.has(admin.userId) }
-    : { id: admin.userId, kind: 'account', email: admin.email, roles: admin.roles as AdminUserListItem['roles'], createdAt: '', updatedAt: '', lastSeenAt: null, hasData: false, displayName: null, avatarUrl: null, colorHex: null }
+    : { id: admin.userId, kind: 'account', email: admin.email, roles: admin.roles as AdminUserListItem['roles'], createdAt: '', updatedAt: '', lastSeenAt: null, hasData: false, displayName: null, avatarUrl: null, color: null }
 
   return [adminUser, ...users]
 }
@@ -500,7 +563,7 @@ function normalizeUserRow(row: { id: string; kind: string; email: string | null;
     hasData: false,
     displayName: typeof metadata?.displayName === 'string' ? metadata.displayName : null,
     avatarUrl: typeof metadata?.avatarUrl === 'string' ? metadata.avatarUrl : null,
-    colorHex: typeof metadata?.colorHex === 'string' ? metadata.colorHex : null,
+    color: typeof metadata?.color === 'string' ? metadata.color : null,
   }
 }
 

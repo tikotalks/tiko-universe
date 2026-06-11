@@ -218,6 +218,11 @@ button:disabled { cursor: not-allowed; opacity: .45; }
   overflow: auto;
 }
 
+.type-app__phrase-section {
+  display: grid;
+  gap: .5rem;
+}
+
 .type-app__phrase-row {
   display: flex;
   align-items: center;

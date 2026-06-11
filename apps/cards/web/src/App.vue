@@ -3,7 +3,8 @@ import { computed, h, inject, markRaw, onMounted, ref, watch } from 'vue'
 import { useBemm } from 'bemm'
 import { Button, Popup, type PopupService } from '@sil/ui'
 import { IdentityClient } from '@tiko/identity'
-import { createI18n, createTikoTranslationLoader, defaultLanguage, tikoI18nKeys, tikoLanguageOptions, tikoLanguages, type TikoLanguage } from '@tiko/i18n'
+import { TikoDataClient, type CardsSettings } from '@tiko/data'
+import { createI18n, createTikoIdentityLabels, createTikoTranslationLoader, defaultLanguage, tikoI18nKeys, tikoLanguageOptions, tikoLanguages, type TikoLanguage } from '@tiko/i18n'
 import {
   TikoAppShell,
   createTikoTtsClient,
@@ -18,7 +19,6 @@ import CardsBulkActionsSheet from './components/CardsBulkActionsSheet.vue'
 import CardsCardSheet from './components/CardsCardSheet.vue'
 import CardsCollectionSheet from './components/CardsCollectionSheet.vue'
 import CardsSettingsSheet from './components/CardsSettingsSheet.vue'
-import { isUserOwned } from './composables/useCardsStore'
 import { useCardsStore } from './composables/useCardsStore'
 import type { CardCollection, CardsGridItem, CommunicationCard, PersistedCards, SpeakStatus } from './types'
 import './styles.scss'
@@ -53,8 +53,11 @@ const hideDefaultCollections = ref(stored.hideDefaultCollections ?? false)
 const showAnimations = ref(stored.showAnimations ?? true)
 const cardSizeIndex = ref(clampIndex(stored.cardSizeIndex ?? 1))
 const labelSizeIndex = ref(clampIndex(stored.labelSizeIndex ?? 1))
+const settingsVersion = ref<number>()
+const collectionsHydrated = ref(false)
 
 const identityClient = new IdentityClient({ baseUrl: resolveIdentityBaseUrl(), credentials: 'include' })
+const dataClient = new TikoDataClient({ baseUrl: resolveApiBaseUrl() })
 const identityState: IdentityRuntimeState = {
   sessionToken: ref(''),
   userId: ref(''),
@@ -70,6 +73,7 @@ const runtime = useIdentityRuntime({
   identityClient,
   state: identityState,
   deviceName: 'Cards web',
+  labels: () => createTikoIdentityLabels(i18n.t),
 })
 
 const cards = useCardsStore({
@@ -177,28 +181,13 @@ const labelSize = computed<'small' | 'medium' | 'large'>(() => labelSizeIndex.va
 const isAdmin = computed(() => identityState.accountEmailVerified.value === true)
 const appTitle = computed(() => {
   const collection = cards.currentCollection.value
-  return collection ? translateDefaultCollectionTitle(collection) : labels.value.appName
+  return collection ? collection.title : labels.value.appName
 })
-
-function translateKey(key: string, fallback: string) {
-  const translated = i18n.t(key)
-  return translated === key ? fallback : translated
-}
-
-function translateDefaultCollectionTitle(collection: CardCollection) {
-  if (isUserOwned(collection.id)) return collection.title
-  return translateKey(`cards.default.${collection.id}`, collection.title)
-}
-
-function translateDefaultCardTitle(card: CommunicationCard) {
-  if (isUserOwned(card.id)) return card.title
-  return translateKey(`cards.default.${card.id}`, card.title)
-}
 
 function translateGridItemTitle(item: CardsGridItem) {
   return item.kind === 'collection'
-    ? translateDefaultCollectionTitle(item.collection)
-    : translateDefaultCardTitle(item.card)
+    ? item.collection.title
+    : item.card.title
 }
 
 function activateItem(item: CardsGridItem) {
@@ -237,8 +226,7 @@ function headerAction(id: string) {
 }
 
 async function speak(card: CommunicationCard) {
-  const text = (isUserOwned(card.id) ? card.speech : translateKey(`cards.default.${card.id}`, card.speech)).trim()
-    || translateDefaultCardTitle(card).trim()
+  const text = card.speech.trim() || card.title.trim()
   if (!text) return
   speakingCardID.value = card.id
   speakStatus.value = 'speaking'
@@ -340,8 +328,8 @@ function renderPopup(kind: PopupKind) {
         await cards.moveSelected(collectionID)
         popup.closeAllPopups()
       },
-      onColor: async (colorHex: number) => {
-        await cards.recolorSelected(colorHex)
+      onColor: async (color) => {
+        await cards.recolorSelected(color)
         popup.closeAllPopups()
       },
       onClose: popup.closeAllPopups,
@@ -403,6 +391,11 @@ function resolveIdentityBaseUrl() {
   return (env?.VITE_IDENTITY_API_URL ?? env?.VITE_TIKO_IDENTITY_BASE_URL ?? 'https://id.tikoapps.org/v1').replace(/\/$/, '')
 }
 
+function resolveApiBaseUrl() {
+  const env = (import.meta as ImportMeta & { env?: Record<string, string | undefined> }).env
+  return (env?.VITE_TIKO_API_BASE_URL ?? 'https://app.tikoapi.org/v1').replace(/\/$/, '')
+}
+
 function resolveColorMode(mode: TikoColorMode) {
   if (mode !== 'system') return mode
   if (typeof window === 'undefined') return 'light'
@@ -423,9 +416,57 @@ async function loadTranslations(value: TikoLanguage) {
   }
 }
 
+function applyRemoteSettings(settings: CardsSettings, version?: number) {
+  language.value = toLanguage(settings.language)
+  colorMode.value = toColorMode(settings.colorMode)
+  hideDefaultCollections.value = typeof settings.hideDefaultCollections === 'boolean'
+    ? settings.hideDefaultCollections
+    : hideDefaultCollections.value
+  showAnimations.value = typeof settings.showAnimations === 'boolean'
+    ? settings.showAnimations
+    : showAnimations.value
+  cardSizeIndex.value = typeof settings.cardSizeIndex === 'number'
+    ? clampIndex(settings.cardSizeIndex)
+    : cardSizeIndex.value
+  labelSizeIndex.value = typeof settings.labelSizeIndex === 'number'
+    ? clampIndex(settings.labelSizeIndex)
+    : labelSizeIndex.value
+  settingsVersion.value = version
+}
+
+async function hydrateRemoteSettings() {
+  const token = identityState.sessionToken.value
+  if (!token) return
+  try {
+    const response = await dataClient.getSettings('cards', token)
+    applyRemoteSettings(response.settings, response.version)
+  } catch {
+    // Local settings remain active when the app settings API is unavailable.
+  }
+}
+
+async function persistRemoteSettings() {
+  const token = identityState.sessionToken.value
+  if (!token) return
+  try {
+    const response = await dataClient.putSettings('cards', token, {
+      language: language.value,
+      colorMode: colorMode.value,
+      hideDefaultCollections: hideDefaultCollections.value,
+      showAnimations: showAnimations.value,
+      cardSizeIndex: cardSizeIndex.value,
+      labelSizeIndex: labelSizeIndex.value,
+    }, { version: settingsVersion.value })
+    settingsVersion.value = response.version
+  } catch {
+    // Local persistence already happened; remote settings will be retried on the next change.
+  }
+}
+
 watch(language, value => {
   i18n.setLanguage(value)
   void loadTranslations(value)
+  if (collectionsHydrated.value) void cards.loadCollections(value)
 }, { immediate: true })
 
 watch(colorMode, mode => {
@@ -443,13 +484,19 @@ watch([language, colorMode, hideDefaultCollections, showAnimations, cardSizeInde
   labelSizeIndex: labelSizeIndex.value,
 }))
 
+watch([language, colorMode, hideDefaultCollections, showAnimations, cardSizeIndex, labelSizeIndex], () => {
+  void persistRemoteSettings()
+})
+
 watch(() => cards.collectionStack.value.join('/'), () => {
   page.value = 0
 })
 
 onMounted(async () => {
   await runtime.bootstrapIdentity()
-  await cards.loadCollections()
+  await hydrateRemoteSettings()
+  await cards.loadCollections(language.value)
+  collectionsHydrated.value = true
   await Promise.all(rootCollections.value.slice(0, 8).map(collection => cards.hydrateMedia(collection.id, false)))
 })
 </script>

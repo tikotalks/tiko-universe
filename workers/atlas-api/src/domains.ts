@@ -1,5 +1,6 @@
 import { bytesBody, getCachedJson, putCachedJson, sha256Hex } from './cache'
 import type { AtlasExecutionResult, AtlasRunRequest, DataFetchRequest, Env, ImageRequest, SpeechRequest, TextRequest } from './types'
+import { DEFAULT_ATLAS_SPEECH_CONFIG, defaultSpeechVoiceForProvider, normalizeSpeechServiceConfig, type AtlasSpeechServiceConfig } from '../../shared/atlas-speech-config'
 
 interface CachedAssetRow {
   id: string
@@ -10,6 +11,9 @@ interface CachedAssetRow {
   model?: string | null
   byte_size?: number | null
 }
+
+type SpeechProvider = 'openai' | 'elevenlabs' | 'narakeet'
+type GeneratedSpeech = { bytes: Uint8Array; contentType: string; durationSeconds?: number }
 
 export async function executeAtlasCapability(request: AtlasRunRequest, env: Env): Promise<AtlasExecutionResult> {
   switch (request.capability) {
@@ -26,13 +30,15 @@ export async function synthesizeSpeech(input: SpeechRequest, env: Env): Promise<
   const validation = validateSpeech(input)
   if (validation) throw capabilityError(validation, 400)
 
-  const provider = input.provider === 'elevenlabs' ? 'elevenlabs' : input.provider === 'openai' ? 'openai' : env.ELEVENLABS_API_KEY ? 'elevenlabs' : 'openai'
+  const speechConfig = await loadSpeechServiceConfig(env)
+  const provider = normalizeSpeechProvider(input.provider, env, speechConfig)
+  const locale = (input.locale ?? input.language ?? 'en').trim().toLowerCase()
   const normalized = {
     text: input.text.trim(),
-    locale: (input.locale ?? input.language ?? 'en').trim().toLowerCase(),
+    locale,
     provider,
-    model: input.model?.trim() || (provider === 'elevenlabs' ? 'eleven_multilingual_v2' : 'tts-1'),
-    voice: input.voice?.trim() || (provider === 'elevenlabs' ? '21m00Tcm4TlvDq8ikWAM' : 'nova'),
+    model: input.model?.trim() || defaultSpeechModel(provider, speechConfig),
+    voice: input.voice?.trim() || defaultSpeechVoice(provider, locale, speechConfig),
     speed: clamp(input.speed ?? 1, 0.25, 4),
     format: 'mp3' as const,
   }
@@ -43,7 +49,7 @@ export async function synthesizeSpeech(input: SpeechRequest, env: Env): Promise<
   const existing = await findCachedAsset(env, requestHash)
   if (existing) {
     return {
-      provider: existing.provider === 'elevenlabs' ? 'elevenlabs' : 'openai',
+      provider: toSpeechProvider(existing.provider),
       model: existing.model ?? normalized.model,
       cached: true,
       requestHash,
@@ -62,9 +68,11 @@ export async function synthesizeSpeech(input: SpeechRequest, env: Env): Promise<
   }
 
   const providerStarted = Date.now()
-  const generated = normalized.provider === 'elevenlabs'
-    ? await generateElevenLabsSpeech(normalized, env)
-    : await generateOpenAiSpeech(normalized, env)
+  const generated = normalized.provider === 'narakeet'
+    ? await generateNarakeetSpeech(normalized, env)
+    : normalized.provider === 'elevenlabs'
+      ? await generateElevenLabsSpeech(normalized, env)
+      : await generateOpenAiSpeech(normalized, env)
   const providerDurationMs = Date.now() - providerStarted
 
   const id = crypto.randomUUID()
@@ -83,11 +91,28 @@ export async function synthesizeSpeech(input: SpeechRequest, env: Env): Promise<
     publicUrl,
     contentType: generated.contentType,
     byteSize: generated.bytes.byteLength,
-    metadata: { locale: normalized.locale, voice: normalized.voice, speed: normalized.speed },
+    metadata: {
+      phrase: normalized.text,
+      locale: normalized.locale,
+      language: normalized.locale,
+      provider: normalized.provider,
+      voice: normalized.voice,
+      model: normalized.model,
+      speed: normalized.speed,
+      format: normalized.format,
+      settings: {
+        provider: normalized.provider,
+        voice: normalized.voice,
+        model: normalized.model,
+        speed: normalized.speed,
+        format: normalized.format,
+      },
+      ...(generated.durationSeconds !== undefined ? { durationSeconds: generated.durationSeconds } : {}),
+    },
   })
 
   return {
-    provider: normalized.provider as 'openai' | 'elevenlabs',
+    provider: normalized.provider,
     model: normalized.model,
     cached: false,
     status: 201,
@@ -191,7 +216,7 @@ export async function getAtlasAsset(pathname: string, env: Env): Promise<Respons
   return new Response(object.body, { headers: { 'Content-Type': object.httpMetadata?.contentType ?? row.content_type, 'Cache-Control': 'public, max-age=31536000, immutable' } })
 }
 
-async function generateOpenAiSpeech(input: { text: string; model: string; voice: string; speed: number }, env: Env) {
+async function generateOpenAiSpeech(input: { text: string; model: string; voice: string; speed: number }, env: Env): Promise<GeneratedSpeech> {
   if (!env.OPENAI_API_KEY) throw capabilityError('openai_tts_not_configured', 503)
   const response = await fetch('https://api.openai.com/v1/audio/speech', {
     method: 'POST',
@@ -202,7 +227,7 @@ async function generateOpenAiSpeech(input: { text: string; model: string; voice:
   return { bytes: new Uint8Array(await response.arrayBuffer()), contentType: 'audio/mpeg' }
 }
 
-async function generateElevenLabsSpeech(input: { text: string; model: string; voice: string; speed: number }, env: Env) {
+async function generateElevenLabsSpeech(input: { text: string; model: string; voice: string; speed: number }, env: Env): Promise<GeneratedSpeech> {
   if (!env.ELEVENLABS_API_KEY) throw capabilityError('elevenlabs_tts_not_configured', 503)
   const response = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${encodeURIComponent(input.voice)}?output_format=mp3_44100_128`, {
     method: 'POST',
@@ -211,6 +236,62 @@ async function generateElevenLabsSpeech(input: { text: string; model: string; vo
   })
   if (!response.ok) throw capabilityError('tts_provider_failed', 502)
   return { bytes: new Uint8Array(await response.arrayBuffer()), contentType: 'audio/mpeg' }
+}
+
+async function generateNarakeetSpeech(input: { text: string; voice: string; speed: number }, env: Env): Promise<GeneratedSpeech> {
+  if (!env.NARAKEET_API_KEY) throw capabilityError('narakeet_tts_not_configured', 503)
+  const url = new URL('https://api.narakeet.com/text-to-speech/mp3')
+  url.searchParams.set('voice', input.voice)
+  if (input.speed !== 1) url.searchParams.set('voice-speed', String(input.speed))
+  const response = await fetch(url.toString(), {
+    method: 'POST',
+    headers: { 'x-api-key': env.NARAKEET_API_KEY, 'Content-Type': 'text/plain', Accept: 'application/octet-stream' },
+    body: input.text,
+  })
+  if (!response.ok) throw capabilityError('tts_provider_failed', 502)
+  const durationHeader = response.headers.get('x-duration-seconds')
+  const durationSeconds = durationHeader ? Number(durationHeader) : undefined
+  return {
+    bytes: new Uint8Array(await response.arrayBuffer()),
+    contentType: 'audio/mpeg',
+    ...(Number.isFinite(durationSeconds) ? { durationSeconds } : {}),
+  }
+}
+
+async function loadSpeechServiceConfig(env: Env): Promise<AtlasSpeechServiceConfig> {
+  try {
+    const row = await env.ATLAS_DB?.prepare('SELECT data_json FROM atlas_service_config WHERE service = ? LIMIT 1').bind('speech').first<{ data_json: string }>()
+    if (!row?.data_json) return DEFAULT_ATLAS_SPEECH_CONFIG
+    return normalizeSpeechServiceConfig(JSON.parse(row.data_json))
+  } catch {
+    return DEFAULT_ATLAS_SPEECH_CONFIG
+  }
+}
+
+function normalizeSpeechProvider(provider: SpeechRequest['provider'], env: Env, config: AtlasSpeechServiceConfig): SpeechProvider {
+  if (provider === 'narakeet') return 'narakeet'
+  if (provider === 'elevenlabs') return 'elevenlabs'
+  if (provider === 'openai') return 'openai'
+  if (config.defaultProvider === 'narakeet' && env.NARAKEET_API_KEY) return 'narakeet'
+  if (config.defaultProvider === 'elevenlabs' && env.ELEVENLABS_API_KEY) return 'elevenlabs'
+  if (config.defaultProvider === 'openai' && env.OPENAI_API_KEY) return 'openai'
+  if (env.NARAKEET_API_KEY) return 'narakeet'
+  if (env.ELEVENLABS_API_KEY) return 'elevenlabs'
+  return 'openai'
+}
+
+function defaultSpeechModel(provider: SpeechProvider, config: AtlasSpeechServiceConfig) {
+  return config.models[provider] ?? DEFAULT_ATLAS_SPEECH_CONFIG.models[provider] ?? (provider === 'narakeet' ? 'narakeet-mp3' : provider === 'elevenlabs' ? 'eleven_multilingual_v2' : 'tts-1')
+}
+
+function defaultSpeechVoice(provider: SpeechProvider, locale: string, config: AtlasSpeechServiceConfig) {
+  return defaultSpeechVoiceForProvider(provider, locale, config)
+}
+
+function toSpeechProvider(provider: string): SpeechProvider {
+  if (provider === 'narakeet') return 'narakeet'
+  if (provider === 'elevenlabs') return 'elevenlabs'
+  return 'openai'
 }
 
 async function runWorkersAiText(env: Env, model: string, input: string): Promise<string> {

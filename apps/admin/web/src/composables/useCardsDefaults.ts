@@ -1,23 +1,23 @@
 import { ref } from 'vue'
+import type { TikoColorName } from '@tiko/data'
 import { useAdminAuth } from './useAdminAuth'
 
 export interface CardsCard {
   id: string
   title: string
   speech: string
-  colorHex: number
+  color: TikoColorName
   order: number
-  imageURL?: string
   imageRef?: string
 }
 
 export interface CardsCollection {
   id: string
   title: string
-  colorHex: number
+  color: TikoColorName
   order: number
   mediaCategories: string[]
-  imageURL?: string
+  imageRef?: string
   cards: CardsCard[]
 }
 
@@ -38,6 +38,19 @@ function contentBaseUrl(): string {
 function errorMessage(body: ApiErrorBody | null, fallback: string): string {
   const apiError = body && 'error' in body ? body.error : undefined
   return (typeof apiError === 'string' ? apiError : apiError?.message) ?? fallback
+}
+
+function sanitizeCollection(collection: CardsCollection): CardsCollection {
+  const cleanCollection = { ...collection }
+  if (cleanCollection.imageRef && /^https?:\/\//i.test(cleanCollection.imageRef)) delete cleanCollection.imageRef
+  return {
+    ...cleanCollection,
+    cards: collection.cards.map((card) => {
+      const cleanCard = { ...card }
+      if (cleanCard.imageRef && /^https?:\/\//i.test(cleanCard.imageRef)) delete cleanCard.imageRef
+      return cleanCard
+    }),
+  }
 }
 
 export function useCardsDefaults() {
@@ -73,7 +86,7 @@ export function useCardsDefaults() {
           authorization: `Bearer ${token.value}`,
           'content-type': 'application/json',
         },
-        body: JSON.stringify({ collections }),
+        body: JSON.stringify({ collections: collections.map(sanitizeCollection) }),
       })
       const body = await response.json().catch(() => null) as ApiErrorBody | null
       if (!response.ok) throw new Error(errorMessage(body, `Could not save Cards defaults: ${response.status}`))

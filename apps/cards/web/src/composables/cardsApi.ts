@@ -31,8 +31,9 @@ export function createCardsApi(options: CardsApiOptions) {
   return {
     baseUrl,
 
-    async fetchCollections(): Promise<CardCollection[]> {
-      const body = await request<CardsPayload>('/cards/collections')
+    async fetchCollections(language?: string): Promise<CardCollection[]> {
+      const query = language ? `?language=${encodeURIComponent(language)}` : ''
+      const body = await request<CardsPayload>(`/cards/collections${query}`)
       return (body.data && 'collections' in body.data ? body.data.collections : []) ?? []
     },
 

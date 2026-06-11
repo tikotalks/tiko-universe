@@ -53,17 +53,84 @@ const DEFAULTS: Record<TikoAppId, Record<AppResource, JsonValue>> = {
   },
   type: {
     settings: { language: 'en', colorMode: 'system', keyboardLayout: 'qwerty' },
-    state: { text: '', completedPrompts: [] },
+    state: {
+      text: '',
+      prompts: ['I need help', 'I want a break', 'I am finished', 'Thank you'],
+      completedPrompts: []
+    },
     progress: {}
   },
-  cards: { settings: {}, state: {}, progress: {} },
+  cards: { settings: { language: 'en', colorMode: 'system' }, state: {}, progress: {} },
   sequence: { settings: {}, state: {}, progress: {} },
-  timer: { settings: {}, state: {}, progress: {} },
-  radio: { settings: {}, state: {}, progress: {} },
+  timer: {
+    settings: {},
+    state: {
+      presets: [
+        { id: '1m', label: '1 min', seconds: 60 },
+        { id: '3m', label: '3 min', seconds: 180 },
+        { id: '5m', label: '5 min', seconds: 300 },
+        { id: '10m', label: '10 min', seconds: 600 }
+      ]
+    },
+    progress: {}
+  },
+  radio: {
+    settings: { language: 'en', colorMode: 'system', volume: 0.8 },
+    state: {
+      categories: [
+        { id: 'animals', name: 'Animals', icon: 'animals/cat-head', color: 'yellow', order: 0 },
+        { id: 'stories', name: 'Stories', icon: 'ui/books', color: 'purple', order: 1 },
+        { id: 'bedtime', name: 'Bedtime', icon: 'media/headphones', color: 'cyan', order: 2 },
+        { id: 'songs', name: 'Songs', icon: 'media/music-note', color: 'pink', order: 3 }
+      ],
+      tracks: [],
+      currentTrackIndex: 0,
+      shuffleEnabled: false,
+      repeatEnabled: false
+    },
+    progress: {}
+  },
   media: { settings: {}, state: {}, progress: {} },
   admin: { settings: {}, state: {}, progress: {} },
   tiko: { settings: {}, state: {}, progress: {} },
-  todo: { settings: {}, state: {}, progress: {} },
+  todo: {
+    settings: { language: 'en', colorMode: 'system' },
+    state: {
+      items: [
+        {
+          id: 'morning-routine',
+          name: 'Morning routine',
+          done: false,
+          steps: [
+            { name: 'Brush teeth', done: false },
+            { name: 'Get dressed', done: false },
+            { name: 'Pack bag', done: false }
+          ]
+        },
+        {
+          id: 'after-school',
+          name: 'After school',
+          done: false,
+          steps: [
+            { name: 'Hang up coat', done: false },
+            { name: 'Wash hands', done: false },
+            { name: 'Choose a snack', done: false }
+          ]
+        },
+        {
+          id: 'bedtime',
+          name: 'Bedtime',
+          done: false,
+          steps: [
+            { name: 'Put on pajamas', done: false },
+            { name: 'Brush teeth', done: false },
+            { name: 'Choose a story', done: false }
+          ]
+        }
+      ]
+    },
+    progress: {}
+  },
   talk: { settings: {}, state: {}, progress: {} }
 }
 
@@ -233,7 +300,7 @@ async function readAppData(env: Env, userId: string, app: TikoAppId, resource: A
     WHERE user_id = ? AND app = ?
   `).bind(userId, app))
 
-  if (!row) return json(payload(app, resource, cloneDefault(app, resource), null, 0))
+  if (!row) return json(payload(app, resource, await defaultValue(env, app, resource), null, 0))
 
   return json(payload(app, resource, parseStoredJson(row.data_json), row.updated_at, Number(row.version)))
 }
@@ -326,9 +393,9 @@ async function resetApp(env: Env, userId: string, app: TikoAppId, request: Reque
     return jsonError('confirmation_required', 'Confirmation string "reset_app" is required.', 400)
   }
   const now = new Date().toISOString()
-  const settingsDefault = cloneDefault(app, 'settings')
-  const stateDefault = cloneDefault(app, 'state')
-  const progressDefault = cloneDefault(app, 'progress')
+  const settingsDefault = await defaultValue(env, app, 'settings')
+  const stateDefault = await defaultValue(env, app, 'state')
+  const progressDefault = await defaultValue(env, app, 'progress')
   await run(env.APP_DB.prepare('INSERT INTO app_settings (user_id, app, data_json, updated_at, version) VALUES (?, ?, ?, ?, 1) ON CONFLICT(user_id, app) DO UPDATE SET data_json = excluded.data_json, updated_at = excluded.updated_at, version = version + 1')
     .bind(userId, app, JSON.stringify(settingsDefault), now))
   await run(env.APP_DB.prepare('INSERT INTO app_state (user_id, app, data_json, updated_at, version) VALUES (?, ?, ?, ?, 1) ON CONFLICT(user_id, app) DO UPDATE SET data_json = excluded.data_json, updated_at = excluded.updated_at, version = version + 1')
@@ -344,7 +411,7 @@ async function resetAppProgress(env: Env, userId: string, app: TikoAppId, reques
     return jsonError('confirmation_required', 'Confirmation string "reset_progress" is required.', 400)
   }
   const now = new Date().toISOString()
-  const progressDefault = cloneDefault(app, 'progress')
+  const progressDefault = await defaultValue(env, app, 'progress')
   await run(env.APP_DB.prepare('INSERT INTO app_progress (user_id, app, data_json, updated_at, version) VALUES (?, ?, ?, ?, 1) ON CONFLICT(user_id, app) DO UPDATE SET data_json = excluded.data_json, updated_at = excluded.updated_at, version = version + 1')
     .bind(userId, app, JSON.stringify(progressDefault), now))
   return json({ app, reset: 'progress', status: 'completed', categoriesAffected: ['progress'], resetAt: now }, 202)
@@ -432,6 +499,13 @@ function tableName(resource: AppResource): 'app_settings' | 'app_state' | 'app_p
 
 function cloneDefault(app: TikoAppId, resource: AppResource): JsonValue {
   return JSON.parse(JSON.stringify(DEFAULTS[app][resource])) as JsonValue
+}
+
+async function defaultValue(env: Env, app: TikoAppId, resource: AppResource): Promise<JsonValue> {
+  const row = await first<AppDataRow>(env.APP_DB.prepare(
+    'SELECT data_json, updated_at, version FROM app_defaults WHERE app = ? AND resource = ?'
+  ).bind(app, resource))
+  return row ? parseStoredJson(row.data_json) : cloneDefault(app, resource)
 }
 
 function parseStoredJson(value: string): JsonValue {

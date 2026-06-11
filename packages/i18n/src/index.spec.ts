@@ -31,7 +31,7 @@ describe('@tiko/i18n fallback contract', () => {
     expect(talkI18n.t(tikoI18nKeys.talk.status.offline)).toBe('Offline words active')
   })
 
-  it('falls back from the selected language to English and keeps track of missing keys', () => {
+  it('merges partial runtime bundles over local selected-language fallbacks and keeps track of missing keys', () => {
     const i18n = createI18n({
       app: 'yes-no',
       language: 'nl',
@@ -45,7 +45,7 @@ describe('@tiko/i18n fallback contract', () => {
     })
 
     expect(i18n.t(tikoI18nKeys.yesNo.answers.yes)).toBe('Ja')
-    expect(i18n.t(tikoI18nKeys.yesNo.answers.no)).toBe('No')
+    expect(i18n.t(tikoI18nKeys.yesNo.answers.no)).toBe('Nee')
     expect(i18n.t('yesNo.missing.futureKey')).toBe('yesNo.missing.futureKey')
     expect(i18n.missingKeys()).toEqual(['yesNo.missing.futureKey'])
   })

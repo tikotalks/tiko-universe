@@ -41,11 +41,11 @@ public enum TikoOpenIcons {
 
 public struct TikoOpenIconView: UIViewRepresentable {
     private let name: String
-    private let colorHex: String
+    private let color: String
 
-    public init(_ name: String, colorHex: String = "#FFFFFF") {
+    public init(_ name: String, color: String = "#FFFFFF") {
         self.name = name
-        self.colorHex = colorHex
+        self.color = color
     }
 
     public func makeUIView(context: Context) -> WKWebView {
@@ -69,8 +69,8 @@ public struct TikoOpenIconView: UIViewRepresentable {
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
             <style>
               html, body { margin: 0; width: 100%; height: 100%; background: transparent; overflow: hidden; }
-              body { display: grid; place-items: center; color: \(colorHex); }
-              svg { width: 100%; height: 100%; display: block; --icon-stroke-color: \(colorHex); --icon-stroke-color-secondary: \(colorHex); --icon-fill: transparent; --icon-stroke-width: 5; }
+              body { display: grid; place-items: center; color: \(color); }
+              svg { width: 100%; height: 100%; display: block; --icon-stroke-color: \(color); --icon-stroke-color-secondary: \(color); --icon-fill: transparent; --icon-stroke-width: 5; }
             </style>
           </head>
           <body>\(TikoOpenIcons.svg(named: name))</body>
@@ -96,7 +96,7 @@ public struct TikoOpenIconPicker: View {
                 Button {
                     selection = selection == icon.name ? "" : icon.name
                 } label: {
-                    TikoOpenIconView(icon.name, colorHex: "#17131C")
+                    TikoOpenIconView(icon.name, color: "#17131C")
                         .frame(width: 30, height: 30)
                         .frame(maxWidth: .infinity, minHeight: 48)
                         .background(selection == icon.name ? Color.accentColor.opacity(0.18) : Color(.secondarySystemBackground))

@@ -1,8 +1,14 @@
 import { computed, ref, type Ref } from 'vue'
 import { useTikoMedia } from '@tiko/media'
+import type { TikoColorName } from '@tiko/data'
+import { tikoColors } from '@tiko/ui'
 import type { CardCollection, CardsCardInput, CardsCollectionInput, CardsGridItem, CommunicationCard, PersistedCards } from '../types'
 import { createCardsApi, resolveContentBaseUrl } from './cardsApi'
 import { matchCardsMedia } from './cardsMedia'
+
+const colorNames = new Set<TikoColorName>(tikoColors.map(color => color.name as TikoColorName))
+const colorValueByName = new Map<TikoColorName, string>(tikoColors.map(color => [color.name as TikoColorName, color.hex]))
+const fallbackColors = ['red', 'yellow', 'green', 'blue', 'orange', 'purple'] as const
 
 export interface UseCardsStoreOptions {
   storageKey: string
@@ -60,15 +66,15 @@ export function useCardsStore(options: UseCardsStoreOptions) {
     options.writeStored({
       ...stored,
       ...extra,
-      collections: collections.value,
+      collections: collections.value.map(collectionForStorage),
       collectionStack: collectionStack.value,
     })
   }
 
-  async function loadCollections() {
+  async function loadCollections(language?: string) {
     loadingCollections.value = true
     try {
-      collections.value = (await api.fetchCollections()).map(normalizeCollection).sort((a, b) => a.order - b.order)
+      collections.value = (await api.fetchCollections(language)).map(normalizeCollection).sort((a, b) => a.order - b.order)
     } catch {
       if (!collections.value.length) collections.value = []
     } finally {
@@ -92,11 +98,11 @@ export function useCardsStore(options: UseCardsStoreOptions) {
     const optimistic: CardCollection = {
       id,
       title,
-      colorHex: input.colorHex,
+      color: input.color,
       order: collections.value.filter(collection => (collection.parentID ?? '') === (input.parentID ?? '')).length,
       parentID: input.parentID ?? null,
       mediaCategories: [],
-      imageURL: input.imageURL,
+      imageRef: input.imageRef,
       cards: [],
     }
     replaceCollection(optimistic)
@@ -111,7 +117,11 @@ export function useCardsStore(options: UseCardsStoreOptions) {
   async function updateCollection(id: string, input: CardsCollectionInput) {
     const current = collections.value.find(collection => collection.id === id)
     if (!current) return
-    replaceCollection({ ...current, ...input, title: input.title.trim() || current.title })
+    replaceCollection({
+      ...current,
+      ...input,
+      title: input.title.trim() || current.title,
+    })
     try {
       const saved = await api.updateCollection(id, { ...input, title: input.title.trim() || current.title })
       if (saved) replaceCollection(saved)
@@ -138,9 +148,9 @@ export function useCardsStore(options: UseCardsStoreOptions) {
       id: createUserID(),
       title,
       speech: input.speech.trim() || title,
-      colorHex: input.colorHex,
+      color: input.color,
       order: collection.cards.length,
-      imageURL: input.imageURL,
+      imageRef: input.imageRef,
     }
     collection.cards = [...collection.cards, optimistic]
     collections.value = [...collections.value]
@@ -158,7 +168,13 @@ export function useCardsStore(options: UseCardsStoreOptions) {
   async function updateCard(collectionID: string, cardID: string, input: CardsCardInput) {
     const collection = collections.value.find(item => item.id === collectionID)
     if (!collection) return
-    collection.cards = collection.cards.map(card => card.id === cardID ? { ...card, ...input, title: input.title.trim() || card.title } : card)
+    collection.cards = collection.cards.map(card => card.id === cardID
+      ? {
+          ...card,
+          ...input,
+          title: input.title.trim() || card.title,
+        }
+      : card)
     collections.value = [...collections.value]
     try {
       const saved = await api.updateCard(collectionID, cardID, input)
@@ -278,11 +294,11 @@ export function useCardsStore(options: UseCardsStoreOptions) {
     clearEditMode()
   }
 
-  async function recolorSelected(colorHex: number) {
+  async function recolorSelected(color: TikoColorName) {
     if (!currentCollection.value) return
     for (const id of selectedCardIDs.value) {
       const card = currentCollection.value.cards.find(item => item.id === id)
-      if (card) await updateCard(currentCollection.value.id, id, { ...card, colorHex })
+      if (card) await updateCard(currentCollection.value.id, id, { ...card, color })
     }
     clearEditMode()
   }
@@ -368,15 +384,16 @@ export function useCardsStore(options: UseCardsStoreOptions) {
 }
 
 export function normalizeCollection(collection: CardCollection): CardCollection {
+  const collectionColor = normalizeColor(collection.color, 'orange')
   return {
     ...collection,
-    colorHex: typeof collection.colorHex === 'number' ? collection.colorHex : 0x888888,
+    color: collectionColor,
     parentID: collection.parentID ?? null,
     mediaCategories: Array.isArray(collection.mediaCategories) ? collection.mediaCategories : [],
     cards: (collection.cards ?? []).map((card, index) => ({
       ...card,
       speech: card.speech || card.title,
-      colorHex: typeof card.colorHex === 'number' ? card.colorHex : collection.colorHex,
+      color: normalizeColor(card.color, collectionColor),
       order: card.order ?? index,
     })),
   }
@@ -386,8 +403,30 @@ export function isUserOwned(id: string) {
   return id.startsWith('user_')
 }
 
-export function hexColor(value: number) {
-  return `#${Math.max(0, value).toString(16).padStart(6, '0').slice(-6).toUpperCase()}`
+export function colorValue(color: TikoColorName) {
+  return colorValueByName.get(color) ?? colorValueByName.get('gray') ?? 'currentColor'
+}
+
+function normalizeColor(value: unknown, fallback: TikoColorName): TikoColorName {
+  if (typeof value === 'string') {
+    if (colorNames.has(value as TikoColorName)) return value as TikoColorName
+  }
+  return fallback
+}
+
+export function fallbackColor(index: number): TikoColorName {
+  return fallbackColors[index % fallbackColors.length]
+}
+
+function collectionForStorage(collection: CardCollection): CardCollection {
+  const { imageURL: _imageURL, ...storedCollection } = collection
+  return {
+    ...storedCollection,
+    cards: collection.cards.map(card => {
+      const { imageURL: _cardImageURL, ...storedCard } = card
+      return storedCard
+    }),
+  }
 }
 
 function createUserID() {

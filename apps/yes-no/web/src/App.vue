@@ -4,15 +4,17 @@ import { useBemm } from 'bemm'
 import { Icon, Popup } from '@sil/ui'
 import { IdentityClient } from '@tiko/identity'
 import { TikoDataClient, type YesNoSettings, type YesNoState } from '@tiko/data'
-import { createI18n, createTikoTranslationLoader, defaultLanguage, tikoI18nKeys, tikoLanguageOptions, tikoLanguages, type TikoLanguage } from '@tiko/i18n'
+import { createI18n, createTikoIdentityLabels, createTikoTranslationLoader, defaultLanguage, tikoI18nKeys, tikoLanguageOptions, tikoLanguages, type TikoLanguage } from '@tiko/i18n'
 import {
   TikoAppShell,
   TikoSettingsPanel,
   TikoSquareTile,
   createTikoTtsClient,
+  injectAppMeta,
   tikoColors,
   useIdentityRuntime,
   type IdentityRuntimeState,
+  type TikoAppConfig,
   type TikoColorMode
 } from '@tiko/ui'
 import { appConfig } from './appConfig'
@@ -21,10 +23,12 @@ import './styles.scss'
 const storageKey = 'tiko:yes-no'
 const appId = 'yes-no' as const
 const apiBaseUrl = resolveApiBaseUrl()
+const contentBaseUrl = resolveContentBaseUrl()
 const identityBaseUrl = resolveIdentityBaseUrl()
 const bemm = useBemm('yes-no-app', { return: 'string', includeBaseClass: true })
 
 type SpeakStatus = 'idle' | 'speaking' | 'fallback' | 'error'
+type SentenceSpeechState = 'idle' | 'generating' | 'playing'
 
 interface AnswerTile {
   id: string
@@ -33,7 +37,7 @@ interface AnswerTile {
   labelTranslations?: Partial<Record<TikoLanguage, string>>
   speechTranslations?: Partial<Record<TikoLanguage, string>>
   color?: string
-  imageURL?: string
+  imageRef?: string
   icon?: string
 }
 
@@ -46,6 +50,14 @@ interface DefaultsState {
   answers?: AnswerTile[]
   answerSets?: AnswerSet[]
   selectedSetId?: string
+}
+
+interface AppConfigResponse {
+  config?: Partial<TikoAppConfig>
+}
+
+interface ContentResponse {
+  data?: DefaultsState
 }
 
 interface PersistedState {
@@ -66,6 +78,11 @@ function resolveApiBaseUrl() {
 function resolveIdentityBaseUrl() {
   const env = (import.meta as ImportMeta & { env?: Record<string, string | undefined> }).env
   return (env?.VITE_IDENTITY_API_URL ?? env?.VITE_TIKO_IDENTITY_BASE_URL ?? 'https://id.tikoapps.org/v1').replace(/\/$/, '')
+}
+
+function resolveContentBaseUrl() {
+  const env = (import.meta as ImportMeta & { env?: Record<string, string | undefined> }).env
+  return (env?.VITE_TIKO_CONTENT_BASE_URL ?? env?.VITE_CONTENT_API_URL ?? 'https://content.tikoapi.org/v1').replace(/\/$/, '')
 }
 
 function readJson<T>(key: string, fallback: T): T {
@@ -102,6 +119,14 @@ function colorTokenToHex(color: string | undefined, fallback: string) {
   if (!color) return fallback
   if (color.startsWith('#')) return color
   return tikoColors.find(item => item.name === color)?.hex ?? fallback
+}
+
+function imageRefURL(imageRef: string) {
+  return `${contentBaseUrl}/content/images/${encodeURIComponent(imageRef)}`
+}
+
+function answerImageSrc(answer: AnswerTile): string {
+  return answer.imageRef ? imageRefURL(answer.imageRef) : ''
 }
 
 function answerLabel(answer: string) {
@@ -142,10 +167,12 @@ const latestAnswerId = ref<string>(toAnswerId(stored.latestAnswerId ?? stored.la
 const answerHistory = ref<string[]>(toHistory(stored.answerHistory))
 const defaultAnswers = ref<AnswerTile[]>([])
 const customAnswers = ref<AnswerTile[]>(Array.isArray(stored.answers) ? stored.answers : [])
+const runtimeAppConfig = ref<TikoAppConfig>({ ...appConfig })
 const settingsOpen = ref(false)
 const historyOpen = ref(false)
 const sentence = ref(stored.sentence || i18n.t(tikoI18nKeys.yesNo.sentence.default))
 const speakStatus = ref<SpeakStatus>('idle')
+const sentenceSpeechState = ref<SentenceSpeechState>('idle')
 const settingsVersion = ref<number | undefined>()
 const stateVersion = ref<number | undefined>()
 const sessionToken = ref<string>('')
@@ -171,7 +198,7 @@ const runtimeState: IdentityRuntimeState = {
   childModeEnabled,
   pinConfigured,
 }
-const runtime = useIdentityRuntime({ identityClient, state: runtimeState, deviceName: 'Yes No web' })
+const runtime = useIdentityRuntime({ identityClient, state: runtimeState, deviceName: 'Yes No web', labels: () => createTikoIdentityLabels(i18n.t) })
 
 const defaultSentence = computed(() => {
   void translationsRevision.value
@@ -205,6 +232,8 @@ const labels = computed(() => {
     }
   }
 })
+
+const shellAppName = computed(() => runtimeAppConfig.value.title || labels.value.appName)
 
 const hardcodedAnswers = computed<AnswerTile[]>(() => [
   { id: 'yes', label: labels.value.yes, speech: labels.value.yes, color: 'green', icon: 'ui/check-fat' },
@@ -273,14 +302,39 @@ function applyState(state: YesNoState, version?: number) {
 
 async function hydrateRemoteData() {
   if (!sessionToken.value) return
-  const [settings, state, defaults] = await Promise.all([
+  const [settings, state] = await Promise.all([
     dataClient.getSettings(appId, sessionToken.value),
-    dataClient.getState(appId, sessionToken.value),
-    dataClient.getAppDefaults(appId, 'state').catch(() => null)
+    dataClient.getState(appId, sessionToken.value)
   ])
   applySettings(settings.settings, settings.version)
   applyState(state.state, state.version)
-  defaultAnswers.value = defaultsAnswers(defaults?.state)
+  await loadDefaultContent()
+}
+
+async function loadDefaultContent() {
+  const headers: Record<string, string> = { Accept: 'application/json' }
+  if (sessionToken.value) headers.Authorization = `Bearer ${sessionToken.value}`
+  try {
+    const response = await fetch(`${contentBaseUrl}/yes-no/content?language=${encodeURIComponent(language.value)}`, { headers })
+    if (!response.ok) return
+    const body = await response.json() as ContentResponse
+    defaultAnswers.value = defaultsAnswers(body.data)
+  } catch {
+    // Keep built-in fallbacks active when content-api is unavailable.
+  }
+}
+
+async function loadAppConfig() {
+  try {
+    const response = await fetch(`${apiBaseUrl}/apps/config/${appId}`)
+    if (!response.ok) return
+    const body = await response.json() as AppConfigResponse
+    if (!body.config || typeof body.config !== 'object') return
+    runtimeAppConfig.value = { ...appConfig, ...body.config, id: appId }
+    injectAppMeta(runtimeAppConfig.value)
+  } catch {
+    // Keep generated appConfig active when the config endpoint is unavailable.
+  }
 }
 
 async function persistSettingsRemote() {
@@ -329,6 +383,7 @@ async function loadTranslations(value: TikoLanguage) {
 watch(language, (value) => {
   i18n.setLanguage(value)
   void loadTranslations(value)
+  void loadDefaultContent()
 }, { immediate: true })
 
 watch(colorMode, (mode) => {
@@ -348,6 +403,7 @@ watch([latestAnswerId, answerHistory], () => {
 }, { deep: true })
 
 onMounted(async () => {
+  void loadAppConfig()
   try {
     await runtime.bootstrapIdentity()
     await runtime.loadProfile()
@@ -365,10 +421,44 @@ async function speak(text: string) {
   if (!trimmed) return
   speakStatus.value = 'speaking'
   try {
-    const result = await tts.speak({ text: trimmed, language: language.value, provider: 'auto' })
+    const result = await tts.speak({ text: trimmed, language: language.value, provider: 'narakeet' })
     speakStatus.value = result.metadata?.fallbackUsed ? 'fallback' : 'idle'
   } catch {
     speakStatus.value = 'error'
+  }
+}
+
+function waitForAudioEnd(audio: Pick<EventTarget, 'addEventListener'>): Promise<void> {
+  return new Promise((resolve) => {
+    const done = () => resolve()
+    audio.addEventListener('ended', done, { once: true })
+    audio.addEventListener('error', done, { once: true })
+  })
+}
+
+async function speakSentence() {
+  const trimmed = sentence.value.trim()
+  if (sentenceSpeechState.value !== 'idle' || !trimmed) return
+  sentenceSpeechState.value = 'generating'
+  speakStatus.value = 'speaking'
+  try {
+    const result = await tts.getAudio({ text: trimmed, language: language.value, provider: 'narakeet' })
+    if (result.audioUrl) {
+      const audio = new Audio(result.audioUrl)
+      sentenceSpeechState.value = 'playing'
+      await audio.play()
+      await waitForAudioEnd(audio)
+      speakStatus.value = result.metadata?.fallbackUsed ? 'fallback' : 'idle'
+      return
+    }
+
+    sentenceSpeechState.value = 'playing'
+    await tts.speak({ text: trimmed, language: language.value, provider: 'narakeet' })
+    speakStatus.value = result.metadata?.fallbackUsed ? 'fallback' : 'idle'
+  } catch {
+    speakStatus.value = 'error'
+  } finally {
+    sentenceSpeechState.value = 'idle'
   }
 }
 
@@ -392,12 +482,12 @@ function resetSentence() {
 
 <template>
   <TikoAppShell
-    :app-name="labels.appName"
-    :app-icon="appConfig.appIcon"
-    :app-icon-image-url="appConfig.appIconImageUrl"
-    :app-icon-media-category="appConfig.appIconMediaCategory"
-    :app-color="appConfig.appColor"
-    :theme-color="appConfig.themeColor"
+    :app-name="shellAppName"
+    :app-icon="runtimeAppConfig.appIcon"
+    :app-icon-image-url="runtimeAppConfig.appIconImageUrl"
+    :app-icon-media-category="runtimeAppConfig.appIconMediaCategory"
+    :app-color="runtimeAppConfig.appColor"
+    :theme-color="runtimeAppConfig.themeColor"
     avatar="ui/avatar"
     :actions="headerActions"
     :show-settings-button="parentMode"
@@ -419,11 +509,15 @@ function resetSentence() {
           <button
             :class="[bemm('round-control'), bemm('speak')]"
             type="button"
-            :disabled="!canSpeakSentence"
+            :disabled="!canSpeakSentence || sentenceSpeechState !== 'idle'"
+            :aria-busy="sentenceSpeechState === 'generating'"
+            :data-state="sentenceSpeechState"
             :aria-label="labels.speak"
-            @click="speak(sentence)"
+            @click="speakSentence"
           >
-            <Icon name="media/volume-iii" size="large" aria-hidden="true" />
+            <span v-if="sentenceSpeechState === 'generating'" :class="bemm('spinner')" aria-hidden="true"></span>
+            <Icon v-else-if="sentenceSpeechState === 'playing'" name="media/playback-pause" size="large" aria-hidden="true" />
+            <Icon v-else name="media/volume-iii" size="large" aria-hidden="true" />
           </button>
           <button
             :class="[bemm('round-control'), bemm('reset')]"
@@ -463,7 +557,7 @@ function resetSentence() {
           data-test="tiko-answer-button"
           :title="choice.label"
           :background="colorTokenToHex(choice.color, choice.id === 'no' ? '#E03131' : '#2F9E44')"
-          :image-src="choice.imageURL"
+          :image-src="answerImageSrc(choice)"
           label-size="large"
           @press="answer(choice.id)"
         />

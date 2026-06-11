@@ -17,6 +17,7 @@
 		7E8CCD072CB513BCC46CF3A1 /* RadioPlaybackService.swift in Sources */ = {isa = PBXBuildFile; fileRef = D79EE4617893EC2DA91D30CC /* RadioPlaybackService.swift */; };
 		8FA44C8F5278E6B7304ACCCF /* TikoRadioTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C10F4D15A1B9E163D45B6C7E /* TikoRadioTests.swift */; };
 		974158368AEA9ED06A3260D9 /* RadioModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = F03EEB0E43F08257135FD2ED /* RadioModels.swift */; };
+		E8D82874EF218F9F21FEFAF8 /* RadioAppConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = B17B677C7C8F49D6E855D8E7 /* RadioAppConfig.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -39,6 +40,7 @@
 		7F3786B8F2D3DF95A603F404 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		88B1A13F79D6851C959281CE /* TikoRadio.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = TikoRadio.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		8C73BBE6FEDFFA5DE99385BC /* YouTubePlaybackBridge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YouTubePlaybackBridge.swift; sourceTree = "<group>"; };
+		B17B677C7C8F49D6E855D8E7 /* RadioAppConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RadioAppConfig.swift; sourceTree = "<group>"; };
 		C10F4D15A1B9E163D45B6C7E /* TikoRadioTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TikoRadioTests.swift; sourceTree = "<group>"; };
 		D554990F8B6D5214203045EF /* RadioView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RadioView.swift; sourceTree = "<group>"; };
 		D79EE4617893EC2DA91D30CC /* RadioPlaybackService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RadioPlaybackService.swift; sourceTree = "<group>"; };
@@ -72,6 +74,7 @@
 			children = (
 				75E41645927137FAEBA203E8 /* Assets.xcassets */,
 				7F3786B8F2D3DF95A603F404 /* Info.plist */,
+				B17B677C7C8F49D6E855D8E7 /* RadioAppConfig.swift */,
 				2DC2F0CE35E3A79F4815DE3D /* RadioLibraryStore.swift */,
 				F03EEB0E43F08257135FD2ED /* RadioModels.swift */,
 				D79EE4617893EC2DA91D30CC /* RadioPlaybackService.swift */,
@@ -205,6 +208,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E8D82874EF218F9F21FEFAF8 /* RadioAppConfig.swift in Sources */,
 				795955A8BBCF0D6FBF9E276E /* RadioLibraryStore.swift in Sources */,
 				974158368AEA9ED06A3260D9 /* RadioModels.swift in Sources */,
 				7E8CCD072CB513BCC46CF3A1 /* RadioPlaybackService.swift in Sources */,

@@ -1,17 +1,32 @@
 import AVFoundation
 
 @MainActor
-final class YesNoSpeechService {
+enum YesNoSpeechPlaybackState {
+    case idle
+    case generating
+    case playing
+}
+
+@MainActor
+final class YesNoSpeechService: NSObject, AVAudioPlayerDelegate, AVSpeechSynthesizerDelegate {
     private let synthesizer = AVSpeechSynthesizer()
     private let atlasSpeechURL = URL(string: "https://api.tikotalks.com/v1/atlas/speech")!
     private var audioPlayer: AVAudioPlayer?
     private var speechTask: Task<Void, Never>?
+    private var stateHandler: ((YesNoSpeechPlaybackState) -> Void)?
 
-    func speak(_ text: String, languageCode: String = "en") {
+    override init() {
+        super.init()
+        synthesizer.delegate = self
+    }
+
+    func speak(_ text: String, languageCode: String = "en", onStateChange: ((YesNoSpeechPlaybackState) -> Void)? = nil) {
         let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmed.isEmpty else { return }
 
         stop()
+        stateHandler = onStateChange
+        notify(.generating)
 
         speechTask = Task { [atlasSpeechURL] in
             do {
@@ -24,13 +39,16 @@ final class YesNoSpeechService {
                 }
 
                 let player = try AVAudioPlayer(data: audioData)
+                player.delegate = self
                 player.prepareToPlay()
+                audioPlayer = player
+                notify(.playing)
                 guard player.play() else {
                     throw SpeechError.playbackFailed
                 }
-                audioPlayer = player
             } catch {
                 guard !Task.isCancelled else { return }
+                notify(.playing)
                 speakLocally(trimmed, languageCode: languageCode)
             }
         }
@@ -44,6 +62,34 @@ final class YesNoSpeechService {
         if synthesizer.isSpeaking {
             synthesizer.stopSpeaking(at: .immediate)
         }
+        notify(.idle)
+        stateHandler = nil
+    }
+
+    nonisolated func audioPlayerDidFinishPlaying(_ player: AVAudioPlayer, successfully flag: Bool) {
+        Task { @MainActor in finishPlayback() }
+    }
+
+    nonisolated func audioPlayerDecodeErrorDidOccur(_ player: AVAudioPlayer, error: Error?) {
+        Task { @MainActor in finishPlayback() }
+    }
+
+    nonisolated func speechSynthesizer(_ synthesizer: AVSpeechSynthesizer, didFinish utterance: AVSpeechUtterance) {
+        Task { @MainActor in finishPlayback() }
+    }
+
+    nonisolated func speechSynthesizer(_ synthesizer: AVSpeechSynthesizer, didCancel utterance: AVSpeechUtterance) {
+        Task { @MainActor in finishPlayback() }
+    }
+
+    private func finishPlayback() {
+        audioPlayer = nil
+        notify(.idle)
+        stateHandler = nil
+    }
+
+    private func notify(_ state: YesNoSpeechPlaybackState) {
+        stateHandler?(state)
     }
 
     private func speakLocally(_ text: String, languageCode: String) {
@@ -88,7 +134,7 @@ final class YesNoSpeechService {
             purpose: "speech-playback",
             text: text,
             language: languageCode,
-            provider: "auto"
+            provider: "narakeet"
         ))
 
         let (data, response) = try await URLSession.shared.data(for: request)

@@ -25,8 +25,10 @@ actor CardsContentClient {
 
     /// Fetches collections from the Content API.
     /// Passes the session token so the API can merge user-specific data.
-    func fetchCollections(sessionToken: String?) async throws -> [CardCollection] {
-        guard let url = URL(string: "\(Self.baseURL)/cards/collections") else {
+    func fetchCollections(sessionToken: String?, languageCode: String) async throws -> [CardCollection] {
+        var components = URLComponents(string: "\(Self.baseURL)/cards/collections")
+        components?.queryItems = [URLQueryItem(name: "language", value: languageCode)]
+        guard let url = components?.url else {
             throw URLError(.badURL)
         }
         var request = URLRequest(url: url)
@@ -42,7 +44,7 @@ actor CardsContentClient {
     }
 
     /// Creates a new user collection and persists it server-side.
-    func createCollection(id: String, title: String, colorHex: UInt32, order: Int, parentID: String? = nil, imageURL: URL? = nil, sessionToken: String) async throws -> CardCollection {
+    func createCollection(id: String, title: String, color: String, order: Int, parentID: String? = nil, imageURL: URL? = nil, sessionToken: String) async throws -> CardCollection {
         guard let url = URL(string: "\(Self.baseURL)/cards/collections") else {
             throw URLError(.badURL)
         }
@@ -51,9 +53,9 @@ actor CardsContentClient {
         request.timeoutInterval = 15
         request.setValue("Bearer \(sessionToken)", forHTTPHeaderField: "Authorization")
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        var payload: [String: Any] = ["id": id, "title": title, "colorHex": colorHex, "order": order]
+        var payload: [String: Any] = ["id": id, "title": title, "color": color, "order": order]
         if let parentID { payload["parentID"] = parentID }
-        if let imageURL, !imageURL.isFileURL { payload["imageURL"] = imageURL.absoluteString }
+        if let imageRef = try await imageRefPayload(from: imageURL, sessionToken: sessionToken) { payload["imageRef"] = imageRef }
         request.httpBody = try JSONSerialization.data(withJSONObject: payload)
         let (data, response) = try await URLSession.shared.data(for: request)
         guard let http = response as? HTTPURLResponse, (200..<300).contains(http.statusCode) else {
@@ -63,7 +65,7 @@ actor CardsContentClient {
     }
 
     /// Adds a card to a user collection and persists it server-side.
-    func createCard(id: String, title: String, speech: String, colorHex: UInt32, order: Int, imageURL: URL? = nil, collectionID: String, sessionToken: String) async throws -> CommunicationCard {
+    func createCard(id: String, title: String, speech: String, color: String, order: Int, imageURL: URL? = nil, collectionID: String, sessionToken: String) async throws -> CommunicationCard {
         guard let url = URL(string: "\(Self.baseURL)/cards/collections/\(collectionID)/cards") else {
             throw URLError(.badURL)
         }
@@ -72,8 +74,8 @@ actor CardsContentClient {
         request.timeoutInterval = 15
         request.setValue("Bearer \(sessionToken)", forHTTPHeaderField: "Authorization")
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        var payload: [String: Any] = ["id": id, "title": title, "speech": speech, "colorHex": colorHex, "order": order]
-        if let imageURL, !imageURL.isFileURL { payload["imageURL"] = imageURL.absoluteString }
+        var payload: [String: Any] = ["id": id, "title": title, "speech": speech, "color": color, "order": order]
+        if let imageRef = try await imageRefPayload(from: imageURL, sessionToken: sessionToken) { payload["imageRef"] = imageRef }
         request.httpBody = try JSONSerialization.data(withJSONObject: payload)
         let (data, response) = try await URLSession.shared.data(for: request)
         guard let http = response as? HTTPURLResponse, (200..<300).contains(http.statusCode) else {
@@ -82,7 +84,7 @@ actor CardsContentClient {
         return try JSONDecoder().decode(SingleCardResponse.self, from: data).data
     }
 
-    func updateCollection(id: String, title: String, colorHex: UInt32, parentID: String?? = nil, imageURL: URL? = nil, saveAsDefault: Bool = false, sessionToken: String) async throws -> CardCollection {
+    func updateCollection(id: String, title: String, color: String, parentID: String?? = nil, imageURL: URL? = nil, saveAsDefault: Bool = false, sessionToken: String) async throws -> CardCollection {
         guard let url = URL(string: "\(Self.baseURL)/cards/collections/\(id)") else {
             throw URLError(.badURL)
         }
@@ -91,9 +93,9 @@ actor CardsContentClient {
         request.timeoutInterval = 15
         request.setValue("Bearer \(sessionToken)", forHTTPHeaderField: "Authorization")
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        var payload: [String: Any] = ["title": title, "colorHex": colorHex, "saveAsDefault": saveAsDefault]
+        var payload: [String: Any] = ["title": title, "color": color, "saveAsDefault": saveAsDefault]
         if let parentID { payload["parentID"] = parentID ?? NSNull() }
-        if let imageURL, !imageURL.isFileURL { payload["imageURL"] = imageURL.absoluteString }
+        if let imageRef = try await imageRefPayload(from: imageURL, sessionToken: sessionToken) { payload["imageRef"] = imageRef }
         request.httpBody = try JSONSerialization.data(withJSONObject: payload)
         let (data, response) = try await URLSession.shared.data(for: request)
         guard let http = response as? HTTPURLResponse, (200..<300).contains(http.statusCode) else {
@@ -102,7 +104,7 @@ actor CardsContentClient {
         return try JSONDecoder().decode(SingleCollectionResponse.self, from: data).data
     }
 
-    func updateCard(id: String, title: String, speech: String, colorHex: UInt32, imageURL: URL? = nil, collectionID: String, sessionToken: String) async throws -> CommunicationCard {
+    func updateCard(id: String, title: String, speech: String, color: String, imageURL: URL? = nil, collectionID: String, sessionToken: String) async throws -> CommunicationCard {
         guard let url = URL(string: "\(Self.baseURL)/cards/collections/\(collectionID)/cards/\(id)") else {
             throw URLError(.badURL)
         }
@@ -111,19 +113,8 @@ actor CardsContentClient {
         request.timeoutInterval = 15
         request.setValue("Bearer \(sessionToken)", forHTTPHeaderField: "Authorization")
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        var payload: [String: Any] = ["title": title, "speech": speech, "colorHex": colorHex]
-        if let imageURL, !imageURL.isFileURL {
-            if collectionID.hasPrefix("user_") {
-                payload["imageURL"] = imageURL.absoluteString
-            } else {
-                do {
-                    let imageId = try await uploadImage(imageURL: imageURL, sessionToken: sessionToken)
-                    payload["imageRef"] = imageId
-                } catch {
-                    print("[CardsContentClient] uploadImage failed: \(error)")
-                }
-            }
-        }
+        var payload: [String: Any] = ["title": title, "speech": speech, "color": color]
+        if let imageRef = try await imageRefPayload(from: imageURL, sessionToken: sessionToken) { payload["imageRef"] = imageRef }
         request.httpBody = try JSONSerialization.data(withJSONObject: payload)
         let (data, response) = try await URLSession.shared.data(for: request)
         guard let http = response as? HTTPURLResponse, (200..<300).contains(http.statusCode) else {
@@ -169,21 +160,25 @@ actor CardsContentClient {
         request.timeoutInterval = 15
         request.setValue("Bearer \(sessionToken)", forHTTPHeaderField: "Authorization")
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        let payload: [String: Any] = [
-            "collection": [
-                "id": collection.id,
-                "title": collection.title,
-                "colorHex": collection.colorHex,
-                "order": collection.order,
-                "cards": collection.cards.map { [
-                    "id": $0.id,
-                    "title": $0.title,
-                    "speech": $0.speech,
-                    "colorHex": $0.colorHex,
-                    "order": 0
-                ] }
-            ]
+        var collectionPayload: [String: Any] = [
+            "id": collection.id,
+            "title": collection.title,
+            "color": collection.color,
+            "order": collection.order,
         ]
+        if let imageRef = collection.imageRef { collectionPayload["imageRef"] = imageRef }
+        collectionPayload["cards"] = collection.cards.map { card in
+            var cardPayload: [String: Any] = [
+                "id": card.id,
+                "title": card.title,
+                "speech": card.speech,
+                "color": card.color,
+                "order": 0,
+            ]
+            if let imageRef = card.imageRef { cardPayload["imageRef"] = imageRef }
+            return cardPayload
+        }
+        let payload: [String: Any] = ["collection": collectionPayload]
         request.httpBody = try JSONSerialization.data(withJSONObject: payload)
         let (_, response) = try await URLSession.shared.data(for: request)
         guard let http = response as? HTTPURLResponse, (200..<300).contains(http.statusCode) else {
@@ -219,6 +214,23 @@ actor CardsContentClient {
             throw URLError(.badServerResponse)
         }
         return try JSONDecoder().decode(UploadResponse.self, from: data).data.id
+    }
+
+    private func imageRefPayload(from imageURL: URL?, sessionToken: String) async throws -> String? {
+        guard let imageURL else { return nil }
+        if let contentImageRef = contentImageRef(from: imageURL) {
+            return contentImageRef
+        }
+        return try await uploadImage(imageURL: imageURL, sessionToken: sessionToken)
+    }
+
+    private func contentImageRef(from url: URL) -> String? {
+        let components = url.path.split(separator: "/").map(String.init)
+        guard let imagesIndex = components.firstIndex(of: "images"),
+              components.indices.contains(imagesIndex + 1) else {
+            return nil
+        }
+        return components[imagesIndex + 1]
     }
 }
 

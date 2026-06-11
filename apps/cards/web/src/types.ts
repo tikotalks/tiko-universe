@@ -1,4 +1,5 @@
 import type { TikoColorMode } from '@tiko/ui'
+import type { TikoColorName } from '@tiko/data'
 
 export type SpeakStatus = 'idle' | 'speaking' | 'error'
 export type CardsItemKind = 'collection' | 'card'
@@ -6,10 +7,11 @@ export type CardsItemKind = 'collection' | 'card'
 export interface CardCollection {
   id: string
   title: string
-  colorHex: number
+  color: TikoColorName
   order: number
   parentID?: string | null
   mediaCategories: string[]
+  imageRef?: string
   imageURL?: string
   cards: CommunicationCard[]
 }
@@ -20,7 +22,7 @@ export interface CommunicationCard {
   speech: string
   imageURL?: string
   imageRef?: string
-  colorHex: number
+  color: TikoColorName
   order?: number
 }
 
@@ -46,16 +48,16 @@ export type CardsGridItem =
 
 export interface CardsCollectionInput {
   title: string
-  colorHex: number
+  color: TikoColorName
   parentID?: string | null
-  imageURL?: string
+  imageRef?: string
 }
 
 export interface CardsCardInput {
   title: string
   speech: string
-  colorHex: number
-  imageURL?: string
+  color: TikoColorName
+  imageRef?: string
 }
 
 export interface CardsSettingsState {

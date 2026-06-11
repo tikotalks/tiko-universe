@@ -111,6 +111,25 @@ describe('Type App', () => {
     expect(wrapper.find('.type-app__phrases-header').exists()).toBe(true)
   })
 
+  it('loads starter prompts from persisted/default state', async () => {
+    const { wrapper } = mountApp({
+      'tiko:type': JSON.stringify({
+        prompts: ['I need help', 'Thank you'],
+        completedPrompts: [],
+      }),
+    })
+    const phrasesBtn = wrapper.findAll('.type-app__actions button')[3]
+    await phrasesBtn!.trigger('click')
+    await nextTick()
+
+    const items = wrapper.findAll('.type-app__phrase-item')
+    expect(items.map(item => item.text())).toEqual(['I need help', 'Thank you'])
+
+    await items[0].trigger('click')
+    await nextTick()
+    expect((wrapper.find('.type-app__textarea').element as HTMLTextAreaElement).value).toBe('I need help')
+  })
+
   it('localStorage persistence works', async () => {
     const { wrapper, ls } = mountApp()
     const textarea = wrapper.find('.type-app__textarea')

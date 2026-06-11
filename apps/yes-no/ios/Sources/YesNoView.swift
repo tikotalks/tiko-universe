@@ -47,7 +47,7 @@ struct YesNoAnswerTile: Codable, Identifiable, Equatable {
     }
 
     private enum CodingKeys: String, CodingKey {
-        case id, label, speech, labelTranslations, speechTranslations, color, colorHex, imageURL, icon
+        case id, label, speech, labelTranslations, speechTranslations, color, imageURL, icon
     }
 
     init(from decoder: Decoder) throws {
@@ -57,13 +57,7 @@ struct YesNoAnswerTile: Codable, Identifiable, Equatable {
         speech = try container.decodeIfPresent(String.self, forKey: .speech) ?? label
         labelTranslations = try container.decodeIfPresent([String: String].self, forKey: .labelTranslations)
         speechTranslations = try container.decodeIfPresent([String: String].self, forKey: .speechTranslations)
-        if let color = try container.decodeIfPresent(String.self, forKey: .color) {
-            self.color = color
-        } else if let colorHex = try container.decodeIfPresent(UInt32.self, forKey: .colorHex) {
-            self.color = String(format: "#%06X", colorHex)
-        } else {
-            self.color = TikoColors.teal.name
-        }
+        color = try container.decodeIfPresent(String.self, forKey: .color) ?? TikoColors.teal.name
         imageURL = try container.decodeIfPresent(URL.self, forKey: .imageURL)
         icon = try container.decodeIfPresent(String.self, forKey: .icon)
     }
@@ -173,10 +167,12 @@ final class YesNoStore: ObservableObject {
     @Published var defaultSets: [YesNoAnswerSet] = builtInAnswerSets
     @Published var defaultSelectedSetId: String?
 
-    private static let appAPIBase = "https://app.tikoapi.org/v1"
+    private static let contentAPIBase = "https://content.tikoapi.org/v1"
 
-    func fetchDefaults() async {
-        guard let url = URL(string: "\(Self.appAPIBase)/apps/defaults/yes-no/state") else { return }
+    func fetchDefaults(languageCode: String = "en") async {
+        guard var components = URLComponents(string: "\(Self.contentAPIBase)/yes-no/content") else { return }
+        components.queryItems = [URLQueryItem(name: "language", value: languageCode)]
+        guard let url = components.url else { return }
         do {
             let (data, response) = try await URLSession.shared.data(from: url)
             guard let http = response as? HTTPURLResponse, (200..<300).contains(http.statusCode) else { return }
@@ -228,6 +224,7 @@ struct YesNoView: View {
     @State private var showingHistory = false
     @State private var showingChoiceStyle = false
     @State private var showingTileEditor = false
+    @State private var sentenceSpeechState: YesNoSpeechPlaybackState = .idle
 
     private var defaultSentence: String { i18n.t("yesNo.sentence.default") }
 
@@ -257,6 +254,35 @@ struct YesNoView: View {
 
     private var clearButtonBackground: Color {
         effectiveColorScheme == .dark ? .white.opacity(0.12) : .white.opacity(0.36)
+    }
+
+    private var speakButtonBackground: Color {
+        switch sentenceSpeechState {
+        case .idle:
+            return Color(hex: 0x93ee3f)
+        case .generating:
+            return Color(hex: 0x0b5a7a)
+        case .playing:
+            return Color(hex: 0x006c67)
+        }
+    }
+
+    @ViewBuilder
+    private var speakButtonContent: some View {
+        switch sentenceSpeechState {
+        case .generating:
+            ProgressView()
+                .progressViewStyle(.circular)
+                .tint(.white)
+        case .playing:
+            Image(systemName: "waveform")
+                .font(.title2.weight(.bold))
+                .foregroundStyle(.white)
+        case .idle:
+            Image(systemName: "speaker.wave.2.fill")
+                .font(.title2.weight(.bold))
+                .foregroundStyle(.white)
+        }
     }
 
     private var choiceStyle: TikoChoiceStyle {
@@ -339,14 +365,19 @@ struct YesNoView: View {
 
                 HStack(spacing: 12) {
                     Button(action: speakSentence) {
-                        Image(systemName: "speaker.wave.2.fill")
-                            .font(.title2.weight(.bold))
-                            .foregroundStyle(.white)
+                        speakButtonContent
                             .frame(width: 56, height: 56)
-                            .background(Color(hex: 0x93ee3f))
+                            .background(speakButtonBackground)
                             .clipShape(Circle())
+                            .shadow(
+                                color: speakButtonBackground.opacity(sentenceSpeechState == .idle ? 0.0 : 0.32),
+                                radius: sentenceSpeechState == .idle ? 0 : 10,
+                                y: sentenceSpeechState == .idle ? 0 : 4
+                            )
                     }
+                    .disabled(!speechEnabled || sentenceSpeechState != .idle || effectiveSentence.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
                     .accessibilityLabel("Speak sentence")
+                    .accessibilityValue(sentenceSpeechState == .generating ? "Generating" : sentenceSpeechState == .playing ? "Playing" : "")
 
                     Button(action: { sentence = "" }) {
                         Image(systemName: "xmark")
@@ -373,9 +404,12 @@ struct YesNoView: View {
         }
         .onChange(of: languageCode) { _, code in
             i18n.setLanguage(code)
+            Task {
+                await store.fetchDefaults(languageCode: code)
+            }
         }
         .task {
-            await store.fetchDefaults()
+            await store.fetchDefaults(languageCode: languageCode)
             if customAnswerSets.isEmpty {
                 if let defaultSelected = store.defaultSelectedSetId,
                    availableAnswerSets.contains(where: { $0.id == defaultSelected }) {
@@ -438,10 +472,11 @@ struct YesNoView: View {
     }
 
     private func speakSentence() {
+        guard speechEnabled, sentenceSpeechState == .idle else { return }
         UIImpactFeedbackGenerator(style: .light).impactOccurred()
         rememberCurrentQuestion()
-        if speechEnabled {
-            speechService.speak(effectiveSentence, languageCode: languageCode)
+        speechService.speak(effectiveSentence, languageCode: languageCode) { state in
+            sentenceSpeechState = state
         }
     }
 
@@ -456,10 +491,8 @@ struct YesNoView: View {
 
     private func flashBackground(for choice: TikoAnswerChoice) {
         let base: Color
-        if let color = choice.color, let parsed = TikoColors.color(named: color) ?? Color(hexString: color) {
+        if let color = choice.color, let parsed = TikoColors.color(named: color) {
             base = parsed
-        } else if let hex = choice.colorHex {
-            base = Color(hex: hex)
         } else {
             base = choice.tone == .primary ? Color(hex: 0x93ee3f) : Color(hex: 0xef405d)
         }

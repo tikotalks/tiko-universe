@@ -37,6 +37,8 @@ export interface UseIdentityRuntimeOptions {
   deviceName: string
   /** localStorage key for persisted identity */
   storageKey?: string
+  /** Reactive labels for shared identity/profile flows. */
+  labels?: () => Partial<TikoIdentityLabels>
 }
 
 export interface StoredIdentity {
@@ -49,6 +51,170 @@ export interface StoredIdentity {
   accountEmailVerified?: boolean
 }
 
+export interface TikoIdentityLabels {
+  profileMenu: {
+    close: string
+    account: string
+    deviceUser: string
+    temporaryDeviceUser: string
+    profile: string
+    setNameAndEmail: string
+    profileDetail: string
+    recoverableUserDetail: string
+    logIn: string
+    logInDetail: string
+    childMode: string
+    hideParentControls: string
+    createParentCode: string
+    childAccounts: string
+    childAccountsDetail: string
+    deleteAccount: string
+    deleteAccountDetail: string
+    logOut: string
+    logOutDetail: string
+  }
+  childAccounts: {
+    back: string
+    title: string
+    subtitle: string
+    code: string
+    codeNotSet: string
+    rename: string
+    resetCode: string
+    delete: string
+    name: string
+    save: string
+    cancel: string
+    newCode: string
+    empty: string
+    addChildAccount: string
+    childName: string
+    loginCode: string
+    create: string
+    deleteConfirm: string
+    loadError: string
+    createError: string
+    updateError: string
+    resetError: string
+    deleteError: string
+  }
+  pin: {
+    createTitle: string
+    createSubtitle: string
+    confirmTitle: string
+    confirmSubtitle: string
+    enterTitle: string
+    enterSubtitle: string
+    codesDontMatch: string
+    wrongCode: string
+    back: string
+    cancel: string
+  }
+  accountPopup: {
+    titleAccount: string
+    titleSetup: string
+    temporaryDeviceUser: string
+    verifiedAccount: string
+    addEmailToRecover: string
+    displayName: string
+    yourName: string
+    email: string
+    emailPlaceholder: string
+    codePlaceholder: string
+    sendError: string
+    verifyError: string
+    verified: string
+    pleaseWait: string
+    verifyCode: string
+    sendMagicLink: string
+    signOut: string
+    deleteAccount: string
+    deleteConfirm: string
+  }
+}
+
+const defaultIdentityLabels: TikoIdentityLabels = {
+  profileMenu: {
+    close: 'Close',
+    account: 'Account',
+    deviceUser: 'Device user',
+    temporaryDeviceUser: 'Temporary device user',
+    profile: 'Profile',
+    setNameAndEmail: 'Set name and email',
+    profileDetail: 'Name, email, avatar',
+    recoverableUserDetail: 'Make this a recoverable user',
+    logIn: 'Log in',
+    logInDetail: 'Recover an existing user by email',
+    childMode: 'Child mode',
+    hideParentControls: 'Hide parent controls',
+    createParentCode: 'Create a 4-digit code',
+    childAccounts: 'Child accounts',
+    childAccountsDetail: 'Manage child profiles and login codes',
+    deleteAccount: 'Delete account',
+    deleteAccountDetail: 'Remove this user and its sessions',
+    logOut: 'Log out',
+    logOutDetail: 'Keep this app available on the device',
+  },
+  childAccounts: {
+    back: 'Back',
+    title: 'Child accounts',
+    subtitle: 'Manage profiles for your children',
+    code: 'Code',
+    codeNotSet: 'not set',
+    rename: 'Rename',
+    resetCode: 'Reset code',
+    delete: 'Delete',
+    name: 'Name',
+    save: 'Save',
+    cancel: 'Cancel',
+    newCode: 'New 4-digit code',
+    empty: 'No child accounts yet. Add one so your child can log in with a 4-digit code.',
+    addChildAccount: 'Add child account',
+    childName: "Child's name",
+    loginCode: '4-digit login code',
+    create: 'Create',
+    deleteConfirm: 'Delete this child account?',
+    loadError: 'Could not load child accounts.',
+    createError: 'Could not create child account.',
+    updateError: 'Could not update name.',
+    resetError: 'Could not reset code.',
+    deleteError: 'Could not delete child account.',
+  },
+  pin: {
+    createTitle: 'Create a code',
+    createSubtitle: 'This protects parent mode from kids',
+    confirmTitle: 'Confirm code',
+    confirmSubtitle: 'Enter the same 4 digits again',
+    enterTitle: 'Enter code',
+    enterSubtitle: 'to switch to parent mode',
+    codesDontMatch: "Codes don't match",
+    wrongCode: 'Wrong code',
+    back: 'Back',
+    cancel: 'Cancel',
+  },
+  accountPopup: {
+    titleAccount: 'Your account',
+    titleSetup: 'Set up user',
+    temporaryDeviceUser: 'Temporary device user',
+    verifiedAccount: 'Verified account',
+    addEmailToRecover: 'Add email to recover this user',
+    displayName: 'Display name',
+    yourName: 'Your name',
+    email: 'Email',
+    emailPlaceholder: 'you@example.com',
+    codePlaceholder: '123 456',
+    sendError: 'Could not send the code. Please try again.',
+    verifyError: 'Invalid or expired code. Try again or resend.',
+    verified: 'Verified',
+    pleaseWait: 'Please wait...',
+    verifyCode: 'Verify code',
+    sendMagicLink: 'Send magic link',
+    signOut: 'Sign out',
+    deleteAccount: 'Delete account',
+    deleteConfirm: 'Delete this Tiko user? This removes the account and sessions.',
+  },
+}
+
 // ---------------------------------------------------------------------------
 // Composable
 // ---------------------------------------------------------------------------
@@ -59,6 +225,7 @@ export function useIdentityRuntime(options: UseIdentityRuntimeOptions) {
   const popup = inject<PopupService>('popupService')!
 
   const hasParentCode = computed(() => state.pinConfigured.value)
+  const labels = computed(() => mergeIdentityLabels(defaultIdentityLabels, options.labels?.() ?? {}))
 
   // ---- Persistence ----
 
@@ -187,7 +354,8 @@ export function useIdentityRuntime(options: UseIdentityRuntimeOptions) {
         hasCode: hasParentCode.value,
         isLoggedIn: Boolean(state.sessionToken.value),
         isRecoverable: state.accountEmailVerified.value,
-        userLabel: state.displayName.value || state.accountEmail.value || state.userId.value || 'Device user',
+        userLabel: state.displayName.value || state.accountEmail.value || state.userId.value || labels.value.profileMenu.deviceUser,
+        labels: labels.value.profileMenu,
       },
       config: { position: 'center', canClose: true, background: true, width: 'min(34rem, calc(100vw - 2rem))' },
       on: {
@@ -230,7 +398,7 @@ export function useIdentityRuntime(options: UseIdentityRuntimeOptions) {
               state.accountEmail.value = email
               sent.value = true
             } catch {
-              error.value = 'Could not send the code. Please try again.'
+              error.value = labels.value.accountPopup.sendError
             } finally {
               loading.value = false
             }
@@ -247,7 +415,7 @@ export function useIdentityRuntime(options: UseIdentityRuntimeOptions) {
               state.accountEmailVerified.value = true
               popup.closeAllPopups()
             } catch {
-              error.value = 'Invalid or expired code. Try again or resend.'
+              error.value = labels.value.accountPopup.verifyError
             } finally {
               loading.value = false
             }
@@ -256,30 +424,30 @@ export function useIdentityRuntime(options: UseIdentityRuntimeOptions) {
           return () => h('div', { class: 'tiko-identity-popup tiko-account-popup', 'data-test': 'tiko-account-popup' }, [
             h('div', { class: 'tiko-identity-popup__header' }, [
               h(Icon, { class: 'tiko-identity-popup__icon', name: 'ui/avatar', 'aria-hidden': 'true' }),
-              h('h2', { class: 'tiko-identity-popup__title' }, state.accountEmailVerified.value ? 'Your account' : 'Set up user'),
+              h('h2', { class: 'tiko-identity-popup__title' }, state.accountEmailVerified.value ? labels.value.accountPopup.titleAccount : labels.value.accountPopup.titleSetup),
             ]),
             h('div', { class: 'tiko-account-popup__avatar', 'aria-hidden': 'true' }, [h(Icon, { name: 'ui/avatar' })]),
             h('div', { class: 'tiko-account-popup__row' }, [
               h(Icon, { class: 'tiko-account-popup__row-icon', name: 'media/icon_mail', 'aria-hidden': 'true' }),
               h('span', { class: 'tiko-account-popup__row-copy' }, [
-                h('strong', state.accountEmail.value || state.userId.value || 'Temporary device user'),
-                h('small', state.accountEmailVerified.value ? 'Verified account' : 'Add email to recover this user'),
+                h('strong', state.accountEmail.value || state.userId.value || labels.value.accountPopup.temporaryDeviceUser),
+                h('small', state.accountEmailVerified.value ? labels.value.accountPopup.verifiedAccount : labels.value.accountPopup.addEmailToRecover),
               ]),
-              state.accountEmailVerified.value ? h(Icon, { class: 'tiko-account-popup__verified', name: 'ui/check-fat', 'aria-label': 'Verified' }) : null,
+              state.accountEmailVerified.value ? h(Icon, { class: 'tiko-account-popup__verified', name: 'ui/check-fat', 'aria-label': labels.value.accountPopup.verified }) : null,
             ]),
-            h('label', { class: 'tiko-account-popup__label' }, 'Display name'),
+            h('label', { class: 'tiko-account-popup__label' }, labels.value.accountPopup.displayName),
             h('input', {
               class: 'tiko-account-popup__field',
               value: nameInput.value,
-              placeholder: 'Your name',
+              placeholder: labels.value.accountPopup.yourName,
               onInput: (event: Event) => { nameInput.value = (event.target as HTMLInputElement).value },
             }),
-            !state.accountEmailVerified.value ? h('label', { class: 'tiko-account-popup__label' }, 'Email') : null,
+            !state.accountEmailVerified.value ? h('label', { class: 'tiko-account-popup__label' }, labels.value.accountPopup.email) : null,
             !state.accountEmailVerified.value ? h('input', {
               class: 'tiko-account-popup__field',
               type: 'email',
               value: emailInput.value,
-              placeholder: 'you@example.com',
+              placeholder: labels.value.accountPopup.emailPlaceholder,
               onInput: (event: Event) => { emailInput.value = (event.target as HTMLInputElement).value },
             }) : null,
             sent.value ? h('input', {
@@ -288,7 +456,7 @@ export function useIdentityRuntime(options: UseIdentityRuntimeOptions) {
               autocomplete: 'one-time-code',
               maxlength: 7,
               value: codeInput.value,
-              placeholder: '123 456',
+              placeholder: labels.value.accountPopup.codePlaceholder,
               onInput: (event: Event) => { codeInput.value = (event.target as HTMLInputElement).value.replace(/\D/g, '').slice(0, 6) },
               onKeydown: (event: KeyboardEvent) => { if (event.key === 'Enter') void verifyCode() },
             }) : null,
@@ -298,9 +466,9 @@ export function useIdentityRuntime(options: UseIdentityRuntimeOptions) {
               type: 'button',
               disabled: loading.value || !emailInput.value.trim().includes('@'),
               onClick: sent.value ? verifyCode : saveAndSendCode,
-            }, loading.value ? 'Please wait...' : sent.value ? 'Verify code' : 'Send magic link') : null,
-            state.accountEmailVerified.value ? h('button', { class: 'tiko-account-popup__signout', type: 'button', onClick: doLogout }, 'Sign out') : null,
-            state.accountEmailVerified.value ? h('button', { class: 'tiko-account-popup__delete', type: 'button', onClick: deleteCurrentUser }, 'Delete account') : null,
+            }, loading.value ? labels.value.accountPopup.pleaseWait : sent.value ? labels.value.accountPopup.verifyCode : labels.value.accountPopup.sendMagicLink) : null,
+            state.accountEmailVerified.value ? h('button', { class: 'tiko-account-popup__signout', type: 'button', onClick: doLogout }, labels.value.accountPopup.signOut) : null,
+            state.accountEmailVerified.value ? h('button', { class: 'tiko-account-popup__delete', type: 'button', onClick: deleteCurrentUser }, labels.value.accountPopup.deleteAccount) : null,
           ])
         },
       }),
@@ -314,7 +482,7 @@ export function useIdentityRuntime(options: UseIdentityRuntimeOptions) {
 
   async function deleteCurrentUser() {
     if (!state.sessionToken.value || !state.accountEmailVerified.value) return
-    if (!window.confirm('Delete this Tiko user? This removes the account and sessions.')) return
+    if (!window.confirm(labels.value.accountPopup.deleteConfirm)) return
     try { await identityClient.createDeletionRequest(state.sessionToken.value, { scope: 'account' }) } catch { /* local cleanup still makes the device usable */ }
     resetIdentityState()
     popup.closeAllPopups()
@@ -339,6 +507,7 @@ export function useIdentityRuntime(options: UseIdentityRuntimeOptions) {
       title: '',
       props: {
         mode: 'verify',
+        labels: labels.value.pin,
         verifyCode: async (pin: string) => {
           if (!state.sessionToken.value) return false
           try {
@@ -371,7 +540,7 @@ export function useIdentityRuntime(options: UseIdentityRuntimeOptions) {
       popup.showPopup({
         component: markRaw(TikoPinPopup),
         title: '',
-        props: { existingHash: undefined },
+        props: { existingHash: undefined, labels: labels.value.pin },
         config: { position: 'center', canClose: true, background: true, width: 'min(30rem, calc(100vw - 2rem))' },
         on: {
           set: async (...args: unknown[]) => {
@@ -429,6 +598,7 @@ export function useIdentityRuntime(options: UseIdentityRuntimeOptions) {
         onDelete: async (id: string) => {
           await identityClient.deleteChildAccount(state.sessionToken.value!, id)
         },
+        labels: labels.value.childAccounts,
       },
       config: { position: 'center', canClose: true, background: true, width: 'min(34rem, calc(100vw - 2rem))' },
       on: {
@@ -457,5 +627,14 @@ export function useIdentityRuntime(options: UseIdentityRuntimeOptions) {
     // Account actions
     deleteCurrentUser,
     doLogout,
+  }
+}
+
+function mergeIdentityLabels(base: TikoIdentityLabels, override: Partial<TikoIdentityLabels>): TikoIdentityLabels {
+  return {
+    profileMenu: { ...base.profileMenu, ...override.profileMenu },
+    childAccounts: { ...base.childAccounts, ...override.childAccounts },
+    pin: { ...base.pin, ...override.pin },
+    accountPopup: { ...base.accountPopup, ...override.accountPopup },
   }
 }

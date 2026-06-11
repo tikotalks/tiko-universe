@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, onUnmounted } from 'vue'
 
 const CODE_LENGTH = 4
+const EMPTY_DIGITS = () => Array<string>(CODE_LENGTH).fill('')
 
 interface Props {
   /** Existing code hash — if undefined, this is first-time setup unless mode is forced. */
@@ -12,11 +13,37 @@ interface Props {
   mode?: 'setup' | 'verify'
   /** Optional async verifier for API-backed PIN flows. Return false to keep the popup open with an error. */
   verifyCode?: (code: string) => boolean | Promise<boolean>
+  labels?: TikoPinPopupLabels
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  hashNamespace: 'parent-code'
+  hashNamespace: 'parent-code',
+  labels: () => ({
+    createTitle: 'Create a code',
+    createSubtitle: 'This protects parent mode from kids',
+    confirmTitle: 'Confirm code',
+    confirmSubtitle: 'Enter the same 4 digits again',
+    enterTitle: 'Enter code',
+    enterSubtitle: 'to switch to parent mode',
+    codesDontMatch: "Codes don't match",
+    wrongCode: 'Wrong code',
+    back: 'Back',
+    cancel: 'Cancel',
+  }),
 })
+
+interface TikoPinPopupLabels {
+  createTitle: string
+  createSubtitle: string
+  confirmTitle: string
+  confirmSubtitle: string
+  enterTitle: string
+  enterSubtitle: string
+  codesDontMatch: string
+  wrongCode: string
+  back: string
+  cancel: string
+}
 
 const emit = defineEmits<{
   (e: 'set', hash: string, code: string): void
@@ -26,8 +53,8 @@ const emit = defineEmits<{
 const mode = computed(() => props.mode ?? (props.existingHash ? 'verify' : 'setup'))
 
 const step = ref<'enter' | 'confirm'>('enter')
-const digits = ref<string[]>([])
-const confirmDigits = ref<string[]>([])
+const digits = ref<string[]>(EMPTY_DIGITS())
+const confirmDigits = ref<string[]>(EMPTY_DIGITS())
 const error = ref('')
 const shake = ref(false)
 const loading = ref(false)
@@ -41,9 +68,18 @@ function focusDigit(index: number) {
 function onDigitInput(index: number, event: Event) {
   const target = event.target as HTMLInputElement
   const value = target.value.replace(/[^0-9]/g, '')
+  const arr = mode.value === 'setup' && step.value === 'confirm'
+    ? confirmDigits.value
+    : digits.value
 
-  if (mode.value === 'setup') {
-    const arr = step.value === 'enter' ? digits.value : confirmDigits.value
+  if (value.length > 1) {
+    const distributed = value.replace(/[^0-9]/g, '').slice(0, CODE_LENGTH).split('')
+    for (let di = 0; di < distributed.length; di++) {
+      if (index + di < CODE_LENGTH) arr[index + di] = distributed[di]
+    }
+    const nextIndex = Math.min(index + distributed.length, CODE_LENGTH - 1)
+    focusDigit(nextIndex)
+  } else if (mode.value === 'setup') {
     if (value.length === 1) {
       arr[index] = value
       if (index < CODE_LENGTH - 1) focusDigit(index + 1)
@@ -52,7 +88,7 @@ function onDigitInput(index: number, event: Event) {
       if (index > 0) focusDigit(index - 1)
     }
   } else {
-    digits.value[index] = value.length === 1 ? value : ''
+    arr[index] = value.length === 1 ? value : ''
     if (value.length === 1 && index < CODE_LENGTH - 1) focusDigit(index + 1)
     else if (value.length === 0 && index > 0) focusDigit(index - 1)
   }
@@ -64,8 +100,8 @@ function onDigitInput(index: number, event: Event) {
     ? confirmDigits.value
     : digits.value
 
-  if (currentDigits.length === CODE_LENGTH && currentDigits.every(d => d !== '')) {
-    setTimeout(() => handleSubmit(), 200)
+  if (currentDigits.filter(d => d !== '').length === CODE_LENGTH) {
+    autoSubmitTimer = window.setTimeout(() => handleSubmit(), 200)
   }
 }
 
@@ -90,7 +126,7 @@ async function handleSubmit() {
     ? confirmDigits.value
     : digits.value
 
-  if (currentDigits.length !== CODE_LENGTH || !currentDigits.every(digit => digit !== '')) return
+  if (currentDigits.filter(digit => digit !== '').length !== CODE_LENGTH) return
 
   const code = currentDigits.join('')
 
@@ -101,10 +137,10 @@ async function handleSubmit() {
     } else {
       const original = digits.value.join('')
       if (code !== original) {
-        error.value = 'Codes don\'t match'
+        error.value = props.labels.codesDontMatch
         shake.value = true
-        confirmDigits.value = []
-        setTimeout(() => { shake.value = false }, 400)
+        confirmDigits.value = EMPTY_DIGITS()
+        shakeTimer = window.setTimeout(() => { shake.value = false }, 400)
         focusDigit(0)
       } else {
         const hash = await hashCode(code)
@@ -119,22 +155,22 @@ async function handleSubmit() {
         ? await props.verifyCode(code)
         : props.existingHash
           ? hash === props.existingHash
-          : true
+          : false
 
       if (verified) {
         emit('set', hash, code)
       } else {
-        error.value = 'Wrong code'
+        error.value = props.labels.wrongCode
         shake.value = true
-        digits.value = []
-        setTimeout(() => { shake.value = false }, 400)
+        digits.value = EMPTY_DIGITS()
+        shakeTimer = window.setTimeout(() => { shake.value = false }, 400)
         focusDigit(0)
       }
     } catch {
-      error.value = 'Wrong code'
+      error.value = props.labels.wrongCode
       shake.value = true
-      digits.value = []
-      setTimeout(() => { shake.value = false }, 400)
+      digits.value = EMPTY_DIGITS()
+      shakeTimer = window.setTimeout(() => { shake.value = false }, 400)
       focusDigit(0)
     } finally {
       loading.value = false
@@ -144,11 +180,19 @@ async function handleSubmit() {
 
 function resetConfirm() {
   step.value = 'enter'
-  confirmDigits.value = []
-  digits.value = []
+  confirmDigits.value = EMPTY_DIGITS()
+  digits.value = EMPTY_DIGITS()
   error.value = ''
   focusDigit(0)
 }
+
+let autoSubmitTimer: number | undefined
+let shakeTimer: number | undefined
+
+onUnmounted(() => {
+  if (autoSubmitTimer !== undefined) clearTimeout(autoSubmitTimer)
+  if (shakeTimer !== undefined) clearTimeout(shakeTimer)
+})
 
 async function hashCode(code: string): Promise<string> {
   const encoder = new TextEncoder()
@@ -164,19 +208,19 @@ async function hashCode(code: string): Promise<string> {
   <div class="tiko-pin-popup" :class="{ 'tiko-pin-popup--shake': shake }">
     <template v-if="mode === 'setup'">
       <div v-if="step === 'enter'" class="tiko-pin-popup__header">
-        <h2 class="tiko-pin-popup__title">Create a code</h2>
-        <p class="tiko-pin-popup__subtitle">This protects parent mode from kids</p>
+        <h2 class="tiko-pin-popup__title">{{ props.labels.createTitle }}</h2>
+        <p class="tiko-pin-popup__subtitle">{{ props.labels.createSubtitle }}</p>
       </div>
       <div v-else class="tiko-pin-popup__header">
-        <h2 class="tiko-pin-popup__title">Confirm code</h2>
-        <p class="tiko-pin-popup__subtitle">Enter the same 4 digits again</p>
+        <h2 class="tiko-pin-popup__title">{{ props.labels.confirmTitle }}</h2>
+        <p class="tiko-pin-popup__subtitle">{{ props.labels.confirmSubtitle }}</p>
       </div>
     </template>
 
     <template v-else>
       <div class="tiko-pin-popup__header">
-        <h2 class="tiko-pin-popup__title">Enter code</h2>
-        <p class="tiko-pin-popup__subtitle">to switch to parent mode</p>
+        <h2 class="tiko-pin-popup__title">{{ props.labels.enterTitle }}</h2>
+        <p class="tiko-pin-popup__subtitle">{{ props.labels.enterSubtitle }}</p>
       </div>
     </template>
 
@@ -193,6 +237,7 @@ async function hashCode(code: string): Promise<string> {
           :value="confirmDigits[i - 1]"
           @input="onDigitInput(i - 1, $event)"
           @keydown="onKeydown(i - 1, $event)"
+          :aria-label="`Digit ${i} of ${CODE_LENGTH}`"
           autocomplete="off"
         />
       </template>
@@ -208,6 +253,7 @@ async function hashCode(code: string): Promise<string> {
           :value="digits[i - 1]"
           @input="onDigitInput(i - 1, $event)"
           @keydown="onKeydown(i - 1, $event)"
+          :aria-label="`Digit ${i} of ${CODE_LENGTH}`"
           autocomplete="off"
         />
       </template>
@@ -220,7 +266,7 @@ async function hashCode(code: string): Promise<string> {
       class="tiko-pin-popup__back"
       @click="resetConfirm"
     >
-      Back
+      {{ props.labels.back }}
     </button>
 
     <button
@@ -228,7 +274,7 @@ async function hashCode(code: string): Promise<string> {
       class="tiko-pin-popup__cancel"
       @click="emit('cancel')"
     >
-      Cancel
+      {{ props.labels.cancel }}
     </button>
   </div>
 </template>

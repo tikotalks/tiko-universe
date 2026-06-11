@@ -4,9 +4,9 @@ import { useRoute, useRouter } from 'vue-router'
 import { useBemm } from 'bemm'
 import { Button, Icon, InputText } from '@sil/ui'
 import { TikoAppHeader, tikoAppConfigs, tikoAppColors, type TikoAppColor, type TikoAppConfig } from '@tiko/ui'
-import { tikoLanguageOptions } from '@tiko/i18n'
-import { useAdminAppConfig, type AdminManagedAppConfig, type TikoGeneralSettings } from '../composables/useAdminAppConfig'
+import { useAdminAppConfig, type AdminManagedAppConfig } from '../composables/useAdminAppConfig'
 import { useAppDefaults, type AppResource, type TikoManagedApp } from '../composables/useAppDefaults'
+import { useSequenceDefaults, type SequenceDefault } from '../composables/useSequenceDefaults'
 import MediaPicker from '../components/MediaPicker.vue'
 import ColorSwatchPicker from '../components/ColorSwatchPicker.vue'
 import CardsEditor from '../components/defaults/CardsEditor.vue'
@@ -14,13 +14,15 @@ import YesNoEditor from '../components/defaults/YesNoEditor.vue'
 import SequenceEditor from '../components/defaults/SequenceEditor.vue'
 import TypeEditor from '../components/defaults/TypeEditor.vue'
 import TimerEditor from '../components/defaults/TimerEditor.vue'
+import RadioEditor from '../components/defaults/RadioEditor.vue'
+import TodoEditor from '../components/defaults/TodoEditor.vue'
 
 const bemm = useBemm('apps-page', { return: 'string', includeBaseClass: true })
 const route = useRoute()
 const router = useRouter()
 
 const appOrder: TikoAppColor[] = ['yes-no', 'type', 'cards', 'sequence', 'timer', 'radio', 'talk', 'todo', 'media', 'admin', 'tiko']
-const editableDefaultsApps = ['cards', 'yes-no', 'sequence', 'type', 'timer', 'radio', 'todo', 'talk'] as const
+const editableDefaultsApps = ['cards', 'yes-no', 'sequence', 'type', 'timer', 'radio', 'todo'] as const
 
 type DefaultsApp = typeof editableDefaultsApps[number]
 
@@ -30,22 +32,17 @@ const editorByApp: Partial<Record<DefaultsApp, Component>> = {
   sequence: SequenceEditor,
   type: TypeEditor,
   timer: TimerEditor,
+  radio: RadioEditor,
+  todo: TodoEditor,
 }
 
 const configApi = useAdminAppConfig()
 const defaultsApi = useAppDefaults()
+const sequenceDefaultsApi = useSequenceDefaults()
 const configs = ref<Record<TikoAppColor, AdminManagedAppConfig>>({ ...tikoAppConfigs })
 const configDraft = reactive<AdminManagedAppConfig>({ ...tikoAppConfigs.cards, supportedLanguagesMode: 'tiko-defaults', supportedLanguages: [] })
 const configDirty = ref(false)
 const configSavedMessage = ref<string | null>(null)
-const appCustomLanguage = ref('')
-
-const tikoSettingsDraft = reactive<TikoGeneralSettings>({ supportedLanguages: tikoLanguageOptions.map((language) => language.value) })
-const tikoSettingsVersion = ref(0)
-const tikoSettingsUpdatedAt = ref<string | null>(null)
-const tikoSettingsDirty = ref(false)
-const tikoSettingsSavedMessage = ref<string | null>(null)
-const tikoCustomLanguage = ref('')
 
 const stateValue = ref<Record<string, unknown>>({})
 const defaultsVersion = ref(0)
@@ -66,9 +63,10 @@ const previewIcon = computed(() => configDraft.appIconImageUrl || configDraft.ap
 const defaultsApp = computed<DefaultsApp | null>(() => editableDefaultsApps.includes(selectedApp.value as DefaultsApp) ? selectedApp.value as DefaultsApp : null)
 const currentEditor = computed<Component | null>(() => defaultsApp.value ? editorByApp[defaultsApp.value] ?? null : null)
 const canEditDefaults = computed(() => Boolean(defaultsApp.value))
-const globalSupportedLanguages = computed(() => normalizeLanguages(tikoSettingsDraft.supportedLanguages))
+const defaultsLoading = computed(() => defaultsApp.value === 'sequence' ? sequenceDefaultsApi.loading.value : defaultsApi.loading.value)
+const defaultsSaving = computed(() => defaultsApp.value === 'sequence' ? sequenceDefaultsApi.saving.value : defaultsApi.saving.value)
+const defaultsError = computed(() => defaultsApp.value === 'sequence' ? sequenceDefaultsApi.error.value : defaultsApi.error.value)
 const appSupportedLanguages = computed(() => normalizeLanguages(configDraft.supportedLanguages))
-const effectiveSupportedLanguages = computed(() => configDraft.supportedLanguagesMode === 'custom' && appSupportedLanguages.value.length > 0 ? appSupportedLanguages.value : globalSupportedLanguages.value)
 
 function isImageSource(value: string | undefined) {
   return Boolean(value && (/^(https?:|data:|blob:)/.test(value) || /\.(avif|gif|jpe?g|png|svg|webp)(\?|#|$)/i.test(value)))
@@ -113,38 +111,6 @@ async function loadConfigs() {
   }
 }
 
-async function loadTikoSettings() {
-  try {
-    const payload = await configApi.readTikoSettings()
-    Object.assign(tikoSettingsDraft, {
-      ...payload.settings,
-      supportedLanguages: normalizeLanguages(payload.settings.supportedLanguages, tikoLanguageOptions.map((language) => language.value)),
-    })
-    tikoSettingsVersion.value = payload.version
-    tikoSettingsUpdatedAt.value = payload.updatedAt
-    tikoSettingsDirty.value = false
-  } catch {
-    // error is surfaced via configApi.error.value
-  }
-}
-
-async function saveTikoSettings() {
-  tikoSettingsSavedMessage.value = null
-  try {
-    const payload = await configApi.writeTikoSettings(
-      { ...tikoSettingsDraft, supportedLanguages: globalSupportedLanguages.value },
-      tikoSettingsVersion.value,
-    )
-    Object.assign(tikoSettingsDraft, payload.settings)
-    tikoSettingsVersion.value = payload.version
-    tikoSettingsUpdatedAt.value = payload.updatedAt
-    tikoSettingsDirty.value = false
-    tikoSettingsSavedMessage.value = 'Saved Tiko language defaults.'
-  } catch {
-    // error is surfaced via configApi.error.value
-  }
-}
-
 async function saveConfig() {
   configSavedMessage.value = null
   const normalized: AdminManagedAppConfig = {
@@ -179,6 +145,12 @@ async function loadDefaults() {
   if (!defaultsApp.value || isOverview.value) return
 
   try {
+    if (defaultsApp.value === 'sequence') {
+      const payload = await sequenceDefaultsApi.read()
+      stateValue.value = { sequences: payload.sequences }
+      defaultsUpdatedAt.value = null
+      return
+    }
     const payload = await defaultsApi.readDefaults(defaultsApp.value as TikoManagedApp, 'state' satisfies AppResource)
     stateValue.value = (payload.state ?? {}) as Record<string, unknown>
     defaultsVersion.value = payload.version
@@ -192,6 +164,13 @@ async function saveDefaults() {
   if (!defaultsApp.value) return
   defaultsSavedMessage.value = null
   try {
+    if (defaultsApp.value === 'sequence') {
+      const sequences = Array.isArray(stateValue.value.sequences) ? stateValue.value.sequences as SequenceDefault[] : []
+      await sequenceDefaultsApi.write(sequences)
+      defaultsSavedMessage.value = `Saved ${selectedConfig.value.title} defaults.`
+      defaultsDirty.value = false
+      return
+    }
     const payload = await defaultsApi.writeDefaults(defaultsApp.value as TikoManagedApp, 'state', stateValue.value, defaultsVersion.value)
     defaultsVersion.value = payload.version
     defaultsUpdatedAt.value = payload.updatedAt
@@ -218,66 +197,6 @@ function normalizeLanguageTag(value: string): string {
   return cleaned.split('-').map((part, index) => index === 0 ? part.toLowerCase() : part.length === 2 ? part.toUpperCase() : part).join('-')
 }
 
-function languageLabel(code: string): string {
-  const preset = tikoLanguageOptions.find((language) => language.value === code)
-  return preset ? `${preset.label} (${preset.nativeLabel})` : code
-}
-
-function isGlobalLanguageSelected(code: string): boolean {
-  return globalSupportedLanguages.value.includes(code)
-}
-
-function isAppLanguageSelected(code: string): boolean {
-  return appSupportedLanguages.value.includes(code)
-}
-
-function toggleGlobalLanguage(code: string, checked: boolean) {
-  const next = new Set(globalSupportedLanguages.value)
-  if (checked) next.add(code)
-  else next.delete(code)
-  tikoSettingsDraft.supportedLanguages = Array.from(next)
-  tikoSettingsDirty.value = true
-  tikoSettingsSavedMessage.value = null
-}
-
-function toggleAppLanguage(code: string, checked: boolean) {
-  const next = new Set(appSupportedLanguages.value)
-  if (checked) next.add(code)
-  else next.delete(code)
-  configDraft.supportedLanguages = Array.from(next)
-  onConfigInput()
-}
-
-function removeGlobalLanguage(code: string) {
-  toggleGlobalLanguage(code, false)
-}
-
-function removeAppLanguage(code: string) {
-  toggleAppLanguage(code, false)
-}
-
-function addGlobalCustomLanguage() {
-  const code = normalizeLanguageTag(tikoCustomLanguage.value)
-  if (!code) return
-  toggleGlobalLanguage(code, true)
-  tikoCustomLanguage.value = ''
-}
-
-function addAppCustomLanguage() {
-  const code = normalizeLanguageTag(appCustomLanguage.value)
-  if (!code) return
-  toggleAppLanguage(code, true)
-  appCustomLanguage.value = ''
-}
-
-function setAppLanguageMode(mode: 'tiko-defaults' | 'custom') {
-  configDraft.supportedLanguagesMode = mode
-  if (mode === 'custom' && appSupportedLanguages.value.length === 0) {
-    configDraft.supportedLanguages = [...globalSupportedLanguages.value]
-  }
-  onConfigInput()
-}
-
 watch(selectedApp, () => {
   syncDraft(selectedConfig.value)
   void loadDefaults()
@@ -288,7 +207,7 @@ watch(isOverview, () => {
 })
 
 onMounted(async () => {
-  await Promise.all([loadConfigs(), loadTikoSettings()])
+  await loadConfigs()
   if (!isOverview.value) await loadDefaults()
 })
 
@@ -318,70 +237,6 @@ if (!isOverview.value && !routeApp.value) {
     </header>
 
     <div v-if="isOverview" :class="bemm('overview-stack')">
-      <section :class="bemm('panel')" aria-label="General Tiko settings">
-        <header :class="bemm('panel-head')">
-          <div :class="bemm('panel-intro')">
-            <h2 :class="bemm('panel-title')">General Tiko settings</h2>
-            <p :class="bemm('panel-meta')">
-              Supported languages are stored in Tiko defaults and synced to Lezu when saved.
-              Version {{ tikoSettingsVersion }} · Updated {{ tikoSettingsUpdatedAt || 'never' }}
-            </p>
-          </div>
-          <div :class="bemm('panel-actions')">
-            <Button variant="outline" :loading="configApi.loading.value" :disabled="configApi.loading.value" @click="loadTikoSettings">
-              Reload
-            </Button>
-            <Button :loading="configApi.saving.value" :disabled="configApi.saving.value || !tikoSettingsDirty" @click="saveTikoSettings">
-              Save Tiko settings
-            </Button>
-          </div>
-        </header>
-        <p v-if="configApi.error.value" :class="bemm('error')">{{ configApi.error.value }}</p>
-        <p v-if="tikoSettingsSavedMessage" :class="bemm('success')">{{ tikoSettingsSavedMessage }}</p>
-
-        <div :class="bemm('language-editor')">
-          <label
-            v-for="language in tikoLanguageOptions"
-            :key="language.value"
-            :class="bemm('language-option')"
-          >
-            <input
-              type="checkbox"
-              :checked="isGlobalLanguageSelected(language.value)"
-              @change="(event: Event) => toggleGlobalLanguage(language.value, (event.target as HTMLInputElement).checked)"
-            >
-            <span>{{ language.label }}</span>
-            <small>{{ language.nativeLabel }}</small>
-          </label>
-        </div>
-        <div :class="bemm('custom-language-row')">
-          <InputText
-            v-model="tikoCustomLanguage"
-            label="Add custom locale"
-            placeholder="en-GB, pt-BR, fr-CA"
-            @keyup.enter="addGlobalCustomLanguage"
-          />
-          <Button variant="outline" :disabled="!normalizeLanguageTag(tikoCustomLanguage)" @click="addGlobalCustomLanguage">
-            Add locale
-          </Button>
-        </div>
-        <div :class="bemm('language-chips')" aria-label="Active Tiko default languages">
-          <button
-            v-for="language in globalSupportedLanguages"
-            :key="language"
-            type="button"
-            :class="bemm('language-chip')"
-            @click="removeGlobalLanguage(language)"
-          >
-            <span>{{ languageLabel(language) }}</span>
-            <Icon name="ui/multiply-s" size="small" />
-          </button>
-        </div>
-        <p :class="bemm('language-summary')">
-          Active Tiko defaults: {{ globalSupportedLanguages.map(languageLabel).join(', ') || 'none' }}
-        </p>
-      </section>
-
       <section :class="bemm('overview')" aria-label="Apps overview">
         <router-link
           v-for="app in appOrder"
@@ -459,66 +314,6 @@ if (!isOverview.value && !routeApp.value) {
                 @update:model-value="(v: string) => { configDraft.themeColor = v; onConfigInput() }"
               />
             </div>
-            <div :class="bemm('field', { wide: true })">
-              <span :class="bemm('field-label')">Supported languages</span>
-              <div :class="bemm('segmented')">
-                <button
-                  type="button"
-                  :class="bemm('segmented-button', { active: configDraft.supportedLanguagesMode !== 'custom' })"
-                  @click="setAppLanguageMode('tiko-defaults')"
-                >
-                  Use Tiko Defaults
-                </button>
-                <button
-                  type="button"
-                  :class="bemm('segmented-button', { active: configDraft.supportedLanguagesMode === 'custom' })"
-                  @click="setAppLanguageMode('custom')"
-                >
-                  Custom
-                </button>
-              </div>
-              <div v-if="configDraft.supportedLanguagesMode === 'custom'" :class="bemm('language-editor')">
-                <label
-                  v-for="language in tikoLanguageOptions"
-                  :key="language.value"
-                  :class="bemm('language-option')"
-                >
-                  <input
-                    type="checkbox"
-                    :checked="isAppLanguageSelected(language.value)"
-                    @change="(event: Event) => toggleAppLanguage(language.value, (event.target as HTMLInputElement).checked)"
-                  >
-                  <span>{{ language.label }}</span>
-                  <small>{{ language.nativeLabel }}</small>
-                </label>
-              </div>
-              <div v-if="configDraft.supportedLanguagesMode === 'custom'" :class="bemm('custom-language-row')">
-                <InputText
-                  v-model="appCustomLanguage"
-                  label="Add custom locale"
-                  placeholder="en-GB, pt-BR, fr-CA"
-                  @keyup.enter="addAppCustomLanguage"
-                />
-                <Button variant="outline" :disabled="!normalizeLanguageTag(appCustomLanguage)" @click="addAppCustomLanguage">
-                  Add locale
-                </Button>
-              </div>
-              <div v-if="configDraft.supportedLanguagesMode === 'custom'" :class="bemm('language-chips')" aria-label="Active app languages">
-                <button
-                  v-for="language in appSupportedLanguages"
-                  :key="language"
-                  type="button"
-                  :class="bemm('language-chip')"
-                  @click="removeAppLanguage(language)"
-                >
-                  <span>{{ languageLabel(language) }}</span>
-                  <Icon name="ui/multiply-s" size="small" />
-                </button>
-              </div>
-              <p :class="bemm('language-summary')">
-                Effective languages: {{ effectiveSupportedLanguages.map(languageLabel).join(', ') || 'none' }}
-              </p>
-            </div>
           </div>
 
           <aside :class="bemm('preview')" :style="{ '--tiko-app-primary': previewAccent, '--app-accent': previewAccent }" aria-label="App icon preview">
@@ -566,16 +361,16 @@ if (!isOverview.value && !routeApp.value) {
             </p>
           </div>
           <div v-if="canEditDefaults" :class="bemm('panel-actions')">
-            <Button variant="outline" :loading="defaultsApi.loading.value" :disabled="defaultsApi.loading.value" @click="loadDefaults">
+            <Button variant="outline" :loading="defaultsLoading" :disabled="defaultsLoading" @click="loadDefaults">
               Reload
             </Button>
-            <Button :loading="defaultsApi.saving.value" :disabled="defaultsApi.saving.value || !defaultsDirty || !currentEditor" @click="saveDefaults">
+            <Button :loading="defaultsSaving" :disabled="defaultsSaving || !defaultsDirty || !currentEditor" @click="saveDefaults">
               Save defaults
             </Button>
           </div>
         </header>
 
-        <p v-if="defaultsApi.error.value" :class="bemm('error')">{{ defaultsApi.error.value }}</p>
+        <p v-if="defaultsError" :class="bemm('error')">{{ defaultsError }}</p>
         <p v-if="defaultsSavedMessage" :class="bemm('success')">{{ defaultsSavedMessage }}</p>
 
         <component

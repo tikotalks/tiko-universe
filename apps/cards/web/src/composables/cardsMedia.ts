@@ -15,11 +15,15 @@ export function resizedCDNURL(originalUrl: string | undefined, baseUrl = 'https:
 }
 
 export function imageForCollection(collection: CardCollection, thumbnails: Record<string, string>) {
-  return resizedCDNURL(collection.imageURL ?? thumbnails[collection.id])
+  return resizedCDNURL(collection.imageURL ?? (collection.imageRef ? imageRefURL(collection.imageRef) : thumbnails[collection.id]))
 }
 
 export function imageForCard(card: CommunicationCard, contentBaseUrl: string) {
-  return resizedCDNURL(card.imageURL ?? (card.imageRef ? `${contentBaseUrl}/content/images/${encodeURIComponent(card.imageRef)}` : undefined), contentBaseUrl)
+  return resizedCDNURL(card.imageURL ?? (card.imageRef ? imageRefURL(card.imageRef, contentBaseUrl) : undefined), contentBaseUrl)
+}
+
+export function imageRefURL(imageRef: string, contentBaseUrl = 'https://content.tikoapi.org/v1') {
+  return `${contentBaseUrl}/content/images/${encodeURIComponent(imageRef)}`
 }
 
 export function matchCardsMedia(collection: CardCollection, mediaItems: TikoMedia[], contentBaseUrl: string): { cards: CommunicationCard[]; thumbnailURL?: string } {
@@ -34,7 +38,7 @@ export function matchCardsMedia(collection: CardCollection, mediaItems: TikoMedi
 
   for (const card of collection.cards) {
     if (card.imageRef) {
-      updates.set(card.id, `${contentBaseUrl}/content/images/${encodeURIComponent(card.imageRef)}`)
+      updates.set(card.id, imageRefURL(card.imageRef, contentBaseUrl))
       continue
     }
     const item = mediaByName.get(normalizeText(card.title))

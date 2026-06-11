@@ -11,6 +11,7 @@ export type AtlasProvider =
   | 'cloudflare-workers-ai'
   | 'openai'
   | 'elevenlabs'
+  | 'narakeet'
   | 'youtube'
   | 'url-metadata'
   | 'internal'
@@ -61,7 +62,7 @@ export interface SpeechRequest {
   voice?: string
   model?: string
   speed?: number
-  provider?: 'openai' | 'elevenlabs' | 'auto'
+  provider?: 'openai' | 'elevenlabs' | 'narakeet' | 'auto'
 }
 
 export interface ImageRequest {
@@ -103,6 +104,7 @@ export interface Env {
   AI?: { run(model: string, input: unknown): Promise<unknown> }
   OPENAI_API_KEY?: string
   ELEVENLABS_API_KEY?: string
+  NARAKEET_API_KEY?: string
   YOUTUBE_API_KEY?: string
   TOKEN_PEPPER?: string
   SERVICE_API_KEYS?: string

@@ -11,6 +11,7 @@ export type AtlasProvider =
   | 'cloudflare-workers-ai'
   | 'openai'
   | 'elevenlabs'
+  | 'narakeet'
   | 'youtube'
   | 'url-metadata'
   | 'internal'
@@ -50,7 +51,7 @@ export interface AtlasSpeechRequest {
   voice?: string
   model?: string
   speed?: number
-  provider?: 'openai' | 'elevenlabs' | 'auto'
+  provider?: 'openai' | 'elevenlabs' | 'narakeet' | 'auto'
 }
 
 export interface AtlasSpeechResponse {

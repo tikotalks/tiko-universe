@@ -10,6 +10,7 @@ class MemoryD1 {
   assetsByHash = new Map<string, Row>()
   requests: Row[] = []
   providerStatuses = new Map<string, Row>()
+  serviceConfigs = new Map<string, Row>()
 
   prepare(sql: string) {
     return {
@@ -17,6 +18,7 @@ class MemoryD1 {
         first: async <T>() => {
           if (sql.includes('FROM atlas_cached_assets') && sql.includes('request_hash')) return (this.assetsByHash.get(String(values[0])) ?? null) as T | null
           if (sql.includes('FROM atlas_cached_assets') && sql.includes('WHERE id')) return (this.assets.get(String(values[0])) ?? null) as T | null
+          if (sql.includes('FROM atlas_service_config')) return (this.serviceConfigs.get(String(values[0])) ?? null) as T | null
           if (sql.includes('FROM atlas_requests') && sql.includes('WHERE id')) return (this.requests.find((row) => row.id === values[0]) ?? null) as T | null
           return null
         },
@@ -58,6 +60,9 @@ class MemoryD1 {
           if (sql.includes('INSERT INTO atlas_provider_status')) {
             this.providerStatuses.set(String(values[0]), { provider: values[0], enabled: 1, status: values[1], last_checked_at: values[2], last_error: values[3], metadata_json: values[4] })
           }
+          if (sql.includes('INSERT INTO atlas_service_config')) {
+            this.serviceConfigs.set(String(values[0]), { service: values[0], data_json: values[1], updated_at: values[2], version: values[3] })
+          }
           return { success: true }
         },
       }),
@@ -98,6 +103,7 @@ function makeEnv(overrides: Partial<Env> = {}): Env & { db: MemoryD1; bucket: Me
     ATLAS_ASSETS_BUCKET: bucket,
     OPENAI_API_KEY: 'openai-key',
     ELEVENLABS_API_KEY: 'eleven-key',
+    NARAKEET_API_KEY: 'narakeet-key',
     AI: { run: vi.fn(async () => ({ response: 'Workers AI answer' })) },
     ...overrides,
   }
@@ -123,7 +129,7 @@ describe('atlas-api', () => {
   })
 
   it('synthesizes speech, stores it in R2, then serves the cached asset', async () => {
-    const env = makeEnv({ ELEVENLABS_API_KEY: undefined })
+    const env = makeEnv({ ELEVENLABS_API_KEY: undefined, NARAKEET_API_KEY: undefined })
     vi.spyOn(globalThis, 'fetch').mockResolvedValue(new Response(new Uint8Array([1, 2, 3]), { status: 200 }))
 
     const response = await worker.fetch(new Request('https://api.test/v1/atlas/speech', {
@@ -147,6 +153,173 @@ describe('atlas-api', () => {
     const asset = await worker.fetch(new Request(`https://api.test${generated.data.audioUrl}`), env)
     expect(asset.status).toBe(200)
     expect(new Uint8Array(await asset.arrayBuffer())).toEqual(new Uint8Array([1, 2, 3]))
+  })
+
+  it('uses Narakeet by default and stores phrase lookup metadata before serving cached audio', async () => {
+    const env = makeEnv()
+    const fetchSpy = vi.spyOn(globalThis, 'fetch').mockResolvedValue(new Response(new Uint8Array([4, 5, 6]), { status: 200, headers: { 'x-duration-seconds': '2' } }))
+
+    const body = { text: 'Ik wil drinken', locale: 'nl-NL', app: 'yes-no', purpose: 'child-button' }
+    const first = await worker.fetch(new Request('https://api.test/v1/atlas/speech', {
+      method: 'POST',
+      body: JSON.stringify(body),
+    }), env)
+
+    expect(first.status).toBe(201)
+    await expect(json(first)).resolves.toMatchObject({
+      data: { cached: false, provider: { name: 'narakeet', model: 'narakeet-mp3', voice: 'famke' } },
+      meta: { capability: 'speech.synthesize', provider: 'narakeet', cached: false },
+    })
+    expect(fetchSpy).toHaveBeenCalledTimes(1)
+    expect(fetchSpy).toHaveBeenCalledWith(
+      'https://api.narakeet.com/text-to-speech/mp3?voice=famke',
+      expect.objectContaining({
+        method: 'POST',
+        body: 'Ik wil drinken',
+        headers: expect.objectContaining({ 'x-api-key': 'narakeet-key', 'Content-Type': 'text/plain' }),
+      }),
+    )
+
+    const cachedAsset = Array.from(env.db.assets.values())[0]
+    expect(JSON.parse(String(cachedAsset.metadata_json))).toMatchObject({
+      phrase: 'Ik wil drinken',
+      locale: 'nl-nl',
+      language: 'nl-nl',
+      provider: 'narakeet',
+      voice: 'famke',
+      model: 'narakeet-mp3',
+      speed: 1,
+      format: 'mp3',
+      durationSeconds: 2,
+      settings: {
+        provider: 'narakeet',
+        voice: 'famke',
+        model: 'narakeet-mp3',
+        speed: 1,
+        format: 'mp3',
+      },
+    })
+
+    const second = await worker.fetch(new Request('https://api.test/v1/atlas/speech', {
+      method: 'POST',
+      body: JSON.stringify(body),
+    }), env)
+    expect(second.status).toBe(200)
+    await expect(json(second)).resolves.toMatchObject({ data: { cached: true, provider: { name: 'narakeet', voice: 'famke' } }, meta: { cached: true } })
+    expect(fetchSpy).toHaveBeenCalledTimes(1)
+  })
+
+  it('selects a native Narakeet voice for each supported Tiko language', async () => {
+    const cases = [
+      ['en', 'raymond'],
+      ['de', 'andreas'],
+      ['es', 'alejandra'],
+      ['fr', 'marion'],
+      ['nl', 'famke'],
+      ['pt', 'lurdes'],
+      ['ja', 'hideaki'],
+      ['zh', 'yifei'],
+      ['ko', 'dong-min'],
+      ['mt', 'corazon'],
+      ['it', 'vittorio'],
+      ['ar', 'farah'],
+      ['hy', 'nune'],
+    ] as const
+
+    const fetchSpy = vi.spyOn(globalThis, 'fetch').mockImplementation(async () => new Response(new Uint8Array([4, 5, 6]), { status: 200 }))
+
+    for (const [locale, voice] of cases) {
+      const env = makeEnv()
+      const response = await worker.fetch(new Request('https://api.test/v1/atlas/speech', {
+        method: 'POST',
+        body: JSON.stringify({ text: `Phrase ${locale}`, locale, app: 'yes-no', purpose: 'child-button' }),
+      }), env)
+
+      expect(response.status).toBe(201)
+      await expect(json(response)).resolves.toMatchObject({
+        data: { provider: { name: 'narakeet', model: 'narakeet-mp3', voice } },
+      })
+      expect(fetchSpy).toHaveBeenLastCalledWith(
+        `https://api.narakeet.com/text-to-speech/mp3?voice=${encodeURIComponent(voice)}`,
+        expect.objectContaining({
+          method: 'POST',
+          body: `Phrase ${locale}`,
+          headers: expect.objectContaining({ 'x-api-key': 'narakeet-key', 'Content-Type': 'text/plain' }),
+        }),
+      )
+    }
+  })
+
+  it('prefers exact Narakeet locale voices over language fallbacks', async () => {
+    const cases = [
+      ['en-GB', 'beatrice'],
+      ['en-AU', 'graham'],
+      ['nl-BE', 'koen'],
+      ['fr-CA', 'audrey'],
+      ['de-AT', 'fritzi'],
+      ['pt-BR', 'gisele'],
+      ['es-MX', 'ramona'],
+      ['cmn-TW', 'yili'],
+      ['zh-TW', 'yili'],
+      ['zh_HK', 'man-chi'],
+      ['ssw-ZA', 'nomcebo'],
+      ['ven-ZA', 'mulalo'],
+    ] as const
+
+    const fetchSpy = vi.spyOn(globalThis, 'fetch').mockImplementation(async () => new Response(new Uint8Array([4, 5, 6]), { status: 200 }))
+
+    for (const [locale, voice] of cases) {
+      const env = makeEnv()
+      const response = await worker.fetch(new Request('https://api.test/v1/atlas/speech', {
+        method: 'POST',
+        body: JSON.stringify({ text: `Phrase ${locale}`, locale, app: 'yes-no', purpose: 'child-button' }),
+      }), env)
+
+      expect(response.status).toBe(201)
+      await expect(json(response)).resolves.toMatchObject({
+        data: { provider: { name: 'narakeet', model: 'narakeet-mp3', voice } },
+      })
+      expect(fetchSpy).toHaveBeenLastCalledWith(
+        `https://api.narakeet.com/text-to-speech/mp3?voice=${encodeURIComponent(voice)}`,
+        expect.objectContaining({
+          method: 'POST',
+          body: `Phrase ${locale}`,
+          headers: expect.objectContaining({ 'x-api-key': 'narakeet-key', 'Content-Type': 'text/plain' }),
+        }),
+      )
+    }
+  })
+
+  it('uses managed speech service config for default provider and voices', async () => {
+    const env = makeEnv()
+    env.db.serviceConfigs.set('speech', {
+      service: 'speech',
+      data_json: JSON.stringify({
+        defaultProvider: 'openai',
+        models: { openai: 'tts-1' },
+        voices: { openai: { 'nl-nl': 'alloy' } },
+      }),
+      updated_at: '2026-06-11T00:00:00.000Z',
+      version: 1,
+    })
+    const fetchSpy = vi.spyOn(globalThis, 'fetch').mockImplementation(async () => new Response(new Uint8Array([1, 2, 3]), { status: 200 }))
+
+    const response = await worker.fetch(new Request('https://api.test/v1/atlas/speech', {
+      method: 'POST',
+      body: JSON.stringify({ text: 'Hoe gaat het?', locale: 'nl-NL', app: 'yes-no', purpose: 'speech-playback' }),
+    }), env)
+
+    expect(response.status).toBe(201)
+    await expect(json(response)).resolves.toMatchObject({
+      data: { provider: { name: 'openai', model: 'tts-1', voice: 'alloy' } },
+    })
+    expect(fetchSpy).toHaveBeenCalledWith(
+      'https://api.openai.com/v1/audio/speech',
+      expect.objectContaining({
+        method: 'POST',
+        body: JSON.stringify({ model: 'tts-1', voice: 'alloy', input: 'Hoe gaat het?', response_format: 'mp3', speed: 1 }),
+      }),
+    )
   })
 
   it('routes text generation to Workers AI by default', async () => {
@@ -195,7 +368,7 @@ describe('atlas-api', () => {
 
 
   it('records redacted usage rows and exposes admin observability endpoints', async () => {
-    const env = makeEnv({ ELEVENLABS_API_KEY: undefined, SERVICE_API_KEYS: 'service-token' })
+    const env = makeEnv({ ELEVENLABS_API_KEY: undefined, NARAKEET_API_KEY: undefined, SERVICE_API_KEYS: 'service-token' })
     vi.spyOn(globalThis, 'fetch').mockResolvedValue(new Response(new Uint8Array([1, 2, 3]), { status: 200 }))
 
     const generated = await worker.fetch(new Request('https://api.test/v1/atlas/speech', {

@@ -2,7 +2,8 @@
 import { h, inject, markRaw } from 'vue'
 import { useBemm } from 'bemm'
 import { Button, type PopupService } from '@sil/ui'
-import { resizedCDNURL } from '../composables/cardsMedia'
+import { imageRefURL, resizedCDNURL } from '../composables/cardsMedia'
+import { resolveContentBaseUrl } from '../composables/cardsApi'
 import CardsImagePickerSheet from './CardsImagePickerSheet.vue'
 
 const props = defineProps<{
@@ -26,6 +27,11 @@ const emit = defineEmits<{
 
 const bemm = useBemm('cards-image-chooser', { return: 'string', includeBaseClass: true })
 const popup = inject<PopupService>('popupService')!
+
+function imageRefPreview(value: string) {
+  if (/^https?:/.test(value)) return resizedCDNURL(value)
+  return imageRefURL(value, resolveContentBaseUrl())
+}
 
 function openPicker(query: string) {
   popup.showPopup({
@@ -57,7 +63,7 @@ function openPicker(query: string) {
   <div :class="bemm('')">
     <span :class="bemm('label')">{{ labels.image }}</span>
     <div v-if="modelValue" :class="bemm('preview')">
-      <img :src="resizedCDNURL(modelValue)" alt="" loading="lazy">
+      <img :src="imageRefPreview(modelValue)" alt="" loading="lazy">
       <button type="button" @click="emit('update:modelValue', '')">×</button>
     </div>
     <Button type="button" variant="secondary" @click="openPicker(query)">

@@ -19,9 +19,62 @@ interface Props {
   onResetCode: (id: string, code: string) => Promise<ChildAccountItem>
   /** Called to delete a child account */
   onDelete: (id: string) => Promise<void>
+  labels?: TikoChildAccountsLabels
 }
 
-const props = defineProps<Props>()
+interface TikoChildAccountsLabels {
+  back: string
+  title: string
+  subtitle: string
+  code: string
+  codeNotSet: string
+  rename: string
+  resetCode: string
+  delete: string
+  name: string
+  save: string
+  cancel: string
+  newCode: string
+  empty: string
+  addChildAccount: string
+  childName: string
+  loginCode: string
+  create: string
+  deleteConfirm: string
+  loadError: string
+  createError: string
+  updateError: string
+  resetError: string
+  deleteError: string
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  labels: () => ({
+    back: 'Back',
+    title: 'Child accounts',
+    subtitle: 'Manage profiles for your children',
+    code: 'Code',
+    codeNotSet: 'not set',
+    rename: 'Rename',
+    resetCode: 'Reset code',
+    delete: 'Delete',
+    name: 'Name',
+    save: 'Save',
+    cancel: 'Cancel',
+    newCode: 'New 4-digit code',
+    empty: 'No child accounts yet. Add one so your child can log in with a 4-digit code.',
+    addChildAccount: 'Add child account',
+    childName: "Child's name",
+    loginCode: '4-digit login code',
+    create: 'Create',
+    deleteConfirm: 'Delete this child account?',
+    loadError: 'Could not load child accounts.',
+    createError: 'Could not create child account.',
+    updateError: 'Could not update name.',
+    resetError: 'Could not reset code.',
+    deleteError: 'Could not delete child account.',
+  }),
+})
 const emit = defineEmits<{ (e: 'close'): void }>()
 
 const children = ref<ChildAccountItem[]>([])
@@ -47,7 +100,7 @@ async function load() {
   try {
     children.value = await props.onLoad()
   } catch {
-    error.value = 'Could not load child accounts.'
+    error.value = props.labels.loadError
   } finally {
     loading.value = false
   }
@@ -66,7 +119,7 @@ async function createChild() {
     newCode.value = ''
     showCreate.value = false
   } catch {
-    error.value = 'Could not create child account.'
+    error.value = props.labels.createError
   } finally {
     loading.value = false
   }
@@ -88,7 +141,7 @@ async function saveEdit() {
     if (idx >= 0) children.value[idx] = updated
     editingId.value = null
   } catch {
-    error.value = 'Could not update name.'
+    error.value = props.labels.updateError
   } finally {
     loading.value = false
   }
@@ -110,21 +163,21 @@ async function saveResetCode() {
     if (idx >= 0) children.value[idx] = updated
     resettingId.value = null
   } catch {
-    error.value = 'Could not reset code.'
+    error.value = props.labels.resetError
   } finally {
     loading.value = false
   }
 }
 
 async function deleteChild(id: string) {
-  if (!confirm('Delete this child account?')) return
+  if (!confirm(props.labels.deleteConfirm)) return
   loading.value = true
   error.value = null
   try {
     await props.onDelete(id)
     children.value = children.value.filter(c => c.id !== id)
   } catch {
-    error.value = 'Could not delete child account.'
+    error.value = props.labels.deleteError
   } finally {
     loading.value = false
   }
@@ -143,12 +196,12 @@ function cancelEdit() {
 <template>
   <div class="tiko-child-accounts" data-test="tiko-child-accounts">
     <div class="tiko-child-accounts__header">
-      <button class="tiko-child-accounts__back" type="button" aria-label="Back" @click="emit('close')">
+      <button class="tiko-child-accounts__back" type="button" :aria-label="props.labels.back" @click="emit('close')">
         <Icon name="arrows/arrow-left" aria-hidden="true" />
       </button>
       <div class="tiko-child-accounts__heading">
-        <h2 class="tiko-child-accounts__title">Child Accounts</h2>
-        <p class="tiko-child-accounts__subtitle">Manage profiles for your children</p>
+        <h2 class="tiko-child-accounts__title">{{ props.labels.title }}</h2>
+        <p class="tiko-child-accounts__subtitle">{{ props.labels.subtitle }}</p>
       </div>
       <span class="tiko-child-accounts__badge" aria-hidden="true"><Icon name="product/baby-stroller" /></span>
     </div>
@@ -164,17 +217,17 @@ function cancelEdit() {
             <span class="tiko-child-accounts__item-icon"><Icon name="ui/user-s" /></span>
             <div class="tiko-child-accounts__item-copy">
               <strong>{{ child.name }}</strong>
-              <small>Code: {{ child.code ? '****' : 'not set' }}</small>
+              <small>{{ props.labels.code }}: {{ child.code ? '****' : props.labels.codeNotSet }}</small>
             </div>
           </div>
           <div class="tiko-child-accounts__item-actions">
-            <button class="tiko-child-accounts__action" type="button" title="Rename" @click="startEdit(child)">
+            <button class="tiko-child-accounts__action" type="button" :title="props.labels.rename" @click="startEdit(child)">
               <Icon name="ui/pencil" aria-hidden="true" />
             </button>
-            <button class="tiko-child-accounts__action" type="button" title="Reset code" @click="startResetCode(child)">
+            <button class="tiko-child-accounts__action" type="button" :title="props.labels.resetCode" @click="startResetCode(child)">
               <Icon name="ui/lock" aria-hidden="true" />
             </button>
-            <button class="tiko-child-accounts__action tiko-child-accounts__action--danger" type="button" title="Delete" @click="deleteChild(child.id)">
+            <button class="tiko-child-accounts__action tiko-child-accounts__action--danger" type="button" :title="props.labels.delete" @click="deleteChild(child.id)">
               <Icon name="wayfinding/cross" aria-hidden="true" />
             </button>
           </div>
@@ -183,10 +236,10 @@ function cancelEdit() {
         <!-- Edit name form -->
         <template v-else-if="editingId === child.id">
           <div class="tiko-child-accounts__form">
-            <input v-model="editName" class="tiko-child-accounts__input" type="text" placeholder="Name" :disabled="loading" @keyup.enter="saveEdit" @keyup.escape="cancelEdit" />
+            <input v-model="editName" class="tiko-child-accounts__input" type="text" :placeholder="props.labels.name" :disabled="loading" @keyup.enter="saveEdit" @keyup.escape="cancelEdit" />
             <div class="tiko-child-accounts__form-actions">
-              <button class="tiko-child-accounts__btn" type="button" :disabled="loading" @click="saveEdit">Save</button>
-              <button class="tiko-child-accounts__btn tiko-child-accounts__btn--ghost" type="button" @click="cancelEdit">Cancel</button>
+              <button class="tiko-child-accounts__btn" type="button" :disabled="loading" @click="saveEdit">{{ props.labels.save }}</button>
+              <button class="tiko-child-accounts__btn tiko-child-accounts__btn--ghost" type="button" @click="cancelEdit">{{ props.labels.cancel }}</button>
             </div>
           </div>
         </template>
@@ -194,10 +247,10 @@ function cancelEdit() {
         <!-- Reset code form -->
         <template v-else-if="resettingId === child.id">
           <div class="tiko-child-accounts__form">
-            <input v-model="resetCode" class="tiko-child-accounts__input" type="text" inputmode="numeric" maxlength="4" placeholder="New 4-digit code" :disabled="loading" @keyup.enter="saveResetCode" @keyup.escape="cancelEdit" />
+            <input v-model="resetCode" class="tiko-child-accounts__input" type="text" inputmode="numeric" maxlength="4" :placeholder="props.labels.newCode" :disabled="loading" @keyup.enter="saveResetCode" @keyup.escape="cancelEdit" />
             <div class="tiko-child-accounts__form-actions">
-              <button class="tiko-child-accounts__btn" type="button" :disabled="loading" @click="saveResetCode">Save</button>
-              <button class="tiko-child-accounts__btn tiko-child-accounts__btn--ghost" type="button" @click="cancelEdit">Cancel</button>
+              <button class="tiko-child-accounts__btn" type="button" :disabled="loading" @click="saveResetCode">{{ props.labels.save }}</button>
+              <button class="tiko-child-accounts__btn tiko-child-accounts__btn--ghost" type="button" @click="cancelEdit">{{ props.labels.cancel }}</button>
             </div>
           </div>
         </template>
@@ -205,7 +258,7 @@ function cancelEdit() {
 
       <!-- Empty state -->
       <div v-if="!loading && children.length === 0" class="tiko-child-accounts__empty">
-        <p>No child accounts yet. Add one so your child can log in with a 4-digit code.</p>
+        <p>{{ props.labels.empty }}</p>
       </div>
     </div>
 
@@ -213,17 +266,17 @@ function cancelEdit() {
     <div v-if="!showCreate && !editingId && !resettingId" class="tiko-child-accounts__add">
       <button class="tiko-child-accounts__item tiko-child-accounts__item--add" type="button" @click="showCreate = true">
         <span class="tiko-child-accounts__item-icon"><Icon name="ui/plus" /></span>
-        <span class="tiko-child-accounts__item-copy"><strong>Add child account</strong></span>
+        <span class="tiko-child-accounts__item-copy"><strong>{{ props.labels.addChildAccount }}</strong></span>
       </button>
     </div>
 
     <!-- Create form -->
     <div v-if="showCreate" class="tiko-child-accounts__create-form">
-      <input v-model="newName" class="tiko-child-accounts__input" type="text" placeholder="Child's name" :disabled="loading" @keyup.enter="createChild" />
-      <input v-model="newCode" class="tiko-child-accounts__input" type="text" inputmode="numeric" maxlength="4" placeholder="4-digit login code" :disabled="loading" @keyup.enter="createChild" />
+      <input v-model="newName" class="tiko-child-accounts__input" type="text" :placeholder="props.labels.childName" :disabled="loading" @keyup.enter="createChild" />
+      <input v-model="newCode" class="tiko-child-accounts__input" type="text" inputmode="numeric" maxlength="4" :placeholder="props.labels.loginCode" :disabled="loading" @keyup.enter="createChild" />
       <div class="tiko-child-accounts__form-actions">
-        <button class="tiko-child-accounts__btn" type="button" :disabled="loading || !newName.trim() || !newCode.trim()" @click="createChild">Create</button>
-        <button class="tiko-child-accounts__btn tiko-child-accounts__btn--ghost" type="button" @click="cancelEdit">Cancel</button>
+        <button class="tiko-child-accounts__btn" type="button" :disabled="loading || !newName.trim() || !newCode.trim()" @click="createChild">{{ props.labels.create }}</button>
+        <button class="tiko-child-accounts__btn tiko-child-accounts__btn--ghost" type="button" @click="cancelEdit">{{ props.labels.cancel }}</button>
       </div>
     </div>
   </div>

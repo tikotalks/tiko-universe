@@ -3,7 +3,7 @@ import { computed, onMounted, ref, watch } from 'vue'
 import { Icon, Popup } from '@sil/ui'
 import { IdentityClient, type IdentityBundle } from '@tiko/identity'
 import { TikoDataClient, type TypeSettings, type TypeState } from '@tiko/data'
-import { createI18n, defaultLanguage, tikoI18nKeys, tikoLanguageOptions, tikoLanguages, type TikoLanguage } from '@tiko/i18n'
+import { createI18n, createTikoIdentityLabels, defaultLanguage, tikoI18nKeys, tikoLanguageOptions, tikoLanguages, type TikoLanguage } from '@tiko/i18n'
 import {
   TikoAppShell,
   TikoSettingsPanel,
@@ -25,6 +25,7 @@ interface PersistedState {
   colorMode?: TikoColorMode
   keyboardLayout?: 'qwerty' | 'azerty' | 'abc'
   text?: string
+  prompts?: string[]
   completedPrompts?: string[]
 }
 
@@ -62,12 +63,21 @@ function toColorMode(value: string | undefined): TikoColorMode {
   return value === 'light' || value === 'dark' || value === 'system' ? value : 'system'
 }
 
+function normalizePrompts(value: unknown): string[] {
+  if (!Array.isArray(value)) return []
+  return value
+    .filter((prompt): prompt is string => typeof prompt === 'string')
+    .map(prompt => prompt.trim())
+    .filter(Boolean)
+}
+
 const stored = readJson<PersistedState>(storageKey, {})
 const i18n = createI18n({ app: appId, language: toLanguage(stored.language) })
 const language = ref<TikoLanguage>(toLanguage(stored.language))
 const colorMode = ref<TikoColorMode>(toColorMode(stored.colorMode))
 const keyboardLayout = ref<'qwerty' | 'azerty' | 'abc'>(stored.keyboardLayout ?? 'abc')
 const text = ref(stored.text ?? '')
+const prompts = ref<string[]>(normalizePrompts(stored.prompts))
 const completedPrompts = ref<string[]>(stored.completedPrompts ?? [])
 const phrasesOpen = ref(false)
 const settingsOpen = ref(false)
@@ -89,7 +99,7 @@ const runtimeState: IdentityRuntimeState = {
   sessionToken, userId, accountEmail, accountEmailVerified, displayName,
   parentMode, childModeEnabled, pinConfigured,
 }
-const runtime = useIdentityRuntime({ identityClient, state: runtimeState, deviceName: 'Type web' })
+const runtime = useIdentityRuntime({ identityClient, state: runtimeState, deviceName: 'Type web', labels: () => createTikoIdentityLabels(i18n.t) })
 
 const labels = computed(() => {
   void language.value
@@ -161,6 +171,7 @@ function saveLocalFallback() {
     colorMode: colorMode.value,
     keyboardLayout: keyboardLayout.value,
     text: text.value,
+    prompts: prompts.value,
     completedPrompts: completedPrompts.value
   })
 }
@@ -185,6 +196,9 @@ function applySettings(settings: TypeSettings, version?: number) {
 function applyState(state: TypeState, version?: number) {
   if (typeof state.text === 'string') {
     text.value = state.text
+  }
+  if (Array.isArray(state.prompts)) {
+    prompts.value = normalizePrompts(state.prompts)
   }
   if (Array.isArray(state.completedPrompts)) {
     completedPrompts.value = state.completedPrompts
@@ -221,6 +235,7 @@ async function persistStateRemote() {
   try {
     const response = await dataClient.putState(appId, sessionToken.value, {
       text: text.value,
+      prompts: prompts.value,
       completedPrompts: completedPrompts.value
     }, { version: stateVersion.value })
     stateVersion.value = response.version
@@ -312,6 +327,8 @@ function loadPhrase(phrase: string) {
   text.value = phrase
   phrasesOpen.value = false
 }
+
+const savedPhrases = computed(() => completedPrompts.value.filter(phrase => !prompts.value.includes(phrase)))
 
 function removePhrase(phrase: string) {
   completedPrompts.value = completedPrompts.value.filter(p => p !== phrase)
@@ -405,13 +422,22 @@ function headerAction(id: string) {
             <h2>{{ labels.phrasesTitle }}</h2>
             <button class="type-app__icon-btn" type="button" aria-label="Close" @click="phrasesOpen = false">×</button>
           </div>
-          <ul v-if="completedPrompts.length" class="type-app__phrases-list">
-            <li v-for="phrase in completedPrompts" :key="phrase" class="type-app__phrase-row">
-              <button class="type-app__phrase-item" type="button" @click="loadPhrase(phrase)">{{ phrase }}</button>
-              <button class="type-app__phrase-remove" type="button" aria-label="Remove phrase" @click="removePhrase(phrase)">×</button>
-            </li>
-          </ul>
-          <p v-else class="type-app__phrases-empty">{{ labels.phrasesEmpty }}</p>
+          <div v-if="prompts.length" class="type-app__phrase-section">
+            <ul class="type-app__phrases-list">
+              <li v-for="phrase in prompts" :key="phrase" class="type-app__phrase-row">
+                <button class="type-app__phrase-item" type="button" @click="loadPhrase(phrase)">{{ phrase }}</button>
+              </li>
+            </ul>
+          </div>
+          <div v-if="savedPhrases.length" class="type-app__phrase-section">
+            <ul class="type-app__phrases-list">
+              <li v-for="phrase in savedPhrases" :key="phrase" class="type-app__phrase-row">
+                <button class="type-app__phrase-item" type="button" @click="loadPhrase(phrase)">{{ phrase }}</button>
+                <button class="type-app__phrase-remove" type="button" aria-label="Remove phrase" @click="removePhrase(phrase)">×</button>
+              </li>
+            </ul>
+          </div>
+          <p v-if="!prompts.length && !savedPhrases.length" class="type-app__phrases-empty">{{ labels.phrasesEmpty }}</p>
         </section>
       </div>
 

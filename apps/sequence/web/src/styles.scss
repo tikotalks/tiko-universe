@@ -28,29 +28,30 @@ button:disabled { cursor: not-allowed; opacity: .45; }
 }
 
 .sequence-app__list {
-  display: flex;
-  flex-direction: column;
-  gap: .65rem;
-  max-width: 36rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(9rem, 1fr));
+  gap: .9rem;
+  max-width: 56rem;
   margin: 1rem auto;
 }
 
 .sequence-app__item {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: .85rem 1.1rem;
-  border: 2px solid transparent;
-  border-radius: 1rem;
-  background: var(--tiko-panel, color-mix(in srgb, var(--tiko-surface, #fff), var(--color-foreground, #000) 6%));
-  cursor: pointer;
-  transition: border-color .15s;
-  text-align: left;
+  min-width: 0;
+  flex-direction: column;
+  gap: .35rem;
 }
 
-.sequence-app__item:hover { border-color: var(--color-tertiary, #14b8a6); }
-.sequence-app__item-name { font-weight: 800; }
-.sequence-app__item-steps { font-size: .85rem; opacity: .65; }
+.sequence-app__item .tiko-square-tile {
+  aspect-ratio: 1;
+  height: auto;
+}
+
+.sequence-app__item-steps {
+  font-size: .78rem;
+  font-weight: 800;
+  opacity: .65;
+}
 
 .sequence-app__play {
   display: flex;
@@ -62,12 +63,12 @@ button:disabled { cursor: not-allowed; opacity: .45; }
 
 .sequence-app__play-name { font-weight: 800; font-size: 1.5rem; }
 .sequence-app__play-step { font-size: .9rem; opacity: .6; }
+.sequence-app__play-tile {
+  width: min(22rem, calc(100vw - 2rem));
+  aspect-ratio: 1;
+}
+
 .sequence-app__play-text {
-  font-size: clamp(1.5rem, 5vw, 2.5rem);
-  font-weight: 800;
-  padding: 1.5rem;
-  border-radius: 1rem;
-  background: var(--tiko-panel, color-mix(in srgb, var(--tiko-surface, #fff), var(--color-foreground, #000) 6%));
   max-width: 36rem;
   width: 100%;
 }

@@ -40,8 +40,8 @@ public struct TikoAnswerChoice: Identifiable, Equatable, Sendable {
     public let icon: Icon
     public let tone: TikoChoiceTone
     public let color: String?
-    public let colorHex: UInt32?
     public let imageURL: URL?
+    public let imageURLs: [URL]
 
     public init(
         id: String,
@@ -50,8 +50,8 @@ public struct TikoAnswerChoice: Identifiable, Equatable, Sendable {
         icon: Icon,
         tone: TikoChoiceTone,
         color: String? = nil,
-        colorHex: UInt32? = nil,
-        imageURL: URL? = nil
+        imageURL: URL? = nil,
+        imageURLs: [URL] = []
     ) {
         self.id = id
         self.label = label
@@ -59,8 +59,8 @@ public struct TikoAnswerChoice: Identifiable, Equatable, Sendable {
         self.icon = icon
         self.tone = tone
         self.color = color
-        self.colorHex = colorHex
         self.imageURL = imageURL
+        self.imageURLs = imageURLs
     }
 
     /// Convenience initializer accepting an open-icon name.
@@ -97,7 +97,10 @@ public struct TikoAnswerButton: View {
                 title: choice.label,
                 background: choice.resolvedColor ?? tileColor
             ) {
-                if let url = choice.imageURL {
+                let imageURLs = choice.resolvedImageURLs
+                if imageURLs.count > 1 {
+                    TikoMultiImageTileContent(imageURLs: imageURLs)
+                } else if let url = imageURLs.first {
                     TikoCachedRemoteImage(url: url) {
                         ProgressView()
                             .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -153,7 +156,6 @@ public struct TikoAnswerButton: View {
 
     private var tileColor: Color {
         if let color = choice.resolvedColor { return color }
-        if let hex = choice.colorHex { return Color(hex: hex) }
         switch choice.tone {
         case .primary, .success: return Color(hex: 0x93ee3f)
         case .secondary, .danger: return Color(hex: 0xef405d)
@@ -163,10 +165,14 @@ public struct TikoAnswerButton: View {
 }
 
 private extension TikoAnswerChoice {
+    var resolvedImageURLs: [URL] {
+        if !imageURLs.isEmpty { return Array(imageURLs.prefix(9)) }
+        if let imageURL { return [imageURL] }
+        return []
+    }
+
     var resolvedColor: Color? {
         if let color, let named = TikoColors.color(named: color) { return named }
-        if let color, let parsed = Color(hexString: color) { return parsed }
-        if let colorHex { return Color(hex: colorHex) }
         return nil
     }
 }
@@ -187,7 +193,7 @@ public struct TikoChoiceGrid: View {
     }
 
     private var tileSpacing: CGFloat {
-        choices.allSatisfy { $0.color != nil || $0.colorHex != nil || $0.imageURL != nil } ? 12 : 40
+        choices.allSatisfy { $0.color != nil || !$0.resolvedImageURLs.isEmpty } ? 12 : 40
     }
 
     public var body: some View {

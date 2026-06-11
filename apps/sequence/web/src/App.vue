@@ -3,10 +3,11 @@ import { computed, onMounted, ref, watch } from 'vue'
 import { Button, InputTextArea, Popup } from '@sil/ui'
 import { IdentityClient, type IdentityBundle } from '@tiko/identity'
 import { TikoDataClient, type SequenceSettings, type SequenceState } from '@tiko/data'
-import { createI18n, defaultLanguage, tikoI18nKeys, tikoLanguageOptions, tikoLanguages, type TikoLanguage } from '@tiko/i18n'
+import { createI18n, createTikoIdentityLabels, defaultLanguage, tikoI18nKeys, tikoLanguageOptions, tikoLanguages, type TikoLanguage } from '@tiko/i18n'
 import {
   TikoAppShell,
   TikoSettingsPanel,
+  TikoSquareTile,
   createTikoTtsClient,
   useIdentityRuntime,
   type IdentityRuntimeState,
@@ -20,11 +21,26 @@ const identityStorageKey = 'tiko:identity:device-session'
 const appId = 'sequence' as const
 const apiBaseUrl = resolveApiBaseUrl()
 const identityBaseUrl = resolveIdentityBaseUrl()
+const contentBaseUrl = resolveContentBaseUrl()
+
+interface SequenceStep {
+  id: string
+  label: string
+  text: string
+  imageRef?: string
+  imageRefs?: string[]
+}
 
 interface SequenceItem {
   id: string
   name: string
-  steps: string[]
+  title?: string
+  category?: string
+  color?: string
+  imageRef?: string
+  order?: number
+  steps: SequenceStep[]
+  source?: 'default' | 'user'
 }
 
 interface PersistedState {
@@ -45,6 +61,11 @@ function resolveApiBaseUrl() {
 function resolveIdentityBaseUrl() {
   const env = (import.meta as ImportMeta & { env?: Record<string, string | undefined> }).env
   return (env?.VITE_IDENTITY_API_URL ?? env?.VITE_TIKO_IDENTITY_BASE_URL ?? 'https://id.tikoapps.org/v1').replace(/\/$/, '')
+}
+
+function resolveContentBaseUrl() {
+  const env = (import.meta as ImportMeta & { env?: Record<string, string | undefined> }).env
+  return (env?.VITE_CONTENT_API_URL ?? 'https://content.tikoapi.org/v1').replace(/\/$/, '')
 }
 
 function readJson<T>(key: string, fallback: T): T {
@@ -73,11 +94,45 @@ function generateId(): string {
   return `seq-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`
 }
 
+function normalizeStep(step: unknown, index: number): SequenceStep {
+  if (typeof step === 'string') return { id: `step-${index}`, label: step, text: step }
+  const value = step && typeof step === 'object' ? step as Partial<SequenceStep> : {}
+  const label = typeof value.label === 'string' && value.label.trim() ? value.label : `Step ${index + 1}`
+  return {
+    id: typeof value.id === 'string' && value.id.trim() ? value.id : `step-${index}`,
+    label,
+    text: typeof value.text === 'string' && value.text.trim() ? value.text : label,
+    ...(typeof value.imageRef === 'string' && value.imageRef.trim() ? { imageRef: value.imageRef } : {}),
+    ...(Array.isArray(value.imageRefs) ? { imageRefs: value.imageRefs.filter((ref): ref is string => typeof ref === 'string' && ref.trim().length > 0) } : {}),
+  }
+}
+
+function normalizeSequenceItem(item: unknown, source: SequenceItem['source']): SequenceItem {
+  const value = item && typeof item === 'object' ? item as Partial<SequenceItem> : {}
+  const name = typeof value.name === 'string' && value.name.trim()
+    ? value.name
+    : typeof value.title === 'string' && value.title.trim()
+      ? value.title
+      : 'Sequence'
+  return {
+    id: typeof value.id === 'string' && value.id.trim() ? value.id : generateId(),
+    name,
+    title: name,
+    source,
+    ...(typeof value.category === 'string' && value.category.trim() ? { category: value.category } : {}),
+    ...(typeof value.color === 'string' && value.color.trim() ? { color: value.color } : {}),
+    ...(typeof value.imageRef === 'string' && value.imageRef.trim() ? { imageRef: value.imageRef } : {}),
+    order: typeof value.order === 'number' ? value.order : source === 'default' ? 0 : 1000,
+    steps: Array.isArray(value.steps) ? value.steps.map(normalizeStep) : [],
+  }
+}
+
 const stored = readJson<PersistedState>(storageKey, {})
 const i18n = createI18n({ app: appId, language: toLanguage(stored.language) })
 const language = ref<TikoLanguage>(toLanguage(stored.language))
 const colorMode = ref<TikoColorMode>(toColorMode(stored.colorMode))
-const items = ref<SequenceItem[]>(stored.items ?? [])
+const defaultItems = ref<SequenceItem[]>([])
+const customItems = ref<SequenceItem[]>((stored.items ?? []).map(item => normalizeSequenceItem(item, 'user')))
 const playingId = ref<string | null>(null)
 const currentStep = ref(0)
 const settingsOpen = ref(false)
@@ -102,7 +157,7 @@ const runtimeState: IdentityRuntimeState = {
   sessionToken, userId, accountEmail, accountEmailVerified, displayName,
   parentMode, childModeEnabled, pinConfigured,
 }
-const runtime = useIdentityRuntime({ identityClient, state: runtimeState, deviceName: 'Sequence web' })
+const runtime = useIdentityRuntime({ identityClient, state: runtimeState, deviceName: 'Sequence web', labels: () => createTikoIdentityLabels(i18n.t) })
 
 const labels = computed(() => {
   void language.value
@@ -139,11 +194,19 @@ const headerActions = computed(() => parentMode.value ? [
   { id: 'settings', label: labels.value.settings, icon: 'ui/settings-dual', active: settingsOpen.value },
 ] : [])
 
+const items = computed(() => {
+  const merged = new Map<string, SequenceItem>()
+  for (const item of defaultItems.value) merged.set(item.id, item)
+  for (const item of customItems.value) merged.set(item.id, item)
+  return Array.from(merged.values()).sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
+})
+
 const playingItem = computed(() =>
   playingId.value ? items.value.find(item => item.id === playingId.value) : null
 )
 
 const isPlaying = computed(() => playingItem.value !== null)
+const currentPlayingStep = computed(() => playingItem.value?.steps[currentStep.value] ?? null)
 
 function resolveColorMode(mode: TikoColorMode) {
   if (mode !== 'system') return mode
@@ -155,7 +218,7 @@ function saveLocal() {
   writeJson(storageKey, {
     language: language.value,
     colorMode: colorMode.value,
-    items: items.value,
+    items: customItems.value,
   })
 }
 
@@ -173,7 +236,7 @@ function applySettings(settings: SequenceSettings) {
 }
 
 function applyState(state: SequenceState) {
-  if (state.items) items.value = state.items as unknown as SequenceItem[]
+  if (state.items) customItems.value = (state.items as unknown[]).map(item => normalizeSequenceItem(item, 'user'))
 }
 
 async function hydrateRemoteData() {
@@ -186,11 +249,24 @@ async function hydrateRemoteData() {
   applyState(state.state)
 }
 
+async function hydrateDefaultContent() {
+  try {
+    const headers: Record<string, string> = { Accept: 'application/json' }
+    if (sessionToken.value) headers.Authorization = `Bearer ${sessionToken.value}`
+    const response = await fetch(`${contentBaseUrl}/sequence/content?language=${encodeURIComponent(language.value)}`, { headers })
+    if (!response.ok) throw new Error(`Sequence content failed: ${response.status}`)
+    const body = await response.json() as { data?: { sequences?: unknown[] } }
+    defaultItems.value = (body.data?.sequences ?? []).map(item => normalizeSequenceItem(item, 'default'))
+  } catch {
+    defaultItems.value = []
+  }
+}
+
 async function persistRemote() {
   if (!bootstrapped.value || !sessionToken.value) return
   try {
     await dataClient.putState(appId, sessionToken.value, {
-      items: items.value,
+      items: customItems.value,
     })
   } catch {
     // Local fallback already written
@@ -199,6 +275,7 @@ async function persistRemote() {
 
 watch(language, (value) => {
   i18n.setLanguage(value)
+  void hydrateDefaultContent()
 }, { immediate: true })
 
 watch(colorMode, (mode) => {
@@ -207,7 +284,7 @@ watch(colorMode, (mode) => {
   document.documentElement.dataset.theme = effective
 }, { immediate: true })
 
-watch([language, colorMode, items], () => {
+watch([language, colorMode, customItems], () => {
   saveLocal()
   void persistRemote()
 }, { deep: true })
@@ -222,6 +299,7 @@ onMounted(async () => {
 
   try {
     await hydrateRemoteData()
+    await hydrateDefaultContent()
   } catch {
     // Remote sync failed — local state is still valid
     if (!sessionToken.value) loadError.value = true
@@ -258,9 +336,14 @@ function updateStep(index: number, value: string) {
 
 function submitCreate() {
   const name = newName.value.trim()
-  const steps = newSteps.value.map(s => s.trim()).filter(Boolean)
+  const steps = newSteps.value
+    .map((step, index) => {
+      const label = step.trim()
+      return label ? { id: `step-${index}`, label, text: label } : null
+    })
+    .filter((step): step is SequenceStep => Boolean(step))
   if (!name || steps.length === 0) return
-  items.value = [...items.value, { id: generateId(), name, steps }]
+  customItems.value = [...customItems.value, { id: generateId(), name, title: name, steps, source: 'user', order: 1000 + customItems.value.length }]
   closeCreate()
 }
 
@@ -291,6 +374,43 @@ async function speakStep(text: string) {
   }
 }
 
+function stepText(step: SequenceStep | null | undefined): string {
+  return step?.text || step?.label || ''
+}
+
+function stepImages(step: SequenceStep | null | undefined): string[] {
+  if (!step) return []
+  if (Array.isArray(step.imageRefs) && step.imageRefs.length > 0) return step.imageRefs.map(imageRefURL)
+  return step.imageRef ? [imageRefURL(step.imageRef)] : []
+}
+
+function itemImages(item: SequenceItem): string[] {
+  const firstStep = item.steps.find(step => stepImages(step).length > 0)
+  if (firstStep) return stepImages(firstStep)
+  return item.imageRef ? [imageRefURL(item.imageRef)] : []
+}
+
+function imageRefURL(imageRef: string) {
+  return `${contentBaseUrl}/content/images/${encodeURIComponent(imageRef)}`
+}
+
+function itemBackground(item: SequenceItem): string {
+  const colors: Record<string, string> = {
+    learning: '#5b8def',
+    concepts: '#20b486',
+    'daily-life': '#f59e0b',
+    nature: '#60a64a',
+    people: '#ef6f8f',
+    play: '#8b5cf6',
+    world: '#14b8a6',
+    colors: '#f97316',
+    school: '#64748b',
+    movement: '#06b6d4',
+    vehicles: '#e11d48',
+  }
+  return colors[item.color ?? item.category ?? ''] ?? appConfig.themeColor ?? '#4f46e5'
+}
+
 async function retry() {
   loadError.value = false
   try {
@@ -300,6 +420,7 @@ async function retry() {
   }
   try {
     await hydrateRemoteData()
+    await hydrateDefaultContent()
   } catch {
     if (!sessionToken.value) loadError.value = true
   }
@@ -335,9 +456,16 @@ async function retry() {
         <p class="sequence-app__play-step">
           {{ labels.step.replace('{current}', String(currentStep + 1)).replace('{total}', String(playingItem.steps.length)) }}
         </p>
-        <p class="sequence-app__play-text">{{ playingItem.steps[currentStep] }}</p>
+        <div class="sequence-app__play-tile">
+          <TikoSquareTile
+            :title="stepText(currentPlayingStep)"
+            :background="itemBackground(playingItem)"
+            :image-srcs="stepImages(currentPlayingStep)"
+            label-size="large"
+          />
+        </div>
         <div class="sequence-app__play-actions">
-          <Button variant="primary" icon="media/volume-iii" @click="speakStep(playingItem.steps[currentStep])">Speak</Button>
+          <Button variant="primary" icon="media/volume-iii" @click="speakStep(stepText(currentPlayingStep))">Speak</Button>
           <Button v-if="currentStep < playingItem.steps.length - 1" variant="primary" @click="nextStep">{{ labels.next }}</Button>
           <Button v-else variant="primary" @click="stopPlaying">{{ labels.done }}</Button>
           <Button variant="ghost" @click="stopPlaying">Stop</Button>
@@ -353,15 +481,19 @@ async function retry() {
 
       <!-- Sequence list -->
       <section v-else class="sequence-app__list">
-        <button
+        <div
           v-for="item in items"
           :key="item.id"
           class="sequence-app__item"
-          @click="playSequence(item.id)"
         >
-          <span class="sequence-app__item-name">{{ item.name }}</span>
+          <TikoSquareTile
+            :title="item.name"
+            :background="itemBackground(item)"
+            :image-srcs="itemImages(item)"
+            @press="playSequence(item.id)"
+          />
           <span class="sequence-app__item-steps">{{ item.steps.length }} steps</span>
-        </button>
+        </div>
       </section>
 
       <!-- Create dialog -->

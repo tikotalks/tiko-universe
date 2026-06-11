@@ -129,7 +129,7 @@ final class RadioLibraryStore {
             .joined(separator: "-")
         let id = uniqueCategoryID(baseID.isEmpty ? "collection" : baseID)
         let color = defaultCategoryColors[categories.count % defaultCategoryColors.count]
-        let category = RadioCategory(id: id, title: title, symbol: "music.note.list", colorHex: color)
+        let category = RadioCategory(id: id, title: title, symbol: "music.note.list", color: color)
         categories.append(category)
         selectedCategoryID = category.id
         save(userDefaults: userDefaults)
@@ -162,7 +162,7 @@ final class RadioLibraryStore {
         guard !cleaned.isEmpty else { return }
         categories = categories.map { category in
             guard category.id == id else { return category }
-            return RadioCategory(id: category.id, title: cleaned, symbol: category.symbol, colorHex: category.colorHex)
+            return RadioCategory(id: category.id, title: cleaned, symbol: category.symbol, color: category.color)
         }
         save(userDefaults: userDefaults)
     }
@@ -187,21 +187,21 @@ final class RadioLibraryStore {
 let defaultUncategorizedCategoryID = "uncategorized"
 
 let defaultRadioCategories: [RadioCategory] = [
-    RadioCategory(id: "animals", title: "Animals", symbol: "pawprint.fill", colorHex: 0xFFD93D),
-    RadioCategory(id: "stories", title: "Stories", symbol: "book.fill", colorHex: 0xC3AED6),
-    RadioCategory(id: "music", title: "Music", symbol: "music.note", colorHex: 0xFF8A1F),
-    RadioCategory(id: "calm", title: "Calm", symbol: "moon.stars.fill", colorHex: 0x2488FF),
-    RadioCategory(id: "favorites", title: "Favorites", symbol: "star.fill", colorHex: 0xF8C22E),
-    RadioCategory(id: defaultUncategorizedCategoryID, title: "Unsorted", symbol: "tray.fill", colorHex: 0x93EE3F)
+    RadioCategory(id: "animals", title: "Animals", symbol: "pawprint.fill", color: "yellow"),
+    RadioCategory(id: "stories", title: "Stories", symbol: "book.fill", color: "purple"),
+    RadioCategory(id: "music", title: "Music", symbol: "music.note", color: "orange"),
+    RadioCategory(id: "calm", title: "Calm", symbol: "moon.stars.fill", color: "blue"),
+    RadioCategory(id: "favorites", title: "Favorites", symbol: "star.fill", color: "gold"),
+    RadioCategory(id: defaultUncategorizedCategoryID, title: "Unsorted", symbol: "tray.fill", color: "lime")
 ]
 
-private let defaultCategoryColors: [UInt32] = [
-    0xFFD93D,
-    0xC3AED6,
-    0xFF8A1F,
-    0x2488FF,
-    0x93EE3F,
-    0xE84057
+private let defaultCategoryColors: [String] = [
+    "yellow",
+    "purple",
+    "orange",
+    "blue",
+    "lime",
+    "red"
 ]
 
 protocol RadioSyncClient {

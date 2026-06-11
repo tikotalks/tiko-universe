@@ -214,12 +214,33 @@ describe('app-api settings/state endpoints', () => {
     const testEnv = await env()
     const settings = await fetchJson('/v1/apps/yes-no/settings', { headers: auth }, testEnv)
     const state = await fetchJson('/v1/apps/type/state', { headers: auth }, testEnv)
+    const radioState = await fetchJson('/v1/apps/radio/state', { headers: auth }, testEnv)
+    const todoSettings = await fetchJson('/v1/apps/todo/settings', { headers: auth }, testEnv)
+    const todoState = await fetchJson('/v1/apps/todo/state', { headers: auth }, testEnv)
 
     expect(settings.response.status).toBe(200)
     expect(settings.body).toMatchObject({ app: 'yes-no', version: 0, updatedAt: null })
     expect(settings.body.settings.spokenPrompt).toBe('Make a choice.')
     expect(state.response.status).toBe(200)
+    expect(state.body.state.prompts).toEqual(['I need help', 'I want a break', 'I am finished', 'Thank you'])
     expect(state.body.state.completedPrompts).toEqual([])
+    expect(radioState.response.status).toBe(200)
+    expect(radioState.body.state.categories[0].icon).toBe('animals/cat-head')
+    expect(radioState.body.state.categories[3].icon).toBe('media/music-note')
+    expect(todoSettings.response.status).toBe(200)
+    expect(todoSettings.body.settings).toEqual({ language: 'en', colorMode: 'system' })
+    expect(todoState.response.status).toBe(200)
+    expect(todoState.body.state.items).toHaveLength(3)
+    expect(todoState.body.state.items[0]).toMatchObject({
+      id: 'morning-routine',
+      name: 'Morning routine',
+      done: false,
+      steps: [
+        { name: 'Brush teeth', done: false },
+        { name: 'Get dressed', done: false },
+        { name: 'Pack bag', done: false }
+      ]
+    })
   })
 
   it('writes and reads back settings and state with version increments', async () => {
@@ -304,10 +325,13 @@ describe('@tiko/data client', () => {
 describe('global defaults endpoints', () => {
   it('returns built-in defaults when no global defaults are stored', async () => {
     const { response, body } = await fetchJson('/v1/apps/defaults/cards/state', { headers: auth })
+    const radio = await fetchJson('/v1/apps/defaults/radio/state', { headers: auth })
+
     expect(response.status).toBe(200)
     expect(body.version).toBe(0)
     expect(body.updatedAt).toBeNull()
     expect(body.state).toEqual({})
+    expect(radio.body.state.categories.map((category: { id: string }) => category.id)).toEqual(['animals', 'stories', 'bedtime', 'songs'])
   })
 
   it('allows unauthenticated GET of defaults', async () => {
@@ -380,4 +404,20 @@ describe('global defaults endpoints', () => {
     expect(global.body.state.collections[0].id).toBe('global')
     expect(user.body.state.collections[0].id).toBe('user')
   }, 15000)
+
+  it('uses global defaults for new user app data', async () => {
+    const testEnv = await env()
+
+    await fetchJson('/v1/apps/defaults/radio/state', {
+      method: 'PUT',
+      headers: auth,
+      body: JSON.stringify({ state: { categories: [{ id: 'stories', name: 'Stories', icon: 'book', color: 'purple', order: 0 }] }, version: 0 })
+    }, testEnv)
+
+    const read = await fetchJson('/v1/apps/radio/state', { headers: auth }, testEnv)
+
+    expect(read.response.status).toBe(200)
+    expect(read.body.version).toBe(0)
+    expect(read.body.state.categories[0]).toMatchObject({ id: 'stories', name: 'Stories' })
+  })
 })

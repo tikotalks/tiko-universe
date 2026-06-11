@@ -193,7 +193,7 @@ struct RadioView: View {
             TikoSquareTile(
                 title: category.title,
                 subtitle: "\(count) songs",
-                background: Color(hex: category.colorHex)
+                background: TikoColors.color(named: category.color) ?? TikoColors.color(named: "gray")!
             ) {
                 Image(systemName: category.symbol)
                     .font(.system(size: 52, weight: .heavy))

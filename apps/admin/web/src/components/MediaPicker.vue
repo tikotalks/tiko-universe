@@ -7,6 +7,7 @@ import { useAdminMediaLibrary, type AdminMediaItem } from '../composables/useAdm
 const props = defineProps<{
   modelValue: string
   label?: string
+  emitId?: boolean
 }>()
 
 const emit = defineEmits<{
@@ -22,7 +23,7 @@ const fileInput = ref<HTMLInputElement | null>(null)
 let searchTimer: number | undefined
 
 function select(item: AdminMediaItem) {
-  emit('update:modelValue', itemUrl(item))
+  emit('update:modelValue', props.emitId ? item.id : itemUrl(item))
   open.value = false
 }
 
@@ -40,7 +41,7 @@ async function uploadFile(event: Event) {
   if (!file) return
   try {
     const result = await upload(file)
-    emit('update:modelValue', result.url)
+    emit('update:modelValue', props.emitId ? (result.id ?? '') : (result.url ?? ''))
     open.value = false
   } finally {
     input.value = ''
@@ -53,12 +54,18 @@ watch(search, () => {
   searchTimer = window.setTimeout(loadMedia, 250)
 })
 watch(open, (v) => { if (v) loadMedia() })
+
+function selectedPreviewUrl(value: string, size = 96): string {
+  if (!props.emitId) return previewUrl(value, size)
+  const selectedItem = items.value.find(item => item.id === value)
+  return selectedItem ? itemPreviewUrl(selectedItem, size) : `https://media.tikoapi.org/v1/media/${encodeURIComponent(value)}/download`
+}
 </script>
 
 <template>
   <div :class="bemm('')">
     <div :class="bemm('preview')" v-if="modelValue">
-      <img :class="bemm('image')" :src="previewUrl(modelValue, 96)" alt="Selected icon" decoding="async" />
+      <img :class="bemm('image')" :src="selectedPreviewUrl(modelValue, 96)" alt="Selected icon" decoding="async" />
       <Button size="small" variant="ghost" @click="clear">Remove</Button>
     </div>
     <Button size="small" variant="outline" @click="open = true">
@@ -85,7 +92,7 @@ watch(open, (v) => { if (v) loadMedia() })
             v-for="item in items"
             :key="item.id"
             type="button"
-            :class="[bemm('modal-item'), { [bemm('modal-item--selected')]: itemUrl(item) === modelValue }]"
+            :class="[bemm('modal-item'), { [bemm('modal-item--selected')]: (emitId ? item.id : itemUrl(item)) === modelValue }]"
             @click="select(item)"
           >
             <img :src="itemPreviewUrl(item, 180)" :alt="item.title || item.file_name" loading="lazy" decoding="async" />

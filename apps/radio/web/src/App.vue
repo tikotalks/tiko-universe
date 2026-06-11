@@ -1,14 +1,15 @@
 <script setup lang="ts">
 import { computed, onMounted, ref, watch, nextTick, inject, markRaw, h } from 'vue'
-import { Button, Popup } from '@sil/ui'
+import { Button, Icon as SilIcon, Popup } from '@sil/ui'
 import type { PopupService } from '@sil/ui'
 import { IdentityClient } from '@tiko/identity'
 import { TikoDataClient, type RadioSettings, type RadioState } from '@tiko/data'
 import type { RadioTrack, RadioCategory } from '@tiko/data'
-import { createI18n, defaultLanguage, tikoI18nKeys, tikoLanguageOptions, tikoLanguages, type TikoLanguage } from '@tiko/i18n'
+import { createI18n, createTikoIdentityLabels, defaultLanguage, tikoI18nKeys, tikoLanguageOptions, tikoLanguages, type TikoLanguage } from '@tiko/i18n'
 import {
   TikoAppShell,
   TikoColorMode,
+  tikoColors,
   useIdentityRuntime,
   type IdentityRuntimeState,
 } from '@tiko/ui'
@@ -149,6 +150,7 @@ const runtime = useIdentityRuntime({
   state: runtimeState,
   deviceName: 'Radio web',
   storageKey: 'tiko:identity:device-session',
+  labels: () => createTikoIdentityLabels(i18n.t),
 })
 
 // ---- Kid / parent mode (aliases into runtimeState) -------------------------
@@ -193,6 +195,8 @@ const labels = computed(() => {
     },
   }
 })
+const colorValueByName = new Map(tikoColors.map(color => [color.name, color.hex]))
+const categoryColorNames = ['red', 'orange', 'yellow', 'green', 'blue', 'purple', 'pink', 'cyan', 'teal', 'lime'] as const
 
 // ---- Volume icon ----------------------------------------------------------
 const volumeIcon = computed(() => {
@@ -373,15 +377,19 @@ async function persistStateRemote() {
 function seedDefaultCategories() {
   if (categories.isEmpty.value) {
     const defaults: RadioCategory[] = [
-      { id: 'animals', name: 'Animals', icon: '🐾', color: '#FFD93D', order: 0 },
-      { id: 'stories', name: 'Stories', icon: '📖', color: '#C3AED6', order: 1 },
-      { id: 'bedtime', name: 'Bedtime', icon: '🌙', color: '#A8D8EA', order: 2 },
-      { id: 'songs', name: 'Songs', icon: '🎵', color: '#FFB3C1', order: 3 },
+      { id: 'animals', name: 'Animals', icon: 'animals/cat-head', color: 'yellow', order: 0 },
+      { id: 'stories', name: 'Stories', icon: 'ui/books', color: 'purple', order: 1 },
+      { id: 'bedtime', name: 'Bedtime', icon: 'media/headphones', color: 'cyan', order: 2 },
+      { id: 'songs', name: 'Songs', icon: 'media/music-note', color: 'pink', order: 3 },
     ]
     for (const cat of defaults) {
       categories.addCategory(cat)
     }
   }
+}
+
+function categoryColor(category: RadioCategory) {
+  return colorValueByName.get(category.color) ?? colorValueByName.get('gray') ?? 'currentColor'
 }
 
 function absoluteGenerationUrl(url: string) {
@@ -699,8 +707,8 @@ function handleCreateCategory() {
   const id = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')
   categories.addCategory({
     name,
-    icon: '📁',
-    color: `hsl(${Math.floor(Math.random() * 360)}, 70%, 60%)`,
+    icon: 'media/headphones',
+    color: categoryColorNames[categories.categories.value.length % categoryColorNames.length],
   })
   newCategoryName.value = ''
   newCategoryOpen.value = false
@@ -735,10 +743,12 @@ function handleCreateCategory() {
             :key="cat.id"
             class="radio-app__category-card"
             :class="{ 'radio-app__category-card--active': selectedCategoryId === cat.id }"
-            :style="{ '--cat-color': cat.color }"
+            :style="{ '--cat-color': categoryColor(cat) }"
             @click="selectCategory(cat.id)"
           >
-            <span class="radio-app__category-card__icon">{{ cat.icon }}</span>
+            <span class="radio-app__category-card__icon">
+              <SilIcon :name="cat.icon" size="large" />
+            </span>
             <span class="radio-app__category-card__label">{{ cat.name }}</span>
           </button>
           <!-- Parent mode: add category button -->
