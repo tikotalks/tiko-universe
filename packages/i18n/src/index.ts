@@ -18,6 +18,28 @@ export const tikoLanguages = [
 
 export type TikoLanguage = typeof tikoLanguages[number]
 
+export interface TikoLanguageOption {
+  value: TikoLanguage
+  label: string
+  nativeLabel: string
+}
+
+export const tikoLanguageOptions: TikoLanguageOption[] = [
+  { value: 'en', label: 'English', nativeLabel: 'English' },
+  { value: 'de', label: 'German', nativeLabel: 'Deutsch' },
+  { value: 'es', label: 'Spanish', nativeLabel: 'Español' },
+  { value: 'fr', label: 'French', nativeLabel: 'Français' },
+  { value: 'nl', label: 'Dutch', nativeLabel: 'Nederlands' },
+  { value: 'pt', label: 'Portuguese', nativeLabel: 'Português' },
+  { value: 'ja', label: 'Japanese', nativeLabel: '日本語' },
+  { value: 'zh', label: 'Chinese', nativeLabel: '中文' },
+  { value: 'ko', label: 'Korean', nativeLabel: '한국어' },
+  { value: 'mt', label: 'Maltese', nativeLabel: 'Malti' },
+  { value: 'it', label: 'Italian', nativeLabel: 'Italiano' },
+  { value: 'ar', label: 'Arabic', nativeLabel: 'العربية' },
+  { value: 'hy', label: 'Armenian', nativeLabel: 'Հայերեն' },
+]
+
 export const tikoAppKeys = ['yes-no', 'type', 'timer', 'radio', 'cards', 'sequence', 'todo', 'talk'] as const
 
 export type TikoAppKey = typeof tikoAppKeys[number]
@@ -355,6 +377,15 @@ export const tikoI18nKeys = {
   },
   common: {
     settings: 'common.settings',
+    language: 'common.language',
+    appearance: 'common.appearance',
+    appPreferences: 'common.appPreferences',
+    colorMode: 'common.colorMode',
+    colorModeOptions: {
+      light: 'common.colorMode.light',
+      dark: 'common.colorMode.dark',
+      system: 'common.colorMode.system',
+    },
     size: {
       small: 'common.size.small',
       medium: 'common.size.medium',
@@ -363,7 +394,78 @@ export const tikoI18nKeys = {
   },
 } as const
 
+const commonEnglish: TranslationMap = {
+  [tikoI18nKeys.common.settings]: 'Settings',
+  [tikoI18nKeys.common.language]: 'Language',
+  [tikoI18nKeys.common.appearance]: 'Appearance',
+  [tikoI18nKeys.common.appPreferences]: 'Language, appearance and app preferences.',
+  [tikoI18nKeys.common.colorMode]: 'Color mode',
+  [tikoI18nKeys.common.colorModeOptions.light]: 'Light',
+  [tikoI18nKeys.common.colorModeOptions.dark]: 'Dark',
+  [tikoI18nKeys.common.colorModeOptions.system]: 'System',
+  [tikoI18nKeys.common.size.small]: 'Small',
+  [tikoI18nKeys.common.size.medium]: 'Medium',
+  [tikoI18nKeys.common.size.large]: 'Large',
+}
+
+const commonFrench: TranslationMap = {
+  [tikoI18nKeys.common.settings]: 'Réglages',
+  [tikoI18nKeys.common.language]: 'Langue',
+  [tikoI18nKeys.common.appearance]: 'Apparence',
+  [tikoI18nKeys.common.appPreferences]: 'Langue, apparence et préférences de l’app.',
+  [tikoI18nKeys.common.colorMode]: 'Mode couleur',
+  [tikoI18nKeys.common.colorModeOptions.light]: 'Clair',
+  [tikoI18nKeys.common.colorModeOptions.dark]: 'Sombre',
+  [tikoI18nKeys.common.colorModeOptions.system]: 'Système',
+  [tikoI18nKeys.common.size.small]: 'Petit',
+  [tikoI18nKeys.common.size.medium]: 'Moyen',
+  [tikoI18nKeys.common.size.large]: 'Grand',
+}
+
+const commonDutch: TranslationMap = {
+  [tikoI18nKeys.common.settings]: 'Instellingen',
+  [tikoI18nKeys.common.language]: 'Taal',
+  [tikoI18nKeys.common.appearance]: 'Weergave',
+  [tikoI18nKeys.common.appPreferences]: 'Taal, weergave en app-voorkeuren.',
+  [tikoI18nKeys.common.colorMode]: 'Kleurmodus',
+  [tikoI18nKeys.common.colorModeOptions.light]: 'Licht',
+  [tikoI18nKeys.common.colorModeOptions.dark]: 'Donker',
+  [tikoI18nKeys.common.colorModeOptions.system]: 'Systeem',
+  [tikoI18nKeys.common.size.small]: 'Klein',
+  [tikoI18nKeys.common.size.medium]: 'Middel',
+  [tikoI18nKeys.common.size.large]: 'Groot',
+}
+
+const commonSpanish: TranslationMap = {
+  [tikoI18nKeys.common.settings]: 'Ajustes',
+  [tikoI18nKeys.common.language]: 'Idioma',
+  [tikoI18nKeys.common.appearance]: 'Apariencia',
+  [tikoI18nKeys.common.appPreferences]: 'Idioma, apariencia y preferencias de la app.',
+  [tikoI18nKeys.common.colorMode]: 'Modo de color',
+  [tikoI18nKeys.common.colorModeOptions.light]: 'Claro',
+  [tikoI18nKeys.common.colorModeOptions.dark]: 'Oscuro',
+  [tikoI18nKeys.common.colorModeOptions.system]: 'Sistema',
+  [tikoI18nKeys.common.size.small]: 'Pequeño',
+  [tikoI18nKeys.common.size.medium]: 'Mediano',
+  [tikoI18nKeys.common.size.large]: 'Grande',
+}
+
+const commonMaltese: TranslationMap = {
+  [tikoI18nKeys.common.settings]: 'Settings',
+  [tikoI18nKeys.common.language]: 'Lingwa',
+  [tikoI18nKeys.common.appearance]: 'Dehra',
+  [tikoI18nKeys.common.appPreferences]: 'Lingwa, dehra u preferenzi tal-app.',
+  [tikoI18nKeys.common.colorMode]: 'Mod tal-kulur',
+  [tikoI18nKeys.common.colorModeOptions.light]: 'Ċar',
+  [tikoI18nKeys.common.colorModeOptions.dark]: 'Skur',
+  [tikoI18nKeys.common.colorModeOptions.system]: 'Sistema',
+  [tikoI18nKeys.common.size.small]: 'Żgħir',
+  [tikoI18nKeys.common.size.medium]: 'Medju',
+  [tikoI18nKeys.common.size.large]: 'Kbir',
+}
+
 const yesNoEnglish: TranslationMap = {
+  ...commonEnglish,
   [tikoI18nKeys.yesNo.appName]: 'Yes No',
   [tikoI18nKeys.yesNo.sentence.label]: 'Sentence to speak',
   [tikoI18nKeys.yesNo.sentence.default]: 'Do you want to go eat?',
@@ -398,6 +500,7 @@ const yesNoEnglish: TranslationMap = {
 }
 
 const yesNoFrench: TranslationMap = {
+  ...commonFrench,
   [tikoI18nKeys.yesNo.answers.yes]: 'Oui',
   [tikoI18nKeys.yesNo.answers.no]: 'Non',
   [tikoI18nKeys.yesNo.latestAnswer]: 'Dernière réponse',
@@ -423,6 +526,7 @@ const yesNoFrench: TranslationMap = {
 }
 
 const yesNoDutch: TranslationMap = {
+  ...commonDutch,
   [tikoI18nKeys.yesNo.answers.yes]: 'Ja',
   [tikoI18nKeys.yesNo.answers.no]: 'Nee',
   [tikoI18nKeys.yesNo.latestAnswer]: 'Laatste antwoord',
@@ -447,6 +551,7 @@ const yesNoDutch: TranslationMap = {
 }
 
 const yesNoSpanish: TranslationMap = {
+  ...commonSpanish,
   [tikoI18nKeys.yesNo.answers.yes]: 'Sí',
   [tikoI18nKeys.yesNo.answers.no]: 'No',
   [tikoI18nKeys.yesNo.latestAnswer]: 'Última respuesta',
@@ -470,7 +575,28 @@ const yesNoSpanish: TranslationMap = {
   [tikoI18nKeys.yesNo.status.browserVoiceFallback]: 'Voz del navegador usada',
 }
 
+const yesNoMaltese: TranslationMap = {
+  ...commonMaltese,
+  [tikoI18nKeys.yesNo.appName]: 'Iva Le',
+  [tikoI18nKeys.yesNo.answers.yes]: 'Iva',
+  [tikoI18nKeys.yesNo.answers.no]: 'Le',
+  [tikoI18nKeys.yesNo.latestAnswer]: 'L-aħħar risposta',
+  [tikoI18nKeys.yesNo.settings.title]: 'Iva Le',
+  [tikoI18nKeys.yesNo.settings.speakAnswers]: 'Aqra r-risposti',
+  [tikoI18nKeys.yesNo.settings.answerStyle]: 'Stil tar-risposti',
+  [tikoI18nKeys.yesNo.settings.answerTiles]: 'Madum tar-risposti',
+  [tikoI18nKeys.yesNo.settings.answerTilesDefault]: 'Default',
+  [tikoI18nKeys.yesNo.tileEditor.title]: 'Madum tar-risposti',
+  [tikoI18nKeys.yesNo.tileEditor.subtitle]: 'Agħżel ir-risposti murija lit-tifel jew tifla.',
+  [tikoI18nKeys.yesNo.tileEditor.empty]: 'Qed jintużaw ir-risposti default Iva u Le.',
+  [tikoI18nKeys.yesNo.tileEditor.addTile]: 'Żid maduma',
+  [tikoI18nKeys.yesNo.tileEditor.reset]: 'Irrisettja',
+  [tikoI18nKeys.yesNo.tileEditor.save]: 'Issejvja',
+  [tikoI18nKeys.yesNo.status.browserVoiceFallback]: 'Intużat il-vuċi tal-browser',
+}
+
 const typeEnglish: TranslationMap = {
+  ...commonEnglish,
   [tikoI18nKeys.type.appName]: 'Type',
   [tikoI18nKeys.type.compose.label]: 'Message to speak',
   [tikoI18nKeys.type.compose.placeholder]: 'Type what you want to say',
@@ -483,6 +609,7 @@ const typeEnglish: TranslationMap = {
 }
 
 const timerEnglish: TranslationMap = {
+  ...commonEnglish,
   [tikoI18nKeys.timer.appName]: 'Timer',
   [tikoI18nKeys.timer.display.expired]: 'Time is up!',
   [tikoI18nKeys.timer.controls.start]: 'Start',
@@ -500,6 +627,7 @@ const timerEnglish: TranslationMap = {
 }
 
 const radioEnglish: TranslationMap = {
+  ...commonEnglish,
   [tikoI18nKeys.radio.appName]: 'Radio',
   [tikoI18nKeys.radio.player.play]: 'Play',
   [tikoI18nKeys.radio.player.pause]: 'Pause',
@@ -551,6 +679,7 @@ const radioEnglish: TranslationMap = {
 }
 
 const cardsEnglish: TranslationMap = {
+  ...commonEnglish,
   [tikoI18nKeys.cards.appName]: 'Cards',
   [tikoI18nKeys.cards.collections.empty]: 'No collections yet.',
   [tikoI18nKeys.cards.collections.addNew]: 'Add collection',
@@ -563,12 +692,10 @@ const cardsEnglish: TranslationMap = {
   [tikoI18nKeys.cards.settings.restoreConfirm]: 'This will show all default collections again.',
   [tikoI18nKeys.cards.status.browserVoiceFallback]: 'Browser voice used',
   [tikoI18nKeys.cards.status.speechError]: 'Could not speak yet. Try again.',
-  [tikoI18nKeys.common.size.small]: 'Small',
-  [tikoI18nKeys.common.size.medium]: 'Medium',
-  [tikoI18nKeys.common.size.large]: 'Large',
 }
 
 const sequenceEnglish: TranslationMap = {
+  ...commonEnglish,
   [tikoI18nKeys.sequence.appName]: 'Sequence',
   [tikoI18nKeys.sequence.empty.title]: 'No sequences yet',
   [tikoI18nKeys.sequence.empty.description]: 'Create your first sequence to get started.',
@@ -587,6 +714,7 @@ const sequenceEnglish: TranslationMap = {
 }
 
 const todoEnglish: TranslationMap = {
+  ...commonEnglish,
   [tikoI18nKeys.todo.appName]: 'Todo',
   [tikoI18nKeys.todo.empty.title]: 'No items yet',
   [tikoI18nKeys.todo.empty.description]: 'Add your first task to get started.',
@@ -607,10 +735,10 @@ const todoEnglish: TranslationMap = {
   [tikoI18nKeys.todo.item.remaining]: '{count} remaining',
   [tikoI18nKeys.todo.status.loadError]: 'Could not load data.',
   [tikoI18nKeys.todo.status.retry]: 'Retry',
-  [tikoI18nKeys.common.settings]: 'Settings',
 }
 
 const talkEnglish: TranslationMap = {
+  ...commonEnglish,
   [tikoI18nKeys.talk.appName]: 'Talk',
   [tikoI18nKeys.talk.sentence.label]: 'Sentence',
   [tikoI18nKeys.talk.sentence.placeholder]: 'Build a sentence',
@@ -637,11 +765,20 @@ const talkEnglish: TranslationMap = {
   [tikoI18nKeys.talk.status.retry]: 'Retry',
 }
 
+const commonFallbackBundles = tikoAppKeys.flatMap((app) => [
+  createTranslationBundle({ app, language: 'fr', translations: commonFrench }),
+  createTranslationBundle({ app, language: 'nl', translations: commonDutch }),
+  createTranslationBundle({ app, language: 'es', translations: commonSpanish }),
+  createTranslationBundle({ app, language: 'mt', translations: commonMaltese }),
+])
+
 const localTranslationBundles = [
+  ...commonFallbackBundles,
   createTranslationBundle({ app: 'yes-no', language: 'en', translations: yesNoEnglish }),
   createTranslationBundle({ app: 'yes-no', language: 'fr', translations: yesNoFrench }),
   createTranslationBundle({ app: 'yes-no', language: 'nl', translations: yesNoDutch }),
   createTranslationBundle({ app: 'yes-no', language: 'es', translations: yesNoSpanish }),
+  createTranslationBundle({ app: 'yes-no', language: 'mt', translations: yesNoMaltese }),
   createTranslationBundle({ app: 'type', language: 'en', translations: typeEnglish }),
   createTranslationBundle({ app: 'cards', language: 'en', translations: cardsEnglish }),
   createTranslationBundle({ app: 'sequence', language: 'en', translations: sequenceEnglish }),

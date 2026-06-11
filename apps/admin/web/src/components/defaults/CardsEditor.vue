@@ -12,8 +12,13 @@ interface LegacyTile {
   type?: string
   color?: string
   image?: string
+  imageUrl?: string
+  image_url?: string
   imageURL?: string
   imageRef?: string
+  original_url?: string
+  thumbnailUrl?: string
+  thumbnail_url?: string
   colorHex?: number
   order?: number
 }
@@ -36,6 +41,7 @@ interface Collection {
   parentID?: string | null
   mediaCategories: string[]
   imageURL?: string
+  imageRef?: string
   cards: CardItem[]
   tiles?: LegacyTile[]
 }
@@ -83,27 +89,51 @@ function colorToHex(value: string | undefined, fallback: number) {
   return value.startsWith('#') ? hexToNum(value, fallback) : fallback
 }
 
+function mediaDownloadUrl(mediaId: string): string {
+  return `https://media.tikoapi.org/v1/media/${encodeURIComponent(mediaId)}/download`
+}
+
+function firstImageValue(...values: unknown[]): string | undefined {
+  return values.find((value): value is string => typeof value === 'string' && value.trim().length > 0)?.trim()
+}
+
+function resolvedImageURL(source: Record<string, unknown>): string | undefined {
+  const url = firstImageValue(
+    source.imageURL,
+    source.imageUrl,
+    source.image_url,
+    source.image,
+    source.original_url,
+    source.thumbnailUrl,
+    source.thumbnail_url,
+  )
+  if (url) return url
+  const imageRef = firstImageValue(source.imageRef, source.image_ref)
+  if (!imageRef) return undefined
+  return imageRef.startsWith('http') ? imageRef : mediaDownloadUrl(imageRef)
+}
+
 function normalizeCard(card: LegacyTile, order: number, fallbackColor: number): CardItem {
   const colorHex = typeof card.colorHex === 'number' ? card.colorHex : colorToHex(card.color, fallbackColor)
+  const imageURL = resolvedImageURL(card as Record<string, unknown>)
   return {
     id: card.id || makeId('card'),
     title: card.title || 'New card',
     speech: card.speech || card.title || 'New card',
     colorHex,
     order: typeof card.order === 'number' ? card.order : order,
-    ...(card.imageURL || card.image ? { imageURL: card.imageURL || card.image } : {}),
+    ...(imageURL ? { imageURL } : {}),
     ...(card.imageRef ? { imageRef: card.imageRef } : {}),
   }
 }
 
 function normalizeCollection(collection: Collection, order = 0): Collection {
-  const legacyColor = typeof (collection as Collection & { color?: string }).color === 'string'
-    ? (collection as Collection & { color?: string }).color
+  const rawCollection = collection as Collection & Record<string, unknown>
+  const legacyColor = typeof rawCollection.color === 'string'
+    ? rawCollection.color
     : undefined
   const colorHex = typeof collection.colorHex === 'number' ? collection.colorHex : colorToHex(legacyColor, 0x4ECDC4)
-  const legacyImage = typeof (collection as Collection & { image?: string }).image === 'string'
-    ? (collection as Collection & { image?: string }).image
-    : undefined
+  const imageURL = resolvedImageURL(rawCollection)
   const sourceCards = Array.isArray(collection.cards) ? collection.cards : Array.isArray(collection.tiles) ? collection.tiles : []
   return {
     id: collection.id || makeId('col'),
@@ -112,7 +142,8 @@ function normalizeCollection(collection: Collection, order = 0): Collection {
     order: typeof collection.order === 'number' ? collection.order : order,
     parentID: collection.parentID ?? null,
     mediaCategories: Array.isArray(collection.mediaCategories) ? collection.mediaCategories : [],
-    ...(collection.imageURL || legacyImage ? { imageURL: collection.imageURL || legacyImage } : {}),
+    ...(imageURL ? { imageURL } : {}),
+    ...(collection.imageRef ? { imageRef: collection.imageRef } : {}),
     cards: sourceCards.map((card, index) => normalizeCard(card, index, colorHex)).sort((a, b) => a.order - b.order),
   }
 }

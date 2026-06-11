@@ -31,8 +31,7 @@ public enum TikoChoiceStyle: String, CaseIterable, Codable, Sendable {
 
 public struct TikoAnswerChoice: Identifiable, Equatable, Sendable {
     public enum Icon: Equatable, Sendable {
-        case systemName(String)
-        case text(String)
+        case openIcon(String)
     }
 
     public let id: String
@@ -64,9 +63,9 @@ public struct TikoAnswerChoice: Identifiable, Equatable, Sendable {
         self.imageURL = imageURL
     }
 
-    /// Convenience initializer accepting a plain string symbol (backward compatibility).
+    /// Convenience initializer accepting an open-icon name.
     public init(id: String, label: String, symbol: String, tone: TikoChoiceTone) {
-        self.init(id: id, label: label, icon: .text(symbol), tone: tone)
+        self.init(id: id, label: label, icon: .openIcon(symbol), tone: tone)
     }
 }
 
@@ -146,14 +145,9 @@ public struct TikoAnswerButton: View {
     @ViewBuilder
     private var iconView: some View {
         switch choice.icon {
-        case .systemName(let name):
-            Image(systemName: name)
-                .renderingMode(.template)
-                .foregroundStyle(.white)
-                .font(.system(size: 48, weight: .bold))
-        case .text(let text):
-            Text(text)
-                .font(.system(size: 92))
+        case .openIcon(let name):
+            TikoOpenIconView(name)
+                .frame(width: 58, height: 58)
         }
     }
 
@@ -166,9 +160,6 @@ public struct TikoAnswerButton: View {
         }
     }
 
-    private var labelColor: Color {
-        colorScheme == .dark ? .white.opacity(0.92) : Color(hex: 0x0b5a7a)
-    }
 }
 
 private extension TikoAnswerChoice {

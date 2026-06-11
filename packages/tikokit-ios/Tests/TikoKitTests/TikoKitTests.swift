@@ -15,28 +15,26 @@ final class TikoKitTests: XCTestCase {
         XCTAssertEqual(TikoAppConfig.talk.themeColorHex, 0x2f80ed)
     }
 
-    func testAnswerChoiceWithSystemName() {
-        let choice = TikoAnswerChoice(id: "yes", label: "Yes", icon: .systemName("checkmark"), tone: .primary)
+    func testAnswerChoiceWithOpenIcon() {
+        let choice = TikoAnswerChoice(id: "yes", label: "Yes", icon: .openIcon("ui/check-fat"), tone: .primary)
 
         XCTAssertEqual(choice.id, "yes")
         XCTAssertEqual(choice.label, "Yes")
-        XCTAssertEqual(choice.icon, .systemName("checkmark"))
+        XCTAssertEqual(choice.icon, .openIcon("ui/check-fat"))
         XCTAssertEqual(choice.tone, .primary)
     }
 
-    func testAnswerChoiceBackwardCompatSymbol() {
-        let choice = TikoAnswerChoice(id: "no", label: "No", symbol: "xmark", tone: .secondary)
+    func testAnswerChoiceOpenIconConvenience() {
+        let choice = TikoAnswerChoice(id: "no", label: "No", symbol: "wayfinding/cross", tone: .secondary)
 
         XCTAssertEqual(choice.id, "no")
-        XCTAssertEqual(choice.icon, .text("xmark"))
+        XCTAssertEqual(choice.icon, .openIcon("wayfinding/cross"))
         XCTAssertEqual(choice.tone, .secondary)
     }
 
     func testIconEquality() {
-        XCTAssertEqual(TikoAnswerChoice.Icon.systemName("checkmark"), .systemName("checkmark"))
-        XCTAssertNotEqual(TikoAnswerChoice.Icon.systemName("checkmark"), .systemName("xmark"))
-        XCTAssertEqual(TikoAnswerChoice.Icon.text("A"), .text("A"))
-        XCTAssertNotEqual(TikoAnswerChoice.Icon.systemName("A"), .text("A"))
+        XCTAssertEqual(TikoAnswerChoice.Icon.openIcon("ui/check-fat"), .openIcon("ui/check-fat"))
+        XCTAssertNotEqual(TikoAnswerChoice.Icon.openIcon("ui/check-fat"), .openIcon("wayfinding/cross"))
     }
 
     func testColorModeIsExplicitLightDarkOnly() {

@@ -511,8 +511,30 @@ enum TikoLocalTranslations {
         "common.settings": "Einstellungen",
     ]
 
+    private static let yesNoMT: [String: String] = [
+        "yesNo.appName": "Iva Le",
+        "yesNo.answers.yes": "Iva",
+        "yesNo.answers.no": "Le",
+        "yesNo.latestAnswer": "L-aħħar risposta",
+        "yesNo.status.answerCount": "{count} risposti",
+        "yesNo.settings.title": "Iva Le",
+        "yesNo.settings.speakAnswers": "Aqra r-risposti",
+        "yesNo.settings.answerStyle": "Stil tar-risposti",
+        "yesNo.settings.answerTiles": "Madum tar-risposti",
+        "yesNo.settings.answerTilesDefault": "Default",
+        "yesNo.tileEditor.title": "Madum tar-risposti",
+        "yesNo.tileEditor.subtitle": "Agħżel ir-risposti murija lit-tifel jew tifla.",
+        "yesNo.tileEditor.empty": "Qed jintużaw ir-risposti default Iva u Le.",
+        "yesNo.tileEditor.addTile": "Żid maduma",
+        "yesNo.tileEditor.reset": "Irrisettja",
+        "yesNo.tileEditor.save": "Issejvja",
+        "common.cancel": "Ikkanċella",
+        "common.save": "Issejvja",
+        "common.settings": "Settings",
+    ]
+
     private static var yesNoBundles: [(String, [String: String])] {
-        [("en", yesNoEN), ("nl", yesNoNL), ("fr", yesNoFR), ("es", yesNoES), ("de", yesNoDE)]
+        [("en", yesNoEN), ("nl", yesNoNL), ("fr", yesNoFR), ("es", yesNoES), ("de", yesNoDE), ("mt", yesNoMT)]
     }
 
     // MARK: Cards

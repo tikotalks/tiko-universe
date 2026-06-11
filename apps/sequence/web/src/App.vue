@@ -3,7 +3,7 @@ import { computed, onMounted, ref, watch } from 'vue'
 import { Button, InputTextArea, Popup } from '@sil/ui'
 import { IdentityClient, type IdentityBundle } from '@tiko/identity'
 import { TikoDataClient, type SequenceSettings, type SequenceState } from '@tiko/data'
-import { createI18n, defaultLanguage, tikoI18nKeys, tikoLanguages, type TikoLanguage } from '@tiko/i18n'
+import { createI18n, defaultLanguage, tikoI18nKeys, tikoLanguageOptions, tikoLanguages, type TikoLanguage } from '@tiko/i18n'
 import {
   TikoAppShell,
   TikoSettingsPanel,
@@ -122,12 +122,21 @@ const labels = computed(() => {
     done: i18n.t(tikoI18nKeys.sequence.play.done),
     loadError: i18n.t(tikoI18nKeys.sequence.status.loadError),
     retry: i18n.t(tikoI18nKeys.sequence.status.retry),
+    settings: i18n.t(tikoI18nKeys.common.settings),
+    settingsPanel: {
+      settings: i18n.t(tikoI18nKeys.common.settings),
+      language: i18n.t(tikoI18nKeys.common.language),
+      colorMode: i18n.t(tikoI18nKeys.common.colorMode),
+      light: i18n.t(tikoI18nKeys.common.colorModeOptions.light),
+      dark: i18n.t(tikoI18nKeys.common.colorModeOptions.dark),
+      system: i18n.t(tikoI18nKeys.common.colorModeOptions.system),
+    }
   }
 })
 
 const headerActions = computed(() => parentMode.value ? [
   { id: 'add', label: labels.value.emptyCreate, icon: 'ui/plus' },
-  { id: 'settings', label: 'Settings', icon: 'ui/settings-dual', active: settingsOpen.value },
+  { id: 'settings', label: labels.value.settings, icon: 'ui/settings-dual', active: settingsOpen.value },
 ] : [])
 
 const playingItem = computed(() =>
@@ -387,6 +396,8 @@ async function retry() {
         v-if="settingsOpen"
         v-model:language="language"
         v-model:color-mode="colorMode"
+        :languages="tikoLanguageOptions"
+        :labels="labels.settingsPanel"
       />
     </section>
   </TikoAppShell>

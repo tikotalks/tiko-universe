@@ -122,6 +122,102 @@ public struct TikoLanguage: Identifiable, Codable, Equatable, Sendable {
     }
 }
 
+public struct TikoSettingsLabels {
+    public let settings: String
+    public let subtitle: String
+    public let language: String
+    public let colorMode: String
+    public let languageSubtitle: String
+    public let searchLanguages: String
+    public let colorModeSubtitle: String
+    public let light: String
+    public let dark: String
+
+    public static func forLanguage(_ languageID: String) -> TikoSettingsLabels {
+        switch languageID {
+        case "nl":
+            TikoSettingsLabels(
+                settings: "Instellingen",
+                subtitle: "Taal, uiterlijk en appvoorkeuren.",
+                language: "Taal",
+                colorMode: "Kleurmodus",
+                languageSubtitle: "Kies de taal voor Tiko-apps.",
+                searchLanguages: "Zoek talen",
+                colorModeSubtitle: "Kies een duidelijke lichte of donkere weergave.",
+                light: "Licht",
+                dark: "Donker"
+            )
+        case "fr":
+            TikoSettingsLabels(
+                settings: "Paramètres",
+                subtitle: "Langue, apparence et préférences de l'app.",
+                language: "Langue",
+                colorMode: "Mode couleur",
+                languageSubtitle: "Choisissez la langue des apps Tiko.",
+                searchLanguages: "Rechercher des langues",
+                colorModeSubtitle: "Choisissez une apparence claire ou sombre.",
+                light: "Clair",
+                dark: "Sombre"
+            )
+        case "es":
+            TikoSettingsLabels(
+                settings: "Ajustes",
+                subtitle: "Idioma, apariencia y preferencias de la app.",
+                language: "Idioma",
+                colorMode: "Modo de color",
+                languageSubtitle: "Elige el idioma de las apps Tiko.",
+                searchLanguages: "Buscar idiomas",
+                colorModeSubtitle: "Elige una apariencia clara u oscura.",
+                light: "Claro",
+                dark: "Oscuro"
+            )
+        case "mt":
+            TikoSettingsLabels(
+                settings: "Settings",
+                subtitle: "Lingwa, dehra u preferenzi tal-app.",
+                language: "Lingwa",
+                colorMode: "Modalità tal-kulur",
+                languageSubtitle: "Agħżel il-lingwa għall-apps Tiko.",
+                searchLanguages: "Fittex lingwi",
+                colorModeSubtitle: "Agħżel dehra ċara jew skura.",
+                light: "Ċar",
+                dark: "Skur"
+            )
+        case "de":
+            TikoSettingsLabels(
+                settings: "Einstellungen",
+                subtitle: "Sprache, Darstellung und App-Einstellungen.",
+                language: "Sprache",
+                colorMode: "Farbmodus",
+                languageSubtitle: "Wähle die Sprache für Tiko-Apps.",
+                searchLanguages: "Sprachen suchen",
+                colorModeSubtitle: "Wähle eine klare helle oder dunkle Darstellung.",
+                light: "Hell",
+                dark: "Dunkel"
+            )
+        default:
+            TikoSettingsLabels(
+                settings: "Settings",
+                subtitle: "Language, appearance and app preferences.",
+                language: "Language",
+                colorMode: "Color mode",
+                languageSubtitle: "Choose the language for Tiko apps.",
+                searchLanguages: "Search languages",
+                colorModeSubtitle: "Pick a clear light or dark appearance.",
+                light: "Light",
+                dark: "Dark"
+            )
+        }
+    }
+
+    public func title(for mode: TikoColorMode) -> String {
+        switch mode {
+        case .light: light
+        case .dark: dark
+        }
+    }
+}
+
 public struct TikoSettingsSection<Content: View>: View {
     private let title: String
     private let content: Content
@@ -427,9 +523,11 @@ public struct TikoSettingsSheet<AppSettings: View>: View {
     }
 
     public var body: some View {
+        let labels = TikoSettingsLabels.forLanguage(languageID)
+
         TikoPopupCard(
-            title: "Settings",
-            subtitle: "Language, appearance and app preferences.",
+            title: labels.settings,
+            subtitle: labels.subtitle,
             icon: "gearshape.fill",
             appColor: appColor,
             onClose: onClose
@@ -437,15 +535,15 @@ public struct TikoSettingsSheet<AppSettings: View>: View {
             VStack(spacing: 16) {
                 TikoSettingsSection(title: "Tiko") {
                     TikoSettingsActionRow(
-                        title: "Language",
+                        title: labels.language,
                         value: selectedLanguageTitle,
                         icon: "globe",
                         appColor: appColor
                     ) { showingLanguagePicker = true }
 
                     TikoSettingsActionRow(
-                        title: "Color mode",
-                        value: selectedColorMode.title,
+                        title: labels.colorMode,
+                        value: labels.title(for: selectedColorMode),
                         icon: "circle.lefthalf.filled",
                         appColor: appColor
                     ) { showingColorModePicker = true }
@@ -459,6 +557,7 @@ public struct TikoSettingsSheet<AppSettings: View>: View {
                 appColor: appColor,
                 languages: TikoLanguage.defaultLanguages,
                 selectedLanguageID: languageID,
+                labels: labels,
                 onSelect: { language in
                     languageID = language.id
                     showingLanguagePicker = false
@@ -470,6 +569,7 @@ public struct TikoSettingsSheet<AppSettings: View>: View {
             TikoColorModePickerSheet(
                 appColor: appColor,
                 selectedMode: selectedColorMode,
+                labels: labels,
                 onSelect: { mode in
                     colorModeRawValue = mode.rawValue
                     showingColorModePicker = false
@@ -498,6 +598,7 @@ public struct TikoLanguagePickerSheet: View {
     private let appColor: TikoAppColor
     private let languages: [TikoLanguage]
     private let selectedLanguageID: String
+    private let labels: TikoSettingsLabels
     private let onSelect: (TikoLanguage) -> Void
     private let onClose: () -> Void
     @State private var query = ""
@@ -506,20 +607,22 @@ public struct TikoLanguagePickerSheet: View {
         appColor: TikoAppColor,
         languages: [TikoLanguage],
         selectedLanguageID: String,
+        labels: TikoSettingsLabels,
         onSelect: @escaping (TikoLanguage) -> Void,
         onClose: @escaping () -> Void
     ) {
         self.appColor = appColor
         self.languages = languages
         self.selectedLanguageID = selectedLanguageID
+        self.labels = labels
         self.onSelect = onSelect
         self.onClose = onClose
     }
 
     public var body: some View {
-        TikoPopupCard(title: "Language", subtitle: "Choose the language for Tiko apps.", icon: "globe", appColor: appColor, onClose: onClose) {
+        TikoPopupCard(title: labels.language, subtitle: labels.languageSubtitle, icon: "globe", appColor: appColor, onClose: onClose) {
             VStack(spacing: 12) {
-                TextField("Search languages", text: $query)
+                TextField(labels.searchLanguages, text: $query)
                     .font(.system(size: 16, weight: .semibold, design: .rounded))
                     .padding(14)
                     .background(Color(.systemBackground))
@@ -572,23 +675,26 @@ public struct TikoLanguagePickerSheet: View {
 public struct TikoColorModePickerSheet: View {
     private let appColor: TikoAppColor
     private let selectedMode: TikoColorMode
+    private let labels: TikoSettingsLabels
     private let onSelect: (TikoColorMode) -> Void
     private let onClose: () -> Void
 
     public init(
         appColor: TikoAppColor,
         selectedMode: TikoColorMode,
+        labels: TikoSettingsLabels,
         onSelect: @escaping (TikoColorMode) -> Void,
         onClose: @escaping () -> Void
     ) {
         self.appColor = appColor
         self.selectedMode = selectedMode
+        self.labels = labels
         self.onSelect = onSelect
         self.onClose = onClose
     }
 
     public var body: some View {
-        TikoPopupCard(title: "Color mode", subtitle: "Pick a clear light or dark appearance.", icon: "circle.lefthalf.filled", appColor: appColor, onClose: onClose) {
+        TikoPopupCard(title: labels.colorMode, subtitle: labels.colorModeSubtitle, icon: "circle.lefthalf.filled", appColor: appColor, onClose: onClose) {
             VStack(spacing: 12) {
                 ForEach(TikoColorMode.allCases, id: \.rawValue) { mode in
                     Button {
@@ -601,7 +707,7 @@ public struct TikoColorModePickerSheet: View {
                                 .frame(width: 40, height: 40)
                                 .background(appColor.palette.primary.opacity(0.12))
                                 .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
-                            Text(mode.title)
+                            Text(labels.title(for: mode))
                                 .font(.system(size: 17, weight: .heavy, design: .rounded))
                                 .foregroundStyle(.primary)
                             Spacer()

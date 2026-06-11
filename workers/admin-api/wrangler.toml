@@ -27,10 +27,12 @@ APP_API_URL = "https://dev.api.tikotalks.com/v1/apps"
 GENERATION_API_URL = "https://dev-api.tikotalks.com/v1/generation"
 MEDIA_API_URL = "https://media-api.tikotalks.com/v1"
 COMMUNICATION_API_URL = "https://dev.api.tikotalks.com/v1/communication"
+TRANSLATIONS_API_URL = "https://tiko-translations-api-dev.silvandiepen.workers.dev/v1"
 
 # Secrets:
 # TOKEN_PEPPER — same pepper as identity-api, required for email hash verification
 # COMMUNICATION_API_KEY — service key for communication-api proxy calls
+# TRANSLATIONS_API_KEY — ApiKey accepted by translations-api for Lezu sync
 
 # ── Production environment ──────────────────────────────────────
 # Deploy with: npx wrangler deploy --env production
@@ -68,6 +70,7 @@ APP_API_URL = "https://app.tikoapi.org/v1/apps"
 GENERATION_API_URL = "https://generation.tikoapi.org/v1/generation"
 MEDIA_API_URL = "https://media.tikoapi.org/v1"
 COMMUNICATION_API_URL = "https://communication.tikoapi.org/v1/communication"
+TRANSLATIONS_API_URL = "https://translations.tikoapi.org/v1"
 
 [[env.production.triggers]]
 crons = ["0 3 * * *"]

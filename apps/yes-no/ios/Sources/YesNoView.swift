@@ -8,6 +8,8 @@ struct YesNoAnswerTile: Codable, Identifiable, Equatable {
     var id: String
     var label: String
     var speech: String
+    var labelTranslations: [String: String]?
+    var speechTranslations: [String: String]?
     var color: String
     var imageURL: URL?
     var icon: String?
@@ -17,24 +19,35 @@ struct YesNoAnswerTile: Codable, Identifiable, Equatable {
             id: id,
             label: label,
             speech: speech,
-            icon: icon.map { .systemName($0) } ?? .systemName("checkmark"),
+            icon: .openIcon(icon ?? "ui/check-fat"),
             tone: .primary,
             color: color,
             imageURL: imageURL
         )
     }
 
-    init(id: String, label: String, speech: String, color: String, imageURL: URL? = nil, icon: String? = nil) {
+    init(
+        id: String,
+        label: String,
+        speech: String,
+        labelTranslations: [String: String]? = nil,
+        speechTranslations: [String: String]? = nil,
+        color: String,
+        imageURL: URL? = nil,
+        icon: String? = nil
+    ) {
         self.id = id
         self.label = label
         self.speech = speech
+        self.labelTranslations = labelTranslations
+        self.speechTranslations = speechTranslations
         self.color = color
         self.imageURL = imageURL
         self.icon = icon
     }
 
     private enum CodingKeys: String, CodingKey {
-        case id, label, speech, color, colorHex, imageURL, icon
+        case id, label, speech, labelTranslations, speechTranslations, color, colorHex, imageURL, icon
     }
 
     init(from decoder: Decoder) throws {
@@ -42,6 +55,8 @@ struct YesNoAnswerTile: Codable, Identifiable, Equatable {
         id = try container.decode(String.self, forKey: .id)
         label = try container.decode(String.self, forKey: .label)
         speech = try container.decodeIfPresent(String.self, forKey: .speech) ?? label
+        labelTranslations = try container.decodeIfPresent([String: String].self, forKey: .labelTranslations)
+        speechTranslations = try container.decodeIfPresent([String: String].self, forKey: .speechTranslations)
         if let color = try container.decodeIfPresent(String.self, forKey: .color) {
             self.color = color
         } else if let colorHex = try container.decodeIfPresent(UInt32.self, forKey: .colorHex) {
@@ -58,6 +73,8 @@ struct YesNoAnswerTile: Codable, Identifiable, Equatable {
         try container.encode(id, forKey: .id)
         try container.encode(label, forKey: .label)
         try container.encode(speech, forKey: .speech)
+        try container.encodeIfPresent(labelTranslations, forKey: .labelTranslations)
+        try container.encodeIfPresent(speechTranslations, forKey: .speechTranslations)
         try container.encode(color, forKey: .color)
         try container.encodeIfPresent(imageURL, forKey: .imageURL)
         try container.encodeIfPresent(icon, forKey: .icon)
@@ -84,6 +101,30 @@ struct YesNoAnswerSet: Codable, Identifiable, Equatable {
     }
 }
 
+private let builtInAnswerTranslations: [String: [String: String]] = [
+    "yes": ["nl": "Ja", "fr": "Oui", "es": "Sí", "mt": "Iva", "de": "Ja"],
+    "no": ["nl": "Nee", "fr": "Non", "es": "No", "mt": "Le", "de": "Nein"],
+    "help": ["nl": "Help", "fr": "Aide", "es": "Ayuda", "mt": "Għajnuna", "de": "Hilfe"],
+    "more": ["nl": "Meer", "fr": "Encore", "es": "Más", "mt": "Iktar", "de": "Mehr"],
+    "stop": ["nl": "Stop", "fr": "Arrêter", "es": "Parar", "mt": "Waqqaf", "de": "Stopp"],
+    "finished": ["nl": "Klaar", "fr": "Terminé", "es": "Terminado", "mt": "Lest", "de": "Fertig"],
+    "maybe": ["nl": "Misschien", "fr": "Peut-être", "es": "Quizás", "mt": "Forsi", "de": "Vielleicht"],
+    "later": ["nl": "Later", "fr": "Plus tard", "es": "Más tarde", "mt": "Aktar tard", "de": "Später"],
+]
+
+private func builtInAnswerTile(id: String, label: String, color: String, icon: String) -> YesNoAnswerTile {
+    let translations = builtInAnswerTranslations[id]
+    return YesNoAnswerTile(
+        id: id,
+        label: label,
+        speech: label,
+        labelTranslations: translations,
+        speechTranslations: translations,
+        color: color,
+        icon: icon
+    )
+}
+
 private let builtInAnswerSets: [YesNoAnswerSet] = [
     YesNoAnswerSet(
         id: "yes-no",
@@ -92,8 +133,8 @@ private let builtInAnswerSets: [YesNoAnswerSet] = [
         color: TikoColors.green.name,
         order: 0,
         answers: [
-            YesNoAnswerTile(id: "yes", label: "Yes", speech: "Yes", color: TikoColors.green.name, icon: "checkmark"),
-            YesNoAnswerTile(id: "no", label: "No", speech: "No", color: TikoColors.red.name, icon: "xmark")
+            builtInAnswerTile(id: "yes", label: "Yes", color: TikoColors.green.name, icon: "ui/check-fat"),
+            builtInAnswerTile(id: "no", label: "No", color: TikoColors.red.name, icon: "wayfinding/cross")
         ]
     ),
     YesNoAnswerSet(
@@ -103,10 +144,10 @@ private let builtInAnswerSets: [YesNoAnswerSet] = [
         color: TikoColors.teal.name,
         order: 1,
         answers: [
-            YesNoAnswerTile(id: "help", label: "Help", speech: "Help", color: TikoColors.blue.name, icon: "hand.raised.fill"),
-            YesNoAnswerTile(id: "more", label: "More", speech: "More", color: TikoColors.teal.name, icon: "plus"),
-            YesNoAnswerTile(id: "stop", label: "Stop", speech: "Stop", color: TikoColors.orange.name, icon: "hand.raised.slash.fill"),
-            YesNoAnswerTile(id: "finished", label: "Finished", speech: "Finished", color: TikoColors.purple.name, icon: "checkmark.circle.fill")
+            builtInAnswerTile(id: "help", label: "Help", color: TikoColors.blue.name, icon: "ui/pointer-hand"),
+            builtInAnswerTile(id: "more", label: "More", color: TikoColors.teal.name, icon: "ui/add-fat"),
+            builtInAnswerTile(id: "stop", label: "Stop", color: TikoColors.orange.name, icon: "ui/pointer-cross"),
+            builtInAnswerTile(id: "finished", label: "Finished", color: TikoColors.purple.name, icon: "ui/check-fat")
         ]
     ),
     YesNoAnswerSet(
@@ -116,10 +157,10 @@ private let builtInAnswerSets: [YesNoAnswerSet] = [
         color: TikoColors.yellow.name,
         order: 2,
         answers: [
-            YesNoAnswerTile(id: "yes", label: "Yes", speech: "Yes", color: TikoColors.green.name, icon: "checkmark"),
-            YesNoAnswerTile(id: "no", label: "No", speech: "No", color: TikoColors.red.name, icon: "xmark"),
-            YesNoAnswerTile(id: "maybe", label: "Maybe", speech: "Maybe", color: TikoColors.yellow.name, icon: "questionmark"),
-            YesNoAnswerTile(id: "later", label: "Later", speech: "Later", color: TikoColors.purple.name, icon: "clock")
+            builtInAnswerTile(id: "yes", label: "Yes", color: TikoColors.green.name, icon: "ui/check-fat"),
+            builtInAnswerTile(id: "no", label: "No", color: TikoColors.red.name, icon: "wayfinding/cross"),
+            builtInAnswerTile(id: "maybe", label: "Maybe", color: TikoColors.yellow.name, icon: "ui/question-mark-fat"),
+            builtInAnswerTile(id: "later", label: "Later", color: TikoColors.purple.name, icon: "ui/clock")
         ]
     )
 ]
@@ -224,8 +265,8 @@ struct YesNoView: View {
 
     private var hardcodedChoices: [TikoAnswerChoice] {
         [
-            TikoAnswerChoice(id: "yes", label: i18n.t("yesNo.answers.yes"), icon: .systemName("checkmark"), tone: .primary),
-            TikoAnswerChoice(id: "no", label: i18n.t("yesNo.answers.no"), icon: .systemName("xmark"), tone: .secondary)
+            TikoAnswerChoice(id: "yes", label: i18n.t("yesNo.answers.yes"), icon: .openIcon("ui/check-fat"), tone: .primary),
+            TikoAnswerChoice(id: "no", label: i18n.t("yesNo.answers.no"), icon: .openIcon("wayfinding/cross"), tone: .secondary)
         ]
     }
 
@@ -239,10 +280,18 @@ struct YesNoView: View {
     }
 
     private var effectiveChoices: [TikoAnswerChoice] {
-        if !selectedAnswerSet.answers.isEmpty { return selectedAnswerSet.answers.map(\.answerChoice) }
-        if !customAnswers.isEmpty { return customAnswers.map(\.answerChoice) }
-        if !store.defaultAnswers.isEmpty { return store.defaultAnswers.map(\.answerChoice) }
+        if !selectedAnswerSet.answers.isEmpty { return selectedAnswerSet.answers.map(localizedAnswerTile).map(\.answerChoice) }
+        if !customAnswers.isEmpty { return customAnswers.map(localizedAnswerTile).map(\.answerChoice) }
+        if !store.defaultAnswers.isEmpty { return store.defaultAnswers.map(localizedAnswerTile).map(\.answerChoice) }
         return hardcodedChoices
+    }
+
+    private func localizedAnswerTile(_ tile: YesNoAnswerTile) -> YesNoAnswerTile {
+        var next = tile
+        let label = tile.labelTranslations?[languageCode] ?? tile.label
+        next.label = label
+        next.speech = tile.speechTranslations?[languageCode] ?? tile.speech
+        return next
     }
 
     var body: some View {
@@ -384,7 +433,7 @@ struct YesNoView: View {
         rememberCurrentQuestion()
         flashBackground(for: choice)
         if speechEnabled {
-            speechService.speak(choice.speech)
+            speechService.speak(choice.speech, languageCode: languageCode)
         }
     }
 
@@ -392,7 +441,7 @@ struct YesNoView: View {
         UIImpactFeedbackGenerator(style: .light).impactOccurred()
         rememberCurrentQuestion()
         if speechEnabled {
-            speechService.speak(effectiveSentence)
+            speechService.speak(effectiveSentence, languageCode: languageCode)
         }
     }
 
@@ -666,7 +715,6 @@ private struct TileEditorSheet: View {
                 if let i = sets.firstIndex(where: { $0.id == updated.id }) {
                     sets[i] = updated
                 }
-                editingSet = nil
             }
         }
         .sheet(item: $editingTile) { selection in
@@ -675,7 +723,6 @@ private struct TileEditorSheet: View {
                    let i = sets[selection.setIndex].answers.firstIndex(where: { $0.id == updated.id }) {
                     sets[selection.setIndex].answers[i] = updated
                 }
-                editingTile = nil
             }
         }
     }
@@ -807,9 +854,8 @@ private struct TileEditorSheet: View {
                         .fill(tileColor)
                         .overlay {
                             if let icon = tile.icon {
-                        Image(systemName: icon)
-                            .font(.system(size: 14, weight: .bold))
-                            .foregroundStyle(.white)
+                                TikoOpenIconView(icon)
+                                    .frame(width: 20, height: 20)
                             }
                     }
                 }
@@ -995,8 +1041,13 @@ private struct TileDetailEditView: View {
                 Section("Spoken text") {
                     TextField("What to say when tapped", text: $speech)
                 }
-                Section("Icon (SF Symbol)") {
-                    TextField("e.g. checkmark", text: $icon)
+                Section("Icon") {
+                    TikoOpenIconPicker(selection: $icon)
+                        .onChange(of: icon) { _, newValue in
+                            if !newValue.isEmpty {
+                                imageURL = nil
+                            }
+                        }
                 }
                 Section("Image") {
                     if let imageURL {
@@ -1045,7 +1096,7 @@ private struct TileDetailEditView: View {
                             speech: speech.isEmpty ? label : speech,
                             color: color,
                             imageURL: imageURL,
-                            icon: icon.isEmpty ? nil : icon
+                            icon: imageURL == nil && !icon.isEmpty ? icon : nil
                         ))
                         dismiss()
                     }
@@ -1055,6 +1106,7 @@ private struct TileDetailEditView: View {
         }
         .tikoMediaPickerPopup(isPresented: $showingMediaPicker, appColor: .yesNo, title: "Choose tile image") { url in
             imageURL = url
+            icon = ""
         }
     }
 }

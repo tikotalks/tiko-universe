@@ -36,6 +36,8 @@ export interface YesNoAnswerTile {
   id: string
   label: string
   speech: string
+  labelTranslations?: Record<string, string>
+  speechTranslations?: Record<string, string>
   color?: string
   imageURL?: string
   icon?: string

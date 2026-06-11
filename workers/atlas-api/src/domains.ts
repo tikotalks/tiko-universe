@@ -26,12 +26,13 @@ export async function synthesizeSpeech(input: SpeechRequest, env: Env): Promise<
   const validation = validateSpeech(input)
   if (validation) throw capabilityError(validation, 400)
 
+  const provider = input.provider === 'elevenlabs' ? 'elevenlabs' : input.provider === 'openai' ? 'openai' : env.ELEVENLABS_API_KEY ? 'elevenlabs' : 'openai'
   const normalized = {
     text: input.text.trim(),
     locale: (input.locale ?? input.language ?? 'en').trim().toLowerCase(),
-    provider: input.provider === 'elevenlabs' ? 'elevenlabs' : input.provider === 'openai' ? 'openai' : env.ELEVENLABS_API_KEY ? 'elevenlabs' : 'openai',
-    model: input.model?.trim() || (input.provider === 'elevenlabs' ? 'eleven_multilingual_v2' : 'tts-1'),
-    voice: input.voice?.trim() || (input.provider === 'elevenlabs' ? '21m00Tcm4TlvDq8ikWAM' : 'nova'),
+    provider,
+    model: input.model?.trim() || (provider === 'elevenlabs' ? 'eleven_multilingual_v2' : 'tts-1'),
+    voice: input.voice?.trim() || (provider === 'elevenlabs' ? '21m00Tcm4TlvDq8ikWAM' : 'nova'),
     speed: clamp(input.speed ?? 1, 0.25, 4),
     format: 'mp3' as const,
   }

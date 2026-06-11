@@ -4,7 +4,7 @@ import { useBemm } from 'bemm'
 import { Icon, Popup } from '@sil/ui'
 import { IdentityClient } from '@tiko/identity'
 import { TikoDataClient, type YesNoSettings, type YesNoState } from '@tiko/data'
-import { createI18n, createTikoTranslationLoader, defaultLanguage, tikoI18nKeys, tikoLanguages, type TikoLanguage } from '@tiko/i18n'
+import { createI18n, createTikoTranslationLoader, defaultLanguage, tikoI18nKeys, tikoLanguageOptions, tikoLanguages, type TikoLanguage } from '@tiko/i18n'
 import {
   TikoAppShell,
   TikoSettingsPanel,
@@ -30,9 +30,22 @@ interface AnswerTile {
   id: string
   label: string
   speech: string
+  labelTranslations?: Partial<Record<TikoLanguage, string>>
+  speechTranslations?: Partial<Record<TikoLanguage, string>>
   color?: string
   imageURL?: string
   icon?: string
+}
+
+interface AnswerSet {
+  id: string
+  answers?: AnswerTile[]
+}
+
+interface DefaultsState {
+  answers?: AnswerTile[]
+  answerSets?: AnswerSet[]
+  selectedSetId?: string
 }
 
 interface PersistedState {
@@ -92,21 +105,30 @@ function colorTokenToHex(color: string | undefined, fallback: string) {
 }
 
 function answerLabel(answer: string) {
-  if (answer === 'yes') return i18n.t(tikoI18nKeys.yesNo.answers.yes)
-  if (answer === 'no') return i18n.t(tikoI18nKeys.yesNo.answers.no)
   return choices.value.find(choice => choice.id === answer)?.label ?? ''
 }
 
 function localizeDefaultAnswer(answer: AnswerTile): AnswerTile {
-  if (answer.id === 'yes') {
-    const label = i18n.t(tikoI18nKeys.yesNo.answers.yes)
-    return { ...answer, label, speech: label }
+  const semanticLabel = answer.id === 'yes'
+    ? labels.value.yes
+    : answer.id === 'no'
+      ? labels.value.no
+      : undefined
+  const label = answer.labelTranslations?.[language.value] ?? semanticLabel ?? answer.label
+  const speech = answer.speechTranslations?.[language.value] ?? semanticLabel ?? answer.speech ?? label
+  return { ...answer, label, speech }
+}
+
+function defaultsAnswers(state: unknown): AnswerTile[] {
+  const value = state as DefaultsState | undefined
+  if (Array.isArray(value?.answerSets)) {
+    const selected = typeof value?.selectedSetId === 'string'
+      ? value.answerSets.find(set => set.id === value.selectedSetId)
+      : undefined
+    const activeSet = selected ?? value.answerSets[0]
+    return Array.isArray(activeSet?.answers) ? activeSet.answers : []
   }
-  if (answer.id === 'no') {
-    const label = i18n.t(tikoI18nKeys.yesNo.answers.no)
-    return { ...answer, label, speech: label }
-  }
-  return answer
+  return Array.isArray(value?.answers) ? value.answers : []
 }
 
 const stored = readJson<PersistedState>(storageKey, {})
@@ -171,7 +193,16 @@ const labels = computed(() => {
     historyTitle: i18n.t(tikoI18nKeys.yesNo.history.title),
     historyEmpty: i18n.t(tikoI18nKeys.yesNo.history.empty),
     fallback: i18n.t(tikoI18nKeys.yesNo.status.browserVoiceFallback),
-    speechError: i18n.t(tikoI18nKeys.yesNo.status.speechError)
+    speechError: i18n.t(tikoI18nKeys.yesNo.status.speechError),
+    settings: i18n.t(tikoI18nKeys.common.settings),
+    settingsPanel: {
+      settings: i18n.t(tikoI18nKeys.common.settings),
+      language: i18n.t(tikoI18nKeys.common.language),
+      colorMode: i18n.t(tikoI18nKeys.common.colorMode),
+      light: i18n.t(tikoI18nKeys.common.colorModeOptions.light),
+      dark: i18n.t(tikoI18nKeys.common.colorModeOptions.dark),
+      system: i18n.t(tikoI18nKeys.common.colorModeOptions.system),
+    }
   }
 })
 
@@ -181,6 +212,8 @@ const hardcodedAnswers = computed<AnswerTile[]>(() => [
 ])
 
 const defaultChoices = computed<AnswerTile[]>(() => {
+  void language.value
+  void translationsRevision.value
   if (!defaultAnswers.value.length) return hardcodedAnswers.value
   return defaultAnswers.value.map(localizeDefaultAnswer)
 })
@@ -192,12 +225,20 @@ const choices = computed<AnswerTile[]>(() => {
 
 const headerActions = computed(() => parentMode.value ? [
   { id: 'history', label: labels.value.historyTitle, icon: 'ui/clock', active: historyOpen.value },
-  { id: 'settings', label: 'Settings', icon: 'ui/settings-dual', active: settingsOpen.value }
+  { id: 'settings', label: labels.value.settings, icon: 'ui/settings-dual', active: settingsOpen.value }
 ] : [])
 
 const canSpeakSentence = computed(() => sentence.value.trim().length > 0)
-const latestAnswerLabel = computed(() => answerLabel(latestAnswerId.value))
-const answerHistoryLabels = computed(() => answerHistory.value.map(answerLabel))
+const latestAnswerLabel = computed(() => {
+  void language.value
+  void translationsRevision.value
+  return answerLabel(latestAnswerId.value)
+})
+const answerHistoryLabels = computed(() => {
+  void language.value
+  void translationsRevision.value
+  return answerHistory.value.map(answerLabel)
+})
 
 function resolveColorMode(mode: TikoColorMode) {
   if (mode !== 'system') return mode
@@ -239,7 +280,7 @@ async function hydrateRemoteData() {
   ])
   applySettings(settings.settings, settings.version)
   applyState(state.state, state.version)
-  defaultAnswers.value = Array.isArray(defaults?.state.answers) ? defaults.state.answers as AnswerTile[] : []
+  defaultAnswers.value = defaultsAnswers(defaults?.state)
 }
 
 async function persistSettingsRemote() {
@@ -402,6 +443,8 @@ function resetSentence() {
         v-if="settingsOpen"
         v-model:language="language"
         v-model:color-mode="colorMode"
+        :languages="tikoLanguageOptions"
+        :labels="labels.settingsPanel"
       />
 
       <aside v-if="historyOpen" :class="bemm('history')" :aria-label="labels.historyLabel">

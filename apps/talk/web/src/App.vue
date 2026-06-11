@@ -3,6 +3,7 @@ import { computed, onMounted } from 'vue'
 import { useBemm } from 'bemm'
 import { Popup } from '@sil/ui'
 import { TikoAppShell, TikoSettingsPanel } from '@tiko/ui'
+import { createI18n, defaultLanguage, tikoI18nKeys, tikoLanguageOptions, tikoLanguages, type TikoLanguage } from '@tiko/i18n'
 import TalkSentenceBar from './components/TalkSentenceBar.vue'
 import TalkWordCloud from './components/TalkWordCloud.vue'
 import { useTalkApp } from './composables/useTalkApp'
@@ -11,9 +12,29 @@ import { appConfig } from './appConfig'
 const bemm = useBemm('talk-screen', { return: 'string', includeBaseClass: true })
 
 const talk = useTalkApp()
+const i18n = createI18n({ app: 'talk', language: defaultLanguage })
+
+function toLanguage(value: string): TikoLanguage {
+  return tikoLanguages.includes(value as TikoLanguage) ? value as TikoLanguage : defaultLanguage
+}
+
+const labels = computed(() => {
+  i18n.setLanguage(toLanguage(talk.language.value))
+  return {
+    settings: i18n.t(tikoI18nKeys.common.settings),
+    settingsPanel: {
+      settings: i18n.t(tikoI18nKeys.common.settings),
+      language: i18n.t(tikoI18nKeys.common.language),
+      colorMode: i18n.t(tikoI18nKeys.common.colorMode),
+      light: i18n.t(tikoI18nKeys.common.colorModeOptions.light),
+      dark: i18n.t(tikoI18nKeys.common.colorModeOptions.dark),
+      system: i18n.t(tikoI18nKeys.common.colorModeOptions.system),
+    },
+  }
+})
 
 const headerActions = computed(() => talk.parentMode.value ? [
-  { id: 'settings', label: 'Settings', icon: 'ui/settings-dual', active: talk.settingsOpen.value }
+  { id: 'settings', label: labels.value.settings, icon: 'ui/settings-dual', active: talk.settingsOpen.value }
 ] : [])
 
 function openAccount() {
@@ -45,7 +66,9 @@ onMounted(() => {
       <section v-if="talk.settingsOpen.value" :class="bemm('settings')" aria-label="Talk settings">
         <TikoSettingsPanel
           :language="talk.language.value"
+          :languages="tikoLanguageOptions"
           :color-mode="talk.colorMode.value"
+          :labels="labels.settingsPanel"
           @update:language="talk.language.value = $event"
           @update:color-mode="talk.colorMode.value = $event"
         />

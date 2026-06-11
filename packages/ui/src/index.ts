@@ -25,6 +25,7 @@ export { Button as SilButton, Icon as SilIcon } from '@sil/ui'
 export type TikoChoiceTone = 'primary' | 'secondary' | 'success' | 'danger'
 export type TikoAppColor = 'yes-no' | 'type' | 'cards' | 'sequence' | 'timer' | 'radio' | 'media' | 'admin' | 'tiko' | 'todo' | 'talk'
 export type TikoColorMode = 'light' | 'dark' | 'system'
+export type TikoSupportedLanguagesMode = 'tiko-defaults' | 'custom'
 export type { TikoTtsProvider } from '@tiko/media'
 
 export interface TikoAppConfig {
@@ -35,6 +36,8 @@ export interface TikoAppConfig {
   appIconMediaCategory?: string
   appIconImageUrl?: string
   themeColor?: string
+  supportedLanguagesMode?: TikoSupportedLanguagesMode
+  supportedLanguages?: string[]
 }
 
 export const tikoAppConfigs: Record<TikoAppColor, TikoAppConfig> = {
@@ -137,12 +140,103 @@ export const TIKO_PALETTE: string[] = [
 
 export { tikoColors, type TikoColorEntry } from './tikoColors'
 
+export interface TikoOpenIconOption {
+  name: string
+  label: string
+}
+
+export interface TikoSettingsPanelLabels {
+  settings?: string
+  language?: string
+  colorMode?: string
+  light?: string
+  dark?: string
+  system?: string
+}
+
+export interface TikoSettingsPanelLanguage {
+  value: string
+  nativeLabel: string
+}
+
+export const tikoOpenIcons: TikoOpenIconOption[] = [
+  { name: 'ui/check-fat', label: 'Check' },
+  { name: 'wayfinding/cross', label: 'Cross' },
+  { name: 'ui/question-mark-fat', label: 'Question' },
+  { name: 'ui/add-fat', label: 'Plus' },
+  { name: 'ui/subtract-fat', label: 'Minus' },
+  { name: 'ui/info-fat', label: 'Info' },
+  { name: 'ui/exclamation-mark-s', label: 'Important' },
+  { name: 'ui/star-fat', label: 'Star' },
+  { name: 'ui/circled-heart', label: 'Heart' },
+  { name: 'ui/circled-check', label: 'Circle check' },
+  { name: 'ui/circled-question-mark', label: 'Circle question' },
+  { name: 'ui/squared-check', label: 'Square check' },
+  { name: 'ui/squared-question-mark', label: 'Square question' },
+  { name: 'ui/pointer-hand', label: 'Hand' },
+  { name: 'ui/pointer-cross', label: 'Stop hand' },
+  { name: 'ui/pointer-arrow', label: 'Pointer' },
+  { name: 'ui/speech-balloon', label: 'Speech' },
+  { name: 'ui/speech-balloon-square-text', label: 'Message' },
+  { name: 'ui/talk-info', label: 'Talk info' },
+  { name: 'ui/talk-question-mark', label: 'Talk question' },
+  { name: 'ui/user', label: 'Person' },
+  { name: 'ui/users', label: 'People' },
+  { name: 'ui/user-heart', label: 'Care' },
+  { name: 'ui/accessibility-person', label: 'Accessibility' },
+  { name: 'ui/wheelchair-action', label: 'Wheelchair' },
+  { name: 'ui/clock', label: 'Clock' },
+  { name: 'ui/timer', label: 'Timer' },
+  { name: 'ui/calendar-2', label: 'Calendar' },
+  { name: 'ui/check-list', label: 'Checklist' },
+  { name: 'ui/checklist-success', label: 'Checklist done' },
+  { name: 'ui/books', label: 'Books' },
+  { name: 'ui/home-location', label: 'Home' },
+  { name: 'ui/building-house', label: 'House' },
+  { name: 'ui/building-shop', label: 'Shop' },
+  { name: 'ui/globe', label: 'Globe' },
+  { name: 'ui/world', label: 'World' },
+  { name: 'media/volume-iii', label: 'Voice' },
+  { name: 'media/music-note', label: 'Music' },
+  { name: 'media/headphones', label: 'Headphones' },
+  { name: 'media/microphone', label: 'Microphone' },
+  { name: 'media/camera', label: 'Camera' },
+  { name: 'media/image', label: 'Image' },
+  { name: 'media/playback-play', label: 'Play' },
+  { name: 'media/playback-pause', label: 'Pause' },
+  { name: 'food-drinks/bottle', label: 'Bottle' },
+  { name: 'food-drinks/bread-slice', label: 'Bread' },
+  { name: 'food-drinks/hamburger', label: 'Food' },
+  { name: 'animals/cat-head', label: 'Cat' },
+  { name: 'animals/fish', label: 'Fish' },
+  { name: 'animals/turtle', label: 'Turtle' },
+  { name: 'misc/toy-blocks', label: 'Toys' },
+  { name: 'misc/furniture-bed', label: 'Bed' },
+  { name: 'misc/plant', label: 'Plant' },
+  { name: 'misc/fire', label: 'Fire' },
+  { name: 'misc/key', label: 'Key' },
+  { name: 'misc/lock', label: 'Lock' },
+  { name: 'misc/unlock', label: 'Unlock' },
+  { name: 'misc/shield-check', label: 'Safe' },
+  { name: 'arrows/arrow-headed-left', label: 'Left' },
+  { name: 'arrows/arrow-headed-right', label: 'Right' },
+  { name: 'arrows/arrow-headed-up', label: 'Up' },
+  { name: 'arrows/arrow-headed-down', label: 'Down' },
+]
+
+export function tikoNormalizeOpenIcon(icon: string | undefined): string {
+  if (!icon) return ''
+  if (icon.includes('/')) return icon
+  return 'ui/question-mark-fat'
+}
+
 export const tikoKitComponents = [
   'TikoAppHeader',
   'TikoAppShell',
   'TikoAnswerButton',
   'TikoChoiceGrid',
   'TikoSettingsPanel',
+  'TikoOpenIconPicker',
   'tikoAppColors',
   'tikoAppConfigs'
 ]
@@ -415,11 +509,31 @@ function imageSpan(src: string, alt = '') {
 
 function iconSpan(icon: string, alt = '') {
   if (isImageSource(icon)) return imageSpan(icon, alt)
-  if (icon.includes('/')) {
-    return h(Icon, { class: 'tiko-icon', name: icon, size: 'medium', 'aria-hidden': 'true', 'data-icon': icon })
-  }
-  return h('span', { class: 'tiko-icon', 'aria-hidden': 'true', 'data-icon': icon }, icon)
+  const openIcon = tikoNormalizeOpenIcon(icon)
+  return h(Icon, { class: 'tiko-icon', name: openIcon, size: 'medium', 'aria-hidden': 'true', 'data-icon': openIcon })
 }
+
+export const TikoOpenIconPicker = defineComponent({
+  name: 'TikoOpenIconPicker',
+  props: {
+    modelValue: { type: String, default: '' },
+    icons: { type: Array as () => TikoOpenIconOption[], default: () => tikoOpenIcons },
+  },
+  emits: ['update:modelValue'],
+  setup(props, { emit }) {
+    return () => h('div', { class: 'tiko-open-icon-picker', role: 'listbox', 'aria-label': 'Open icons' }, props.icons.map(icon =>
+      h('button', {
+        key: icon.name,
+        type: 'button',
+        class: ['tiko-open-icon-picker__item', tikoNormalizeOpenIcon(props.modelValue) === icon.name ? 'tiko-open-icon-picker__item--active' : ''],
+        title: icon.label,
+        'aria-label': icon.label,
+        'aria-selected': tikoNormalizeOpenIcon(props.modelValue) === icon.name ? 'true' : 'false',
+        onClick: () => emit('update:modelValue', tikoNormalizeOpenIcon(props.modelValue) === icon.name ? '' : icon.name),
+      }, [h(Icon, { name: icon.name, size: 'medium', 'aria-hidden': 'true' })])
+    ))
+  }
+})
 
 export const TikoAppHeader = defineComponent({
   name: 'TikoAppHeader',
@@ -565,7 +679,14 @@ export const TikoSettingsPanel = defineComponent({
   name: 'TikoSettingsPanel',
   props: {
     language: { type: String, required: true },
-    colorMode: { type: String as () => TikoColorMode, required: true }
+    colorMode: { type: String as () => TikoColorMode, required: true },
+    labels: { type: Object as () => TikoSettingsPanelLabels, default: () => ({}) },
+    languages: { type: Array as () => TikoSettingsPanelLanguage[], default: () => [
+      { value: 'en', nativeLabel: 'English' },
+      { value: 'nl', nativeLabel: 'Nederlands' },
+      { value: 'fr', nativeLabel: 'Français' },
+      { value: 'es', nativeLabel: 'Español' },
+    ] }
   },
   emits: ['update:language', 'update:colorMode'],
   setup(props, { emit }) {
@@ -573,17 +694,13 @@ export const TikoSettingsPanel = defineComponent({
       if (!['light', 'dark', 'system'].includes(mode)) emit('update:colorMode', 'system')
     }, { immediate: true })
 
-    return () => h('section', { class: 'tiko-settings-panel', 'data-test': 'tiko-settings-panel', 'aria-label': 'Settings' }, [
-      h('label', {}, ['Language', h('select', { value: props.language, class: 'tiko-settings-panel__select', 'data-test': 'tiko-settings-language', onChange: (e: Event) => emit('update:language', (e.target as HTMLSelectElement).value) }, [
-        h('option', { value: 'en' }, 'English'),
-        h('option', { value: 'nl' }, 'Nederlands'),
-        h('option', { value: 'fr' }, 'Français'),
-        h('option', { value: 'es' }, 'Español')
-      ])]),
-      h('label', {}, ['Color mode', h('select', { value: props.colorMode, class: 'tiko-settings-panel__select', 'data-test': 'tiko-settings-color-mode', onChange: (e: Event) => emit('update:colorMode', (e.target as HTMLSelectElement).value) }, [
-        h('option', { value: 'light' }, 'Light'),
-        h('option', { value: 'dark' }, 'Dark'),
-        h('option', { value: 'system' }, 'System')
+    const text = (key: keyof TikoSettingsPanelLabels, fallback: string) => props.labels[key] ?? fallback
+    return () => h('section', { class: 'tiko-settings-panel', 'data-test': 'tiko-settings-panel', 'aria-label': text('settings', 'Settings') }, [
+      h('label', {}, [text('language', 'Language'), h('select', { value: props.language, class: 'tiko-settings-panel__select', 'data-test': 'tiko-settings-language', onChange: (e: Event) => emit('update:language', (e.target as HTMLSelectElement).value) }, props.languages.map((language) => h('option', { value: language.value }, language.nativeLabel)))]),
+      h('label', {}, [text('colorMode', 'Color mode'), h('select', { value: props.colorMode, class: 'tiko-settings-panel__select', 'data-test': 'tiko-settings-color-mode', onChange: (e: Event) => emit('update:colorMode', (e.target as HTMLSelectElement).value) }, [
+        h('option', { value: 'light' }, text('light', 'Light')),
+        h('option', { value: 'dark' }, text('dark', 'Dark')),
+        h('option', { value: 'system' }, text('system', 'System'))
       ])])
     ])
   }

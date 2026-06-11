@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, nextTick } from 'vue'
 import { useBemm } from 'bemm'
 import { Button, InputText } from '@sil/ui'
-import { tikoColors } from '@tiko/ui'
+import { TikoOpenIconPicker, tikoColors, tikoNormalizeOpenIcon } from '@tiko/ui'
 import ColorSwatchPicker from '../ColorSwatchPicker.vue'
 import MediaPicker from '../MediaPicker.vue'
 
@@ -10,6 +10,8 @@ interface YesNoAnswerTile {
   id: string
   label: string
   speech: string
+  labelTranslations?: Record<string, string>
+  speechTranslations?: Record<string, string>
   color?: string
   imageURL?: string
   icon?: string
@@ -36,55 +38,38 @@ const bemm = useBemm('yes-no-editor', { return: 'string', includeBaseClass: true
 
 const props = defineProps<{ modelValue: Record<string, unknown> }>()
 const emit = defineEmits<{ 'update:modelValue': [value: Record<string, unknown>] }>()
+const setElements = new Map<string, HTMLElement>()
+
+const answerTranslations: Record<string, Record<string, string>> = {
+  yes: { nl: 'Ja', fr: 'Oui', es: 'Sí', mt: 'Iva', de: 'Ja' },
+  no: { nl: 'Nee', fr: 'Non', es: 'No', mt: 'Le', de: 'Nein' },
+  maybe: { nl: 'Misschien', fr: 'Peut-être', es: 'Quizás', mt: 'Forsi', de: 'Vielleicht' },
+  help: { nl: 'Help', fr: 'Aide', es: 'Ayuda', mt: 'Għajnuna', de: 'Hilfe' },
+  stop: { nl: 'Stop', fr: 'Arrêter', es: 'Parar', mt: 'Waqqaf', de: 'Stopp' },
+  more: { nl: 'Meer', fr: 'Encore', es: 'Más', mt: 'Iktar', de: 'Mehr' },
+  finished: { nl: 'Klaar', fr: 'Terminé', es: 'Terminado', mt: 'Lest', de: 'Fertig' },
+  later: { nl: 'Later', fr: 'Plus tard', es: 'Más tarde', mt: 'Aktar tard', de: 'Später' },
+}
+
+function presetAnswer(id: string, label: string, color: string, icon: string): Omit<YesNoAnswerTile, 'id'> {
+  const translations = answerTranslations[id]
+  return {
+    label,
+    speech: label,
+    ...(translations ? { labelTranslations: translations, speechTranslations: translations } : {}),
+    color,
+    icon,
+  }
+}
 
 const answerPresets: Array<Omit<YesNoAnswerTile, 'id'>> = [
-  { label: 'Yes', speech: 'Yes', color: 'green', icon: 'checkmark' },
-  { label: 'No', speech: 'No', color: 'red', icon: 'xmark' },
-  { label: 'Maybe', speech: 'Maybe', color: 'yellow', icon: 'questionmark' },
-  { label: 'Help', speech: 'Help', color: 'blue', icon: 'hand.raised.fill' },
-  { label: 'Stop', speech: 'Stop', color: 'orange', icon: 'hand.raised.slash.fill' },
-  { label: 'More', speech: 'More', color: 'teal', icon: 'plus' },
-  { label: 'Finished', speech: 'Finished', color: 'purple', icon: 'checkmark.circle.fill' },
-]
-
-const defaultAnswerSets: YesNoAnswerSet[] = [
-  {
-    id: 'yes-no',
-    title: 'Yes / No',
-    description: 'Simple yes and no answers.',
-    color: 'green',
-    order: 0,
-    answers: [
-      { id: 'yes', label: 'Yes', speech: 'Yes', color: 'green', icon: 'checkmark' },
-      { id: 'no', label: 'No', speech: 'No', color: 'red', icon: 'xmark' },
-    ],
-  },
-  {
-    id: 'basic-needs',
-    title: 'Basic needs',
-    description: 'Common needs and requests.',
-    color: 'teal',
-    order: 1,
-    answers: [
-      { id: 'help', label: 'Help', speech: 'Help', color: 'blue', icon: 'hand.raised.fill' },
-      { id: 'more', label: 'More', speech: 'More', color: 'teal', icon: 'plus' },
-      { id: 'stop', label: 'Stop', speech: 'Stop', color: 'orange', icon: 'hand.raised.slash.fill' },
-      { id: 'finished', label: 'Finished', speech: 'Finished', color: 'purple', icon: 'checkmark.circle.fill' },
-    ],
-  },
-  {
-    id: 'quick-choices',
-    title: 'Quick choices',
-    description: 'Fast everyday responses.',
-    color: 'yellow',
-    order: 2,
-    answers: [
-      { id: 'yes', label: 'Yes', speech: 'Yes', color: 'green', icon: 'checkmark' },
-      { id: 'no', label: 'No', speech: 'No', color: 'red', icon: 'xmark' },
-      { id: 'maybe', label: 'Maybe', speech: 'Maybe', color: 'yellow', icon: 'questionmark' },
-      { id: 'later', label: 'Later', speech: 'Later', color: 'purple', icon: 'clock' },
-    ],
-  },
+  presetAnswer('yes', 'Yes', 'green', 'ui/check-fat'),
+  presetAnswer('no', 'No', 'red', 'wayfinding/cross'),
+  presetAnswer('maybe', 'Maybe', 'yellow', 'ui/question-mark-fat'),
+  presetAnswer('help', 'Help', 'blue', 'ui/pointer-hand'),
+  presetAnswer('stop', 'Stop', 'orange', 'ui/pointer-cross'),
+  presetAnswer('more', 'More', 'teal', 'ui/add-fat'),
+  presetAnswer('finished', 'Finished', 'purple', 'ui/check-fat'),
 ]
 
 const state = computed<YesNoState>(() => {
@@ -94,7 +79,7 @@ const state = computed<YesNoState>(() => {
     ? (value.answerSets as YesNoAnswerSet[])
     : legacyAnswers.length
       ? [{ id: 'custom', title: 'Custom answers', color: 'teal', order: 0, answers: legacyAnswers }]
-      : defaultAnswerSets
+      : []
   return {
     prompt: typeof value?.prompt === 'string' ? value.prompt : '',
     answers: legacyAnswers,
@@ -121,9 +106,11 @@ function normalizeAnswer(answer: YesNoAnswerTile): YesNoAnswerTile {
     id: answer.id,
     label: answer.label,
     speech: answer.speech,
+    ...(answer.labelTranslations ? { labelTranslations: answer.labelTranslations } : {}),
+    ...(answer.speechTranslations ? { speechTranslations: answer.speechTranslations } : {}),
     ...(answer.color ? { color: answer.color } : {}),
     ...(answer.imageURL ? { imageURL: answer.imageURL } : {}),
-    ...(answer.icon ? { icon: answer.icon } : {}),
+    ...(answer.icon && !answer.imageURL ? { icon: tikoNormalizeOpenIcon(answer.icon) } : {}),
   }
 }
 
@@ -147,16 +134,35 @@ function updateSets(sets: YesNoAnswerSet[], selectedSetId = state.value.selected
 
 function addSet() {
   const sets = state.value.answerSets
+  const id = makeId('set')
   updateSets([
     ...sets,
     {
-      id: makeId('set'),
+      id,
       title: 'New set',
       color: 'teal',
       order: sets.length,
       answers: [],
     },
   ])
+  void focusSetTitle(id)
+}
+
+function setSetElement(id: string, element: unknown) {
+  if (element instanceof HTMLElement) {
+    setElements.set(id, element)
+    return
+  }
+  setElements.delete(id)
+}
+
+async function focusSetTitle(id: string) {
+  await nextTick()
+  const element = setElements.get(id)
+  const input = element?.querySelector<HTMLInputElement>('input')
+  element?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+  input?.focus()
+  input?.select()
 }
 
 function updateSet(index: number, patch: Partial<YesNoAnswerSet>) {
@@ -190,6 +196,22 @@ function updateAnswer(setIndex: number, answerIndex: number, patch: Partial<YesN
     return { ...set, answers }
   })
   updateSets(sets)
+}
+
+function updateAnswerIcon(setIndex: number, answerIndex: number, icon: string) {
+  updateAnswer(setIndex, answerIndex, { icon: icon || undefined, imageURL: undefined })
+}
+
+function updateAnswerImage(setIndex: number, answerIndex: number, imageURL: string) {
+  updateAnswer(setIndex, answerIndex, { imageURL: imageURL || undefined, icon: undefined })
+}
+
+function useAnswerIcon(setIndex: number, answerIndex: number, answer: YesNoAnswerTile) {
+  updateAnswer(setIndex, answerIndex, { icon: answer.icon || 'ui/question-mark-fat', imageURL: undefined })
+}
+
+function useAnswerImage(setIndex: number, answerIndex: number) {
+  updateAnswer(setIndex, answerIndex, { imageURL: '', icon: undefined })
 }
 
 function removeAnswer(setIndex: number, answerIndex: number) {
@@ -241,7 +263,12 @@ function moveAnswer(setIndex: number, answerIndex: number, delta: number) {
       </div>
 
       <div v-else :class="bemm('list')">
-        <article v-for="(set, si) in state.answerSets" :key="set.id" :class="bemm('set')">
+        <article
+          v-for="(set, si) in state.answerSets"
+          :key="set.id"
+          :ref="(element) => setSetElement(set.id, element)"
+          :class="bemm('set')"
+        >
           <header :class="bemm('set-head')">
             <InputText
               :model-value="set.title"
@@ -305,17 +332,33 @@ function moveAnswer(setIndex: number, answerIndex: number, delta: number) {
                   placeholder="What to say when tapped"
                   @update:model-value="(v: string) => updateAnswer(si, i, { speech: v })"
                 />
-                <InputText
-                  :model-value="answer.icon ?? ''"
-                  label="Icon (SF symbol)"
-                  placeholder="checkmark"
-                  @update:model-value="(v: string) => updateAnswer(si, i, { icon: v || undefined })"
-                />
-                <div :class="bemm('image-field')">
-                  <span :class="bemm('color-label')">Image</span>
+                <div :class="bemm('visual-field')">
+                  <span :class="bemm('color-label')">Visual</span>
+                  <div :class="bemm('visual-toggle')" role="group" aria-label="Tile visual type">
+                    <button
+                      type="button"
+                      :class="bemm('visual-option', { active: !answer.imageURL })"
+                      @click="useAnswerIcon(si, i, answer)"
+                    >
+                      Icon
+                    </button>
+                    <button
+                      type="button"
+                      :class="bemm('visual-option', { active: Boolean(answer.imageURL) })"
+                      @click="useAnswerImage(si, i)"
+                    >
+                      Image
+                    </button>
+                  </div>
+                  <TikoOpenIconPicker
+                    v-if="!answer.imageURL"
+                    :model-value="answer.icon ?? ''"
+                    @update:model-value="(v: string) => updateAnswerIcon(si, i, v)"
+                  />
                   <MediaPicker
+                    v-else
                     :model-value="answer.imageURL ?? ''"
-                    @update:model-value="(v: string) => updateAnswer(si, i, { imageURL: v || undefined })"
+                    @update:model-value="(v: string) => updateAnswerImage(si, i, v)"
                   />
                 </div>
                 <div :class="bemm('color-field')">
@@ -455,7 +498,7 @@ function moveAnswer(setIndex: number, answerIndex: number, delta: number) {
 
   &__item-fields {
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr 1.5fr 1fr;
+    grid-template-columns: 1fr 1fr minmax(18rem, 2fr) 1fr;
     gap: var(--space-s);
     align-items: start;
   }
@@ -467,10 +510,36 @@ function moveAnswer(setIndex: number, answerIndex: number, delta: number) {
   }
 
   &__color-field,
-  &__image-field {
+  &__image-field,
+  &__visual-field {
     display: flex;
     flex-direction: column;
     gap: var(--space-xs);
+  }
+
+  &__visual-toggle {
+    display: inline-flex;
+    align-self: flex-start;
+    border: 1px solid var(--admin-border);
+    border-radius: var(--border-radius-xs);
+    overflow: hidden;
+    background: var(--admin-surface);
+  }
+
+  &__visual-option {
+    border: 0;
+    background: transparent;
+    color: var(--admin-text-muted);
+    font: inherit;
+    font-size: var(--font-size-xs);
+    font-weight: 700;
+    padding: 0.35rem 0.6rem;
+    cursor: pointer;
+
+    &--active {
+      background: var(--color-primary);
+      color: var(--color-primary-text, #fff);
+    }
   }
 
   &__color-label {

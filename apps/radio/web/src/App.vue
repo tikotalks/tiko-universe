@@ -5,7 +5,7 @@ import type { PopupService } from '@sil/ui'
 import { IdentityClient } from '@tiko/identity'
 import { TikoDataClient, type RadioSettings, type RadioState } from '@tiko/data'
 import type { RadioTrack, RadioCategory } from '@tiko/data'
-import { createI18n, defaultLanguage, tikoI18nKeys, tikoLanguages, type TikoLanguage } from '@tiko/i18n'
+import { createI18n, defaultLanguage, tikoI18nKeys, tikoLanguageOptions, tikoLanguages, type TikoLanguage } from '@tiko/i18n'
 import {
   TikoAppShell,
   TikoColorMode,
@@ -183,6 +183,14 @@ const labels = computed(() => {
     createCategory: i18n.t(tikoI18nKeys.radio.management.createCategory),
     removeTrack: i18n.t(tikoI18nKeys.radio.library.removeTrack),
     uploadFile: i18n.t(tikoI18nKeys.radio.library.uploadFile),
+    settings: i18n.t(tikoI18nKeys.common.settings),
+    settingsPanel: {
+      language: i18n.t(tikoI18nKeys.common.language),
+      appearance: i18n.t(tikoI18nKeys.common.appearance),
+      light: i18n.t(tikoI18nKeys.common.colorModeOptions.light),
+      dark: i18n.t(tikoI18nKeys.common.colorModeOptions.dark),
+      system: i18n.t(tikoI18nKeys.common.colorModeOptions.system),
+    },
   }
 })
 
@@ -219,7 +227,7 @@ const headerActions = computed(() => {
   }
 
   actions.push(
-    { id: 'settings', label: 'Settings', icon: 'ui/settings' },
+    { id: 'settings', label: labels.value.settings, icon: 'ui/settings' },
   )
 
   return actions
@@ -548,7 +556,7 @@ function openSettingsPopup() {
   popup.showPopup({
     component: markRaw(SettingsPopup),
     title: '',
-    props: { language: language.value, colorMode: colorMode.value },
+    props: { language: language.value, languages: tikoLanguageOptions, colorMode: colorMode.value, labels: labels.value.settingsPanel },
     config: { position: 'center', canClose: true, background: true, width: '24rem' },
     on: {
       'update:language': (...args: unknown[]) => { language.value = args[0] as TikoLanguage },
