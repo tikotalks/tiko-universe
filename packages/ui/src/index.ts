@@ -25,6 +25,7 @@ export { Button as SilButton, Icon as SilIcon } from '@sil/ui'
 export type TikoChoiceTone = 'primary' | 'secondary' | 'success' | 'danger'
 export type TikoAppColor = 'yes-no' | 'type' | 'cards' | 'sequence' | 'timer' | 'radio' | 'media' | 'admin' | 'tiko' | 'todo' | 'talk'
 export type TikoColorMode = 'light' | 'dark' | 'system'
+export type TikoSupportedLanguagesMode = 'tiko-defaults' | 'custom'
 export type { TikoTtsProvider } from '@tiko/media'
 
 export interface TikoAppConfig {
@@ -35,6 +36,8 @@ export interface TikoAppConfig {
   appIconMediaCategory?: string
   appIconImageUrl?: string
   themeColor?: string
+  supportedLanguagesMode?: TikoSupportedLanguagesMode
+  supportedLanguages?: string[]
 }
 
 export const tikoAppConfigs: Record<TikoAppColor, TikoAppConfig> = {

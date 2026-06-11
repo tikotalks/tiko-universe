@@ -10,6 +10,7 @@
 //   POST /v1/sync                  — purge all cached locales
 //   POST /v1/sync/:language        — purge one cached locale
 //   POST /v1/import                — seed Lezu with source strings
+//   PUT  /v1/languages             — ensure Tiko-managed locales exist in Lezu
 //
 // Environment (set via wrangler secret put):
 //   LEZU_API_KEY      — lez_user_... key
@@ -56,7 +57,7 @@ const APP_PREFIXES: Record<string, string[]> = {
 
 const CORS: Record<string, string> = {
   'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+  'Access-Control-Allow-Methods': 'GET, POST, PUT, OPTIONS',
   'Access-Control-Allow-Headers': 'Content-Type, Authorization',
 }
 
@@ -133,6 +134,23 @@ async function importToLezu(
 
   const result = await response.json()
   return json({ success: true, lezu: result })
+}
+
+async function addLocaleToLezu(language: string, env: Env): Promise<'created' | 'exists'> {
+  const response = await fetch(`${LEZU_BASE}/v1/i18n/projects/${env.LEZU_PROJECT_ID}/locales`, {
+    method: 'POST',
+    headers: {
+      'Authorization': `ApiKey ${env.LEZU_API_KEY}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ code: language, name: languageName(language) }),
+  })
+
+  if (response.status === 201) return 'created'
+  if (response.status === 200 || response.status === 409) return 'exists'
+
+  const err = await response.text()
+  throw new Error(`Lezu locale ${language} failed (${response.status}): ${err}`)
 }
 
 // ── KV cache helpers ──────────────────────────────────────────────────────────
@@ -252,6 +270,53 @@ async function handleImport(request: Request, env: Env): Promise<Response> {
   return result
 }
 
+async function handleLanguages(request: Request, env: Env): Promise<Response> {
+  if (!isAuthorized(request, env)) return json({ error: 'Unauthorized' }, 401)
+
+  let body: { languages?: unknown }
+  try {
+    body = await request.json() as typeof body
+  } catch {
+    return json({ error: 'Invalid JSON body' }, 400)
+  }
+
+  const languages = normalizeLanguageList(body.languages)
+  if (languages.length === 0) return json({ error: 'languages must contain at least one locale' }, 400)
+
+  const created: string[] = []
+  const existing: string[] = []
+  for (const language of languages) {
+    const status = await addLocaleToLezu(language, env)
+    if (status === 'created') created.push(language)
+    else existing.push(language)
+    await purgeLocale(language, env)
+  }
+
+  return json({ success: true, languages, created, existing })
+}
+
+function normalizeLanguageList(value: unknown): string[] {
+  if (!Array.isArray(value)) return []
+  const normalized = value
+    .map((item) => typeof item === 'string' ? normalizeLanguageTag(item) : '')
+    .filter(Boolean)
+  return Array.from(new Set(normalized))
+}
+
+function normalizeLanguageTag(value: string): string {
+  const cleaned = value.trim().replace(/_/g, '-')
+  if (!/^[a-zA-Z]{2,3}(?:-[a-zA-Z0-9]{2,8})*$/.test(cleaned)) return ''
+  return cleaned.split('-').map((part, index) => index === 0 ? part.toLowerCase() : part.length === 2 ? part.toUpperCase() : part).join('-')
+}
+
+function languageName(language: string): string {
+  try {
+    return new Intl.DisplayNames(['en'], { type: 'language' }).of(language) ?? language
+  } catch {
+    return language
+  }
+}
+
 // ── Router ────────────────────────────────────────────────────────────────────
 
 export default {
@@ -274,6 +339,11 @@ export default {
     // POST /v1/import
     if (request.method === 'POST' && parts[0] === 'v1' && parts[1] === 'import') {
       return handleImport(request, env)
+    }
+
+    // PUT /v1/languages
+    if (request.method === 'PUT' && parts[0] === 'v1' && parts[1] === 'languages') {
+      return handleLanguages(request, env)
     }
 
     return json({ error: 'Not found' }, 404)

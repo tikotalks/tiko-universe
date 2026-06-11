@@ -4,7 +4,8 @@ import { useRoute, useRouter } from 'vue-router'
 import { useBemm } from 'bemm'
 import { Button, Icon, InputText } from '@sil/ui'
 import { TikoAppHeader, tikoAppConfigs, tikoAppColors, type TikoAppColor, type TikoAppConfig } from '@tiko/ui'
-import { useAdminAppConfig, type AdminManagedAppConfig } from '../composables/useAdminAppConfig'
+import { tikoLanguageOptions } from '@tiko/i18n'
+import { useAdminAppConfig, type AdminManagedAppConfig, type TikoGeneralSettings } from '../composables/useAdminAppConfig'
 import { useAppDefaults, type AppResource, type TikoManagedApp } from '../composables/useAppDefaults'
 import MediaPicker from '../components/MediaPicker.vue'
 import ColorSwatchPicker from '../components/ColorSwatchPicker.vue'
@@ -34,9 +35,17 @@ const editorByApp: Partial<Record<DefaultsApp, Component>> = {
 const configApi = useAdminAppConfig()
 const defaultsApi = useAppDefaults()
 const configs = ref<Record<TikoAppColor, AdminManagedAppConfig>>({ ...tikoAppConfigs })
-const configDraft = reactive<TikoAppConfig>({ ...tikoAppConfigs.cards })
+const configDraft = reactive<AdminManagedAppConfig>({ ...tikoAppConfigs.cards, supportedLanguagesMode: 'tiko-defaults', supportedLanguages: [] })
 const configDirty = ref(false)
 const configSavedMessage = ref<string | null>(null)
+const appCustomLanguage = ref('')
+
+const tikoSettingsDraft = reactive<TikoGeneralSettings>({ supportedLanguages: tikoLanguageOptions.map((language) => language.value) })
+const tikoSettingsVersion = ref(0)
+const tikoSettingsUpdatedAt = ref<string | null>(null)
+const tikoSettingsDirty = ref(false)
+const tikoSettingsSavedMessage = ref<string | null>(null)
+const tikoCustomLanguage = ref('')
 
 const stateValue = ref<Record<string, unknown>>({})
 const defaultsVersion = ref(0)
@@ -57,6 +66,9 @@ const previewIcon = computed(() => configDraft.appIconImageUrl || configDraft.ap
 const defaultsApp = computed<DefaultsApp | null>(() => editableDefaultsApps.includes(selectedApp.value as DefaultsApp) ? selectedApp.value as DefaultsApp : null)
 const currentEditor = computed<Component | null>(() => defaultsApp.value ? editorByApp[defaultsApp.value] ?? null : null)
 const canEditDefaults = computed(() => Boolean(defaultsApp.value))
+const globalSupportedLanguages = computed(() => normalizeLanguages(tikoSettingsDraft.supportedLanguages))
+const appSupportedLanguages = computed(() => normalizeLanguages(configDraft.supportedLanguages))
+const effectiveSupportedLanguages = computed(() => configDraft.supportedLanguagesMode === 'custom' && appSupportedLanguages.value.length > 0 ? appSupportedLanguages.value : globalSupportedLanguages.value)
 
 function isImageSource(value: string | undefined) {
   return Boolean(value && (/^(https?:|data:|blob:)/.test(value) || /\.(avif|gif|jpe?g|png|svg|webp)(\?|#|$)/i.test(value)))
@@ -80,6 +92,8 @@ function syncDraft(config: TikoAppConfig) {
     appIconMediaCategory: config.appIconMediaCategory ?? '',
     appIconImageUrl: config.appIconImageUrl ?? '',
     themeColor: config.themeColor ?? '',
+    supportedLanguagesMode: config.supportedLanguagesMode === 'custom' ? 'custom' : 'tiko-defaults',
+    supportedLanguages: normalizeLanguages(config.supportedLanguages),
   })
   configDirty.value = false
 }
@@ -99,9 +113,41 @@ async function loadConfigs() {
   }
 }
 
+async function loadTikoSettings() {
+  try {
+    const payload = await configApi.readTikoSettings()
+    Object.assign(tikoSettingsDraft, {
+      ...payload.settings,
+      supportedLanguages: normalizeLanguages(payload.settings.supportedLanguages, tikoLanguageOptions.map((language) => language.value)),
+    })
+    tikoSettingsVersion.value = payload.version
+    tikoSettingsUpdatedAt.value = payload.updatedAt
+    tikoSettingsDirty.value = false
+  } catch {
+    // error is surfaced via configApi.error.value
+  }
+}
+
+async function saveTikoSettings() {
+  tikoSettingsSavedMessage.value = null
+  try {
+    const payload = await configApi.writeTikoSettings(
+      { ...tikoSettingsDraft, supportedLanguages: globalSupportedLanguages.value },
+      tikoSettingsVersion.value,
+    )
+    Object.assign(tikoSettingsDraft, payload.settings)
+    tikoSettingsVersion.value = payload.version
+    tikoSettingsUpdatedAt.value = payload.updatedAt
+    tikoSettingsDirty.value = false
+    tikoSettingsSavedMessage.value = 'Saved Tiko language defaults.'
+  } catch {
+    // error is surfaced via configApi.error.value
+  }
+}
+
 async function saveConfig() {
   configSavedMessage.value = null
-  const normalized: TikoAppConfig = {
+  const normalized: AdminManagedAppConfig = {
     id: selectedApp.value,
     title: configDraft.title,
     appColor: configDraft.appColor,
@@ -109,6 +155,8 @@ async function saveConfig() {
     ...(configDraft.appIconMediaCategory ? { appIconMediaCategory: configDraft.appIconMediaCategory } : {}),
     ...(configDraft.appIconImageUrl ? { appIconImageUrl: configDraft.appIconImageUrl } : {}),
     ...(configDraft.themeColor ? { themeColor: configDraft.themeColor } : {}),
+    supportedLanguagesMode: configDraft.supportedLanguagesMode === 'custom' ? 'custom' : 'tiko-defaults',
+    supportedLanguages: configDraft.supportedLanguagesMode === 'custom' ? appSupportedLanguages.value : [],
   }
   try {
     const saved = await configApi.writeConfig(selectedApp.value, normalized, configs.value[selectedApp.value]?.version ?? 0)
@@ -159,6 +207,77 @@ function onDefaultsUpdate(next: Record<string, unknown>) {
   defaultsDirty.value = true
 }
 
+function normalizeLanguages(value: unknown, fallback: string[] = []): string[] {
+  const source = Array.isArray(value) ? value : fallback
+  return Array.from(new Set(source.map((item) => typeof item === 'string' ? normalizeLanguageTag(item) : '').filter(Boolean)))
+}
+
+function normalizeLanguageTag(value: string): string {
+  const cleaned = value.trim().replace(/_/g, '-')
+  if (!/^[a-zA-Z]{2,3}(?:-[a-zA-Z0-9]{2,8})*$/.test(cleaned)) return ''
+  return cleaned.split('-').map((part, index) => index === 0 ? part.toLowerCase() : part.length === 2 ? part.toUpperCase() : part).join('-')
+}
+
+function languageLabel(code: string): string {
+  const preset = tikoLanguageOptions.find((language) => language.value === code)
+  return preset ? `${preset.label} (${preset.nativeLabel})` : code
+}
+
+function isGlobalLanguageSelected(code: string): boolean {
+  return globalSupportedLanguages.value.includes(code)
+}
+
+function isAppLanguageSelected(code: string): boolean {
+  return appSupportedLanguages.value.includes(code)
+}
+
+function toggleGlobalLanguage(code: string, checked: boolean) {
+  const next = new Set(globalSupportedLanguages.value)
+  if (checked) next.add(code)
+  else next.delete(code)
+  tikoSettingsDraft.supportedLanguages = Array.from(next)
+  tikoSettingsDirty.value = true
+  tikoSettingsSavedMessage.value = null
+}
+
+function toggleAppLanguage(code: string, checked: boolean) {
+  const next = new Set(appSupportedLanguages.value)
+  if (checked) next.add(code)
+  else next.delete(code)
+  configDraft.supportedLanguages = Array.from(next)
+  onConfigInput()
+}
+
+function removeGlobalLanguage(code: string) {
+  toggleGlobalLanguage(code, false)
+}
+
+function removeAppLanguage(code: string) {
+  toggleAppLanguage(code, false)
+}
+
+function addGlobalCustomLanguage() {
+  const code = normalizeLanguageTag(tikoCustomLanguage.value)
+  if (!code) return
+  toggleGlobalLanguage(code, true)
+  tikoCustomLanguage.value = ''
+}
+
+function addAppCustomLanguage() {
+  const code = normalizeLanguageTag(appCustomLanguage.value)
+  if (!code) return
+  toggleAppLanguage(code, true)
+  appCustomLanguage.value = ''
+}
+
+function setAppLanguageMode(mode: 'tiko-defaults' | 'custom') {
+  configDraft.supportedLanguagesMode = mode
+  if (mode === 'custom' && appSupportedLanguages.value.length === 0) {
+    configDraft.supportedLanguages = [...globalSupportedLanguages.value]
+  }
+  onConfigInput()
+}
+
 watch(selectedApp, () => {
   syncDraft(selectedConfig.value)
   void loadDefaults()
@@ -169,7 +288,7 @@ watch(isOverview, () => {
 })
 
 onMounted(async () => {
-  await loadConfigs()
+  await Promise.all([loadConfigs(), loadTikoSettings()])
   if (!isOverview.value) await loadDefaults()
 })
 
@@ -198,36 +317,102 @@ if (!isOverview.value && !routeApp.value) {
       </Button>
     </header>
 
-    <section v-if="isOverview" :class="bemm('overview')" aria-label="Apps overview">
-      <router-link
-        v-for="app in appOrder"
-        :key="app"
-        :to="`/apps/${app}`"
-        :class="bemm('overview-card')"
-        :style="{ '--app-accent': appAccent(app) }"
-      >
-        <span :class="bemm('overview-icon')" :style="{ '--app-accent': appAccent(app) }">
-          <img
-            v-if="appConfig(app).appIconImageUrl || isImageSource(appConfig(app).appIcon)"
-            :class="bemm('overview-icon-image')"
-            :src="appConfig(app).appIconImageUrl || appConfig(app).appIcon"
-            :alt="`${appConfig(app).title} icon`"
+    <div v-if="isOverview" :class="bemm('overview-stack')">
+      <section :class="bemm('panel')" aria-label="General Tiko settings">
+        <header :class="bemm('panel-head')">
+          <div :class="bemm('panel-intro')">
+            <h2 :class="bemm('panel-title')">General Tiko settings</h2>
+            <p :class="bemm('panel-meta')">
+              Supported languages are stored in Tiko defaults and synced to Lezu when saved.
+              Version {{ tikoSettingsVersion }} · Updated {{ tikoSettingsUpdatedAt || 'never' }}
+            </p>
+          </div>
+          <div :class="bemm('panel-actions')">
+            <Button variant="outline" :loading="configApi.loading.value" :disabled="configApi.loading.value" @click="loadTikoSettings">
+              Reload
+            </Button>
+            <Button :loading="configApi.saving.value" :disabled="configApi.saving.value || !tikoSettingsDirty" @click="saveTikoSettings">
+              Save Tiko settings
+            </Button>
+          </div>
+        </header>
+        <p v-if="configApi.error.value" :class="bemm('error')">{{ configApi.error.value }}</p>
+        <p v-if="tikoSettingsSavedMessage" :class="bemm('success')">{{ tikoSettingsSavedMessage }}</p>
+
+        <div :class="bemm('language-editor')">
+          <label
+            v-for="language in tikoLanguageOptions"
+            :key="language.value"
+            :class="bemm('language-option')"
           >
-          <Icon v-else-if="(appConfig(app).appIcon || '').includes('/')" :name="appConfig(app).appIcon" size="medium" />
-          <span v-else>{{ appConfig(app).appIcon || app.charAt(0).toUpperCase() }}</span>
-        </span>
-        <span :class="bemm('overview-copy')">
-          <strong :class="bemm('overview-title')">{{ appConfig(app).title }}</strong>
-          <span :class="bemm('overview-meta')">{{ appConfig(app).appColor }} · {{ appConfig(app).appIconMediaCategory || 'no media category' }}</span>
-        </span>
-        <span :class="bemm('overview-footer')">
-          <span :class="bemm('pill')">Settings</span>
-          <span :class="bemm('pill', { muted: !editableDefaultsApps.includes(app as DefaultsApp) })">
-            {{ editableDefaultsApps.includes(app as DefaultsApp) ? 'Defaults' : 'No defaults' }}
+            <input
+              type="checkbox"
+              :checked="isGlobalLanguageSelected(language.value)"
+              @change="(event: Event) => toggleGlobalLanguage(language.value, (event.target as HTMLInputElement).checked)"
+            >
+            <span>{{ language.label }}</span>
+            <small>{{ language.nativeLabel }}</small>
+          </label>
+        </div>
+        <div :class="bemm('custom-language-row')">
+          <InputText
+            v-model="tikoCustomLanguage"
+            label="Add custom locale"
+            placeholder="en-GB, pt-BR, fr-CA"
+            @keyup.enter="addGlobalCustomLanguage"
+          />
+          <Button variant="outline" :disabled="!normalizeLanguageTag(tikoCustomLanguage)" @click="addGlobalCustomLanguage">
+            Add locale
+          </Button>
+        </div>
+        <div :class="bemm('language-chips')" aria-label="Active Tiko default languages">
+          <button
+            v-for="language in globalSupportedLanguages"
+            :key="language"
+            type="button"
+            :class="bemm('language-chip')"
+            @click="removeGlobalLanguage(language)"
+          >
+            <span>{{ languageLabel(language) }}</span>
+            <Icon name="ui/multiply-s" size="small" />
+          </button>
+        </div>
+        <p :class="bemm('language-summary')">
+          Active Tiko defaults: {{ globalSupportedLanguages.map(languageLabel).join(', ') || 'none' }}
+        </p>
+      </section>
+
+      <section :class="bemm('overview')" aria-label="Apps overview">
+        <router-link
+          v-for="app in appOrder"
+          :key="app"
+          :to="`/apps/${app}`"
+          :class="bemm('overview-card')"
+          :style="{ '--app-accent': appAccent(app) }"
+        >
+          <span :class="bemm('overview-icon')" :style="{ '--app-accent': appAccent(app) }">
+            <img
+              v-if="appConfig(app).appIconImageUrl || isImageSource(appConfig(app).appIcon)"
+              :class="bemm('overview-icon-image')"
+              :src="appConfig(app).appIconImageUrl || appConfig(app).appIcon"
+              :alt="`${appConfig(app).title} icon`"
+            >
+            <Icon v-else-if="(appConfig(app).appIcon || '').includes('/')" :name="appConfig(app).appIcon" size="medium" />
+            <span v-else>{{ appConfig(app).appIcon || app.charAt(0).toUpperCase() }}</span>
           </span>
-        </span>
-      </router-link>
-    </section>
+          <span :class="bemm('overview-copy')">
+            <strong :class="bemm('overview-title')">{{ appConfig(app).title }}</strong>
+            <span :class="bemm('overview-meta')">{{ appConfig(app).appColor }} · {{ appConfig(app).appIconMediaCategory || 'no media category' }}</span>
+          </span>
+          <span :class="bemm('overview-footer')">
+            <span :class="bemm('pill')">Settings</span>
+            <span :class="bemm('pill', { muted: !editableDefaultsApps.includes(app as DefaultsApp) })">
+              {{ editableDefaultsApps.includes(app as DefaultsApp) ? 'Defaults' : 'No defaults' }}
+            </span>
+          </span>
+        </router-link>
+      </section>
+    </div>
 
     <div v-else :class="bemm('workspace')">
       <section :class="bemm('panel')" :style="{ '--app-accent': previewAccent }">
@@ -273,6 +458,66 @@ if (!isOverview.value && !routeApp.value) {
                 :model-value="configDraft.themeColor || tikoAppConfigs[selectedApp]?.themeColor || ''"
                 @update:model-value="(v: string) => { configDraft.themeColor = v; onConfigInput() }"
               />
+            </div>
+            <div :class="bemm('field', { wide: true })">
+              <span :class="bemm('field-label')">Supported languages</span>
+              <div :class="bemm('segmented')">
+                <button
+                  type="button"
+                  :class="bemm('segmented-button', { active: configDraft.supportedLanguagesMode !== 'custom' })"
+                  @click="setAppLanguageMode('tiko-defaults')"
+                >
+                  Use Tiko Defaults
+                </button>
+                <button
+                  type="button"
+                  :class="bemm('segmented-button', { active: configDraft.supportedLanguagesMode === 'custom' })"
+                  @click="setAppLanguageMode('custom')"
+                >
+                  Custom
+                </button>
+              </div>
+              <div v-if="configDraft.supportedLanguagesMode === 'custom'" :class="bemm('language-editor')">
+                <label
+                  v-for="language in tikoLanguageOptions"
+                  :key="language.value"
+                  :class="bemm('language-option')"
+                >
+                  <input
+                    type="checkbox"
+                    :checked="isAppLanguageSelected(language.value)"
+                    @change="(event: Event) => toggleAppLanguage(language.value, (event.target as HTMLInputElement).checked)"
+                  >
+                  <span>{{ language.label }}</span>
+                  <small>{{ language.nativeLabel }}</small>
+                </label>
+              </div>
+              <div v-if="configDraft.supportedLanguagesMode === 'custom'" :class="bemm('custom-language-row')">
+                <InputText
+                  v-model="appCustomLanguage"
+                  label="Add custom locale"
+                  placeholder="en-GB, pt-BR, fr-CA"
+                  @keyup.enter="addAppCustomLanguage"
+                />
+                <Button variant="outline" :disabled="!normalizeLanguageTag(appCustomLanguage)" @click="addAppCustomLanguage">
+                  Add locale
+                </Button>
+              </div>
+              <div v-if="configDraft.supportedLanguagesMode === 'custom'" :class="bemm('language-chips')" aria-label="Active app languages">
+                <button
+                  v-for="language in appSupportedLanguages"
+                  :key="language"
+                  type="button"
+                  :class="bemm('language-chip')"
+                  @click="removeAppLanguage(language)"
+                >
+                  <span>{{ languageLabel(language) }}</span>
+                  <Icon name="ui/multiply-s" size="small" />
+                </button>
+              </div>
+              <p :class="bemm('language-summary')">
+                Effective languages: {{ effectiveSupportedLanguages.map(languageLabel).join(', ') || 'none' }}
+              </p>
             </div>
           </div>
 
@@ -375,6 +620,11 @@ if (!isOverview.value && !routeApp.value) {
   &__workspace { gap: var(--space-m); min-width: 0; }
   &__panel { gap: var(--space-m); }
   &__overview-copy { gap: 2px; min-width: 0; }
+  &__overview-stack {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-m);
+  }
 
   &__eyebrow {
     color: var(--color-primary);
@@ -517,6 +767,10 @@ if (!isOverview.value && !routeApp.value) {
     color: var(--admin-text-muted);
     font-size: var(--font-size-xs);
     font-weight: 600;
+
+    &--wide {
+      grid-column: 1 / -1;
+    }
   }
 
   &__field-label {
@@ -539,6 +793,114 @@ if (!isOverview.value && !routeApp.value) {
     padding: 2px;
     cursor: pointer;
     background: transparent;
+  }
+
+  &__segmented {
+    display: inline-flex;
+    width: fit-content;
+    max-width: 100%;
+    padding: 3px;
+    border: 1px solid var(--admin-border);
+    border-radius: var(--border-radius-s);
+    background: var(--admin-surface-hover);
+    overflow: hidden;
+  }
+
+  &__segmented-button {
+    min-height: calc(var(--space) * 2);
+    padding: 0 var(--space-s);
+    border: 0;
+    border-radius: var(--border-radius-xs);
+    background: transparent;
+    color: var(--admin-text-muted);
+    font: inherit;
+    font-size: var(--font-size-s);
+    font-weight: 700;
+    cursor: pointer;
+
+    &--active {
+      background: var(--admin-surface);
+      color: var(--admin-text);
+      box-shadow: 0 1px 2px color-mix(in srgb, var(--color-foreground), transparent 88%);
+    }
+  }
+
+  &__language-editor {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(calc(var(--space) * 11), 1fr));
+    gap: var(--space-xs);
+  }
+
+  &__language-option {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: 2px var(--space-xs);
+    align-items: center;
+    min-height: calc(var(--space) * 2.75);
+    padding: var(--space-xs);
+    border: 1px solid var(--admin-border);
+    border-radius: var(--border-radius-s);
+    background: color-mix(in srgb, var(--admin-surface), var(--admin-text) 3%);
+    color: var(--admin-text);
+    font-size: var(--font-size-s);
+
+    input {
+      grid-row: span 2;
+      width: var(--space);
+      height: var(--space);
+      accent-color: var(--color-primary);
+    }
+
+    small {
+      grid-column: 2;
+      color: var(--admin-text-muted);
+      font-size: var(--font-size-xs);
+      font-weight: 600;
+      overflow-wrap: anywhere;
+    }
+  }
+
+  &__custom-language-row {
+    display: grid;
+    grid-template-columns: minmax(0, calc(var(--space) * 18)) auto;
+    gap: var(--space-s);
+    align-items: end;
+  }
+
+  &__language-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-xs);
+  }
+
+  &__language-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    min-height: calc(var(--space) * 1.75);
+    max-width: 100%;
+    padding: 0 var(--space-xs);
+    border: 1px solid var(--admin-border);
+    border-radius: 999px;
+    background: var(--admin-surface-hover);
+    color: var(--admin-text);
+    font-size: var(--font-size-xs);
+    font-weight: 700;
+    cursor: pointer;
+
+    span {
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+  }
+
+  &__language-summary {
+    color: var(--admin-text-muted);
+    font-size: var(--font-size-xs);
+    line-height: 1.45;
+    overflow-wrap: anywhere;
   }
 
   &__preview {
@@ -641,7 +1003,8 @@ if (!isOverview.value && !routeApp.value) {
     &__header,
     &__panel-head,
     &__panel-actions,
-    &__color-row {
+    &__color-row,
+    &__custom-language-row {
       flex-direction: column;
       align-items: stretch;
     }
@@ -651,7 +1014,8 @@ if (!isOverview.value && !routeApp.value) {
     }
 
     &__config-layout,
-    &__config-form {
+    &__config-form,
+    &__custom-language-row {
       grid-template-columns: 1fr;
     }
   }

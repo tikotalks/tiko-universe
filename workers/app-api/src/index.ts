@@ -75,6 +75,8 @@ interface AppConfigRow {
   app_icon_media_category: string | null
   app_icon_image_url: string | null
   theme_color: string | null
+  supported_languages_mode: string | null
+  supported_languages_json: string | null
   updated_at: string
   version: number
 }
@@ -101,6 +103,8 @@ interface AppConfigPayload {
   appIconMediaCategory?: string
   appIconImageUrl?: string
   themeColor?: string
+  supportedLanguagesMode?: 'tiko-defaults' | 'custom'
+  supportedLanguages?: string[]
 }
 
 export default {
@@ -177,14 +181,14 @@ export async function handleRequest(request: Request, env: Env): Promise<Respons
 
 
 async function readAppConfigs(env: Env): Promise<Response> {
-  const { results } = await env.APP_DB.prepare('SELECT app, title, app_color, app_icon, app_icon_media_category, app_icon_image_url, theme_color, updated_at, version FROM app_config').all<AppConfigRow>()
+  const { results } = await env.APP_DB.prepare('SELECT app, title, app_color, app_icon, app_icon_media_category, app_icon_image_url, theme_color, supported_languages_mode, supported_languages_json, updated_at, version FROM app_config').all<AppConfigRow>()
   const rows = new Map((results ?? []).map((row) => [row.app, row]))
   const configs = Object.fromEntries(APPS.map((app) => [app, rowToConfig(app, rows.get(app) ?? null)]))
   return json({ configs, updatedAt: latestUpdatedAt(results ?? []) })
 }
 
 async function readAppConfig(env: Env, app: TikoAppId): Promise<Response> {
-  const row = await first<AppConfigRow>(env.APP_DB.prepare('SELECT app, title, app_color, app_icon, app_icon_media_category, app_icon_image_url, theme_color, updated_at, version FROM app_config WHERE app = ?').bind(app))
+  const row = await first<AppConfigRow>(env.APP_DB.prepare('SELECT app, title, app_color, app_icon, app_icon_media_category, app_icon_image_url, theme_color, supported_languages_mode, supported_languages_json, updated_at, version FROM app_config WHERE app = ?').bind(app))
   return json({ config: rowToConfig(app, row), updatedAt: row?.updated_at ?? null, version: row ? Number(row.version) : 0 })
 }
 
@@ -198,7 +202,19 @@ function rowToConfig(app: TikoAppId, row: AppConfigRow | null): AppConfigPayload
     appIcon: row.app_icon || fallback.appIcon,
     ...(row.app_icon_media_category ? { appIconMediaCategory: row.app_icon_media_category } : fallback.appIconMediaCategory ? { appIconMediaCategory: fallback.appIconMediaCategory } : {}),
     ...(row.app_icon_image_url ? { appIconImageUrl: row.app_icon_image_url } : fallback.appIconImageUrl ? { appIconImageUrl: fallback.appIconImageUrl } : {}),
-    ...(row.theme_color ? { themeColor: row.theme_color } : fallback.themeColor ? { themeColor: fallback.themeColor } : {})
+    ...(row.theme_color ? { themeColor: row.theme_color } : fallback.themeColor ? { themeColor: fallback.themeColor } : {}),
+    supportedLanguagesMode: row.supported_languages_mode === 'custom' ? 'custom' : 'tiko-defaults',
+    supportedLanguages: parseLanguageList(row.supported_languages_json)
+  }
+}
+
+function parseLanguageList(raw: string | null): string[] {
+  if (!raw) return []
+  try {
+    const parsed = JSON.parse(raw) as unknown
+    return Array.isArray(parsed) ? parsed.filter((item): item is string => typeof item === 'string') : []
+  } catch {
+    return []
   }
 }
 

@@ -7,6 +7,11 @@ export interface AdminManagedAppConfig extends TikoAppConfig {
   version?: number
 }
 
+export interface TikoGeneralSettings {
+  supportedLanguages: string[]
+  [key: string]: unknown
+}
+
 interface AdminConfigListResponse {
   configs: Record<TikoAppColor, AdminManagedAppConfig>
 }
@@ -14,6 +19,12 @@ interface AdminConfigListResponse {
 interface AdminConfigWriteResponse {
   config: AdminManagedAppConfig
   updatedAt: string
+  version: number
+}
+
+interface TikoSettingsResponse {
+  settings: TikoGeneralSettings
+  updatedAt: string | null
   version: number
 }
 
@@ -59,7 +70,7 @@ export function useAdminAppConfig() {
     }
   }
 
-  async function writeConfig(app: TikoAppColor, config: TikoAppConfig, version = 0): Promise<AdminConfigWriteResponse> {
+  async function writeConfig(app: TikoAppColor, config: AdminManagedAppConfig, version = 0): Promise<AdminConfigWriteResponse> {
     saving.value = true
     error.value = null
     try {
@@ -79,5 +90,43 @@ export function useAdminAppConfig() {
     }
   }
 
-  return { loading, saving, error, readConfigs, writeConfig }
+  async function readTikoSettings(): Promise<TikoSettingsResponse> {
+    loading.value = true
+    error.value = null
+    try {
+      const response = await fetch(`${adminApiBaseUrl()}/tiko/settings`, {
+        headers: { authorization: `Bearer ${token.value}` },
+      })
+      const body = await response.json().catch(() => null) as AdminApiResponse<TikoSettingsResponse> | ApiErrorBody | null
+      if (!response.ok) throw new Error(errorMessage(body as ApiErrorBody | null, `Could not load Tiko settings: ${response.status}`))
+      return (body as AdminApiResponse<TikoSettingsResponse>).data
+    } catch (e) {
+      error.value = e instanceof Error ? e.message : 'Could not load Tiko settings.'
+      throw e
+    } finally {
+      loading.value = false
+    }
+  }
+
+  async function writeTikoSettings(settings: TikoGeneralSettings, version = 0): Promise<TikoSettingsResponse> {
+    saving.value = true
+    error.value = null
+    try {
+      const response = await fetch(`${adminApiBaseUrl()}/tiko/settings`, {
+        method: 'PUT',
+        headers: { authorization: `Bearer ${token.value}`, 'content-type': 'application/json' },
+        body: JSON.stringify({ settings, version }),
+      })
+      const body = await response.json().catch(() => null) as AdminApiResponse<TikoSettingsResponse> | ApiErrorBody | null
+      if (!response.ok) throw new Error(errorMessage(body as ApiErrorBody | null, `Could not save Tiko settings: ${response.status}`))
+      return (body as AdminApiResponse<TikoSettingsResponse>).data
+    } catch (e) {
+      error.value = e instanceof Error ? e.message : 'Could not save Tiko settings.'
+      throw e
+    } finally {
+      saving.value = false
+    }
+  }
+
+  return { loading, saving, error, readConfigs, writeConfig, readTikoSettings, writeTikoSettings }
 }

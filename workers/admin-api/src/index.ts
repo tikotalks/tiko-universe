@@ -11,6 +11,8 @@ interface TikoAppConfigPayload {
   appIconMediaCategory?: string
   appIconImageUrl?: string
   themeColor?: string
+  supportedLanguagesMode?: 'tiko-defaults' | 'custom'
+  supportedLanguages?: string[]
 }
 interface AppConfigRow {
   app: string
@@ -20,6 +22,14 @@ interface AppConfigRow {
   app_icon_media_category: string | null
   app_icon_image_url: string | null
   theme_color: string | null
+  supported_languages_mode: string | null
+  supported_languages_json: string | null
+  updated_at: string
+  version: number
+}
+
+interface AppDefaultsRow {
+  data_json: string
   updated_at: string
   version: number
 }
@@ -45,6 +55,8 @@ export interface Env extends AuthEnv {
   MEDIA_API_URL?: string
   COMMUNICATION_API_URL?: string
   COMMUNICATION_API_KEY?: string
+  TRANSLATIONS_API_URL?: string
+  TRANSLATIONS_API_KEY?: string
 }
 
 interface AdminSession {
@@ -73,6 +85,7 @@ const PRODUCT = 'tiko'
 const ADMIN_ROLE = 'admin'
 const VALID_ROLES = new Set(['guest', 'user', 'child', 'profile_manager', 'content_editor', 'admin'])
 const APPS = ['yes-no', 'type', 'cards', 'sequence', 'timer', 'radio', 'media', 'admin', 'tiko', 'todo', 'talk'] as const
+const DEFAULT_SUPPORTED_LANGUAGES = ['en', 'de', 'es', 'fr', 'nl', 'pt', 'ja', 'zh', 'ko', 'mt', 'it', 'ar', 'hy']
 const DEFAULT_APP_CONFIGS: Record<TikoAppId, TikoAppConfigPayload> = {
   'yes-no': { id: 'yes-no', title: 'Yes No', appColor: 'yes-no', appIcon: 'ui/check-fat', appIconMediaCategory: 'emotions', themeColor: '#9b3fbd' },
   type: { id: 'type', title: 'Type', appColor: 'type', appIcon: 'ui/type', appIconMediaCategory: 'letters', themeColor: '#2488ff' },
@@ -127,10 +140,20 @@ export default {
       return listAppConfigs(appDb)
     }
 
+    if (path === '/v1/admin/tiko/settings' && request.method === 'GET') {
+      const appDb = requireAppDb(env)
+      return readTikoSettings(appDb)
+    }
+
+    if (path === '/v1/admin/tiko/settings' && request.method === 'PUT') {
+      const appDb = requireAppDb(env)
+      return writeTikoSettings(request, appDb, env)
+    }
+
     const appConfigMatch = path.match(/^\/v1\/admin\/apps\/config\/([^/]+)$/)
     if (appConfigMatch && request.method === 'PUT') {
       const appDb = requireAppDb(env)
-      return writeAppConfig(request, appDb, decodeURIComponent(appConfigMatch[1]))
+      return writeAppConfig(request, appDb, env, decodeURIComponent(appConfigMatch[1]))
     }
 
     if (path === '/v1/admin/users' && request.method === 'GET') {
@@ -163,13 +186,13 @@ export default {
 
 
 async function listAppConfigs(db: D1Database): Promise<Response> {
-  const { results } = await db.prepare('SELECT app, title, app_color, app_icon, app_icon_media_category, app_icon_image_url, theme_color, updated_at, version FROM app_config').all<AppConfigRow>()
+  const { results } = await db.prepare('SELECT app, title, app_color, app_icon, app_icon_media_category, app_icon_image_url, theme_color, supported_languages_mode, supported_languages_json, updated_at, version FROM app_config').all<AppConfigRow>()
   const rows = new Map((results ?? []).map((row) => [row.app, row]))
   const configs = Object.fromEntries(APPS.map((app) => [app, rowToConfig(app, rows.get(app) ?? null)]))
   return json({ data: { configs } })
 }
 
-async function writeAppConfig(request: Request, db: D1Database, rawApp: string): Promise<Response> {
+async function writeAppConfig(request: Request, db: D1Database, env: Env, rawApp: string): Promise<Response> {
   let app: TikoAppId
   try {
     app = parseApp(rawApp)
@@ -186,8 +209,8 @@ async function writeAppConfig(request: Request, db: D1Database, rawApp: string):
   const now = new Date().toISOString()
   const version = currentVersion + 1
   await db.prepare(
-    `INSERT INTO app_config (app, title, app_color, app_icon, app_icon_media_category, app_icon_image_url, theme_color, updated_at, version)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `INSERT INTO app_config (app, title, app_color, app_icon, app_icon_media_category, app_icon_image_url, theme_color, supported_languages_mode, supported_languages_json, updated_at, version)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
      ON CONFLICT(app) DO UPDATE SET
        title = excluded.title,
        app_color = excluded.app_color,
@@ -195,9 +218,12 @@ async function writeAppConfig(request: Request, db: D1Database, rawApp: string):
        app_icon_media_category = excluded.app_icon_media_category,
        app_icon_image_url = excluded.app_icon_image_url,
        theme_color = excluded.theme_color,
+       supported_languages_mode = excluded.supported_languages_mode,
+       supported_languages_json = excluded.supported_languages_json,
        updated_at = excluded.updated_at,
        version = excluded.version`
-  ).bind(app, next.title, next.appColor, next.appIcon, next.appIconMediaCategory ?? null, next.appIconImageUrl ?? null, next.themeColor ?? null, now, version).run()
+  ).bind(app, next.title, next.appColor, next.appIcon, next.appIconMediaCategory ?? null, next.appIconImageUrl ?? null, next.themeColor ?? null, next.supportedLanguagesMode ?? 'tiko-defaults', JSON.stringify(next.supportedLanguages ?? []), now, version).run()
+  await syncLezuLanguages(db, env)
   return json({ data: { config: next, updatedAt: now, version } })
 }
 
@@ -212,6 +238,8 @@ function rowToConfig(app: TikoAppId, row: AppConfigRow | null): TikoAppConfigPay
     ...(row.app_icon_media_category ? { appIconMediaCategory: row.app_icon_media_category } : fallback.appIconMediaCategory ? { appIconMediaCategory: fallback.appIconMediaCategory } : {}),
     ...(row.app_icon_image_url ? { appIconImageUrl: row.app_icon_image_url } : fallback.appIconImageUrl ? { appIconImageUrl: fallback.appIconImageUrl } : {}),
     ...(row.theme_color ? { themeColor: row.theme_color } : fallback.themeColor ? { themeColor: fallback.themeColor } : {}),
+    supportedLanguagesMode: row.supported_languages_mode === 'custom' ? 'custom' : 'tiko-defaults',
+    supportedLanguages: parseLanguageList(row.supported_languages_json),
     updatedAt: row.updated_at,
     version: Number(row.version)
   }
@@ -226,8 +254,99 @@ function normalizeAppConfig(app: TikoAppId, value: Partial<TikoAppConfigPayload>
     appIcon: cleanString(value.appIcon, fallback.appIcon),
     ...(cleanOptionalString(value.appIconMediaCategory) ? { appIconMediaCategory: cleanOptionalString(value.appIconMediaCategory) } : {}),
     ...(cleanOptionalString(value.appIconImageUrl) ? { appIconImageUrl: cleanOptionalString(value.appIconImageUrl) } : {}),
-    ...(cleanOptionalString(value.themeColor) ? { themeColor: cleanOptionalString(value.themeColor) } : {})
+    ...(cleanOptionalString(value.themeColor) ? { themeColor: cleanOptionalString(value.themeColor) } : {}),
+    supportedLanguagesMode: value.supportedLanguagesMode === 'custom' ? 'custom' : 'tiko-defaults',
+    supportedLanguages: normalizeLanguageList(value.supportedLanguages)
   }
+}
+
+async function readTikoSettings(db: D1Database): Promise<Response> {
+  const row = await db.prepare('SELECT data_json, updated_at, version FROM app_defaults WHERE app = ? AND resource = ?').bind('tiko', 'settings').first<AppDefaultsRow>()
+  const settings = tikoSettingsFromRow(row)
+  return json({ data: { settings, updatedAt: row?.updated_at ?? null, version: row ? Number(row.version) : 0 } })
+}
+
+async function writeTikoSettings(request: Request, db: D1Database, env: Env): Promise<Response> {
+  const body = await readJson<{ settings?: Record<string, unknown>, version?: number }>(request)
+  const next = normalizeTikoSettings(body.settings ?? {})
+  const existing = await db.prepare('SELECT version FROM app_defaults WHERE app = ? AND resource = ?').bind('tiko', 'settings').first<{ version: number }>()
+  const currentVersion = existing ? Number(existing.version) : 0
+  if (typeof body.version === 'number' && body.version !== currentVersion) {
+    return apiError('version_conflict', 'Stored Tiko settings version does not match requested version.', 409)
+  }
+  const now = new Date().toISOString()
+  const version = currentVersion + 1
+  await db.prepare(
+    `INSERT INTO app_defaults (app, resource, data_json, updated_at, version)
+     VALUES (?, ?, ?, ?, ?)
+     ON CONFLICT(app, resource) DO UPDATE SET
+       data_json = excluded.data_json,
+       updated_at = excluded.updated_at,
+       version = excluded.version`
+  ).bind('tiko', 'settings', JSON.stringify(next), now, version).run()
+  await syncLezuLanguages(db, env)
+  return json({ data: { settings: next, updatedAt: now, version } })
+}
+
+function tikoSettingsFromRow(row: AppDefaultsRow | null): Record<string, unknown> {
+  if (!row) return { supportedLanguages: DEFAULT_SUPPORTED_LANGUAGES }
+  const parsed = parseJson(row.data_json) ?? {}
+  return normalizeTikoSettings(parsed)
+}
+
+function normalizeTikoSettings(value: Record<string, unknown>): Record<string, unknown> {
+  return { ...value, supportedLanguages: normalizeLanguageList(value.supportedLanguages, DEFAULT_SUPPORTED_LANGUAGES) }
+}
+
+async function syncLezuLanguages(db: D1Database, env: Env): Promise<void> {
+  if (!env.TRANSLATIONS_API_KEY) return
+  const languages = await collectLezuLanguages(db)
+  const baseUrl = (env.TRANSLATIONS_API_URL ?? 'https://translations.tikoapi.org/v1').replace(/\/$/, '')
+  const response = await fetch(`${baseUrl}/languages`, {
+    method: 'PUT',
+    headers: { authorization: `ApiKey ${env.TRANSLATIONS_API_KEY}`, 'content-type': 'application/json' },
+    body: JSON.stringify({ languages })
+  })
+  if (!response.ok) {
+    const detail = await response.text().catch(() => '')
+    throw new Error(`translations_language_sync_failed:${response.status}:${detail}`)
+  }
+}
+
+async function collectLezuLanguages(db: D1Database): Promise<string[]> {
+  const defaultsRow = await db.prepare('SELECT data_json, updated_at, version FROM app_defaults WHERE app = ? AND resource = ?').bind('tiko', 'settings').first<AppDefaultsRow>()
+  const languages = new Set(normalizeLanguageList(tikoSettingsFromRow(defaultsRow).supportedLanguages, DEFAULT_SUPPORTED_LANGUAGES))
+  const { results } = await db.prepare('SELECT supported_languages_mode, supported_languages_json FROM app_config').all<Pick<AppConfigRow, 'supported_languages_mode' | 'supported_languages_json'>>()
+  for (const row of results ?? []) {
+    if (row.supported_languages_mode === 'custom') {
+      for (const language of parseLanguageList(row.supported_languages_json)) languages.add(language)
+    }
+  }
+  return Array.from(languages).sort()
+}
+
+function parseLanguageList(raw: string | null | undefined): string[] {
+  if (!raw) return []
+  try {
+    const parsed = JSON.parse(raw) as unknown
+    return normalizeLanguageList(parsed)
+  } catch {
+    return []
+  }
+}
+
+function normalizeLanguageList(value: unknown, fallback: string[] = []): string[] {
+  const source = Array.isArray(value) ? value : fallback
+  const values = source
+    .map((item) => typeof item === 'string' ? normalizeLanguageTag(item) : '')
+    .filter(Boolean)
+  return Array.from(new Set(values))
+}
+
+function normalizeLanguageTag(value: string): string {
+  const cleaned = value.trim().replace(/_/g, '-')
+  if (!/^[a-zA-Z]{2,3}(?:-[a-zA-Z0-9]{2,8})*$/.test(cleaned)) return ''
+  return cleaned.split('-').map((part, index) => index === 0 ? part.toLowerCase() : part.length === 2 ? part.toUpperCase() : part).join('-')
 }
 
 function parseApp(value: string): TikoAppId {
