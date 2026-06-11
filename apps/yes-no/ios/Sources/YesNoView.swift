@@ -173,10 +173,12 @@ final class YesNoStore: ObservableObject {
     @Published var defaultSets: [YesNoAnswerSet] = builtInAnswerSets
     @Published var defaultSelectedSetId: String?
 
-    private static let appAPIBase = "https://app.tikoapi.org/v1"
+    private static let contentAPIBase = "https://content.tikoapi.org/v1"
 
-    func fetchDefaults() async {
-        guard let url = URL(string: "\(Self.appAPIBase)/apps/defaults/yes-no/state") else { return }
+    func fetchDefaults(languageCode: String = "en") async {
+        guard var components = URLComponents(string: "\(Self.contentAPIBase)/yes-no/content") else { return }
+        components.queryItems = [URLQueryItem(name: "language", value: languageCode)]
+        guard let url = components.url else { return }
         do {
             let (data, response) = try await URLSession.shared.data(from: url)
             guard let http = response as? HTTPURLResponse, (200..<300).contains(http.statusCode) else { return }
@@ -373,9 +375,12 @@ struct YesNoView: View {
         }
         .onChange(of: languageCode) { _, code in
             i18n.setLanguage(code)
+            Task {
+                await store.fetchDefaults(languageCode: code)
+            }
         }
         .task {
-            await store.fetchDefaults()
+            await store.fetchDefaults(languageCode: languageCode)
             if customAnswerSets.isEmpty {
                 if let defaultSelected = store.defaultSelectedSetId,
                    availableAnswerSets.contains(where: { $0.id == defaultSelected }) {

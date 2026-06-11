@@ -107,12 +107,19 @@ const DEFAULT_ALLOWED_ORIGINS = [
 
 const CACHE_TTL_SECONDS = 300
 const CACHE_KEY_CARDS_COLLECTIONS = 'cards:collections'
+const CACHE_KEY_YES_NO_CONTENT = 'yes-no:content'
 const CARDS_CACHE_LANGUAGES = ['en', 'nl', 'fr', 'es', 'de', 'mt', 'it', 'pt', 'pt-br', 'ar']
 
 async function invalidateCardsCache(env: Env): Promise<void> {
   if (!env.CONTENT_CACHE) return
   await env.CONTENT_CACHE.delete(CACHE_KEY_CARDS_COLLECTIONS)
   await Promise.all(CARDS_CACHE_LANGUAGES.map(language => env.CONTENT_CACHE!.delete(`${CACHE_KEY_CARDS_COLLECTIONS}:${language}`)))
+}
+
+async function invalidateYesNoCache(env: Env): Promise<void> {
+  if (!env.CONTENT_CACHE) return
+  await env.CONTENT_CACHE.delete(CACHE_KEY_YES_NO_CONTENT)
+  await Promise.all(CARDS_CACHE_LANGUAGES.map(language => env.CONTENT_CACHE!.delete(`${CACHE_KEY_YES_NO_CONTENT}:${language}`)))
 }
 
 interface UserImageRow {
@@ -215,11 +222,11 @@ function languageFromRequest(request: Request): string | undefined {
     ?? languageFromAcceptLanguage(request.headers.get('Accept-Language'))
 }
 
-async function languageFromUserSettings(env: Env, sessionToken: string | undefined): Promise<string | undefined> {
+async function languageFromUserSettings(env: Env, appId: string, sessionToken: string | undefined): Promise<string | undefined> {
   if (!sessionToken || !env.APP_API_URL) return undefined
   try {
     const appBase = env.APP_API_URL.replace(/\/$/, '')
-    const resp = await fetch(`${appBase}/v1/apps/cards/settings`, {
+    const resp = await fetch(`${appBase}/v1/apps/${encodeURIComponent(appId)}/settings`, {
       headers: { Authorization: `Bearer ${sessionToken}`, Accept: 'application/json' },
     })
     if (!resp.ok) return undefined
@@ -232,73 +239,14 @@ async function languageFromUserSettings(env: Env, sessionToken: string | undefin
 
 async function effectiveCardsLanguage(request: Request, env: Env, sessionToken: string | undefined): Promise<string> {
   return languageFromRequest(request)
-    ?? await languageFromUserSettings(env, sessionToken)
+    ?? await languageFromUserSettings(env, 'cards', sessionToken)
     ?? 'en'
 }
 
-async function fetchCardsTranslations(env: Env, language: string): Promise<Record<string, string>> {
-  if (language === 'en') return {}
-  try {
-    const base = (env.TRANSLATIONS_API_URL ?? 'https://translations.tikoapi.org/v1').replace(/\/$/, '')
-    const response = await fetch(`${base}/cards/${encodeURIComponent(language)}`, {
-      headers: { Accept: 'application/json' },
-    })
-    if (!response.ok) return {}
-    const body = await response.json() as { translations?: Record<string, unknown> }
-    return Object.fromEntries(
-      Object.entries(body.translations ?? {}).filter((entry): entry is [string, string] => typeof entry[1] === 'string'),
-    )
-  } catch {
-    return {}
-  }
-}
-
-function translateDefaultCollections(collections: CardCollection[], translations: Record<string, string>): CardCollection[] {
-  if (Object.keys(translations).length === 0) return collections
-  return collections.map((collection) => {
-    if (collection.id.startsWith('user_')) return collection
-    const collectionTitle = translateDefaultTitle(collection.id, translations) ?? collection.title
-    return {
-      ...collection,
-      title: collectionTitle,
-      cards: collection.cards.map((card) => {
-        if (card.id.startsWith('user_')) return card
-        const translated = translateDefaultTitle(card.id, translations)
-        if (!translated) return card
-        return { ...card, title: translated, speech: translated }
-      }),
-    }
-  })
-}
-
-function translateDefaultTitle(id: string, translations: Record<string, string>): string | undefined {
-  for (const key of defaultTranslationKeys(id)) {
-    const translated = translations[key]
-    if (translated) return translated
-  }
-  return undefined
-}
-
-function defaultTranslationKeys(id: string): string[] {
-  const keys = [`cards.default.${id}`]
-  const match = /^__default_([^_]+)_(.+)$/.exec(id)
-  if (!match) return keys
-
-  const [, rawGroup, item] = match
-  const groupAliases: Record<string, string> = {
-    animals: 'animal',
-    body: 'body',
-    colors: 'color',
-    emotions: 'emotion',
-    food: 'food',
-    letters: 'letter',
-    numbers: 'num',
-    shapes: 'shape',
-    transport: 'transport',
-  }
-  const alias = groupAliases[rawGroup] ?? rawGroup
-  keys.push(`cards.default.${alias}_${item}`)
-  return keys
+async function effectiveAppLanguage(request: Request, env: Env, appId: string, sessionToken: string | undefined): Promise<string> {
+  return languageFromRequest(request)
+    ?? await languageFromUserSettings(env, appId, sessionToken)
+    ?? 'en'
 }
 
 function normalizeRow(row: JsonRecord): JsonRecord {
@@ -465,156 +413,218 @@ async function executeQuery(env: Env, query: ContentQuery): Promise<unknown> {
 // Cards
 // ---------------------------------------------------------------------------
 
-interface CardsCollectionRow {
+interface AppContentItemRow {
   id: string
-  title: string
-  color_hex: number
-  display_order: number
-  media_categories: string | null
-  image_url: string | null
+  app_id: string
+  type: string
   parent_id: string | null
-}
-
-interface CardsTileRow {
-  id: string
-  collection_id: string
   title: string
-  speech: string
-  color_hex: number
-  display_order: number
+  subtitle: string | null
+  body: string | null
+  speech: string | null
+  color_token: string | null
+  color_hex: number | null
+  icon: string | null
   image_ref: string | null
+  image_url: string | null
+  sort_order: number
+  is_default: number
+  is_published: number
+  owner_user_id: string | null
+  owner_child_id: string | null
+  source_item_id: string | null
+  metadata_json: string | null
 }
 
-// Map a hex color string ('#4CAF50') or number to a numeric colorHex.
-function parseColorHex(color: unknown, fallback = 0x888888): number {
-  if (typeof color === 'number') return color
-  if (typeof color === 'string') {
-    const hex = color.replace(/^#/, '')
-    const n = parseInt(hex, 16)
-    if (!isNaN(n)) return n
-  }
-  return fallback
+interface AppContentTranslationRow {
+  item_id: string
+  title: string | null
+  subtitle: string | null
+  body: string | null
+  speech: string | null
+  metadata_json: string | null
 }
 
-// Map app-api CardsCollection format (web) to content-api CardCollection format (iOS).
-interface AppApiCollection {
-  id?: unknown
-  title?: unknown
-  color?: unknown
-  order?: unknown
-  mediaCategories?: unknown
-  image?: unknown
-  imageURL?: unknown
-  imageUrl?: unknown
-  image_url?: unknown
-  tiles?: unknown[]
+interface LocalizedContentItem extends AppContentItemRow {
+  metadata: JsonRecord
 }
 
-function stringImageValue(...values: unknown[]): string | undefined {
-  const value = values.find((item): item is string => typeof item === 'string' && item.trim().length > 0)
-  return value?.trim()
+interface YesNoAnswerTile {
+  id: string
+  label: string
+  speech: string
+  color?: string
+  imageURL?: string
+  icon?: string
 }
 
-function mapAppApiCollection(raw: AppApiCollection, index: number): CardCollection {
-  const colorHex = parseColorHex(raw.color)
-  const tiles = Array.isArray(raw.tiles) ? raw.tiles : []
-  const imageURL = stringImageValue(raw.imageURL, raw.imageUrl, raw.image_url, raw.image)
-  return {
-    id: String(raw.id ?? ''),
-    title: String(raw.title ?? ''),
-    colorHex,
-    order: typeof raw.order === 'number' ? raw.order : index,
-    mediaCategories: Array.isArray(raw.mediaCategories) ? (raw.mediaCategories as string[]) : [],
-    ...(imageURL ? { imageURL } : {}),
-    cards: tiles.map((t, i) => {
-      const tile = t as { id?: unknown; title?: unknown; speech?: unknown; color?: unknown; image?: unknown; imageURL?: unknown; imageUrl?: unknown; image_url?: unknown; imageRef?: unknown; image_ref?: unknown }
-      const tileImageURL = stringImageValue(tile.imageURL, tile.imageUrl, tile.image_url, tile.image)
-      const imageRef = stringImageValue(tile.imageRef, tile.image_ref)
-      return {
-        id: String(tile.id ?? ''),
-        title: String(tile.title ?? ''),
-        speech: String(tile.speech ?? tile.title ?? ''),
-        colorHex: parseColorHex(tile.color, colorHex),
-        order: i,
-        ...(tileImageURL ? { imageURL: tileImageURL } : {}),
-        ...(imageRef ? { imageRef } : {}),
-      }
-    }),
+interface YesNoAnswerSet {
+  id: string
+  title: string
+  description?: string
+  color?: string
+  imageURL?: string
+  order: number
+  answers: YesNoAnswerTile[]
+}
+
+function parseJsonRecord(value: unknown): JsonRecord {
+  if (value && typeof value === 'object' && !Array.isArray(value)) return value as JsonRecord
+  if (typeof value !== 'string' || !value.trim()) return {}
+  try {
+    const parsed = JSON.parse(value)
+    return parsed && typeof parsed === 'object' && !Array.isArray(parsed) ? parsed as JsonRecord : {}
+  } catch {
+    return {}
   }
 }
 
-async function getDefaultCollections(env: Env): Promise<CardCollection[]> {
-  // Primary: app-api global defaults (single source of truth shared with web app)
-  if (env.APP_API_URL) {
-    try {
-      const appBase = env.APP_API_URL.replace(/\/$/, '')
-      const resp = await fetch(`${appBase}/v1/apps/defaults/cards/state`)
-      if (resp.ok) {
-        const body = (await resp.json()) as { state?: { collections?: unknown[] } }
-        const cols = body?.state?.collections
-        if (Array.isArray(cols) && cols.length > 0) {
-          return (cols as AppApiCollection[]).map(mapAppApiCollection)
-        }
-      }
-    } catch {
-      // fall through to DB
-    }
+function overlayText(base: string | null, translated: string | null): string | null {
+  return typeof translated === 'string' && translated.trim() ? translated : base
+}
+
+async function getLocalizedContentItems(env: Env, appId: string, language: string): Promise<LocalizedContentItem[]> {
+  const { results: rows } = await env.CONTENT_DB.prepare(
+    `SELECT id, app_id, type, parent_id, title, subtitle, body, speech, color_token, color_hex,
+            icon, image_ref, image_url, sort_order, is_default, is_published, owner_user_id,
+            owner_child_id, source_item_id, metadata_json
+     FROM content_items
+     WHERE app_id = ?
+       AND COALESCE(is_published, status = 'published', 1) = 1
+       AND owner_user_id IS NULL
+     ORDER BY COALESCE(parent_id, id), sort_order ASC, title ASC`,
+  ).bind(appId).all<AppContentItemRow>()
+
+  if (rows.length === 0) return []
+
+  const normalizedLanguage = normalizeLanguage(language) ?? 'en'
+  const translationMap = new Map<string, AppContentTranslationRow>()
+  if (normalizedLanguage !== 'en') {
+    const { results: translations } = await env.CONTENT_DB.prepare(
+      `SELECT item_id, title, subtitle, body, speech, metadata_json
+       FROM content_item_translations
+       WHERE locale = ?`,
+    ).bind(normalizedLanguage).all<AppContentTranslationRow>()
+    for (const translation of translations) translationMap.set(translation.item_id, translation)
   }
 
-  // Fallback: content-DB cards_collections table
-  const { results: collectionRows } = await env.CONTENT_DB.prepare(
-    `SELECT id, title, color_hex, display_order, media_categories, image_url, parent_id
-     FROM cards_collections
-     WHERE is_active = 1
-     ORDER BY display_order ASC`,
-  ).all<CardsCollectionRow>()
-
-  const { results: tileRows } = await env.CONTENT_DB.prepare(
-    `SELECT id, collection_id, title, speech, color_hex, display_order, image_ref
-     FROM cards_tiles
-     ORDER BY collection_id, display_order ASC`,
-  ).all<CardsTileRow>()
-
-  const tilesByCollection = new Map<string, CardTile[]>()
-  for (const row of tileRows) {
-    const resolvedImageURL = row.image_ref
-      ? row.image_ref.startsWith('http')
-        ? row.image_ref
-        : `${(env.MEDIA_API_URL ?? 'https://media.tikoapi.org/v1').replace(/\/$/, '')}/media/${encodeURIComponent(row.image_ref)}/download`
-      : undefined
-    const tile: CardTile = {
-      id: row.id,
-      title: row.title,
-      speech: row.speech,
-      colorHex: row.color_hex,
-      order: row.display_order,
-      imageRef: row.image_ref ?? undefined,
-      imageURL: resolvedImageURL,
-    }
-    const existing = tilesByCollection.get(row.collection_id)
-    if (existing) { existing.push(tile) } else { tilesByCollection.set(row.collection_id, [tile]) }
-  }
-
-  return collectionRows.map((row) => {
-    const cats = parseJsonArray(row.media_categories) as string[]
-    const imageURL = row.image_url || cats.find(c => c.startsWith('http'))
+  return rows.map((row) => {
+    const translation = translationMap.get(row.id)
+    const baseMetadata = parseJsonRecord(row.metadata_json)
+    const translatedMetadata = parseJsonRecord(translation?.metadata_json)
     return {
-      id: row.id,
-      title: row.title,
-      colorHex: row.color_hex,
-      order: row.display_order,
-      mediaCategories: cats.filter(c => !c.startsWith('http')),
-      ...(imageURL ? { imageURL } : {}),
-      ...(row.parent_id ? { parentID: row.parent_id } : {}),
-      cards: tilesByCollection.get(row.id) ?? [],
+      ...row,
+      title: overlayText(row.title, translation?.title ?? null) ?? row.title,
+      subtitle: overlayText(row.subtitle, translation?.subtitle ?? null),
+      body: overlayText(row.body, translation?.body ?? null),
+      speech: overlayText(row.speech, translation?.speech ?? null),
+      metadata: { ...baseMetadata, ...translatedMetadata },
     }
   })
 }
 
+async function resolveItemImageURL(item: AppContentItemRow, env: Env): Promise<string | undefined> {
+  if (item.image_url) return item.image_url
+  if (!item.image_ref) return undefined
+  if (item.image_ref.startsWith('http')) return item.image_ref
+  return await resolveImageRef(item.image_ref, env) ?? undefined
+}
+
+async function mapCardsContentItems(items: LocalizedContentItem[], env: Env): Promise<CardCollection[]> {
+  const collections = items.filter(item => item.type === 'collection')
+  const cards = items.filter(item => item.type === 'card')
+  const cardsByCollection = new Map<string, LocalizedContentItem[]>()
+  for (const card of cards) {
+    if (!card.parent_id) continue
+    const existing = cardsByCollection.get(card.parent_id)
+    if (existing) existing.push(card)
+    else cardsByCollection.set(card.parent_id, [card])
+  }
+
+  const result: CardCollection[] = []
+  for (const collection of collections) {
+    const mediaCategories = parseJsonArray(collection.metadata.mediaCategories) as string[]
+    const imageURL = await resolveItemImageURL(collection, env)
+    const collectionCards: CardTile[] = []
+    for (const card of cardsByCollection.get(collection.id) ?? []) {
+      const cardImageURL = await resolveItemImageURL(card, env)
+      collectionCards.push({
+        id: card.id,
+        title: card.title,
+        speech: card.speech ?? card.title,
+        colorHex: card.color_hex ?? collection.color_hex ?? 0,
+        order: card.sort_order,
+        ...(card.image_ref ? { imageRef: card.image_ref } : {}),
+        ...(cardImageURL ? { imageURL: cardImageURL } : {}),
+      })
+    }
+
+    result.push({
+      id: collection.id,
+      title: collection.title,
+      colorHex: collection.color_hex ?? 0,
+      order: collection.sort_order,
+      mediaCategories,
+      ...(imageURL ? { imageURL } : {}),
+      ...(collection.parent_id ? { parentID: collection.parent_id } : {}),
+      cards: collectionCards.sort((a, b) => a.order - b.order),
+    })
+  }
+
+  return result.sort((a, b) => a.order - b.order)
+}
+
+async function getDefaultCollections(env: Env, language = 'en'): Promise<CardCollection[]> {
+  const items = await getLocalizedContentItems(env, 'cards', language)
+  return mapCardsContentItems(items, env)
+}
+
+async function getYesNoContent(env: Env, language: string): Promise<{ answerSets: YesNoAnswerSet[]; answers: YesNoAnswerTile[]; selectedSetId: string | null }> {
+  const items = await getLocalizedContentItems(env, 'yes-no', language)
+  const sets = items.filter(item => item.type === 'answer_set')
+  const answers = items.filter(item => item.type === 'answer_tile')
+  const answersBySet = new Map<string, LocalizedContentItem[]>()
+  for (const answer of answers) {
+    if (!answer.parent_id) continue
+    const existing = answersBySet.get(answer.parent_id)
+    if (existing) existing.push(answer)
+    else answersBySet.set(answer.parent_id, [answer])
+  }
+
+  const answerSets: YesNoAnswerSet[] = []
+  for (const set of sets) {
+    const mappedAnswers: YesNoAnswerTile[] = (answersBySet.get(set.id) ?? [])
+      .sort((a, b) => a.sort_order - b.sort_order)
+      .map((answer) => ({
+        id: typeof answer.metadata.answerId === 'string' ? answer.metadata.answerId : answer.id,
+        label: answer.title,
+        speech: answer.speech ?? answer.title,
+        ...(answer.color_token ? { color: answer.color_token } : {}),
+        ...(answer.image_url ? { imageURL: answer.image_url } : {}),
+        ...(answer.icon ? { icon: answer.icon } : {}),
+      }))
+
+    answerSets.push({
+      id: set.id,
+      title: set.title,
+      ...(set.subtitle ? { description: set.subtitle } : {}),
+      ...(set.color_token ? { color: set.color_token } : {}),
+      ...(set.image_url ? { imageURL: set.image_url } : {}),
+      order: set.sort_order,
+      answers: mappedAnswers,
+    })
+  }
+
+  const sortedSets = answerSets.sort((a, b) => a.order - b.order)
+  return {
+    answerSets: sortedSets,
+    answers: sortedSets[0]?.answers ?? [],
+    selectedSetId: sortedSets[0]?.id ?? null,
+  }
+}
+
 async function getCardsCollections(env: Env, language: string, sessionToken?: string): Promise<{ collections: CardCollection[] }> {
-  const defaults = await getDefaultCollections(env)
-  const translations = await fetchCardsTranslations(env, language)
-  const localizedDefaults = translateDefaultCollections(defaults, translations)
+  const localizedDefaults = await getDefaultCollections(env, language)
 
   if (!sessionToken || !env.APP_API_URL) {
     return { collections: localizedDefaults }
@@ -649,30 +659,56 @@ async function putAdminCardsCollections(
     throw new Error('collections must be a non-empty array')
   }
 
-  await env.CONTENT_DB.prepare(`DELETE FROM cards_collections`).run()
+  await env.CONTENT_DB.prepare(`DELETE FROM content_item_translations WHERE item_id IN (SELECT id FROM content_items WHERE app_id = 'cards' AND owner_user_id IS NULL)`).run()
+  await env.CONTENT_DB.prepare(`DELETE FROM content_items WHERE app_id = 'cards' AND owner_user_id IS NULL`).run()
 
   for (const col of collections) {
     await env.CONTENT_DB.prepare(
-      `INSERT INTO cards_collections (id, title, color_hex, display_order, media_categories, image_url, language_code, is_active)
-       VALUES (?, ?, ?, ?, ?, ?, 'en', 1)`,
+      `INSERT INTO content_items (
+         id, template_id, title, slug, status, language_code, tags, categories, data,
+         app_id, type, parent_id, source_locale, speech, color_hex, image_url,
+         sort_order, is_default, is_published, metadata_json
+       )
+       VALUES (?, 'cards.collection', ?, ?, 'published', 'en', NULL, '["cards"]', ?,
+         'cards', 'collection', NULL, 'en', ?, ?, ?, ?, 1, 1, ?)`,
     )
       .bind(
         col.id,
         col.title,
+        col.id,
+        JSON.stringify({ mediaCategories: col.mediaCategories ?? [] }),
+        col.title,
         col.colorHex ?? 0,
-        col.order ?? 0,
-        JSON.stringify(col.mediaCategories ?? []),
         col.imageURL ?? null,
+        col.order ?? 0,
+        JSON.stringify({ mediaCategories: col.mediaCategories ?? [] }),
       )
       .run()
 
     if (Array.isArray(col.cards)) {
       for (const tile of col.cards) {
         await env.CONTENT_DB.prepare(
-          `INSERT INTO cards_tiles (id, collection_id, title, speech, color_hex, display_order, image_ref)
-           VALUES (?, ?, ?, ?, ?, ?, ?)`,
+          `INSERT INTO content_items (
+             id, template_id, title, slug, status, language_code, tags, categories, data,
+             app_id, type, parent_id, source_locale, speech, color_hex, image_ref, image_url,
+             sort_order, is_default, is_published, metadata_json
+           )
+           VALUES (?, 'cards.card', ?, ?, 'published', 'en', NULL, '["cards"]', ?,
+             'cards', 'card', ?, 'en', ?, ?, ?, ?, ?, 1, 1, ?)`,
         )
-          .bind(tile.id, col.id, tile.title, tile.speech, tile.colorHex ?? 0, tile.order ?? 0, tile.imageRef ?? tile.imageURL ?? null)
+          .bind(
+            tile.id,
+            tile.title,
+            tile.id,
+            JSON.stringify({ collectionId: col.id }),
+            col.id,
+            tile.speech,
+            tile.colorHex ?? 0,
+            tile.imageRef ?? null,
+            tile.imageURL ?? null,
+            tile.order ?? 0,
+            JSON.stringify({ collectionId: col.id }),
+          )
           .run()
       }
     }
@@ -785,9 +821,28 @@ async function handlePostCards(request: Request, env: Env, segments: string[]): 
         : typeof body.imageURL === 'string' && body.imageURL
           ? body.imageURL
           : null
+      const imageURL = typeof body.imageURL === 'string' && body.imageURL ? body.imageURL : null
       await env.CONTENT_DB.prepare(
-        'INSERT INTO cards_tiles (id, collection_id, title, speech, color_hex, display_order, image_ref) VALUES (?, ?, ?, ?, ?, ?, ?)',
-      ).bind(id, collectionId, title, speech, colorHex, order, imageRef).run()
+        `INSERT INTO content_items (
+           id, template_id, title, slug, status, language_code, tags, categories, data,
+           app_id, type, parent_id, source_locale, speech, color_hex, image_ref, image_url,
+           sort_order, is_default, is_published, metadata_json
+         )
+         VALUES (?, 'cards.card', ?, ?, 'published', 'en', NULL, '["cards"]', ?,
+           'cards', 'card', ?, 'en', ?, ?, ?, ?, ?, 1, 1, ?)`,
+      ).bind(
+        id,
+        title,
+        id,
+        JSON.stringify({ collectionId }),
+        collectionId,
+        speech,
+        colorHex,
+        imageRef,
+        imageURL,
+        order,
+        JSON.stringify({ collectionId }),
+      ).run()
       await invalidateCardsCache(env)
       const newCard: CardTile = { id, title, speech, colorHex, order, ...(imageRef ? { imageRef, imageURL: imageRef.startsWith('http') ? imageRef : undefined } : {}) }
       return json(request, env, { success: true, data: newCard }, 201)
@@ -902,6 +957,20 @@ async function handleGet(request: Request, env: Env, segments: string[]): Promis
     }
 
     const data = await cached(request, env, `${CACHE_KEY_CARDS_COLLECTIONS}:${language}`, () => getCardsCollections(env, language))
+    return json(request, env, { success: true, data })
+  }
+
+  if (resource === 'yes-no' && segments[2] === 'content') {
+    const authHeader = request.headers.get('Authorization') ?? ''
+    const sessionToken = authHeader.startsWith('Bearer ') ? authHeader.slice(7) : undefined
+    const language = await effectiveAppLanguage(request, env, 'yes-no', sessionToken)
+
+    if (sessionToken) {
+      const data = await getYesNoContent(env, language)
+      return json(request, env, { success: true, data }, 200, { 'Cache-Control': 'no-store' })
+    }
+
+    const data = await cached(request, env, `${CACHE_KEY_YES_NO_CONTENT}:${language}`, () => getYesNoContent(env, language))
     return json(request, env, { success: true, data })
   }
 
@@ -1067,24 +1136,11 @@ async function handlePutCards(request: Request, env: Env, segments: string[]): P
         return json(request, env, { success: true, data: updated })
       }
 
-      // Admin "update for everyone": update global defaults via app-api
-      if (!env.APP_API_URL) return error(request, env, 'not_configured', 'APP_API_URL not set', 503)
-      const appBase = env.APP_API_URL.replace(/\/$/, '')
-      const defaultsResp = await fetch(`${appBase}/v1/apps/defaults/cards/state`)
-      const defaultsBody = defaultsResp.ok ? (await defaultsResp.json() as { state?: { collections?: unknown[] }; version?: number }) : null
-      const existingDefaults = Array.isArray(defaultsBody?.state?.collections) ? (defaultsBody!.state!.collections as Array<Record<string, unknown>>) : []
-      const existingVersion = typeof defaultsBody?.version === 'number' ? defaultsBody!.version : 0
-
-      const updatedDefaults = existingDefaults.map(c =>
-        c.id === collectionId ? { ...c, title, color: `#${colorHex.toString(16).padStart(6, '0')}`, ...(imageURL !== undefined ? { image: imageURL } : {}) } : c
-      )
-
-      const putResp = await fetch(`${appBase}/v1/apps/defaults/cards/state`, {
-        method: 'PUT',
-        headers: { Authorization: `Bearer ${sessionToken}`, 'Content-Type': 'application/json' },
-        body: JSON.stringify({ state: { collections: updatedDefaults }, version: existingVersion }),
-      })
-      if (!putResp.ok) return error(request, env, 'internal_error', 'Failed to update global defaults', 500)
+      await env.CONTENT_DB.prepare(
+        `UPDATE content_items
+         SET title = ?, speech = ?, color_hex = ?, image_url = ?, updated_at = datetime('now')
+         WHERE id = ? AND app_id = 'cards' AND type = 'collection'`,
+      ).bind(title, title, colorHex, imageURL ?? null, collectionId).run()
       await invalidateCardsCache(env)
 
       const updated: CardCollection = { id: collectionId, title, colorHex, order: 0, mediaCategories: [], ...(imageURL ? { imageURL } : {}), cards: [] }
@@ -1129,7 +1185,12 @@ async function handlePutCards(request: Request, env: Env, segments: string[]): P
         : typeof body.imageURL === 'string' && body.imageURL
           ? body.imageURL
           : null
-      await env.CONTENT_DB.prepare('UPDATE cards_tiles SET title = ?, speech = ?, color_hex = ?, image_ref = ? WHERE id = ?').bind(title, speech, colorHex, imageRef, cardId).run()
+      const imageURL = typeof body.imageURL === 'string' && body.imageURL ? body.imageURL : null
+      await env.CONTENT_DB.prepare(
+        `UPDATE content_items
+         SET title = ?, speech = ?, color_hex = ?, image_ref = ?, image_url = ?, updated_at = datetime('now')
+         WHERE id = ? AND app_id = 'cards' AND type = 'card'`,
+      ).bind(title, speech, colorHex, imageRef, imageURL, cardId).run()
       await invalidateCardsCache(env)
       const updatedCard: CardTile = { id: cardId, title, speech, colorHex, order: 0, ...(imageRef ? { imageRef, imageURL: imageRef.startsWith('http') ? imageRef : undefined } : {}) }
       return json(request, env, { success: true, data: updatedCard })
@@ -1171,8 +1232,8 @@ async function handleDeleteCards(request: Request, env: Env, segments: string[])
       if (!(await verifyAdminFromSession(env, sessionToken))) {
         return error(request, env, 'forbidden', 'Admin role required to delete default collections', 403)
       }
-      await env.CONTENT_DB.prepare('DELETE FROM cards_tiles WHERE collection_id = ?').bind(collectionId).run()
-      await env.CONTENT_DB.prepare('DELETE FROM cards_collections WHERE id = ?').bind(collectionId).run()
+      await env.CONTENT_DB.prepare(`DELETE FROM content_item_translations WHERE item_id IN (SELECT id FROM content_items WHERE app_id = 'cards' AND (id = ? OR parent_id = ?))`).bind(collectionId, collectionId).run()
+      await env.CONTENT_DB.prepare(`DELETE FROM content_items WHERE app_id = 'cards' AND (id = ? OR parent_id = ?)`).bind(collectionId, collectionId).run()
       await invalidateCardsCache(env)
       return json(request, env, { success: true })
     }
@@ -1197,7 +1258,8 @@ async function handleDeleteCards(request: Request, env: Env, segments: string[])
       if (!(await verifyAdminFromSession(env, sessionToken))) {
         return error(request, env, 'forbidden', 'Admin role required to delete default cards', 403)
       }
-      await env.CONTENT_DB.prepare('DELETE FROM cards_tiles WHERE id = ? AND collection_id = ?').bind(cardId, collectionId).run()
+      await env.CONTENT_DB.prepare(`DELETE FROM content_item_translations WHERE item_id = ?`).bind(cardId).run()
+      await env.CONTENT_DB.prepare(`DELETE FROM content_items WHERE id = ? AND parent_id = ? AND app_id = 'cards' AND type = 'card'`).bind(cardId, collectionId).run()
       await invalidateCardsCache(env)
       return json(request, env, { success: true })
     }
@@ -1238,14 +1300,48 @@ async function handlePromoteCollection(request: Request, env: Env, _segments: st
 
   const id = !col.id.startsWith('user_') ? col.id : col.id.replace(/^user_/, '')
   await env.CONTENT_DB.prepare(
-    'INSERT OR REPLACE INTO cards_collections (id, title, color_hex, display_order, media_categories, language_code, is_active) VALUES (?, ?, ?, ?, ?, ?, 1)',
-  ).bind(id, col.title, col.colorHex ?? 0, col.order ?? 0, JSON.stringify(col.mediaCategories ?? []), 'en').run()
+    `INSERT OR REPLACE INTO content_items (
+       id, template_id, title, slug, status, language_code, tags, categories, data,
+       app_id, type, parent_id, source_locale, speech, color_hex, image_url,
+       sort_order, is_default, is_published, metadata_json
+     )
+     VALUES (?, 'cards.collection', ?, ?, 'published', 'en', NULL, '["cards"]', ?,
+       'cards', 'collection', NULL, 'en', ?, ?, ?, ?, 1, 1, ?)`,
+  ).bind(
+    id,
+    col.title,
+    id,
+    JSON.stringify({ mediaCategories: col.mediaCategories ?? [] }),
+    col.title,
+    col.colorHex ?? 0,
+    col.imageURL ?? null,
+    col.order ?? 0,
+    JSON.stringify({ mediaCategories: col.mediaCategories ?? [] }),
+  ).run()
 
   if (Array.isArray(col.cards)) {
     for (const tile of col.cards) {
       await env.CONTENT_DB.prepare(
-        'INSERT OR REPLACE INTO cards_tiles (id, collection_id, title, speech, color_hex, display_order, image_ref) VALUES (?, ?, ?, ?, ?, ?, ?)',
-      ).bind(tile.id, id, tile.title, tile.speech, tile.colorHex ?? 0, tile.order ?? 0, tile.imageRef ?? null).run()
+        `INSERT OR REPLACE INTO content_items (
+           id, template_id, title, slug, status, language_code, tags, categories, data,
+           app_id, type, parent_id, source_locale, speech, color_hex, image_ref, image_url,
+           sort_order, is_default, is_published, metadata_json
+         )
+         VALUES (?, 'cards.card', ?, ?, 'published', 'en', NULL, '["cards"]', ?,
+           'cards', 'card', ?, 'en', ?, ?, ?, ?, ?, 1, 1, ?)`,
+      ).bind(
+        tile.id,
+        tile.title,
+        tile.id,
+        JSON.stringify({ collectionId: id }),
+        id,
+        tile.speech,
+        tile.colorHex ?? 0,
+        tile.imageRef ?? null,
+        tile.imageURL ?? null,
+        tile.order ?? 0,
+        JSON.stringify({ collectionId: id }),
+      ).run()
     }
   }
 

@@ -119,8 +119,8 @@ function createFetchMock(options: {
       return jsonResponse({ app: 'yes-no', updatedAt: null, version: 3, state: options.state ?? {} })
     }
 
-    if (url.endsWith('/apps/defaults/yes-no/state') && method === 'GET') {
-      return jsonResponse({ app: 'yes-no', updatedAt: null, version: 1, state: options.defaults ?? {} })
+    if (url.includes('/yes-no/content') && method === 'GET') {
+      return jsonResponse({ success: true, data: options.defaults ?? {} })
     }
 
     if (url.endsWith('/apps/yes-no/settings') && method === 'PUT') {

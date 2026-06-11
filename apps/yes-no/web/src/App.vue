@@ -23,6 +23,7 @@ import './styles.scss'
 const storageKey = 'tiko:yes-no'
 const appId = 'yes-no' as const
 const apiBaseUrl = resolveApiBaseUrl()
+const contentBaseUrl = resolveContentBaseUrl()
 const identityBaseUrl = resolveIdentityBaseUrl()
 const bemm = useBemm('yes-no-app', { return: 'string', includeBaseClass: true })
 
@@ -54,6 +55,10 @@ interface AppConfigResponse {
   config?: Partial<TikoAppConfig>
 }
 
+interface ContentResponse {
+  data?: DefaultsState
+}
+
 interface PersistedState {
   language?: string
   colorMode?: TikoColorMode
@@ -72,6 +77,11 @@ function resolveApiBaseUrl() {
 function resolveIdentityBaseUrl() {
   const env = (import.meta as ImportMeta & { env?: Record<string, string | undefined> }).env
   return (env?.VITE_IDENTITY_API_URL ?? env?.VITE_TIKO_IDENTITY_BASE_URL ?? 'https://id.tikoapps.org/v1').replace(/\/$/, '')
+}
+
+function resolveContentBaseUrl() {
+  const env = (import.meta as ImportMeta & { env?: Record<string, string | undefined> }).env
+  return (env?.VITE_TIKO_CONTENT_BASE_URL ?? env?.VITE_CONTENT_API_URL ?? 'https://content.tikoapi.org/v1').replace(/\/$/, '')
 }
 
 function readJson<T>(key: string, fallback: T): T {
@@ -282,14 +292,26 @@ function applyState(state: YesNoState, version?: number) {
 
 async function hydrateRemoteData() {
   if (!sessionToken.value) return
-  const [settings, state, defaults] = await Promise.all([
+  const [settings, state] = await Promise.all([
     dataClient.getSettings(appId, sessionToken.value),
-    dataClient.getState(appId, sessionToken.value),
-    dataClient.getAppDefaults(appId, 'state').catch(() => null)
+    dataClient.getState(appId, sessionToken.value)
   ])
   applySettings(settings.settings, settings.version)
   applyState(state.state, state.version)
-  defaultAnswers.value = defaultsAnswers(defaults?.state)
+  await loadDefaultContent()
+}
+
+async function loadDefaultContent() {
+  const headers: Record<string, string> = { Accept: 'application/json' }
+  if (sessionToken.value) headers.Authorization = `Bearer ${sessionToken.value}`
+  try {
+    const response = await fetch(`${contentBaseUrl}/yes-no/content?language=${encodeURIComponent(language.value)}`, { headers })
+    if (!response.ok) return
+    const body = await response.json() as ContentResponse
+    defaultAnswers.value = defaultsAnswers(body.data)
+  } catch {
+    // Keep built-in fallbacks active when content-api is unavailable.
+  }
 }
 
 async function loadAppConfig() {
@@ -351,6 +373,7 @@ async function loadTranslations(value: TikoLanguage) {
 watch(language, (value) => {
   i18n.setLanguage(value)
   void loadTranslations(value)
+  void loadDefaultContent()
 }, { immediate: true })
 
 watch(colorMode, (mode) => {
@@ -388,7 +411,7 @@ async function speak(text: string) {
   if (!trimmed) return
   speakStatus.value = 'speaking'
   try {
-    const result = await tts.speak({ text: trimmed, language: language.value, provider: 'elevenlabs' })
+    const result = await tts.speak({ text: trimmed, language: language.value, provider: 'narakeet' })
     speakStatus.value = result.metadata?.fallbackUsed ? 'fallback' : 'idle'
   } catch {
     speakStatus.value = 'error'
