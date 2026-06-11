@@ -44,6 +44,7 @@ function createFetchMock(options: {
   settings?: Record<string, unknown>
   state?: Record<string, unknown>
   defaults?: Record<string, unknown>
+  appConfig?: Record<string, unknown>
   failBootstrap?: boolean
   failCookieSession?: boolean
   failTts?: boolean
@@ -59,6 +60,22 @@ function createFetchMock(options: {
       }
       return jsonResponse(identityBundle(options.identity))
     }
+
+    if (url.endsWith('/apps/config/yes-no') && method === 'GET') {
+      return jsonResponse({
+        config: options.appConfig ?? {
+          id: 'yes-no',
+          title: 'Yes No',
+          appColor: 'yes-no',
+          appIcon: 'ui/check-fat',
+          appIconMediaCategory: 'emotions',
+          themeColor: '#9b3fbd',
+        },
+        updatedAt: null,
+        version: 0,
+      })
+    }
+
     if (url.endsWith('/identity/profile') && method === 'GET') {
       return jsonResponse({ profile: {} })
     }
@@ -194,6 +211,30 @@ describe('Yes No web app', () => {
       expect(labels).not.toContain('Yes')
       expect(labels).not.toContain('No')
     })
+  })
+
+  it('applies admin-managed app color and icon config at runtime', async () => {
+    vi.stubGlobal('fetch', createFetchMock({
+      appConfig: {
+        id: 'yes-no',
+        title: 'Custom Yes No',
+        appColor: 'yes-no',
+        appIcon: 'ui/question-mark-fat',
+        appIconImageUrl: 'https://data.tikocdn.org/uploads/custom-icon.png',
+        appIconMediaCategory: 'feelings',
+        themeColor: '#123456',
+      }
+    }))
+
+    const { wrapper } = mountApp()
+    await flushPromises()
+
+    await vi.waitFor(() => {
+      expect(wrapper.text()).toContain('Custom Yes No')
+      expect(wrapper.get('.tiko-app-shell').attributes('style')).toContain('#123456')
+      expect(wrapper.get('.tiko-app-header__app-icon img').attributes('src')).toContain('custom-icon.png')
+    })
+    expect(document.querySelector<HTMLMetaElement>('meta[name="theme-color"]')?.content).toBe('#123456')
   })
 
   it('persists settings through @tiko/data and keeps a local fallback copy', async () => {

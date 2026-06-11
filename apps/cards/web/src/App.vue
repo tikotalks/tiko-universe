@@ -3,7 +3,7 @@ import { computed, h, inject, markRaw, onMounted, ref, watch } from 'vue'
 import { useBemm } from 'bemm'
 import { Button, Popup, type PopupService } from '@sil/ui'
 import { IdentityClient } from '@tiko/identity'
-import { createI18n, createTikoTranslationLoader, defaultLanguage, tikoI18nKeys, tikoLanguageOptions, tikoLanguages, type TikoLanguage } from '@tiko/i18n'
+import { createI18n, createTikoIdentityLabels, createTikoTranslationLoader, defaultLanguage, tikoI18nKeys, tikoLanguageOptions, tikoLanguages, type TikoLanguage } from '@tiko/i18n'
 import {
   TikoAppShell,
   createTikoTtsClient,
@@ -70,6 +70,7 @@ const runtime = useIdentityRuntime({
   identityClient,
   state: identityState,
   deviceName: 'Cards web',
+  labels: () => createTikoIdentityLabels(i18n.t),
 })
 
 const cards = useCardsStore({

@@ -8,13 +8,57 @@ interface Props {
   isLoggedIn?: boolean
   isRecoverable?: boolean
   userLabel?: string
+  labels?: TikoProfileMenuLabels
 }
 
 const props = withDefaults(defineProps<Props>(), {
   isLoggedIn: true,
   isRecoverable: false,
-  userLabel: 'Device user'
+  userLabel: 'Device user',
+  labels: () => ({
+    close: 'Close',
+    account: 'Account',
+    deviceUser: 'Device user',
+    temporaryDeviceUser: 'Temporary device user',
+    profile: 'Profile',
+    setNameAndEmail: 'Set name and email',
+    profileDetail: 'Name, email, avatar',
+    recoverableUserDetail: 'Make this a recoverable user',
+    logIn: 'Log in',
+    logInDetail: 'Recover an existing user by email',
+    childMode: 'Child mode',
+    hideParentControls: 'Hide parent controls',
+    createParentCode: 'Create a 4-digit code',
+    childAccounts: 'Child accounts',
+    childAccountsDetail: 'Manage child profiles and login codes',
+    deleteAccount: 'Delete account',
+    deleteAccountDetail: 'Remove this user and its sessions',
+    logOut: 'Log out',
+    logOutDetail: 'Keep this app available on the device',
+  })
 })
+
+interface TikoProfileMenuLabels {
+  close: string
+  account: string
+  deviceUser: string
+  temporaryDeviceUser: string
+  profile: string
+  setNameAndEmail: string
+  profileDetail: string
+  recoverableUserDetail: string
+  logIn: string
+  logInDetail: string
+  childMode: string
+  hideParentControls: string
+  createParentCode: string
+  childAccounts: string
+  childAccountsDetail: string
+  deleteAccount: string
+  deleteAccountDetail: string
+  logOut: string
+  logOutDetail: string
+}
 
 const emit = defineEmits<{
   (e: 'profile'): void
@@ -31,12 +75,12 @@ const emit = defineEmits<{
 <template>
   <div class="tiko-profile-menu" data-test="tiko-profile-menu">
     <div class="tiko-profile-menu__header">
-      <button class="tiko-profile-menu__close" type="button" aria-label="Close" @click="emit('close')">
+      <button class="tiko-profile-menu__close" type="button" :aria-label="props.labels.close" @click="emit('close')">
         <Icon name="wayfinding/cross" aria-hidden="true" />
       </button>
       <div class="tiko-profile-menu__heading">
-        <h2 class="tiko-profile-menu__title">Account</h2>
-        <p class="tiko-profile-menu__subtitle">{{ props.isRecoverable ? props.userLabel : 'Temporary device user' }}</p>
+        <h2 class="tiko-profile-menu__title">{{ props.labels.account }}</h2>
+        <p class="tiko-profile-menu__subtitle">{{ props.isRecoverable ? props.userLabel : props.labels.temporaryDeviceUser }}</p>
       </div>
       <span class="tiko-profile-menu__badge" aria-hidden="true"><Icon name="ui/user-s" /></span>
     </div>
@@ -45,8 +89,8 @@ const emit = defineEmits<{
       <button class="tiko-profile-menu__item" type="button" @click="emit('profile')">
         <span class="tiko-profile-menu__icon"><Icon name="ui/user-s" /></span>
         <span class="tiko-profile-menu__copy">
-          <strong>{{ props.isRecoverable ? 'Profile' : 'Set name and email' }}</strong>
-          <small>{{ props.isRecoverable ? 'Name, email, avatar' : 'Make this a recoverable user' }}</small>
+          <strong>{{ props.isRecoverable ? props.labels.profile : props.labels.setNameAndEmail }}</strong>
+          <small>{{ props.isRecoverable ? props.labels.profileDetail : props.labels.recoverableUserDetail }}</small>
         </span>
         <span class="tiko-profile-menu__chevron" aria-hidden="true">›</span>
       </button>
@@ -54,8 +98,8 @@ const emit = defineEmits<{
       <button v-if="!props.isRecoverable" class="tiko-profile-menu__item" type="button" @click="emit('login')">
         <span class="tiko-profile-menu__icon"><Icon name="media/mail" /></span>
         <span class="tiko-profile-menu__copy">
-          <strong>Log in</strong>
-          <small>Recover an existing user by email</small>
+          <strong>{{ props.labels.logIn }}</strong>
+          <small>{{ props.labels.logInDetail }}</small>
         </span>
         <span class="tiko-profile-menu__chevron" aria-hidden="true">›</span>
       </button>
@@ -63,8 +107,8 @@ const emit = defineEmits<{
       <button v-if="props.isRecoverable" class="tiko-profile-menu__item" type="button" @click="emit('enter-child-mode')">
         <span class="tiko-profile-menu__icon"><Icon name="product/baby-stroller" /></span>
         <span class="tiko-profile-menu__copy">
-          <strong>Child mode</strong>
-          <small>{{ props.hasCode ? 'Hide parent controls' : 'Create a 4-digit code' }}</small>
+          <strong>{{ props.labels.childMode }}</strong>
+          <small>{{ props.hasCode ? props.labels.hideParentControls : props.labels.createParentCode }}</small>
         </span>
         <span class="tiko-profile-menu__chevron" aria-hidden="true">›</span>
       </button>
@@ -72,8 +116,8 @@ const emit = defineEmits<{
       <button v-if="props.isRecoverable" class="tiko-profile-menu__item" type="button" @click="emit('child-accounts')">
         <span class="tiko-profile-menu__icon"><Icon name="ui/users" /></span>
         <span class="tiko-profile-menu__copy">
-          <strong>Child Accounts</strong>
-          <small>Manage child profiles and login codes</small>
+          <strong>{{ props.labels.childAccounts }}</strong>
+          <small>{{ props.labels.childAccountsDetail }}</small>
         </span>
         <span class="tiko-profile-menu__chevron" aria-hidden="true">›</span>
       </button>
@@ -81,8 +125,8 @@ const emit = defineEmits<{
       <button v-if="props.isRecoverable" class="tiko-profile-menu__item tiko-profile-menu__item--danger" type="button" @click="emit('delete-account')">
         <span class="tiko-profile-menu__icon"><Icon name="wayfinding/cross" /></span>
         <span class="tiko-profile-menu__copy">
-          <strong>Delete account</strong>
-          <small>Remove this user and its sessions</small>
+          <strong>{{ props.labels.deleteAccount }}</strong>
+          <small>{{ props.labels.deleteAccountDetail }}</small>
         </span>
         <span class="tiko-profile-menu__chevron" aria-hidden="true">›</span>
       </button>
@@ -90,8 +134,8 @@ const emit = defineEmits<{
       <button v-if="props.isLoggedIn" class="tiko-profile-menu__item" type="button" @click="emit('logout')">
         <span class="tiko-profile-menu__icon"><Icon name="arrows/arrow-headed-right" /></span>
         <span class="tiko-profile-menu__copy">
-          <strong>Log out</strong>
-          <small>Keep this app available on the device</small>
+          <strong>{{ props.labels.logOut }}</strong>
+          <small>{{ props.labels.logOutDetail }}</small>
         </span>
         <span class="tiko-profile-menu__chevron" aria-hidden="true">›</span>
       </button>

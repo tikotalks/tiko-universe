@@ -4,15 +4,17 @@ import { useBemm } from 'bemm'
 import { Icon, Popup } from '@sil/ui'
 import { IdentityClient } from '@tiko/identity'
 import { TikoDataClient, type YesNoSettings, type YesNoState } from '@tiko/data'
-import { createI18n, createTikoTranslationLoader, defaultLanguage, tikoI18nKeys, tikoLanguageOptions, tikoLanguages, type TikoLanguage } from '@tiko/i18n'
+import { createI18n, createTikoIdentityLabels, createTikoTranslationLoader, defaultLanguage, tikoI18nKeys, tikoLanguageOptions, tikoLanguages, type TikoLanguage } from '@tiko/i18n'
 import {
   TikoAppShell,
   TikoSettingsPanel,
   TikoSquareTile,
   createTikoTtsClient,
+  injectAppMeta,
   tikoColors,
   useIdentityRuntime,
   type IdentityRuntimeState,
+  type TikoAppConfig,
   type TikoColorMode
 } from '@tiko/ui'
 import { appConfig } from './appConfig'
@@ -46,6 +48,10 @@ interface DefaultsState {
   answers?: AnswerTile[]
   answerSets?: AnswerSet[]
   selectedSetId?: string
+}
+
+interface AppConfigResponse {
+  config?: Partial<TikoAppConfig>
 }
 
 interface PersistedState {
@@ -142,6 +148,7 @@ const latestAnswerId = ref<string>(toAnswerId(stored.latestAnswerId ?? stored.la
 const answerHistory = ref<string[]>(toHistory(stored.answerHistory))
 const defaultAnswers = ref<AnswerTile[]>([])
 const customAnswers = ref<AnswerTile[]>(Array.isArray(stored.answers) ? stored.answers : [])
+const runtimeAppConfig = ref<TikoAppConfig>({ ...appConfig })
 const settingsOpen = ref(false)
 const historyOpen = ref(false)
 const sentence = ref(stored.sentence || i18n.t(tikoI18nKeys.yesNo.sentence.default))
@@ -171,7 +178,7 @@ const runtimeState: IdentityRuntimeState = {
   childModeEnabled,
   pinConfigured,
 }
-const runtime = useIdentityRuntime({ identityClient, state: runtimeState, deviceName: 'Yes No web' })
+const runtime = useIdentityRuntime({ identityClient, state: runtimeState, deviceName: 'Yes No web', labels: () => createTikoIdentityLabels(i18n.t) })
 
 const defaultSentence = computed(() => {
   void translationsRevision.value
@@ -205,6 +212,8 @@ const labels = computed(() => {
     }
   }
 })
+
+const shellAppName = computed(() => runtimeAppConfig.value.title || labels.value.appName)
 
 const hardcodedAnswers = computed<AnswerTile[]>(() => [
   { id: 'yes', label: labels.value.yes, speech: labels.value.yes, color: 'green', icon: 'ui/check-fat' },
@@ -283,6 +292,19 @@ async function hydrateRemoteData() {
   defaultAnswers.value = defaultsAnswers(defaults?.state)
 }
 
+async function loadAppConfig() {
+  try {
+    const response = await fetch(`${apiBaseUrl}/apps/config/${appId}`)
+    if (!response.ok) return
+    const body = await response.json() as AppConfigResponse
+    if (!body.config || typeof body.config !== 'object') return
+    runtimeAppConfig.value = { ...appConfig, ...body.config, id: appId }
+    injectAppMeta(runtimeAppConfig.value)
+  } catch {
+    // Keep generated appConfig active when the config endpoint is unavailable.
+  }
+}
+
 async function persistSettingsRemote() {
   if (!bootstrapped.value || !sessionToken.value) return
   try {
@@ -348,6 +370,7 @@ watch([latestAnswerId, answerHistory], () => {
 }, { deep: true })
 
 onMounted(async () => {
+  void loadAppConfig()
   try {
     await runtime.bootstrapIdentity()
     await runtime.loadProfile()
@@ -365,7 +388,7 @@ async function speak(text: string) {
   if (!trimmed) return
   speakStatus.value = 'speaking'
   try {
-    const result = await tts.speak({ text: trimmed, language: language.value, provider: 'auto' })
+    const result = await tts.speak({ text: trimmed, language: language.value, provider: 'elevenlabs' })
     speakStatus.value = result.metadata?.fallbackUsed ? 'fallback' : 'idle'
   } catch {
     speakStatus.value = 'error'
@@ -392,12 +415,12 @@ function resetSentence() {
 
 <template>
   <TikoAppShell
-    :app-name="labels.appName"
-    :app-icon="appConfig.appIcon"
-    :app-icon-image-url="appConfig.appIconImageUrl"
-    :app-icon-media-category="appConfig.appIconMediaCategory"
-    :app-color="appConfig.appColor"
-    :theme-color="appConfig.themeColor"
+    :app-name="shellAppName"
+    :app-icon="runtimeAppConfig.appIcon"
+    :app-icon-image-url="runtimeAppConfig.appIconImageUrl"
+    :app-icon-media-category="runtimeAppConfig.appIconMediaCategory"
+    :app-color="runtimeAppConfig.appColor"
+    :theme-color="runtimeAppConfig.themeColor"
     avatar="ui/avatar"
     :actions="headerActions"
     :show-settings-button="parentMode"

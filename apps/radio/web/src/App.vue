@@ -5,7 +5,7 @@ import type { PopupService } from '@sil/ui'
 import { IdentityClient } from '@tiko/identity'
 import { TikoDataClient, type RadioSettings, type RadioState } from '@tiko/data'
 import type { RadioTrack, RadioCategory } from '@tiko/data'
-import { createI18n, defaultLanguage, tikoI18nKeys, tikoLanguageOptions, tikoLanguages, type TikoLanguage } from '@tiko/i18n'
+import { createI18n, createTikoIdentityLabels, defaultLanguage, tikoI18nKeys, tikoLanguageOptions, tikoLanguages, type TikoLanguage } from '@tiko/i18n'
 import {
   TikoAppShell,
   TikoColorMode,
@@ -149,6 +149,7 @@ const runtime = useIdentityRuntime({
   state: runtimeState,
   deviceName: 'Radio web',
   storageKey: 'tiko:identity:device-session',
+  labels: () => createTikoIdentityLabels(i18n.t),
 })
 
 // ---- Kid / parent mode (aliases into runtimeState) -------------------------

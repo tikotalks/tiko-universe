@@ -12,11 +12,37 @@ interface Props {
   mode?: 'setup' | 'verify'
   /** Optional async verifier for API-backed PIN flows. Return false to keep the popup open with an error. */
   verifyCode?: (code: string) => boolean | Promise<boolean>
+  labels?: TikoPinPopupLabels
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  hashNamespace: 'parent-code'
+  hashNamespace: 'parent-code',
+  labels: () => ({
+    createTitle: 'Create a code',
+    createSubtitle: 'This protects parent mode from kids',
+    confirmTitle: 'Confirm code',
+    confirmSubtitle: 'Enter the same 4 digits again',
+    enterTitle: 'Enter code',
+    enterSubtitle: 'to switch to parent mode',
+    codesDontMatch: "Codes don't match",
+    wrongCode: 'Wrong code',
+    back: 'Back',
+    cancel: 'Cancel',
+  }),
 })
+
+interface TikoPinPopupLabels {
+  createTitle: string
+  createSubtitle: string
+  confirmTitle: string
+  confirmSubtitle: string
+  enterTitle: string
+  enterSubtitle: string
+  codesDontMatch: string
+  wrongCode: string
+  back: string
+  cancel: string
+}
 
 const emit = defineEmits<{
   (e: 'set', hash: string, code: string): void
@@ -101,7 +127,7 @@ async function handleSubmit() {
     } else {
       const original = digits.value.join('')
       if (code !== original) {
-        error.value = 'Codes don\'t match'
+        error.value = props.labels.codesDontMatch
         shake.value = true
         confirmDigits.value = []
         setTimeout(() => { shake.value = false }, 400)
@@ -124,14 +150,14 @@ async function handleSubmit() {
       if (verified) {
         emit('set', hash, code)
       } else {
-        error.value = 'Wrong code'
+        error.value = props.labels.wrongCode
         shake.value = true
         digits.value = []
         setTimeout(() => { shake.value = false }, 400)
         focusDigit(0)
       }
     } catch {
-      error.value = 'Wrong code'
+      error.value = props.labels.wrongCode
       shake.value = true
       digits.value = []
       setTimeout(() => { shake.value = false }, 400)
@@ -164,19 +190,19 @@ async function hashCode(code: string): Promise<string> {
   <div class="tiko-pin-popup" :class="{ 'tiko-pin-popup--shake': shake }">
     <template v-if="mode === 'setup'">
       <div v-if="step === 'enter'" class="tiko-pin-popup__header">
-        <h2 class="tiko-pin-popup__title">Create a code</h2>
-        <p class="tiko-pin-popup__subtitle">This protects parent mode from kids</p>
+        <h2 class="tiko-pin-popup__title">{{ props.labels.createTitle }}</h2>
+        <p class="tiko-pin-popup__subtitle">{{ props.labels.createSubtitle }}</p>
       </div>
       <div v-else class="tiko-pin-popup__header">
-        <h2 class="tiko-pin-popup__title">Confirm code</h2>
-        <p class="tiko-pin-popup__subtitle">Enter the same 4 digits again</p>
+        <h2 class="tiko-pin-popup__title">{{ props.labels.confirmTitle }}</h2>
+        <p class="tiko-pin-popup__subtitle">{{ props.labels.confirmSubtitle }}</p>
       </div>
     </template>
 
     <template v-else>
       <div class="tiko-pin-popup__header">
-        <h2 class="tiko-pin-popup__title">Enter code</h2>
-        <p class="tiko-pin-popup__subtitle">to switch to parent mode</p>
+        <h2 class="tiko-pin-popup__title">{{ props.labels.enterTitle }}</h2>
+        <p class="tiko-pin-popup__subtitle">{{ props.labels.enterSubtitle }}</p>
       </div>
     </template>
 
@@ -220,7 +246,7 @@ async function hashCode(code: string): Promise<string> {
       class="tiko-pin-popup__back"
       @click="resetConfirm"
     >
-      Back
+      {{ props.labels.back }}
     </button>
 
     <button
@@ -228,7 +254,7 @@ async function hashCode(code: string): Promise<string> {
       class="tiko-pin-popup__cancel"
       @click="emit('cancel')"
     >
-      Cancel
+      {{ props.labels.cancel }}
     </button>
   </div>
 </template>

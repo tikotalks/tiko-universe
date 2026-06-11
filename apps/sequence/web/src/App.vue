@@ -3,7 +3,7 @@ import { computed, onMounted, ref, watch } from 'vue'
 import { Button, InputTextArea, Popup } from '@sil/ui'
 import { IdentityClient, type IdentityBundle } from '@tiko/identity'
 import { TikoDataClient, type SequenceSettings, type SequenceState } from '@tiko/data'
-import { createI18n, defaultLanguage, tikoI18nKeys, tikoLanguageOptions, tikoLanguages, type TikoLanguage } from '@tiko/i18n'
+import { createI18n, createTikoIdentityLabels, defaultLanguage, tikoI18nKeys, tikoLanguageOptions, tikoLanguages, type TikoLanguage } from '@tiko/i18n'
 import {
   TikoAppShell,
   TikoSettingsPanel,
@@ -102,7 +102,7 @@ const runtimeState: IdentityRuntimeState = {
   sessionToken, userId, accountEmail, accountEmailVerified, displayName,
   parentMode, childModeEnabled, pinConfigured,
 }
-const runtime = useIdentityRuntime({ identityClient, state: runtimeState, deviceName: 'Sequence web' })
+const runtime = useIdentityRuntime({ identityClient, state: runtimeState, deviceName: 'Sequence web', labels: () => createTikoIdentityLabels(i18n.t) })
 
 const labels = computed(() => {
   void language.value
