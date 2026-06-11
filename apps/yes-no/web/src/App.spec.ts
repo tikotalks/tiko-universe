@@ -43,6 +43,7 @@ function mountApp() {
 function createFetchMock(options: {
   settings?: Record<string, unknown>
   state?: Record<string, unknown>
+  defaults?: Record<string, unknown>
   failBootstrap?: boolean
   failCookieSession?: boolean
   failTts?: boolean
@@ -99,6 +100,10 @@ function createFetchMock(options: {
 
     if (url.endsWith('/apps/yes-no/state') && method === 'GET') {
       return jsonResponse({ app: 'yes-no', updatedAt: null, version: 3, state: options.state ?? {} })
+    }
+
+    if (url.endsWith('/apps/defaults/yes-no/state') && method === 'GET') {
+      return jsonResponse({ app: 'yes-no', updatedAt: null, version: 1, state: options.defaults ?? {} })
     }
 
     if (url.endsWith('/apps/yes-no/settings') && method === 'PUT') {
@@ -166,6 +171,29 @@ describe('Yes No web app', () => {
     expect(wrapper.text()).toContain('Laatste antwoord: Nee')
     expect((wrapper.get('textarea').element as HTMLTextAreaElement).value).toBe('Wil je eten?')
     expect(document.documentElement.dataset.colorMode).toBe('dark')
+  })
+
+  it('translates semantic default answer tiles from admin defaults when language changes', async () => {
+    vi.stubGlobal('fetch', createFetchMock({
+      settings: { language: 'nl', colorMode: 'system' },
+      defaults: {
+        answers: [
+          { id: 'yes', label: 'Yes', speech: 'Yes', color: 'green' },
+          { id: 'no', label: 'No', speech: 'No', color: 'red' }
+        ]
+      }
+    }))
+
+    const { wrapper } = mountApp()
+    await flushPromises()
+
+    await vi.waitFor(() => {
+      const labels = wrapper.findAll('[data-test="tiko-answer-button"]').map(button => button.text())
+      expect(labels).toContain('Ja')
+      expect(labels).toContain('Nee')
+      expect(labels).not.toContain('Yes')
+      expect(labels).not.toContain('No')
+    })
   })
 
   it('persists settings through @tiko/data and keeps a local fallback copy', async () => {

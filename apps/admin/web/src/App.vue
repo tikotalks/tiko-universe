@@ -3,6 +3,8 @@ import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useBemm } from 'bemm'
 import { Button, Icon, InputText } from '@sil/ui'
+import { tikoAppConfigs, tikoAppColors, type TikoAppColor } from '@tiko/ui'
+import { useAdminAppConfig, type AdminManagedAppConfig } from './composables/useAdminAppConfig'
 import { useAdminAuth } from './composables/useAdminAuth'
 
 const shell = useBemm('admin-shell', { return: 'string', includeBaseClass: true })
@@ -11,42 +13,65 @@ const login = useBemm('admin-login', { return: 'string', includeBaseClass: true 
 const route = useRoute()
 const router = useRouter()
 const { token, user, loading, error, loginMessage, isAuthed, verify, warmDeviceSession, requestMagicLink, verifyEmailChallenge, logout } = useAdminAuth()
+const appConfigApi = useAdminAppConfig()
 const emailInput = ref('')
 const codeInput = ref('')
 const codeSent = ref(false)
 const userMenuOpen = ref(false)
 const mobileMenuOpen = ref(false)
 const userMenuRef = ref<HTMLElement | null>(null)
+const appConfigs = ref<Record<TikoAppColor, AdminManagedAppConfig>>({ ...tikoAppConfigs })
 
-const appSubItems = [
-  { to: '/apps/yes-no', label: 'Yes/No', color: '#10b981' },
-  { to: '/apps/type', label: 'Type', color: '#f59e0b' },
-  { to: '/apps/cards', label: 'Cards', color: '#6366f1' },
-  { to: '/apps/sequence', label: 'Sequence', color: '#ec4899' },
-  { to: '/apps/timer', label: 'Timer', color: '#ef4444' },
-  { to: '/apps/radio', label: 'Radio', color: '#8b5cf6' },
-  { to: '/apps/talk', label: 'Talk', color: '#06b6d4' },
-]
+const appOrder: TikoAppColor[] = ['yes-no', 'type', 'cards', 'sequence', 'timer', 'radio', 'talk', 'todo', 'media', 'admin', 'tiko']
 
-const navItems = [
+const appSubItems = computed(() => appOrder.map(app => {
+  const config = appConfigs.value[app] ?? tikoAppConfigs[app]
+  return {
+    to: `/apps/${app}`,
+    label: config.title,
+    color: config.themeColor || tikoAppConfigs[app]?.themeColor || tikoAppColors[app]?.primary || '#2488ff',
+  }
+}))
+
+const navItems = computed(() => [
   { to: '/', label: 'Home', icon: 'ui/dashboard' },
   { to: '/images', label: 'Images', icon: 'ui/image' },
   { to: '/stories', label: 'Stories', icon: 'ui/music-note-single' },
   { to: '/library', label: 'Library', icon: 'ui/folder' },
   { to: '/users', label: 'Users', icon: 'ui/user' },
-  { to: '/apps', label: 'Apps', icon: 'ui/board-multi-dashboard', children: appSubItems },
+  { to: '/apps', label: 'Apps', icon: 'ui/board-multi-dashboard', children: appSubItems.value },
   { to: '/support', label: 'Support', icon: 'ui/at-sign' },
-]
+])
 
 const mobileMenuLabel = computed(() => mobileMenuOpen.value ? 'Close menu' : 'Open menu')
 
-function isNavItemActive(item: (typeof navItems)[number]) {
+function isNavItemActive(item: (typeof navItems.value)[number]) {
   return route.path === item.to || (item.to !== '/' && route.path.startsWith(`${item.to}/`))
+}
+
+async function loadAppConfigs() {
+  if (!isAuthed.value) return
+  try {
+    const configs = await appConfigApi.readConfigs()
+    appConfigs.value = { ...tikoAppConfigs, ...configs }
+  } catch {
+    // App pages still use local fallbacks; keep sidebar usable if config loading fails.
+  }
+}
+
+function onAppConfigUpdated(event: Event) {
+  const detail = (event as CustomEvent<{ app?: TikoAppColor; config?: AdminManagedAppConfig }>).detail
+  if (!detail?.app || !detail.config) return
+  appConfigs.value = { ...appConfigs.value, [detail.app]: detail.config }
 }
 
 watch(() => route.fullPath, () => {
   mobileMenuOpen.value = false
   userMenuOpen.value = false
+})
+
+watch(isAuthed, (authed) => {
+  if (authed) void loadAppConfigs()
 })
 
 function onDocumentClick(event: MouseEvent) {
@@ -67,6 +92,7 @@ function onDocumentKeydown(event: KeyboardEvent) {
 onMounted(async () => {
   document.addEventListener('click', onDocumentClick)
   document.addEventListener('keydown', onDocumentKeydown)
+  window.addEventListener('tiko-admin-app-config-updated', onAppConfigUpdated)
 
   const urlToken = route.query.token as string | undefined
   if (urlToken) {
@@ -78,6 +104,7 @@ onMounted(async () => {
     await verify(undefined, { silent: true })
     if (!isAuthed.value) logout()
   }
+  if (isAuthed.value) await loadAppConfigs()
   if (!isAuthed.value) {
     warmDeviceSession()
   }
@@ -86,6 +113,7 @@ onMounted(async () => {
 onBeforeUnmount(() => {
   document.removeEventListener('click', onDocumentClick)
   document.removeEventListener('keydown', onDocumentKeydown)
+  window.removeEventListener('tiko-admin-app-config-updated', onAppConfigUpdated)
 })
 
 async function sendMagicLink() {

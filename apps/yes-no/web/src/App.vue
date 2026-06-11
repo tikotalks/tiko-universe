@@ -97,6 +97,18 @@ function answerLabel(answer: string) {
   return choices.value.find(choice => choice.id === answer)?.label ?? ''
 }
 
+function localizeDefaultAnswer(answer: AnswerTile): AnswerTile {
+  if (answer.id === 'yes') {
+    const label = i18n.t(tikoI18nKeys.yesNo.answers.yes)
+    return { ...answer, label, speech: label }
+  }
+  if (answer.id === 'no') {
+    const label = i18n.t(tikoI18nKeys.yesNo.answers.no)
+    return { ...answer, label, speech: label }
+  }
+  return answer
+}
+
 const stored = readJson<PersistedState>(storageKey, {})
 const i18n = createI18n({ app: appId, language: toLanguage(stored.language) })
 const translationLoader = createTikoTranslationLoader()
@@ -168,10 +180,14 @@ const hardcodedAnswers = computed<AnswerTile[]>(() => [
   { id: 'no', label: labels.value.no, speech: labels.value.no, color: 'red', icon: 'wayfinding/cross' }
 ])
 
+const defaultChoices = computed<AnswerTile[]>(() => {
+  if (!defaultAnswers.value.length) return hardcodedAnswers.value
+  return defaultAnswers.value.map(localizeDefaultAnswer)
+})
+
 const choices = computed<AnswerTile[]>(() => {
   if (customAnswers.value.length) return customAnswers.value
-  if (defaultAnswers.value.length) return defaultAnswers.value
-  return hardcodedAnswers.value
+  return defaultChoices.value
 })
 
 const headerActions = computed(() => parentMode.value ? [
@@ -257,11 +273,15 @@ async function persistStateRemote() {
 
 async function loadTranslations(value: TikoLanguage) {
   if (loadedTranslations.has(value)) return
-  loadedTranslations.add(value)
-  const bundle = await translationLoader({ app: appId, language: value })
-  if (Object.keys(bundle.translations).length > 0) {
-    i18n.addBundle(bundle)
-    translationsRevision.value += 1
+  try {
+    const bundle = await translationLoader({ app: appId, language: value })
+    if (Object.keys(bundle.translations).length > 0) {
+      i18n.addBundle(bundle)
+      translationsRevision.value += 1
+    }
+    loadedTranslations.add(value)
+  } catch {
+    // Keep local fallbacks active and allow a later language switch to retry.
   }
 }
 
@@ -333,8 +353,10 @@ function resetSentence() {
   <TikoAppShell
     :app-name="labels.appName"
     :app-icon="appConfig.appIcon"
+    :app-icon-image-url="appConfig.appIconImageUrl"
     :app-icon-media-category="appConfig.appIconMediaCategory"
     :app-color="appConfig.appColor"
+    :theme-color="appConfig.themeColor"
     avatar="ui/avatar"
     :actions="headerActions"
     :show-settings-button="parentMode"

@@ -5,6 +5,7 @@ export const appConfig = {
   "title": "Yes No",
   "appColor": "yes-no",
   "appIcon": "ui/check-fat",
+  "appIconImageUrl": "",
   "appIconMediaCategory": "emotions",
   "themeColor": "#9b3fbd"
 } satisfies TikoAppConfig

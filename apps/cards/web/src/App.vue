@@ -402,11 +402,15 @@ function resolveColorMode(mode: TikoColorMode) {
 
 async function loadTranslations(value: TikoLanguage) {
   if (loadedTranslations.has(value)) return
-  loadedTranslations.add(value)
-  const bundle = await translationLoader({ app: 'cards', language: value })
-  if (Object.keys(bundle.translations).length > 0) {
-    i18n.addBundle(bundle)
-    translationsRevision.value += 1
+  try {
+    const bundle = await translationLoader({ app: 'cards', language: value })
+    if (Object.keys(bundle.translations).length > 0) {
+      i18n.addBundle(bundle)
+      translationsRevision.value += 1
+    }
+    loadedTranslations.add(value)
+  } catch {
+    // Keep local fallbacks active and allow a later language switch to retry.
   }
 }
 
@@ -445,8 +449,10 @@ onMounted(async () => {
   <TikoAppShell
     :app-name="appTitle"
     :app-icon="appConfig.appIcon"
+    :app-icon-image-url="appConfig.appIconImageUrl"
     :app-icon-media-category="appConfig.appIconMediaCategory"
     :app-color="appConfig.appColor"
+    :theme-color="appConfig.themeColor"
     avatar="ui/avatar"
     :show-back="cards.collectionStack.value.length > 0"
     :actions="headerActions"

@@ -1,4 +1,5 @@
 import { defineComponent, h, onMounted, ref, watch } from 'vue'
+import type { CSSProperties } from 'vue'
 export { default as TikoLogo } from './TikoLogo.vue'
 export { default as TikoChildAccountsPanel } from './TikoChildAccountsPanel.vue'
 export { default as TikoProfileMenu } from './TikoProfileMenu.vue'
@@ -321,6 +322,38 @@ function resizedTikoMediaUrl(url: string, size = 96) {
   return url
 }
 
+function normalizedHexColor(value?: string): string {
+  const raw = value?.trim()
+  if (!raw) return ''
+  const match = raw.match(/^#?([0-9a-f]{3}|[0-9a-f]{6})$/i)
+  if (!match) return ''
+  const hex = match[1]
+  if (hex.length === 3) {
+    return `#${hex.split('').map((part) => `${part}${part}`).join('')}`.toLowerCase()
+  }
+  return `#${hex.toLowerCase()}`
+}
+
+function readableTextColor(background: string): string {
+  const hex = normalizedHexColor(background).slice(1)
+  if (!hex) return '#ffffff'
+  const red = Number.parseInt(hex.slice(0, 2), 16)
+  const green = Number.parseInt(hex.slice(2, 4), 16)
+  const blue = Number.parseInt(hex.slice(4, 6), 16)
+  const luminance = (0.2126 * red + 0.7152 * green + 0.0722 * blue) / 255
+  return luminance > 0.58 ? '#17131c' : '#ffffff'
+}
+
+function appThemeStyle(themeColor?: string): CSSProperties | undefined {
+  const primary = normalizedHexColor(themeColor)
+  if (!primary) return undefined
+  return {
+    '--tiko-app-primary': primary,
+    '--tiko-app-primary-text': readableTextColor(primary),
+    '--tiko-app-primary-deep': `color-mix(in srgb, ${primary}, var(--color-foreground) 42%)`,
+  } as CSSProperties
+}
+
 /**
  * Inject favicon, apple-touch-icon, and theme-color meta tags from app config.
  * Call once in each web app's main.ts before mounting.
@@ -397,6 +430,7 @@ export const TikoAppHeader = defineComponent({
     appIconMediaCategory: { type: String, default: '' },
     avatar: { type: String, default: '' },
     appColor: { type: String as () => TikoAppColor, default: 'yes-no' },
+    themeColor: { type: String, default: '' },
     actions: { type: Array as () => TikoHeaderAction[], default: () => [] },
     showBack: { type: Boolean, default: false },
     showSettingsButton: { type: Boolean, default: true },
@@ -428,7 +462,7 @@ export const TikoAppHeader = defineComponent({
     onMounted(resolveMediaIcon)
     watch(() => [props.appColor, props.appIconMediaCategory], resolveMediaIcon)
 
-    return () => h('header', { class: ['tiko-app-header', props.showBack ? 'tiko-app-header--has-back' : ''], 'data-test': 'tiko-app-header', 'data-app-color': props.appColor }, [
+    return () => h('header', { class: ['tiko-app-header', props.showBack ? 'tiko-app-header--has-back' : ''], 'data-test': 'tiko-app-header', 'data-app-color': props.appColor, style: appThemeStyle(props.themeColor) }, [
       h('div', { class: 'tiko-app-header__brand' }, [
         props.showBack
           ? h('button', {
@@ -468,6 +502,7 @@ export const TikoAppShell = defineComponent({
     appIconImageUrl: { type: String, default: '' },
     appIconMediaCategory: { type: String, default: '' },
     appColor: { type: String as () => TikoAppColor, default: 'yes-no' },
+    themeColor: { type: String, default: '' },
     avatar: { type: String, default: '' },
     actions: { type: Array as () => TikoHeaderAction[], default: () => [] },
     showBack: { type: Boolean, default: false },
@@ -475,7 +510,7 @@ export const TikoAppShell = defineComponent({
   },
   emits: ['headerAction', 'avatar-click', 'back-click', 'title-click'],
   setup(props, { slots, emit }) {
-    return () => h('div', { class: 'tiko-app-shell', 'data-app-color': props.appColor }, [
+    return () => h('div', { class: 'tiko-app-shell', 'data-app-color': props.appColor, style: appThemeStyle(props.themeColor) }, [
       h(TikoAppHeader, {
         appName: props.appName,
         appIcon: props.appIcon,
@@ -483,6 +518,7 @@ export const TikoAppShell = defineComponent({
         appIconMediaCategory: props.appIconMediaCategory,
         avatar: props.avatar,
         appColor: props.appColor,
+        themeColor: props.themeColor,
         actions: props.actions,
         showBack: props.showBack,
         showSettingsButton: props.showSettingsButton,

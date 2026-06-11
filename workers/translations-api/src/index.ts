@@ -65,7 +65,7 @@ const CORS: Record<string, string> = {
 function json(body: unknown, status = 200): Response {
   return new Response(JSON.stringify(body), {
     status,
-    headers: { 'Content-Type': 'application/json', ...CORS },
+    headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-store', ...CORS },
   })
 }
 
@@ -114,6 +114,7 @@ async function importToLezu(
   locale: string,
   content: Record<string, string>,
   translateMissing: boolean,
+  targetLocales: string[] | undefined,
   env: Env
 ): Promise<Response> {
   const response = await fetch(`${LEZU_BASE}/v1/i18n/projects/${env.LEZU_PROJECT_ID}/import`, {
@@ -122,7 +123,7 @@ async function importToLezu(
       'Authorization': `ApiKey ${env.LEZU_API_KEY}`,
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ locale, content, translateMissing }),
+    body: JSON.stringify({ locale, content, translateMissing, targetLocales }),
   })
 
   if (!response.ok) {
@@ -190,6 +191,16 @@ async function handleGetTranslations(app: string, language: string, env: Env): P
 }
 
 async function handleSync(language: string | undefined, env: Env, request: Request): Promise<Response> {
+  if (isAuthorized(request, env)) {
+    if (language) {
+      await purgeLocale(language, env)
+      return json({ cleared: [localeCacheKey(language)] })
+    }
+
+    const cleared = await purgeAllLocales(env)
+    return json({ cleared })
+  }
+
   const webhookSecret = env.WEBHOOK_SECRET
   if (webhookSecret) {
     const sig = request.headers.get('X-Lezu-Webhook-Secret')
@@ -211,7 +222,12 @@ async function handleSync(language: string | undefined, env: Env, request: Reque
 async function handleImport(request: Request, env: Env): Promise<Response> {
   if (!isAuthorized(request, env)) return json({ error: 'Unauthorized' }, 401)
 
-  let body: { locale: string; content: Record<string, string>; translateMissing?: boolean }
+  let body: {
+    locale: string
+    content: Record<string, string>
+    translateMissing?: boolean
+    targetLocales?: string[]
+  }
   try {
     body = await request.json() as typeof body
   } catch {
@@ -222,7 +238,13 @@ async function handleImport(request: Request, env: Env): Promise<Response> {
     return json({ error: 'locale and content are required' }, 400)
   }
 
-  const result = await importToLezu(body.locale, body.content, body.translateMissing ?? true, env)
+  const result = await importToLezu(
+    body.locale,
+    body.content,
+    body.translateMissing ?? true,
+    body.targetLocales,
+    env
+  )
 
   // Bust cache so next GET picks up the new translations
   await purgeLocale(body.locale, env)

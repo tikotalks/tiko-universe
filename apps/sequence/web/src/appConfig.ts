@@ -5,6 +5,7 @@ export const appConfig = {
   "title": "Sequence",
   "appColor": "sequence",
   "appIcon": "ui/list",
+  "appIconImageUrl": "",
   "appIconMediaCategory": "routines",
   "themeColor": "#16b8a6"
 } satisfies TikoAppConfig

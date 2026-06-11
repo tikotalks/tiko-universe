@@ -323,8 +323,10 @@ async function retry() {
   <TikoAppShell
     :app-name="labels.appName"
     :app-icon="appConfig.appIcon"
+    :app-icon-image-url="appConfig.appIconImageUrl"
     :app-icon-media-category="appConfig.appIconMediaCategory"
     :app-color="appConfig.appColor"
+    :theme-color="appConfig.themeColor"
     :actions="headerActions"
     @header-action="headerAction"
   >

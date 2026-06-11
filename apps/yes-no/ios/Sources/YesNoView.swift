@@ -64,11 +64,73 @@ struct YesNoAnswerTile: Codable, Identifiable, Equatable {
     }
 }
 
+struct YesNoAnswerSet: Codable, Identifiable, Equatable {
+    var id: String
+    var title: String
+    var description: String?
+    var color: String?
+    var imageURL: URL?
+    var order: Int
+    var answers: [YesNoAnswerTile]
+
+    init(id: String, title: String, description: String? = nil, color: String? = nil, imageURL: URL? = nil, order: Int = 0, answers: [YesNoAnswerTile]) {
+        self.id = id
+        self.title = title
+        self.description = description
+        self.color = color
+        self.imageURL = imageURL
+        self.order = order
+        self.answers = answers
+    }
+}
+
+private let builtInAnswerSets: [YesNoAnswerSet] = [
+    YesNoAnswerSet(
+        id: "yes-no",
+        title: "Yes / No",
+        description: "Simple yes and no answers.",
+        color: TikoColors.green.name,
+        order: 0,
+        answers: [
+            YesNoAnswerTile(id: "yes", label: "Yes", speech: "Yes", color: TikoColors.green.name, icon: "checkmark"),
+            YesNoAnswerTile(id: "no", label: "No", speech: "No", color: TikoColors.red.name, icon: "xmark")
+        ]
+    ),
+    YesNoAnswerSet(
+        id: "basic-needs",
+        title: "Basic needs",
+        description: "Common needs and requests.",
+        color: TikoColors.teal.name,
+        order: 1,
+        answers: [
+            YesNoAnswerTile(id: "help", label: "Help", speech: "Help", color: TikoColors.blue.name, icon: "hand.raised.fill"),
+            YesNoAnswerTile(id: "more", label: "More", speech: "More", color: TikoColors.teal.name, icon: "plus"),
+            YesNoAnswerTile(id: "stop", label: "Stop", speech: "Stop", color: TikoColors.orange.name, icon: "hand.raised.slash.fill"),
+            YesNoAnswerTile(id: "finished", label: "Finished", speech: "Finished", color: TikoColors.purple.name, icon: "checkmark.circle.fill")
+        ]
+    ),
+    YesNoAnswerSet(
+        id: "quick-choices",
+        title: "Quick choices",
+        description: "Fast everyday responses.",
+        color: TikoColors.yellow.name,
+        order: 2,
+        answers: [
+            YesNoAnswerTile(id: "yes", label: "Yes", speech: "Yes", color: TikoColors.green.name, icon: "checkmark"),
+            YesNoAnswerTile(id: "no", label: "No", speech: "No", color: TikoColors.red.name, icon: "xmark"),
+            YesNoAnswerTile(id: "maybe", label: "Maybe", speech: "Maybe", color: TikoColors.yellow.name, icon: "questionmark"),
+            YesNoAnswerTile(id: "later", label: "Later", speech: "Later", color: TikoColors.purple.name, icon: "clock")
+        ]
+    )
+]
+
 // MARK: - Store
 
 @MainActor
 final class YesNoStore: ObservableObject {
     @Published var defaultAnswers: [YesNoAnswerTile] = []
+    @Published var defaultSets: [YesNoAnswerSet] = builtInAnswerSets
+    @Published var defaultSelectedSetId: String?
 
     private static let appAPIBase = "https://app.tikoapi.org/v1"
 
@@ -79,6 +141,14 @@ final class YesNoStore: ObservableObject {
             guard let http = response as? HTTPURLResponse, (200..<300).contains(http.statusCode) else { return }
             let decoded = try JSONDecoder().decode(DefaultsResponse.self, from: data)
             defaultAnswers = decoded.data.answers ?? []
+            defaultSelectedSetId = decoded.data.selectedSetId
+            if let answerSets = decoded.data.answerSets, !answerSets.isEmpty {
+                defaultSets = answerSets.sorted { $0.order < $1.order }
+            } else if !defaultAnswers.isEmpty {
+                defaultSets = [
+                    YesNoAnswerSet(id: "default", title: "Default", color: TikoColors.teal.name, order: 0, answers: defaultAnswers)
+                ]
+            }
         } catch {}
     }
 
@@ -86,6 +156,8 @@ final class YesNoStore: ObservableObject {
         let data: StatePayload
         struct StatePayload: Decodable {
             let answers: [YesNoAnswerTile]?
+            let answerSets: [YesNoAnswerSet]?
+            let selectedSetId: String?
         }
     }
 }
@@ -102,12 +174,15 @@ struct YesNoView: View {
     @AppStorage("tiko.language") private var languageCode = "en"
     @AppStorage("yesno.questionHistory") private var historyData = Data()
     @AppStorage("yesno.customAnswers") private var customAnswersData = Data()
+    @AppStorage("yesno.customAnswerSets") private var customAnswerSetsData = Data()
+    @AppStorage("yesno.selectedAnswerSetId") private var selectedAnswerSetId = ""
 
     @StateObject private var i18n = TikoI18n(app: .yesNo)
     @StateObject private var store = YesNoStore()
 
     @State private var history: [String] = []
     @State private var customAnswers: [YesNoAnswerTile] = []
+    @State private var customAnswerSets: [YesNoAnswerSet] = []
     @State private var feedbackBackground: Color?
     @State private var showingHistory = false
     @State private var showingChoiceStyle = false
@@ -154,7 +229,17 @@ struct YesNoView: View {
         ]
     }
 
+    private var availableAnswerSets: [YesNoAnswerSet] {
+        let sets = !customAnswerSets.isEmpty ? customAnswerSets : store.defaultSets
+        return sets.isEmpty ? builtInAnswerSets : sets.sorted { $0.order < $1.order }
+    }
+
+    private var selectedAnswerSet: YesNoAnswerSet {
+        availableAnswerSets.first { $0.id == selectedAnswerSetId } ?? availableAnswerSets.first ?? builtInAnswerSets[0]
+    }
+
     private var effectiveChoices: [TikoAnswerChoice] {
+        if !selectedAnswerSet.answers.isEmpty { return selectedAnswerSet.answers.map(\.answerChoice) }
         if !customAnswers.isEmpty { return customAnswers.map(\.answerChoice) }
         if !store.defaultAnswers.isEmpty { return store.defaultAnswers.map(\.answerChoice) }
         return hardcodedChoices
@@ -183,7 +268,7 @@ struct YesNoView: View {
                     }
                     TikoSettingsActionRow(
                         title: i18n.t("yesNo.settings.answerTiles"),
-                        value: customAnswers.isEmpty ? i18n.t("yesNo.settings.answerTilesDefault") : "\(customAnswers.count)",
+                        value: selectedAnswerSet.title,
                         icon: "square.grid.2x2",
                         appColor: .yesNo
                     ) {
@@ -235,12 +320,21 @@ struct YesNoView: View {
             i18n.setLanguage(languageCode)
             loadHistory()
             loadCustomAnswers()
+            loadCustomAnswerSets()
         }
         .onChange(of: languageCode) { _, code in
             i18n.setLanguage(code)
         }
         .task {
             await store.fetchDefaults()
+            if customAnswerSets.isEmpty {
+                if let defaultSelected = store.defaultSelectedSetId,
+                   availableAnswerSets.contains(where: { $0.id == defaultSelected }) {
+                    selectedAnswerSetId = defaultSelected
+                } else if !availableAnswerSets.contains(where: { $0.id == selectedAnswerSetId }) {
+                    selectedAnswerSetId = availableAnswerSets.first?.id ?? ""
+                }
+            }
         }
         .tikoPopup(isPresented: $showingHistory) {
             QuestionHistorySheet(questions: history) { question in
@@ -262,10 +356,13 @@ struct YesNoView: View {
         }
         .tikoPopup(isPresented: $showingTileEditor) {
             TileEditorSheet(
-                customAnswers: customAnswers,
-                defaultAnswers: store.defaultAnswers,
-                onSave: { tiles in
-                    customAnswers = tiles
+                answerSets: customAnswerSets.isEmpty ? availableAnswerSets : customAnswerSets,
+                selectedSetId: selectedAnswerSet.id,
+                onSave: { sets, selected in
+                    customAnswerSets = sets
+                    selectedAnswerSetId = selected ?? sets.first?.id ?? ""
+                    customAnswers = []
+                    saveCustomAnswerSets()
                     saveCustomAnswers()
                     showingTileEditor = false
                 },
@@ -339,6 +436,22 @@ struct YesNoView: View {
 
     private func saveCustomAnswers() {
         customAnswersData = (try? JSONEncoder().encode(customAnswers)) ?? Data()
+    }
+
+    private func loadCustomAnswerSets() {
+        customAnswerSets = (try? JSONDecoder().decode([YesNoAnswerSet].self, from: customAnswerSetsData)) ?? []
+        if customAnswerSets.isEmpty, !customAnswers.isEmpty {
+            customAnswerSets = [
+                YesNoAnswerSet(id: "custom", title: "Custom answers", color: TikoColors.teal.name, order: 0, answers: customAnswers)
+            ]
+        }
+        if selectedAnswerSetId.isEmpty {
+            selectedAnswerSetId = (customAnswerSets.first ?? store.defaultSets.first ?? builtInAnswerSets.first)?.id ?? ""
+        }
+    }
+
+    private func saveCustomAnswerSets() {
+        customAnswerSetsData = (try? JSONEncoder().encode(customAnswerSets)) ?? Data()
     }
 }
 
@@ -464,19 +577,21 @@ private struct QuestionHistorySheet: View {
 // MARK: - Tile editor sheet
 
 private struct TileEditorSheet: View {
-    let defaultAnswers: [YesNoAnswerTile]
-    let onSave: ([YesNoAnswerTile]) -> Void
+    let onSave: ([YesNoAnswerSet], String?) -> Void
     let onClose: () -> Void
 
     @EnvironmentObject private var i18n: TikoI18n
-    @State private var tiles: [YesNoAnswerTile]
-    @State private var editingIndex: Int? = nil
+    @State private var sets: [YesNoAnswerSet]
+    @State private var selectedSetId: String
+    @State private var editingSet: YesNoAnswerSet?
+    @State private var editingTile: TileEditSelection?
 
-    init(customAnswers: [YesNoAnswerTile], defaultAnswers: [YesNoAnswerTile], onSave: @escaping ([YesNoAnswerTile]) -> Void, onClose: @escaping () -> Void) {
-        self.defaultAnswers = defaultAnswers
+    init(answerSets: [YesNoAnswerSet], selectedSetId: String, onSave: @escaping ([YesNoAnswerSet], String?) -> Void, onClose: @escaping () -> Void) {
         self.onSave = onSave
         self.onClose = onClose
-        _tiles = State(initialValue: customAnswers)
+        let initialSets = answerSets.isEmpty ? builtInAnswerSets : answerSets
+        _sets = State(initialValue: initialSets)
+        _selectedSetId = State(initialValue: initialSets.contains { $0.id == selectedSetId } ? selectedSetId : initialSets.first?.id ?? "")
     }
 
     var body: some View {
@@ -488,9 +603,9 @@ private struct TileEditorSheet: View {
             onClose: onClose
         ) {
             VStack(spacing: 12) {
-                if tiles.isEmpty {
+                if sets.isEmpty {
                     VStack(spacing: 8) {
-                        Text(i18n.t("yesNo.tileEditor.empty"))
+                        Text("No answer sets yet.")
                             .font(.system(size: 14, weight: .semibold, design: .rounded))
                             .foregroundStyle(.secondary)
                             .multilineTextAlignment(.center)
@@ -500,26 +615,19 @@ private struct TileEditorSheet: View {
                 } else {
                     ScrollView {
                         LazyVStack(spacing: 10) {
-                            ForEach(Array(tiles.enumerated()), id: \.element.id) { index, tile in
-                                tileRow(tile: tile, index: index)
+                            ForEach(Array(sets.enumerated()), id: \.element.id) { index, set in
+                                setSection(set: set, index: index)
                             }
                         }
                         .padding(.vertical, 2)
                     }
                     .scrollIndicators(.hidden)
-                    .frame(maxHeight: 320)
+                    .frame(maxHeight: 420)
                 }
 
                 HStack(spacing: 10) {
-                    Button {
-                        tiles.append(YesNoAnswerTile(
-                            id: "answer-\(UUID().uuidString.prefix(8))",
-                            label: "Answer",
-                            speech: "Answer",
-                            color: TikoColors.teal.name
-                        ))
-                    } label: {
-                        Text(i18n.t("yesNo.tileEditor.addTile"))
+                    Button { addSet() } label: {
+                        Text("Add set")
                             .font(.system(size: 15, weight: .heavy, design: .rounded))
                             .foregroundStyle(TikoAppColor.yesNo.palette.primary)
                             .frame(maxWidth: .infinity)
@@ -529,23 +637,19 @@ private struct TileEditorSheet: View {
                     }
                     .buttonStyle(.plain)
 
-                    if !tiles.isEmpty {
-                        Button {
-                            tiles = []
-                        } label: {
-                            Text(i18n.t("yesNo.tileEditor.reset"))
-                                .font(.system(size: 15, weight: .heavy, design: .rounded))
-                                .foregroundStyle(.secondary)
-                                .padding(.vertical, 12)
-                                .padding(.horizontal, 14)
-                                .background(Color(.systemFill))
-                                .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
-                        }
-                        .buttonStyle(.plain)
+                    Button { sets = builtInAnswerSets; selectedSetId = builtInAnswerSets.first?.id ?? "" } label: {
+                        Text(i18n.t("yesNo.tileEditor.reset"))
+                            .font(.system(size: 15, weight: .heavy, design: .rounded))
+                            .foregroundStyle(.secondary)
+                            .padding(.vertical, 12)
+                            .padding(.horizontal, 14)
+                            .background(Color(.systemFill))
+                            .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
                     }
+                    .buttonStyle(.plain)
                 }
 
-                Button { onSave(tiles) } label: {
+                Button { onSave(normalizedSets, selectedSetId) } label: {
                     Text(i18n.t("yesNo.tileEditor.save"))
                         .font(.system(size: 16, weight: .heavy, design: .rounded))
                         .foregroundStyle(.white)
@@ -557,35 +661,161 @@ private struct TileEditorSheet: View {
                 .buttonStyle(.plain)
             }
         }
-        .sheet(item: editingTileBinding) { tile in
-            TileDetailEditView(tile: tile) { updated in
-                if let i = tiles.firstIndex(where: { $0.id == updated.id }) {
-                    tiles[i] = updated
+        .sheet(item: $editingSet) { set in
+            SetDetailEditView(set: set) { updated in
+                if let i = sets.firstIndex(where: { $0.id == updated.id }) {
+                    sets[i] = updated
                 }
-                editingIndex = nil
+                editingSet = nil
+            }
+        }
+        .sheet(item: $editingTile) { selection in
+            TileDetailEditView(tile: selection.tile) { updated in
+                if sets.indices.contains(selection.setIndex),
+                   let i = sets[selection.setIndex].answers.firstIndex(where: { $0.id == updated.id }) {
+                    sets[selection.setIndex].answers[i] = updated
+                }
+                editingTile = nil
             }
         }
     }
 
-    private var editingTileBinding: Binding<YesNoAnswerTile?> {
-        Binding(
-            get: { editingIndex.flatMap { tiles.indices.contains($0) ? tiles[$0] : nil } },
-            set: { _ in editingIndex = nil }
-        )
+    private var normalizedSets: [YesNoAnswerSet] {
+        sets.enumerated().map { index, set in
+            var next = set
+            next.order = index
+            return next
+        }
     }
 
-    private func tileRow(tile: YesNoAnswerTile, index: Int) -> some View {
+    private func addSet() {
+        let id = "set-\(UUID().uuidString.prefix(8))"
+        sets.append(YesNoAnswerSet(id: id, title: "New set", color: TikoColors.teal.name, order: sets.count, answers: []))
+        selectedSetId = id
+    }
+
+    private func addTile(to setIndex: Int) {
+        guard sets.indices.contains(setIndex) else { return }
+        sets[setIndex].answers.append(YesNoAnswerTile(
+            id: "answer-\(UUID().uuidString.prefix(8))",
+            label: "Answer",
+            speech: "Answer",
+            color: TikoColors.teal.name
+        ))
+    }
+
+    private func removeSet(at index: Int) {
+        guard sets.indices.contains(index) else { return }
+        let removed = sets.remove(at: index)
+        if selectedSetId == removed.id {
+            selectedSetId = sets.first?.id ?? ""
+        }
+    }
+
+    private func removeTile(setIndex: Int, tileIndex: Int) {
+        guard sets.indices.contains(setIndex), sets[setIndex].answers.indices.contains(tileIndex) else { return }
+        sets[setIndex].answers.remove(at: tileIndex)
+    }
+
+    private func setSection(set: YesNoAnswerSet, index: Int) -> some View {
+        VStack(spacing: 10) {
+            HStack(spacing: 12) {
+                setThumb(set)
+
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(set.title)
+                        .font(.system(size: 16, weight: .heavy, design: .rounded))
+                        .foregroundStyle(.primary)
+                    Text("\(set.answers.count) tiles")
+                        .font(.system(size: 12, weight: .semibold, design: .rounded))
+                        .foregroundStyle(.secondary)
+                }
+
+                Spacer(minLength: 0)
+
+                Button { selectedSetId = set.id } label: {
+                    Image(systemName: selectedSetId == set.id ? "checkmark.circle.fill" : "circle")
+                        .font(.system(size: 22, weight: .bold))
+                        .foregroundStyle(TikoAppColor.yesNo.palette.primary)
+                }
+                .buttonStyle(.plain)
+
+                Button { editingSet = set } label: {
+                    Image(systemName: "pencil")
+                        .font(.system(size: 13, weight: .bold))
+                        .foregroundStyle(.secondary)
+                        .frame(width: 30, height: 30)
+                        .background(Color(.systemFill))
+                        .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+                }
+                .buttonStyle(.plain)
+
+                Button { removeSet(at: index) } label: {
+                    Image(systemName: "trash")
+                        .font(.system(size: 13, weight: .bold))
+                        .foregroundStyle(.red.opacity(0.7))
+                        .frame(width: 30, height: 30)
+                        .background(Color.red.opacity(0.08))
+                        .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+                }
+                .buttonStyle(.plain)
+            }
+
+            ForEach(Array(set.answers.enumerated()), id: \.element.id) { tileIndex, tile in
+                tileRow(tile: tile, setIndex: index, tileIndex: tileIndex)
+            }
+
+            Button { addTile(to: index) } label: {
+                Label(i18n.t("yesNo.tileEditor.addTile"), systemImage: "plus")
+                    .font(.system(size: 14, weight: .heavy, design: .rounded))
+                    .foregroundStyle(TikoAppColor.yesNo.palette.primary)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 10)
+                    .background(TikoAppColor.yesNo.palette.primary.opacity(0.1))
+                    .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+            }
+            .buttonStyle(.plain)
+        }
+        .padding(12)
+        .background(Color(.systemBackground))
+        .overlay { RoundedRectangle(cornerRadius: 18, style: .continuous).stroke(Color.primary.opacity(0.08), lineWidth: 1) }
+        .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
+    }
+
+    @ViewBuilder
+    private func setThumb(_ set: YesNoAnswerSet) -> some View {
+        let color = TikoColors.color(named: set.color ?? "") ?? Color(hexString: set.color ?? "") ?? TikoAppColor.yesNo.palette.primary
+        if let imageURL = set.imageURL {
+            TikoCachedRemoteImage(url: imageURL) { color.opacity(0.18) }
+                .frame(width: 44, height: 44)
+                .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+        } else {
+            RoundedRectangle(cornerRadius: 12, style: .continuous)
+                .fill(color)
+                .frame(width: 44, height: 44)
+        }
+    }
+
+    private func tileRow(tile: YesNoAnswerTile, setIndex: Int, tileIndex: Int) -> some View {
         HStack(spacing: 12) {
-            RoundedRectangle(cornerRadius: 10, style: .continuous)
-                .fill(TikoColors.color(named: tile.color) ?? Color(hexString: tile.color) ?? TikoAppColor.yesNo.palette.primary)
-                .frame(width: 36, height: 36)
-                .overlay {
-                    if let icon = tile.icon {
+            let tileColor = TikoColors.color(named: tile.color) ?? Color(hexString: tile.color) ?? TikoAppColor.yesNo.palette.primary
+            Group {
+                if let imageURL = tile.imageURL {
+                    TikoCachedRemoteImage(url: imageURL) { tileColor.opacity(0.18) }
+                } else {
+                    RoundedRectangle(cornerRadius: 10, style: .continuous)
+                        .fill(tileColor)
+                        .overlay {
+                            if let icon = tile.icon {
                         Image(systemName: icon)
                             .font(.system(size: 14, weight: .bold))
                             .foregroundStyle(.white)
+                            }
                     }
                 }
+            }
+            .frame(width: 36, height: 36)
+            .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
 
             VStack(alignment: .leading, spacing: 2) {
                 Text(tile.label)
@@ -601,7 +831,7 @@ private struct TileEditorSheet: View {
 
             Spacer(minLength: 0)
 
-            Button { editingIndex = index } label: {
+            Button { editingTile = TileEditSelection(setIndex: setIndex, tile: tile) } label: {
                 Image(systemName: "pencil")
                     .font(.system(size: 13, weight: .bold))
                     .foregroundStyle(.secondary)
@@ -611,9 +841,7 @@ private struct TileEditorSheet: View {
             }
             .buttonStyle(.plain)
 
-            Button {
-                tiles.remove(at: index)
-            } label: {
+            Button { removeTile(setIndex: setIndex, tileIndex: tileIndex) } label: {
                 Image(systemName: "trash")
                     .font(.system(size: 13, weight: .bold))
                     .foregroundStyle(.red.opacity(0.7))
@@ -630,6 +858,110 @@ private struct TileEditorSheet: View {
     }
 }
 
+private struct TileEditSelection: Identifiable {
+    let setIndex: Int
+    let tile: YesNoAnswerTile
+    var id: String { "\(setIndex)-\(tile.id)" }
+}
+
+// MARK: - Set detail edit view
+
+private struct SetDetailEditView: View {
+    let set: YesNoAnswerSet
+    let onSave: (YesNoAnswerSet) -> Void
+
+    @State private var title: String
+    @State private var description: String
+    @State private var color: String
+    @State private var imageURL: URL?
+    @State private var showingMediaPicker = false
+    @Environment(\.dismiss) private var dismiss
+
+    init(set: YesNoAnswerSet, onSave: @escaping (YesNoAnswerSet) -> Void) {
+        self.set = set
+        self.onSave = onSave
+        _title = State(initialValue: set.title)
+        _description = State(initialValue: set.description ?? "")
+        _color = State(initialValue: set.color ?? TikoColors.teal.name)
+        _imageURL = State(initialValue: set.imageURL)
+    }
+
+    var body: some View {
+        NavigationStack {
+            Form {
+                Section("Set") {
+                    TextField("Set title", text: $title)
+                    TextField("Description", text: $description)
+                }
+                Section("Image") {
+                    imagePreview(url: imageURL)
+                    Button(imageURL == nil ? "Choose image" : "Change image") { showingMediaPicker = true }
+                    if imageURL != nil {
+                        Button("Remove image", role: .destructive) { imageURL = nil }
+                    }
+                }
+                colorSection
+            }
+            .navigationTitle("Edit set")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) { Button("Cancel") { dismiss() } }
+                ToolbarItem(placement: .confirmationAction) {
+                    Button("Save") {
+                        onSave(YesNoAnswerSet(
+                            id: set.id,
+                            title: title.isEmpty ? "Set" : title,
+                            description: description.isEmpty ? nil : description,
+                            color: color,
+                            imageURL: imageURL,
+                            order: set.order,
+                            answers: set.answers
+                        ))
+                        dismiss()
+                    }
+                    .fontWeight(.bold)
+                }
+            }
+        }
+        .tikoMediaPickerPopup(isPresented: $showingMediaPicker, appColor: .yesNo, title: "Choose set image") { url in
+            imageURL = url
+        }
+    }
+
+    private var colorSection: some View {
+        Section("Color") {
+            LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 10), count: 7), spacing: 10) {
+                ForEach(TikoColors.all, id: \.name) { preset in
+                    Circle()
+                        .fill(preset.color)
+                        .frame(height: 36)
+                        .overlay {
+                            if color == preset.name {
+                                Circle().strokeBorder(.white, lineWidth: 2.5)
+                                Image(systemName: "checkmark")
+                                    .font(.system(size: 11, weight: .black))
+                                    .foregroundStyle(.white)
+                            }
+                        }
+                        .onTapGesture { color = preset.name }
+                }
+            }
+            .padding(.vertical, 6)
+        }
+    }
+
+    @ViewBuilder
+    private func imagePreview(url: URL?) -> some View {
+        if let url {
+            TikoCachedRemoteImage(url: url) {
+                Color(.systemFill)
+            }
+            .frame(width: 80, height: 80)
+            .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
+        }
+    }
+}
+
 // MARK: - Tile detail edit view
 
 private struct TileDetailEditView: View {
@@ -640,6 +972,8 @@ private struct TileDetailEditView: View {
     @State private var speech: String
     @State private var color: String
     @State private var icon: String
+    @State private var imageURL: URL?
+    @State private var showingMediaPicker = false
     @Environment(\.dismiss) private var dismiss
 
     init(tile: YesNoAnswerTile, onSave: @escaping (YesNoAnswerTile) -> Void) {
@@ -649,6 +983,7 @@ private struct TileDetailEditView: View {
         _speech = State(initialValue: tile.speech)
         _color = State(initialValue: tile.color)
         _icon = State(initialValue: tile.icon ?? "")
+        _imageURL = State(initialValue: tile.imageURL)
     }
 
     var body: some View {
@@ -662,6 +997,19 @@ private struct TileDetailEditView: View {
                 }
                 Section("Icon (SF Symbol)") {
                     TextField("e.g. checkmark", text: $icon)
+                }
+                Section("Image") {
+                    if let imageURL {
+                        TikoCachedRemoteImage(url: imageURL) {
+                            Color(.systemFill)
+                        }
+                        .frame(width: 80, height: 80)
+                        .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
+                    }
+                    Button(imageURL == nil ? "Choose image" : "Change image") { showingMediaPicker = true }
+                    if imageURL != nil {
+                        Button("Remove image", role: .destructive) { imageURL = nil }
+                    }
                 }
                 Section("Color") {
                     LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 10), count: 7), spacing: 10) {
@@ -696,7 +1044,7 @@ private struct TileDetailEditView: View {
                             label: label.isEmpty ? "Answer" : label,
                             speech: speech.isEmpty ? label : speech,
                             color: color,
-                            imageURL: tile.imageURL,
+                            imageURL: imageURL,
                             icon: icon.isEmpty ? nil : icon
                         ))
                         dismiss()
@@ -704,6 +1052,9 @@ private struct TileDetailEditView: View {
                     .fontWeight(.bold)
                 }
             }
+        }
+        .tikoMediaPickerPopup(isPresented: $showingMediaPicker, appColor: .yesNo, title: "Choose tile image") { url in
+            imageURL = url
         }
     }
 }

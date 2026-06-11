@@ -5,6 +5,7 @@ export const appConfig = {
   "title": "Type",
   "appColor": "type",
   "appIcon": "ui/type",
+  "appIconImageUrl": "",
   "appIconMediaCategory": "letters",
   "themeColor": "#2488ff"
 } satisfies TikoAppConfig
