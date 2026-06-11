@@ -10,6 +10,7 @@ class MemoryD1 {
   assetsByHash = new Map<string, Row>()
   requests: Row[] = []
   providerStatuses = new Map<string, Row>()
+  serviceConfigs = new Map<string, Row>()
 
   prepare(sql: string) {
     return {
@@ -17,6 +18,7 @@ class MemoryD1 {
         first: async <T>() => {
           if (sql.includes('FROM atlas_cached_assets') && sql.includes('request_hash')) return (this.assetsByHash.get(String(values[0])) ?? null) as T | null
           if (sql.includes('FROM atlas_cached_assets') && sql.includes('WHERE id')) return (this.assets.get(String(values[0])) ?? null) as T | null
+          if (sql.includes('FROM atlas_service_config')) return (this.serviceConfigs.get(String(values[0])) ?? null) as T | null
           if (sql.includes('FROM atlas_requests') && sql.includes('WHERE id')) return (this.requests.find((row) => row.id === values[0]) ?? null) as T | null
           return null
         },
@@ -57,6 +59,9 @@ class MemoryD1 {
           }
           if (sql.includes('INSERT INTO atlas_provider_status')) {
             this.providerStatuses.set(String(values[0]), { provider: values[0], enabled: 1, status: values[1], last_checked_at: values[2], last_error: values[3], metadata_json: values[4] })
+          }
+          if (sql.includes('INSERT INTO atlas_service_config')) {
+            this.serviceConfigs.set(String(values[0]), { service: values[0], data_json: values[1], updated_at: values[2], version: values[3] })
           }
           return { success: true }
         },
@@ -283,6 +288,38 @@ describe('atlas-api', () => {
         }),
       )
     }
+  })
+
+  it('uses managed speech service config for default provider and voices', async () => {
+    const env = makeEnv()
+    env.db.serviceConfigs.set('speech', {
+      service: 'speech',
+      data_json: JSON.stringify({
+        defaultProvider: 'openai',
+        models: { openai: 'tts-1' },
+        voices: { openai: { 'nl-nl': 'alloy' } },
+      }),
+      updated_at: '2026-06-11T00:00:00.000Z',
+      version: 1,
+    })
+    const fetchSpy = vi.spyOn(globalThis, 'fetch').mockImplementation(async () => new Response(new Uint8Array([1, 2, 3]), { status: 200 }))
+
+    const response = await worker.fetch(new Request('https://api.test/v1/atlas/speech', {
+      method: 'POST',
+      body: JSON.stringify({ text: 'Hoe gaat het?', locale: 'nl-NL', app: 'yes-no', purpose: 'speech-playback' }),
+    }), env)
+
+    expect(response.status).toBe(201)
+    await expect(json(response)).resolves.toMatchObject({
+      data: { provider: { name: 'openai', model: 'tts-1', voice: 'alloy' } },
+    })
+    expect(fetchSpy).toHaveBeenCalledWith(
+      'https://api.openai.com/v1/audio/speech',
+      expect.objectContaining({
+        method: 'POST',
+        body: JSON.stringify({ model: 'tts-1', voice: 'alloy', input: 'Hoe gaat het?', response_format: 'mp3', speed: 1 }),
+      }),
+    )
   })
 
   it('routes text generation to Workers AI by default', async () => {

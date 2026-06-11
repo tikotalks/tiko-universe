@@ -498,8 +498,6 @@ interface SequenceStep {
   imageRef?: string
   imageRefs?: string[]
   imagePrompt?: string
-  imageURL?: string
-  imageURLs?: string[]
 }
 
 interface SequenceDefault {
@@ -509,7 +507,6 @@ interface SequenceDefault {
   category?: string
   color?: string
   imageRef?: string
-  imageURL?: string
   order: number
   steps: SequenceStep[]
 }
@@ -714,12 +711,9 @@ async function getSequenceContent(env: Env, language: string): Promise<{ sequenc
 
   const mappedSequences: SequenceDefault[] = []
   for (const sequence of sequences) {
-    const sequenceImageURL = await resolveItemImageURL(sequence, env)
     const mappedSteps: SequenceStep[] = []
     for (const step of (stepsBySequence.get(sequence.id) ?? []).sort((a, b) => a.sort_order - b.sort_order)) {
-      const stepImageURL = await resolveItemImageURL(step, env)
       const imageRefs = asImageRefs(step.metadata.imageRefs)
-      const imageURLs = (await Promise.all(imageRefs.map(ref => resolveImageRef(ref, env)))).filter((url): url is string => Boolean(url))
       const imagePrompt = asString(step.metadata.imagePrompt)
       mappedSteps.push({
         id: step.id,
@@ -728,8 +722,6 @@ async function getSequenceContent(env: Env, language: string): Promise<{ sequenc
         ...(step.image_ref ? { imageRef: step.image_ref } : {}),
         ...(imageRefs.length > 0 ? { imageRefs } : {}),
         ...(imagePrompt ? { imagePrompt } : {}),
-        ...(stepImageURL ? { imageURL: stepImageURL } : {}),
-        ...(imageURLs.length > 0 ? { imageURLs } : {}),
       })
     }
 
@@ -740,7 +732,6 @@ async function getSequenceContent(env: Env, language: string): Promise<{ sequenc
       ...(asString(sequence.metadata.category) ? { category: asString(sequence.metadata.category) } : {}),
       ...(sequence.color_token ? { color: sequence.color_token } : {}),
       ...(sequence.image_ref ? { imageRef: sequence.image_ref } : {}),
-      ...(sequenceImageURL ? { imageURL: sequenceImageURL } : {}),
       order: sequence.sort_order,
       steps: mappedSteps,
     })

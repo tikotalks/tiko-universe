@@ -235,16 +235,7 @@ describe('content-api worker', () => {
     ])
   })
 
-  it('serves localized Sequence defaults and resolves media ID image refs', async () => {
-    vi.spyOn(globalThis, 'fetch').mockImplementation(async (request) => {
-      const url = typeof request === 'string' ? request : request instanceof URL ? request.toString() : request.url
-      const id = url.split('/').pop()
-      return new Response(JSON.stringify({ original_url: `https://data.tikocdn.org/uploads/${id}.png` }), {
-        status: 200,
-        headers: { 'content-type': 'application/json' },
-      })
-    })
-
+  it('serves localized Sequence defaults with media ID image refs', async () => {
     const response = await worker.fetch(new Request('https://content.test/v1/sequence/content?language=mt'), makeEnv() as never)
     const body = await parseJson(response)
 
@@ -254,17 +245,12 @@ describe('content-api worker', () => {
       name: 'Ngħoddu t-Tuffieħ',
       category: 'learning',
       imageRef: 'media-sequence',
-      imageURL: 'https://data.tikocdn.org/uploads/media-sequence.png',
     })
     expect(body.data.sequences[0].steps[0]).toMatchObject({
       label: '2 tuffiħiet',
       text: '2 tuffiħiet',
       imageRef: 'media-apple',
-      imageURL: 'https://data.tikocdn.org/uploads/media-apple.png',
-      imageURLs: [
-        'https://data.tikocdn.org/uploads/media-apple.png',
-        'https://data.tikocdn.org/uploads/media-apple.png',
-      ],
+      imageRefs: ['media-apple', 'media-apple'],
     })
   })
 

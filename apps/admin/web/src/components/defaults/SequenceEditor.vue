@@ -10,8 +10,6 @@ interface SequenceStep {
   imageRef?: string
   imageRefs?: string[]
   imagePrompt?: string
-  imageURL?: string
-  imageURLs?: string[]
 }
 
 interface Sequence {
@@ -21,7 +19,6 @@ interface Sequence {
   category?: string
   color?: string
   imageRef?: string
-  imageURL?: string
   order?: number
   steps: SequenceStep[]
 }
@@ -84,10 +81,10 @@ function normalizeSequence(sequence: unknown, index: number): Sequence {
   }
 }
 
-function splitUrls(value: string): string[] {
+function splitMediaRefs(value: string): string[] {
   return value
     .split(/[\n,]/)
-    .map(url => url.trim())
+    .map(ref => ref.trim())
     .filter(Boolean)
 }
 
@@ -212,7 +209,7 @@ function removeStep(sequenceIndex: number, stepIndex: number) {
               :model-value="(step.imageRefs ?? []).join('\n')"
               label="Multiple image media IDs"
               :rows="3"
-              @update:model-value="(v: unknown) => updateStep(si, stepIdx, { imageRefs: splitUrls(String(v)) })"
+              @update:model-value="(v: unknown) => updateStep(si, stepIdx, { imageRefs: splitMediaRefs(String(v)) })"
             />
             <InputTextArea
               :model-value="step.imagePrompt ?? ''"

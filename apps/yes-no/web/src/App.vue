@@ -28,6 +28,7 @@ const identityBaseUrl = resolveIdentityBaseUrl()
 const bemm = useBemm('yes-no-app', { return: 'string', includeBaseClass: true })
 
 type SpeakStatus = 'idle' | 'speaking' | 'fallback' | 'error'
+type SentenceSpeechState = 'idle' | 'generating' | 'playing'
 
 interface AnswerTile {
   id: string
@@ -163,6 +164,7 @@ const settingsOpen = ref(false)
 const historyOpen = ref(false)
 const sentence = ref(stored.sentence || i18n.t(tikoI18nKeys.yesNo.sentence.default))
 const speakStatus = ref<SpeakStatus>('idle')
+const sentenceSpeechState = ref<SentenceSpeechState>('idle')
 const settingsVersion = ref<number | undefined>()
 const stateVersion = ref<number | undefined>()
 const sessionToken = ref<string>('')
@@ -418,6 +420,42 @@ async function speak(text: string) {
   }
 }
 
+function waitForAudioEnd(audio: { addEventListener?: (type: string, listener: () => void, options?: { once?: boolean }) => void }): Promise<void> {
+  if (!audio.addEventListener) return Promise.resolve()
+  return new Promise((resolve) => {
+    const done = () => resolve()
+    audio.addEventListener?.('ended', done, { once: true })
+    audio.addEventListener?.('error', done, { once: true })
+  })
+}
+
+async function speakSentence() {
+  const trimmed = sentence.value.trim()
+  if (sentenceSpeechState.value !== 'idle' || !trimmed) return
+  sentenceSpeechState.value = 'generating'
+  speakStatus.value = 'speaking'
+  try {
+    const result = await tts.getAudio({ text: trimmed, language: language.value, provider: 'narakeet' })
+    if (result.audioUrl) {
+      const audio = new Audio(result.audioUrl)
+      const ended = waitForAudioEnd(audio)
+      sentenceSpeechState.value = 'playing'
+      await audio.play()
+      await ended
+      speakStatus.value = result.metadata?.fallbackUsed ? 'fallback' : 'idle'
+      return
+    }
+
+    sentenceSpeechState.value = 'playing'
+    await tts.speak({ text: trimmed, language: language.value, provider: 'narakeet' })
+    speakStatus.value = result.metadata?.fallbackUsed ? 'fallback' : 'idle'
+  } catch {
+    speakStatus.value = 'error'
+  } finally {
+    sentenceSpeechState.value = 'idle'
+  }
+}
+
 async function answer(id: string) {
   const choice = choices.value.find((item) => item.id === id)
   if (!choice) return
@@ -465,11 +503,15 @@ function resetSentence() {
           <button
             :class="[bemm('round-control'), bemm('speak')]"
             type="button"
-            :disabled="!canSpeakSentence"
+            :disabled="!canSpeakSentence || sentenceSpeechState !== 'idle'"
+            :aria-busy="sentenceSpeechState === 'generating'"
+            :data-state="sentenceSpeechState"
             :aria-label="labels.speak"
-            @click="speak(sentence)"
+            @click="speakSentence"
           >
-            <Icon name="media/volume-iii" size="large" aria-hidden="true" />
+            <span v-if="sentenceSpeechState === 'generating'" :class="bemm('spinner')" aria-hidden="true"></span>
+            <Icon v-else-if="sentenceSpeechState === 'playing'" name="media/playback-pause" size="large" aria-hidden="true" />
+            <Icon v-else name="media/volume-iii" size="large" aria-hidden="true" />
           </button>
           <button
             :class="[bemm('round-control'), bemm('reset')]"

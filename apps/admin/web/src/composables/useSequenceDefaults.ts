@@ -8,8 +8,6 @@ export interface SequenceStep {
   imageRef?: string
   imageRefs?: string[]
   imagePrompt?: string
-  imageURL?: string
-  imageURLs?: string[]
 }
 
 export interface SequenceDefault {
@@ -19,7 +17,6 @@ export interface SequenceDefault {
   category?: string
   color?: string
   imageRef?: string
-  imageURL?: string
   order: number
   steps: SequenceStep[]
 }
@@ -45,14 +42,11 @@ function errorMessage(body: ApiErrorBody | null, fallback: string): string {
 
 function sanitizeSequence(sequence: SequenceDefault): SequenceDefault {
   const base = { ...sequence }
-  delete base.imageURL
   if (base.imageRef && /^https?:\/\//i.test(base.imageRef)) delete base.imageRef
   return {
     ...base,
     steps: sequence.steps.map((step) => {
       const cleanStep = { ...step }
-      delete cleanStep.imageURL
-      delete cleanStep.imageURLs
       if (cleanStep.imageRef && /^https?:\/\//i.test(cleanStep.imageRef)) delete cleanStep.imageRef
       if (Array.isArray(cleanStep.imageRefs)) cleanStep.imageRefs = cleanStep.imageRefs.filter(ref => !/^https?:\/\//i.test(ref))
       return cleanStep

@@ -1,5 +1,6 @@
 import { bytesBody, getCachedJson, putCachedJson, sha256Hex } from './cache'
 import type { AtlasExecutionResult, AtlasRunRequest, DataFetchRequest, Env, ImageRequest, SpeechRequest, TextRequest } from './types'
+import { DEFAULT_ATLAS_SPEECH_CONFIG, defaultSpeechVoiceForProvider, normalizeSpeechServiceConfig, type AtlasSpeechServiceConfig } from '../../shared/atlas-speech-config'
 
 interface CachedAssetRow {
   id: string
@@ -13,133 +14,6 @@ interface CachedAssetRow {
 
 type SpeechProvider = 'openai' | 'elevenlabs' | 'narakeet'
 type GeneratedSpeech = { bytes: Uint8Array; contentType: string; durationSeconds?: number }
-
-const DEFAULT_NARAKEET_VOICE_BY_LOCALE: Record<string, string> = {
-  'en-us': 'raymond',
-  'en-gb': 'beatrice',
-  'en-ca': 'ryan',
-  'en-au': 'graham',
-  'en-nz': 'keith',
-  'en-ie': 'cillian',
-  'en-in': 'neerja',
-  'en-za': 'aletta',
-  'en-ng': 'obinna',
-  'en-ph': 'manny',
-  'en-sg': 'ava',
-  'af-za': 'rolanda',
-  'sq-al': 'arben',
-  'am-et': 'girum',
-  'ar-xa': 'farah',
-  'hy-am': 'nune',
-  'as-in': 'jahnu',
-  'az-az': 'tofiq',
-  'bn-bd': 'mahiya',
-  'bn-in': 'arpita',
-  'eu-es': 'aitor',
-  'bs-ba': 'mujo',
-  'bg-bg': 'desislava',
-  'my-mm': 'zeya',
-  'ca-es': 'silvia',
-  'cmn-cn': 'yifei',
-  'cmn-tw': 'yili',
-  'cmn-hk': 'man-chi',
-  'hr-hr': 'jasna',
-  'cs-cz': 'ladislav',
-  'da-dk': 'iben',
-  'nl-nl': 'famke',
-  'nl-be': 'koen',
-  'et-ee': 'pille',
-  'fi-fi': 'juha',
-  'fil-ph': 'piolo',
-  'fr-fr': 'marion',
-  'fr-ca': 'audrey',
-  'fr-be': 'laetitia',
-  'fr-ch': 'matthieu',
-  'gl-es': 'gonzalo',
-  'de-de': 'andreas',
-  'de-ch': 'heidi',
-  'de-at': 'fritzi',
-  'ka-ge': 'tornike',
-  'el-gr': 'afroditi',
-  'gu-in': 'pratik',
-  'he-il': 'ayelet',
-  'hi-in': 'amitabh',
-  'hu-hu': 'eszter',
-  'is-is': 'steinunn',
-  'it-it': 'vittorio',
-  'id-id': 'agung',
-  'ga-ie': 'aoife',
-  'ja-jp': 'hideaki',
-  'jv-id': 'riyanto',
-  'kn-in': 'bhavana',
-  'kk-kz': 'gulshat',
-  'km-kh': 'sovath',
-  'ko-kr': 'dong-min',
-  'lo-la': 'tonkham',
-  'lv-lv': 'kristaps',
-  'lt-lt': 'jurga',
-  'mk-mk': 'vlatko',
-  'ml-in': 'ajay',
-  'ms-my': 'taufan',
-  'mt-mt': 'corazon',
-  'mr-in': 'shahana',
-  'mn-mn': 'ganbaatar',
-  'nr-za': 'dumisani',
-  'ne-np': 'lhakpa',
-  'nb-no': 'aksel',
-  'or-in': 'baisali',
-  'ps-af': 'dilawar',
-  'fa-ir': 'reza',
-  'pl-pl': 'danuta',
-  'pt-pt': 'lurdes',
-  'pt-br': 'gisele',
-  'pa-in': 'inderjit',
-  'ro-ro': 'alina',
-  'ru-ru': 'irina',
-  'si-lk': 'sanath',
-  'ssw-za': 'nomcebo',
-  'nso-za': 'mpho',
-  'sr-rs': 'lazar',
-  'st-za': 'palesa',
-  'sk-sk': 'juraj',
-  'sl-si': 'mojca',
-  'so-so': 'cabdi',
-  'es-es': 'alejandra',
-  'es-us': 'hector',
-  'es-mx': 'ramona',
-  'es-pr': 'margarita',
-  'su-id': 'atep',
-  'sv-se': 'elsa',
-  'sw-ke': 'ngina',
-  'ta-in': 'aparna',
-  'te-in': 'ramakrishna',
-  'th-th': 'somsak',
-  'tn-za': 'bokang',
-  'ven-za': 'mulalo',
-  'tr-tr': 'murat',
-  'uk-ua': 'oleksandr',
-  'ur-pk': 'imran',
-  'uz-uz': 'shavkat',
-  'vi-vn': 'nga',
-  'cy-gb': 'rhys',
-  'tso-za': 'basetsana',
-  'xh-za': 'thabo',
-  'zu-za': 'nandi',
-}
-
-const NARAKEET_LOCALE_ALIASES: Record<string, string> = {
-  zh: 'cmn-cn',
-  'zh-cn': 'cmn-cn',
-  'zh-tw': 'cmn-tw',
-  'zh-hk': 'cmn-hk',
-}
-
-const DEFAULT_NARAKEET_VOICE_BY_LANGUAGE = Object.entries(DEFAULT_NARAKEET_VOICE_BY_LOCALE)
-  .reduce<Record<string, string>>((voices, [locale, voice]) => {
-    const language = locale.split('-')[0]
-    voices[language] ??= voice
-    return voices
-  }, { zh: DEFAULT_NARAKEET_VOICE_BY_LOCALE['cmn-cn'] })
 
 export async function executeAtlasCapability(request: AtlasRunRequest, env: Env): Promise<AtlasExecutionResult> {
   switch (request.capability) {
@@ -156,13 +30,15 @@ export async function synthesizeSpeech(input: SpeechRequest, env: Env): Promise<
   const validation = validateSpeech(input)
   if (validation) throw capabilityError(validation, 400)
 
-  const provider = normalizeSpeechProvider(input.provider, env)
+  const speechConfig = await loadSpeechServiceConfig(env)
+  const provider = normalizeSpeechProvider(input.provider, env, speechConfig)
+  const locale = (input.locale ?? input.language ?? 'en').trim().toLowerCase()
   const normalized = {
     text: input.text.trim(),
-    locale: (input.locale ?? input.language ?? 'en').trim().toLowerCase(),
+    locale,
     provider,
-    model: input.model?.trim() || defaultSpeechModel(provider),
-    voice: input.voice?.trim() || defaultSpeechVoice(provider, (input.locale ?? input.language ?? 'en').trim().toLowerCase()),
+    model: input.model?.trim() || defaultSpeechModel(provider, speechConfig),
+    voice: input.voice?.trim() || defaultSpeechVoice(provider, locale, speechConfig),
     speed: clamp(input.speed ?? 1, 0.25, 4),
     format: 'mp3' as const,
   }
@@ -382,34 +258,34 @@ async function generateNarakeetSpeech(input: { text: string; voice: string; spee
   }
 }
 
-function normalizeSpeechProvider(provider: SpeechRequest['provider'], env: Env): SpeechProvider {
+async function loadSpeechServiceConfig(env: Env): Promise<AtlasSpeechServiceConfig> {
+  const row = await env.ATLAS_DB?.prepare('SELECT data_json FROM atlas_service_config WHERE service = ? LIMIT 1').bind('speech').first<{ data_json: string }>()
+  if (!row?.data_json) return DEFAULT_ATLAS_SPEECH_CONFIG
+  try {
+    return normalizeSpeechServiceConfig(JSON.parse(row.data_json))
+  } catch {
+    return DEFAULT_ATLAS_SPEECH_CONFIG
+  }
+}
+
+function normalizeSpeechProvider(provider: SpeechRequest['provider'], env: Env, config: AtlasSpeechServiceConfig): SpeechProvider {
   if (provider === 'narakeet') return 'narakeet'
   if (provider === 'elevenlabs') return 'elevenlabs'
   if (provider === 'openai') return 'openai'
+  if (config.defaultProvider === 'narakeet' && env.NARAKEET_API_KEY) return 'narakeet'
+  if (config.defaultProvider === 'elevenlabs' && env.ELEVENLABS_API_KEY) return 'elevenlabs'
+  if (config.defaultProvider === 'openai' && env.OPENAI_API_KEY) return 'openai'
   if (env.NARAKEET_API_KEY) return 'narakeet'
   if (env.ELEVENLABS_API_KEY) return 'elevenlabs'
   return 'openai'
 }
 
-function defaultSpeechModel(provider: SpeechProvider) {
-  if (provider === 'narakeet') return 'narakeet-mp3'
-  if (provider === 'elevenlabs') return 'eleven_multilingual_v2'
-  return 'tts-1'
+function defaultSpeechModel(provider: SpeechProvider, config: AtlasSpeechServiceConfig) {
+  return config.models[provider] ?? DEFAULT_ATLAS_SPEECH_CONFIG.models[provider] ?? (provider === 'narakeet' ? 'narakeet-mp3' : provider === 'elevenlabs' ? 'eleven_multilingual_v2' : 'tts-1')
 }
 
-function defaultSpeechVoice(provider: SpeechProvider, locale = 'en') {
-  if (provider === 'narakeet') return defaultNarakeetVoice(locale)
-  if (provider === 'elevenlabs') return '21m00Tcm4TlvDq8ikWAM'
-  return 'nova'
-}
-
-function defaultNarakeetVoice(locale: string) {
-  const normalizedLocale = locale.trim().toLowerCase().replace(/_/g, '-')
-  const aliasedLocale = NARAKEET_LOCALE_ALIASES[normalizedLocale] ?? normalizedLocale
-  const language = aliasedLocale.split('-')[0]
-  return DEFAULT_NARAKEET_VOICE_BY_LOCALE[aliasedLocale]
-    ?? DEFAULT_NARAKEET_VOICE_BY_LANGUAGE[language]
-    ?? DEFAULT_NARAKEET_VOICE_BY_LANGUAGE.en
+function defaultSpeechVoice(provider: SpeechProvider, locale: string, config: AtlasSpeechServiceConfig) {
+  return defaultSpeechVoiceForProvider(provider, locale, config)
 }
 
 function toSpeechProvider(provider: string): SpeechProvider {

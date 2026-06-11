@@ -27,8 +27,8 @@ interface SequenceStep {
   id: string
   label: string
   text: string
-  imageURL?: string
-  imageURLs?: string[]
+  imageRef?: string
+  imageRefs?: string[]
 }
 
 interface SequenceItem {
@@ -37,7 +37,7 @@ interface SequenceItem {
   title?: string
   category?: string
   color?: string
-  imageURL?: string
+  imageRef?: string
   order?: number
   steps: SequenceStep[]
   source?: 'default' | 'user'
@@ -102,8 +102,8 @@ function normalizeStep(step: unknown, index: number): SequenceStep {
     id: typeof value.id === 'string' && value.id.trim() ? value.id : `step-${index}`,
     label,
     text: typeof value.text === 'string' && value.text.trim() ? value.text : label,
-    ...(typeof value.imageURL === 'string' && value.imageURL.trim() ? { imageURL: value.imageURL } : {}),
-    ...(Array.isArray(value.imageURLs) ? { imageURLs: value.imageURLs.filter((url): url is string => typeof url === 'string' && url.trim().length > 0) } : {}),
+    ...(typeof value.imageRef === 'string' && value.imageRef.trim() ? { imageRef: value.imageRef } : {}),
+    ...(Array.isArray(value.imageRefs) ? { imageRefs: value.imageRefs.filter((ref): ref is string => typeof ref === 'string' && ref.trim().length > 0) } : {}),
   }
 }
 
@@ -121,7 +121,7 @@ function normalizeSequenceItem(item: unknown, source: SequenceItem['source']): S
     source,
     ...(typeof value.category === 'string' && value.category.trim() ? { category: value.category } : {}),
     ...(typeof value.color === 'string' && value.color.trim() ? { color: value.color } : {}),
-    ...(typeof value.imageURL === 'string' && value.imageURL.trim() ? { imageURL: value.imageURL } : {}),
+    ...(typeof value.imageRef === 'string' && value.imageRef.trim() ? { imageRef: value.imageRef } : {}),
     order: typeof value.order === 'number' ? value.order : source === 'default' ? 0 : 1000,
     steps: Array.isArray(value.steps) ? value.steps.map(normalizeStep) : [],
   }
@@ -380,14 +380,18 @@ function stepText(step: SequenceStep | null | undefined): string {
 
 function stepImages(step: SequenceStep | null | undefined): string[] {
   if (!step) return []
-  if (Array.isArray(step.imageURLs) && step.imageURLs.length > 0) return step.imageURLs
-  return step.imageURL ? [step.imageURL] : []
+  if (Array.isArray(step.imageRefs) && step.imageRefs.length > 0) return step.imageRefs.map(imageRefURL)
+  return step.imageRef ? [imageRefURL(step.imageRef)] : []
 }
 
 function itemImages(item: SequenceItem): string[] {
   const firstStep = item.steps.find(step => stepImages(step).length > 0)
   if (firstStep) return stepImages(firstStep)
-  return item.imageURL ? [item.imageURL] : []
+  return item.imageRef ? [imageRefURL(item.imageRef)] : []
+}
+
+function imageRefURL(imageRef: string) {
+  return `${contentBaseUrl}/content/images/${encodeURIComponent(imageRef)}`
 }
 
 function itemBackground(item: SequenceItem): string {

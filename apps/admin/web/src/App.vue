@@ -39,6 +39,7 @@ const navItems = computed(() => [
   { to: '/stories', label: 'Stories', icon: 'ui/music-note-single' },
   { to: '/library', label: 'Library', icon: 'ui/folder' },
   { to: '/users', label: 'Users', icon: 'ui/user' },
+  { to: '/services', label: 'Services', icon: 'ui/settings' },
   { to: '/apps', label: 'Apps', icon: 'ui/board-multi-dashboard', children: appSubItems.value },
   { to: '/settings', label: 'Settings', icon: 'ui/settings-dual' },
   { to: '/support', label: 'Support', icon: 'ui/at-sign' },
