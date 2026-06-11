@@ -81,6 +81,7 @@ interface CardCollection {
   colorHex: number
   order: number
   mediaCategories: string[]
+  imageRef?: string
   imageURL?: string
   parentID?: string | null
   cards: CardTile[]
@@ -108,6 +109,7 @@ const DEFAULT_ALLOWED_ORIGINS = [
 const CACHE_TTL_SECONDS = 300
 const CACHE_KEY_CARDS_COLLECTIONS = 'cards:collections'
 const CACHE_KEY_YES_NO_CONTENT = 'yes-no:content'
+const CACHE_KEY_SEQUENCE_CONTENT = 'sequence:content'
 const CARDS_CACHE_LANGUAGES = ['en', 'nl', 'fr', 'es', 'de', 'mt', 'it', 'pt', 'pt-br', 'ar']
 
 async function invalidateCardsCache(env: Env): Promise<void> {
@@ -120,6 +122,12 @@ async function invalidateYesNoCache(env: Env): Promise<void> {
   if (!env.CONTENT_CACHE) return
   await env.CONTENT_CACHE.delete(CACHE_KEY_YES_NO_CONTENT)
   await Promise.all(CARDS_CACHE_LANGUAGES.map(language => env.CONTENT_CACHE!.delete(`${CACHE_KEY_YES_NO_CONTENT}:${language}`)))
+}
+
+async function invalidateSequenceCache(env: Env): Promise<void> {
+  if (!env.CONTENT_CACHE) return
+  await env.CONTENT_CACHE.delete(CACHE_KEY_SEQUENCE_CONTENT)
+  await Promise.all(CARDS_CACHE_LANGUAGES.map(language => env.CONTENT_CACHE!.delete(`${CACHE_KEY_SEQUENCE_CONTENT}:${language}`)))
 }
 
 interface UserImageRow {
@@ -184,6 +192,16 @@ function asString(value: unknown): string | undefined {
   return typeof value === 'string' && value.trim() ? value.trim() : undefined
 }
 
+function asImageRef(value: unknown): string | undefined {
+  const ref = asString(value)
+  if (!ref || /^https?:\/\//i.test(ref)) return undefined
+  return ref
+}
+
+function asImageRefs(value: unknown): string[] {
+  return parseStringArray(value).filter(ref => !/^https?:\/\//i.test(ref))
+}
+
 function asLimit(value: unknown, fallback = 50): number {
   const n = typeof value === 'number' ? value : Number(value)
   return Number.isFinite(n) ? Math.min(Math.max(Math.trunc(n), 1), 100) : fallback
@@ -204,6 +222,12 @@ function parseJsonArray(value: unknown): unknown[] {
   } catch {
     return []
   }
+}
+
+function parseStringArray(value: unknown): string[] {
+  return parseJsonArray(value)
+    .filter((item): item is string => typeof item === 'string' && item.trim().length > 0)
+    .map(item => item.trim())
 }
 
 function normalizeLanguage(value: string | null | undefined): string | undefined {
@@ -426,7 +450,6 @@ interface AppContentItemRow {
   color_hex: number | null
   icon: string | null
   image_ref: string | null
-  image_url: string | null
   sort_order: number
   is_default: number
   is_published: number
@@ -468,6 +491,29 @@ interface YesNoAnswerSet {
   answers: YesNoAnswerTile[]
 }
 
+interface SequenceStep {
+  id: string
+  label: string
+  text: string
+  imageRef?: string
+  imageRefs?: string[]
+  imagePrompt?: string
+  imageURL?: string
+  imageURLs?: string[]
+}
+
+interface SequenceDefault {
+  id: string
+  name: string
+  title: string
+  category?: string
+  color?: string
+  imageRef?: string
+  imageURL?: string
+  order: number
+  steps: SequenceStep[]
+}
+
 function parseJsonRecord(value: unknown): JsonRecord {
   if (value && typeof value === 'object' && !Array.isArray(value)) return value as JsonRecord
   if (typeof value !== 'string' || !value.trim()) return {}
@@ -486,7 +532,7 @@ function overlayText(base: string | null, translated: string | null): string | n
 async function getLocalizedContentItems(env: Env, appId: string, language: string): Promise<LocalizedContentItem[]> {
   const { results: rows } = await env.CONTENT_DB.prepare(
     `SELECT id, app_id, type, parent_id, title, subtitle, body, speech, color_token, color_hex,
-            icon, image_ref, image_url, sort_order, is_default, is_published, owner_user_id,
+            icon, image_ref, sort_order, is_default, is_published, owner_user_id,
             owner_child_id, source_item_id, metadata_json
      FROM content_items
      WHERE app_id = ?
@@ -524,9 +570,7 @@ async function getLocalizedContentItems(env: Env, appId: string, language: strin
 }
 
 async function resolveItemImageURL(item: AppContentItemRow, env: Env): Promise<string | undefined> {
-  if (item.image_url) return item.image_url
   if (!item.image_ref) return undefined
-  if (item.image_ref.startsWith('http')) return item.image_ref
   return await resolveImageRef(item.image_ref, env) ?? undefined
 }
 
@@ -565,6 +609,7 @@ async function mapCardsContentItems(items: LocalizedContentItem[], env: Env): Pr
       colorHex: collection.color_hex ?? 0,
       order: collection.sort_order,
       mediaCategories,
+      ...(collection.image_ref ? { imageRef: collection.image_ref } : {}),
       ...(imageURL ? { imageURL } : {}),
       ...(collection.parent_id ? { parentID: collection.parent_id } : {}),
       cards: collectionCards.sort((a, b) => a.order - b.order),
@@ -593,23 +638,26 @@ async function getYesNoContent(env: Env, language: string): Promise<{ answerSets
 
   const answerSets: YesNoAnswerSet[] = []
   for (const set of sets) {
-    const mappedAnswers: YesNoAnswerTile[] = (answersBySet.get(set.id) ?? [])
-      .sort((a, b) => a.sort_order - b.sort_order)
-      .map((answer) => ({
+    const mappedAnswers: YesNoAnswerTile[] = []
+    for (const answer of (answersBySet.get(set.id) ?? []).sort((a, b) => a.sort_order - b.sort_order)) {
+      const answerImageURL = await resolveItemImageURL(answer, env)
+      mappedAnswers.push({
         id: typeof answer.metadata.answerId === 'string' ? answer.metadata.answerId : answer.id,
         label: answer.title,
         speech: answer.speech ?? answer.title,
         ...(answer.color_token ? { color: answer.color_token } : {}),
-        ...(answer.image_url ? { imageURL: answer.image_url } : {}),
+        ...(answerImageURL ? { imageURL: answerImageURL } : {}),
         ...(answer.icon ? { icon: answer.icon } : {}),
-      }))
+      })
+    }
+    const setImageURL = await resolveItemImageURL(set, env)
 
     answerSets.push({
       id: set.id,
       title: set.title,
       ...(set.subtitle ? { description: set.subtitle } : {}),
       ...(set.color_token ? { color: set.color_token } : {}),
-      ...(set.image_url ? { imageURL: set.image_url } : {}),
+      ...(setImageURL ? { imageURL: setImageURL } : {}),
       order: set.sort_order,
       answers: mappedAnswers,
     })
@@ -621,6 +669,55 @@ async function getYesNoContent(env: Env, language: string): Promise<{ answerSets
     answers: sortedSets[0]?.answers ?? [],
     selectedSetId: sortedSets[0]?.id ?? null,
   }
+}
+
+async function getSequenceContent(env: Env, language: string): Promise<{ sequences: SequenceDefault[] }> {
+  const items = await getLocalizedContentItems(env, 'sequence', language)
+  const sequences = items.filter(item => item.type === 'sequence')
+  const steps = items.filter(item => item.type === 'sequence_step')
+  const stepsBySequence = new Map<string, LocalizedContentItem[]>()
+  for (const step of steps) {
+    if (!step.parent_id) continue
+    const existing = stepsBySequence.get(step.parent_id)
+    if (existing) existing.push(step)
+    else stepsBySequence.set(step.parent_id, [step])
+  }
+
+  const mappedSequences: SequenceDefault[] = []
+  for (const sequence of sequences) {
+    const sequenceImageURL = await resolveItemImageURL(sequence, env)
+    const mappedSteps: SequenceStep[] = []
+    for (const step of (stepsBySequence.get(sequence.id) ?? []).sort((a, b) => a.sort_order - b.sort_order)) {
+      const stepImageURL = await resolveItemImageURL(step, env)
+      const imageRefs = asImageRefs(step.metadata.imageRefs)
+      const imageURLs = (await Promise.all(imageRefs.map(ref => resolveImageRef(ref, env)))).filter((url): url is string => Boolean(url))
+      const imagePrompt = asString(step.metadata.imagePrompt)
+      mappedSteps.push({
+        id: step.id,
+        label: step.title,
+        text: step.speech ?? step.title,
+        ...(step.image_ref ? { imageRef: step.image_ref } : {}),
+        ...(imageRefs.length > 0 ? { imageRefs } : {}),
+        ...(imagePrompt ? { imagePrompt } : {}),
+        ...(stepImageURL ? { imageURL: stepImageURL } : {}),
+        ...(imageURLs.length > 0 ? { imageURLs } : {}),
+      })
+    }
+
+    mappedSequences.push({
+      id: sequence.id,
+      name: sequence.title,
+      title: sequence.title,
+      ...(asString(sequence.metadata.category) ? { category: asString(sequence.metadata.category) } : {}),
+      ...(sequence.color_token ? { color: sequence.color_token } : {}),
+      ...(sequence.image_ref ? { imageRef: sequence.image_ref } : {}),
+      ...(sequenceImageURL ? { imageURL: sequenceImageURL } : {}),
+      order: sequence.sort_order,
+      steps: mappedSteps,
+    })
+  }
+
+  return { sequences: mappedSequences.sort((a, b) => a.order - b.order) }
 }
 
 async function getCardsCollections(env: Env, language: string, sessionToken?: string): Promise<{ collections: CardCollection[] }> {
@@ -664,12 +761,12 @@ async function putAdminCardsCollections(
 
   for (const col of collections) {
     await env.CONTENT_DB.prepare(
-      `INSERT INTO content_items (
-         id, template_id, title, slug, status, language_code, tags, categories, data,
-         app_id, type, parent_id, source_locale, speech, color_hex, image_url,
-         sort_order, is_default, is_published, metadata_json
-       )
-       VALUES (?, 'cards.collection', ?, ?, 'published', 'en', NULL, '["cards"]', ?,
+	      `INSERT INTO content_items (
+	         id, template_id, title, slug, status, language_code, tags, categories, data,
+	         app_id, type, parent_id, source_locale, speech, color_hex, image_ref,
+	         sort_order, is_default, is_published, metadata_json
+	       )
+	       VALUES (?, 'cards.collection', ?, ?, 'published', 'en', NULL, '["cards"]', ?,
          'cards', 'collection', NULL, 'en', ?, ?, ?, ?, 1, 1, ?)`,
     )
       .bind(
@@ -677,24 +774,24 @@ async function putAdminCardsCollections(
         col.title,
         col.id,
         JSON.stringify({ mediaCategories: col.mediaCategories ?? [] }),
-        col.title,
-        col.colorHex ?? 0,
-        col.imageURL ?? null,
-        col.order ?? 0,
-        JSON.stringify({ mediaCategories: col.mediaCategories ?? [] }),
+	        col.title,
+	        col.colorHex ?? 0,
+	        asImageRef(col.imageRef) ?? null,
+	        col.order ?? 0,
+	        JSON.stringify({ mediaCategories: col.mediaCategories ?? [] }),
       )
       .run()
 
     if (Array.isArray(col.cards)) {
       for (const tile of col.cards) {
         await env.CONTENT_DB.prepare(
-          `INSERT INTO content_items (
-             id, template_id, title, slug, status, language_code, tags, categories, data,
-             app_id, type, parent_id, source_locale, speech, color_hex, image_ref, image_url,
-             sort_order, is_default, is_published, metadata_json
-           )
-           VALUES (?, 'cards.card', ?, ?, 'published', 'en', NULL, '["cards"]', ?,
-             'cards', 'card', ?, 'en', ?, ?, ?, ?, ?, 1, 1, ?)`,
+	          `INSERT INTO content_items (
+	             id, template_id, title, slug, status, language_code, tags, categories, data,
+	             app_id, type, parent_id, source_locale, speech, color_hex, image_ref,
+	             sort_order, is_default, is_published, metadata_json
+	           )
+	           VALUES (?, 'cards.card', ?, ?, 'published', 'en', NULL, '["cards"]', ?,
+	             'cards', 'card', ?, 'en', ?, ?, ?, ?, 1, 1, ?)`,
         )
           .bind(
             tile.id,
@@ -702,12 +799,11 @@ async function putAdminCardsCollections(
             tile.id,
             JSON.stringify({ collectionId: col.id }),
             col.id,
-            tile.speech,
-            tile.colorHex ?? 0,
-            tile.imageRef ?? null,
-            tile.imageURL ?? null,
-            tile.order ?? 0,
-            JSON.stringify({ collectionId: col.id }),
+	            tile.speech,
+	            tile.colorHex ?? 0,
+	            asImageRef(tile.imageRef) ?? null,
+	            tile.order ?? 0,
+	            JSON.stringify({ collectionId: col.id }),
           )
           .run()
       }
@@ -715,6 +811,80 @@ async function putAdminCardsCollections(
   }
 
   return { success: true, count: collections.length }
+}
+
+async function putAdminSequenceContent(
+  env: Env,
+  sequences: SequenceDefault[],
+): Promise<{ success: boolean; count: number }> {
+  if (!Array.isArray(sequences) || sequences.length === 0) {
+    throw new Error('sequences must be a non-empty array')
+  }
+
+  await env.CONTENT_DB.prepare(`DELETE FROM content_item_translations WHERE item_id IN (SELECT id FROM content_items WHERE app_id = 'sequence' AND owner_user_id IS NULL)`).run()
+  await env.CONTENT_DB.prepare(`DELETE FROM content_items WHERE app_id = 'sequence' AND owner_user_id IS NULL`).run()
+
+  for (const [sequenceIndex, sequence] of sequences.entries()) {
+    const sequenceId = asString(sequence.id) ?? `sequence_${crypto.randomUUID()}`
+    const title = asString(sequence.title) ?? asString(sequence.name) ?? `Sequence ${sequenceIndex + 1}`
+    const category = asString(sequence.category)
+    await env.CONTENT_DB.prepare(
+      `INSERT INTO content_items (
+       id, template_id, title, slug, status, language_code, tags, categories, data,
+         app_id, type, parent_id, source_locale, speech, color_token, image_ref,
+         sort_order, is_default, is_published, metadata_json
+       )
+       VALUES (?, 'sequence.sequence', ?, ?, 'published', 'en', NULL, '["sequence"]', ?,
+         'sequence', 'sequence', NULL, 'en', ?, ?, ?, ?, 1, 1, ?)`,
+    )
+      .bind(
+        sequenceId,
+        title,
+        sequenceId,
+        JSON.stringify({ category, stepCount: Array.isArray(sequence.steps) ? sequence.steps.length : 0 }),
+        title,
+        asString(sequence.color) ?? null,
+        asImageRef(sequence.imageRef) ?? null,
+        typeof sequence.order === 'number' ? sequence.order : sequenceIndex,
+        JSON.stringify({ category }),
+      )
+      .run()
+
+    for (const [stepIndex, step] of (sequence.steps ?? []).entries()) {
+      const stepId = asString(step.id) ?? `${sequenceId}_step_${stepIndex + 1}`
+      const label = asString(step.label) ?? asString(step.text) ?? `Step ${stepIndex + 1}`
+      const text = asString(step.text) ?? label
+      const imageRefs = asImageRefs(step.imageRefs)
+      const metadata = {
+        sequenceId,
+        imagePrompt: asString(step.imagePrompt) ?? null,
+        imageRefs,
+      }
+      await env.CONTENT_DB.prepare(
+        `INSERT INTO content_items (
+           id, template_id, title, slug, status, language_code, tags, categories, data,
+           app_id, type, parent_id, source_locale, speech, image_ref,
+           sort_order, is_default, is_published, metadata_json
+         )
+         VALUES (?, 'sequence.step', ?, ?, 'published', 'en', NULL, '["sequence"]', ?,
+           'sequence', 'sequence_step', ?, 'en', ?, ?, ?, 1, 1, ?)`,
+      )
+        .bind(
+          stepId,
+          label,
+          stepId,
+          JSON.stringify({ sequenceId }),
+          sequenceId,
+          text,
+          asImageRef(step.imageRef) ?? null,
+          stepIndex,
+          JSON.stringify(metadata),
+        )
+        .run()
+    }
+  }
+
+  return { success: true, count: sequences.length }
 }
 
 // ---------------------------------------------------------------------------
@@ -770,7 +940,7 @@ async function handlePostCards(request: Request, env: Env, segments: string[]): 
 
   // POST /v1/cards/collections
   if (segments[2] === 'collections' && segments.length === 3) {
-    let body: { id?: unknown; title?: unknown; colorHex?: unknown; order?: unknown; imageURL?: unknown }
+    let body: { id?: unknown; title?: unknown; colorHex?: unknown; order?: unknown; imageRef?: unknown }
     try { body = (await request.json()) as typeof body } catch {
       return error(request, env, 'bad_request', 'Request body must be valid JSON', 400)
     }
@@ -784,8 +954,8 @@ async function handlePostCards(request: Request, env: Env, segments: string[]): 
     const id = typeof body.id === 'string' && body.id.startsWith('user_') ? body.id : `user_${crypto.randomUUID()}`
     const colorHex = typeof body.colorHex === 'number' ? body.colorHex : colors[current.state.collections.length % colors.length]
     const order = typeof body.order === 'number' ? body.order : current.state.collections.length
-    const imageURL = typeof body.imageURL === 'string' && body.imageURL ? body.imageURL : undefined
-    const newCollection: CardCollection = { id, title, colorHex, order, mediaCategories: [], ...(imageURL ? { imageURL } : {}), cards: [] }
+    const imageRef = asImageRef(body.imageRef)
+    const newCollection: CardCollection = { id, title, colorHex, order, mediaCategories: [], ...(imageRef ? { imageRef } : {}), cards: [] }
 
     const existing = current.state.collections.find(c => c.id === id)
     const updated: UserCardsState = {
@@ -801,7 +971,7 @@ async function handlePostCards(request: Request, env: Env, segments: string[]): 
   if (segments[2] === 'collections' && segments[4] === 'cards' && segments.length === 5) {
     const collectionId = segments[3]
     const isDefault = !collectionId.startsWith('user_')
-    let body: { id?: unknown; title?: unknown; speech?: unknown; colorHex?: unknown; order?: unknown; imageURL?: unknown; imageRef?: unknown }
+    let body: { id?: unknown; title?: unknown; speech?: unknown; colorHex?: unknown; order?: unknown; imageRef?: unknown }
     try { body = (await request.json()) as typeof body } catch {
       return error(request, env, 'bad_request', 'Request body must be valid JSON', 400)
     }
@@ -816,20 +986,15 @@ async function handlePostCards(request: Request, env: Env, segments: string[]): 
         return error(request, env, 'forbidden', 'Admin role required to add cards to default collections', 403)
       }
       const id = `__default_${crypto.randomUUID().replace(/-/g, '')}`
-      const imageRef = typeof body.imageRef === 'string' && body.imageRef
-        ? body.imageRef
-        : typeof body.imageURL === 'string' && body.imageURL
-          ? body.imageURL
-          : null
-      const imageURL = typeof body.imageURL === 'string' && body.imageURL ? body.imageURL : null
+      const imageRef = asImageRef(body.imageRef) ?? null
       await env.CONTENT_DB.prepare(
         `INSERT INTO content_items (
            id, template_id, title, slug, status, language_code, tags, categories, data,
-           app_id, type, parent_id, source_locale, speech, color_hex, image_ref, image_url,
+           app_id, type, parent_id, source_locale, speech, color_hex, image_ref,
            sort_order, is_default, is_published, metadata_json
          )
          VALUES (?, 'cards.card', ?, ?, 'published', 'en', NULL, '["cards"]', ?,
-           'cards', 'card', ?, 'en', ?, ?, ?, ?, ?, 1, 1, ?)`,
+           'cards', 'card', ?, 'en', ?, ?, ?, ?, 1, 1, ?)`,
       ).bind(
         id,
         title,
@@ -839,12 +1004,11 @@ async function handlePostCards(request: Request, env: Env, segments: string[]): 
         speech,
         colorHex,
         imageRef,
-        imageURL,
         order,
         JSON.stringify({ collectionId }),
       ).run()
       await invalidateCardsCache(env)
-      const newCard: CardTile = { id, title, speech, colorHex, order, ...(imageRef ? { imageRef, imageURL: imageRef.startsWith('http') ? imageRef : undefined } : {}) }
+      const newCard: CardTile = { id, title, speech, colorHex, order, ...(imageRef ? { imageRef } : {}) }
       return json(request, env, { success: true, data: newCard }, 201)
     }
 
@@ -858,8 +1022,8 @@ async function handlePostCards(request: Request, env: Env, segments: string[]): 
     const id = typeof body.id === 'string' && body.id.startsWith('user_') ? body.id : `user_${crypto.randomUUID()}`
     const resolvedColor = colorHex || collection.colorHex
     const resolvedOrder = order || collection.cards.length
-    const imageURL = typeof body.imageURL === 'string' && body.imageURL ? body.imageURL : undefined
-    const newCard: CardTile = { id, title, speech, colorHex: resolvedColor, order: resolvedOrder, ...(imageURL ? { imageURL } : {}) }
+    const imageRef = asImageRef(body.imageRef)
+    const newCard: CardTile = { id, title, speech, colorHex: resolvedColor, order: resolvedOrder, ...(imageRef ? { imageRef } : {}) }
 
     const alreadyExists = collection.cards.some(c => c.id === id)
     const updatedCollection = { ...collection, cards: alreadyExists ? collection.cards : [...collection.cards, newCard] }
@@ -919,10 +1083,18 @@ async function handleUploadUserImage(request: Request, env: Env): Promise<Respon
 }
 
 async function handleGetUserImage(env: Env, imageId: string): Promise<Response> {
-  if (!env.USER_IMAGES) return new Response('Not found', { status: 404 })
+  if (!env.USER_IMAGES) {
+    const mediaURL = await resolveImageRef(imageId, env)
+    if (mediaURL) return Response.redirect(mediaURL, 302)
+    return new Response('Not found', { status: 404 })
+  }
 
   const row = await env.CONTENT_DB.prepare('SELECT r2_key, content_type FROM user_images WHERE id = ?').bind(imageId).first<{ r2_key: string; content_type: string }>()
-  if (!row) return new Response('Not found', { status: 404 })
+  if (!row) {
+    const mediaURL = await resolveImageRef(imageId, env)
+    if (mediaURL) return Response.redirect(mediaURL, 302)
+    return new Response('Not found', { status: 404 })
+  }
 
   const object = await env.USER_IMAGES.get(row.r2_key)
   if (!object) return new Response('Not found', { status: 404 })
@@ -971,6 +1143,20 @@ async function handleGet(request: Request, env: Env, segments: string[]): Promis
     }
 
     const data = await cached(request, env, `${CACHE_KEY_YES_NO_CONTENT}:${language}`, () => getYesNoContent(env, language))
+    return json(request, env, { success: true, data })
+  }
+
+  if (resource === 'sequence' && segments[2] === 'content') {
+    const authHeader = request.headers.get('Authorization') ?? ''
+    const sessionToken = authHeader.startsWith('Bearer ') ? authHeader.slice(7) : undefined
+    const language = await effectiveAppLanguage(request, env, 'sequence', sessionToken)
+
+    if (sessionToken) {
+      const data = await getSequenceContent(env, language)
+      return json(request, env, { success: true, data }, 200, { 'Cache-Control': 'no-store' })
+    }
+
+    const data = await cached(request, env, `${CACHE_KEY_SEQUENCE_CONTENT}:${language}`, () => getSequenceContent(env, language))
     return json(request, env, { success: true, data })
   }
 
@@ -1063,6 +1249,24 @@ export default {
       }
     }
 
+    if (request.method === 'PUT' && url.pathname === '/v1/admin/sequence/content') {
+      const authError = requireAdminSecret(request, env)
+      if (authError) return authError
+      let body: { sequences?: unknown }
+      try {
+        body = (await request.json()) as { sequences?: unknown }
+      } catch {
+        return error(request, env, 'bad_request', 'Request body must be valid JSON', 400)
+      }
+      try {
+        const result = await putAdminSequenceContent(env, body.sequences as SequenceDefault[])
+        await invalidateSequenceCache(env)
+        return json(request, env, result)
+      } catch (err) {
+        return error(request, env, 'bad_request', err instanceof Error ? err.message : 'Failed to update sequences', 400)
+      }
+    }
+
     return error(request, env, 'method_not_allowed', 'Method not allowed', 405)
   },
 }
@@ -1093,7 +1297,7 @@ async function handlePutCards(request: Request, env: Env, segments: string[]): P
     const collectionId = segments[3]
     const isDefault = !collectionId.startsWith('user_')
 
-    let body: { title?: unknown; colorHex?: unknown; imageURL?: unknown; saveAsDefault?: unknown }
+    let body: { title?: unknown; colorHex?: unknown; imageRef?: unknown; saveAsDefault?: unknown }
     try { body = (await request.json()) as typeof body } catch {
       return error(request, env, 'bad_request', 'Request body must be valid JSON', 400)
     }
@@ -1101,7 +1305,7 @@ async function handlePutCards(request: Request, env: Env, segments: string[]): P
     if (!title) return error(request, env, 'bad_request', 'title is required', 400)
     if (typeof body.colorHex !== 'number') return error(request, env, 'bad_request', 'colorHex is required', 400)
     const colorHex = body.colorHex
-    const imageURL = typeof body.imageURL === 'string' && body.imageURL ? body.imageURL : undefined
+    const imageRef = asImageRef(body.imageRef)
     const saveAsDefault = body.saveAsDefault === true
 
     if (isDefault) {
@@ -1124,7 +1328,7 @@ async function handlePutCards(request: Request, env: Env, segments: string[]): P
           order: base?.order ?? 0,
           title,
           colorHex,
-          ...(imageURL !== undefined ? { imageURL } : {}),
+          ...(imageRef !== undefined ? { imageRef } : {}),
         }
 
         const updatedCollections = existingIdx >= 0
@@ -1138,12 +1342,12 @@ async function handlePutCards(request: Request, env: Env, segments: string[]): P
 
       await env.CONTENT_DB.prepare(
         `UPDATE content_items
-         SET title = ?, speech = ?, color_hex = ?, image_url = ?, updated_at = datetime('now')
+         SET title = ?, speech = ?, color_hex = ?, image_ref = ?, updated_at = datetime('now')
          WHERE id = ? AND app_id = 'cards' AND type = 'collection'`,
-      ).bind(title, title, colorHex, imageURL ?? null, collectionId).run()
+      ).bind(title, title, colorHex, imageRef ?? null, collectionId).run()
       await invalidateCardsCache(env)
 
-      const updated: CardCollection = { id: collectionId, title, colorHex, order: 0, mediaCategories: [], ...(imageURL ? { imageURL } : {}), cards: [] }
+      const updated: CardCollection = { id: collectionId, title, colorHex, order: 0, mediaCategories: [], ...(imageRef ? { imageRef } : {}), cards: [] }
       return json(request, env, { success: true, data: updated })
     }
 
@@ -1152,7 +1356,7 @@ async function handlePutCards(request: Request, env: Env, segments: string[]): P
     const idx = current.state.collections.findIndex(c => c.id === collectionId)
     if (idx === -1) return error(request, env, 'not_found', 'Collection not found', 404)
     const existing = current.state.collections[idx]
-    const updatedCollection: CardCollection = { ...existing, title, ...(colorHex !== undefined ? { colorHex } : {}), ...(imageURL ? { imageURL } : {}) }
+    const updatedCollection: CardCollection = { ...existing, title, ...(colorHex !== undefined ? { colorHex } : {}), ...(imageRef ? { imageRef } : {}) }
     const updatedCollections = [...current.state.collections]
     updatedCollections[idx] = updatedCollection
     const ok = await putUserCardsState(env, sessionToken, { collections: updatedCollections }, current.version)
@@ -1166,7 +1370,7 @@ async function handlePutCards(request: Request, env: Env, segments: string[]): P
     const cardId = segments[5]
     const isDefault = !collectionId.startsWith('user_')
 
-    let body: { title?: unknown; speech?: unknown; colorHex?: unknown; imageRef?: unknown; imageURL?: unknown }
+    let body: { title?: unknown; speech?: unknown; colorHex?: unknown; imageRef?: unknown }
     try { body = (await request.json()) as typeof body } catch {
       return error(request, env, 'bad_request', 'Request body must be valid JSON', 400)
     }
@@ -1180,19 +1384,14 @@ async function handlePutCards(request: Request, env: Env, segments: string[]): P
       if (!(await verifyAdminFromSession(env, sessionToken))) {
         return error(request, env, 'forbidden', 'Admin role required to edit default cards', 403)
       }
-      const imageRef = typeof body.imageRef === 'string' && body.imageRef
-        ? body.imageRef
-        : typeof body.imageURL === 'string' && body.imageURL
-          ? body.imageURL
-          : null
-      const imageURL = typeof body.imageURL === 'string' && body.imageURL ? body.imageURL : null
+      const imageRef = asImageRef(body.imageRef) ?? null
       await env.CONTENT_DB.prepare(
         `UPDATE content_items
-         SET title = ?, speech = ?, color_hex = ?, image_ref = ?, image_url = ?, updated_at = datetime('now')
+         SET title = ?, speech = ?, color_hex = ?, image_ref = ?, updated_at = datetime('now')
          WHERE id = ? AND app_id = 'cards' AND type = 'card'`,
-      ).bind(title, speech, colorHex, imageRef, imageURL, cardId).run()
+      ).bind(title, speech, colorHex, imageRef, cardId).run()
       await invalidateCardsCache(env)
-      const updatedCard: CardTile = { id: cardId, title, speech, colorHex, order: 0, ...(imageRef ? { imageRef, imageURL: imageRef.startsWith('http') ? imageRef : undefined } : {}) }
+      const updatedCard: CardTile = { id: cardId, title, speech, colorHex, order: 0, ...(imageRef ? { imageRef } : {}) }
       return json(request, env, { success: true, data: updatedCard })
     }
 
@@ -1300,11 +1499,11 @@ async function handlePromoteCollection(request: Request, env: Env, _segments: st
 
   const id = !col.id.startsWith('user_') ? col.id : col.id.replace(/^user_/, '')
   await env.CONTENT_DB.prepare(
-    `INSERT OR REPLACE INTO content_items (
-       id, template_id, title, slug, status, language_code, tags, categories, data,
-       app_id, type, parent_id, source_locale, speech, color_hex, image_url,
-       sort_order, is_default, is_published, metadata_json
-     )
+	    `INSERT OR REPLACE INTO content_items (
+	       id, template_id, title, slug, status, language_code, tags, categories, data,
+	       app_id, type, parent_id, source_locale, speech, color_hex, image_ref,
+	       sort_order, is_default, is_published, metadata_json
+	     )
      VALUES (?, 'cards.collection', ?, ?, 'published', 'en', NULL, '["cards"]', ?,
        'cards', 'collection', NULL, 'en', ?, ?, ?, ?, 1, 1, ?)`,
   ).bind(
@@ -1312,34 +1511,33 @@ async function handlePromoteCollection(request: Request, env: Env, _segments: st
     col.title,
     id,
     JSON.stringify({ mediaCategories: col.mediaCategories ?? [] }),
-    col.title,
-    col.colorHex ?? 0,
-    col.imageURL ?? null,
-    col.order ?? 0,
+	    col.title,
+	    col.colorHex ?? 0,
+	    asImageRef(col.imageRef) ?? null,
+	    col.order ?? 0,
     JSON.stringify({ mediaCategories: col.mediaCategories ?? [] }),
   ).run()
 
   if (Array.isArray(col.cards)) {
     for (const tile of col.cards) {
-      await env.CONTENT_DB.prepare(
-        `INSERT OR REPLACE INTO content_items (
-           id, template_id, title, slug, status, language_code, tags, categories, data,
-           app_id, type, parent_id, source_locale, speech, color_hex, image_ref, image_url,
-           sort_order, is_default, is_published, metadata_json
-         )
-         VALUES (?, 'cards.card', ?, ?, 'published', 'en', NULL, '["cards"]', ?,
-           'cards', 'card', ?, 'en', ?, ?, ?, ?, ?, 1, 1, ?)`,
+	      await env.CONTENT_DB.prepare(
+	        `INSERT OR REPLACE INTO content_items (
+	           id, template_id, title, slug, status, language_code, tags, categories, data,
+	           app_id, type, parent_id, source_locale, speech, color_hex, image_ref,
+	           sort_order, is_default, is_published, metadata_json
+	         )
+	         VALUES (?, 'cards.card', ?, ?, 'published', 'en', NULL, '["cards"]', ?,
+	           'cards', 'card', ?, 'en', ?, ?, ?, ?, 1, 1, ?)`,
       ).bind(
         tile.id,
         tile.title,
         tile.id,
         JSON.stringify({ collectionId: id }),
         id,
-        tile.speech,
-        tile.colorHex ?? 0,
-        tile.imageRef ?? null,
-        tile.imageURL ?? null,
-        tile.order ?? 0,
+	        tile.speech,
+	        tile.colorHex ?? 0,
+	        asImageRef(tile.imageRef) ?? null,
+	        tile.order ?? 0,
         JSON.stringify({ collectionId: id }),
       ).run()
     }

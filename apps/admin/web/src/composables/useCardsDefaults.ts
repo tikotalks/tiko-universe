@@ -17,6 +17,7 @@ export interface CardsCollection {
   colorHex: number
   order: number
   mediaCategories: string[]
+  imageRef?: string
   imageURL?: string
   cards: CardsCard[]
 }
@@ -38,6 +39,21 @@ function contentBaseUrl(): string {
 function errorMessage(body: ApiErrorBody | null, fallback: string): string {
   const apiError = body && 'error' in body ? body.error : undefined
   return (typeof apiError === 'string' ? apiError : apiError?.message) ?? fallback
+}
+
+function sanitizeCollection(collection: CardsCollection): CardsCollection {
+  const cleanCollection = { ...collection }
+  delete cleanCollection.imageURL
+  if (cleanCollection.imageRef && /^https?:\/\//i.test(cleanCollection.imageRef)) delete cleanCollection.imageRef
+  return {
+    ...cleanCollection,
+    cards: collection.cards.map((card) => {
+      const cleanCard = { ...card }
+      delete cleanCard.imageURL
+      if (cleanCard.imageRef && /^https?:\/\//i.test(cleanCard.imageRef)) delete cleanCard.imageRef
+      return cleanCard
+    }),
+  }
 }
 
 export function useCardsDefaults() {
@@ -73,7 +89,7 @@ export function useCardsDefaults() {
           authorization: `Bearer ${token.value}`,
           'content-type': 'application/json',
         },
-        body: JSON.stringify({ collections }),
+        body: JSON.stringify({ collections: collections.map(sanitizeCollection) }),
       })
       const body = await response.json().catch(() => null) as ApiErrorBody | null
       if (!response.ok) throw new Error(errorMessage(body, `Could not save Cards defaults: ${response.status}`))

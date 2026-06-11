@@ -2,7 +2,7 @@ import { computed, ref, type Ref } from 'vue'
 import { useTikoMedia } from '@tiko/media'
 import type { CardCollection, CardsCardInput, CardsCollectionInput, CardsGridItem, CommunicationCard, PersistedCards } from '../types'
 import { createCardsApi, resolveContentBaseUrl } from './cardsApi'
-import { matchCardsMedia } from './cardsMedia'
+import { imageRefURL, matchCardsMedia } from './cardsMedia'
 
 export interface UseCardsStoreOptions {
   storageKey: string
@@ -96,7 +96,7 @@ export function useCardsStore(options: UseCardsStoreOptions) {
       order: collections.value.filter(collection => (collection.parentID ?? '') === (input.parentID ?? '')).length,
       parentID: input.parentID ?? null,
       mediaCategories: [],
-      imageURL: input.imageURL,
+      imageRef: input.imageRef,
       cards: [],
     }
     replaceCollection(optimistic)
@@ -111,7 +111,12 @@ export function useCardsStore(options: UseCardsStoreOptions) {
   async function updateCollection(id: string, input: CardsCollectionInput) {
     const current = collections.value.find(collection => collection.id === id)
     if (!current) return
-    replaceCollection({ ...current, ...input, title: input.title.trim() || current.title })
+    replaceCollection({
+      ...current,
+      ...input,
+      ...(input.imageRef !== undefined ? { imageURL: imageRefURL(input.imageRef, api.baseUrl) } : {}),
+      title: input.title.trim() || current.title,
+    })
     try {
       const saved = await api.updateCollection(id, { ...input, title: input.title.trim() || current.title })
       if (saved) replaceCollection(saved)
@@ -140,7 +145,7 @@ export function useCardsStore(options: UseCardsStoreOptions) {
       speech: input.speech.trim() || title,
       colorHex: input.colorHex,
       order: collection.cards.length,
-      imageURL: input.imageURL,
+      imageRef: input.imageRef,
     }
     collection.cards = [...collection.cards, optimistic]
     collections.value = [...collections.value]
@@ -158,7 +163,14 @@ export function useCardsStore(options: UseCardsStoreOptions) {
   async function updateCard(collectionID: string, cardID: string, input: CardsCardInput) {
     const collection = collections.value.find(item => item.id === collectionID)
     if (!collection) return
-    collection.cards = collection.cards.map(card => card.id === cardID ? { ...card, ...input, title: input.title.trim() || card.title } : card)
+    collection.cards = collection.cards.map(card => card.id === cardID
+      ? {
+          ...card,
+          ...input,
+          ...(input.imageRef !== undefined ? { imageURL: imageRefURL(input.imageRef, api.baseUrl) } : {}),
+          title: input.title.trim() || card.title,
+        }
+      : card)
     collections.value = [...collections.value]
     try {
       const saved = await api.updateCard(collectionID, cardID, input)

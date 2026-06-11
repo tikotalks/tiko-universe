@@ -13,7 +13,6 @@ interface LegacyTile {
   color?: string
   image?: string
   imageUrl?: string
-  image_url?: string
   imageURL?: string
   imageRef?: string
   original_url?: string
@@ -90,7 +89,7 @@ function colorToHex(value: string | undefined, fallback: number) {
 }
 
 function mediaDownloadUrl(mediaId: string): string {
-  return `https://media.tikoapi.org/v1/media/${encodeURIComponent(mediaId)}/download`
+  return `https://content.tikoapi.org/v1/content/images/${encodeURIComponent(mediaId)}`
 }
 
 function firstImageValue(...values: unknown[]): string | undefined {
@@ -101,7 +100,6 @@ function resolvedImageURL(source: Record<string, unknown>): string | undefined {
   const url = firstImageValue(
     source.imageURL,
     source.imageUrl,
-    source.image_url,
     source.image,
     source.original_url,
     source.thumbnailUrl,
@@ -245,6 +243,20 @@ function updateCard(index: number, patch: Partial<CardItem>) {
   })
 }
 
+function updateActiveImageRef(value: string) {
+  patchActive({
+    imageRef: value || undefined,
+    imageURL: value ? mediaDownloadUrl(value) : undefined,
+  })
+}
+
+function updateCardImageRef(index: number, value: string) {
+  updateCard(index, {
+    imageRef: value || undefined,
+    imageURL: value ? mediaDownloadUrl(value) : undefined,
+  })
+}
+
 function removeCard(index: number) {
   if (!activeCollection.value) return
   patchActive({ cards: activeCollection.value.cards.filter((_, i) => i !== index) })
@@ -348,8 +360,9 @@ function moveCard(index: number, delta: number) {
           <div :class="bemm('media-field')">
             <span :class="bemm('field-label')">Cover image</span>
             <MediaPicker
-              :model-value="activeCollection.imageURL ?? ''"
-              @update:model-value="(value: string) => patchActive({ imageURL: value || undefined })"
+              :model-value="activeCollection.imageRef ?? ''"
+              emit-id
+              @update:model-value="updateActiveImageRef"
             />
           </div>
         </div>
@@ -398,8 +411,9 @@ function moveCard(index: number, delta: number) {
                   @update:model-value="(value: string) => updateCard(cardIndex, { colorHex: hexToNum(value, card.colorHex) })"
                 />
                 <MediaPicker
-                  :model-value="card.imageURL ?? ''"
-                  @update:model-value="(value: string) => updateCard(cardIndex, { imageURL: value || undefined })"
+                  :model-value="card.imageRef ?? ''"
+                  emit-id
+                  @update:model-value="(value: string) => updateCardImageRef(cardIndex, value)"
                 />
                 <div :class="bemm('card-actions')">
                   <Button variant="ghost" size="small" :disabled="cardIndex === 0" @click="moveCard(cardIndex, -1)">Up</Button>

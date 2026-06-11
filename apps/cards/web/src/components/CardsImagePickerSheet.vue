@@ -55,7 +55,7 @@ void runSearch()
         :key="item.id"
         type="button"
         :class="bemm('result')"
-        @click="emit('select', item.original_url)"
+        @click="emit('select', item.id)"
       >
         <img :src="resizedCDNURL(item.original_url)" :alt="item.title || item.name" loading="lazy">
       </button>

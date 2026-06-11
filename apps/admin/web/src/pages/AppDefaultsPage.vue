@@ -7,6 +7,7 @@ import { TikoAppHeader, tikoAppConfigs, tikoAppColors, type TikoAppColor, type T
 import { tikoLanguageOptions } from '@tiko/i18n'
 import { useAdminAppConfig, type AdminManagedAppConfig, type TikoGeneralSettings } from '../composables/useAdminAppConfig'
 import { useAppDefaults, type AppResource, type TikoManagedApp } from '../composables/useAppDefaults'
+import { useSequenceDefaults, type SequenceDefault } from '../composables/useSequenceDefaults'
 import MediaPicker from '../components/MediaPicker.vue'
 import ColorSwatchPicker from '../components/ColorSwatchPicker.vue'
 import CardsEditor from '../components/defaults/CardsEditor.vue'
@@ -34,6 +35,7 @@ const editorByApp: Partial<Record<DefaultsApp, Component>> = {
 
 const configApi = useAdminAppConfig()
 const defaultsApi = useAppDefaults()
+const sequenceDefaultsApi = useSequenceDefaults()
 const configs = ref<Record<TikoAppColor, AdminManagedAppConfig>>({ ...tikoAppConfigs })
 const configDraft = reactive<AdminManagedAppConfig>({ ...tikoAppConfigs.cards, supportedLanguagesMode: 'tiko-defaults', supportedLanguages: [] })
 const configDirty = ref(false)
@@ -66,6 +68,9 @@ const previewIcon = computed(() => configDraft.appIconImageUrl || configDraft.ap
 const defaultsApp = computed<DefaultsApp | null>(() => editableDefaultsApps.includes(selectedApp.value as DefaultsApp) ? selectedApp.value as DefaultsApp : null)
 const currentEditor = computed<Component | null>(() => defaultsApp.value ? editorByApp[defaultsApp.value] ?? null : null)
 const canEditDefaults = computed(() => Boolean(defaultsApp.value))
+const defaultsLoading = computed(() => defaultsApp.value === 'sequence' ? sequenceDefaultsApi.loading.value : defaultsApi.loading.value)
+const defaultsSaving = computed(() => defaultsApp.value === 'sequence' ? sequenceDefaultsApi.saving.value : defaultsApi.saving.value)
+const defaultsError = computed(() => defaultsApp.value === 'sequence' ? sequenceDefaultsApi.error.value : defaultsApi.error.value)
 const globalSupportedLanguages = computed(() => normalizeLanguages(tikoSettingsDraft.supportedLanguages))
 const appSupportedLanguages = computed(() => normalizeLanguages(configDraft.supportedLanguages))
 const effectiveSupportedLanguages = computed(() => configDraft.supportedLanguagesMode === 'custom' && appSupportedLanguages.value.length > 0 ? appSupportedLanguages.value : globalSupportedLanguages.value)
@@ -179,6 +184,12 @@ async function loadDefaults() {
   if (!defaultsApp.value || isOverview.value) return
 
   try {
+    if (defaultsApp.value === 'sequence') {
+      const payload = await sequenceDefaultsApi.read()
+      stateValue.value = { sequences: payload.sequences }
+      defaultsUpdatedAt.value = null
+      return
+    }
     const payload = await defaultsApi.readDefaults(defaultsApp.value as TikoManagedApp, 'state' satisfies AppResource)
     stateValue.value = (payload.state ?? {}) as Record<string, unknown>
     defaultsVersion.value = payload.version
@@ -192,6 +203,13 @@ async function saveDefaults() {
   if (!defaultsApp.value) return
   defaultsSavedMessage.value = null
   try {
+    if (defaultsApp.value === 'sequence') {
+      const sequences = Array.isArray(stateValue.value.sequences) ? stateValue.value.sequences as SequenceDefault[] : []
+      await sequenceDefaultsApi.write(sequences)
+      defaultsSavedMessage.value = `Saved ${selectedConfig.value.title} defaults.`
+      defaultsDirty.value = false
+      return
+    }
     const payload = await defaultsApi.writeDefaults(defaultsApp.value as TikoManagedApp, 'state', stateValue.value, defaultsVersion.value)
     defaultsVersion.value = payload.version
     defaultsUpdatedAt.value = payload.updatedAt
@@ -566,16 +584,16 @@ if (!isOverview.value && !routeApp.value) {
             </p>
           </div>
           <div v-if="canEditDefaults" :class="bemm('panel-actions')">
-            <Button variant="outline" :loading="defaultsApi.loading.value" :disabled="defaultsApi.loading.value" @click="loadDefaults">
+            <Button variant="outline" :loading="defaultsLoading" :disabled="defaultsLoading" @click="loadDefaults">
               Reload
             </Button>
-            <Button :loading="defaultsApi.saving.value" :disabled="defaultsApi.saving.value || !defaultsDirty || !currentEditor" @click="saveDefaults">
+            <Button :loading="defaultsSaving" :disabled="defaultsSaving || !defaultsDirty || !currentEditor" @click="saveDefaults">
               Save defaults
             </Button>
           </div>
         </header>
 
-        <p v-if="defaultsApi.error.value" :class="bemm('error')">{{ defaultsApi.error.value }}</p>
+        <p v-if="defaultsError" :class="bemm('error')">{{ defaultsError }}</p>
         <p v-if="defaultsSavedMessage" :class="bemm('success')">{{ defaultsSavedMessage }}</p>
 
         <component

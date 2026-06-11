@@ -42,6 +42,7 @@ public struct TikoAnswerChoice: Identifiable, Equatable, Sendable {
     public let color: String?
     public let colorHex: UInt32?
     public let imageURL: URL?
+    public let imageURLs: [URL]
 
     public init(
         id: String,
@@ -51,7 +52,8 @@ public struct TikoAnswerChoice: Identifiable, Equatable, Sendable {
         tone: TikoChoiceTone,
         color: String? = nil,
         colorHex: UInt32? = nil,
-        imageURL: URL? = nil
+        imageURL: URL? = nil,
+        imageURLs: [URL] = []
     ) {
         self.id = id
         self.label = label
@@ -61,6 +63,7 @@ public struct TikoAnswerChoice: Identifiable, Equatable, Sendable {
         self.color = color
         self.colorHex = colorHex
         self.imageURL = imageURL
+        self.imageURLs = imageURLs
     }
 
     /// Convenience initializer accepting an open-icon name.
@@ -97,7 +100,10 @@ public struct TikoAnswerButton: View {
                 title: choice.label,
                 background: choice.resolvedColor ?? tileColor
             ) {
-                if let url = choice.imageURL {
+                let imageURLs = choice.resolvedImageURLs
+                if imageURLs.count > 1 {
+                    TikoMultiImageTileContent(imageURLs: imageURLs)
+                } else if let url = imageURLs.first {
                     TikoCachedRemoteImage(url: url) {
                         ProgressView()
                             .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -163,6 +169,12 @@ public struct TikoAnswerButton: View {
 }
 
 private extension TikoAnswerChoice {
+    var resolvedImageURLs: [URL] {
+        if !imageURLs.isEmpty { return Array(imageURLs.prefix(9)) }
+        if let imageURL { return [imageURL] }
+        return []
+    }
+
     var resolvedColor: Color? {
         if let color, let named = TikoColors.color(named: color) { return named }
         if let color, let parsed = Color(hexString: color) { return parsed }
@@ -187,7 +199,7 @@ public struct TikoChoiceGrid: View {
     }
 
     private var tileSpacing: CGFloat {
-        choices.allSatisfy { $0.color != nil || $0.colorHex != nil || $0.imageURL != nil } ? 12 : 40
+        choices.allSatisfy { $0.color != nil || $0.colorHex != nil || !$0.resolvedImageURLs.isEmpty } ? 12 : 40
     }
 
     public var body: some View {

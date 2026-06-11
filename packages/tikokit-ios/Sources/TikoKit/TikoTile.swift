@@ -129,3 +129,34 @@ public struct TikoSquareTile<Content: View>: View {
         .accessibilityLabel(title)
     }
 }
+
+public struct TikoMultiImageTileContent: View {
+    public let imageURLs: [URL]
+    public let cornerRadius: CGFloat
+
+    public init(imageURLs: [URL], cornerRadius: CGFloat = 12) {
+        self.imageURLs = Array(imageURLs.prefix(9))
+        self.cornerRadius = cornerRadius
+    }
+
+    private var columns: [GridItem] {
+        let count = imageURLs.count
+        let columnCount = count <= 1 ? 1 : count <= 4 ? 2 : 3
+        return Array(repeating: GridItem(.flexible(), spacing: 3), count: columnCount)
+    }
+
+    public var body: some View {
+        LazyVGrid(columns: columns, spacing: 3) {
+            ForEach(Array(imageURLs.enumerated()), id: \.offset) { _, url in
+                TikoCachedRemoteImage(url: url) {
+                    ProgressView()
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        .background(.white.opacity(0.18))
+                }
+                .aspectRatio(1, contentMode: .fill)
+                .clipped()
+                .clipShape(RoundedRectangle(cornerRadius: cornerRadius, style: .continuous))
+            }
+        }
+    }
+}

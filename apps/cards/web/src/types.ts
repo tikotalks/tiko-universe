@@ -10,6 +10,7 @@ export interface CardCollection {
   order: number
   parentID?: string | null
   mediaCategories: string[]
+  imageRef?: string
   imageURL?: string
   cards: CommunicationCard[]
 }
@@ -48,14 +49,14 @@ export interface CardsCollectionInput {
   title: string
   colorHex: number
   parentID?: string | null
-  imageURL?: string
+  imageRef?: string
 }
 
 export interface CardsCardInput {
   title: string
   speech: string
   colorHex: number
-  imageURL?: string
+  imageRef?: string
 }
 
 export interface CardsSettingsState {

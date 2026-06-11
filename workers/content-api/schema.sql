@@ -65,7 +65,6 @@ CREATE TABLE IF NOT EXISTS content_items (
   color_hex INTEGER,
   icon TEXT,
   image_ref TEXT,
-  image_url TEXT,
   sort_order INTEGER NOT NULL DEFAULT 0,
   is_default INTEGER NOT NULL DEFAULT 0,
   is_published INTEGER NOT NULL DEFAULT 1,

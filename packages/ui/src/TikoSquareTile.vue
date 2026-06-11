@@ -1,16 +1,19 @@
 <script setup lang="ts">
+import { computed } from 'vue'
 import { useBemm } from 'bemm'
 
-withDefaults(defineProps<{
+const props = withDefaults(defineProps<{
   title: string
   background: string
   imageSrc?: string
+  imageSrcs?: string[]
   active?: boolean
   editing?: boolean
   selected?: boolean
   labelSize?: 'small' | 'medium' | 'large'
 }>(), {
   imageSrc: '',
+  imageSrcs: () => [],
   active: false,
   editing: false,
   selected: false,
@@ -22,6 +25,14 @@ const emit = defineEmits<{
 }>()
 
 const bemm = useBemm('tiko-square-tile', { return: 'string', includeBaseClass: true })
+
+const images = computed(() => {
+  const sources = props.imageSrcs.length > 0 ? props.imageSrcs : props.imageSrc ? [props.imageSrc] : []
+  return sources
+    .map(source => source.trim())
+    .filter(Boolean)
+    .slice(0, 9)
+})
 </script>
 
 <template>
@@ -32,7 +43,15 @@ const bemm = useBemm('tiko-square-tile', { return: 'string', includeBaseClass: t
     :aria-label="title"
     @click="emit('press')"
   >
-    <img v-if="imageSrc" :class="bemm('image')" :src="imageSrc" :alt="title" loading="lazy">
+    <div
+      v-if="images.length > 0"
+      :class="bemm('image-grid', { [`count-${images.length}`]: true })"
+      aria-hidden="true"
+    >
+      <span v-for="(src, index) in images" :key="`${src}-${index}`" :class="bemm('image-cell')">
+        <img :class="bemm('image')" :src="src" alt="" loading="lazy">
+      </span>
+    </div>
     <span :class="bemm('label')">{{ title }}</span>
   </button>
 </template>
