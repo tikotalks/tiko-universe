@@ -54,7 +54,7 @@ App dev ports:
 | todo | 3065 |
 | talk | 3066 |
 
-`apps/clock/web` is not a runnable workspace at the moment; it only has stale E2E/public leftovers and should stay out of active app commands until the app is restored.
+`apps/clock/web` is not a runnable workspace at the moment and should stay out of active app commands until the app is restored.
 
 ### E2E tests
 
