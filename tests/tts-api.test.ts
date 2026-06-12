@@ -55,6 +55,7 @@ interface AudioRecord {
 class MemoryD1 {
   byHash = new Map<string, Row>()
   records: AudioRecord[] = []
+  conflictOnInsert: AudioRecord | null = null
 
   prepare(sql: string): MemoryStatement {
     return new MemoryStatement(this, sql)
@@ -69,7 +70,13 @@ class MemoryD1 {
       return new MemoryResult(row ? [row] : [])
     }
 
-    if (normalized.startsWith('INSERT INTO tts_audio')) {
+    if (normalized.startsWith('INSERT INTO tts_audio') || normalized.startsWith('INSERT OR IGNORE INTO tts_audio')) {
+      if (this.conflictOnInsert) {
+        this.byHash.set(this.conflictOnInsert.text_hash, this.conflictOnInsert as unknown as Row)
+        this.records.push(this.conflictOnInsert)
+        this.conflictOnInsert = null
+        return new MemoryResult()
+      }
       const record: AudioRecord = {
         id: values[0] as string,
         text_hash: values[1] as string,
@@ -84,6 +91,9 @@ class MemoryD1 {
         r2_key: values[10] as string,
         file_size_bytes: values[11] as number,
         generated_at: values[12] as string,
+      }
+      if (normalized.startsWith('INSERT OR IGNORE') && this.byHash.has(record.text_hash)) {
+        return new MemoryResult()
       }
       this.records.push(record)
       this.byHash.set(record.text_hash, record as unknown as Row)
@@ -391,6 +401,45 @@ describe('tts-api worker', () => {
       expect(env.db.records[0].text).toBe('Hello world')
       expect(env.db.records[0].language).toBe('en')
       expect(env.db.records[0].file_size_bytes).toBe(3)
+    })
+
+    it('returns the winning cache row when insert loses a text-hash race', async () => {
+      const env = makeEnv()
+      const normalized = internals.normalizeRequest({ text: 'Hello race', language: 'en' })
+      const textHash = await internals.generateTextHash(normalized)
+      env.db.conflictOnInsert = {
+        id: 'winner',
+        text_hash: textHash,
+        text: normalized.text,
+        language: normalized.language,
+        provider: normalized.provider,
+        voice: normalized.voice,
+        model: normalized.model,
+        speed: normalized.speed,
+        pitch: normalized.pitch,
+        audio_url: '/audio?key=audio%2Fwinner.mp3',
+        r2_key: 'audio/winner.mp3',
+        file_size_bytes: 3,
+        generated_at: '2026-01-01T00:00:00.000Z',
+      }
+      vi.spyOn(globalThis, 'fetch').mockResolvedValue(new Response(new Uint8Array([0x49, 0x44, 0x33]), { status: 200 }))
+
+      const response = await worker.fetch(
+        new Request('https://tts.test/generate', {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({ text: 'Hello race', language: 'en' }),
+        }),
+        env,
+      )
+
+      expect(response.status).toBe(200)
+      await expect(json(response)).resolves.toMatchObject({
+        success: true,
+        cached: true,
+        audioUrl: '/audio?key=audio%2Fwinner.mp3',
+        metadata: { id: 'winner' },
+      })
     })
 
     it('handles OpenAI API error gracefully', async () => {

@@ -2,6 +2,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 import worker from '../workers/atlas-api/src/index'
 import type { Env } from '../workers/atlas-api/src/types'
 import { createAtlasClient, AtlasClientError } from '../packages/atlas/src/index'
+import { sha256Hex } from '../workers/atlas-api/src/cache'
 
 type Row = Record<string, unknown>
 
@@ -11,6 +12,7 @@ class MemoryD1 {
   requests: Row[] = []
   providerStatuses = new Map<string, Row>()
   serviceConfigs = new Map<string, Row>()
+  conflictAssetOnInsert: Row | null = null
 
   prepare(sql: string) {
     return {
@@ -41,10 +43,19 @@ class MemoryD1 {
           return { results: [] as T[] }
         },
         run: async () => {
-          if (sql.includes('INSERT INTO atlas_cached_assets')) {
+          if (sql.includes('INSERT') && sql.includes('atlas_cached_assets')) {
             const row = {
               id: values[0], capability: values[1], request_hash: values[2], provider: values[3], model: values[4],
               r2_key: values[5], public_url: values[6], content_type: values[7], byte_size: values[8], metadata_json: values[9], created_at: values[10], expires_at: values[11],
+            }
+            if (sql.includes('INSERT OR IGNORE') && this.conflictAssetOnInsert) {
+              this.assets.set(String(this.conflictAssetOnInsert.id), this.conflictAssetOnInsert)
+              this.assetsByHash.set(String(this.conflictAssetOnInsert.request_hash), this.conflictAssetOnInsert)
+              this.conflictAssetOnInsert = null
+              return { success: true, meta: { changes: 0 } }
+            }
+            if (sql.includes('INSERT OR IGNORE') && this.assetsByHash.has(String(row.request_hash))) {
+              return { success: true, meta: { changes: 0 } }
             }
             this.assets.set(String(row.id), row)
             this.assetsByHash.set(String(row.request_hash), row)
@@ -153,6 +164,46 @@ describe('atlas-api', () => {
     const asset = await worker.fetch(new Request(`https://api.test${generated.data.audioUrl}`), env)
     expect(asset.status).toBe(200)
     expect(new Uint8Array(await asset.arrayBuffer())).toEqual(new Uint8Array([1, 2, 3]))
+  })
+
+  it('returns the winning cache row when speech asset insert loses a request-hash race', async () => {
+    const env = makeEnv({ ELEVENLABS_API_KEY: undefined, NARAKEET_API_KEY: undefined })
+    const requestHash = await sha256Hex({
+      capability: 'speech.synthesize',
+      text: 'Race',
+      locale: 'en',
+      provider: 'openai',
+      model: 'tts-1',
+      voice: 'nova',
+      speed: 1,
+      format: 'mp3',
+    })
+    env.db.conflictAssetOnInsert = {
+      id: 'winner',
+      capability: 'speech.synthesize',
+      request_hash: requestHash,
+      provider: 'openai',
+      model: 'tts-1',
+      r2_key: 'speech/winner.mp3',
+      public_url: '/v1/atlas/assets/winner',
+      content_type: 'audio/mpeg',
+      byte_size: 3,
+      metadata_json: '{}',
+      created_at: '2026-01-01T00:00:00.000Z',
+      expires_at: null,
+    }
+    vi.spyOn(globalThis, 'fetch').mockResolvedValue(new Response(new Uint8Array([1, 2, 3]), { status: 200 }))
+
+    const response = await worker.fetch(new Request('https://api.test/v1/atlas/speech', {
+      method: 'POST',
+      body: JSON.stringify({ text: 'Race', locale: 'en', app: 'yes-no', purpose: 'child-button', provider: 'openai' }),
+    }), env)
+
+    expect(response.status).toBe(200)
+    await expect(json(response)).resolves.toMatchObject({
+      data: { id: 'winner', audioUrl: '/v1/atlas/assets/winner', cached: true },
+      meta: { cached: true },
+    })
   })
 
   it('uses Narakeet by default and stores phrase lookup metadata before serving cached audio', async () => {

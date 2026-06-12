@@ -48,23 +48,7 @@ export async function synthesizeSpeech(input: SpeechRequest, env: Env): Promise<
   const requestHash = await sha256Hex({ capability: 'speech.synthesize', ...normalized })
   const existing = await findCachedAsset(env, requestHash)
   if (existing) {
-    return {
-      provider: toSpeechProvider(existing.provider),
-      model: existing.model ?? normalized.model,
-      cached: true,
-      requestHash,
-      inputUnits: normalized.text.length,
-      outputUnits: existing.byte_size ?? null,
-      estimatedCostUsd: 0,
-      data: {
-        id: existing.id,
-        audioUrl: existing.public_url,
-        contentType: existing.content_type,
-        cached: true,
-        provider: { name: existing.provider, model: existing.model ?? normalized.model, voice: normalized.voice },
-        usage: { inputCharacters: normalized.text.length },
-      },
-    }
+    return cachedSpeechResult(existing, normalized, requestHash)
   }
 
   const providerStarted = Date.now()
@@ -81,7 +65,7 @@ export async function synthesizeSpeech(input: SpeechRequest, env: Env): Promise<
   await env.ATLAS_ASSETS_BUCKET?.put(r2Key, generated.bytes, {
     httpMetadata: { contentType: generated.contentType, cacheControl: 'public, max-age=31536000, immutable' },
   })
-  await storeCachedAsset(env, {
+  const stored = await storeCachedAsset(env, {
     id,
     capability: 'speech.synthesize',
     requestHash,
@@ -110,6 +94,7 @@ export async function synthesizeSpeech(input: SpeechRequest, env: Env): Promise<
       ...(generated.durationSeconds !== undefined ? { durationSeconds: generated.durationSeconds } : {}),
     },
   })
+  if (stored && stored.id !== id) return cachedSpeechResult(stored, normalized, requestHash)
 
   return {
     provider: normalized.provider,
@@ -371,14 +356,39 @@ async function findCachedAsset(env: Env, requestHash: string): Promise<CachedAss
   return env.ATLAS_DB?.prepare('SELECT id, public_url, r2_key, content_type, provider, model, byte_size FROM atlas_cached_assets WHERE request_hash = ? LIMIT 1').bind(requestHash).first<CachedAssetRow>() ?? null
 }
 
-async function storeCachedAsset(env: Env, params: { id: string; capability: string; requestHash: string; provider: string; model?: string; r2Key: string; publicUrl: string; contentType: string; byteSize?: number; metadata?: unknown }) {
-  if (!env.ATLAS_DB) return
-  await env.ATLAS_DB.prepare(`INSERT INTO atlas_cached_assets (
+async function storeCachedAsset(env: Env, params: { id: string; capability: string; requestHash: string; provider: string; model?: string; r2Key: string; publicUrl: string; contentType: string; byteSize?: number; metadata?: unknown }): Promise<CachedAssetRow | null> {
+  if (!env.ATLAS_DB) return null
+  await env.ATLAS_DB.prepare(`INSERT OR IGNORE INTO atlas_cached_assets (
     id, capability, request_hash, provider, model, r2_key, public_url, content_type, byte_size, metadata_json, created_at, expires_at
   ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`).bind(
     params.id, params.capability, params.requestHash, params.provider, params.model ?? null, params.r2Key,
     params.publicUrl, params.contentType, params.byteSize ?? null, JSON.stringify(params.metadata ?? {}), new Date().toISOString(), null,
   ).run()
+  return findCachedAsset(env, params.requestHash)
+}
+
+function cachedSpeechResult(
+  existing: CachedAssetRow,
+  normalized: { text: string; model: string; voice: string },
+  requestHash: string,
+): AtlasExecutionResult {
+  return {
+    provider: toSpeechProvider(existing.provider),
+    model: existing.model ?? normalized.model,
+    cached: true,
+    requestHash,
+    inputUnits: normalized.text.length,
+    outputUnits: existing.byte_size ?? null,
+    estimatedCostUsd: 0,
+    data: {
+      id: existing.id,
+      audioUrl: existing.public_url,
+      contentType: existing.content_type,
+      cached: true,
+      provider: { name: existing.provider, model: existing.model ?? normalized.model, voice: normalized.voice },
+      usage: { inputCharacters: normalized.text.length },
+    },
+  }
 }
 
 function validateSpeech(input: SpeechRequest): string | null {

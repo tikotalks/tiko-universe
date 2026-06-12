@@ -392,7 +392,7 @@ async function generateTts(request: Request, env: Env): Promise<Response> {
     generated_at: generatedAt,
   }
 
-  await env.GENERATION_DB.prepare(`INSERT INTO generated_audio (
+  await env.GENERATION_DB.prepare(`INSERT OR IGNORE INTO generated_audio (
     id, request_hash, text, language, provider, voice, model, speed, pitch, audio_url, r2_key, content_type, file_size_bytes, generated_at
   ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`).bind(
     record.id,
@@ -410,6 +410,9 @@ async function generateTts(request: Request, env: Env): Promise<Response> {
     record.file_size_bytes,
     record.generated_at,
   ).run()
+
+  const stored = await findAudioByHash(requestHash, env)
+  if (stored) return json(ttsResponseFromRecord(stored, stored.id !== record.id), stored.id === record.id ? 201 : 200)
 
   return json(ttsResponseFromRecord(record, false), 201)
 }

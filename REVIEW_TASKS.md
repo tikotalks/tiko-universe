@@ -92,7 +92,7 @@ The most urgent work is to lock down Atlas/generation/sentence/media/identity, i
   - Pass the selected language to Cards and Talk TTS.
   - Make Talk release builds use production API and debug builds use development API.
 
-- [ ] Fix TTS cache races.
+- [x] Fix TTS cache races.
   - Use `INSERT OR IGNORE` / conflict-safe writes in atlas-api, generation-api, and tts-api.
   - Re-select the winning cache row after conflict.
 

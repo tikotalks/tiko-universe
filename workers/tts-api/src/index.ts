@@ -20,6 +20,7 @@ interface GenerateRequest {
 }
 
 interface AudioRecord {
+  id: string
   audio_url: string
   r2_key: string
   provider: string
@@ -76,10 +77,11 @@ async function generate(request: Request, env: Env): Promise<Response> {
   })
 
   const audioUrl = `/audio?key=${encodeURIComponent(r2Key)}`
-  await env.TTS_DB.prepare(`INSERT INTO tts_audio (
+  const id = crypto.randomUUID()
+  await env.TTS_DB.prepare(`INSERT OR IGNORE INTO tts_audio (
     id, text_hash, text, language, provider, voice, model, speed, pitch, audio_url, r2_key, file_size_bytes, generated_at
   ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`).bind(
-    crypto.randomUUID(),
+    id,
     textHash,
     normalized.text,
     normalized.language,
@@ -93,6 +95,9 @@ async function generate(request: Request, env: Env): Promise<Response> {
     generated.bytes.byteLength,
     new Date().toISOString(),
   ).run()
+
+  const stored = await findAudio(textHash, env)
+  if (stored) return json({ success: true, audioUrl: stored.audio_url, cached: stored.id !== id, metadata: stored })
 
   return json({ success: true, audioUrl, cached: false })
 }

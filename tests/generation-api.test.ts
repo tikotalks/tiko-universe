@@ -25,6 +25,7 @@ class MemoryD1 {
   byHash = new Map<string, StoredAudioRecord>()
   byId = new Map<string, StoredAudioRecord>()
   storyDrafts = new Map<string, Record<string, unknown>>()
+  conflictAudioOnInsert: StoredAudioRecord | null = null
 
   prepare(sql: string) {
     return {
@@ -61,6 +62,12 @@ class MemoryD1 {
           if (sql.includes('INSERT INTO generated_images')) {
             return { success: true, meta: { changes: 1 } }
           }
+          if (sql.includes('INSERT OR IGNORE INTO generated_audio') && this.conflictAudioOnInsert) {
+            this.byHash.set(this.conflictAudioOnInsert.request_hash, this.conflictAudioOnInsert)
+            this.byId.set(this.conflictAudioOnInsert.id, this.conflictAudioOnInsert)
+            this.conflictAudioOnInsert = null
+            return { success: true, meta: { changes: 0 } }
+          }
           const record: StoredAudioRecord = {
             id: values[0] as string,
             request_hash: values[1] as string,
@@ -76,6 +83,9 @@ class MemoryD1 {
             content_type: values[11] as string,
             file_size_bytes: values[12] as number,
             generated_at: values[13] as string,
+          }
+          if (sql.includes('INSERT OR IGNORE') && this.byHash.has(record.request_hash)) {
+            return { success: true, meta: { changes: 0 } }
           }
           this.byHash.set(record.request_hash, record)
           this.byId.set(record.id, record)
@@ -268,6 +278,40 @@ describe('generation-api TTS contract', () => {
     env.db.byId.set('bad-key', { ...env.db.byId.values().next().value!, id: 'bad-key', r2_key: '../secret' })
     const unsafeResponse = await worker.fetch(new Request('https://api.test/v1/generation/audio/bad-key'), env)
     expect(unsafeResponse.status).toBe(404)
+  })
+
+  it('returns the winning cache row when generated audio insert loses a request-hash race', async () => {
+    const env = makeEnv()
+    const normalized = internals.normalizeTtsRequest({ text: 'Hello race', language: 'en' })
+    const requestHash = await internals.generateRequestHash(normalized)
+    env.db.conflictAudioOnInsert = {
+      id: 'winner',
+      request_hash: requestHash,
+      text: normalized.text,
+      language: normalized.language,
+      provider: normalized.provider === 'auto' ? 'openai' : normalized.provider,
+      voice: normalized.voice,
+      model: normalized.model,
+      speed: normalized.speed,
+      pitch: normalized.pitch,
+      audio_url: '/v1/generation/audio/winner',
+      r2_key: 'audio/winner.mp3',
+      content_type: 'audio/mpeg',
+      file_size_bytes: 3,
+      generated_at: '2026-01-01T00:00:00.000Z',
+    }
+    vi.spyOn(globalThis, 'fetch').mockResolvedValue(new Response(new Uint8Array([1, 2, 3]), { status: 200 }))
+
+    const response = await worker.fetch(new Request('https://api.test/v1/generation/tts', {
+      method: 'POST',
+      body: JSON.stringify({ text: 'Hello race', language: 'en' }),
+    }), env)
+
+    expect(response.status).toBe(200)
+    await expect(json(response)).resolves.toMatchObject({
+      data: { id: 'winner', audioUrl: '/v1/generation/audio/winner' },
+      meta: { cached: true },
+    })
   })
 
   it('exposes health and sampled voice catalog for the story creator', async () => {
