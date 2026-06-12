@@ -27,6 +27,8 @@ defineProps<{
     large: string
     settingsPanel: {
       settings: string
+      appearance: string
+      appPreferences: string
       language: string
       colorMode: string
       light: string

@@ -147,6 +147,8 @@ export interface TikoOpenIconOption {
 
 export interface TikoSettingsPanelLabels {
   settings?: string
+  appearance?: string
+  appPreferences?: string
   language?: string
   colorMode?: string
   light?: string
@@ -702,12 +704,18 @@ export const TikoSettingsPanel = defineComponent({
 
     const text = (key: keyof TikoSettingsPanelLabels, fallback: string) => props.labels[key] ?? fallback
     return () => h('section', { class: 'tiko-settings-panel', 'data-test': 'tiko-settings-panel', 'aria-label': text('settings', 'Settings') }, [
-      h('label', {}, [text('language', 'Language'), h('select', { value: props.language, class: 'tiko-settings-panel__select', 'data-test': 'tiko-settings-language', onChange: (e: Event) => emit('update:language', (e.target as HTMLSelectElement).value) }, props.languages.map((language) => h('option', { value: language.value }, language.nativeLabel)))]),
-      h('label', {}, [text('colorMode', 'Color mode'), h('select', { value: props.colorMode, class: 'tiko-settings-panel__select', 'data-test': 'tiko-settings-color-mode', onChange: (e: Event) => emit('update:colorMode', (e.target as HTMLSelectElement).value) }, [
-        h('option', { value: 'light' }, text('light', 'Light')),
-        h('option', { value: 'dark' }, text('dark', 'Dark')),
-        h('option', { value: 'system' }, text('system', 'System'))
-      ])])
+      h('header', { class: 'tiko-settings-panel__header' }, [
+        h('h2', { class: 'tiko-settings-panel__title' }, text('settings', 'Settings')),
+        h('p', { class: 'tiko-settings-panel__subtitle' }, text('appPreferences', 'Language, appearance and app preferences.')),
+      ]),
+      h('div', { class: 'tiko-settings-panel__group', 'aria-label': text('appearance', 'Appearance') }, [
+        h('label', {}, [text('language', 'Language'), h('select', { value: props.language, class: 'tiko-settings-panel__select', 'data-test': 'tiko-settings-language', onChange: (e: Event) => emit('update:language', (e.target as HTMLSelectElement).value) }, props.languages.map((language) => h('option', { value: language.value }, language.nativeLabel)))]),
+        h('label', {}, [text('colorMode', 'Color mode'), h('select', { value: props.colorMode, class: 'tiko-settings-panel__select', 'data-test': 'tiko-settings-color-mode', onChange: (e: Event) => emit('update:colorMode', (e.target as HTMLSelectElement).value) }, [
+          h('option', { value: 'light' }, text('light', 'Light')),
+          h('option', { value: 'dark' }, text('dark', 'Dark')),
+          h('option', { value: 'system' }, text('system', 'System'))
+        ])])
+      ])
     ])
   }
 })

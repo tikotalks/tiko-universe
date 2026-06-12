@@ -189,8 +189,11 @@ const labels = computed(() => {
     uploadFile: i18n.t(tikoI18nKeys.radio.library.uploadFile),
     settings: i18n.t(tikoI18nKeys.common.settings),
     settingsPanel: {
+      settings: i18n.t(tikoI18nKeys.common.settings),
       language: i18n.t(tikoI18nKeys.common.language),
       appearance: i18n.t(tikoI18nKeys.common.appearance),
+      appPreferences: i18n.t(tikoI18nKeys.common.appPreferences),
+      colorMode: i18n.t(tikoI18nKeys.common.colorMode),
       light: i18n.t(tikoI18nKeys.common.colorModeOptions.light),
       dark: i18n.t(tikoI18nKeys.common.colorModeOptions.dark),
       system: i18n.t(tikoI18nKeys.common.colorModeOptions.system),

@@ -382,15 +382,37 @@ body {
 }
 
 .tiko-settings-panel {
-  display: flex;
-  justify-content: center;
+  display: grid;
   gap: 1rem;
-  flex-wrap: wrap;
   margin: 1rem auto 0;
   max-width: 36rem;
   padding: 1rem;
   border-radius: 1rem;
   background: var(--tiko-panel);
+}
+
+.tiko-settings-panel__header {
+  display: grid;
+  gap: .25rem;
+}
+
+.tiko-settings-panel__title {
+  margin: 0;
+  font-size: 1.1rem;
+  line-height: 1.2;
+}
+
+.tiko-settings-panel__subtitle {
+  margin: 0;
+  color: color-mix(in srgb, currentColor 64%, transparent);
+  font-size: .92rem;
+}
+
+.tiko-settings-panel__group {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  flex-wrap: wrap;
 }
 
 .tiko-settings-panel label {

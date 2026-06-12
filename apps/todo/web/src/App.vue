@@ -120,6 +120,8 @@ const labels = computed(() => {
     retry: i18n.t(tikoI18nKeys.todo.status.retry),
     settingsPanel: {
       settings: i18n.t(tikoI18nKeys.common.settings),
+      appearance: i18n.t(tikoI18nKeys.common.appearance),
+      appPreferences: i18n.t(tikoI18nKeys.common.appPreferences),
       language: i18n.t(tikoI18nKeys.common.language),
       colorMode: i18n.t(tikoI18nKeys.common.colorMode),
       light: i18n.t(tikoI18nKeys.common.colorModeOptions.light),
