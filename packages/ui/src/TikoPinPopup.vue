@@ -121,6 +121,14 @@ function onKeydown(index: number, event: KeyboardEvent) {
   }
 }
 
+function rejectCode() {
+  error.value = props.labels.wrongCode
+  shake.value = true
+  digits.value = EMPTY_DIGITS()
+  shakeTimer = window.setTimeout(() => { shake.value = false }, 400)
+  focusDigit(0)
+}
+
 async function handleSubmit() {
   if (loading.value) return
   const currentDigits = mode.value === 'setup' && step.value === 'confirm'
@@ -149,6 +157,10 @@ async function handleSubmit() {
       }
     }
   } else {
+    if (!props.verifyCode && !props.existingHash) {
+      rejectCode()
+      return
+    }
     const hash = await hashCode(code)
     loading.value = true
     try {
@@ -161,18 +173,10 @@ async function handleSubmit() {
       if (verified) {
         emit('set', hash, code)
       } else {
-        error.value = props.labels.wrongCode
-        shake.value = true
-        digits.value = EMPTY_DIGITS()
-        shakeTimer = window.setTimeout(() => { shake.value = false }, 400)
-        focusDigit(0)
+        rejectCode()
       }
     } catch {
-      error.value = props.labels.wrongCode
-      shake.value = true
-      digits.value = EMPTY_DIGITS()
-      shakeTimer = window.setTimeout(() => { shake.value = false }, 400)
-      focusDigit(0)
+      rejectCode()
     } finally {
       loading.value = false
     }

@@ -67,7 +67,7 @@ The most urgent work is to lock down Atlas/generation/sentence/media/identity, i
   - Stop persisting blob URLs as tracks.
   - Guard async YouTube player creation against double-start races.
 
-- [ ] Fix the PIN popup.
+- [x] Fix the PIN popup.
   - Initialize digits with `Array(CODE_LENGTH).fill('')`.
   - Treat completeness as exactly four non-empty digits.
   - Fail closed when verify mode has no verifier/hash.
