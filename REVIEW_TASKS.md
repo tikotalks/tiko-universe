@@ -61,7 +61,7 @@ The most urgent work is to lock down Atlas/generation/sentence/media/identity, i
   - Make display and progress computed from that ref.
   - Add an assertion-based regression test.
 
-- [ ] Fix web Radio playback.
+- [x] Fix web Radio playback.
   - Advance only on explicit ended events, never on `isPlaying === false`.
   - Fix the volume slider native input handler.
   - Stop persisting blob URLs as tracks.

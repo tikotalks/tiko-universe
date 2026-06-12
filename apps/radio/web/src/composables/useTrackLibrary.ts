@@ -12,6 +12,14 @@ type NewTrackInput = {
   categoryId?: string
 }
 
+function hasPersistentAudioUrl(track: RadioTrack): boolean {
+  return typeof track.audioUrl !== 'string' || !track.audioUrl.startsWith('blob:')
+}
+
+export function getPersistableRadioTracks(tracks: RadioTrack[]): RadioTrack[] {
+  return tracks.filter(hasPersistentAudioUrl)
+}
+
 export function useTrackLibrary(storageKey: string = 'tiko:radio:tracks') {
   const tracks: ShallowRef<RadioTrack[]> = shallowRef(loadTracks())
 
@@ -19,7 +27,7 @@ export function useTrackLibrary(storageKey: string = 'tiko:radio:tracks') {
     if (typeof window === 'undefined') return []
     try {
       const raw = window.localStorage.getItem(storageKey)
-      return raw ? JSON.parse(raw) : []
+      return raw ? getPersistableRadioTracks(JSON.parse(raw)) : []
     } catch {
       return []
     }
@@ -27,7 +35,7 @@ export function useTrackLibrary(storageKey: string = 'tiko:radio:tracks') {
 
   function saveTracks() {
     if (typeof window === 'undefined') return
-    window.localStorage.setItem(storageKey, JSON.stringify(tracks.value))
+    window.localStorage.setItem(storageKey, JSON.stringify(getPersistableRadioTracks(tracks.value)))
   }
 
   function addTrack(track: NewTrackInput): RadioTrack {

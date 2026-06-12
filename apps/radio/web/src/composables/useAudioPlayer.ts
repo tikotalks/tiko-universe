@@ -4,17 +4,27 @@ import type { RadioTrack } from '@tiko/data'
 // -------------------------------------------------------------------
 // YouTube IFrame API loader
 // -------------------------------------------------------------------
+let youtubeIframeApiPromise: Promise<void> | null = null
+
 function loadYouTubeIframeAPI(): Promise<void> {
-  return new Promise((resolve) => {
+  if (youtubeIframeApiPromise) return youtubeIframeApiPromise
+
+  youtubeIframeApiPromise = new Promise((resolve) => {
     if ((window as any).YT && (window as any).YT.Player) {
       resolve()
       return
     }
+    const previousReady = (window as any).onYouTubeIframeAPIReady
     const tag = document.createElement('script')
     tag.src = 'https://www.youtube.com/iframe_api'
     document.head.appendChild(tag)
-    ;(window as any).onYouTubeIframeAPIReady = () => resolve()
+    ;(window as any).onYouTubeIframeAPIReady = () => {
+      if (typeof previousReady === 'function') previousReady()
+      resolve()
+    }
   })
+
+  return youtubeIframeApiPromise
 }
 
 // -------------------------------------------------------------------
@@ -29,11 +39,13 @@ export function useAudioPlayer() {
   const progress = ref(0)
   const volume = ref(1)
   const source = ref<'youtube' | 'html5' | null>(null)
+  const endedCount = ref(0)
 
   // ---- internal refs -------------------------------------------------
   let ytPlayer: any = null
   let ytContainer: HTMLDivElement | null = null
   let ytPollInterval: ReturnType<typeof setInterval> | null = null
+  let playGeneration = 0
 
   let audio: HTMLAudioElement | null = null
   let rafId: number | null = null
@@ -116,6 +128,7 @@ export function useAudioPlayer() {
   function play(track: RadioTrack): void {
     stop()
 
+    const generation = ++playGeneration
     currentTrack.value = track
 
     // YouTube mode
@@ -123,6 +136,8 @@ export function useAudioPlayer() {
       source.value = 'youtube'
 
       loadYouTubeIframeAPI().then(() => {
+        if (generation !== playGeneration || currentTrack.value?.id !== track.id) return
+
         ytContainer = createYTContainer()
 
         ytPlayer = new (window as any).YT.Player(ytContainer, {
@@ -151,6 +166,7 @@ export function useAudioPlayer() {
                 }
               } else if (state === (window as any).YT.PlayerState.ENDED) {
                 isPlaying.value = false
+                endedCount.value += 1
                 if (ytPollInterval) {
                   clearInterval(ytPollInterval)
                   ytPollInterval = null
@@ -173,6 +189,7 @@ export function useAudioPlayer() {
 
       audio.addEventListener('ended', () => {
         isPlaying.value = false
+        endedCount.value += 1
         if (rafId !== null) {
           cancelAnimationFrame(rafId)
           rafId = null
@@ -189,6 +206,7 @@ export function useAudioPlayer() {
 
       audio.play()
         .then(() => {
+          if (generation !== playGeneration || currentTrack.value?.id !== track.id) return
           isPlaying.value = true
           syncProgressHTML5()
         })
@@ -245,6 +263,7 @@ export function useAudioPlayer() {
   }
 
   function stop(): void {
+    playGeneration += 1
     destroyYouTube()
     destroyHTML5()
     currentTrack.value = null
@@ -303,6 +322,7 @@ export function useAudioPlayer() {
     progress,
     volume,
     source,
+    endedCount,
     play,
     pause,
     resume,

@@ -14,7 +14,7 @@ import {
   type IdentityRuntimeState,
 } from '@tiko/ui'
 import { useAudioPlayer } from './composables/useAudioPlayer'
-import { useTrackLibrary } from './composables/useTrackLibrary'
+import { getPersistableRadioTracks, useTrackLibrary } from './composables/useTrackLibrary'
 import { useCategories } from './composables/useCategories'
 import AddAudioPopup from './components/AddAudioPopup.vue'
 import SettingsPopup from './components/SettingsPopup.vue'
@@ -360,7 +360,7 @@ async function persistStateRemote() {
       runtimeState.sessionToken.value,
       {
         currentTrackIndex: currentTrackIndex.value,
-        tracks: library.tracks.value,
+        tracks: getPersistableRadioTracks(library.tracks.value),
         categories: categories.categories.value,
         shuffleEnabled: shuffleEnabled.value,
         repeatEnabled: repeatEnabled.value,
@@ -485,22 +485,21 @@ watch(volume, (v) => {
 }, { immediate: true })
 
 // Track ended auto-advance
-watch(player.isPlaying, (playing, wasPlaying) => {
-  if (wasPlaying && !playing && player.currentTrack.value) {
-    if (repeatEnabled.value) {
-      player.play(player.currentTrack.value)
-      return
-    }
-    const len = library.tracks.value.length
-    if (len === 0) return
-    const nextIndex = shuffleEnabled.value
-      ? Math.floor(Math.random() * len)
-      : (currentTrackIndex.value + 1) % len
-    const nextTrack = library.tracks.value[nextIndex]
-    if (nextTrack) {
-      currentTrackIndex.value = nextIndex
-      player.play(nextTrack)
-    }
+watch(player.endedCount, () => {
+  if (!player.currentTrack.value) return
+  if (repeatEnabled.value) {
+    player.play(player.currentTrack.value)
+    return
+  }
+  const len = library.tracks.value.length
+  if (len === 0) return
+  const nextIndex = shuffleEnabled.value
+    ? Math.floor(Math.random() * len)
+    : (currentTrackIndex.value + 1) % len
+  const nextTrack = library.tracks.value[nextIndex]
+  if (nextTrack) {
+    currentTrackIndex.value = nextIndex
+    player.play(nextTrack)
   }
 })
 
@@ -537,8 +536,8 @@ function openVolumePopup() {
               min: '0',
               max: '1',
               step: '0.05',
-              'onUpdate:modelValue': (v: string) => {
-                vol.value = parseFloat(v)
+              onInput: (event: Event) => {
+                vol.value = parseFloat((event.target as HTMLInputElement).value)
                 emit('update:volume', vol.value)
               },
               value: vol.value,
