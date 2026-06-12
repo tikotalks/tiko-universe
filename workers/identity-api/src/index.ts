@@ -195,6 +195,18 @@ interface RuntimeState {
   pinHash?: string
 }
 
+interface PinGrantRow {
+  id: string
+  subject_id: string
+  product: string
+  token_hash: string
+  purpose: string
+  created_at: string
+  expires_at: string
+  consumed_at: string | null
+  metadata_json: string
+}
+
 async function handleManagedIdentity(request: Request, env: Env): Promise<Response | null> {
   const url = new URL(request.url)
   const path = url.pathname.replace(/\/$/, '')
@@ -251,8 +263,11 @@ async function verifyPin(request: Request, env: Env): Promise<Response> {
   if (!runtime.pinHash || runtime.pinHash !== await hashSecret(String(body.pin ?? ''), env, 'pin')) {
     return Response.json({ error: 'invalid_pin' }, { status: 403 })
   }
+  const token = randomToken('grt_')
+  const purpose = body.purpose ?? 'parent_mode'
   const expiresAt = new Date(Date.now() + 10 * 60 * 1000).toISOString()
-  return Response.json({ ok: true, grant: { token: randomToken('grt_'), purpose: body.purpose ?? 'parent_mode', expiresAt } })
+  await persistPinGrant(env, session.subjectId, token, purpose, expiresAt)
+  return Response.json({ ok: true, grant: { token, purpose, expiresAt } })
 }
 
 async function removePin(request: Request, env: Env): Promise<Response> {
@@ -434,6 +449,10 @@ async function resetAccountData(request: Request, env: Env): Promise<Response> {
   if (runtime.pinHash && !body.pinGrantToken) {
     return Response.json({ error: 'pin_grant_required' }, { status: 403 })
   }
+  if (runtime.pinHash) {
+    const grant = await consumePinGrant(env, session.subjectId, String(body.pinGrantToken), 'account_reset')
+    if (!grant.ok) return grant.response
+  }
 
   const requestId = id('rst')
   const categories: DataCategory[] = ['preferences', 'app_state', 'user_content', 'progress', 'insights']
@@ -490,6 +509,10 @@ async function createDeletionRequest(request: Request, env: Env): Promise<Respon
   if (runtime.pinHash && scope !== 'local-device' && !body.pinGrantToken) {
     return Response.json({ error: 'pin_grant_required' }, { status: 403 })
   }
+  const pinGrantHash = runtime.pinHash && scope !== 'local-device'
+    ? await consumePinGrant(env, session.subjectId, String(body.pinGrantToken), 'account_deletion')
+    : null
+  if (pinGrantHash && !pinGrantHash.ok) return pinGrantHash.response
 
   if (scope === 'child_account') {
     if (!body.childAccountId) return Response.json({ error: 'child_account_id_required' }, { status: 400 })
@@ -504,7 +527,7 @@ async function createDeletionRequest(request: Request, env: Env): Promise<Respon
     'INSERT INTO identity_deletion_requests (id, subject_id, scope, status, child_account_id, pin_grant_token, created_at, updated_at, completed_at, metadata_json) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
   ).bind(
     requestId, session.subjectId, scope, 'requested',
-    body.childAccountId ?? null, body.pinGrantToken ?? null,
+    body.childAccountId ?? null, pinGrantHash?.tokenHash ?? null,
     at, at, null, '{}'
   ).run().catch(async () => {
     // Table might not exist yet — create it and retry
@@ -515,7 +538,7 @@ async function createDeletionRequest(request: Request, env: Env): Promise<Respon
       'INSERT INTO identity_deletion_requests (id, subject_id, scope, status, child_account_id, pin_grant_token, created_at, updated_at, completed_at, metadata_json) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
     ).bind(
       requestId, session.subjectId, scope, 'requested',
-      body.childAccountId ?? null, body.pinGrantToken ?? null,
+      body.childAccountId ?? null, pinGrantHash?.tokenHash ?? null,
       at, at, null, '{}'
     ).run()
   })
@@ -615,6 +638,34 @@ async function executeAccountDeletion(env: Env, subjectId: string): Promise<void
     .bind(at, subjectId, 'tiko').run()
   await env.IDENTITY_DB.prepare('INSERT INTO identity_audit_events (id, subject_id, actor_subject_id, product, type, created_at, ip_hash, user_agent_hash, metadata_json) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)')
     .bind(id('aud'), subjectId, subjectId, 'tiko', 'identity.deleted_self', at, null, null, '{}').run()
+}
+
+async function persistPinGrant(env: Env, subjectId: string, token: string, purpose: string, expiresAt: string): Promise<void> {
+  const at = new Date().toISOString()
+  await env.IDENTITY_DB.prepare(`
+    INSERT INTO identity_pin_grants (id, subject_id, product, token_hash, purpose, created_at, expires_at, consumed_at, metadata_json)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+  `).bind(id('grt'), subjectId, 'tiko', await hashSecret(token, env, 'pin-grant'), purpose, at, expiresAt, null, '{}').run()
+}
+
+async function consumePinGrant(env: Env, subjectId: string, token: string, purpose: string): Promise<{ ok: true, tokenHash: string } | { ok: false, response: Response }> {
+  const tokenHash = await hashSecret(token, env, 'pin-grant')
+  let row: PinGrantRow | null = null
+  try {
+    row = await env.IDENTITY_DB.prepare('SELECT * FROM identity_pin_grants WHERE token_hash = ? LIMIT 1')
+      .bind(tokenHash)
+      .first<PinGrantRow>()
+  } catch {
+    row = null
+  }
+  const now = new Date().toISOString()
+  if (!row || row.subject_id !== subjectId || row.product !== 'tiko' || row.purpose !== purpose || row.consumed_at || row.expires_at <= now) {
+    return { ok: false, response: Response.json({ error: 'invalid_pin_grant' }, { status: 403 }) }
+  }
+  await env.IDENTITY_DB.prepare('UPDATE identity_pin_grants SET consumed_at = ? WHERE id = ? AND consumed_at IS NULL')
+    .bind(now, row.id)
+    .run()
+  return { ok: true, tokenHash }
 }
 
 // ─── Child progress reset ──────────────────────────────────────────────

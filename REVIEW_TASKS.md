@@ -24,7 +24,7 @@ The most urgent work is to lock down Atlas/generation/sentence/media/identity, i
   - Reject caller-supplied `userId` unless it matches the session subject or an authorized managed child.
   - Cover read, write, delete, and autosave phrase endpoints.
 
-- [ ] Persist and validate `pinGrantToken`.
+- [x] Persist and validate `pinGrantToken`.
   - Store token hash, subject, purpose, expiry, and consumed timestamp.
   - Consume grants on account reset and deletion request.
   - Reject any non-issued, expired, wrong-purpose, or already-consumed grant.

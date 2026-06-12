@@ -56,6 +56,7 @@ class MemoryD1Database {
   roles: Row[] = []
   managedCredentials = new Map<string, Row>()
   deletionRequests = new Map<string, Row>()
+  pinGrants = new Map<string, Row>()
   auditEvents: Row[] = []
 
   prepare(sql: string): MemoryStatement {
@@ -302,6 +303,21 @@ class MemoryD1Database {
       this.deletionRequests.set(String(id), { id, subject_id: subjectId, scope, status, child_account_id: childAccountId, pin_grant_token: pinGrantToken, created_at: createdAt, updated_at: updatedAt, completed_at: completedAt, metadata_json: metadataJson })
       return new MemoryResult()
     }
+    if (normalized.startsWith('INSERT INTO identity_pin_grants')) {
+      const [id, subjectId, product, tokenHash, purpose, createdAt, expiresAt, consumedAt, metadataJson] = values
+      this.pinGrants.set(String(id), { id, subject_id: subjectId, product, token_hash: tokenHash, purpose, created_at: createdAt, expires_at: expiresAt, consumed_at: consumedAt, metadata_json: metadataJson })
+      return new MemoryResult()
+    }
+    if (normalized.startsWith('SELECT * FROM identity_pin_grants WHERE token_hash =')) {
+      const row = [...this.pinGrants.values()].find((grant) => grant.token_hash === values[0])
+      return new MemoryResult(row ? [row] : [])
+    }
+    if (normalized.startsWith('UPDATE identity_pin_grants SET consumed_at')) {
+      const [consumedAt, id] = values
+      const row = this.pinGrants.get(String(id))
+      if (row && !row.consumed_at) row.consumed_at = consumedAt
+      return new MemoryResult()
+    }
     if (normalized.startsWith('SELECT * FROM identity_deletion_requests WHERE id =')) {
       const req = this.deletionRequests.get(String(values[0]))
       return new MemoryResult(req ? [req] : [])
@@ -362,6 +378,29 @@ async function fetchJson(path: string, init: RequestInit = {}, testEnv = env()) 
   const response = await worker.fetch(request, testEnv as never, {} as never)
   const body = response.status === 204 ? {} : await response.json().catch(() => ({})) as JsonBody
   return { response, body, env: testEnv }
+}
+
+async function verifiedAccountWithPin(testEnv = env()) {
+  const created = await fetchJson('/v1/identity/device', { method: 'POST', body: JSON.stringify({}) }, testEnv)
+  const token = (created.body as IdentityBundle).session?.token ?? ''
+  await fetchJson('/v1/identity/email', {
+    method: 'POST',
+    headers: { authorization: `Bearer ${token}` },
+    body: JSON.stringify({ email: `pin-${crypto.randomUUID()}@example.test`, purpose: 'recovery' })
+  }, testEnv)
+  const magicToken = testEnv.MAGIC_LINK_TEST_SINK.at(-1)?.token ?? ''
+  const verified = await fetchJson('/v1/identity/email/verify', {
+    method: 'POST',
+    body: JSON.stringify({ token: magicToken })
+  }, testEnv)
+  const verifiedToken = (verified.body as IdentityBundle).session?.token ?? ''
+  const setPin = await fetchJson('/v1/identity/pin', {
+    method: 'POST',
+    headers: { authorization: `Bearer ${verifiedToken}` },
+    body: JSON.stringify({ pin: '2468' })
+  }, testEnv)
+  expect(setPin.response.status).toBe(200)
+  return { testEnv, token: verifiedToken, subjectId: (verified.body as IdentityBundle).subject.id }
 }
 
 describeIdentityContract('identity-api published Ankore contract', { config: identityConfig, tokenPepper: 'test-pepper' })
@@ -751,6 +790,93 @@ describe('identity-api endpoints', () => {
     }, testEnv)
     expect(parent.response.status).toBe(200)
     expect((parent.body as IdentityBundle).runtime?.mode).toBe('parent')
+  })
+
+  it('persists PIN grants and consumes them for account reset exactly once', async () => {
+    const { testEnv, token } = await verifiedAccountWithPin()
+
+    const unissued = await fetchJson('/v1/identity/reset', {
+      method: 'POST',
+      headers: { authorization: `Bearer ${token}` },
+      body: JSON.stringify({ confirmation: 'reset_my_data', pinGrantToken: 'grt_unissued' })
+    }, testEnv)
+    expect(unissued.response.status).toBe(403)
+    expect(unissued.body.error).toBe('invalid_pin_grant')
+
+    const expiredGrant = await fetchJson('/v1/identity/pin/verify', {
+      method: 'POST',
+      headers: { authorization: `Bearer ${token}` },
+      body: JSON.stringify({ pin: '2468', purpose: 'account_reset' })
+    }, testEnv)
+    const expiredGrantToken = String(expiredGrant.body.grant.token)
+    const expiredGrantRow = [...testEnv.IDENTITY_DB.pinGrants.values()][0]
+    if (expiredGrantRow) expiredGrantRow.expires_at = '2000-01-01T00:00:00.000Z'
+    const expired = await fetchJson('/v1/identity/reset', {
+      method: 'POST',
+      headers: { authorization: `Bearer ${token}` },
+      body: JSON.stringify({ confirmation: 'reset_my_data', pinGrantToken: expiredGrantToken })
+    }, testEnv)
+    expect(expired.response.status).toBe(403)
+    expect(expired.body.error).toBe('invalid_pin_grant')
+
+    const grant = await fetchJson('/v1/identity/pin/verify', {
+      method: 'POST',
+      headers: { authorization: `Bearer ${token}` },
+      body: JSON.stringify({ pin: '2468', purpose: 'account_reset' })
+    }, testEnv)
+    const grantToken = String(grant.body.grant.token)
+    expect(testEnv.IDENTITY_DB.pinGrants.size).toBe(2)
+    expect(JSON.stringify([...testEnv.IDENTITY_DB.pinGrants.values()])).not.toContain(grantToken)
+
+    const reset = await fetchJson('/v1/identity/reset', {
+      method: 'POST',
+      headers: { authorization: `Bearer ${token}` },
+      body: JSON.stringify({ confirmation: 'reset_my_data', pinGrantToken: grantToken })
+    }, testEnv)
+    expect(reset.response.status).toBe(202)
+    expect([...testEnv.IDENTITY_DB.pinGrants.values()].some((row) => row.consumed_at)).toBe(true)
+
+    const replay = await fetchJson('/v1/identity/reset', {
+      method: 'POST',
+      headers: { authorization: `Bearer ${token}` },
+      body: JSON.stringify({ confirmation: 'reset_my_data', pinGrantToken: grantToken })
+    }, testEnv)
+    expect(replay.response.status).toBe(403)
+    expect(replay.body.error).toBe('invalid_pin_grant')
+  })
+
+  it('requires a purpose-matched PIN grant for account deletion requests', async () => {
+    const { testEnv, token } = await verifiedAccountWithPin()
+
+    const wrongPurpose = await fetchJson('/v1/identity/pin/verify', {
+      method: 'POST',
+      headers: { authorization: `Bearer ${token}` },
+      body: JSON.stringify({ pin: '2468', purpose: 'account_reset' })
+    }, testEnv)
+    const wrongPurposeToken = String(wrongPurpose.body.grant.token)
+    const rejected = await fetchJson('/v1/identity/deletion-requests', {
+      method: 'POST',
+      headers: { authorization: `Bearer ${token}` },
+      body: JSON.stringify({ scope: 'account', pinGrantToken: wrongPurposeToken })
+    }, testEnv)
+    expect(rejected.response.status).toBe(403)
+    expect(rejected.body.error).toBe('invalid_pin_grant')
+
+    const grant = await fetchJson('/v1/identity/pin/verify', {
+      method: 'POST',
+      headers: { authorization: `Bearer ${token}` },
+      body: JSON.stringify({ pin: '2468', purpose: 'account_deletion' })
+    }, testEnv)
+    const grantToken = String(grant.body.grant.token)
+    const deleted = await fetchJson('/v1/identity/deletion-requests', {
+      method: 'POST',
+      headers: { authorization: `Bearer ${token}` },
+      body: JSON.stringify({ scope: 'account', pinGrantToken: grantToken })
+    }, testEnv)
+    expect(deleted.response.status).toBe(202)
+    const request = [...testEnv.IDENTITY_DB.deletionRequests.values()][0]
+    expect(request?.pin_grant_token).toMatch(/^sha256:/)
+    expect(request?.pin_grant_token).not.toBe(grantToken)
   })
 
   it('supports canonical Profile Manager child-account management endpoints', async () => {
