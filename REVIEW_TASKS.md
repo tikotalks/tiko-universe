@@ -34,7 +34,7 @@ The most urgent work is to lock down Atlas/generation/sentence/media/identity, i
   - Normalize the voice-sample cache key to the actual provider model.
   - Add rate limits and budget controls.
 
-- [ ] Fix media-api privacy enforcement.
+- [x] Fix media-api privacy enforcement.
   - Default unauthenticated asset/media reads to public-only.
   - Add owner fields where missing.
   - Require matching session or admin role for private reads and downloads.

@@ -13,6 +13,7 @@ CREATE TABLE IF NOT EXISTS media (
   categories TEXT NOT NULL DEFAULT '[]',
   tags TEXT NOT NULL DEFAULT '[]',
   is_private INTEGER NOT NULL DEFAULT 0 CHECK (is_private IN (0, 1)),
+  owner_user_id TEXT,
   original_url TEXT NOT NULL,
   thumbnail_url TEXT,
   medium_url TEXT,
@@ -22,6 +23,9 @@ CREATE TABLE IF NOT EXISTS media (
 
 CREATE INDEX IF NOT EXISTS media_private_created_idx
   ON media (is_private, created_at DESC);
+
+CREATE INDEX IF NOT EXISTS media_owner_created_idx
+  ON media (owner_user_id, created_at DESC);
 
 -- Assets table (ported from assets-upload)
 CREATE TABLE IF NOT EXISTS assets (

@@ -4,7 +4,7 @@
 // service with versioned /v1/ routes.
 // ────────────────────────────────────────────────────────────────
 
-import { authenticate, type AuthResult } from '../../shared/auth'
+import { authenticate, type AuthSuccess } from '../../shared/auth'
 
 // ── Inline env / type interfaces (no @cloudflare/workers-types) ─
 
@@ -109,6 +109,10 @@ interface AudioTrackRow {
   media_title?: string | null
 }
 
+interface MediaAccessContext {
+  auth: AuthSuccess | null
+}
+
 // ── CORS helpers ───────────────────────────────────────────────
 
 const CORS_HEADERS = {
@@ -135,6 +139,41 @@ function json(data: unknown, status = 200): Response {
 
 function ok(data: Record<string, unknown>): Response { return json({ success: true, ...data }) }
 function err(message: string, status = 400): Response { return json({ success: false, error: message }, status) }
+
+async function optionalAuth(request: Request, env: Env): Promise<MediaAccessContext | Response> {
+  if (!request.headers.has('authorization')) return { auth: null }
+  const authed = await authenticate(request, env)
+  if (authed.ok === false) return withCors(authed.response)
+  return { auth: authed }
+}
+
+function isServiceAccess(context: MediaAccessContext): boolean {
+  return context.auth?.method === 'api_key'
+}
+
+function sessionUserId(context: MediaAccessContext): string | null {
+  return context.auth?.method === 'session' && context.auth.userId ? context.auth.userId : null
+}
+
+function canReadPrivateOwner(context: MediaAccessContext, ownerUserId: unknown): boolean {
+  if (isServiceAccess(context)) return true
+  const userId = sessionUserId(context)
+  return !!userId && typeof ownerUserId === 'string' && ownerUserId === userId
+}
+
+function canReadMedia(row: Record<string, unknown>, context: MediaAccessContext): boolean {
+  if (!dbBoolean(row.is_private)) return true
+  return canReadPrivateOwner(context, row.owner_user_id)
+}
+
+function canReadAsset(row: Record<string, unknown>, context: MediaAccessContext): boolean {
+  if (dbBoolean(row.is_public)) return true
+  return canReadPrivateOwner(context, row.user_id)
+}
+
+function privateAccessResponse(context: MediaAccessContext): Response {
+  return context.auth ? err('Forbidden', 403) : err('Authentication required', 401)
+}
 
 // ── Utility helpers ────────────────────────────────────────────
 
@@ -185,7 +224,7 @@ function rowToMediaItem(row: Record<string, unknown>): MediaItem {
     description: nullableString(row.description),
     folder: firstCategory(row.folder),
     tags: parseStringArray(row.tags),
-    is_private: Boolean(row.is_private),
+    is_private: dbBoolean(row.is_private),
     original_url: String(row.original_url),
     created_at: String(row.created_at),
     updated_at: String(row.updated_at),
@@ -208,10 +247,17 @@ function rowToAsset(row: Record<string, unknown>): AssetRecord {
     width: nullableNumber(row.width),
     height: nullableNumber(row.height),
     duration: nullableNumber(row.duration),
-    is_public: Boolean(row.is_public),
+    is_public: dbBoolean(row.is_public),
     user_id: nullableString(row.user_id),
     created_at: String(row.created_at),
   }
+}
+
+function dbBoolean(value: unknown): boolean {
+  if (typeof value === 'boolean') return value
+  if (typeof value === 'number') return value !== 0
+  if (typeof value === 'string') return value === '1' || value.toLowerCase() === 'true'
+  return false
 }
 
 function parseJsonObject(value: unknown): Record<string, unknown> {
@@ -457,7 +503,7 @@ async function analyzeWithOpenAI(
 // ── Route handlers ─────────────────────────────────────────────
 
 // POST /v1/media/upload — upload media to R2, optionally analyze, return metadata
-async function handleMediaUpload(request: Request, env: Env): Promise<Response> {
+async function handleMediaUpload(request: Request, env: Env, access: MediaAccessContext): Promise<Response> {
   try {
     const formData = await request.formData()
     const file = formData.get('file') as File | null
@@ -475,12 +521,17 @@ async function handleMediaUpload(request: Request, env: Env): Promise<Response> 
     const { safeName, extension } = generateSafeFilename(file.name)
     const nameWithoutExt = file.name.replace(/\.[^.]+$/, '')
     const baseKey = `uploads/${safeName}`
+    const id = crypto.randomUUID()
+    const now = new Date().toISOString()
+    const isPrivate = formData.get('isPrivate') === 'true'
+    const ownerUserId = sessionUserId(access)
+    const mediaBucket = isPrivate ? env.USER_MEDIA_BUCKET : env.MEDIA_BUCKET
 
-    await env.MEDIA_BUCKET.put(baseKey, file.stream(), {
+    await mediaBucket.put(baseKey, file.stream(), {
       httpMetadata: { contentType: file.type },
     })
 
-    const baseUrl = `https://data.tikocdn.org/${baseKey}`
+    const baseUrl = isPrivate ? `/v1/media/${id}/download` : `https://data.tikocdn.org/${baseKey}`
     const isImage = file.type.startsWith('image/')
     const isVideo = file.type.startsWith('video/')
 
@@ -491,14 +542,14 @@ async function handleMediaUpload(request: Request, env: Env): Promise<Response> 
     // Handle video thumbnail upload
     if (isVideo && thumbnail) {
       const thumbnailKey = `uploads/thumbnails/${Date.now()}-${nameWithoutExt.toLowerCase().replace(/[^a-z0-9]/g, '-')}-thumb.jpg`
-      await env.MEDIA_BUCKET.put(thumbnailKey, thumbnail.stream(), {
+      await mediaBucket.put(thumbnailKey, thumbnail.stream(), {
         httpMetadata: { contentType: 'image/jpeg' },
       })
-      thumbnailUrl = `https://data.tikocdn.org/${thumbnailKey}`
+      thumbnailUrl = isPrivate ? `/v1/media/${id}/download` : `https://data.tikocdn.org/${thumbnailKey}`
     }
 
     // Analyze with OpenAI Vision
-    if ((isImage || (isVideo && thumbnailUrl)) && env.OPENAI_API_KEY) {
+    if (!isPrivate && (isImage || (isVideo && thumbnailUrl)) && env.OPENAI_API_KEY) {
       const analyzeUrl = isVideo ? thumbnailUrl! : baseUrl
       const result = await analyzeWithOpenAI(analyzeUrl, nameWithoutExt, env.OPENAI_API_KEY)
       metadata = result.metadata
@@ -517,19 +568,16 @@ async function handleMediaUpload(request: Request, env: Env): Promise<Response> 
         .replace(/\b\w/g, (l) => l.toUpperCase())
     }
 
-    const id = crypto.randomUUID()
-    const now = new Date().toISOString()
     const width = widthParam ? parseInt(widthParam) : undefined
     const height = heightParam ? parseInt(heightParam) : undefined
-    const isPrivate = formData.get('isPrivate') === 'true'
 
     const thumbnailUrl2 = isImage ? `${baseUrl}?width=200` : (thumbnailUrl || baseUrl)
     const mediumUrl = isImage ? `${baseUrl}?width=800` : baseUrl
 
     const insertSql = `INSERT INTO media (
           id, name, filename, file_size, mime_type, width, height, title, description,
-          categories, tags, is_private, original_url, thumbnail_url, medium_url, created_at, updated_at
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+          categories, tags, is_private, owner_user_id, original_url, thumbnail_url, medium_url, created_at, updated_at
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
     const insertBindings = [
       id,
       metadata.title || nameWithoutExt,
@@ -543,6 +591,7 @@ async function handleMediaUpload(request: Request, env: Env): Promise<Response> 
       JSON.stringify(metadata.categories),
       JSON.stringify(metadata.tags),
       isPrivate ? 1 : 0,
+      ownerUserId,
       baseUrl,
       thumbnailUrl2,
       mediumUrl,
@@ -558,7 +607,7 @@ async function handleMediaUpload(request: Request, env: Env): Promise<Response> 
         break
       } catch (dbError) {
         if (attempt === 3) {
-          try { await env.MEDIA_BUCKET.delete(baseKey) } catch { /* ignore cleanup failure */ }
+          try { await mediaBucket.delete(baseKey) } catch { /* ignore cleanup failure */ }
           return json({ success: false, error: 'Failed to save media metadata', details: (dbError as Error).message }, 500)
         }
         await new Promise(r => setTimeout(r, 150 * attempt))
@@ -584,7 +633,7 @@ async function handleMediaUpload(request: Request, env: Env): Promise<Response> 
         timestamp: new Date().toISOString(),
         isImage,
         isVideo,
-        visionAttempted: !!env.OPENAI_API_KEY && (isImage || !!thumbnailUrl),
+        visionAttempted: !isPrivate && !!env.OPENAI_API_KEY && (isImage || !!thumbnailUrl),
         visionError,
       },
     })
@@ -634,6 +683,8 @@ async function handleMediaAnalyze(request: Request, env: Env): Promise<Response>
 async function handleListMedia(request: Request, env: Env): Promise<Response> {
   try {
     const url = new URL(request.url)
+    const access = await optionalAuth(request, env)
+    if (access instanceof Response) return access
     const page = Math.max(parseInt(url.searchParams.get('page') || '1'), 1)
     const limit = Math.min(Math.max(parseInt(url.searchParams.get('limit') || '20'), 1), 100)
     const offset = (page - 1) * limit
@@ -643,12 +694,21 @@ async function handleListMedia(request: Request, env: Env): Promise<Response> {
     const tags = url.searchParams.get('tags')?.split(',').map(t => t.trim()).filter(Boolean)
     const sort = url.searchParams.get('sort') || 'created_at'
     const order = url.searchParams.get('order')?.toLowerCase() === 'asc' ? 'ASC' : 'DESC'
+    const includePrivate = url.searchParams.get('private') === 'true'
 
     const allowedSorts = ['created_at', 'file_size', 'title']
     const safeSort = allowedSorts.includes(sort) ? sort : 'created_at'
 
-    const clauses: string[] = ['is_private = 0']
+    const clauses: string[] = []
     const values: unknown[] = []
+    if (!includePrivate) {
+      clauses.push('is_private = 0')
+    } else if (!access.auth) {
+      return err('Authentication required', 401)
+    } else if (!isServiceAccess(access)) {
+      clauses.push('(is_private = 0 OR owner_user_id = ?)')
+      values.push(sessionUserId(access))
+    }
 
     if (search) {
       clauses.push('(title LIKE ? OR description LIKE ? OR name LIKE ? OR filename LIKE ?)')
@@ -669,11 +729,11 @@ async function handleListMedia(request: Request, env: Env): Promise<Response> {
       }
     }
 
-    const where = `WHERE ${clauses.join(' AND ')}`
+    const where = clauses.length ? `WHERE ${clauses.join(' AND ')}` : ''
 
     const rows = await env.MEDIA_DB.prepare(
       `SELECT id, filename AS file_name, file_size, mime_type, width, height, '' AS alt_text, title,
-              description, categories AS folder, tags, is_private, original_url, created_at, updated_at
+              description, categories AS folder, tags, is_private, owner_user_id, original_url, created_at, updated_at
        FROM media
        ${where}
        ORDER BY ${safeSort} ${order}
@@ -708,15 +768,18 @@ async function handleListMedia(request: Request, env: Env): Promise<Response> {
 // GET /v1/media/:id — get single media item
 async function handleGetMedia(request: Request, env: Env, id: string): Promise<Response> {
   try {
+    const access = await optionalAuth(request, env)
+    if (access instanceof Response) return access
     const row = await env.MEDIA_DB.prepare(
       `SELECT id, filename AS file_name, file_size, mime_type, width, height, '' AS alt_text, title,
-              description, categories AS folder, tags, is_private, original_url, created_at, updated_at
+              description, categories AS folder, tags, is_private, owner_user_id, original_url, created_at, updated_at
        FROM media WHERE id = ? LIMIT 1`,
     )
       .bind(id)
       .first<Record<string, unknown>>()
 
     if (!row) return err('Media not found', 404)
+    if (!canReadMedia(row, access)) return privateAccessResponse(access)
     return json({ data: rowToMediaItem(row) })
   } catch (error) {
     return json(
@@ -729,17 +792,20 @@ async function handleGetMedia(request: Request, env: Env, id: string): Promise<R
 // GET /v1/media/:id/download — proxy download from R2
 async function handleMediaDownload(request: Request, env: Env, id: string): Promise<Response> {
   try {
+    const access = await optionalAuth(request, env)
+    if (access instanceof Response) return access
     const row = await env.MEDIA_DB.prepare(
-      'SELECT filename AS file_name, mime_type, original_url FROM media WHERE id = ? LIMIT 1',
+      'SELECT filename AS file_name, mime_type, is_private, owner_user_id, original_url FROM media WHERE id = ? LIMIT 1',
     )
       .bind(id)
-      .first<{ file_name: string; mime_type: string; original_url: string }>()
+      .first<{ file_name: string; mime_type: string; is_private: unknown; owner_user_id?: string | null; original_url: string }>()
 
     if (!row) return err('Media not found', 404)
+    if (!canReadMedia(row as unknown as Record<string, unknown>, access)) return privateAccessResponse(access)
 
-    // Try R2 first, fallback to original URL
-    const r2Key = row.original_url.replace(/^https?:\/\/[^/]+\//, '')
-    const r2Object = await env.MEDIA_BUCKET.get(r2Key)
+    const isPrivate = dbBoolean(row.is_private)
+    const r2Key = isPrivate ? row.file_name : row.original_url.replace(/^https?:\/\/[^/]+\//, '')
+    const r2Object = await (isPrivate ? env.USER_MEDIA_BUCKET : env.MEDIA_BUCKET).get(r2Key)
 
     if (r2Object) {
       return new Response(r2Object.body, {
@@ -751,7 +817,7 @@ async function handleMediaDownload(request: Request, env: Env, id: string): Prom
       })
     }
 
-    // Fallback: redirect to CDN URL
+    if (isPrivate) return err('Media file not found', 404)
     return Response.redirect(row.original_url, 302)
   } catch (error) {
     return json(
@@ -762,7 +828,7 @@ async function handleMediaDownload(request: Request, env: Env, id: string): Prom
 }
 
 // POST /v1/assets/upload — upload asset to R2, track in D1
-async function handleAssetUpload(request: Request, env: Env): Promise<Response> {
+async function handleAssetUpload(request: Request, env: Env, access: MediaAccessContext): Promise<Response> {
   try {
     const formData = await request.formData()
     const file = formData.get('file') as File | null
@@ -771,7 +837,7 @@ async function handleAssetUpload(request: Request, env: Env): Promise<Response> 
     const categories = formData.get('categories') ? JSON.parse(formData.get('categories') as string) : []
     const tags = formData.get('tags') ? JSON.parse(formData.get('tags') as string) : []
     const isPublic = formData.get('isPublic') === 'true'
-    const userId = formData.get('userId') as string | null
+    const userId = sessionUserId(access)
 
     if (!file) return err('No file provided')
 
@@ -863,6 +929,8 @@ async function handleAssetUpload(request: Request, env: Env): Promise<Response> 
 async function handleListAssets(request: Request, env: Env): Promise<Response> {
   try {
     const url = new URL(request.url)
+    const access = await optionalAuth(request, env)
+    if (access instanceof Response) return access
     const page = Math.max(parseInt(url.searchParams.get('page') || '1'), 1)
     const limit = Math.min(Math.max(parseInt(url.searchParams.get('limit') || '20'), 1), 100)
     const isPublic = url.searchParams.get('public') === 'true'
@@ -875,7 +943,12 @@ async function handleListAssets(request: Request, env: Env): Promise<Response> {
     const clauses: string[] = []
     const values: unknown[] = []
 
-    if (isPublic) { clauses.push('is_public = 1') }
+    if (!access.auth || isPublic) {
+      clauses.push('is_public = 1')
+    } else if (!isServiceAccess(access)) {
+      clauses.push('(is_public = 1 OR user_id = ?)')
+      values.push(sessionUserId(access))
+    }
     if (userId) { clauses.push('user_id = ?'); values.push(userId) }
     if (search) {
       clauses.push('(title LIKE ? OR description LIKE ?)')
@@ -917,11 +990,14 @@ async function handleListAssets(request: Request, env: Env): Promise<Response> {
 // GET /v1/assets/:id — get single asset
 async function handleGetAsset(request: Request, env: Env, id: string): Promise<Response> {
   try {
+    const access = await optionalAuth(request, env)
+    if (access instanceof Response) return access
     const row = await env.ASSETS_DB.prepare('SELECT * FROM assets WHERE id = ?')
       .bind(id)
       .first<Record<string, unknown>>()
 
     if (!row) return err('Asset not found', 404)
+    if (!canReadAsset(row, access)) return privateAccessResponse(access)
     return ok({ asset: rowToAsset(row) })
   } catch (error) {
     return json(
@@ -1078,7 +1154,7 @@ export default {
       if (request.method === 'POST' && id === 'upload') {
         const authed = await authenticate(request, env)
         if (authed.ok === false) return withCors(authed.response)
-        return withCors(await handleMediaUpload(request, env))
+        return withCors(await handleMediaUpload(request, env, { auth: authed }))
       }
       if (request.method === 'POST' && id === 'analyze') {
         const authed = await authenticate(request, env)
@@ -1097,7 +1173,7 @@ export default {
       if (request.method === 'POST' && id === 'upload') {
         const authed = await authenticate(request, env)
         if (authed.ok === false) return withCors(authed.response)
-        return withCors(await handleAssetUpload(request, env))
+        return withCors(await handleAssetUpload(request, env, { auth: authed }))
       }
       if (request.method === 'GET' && !id) return handleListAssets(request, env)
       if (request.method === 'GET' && id) return handleGetAsset(request, env, id)

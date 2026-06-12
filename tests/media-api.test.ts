@@ -1,5 +1,5 @@
 // @vitest-environment node
-import { describe, expect, it, vi } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 import worker from '../workers/media-api/src/index'
 
 type Row = Record<string, unknown>
@@ -64,23 +64,25 @@ class MemoryD1 {
         folder: values[9],
         tags: values[10],
         is_private: values[11],
-        original_url: values[12],
-        thumbnail_url: values[13],
-        medium_url: values[14],
-        created_at: values[15],
-        updated_at: values[16],
+        owner_user_id: values[12],
+        original_url: values[13],
+        thumbnail_url: values[14],
+        medium_url: values[15],
+        created_at: values[16],
+        updated_at: values[17],
       }
       this.media.push(row)
       return new MemoryResult()
     }
 
     if (normalized.includes('FROM media')) {
-      if (normalized.includes('COUNT(*)')) return new MemoryResult([{ count: this.media.filter(row => row.is_private === 0).length }])
+      const rows = this.filterRows(this.media, normalized, values)
+      if (normalized.includes('COUNT(*)')) return new MemoryResult([{ count: rows.length }])
       if (normalized.includes('WHERE id = ?')) {
         const id = String(values[0])
         return new MemoryResult(this.media.filter(row => row.id === id))
       }
-      return new MemoryResult(this.media.filter(row => row.is_private === 0))
+      return new MemoryResult(rows)
     }
 
     if (normalized.startsWith('INSERT INTO audio_albums')) {
@@ -130,16 +132,43 @@ class MemoryD1 {
     }
 
     if (normalized.includes('FROM assets')) {
-      if (normalized.includes('COUNT(*)')) return new MemoryResult([{ count: this.assets.length }])
+      const rows = this.filterRows(this.assets, normalized, values)
+      if (normalized.includes('COUNT(*)')) return new MemoryResult([{ count: rows.length }])
       if (normalized.includes('WHERE id = ?')) {
         const id = String(values[0])
         return new MemoryResult(this.assets.filter(row => row.id === id))
       }
-      return new MemoryResult(this.assets)
+      return new MemoryResult(rows)
     }
 
     if (normalized.startsWith('INSERT INTO assets')) return new MemoryResult()
     throw new Error(`Unhandled SQL in media-api test fake: ${normalized}`)
+  }
+
+  private filterRows(rows: Row[], normalized: string, values: unknown[]): Row[] {
+    let filtered = rows
+    let valueIndex = 0
+    if (normalized.includes('(is_private = 0 OR owner_user_id = ?)')) {
+      const owner = String(values[valueIndex])
+      valueIndex += 1
+      filtered = filtered.filter(row => Number(row.is_private) === 0 || row.owner_user_id === owner)
+    } else if (normalized.includes('is_private = 0')) {
+      filtered = filtered.filter(row => Number(row.is_private) === 0)
+    }
+
+    if (normalized.includes('(is_public = 1 OR user_id = ?)')) {
+      const userId = String(values[valueIndex])
+      valueIndex += 1
+      filtered = filtered.filter(row => Number(row.is_public) === 1 || row.user_id === userId)
+    } else if (normalized.includes('is_public = 1')) {
+      filtered = filtered.filter(row => Number(row.is_public) === 1)
+    }
+
+    if (normalized.includes('user_id = ?') && !normalized.includes('(is_public = 1 OR user_id = ?)')) {
+      const userId = String(values[valueIndex])
+      filtered = filtered.filter(row => row.user_id === userId)
+    }
+    return filtered
   }
 }
 
@@ -168,11 +197,19 @@ function mediaRow(overrides: Row = {}): Row {
     folder: 'cards',
     tags: JSON.stringify(['test', 'cards']),
     is_private: 0,
+    owner_user_id: null,
     original_url: 'https://data.tikocdn.org/uploads/hello.png',
     created_at: '2026-05-01T00:00:00.000Z',
     updated_at: '2026-05-01T00:00:00.000Z',
     ...overrides,
   }
+}
+
+function authFetch(userId = 'usr_1') {
+  return vi.spyOn(globalThis, 'fetch').mockImplementation(async () => new Response(JSON.stringify({
+    subject: { id: userId },
+    session: { token: 'session-token', expiresAt: '2099-01-01T00:00:00.000Z' },
+  }), { status: 200, headers: { 'content-type': 'application/json' } }))
 }
 
 function assetRow(overrides: Row = {}): Row {
@@ -218,6 +255,10 @@ async function parseJson(response: Response) {
 }
 
 describe('media-api worker', () => {
+  beforeEach(() => {
+    vi.restoreAllMocks()
+  })
+
   it('handles CORS preflight', async () => {
     const response = await worker.fetch(new Request('https://media.test/v1/media', { method: 'OPTIONS' }), makeEnv() as never)
 
@@ -256,6 +297,38 @@ describe('media-api worker', () => {
     expect((await parseJson(missing)).error).toBe('Media not found')
   })
 
+  it('requires owner session or service key for private media records', async () => {
+    const env = makeEnv()
+    env.MEDIA_DB.media.push(mediaRow({
+      id: 'media_private',
+      is_private: 1,
+      owner_user_id: 'usr_1',
+      original_url: '/v1/media/media_private/download',
+    }))
+
+    const unauthenticated = await worker.fetch(new Request('https://media.test/v1/media/media_private'), env as never)
+    expect(unauthenticated.status).toBe(401)
+
+    authFetch('usr_2')
+    const otherUser = await worker.fetch(new Request('https://media.test/v1/media/media_private', {
+      headers: { authorization: 'Bearer session-token' },
+    }), env as never)
+    expect(otherUser.status).toBe(403)
+
+    vi.restoreAllMocks()
+    authFetch('usr_1')
+    const owner = await worker.fetch(new Request('https://media.test/v1/media/media_private', {
+      headers: { authorization: 'Bearer session-token' },
+    }), env as never)
+    expect(owner.status).toBe(200)
+    expect((await parseJson(owner)).data.id).toBe('media_private')
+
+    const service = await worker.fetch(new Request('https://media.test/v1/media/media_private', {
+      headers: { authorization: 'Bearer test-api-key' },
+    }), env as never)
+    expect(service.status).toBe(200)
+  })
+
   it('downloads media from R2 before falling back to redirect', async () => {
     const env = makeEnv()
     env.MEDIA_BUCKET.objects.set('uploads/hello.png', {
@@ -269,6 +342,33 @@ describe('media-api worker', () => {
     expect(response.headers.get('Content-Type')).toBe('image/png')
     expect(response.headers.get('Content-Disposition')).toContain('hello.png')
     expect(new Uint8Array(await response.arrayBuffer())).toEqual(new Uint8Array([1, 2, 3]))
+  })
+
+  it('serves private downloads only from the user media bucket to authorized callers', async () => {
+    const env = makeEnv()
+    env.MEDIA_DB.media.push(mediaRow({
+      id: 'media_private',
+      file_name: 'uploads/private.png',
+      filename: 'uploads/private.png',
+      is_private: 1,
+      owner_user_id: 'usr_1',
+      original_url: '/v1/media/media_private/download',
+    }))
+    env.USER_MEDIA_BUCKET.objects.set('uploads/private.png', {
+      body: new Uint8Array([9, 8, 7]).buffer,
+      httpMetadata: { contentType: 'image/png' },
+    })
+
+    const unauthenticated = await worker.fetch(new Request('https://media.test/v1/media/media_private/download'), env as never)
+    expect(unauthenticated.status).toBe(401)
+
+    authFetch('usr_1')
+    const owner = await worker.fetch(new Request('https://media.test/v1/media/media_private/download', {
+      headers: { authorization: 'Bearer session-token' },
+    }), env as never)
+    expect(owner.status).toBe(200)
+    expect(owner.headers.get('Location')).toBeNull()
+    expect(new Uint8Array(await owner.arrayBuffer())).toEqual(new Uint8Array([9, 8, 7]))
   })
 
   it('requires auth for media uploads', async () => {
@@ -308,6 +408,33 @@ describe('media-api worker', () => {
       title: 'Blob',
       original_url: body.url,
       is_private: 0,
+      owner_user_id: null,
+    })
+  })
+
+  it('stores private session media in the user bucket with the session owner', async () => {
+    const env = makeEnv()
+    authFetch('usr_1')
+    const form = new FormData()
+    form.set('file', new File(['secret'], 'secret.png', { type: 'image/png' }))
+    form.set('isPrivate', 'true')
+
+    const response = await worker.fetch(new Request('https://media.test/v1/media/upload', {
+      method: 'POST',
+      headers: { authorization: 'Bearer session-token' },
+      body: form,
+    }), env as never)
+    const body = await parseJson(response)
+
+    expect(response.status).toBe(200)
+    expect(body.url).toBe(`/v1/media/${body.id}/download`)
+    expect(env.MEDIA_BUCKET.objects.size).toBe(0)
+    expect(env.USER_MEDIA_BUCKET.objects.size).toBe(1)
+    expect(env.MEDIA_DB.media[1]).toMatchObject({
+      id: body.id,
+      is_private: 1,
+      owner_user_id: 'usr_1',
+      original_url: `/v1/media/${body.id}/download`,
     })
   })
 
@@ -320,6 +447,33 @@ describe('media-api worker', () => {
     expect((await parseJson(list)).assets[0]).toMatchObject({ id: 'asset_1', categories: ['animals'], tags: ['cat'] })
     expect(get.status).toBe(200)
     expect((await parseJson(get)).asset.title).toBe('Card Cat')
+  })
+
+  it('defaults asset reads to public and protects private owner assets', async () => {
+    const env = makeEnv()
+    env.ASSETS_DB.assets.push(assetRow({ id: 'asset_private', is_public: 0, user_id: 'usr_1', title: 'Private Cat' }))
+
+    const list = await worker.fetch(new Request('https://media.test/v1/assets'), env as never)
+    const listBody = await parseJson(list)
+    expect(list.status).toBe(200)
+    expect(listBody.assets.map((asset: Row) => asset.id)).toEqual(['asset_1'])
+
+    const unauthenticated = await worker.fetch(new Request('https://media.test/v1/assets/asset_private'), env as never)
+    expect(unauthenticated.status).toBe(401)
+
+    authFetch('usr_2')
+    const otherUser = await worker.fetch(new Request('https://media.test/v1/assets/asset_private', {
+      headers: { authorization: 'Bearer session-token' },
+    }), env as never)
+    expect(otherUser.status).toBe(403)
+
+    vi.restoreAllMocks()
+    authFetch('usr_1')
+    const owner = await worker.fetch(new Request('https://media.test/v1/assets/asset_private', {
+      headers: { authorization: 'Bearer session-token' },
+    }), env as never)
+    expect(owner.status).toBe(200)
+    expect((await parseJson(owner)).asset.title).toBe('Private Cat')
   })
 
   it('creates audio albums and exposes radio-enabled public albums with tracks', async () => {
