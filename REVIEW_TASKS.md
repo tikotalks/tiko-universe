@@ -277,9 +277,9 @@ The most urgent work is to lock down Atlas/generation/sentence/media/identity, i
   - PIN popup and child-mode flows.
   - App runtime language/theme persistence.
 
-- [ ] Make iOS tests run.
+- [x] Make iOS tests run.
   - Fix stale TikoKit color assertion.
-  - Add `swift test` for `packages/tikokit-ios`.
+  - Add an iOS simulator package test for `packages/tikokit-ios` because it imports UIKit.
   - Run iOS CI on pull requests with path filters.
 
 - [ ] Add real tests for `@tiko/ui`, `@tiko/atlas`, translations-api, and communication-api.

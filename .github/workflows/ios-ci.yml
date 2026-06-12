@@ -1,6 +1,17 @@
 name: iOS CI
 
 on:
+  pull_request:
+    paths:
+      - 'apps/*/ios/**'
+      - 'packages/tikokit-ios/**'
+      - '.github/workflows/ios-ci.yml'
+  push:
+    branches: [development, main]
+    paths:
+      - 'apps/*/ios/**'
+      - 'packages/tikokit-ios/**'
+      - '.github/workflows/ios-ci.yml'
   workflow_dispatch:
     inputs:
       app:
@@ -13,6 +24,37 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  tikokit:
+    name: Test TikoKit
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Select Xcode
+        run: |
+          sudo xcode-select -s /Applications/Xcode.app
+          xcodebuild -version
+
+      - name: Pick simulator
+        id: simulator
+        shell: bash
+        run: |
+          set -euo pipefail
+          device=$(xcrun simctl list devices available | grep -E 'iPhone (15|16)' | grep -v unavailable | head -1 | sed -E 's/^[[:space:]]*([^\(]+).*/\1/' | xargs)
+          if [[ -z "$device" ]]; then
+            device=$(xcrun simctl list devices available | grep -E 'iPhone' | grep -v unavailable | head -1 | sed -E 's/^[[:space:]]*([^\(]+).*/\1/' | xargs)
+          fi
+          echo "device=$device" >> "$GITHUB_OUTPUT"
+          echo "Using simulator: $device"
+
+      - name: Run Swift package tests
+        working-directory: packages/tikokit-ios
+        run: |
+          xcodebuild test \
+            -scheme TikoKit \
+            -destination 'platform=iOS Simulator,name=${{ steps.simulator.outputs.device }}' \
+            CODE_SIGNING_ALLOWED=NO
+
   discover:
     name: Discover iOS apps
     runs-on: ubuntu-latest

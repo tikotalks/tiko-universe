@@ -12,7 +12,7 @@ final class TikoKitTests: XCTestCase {
         XCTAssertEqual(TikoAppColor.talk.palette.label, "Talk")
         XCTAssertEqual(TikoAppConfig.talk.id, .talk)
         XCTAssertEqual(TikoAppConfig.talk.title, "Talk")
-        XCTAssertEqual(TikoAppConfig.talk.themeColorHex, 0x2f80ed)
+        XCTAssertEqual(TikoAppConfig.talk.themeColorHex, 0x17131c)
     }
 
     func testAnswerChoiceWithOpenIcon() {
