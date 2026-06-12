@@ -35,8 +35,6 @@ interface PersistedState {
 interface StoredIdentity {
   userId?: string
   deviceId?: string
-  deviceSecret?: string
-  sessionToken?: string
   expiresAt?: string
 }
 
@@ -154,8 +152,6 @@ function saveIdentity(bundle: IdentityBundle) {
   writeJson(identityStorageKey, {
     userId: bundle.subject.id,
     deviceId: bundle.device?.id,
-    deviceSecret: bundle.device?.secret,
-    sessionToken: bundle.session.token,
     expiresAt: bundle.session.expiresAt,
   } satisfies StoredIdentity)
 }
@@ -168,23 +164,11 @@ async function bootstrapIdentity() {
     saveIdentity(bundle)
     return
   } catch {
-    // Fall through to local bearer/device fallback when the shared app-family cookie is missing or expired.
-  }
-
-  if (storedIdentity.sessionToken) {
-    try {
-      const bundle = await identityClient.getSession(storedIdentity.sessionToken)
-      saveIdentity(bundle)
-      return
-    } catch {
-      // Fall through
-    }
+    // Fall through to device bootstrap when the HttpOnly cookie is missing or expired.
   }
 
   const bundle = await identityClient.bootstrapDevice({
     device: {
-      id: storedIdentity.deviceId,
-      secret: storedIdentity.deviceSecret,
       name: 'Todo web',
       platform: 'web',
     },
