@@ -1,3 +1,4 @@
+import AVFoundation
 import SwiftUI
 import TikoKit
 
@@ -8,6 +9,7 @@ struct TypeView: View {
     @AppStorage("tiko.language") private var languageCode = "en"
     @StateObject private var i18n = TikoI18n(app: .type)
     @State private var phrases: [String] = []
+    private let speechSynthesizer = AVSpeechSynthesizer()
 
     private let layouts: [(label: String, keys: [[String]])] = [
         ("ABC", [["a","b","c","d","e","f","g","h","i"],["j","k","l","m","n","o","p","q","r"],["s","t","u","v","w","x","y","z"]]),
@@ -140,7 +142,13 @@ struct TypeView: View {
 
     private func speakText() {
         guard speechEnabled, !text.isEmpty else { return }
-        // TODO: call shared TTS API
+        TikoSpeech.configurePlaybackSession()
+        let utterance = AVSpeechUtterance(string: text)
+        utterance.voice = AVSpeechSynthesisVoice(language: TikoSpeech.languageCode(for: languageCode))
+        if speechSynthesizer.isSpeaking {
+            speechSynthesizer.stopSpeaking(at: .immediate)
+        }
+        speechSynthesizer.speak(utterance)
     }
 
     private func savePhrase() {

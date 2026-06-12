@@ -308,11 +308,7 @@ function applyState(state: RadioState, version?: number) {
     library.tracks.value = state.tracks
   }
   if (Array.isArray(state.categories) && state.categories.length > 0) {
-    for (const cat of state.categories) {
-      if (!categories.categories.value.find((c) => c.id === cat.id)) {
-        categories.addCategory(cat)
-      }
-    }
+    categories.replaceCategories(state.categories)
   }
   if (typeof state.shuffleEnabled === 'boolean') {
     shuffleEnabled.value = state.shuffleEnabled
@@ -595,6 +591,7 @@ function openAddAudioPopup() {
           title: d.title,
           source: 'upload',
           audioUrl,
+          categoryId: d.categoryId,
         } as Parameters<typeof library.addTrack>[0] & { categoryId?: string })
         if (!player.isPlaying.value) {
           currentTrackIndex.value = library.tracks.value.length - 1

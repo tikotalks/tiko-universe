@@ -1426,13 +1426,14 @@ async function handlePutCards(request: Request, env: Env, segments: string[]): P
     const collectionId = segments[3]
     const isDefault = !collectionId.startsWith('user_')
 
-    let body: { title?: unknown; color?: unknown; imageRef?: unknown; saveAsDefault?: unknown }
+    let body: { title?: unknown; color?: unknown; order?: unknown; imageRef?: unknown; saveAsDefault?: unknown }
     try { body = (await request.json()) as typeof body } catch {
       return error(request, env, 'bad_request', 'Request body must be valid JSON', 400)
     }
     const title = typeof body.title === 'string' ? body.title.trim() : ''
     if (!title) return error(request, env, 'bad_request', 'title is required', 400)
     const color = asColorToken(body.color)
+    const order = typeof body.order === 'number' && Number.isFinite(body.order) ? Math.max(0, Math.round(body.order)) : undefined
     const imageRef = asImageRef(body.imageRef)
     const saveAsDefault = body.saveAsDefault === true
 
@@ -1453,7 +1454,7 @@ async function handlePutCards(request: Request, env: Env, segments: string[]): P
           id: collectionId,
           mediaCategories: base?.mediaCategories ?? [],
           cards: base?.cards ?? [],
-          order: base?.order ?? 0,
+          order: order ?? base?.order ?? 0,
           title,
           color,
           ...(imageRef !== undefined ? { imageRef } : {}),
@@ -1470,12 +1471,12 @@ async function handlePutCards(request: Request, env: Env, segments: string[]): P
 
       await env.CONTENT_DB.prepare(
         `UPDATE content_items
-         SET title = ?, speech = ?, color_token = ?, image_ref = ?, updated_at = datetime('now')
+         SET title = ?, speech = ?, color_token = ?, image_ref = ?, sort_order = COALESCE(?, sort_order), updated_at = datetime('now')
          WHERE id = ? AND app_id = 'cards' AND type = 'collection'`,
-      ).bind(title, title, color, imageRef ?? null, collectionId).run()
+      ).bind(title, title, color, imageRef ?? null, order ?? null, collectionId).run()
       await invalidateCardsCache(env)
 
-      const updated: CardCollection = { id: collectionId, title, color, order: 0, mediaCategories: [], ...(imageRef ? { imageRef } : {}), cards: [] }
+      const updated: CardCollection = { id: collectionId, title, color, order: order ?? 0, mediaCategories: [], ...(imageRef ? { imageRef } : {}), cards: [] }
       return json(request, env, { success: true, data: updated })
     }
 
@@ -1484,7 +1485,7 @@ async function handlePutCards(request: Request, env: Env, segments: string[]): P
     const idx = current.state.collections.findIndex(c => c.id === collectionId)
     if (idx === -1) return error(request, env, 'not_found', 'Collection not found', 404)
     const existing = current.state.collections[idx]
-    const updatedCollection: CardCollection = { ...existing, title, color, ...(imageRef ? { imageRef } : {}) }
+    const updatedCollection: CardCollection = { ...existing, title, color, order: order ?? existing.order, ...(imageRef ? { imageRef } : {}) }
     const updatedCollections = [...current.state.collections]
     updatedCollections[idx] = updatedCollection
     const ok = await putUserCardsState(env, sessionToken, { collections: updatedCollections }, current.version)
@@ -1498,7 +1499,7 @@ async function handlePutCards(request: Request, env: Env, segments: string[]): P
     const cardId = segments[5]
     const isDefault = !collectionId.startsWith('user_')
 
-    let body: { title?: unknown; speech?: unknown; color?: unknown; imageRef?: unknown }
+    let body: { title?: unknown; speech?: unknown; color?: unknown; order?: unknown; imageRef?: unknown }
     try { body = (await request.json()) as typeof body } catch {
       return error(request, env, 'bad_request', 'Request body must be valid JSON', 400)
     }
@@ -1506,6 +1507,7 @@ async function handlePutCards(request: Request, env: Env, segments: string[]): P
     if (!title) return error(request, env, 'bad_request', 'title is required', 400)
     const speech = typeof body.speech === 'string' && body.speech.trim() ? body.speech.trim() : title
     const color = asColorToken(body.color)
+    const order = typeof body.order === 'number' && Number.isFinite(body.order) ? Math.max(0, Math.round(body.order)) : undefined
 
     if (isDefault) {
       if (!(await verifyAdminFromSession(env, sessionToken))) {
@@ -1514,11 +1516,11 @@ async function handlePutCards(request: Request, env: Env, segments: string[]): P
       const imageRef = asImageRef(body.imageRef) ?? null
       await env.CONTENT_DB.prepare(
         `UPDATE content_items
-         SET title = ?, speech = ?, color_token = ?, image_ref = ?, updated_at = datetime('now')
+         SET title = ?, speech = ?, color_token = ?, image_ref = ?, sort_order = COALESCE(?, sort_order), updated_at = datetime('now')
          WHERE id = ? AND app_id = 'cards' AND type = 'card'`,
-      ).bind(title, speech, color, imageRef, cardId).run()
+      ).bind(title, speech, color, imageRef, order ?? null, cardId).run()
       await invalidateCardsCache(env)
-      const updatedCard: CardTile = { id: cardId, title, speech, color, order: 0, ...(imageRef ? { imageRef } : {}) }
+      const updatedCard: CardTile = { id: cardId, title, speech, color, order: order ?? 0, ...(imageRef ? { imageRef } : {}) }
       return json(request, env, { success: true, data: updatedCard })
     }
 
@@ -1530,7 +1532,7 @@ async function handlePutCards(request: Request, env: Env, segments: string[]): P
     const cardIdx = collection.cards.findIndex(c => c.id === cardId)
     if (cardIdx === -1) return error(request, env, 'not_found', 'Card not found', 404)
     const existingCard = collection.cards[cardIdx]
-    const updatedCard: CardTile = { ...existingCard, title, speech, color }
+    const updatedCard: CardTile = { ...existingCard, title, speech, color, order: order ?? existingCard.order }
     const updatedCards = [...collection.cards]
     updatedCards[cardIdx] = updatedCard
     const updatedCollection: CardCollection = { ...collection, cards: updatedCards }

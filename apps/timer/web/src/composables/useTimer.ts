@@ -92,12 +92,12 @@ export function useTimer() {
     now.value = Date.now()
   }
 
-  function restoreFromState(state: { mode?: TimerMode; targetMs?: number; remainingMs?: number; startedAt?: number | null }) {
+  function restoreFromState(state: { mode?: TimerMode; targetMs?: number; remainingMs?: number; totalDurationMs?: number; startedAt?: number | null }) {
     if (state.mode === 'running' && state.targetMs) {
       now.value = Date.now()
       const left = state.targetMs - now.value
       if (left > 0) {
-        totalDuration.value = 0 // unknown, approximate
+        totalDuration.value = state.totalDurationMs && state.totalDurationMs > 0 ? state.totalDurationMs : left
         targetMs.value = state.targetMs
         remainingMs.value = left
         mode.value = 'running'
@@ -109,7 +109,7 @@ export function useTimer() {
       return
     }
     if (state.mode === 'paused' && state.remainingMs) {
-      totalDuration.value = 0
+      totalDuration.value = state.totalDurationMs && state.totalDurationMs > 0 ? state.totalDurationMs : state.remainingMs
       remainingMs.value = state.remainingMs
       targetMs.value = 0
       mode.value = 'paused'
@@ -124,12 +124,12 @@ export function useTimer() {
     reset()
   }
 
-  function getState(): { mode: TimerMode; targetMs: number; remainingMs: number; startedAt: number | null } {
+  function getState(): { mode: TimerMode; targetMs: number; remainingMs: number; totalDurationMs: number; startedAt: number | null } {
     if (mode.value === 'running') {
       now.value = Date.now()
-      return { mode: 'running', targetMs: targetMs.value, remainingMs: Math.max(0, targetMs.value - now.value), startedAt: targetMs.value - totalDuration.value || null }
+      return { mode: 'running', targetMs: targetMs.value, remainingMs: Math.max(0, targetMs.value - now.value), totalDurationMs: totalDuration.value, startedAt: targetMs.value - totalDuration.value || null }
     }
-    return { mode: mode.value, targetMs: targetMs.value, remainingMs: remainingMs.value, startedAt: null }
+    return { mode: mode.value, targetMs: targetMs.value, remainingMs: remainingMs.value, totalDurationMs: totalDuration.value, startedAt: null }
   }
 
   const cleanup = () => clearTimer()

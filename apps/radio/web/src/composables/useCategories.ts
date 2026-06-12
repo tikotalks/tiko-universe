@@ -44,12 +44,15 @@ export function useCategories(storageKey: string = 'tiko:radio:categories') {
 
   const categoryNames: ComputedRef<Set<string>> = computed(() => new Set(categories.value.map(c => c.name)))
 
-  function addCategory(category: Omit<RadioCategory, 'id' | 'order'>): RadioCategory {
-    const id = category.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')
+  function addCategory(category: Partial<RadioCategory> & Pick<RadioCategory, 'name' | 'icon' | 'color'>): RadioCategory {
     const maxOrder = categories.value.reduce((max, c) => Math.max(max, c.order), -1)
-    const newCat: RadioCategory = normalizeCategory({ ...category, id, order: maxOrder + 1 }, maxOrder + 1)
+    const newCat: RadioCategory = normalizeCategory({ ...category, order: category.order ?? maxOrder + 1 }, maxOrder + 1)
     categories.value = [...categories.value, newCat]
     return newCat
+  }
+
+  function replaceCategories(nextCategories: Partial<RadioCategory>[]) {
+    categories.value = nextCategories.map((category, index) => normalizeCategory(category, index))
   }
 
   function removeCategory(id: string) {
@@ -67,6 +70,7 @@ export function useCategories(storageKey: string = 'tiko:radio:categories') {
     isEmpty,
     categoryNames,
     addCategory,
+    replaceCategories,
     removeCategory,
     updateCategory,
   }

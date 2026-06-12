@@ -137,6 +137,7 @@ export interface TimerState extends JsonObject {
   mode?: 'idle' | 'running' | 'paused' | 'expired'
   targetMs?: number
   remainingMs?: number
+  totalDurationMs?: number
   startedAt?: number | null
   lastPresets?: number[]
   presets?: { id: string; label: string; seconds: number }[]

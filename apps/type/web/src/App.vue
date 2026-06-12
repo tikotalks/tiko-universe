@@ -8,6 +8,7 @@ import {
   TikoAppShell,
   TikoSettingsPanel,
   TikoColorMode,
+  createTikoTtsClient,
   useIdentityRuntime,
   type IdentityRuntimeState
 } from '@tiko/ui'
@@ -92,6 +93,7 @@ const parentMode = ref(true)
 const childModeEnabled = ref(false)
 const pinConfigured = ref(false)
 const bootstrapped = ref(false)
+const tts = createTikoTtsClient()
 const identityClient = new IdentityClient({ baseUrl: identityBaseUrl, credentials: 'include' })
 const dataClient = new TikoDataClient({ baseUrl: apiBaseUrl })
 
@@ -277,16 +279,13 @@ onMounted(async () => {
   }
 })
 
-function handleSpeak() {
+async function handleSpeak() {
   if (!text.value.trim()) return
-  if (typeof window === 'undefined' || !window.speechSynthesis) return
-
-  window.speechSynthesis.cancel()
-  const utterance = new SpeechSynthesisUtterance(text.value)
-  utterance.onerror = () => {
-    // Speech synthesis error — silently handled
+  try {
+    await tts.speak({ text: text.value, language: language.value, provider: 'auto' })
+  } catch {
+    // Browser fallback is handled inside the shared TTS client.
   }
-  window.speechSynthesis.speak(utterance)
 }
 
 function handleClear() {

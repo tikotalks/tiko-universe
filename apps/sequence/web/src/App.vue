@@ -136,6 +136,8 @@ const customItems = ref<SequenceItem[]>((stored.items ?? []).map(item => normali
 const playingId = ref<string | null>(null)
 const currentStep = ref(0)
 const settingsOpen = ref(false)
+const settingsVersion = ref<number | undefined>()
+const stateVersion = ref<number | undefined>()
 const createOpen = ref(false)
 const newName = ref('')
 const newSteps = ref<string[]>([''])
@@ -230,13 +232,15 @@ async function bootstrapIdentity() {
   return runtime.bootstrapIdentity()
 }
 
-function applySettings(settings: SequenceSettings) {
+function applySettings(settings: SequenceSettings, version?: number) {
   language.value = toLanguage(settings.language)
   colorMode.value = toColorMode(settings.colorMode)
+  settingsVersion.value = version
 }
 
-function applyState(state: SequenceState) {
+function applyState(state: SequenceState, version?: number) {
   if (state.items) customItems.value = (state.items as unknown[]).map(item => normalizeSequenceItem(item, 'user'))
+  stateVersion.value = version
 }
 
 async function hydrateRemoteData() {
@@ -245,8 +249,8 @@ async function hydrateRemoteData() {
     dataClient.getSettings(appId, sessionToken.value),
     dataClient.getState(appId, sessionToken.value),
   ])
-  applySettings(settings.settings)
-  applyState(state.state)
+  applySettings(settings.settings, settings.version)
+  applyState(state.state, state.version)
 }
 
 async function hydrateDefaultContent() {
@@ -262,14 +266,28 @@ async function hydrateDefaultContent() {
   }
 }
 
-async function persistRemote() {
+async function persistSettingsRemote() {
   if (!bootstrapped.value || !sessionToken.value) return
   try {
-    await dataClient.putState(appId, sessionToken.value, {
-      items: customItems.value,
-    })
+    const response = await dataClient.putSettings(appId, sessionToken.value, {
+      language: language.value,
+      colorMode: colorMode.value,
+    }, { version: settingsVersion.value })
+    settingsVersion.value = response.version
   } catch {
-    // Local fallback already written
+    // Local fallback already written; remote will be retried on the next settings edit.
+  }
+}
+
+async function persistStateRemote() {
+  if (!bootstrapped.value || !sessionToken.value) return
+  try {
+    const response = await dataClient.putState(appId, sessionToken.value, {
+      items: customItems.value,
+    }, { version: stateVersion.value })
+    stateVersion.value = response.version
+  } catch {
+    // Local fallback already written; remote will be retried on the next content edit.
   }
 }
 
@@ -284,9 +302,14 @@ watch(colorMode, (mode) => {
   document.documentElement.dataset.theme = effective
 }, { immediate: true })
 
-watch([language, colorMode, customItems], () => {
+watch([language, colorMode], () => {
   saveLocal()
-  void persistRemote()
+  void persistSettingsRemote()
+})
+
+watch(customItems, () => {
+  saveLocal()
+  void persistStateRemote()
 }, { deep: true })
 
 onMounted(async () => {

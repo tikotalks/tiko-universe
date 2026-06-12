@@ -84,6 +84,25 @@ describe('Timer App', () => {
     scope.stop()
   })
 
+  it('restores running progress with the original total duration', async () => {
+    const scope = effectScope()
+    const timer = scope.run(() => useTimer())
+
+    expect(timer).toBeTruthy()
+    timer!.restoreFromState({
+      mode: 'running',
+      targetMs: Date.now() + 30_000,
+      remainingMs: 30_000,
+      totalDurationMs: 60_000,
+      startedAt: Date.now() - 30_000,
+    })
+    await nextTick()
+
+    expect(timer!.displayTime.value).toBe('00:30')
+    expect(timer!.progress.value).toBeCloseTo(0.5, 2)
+    scope.stop()
+  })
+
   it('opens immediately with timer UI, no login wall', () => {
     const { wrapper } = mountApp()
     expect(wrapper.find('.timer-app').exists()).toBe(true)

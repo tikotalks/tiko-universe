@@ -132,7 +132,7 @@ Approximate review spread: 7 Critical, about 35 High, about 70 Medium, and about
   - Ensure Maltese and every configured supported language has coverage for shell/profile/settings/app UI.
   - Keep default content translations as content, not hand-managed UI-key clutter.
 
-- [ ] Fix app-specific persistence bugs.
+- [x] Fix app-specific persistence bugs.
   - Sequence and Todo must write settings back remotely.
   - Radio must preserve category IDs/order and selected upload category.
   - Timer restore must preserve total duration/progress.

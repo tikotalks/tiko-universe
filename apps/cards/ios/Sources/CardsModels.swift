@@ -50,13 +50,15 @@ struct CommunicationCard: Identifiable, Codable, Equatable, Sendable {
     var speech: String
     var imageRef: String?
     var color: String
+    var order: Int
 
-    init(id: String, title: String, speech: String, imageRef: String? = nil, color: String) {
+    init(id: String, title: String, speech: String, imageRef: String? = nil, color: String, order: Int = 0) {
         self.id = id
         self.title = title
         self.speech = speech
         self.imageRef = imageRef
         self.color = cardsColorName(color, fallback: "orange")
+        self.order = order
     }
 
     init(from decoder: Decoder) throws {
@@ -66,6 +68,7 @@ struct CommunicationCard: Identifiable, Codable, Equatable, Sendable {
         speech = try container.decode(String.self, forKey: .speech)
         imageRef = try container.decodeIfPresent(String.self, forKey: .imageRef)
         color = cardsColorName(try container.decode(String.self, forKey: .color), fallback: "orange")
+        order = try container.decodeIfPresent(Int.self, forKey: .order) ?? 0
     }
 }
 

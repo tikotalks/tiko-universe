@@ -29,6 +29,7 @@ interface PersistedState {
   timerMode?: TimerMode
   targetMs?: number
   remainingMs?: number
+  totalDurationMs?: number
   startedAt?: number | null
   presets?: TimerPreset[]
 }
@@ -133,6 +134,7 @@ if (stored.timerMode && stored.timerMode !== 'idle') {
     mode: stored.timerMode,
     targetMs: stored.targetMs ?? 0,
     remainingMs: stored.remainingMs ?? 0,
+    totalDurationMs: stored.totalDurationMs ?? 0,
     startedAt: stored.startedAt ?? null
   })
 }
@@ -225,6 +227,7 @@ function applyState(state: TimerState, version?: number) {
       mode: state.mode,
       targetMs: state.targetMs ?? 0,
       remainingMs: state.remainingMs ?? 0,
+      totalDurationMs: state.totalDurationMs ?? 0,
       startedAt: state.startedAt ?? null
     })
   }
@@ -264,6 +267,7 @@ async function persistStateRemote() {
       mode: timerState.mode,
       targetMs: timerState.targetMs,
       remainingMs: timerState.remainingMs,
+      totalDurationMs: timerState.totalDurationMs,
       startedAt: timerState.startedAt,
       presets: presets.value
     }, { version: stateVersion.value })

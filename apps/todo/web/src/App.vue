@@ -80,6 +80,8 @@ const language = ref<TikoLanguage>(toLanguage(stored.language))
 const colorMode = ref<TikoColorMode>(toColorMode(stored.colorMode))
 const items = ref<TodoItem[]>(stored.items ?? [])
 const settingsOpen = ref(false)
+const settingsVersion = ref<number | undefined>()
+const stateVersion = ref<number | undefined>()
 const createOpen = ref(false)
 const newName = ref('')
 const newSteps = ref<string[]>([])
@@ -176,13 +178,15 @@ async function bootstrapIdentity() {
   saveIdentity(bundle)
 }
 
-function applySettings(settings: TodoSettings) {
+function applySettings(settings: TodoSettings, version?: number) {
   language.value = toLanguage(settings.language)
   colorMode.value = toColorMode(settings.colorMode)
+  settingsVersion.value = version
 }
 
-function applyState(state: TodoState) {
+function applyState(state: TodoState, version?: number) {
   if (state.items) items.value = state.items as TodoItem[]
+  stateVersion.value = version
 }
 
 async function hydrateRemoteData() {
@@ -191,18 +195,32 @@ async function hydrateRemoteData() {
     dataClient.getSettings(appId, sessionToken.value),
     dataClient.getState(appId, sessionToken.value),
   ])
-  applySettings(settings.settings)
-  applyState(state.state)
+  applySettings(settings.settings, settings.version)
+  applyState(state.state, state.version)
 }
 
-async function persistRemote() {
+async function persistSettingsRemote() {
   if (!bootstrapped.value || !sessionToken.value) return
   try {
-    await dataClient.putState(appId, sessionToken.value, {
-      items: items.value,
-    })
+    const response = await dataClient.putSettings(appId, sessionToken.value, {
+      language: language.value,
+      colorMode: colorMode.value,
+    }, { version: settingsVersion.value })
+    settingsVersion.value = response.version
   } catch {
-    // Local fallback already written
+    // Local fallback is already written; remote will be retried on the next settings edit.
+  }
+}
+
+async function persistStateRemote() {
+  if (!bootstrapped.value || !sessionToken.value) return
+  try {
+    const response = await dataClient.putState(appId, sessionToken.value, {
+      items: items.value,
+    }, { version: stateVersion.value })
+    stateVersion.value = response.version
+  } catch {
+    // Local fallback is already written; remote will be retried on the next item edit.
   }
 }
 
@@ -216,9 +234,14 @@ watch(colorMode, (mode) => {
   document.documentElement.dataset.theme = effective
 }, { immediate: true })
 
-watch([language, colorMode, items], () => {
+watch([language, colorMode], () => {
   saveLocal()
-  void persistRemote()
+  void persistSettingsRemote()
+})
+
+watch(items, () => {
+  saveLocal()
+  void persistStateRemote()
 }, { deep: true })
 
 onMounted(async () => {
