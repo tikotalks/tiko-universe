@@ -113,6 +113,20 @@ interface MediaAccessContext {
   auth: AuthSuccess | null
 }
 
+const MAX_MEDIA_UPLOAD_BYTES = 50 * 1024 * 1024
+const MAX_ASSET_UPLOAD_BYTES = 25 * 1024 * 1024
+const MAX_THUMBNAIL_UPLOAD_BYTES = 5 * 1024 * 1024
+const ALLOWED_MEDIA_MIME_PREFIXES = ['image/', 'audio/', 'video/']
+const ALLOWED_ASSET_MIME_TYPES = new Set([
+  'application/pdf',
+  'image/gif',
+  'image/jpeg',
+  'image/png',
+  'image/svg+xml',
+  'image/webp',
+])
+const TRUSTED_ANALYSIS_HOSTS = new Set(['data.tikocdn.org', 'data-tikoapps.org', 'data.tikoapps.org'])
+
 // ── CORS helpers ───────────────────────────────────────────────
 
 const CORS_HEADERS = {
@@ -258,6 +272,34 @@ function dbBoolean(value: unknown): boolean {
   if (typeof value === 'number') return value !== 0
   if (typeof value === 'string') return value === '1' || value.toLowerCase() === 'true'
   return false
+}
+
+function validateMediaUploadFile(file: File): Response | null {
+  const mimeType = file.type.toLowerCase()
+  if (!mimeType || !ALLOWED_MEDIA_MIME_PREFIXES.some(prefix => mimeType.startsWith(prefix))) {
+    return err('Unsupported media type', 415)
+  }
+  if (file.size <= 0) return err('File is empty', 400)
+  if (file.size > MAX_MEDIA_UPLOAD_BYTES) return err('File is too large', 413)
+  return null
+}
+
+function validateAssetUploadFile(file: File): Response | null {
+  const mimeType = file.type.toLowerCase()
+  if (!mimeType || !ALLOWED_ASSET_MIME_TYPES.has(mimeType)) {
+    return err('Unsupported asset type', 415)
+  }
+  if (file.size <= 0) return err('File is empty', 400)
+  if (file.size > MAX_ASSET_UPLOAD_BYTES) return err('File is too large', 413)
+  return null
+}
+
+function validateThumbnailUploadFile(file: File): Response | null {
+  const mimeType = file.type.toLowerCase()
+  if (!mimeType.startsWith('image/')) return err('Unsupported thumbnail type', 415)
+  if (file.size <= 0) return err('Thumbnail is empty', 400)
+  if (file.size > MAX_THUMBNAIL_UPLOAD_BYTES) return err('Thumbnail is too large', 413)
+  return null
 }
 
 function parseJsonObject(value: unknown): Record<string, unknown> {
@@ -517,6 +559,8 @@ async function handleMediaUpload(request: Request, env: Env, access: MediaAccess
     const tagsParam = parseFormStringArray(formData.get('tags'))
 
     if (!file) return err('No file provided')
+    const validationError = validateMediaUploadFile(file)
+    if (validationError) return validationError
 
     const { safeName, extension } = generateSafeFilename(file.name)
     const nameWithoutExt = file.name.replace(/\.[^.]+$/, '')
@@ -525,6 +569,7 @@ async function handleMediaUpload(request: Request, env: Env, access: MediaAccess
     const now = new Date().toISOString()
     const isPrivate = formData.get('isPrivate') === 'true'
     const ownerUserId = sessionUserId(access)
+    if (isPrivate && !ownerUserId) return err('Private uploads require a user session', 403)
     const mediaBucket = isPrivate ? env.USER_MEDIA_BUCKET : env.MEDIA_BUCKET
 
     await mediaBucket.put(baseKey, file.stream(), {
@@ -541,6 +586,8 @@ async function handleMediaUpload(request: Request, env: Env, access: MediaAccess
 
     // Handle video thumbnail upload
     if (isVideo && thumbnail) {
+      const thumbnailValidationError = validateThumbnailUploadFile(thumbnail)
+      if (thumbnailValidationError) return thumbnailValidationError
       const thumbnailKey = `uploads/thumbnails/${Date.now()}-${nameWithoutExt.toLowerCase().replace(/[^a-z0-9]/g, '-')}-thumb.jpg`
       await mediaBucket.put(thumbnailKey, thumbnail.stream(), {
         httpMetadata: { contentType: 'image/jpeg' },
@@ -646,16 +693,18 @@ async function handleMediaUpload(request: Request, env: Env, access: MediaAccess
 }
 
 // POST /v1/media/analyze — analyze an image URL with Vision, no upload
-async function handleMediaAnalyze(request: Request, env: Env): Promise<Response> {
+async function handleMediaAnalyze(request: Request, env: Env, access: MediaAccessContext): Promise<Response> {
   try {
     const body = (await request.json()) as { imageUrl?: string; title?: string }
     if (!body.imageUrl) return err('Image URL is required')
+    const trustedImageUrl = await trustedAnalysisImageUrl(body.imageUrl, env, access)
+    if (!trustedImageUrl) return err('Image URL must be a readable Tiko media or CDN URL', 403)
 
     let metadata: ImageMetadata = { title: '', description: '', tags: [], categories: [] }
     let visionError: string | null = null
 
     if (env.OPENAI_API_KEY) {
-      const result = await analyzeWithOpenAI(body.imageUrl, body.title, env.OPENAI_API_KEY)
+      const result = await analyzeWithOpenAI(trustedImageUrl, body.title, env.OPENAI_API_KEY)
       metadata = result.metadata
       visionError = result.visionError
     } else {
@@ -677,6 +726,51 @@ async function handleMediaAnalyze(request: Request, env: Env): Promise<Response>
       500,
     )
   }
+}
+
+async function trustedAnalysisImageUrl(imageUrl: string, env: Env, access: MediaAccessContext): Promise<string | null> {
+  const trimmed = imageUrl.trim()
+  if (!trimmed) return null
+
+  const directUrl = parseHttpUrl(trimmed)
+  if (directUrl && directUrl.protocol === 'https:' && TRUSTED_ANALYSIS_HOSTS.has(directUrl.hostname)) {
+    return directUrl.toString()
+  }
+
+  const mediaId = mediaIdFromAnalysisUrl(trimmed)
+  if (!mediaId) return null
+
+  const row = await env.MEDIA_DB.prepare(
+    'SELECT id, filename AS file_name, mime_type, is_private, owner_user_id, original_url FROM media WHERE id = ? LIMIT 1',
+  )
+    .bind(mediaId)
+    .first<Record<string, unknown>>()
+  if (!row || !canReadMedia(row, access)) return null
+  if (!String(row.mime_type ?? '').startsWith('image/')) return null
+
+  const originalUrl = String(row.original_url ?? '')
+  const storedUrl = parseHttpUrl(originalUrl)
+  if (storedUrl && storedUrl.protocol === 'https:' && TRUSTED_ANALYSIS_HOSTS.has(storedUrl.hostname)) {
+    return storedUrl.toString()
+  }
+  return null
+}
+
+function parseHttpUrl(value: string): URL | null {
+  try {
+    const url = new URL(value)
+    if (url.protocol !== 'http:' && url.protocol !== 'https:') return null
+    return url
+  } catch {
+    return null
+  }
+}
+
+function mediaIdFromAnalysisUrl(value: string): string | null {
+  const relative = value.startsWith('/') ? value : parseHttpUrl(value)?.pathname
+  if (!relative) return null
+  const match = relative.match(/^\/v1\/media\/([^/]+)(?:\/download)?$/)
+  return match?.[1] ? decodeURIComponent(match[1]) : null
 }
 
 // GET /v1/media — list public media with search, type, category, tags, sort
@@ -840,6 +934,8 @@ async function handleAssetUpload(request: Request, env: Env, access: MediaAccess
     const userId = sessionUserId(access)
 
     if (!file) return err('No file provided')
+    const validationError = validateAssetUploadFile(file)
+    if (validationError) return validationError
 
     const { safeName, extension } = generateSafeFilename(file.name)
     const filePath = `assets/${safeName}`
@@ -1159,7 +1255,7 @@ export default {
       if (request.method === 'POST' && id === 'analyze') {
         const authed = await authenticate(request, env)
         if (authed.ok === false) return withCors(authed.response)
-        return withCors(await handleMediaAnalyze(request, env))
+        return withCors(await handleMediaAnalyze(request, env, { auth: authed }))
       }
       if (request.method === 'GET' && !id) return handleListMedia(request, env)
       if (request.method === 'GET' && id && segments[3] === 'download') {

@@ -183,6 +183,33 @@ class MemoryR2 {
   async delete(key: string) { this.deleted.push(key); this.objects.delete(key) }
 }
 
+class MemoryAuthDb {
+  private readonly testApiKeyHash = 'sha256:92a285b165e21319c4fd750e257dea110e52f1b31183da3cc2d5689be31b7f7d'
+
+  prepare(sql: string) {
+    return {
+      bind: (...values: unknown[]) => ({
+        first: async () => {
+          if (!sql.includes('FROM identity_api_keys')) return null
+          if (values[0] !== this.testApiKeyHash) return null
+          return {
+            id: 'key_1',
+            subject_id: 'svc_media',
+            product: 'tiko',
+            name: 'media test key',
+            key_hash: values[0],
+            scopes_json: JSON.stringify(['*']),
+            expires_at: null,
+            revoked_at: null,
+          }
+        },
+        all: async () => ({ results: [] }),
+        run: async () => ({ meta: { changes: 1 } }),
+      }),
+    }
+  }
+}
+
 function mediaRow(overrides: Row = {}): Row {
   return {
     id: 'media_1',
@@ -246,7 +273,8 @@ function makeEnv() {
     MEDIA_BUCKET: new MemoryR2(),
     ASSETS_BUCKET: new MemoryR2(),
     USER_MEDIA_BUCKET: new MemoryR2(),
-    API_KEYS: 'test-api-key',
+    AUTH_DB: new MemoryAuthDb(),
+    TOKEN_PEPPER: 'test-pepper',
   }
 }
 
@@ -410,6 +438,55 @@ describe('media-api worker', () => {
       is_private: 0,
       owner_user_id: null,
     })
+  })
+
+  it('rejects unsupported media upload MIME types', async () => {
+    const env = makeEnv()
+    const form = new FormData()
+    form.set('file', new File(['hello'], 'notes.txt', { type: 'text/plain' }))
+
+    const response = await worker.fetch(new Request('https://media.test/v1/media/upload', {
+      method: 'POST',
+      headers: { authorization: 'Bearer test-api-key' },
+      body: form,
+    }), env as never)
+    const body = await parseJson(response)
+
+    expect(response.status).toBe(415)
+    expect(body.error).toBe('Unsupported media type')
+    expect(env.MEDIA_BUCKET.objects.size).toBe(0)
+  })
+
+  it('rejects private uploads without a session owner', async () => {
+    const env = makeEnv()
+    const form = new FormData()
+    form.set('file', new File(['secret'], 'secret.png', { type: 'image/png' }))
+    form.set('isPrivate', 'true')
+
+    const response = await worker.fetch(new Request('https://media.test/v1/media/upload', {
+      method: 'POST',
+      headers: { authorization: 'Bearer test-api-key' },
+      body: form,
+    }), env as never)
+    const body = await parseJson(response)
+
+    expect(response.status).toBe(403)
+    expect(body.error).toBe('Private uploads require a user session')
+    expect(env.USER_MEDIA_BUCKET.objects.size).toBe(0)
+  })
+
+  it('rejects arbitrary media analysis URLs before provider calls', async () => {
+    const env = makeEnv()
+
+    const response = await worker.fetch(new Request('https://media.test/v1/media/analyze', {
+      method: 'POST',
+      headers: { authorization: 'Bearer test-api-key', 'content-type': 'application/json' },
+      body: JSON.stringify({ imageUrl: 'https://evil.example/cat.png', title: 'Cat' }),
+    }), env as never)
+    const body = await parseJson(response)
+
+    expect(response.status).toBe(403)
+    expect(body.error).toBe('Image URL must be a readable Tiko media or CDN URL')
   })
 
   it('stores private session media in the user bucket with the session owner', async () => {

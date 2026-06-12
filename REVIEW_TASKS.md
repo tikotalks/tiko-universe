@@ -85,7 +85,7 @@ Approximate review spread: 7 Critical, about 35 High, about 70 Medium, and about
   - Make reset endpoints actually clear app data via service bindings, or return a requested/pending status.
   - Redact magic-link and OTP material in communication message storage.
 
-- [ ] Harden remaining upload and provider abuse surfaces.
+- [x] Harden remaining upload and provider abuse surfaces.
   - Add upload size/MIME validation.
   - Attribute uploads from the authenticated session, not client-supplied user IDs.
   - Restrict media analysis to owned or trusted CDN assets.
