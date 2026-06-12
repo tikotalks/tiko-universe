@@ -29,7 +29,7 @@ The most urgent work is to lock down Atlas/generation/sentence/media/identity, i
   - Consume grants on account reset and deletion request.
   - Reject any non-issued, expired, wrong-purpose, or already-consumed grant.
 
-- [ ] Gate paid AI/TTS endpoints.
+- [x] Gate paid AI/TTS endpoints.
   - Require auth or explicit service keys on generation-api TTS, voice samples, voices, tts-api `/generate`, sentence `/next`, and sentence `/complete`.
   - Normalize the voice-sample cache key to the actual provider model.
   - Add rate limits and budget controls.

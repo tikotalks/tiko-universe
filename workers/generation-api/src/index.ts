@@ -1,4 +1,5 @@
 import { authenticate } from '../../shared/auth'
+import type { AuthSuccess } from '../../shared/auth'
 
 export interface Env {
   GENERATION_DB: D1DatabaseLike
@@ -74,6 +75,18 @@ interface GenerateAudioFailure {
   status?: number
 }
 
+interface PaidAuthContext {
+  auth: AuthSuccess
+  subjectKey: string
+}
+
+interface UsagePolicy {
+  capability: string
+  units: number
+  maxRequestsPerMinute: number
+  maxUnitsPerDay: number
+}
+
 interface AtlasSpeechResponse {
   data?: {
     id?: string
@@ -146,9 +159,9 @@ export default {
 
     const url = new URL(request.url)
     if (url.pathname === '/v1/generation/health' && request.method === 'GET') return generationHealth()
-    if (url.pathname === '/v1/generation/voices' && request.method === 'GET') return requireAuth(request, env, () => listVoices(url, env))
-    if (url.pathname === '/v1/generation/tts' && request.method === 'POST') return requireAuth(request, env, () => generateTts(request, env))
-    if (url.pathname.startsWith('/v1/generation/voice-samples/') && request.method === 'GET') return requireAuth(request, env, () => getVoiceSample(url, env))
+    if (url.pathname === '/v1/generation/voices' && request.method === 'GET') return requirePaidAccess(request, env, { capability: 'voices.list', units: 1, maxRequestsPerMinute: 120, maxUnitsPerDay: 2000 }, () => listVoices(url, env))
+    if (url.pathname === '/v1/generation/tts' && request.method === 'POST') return generateTts(request, env)
+    if (url.pathname.startsWith('/v1/generation/voice-samples/') && request.method === 'GET') return requirePaidAccess(request, env, { capability: 'voice.sample', units: 40, maxRequestsPerMinute: 30, maxUnitsPerDay: 2000 }, () => getVoiceSample(url, env))
     if (url.pathname.startsWith('/v1/generation/audio/') && request.method === 'GET') return getAudio(url.pathname, env)
     if (url.pathname === '/v1/generation/image' && request.method === 'POST') return requireAuth(request, env, () => generateImage(request, env))
     if (url.pathname.startsWith('/v1/generation/images/') && url.pathname.endsWith('/binary') && request.method === 'GET') return getImage(url.pathname, env)
@@ -222,6 +235,62 @@ async function requireAuth(request: Request, env: Env, handler: () => Promise<Re
     return new Response(authed.response.body, { status: authed.response.status, statusText: authed.response.statusText, headers })
   }
   return handler()
+}
+
+async function requirePaidAccess(request: Request, env: Env, policy: UsagePolicy, handler: (context: PaidAuthContext) => Promise<Response>): Promise<Response> {
+  const context = await authenticatePaidRequest(request, env)
+  if (context instanceof Response) return context
+  const usageError = await recordUsageWindow(env, context.subjectKey, policy)
+  if (usageError) return usageError
+  return handler(context)
+}
+
+async function authenticatePaidRequest(request: Request, env: Env): Promise<PaidAuthContext | Response> {
+  const authed = await authenticate(request, env)
+  if (authed.ok === false) {
+    const headers = new Headers(authed.response.headers)
+    for (const [key, value] of Object.entries(CORS_HEADERS)) headers.set(key, value)
+    return new Response(authed.response.body, { status: authed.response.status, statusText: authed.response.statusText, headers })
+  }
+  const token = bearerToken(request)
+  const subjectKey = authed.method === 'session' && authed.userId
+    ? `session:${authed.userId}`
+    : `key:${await sha256Hex(token)}`
+  return { auth: authed, subjectKey }
+}
+
+async function recordUsageWindow(env: Env, subjectKey: string, policy: UsagePolicy): Promise<Response | null> {
+  const now = new Date()
+  const minuteStart = new Date(Math.floor(now.getTime() / 60000) * 60000).toISOString()
+  const dayStart = now.toISOString().slice(0, 10)
+  const minute = await readUsageWindow(env, subjectKey, policy.capability, 'minute', minuteStart)
+  if (minute.request_count >= policy.maxRequestsPerMinute) return apiError('rate_limited', 'Rate limit exceeded.', 429)
+  const day = await readUsageWindow(env, subjectKey, policy.capability, 'day', dayStart)
+  if (day.unit_count + policy.units > policy.maxUnitsPerDay) return apiError('budget_exceeded', 'Daily usage budget exceeded.', 429)
+  await incrementUsageWindow(env, subjectKey, policy.capability, 'minute', minuteStart, 1, policy.units)
+  await incrementUsageWindow(env, subjectKey, policy.capability, 'day', dayStart, 1, policy.units)
+  return null
+}
+
+async function readUsageWindow(env: Env, subjectKey: string, capability: string, windowKind: string, windowStart: string): Promise<{ request_count: number; unit_count: number }> {
+  const row = await env.GENERATION_DB.prepare(`
+    SELECT request_count, unit_count FROM generation_usage_windows
+    WHERE subject_key = ? AND capability = ? AND window_kind = ? AND window_start = ?
+    LIMIT 1
+  `).bind(subjectKey, capability, windowKind, windowStart).first<{ request_count: number; unit_count: number }>()
+  return { request_count: Number(row?.request_count ?? 0), unit_count: Number(row?.unit_count ?? 0) }
+}
+
+async function incrementUsageWindow(env: Env, subjectKey: string, capability: string, windowKind: string, windowStart: string, requests: number, units: number): Promise<void> {
+  const at = new Date().toISOString()
+  await env.GENERATION_DB.prepare(`
+    INSERT INTO generation_usage_windows (subject_key, capability, window_kind, window_start, request_count, unit_count, updated_at)
+    VALUES (?, ?, ?, ?, ?, ?, ?)
+    ON CONFLICT(subject_key, capability, window_kind, window_start) DO UPDATE SET
+      request_count = request_count + excluded.request_count,
+      unit_count = unit_count + excluded.unit_count,
+      updated_at = excluded.updated_at
+  `).bind(subjectKey, capability, windowKind, windowStart, requests, units, at).run()
 }
 
 interface StoryDraftChapter {
@@ -354,6 +423,16 @@ async function generateTts(request: Request, env: Env): Promise<Response> {
   if (validationError) return apiError(validationError.code, validationError.message, 400, validationError.field)
 
   const normalized = normalizeTtsRequest(body)
+  const access = await authenticatePaidRequest(request, env)
+  if (access instanceof Response) return access
+  const usageError = await recordUsageWindow(env, access.subjectKey, {
+    capability: 'tts.generate',
+    units: Math.max(1, normalized.text.length),
+    maxRequestsPerMinute: 60,
+    maxUnitsPerDay: 12000,
+  })
+  if (usageError) return usageError
+
   const requestHash = await generateRequestHash(normalized)
   const existing = await findAudioByHash(requestHash, env)
   if (existing) return json(ttsResponseFromRecord(existing, true))
@@ -1998,6 +2077,17 @@ function clamp(value: number, min: number, max: number) {
 
 function apiError(code: string, message: string, status = 400, field?: string): Response {
   return json({ error: { code, message, ...(field ? { field } : {}) } }, status)
+}
+
+function bearerToken(request: Request): string {
+  const match = /^Bearer\s+(.+)$/i.exec(request.headers.get('authorization') ?? '')
+  return match?.[1]?.trim() ?? ''
+}
+
+async function sha256Hex(value: string): Promise<string> {
+  const bytes = new TextEncoder().encode(value)
+  const digest = await crypto.subtle.digest('SHA-256', bytes)
+  return Array.from(new Uint8Array(digest)).map((byte) => byte.toString(16).padStart(2, '0')).join('')
 }
 
 function json(data: unknown, status = 200): Response {

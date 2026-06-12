@@ -106,6 +106,13 @@ interface IdentityContext {
   authorization: string
 }
 
+interface SentenceUsagePolicy {
+  capability: string
+  units: number
+  maxRequestsPerMinute: number
+  maxUnitsPerDay: number
+}
+
 const DEFAULT_ALLOWED_ORIGINS = [
   'https://talk.tikoapps.org',
   'https://dev.talk.tikoapps.org',
@@ -338,6 +345,12 @@ async function nextSentence(request: Request, env: Env): Promise<Response> {
   }
 
   const subjectId = await requireSubjectId(request, env, body.userId)
+  await enforceSentenceUsage(env, subjectId, {
+    capability: 'sentence.next',
+    units: Math.max(1, currentWords.length),
+    maxRequestsPerMinute: 120,
+    maxUnitsPerDay: 4000,
+  })
   const cacheKey = `sentence:next:${locale}:${subjectId ?? 'anon'}:${currentWords.join(',')}`
   const cached = await readCache<SentenceNextResponse>(env, cacheKey)
   if (cached) return json(cached)
@@ -400,6 +413,12 @@ async function completeSentence(request: Request, env: Env): Promise<Response> {
   const locale = normalizeLocale(body.locale)
   const wordIds = validateWordIds(body.wordIds, 'wordIds')
   const subjectId = await requireSubjectId(request, env, body.userId)
+  await enforceSentenceUsage(env, subjectId, {
+    capability: 'sentence.complete',
+    units: Math.max(1, wordIds.length),
+    maxRequestsPerMinute: 60,
+    maxUnitsPerDay: 2000,
+  })
   const pack = await loadActivePack(env.DB, locale)
   const selectedWords = await loadWordsByIds(env.DB, pack.id, wordIds)
   const orderedWords = orderWordsOrThrow(wordIds, selectedWords)
@@ -1003,6 +1022,36 @@ async function canAccessManagedChild(env: Env, identity: IdentityContext, reques
   } catch {
     return false
   }
+}
+
+async function enforceSentenceUsage(env: Env, subjectId: string, policy: SentenceUsagePolicy): Promise<void> {
+  const now = new Date()
+  const minuteStart = new Date(Math.floor(now.getTime() / 60000) * 60000).toISOString()
+  const dayStart = now.toISOString().slice(0, 10)
+  const minuteKey = `sentence:usage:${policy.capability}:${hashCacheKey(subjectId)}:minute:${minuteStart}`
+  const dayKey = `sentence:usage:${policy.capability}:${hashCacheKey(subjectId)}:day:${dayStart}`
+  const minute = await readUsageCounter(env, minuteKey)
+  if (minute.requests >= policy.maxRequestsPerMinute) throw new HttpError(429, 'rate_limited', 'Rate limit exceeded.')
+  const day = await readUsageCounter(env, dayKey)
+  if (day.units + policy.units > policy.maxUnitsPerDay) throw new HttpError(429, 'budget_exceeded', 'Daily usage budget exceeded.')
+  await writeUsageCounter(env, minuteKey, { requests: minute.requests + 1, units: minute.units + policy.units }, 70)
+  await writeUsageCounter(env, dayKey, { requests: day.requests + 1, units: day.units + policy.units }, 90000)
+}
+
+async function readUsageCounter(env: Env, key: string): Promise<{ requests: number; units: number }> {
+  const value = await env.CACHE.get(key)
+  if (!value) return { requests: 0, units: 0 }
+  try {
+    const parsed = JSON.parse(value) as { requests?: unknown; units?: unknown }
+    return { requests: Number(parsed.requests ?? 0), units: Number(parsed.units ?? 0) }
+  } catch {
+    await env.CACHE.delete(key)
+    return { requests: 0, units: 0 }
+  }
+}
+
+async function writeUsageCounter(env: Env, key: string, value: { requests: number; units: number }, ttl: number): Promise<void> {
+  await env.CACHE.put(key, JSON.stringify(value), { expirationTtl: ttl })
 }
 
 async function readCache<T>(env: Env, key: string): Promise<T | null> {

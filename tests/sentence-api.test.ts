@@ -249,6 +249,14 @@ async function fetchJson(path: string, init: RequestInit = {}, testEnv = env().t
   return { response, body }
 }
 
+function sentenceHashCacheKey(value: string): string {
+  let hash = 0
+  for (let index = 0; index < value.length; index += 1) {
+    hash = ((hash << 5) - hash + value.charCodeAt(index)) | 0
+  }
+  return Math.abs(hash).toString(36)
+}
+
 describe('sentence-api foundation', () => {
   it('allows only configured origins in CORS preflight responses', async () => {
     const allowed = await fetchJson('/v1/sentence/start?locale=en', {
@@ -331,6 +339,31 @@ describe('sentence-api foundation', () => {
 
     expect(next.response.status).toBe(401)
     expect(complete.response.status).toBe(401)
+  })
+
+  it('enforces sentence prediction rate limits and completion daily budgets', async () => {
+    const { testEnv, cache } = env()
+    const subjectHash = sentenceHashCacheKey('sub_1')
+    const minuteStart = new Date(Math.floor(Date.now() / 60000) * 60000).toISOString()
+    const dayStart = new Date().toISOString().slice(0, 10)
+    cache.values.set(`sentence:usage:sentence.next:${subjectHash}:minute:${minuteStart}`, JSON.stringify({ requests: 120, units: 120 }))
+    cache.values.set(`sentence:usage:sentence.complete:${subjectHash}:day:${dayStart}`, JSON.stringify({ requests: 1, units: 2000 }))
+
+    const next = await fetchJson('/v1/sentence/next', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json', ...auth },
+      body: JSON.stringify({ locale: 'en', currentWords: ['i'] }),
+    }, testEnv)
+    const complete = await fetchJson('/v1/sentence/complete', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json', ...auth },
+      body: JSON.stringify({ locale: 'en', wordIds: ['i'] }),
+    }, testEnv)
+
+    expect(next.response.status).toBe(429)
+    expect(next.body.error.code).toBe('rate_limited')
+    expect(complete.response.status).toBe(429)
+    expect(complete.body.error.code).toBe('budget_exceeded')
   })
 
 

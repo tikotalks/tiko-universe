@@ -25,12 +25,17 @@ class MemoryD1 {
   byHash = new Map<string, StoredAudioRecord>()
   byId = new Map<string, StoredAudioRecord>()
   storyDrafts = new Map<string, Record<string, unknown>>()
+  usageWindows = new Map<string, { request_count: number; unit_count: number }>()
   conflictAudioOnInsert: StoredAudioRecord | null = null
 
   prepare(sql: string) {
     return {
       bind: (...values: unknown[]) => ({
         first: async <T>() => {
+          if (sql.includes('FROM generation_usage_windows')) {
+            const key = values.slice(0, 4).map(String).join('|')
+            return (this.usageWindows.get(key) ?? null) as T | null
+          }
           if (sql.includes('WHERE request_hash')) return (this.byHash.get(values[0] as string) ?? null) as T | null
           if (sql.includes('FROM story_drafts') && sql.includes('WHERE id')) return (this.storyDrafts.get(values[0] as string) ?? null) as T | null
           if (sql.includes('WHERE id')) return (this.byId.get(values[0] as string) ?? null) as T | null
@@ -57,6 +62,14 @@ class MemoryD1 {
               updated_at: values[11],
             }
             this.storyDrafts.set(record.id as string, record)
+            return { success: true, meta: { changes: 1 } }
+          }
+          if (sql.includes('INSERT INTO generation_usage_windows')) {
+            const key = values.slice(0, 4).map(String).join('|')
+            const current = this.usageWindows.get(key) ?? { request_count: 0, unit_count: 0 }
+            current.request_count += Number(values[4])
+            current.unit_count += Number(values[5])
+            this.usageWindows.set(key, current)
             return { success: true, meta: { changes: 1 } }
           }
           if (sql.includes('INSERT INTO generated_images')) {
@@ -147,6 +160,11 @@ function generationPost(path: string, body: unknown): Request {
   })
 }
 
+async function sha256HexForTest(value: string): Promise<string> {
+  const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(value))
+  return Array.from(new Uint8Array(digest)).map((byte) => byte.toString(16).padStart(2, '0')).join('')
+}
+
 beforeEach(() => {
   vi.restoreAllMocks()
 })
@@ -172,6 +190,28 @@ describe('generation-api TTS contract', () => {
     await expect(json(response)).resolves.toMatchObject({
       error: { code: 'missing_text', field: 'text' }
     })
+  })
+
+  it('enforces per-caller TTS rate and daily character budgets', async () => {
+    const env = makeEnv()
+    vi.spyOn(globalThis, 'fetch').mockImplementation(async () => new Response(new Uint8Array([1, 2, 3]), { status: 200 }))
+
+    for (let index = 0; index < 60; index += 1) {
+      const response = await worker.fetch(generationPost('/v1/generation/tts', { text: `Hello ${index}`, language: 'en' }), env)
+      expect([200, 201]).toContain(response.status)
+    }
+
+    const limited = await worker.fetch(generationPost('/v1/generation/tts', { text: 'Too many', language: 'en' }), env)
+    expect(limited.status).toBe(429)
+    await expect(json(limited)).resolves.toMatchObject({ error: { code: 'rate_limited' } })
+
+    const budgetEnv = makeEnv()
+    const dayStart = new Date().toISOString().slice(0, 10)
+    const subjectKey = `key:${await sha256HexForTest('test-api-key')}`
+    budgetEnv.db.usageWindows.set(`${subjectKey}|tts.generate|day|${dayStart}`, { request_count: 1, unit_count: 11999 })
+    const overBudget = await worker.fetch(generationPost('/v1/generation/tts', { text: 'No', language: 'en' }), budgetEnv)
+    expect(overBudget.status).toBe(429)
+    await expect(json(overBudget)).resolves.toMatchObject({ error: { code: 'budget_exceeded' } })
   })
 
   it('returns a D1-backed cache hit without calling the provider', async () => {

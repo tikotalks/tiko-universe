@@ -54,6 +54,7 @@ interface AudioRecord {
 
 class MemoryD1 {
   byHash = new Map<string, Row>()
+  usageWindows = new Map<string, { request_count: number; unit_count: number }>()
   records: AudioRecord[] = []
   conflictOnInsert: AudioRecord | null = null
 
@@ -69,7 +70,20 @@ class MemoryD1 {
       const row = this.byHash.get(hash)
       return new MemoryResult(row ? [row] : [])
     }
+    if (normalized.startsWith('SELECT') && normalized.includes('FROM tts_usage_windows')) {
+      const key = values.slice(0, 4).map(String).join('|')
+      const row = this.usageWindows.get(key)
+      return new MemoryResult(row ? [row] : [])
+    }
 
+    if (normalized.startsWith('INSERT INTO tts_usage_windows')) {
+      const key = values.slice(0, 4).map(String).join('|')
+      const current = this.usageWindows.get(key) ?? { request_count: 0, unit_count: 0 }
+      current.request_count += Number(values[4])
+      current.unit_count += Number(values[5])
+      this.usageWindows.set(key, current)
+      return new MemoryResult()
+    }
     if (normalized.startsWith('INSERT INTO tts_audio') || normalized.startsWith('INSERT OR IGNORE INTO tts_audio')) {
       if (this.conflictOnInsert) {
         this.byHash.set(this.conflictOnInsert.text_hash, this.conflictOnInsert as unknown as Row)
@@ -148,6 +162,11 @@ function ttsGenerate(body: unknown, init: RequestInit = {}) {
     headers: { authorization: 'Bearer test-api-key', 'content-type': 'application/json', ...(init.headers ?? {}) },
     body: init.body ?? JSON.stringify(body),
   })
+}
+
+async function sha256HexForTest(value: string): Promise<string> {
+  const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(value))
+  return Array.from(new Uint8Array(digest)).map((byte) => byte.toString(16).padStart(2, '0')).join('')
 }
 
 beforeEach(() => {
@@ -314,6 +333,28 @@ describe('tts-api worker', () => {
       expect(response.status).toBe(400)
       const body = await json(response)
       expect(body.error).toBe('missing_language')
+    })
+
+    it('enforces per-key rate limits and daily character budgets', async () => {
+      const env = makeEnv()
+      vi.spyOn(globalThis, 'fetch').mockImplementation(async () => new Response(new Uint8Array([0x49, 0x44, 0x33]), { status: 200 }))
+
+      for (let index = 0; index < 60; index += 1) {
+        const response = await worker.fetch(ttsGenerate({ text: `Hello ${index}`, language: 'en' }), env)
+        expect(response.status).toBe(200)
+      }
+
+      const limited = await worker.fetch(ttsGenerate({ text: 'Too many', language: 'en' }), env)
+      expect(limited.status).toBe(429)
+      await expect(json(limited)).resolves.toMatchObject({ success: false, error: 'rate_limited' })
+
+      const budgetEnv = makeEnv()
+      const dayStart = new Date().toISOString().slice(0, 10)
+      const subjectKey = `key:${await sha256HexForTest('test-api-key')}`
+      budgetEnv.db.usageWindows.set(`${subjectKey}|tts.generate|day|${dayStart}`, { request_count: 1, unit_count: 11999 })
+      const overBudget = await worker.fetch(ttsGenerate({ text: 'No', language: 'en' }), budgetEnv)
+      expect(overBudget.status).toBe(429)
+      await expect(json(overBudget)).resolves.toMatchObject({ success: false, error: 'budget_exceeded' })
     })
 
     it('returns cached audio on D1 cache hit without calling the provider', async () => {
