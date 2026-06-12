@@ -28,6 +28,7 @@ export function useCardsStore(options: UseCardsStoreOptions) {
   const loadingMediaIDs = ref<Set<string>>(new Set())
   const fetchedMediaIDs = ref<Set<string>>(new Set())
   const collectionThumbnails = ref<Record<string, string>>({})
+  const cardImages = ref<Record<string, string>>({})
   const editMode = ref(false)
   const selectedCollectionIDs = ref<Set<string>>(new Set())
   const selectedCardIDs = ref<Set<string>>(new Set())
@@ -207,11 +208,12 @@ export function useCardsStore(options: UseCardsStoreOptions) {
     try {
       const mediaItems = await fetchByCategory(collection.mediaCategories, { limit: 100 })
       const match = matchCardsMedia(collection, mediaItems, api.baseUrl)
-      collection.cards = match.cards
+      cardImages.value = { ...cardImages.value, ...match.cardImages }
       if (match.thumbnailURL) collectionThumbnails.value = { ...collectionThumbnails.value, [collectionID]: match.thumbnailURL }
       if (prefetchCards) {
-        for (const card of match.cards.slice(0, 12)) {
-          if (card.imageURL) void preload(card.imageURL)
+        for (const card of collection.cards.slice(0, 12)) {
+          const url = card.imageRef ? `${api.baseUrl}/content/images/${encodeURIComponent(card.imageRef)}` : match.cardImages[card.id]
+          if (url) void preload(url)
         }
       }
       collections.value = [...collections.value]
@@ -351,6 +353,7 @@ export function useCardsStore(options: UseCardsStoreOptions) {
     loadingCollections,
     loadingMediaIDs,
     collectionThumbnails,
+    cardImages,
     editMode,
     selectedCollectionIDs,
     selectedCardIDs,
@@ -419,14 +422,7 @@ export function fallbackColor(index: number): TikoColorName {
 }
 
 function collectionForStorage(collection: CardCollection): CardCollection {
-  const { imageURL: _imageURL, ...storedCollection } = collection
-  return {
-    ...storedCollection,
-    cards: collection.cards.map(card => {
-      const { imageURL: _cardImageURL, ...storedCard } = card
-      return storedCard
-    }),
-  }
+  return collection
 }
 
 function createUserID() {

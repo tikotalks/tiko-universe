@@ -72,7 +72,6 @@ interface CardTile {
   color: string
   order: number
   imageRef?: string
-  imageURL?: string
 }
 
 interface CardCollection {
@@ -82,7 +81,6 @@ interface CardCollection {
   order: number
   mediaCategories: string[]
   imageRef?: string
-  imageURL?: string
   parentID?: string | null
   cards: CardTile[]
 }
@@ -478,7 +476,6 @@ interface YesNoAnswerTile {
   speech: string
   color?: string
   imageRef?: string
-  imageURL?: string
   icon?: string
 }
 
@@ -488,7 +485,6 @@ interface YesNoAnswerSet {
   description?: string
   color?: string
   imageRef?: string
-  imageURL?: string
   order: number
   answers: YesNoAnswerTile[]
 }
@@ -597,12 +593,7 @@ async function getLocalizedContentItems(env: Env, appId: string, language: strin
   })
 }
 
-async function resolveItemImageURL(item: AppContentItemRow, env: Env): Promise<string | undefined> {
-  if (!item.image_ref) return undefined
-  return await resolveImageRef(item.image_ref, env) ?? undefined
-}
-
-async function mapCardsContentItems(items: LocalizedContentItem[], env: Env): Promise<CardCollection[]> {
+async function mapCardsContentItems(items: LocalizedContentItem[]): Promise<CardCollection[]> {
   const collections = items.filter(item => item.type === 'collection')
   const cards = items.filter(item => item.type === 'card')
   const cardsByCollection = new Map<string, LocalizedContentItem[]>()
@@ -616,10 +607,8 @@ async function mapCardsContentItems(items: LocalizedContentItem[], env: Env): Pr
   const result: CardCollection[] = []
   for (const collection of collections) {
     const mediaCategories = parseJsonArray(collection.metadata.mediaCategories) as string[]
-    const imageURL = await resolveItemImageURL(collection, env)
     const collectionCards: CardTile[] = []
     for (const card of cardsByCollection.get(collection.id) ?? []) {
-      const cardImageURL = await resolveItemImageURL(card, env)
       collectionCards.push({
         id: card.id,
         title: card.title,
@@ -627,7 +616,6 @@ async function mapCardsContentItems(items: LocalizedContentItem[], env: Env): Pr
         color: asColorToken(card.color_token, asColorToken(collection.color_token)),
         order: card.sort_order,
         ...(card.image_ref ? { imageRef: card.image_ref } : {}),
-        ...(cardImageURL ? { imageURL: cardImageURL } : {}),
       })
     }
 
@@ -638,7 +626,6 @@ async function mapCardsContentItems(items: LocalizedContentItem[], env: Env): Pr
       order: collection.sort_order,
       mediaCategories,
       ...(collection.image_ref ? { imageRef: collection.image_ref } : {}),
-      ...(imageURL ? { imageURL } : {}),
       ...(collection.parent_id ? { parentID: collection.parent_id } : {}),
       cards: collectionCards.sort((a, b) => a.order - b.order),
     })
@@ -649,7 +636,7 @@ async function mapCardsContentItems(items: LocalizedContentItem[], env: Env): Pr
 
 async function getDefaultCollections(env: Env, language = 'en'): Promise<CardCollection[]> {
   const items = await getLocalizedContentItems(env, 'cards', language)
-  return mapCardsContentItems(items, env)
+  return mapCardsContentItems(items)
 }
 
 async function getYesNoContent(env: Env, language: string): Promise<{ answerSets: YesNoAnswerSet[]; answers: YesNoAnswerTile[]; selectedSetId: string | null }> {
@@ -668,18 +655,15 @@ async function getYesNoContent(env: Env, language: string): Promise<{ answerSets
   for (const set of sets) {
     const mappedAnswers: YesNoAnswerTile[] = []
     for (const answer of (answersBySet.get(set.id) ?? []).sort((a, b) => a.sort_order - b.sort_order)) {
-      const answerImageURL = await resolveItemImageURL(answer, env)
       mappedAnswers.push({
         id: typeof answer.metadata.answerId === 'string' ? answer.metadata.answerId : answer.id,
         label: answer.title,
         speech: answer.speech ?? answer.title,
         ...(answer.color_token ? { color: answer.color_token } : {}),
         ...(answer.image_ref ? { imageRef: answer.image_ref } : {}),
-        ...(answerImageURL ? { imageURL: answerImageURL } : {}),
         ...(answer.icon ? { icon: answer.icon } : {}),
       })
     }
-    const setImageURL = await resolveItemImageURL(set, env)
 
     answerSets.push({
       id: set.id,
@@ -687,7 +671,6 @@ async function getYesNoContent(env: Env, language: string): Promise<{ answerSets
       ...(set.subtitle ? { description: set.subtitle } : {}),
       ...(set.color_token ? { color: set.color_token } : {}),
       ...(set.image_ref ? { imageRef: set.image_ref } : {}),
-      ...(setImageURL ? { imageURL: setImageURL } : {}),
       order: set.sort_order,
       answers: mappedAnswers,
     })

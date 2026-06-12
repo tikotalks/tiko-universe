@@ -12,7 +12,6 @@ export interface CardCollection {
   parentID?: string | null
   mediaCategories: string[]
   imageRef?: string
-  imageURL?: string
   cards: CommunicationCard[]
 }
 
@@ -20,7 +19,6 @@ export interface CommunicationCard {
   id: string
   title: string
   speech: string
-  imageURL?: string
   imageRef?: string
   color: TikoColorName
   order?: number

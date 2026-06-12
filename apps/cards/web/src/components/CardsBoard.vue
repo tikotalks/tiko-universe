@@ -23,6 +23,7 @@ const props = defineProps<{
   selectedCollectionIds: Set<string>
   selectedCardIds: Set<string>
   collectionThumbnails: Record<string, string>
+  cardImages: Record<string, string>
   contentBaseUrl: string
   speakingCardID?: string
   translateTitle?: (item: CardsGridItem) => string
@@ -67,7 +68,7 @@ function background(item: CardsGridItem) {
 function image(item: CardsGridItem) {
   return item.kind === 'collection'
     ? imageForCollection(item.collection, props.collectionThumbnails)
-    : imageForCard(item.card, props.contentBaseUrl)
+    : imageForCard(item.card, props.contentBaseUrl, props.cardImages)
 }
 
 function itemID(item: CardsGridItem): string {

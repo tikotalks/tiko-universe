@@ -15,18 +15,18 @@ export function resizedCDNURL(originalUrl: string | undefined, baseUrl = 'https:
 }
 
 export function imageForCollection(collection: CardCollection, thumbnails: Record<string, string>) {
-  return resizedCDNURL(collection.imageURL ?? (collection.imageRef ? imageRefURL(collection.imageRef) : thumbnails[collection.id]))
+  return resizedCDNURL(collection.imageRef ? imageRefURL(collection.imageRef) : thumbnails[collection.id])
 }
 
-export function imageForCard(card: CommunicationCard, contentBaseUrl: string) {
-  return resizedCDNURL(card.imageURL ?? (card.imageRef ? imageRefURL(card.imageRef, contentBaseUrl) : undefined), contentBaseUrl)
+export function imageForCard(card: CommunicationCard, contentBaseUrl: string, cardImages: Record<string, string>) {
+  return resizedCDNURL(card.imageRef ? imageRefURL(card.imageRef, contentBaseUrl) : cardImages[card.id], contentBaseUrl)
 }
 
 export function imageRefURL(imageRef: string, contentBaseUrl = 'https://content.tikoapi.org/v1') {
   return `${contentBaseUrl}/content/images/${encodeURIComponent(imageRef)}`
 }
 
-export function matchCardsMedia(collection: CardCollection, mediaItems: TikoMedia[], contentBaseUrl: string): { cards: CommunicationCard[]; thumbnailURL?: string } {
+export function matchCardsMedia(collection: CardCollection, mediaItems: TikoMedia[], contentBaseUrl: string): { cardImages: Record<string, string>; thumbnailURL?: string } {
   const updates = new Map<string, string>()
   const matched = new Set<string>()
   const mediaByName = new Map<string, TikoMedia>()
@@ -64,7 +64,7 @@ export function matchCardsMedia(collection: CardCollection, mediaItems: TikoMedi
   }
 
   return {
-    cards: collection.cards.map(card => ({ ...card, imageURL: updates.get(card.id) ?? card.imageURL })),
+    cardImages: Object.fromEntries(updates),
     thumbnailURL: mediaItems[0]?.original_url ? resizedCDNURL(mediaItems[0].original_url, contentBaseUrl) : undefined,
   }
 }
