@@ -105,7 +105,7 @@ Approximate review spread: 7 Critical, about 35 High, about 70 Medium, and about
   - Return actual new versions with `RETURNING`.
   - Debounce and serialize client writes.
 
-- [ ] Make content-api bulk writes atomic.
+- [x] Make content-api bulk writes atomic.
   - Replace wipe-and-reinsert with batch/reconcile.
   - Preserve translations unless explicitly removed.
   - Prevent readers from seeing empty or partial catalogs during writes.

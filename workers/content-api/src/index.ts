@@ -15,6 +15,7 @@ interface Env {
 
 interface D1Database {
   prepare(sql: string): D1PreparedStatement
+  batch<T = unknown>(statements: D1PreparedStatement[]): Promise<T[]>
 }
 
 interface D1PreparedStatement {
@@ -763,18 +764,47 @@ async function putAdminCardsCollections(
     throw new Error('collections must be a non-empty array')
   }
 
-  await env.CONTENT_DB.prepare(`DELETE FROM content_item_translations WHERE item_id IN (SELECT id FROM content_items WHERE app_id = 'cards' AND owner_user_id IS NULL)`).run()
-  await env.CONTENT_DB.prepare(`DELETE FROM content_items WHERE app_id = 'cards' AND owner_user_id IS NULL`).run()
+  const existingRows = await env.CONTENT_DB.prepare(
+    `SELECT id FROM content_items WHERE app_id = ? AND owner_user_id IS NULL`,
+  ).bind('cards').all<{ id: string }>()
+  const incomingIds = new Set<string>()
+  for (const col of collections) {
+    incomingIds.add(col.id)
+    for (const tile of col.cards ?? []) incomingIds.add(tile.id)
+  }
+  const removedIds = (existingRows.results ?? []).map(row => row.id).filter(id => !incomingIds.has(id))
+  const statements = deleteRemovedDefaultItemStatements(env, removedIds)
 
   for (const col of collections) {
-    await env.CONTENT_DB.prepare(
-	      `INSERT INTO content_items (
+    statements.push(env.CONTENT_DB.prepare(
+      `INSERT INTO content_items (
 	         id, template_id, title, slug, status, language_code, tags, categories, data,
 	         app_id, type, parent_id, source_locale, speech, color_token, image_ref,
 	         sort_order, is_default, is_published, metadata_json
 	       )
 	       VALUES (?, 'cards.collection', ?, ?, 'published', 'en', NULL, '["cards"]', ?,
-         'cards', 'collection', NULL, 'en', ?, ?, ?, ?, 1, 1, ?)`,
+         'cards', 'collection', NULL, 'en', ?, ?, ?, ?, 1, 1, ?)
+       ON CONFLICT(id) DO UPDATE SET
+         template_id = excluded.template_id,
+         title = excluded.title,
+         slug = excluded.slug,
+         status = excluded.status,
+         language_code = excluded.language_code,
+         tags = excluded.tags,
+         categories = excluded.categories,
+         data = excluded.data,
+         app_id = excluded.app_id,
+         type = excluded.type,
+         parent_id = excluded.parent_id,
+         source_locale = excluded.source_locale,
+         speech = excluded.speech,
+         color_token = excluded.color_token,
+         image_ref = excluded.image_ref,
+         sort_order = excluded.sort_order,
+         is_default = excluded.is_default,
+         is_published = excluded.is_published,
+         metadata_json = excluded.metadata_json,
+         updated_at = datetime('now')`,
     )
       .bind(
         col.id,
@@ -786,19 +816,39 @@ async function putAdminCardsCollections(
 	        asImageRef(col.imageRef) ?? null,
 	        col.order ?? 0,
 	        JSON.stringify({ mediaCategories: col.mediaCategories ?? [] }),
-      )
-      .run()
+      ))
 
     if (Array.isArray(col.cards)) {
       for (const tile of col.cards) {
-        await env.CONTENT_DB.prepare(
-	          `INSERT INTO content_items (
+        statements.push(env.CONTENT_DB.prepare(
+          `INSERT INTO content_items (
 	             id, template_id, title, slug, status, language_code, tags, categories, data,
 	             app_id, type, parent_id, source_locale, speech, color_token, image_ref,
 	             sort_order, is_default, is_published, metadata_json
 	           )
 	           VALUES (?, 'cards.card', ?, ?, 'published', 'en', NULL, '["cards"]', ?,
-	             'cards', 'card', ?, 'en', ?, ?, ?, ?, 1, 1, ?)`,
+	             'cards', 'card', ?, 'en', ?, ?, ?, ?, 1, 1, ?)
+             ON CONFLICT(id) DO UPDATE SET
+               template_id = excluded.template_id,
+               title = excluded.title,
+               slug = excluded.slug,
+               status = excluded.status,
+               language_code = excluded.language_code,
+               tags = excluded.tags,
+               categories = excluded.categories,
+               data = excluded.data,
+               app_id = excluded.app_id,
+               type = excluded.type,
+               parent_id = excluded.parent_id,
+               source_locale = excluded.source_locale,
+               speech = excluded.speech,
+               color_token = excluded.color_token,
+               image_ref = excluded.image_ref,
+               sort_order = excluded.sort_order,
+               is_default = excluded.is_default,
+               is_published = excluded.is_published,
+               metadata_json = excluded.metadata_json,
+               updated_at = datetime('now')`,
         )
           .bind(
             tile.id,
@@ -811,11 +861,11 @@ async function putAdminCardsCollections(
 	            asImageRef(tile.imageRef) ?? null,
 	            tile.order ?? 0,
 	            JSON.stringify({ collectionId: col.id }),
-          )
-          .run()
+          ))
       }
     }
   }
+  await env.CONTENT_DB.batch(statements)
 
   return { success: true, count: collections.length }
 }
@@ -828,21 +878,57 @@ async function putAdminSequenceContent(
     throw new Error('sequences must be a non-empty array')
   }
 
-  await env.CONTENT_DB.prepare(`DELETE FROM content_item_translations WHERE item_id IN (SELECT id FROM content_items WHERE app_id = 'sequence' AND owner_user_id IS NULL)`).run()
-  await env.CONTENT_DB.prepare(`DELETE FROM content_items WHERE app_id = 'sequence' AND owner_user_id IS NULL`).run()
+  const sequenceIds = sequences.map((sequence) => asString(sequence.id) ?? `sequence_${crypto.randomUUID()}`)
+  const stepIds = sequences.map((sequence, sequenceIndex) =>
+    (sequence.steps ?? []).map((step, stepIndex) => asString(step.id) ?? `${sequenceIds[sequenceIndex]}_step_${stepIndex + 1}`),
+  )
+  const existingRows = await env.CONTENT_DB.prepare(
+    `SELECT id FROM content_items WHERE app_id = ? AND owner_user_id IS NULL`,
+  ).bind('sequence').all<{ id: string }>()
+  const incomingIds = new Set<string>()
+  for (const [sequenceIndex, sequence] of sequences.entries()) {
+    const sequenceId = sequenceIds[sequenceIndex]
+    incomingIds.add(sequenceId)
+    for (const [stepIndex] of (sequence.steps ?? []).entries()) {
+      incomingIds.add(stepIds[sequenceIndex][stepIndex])
+    }
+  }
+  const removedIds = (existingRows.results ?? []).map(row => row.id).filter(id => !incomingIds.has(id))
+  const statements = deleteRemovedDefaultItemStatements(env, removedIds)
 
   for (const [sequenceIndex, sequence] of sequences.entries()) {
-    const sequenceId = asString(sequence.id) ?? `sequence_${crypto.randomUUID()}`
+    const sequenceId = sequenceIds[sequenceIndex]
     const title = asString(sequence.title) ?? asString(sequence.name) ?? `Sequence ${sequenceIndex + 1}`
     const category = asString(sequence.category)
-    await env.CONTENT_DB.prepare(
+    statements.push(env.CONTENT_DB.prepare(
       `INSERT INTO content_items (
        id, template_id, title, slug, status, language_code, tags, categories, data,
          app_id, type, parent_id, source_locale, speech, color_token, image_ref,
          sort_order, is_default, is_published, metadata_json
        )
        VALUES (?, 'sequence.sequence', ?, ?, 'published', 'en', NULL, '["sequence"]', ?,
-         'sequence', 'sequence', NULL, 'en', ?, ?, ?, ?, 1, 1, ?)`,
+         'sequence', 'sequence', NULL, 'en', ?, ?, ?, ?, 1, 1, ?)
+       ON CONFLICT(id) DO UPDATE SET
+         template_id = excluded.template_id,
+         title = excluded.title,
+         slug = excluded.slug,
+         status = excluded.status,
+         language_code = excluded.language_code,
+         tags = excluded.tags,
+         categories = excluded.categories,
+         data = excluded.data,
+         app_id = excluded.app_id,
+         type = excluded.type,
+         parent_id = excluded.parent_id,
+         source_locale = excluded.source_locale,
+         speech = excluded.speech,
+         color_token = excluded.color_token,
+         image_ref = excluded.image_ref,
+         sort_order = excluded.sort_order,
+         is_default = excluded.is_default,
+         is_published = excluded.is_published,
+         metadata_json = excluded.metadata_json,
+         updated_at = datetime('now')`,
     )
       .bind(
         sequenceId,
@@ -854,11 +940,10 @@ async function putAdminSequenceContent(
         asImageRef(sequence.imageRef) ?? null,
         typeof sequence.order === 'number' ? sequence.order : sequenceIndex,
         JSON.stringify({ category }),
-      )
-      .run()
+      ))
 
     for (const [stepIndex, step] of (sequence.steps ?? []).entries()) {
-      const stepId = asString(step.id) ?? `${sequenceId}_step_${stepIndex + 1}`
+      const stepId = stepIds[sequenceIndex][stepIndex]
       const label = asString(step.label) ?? asString(step.text) ?? `Step ${stepIndex + 1}`
       const text = asString(step.text) ?? label
       const imageRefs = asImageRefs(step.imageRefs)
@@ -867,14 +952,34 @@ async function putAdminSequenceContent(
         imagePrompt: asString(step.imagePrompt) ?? null,
         imageRefs,
       }
-      await env.CONTENT_DB.prepare(
+      statements.push(env.CONTENT_DB.prepare(
         `INSERT INTO content_items (
            id, template_id, title, slug, status, language_code, tags, categories, data,
            app_id, type, parent_id, source_locale, speech, image_ref,
            sort_order, is_default, is_published, metadata_json
          )
          VALUES (?, 'sequence.step', ?, ?, 'published', 'en', NULL, '["sequence"]', ?,
-           'sequence', 'sequence_step', ?, 'en', ?, ?, ?, 1, 1, ?)`,
+           'sequence', 'sequence_step', ?, 'en', ?, ?, ?, 1, 1, ?)
+         ON CONFLICT(id) DO UPDATE SET
+           template_id = excluded.template_id,
+           title = excluded.title,
+           slug = excluded.slug,
+           status = excluded.status,
+           language_code = excluded.language_code,
+           tags = excluded.tags,
+           categories = excluded.categories,
+           data = excluded.data,
+           app_id = excluded.app_id,
+           type = excluded.type,
+           parent_id = excluded.parent_id,
+           source_locale = excluded.source_locale,
+           speech = excluded.speech,
+           image_ref = excluded.image_ref,
+           sort_order = excluded.sort_order,
+           is_default = excluded.is_default,
+           is_published = excluded.is_published,
+           metadata_json = excluded.metadata_json,
+           updated_at = datetime('now')`,
       )
         .bind(
           stepId,
@@ -886,12 +991,21 @@ async function putAdminSequenceContent(
           asImageRef(step.imageRef) ?? null,
           stepIndex,
           JSON.stringify(metadata),
-        )
-        .run()
+        ))
     }
   }
+  await env.CONTENT_DB.batch(statements)
 
   return { success: true, count: sequences.length }
+}
+
+function deleteRemovedDefaultItemStatements(env: Env, itemIds: string[]): D1PreparedStatement[] {
+  if (itemIds.length === 0) return []
+  const placeholders = itemIds.map(() => '?').join(', ')
+  return [
+    env.CONTENT_DB.prepare(`DELETE FROM content_item_translations WHERE item_id IN (${placeholders})`).bind(...itemIds),
+    env.CONTENT_DB.prepare(`DELETE FROM content_items WHERE id IN (${placeholders})`).bind(...itemIds),
+  ]
 }
 
 // ---------------------------------------------------------------------------

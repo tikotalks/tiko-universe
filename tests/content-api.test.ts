@@ -7,6 +7,7 @@ class MemoryResult {
   constructor(private rows: Row[] = []) {}
   async first<T = Row>(): Promise<T | null> { return (this.rows[0] as T | undefined) ?? null }
   async all<T = Row>(): Promise<{ results: T[] }> { return { results: this.rows as T[] } }
+  async run(): Promise<{ success: true }> { return { success: true } }
 }
 
 class MemoryStatement {
@@ -15,6 +16,7 @@ class MemoryStatement {
   bind(...values: unknown[]) { this.values = values; return this }
   first<T = Row>() { return this.db.execute(this.sql, this.values).first<T>() }
   all<T = Row>() { return this.db.execute(this.sql, this.values).all<T>() }
+  run() { return this.db.execute(this.sql, this.values).run() }
 }
 
 class MemoryD1 {
@@ -97,9 +99,37 @@ class MemoryD1 {
   ]
 
   prepare(sql: string) { return new MemoryStatement(this, sql) }
+  async batch(statements: MemoryStatement[]) {
+    const appItems = this.appItems.map(row => ({ ...row }))
+    const appTranslations = this.appTranslations.map(row => ({ ...row }))
+    try {
+      return await Promise.all(statements.map(statement => statement.run()))
+    } catch (error) {
+      this.appItems = appItems
+      this.appTranslations = appTranslations
+      throw error
+    }
+  }
 
   execute(sql: string, values: unknown[]): MemoryResult {
     const normalized = sql.replace(/\s+/g, ' ').trim()
+    if (normalized.startsWith('DELETE FROM content_item_translations WHERE item_id IN')) {
+      const ids = new Set(values.map(String))
+      this.appTranslations = this.appTranslations.filter(row => !ids.has(String(row.item_id)))
+      return new MemoryResult()
+    }
+    if (normalized.startsWith('DELETE FROM content_items WHERE id IN')) {
+      const ids = new Set(values.map(String))
+      this.appItems = this.appItems.filter(row => !ids.has(String(row.id)))
+      return new MemoryResult()
+    }
+    if (normalized.startsWith('INSERT INTO content_items')) {
+      const row = this.rowFromContentInsert(normalized, values)
+      const existingIndex = this.appItems.findIndex(item => item.id === row.id)
+      if (existingIndex >= 0) this.appItems[existingIndex] = { ...this.appItems[existingIndex], ...row }
+      else this.appItems.push(row)
+      return new MemoryResult()
+    }
     if (normalized.includes('FROM content_projects')) {
       if (normalized.includes('slug = ?')) return new MemoryResult(this.projects.filter(row => row.slug === values[0]))
       if (normalized.includes('id = ?')) return new MemoryResult(this.projects.filter(row => row.id === values[0]))
@@ -124,6 +154,46 @@ class MemoryD1 {
     }
     throw new Error(`Unhandled SQL in content-api fake: ${normalized}`)
   }
+
+  private rowFromContentInsert(sql: string, values: unknown[]): Row {
+    if (sql.includes('cards.collection')) {
+      const [id, title, slug, data, speech, color, imageRef, sortOrder, metadataJson] = values
+      return {
+        id, app_id: 'cards', type: 'collection', parent_id: null, title, slug, data, speech,
+        subtitle: null, body: null, color_token: color, icon: null, image_ref: imageRef,
+        sort_order: sortOrder, is_default: 1, is_published: 1, owner_user_id: null,
+        owner_child_id: null, source_item_id: null, metadata_json: metadataJson,
+      }
+    }
+    if (sql.includes('cards.card')) {
+      const [id, title, slug, data, parentId, speech, color, imageRef, sortOrder, metadataJson] = values
+      return {
+        id, app_id: 'cards', type: 'card', parent_id: parentId, title, slug, data, speech,
+        subtitle: null, body: null, color_token: color, icon: null, image_ref: imageRef,
+        sort_order: sortOrder, is_default: 1, is_published: 1, owner_user_id: null,
+        owner_child_id: null, source_item_id: null, metadata_json: metadataJson,
+      }
+    }
+    if (sql.includes('sequence.sequence')) {
+      const [id, title, slug, data, speech, color, imageRef, sortOrder, metadataJson] = values
+      return {
+        id, app_id: 'sequence', type: 'sequence', parent_id: null, title, slug, data, speech,
+        subtitle: null, body: null, color_token: color, icon: null, image_ref: imageRef,
+        sort_order: sortOrder, is_default: 1, is_published: 1, owner_user_id: null,
+        owner_child_id: null, source_item_id: null, metadata_json: metadataJson,
+      }
+    }
+    if (sql.includes('sequence.step')) {
+      const [id, title, slug, data, parentId, speech, imageRef, sortOrder, metadataJson] = values
+      return {
+        id, app_id: 'sequence', type: 'sequence_step', parent_id: parentId, title, slug, data, speech,
+        subtitle: null, body: null, color_token: null, icon: null, image_ref: imageRef,
+        sort_order: sortOrder, is_default: 1, is_published: 1, owner_user_id: null,
+        owner_child_id: null, source_item_id: null, metadata_json: metadataJson,
+      }
+    }
+    throw new Error(`Unhandled content insert in fake: ${sql}`)
+  }
 }
 
 class MemoryKV {
@@ -138,6 +208,7 @@ function makeEnv() {
     CONTENT_DB: new MemoryD1(),
     CONTENT_CACHE: new MemoryKV(),
     ALLOWED_ORIGINS: 'https://cards.tikoapps.org,http://localhost:5173',
+    ADMIN_SECRET: 'admin-secret',
     TRANSLATIONS_API_URL: 'https://translations.test/v1',
   }
 }
@@ -230,6 +301,39 @@ describe('content-api worker', () => {
     expect(body.data.collections[0].cards[0]).not.toHaveProperty('imageURL')
   })
 
+  it('reconciles admin Cards bulk saves without deleting preserved translations', async () => {
+    const env = makeEnv()
+    const response = await worker.fetch(new Request('https://content.test/v1/admin/cards/collections', {
+      method: 'PUT',
+      headers: { authorization: 'Bearer admin-secret', 'content-type': 'application/json' },
+      body: JSON.stringify({
+        collections: [{
+          id: '__default_animals',
+          title: 'Animals updated',
+          color: 'green',
+          order: 0,
+          mediaCategories: ['animals'],
+          cards: [{
+            id: '__default_animals_dog',
+            title: 'Dog updated',
+            speech: 'Dog updated',
+            color: 'green',
+            order: 0,
+            imageRef: 'media-dog',
+          }],
+        }],
+      }),
+    }), env as never)
+
+    expect(response.status).toBe(200)
+    expect((await parseJson(response)).count).toBe(1)
+    expect(env.CONTENT_DB.appItems.find(row => row.id === '__default_animals')?.title).toBe('Animals updated')
+    expect(env.CONTENT_DB.appItems.find(row => row.id === '__default_animals_dog')?.image_ref).toBe('media-dog')
+    expect(env.CONTENT_DB.appTranslations.some(row => row.item_id === '__default_animals' && row.title === 'Annimali')).toBe(true)
+    expect(env.CONTENT_DB.appTranslations.some(row => row.item_id === '__default_animals_dog' && row.title === 'Kelb')).toBe(true)
+    expect(env.CONTENT_DB.appItems.some(row => row.id === 'yes-no-answer-yes')).toBe(true)
+  })
+
   it('serves localized Yes No default content from generic content items', async () => {
     const response = await worker.fetch(new Request('https://content.test/v1/yes-no/content?language=mt'), makeEnv() as never)
     const body = await parseJson(response)
@@ -268,6 +372,39 @@ describe('content-api worker', () => {
       imageRef: 'media-apple',
       imageRefs: Array.from({ length: 9 }, () => 'media-apple'),
     })
+  })
+
+  it('reconciles admin Sequence bulk saves without deleting preserved translations', async () => {
+    const env = makeEnv()
+    const response = await worker.fetch(new Request('https://content.test/v1/admin/sequence/content', {
+      method: 'PUT',
+      headers: { authorization: 'Bearer admin-secret', 'content-type': 'application/json' },
+      body: JSON.stringify({
+        sequences: [{
+          id: 'sequence_counting-apples',
+          title: 'Counting Apples updated',
+          category: 'learning',
+          color: 'green',
+          imageRef: 'media-sequence',
+          order: 0,
+          steps: [{
+            id: 'sequence_counting-apples_two-apples',
+            label: '2 apples updated',
+            text: '2 apples updated',
+            imageRef: 'media-apple',
+            imageRefs: ['media-apple', 'media-apple'],
+          }],
+        }],
+      }),
+    }), env as never)
+
+    expect(response.status).toBe(200)
+    expect((await parseJson(response)).count).toBe(1)
+    expect(env.CONTENT_DB.appItems.find(row => row.id === 'sequence_counting-apples')?.title).toBe('Counting Apples updated')
+    expect(env.CONTENT_DB.appItems.some(row => row.id === 'sequence_counting-apples_nine-apples')).toBe(false)
+    expect(env.CONTENT_DB.appTranslations.some(row => row.item_id === 'sequence_counting-apples' && row.title === 'Ngħoddu t-Tuffieħ')).toBe(true)
+    expect(env.CONTENT_DB.appTranslations.some(row => row.item_id === 'sequence_counting-apples_two-apples' && row.title === '2 tuffiħiet')).toBe(true)
+    expect(env.CONTENT_DB.appTranslations.some(row => row.item_id === 'sequence_counting-apples_nine-apples')).toBe(false)
   })
 
   it('rejects malformed query requests', async () => {
