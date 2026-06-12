@@ -123,7 +123,7 @@ The most urgent work is to lock down Atlas/generation/sentence/media/identity, i
   - Delete duplicated admin-role parsing and static-secret variants.
   - Remove app-api direct identity DB fallback.
 
-- [ ] Fix shared API-key auth.
+- [x] Fix shared API-key auth.
   - Point at the real key table.
   - Hash presented tokens before comparison.
   - Use timing-safe comparison.

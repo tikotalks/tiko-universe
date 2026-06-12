@@ -3,8 +3,7 @@
  *
  * Accepts either:
  *   1. A Bearer session token validated against the identity-api service
- *   2. An API key validated against the D1 `api_keys` table (with in-memory cache)
- *      — falls back to the comma-separated API_KEYS env var when AUTH_DB is absent
+ *   2. An API key validated against the D1 `identity_api_keys` table
  *
  * Usage:
  *   const authed = await authenticate(request, env)
@@ -19,8 +18,10 @@ export interface AuthSuccess {
   method: 'session' | 'api_key'
   /** Populated when method === 'session' */
   userId?: string
+  subjectId?: string
   roles?: string[]
   capabilities?: Record<string, unknown>
+  scopes?: string[]
 }
 
 export interface AuthFailure {
@@ -35,9 +36,11 @@ export type AuthResult = AuthSuccess | AuthFailure
 export interface AuthEnv {
   /** D1 database binding for the identity/auth database */
   AUTH_DB?: {
-    prepare(sql: string): { bind(...values: unknown[]): { first<T>(): Promise<T | null>; all(): Promise<{ results: unknown[] }> } }
+    prepare(sql: string): { bind(...values: unknown[]): { first<T>(): Promise<T | null>; all(): Promise<{ results: unknown[] }>; run?(): Promise<unknown> } }
   }
-  /** Comma-separated list of valid API keys (fallback when AUTH_DB is absent) */
+  TOKEN_PEPPER?: string
+  ANKORE_TOKEN_PEPPER?: string
+  /** @deprecated Static API key fallback is intentionally not used. */
   API_KEYS?: string
   /** Base URL of the identity service (e.g. https://api.tikotalks.com/v1) */
   IDENTITY_BASE_URL?: string
@@ -55,15 +58,20 @@ export interface AuthEnv {
 
 interface CachedKey {
   hash: string
+  subjectId: string
   name: string
-  scopes: string
-  active: boolean
+  scopes: string[]
   expiresAt: string | null
 }
 
-let keysCache: CachedKey[] | null = null
-let keysCacheExpiry = 0
+let keysCache = new Map<string, { expiresAt: number; key: CachedKey | null }>()
+let keyLookupUnavailableUntil = 0
 const CACHE_TTL_MS = 5 * 60 * 1000 // 5 minutes
+const NEGATIVE_CACHE_TTL_MS = 60 * 1000
+
+export interface AuthenticateOptions {
+  scopes?: string[]
+}
 
 // ── Session validation response from identity-api ────────────
 
@@ -86,57 +94,89 @@ function getBearer(request: Request): string | null {
 /**
  * Load active API keys from D1 and refresh the in-memory cache.
  */
-async function refreshKeysFromD1(db: NonNullable<AuthEnv['AUTH_DB']>): Promise<void> {
-  const { results } = await db
-    .prepare('SELECT key_hash, name, scopes, active, expires_at FROM api_keys WHERE active = 1')
-    .bind()
-    .all()
+async function hashApiKey(token: string, env: AuthEnv): Promise<string | null> {
+  const pepper = env.ANKORE_TOKEN_PEPPER ?? env.TOKEN_PEPPER
+  if (!pepper) return null
+  const material = `tiko:api-key:${pepper}:${token}`
+  const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(material))
+  return `sha256:${Array.from(new Uint8Array(digest)).map((byte) => byte.toString(16).padStart(2, '0')).join('')}`
+}
 
-  keysCache = (results as Array<Record<string, unknown>>).map((row) => ({
-    hash: String(row.key_hash),
-    name: String(row.name),
-    scopes: String(row.scopes),
-    active: Boolean(row.active),
-    expiresAt: row.expires_at ? String(row.expires_at) : null,
-  }))
-  keysCacheExpiry = Date.now() + CACHE_TTL_MS
+function timingSafeEqual(a: string, b: string): boolean {
+  const left = new TextEncoder().encode(a)
+  const right = new TextEncoder().encode(b)
+  const length = Math.max(left.length, right.length)
+  let diff = left.length ^ right.length
+  for (let index = 0; index < length; index += 1) {
+    diff |= (left[index] ?? 0) ^ (right[index] ?? 0)
+  }
+  return diff === 0
+}
+
+function parseScopes(value: unknown): string[] {
+  if (Array.isArray(value)) return value.map(String)
+  if (typeof value !== 'string') return []
+  const trimmed = value.trim()
+  if (!trimmed) return []
+  try {
+    const parsed = JSON.parse(trimmed)
+    if (Array.isArray(parsed)) return parsed.map(String)
+  } catch {
+    // Legacy comma-separated scopes are normalized below.
+  }
+  return trimmed.split(',').map((scope) => scope.trim()).filter(Boolean)
+}
+
+function hasScopes(granted: string[], required: string[] | undefined): boolean {
+  if (!required || required.length === 0) return true
+  return granted.includes('*') || required.every((scope) => granted.includes(scope))
+}
+
+async function lookupApiKey(hash: string, db: NonNullable<AuthEnv['AUTH_DB']>): Promise<CachedKey | null> {
+  const now = Date.now()
+  if (now < keyLookupUnavailableUntil) return null
+  const cached = keysCache.get(hash)
+  if (cached && cached.expiresAt > now) return cached.key
+
+  try {
+    const row = await db
+      .prepare('SELECT id, subject_id, product, name, key_hash, scopes_json, expires_at, revoked_at FROM identity_api_keys WHERE key_hash = ? AND revoked_at IS NULL LIMIT 1')
+      .bind(hash)
+      .first<Record<string, unknown>>()
+    const key = row && timingSafeEqual(String(row.key_hash), hash)
+      ? {
+          hash: String(row.key_hash),
+          subjectId: String(row.subject_id),
+          name: String(row.name),
+          scopes: parseScopes(row.scopes_json),
+          expiresAt: row.expires_at ? String(row.expires_at) : null,
+        }
+      : null
+    keysCache.set(hash, { expiresAt: now + (key ? CACHE_TTL_MS : NEGATIVE_CACHE_TTL_MS), key })
+    return key
+  } catch {
+    keyLookupUnavailableUntil = now + NEGATIVE_CACHE_TTL_MS
+    return null
+  }
 }
 
 /**
  * Check whether `token` matches a known API key.
- * Uses D1 + cache when AUTH_DB is available, otherwise falls back to API_KEYS env var.
  */
-async function isApiKey(token: string, env: AuthEnv): Promise<boolean> {
-  if (env.AUTH_DB) {
-    // Refresh cache if expired or empty
-    if (!keysCache || Date.now() > keysCacheExpiry) {
-      try {
-        await refreshKeysFromD1(env.AUTH_DB)
-      } catch {
-        // If D1 lookup fails, keep whatever cache we have (or empty)
-      }
-    }
-
-    if (keysCache) {
-      const now = new Date().toISOString()
-      return keysCache.some(
-        (key) =>
-          key.hash === token &&
-          key.active &&
-          (key.expiresAt === null || key.expiresAt > now),
-      )
-    }
-
-    return false
-  }
-
-  // Fallback: env var
-  if (!env.API_KEYS) return false
-  return env.API_KEYS
-    .split(',')
-    .map((k) => k.trim())
-    .filter(Boolean)
-    .includes(token)
+async function validateApiKey(token: string, env: AuthEnv, options: AuthenticateOptions): Promise<AuthSuccess | null> {
+  if (!env.AUTH_DB) return null
+  const hash = await hashApiKey(token, env)
+  if (!hash) return null
+  const key = await lookupApiKey(hash, env.AUTH_DB)
+  if (!key) return null
+  const now = new Date().toISOString()
+  if (key.expiresAt !== null && key.expiresAt <= now) return null
+  if (!hasScopes(key.scopes, options.scopes)) return null
+  const updateLastUsed = env.AUTH_DB.prepare('UPDATE identity_api_keys SET last_used_at = ? WHERE key_hash = ?')
+    .bind(now, hash)
+    .run?.()
+  await updateLastUsed?.catch(() => undefined)
+  return { ok: true, method: 'api_key', subjectId: key.subjectId, scopes: key.scopes }
 }
 
 async function validateSession(
@@ -174,6 +214,7 @@ async function validateSession(
 export async function authenticate(
   request: Request,
   env: AuthEnv,
+  options: AuthenticateOptions = {},
 ): Promise<AuthResult> {
   const token = getBearer(request)
   if (!token) {
@@ -189,8 +230,9 @@ export async function authenticate(
   }
 
   // 1. Check API key first (cheapest check — cached D1 lookup, no external network call)
-  if (await isApiKey(token, env)) {
-    return { ok: true, method: 'api_key' }
+  const apiKey = await validateApiKey(token, env, options)
+  if (apiKey) {
+    return apiKey
   }
 
   // 2. Validate as session token against identity service
@@ -244,8 +286,8 @@ export async function requireRole(request: Request, env: AuthEnv, roles: string[
   return session
 }
 
-export async function requireServiceKey(request: Request, env: AuthEnv): Promise<AuthSuccess | Response> {
-  const auth = await authenticate(request, env)
+export async function requireServiceKey(request: Request, env: AuthEnv, scopes: string[] = []): Promise<AuthSuccess | Response> {
+  const auth = await authenticate(request, env, { scopes })
   if (auth.ok === false) return auth.response
   if (auth.method !== 'api_key') {
     return new Response(
