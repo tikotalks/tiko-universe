@@ -53,6 +53,7 @@ public final class TikoI18n: ObservableObject {
     }
 
     public func addBundle(languageCode: String, translations: [String: String]) {
+        objectWillChange.send()
         let k = bundleKey(app.rawValue, languageCode)
         if bundles[k] != nil {
             for (key, val) in translations { bundles[k]![key] = val }
