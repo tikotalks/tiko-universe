@@ -255,7 +255,7 @@ Approximate review spread: 7 Critical, about 35 High, about 70 Medium, and about
 
 ## Phase 5 - Performance And Scale
 
-- [ ] Batch content image resolution.
+- [x] Batch content image resolution.
   - Resolve image refs with one `WHERE IN` query.
   - Avoid sequential media-api fallbacks per card.
   - Denormalize resolved URLs at publish time if needed.
