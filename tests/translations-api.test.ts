@@ -111,6 +111,20 @@ describe('translations-api', () => {
     await expect(json(all)).resolves.toEqual({ cleared: ['locale:nl'] })
   })
 
+  it('fails closed for webhook sync when the webhook secret is not configured', async () => {
+    const env = makeEnv({ WEBHOOK_SECRET: undefined })
+    env.TRANSLATIONS_KV.values.set('locale:en', '{}')
+
+    const response = await worker.fetch(new Request('https://translations.test/v1/sync/en', {
+      method: 'POST',
+      headers: { 'X-Lezu-Webhook-Secret': 'anything' },
+    }), env)
+
+    expect(response.status).toBe(503)
+    await expect(json(response)).resolves.toEqual({ error: 'Webhook secret is not configured' })
+    expect(env.TRANSLATIONS_KV.values.has('locale:en')).toBe(true)
+  })
+
   it('normalizes configured languages and creates missing Lezu locales', async () => {
     const env = makeEnv()
     const fetchMock = vi.spyOn(globalThis, 'fetch')

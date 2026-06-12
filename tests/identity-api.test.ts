@@ -705,6 +705,25 @@ describe('identity-api endpoints', () => {
     expect(body.otp).toMatch(/^\d{6}$/)
   })
 
+  it('fails email challenge delivery when communication auth is not configured outside the test sink', async () => {
+    const { MAGIC_LINK_TEST_SINK: _sink, ...testEnv } = env()
+    const created = await worker.fetch(new Request('https://identity.test/v1/identity/device', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({}),
+    }), testEnv as never, {} as never)
+    const createdBody = await created.json() as IdentityBundle
+    const token = createdBody.session?.token ?? ''
+
+    const response = await worker.fetch(new Request('https://identity.test/v1/identity/email/challenge', {
+      method: 'POST',
+      headers: { authorization: `Bearer ${token}`, 'content-type': 'application/json' },
+      body: JSON.stringify({ email: 'caregiver@example.test', purpose: 'recover' })
+    }), testEnv as never, {} as never)
+
+    expect(response.status).toBeGreaterThanOrEqual(500)
+  })
+
   it('verifies magic link token and OTP through Ankore and consumes challenges', async () => {
     const testEnv = env()
     const created = await fetchJson('/v1/identity/device', { method: 'POST', body: JSON.stringify({}) }, testEnv)

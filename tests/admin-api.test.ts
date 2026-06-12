@@ -223,6 +223,23 @@ async function fetchAdmin(path: string, env: Awaited<ReturnType<typeof makeEnv>>
 }
 
 describe('admin-api role based access', () => {
+  it('allows only configured admin origins in CORS preflight responses', async () => {
+    const testEnv = await makeEnv()
+    const allowed = await worker.fetch(new Request('https://admin.test/v1/admin/me', {
+      method: 'OPTIONS',
+      headers: { origin: 'https://admin.tikoapps.org' },
+    }), testEnv as never)
+    const denied = await worker.fetch(new Request('https://admin.test/v1/admin/me', {
+      method: 'OPTIONS',
+      headers: { origin: 'https://evil.example' },
+    }), testEnv as never)
+
+    expect(allowed.status).toBe(204)
+    expect(allowed.headers.get('access-control-allow-origin')).toBe('https://admin.tikoapps.org')
+    expect(denied.status).toBe(403)
+    expect(denied.headers.get('access-control-allow-origin')).toBeNull()
+  })
+
   it('bootstraps the configured first admin email into a role assignment', async () => {
     const testEnv = await makeEnv()
     const response = await fetchAdmin('/v1/admin/me', testEnv)

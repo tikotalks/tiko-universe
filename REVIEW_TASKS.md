@@ -91,7 +91,7 @@ Approximate review spread: 7 Critical, about 35 High, about 70 Medium, and about
   - Restrict media analysis to owned or trusted CDN assets.
   - Block admin bearer tokens from being sent to arbitrary image hosts.
 
-- [ ] Fix remaining secret/CORS hygiene.
+- [x] Fix remaining secret/CORS hygiene.
   - Scope Cloudflare tokens to deploy steps only.
   - Pin GitHub Actions to SHAs.
   - Use allowlisted admin CORS instead of wildcard where credentials/tokens are involved.

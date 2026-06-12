@@ -56,6 +56,7 @@ export interface Env extends AuthEnv {
   AUTH_DB: D1Database
   APP_DB?: D1Database
   TOKEN_PEPPER: string
+  ALLOWED_ORIGINS?: string
   ADMIN_EMAIL?: string
   APP_API_URL?: string
   GENERATION_API_URL?: string
@@ -107,16 +108,20 @@ const DEFAULT_APP_CONFIGS: Record<TikoAppId, TikoAppConfigPayload> = {
   talk: { id: 'talk', title: 'Talk', appColor: 'talk', appIcon: 'ui/talk', appIconMediaCategory: 'communication', themeColor: '#17131c' }
 }
 
-const CORS_HEADERS = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-  'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-}
+const DEFAULT_ALLOWED_ORIGINS = 'https://admin.tikoapps.org,https://admin-dev.tikoapps.org,https://dev.admin.tikoapps.org,http://localhost:5173,http://localhost:4173'
 
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
-    if (request.method === 'OPTIONS') return new Response(null, { status: 204, headers: CORS_HEADERS })
+    if (request.method === 'OPTIONS') return adminCorsPreflight(request, env)
+    return withAdminCors(request, env, await handleAdminRequest(request, env))
+  },
 
+  async scheduled(_event: { cron: string }, env: Env): Promise<void> {
+    await cleanupAnonymousSubjects(env)
+  },
+}
+
+async function handleAdminRequest(request: Request, env: Env): Promise<Response> {
     const url = new URL(request.url)
     const path = url.pathname.replace(/\/$/, '')
 
@@ -125,7 +130,7 @@ export default {
     }
 
     const admin = await requireAdmin(request, env)
-    if (admin instanceof Response) return withCors(admin)
+    if (admin instanceof Response) return admin
 
     if (path === '/v1/admin/me' && request.method === 'GET') {
       return json({ data: { userId: admin.userId, email: admin.email, role: 'admin', roles: admin.roles } })
@@ -190,15 +195,10 @@ export default {
     }
 
     if (path === '/v1/admin/communication/inbox' && request.method === 'GET') {
-      return withCors(await proxyCommunicationInbox(request, env))
+      return proxyCommunicationInbox(request, env)
     }
 
     return apiError('not_found', 'Route not found.', 404)
-  },
-
-  async scheduled(_event: { cron: string }, env: Env): Promise<void> {
-    await cleanupAnonymousSubjects(env)
-  },
 }
 
 
@@ -727,7 +727,7 @@ async function proxyCommunicationInbox(request: Request, env: Env): Promise<Resp
   const body = await response.text()
   return new Response(body, {
     status: response.status,
-    headers: { ...CORS_HEADERS, 'Content-Type': response.headers.get('content-type') ?? 'application/json' }
+    headers: { 'Content-Type': response.headers.get('content-type') ?? 'application/json' }
   })
 }
 
@@ -748,12 +748,37 @@ function apiError(code: string, message: string, status = 400): Response {
 function json(data: unknown, status = 200): Response {
   return new Response(JSON.stringify(data), {
     status,
-    headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
+    headers: { 'Content-Type': 'application/json' },
   })
 }
 
-function withCors(response: Response): Response {
+function adminCorsPreflight(request: Request, env: Env): Response {
+  const origin = allowedAdminOrigin(request, env)
+  if (!origin) return new Response(null, { status: 403 })
+  return new Response(null, { status: 204, headers: adminCorsHeaders(origin) })
+}
+
+function withAdminCors(request: Request, env: Env, response: Response): Response {
+  const origin = allowedAdminOrigin(request, env)
+  if (!origin) return response
   const headers = new Headers(response.headers)
-  for (const [key, value] of Object.entries(CORS_HEADERS)) headers.set(key, value)
+  adminCorsHeaders(origin).forEach((value, key) => headers.set(key, value))
   return new Response(response.body, { status: response.status, statusText: response.statusText, headers })
+}
+
+function allowedAdminOrigin(request: Request, env: Env): string | null {
+  const origin = request.headers.get('origin')
+  if (!origin) return null
+  const allowed = (env.ALLOWED_ORIGINS ?? DEFAULT_ALLOWED_ORIGINS).split(',').map(entry => entry.trim()).filter(Boolean)
+  return allowed.includes(origin) ? origin : null
+}
+
+function adminCorsHeaders(origin: string): Headers {
+  return new Headers({
+    'Access-Control-Allow-Origin': origin,
+    'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+    'Access-Control-Max-Age': '86400',
+    Vary: 'Origin',
+  })
 }

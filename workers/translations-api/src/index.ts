@@ -15,7 +15,7 @@
 // Environment (set via wrangler secret put):
 //   LEZU_API_KEY      — lez_user_... key
 //   LEZU_PROJECT_ID   — project_... UUID
-//   WEBHOOK_SECRET    — optional, verifies Lezu webhook calls to /v1/sync
+//   WEBHOOK_SECRET    — verifies Lezu webhook calls to /v1/sync
 //
 // KV namespace:
 //   TRANSLATIONS_KV   — caches full locale bundles for 4 hours
@@ -76,7 +76,7 @@ function corsPrelight(): Response {
 
 function isAuthorized(request: Request, env: Env): boolean {
   const auth = request.headers.get('Authorization')
-  return auth === `ApiKey ${env.LEZU_API_KEY}` || auth === `ApiKey ${env.WEBHOOK_SECRET ?? ''}`
+  return auth === `ApiKey ${env.LEZU_API_KEY}` || (Boolean(env.WEBHOOK_SECRET) && auth === `ApiKey ${env.WEBHOOK_SECRET}`)
 }
 
 // ── Lezu API calls ────────────────────────────────────────────────────────────
@@ -220,12 +220,12 @@ async function handleSync(language: string | undefined, env: Env, request: Reque
   }
 
   const webhookSecret = env.WEBHOOK_SECRET
-  if (webhookSecret) {
-    const sig = request.headers.get('X-Lezu-Webhook-Secret')
-      || request.headers.get('Authorization')
-    if (sig !== webhookSecret && sig !== `ApiKey ${webhookSecret}`) {
-      return json({ error: 'Unauthorized' }, 401)
-    }
+  if (!webhookSecret) return json({ error: 'Webhook secret is not configured' }, 503)
+
+  const sig = request.headers.get('X-Lezu-Webhook-Secret')
+    || request.headers.get('Authorization')
+  if (sig !== webhookSecret && sig !== `ApiKey ${webhookSecret}`) {
+    return json({ error: 'Unauthorized' }, 401)
   }
 
   if (language) {

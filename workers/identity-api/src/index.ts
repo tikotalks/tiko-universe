@@ -1257,7 +1257,10 @@ async function requestMagicLinkDelivery(env: Env, message: EmailMessage): Promis
   const webUrl = webMagicLinkUrl(message.token)
   env.MAGIC_LINK_TEST_SINK?.push({ email: message.to, token: message.token, otp: message.otp, url, webUrl })
 
-  if (!env.COMMUNICATION_API_KEY) return
+  if (!env.COMMUNICATION_API_KEY) {
+    if (env.MAGIC_LINK_TEST_SINK) return
+    throw new Error('communication_api_key_not_configured')
+  }
 
   const baseUrl = (env.COMMUNICATION_API_URL ?? DEFAULT_COMMUNICATION_API_URL).replace(/\/$/, '')
   const endpoint = `${baseUrl}/email/magic-link`
