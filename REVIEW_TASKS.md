@@ -120,7 +120,7 @@ Approximate review spread: 7 Critical, about 35 High, about 70 Medium, and about
   - Delete the duplicate editor.
   - Make admin Cards thumbnails resolve through image refs/CDN correctly.
 
-- [ ] Finish the image/color model cleanup.
+- [x] Finish the image/color model cleanup.
   - Store `imageRef`, never persistent image URLs, for Cards/default content.
   - Use Tiko Media refs for media-library images and custom uploads.
   - Use named Tiko color enum values, never per-item `colorHex`.

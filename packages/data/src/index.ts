@@ -42,7 +42,7 @@ export interface YesNoAnswerTile {
   labelTranslations?: Record<string, string>
   speechTranslations?: Record<string, string>
   color?: string
-  imageURL?: string
+  imageRef?: string
   icon?: string
 }
 
@@ -69,10 +69,10 @@ export interface TypeState extends JsonObject {
 export interface CardsTile {
   id: string
   title: string
-  type: string
   speech: string
-  image?: string
+  imageRef?: string
   color?: string
+  order?: number
 }
 
 export interface CardsCollection {
@@ -80,18 +80,18 @@ export interface CardsCollection {
   title: string
   color: string
   order: number
-  icon?: string
-  image?: string
+  parentID?: string | null
+  imageRef?: string
   mediaCategories?: string[]
-  tiles: CardsTile[]
+  cards: CardsTile[]
 }
 
 export interface CardsSettings {
   language?: string
   colorMode?: 'light' | 'dark' | 'system'
   hiddenDefaults?: string[]
-  collectionOverrides?: Record<string, Partial<{ title: string; icon: string; color: string; image: string; order: number }>>
-  tileOverrides?: Record<string, Partial<{ title: string; speech: string; color: string; image: string }>>
+  collectionOverrides?: Record<string, Partial<{ title: string; color: string; imageRef: string; order: number }>>
+  tileOverrides?: Record<string, Partial<{ title: string; speech: string; color: string; imageRef: string }>>
   [key: string]: unknown
 }
 
