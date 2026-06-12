@@ -1,4 +1,6 @@
-interface Env {
+import { requireServiceKey, type AuthEnv } from '../../shared/auth'
+
+interface Env extends AuthEnv {
   TTS_DB: {
     prepare(sql: string): { bind(...values: unknown[]): { first<T>(): Promise<T | null>; run(): Promise<unknown> } }
   }
@@ -7,7 +9,6 @@ interface Env {
     put(key: string, value: ArrayBuffer | Uint8Array, options?: Record<string, unknown>): Promise<unknown>
   }
   OPENAI_API_KEY?: string
-  API_KEYS?: string
 }
 
 interface GenerateRequest {
@@ -56,9 +57,9 @@ export default {
       const url = new URL(request.url)
 
       if (url.pathname === '/generate' && request.method === 'POST') {
-        const auth = await requireServiceAuth(request, env)
-        if (auth instanceof Response) return auth
-        return generate(request, env, auth.subjectKey)
+        const auth = await requireServiceKey(request, env, ['tts.generate'])
+        if (auth instanceof Response) return serviceAuthFailure(auth)
+        return generate(request, env, `api_key:${auth.subjectId ?? 'unknown'}`)
       }
       if (url.pathname === '/audio' && request.method === 'GET') return getAudio(request, env)
 
@@ -70,13 +71,9 @@ export default {
   },
 }
 
-async function requireServiceAuth(request: Request, env: Env): Promise<{ subjectKey: string } | Response> {
-  const configured = (env.API_KEYS ?? '').split(',').map((key) => key.trim()).filter(Boolean)
-  if (configured.length === 0) return json({ success: false, error: 'auth_not_configured' }, 503)
-  const match = /^Bearer\s+(.+)$/i.exec(request.headers.get('authorization') ?? '')
-  const token = match?.[1]?.trim()
-  if (!token || !configured.includes(token)) return json({ success: false, error: 'unauthorized' }, 401)
-  return { subjectKey: `key:${await sha256Hex(token)}` }
+async function serviceAuthFailure(response: Response): Promise<Response> {
+  const body = await response.json().catch(() => null) as { error?: { code?: string } } | null
+  return json({ success: false, error: body?.error?.code ?? 'unauthorized' }, response.status)
 }
 
 async function generate(request: Request, env: Env, subjectKey: string): Promise<Response> {
@@ -216,12 +213,6 @@ async function generateTextHash(input: Required<GenerateRequest>): Promise<strin
   const bytes = new TextEncoder().encode(str)
   const digest = await crypto.subtle.digest('SHA-256', bytes)
   return Array.from(new Uint8Array(digest)).map((byte) => byte.toString(16).padStart(2, '0')).join('').slice(0, 32)
-}
-
-async function sha256Hex(value: string): Promise<string> {
-  const bytes = new TextEncoder().encode(value)
-  const digest = await crypto.subtle.digest('SHA-256', bytes)
-  return Array.from(new Uint8Array(digest)).map((byte) => byte.toString(16).padStart(2, '0')).join('')
 }
 
 async function findAudio(textHash: string, env: Env): Promise<AudioRecord | null> {

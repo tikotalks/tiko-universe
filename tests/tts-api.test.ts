@@ -34,6 +34,10 @@ class MemoryStatement {
   run() {
     return this.db.execute(this.sql, this.values).run()
   }
+
+  async all() {
+    return { results: [] }
+  }
 }
 
 interface AudioRecord {
@@ -55,6 +59,7 @@ interface AudioRecord {
 class MemoryD1 {
   byHash = new Map<string, Row>()
   usageWindows = new Map<string, { request_count: number; unit_count: number }>()
+  apiKeys = new Map<string, Row>()
   records: AudioRecord[] = []
   conflictOnInsert: AudioRecord | null = null
 
@@ -70,6 +75,11 @@ class MemoryD1 {
       const row = this.byHash.get(hash)
       return new MemoryResult(row ? [row] : [])
     }
+    if (normalized.startsWith('SELECT') && normalized.includes('FROM identity_api_keys')) {
+      const hash = values[0] as string
+      const row = this.apiKeys.get(hash)
+      return new MemoryResult(row ? [row] : [])
+    }
     if (normalized.startsWith('SELECT') && normalized.includes('FROM tts_usage_windows')) {
       const key = values.slice(0, 4).map(String).join('|')
       const row = this.usageWindows.get(key)
@@ -82,6 +92,9 @@ class MemoryD1 {
       current.request_count += Number(values[4])
       current.unit_count += Number(values[5])
       this.usageWindows.set(key, current)
+      return new MemoryResult()
+    }
+    if (normalized.startsWith('UPDATE identity_api_keys SET last_used_at')) {
       return new MemoryResult()
     }
     if (normalized.startsWith('INSERT INTO tts_audio') || normalized.startsWith('INSERT OR IGNORE INTO tts_audio')) {
@@ -140,11 +153,22 @@ class MemoryR2 {
 function makeEnv(overrides: Record<string, unknown> = {}) {
   const db = new MemoryD1()
   const bucket = new MemoryR2()
+  db.apiKeys.set('sha256:92a285b165e21319c4fd750e257dea110e52f1b31183da3cc2d5689be31b7f7d', {
+    id: 'key_tts',
+    subject_id: 'svc_tts',
+    product: 'tiko',
+    name: 'TTS test key',
+    key_hash: 'sha256:92a285b165e21319c4fd750e257dea110e52f1b31183da3cc2d5689be31b7f7d',
+    scopes_json: JSON.stringify(['tts.generate']),
+    expires_at: null,
+    revoked_at: null,
+  })
   return {
     TTS_DB: db,
+    AUTH_DB: db,
     AUDIO_BUCKET: bucket,
     OPENAI_API_KEY: 'test-key',
-    API_KEYS: 'test-api-key',
+    TOKEN_PEPPER: 'test-pepper',
     db,
     bucket,
     ...overrides,
@@ -162,11 +186,6 @@ function ttsGenerate(body: unknown, init: RequestInit = {}) {
     headers: { authorization: 'Bearer test-api-key', 'content-type': 'application/json', ...(init.headers ?? {}) },
     body: init.body ?? JSON.stringify(body),
   })
-}
-
-async function sha256HexForTest(value: string): Promise<string> {
-  const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(value))
-  return Array.from(new Uint8Array(digest)).map((byte) => byte.toString(16).padStart(2, '0')).join('')
 }
 
 beforeEach(() => {
@@ -350,7 +369,7 @@ describe('tts-api worker', () => {
 
       const budgetEnv = makeEnv()
       const dayStart = new Date().toISOString().slice(0, 10)
-      const subjectKey = `key:${await sha256HexForTest('test-api-key')}`
+      const subjectKey = 'api_key:svc_tts'
       budgetEnv.db.usageWindows.set(`${subjectKey}|tts.generate|day|${dayStart}`, { request_count: 1, unit_count: 11999 })
       const overBudget = await worker.fetch(ttsGenerate({ text: 'No', language: 'en' }), budgetEnv)
       expect(overBudget.status).toBe(429)
