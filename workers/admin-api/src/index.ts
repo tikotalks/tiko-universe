@@ -218,30 +218,13 @@ async function writeAppConfig(request: Request, db: D1Database, env: Env, rawApp
   }
   const body = await readJson<{ config?: Partial<TikoAppConfigPayload>, version?: number }>(request)
   const next = normalizeAppConfig(app, body.config ?? {})
-  const existing = await db.prepare('SELECT version FROM app_config WHERE app = ?').bind(app).first<{ version: number }>()
-  const currentVersion = existing ? Number(existing.version) : 0
-  if (typeof body.version === 'number' && body.version !== currentVersion) {
+  const now = new Date().toISOString()
+  const row = await atomicWriteAppConfig(db, app, next, now, optionalAdminVersion(body.version))
+  if (!row) {
     return apiError('version_conflict', 'Stored app config version does not match requested version.', 409)
   }
-  const now = new Date().toISOString()
-  const version = currentVersion + 1
-  await db.prepare(
-    `INSERT INTO app_config (app, title, app_color, app_icon, app_icon_media_category, app_icon_image_url, theme_color, supported_languages_mode, supported_languages_json, updated_at, version)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-     ON CONFLICT(app) DO UPDATE SET
-       title = excluded.title,
-       app_color = excluded.app_color,
-       app_icon = excluded.app_icon,
-       app_icon_media_category = excluded.app_icon_media_category,
-       app_icon_image_url = excluded.app_icon_image_url,
-       theme_color = excluded.theme_color,
-       supported_languages_mode = excluded.supported_languages_mode,
-       supported_languages_json = excluded.supported_languages_json,
-       updated_at = excluded.updated_at,
-       version = excluded.version`
-  ).bind(app, next.title, next.appColor, next.appIcon, next.appIconMediaCategory ?? null, next.appIconImageUrl ?? null, next.themeColor ?? null, next.supportedLanguagesMode ?? 'tiko-defaults', JSON.stringify(next.supportedLanguages ?? []), now, version).run()
   await syncLezuLanguages(db, env)
-  return json({ data: { config: next, updatedAt: now, version } })
+  return json({ data: { config: next, updatedAt: row.updated_at, version: Number(row.version) } })
 }
 
 function rowToConfig(app: TikoAppId, row: AppConfigRow | null): TikoAppConfigPayload & { updatedAt: string | null, version: number } {
@@ -286,23 +269,13 @@ async function readTikoSettings(db: D1Database): Promise<Response> {
 async function writeTikoSettings(request: Request, db: D1Database, env: Env): Promise<Response> {
   const body = await readJson<{ settings?: Record<string, unknown>, version?: number }>(request)
   const next = normalizeTikoSettings(body.settings ?? {})
-  const existing = await db.prepare('SELECT version FROM app_defaults WHERE app = ? AND resource = ?').bind('tiko', 'settings').first<{ version: number }>()
-  const currentVersion = existing ? Number(existing.version) : 0
-  if (typeof body.version === 'number' && body.version !== currentVersion) {
+  const now = new Date().toISOString()
+  const row = await atomicWriteTikoSettings(db, next, now, optionalAdminVersion(body.version))
+  if (!row) {
     return apiError('version_conflict', 'Stored Tiko settings version does not match requested version.', 409)
   }
-  const now = new Date().toISOString()
-  const version = currentVersion + 1
-  await db.prepare(
-    `INSERT INTO app_defaults (app, resource, data_json, updated_at, version)
-     VALUES (?, ?, ?, ?, ?)
-     ON CONFLICT(app, resource) DO UPDATE SET
-       data_json = excluded.data_json,
-       updated_at = excluded.updated_at,
-       version = excluded.version`
-  ).bind('tiko', 'settings', JSON.stringify(next), now, version).run()
   await syncLezuLanguages(db, env)
-  return json({ data: { settings: next, updatedAt: now, version } })
+  return json({ data: { settings: next, updatedAt: row.updated_at, version: Number(row.version) } })
 }
 
 async function readSpeechServiceConfig(db: D1Database): Promise<Response> {
@@ -324,22 +297,146 @@ async function readSpeechServiceConfig(db: D1Database): Promise<Response> {
 async function writeSpeechServiceConfig(request: Request, db: D1Database): Promise<Response> {
   const body = await readJson<{ settings?: AtlasSpeechServiceConfig, version?: number }>(request)
   const next = normalizeSpeechServiceConfig(body.settings ?? {})
-  const existing = await db.prepare('SELECT version FROM atlas_service_config WHERE service = ? LIMIT 1').bind('speech').first<{ version: number }>()
-  const currentVersion = existing ? Number(existing.version) : 0
-  if (typeof body.version === 'number' && body.version !== currentVersion) {
+  const now = new Date().toISOString()
+  const row = await atomicWriteSpeechServiceConfig(db, next, now, optionalAdminVersion(body.version))
+  if (!row) {
     return apiError('version_conflict', 'Stored speech service version does not match requested version.', 409)
   }
-  const now = new Date().toISOString()
-  const version = currentVersion + 1
-  await db.prepare(
+  return json({ data: { settings: next, updatedAt: row.updated_at, version: Number(row.version) } })
+}
+
+function optionalAdminVersion(value: unknown): number | null {
+  return typeof value === 'number' && Number.isInteger(value) && value >= 0 ? value : null
+}
+
+async function atomicWriteAppConfig(
+  db: D1Database,
+  app: TikoAppId,
+  next: TikoAppConfigPayload,
+  updatedAt: string,
+  expectedVersion: number | null,
+): Promise<Pick<AppConfigRow, 'updated_at' | 'version'> | null> {
+  const values: D1Value[] = [
+    app,
+    next.title,
+    next.appColor,
+    next.appIcon,
+    next.appIconMediaCategory ?? null,
+    next.appIconImageUrl ?? null,
+    next.themeColor ?? null,
+    next.supportedLanguagesMode ?? 'tiko-defaults',
+    JSON.stringify(next.supportedLanguages ?? []),
+    updatedAt,
+  ]
+  if (expectedVersion === 0) {
+    return db.prepare(
+      `INSERT INTO app_config (app, title, app_color, app_icon, app_icon_media_category, app_icon_image_url, theme_color, supported_languages_mode, supported_languages_json, updated_at, version)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1)
+       ON CONFLICT(app) DO NOTHING
+       RETURNING updated_at, version`
+    ).bind(...values).first()
+  }
+  if (expectedVersion !== null) {
+    return db.prepare(
+      `UPDATE app_config
+       SET title = ?,
+           app_color = ?,
+           app_icon = ?,
+           app_icon_media_category = ?,
+           app_icon_image_url = ?,
+           theme_color = ?,
+           supported_languages_mode = ?,
+           supported_languages_json = ?,
+           updated_at = ?,
+           version = version + 1
+       WHERE app = ? AND version = ?
+       RETURNING updated_at, version`
+    ).bind(...values.slice(1), app, expectedVersion).first()
+  }
+  return db.prepare(
+    `INSERT INTO app_config (app, title, app_color, app_icon, app_icon_media_category, app_icon_image_url, theme_color, supported_languages_mode, supported_languages_json, updated_at, version)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1)
+     ON CONFLICT(app) DO UPDATE SET
+       title = excluded.title,
+       app_color = excluded.app_color,
+       app_icon = excluded.app_icon,
+       app_icon_media_category = excluded.app_icon_media_category,
+       app_icon_image_url = excluded.app_icon_image_url,
+       theme_color = excluded.theme_color,
+       supported_languages_mode = excluded.supported_languages_mode,
+       supported_languages_json = excluded.supported_languages_json,
+       updated_at = excluded.updated_at,
+       version = app_config.version + 1
+     RETURNING updated_at, version`
+  ).bind(...values).first()
+}
+
+async function atomicWriteTikoSettings(
+  db: D1Database,
+  next: Record<string, unknown>,
+  updatedAt: string,
+  expectedVersion: number | null,
+): Promise<AppDefaultsRow | null> {
+  const dataJson = JSON.stringify(next)
+  if (expectedVersion === 0) {
+    return db.prepare(
+      `INSERT INTO app_defaults (app, resource, data_json, updated_at, version)
+       VALUES (?, ?, ?, ?, 1)
+       ON CONFLICT(app, resource) DO NOTHING
+       RETURNING data_json, updated_at, version`
+    ).bind('tiko', 'settings', dataJson, updatedAt).first()
+  }
+  if (expectedVersion !== null) {
+    return db.prepare(
+      `UPDATE app_defaults
+       SET data_json = ?, updated_at = ?, version = version + 1
+       WHERE app = ? AND resource = ? AND version = ?
+       RETURNING data_json, updated_at, version`
+    ).bind(dataJson, updatedAt, 'tiko', 'settings', expectedVersion).first()
+  }
+  return db.prepare(
+    `INSERT INTO app_defaults (app, resource, data_json, updated_at, version)
+     VALUES (?, ?, ?, ?, 1)
+     ON CONFLICT(app, resource) DO UPDATE SET
+       data_json = excluded.data_json,
+       updated_at = excluded.updated_at,
+       version = app_defaults.version + 1
+     RETURNING data_json, updated_at, version`
+  ).bind('tiko', 'settings', dataJson, updatedAt).first()
+}
+
+async function atomicWriteSpeechServiceConfig(
+  db: D1Database,
+  next: AtlasSpeechServiceConfig,
+  updatedAt: string,
+  expectedVersion: number | null,
+): Promise<ServiceConfigRow | null> {
+  const dataJson = JSON.stringify(next)
+  if (expectedVersion === 0) {
+    return db.prepare(
+      `INSERT INTO atlas_service_config (service, data_json, updated_at, version)
+       VALUES (?, ?, ?, 1)
+       ON CONFLICT(service) DO NOTHING
+       RETURNING data_json, updated_at, version`
+    ).bind('speech', dataJson, updatedAt).first()
+  }
+  if (expectedVersion !== null) {
+    return db.prepare(
+      `UPDATE atlas_service_config
+       SET data_json = ?, updated_at = ?, version = version + 1
+       WHERE service = ? AND version = ?
+       RETURNING data_json, updated_at, version`
+    ).bind(dataJson, updatedAt, 'speech', expectedVersion).first()
+  }
+  return db.prepare(
     `INSERT INTO atlas_service_config (service, data_json, updated_at, version)
-     VALUES (?, ?, ?, ?)
+     VALUES (?, ?, ?, 1)
      ON CONFLICT(service) DO UPDATE SET
        data_json = excluded.data_json,
        updated_at = excluded.updated_at,
-       version = excluded.version`
-  ).bind('speech', JSON.stringify(next), now, version).run()
-  return json({ data: { settings: next, updatedAt: now, version } })
+       version = atlas_service_config.version + 1
+     RETURNING data_json, updated_at, version`
+  ).bind('speech', dataJson, updatedAt).first()
 }
 
 function speechConfigFromRow(row: ServiceConfigRow | null): AtlasSpeechServiceConfig {

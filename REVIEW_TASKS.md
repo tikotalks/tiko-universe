@@ -99,7 +99,7 @@ Approximate review spread: 7 Critical, about 35 High, about 70 Medium, and about
 
 ## Phase 2 - Product Correctness And Data Integrity
 
-- [ ] Make optimistic concurrency atomic.
+- [x] Make optimistic concurrency atomic.
   - Use SQL compare-and-swap updates in app-api and admin-api.
   - Require versions where writes claim concurrency safety.
   - Return actual new versions with `RETURNING`.

@@ -33,10 +33,109 @@ class AdminMemoryD1 {
   appSettings = new Set<string>()
   appState = new Set<string>()
   appProgress = new Set<string>()
+  appConfig = new Map<string, Row>()
+  appDefaults = new Map<string, Row>()
+  serviceConfig = new Map<string, Row>()
   failIdentityDeleteFor = new Set<string>()
   prepare(sql: string) { return new MemoryStatement(this, sql) }
   execute(sql: string, values: unknown[]): MemoryResult {
     const normalized = sql.replace(/\s+/g, ' ').trim()
+    if (normalized.startsWith('SELECT app, title') && normalized.includes('FROM app_config')) {
+      if (normalized.includes('WHERE app = ?')) {
+        const row = this.appConfig.get(String(values[0]))
+        return new MemoryResult(row ? [row] : [])
+      }
+      return new MemoryResult([...this.appConfig.values()])
+    }
+    if (normalized.startsWith('INSERT INTO app_config')) {
+      const [app, title, appColor, appIcon, appIconMediaCategory, appIconImageUrl, themeColor, supportedLanguagesMode, supportedLanguagesJson, updatedAt] = values
+      const key = String(app)
+      const existing = this.appConfig.get(key)
+      if (existing && normalized.includes('DO NOTHING')) return new MemoryResult()
+      const version = existing && normalized.includes('DO UPDATE') ? Number(existing.version) + 1 : 1
+      const row = {
+        app,
+        title,
+        app_color: appColor,
+        app_icon: appIcon,
+        app_icon_media_category: appIconMediaCategory,
+        app_icon_image_url: appIconImageUrl,
+        theme_color: themeColor,
+        supported_languages_mode: supportedLanguagesMode,
+        supported_languages_json: supportedLanguagesJson,
+        updated_at: updatedAt,
+        version,
+      }
+      this.appConfig.set(key, row)
+      return new MemoryResult(normalized.includes('RETURNING') ? [row] : [])
+    }
+    if (normalized.startsWith('UPDATE app_config')) {
+      const [title, appColor, appIcon, appIconMediaCategory, appIconImageUrl, themeColor, supportedLanguagesMode, supportedLanguagesJson, updatedAt, app, expectedVersion] = values
+      const key = String(app)
+      const existing = this.appConfig.get(key)
+      if (!existing || Number(existing.version) !== Number(expectedVersion)) return new MemoryResult()
+      const row = {
+        ...existing,
+        title,
+        app_color: appColor,
+        app_icon: appIcon,
+        app_icon_media_category: appIconMediaCategory,
+        app_icon_image_url: appIconImageUrl,
+        theme_color: themeColor,
+        supported_languages_mode: supportedLanguagesMode,
+        supported_languages_json: supportedLanguagesJson,
+        updated_at: updatedAt,
+        version: Number(existing.version) + 1,
+      }
+      this.appConfig.set(key, row)
+      return new MemoryResult([row])
+    }
+    if (normalized.startsWith('SELECT data_json') && normalized.includes('FROM app_defaults')) {
+      const row = this.appDefaults.get(`${values[0]}:${values[1]}`)
+      return new MemoryResult(row ? [row] : [])
+    }
+    if (normalized.startsWith('INSERT INTO app_defaults')) {
+      const [app, resource, dataJson, updatedAt] = values
+      const key = `${app}:${resource}`
+      const existing = this.appDefaults.get(key)
+      if (existing && normalized.includes('DO NOTHING')) return new MemoryResult()
+      const version = existing && normalized.includes('DO UPDATE') ? Number(existing.version) + 1 : 1
+      const row = { app, resource, data_json: dataJson, updated_at: updatedAt, version }
+      this.appDefaults.set(key, row)
+      return new MemoryResult(normalized.includes('RETURNING') ? [row] : [])
+    }
+    if (normalized.startsWith('UPDATE app_defaults')) {
+      const [dataJson, updatedAt, app, resource, expectedVersion] = values
+      const key = `${app}:${resource}`
+      const existing = this.appDefaults.get(key)
+      if (!existing || Number(existing.version) !== Number(expectedVersion)) return new MemoryResult()
+      const row = { ...existing, data_json: dataJson, updated_at: updatedAt, version: Number(existing.version) + 1 }
+      this.appDefaults.set(key, row)
+      return new MemoryResult([row])
+    }
+    if (normalized.startsWith('SELECT data_json') && normalized.includes('FROM atlas_service_config')) {
+      const row = this.serviceConfig.get(String(values[0]))
+      return new MemoryResult(row ? [row] : [])
+    }
+    if (normalized.startsWith('INSERT INTO atlas_service_config')) {
+      const [service, dataJson, updatedAt] = values
+      const key = String(service)
+      const existing = this.serviceConfig.get(key)
+      if (existing && normalized.includes('DO NOTHING')) return new MemoryResult()
+      const version = existing && normalized.includes('DO UPDATE') ? Number(existing.version) + 1 : 1
+      const row = { service, data_json: dataJson, updated_at: updatedAt, version }
+      this.serviceConfig.set(key, row)
+      return new MemoryResult(normalized.includes('RETURNING') ? [row] : [])
+    }
+    if (normalized.startsWith('UPDATE atlas_service_config')) {
+      const [dataJson, updatedAt, service, expectedVersion] = values
+      const key = String(service)
+      const existing = this.serviceConfig.get(key)
+      if (!existing || Number(existing.version) !== Number(expectedVersion)) return new MemoryResult()
+      const row = { ...existing, data_json: dataJson, updated_at: updatedAt, version: Number(existing.version) + 1 }
+      this.serviceConfig.set(key, row)
+      return new MemoryResult([row])
+    }
     if (normalized.startsWith('SELECT subject_id AS id, email_hash')) {
       const row = Array.from(this.accounts.values()).find((account) => account.subject_id === values[0] && !account.disabled_at)
       return new MemoryResult(row ? [{ id: row.subject_id, email_hash: row.email_hash, email_plain: row.email_plain }] : [])
@@ -208,14 +307,16 @@ function identityService(subjectId: string) {
 
 async function makeEnv(subjectId = 'sub_admin', email = 'me@sil.mt') {
   const db = new AdminMemoryD1()
+  const appDb = new AdminMemoryD1()
   db.subjects.set(subjectId, { id: subjectId, product: 'tiko', kind: 'account', created_at: '2026-01-01T00:00:00.000Z', updated_at: '2026-01-01T00:00:00.000Z', disabled_at: null, metadata_json: '{}' })
   db.accounts.set('acc_admin', { id: 'acc_admin', subject_id: subjectId, product: 'tiko', email_hash: await ankoreEmailHash(email), email_plain: email, disabled_at: null })
   return {
     AUTH_DB: db as never,
+    APP_DB: appDb as never,
     TOKEN_PEPPER: 'test-pepper',
     ADMIN_EMAIL: 'me@sil.mt',
     IDENTITY_SERVICE: identityService(subjectId)
-  } as unknown as Partial<Env> & { AUTH_DB: AdminMemoryD1 }
+  } as unknown as Partial<Env> & { AUTH_DB: AdminMemoryD1; APP_DB: AdminMemoryD1 }
 }
 
 async function fetchAdmin(path: string, env: Awaited<ReturnType<typeof makeEnv>>, token = 'ank_test') {
@@ -310,6 +411,72 @@ describe('admin-api role based access', () => {
     const unrelatedBody = await unrelatedResponse.json() as { data: { users: Array<{ id: string }> } }
     expect(unrelatedResponse.status).toBe(200)
     expect(unrelatedBody.data.users).toHaveLength(0)
+  })
+
+  it('uses atomic version checks for app config writes', async () => {
+    const testEnv = await makeEnv()
+    const write1 = await worker.fetch(new Request('https://admin.test/v1/admin/apps/config/cards', {
+      method: 'PUT',
+      headers: { authorization: 'Bearer ank_test', 'content-type': 'application/json' },
+      body: JSON.stringify({ config: { title: 'Cards One' }, version: 0 }),
+    }), testEnv as never)
+    const conflict = await worker.fetch(new Request('https://admin.test/v1/admin/apps/config/cards', {
+      method: 'PUT',
+      headers: { authorization: 'Bearer ank_test', 'content-type': 'application/json' },
+      body: JSON.stringify({ config: { title: 'Cards Two' }, version: 0 }),
+    }), testEnv as never)
+    const write2 = await worker.fetch(new Request('https://admin.test/v1/admin/apps/config/cards', {
+      method: 'PUT',
+      headers: { authorization: 'Bearer ank_test', 'content-type': 'application/json' },
+      body: JSON.stringify({ config: { title: 'Cards Two' }, version: 1 }),
+    }), testEnv as never)
+    const body1 = await write1.json() as { data: { version: number } }
+    const conflictBody = await conflict.json() as { error: { code: string } }
+    const body2 = await write2.json() as { data: { config: { title: string }, version: number } }
+
+    expect(write1.status).toBe(200)
+    expect(body1.data.version).toBe(1)
+    expect(conflict.status).toBe(409)
+    expect(conflictBody.error.code).toBe('version_conflict')
+    expect(write2.status).toBe(200)
+    expect(body2.data).toMatchObject({ config: { title: 'Cards Two' }, version: 2 })
+  })
+
+  it('uses atomic version checks for Tiko settings and speech service writes', async () => {
+    const testEnv = await makeEnv()
+    const tiko1 = await worker.fetch(new Request('https://admin.test/v1/admin/tiko/settings', {
+      method: 'PUT',
+      headers: { authorization: 'Bearer ank_test', 'content-type': 'application/json' },
+      body: JSON.stringify({ settings: { supportedLanguages: ['en', 'mt'] }, version: 0 }),
+    }), testEnv as never)
+    const tikoConflict = await worker.fetch(new Request('https://admin.test/v1/admin/tiko/settings', {
+      method: 'PUT',
+      headers: { authorization: 'Bearer ank_test', 'content-type': 'application/json' },
+      body: JSON.stringify({ settings: { supportedLanguages: ['en'] }, version: 0 }),
+    }), testEnv as never)
+    const speech1 = await worker.fetch(new Request('https://admin.test/v1/admin/services/speech', {
+      method: 'PUT',
+      headers: { authorization: 'Bearer ank_test', 'content-type': 'application/json' },
+      body: JSON.stringify({ settings: { providers: ['browser'], models: { fallback: 'local' }, narakeetVoices: {} }, version: 0 }),
+    }), testEnv as never)
+    const speechConflict = await worker.fetch(new Request('https://admin.test/v1/admin/services/speech', {
+      method: 'PUT',
+      headers: { authorization: 'Bearer ank_test', 'content-type': 'application/json' },
+      body: JSON.stringify({ settings: { providers: ['browser'], models: { fallback: 'local' }, narakeetVoices: {} }, version: 0 }),
+    }), testEnv as never)
+    const tikoBody = await tiko1.json() as { data: { version: number } }
+    const speechBody = await speech1.json() as { data: { version: number } }
+    const tikoConflictBody = await tikoConflict.json() as { error: { code: string } }
+    const speechConflictBody = await speechConflict.json() as { error: { code: string } }
+
+    expect(tiko1.status).toBe(200)
+    expect(tikoBody.data.version).toBe(1)
+    expect(tikoConflict.status).toBe(409)
+    expect(tikoConflictBody.error.code).toBe('version_conflict')
+    expect(speech1.status).toBe(200)
+    expect(speechBody.data.version).toBe(1)
+    expect(speechConflict.status).toBe(409)
+    expect(speechConflictBody.error.code).toBe('version_conflict')
   })
 
   it('assigns and revokes roles while preventing removal of the final active admin', async () => {

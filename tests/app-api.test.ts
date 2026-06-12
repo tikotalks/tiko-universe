@@ -47,6 +47,7 @@ class MemoryStatement {
 class MemoryD1Database {
   settings = new Map<string, Row>()
   state = new Map<string, Row>()
+  progress = new Map<string, Row>()
   defaults = new Map<string, Row>()
   appConfig = new Map<string, Row>()
 
@@ -57,25 +58,30 @@ class MemoryD1Database {
   execute(sql: string, values: unknown[]): MemoryResult {
     const normalized = sql.replace(/\s+/g, ' ').trim()
 
-    if (normalized.includes('FROM app_settings') && normalized.startsWith('SELECT data_json')) {
+    const userTable = this.userTable(normalized)
+    if (userTable && normalized.startsWith('SELECT data_json')) {
       const key = `${values[0]}:${values[1]}`
-      const row = this.settings.get(key)
+      const row = userTable.get(key)
       return new MemoryResult(row ? [row] : [])
     }
-    if (normalized.includes('FROM app_state') && normalized.startsWith('SELECT data_json')) {
-      const key = `${values[0]}:${values[1]}`
-      const row = this.state.get(key)
-      return new MemoryResult(row ? [row] : [])
+    if (userTable && normalized.startsWith('INSERT INTO')) {
+      const [userId, app, dataJson, updatedAt] = values
+      const key = `${userId}:${app}`
+      const existing = userTable.get(key)
+      if (existing && normalized.includes('DO NOTHING')) return new MemoryResult()
+      const version = existing && normalized.includes('DO UPDATE') ? Number(existing.version) + 1 : 1
+      const row = { user_id: userId, app, data_json: dataJson, updated_at: updatedAt, version }
+      userTable.set(key, row)
+      return new MemoryResult(normalized.includes('RETURNING') ? [row] : [])
     }
-    if (normalized.startsWith('INSERT INTO app_settings')) {
-      const [userId, app, dataJson, updatedAt, version] = values
-      this.settings.set(`${userId}:${app}`, { user_id: userId, app, data_json: dataJson, updated_at: updatedAt, version })
-      return new MemoryResult()
-    }
-    if (normalized.startsWith('INSERT INTO app_state')) {
-      const [userId, app, dataJson, updatedAt, version] = values
-      this.state.set(`${userId}:${app}`, { user_id: userId, app, data_json: dataJson, updated_at: updatedAt, version })
-      return new MemoryResult()
+    if (userTable && normalized.startsWith('UPDATE')) {
+      const [dataJson, updatedAt, userId, app, expectedVersion] = values
+      const key = `${userId}:${app}`
+      const existing = userTable.get(key)
+      if (!existing || Number(existing.version) !== Number(expectedVersion)) return new MemoryResult()
+      const row = { ...existing, data_json: dataJson, updated_at: updatedAt, version: Number(existing.version) + 1 }
+      userTable.set(key, row)
+      return new MemoryResult([row])
     }
 
     // app_defaults table (global defaults)
@@ -85,9 +91,23 @@ class MemoryD1Database {
       return new MemoryResult(row ? [row] : [])
     }
     if (normalized.startsWith('INSERT INTO app_defaults')) {
-      const [app, resource, dataJson, updatedAt, version] = values
-      this.defaults.set(`${app}:${resource}`, { app, resource, data_json: dataJson, updated_at: updatedAt, version })
-      return new MemoryResult()
+      const [app, resource, dataJson, updatedAt] = values
+      const key = `${app}:${resource}`
+      const existing = this.defaults.get(key)
+      if (existing && normalized.includes('DO NOTHING')) return new MemoryResult()
+      const version = existing && normalized.includes('DO UPDATE') ? Number(existing.version) + 1 : 1
+      const row = { app, resource, data_json: dataJson, updated_at: updatedAt, version }
+      this.defaults.set(key, row)
+      return new MemoryResult(normalized.includes('RETURNING') ? [row] : [])
+    }
+    if (normalized.startsWith('UPDATE app_defaults')) {
+      const [dataJson, updatedAt, app, resource, expectedVersion] = values
+      const key = `${app}:${resource}`
+      const existing = this.defaults.get(key)
+      if (!existing || Number(existing.version) !== Number(expectedVersion)) return new MemoryResult()
+      const row = { ...existing, data_json: dataJson, updated_at: updatedAt, version: Number(existing.version) + 1 }
+      this.defaults.set(key, row)
+      return new MemoryResult([row])
     }
 
     // app_config table (admin-managed app identity)
@@ -100,6 +120,13 @@ class MemoryD1Database {
     }
 
     throw new Error(`Unhandled SQL in test fake: ${normalized}`)
+  }
+
+  private userTable(sql: string): Map<string, Row> | null {
+    if (sql.includes('app_settings')) return this.settings
+    if (sql.includes('app_state')) return this.state
+    if (sql.includes('app_progress')) return this.progress
+    return null
   }
 }
 

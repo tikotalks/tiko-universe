@@ -313,28 +313,10 @@ async function writeAppData(request: Request, env: Env, userId: string, app: Tik
   if (!isJsonObject(value)) throw new HttpError(400, 'invalid_request', `${key} must be a JSON object.`, key)
 
   const expectedVersion = optionalVersion(body.version)
-  const existing = await first<AppDataRow>(env.APP_DB.prepare(`
-    SELECT data_json, updated_at, version
-    FROM ${tableName(resource)}
-    WHERE user_id = ? AND app = ?
-  `).bind(userId, app))
-  const currentVersion = existing ? Number(existing.version) : 0
-  if (expectedVersion !== null && expectedVersion !== currentVersion) {
-    throw new HttpError(409, 'version_conflict', 'Stored version does not match requested version.', 'version')
-  }
-
   const now = new Date().toISOString()
-  const nextVersion = currentVersion + 1
-  await run(env.APP_DB.prepare(`
-    INSERT INTO ${tableName(resource)} (user_id, app, data_json, updated_at, version)
-    VALUES (?, ?, ?, ?, ?)
-    ON CONFLICT(user_id, app) DO UPDATE SET
-      data_json = excluded.data_json,
-      updated_at = excluded.updated_at,
-      version = excluded.version
-  `).bind(userId, app, JSON.stringify(value), now, nextVersion))
+  const row = await atomicWriteAppData(env.APP_DB, resource, userId, app, value as JsonValue, now, expectedVersion)
 
-  return json(payload(app, resource, value as JsonValue, now, nextVersion))
+  return json(payload(app, resource, parseStoredJson(row.data_json), row.updated_at, Number(row.version)))
 }
 
 // ---------------------------------------------------------------------------
@@ -358,26 +340,90 @@ async function writeDefaults(request: Request, env: Env, app: TikoAppId, resourc
   if (!isJsonObject(value)) throw new HttpError(400, 'invalid_request', `${key} must be a JSON object.`, key)
 
   const expectedVersion = optionalVersion(body.version)
-  const existing = await first<AppDataRow>(env.APP_DB.prepare(
-    'SELECT data_json, updated_at, version FROM app_defaults WHERE app = ? AND resource = ?'
-  ).bind(app, resource))
-  const currentVersion = existing ? Number(existing.version) : 0
-  if (expectedVersion !== null && expectedVersion !== currentVersion) {
-    throw new HttpError(409, 'version_conflict', 'Stored version does not match requested version.', 'version')
-  }
-
   const now = new Date().toISOString()
-  const nextVersion = currentVersion + 1
-  await run(env.APP_DB.prepare(
-    `INSERT INTO app_defaults (app, resource, data_json, updated_at, version)
-     VALUES (?, ?, ?, ?, ?)
-     ON CONFLICT(app, resource) DO UPDATE SET
-       data_json = excluded.data_json,
-       updated_at = excluded.updated_at,
-       version = excluded.version`
-  ).bind(app, resource, JSON.stringify(value), now, nextVersion))
+  const row = await atomicWriteDefaults(env.APP_DB, app, resource, value as JsonValue, now, expectedVersion)
 
-  return json(payload(app, resource, value as JsonValue, now, nextVersion))
+  return json(payload(app, resource, parseStoredJson(row.data_json), row.updated_at, Number(row.version)))
+}
+
+async function atomicWriteAppData(
+  db: D1Database,
+  resource: AppResource,
+  userId: string,
+  app: TikoAppId,
+  value: JsonValue,
+  updatedAt: string,
+  expectedVersion: number | null,
+): Promise<AppDataRow> {
+  const dataJson = JSON.stringify(value)
+  const table = tableName(resource)
+  let row: AppDataRow | null
+  if (expectedVersion === 0) {
+    row = await first<AppDataRow>(db.prepare(`
+      INSERT INTO ${table} (user_id, app, data_json, updated_at, version)
+      VALUES (?, ?, ?, ?, 1)
+      ON CONFLICT(user_id, app) DO NOTHING
+      RETURNING data_json, updated_at, version
+    `).bind(userId, app, dataJson, updatedAt))
+  } else if (expectedVersion !== null) {
+    row = await first<AppDataRow>(db.prepare(`
+      UPDATE ${table}
+      SET data_json = ?, updated_at = ?, version = version + 1
+      WHERE user_id = ? AND app = ? AND version = ?
+      RETURNING data_json, updated_at, version
+    `).bind(dataJson, updatedAt, userId, app, expectedVersion))
+  } else {
+    row = await first<AppDataRow>(db.prepare(`
+      INSERT INTO ${table} (user_id, app, data_json, updated_at, version)
+      VALUES (?, ?, ?, ?, 1)
+      ON CONFLICT(user_id, app) DO UPDATE SET
+        data_json = excluded.data_json,
+        updated_at = excluded.updated_at,
+        version = ${table}.version + 1
+      RETURNING data_json, updated_at, version
+    `).bind(userId, app, dataJson, updatedAt))
+  }
+  if (!row) throw new HttpError(409, 'version_conflict', 'Stored version does not match requested version.', 'version')
+  return row
+}
+
+async function atomicWriteDefaults(
+  db: D1Database,
+  app: TikoAppId,
+  resource: AppResource,
+  value: JsonValue,
+  updatedAt: string,
+  expectedVersion: number | null,
+): Promise<AppDataRow> {
+  const dataJson = JSON.stringify(value)
+  let row: AppDataRow | null
+  if (expectedVersion === 0) {
+    row = await first<AppDataRow>(db.prepare(`
+      INSERT INTO app_defaults (app, resource, data_json, updated_at, version)
+      VALUES (?, ?, ?, ?, 1)
+      ON CONFLICT(app, resource) DO NOTHING
+      RETURNING data_json, updated_at, version
+    `).bind(app, resource, dataJson, updatedAt))
+  } else if (expectedVersion !== null) {
+    row = await first<AppDataRow>(db.prepare(`
+      UPDATE app_defaults
+      SET data_json = ?, updated_at = ?, version = version + 1
+      WHERE app = ? AND resource = ? AND version = ?
+      RETURNING data_json, updated_at, version
+    `).bind(dataJson, updatedAt, app, resource, expectedVersion))
+  } else {
+    row = await first<AppDataRow>(db.prepare(`
+      INSERT INTO app_defaults (app, resource, data_json, updated_at, version)
+      VALUES (?, ?, ?, ?, 1)
+      ON CONFLICT(app, resource) DO UPDATE SET
+        data_json = excluded.data_json,
+        updated_at = excluded.updated_at,
+        version = app_defaults.version + 1
+      RETURNING data_json, updated_at, version
+    `).bind(app, resource, dataJson, updatedAt))
+  }
+  if (!row) throw new HttpError(409, 'version_conflict', 'Stored version does not match requested version.', 'version')
+  return row
 }
 
 function payload(app: TikoAppId, resource: AppResource, value: JsonValue, updatedAt: string | null, version: number) {
