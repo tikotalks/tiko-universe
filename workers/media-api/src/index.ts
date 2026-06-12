@@ -1118,19 +1118,26 @@ async function handleListAudioAlbums(request: Request, env: Env): Promise<Respon
        ORDER BY created_at DESC`,
     ).bind(...values).all<AudioAlbumRow>()
 
-    const data = []
-    for (const album of rows.results) {
+    const albumIds = rows.results.map(album => album.id)
+    const tracksByAlbum = new Map<string, AudioTrackRow[]>()
+    if (albumIds.length > 0) {
+      const placeholders = albumIds.map(() => '?').join(', ')
       const tracks = await env.MEDIA_DB.prepare(
         `SELECT t.id AS track_id, t.album_id, t.media_id, t.title, t.artist, t.duration_seconds,
                 t.position, t.created_at, t.updated_at,
                 m.original_url, m.mime_type, m.filename AS file_name, m.title AS media_title
          FROM audio_tracks t
          JOIN media m ON m.id = t.media_id
-         WHERE t.album_id = ?
-         ORDER BY t.position ASC, t.created_at ASC`,
-      ).bind(album.id).all<AudioTrackRow>()
-      data.push(rowToAudioAlbum(album, tracks.results))
+         WHERE t.album_id IN (${placeholders})
+         ORDER BY t.album_id ASC, t.position ASC, t.created_at ASC`,
+      ).bind(...albumIds).all<AudioTrackRow>()
+      for (const track of tracks.results) {
+        const existing = tracksByAlbum.get(track.album_id)
+        if (existing) existing.push(track)
+        else tracksByAlbum.set(track.album_id, [track])
+      }
     }
+    const data = rows.results.map(album => rowToAudioAlbum(album, tracksByAlbum.get(album.id) ?? []))
 
     return json({ data, meta: { total: data.length, schemaVersion: 1 } })
   } catch (error) {

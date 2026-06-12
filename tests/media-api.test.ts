@@ -40,6 +40,7 @@ class MemoryD1 {
   assets: Row[] = []
   audioAlbums: Row[] = []
   audioTracks: Row[] = []
+  audioTrackQueryCount = 0
 
   prepare(sql: string): MemoryStatement {
     return new MemoryStatement(this, sql)
@@ -125,7 +126,9 @@ class MemoryD1 {
     }
 
     if (normalized.includes('FROM audio_tracks')) {
-      return new MemoryResult(this.audioTracks.filter(row => row.album_id === values[0]).map(track => {
+      this.audioTrackQueryCount += 1
+      const albumIds = new Set(values.map(String))
+      return new MemoryResult(this.audioTracks.filter(row => albumIds.has(String(row.album_id))).map(track => {
         const media = this.media.find(row => row.id === track.media_id) ?? {}
         return { ...media, ...track, track_id: track.id, media_id: track.media_id, media_title: media.title }
       }))
@@ -583,6 +586,7 @@ describe('media-api worker', () => {
   it('creates audio albums and exposes radio-enabled public albums with tracks', async () => {
     const env = makeEnv()
     env.MEDIA_DB.media.push(mediaRow({ id: 'audio_1', file_name: 'story.mp3', filename: 'story.mp3', mime_type: 'audio/mpeg', title: 'Bedtime Story', original_url: 'https://data.tikocdn.org/uploads/story.mp3' }))
+    env.MEDIA_DB.media.push(mediaRow({ id: 'audio_2', file_name: 'song.mp3', filename: 'song.mp3', mime_type: 'audio/mpeg', title: 'Wake Up Song', original_url: 'https://data.tikocdn.org/uploads/song.mp3' }))
 
     const createAlbum = await worker.fetch(new Request('https://media.test/v1/audio/albums', {
       method: 'POST',
@@ -603,11 +607,32 @@ describe('media-api worker', () => {
     expect(addTrack.status).toBe(201)
     expect((await parseJson(addTrack)).data).toMatchObject({ albumId: albumBody.data.id, mediaId: 'audio_1', title: 'Chapter 1' })
 
+    const createMusicAlbum = await worker.fetch(new Request('https://media.test/v1/audio/albums', {
+      method: 'POST',
+      headers: { authorization: 'Bearer test-api-key', 'content-type': 'application/json' },
+      body: JSON.stringify({ title: 'Songs', description: 'Generated songs', visibility: 'public', radioEnabled: true, sortMode: 'manual', settings: { autoplay: true } }),
+    }), env as never)
+    const musicAlbumBody = await parseJson(createMusicAlbum)
+
+    expect(createMusicAlbum.status).toBe(201)
+
+    const addMusicTrack = await worker.fetch(new Request(`https://media.test/v1/audio/albums/${musicAlbumBody.data.id}/tracks`, {
+      method: 'POST',
+      headers: { authorization: 'Bearer test-api-key', 'content-type': 'application/json' },
+      body: JSON.stringify({ mediaId: 'audio_2', title: 'Morning', artist: 'Tiko Music Creator', durationSeconds: 64 }),
+    }), env as never)
+
+    expect(addMusicTrack.status).toBe(201)
+
     const publicList = await worker.fetch(new Request('https://media.test/v1/audio/albums?radioEnabled=true'), env as never)
     const publicBody = await parseJson(publicList)
+    const storiesAlbum = publicBody.data.find((album: Row) => album.id === albumBody.data.id)
+    const musicAlbum = publicBody.data.find((album: Row) => album.id === musicAlbumBody.data.id)
 
     expect(publicList.status).toBe(200)
-    expect(publicBody.data).toHaveLength(1)
-    expect(publicBody.data[0]).toMatchObject({ id: albumBody.data.id, title: 'Stories', tracks: [expect.objectContaining({ title: 'Chapter 1', mediaId: 'audio_1', audioUrl: 'https://data.tikocdn.org/uploads/story.mp3' })] })
+    expect(publicBody.data).toHaveLength(2)
+    expect(storiesAlbum).toMatchObject({ id: albumBody.data.id, title: 'Stories', tracks: [expect.objectContaining({ title: 'Chapter 1', mediaId: 'audio_1', audioUrl: 'https://data.tikocdn.org/uploads/story.mp3' })] })
+    expect(musicAlbum).toMatchObject({ id: musicAlbumBody.data.id, title: 'Songs', tracks: [expect.objectContaining({ title: 'Morning', mediaId: 'audio_2', audioUrl: 'https://data.tikocdn.org/uploads/song.mp3' })] })
+    expect(env.MEDIA_DB.audioTrackQueryCount).toBe(1)
   })
 })
