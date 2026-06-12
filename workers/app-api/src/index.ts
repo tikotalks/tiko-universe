@@ -1,4 +1,4 @@
-import { authenticate, type AuthEnv } from '../../shared/auth'
+import { authenticate, requireSession as requireSharedSession, type AuthEnv } from '../../shared/auth'
 type D1Value = string | number | boolean | null
 
 interface D1Result<T = unknown> {
@@ -478,19 +478,15 @@ async function clearAppProgress(env: Env, userId: string, app: TikoAppId): Promi
 }
 
 async function requireSession(request: Request, env: Env): Promise<SessionJoinRow> {
-  const authed = await authenticate(request, env)
-  if (authed.ok && authed.method === 'session' && authed.userId) {
-    return {
-      user_id: authed.userId,
-      device_id: null,
-      expires_at: '',
-      roles: authed.roles ?? [],
-      capabilities: authed.capabilities ?? {},
-    }
+  const session = await requireSharedSession(request, env)
+  if (session instanceof Response) throw await authResponseToHttpError(session)
+  return {
+    user_id: session.userId!,
+    device_id: null,
+    expires_at: '',
+    roles: session.roles ?? [],
+    capabilities: session.capabilities ?? {},
   }
-
-  if (authed.ok && authed.method === 'api_key') throw new HttpError(403, 'session_required', 'A Tiko user session is required.')
-  throw new HttpError(401, 'unauthorized', 'Session is invalid or expired.')
 }
 
 async function requireAdminSession(request: Request, env: Env): Promise<void> {
@@ -506,6 +502,13 @@ async function requireAnyAuth(request: Request, env: Env): Promise<void> {
   const authed = await authenticate(request, env)
   if (authed.ok) return
   throw new HttpError(401, 'unauthorized', 'Authentication required.')
+}
+
+async function authResponseToHttpError(response: Response): Promise<HttpError> {
+  const body = await response.json().catch(() => null) as { error?: { code?: string; message?: string } } | null
+  const code = body?.error?.code ?? (response.status === 403 ? 'forbidden' : 'unauthorized')
+  const message = body?.error?.message ?? (response.status === 403 ? 'Access denied.' : 'Session is invalid or expired.')
+  return new HttpError(response.status, code, message)
 }
 
 export async function hashToken(value: string, pepper: string): Promise<string> {
