@@ -14,7 +14,7 @@ The most urgent work is to lock down Atlas/generation/sentence/media/identity, i
 
 ## Phase 0 — Stop-The-Bleed Security And Product Fixes
 
-- [ ] Authenticate all atlas-api capability routes: `/run`, `/speech`, `/images`, `/text`, `/data/fetch`.
+- [x] Authenticate all atlas-api capability routes: `/run`, `/speech`, `/images`, `/text`, `/data/fetch`.
   - Enforce capability registry allowlists.
   - Add per-session/per-key rate limits for high-cost capabilities.
   - Block/limit `data.fetch` SSRF behavior.

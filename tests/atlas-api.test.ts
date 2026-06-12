@@ -115,9 +115,22 @@ function makeEnv(overrides: Partial<Env> = {}): Env & { db: MemoryD1; bucket: Me
     OPENAI_API_KEY: 'openai-key',
     ELEVENLABS_API_KEY: 'eleven-key',
     NARAKEET_API_KEY: 'narakeet-key',
+    SERVICE_API_KEYS: 'service-token',
     AI: { run: vi.fn(async () => ({ response: 'Workers AI answer' })) },
     ...overrides,
   }
+}
+
+function atlasPost(path: string, body: unknown, init: RequestInit = {}): Request {
+  const headers = new Headers(init.headers)
+  if (!headers.has('authorization')) headers.set('authorization', 'Bearer service-token')
+  if (!headers.has('content-type')) headers.set('content-type', 'application/json')
+  return new Request(`https://api.test${path}`, {
+    ...init,
+    method: init.method ?? 'POST',
+    headers,
+    body: init.body ?? JSON.stringify(body),
+  })
 }
 
 async function json(response: Response) {
@@ -139,14 +152,58 @@ describe('atlas-api', () => {
     })
   })
 
+  it('requires authentication for all capability routes', async () => {
+    const env = makeEnv()
+    const body = { text: 'No token', locale: 'en', app: 'yes-no', purpose: 'child-button' }
+
+    const response = await worker.fetch(new Request('https://api.test/v1/atlas/speech', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify(body),
+    }), env)
+
+    expect(response.status).toBe(401)
+    await expect(json(response)).resolves.toMatchObject({ error: { code: 'unauthorized' } })
+  })
+
+  it('enforces capability app and purpose allowlists', async () => {
+    const response = await worker.fetch(atlasPost('/v1/atlas/text', {
+      input: 'Summarize this',
+      app: 'yes-no',
+      purpose: 'internal-summary',
+    }), makeEnv())
+
+    expect(response.status).toBe(403)
+    await expect(json(response)).resolves.toMatchObject({ error: { code: 'app_not_allowed' } })
+  })
+
+  it('rate limits high-cost capabilities per service key', async () => {
+    const env = makeEnv()
+
+    for (let i = 0; i < 20; i += 1) {
+      const response = await worker.fetch(atlasPost('/v1/atlas/images', {
+        prompt: '',
+        app: 'cards',
+        purpose: 'card-image',
+      }), env)
+      expect(response.status).toBe(400)
+    }
+
+    const limited = await worker.fetch(atlasPost('/v1/atlas/images', {
+      prompt: '',
+      app: 'cards',
+      purpose: 'card-image',
+    }), env)
+
+    expect(limited.status).toBe(429)
+    await expect(json(limited)).resolves.toMatchObject({ error: { code: 'rate_limited' } })
+  })
+
   it('synthesizes speech, stores it in R2, then serves the cached asset', async () => {
     const env = makeEnv({ ELEVENLABS_API_KEY: undefined, NARAKEET_API_KEY: undefined })
     vi.spyOn(globalThis, 'fetch').mockResolvedValue(new Response(new Uint8Array([1, 2, 3]), { status: 200 }))
 
-    const response = await worker.fetch(new Request('https://api.test/v1/atlas/speech', {
-      method: 'POST',
-      body: JSON.stringify({ text: ' Yes ', locale: 'EN', app: 'yes-no', purpose: 'child-button', provider: 'openai' }),
-    }), env)
+    const response = await worker.fetch(atlasPost('/v1/atlas/speech', { text: ' Yes ', locale: 'EN', app: 'yes-no', purpose: 'child-button', provider: 'openai' }), env)
 
     expect(response.status).toBe(201)
     const generated = await json(response)
@@ -154,10 +211,7 @@ describe('atlas-api', () => {
     expect(generated.meta).toMatchObject({ capability: 'speech.synthesize', provider: 'openai', cached: false })
     expect(Array.from(env.bucket.objects.keys())[0]).toMatch(/^speech\/[a-f0-9]{32}\.mp3$/)
 
-    const cached = await worker.fetch(new Request('https://api.test/v1/atlas/speech', {
-      method: 'POST',
-      body: JSON.stringify({ text: ' Yes ', locale: 'EN', app: 'yes-no', purpose: 'child-button', provider: 'openai' }),
-    }), env)
+    const cached = await worker.fetch(atlasPost('/v1/atlas/speech', { text: ' Yes ', locale: 'EN', app: 'yes-no', purpose: 'child-button', provider: 'openai' }), env)
     expect(cached.status).toBe(200)
     expect(await json(cached)).toMatchObject({ data: { cached: true }, meta: { cached: true } })
 
@@ -194,10 +248,7 @@ describe('atlas-api', () => {
     }
     vi.spyOn(globalThis, 'fetch').mockResolvedValue(new Response(new Uint8Array([1, 2, 3]), { status: 200 }))
 
-    const response = await worker.fetch(new Request('https://api.test/v1/atlas/speech', {
-      method: 'POST',
-      body: JSON.stringify({ text: 'Race', locale: 'en', app: 'yes-no', purpose: 'child-button', provider: 'openai' }),
-    }), env)
+    const response = await worker.fetch(atlasPost('/v1/atlas/speech', { text: 'Race', locale: 'en', app: 'yes-no', purpose: 'child-button', provider: 'openai' }), env)
 
     expect(response.status).toBe(200)
     await expect(json(response)).resolves.toMatchObject({
@@ -211,10 +262,7 @@ describe('atlas-api', () => {
     const fetchSpy = vi.spyOn(globalThis, 'fetch').mockResolvedValue(new Response(new Uint8Array([4, 5, 6]), { status: 200, headers: { 'x-duration-seconds': '2' } }))
 
     const body = { text: 'Ik wil drinken', locale: 'nl-NL', app: 'yes-no', purpose: 'child-button' }
-    const first = await worker.fetch(new Request('https://api.test/v1/atlas/speech', {
-      method: 'POST',
-      body: JSON.stringify(body),
-    }), env)
+    const first = await worker.fetch(atlasPost('/v1/atlas/speech', body), env)
 
     expect(first.status).toBe(201)
     await expect(json(first)).resolves.toMatchObject({
@@ -251,10 +299,7 @@ describe('atlas-api', () => {
       },
     })
 
-    const second = await worker.fetch(new Request('https://api.test/v1/atlas/speech', {
-      method: 'POST',
-      body: JSON.stringify(body),
-    }), env)
+    const second = await worker.fetch(atlasPost('/v1/atlas/speech', body), env)
     expect(second.status).toBe(200)
     await expect(json(second)).resolves.toMatchObject({ data: { cached: true, provider: { name: 'narakeet', voice: 'famke' } }, meta: { cached: true } })
     expect(fetchSpy).toHaveBeenCalledTimes(1)
@@ -281,10 +326,7 @@ describe('atlas-api', () => {
 
     for (const [locale, voice] of cases) {
       const env = makeEnv()
-      const response = await worker.fetch(new Request('https://api.test/v1/atlas/speech', {
-        method: 'POST',
-        body: JSON.stringify({ text: `Phrase ${locale}`, locale, app: 'yes-no', purpose: 'child-button' }),
-      }), env)
+      const response = await worker.fetch(atlasPost('/v1/atlas/speech', { text: `Phrase ${locale}`, locale, app: 'yes-no', purpose: 'child-button' }), env)
 
       expect(response.status).toBe(201)
       await expect(json(response)).resolves.toMatchObject({
@@ -321,10 +363,7 @@ describe('atlas-api', () => {
 
     for (const [locale, voice] of cases) {
       const env = makeEnv()
-      const response = await worker.fetch(new Request('https://api.test/v1/atlas/speech', {
-        method: 'POST',
-        body: JSON.stringify({ text: `Phrase ${locale}`, locale, app: 'yes-no', purpose: 'child-button' }),
-      }), env)
+      const response = await worker.fetch(atlasPost('/v1/atlas/speech', { text: `Phrase ${locale}`, locale, app: 'yes-no', purpose: 'child-button' }), env)
 
       expect(response.status).toBe(201)
       await expect(json(response)).resolves.toMatchObject({
@@ -355,10 +394,7 @@ describe('atlas-api', () => {
     })
     const fetchSpy = vi.spyOn(globalThis, 'fetch').mockImplementation(async () => new Response(new Uint8Array([1, 2, 3]), { status: 200 }))
 
-    const response = await worker.fetch(new Request('https://api.test/v1/atlas/speech', {
-      method: 'POST',
-      body: JSON.stringify({ text: 'Hoe gaat het?', locale: 'nl-NL', app: 'yes-no', purpose: 'speech-playback' }),
-    }), env)
+    const response = await worker.fetch(atlasPost('/v1/atlas/speech', { text: 'Hoe gaat het?', locale: 'nl-NL', app: 'yes-no', purpose: 'speech-playback' }), env)
 
     expect(response.status).toBe(201)
     await expect(json(response)).resolves.toMatchObject({
@@ -375,10 +411,7 @@ describe('atlas-api', () => {
 
   it('routes text generation to Workers AI by default', async () => {
     const env = makeEnv()
-    const response = await worker.fetch(new Request('https://api.test/v1/atlas/text', {
-      method: 'POST',
-      body: JSON.stringify({ input: 'Summarize this', app: 'admin', purpose: 'internal-summary' }),
-    }), env)
+    const response = await worker.fetch(atlasPost('/v1/atlas/text', { input: 'Summarize this', app: 'admin', purpose: 'internal-summary' }), env)
 
     expect(response.status).toBe(200)
     expect(env.AI?.run).toHaveBeenCalled()
@@ -393,11 +426,11 @@ describe('atlas-api', () => {
     const fetchSpy = vi.spyOn(globalThis, 'fetch').mockResolvedValue(new Response(JSON.stringify({ title: 'Song', author_name: 'Artist' }), { status: 200, headers: { 'Content-Type': 'application/json' } }))
     const body = { source: 'youtube', operation: 'video.metadata', app: 'radio', purpose: 'add-track', input: { url: 'https://www.youtube.com/watch?v=test' } }
 
-    const first = await worker.fetch(new Request('https://api.test/v1/atlas/data/fetch', { method: 'POST', body: JSON.stringify(body) }), env)
+    const first = await worker.fetch(atlasPost('/v1/atlas/data/fetch', body), env)
     expect(first.status).toBe(200)
     await expect(json(first)).resolves.toMatchObject({ meta: { provider: 'youtube', cached: false } })
 
-    const second = await worker.fetch(new Request('https://api.test/v1/atlas/data/fetch', { method: 'POST', body: JSON.stringify(body) }), env)
+    const second = await worker.fetch(atlasPost('/v1/atlas/data/fetch', body), env)
     expect(second.status).toBe(200)
     await expect(json(second)).resolves.toMatchObject({ meta: { provider: 'youtube', cached: true } })
     expect(fetchSpy).toHaveBeenCalledTimes(1)
@@ -408,7 +441,7 @@ describe('atlas-api', () => {
     vi.spyOn(globalThis, 'fetch').mockResolvedValue(new Response('<html><title>Example</title></html>', { status: 200, headers: { 'Content-Type': 'text/html' } }))
     const body = { source: 'https://example.com', operation: 'fetch', app: 'atlas-test', purpose: 'metadata' }
 
-    const response = await worker.fetch(new Request('https://api.test/v1/atlas/data/fetch', { method: 'POST', body: JSON.stringify(body) }), env)
+    const response = await worker.fetch(atlasPost('/v1/atlas/data/fetch', body), env)
 
     expect(response.status).toBe(200)
     await expect(json(response)).resolves.toMatchObject({
@@ -417,15 +450,24 @@ describe('atlas-api', () => {
     })
   })
 
+  it('blocks private network URL metadata fetches', async () => {
+    const env = makeEnv()
+    const fetchSpy = vi.spyOn(globalThis, 'fetch').mockResolvedValue(new Response('<html></html>', { status: 200 }))
+    const body = { source: 'http://127.0.0.1/admin', operation: 'fetch', app: 'radio', purpose: 'metadata' }
+
+    const response = await worker.fetch(atlasPost('/v1/atlas/data/fetch', body), env)
+
+    expect(response.status).toBe(400)
+    await expect(json(response)).resolves.toMatchObject({ error: { code: 'url_not_allowed' } })
+    expect(fetchSpy).not.toHaveBeenCalled()
+  })
+
 
   it('records redacted usage rows and exposes admin observability endpoints', async () => {
     const env = makeEnv({ ELEVENLABS_API_KEY: undefined, NARAKEET_API_KEY: undefined, SERVICE_API_KEYS: 'service-token' })
     vi.spyOn(globalThis, 'fetch').mockResolvedValue(new Response(new Uint8Array([1, 2, 3]), { status: 200 }))
 
-    const generated = await worker.fetch(new Request('https://api.test/v1/atlas/speech', {
-      method: 'POST',
-      body: JSON.stringify({ text: 'A'.repeat(160), locale: 'en', app: 'yes-no', purpose: 'child-button', provider: 'openai', apiKey: 'do-not-log' }),
-    }), env)
+    const generated = await worker.fetch(atlasPost('/v1/atlas/speech', { text: 'A'.repeat(160), locale: 'en', app: 'yes-no', purpose: 'child-button', provider: 'openai', apiKey: 'do-not-log' }), env)
     expect(generated.status).toBe(201)
     expect(env.db.requests[0]).toMatchObject({ capability: 'speech.synthesize', provider: 'openai', status: 'success', cache_status: 'miss' })
     expect(env.db.requests[0].request_hash).toMatch(/^[a-f0-9]{32}$/)

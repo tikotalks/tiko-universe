@@ -107,7 +107,11 @@ export interface Env {
   NARAKEET_API_KEY?: string
   YOUTUBE_API_KEY?: string
   TOKEN_PEPPER?: string
+  API_KEYS?: string
   SERVICE_API_KEYS?: string
+  AUTH_DB?: {
+    prepare(sql: string): { bind(...values: unknown[]): { first<T>(): Promise<T | null>; all(): Promise<{ results: unknown[] }> } }
+  }
   IDENTITY_BASE_URL?: string
   IDENTITY_SERVICE?: { fetch(input: Request | string, init?: RequestInit): Promise<Response> }
 }

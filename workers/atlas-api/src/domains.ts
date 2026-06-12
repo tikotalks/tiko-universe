@@ -312,6 +312,7 @@ function normalizeDataFetchRequest(input: DataFetchRequest): DataFetchRequest {
   if (!source && !url) throw capabilityError('missing_source', 400)
   if (!operation && !url) throw capabilityError('missing_operation', 400)
   if (url && !/^https?:\/\//i.test(url)) throw capabilityError('missing_url', 400)
+  if (url) assertPublicHttpUrl(url)
 
   if (sourceUrl || topLevelUrl) {
     return {
@@ -336,6 +337,8 @@ function isYoutubeUrl(url: string): boolean {
 async function fetchYoutubeMetadata(input: DataFetchRequest): Promise<unknown> {
   const url = String(input.input.url ?? input.input.videoUrl ?? '')
   if (!url) throw capabilityError('missing_url', 400)
+  assertPublicHttpUrl(url)
+  if (!isYoutubeUrl(url)) throw capabilityError('url_not_allowed', 400)
   const response = await fetch(`https://www.youtube.com/oembed?format=json&url=${encodeURIComponent(url)}`)
   if (!response.ok) throw capabilityError('youtube_metadata_failed', 502)
   return { source: 'youtube', operation: input.operation, metadata: await response.json() }
@@ -344,12 +347,47 @@ async function fetchYoutubeMetadata(input: DataFetchRequest): Promise<unknown> {
 async function fetchUrlMetadata(input: DataFetchRequest): Promise<unknown> {
   const url = String(input.input.url ?? '')
   if (!url || !/^https?:\/\//.test(url)) throw capabilityError('missing_url', 400)
-  const response = await fetch(url, { headers: { Accept: 'text/html,application/xhtml+xml' } })
+  assertPublicHttpUrl(url)
+  const response = await fetch(url, { headers: { Accept: 'text/html,application/xhtml+xml' }, redirect: 'manual' })
+  if (response.status >= 300 && response.status < 400) throw capabilityError('url_redirect_not_allowed', 400)
   if (!response.ok) throw capabilityError('url_metadata_failed', 502)
   const html = await response.text()
   const title = html.match(/<title[^>]*>([^<]*)<\/title>/i)?.[1]?.trim() ?? null
   const description = html.match(/<meta[^>]+name=["']description["'][^>]+content=["']([^"']*)["'][^>]*>/i)?.[1]?.trim() ?? null
   return { source: 'url-metadata', operation: input.operation, metadata: { url, title, description } }
+}
+
+function assertPublicHttpUrl(value: string): void {
+  let url: URL
+  try {
+    url = new URL(value)
+  } catch {
+    throw capabilityError('missing_url', 400)
+  }
+  if (url.protocol !== 'http:' && url.protocol !== 'https:') throw capabilityError('missing_url', 400)
+  if (url.username || url.password) throw capabilityError('url_not_allowed', 400)
+  if (isBlockedHostname(url.hostname)) throw capabilityError('url_not_allowed', 400)
+}
+
+function isBlockedHostname(hostname: string): boolean {
+  const normalized = hostname.toLowerCase().replace(/^\[|\]$/g, '').replace(/\.$/, '')
+  if (!normalized) return true
+  if (normalized === 'localhost' || normalized.endsWith('.localhost')) return true
+  if (normalized === 'metadata.google.internal') return true
+  const isIpv6 = normalized.includes(':')
+  if (isIpv6 && (normalized === '::1' || normalized.startsWith('fc') || normalized.startsWith('fd') || normalized.startsWith('fe80:'))) return true
+
+  const parts = normalized.split('.')
+  if (parts.length === 4 && parts.every((part) => /^\d+$/.test(part))) {
+    const octets = parts.map(Number)
+    if (octets.some((part) => part < 0 || part > 255)) return true
+    const [a, b] = octets
+    if (a === 0 || a === 10 || a === 127) return true
+    if (a === 169 && b === 254) return true
+    if (a === 172 && b >= 16 && b <= 31) return true
+    if (a === 192 && b === 168) return true
+  }
+  return false
 }
 
 async function findCachedAsset(env: Env, requestHash: string): Promise<CachedAssetRow | null> {
