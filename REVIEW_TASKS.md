@@ -115,7 +115,7 @@ Approximate review spread: 7 Critical, about 35 High, about 70 Medium, and about
   - Use configured supported languages.
   - Version-stamp cache keys or purge every affected locale reliably.
 
-- [ ] Fix Cards content source of truth in admin.
+- [x] Fix Cards content source of truth in admin.
   - Decide whether starter/default Cards live in content-api or app defaults.
   - Delete the duplicate editor.
   - Make admin Cards thumbnails resolve through image refs/CDN correctly.

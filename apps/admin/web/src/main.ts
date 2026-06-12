@@ -30,7 +30,7 @@ const routes: RouteRecordRaw[] = [
   { path: '/services', name: 'services', component: () => import('./pages/ServicesPage.vue') },
   { path: '/profile', name: 'profile', component: () => import('./pages/ProfilePage.vue') },
   { path: '/settings', name: 'settings', component: () => import('./pages/SettingsPage.vue') },
-  { path: '/cards', name: 'cards', component: () => import('./pages/CardsPage.vue') },
+  { path: '/cards', redirect: '/apps/cards' },
   { path: '/apps', name: 'apps', component: () => import('./pages/AppDefaultsPage.vue') },
   { path: '/apps/:app', name: 'app-detail', component: () => import('./pages/AppDefaultsPage.vue') },
   { path: '/defaults', redirect: '/apps' },

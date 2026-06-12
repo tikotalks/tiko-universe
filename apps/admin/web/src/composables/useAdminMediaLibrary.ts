@@ -193,6 +193,14 @@ export function useAdminMediaLibrary() {
     return item.url || item.original_url || item.medium_url || item.thumbnailUrl || item.thumbnail_url || `${mediaBaseUrl()}/media/${item.id}/download`
   }
 
+  function mediaDownloadUrl(mediaId: string): string {
+    return `${mediaBaseUrl()}/media/${encodeURIComponent(mediaId)}/download`
+  }
+
+  function mediaRefPreviewUrl(mediaId: string, size = 160): string {
+    return resizedMediaUrl(mediaDownloadUrl(mediaId), size)
+  }
+
   function itemPreviewUrl(item: AdminMediaItem, size = 160): string {
     return resizedMediaUrl(item.thumbnailUrl || item.thumbnail_url || item.medium_url || item.url || item.original_url || itemUrl(item), size)
   }
@@ -201,5 +209,5 @@ export function useAdminMediaLibrary() {
     return resizedMediaUrl(url, size)
   }
 
-  return { items, total, page, totalPages, loading, uploading, error, list, upload, itemUrl, itemPreviewUrl, previewUrl, listAudioAlbums, createAudioAlbum, addAudioTrack }
+  return { items, total, page, totalPages, loading, uploading, error, list, upload, itemUrl, mediaDownloadUrl, mediaRefPreviewUrl, itemPreviewUrl, previewUrl, listAudioAlbums, createAudioAlbum, addAudioTrack }
 }

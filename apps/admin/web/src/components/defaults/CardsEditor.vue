@@ -6,6 +6,7 @@ import { tikoColors } from '@tiko/ui'
 import type { TikoColorName } from '@tiko/data'
 import ColorDotPicker from '../ColorDotPicker.vue'
 import MediaPicker from '../MediaPicker.vue'
+import { useAdminMediaLibrary } from '../../composables/useAdminMediaLibrary'
 
 interface LegacyTile {
   id?: string
@@ -49,6 +50,7 @@ const emit = defineEmits<{ 'update:modelValue': [value: Record<string, unknown>]
 
 const activeIndex = ref(-1)
 const activeCollection = ref<Collection | null>(null)
+const { mediaRefPreviewUrl } = useAdminMediaLibrary()
 const colorNames = new Set<TikoColorName>(tikoColors.map(color => color.name as TikoColorName))
 const colorValueByName = new Map<TikoColorName, string>(tikoColors.map(color => [color.name as TikoColorName, color.hex]))
 const colorNameByValue = new Map<string, TikoColorName>(tikoColors.map(color => [color.hex.toLowerCase(), color.name as TikoColorName]))
@@ -85,22 +87,8 @@ function colorFromPicker(value: string, fallback: TikoColorName) {
   return colorName(value, fallback)
 }
 
-function mediaDownloadUrl(mediaId: string): string {
-  return `https://media.tikoapi.org/v1/media/${encodeURIComponent(mediaId)}/download`
-}
-
 function mediaPreviewUrl(imageRef: string | undefined, size = 96): string {
-  if (!imageRef) return ''
-  const url = mediaDownloadUrl(imageRef)
-  try {
-    const parsed = new URL(url)
-    if (parsed.host === 'data.tikocdn.org' && parsed.pathname.startsWith('/uploads/')) {
-      return `https://data.tikocdn.org/cdn-cgi/image/width=${size},height=${size},fit=cover,quality=80,f=auto${parsed.pathname}`
-    }
-  } catch {
-    // Non-URL values are returned unchanged.
-  }
-  return url
+  return imageRef ? mediaRefPreviewUrl(imageRef, size) : ''
 }
 
 function firstImageValue(...values: unknown[]): string | undefined {
