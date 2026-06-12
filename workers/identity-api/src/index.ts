@@ -370,14 +370,6 @@ async function deleteCurrentIdentity(request: Request, env: Env): Promise<Respon
   await env.IDENTITY_DB.prepare(
     'INSERT INTO identity_deletion_requests (id, subject_id, scope, status, child_account_id, pin_grant_token, created_at, updated_at, completed_at, metadata_json) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
   ).bind(requestId, session.subjectId, 'account', 'requested', null, null, at, at, null, '{"legacy":true}').run()
-    .catch(async () => {
-      await env.IDENTITY_DB.prepare(
-        'CREATE TABLE IF NOT EXISTS identity_deletion_requests (id TEXT PRIMARY KEY, subject_id TEXT NOT NULL, scope TEXT NOT NULL, status TEXT NOT NULL DEFAULT \'requested\', child_account_id TEXT, pin_grant_token TEXT, created_at TEXT NOT NULL, updated_at TEXT NOT NULL, completed_at TEXT, metadata_json TEXT DEFAULT \'{}\')'
-      ).run()
-      await env.IDENTITY_DB.prepare(
-        'INSERT INTO identity_deletion_requests (id, subject_id, scope, status, child_account_id, pin_grant_token, created_at, updated_at, completed_at, metadata_json) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
-      ).bind(requestId, session.subjectId, 'account', 'requested', null, null, at, at, null, '{"legacy":true}').run()
-    })
 
   await executeAccountDeletion(env, session.subjectId)
   const completedAt = new Date().toISOString()
@@ -569,19 +561,7 @@ async function createDeletionRequest(request: Request, env: Env): Promise<Respon
     requestId, session.subjectId, scope, 'requested',
     body.childAccountId ?? null, pinGrantHash?.tokenHash ?? null,
     at, at, null, '{}'
-  ).run().catch(async () => {
-    // Table might not exist yet — create it and retry
-    await env.IDENTITY_DB.prepare(
-      'CREATE TABLE IF NOT EXISTS identity_deletion_requests (id TEXT PRIMARY KEY, subject_id TEXT NOT NULL, scope TEXT NOT NULL, status TEXT NOT NULL DEFAULT \'requested\', child_account_id TEXT, pin_grant_token TEXT, created_at TEXT NOT NULL, updated_at TEXT NOT NULL, completed_at TEXT, metadata_json TEXT DEFAULT \'{}\')'
-    ).run()
-    await env.IDENTITY_DB.prepare(
-      'INSERT INTO identity_deletion_requests (id, subject_id, scope, status, child_account_id, pin_grant_token, created_at, updated_at, completed_at, metadata_json) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
-    ).bind(
-      requestId, session.subjectId, scope, 'requested',
-      body.childAccountId ?? null, pinGrantHash?.tokenHash ?? null,
-      at, at, null, '{}'
-    ).run()
-  })
+  ).run()
 
   await env.IDENTITY_DB.prepare('INSERT INTO identity_audit_events (id, subject_id, actor_subject_id, product, type, created_at, ip_hash, user_agent_hash, metadata_json) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)')
     .bind(id('aud'), session.subjectId, session.subjectId, 'tiko', 'identity.deletion_requested', at, null, null, JSON.stringify({ requestId, scope }))
