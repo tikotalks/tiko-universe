@@ -40,7 +40,7 @@ The most urgent work is to lock down Atlas/generation/sentence/media/identity, i
   - Require matching session or admin role for private reads and downloads.
   - Decide whether private media can be served from the public CDN at all.
 
-- [ ] Add ownership and role checks to generation-api content mutations.
+- [x] Add ownership and role checks to generation-api content mutations.
   - Record `created_by`.
   - Restrict delete/promote/edit/upscale/link operations to owner or admin.
   - Require auth for draft/private listings and binaries.

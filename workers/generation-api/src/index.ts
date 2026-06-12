@@ -80,6 +80,10 @@ interface PaidAuthContext {
   subjectKey: string
 }
 
+interface GenerationAccessContext {
+  auth: AuthSuccess | null
+}
+
 interface UsagePolicy {
   capability: string
   units: number
@@ -163,22 +167,22 @@ export default {
     if (url.pathname === '/v1/generation/tts' && request.method === 'POST') return generateTts(request, env)
     if (url.pathname.startsWith('/v1/generation/voice-samples/') && request.method === 'GET') return requirePaidAccess(request, env, { capability: 'voice.sample', units: 40, maxRequestsPerMinute: 30, maxUnitsPerDay: 2000 }, () => getVoiceSample(url, env))
     if (url.pathname.startsWith('/v1/generation/audio/') && request.method === 'GET') return getAudio(url.pathname, env)
-    if (url.pathname === '/v1/generation/image' && request.method === 'POST') return requireAuth(request, env, () => generateImage(request, env))
-    if (url.pathname.startsWith('/v1/generation/images/') && url.pathname.endsWith('/binary') && request.method === 'GET') return getImage(url.pathname, env)
-    if (url.pathname.startsWith('/v1/generation/images/') && url.pathname.endsWith('/promote') && request.method === 'POST') return requireAuth(request, env, () => promoteImage(url.pathname, env))
-    if (url.pathname.startsWith('/v1/generation/images/') && url.pathname.endsWith('/media-link') && request.method === 'POST') return requireAuth(request, env, () => linkImageMedia(url.pathname, request, env))
-    if (url.pathname.startsWith('/v1/generation/images/') && url.pathname.endsWith('/enrich') && request.method === 'POST') return requireAuth(request, env, () => enrichImage(url.pathname, env))
-    if (url.pathname.startsWith('/v1/generation/images/') && url.pathname.endsWith('/edit') && request.method === 'POST') return requireAuth(request, env, () => editImageVariant(url.pathname, request, env))
-    if (url.pathname.startsWith('/v1/generation/images/') && url.pathname.endsWith('/upscale') && request.method === 'POST') return requireAuth(request, env, () => upscaleImage(url.pathname, request, env))
-    if (url.pathname.startsWith('/v1/generation/images/') && request.method === 'DELETE') return requireAuth(request, env, () => deleteImage(url.pathname, env))
+    if (url.pathname === '/v1/generation/image' && request.method === 'POST') return requireAuth(request, env, (access) => generateImage(request, env, access))
+    if (url.pathname.startsWith('/v1/generation/images/') && url.pathname.endsWith('/binary') && request.method === 'GET') return getImage(request, url.pathname, env)
+    if (url.pathname.startsWith('/v1/generation/images/') && url.pathname.endsWith('/promote') && request.method === 'POST') return requireAuth(request, env, (access) => promoteImage(url.pathname, env, access))
+    if (url.pathname.startsWith('/v1/generation/images/') && url.pathname.endsWith('/media-link') && request.method === 'POST') return requireAuth(request, env, (access) => linkImageMedia(url.pathname, request, env, access))
+    if (url.pathname.startsWith('/v1/generation/images/') && url.pathname.endsWith('/enrich') && request.method === 'POST') return requireAuth(request, env, (access) => enrichImage(url.pathname, env, access))
+    if (url.pathname.startsWith('/v1/generation/images/') && url.pathname.endsWith('/edit') && request.method === 'POST') return requireAuth(request, env, (access) => editImageVariant(url.pathname, request, env, access))
+    if (url.pathname.startsWith('/v1/generation/images/') && url.pathname.endsWith('/upscale') && request.method === 'POST') return requireAuth(request, env, (access) => upscaleImage(url.pathname, request, env, access))
+    if (url.pathname.startsWith('/v1/generation/images/') && request.method === 'DELETE') return requireAuth(request, env, (access) => deleteImage(url.pathname, env, access))
     if (url.pathname === '/v1/generation/images' && request.method === 'GET') return listImages(request, env)
-    if (url.pathname === '/v1/generation/stories/tryout' && request.method === 'POST') return requireAuth(request, env, () => generateStoryTryout(request, env))
-    if (url.pathname === '/v1/generation/stories/render' && request.method === 'POST') return requireAuth(request, env, () => renderStory(request, env))
-    if (url.pathname === '/v1/generation/story-drafts' && request.method === 'POST') return requireAuth(request, env, () => createStoryDraft(request, env))
-    if (url.pathname === '/v1/generation/story-drafts' && request.method === 'GET') return listStoryDrafts(env)
-    if (url.pathname.startsWith('/v1/generation/stories/') && url.pathname.endsWith('/audio') && request.method === 'GET') return getStoryAudio(url.pathname, env)
-    if (url.pathname.startsWith('/v1/generation/stories/') && url.pathname.endsWith('/promote') && request.method === 'POST') return requireAuth(request, env, () => promoteStory(url.pathname, env))
-    if (url.pathname.startsWith('/v1/generation/stories/') && request.method === 'DELETE') return requireAuth(request, env, () => deleteStory(url.pathname, env))
+    if (url.pathname === '/v1/generation/stories/tryout' && request.method === 'POST') return requireAuth(request, env, (access) => generateStoryTryout(request, env, access))
+    if (url.pathname === '/v1/generation/stories/render' && request.method === 'POST') return requireAuth(request, env, (access) => renderStory(request, env, access))
+    if (url.pathname === '/v1/generation/story-drafts' && request.method === 'POST') return requireAuth(request, env, (access) => createStoryDraft(request, env, access))
+    if (url.pathname === '/v1/generation/story-drafts' && request.method === 'GET') return requireAuth(request, env, (access) => listStoryDrafts(env, access))
+    if (url.pathname.startsWith('/v1/generation/stories/') && url.pathname.endsWith('/audio') && request.method === 'GET') return getStoryAudio(request, url.pathname, env)
+    if (url.pathname.startsWith('/v1/generation/stories/') && url.pathname.endsWith('/promote') && request.method === 'POST') return requireAuth(request, env, (access) => promoteStory(url.pathname, env, access))
+    if (url.pathname.startsWith('/v1/generation/stories/') && request.method === 'DELETE') return requireAuth(request, env, (access) => deleteStory(url.pathname, env, access))
     if (url.pathname === '/v1/generation/stories' && request.method === 'GET') return listStories(request, env)
 
     return apiError('not_found', 'Route not found.', 404)
@@ -227,14 +231,54 @@ function generationHealth(): Response {
   })
 }
 
-async function requireAuth(request: Request, env: Env, handler: () => Promise<Response>): Promise<Response> {
+async function requireAuth(request: Request, env: Env, handler: (context: GenerationAccessContext) => Promise<Response>): Promise<Response> {
   const authed = await authenticate(request, env)
   if (authed.ok === false) {
     const headers = new Headers(authed.response.headers)
     for (const [key, value] of Object.entries(CORS_HEADERS)) headers.set(key, value)
     return new Response(authed.response.body, { status: authed.response.status, statusText: authed.response.statusText, headers })
   }
-  return handler()
+  return handler({ auth: authed })
+}
+
+async function optionalAuth(request: Request, env: Env): Promise<GenerationAccessContext | Response> {
+  if (!request.headers.has('authorization')) return { auth: null }
+  const authed = await authenticate(request, env)
+  if (authed.ok === false) {
+    const headers = new Headers(authed.response.headers)
+    for (const [key, value] of Object.entries(CORS_HEADERS)) headers.set(key, value)
+    return new Response(authed.response.body, { status: authed.response.status, statusText: authed.response.statusText, headers })
+  }
+  return { auth: authed }
+}
+
+function isServiceAccess(context: GenerationAccessContext): boolean {
+  return context.auth?.method === 'api_key'
+}
+
+function sessionUserId(context: GenerationAccessContext): string | null {
+  return context.auth?.method === 'session' && context.auth.userId ? context.auth.userId : null
+}
+
+function createdBy(context: GenerationAccessContext): string | null {
+  return sessionUserId(context)
+}
+
+function canAccessOwnedRecord(context: GenerationAccessContext, record: { is_public?: unknown; created_by?: unknown }): boolean {
+  if (Number(record.is_public ?? 0) === 1) return true
+  if (isServiceAccess(context)) return true
+  const userId = sessionUserId(context)
+  return !!userId && typeof record.created_by === 'string' && record.created_by === userId
+}
+
+function canMutateOwnedRecord(context: GenerationAccessContext, record: { created_by?: unknown }): boolean {
+  if (isServiceAccess(context)) return true
+  const userId = sessionUserId(context)
+  return !!userId && typeof record.created_by === 'string' && record.created_by === userId
+}
+
+function forbiddenOrUnauthorized(context: GenerationAccessContext): Response {
+  return context.auth ? apiError('forbidden', 'You do not have access to this generated content.', 403) : apiError('unauthorized', 'Authentication is required.', 401)
 }
 
 async function requirePaidAccess(request: Request, env: Env, policy: UsagePolicy, handler: (context: PaidAuthContext) => Promise<Response>): Promise<Response> {
@@ -313,6 +357,7 @@ interface StoryDraftRow {
   status: string
   chapters: string
   settings: string
+  created_by: string | null
   created_at: string
   updated_at: string
 }
@@ -354,7 +399,7 @@ function parseJsonObject(value: unknown): Record<string, unknown> {
   }
 }
 
-async function createStoryDraft(request: Request, env: Env): Promise<Response> {
+async function createStoryDraft(request: Request, env: Env, access: GenerationAccessContext): Promise<Response> {
   let body: Record<string, unknown>
   try {
     body = await request.json() as Record<string, unknown>
@@ -379,14 +424,15 @@ async function createStoryDraft(request: Request, env: Env): Promise<Response> {
     status: 'draft',
     chapters: JSON.stringify(chapters),
     settings: JSON.stringify(body.settings && typeof body.settings === 'object' ? body.settings : {}),
+    created_by: createdBy(access),
     created_at: now,
     updated_at: now,
   }
 
   await env.GENERATION_DB.prepare(
-    `INSERT INTO story_drafts (id, title, description, cover_media_id, default_voice, default_speed, target_album_id, status, chapters, settings, created_at, updated_at)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-  ).bind(row.id, row.title, row.description, row.cover_media_id, row.default_voice, row.default_speed, row.target_album_id, row.status, row.chapters, row.settings, row.created_at, row.updated_at).run()
+    `INSERT INTO story_drafts (id, title, description, cover_media_id, default_voice, default_speed, target_album_id, status, chapters, settings, created_by, created_at, updated_at)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+  ).bind(row.id, row.title, row.description, row.cover_media_id, row.default_voice, row.default_speed, row.target_album_id, row.status, row.chapters, row.settings, row.created_by, row.created_at, row.updated_at).run()
 
   return json({ data: rowToStoryDraft(row), meta: { schemaVersion: 1 } }, 201)
 }
@@ -403,11 +449,13 @@ function normalizeDraftChapter(chapter: StoryDraftChapter, index: number, defaul
   }
 }
 
-async function listStoryDrafts(env: Env): Promise<Response> {
+async function listStoryDrafts(env: Env, access: GenerationAccessContext): Promise<Response> {
+  const where = isServiceAccess(access) ? '' : 'WHERE created_by = ?'
+  const values = isServiceAccess(access) ? [] : [sessionUserId(access)]
   const rows = await env.GENERATION_DB.prepare(
-    `SELECT id, title, description, cover_media_id, default_voice, default_speed, target_album_id, status, chapters, settings, created_at, updated_at
-     FROM story_drafts ORDER BY updated_at DESC`,
-  ).bind().all<StoryDraftRow>()
+    `SELECT id, title, description, cover_media_id, default_voice, default_speed, target_album_id, status, chapters, settings, created_by, created_at, updated_at
+     FROM story_drafts ${where} ORDER BY updated_at DESC`,
+  ).bind(...values).all<StoryDraftRow>()
   return json({ data: rows.results.map(rowToStoryDraft), meta: { total: rows.results.length, schemaVersion: 1 } })
 }
 
@@ -773,11 +821,12 @@ interface StoryRecord {
   category: string
   tags: string
   is_public: number
+  created_by: string | null
   created_at: string
   updated_at: string
 }
 
-async function generateStoryTryout(request: Request, env: Env): Promise<Response> {
+async function generateStoryTryout(request: Request, env: Env, _access: GenerationAccessContext): Promise<Response> {
   let body: StoryTryoutRequest
   try { body = await request.json() as StoryTryoutRequest } catch { return apiError('invalid_json', 'Request body must be valid JSON.', 400) }
 
@@ -796,7 +845,7 @@ async function generateStoryTryout(request: Request, env: Env): Promise<Response
   return json({ data: { id, audioUrl, contentType: generated.contentType, fileSizeBytes: generated.bytes.byteLength }, meta: { schemaVersion: 1 } }, 201)
 }
 
-async function renderStory(request: Request, env: Env): Promise<Response> {
+async function renderStory(request: Request, env: Env, access: GenerationAccessContext): Promise<Response> {
   let body: StoryRenderRequest
   try { body = await request.json() as StoryRenderRequest } catch { return apiError('invalid_json', 'Request body must be valid JSON.', 400) }
 
@@ -829,17 +878,20 @@ async function renderStory(request: Request, env: Env): Promise<Response> {
 
   await env.GENERATION_DB.prepare(`INSERT INTO stories (
     id, title, description, voice, speed, segments, status, audio_url, r2_key,
-    duration_seconds, file_size_bytes, category, tags, is_public, created_at, updated_at
-  ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`).bind(
+    duration_seconds, file_size_bytes, category, tags, is_public, created_by, created_at, updated_at
+  ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`).bind(
     id, body.title.trim(), body.description?.trim() || null, voice, speed, JSON.stringify(cleanSegments), 'complete', audioUrl, r2Key,
-    null, audioBytes.byteLength, body.category || 'story', JSON.stringify(body.tags || []), 0, now, now,
+    null, audioBytes.byteLength, body.category || 'story', JSON.stringify(body.tags || []), 0, createdBy(access), now, now,
   ).run()
 
   return json({ data: { id, title: body.title.trim(), audioUrl, voice, speed, fileSizeBytes: audioBytes.byteLength, createdAt: now }, meta: { schemaVersion: 1, segmentCount: cleanSegments.length } }, 201)
 }
 
-async function getStoryAudio(pathname: string, env: Env): Promise<Response> {
+async function getStoryAudio(request: Request, pathname: string, env: Env): Promise<Response> {
+  const access = await optionalAuth(request, env)
+  if (access instanceof Response) return access
   if (pathname.startsWith('/v1/generation/stories/tryouts/')) {
+    if (!access.auth) return forbiddenOrUnauthorized(access)
     const id = decodeURIComponent(pathname.replace('/v1/generation/stories/tryouts/', '').replace('/audio', ''))
     if (!isSafeId(id)) return apiError('invalid_tryout_id', 'Tryout id is invalid.', 400)
     const object = await env.GENERATED_MEDIA_BUCKET.get(`story-tryouts/${id}.mp3`)
@@ -849,8 +901,9 @@ async function getStoryAudio(pathname: string, env: Env): Promise<Response> {
 
   const id = decodeURIComponent(pathname.replace('/v1/generation/stories/', '').replace('/audio', ''))
   if (!isSafeId(id)) return apiError('invalid_story_id', 'Story id is invalid.', 400)
-  const record = await env.GENERATION_DB.prepare('SELECT r2_key FROM stories WHERE id = ? LIMIT 1').bind(id).first<{ r2_key: string | null }>()
+  const record = await env.GENERATION_DB.prepare('SELECT r2_key, is_public, created_by FROM stories WHERE id = ? LIMIT 1').bind(id).first<{ r2_key: string | null; is_public: number; created_by: string | null }>()
   if (!record?.r2_key) return apiError('story_not_found', 'Story not found.', 404)
+  if (!canAccessOwnedRecord(access, record)) return forbiddenOrUnauthorized(access)
   const object = await env.GENERATED_MEDIA_BUCKET.get(record.r2_key)
   if (!object) return apiError('story_not_found', 'Story audio not found.', 404)
   return audioResponse(object, 'public, max-age=31536000, immutable')
@@ -858,16 +911,21 @@ async function getStoryAudio(pathname: string, env: Env): Promise<Response> {
 
 async function listStories(request: Request, env: Env): Promise<Response> {
   const url = new URL(request.url)
+  const access = await optionalAuth(request, env)
+  if (access instanceof Response) return access
   const page = Math.max(parseInt(url.searchParams.get('page') || '1'), 1)
   const limit = Math.min(Math.max(parseInt(url.searchParams.get('limit') || '20'), 1), 100)
   const offset = (page - 1) * limit
   const status = url.searchParams.get('status') || 'promoted'
   const isPublic = status === 'draft' ? 0 : 1
+  if (isPublic === 0 && !access.auth) return forbiddenOrUnauthorized(access)
+  const ownerClause = isPublic === 0 && !isServiceAccess(access) ? ' AND created_by = ?' : ''
+  const ownerValues = ownerClause ? [sessionUserId(access)] : []
 
   const rows = await env.GENERATION_DB.prepare(`SELECT id, title, description, voice, speed, segments, status, audio_url, r2_key,
-      duration_seconds, file_size_bytes, category, tags, is_public, created_at, updated_at
-    FROM stories WHERE is_public = ? ORDER BY created_at DESC LIMIT ? OFFSET ?`).bind(isPublic, limit, offset).all<StoryRecord>()
-  const countRow = await env.GENERATION_DB.prepare('SELECT COUNT(*) AS count FROM stories WHERE is_public = ?').bind(isPublic).first<{ count: number }>()
+      duration_seconds, file_size_bytes, category, tags, is_public, created_by, created_at, updated_at
+    FROM stories WHERE is_public = ?${ownerClause} ORDER BY created_at DESC LIMIT ? OFFSET ?`).bind(isPublic, ...ownerValues, limit, offset).all<StoryRecord>()
+  const countRow = await env.GENERATION_DB.prepare(`SELECT COUNT(*) AS count FROM stories WHERE is_public = ?${ownerClause}`).bind(isPublic, ...ownerValues).first<{ count: number }>()
   const total = countRow?.count ?? 0
   return json({
     data: rows.results.map(row => ({ id: row.id, title: row.title, description: row.description, voice: row.voice, speed: row.speed, segmentCount: JSON.parse(row.segments || '[]').length, status: row.is_public === 1 ? 'promoted' : 'draft', renderStatus: row.status, audioUrl: row.audio_url, fileSizeBytes: row.file_size_bytes, category: row.category, tags: JSON.parse(row.tags || '[]'), createdAt: row.created_at })),
@@ -875,9 +933,13 @@ async function listStories(request: Request, env: Env): Promise<Response> {
   })
 }
 
-async function promoteStory(pathname: string, env: Env): Promise<Response> {
+async function promoteStory(pathname: string, env: Env, access: GenerationAccessContext): Promise<Response> {
   const id = pathname.replace('/v1/generation/stories/', '').replace('/promote', '')
   if (!isSafeId(id)) return apiError('invalid_story_id', 'Story id is invalid.', 400)
+
+  const record = await env.GENERATION_DB.prepare('SELECT created_by FROM stories WHERE id = ? LIMIT 1').bind(id).first<{ created_by: string | null }>()
+  if (!record) return apiError('story_not_found', 'Story not found.', 404)
+  if (!canMutateOwnedRecord(access, record)) return forbiddenOrUnauthorized(access)
 
   const now = new Date().toISOString()
   const result = await env.GENERATION_DB.prepare(
@@ -888,15 +950,16 @@ async function promoteStory(pathname: string, env: Env): Promise<Response> {
   return json({ data: { id, status: 'promoted', updatedAt: now } })
 }
 
-async function deleteStory(pathname: string, env: Env): Promise<Response> {
+async function deleteStory(pathname: string, env: Env, access: GenerationAccessContext): Promise<Response> {
   const id = pathname.replace('/v1/generation/stories/', '')
   if (!isSafeId(id)) return apiError('invalid_story_id', 'Story id is invalid.', 400)
 
   const record = await env.GENERATION_DB.prepare(
-    'SELECT r2_key FROM stories WHERE id = ? LIMIT 1',
-  ).bind(id).first<{ r2_key: string | null }>()
+    'SELECT r2_key, created_by FROM stories WHERE id = ? LIMIT 1',
+  ).bind(id).first<{ r2_key: string | null; created_by: string | null }>()
 
   if (!record) return apiError('story_not_found', 'Story not found.', 404)
+  if (!canMutateOwnedRecord(access, record)) return forbiddenOrUnauthorized(access)
   if (record.r2_key) await env.GENERATED_MEDIA_BUCKET.delete(record.r2_key).catch(() => null)
   await env.GENERATION_DB.prepare('DELETE FROM stories WHERE id = ?').bind(id).run()
 
@@ -962,6 +1025,7 @@ interface GeneratedImageRecord {
   is_public: number
   is_preview: number
   media_id: string | null
+  created_by: string | null
   created_at: string
   updated_at: string
 }
@@ -1252,7 +1316,7 @@ async function boostPrompt(subject: string, mode: ImageMode, tikoStyle: TikoStyl
   return (data.data?.output ?? '').trim()
 }
 
-async function generateImage(request: Request, env: Env): Promise<Response> {
+async function generateImage(request: Request, env: Env, access: GenerationAccessContext): Promise<Response> {
   let body: ImageGenerationRequest
   try {
     body = await request.json() as ImageGenerationRequest
@@ -1344,13 +1408,13 @@ async function generateImage(request: Request, env: Env): Promise<Response> {
         await env.GENERATION_DB.prepare(`INSERT INTO generated_images (
           id, prompt, revised_prompt, model, size, quality, style, image_url, r2_key,
           content_type, file_size_bytes, width, height, category, tags, title, description,
-          is_public, is_preview, created_at, updated_at
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`).bind(
+          is_public, is_preview, created_by, created_at, updated_at
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`).bind(
           id, body.prompt.trim(), imageItem.revised_prompt || null,
           'gpt-image-1-mini', size, 'medium', tikoStyle, imageUrl, r2Key,
           'image/png', imageBytes.byteLength, dims.width, dims.height,
           body.category || 'generated', JSON.stringify(body.tags || []), body.title || null, null,
-          0, 1, now, now,
+          0, 1, createdBy(access), now, now,
         ).run()
         return { id, imageUrl, prompt: body.prompt.trim(), revisedPrompt: imageItem.revised_prompt || null, size, quality: 'medium', style: tikoStyle, width: dims.width, height: dims.height, fileSizeBytes: imageBytes.byteLength, isPreview: true, createdAt: now }
       } catch (e) {
@@ -1414,12 +1478,12 @@ async function generateImage(request: Request, env: Env): Promise<Response> {
   await env.GENERATION_DB.prepare(`INSERT INTO generated_images (
     id, prompt, revised_prompt, model, size, quality, style, image_url, r2_key,
     content_type, file_size_bytes, width, height, category, tags, title, description,
-    is_public, created_at, updated_at
-  ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`).bind(
+    is_public, created_by, created_at, updated_at
+  ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`).bind(
     id, body.prompt.trim(), image.revisedPrompt || null, image.provider?.model ?? 'gpt-image-1',
     size, quality, style, imageUrl, r2Key, contentType, imageBytes.byteLength,
     dims.width, dims.height, body.category || 'generated', JSON.stringify(body.tags || []),
-    body.title || null, null, 0, now, now,
+    body.title || null, null, 0, createdBy(access), now, now,
   ).run()
 
   return json({
@@ -1441,16 +1505,19 @@ function toAtlasImageSize(size: string): 'square' | 'portrait' | 'landscape' {
   return 'square'
 }
 
-async function getImage(pathname: string, env: Env): Promise<Response> {
+async function getImage(request: Request, pathname: string, env: Env): Promise<Response> {
+  const access = await optionalAuth(request, env)
+  if (access instanceof Response) return access
   const parts = pathname.replace('/v1/generation/images/', '').replace('/binary', '')
   const id = decodeURIComponent(parts)
   if (!isSafeId(id)) return apiError('invalid_image_id', 'Image id is invalid.', 400)
 
   const record = await env.GENERATION_DB.prepare(
-    'SELECT r2_key, content_type FROM generated_images WHERE id = ? LIMIT 1',
-  ).bind(id).first<{ r2_key: string; content_type: string }>()
+    'SELECT r2_key, content_type, is_public, created_by FROM generated_images WHERE id = ? LIMIT 1',
+  ).bind(id).first<{ r2_key: string; content_type: string; is_public: number; created_by: string | null }>()
 
   if (!record) return apiError('image_not_found', 'Image not found.', 404)
+  if (!canAccessOwnedRecord(access, record)) return forbiddenOrUnauthorized(access)
 
   const object = await env.GENERATED_MEDIA_BUCKET.get(record.r2_key)
   if (!object) return apiError('image_not_found', 'Image not found.', 404)
@@ -1466,25 +1533,30 @@ async function getImage(pathname: string, env: Env): Promise<Response> {
 
 async function listImages(request: Request, env: Env): Promise<Response> {
   const url = new URL(request.url)
+  const access = await optionalAuth(request, env)
+  if (access instanceof Response) return access
   const page = Math.max(parseInt(url.searchParams.get('page') || '1'), 1)
   const limit = Math.min(Math.max(parseInt(url.searchParams.get('limit') || '20'), 1), 100)
   const offset = (page - 1) * limit
   const status = url.searchParams.get('status') || 'promoted'
   const isPublic = status === 'draft' ? 0 : 1
+  if (isPublic === 0 && !access.auth) return forbiddenOrUnauthorized(access)
+  const ownerClause = isPublic === 0 && !isServiceAccess(access) ? ' AND created_by = ?' : ''
+  const ownerValues = ownerClause ? [sessionUserId(access)] : []
 
   const rows = await env.GENERATION_DB.prepare(
     `SELECT id, prompt, revised_prompt, model, size, quality, style, image_url, r2_key,
             content_type, file_size_bytes, width, height, category, tags, title, description,
-            is_public, is_preview, media_id, created_at, updated_at
+            is_public, is_preview, media_id, created_by, created_at, updated_at
      FROM generated_images
-     WHERE is_public = ?
+     WHERE is_public = ?${ownerClause}
      ORDER BY created_at DESC
      LIMIT ? OFFSET ?`,
-  ).bind(isPublic, limit, offset).all<GeneratedImageRecord>()
+  ).bind(isPublic, ...ownerValues, limit, offset).all<GeneratedImageRecord>()
 
   const countRow = await env.GENERATION_DB.prepare(
-    'SELECT COUNT(*) AS count FROM generated_images WHERE is_public = ?',
-  ).bind(isPublic).first<{ count: number }>()
+    `SELECT COUNT(*) AS count FROM generated_images WHERE is_public = ?${ownerClause}`,
+  ).bind(isPublic, ...ownerValues).first<{ count: number }>()
 
   const total = countRow?.count ?? 0
 
@@ -1514,14 +1586,15 @@ async function listImages(request: Request, env: Env): Promise<Response> {
   })
 }
 
-async function promoteImage(pathname: string, env: Env): Promise<Response> {
+async function promoteImage(pathname: string, env: Env, access: GenerationAccessContext): Promise<Response> {
   const id = pathname.replace('/v1/generation/images/', '').replace('/promote', '')
   if (!isSafeId(id)) return apiError('invalid_image_id', 'Image id is invalid.', 400)
 
   const record = await env.GENERATION_DB.prepare(
-    'SELECT is_preview FROM generated_images WHERE id = ? LIMIT 1',
-  ).bind(id).first<{ is_preview: number }>()
+    'SELECT is_preview, created_by FROM generated_images WHERE id = ? LIMIT 1',
+  ).bind(id).first<{ is_preview: number; created_by: string | null }>()
   if (!record) return apiError('image_not_found', 'Image not found.', 404)
+  if (!canMutateOwnedRecord(access, record)) return forbiddenOrUnauthorized(access)
   if (record.is_preview === 1) return apiError('preview_cannot_promote', 'Preview images must be upscaled before promoting.', 400)
 
   const now = new Date().toISOString()
@@ -1533,7 +1606,7 @@ async function promoteImage(pathname: string, env: Env): Promise<Response> {
   return json({ data: { id, status: 'promoted', updatedAt: now } })
 }
 
-async function linkImageMedia(pathname: string, request: Request, env: Env): Promise<Response> {
+async function linkImageMedia(pathname: string, request: Request, env: Env, access: GenerationAccessContext): Promise<Response> {
   const id = pathname.replace('/v1/generation/images/', '').replace('/media-link', '')
   if (!isSafeId(id)) return apiError('invalid_image_id', 'Image id is invalid.', 400)
 
@@ -1546,6 +1619,9 @@ async function linkImageMedia(pathname: string, request: Request, env: Env): Pro
 
   const mediaId = typeof body.mediaId === 'string' && body.mediaId.trim() ? body.mediaId.trim() : null
   if (!mediaId) return apiError('missing_media_id', 'mediaId is required.', 400, 'mediaId')
+  const record = await env.GENERATION_DB.prepare('SELECT created_by FROM generated_images WHERE id = ? LIMIT 1').bind(id).first<{ created_by: string | null }>()
+  if (!record) return apiError('image_not_found', 'Image not found.', 404)
+  if (!canMutateOwnedRecord(access, record)) return forbiddenOrUnauthorized(access)
 
   const now = new Date().toISOString()
   const result = await env.GENERATION_DB.prepare(
@@ -1556,16 +1632,17 @@ async function linkImageMedia(pathname: string, request: Request, env: Env): Pro
   return json({ data: { id, mediaId, updatedAt: now } })
 }
 
-async function enrichImage(pathname: string, env: Env): Promise<Response> {
+async function enrichImage(pathname: string, env: Env, access: GenerationAccessContext): Promise<Response> {
   const id = pathname.replace('/v1/generation/images/', '').replace('/enrich', '')
   if (!isSafeId(id)) return apiError('invalid_image_id', 'Image id is invalid.', 400)
   if (!env.OPENAI_API_KEY) return apiError('openai_not_configured', 'OpenAI is not configured.', 503)
 
   const record = await env.GENERATION_DB.prepare(
-    'SELECT id, title, prompt FROM generated_images WHERE id = ? LIMIT 1',
-  ).bind(id).first<{ id: string; title: string | null; prompt: string }>()
+    'SELECT id, title, prompt, created_by FROM generated_images WHERE id = ? LIMIT 1',
+  ).bind(id).first<{ id: string; title: string | null; prompt: string; created_by: string | null }>()
 
   if (!record) return apiError('image_not_found', 'Image not found.', 404)
+  if (!canMutateOwnedRecord(access, record)) return forbiddenOrUnauthorized(access)
 
   const publicBase = (env.GENERATION_PUBLIC_ROUTE ?? '').replace(/\/$/, '')
   const imageUrl = `${publicBase}/images/${id}/binary`
@@ -1649,7 +1726,7 @@ function parseImageVisionResponse(content: string): { title: string; description
   } catch { return null }
 }
 
-async function editImageVariant(pathname: string, request: Request, env: Env): Promise<Response> {
+async function editImageVariant(pathname: string, request: Request, env: Env, access: GenerationAccessContext): Promise<Response> {
   const id = pathname.replace('/v1/generation/images/', '').replace('/edit', '')
   if (!isSafeId(id)) return apiError('invalid_image_id', 'Image id is invalid.', 400)
   if (!env.OPENAI_API_KEY) return apiError('openai_not_configured', 'OpenAI is not configured.', 503)
@@ -1667,9 +1744,10 @@ async function editImageVariant(pathname: string, request: Request, env: Env): P
   const size = typeof body.size === 'string' && ALLOWED_IMAGE_SIZES.has(body.size) ? body.size as '1024x1024' | '1024x1792' | '1792x1024' : '1024x1024'
 
   const record = await env.GENERATION_DB.prepare(
-    'SELECT id, r2_key, prompt, category, tags, title FROM generated_images WHERE id = ? LIMIT 1',
-  ).bind(id).first<{ id: string; r2_key: string; prompt: string; category: string; tags: string; title: string | null }>()
+    'SELECT id, r2_key, prompt, category, tags, title, created_by FROM generated_images WHERE id = ? LIMIT 1',
+  ).bind(id).first<{ id: string; r2_key: string; prompt: string; category: string; tags: string; title: string | null; created_by: string | null }>()
   if (!record) return apiError('image_not_found', 'Image not found.', 404)
+  if (!canMutateOwnedRecord(access, record)) return forbiddenOrUnauthorized(access)
 
   const object = await env.GENERATED_MEDIA_BUCKET.get(record.r2_key)
   if (!object) return apiError('image_not_found', 'Image not found in storage.', 404)
@@ -1734,12 +1812,12 @@ async function editImageVariant(pathname: string, request: Request, env: Env): P
   await env.GENERATION_DB.prepare(`INSERT INTO generated_images (
     id, prompt, revised_prompt, model, size, quality, style, image_url, r2_key,
     content_type, file_size_bytes, width, height, category, tags, title, description,
-    is_public, created_at, updated_at
-  ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`).bind(
+    is_public, created_by, created_at, updated_at
+  ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`).bind(
     newId, prompt, null, editModel, size, 'standard', 'vivid', imageUrl, r2Key,
     'image/png', newImageBytes.byteLength, dims.width, dims.height,
     record.category || 'generated', record.tags || '[]', record.title || null, null,
-    0, now, now,
+    0, createdBy(access), now, now,
   ).run()
 
   return json({
@@ -1937,7 +2015,7 @@ function base64ToBytes(base64: string): Uint8Array {
   return bytes
 }
 
-async function upscaleImage(pathname: string, request: Request, env: Env): Promise<Response> {
+async function upscaleImage(pathname: string, request: Request, env: Env, access: GenerationAccessContext): Promise<Response> {
   const id = pathname.replace('/v1/generation/images/', '').replace('/upscale', '')
   if (!isSafeId(id)) return apiError('invalid_image_id', 'Image id is invalid.', 400)
   if (!env.OPENAI_API_KEY) return apiError('openai_not_configured', 'OpenAI is not configured.', 503)
@@ -1954,9 +2032,10 @@ async function upscaleImage(pathname: string, request: Request, env: Env): Promi
   const removeBackground = typeof body.removeBackground === 'boolean' ? body.removeBackground : true
 
   const record = await env.GENERATION_DB.prepare(
-    'SELECT id, r2_key, prompt, category, tags, title FROM generated_images WHERE id = ? LIMIT 1',
-  ).bind(id).first<{ id: string; r2_key: string; prompt: string; category: string; tags: string; title: string | null }>()
+    'SELECT id, r2_key, prompt, category, tags, title, created_by FROM generated_images WHERE id = ? LIMIT 1',
+  ).bind(id).first<{ id: string; r2_key: string; prompt: string; category: string; tags: string; title: string | null; created_by: string | null }>()
   if (!record) return apiError('image_not_found', 'Image not found.', 404)
+  if (!canMutateOwnedRecord(access, record)) return forbiddenOrUnauthorized(access)
 
   const object = await env.GENERATED_MEDIA_BUCKET.get(record.r2_key)
   if (!object) return apiError('image_not_found', 'Image not found in storage.', 404)
@@ -2023,12 +2102,12 @@ async function upscaleImage(pathname: string, request: Request, env: Env): Promi
   await env.GENERATION_DB.prepare(`INSERT INTO generated_images (
     id, prompt, revised_prompt, model, size, quality, style, image_url, r2_key,
     content_type, file_size_bytes, width, height, category, tags, title, description,
-    is_public, is_preview, created_at, updated_at
-  ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`).bind(
+    is_public, is_preview, created_by, created_at, updated_at
+  ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`).bind(
     newId, record.prompt, null, model, size, quality, 'tiko-v2', imageUrl, r2Key,
     'image/png', newImageBytes.byteLength, dims.width, dims.height,
     record.category || 'generated', record.tags || '[]', record.title || null, null,
-    0, 0, now, now,
+    0, 0, createdBy(access), now, now,
   ).run()
 
   return json({
@@ -2050,15 +2129,16 @@ async function upscaleImage(pathname: string, request: Request, env: Env): Promi
   }, 201)
 }
 
-async function deleteImage(pathname: string, env: Env): Promise<Response> {
+async function deleteImage(pathname: string, env: Env, access: GenerationAccessContext): Promise<Response> {
   const id = pathname.replace('/v1/generation/images/', '')
   if (!isSafeId(id)) return apiError('invalid_image_id', 'Image id is invalid.', 400)
 
   const record = await env.GENERATION_DB.prepare(
-    'SELECT r2_key FROM generated_images WHERE id = ? LIMIT 1',
-  ).bind(id).first<{ r2_key: string }>()
+    'SELECT r2_key, created_by FROM generated_images WHERE id = ? LIMIT 1',
+  ).bind(id).first<{ r2_key: string; created_by: string | null }>()
 
   if (!record) return apiError('image_not_found', 'Image not found.', 404)
+  if (!canMutateOwnedRecord(access, record)) return forbiddenOrUnauthorized(access)
 
   await env.GENERATED_MEDIA_BUCKET.delete(record.r2_key).catch(() => null)
   await env.GENERATION_DB.prepare('DELETE FROM generated_images WHERE id = ?').bind(id).run()

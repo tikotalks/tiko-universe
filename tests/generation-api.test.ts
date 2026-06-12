@@ -25,6 +25,7 @@ class MemoryD1 {
   byHash = new Map<string, StoredAudioRecord>()
   byId = new Map<string, StoredAudioRecord>()
   storyDrafts = new Map<string, Record<string, unknown>>()
+  generatedImages = new Map<string, Record<string, unknown>>()
   usageWindows = new Map<string, { request_count: number; unit_count: number }>()
   conflictAudioOnInsert: StoredAudioRecord | null = null
 
@@ -37,12 +38,17 @@ class MemoryD1 {
             return (this.usageWindows.get(key) ?? null) as T | null
           }
           if (sql.includes('WHERE request_hash')) return (this.byHash.get(values[0] as string) ?? null) as T | null
+          if (sql.includes('FROM generated_images') && sql.includes('WHERE id')) return (this.generatedImages.get(values[0] as string) ?? null) as T | null
           if (sql.includes('FROM story_drafts') && sql.includes('WHERE id')) return (this.storyDrafts.get(values[0] as string) ?? null) as T | null
           if (sql.includes('WHERE id')) return (this.byId.get(values[0] as string) ?? null) as T | null
           return null
         },
         all: async <T>() => {
-          if (sql.includes('FROM story_drafts')) return { results: Array.from(this.storyDrafts.values()) as T[] }
+          if (sql.includes('FROM story_drafts')) {
+            let drafts = Array.from(this.storyDrafts.values())
+            if (sql.includes('created_by = ?')) drafts = drafts.filter((draft) => draft.created_by === values[0])
+            return { results: drafts as T[] }
+          }
           return { results: [] as T[] }
         },
         run: async () => {
@@ -58,8 +64,9 @@ class MemoryD1 {
               status: values[7],
               chapters: values[8],
               settings: values[9],
-              created_at: values[10],
-              updated_at: values[11],
+              created_by: values[10],
+              created_at: values[11],
+              updated_at: values[12],
             }
             this.storyDrafts.set(record.id as string, record)
             return { success: true, meta: { changes: 1 } }
@@ -74,6 +81,17 @@ class MemoryD1 {
           }
           if (sql.includes('INSERT INTO generated_images')) {
             return { success: true, meta: { changes: 1 } }
+          }
+          if (sql.includes('UPDATE generated_images')) {
+            const id = values.at(-1) as string
+            const existing = this.generatedImages.get(id)
+            if (!existing) return { success: true, meta: { changes: 0 } }
+            this.generatedImages.set(id, { ...existing, updated_at: values[0] })
+            return { success: true, meta: { changes: 1 } }
+          }
+          if (sql.includes('DELETE FROM generated_images')) {
+            const deleted = this.generatedImages.delete(values[0] as string)
+            return { success: true, meta: { changes: deleted ? 1 : 0 } }
           }
           if (sql.includes('INSERT OR IGNORE INTO generated_audio') && this.conflictAudioOnInsert) {
             this.byHash.set(this.conflictAudioOnInsert.request_hash, this.conflictAudioOnInsert)
@@ -158,6 +176,21 @@ function generationPost(path: string, body: unknown): Request {
     headers: authHeaders({ 'content-type': 'application/json' }),
     body: JSON.stringify(body),
   })
+}
+
+function sessionIdentityService(usersByToken: Record<string, string>) {
+  return {
+    fetch: vi.fn(async (_input: Request | string, init?: RequestInit) => {
+      const authorization = new Headers(init?.headers).get('authorization') ?? ''
+      const token = authorization.replace(/^Bearer\s+/i, '')
+      const userId = usersByToken[token]
+      if (!userId) return new Response(JSON.stringify({ error: { code: 'unauthorized' } }), { status: 401 })
+      return new Response(JSON.stringify({ subject: { id: userId } }), {
+        status: 200,
+        headers: { 'content-type': 'application/json' },
+      })
+    }),
+  }
 }
 
 async function sha256HexForTest(value: string): Promise<string> {
@@ -401,6 +434,72 @@ describe('generation-api TTS contract', () => {
     expect(createDraft.status).toBe(201)
     expect(draftBody.data).toMatchObject({ title: 'The Mountain', coverMediaId: 'cover_1', targetAlbumId: 'album_1', defaultVoice: '21m00Tcm4TlvDq8ikWAM' })
     expect(draftBody.data.chapters).toHaveLength(2)
+  })
+
+  it('scopes story draft lists to the authenticated session owner', async () => {
+    const identity = sessionIdentityService({ 'token-a': 'user_a', 'token-b': 'user_b' })
+    const env = makeEnv({ API_KEYS: undefined, IDENTITY_SERVICE: identity } as Partial<Env>)
+
+    for (const [token, title] of [['token-a', 'Owner A'], ['token-b', 'Owner B']] as const) {
+      const response = await worker.fetch(new Request('https://api.test/v1/generation/story-drafts', {
+        method: 'POST',
+        headers: { authorization: `Bearer ${token}`, 'content-type': 'application/json' },
+        body: JSON.stringify({ title }),
+      }), env)
+      expect(response.status).toBe(201)
+    }
+
+    const ownerList = await worker.fetch(new Request('https://api.test/v1/generation/story-drafts', {
+      headers: { authorization: 'Bearer token-a' },
+    }), env)
+    const body = await json(ownerList)
+
+    expect(ownerList.status).toBe(200)
+    expect(body.data.map((draft: Record<string, unknown>) => draft.title)).toEqual(['Owner A'])
+  })
+
+  it('protects private image binaries and mutations by owner', async () => {
+    const identity = sessionIdentityService({ 'token-a': 'user_a', 'token-b': 'user_b' })
+    const env = makeEnv({ API_KEYS: undefined, IDENTITY_SERVICE: identity } as Partial<Env>)
+    env.db.generatedImages.set('image_private', {
+      id: 'image_private',
+      r2_key: 'images/private.png',
+      content_type: 'image/png',
+      is_public: 0,
+      created_by: 'user_a',
+    })
+    env.bucket.objects.set('images/private.png', {
+      body: new Uint8Array([1, 2, 3]).buffer,
+      httpMetadata: { contentType: 'image/png' },
+    })
+
+    const unauthenticated = await worker.fetch(new Request('https://api.test/v1/generation/images/image_private/binary'), env)
+    expect(unauthenticated.status).toBe(401)
+
+    const otherBinary = await worker.fetch(new Request('https://api.test/v1/generation/images/image_private/binary', {
+      headers: { authorization: 'Bearer token-b' },
+    }), env)
+    expect(otherBinary.status).toBe(403)
+
+    const ownerBinary = await worker.fetch(new Request('https://api.test/v1/generation/images/image_private/binary', {
+      headers: { authorization: 'Bearer token-a' },
+    }), env)
+    expect(ownerBinary.status).toBe(200)
+    expect(new Uint8Array(await ownerBinary.arrayBuffer())).toEqual(new Uint8Array([1, 2, 3]))
+
+    const otherDelete = await worker.fetch(new Request('https://api.test/v1/generation/images/image_private', {
+      method: 'DELETE',
+      headers: { authorization: 'Bearer token-b' },
+    }), env)
+    expect(otherDelete.status).toBe(403)
+    expect(env.db.generatedImages.has('image_private')).toBe(true)
+
+    const ownerDelete = await worker.fetch(new Request('https://api.test/v1/generation/images/image_private', {
+      method: 'DELETE',
+      headers: { authorization: 'Bearer token-a' },
+    }), env)
+    expect(ownerDelete.status).toBe(200)
+    expect(env.db.generatedImages.has('image_private')).toBe(false)
   })
 
   it('routes image generation through Atlas and stores the returned asset locally', async () => {
