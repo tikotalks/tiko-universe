@@ -5,6 +5,7 @@ import {
   TikoAppHeader,
   TikoAppShell,
   TikoChoiceGrid,
+  TikoSettingsPanel,
   createTikoChoice,
   createTikoTtsClient,
   tikoAppColors,
@@ -81,6 +82,31 @@ describe('TikoKit component contract', () => {
     expect(wrapper.get('.tiko-app-shell').attributes('data-app-color')).toBe('yes-no')
     expect(wrapper.get('[data-test="tiko-shell-title"]').text()).toBe('Yes No')
     expect(wrapper.get('[data-test="content"]').text()).toBe('Ready')
+  })
+
+  it('renders translated settings copy and normalizes invalid color modes', () => {
+    const wrapper = mount(TikoSettingsPanel, {
+      props: {
+        language: 'mt',
+        colorMode: 'sepia' as never,
+        labels: {
+          settings: 'Impostazzjonijiet',
+          appPreferences: 'Lingwa, dehra u preferenzi tal-app.',
+          appearance: 'Dehra',
+          language: 'Lingwa',
+          colorMode: 'Mod tal-kulur',
+          light: 'Car',
+          dark: 'Skur',
+          system: 'Sistema',
+        },
+        languages: [{ value: 'mt', nativeLabel: 'Malti' }],
+      },
+    })
+
+    expect(wrapper.get('.tiko-settings-panel__title').text()).toBe('Impostazzjonijiet')
+    expect(wrapper.get('.tiko-settings-panel__subtitle').text()).toBe('Lingwa, dehra u preferenzi tal-app.')
+    expect(wrapper.get('[data-test="tiko-settings-language"]').text()).toContain('Malti')
+    expect(wrapper.emitted('update:colorMode')).toEqual([['system']])
   })
 
   it('emits answer when an answer button is tapped', async () => {
