@@ -19,7 +19,7 @@ The most urgent work is to lock down Atlas/generation/sentence/media/identity, i
   - Add per-session/per-key rate limits for high-cost capabilities.
   - Block/limit `data.fetch` SSRF behavior.
 
-- [ ] Fix sentence-api saved-phrase IDOR.
+- [x] Fix sentence-api saved-phrase IDOR.
   - Resolve the authenticated session first.
   - Reject caller-supplied `userId` unless it matches the session subject or an authorized managed child.
   - Cover read, write, delete, and autosave phrase endpoints.

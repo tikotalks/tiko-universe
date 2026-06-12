@@ -5,6 +5,7 @@ import type { LanguagePack, PackTemplate, PackWord } from '@tiko/talk-types'
 
 type Row = Record<string, unknown>
 type JsonBody = Record<string, any>
+const auth = { authorization: 'Bearer user-token' }
 
 const pack = JSON.parse(readFileSync('workers/sentence-api/data/en-v1.json', 'utf8')) as LanguagePack
 
@@ -177,7 +178,7 @@ class MemoryKVNamespace {
   }
 }
 
-function service(options: { ttsOk?: boolean, roles?: string[] } = {}) {
+function service(options: { ttsOk?: boolean, roles?: string[], subjectId?: string, childAccounts?: Array<{ id: string, subjectId?: string }> } = {}) {
   return {
     fetch: async (request: Request) => {
       const url = new URL(request.url)
@@ -185,7 +186,10 @@ function service(options: { ttsOk?: boolean, roles?: string[] } = {}) {
         if (options.ttsOk === false) return new Response(JSON.stringify({ error: { code: 'provider_unavailable' } }), { status: 503, headers: { 'content-type': 'application/json' } })
         return new Response(JSON.stringify({ data: { audioUrl: '/v1/generation/audio/test-audio' }, meta: { cached: true } }), { status: 200, headers: { 'content-type': 'application/json' } })
       }
-      return new Response(JSON.stringify({ subject: { id: 'sub_from_service' }, roles: options.roles ?? ['user'] }), { headers: { 'content-type': 'application/json' } })
+      if (url.pathname === '/v1/identity/child-accounts') {
+        return new Response(JSON.stringify({ childAccounts: options.childAccounts ?? [] }), { headers: { 'content-type': 'application/json' } })
+      }
+      return new Response(JSON.stringify({ subject: { id: options.subjectId ?? 'sub_1' }, roles: options.roles ?? ['user'] }), { headers: { 'content-type': 'application/json' } })
     }
   }
 }
@@ -278,9 +282,9 @@ describe('sentence-api foundation', () => {
   it('returns a D1-backed start payload with saved phrases and caches it', async () => {
     const { testEnv, cache } = env()
     const first = await fetchJson('/v1/sentence/start?locale=en&userId=sub_1', {
-      headers: { origin: 'https://talk.tiko.test' },
+      headers: { origin: 'https://talk.tiko.test', ...auth },
     }, testEnv)
-    const second = await fetchJson('/v1/sentence/start?locale=en&userId=sub_1', {}, testEnv)
+    const second = await fetchJson('/v1/sentence/start?locale=en&userId=sub_1', { headers: auth }, testEnv)
 
     expect(first.response.status).toBe(200)
     expect(first.response.headers.get('access-control-allow-origin')).toBe('https://talk.tiko.test')
@@ -318,7 +322,7 @@ describe('sentence-api foundation', () => {
     const { testEnv, db } = env()
     const { response, body } = await fetchJson('/v1/sentence/complete', {
       method: 'POST',
-      headers: { 'content-type': 'application/json' },
+      headers: { 'content-type': 'application/json', ...auth },
       body: JSON.stringify({ locale: 'en', userId: 'sub_1', wordIds: ['i', 'want', 'water'], autoSave: true }),
     }, testEnv)
 
@@ -363,23 +367,76 @@ describe('sentence-api foundation', () => {
     const anonymous = await fetchJson('/v1/sentence/phrases?locale=en', {}, testEnv)
     expect(anonymous.response.status).toBe(401)
 
-    const listed = await fetchJson('/v1/sentence/phrases?locale=en&userId=sub_1', {}, testEnv)
+    const listed = await fetchJson('/v1/sentence/phrases?locale=en&userId=sub_1', { headers: auth }, testEnv)
     expect(listed.response.status).toBe(200)
     expect(listed.body.phrases[0]).toMatchObject({ id: 'phrase_1', sentence: 'I want water.' })
 
     const saved = await fetchJson('/v1/sentence/phrases', {
       method: 'POST',
-      headers: { 'content-type': 'application/json' },
+      headers: { 'content-type': 'application/json', ...auth },
       body: JSON.stringify({ locale: 'en', userId: 'sub_1', wordIds: ['i', 'want', 'juice'], label: 'Juice' }),
     }, testEnv)
     expect(saved.response.status).toBe(201)
     expect(saved.body.phrase).toMatchObject({ sentence: 'I want juice.', label: 'Juice', usageCount: 1 })
     expect(db.phrases.some((phrase) => phrase.id === saved.body.phrase.id && phrase.subject_id === 'sub_1')).toBe(true)
 
-    const deleted = await fetchJson(`/v1/sentence/phrases/${saved.body.phrase.id}?locale=en&userId=sub_1`, { method: 'DELETE' }, testEnv)
+    const deleted = await fetchJson(`/v1/sentence/phrases/${saved.body.phrase.id}?locale=en&userId=sub_1`, { method: 'DELETE', headers: auth }, testEnv)
     expect(deleted.response.status).toBe(200)
     expect(deleted.body).toEqual({ deleted: true })
     expect(db.phrases.some((phrase) => phrase.id === saved.body.phrase.id)).toBe(false)
+  })
+
+  it('rejects caller-supplied user ids that do not belong to the session', async () => {
+    const { testEnv, db } = env()
+    db.phrases.push({
+      id: 'phrase_other',
+      subject_id: 'sub_other',
+      locale: 'en',
+      sentence: 'Other phrase.',
+      word_ids_json: JSON.stringify(['i']),
+      is_auto: 0,
+      usage_count: 1,
+      label: null,
+    })
+
+    const listed = await fetchJson('/v1/sentence/phrases?locale=en&userId=sub_other', { headers: auth }, testEnv)
+    const saved = await fetchJson('/v1/sentence/phrases', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json', ...auth },
+      body: JSON.stringify({ locale: 'en', userId: 'sub_other', wordIds: ['i'] }),
+    }, testEnv)
+    const completed = await fetchJson('/v1/sentence/complete', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json', ...auth },
+      body: JSON.stringify({ locale: 'en', userId: 'sub_other', wordIds: ['i'], autoSave: true }),
+    }, testEnv)
+    const deleted = await fetchJson('/v1/sentence/phrases/phrase_other?locale=en&userId=sub_other', { method: 'DELETE', headers: auth }, testEnv)
+
+    expect(listed.response.status).toBe(403)
+    expect(saved.response.status).toBe(403)
+    expect(completed.response.status).toBe(403)
+    expect(deleted.response.status).toBe(403)
+    expect(db.phrases.some((phrase) => phrase.id === 'phrase_other')).toBe(true)
+  })
+
+  it('allows a profile manager session to access managed child phrases', async () => {
+    const { testEnv, db } = env()
+    testEnv.IDENTITY_SERVICE = service({ subjectId: 'manager_1', childAccounts: [{ id: 'child_1', subjectId: 'child_1' }] })
+    db.phrases.push({
+      id: 'phrase_child',
+      subject_id: 'child_1',
+      locale: 'en',
+      sentence: 'Child phrase.',
+      word_ids_json: JSON.stringify(['i']),
+      is_auto: 0,
+      usage_count: 1,
+      label: null,
+    })
+
+    const listed = await fetchJson('/v1/sentence/phrases?locale=en&userId=child_1', { headers: auth }, testEnv)
+
+    expect(listed.response.status).toBe(200)
+    expect(listed.body.phrases[0]).toMatchObject({ id: 'phrase_child', sentence: 'Child phrase.' })
   })
 
   it('rejects unknown words and returns JSON 404/method errors', async () => {

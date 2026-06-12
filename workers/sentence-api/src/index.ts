@@ -101,6 +101,11 @@ interface PhraseRow {
   label: string | null
 }
 
+interface IdentityContext {
+  subjectId: string
+  authorization: string
+}
+
 const DEFAULT_ALLOWED_ORIGINS = [
   'https://talk.tikoapps.org',
   'https://dev.talk.tikoapps.org',
@@ -948,21 +953,55 @@ async function run(statement: D1PreparedStatement): Promise<D1Result> {
 }
 
 async function resolveSubjectId(request: Request, env: Env, explicitSubjectId?: string | null): Promise<string | null> {
-  if (explicitSubjectId?.trim()) return explicitSubjectId.trim()
+  const requestedSubjectId = explicitSubjectId?.trim() || null
   const auth = request.headers.get('Authorization')
-  if (!auth?.startsWith('Bearer ')) return null
+  if (!auth || !/^Bearer\s+\S+/i.test(auth)) {
+    if (requestedSubjectId) throw new HttpError(401, 'identity_required', 'A Tiko identity session is required for this user id.', 'Authorization')
+    return null
+  }
 
   // Identity improves saved-phrase personalization, but Talk must not have a login wall.
-  // If the service binding is unavailable or returns an unexpected shape, continue anonymous.
+  // If the service binding is unavailable or returns an unexpected shape, continue anonymous
+  // only when the caller did not ask for user-scoped data.
+  const identity = await resolveIdentityContext(env, auth)
+  if (!identity) {
+    if (requestedSubjectId) throw new HttpError(401, 'identity_required', 'A valid Tiko identity session is required for this user id.', 'Authorization')
+    return null
+  }
+
+  if (!requestedSubjectId || requestedSubjectId === identity.subjectId) return requestedSubjectId ?? identity.subjectId
+  if (await canAccessManagedChild(env, identity, requestedSubjectId)) return requestedSubjectId
+  throw new HttpError(403, 'subject_forbidden', 'The authenticated identity cannot access this subject.', 'userId')
+}
+
+async function resolveIdentityContext(env: Env, authorization: string): Promise<IdentityContext | null> {
   try {
     const response = await env.IDENTITY_SERVICE.fetch(new Request('https://identity.internal/v1/identity/me', {
-      headers: { Authorization: auth },
+      headers: { Authorization: authorization },
     }))
     if (!response.ok) return null
     const body = await response.json() as { subject?: { id?: string }, data?: { userId?: string, subjectId?: string } }
-    return body.subject?.id ?? body.data?.subjectId ?? body.data?.userId ?? null
+    const subjectId = body.subject?.id ?? body.data?.subjectId ?? body.data?.userId ?? null
+    return subjectId ? { subjectId, authorization } : null
   } catch {
     return null
+  }
+}
+
+async function canAccessManagedChild(env: Env, identity: IdentityContext, requestedSubjectId: string): Promise<boolean> {
+  try {
+    const response = await env.IDENTITY_SERVICE.fetch(new Request('https://identity.internal/v1/identity/child-accounts', {
+      headers: { Authorization: identity.authorization },
+    }))
+    if (!response.ok) return false
+    const body = await response.json() as {
+      childAccounts?: Array<{ id?: string, subjectId?: string }>
+      data?: { childAccounts?: Array<{ id?: string, subjectId?: string }> }
+    }
+    const childAccounts = body.childAccounts ?? body.data?.childAccounts ?? []
+    return childAccounts.some((child) => child.subjectId === requestedSubjectId || child.id === requestedSubjectId)
+  } catch {
+    return false
   }
 }
 
