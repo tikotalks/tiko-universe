@@ -227,6 +227,7 @@ export const tikoOpenIcons: TikoOpenIconOption[] = [
 export function tikoNormalizeOpenIcon(icon: string | undefined): string {
   if (!icon) return ''
   if (icon.includes('/')) return icon
+  if (import.meta.env?.DEV) console.warn(`[tiko] Unknown icon "${icon}" rewritten to "ui/question-mark-fat"`)
   return 'ui/question-mark-fat'
 }
 
@@ -267,7 +268,7 @@ function createBrowserFallback(fallbackUsed = false, error?: string): TikoTtsRes
 }
 
 export function createTikoTtsClient(options: TikoTtsClientOptions = {}) {
-  const workerUrl = normalizeBaseUrl(options.workerUrl ?? 'https://tiko-atlas-api-dev.silvandiepen.workers.dev/v1')
+  const workerUrl = normalizeBaseUrl(options.workerUrl ?? 'https://api.tikotalks.com/v1')
   const cdnUrl = normalizeBaseUrl(options.cdnUrl ?? 'https://tts.tikocdn.org')
   const fetcher = options.fetcher ?? globalThis.fetch
   const memoryCache = new Map<string, TikoTtsResponse>()
@@ -361,7 +362,7 @@ export function createTikoTtsClient(options: TikoTtsClientOptions = {}) {
 
       const data = await response.json()
       const normalized = normalizeTtsResponse(data)
-      memoryCache.set(key, normalized)
+      if (normalized.success && normalized.audioUrl) memoryCache.set(key, normalized)
       return normalized
     } catch (error) {
       return createBrowserFallback(true, error instanceof Error ? error.message : 'tts_fetch_failed')
@@ -521,14 +522,14 @@ export const TikoOpenIconPicker = defineComponent({
   },
   emits: ['update:modelValue'],
   setup(props, { emit }) {
-    return () => h('div', { class: 'tiko-open-icon-picker', role: 'listbox', 'aria-label': 'Open icons' }, props.icons.map(icon =>
+    return () => h('div', { class: 'tiko-open-icon-picker', 'aria-label': 'Open icons' }, props.icons.map(icon =>
       h('button', {
         key: icon.name,
         type: 'button',
         class: ['tiko-open-icon-picker__item', tikoNormalizeOpenIcon(props.modelValue) === icon.name ? 'tiko-open-icon-picker__item--active' : ''],
         title: icon.label,
         'aria-label': icon.label,
-        'aria-selected': tikoNormalizeOpenIcon(props.modelValue) === icon.name ? 'true' : 'false',
+        'aria-pressed': tikoNormalizeOpenIcon(props.modelValue) === icon.name ? 'true' : 'false',
         onClick: () => emit('update:modelValue', tikoNormalizeOpenIcon(props.modelValue) === icon.name ? '' : icon.name),
       }, [h(Icon, { name: icon.name, size: 'medium', 'aria-hidden': 'true' })])
     ))
@@ -553,17 +554,22 @@ export const TikoAppHeader = defineComponent({
   setup(props, { emit }) {
     const mediaIconUrl = ref('')
 
+    let mediaIconSeq = 0
+
     async function resolveMediaIcon() {
+      const seq = ++mediaIconSeq
       mediaIconUrl.value = ''
       if (!props.appIconMediaCategory || typeof fetch === 'undefined') return
       const storageKey = `tiko:app-icon:${props.appColor}:${props.appIconMediaCategory}`
       try {
         const stored = typeof localStorage !== 'undefined' ? localStorage.getItem(storageKey) : ''
         if (stored) {
+          if (seq !== mediaIconSeq) return
           mediaIconUrl.value = stored
           return
         }
         const url = await fetchTikoMediaIcon(props.appIconMediaCategory)
+        if (seq !== mediaIconSeq) return
         if (url) {
           mediaIconUrl.value = url
           if (typeof localStorage !== 'undefined') localStorage.setItem(storageKey, url)
@@ -588,7 +594,7 @@ export const TikoAppHeader = defineComponent({
         h('span', { class: 'tiko-app-header__title', 'data-test': 'tiko-shell-title', onClick: () => emit('title-click') }, props.appName)
       ]),
       h('div', { class: 'tiko-app-header__actions' }, [
-        ...(props.showSettingsButton ? props.actions : []).filter(a => a.visible !== false).map(action => h(Button, {
+        ...props.actions.filter(a => a.visible !== false && (props.showSettingsButton || a.id !== 'settings')).map(action => h(Button, {
           class: ['tiko-app-header__action', action.active ? 'tiko-app-header__action--active' : '', action.round ? 'tiko-app-header__action--round' : ''],
           variant: 'ghost',
           iconOnly: true,

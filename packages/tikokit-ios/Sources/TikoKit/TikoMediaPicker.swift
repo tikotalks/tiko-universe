@@ -1,11 +1,21 @@
 import SwiftUI
 import PhotosUI
 
+public struct TikoMediaSelection: Sendable {
+    public let id: String?
+    public let url: URL
+
+    public init(id: String?, url: URL) {
+        self.id = id
+        self.url = url
+    }
+}
+
 /// Reusable media picker sheet — search the Tiko media library or upload from device.
 public struct TikoMediaPickerSheet: View {
     private let appColor: TikoAppColor
     private let title: String
-    private let onSelect: (URL) -> Void
+    private let onSelect: (TikoMediaSelection) -> Void
     private let onClose: () -> Void
 
     @State private var query = ""
@@ -25,7 +35,19 @@ public struct TikoMediaPickerSheet: View {
     ) {
         self.appColor = appColor
         self.title = title
-        self.onSelect = onSelect
+        self.onSelect = { onSelect($0.url) }
+        self.onClose = onClose
+    }
+
+    public init(
+        appColor: TikoAppColor,
+        title: String = "Choose image",
+        onSelectMedia: @escaping (TikoMediaSelection) -> Void,
+        onClose: @escaping () -> Void
+    ) {
+        self.appColor = appColor
+        self.title = title
+        self.onSelect = onSelectMedia
         self.onClose = onClose
     }
 
@@ -106,7 +128,7 @@ public struct TikoMediaPickerSheet: View {
                         ) {
                             ForEach(results) { item in
                                 Button {
-                                    onSelect(item.url)
+                                    onSelect(TikoMediaSelection(id: item.id, url: item.url))
                                     onClose()
                                 } label: {
                                     TikoCachedRemoteImage(url: thumbnailURL(item.url)) {
@@ -199,7 +221,7 @@ public struct TikoMediaPickerSheet: View {
         let fileURL = cacheDir.appendingPathComponent(filename)
 
         guard (try? jpeg.write(to: fileURL)) != nil else { return }
-        onSelect(fileURL)
+        onSelect(TikoMediaSelection(id: nil, url: fileURL))
         onClose()
     }
 
@@ -226,6 +248,22 @@ public extension View {
                 appColor: appColor,
                 title: title,
                 onSelect: onSelect,
+                onClose: { isPresented.wrappedValue = false }
+            )
+        }
+    }
+
+    func tikoMediaPickerPopup(
+        isPresented: Binding<Bool>,
+        appColor: TikoAppColor,
+        title: String = "Choose image",
+        onSelectMedia: @escaping (TikoMediaSelection) -> Void
+    ) -> some View {
+        tikoPopup(isPresented: isPresented) {
+            TikoMediaPickerSheet(
+                appColor: appColor,
+                title: title,
+                onSelectMedia: onSelectMedia,
                 onClose: { isPresented.wrappedValue = false }
             )
         }

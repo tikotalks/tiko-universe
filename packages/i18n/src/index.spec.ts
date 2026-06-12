@@ -47,7 +47,7 @@ describe('@tiko/i18n fallback contract', () => {
     expect(i18n.t(tikoI18nKeys.yesNo.answers.yes)).toBe('Ja')
     expect(i18n.t(tikoI18nKeys.yesNo.answers.no)).toBe('Nee')
     expect(i18n.t('yesNo.missing.futureKey')).toBe('yesNo.missing.futureKey')
-    expect(i18n.missingKeys()).toEqual(['yesNo.missing.futureKey'])
+    expect(i18n.missingKeys()).toEqual(['nl:yesNo.missing.futureKey'])
   })
 
   it('switches language without rebuilding consumers and applies parameter interpolation', () => {

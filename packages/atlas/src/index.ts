@@ -9,11 +9,14 @@ export type {
   AtlasImageResponse,
   AtlasMeta,
   AtlasProvider,
+  AtlasProviderStatus,
+  AtlasProviderUsageSummary,
   AtlasRunRequest,
   AtlasRunResponse,
   AtlasSpeechRequest,
   AtlasSpeechResponse,
   AtlasTextRequest,
   AtlasTextResponse,
+  AtlasUsageRow,
 } from './types'
 export { AtlasClientError } from './types'

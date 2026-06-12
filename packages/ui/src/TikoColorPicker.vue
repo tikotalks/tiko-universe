@@ -54,6 +54,7 @@ function hexColor(value: number) {
         :class="bemm('swatch', { active: color.value === modelValue })"
         :style="{ backgroundColor: color.color }"
         :aria-label="color.label"
+        :aria-pressed="color.value === modelValue ? 'true' : 'false'"
         @click="emit('update:modelValue', color.value)"
       />
     </div>

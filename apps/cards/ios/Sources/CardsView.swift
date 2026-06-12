@@ -173,7 +173,7 @@ struct CardsView: View {
                                             ZStack(alignment: .topTrailing) {
                                                 SubCollectionTile(
                                                     collection: collection,
-                                                    thumbnailURL: collection.imageURL ?? store.collectionThumbnails[collection.id],
+                                                    thumbnailURL: store.imageURL(for: collection),
                                                     labelFont: labelFont
                                                 )
                                                 .scaleEffect(isEditing ? 0.92 : 1.0)
@@ -185,7 +185,7 @@ struct CardsView: View {
                                                         } preview: {
                                                             SubCollectionTile(
                                                                 collection: collection,
-                                                                thumbnailURL: collection.imageURL ?? store.collectionThumbnails[collection.id]
+                                                                thumbnailURL: store.imageURL(for: collection)
                                                             )
                                                             .frame(width: 96, height: 96)
                                                             .shadow(color: .black.opacity(0.22), radius: 14, x: 0, y: 8)
@@ -512,7 +512,7 @@ private struct SubCollectionTile: View {
         VStack(spacing: 0) {
             ZStack {
                 cardColor(collection.color)
-                if let url = thumbnailURL ?? collection.imageURL {
+                if let url = thumbnailURL {
                     CachedCardImage(url: url)
                 }
             }
@@ -614,7 +614,7 @@ private struct CollectionDetailView: View {
                                     ZStack(alignment: .topTrailing) {
                                         SubCollectionTile(
                                             collection: sub,
-                                            thumbnailURL: sub.imageURL ?? store.collectionThumbnails[sub.id],
+                                            thumbnailURL: store.imageURL(for: sub),
                                             labelFont: labelFont
                                         )
                                         .scaleEffect(isEditing ? 0.92 : 1.0)
@@ -660,6 +660,7 @@ private struct CollectionDetailView: View {
                                     ZStack(alignment: .topTrailing) {
                                         CommunicationCardTile(
                                             card: card,
+                                            imageURL: store.imageURL(for: card),
                                             isSpeaking: speakingCardID == card.id,
                                             isEditing: isEditing,
                                             labelFont: labelFont,
@@ -674,6 +675,7 @@ private struct CollectionDetailView: View {
                                                 } preview: {
                                                     CommunicationCardTile(
                                                         card: card,
+                                                        imageURL: store.imageURL(for: card),
                                                         isSpeaking: false,
                                                         isEditing: false,
                                                         onSpeak: {}
@@ -827,7 +829,7 @@ private struct CollectionDetailView: View {
             )
         }
         .sheet(item: $fullscreenCard) { card in
-            FullscreenCardView(card: card) { fullscreenCard = nil }
+            FullscreenCardView(card: card, imageURL: store.imageURL(for: card)) { fullscreenCard = nil }
                 .presentationDetents([.large])
                 .presentationDragIndicator(.hidden)
         }
@@ -1006,6 +1008,7 @@ private struct BulkColorSheet: View {
 
 private struct CommunicationCardTile: View {
     let card: CommunicationCard
+    let imageURL: URL?
     let isSpeaking: Bool
     let isEditing: Bool
     let labelFont: Font
@@ -1013,12 +1016,14 @@ private struct CommunicationCardTile: View {
 
     init(
         card: CommunicationCard,
+        imageURL: URL?,
         isSpeaking: Bool,
         isEditing: Bool,
         labelFont: Font = Font.system(.caption, design: .rounded).weight(.heavy),
         onSpeak: @escaping () -> Void
     ) {
         self.card = card
+        self.imageURL = imageURL
         self.isSpeaking = isSpeaking
         self.isEditing = isEditing
         self.labelFont = labelFont
@@ -1033,7 +1038,7 @@ private struct CommunicationCardTile: View {
                 isActive: isSpeaking,
                 labelFont: labelFont
             ) {
-                if let imageURL = card.imageURL {
+                if let imageURL {
                     CachedCardImage(url: imageURL)
                 }
             }
@@ -1079,6 +1084,7 @@ private struct PageDots: View {
 
 private struct FullscreenCardView: View {
     let card: CommunicationCard
+    let imageURL: URL?
     let onClose: () -> Void
     @State private var imageScale: CGFloat = 0.82
     @State private var imageOpacity: CGFloat = 0
@@ -1091,7 +1097,7 @@ private struct FullscreenCardView: View {
             VStack(spacing: 28) {
                 Spacer()
 
-                if let url = card.imageURL {
+                if let url = imageURL {
                     TikoCachedRemoteImage(url: url) {
                         RoundedRectangle(cornerRadius: 32, style: .continuous)
                             .fill(.white.opacity(0.2))
@@ -1311,7 +1317,7 @@ private struct EditCollectionSheet: View {
         self._title = State(initialValue: collection.title)
         self._selectedColor = State(initialValue: collection.color)
         self._selectedParentID = State(initialValue: collection.parentID)
-        self._selectedImageURL = State(initialValue: collection.imageURL)
+        self._selectedImageURL = State(initialValue: store.imageURL(for: collection))
     }
 
     var body: some View {
@@ -1330,7 +1336,6 @@ private struct EditCollectionSheet: View {
                             title: title.isEmpty ? " " : title,
                             color: selectedColor,
                             order: collection.order,
-                            imageURL: selectedImageURL,
                             cards: []
                         ),
                         thumbnailURL: selectedImageURL
@@ -1458,7 +1463,7 @@ private struct EditCardSheet: View {
         self._title = State(initialValue: card.title)
         self._speech = State(initialValue: card.speech)
         self._selectedColor = State(initialValue: card.color)
-        self._selectedImageURL = State(initialValue: card.imageURL)
+        self._selectedImageURL = State(initialValue: store.imageURL(for: card))
     }
 
     var body: some View {
@@ -1476,9 +1481,9 @@ private struct EditCardSheet: View {
                             id: card.id,
                             title: title.isEmpty ? " " : title,
                             speech: speech,
-                            imageURL: selectedImageURL,
                             color: selectedColor
                         ),
+                        imageURL: selectedImageURL,
                         isSpeaking: false,
                         isEditing: false,
                         labelFont: Font.system(.caption, design: .rounded).weight(.heavy),

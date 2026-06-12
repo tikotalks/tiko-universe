@@ -173,6 +173,7 @@ export function createJsonRequest(url: string, options: JsonRequestOptions = {})
 
   const init: RequestInit = {
     ...options,
+    method: options.method ?? (options.json !== undefined ? 'POST' : options.method),
     headers,
     body: options.json !== undefined ? JSON.stringify(options.json) : options.body,
   }
@@ -286,27 +287,28 @@ function createStatement(sql: string, handlers: D1Handler[], history: D1Executio
     },
     async first<T>() {
       const handler = findHandler()
+      history.push({ sql, values: [...values], meta: {} })
       if (!handler) {
         if (strict) throw new Error(`Unhandled D1 SQL in mock: ${sql}`)
         return null
       }
       const rows = typeof handler.rows === 'function' ? handler.rows(context()) : handler.rows ?? []
-      history.push({ sql, values: [...values], meta: {} })
       return (rows[0] as T | undefined) ?? null
     },
     async all<T>() {
       const handler = findHandler()
+      history.push({ sql, values: [...values], meta: {} })
       if (!handler) {
         if (strict) throw new Error(`Unhandled D1 SQL in mock: ${sql}`)
         return { results: [] as T[], success: true, meta: {} }
       }
       const rows = typeof handler.rows === 'function' ? handler.rows(context()) : handler.rows ?? []
-      history.push({ sql, values: [...values], meta: {} })
       return { results: rows as T[], success: true, meta: {} }
     },
     async run() {
       const handler = findHandler()
       if (!handler) {
+        history.push({ sql, values: [...values], meta: {} })
         if (strict) throw new Error(`Unhandled D1 SQL in mock: ${sql}`)
         return { results: [], success: true, meta: {} }
       }
@@ -329,13 +331,13 @@ async function safeJsonFromText(response: Response): Promise<unknown> {
 }
 
 function createR2Object(value: ArrayBuffer | Uint8Array | string, httpMetadata?: MockR2Object['httpMetadata']): MockR2Object {
-  const bytes = toUint8Array(value)
-  const body = copyArrayBuffer(bytes)
+  const snapshot = toUint8Array(value).slice()
+  const body = copyArrayBuffer(snapshot)
   return {
     body,
     httpMetadata,
     async arrayBuffer() {
-      return copyArrayBuffer(bytes)
+      return copyArrayBuffer(snapshot)
     },
   }
 }

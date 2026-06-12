@@ -11,7 +11,7 @@ struct YesNoAnswerTile: Codable, Identifiable, Equatable {
     var labelTranslations: [String: String]?
     var speechTranslations: [String: String]?
     var color: String
-    var imageURL: URL?
+    var imageRef: String?
     var icon: String?
 
     var answerChoice: TikoAnswerChoice {
@@ -22,7 +22,7 @@ struct YesNoAnswerTile: Codable, Identifiable, Equatable {
             icon: .openIcon(icon ?? "ui/check-fat"),
             tone: .primary,
             color: color,
-            imageURL: imageURL
+            imageURL: yesNoImageURL(for: imageRef)
         )
     }
 
@@ -33,7 +33,7 @@ struct YesNoAnswerTile: Codable, Identifiable, Equatable {
         labelTranslations: [String: String]? = nil,
         speechTranslations: [String: String]? = nil,
         color: String,
-        imageURL: URL? = nil,
+        imageRef: String? = nil,
         icon: String? = nil
     ) {
         self.id = id
@@ -42,12 +42,12 @@ struct YesNoAnswerTile: Codable, Identifiable, Equatable {
         self.labelTranslations = labelTranslations
         self.speechTranslations = speechTranslations
         self.color = color
-        self.imageURL = imageURL
+        self.imageRef = imageRef
         self.icon = icon
     }
 
     private enum CodingKeys: String, CodingKey {
-        case id, label, speech, labelTranslations, speechTranslations, color, imageURL, icon
+        case id, label, speech, labelTranslations, speechTranslations, color, imageRef, icon
     }
 
     init(from decoder: Decoder) throws {
@@ -58,7 +58,7 @@ struct YesNoAnswerTile: Codable, Identifiable, Equatable {
         labelTranslations = try container.decodeIfPresent([String: String].self, forKey: .labelTranslations)
         speechTranslations = try container.decodeIfPresent([String: String].self, forKey: .speechTranslations)
         color = try container.decodeIfPresent(String.self, forKey: .color) ?? TikoColors.teal.name
-        imageURL = try container.decodeIfPresent(URL.self, forKey: .imageURL)
+        imageRef = try container.decodeIfPresent(String.self, forKey: .imageRef)
         icon = try container.decodeIfPresent(String.self, forKey: .icon)
     }
 
@@ -70,7 +70,7 @@ struct YesNoAnswerTile: Codable, Identifiable, Equatable {
         try container.encodeIfPresent(labelTranslations, forKey: .labelTranslations)
         try container.encodeIfPresent(speechTranslations, forKey: .speechTranslations)
         try container.encode(color, forKey: .color)
-        try container.encodeIfPresent(imageURL, forKey: .imageURL)
+        try container.encodeIfPresent(imageRef, forKey: .imageRef)
         try container.encodeIfPresent(icon, forKey: .icon)
     }
 }
@@ -80,19 +80,26 @@ struct YesNoAnswerSet: Codable, Identifiable, Equatable {
     var title: String
     var description: String?
     var color: String?
-    var imageURL: URL?
+    var imageRef: String?
     var order: Int
     var answers: [YesNoAnswerTile]
 
-    init(id: String, title: String, description: String? = nil, color: String? = nil, imageURL: URL? = nil, order: Int = 0, answers: [YesNoAnswerTile]) {
+    init(id: String, title: String, description: String? = nil, color: String? = nil, imageRef: String? = nil, order: Int = 0, answers: [YesNoAnswerTile]) {
         self.id = id
         self.title = title
         self.description = description
         self.color = color
-        self.imageURL = imageURL
+        self.imageRef = imageRef
         self.order = order
         self.answers = answers
     }
+}
+
+private let yesNoContentAPIBase = "https://content.tikoapi.org/v1"
+
+private func yesNoImageURL(for imageRef: String?) -> URL? {
+    guard let imageRef else { return nil }
+    return URL(string: "\(yesNoContentAPIBase)/content/images/\(imageRef)")
 }
 
 private let builtInAnswerTranslations: [String: [String: String]] = [
@@ -167,10 +174,8 @@ final class YesNoStore: ObservableObject {
     @Published var defaultSets: [YesNoAnswerSet] = builtInAnswerSets
     @Published var defaultSelectedSetId: String?
 
-    private static let contentAPIBase = "https://content.tikoapi.org/v1"
-
     func fetchDefaults(languageCode: String = "en") async {
-        guard var components = URLComponents(string: "\(Self.contentAPIBase)/yes-no/content") else { return }
+        guard var components = URLComponents(string: "\(yesNoContentAPIBase)/yes-no/content") else { return }
         components.queryItems = [URLQueryItem(name: "language", value: languageCode)]
         guard let url = components.url else { return }
         do {
@@ -865,7 +870,7 @@ private struct TileEditorSheet: View {
     @ViewBuilder
     private func setThumb(_ set: YesNoAnswerSet) -> some View {
         let color = TikoColors.color(named: set.color ?? "") ?? Color(hexString: set.color ?? "") ?? TikoAppColor.yesNo.palette.primary
-        if let imageURL = set.imageURL {
+        if let imageURL = yesNoImageURL(for: set.imageRef) {
             TikoCachedRemoteImage(url: imageURL) { color.opacity(0.18) }
                 .frame(width: 44, height: 44)
                 .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
@@ -880,7 +885,7 @@ private struct TileEditorSheet: View {
         HStack(spacing: 12) {
             let tileColor = TikoColors.color(named: tile.color) ?? Color(hexString: tile.color) ?? TikoAppColor.yesNo.palette.primary
             Group {
-                if let imageURL = tile.imageURL {
+                if let imageURL = yesNoImageURL(for: tile.imageRef) {
                     TikoCachedRemoteImage(url: imageURL) { tileColor.opacity(0.18) }
                 } else {
                     RoundedRectangle(cornerRadius: 10, style: .continuous)
@@ -953,6 +958,7 @@ private struct SetDetailEditView: View {
     @State private var description: String
     @State private var color: String
     @State private var imageURL: URL?
+    @State private var imageRef: String?
     @State private var showingMediaPicker = false
     @Environment(\.dismiss) private var dismiss
 
@@ -962,7 +968,8 @@ private struct SetDetailEditView: View {
         _title = State(initialValue: set.title)
         _description = State(initialValue: set.description ?? "")
         _color = State(initialValue: set.color ?? TikoColors.teal.name)
-        _imageURL = State(initialValue: set.imageURL)
+        _imageRef = State(initialValue: set.imageRef)
+        _imageURL = State(initialValue: yesNoImageURL(for: set.imageRef))
     }
 
     var body: some View {
@@ -976,7 +983,10 @@ private struct SetDetailEditView: View {
                     imagePreview(url: imageURL)
                     Button(imageURL == nil ? "Choose image" : "Change image") { showingMediaPicker = true }
                     if imageURL != nil {
-                        Button("Remove image", role: .destructive) { imageURL = nil }
+                        Button("Remove image", role: .destructive) {
+                            imageRef = nil
+                            imageURL = nil
+                        }
                     }
                 }
                 colorSection
@@ -992,7 +1002,7 @@ private struct SetDetailEditView: View {
                             title: title.isEmpty ? "Set" : title,
                             description: description.isEmpty ? nil : description,
                             color: color,
-                            imageURL: imageURL,
+                            imageRef: imageRef,
                             order: set.order,
                             answers: set.answers
                         ))
@@ -1002,9 +1012,10 @@ private struct SetDetailEditView: View {
                 }
             }
         }
-        .tikoMediaPickerPopup(isPresented: $showingMediaPicker, appColor: .yesNo, title: "Choose set image") { url in
-            imageURL = url
-        }
+        .tikoMediaPickerPopup(isPresented: $showingMediaPicker, appColor: .yesNo, title: "Choose set image", onSelectMedia: { selection in
+            imageRef = selection.id
+            imageURL = selection.id == nil ? nil : selection.url
+        })
     }
 
     private var colorSection: some View {
@@ -1052,6 +1063,7 @@ private struct TileDetailEditView: View {
     @State private var color: String
     @State private var icon: String
     @State private var imageURL: URL?
+    @State private var imageRef: String?
     @State private var showingMediaPicker = false
     @Environment(\.dismiss) private var dismiss
 
@@ -1062,7 +1074,8 @@ private struct TileDetailEditView: View {
         _speech = State(initialValue: tile.speech)
         _color = State(initialValue: tile.color)
         _icon = State(initialValue: tile.icon ?? "")
-        _imageURL = State(initialValue: tile.imageURL)
+        _imageRef = State(initialValue: tile.imageRef)
+        _imageURL = State(initialValue: yesNoImageURL(for: tile.imageRef))
     }
 
     var body: some View {
@@ -1078,6 +1091,7 @@ private struct TileDetailEditView: View {
                     TikoOpenIconPicker(selection: $icon)
                         .onChange(of: icon) { _, newValue in
                             if !newValue.isEmpty {
+                                imageRef = nil
                                 imageURL = nil
                             }
                         }
@@ -1092,7 +1106,10 @@ private struct TileDetailEditView: View {
                     }
                     Button(imageURL == nil ? "Choose image" : "Change image") { showingMediaPicker = true }
                     if imageURL != nil {
-                        Button("Remove image", role: .destructive) { imageURL = nil }
+                        Button("Remove image", role: .destructive) {
+                            imageRef = nil
+                            imageURL = nil
+                        }
                     }
                 }
                 Section("Color") {
@@ -1128,8 +1145,8 @@ private struct TileDetailEditView: View {
                             label: label.isEmpty ? "Answer" : label,
                             speech: speech.isEmpty ? label : speech,
                             color: color,
-                            imageURL: imageURL,
-                            icon: imageURL == nil && !icon.isEmpty ? icon : nil
+                            imageRef: imageRef,
+                            icon: imageRef == nil && !icon.isEmpty ? icon : nil
                         ))
                         dismiss()
                     }
@@ -1137,10 +1154,11 @@ private struct TileDetailEditView: View {
                 }
             }
         }
-        .tikoMediaPickerPopup(isPresented: $showingMediaPicker, appColor: .yesNo, title: "Choose tile image") { url in
-            imageURL = url
+        .tikoMediaPickerPopup(isPresented: $showingMediaPicker, appColor: .yesNo, title: "Choose tile image", onSelectMedia: { selection in
+            imageRef = selection.id
+            imageURL = selection.id == nil ? nil : selection.url
             icon = ""
-        }
+        })
     }
 }
 

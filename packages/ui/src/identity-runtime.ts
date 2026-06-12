@@ -1,4 +1,5 @@
 import { computed, h, inject, markRaw, ref } from 'vue'
+import type { Ref } from 'vue'
 import { Icon, type PopupService } from '@sil/ui'
 import type { IdentityClient, IdentityBundle } from '@tiko/identity'
 import TikoProfileMenu from './TikoProfileMenu.vue'
@@ -11,21 +12,21 @@ import TikoChildAccountsPanel from './TikoChildAccountsPanel.vue'
 
 export interface IdentityRuntimeState {
   /** Current session token (empty when not logged in) */
-  sessionToken: ReturnType<typeof ref<string>>
+  sessionToken: Ref<string>
   /** User ID / display label */
-  userId: ReturnType<typeof ref<string>>
+  userId: Ref<string>
   /** Account email (empty when not recovered) */
-  accountEmail: ReturnType<typeof ref<string>>
+  accountEmail: Ref<string>
   /** Whether the account email has been verified */
-  accountEmailVerified: ReturnType<typeof ref<boolean>>
+  accountEmailVerified: Ref<boolean>
   /** User's display name */
-  displayName: ReturnType<typeof ref<string>>
+  displayName: Ref<string>
   /** Whether parent mode is active (true by default) */
-  parentMode: ReturnType<typeof ref<boolean>>
+  parentMode: Ref<boolean>
   /** Whether child mode has been enabled on the account */
-  childModeEnabled: ReturnType<typeof ref<boolean>>
+  childModeEnabled: Ref<boolean>
   /** Whether a PIN has been configured */
-  pinConfigured: ReturnType<typeof ref<boolean>>
+  pinConfigured: Ref<boolean>
 }
 
 export interface UseIdentityRuntimeOptions {
@@ -222,7 +223,12 @@ const defaultIdentityLabels: TikoIdentityLabels = {
 export function useIdentityRuntime(options: UseIdentityRuntimeOptions) {
   const { identityClient, state, deviceName } = options
   const storageKey = options.storageKey ?? 'tiko:identity:device-session'
-  const popup = inject<PopupService>('popupService')!
+  const popup = inject<PopupService>('popupService')
+
+  function requirePopup(): PopupService {
+    if (!popup) throw new Error('[tiko] popupService not provided — ensure the app provides it via app.provide()')
+    return popup
+  }
 
   const hasParentCode = computed(() => state.pinConfigured.value)
   const labels = computed(() => mergeIdentityLabels(defaultIdentityLabels, options.labels?.() ?? {}))
@@ -279,7 +285,7 @@ export function useIdentityRuntime(options: UseIdentityRuntimeOptions) {
     state.childModeEnabled.value = false
     state.pinConfigured.value = false
     state.parentMode.value = true
-    window.localStorage.removeItem(storageKey)
+    if (typeof window !== 'undefined') window.localStorage.removeItem(storageKey)
   }
 
   // ---- Bootstrap ----
@@ -334,7 +340,6 @@ export function useIdentityRuntime(options: UseIdentityRuntimeOptions) {
   // ---- Avatar click (entry point for profile menu) ----
 
   function handleAvatarClick() {
-    // Graceful no-op when popup provider is absent (test env)
     if (popup == null) return
     if (state.parentMode.value) {
       openProfileMenu()
@@ -346,7 +351,7 @@ export function useIdentityRuntime(options: UseIdentityRuntimeOptions) {
   // ---- Profile menu ----
 
   function openProfileMenu() {
-    popup.showPopup({
+    requirePopup().showPopup({
       component: markRaw(TikoProfileMenu),
       title: '',
       props: {
@@ -359,14 +364,14 @@ export function useIdentityRuntime(options: UseIdentityRuntimeOptions) {
       },
       config: { position: 'center', canClose: true, background: true, width: 'min(34rem, calc(100vw - 2rem))' },
       on: {
-        profile: () => { popup.closeAllPopups(); window.setTimeout(openAccountPopup, 180) },
-        login: () => { popup.closeAllPopups(); window.setTimeout(openAccountPopup, 180) },
+        profile: () => { requirePopup().closeAllPopups(); window.setTimeout(openAccountPopup, 180) },
+        login: () => { requirePopup().closeAllPopups(); window.setTimeout(openAccountPopup, 180) },
         logout: () => void doLogout(),
         'delete-account': () => void deleteCurrentUser(),
         'enter-parent-mode': () => openParentCodePopup(),
         'enter-child-mode': () => openChildModeFlow(),
-        'child-accounts': () => { popup.closeAllPopups(); window.setTimeout(openChildAccounts, 180) },
-        close: () => popup.closeAllPopups(),
+        'child-accounts': () => { requirePopup().closeAllPopups(); window.setTimeout(openChildAccounts, 180) },
+        close: () => requirePopup().closeAllPopups(),
       },
     })
   }
@@ -374,7 +379,7 @@ export function useIdentityRuntime(options: UseIdentityRuntimeOptions) {
   // ---- Account popup (email/OTP/recover) ----
 
   function openAccountPopup() {
-    popup.showPopup({
+    requirePopup().showPopup({
       component: markRaw({
         setup() {
           const nameInput = ref<string>(state.displayName.value ?? '')
@@ -386,7 +391,8 @@ export function useIdentityRuntime(options: UseIdentityRuntimeOptions) {
 
           async function saveAndSendCode() {
             const email = emailInput.value.trim().toLowerCase()
-            if (!state.sessionToken.value || !email.includes('@')) return
+            if (!state.sessionToken.value) { error.value = labels.value.accountPopup.sendError; return }
+            if (!email.includes('@')) return
             loading.value = true
             error.value = ''
             try {
@@ -413,7 +419,7 @@ export function useIdentityRuntime(options: UseIdentityRuntimeOptions) {
               const bundle = await identityClient.verifyOtp(otp)
               saveIdentity(bundle)
               state.accountEmailVerified.value = true
-              popup.closeAllPopups()
+              requirePopup().closeAllPopups()
             } catch {
               error.value = labels.value.accountPopup.verifyError
             } finally {
@@ -435,22 +441,20 @@ export function useIdentityRuntime(options: UseIdentityRuntimeOptions) {
               ]),
               state.accountEmailVerified.value ? h(Icon, { class: 'tiko-account-popup__verified', name: 'ui/check-fat', 'aria-label': labels.value.accountPopup.verified }) : null,
             ]),
-            h('label', { class: 'tiko-account-popup__label' }, labels.value.accountPopup.displayName),
-            h('input', {
+            h('label', { class: 'tiko-account-popup__label' }, [labels.value.accountPopup.displayName, h('input', {
               class: 'tiko-account-popup__field',
               value: nameInput.value,
               placeholder: labels.value.accountPopup.yourName,
               onInput: (event: Event) => { nameInput.value = (event.target as HTMLInputElement).value },
-            }),
-            !state.accountEmailVerified.value ? h('label', { class: 'tiko-account-popup__label' }, labels.value.accountPopup.email) : null,
-            !state.accountEmailVerified.value ? h('input', {
+            })]),
+            !state.accountEmailVerified.value ? h('label', { class: 'tiko-account-popup__label' }, [labels.value.accountPopup.email, h('input', {
               class: 'tiko-account-popup__field',
               type: 'email',
               value: emailInput.value,
               placeholder: labels.value.accountPopup.emailPlaceholder,
               onInput: (event: Event) => { emailInput.value = (event.target as HTMLInputElement).value },
-            }) : null,
-            sent.value ? h('input', {
+            })]) : null,
+            sent.value ? h('label', { class: 'tiko-account-popup__label' }, [labels.value.accountPopup.verifyCode, h('input', {
               class: 'tiko-account-popup__field tiko-account-popup__field--otp',
               inputmode: 'numeric',
               autocomplete: 'one-time-code',
@@ -459,7 +463,7 @@ export function useIdentityRuntime(options: UseIdentityRuntimeOptions) {
               placeholder: labels.value.accountPopup.codePlaceholder,
               onInput: (event: Event) => { codeInput.value = (event.target as HTMLInputElement).value.replace(/\D/g, '').slice(0, 6) },
               onKeydown: (event: KeyboardEvent) => { if (event.key === 'Enter') void verifyCode() },
-            }) : null,
+            })]) : null,
             error.value ? h('p', { class: 'tiko-account-popup__error' }, error.value) : null,
             !state.accountEmailVerified.value ? h('button', {
               class: 'tiko-account-popup__signout tiko-account-popup__primary',
@@ -485,7 +489,7 @@ export function useIdentityRuntime(options: UseIdentityRuntimeOptions) {
     if (!window.confirm(labels.value.accountPopup.deleteConfirm)) return
     try { await identityClient.createDeletionRequest(state.sessionToken.value, { scope: 'account' }) } catch { /* local cleanup still makes the device usable */ }
     resetIdentityState()
-    popup.closeAllPopups()
+    requirePopup().closeAllPopups()
     await bootstrapIdentity().catch(() => undefined)
   }
 
@@ -496,13 +500,13 @@ export function useIdentityRuntime(options: UseIdentityRuntimeOptions) {
       try { await identityClient.logout(state.sessionToken.value) } catch { /* ignore */ }
     }
     resetIdentityState()
-    popup.closeAllPopups()
+    requirePopup().closeAllPopups()
   }
 
   // ---- Parent code popup ----
 
   function openParentCodePopup() {
-    popup.showPopup({
+    requirePopup().showPopup({
       component: markRaw(TikoPinPopup),
       title: '',
       props: {
@@ -521,8 +525,8 @@ export function useIdentityRuntime(options: UseIdentityRuntimeOptions) {
       },
       config: { position: 'center', canClose: true, background: true, width: 'min(30rem, calc(100vw - 2rem))' },
       on: {
-        set: () => { popup.closeAllPopups() },
-        cancel: () => popup.closeAllPopups(),
+        set: () => { requirePopup().closeAllPopups() },
+        cancel: () => requirePopup().closeAllPopups(),
       },
     })
   }
@@ -530,14 +534,14 @@ export function useIdentityRuntime(options: UseIdentityRuntimeOptions) {
   // ---- Child mode flow ----
 
   function openChildModeFlow() {
-    popup.closeAllPopups()
+    requirePopup().closeAllPopups()
     if (!state.sessionToken.value || !state.accountEmailVerified.value) {
       window.setTimeout(openAccountPopup, 180)
       return
     }
 
     if (!hasParentCode.value) {
-      popup.showPopup({
+      requirePopup().showPopup({
         component: markRaw(TikoPinPopup),
         title: '',
         props: { existingHash: undefined, labels: labels.value.pin },
@@ -550,12 +554,12 @@ export function useIdentityRuntime(options: UseIdentityRuntimeOptions) {
               saveIdentity(await identityClient.setPin(state.sessionToken.value, { pin }))
               if (!state.childModeEnabled.value) saveIdentity(await identityClient.enableChildMode(state.sessionToken.value))
               saveIdentity(await identityClient.enterChildMode(state.sessionToken.value))
-              popup.closeAllPopups()
+              requirePopup().closeAllPopups()
             } catch {
               // Keep the menu open on API failure.
             }
           },
-          cancel: () => popup.closeAllPopups(),
+          cancel: () => requirePopup().closeAllPopups(),
         },
       })
     } else {
@@ -575,7 +579,7 @@ export function useIdentityRuntime(options: UseIdentityRuntimeOptions) {
   // ---- Child accounts ----
 
   function openChildAccounts() {
-    popup.showPopup({
+    requirePopup().showPopup({
       component: markRaw(TikoChildAccountsPanel),
       title: '',
       props: {
@@ -602,7 +606,7 @@ export function useIdentityRuntime(options: UseIdentityRuntimeOptions) {
       },
       config: { position: 'center', canClose: true, background: true, width: 'min(34rem, calc(100vw - 2rem))' },
       on: {
-        close: () => popup.closeAllPopups(),
+        close: () => requirePopup().closeAllPopups(),
       },
     })
   }

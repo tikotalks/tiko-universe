@@ -45,7 +45,7 @@ actor CardsMediaClient {
 }
 
 struct CardsMediaMatcher {
-    static func match(collection: CardCollection, mediaItems: [TikoMediaItem]) -> (cards: [CommunicationCard], thumbnailURL: URL?) {
+    static func match(collection: CardCollection, mediaItems: [TikoMediaItem]) -> (cardImages: [String: URL], thumbnailURL: URL?) {
         var updates: [String: URL] = [:]
         var matchedURLs = Set<URL>()
         var mediaByName: [String: TikoMediaItem] = [:]
@@ -84,13 +84,7 @@ struct CardsMediaMatcher {
             }
         }
 
-        let cards = collection.cards.map { card in
-            var copy = card
-            copy.imageURL = updates[card.id]
-            return copy
-        }
-
-        return (cards, mediaItems.first.map { resizedCDNURL($0.originalURL) })
+        return (updates, mediaItems.first.map { resizedCDNURL($0.originalURL) })
     }
 
     static func resizedCDNURL(_ originalURL: URL) -> URL {

@@ -6,6 +6,15 @@ import { ref, computed } from 'vue'
  * The code hash is stored on the user's identity profile (subject metadata).
  */
 
+export async function hashParentPin(pin: string, namespace = 'parent-code'): Promise<string> {
+  const encoder = new TextEncoder()
+  const data = encoder.encode(`tiko:${namespace}:${pin}`)
+  const buffer = await crypto.subtle.digest('SHA-256', data)
+  return Array.from(new Uint8Array(buffer))
+    .map(b => b.toString(16).padStart(2, '0'))
+    .join('')
+}
+
 // Singleton state
 const parentMode = ref(true)
 const parentCodeHash = ref<string | undefined>()
@@ -28,7 +37,7 @@ export function useParentMode() {
   }
 
   async function saveCode(code: string, deps: ParentModeDeps): Promise<void> {
-    const hash = await hashPin(code)
+    const hash = await hashParentPin(code)
     parentCodeHash.value = hash
     await deps.updateProfile({ parentCodeHash: hash })
   }
@@ -37,17 +46,15 @@ export function useParentMode() {
     parentMode.value = true
   }
 
-  async function disableParentMode(deps: ParentModeDeps): Promise<{ needsCode: true } | { needsCode: false; error?: string }> {
+  function disableParentMode(): { action: 'create' } | { action: 'verify' } {
     if (!parentCodeHash.value) {
-      // No code set yet — caller should show code creation UI
-      return { needsCode: true }
+      return { action: 'create' }
     }
-    // Code exists — caller should show verification UI
-    return { needsCode: true }
+    return { action: 'verify' }
   }
 
-  async function verifyAndDisable(code: string, deps: ParentModeDeps): Promise<{ success: boolean; error?: string }> {
-    const hash = await hashPin(code)
+  async function verifyAndDisable(code: string): Promise<{ success: boolean; error?: string }> {
+    const hash = await hashParentPin(code)
     if (hash === parentCodeHash.value) {
       parentMode.value = false
       return { success: true }
@@ -71,13 +78,4 @@ export function useParentMode() {
     verifyAndDisable,
     createCodeAndDisable,
   }
-}
-
-async function hashPin(pin: string): Promise<string> {
-  const encoder = new TextEncoder()
-  const data = encoder.encode(`tiko:parent-code:${pin}`)
-  const buffer = await crypto.subtle.digest('SHA-256', data)
-  return Array.from(new Uint8Array(buffer))
-    .map(b => b.toString(16).padStart(2, '0'))
-    .join('')
 }

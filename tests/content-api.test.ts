@@ -226,6 +226,8 @@ describe('content-api worker', () => {
     expect(response.status).toBe(200)
     expect(body.data.collections[0].title).toBe('Annimali')
     expect(body.data.collections[0].cards[0]).toMatchObject({ title: 'Kelb', speech: 'Kelb' })
+    expect(body.data.collections[0]).not.toHaveProperty('imageURL')
+    expect(body.data.collections[0].cards[0]).not.toHaveProperty('imageURL')
   })
 
   it('serves localized Yes No default content from generic content items', async () => {
@@ -239,6 +241,8 @@ describe('content-api worker', () => {
       expect.objectContaining({ id: 'yes', label: 'Iva', speech: 'Iva', color: 'green', imageRef: 'media-yes' }),
       expect.objectContaining({ id: 'no', label: 'Le', speech: 'Le', color: 'red' }),
     ])
+    expect(body.data.answerSets[0]).not.toHaveProperty('imageURL')
+    expect(body.data.answerSets[0].answers[0]).not.toHaveProperty('imageURL')
   })
 
   it('serves localized Sequence defaults with media ID image refs', async () => {

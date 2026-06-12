@@ -3,6 +3,8 @@ import { useBemm } from 'bemm'
 
 defineProps<{
   selected: boolean
+  selectLabel?: string
+  deselectLabel?: string
 }>()
 
 const emit = defineEmits<{
@@ -16,7 +18,7 @@ const bemm = useBemm('tiko-selection-badge', { return: 'string', includeBaseClas
   <button
     type="button"
     :class="bemm('', { selected })"
-    :aria-label="selected ? 'Deselect' : 'Select'"
+    :aria-label="selected ? (deselectLabel || 'Deselect') : (selectLabel || 'Select')"
     @click.stop="emit('toggle')"
   >
     <span v-if="selected" :class="bemm('check')" aria-hidden="true">✓</span>

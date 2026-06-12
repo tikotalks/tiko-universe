@@ -5,6 +5,7 @@ import TikoKit
 final class CardsStore: ObservableObject {
     @Published private(set) var collections: [CardCollection] = []
     @Published private(set) var collectionThumbnails: [String: URL] = [:]
+    @Published private(set) var cardImages: [String: URL] = [:]
     @Published private(set) var loadingCollectionIDs: Set<String> = []
     @Published private(set) var isLoading = false
     @Published var lastPersistError: String?
@@ -58,12 +59,12 @@ final class CardsStore: ObservableObject {
             let mediaItems = try await mediaClient.fetchMedia(for: categories)
             guard let index = collections.firstIndex(where: { $0.id == collectionID }) else { return }
             let match = CardsMediaMatcher.match(collection: collections[index], mediaItems: mediaItems)
-            collections[index].cards = match.cards
+            cardImages.merge(match.cardImages) { _, new in new }
             if let thumbnailURL = match.thumbnailURL {
                 collectionThumbnails[collectionID] = thumbnailURL
             }
 
-            var urls = Array(match.cards.compactMap(\.imageURL).prefix(prefetchCards ? match.cards.count : 6))
+            var urls = Array(collections[index].cards.compactMap { match.cardImages[$0.id] ?? imageURL(for: $0) }.prefix(prefetchCards ? collections[index].cards.count : 6))
             if let thumbnailURL = match.thumbnailURL { urls.append(thumbnailURL) }
             await imageCache.prefetch(urls)
         } catch {
@@ -75,11 +76,11 @@ final class CardsStore: ObservableObject {
         let trimmed = title.trimmingCharacters(in: .whitespaces)
         guard !trimmed.isEmpty else { return }
         let id = "user_\(UUID().uuidString.lowercased())"
-        let persistedURL = imageURL.flatMap { Self.persistLocalImageIfNeeded($0) }
         let order = collections.filter { $0.parentID == parentID }.count
-        let collection = CardCollection(id: id, title: trimmed, color: color, order: order, parentID: parentID, imageURL: persistedURL, cards: [])
+        let collection = CardCollection(id: id, title: trimmed, color: color, order: order, parentID: parentID, cards: [])
         collections.append(collection)
-        Task { await persistCollection(id: id, title: trimmed, color: color, order: order, parentID: parentID, imageURL: persistedURL) }
+        if let imageURL { collectionThumbnails[id] = imageURL }
+        Task { await persistCollection(id: id, title: trimmed, color: color, order: order, parentID: parentID, imageURL: imageURL) }
     }
 
     func addCard(title: String, speech: String, color: String? = nil, imageURL: URL? = nil, to collectionID: String) {
@@ -89,21 +90,11 @@ final class CardsStore: ObservableObject {
         let id = "user_\(UUID().uuidString.lowercased())"
         let spokenText = speech.trimmingCharacters(in: .whitespaces).isEmpty ? trimmed : speech.trimmingCharacters(in: .whitespaces)
         let resolvedColor = color ?? collections[index].color
-        let persistedURL = imageURL.flatMap { Self.persistLocalImageIfNeeded($0) }
         let order = collections[index].cards.count
-        let card = CommunicationCard(id: id, title: trimmed, speech: spokenText, imageURL: persistedURL, color: resolvedColor)
+        let card = CommunicationCard(id: id, title: trimmed, speech: spokenText, color: resolvedColor)
         collections[index].cards.append(card)
-        Task { await persistCard(id: id, title: trimmed, speech: spokenText, color: resolvedColor, order: order, imageURL: persistedURL, collectionID: collectionID) }
-    }
-
-    static func persistLocalImageIfNeeded(_ url: URL) -> URL {
-        guard url.isFileURL else { return url }
-        let docs = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
-        let dir = docs.appendingPathComponent("card_images", isDirectory: true)
-        try? FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
-        let dest = dir.appendingPathComponent(UUID().uuidString + ".jpg")
-        try? FileManager.default.copyItem(at: url, to: dest)
-        return dest
+        if let imageURL { cardImages[id] = imageURL }
+        Task { await persistCard(id: id, title: trimmed, speech: spokenText, color: resolvedColor, order: order, imageURL: imageURL, collectionID: collectionID) }
     }
 
     func reorderCollection(draggingID: String, targetID: String) {
@@ -118,16 +109,21 @@ final class CardsStore: ObservableObject {
         collections[i].title = title
         collections[i].color = color
         if let parentID { collections[i].parentID = parentID }
-        collections[i].imageURL = imageURL.flatMap { Self.persistLocalImageIfNeeded($0) }
+        if let imageURL {
+            collectionThumbnails[id] = imageURL
+        } else {
+            collectionThumbnails.removeValue(forKey: id)
+            collections[i].imageRef = nil
+        }
         let effectiveParent = collections[i].parentID
-        Task { await persistUpdateCollection(id: id, title: title, color: color, parentID: effectiveParent, imageURL: collections[i].imageURL, saveAsDefault: saveAsDefault) }
+        Task { await persistUpdateCollection(id: id, title: title, color: color, parentID: effectiveParent, imageURL: imageURL, saveAsDefault: saveAsDefault) }
     }
 
     func reparentCollections(ids: Set<String>, toParentID: String?) {
         for i in collections.indices where ids.contains(collections[i].id) {
             collections[i].parentID = toParentID
             let col = collections[i]
-            Task { await persistUpdateCollection(id: col.id, title: col.title, color: col.color, parentID: toParentID, imageURL: col.imageURL) }
+            Task { await persistUpdateCollection(id: col.id, title: col.title, color: col.color, parentID: toParentID, imageURL: imageURL(for: col)) }
         }
     }
 
@@ -137,8 +133,13 @@ final class CardsStore: ObservableObject {
         collections[ci].cards[ji].title = title
         collections[ci].cards[ji].speech = speech
         collections[ci].cards[ji].color = color
-        collections[ci].cards[ji].imageURL = imageURL.flatMap { Self.persistLocalImageIfNeeded($0) }
-        Task { await persistUpdateCard(id: id, title: title, speech: speech, color: color, imageURL: collections[ci].cards[ji].imageURL, collectionID: inCollectionID) }
+        if let imageURL {
+            cardImages[id] = imageURL
+        } else {
+            cardImages.removeValue(forKey: id)
+            collections[ci].cards[ji].imageRef = nil
+        }
+        Task { await persistUpdateCard(id: id, title: title, speech: speech, color: color, imageURL: imageURL, collectionID: inCollectionID) }
     }
 
     func reorderCard(draggingID: String, targetID: String, inCollectionID: String) {
@@ -151,12 +152,14 @@ final class CardsStore: ObservableObject {
 
     private func persistCollection(id: String, title: String, color: String, order: Int, parentID: String? = nil, imageURL: URL?) async {
         guard let token = try? TikoDeviceSessionStore().load()?.accessToken else { return }
-        _ = try? await contentClient.createCollection(id: id, title: title, color: color, order: order, parentID: parentID, imageURL: imageURL, sessionToken: token)
+        guard let saved = try? await contentClient.createCollection(id: id, title: title, color: color, order: order, parentID: parentID, imageURL: imageURL, sessionToken: token) else { return }
+        applySavedCollection(saved)
     }
 
     private func persistCard(id: String, title: String, speech: String, color: String, order: Int, imageURL: URL?, collectionID: String) async {
         guard let token = try? TikoDeviceSessionStore().load()?.accessToken else { return }
-        _ = try? await contentClient.createCard(id: id, title: title, speech: speech, color: color, order: order, imageURL: imageURL, collectionID: collectionID, sessionToken: token)
+        guard let saved = try? await contentClient.createCard(id: id, title: title, speech: speech, color: color, order: order, imageURL: imageURL, collectionID: collectionID, sessionToken: token) else { return }
+        applySavedCard(saved, collectionID: collectionID)
     }
 
     private func persistUpdateCollection(id: String, title: String, color: String, parentID: String?? = nil, imageURL: URL?, saveAsDefault: Bool = false) async {
@@ -165,7 +168,8 @@ final class CardsStore: ObservableObject {
             return
         }
         do {
-            _ = try await contentClient.updateCollection(id: id, title: title, color: color, parentID: parentID ?? nil, imageURL: imageURL, saveAsDefault: saveAsDefault, sessionToken: token)
+            let saved = try await contentClient.updateCollection(id: id, title: title, color: color, parentID: parentID ?? nil, imageURL: imageURL, saveAsDefault: saveAsDefault, sessionToken: token)
+            applySavedCollection(saved)
         } catch {
             lastPersistError = "Failed to save collection: \(error.localizedDescription)"
             print("[CardsStore] persistUpdateCollection error: \(error)")
@@ -178,7 +182,8 @@ final class CardsStore: ObservableObject {
             return
         }
         do {
-            _ = try await contentClient.updateCard(id: id, title: title, speech: speech, color: color, imageURL: imageURL, collectionID: collectionID, sessionToken: token)
+            let saved = try await contentClient.updateCard(id: id, title: title, speech: speech, color: color, imageURL: imageURL, collectionID: collectionID, sessionToken: token)
+            applySavedCard(saved, collectionID: collectionID)
         } catch {
             lastPersistError = "Failed to save card: \(error.localizedDescription)"
             print("[CardsStore] persistUpdateCard error: \(error)")
@@ -215,7 +220,7 @@ final class CardsStore: ObservableObject {
         Task {
             for (i, card) in toMove.enumerated() {
                 await persistDeleteCard(id: card.id, collectionID: fromCollectionID)
-                await persistCard(id: card.id, title: card.title, speech: card.speech, color: card.color, order: startOrder + i, imageURL: card.imageURL, collectionID: toCollectionID)
+                await persistCard(id: card.id, title: card.title, speech: card.speech, color: card.color, order: startOrder + i, imageURL: imageURL(for: card), collectionID: toCollectionID)
             }
         }
     }
@@ -225,7 +230,7 @@ final class CardsStore: ObservableObject {
         for ji in collections[ci].cards.indices where ids.contains(collections[ci].cards[ji].id) {
             let card = collections[ci].cards[ji]
             collections[ci].cards[ji].color = color
-            Task { await persistUpdateCard(id: card.id, title: card.title, speech: card.speech, color: color, imageURL: card.imageURL, collectionID: inCollectionID) }
+            Task { await persistUpdateCard(id: card.id, title: card.title, speech: card.speech, color: color, imageURL: imageURL(for: card), collectionID: inCollectionID) }
         }
     }
 
@@ -238,7 +243,7 @@ final class CardsStore: ObservableObject {
             color: collection.color,
             order: collection.order,
             mediaCategories: collection.mediaCategories,
-            imageURL: collection.imageURL,
+            imageRef: collection.imageRef,
             cards: collection.cards
         )
         collections[ci] = promoted
@@ -285,5 +290,38 @@ final class CardsStore: ObservableObject {
             lastPersistError = "Failed to promote collection: \(error.localizedDescription)"
             print("[CardsStore] persistPromoteCollection error: \(error)")
         }
+    }
+
+    func imageURL(for collection: CardCollection) -> URL? {
+        if let cached = collectionThumbnails[collection.id] { return cached }
+        if let imageRef = collection.imageRef { return contentImageURL(for: imageRef) }
+        return nil
+    }
+
+    func imageURL(for card: CommunicationCard) -> URL? {
+        if let cached = cardImages[card.id] { return cached }
+        if let imageRef = card.imageRef { return contentImageURL(for: imageRef) }
+        return nil
+    }
+
+    private func applySavedCollection(_ saved: CardCollection) {
+        guard let index = collections.firstIndex(where: { $0.id == saved.id }) else { return }
+        collections[index].imageRef = saved.imageRef
+        if let imageRef = saved.imageRef {
+            collectionThumbnails[saved.id] = contentImageURL(for: imageRef)
+        }
+    }
+
+    private func applySavedCard(_ saved: CommunicationCard, collectionID: String) {
+        guard let collectionIndex = collections.firstIndex(where: { $0.id == collectionID }),
+              let cardIndex = collections[collectionIndex].cards.firstIndex(where: { $0.id == saved.id }) else { return }
+        collections[collectionIndex].cards[cardIndex].imageRef = saved.imageRef
+        if let imageRef = saved.imageRef {
+            cardImages[saved.id] = contentImageURL(for: imageRef)
+        }
+    }
+
+    private func contentImageURL(for imageRef: String) -> URL {
+        URL(string: "\(CardsContentClient.baseURL)/content/images/\(imageRef)")!
     }
 }

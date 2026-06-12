@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, computed, onUnmounted } from 'vue'
+import { hashParentPin } from './parent-mode'
 
 const CODE_LENGTH = 4
 const EMPTY_DIGITS = () => Array<string>(CODE_LENGTH).fill('')
@@ -73,7 +74,7 @@ function onDigitInput(index: number, event: Event) {
     : digits.value
 
   if (value.length > 1) {
-    const distributed = value.replace(/[^0-9]/g, '').slice(0, CODE_LENGTH).split('')
+    const distributed = value.slice(0, CODE_LENGTH).split('')
     for (let di = 0; di < distributed.length; di++) {
       if (index + di < CODE_LENGTH) arr[index + di] = distributed[di]
     }
@@ -195,12 +196,7 @@ onUnmounted(() => {
 })
 
 async function hashCode(code: string): Promise<string> {
-  const encoder = new TextEncoder()
-  const data = encoder.encode(`tiko:${props.hashNamespace}:${code}`)
-  const buffer = await crypto.subtle.digest('SHA-256', data)
-  return Array.from(new Uint8Array(buffer))
-    .map(b => b.toString(16).padStart(2, '0'))
-    .join('')
+  return hashParentPin(code, props.hashNamespace)
 }
 </script>
 

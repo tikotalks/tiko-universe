@@ -109,7 +109,9 @@ async function load() {
 onMounted(load)
 
 async function createChild() {
-  if (!newName.value.trim() || !newCode.value.trim()) return
+  const code = newCode.value.trim()
+  if (!newName.value.trim() || !code) return
+  if (!/^\d{4}$/.test(code)) { error.value = props.labels.loginCode; return }
   loading.value = true
   error.value = null
   try {
@@ -154,7 +156,9 @@ function startResetCode(child: ChildAccountItem) {
 }
 
 async function saveResetCode() {
-  if (!resettingId.value || !resetCode.value.trim()) return
+  const code = resetCode.value.trim()
+  if (!resettingId.value || !code) return
+  if (!/^\d{4}$/.test(code)) { error.value = props.labels.newCode; return }
   loading.value = true
   error.value = null
   try {
@@ -472,7 +476,7 @@ function cancelEdit() {
   padding: 0.75rem 1rem;
   border: none;
   border-radius: 1rem;
-  background: color-mix(in srgb, var(--color-foreground), var(--color-background) 88%);
+  background: color-mix(in srgb, var(--color-foreground), var(--color-background) 12%);
   color: var(--color-background);
   font-size: 1rem;
   font-weight: 850;

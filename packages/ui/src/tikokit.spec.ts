@@ -125,9 +125,9 @@ describe('TikoKit component contract', () => {
 
     const result = await client.speak({ text: 'Yes', language: 'en', provider: 'auto' })
 
-    expect(fetcher).toHaveBeenCalledWith('https://tiko-atlas-api-dev.silvandiepen.workers.dev/v1/atlas/speech', expect.objectContaining({ method: 'POST' }))
+    expect(fetcher).toHaveBeenCalledWith('https://api.tikotalks.com/v1/atlas/speech', expect.objectContaining({ method: 'POST' }))
     expect(JSON.parse((fetcher as any).mock.calls[0][1].body)).toMatchObject({ app: 'tiko-ui', purpose: 'speech-playback', text: 'Yes', language: 'en', provider: 'auto' })
-    expect(result.audioUrl).toBe('https://tiko-atlas-api-dev.silvandiepen.workers.dev/v1/atlas/assets/asset-yes')
+    expect(result.audioUrl).toBe('https://api.tikotalks.com/v1/atlas/assets/asset-yes')
     expect(result.metadata).toMatchObject({ id: 'asset-yes', provider: 'openai', model: 'tts-1', voice: 'nova', requestId: 'atlas-req-1' })
     expect(play).toHaveBeenCalledTimes(1)
   })
@@ -148,7 +148,7 @@ describe('TikoKit component contract', () => {
     const result = await client.getAudio({ text: 'Yes', language: 'en' })
 
     expect(result.success).toBe(true)
-    expect(result.audioUrl).toBe('https://tiko-atlas-api-dev.silvandiepen.workers.dev/v1/atlas/assets/asset-1')
+    expect(result.audioUrl).toBe('https://api.tikotalks.com/v1/atlas/assets/asset-1')
     expect(result.cached).toBe(true)
     expect(result.metadata).toMatchObject({ id: 'asset-1', provider: 'elevenlabs', schemaVersion: 1, requestId: 'atlas-req-2' })
   })

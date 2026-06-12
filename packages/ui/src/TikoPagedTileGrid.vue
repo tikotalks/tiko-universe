@@ -7,8 +7,10 @@ const props = withDefaults(defineProps<{
   columns: number
   itemsPerPage: number
   reduceMotion?: boolean
+  pageLabel?: string
 }>(), {
   reduceMotion: false,
+  pageLabel: 'Page',
 })
 
 const emit = defineEmits<{
@@ -17,6 +19,7 @@ const emit = defineEmits<{
 
 const currentPage = defineModel<number>('page', { default: 0 })
 const bemm = useBemm('tiko-paged-tile-grid', { return: 'string', includeBaseClass: true })
+const rootEl = ref<HTMLElement | null>(null)
 const pagerWidth = ref(typeof window === 'undefined' ? 390 : window.innerWidth)
 const touchStartX = ref(0)
 const touchDeltaX = ref(0)
@@ -36,9 +39,10 @@ const pageOffset = computed(() => {
   return isDragging.value ? base + touchDeltaX.value : base
 })
 
+let resizeObserver: ResizeObserver | undefined
+
 function updatePagerWidth() {
-  const el = document.querySelector('.tiko-paged-tile-grid') as HTMLElement | null
-  pagerWidth.value = el?.clientWidth || window.innerWidth
+  pagerWidth.value = rootEl.value?.clientWidth || window.innerWidth
 }
 
 function onPointerDown(event: PointerEvent) {
@@ -71,8 +75,8 @@ function onPointerUp(event?: PointerEvent) {
   touchDeltaX.value = 0
 }
 
-watch(() => props.itemsPerPage, () => {
-  currentPage.value = Math.min(currentPage.value, totalPages.value - 1)
+watch(totalPages, total => {
+  if (currentPage.value > total - 1) currentPage.value = total - 1
 })
 
 watch(currentPage, page => emit('pageChange', page))
@@ -80,13 +84,21 @@ watch(currentPage, page => emit('pageChange', page))
 onMounted(() => {
   nextTick(updatePagerWidth)
   window.addEventListener('resize', updatePagerWidth)
+  if (rootEl.value && typeof ResizeObserver !== 'undefined') {
+    resizeObserver = new ResizeObserver(updatePagerWidth)
+    resizeObserver.observe(rootEl.value)
+  }
 })
 
-onUnmounted(() => window.removeEventListener('resize', updatePagerWidth))
+onUnmounted(() => {
+  window.removeEventListener('resize', updatePagerWidth)
+  resizeObserver?.disconnect()
+})
 </script>
 
 <template>
   <div
+    ref="rootEl"
     :class="bemm('')"
     @pointerdown="onPointerDown"
     @pointermove="onPointerMove"
@@ -113,7 +125,7 @@ onUnmounted(() => window.removeEventListener('resize', updatePagerWidth))
         :key="page"
         type="button"
         :class="bemm('dot', { active: page - 1 === currentPage })"
-        :aria-label="`Page ${page}`"
+        :aria-label="`${pageLabel} ${page}`"
         @click="currentPage = page - 1"
       />
     </div>

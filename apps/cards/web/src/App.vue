@@ -532,6 +532,7 @@ onMounted(async () => {
         :selected-collection-ids="cards.selectedCollectionIDs.value"
         :selected-card-ids="cards.selectedCardIDs.value"
         :collection-thumbnails="cards.collectionThumbnails.value"
+        :card-images="cards.cardImages.value"
         :content-base-url="cards.contentBaseUrl"
         :speaking-card-i-d="speakingCardID"
         :translate-title="translateGridItemTitle"
