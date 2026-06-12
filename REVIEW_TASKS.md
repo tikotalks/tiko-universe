@@ -56,7 +56,7 @@ The most urgent work is to lock down Atlas/generation/sentence/media/identity, i
   - Replace fast single SHA-256 for 4-digit secrets with a stronger KDF where practical.
   - Remove synced app-level PIN hashes such as `RadioSettings.pinHash`.
 
-- [ ] Fix web Timer countdown.
+- [x] Fix web Timer countdown.
   - Add a reactive `now` ref updated by the interval.
   - Make display and progress computed from that ref.
   - Add an assertion-based regression test.

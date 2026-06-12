@@ -1,7 +1,8 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { mount } from '@vue/test-utils'
-import { ref, nextTick } from 'vue'
+import { nextTick, effectScope } from 'vue'
 import App from './App.vue'
+import { useTimer } from './composables/useTimer'
 
 function createLocalStorageMock() {
   const store: Record<string, string> = {}
@@ -57,6 +58,26 @@ function mountApp(localStorageOverride?: Record<string, string>) {
 describe('Timer App', () => {
   beforeEach(() => {
     vi.useFakeTimers()
+    vi.setSystemTime(new Date('2026-01-01T00:00:00Z'))
+  })
+
+  afterEach(() => {
+    vi.useRealTimers()
+  })
+
+  it('updates the displayed countdown while running', async () => {
+    const scope = effectScope()
+    const timer = scope.run(() => useTimer())
+
+    expect(timer).toBeTruthy()
+    timer!.start(60_000)
+    expect(timer!.displayTime.value).toBe('01:00')
+
+    vi.advanceTimersByTime(1_000)
+    await nextTick()
+
+    expect(timer!.displayTime.value).toBe('00:59')
+    scope.stop()
   })
 
   it('opens immediately with timer UI, no login wall', () => {
@@ -181,8 +202,7 @@ describe('Timer App', () => {
 
     // After expiry, expired label should show
     const expiredLabel = wrapper.find('.timer-app__expired-label')
-    // The timer composable uses Date.now() which fake timers control
-    // but in jsdom with useFakeTimers, Date.now() is also mocked
+    expect(expiredLabel.exists()).toBe(true)
   })
 
   it('settings panel opens and closes', async () => {
