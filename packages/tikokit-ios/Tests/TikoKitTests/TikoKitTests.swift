@@ -1,6 +1,35 @@
 import XCTest
 @testable import TikoKit
 
+private final class MemoryIdentityStore: TikoIdentityStorage, @unchecked Sendable {
+    var bundle: TikoIdentityBundle?
+
+    func load() throws -> TikoIdentityBundle? {
+        bundle
+    }
+
+    func save(_ bundle: TikoIdentityBundle) throws {
+        self.bundle = bundle
+    }
+
+    func clearSessionKeepingDevice() throws {
+        guard let bundle else { return }
+        self.bundle = TikoIdentityBundle(
+            subject: bundle.subject,
+            device: bundle.device,
+            account: bundle.account,
+            session: nil,
+            runtime: bundle.runtime,
+            capabilities: bundle.capabilities,
+            roles: bundle.roles
+        )
+    }
+
+    func clearAll() throws {
+        bundle = nil
+    }
+}
+
 final class TikoKitTests: XCTestCase {
     func testAppColorsHaveUniqueRawValues() {
         let rawValues = TikoAppColor.allCases.map(\.rawValue)
@@ -84,11 +113,8 @@ final class TikoKitTests: XCTestCase {
     }
 
     func testDeviceSessionStoreRoundTripsSharedIdentityBundle() throws {
-        let suiteName = "TikoKitTests.\(UUID().uuidString)"
-        let defaults = UserDefaults(suiteName: suiteName)!
-        defer { defaults.removePersistentDomain(forName: suiteName) }
-
-        let store = TikoDeviceSessionStore(defaults: defaults, namespace: "org.tiko.identity")
+        let primary = MemoryIdentityStore()
+        let store = TikoDeviceSessionStore(primary: primary)
         let bundle = TikoIdentityBundle(
             subject: TikoIdentitySubject(id: "sub-1", kind: "anonymous", product: "tiko"),
             device: TikoIdentityDevice(id: "device-1", secret: "device-secret"),
@@ -98,6 +124,7 @@ final class TikoKitTests: XCTestCase {
 
         try store.save(bundle)
         XCTAssertEqual(try store.load(), bundle)
+        XCTAssertEqual(primary.bundle, bundle)
 
         try store.clearSessionKeepingDevice()
         let retained = try XCTUnwrap(try store.load())
@@ -107,6 +134,29 @@ final class TikoKitTests: XCTestCase {
 
         try store.clearAll()
         XCTAssertNil(try store.load())
+        XCTAssertNil(primary.bundle)
+    }
+
+    func testDeviceSessionStoreMigratesLegacyUserDefaultsBundle() throws {
+        let suiteName = "TikoKitTests.\(UUID().uuidString)"
+        let defaults = UserDefaults(suiteName: suiteName)!
+        defer { defaults.removePersistentDomain(forName: suiteName) }
+
+        let primary = MemoryIdentityStore()
+        let legacy = TikoUserDefaultsIdentityStore(defaults: defaults, namespace: "org.tiko.identity")
+        let store = TikoDeviceSessionStore(primary: primary, legacy: legacy)
+        let bundle = TikoIdentityBundle(
+            subject: TikoIdentitySubject(id: "sub-legacy", kind: "anonymous", product: "tiko"),
+            device: TikoIdentityDevice(id: "device-legacy", secret: "device-secret"),
+            account: nil,
+            session: TikoIdentitySession(id: "session-legacy", token: "access", transport: "bearer", expiresAt: "2030-01-01T00:00:00.000Z")
+        )
+
+        try legacy.save(bundle)
+
+        XCTAssertEqual(try store.load(), bundle)
+        XCTAssertEqual(primary.bundle, bundle)
+        XCTAssertNil(try legacy.load())
     }
 
     func testSharedNativeIdentityStoreUsesStableAppFamilyNamespace() {

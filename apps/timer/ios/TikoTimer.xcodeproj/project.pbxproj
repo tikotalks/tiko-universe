@@ -12,6 +12,7 @@
 		706593CA96493CC971FD35FF /* TikoTimerApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CA11BAD580A7FF1BA151E12 /* TikoTimerApp.swift */; };
 		73A60CE65E67CE28698D1A55 /* TikoTimerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A42A62D5D1C08136AE41EF3F /* TikoTimerTests.swift */; };
 		DF4AD65A13BFA95429B1AC45 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8DD9428740D5FF24A90C0CBC /* Assets.xcassets */; };
+		F8D454E2ABEFDF8D878C86CC /* TimerAppConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57CC96EA50F45F53D8E9B3C0 /* TimerAppConfig.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -28,7 +29,9 @@
 		3E455AE7E0B07A31A8DE0E67 /* tikokit-ios */ = {isa = PBXFileReference; lastKnownFileType = folder; name = "tikokit-ios"; path = "../../../packages/tikokit-ios"; sourceTree = SOURCE_ROOT; };
 		48078D80322BE65093677655 /* TimerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimerView.swift; sourceTree = "<group>"; };
 		4CA11BAD580A7FF1BA151E12 /* TikoTimerApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TikoTimerApp.swift; sourceTree = "<group>"; };
+		57CC96EA50F45F53D8E9B3C0 /* TimerAppConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimerAppConfig.swift; sourceTree = "<group>"; };
 		7E01878316543CE6EE05D643 /* TikoTimerTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = TikoTimerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		7E120971C8392093444885A9 /* TikoTimer.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = TikoTimer.entitlements; sourceTree = "<group>"; };
 		8DD9428740D5FF24A90C0CBC /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		966FBC3F7D18BDE3ABB2F850 /* TikoTimer.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = TikoTimer.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9D193448D237A305A42B23E8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
@@ -87,7 +90,9 @@
 			children = (
 				8DD9428740D5FF24A90C0CBC /* Assets.xcassets */,
 				9D193448D237A305A42B23E8 /* Info.plist */,
+				7E120971C8392093444885A9 /* TikoTimer.entitlements */,
 				4CA11BAD580A7FF1BA151E12 /* TikoTimerApp.swift */,
+				57CC96EA50F45F53D8E9B3C0 /* TimerAppConfig.swift */,
 				48078D80322BE65093677655 /* TimerView.swift */,
 			);
 			path = Sources;
@@ -199,6 +204,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				706593CA96493CC971FD35FF /* TikoTimerApp.swift in Sources */,
+				F8D454E2ABEFDF8D878C86CC /* TimerAppConfig.swift in Sources */,
 				323134D99698474D059938C1 /* TimerView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -298,6 +304,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = Sources/TikoTimer.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				INFOPLIST_FILE = Sources/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -371,6 +378,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = Sources/TikoTimer.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				INFOPLIST_FILE = Sources/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (

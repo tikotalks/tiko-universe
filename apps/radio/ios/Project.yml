@@ -21,6 +21,7 @@ targets:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: mt.tiko.radio
         INFOPLIST_FILE: Sources/Info.plist
+        CODE_SIGN_ENTITLEMENTS: Sources/TikoRadio.entitlements
   TikoRadioTests:
     type: bundle.unit-test
     platform: iOS

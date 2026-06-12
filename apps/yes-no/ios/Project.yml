@@ -21,6 +21,7 @@ targets:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: mt.tiko.yesno
         INFOPLIST_FILE: Sources/Info.plist
+        CODE_SIGN_ENTITLEMENTS: Sources/TikoYesNo.entitlements
   TikoYesNoTests:
     type: bundle.unit-test
     platform: iOS

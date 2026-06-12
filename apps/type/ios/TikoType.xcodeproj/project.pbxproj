@@ -10,6 +10,7 @@
 		24864309C825A7CC228088D0 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = FC88CA0AE8A939383526F8FE /* Assets.xcassets */; };
 		2631178230D390774853A218 /* TypeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E062EA54CFDC1CAC1F084BAA /* TypeView.swift */; };
 		3FC710BDE7A1812E56C830F1 /* TikoTypeApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92EFF279CA932F698DEC1B11 /* TikoTypeApp.swift */; };
+		5C76BC10D8536C268FF32327 /* TypeAppConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2784AE1A879155FBDA9A5ED1 /* TypeAppConfig.swift */; };
 		D2902A334828ECFA42E8A9AE /* TikoKit in Frameworks */ = {isa = PBXBuildFile; productRef = E698A794872B2F90B85DF6AE /* TikoKit */; };
 		DA8155367CA22F31AC35C7E3 /* TikoTypeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8549F5329BFE78AA41AB74EB /* TikoTypeTests.swift */; };
 /* End PBXBuildFile section */
@@ -27,9 +28,11 @@
 /* Begin PBXFileReference section */
 		074135D340258FEED1495621 /* TikoTypeTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = TikoTypeTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		17FEAA921D1BE9E6E0A21CE8 /* TikoType.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = TikoType.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		2784AE1A879155FBDA9A5ED1 /* TypeAppConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TypeAppConfig.swift; sourceTree = "<group>"; };
 		6F38F474C04DC7AFB45AED52 /* tikokit-ios */ = {isa = PBXFileReference; lastKnownFileType = folder; name = "tikokit-ios"; path = "../../../packages/tikokit-ios"; sourceTree = SOURCE_ROOT; };
 		8549F5329BFE78AA41AB74EB /* TikoTypeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TikoTypeTests.swift; sourceTree = "<group>"; };
 		92EFF279CA932F698DEC1B11 /* TikoTypeApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TikoTypeApp.swift; sourceTree = "<group>"; };
+		C9A5E22E6D4B935B93398565 /* TikoType.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = TikoType.entitlements; sourceTree = "<group>"; };
 		E062EA54CFDC1CAC1F084BAA /* TypeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TypeView.swift; sourceTree = "<group>"; };
 		E7215D55E4A61BC100115801 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		FC88CA0AE8A939383526F8FE /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -52,7 +55,9 @@
 			children = (
 				FC88CA0AE8A939383526F8FE /* Assets.xcassets */,
 				E7215D55E4A61BC100115801 /* Info.plist */,
+				C9A5E22E6D4B935B93398565 /* TikoType.entitlements */,
 				92EFF279CA932F698DEC1B11 /* TikoTypeApp.swift */,
+				2784AE1A879155FBDA9A5ED1 /* TypeAppConfig.swift */,
 				E062EA54CFDC1CAC1F084BAA /* TypeView.swift */,
 			);
 			path = Sources;
@@ -199,6 +204,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				3FC710BDE7A1812E56C830F1 /* TikoTypeApp.swift in Sources */,
+				5C76BC10D8536C268FF32327 /* TypeAppConfig.swift in Sources */,
 				2631178230D390774853A218 /* TypeView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -291,6 +297,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = Sources/TikoType.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				INFOPLIST_FILE = Sources/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -307,6 +314,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = Sources/TikoType.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				INFOPLIST_FILE = Sources/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (

@@ -33,6 +33,7 @@
 /* Begin PBXFileReference section */
 		03715B4CD12D3D040F425685 /* TikoRadioTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = TikoRadioTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		18B4D8C1E3F12BD0E675A7AA /* TikoRadioApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TikoRadioApp.swift; sourceTree = "<group>"; };
+		2D8DE4E3971AE54756A07782 /* TikoRadio.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = TikoRadio.entitlements; sourceTree = "<group>"; };
 		2DC2F0CE35E3A79F4815DE3D /* RadioLibraryStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RadioLibraryStore.swift; sourceTree = "<group>"; };
 		3F8B67EBA4AAB2F3AF4067C6 /* tikokit-ios */ = {isa = PBXFileReference; lastKnownFileType = folder; name = "tikokit-ios"; path = "../../../packages/tikokit-ios"; sourceTree = SOURCE_ROOT; };
 		59529CBA793A9109D0A98D4C /* RadioSupportViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RadioSupportViews.swift; sourceTree = "<group>"; };
@@ -80,6 +81,7 @@
 				D79EE4617893EC2DA91D30CC /* RadioPlaybackService.swift */,
 				59529CBA793A9109D0A98D4C /* RadioSupportViews.swift */,
 				D554990F8B6D5214203045EF /* RadioView.swift */,
+				2D8DE4E3971AE54756A07782 /* TikoRadio.entitlements */,
 				18B4D8C1E3F12BD0E675A7AA /* TikoRadioApp.swift */,
 				8C73BBE6FEDFFA5DE99385BC /* YouTubePlaybackBridge.swift */,
 			);
@@ -379,6 +381,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = Sources/TikoRadio.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				INFOPLIST_FILE = Sources/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -395,6 +398,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = Sources/TikoRadio.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				INFOPLIST_FILE = Sources/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (

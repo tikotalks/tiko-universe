@@ -29,6 +29,7 @@
 /* Begin PBXFileReference section */
 		0A03A3830F9E9D0D41C10399 /* tikokit-ios */ = {isa = PBXFileReference; lastKnownFileType = folder; name = "tikokit-ios"; path = "../../../packages/tikokit-ios"; sourceTree = SOURCE_ROOT; };
 		216C3B420E05057458B4A8FF /* TikoYesNoTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = TikoYesNoTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		2B19C1507B00190FDAF8CB2A /* TikoYesNo.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = TikoYesNo.entitlements; sourceTree = "<group>"; };
 		3C1243037126C3062F4D62D8 /* TikoYesNoTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TikoYesNoTests.swift; sourceTree = "<group>"; };
 		7357E5FCD5F592CEE258CE95 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		7C99E9A160668D93E2D88752 /* YesNoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YesNoView.swift; sourceTree = "<group>"; };
@@ -74,6 +75,7 @@
 			children = (
 				C29DD0F7C2038B0621DDB76E /* Assets.xcassets */,
 				7357E5FCD5F592CEE258CE95 /* Info.plist */,
+				2B19C1507B00190FDAF8CB2A /* TikoYesNo.entitlements */,
 				EF6BBD658EE7F2E3FFB60F4D /* TikoYesNoApp.swift */,
 				CFF1B4E75F0388887506E441 /* YesNoAppConfig.swift */,
 				ACA4B1596AEF26381F6234C3 /* YesNoSpeechService.swift */,
@@ -347,6 +349,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = Sources/TikoYesNo.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				INFOPLIST_FILE = Sources/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -397,6 +400,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = Sources/TikoYesNo.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				INFOPLIST_FILE = Sources/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (

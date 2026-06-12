@@ -21,6 +21,7 @@ targets:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: mt.tiko.talk
         INFOPLIST_FILE: Sources/Info.plist
+        CODE_SIGN_ENTITLEMENTS: Sources/TikoTalk.entitlements
   TikoTalkTests:
     type: bundle.unit-test
     platform: iOS

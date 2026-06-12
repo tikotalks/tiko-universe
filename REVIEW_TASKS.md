@@ -69,7 +69,7 @@ Approximate review spread: 7 Critical, about 35 High, about 70 Medium, and about
   - Delete duplicated admin-role parsing and static-secret variants.
   - Remove app-api direct identity DB fallback completely.
 
-- [ ] Move iOS identity storage to Keychain.
+- [x] Move iOS identity storage to Keychain.
   - Make `TikoKeychainIdentityStore` the default.
   - Migrate existing UserDefaults identity bundles once.
   - Add shared Keychain access groups where cross-app identity is expected.

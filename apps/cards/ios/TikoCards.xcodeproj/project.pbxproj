@@ -33,6 +33,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		0C3D2678AD8AA655C17E7D44 /* TikoCards.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = TikoCards.entitlements; sourceTree = "<group>"; };
 		1F976EA464A8D7FD09CFC50E /* CardsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardsView.swift; sourceTree = "<group>"; };
 		207A42348432F2BFF126FFBE /* CardsMediaClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardsMediaClient.swift; sourceTree = "<group>"; };
 		440E1EA00776E4B4C4B2BF15 /* TikoCards.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = TikoCards.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -112,6 +113,7 @@
 				EBAEDE295147575574F99882 /* CardsStore.swift */,
 				1F976EA464A8D7FD09CFC50E /* CardsView.swift */,
 				BA81DB944EFAC2BEB232F5E5 /* Info.plist */,
+				0C3D2678AD8AA655C17E7D44 /* TikoCards.entitlements */,
 				524C104FBEF1095D1213B1BC /* TikoCardsApp.swift */,
 			);
 			path = Sources;
@@ -250,6 +252,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = Sources/TikoCards.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				INFOPLIST_FILE = Sources/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -387,6 +390,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = Sources/TikoCards.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				INFOPLIST_FILE = Sources/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (

@@ -21,6 +21,7 @@ targets:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: mt.tiko.type
         INFOPLIST_FILE: Sources/Info.plist
+        CODE_SIGN_ENTITLEMENTS: Sources/TikoType.entitlements
   TikoTypeTests:
     type: bundle.unit-test
     platform: iOS

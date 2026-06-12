@@ -438,19 +438,13 @@ public protocol TikoIdentityStorage: Sendable {
     func clearAll() throws
 }
 
-public final class TikoDeviceSessionStore: TikoIdentityStorage, @unchecked Sendable {
-    public static let sharedNamespace = "org.tiko.identity"
-
+public final class TikoUserDefaultsIdentityStore: TikoIdentityStorage, @unchecked Sendable {
     private let defaults: UserDefaults
     private let sessionKey: String
 
     public init(defaults: UserDefaults = .standard, namespace: String = TikoDeviceSessionStore.sharedNamespace) {
         self.defaults = defaults
         self.sessionKey = "\(namespace).identityBundle"
-    }
-
-    public static func sharedKeychainAccessGroup(teamId: String) -> String {
-        "\(teamId).\(sharedNamespace)"
     }
 
     public func load() throws -> TikoIdentityBundle? {
@@ -470,6 +464,74 @@ public final class TikoDeviceSessionStore: TikoIdentityStorage, @unchecked Senda
 
     public func clearAll() throws {
         defaults.removeObject(forKey: sessionKey)
+    }
+}
+
+public final class TikoDeviceSessionStore: TikoIdentityStorage, @unchecked Sendable {
+    public static let sharedNamespace = "org.tiko.identity"
+
+    private let primary: TikoIdentityStorage
+    private let legacy: TikoUserDefaultsIdentityStore?
+
+    public convenience init(
+        defaults: UserDefaults = .standard,
+        namespace: String = TikoDeviceSessionStore.sharedNamespace,
+        accessGroup: String? = nil
+    ) {
+        let legacy = TikoUserDefaultsIdentityStore(defaults: defaults, namespace: namespace)
+        #if canImport(Security)
+        let resolvedAccessGroup = accessGroup ?? Self.defaultKeychainAccessGroup()
+        self.init(
+            primary: TikoKeychainIdentityStore(service: namespace, account: "identityBundle", accessGroup: resolvedAccessGroup),
+            legacy: legacy
+        )
+        #else
+        self.init(primary: legacy, legacy: nil)
+        #endif
+    }
+
+    public init(primary: TikoIdentityStorage, legacy: TikoUserDefaultsIdentityStore? = nil) {
+        self.primary = primary
+        self.legacy = legacy
+    }
+
+    public static func sharedKeychainAccessGroup(teamId: String) -> String {
+        "\(teamId).\(sharedNamespace)"
+    }
+
+    #if canImport(Security)
+    private static func defaultKeychainAccessGroup() -> String? {
+        Bundle.main.object(forInfoDictionaryKey: "TikoKeychainAccessGroup") as? String
+    }
+    #endif
+
+    public func load() throws -> TikoIdentityBundle? {
+        if let bundle = try primary.load() {
+            return bundle
+        }
+
+        guard let legacy, let legacyBundle = try legacy.load() else {
+            return nil
+        }
+
+        try primary.save(legacyBundle)
+        try legacy.clearAll()
+        return legacyBundle
+    }
+
+    public func save(_ bundle: TikoIdentityBundle) throws {
+        try primary.save(bundle)
+        try legacy?.clearAll()
+    }
+
+    public func clearSessionKeepingDevice() throws {
+        guard let bundle = try load() else { return }
+        try save(TikoIdentityBundle(subject: bundle.subject, device: bundle.device, account: bundle.account, session: nil, runtime: bundle.runtime, capabilities: bundle.capabilities, roles: bundle.roles))
+    }
+
+    public func clearAll() throws {
+        try primary.clearAll()
+        try legacy?.clearAll()
     }
 }
 
