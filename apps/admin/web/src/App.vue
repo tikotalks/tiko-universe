@@ -102,10 +102,8 @@ onMounted(async () => {
     await router.replace({ query: {} })
     return
   }
-  if (token.value) {
-    await verify(undefined, { silent: true })
-    if (!isAuthed.value) logout()
-  }
+  if (!token.value) await warmDeviceSession().catch(() => undefined)
+  if (token.value) await verify(undefined, { silent: true })
   if (isAuthed.value) await loadAppConfigs()
   if (!isAuthed.value) {
     warmDeviceSession()

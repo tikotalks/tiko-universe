@@ -130,7 +130,7 @@ The most urgent work is to lock down Atlas/generation/sentence/media/identity, i
   - Add negative caching for missing key table/config.
   - Enforce scopes.
 
-- [ ] Move browser identity to HttpOnly cookie transport.
+- [x] Move browser identity to HttpOnly cookie transport.
   - Stop persisting session tokens and device secrets in localStorage.
   - Keep bearer-token JSON only for native/non-browser clients if needed.
   - Update identity runtime and app clients consistently.
