@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { mount } from '@vue/test-utils'
 import { nextTick, effectScope } from 'vue'
+import { createWebAppFetchHandler } from '@tiko/testing'
 import App from './App.vue'
 import { useTimer } from './composables/useTimer'
 
@@ -59,10 +60,13 @@ describe('Timer App', () => {
   beforeEach(() => {
     vi.useFakeTimers()
     vi.setSystemTime(new Date('2026-01-01T00:00:00Z'))
+    vi.stubGlobal('fetch', vi.fn(createWebAppFetchHandler({ appId: 'timer' })))
   })
 
   afterEach(() => {
     vi.useRealTimers()
+    vi.unstubAllGlobals()
+    vi.restoreAllMocks()
   })
 
   it('updates the displayed countdown while running', async () => {

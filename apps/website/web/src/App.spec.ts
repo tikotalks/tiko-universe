@@ -1,10 +1,33 @@
 import { flushPromises, mount } from '@vue/test-utils'
-import { afterEach, describe, expect, it } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { createRouter, createMemoryHistory } from 'vue-router'
 import App from './App.vue'
 import SiteHeader from './components/SiteHeader.vue'
 import { appUniverse } from './content/appUniverse'
 import { docsPages } from './siteContent'
+
+function jsonResponse(body: unknown, status = 200) {
+  return new Response(JSON.stringify(body), { status, headers: { 'content-type': 'application/json' } })
+}
+
+function createMediaFetchMock() {
+  return vi.fn(async (input: RequestInfo | URL) => {
+    const url = String(input)
+    if (url.includes('https://media.tikoapi.org/v1/media')) {
+      return jsonResponse({
+        data: [
+          {
+            id: 'media-card-test',
+            title: 'Test media image',
+            original_url: 'https://data.tikocdn.org/uploads/test-media-image.png',
+          },
+        ],
+        meta: { total: 1 },
+      })
+    }
+    return jsonResponse({ error: { code: 'unexpected_test_fetch', message: url } }, 500)
+  }) as typeof fetch
+}
 
 async function mountAt(path: string) {
   const router = createRouter({
@@ -28,8 +51,13 @@ async function mountAt(path: string) {
   return wrapper
 }
 
+beforeEach(() => {
+  vi.stubGlobal('fetch', createMediaFetchMock())
+})
+
 afterEach(() => {
-  // nothing to clean up with memory history
+  vi.unstubAllGlobals()
+  vi.restoreAllMocks()
 })
 
 describe('TikoTalks website', () => {

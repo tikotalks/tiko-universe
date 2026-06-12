@@ -264,7 +264,7 @@ The most urgent work is to lock down Atlas/generation/sentence/media/identity, i
   - Mock current Atlas/TTS endpoints, not legacy generation endpoints.
   - Add CI smoke coverage.
 
-- [ ] Stop unit tests from calling production APIs.
+- [x] Stop unit tests from calling production APIs.
   - Extract yes-no fetch mock patterns into `@tiko/testing`.
   - Use them in timer, type, website, and other app tests.
   - Clean up fake timers after each test.

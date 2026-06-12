@@ -1,6 +1,7 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { mount } from '@vue/test-utils'
 import { nextTick } from 'vue'
+import { createWebAppFetchHandler } from '@tiko/testing'
 import App from './App.vue'
 
 function createLocalStorageMock() {
@@ -48,6 +49,13 @@ function mountApp(localStorageOverride?: Record<string, string>) {
 describe('Type App', () => {
   beforeEach(() => {
     vi.useFakeTimers()
+    vi.stubGlobal('fetch', vi.fn(createWebAppFetchHandler({ appId: 'type' })))
+  })
+
+  afterEach(() => {
+    vi.useRealTimers()
+    vi.unstubAllGlobals()
+    vi.restoreAllMocks()
   })
 
   it('opens immediately with compose area, no login wall', () => {
