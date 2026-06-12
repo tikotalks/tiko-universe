@@ -130,6 +130,7 @@ function makeEnv(overrides: Record<string, unknown> = {}) {
     TTS_DB: db,
     AUDIO_BUCKET: bucket,
     OPENAI_API_KEY: 'test-key',
+    API_KEYS: 'test-api-key',
     db,
     bucket,
     ...overrides,
@@ -138,6 +139,15 @@ function makeEnv(overrides: Record<string, unknown> = {}) {
 
 async function json(response: Response) {
   return response.json() as Promise<Record<string, any>>
+}
+
+function ttsGenerate(body: unknown, init: RequestInit = {}) {
+  return new Request('https://tts.test/generate', {
+    ...init,
+    method: 'POST',
+    headers: { authorization: 'Bearer test-api-key', 'content-type': 'application/json', ...(init.headers ?? {}) },
+    body: init.body ?? JSON.stringify(body),
+  })
 }
 
 beforeEach(() => {
@@ -255,13 +265,26 @@ describe('tts-api worker', () => {
   })
 
   describe('POST /generate', () => {
-    it('rejects invalid JSON', async () => {
+    it('requires a service token', async () => {
       const env = makeEnv()
       const response = await worker.fetch(
         new Request('https://tts.test/generate', {
           method: 'POST',
-          body: 'not-json',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({ text: 'Hello', language: 'en' }),
         }),
+        env
+      )
+      expect(response.status).toBe(401)
+      const body = await json(response)
+      expect(body.success).toBe(false)
+      expect(body.error).toBe('unauthorized')
+    })
+
+    it('rejects invalid JSON', async () => {
+      const env = makeEnv()
+      const response = await worker.fetch(
+        ttsGenerate({}, { body: 'not-json' }),
         env
       )
       expect(response.status).toBe(400)
@@ -273,11 +296,7 @@ describe('tts-api worker', () => {
     it('rejects missing text', async () => {
       const env = makeEnv()
       const response = await worker.fetch(
-        new Request('https://tts.test/generate', {
-          method: 'POST',
-          headers: { 'content-type': 'application/json' },
-          body: JSON.stringify({ language: 'en' }),
-        }),
+        ttsGenerate({ language: 'en' }),
         env
       )
       expect(response.status).toBe(400)
@@ -289,11 +308,7 @@ describe('tts-api worker', () => {
     it('rejects missing language', async () => {
       const env = makeEnv()
       const response = await worker.fetch(
-        new Request('https://tts.test/generate', {
-          method: 'POST',
-          headers: { 'content-type': 'application/json' },
-          body: JSON.stringify({ text: 'Hello' }),
-        }),
+        ttsGenerate({ text: 'Hello' }),
         env
       )
       expect(response.status).toBe(400)
@@ -323,11 +338,7 @@ describe('tts-api worker', () => {
 
       const fetchSpy = vi.spyOn(globalThis, 'fetch')
       const response = await worker.fetch(
-        new Request('https://tts.test/generate', {
-          method: 'POST',
-          headers: { 'content-type': 'application/json' },
-          body: JSON.stringify({ text: '  Cached  ', language: 'EN' }),
-        }),
+        ttsGenerate({ text: '  Cached  ', language: 'EN' }),
         env
       )
 
@@ -342,11 +353,7 @@ describe('tts-api worker', () => {
     it('returns 503 when no API key and no cache hit', async () => {
       const env = makeEnv({ OPENAI_API_KEY: undefined })
       const response = await worker.fetch(
-        new Request('https://tts.test/generate', {
-          method: 'POST',
-          headers: { 'content-type': 'application/json' },
-          body: JSON.stringify({ text: 'Hello', language: 'en' }),
-        }),
+        ttsGenerate({ text: 'Hello', language: 'en' }),
         env
       )
       expect(response.status).toBe(503)
@@ -358,11 +365,7 @@ describe('tts-api worker', () => {
     it('returns 501 for azure provider', async () => {
       const env = makeEnv()
       const response = await worker.fetch(
-        new Request('https://tts.test/generate', {
-          method: 'POST',
-          headers: { 'content-type': 'application/json' },
-          body: JSON.stringify({ text: 'Hello', language: 'en', provider: 'azure' }),
-        }),
+        ttsGenerate({ text: 'Hello', language: 'en', provider: 'azure' }),
         env
       )
       expect(response.status).toBe(501)
@@ -377,11 +380,7 @@ describe('tts-api worker', () => {
       vi.spyOn(globalThis, 'fetch').mockResolvedValue(new Response(audioBytes, { status: 200 }))
 
       const response = await worker.fetch(
-        new Request('https://tts.test/generate', {
-          method: 'POST',
-          headers: { 'content-type': 'application/json' },
-          body: JSON.stringify({ text: 'Hello world', language: 'en' }),
-        }),
+        ttsGenerate({ text: 'Hello world', language: 'en' }),
         env
       )
 
@@ -425,11 +424,7 @@ describe('tts-api worker', () => {
       vi.spyOn(globalThis, 'fetch').mockResolvedValue(new Response(new Uint8Array([0x49, 0x44, 0x33]), { status: 200 }))
 
       const response = await worker.fetch(
-        new Request('https://tts.test/generate', {
-          method: 'POST',
-          headers: { 'content-type': 'application/json' },
-          body: JSON.stringify({ text: 'Hello race', language: 'en' }),
-        }),
+        ttsGenerate({ text: 'Hello race', language: 'en' }),
         env,
       )
 
@@ -449,11 +444,7 @@ describe('tts-api worker', () => {
       )
 
       const response = await worker.fetch(
-        new Request('https://tts.test/generate', {
-          method: 'POST',
-          headers: { 'content-type': 'application/json' },
-          body: JSON.stringify({ text: 'Hello', language: 'en' }),
-        }),
+        ttsGenerate({ text: 'Hello', language: 'en' }),
         env
       )
 

@@ -135,17 +135,38 @@ async function json(response: Response) {
   return response.json() as Promise<Record<string, any>>
 }
 
+function authHeaders(extra: HeadersInit = {}) {
+  return { authorization: 'Bearer test-api-key', ...extra }
+}
+
+function generationPost(path: string, body: unknown): Request {
+  return new Request(`https://api.test${path}`, {
+    method: 'POST',
+    headers: authHeaders({ 'content-type': 'application/json' }),
+    body: JSON.stringify(body),
+  })
+}
+
 beforeEach(() => {
   vi.restoreAllMocks()
 })
 
 describe('generation-api TTS contract', () => {
+  it('requires auth for paid TTS and voice catalog endpoints', async () => {
+    const env = makeEnv()
+    const tts = await worker.fetch(new Request('https://api.test/v1/generation/tts', {
+      method: 'POST',
+      body: JSON.stringify({ text: 'Hello', language: 'en' }),
+    }), env)
+    const voices = await worker.fetch(new Request('https://api.test/v1/generation/voices'), env)
+
+    expect(tts.status).toBe(401)
+    expect(voices.status).toBe(401)
+  })
+
   it('returns explicit validation errors for invalid TTS requests', async () => {
     const env = makeEnv()
-    const response = await worker.fetch(new Request('https://api.test/v1/generation/tts', {
-      method: 'POST',
-      body: JSON.stringify({ language: 'en' }),
-    }), env)
+    const response = await worker.fetch(generationPost('/v1/generation/tts', { language: 'en' }), env)
 
     expect(response.status).toBe(400)
     await expect(json(response)).resolves.toMatchObject({
@@ -175,10 +196,7 @@ describe('generation-api TTS contract', () => {
     })
 
     const fetchSpy = vi.spyOn(globalThis, 'fetch')
-    const response = await worker.fetch(new Request('https://api.test/v1/generation/tts', {
-      method: 'POST',
-      body: JSON.stringify({ text: ' Yes ', language: 'EN', provider: 'auto' }),
-    }), env)
+    const response = await worker.fetch(generationPost('/v1/generation/tts', { text: ' Yes ', language: 'EN', provider: 'auto' }), env)
 
     expect(response.status).toBe(200)
     expect(fetchSpy).not.toHaveBeenCalled()
@@ -221,10 +239,7 @@ describe('generation-api TTS contract', () => {
       ELEVENLABS_API_KEY: undefined,
     } as Partial<Env> & Record<string, unknown>)
 
-    const response = await worker.fetch(new Request('https://api.test/v1/generation/tts', {
-      method: 'POST',
-      body: JSON.stringify({ text: 'Hello', language: 'en', provider: 'auto' }),
-    }), env)
+    const response = await worker.fetch(generationPost('/v1/generation/tts', { text: 'Hello', language: 'en', provider: 'auto' }), env)
     const generated = await json(response)
 
     expect(response.status).toBe(201)
@@ -244,10 +259,7 @@ describe('generation-api TTS contract', () => {
 
   it('returns a safe missing-provider-key error on cache miss', async () => {
     const env = makeEnv({ OPENAI_API_KEY: undefined, ELEVENLABS_API_KEY: undefined })
-    const response = await worker.fetch(new Request('https://api.test/v1/generation/tts', {
-      method: 'POST',
-      body: JSON.stringify({ text: 'Hello', language: 'en' }),
-    }), env)
+    const response = await worker.fetch(generationPost('/v1/generation/tts', { text: 'Hello', language: 'en' }), env)
 
     expect(response.status).toBe(503)
     await expect(json(response)).resolves.toMatchObject({
@@ -259,10 +271,7 @@ describe('generation-api TTS contract', () => {
     const env = makeEnv()
     vi.spyOn(globalThis, 'fetch').mockResolvedValue(new Response(new Uint8Array([1, 2, 3]), { status: 200 }))
 
-    const generateResponse = await worker.fetch(new Request('https://api.test/v1/generation/tts', {
-      method: 'POST',
-      body: JSON.stringify({ text: 'Hello', language: 'en' }),
-    }), env)
+    const generateResponse = await worker.fetch(generationPost('/v1/generation/tts', { text: 'Hello', language: 'en' }), env)
     const generated = await json(generateResponse)
 
     expect(generateResponse.status).toBe(201)
@@ -302,10 +311,7 @@ describe('generation-api TTS contract', () => {
     }
     vi.spyOn(globalThis, 'fetch').mockResolvedValue(new Response(new Uint8Array([1, 2, 3]), { status: 200 }))
 
-    const response = await worker.fetch(new Request('https://api.test/v1/generation/tts', {
-      method: 'POST',
-      body: JSON.stringify({ text: 'Hello race', language: 'en' }),
-    }), env)
+    const response = await worker.fetch(generationPost('/v1/generation/tts', { text: 'Hello race', language: 'en' }), env)
 
     expect(response.status).toBe(200)
     await expect(json(response)).resolves.toMatchObject({
@@ -317,7 +323,7 @@ describe('generation-api TTS contract', () => {
   it('exposes health and sampled voice catalog for the story creator', async () => {
     const env = makeEnv()
     const health = await worker.fetch(new Request('https://api.test/v1/generation/health'), env)
-    const voices = await worker.fetch(new Request('https://api.test/v1/generation/voices'), env)
+    const voices = await worker.fetch(new Request('https://api.test/v1/generation/voices', { headers: authHeaders() }), env)
 
     expect(health.status).toBe(200)
     await expect(json(health)).resolves.toMatchObject({ data: { service: 'generation-api', status: 'ok' } })

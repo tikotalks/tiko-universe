@@ -146,9 +146,9 @@ export default {
 
     const url = new URL(request.url)
     if (url.pathname === '/v1/generation/health' && request.method === 'GET') return generationHealth()
-    if (url.pathname === '/v1/generation/voices' && request.method === 'GET') return listVoices(url, env)
-    if (url.pathname === '/v1/generation/tts' && request.method === 'POST') return generateTts(request, env)
-    if (url.pathname.startsWith('/v1/generation/voice-samples/') && request.method === 'GET') return getVoiceSample(url, env)
+    if (url.pathname === '/v1/generation/voices' && request.method === 'GET') return requireAuth(request, env, () => listVoices(url, env))
+    if (url.pathname === '/v1/generation/tts' && request.method === 'POST') return requireAuth(request, env, () => generateTts(request, env))
+    if (url.pathname.startsWith('/v1/generation/voice-samples/') && request.method === 'GET') return requireAuth(request, env, () => getVoiceSample(url, env))
     if (url.pathname.startsWith('/v1/generation/audio/') && request.method === 'GET') return getAudio(url.pathname, env)
     if (url.pathname === '/v1/generation/image' && request.method === 'POST') return requireAuth(request, env, () => generateImage(request, env))
     if (url.pathname.startsWith('/v1/generation/images/') && url.pathname.endsWith('/binary') && request.method === 'GET') return getImage(url.pathname, env)
@@ -617,19 +617,19 @@ async function getVoiceSample(url: URL, env: Env): Promise<Response> {
   const voiceId = decodeURIComponent(url.pathname.replace('/v1/generation/voice-samples/', ''))
   if (!ELEVENLABS_VOICE_ID_RE.test(voiceId) && !OPENAI_VOICES.has(voiceId)) return apiError('invalid_voice_id', 'Voice id is invalid.', 400)
   const provider = url.searchParams.get('provider') === 'openai' ? 'openai' : 'elevenlabs'
-  const model = url.searchParams.get('model') || (provider === 'openai' ? 'tts-1' : DEFAULT_ELEVENLABS_MODEL)
-  const safeModel = model.replace(/[^a-zA-Z0-9._-]/g, '') || (provider === 'openai' ? 'tts-1' : DEFAULT_ELEVENLABS_MODEL)
-  const r2Key = `voice-samples/${safeModel}/${voiceId}.mp3`
-  if (!VOICE_SAMPLE_KEY_RE.test(r2Key)) return apiError('invalid_voice_sample', 'Voice sample path is invalid.', 400)
-  const existing = await env.GENERATED_MEDIA_BUCKET.get(r2Key)
-  if (existing) return audioResponse(existing, 'public, max-age=31536000, immutable')
-  const generated = await generateAudioBytes(normalizeTtsRequest({
+  const normalized = normalizeTtsRequest({
     text: 'Hello from Tiko. This is how this voice sounds.',
     language: 'en',
     provider,
     voice: voiceId,
-    model: safeModel,
-  }), env)
+    model: url.searchParams.get('model') || undefined,
+  })
+  const safeModel = normalized.model.replace(/[^a-zA-Z0-9._-]/g, '') || (normalized.provider === 'openai' ? 'tts-1' : DEFAULT_ELEVENLABS_MODEL)
+  const r2Key = `voice-samples/${safeModel}/${normalized.voice}.mp3`
+  if (!VOICE_SAMPLE_KEY_RE.test(r2Key)) return apiError('invalid_voice_sample', 'Voice sample path is invalid.', 400)
+  const existing = await env.GENERATED_MEDIA_BUCKET.get(r2Key)
+  if (existing) return audioResponse(existing, 'public, max-age=31536000, immutable')
+  const generated = await generateAudioBytes(normalized, env)
   if (generated.success === false) return apiError(generated.error, providerSafeMessage(generated.error), generated.status ?? 503)
   await env.GENERATED_MEDIA_BUCKET.put(r2Key, generated.bytes, { httpMetadata: { contentType: generated.contentType, cacheControl: 'public, max-age=31536000, immutable' } })
   return new Response(bytesBody(generated.bytes), { headers: { ...CORS_HEADERS, 'Content-Type': generated.contentType, 'Cache-Control': 'public, max-age=31536000, immutable' } })

@@ -337,7 +337,7 @@ async function nextSentence(request: Request, env: Env): Promise<Response> {
     throw new HttpError(400, 'invalid_current_words', 'currentWords must contain only word id strings.', 'currentWords')
   }
 
-  const subjectId = await resolveSubjectId(request, env, body.userId)
+  const subjectId = await requireSubjectId(request, env, body.userId)
   const cacheKey = `sentence:next:${locale}:${subjectId ?? 'anon'}:${currentWords.join(',')}`
   const cached = await readCache<SentenceNextResponse>(env, cacheKey)
   if (cached) return json(cached)
@@ -399,7 +399,7 @@ async function completeSentence(request: Request, env: Env): Promise<Response> {
   const body = await readJson<SentenceCompleteRequest>(request)
   const locale = normalizeLocale(body.locale)
   const wordIds = validateWordIds(body.wordIds, 'wordIds')
-  const subjectId = await resolveSubjectId(request, env, body.userId)
+  const subjectId = await requireSubjectId(request, env, body.userId)
   const pack = await loadActivePack(env.DB, locale)
   const selectedWords = await loadWordsByIds(env.DB, pack.id, wordIds)
   const orderedWords = orderWordsOrThrow(wordIds, selectedWords)

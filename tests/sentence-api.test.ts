@@ -301,7 +301,7 @@ describe('sentence-api foundation', () => {
     const { testEnv, cache } = env()
     const request = {
       method: 'POST',
-      headers: { 'content-type': 'application/json' },
+      headers: { 'content-type': 'application/json', ...auth },
       body: JSON.stringify({ locale: 'en', currentWords: ['i', 'want'] }),
     }
     const first = await fetchJson('/v1/sentence/next', request, testEnv)
@@ -314,7 +314,23 @@ describe('sentence-api foundation', () => {
     expect(first.body.categories.length).toBeGreaterThan(0)
     expect(Object.keys(first.body.words).length).toBeGreaterThan(0)
     expect(second.body).toEqual(first.body)
-    expect(cache.writes).toContain('sentence:next:en:anon:i,want')
+    expect(cache.writes).toContain('sentence:next:en:sub_1:i,want')
+  })
+
+  it('requires identity for paid next and complete sentence endpoints', async () => {
+    const next = await fetchJson('/v1/sentence/next', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ locale: 'en', currentWords: ['i'] }),
+    })
+    const complete = await fetchJson('/v1/sentence/complete', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ locale: 'en', wordIds: ['i'] }),
+    })
+
+    expect(next.response.status).toBe(401)
+    expect(complete.response.status).toBe(401)
   })
 
 
@@ -340,7 +356,7 @@ describe('sentence-api foundation', () => {
     testEnv.GENERATION_SERVICE = service({ ttsOk: false })
     const { response, body } = await fetchJson('/v1/sentence/complete', {
       method: 'POST',
-      headers: { 'content-type': 'application/json' },
+      headers: { 'content-type': 'application/json', ...auth },
       body: JSON.stringify({ locale: 'en', wordIds: ['i', 'want', 'juice'] }),
     }, testEnv)
 
@@ -442,7 +458,7 @@ describe('sentence-api foundation', () => {
   it('rejects unknown words and returns JSON 404/method errors', async () => {
     const unknown = await fetchJson('/v1/sentence/next', {
       method: 'POST',
-      headers: { 'content-type': 'application/json' },
+      headers: { 'content-type': 'application/json', ...auth },
       body: JSON.stringify({ locale: 'en', currentWords: ['missing-word'] }),
     })
     const missing = await fetchJson('/v1/nope')

@@ -7,6 +7,7 @@ interface Env {
     put(key: string, value: ArrayBuffer | Uint8Array, options?: Record<string, unknown>): Promise<unknown>
   }
   OPENAI_API_KEY?: string
+  API_KEYS?: string
 }
 
 interface GenerateRequest {
@@ -35,7 +36,7 @@ interface AudioRecord {
 const CORS_HEADERS = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-  'Access-Control-Allow-Headers': 'Content-Type',
+  'Access-Control-Allow-Headers': 'Content-Type, Authorization',
 }
 
 const OPENAI_VOICES = new Set(['alloy', 'ash', 'ballad', 'coral', 'echo', 'fable', 'nova', 'onyx', 'sage', 'shimmer', 'verse'])
@@ -45,11 +46,24 @@ export default {
     if (request.method === 'OPTIONS') return new Response(null, { headers: CORS_HEADERS })
     const url = new URL(request.url)
 
-    if (url.pathname === '/generate' && request.method === 'POST') return generate(request, env)
+    if (url.pathname === '/generate' && request.method === 'POST') {
+      const authError = requireServiceAuth(request, env)
+      if (authError) return authError
+      return generate(request, env)
+    }
     if (url.pathname === '/audio' && request.method === 'GET') return getAudio(request, env)
 
     return json({ success: false, error: 'not_found' }, 404)
   },
+}
+
+function requireServiceAuth(request: Request, env: Env): Response | null {
+  const configured = (env.API_KEYS ?? '').split(',').map((key) => key.trim()).filter(Boolean)
+  if (configured.length === 0) return json({ success: false, error: 'auth_not_configured' }, 503)
+  const match = /^Bearer\s+(.+)$/i.exec(request.headers.get('authorization') ?? '')
+  const token = match?.[1]?.trim()
+  if (!token || !configured.includes(token)) return json({ success: false, error: 'unauthorized' }, 401)
+  return null
 }
 
 async function generate(request: Request, env: Env): Promise<Response> {
