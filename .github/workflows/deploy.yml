@@ -63,7 +63,7 @@ jobs:
           # that have real Cloudflare Pages projects.
           APPS="admin cards media radio sequence talk timer todo type website yes-no"
           # Worker directories
-          WORKERS="admin-api app-api atlas-api content-api generation-api identity-api media-api sentence-api tts-api"
+          WORKERS="admin-api app-api atlas-api communication-api content-api generation-api identity-api media-api sentence-api translations-api tts-api"
           # Shared package paths
           SHARED_PATHS="packages/ workers/shared/"
 
@@ -193,7 +193,7 @@ jobs:
       fail-fast: false
       max-parallel: 1
       matrix:
-        worker: ${{ fromJSON(needs.detect-changes.outputs.deploy-all == 'true' && '["admin-api","app-api","atlas-api","content-api","generation-api","identity-api","media-api","sentence-api","tts-api"]' || needs.detect-changes.outputs.workers-changed) }}
+        worker: ${{ fromJSON(needs.detect-changes.outputs.deploy-all == 'true' && '["admin-api","app-api","atlas-api","communication-api","content-api","generation-api","identity-api","media-api","sentence-api","translations-api","tts-api"]' || needs.detect-changes.outputs.workers-changed) }}
     steps:
       - uses: actions/checkout@v6
 
@@ -270,4 +270,3 @@ jobs:
             # Actual dev deploy
             npx wrangler deploy
           fi
-

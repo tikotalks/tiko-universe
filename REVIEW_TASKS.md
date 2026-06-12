@@ -103,7 +103,7 @@ The most urgent work is to lock down Atlas/generation/sentence/media/identity, i
   - Make all deploy jobs depend on typecheck/tests/build.
   - Remove decorative `|| true` dry-run gates.
 
-- [ ] Add missing workers to deploy.
+- [x] Add missing workers to deploy.
   - Add `communication-api` and `translations-api` to deploy detection and matrices.
   - If any worker is intentionally manual, document that explicitly in CI.
 

@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "wrangler dev",
     "deploy": "wrangler deploy",
+    "deploy:dry-run": "wrangler deploy --dry-run",
     "deploy:production": "wrangler deploy --env production",
     "kv:create:dev": "wrangler kv namespace create TRANSLATIONS_KV",
     "kv:create:prod": "wrangler kv namespace create TRANSLATIONS_KV --env production",
