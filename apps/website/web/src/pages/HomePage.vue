@@ -43,6 +43,8 @@ let mediaVelocity = -28
 let mediaLoopWidth = 0
 let mediaPointerX: number | null = null
 let mediaPointerY: number | null = null
+let mediaStreamVisible = true
+let mediaObserver: IntersectionObserver | null = null
 
 const appImages: Record<string, MediaImage> = {
   'yes-no': {
@@ -108,15 +110,6 @@ function shuffled<T>(items: T[]): T[] {
   return copy
 }
 
-function randomUniqueNumbers(count: number, maxInclusive: number): number[] {
-  const picked = new Set<number>()
-  const target = Math.min(count, maxInclusive)
-  while (picked.size < target) {
-    picked.add(1 + Math.floor(Math.random() * maxInclusive))
-  }
-  return Array.from(picked)
-}
-
 function buildMediaStreamImages(images: MediaImage[]): MediaStreamImage[] {
   const source = images.length ? shuffled(images) : shuffled(Object.values(appImages))
 
@@ -136,26 +129,12 @@ function buildMediaStreamImages(images: MediaImage[]): MediaStreamImage[] {
 
 async function loadHomeImages() {
   try {
-    const pageSize = 12
-    const seedRes = await fetch('https://media.tikoapi.org/v1/media?limit=1&type=image&page=1')
+    const response = await fetch('https://media.tikoapi.org/v1/media?limit=50&type=image&page=1')
 
-    if (seedRes.ok) {
-      const seedJson = await seedRes.json() as MediaApiResponse | MediaApiImage[]
-      const meta = Array.isArray(seedJson) ? undefined : seedJson.meta
-      const totalItems = meta?.total ?? 50
-      const totalPages = Math.max(1, Math.ceil(totalItems / pageSize))
-      const pages = randomUniqueNumbers(8, totalPages)
-      const responses = await Promise.all(
-        pages.map((pageNumber) =>
-          fetch(`https://media.tikoapi.org/v1/media?limit=${pageSize}&type=image&page=${pageNumber}`),
-        ),
-      )
-
-      const pagePayloads = await Promise.all(
-        responses.filter((response) => response.ok).map((response) => response.json() as Promise<MediaApiResponse | MediaApiImage[]>),
-      )
-      const items = pagePayloads.flatMap((payload) => (Array.isArray(payload) ? payload : (payload.data ?? [])))
-      const uniqueItems = Array.from(new Map(items.map((item) => [item.id, item])).values())
+    if (response.ok) {
+      const payload = await response.json() as MediaApiResponse | MediaApiImage[]
+      const items = Array.isArray(payload) ? payload : (payload.data ?? [])
+      const uniqueItems = Array.from(new Map(items.map(item => [item.id, item])).values())
       const normalized = normalizeMediaImages(shuffled(uniqueItems).slice(0, 50))
       mediaImages.value = buildMediaStreamImages(normalized)
       await nextTick()
@@ -220,11 +199,11 @@ function animateMediaStream(frameTime: number) {
   const deltaSeconds = Math.min(0.05, (frameTime - mediaLastFrame) / 1000)
   mediaLastFrame = frameTime
 
-  refreshMediaLoopWidth()
-  mediaOffset += mediaVelocity * deltaSeconds
-  wrapMediaOffset()
-  setMediaTrackTransform()
-  updateMediaTileInfluence()
+  if (mediaStreamVisible) {
+    mediaOffset += mediaVelocity * deltaSeconds
+    wrapMediaOffset()
+    setMediaTrackTransform()
+  }
 
   mediaAnimationFrame = window.requestAnimationFrame(animateMediaStream)
 }
@@ -250,11 +229,21 @@ function onMediaStreamPointerLeave() {
 
 onMounted(() => {
   loadHomeImages()
+  window.addEventListener('resize', refreshMediaLoopWidth)
+  if ('IntersectionObserver' in window) {
+    mediaObserver = new IntersectionObserver((entries) => {
+      mediaStreamVisible = entries.some(entry => entry.isIntersecting)
+    })
+    if (mediaStream.value) mediaObserver.observe(mediaStream.value)
+  }
   mediaAnimationFrame = window.requestAnimationFrame(animateMediaStream)
 })
 
 onUnmounted(() => {
   window.cancelAnimationFrame(mediaAnimationFrame)
+  window.removeEventListener('resize', refreshMediaLoopWidth)
+  mediaObserver?.disconnect()
+  mediaObserver = null
 })
 </script>
 

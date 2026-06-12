@@ -70,6 +70,8 @@ describe('TikoTalks website', () => {
     expect(wrapper.text()).not.toContain('Start free trial')
     expect(wrapper.text()).not.toContain('Talk to sales')
     expect(wrapper.text()).not.toContain('Sign in')
+    expect(fetch).toHaveBeenCalledTimes(1)
+    expect(fetch).toHaveBeenCalledWith('https://media.tikoapi.org/v1/media?limit=50&type=image&page=1')
   })
 
   it('shows the header navigation for site pages', async () => {

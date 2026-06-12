@@ -301,7 +301,7 @@ The most urgent work is to lock down Atlas/generation/sentence/media/identity, i
   - Avoid sequential media-api fallbacks per card.
   - Denormalize resolved URLs at publish time if needed.
 
-- [ ] Fix homepage marquee and decorative API fan-out.
+- [x] Fix homepage marquee and decorative API fan-out.
   - Avoid per-frame layout reads.
   - Pause offscreen.
   - Replace 9 startup API calls with one cached request or static fallback.
