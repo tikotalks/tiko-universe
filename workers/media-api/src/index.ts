@@ -784,7 +784,7 @@ async function handleListMedia(request: Request, env: Env): Promise<Response> {
     const offset = (page - 1) * limit
     const search = url.searchParams.get('search')?.trim()
     const type = url.searchParams.get('type')?.trim()       // image | audio | video
-    const category = url.searchParams.get('category')?.trim()
+    const categories = url.searchParams.get('category')?.split(',').map(category => category.trim()).filter(Boolean) ?? []
     const tags = url.searchParams.get('tags')?.split(',').map(t => t.trim()).filter(Boolean)
     const sort = url.searchParams.get('sort') || 'created_at'
     const order = url.searchParams.get('order')?.toLowerCase() === 'asc' ? 'ASC' : 'DESC'
@@ -812,9 +812,9 @@ async function handleListMedia(request: Request, env: Env): Promise<Response> {
       clauses.push('mime_type LIKE ?')
       values.push(`${type}/%`)
     }
-    if (category) {
-      clauses.push('categories LIKE ?')
-      values.push(`%"${category}"%`)
+    if (categories.length) {
+      clauses.push(`(${categories.map(() => 'categories LIKE ?').join(' OR ')})`)
+      values.push(...categories.map(category => `%"${category}"%`))
     }
     if (tags?.length) {
       for (const tag of tags) {

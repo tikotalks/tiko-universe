@@ -166,7 +166,20 @@ class MemoryD1 {
 
     if (normalized.includes('user_id = ?') && !normalized.includes('(is_public = 1 OR user_id = ?)')) {
       const userId = String(values[valueIndex])
+      valueIndex += 1
       filtered = filtered.filter(row => row.user_id === userId)
+    }
+    if (normalized.includes('categories LIKE ?')) {
+      const categoryPatterns = values
+        .slice(valueIndex)
+        .filter((value): value is string => typeof value === 'string' && value.startsWith('%"') && value.endsWith('"%'))
+        .map(value => value.slice(2, -2))
+      if (categoryPatterns.length > 0) {
+        filtered = filtered.filter(row => {
+          const raw = String(row.folder ?? row.categories ?? '')
+          return categoryPatterns.some(category => raw.includes(`"${category}"`) || raw === category)
+        })
+      }
     }
     return filtered
   }
@@ -221,7 +234,8 @@ function mediaRow(overrides: Row = {}): Row {
     alt_text: 'Hello image',
     title: 'Hello',
     description: 'A test image',
-    folder: 'cards',
+    folder: JSON.stringify(['cards']),
+    categories: JSON.stringify(['cards']),
     tags: JSON.stringify(['test', 'cards']),
     is_private: 0,
     owner_user_id: null,
@@ -312,6 +326,19 @@ describe('media-api worker', () => {
     expect(body.data).toHaveLength(1)
     expect(body.data[0]).toMatchObject({ id: 'media_1', file_name: 'hello.png', tags: ['test', 'cards'], is_private: false })
     expect(body.meta).toMatchObject({ total: 1, page: 1, limit: 10, totalPages: 1 })
+  })
+
+  it('filters public media by multiple categories in one request', async () => {
+    const env = makeEnv()
+    env.MEDIA_DB.media.push(mediaRow({ id: 'media_2', file_name: 'dog.png', folder: JSON.stringify(['animals']), categories: JSON.stringify(['animals']) }))
+    env.MEDIA_DB.media.push(mediaRow({ id: 'media_3', file_name: 'food.png', folder: JSON.stringify(['food']), categories: JSON.stringify(['food']) }))
+
+    const response = await worker.fetch(new Request('https://media.test/v1/media?type=image&category=cards,animals&limit=10'), env as never)
+    const body = await parseJson(response)
+
+    expect(response.status).toBe(200)
+    expect(body.data.map((item: { id: string }) => item.id)).toEqual(['media_1', 'media_2'])
+    expect(body.meta).toMatchObject({ total: 2, page: 1, limit: 10 })
   })
 
   it('returns one media record and 404s missing media', async () => {
