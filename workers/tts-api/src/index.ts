@@ -47,20 +47,26 @@ const CORS_HEADERS = {
 }
 
 const OPENAI_VOICES = new Set(['alloy', 'ash', 'ballad', 'coral', 'echo', 'fable', 'nova', 'onyx', 'sage', 'shimmer', 'verse'])
+const PROVIDER_TIMEOUT_MS = 15_000
 
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
-    if (request.method === 'OPTIONS') return new Response(null, { headers: CORS_HEADERS })
-    const url = new URL(request.url)
+    try {
+      if (request.method === 'OPTIONS') return new Response(null, { headers: CORS_HEADERS })
+      const url = new URL(request.url)
 
-    if (url.pathname === '/generate' && request.method === 'POST') {
-      const auth = await requireServiceAuth(request, env)
-      if (auth instanceof Response) return auth
-      return generate(request, env, auth.subjectKey)
+      if (url.pathname === '/generate' && request.method === 'POST') {
+        const auth = await requireServiceAuth(request, env)
+        if (auth instanceof Response) return auth
+        return generate(request, env, auth.subjectKey)
+      }
+      if (url.pathname === '/audio' && request.method === 'GET') return getAudio(request, env)
+
+      return json({ success: false, error: 'not_found' }, 404)
+    } catch (error) {
+      console.error('[tts-api] unhandled request error', error)
+      return json({ success: false, error: 'internal_error' }, 500)
     }
-    if (url.pathname === '/audio' && request.method === 'GET') return getAudio(request, env)
-
-    return json({ success: false, error: 'not_found' }, 404)
   },
 }
 
@@ -227,20 +233,25 @@ async function generateAudioBytes(input: Required<GenerateRequest>, env: Env): P
   if (input.provider === 'azure') return { success: false, error: 'azure_tts_not_configured', status: 501 }
   if (!env.OPENAI_API_KEY) return { success: false, error: 'tts_generation_not_configured', status: 503 }
 
-  const response = await fetch('https://api.openai.com/v1/audio/speech', {
-    method: 'POST',
-    headers: {
-      Authorization: `Bearer ${env.OPENAI_API_KEY}`,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      model: input.model,
-      voice: input.voice,
-      input: input.text,
-      response_format: 'mp3',
-      speed: input.speed,
-    }),
-  })
+  let response: Response
+  try {
+    response = await fetchWithRetry('https://api.openai.com/v1/audio/speech', {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${env.OPENAI_API_KEY}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        model: input.model,
+        voice: input.voice,
+        input: input.text,
+        response_format: 'mp3',
+        speed: input.speed,
+      }),
+    }, { timeoutMs: PROVIDER_TIMEOUT_MS })
+  } catch {
+    return { success: false, error: 'openai_tts_unavailable', status: 503 }
+  }
 
   if (!response.ok) {
     const message = await response.text().catch(() => '')
@@ -248,6 +259,40 @@ async function generateAudioBytes(input: Required<GenerateRequest>, env: Env): P
   }
 
   return { success: true, bytes: new Uint8Array(await response.arrayBuffer()) }
+}
+
+async function fetchWithRetry(input: RequestInfo | URL, init: RequestInit, options: { timeoutMs: number }): Promise<Response> {
+  let lastError: unknown
+  for (let attempt = 0; attempt < 2; attempt += 1) {
+    const response = await fetchWithTimeout(input, init, options.timeoutMs).catch((error) => {
+      lastError = error
+      return null
+    })
+    if (!response) continue
+    if (attempt === 0 && isRetryableStatus(response.status)) {
+      await response.body?.cancel().catch(() => undefined)
+      continue
+    }
+    return response
+  }
+  throw lastError instanceof Error ? lastError : new Error('fetch_failed')
+}
+
+async function fetchWithTimeout(input: RequestInfo | URL, init: RequestInit, timeoutMs: number): Promise<Response> {
+  const controller = new AbortController()
+  const timeout = setTimeout(() => controller.abort(), timeoutMs)
+  try {
+    return await fetch(input, {
+      ...init,
+      signal: controller.signal,
+    })
+  } finally {
+    clearTimeout(timeout)
+  }
+}
+
+function isRetryableStatus(status: number): boolean {
+  return status === 408 || status === 429 || status >= 500
 }
 
 function clamp(value: number, min: number, max: number) {

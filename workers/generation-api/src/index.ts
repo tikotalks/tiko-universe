@@ -127,6 +127,8 @@ const DEFAULT_ELEVENLABS_MODEL = 'eleven_multilingual_v2'
 const DEFAULT_ELEVENLABS_VOICE = '21m00Tcm4TlvDq8ikWAM'
 const ELEVENLABS_MODELS = new Set(['eleven_multilingual_v2', 'eleven_turbo_v2_5', 'eleven_flash_v2_5'])
 const ELEVENLABS_VOICE_ID_RE = /^[a-zA-Z0-9_-]{6,64}$/
+const PROVIDER_TIMEOUT_MS = 20_000
+const PROVIDER_IMAGE_TIMEOUT_MS = 45_000
 const DEFAULT_ELEVENLABS_VOICES = [
   { id: DEFAULT_ELEVENLABS_VOICE, label: 'Rachel' },
   { id: 'AZnzlk1XvdvUeBnXmlld', label: 'Domi' },
@@ -159,33 +161,38 @@ const VOICE_SAMPLE_KEY_RE = /^voice-samples\/[a-z0-9._-]+\/[a-zA-Z0-9_-]{6,64}\.
 
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
-    if (request.method === 'OPTIONS') return new Response(null, { headers: CORS_HEADERS })
+    try {
+      if (request.method === 'OPTIONS') return new Response(null, { headers: CORS_HEADERS })
 
-    const url = new URL(request.url)
-    if (url.pathname === '/v1/generation/health' && request.method === 'GET') return generationHealth()
-    if (url.pathname === '/v1/generation/voices' && request.method === 'GET') return requirePaidAccess(request, env, { capability: 'voices.list', units: 1, maxRequestsPerMinute: 120, maxUnitsPerDay: 2000 }, () => listVoices(url, env))
-    if (url.pathname === '/v1/generation/tts' && request.method === 'POST') return generateTts(request, env)
-    if (url.pathname.startsWith('/v1/generation/voice-samples/') && request.method === 'GET') return requirePaidAccess(request, env, { capability: 'voice.sample', units: 40, maxRequestsPerMinute: 30, maxUnitsPerDay: 2000 }, () => getVoiceSample(url, env))
-    if (url.pathname.startsWith('/v1/generation/audio/') && request.method === 'GET') return getAudio(url.pathname, env)
-    if (url.pathname === '/v1/generation/image' && request.method === 'POST') return requireAuth(request, env, (access) => generateImage(request, env, access))
-    if (url.pathname.startsWith('/v1/generation/images/') && url.pathname.endsWith('/binary') && request.method === 'GET') return getImage(request, url.pathname, env)
-    if (url.pathname.startsWith('/v1/generation/images/') && url.pathname.endsWith('/promote') && request.method === 'POST') return requireAuth(request, env, (access) => promoteImage(url.pathname, env, access))
-    if (url.pathname.startsWith('/v1/generation/images/') && url.pathname.endsWith('/media-link') && request.method === 'POST') return requireAuth(request, env, (access) => linkImageMedia(url.pathname, request, env, access))
-    if (url.pathname.startsWith('/v1/generation/images/') && url.pathname.endsWith('/enrich') && request.method === 'POST') return requireAuth(request, env, (access) => enrichImage(url.pathname, env, access))
-    if (url.pathname.startsWith('/v1/generation/images/') && url.pathname.endsWith('/edit') && request.method === 'POST') return requireAuth(request, env, (access) => editImageVariant(url.pathname, request, env, access))
-    if (url.pathname.startsWith('/v1/generation/images/') && url.pathname.endsWith('/upscale') && request.method === 'POST') return requireAuth(request, env, (access) => upscaleImage(url.pathname, request, env, access))
-    if (url.pathname.startsWith('/v1/generation/images/') && request.method === 'DELETE') return requireAuth(request, env, (access) => deleteImage(url.pathname, env, access))
-    if (url.pathname === '/v1/generation/images' && request.method === 'GET') return listImages(request, env)
-    if (url.pathname === '/v1/generation/stories/tryout' && request.method === 'POST') return requireAuth(request, env, (access) => generateStoryTryout(request, env, access))
-    if (url.pathname === '/v1/generation/stories/render' && request.method === 'POST') return requireAuth(request, env, (access) => renderStory(request, env, access))
-    if (url.pathname === '/v1/generation/story-drafts' && request.method === 'POST') return requireAuth(request, env, (access) => createStoryDraft(request, env, access))
-    if (url.pathname === '/v1/generation/story-drafts' && request.method === 'GET') return requireAuth(request, env, (access) => listStoryDrafts(env, access))
-    if (url.pathname.startsWith('/v1/generation/stories/') && url.pathname.endsWith('/audio') && request.method === 'GET') return getStoryAudio(request, url.pathname, env)
-    if (url.pathname.startsWith('/v1/generation/stories/') && url.pathname.endsWith('/promote') && request.method === 'POST') return requireAuth(request, env, (access) => promoteStory(url.pathname, env, access))
-    if (url.pathname.startsWith('/v1/generation/stories/') && request.method === 'DELETE') return requireAuth(request, env, (access) => deleteStory(url.pathname, env, access))
-    if (url.pathname === '/v1/generation/stories' && request.method === 'GET') return listStories(request, env)
+      const url = new URL(request.url)
+      if (url.pathname === '/v1/generation/health' && request.method === 'GET') return generationHealth()
+      if (url.pathname === '/v1/generation/voices' && request.method === 'GET') return requirePaidAccess(request, env, { capability: 'voices.list', units: 1, maxRequestsPerMinute: 120, maxUnitsPerDay: 2000 }, () => listVoices(url, env))
+      if (url.pathname === '/v1/generation/tts' && request.method === 'POST') return generateTts(request, env)
+      if (url.pathname.startsWith('/v1/generation/voice-samples/') && request.method === 'GET') return requirePaidAccess(request, env, { capability: 'voice.sample', units: 40, maxRequestsPerMinute: 30, maxUnitsPerDay: 2000 }, () => getVoiceSample(url, env))
+      if (url.pathname.startsWith('/v1/generation/audio/') && request.method === 'GET') return getAudio(url.pathname, env)
+      if (url.pathname === '/v1/generation/image' && request.method === 'POST') return requireAuth(request, env, (access) => generateImage(request, env, access))
+      if (url.pathname.startsWith('/v1/generation/images/') && url.pathname.endsWith('/binary') && request.method === 'GET') return getImage(request, url.pathname, env)
+      if (url.pathname.startsWith('/v1/generation/images/') && url.pathname.endsWith('/promote') && request.method === 'POST') return requireAuth(request, env, (access) => promoteImage(url.pathname, env, access))
+      if (url.pathname.startsWith('/v1/generation/images/') && url.pathname.endsWith('/media-link') && request.method === 'POST') return requireAuth(request, env, (access) => linkImageMedia(url.pathname, request, env, access))
+      if (url.pathname.startsWith('/v1/generation/images/') && url.pathname.endsWith('/enrich') && request.method === 'POST') return requireAuth(request, env, (access) => enrichImage(url.pathname, env, access))
+      if (url.pathname.startsWith('/v1/generation/images/') && url.pathname.endsWith('/edit') && request.method === 'POST') return requireAuth(request, env, (access) => editImageVariant(url.pathname, request, env, access))
+      if (url.pathname.startsWith('/v1/generation/images/') && url.pathname.endsWith('/upscale') && request.method === 'POST') return requireAuth(request, env, (access) => upscaleImage(url.pathname, request, env, access))
+      if (url.pathname.startsWith('/v1/generation/images/') && request.method === 'DELETE') return requireAuth(request, env, (access) => deleteImage(url.pathname, env, access))
+      if (url.pathname === '/v1/generation/images' && request.method === 'GET') return listImages(request, env)
+      if (url.pathname === '/v1/generation/stories/tryout' && request.method === 'POST') return requireAuth(request, env, (access) => generateStoryTryout(request, env, access))
+      if (url.pathname === '/v1/generation/stories/render' && request.method === 'POST') return requireAuth(request, env, (access) => renderStory(request, env, access))
+      if (url.pathname === '/v1/generation/story-drafts' && request.method === 'POST') return requireAuth(request, env, (access) => createStoryDraft(request, env, access))
+      if (url.pathname === '/v1/generation/story-drafts' && request.method === 'GET') return requireAuth(request, env, (access) => listStoryDrafts(env, access))
+      if (url.pathname.startsWith('/v1/generation/stories/') && url.pathname.endsWith('/audio') && request.method === 'GET') return getStoryAudio(request, url.pathname, env)
+      if (url.pathname.startsWith('/v1/generation/stories/') && url.pathname.endsWith('/promote') && request.method === 'POST') return requireAuth(request, env, (access) => promoteStory(url.pathname, env, access))
+      if (url.pathname.startsWith('/v1/generation/stories/') && request.method === 'DELETE') return requireAuth(request, env, (access) => deleteStory(url.pathname, env, access))
+      if (url.pathname === '/v1/generation/stories' && request.method === 'GET') return listStories(request, env)
 
-    return apiError('not_found', 'Route not found.', 404)
+      return apiError('not_found', 'Route not found.', 404)
+    } catch (error) {
+      console.error('[generation-api] unhandled request error', error)
+      return apiError('internal_error', 'Generation request failed.', 500)
+    }
   },
 }
 
@@ -204,7 +211,7 @@ async function listVoices(url: URL, env: Env): Promise<Response> {
 
 async function fetchElevenLabsVoices(env: Env) {
   if (!env.ELEVENLABS_API_KEY) return ELEVENLABS_VOICE_CATALOG
-  const response = await fetch('https://api.elevenlabs.io/v1/voices', { headers: { 'xi-api-key': env.ELEVENLABS_API_KEY } })
+  const response = await fetchWithRetry('https://api.elevenlabs.io/v1/voices', { headers: { 'xi-api-key': env.ELEVENLABS_API_KEY } }, { timeoutMs: PROVIDER_TIMEOUT_MS })
   if (!response.ok) return ELEVENLABS_VOICE_CATALOG
   const body = await response.json() as { voices?: Array<{ voice_id?: string; name?: string; labels?: Record<string, string> }> }
   const voices = (body.voices ?? [])
@@ -672,6 +679,10 @@ export async function generateRequestHash(input: NormalizedTtsRequest): Promise<
   return Array.from(new Uint8Array(digest)).map((byte) => byte.toString(16).padStart(2, '0')).join('').slice(0, 32)
 }
 
+async function storySegmentCacheKey(input: NormalizedTtsRequest): Promise<string> {
+  return `story-segments/${await generateRequestHash(input)}.mp3`
+}
+
 function audioKeyForHash(requestHash: string) {
   return `audio/${requestHash}.mp3`
 }
@@ -699,20 +710,25 @@ async function generateAudioBytes(input: NormalizedTtsRequest, env: Env): Promis
   if (input.provider === 'elevenlabs') return generateElevenLabsAudioBytes(input, env)
   if (!env.OPENAI_API_KEY) return { success: false, error: 'tts_generation_not_configured', status: 503 }
 
-  const response = await fetch('https://api.openai.com/v1/audio/speech', {
-    method: 'POST',
-    headers: {
-      Authorization: `Bearer ${env.OPENAI_API_KEY}`,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      model: input.model,
-      voice: input.voice,
-      input: input.text,
-      response_format: 'mp3',
-      speed: input.speed,
-    }),
-  })
+  let response: Response
+  try {
+    response = await fetchWithRetry('https://api.openai.com/v1/audio/speech', {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${env.OPENAI_API_KEY}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        model: input.model,
+        voice: input.voice,
+        input: input.text,
+        response_format: 'mp3',
+        speed: input.speed,
+      }),
+    }, { timeoutMs: PROVIDER_TIMEOUT_MS })
+  } catch {
+    return { success: false, error: 'tts_provider_unavailable', status: 503 }
+  }
 
   if (!response.ok) return { success: false, error: 'tts_provider_failed', status: 502 }
 
@@ -722,20 +738,25 @@ async function generateAudioBytes(input: NormalizedTtsRequest, env: Env): Promis
 async function generateElevenLabsAudioBytes(input: NormalizedTtsRequest, env: Env): Promise<GenerateAudioSuccess | GenerateAudioFailure> {
   if (!env.ELEVENLABS_API_KEY) return { success: false, error: 'elevenlabs_tts_not_configured', status: 503 }
   const model = ELEVENLABS_MODELS.has(input.model) ? input.model : DEFAULT_ELEVENLABS_MODEL
-  const response = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${encodeURIComponent(input.voice)}?output_format=mp3_44100_128`, {
-    method: 'POST',
-    headers: {
-      'xi-api-key': env.ELEVENLABS_API_KEY,
-      'Content-Type': 'application/json',
-      Accept: 'audio/mpeg',
-    },
-    body: JSON.stringify({
-      text: input.text,
-      model_id: model,
-      voice_settings: { stability: 0.5, similarity_boost: 0.75, style: 0, use_speaker_boost: true, speed: input.speed },
-      apply_text_normalization: 'auto',
-    }),
-  })
+  let response: Response
+  try {
+    response = await fetchWithRetry(`https://api.elevenlabs.io/v1/text-to-speech/${encodeURIComponent(input.voice)}?output_format=mp3_44100_128`, {
+      method: 'POST',
+      headers: {
+        'xi-api-key': env.ELEVENLABS_API_KEY,
+        'Content-Type': 'application/json',
+        Accept: 'audio/mpeg',
+      },
+      body: JSON.stringify({
+        text: input.text,
+        model_id: model,
+        voice_settings: { stability: 0.5, similarity_boost: 0.75, style: 0, use_speaker_boost: true, speed: input.speed },
+        apply_text_normalization: 'auto',
+      }),
+    }, { timeoutMs: PROVIDER_TIMEOUT_MS })
+  } catch {
+    return { success: false, error: 'tts_provider_unavailable', status: 503 }
+  }
   if (!response.ok) return { success: false, error: 'tts_provider_failed', status: 502 }
   return { success: true, bytes: new Uint8Array(await response.arrayBuffer()), contentType: 'audio/mpeg' }
 }
@@ -774,6 +795,7 @@ function providerSafeMessage(code: string) {
     case 'tts_generation_not_configured': return 'TTS generation is not configured.'
     case 'elevenlabs_tts_not_configured': return 'ElevenLabs TTS is not configured.'
     case 'tts_provider_failed': return 'TTS provider failed.'
+    case 'tts_provider_unavailable': return 'TTS provider is temporarily unavailable.'
     default: return 'TTS generation failed.'
   }
 }
@@ -862,9 +884,17 @@ async function renderStory(request: Request, env: Env, access: GenerationAccessC
   const chunks: Uint8Array[] = []
 
   for (const segment of cleanSegments) {
-    const generated = await generateAudioBytes(normalizeTtsRequest({ text: segment.text, language: body.language || 'en', provider: 'elevenlabs', voice, model: body.model || DEFAULT_ELEVENLABS_MODEL, speed }), env)
-    if (generated.success === false) return apiError(generated.error, providerSafeMessage(generated.error), generated.status ?? 503)
-    chunks.push(generated.bytes)
+    const normalized = normalizeTtsRequest({ text: segment.text, language: body.language || 'en', provider: 'elevenlabs', voice, model: body.model || DEFAULT_ELEVENLABS_MODEL, speed })
+    const segmentKey = await storySegmentCacheKey(normalized)
+    const cached = await env.GENERATED_MEDIA_BUCKET.get(segmentKey)
+    if (cached) {
+      chunks.push(new Uint8Array(await new Response(cached.body).arrayBuffer()))
+    } else {
+      const generated = await generateAudioBytes(normalized, env)
+      if (generated.success === false) return apiError(generated.error, providerSafeMessage(generated.error), generated.status ?? 503)
+      await env.GENERATED_MEDIA_BUCKET.put(segmentKey, generated.bytes, { httpMetadata: { contentType: generated.contentType, cacheControl: 'public, max-age=31536000, immutable' } })
+      chunks.push(generated.bytes)
+    }
     if (segment.pauseAfterMs > 0) chunks.push(makeSilentMp3Padding())
   }
 
@@ -1375,11 +1405,11 @@ async function generateImage(request: Request, env: Env, access: GenerationAcces
           quality: 'medium',
           background: 'transparent',
         }
-        const openaiResponse = await fetch('https://api.openai.com/v1/images/generations', {
+        const openaiResponse = await fetchWithRetry('https://api.openai.com/v1/images/generations', {
           method: 'POST',
           headers: { Authorization: `Bearer ${env.OPENAI_API_KEY}`, 'Content-Type': 'application/json' },
           body: JSON.stringify(payload),
-        })
+        }, { timeoutMs: PROVIDER_IMAGE_TIMEOUT_MS })
         if (!openaiResponse.ok) {
           const errText = await openaiResponse.text().catch(() => '')
           console.error('[generate] OpenAI preview failed', { status: openaiResponse.status, body: errText, variation: i })
@@ -1393,7 +1423,7 @@ async function generateImage(request: Request, env: Env, access: GenerationAcces
         if (imageItem.b64_json) {
           imageBytes = base64ToBytes(imageItem.b64_json)
         } else if (imageItem.url) {
-          const urlRes = await fetch(imageItem.url)
+          const urlRes = await fetchWithRetry(imageItem.url, {}, { timeoutMs: PROVIDER_IMAGE_TIMEOUT_MS })
           if (!urlRes.ok) return null
           imageBytes = new Uint8Array(await urlRes.arrayBuffer())
         } else {
@@ -1493,7 +1523,7 @@ async function generateImage(request: Request, env: Env, access: GenerationAcces
 }
 
 async function fetchAtlasImageAsset(mediaUrl: string, env: Env, atlasBase: string): Promise<Response> {
-  if (/^https?:\/\//i.test(mediaUrl)) return fetch(mediaUrl)
+  if (/^https?:\/\//i.test(mediaUrl)) return fetchWithRetry(mediaUrl, {}, { timeoutMs: PROVIDER_IMAGE_TIMEOUT_MS })
   if (!env.ATLAS_SERVICE) return new Response('Atlas service unavailable', { status: 503 })
   const origin = new URL(atlasBase).origin
   return env.ATLAS_SERVICE.fetch(new Request(`${origin}${mediaUrl.startsWith('/') ? mediaUrl : `/${mediaUrl}`}`))
@@ -1648,7 +1678,7 @@ async function enrichImage(pathname: string, env: Env, access: GenerationAccessC
   const imageUrl = `${publicBase}/images/${id}/binary`
   const hint = record.title || record.prompt
 
-  const visionResponse = await fetch('https://api.openai.com/v1/chat/completions', {
+  const visionResponse = await fetchWithRetry('https://api.openai.com/v1/chat/completions', {
     method: 'POST',
     headers: { Authorization: `Bearer ${env.OPENAI_API_KEY}`, 'Content-Type': 'application/json' },
     body: JSON.stringify({
@@ -1659,7 +1689,7 @@ async function enrichImage(pathname: string, env: Env, access: GenerationAccessC
       ] }],
       max_tokens: 500,
     }),
-  })
+  }, { timeoutMs: PROVIDER_TIMEOUT_MS })
 
   if (!visionResponse.ok) {
     const errBody = await visionResponse.text().catch(() => '')
@@ -1769,11 +1799,11 @@ async function editImageVariant(pathname: string, request: Request, env: Env, ac
     form.append('mask', new Blob([maskBuffer], { type: 'image/png' }), 'mask.png')
   }
 
-  const editResponse = await fetch('https://api.openai.com/v1/images/edits', {
+  const editResponse = await fetchWithRetry('https://api.openai.com/v1/images/edits', {
     method: 'POST',
     headers: { Authorization: `Bearer ${env.OPENAI_API_KEY}` },
     body: form,
-  })
+  }, { timeoutMs: PROVIDER_IMAGE_TIMEOUT_MS })
 
   if (!editResponse.ok) {
     const errBody = await editResponse.text().catch(() => '')
@@ -1792,7 +1822,7 @@ async function editImageVariant(pathname: string, request: Request, env: Env, ac
   if (imageItem.b64_json) {
     newImageBytes = base64ToBytes(imageItem.b64_json)
   } else if (imageItem.url) {
-    const urlRes = await fetch(imageItem.url)
+    const urlRes = await fetchWithRetry(imageItem.url, {}, { timeoutMs: PROVIDER_IMAGE_TIMEOUT_MS })
     if (!urlRes.ok) return apiError('image_edit_asset_failed', 'Could not fetch edited image asset.', 502)
     newImageBytes = new Uint8Array(await urlRes.arrayBuffer())
   } else {
@@ -2059,11 +2089,11 @@ async function upscaleImage(pathname: string, request: Request, env: Env, access
   if (removeBackground) form.append('background', 'transparent')
   form.append('image', new Blob([imageBuffer], { type: 'image/png' }), 'image.png')
 
-  const editResponse = await fetch('https://api.openai.com/v1/images/edits', {
+  const editResponse = await fetchWithRetry('https://api.openai.com/v1/images/edits', {
     method: 'POST',
     headers: { Authorization: `Bearer ${env.OPENAI_API_KEY}` },
     body: form,
-  })
+  }, { timeoutMs: PROVIDER_IMAGE_TIMEOUT_MS })
 
   if (!editResponse.ok) {
     const errBody = await editResponse.text().catch(() => '')
@@ -2082,7 +2112,7 @@ async function upscaleImage(pathname: string, request: Request, env: Env, access
   if (imageItem.b64_json) {
     newImageBytes = base64ToBytes(imageItem.b64_json)
   } else if (imageItem.url) {
-    const urlRes = await fetch(imageItem.url)
+    const urlRes = await fetchWithRetry(imageItem.url, {}, { timeoutMs: PROVIDER_IMAGE_TIMEOUT_MS })
     if (!urlRes.ok) return apiError('image_upscale_asset_failed', 'Could not fetch upscaled image asset.', 502)
     newImageBytes = new Uint8Array(await urlRes.arrayBuffer())
   } else {
@@ -2149,6 +2179,37 @@ async function deleteImage(pathname: string, env: Env, access: GenerationAccessC
 function parseImageSize(size: string): { width: number; height: number } {
   const [w, h] = size.split('x').map(Number)
   return { width: w || 1024, height: h || 1024 }
+}
+
+async function fetchWithRetry(input: RequestInfo | URL, init: RequestInit, options: { timeoutMs: number }): Promise<Response> {
+  let lastError: unknown
+  for (let attempt = 0; attempt < 2; attempt += 1) {
+    const response = await fetchWithTimeout(input, init, options.timeoutMs).catch((error) => {
+      lastError = error
+      return null
+    })
+    if (!response) continue
+    if (attempt === 0 && isRetryableStatus(response.status)) {
+      await response.body?.cancel().catch(() => undefined)
+      continue
+    }
+    return response
+  }
+  throw lastError instanceof Error ? lastError : new Error('fetch_failed')
+}
+
+async function fetchWithTimeout(input: RequestInfo | URL, init: RequestInit, timeoutMs: number): Promise<Response> {
+  const controller = new AbortController()
+  const timeout = setTimeout(() => controller.abort(), timeoutMs)
+  try {
+    return await fetch(input, { ...init, signal: controller.signal })
+  } finally {
+    clearTimeout(timeout)
+  }
+}
+
+function isRetryableStatus(status: number): boolean {
+  return status === 408 || status === 429 || status >= 500
 }
 
 function clamp(value: number, min: number, max: number) {

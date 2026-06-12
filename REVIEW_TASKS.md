@@ -147,7 +147,7 @@ Approximate review spread: 7 Critical, about 35 High, about 70 Medium, and about
   - Fix Answer Tiles modal save/add-set/autofocus/scroll behavior.
   - Expand the icon selector and enforce icon-or-image, not both.
 
-- [ ] Add provider/network robustness.
+- [x] Add provider/network robustness.
   - Add top-level error handlers in generation-api, tts-api, and translations-api.
   - Add timeouts and one retry for external provider calls.
   - Make story rendering resumable or per-segment cached.

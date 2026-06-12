@@ -357,6 +357,20 @@ describe('tts-api worker', () => {
       await expect(json(overBudget)).resolves.toMatchObject({ success: false, error: 'budget_exceeded' })
     })
 
+    it('retries a transient provider failure once before storing generated audio', async () => {
+      const env = makeEnv()
+      const fetchMock = vi.spyOn(globalThis, 'fetch')
+        .mockResolvedValueOnce(new Response('temporary', { status: 503 }))
+        .mockResolvedValueOnce(new Response(new Uint8Array([0x49, 0x44, 0x33]), { status: 200 }))
+
+      const response = await worker.fetch(ttsGenerate({ text: 'Retry me', language: 'en' }), env)
+
+      expect(response.status).toBe(200)
+      expect(fetchMock).toHaveBeenCalledTimes(2)
+      expect(env.db.records).toHaveLength(1)
+      await expect(json(response)).resolves.toMatchObject({ success: true, cached: false })
+    })
+
     it('returns cached audio on D1 cache hit without calling the provider', async () => {
       const env = makeEnv()
       const normalized = internals.normalizeRequest({ text: 'Cached', language: 'en' })

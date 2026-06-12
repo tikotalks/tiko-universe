@@ -25,6 +25,7 @@ class MemoryD1 {
   byHash = new Map<string, StoredAudioRecord>()
   byId = new Map<string, StoredAudioRecord>()
   storyDrafts = new Map<string, Record<string, unknown>>()
+  stories = new Map<string, Record<string, unknown>>()
   generatedImages = new Map<string, Record<string, unknown>>()
   usageWindows = new Map<string, { request_count: number; unit_count: number }>()
   conflictAudioOnInsert: StoredAudioRecord | null = null
@@ -69,6 +70,29 @@ class MemoryD1 {
               updated_at: values[12],
             }
             this.storyDrafts.set(record.id as string, record)
+            return { success: true, meta: { changes: 1 } }
+          }
+          if (sql.includes('INSERT INTO stories')) {
+            const record = {
+              id: values[0],
+              title: values[1],
+              description: values[2],
+              voice: values[3],
+              speed: values[4],
+              segments: values[5],
+              status: values[6],
+              audio_url: values[7],
+              r2_key: values[8],
+              duration_seconds: values[9],
+              file_size_bytes: values[10],
+              category: values[11],
+              tags: values[12],
+              is_public: values[13],
+              created_by: values[14],
+              created_at: values[15],
+              updated_at: values[16],
+            }
+            this.stories.set(record.id as string, record)
             return { success: true, meta: { changes: 1 } }
           }
           if (sql.includes('INSERT INTO generation_usage_windows')) {
@@ -158,6 +182,7 @@ function makeEnv(overrides: Partial<Env> = {}): Env & { db: MemoryD1; bucket: Me
     ELEVENLABS_API_KEY: 'test-eleven-key',
     API_KEYS: 'test-api-key',
     IDENTITY_BASE_URL: 'https://identity.test/v1',
+    IDENTITY_SERVICE: sessionIdentityService({ 'test-api-key': 'service_user' }),
     ...overrides,
   }
 }
@@ -240,7 +265,7 @@ describe('generation-api TTS contract', () => {
 
     const budgetEnv = makeEnv()
     const dayStart = new Date().toISOString().slice(0, 10)
-    const subjectKey = `key:${await sha256HexForTest('test-api-key')}`
+    const subjectKey = 'session:service_user'
     budgetEnv.db.usageWindows.set(`${subjectKey}|tts.generate|day|${dayStart}`, { request_count: 1, unit_count: 11999 })
     const overBudget = await worker.fetch(generationPost('/v1/generation/tts', { text: 'No', language: 'en' }), budgetEnv)
     expect(overBudget.status).toBe(429)
@@ -434,6 +459,39 @@ describe('generation-api TTS contract', () => {
     expect(createDraft.status).toBe(201)
     expect(draftBody.data).toMatchObject({ title: 'The Mountain', coverMediaId: 'cover_1', targetAlbumId: 'album_1', defaultVoice: '21m00Tcm4TlvDq8ikWAM' })
     expect(draftBody.data.chapters).toHaveLength(2)
+  })
+
+  it('reuses cached story segment audio when a previous render failed mid-story', async () => {
+    const env = makeEnv()
+    const firstSegmentBytes = Uint8Array.from([1, 2, 3])
+    const secondSegmentBytes = Uint8Array.from([4, 5, 6])
+    const fetchMock = vi.spyOn(globalThis, 'fetch')
+      .mockResolvedValueOnce(new Response(firstSegmentBytes, { status: 200 }))
+      .mockResolvedValueOnce(new Response('temporary', { status: 503 }))
+      .mockResolvedValueOnce(new Response('still temporary', { status: 503 }))
+
+    const body = {
+      title: 'Resumable story',
+      language: 'en',
+      segments: [
+        { id: 'one', text: 'First segment', pauseAfterMs: 0 },
+        { id: 'two', text: 'Second segment', pauseAfterMs: 0 },
+      ],
+    }
+
+    const failed = await worker.fetch(generationPost('/v1/generation/stories/render', body), env)
+    expect(failed.status).toBe(502)
+    expect(Array.from(env.bucket.objects.keys()).filter((key) => key.startsWith('story-segments/'))).toHaveLength(1)
+
+    fetchMock.mockResolvedValueOnce(new Response(secondSegmentBytes, { status: 200 }))
+    const retried = await worker.fetch(generationPost('/v1/generation/stories/render', body), env)
+    const retriedBody = await json(retried)
+
+    expect(retried.status).toBe(201)
+    expect(fetchMock).toHaveBeenCalledTimes(4)
+    expect(Array.from(env.bucket.objects.keys()).filter((key) => key.startsWith('story-segments/'))).toHaveLength(2)
+    expect(env.db.stories.size).toBe(1)
+    expect(retriedBody.data).toMatchObject({ title: 'Resumable story', fileSizeBytes: 6 })
   })
 
   it('scopes story draft lists to the authenticated session owner', async () => {

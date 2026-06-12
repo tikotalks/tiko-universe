@@ -90,6 +90,26 @@ describe('translations-api', () => {
     expect(fetchMock).toHaveBeenCalledTimes(1)
   })
 
+  it('retries transient Lezu export failures before returning app translations', async () => {
+    const env = makeEnv()
+    const fetchMock = vi.spyOn(globalThis, 'fetch')
+      .mockResolvedValueOnce(new Response('temporary', { status: 503 }))
+      .mockResolvedValueOnce(new Response(JSON.stringify({
+        data: { content: { 'common.settings': 'Settings', 'yesNo.appName': 'Yes No' } },
+      }), { status: 200, headers: { 'content-type': 'application/json' } }))
+
+    const response = await worker.fetch(new Request('https://translations.test/v1/yes-no/en'), env)
+
+    expect(response.status).toBe(200)
+    expect(fetchMock).toHaveBeenCalledTimes(2)
+    await expect(json(response)).resolves.toEqual({
+      translations: {
+        'common.settings': 'Settings',
+        'yesNo.appName': 'Yes No',
+      },
+    })
+  })
+
   it('purges cached locales with webhook or ApiKey authorization', async () => {
     const env = makeEnv()
     env.TRANSLATIONS_KV.values.set('locale:en', '{}')
