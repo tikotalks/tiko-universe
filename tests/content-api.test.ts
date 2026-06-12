@@ -301,6 +301,24 @@ describe('content-api worker', () => {
     expect(body.data.collections[0].cards[0]).not.toHaveProperty('imageURL')
   })
 
+  it('serves card image refs without per-item media URL lookups', async () => {
+    const env = makeEnv()
+    const collection = env.CONTENT_DB.appItems.find(row => row.id === '__default_animals')
+    const card = env.CONTENT_DB.appItems.find(row => row.id === '__default_animals_dog')
+    collection!.image_ref = 'media-animals'
+    card!.image_ref = 'media-dog'
+    const fetchSpy = vi.fn(async () => { throw new Error('unexpected media lookup') })
+    vi.stubGlobal('fetch', fetchSpy)
+
+    const response = await worker.fetch(new Request('https://content.test/v1/cards/collections?language=en'), env as never)
+    const body = await parseJson(response)
+
+    expect(response.status).toBe(200)
+    expect(body.data.collections[0]).toMatchObject({ imageRef: 'media-animals' })
+    expect(body.data.collections[0].cards[0]).toMatchObject({ imageRef: 'media-dog' })
+    expect(fetchSpy).not.toHaveBeenCalled()
+  })
+
   it('reconciles admin Cards bulk saves without deleting preserved translations', async () => {
     const env = makeEnv()
     const response = await worker.fetch(new Request('https://content.test/v1/admin/cards/collections', {
