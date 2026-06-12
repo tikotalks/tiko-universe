@@ -75,12 +75,14 @@ export const identityConfig: NormalizedAnkoreConfig = normalizeConfig(baseConfig
 
 export default {
   async fetch(request: Request, env: Env, _ctx?: unknown): Promise<Response> {
+    if (request.method === 'OPTIONS') return corsPreflight(request, env)
+
     const contractRequest = request.clone() as AnyRequest
     const canonical = await handleCanonicalIdentity(request, env)
-    if (canonical) return withBrowserSessionCookie(contractRequest, await withTikoSessionContract(contractRequest, env, canonical))
+    if (canonical) return withIdentityCors(contractRequest, env, await withBrowserSessionCookie(contractRequest, await withTikoSessionContract(contractRequest, env, canonical)))
 
     const managed = await handleManagedIdentity(request, env)
-    if (managed) return withBrowserSessionCookie(contractRequest, await withTikoSessionContract(contractRequest, env, managed))
+    if (managed) return withIdentityCors(contractRequest, env, await withBrowserSessionCookie(contractRequest, await withTikoSessionContract(contractRequest, env, managed)))
 
     const ankoreResponse = await createIdentityWorker(configForEnv(env), {
       sendEmail: message => requestMagicLinkDelivery(env, message)
@@ -89,13 +91,52 @@ export default {
       ANKORE_TOKEN_PEPPER: env.ANKORE_TOKEN_PEPPER ?? env.TOKEN_PEPPER
     })
 
-    return withBrowserSessionCookie(contractRequest, await withTikoSessionContract(contractRequest, env, ankoreResponse))
+    return withIdentityCors(contractRequest, env, await withBrowserSessionCookie(contractRequest, await withTikoSessionContract(contractRequest, env, ankoreResponse)))
   }
 }
 
 function configForEnv(env: Env): AnkoreConfig {
   const allowedOrigins = (env.ALLOWED_ORIGINS ?? DEFAULT_ALLOWED_ORIGINS).split(',').map(entry => entry.trim()).filter(Boolean)
   return { ...baseConfig, cors: { allowedOrigins } }
+}
+
+function allowedOriginsForEnv(env: Env): Set<string> {
+  return new Set((env.ALLOWED_ORIGINS ?? DEFAULT_ALLOWED_ORIGINS).split(',').map(entry => entry.trim()).filter(Boolean))
+}
+
+function allowedOrigin(request: Request, env: Env): string | null {
+  const origin = request.headers.get('origin')
+  if (!origin) return null
+  return allowedOriginsForEnv(env).has(origin) ? origin : null
+}
+
+function corsPreflight(request: Request, env: Env): Response {
+  const origin = allowedOrigin(request, env)
+  if (!origin) return new Response(null, { status: 403 })
+  return new Response(null, {
+    status: 204,
+    headers: identityCorsHeaders(origin)
+  })
+}
+
+function withIdentityCors(request: Request, env: Env, response: Response): Response {
+  const origin = allowedOrigin(request, env)
+  if (!origin) return response
+  const headers = new Headers(response.headers)
+  const cors = identityCorsHeaders(origin)
+  cors.forEach((value, key) => headers.set(key, value))
+  return new Response(response.body, { status: response.status, statusText: response.statusText, headers })
+}
+
+function identityCorsHeaders(origin: string): Headers {
+  return new Headers({
+    'Access-Control-Allow-Origin': origin,
+    'Access-Control-Allow-Credentials': 'true',
+    'Access-Control-Allow-Methods': 'GET,POST,PUT,DELETE,OPTIONS',
+    'Access-Control-Allow-Headers': 'Authorization,Content-Type,X-Requested-With',
+    'Access-Control-Max-Age': '86400',
+    Vary: 'Origin'
+  })
 }
 
 type AccountType = 'temporary' | 'verified' | 'profile_manager' | 'child_account'
@@ -814,13 +855,32 @@ async function updateIdentityProfile(request: Request, env: Env): Promise<Respon
 }
 
 async function requireIdentitySession(request: Request, env: Env): Promise<{ subjectId: string } | null> {
-  const token = request.headers.get('authorization')?.match(/^Bearer\s+(.+)$/i)?.[1]?.trim()
+  const token = sessionTokenFromRequest(request)
   if (!token) return null
   const session = await env.IDENTITY_DB.prepare('SELECT * FROM identity_sessions WHERE token_hash = ? LIMIT 1')
     .bind(await hashSecret(token, env, 'session'))
     .first<SessionRow>()
   if (!session || session.revoked_at || session.product !== 'tiko' || new Date(session.expires_at).getTime() <= Date.now()) return null
   return { subjectId: session.subject_id }
+}
+
+function sessionTokenFromRequest(request: Request): string | null {
+  const bearer = request.headers.get('authorization')?.match(/^Bearer\s+(.+)$/i)?.[1]?.trim()
+  if (bearer) return bearer
+  const cookie = request.headers.get('cookie')
+  if (!cookie) return null
+  for (const part of cookie.split(';')) {
+    const [rawName, ...rawValue] = part.trim().split('=')
+    if (rawName !== 'tiko_session') continue
+    const value = rawValue.join('=')
+    if (!value) return null
+    try {
+      return decodeURIComponent(value)
+    } catch {
+      return value
+    }
+  }
+  return null
 }
 
 async function sessionResponse(request: Request, env: Env): Promise<Response> {

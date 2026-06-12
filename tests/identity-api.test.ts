@@ -450,6 +450,30 @@ describe('identity-api endpoints', () => {
     expect(denied.response.headers.get('access-control-allow-origin')).toBeNull()
   })
 
+  it('reflects allowed origins and PUT for managed identity preflights', async () => {
+    const allowed = await fetchJson('/v1/identity/child-accounts/sub_1', {
+      method: 'OPTIONS',
+      headers: {
+        origin: 'https://cards.tikoapps.org',
+        'access-control-request-method': 'PUT'
+      }
+    })
+    const denied = await fetchJson('/v1/identity/child-accounts/sub_1', {
+      method: 'OPTIONS',
+      headers: {
+        origin: 'https://evil.example',
+        'access-control-request-method': 'PUT'
+      }
+    })
+
+    expect(allowed.response.status).toBe(204)
+    expect(allowed.response.headers.get('access-control-allow-origin')).toBe('https://cards.tikoapps.org')
+    expect(allowed.response.headers.get('access-control-allow-credentials')).toBe('true')
+    expect(allowed.response.headers.get('access-control-allow-methods')).toContain('PUT')
+    expect(denied.response.status).toBe(403)
+    expect(denied.response.headers.get('access-control-allow-origin')).toBeNull()
+  })
+
   it('bootstraps a device subject through Ankore and stores only Ankore identity rows', async () => {
     const testEnv = env()
     const { response, body } = await fetchJson('/v1/identity/device', {
@@ -530,6 +554,28 @@ describe('identity-api endpoints', () => {
 
     expect(restored.status).toBe(200)
     expect(restoredBundle.subject.id).toBe(createdBundle.subject.id)
+  })
+
+  it('accepts shared browser session cookies on managed identity endpoints', async () => {
+    const testEnv = env()
+    const created = await worker.fetch(new Request('https://id.tikoapps.org/v1/identity/device', {
+      method: 'POST',
+      headers: { origin: 'https://yesno.tikoapps.org', 'content-type': 'application/json' },
+      body: JSON.stringify({ device: { platform: 'web' } })
+    }), testEnv as never, {} as never)
+    const createdBundle = await created.json() as IdentityBundle
+    const cookie = created.headers.get('set-cookie')?.split(';')[0] ?? ''
+    await assignTestRole(testEnv.IDENTITY_DB, createdBundle.subject.id, 'profile_manager')
+
+    const listed = await worker.fetch(new Request('https://id.tikoapps.org/v1/identity/child-accounts', {
+      headers: { origin: 'https://cards.tikoapps.org', cookie }
+    }), testEnv as never, {} as never)
+    const body = await listed.json() as JsonBody
+
+    expect(listed.status).toBe(200)
+    expect(body.childAccounts).toEqual([])
+    expect(listed.headers.get('access-control-allow-origin')).toBe('https://cards.tikoapps.org')
+    expect(listed.headers.get('access-control-allow-credentials')).toBe('true')
   })
 
   it('restores the same device with device credentials and creates a fresh session', async () => {

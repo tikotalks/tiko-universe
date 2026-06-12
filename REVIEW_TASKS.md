@@ -75,7 +75,7 @@ Approximate review spread: 7 Critical, about 35 High, about 70 Medium, and about
   - Add shared Keychain access groups where cross-app identity is expected.
   - Do not add a UserDefaults fallback for failed Keychain writes.
 
-- [ ] Fix identity browser CORS and cookie-session support.
+- [x] Fix identity browser CORS and cookie-session support.
   - Reflect the allowlisted origin on managed identity endpoints.
   - Include PUT in preflight responses.
   - Make managed identity endpoints accept the same cookie session model as canonical identity routes.
