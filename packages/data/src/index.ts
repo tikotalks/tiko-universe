@@ -296,6 +296,3 @@ function jsonBearerHeaders(sessionToken: string): Record<string, string> {
 function versionBody(options: WriteOptions): { version?: number } {
   return options.version === undefined ? {} : { version: options.version }
 }
-
-export { TikoMediaClient, TikoMediaError } from './media.js'
-export type { MediaClientOptions, UploadAudioResponse, ExtractYouTubeResponse, GetTrackResponse } from './media.js'
