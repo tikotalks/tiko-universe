@@ -583,7 +583,7 @@ async function cleanupAnonymousSubjects(env: Env): Promise<void> {
   const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString()
   const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString()
 
-  // Find unverified subjects whose last session is older than 30 days (we'll tighten per-subject below)
+  // Find unverified, unmanaged subjects old enough to be eligible; per-subject data decides the final threshold.
   const { results } = await env.AUTH_DB.prepare(`
     SELECT s.id, MAX(COALESCE(sess.last_seen_at, sess.created_at, s.created_at)) AS last_seen
     FROM identity_subjects s
@@ -594,9 +594,22 @@ async function cleanupAnonymousSubjects(env: Env): Promise<void> {
         SELECT 1 FROM identity_accounts ia
         WHERE ia.subject_id = s.id AND ia.email_verified_at IS NOT NULL AND ia.disabled_at IS NULL
       )
+      AND NOT EXISTS (
+        SELECT 1 FROM identity_managed_credentials imc
+        WHERE imc.product = s.product
+          AND imc.revoked_at IS NULL
+          AND (imc.subject_id = s.id OR imc.manager_subject_id = s.id)
+      )
+      AND NOT EXISTS (
+        SELECT 1 FROM identity_role_assignments ira
+        WHERE ira.subject_id = s.id
+          AND ira.product = s.product
+          AND ira.role = 'child'
+          AND ira.revoked_at IS NULL
+      )
     GROUP BY s.id
     HAVING MAX(COALESCE(sess.last_seen_at, sess.created_at, s.created_at)) < ? OR MAX(COALESCE(sess.last_seen_at, sess.created_at, s.created_at)) IS NULL
-  `).bind(PRODUCT, thirtyDaysAgo).all<{ id: string; last_seen: string | null }>()
+  `).bind(PRODUCT, oneDayAgo).all<{ id: string; last_seen: string | null }>()
 
   if (results.length === 0) return
 
@@ -606,8 +619,12 @@ async function cleanupAnonymousSubjects(env: Env): Promise<void> {
     const hasData = dataSet.has(id)
     const threshold = hasData ? thirtyDaysAgo : oneDayAgo
     if (!last_seen || last_seen < threshold) {
-      await deleteSubjectData(env.APP_DB, id)
-      await deleteSubjectIdentity(env.AUTH_DB, id)
+      try {
+        await deleteSubjectData(env.APP_DB, id)
+        await deleteSubjectIdentity(env.AUTH_DB, id)
+      } catch (error) {
+        console.error('cleanup_subject_failed', { subjectId: id, error: error instanceof Error ? error.message : String(error) })
+      }
     }
   }
 }
@@ -624,6 +641,10 @@ async function deleteSubjectData(db: D1Database, subjectId: string): Promise<voi
 }
 
 async function deleteSubjectIdentity(db: D1Database, subjectId: string): Promise<void> {
+  await db.prepare('DELETE FROM identity_managed_credentials WHERE subject_id = ? OR manager_subject_id = ?').bind(subjectId, subjectId).run()
+  await db.prepare('DELETE FROM identity_audit_events WHERE subject_id = ? OR actor_subject_id = ?').bind(subjectId, subjectId).run()
+  await db.prepare('DELETE FROM identity_api_keys WHERE subject_id = ?').bind(subjectId).run()
+  await db.prepare('DELETE FROM identity_entitlements WHERE subject_id = ?').bind(subjectId).run()
   await db.prepare('DELETE FROM identity_role_assignments WHERE subject_id = ?').bind(subjectId).run()
   await db.prepare('DELETE FROM identity_sessions WHERE subject_id = ?').bind(subjectId).run()
   await db.prepare('DELETE FROM identity_email_challenges WHERE subject_id = ?').bind(subjectId).run()

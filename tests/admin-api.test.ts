@@ -22,7 +22,18 @@ class MemoryStatement {
 class AdminMemoryD1 {
   subjects = new Map<string, Row>()
   accounts = new Map<string, Row>()
+  sessions: Row[] = []
   roles: Row[] = []
+  managedCredentials: Row[] = []
+  auditEvents: Row[] = []
+  apiKeys: Row[] = []
+  entitlements: Row[] = []
+  emailChallenges: Row[] = []
+  devices: Row[] = []
+  appSettings = new Set<string>()
+  appState = new Set<string>()
+  appProgress = new Set<string>()
+  failIdentityDeleteFor = new Set<string>()
   prepare(sql: string) { return new MemoryStatement(this, sql) }
   execute(sql: string, values: unknown[]): MemoryResult {
     const normalized = sql.replace(/\s+/g, ' ').trim()
@@ -46,6 +57,23 @@ class AdminMemoryD1 {
         roles: JSON.stringify(roles),
         metadata_json: subject.metadata_json ?? null,
       }])
+    }
+    if (normalized.startsWith('SELECT s.id, MAX(COALESCE') && normalized.includes('NOT EXISTS ( SELECT 1 FROM identity_managed_credentials')) {
+      const product = String(values[0] ?? 'tiko')
+      const cutoff = String(values[1] ?? '')
+      const rows = Array.from(this.subjects.values())
+        .filter((subject) => subject.product === product && !subject.disabled_at)
+        .filter((subject) => !Array.from(this.accounts.values()).some((account) => account.subject_id === subject.id && account.email_verified_at && !account.disabled_at))
+        .filter((subject) => !this.managedCredentials.some((credential) => credential.product === subject.product && !credential.revoked_at && (credential.subject_id === subject.id || credential.manager_subject_id === subject.id)))
+        .filter((subject) => !this.roles.some((role) => role.subject_id === subject.id && role.product === subject.product && role.role === 'child' && !role.revoked_at))
+        .map((subject) => {
+          const activeSessions = this.sessions.filter((session) => session.subject_id === subject.id && !session.revoked_at)
+          const sessionTimes = activeSessions.map((session) => String(session.last_seen_at ?? session.created_at ?? subject.created_at))
+          const lastSeen = [String(subject.created_at), ...sessionTimes].sort().at(-1) ?? null
+          return { id: subject.id as string, last_seen: lastSeen }
+        })
+        .filter((row) => !row.last_seen || row.last_seen < cutoff)
+      return new MemoryResult(rows)
     }
     if (normalized.startsWith('SELECT s.id') && normalized.includes('GROUP BY s.id')) {
       const product = String(values[0] ?? 'tiko')
@@ -81,6 +109,14 @@ class AdminMemoryD1 {
       const count = this.roles.filter((role) => role.product === values[0] && role.role === values[1] && !role.revoked_at).length
       return new MemoryResult([{ count }])
     }
+    if (normalized.startsWith('SELECT DISTINCT user_id FROM app_settings')) {
+      const ids = new Set(values.map(String))
+      const rows = new Set<string>()
+      for (const id of this.appSettings) if (ids.has(id)) rows.add(id)
+      for (const id of this.appState) if (ids.has(id)) rows.add(id)
+      for (const id of this.appProgress) if (ids.has(id)) rows.add(id)
+      return new MemoryResult(Array.from(rows).map((user_id) => ({ user_id })))
+    }
     if (normalized.startsWith('INSERT INTO identity_role_assignments')) {
       const [id, subjectId, product, role, source, actorSubjectId, createdAt, revokedAt, metadataJson] = values
       if (!this.roles.some((existing) => existing.subject_id === subjectId && existing.product === product && existing.role === role && !existing.revoked_at)) {
@@ -93,6 +129,64 @@ class AdminMemoryD1 {
       for (const assignment of this.roles) {
         if (assignment.subject_id === subjectId && assignment.product === product && assignment.role === role && !assignment.revoked_at) assignment.revoked_at = revokedAt
       }
+      return new MemoryResult()
+    }
+    if (normalized.startsWith('DELETE FROM app_settings WHERE user_id =')) {
+      this.appSettings.delete(String(values[0]))
+      return new MemoryResult()
+    }
+    if (normalized.startsWith('DELETE FROM app_state WHERE user_id =')) {
+      this.appState.delete(String(values[0]))
+      return new MemoryResult()
+    }
+    if (normalized.startsWith('DELETE FROM app_progress WHERE user_id =')) {
+      this.appProgress.delete(String(values[0]))
+      return new MemoryResult()
+    }
+    if (normalized.startsWith('DELETE FROM identity_managed_credentials')) {
+      const [subjectId, managerSubjectId] = values.map(String)
+      this.managedCredentials = this.managedCredentials.filter((credential) => credential.subject_id !== subjectId && credential.manager_subject_id !== managerSubjectId)
+      return new MemoryResult()
+    }
+    if (normalized.startsWith('DELETE FROM identity_audit_events')) {
+      const [subjectId, actorSubjectId] = values.map(String)
+      this.auditEvents = this.auditEvents.filter((event) => event.subject_id !== subjectId && event.actor_subject_id !== actorSubjectId)
+      return new MemoryResult()
+    }
+    if (normalized.startsWith('DELETE FROM identity_api_keys')) {
+      this.apiKeys = this.apiKeys.filter((key) => key.subject_id !== values[0])
+      return new MemoryResult()
+    }
+    if (normalized.startsWith('DELETE FROM identity_entitlements')) {
+      this.entitlements = this.entitlements.filter((entitlement) => entitlement.subject_id !== values[0])
+      return new MemoryResult()
+    }
+    if (normalized.startsWith('DELETE FROM identity_role_assignments WHERE subject_id =')) {
+      this.roles = this.roles.filter((role) => role.subject_id !== values[0])
+      return new MemoryResult()
+    }
+    if (normalized.startsWith('DELETE FROM identity_sessions WHERE subject_id =')) {
+      this.sessions = this.sessions.filter((session) => session.subject_id !== values[0])
+      return new MemoryResult()
+    }
+    if (normalized.startsWith('DELETE FROM identity_email_challenges WHERE subject_id =')) {
+      this.emailChallenges = this.emailChallenges.filter((challenge) => challenge.subject_id !== values[0])
+      return new MemoryResult()
+    }
+    if (normalized.startsWith('DELETE FROM identity_accounts WHERE subject_id =')) {
+      for (const [id, account] of this.accounts) {
+        if (account.subject_id === values[0]) this.accounts.delete(id)
+      }
+      return new MemoryResult()
+    }
+    if (normalized.startsWith('DELETE FROM identity_devices WHERE subject_id =')) {
+      const subjectId = String(values[0])
+      if (this.failIdentityDeleteFor.has(subjectId)) throw new Error('simulated_fk_failure')
+      this.devices = this.devices.filter((device) => device.subject_id !== subjectId)
+      return new MemoryResult()
+    }
+    if (normalized.startsWith('DELETE FROM identity_subjects WHERE id =')) {
+      this.subjects.delete(String(values[0]))
       return new MemoryResult()
     }
     if (normalized.startsWith('SELECT key_hash')) return new MemoryResult([])
@@ -228,5 +322,38 @@ describe('admin-api role based access', () => {
     const body = await revokeLastAdminResponse.json() as { error: { code: string } }
     expect(revokeLastAdminResponse.status).toBe(409)
     expect(body.error.code).toBe('last_admin_role')
+  })
+
+  it('scheduled cleanup skips managed children and continues after one subject fails', async () => {
+    const authDb = new AdminMemoryD1()
+    const appDb = new AdminMemoryD1()
+    const createdAt = '2026-01-01T00:00:00.000Z'
+    authDb.subjects.set('sub_fails', { id: 'sub_fails', product: 'tiko', kind: 'anonymous', created_at: createdAt, updated_at: createdAt, disabled_at: null, metadata_json: '{}' })
+    authDb.subjects.set('sub_deleted', { id: 'sub_deleted', product: 'tiko', kind: 'anonymous', created_at: createdAt, updated_at: createdAt, disabled_at: null, metadata_json: '{}' })
+    authDb.subjects.set('sub_child', { id: 'sub_child', product: 'tiko', kind: 'account', created_at: createdAt, updated_at: createdAt, disabled_at: null, metadata_json: '{}' })
+    authDb.subjects.set('sub_manager', { id: 'sub_manager', product: 'tiko', kind: 'account', created_at: createdAt, updated_at: createdAt, disabled_at: null, metadata_json: '{}' })
+    authDb.managedCredentials.push({ id: 'credential_1', subject_id: 'sub_child', manager_subject_id: 'sub_manager', product: 'tiko', revoked_at: null })
+    authDb.auditEvents.push({ id: 'audit_1', subject_id: 'sub_deleted', actor_subject_id: 'sub_deleted' })
+    authDb.apiKeys.push({ id: 'key_1', subject_id: 'sub_deleted' })
+    authDb.entitlements.push({ id: 'entitlement_1', subject_id: 'sub_deleted' })
+    authDb.failIdentityDeleteFor.add('sub_fails')
+    appDb.appSettings.add('sub_fails')
+    appDb.appSettings.add('sub_deleted')
+
+    await worker.scheduled({ cron: '0 2 * * *' }, {
+      AUTH_DB: authDb as never,
+      APP_DB: appDb as never,
+      TOKEN_PEPPER: 'test-pepper',
+      IDENTITY_SERVICE: identityService('sub_admin'),
+    } as never)
+
+    expect(authDb.subjects.has('sub_fails')).toBe(true)
+    expect(authDb.subjects.has('sub_deleted')).toBe(false)
+    expect(authDb.subjects.has('sub_child')).toBe(true)
+    expect(authDb.subjects.has('sub_manager')).toBe(true)
+    expect(authDb.auditEvents).toEqual([])
+    expect(authDb.apiKeys).toEqual([])
+    expect(authDb.entitlements).toEqual([])
+    expect(appDb.appSettings.has('sub_deleted')).toBe(false)
   })
 })

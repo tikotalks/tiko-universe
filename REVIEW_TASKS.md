@@ -45,7 +45,7 @@ The most urgent work is to lock down Atlas/generation/sentence/media/identity, i
   - Restrict delete/promote/edit/upscale/link operations to owner or admin.
   - Require auth for draft/private listings and binaries.
 
-- [ ] Fix identity cleanup cron.
+- [x] Fix identity cleanup cron.
   - Exclude managed child accounts and child-role subjects from anonymous cleanup.
   - Delete FK-dependent rows before subject deletion.
   - Wrap each subject cleanup in try/catch so one bad row does not wedge the whole cron.
