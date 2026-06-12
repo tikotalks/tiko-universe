@@ -23,6 +23,9 @@ function adminApiBaseUrl(): string {
 export function useAdminUsers() {
   const { token } = useAdminAuth()
   const users = ref<AdminManagedUser[]>([])
+  const total = ref(0)
+  const page = ref(1)
+  const totalPages = ref(1)
   const loading = ref(false)
   const saving = ref(false)
   const error = ref<string | null>(null)
@@ -41,13 +44,22 @@ export function useAdminUsers() {
     return (body as AdminApiResponse<T>).data
   }
 
-  async function list(query = '') {
+  async function list(query = '', options: { page?: number; limit?: number } = {}) {
     loading.value = true
     error.value = null
     try {
-      const params = query.trim() ? `?q=${encodeURIComponent(query.trim())}` : ''
-      const data = await adminFetch<{ users: AdminManagedUser[] }>(`/users${params}`)
+      const params = new URLSearchParams()
+      if (query.trim()) params.set('q', query.trim())
+      params.set('page', String(options.page ?? page.value))
+      params.set('limit', String(options.limit ?? 25))
+      const data = await adminFetch<{
+        users: AdminManagedUser[]
+        meta: { total: number; page: number; limit: number; totalPages: number }
+      }>(`/users?${params.toString()}`)
       users.value = data.users
+      total.value = data.meta.total
+      page.value = data.meta.page
+      totalPages.value = data.meta.totalPages
     } catch (e) {
       error.value = e instanceof Error ? e.message : 'Could not load users.'
     } finally {
@@ -106,5 +118,5 @@ export function useAdminUsers() {
     users.value = users.value.map((user) => user.id === subjectId ? { ...user, roles } : user)
   }
 
-  return { users, loading, saving, error, list, assignRole, revokeRole, setRoles }
+  return { users, total, page, totalPages, loading, saving, error, list, assignRole, revokeRole, setRoles }
 }

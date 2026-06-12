@@ -179,31 +179,18 @@ class AdminMemoryD1 {
         .filter((row) => !row.last_seen || row.last_seen < cutoff)
       return new MemoryResult(rows)
     }
+    if (normalized.startsWith('SELECT COUNT(DISTINCT s.id) AS count') && normalized.includes('FROM identity_subjects')) {
+      const product = String(values[0] ?? 'tiko')
+      const q = String(values[1] ?? '').replace(/%/g, '').toLowerCase()
+      const count = this.accountBackedUserRows(product, q).length
+      return new MemoryResult([{ count }])
+    }
     if (normalized.startsWith('SELECT s.id') && normalized.includes('GROUP BY s.id')) {
       const product = String(values[0] ?? 'tiko')
       const q = String(values[2] ?? '').replace(/%/g, '').toLowerCase()
-      const rows = Array.from(this.subjects.values())
-        .filter((subject) => subject.product === product && !subject.disabled_at)
-        .map((subject) => {
-          const account = Array.from(this.accounts.values()).find((candidate) => candidate.subject_id === subject.id && !candidate.disabled_at && candidate.email_hash)
-          if (!account) return null
-          const roles = this.roles.filter((role) => role.subject_id === subject.id && role.product === product && !role.revoked_at).map((role) => role.role).sort()
-          const kind = account.email_verified_at ? 'account' : subject.kind
-          const displayName = subject.metadata_json ? JSON.parse(subject.metadata_json as string).displayName ?? '' : ''
-          return {
-            id: subject.id,
-            kind,
-            email: account.email_plain ?? null,
-            created_at: subject.created_at,
-            updated_at: subject.updated_at,
-            last_seen_at: null,
-            roles: JSON.stringify(roles),
-            metadata_json: subject.metadata_json ?? null,
-          }
-        })
-        .filter((row): row is NonNullable<typeof row> => row !== null)
-        .filter((row) => !q || String(row.id).toLowerCase().includes(q) || String(row.email ?? '').toLowerCase().includes(q) || String(row.kind).toLowerCase().includes(q) || (row.metadata_json && String((JSON.parse(row.metadata_json as string) as { displayName?: string }).displayName ?? '').toLowerCase().includes(q)))
-      return new MemoryResult(rows)
+      const limit = Number(values[7] ?? 100)
+      const offset = Number(values[8] ?? 0)
+      return new MemoryResult(this.accountBackedUserRows(product, q).slice(offset, offset + limit))
     }
     if (normalized.startsWith('SELECT role FROM identity_role_assignments')) {
       const rows = this.roles.filter((role) => role.subject_id === values[0] && role.product === values[1] && !role.revoked_at)
@@ -299,6 +286,32 @@ class AdminMemoryD1 {
     }
     if (normalized.startsWith('SELECT key_hash')) return new MemoryResult([])
     throw new Error(`Unhandled SQL in admin-api test fake: ${normalized}`)
+  }
+
+  private accountBackedUserRows(product: string, q: string): Row[] {
+    return Array.from(this.subjects.values())
+      .filter((subject) => subject.product === product && !subject.disabled_at)
+      .map((subject) => {
+        const account = Array.from(this.accounts.values()).find((candidate) => candidate.subject_id === subject.id && !candidate.disabled_at && candidate.email_hash)
+        if (!account) return null
+        const roles = this.roles.filter((role) => role.subject_id === subject.id && role.product === product && !role.revoked_at).map((role) => role.role).sort()
+        const kind = account.email_verified_at ? 'account' : subject.kind
+        return {
+          id: subject.id,
+          kind,
+          email: account.email_plain ?? null,
+          created_at: subject.created_at,
+          updated_at: subject.updated_at,
+          last_seen_at: null,
+          roles: JSON.stringify(roles),
+          metadata_json: subject.metadata_json ?? null,
+        }
+      })
+      .filter((row): row is NonNullable<typeof row> => row !== null)
+      .filter((row) => {
+        const displayName = row.metadata_json ? String((JSON.parse(row.metadata_json as string) as { displayName?: string }).displayName ?? '').toLowerCase() : ''
+        return !q || String(row.id).toLowerCase().includes(q) || String(row.email ?? '').toLowerCase().includes(q) || String(row.kind).toLowerCase().includes(q) || displayName.includes(q)
+      })
   }
 }
 
@@ -399,6 +412,22 @@ describe('admin-api role based access', () => {
     expect(response.status).toBe(200)
     expect(body.data.users).toHaveLength(1)
     expect(body.data.users[0]).toMatchObject({ id: 'sub_child', email: 'child@example.test', roles: ['child'] })
+  })
+
+  it('paginates identity subject lists with metadata', async () => {
+    const testEnv = await makeEnv()
+    testEnv.AUTH_DB.roles.push({ id: 'role_admin', subject_id: 'sub_admin', product: 'tiko', role: 'admin', source: 'manual', actor_subject_id: null, created_at: '2026-01-01T00:00:00.000Z', revoked_at: null, metadata_json: '{}' })
+    for (let index = 1; index <= 3; index += 1) {
+      testEnv.AUTH_DB.subjects.set(`sub_user_${index}`, { id: `sub_user_${index}`, product: 'tiko', kind: 'account', created_at: `2026-01-0${index + 1}T00:00:00.000Z`, updated_at: `2026-01-0${index + 1}T00:00:00.000Z`, disabled_at: null, metadata_json: '{}' })
+      testEnv.AUTH_DB.accounts.set(`acc_user_${index}`, { id: `acc_user_${index}`, subject_id: `sub_user_${index}`, product: 'tiko', email_hash: await ankoreEmailHash(`user${index}@example.test`), email_plain: `user${index}@example.test`, disabled_at: null })
+    }
+
+    const response = await fetchAdmin('/v1/admin/users?page=2&limit=2', testEnv)
+    const body = await response.json() as { data: { users: Array<{ id: string }>; meta: { total: number; page: number; limit: number; totalPages: number } } }
+
+    expect(response.status).toBe(200)
+    expect(body.data.meta).toMatchObject({ total: 4, page: 2, limit: 2, totalPages: 2 })
+    expect(body.data.users.map((user) => user.id)).toEqual(['sub_user_2', 'sub_user_3'])
   })
 
   it('keeps the signed-in admin visible in the default and matching user list', async () => {

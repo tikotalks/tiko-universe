@@ -260,7 +260,7 @@ Approximate review spread: 7 Critical, about 35 High, about 70 Medium, and about
   - Avoid sequential media-api fallbacks per card.
   - Denormalize resolved URLs at publish time if needed.
 
-- [ ] Optimize admin/media large lists and thumbnails.
+- [x] Optimize admin/media large lists and thumbnails.
   - Add pagination/virtualization for admin users and media.
   - Cancel stale media list requests.
   - Render CDN-resized thumbnails instead of full originals.

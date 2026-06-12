@@ -9,7 +9,7 @@ import type { AdminManagedUser, TikoRole } from '../types/admin'
 const bemm = useBemm('users-page', { return: 'string', includeBaseClass: true })
 const route = useRoute()
 const router = useRouter()
-const { users, loading, saving, error, list, setRoles } = useAdminUsers()
+const { users, total, page: currentPage, totalPages, loading, saving, error, list, setRoles } = useAdminUsers()
 const query = ref(typeof route.query.q === 'string' ? route.query.q : '')
 const selectedUserId = ref<string | null>(null)
 
@@ -17,14 +17,22 @@ const selectedUser = computed(() => users.value.find((user) => user.id === selec
 const onlineThreshold = 5 * 60 * 1000 // 5 minutes
 
 onMounted(async () => {
-  await list(query.value)
+  await list(query.value, { page: Number(route.query.page) || 1 })
   if (users.value.length > 0) selectedUserId.value = users.value[0].id
 })
 
 async function search() {
   const trimmed = query.value.trim()
   await router.replace({ path: '/users', query: trimmed ? { q: trimmed } : {} })
-  await list(trimmed)
+  await list(trimmed, { page: 1 })
+  if (users.value.length > 0) selectedUserId.value = users.value[0].id
+}
+
+async function go(delta: number) {
+  const nextPage = currentPage.value + delta
+  const trimmed = query.value.trim()
+  await router.replace({ path: '/users', query: { ...(trimmed ? { q: trimmed } : {}), ...(nextPage > 1 ? { page: String(nextPage) } : {}) } })
+  await list(trimmed, { page: nextPage })
   if (users.value.length > 0) selectedUserId.value = users.value[0].id
 }
 
@@ -84,7 +92,7 @@ function kindLabel(kind: string): string {
     <header :class="bemm('header')">
       <div>
         <h1 :class="bemm('title')">Users</h1>
-        <p :class="bemm('subtitle')">{{ users.length }} identities · Search by name, email, or ID</p>
+        <p :class="bemm('subtitle')">{{ total }} identities · Search by name, email, or ID</p>
       </div>
       <Button :disabled="loading" :loading="loading" size="small" @click="search">
         <Icon name="ui/refresh" size="small" />
@@ -129,6 +137,12 @@ function kindLabel(kind: string): string {
         </button>
 
         <p v-if="!loading && users.length === 0" :class="bemm('empty')">No users found.</p>
+
+        <footer v-if="users.length > 0 || totalPages > 1" :class="bemm('pager')">
+          <Button variant="outline" size="small" :disabled="currentPage <= 1 || loading" @click="go(-1)">Previous</Button>
+          <span :class="bemm('pager-status')">Page {{ currentPage }} / {{ totalPages }}</span>
+          <Button variant="outline" size="small" :disabled="currentPage >= totalPages || loading" @click="go(1)">Next</Button>
+        </footer>
       </section>
 
       <aside :class="bemm('detail')">
@@ -257,6 +271,20 @@ function kindLabel(kind: string): string {
     display: flex;
     flex-direction: column;
     overflow: hidden;
+  }
+
+  &__pager {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-xs);
+    padding: var(--space-s);
+    border-top: 1px solid var(--admin-border);
+  }
+
+  &__pager-status {
+    color: var(--admin-text-muted);
+    font-size: var(--font-size-s);
   }
 
   &__user-card {

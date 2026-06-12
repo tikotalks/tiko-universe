@@ -180,8 +180,14 @@ async function handleAdminRequest(request: Request, env: Env): Promise<Response>
 
     if (path === '/v1/admin/users' && request.method === 'GET') {
       const query = url.searchParams.get('q') ?? ''
-      const users = await listUsers(env.AUTH_DB, env.APP_DB, query)
-      return json({ data: { users: await ensureAdminInUsers(env.AUTH_DB, env.APP_DB, users, admin, query) } })
+      const page = parsePositiveInt(url.searchParams.get('page'), 1)
+      const limit = Math.min(parsePositiveInt(url.searchParams.get('limit'), 25), 100)
+      const listed = await listUsers(env.AUTH_DB, env.APP_DB, query, page, limit)
+      const users = page === 1
+        ? await ensureAdminInUsers(env.AUTH_DB, env.APP_DB, listed.users, admin, query)
+        : listed.users
+      const total = listed.total + Math.max(users.length - listed.users.length, 0)
+      return json({ data: { users, meta: { total, page, limit, totalPages: Math.max(1, Math.ceil(total / limit)) } } })
     }
 
     const assignRoleMatch = path.match(/^\/v1\/admin\/users\/([^/]+)\/roles$/)
@@ -589,8 +595,23 @@ async function assignRole(db: D1Database, subjectId: string, role: string, sourc
     .run()
 }
 
-async function listUsers(authDb: D1Database, appDb: D1Database | undefined, query: string): Promise<AdminUserListItem[]> {
+function parsePositiveInt(value: string | null, fallback: number): number {
+  const parsed = Number.parseInt(value ?? '', 10)
+  return Number.isFinite(parsed) && parsed > 0 ? parsed : fallback
+}
+
+async function listUsers(authDb: D1Database, appDb: D1Database | undefined, query: string, page: number, limit: number): Promise<{ users: AdminUserListItem[]; total: number }> {
   const q = `%${query.trim().toLowerCase()}%`
+  const offset = (page - 1) * limit
+  const totalRow = await authDb.prepare(`
+    SELECT COUNT(DISTINCT s.id) AS count
+    FROM identity_subjects s
+    INNER JOIN identity_accounts a ON a.subject_id = s.id AND a.disabled_at IS NULL AND a.email_hash IS NOT NULL
+    WHERE s.product = ? AND s.disabled_at IS NULL
+      AND (? = '%%' OR lower(s.id) LIKE ? OR lower(s.kind) LIKE ? OR lower(COALESCE(a.email_plain, '')) LIKE ? OR lower(COALESCE(json_extract(s.metadata_json, '$.displayName'), '')) LIKE ?)
+  `)
+    .bind(PRODUCT, q, q, q, q, q)
+    .first<{ count: number }>()
   const { results } = await authDb.prepare(`
     SELECT s.id,
       CASE WHEN a.email_verified_at IS NOT NULL THEN 'account' ELSE s.kind END AS kind,
@@ -607,14 +628,14 @@ async function listUsers(authDb: D1Database, appDb: D1Database | undefined, quer
       AND (? = '%%' OR lower(s.id) LIKE ? OR lower(s.kind) LIKE ? OR lower(COALESCE(a.email_plain, '')) LIKE ? OR lower(COALESCE(json_extract(s.metadata_json, '$.displayName'), '')) LIKE ?)
     GROUP BY s.id, s.kind, a.email_plain, a.email_verified_at, s.created_at, s.updated_at, s.metadata_json
     ORDER BY last_seen_at DESC, s.created_at DESC
-    LIMIT 100
+    LIMIT ? OFFSET ?
   `)
-    .bind(PRODUCT, PRODUCT, q, q, q, q, q)
+    .bind(PRODUCT, PRODUCT, q, q, q, q, q, limit, offset)
     .all<{ id: string; kind: string; email: string | null; created_at: string; updated_at: string; last_seen_at: string | null; roles: string | null; metadata_json: string | null }>()
 
   const users = results.map(normalizeUserRow)
   const dataSet = await subjectsWithData(appDb, users.map((u) => u.id))
-  return users.map((u) => ({ ...u, hasData: dataSet.has(u.id) }))
+  return { users: users.map((u) => ({ ...u, hasData: dataSet.has(u.id) })), total: Number(totalRow?.count ?? 0) }
 }
 
 async function ensureAdminInUsers(authDb: D1Database, appDb: D1Database | undefined, users: AdminUserListItem[], admin: AdminSession, query: string): Promise<AdminUserListItem[]> {
