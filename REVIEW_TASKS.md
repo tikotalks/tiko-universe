@@ -73,7 +73,7 @@ The most urgent work is to lock down Atlas/generation/sentence/media/identity, i
   - Fail closed when verify mode has no verifier/hash.
   - Add tests for sparse input, paste, auto-submit, and setup confirmation.
 
-- [ ] Fix Cards web first-run/offline hang.
+- [x] Fix Cards web first-run/offline hang.
   - Catch identity bootstrap errors.
   - Always load collections.
   - Handle media hydration failures with retryable state.

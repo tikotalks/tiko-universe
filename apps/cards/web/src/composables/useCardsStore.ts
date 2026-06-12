@@ -217,6 +217,10 @@ export function useCardsStore(options: UseCardsStoreOptions) {
         }
       }
       collections.value = [...collections.value]
+    } catch {
+      const nextFetched = new Set(fetchedMediaIDs.value)
+      nextFetched.delete(collectionID)
+      fetchedMediaIDs.value = nextFetched
     } finally {
       const next = new Set(loadingMediaIDs.value)
       next.delete(collectionID)

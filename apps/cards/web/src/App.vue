@@ -493,11 +493,15 @@ watch(() => cards.collectionStack.value.join('/'), () => {
 })
 
 onMounted(async () => {
-  await runtime.bootstrapIdentity()
-  await hydrateRemoteSettings()
+  try {
+    await runtime.bootstrapIdentity()
+    await hydrateRemoteSettings()
+  } catch {
+    // Cards must remain usable from local/default content when identity is unavailable.
+  }
   await cards.loadCollections(language.value)
   collectionsHydrated.value = true
-  await Promise.all(rootCollections.value.slice(0, 8).map(collection => cards.hydrateMedia(collection.id, false)))
+  await Promise.allSettled(rootCollections.value.slice(0, 8).map(collection => cards.hydrateMedia(collection.id, false)))
 })
 </script>
 
