@@ -10,7 +10,6 @@ concurrency:
 
 env:
   CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID || 'dc2b7d14a69351375cab6de9a13ddee9' }}
-  CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
   CLOUDFLARE_PAGES_PROJECT_DEV: ${{ vars.CLOUDFLARE_PAGES_PROJECT_DEV }}
   CLOUDFLARE_PAGES_PROJECT_PROD: ${{ vars.CLOUDFLARE_PAGES_PROJECT_PROD }}
   CLOUDFLARE_PAGES_PROJECT_WEBSITE_DEV: ${{ vars.CLOUDFLARE_PAGES_PROJECT_WEBSITE_DEV }}
@@ -113,9 +112,31 @@ jobs:
             echo "🎯 Selective deploy — apps: $apps_json workers: $workers_json"
           fi
 
+  verify:
+    name: Verify Before Deploy
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Test
+        run: npm run test
+
+      - name: Build
+        run: npm run build
+
   deploy-apps:
     name: Deploy Apps
-    needs: detect-changes
+    needs: [detect-changes, verify]
     if: needs.detect-changes.outputs.apps-changed != '[]' || needs.detect-changes.outputs.deploy-all == 'true'
     runs-on: ubuntu-latest
     environment: ${{ needs.detect-changes.outputs.environment }}
@@ -137,6 +158,8 @@ jobs:
         run: npm run build --workspace=apps/${{ matrix.app }}/web
 
       - name: Deploy ${{ matrix.app }} to Cloudflare Pages
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
         run: |
           APP="${{ matrix.app }}"
           ENV="${{ needs.detect-changes.outputs.environment }}"
@@ -185,7 +208,7 @@ jobs:
 
   deploy-workers:
     name: Deploy Workers
-    needs: detect-changes
+    needs: [detect-changes, verify]
     if: needs.detect-changes.outputs.workers-changed != '[]' || needs.detect-changes.outputs.deploy-all == 'true'
     runs-on: ubuntu-latest
     environment: ${{ needs.detect-changes.outputs.environment }}
@@ -205,6 +228,8 @@ jobs:
       - run: npm ci
 
       - name: Deploy ${{ matrix.worker }}
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
         run: |
           WORKER="${{ matrix.worker }}"
           ENV="${{ needs.detect-changes.outputs.environment }}"
@@ -266,7 +291,7 @@ jobs:
               echo "🗄️ Applying app-api development D1 migrations"
               npx wrangler d1 migrations apply tiko-db --remote
             fi
-            npx wrangler deploy --dry-run --outdir dist 2>&1 || true
+            npx wrangler deploy --dry-run --outdir dist
             # Actual dev deploy
             npx wrangler deploy
           fi

@@ -98,7 +98,7 @@ The most urgent work is to lock down Atlas/generation/sentence/media/identity, i
 
 ## Phase 1 — Deployment, Data Isolation, And Auth Foundations
 
-- [ ] Gate deploys on CI.
+- [x] Gate deploys on CI.
   - Add a verify job or convert deploy to `workflow_run`.
   - Make all deploy jobs depend on typecheck/tests/build.
   - Remove decorative `|| true` dry-run gates.
