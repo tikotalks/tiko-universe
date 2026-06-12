@@ -38,7 +38,23 @@ npm run test --workspace=apps/yes-no/web      # App-specific unit tests
 npm run build --workspace=apps/talk/web       # Build one app
 ```
 
-App dev ports: yes-no:3056, timer:3057, type:3058, clock:3059, cards:3061, sequence:3062, todo:3065, radio:3067.
+App dev ports:
+
+| App | Port |
+| --- | ---: |
+| yes-no | 3056 |
+| timer | 3057 |
+| type | 3058 |
+| radio | 3059 |
+| website | 3060 |
+| media | 3061 |
+| admin | 3062 |
+| cards | 3063 |
+| sequence | 3064 |
+| todo | 3065 |
+| talk | 3066 |
+
+`apps/clock/web` is not a runnable workspace at the moment; it only has stale E2E/public leftovers and should stay out of active app commands until the app is restored.
 
 ### E2E tests
 
@@ -47,7 +63,7 @@ npx playwright test --config=playwright.config.ts              # All apps
 npx playwright test --project=timer --config=playwright.config.ts  # Single app
 ```
 
-Admin uses Cypress separately: `apps/admin/web` has its own `cypress.config.mjs`.
+Current status: Playwright specs exist for several child-facing web apps, but `@playwright/test` is not currently declared in the root package manifest and E2E is not part of the default CI gate. Treat these commands as local/manual until the Playwright task in `REVIEW_TASKS.md` is completed. Admin uses Cypress separately: `apps/admin/web` has its own `cypress.config.mjs`.
 
 ### iOS
 
@@ -270,6 +286,7 @@ Located in `tests/` at repo root. These test worker API contracts without runnin
 - Runs against real dev server on dedicated port
 - `testIdAttribute: 'data-test'` configured globally
 - Single worker, no parallelism (`workers: 1`)
+- Not currently part of the default CI gate; see `REVIEW_TASKS.md` before treating Playwright as restored.
 
 ### iOS tests
 - XCTest framework, one test file per app in `apps/<name>/ios/Tests/`

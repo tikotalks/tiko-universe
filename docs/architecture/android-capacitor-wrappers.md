@@ -12,6 +12,8 @@ Tiko Android is intentionally low priority for now. The Android clients in this 
 
 ## Current wrappers
 
+This list must match `tools/android-wrappers.mjs`; update both when adding or removing a wrapper.
+
 - `apps/yes-no/android` — `org.tikoapps.yesno`
 - `apps/cards/android` — `org.tikoapps.cards`
 - `apps/type/android` — `org.tikoapps.type`

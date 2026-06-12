@@ -247,7 +247,7 @@ Approximate review spread: 7 Critical, about 35 High, about 70 Medium, and about
   - Ensure CI validates the same artifacts deploy ships.
   - Validate fetched config values before writing Swift/TS source.
 
-- [ ] Fix docs drift.
+- [x] Fix docs drift.
   - Update AGENTS.md port table from actual package scripts.
   - Update README repository structure.
   - Fix Android wrapper docs.

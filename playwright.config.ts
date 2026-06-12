@@ -11,14 +11,13 @@ import { defineConfig, devices } from '@playwright/test'
  */
 
 const apps = [
-  { name: 'timer',    cwd: 'apps/timer/web',    port: 3057 },
   { name: 'yes-no',   cwd: 'apps/yes-no/web',   port: 3056 },
+  { name: 'timer',    cwd: 'apps/timer/web',    port: 3057 },
   { name: 'type',     cwd: 'apps/type/web',     port: 3058 },
-  { name: 'clock',    cwd: 'apps/clock/web',    port: 3059 },
+  { name: 'radio',    cwd: 'apps/radio/web',    port: 3059 },
+  { name: 'cards',    cwd: 'apps/cards/web',    port: 3063 },
+  { name: 'sequence', cwd: 'apps/sequence/web', port: 3064 },
   { name: 'todo',     cwd: 'apps/todo/web',     port: 3065 },
-  { name: 'radio',    cwd: 'apps/radio/web',    port: 3067 },
-  { name: 'cards',    cwd: 'apps/cards/web',    port: 3061 },
-  { name: 'sequence', cwd: 'apps/sequence/web', port: 3062 },
 ]
 
 export default defineConfig({
