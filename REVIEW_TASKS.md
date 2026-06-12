@@ -317,7 +317,7 @@ The most urgent work is to lock down Atlas/generation/sentence/media/identity, i
   - Content cache language invalidation.
   - KV key hashing for query cache.
 
-- [ ] Clean dependency declarations.
+- [x] Clean dependency declarations.
   - Move build/test tooling to devDependencies.
   - Move actual runtime dependencies where they belong.
   - Declare all imported workspace/external packages in each package.

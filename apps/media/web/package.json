@@ -9,15 +9,17 @@
     "test": "echo scaffold-only:@tiko-web/media"
   },
   "dependencies": {
+    "@sil/ui": "^2.6.0",
     "@tiko/data": "file:../../../packages/data",
     "@tiko/identity": "file:../../../packages/identity",
     "@tiko/i18n": "file:../../../packages/i18n",
     "@tiko/media": "file:../../../packages/media",
     "@tiko/ui": "file:../../../packages/ui",
-    "@vitejs/plugin-vue": "^6.0.1",
-    "vite": "^7.2.4",
     "vue": "^3.5.24",
     "vue-router": "^4.5.0"
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^6.0.1",
+    "vite": "^7.2.4"
+  }
 }
