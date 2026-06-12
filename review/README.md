@@ -19,3 +19,4 @@ Scope: all 13 Cloudflare Workers, all 10 shared packages, all 12 web apps, the i
 | [06-testing.md](06-testing.md) | Excellent worker contract tests vs a dead Playwright layer, six stale e2e suites, unit tests hitting production APIs, and coverage inverted relative to risk. |
 | [07-dependencies.md](07-dependencies.md) | 0 known vulns, but deploys aren't CI-gated, two workers never deploy, builds are nondeterministic (network fetch in prebuild), dep placement inverted, docs drifted. |
 | [08-recommendations.md](08-recommendations.md) | 40-item prioritized plan — Now (15 security/product-critical fixes), Next (structural: env isolation, shared auth, i18n reactivity, shared app runtime), Later (consolidation, a11y, test depth). |
+| [09-talk-engine.md](09-talk-engine.md) | Deep dive: the suggestion pipeline works, but the learning engine is inert — no cron, learned transitions written but never read, signal keyed too finely to converge; 7-step evolution path. |
