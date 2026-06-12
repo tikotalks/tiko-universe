@@ -78,7 +78,7 @@ The most urgent work is to lock down Atlas/generation/sentence/media/identity, i
   - Always load collections.
   - Handle media hydration failures with retryable state.
 
-- [ ] Fix Cards web bulk move data loss.
+- [x] Fix Cards web bulk move data loss.
   - Move via update, or create-first-then-delete.
   - Do not delete/move default cards as user-owned content.
   - Add store tests for move failure and default-card behavior.

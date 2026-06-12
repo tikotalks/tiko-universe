@@ -286,15 +286,30 @@ export function useCardsStore(options: UseCardsStoreOptions) {
   async function moveSelected(targetCollectionID: string) {
     for (const id of selectedCollectionIDs.value) {
       const collection = collections.value.find(item => item.id === id)
-      if (collection) await updateCollection(id, { ...collection, parentID: targetCollectionID })
+      if (collection && isUserOwned(collection.id)) await updateCollection(id, { ...collection, parentID: targetCollectionID })
     }
     if (currentCollection.value) {
       const source = currentCollection.value
+      const target = collections.value.find(item => item.id === targetCollectionID)
+      if (!target || source.id === target.id) {
+        clearEditMode()
+        return
+      }
       for (const id of selectedCardIDs.value) {
         const card = source.cards.find(item => item.id === id)
-        if (!card) continue
-        await deleteCard(source.id, id)
-        await createCard(targetCollectionID, card)
+        if (!card || !isUserOwned(card.id)) continue
+        const order = target.cards.length
+        try {
+          const saved = await api.createCard(targetCollectionID, { ...card, id: card.id, order })
+          if (!saved) continue
+          await api.deleteCard(source.id, id)
+          source.cards = source.cards.filter(item => item.id !== id)
+          target.cards = [...target.cards, { ...saved, order }]
+          collections.value = [...collections.value]
+          persist()
+        } catch {
+          // Keep the source card intact when copying or deleting fails.
+        }
       }
     }
     clearEditMode()
