@@ -334,6 +334,37 @@ describe('content-api worker', () => {
     expect(env.CONTENT_DB.appItems.some(row => row.id === 'yes-no-answer-yes')).toBe(true)
   })
 
+  it('invalidates Cards content cache for every locale without hardcoded language keys', async () => {
+    const env = makeEnv()
+    const before = await worker.fetch(new Request('https://content.test/v1/cards/collections?language=zh'), env as never)
+    expect((await parseJson(before)).data.collections[0].title).toBe('Animals')
+
+    const update = await worker.fetch(new Request('https://content.test/v1/admin/cards/collections', {
+      method: 'PUT',
+      headers: { authorization: 'Bearer admin-secret', 'content-type': 'application/json' },
+      body: JSON.stringify({
+        collections: [{
+          id: '__default_animals',
+          title: 'Animals updated',
+          color: 'green',
+          order: 0,
+          mediaCategories: ['animals'],
+          cards: [{
+            id: '__default_animals_dog',
+            title: 'Dog updated',
+            speech: 'Dog updated',
+            color: 'green',
+            order: 0,
+          }],
+        }],
+      }),
+    }), env as never)
+    const after = await worker.fetch(new Request('https://content.test/v1/cards/collections?language=zh'), env as never)
+
+    expect(update.status).toBe(200)
+    expect((await parseJson(after)).data.collections[0].title).toBe('Animals updated')
+  })
+
   it('serves localized Yes No default content from generic content items', async () => {
     const response = await worker.fetch(new Request('https://content.test/v1/yes-no/content?language=mt'), makeEnv() as never)
     const body = await parseJson(response)

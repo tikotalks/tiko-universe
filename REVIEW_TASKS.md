@@ -110,7 +110,7 @@ Approximate review spread: 7 Critical, about 35 High, about 70 Medium, and about
   - Preserve translations unless explicitly removed.
   - Prevent readers from seeing empty or partial catalogs during writes.
 
-- [ ] Fix content translation and cache invalidation.
+- [x] Fix content translation and cache invalidation.
   - Stop hardcoding language invalidation lists.
   - Use configured supported languages.
   - Version-stamp cache keys or purge every affected locale reliably.

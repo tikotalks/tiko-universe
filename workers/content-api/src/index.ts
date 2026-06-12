@@ -110,24 +110,27 @@ const CACHE_TTL_SECONDS = 300
 const CACHE_KEY_CARDS_COLLECTIONS = 'cards:collections'
 const CACHE_KEY_YES_NO_CONTENT = 'yes-no:content'
 const CACHE_KEY_SEQUENCE_CONTENT = 'sequence:content'
-const CARDS_CACHE_LANGUAGES = ['en', 'nl', 'fr', 'es', 'de', 'mt', 'it', 'pt', 'pt-br', 'ar']
+const CACHE_VERSION_PREFIX = 'content-cache-version'
 
 async function invalidateCardsCache(env: Env): Promise<void> {
-  if (!env.CONTENT_CACHE) return
-  await env.CONTENT_CACHE.delete(CACHE_KEY_CARDS_COLLECTIONS)
-  await Promise.all(CARDS_CACHE_LANGUAGES.map(language => env.CONTENT_CACHE!.delete(`${CACHE_KEY_CARDS_COLLECTIONS}:${language}`)))
+  await invalidateCacheNamespace(env, CACHE_KEY_CARDS_COLLECTIONS)
 }
 
 async function invalidateYesNoCache(env: Env): Promise<void> {
-  if (!env.CONTENT_CACHE) return
-  await env.CONTENT_CACHE.delete(CACHE_KEY_YES_NO_CONTENT)
-  await Promise.all(CARDS_CACHE_LANGUAGES.map(language => env.CONTENT_CACHE!.delete(`${CACHE_KEY_YES_NO_CONTENT}:${language}`)))
+  await invalidateCacheNamespace(env, CACHE_KEY_YES_NO_CONTENT)
 }
 
 async function invalidateSequenceCache(env: Env): Promise<void> {
+  await invalidateCacheNamespace(env, CACHE_KEY_SEQUENCE_CONTENT)
+}
+
+async function invalidateCacheNamespace(env: Env, namespace: string): Promise<void> {
   if (!env.CONTENT_CACHE) return
-  await env.CONTENT_CACHE.delete(CACHE_KEY_SEQUENCE_CONTENT)
-  await Promise.all(CARDS_CACHE_LANGUAGES.map(language => env.CONTENT_CACHE!.delete(`${CACHE_KEY_SEQUENCE_CONTENT}:${language}`)))
+  await env.CONTENT_CACHE.put(cacheVersionKey(namespace), `${Date.now()}-${crypto.randomUUID()}`)
+}
+
+function cacheVersionKey(namespace: string): string {
+  return `${CACHE_VERSION_PREFIX}:${namespace}`
 }
 
 interface UserImageRow {
@@ -293,6 +296,12 @@ async function cached<T>(request: Request, env: Env, key: string, loader: () => 
   const value = await loader()
   await env.CONTENT_CACHE.put(key, JSON.stringify(value), { expirationTtl: CACHE_TTL_SECONDS })
   return value
+}
+
+async function cachedInNamespace<T>(request: Request, env: Env, namespace: string, key: string, loader: () => Promise<T>): Promise<T> {
+  if (new URL(request.url).searchParams.get('no-cache') === '1' || !env.CONTENT_CACHE) return loader()
+  const version = await env.CONTENT_CACHE.get(cacheVersionKey(namespace)) ?? '0'
+  return cached(request, env, `${namespace}:${version}:${key}`, loader)
 }
 
 async function getProjects(env: Env): Promise<JsonRecord[]> {
@@ -1248,7 +1257,7 @@ async function handleGet(request: Request, env: Env, segments: string[]): Promis
       return json(request, env, { success: true, data }, 200, { 'Cache-Control': 'no-store' })
     }
 
-    const data = await cached(request, env, `${CACHE_KEY_CARDS_COLLECTIONS}:${language}`, () => getCardsCollections(env, language))
+    const data = await cachedInNamespace(request, env, CACHE_KEY_CARDS_COLLECTIONS, language, () => getCardsCollections(env, language))
     return json(request, env, { success: true, data })
   }
 
@@ -1262,7 +1271,7 @@ async function handleGet(request: Request, env: Env, segments: string[]): Promis
       return json(request, env, { success: true, data }, 200, { 'Cache-Control': 'no-store' })
     }
 
-    const data = await cached(request, env, `${CACHE_KEY_YES_NO_CONTENT}:${language}`, () => getYesNoContent(env, language))
+    const data = await cachedInNamespace(request, env, CACHE_KEY_YES_NO_CONTENT, language, () => getYesNoContent(env, language))
     return json(request, env, { success: true, data })
   }
 
@@ -1276,7 +1285,7 @@ async function handleGet(request: Request, env: Env, segments: string[]): Promis
       return json(request, env, { success: true, data }, 200, { 'Cache-Control': 'no-store' })
     }
 
-    const data = await cached(request, env, `${CACHE_KEY_SEQUENCE_CONTENT}:${language}`, () => getSequenceContent(env, language))
+    const data = await cachedInNamespace(request, env, CACHE_KEY_SEQUENCE_CONTENT, language, () => getSequenceContent(env, language))
     return json(request, env, { success: true, data })
   }
 
