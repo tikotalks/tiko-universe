@@ -45,8 +45,6 @@ export interface UseIdentityRuntimeOptions {
 export interface StoredIdentity {
   userId?: string
   deviceId?: string
-  deviceSecret?: string
-  sessionToken?: string
   expiresAt?: string
   accountEmail?: string | null
   accountEmailVerified?: boolean
@@ -268,8 +266,6 @@ export function useIdentityRuntime(options: UseIdentityRuntimeOptions) {
     writeJson(storageKey, {
       userId: bundle.subject.id,
       deviceId: bundle.device?.id,
-      deviceSecret: bundle.device?.secret,
-      sessionToken: bundle.session.token,
       expiresAt: bundle.session.expiresAt,
       accountEmail: bundle.account?.email ?? null,
       accountEmailVerified: Boolean(bundle.account?.emailVerified),
@@ -301,23 +297,11 @@ export function useIdentityRuntime(options: UseIdentityRuntimeOptions) {
       saveIdentity(bundle)
       return
     } catch {
-      // Fall through to local bearer/device fallback.
-    }
-
-    if (storedIdentity.sessionToken) {
-      try {
-        const bundle = await identityClient.getSession(storedIdentity.sessionToken)
-        saveIdentity(bundle)
-        return
-      } catch {
-        // Fall through to device bootstrap.
-      }
+      // Fall through to device bootstrap when the HttpOnly cookie is missing or expired.
     }
 
     const bundle = await identityClient.bootstrapDevice({
       device: {
-        id: storedIdentity.deviceId,
-        secret: storedIdentity.deviceSecret,
         name: deviceName,
         platform: 'web',
       },
