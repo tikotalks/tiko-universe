@@ -5,7 +5,7 @@ import type { PopupService } from '@sil/ui'
 import { IdentityClient } from '@tiko/identity'
 import { TikoDataClient, type RadioSettings, type RadioState } from '@tiko/data'
 import type { RadioTrack, RadioCategory } from '@tiko/data'
-import { createI18n, createTikoIdentityLabels, defaultLanguage, tikoI18nKeys, tikoLanguageOptions, tikoLanguages, type TikoLanguage } from '@tiko/i18n'
+import { createI18n, createTikoIdentityLabels, createTikoTranslationLoader, defaultLanguage, tikoI18nKeys, tikoLanguageOptions, tikoLanguages, type TikoLanguage } from '@tiko/i18n'
 import {
   TikoAppShell,
   TikoColorMode,
@@ -122,6 +122,7 @@ function resolveColorMode(mode: TikoColorMode) {
 // ---- State initialization --------------------------------------------------
 const stored = readJson<PersistedState>(storageKey, {})
 const i18n = createI18n({ app: appId, language: toLanguage(stored.language) })
+const translationLoader = createTikoTranslationLoader()
 const language = ref<TikoLanguage>(toLanguage(stored.language))
 const colorMode = ref<TikoColorMode>(toColorMode(stored.colorMode))
 const volume = ref(stored.volume ?? 1)
@@ -167,6 +168,7 @@ const categories = useCategories('tiko:radio:categories')
 // ---- Labels ---------------------------------------------------------------
 const labels = computed(() => {
   void language.value
+  void i18n._revision.value
   return {
     appName: i18n.t(tikoI18nKeys.radio.appName),
     play: i18n.t(tikoI18nKeys.radio.player.play),
@@ -445,9 +447,18 @@ async function syncGeneratedStories() {
   }
 }
 
+async function loadTranslations(value: TikoLanguage) {
+  try {
+    i18n.addBundle(await translationLoader({ app: appId, language: value }))
+  } catch {
+    // Local fallbacks remain active; a later language switch can retry.
+  }
+}
+
 // ---- Watchers --------------------------------------------------------------
 watch(language, (value) => {
   i18n.setLanguage(value)
+  void loadTranslations(value)
 }, { immediate: true })
 
 watch(colorMode, (mode) => {

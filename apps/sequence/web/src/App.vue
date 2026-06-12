@@ -3,7 +3,7 @@ import { computed, onMounted, ref, watch } from 'vue'
 import { Button, InputTextArea, Popup } from '@sil/ui'
 import { IdentityClient, type IdentityBundle } from '@tiko/identity'
 import { TikoDataClient, type SequenceSettings, type SequenceState } from '@tiko/data'
-import { createI18n, createTikoIdentityLabels, defaultLanguage, tikoI18nKeys, tikoLanguageOptions, tikoLanguages, type TikoLanguage } from '@tiko/i18n'
+import { createI18n, createTikoIdentityLabels, createTikoTranslationLoader, defaultLanguage, tikoI18nKeys, tikoLanguageOptions, tikoLanguages, type TikoLanguage } from '@tiko/i18n'
 import {
   TikoAppShell,
   TikoSettingsPanel,
@@ -129,6 +129,7 @@ function normalizeSequenceItem(item: unknown, source: SequenceItem['source']): S
 
 const stored = readJson<PersistedState>(storageKey, {})
 const i18n = createI18n({ app: appId, language: toLanguage(stored.language) })
+const translationLoader = createTikoTranslationLoader()
 const language = ref<TikoLanguage>(toLanguage(stored.language))
 const colorMode = ref<TikoColorMode>(toColorMode(stored.colorMode))
 const defaultItems = ref<SequenceItem[]>([])
@@ -163,6 +164,7 @@ const runtime = useIdentityRuntime({ identityClient, state: runtimeState, device
 
 const labels = computed(() => {
   void language.value
+  void i18n._revision.value
   return {
     appName: i18n.t(tikoI18nKeys.sequence.appName),
     emptyTitle: i18n.t(tikoI18nKeys.sequence.empty.title),
@@ -291,8 +293,17 @@ async function persistStateRemote() {
   }
 }
 
+async function loadTranslations(value: TikoLanguage) {
+  try {
+    i18n.addBundle(await translationLoader({ app: appId, language: value }))
+  } catch {
+    // Local fallbacks remain active; a later language switch can retry.
+  }
+}
+
 watch(language, (value) => {
   i18n.setLanguage(value)
+  void loadTranslations(value)
   void hydrateDefaultContent()
 }, { immediate: true })
 
