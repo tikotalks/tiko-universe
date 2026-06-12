@@ -207,6 +207,18 @@ interface PinGrantRow {
   metadata_json: string
 }
 
+interface RateLimitRow {
+  subject_key: string
+  action: string
+  fail_count: number
+  locked_until: string | null
+  updated_at: string
+}
+
+const LOW_ENTROPY_SECRET_ITERATIONS = 120_000
+const PIN_RATE_LIMIT = { maxFailures: 5, lockMs: 15 * 60 * 1000 }
+const CHILD_CODE_RATE_LIMIT = { maxFailures: 8, lockMs: 15 * 60 * 1000 }
+
 async function handleManagedIdentity(request: Request, env: Env): Promise<Response | null> {
   const url = new URL(request.url)
   const path = url.pathname.replace(/\/$/, '')
@@ -246,11 +258,16 @@ async function setPin(request: Request, env: Env): Promise<Response> {
   const pin = String(body.pin ?? '')
   if (!/^\d{4}$/.test(pin)) return Response.json({ error: 'invalid_pin' }, { status: 400 })
   const currentRuntime = await runtimeStateForSubject(env, session.subjectId)
-  if (currentRuntime.pinHash && currentRuntime.pinHash !== await hashSecret(String(body.currentPin ?? ''), env, 'pin')) {
+  const rateKey = `pin:${session.subjectId}`
+  const lock = await enforceRateLimit(env, rateKey, 'pin')
+  if (lock) return lock
+  if (currentRuntime.pinHash && !await verifyCredentialSecret(String(body.currentPin ?? ''), currentRuntime.pinHash, env, 'pin')) {
+    await recordRateLimitFailure(env, rateKey, 'pin', PIN_RATE_LIMIT)
     return Response.json({ error: 'invalid_pin' }, { status: 403 })
   }
+  await clearRateLimit(env, rateKey, 'pin')
 
-  const nextRuntime = { ...currentRuntime, pinHash: await hashSecret(pin, env, 'pin') }
+  const nextRuntime = { ...currentRuntime, pinHash: await hashCredentialSecret(pin, env, 'pin') }
   await updateRuntimeState(env, session.subjectId, nextRuntime)
   return sessionResponse(request, env)
 }
@@ -260,9 +277,16 @@ async function verifyPin(request: Request, env: Env): Promise<Response> {
   if (!session) return Response.json({ error: 'invalid_session' }, { status: 401 })
   const body = await request.json().catch(() => ({})) as { pin?: string; purpose?: string }
   const runtime = await runtimeStateForSubject(env, session.subjectId)
-  if (!runtime.pinHash || runtime.pinHash !== await hashSecret(String(body.pin ?? ''), env, 'pin')) {
+  const rateKey = `pin:${session.subjectId}`
+  const lock = await enforceRateLimit(env, rateKey, 'pin')
+  if (lock) return lock
+  const pin = String(body.pin ?? '')
+  if (!runtime.pinHash || !await verifyCredentialSecret(pin, runtime.pinHash, env, 'pin')) {
+    await recordRateLimitFailure(env, rateKey, 'pin', PIN_RATE_LIMIT)
     return Response.json({ error: 'invalid_pin' }, { status: 403 })
   }
+  await clearRateLimit(env, rateKey, 'pin')
+  if (needsCredentialRehash(runtime.pinHash)) await updateRuntimeState(env, session.subjectId, { ...runtime, pinHash: await hashCredentialSecret(pin, env, 'pin') })
   const token = randomToken('grt_')
   const purpose = body.purpose ?? 'parent_mode'
   const expiresAt = new Date(Date.now() + 10 * 60 * 1000).toISOString()
@@ -277,7 +301,14 @@ async function removePin(request: Request, env: Env): Promise<Response> {
   if (accountType === 'temporary' || accountType === 'child_account') return Response.json({ error: 'pin_not_allowed' }, { status: 403 })
   const body = await request.json().catch(() => ({})) as { pin?: string }
   const runtime = await runtimeStateForSubject(env, session.subjectId)
-  if (runtime.pinHash && runtime.pinHash !== await hashSecret(String(body.pin ?? ''), env, 'pin')) return Response.json({ error: 'invalid_pin' }, { status: 403 })
+  const rateKey = `pin:${session.subjectId}`
+  const lock = await enforceRateLimit(env, rateKey, 'pin')
+  if (lock) return lock
+  if (runtime.pinHash && !await verifyCredentialSecret(String(body.pin ?? ''), runtime.pinHash, env, 'pin')) {
+    await recordRateLimitFailure(env, rateKey, 'pin', PIN_RATE_LIMIT)
+    return Response.json({ error: 'invalid_pin' }, { status: 403 })
+  }
+  await clearRateLimit(env, rateKey, 'pin')
   await updateRuntimeState(env, session.subjectId, { mode: 'parent', childModeEnabled: false })
   return sessionResponse(request, env)
 }
@@ -313,7 +344,16 @@ async function enterParentMode(request: Request, env: Env): Promise<Response> {
   const runtime = await runtimeStateForSubject(env, session.subjectId)
   if (runtime.mode === 'child') {
     const body = await request.json().catch(() => ({})) as { pin?: string }
-    if (!runtime.pinHash || runtime.pinHash !== await hashSecret(String(body.pin ?? ''), env, 'pin')) return Response.json({ error: 'invalid_pin' }, { status: 403 })
+    const rateKey = `pin:${session.subjectId}`
+    const lock = await enforceRateLimit(env, rateKey, 'pin')
+    if (lock) return lock
+    const pin = String(body.pin ?? '')
+    if (!runtime.pinHash || !await verifyCredentialSecret(pin, runtime.pinHash, env, 'pin')) {
+      await recordRateLimitFailure(env, rateKey, 'pin', PIN_RATE_LIMIT)
+      return Response.json({ error: 'invalid_pin' }, { status: 403 })
+    }
+    await clearRateLimit(env, rateKey, 'pin')
+    if (needsCredentialRehash(runtime.pinHash)) await updateRuntimeState(env, session.subjectId, { ...runtime, pinHash: await hashCredentialSecret(pin, env, 'pin') })
   }
   await updateRuntimeState(env, session.subjectId, { ...runtime, mode: 'parent' })
   return sessionResponse(request, env)
@@ -367,7 +407,7 @@ async function createManagedChild(request: Request, env: Env): Promise<Response>
     .run()
   await assignRole(env.IDENTITY_DB, subjectId, 'child', 'managed_login', manager.subjectId)
   await env.IDENTITY_DB.prepare('INSERT INTO identity_managed_credentials (id, subject_id, manager_subject_id, product, handle, handle_norm, code_hash, display_name, created_at, revoked_at, metadata_json) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)')
-    .bind(credentialId, subjectId, manager.subjectId, 'tiko', handle, handle.toLowerCase(), await hashSecret(accessCode, env, 'managed-code'), displayName, at, null, JSON.stringify({ language: body.language }))
+    .bind(credentialId, subjectId, manager.subjectId, 'tiko', handle, handle.toLowerCase(), await hashCredentialSecret(accessCode, env, 'managed-code'), displayName, at, null, JSON.stringify({ language: body.language }))
     .run()
 
   return Response.json({ child: { id: subjectId, subjectId, managerSubjectId: manager.subjectId, handle, name: displayName, displayName, roles: ['child'] } }, { status: 201 })
@@ -409,7 +449,7 @@ async function resetManagedChildCode(request: Request, env: Env, childAccountId:
   const row = await managedChildForManager(env, manager.subjectId, childAccountId)
   if (!row) return Response.json({ error: 'not_found' }, { status: 404 })
   await env.IDENTITY_DB.prepare('UPDATE identity_managed_credentials SET code_hash = ? WHERE id = ? AND manager_subject_id = ? AND product = ? AND revoked_at IS NULL')
-    .bind(await hashSecret(code, env, 'managed-code'), row.id, manager.subjectId, 'tiko')
+    .bind(await hashCredentialSecret(code, env, 'managed-code'), row.id, manager.subjectId, 'tiko')
     .run()
   return Response.json({ child: childAccountFromRow(row) })
 }
@@ -716,8 +756,23 @@ async function loginManagedChild(request: Request, env: Env): Promise<Response> 
   const row = await env.IDENTITY_DB.prepare('SELECT * FROM identity_managed_credentials WHERE product = ? AND handle_norm = ? AND revoked_at IS NULL LIMIT 1')
     .bind('tiko', handle.toLowerCase())
     .first<ManagedCredentialRow>()
-  if (!row || (body.managerSubjectId && row.manager_subject_id !== body.managerSubjectId)) return Response.json({ error: 'invalid_managed_login' }, { status: 401 })
-  if (row.code_hash !== await hashSecret(accessCode, env, 'managed-code')) return Response.json({ error: 'invalid_managed_login' }, { status: 401 })
+  const rateKey = `child-code:${handle.toLowerCase()}:${body.managerSubjectId ?? row?.manager_subject_id ?? 'unknown'}`
+  const lock = await enforceRateLimit(env, rateKey, 'child_code')
+  if (lock) return lock
+  if (!row || (body.managerSubjectId && row.manager_subject_id !== body.managerSubjectId)) {
+    await recordRateLimitFailure(env, rateKey, 'child_code', CHILD_CODE_RATE_LIMIT)
+    return Response.json({ error: 'invalid_managed_login' }, { status: 401 })
+  }
+  if (!await verifyCredentialSecret(accessCode, row.code_hash, env, 'managed-code')) {
+    await recordRateLimitFailure(env, rateKey, 'child_code', CHILD_CODE_RATE_LIMIT)
+    return Response.json({ error: 'invalid_managed_login' }, { status: 401 })
+  }
+  await clearRateLimit(env, rateKey, 'child_code')
+  if (needsCredentialRehash(row.code_hash)) {
+    await env.IDENTITY_DB.prepare('UPDATE identity_managed_credentials SET code_hash = ? WHERE id = ? AND manager_subject_id = ? AND product = ?')
+      .bind(await hashCredentialSecret(accessCode, env, 'managed-code'), row.id, row.manager_subject_id, 'tiko')
+      .run()
+  }
 
   const subject = await env.IDENTITY_DB.prepare('SELECT * FROM identity_subjects WHERE id = ? LIMIT 1')
     .bind(row.subject_id)
@@ -904,6 +959,47 @@ async function assignRole(db: D1Database, subjectId: string, role: string, sourc
     .run()
 }
 
+async function enforceRateLimit(env: Env, subjectKey: string, action: string): Promise<Response | null> {
+  const row = await readRateLimit(env, subjectKey, action)
+  if (!row?.locked_until) return null
+  if (row.locked_until > new Date().toISOString()) {
+    return Response.json({ error: 'rate_limited', retryAfter: row.locked_until }, { status: 429 })
+  }
+  return null
+}
+
+async function recordRateLimitFailure(env: Env, subjectKey: string, action: string, policy: { maxFailures: number; lockMs: number }): Promise<void> {
+  const now = new Date()
+  const row = await readRateLimit(env, subjectKey, action)
+  const failCount = Number(row?.fail_count ?? 0) + 1
+  const lockedUntil = failCount >= policy.maxFailures ? new Date(now.getTime() + policy.lockMs).toISOString() : null
+  await env.IDENTITY_DB.prepare(`
+    INSERT INTO identity_rate_limits (subject_key, action, fail_count, locked_until, updated_at)
+    VALUES (?, ?, ?, ?, ?)
+    ON CONFLICT(subject_key, action) DO UPDATE SET
+      fail_count = excluded.fail_count,
+      locked_until = excluded.locked_until,
+      updated_at = excluded.updated_at
+  `).bind(subjectKey, action, failCount, lockedUntil, now.toISOString()).run()
+}
+
+async function clearRateLimit(env: Env, subjectKey: string, action: string): Promise<void> {
+  await env.IDENTITY_DB.prepare(`
+    INSERT INTO identity_rate_limits (subject_key, action, fail_count, locked_until, updated_at)
+    VALUES (?, ?, 0, NULL, ?)
+    ON CONFLICT(subject_key, action) DO UPDATE SET
+      fail_count = 0,
+      locked_until = NULL,
+      updated_at = excluded.updated_at
+  `).bind(subjectKey, action, new Date().toISOString()).run()
+}
+
+async function readRateLimit(env: Env, subjectKey: string, action: string): Promise<RateLimitRow | null> {
+  return env.IDENTITY_DB.prepare('SELECT * FROM identity_rate_limits WHERE subject_key = ? AND action = ? LIMIT 1')
+    .bind(subjectKey, action)
+    .first<RateLimitRow>()
+}
+
 function normalizeHandle(value: unknown): string | null {
   if (typeof value !== 'string') return null
   const handle = value.trim().replace(/\s+/g, '-').replace(/[^a-zA-Z0-9_-]/g, '')
@@ -914,6 +1010,63 @@ async function hashSecret(secret: string, env: Env, purpose: string): Promise<st
   const material = `tiko:${purpose}:${env.ANKORE_TOKEN_PEPPER ?? env.TOKEN_PEPPER}:${secret}`
   const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(material))
   return `sha256:${Array.from(new Uint8Array(digest)).map((byte) => byte.toString(16).padStart(2, '0')).join('')}`
+}
+
+async function hashCredentialSecret(secret: string, env: Env, purpose: string): Promise<string> {
+  const salt = crypto.getRandomValues(new Uint8Array(16))
+  const key = await crypto.subtle.importKey(
+    'raw',
+    new TextEncoder().encode(`tiko:${purpose}:${env.ANKORE_TOKEN_PEPPER ?? env.TOKEN_PEPPER}:${secret}`),
+    'PBKDF2',
+    false,
+    ['deriveBits'],
+  )
+  const bits = await crypto.subtle.deriveBits({ name: 'PBKDF2', hash: 'SHA-256', salt, iterations: LOW_ENTROPY_SECRET_ITERATIONS }, key, 256)
+  return `pbkdf2-sha256:${LOW_ENTROPY_SECRET_ITERATIONS}:${base64Url(salt)}:${base64Url(new Uint8Array(bits))}`
+}
+
+async function verifyCredentialSecret(secret: string, storedHash: string, env: Env, purpose: string): Promise<boolean> {
+  if (storedHash.startsWith('pbkdf2-sha256:')) {
+    const [, iterationsRaw, saltRaw, hashRaw] = storedHash.split(':')
+    const iterations = Number(iterationsRaw)
+    if (!Number.isFinite(iterations) || !saltRaw || !hashRaw) return false
+    const salt = base64UrlDecode(saltRaw)
+    const expected = base64UrlDecode(hashRaw)
+    const key = await crypto.subtle.importKey(
+      'raw',
+      new TextEncoder().encode(`tiko:${purpose}:${env.ANKORE_TOKEN_PEPPER ?? env.TOKEN_PEPPER}:${secret}`),
+      'PBKDF2',
+      false,
+      ['deriveBits'],
+    )
+    const saltBuffer = salt.buffer.slice(salt.byteOffset, salt.byteOffset + salt.byteLength) as ArrayBuffer
+    const bits = new Uint8Array(await crypto.subtle.deriveBits({ name: 'PBKDF2', hash: 'SHA-256', salt: saltBuffer, iterations }, key, expected.byteLength * 8))
+    return timingSafeEqual(bits, expected)
+  }
+  return storedHash === await hashSecret(secret, env, purpose)
+}
+
+function needsCredentialRehash(storedHash: string): boolean {
+  return !storedHash.startsWith(`pbkdf2-sha256:${LOW_ENTROPY_SECRET_ITERATIONS}:`)
+}
+
+function timingSafeEqual(a: Uint8Array, b: Uint8Array): boolean {
+  if (a.byteLength !== b.byteLength) return false
+  let diff = 0
+  for (let index = 0; index < a.byteLength; index += 1) diff |= a[index] ^ b[index]
+  return diff === 0
+}
+
+function base64Url(bytes: Uint8Array): string {
+  let binary = ''
+  for (const byte of bytes) binary += String.fromCharCode(byte)
+  return btoa(binary).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/g, '')
+}
+
+function base64UrlDecode(value: string): Uint8Array {
+  const padded = value.replace(/-/g, '+').replace(/_/g, '/') + '='.repeat((4 - value.length % 4) % 4)
+  const binary = atob(padded)
+  return Uint8Array.from(binary, char => char.charCodeAt(0))
 }
 
 function normalizeEmail(value: string): string {

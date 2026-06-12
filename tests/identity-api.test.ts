@@ -57,6 +57,7 @@ class MemoryD1Database {
   managedCredentials = new Map<string, Row>()
   deletionRequests = new Map<string, Row>()
   pinGrants = new Map<string, Row>()
+  rateLimits = new Map<string, Row>()
   auditEvents: Row[] = []
 
   prepare(sql: string): MemoryStatement {
@@ -316,6 +317,19 @@ class MemoryD1Database {
       const [consumedAt, id] = values
       const row = this.pinGrants.get(String(id))
       if (row && !row.consumed_at) row.consumed_at = consumedAt
+      return new MemoryResult()
+    }
+    if (normalized.startsWith('SELECT * FROM identity_rate_limits')) {
+      const row = this.rateLimits.get(`${values[0]}|${values[1]}`)
+      return new MemoryResult(row ? [row] : [])
+    }
+    if (normalized.startsWith('INSERT INTO identity_rate_limits')) {
+      const subjectKey = values[0]
+      const action = values[1]
+      const failCount = values.length === 3 ? 0 : values[2]
+      const lockedUntil = values.length === 3 ? null : values[3]
+      const updatedAt = values.length === 3 ? values[2] : values[4]
+      this.rateLimits.set(`${subjectKey}|${action}`, { subject_key: subjectKey, action, fail_count: failCount, locked_until: lockedUntil, updated_at: updatedAt })
       return new MemoryResult()
     }
     if (normalized.startsWith('SELECT * FROM identity_deletion_requests WHERE id =')) {
@@ -792,6 +806,29 @@ describe('identity-api endpoints', () => {
     expect((parent.body as IdentityBundle).runtime?.mode).toBe('parent')
   })
 
+  it('rate-limits repeated invalid PIN verification attempts', async () => {
+    const { testEnv, token, subjectId } = await verifiedAccountWithPin()
+
+    for (let attempt = 0; attempt < 5; attempt += 1) {
+      const response = await fetchJson('/v1/identity/pin/verify', {
+        method: 'POST',
+        headers: { authorization: `Bearer ${token}` },
+        body: JSON.stringify({ pin: '0000', purpose: 'parent_mode' })
+      }, testEnv)
+      expect(response.response.status).toBe(403)
+    }
+
+    const limited = await fetchJson('/v1/identity/pin/verify', {
+      method: 'POST',
+      headers: { authorization: `Bearer ${token}` },
+      body: JSON.stringify({ pin: '2468', purpose: 'parent_mode' })
+    }, testEnv)
+
+    expect(limited.response.status).toBe(429)
+    expect(limited.body.error).toBe('rate_limited')
+    expect(testEnv.IDENTITY_DB.rateLimits.get(`pin:${subjectId}|pin`)?.locked_until).toEqual(expect.any(String))
+  })
+
   it('persists PIN grants and consumes them for account reset exactly once', async () => {
     const { testEnv, token } = await verifiedAccountWithPin()
 
@@ -962,7 +999,7 @@ describe('identity-api endpoints', () => {
     expect(testEnv.IDENTITY_DB.roles.some((role) => role.subject_id === created.body.child.subjectId && role.role === 'child')).toBe(true)
     const storedCredential = Array.from(testEnv.IDENTITY_DB.managedCredentials.values())[0]
     expect(storedCredential.code_hash).not.toBe('4829')
-    expect(String(storedCredential.code_hash)).toMatch(/^sha256:/)
+    expect(String(storedCredential.code_hash)).toMatch(/^pbkdf2-sha256:/)
 
     const badLogin = await fetchJson('/v1/identity/managed/login', {
       method: 'POST',
@@ -997,6 +1034,37 @@ describe('identity-api endpoints', () => {
     })
     expect(login.body.session.loginMethod).toBe('child_code')
     expect(login.body.managed).toMatchObject({ handle: 'Mila', displayName: 'Mila', managerSubjectId: managerBundle.subject.id })
+  })
+
+  it('rate-limits repeated invalid managed child code logins', async () => {
+    const testEnv = env()
+    const manager = await fetchJson('/v1/identity/device', { method: 'POST', body: JSON.stringify({}) }, testEnv)
+    const managerBundle = manager.body as IdentityBundle
+    const managerToken = managerBundle.session?.token ?? ''
+    await assignTestRole(testEnv.IDENTITY_DB, managerBundle.subject.id, 'profile_manager')
+
+    const created = await fetchJson('/v1/identity/child-accounts', {
+      method: 'POST',
+      headers: { authorization: `Bearer ${managerToken}` },
+      body: JSON.stringify({ name: 'Mila', code: '4829' })
+    }, testEnv)
+    expect(created.response.status).toBe(201)
+
+    for (let attempt = 0; attempt < 8; attempt += 1) {
+      const response = await fetchJson('/v1/identity/child-accounts/login', {
+        method: 'POST',
+        body: JSON.stringify({ name: 'Mila', code: '0000' })
+      }, testEnv)
+      expect(response.response.status).toBe(401)
+    }
+
+    const limited = await fetchJson('/v1/identity/child-accounts/login', {
+      method: 'POST',
+      body: JSON.stringify({ name: 'Mila', code: '4829' })
+    }, testEnv)
+
+    expect(limited.response.status).toBe(429)
+    expect(limited.body.error).toBe('rate_limited')
   })
 })
 

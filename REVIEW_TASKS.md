@@ -50,7 +50,7 @@ The most urgent work is to lock down Atlas/generation/sentence/media/identity, i
   - Delete FK-dependent rows before subject deletion.
   - Wrap each subject cleanup in try/catch so one bad row does not wedge the whole cron.
 
-- [ ] Add PIN and child-code throttling.
+- [x] Add PIN and child-code throttling.
   - Rate-limit `/pin/verify`, `/mode/parent`, and `/child-accounts/login`.
   - Add lockout/backoff per subject/device.
   - Replace fast single SHA-256 for 4-digit secrets with a stronger KDF where practical.

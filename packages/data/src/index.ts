@@ -170,7 +170,6 @@ export interface RadioSettings extends JsonObject {
   colorMode?: 'light' | 'dark' | 'system'
   autoPlay?: boolean
   volume?: number
-  pinHash?: string
 }
 
 export interface RadioState {
