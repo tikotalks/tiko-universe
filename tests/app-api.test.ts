@@ -131,7 +131,11 @@ async function env() {
     APP_DB: new MemoryD1Database(),
     IDENTITY_DB: identity,
     IDENTITY_SERVICE: {
-      fetch: async () => new Response(JSON.stringify({ roles: ['admin'], capabilities: { canEditContent: true } }), {
+      fetch: async () => new Response(JSON.stringify({
+        subject: { id: 'sub_1' },
+        roles: ['admin'],
+        capabilities: { canEditContent: true }
+      }), {
         headers: { 'content-type': 'application/json' }
       })
     },

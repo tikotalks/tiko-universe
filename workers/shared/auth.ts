@@ -19,6 +19,8 @@ export interface AuthSuccess {
   method: 'session' | 'api_key'
   /** Populated when method === 'session' */
   userId?: string
+  roles?: string[]
+  capabilities?: Record<string, unknown>
 }
 
 export interface AuthFailure {
@@ -68,6 +70,8 @@ const CACHE_TTL_MS = 5 * 60 * 1000 // 5 minutes
 interface IdentitySessionBody {
   subject: { id: string }
   session?: { token: string; expiresAt: string }
+  roles?: string[]
+  capabilities?: Record<string, unknown>
 }
 
 // ── Helpers ──────────────────────────────────────────────────
@@ -138,7 +142,7 @@ async function isApiKey(token: string, env: AuthEnv): Promise<boolean> {
 async function validateSession(
   token: string,
   env: AuthEnv,
-): Promise<{ userId: string } | null> {
+): Promise<{ userId: string; roles: string[]; capabilities: Record<string, unknown> } | null> {
   const baseUrl = (env.IDENTITY_BASE_URL ?? 'https://api.tikotalks.com/v1').replace(/\/$/, '')
   const url = `${baseUrl}/identity/session`
   const init: RequestInit = {
@@ -154,7 +158,12 @@ async function validateSession(
       : await fetch(url, init)
     if (!response.ok) return null
     const body = (await response.json()) as IdentitySessionBody
-    return { userId: body.subject.id }
+    if (!body.subject?.id) return null
+    return {
+      userId: body.subject.id,
+      roles: Array.isArray(body.roles) ? body.roles.map(String) : [],
+      capabilities: body.capabilities && typeof body.capabilities === 'object' ? body.capabilities : {},
+    }
   } catch {
     return null
   }
@@ -187,7 +196,13 @@ export async function authenticate(
   // 2. Validate as session token against identity service
   const session = await validateSession(token, env)
   if (session) {
-    return { ok: true, method: 'session', userId: session.userId }
+    return {
+      ok: true,
+      method: 'session',
+      userId: session.userId,
+      roles: session.roles,
+      capabilities: session.capabilities,
+    }
   }
 
   return {
@@ -202,4 +217,41 @@ export async function authenticate(
       { status: 401, headers: { 'content-type': 'application/json' } },
     ),
   }
+}
+
+export async function requireSession(request: Request, env: AuthEnv): Promise<AuthSuccess | Response> {
+  const auth = await authenticate(request, env)
+  if (auth.ok === false) return auth.response
+  if (auth.method !== 'session' || !auth.userId) {
+    return new Response(
+      JSON.stringify({ error: { code: 'session_required', message: 'A Tiko user session is required.' } }),
+      { status: 403, headers: { 'content-type': 'application/json' } },
+    )
+  }
+  return auth
+}
+
+export async function requireRole(request: Request, env: AuthEnv, roles: string[]): Promise<AuthSuccess | Response> {
+  const session = await requireSession(request, env)
+  if (session instanceof Response) return session
+  const allowed = new Set(roles)
+  if (!session.roles?.some((role) => allowed.has(role))) {
+    return new Response(
+      JSON.stringify({ error: { code: 'forbidden', message: 'Required role is missing.' } }),
+      { status: 403, headers: { 'content-type': 'application/json' } },
+    )
+  }
+  return session
+}
+
+export async function requireServiceKey(request: Request, env: AuthEnv): Promise<AuthSuccess | Response> {
+  const auth = await authenticate(request, env)
+  if (auth.ok === false) return auth.response
+  if (auth.method !== 'api_key') {
+    return new Response(
+      JSON.stringify({ error: { code: 'service_key_required', message: 'A service API key is required.' } }),
+      { status: 403, headers: { 'content-type': 'application/json' } },
+    )
+  }
+  return auth
 }
