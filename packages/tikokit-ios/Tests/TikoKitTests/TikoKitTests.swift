@@ -50,6 +50,13 @@ final class TikoKitTests: XCTestCase {
         XCTAssertEqual(TikoChoiceStyle.compact.rawValue, "compact")
     }
 
+    func testSpeechLanguageMappingUsesAppLanguageCodes() {
+        XCTAssertEqual(TikoSpeech.languageCode(for: "en"), "en-US")
+        XCTAssertEqual(TikoSpeech.languageCode(for: "nl"), "nl-NL")
+        XCTAssertEqual(TikoSpeech.languageCode(for: "mt"), "mt-MT")
+        XCTAssertEqual(TikoSpeech.languageCode(for: "pt-BR"), "pt-BR")
+    }
+
     func testRecoverableIdentityRequiresVerifiedAccount() {
         let deviceOnly = TikoIdentityBundle(
             subject: TikoIdentitySubject(id: "sub-device", kind: "anonymous", product: "tiko"),

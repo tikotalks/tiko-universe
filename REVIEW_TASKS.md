@@ -87,7 +87,7 @@ The most urgent work is to lock down Atlas/generation/sentence/media/identity, i
   - CSP, `frame-ancestors`, `X-Frame-Options`, `nosniff`, `Referrer-Policy`, and `Permissions-Policy`.
   - Include admin, website, media, and all child apps.
 
-- [ ] Fix iOS speech basics.
+- [x] Fix iOS speech basics.
   - Set `AVAudioSession` to `.playback` / `.spokenAudio` before AAC speech.
   - Pass the selected language to Cards and Talk TTS.
   - Make Talk release builds use production API and debug builds use development API.

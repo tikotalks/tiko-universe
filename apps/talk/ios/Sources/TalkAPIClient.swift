@@ -50,8 +50,16 @@ actor TalkAPIClient: TalkSentenceAPI {
     private let decoder = JSONDecoder()
     private let encoder = JSONEncoder()
 
-    init(environment: Environment = .development, session: URLSession = .shared) {
-        self.environment = environment
+    static var defaultEnvironment: Environment {
+        #if DEBUG
+        return .development
+        #else
+        return .production
+        #endif
+    }
+
+    init(environment: Environment? = nil, session: URLSession = .shared) {
+        self.environment = environment ?? Self.defaultEnvironment
         self.session = session
     }
 

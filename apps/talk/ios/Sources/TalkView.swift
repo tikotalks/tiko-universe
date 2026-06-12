@@ -8,6 +8,7 @@ struct TalkView: View {
     @State private var showingPhrases = false
     @State private var isSpeaking = false
     @State private var saveMessage: String?
+    @AppStorage("tiko.language") private var languageCode = "en"
     @AppStorage("talk.nativeSpeechFallback") private var nativeSpeechFallback = true
 
     private let speechService = TalkSpeechService()
@@ -65,7 +66,14 @@ struct TalkView: View {
             .padding(.horizontal, 16)
             .padding(.top, 12)
             .task {
+                store.locale = languageCode
                 await store.load()
+            }
+            .onChange(of: languageCode) { _, code in
+                Task {
+                    store.locale = code
+                    await store.load()
+                }
             }
             .sheet(isPresented: $showingTemplates) {
                 TalkTemplateSheet(templates: store.templates, appColor: .talk) { template in
@@ -167,6 +175,10 @@ struct TalkView: View {
         }
     }
 
+    private var speechLanguageCode: String {
+        TikoSpeech.languageCode(for: languageCode)
+    }
+
     private func handleHeaderAction(_ id: String) {
         switch id {
         case "templates":
@@ -209,7 +221,7 @@ struct TalkView: View {
         if let url = store.audioURL, response != nil {
             audioPlayer.play(url: url)
         } else if nativeSpeechFallback {
-            speechService.speak(store.completedSentence ?? store.sentenceText)
+            speechService.speak(store.completedSentence ?? store.sentenceText, languageCode: speechLanguageCode)
         }
     }
 }

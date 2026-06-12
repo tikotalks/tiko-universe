@@ -396,7 +396,7 @@ struct CardsView: View {
     private func speak(_ card: CommunicationCard) {
         UIImpactFeedbackGenerator(style: .medium).impactOccurred()
         speakingCardID = card.id
-        speechService.speak(card.speech)
+        speechService.speak(card.speech, languageCode: languageCode)
 
         Task { @MainActor in
             try? await Task.sleep(nanoseconds: 450_000_000)
