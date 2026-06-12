@@ -38,6 +38,11 @@ class AdminMemoryD1 {
   serviceConfig = new Map<string, Row>()
   failIdentityDeleteFor = new Set<string>()
   prepare(sql: string) { return new MemoryStatement(this, sql) }
+  async batch(statements: MemoryStatement[]): Promise<Array<{ success: true }>> {
+    const results = []
+    for (const statement of statements) results.push(await statement.run())
+    return results
+  }
   execute(sql: string, values: unknown[]): MemoryResult {
     const normalized = sql.replace(/\s+/g, ' ').trim()
     if (normalized.startsWith('SELECT app, title') && normalized.includes('FROM app_config')) {
@@ -226,7 +231,11 @@ class AdminMemoryD1 {
     if (normalized.startsWith('UPDATE identity_role_assignments SET revoked_at')) {
       const [revokedAt, subjectId, product, role] = values
       for (const assignment of this.roles) {
-        if (assignment.subject_id === subjectId && assignment.product === product && assignment.role === role && !assignment.revoked_at) assignment.revoked_at = revokedAt
+        if (normalized.includes('role <> ?')) {
+          if (assignment.subject_id === subjectId && assignment.product === product && assignment.role !== role && !assignment.revoked_at) assignment.revoked_at = revokedAt
+        } else if (assignment.subject_id === subjectId && assignment.product === product && assignment.role === role && !assignment.revoked_at) {
+          assignment.revoked_at = revokedAt
+        }
       }
       return new MemoryResult()
     }
@@ -492,12 +501,23 @@ describe('admin-api role based access', () => {
     expect(assignResponse.status).toBe(200)
     expect(testEnv.AUTH_DB.roles.some((role) => role.subject_id === 'sub_editor' && role.role === 'content_editor' && !role.revoked_at)).toBe(true)
 
+    const setResponse = await worker.fetch(new Request('https://admin.test/v1/admin/users/sub_editor/roles', {
+      method: 'PUT',
+      headers: { authorization: 'Bearer ank_test', 'content-type': 'application/json' },
+      body: JSON.stringify({ roles: ['profile_manager'] })
+    }), testEnv as never)
+    const setBody = await setResponse.json() as { data: { roles: string[] } }
+    expect(setResponse.status).toBe(200)
+    expect(setBody.data.roles).toEqual(['profile_manager'])
+    expect(testEnv.AUTH_DB.roles.some((role) => role.subject_id === 'sub_editor' && role.role === 'content_editor' && !role.revoked_at)).toBe(false)
+    expect(testEnv.AUTH_DB.roles.some((role) => role.subject_id === 'sub_editor' && role.role === 'profile_manager' && !role.revoked_at)).toBe(true)
+
     const revokeResponse = await worker.fetch(new Request('https://admin.test/v1/admin/users/sub_editor/roles/content_editor', {
       method: 'DELETE',
       headers: { authorization: 'Bearer ank_test' }
     }), testEnv as never)
     expect(revokeResponse.status).toBe(200)
-    expect(testEnv.AUTH_DB.roles.some((role) => role.subject_id === 'sub_editor' && role.role === 'content_editor' && !role.revoked_at)).toBe(false)
+    expect(testEnv.AUTH_DB.roles.some((role) => role.subject_id === 'sub_editor' && role.role === 'profile_manager' && !role.revoked_at)).toBe(true)
 
     const revokeLastAdminResponse = await worker.fetch(new Request('https://admin.test/v1/admin/users/sub_admin/roles/admin', {
       method: 'DELETE',
@@ -506,6 +526,15 @@ describe('admin-api role based access', () => {
     const body = await revokeLastAdminResponse.json() as { error: { code: string } }
     expect(revokeLastAdminResponse.status).toBe(409)
     expect(body.error.code).toBe('last_admin_role')
+
+    const replaceLastAdminResponse = await worker.fetch(new Request('https://admin.test/v1/admin/users/sub_admin/roles', {
+      method: 'PUT',
+      headers: { authorization: 'Bearer ank_test', 'content-type': 'application/json' },
+      body: JSON.stringify({ roles: ['content_editor'] })
+    }), testEnv as never)
+    const replaceBody = await replaceLastAdminResponse.json() as { error: { code: string } }
+    expect(replaceLastAdminResponse.status).toBe(409)
+    expect(replaceBody.error.code).toBe('last_admin_role')
   })
 
   it('scheduled cleanup skips managed children and continues after one subject fails', async () => {

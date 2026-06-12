@@ -9,7 +9,7 @@ import type { AdminManagedUser, TikoRole } from '../types/admin'
 const bemm = useBemm('users-page', { return: 'string', includeBaseClass: true })
 const route = useRoute()
 const router = useRouter()
-const { users, loading, saving, error, list, assignRole, revokeRole } = useAdminUsers()
+const { users, loading, saving, error, list, setRoles } = useAdminUsers()
 const query = ref(typeof route.query.q === 'string' ? route.query.q : '')
 const selectedUserId = ref<string | null>(null)
 
@@ -48,15 +48,7 @@ function userInitials(user: AdminManagedUser): string {
 
 async function setSingleRole(user: AdminManagedUser, role: TikoRole) {
   if (saving.value) return
-  // Revoke all current roles first, then assign the new one
-  const rolesToRevoke = user.roles.filter((r) => r !== role)
-  for (const r of rolesToRevoke) {
-    await revokeRole(user.id, r)
-  }
-  // If the user didn't already have this role, assign it
-  if (!user.roles.includes(role)) {
-    await assignRole(user.id, role)
-  }
+  await setRoles(user.id, [role])
 }
 
 function formatRole(role: string) {

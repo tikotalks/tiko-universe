@@ -91,12 +91,18 @@ function onDocumentKeydown(event: KeyboardEvent) {
   }
 }
 
+function magicTokenFromLocation(): string {
+  const routeToken = Array.isArray(route.query.token) ? route.query.token[0] : route.query.token
+  if (typeof routeToken === 'string' && routeToken.trim()) return routeToken
+  return new URL(window.location.href).searchParams.get('token')?.trim() ?? ''
+}
+
 onMounted(async () => {
   document.addEventListener('click', onDocumentClick)
   document.addEventListener('keydown', onDocumentKeydown)
   window.addEventListener('tiko-admin-app-config-updated', onAppConfigUpdated)
 
-  const urlToken = route.query.token as string | undefined
+  const urlToken = magicTokenFromLocation()
   if (urlToken) {
     await verifyEmailChallenge(urlToken)
     await router.replace({ query: {} })

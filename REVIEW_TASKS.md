@@ -139,7 +139,7 @@ Approximate review spread: 7 Critical, about 35 High, about 70 Medium, and about
   - Cards reorder must persist on iOS.
   - Type web/iOS speak actions must use the selected language and actually speak.
 
-- [ ] Fix admin reliability flows.
+- [x] Fix admin reliability flows.
   - Await router readiness or read magic-link token from `window.location`.
   - Replace revoke-all-then-assign role changes with an atomic server operation.
   - Distinguish offline/5xx from 401/403 so valid admin sessions are not wiped.

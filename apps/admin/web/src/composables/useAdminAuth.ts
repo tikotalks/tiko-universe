@@ -21,6 +21,13 @@ interface ApiErrorBody {
   error?: { message?: string } | string
 }
 
+class AdminFetchError extends Error {
+  constructor(message: string, readonly status: number) {
+    super(message)
+    this.name = 'AdminFetchError'
+  }
+}
+
 function adminApiBaseUrl(): string {
   const env = (import.meta as ImportMeta & { env?: Record<string, string | undefined> }).env
   return (env?.VITE_ADMIN_API_URL ?? 'https://admin.tikoapi.org/v1/admin').replace(/\/$/, '')
@@ -63,7 +70,7 @@ async function adminFetch<T>(path: string): Promise<T> {
   const body = await response.json().catch(() => null) as ApiErrorBody | AdminApiResponse<T> | null
   if (!response.ok) {
     const apiError = body && 'error' in body ? body.error : undefined
-    throw new Error((typeof apiError === 'string' ? apiError : apiError?.message) ?? `Admin API error: ${response.status}`)
+    throw new AdminFetchError((typeof apiError === 'string' ? apiError : apiError?.message) ?? `Admin API error: ${response.status}`, response.status)
   }
   return (body as AdminApiResponse<T>).data
 }
@@ -108,14 +115,18 @@ export function useAdminAuth() {
     if (!silent) loading.value = true
     error.value = null
     try {
-      user.value = await adminFetch<AdminUser>('/me')
-      config.value = await adminFetch<AdminConfig>('/config')
+      const nextUser = await adminFetch<AdminUser>('/me')
+      const nextConfig = await adminFetch<AdminConfig>('/config')
+      user.value = nextUser
+      config.value = nextConfig
       loginMessage.value = null
       return true
     } catch (e) {
-      user.value = null
-      config.value = null
-      token.value = ''
+      if (e instanceof AdminFetchError && (e.status === 401 || e.status === 403)) {
+        user.value = null
+        config.value = null
+        token.value = ''
+      }
       if (!silent) error.value = e instanceof Error ? e.message : 'Admin verification failed.'
       return false
     } finally {

@@ -51,6 +51,7 @@ const defaultsVersion = ref(0)
 const defaultsUpdatedAt = ref<string | null>(null)
 const defaultsSavedMessage = ref<string | null>(null)
 const defaultsDirty = ref(false)
+let defaultsLoadRequestId = 0
 
 const routeApp = computed<TikoAppColor | null>(() => {
   const param = Array.isArray(route.params.app) ? route.params.app[0] : route.params.app
@@ -151,27 +152,32 @@ async function saveConfig() {
 }
 
 async function loadDefaults() {
+  const requestId = ++defaultsLoadRequestId
+  const app = defaultsApp.value
   defaultsSavedMessage.value = null
   stateValue.value = {}
   defaultsVersion.value = 0
   defaultsUpdatedAt.value = null
   defaultsDirty.value = false
-  if (!defaultsApp.value || isOverview.value) return
+  if (!app || isOverview.value) return
 
   try {
-    if (defaultsApp.value === 'cards') {
+    if (app === 'cards') {
       const payload = await cardsDefaultsApi.read()
+      if (requestId !== defaultsLoadRequestId || defaultsApp.value !== app) return
       stateValue.value = { collections: payload.collections }
       defaultsUpdatedAt.value = null
       return
     }
-    if (defaultsApp.value === 'sequence') {
+    if (app === 'sequence') {
       const payload = await sequenceDefaultsApi.read()
+      if (requestId !== defaultsLoadRequestId || defaultsApp.value !== app) return
       stateValue.value = { sequences: payload.sequences }
       defaultsUpdatedAt.value = null
       return
     }
-    const payload = await defaultsApi.readDefaults(defaultsApp.value as TikoManagedApp, 'state' satisfies AppResource)
+    const payload = await defaultsApi.readDefaults(app as TikoManagedApp, 'state' satisfies AppResource)
+    if (requestId !== defaultsLoadRequestId || defaultsApp.value !== app) return
     stateValue.value = (payload.state ?? {}) as Record<string, unknown>
     defaultsVersion.value = payload.version
     defaultsUpdatedAt.value = payload.updatedAt

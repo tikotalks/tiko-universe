@@ -86,9 +86,25 @@ export function useAdminUsers() {
     }
   }
 
+  async function setRoles(subjectId: string, roles: TikoRole[]) {
+    saving.value = true
+    error.value = null
+    try {
+      const data = await adminFetch<{ subjectId: string; roles: TikoRole[] }>(`/users/${encodeURIComponent(subjectId)}/roles`, {
+        method: 'PUT',
+        body: JSON.stringify({ roles }),
+      })
+      updateUserRoles(data.subjectId, data.roles)
+    } catch (e) {
+      error.value = e instanceof Error ? e.message : 'Could not update roles.'
+    } finally {
+      saving.value = false
+    }
+  }
+
   function updateUserRoles(subjectId: string, roles: TikoRole[]) {
     users.value = users.value.map((user) => user.id === subjectId ? { ...user, roles } : user)
   }
 
-  return { users, loading, saving, error, list, assignRole, revokeRole }
+  return { users, loading, saving, error, list, assignRole, revokeRole, setRoles }
 }

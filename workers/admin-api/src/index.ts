@@ -185,6 +185,10 @@ async function handleAdminRequest(request: Request, env: Env): Promise<Response>
     }
 
     const assignRoleMatch = path.match(/^\/v1\/admin\/users\/([^/]+)\/roles$/)
+    if (assignRoleMatch && request.method === 'PUT') {
+      return setUserRoles(request, env.AUTH_DB, admin, decodeURIComponent(assignRoleMatch[1]))
+    }
+
     if (assignRoleMatch && request.method === 'POST') {
       return assignUserRole(request, env.AUTH_DB, admin, decodeURIComponent(assignRoleMatch[1]))
     }
@@ -762,6 +766,44 @@ async function assignUserRole(request: Request, db: D1Database, admin: AdminSess
   if (!VALID_ROLES.has(role)) return apiError('invalid_role', 'Role is not assignable.', 400)
 
   await assignRole(db, subjectId, role, 'manual', admin.userId)
+  return json({ data: { subjectId, roles: await activeRoles(db, subjectId) } })
+}
+
+async function setUserRoles(request: Request, db: D1Database, admin: AdminSession, subjectId: string): Promise<Response> {
+  let body: { role?: unknown; roles?: unknown }
+  try {
+    body = await request.json()
+  } catch {
+    return apiError('invalid_json', 'Request body must be valid JSON.', 400)
+  }
+
+  const requestedRoles = Array.isArray(body.roles) ? body.roles : body.role ? [body.role] : []
+  const roles = Array.from(new Set(requestedRoles.map((role) => typeof role === 'string' ? role : '').filter(Boolean)))
+  if (roles.length !== 1) return apiError('invalid_role_count', 'Exactly one role must be selected.', 400)
+
+  const [role] = roles
+  if (!VALID_ROLES.has(role)) return apiError('invalid_role', 'Role is not assignable.', 400)
+
+  const currentRoles = await activeRoles(db, subjectId)
+  if (currentRoles.includes(ADMIN_ROLE) && role !== ADMIN_ROLE) {
+    const adminCount = await activeRoleCount(db, ADMIN_ROLE)
+    if (adminCount <= 1) return apiError('last_admin_role', 'Cannot revoke the final active admin role.', 409)
+  }
+
+  const now = new Date().toISOString()
+  const statements = [
+    db.prepare('UPDATE identity_role_assignments SET revoked_at = ? WHERE subject_id = ? AND product = ? AND role <> ? AND revoked_at IS NULL')
+      .bind(now, subjectId, PRODUCT, role),
+  ]
+
+  if (!currentRoles.includes(role)) {
+    statements.push(
+      db.prepare('INSERT INTO identity_role_assignments (id, subject_id, product, role, source, actor_subject_id, created_at, revoked_at, metadata_json) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)')
+        .bind(`role_${crypto.randomUUID().replace(/-/g, '')}`, subjectId, PRODUCT, role, 'manual', admin.userId, now, null, '{}'),
+    )
+  }
+
+  await (db as unknown as { batch(items: typeof statements): Promise<unknown> }).batch(statements)
   return json({ data: { subjectId, roles: await activeRoles(db, subjectId) } })
 }
 

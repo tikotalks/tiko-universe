@@ -46,7 +46,12 @@ const router = createRouter({
   },
 })
 
-const app = createApp(App)
-app.provide('popupService', popupService)
-app.use(router)
-app.mount('#app')
+async function startAdminApp() {
+  const app = createApp(App)
+  app.provide('popupService', popupService)
+  app.use(router)
+  await router.isReady()
+  app.mount('#app')
+}
+
+void startAdminApp()
