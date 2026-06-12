@@ -107,16 +107,13 @@ function replaceFirstTomlValue(source, key, value) {
   return source.replace(new RegExp(`(^\\s*${key}\\s*=\\s*")([^"]+)(")`, 'm'), `$1${value}$3`)
 }
 
-function replaceTomlValueAfterMarker(source, marker, key, value) {
-  const index = source.indexOf(marker)
-  if (index === -1) throw new Error(`Marker not found in wrangler config: ${marker}`)
-  const before = source.slice(0, index)
-  const after = source.slice(index).replace(new RegExp(`(^\\s*${key}\\s*=\\s*")([^"]+)(")`, 'm'), `$1${value}$3`)
-  return `${before}${after}`
+if (process.env.TIKO_PROVISION_PRODUCTION === 'true') {
+  throw new Error('provision-talk-dev.mjs is dev-only and must not mutate production bindings')
 }
 
 // The Cloudflare account is at its D1 database limit. Reuse the existing shared
-// dev app database and keep Talk isolated through sentence-api table names.
+// dev app database and keep Talk isolated through sentence-api table names until
+// a dedicated development D1 database is provisioned.
 const devDbId = await ensureD1('tiko-db')
 const devKvId = await ensureKv('tiko-sentence-cache-dev')
 
@@ -124,13 +121,6 @@ let wrangler = await readFile(WORKER_WRANGLER, 'utf8')
 wrangler = replaceFirstTomlValue(wrangler, 'database_id', devDbId)
 wrangler = replaceFirstTomlValue(wrangler, 'id', devKvId)
 wrangler = replaceFirstTomlValue(wrangler, 'preview_id', devKvId)
-
-if (process.env.TIKO_PROVISION_PRODUCTION === 'true') {
-  const prodDbId = await ensureD1('tiko-db')
-  const prodKvId = await ensureKv('tiko-sentence-cache')
-  wrangler = replaceTomlValueAfterMarker(wrangler, '[env.production]', 'database_id', prodDbId)
-  wrangler = replaceTomlValueAfterMarker(wrangler, '[env.production]', 'id', prodKvId)
-}
 
 await writeFile(WORKER_WRANGLER, wrangler)
 

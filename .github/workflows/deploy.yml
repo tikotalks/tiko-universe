@@ -284,8 +284,7 @@ jobs:
           else
             echo "🧪 Deploying $WORKER to development (dry-run to verify, then deploy)"
             if [[ "$WORKER" == "sentence-api" ]]; then
-              npx wrangler d1 execute tiko-db --remote --file schema.sql
-              npx wrangler d1 execute tiko-db --remote --file db/seed-en.sql
+              echo "⏭️ sentence-api dev schema/seed is not applied automatically while dev shares tiko-db"
             fi
             if [[ "$WORKER" == "app-api" ]]; then
               echo "🗄️ Applying app-api development D1 migrations"

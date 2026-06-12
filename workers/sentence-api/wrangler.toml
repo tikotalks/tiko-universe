@@ -19,8 +19,8 @@ migrations_dir = "migrations"
 
 [[kv_namespaces]]
 binding = "CACHE"
-id = "126846bedae445ccb8fd60db72873c19"
-preview_id = "126846bedae445ccb8fd60db72873c19"
+id = "be881c5650874b7698c004f7d80eca1a"
+preview_id = "be881c5650874b7698c004f7d80eca1a"
 
 [[services]]
 binding = "IDENTITY_SERVICE"
