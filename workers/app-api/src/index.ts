@@ -20,7 +20,6 @@ interface D1Database {
 
 export interface Env extends AuthEnv {
   APP_DB: D1Database
-  IDENTITY_DB?: D1Database
   TOKEN_PEPPER?: string
   ALLOWED_ORIGINS?: string
 }

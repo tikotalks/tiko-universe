@@ -18,11 +18,6 @@ database_name = "tiko-db"
 database_id = "f99b61ae-6a78-4670-bb9c-cdc4f634264a"
 migrations_dir = "migrations"
 
-[[d1_databases]]
-binding = "IDENTITY_DB"
-database_name = "tiko-identity"
-database_id = "036a1726-ac16-48a9-ab76-22c3a88ca7ae"
-
 # ── Production environment ──────────────────────────────────────
 # Deploy with: npx wrangler deploy --env production
 
@@ -42,11 +37,6 @@ binding = "APP_DB"
 database_name = "tiko-db"
 database_id = "f99b61ae-6a78-4670-bb9c-cdc4f634264a"
 migrations_dir = "migrations"
-
-[[env.production.d1_databases]]
-binding = "IDENTITY_DB"
-database_name = "tiko-identity"
-database_id = "036a1726-ac16-48a9-ab76-22c3a88ca7ae"
 
 [[env.production.routes]]
 pattern = "app.tikoapi.org"
