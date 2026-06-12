@@ -137,7 +137,7 @@ describe('communication-api', () => {
     const result = await fetchJson('/v1/communication/email/magic-link', {
       method: 'POST',
       headers: { authorization: 'Bearer comm_test_key' },
-      body: JSON.stringify({ to: 'caregiver@example.test', magicLinkUrl: 'https://example.test/magic?token=abc' })
+      body: JSON.stringify({ to: 'caregiver@example.test', magicLinkUrl: 'https://example.test/magic?token=abc', otp: '123456' })
     }, testEnv)
 
     expect(result.response.status).toBe(202)
@@ -148,6 +148,16 @@ describe('communication-api', () => {
     }))
     const message = [...testEnv.COMMUNICATION_DB.messages.values()][0]
     expect(message).toMatchObject({ direction: 'outbound', status: 'sent', provider_message_id: 'email_123' })
+    expect(message.subject).toBe('Your Tiko sign-in code')
+    expect(String(message.text_body)).toContain('token=%5BREDACTED%5D')
+    expect(String(message.html_body)).toContain('token=%5BREDACTED%5D')
+    expect(JSON.stringify(message)).not.toContain('abc')
+    expect(JSON.stringify(message)).not.toContain('123456')
+    expect(JSON.stringify(message)).not.toContain('123 456')
+    const providerBody = JSON.parse(String((resendFetch.mock.calls[0]?.[1] as RequestInit).body))
+    expect(providerBody.subject).toContain('123 456')
+    expect(providerBody.text).toContain('https://example.test/magic?token=abc')
+    expect(providerBody.html).toContain('https://example.test/magic?token=abc')
     expect(testEnv.COMMUNICATION_DB.attempts[0]).toMatchObject({ provider: 'resend', status: 'sent' })
     expect(testEnv.COMMUNICATION_DB.events.map((event) => event.event_type)).toEqual(['message_queued', 'provider_accepted'])
   })

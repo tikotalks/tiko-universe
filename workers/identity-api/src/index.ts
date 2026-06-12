@@ -540,10 +540,10 @@ async function resetAccountData(request: Request, env: Env): Promise<Response> {
 
   return Response.json({
     id: requestId,
-    status: 'completed',
-    categoriesAffected: categories,
+    status: 'requested',
+    categoriesRequested: categories,
     createdAt: at,
-    completedAt: at
+    completedAt: null
   }, { status: 202 })
 }
 
@@ -687,8 +687,8 @@ async function executeAccountDeletion(env: Env, subjectId: string): Promise<void
   const at = new Date().toISOString()
   await env.IDENTITY_DB.prepare('UPDATE identity_subjects SET disabled_at = ?, updated_at = ? WHERE id = ? AND product = ?')
     .bind(at, at, subjectId, 'tiko').run()
-  await env.IDENTITY_DB.prepare('UPDATE identity_accounts SET disabled_at = ?, updated_at = ? WHERE subject_id = ? AND product = ? AND disabled_at IS NULL')
-    .bind(at, at, subjectId, 'tiko').run()
+  await env.IDENTITY_DB.prepare('UPDATE identity_accounts SET disabled_at = ?, updated_at = ?, email_hash = NULL, email_plain = NULL, email_verified_at = NULL, metadata_json = ? WHERE subject_id = ? AND product = ? AND disabled_at IS NULL')
+    .bind(at, at, '{}', subjectId, 'tiko').run()
   await env.IDENTITY_DB.prepare('UPDATE identity_sessions SET revoked_at = ? WHERE subject_id = ? AND product = ? AND revoked_at IS NULL')
     .bind(at, subjectId, 'tiko').run()
   await env.IDENTITY_DB.prepare('UPDATE identity_devices SET revoked_at = ? WHERE subject_id = ? AND product = ? AND revoked_at IS NULL')

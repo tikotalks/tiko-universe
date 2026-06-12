@@ -80,7 +80,7 @@ Approximate review spread: 7 Critical, about 35 High, about 70 Medium, and about
   - Include PUT in preflight responses.
   - Make managed identity endpoints accept the same cookie session model as canonical identity routes.
 
-- [ ] Make deletion and reset behavior honest.
+- [x] Make deletion and reset behavior honest.
   - Null or delete PII on completed account deletion.
   - Make reset endpoints actually clear app data via service bindings, or return a requested/pending status.
   - Redact magic-link and OTP material in communication message storage.

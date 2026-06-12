@@ -103,9 +103,12 @@ async function sendMagicLinkEmail(request: Request, env: Env): Promise<Response>
   const messageId = id('msg')
   const from = env.MAGIC_LINK_FROM_EMAIL ?? DEFAULT_MAGIC_LINK_FROM_EMAIL
   const subject = otp ? `${formatOtp(otp)} is your Tiko sign-in code` : 'Your Tiko sign-in link'
+  const storedSubject = otp ? 'Your Tiko sign-in code' : subject
   const otpLine = otp ? `Your sign-in code: ${formatOtp(otp)}\n\n` : ''
   const text = `${otpLine}Open this link to sign in to Tiko:\n\n${magicLinkUrl}\n\nThis link and code expire in 15 minutes.\n\nIf you did not request this, you can ignore this email.`
   const html = magicLinkHtml(magicLinkUrl, { otp, webLinkUrl })
+  const redactedText = redactMagicLinkMessage(text, magicLinkUrl, otp)
+  const redactedHtml = redactMagicLinkMessage(html, magicLinkUrl, otp)
 
   await insertMessage(env, {
     id: messageId,
@@ -115,9 +118,9 @@ async function sendMagicLinkEmail(request: Request, env: Env): Promise<Response>
     status: 'queued',
     from_address: from,
     to_address: to,
-    subject,
-    text_body: text,
-    html_body: html,
+    subject: storedSubject,
+    text_body: redactedText,
+    html_body: redactedHtml,
     provider: 'resend',
     provider_message_id: null,
     related_user_id: optionalString(body.relatedUserId),
@@ -282,6 +285,35 @@ function requireServiceAuth(request: Request, env: Env): void {
 function formatOtp(otp: string): string {
   const digits = otp.replace(/\D/g, '')
   return digits.length === 6 ? `${digits.slice(0, 3)} ${digits.slice(3)}` : otp
+}
+
+function redactMagicLinkMessage(value: string, magicLinkUrl: string, otp?: string | null): string {
+  const redactedUrl = redactedMagicLinkUrl(magicLinkUrl)
+  let redacted = value
+    .split(magicLinkUrl).join(redactedUrl)
+    .split(escapeHtml(magicLinkUrl)).join(escapeHtml(redactedUrl))
+  if (otp) {
+    redacted = redacted
+      .split(otp).join('[REDACTED_OTP]')
+      .split(formatOtp(otp)).join('[REDACTED_OTP]')
+      .split(escapeHtml(formatOtp(otp))).join('[REDACTED_OTP]')
+  }
+  return redacted
+}
+
+function redactedMagicLinkUrl(value: string): string {
+  try {
+    const url = new URL(value)
+    for (const key of ['token', 'otp', 'code']) {
+      if (url.searchParams.has(key)) url.searchParams.set(key, '[REDACTED]')
+    }
+    if (!url.searchParams.has('token') && !url.searchParams.has('otp') && !url.searchParams.has('code')) {
+      return '[REDACTED_MAGIC_LINK]'
+    }
+    return url.toString()
+  } catch {
+    return '[REDACTED_MAGIC_LINK]'
+  }
 }
 
 function magicLinkHtml(magicLinkUrl: string, opts: { otp?: string | null; webLinkUrl?: string }): string {

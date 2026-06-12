@@ -174,9 +174,15 @@ class MemoryD1Database {
       return new MemoryResult()
     }
     if (normalized.startsWith('UPDATE identity_accounts SET disabled_at')) {
-      const [disabledAt, updatedAt, subjectId, product] = values
+      const [disabledAt, updatedAt, metadataOrSubjectId, maybeSubjectId, maybeProduct] = values
+      const scrubsPii = normalized.includes('email_hash = NULL')
+      const subjectId = scrubsPii ? maybeSubjectId : metadataOrSubjectId
+      const product = scrubsPii ? maybeProduct : maybeSubjectId
       for (const row of this.accounts.values()) {
-        if (row.subject_id === subjectId && row.product === product && !row.disabled_at) Object.assign(row, { disabled_at: disabledAt, updated_at: updatedAt })
+        if (row.subject_id === subjectId && row.product === product && !row.disabled_at) {
+          Object.assign(row, { disabled_at: disabledAt, updated_at: updatedAt })
+          if (scrubsPii) Object.assign(row, { email_hash: null, email_plain: null, email_verified_at: null, metadata_json: metadataOrSubjectId })
+        }
       }
       return new MemoryResult()
     }
@@ -644,6 +650,7 @@ describe('identity-api endpoints', () => {
     expect([...testEnv.IDENTITY_DB.sessions.values()].filter((row) => row.subject_id === subjectId).every((row) => row.revoked_at)).toBe(true)
     expect([...testEnv.IDENTITY_DB.devices.values()].filter((row) => row.subject_id === subjectId).every((row) => row.revoked_at)).toBe(true)
     expect([...testEnv.IDENTITY_DB.accounts.values()].filter((row) => row.subject_id === subjectId).every((row) => row.disabled_at)).toBe(true)
+    expect([...testEnv.IDENTITY_DB.accounts.values()].filter((row) => row.subject_id === subjectId).every((row) => row.email_hash === null && row.email_plain === null && row.email_verified_at === null && row.metadata_json === '{}')).toBe(true)
     const afterDelete = await fetchJson('/v1/identity/session', { headers: { authorization: `Bearer ${verifiedToken}` } }, testEnv)
     expect(afterDelete.response.status).toBe(401)
   })
@@ -917,6 +924,8 @@ describe('identity-api endpoints', () => {
       body: JSON.stringify({ confirmation: 'reset_my_data', pinGrantToken: grantToken })
     }, testEnv)
     expect(reset.response.status).toBe(202)
+    expect(reset.body).toMatchObject({ status: 'requested', completedAt: null })
+    expect(reset.body.categoriesRequested).toEqual(['preferences', 'app_state', 'user_content', 'progress', 'insights'])
     expect([...testEnv.IDENTITY_DB.pinGrants.values()].some((row) => row.consumed_at)).toBe(true)
 
     const replay = await fetchJson('/v1/identity/reset', {
