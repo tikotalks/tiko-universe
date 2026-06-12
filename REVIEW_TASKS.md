@@ -282,7 +282,7 @@ The most urgent work is to lock down Atlas/generation/sentence/media/identity, i
   - Add an iOS simulator package test for `packages/tikokit-ios` because it imports UIKit.
   - Run iOS CI on pull requests with path filters.
 
-- [ ] Add real tests for `@tiko/ui`, `@tiko/atlas`, translations-api, and communication-api.
+- [x] Add real tests for `@tiko/ui`, `@tiko/atlas`, translations-api, and communication-api.
   - Replace scaffold-only scripts where the package has real code.
   - Add at least one contract test per worker.
 

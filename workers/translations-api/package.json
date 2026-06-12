@@ -7,6 +7,7 @@
     "deploy": "wrangler deploy",
     "deploy:dry-run": "wrangler deploy --dry-run",
     "deploy:production": "wrangler deploy --env production",
+    "test": "cd ../.. && vitest run tests/translations-api.test.ts",
     "kv:create:dev": "wrangler kv namespace create TRANSLATIONS_KV",
     "kv:create:prod": "wrangler kv namespace create TRANSLATIONS_KV --env production",
     "secret:lezu-key": "wrangler secret put LEZU_API_KEY",
