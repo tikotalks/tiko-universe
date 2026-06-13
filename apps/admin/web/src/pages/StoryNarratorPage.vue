@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { computed, onMounted, ref, watch } from 'vue'
 import { useBemm } from 'bemm'
-import { Button, Icon, InputRange, InputText } from '@sil/ui'
+import { Button, Icon } from '@sil/ui'
 import StoryDraftsPanel from '../components/stories/StoryDraftsPanel.vue'
+import StoryPublishSettingsCard from '../components/stories/StoryPublishSettingsCard.vue'
 import StorySegmentsEditor from '../components/stories/StorySegmentsEditor.vue'
 import { useStoryNarration, type StoryDraft, type StoryGalleryItem, type VoiceSample } from '../composables/useStoryNarration'
 import { useAdminMediaLibrary, type AudioLibraryAlbum } from '../composables/useAdminMediaLibrary'
@@ -502,37 +503,14 @@ onMounted(() => {
           <audio v-if="selectedPreviewAudioUrl" :class="page('preview-audio')" :src="audioSrc(selectedPreviewAudioUrl)" controls />
         </section>
 
-        <section :class="page('side-card')">
-          <header :class="page('side-head')">
-            <Icon name="ui/on-target" size="small" />
-            <div>
-              <h3 :class="page('panel-title')">Publish settings</h3>
-              <p :class="page('panel-meta')">Choose where and how to publish.</p>
-            </div>
-          </header>
-          <label :class="page('label')">
-            <span :class="page('label-text')">Target Radio album</span>
-            <select :class="page('select')" v-model="targetAlbumId">
-              <option value="">No album assigned</option>
-              <option v-for="album in audioAlbums" :key="album.id" :value="album.id">{{ album.title }}</option>
-            </select>
-          </label>
-          <div :class="page('two-col')">
-            <label :class="page('label')">
-              <span :class="page('label-text')">Language</span>
-              <input v-model="language" :class="page('input')" type="text" placeholder="en" />
-            </label>
-            <label :class="page('label')">
-              <span :class="page('label-text')">Speed {{ speed.toFixed(2) }}×</span>
-              <InputRange v-model="speed" :min="0.5" :max="1.5" :step="0.05" />
-            </label>
-          </div>
-          <div :class="page('two-col')">
-            <InputText v-model="category" label="Category" />
-            <InputText v-model="tagsText" label="Tags" placeholder="comma, separated" />
-          </div>
-          <p :class="page('status-row')"><span>Draft</span> Only you can see this.</p>
-        </section>
+        <StoryPublishSettingsCard
+          v-model:target-album-id="targetAlbumId"
+          v-model:language="language"
+          v-model:speed="speed"
+          v-model:category="category"
+          v-model:tags-text="tagsText"
+          :audio-albums="audioAlbums"
+        />
       </aside>
 
       <footer :class="page('footer-bar')">
@@ -1362,22 +1340,6 @@ onMounted(() => {
       height: 100%;
       border-radius: inherit;
       background: currentColor;
-    }
-  }
-
-  &__status-row {
-    color: var(--admin-text-muted);
-    font-size: var(--font-size-s);
-    display: flex;
-    align-items: center;
-    gap: var(--space-s);
-
-    span {
-      border: 1px solid color-mix(in srgb, var(--color-foreground), transparent 80%);
-      border-radius: var(--border-radius-s);
-      padding: var(--space-xs) var(--space-s);
-      color: var(--admin-text);
-      background: color-mix(in srgb, var(--color-background), var(--color-foreground) 6%);
     }
   }
 
