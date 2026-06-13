@@ -1,4 +1,5 @@
 import { CORS_HEADERS, apiError, fetchWithRetry, json } from './http'
+import { resolveSecrets, type SecretStoreBinding } from '../../shared/secrets'
 import {
   canAccessOwnedRecord,
   canMutateOwnedRecord,
@@ -31,7 +32,9 @@ export interface Env {
   GENERATION_DB: D1DatabaseLike
   GENERATED_MEDIA_BUCKET: R2BucketLike
   OPENAI_API_KEY?: string
+  OPENAI_SECRET?: { get(): Promise<string> }
   ELEVENLABS_API_KEY?: string
+  ELEVENLABS_SECRET?: { get(): Promise<string> }
   AUTH_DB?: {
     prepare(sql: string): { bind(...values: unknown[]): { first<T>(): Promise<T | null>; all(): Promise<{ results: unknown[] }> } }
   }
@@ -45,6 +48,7 @@ export interface Env {
   }
   ATLAS_BASE_URL?: string
   ATLAS_API_KEY?: string
+  ATLAS_SECRET?: { get(): Promise<string> }
 }
 
 export interface D1DatabaseLike {
@@ -105,29 +109,30 @@ export default {
   async fetch(request: Request, env: Env): Promise<Response> {
     try {
       if (request.method === 'OPTIONS') return new Response(null, { headers: CORS_HEADERS })
+      const resolvedEnv = await resolveSecrets(env)
 
       const url = new URL(request.url)
       if (url.pathname === '/v1/generation/health' && request.method === 'GET') return generationHealth()
-      if (url.pathname === '/v1/generation/voices' && request.method === 'GET') return requirePaidAccess(request, env, { capability: 'voices.list', units: 1, maxRequestsPerMinute: 120, maxUnitsPerDay: 2000 }, () => listVoices(url, env))
-      if (url.pathname === '/v1/generation/tts' && request.method === 'POST') return generateTts(request, env)
-      if (url.pathname.startsWith('/v1/generation/voice-samples/') && request.method === 'GET') return requirePaidAccess(request, env, { capability: 'voice.sample', units: 40, maxRequestsPerMinute: 30, maxUnitsPerDay: 2000 }, () => getVoiceSample(url, env))
-      if (url.pathname === '/v1/generation/image' && request.method === 'POST') return requireAuth(request, env, (access) => generateImage(request, env, access))
-      if (url.pathname.startsWith('/v1/generation/images/') && url.pathname.endsWith('/binary') && request.method === 'GET') return getImage(request, url.pathname, env)
-      if (url.pathname.startsWith('/v1/generation/images/') && url.pathname.endsWith('/promote') && request.method === 'POST') return requireAuth(request, env, (access) => promoteImage(url.pathname, env, access))
-      if (url.pathname.startsWith('/v1/generation/images/') && url.pathname.endsWith('/media-link') && request.method === 'POST') return requireAuth(request, env, (access) => linkImageMedia(url.pathname, request, env, access))
-      if (url.pathname.startsWith('/v1/generation/images/') && url.pathname.endsWith('/enrich') && request.method === 'POST') return requireAuth(request, env, (access) => enrichImage(url.pathname, env, access))
-      if (url.pathname.startsWith('/v1/generation/images/') && url.pathname.endsWith('/edit') && request.method === 'POST') return requireAuth(request, env, (access) => editImageVariant(url.pathname, request, env, access))
-      if (url.pathname.startsWith('/v1/generation/images/') && url.pathname.endsWith('/upscale') && request.method === 'POST') return requireAuth(request, env, (access) => upscaleImage(url.pathname, request, env, access))
-      if (url.pathname.startsWith('/v1/generation/images/') && request.method === 'DELETE') return requireAuth(request, env, (access) => deleteImage(url.pathname, env, access))
-      if (url.pathname === '/v1/generation/images' && request.method === 'GET') return listImages(request, env)
-      if (url.pathname === '/v1/generation/stories/tryout' && request.method === 'POST') return requireAuth(request, env, (access) => generateStoryTryout(request, env, access))
-      if (url.pathname === '/v1/generation/stories/render' && request.method === 'POST') return requireAuth(request, env, (access) => renderStory(request, env, access))
-      if (url.pathname === '/v1/generation/story-drafts' && request.method === 'POST') return requireAuth(request, env, (access) => createStoryDraft(request, env, access))
-      if (url.pathname === '/v1/generation/story-drafts' && request.method === 'GET') return requireAuth(request, env, (access) => listStoryDrafts(env, access))
-      if (url.pathname.startsWith('/v1/generation/stories/') && url.pathname.endsWith('/audio') && request.method === 'GET') return getStoryAudio(request, url.pathname, env)
-      if (url.pathname.startsWith('/v1/generation/stories/') && url.pathname.endsWith('/promote') && request.method === 'POST') return requireAuth(request, env, (access) => promoteStory(url.pathname, env, access))
-      if (url.pathname.startsWith('/v1/generation/stories/') && request.method === 'DELETE') return requireAuth(request, env, (access) => deleteStory(url.pathname, env, access))
-      if (url.pathname === '/v1/generation/stories' && request.method === 'GET') return listStories(request, env)
+      if (url.pathname === '/v1/generation/voices' && request.method === 'GET') return requirePaidAccess(request, resolvedEnv, { capability: 'voices.list', units: 1, maxRequestsPerMinute: 120, maxUnitsPerDay: 2000 }, () => listVoices(url, resolvedEnv))
+      if (url.pathname === '/v1/generation/tts' && request.method === 'POST') return generateTts(request, resolvedEnv)
+      if (url.pathname.startsWith('/v1/generation/voice-samples/') && request.method === 'GET') return requirePaidAccess(request, resolvedEnv, { capability: 'voice.sample', units: 40, maxRequestsPerMinute: 30, maxUnitsPerDay: 2000 }, () => getVoiceSample(url, resolvedEnv))
+      if (url.pathname === '/v1/generation/image' && request.method === 'POST') return requireAuth(request, resolvedEnv, (access) => generateImage(request, resolvedEnv, access))
+      if (url.pathname.startsWith('/v1/generation/images/') && url.pathname.endsWith('/binary') && request.method === 'GET') return getImage(request, url.pathname, resolvedEnv)
+      if (url.pathname.startsWith('/v1/generation/images/') && url.pathname.endsWith('/promote') && request.method === 'POST') return requireAuth(request, resolvedEnv, (access) => promoteImage(url.pathname, resolvedEnv, access))
+      if (url.pathname.startsWith('/v1/generation/images/') && url.pathname.endsWith('/media-link') && request.method === 'POST') return requireAuth(request, resolvedEnv, (access) => linkImageMedia(url.pathname, request, resolvedEnv, access))
+      if (url.pathname.startsWith('/v1/generation/images/') && url.pathname.endsWith('/enrich') && request.method === 'POST') return requireAuth(request, resolvedEnv, (access) => enrichImage(url.pathname, resolvedEnv, access))
+      if (url.pathname.startsWith('/v1/generation/images/') && url.pathname.endsWith('/edit') && request.method === 'POST') return requireAuth(request, resolvedEnv, (access) => editImageVariant(url.pathname, request, resolvedEnv, access))
+      if (url.pathname.startsWith('/v1/generation/images/') && url.pathname.endsWith('/upscale') && request.method === 'POST') return requireAuth(request, resolvedEnv, (access) => upscaleImage(url.pathname, request, resolvedEnv, access))
+      if (url.pathname.startsWith('/v1/generation/images/') && request.method === 'DELETE') return requireAuth(request, resolvedEnv, (access) => deleteImage(url.pathname, resolvedEnv, access))
+      if (url.pathname === '/v1/generation/images' && request.method === 'GET') return listImages(request, resolvedEnv)
+      if (url.pathname === '/v1/generation/stories/tryout' && request.method === 'POST') return requireAuth(request, resolvedEnv, (access) => generateStoryTryout(request, resolvedEnv, access))
+      if (url.pathname === '/v1/generation/stories/render' && request.method === 'POST') return requireAuth(request, resolvedEnv, (access) => renderStory(request, resolvedEnv, access))
+      if (url.pathname === '/v1/generation/story-drafts' && request.method === 'POST') return requireAuth(request, resolvedEnv, (access) => createStoryDraft(request, resolvedEnv, access))
+      if (url.pathname === '/v1/generation/story-drafts' && request.method === 'GET') return requireAuth(request, resolvedEnv, (access) => listStoryDrafts(resolvedEnv, access))
+      if (url.pathname.startsWith('/v1/generation/stories/') && url.pathname.endsWith('/audio') && request.method === 'GET') return getStoryAudio(request, url.pathname, resolvedEnv)
+      if (url.pathname.startsWith('/v1/generation/stories/') && url.pathname.endsWith('/promote') && request.method === 'POST') return requireAuth(request, resolvedEnv, (access) => promoteStory(url.pathname, resolvedEnv, access))
+      if (url.pathname.startsWith('/v1/generation/stories/') && request.method === 'DELETE') return requireAuth(request, resolvedEnv, (access) => deleteStory(url.pathname, resolvedEnv, access))
+      if (url.pathname === '/v1/generation/stories' && request.method === 'GET') return listStories(request, resolvedEnv)
 
       return apiError('not_found', 'Route not found.', 404)
     } catch (error) {

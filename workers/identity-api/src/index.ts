@@ -1,6 +1,7 @@
 import { normalizeConfig, type AnkoreConfig, type NormalizedAnkoreConfig } from 'ankore'
 import { createIdentityWorker, type EmailMessage } from 'ankore/worker'
 import { resolvePepper, type SecretStoreSecret } from '../../shared/auth'
+import { resolveSecrets, type SecretStoreBinding } from '../../shared/secrets'
 
 interface D1PreparedStatement {
   bind(...values: unknown[]): D1PreparedStatement
@@ -26,6 +27,7 @@ export interface Env {
   MAGIC_LINK_BASE_URL?: string
   COMMUNICATION_API_URL?: string
   COMMUNICATION_API_KEY?: string
+  COMMUNICATION_SECRET?: SecretStoreBinding
   COMMUNICATION_SERVICE?: ServiceBinding
   ALLOWED_ORIGINS?: string
   MAGIC_LINK_TEST_SINK?: Array<{ email: string; token: string; otp: string; url: string; webUrl: string }>
@@ -78,19 +80,20 @@ export const identityConfig: NormalizedAnkoreConfig = normalizeConfig(baseConfig
 export default {
   async fetch(request: Request, env: Env, _ctx?: unknown): Promise<Response> {
     if (request.method === 'OPTIONS') return corsPreflight(request, env)
+    const resolvedEnv = await resolveSecrets(env)
 
     const contractRequest = request.clone() as AnyRequest
-    const canonical = await handleCanonicalIdentity(request, env)
-    if (canonical) return withIdentityCors(contractRequest, env, await withBrowserSessionCookie(contractRequest, await withTikoSessionContract(contractRequest, env, canonical)))
+    const canonical = await handleCanonicalIdentity(request, resolvedEnv)
+    if (canonical) return withIdentityCors(contractRequest, resolvedEnv, await withBrowserSessionCookie(contractRequest, await withTikoSessionContract(contractRequest, resolvedEnv, canonical)))
 
-    const managed = await handleManagedIdentity(request, env)
-    if (managed) return withIdentityCors(contractRequest, env, await withBrowserSessionCookie(contractRequest, await withTikoSessionContract(contractRequest, env, managed)))
+    const managed = await handleManagedIdentity(request, resolvedEnv)
+    if (managed) return withIdentityCors(contractRequest, resolvedEnv, await withBrowserSessionCookie(contractRequest, await withTikoSessionContract(contractRequest, resolvedEnv, managed)))
 
-    const ankoreResponse = await createIdentityWorker(configForEnv(env), {
-      sendEmail: message => requestMagicLinkDelivery(env, message)
-    }).fetch(request, await ankoreEnv(env))
+    const ankoreResponse = await createIdentityWorker(configForEnv(resolvedEnv), {
+      sendEmail: message => requestMagicLinkDelivery(resolvedEnv, message)
+    }).fetch(request, await ankoreEnv(resolvedEnv))
 
-    return withIdentityCors(contractRequest, env, await withBrowserSessionCookie(contractRequest, await withTikoSessionContract(contractRequest, env, ankoreResponse)))
+    return withIdentityCors(contractRequest, resolvedEnv, await withBrowserSessionCookie(contractRequest, await withTikoSessionContract(contractRequest, resolvedEnv, ankoreResponse)))
   }
 }
 

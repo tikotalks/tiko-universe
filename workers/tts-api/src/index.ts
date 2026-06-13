@@ -1,4 +1,5 @@
 import { requireServiceKey, type AuthEnv } from '../../shared/auth'
+import { resolveSecrets, type SecretStoreBinding } from '../../shared/secrets'
 
 interface Env extends AuthEnv {
   ATLAS_SERVICE?: {
@@ -6,6 +7,7 @@ interface Env extends AuthEnv {
   }
   ATLAS_BASE_URL?: string
   ATLAS_API_KEY?: string
+  ATLAS_SECRET?: SecretStoreBinding
 }
 
 interface GenerateRequest {
@@ -37,12 +39,13 @@ export default {
   async fetch(request: Request, env: Env): Promise<Response> {
     try {
       if (request.method === 'OPTIONS') return new Response(null, { headers: CORS_HEADERS })
+      const resolvedEnv = await resolveSecrets(env)
       const url = new URL(request.url)
 
       if (url.pathname === '/generate' && request.method === 'POST') {
-        const auth = await requireServiceKey(request, env, ['tts.generate'])
+        const auth = await requireServiceKey(request, resolvedEnv, ['tts.generate'])
         if (auth instanceof Response) return serviceAuthFailure(auth)
-        return generate(request, env)
+        return generate(request, resolvedEnv)
       }
 
       return json({ success: false, error: 'not_found' }, 404)

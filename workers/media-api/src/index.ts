@@ -5,6 +5,7 @@
 // ────────────────────────────────────────────────────────────────
 
 import { authenticate, type AuthSuccess } from '../../shared/auth'
+import { resolveSecrets, type SecretStoreBinding } from '../../shared/secrets'
 
 // ── Inline env / type interfaces (no @cloudflare/workers-types) ─
 
@@ -18,6 +19,8 @@ interface Env {
     prepare(sql: string): { bind(...values: unknown[]): { first<T>(): Promise<T | null>; all(): Promise<{ results: unknown[] }> } }
   }
   OPENAI_API_KEY?: string
+  OPENAI_SECRET?: SecretStoreBinding
+  PEPPER_SECRET?: SecretStoreBinding
   IDENTITY_BASE_URL?: string
 }
 
@@ -1222,6 +1225,8 @@ export default {
     if (request.method === 'OPTIONS') {
       return new Response(null, { headers: CORS_HEADERS })
     }
+
+    env = await resolveSecrets(env)
 
     const url = new URL(request.url)
     const segments = url.pathname.split('/').filter(Boolean)

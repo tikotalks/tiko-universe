@@ -1,5 +1,6 @@
 import { loadIdentityRoles, requireSession, resolvePepper, type AuthEnv } from '../../shared/auth'
 import { DEFAULT_ATLAS_SPEECH_CONFIG, DEFAULT_NARAKEET_VOICE_BY_LOCALE, normalizeSpeechServiceConfig, type AtlasSpeechServiceConfig } from '../../shared/atlas-speech-config'
+import { resolveSecrets, type SecretStoreBinding } from '../../shared/secrets'
 
 type D1Value = string | number | boolean | null
 
@@ -63,6 +64,7 @@ export interface Env extends AuthEnv {
   MEDIA_API_URL?: string
   COMMUNICATION_API_URL?: string
   COMMUNICATION_API_KEY?: string
+  COMMUNICATION_SECRET?: SecretStoreBinding
   TRANSLATIONS_API_URL?: string
   TRANSLATIONS_API_KEY?: string
 }
@@ -113,7 +115,8 @@ const DEFAULT_ALLOWED_ORIGINS = 'https://admin.tikoapps.org,https://admin-dev.ti
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
     if (request.method === 'OPTIONS') return adminCorsPreflight(request, env)
-    return withAdminCors(request, env, await handleAdminRequest(request, env))
+    const resolvedEnv = await resolveSecrets(env)
+    return withAdminCors(request, resolvedEnv, await handleAdminRequest(request, resolvedEnv))
   },
 
   async scheduled(_event: { cron: string }, env: Env): Promise<void> {

@@ -21,6 +21,11 @@ database_name = "tiko-content-staging"
 database_id = "2412c370-9e7c-4991-9995-6eea10b38d90"
 migrations_dir = "migrations"
 
+[[secrets_store_secrets]]
+binding = "PEPPER_SECRET"
+store_id = "0ba6468063e04b779e529f5db651896b"
+secret_name = "TOKEN_PEPPER"
+
 [[kv_namespaces]]
 binding = "CONTENT_CACHE"
 id = "19e053c7a4c94f16a1ee4a436bfac34a"
