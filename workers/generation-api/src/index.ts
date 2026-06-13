@@ -254,10 +254,10 @@ async function authenticatePaidRequest(request: Request, env: Env): Promise<Paid
     for (const [key, value] of Object.entries(CORS_HEADERS)) headers.set(key, value)
     return new Response(authed.response.body, { status: authed.response.status, statusText: authed.response.statusText, headers })
   }
-  const token = bearerToken(request)
+  if (!authed.bearerToken) return apiError('invalid_auth_context', 'Authenticated requests must include the validated bearer token.', 500)
   const subjectKey = authed.method === 'session' && authed.userId
     ? `session:${authed.userId}`
-    : `key:${await sha256Hex(token)}`
+    : `key:${await sha256Hex(authed.bearerToken)}`
   return { auth: authed, subjectKey }
 }
 
@@ -1752,11 +1752,6 @@ function clamp(value: number, min: number, max: number) {
 
 function apiError(code: string, message: string, status = 400, field?: string): Response {
   return json({ error: { code, message, ...(field ? { field } : {}) } }, status)
-}
-
-function bearerToken(request: Request): string {
-  const match = /^Bearer\s+(.+)$/i.exec(request.headers.get('authorization') ?? '')
-  return match?.[1]?.trim() ?? ''
 }
 
 async function sha256Hex(value: string): Promise<string> {
