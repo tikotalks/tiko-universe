@@ -1200,6 +1200,66 @@ private struct FullscreenCardView: View {
 
 // MARK: - Add sheets
 
+private struct CardsFormSheet<Content: View>: View {
+    let title: String
+    let icon: String
+    let onClose: () -> Void
+    private let content: Content
+
+    init(title: String, icon: String, onClose: @escaping () -> Void, @ViewBuilder content: () -> Content) {
+        self.title = title
+        self.icon = icon
+        self.onClose = onClose
+        self.content = content()
+    }
+
+    var body: some View {
+        VStack(spacing: 0) {
+            HStack(spacing: 14) {
+                Button(action: onClose) {
+                    Image(systemName: "xmark")
+                        .font(.system(size: 14, weight: .bold))
+                        .foregroundStyle(.primary.opacity(0.75))
+                        .frame(width: 44, height: 44)
+                        .background(Color.primary.opacity(0.055))
+                        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+                }
+                .buttonStyle(.plain)
+                .accessibilityLabel("Close")
+
+                VStack(alignment: .leading, spacing: 3) {
+                    Text(title)
+                        .font(.system(size: 24, weight: .heavy, design: .rounded))
+                        .foregroundStyle(.primary)
+                    Text("Cards")
+                        .font(.system(size: 13, weight: .bold, design: .rounded))
+                        .foregroundStyle(.secondary)
+                }
+
+                Spacer()
+
+                Image(systemName: icon)
+                    .font(.system(size: 19, weight: .bold))
+                    .foregroundStyle(TikoAppColor.cards.palette.primary)
+                    .frame(width: 44, height: 44)
+                    .background(TikoAppColor.cards.palette.primary.opacity(0.12))
+                    .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+            }
+            .padding(.horizontal, 20)
+            .padding(.top, 18)
+            .padding(.bottom, 14)
+
+            ScrollView {
+                content
+                    .padding(.horizontal, 20)
+                    .padding(.bottom, 28)
+            }
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+        .background(Color(.systemGroupedBackground).ignoresSafeArea())
+    }
+}
+
 private struct AddCategorySheet: View {
     let store: CardsStore
     let collections: [CardCollection]
@@ -1213,10 +1273,9 @@ private struct AddCategorySheet: View {
     @State private var showingImagePicker = false
 
     var body: some View {
-        TikoPopupCard(
+        CardsFormSheet(
             title: i18n.t("cards.add.newCategory"),
             icon: "square.grid.2x2.fill",
-            appColor: .cards,
             onClose: { isPresented = false }
         ) {
             VStack(spacing: 14) {
@@ -1275,10 +1334,9 @@ private struct AddCardSheet: View {
     }
 
     var body: some View {
-        TikoPopupCard(
+        CardsFormSheet(
             title: i18n.t("cards.add.newCard"),
             icon: "rectangle.badge.plus",
-            appColor: .cards,
             onClose: { isPresented = false }
         ) {
             VStack(spacing: 14) {
@@ -1361,10 +1419,9 @@ private struct EditCollectionSheet: View {
     }
 
     var body: some View {
-        TikoPopupCard(
+        CardsFormSheet(
             title: i18n.t("cards.add.editCategory"),
             icon: "square.grid.2x2.fill",
-            appColor: .cards,
             onClose: onClose
         ) {
             VStack(spacing: 14) {
@@ -1507,10 +1564,9 @@ private struct EditCardSheet: View {
     }
 
     var body: some View {
-        TikoPopupCard(
+        CardsFormSheet(
             title: i18n.t("cards.add.editCard"),
             icon: "rectangle.badge.plus",
-            appColor: .cards,
             onClose: onClose
         ) {
             VStack(spacing: 14) {
