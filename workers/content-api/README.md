@@ -16,10 +16,6 @@ D1-backed Cloudflare Worker for published Tiko content read models.
 - `GET /v1/pages?projectSlug=<slug>&languageCode=en`
 - `GET /v1/pages/:slug?projectSlug=<slug>&languageCode=en`
 - `GET /v1/languages`
-- `POST /v1/query` — compatibility query endpoint for existing content clients.
-- `POST /query` — legacy compatibility alias.
-
-Supported query methods: `getProjects`, `getProject`, `getProjectBySlug`, `getPages`, `getPage`, `getPageBySlug`, `getPageWithFullContent`, `getLanguages`, `getItems`, `getItem`, `getItemBySlug`.
 
 ## Validation
 

@@ -48,23 +48,6 @@ interface R2Object {
 }
 
 type JsonRecord = Record<string, unknown>
-type QueryMethod =
-  | 'getProjects'
-  | 'getProject'
-  | 'getProjectBySlug'
-  | 'getPages'
-  | 'getPage'
-  | 'getPageBySlug'
-  | 'getPageWithFullContent'
-  | 'getLanguages'
-  | 'getItems'
-  | 'getItem'
-  | 'getItemBySlug'
-
-interface ContentQuery {
-  method?: QueryMethod
-  params?: JsonRecord
-}
 
 interface CardTile {
   id: string
@@ -277,24 +260,6 @@ function normalizeRow(row: JsonRecord): JsonRecord {
   return normalized
 }
 
-function stableJson(value: unknown): string {
-  if (value === null || typeof value !== 'object') return JSON.stringify(value)
-  if (Array.isArray(value)) return `[${value.map(stableJson).join(',')}]`
-  return `{${Object.entries(value as JsonRecord)
-    .sort(([a], [b]) => a.localeCompare(b))
-    .map(([key, item]) => `${JSON.stringify(key)}:${stableJson(item)}`)
-    .join(',')}}`
-}
-
-async function sha256Hex(value: unknown, length = 32): Promise<string> {
-  const bytes = new TextEncoder().encode(typeof value === 'string' ? value : stableJson(value))
-  const digest = await crypto.subtle.digest('SHA-256', bytes)
-  return Array.from(new Uint8Array(digest))
-    .map(byte => byte.toString(16).padStart(2, '0'))
-    .join('')
-    .slice(0, length)
-}
-
 async function cached<T>(request: Request, env: Env, key: string, loader: () => Promise<T>): Promise<T> {
   if (new URL(request.url).searchParams.get('no-cache') === '1' || !env.CONTENT_CACHE) return loader()
   const cachedValue = await env.CONTENT_CACHE.get(key)
@@ -428,24 +393,6 @@ async function getItem(env: Env, params: JsonRecord): Promise<JsonRecord | null>
     `SELECT * FROM content_items WHERE ${id ? 'id = ?' : 'slug = ?'} AND COALESCE(status = 'published', 1) = 1 LIMIT 1`,
   ).bind(id ?? slug).first<JsonRecord>()
   return row ? normalizeRow(row) : null
-}
-
-async function executeQuery(env: Env, query: ContentQuery): Promise<unknown> {
-  const params = query.params ?? {}
-  switch (query.method) {
-    case 'getProjects': return getProjects(env)
-    case 'getProject': return getProject(env, params)
-    case 'getProjectBySlug': return getProject(env, { slug: params.slug })
-    case 'getPages': return getPages(env, params)
-    case 'getPage': return getPage(env, params)
-    case 'getPageBySlug': return getPage(env, params)
-    case 'getPageWithFullContent': return getPageWithFullContent(env, params)
-    case 'getLanguages': return getLanguages(env)
-    case 'getItems': return getItems(env, params)
-    case 'getItem': return getItem(env, params)
-    case 'getItemBySlug': return getItem(env, { slug: params.slug })
-    default: throw new Error(`Unknown method: ${query.method ?? 'missing'}`)
-  }
 }
 
 // ---------------------------------------------------------------------------
@@ -1318,24 +1265,6 @@ async function handleGet(request: Request, env: Env, segments: string[]): Promis
   return error(request, env, 'not_found', 'Not found', 404)
 }
 
-async function handleQuery(request: Request, env: Env): Promise<Response> {
-  let query: ContentQuery
-  try {
-    query = (await request.json()) as ContentQuery
-  } catch {
-    return error(request, env, 'bad_request', 'Request body must be valid JSON', 400)
-  }
-  if (!query.method) return error(request, env, 'bad_request', 'Query method is required', 400)
-
-  try {
-    const cacheKey = `query:${await sha256Hex(query)}`
-    const data = await cached(request, env, cacheKey, () => executeQuery(env, query))
-    return json(request, env, { success: true, data })
-  } catch (err) {
-    return error(request, env, 'bad_request', err instanceof Error ? err.message : 'Query failed', 400)
-  }
-}
-
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
     if (request.method === 'OPTIONS') return new Response(null, { status: 204, headers: corsHeaders(request, env) })
@@ -1347,7 +1276,6 @@ export default {
       return json(request, env, { ok: true, service: 'content-api' }, 200, { 'Cache-Control': 'no-store' })
     }
     if (request.method === 'GET') return handleGet(request, env, segments)
-    if (request.method === 'POST' && (url.pathname === '/v1/query' || url.pathname === '/query')) return handleQuery(request, env)
     if (request.method === 'POST' && segments[0] === 'v1' && segments[1] === 'cards') return handlePostCards(request, env, segments)
 
     if (request.method === 'PUT' && segments[0] === 'v1' && segments[1] === 'cards') return handlePutCards(request, env, segments)
@@ -1686,7 +1614,6 @@ async function handlePromoteCollection(request: Request, env: Env, _segments: st
 }
 
 export const internals = {
-  executeQuery,
   getProjects,
   getProject,
   getPages,
