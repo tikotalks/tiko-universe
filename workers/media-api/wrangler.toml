@@ -15,11 +15,13 @@ workers_dev = true
 binding = "MEDIA_DB"
 database_name = "tiko-media"
 database_id = "f984707d-04a1-4266-bf9d-012164ccde85"
+migrations_dir = "migrations/media"
 
 [[d1_databases]]
 binding = "ASSETS_DB"
 database_name = "tiko-assets-db-dev"
 database_id = "85e07dfc-d7d5-4b95-9489-268a50a95f3a"
+migrations_dir = "migrations/assets"
 
 # ── R2 Buckets ────────────────────────────────────────────────
 
@@ -56,11 +58,13 @@ workers_dev = true
 binding = "MEDIA_DB"
 database_name = "tiko-media"
 database_id = "f984707d-04a1-4266-bf9d-012164ccde85"
+migrations_dir = "migrations/media"
 
 [[env.production.d1_databases]]
 binding = "ASSETS_DB"
 database_name = "tiko-assets-db"
 database_id = "4287b238-934f-4dd8-8559-7facb9ff39ef"
+migrations_dir = "migrations/assets"
 
 [[env.production.r2_buckets]]
 binding = "MEDIA_BUCKET"
