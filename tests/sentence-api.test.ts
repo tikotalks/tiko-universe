@@ -342,6 +342,7 @@ function env() {
     GENERATION_SERVICE: service(),
     ALLOWED_ORIGINS: 'https://talk.tiko.test',
     TIKO_ENVIRONMENT: 'test',
+    ATLAS_API_KEY: 'test-atlas-key',
   }
   return { testEnv, db, cache }
 }

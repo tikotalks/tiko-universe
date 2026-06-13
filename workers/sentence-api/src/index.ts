@@ -62,6 +62,9 @@ export interface Env {
   ATLAS_SERVICE?: ServiceBinding
   ALLOWED_ORIGINS?: string
   TIKO_ENVIRONMENT?: string
+  // Optional service key accepted by atlas-api's SERVICE_API_KEYS, used for
+  // server-to-server AI prediction calls when no caller session is available.
+  ATLAS_API_KEY?: string
 }
 
 interface PredictionRow {
@@ -401,7 +404,7 @@ async function nextSentence(request: Request, env: Env): Promise<Response> {
     // Serve stored predictions first; the LLM is consulted once per sequence, ever.
     let suggestions = await loadPredictedWords(env.DB, pack.id, sequenceHash, validNext)
     if (suggestions.length < 10) {
-      suggestions = await generateAndStorePredictions(env, pack, locale, sequenceHash, sequenceText, orderedSelected, validNext)
+      suggestions = await generateAndStorePredictions(env, pack, locale, sequenceHash, sequenceText, orderedSelected, validNext, atlasAuthHeader(request, env))
     }
     suggestions = suggestions.slice(0, SUGGESTION_LIMIT)
 
@@ -767,11 +770,12 @@ async function generateAndStorePredictions(
   sequenceText: string,
   orderedSelected: PackWord[],
   validNext: string[],
+  atlasAuth: string | null,
 ): Promise<PackWord[]> {
   const candidatePosTypes = validNext.length ? validNext : STARTER_POS
   const candidateWords = await loadSuggestedWords(env.DB, pack.id, candidatePosTypes)
 
-  const aiPredictions = await fetchAiPredictions(env, candidateWords, sequenceText, locale)
+  const aiPredictions = await fetchAiPredictions(env, candidateWords, sequenceText, locale, atlasAuth)
 
   if (aiPredictions && aiPredictions.length > 0) {
     const wordMap = new Map(candidateWords.map((w) => [w.id, w]))
@@ -805,13 +809,21 @@ async function generateAndStorePredictions(
   return fallback.slice(0, SUGGESTION_LIMIT)
 }
 
+// Atlas capability routes require a Bearer credential. Prefer a configured
+// server-to-server service key; otherwise forward the caller's session token.
+function atlasAuthHeader(request: Request, env: Env): string | null {
+  if (env.ATLAS_API_KEY) return `Bearer ${env.ATLAS_API_KEY}`
+  return request.headers.get('Authorization')
+}
+
 async function fetchAiPredictions(
   env: Env,
   candidateWords: PackWord[],
   sequenceText: string,
   locale: string,
+  atlasAuth: string | null,
 ): Promise<Array<{ wordId: string, probability: number }> | null> {
-  if (!env.ATLAS_SERVICE) return null
+  if (!env.ATLAS_SERVICE || !atlasAuth) return null
 
   const language = LOCALE_LANGUAGE_NAMES[locale.split('-')[0].toLowerCase()] ?? locale
   const context = sequenceText.trim() ? `"${sequenceText}"` : 'the start of a sentence'
@@ -835,7 +847,7 @@ Return ONLY a JSON array of [wordId, probability] pairs with exactly ${target} e
   try {
     const response = await env.ATLAS_SERVICE.fetch(new Request('https://atlas.internal/v1/atlas/text', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', Authorization: atlasAuth },
       body: JSON.stringify({
         input: prompt,
         app: 'talk',
