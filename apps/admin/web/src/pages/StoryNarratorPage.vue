@@ -5,6 +5,7 @@ import { Button, Icon } from '@sil/ui'
 import StoryDraftsPanel from '../components/stories/StoryDraftsPanel.vue'
 import StoryPublishSettingsCard from '../components/stories/StoryPublishSettingsCard.vue'
 import StorySegmentsEditor from '../components/stories/StorySegmentsEditor.vue'
+import StoryVoiceCard from '../components/stories/StoryVoiceCard.vue'
 import { useStoryNarration, type StoryDraft, type StoryGalleryItem, type VoiceSample } from '../composables/useStoryNarration'
 import { useAdminMediaLibrary, type AudioLibraryAlbum } from '../composables/useAdminMediaLibrary'
 import type { StorySegmentInput, StoryTryoutResult } from '../types/admin'
@@ -458,31 +459,14 @@ onMounted(() => {
       </form>
 
       <aside :class="page('sidebar')">
-        <section :class="page('side-card')">
-          <header :class="page('side-head')">
-            <Icon name="media/music-note-single" size="small" />
-            <div>
-              <h3 :class="page('panel-title')">Voice</h3>
-              <p :class="page('panel-meta')">Choose the voice for your story.</p>
-            </div>
-          </header>
-
-          <div :class="page('voice-list')">
-            <article v-for="option in voiceOptions" :key="option.id" :class="page('voice-row', { active: voice === option.id })">
-              <button type="button" :class="page('voice-select')" @click="voice = option.id">
-                <span :class="page('voice-radio')" aria-hidden="true">{{ voice === option.id ? '✓' : '' }}</span>
-                <span :class="page('voice-copy')">
-                  <strong>{{ option.label }}</strong>
-                  <span>{{ option.id === voice ? selectedVoiceDescription : (option.provider === 'elevenlabs' ? 'Expressive narration' : option.model) }}</span>
-                </span>
-              </button>
-              <button type="button" :class="page('play-button')" :aria-label="`Preview ${option.label}`" @click="previewVoice(option)">
-                <Icon :name="voicePreviewPlayingId === option.id ? 'media/playback-pause' : 'media/playback-play'" size="small" />
-              </button>
-            </article>
-          </div>
-          <a :class="page('manage-link')" href="https://elevenlabs.io/app/voice-library" target="_blank" rel="noreferrer">Manage voices ↗</a>
-        </section>
+        <StoryVoiceCard
+          :voices="voiceOptions"
+          :selected-voice-id="voice"
+          :selected-description="selectedVoiceDescription"
+          :playing-voice-id="voicePreviewPlayingId"
+          @select="voice = $event"
+          @preview="previewVoice"
+        />
 
         <section :class="page('side-card')">
           <header :class="page('side-head')">
@@ -1235,68 +1219,6 @@ onMounted(() => {
     gap: var(--space-m);
   }
 
-  &__voice-list {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-xs);
-  }
-
-  &__voice-row {
-    display: flex;
-    align-items: center;
-    gap: var(--space-xs);
-    border: 1px solid color-mix(in srgb, var(--color-foreground), transparent 90%);
-    border-radius: var(--border-radius-s);
-    background: color-mix(in srgb, var(--color-background), var(--color-foreground) 2%);
-    padding: var(--space-xs);
-
-    &--active {
-      border-color: color-mix(in srgb, var(--color-foreground), transparent 45%);
-      background: color-mix(in srgb, var(--color-background), var(--color-foreground) 8%);
-    }
-  }
-
-  &__voice-select {
-    flex: 1;
-    display: flex;
-    align-items: center;
-    gap: var(--space-s);
-    text-align: left;
-    border: 0;
-    background: transparent;
-    color: inherit;
-    cursor: pointer;
-    padding: var(--space-xs);
-  }
-
-  &__voice-radio {
-    width: calc(var(--space) * 1.05);
-    height: calc(var(--space) * 1.05);
-    border-radius: 50%;
-    border: 1px solid color-mix(in srgb, var(--color-foreground), transparent 65%);
-    display: grid;
-    place-items: center;
-    font-size: var(--font-size-xs);
-    color: var(--admin-text);
-  }
-
-  &__voice-copy {
-    display: flex;
-    flex-direction: column;
-    gap: 0;
-
-    strong {
-      color: var(--admin-text);
-      font-size: var(--font-size-s);
-    }
-
-    span {
-      color: var(--admin-text-muted);
-      font-size: var(--font-size-xs);
-    }
-  }
-
-  &__play-button,
   &__player-button {
     width: calc(var(--space) * 2.2);
     height: calc(var(--space) * 2.2);
@@ -1307,12 +1229,6 @@ onMounted(() => {
     display: grid;
     place-items: center;
     cursor: pointer;
-  }
-
-  &__manage-link {
-    color: var(--admin-text);
-    font-size: var(--font-size-s);
-    text-decoration: none;
   }
 
   &__player {
