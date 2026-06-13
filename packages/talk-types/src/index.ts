@@ -70,6 +70,8 @@ export interface PackWord {
   category: TalkCategoryId
   frequency: number
   icon?: TalkIconName
+  /** Tiko media image URL for this concept, shared across languages by id. */
+  image?: string
   inflections?: Record<string, string>
 }
 

@@ -233,6 +233,12 @@ export async function handleRequest(request: Request, env: Env): Promise<Respons
       return withCors(await generatePackShell(request, env), cors)
     }
 
+    if (path === '/v1/sentence-admin/media-map') {
+      if (request.method === 'GET') return withCors(await listMediaMap(request, env), cors)
+      if (request.method === 'PUT') return withCors(await putMediaMap(request, env), cors)
+      return withCors(jsonError('method_not_allowed', 'Method not allowed.', 405), cors)
+    }
+
     return withCors(jsonError('not_found', 'Route not found.', 404), cors)
   } catch (error) {
     if (error instanceof HttpError) {
@@ -331,6 +337,40 @@ async function generatePackShell(request: Request, env: Env): Promise<Response> 
   throw new HttpError(501, 'pack_generation_provider_unconfigured', 'Admin pack generation needs a configured provider and review workflow before it can run.')
 }
 
+async function listMediaMap(request: Request, env: Env): Promise<Response> {
+  await requireAdmin(request, env)
+  const rows = await all<{ concept_id: string, image_url: string, source: string, updated_at: string }>(env.DB.prepare(`
+    SELECT concept_id, image_url, source, updated_at FROM talk_media_map ORDER BY concept_id
+  `))
+  return json({ map: rows.map((row) => ({ conceptId: row.concept_id, imageUrl: row.image_url, source: row.source, updatedAt: row.updated_at })) })
+}
+
+async function putMediaMap(request: Request, env: Env): Promise<Response> {
+  await requireAdmin(request, env)
+  const body = await readJson<{ conceptId?: string, imageUrl?: string }>(request)
+  const conceptId = typeof body.conceptId === 'string' ? body.conceptId.trim() : ''
+  const imageUrl = typeof body.imageUrl === 'string' ? body.imageUrl.trim() : ''
+  if (!conceptId) throw new HttpError(400, 'missing_concept_id', 'conceptId is required.', 'conceptId')
+
+  if (!imageUrl) {
+    // Empty URL clears the mapping (the concept falls back to no image).
+    await run(env.DB.prepare('DELETE FROM talk_media_map WHERE concept_id = ?').bind(conceptId))
+  } else {
+    // Admin edits are 'manual' so the auto-enrichment reseed never overwrites them.
+    await run(env.DB.prepare(`
+      INSERT INTO talk_media_map (concept_id, image_url, source, updated_at)
+      VALUES (?, ?, 'manual', CURRENT_TIMESTAMP)
+      ON CONFLICT(concept_id) DO UPDATE SET image_url = excluded.image_url, source = 'manual', updated_at = CURRENT_TIMESTAMP
+    `).bind(conceptId, imageUrl))
+  }
+
+  // Drop the map cache and the image-baked response caches so the change shows.
+  await env.CACHE.delete('sentence:mediamap')
+  await deleteCachePrefix(env.CACHE, 'sentence:next:')
+  await deleteCachePrefix(env.CACHE, 'sentence:start:')
+  return json({ ok: true, conceptId, imageUrl: imageUrl || null })
+}
+
 async function startSentence(request: Request, env: Env, url: URL): Promise<Response> {
   const locale = readLocale(url)
   const subjectId = await resolveSubjectId(request, env, url.searchParams.get('userId'))
@@ -349,11 +389,12 @@ async function startSentence(request: Request, env: Env, url: URL): Promise<Resp
   // The user's own words join the board so they're browsable from the start.
   const words = [...packWords, ...userWords]
   const categories = buildCategories(words)
-  const initialWords = words
+  const mediaMap = await loadMediaMap(env)
+  const initialWords = decorateTiles(words
     .filter((word) => STARTER_POS.includes(word.pos))
     .sort((a, b) => b.frequency - a.frequency || a.text.localeCompare(b.text))
     .slice(0, SUGGESTION_LIMIT)
-    .map(toWordTile)
+    .map(toWordTile), mediaMap, locale)
 
   const response: SentenceStartResponse = {
     templates: templates.map(toTemplate),
@@ -414,10 +455,11 @@ async function nextSentence(request: Request, env: Env): Promise<Response> {
       canComplete: orderedSelected.length > 0 && COMPLETABLE_POS.has(orderedSelected[orderedSelected.length - 1].pos),
     }
 
+    const mediaMap = await loadMediaMap(env)
     base = {
-      suggestions: suggestions.map(toWordTile),
+      suggestions: decorateTiles(suggestions.map(toWordTile), mediaMap, locale),
       categories: buildCategories(suggestions),
-      words: groupWords(suggestions),
+      words: decorateGroups(groupWords(suggestions), mediaMap, locale),
       stripState,
     }
     await writeCache(env, baseCacheKey, base, NEXT_CACHE_TTL)
@@ -516,8 +558,9 @@ async function vocabulary(request: Request, env: Env, url: URL): Promise<Respons
     words = words.filter((word) => word.text.toLowerCase().includes(query))
   }
 
+  const mediaMap = await loadMediaMap(env)
   const response: SentenceVocabularyResponse = {
-    words: words.map(toWordTile),
+    words: decorateTiles(words.map(toWordTile), mediaMap, locale),
     categories: buildCategories(words),
     totalWords: words.length,
   }
@@ -1052,6 +1095,7 @@ function toPackWord(row: WordRow): PackWord {
     category: row.category,
     frequency: Number(row.frequency),
     ...(row.icon ? { icon: row.icon } : {}),
+    ...(row.image ? { image: row.image } : {}),
     ...(row.inflections_json ? { inflections: parseJson<Record<string, string>>(row.inflections_json, 'inflections_json') } : {}),
   }
 }
@@ -1063,6 +1107,7 @@ function toWordTile(word: PackWord): WordTile {
     pos: word.pos,
     category: word.category,
     ...(word.icon ? { icon: word.icon } : {}),
+    ...(word.image ? { image: word.image } : {}),
     ...(word.id.startsWith(USER_WORD_PREFIX) ? { isCustom: true } : {}),
   }
 }
@@ -1230,10 +1275,15 @@ async function personalizeNext(
     if (entry) entry.score += clicks * AFFINITY_BOOST
   }
 
-  const merged = Array.from(scored.values())
-    .sort((a, b) => b.score - a.score || a.tile.text.localeCompare(b.tile.text))
-    .slice(0, SUGGESTION_LIMIT)
-    .map((entry) => entry.tile)
+  const mediaMap = await loadMediaMap(env)
+  const merged = decorateTiles(
+    Array.from(scored.values())
+      .sort((a, b) => b.score - a.score || a.tile.text.localeCompare(b.tile.text))
+      .slice(0, SUGGESTION_LIMIT)
+      .map((entry) => entry.tile),
+    mediaMap,
+    locale,
+  )
 
   return {
     suggestions: merged,
@@ -1241,6 +1291,45 @@ async function personalizeNext(
     words: groupTiles(merged),
     stripState: base.stripState,
   }
+}
+
+// The central concept -> image map (talk_media_map), keyed by the shared word
+// concept. Loaded once and cached; applied to tiles by stripping the locale
+// prefix off the word id to get the concept (e.g. "nl-bread" -> "bread").
+async function loadMediaMap(env: Env): Promise<Map<string, string>> {
+  const cacheKey = 'sentence:mediamap'
+  const cached = await readCache<Record<string, string>>(env, cacheKey)
+  if (cached) return new Map(Object.entries(cached))
+  let rows: Array<{ concept_id: string, image_url: string }> = []
+  try {
+    rows = await all<{ concept_id: string, image_url: string }>(env.DB.prepare('SELECT concept_id, image_url FROM talk_media_map'))
+  } catch {
+    rows = []
+  }
+  const map = new Map(rows.map((row) => [row.concept_id, row.image_url]))
+  await writeCache(env, cacheKey, Object.fromEntries(map), 3600)
+  return map
+}
+
+function conceptIdFor(wordId: string, locale: string): string {
+  const prefix = `${locale}-`
+  return wordId.startsWith(prefix) ? wordId.slice(prefix.length) : wordId
+}
+
+function decorateTiles(tiles: WordTile[], map: Map<string, string>, locale: string): WordTile[] {
+  if (map.size === 0) return tiles
+  return tiles.map((tile) => {
+    if (tile.image) return tile
+    const url = map.get(conceptIdFor(tile.id, locale))
+    return url ? { ...tile, image: url } : tile
+  })
+}
+
+function decorateGroups(groups: Record<string, WordTile[]>, map: Map<string, string>, locale: string): Record<string, WordTile[]> {
+  if (map.size === 0) return groups
+  const out: Record<string, WordTile[]> = {}
+  for (const [category, tiles] of Object.entries(groups)) out[category] = decorateTiles(tiles, map, locale)
+  return out
 }
 
 async function loadActivePackId(db: D1Database, locale: string): Promise<string> {

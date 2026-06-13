@@ -51,6 +51,10 @@ class MemoryD1Database {
       return new MemoryResult([{ id: 'en-v1' }])
     }
 
+    if (normalized.startsWith('SELECT concept_id, image_url FROM talk_media_map')) {
+      return new MemoryResult([])
+    }
+
     // ── talk_user_words ──────────────────────────────────────────────
     if (normalized.startsWith('SELECT id, text, pos, category, icon, usage_count FROM talk_user_words WHERE subject_id = ? AND locale = ? AND id IN')) {
       const [subjectId, locale] = values.map(String)

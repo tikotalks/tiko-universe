@@ -239,6 +239,40 @@ function main() {
     }
   }
 
+  // Concept -> image seed from the central media map. Upserts only 'auto' rows
+  // so admin 'manual' overrides survive reseeds.
+  const mapPath = join(DATA_DIR, 'media-map.json');
+  const mapSeedPath = join(DB_DIR, 'seed-media-map.sql');
+  const mapSeedRelative = 'workers/sentence-api/db/seed-media-map.sql';
+  if (existsSync(mapPath)) {
+    let mediaMap;
+    try {
+      mediaMap = JSON.parse(readFileSync(mapPath, 'utf8'));
+    } catch (error) {
+      fail(`media-map.json: invalid JSON (${error.message})`);
+    }
+    const lines = ['-- Generated from workers/sentence-api/data/media-map.json; concept -> Tiko media image.'];
+    for (const conceptId of Object.keys(mediaMap).sort()) {
+      const imageUrl = mediaMap[conceptId];
+      if (typeof imageUrl !== 'string' || !imageUrl) continue;
+      lines.push(
+        'INSERT INTO talk_media_map (concept_id, image_url, source, updated_at) VALUES ' +
+          `(${sqlString(conceptId)}, ${sqlString(imageUrl)}, 'auto', CURRENT_TIMESTAMP) ` +
+          'ON CONFLICT(concept_id) DO UPDATE SET image_url = excluded.image_url, updated_at = CURRENT_TIMESTAMP ' +
+          "WHERE talk_media_map.source = 'auto';"
+      );
+    }
+    const mapSql = lines.join('\n') + '\n';
+    if (CHECK_MODE) {
+      const existingMap = existsSync(mapSeedPath) ? readFileSync(mapSeedPath, 'utf8') : null;
+      if (existingMap !== mapSql) stale.push(`${mapSeedRelative} is stale (regenerate from media-map.json)`);
+      else console.log(`OK ${mapSeedRelative} is up to date`);
+    } else {
+      writeFileSync(mapSeedPath, mapSql);
+      console.log(`Wrote ${mapSeedRelative} (${Object.keys(mediaMap).length} concepts)`);
+    }
+  }
+
   if (CHECK_MODE) {
     if (stale.length > 0) {
       console.error('Seed files are out of date. Run: npm run generate:talk-seeds');

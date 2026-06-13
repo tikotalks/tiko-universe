@@ -150,3 +150,14 @@ CREATE TABLE IF NOT EXISTS talk_user_affinity (
 );
 
 CREATE INDEX IF NOT EXISTS idx_talk_user_affinity_lookup ON talk_user_affinity(subject_id, sequence_hash, click_count DESC);
+
+-- Concept -> Tiko media image, keyed by the shared (English-derived) word id.
+-- Single source of truth for word pictures: one row per concept, applied to
+-- every language by id, editable from admin. source='auto' rows come from the
+-- media-search enrichment; 'manual' rows are admin overrides and are preserved.
+CREATE TABLE IF NOT EXISTS talk_media_map (
+  concept_id TEXT PRIMARY KEY,
+  image_url TEXT NOT NULL,
+  source TEXT NOT NULL DEFAULT 'auto' CHECK (source IN ('auto', 'manual')),
+  updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
