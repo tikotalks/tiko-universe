@@ -176,7 +176,7 @@ Approximate review spread: 7 Critical, about 35 High, about 70 Medium, and about
 
 - [ ] Move reusable UI/layout into TikoUI/TikoKit.
   - Cards/choice tile layouts.
-  - Shared media image-ref rendering.
+  - [x] Shared media image-ref rendering.
   - Shared user-flow components that are not app-specific.
   - Avoid giant one-file app implementations.
 

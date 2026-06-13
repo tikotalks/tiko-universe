@@ -1,17 +1,9 @@
 import type { TikoMedia } from '@tiko/media'
+import { tikoContentImageRefUrl, tikoMediaThumbnailUrl } from '@tiko/ui'
 import type { CardCollection, CommunicationCard } from '../types'
 
-export function resizedCDNURL(originalUrl: string | undefined, baseUrl = 'https://content.tikoapi.org/v1') {
-  if (!originalUrl) return ''
-  try {
-    const url = new URL(originalUrl, baseUrl)
-    if (url.hostname === 'data.tikocdn.org' && url.pathname.startsWith('/uploads/')) {
-      return `https://data.tikocdn.org/cdn-cgi/image/width=300,quality=80,f=auto${url.pathname}`
-    }
-    return url.toString()
-  } catch {
-    return originalUrl
-  }
+export function resizedCDNURL(originalUrl: string | undefined) {
+  return tikoMediaThumbnailUrl(originalUrl, 300)
 }
 
 export function imageForCollection(collection: CardCollection, thumbnails: Record<string, string>) {
@@ -19,11 +11,11 @@ export function imageForCollection(collection: CardCollection, thumbnails: Recor
 }
 
 export function imageForCard(card: CommunicationCard, contentBaseUrl: string, cardImages: Record<string, string>) {
-  return resizedCDNURL(card.imageRef ? imageRefURL(card.imageRef, contentBaseUrl) : cardImages[card.id], contentBaseUrl)
+  return resizedCDNURL(card.imageRef ? imageRefURL(card.imageRef, contentBaseUrl) : cardImages[card.id])
 }
 
 export function imageRefURL(imageRef: string, contentBaseUrl = 'https://content.tikoapi.org/v1') {
-  return `${contentBaseUrl}/content/images/${encodeURIComponent(imageRef)}`
+  return tikoContentImageRefUrl(imageRef, contentBaseUrl)
 }
 
 export function matchCardsMedia(collection: CardCollection, mediaItems: TikoMedia[], contentBaseUrl: string): { cardImages: Record<string, string>; thumbnailURL?: string } {
@@ -43,7 +35,7 @@ export function matchCardsMedia(collection: CardCollection, mediaItems: TikoMedi
     }
     const item = mediaByName.get(normalizeText(card.title))
     if (item) {
-      updates.set(card.id, resizedCDNURL(item.original_url, contentBaseUrl))
+      updates.set(card.id, resizedCDNURL(item.original_url))
       matched.add(item.original_url)
     }
   }
@@ -58,14 +50,14 @@ export function matchCardsMedia(collection: CardCollection, mediaItems: TikoMedi
       return tagMatch || nameMatch
     })
     if (item) {
-      updates.set(card.id, resizedCDNURL(item.original_url, contentBaseUrl))
+      updates.set(card.id, resizedCDNURL(item.original_url))
       matched.add(item.original_url)
     }
   }
 
   return {
     cardImages: Object.fromEntries(updates),
-    thumbnailURL: mediaItems[0]?.original_url ? resizedCDNURL(mediaItems[0].original_url, contentBaseUrl) : undefined,
+    thumbnailURL: mediaItems[0]?.original_url ? resizedCDNURL(mediaItems[0].original_url) : undefined,
   }
 }
 

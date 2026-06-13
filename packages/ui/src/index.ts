@@ -1,5 +1,6 @@
 import { defineComponent, h, onMounted, ref, watch } from 'vue'
 import type { CSSProperties } from 'vue'
+import { tikoMediaThumbnailUrl } from './media-images'
 export { default as TikoLogo } from './TikoLogo.vue'
 export { default as TikoChildAccountsPanel } from './TikoChildAccountsPanel.vue'
 export { default as TikoProfileMenu } from './TikoProfileMenu.vue'
@@ -18,6 +19,7 @@ export { useIdentityRuntime, type UseIdentityRuntimeOptions, type IdentityRuntim
 export { useTikoAppDataRuntime, useTikoAppSettingsRuntime, type TikoAppDataClient, type TikoAppDataRuntimeOptions, type TikoAppSettingsClient, type TikoAppSettingsRuntimeOptions, type TikoVersionedSettings, type TikoVersionedState } from './app-data-runtime'
 export { useTikoI18nRuntime, type UseTikoI18nRuntimeOptions } from './i18n-runtime'
 export { createTikoTtsClient, type TikoTtsClientOptions, type TikoTtsProvider, type TikoTtsRequest, type TikoTtsResponse } from './tts-client'
+export { tikoContentImageRefUrl, tikoMediaThumbnailUrl } from './media-images'
 export {
   applyTikoColorMode,
   normalizeTikoColorMode,
@@ -270,18 +272,6 @@ function isImageSource(value: string) {
   return /^(https?:|data:|blob:)/.test(value) || /\.(avif|gif|jpe?g|png|svg|webp)(\?|#|$)/i.test(value)
 }
 
-function resizedTikoMediaUrl(url: string, size = 96) {
-  try {
-    const parsed = new URL(url)
-    if (parsed.host === 'data.tikocdn.org' && parsed.pathname.startsWith('/uploads/')) {
-      return `https://data.tikocdn.org/cdn-cgi/image/width=${size},height=${size},fit=cover,quality=85,f=auto${parsed.pathname}`
-    }
-  } catch {
-    // Keep non-URL values as-is; callers already validated source shape.
-  }
-  return url
-}
-
 function normalizedHexColor(value?: string): string {
   const raw = value?.trim()
   if (!raw) return ''
@@ -324,8 +314,8 @@ export function injectAppMeta(config: TikoAppConfig): void {
 
   if (iconUrl) {
     // Cloudflare Image Resizing: 32x32 for favicon, 180x180 for apple-touch-icon
-    const faviconUrl = resizedTikoMediaUrl(iconUrl, 32)
-    const touchIconUrl = resizedTikoMediaUrl(iconUrl, 180)
+    const faviconUrl = tikoMediaThumbnailUrl(iconUrl, 32)
+    const touchIconUrl = tikoMediaThumbnailUrl(iconUrl, 180)
 
     // Set or create <link rel="icon">
     let favicon = document.querySelector<HTMLLinkElement>('link[rel="icon"]')
@@ -366,7 +356,7 @@ async function fetchTikoMediaIcon(category: string): Promise<string> {
   const payload = await response.json() as { data?: Array<{ original_url?: string; url?: string }> }
   const item = payload.data?.find((entry) => entry.original_url || entry.url)
   const url = item?.original_url ?? item?.url ?? ''
-  return url ? resizedTikoMediaUrl(url) : ''
+  return url ? tikoMediaThumbnailUrl(url, 96) : ''
 }
 
 function imageSpan(src: string, alt = '') {

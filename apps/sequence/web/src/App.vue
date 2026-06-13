@@ -14,6 +14,7 @@ import {
   resolveTikoAppApiBaseUrl,
   resolveTikoContentApiBaseUrl,
   resolveTikoIdentityBaseUrl,
+  tikoContentImageRefUrl,
   useTikoAppDataRuntime,
   useTikoColorModeEffect,
   useTikoI18nRuntime,
@@ -340,18 +341,14 @@ function stepText(step: SequenceStep | null | undefined): string {
 
 function stepImages(step: SequenceStep | null | undefined): string[] {
   if (!step) return []
-  if (Array.isArray(step.imageRefs) && step.imageRefs.length > 0) return step.imageRefs.map(imageRefURL)
-  return step.imageRef ? [imageRefURL(step.imageRef)] : []
+  if (Array.isArray(step.imageRefs) && step.imageRefs.length > 0) return step.imageRefs.map(imageRef => tikoContentImageRefUrl(imageRef, contentBaseUrl))
+  return step.imageRef ? [tikoContentImageRefUrl(step.imageRef, contentBaseUrl)] : []
 }
 
 function itemImages(item: SequenceItem): string[] {
   const firstStep = item.steps.find(step => stepImages(step).length > 0)
   if (firstStep) return stepImages(firstStep)
-  return item.imageRef ? [imageRefURL(item.imageRef)] : []
-}
-
-function imageRefURL(imageRef: string) {
-  return `${contentBaseUrl}/content/images/${encodeURIComponent(imageRef)}`
+  return item.imageRef ? [tikoContentImageRefUrl(item.imageRef, contentBaseUrl)] : []
 }
 
 function itemBackground(item: SequenceItem): string {

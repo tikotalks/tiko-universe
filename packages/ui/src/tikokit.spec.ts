@@ -23,6 +23,8 @@ import {
   resolveTikoGenerationApiBaseUrl,
   resolveTikoIdentityBaseUrl,
   resolveTikoMediaApiBaseUrl,
+  tikoContentImageRefUrl,
+  tikoMediaThumbnailUrl,
   useTikoAppDataRuntime,
   useTikoAppSettingsRuntime,
   useTikoColorModeEffect,
@@ -91,6 +93,13 @@ describe('TikoKit component contract', () => {
     expect(resolveTikoContentApiBaseUrl({ VITE_CONTENT_API_URL: 'https://legacy-content.test/v1/' })).toBe('https://legacy-content.test/v1')
     expect(resolveTikoGenerationApiBaseUrl({ VITE_GENERATION_API_URL: 'https://generation.test/v1/generation/' })).toBe('https://generation.test/v1/generation')
     expect(resolveTikoMediaApiBaseUrl({ VITE_MEDIA_API_URL: 'https://media.test/v1/' })).toBe('https://media.test/v1')
+  })
+
+  it('shares media image ref and thumbnail URL helpers', () => {
+    expect(tikoContentImageRefUrl('media yes', 'https://content.test/v1/')).toBe('https://content.test/v1/content/images/media%20yes')
+    expect(tikoMediaThumbnailUrl('https://data.tikocdn.org/uploads/cards.png', 96)).toBe('https://data.tikocdn.org/cdn-cgi/image/width=96,height=96,fit=cover,quality=85,f=auto/uploads/cards.png')
+    expect(tikoMediaThumbnailUrl('https://example.test/image.png', 96)).toBe('https://example.test/image.png')
+    expect(tikoMediaThumbnailUrl('not-a-url', 96)).toBe('')
   })
 
   it('shares local JSON storage and color-mode runtime helpers', () => {

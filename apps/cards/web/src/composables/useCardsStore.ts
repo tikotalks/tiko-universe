@@ -1,7 +1,7 @@
 import { computed, ref, type Ref } from 'vue'
 import { useTikoMedia } from '@tiko/media'
 import type { TikoColorName } from '@tiko/data'
-import { tikoColors } from '@tiko/ui'
+import { tikoColors, tikoContentImageRefUrl } from '@tiko/ui'
 import type { CardCollection, CardsCardInput, CardsCollectionInput, CardsGridItem, CommunicationCard, PersistedCards } from '../types'
 import { createCardsApi, resolveContentBaseUrl } from './cardsApi'
 import { matchCardsMedia } from './cardsMedia'
@@ -212,7 +212,7 @@ export function useCardsStore(options: UseCardsStoreOptions) {
       if (match.thumbnailURL) collectionThumbnails.value = { ...collectionThumbnails.value, [collectionID]: match.thumbnailURL }
       if (prefetchCards) {
         for (const card of collection.cards.slice(0, 12)) {
-          const url = card.imageRef ? `${api.baseUrl}/content/images/${encodeURIComponent(card.imageRef)}` : match.cardImages[card.id]
+          const url = card.imageRef ? tikoContentImageRefUrl(card.imageRef, api.baseUrl) : match.cardImages[card.id]
           if (url) void preload(url)
         }
       }

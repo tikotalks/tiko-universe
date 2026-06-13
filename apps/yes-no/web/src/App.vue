@@ -16,6 +16,7 @@ import {
   resolveTikoAppApiBaseUrl,
   resolveTikoContentApiBaseUrl,
   resolveTikoIdentityBaseUrl,
+  tikoContentImageRefUrl,
   tikoColors,
   useTikoAppDataRuntime,
   useTikoColorModeEffect,
@@ -93,12 +94,8 @@ function colorTokenToHex(color: string | undefined, fallback: string) {
   return tikoColors.find(item => item.name === color)?.hex ?? fallback
 }
 
-function imageRefURL(imageRef: string) {
-  return `${contentBaseUrl}/content/images/${encodeURIComponent(imageRef)}`
-}
-
 function answerImageSrc(answer: AnswerTile): string {
-  return answer.imageRef ? imageRefURL(answer.imageRef) : ''
+  return answer.imageRef ? tikoContentImageRefUrl(answer.imageRef, contentBaseUrl) : ''
 }
 
 function answerLabel(answer: string) {
