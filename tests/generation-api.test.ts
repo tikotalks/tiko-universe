@@ -309,14 +309,15 @@ describe('generation-api TTS contract', () => {
     const atlasFetch = vi.fn(async (input: Request | string) => {
       const request = input instanceof Request ? input : new Request(input)
       expect(new URL(request.url).pathname).toBe('/v1/atlas/speech')
+      expect(request.headers.get('authorization')).toBe('Bearer test-atlas-key')
       const atlasBody = await request.json() as Record<string, unknown>
       expect(atlasBody).toMatchObject({
         app: 'generation-api',
         purpose: 'compatibility-tts',
         text: 'Hello',
         language: 'en',
-        provider: 'auto',
       })
+      expect(atlasBody).not.toHaveProperty('provider')
       expect(atlasBody).not.toHaveProperty('voice')
       expect(atlasBody).not.toHaveProperty('model')
       return new Response(JSON.stringify({
@@ -333,6 +334,7 @@ describe('generation-api TTS contract', () => {
     const providerFetch = vi.spyOn(globalThis, 'fetch')
     const env = makeEnv({
       ATLAS_SERVICE: { fetch: atlasFetch },
+      ATLAS_API_KEY: 'test-atlas-key',
       OPENAI_API_KEY: undefined,
       ELEVENLABS_API_KEY: undefined,
     } as Partial<Env> & Record<string, unknown>)
@@ -352,6 +354,25 @@ describe('generation-api TTS contract', () => {
         model: 'tts-1',
       },
       meta: { cached: false, schemaVersion: 1, atlasRequestId: 'atlas-req-1' },
+    })
+  })
+
+  it('does not bypass Atlas when the compatibility TTS service binding is missing its service key', async () => {
+    const atlasFetch = vi.fn()
+    const providerFetch = vi.spyOn(globalThis, 'fetch')
+    const env = makeEnv({
+      ATLAS_SERVICE: { fetch: atlasFetch },
+      OPENAI_API_KEY: undefined,
+      ELEVENLABS_API_KEY: undefined,
+    } as Partial<Env>)
+
+    const response = await worker.fetch(generationPost('/v1/generation/tts', { text: 'Hello', language: 'en' }), env)
+
+    expect(response.status).toBe(503)
+    expect(atlasFetch).not.toHaveBeenCalled()
+    expect(providerFetch).not.toHaveBeenCalled()
+    await expect(json(response)).resolves.toMatchObject({
+      error: { code: 'atlas_service_key_not_configured', message: 'Atlas service key is not configured.' },
     })
   })
 

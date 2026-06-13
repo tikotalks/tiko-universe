@@ -19,6 +19,7 @@ export interface Env {
     fetch(input: Request | string, init?: RequestInit): Promise<Response>
   }
   ATLAS_BASE_URL?: string
+  ATLAS_API_KEY?: string
 }
 
 export interface D1DatabaseLike {
@@ -492,7 +493,7 @@ async function generateTts(request: Request, env: Env): Promise<Response> {
   const existing = await findAudioByHash(requestHash, env)
   if (existing) return json(ttsResponseFromRecord(existing, true))
 
-  const atlasResponse = await synthesizeWithAtlas(normalized, env, body.provider)
+  const atlasResponse = await synthesizeWithAtlas(normalized, env)
   if (atlasResponse) return atlasResponse
 
   const generated = await generateAudioBytes(normalized, env)
@@ -590,27 +591,22 @@ function ttsResponseFromRecord(record: GenerationAudioRecord, cached: boolean) {
   }
 }
 
-async function synthesizeWithAtlas(input: NormalizedTtsRequest, env: Env, requestedProvider?: TtsProvider): Promise<Response | null> {
+async function synthesizeWithAtlas(input: NormalizedTtsRequest, env: Env): Promise<Response | null> {
   if (!env.ATLAS_SERVICE) return null
+  if (!env.ATLAS_API_KEY) return apiError('atlas_service_key_not_configured', 'Atlas service key is not configured.', 503)
 
   const atlasUrl = `${(env.ATLAS_BASE_URL ?? 'https://tiko-atlas-api-dev.silvandiepen.workers.dev/v1/atlas').replace(/\/$/, '')}/speech`
-  const atlasProvider = requestedProvider && requestedProvider !== 'azure' ? requestedProvider : 'auto'
   const atlasPayload: Record<string, unknown> = {
     app: 'generation-api',
     purpose: 'compatibility-tts',
     text: input.text,
     language: input.language,
-    provider: atlasProvider,
     speed: input.speed,
-  }
-  if (atlasProvider !== 'auto') {
-    atlasPayload.voice = input.voice
-    atlasPayload.model = input.model
   }
 
   const response = await env.ATLAS_SERVICE.fetch(new Request(atlasUrl, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${env.ATLAS_API_KEY}` },
     body: JSON.stringify(atlasPayload),
   }))
   const body = await response.json().catch(() => null) as AtlasSpeechResponse | null
