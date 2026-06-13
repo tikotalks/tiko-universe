@@ -1,5 +1,5 @@
 import { CORS_HEADERS, apiError, fetchWithRetry, json } from './http'
-import { resolveSecrets, type SecretStoreBinding } from '../../shared/secrets'
+import { resolveSecrets } from '../../shared/secrets'
 import {
   canAccessOwnedRecord,
   canMutateOwnedRecord,
