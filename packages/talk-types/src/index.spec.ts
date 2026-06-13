@@ -20,6 +20,9 @@ describe('@tiko/talk-types contracts', () => {
       'GET /v1/sentence/phrases',
       'POST /v1/sentence/phrases',
       'DELETE /v1/sentence/phrases/:phraseId',
+      'GET /v1/sentence/words',
+      'POST /v1/sentence/words',
+      'DELETE /v1/sentence/words/:wordId',
       'POST /v1/sentence-admin/generate-pack',
     ])
   })
