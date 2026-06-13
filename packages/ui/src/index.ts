@@ -1,5 +1,5 @@
-import { defineComponent, h, onMounted, ref, watch } from 'vue'
-import type { CSSProperties } from 'vue'
+import { defineComponent, h, onMounted, onUnmounted, ref, watch } from 'vue'
+import type { CSSProperties, Ref } from 'vue'
 export { default as TikoLogo } from './TikoLogo.vue'
 export { default as TikoChildAccountsPanel } from './TikoChildAccountsPanel.vue'
 export { default as TikoProfileMenu } from './TikoProfileMenu.vue'
@@ -178,6 +178,52 @@ export function resolveTikoColorMode(mode: TikoColorMode, mediaMatcher: Pick<Win
   if (mode !== 'system') return mode
   if (!mediaMatcher) return 'light'
   return mediaMatcher.matchMedia?.('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+}
+
+export interface TikoColorModeDocument {
+  documentElement: { dataset: { colorMode?: string; theme?: string } }
+}
+
+export interface TikoColorModeMediaQuery {
+  matches: boolean
+  addEventListener?: (type: 'change', listener: () => void) => void
+  removeEventListener?: (type: 'change', listener: () => void) => void
+  addListener?: (listener: () => void) => void
+  removeListener?: (listener: () => void) => void
+}
+
+export interface TikoColorModeWindow {
+  matchMedia?: (query: string) => TikoColorModeMediaQuery
+}
+
+export function applyTikoColorMode(mode: TikoColorMode, documentTarget: TikoColorModeDocument | undefined = typeof document === 'undefined' ? undefined : document, windowTarget: TikoColorModeWindow | undefined = typeof window === 'undefined' ? undefined : window): 'light' | 'dark' {
+  const effective = mode === 'system'
+    ? (windowTarget?.matchMedia?.('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
+    : mode
+  if (documentTarget) {
+    documentTarget.documentElement.dataset.colorMode = effective
+    documentTarget.documentElement.dataset.theme = effective
+  }
+  return effective
+}
+
+export function useTikoColorModeEffect(mode: Ref<TikoColorMode>, documentTarget: TikoColorModeDocument | undefined = typeof document === 'undefined' ? undefined : document, windowTarget: TikoColorModeWindow | undefined = typeof window === 'undefined' ? undefined : window) {
+  const query = windowTarget?.matchMedia?.('(prefers-color-scheme: dark)')
+  const apply = () => applyTikoColorMode(mode.value, documentTarget, windowTarget)
+  const stopWatch = watch(mode, apply, { immediate: true })
+
+  onMounted(() => {
+    if (query?.addEventListener) query.addEventListener('change', apply)
+    else query?.addListener?.(apply)
+  })
+
+  onUnmounted(() => {
+    if (query?.removeEventListener) query.removeEventListener('change', apply)
+    else query?.removeListener?.(apply)
+    stopWatch()
+  })
+
+  return { apply, stop: stopWatch }
 }
 
 export const TIKO_PALETTE: string[] = [
