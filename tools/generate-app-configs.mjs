@@ -1,6 +1,11 @@
 #!/usr/bin/env node
-import { mkdir, readFile, writeFile } from 'node:fs/promises'
+import { execFile } from 'node:child_process'
+import { mkdtemp, mkdir, readFile, writeFile } from 'node:fs/promises'
+import { tmpdir } from 'node:os'
 import { dirname, resolve } from 'node:path'
+import { promisify } from 'node:util'
+
+const run = promisify(execFile)
 
 const root = resolve(new URL('..', import.meta.url).pathname)
 const endpoint = (process.env.TIKO_APP_CONFIG_URL ?? process.env.VITE_TIKO_APP_CONFIG_URL ?? 'https://app.tikoapi.org/v1/apps/config').replace(/\/$/, '')
@@ -30,6 +35,34 @@ const iosApps = {
   timer: 'TimerAppConfig.swift',
   radio: 'RadioAppConfig.swift',
 }
+const iosAppIconSources = {
+  'yes-no': 'apps/yes-no/ios/Sources',
+  type: 'apps/type/ios/Sources',
+  cards: 'apps/cards/ios/Sources',
+  timer: 'apps/timer/ios/Sources',
+  radio: 'apps/radio/ios/Sources',
+  talk: 'apps/talk/ios/Sources',
+}
+const iosAppIconImages = [
+  { idiom: 'iphone', size: '20x20', scale: '2x', pixels: 40 },
+  { idiom: 'iphone', size: '20x20', scale: '3x', pixels: 60 },
+  { idiom: 'iphone', size: '29x29', scale: '2x', pixels: 58 },
+  { idiom: 'iphone', size: '29x29', scale: '3x', pixels: 87 },
+  { idiom: 'iphone', size: '40x40', scale: '2x', pixels: 80 },
+  { idiom: 'iphone', size: '40x40', scale: '3x', pixels: 120 },
+  { idiom: 'iphone', size: '60x60', scale: '2x', pixels: 120 },
+  { idiom: 'iphone', size: '60x60', scale: '3x', pixels: 180 },
+  { idiom: 'ipad', size: '20x20', scale: '1x', pixels: 20 },
+  { idiom: 'ipad', size: '20x20', scale: '2x', pixels: 40 },
+  { idiom: 'ipad', size: '29x29', scale: '1x', pixels: 29 },
+  { idiom: 'ipad', size: '29x29', scale: '2x', pixels: 58 },
+  { idiom: 'ipad', size: '40x40', scale: '1x', pixels: 40 },
+  { idiom: 'ipad', size: '40x40', scale: '2x', pixels: 80 },
+  { idiom: 'ipad', size: '76x76', scale: '1x', pixels: 76 },
+  { idiom: 'ipad', size: '76x76', scale: '2x', pixels: 152 },
+  { idiom: 'ipad', size: '83.5x83.5', scale: '2x', pixels: 167 },
+  { idiom: 'ios-marketing', size: '1024x1024', scale: '1x', pixels: 1024 },
+]
 
 async function main() {
   const configs = await fetchConfigs()
@@ -44,6 +77,7 @@ async function main() {
   for (const [app, file] of Object.entries(iosApps)) {
     await writeIosAppConfig(app, file)
   }
+  await writeIosAppIcons(configs)
   console.log(`Generated app configs from ${endpoint}`)
 }
 
@@ -142,11 +176,110 @@ async function writeIosAppConfig(app, fileName) {
   await writeIfChanged(file, content)
 }
 
+async function writeIosAppIcons(configs) {
+  const sips = await hasCommand('sips')
+  if (!sips) {
+    const message = 'sips is required to generate iOS app icon PNGs'
+    if (strict) throw new Error(message)
+    console.warn(`${message}; skipping iOS app icon generation.`)
+    return
+  }
+
+  const tempDir = await mkdtemp(resolve(tmpdir(), 'tiko-app-icons-'))
+  for (const [app, sourceDir] of Object.entries(iosAppIconSources)) {
+    const config = configs[app] ?? fallbackConfigs[app]
+    if (!config?.appIconImageUrl) {
+      const message = `${app}: appIconImageUrl is required to generate the iOS AppIcon asset catalog`
+      if (strict) throw new Error(message)
+      console.warn(`${message}; skipping.`)
+      continue
+    }
+
+    const sourceUrl = await resolveMediaImageUrl(config.appIconImageUrl)
+    const downloadUrl = resizedTikoCdnUrl(sourceUrl, 1024)
+    const sourceFile = resolve(tempDir, `${app}.source`)
+    await downloadImage(downloadUrl, sourceFile, `${app} app icon`)
+
+    const appIconDir = resolve(root, sourceDir, 'Assets.xcassets/AppIcon.appiconset')
+    await mkdir(appIconDir, { recursive: true })
+    await writeIfChanged(resolve(root, sourceDir, 'Assets.xcassets/Contents.json'), assetCatalogContents())
+    await writeIfChanged(resolve(appIconDir, 'Contents.json'), appIconContents())
+
+    const uniqueSizes = [...new Set(iosAppIconImages.map(image => image.pixels))]
+    for (const pixels of uniqueSizes) {
+      await run('sips', ['-s', 'format', 'png', '-z', String(pixels), String(pixels), sourceFile, '--out', resolve(appIconDir, `app-icon-${pixels}.png`)])
+    }
+  }
+}
+
 async function writeIfChanged(file, content) {
   await mkdir(dirname(file), { recursive: true })
   let old = ''
   try { old = await readFile(file, 'utf8') } catch {}
   if (old !== content) await writeFile(file, content)
+}
+
+async function hasCommand(command) {
+  try {
+    await run(command, ['--version'])
+    return true
+  } catch {
+    return false
+  }
+}
+
+async function resolveMediaImageUrl(value) {
+  const url = new URL(value)
+  const mediaId = mediaDownloadId(url)
+  if (!mediaId) return url
+
+  const mediaUrl = new URL(`/v1/media/${encodeURIComponent(mediaId)}`, url.origin)
+  const response = await fetch(mediaUrl)
+  if (!response.ok) throw new Error(`Could not resolve media icon ${mediaId} (HTTP ${response.status})`)
+  const body = await response.json()
+  const originalUrl = body?.data?.original_url ?? body?.original_url
+  if (!originalUrl) throw new Error(`Could not resolve media icon ${mediaId} (missing original_url)`)
+  return new URL(originalUrl)
+}
+
+function mediaDownloadId(url) {
+  if (url.hostname !== 'media.tikoapi.org') return ''
+  const parts = url.pathname.split('/').filter(Boolean)
+  const mediaIndex = parts.indexOf('media')
+  if (mediaIndex < 0 || parts[mediaIndex + 2] !== 'download') return ''
+  return parts[mediaIndex + 1] ?? ''
+}
+
+function resizedTikoCdnUrl(url, size) {
+  if (url.hostname === 'data.tikocdn.org' && url.pathname.startsWith('/uploads/')) {
+    return new URL(`https://data.tikocdn.org/cdn-cgi/image/width=${size},height=${size},fit=cover,quality=95,f=auto${url.pathname}`)
+  }
+  return url
+}
+
+async function downloadImage(url, file, label) {
+  const response = await fetch(url)
+  if (!response.ok) throw new Error(`Could not download ${label} (${response.status})`)
+  const type = response.headers.get('content-type') ?? ''
+  if (!type.startsWith('image/')) throw new Error(`Could not download ${label} (expected image, got ${type || 'unknown content type'})`)
+  const bytes = new Uint8Array(await response.arrayBuffer())
+  await writeFile(file, bytes)
+}
+
+function assetCatalogContents() {
+  return `${JSON.stringify({ info: { author: 'xcode', version: 1 } }, null, 2)}\n`
+}
+
+function appIconContents() {
+  return `${JSON.stringify({
+    images: iosAppIconImages.map(({ idiom, size, scale, pixels }) => ({
+      idiom,
+      size,
+      scale,
+      filename: `app-icon-${pixels}.png`,
+    })),
+    info: { author: 'xcode', version: 1 },
+  }, null, 2)}\n`
 }
 
 function swiftStaticName(app) {
