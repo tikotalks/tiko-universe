@@ -208,13 +208,46 @@ function makeEnv() {
     CONTENT_DB: new MemoryD1(),
     CONTENT_CACHE: new MemoryKV(),
     ALLOWED_ORIGINS: 'https://cards.tikoapps.org,http://localhost:5173',
-    ADMIN_SECRET: 'admin-secret',
     TRANSLATIONS_API_URL: 'https://translations.test/v1',
   }
 }
 
 async function parseJson(response: Response) {
   return response.json() as Promise<Record<string, any>>
+}
+
+function mockAdminSession() {
+  vi.stubGlobal('fetch', vi.fn(async (input: RequestInfo | URL) => {
+    const url = String(input)
+    if (url.includes('/identity/session')) {
+      return new Response(JSON.stringify({
+        subject: { id: 'admin-user' },
+        roles: ['admin'],
+        capabilities: { canEditContent: true },
+      }), {
+        status: 200,
+        headers: { 'Content-Type': 'application/json' },
+      })
+    }
+    throw new Error(`Unexpected fetch ${url}`)
+  }))
+}
+
+function mockUserSession() {
+  vi.stubGlobal('fetch', vi.fn(async (input: RequestInfo | URL) => {
+    const url = String(input)
+    if (url.includes('/identity/session')) {
+      return new Response(JSON.stringify({
+        subject: { id: 'regular-user' },
+        roles: ['user'],
+        capabilities: { canEditContent: false },
+      }), {
+        status: 200,
+        headers: { 'Content-Type': 'application/json' },
+      })
+    }
+    throw new Error(`Unexpected fetch ${url}`)
+  }))
 }
 
 afterEach(() => {
@@ -341,9 +374,10 @@ describe('content-api worker', () => {
 
   it('reconciles admin Cards bulk saves without deleting preserved translations', async () => {
     const env = makeEnv()
+    mockAdminSession()
     const response = await worker.fetch(new Request('https://content.test/v1/admin/cards/collections', {
       method: 'PUT',
-      headers: { authorization: 'Bearer admin-secret', 'content-type': 'application/json' },
+      headers: { authorization: 'Bearer admin-session', 'content-type': 'application/json' },
       body: JSON.stringify({
         collections: [{
           id: '__default_animals',
@@ -372,14 +406,30 @@ describe('content-api worker', () => {
     expect(env.CONTENT_DB.appItems.some(row => row.id === 'yes-no-answer-yes')).toBe(true)
   })
 
+  it('rejects admin Cards bulk saves without an admin identity session', async () => {
+    const env = makeEnv()
+    mockUserSession()
+
+    const response = await worker.fetch(new Request('https://content.test/v1/admin/cards/collections', {
+      method: 'PUT',
+      headers: { authorization: 'Bearer user-session', 'content-type': 'application/json' },
+      body: JSON.stringify({ collections: [] }),
+    }), env as never)
+    const body = await parseJson(response)
+
+    expect(response.status).toBe(403)
+    expect(body.error.code).toBe('forbidden')
+  })
+
   it('invalidates Cards content cache for every locale without hardcoded language keys', async () => {
     const env = makeEnv()
     const before = await worker.fetch(new Request('https://content.test/v1/cards/collections?language=zh'), env as never)
     expect((await parseJson(before)).data.collections[0].title).toBe('Animals')
 
+    mockAdminSession()
     const update = await worker.fetch(new Request('https://content.test/v1/admin/cards/collections', {
       method: 'PUT',
-      headers: { authorization: 'Bearer admin-secret', 'content-type': 'application/json' },
+      headers: { authorization: 'Bearer admin-session', 'content-type': 'application/json' },
       body: JSON.stringify({
         collections: [{
           id: '__default_animals',
@@ -445,9 +495,10 @@ describe('content-api worker', () => {
 
   it('reconciles admin Sequence bulk saves without deleting preserved translations', async () => {
     const env = makeEnv()
+    mockAdminSession()
     const response = await worker.fetch(new Request('https://content.test/v1/admin/sequence/content', {
       method: 'PUT',
-      headers: { authorization: 'Bearer admin-secret', 'content-type': 'application/json' },
+      headers: { authorization: 'Bearer admin-session', 'content-type': 'application/json' },
       body: JSON.stringify({
         sequences: [{
           id: 'sequence_counting-apples',

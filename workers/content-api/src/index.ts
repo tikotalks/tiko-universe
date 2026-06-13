@@ -1,13 +1,13 @@
 // Tiko content-api — D1-backed published content read model.
 // Public reads only for now; admin mutations belong in admin-api.
+import { authenticate, type AuthEnv } from '../../shared/auth'
 
-interface Env {
+interface Env extends AuthEnv {
   CONTENT_DB: D1Database
   CONTENT_CACHE?: KVNamespace
   USER_IMAGES?: R2Bucket
   ALLOWED_ORIGINS?: string
   APP_API_URL?: string
-  ADMIN_SECRET?: string
   IDENTITY_API_URL?: string
   MEDIA_API_URL?: string
   TRANSLATIONS_API_URL?: string
@@ -1185,12 +1185,18 @@ async function handlePostCards(request: Request, env: Env, segments: string[]): 
   return error(request, env, 'not_found', 'Not found', 404)
 }
 
-function requireAdminSecret(request: Request, env: Env): Response | null {
+async function requireAdminSession(request: Request, env: Env): Promise<Response | null> {
   const authHeader = request.headers.get('Authorization') ?? ''
   const token = authHeader.startsWith('Bearer ') ? authHeader.slice(7) : ''
-  if (!env.ADMIN_SECRET || token !== env.ADMIN_SECRET) {
+  if (!token) {
     return new Response(JSON.stringify({ success: false, error: { code: 'unauthorized', message: 'Unauthorized' } }), {
       status: 401,
+      headers: { ...corsHeaders(request, env), 'Content-Type': 'application/json; charset=utf-8' },
+    })
+  }
+  if (!await verifyAdminFromSession(env, token)) {
+    return new Response(JSON.stringify({ success: false, error: { code: 'forbidden', message: 'Admin access required' } }), {
+      status: 403,
       headers: { ...corsHeaders(request, env), 'Content-Type': 'application/json; charset=utf-8' },
     })
   }
@@ -1379,7 +1385,7 @@ export default {
     if (request.method === 'POST' && segments[0] === 'v1' && segments[1] === 'images') return handleUploadUserImage(request, env)
 
     if (request.method === 'PUT' && url.pathname === '/v1/admin/cards/collections') {
-      const authError = requireAdminSecret(request, env)
+      const authError = await requireAdminSession(request, env)
       if (authError) return authError
       let body: { collections?: unknown }
       try {
@@ -1397,7 +1403,7 @@ export default {
     }
 
     if (request.method === 'PUT' && url.pathname === '/v1/admin/sequence/content') {
-      const authError = requireAdminSecret(request, env)
+      const authError = await requireAdminSession(request, env)
       if (authError) return authError
       let body: { sequences?: unknown }
       try {
@@ -1419,18 +1425,20 @@ export default {
 }
 
 async function verifyAdminFromSession(env: Env, sessionToken: string): Promise<boolean> {
-  const baseURL = env.IDENTITY_API_URL ?? 'https://identity.tikoapi.org/v1'
-  try {
-    const resp = await fetch(`${baseURL}/identity/session`, {
-      headers: { Authorization: `Bearer ${sessionToken}`, Accept: 'application/json' },
-    })
-    if (!resp.ok) return false
-    const body = (await resp.json()) as { roles?: string[]; capabilities?: { canEditContent?: boolean } }
-    if (Array.isArray(body.roles) && (body.roles.includes('admin') || body.roles.includes('content_editor'))) return true
-    if (body.capabilities?.canEditContent === true) return true
-    return false
-  } catch {
-    return false
+  const request = new Request('https://content-auth.local/session', {
+    headers: { Authorization: `Bearer ${sessionToken}` },
+  })
+  const auth = await authenticate(request, authEnv(env))
+  if (!auth.ok) return false
+  return auth.roles?.includes('admin') === true
+    || auth.roles?.includes('content_editor') === true
+    || auth.capabilities?.canEditContent === true
+}
+
+function authEnv(env: Env): AuthEnv {
+  return {
+    ...env,
+    IDENTITY_BASE_URL: env.IDENTITY_BASE_URL ?? env.IDENTITY_API_URL ?? 'https://identity.tikoapi.org/v1',
   }
 }
 

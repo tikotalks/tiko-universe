@@ -1,4 +1,4 @@
-import { authenticate, requireSession as requireSharedSession, type AuthEnv } from '../../shared/auth'
+import { requireSession as requireSharedSession, type AuthEnv } from '../../shared/auth'
 type D1Value = string | number | boolean | null
 
 interface D1Result<T = unknown> {
@@ -496,12 +496,6 @@ async function requireAdminSession(request: Request, env: Env): Promise<void> {
   if (!roles.includes('admin') && !roles.includes('content_editor') && !canEditContent) {
     throw new HttpError(403, 'forbidden', 'Admin access required.')
   }
-}
-
-async function requireAnyAuth(request: Request, env: Env): Promise<void> {
-  const authed = await authenticate(request, env)
-  if (authed.ok) return
-  throw new HttpError(401, 'unauthorized', 'Authentication required.')
 }
 
 async function authResponseToHttpError(response: Response): Promise<HttpError> {
