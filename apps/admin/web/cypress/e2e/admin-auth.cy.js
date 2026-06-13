@@ -67,7 +67,13 @@ describe('admin OTP sign-in', () => {
     }).as('verifyOtp')
 
     cy.intercept('GET', 'https://admin.tikoapi.org/v1/admin/me', (req) => {
-      expect(req.headers.authorization).to.equal('Bearer admin-session-token')
+      if (req.headers.authorization !== 'Bearer admin-session-token') {
+        req.alias = 'adminProbe'
+        req.reply({ statusCode: 401, body: { error: 'unauthorized' } })
+        return
+      }
+
+      req.alias = 'adminMe'
       req.reply({
         data: {
           userId: 'admin-user',
@@ -75,7 +81,7 @@ describe('admin OTP sign-in', () => {
           role: 'admin',
         },
       })
-    }).as('adminMe')
+    })
 
     cy.intercept('GET', 'https://admin.tikoapi.org/v1/admin/config', (req) => {
       expect(req.headers.authorization).to.equal('Bearer admin-session-token')
