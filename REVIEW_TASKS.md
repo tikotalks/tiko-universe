@@ -2,7 +2,7 @@
 
 Source: `review/00-executive-summary.md` through `review/08-recommendations.md`.
 
-Talk-engine-specific findings from `review/09-talk-engine.md` are intentionally skipped here and should be handled in a separate session.
+Talk-engine-specific findings from `review/09-talk-engine.md` are intentionally skipped here and should be handled in a separate session. This list also avoids new Talk/sentence-api action items for now.
 
 Review date: 2026-06-12.
 
@@ -15,7 +15,7 @@ The review says the platform has strong architecture but weak enforcement. The b
 The highest-risk areas are:
 
 - Public or weakly protected paid AI endpoints.
-- Server-side authorization gaps around sentences, media, generated content, and identity destructive actions.
+- Server-side authorization gaps around media, generated content, and identity destructive actions.
 - Dev and production sharing D1 data.
 - Long-lived browser/iOS identity secrets stored in localStorage/UserDefaults instead of cookie/Keychain transport.
 - Product-breaking child-facing bugs in Timer, Radio, Cards, PIN entry, and iOS speech.
@@ -27,7 +27,7 @@ Approximate review spread: 7 Critical, about 35 High, about 70 Medium, and about
 ## Phase 0 - Already Fixed High-Risk Items
 
 - [x] Authenticate Atlas capability routes and enforce capability allowlists.
-- [x] Fix sentence-api saved phrase IDOR.
+- [x] Fix saved phrase ownership checks.
 - [x] Persist and validate identity `pinGrantToken`.
 - [x] Gate paid generation/TTS endpoints.
 - [x] Enforce private media access.
@@ -54,7 +54,7 @@ Approximate review spread: 7 Critical, about 35 High, about 70 Medium, and about
 ## Phase 1 - Security, Identity, And Environment Isolation
 
 - [ ] Isolate dev and production data.
-  - Create separate D1 databases and KV namespaces for identity, app, atlas, media, communication, generation, sentence, and content caches.
+  - Create separate D1 databases and KV namespaces for identity, app, atlas, media, communication, generation, and content caches.
   - Fix provisioning so production never reuses dev DB names.
   - Stop dev deploys from applying schema/seed to shared production-like data.
 
@@ -272,7 +272,6 @@ Approximate review spread: 7 Critical, about 35 High, about 70 Medium, and about
   - KV key hashing for content query cache.
 
 - [ ] Reduce worker latency and subrequest count.
-  - Batch sentence prediction inserts.
   - Batch media album track queries.
   - Batch identity/session/runtime queries where independent.
   - Add pagination to admin users and media listings.
