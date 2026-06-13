@@ -228,7 +228,7 @@ Approximate review spread: 7 Critical, about 35 High, about 70 Medium, and about
   - PIN popup and child-mode flows.
   - App runtime language/theme persistence.
 
-- [ ] Add real D1-backed worker test coverage.
+- [x] Add real D1-backed worker test coverage.
   - Keep fast fakes where useful.
   - Add Miniflare or Cloudflare Vitest pool suites that run migrations and real SQLite constraints.
   - Fix fake behavior that masks authorization/schema regressions.
