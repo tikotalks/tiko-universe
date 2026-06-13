@@ -13,6 +13,7 @@ import {
   readTikoLocalJson,
   resolveTikoAppApiBaseUrl,
   resolveTikoIdentityBaseUrl,
+  useTikoAppDataRuntime,
   useTikoColorModeEffect,
   useIdentityRuntime,
   writeTikoLocalJson,
@@ -57,8 +58,6 @@ const prompts = ref<string[]>(normalizePrompts(stored.prompts))
 const completedPrompts = ref<string[]>(stored.completedPrompts ?? [])
 const phrasesOpen = ref(false)
 const settingsOpen = ref(false)
-const settingsVersion = ref<number | undefined>()
-const stateVersion = ref<number | undefined>()
 const sessionToken = ref<string>('')
 const userId = ref('')
 const accountEmail = ref('')
@@ -77,6 +76,24 @@ const runtimeState: IdentityRuntimeState = {
   parentMode, childModeEnabled, pinConfigured,
 }
 const runtime = useIdentityRuntime({ identityClient, state: runtimeState, deviceName: 'Type web', labels: () => createTikoIdentityLabels(i18n.t) })
+const dataRuntime = useTikoAppDataRuntime<typeof appId, TypeSettings, TypeState>({
+  app: appId,
+  sessionToken,
+  bootstrapped,
+  dataClient,
+  readSettings: () => ({
+    language: language.value,
+    colorMode: colorMode.value,
+    keyboardLayout: keyboardLayout.value,
+  }),
+  readState: () => ({
+    text: text.value,
+    prompts: prompts.value,
+    completedPrompts: completedPrompts.value,
+  }),
+  applySettings,
+  applyState,
+})
 
 const labels = computed(() => {
   return {
@@ -157,16 +174,15 @@ async function bootstrapIdentity() {
   return runtime.bootstrapIdentity()
 }
 
-function applySettings(settings: TypeSettings, version?: number) {
+function applySettings(settings: TypeSettings) {
   language.value = normalizeTikoLanguage(settings.language)
   colorMode.value = normalizeTikoColorMode(settings.colorMode)
   if (settings.keyboardLayout === 'qwerty' || settings.keyboardLayout === 'azerty' || settings.keyboardLayout === 'abc') {
     keyboardLayout.value = settings.keyboardLayout
   }
-  settingsVersion.value = version
 }
 
-function applyState(state: TypeState, version?: number) {
+function applyState(state: TypeState) {
   if (typeof state.text === 'string') {
     text.value = state.text
   }
@@ -175,45 +191,6 @@ function applyState(state: TypeState, version?: number) {
   }
   if (Array.isArray(state.completedPrompts)) {
     completedPrompts.value = state.completedPrompts
-  }
-  stateVersion.value = version
-}
-
-async function hydrateRemoteData() {
-  if (!sessionToken.value) return
-  const [settings, state] = await Promise.all([
-    dataClient.getSettings(appId, sessionToken.value),
-    dataClient.getState(appId, sessionToken.value)
-  ])
-  applySettings(settings.settings, settings.version)
-  applyState(state.state, state.version)
-}
-
-async function persistSettingsRemote() {
-  if (!bootstrapped.value || !sessionToken.value) return
-  try {
-    const response = await dataClient.putSettings(appId, sessionToken.value, {
-      language: language.value,
-      colorMode: colorMode.value,
-      keyboardLayout: keyboardLayout.value
-    }, { version: settingsVersion.value })
-    settingsVersion.value = response.version
-  } catch {
-    // Local fallback is already written; remote will be retried on the next edit.
-  }
-}
-
-async function persistStateRemote() {
-  if (!bootstrapped.value || !sessionToken.value) return
-  try {
-    const response = await dataClient.putState(appId, sessionToken.value, {
-      text: text.value,
-      prompts: prompts.value,
-      completedPrompts: completedPrompts.value
-    }, { version: stateVersion.value })
-    stateVersion.value = response.version
-  } catch {
-    // Local fallback is already written; remote will be retried on the next change.
   }
 }
 
@@ -234,19 +211,19 @@ useTikoColorModeEffect(colorMode)
 
 watch([language, colorMode, keyboardLayout], () => {
   saveLocalFallback()
-  void persistSettingsRemote()
+  void dataRuntime.persistSettingsRemote()
 })
 
 watch([text, completedPrompts], () => {
   saveLocalFallback()
-  void persistStateRemote()
+  void dataRuntime.persistStateRemote()
 }, { deep: true })
 
 onMounted(async () => {
   try {
     await runtime.bootstrapIdentity()
     await runtime.loadProfile()
-    await hydrateRemoteData()
+    await dataRuntime.hydrateRemoteData()
   } catch {
     // Keep the child-facing local flow available when API bootstrap is offline.
   } finally {

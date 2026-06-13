@@ -12,6 +12,7 @@ import {
   readTikoLocalJson,
   resolveTikoAppApiBaseUrl,
   resolveTikoIdentityBaseUrl,
+  useTikoAppDataRuntime,
   useTikoColorModeEffect,
   useIdentityRuntime,
   writeTikoLocalJson,
@@ -50,8 +51,6 @@ const language = ref<TikoLanguage>(normalizeTikoLanguage(stored.language))
 const colorMode = ref<TikoColorMode>(normalizeTikoColorMode(stored.colorMode))
 const items = ref<TodoItem[]>(stored.items ?? [])
 const settingsOpen = ref(false)
-const settingsVersion = ref<number | undefined>()
-const stateVersion = ref<number | undefined>()
 const createOpen = ref(false)
 const newName = ref('')
 const newSteps = ref<string[]>([])
@@ -74,6 +73,21 @@ const runtimeState: IdentityRuntimeState = {
   parentMode, childModeEnabled, pinConfigured,
 }
 const runtime = useIdentityRuntime({ identityClient, state: runtimeState, deviceName: 'Todo web', labels: () => createTikoIdentityLabels(i18n.t) })
+const dataRuntime = useTikoAppDataRuntime<typeof appId, TodoSettings, TodoState>({
+  app: appId,
+  sessionToken,
+  bootstrapped,
+  dataClient,
+  readSettings: () => ({
+    language: language.value,
+    colorMode: colorMode.value,
+  }),
+  readState: () => ({
+    items: items.value,
+  }),
+  applySettings,
+  applyState,
+})
 
 const labels = computed(() => {
   return {
@@ -131,50 +145,13 @@ async function bootstrapIdentity() {
   return runtime.bootstrapIdentity()
 }
 
-function applySettings(settings: TodoSettings, version?: number) {
+function applySettings(settings: TodoSettings) {
   language.value = normalizeTikoLanguage(settings.language)
   colorMode.value = normalizeTikoColorMode(settings.colorMode)
-  settingsVersion.value = version
 }
 
-function applyState(state: TodoState, version?: number) {
+function applyState(state: TodoState) {
   if (state.items) items.value = state.items as TodoItem[]
-  stateVersion.value = version
-}
-
-async function hydrateRemoteData() {
-  if (!sessionToken.value) return
-  const [settings, state] = await Promise.all([
-    dataClient.getSettings(appId, sessionToken.value),
-    dataClient.getState(appId, sessionToken.value),
-  ])
-  applySettings(settings.settings, settings.version)
-  applyState(state.state, state.version)
-}
-
-async function persistSettingsRemote() {
-  if (!bootstrapped.value || !sessionToken.value) return
-  try {
-    const response = await dataClient.putSettings(appId, sessionToken.value, {
-      language: language.value,
-      colorMode: colorMode.value,
-    }, { version: settingsVersion.value })
-    settingsVersion.value = response.version
-  } catch {
-    // Local fallback is already written; remote will be retried on the next settings edit.
-  }
-}
-
-async function persistStateRemote() {
-  if (!bootstrapped.value || !sessionToken.value) return
-  try {
-    const response = await dataClient.putState(appId, sessionToken.value, {
-      items: items.value,
-    }, { version: stateVersion.value })
-    stateVersion.value = response.version
-  } catch {
-    // Local fallback is already written; remote will be retried on the next item edit.
-  }
 }
 
 async function loadTranslations(value: TikoLanguage) {
@@ -194,12 +171,12 @@ useTikoColorModeEffect(colorMode)
 
 watch([language, colorMode], () => {
   saveLocal()
-  void persistSettingsRemote()
+  void dataRuntime.persistSettingsRemote()
 })
 
 watch(items, () => {
   saveLocal()
-  void persistStateRemote()
+  void dataRuntime.persistStateRemote()
 }, { deep: true })
 
 onMounted(async () => {
@@ -210,15 +187,10 @@ onMounted(async () => {
     // Identity unavailable — app works locally
   }
 
-  try {
-    await hydrateRemoteData()
-  } catch {
-    // Remote sync failed — local state is still valid
-    if (!sessionToken.value) loadError.value = true
-  } finally {
-    bootstrapped.value = true
-    saveLocal()
-  }
+  const hydrated = await dataRuntime.hydrateRemoteData()
+  if (!hydrated && !sessionToken.value) loadError.value = true
+  bootstrapped.value = true
+  saveLocal()
 })
 
 function headerAction(id: string) {
@@ -287,7 +259,8 @@ async function retry() {
     // Identity still unavailable
   }
   try {
-    await hydrateRemoteData()
+    const hydrated = await dataRuntime.hydrateRemoteData()
+    if (!hydrated && !sessionToken.value) loadError.value = true
   } catch {
     if (!sessionToken.value) loadError.value = true
   }

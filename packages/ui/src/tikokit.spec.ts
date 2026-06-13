@@ -23,6 +23,7 @@ import {
   resolveTikoGenerationApiBaseUrl,
   resolveTikoIdentityBaseUrl,
   resolveTikoMediaApiBaseUrl,
+  useTikoAppDataRuntime,
   useTikoColorModeEffect,
   writeTikoLocalJson,
   tikoAppColors,
@@ -148,6 +149,51 @@ describe('TikoKit component contract', () => {
     expect(documentTarget.documentElement.dataset.colorMode).toBe('light')
     await wrapper.unmount()
     expect(listeners.size).toBe(0)
+  })
+
+  it('shares versioned app data hydrate and persistence runtime', async () => {
+    const sessionToken = ref('session-1')
+    const bootstrapped = ref(false)
+    const settingsWrites: Array<{ version?: number; settings: { language?: string } }> = []
+    const stateWrites: Array<{ version?: number; state: { text?: string } }> = []
+    const dataClient = {
+      getSettings: vi.fn(async () => ({ settings: { language: 'nl' }, version: 4 })),
+      getState: vi.fn(async () => ({ state: { text: 'Hallo' }, version: 7 })),
+      putSettings: vi.fn(async (_app: 'type', _token: string, settings: { language?: string }, options?: { version?: number }) => {
+        settingsWrites.push({ settings, version: options?.version })
+        return { settings, version: 5 }
+      }),
+      putState: vi.fn(async (_app: 'type', _token: string, state: { text?: string }, options?: { version?: number }) => {
+        stateWrites.push({ state, version: options?.version })
+        return { state, version: 8 }
+      }),
+    }
+    const settings = ref<{ language?: string }>({})
+    const state = ref<{ text?: string }>({})
+
+    const runtime = useTikoAppDataRuntime({
+      app: 'type',
+      sessionToken,
+      bootstrapped,
+      dataClient,
+      readSettings: () => settings.value,
+      readState: () => state.value,
+      applySettings: value => { settings.value = value },
+      applyState: value => { state.value = value },
+    })
+
+    expect(await runtime.hydrateRemoteData()).toBe(true)
+    expect(settings.value).toEqual({ language: 'nl' })
+    expect(state.value).toEqual({ text: 'Hallo' })
+
+    settings.value = { language: 'fr' }
+    state.value = { text: 'Bonjour' }
+    expect(await runtime.persistSettingsRemote()).toBe(false)
+    bootstrapped.value = true
+    expect(await runtime.persistSettingsRemote()).toBe(true)
+    expect(await runtime.persistStateRemote()).toBe(true)
+    expect(settingsWrites).toEqual([{ settings: { language: 'fr' }, version: 4 }])
+    expect(stateWrites).toEqual([{ state: { text: 'Bonjour' }, version: 7 }])
   })
 
   it('renders the design header with open-icon action names and app color token', async () => {
