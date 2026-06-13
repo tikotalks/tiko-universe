@@ -237,7 +237,7 @@ Approximate review spread: 7 Critical, about 35 High, about 70 Medium, and about
   - Start with workspaces that already have real suites.
   - Add thresholds only after suites are trustworthy.
 
-- [ ] Add a real linter.
+- [x] Add a real linter.
   - Adopt oxlint or ESLint with Vue support.
   - Rename current scaffold check.
   - Wire lint into `npm run check` and CI.

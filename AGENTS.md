@@ -18,8 +18,9 @@ Tiko is a child-first universe of small, focused AAC (Augmentative and Alternati
 
 ```bash
 npm ci                          # Install all workspace dependencies
-npm run check                   # lint + typecheck + test (the full CI gate)
-npm run lint                    # Checks required scaffold files exist (NOT a code linter)
+npm run check                   # scaffold check + lint + typecheck + test (the full CI gate)
+npm run scaffold:check          # Checks required scaffold files exist
+npm run lint                    # Runs oxlint over the repo
 npm run typecheck               # vue-tsc --noEmit -p tsconfig.json
 npm run test                    # vitest run (all unit tests, jsdom environment)
 npm run test:contracts          # API contract tests only
@@ -143,7 +144,7 @@ docs/                          # Doctrine, architecture, API contracts, app spec
 
 tools/                         # Build/codegen tools
   generate-app-configs.mjs     # Generates appConfig.ts for web + Swift for iOS
-  check-placeholders.mjs       # CI lint: verifies required scaffold files exist
+  check-placeholders.mjs       # CI scaffold check: verifies required scaffold files exist
   check-doctrine.mjs           # Verifies doctrine markdown exists
 
 tests/                         # Root-level integration/contract tests
@@ -306,7 +307,7 @@ Production domains: `tiko.mt`, `tikotalks.com`, `tikoapps.org` subdomains.
 
 ## Gotchas and Non-Obvious Patterns
 
-- **`npm run lint` is NOT a code linter.** It runs `tools/check-placeholders.mjs` which only verifies required scaffold files exist. There is no ESLint/Prettier in this repo.
+- **`npm run lint` is a real code linter.** It runs `oxlint` across the repo. The old scaffold-file verification is now `npm run scaffold:check`.
 
 - **`appConfig.ts` files are auto-generated.** Do not edit them directly. Run `npm run generate:app-configs` to regenerate. The generator fetches from the app-api and falls back to hardcoded configs.
 

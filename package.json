@@ -11,12 +11,13 @@
     "workers/*"
   ],
   "scripts": {
-    "check": "npm run lint && npm run typecheck && npm run test",
+    "check": "npm run scaffold:check && npm run lint && npm run typecheck && npm run test",
     "generate:app-configs": "node tools/generate-app-configs.mjs",
     "generate:colors": "node tools/generate-tiko-colors.mjs",
     "generate:talk-seeds": "node tools/generate-talk-seeds.mjs",
     "prebuild": "npm run generate:colors",
-    "lint": "node tools/check-placeholders.mjs",
+    "scaffold:check": "node tools/check-placeholders.mjs",
+    "lint": "oxlint .",
     "typecheck": "vue-tsc --noEmit -p tsconfig.json",
     "test": "vitest run",
     "test:coverage": "vitest run --coverage",
@@ -52,6 +53,7 @@
     "@playwright/test": "^1.56.1",
     "@types/node": "^25.9.1",
     "@vitest/coverage-v8": "^4.1.7",
+    "oxlint": "^1.69.0",
     "wrangler": "^4.98.0"
   }
 }
