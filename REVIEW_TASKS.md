@@ -81,6 +81,7 @@ Approximate review spread: 7 Critical, about 35 High, about 70 Medium, and about
   - [x] Remove generation-api local bearer parsing from paid usage accounting.
   - [x] Route admin-api dashboard authentication through shared `requireSession`.
   - [x] Route app-api session/admin checks through shared `requireSession` and `requireRole`.
+  - [x] Remove obsolete identity routes for managed-child login and direct self-delete.
 
 - [x] Move iOS identity storage to Keychain.
   - Make `TikoKeychainIdentityStore` the default.
@@ -241,7 +242,7 @@ Approximate review spread: 7 Critical, about 35 High, about 70 Medium, and about
   - [x] Convert tts-api into an Atlas-only adapter with no local speech cache or provider path.
   - [x] Remove generation-api local audio cache/provider fallback and drop its generated-audio table.
   - [x] Route generation-api voice samples and story narration through Atlas assets instead of direct TTS providers.
-  - [x] Remove shared web TTS legacy response decoding so non-Atlas speech responses fall back to native/browser speech.
+  - [x] Remove shared web TTS non-Atlas response decoding so non-Atlas speech responses fall back to native/browser speech.
 
 ## Phase 4 - Testing And CI Quality
 

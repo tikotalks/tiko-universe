@@ -280,9 +280,7 @@ async function handleManagedIdentity(request: Request, env: Env): Promise<Respon
   if (path === '/v1/identity/mode/parent' && request.method === 'POST') return enterParentMode(request, env)
   if (path === '/v1/identity/child-accounts' && request.method === 'GET') return listManagedChildren(request, env)
   if (path === '/v1/identity/child-accounts' && request.method === 'POST') return createManagedChild(request, env)
-  if (path === '/v1/identity/managed/children' && request.method === 'POST') return createManagedChild(request, env)
   if (path === '/v1/identity/child-accounts/login' && request.method === 'POST') return loginManagedChild(request, env)
-  if (path === '/v1/identity/managed/login' && request.method === 'POST') return loginManagedChild(request, env)
   const childMatch = path.match(/^\/v1\/identity\/child-accounts\/([^/]+)(?:\/(code\/reset|progress\/reset))?$/)
   if (childMatch && request.method === 'PUT') return updateManagedChild(request, env, childMatch[1])
   if (childMatch && request.method === 'POST' && childMatch[2] === 'code/reset') return resetManagedChildCode(request, env, childMatch[1])
@@ -292,7 +290,6 @@ async function handleManagedIdentity(request: Request, env: Env): Promise<Respon
   if (path === '/v1/identity/deletion-requests' && request.method === 'POST') return createDeletionRequest(request, env)
   const deletionMatch = path.match(/^\/v1\/identity\/deletion-requests\/([^/]+)$/)
   if (deletionMatch && request.method === 'GET') return getDeletionRequest(request, env, deletionMatch[1])
-  if (path === '/v1/identity/me' && request.method === 'DELETE') return deleteCurrentIdentity(request, env)
   if (path === '/v1/identity/profile' && request.method === 'GET') return getIdentityProfile(request, env)
   if (path === '/v1/identity/profile' && request.method === 'PUT') return updateIdentityProfile(request, env)
   return null
@@ -402,26 +399,6 @@ async function enterParentMode(request: Request, env: Env): Promise<Response> {
   }
   await updateRuntimeState(env, session.subjectId, { ...runtime, mode: 'parent' })
   return sessionResponse(request, env)
-}
-
-async function deleteCurrentIdentity(request: Request, env: Env): Promise<Response> {
-  // Legacy endpoint — delegates to the deletion-request contract
-  const session = await requireIdentitySession(request, env)
-  if (!session) return Response.json({ error: 'invalid_session' }, { status: 401 })
-
-  const requestId = id('del')
-  const at = new Date().toISOString()
-
-  await env.IDENTITY_DB.prepare(
-    'INSERT INTO identity_deletion_requests (id, subject_id, scope, status, child_account_id, pin_grant_token, created_at, updated_at, completed_at, metadata_json) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
-  ).bind(requestId, session.subjectId, 'account', 'requested', null, null, at, at, null, '{"legacy":true}').run()
-
-  await executeAccountDeletion(env, session.subjectId)
-  const completedAt = new Date().toISOString()
-  await env.IDENTITY_DB.prepare('UPDATE identity_deletion_requests SET status = ?, completed_at = ?, updated_at = ? WHERE id = ?')
-    .bind('completed', completedAt, completedAt, requestId).run()
-
-  return new Response(null, { status: 204 })
 }
 
 async function createManagedChild(request: Request, env: Env): Promise<Response> {
@@ -1232,7 +1209,7 @@ function deriveCapabilities(accountType: AccountType, runtime: { mode: RuntimeMo
 
 async function deriveLoginMethod(request: AnyRequest, body: Record<string, any>, accountType: AccountType): Promise<LoginMethod> {
   const path = new URL(request.url).pathname
-  if (accountType === 'child_account' || path.endsWith('/managed/login') || path.endsWith('/child-accounts/login')) return 'child_code'
+  if (accountType === 'child_account' || path.endsWith('/child-accounts/login')) return 'child_code'
   if (path.includes('/email/verify') || path.includes('/magic-links/verify') || path.includes('/otp/verify')) {
     const requestBody = await request.clone().json().catch(() => ({})) as { token?: unknown; otp?: unknown; code?: unknown }
     if (requestBody.token) return 'magic_link'
@@ -1249,7 +1226,7 @@ async function withBrowserSessionCookie(request: AnyRequest, response: Response)
   const url = new URL(request.url)
   const isTikoAppsIdentityHost = url.hostname === 'id.tikoapps.org' || url.hostname.endsWith('.id.tikoapps.org')
   const path = url.pathname.replace(/\/$/, '')
-  const shouldClearCookie = (request.method === 'POST' && path === '/v1/identity/logout') || (request.method === 'DELETE' && path === '/v1/identity/me') || (request.method === 'POST' && path === '/v1/identity/deletion-requests')
+  const shouldClearCookie = (request.method === 'POST' && path === '/v1/identity/logout') || (request.method === 'POST' && path === '/v1/identity/deletion-requests')
 
   if (shouldClearCookie && isTikoAppsIdentityHost) {
     headers.append('Set-Cookie', browserCookie('', 0))
