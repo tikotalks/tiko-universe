@@ -1,12 +1,15 @@
 import { mount } from '@vue/test-utils'
 import { readFileSync } from 'node:fs'
 import { resolve } from 'node:path'
+import { h, nextTick } from 'vue'
 import { describe, expect, it, vi } from 'vitest'
 import {
   TikoAnswerButton,
   TikoAppHeader,
   TikoAppShell,
   TikoChoiceGrid,
+  TikoOpenIconPicker,
+  TikoPagedTileGrid,
   TikoSettingsPanel,
   createTikoChoice,
   createTikoTtsClient,
@@ -14,6 +17,13 @@ import {
   tikoAppConfigs,
   tikoKitComponents
 } from './index'
+import TikoChildAccountsPanel from './TikoChildAccountsPanel.vue'
+
+async function flushMountedWork() {
+  await Promise.resolve()
+  await Promise.resolve()
+  await nextTick()
+}
 
 describe('TikoKit component contract', () => {
   it('exports the initial reusable Yes No building blocks including the reusable app header', () => {
@@ -151,6 +161,74 @@ describe('TikoKit component contract', () => {
     await wrapper.get('button').trigger('click')
 
     expect(wrapper.emitted('answer')).toEqual([['no']])
+  })
+
+  it('loads and creates child accounts from injected handlers', async () => {
+    const onLoad = vi.fn(async () => [])
+    const onCreate = vi.fn(async (name: string, code: string) => ({ id: 'child-1', name, code }))
+    const wrapper = mount(TikoChildAccountsPanel, {
+      props: {
+        onLoad,
+        onCreate,
+        onUpdate: vi.fn(),
+        onResetCode: vi.fn(),
+        onDelete: vi.fn(),
+      },
+    })
+
+    await flushMountedWork()
+    await wrapper.get('.tiko-child-accounts__item--add').trigger('click')
+    const inputs = wrapper.findAll<HTMLInputElement>('.tiko-child-accounts__input')
+    await inputs[0].setValue('Mia')
+    await inputs[1].setValue('1234')
+    await wrapper.get('.tiko-child-accounts__btn').trigger('click')
+    await flushMountedWork()
+
+    expect(onLoad).toHaveBeenCalledTimes(1)
+    expect(onCreate).toHaveBeenCalledWith('Mia', '1234')
+    expect(wrapper.text()).toContain('Mia')
+  })
+
+  it('pages tiles through dots and emits page changes', async () => {
+    const wrapper = mount(TikoPagedTileGrid, {
+      props: {
+        items: [{ id: 'one' }, { id: 'two' }, { id: 'three' }],
+        columns: 2,
+        itemsPerPage: 2,
+        page: 0,
+      },
+      slots: {
+        item: ({ item }: { item: { id: string } }) => h('span', { class: 'tile' }, item.id),
+      },
+    })
+
+    await flushMountedWork()
+    expect(wrapper.findAll('.tile')).toHaveLength(3)
+    expect(wrapper.findAll('.tiko-paged-tile-grid__dot')).toHaveLength(2)
+
+    await wrapper.findAll('.tiko-paged-tile-grid__dot')[1].trigger('click')
+
+    expect(wrapper.emitted('update:page')).toEqual([[1]])
+    expect(wrapper.emitted('pageChange')).toEqual([[1]])
+  })
+
+  it('toggles open-icon selections with accessible buttons', async () => {
+    const wrapper = mount(TikoOpenIconPicker, {
+      props: {
+        modelValue: 'ui/check-fat',
+        icons: [
+          { name: 'ui/check-fat', label: 'Check' },
+          { name: 'ui/star-fat', label: 'Star' },
+        ],
+      },
+    })
+
+    expect(wrapper.get('button[aria-label="Check"]').attributes('aria-pressed')).toBe('true')
+
+    await wrapper.get('button[aria-label="Check"]').trigger('click')
+    await wrapper.get('button[aria-label="Star"]').trigger('click')
+
+    expect(wrapper.emitted('update:modelValue')).toEqual([[''], ['ui/star-fat']])
   })
 
   it('renders a two-choice grid and emits selected choice ids', async () => {
