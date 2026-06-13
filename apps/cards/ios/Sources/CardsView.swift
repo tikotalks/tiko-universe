@@ -74,7 +74,9 @@ struct CardsView: View {
                 : [TikoHeaderAction(id: "add", label: "Add", systemImage: "plus")],
             onAction: { id in
                 switch id {
-                case "add":  showingAdd = true
+                case "add":
+                    refreshAdminStateFromStoredSession()
+                    showingAdd = true
                 case "done": withAnimation(.spring(response: 0.25)) { isEditing = false; selectedCollectionIDs.removeAll() }
                 default: break
                 }
@@ -132,6 +134,10 @@ struct CardsView: View {
                         onEditCollection: { col in
                             editingCollection = col
                             showingEditCollection = true
+                        },
+                        onStartEditing: {
+                            refreshAdminStateFromStoredSession()
+                            withAnimation(.spring(response: 0.25)) { isEditing = true }
                         },
                         onNavigate: { sub in
                             withAnimation(.spring(response: 0.38, dampingFraction: 0.85)) {
@@ -236,6 +242,7 @@ struct CardsView: View {
                                             .simultaneousGesture(LongPressGesture(minimumDuration: 0.5).onEnded { _ in
                                                 let isChild = (try? TikoDeviceSessionStore().load())?.isChildMode ?? false
                                                 guard !isChild else { return }
+                                                refreshAdminStateFromStoredSession()
                                                 UIImpactFeedbackGenerator(style: .medium).impactOccurred()
                                                 withAnimation(.spring(response: 0.25)) { isEditing = true }
                                             })
@@ -365,18 +372,28 @@ struct CardsView: View {
             isAdmin = false
             return
         }
+        isAdmin = Self.hasContentEditingAccess(bundle)
         guard let token = bundle.accessToken else {
-            isAdmin = bundle.capabilities?.canEditContent == true || bundle.roles?.contains("admin") == true || bundle.roles?.contains("content_editor") == true
             return
         }
         do {
             let refreshed = try await TikoIdentityClient().getSession(accessToken: token)
             let merged = refreshed.preservingSession(from: bundle)
             try sessionStore.save(merged)
-            isAdmin = merged.capabilities?.canEditContent == true || merged.roles?.contains("admin") == true || merged.roles?.contains("content_editor") == true
+            isAdmin = Self.hasContentEditingAccess(merged)
         } catch {
-            isAdmin = bundle.capabilities?.canEditContent == true || bundle.roles?.contains("admin") == true || bundle.roles?.contains("content_editor") == true
+            isAdmin = Self.hasContentEditingAccess(bundle)
         }
+    }
+
+    private func refreshAdminStateFromStoredSession() {
+        isAdmin = Self.hasContentEditingAccess(try? TikoDeviceSessionStore().load())
+    }
+
+    static func hasContentEditingAccess(_ bundle: TikoIdentityBundle?) -> Bool {
+        bundle?.capabilities?.canEditContent == true ||
+        bundle?.roles?.contains("admin") == true ||
+        bundle?.roles?.contains("content_editor") == true
     }
 
     private func columnCount(width: CGFloat, height: CGFloat) -> Int {
@@ -562,6 +579,7 @@ private struct CollectionDetailView: View {
     let onSpeak: (CommunicationCard) -> Void
     let onEdit: (CommunicationCard) -> Void
     let onEditCollection: (CardCollection) -> Void
+    let onStartEditing: () -> Void
     let onNavigate: (CardCollection) -> Void
 
     @State private var currentPage = 0
@@ -652,7 +670,7 @@ private struct CollectionDetailView: View {
                                         let isChild = (try? TikoDeviceSessionStore().load())?.isChildMode ?? false
                                         guard !isChild else { return }
                                         UIImpactFeedbackGenerator(style: .medium).impactOccurred()
-                                        withAnimation(.spring(response: 0.25)) { isEditing = true }
+                                        onStartEditing()
                                     })
                                     .animation(.spring(response: 0.25), value: isEditing)
 
@@ -722,7 +740,7 @@ private struct CollectionDetailView: View {
                                         if isChild {
                                             fullscreenCard = card
                                         } else {
-                                            withAnimation(.spring(response: 0.25)) { isEditing = true }
+                                            onStartEditing()
                                         }
                                     })
                                     .animation(.spring(response: 0.25), value: isEditing)

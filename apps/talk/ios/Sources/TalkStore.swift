@@ -11,6 +11,8 @@ final class TalkStore {
     var userId: String?
     var sessionToken: String?
     var isLoading = false
+    // True while a /next prediction request is in flight (drives a subtle loader).
+    var isPredicting = false
     var isOfflineFallback = false
     var sentenceWords: [TalkWordTile] = []
     var templates: [TalkTemplate] = []
@@ -284,6 +286,8 @@ final class TalkStore {
             return
         }
 
+        isPredicting = true
+        defer { isPredicting = false }
         do {
             let response = try await apiClient.next(
                 currentWords: sentenceWords.map(\.id),
