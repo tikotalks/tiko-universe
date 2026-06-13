@@ -389,13 +389,39 @@ describe('generation-api TTS contract', () => {
   })
 
   it('reuses cached story segment audio when a previous render failed mid-story', async () => {
-    const env = makeEnv()
     const firstSegmentBytes = Uint8Array.from([1, 2, 3])
     const secondSegmentBytes = Uint8Array.from([4, 5, 6])
-    const fetchMock = vi.spyOn(globalThis, 'fetch')
-      .mockResolvedValueOnce(new Response(firstSegmentBytes, { status: 200 }))
-      .mockResolvedValueOnce(new Response('temporary', { status: 503 }))
-      .mockResolvedValueOnce(new Response('still temporary', { status: 503 }))
+    let failedSecondSegmentOnce = false
+    const atlasFetch = vi.fn(async (input: Request | string) => {
+      const request = input instanceof Request ? input : new Request(input)
+      const path = new URL(request.url).pathname
+      if (path === '/v1/atlas/speech') {
+        const body = await request.json() as { text: string }
+        const id = body.text.startsWith('First') ? 'segment-one' : 'segment-two'
+        return new Response(JSON.stringify({
+          data: {
+            id,
+            audioUrl: `/v1/atlas/assets/${id}`,
+            contentType: 'audio/mpeg',
+            provider: { name: 'elevenlabs', model: 'eleven_multilingual_v2', voice: 'cgSgspJ2msm6clMCkdW9' },
+          },
+          meta: { cached: false, schemaVersion: 1 },
+        }), { status: 200, headers: { 'content-type': 'application/json' } })
+      }
+      if (path === '/v1/atlas/assets/segment-one') return new Response(firstSegmentBytes, { status: 200, headers: { 'content-type': 'audio/mpeg' } })
+      if (path === '/v1/atlas/assets/segment-two') {
+        if (!failedSecondSegmentOnce) {
+          failedSecondSegmentOnce = true
+          return new Response('temporary', { status: 503 })
+        }
+        return new Response(secondSegmentBytes, { status: 200, headers: { 'content-type': 'audio/mpeg' } })
+      }
+      return new Response('not found', { status: 404 })
+    })
+    const env = makeEnv({
+      ATLAS_SERVICE: { fetch: atlasFetch },
+      ATLAS_API_KEY: 'test-atlas-key',
+    } as Partial<Env> & Record<string, unknown>)
 
     const body = {
       title: 'Resumable story',
@@ -407,15 +433,14 @@ describe('generation-api TTS contract', () => {
     }
 
     const failed = await worker.fetch(generationPost('/v1/generation/stories/render', body), env)
-    expect(failed.status).toBe(502)
+    expect(failed.status).toBe(503)
     expect(Array.from(env.bucket.objects.keys()).filter((key) => key.startsWith('story-segments/'))).toHaveLength(1)
 
-    fetchMock.mockResolvedValueOnce(new Response(secondSegmentBytes, { status: 200 }))
     const retried = await worker.fetch(generationPost('/v1/generation/stories/render', body), env)
     const retriedBody = await json(retried)
 
     expect(retried.status).toBe(201)
-    expect(fetchMock).toHaveBeenCalledTimes(4)
+    expect(atlasFetch).toHaveBeenCalledTimes(6)
     expect(Array.from(env.bucket.objects.keys()).filter((key) => key.startsWith('story-segments/'))).toHaveLength(2)
     expect(env.db.stories.size).toBe(1)
     expect(retriedBody.data).toMatchObject({ title: 'Resumable story', fileSizeBytes: 6 })

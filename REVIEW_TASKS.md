@@ -214,14 +214,15 @@ Approximate review spread: 7 Critical, about 35 High, about 70 Medium, and about
   - [x] Move `TikoOpenIconPicker` out of the `@tiko/ui` barrel into its own component module.
   - [x] Move Tiko app shell/header, choice grid, settings panel, and app meta helpers out of the `@tiko/ui` barrel.
 
-- [ ] Unify TTS architecture.
-  - Retire tts-api and generation-api local provider path, or make Atlas persist into the one shared cache.
-  - Ensure one source of truth for speech generation, caching, and provider selection.
-  - App clients now send speech requests to Atlas without provider/model/voice hints; remaining work is worker-side service/cache consolidation.
+- [x] Unify TTS architecture.
+  - [x] Retire tts-api and generation-api local provider paths so Atlas owns provider choice and speech cache.
+  - [x] Ensure one source of truth for speech generation, caching, and provider selection.
+  - [x] App clients now send speech requests to Atlas without provider/model/voice hints; worker-side service/cache consolidation is complete for speech.
   - [x] Stop generation-api compatibility TTS from sending provider/model/voice hints to Atlas and require an authenticated Atlas service call.
   - [x] Send web and iOS app speech requests to Atlas with the shared identity credentials before using native/browser speech fallback.
   - [x] Convert tts-api into an Atlas-only adapter with no local speech cache or provider path.
   - [x] Remove generation-api compatibility TTS local audio cache/provider fallback and drop its generated-audio table.
+  - [x] Route generation-api voice samples and story narration through Atlas assets instead of direct TTS providers.
 
 ## Phase 4 - Testing And CI Quality
 
