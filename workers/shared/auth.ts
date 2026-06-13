@@ -48,8 +48,6 @@ export interface AuthEnv {
   ANKORE_TOKEN_PEPPER?: string
   /** Secrets Store binding for TOKEN_PEPPER (centralized across workers) */
   PEPPER_SECRET?: SecretStoreSecret
-  /** @deprecated Static API key fallback is intentionally not used. */
-  API_KEYS?: string
   /** Base URL of the identity service (e.g. https://api.tikotalks.com/v1) */
   IDENTITY_BASE_URL?: string
   /**

@@ -21,7 +21,6 @@ export interface Env {
   GENERATED_MEDIA_BUCKET: R2BucketLike
   OPENAI_API_KEY?: string
   ELEVENLABS_API_KEY?: string
-  API_KEYS?: string
   AUTH_DB?: {
     prepare(sql: string): { bind(...values: unknown[]): { first<T>(): Promise<T | null>; all(): Promise<{ results: unknown[] }> } }
   }

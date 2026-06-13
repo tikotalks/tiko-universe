@@ -131,7 +131,6 @@ function makeEnv(overrides: Partial<Env> = {}): Env & { db: MemoryD1; bucket: Me
     GENERATED_MEDIA_BUCKET: bucket,
     OPENAI_API_KEY: 'test-key',
     ELEVENLABS_API_KEY: 'test-eleven-key',
-    API_KEYS: 'test-api-key',
     IDENTITY_BASE_URL: 'https://identity.test/v1',
     IDENTITY_SERVICE: sessionIdentityService({ 'test-api-key': 'service_user' }),
     ...overrides,
@@ -448,7 +447,7 @@ describe('generation-api TTS contract', () => {
 
   it('scopes story draft lists to the authenticated session owner', async () => {
     const identity = sessionIdentityService({ 'token-a': 'user_a', 'token-b': 'user_b' })
-    const env = makeEnv({ API_KEYS: undefined, IDENTITY_SERVICE: identity } as Partial<Env>)
+    const env = makeEnv({ IDENTITY_SERVICE: identity } as Partial<Env>)
 
     for (const [token, title] of [['token-a', 'Owner A'], ['token-b', 'Owner B']] as const) {
       const response = await worker.fetch(new Request('https://api.test/v1/generation/story-drafts', {
@@ -470,7 +469,7 @@ describe('generation-api TTS contract', () => {
 
   it('protects private image binaries and mutations by owner', async () => {
     const identity = sessionIdentityService({ 'token-a': 'user_a', 'token-b': 'user_b' })
-    const env = makeEnv({ API_KEYS: undefined, IDENTITY_SERVICE: identity } as Partial<Env>)
+    const env = makeEnv({ IDENTITY_SERVICE: identity } as Partial<Env>)
     env.db.generatedImages.set('image_private', {
       id: 'image_private',
       r2_key: 'images/private.png',
@@ -564,7 +563,6 @@ describe('generation-api TTS contract', () => {
       })
     })
     const env = makeEnv({
-      API_KEYS: undefined,
       OPENAI_API_KEY: undefined,
       IDENTITY_SERVICE: { fetch: identityFetch },
     } as Partial<Env>)
