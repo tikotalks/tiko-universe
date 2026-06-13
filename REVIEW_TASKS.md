@@ -77,6 +77,7 @@ Approximate review spread: 7 Critical, about 35 High, about 70 Medium, and about
   - [x] Move identity role loading into shared auth and reuse it from admin-api.
   - [x] Resolve API-key pepper through the shared auth layer, including Secrets Store bindings.
   - [x] Remove the stale `API_KEYS` static-secret auth surface from worker contracts and tests.
+  - [x] Route content-api card mutation session validation through shared `requireSession` while preserving app-api token forwarding.
 
 - [x] Move iOS identity storage to Keychain.
   - Make `TikoKeychainIdentityStore` the default.

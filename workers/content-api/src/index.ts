@@ -1,6 +1,6 @@
 // Tiko content-api — D1-backed published content read model.
 // Public reads only for now; admin mutations belong in admin-api.
-import { requireRole, type AuthEnv } from '../../shared/auth'
+import { requireRole, requireSession, type AuthEnv } from '../../shared/auth'
 
 interface Env extends AuthEnv {
   CONTENT_DB: D1Database
@@ -1084,9 +1084,9 @@ async function putUserCardsState(env: Env, sessionToken: string, state: UserCard
 // ---------------------------------------------------------------------------
 
 async function handlePostCards(request: Request, env: Env, segments: string[]): Promise<Response> {
-  const authHeader = request.headers.get('Authorization') ?? ''
-  const sessionToken = authHeader.startsWith('Bearer ') ? authHeader.slice(7) : undefined
-  if (!sessionToken) return error(request, env, 'unauthorized', 'Authorization required', 401)
+  const auth = await requireUserSession(request, env)
+  if (auth instanceof Response) return auth
+  const { sessionToken } = auth
 
   // POST /v1/cards/collections
   if (segments[2] === 'collections' && segments.length === 3) {
@@ -1422,9 +1422,20 @@ async function requireContentAdmin(request: Request, env: Env): Promise<Response
   })
   if (!(auth instanceof Response)) return null
 
+  return sharedAuthError(request, env, auth, 'Admin access required')
+}
+
+async function requireUserSession(request: Request, env: Env): Promise<{ sessionToken: string } | Response> {
+  const auth = await requireSession(request, authEnv(env))
+  if (auth instanceof Response) return sharedAuthError(request, env, auth, 'Authorization required')
+  if (!auth.bearerToken) return error(request, env, 'unauthorized', 'Authorization required', 401)
+  return { sessionToken: auth.bearerToken }
+}
+
+async function sharedAuthError(request: Request, env: Env, auth: Response, fallbackMessage: string): Promise<Response> {
   const body = await auth.json().catch(() => null) as { error?: { code?: string; message?: string } } | null
   const code = body?.error?.code ?? (auth.status === 401 ? 'unauthorized' : 'forbidden')
-  const message = auth.status === 401 ? 'Unauthorized' : 'Admin access required'
+  const message = auth.status === 401 ? 'Unauthorized' : fallbackMessage
   return error(request, env, code, message, auth.status)
 }
 
@@ -1433,9 +1444,9 @@ async function isContentAdmin(request: Request, env: Env): Promise<boolean> {
 }
 
 async function handlePutCards(request: Request, env: Env, segments: string[]): Promise<Response> {
-  const authHeader = request.headers.get('Authorization') ?? ''
-  const sessionToken = authHeader.startsWith('Bearer ') ? authHeader.slice(7) : undefined
-  if (!sessionToken) return error(request, env, 'unauthorized', 'Authorization required', 401)
+  const auth = await requireUserSession(request, env)
+  if (auth instanceof Response) return auth
+  const { sessionToken } = auth
 
   // PUT /v1/cards/collections/:id
   if (segments[2] === 'collections' && segments.length === 4) {
@@ -1563,9 +1574,9 @@ async function handlePutCards(request: Request, env: Env, segments: string[]): P
 }
 
 async function handleDeleteCards(request: Request, env: Env, segments: string[]): Promise<Response> {
-  const authHeader = request.headers.get('Authorization') ?? ''
-  const sessionToken = authHeader.startsWith('Bearer ') ? authHeader.slice(7) : undefined
-  if (!sessionToken) return error(request, env, 'unauthorized', 'Authorization required', 401)
+  const auth = await requireUserSession(request, env)
+  if (auth instanceof Response) return auth
+  const { sessionToken } = auth
 
   // DELETE /v1/cards/collections/:id
   if (segments[2] === 'collections' && segments.length === 4) {
@@ -1628,9 +1639,9 @@ async function handleDeleteCards(request: Request, env: Env, segments: string[])
 }
 
 async function handlePromoteCollection(request: Request, env: Env, _segments: string[]): Promise<Response> {
-  const authHeader = request.headers.get('Authorization') ?? ''
-  const sessionToken = authHeader.startsWith('Bearer ') ? authHeader.slice(7) : undefined
-  if (!sessionToken) return error(request, env, 'unauthorized', 'Authorization required', 401)
+  const auth = await requireUserSession(request, env)
+  if (auth instanceof Response) return auth
+  const { sessionToken } = auth
   if (!(await isContentAdmin(request, env))) {
     return error(request, env, 'forbidden', 'Admin role required to promote collections', 403)
   }
