@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { computed, onMounted, ref, watch } from 'vue'
 import { useBemm } from 'bemm'
-import { Button, Icon, InputRange, InputText, InputTextArea } from '@sil/ui'
+import { Button, Icon, InputRange, InputText } from '@sil/ui'
+import StorySegmentsEditor from '../components/stories/StorySegmentsEditor.vue'
 import { useStoryNarration, type StoryDraft, type StoryGalleryItem, type VoiceSample } from '../composables/useStoryNarration'
 import { useAdminMediaLibrary, type AudioLibraryAlbum } from '../composables/useAdminMediaLibrary'
 import type { StorySegmentInput, StoryTryoutResult } from '../types/admin'
@@ -10,7 +11,6 @@ type Tab = 'library' | 'drafts' | 'create'
 
 const page = useBemm('story-page', { return: 'string', includeBaseClass: true })
 const card = useBemm('story-card', { return: 'string', includeBaseClass: true })
-const segment = useBemm('segment-card', { return: 'string', includeBaseClass: true })
 
 const fallbackVoices = [
   { id: '21m00Tcm4TlvDq8ikWAM', label: 'Rachel', provider: 'elevenlabs', model: 'eleven_multilingual_v2' },
@@ -56,6 +56,13 @@ const voicePreviewAudio = ref<HTMLAudioElement | null>(null)
 const voicePreviewPlayingId = ref<string | null>(null)
 
 const selectedSegment = computed(() => segments.value.find(s => s.id === selectedSegmentId.value) ?? segments.value[0])
+const selectedSegmentText = computed({
+  get: () => selectedSegment.value?.text ?? '',
+  set: value => {
+    const target = selectedSegment.value
+    if (target) target.text = value
+  },
+})
 const totalCharacters = computed(() => segments.value.reduce((sum, s) => sum + s.text.length, 0))
 const canRender = computed(() => title.value.trim() && segments.value.some(s => s.text.trim()))
 const voiceOptions = computed(() => {
@@ -471,28 +478,14 @@ onMounted(() => {
           </div>
         </div>
 
-        <section :class="page('editor')" aria-label="Story text editor">
-          <InputTextArea v-model="selectedSegment.text" label="Story text" :min-rows="10" :max-rows="18" :allow-resize="true" placeholder="Once upon a time…" />
-        </section>
-
-        <button type="button" :class="page('add-paragraph')" @click="addSegment">+ Add paragraph</button>
-
-        <section :class="page('segments')" aria-label="Story paragraphs">
-          <article
-            v-for="(item, index) in segments"
-            :key="item.id"
-            :class="segment('', { active: selectedSegmentId === item.id })"
-            @click="selectedSegmentId = item.id"
-          >
-            <div :class="segment('header')">
-              <strong :class="segment('label')">Paragraph {{ index + 1 }}</strong>
-              <div :class="segment('actions')">
-                <button type="button" :class="page('text-action')" @click.stop="duplicateSegment(item)">Copy</button>
-                <button type="button" :class="page('text-action')" :disabled="segments.length === 1" @click.stop="removeSegment(item.id)">Remove</button>
-              </div>
-            </div>
-          </article>
-        </section>
+        <StorySegmentsEditor
+          v-model:selected-segment-id="selectedSegmentId"
+          v-model:selected-text="selectedSegmentText"
+          :segments="segments"
+          @add="addSegment"
+          @duplicate="duplicateSegment"
+          @remove="removeSegment"
+        />
 
         <footer :class="page('form-meta')">
           <span><Icon name="ui/clock" size="small" /> Estimated length <strong>~{{ estimatedMinutes }} min</strong></span>
@@ -955,46 +948,6 @@ onMounted(() => {
     gap: var(--space-xs);
   }
 }
-
-.segment-card {
-  border: 1px solid var(--admin-border);
-  border-radius: var(--border-radius-s);
-  padding: var(--space-s);
-  background: var(--admin-page-bg);
-  cursor: pointer;
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-s);
-  transition: border-color 0.12s ease;
-
-  &:hover {
-    border-color: var(--admin-border-strong);
-  }
-
-  &--active {
-    border-color: var(--color-primary);
-    box-shadow: 0 0 0 1px var(--color-primary);
-  }
-
-  &__header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: var(--space-s);
-  }
-
-  &__label {
-    color: var(--admin-text);
-    font-weight: 600;
-    font-size: var(--font-size-s);
-  }
-
-  &__actions {
-    display: flex;
-    gap: var(--space-xs);
-  }
-}
-
 
 /* Reference-inspired Stories creator */
 .story-page {
@@ -1510,20 +1463,6 @@ onMounted(() => {
     &__form-meta {
       flex-direction: column;
     }
-  }
-}
-
-.segment-card {
-  padding: var(--space-s) 0;
-  background: transparent;
-  border-color: transparent;
-  border-top-color: color-mix(in srgb, var(--color-foreground), transparent 92%);
-  border-radius: 0;
-
-  &:hover,
-  &--active {
-    border-color: color-mix(in srgb, var(--color-foreground), transparent 86%);
-    box-shadow: none;
   }
 }
 
