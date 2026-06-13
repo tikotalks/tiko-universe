@@ -561,7 +561,7 @@ async function handleMediaUpload(request: Request, env: Env, access: MediaAccess
     const validationError = validateMediaUploadFile(file)
     if (validationError) return validationError
 
-    const { safeName, extension } = generateSafeFilename(file.name)
+    const { safeName } = generateSafeFilename(file.name)
     const nameWithoutExt = file.name.replace(/\.[^.]+$/, '')
     const baseKey = `uploads/${safeName}`
     const id = crypto.randomUUID()
@@ -645,11 +645,9 @@ async function handleMediaUpload(request: Request, env: Env, access: MediaAccess
       now,
     ]
 
-    let inserted = false
     for (let attempt = 1; attempt <= 3; attempt++) {
       try {
         await env.MEDIA_DB.prepare(insertSql).bind(...insertBindings).run()
-        inserted = true
         break
       } catch (dbError) {
         if (attempt === 3) {
