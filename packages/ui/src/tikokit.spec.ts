@@ -15,10 +15,13 @@ import {
   createTikoChoice,
   createTikoTtsClient,
   resolveTikoAppApiBaseUrl,
+  readTikoLocalJson,
   resolveTikoContentApiBaseUrl,
+  resolveTikoColorMode,
   resolveTikoGenerationApiBaseUrl,
   resolveTikoIdentityBaseUrl,
   resolveTikoMediaApiBaseUrl,
+  writeTikoLocalJson,
   tikoAppColors,
   tikoAppConfigs,
   tikoKitComponents
@@ -82,6 +85,27 @@ describe('TikoKit component contract', () => {
     expect(resolveTikoContentApiBaseUrl({ VITE_CONTENT_API_URL: 'https://legacy-content.test/v1/' })).toBe('https://legacy-content.test/v1')
     expect(resolveTikoGenerationApiBaseUrl({ VITE_GENERATION_API_URL: 'https://generation.test/v1/generation/' })).toBe('https://generation.test/v1/generation')
     expect(resolveTikoMediaApiBaseUrl({ VITE_MEDIA_API_URL: 'https://media.test/v1/' })).toBe('https://media.test/v1')
+  })
+
+  it('shares local JSON storage and color-mode runtime helpers', () => {
+    const storage = new Map<string, string>()
+    const localStorageLike = {
+      get length() { return storage.size },
+      clear: () => storage.clear(),
+      getItem: (key: string) => storage.get(key) ?? null,
+      key: (index: number) => Array.from(storage.keys())[index] ?? null,
+      removeItem: (key: string) => storage.delete(key),
+      setItem: (key: string, value: string) => { storage.set(key, value) },
+    } satisfies Storage
+
+    expect(readTikoLocalJson('missing', { ready: false }, localStorageLike)).toEqual({ ready: false })
+    writeTikoLocalJson('state', { ready: true }, localStorageLike)
+    expect(readTikoLocalJson('state', { ready: false }, localStorageLike)).toEqual({ ready: true })
+    storage.set('broken', '{')
+    expect(readTikoLocalJson('broken', { ready: false }, localStorageLike)).toEqual({ ready: false })
+    expect(resolveTikoColorMode('light')).toBe('light')
+    expect(resolveTikoColorMode('dark')).toBe('dark')
+    expect(resolveTikoColorMode('system', { matchMedia: () => ({ matches: true }) as MediaQueryList })).toBe('dark')
   })
 
   it('renders the design header with open-icon action names and app color token', async () => {

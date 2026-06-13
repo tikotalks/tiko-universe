@@ -9,10 +9,13 @@ import {
   TikoSettingsPanel,
   TikoSquareTile,
   createTikoTtsClient,
+  readTikoLocalJson,
   resolveTikoAppApiBaseUrl,
+  resolveTikoColorMode,
   resolveTikoContentApiBaseUrl,
   resolveTikoIdentityBaseUrl,
   useIdentityRuntime,
+  writeTikoLocalJson,
   type IdentityRuntimeState,
   type TikoColorMode
 } from '@tiko/ui'
@@ -55,20 +58,6 @@ interface PersistedState {
 }
 
 
-
-function readJson<T>(key: string, fallback: T): T {
-  if (typeof window === 'undefined') return fallback
-  try {
-    return JSON.parse(window.localStorage.getItem(key) ?? 'null') ?? fallback
-  } catch {
-    return fallback
-  }
-}
-
-function writeJson(key: string, value: unknown) {
-  if (typeof window === 'undefined') return
-  window.localStorage.setItem(key, JSON.stringify(value))
-}
 
 function toLanguage(value: string | undefined): TikoLanguage {
   return tikoLanguages.includes(value as TikoLanguage) ? value as TikoLanguage : defaultLanguage
@@ -115,7 +104,7 @@ function normalizeSequenceItem(item: unknown, source: SequenceItem['source']): S
   }
 }
 
-const stored = readJson<PersistedState>(storageKey, {})
+const stored = readTikoLocalJson<PersistedState>(storageKey, {})
 const i18n = createI18n({ app: appId, language: toLanguage(stored.language) })
 const translationLoader = createTikoTranslationLoader()
 const language = ref<TikoLanguage>(toLanguage(stored.language))
@@ -201,14 +190,8 @@ const playingItem = computed(() =>
 const isPlaying = computed(() => playingItem.value !== null)
 const currentPlayingStep = computed(() => playingItem.value?.steps[currentStep.value] ?? null)
 
-function resolveColorMode(mode: TikoColorMode) {
-  if (mode !== 'system') return mode
-  if (typeof window === 'undefined') return 'light'
-  return window.matchMedia?.('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
-}
-
 function saveLocal() {
-  writeJson(storageKey, {
+  writeTikoLocalJson(storageKey, {
     language: language.value,
     colorMode: colorMode.value,
     items: customItems.value,
@@ -297,7 +280,7 @@ watch(language, (value) => {
 }, { immediate: true })
 
 watch(colorMode, (mode) => {
-  const effective = resolveColorMode(mode)
+  const effective = resolveTikoColorMode(mode)
   document.documentElement.dataset.colorMode = effective
   document.documentElement.dataset.theme = effective
 }, { immediate: true })

@@ -9,12 +9,15 @@ import { createI18n, createTikoIdentityLabels, createTikoShellLabels, createTiko
 import {
   TikoAppShell,
   TikoColorMode,
+  readTikoLocalJson,
   resolveTikoAppApiBaseUrl,
+  resolveTikoColorMode,
   resolveTikoGenerationApiBaseUrl,
   resolveTikoIdentityBaseUrl,
   resolveTikoMediaApiBaseUrl,
   tikoColors,
   useIdentityRuntime,
+  writeTikoLocalJson,
   type IdentityRuntimeState,
 } from '@tiko/ui'
 import { useAudioPlayer } from './composables/useAudioPlayer'
@@ -75,20 +78,6 @@ interface PublicAudioAlbum {
 }
 
 // ---- Utility functions ----------------------------------------------------
-function readJson<T>(key: string, fallback: T): T {
-  if (typeof window === 'undefined') return fallback
-  try {
-    return JSON.parse(window.localStorage.getItem(key) ?? 'null') ?? fallback
-  } catch {
-    return fallback
-  }
-}
-
-function writeJson(key: string, value: unknown) {
-  if (typeof window === 'undefined') return
-  window.localStorage.setItem(key, JSON.stringify(value))
-}
-
 function toLanguage(value: string | undefined): TikoLanguage {
   return tikoLanguages.includes(value as TikoLanguage) ? value as TikoLanguage : defaultLanguage
 }
@@ -97,14 +86,8 @@ function toColorMode(value: string | undefined): TikoColorMode {
   return value === 'light' || value === 'dark' || value === 'system' ? value : 'system'
 }
 
-function resolveColorMode(mode: TikoColorMode) {
-  if (mode !== 'system') return mode
-  if (typeof window === 'undefined') return 'light'
-  return window.matchMedia?.('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
-}
-
 // ---- State initialization --------------------------------------------------
-const stored = readJson<PersistedState>(storageKey, {})
+const stored = readTikoLocalJson<PersistedState>(storageKey, {})
 const i18n = createI18n({ app: appId, language: toLanguage(stored.language) })
 const translationLoader = createTikoTranslationLoader()
 const language = ref<TikoLanguage>(toLanguage(stored.language))
@@ -269,7 +252,7 @@ function handleProgressClick(event: MouseEvent) {
 
 // ---- Persistence -----------------------------------------------------------
 function saveLocalFallback() {
-  writeJson(storageKey, {
+  writeTikoLocalJson(storageKey, {
     language: language.value,
     colorMode: colorMode.value,
     volume: volume.value,
@@ -448,7 +431,7 @@ watch(language, (value) => {
 }, { immediate: true })
 
 watch(colorMode, (mode) => {
-  const effective = resolveColorMode(mode)
+  const effective = resolveTikoColorMode(mode)
   document.documentElement.dataset.colorMode = effective
   document.documentElement.dataset.theme = effective
 }, { immediate: true })

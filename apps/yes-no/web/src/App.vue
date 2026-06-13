@@ -11,11 +11,14 @@ import {
   TikoSquareTile,
   createTikoTtsClient,
   injectAppMeta,
+  readTikoLocalJson,
   resolveTikoAppApiBaseUrl,
+  resolveTikoColorMode,
   resolveTikoContentApiBaseUrl,
   resolveTikoIdentityBaseUrl,
   tikoColors,
   useIdentityRuntime,
+  writeTikoLocalJson,
   type IdentityRuntimeState,
   type TikoAppConfig,
   type TikoColorMode
@@ -71,20 +74,6 @@ interface PersistedState {
   latestAnswerId?: string | null
   answerHistory?: string[]
   answers?: AnswerTile[]
-}
-
-function readJson<T>(key: string, fallback: T): T {
-  if (typeof window === 'undefined') return fallback
-  try {
-    return JSON.parse(window.localStorage.getItem(key) ?? 'null') ?? fallback
-  } catch {
-    return fallback
-  }
-}
-
-function writeJson(key: string, value: unknown) {
-  if (typeof window === 'undefined') return
-  window.localStorage.setItem(key, JSON.stringify(value))
 }
 
 function toLanguage(value: string | undefined): TikoLanguage {
@@ -144,7 +133,7 @@ function defaultsAnswers(state: unknown): AnswerTile[] {
   return Array.isArray(value?.answers) ? value.answers : []
 }
 
-const stored = readJson<PersistedState>(storageKey, {})
+const stored = readTikoLocalJson<PersistedState>(storageKey, {})
 const i18n = createI18n({ app: appId, language: toLanguage(stored.language) })
 const translationLoader = createTikoTranslationLoader()
 const loadedTranslations = new Set<string>()
@@ -253,14 +242,8 @@ const answerHistoryLabels = computed(() => {
   return answerHistory.value.map(answerLabel)
 })
 
-function resolveColorMode(mode: TikoColorMode) {
-  if (mode !== 'system') return mode
-  if (typeof window === 'undefined') return 'light'
-  return window.matchMedia?.('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
-}
-
 function saveLocalFallback() {
-  writeJson(storageKey, {
+  writeTikoLocalJson(storageKey, {
     language: language.value,
     colorMode: colorMode.value,
     sentence: sentence.value,
@@ -370,7 +353,7 @@ watch(language, (value) => {
 }, { immediate: true })
 
 watch(colorMode, (mode) => {
-  const effective = resolveColorMode(mode)
+  const effective = resolveTikoColorMode(mode)
   document.documentElement.dataset.colorMode = effective
   document.documentElement.dataset.theme = effective
 }, { immediate: true })

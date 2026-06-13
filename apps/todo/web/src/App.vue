@@ -8,8 +8,11 @@ import {
   TikoAppShell,
   TikoSettingsPanel,
   createTikoTtsClient,
+  readTikoLocalJson,
   resolveTikoAppApiBaseUrl,
+  resolveTikoColorMode,
   resolveTikoIdentityBaseUrl,
+  writeTikoLocalJson,
   type TikoColorMode
 } from '@tiko/ui'
 import { appConfig } from './appConfig'
@@ -40,20 +43,6 @@ interface StoredIdentity {
   expiresAt?: string
 }
 
-function readJson<T>(key: string, fallback: T): T {
-  if (typeof window === 'undefined') return fallback
-  try {
-    return JSON.parse(window.localStorage.getItem(key) ?? 'null') ?? fallback
-  } catch {
-    return fallback
-  }
-}
-
-function writeJson(key: string, value: unknown) {
-  if (typeof window === 'undefined') return
-  window.localStorage.setItem(key, JSON.stringify(value))
-}
-
 function toLanguage(value: string | undefined): TikoLanguage {
   return tikoLanguages.includes(value as TikoLanguage) ? value as TikoLanguage : defaultLanguage
 }
@@ -66,7 +55,7 @@ function generateId(): string {
   return `todo-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`
 }
 
-const stored = readJson<PersistedState>(storageKey, {})
+const stored = readTikoLocalJson<PersistedState>(storageKey, {})
 const i18n = createI18n({ app: appId, language: toLanguage(stored.language) })
 const translationLoader = createTikoTranslationLoader()
 const language = ref<TikoLanguage>(toLanguage(stored.language))
@@ -129,14 +118,8 @@ const headerActions = computed(() => [
 
 const pendingCount = computed(() => items.value.filter(item => !item.done).length)
 
-function resolveColorMode(mode: TikoColorMode) {
-  if (mode !== 'system') return mode
-  if (typeof window === 'undefined') return 'light'
-  return window.matchMedia?.('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
-}
-
 function saveLocal() {
-  writeJson(storageKey, {
+  writeTikoLocalJson(storageKey, {
     language: language.value,
     colorMode: colorMode.value,
     items: items.value,
@@ -146,7 +129,7 @@ function saveLocal() {
 function saveIdentity(bundle: IdentityBundle) {
   if (!bundle.session?.token) throw new Error('Identity response did not include a session token.')
   sessionToken.value = bundle.session.token
-  writeJson(identityStorageKey, {
+  writeTikoLocalJson(identityStorageKey, {
     userId: bundle.subject.id,
     deviceId: bundle.device?.id,
     expiresAt: bundle.session.expiresAt,
@@ -154,7 +137,7 @@ function saveIdentity(bundle: IdentityBundle) {
 }
 
 async function bootstrapIdentity() {
-  const storedIdentity = readJson<StoredIdentity>(identityStorageKey, {})
+  const storedIdentity = readTikoLocalJson<StoredIdentity>(identityStorageKey, {})
 
   try {
     const bundle = await identityClient.getCookieSession()
@@ -233,7 +216,7 @@ watch(language, (value) => {
 }, { immediate: true })
 
 watch(colorMode, (mode) => {
-  const effective = resolveColorMode(mode)
+  const effective = resolveTikoColorMode(mode)
   document.documentElement.dataset.colorMode = effective
   document.documentElement.dataset.theme = effective
 }, { immediate: true })

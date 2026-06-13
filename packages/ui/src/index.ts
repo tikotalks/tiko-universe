@@ -156,6 +156,26 @@ export function resolveTikoMediaApiBaseUrl(env?: TikoRuntimeEnv): string {
   return resolveTikoBaseUrl(['VITE_MEDIA_API_URL'], 'https://media.tikoapi.org/v1', env)
 }
 
+export function readTikoLocalJson<T>(key: string, fallback: T, storage: Storage | undefined = typeof window === 'undefined' ? undefined : window.localStorage): T {
+  if (!storage) return fallback
+  try {
+    return JSON.parse(storage.getItem(key) ?? 'null') ?? fallback
+  } catch {
+    return fallback
+  }
+}
+
+export function writeTikoLocalJson(key: string, value: unknown, storage: Storage | undefined = typeof window === 'undefined' ? undefined : window.localStorage) {
+  if (!storage) return
+  storage.setItem(key, JSON.stringify(value))
+}
+
+export function resolveTikoColorMode(mode: TikoColorMode, mediaMatcher: Pick<Window, 'matchMedia'> | undefined = typeof window === 'undefined' ? undefined : window): 'light' | 'dark' {
+  if (mode !== 'system') return mode
+  if (!mediaMatcher) return 'light'
+  return mediaMatcher.matchMedia?.('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+}
+
 export const TIKO_PALETTE: string[] = [
   '#9b3fbd', // yes-no purple
   '#2488ff', // type blue

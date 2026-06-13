@@ -8,7 +8,9 @@ import { createI18n, createTikoIdentityLabels, createTikoShellLabels, createTiko
 import {
   TikoAppShell,
   createTikoTtsClient,
+  readTikoLocalJson,
   resolveTikoAppApiBaseUrl,
+  resolveTikoColorMode,
   resolveTikoIdentityBaseUrl,
   useIdentityRuntime,
   type IdentityRuntimeState,
@@ -356,12 +358,7 @@ function renderPopup(kind: PopupKind) {
 }
 
 function readStored(): PersistedCards {
-  if (typeof window === 'undefined') return {}
-  try {
-    return JSON.parse(window.localStorage.getItem(storageKey) ?? 'null') ?? {}
-  } catch {
-    return {}
-  }
+  return readTikoLocalJson<PersistedCards>(storageKey, {})
 }
 
 function writeStored(state: PersistedCards) {
@@ -386,12 +383,6 @@ function toColorMode(value: string | undefined): TikoColorMode {
 
 function clampIndex(value: number) {
   return Math.min(2, Math.max(0, Number.isFinite(value) ? value : 1))
-}
-
-function resolveColorMode(mode: TikoColorMode) {
-  if (mode !== 'system') return mode
-  if (typeof window === 'undefined') return 'light'
-  return window.matchMedia?.('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
 }
 
 async function loadTranslations(value: TikoLanguage) {
@@ -461,7 +452,7 @@ watch(language, value => {
 }, { immediate: true })
 
 watch(colorMode, mode => {
-  const effective = resolveColorMode(mode)
+  const effective = resolveTikoColorMode(mode)
   document.documentElement.dataset.colorMode = effective
   document.documentElement.dataset.theme = effective
 }, { immediate: true })
