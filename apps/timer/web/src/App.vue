@@ -8,6 +8,8 @@ import {
   TikoAppShell,
   TikoSettingsPanel,
   TikoColorMode,
+  resolveTikoAppApiBaseUrl,
+  resolveTikoIdentityBaseUrl,
   useIdentityRuntime,
   type IdentityRuntimeState
 } from '@tiko/ui'
@@ -18,8 +20,8 @@ import './styles.scss'
 const storageKey = 'tiko:timer'
 const identityStorageKey = 'tiko:identity:device-session'
 const appId = 'timer' as const
-const apiBaseUrl = resolveApiBaseUrl()
-const identityBaseUrl = resolveIdentityBaseUrl()
+const apiBaseUrl = resolveTikoAppApiBaseUrl()
+const identityBaseUrl = resolveTikoIdentityBaseUrl()
 
 interface PersistedState {
   language?: string
@@ -46,16 +48,6 @@ const defaultPresets: TimerPreset[] = [
   { id: '5m', label: '5 min', seconds: 300 },
   { id: '10m', label: '10 min', seconds: 600 },
 ]
-
-function resolveApiBaseUrl() {
-  const env = (import.meta as ImportMeta & { env?: Record<string, string | undefined> }).env
-  return (env?.VITE_TIKO_API_BASE_URL ?? 'https://app.tikoapi.org/v1').replace(/\/$/, '')
-}
-
-function resolveIdentityBaseUrl() {
-  const env = (import.meta as ImportMeta & { env?: Record<string, string | undefined> }).env
-  return (env?.VITE_IDENTITY_API_URL ?? env?.VITE_TIKO_IDENTITY_BASE_URL ?? 'https://id.tikoapps.org/v1').replace(/\/$/, '')
-}
 
 function readJson<T>(key: string, fallback: T): T {
   if (typeof window === 'undefined') return fallback

@@ -9,6 +9,10 @@ import { createI18n, createTikoIdentityLabels, createTikoShellLabels, createTiko
 import {
   TikoAppShell,
   TikoColorMode,
+  resolveTikoAppApiBaseUrl,
+  resolveTikoGenerationApiBaseUrl,
+  resolveTikoIdentityBaseUrl,
+  resolveTikoMediaApiBaseUrl,
   tikoColors,
   useIdentityRuntime,
   type IdentityRuntimeState,
@@ -27,10 +31,10 @@ const popup = inject<PopupService>('popupService')!
 // ---- Constants ------------------------------------------------------------
 const storageKey = 'tiko:radio'
 const appId = 'radio' as const
-const apiBaseUrl = resolveApiBaseUrl()
-const identityBaseUrl = resolveIdentityBaseUrl()
-const generationApiBaseUrl = resolveGenerationApiBaseUrl()
-const mediaApiBaseUrl = resolveMediaApiBaseUrl()
+const apiBaseUrl = resolveTikoAppApiBaseUrl()
+const identityBaseUrl = resolveTikoIdentityBaseUrl()
+const generationApiBaseUrl = resolveTikoGenerationApiBaseUrl()
+const mediaApiBaseUrl = resolveTikoMediaApiBaseUrl()
 
 // ---- Interfaces -----------------------------------------------------------
 interface PersistedState {
@@ -71,26 +75,6 @@ interface PublicAudioAlbum {
 }
 
 // ---- Utility functions ----------------------------------------------------
-function resolveApiBaseUrl() {
-  const env = (import.meta as ImportMeta & { env?: Record<string, string | undefined> }).env
-  return (env?.VITE_TIKO_API_BASE_URL ?? 'https://identity.tikoapi.org/v1').replace(/\/$/, '')
-}
-
-function resolveIdentityBaseUrl() {
-  const env = (import.meta as ImportMeta & { env?: Record<string, string | undefined> }).env
-  return (env?.VITE_IDENTITY_API_URL ?? env?.VITE_TIKO_IDENTITY_BASE_URL ?? 'https://id.tikoapps.org/v1').replace(/\/$/, '')
-}
-
-function resolveGenerationApiBaseUrl() {
-  const env = (import.meta as ImportMeta & { env?: Record<string, string | undefined> }).env
-  return (env?.VITE_GENERATION_API_URL ?? 'https://generation.tikoapi.org/v1/generation').replace(/\/$/, '')
-}
-
-function resolveMediaApiBaseUrl() {
-  const env = (import.meta as ImportMeta & { env?: Record<string, string | undefined> }).env
-  return (env?.VITE_MEDIA_API_URL ?? 'https://media.tikoapi.org/v1').replace(/\/$/, '')
-}
-
 function readJson<T>(key: string, fallback: T): T {
   if (typeof window === 'undefined') return fallback
   try {

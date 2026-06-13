@@ -8,6 +8,8 @@ import {
   TikoAppShell,
   TikoSettingsPanel,
   createTikoTtsClient,
+  resolveTikoAppApiBaseUrl,
+  resolveTikoIdentityBaseUrl,
   type TikoColorMode
 } from '@tiko/ui'
 import { appConfig } from './appConfig'
@@ -16,8 +18,8 @@ import './styles.scss'
 const storageKey = 'tiko:todo'
 const identityStorageKey = 'tiko:identity:device-session'
 const appId = 'todo' as const
-const apiBaseUrl = resolveApiBaseUrl()
-const identityBaseUrl = resolveIdentityBaseUrl()
+const apiBaseUrl = resolveTikoAppApiBaseUrl()
+const identityBaseUrl = resolveTikoIdentityBaseUrl()
 
 interface TodoItem {
   id: string
@@ -36,16 +38,6 @@ interface StoredIdentity {
   userId?: string
   deviceId?: string
   expiresAt?: string
-}
-
-function resolveApiBaseUrl() {
-  const env = (import.meta as ImportMeta & { env?: Record<string, string | undefined> }).env
-  return (env?.VITE_TIKO_API_BASE_URL ?? 'https://app.tikoapi.org/v1').replace(/\/$/, '')
-}
-
-function resolveIdentityBaseUrl() {
-  const env = (import.meta as ImportMeta & { env?: Record<string, string | undefined> }).env
-  return (env?.VITE_IDENTITY_API_URL ?? env?.VITE_TIKO_IDENTITY_BASE_URL ?? 'https://id.tikoapps.org/v1').replace(/\/$/, '')
 }
 
 function readJson<T>(key: string, fallback: T): T {

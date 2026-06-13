@@ -13,6 +13,11 @@ import {
   TikoSettingsPanel,
   createTikoChoice,
   createTikoTtsClient,
+  resolveTikoAppApiBaseUrl,
+  resolveTikoContentApiBaseUrl,
+  resolveTikoGenerationApiBaseUrl,
+  resolveTikoIdentityBaseUrl,
+  resolveTikoMediaApiBaseUrl,
   tikoAppColors,
   tikoAppConfigs,
   tikoKitComponents
@@ -64,6 +69,17 @@ describe('TikoKit component contract', () => {
     })
     expect(tikoAppConfigs.radio.appIconMediaCategory).toBe('music')
     expect(tikoAppConfigs.timer.appIconMediaCategory).toBe('transport')
+  })
+
+  it('resolves shared web runtime base URLs from the canonical env keys', () => {
+    expect(resolveTikoAppApiBaseUrl()).toBe('https://app.tikoapi.org/v1')
+    expect(resolveTikoAppApiBaseUrl({ VITE_TIKO_API_BASE_URL: 'https://app.test/v1/' })).toBe('https://app.test/v1')
+    expect(resolveTikoIdentityBaseUrl({ VITE_IDENTITY_API_URL: 'https://identity.test/v1/' })).toBe('https://identity.test/v1')
+    expect(resolveTikoIdentityBaseUrl({ VITE_TIKO_IDENTITY_BASE_URL: 'https://legacy-id.test/v1/' })).toBe('https://legacy-id.test/v1')
+    expect(resolveTikoContentApiBaseUrl({ VITE_TIKO_CONTENT_BASE_URL: 'https://content.test/v1/' })).toBe('https://content.test/v1')
+    expect(resolveTikoContentApiBaseUrl({ VITE_CONTENT_API_URL: 'https://legacy-content.test/v1/' })).toBe('https://legacy-content.test/v1')
+    expect(resolveTikoGenerationApiBaseUrl({ VITE_GENERATION_API_URL: 'https://generation.test/v1/generation/' })).toBe('https://generation.test/v1/generation')
+    expect(resolveTikoMediaApiBaseUrl({ VITE_MEDIA_API_URL: 'https://media.test/v1/' })).toBe('https://media.test/v1')
   })
 
   it('renders the design header with open-icon action names and app color token', async () => {

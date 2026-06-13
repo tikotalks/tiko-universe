@@ -11,6 +11,9 @@ import {
   TikoSquareTile,
   createTikoTtsClient,
   injectAppMeta,
+  resolveTikoAppApiBaseUrl,
+  resolveTikoContentApiBaseUrl,
+  resolveTikoIdentityBaseUrl,
   tikoColors,
   useIdentityRuntime,
   type IdentityRuntimeState,
@@ -22,9 +25,9 @@ import './styles.scss'
 
 const storageKey = 'tiko:yes-no'
 const appId = 'yes-no' as const
-const apiBaseUrl = resolveApiBaseUrl()
-const contentBaseUrl = resolveContentBaseUrl()
-const identityBaseUrl = resolveIdentityBaseUrl()
+const apiBaseUrl = resolveTikoAppApiBaseUrl()
+const contentBaseUrl = resolveTikoContentApiBaseUrl()
+const identityBaseUrl = resolveTikoIdentityBaseUrl()
 const bemm = useBemm('yes-no-app', { return: 'string', includeBaseClass: true })
 
 type SpeakStatus = 'idle' | 'speaking' | 'fallback' | 'error'
@@ -68,21 +71,6 @@ interface PersistedState {
   latestAnswerId?: string | null
   answerHistory?: string[]
   answers?: AnswerTile[]
-}
-
-function resolveApiBaseUrl() {
-  const env = (import.meta as ImportMeta & { env?: Record<string, string | undefined> }).env
-  return (env?.VITE_TIKO_API_BASE_URL ?? 'https://app.tikoapi.org/v1').replace(/\/$/, '')
-}
-
-function resolveIdentityBaseUrl() {
-  const env = (import.meta as ImportMeta & { env?: Record<string, string | undefined> }).env
-  return (env?.VITE_IDENTITY_API_URL ?? env?.VITE_TIKO_IDENTITY_BASE_URL ?? 'https://id.tikoapps.org/v1').replace(/\/$/, '')
-}
-
-function resolveContentBaseUrl() {
-  const env = (import.meta as ImportMeta & { env?: Record<string, string | undefined> }).env
-  return (env?.VITE_TIKO_CONTENT_BASE_URL ?? env?.VITE_CONTENT_API_URL ?? 'https://content.tikoapi.org/v1').replace(/\/$/, '')
 }
 
 function readJson<T>(key: string, fallback: T): T {

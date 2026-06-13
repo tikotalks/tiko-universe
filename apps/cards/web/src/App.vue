@@ -8,6 +8,8 @@ import { createI18n, createTikoIdentityLabels, createTikoShellLabels, createTiko
 import {
   TikoAppShell,
   createTikoTtsClient,
+  resolveTikoAppApiBaseUrl,
+  resolveTikoIdentityBaseUrl,
   useIdentityRuntime,
   type IdentityRuntimeState,
   type TikoColorMode,
@@ -55,8 +57,8 @@ const labelSizeIndex = ref(clampIndex(stored.labelSizeIndex ?? 1))
 const settingsVersion = ref<number>()
 const collectionsHydrated = ref(false)
 
-const identityClient = new IdentityClient({ baseUrl: resolveIdentityBaseUrl(), credentials: 'include' })
-const dataClient = new TikoDataClient({ baseUrl: resolveApiBaseUrl() })
+const identityClient = new IdentityClient({ baseUrl: resolveTikoIdentityBaseUrl(), credentials: 'include' })
+const dataClient = new TikoDataClient({ baseUrl: resolveTikoAppApiBaseUrl() })
 const identityState: IdentityRuntimeState = {
   sessionToken: ref(''),
   userId: ref(''),
@@ -384,16 +386,6 @@ function toColorMode(value: string | undefined): TikoColorMode {
 
 function clampIndex(value: number) {
   return Math.min(2, Math.max(0, Number.isFinite(value) ? value : 1))
-}
-
-function resolveIdentityBaseUrl() {
-  const env = (import.meta as ImportMeta & { env?: Record<string, string | undefined> }).env
-  return (env?.VITE_IDENTITY_API_URL ?? env?.VITE_TIKO_IDENTITY_BASE_URL ?? 'https://id.tikoapps.org/v1').replace(/\/$/, '')
-}
-
-function resolveApiBaseUrl() {
-  const env = (import.meta as ImportMeta & { env?: Record<string, string | undefined> }).env
-  return (env?.VITE_TIKO_API_BASE_URL ?? 'https://app.tikoapi.org/v1').replace(/\/$/, '')
 }
 
 function resolveColorMode(mode: TikoColorMode) {
