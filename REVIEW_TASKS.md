@@ -265,7 +265,7 @@ Approximate review spread: 7 Critical, about 35 High, about 70 Medium, and about
   - Cancel stale media list requests.
   - Render CDN-resized thumbnails instead of full originals.
 
-- [ ] Fix cache correctness.
+- [x] Fix cache correctness.
   - TTS cache environment isolation.
   - Atlas/generation cache consistency.
   - Content cache language invalidation.

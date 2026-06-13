@@ -290,6 +290,26 @@ describe('content-api worker', () => {
     expect(body.data).toMatchObject({ id: 'item_1', slug: 'cat', tags: ['animal'], data: { emoji: '🐱' } })
   })
 
+  it('uses stable hashed cache keys for legacy query requests', async () => {
+    const env = makeEnv()
+    const first = await worker.fetch(new Request('https://content.test/query', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ method: 'getPages', params: { language: 'en', projectSlug: 'cards' } }),
+    }), env as never)
+    env.CONTENT_DB.pages[0].title = 'Changed after cache write'
+    const second = await worker.fetch(new Request('https://content.test/query', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ params: { projectSlug: 'cards', language: 'en' }, method: 'getPages' }),
+    }), env as never)
+
+    expect(first.status).toBe(200)
+    expect(second.status).toBe(200)
+    expect((await parseJson(second)).data[0].title).toBe('Animals')
+    expect([...env.CONTENT_CACHE.values.keys()]).toEqual([expect.stringMatching(/^query:[a-f0-9]{32}$/)])
+  })
+
   it('localizes default cards collections from content item translations', async () => {
     const response = await worker.fetch(new Request('https://content.test/v1/cards/collections?language=mt'), makeEnv() as never)
     const body = await parseJson(response)
