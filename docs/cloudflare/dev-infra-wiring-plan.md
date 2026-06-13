@@ -21,7 +21,7 @@ Read-only checks were run with `CLOUDFLARE_ACCOUNT_ID=8cef251b5fdcf6c6f63db98b7a
 | Type | Name | Binding use | Notes |
 | --- | --- | --- | --- |
 | D1 | `tiko-identity-dev` | `IDENTITY_DB` | Existing dev identity DB. |
-| D1 | `tiko-tts-db-dev` | `TTS_DB` now, `GENERATION_DB` later | Existing temporary TTS DB for the current compatibility Worker. |
+| D1 | `tiko-tts-db-dev` | none for current TTS flow | Existing dev resource from the old TTS shape. Do not bind it to current TTS work. Atlas owns speech metadata/cache. |
 | D1 | `tiko-content-db-dev` | `CONTENT_DB` | Existing dev content DB for later content-api work. |
 | D1 | `tiko-user-media-db-dev` | `MEDIA_DB` | Existing dev media metadata DB candidate. |
 | D1 | `tiko-media-cache-db-dev` | media cache metadata if retained | Existing legacy dev resource; do not treat as authoritative without schema review. |
@@ -76,35 +76,35 @@ CLOUDFLARE_ACCOUNT_ID=8cef251b5fdcf6c6f63db98b7aa49f9a npx -y -p node@22 -p wran
 CLOUDFLARE_ACCOUNT_ID=8cef251b5fdcf6c6f63db98b7aa49f9a npx -y -p node@22 -p wrangler wrangler kv namespace create tiko-app-cache-dev
 ```
 
-### `generation-api` / temporary `tts-api`
+### `generation-api` / `tts-api`
 
 Long-term Worker name: `tiko-generation-api-dev`.
 
-Temporary compatibility Worker name in this repo: `tiko-tts-api-dev`.
+Speech adapter Worker name in this repo: `tiko-tts-api-dev`.
 
 Current implemented Worker:
 
-- `workers/tts-api/src/index.ts` exists and still exposes compatibility endpoints `/generate` and `/audio`.
-- `workers/tts-api/wrangler.toml` was added for dry-run deploy wiring only.
+- `workers/tts-api/src/index.ts` exposes only `POST /generate`.
+- `workers/tts-api` is Atlas-only. It must not own provider selection, local audio storage, generated-audio metadata, or a separate speech cache.
+- `GET /audio` is not served by this Worker.
 
-Bindings for the temporary Worker:
+Bindings for the speech adapter Worker:
 
-- `TTS_DB` -> D1 `tiko-tts-db-dev` (`9ec91ef0-a12c-44c7-9a0a-bc4dbc5a4b74`).
-- `AUDIO_BUCKET` -> proposed R2 `tiko-generated-audio-dev`.
-- `OPENAI_API_KEY` -> secret, not configured in files.
+- `AUTH_DB` -> D1 used by shared service-key auth.
+- `ATLAS_SERVICE` -> service binding to Atlas.
+- `ATLAS_API_KEY` -> service key with the required Atlas scope.
 
 Long-term generation bindings:
 
-- `GENERATION_DB` -> prefer a new D1 `tiko-generation-dev`, or explicitly migrate/rename from `tiko-tts-db-dev` after schema review.
+- `GENERATION_DB` -> prefer a new D1 `tiko-generation-dev`.
 - `GENERATION_BUCKET` -> R2 `tiko-generated-media-dev` or split `tiko-generated-audio-dev` if audio lifecycle differs.
 - `GENERATION_CACHE` -> KV `tiko-generation-cache-dev` only for dedupe/read cache.
 - `GENERATION_QUEUE` -> Queue `tiko-generation-jobs-dev` only when async generation is introduced.
 
 Routes/domains:
 
-- Temporary compatibility route: `https://dev.tts.tikotalks.com/*`.
+- Speech adapter route: `https://dev.tts.tikotalks.com/*`.
 - Long-term route: `https://dev-api.tikotalks.com/v1/generation/*`.
-- Keep `tts.tikotalks.com` production compatibility out of this dev-only task.
 
 Create commands for missing dev resources when approved:
 
@@ -179,8 +179,8 @@ Future implemented Workers should follow the same pattern:
 
 ## Risks and blockers
 
-1. R2 buckets for Tiko media/audio were not found in the target `me@sil.mt` account. The temporary TTS dry-run wiring names `tiko-generated-audio-dev`, but live deploy will need that bucket created or the binding renamed to an approved existing bucket.
-2. Existing Tiko dev resources in the `me@sil.mt` account look legacy-shaped (`tiko-auth-dev`, `tiko-tts-db-dev`, worker-specific DBs). Use schema review before treating any of them as final clean-rebuild sources of truth.
+1. R2 buckets for Tiko media/audio were not found in the target `me@sil.mt` account. Create or approve generation/media buckets before binding new media storage.
+2. Existing Tiko dev resources in the `me@sil.mt` account include old names such as `tiko-auth-dev` and `tiko-tts-db-dev`. Do not bind current workers to them unless the current schema and ownership are explicitly confirmed.
 3. API dev route consolidation under `dev.api.tikoapi.org` needs a route/DNS decision before implemented `identity-api`, `app-api`, `generation-api`, `media-api`, and `content-api` are deployed behind stable domains.
-4. The local host default Node is v20/npm v9, while Wrangler 4 expects Node 22 and the repo declares npm 10. Scripts currently use `npx -p node@22 -p wrangler` as a compatibility shim; CI should run with Node 22/npm 10.
+4. The local host default Node is v20/npm v9, while Wrangler 4 expects Node 22 and the repo declares npm 10. CI should run with Node 22/npm 10.
 5. No production resources were created, changed, or deployed by this task.

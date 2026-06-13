@@ -116,20 +116,20 @@ Package ownership:
 
 ### `workers/tts-api` decision
 
-`workers/tts-api` should be folded into `workers/generation-api`, not kept as a permanent service.
+Atlas owns speech generation, provider selection, and speech caching. `workers/tts-api` is a narrow service-authenticated adapter for clients that still call `POST /generate`; it must not own providers, audio bytes, generated-audio metadata, or a separate cache.
 
 Exact path:
 
-1. Treat `workers/tts-api` as temporary compatibility for the existing Yes No proof app only.
-2. Move the accepted `POST /generate` behavior to `POST /v1/generation/tts` in `generation-api` before Type depends on TTS.
-3. Move `GET /audio?key=...` to either `GET /v1/generation/audio/{id}` or a signed R2 URL returned by `POST /v1/generation/tts`.
-4. Keep `https://tts.tikotalks.com/generate` as a compatibility adapter that forwards to `generation-api` during one transition window.
-5. After Yes No web/iOS and Type web use the new contract, delete or archive `workers/tts-api` and remove `https://tts.tikotalks.com` from package defaults.
+1. Keep app speech clients on the shared Atlas speech contract whenever possible.
+2. Keep `workers/tts-api` limited to `POST /generate` forwarding through Atlas.
+3. Reject provider/model/voice hints at `workers/tts-api`; Atlas decides the provider.
+4. Do not reintroduce `GET /audio`, local TTS D1/R2 storage, local provider calls, or a second speech cache.
+5. If all clients move to Atlas directly, delete `workers/tts-api` rather than expanding it.
 
 Reasoning:
 
-- TTS is generation, not an isolated product domain.
-- Keeping a separate TTS Worker would duplicate D1/R2/cache/job policy as soon as sentence/image generation arrives.
+- Speech is a platform capability, not an isolated product domain.
+- Keeping provider/cache policy in Atlas avoids per-worker divergence.
 - The current `tts-api` contract uses `{ success, audioUrl, cached }`, while the platform needs one shared response/error envelope.
 
 ### `media-api`
@@ -401,7 +401,7 @@ Do not build Type-specific TTS routes. Type must use the same generation/TTS con
 4. Implement `packages/identity` client against that contract.
 5. Implement `app-api` minimal D1 schema and handlers.
 6. Implement `packages/data` client plus Yes No/Type payload schemas.
-7. Move TTS from `workers/tts-api` into `workers/generation-api` and leave a temporary adapter.
+7. Keep speech generation on Atlas and keep `workers/tts-api` limited to the current service-authenticated `/generate` adapter.
 8. Move TTS client contracts out of `packages/ui` into `packages/media` or a generation client package if one is created.
 9. Wire Yes No web and iOS to identity/app/generation contracts without changing the child-facing first screen.
 10. Start Type only after Yes No proves identity, settings/state, and TTS across at least web plus one native path.
@@ -409,7 +409,7 @@ Do not build Type-specific TTS routes. Type must use the same generation/TTS con
 ## Validation checklist for P0 docs
 
 - `docs/api/openapi.yaml` remains the source for current accepted paths.
-- This plan does not introduce passwords, Better Auth, Supabase, login walls, or legacy migration assumptions.
-- `workers/tts-api` is explicitly temporary compatibility.
+- This plan does not introduce passwords, Better Auth, Supabase, login walls, or migration assumptions from old systems.
+- `workers/tts-api` does not own speech generation, storage, provider selection, or cache policy.
 - D1/R2/KV ownership is unambiguous.
 - Yes No and Type can proceed without inventing private client-only contracts.

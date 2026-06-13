@@ -1,6 +1,7 @@
 // Tiko content-api — D1-backed published content read model.
 // Public reads only for now; admin mutations belong in admin-api.
 import { requireRole, requireSession, type AuthEnv } from '../../shared/auth'
+import { resolveSecrets } from '../../shared/secrets'
 
 interface Env extends AuthEnv {
   CONTENT_DB: D1Database
@@ -1268,6 +1269,7 @@ async function handleGet(request: Request, env: Env, segments: string[]): Promis
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
     if (request.method === 'OPTIONS') return new Response(null, { status: 204, headers: corsHeaders(request, env) })
+    env = await resolveSecrets(env)
     const url = new URL(request.url)
     const path = url.pathname.replace(/^\/+|\/+$/g, '')
     const segments = path ? path.split('/') : []

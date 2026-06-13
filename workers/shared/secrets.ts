@@ -29,6 +29,7 @@ type ResolverEnv = {
 }
 
 const SECRET_MAPPINGS: Array<{ binding: keyof ResolverEnv; varName: string }> = [
+  { binding: 'PEPPER_SECRET', varName: 'TOKEN_PEPPER' },
   { binding: 'OPENAI_SECRET', varName: 'OPENAI_API_KEY' },
   { binding: 'ELEVENLABS_SECRET', varName: 'ELEVENLABS_API_KEY' },
   { binding: 'ATLAS_SECRET', varName: 'ATLAS_API_KEY' },
