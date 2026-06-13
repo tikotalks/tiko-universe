@@ -1,6 +1,6 @@
 # TTS API
 
-Compatibility worker for old speech routes.
+Atlas-only speech adapter for the `/generate` route.
 
 TTS ownership has moved to Atlas. New web, iOS, and Android clients must use the Atlas speech contract:
 
@@ -9,7 +9,7 @@ TTS ownership has moved to Atlas. New web, iOS, and Android clients must use the
 
 ## Contract
 
-This Worker keeps one old route during migration:
+This Worker exposes one service-authenticated route:
 
 - `POST /generate`
   - body: `{ "text": string, "language": string, "provider"?: "openai" | "azure" | "auto", "voice"?: string, "model"?: string, "speed"?: number, "pitch"?: number }`
@@ -22,7 +22,7 @@ This Worker keeps one old route during migration:
 
 - Do not add new product behavior here.
 - Atlas is the source of truth for new speech generation, caching, and provider selection.
-- Remove this worker after all clients stop using `/generate`.
+- Do not add local speech storage, provider selection, or generated-audio metadata here.
 
 ## Bindings expected
 

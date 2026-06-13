@@ -471,7 +471,7 @@ async function generateTts(request: Request, env: Env): Promise<Response> {
 }
 
 async function synthesizeWithAtlas(input: NormalizedTtsRequest, env: Env): Promise<Response> {
-  const atlas = await requestAtlasSpeech(input, env, 'compatibility-tts')
+  const atlas = await requestAtlasSpeech(input, env, 'speech-playback')
   if (atlas.success === false) return apiError(atlas.error, providerSafeMessage(atlas.error), atlas.status ?? 503)
 
   const data = atlas.body.data
@@ -493,7 +493,7 @@ async function synthesizeWithAtlas(input: NormalizedTtsRequest, env: Env): Promi
   }, 201)
 }
 
-type AtlasSpeechPurpose = 'compatibility-tts' | 'voice-sample' | 'story-narration'
+type AtlasSpeechPurpose = 'speech-playback' | 'voice-sample' | 'story-narration'
 
 type AtlasSpeechSuccess = {
   success: true
@@ -517,7 +517,7 @@ async function requestAtlasSpeech(input: NormalizedTtsRequest, env: Env, purpose
     language: input.language,
     speed: input.speed,
   }
-  if (purpose !== 'compatibility-tts') {
+  if (purpose !== 'speech-playback') {
     atlasPayload.provider = input.provider
     atlasPayload.voice = input.voice
     atlasPayload.model = input.model

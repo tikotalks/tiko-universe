@@ -282,7 +282,7 @@ describe('tts-api worker', () => {
         const body = await request.json() as Record<string, unknown>
         expect(body).toMatchObject({
           app: 'tts-api',
-          purpose: 'compatibility-tts',
+          purpose: 'speech-playback',
           text: 'Route me',
           language: 'en',
         })

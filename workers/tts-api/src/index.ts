@@ -113,7 +113,7 @@ async function synthesizeWithAtlas(input: Required<GenerateRequest>, env: Env): 
     headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${env.ATLAS_API_KEY}` },
     body: JSON.stringify({
       app: 'tts-api',
-      purpose: 'compatibility-tts',
+      purpose: 'speech-playback',
       text: input.text,
       language: input.language,
       speed: input.speed,

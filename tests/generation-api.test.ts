@@ -232,7 +232,7 @@ describe('generation-api TTS contract', () => {
     await expect(json(overBudget)).resolves.toMatchObject({ error: { code: 'budget_exceeded' } })
   })
 
-  it('routes compatibility TTS generation through Atlas instead of calling providers directly', async () => {
+  it('routes app speech generation through Atlas instead of calling providers directly', async () => {
     const atlasFetch = vi.fn(async (input: Request | string) => {
       const request = input instanceof Request ? input : new Request(input)
       expect(new URL(request.url).pathname).toBe('/v1/atlas/speech')
@@ -240,7 +240,7 @@ describe('generation-api TTS contract', () => {
       const atlasBody = await request.json() as Record<string, unknown>
       expect(atlasBody).toMatchObject({
         app: 'generation-api',
-        purpose: 'compatibility-tts',
+        purpose: 'speech-playback',
         text: 'Hello',
         language: 'en',
       })
@@ -284,7 +284,7 @@ describe('generation-api TTS contract', () => {
     })
   })
 
-  it('does not use local audio records for compatibility TTS', async () => {
+  it('does not use local audio records for app speech', async () => {
     const atlasFetch = vi.fn(async () => new Response(JSON.stringify({
       data: {
         id: 'atlas-audio-2',
@@ -314,7 +314,7 @@ describe('generation-api TTS contract', () => {
     })
   })
 
-  it('does not bypass Atlas when the compatibility TTS service binding is missing its service key', async () => {
+  it('does not bypass Atlas when the app speech service binding is missing its service key', async () => {
     const atlasFetch = vi.fn()
     const providerFetch = vi.spyOn(globalThis, 'fetch')
     const env = makeEnv({
@@ -333,7 +333,7 @@ describe('generation-api TTS contract', () => {
     })
   })
 
-  it('does not bypass Atlas when the compatibility TTS service binding is missing', async () => {
+  it('does not bypass Atlas when the app speech service binding is missing', async () => {
     const providerFetch = vi.spyOn(globalThis, 'fetch')
     const env = makeEnv({ OPENAI_API_KEY: undefined, ELEVENLABS_API_KEY: undefined })
     const response = await worker.fetch(generationPost('/v1/generation/tts', { text: 'Hello', language: 'en' }), env)

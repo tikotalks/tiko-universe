@@ -4,7 +4,7 @@ compatibility_date = "2026-05-27"
 account_id = "dc2b7d14a69351375cab6de9a13ddee9"
 workers_dev = true
 
-# Compatibility route for old speech clients.
+# Speech adapter route.
 # Speech generation, caching, and provider selection are owned by Atlas.
 
 [[d1_databases]]
@@ -22,7 +22,7 @@ TTS_PUBLIC_ROUTE = "https://dev.tts.tikotalks.com"
 ATLAS_BASE_URL = "https://api.tikotalks.com/v1/atlas"
 
 # ── Production environment ──────────────────────────────────────
-# Production compatibility route for old speech clients.
+# Production speech adapter route.
 # Deploy with: npx wrangler deploy --env production
 
 [env.production]
