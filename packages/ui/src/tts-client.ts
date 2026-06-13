@@ -17,6 +17,7 @@ export interface TikoTtsClientOptions {
   workerUrl?: string
   cdnUrl?: string
   fetcher?: typeof fetch
+  credentials?: RequestCredentials
   audioFactory?: (url: string) => { play: () => Promise<void> | void }
   speechSynthesis?: SpeechSynthesis
 }
@@ -38,6 +39,7 @@ export function createTikoTtsClient(options: TikoTtsClientOptions = {}) {
   const workerUrl = normalizeBaseUrl(options.workerUrl ?? 'https://api.tikotalks.com/v1')
   const cdnUrl = normalizeBaseUrl(options.cdnUrl ?? 'https://tts.tikocdn.org')
   const fetcher = options.fetcher ?? globalThis.fetch
+  const credentials = options.credentials ?? 'include'
   const memoryCache = new Map<string, TikoTtsResponse>()
 
   // Tikoapi.org splits APIs per-service subdomain. Existing callers may still
@@ -111,6 +113,7 @@ export function createTikoTtsClient(options: TikoTtsClientOptions = {}) {
     try {
       const response = await fetcher(ttsEndpoint(), {
         method: 'POST',
+        credentials,
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           app: 'tiko-ui',

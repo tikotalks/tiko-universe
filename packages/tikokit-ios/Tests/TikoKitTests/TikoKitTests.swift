@@ -151,6 +151,23 @@ final class TikoKitTests: XCTestCase {
         speech.stop()
     }
 
+    @MainActor
+    func testAtlasSpeechRequestUsesBearerSessionToken() throws {
+        let request = try TikoAtlasSpeechService.makeAtlasSpeechRequest(
+            text: "Hello",
+            languageCode: "en-US",
+            app: "test",
+            purpose: "speech-playback",
+            atlasSpeechURL: URL(string: "https://api.tikotalks.com/v1/atlas/speech")!,
+            accessToken: "session-token"
+        )
+
+        XCTAssertEqual(request.httpMethod, "POST")
+        XCTAssertEqual(request.value(forHTTPHeaderField: "Authorization"), "Bearer session-token")
+        XCTAssertEqual(request.value(forHTTPHeaderField: "Content-Type"), "application/json")
+        XCTAssertNotNil(request.httpBody)
+    }
+
     func testRecoverableIdentityRequiresVerifiedAccount() {
         let deviceOnly = TikoIdentityBundle(
             subject: TikoIdentitySubject(id: "sub-device", kind: "anonymous", product: "tiko"),

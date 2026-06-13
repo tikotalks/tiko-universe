@@ -53,6 +53,7 @@ public final class TikoAtlasSpeechService: NSObject, AVAudioPlayerDelegate, AVSp
     private let atlasSpeechURL: URL
     private let app: String
     private let purpose: String
+    private let accessTokenProvider: () -> String?
     private var audioPlayer: AVAudioPlayer?
     private var speechTask: Task<Void, Never>?
     private var stateHandler: ((TikoSpeechPlaybackState) -> Void)?
@@ -60,11 +61,13 @@ public final class TikoAtlasSpeechService: NSObject, AVAudioPlayerDelegate, AVSp
     public init(
         app: String,
         purpose: String = "speech-playback",
-        atlasSpeechURL: URL = URL(string: "https://api.tikotalks.com/v1/atlas/speech")!
+        atlasSpeechURL: URL = URL(string: "https://api.tikotalks.com/v1/atlas/speech")!,
+        accessTokenProvider: @escaping () -> String? = { try? TikoDeviceSessionStore().load()?.accessToken }
     ) {
         self.app = app
         self.purpose = purpose
         self.atlasSpeechURL = atlasSpeechURL
+        self.accessTokenProvider = accessTokenProvider
         super.init()
         synthesizer.delegate = self
     }
@@ -80,6 +83,7 @@ public final class TikoAtlasSpeechService: NSObject, AVAudioPlayerDelegate, AVSp
         stop()
         stateHandler = onStateChange
         notify(.generating)
+        let accessToken = accessTokenProvider()?.trimmingCharacters(in: .whitespacesAndNewlines)
 
         speechTask = Task { [atlasSpeechURL, app, purpose] in
             do {
@@ -89,7 +93,8 @@ public final class TikoAtlasSpeechService: NSObject, AVAudioPlayerDelegate, AVSp
                     languageCode: locale,
                     app: app,
                     purpose: purpose,
-                    atlasSpeechURL: atlasSpeechURL
+                    atlasSpeechURL: atlasSpeechURL,
+                    accessToken: accessToken?.isEmpty == false ? accessToken : nil
                 )
                 let (audioData, response) = try await URLSession.shared.data(from: audioURL)
                 guard !Task.isCancelled else { return }
@@ -170,17 +175,17 @@ public final class TikoAtlasSpeechService: NSObject, AVAudioPlayerDelegate, AVSp
         languageCode: String,
         app: String,
         purpose: String,
-        atlasSpeechURL: URL
+        atlasSpeechURL: URL,
+        accessToken: String?
     ) async throws -> URL {
-        var request = URLRequest(url: atlasSpeechURL)
-        request.httpMethod = "POST"
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        request.httpBody = try JSONEncoder().encode(AtlasSpeechRequest(
+        let request = try makeAtlasSpeechRequest(
+            text: text,
+            languageCode: languageCode,
             app: app,
             purpose: purpose,
-            text: text,
-            language: languageCode
-        ))
+            atlasSpeechURL: atlasSpeechURL,
+            accessToken: accessToken
+        )
 
         let (data, response) = try await URLSession.shared.data(for: request)
         guard let http = response as? HTTPURLResponse, (200..<300).contains(http.statusCode) else {
@@ -193,6 +198,29 @@ public final class TikoAtlasSpeechService: NSObject, AVAudioPlayerDelegate, AVSp
             throw SpeechError.missingAudioURL
         }
         return audioURL
+    }
+
+    static func makeAtlasSpeechRequest(
+        text: String,
+        languageCode: String,
+        app: String,
+        purpose: String,
+        atlasSpeechURL: URL,
+        accessToken: String?
+    ) throws -> URLRequest {
+        var request = URLRequest(url: atlasSpeechURL)
+        request.httpMethod = "POST"
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        if let accessToken {
+            request.setValue("Bearer \(accessToken)", forHTTPHeaderField: "Authorization")
+        }
+        request.httpBody = try JSONEncoder().encode(AtlasSpeechRequest(
+            app: app,
+            purpose: purpose,
+            text: text,
+            language: languageCode
+        ))
+        return request
     }
 
     private static func resolveAtlasAudioURL(_ value: String) -> URL? {

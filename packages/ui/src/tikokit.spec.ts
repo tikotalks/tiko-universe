@@ -532,7 +532,7 @@ describe('TikoKit component contract', () => {
 
     const result = await client.speak({ text: 'Yes', language: 'en' })
 
-    expect(fetcher).toHaveBeenCalledWith('https://api.tikotalks.com/v1/atlas/speech', expect.objectContaining({ method: 'POST' }))
+    expect(fetcher).toHaveBeenCalledWith('https://api.tikotalks.com/v1/atlas/speech', expect.objectContaining({ method: 'POST', credentials: 'include' }))
     expect(JSON.parse((fetcher as any).mock.calls[0][1].body)).toMatchObject({ app: 'tiko-ui', purpose: 'speech-playback', text: 'Yes', language: 'en' })
     expect(JSON.parse((fetcher as any).mock.calls[0][1].body)).not.toHaveProperty('provider')
     expect(result.audioUrl).toBe('https://api.tikotalks.com/v1/atlas/assets/asset-yes')

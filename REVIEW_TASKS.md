@@ -219,6 +219,7 @@ Approximate review spread: 7 Critical, about 35 High, about 70 Medium, and about
   - Ensure one source of truth for speech generation, caching, and provider selection.
   - App clients now send speech requests to Atlas without provider/model/voice hints; remaining work is worker-side service/cache consolidation.
   - [x] Stop generation-api compatibility TTS from sending provider/model/voice hints to Atlas and require an authenticated Atlas service call.
+  - [x] Send web and iOS app speech requests to Atlas with the shared identity credentials before using native/browser speech fallback.
 
 ## Phase 4 - Testing And CI Quality
 
