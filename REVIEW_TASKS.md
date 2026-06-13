@@ -213,6 +213,7 @@ Approximate review spread: 7 Critical, about 35 High, about 70 Medium, and about
   - content/media/identity workers where useful.
   - admin StoryNarrator/ImageGenerator pages by tab or feature.
   - [x] Extract StoryNarrator segment editor into a focused component.
+  - [x] Extract StoryNarrator drafts tab into a focused component.
   - [x] Extract ImageGenerator queue panel into a focused component.
   - [x] Move ImageGenerator queue styles into the queue component so the page no longer owns its surface.
   - [x] Extract ImageGenerator edit modal and canvas mask editor into a focused component.

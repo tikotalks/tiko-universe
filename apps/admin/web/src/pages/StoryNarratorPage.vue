@@ -2,6 +2,7 @@
 import { computed, onMounted, ref, watch } from 'vue'
 import { useBemm } from 'bemm'
 import { Button, Icon, InputRange, InputText } from '@sil/ui'
+import StoryDraftsPanel from '../components/stories/StoryDraftsPanel.vue'
 import StorySegmentsEditor from '../components/stories/StorySegmentsEditor.vue'
 import { useStoryNarration, type StoryDraft, type StoryGalleryItem, type VoiceSample } from '../composables/useStoryNarration'
 import { useAdminMediaLibrary, type AudioLibraryAlbum } from '../composables/useAdminMediaLibrary'
@@ -373,58 +374,18 @@ onMounted(() => {
       </div>
     </section>
 
-    <section v-else-if="activeTab === 'drafts'" :class="page('panel')">
-      <header :class="page('panel-head')">
-        <div :class="page('panel-intro')">
-          <h2 :class="page('panel-title')">Story creator drafts</h2>
-          <p :class="page('panel-meta')">Chapter plans with voice, cover, and target Radio album settings.</p>
-        </div>
-        <Button variant="outline" :loading="galleryLoading" :disabled="galleryLoading" @click="loadDrafts">Reload</Button>
-      </header>
-
-      <div v-if="savedDrafts.length === 0" :class="page('empty')">
-        No creator drafts yet. <button type="button" :class="page('inline-link')" @click="activeTab = 'create'">Plan one</button>.
-      </div>
-      <div v-else :class="page('grid')">
-        <article v-for="draft in savedDrafts" :key="draft.id" :class="card('', { draft: true })">
-          <header :class="card('head')">
-            <h3 :class="card('title')">{{ draft.title }}</h3>
-            <p :class="card('meta')">{{ draft.defaultVoice }} · {{ draft.chapters.length }} chapters · {{ draft.status }}</p>
-          </header>
-          <p v-if="draft.description" :class="card('description')">{{ draft.description }}</p>
-          <p :class="card('description')">
-            Cover: {{ draft.coverMediaId || 'not assigned' }}<br />
-            Radio album: {{ audioAlbums.find(album => album.id === draft.targetAlbumId)?.title || draft.targetAlbumId || 'not assigned' }}
-          </p>
-        </article>
-      </div>
-
-      <header :class="page('panel-head')">
-        <div :class="page('panel-intro')">
-          <h2 :class="page('panel-title')">Generated drafts</h2>
-          <p :class="page('panel-meta')">Render output stays here until promoted to Tiko Radio.</p>
-        </div>
-      </header>
-
-      <div v-if="galleryLoading && draftItems.length === 0" :class="page('empty')">Loading drafts…</div>
-      <div v-else-if="draftItems.length === 0" :class="page('empty')">
-        No drafts yet. <button type="button" :class="page('inline-link')" @click="activeTab = 'create'">Create one</button>.
-      </div>
-      <div v-else :class="page('grid')">
-        <article v-for="item in draftItems" :key="item.id" :class="card('', { draft: true })">
-          <header :class="card('head')">
-            <h3 :class="card('title')">{{ item.title }}</h3>
-            <p :class="card('meta')">{{ item.voice }} · {{ item.segmentCount }} segments</p>
-          </header>
-          <p v-if="item.description" :class="card('description')">{{ item.description }}</p>
-          <audio v-if="item.audioUrl" :class="card('audio')" :src="audioSrc(item.audioUrl)" controls />
-          <div :class="card('actions')">
-            <Button size="small" @click="onPromote(item)">Promote</Button>
-            <Button variant="ghost" size="small" @click="onDelete(item, 'drafts')">Delete</Button>
-          </div>
-        </article>
-      </div>
-    </section>
+    <StoryDraftsPanel
+      v-else-if="activeTab === 'drafts'"
+      :saved-drafts="savedDrafts"
+      :rendered-drafts="draftItems"
+      :audio-albums="audioAlbums"
+      :loading="galleryLoading"
+      :audio-src="audioSrc"
+      @reload="loadDrafts"
+      @create="activeTab = 'create'"
+      @promote="onPromote"
+      @delete-rendered="onDelete($event, 'drafts')"
+    />
 
     <section v-else :class="page('create')">
       <form :class="page('form')" @submit.prevent="onRender">
