@@ -1,6 +1,6 @@
 import { readFileSync } from 'node:fs'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import worker, { internals } from '../workers/generation-api/src/index'
+import worker from '../workers/generation-api/src/index'
 import type { Env } from '../workers/generation-api/src/index'
 
 class MemoryD1 {
@@ -167,11 +167,6 @@ function sessionIdentityService(usersByToken: Record<string, string>) {
       })
     }),
   }
-}
-
-async function sha256HexForTest(value: string): Promise<string> {
-  const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(value))
-  return Array.from(new Uint8Array(digest)).map((byte) => byte.toString(16).padStart(2, '0')).join('')
 }
 
 beforeEach(() => {

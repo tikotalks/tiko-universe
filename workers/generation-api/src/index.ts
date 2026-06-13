@@ -137,7 +137,6 @@ const ELEVENLABS_VOICE_CATALOG = DEFAULT_ELEVENLABS_VOICES.map((voice) => ({
   label: voice.label,
   sampleUrl: `/v1/generation/voice-samples/${voice.id}?provider=elevenlabs&model=${DEFAULT_ELEVENLABS_MODEL}`,
 }))
-const VOICE_CATALOG = [...ELEVENLABS_VOICE_CATALOG, ...OPENAI_VOICE_CATALOG]
 
 const VOICE_SAMPLE_KEY_RE = /^voice-samples\/[a-z0-9._-]+\/[a-zA-Z0-9_-]{6,64}\.mp3$/
 
