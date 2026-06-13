@@ -279,7 +279,7 @@ async function recalculateLearnedTransitions(env: Env): Promise<void> {
 
   for (const [packId, bucket] of Array.from(countsByPack.entries())) {
     await mergePackTransitions(env.DB, packId, bucket.locale, bucket.counts)
-    await deleteCachePrefix(env.CACHE, `sentence:next:${bucket.locale}:`)
+    await deleteCachePrefix(env.CACHE, `sentence:next:v2:${bucket.locale}:`)
   }
 }
 
@@ -366,7 +366,7 @@ async function putMediaMap(request: Request, env: Env): Promise<Response> {
 
   // Drop the map cache and the image-baked response caches so the change shows.
   await env.CACHE.delete('sentence:mediamap')
-  await deleteCachePrefix(env.CACHE, 'sentence:next:')
+  await deleteCachePrefix(env.CACHE, 'sentence:next:v2:')
   await deleteCachePrefix(env.CACHE, 'sentence:start:')
   return json({ ok: true, conceptId, imageUrl: imageUrl || null })
 }
@@ -427,7 +427,7 @@ async function nextSentence(request: Request, env: Env): Promise<Response> {
   const sequenceHash = await hashText(currentWords.join(','))
   // The global base suggestions are subject-independent (custom-word ids are
   // globally unique, so a sequence containing one is effectively owner-scoped).
-  const baseCacheKey = `sentence:next:${locale}:${sequenceHash.slice(0, 32)}`
+  const baseCacheKey = `sentence:next:v2:${locale}:${sequenceHash.slice(0, 32)}`
   let base = await readCache<SentenceNextResponse>(env, baseCacheKey)
 
   if (!base) {
@@ -444,8 +444,13 @@ async function nextSentence(request: Request, env: Env): Promise<Response> {
 
     // Serve stored predictions first; the LLM is consulted once per sequence, ever.
     let suggestions = await loadPredictedWords(env.DB, pack.id, sequenceHash, validNext)
+    // Stored rows only ever come from the AI now (fallback is never stored), so
+    // a populated result is cacheable.
+    let cacheable = suggestions.length >= 10
     if (suggestions.length < 10) {
-      suggestions = await generateAndStorePredictions(env, pack, locale, sequenceHash, sequenceText, orderedSelected, validNext, atlasAuthHeader(request, env))
+      const generated = await generateAndStorePredictions(env, pack, locale, sequenceHash, sequenceText, orderedSelected, validNext, atlasAuthHeader(request, env))
+      suggestions = generated.words
+      cacheable = generated.fromAI
     }
     suggestions = suggestions.slice(0, SUGGESTION_LIMIT)
 
@@ -462,7 +467,9 @@ async function nextSentence(request: Request, env: Env): Promise<Response> {
       words: decorateGroups(groupWords(suggestions), mediaMap, locale),
       stripState,
     }
-    await writeCache(env, baseCacheKey, base, NEXT_CACHE_TTL)
+    // Only cache AI-backed results; a fallback response must not be pinned for an
+    // hour — the next request should retry the AI.
+    if (cacheable) await writeCache(env, baseCacheKey, base, NEXT_CACHE_TTL)
   }
 
   if (subjectId) {
@@ -814,7 +821,7 @@ async function generateAndStorePredictions(
   orderedSelected: PackWord[],
   validNext: string[],
   atlasAuth: string | null,
-): Promise<PackWord[]> {
+): Promise<{ words: PackWord[], fromAI: boolean }> {
   const candidatePosTypes = validNext.length ? validNext : STARTER_POS
   const candidateWords = await loadSuggestedWords(env.DB, pack.id, candidatePosTypes)
 
@@ -840,23 +847,26 @@ async function generateAndStorePredictions(
     await storePredictions(env.DB, pack.id, locale, sequenceHash, sequenceText,
       scored.map((s) => ({ wordId: s.word.id, probability: s.score })))
 
-    return scored.slice(0, SUGGESTION_LIMIT).map((s) => s.word)
+    return { words: scored.slice(0, SUGGESTION_LIMIT).map((s) => s.word), fromAI: true }
   }
 
-  // AI unavailable — store grammar-ranked order with descending scores
-  const fallback = rankSuggestions(candidateWords, validNext, orderedSelected)
-  const count = fallback.length
-  await storePredictions(env.DB, pack.id, locale, sequenceHash, sequenceText,
-    fallback.map((w, i) => ({ wordId: w.id, probability: Math.max(0.01, 1 - i / count) })))
-
-  return fallback.slice(0, SUGGESTION_LIMIT)
+  // AI unavailable — serve a grammar/frequency ranking but DO NOT store it.
+  // Storing the fallback would freeze the sequence on a dumb alphabetical order
+  // and stop the AI from ever being retried. By not storing, the next request
+  // for this sequence calls the AI again until it succeeds (then that result is
+  // cached). The fallback is deterministic and cheap to recompute meanwhile.
+  return { words: rankSuggestions(candidateWords, validNext, orderedSelected).slice(0, SUGGESTION_LIMIT), fromAI: false }
 }
 
-// Atlas capability routes require a Bearer credential. Prefer a configured
-// server-to-server service key; otherwise forward the caller's session token.
+// Atlas capability routes require a Bearer credential. Prefer the caller's own
+// session token (Atlas accepts any valid Tiko session for capability routes), so
+// real app traffic authenticates as the signed-in user. Fall back to a configured
+// server-to-server service key for anonymous/back-end callers that have no session.
 function atlasAuthHeader(request: Request, env: Env): string | null {
+  const caller = request.headers.get('Authorization')
+  if (caller && /^Bearer\s+\S/i.test(caller)) return caller
   if (env.ATLAS_API_KEY) return `Bearer ${env.ATLAS_API_KEY}`
-  return request.headers.get('Authorization')
+  return null
 }
 
 async function fetchAiPredictions(
@@ -1028,7 +1038,7 @@ async function recalculatePredictionScores(env: Env): Promise<void> {
   }
 
   for (const locale of Array.from(touchedLocales)) {
-    await deleteCachePrefix(env.CACHE, `sentence:next:${locale}:`)
+    await deleteCachePrefix(env.CACHE, `sentence:next:v2:${locale}:`)
   }
 }
 

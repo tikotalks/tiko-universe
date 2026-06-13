@@ -406,8 +406,9 @@ describe('sentence-api foundation', () => {
     expect(cache.reads.filter((key) => key === `sentence:start:en:${SUBJECT}`).length).toBe(2)
   })
 
-  it('returns ranked /next suggestions ordered by transition weights and reuses the KV cache', async () => {
+  it('ranks /next suggestions by transition weights and does not cache the fallback', async () => {
     const { testEnv, cache } = env()
+    // No ATLAS_SERVICE -> grammar/frequency fallback path.
     const request = {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
@@ -422,12 +423,10 @@ describe('sentence-api foundation', () => {
     expect(first.body.stripState.validNext).toEqual(['noun', 'determiner', 'adjective', 'preposition', 'social'])
     expect(first.body.suggestions.length).toBeLessThanOrEqual(50)
     expect(first.body.suggestions.some((word: JsonBody) => word.id === 'water')).toBe(true)
-    expect(first.body.categories.length).toBeGreaterThan(0)
-    expect(Object.keys(first.body.words).length).toBeGreaterThan(0)
+    // Deterministic fallback -> both calls equal even though neither is cached.
     expect(second.body).toEqual(first.body)
-    expect(cache.writes.some((key) => key.startsWith('sentence:next:en:'))).toBe(true)
-    // Cache keys are subject-independent sequence hashes, never raw word lists.
-    expect(cache.writes.every((key) => !key.includes('i,want'))).toBe(true)
+    // The fallback must NOT be cached, so the next request retries the AI.
+    expect(cache.writes.some((key) => key.startsWith('sentence:next:'))).toBe(false)
   })
 
   it('rejects oversized currentWords lists before touching the database', async () => {
@@ -442,7 +441,7 @@ describe('sentence-api foundation', () => {
   })
 
   it('returns the full 50 AI-scored suggestions from compact pair output and stores every candidate score', async () => {
-    const { testEnv, db } = env()
+    const { testEnv, db, cache } = env()
     const capture: { prompt?: string } = {}
     testEnv.ATLAS_SERVICE = atlasService('[["want",0.95],["eat",0.9],["water",0.85]]', capture)
 
@@ -464,6 +463,8 @@ describe('sentence-api foundation', () => {
     expect(db.word_predictions.length).toBeGreaterThan(50)
     const want = db.word_predictions.find((r) => r.word_id === 'want')
     expect(want).toMatchObject({ ai_score: 0.95, final_score: 0.95 })
+    // AI-backed results ARE cached (unlike the fallback).
+    expect(cache.writes.some((key) => key.startsWith('sentence:next:'))).toBe(true)
   })
 
   it('salvages truncated AI output instead of discarding the paid response', async () => {
@@ -670,7 +671,7 @@ describe('sentence-api foundation', () => {
       { id: 'u1', locale: 'en', pack_id: 'en-v1', pos_sequence_json: JSON.stringify(['pronoun', 'verb', 'noun']), usage_count: 10 },
       { id: 'u2', locale: 'en', pack_id: 'en-v1', pos_sequence_json: JSON.stringify(['pronoun', 'verb']), usage_count: 2 },
     )
-    cache.values.set('sentence:next:en:abc123', '{}')
+    cache.values.set('sentence:next:v2:en:abc123', '{}')
     cache.values.set('sentence:start:en:anon', '{}')
 
     await (worker as any).scheduled({ cron: '0 3 * * *' }, testEnv, {} as never)
@@ -678,7 +679,7 @@ describe('sentence-api foundation', () => {
     const learned = db.talk_transitions.filter((row) => row.source === 'learned')
     expect(learned.find((row) => row.from_pos === 'pronoun' && row.to_pos === 'verb')?.weight).toBeCloseTo(10)
     expect(learned.find((row) => row.from_pos === 'verb' && row.to_pos === 'noun')?.weight).toBeCloseTo(9.7)
-    expect(cache.deletes).toEqual(['sentence:next:en:abc123'])
+    expect(cache.deletes).toEqual(['sentence:next:v2:en:abc123'])
     expect(cache.values.has('sentence:start:en:anon')).toBe(true)
   })
 
