@@ -29,6 +29,62 @@ export interface TikoAppDataRuntimeOptions<TApp extends string, TSettings extend
   onError?: (phase: 'hydrate' | 'settings' | 'state', error: unknown) => void
 }
 
+export interface TikoAppSettingsClient<TApp extends string, TSettings extends Record<string, unknown>> {
+  getSettings: (app: TApp, sessionToken: string) => Promise<TikoVersionedSettings<TSettings>>
+  putSettings: (app: TApp, sessionToken: string, settings: TSettings, options?: { version?: number }) => Promise<TikoVersionedSettings<TSettings>>
+}
+
+export interface TikoAppSettingsRuntimeOptions<TApp extends string, TSettings extends Record<string, unknown>> {
+  app: TApp
+  sessionToken: Ref<string>
+  bootstrapped?: Ref<boolean>
+  dataClient: TikoAppSettingsClient<TApp, TSettings>
+  readSettings: () => TSettings
+  applySettings: (settings: TSettings, version?: number) => void
+  onError?: (phase: 'hydrate' | 'settings', error: unknown) => void
+}
+
+export function useTikoAppSettingsRuntime<TApp extends string, TSettings extends Record<string, unknown>>(
+  options: TikoAppSettingsRuntimeOptions<TApp, TSettings>,
+) {
+  const settingsVersion = ref<number | undefined>()
+  const bootstrapped = options.bootstrapped ?? ref(false)
+
+  async function hydrateRemoteSettings(): Promise<boolean> {
+    if (!options.sessionToken.value) return false
+
+    try {
+      const response = await options.dataClient.getSettings(options.app, options.sessionToken.value)
+      settingsVersion.value = response.version
+      options.applySettings(response.settings, response.version)
+      return true
+    } catch (error) {
+      options.onError?.('hydrate', error)
+      return false
+    }
+  }
+
+  async function persistSettingsRemote(): Promise<boolean> {
+    if (!bootstrapped.value || !options.sessionToken.value) return false
+
+    try {
+      const response = await options.dataClient.putSettings(options.app, options.sessionToken.value, options.readSettings(), { version: settingsVersion.value })
+      settingsVersion.value = response.version
+      return true
+    } catch (error) {
+      options.onError?.('settings', error)
+      return false
+    }
+  }
+
+  return {
+    bootstrapped,
+    settingsVersion,
+    hydrateRemoteSettings,
+    persistSettingsRemote,
+  }
+}
+
 export function useTikoAppDataRuntime<TApp extends string, TSettings extends Record<string, unknown>, TState extends Record<string, unknown>>(
   options: TikoAppDataRuntimeOptions<TApp, TSettings, TState>,
 ) {

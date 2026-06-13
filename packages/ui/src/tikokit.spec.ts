@@ -24,6 +24,7 @@ import {
   resolveTikoIdentityBaseUrl,
   resolveTikoMediaApiBaseUrl,
   useTikoAppDataRuntime,
+  useTikoAppSettingsRuntime,
   useTikoColorModeEffect,
   writeTikoLocalJson,
   tikoAppColors,
@@ -194,6 +195,34 @@ describe('TikoKit component contract', () => {
     expect(await runtime.persistStateRemote()).toBe(true)
     expect(settingsWrites).toEqual([{ settings: { language: 'fr' }, version: 4 }])
     expect(stateWrites).toEqual([{ state: { text: 'Bonjour' }, version: 7 }])
+  })
+
+  it('shares settings-only hydrate and persistence runtime', async () => {
+    const sessionToken = ref('session-1')
+    const bootstrapped = ref(true)
+    const writes: Array<{ version?: number; settings: { colorMode?: string } }> = []
+    const dataClient = {
+      getSettings: vi.fn(async () => ({ settings: { colorMode: 'dark' }, version: 2 })),
+      putSettings: vi.fn(async (_app: 'cards', _token: string, settings: { colorMode?: string }, options?: { version?: number }) => {
+        writes.push({ settings, version: options?.version })
+        return { settings, version: 3 }
+      }),
+    }
+    const settings = ref<{ colorMode?: string }>({})
+    const runtime = useTikoAppSettingsRuntime({
+      app: 'cards',
+      sessionToken,
+      bootstrapped,
+      dataClient,
+      readSettings: () => settings.value,
+      applySettings: value => { settings.value = value },
+    })
+
+    expect(await runtime.hydrateRemoteSettings()).toBe(true)
+    expect(settings.value).toEqual({ colorMode: 'dark' })
+    settings.value = { colorMode: 'light' }
+    expect(await runtime.persistSettingsRemote()).toBe(true)
+    expect(writes).toEqual([{ settings: { colorMode: 'light' }, version: 2 }])
   })
 
   it('renders the design header with open-icon action names and app color token', async () => {

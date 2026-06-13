@@ -12,6 +12,7 @@ import {
   readTikoLocalJson,
   resolveTikoAppApiBaseUrl,
   resolveTikoIdentityBaseUrl,
+  useTikoAppSettingsRuntime,
   useTikoColorModeEffect,
   useIdentityRuntime,
   type IdentityRuntimeState,
@@ -37,6 +38,7 @@ interface PopupContext {
 }
 
 const storageKey = 'tiko:cards:web'
+const appId = 'cards' as const
 const popup = inject<PopupService>('popupService')!
 const tts = createTikoTtsClient()
 const appBemm = useBemm('cards-app', { return: 'string', includeBaseClass: true })
@@ -48,7 +50,7 @@ const speakingCardID = ref<string>()
 const speakStatus = ref<SpeakStatus>('idle')
 
 const stored = readStored()
-const i18n = createI18n({ app: 'cards', language: normalizeTikoLanguage(stored.language) })
+const i18n = createI18n({ app: appId, language: normalizeTikoLanguage(stored.language) })
 const translationLoader = createTikoTranslationLoader()
 const loadedTranslations = new Set<string>()
 const language = ref<TikoLanguage>(normalizeTikoLanguage(stored.language))
@@ -57,8 +59,8 @@ const hideDefaultCollections = ref(stored.hideDefaultCollections ?? false)
 const showAnimations = ref(stored.showAnimations ?? true)
 const cardSizeIndex = ref(clampIndex(stored.cardSizeIndex ?? 1))
 const labelSizeIndex = ref(clampIndex(stored.labelSizeIndex ?? 1))
-const settingsVersion = ref<number>()
 const collectionsHydrated = ref(false)
+const bootstrapped = ref(false)
 
 const identityClient = new IdentityClient({ baseUrl: resolveTikoIdentityBaseUrl(), credentials: 'include' })
 const dataClient = new TikoDataClient({ baseUrl: resolveTikoAppApiBaseUrl() })
@@ -85,6 +87,21 @@ const cards = useCardsStore({
   sessionToken: identityState.sessionToken,
   readStored,
   writeStored,
+})
+const settingsRuntime = useTikoAppSettingsRuntime<typeof appId, CardsSettings>({
+  app: appId,
+  sessionToken: identityState.sessionToken,
+  bootstrapped,
+  dataClient,
+  readSettings: () => ({
+    language: language.value,
+    colorMode: colorMode.value,
+    hideDefaultCollections: hideDefaultCollections.value,
+    showAnimations: showAnimations.value,
+    cardSizeIndex: cardSizeIndex.value,
+    labelSizeIndex: labelSizeIndex.value,
+  }),
+  applySettings: applyRemoteSettings,
 })
 
 const labels = computed(() => {
@@ -381,7 +398,7 @@ function clampIndex(value: number) {
 async function loadTranslations(value: TikoLanguage) {
   if (loadedTranslations.has(value)) return
   try {
-    const bundle = await translationLoader({ app: 'cards', language: value })
+    const bundle = await translationLoader({ app: appId, language: value })
     if (Object.keys(bundle.translations).length > 0) {
       i18n.addBundle(bundle)
     }
@@ -391,7 +408,7 @@ async function loadTranslations(value: TikoLanguage) {
   }
 }
 
-function applyRemoteSettings(settings: CardsSettings, version?: number) {
+function applyRemoteSettings(settings: CardsSettings) {
   language.value = normalizeTikoLanguage(settings.language)
   colorMode.value = normalizeTikoColorMode(settings.colorMode)
   hideDefaultCollections.value = typeof settings.hideDefaultCollections === 'boolean'
@@ -406,36 +423,6 @@ function applyRemoteSettings(settings: CardsSettings, version?: number) {
   labelSizeIndex.value = typeof settings.labelSizeIndex === 'number'
     ? clampIndex(settings.labelSizeIndex)
     : labelSizeIndex.value
-  settingsVersion.value = version
-}
-
-async function hydrateRemoteSettings() {
-  const token = identityState.sessionToken.value
-  if (!token) return
-  try {
-    const response = await dataClient.getSettings('cards', token)
-    applyRemoteSettings(response.settings, response.version)
-  } catch {
-    // Local settings remain active when the app settings API is unavailable.
-  }
-}
-
-async function persistRemoteSettings() {
-  const token = identityState.sessionToken.value
-  if (!token) return
-  try {
-    const response = await dataClient.putSettings('cards', token, {
-      language: language.value,
-      colorMode: colorMode.value,
-      hideDefaultCollections: hideDefaultCollections.value,
-      showAnimations: showAnimations.value,
-      cardSizeIndex: cardSizeIndex.value,
-      labelSizeIndex: labelSizeIndex.value,
-    }, { version: settingsVersion.value })
-    settingsVersion.value = response.version
-  } catch {
-    // Local persistence already happened; remote settings will be retried on the next change.
-  }
 }
 
 watch(language, value => {
@@ -456,7 +443,7 @@ watch([language, colorMode, hideDefaultCollections, showAnimations, cardSizeInde
 }))
 
 watch([language, colorMode, hideDefaultCollections, showAnimations, cardSizeIndex, labelSizeIndex], () => {
-  void persistRemoteSettings()
+  void settingsRuntime.persistSettingsRemote()
 })
 
 watch(() => cards.collectionStack.value.join('/'), () => {
@@ -466,9 +453,11 @@ watch(() => cards.collectionStack.value.join('/'), () => {
 onMounted(async () => {
   try {
     await runtime.bootstrapIdentity()
-    await hydrateRemoteSettings()
+    await settingsRuntime.hydrateRemoteSettings()
   } catch {
     // Cards must remain usable from local/default content when identity is unavailable.
+  } finally {
+    bootstrapped.value = true
   }
   await cards.loadCollections(language.value)
   collectionsHydrated.value = true
