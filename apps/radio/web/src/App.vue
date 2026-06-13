@@ -5,10 +5,11 @@ import type { PopupService } from '@sil/ui'
 import { IdentityClient } from '@tiko/identity'
 import { TikoDataClient, type RadioSettings, type RadioState } from '@tiko/data'
 import type { RadioTrack, RadioCategory } from '@tiko/data'
-import { createI18n, createTikoIdentityLabels, createTikoShellLabels, createTikoTranslationLoader, defaultLanguage, tikoI18nKeys, tikoLanguageOptions, tikoLanguages, type TikoLanguage } from '@tiko/i18n'
+import { createI18n, createTikoIdentityLabels, createTikoShellLabels, createTikoTranslationLoader, normalizeTikoLanguage, tikoI18nKeys, tikoLanguageOptions, type TikoLanguage } from '@tiko/i18n'
 import {
   TikoAppShell,
   TikoColorMode,
+  normalizeTikoColorMode,
   readTikoLocalJson,
   resolveTikoAppApiBaseUrl,
   resolveTikoColorMode,
@@ -78,20 +79,12 @@ interface PublicAudioAlbum {
 }
 
 // ---- Utility functions ----------------------------------------------------
-function toLanguage(value: string | undefined): TikoLanguage {
-  return tikoLanguages.includes(value as TikoLanguage) ? value as TikoLanguage : defaultLanguage
-}
-
-function toColorMode(value: string | undefined): TikoColorMode {
-  return value === 'light' || value === 'dark' || value === 'system' ? value : 'system'
-}
-
 // ---- State initialization --------------------------------------------------
 const stored = readTikoLocalJson<PersistedState>(storageKey, {})
-const i18n = createI18n({ app: appId, language: toLanguage(stored.language) })
+const i18n = createI18n({ app: appId, language: normalizeTikoLanguage(stored.language) })
 const translationLoader = createTikoTranslationLoader()
-const language = ref<TikoLanguage>(toLanguage(stored.language))
-const colorMode = ref<TikoColorMode>(toColorMode(stored.colorMode))
+const language = ref<TikoLanguage>(normalizeTikoLanguage(stored.language))
+const colorMode = ref<TikoColorMode>(normalizeTikoColorMode(stored.colorMode))
 const volume = ref(stored.volume ?? 1)
 const shuffleEnabled = ref(stored.shuffleEnabled ?? false)
 const repeatEnabled = ref(stored.repeatEnabled ?? false)
@@ -263,8 +256,8 @@ function saveLocalFallback() {
 }
 
 function applySettings(settings: RadioSettings, version?: number) {
-  language.value = toLanguage(settings.language)
-  colorMode.value = toColorMode(settings.colorMode)
+  language.value = normalizeTikoLanguage(settings.language)
+  colorMode.value = normalizeTikoColorMode(settings.colorMode)
   if (typeof settings.volume === 'number' && settings.volume >= 0 && settings.volume <= 1) {
     volume.value = settings.volume
   }

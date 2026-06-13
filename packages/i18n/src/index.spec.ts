@@ -9,6 +9,7 @@ import {
   createTikoIdentityLabels,
   createTikoShellLabels,
   createTranslationBundle,
+  normalizeTikoLanguage,
   type TikoAppKey,
   type TikoLanguage,
 } from './index'
@@ -32,6 +33,12 @@ describe('@tiko/i18n fallback contract', () => {
     expect(talkI18n.t(tikoI18nKeys.talk.appName)).toBe('Talk')
     expect(talkI18n.t(tikoI18nKeys.talk.sentence.placeholder)).toBe('Build a sentence')
     expect(talkI18n.t(tikoI18nKeys.talk.status.offline)).toBe('Offline words active')
+  })
+
+  it('normalizes persisted language values through one shared helper', () => {
+    expect(normalizeTikoLanguage('mt')).toBe('mt')
+    expect(normalizeTikoLanguage('not-supported')).toBe(defaultLanguage)
+    expect(normalizeTikoLanguage(undefined)).toBe(defaultLanguage)
   })
 
   it('merges partial runtime bundles over local selected-language fallbacks and keeps track of missing keys', () => {

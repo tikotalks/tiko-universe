@@ -14,6 +14,7 @@ import {
   TikoTileBoard,
   createTikoChoice,
   createTikoTtsClient,
+  normalizeTikoColorMode,
   resolveTikoAppApiBaseUrl,
   readTikoLocalJson,
   resolveTikoContentApiBaseUrl,
@@ -106,6 +107,9 @@ describe('TikoKit component contract', () => {
     expect(resolveTikoColorMode('light')).toBe('light')
     expect(resolveTikoColorMode('dark')).toBe('dark')
     expect(resolveTikoColorMode('system', { matchMedia: () => ({ matches: true }) as MediaQueryList })).toBe('dark')
+    expect(normalizeTikoColorMode('dark')).toBe('dark')
+    expect(normalizeTikoColorMode('bad')).toBe('system')
+    expect(normalizeTikoColorMode(undefined)).toBe('system')
   })
 
   it('renders the design header with open-icon action names and app color token', async () => {

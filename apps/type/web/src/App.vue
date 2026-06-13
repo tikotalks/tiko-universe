@@ -3,12 +3,13 @@ import { computed, onMounted, ref, watch } from 'vue'
 import { Icon, Popup } from '@sil/ui'
 import { IdentityClient, type IdentityBundle } from '@tiko/identity'
 import { TikoDataClient, type TypeSettings, type TypeState } from '@tiko/data'
-import { createI18n, createTikoIdentityLabels, createTikoShellLabels, createTikoTranslationLoader, defaultLanguage, tikoI18nKeys, tikoLanguageOptions, tikoLanguages, type TikoLanguage } from '@tiko/i18n'
+import { createI18n, createTikoIdentityLabels, createTikoShellLabels, createTikoTranslationLoader, normalizeTikoLanguage, tikoI18nKeys, tikoLanguageOptions, type TikoLanguage } from '@tiko/i18n'
 import {
   TikoAppShell,
   TikoSettingsPanel,
   TikoColorMode,
   createTikoTtsClient,
+  normalizeTikoColorMode,
   readTikoLocalJson,
   resolveTikoAppApiBaseUrl,
   resolveTikoColorMode,
@@ -37,14 +38,6 @@ interface PersistedState {
 
 
 
-function toLanguage(value: string | undefined): TikoLanguage {
-  return tikoLanguages.includes(value as TikoLanguage) ? value as TikoLanguage : defaultLanguage
-}
-
-function toColorMode(value: string | undefined): TikoColorMode {
-  return value === 'light' || value === 'dark' || value === 'system' ? value : 'system'
-}
-
 function normalizePrompts(value: unknown): string[] {
   if (!Array.isArray(value)) return []
   return value
@@ -54,10 +47,10 @@ function normalizePrompts(value: unknown): string[] {
 }
 
 const stored = readTikoLocalJson<PersistedState>(storageKey, {})
-const i18n = createI18n({ app: appId, language: toLanguage(stored.language) })
+const i18n = createI18n({ app: appId, language: normalizeTikoLanguage(stored.language) })
 const translationLoader = createTikoTranslationLoader()
-const language = ref<TikoLanguage>(toLanguage(stored.language))
-const colorMode = ref<TikoColorMode>(toColorMode(stored.colorMode))
+const language = ref<TikoLanguage>(normalizeTikoLanguage(stored.language))
+const colorMode = ref<TikoColorMode>(normalizeTikoColorMode(stored.colorMode))
 const keyboardLayout = ref<'qwerty' | 'azerty' | 'abc'>(stored.keyboardLayout ?? 'abc')
 const text = ref(stored.text ?? '')
 const prompts = ref<string[]>(normalizePrompts(stored.prompts))
@@ -165,8 +158,8 @@ async function bootstrapIdentity() {
 }
 
 function applySettings(settings: TypeSettings, version?: number) {
-  language.value = toLanguage(settings.language)
-  colorMode.value = toColorMode(settings.colorMode)
+  language.value = normalizeTikoLanguage(settings.language)
+  colorMode.value = normalizeTikoColorMode(settings.colorMode)
   if (settings.keyboardLayout === 'qwerty' || settings.keyboardLayout === 'azerty' || settings.keyboardLayout === 'abc') {
     keyboardLayout.value = settings.keyboardLayout
   }

@@ -170,6 +170,10 @@ export function writeTikoLocalJson(key: string, value: unknown, storage: Storage
   storage.setItem(key, JSON.stringify(value))
 }
 
+export function normalizeTikoColorMode(value: string | null | undefined): TikoColorMode {
+  return value === 'light' || value === 'dark' || value === 'system' ? value : 'system'
+}
+
 export function resolveTikoColorMode(mode: TikoColorMode, mediaMatcher: Pick<Window, 'matchMedia'> | undefined = typeof window === 'undefined' ? undefined : window): 'light' | 'dark' {
   if (mode !== 'system') return mode
   if (!mediaMatcher) return 'light'

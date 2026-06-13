@@ -3,11 +3,12 @@ import { computed, onMounted, ref, watch } from 'vue'
 import { Button, InputTextArea } from '@sil/ui'
 import { IdentityClient, type IdentityBundle } from '@tiko/identity'
 import { TikoDataClient, type TodoSettings, type TodoState } from '@tiko/data'
-import { createI18n, createTikoShellLabels, createTikoTranslationLoader, defaultLanguage, tikoI18nKeys, tikoLanguageOptions, tikoLanguages, type TikoLanguage } from '@tiko/i18n'
+import { createI18n, createTikoShellLabels, createTikoTranslationLoader, normalizeTikoLanguage, tikoI18nKeys, tikoLanguageOptions, type TikoLanguage } from '@tiko/i18n'
 import {
   TikoAppShell,
   TikoSettingsPanel,
   createTikoTtsClient,
+  normalizeTikoColorMode,
   readTikoLocalJson,
   resolveTikoAppApiBaseUrl,
   resolveTikoColorMode,
@@ -43,23 +44,15 @@ interface StoredIdentity {
   expiresAt?: string
 }
 
-function toLanguage(value: string | undefined): TikoLanguage {
-  return tikoLanguages.includes(value as TikoLanguage) ? value as TikoLanguage : defaultLanguage
-}
-
-function toColorMode(value: string | undefined): TikoColorMode {
-  return value === 'light' || value === 'dark' || value === 'system' ? value : 'system'
-}
-
 function generateId(): string {
   return `todo-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`
 }
 
 const stored = readTikoLocalJson<PersistedState>(storageKey, {})
-const i18n = createI18n({ app: appId, language: toLanguage(stored.language) })
+const i18n = createI18n({ app: appId, language: normalizeTikoLanguage(stored.language) })
 const translationLoader = createTikoTranslationLoader()
-const language = ref<TikoLanguage>(toLanguage(stored.language))
-const colorMode = ref<TikoColorMode>(toColorMode(stored.colorMode))
+const language = ref<TikoLanguage>(normalizeTikoLanguage(stored.language))
+const colorMode = ref<TikoColorMode>(normalizeTikoColorMode(stored.colorMode))
 const items = ref<TodoItem[]>(stored.items ?? [])
 const settingsOpen = ref(false)
 const settingsVersion = ref<number | undefined>()
@@ -157,8 +150,8 @@ async function bootstrapIdentity() {
 }
 
 function applySettings(settings: TodoSettings, version?: number) {
-  language.value = toLanguage(settings.language)
-  colorMode.value = toColorMode(settings.colorMode)
+  language.value = normalizeTikoLanguage(settings.language)
+  colorMode.value = normalizeTikoColorMode(settings.colorMode)
   settingsVersion.value = version
 }
 

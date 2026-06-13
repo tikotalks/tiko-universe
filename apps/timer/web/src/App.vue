@@ -3,11 +3,12 @@ import { computed, onMounted, ref, watch } from 'vue'
 import { Button, Popup } from '@sil/ui'
 import { IdentityClient, type IdentityBundle } from '@tiko/identity'
 import { TikoDataClient, type TimerSettings, type TimerState } from '@tiko/data'
-import { createI18n, createTikoIdentityLabels, createTikoShellLabels, createTikoTranslationLoader, defaultLanguage, tikoI18nKeys, tikoLanguageOptions, tikoLanguages, type TikoLanguage } from '@tiko/i18n'
+import { createI18n, createTikoIdentityLabels, createTikoShellLabels, createTikoTranslationLoader, normalizeTikoLanguage, tikoI18nKeys, tikoLanguageOptions, type TikoLanguage } from '@tiko/i18n'
 import {
   TikoAppShell,
   TikoSettingsPanel,
   TikoColorMode,
+  normalizeTikoColorMode,
   readTikoLocalJson,
   resolveTikoAppApiBaseUrl,
   resolveTikoColorMode,
@@ -52,14 +53,6 @@ const defaultPresets: TimerPreset[] = [
   { id: '10m', label: '10 min', seconds: 600 },
 ]
 
-function toLanguage(value: string | undefined): TikoLanguage {
-  return tikoLanguages.includes(value as TikoLanguage) ? value as TikoLanguage : defaultLanguage
-}
-
-function toColorMode(value: string | undefined): TikoColorMode {
-  return value === 'light' || value === 'dark' || value === 'system' ? value : 'system'
-}
-
 function normalizePreset(value: unknown, index: number): TimerPreset | null {
   if (!value || typeof value !== 'object') return null
   const preset = value as Partial<TimerPreset>
@@ -80,10 +73,10 @@ function normalizePresets(value: unknown): TimerPreset[] {
 }
 
 const stored = readTikoLocalJson<PersistedState>(storageKey, {})
-const i18n = createI18n({ app: appId, language: toLanguage(stored.language) })
+const i18n = createI18n({ app: appId, language: normalizeTikoLanguage(stored.language) })
 const translationLoader = createTikoTranslationLoader()
-const language = ref<TikoLanguage>(toLanguage(stored.language))
-const colorMode = ref<TikoColorMode>(toColorMode(stored.colorMode))
+const language = ref<TikoLanguage>(normalizeTikoLanguage(stored.language))
+const colorMode = ref<TikoColorMode>(normalizeTikoColorMode(stored.colorMode))
 const customMinutes = ref(stored.customMinutes ?? 5)
 const customSeconds = ref(stored.customSeconds ?? 0)
 const presets = ref<TimerPreset[]>(normalizePresets(stored.presets))
@@ -185,8 +178,8 @@ async function bootstrapIdentity() {
 }
 
 function applySettings(settings: TimerSettings, version?: number) {
-  language.value = toLanguage(settings.language)
-  colorMode.value = toColorMode(settings.colorMode)
+  language.value = normalizeTikoLanguage(settings.language)
+  colorMode.value = normalizeTikoColorMode(settings.colorMode)
   if (typeof settings.defaultMinutes === 'number' && settings.defaultMinutes >= 0) {
     customMinutes.value = settings.defaultMinutes
   }

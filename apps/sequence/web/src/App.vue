@@ -3,12 +3,13 @@ import { computed, onMounted, ref, watch } from 'vue'
 import { Button, InputTextArea, Popup } from '@sil/ui'
 import { IdentityClient, type IdentityBundle } from '@tiko/identity'
 import { TikoDataClient, type SequenceSettings, type SequenceState } from '@tiko/data'
-import { createI18n, createTikoIdentityLabels, createTikoShellLabels, createTikoTranslationLoader, defaultLanguage, tikoI18nKeys, tikoLanguageOptions, tikoLanguages, type TikoLanguage } from '@tiko/i18n'
+import { createI18n, createTikoIdentityLabels, createTikoShellLabels, createTikoTranslationLoader, normalizeTikoLanguage, tikoI18nKeys, tikoLanguageOptions, type TikoLanguage } from '@tiko/i18n'
 import {
   TikoAppShell,
   TikoSettingsPanel,
   TikoSquareTile,
   createTikoTtsClient,
+  normalizeTikoColorMode,
   readTikoLocalJson,
   resolveTikoAppApiBaseUrl,
   resolveTikoColorMode,
@@ -59,14 +60,6 @@ interface PersistedState {
 
 
 
-function toLanguage(value: string | undefined): TikoLanguage {
-  return tikoLanguages.includes(value as TikoLanguage) ? value as TikoLanguage : defaultLanguage
-}
-
-function toColorMode(value: string | undefined): TikoColorMode {
-  return value === 'light' || value === 'dark' || value === 'system' ? value : 'system'
-}
-
 function generateId(): string {
   return `seq-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`
 }
@@ -105,10 +98,10 @@ function normalizeSequenceItem(item: unknown, source: SequenceItem['source']): S
 }
 
 const stored = readTikoLocalJson<PersistedState>(storageKey, {})
-const i18n = createI18n({ app: appId, language: toLanguage(stored.language) })
+const i18n = createI18n({ app: appId, language: normalizeTikoLanguage(stored.language) })
 const translationLoader = createTikoTranslationLoader()
-const language = ref<TikoLanguage>(toLanguage(stored.language))
-const colorMode = ref<TikoColorMode>(toColorMode(stored.colorMode))
+const language = ref<TikoLanguage>(normalizeTikoLanguage(stored.language))
+const colorMode = ref<TikoColorMode>(normalizeTikoColorMode(stored.colorMode))
 const defaultItems = ref<SequenceItem[]>([])
 const customItems = ref<SequenceItem[]>((stored.items ?? []).map(item => normalizeSequenceItem(item, 'user')))
 const playingId = ref<string | null>(null)
@@ -207,8 +200,8 @@ async function bootstrapIdentity() {
 }
 
 function applySettings(settings: SequenceSettings, version?: number) {
-  language.value = toLanguage(settings.language)
-  colorMode.value = toColorMode(settings.colorMode)
+  language.value = normalizeTikoLanguage(settings.language)
+  colorMode.value = normalizeTikoColorMode(settings.colorMode)
   settingsVersion.value = version
 }
 

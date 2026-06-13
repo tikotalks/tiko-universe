@@ -20,6 +20,10 @@ export const tikoLanguages = [
 
 export type TikoLanguage = typeof tikoLanguages[number]
 
+export function normalizeTikoLanguage(value: string | null | undefined): TikoLanguage {
+  return tikoLanguages.includes(value as TikoLanguage) ? value as TikoLanguage : defaultLanguage
+}
+
 export interface TikoLanguageOption {
   value: TikoLanguage
   label: string

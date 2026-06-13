@@ -4,10 +4,11 @@ import { useBemm } from 'bemm'
 import { Button, Popup, type PopupService } from '@sil/ui'
 import { IdentityClient } from '@tiko/identity'
 import { TikoDataClient, type CardsSettings } from '@tiko/data'
-import { createI18n, createTikoIdentityLabels, createTikoShellLabels, createTikoTranslationLoader, defaultLanguage, tikoI18nKeys, tikoLanguageOptions, tikoLanguages, type TikoLanguage } from '@tiko/i18n'
+import { createI18n, createTikoIdentityLabels, createTikoShellLabels, createTikoTranslationLoader, normalizeTikoLanguage, tikoI18nKeys, tikoLanguageOptions, type TikoLanguage } from '@tiko/i18n'
 import {
   TikoAppShell,
   createTikoTtsClient,
+  normalizeTikoColorMode,
   readTikoLocalJson,
   resolveTikoAppApiBaseUrl,
   resolveTikoColorMode,
@@ -47,11 +48,11 @@ const speakingCardID = ref<string>()
 const speakStatus = ref<SpeakStatus>('idle')
 
 const stored = readStored()
-const i18n = createI18n({ app: 'cards', language: toLanguage(stored.language) })
+const i18n = createI18n({ app: 'cards', language: normalizeTikoLanguage(stored.language) })
 const translationLoader = createTikoTranslationLoader()
 const loadedTranslations = new Set<string>()
-const language = ref<TikoLanguage>(toLanguage(stored.language))
-const colorMode = ref<TikoColorMode>(toColorMode(stored.colorMode))
+const language = ref<TikoLanguage>(normalizeTikoLanguage(stored.language))
+const colorMode = ref<TikoColorMode>(normalizeTikoColorMode(stored.colorMode))
 const hideDefaultCollections = ref(stored.hideDefaultCollections ?? false)
 const showAnimations = ref(stored.showAnimations ?? true)
 const cardSizeIndex = ref(clampIndex(stored.cardSizeIndex ?? 1))
@@ -373,14 +374,6 @@ function writeStored(state: PersistedCards) {
   })
 }
 
-function toLanguage(value: string | undefined): TikoLanguage {
-  return tikoLanguages.includes(value as TikoLanguage) ? value as TikoLanguage : defaultLanguage
-}
-
-function toColorMode(value: string | undefined): TikoColorMode {
-  return value === 'light' || value === 'dark' || value === 'system' ? value : 'system'
-}
-
 function clampIndex(value: number) {
   return Math.min(2, Math.max(0, Number.isFinite(value) ? value : 1))
 }
@@ -399,8 +392,8 @@ async function loadTranslations(value: TikoLanguage) {
 }
 
 function applyRemoteSettings(settings: CardsSettings, version?: number) {
-  language.value = toLanguage(settings.language)
-  colorMode.value = toColorMode(settings.colorMode)
+  language.value = normalizeTikoLanguage(settings.language)
+  colorMode.value = normalizeTikoColorMode(settings.colorMode)
   hideDefaultCollections.value = typeof settings.hideDefaultCollections === 'boolean'
     ? settings.hideDefaultCollections
     : hideDefaultCollections.value

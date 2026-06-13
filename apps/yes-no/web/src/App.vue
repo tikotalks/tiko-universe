@@ -4,13 +4,14 @@ import { useBemm } from 'bemm'
 import { Icon, Popup } from '@sil/ui'
 import { IdentityClient } from '@tiko/identity'
 import { TikoDataClient, type YesNoSettings, type YesNoState } from '@tiko/data'
-import { createI18n, createTikoIdentityLabels, createTikoShellLabels, createTikoTranslationLoader, defaultLanguage, tikoI18nKeys, tikoLanguageOptions, tikoLanguages, type TikoLanguage } from '@tiko/i18n'
+import { createI18n, createTikoIdentityLabels, createTikoShellLabels, createTikoTranslationLoader, normalizeTikoLanguage, tikoI18nKeys, tikoLanguageOptions, type TikoLanguage } from '@tiko/i18n'
 import {
   TikoAppShell,
   TikoSettingsPanel,
   TikoSquareTile,
   createTikoTtsClient,
   injectAppMeta,
+  normalizeTikoColorMode,
   readTikoLocalJson,
   resolveTikoAppApiBaseUrl,
   resolveTikoColorMode,
@@ -76,14 +77,6 @@ interface PersistedState {
   answers?: AnswerTile[]
 }
 
-function toLanguage(value: string | undefined): TikoLanguage {
-  return tikoLanguages.includes(value as TikoLanguage) ? value as TikoLanguage : defaultLanguage
-}
-
-function toColorMode(value: string | undefined): TikoColorMode {
-  return value === 'light' || value === 'dark' || value === 'system' ? value : 'system'
-}
-
 function toAnswerId(value: unknown): string {
   return typeof value === 'string' ? value : ''
 }
@@ -134,11 +127,11 @@ function defaultsAnswers(state: unknown): AnswerTile[] {
 }
 
 const stored = readTikoLocalJson<PersistedState>(storageKey, {})
-const i18n = createI18n({ app: appId, language: toLanguage(stored.language) })
+const i18n = createI18n({ app: appId, language: normalizeTikoLanguage(stored.language) })
 const translationLoader = createTikoTranslationLoader()
 const loadedTranslations = new Set<string>()
-const language = ref<TikoLanguage>(toLanguage(stored.language))
-const colorMode = ref<TikoColorMode>(toColorMode(stored.colorMode))
+const language = ref<TikoLanguage>(normalizeTikoLanguage(stored.language))
+const colorMode = ref<TikoColorMode>(normalizeTikoColorMode(stored.colorMode))
 const latestAnswerId = ref<string>(toAnswerId(stored.latestAnswerId ?? stored.latestAnswer))
 const answerHistory = ref<string[]>(toHistory(stored.answerHistory))
 const defaultAnswers = ref<AnswerTile[]>([])
@@ -254,8 +247,8 @@ function saveLocalFallback() {
 }
 
 function applySettings(settings: YesNoSettings, version?: number) {
-  language.value = toLanguage(settings.language)
-  colorMode.value = toColorMode(settings.colorMode)
+  language.value = normalizeTikoLanguage(settings.language)
+  colorMode.value = normalizeTikoColorMode(settings.colorMode)
   sentence.value = typeof settings.spokenPrompt === 'string' && settings.spokenPrompt.trim() ? settings.spokenPrompt : defaultSentence.value
   settingsVersion.value = version
 }
