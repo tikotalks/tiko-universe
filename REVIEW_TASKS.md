@@ -208,6 +208,7 @@ Approximate review spread: 7 Critical, about 35 High, about 70 Medium, and about
 
 - [ ] Split god files.
   - generation-api routes into modules.
+  - [x] Extract generation-api speech normalization and Atlas speech helpers into a focused module.
   - content/media/identity workers where useful.
   - admin StoryNarrator/ImageGenerator pages by tab or feature.
   - [x] Extract StoryNarrator segment editor into a focused component.
