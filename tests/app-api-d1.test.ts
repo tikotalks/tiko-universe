@@ -78,9 +78,11 @@ async function applyAppMigrations(db: D1Database) {
 }
 
 async function fetchJson(runtime: TestRuntime, path: string, init: RequestInit = {}) {
+  const headers = new Headers(init.headers)
+  headers.set('content-type', headers.get('content-type') ?? 'application/json')
   const request = new Request(`https://app-api.test${path}`, {
     ...init,
-    headers: { 'content-type': 'application/json', ...(init.headers ?? {}) },
+    headers,
   })
   const response = await worker.fetch(request, runtime.env as never, {} as never)
   const body = response.status === 204 ? {} : await response.json() as Record<string, any>
