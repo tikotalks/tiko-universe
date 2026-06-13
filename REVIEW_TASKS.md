@@ -69,7 +69,7 @@ Approximate review spread: 7 Critical, about 35 High, about 70 Medium, and about
   - Delete duplicated admin-role parsing and static-secret variants.
   - [x] Replace Atlas `SERVICE_API_KEYS` string matching with shared scoped API-key auth.
   - [x] Replace communication-api `COMMUNICATION_API_KEY` verification with shared scoped API-key auth.
-  - Remove app-api direct identity DB fallback completely.
+  - [x] Remove app-api direct identity DB fallback completely.
 
 - [x] Move iOS identity storage to Keychain.
   - Make `TikoKeychainIdentityStore` the default.
