@@ -172,9 +172,9 @@ Approximate review spread: 7 Critical, about 35 High, about 70 Medium, and about
   - Make Swift `TikoI18n` publish bundle changes.
   - Delete per-app language workaround code.
 
-- [ ] Extract shared Tiko speech services.
-  - Web: one TTS path, language-aware, concurrency-safe, no permanent failure cache.
-  - iOS: shared audio session, language mapping, and Atlas/native fallback behavior.
+- [x] Extract shared Tiko speech services.
+  - [x] Web: one TTS path, language-aware, concurrency-safe, no permanent failure cache.
+  - [x] iOS: shared Atlas-first speech service with native speech as fallback only.
 
 - [ ] Move reusable UI/layout into TikoUI/TikoKit.
   - Cards/choice tile layouts.
@@ -214,6 +214,7 @@ Approximate review spread: 7 Critical, about 35 High, about 70 Medium, and about
 - [ ] Unify TTS architecture.
   - Retire tts-api and generation-api local provider path, or make Atlas persist into the one shared cache.
   - Ensure one source of truth for speech generation, caching, and provider selection.
+  - App clients now send speech requests to Atlas without provider/model/voice hints; remaining work is worker-side service/cache consolidation.
 
 ## Phase 4 - Testing And CI Quality
 

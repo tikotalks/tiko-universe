@@ -329,7 +329,7 @@ function nextStep() {
 
 async function speakStep(text: string) {
   try {
-    await tts.speak({ text, language: language.value, provider: 'auto' })
+    await tts.speak({ text, language: language.value })
   } catch {
     // Browser fallback handled by TTS client
   }

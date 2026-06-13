@@ -252,7 +252,7 @@ async function speak(card: CommunicationCard) {
   speakingCardID.value = card.id
   speakStatus.value = 'speaking'
   try {
-    await tts.speak({ text, language: language.value, provider: 'auto' })
+    await tts.speak({ text, language: language.value })
     speakStatus.value = 'idle'
   } catch {
     speakStatus.value = 'error'

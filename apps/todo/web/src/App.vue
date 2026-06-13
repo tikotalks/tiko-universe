@@ -233,7 +233,7 @@ function toggleStep(todoId: string, stepIndex: number) {
 
 async function speakName(name: string) {
   try {
-    await tts.speak({ text: name, language: language.value, provider: 'auto' })
+    await tts.speak({ text: name, language: language.value })
   } catch {
     // Browser fallback
   }

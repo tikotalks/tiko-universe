@@ -1,27 +1,14 @@
-import AVFoundation
 import TikoKit
 
 @MainActor
 final class CardsSpeechService {
-    private let synthesizer = AVSpeechSynthesizer()
+    private let speechService = TikoAtlasSpeechService(app: "cards", purpose: "card-speech")
 
     func speak(_ text: String, languageCode: String = "en-US") {
-        let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard !trimmed.isEmpty else { return }
-
-        if synthesizer.isSpeaking {
-            synthesizer.stopSpeaking(at: .immediate)
-        }
-
-        TikoSpeech.configurePlaybackSession()
-        let utterance = AVSpeechUtterance(string: trimmed)
-        utterance.voice = AVSpeechSynthesisVoice(language: TikoSpeech.languageCode(for: languageCode))
-        utterance.rate = AVSpeechUtteranceDefaultSpeechRate * 0.92
-        utterance.pitchMultiplier = 1.04
-        synthesizer.speak(utterance)
+        speechService.speak(text, languageCode: languageCode)
     }
 
     func stop() {
-        synthesizer.stopSpeaking(at: .immediate)
+        speechService.stop()
     }
 }

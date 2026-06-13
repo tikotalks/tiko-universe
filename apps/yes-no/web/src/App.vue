@@ -332,7 +332,7 @@ async function speak(text: string) {
   if (!trimmed) return
   speakStatus.value = 'speaking'
   try {
-    const result = await tts.speak({ text: trimmed, language: language.value, provider: 'narakeet' })
+    const result = await tts.speak({ text: trimmed, language: language.value })
     speakStatus.value = result.metadata?.fallbackUsed ? 'fallback' : 'idle'
   } catch {
     speakStatus.value = 'error'
@@ -353,7 +353,7 @@ async function speakSentence() {
   sentenceSpeechState.value = 'generating'
   speakStatus.value = 'speaking'
   try {
-    const result = await tts.getAudio({ text: trimmed, language: language.value, provider: 'narakeet' })
+    const result = await tts.getAudio({ text: trimmed, language: language.value })
     if (result.audioUrl) {
       const audio = new Audio(result.audioUrl)
       sentenceSpeechState.value = 'playing'
@@ -364,7 +364,7 @@ async function speakSentence() {
     }
 
     sentenceSpeechState.value = 'playing'
-    await tts.speak({ text: trimmed, language: language.value, provider: 'narakeet' })
+    await tts.speak({ text: trimmed, language: language.value })
     speakStatus.value = result.metadata?.fallbackUsed ? 'fallback' : 'idle'
   } catch {
     speakStatus.value = 'error'

@@ -117,9 +117,6 @@ export function createTikoTtsClient(options: TikoTtsClientOptions = {}) {
           purpose: 'speech-playback',
           text: request.text,
           language: request.language,
-          provider: request.provider,
-          voice: request.voice,
-          model: request.model,
           speed: request.speed,
           pitch: request.pitch
         })

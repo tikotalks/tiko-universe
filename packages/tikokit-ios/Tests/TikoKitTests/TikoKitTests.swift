@@ -143,6 +143,14 @@ final class TikoKitTests: XCTestCase {
         XCTAssertEqual(TikoSpeech.languageCode(for: "pt-BR"), "pt-BR")
     }
 
+    @MainActor
+    func testAtlasSpeechServiceIgnoresBlankSpeech() {
+        let speech = TikoAtlasSpeechService(app: "test")
+
+        speech.speak("   ", languageCode: "en")
+        speech.stop()
+    }
+
     func testRecoverableIdentityRequiresVerifiedAccount() {
         let deviceOnly = TikoIdentityBundle(
             subject: TikoIdentitySubject(id: "sub-device", kind: "anonymous", product: "tiko"),

@@ -224,7 +224,7 @@ onMounted(async () => {
 async function handleSpeak() {
   if (!text.value.trim()) return
   try {
-    await tts.speak({ text: text.value, language: language.value, provider: 'auto' })
+    await tts.speak({ text: text.value, language: language.value })
   } catch {
     // Browser fallback is handled inside the shared TTS client.
   }

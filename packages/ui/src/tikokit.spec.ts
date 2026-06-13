@@ -530,10 +530,11 @@ describe('TikoKit component contract', () => {
     }), { status: 200 })) as unknown as typeof fetch
     const client = createTikoTtsClient({ fetcher, audioFactory: () => ({ play }) })
 
-    const result = await client.speak({ text: 'Yes', language: 'en', provider: 'auto' })
+    const result = await client.speak({ text: 'Yes', language: 'en' })
 
     expect(fetcher).toHaveBeenCalledWith('https://api.tikotalks.com/v1/atlas/speech', expect.objectContaining({ method: 'POST' }))
-    expect(JSON.parse((fetcher as any).mock.calls[0][1].body)).toMatchObject({ app: 'tiko-ui', purpose: 'speech-playback', text: 'Yes', language: 'en', provider: 'auto' })
+    expect(JSON.parse((fetcher as any).mock.calls[0][1].body)).toMatchObject({ app: 'tiko-ui', purpose: 'speech-playback', text: 'Yes', language: 'en' })
+    expect(JSON.parse((fetcher as any).mock.calls[0][1].body)).not.toHaveProperty('provider')
     expect(result.audioUrl).toBe('https://api.tikotalks.com/v1/atlas/assets/asset-yes')
     expect(result.metadata).toMatchObject({ id: 'asset-yes', provider: 'openai', model: 'tts-1', voice: 'nova', requestId: 'atlas-req-1' })
     expect(play).toHaveBeenCalledTimes(1)
