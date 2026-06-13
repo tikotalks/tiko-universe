@@ -19,6 +19,7 @@
     "lint": "node tools/check-placeholders.mjs",
     "typecheck": "vue-tsc --noEmit -p tsconfig.json",
     "test": "vitest run",
+    "test:coverage": "vitest run --coverage",
     "test:contracts": "vitest run tests/identity-api.test.ts tests/app-api.test.ts tests/generation-api.test.ts tests/atlas-api.test.ts tests/testing-contract.test.ts",
     "test:services": "npm run test:contracts",
     "build": "npm run build --workspaces --if-present",
@@ -50,6 +51,7 @@
     "@capacitor/core": "^8.4.0",
     "@playwright/test": "^1.56.1",
     "@types/node": "^25.9.1",
+    "@vitest/coverage-v8": "^4.1.7",
     "wrangler": "^4.98.0"
   }
 }

@@ -24,6 +24,18 @@ export default defineConfig({
     environment: 'jsdom',
     globals: true,
     setupFiles: ['./tests/vitest.setup.ts'],
-    exclude: ['**/node_modules/**', '**/dist/**', '**/e2e/**']
+    exclude: ['**/node_modules/**', '**/dist/**', '**/e2e/**'],
+    coverage: {
+      provider: 'v8',
+      reporter: ['text', 'json-summary', 'lcov'],
+      reportsDirectory: './coverage',
+      exclude: [
+        '**/node_modules/**',
+        '**/dist/**',
+        '**/e2e/**',
+        '**/*.config.*',
+        '**/vite-env.d.ts'
+      ]
+    }
   }
 })

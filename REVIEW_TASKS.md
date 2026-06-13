@@ -233,7 +233,7 @@ Approximate review spread: 7 Critical, about 35 High, about 70 Medium, and about
   - Add Miniflare or Cloudflare Vitest pool suites that run migrations and real SQLite constraints.
   - Fix fake behavior that masks authorization/schema regressions.
 
-- [ ] Add coverage reporting.
+- [x] Add coverage reporting.
   - Start with workspaces that already have real suites.
   - Add thresholds only after suites are trustworthy.
 

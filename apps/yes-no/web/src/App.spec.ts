@@ -413,10 +413,10 @@ describe('Yes No web app', () => {
     expect(JSON.stringify([...fetchMock.mock.calls])).not.toContain('parentCodeHash')
   })
 
-  it('renders open-icon names instead of emoji glyphs for visible app and choice icons', () => {
+  it('renders configured media/open icons instead of emoji glyphs for visible app controls', () => {
     const { wrapper } = mountApp()
 
-    expect(wrapper.find('[data-icon="ui/check-fat"]').exists()).toBe(true)
+    expect(wrapper.get('.tiko-app-header__app-icon img').attributes('src')).toContain('/download')
     expect(wrapper.find('[data-icon="wayfinding/cross"]').exists()).toBe(true)
     expect(wrapper.text()).not.toContain('👍')
     expect(wrapper.text()).not.toContain('👎')

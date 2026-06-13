@@ -1,5 +1,53 @@
 import { defineComponent, h } from 'vue'
-import { vi } from 'vitest'
+import { beforeEach, vi } from 'vitest'
+
+function createMemoryStorage(): Storage {
+  const store = new Map<string, string>()
+  return {
+    get length() {
+      return store.size
+    },
+    clear() {
+      store.clear()
+    },
+    getItem(key: string) {
+      return store.get(key) ?? null
+    },
+    key(index: number) {
+      return Array.from(store.keys())[index] ?? null
+    },
+    removeItem(key: string) {
+      store.delete(key)
+    },
+    setItem(key: string, value: string) {
+      store.set(key, String(value))
+    },
+  }
+}
+
+function ensureLocalStorage(): void {
+  if (typeof window === 'undefined') return
+  const storage = window.localStorage
+  if (
+    typeof storage?.clear === 'function' &&
+    typeof storage.getItem === 'function' &&
+    typeof storage.setItem === 'function' &&
+    typeof storage.removeItem === 'function'
+  ) {
+    return
+  }
+  Object.defineProperty(window, 'localStorage', {
+    value: createMemoryStorage(),
+    writable: true,
+    configurable: true,
+  })
+}
+
+ensureLocalStorage()
+
+beforeEach(() => {
+  ensureLocalStorage()
+})
 
 vi.mock('@sil/ui', () => {
   const Button = defineComponent({
