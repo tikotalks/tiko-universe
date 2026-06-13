@@ -12,6 +12,7 @@ import {
   readTikoLocalJson,
   resolveTikoAppApiBaseUrl,
   resolveTikoIdentityBaseUrl,
+  useTikoAppDataRuntime,
   useTikoColorModeEffect,
   useIdentityRuntime,
   writeTikoLocalJson,
@@ -81,8 +82,6 @@ const customMinutes = ref(stored.customMinutes ?? 5)
 const customSeconds = ref(stored.customSeconds ?? 0)
 const presets = ref<TimerPreset[]>(normalizePresets(stored.presets))
 const settingsOpen = ref(false)
-const settingsVersion = ref<number | undefined>()
-const stateVersion = ref<number | undefined>()
 const sessionToken = ref<string>('')
 const userId = ref('')
 const accountEmail = ref('')
@@ -113,6 +112,32 @@ if (stored.timerMode && stored.timerMode !== 'idle') {
     startedAt: stored.startedAt ?? null
   })
 }
+
+const dataRuntime = useTikoAppDataRuntime<typeof appId, TimerSettings, TimerState>({
+  app: appId,
+  sessionToken,
+  bootstrapped,
+  dataClient,
+  readSettings: () => ({
+    language: language.value,
+    colorMode: colorMode.value,
+    defaultMinutes: customMinutes.value,
+    defaultSeconds: customSeconds.value,
+  }),
+  readState: () => {
+    const timerState = timer.getState()
+    return {
+      mode: timerState.mode,
+      targetMs: timerState.targetMs,
+      remainingMs: timerState.remainingMs,
+      totalDurationMs: timerState.totalDurationMs,
+      startedAt: timerState.startedAt,
+      presets: presets.value,
+    }
+  },
+  applySettings,
+  applyState,
+})
 
 const RING_CIRCUMFERENCE = 2 * Math.PI * 80
 
@@ -177,7 +202,7 @@ async function bootstrapIdentity() {
   return runtime.bootstrapIdentity()
 }
 
-function applySettings(settings: TimerSettings, version?: number) {
+function applySettings(settings: TimerSettings) {
   language.value = normalizeTikoLanguage(settings.language)
   colorMode.value = normalizeTikoColorMode(settings.colorMode)
   if (typeof settings.defaultMinutes === 'number' && settings.defaultMinutes >= 0) {
@@ -186,10 +211,9 @@ function applySettings(settings: TimerSettings, version?: number) {
   if (typeof settings.defaultSeconds === 'number' && settings.defaultSeconds >= 0) {
     customSeconds.value = settings.defaultSeconds
   }
-  settingsVersion.value = version
 }
 
-function applyState(state: TimerState, version?: number) {
+function applyState(state: TimerState) {
   if (Array.isArray(state.presets)) {
     presets.value = normalizePresets(state.presets)
   }
@@ -201,50 +225,6 @@ function applyState(state: TimerState, version?: number) {
       totalDurationMs: state.totalDurationMs ?? 0,
       startedAt: state.startedAt ?? null
     })
-  }
-  stateVersion.value = version
-}
-
-async function hydrateRemoteData() {
-  if (!sessionToken.value) return
-  const [settings, state] = await Promise.all([
-    dataClient.getSettings(appId, sessionToken.value),
-    dataClient.getState(appId, sessionToken.value)
-  ])
-  applySettings(settings.settings, settings.version)
-  applyState(state.state, state.version)
-}
-
-async function persistSettingsRemote() {
-  if (!bootstrapped.value || !sessionToken.value) return
-  try {
-    const response = await dataClient.putSettings(appId, sessionToken.value, {
-      language: language.value,
-      colorMode: colorMode.value,
-      defaultMinutes: customMinutes.value,
-      defaultSeconds: customSeconds.value
-    }, { version: settingsVersion.value })
-    settingsVersion.value = response.version
-  } catch {
-    // Local fallback is already written; remote will be retried on the next edit.
-  }
-}
-
-async function persistStateRemote() {
-  if (!bootstrapped.value || !sessionToken.value) return
-  try {
-    const timerState = timer.getState()
-    const response = await dataClient.putState(appId, sessionToken.value, {
-      mode: timerState.mode,
-      targetMs: timerState.targetMs,
-      remainingMs: timerState.remainingMs,
-      totalDurationMs: timerState.totalDurationMs,
-      startedAt: timerState.startedAt,
-      presets: presets.value
-    }, { version: stateVersion.value })
-    stateVersion.value = response.version
-  } catch {
-    // Local fallback is already written; remote will be retried on the next change.
   }
 }
 
@@ -265,19 +245,19 @@ useTikoColorModeEffect(colorMode)
 
 watch([language, colorMode, customMinutes, customSeconds], () => {
   saveLocalFallback()
-  void persistSettingsRemote()
+  void dataRuntime.persistSettingsRemote()
 })
 
 watch(timer.mode, () => {
   saveLocalFallback()
-  void persistStateRemote()
+  void dataRuntime.persistStateRemote()
 })
 
 onMounted(async () => {
   try {
     await runtime.bootstrapIdentity()
     await runtime.loadProfile()
-    await hydrateRemoteData()
+    await dataRuntime.hydrateRemoteData()
   } catch {
     // Keep the child-facing local flow available when API bootstrap is offline.
   } finally {

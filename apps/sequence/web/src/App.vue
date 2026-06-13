@@ -14,6 +14,7 @@ import {
   resolveTikoAppApiBaseUrl,
   resolveTikoContentApiBaseUrl,
   resolveTikoIdentityBaseUrl,
+  useTikoAppDataRuntime,
   useTikoColorModeEffect,
   useIdentityRuntime,
   writeTikoLocalJson,
@@ -107,8 +108,6 @@ const customItems = ref<SequenceItem[]>((stored.items ?? []).map(item => normali
 const playingId = ref<string | null>(null)
 const currentStep = ref(0)
 const settingsOpen = ref(false)
-const settingsVersion = ref<number | undefined>()
-const stateVersion = ref<number | undefined>()
 const createOpen = ref(false)
 const newName = ref('')
 const newSteps = ref<string[]>([''])
@@ -131,6 +130,21 @@ const runtimeState: IdentityRuntimeState = {
   parentMode, childModeEnabled, pinConfigured,
 }
 const runtime = useIdentityRuntime({ identityClient, state: runtimeState, deviceName: 'Sequence web', labels: () => createTikoIdentityLabels(i18n.t) })
+const dataRuntime = useTikoAppDataRuntime<typeof appId, SequenceSettings, SequenceState>({
+  app: appId,
+  sessionToken,
+  bootstrapped,
+  dataClient,
+  readSettings: () => ({
+    language: language.value,
+    colorMode: colorMode.value,
+  }),
+  readState: () => ({
+    items: customItems.value,
+  }),
+  applySettings,
+  applyState,
+})
 
 const labels = computed(() => {
   return {
@@ -199,25 +213,13 @@ async function bootstrapIdentity() {
   return runtime.bootstrapIdentity()
 }
 
-function applySettings(settings: SequenceSettings, version?: number) {
+function applySettings(settings: SequenceSettings) {
   language.value = normalizeTikoLanguage(settings.language)
   colorMode.value = normalizeTikoColorMode(settings.colorMode)
-  settingsVersion.value = version
 }
 
-function applyState(state: SequenceState, version?: number) {
+function applyState(state: SequenceState) {
   if (state.items) customItems.value = (state.items as unknown[]).map(item => normalizeSequenceItem(item, 'user'))
-  stateVersion.value = version
-}
-
-async function hydrateRemoteData() {
-  if (!sessionToken.value) return
-  const [settings, state] = await Promise.all([
-    dataClient.getSettings(appId, sessionToken.value),
-    dataClient.getState(appId, sessionToken.value),
-  ])
-  applySettings(settings.settings, settings.version)
-  applyState(state.state, state.version)
 }
 
 async function hydrateDefaultContent() {
@@ -230,31 +232,6 @@ async function hydrateDefaultContent() {
     defaultItems.value = (body.data?.sequences ?? []).map(item => normalizeSequenceItem(item, 'default'))
   } catch {
     defaultItems.value = []
-  }
-}
-
-async function persistSettingsRemote() {
-  if (!bootstrapped.value || !sessionToken.value) return
-  try {
-    const response = await dataClient.putSettings(appId, sessionToken.value, {
-      language: language.value,
-      colorMode: colorMode.value,
-    }, { version: settingsVersion.value })
-    settingsVersion.value = response.version
-  } catch {
-    // Local fallback already written; remote will be retried on the next settings edit.
-  }
-}
-
-async function persistStateRemote() {
-  if (!bootstrapped.value || !sessionToken.value) return
-  try {
-    const response = await dataClient.putState(appId, sessionToken.value, {
-      items: customItems.value,
-    }, { version: stateVersion.value })
-    stateVersion.value = response.version
-  } catch {
-    // Local fallback already written; remote will be retried on the next content edit.
   }
 }
 
@@ -276,12 +253,12 @@ useTikoColorModeEffect(colorMode)
 
 watch([language, colorMode], () => {
   saveLocal()
-  void persistSettingsRemote()
+  void dataRuntime.persistSettingsRemote()
 })
 
 watch(customItems, () => {
   saveLocal()
-  void persistStateRemote()
+  void dataRuntime.persistStateRemote()
 }, { deep: true })
 
 onMounted(async () => {
@@ -293,7 +270,7 @@ onMounted(async () => {
   }
 
   try {
-    await hydrateRemoteData()
+    await dataRuntime.hydrateRemoteData()
     await hydrateDefaultContent()
   } catch {
     // Remote sync failed — local state is still valid
@@ -414,7 +391,7 @@ async function retry() {
     // Identity still unavailable
   }
   try {
-    await hydrateRemoteData()
+    await dataRuntime.hydrateRemoteData()
     await hydrateDefaultContent()
   } catch {
     if (!sessionToken.value) loadError.value = true
