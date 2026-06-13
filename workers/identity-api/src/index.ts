@@ -1005,10 +1005,6 @@ async function canBootstrapAdmin(env: Env, subjectId: string): Promise<boolean> 
   return row.email_hash === await hashEmail(normalizeEmail(env.ADMIN_EMAIL ?? ADMIN_EMAIL), env.TOKEN_PEPPER)
 }
 
-async function hasRole(db: D1Database, subjectId: string, role: string): Promise<boolean> {
-  return (await activeRoles(db, subjectId)).includes(role)
-}
-
 async function assignRole(db: D1Database, subjectId: string, role: string, source: string, actorSubjectId: string | null): Promise<void> {
   await db.prepare('INSERT INTO identity_role_assignments (id, subject_id, product, role, source, actor_subject_id, created_at, revoked_at, metadata_json) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)')
     .bind(id('role'), subjectId, 'tiko', role, source, actorSubjectId, new Date().toISOString(), null, '{}')
