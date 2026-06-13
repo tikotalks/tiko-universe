@@ -28,20 +28,22 @@ export default defineConfig({
   reporter: process.env.CI ? 'github' : 'list',
   timeout: 30_000,
   expect: { timeout: 10_000 },
-  testIdAttribute: 'data-test',
+  use: {
+    testIdAttribute: 'data-test',
+  },
+  webServer: apps.map(app => ({
+    command: 'npm run dev',
+    cwd: app.cwd,
+    port: app.port,
+    reuseExistingServer: !process.env.CI,
+    timeout: 30_000,
+  })),
   projects: apps.map(app => ({
     name: app.name,
     testDir: `${app.cwd}/e2e`,
     testMatch: '**/*.spec.ts',
     use: {
       baseURL: `http://localhost:${app.port}`,
-    },
-    webServer: {
-      command: 'npm run dev',
-      cwd: app.cwd,
-      port: app.port,
-      reuseExistingServer: !process.env.CI,
-      timeout: 30_000,
     },
   })),
 })

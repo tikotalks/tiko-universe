@@ -12,36 +12,58 @@ const BASE = `http://localhost:${PORT}`
 
 // Intercept API calls to prevent real network requests
 async function mockApi(page: Page) {
-  await page.route('**/identity/**', async route => {
+  const identityBundle = {
+    subject: { id: 'user-test', kind: 'device', product: 'tiko' },
+    user: { id: 'user-test', accountType: 'temporary', recoverable: false },
+    device: { id: 'device-test', secret: 'secret-test' },
+    account: null,
+    session: { id: 'session-test', token: 'token-test', transport: 'bearer', expiresAt: '2099-01-01T00:00:00.000Z' },
+    runtime: { mode: 'parent', childModeEnabled: false, pinConfigured: false },
+    capabilities: { canVerifyEmail: true, canUseParentMode: false, canUseChildMode: false, canManageChildAccounts: false, canDeleteAccount: false }
+  }
+  await page.route('https://id.tikoapps.org/v1/identity/**', async route => {
     await route.fulfill({
       status: 200,
       contentType: 'application/json',
-      body: JSON.stringify({
-        user: { id: 'user-test', kind: 'device', recoverable: false },
-        device: { id: 'device-test', secret: 'secret-test' },
-        session: { token: 'token-test', expiresAt: '2099-01-01T00:00:00.000Z' }
-      })
+      body: JSON.stringify(identityBundle)
     })
   })
-  await page.route('**/apps/timer/**', async route => {
+  await page.route('https://app.tikoapi.org/v1/apps/config/timer', async route => {
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({ config: { id: 'timer', title: 'Timer', appColor: 'timer', appIcon: 'time/timer' }, updatedAt: null, version: 1 })
+    })
+  })
+  await page.route('https://app.tikoapi.org/v1/apps/timer/**', async route => {
     await route.fulfill({
       status: 200,
       contentType: 'application/json',
       body: JSON.stringify({ app: 'timer', updatedAt: null, version: 1, settings: {}, state: {} })
     })
   })
-  await page.route('**/generation/tts**', async route => {
+  await page.route('https://api.tikotalks.com/v1/atlas/speech', async route => {
     await route.fulfill({
       status: 200,
       contentType: 'application/json',
-      body: JSON.stringify({ success: true, audioUrl: '/audio/test.mp3' })
+      body: JSON.stringify({
+        data: { id: 'asset-test', audioUrl: '/v1/atlas/assets/asset-test', contentType: 'audio/mpeg', provider: { name: 'test', model: 'test', voice: 'test' } },
+        meta: { cached: false, schemaVersion: 1, requestId: 'e2e-test' }
+      })
     })
   })
   // Block Audio playback
   await page.addInitScript(() => {
     window.Audio = class {
-      play() { return Promise.resolve() }
+      private listeners: Record<string, Array<() => void>> = {}
+      play() {
+        setTimeout(() => this.listeners.ended?.forEach(listener => listener()), 0)
+        return Promise.resolve()
+      }
       pause() {}
+      addEventListener(type: string, listener: () => void) {
+        this.listeners[type] = [...(this.listeners[type] || []), listener]
+      }
     } as any
   })
 }
