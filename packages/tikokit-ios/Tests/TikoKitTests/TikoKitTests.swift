@@ -67,6 +67,23 @@ final class TikoKitTests: XCTestCase {
         XCTAssertNotEqual(TikoAnswerChoice.Icon.openIcon("ui/check-fat"), .openIcon("wayfinding/cross"))
     }
 
+    func testOpenIconsUseNativeSymbols() throws {
+        XCTAssertGreaterThanOrEqual(TikoOpenIcons.all.count, 60)
+        XCTAssertEqual(TikoOpenIcons.systemSymbol(named: "ui/check-fat"), "checkmark")
+        XCTAssertEqual(TikoOpenIcons.systemSymbol(named: "food-drinks/hamburger"), "fork.knife")
+        XCTAssertEqual(TikoOpenIcons.systemSymbol(named: "unknown/icon"), "questionmark")
+
+        let sourceURL = URL(fileURLWithPath: #filePath)
+            .deletingLastPathComponent()
+            .deletingLastPathComponent()
+            .deletingLastPathComponent()
+            .appendingPathComponent("Sources/TikoKit/TikoOpenIcon.swift")
+        let source = try String(contentsOf: sourceURL)
+        XCTAssertFalse(source.contains("import WebKit"))
+        XCTAssertFalse(source.contains("WKWebView"))
+        XCTAssertFalse(source.contains("loadHTMLString"))
+    }
+
     func testColorModeIsExplicitLightDarkOnly() {
         XCTAssertEqual(TikoColorMode.allCases, [.light, .dark])
         XCTAssertEqual(TikoColorMode.light.title, "Light")
