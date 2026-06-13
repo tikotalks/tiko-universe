@@ -117,6 +117,44 @@ export interface TikoTtsClientOptions {
   speechSynthesis?: SpeechSynthesis
 }
 
+export type TikoRuntimeEnv = Record<string, string | undefined>
+
+function getTikoRuntimeEnv(): TikoRuntimeEnv {
+  return ((import.meta as ImportMeta & { env?: TikoRuntimeEnv }).env ?? {}) as TikoRuntimeEnv
+}
+
+function normalizeBaseUrl(value: string): string {
+  return value.replace(/\/$/, '')
+}
+
+function resolveTikoBaseUrl(keys: string[], fallback: string, env: TikoRuntimeEnv = getTikoRuntimeEnv()): string {
+  for (const key of keys) {
+    const value = env[key]
+    if (typeof value === 'string' && value.trim()) return normalizeBaseUrl(value.trim())
+  }
+  return normalizeBaseUrl(fallback)
+}
+
+export function resolveTikoAppApiBaseUrl(env?: TikoRuntimeEnv): string {
+  return resolveTikoBaseUrl(['VITE_TIKO_API_BASE_URL', 'VITE_APP_API_URL'], 'https://app.tikoapi.org/v1', env)
+}
+
+export function resolveTikoIdentityBaseUrl(env?: TikoRuntimeEnv): string {
+  return resolveTikoBaseUrl(['VITE_IDENTITY_API_URL', 'VITE_TIKO_IDENTITY_BASE_URL'], 'https://id.tikoapps.org/v1', env)
+}
+
+export function resolveTikoContentApiBaseUrl(env?: TikoRuntimeEnv): string {
+  return resolveTikoBaseUrl(['VITE_TIKO_CONTENT_BASE_URL', 'VITE_CONTENT_API_URL'], 'https://content.tikoapi.org/v1', env)
+}
+
+export function resolveTikoGenerationApiBaseUrl(env?: TikoRuntimeEnv): string {
+  return resolveTikoBaseUrl(['VITE_GENERATION_API_URL'], 'https://generation.tikoapi.org/v1/generation', env)
+}
+
+export function resolveTikoMediaApiBaseUrl(env?: TikoRuntimeEnv): string {
+  return resolveTikoBaseUrl(['VITE_MEDIA_API_URL'], 'https://media.tikoapi.org/v1', env)
+}
+
 export const TIKO_PALETTE: string[] = [
   '#9b3fbd', // yes-no purple
   '#2488ff', // type blue
@@ -263,10 +301,6 @@ export function createTikoChoice(input: TikoChoiceInput): TikoChoice {
     ...(input.imageSrc ? { imageSrc: input.imageSrc } : {}),
     ...(input.icon ? { icon: input.icon } : {})
   }
-}
-
-function normalizeBaseUrl(url: string): string {
-  return url.replace(/\/$/, '')
 }
 
 function createBrowserFallback(fallbackUsed = false, error?: string): TikoTtsResponse {
