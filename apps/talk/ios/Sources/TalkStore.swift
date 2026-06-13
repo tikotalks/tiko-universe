@@ -274,10 +274,15 @@ final class TalkStore {
             validNext = response.stripState.validNext
             serverCanComplete = response.stripState.canComplete
         } catch {
-            suggestions = []
+            // Keep the board populated (don't wipe suggestions) and still allow
+            // speaking what's built. Only surface the reason in debug.
             stripDisplay = sentenceText
             serverCanComplete = true
-            errorMessage = "Suggestions unavailable"
+            #if DEBUG
+            errorMessage = "next: \(error.localizedDescription)"
+            #else
+            errorMessage = nil
+            #endif
         }
     }
 

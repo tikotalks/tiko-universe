@@ -38,30 +38,34 @@ struct TalkView: View {
                 }
             }
         ) {
-            VStack(spacing: 14) {
-                TalkSentenceStripView(
-                    words: store.sentenceWords,
-                    canSpeak: store.canSpeak,
-                    isSpeaking: isSpeaking,
-                    appColor: .talk,
-                    onRemove: { word in Task { await removeWord(word) } },
-                    onSpeak: { Task { await speakSentence() } },
-                    onClear: store.clearSentence
-                )
-
-                statusSection
-
-                if cloudLayout {
-                    TalkWordCloudView(words: store.boardWords, appColor: .talk) { word in
-                        Task { await addWord(word) }
+            // The board fills the space; the sentence bar floats on top of it.
+            ZStack(alignment: .top) {
+                Group {
+                    if cloudLayout {
+                        TalkWordCloudView(words: store.boardWords, appColor: .talk) { word in
+                            Task { await addWord(word) }
+                        }
+                    } else {
+                        wordGrid
                     }
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                } else {
-                    wordGrid
                 }
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+
+                VStack(spacing: 10) {
+                    TalkSentenceStripView(
+                        words: store.sentenceWords,
+                        canSpeak: store.canSpeak,
+                        isSpeaking: isSpeaking,
+                        appColor: .talk,
+                        onRemove: { word in Task { await removeWord(word) } },
+                        onSpeak: { Task { await speakSentence() } },
+                        onClear: store.clearSentence
+                    )
+                    statusSection
+                }
+                .padding(.horizontal, 16)
+                .padding(.top, 12)
             }
-            .padding(.horizontal, 16)
-            .padding(.top, 12)
             .task {
                 store.locale = languageCode
                 await store.load()
