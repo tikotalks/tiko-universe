@@ -57,6 +57,7 @@ Approximate review spread: 7 Critical, about 35 High, about 70 Medium, and about
   - Create separate D1 databases and KV namespaces for identity, app, atlas, media, communication, generation, and content caches.
   - Fix provisioning so production never reuses dev DB names.
   - Stop dev deploys from applying schema/seed to shared production-like data.
+  - [x] Add a deploy guard that skips unsafe development worker deploys when D1 bindings still share production database IDs.
 
 - [ ] Consolidate D1 ownership.
   - Use one database per worker, or one migration directory per shared database.

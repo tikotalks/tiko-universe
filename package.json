@@ -24,6 +24,7 @@
     "test:contracts": "vitest run tests/identity-api.test.ts tests/app-api.test.ts tests/generation-api.test.ts tests/atlas-api.test.ts tests/testing-contract.test.ts",
     "test:services": "npm run test:contracts",
     "build": "npm run build --workspaces --if-present",
+    "audit:data-isolation": "node tools/check-d1-isolation.mjs",
     "android:list": "node tools/android-wrappers.mjs list",
     "android:sync": "node tools/android-wrappers.mjs sync",
     "android:build": "node tools/android-wrappers.mjs build-android",

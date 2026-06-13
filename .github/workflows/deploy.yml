@@ -232,6 +232,13 @@ jobs:
           WORKER="${{ matrix.worker }}"
           ENV="${{ needs.detect-changes.outputs.environment }}"
 
+          if [[ "$ENV" == "development" ]]; then
+            if ! node tools/check-d1-isolation.mjs --worker "$WORKER"; then
+              echo "⏭️ $WORKER development D1 bindings are not isolated; skipping deploy until Cloudflare resources are provisioned"
+              exit 0
+            fi
+          fi
+
           if [[ "$WORKER" == "sentence-api" && "$ENV" == "development" ]]; then
             echo "🔧 Provisioning Talk dev Cloudflare resources"
             node scripts/cloudflare/provision-talk-dev.mjs
