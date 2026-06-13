@@ -118,10 +118,6 @@ async function invalidateCardsCache(env: Env): Promise<void> {
   await invalidateCacheNamespace(env, CACHE_KEY_CARDS_COLLECTIONS)
 }
 
-async function invalidateYesNoCache(env: Env): Promise<void> {
-  await invalidateCacheNamespace(env, CACHE_KEY_YES_NO_CONTENT)
-}
-
 async function invalidateSequenceCache(env: Env): Promise<void> {
   await invalidateCacheNamespace(env, CACHE_KEY_SEQUENCE_CONTENT)
 }
@@ -133,16 +129,6 @@ async function invalidateCacheNamespace(env: Env, namespace: string): Promise<vo
 
 function cacheVersionKey(namespace: string): string {
   return `${CACHE_VERSION_PREFIX}:${namespace}`
-}
-
-interface UserImageRow {
-  id: string
-  r2_key: string
-  content_type: string
-  file_size_bytes: number | null
-  width: number | null
-  height: number | null
-  uploaded_by: string | null
 }
 
 async function resolveImageRef(imageRef: string | null | undefined, env: Env): Promise<string | null> {
