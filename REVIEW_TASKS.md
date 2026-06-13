@@ -221,6 +221,7 @@ Approximate review spread: 7 Critical, about 35 High, about 70 Medium, and about
   - [x] Stop generation-api compatibility TTS from sending provider/model/voice hints to Atlas and require an authenticated Atlas service call.
   - [x] Send web and iOS app speech requests to Atlas with the shared identity credentials before using native/browser speech fallback.
   - [x] Convert tts-api into an Atlas-only adapter with no local speech cache or provider path.
+  - [x] Remove generation-api compatibility TTS local audio cache/provider fallback and drop its generated-audio table.
 
 ## Phase 4 - Testing And CI Quality
 
