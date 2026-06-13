@@ -4,6 +4,7 @@ import { dirname, resolve } from 'node:path'
 
 const root = resolve(new URL('..', import.meta.url).pathname)
 const endpoint = (process.env.TIKO_APP_CONFIG_URL ?? process.env.VITE_TIKO_APP_CONFIG_URL ?? 'https://app.tikoapi.org/v1/apps/config').replace(/\/$/, '')
+const strict = process.env.TIKO_APP_CONFIG_STRICT === '1'
 
 const fallbackConfigs = {
   'yes-no': { id: 'yes-no', title: 'Yes No', appColor: 'yes-no', appIcon: 'ui/check-fat', appIconMediaCategory: 'emotions', themeColor: '#9b3fbd', iosIcon: 'checkmark.circle' },
@@ -50,7 +51,11 @@ async function fetchConfigs() {
     if (!configs || typeof configs !== 'object') throw new Error('No configs object in response')
     return { ...fallbackConfigs, ...configs }
   } catch (error) {
-    console.warn(`Could not fetch app configs (${error instanceof Error ? error.message : 'unknown error'}). Keeping fallback configs.`)
+    const message = error instanceof Error ? error.message : 'unknown error'
+    if (strict) {
+      throw new Error(`Could not fetch app configs from ${endpoint} (${message})`)
+    }
+    console.warn(`Could not fetch app configs (${message}). Keeping fallback configs.`)
     return fallbackConfigs
   }
 }

@@ -41,14 +41,14 @@ public struct TikoAppConfig: Sendable {
 }
 
 public extension TikoAppConfig {
-    static let yesNo = TikoAppConfig(id: .yesNo, title: "Yes No", appColor: .yesNo, appIconSystemName: "checkmark.circle", appIconMediaCategory: "emotions", appIconImageUrl: nil, themeColorHex: 0x9b3fbd)
-    static let type = TikoAppConfig(id: .type, title: "Type", appColor: .type, appIconSystemName: "textformat", appIconMediaCategory: "letters", appIconImageUrl: nil, themeColorHex: 0x2488ff)
-    static let cards = TikoAppConfig(id: .cards, title: "Cards", appColor: .cards, appIconSystemName: "rectangle.grid.2x2.fill", appIconMediaCategory: "animals", appIconImageUrl: nil, themeColorHex: 0xff8a1f)
-    static let sequence = TikoAppConfig(id: .sequence, title: "Sequence", appColor: .sequence, appIconSystemName: "list.bullet.rectangle.fill", appIconMediaCategory: "routines", appIconImageUrl: nil, themeColorHex: 0x16b8a6)
-    static let timer = TikoAppConfig(id: .timer, title: "Timer", appColor: .timer, appIconSystemName: "timer", appIconMediaCategory: "transport", appIconImageUrl: nil, themeColorHex: 0xf8c22e)
-    static let radio = TikoAppConfig(id: .radio, title: "Radio", appColor: .radio, appIconSystemName: "headphones", appIconMediaCategory: "music", appIconImageUrl: nil, themeColorHex: 0xe84057)
-    static let tiko = TikoAppConfig(id: .tiko, title: "Tiko", appColor: .tiko, appIconSystemName: "heart.fill", appIconMediaCategory: "tiko", appIconImageUrl: nil, themeColorHex: 0xef4f8f)
-    static let talk = TikoAppConfig(id: .talk, title: "Talk", appColor: .talk, appIconSystemName: "message.fill", appIconMediaCategory: "communication", appIconImageUrl: nil, themeColorHex: 0x17131c)
+    static let yesNo = TikoAppConfig(id: .yesNo, title: "Yes No", appColor: .yesNo, appIconSystemName: "checkmark.circle", appIconMediaCategory: "emotions", appIconImageUrl: "https://media.tikoapi.org/v1/media/c8bfb9e8-0427-4cd9-89e2-74e09d20b8ec/download", themeColorHex: 0x16b8a6)
+    static let type = TikoAppConfig(id: .type, title: "Type", appColor: .type, appIconSystemName: "textformat", appIconMediaCategory: "letters", appIconImageUrl: "https://media.tikoapi.org/v1/media/eecf2917-a885-4025-a762-9c7a8783f5af/download", themeColorHex: 0xff8a1f)
+    static let cards = TikoAppConfig(id: .cards, title: "Cards", appColor: .cards, appIconSystemName: "rectangle.grid.2x2.fill", appIconMediaCategory: "animals", appIconImageUrl: "https://media.tikoapi.org/v1/media/e37943b4-582c-40ee-be3a-c47be7c6e658/download", themeColorHex: 0x82b1ff)
+    static let sequence = TikoAppConfig(id: .sequence, title: "Sequence", appColor: .sequence, appIconSystemName: "list.bullet.rectangle.fill", appIconMediaCategory: "routines", appIconImageUrl: "https://media.tikoapi.org/v1/media/c2e7188c-1ac4-41d6-a29c-2b122ec812e8/download", themeColorHex: 0xef4f8f)
+    static let timer = TikoAppConfig(id: .timer, title: "Timer", appColor: .timer, appIconSystemName: "timer", appIconMediaCategory: "transport", appIconImageUrl: "https://media.tikoapi.org/v1/media/ec6bad5e-8cbe-4934-b1c8-d66d80098f95/download", themeColorHex: 0xe84057)
+    static let radio = TikoAppConfig(id: .radio, title: "Radio", appColor: .radio, appIconSystemName: "headphones", appIconMediaCategory: "music", appIconImageUrl: "https://media.tikoapi.org/v1/media/0b59af4c-e3b7-406b-a7f6-45c566d18615/download", themeColorHex: 0xff8a1f)
+    static let tiko = TikoAppConfig(id: .tiko, title: "Tiko", appColor: .tiko, appIconSystemName: "heart.fill", appIconMediaCategory: "tiko", appIconImageUrl: "https://data.tikocdn.org/uploads/1756901709154-boy-saying-hi-disney-pixar-style-1.png", themeColorHex: 0xa8e6cf)
+    static let talk = TikoAppConfig(id: .talk, title: "Talk", appColor: .talk, appIconSystemName: "message.fill", appIconMediaCategory: "communication", appIconImageUrl: "https://media.tikoapi.org/v1/media/da85b30b-6865-41ef-9b75-71e46999de22/download", themeColorHex: 0xff6b6b)
 }
 
 public struct TikoAppPalette {
@@ -67,21 +67,21 @@ public extension TikoAppColor {
     var palette: TikoAppPalette {
         switch self {
         case .yesNo:
-            TikoAppPalette(label: "Yes No", primary: Color(hex: 0x9b3fbd), dark: Color(hex: 0x512162))
+            TikoAppPalette(label: "Yes No", primary: Color(hex: 0x16b8a6), dark: Color(hex: 0x0b6056))
         case .type:
-            TikoAppPalette(label: "Type", primary: Color(hex: 0x2488ff), dark: Color(hex: 0x134785))
+            TikoAppPalette(label: "Type", primary: Color(hex: 0xff8a1f), dark: Color(hex: 0x854810))
         case .cards:
-            TikoAppPalette(label: "Cards", primary: Color(hex: 0xff8a1f), dark: Color(hex: 0x854810))
+            TikoAppPalette(label: "Cards", primary: Color(hex: 0x82b1ff), dark: Color(hex: 0x445c85))
         case .sequence:
-            TikoAppPalette(label: "Sequence", primary: Color(hex: 0x16b8a6), dark: Color(hex: 0x0b6056))
+            TikoAppPalette(label: "Sequence", primary: Color(hex: 0xef4f8f), dark: Color(hex: 0x7c294a))
         case .timer:
-            TikoAppPalette(label: "Timer", primary: Color(hex: 0xf8c22e), dark: Color(hex: 0x816518))
+            TikoAppPalette(label: "Timer", primary: Color(hex: 0xe84057), dark: Color(hex: 0x79212d))
         case .radio:
-            TikoAppPalette(label: "Radio", primary: Color(hex: 0xe84057), dark: Color(hex: 0x79212d))
+            TikoAppPalette(label: "Radio", primary: Color(hex: 0xff8a1f), dark: Color(hex: 0x854810))
         case .tiko:
-            TikoAppPalette(label: "Tiko", primary: Color(hex: 0xef4f8f), dark: Color(hex: 0x7c294a))
+            TikoAppPalette(label: "Tiko", primary: Color(hex: 0xa8e6cf), dark: Color(hex: 0x57786c))
         case .talk:
-            TikoAppPalette(label: "Talk", primary: Color(hex: 0x17131c), dark: Color(hex: 0x0c0a0f))
+            TikoAppPalette(label: "Talk", primary: Color(hex: 0xff6b6b), dark: Color(hex: 0x853838))
         }
     }
 }

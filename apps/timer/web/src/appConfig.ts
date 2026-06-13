@@ -5,7 +5,7 @@ export const appConfig = {
   "title": "Timer",
   "appColor": "timer",
   "appIcon": "ui/timer",
-  "appIconImageUrl": "",
+  "appIconImageUrl": "https://media.tikoapi.org/v1/media/ec6bad5e-8cbe-4934-b1c8-d66d80098f95/download",
   "appIconMediaCategory": "transport",
-  "themeColor": "#f8c22e"
+  "themeColor": "#e84057"
 } satisfies TikoAppConfig

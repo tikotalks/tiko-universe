@@ -5,7 +5,7 @@ export const appConfig = {
   "title": "Cards",
   "appColor": "cards",
   "appIcon": "education/book-2",
-  "appIconImageUrl": "",
+  "appIconImageUrl": "https://media.tikoapi.org/v1/media/e37943b4-582c-40ee-be3a-c47be7c6e658/download",
   "appIconMediaCategory": "animals",
-  "themeColor": "#ff8a1f"
+  "themeColor": "#82B1FF"
 } satisfies TikoAppConfig

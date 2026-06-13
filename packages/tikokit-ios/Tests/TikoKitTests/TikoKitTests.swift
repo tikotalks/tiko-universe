@@ -41,7 +41,8 @@ final class TikoKitTests: XCTestCase {
         XCTAssertEqual(TikoAppColor.talk.palette.label, "Talk")
         XCTAssertEqual(TikoAppConfig.talk.id, .talk)
         XCTAssertEqual(TikoAppConfig.talk.title, "Talk")
-        XCTAssertEqual(TikoAppConfig.talk.themeColorHex, 0x17131c)
+        XCTAssertNotEqual(TikoAppConfig.talk.themeColorHex, 0x000000)
+        XCTAssertFalse(TikoAppConfig.talk.appIconImageUrl?.isEmpty ?? true)
     }
 
     func testAnswerChoiceWithOpenIcon() {

@@ -5,7 +5,7 @@ export const appConfig = {
   "title": "Type",
   "appColor": "type",
   "appIcon": "ui/type",
-  "appIconImageUrl": "",
+  "appIconImageUrl": "https://media.tikoapi.org/v1/media/eecf2917-a885-4025-a762-9c7a8783f5af/download",
   "appIconMediaCategory": "letters",
-  "themeColor": "#2488ff"
+  "themeColor": "#ff8a1f"
 } satisfies TikoAppConfig
