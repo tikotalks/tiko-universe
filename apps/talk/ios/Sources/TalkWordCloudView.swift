@@ -32,23 +32,35 @@ struct TalkWordCloudView: View {
         var canvas: CGSize
     }
 
+    @State private var appeared = false
+
     var body: some View {
         let layout = computeLayout()
 
         ScrollView([.horizontal, .vertical], showsIndicators: false) {
             ZStack {
-                ForEach(layout.placed) { item in
+                ForEach(Array(layout.placed.enumerated()), id: \.element.id) { index, item in
                     TalkCloudBubble(word: item.word, diameter: item.diameter, appColor: appColor) {
                         onTap(item.word)
                     }
                     .position(item.point)
+                    // Staggered pop-in from the centre outward when the cloud shows.
+                    .scaleEffect(appeared ? 1 : 0.4)
+                    .opacity(appeared ? 1 : 0)
+                    .animation(
+                        .spring(response: 0.5, dampingFraction: 0.7).delay(Double(min(index, 28)) * 0.018),
+                        value: appeared
+                    )
                 }
             }
             .frame(width: layout.canvas.width, height: layout.canvas.height)
+            // Smoothly reflow when the board reorders (e.g. after a word is tapped).
+            .animation(.spring(response: 0.55, dampingFraction: 0.82), value: words.map(\.id))
         }
         .defaultScrollAnchor(.center)
         .scrollClipDisabled()
         .accessibilityLabel("Word cloud. Most used words are in the centre. Drag to explore.")
+        .onAppear { appeared = true }
     }
 
     private func computeLayout() -> Layout {

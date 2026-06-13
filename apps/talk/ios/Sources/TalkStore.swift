@@ -18,6 +18,8 @@ final class TalkStore {
     var wordsByCategory: [String: [TalkWordTile]] = [:]
     var visibleWords: [TalkWordTile] = []
     var suggestions: [TalkWordTile] = []
+    // The board's starting vocabulary, restored when the sentence is cleared.
+    private var baselineWords: [TalkWordTile] = []
     var savedPhrases: [TalkSavedPhrase] = []
     var selectedCategoryId: String?
     var errorMessage: String?
@@ -120,6 +122,15 @@ final class TalkStore {
         audioURL = nil
         stripDisplay = ""
         serverCanComplete = false
+        // Clearing the sentence also returns the board to its starting options.
+        resetBoardToBaseline()
+    }
+
+    private func resetBoardToBaseline() {
+        guard !baselineWords.isEmpty else { return }
+        visibleWords = baselineWords
+        wordsByCategory = Dictionary(grouping: baselineWords, by: \.category)
+        selectedCategoryId = nil
     }
 
     func applyTemplate(_ template: TalkTemplate) async {
@@ -227,6 +238,7 @@ final class TalkStore {
         templates = response.templates
         categories = response.initialCategories
         visibleWords = response.initialWords.deduplicatedById()
+        baselineWords = visibleWords
         wordsByCategory = Dictionary(grouping: visibleWords, by: \.category)
         suggestions = []
         savedPhrases = response.savedPhrases
@@ -247,6 +259,8 @@ final class TalkStore {
             suggestions = []
             stripDisplay = ""
             serverCanComplete = false
+            // Back to an empty sentence -> show the starting options again.
+            resetBoardToBaseline()
             return
         }
         guard !isOfflineFallback else {
@@ -293,6 +307,8 @@ final class TalkStore {
             mergeCategories(response.categories)
             let current = visibleWords + response.words
             visibleWords = current.deduplicatedById()
+            // The full vocabulary becomes the baseline the board resets to.
+            baselineWords = visibleWords
             wordsByCategory = Dictionary(grouping: visibleWords, by: \.category).mapValues { $0.deduplicatedById() }
         } catch {
             // Start response still provides enough initial data; keep the app usable.
