@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { computed, onMounted, ref, watch } from 'vue'
 import { Button, InputTextArea } from '@sil/ui'
-import { IdentityClient, type IdentityBundle } from '@tiko/identity'
+import { IdentityClient } from '@tiko/identity'
 import { TikoDataClient, type TodoSettings, type TodoState } from '@tiko/data'
-import { createI18n, createTikoShellLabels, createTikoTranslationLoader, normalizeTikoLanguage, tikoI18nKeys, tikoLanguageOptions, type TikoLanguage } from '@tiko/i18n'
+import { createI18n, createTikoIdentityLabels, createTikoShellLabels, createTikoTranslationLoader, normalizeTikoLanguage, tikoI18nKeys, tikoLanguageOptions, type TikoLanguage } from '@tiko/i18n'
 import {
   TikoAppShell,
   TikoSettingsPanel,
@@ -13,14 +13,15 @@ import {
   resolveTikoAppApiBaseUrl,
   resolveTikoColorMode,
   resolveTikoIdentityBaseUrl,
+  useIdentityRuntime,
   writeTikoLocalJson,
+  type IdentityRuntimeState,
   type TikoColorMode
 } from '@tiko/ui'
 import { appConfig } from './appConfig'
 import './styles.scss'
 
 const storageKey = 'tiko:todo'
-const identityStorageKey = 'tiko:identity:device-session'
 const appId = 'todo' as const
 const apiBaseUrl = resolveTikoAppApiBaseUrl()
 const identityBaseUrl = resolveTikoIdentityBaseUrl()
@@ -36,12 +37,6 @@ interface PersistedState {
   language?: string
   colorMode?: string
   items?: TodoItem[]
-}
-
-interface StoredIdentity {
-  userId?: string
-  deviceId?: string
-  expiresAt?: string
 }
 
 function generateId(): string {
@@ -62,10 +57,23 @@ const newName = ref('')
 const newSteps = ref<string[]>([])
 const loadError = ref(false)
 const sessionToken = ref('')
+const userId = ref('')
+const accountEmail = ref('')
+const accountEmailVerified = ref(false)
+const displayName = ref('')
+const parentMode = ref(true)
+const childModeEnabled = ref(false)
+const pinConfigured = ref(false)
 const bootstrapped = ref(false)
 const tts = createTikoTtsClient()
 const identityClient = new IdentityClient({ baseUrl: identityBaseUrl, credentials: 'include' })
 const dataClient = new TikoDataClient({ baseUrl: apiBaseUrl })
+
+const runtimeState: IdentityRuntimeState = {
+  sessionToken, userId, accountEmail, accountEmailVerified, displayName,
+  parentMode, childModeEnabled, pinConfigured,
+}
+const runtime = useIdentityRuntime({ identityClient, state: runtimeState, deviceName: 'Todo web', labels: () => createTikoIdentityLabels(i18n.t) })
 
 const labels = computed(() => {
   return {
@@ -119,34 +127,8 @@ function saveLocal() {
   })
 }
 
-function saveIdentity(bundle: IdentityBundle) {
-  if (!bundle.session?.token) throw new Error('Identity response did not include a session token.')
-  sessionToken.value = bundle.session.token
-  writeTikoLocalJson(identityStorageKey, {
-    userId: bundle.subject.id,
-    deviceId: bundle.device?.id,
-    expiresAt: bundle.session.expiresAt,
-  } satisfies StoredIdentity)
-}
-
 async function bootstrapIdentity() {
-  const storedIdentity = readTikoLocalJson<StoredIdentity>(identityStorageKey, {})
-
-  try {
-    const bundle = await identityClient.getCookieSession()
-    saveIdentity(bundle)
-    return
-  } catch {
-    // Fall through to device bootstrap when the HttpOnly cookie is missing or expired.
-  }
-
-  const bundle = await identityClient.bootstrapDevice({
-    device: {
-      name: 'Todo web',
-      platform: 'web',
-    },
-  })
-  saveIdentity(bundle)
+  return runtime.bootstrapIdentity()
 }
 
 function applySettings(settings: TodoSettings, version?: number) {
@@ -227,6 +209,7 @@ watch(items, () => {
 onMounted(async () => {
   try {
     await bootstrapIdentity()
+    await runtime.loadProfile()
   } catch {
     // Identity unavailable — app works locally
   }
@@ -303,6 +286,7 @@ async function retry() {
   loadError.value = false
   try {
     await bootstrapIdentity()
+    await runtime.loadProfile()
   } catch {
     // Identity still unavailable
   }
@@ -325,6 +309,7 @@ async function retry() {
     :actions="headerActions"
     :labels="labels.shell"
     @header-action="headerAction"
+    @avatar-click="runtime.handleAvatarClick"
   >
     <section class="todo-app" :data-color-mode="colorMode">
       <!-- Error state with fallback to create -->
