@@ -208,6 +208,7 @@ Approximate review spread: 7 Critical, about 35 High, about 70 Medium, and about
   - generation-api routes into modules.
   - content/media/identity workers where useful.
   - admin StoryNarrator/ImageGenerator pages by tab or feature.
+  - [x] Extract ImageGenerator queue panel into a focused component.
   - `@tiko/ui` index into focused modules.
   - [x] Move `@tiko/ui` app config, app colors, palette, and open-icon constants into a focused module.
   - [x] Move `TikoOpenIconPicker` out of the `@tiko/ui` barrel into its own component module.

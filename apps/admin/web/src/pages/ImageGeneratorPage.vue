@@ -2,47 +2,11 @@
 import { computed, nextTick, onMounted, ref, watch } from 'vue'
 import { useBemm } from 'bemm'
 import { Button, InputText, InputTextArea } from '@sil/ui'
+import ImageGenerationQueue from '../components/images/ImageGenerationQueue.vue'
+import type { EditInput, EnrichInput, GenerateInput, QueueItem, TikoStyle } from '../components/images/imageGenerationQueueTypes'
 import { useImageGeneration, type ImageGalleryItem } from '../composables/useImageGeneration'
-import type { ImageGenerationResult } from '../types/admin'
 
 type Tab = 'library' | 'drafts' | 'create'
-
-type TikoStyle = 'tiko-original' | 'tiko-v2' | 'tiko-natural'
-
-interface GenerateInput {
-  type: 'generate'
-  prompt: string
-  size: '1024x1024' | '1024x1792' | '1792x1024'
-  quality: 'standard' | 'hd'
-  tikoStyle: TikoStyle
-  title?: string
-  category?: string
-  tags?: string[]
-  count?: number
-}
-
-interface EditInput {
-  type: 'edit'
-  sourceId: string
-  prompt: string
-  maskBase64?: string
-  size: '1024x1024' | '1024x1792' | '1792x1024'
-}
-
-interface EnrichInput {
-  type: 'enrich'
-  sourceId: string
-  list: 'library' | 'drafts'
-}
-
-interface QueueItem {
-  id: string
-  label: string
-  input: GenerateInput | EditInput | EnrichInput
-  status: 'pending' | 'generating' | 'done' | 'error'
-  result: ImageGenerationResult | ImageGenerationResult[] | null
-  error: string | null
-}
 
 const page = useBemm('image-page', { return: 'string', includeBaseClass: true })
 const card = useBemm('image-card', { return: 'string', includeBaseClass: true })
@@ -605,38 +569,12 @@ onMounted(() => { void loadLibrary() })
         <p :class="page('hint')">Generates {{ previewCount }} preview{{ previewCount > 1 ? 's' : '' }} in <button type="button" :class="page('inline-link')" @click="viewDrafts">Drafts</button>. Pick one and Upscale it to full quality.</p>
       </form>
 
-      <aside :class="page('queue')">
-        <header :class="page('queue-head')">
-          <h3 :class="page('panel-title')">Queue <span :class="page('tab-count')">{{ queue.length }}</span></h3>
-          <Button v-if="queue.some(i => i.status === 'done' || i.status === 'error')" variant="ghost" size="small" @click="clearQueue">Clear done</Button>
-        </header>
-
-        <div v-if="queue.length === 0" :class="page('queue-empty')">
-          No items queued. Add a prompt and click "Add to queue".
-        </div>
-
-        <ul v-else :class="page('queue-list')">
-          <li v-for="item in queue" :key="item.id" :class="page('queue-item', { [item.status]: true })">
-            <div :class="page('queue-status')">
-              <span v-if="item.status === 'pending'">⏳</span>
-              <span v-else-if="item.status === 'generating'" :class="page('queue-spinner')">⟳</span>
-              <span v-else-if="item.status === 'done'">✓</span>
-              <span v-else>✕</span>
-            </div>
-            <div :class="page('queue-info')">
-              <strong :class="page('queue-label')">{{ item.label }}</strong>
-              <span v-if="item.status === 'generating'" :class="page('queue-sub')">Generating…</span>
-              <span v-else-if="item.status === 'error'" :class="page('queue-error')" :title="item.error ?? undefined">{{ item.error }}</span>
-              <span v-else-if="item.status === 'done'" :class="page('queue-sub')">{{ item.input.type === 'enrich' ? 'Enriched' : Array.isArray(item.result) ? `${item.result.length} images — check Drafts` : 'Done — check Drafts' }}</span>
-            </div>
-            <img v-if="item.result && !Array.isArray(item.result)" :class="page('queue-thumb')" :src="imageSrc(item.result)" :alt="item.label" />
-            <div v-else-if="Array.isArray(item.result)" style="display:flex;gap:2px;">
-              <img v-for="r in item.result.slice(0, 4)" :key="r.id" :class="page('queue-thumb')" :src="imageSrc(r)" :alt="item.label" />
-            </div>
-            <button v-if="item.status === 'error'" type="button" :class="page('queue-retry')" @click="retryQueueItem(item)">Retry</button>
-          </li>
-        </ul>
-      </aside>
+      <ImageGenerationQueue
+        :queue="queue"
+        :image-src="imageSrc"
+        @clear="clearQueue"
+        @retry="retryQueueItem"
+      />
     </section>
   </section>
 
@@ -984,6 +922,12 @@ onMounted(() => { void loadLibrary() })
     flex-shrink: 0;
     --block-size: 0.5em;
     @include checkeredBackground;
+  }
+
+  &__queue-thumbs {
+    display: flex;
+    gap: 2px;
+    flex-shrink: 0;
   }
 
   &__form {
