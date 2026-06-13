@@ -179,6 +179,7 @@ Approximate review spread: 7 Critical, about 35 High, about 70 Medium, and about
 - [ ] Move reusable UI/layout into TikoUI/TikoKit.
   - Cards/choice tile layouts.
   - [x] Shared media image-ref rendering.
+  - [x] Shared iOS form-sheet surface for Cards add/edit flows.
   - Shared user-flow components that are not app-specific.
   - Avoid giant one-file app implementations.
 

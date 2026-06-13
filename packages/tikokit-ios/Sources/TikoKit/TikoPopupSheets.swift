@@ -78,6 +78,79 @@ public struct TikoPopupCard<Content: View>: View {
     }
 }
 
+public struct TikoFormSheet<Content: View>: View {
+    private let title: String
+    private let subtitle: String?
+    private let icon: String
+    private let appColor: TikoAppColor
+    private let onClose: () -> Void
+    private let content: Content
+
+    public init(
+        title: String,
+        subtitle: String? = nil,
+        icon: String,
+        appColor: TikoAppColor,
+        onClose: @escaping () -> Void,
+        @ViewBuilder content: () -> Content
+    ) {
+        self.title = title
+        self.subtitle = subtitle
+        self.icon = icon
+        self.appColor = appColor
+        self.onClose = onClose
+        self.content = content()
+    }
+
+    public var body: some View {
+        VStack(spacing: 0) {
+            HStack(spacing: 14) {
+                Button(action: onClose) {
+                    Image(systemName: "xmark")
+                        .font(.system(size: 14, weight: .bold))
+                        .foregroundStyle(.primary.opacity(0.75))
+                        .frame(width: 44, height: 44)
+                        .background(Color.primary.opacity(0.055))
+                        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+                }
+                .buttonStyle(.plain)
+                .accessibilityLabel("Close")
+
+                VStack(alignment: .leading, spacing: 3) {
+                    Text(title)
+                        .font(.system(size: 24, weight: .heavy, design: .rounded))
+                        .foregroundStyle(.primary)
+                    if let subtitle, !subtitle.isEmpty {
+                        Text(subtitle)
+                            .font(.system(size: 13, weight: .bold, design: .rounded))
+                            .foregroundStyle(.secondary)
+                    }
+                }
+
+                Spacer()
+
+                Image(systemName: icon)
+                    .font(.system(size: 19, weight: .bold))
+                    .foregroundStyle(appColor.palette.primary)
+                    .frame(width: 44, height: 44)
+                    .background(appColor.palette.primary.opacity(0.12))
+                    .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+            }
+            .padding(.horizontal, 20)
+            .padding(.top, 18)
+            .padding(.bottom, 14)
+
+            ScrollView {
+                content
+                    .padding(.horizontal, 20)
+                    .padding(.bottom, 28)
+            }
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+        .background(Color(.systemGroupedBackground).ignoresSafeArea())
+    }
+}
+
 public enum TikoColorMode: String, CaseIterable, Codable, Sendable {
     case light
     case dark
