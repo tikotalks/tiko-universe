@@ -7,15 +7,15 @@ type JsonBody = Record<string, any>
 class MemoryResult {
   constructor(private rows: Row[] = []) {}
 
-  first<T = Row>(): T | null {
+  async first<T = Row>(): Promise<T | null> {
     return (this.rows[0] as T | undefined) ?? null
   }
 
-  all<T = Row>(): { results: T[]; success: true; meta: Record<string, unknown> } {
+  async all<T = Row>(): Promise<{ results: T[]; success: true; meta: Record<string, unknown> }> {
     return { results: this.rows as T[], success: true, meta: {} }
   }
 
-  run(): { success: true; meta: Record<string, unknown> } {
+  async run(): Promise<{ success: true; meta: Record<string, unknown> }> {
     return { success: true, meta: {} }
   }
 }
@@ -30,7 +30,7 @@ class MemoryStatement {
     return this
   }
 
-  first<T = Row>(): T | null {
+  first<T = Row>(): Promise<T | null> {
     return this.db.execute(this.sql, this.values).first<T>()
   }
 
@@ -47,6 +47,18 @@ class MemoryCommunicationDb {
   messages = new Map<string, Row>()
   attempts: Row[] = []
   events: Row[] = []
+  apiKeys = new Map<string, Row>([
+    ['sha256:934ee4cbb8d3a3924b5a72f46b326b183ad2b29d3c9d41a2fa93d0d2be9bbfe0', {
+      id: 'key_communication',
+      subject_id: 'sub_communication',
+      product: 'tiko',
+      name: 'Communication delivery key',
+      key_hash: 'sha256:934ee4cbb8d3a3924b5a72f46b326b183ad2b29d3c9d41a2fa93d0d2be9bbfe0',
+      scopes_json: JSON.stringify(['communication.send']),
+      expires_at: null,
+      revoked_at: null,
+    }],
+  ])
 
   prepare(sql: string): MemoryStatement {
     return new MemoryStatement(this, sql)
@@ -91,6 +103,14 @@ class MemoryCommunicationDb {
         .slice(0, Number(limit))
       return new MemoryResult(rows)
     }
+    if (normalized.includes('FROM identity_api_keys')) {
+      return new MemoryResult([this.apiKeys.get(String(values[0]))].filter(Boolean) as Row[])
+    }
+    if (normalized.startsWith('UPDATE identity_api_keys SET last_used_at')) {
+      const row = this.apiKeys.get(String(values[1]))
+      if (row) row.last_used_at = values[0]
+      return new MemoryResult()
+    }
     throw new Error(`Unhandled SQL in communication test fake: ${normalized}`)
   }
 }
@@ -98,7 +118,8 @@ class MemoryCommunicationDb {
 function env(db = new MemoryCommunicationDb()) {
   return {
     COMMUNICATION_DB: db,
-    COMMUNICATION_API_KEY: 'comm_test_key',
+    AUTH_DB: db,
+    TOKEN_PEPPER: 'test-pepper',
     RESEND_API_KEY: 're_test_key',
     MAGIC_LINK_FROM_EMAIL: 'Tiko <noreply@tikotalks.com>',
     ALLOWED_ORIGINS: 'https://admin.tiko.test'

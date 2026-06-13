@@ -6,7 +6,9 @@ The service owns provider-specific delivery details, starting with Resend email.
 
 ## Runtime
 
-- `COMMUNICATION_API_KEY` is required and must be set as a Wrangler secret. Service callers send it as `Authorization: Bearer <key>`.
+- `AUTH_DB` must bind to the identity D1 database so bearer tokens can be validated against `identity_api_keys`.
+- `TOKEN_PEPPER` must match identity-api so scoped service API keys can be hashed and verified.
+- Service callers send an identity API key with the `communication.send` scope as `Authorization: Bearer <key>`.
 - `RESEND_API_KEY` is required in deployed environments to send email through Resend.
 - `MAGIC_LINK_FROM_EMAIL` controls the sender address, defaulting to `Tiko <noreply@tikotalks.com>`.
 - `ALLOWED_ORIGINS` is an optional comma-separated CORS allowlist.
