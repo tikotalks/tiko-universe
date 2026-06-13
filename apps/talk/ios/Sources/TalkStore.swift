@@ -61,7 +61,10 @@ final class TalkStore {
             await refreshVocabularyIfPossible()
             await refreshSavedPhrasesIfPossible()
         } catch {
-            errorMessage = "Offline limited mode"
+            // Offline is an expected graceful-degrade state, not an error. The
+            // `isOfflineFallback` flag already drives the "Offline limited mode"
+            // banner, so don't also set errorMessage (that showed it twice).
+            errorMessage = nil
             applyStartResponse(TalkOfflineFallback.startResponse, fallback: true)
         }
     }
