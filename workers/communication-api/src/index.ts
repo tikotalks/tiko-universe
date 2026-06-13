@@ -24,6 +24,7 @@ export interface Env {
   AUTH_DB?: D1Database
   TOKEN_PEPPER?: string
   ANKORE_TOKEN_PEPPER?: string
+  PEPPER_SECRET?: { get(): Promise<string> }
   RESEND_API_KEY?: string
   MAGIC_LINK_FROM_EMAIL?: string
   ALLOWED_ORIGINS?: string
@@ -284,6 +285,7 @@ async function requireServiceAuth(request: Request, env: Env): Promise<void> {
     AUTH_DB: env.AUTH_DB as unknown as AuthEnv['AUTH_DB'],
     TOKEN_PEPPER: env.TOKEN_PEPPER,
     ANKORE_TOKEN_PEPPER: env.ANKORE_TOKEN_PEPPER,
+    PEPPER_SECRET: env.PEPPER_SECRET,
   }, ['communication.send'])
   if (auth instanceof Response) throw new HttpError(auth.status === 403 ? 403 : 401, auth.status === 403 ? 'service_key_required' : 'unauthorized', 'Communication service authorization is required.')
 }
