@@ -1,5 +1,6 @@
 import { authenticate } from '../../shared/auth'
 import type { AuthSuccess } from '../../shared/auth'
+import { CORS_HEADERS, apiError, fetchWithRetry, json } from './http'
 import {
   DEFAULT_ELEVENLABS_MODEL,
   DEFAULT_ELEVENLABS_VOICE,
@@ -76,11 +77,6 @@ interface AtlasImageResponse {
   error?: { code?: string; message?: string }
 }
 
-const CORS_HEADERS = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-  'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-}
 const PROVIDER_TIMEOUT_MS = 20_000
 const PROVIDER_IMAGE_TIMEOUT_MS = 45_000
 const DEFAULT_ELEVENLABS_VOICES = [
@@ -1715,56 +1711,14 @@ function parseImageSize(size: string): { width: number; height: number } {
   return { width: w || 1024, height: h || 1024 }
 }
 
-async function fetchWithRetry(input: RequestInfo | URL, init: RequestInit, options: { timeoutMs: number }): Promise<Response> {
-  let lastError: unknown
-  for (let attempt = 0; attempt < 2; attempt += 1) {
-    const response = await fetchWithTimeout(input, init, options.timeoutMs).catch((error) => {
-      lastError = error
-      return null
-    })
-    if (!response) continue
-    if (attempt === 0 && isRetryableStatus(response.status)) {
-      await response.body?.cancel().catch(() => undefined)
-      continue
-    }
-    return response
-  }
-  throw lastError instanceof Error ? lastError : new Error('fetch_failed')
-}
-
-async function fetchWithTimeout(input: RequestInfo | URL, init: RequestInit, timeoutMs: number): Promise<Response> {
-  const controller = new AbortController()
-  const timeout = setTimeout(() => controller.abort(), timeoutMs)
-  try {
-    return await fetch(input, { ...init, signal: controller.signal })
-  } finally {
-    clearTimeout(timeout)
-  }
-}
-
-function isRetryableStatus(status: number): boolean {
-  return status === 408 || status === 429 || status >= 500
-}
-
 function clamp(value: number, min: number, max: number) {
   return Math.min(max, Math.max(min, value))
-}
-
-function apiError(code: string, message: string, status = 400, field?: string): Response {
-  return json({ error: { code, message, ...(field ? { field } : {}) } }, status)
 }
 
 async function sha256Hex(value: string): Promise<string> {
   const bytes = new TextEncoder().encode(value)
   const digest = await crypto.subtle.digest('SHA-256', bytes)
   return Array.from(new Uint8Array(digest)).map((byte) => byte.toString(16).padStart(2, '0')).join('')
-}
-
-function json(data: unknown, status = 200): Response {
-  return new Response(JSON.stringify(data), {
-    status,
-    headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
-  })
 }
 
 export const internals = { generateRequestHash, normalizeTtsRequest, validateTtsRequest }
