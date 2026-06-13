@@ -37,30 +37,41 @@ struct TalkWordCloudView: View {
     var body: some View {
         let layout = computeLayout()
 
-        ScrollView([.horizontal, .vertical], showsIndicators: false) {
-            ZStack {
-                ForEach(Array(layout.placed.enumerated()), id: \.element.id) { index, item in
-                    TalkCloudBubble(word: item.word, diameter: item.diameter, appColor: appColor) {
-                        onTap(item.word)
+        ScrollViewReader { proxy in
+            ScrollView([.horizontal, .vertical], showsIndicators: false) {
+                ZStack {
+                    ForEach(Array(layout.placed.enumerated()), id: \.element.id) { index, item in
+                        TalkCloudBubble(word: item.word, diameter: item.diameter, appColor: appColor) {
+                            onTap(item.word)
+                        }
+                        .position(item.point)
+                        .id(item.id)
+                        // Staggered pop-in from the centre outward when the cloud shows.
+                        .scaleEffect(appeared ? 1 : 0.4)
+                        .opacity(appeared ? 1 : 0)
+                        .animation(
+                            .spring(response: 0.5, dampingFraction: 0.7).delay(Double(min(index, 28)) * 0.018),
+                            value: appeared
+                        )
                     }
-                    .position(item.point)
-                    // Staggered pop-in from the centre outward when the cloud shows.
-                    .scaleEffect(appeared ? 1 : 0.4)
-                    .opacity(appeared ? 1 : 0)
-                    .animation(
-                        .spring(response: 0.5, dampingFraction: 0.7).delay(Double(min(index, 28)) * 0.018),
-                        value: appeared
-                    )
+                }
+                .frame(width: layout.canvas.width, height: layout.canvas.height)
+                // Smoothly reflow when the board reorders (e.g. after a word is tapped).
+                .animation(.spring(response: 0.55, dampingFraction: 0.82), value: words.map(\.id))
+            }
+            .defaultScrollAnchor(.center)
+            .scrollClipDisabled()
+            .onAppear { appeared = true }
+            // When the set changes (a word was chosen), bring the new most-likely
+            // word back to the middle.
+            .onChange(of: words.first?.id) { _, centre in
+                guard let centre else { return }
+                withAnimation(.spring(response: 0.5, dampingFraction: 0.85)) {
+                    proxy.scrollTo(centre, anchor: .center)
                 }
             }
-            .frame(width: layout.canvas.width, height: layout.canvas.height)
-            // Smoothly reflow when the board reorders (e.g. after a word is tapped).
-            .animation(.spring(response: 0.55, dampingFraction: 0.82), value: words.map(\.id))
         }
-        .defaultScrollAnchor(.center)
-        .scrollClipDisabled()
         .accessibilityLabel("Word cloud. Most used words are in the centre. Drag to explore.")
-        .onAppear { appeared = true }
     }
 
     private func computeLayout() -> Layout {
@@ -128,6 +139,8 @@ private struct TalkCloudBubble: View {
     let appColor: TikoAppColor
     let onTap: () -> Void
 
+    private var posColor: Color { TalkPosColor.color(for: word.pos) }
+
     private var mediaURL: URL? {
         guard let image = word.image, !image.isEmpty else { return nil }
         return URL(string: image)
@@ -137,8 +150,9 @@ private struct TalkCloudBubble: View {
         Button(action: onTap) {
             ZStack {
                 Circle()
-                    .fill(word.isCustom == true ? appColor.palette.primary.opacity(0.18) : Color.white.opacity(0.85))
-                    .overlay(Circle().stroke(appColor.palette.primary.opacity(word.isCustom == true ? 0.4 : 0.16), lineWidth: 1))
+                    .fill(word.isCustom == true ? posColor.opacity(0.16) : Color.white.opacity(0.9))
+                    // Subtle part-of-speech colour as the ring.
+                    .overlay(Circle().stroke(posColor.opacity(word.isCustom == true ? 0.7 : 0.4), lineWidth: 2.5))
                     .shadow(color: appColor.palette.dark.opacity(0.1), radius: diameter * 0.06, y: 3)
 
                 if let mediaURL {
