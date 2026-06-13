@@ -62,6 +62,7 @@ Approximate review spread: 7 Critical, about 35 High, about 70 Medium, and about
 - [ ] Consolidate D1 ownership.
   - Use one database per worker, or one migration directory per shared database.
   - [x] Move media-api table creation out of `schema.sql` into binding-specific D1 migration directories.
+  - [x] Remove duplicate content-api and generation-api `schema.sql` files after confirming migrations own the schema.
   - Delete or move root `migration.sql` into the owning worker.
   - Keep schema creation out of runtime request handlers.
 
