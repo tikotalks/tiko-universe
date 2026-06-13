@@ -169,6 +169,13 @@ final class TalkStore {
 
     func completeSentence(autoSave: Bool = true) async -> TalkSentenceCompleteResponse? {
         guard !sentenceWords.isEmpty else { return nil }
+        // A locally-added custom word can't be resolved server-side; speak the
+        // built sentence with on-device speech instead of calling /complete.
+        if sentenceWords.contains(where: { $0.id.hasPrefix("uword-local-") }) {
+            completedSentence = sentenceText
+            audioURL = nil
+            return nil
+        }
 
         do {
             let response = try await apiClient.complete(
@@ -265,6 +272,13 @@ final class TalkStore {
         }
         guard !isOfflineFallback else {
             suggestions = []
+            stripDisplay = sentenceText
+            serverCanComplete = true
+            return
+        }
+        // Locally-added custom words aren't in the language pack, so /next would
+        // reject the whole id list. Keep the current board and stay speakable.
+        guard !sentenceWords.contains(where: { $0.id.hasPrefix("uword-local-") }) else {
             stripDisplay = sentenceText
             serverCanComplete = true
             return
