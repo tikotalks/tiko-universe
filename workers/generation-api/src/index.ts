@@ -1,6 +1,16 @@
-import { authenticate } from '../../shared/auth'
-import type { AuthSuccess } from '../../shared/auth'
 import { CORS_HEADERS, apiError, fetchWithRetry, json } from './http'
+import {
+  canAccessOwnedRecord,
+  canMutateOwnedRecord,
+  createdBy,
+  forbiddenOrUnauthorized,
+  isServiceAccess,
+  optionalAuth,
+  requireAuth,
+  requirePaidAccess,
+  sessionUserId,
+  type GenerationAccessContext,
+} from './access'
 import {
   DEFAULT_ELEVENLABS_MODEL,
   DEFAULT_ELEVENLABS_VOICE,
@@ -45,22 +55,6 @@ export interface R2BucketLike {
   get(key: string): Promise<{ body: BodyInit; httpMetadata?: { contentType?: string } } | null>
   put(key: string, value: ArrayBuffer | Uint8Array, options?: Record<string, unknown>): Promise<unknown>
   delete(key: string): Promise<unknown>
-}
-
-interface PaidAuthContext {
-  auth: AuthSuccess
-  subjectKey: string
-}
-
-interface GenerationAccessContext {
-  auth: AuthSuccess | null
-}
-
-interface UsagePolicy {
-  capability: string
-  units: number
-  maxRequestsPerMinute: number
-  maxUnitsPerDay: number
 }
 
 interface AtlasImageResponse {
@@ -183,112 +177,6 @@ function generationHealth(): Response {
     },
     meta: { schemaVersion: 1 },
   })
-}
-
-async function requireAuth(request: Request, env: Env, handler: (context: GenerationAccessContext) => Promise<Response>): Promise<Response> {
-  const authed = await authenticate(request, env)
-  if (authed.ok === false) {
-    const headers = new Headers(authed.response.headers)
-    for (const [key, value] of Object.entries(CORS_HEADERS)) headers.set(key, value)
-    return new Response(authed.response.body, { status: authed.response.status, statusText: authed.response.statusText, headers })
-  }
-  return handler({ auth: authed })
-}
-
-async function optionalAuth(request: Request, env: Env): Promise<GenerationAccessContext | Response> {
-  if (!request.headers.has('authorization')) return { auth: null }
-  const authed = await authenticate(request, env)
-  if (authed.ok === false) {
-    const headers = new Headers(authed.response.headers)
-    for (const [key, value] of Object.entries(CORS_HEADERS)) headers.set(key, value)
-    return new Response(authed.response.body, { status: authed.response.status, statusText: authed.response.statusText, headers })
-  }
-  return { auth: authed }
-}
-
-function isServiceAccess(context: GenerationAccessContext): boolean {
-  return context.auth?.method === 'api_key'
-}
-
-function sessionUserId(context: GenerationAccessContext): string | null {
-  return context.auth?.method === 'session' && context.auth.userId ? context.auth.userId : null
-}
-
-function createdBy(context: GenerationAccessContext): string | null {
-  return sessionUserId(context)
-}
-
-function canAccessOwnedRecord(context: GenerationAccessContext, record: { is_public?: unknown; created_by?: unknown }): boolean {
-  if (Number(record.is_public ?? 0) === 1) return true
-  if (isServiceAccess(context)) return true
-  const userId = sessionUserId(context)
-  return !!userId && typeof record.created_by === 'string' && record.created_by === userId
-}
-
-function canMutateOwnedRecord(context: GenerationAccessContext, record: { created_by?: unknown }): boolean {
-  if (isServiceAccess(context)) return true
-  const userId = sessionUserId(context)
-  return !!userId && typeof record.created_by === 'string' && record.created_by === userId
-}
-
-function forbiddenOrUnauthorized(context: GenerationAccessContext): Response {
-  return context.auth ? apiError('forbidden', 'You do not have access to this generated content.', 403) : apiError('unauthorized', 'Authentication is required.', 401)
-}
-
-async function requirePaidAccess(request: Request, env: Env, policy: UsagePolicy, handler: (context: PaidAuthContext) => Promise<Response>): Promise<Response> {
-  const context = await authenticatePaidRequest(request, env)
-  if (context instanceof Response) return context
-  const usageError = await recordUsageWindow(env, context.subjectKey, policy)
-  if (usageError) return usageError
-  return handler(context)
-}
-
-async function authenticatePaidRequest(request: Request, env: Env): Promise<PaidAuthContext | Response> {
-  const authed = await authenticate(request, env)
-  if (authed.ok === false) {
-    const headers = new Headers(authed.response.headers)
-    for (const [key, value] of Object.entries(CORS_HEADERS)) headers.set(key, value)
-    return new Response(authed.response.body, { status: authed.response.status, statusText: authed.response.statusText, headers })
-  }
-  if (!authed.bearerToken) return apiError('invalid_auth_context', 'Authenticated requests must include the validated bearer token.', 500)
-  const subjectKey = authed.method === 'session' && authed.userId
-    ? `session:${authed.userId}`
-    : `key:${await sha256Hex(authed.bearerToken)}`
-  return { auth: authed, subjectKey }
-}
-
-async function recordUsageWindow(env: Env, subjectKey: string, policy: UsagePolicy): Promise<Response | null> {
-  const now = new Date()
-  const minuteStart = new Date(Math.floor(now.getTime() / 60000) * 60000).toISOString()
-  const dayStart = now.toISOString().slice(0, 10)
-  const minute = await readUsageWindow(env, subjectKey, policy.capability, 'minute', minuteStart)
-  if (minute.request_count >= policy.maxRequestsPerMinute) return apiError('rate_limited', 'Rate limit exceeded.', 429)
-  const day = await readUsageWindow(env, subjectKey, policy.capability, 'day', dayStart)
-  if (day.unit_count + policy.units > policy.maxUnitsPerDay) return apiError('budget_exceeded', 'Daily usage budget exceeded.', 429)
-  await incrementUsageWindow(env, subjectKey, policy.capability, 'minute', minuteStart, 1, policy.units)
-  await incrementUsageWindow(env, subjectKey, policy.capability, 'day', dayStart, 1, policy.units)
-  return null
-}
-
-async function readUsageWindow(env: Env, subjectKey: string, capability: string, windowKind: string, windowStart: string): Promise<{ request_count: number; unit_count: number }> {
-  const row = await env.GENERATION_DB.prepare(`
-    SELECT request_count, unit_count FROM generation_usage_windows
-    WHERE subject_key = ? AND capability = ? AND window_kind = ? AND window_start = ?
-    LIMIT 1
-  `).bind(subjectKey, capability, windowKind, windowStart).first<{ request_count: number; unit_count: number }>()
-  return { request_count: Number(row?.request_count ?? 0), unit_count: Number(row?.unit_count ?? 0) }
-}
-
-async function incrementUsageWindow(env: Env, subjectKey: string, capability: string, windowKind: string, windowStart: string, requests: number, units: number): Promise<void> {
-  const at = new Date().toISOString()
-  await env.GENERATION_DB.prepare(`
-    INSERT INTO generation_usage_windows (subject_key, capability, window_kind, window_start, request_count, unit_count, updated_at)
-    VALUES (?, ?, ?, ?, ?, ?, ?)
-    ON CONFLICT(subject_key, capability, window_kind, window_start) DO UPDATE SET
-      request_count = request_count + excluded.request_count,
-      unit_count = unit_count + excluded.unit_count,
-      updated_at = excluded.updated_at
-  `).bind(subjectKey, capability, windowKind, windowStart, requests, units, at).run()
 }
 
 interface StoryDraftChapter {
@@ -425,17 +313,12 @@ async function generateTts(request: Request, env: Env): Promise<Response> {
   if (validationError) return apiError(validationError.code, validationError.message, 400, validationError.field)
 
   const normalized = normalizeTtsRequest(body)
-  const access = await authenticatePaidRequest(request, env)
-  if (access instanceof Response) return access
-  const usageError = await recordUsageWindow(env, access.subjectKey, {
+  return requirePaidAccess(request, env, {
     capability: 'tts.generate',
     units: Math.max(1, normalized.text.length),
     maxRequestsPerMinute: 60,
     maxUnitsPerDay: 12000,
-  })
-  if (usageError) return usageError
-
-  return synthesizeWithAtlas(normalized, env)
+  }, () => synthesizeWithAtlas(normalized, env))
 }
 
 async function synthesizeWithAtlas(input: NormalizedTtsRequest, env: Env): Promise<Response> {
@@ -1713,12 +1596,6 @@ function parseImageSize(size: string): { width: number; height: number } {
 
 function clamp(value: number, min: number, max: number) {
   return Math.min(max, Math.max(min, value))
-}
-
-async function sha256Hex(value: string): Promise<string> {
-  const bytes = new TextEncoder().encode(value)
-  const digest = await crypto.subtle.digest('SHA-256', bytes)
-  return Array.from(new Uint8Array(digest)).map((byte) => byte.toString(16).padStart(2, '0')).join('')
 }
 
 export const internals = { generateRequestHash, normalizeTtsRequest, validateTtsRequest }

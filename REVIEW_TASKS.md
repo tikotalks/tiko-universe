@@ -219,6 +219,7 @@ Approximate review spread: 7 Critical, about 35 High, about 70 Medium, and about
   - generation-api routes into modules.
   - [x] Extract generation-api speech normalization and Atlas speech helpers into a focused module.
   - [x] Extract generation-api HTTP response and provider fetch helpers into a focused module.
+  - [x] Extract generation-api auth, ownership, and paid usage helpers into a focused module.
   - content/media/identity workers where useful.
   - admin StoryNarrator/ImageGenerator pages by tab or feature.
   - [x] Extract StoryNarrator segment editor into a focused component.
