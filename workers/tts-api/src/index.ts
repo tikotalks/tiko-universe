@@ -1,4 +1,6 @@
-interface Env {
+import { requireServiceKey, type AuthEnv } from '../../shared/auth'
+
+interface Env extends AuthEnv {
   TTS_DB: {
     prepare(sql: string): { bind(...values: unknown[]): { first<T>(): Promise<T | null>; run(): Promise<unknown> } }
   }
@@ -6,7 +8,11 @@ interface Env {
     get(key: string): Promise<{ body: BodyInit; httpMetadata?: { contentType?: string } } | null>
     put(key: string, value: ArrayBuffer | Uint8Array, options?: Record<string, unknown>): Promise<unknown>
   }
-  OPENAI_API_KEY?: string
+  ATLAS_SERVICE?: {
+    fetch(input: Request | string, init?: RequestInit): Promise<Response>
+  }
+  ATLAS_BASE_URL?: string
+  ATLAS_API_KEY?: string
 }
 
 interface GenerateRequest {
@@ -20,6 +26,7 @@ interface GenerateRequest {
 }
 
 interface AudioRecord {
+  id: string
   audio_url: string
   r2_key: string
   provider: string
@@ -31,27 +38,60 @@ interface AudioRecord {
   duration_seconds?: number
 }
 
+interface AtlasSpeechResponse {
+  data?: {
+    id?: string
+    audioUrl?: string
+    contentType?: string
+    cached?: boolean
+    provider?: { name?: string; model?: string; voice?: string }
+  }
+  meta?: { cached?: boolean; schemaVersion?: number; requestId?: string }
+  error?: { code?: string; message?: string }
+}
+
+interface UsagePolicy {
+  capability: string
+  units: number
+  maxRequestsPerMinute: number
+  maxUnitsPerDay: number
+}
+
 const CORS_HEADERS = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-  'Access-Control-Allow-Headers': 'Content-Type',
+  'Access-Control-Allow-Headers': 'Content-Type, Authorization',
 }
 
 const OPENAI_VOICES = new Set(['alloy', 'ash', 'ballad', 'coral', 'echo', 'fable', 'nova', 'onyx', 'sage', 'shimmer', 'verse'])
 
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
-    if (request.method === 'OPTIONS') return new Response(null, { headers: CORS_HEADERS })
-    const url = new URL(request.url)
+    try {
+      if (request.method === 'OPTIONS') return new Response(null, { headers: CORS_HEADERS })
+      const url = new URL(request.url)
 
-    if (url.pathname === '/generate' && request.method === 'POST') return generate(request, env)
-    if (url.pathname === '/audio' && request.method === 'GET') return getAudio(request, env)
+      if (url.pathname === '/generate' && request.method === 'POST') {
+        const auth = await requireServiceKey(request, env, ['tts.generate'])
+        if (auth instanceof Response) return serviceAuthFailure(auth)
+        return generate(request, env, `api_key:${auth.subjectId ?? 'unknown'}`)
+      }
+      if (url.pathname === '/audio' && request.method === 'GET') return getAudio(request, env)
 
-    return json({ success: false, error: 'not_found' }, 404)
+      return json({ success: false, error: 'not_found' }, 404)
+    } catch (error) {
+      console.error('[tts-api] unhandled request error', error)
+      return json({ success: false, error: 'internal_error' }, 500)
+    }
   },
 }
 
-async function generate(request: Request, env: Env): Promise<Response> {
+async function serviceAuthFailure(response: Response): Promise<Response> {
+  const body = await response.json().catch(() => null) as { error?: { code?: string } } | null
+  return json({ success: false, error: body?.error?.code ?? 'unauthorized' }, response.status)
+}
+
+async function generate(request: Request, env: Env, subjectKey: string): Promise<Response> {
   let body: GenerateRequest
   try {
     body = await request.json() as GenerateRequest
@@ -63,38 +103,52 @@ async function generate(request: Request, env: Env): Promise<Response> {
   if (validationError) return json({ success: false, error: validationError }, 400)
 
   const normalized = normalizeRequest(body)
+  const usageError = await recordUsageWindow(env, subjectKey, {
+    capability: 'tts.generate',
+    units: Math.max(1, normalized.text.length),
+    maxRequestsPerMinute: 60,
+    maxUnitsPerDay: 12000,
+  })
+  if (usageError) return usageError
+
   const textHash = await generateTextHash(normalized)
   const existing = await findAudio(textHash, env)
   if (existing) return json({ success: true, audioUrl: existing.audio_url, cached: true, metadata: existing })
 
-  const generated = await generateAudioBytes(normalized, env)
-  if ('error' in generated) return json({ success: false, error: generated.error }, generated.status ?? 503)
+  return synthesizeWithAtlas(normalized, env)
+}
 
-  const r2Key = `audio/${textHash}.mp3`
-  await env.AUDIO_BUCKET.put(r2Key, generated.bytes, {
-    httpMetadata: { contentType: 'audio/mpeg', cacheControl: 'public, max-age=31536000, immutable' },
-  })
+async function recordUsageWindow(env: Env, subjectKey: string, policy: UsagePolicy): Promise<Response | null> {
+  const now = new Date()
+  const minuteStart = new Date(Math.floor(now.getTime() / 60000) * 60000).toISOString()
+  const dayStart = now.toISOString().slice(0, 10)
+  const minute = await readUsageWindow(env, subjectKey, policy.capability, 'minute', minuteStart)
+  if (minute.request_count >= policy.maxRequestsPerMinute) return json({ success: false, error: 'rate_limited' }, 429)
+  const day = await readUsageWindow(env, subjectKey, policy.capability, 'day', dayStart)
+  if (day.unit_count + policy.units > policy.maxUnitsPerDay) return json({ success: false, error: 'budget_exceeded' }, 429)
+  await incrementUsageWindow(env, subjectKey, policy.capability, 'minute', minuteStart, 1, policy.units)
+  await incrementUsageWindow(env, subjectKey, policy.capability, 'day', dayStart, 1, policy.units)
+  return null
+}
 
-  const audioUrl = `/audio?key=${encodeURIComponent(r2Key)}`
-  await env.TTS_DB.prepare(`INSERT INTO tts_audio (
-    id, text_hash, text, language, provider, voice, model, speed, pitch, audio_url, r2_key, file_size_bytes, generated_at
-  ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`).bind(
-    crypto.randomUUID(),
-    textHash,
-    normalized.text,
-    normalized.language,
-    normalized.provider,
-    normalized.voice,
-    normalized.model,
-    normalized.speed,
-    normalized.pitch,
-    audioUrl,
-    r2Key,
-    generated.bytes.byteLength,
-    new Date().toISOString(),
-  ).run()
+async function readUsageWindow(env: Env, subjectKey: string, capability: string, windowKind: string, windowStart: string): Promise<{ request_count: number; unit_count: number }> {
+  const row = await env.TTS_DB.prepare(`
+    SELECT request_count, unit_count FROM tts_usage_windows
+    WHERE subject_key = ? AND capability = ? AND window_kind = ? AND window_start = ?
+    LIMIT 1
+  `).bind(subjectKey, capability, windowKind, windowStart).first<{ request_count: number; unit_count: number }>()
+  return { request_count: Number(row?.request_count ?? 0), unit_count: Number(row?.unit_count ?? 0) }
+}
 
-  return json({ success: true, audioUrl, cached: false })
+async function incrementUsageWindow(env: Env, subjectKey: string, capability: string, windowKind: string, windowStart: string, requests: number, units: number): Promise<void> {
+  await env.TTS_DB.prepare(`
+    INSERT INTO tts_usage_windows (subject_key, capability, window_kind, window_start, request_count, unit_count, updated_at)
+    VALUES (?, ?, ?, ?, ?, ?, ?)
+    ON CONFLICT(subject_key, capability, window_kind, window_start) DO UPDATE SET
+      request_count = request_count + excluded.request_count,
+      unit_count = unit_count + excluded.unit_count,
+      updated_at = excluded.updated_at
+  `).bind(subjectKey, capability, windowKind, windowStart, requests, units, new Date().toISOString()).run()
 }
 
 async function getAudio(request: Request, env: Env): Promise<Response> {
@@ -150,31 +204,44 @@ async function findAudio(textHash: string, env: Env): Promise<AudioRecord | null
     FROM tts_audio WHERE text_hash = ? LIMIT 1`).bind(textHash).first<AudioRecord>()
 }
 
-async function generateAudioBytes(input: Required<GenerateRequest>, env: Env): Promise<{ success: true; bytes: Uint8Array } | { success: false; error: string; status?: number }> {
-  if (input.provider === 'azure') return { success: false, error: 'azure_tts_not_configured', status: 501 }
-  if (!env.OPENAI_API_KEY) return { success: false, error: 'tts_generation_not_configured', status: 503 }
+async function synthesizeWithAtlas(input: Required<GenerateRequest>, env: Env): Promise<Response> {
+  if (!env.ATLAS_SERVICE || !env.ATLAS_API_KEY) return json({ success: false, error: 'atlas_tts_not_configured' }, 503)
 
-  const response = await fetch('https://api.openai.com/v1/audio/speech', {
+  const atlasBase = (env.ATLAS_BASE_URL ?? 'https://api.tikotalks.com/v1/atlas').replace(/\/$/, '')
+  const atlasURL = atlasBase.endsWith('/speech') ? atlasBase : `${atlasBase}/speech`
+  const response = await env.ATLAS_SERVICE.fetch(new Request(atlasURL, {
     method: 'POST',
-    headers: {
-      Authorization: `Bearer ${env.OPENAI_API_KEY}`,
-      'Content-Type': 'application/json',
-    },
+    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${env.ATLAS_API_KEY}` },
     body: JSON.stringify({
-      model: input.model,
-      voice: input.voice,
-      input: input.text,
-      response_format: 'mp3',
+      app: 'tts-api',
+      purpose: 'compatibility-tts',
+      text: input.text,
+      language: input.language,
       speed: input.speed,
+      pitch: input.pitch,
     }),
+  }))
+  const body = await response.json().catch(() => null) as AtlasSpeechResponse | null
+
+  if (!response.ok) return json({ success: false, error: body?.error?.code ?? 'atlas_tts_failed' }, response.status)
+
+  const data = body?.data
+  if (!data?.audioUrl) return json({ success: false, error: 'atlas_tts_invalid_response' }, 502)
+
+  return json({
+    success: true,
+    audioUrl: data.audioUrl,
+    cached: body?.meta?.cached ?? data.cached ?? false,
+    metadata: {
+      id: data.id,
+      provider: data.provider?.name,
+      voice: data.provider?.voice,
+      model: data.provider?.model,
+      language: input.language,
+      requestId: body?.meta?.requestId,
+      schemaVersion: body?.meta?.schemaVersion,
+    },
   })
-
-  if (!response.ok) {
-    const message = await response.text().catch(() => '')
-    return { success: false, error: message ? `openai_tts_failed:${message.slice(0, 180)}` : 'openai_tts_failed', status: 502 }
-  }
-
-  return { success: true, bytes: new Uint8Array(await response.arrayBuffer()) }
 }
 
 function clamp(value: number, min: number, max: number) {

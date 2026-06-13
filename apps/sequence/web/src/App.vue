@@ -3,13 +3,23 @@ import { computed, onMounted, ref, watch } from 'vue'
 import { Button, InputTextArea, Popup } from '@sil/ui'
 import { IdentityClient, type IdentityBundle } from '@tiko/identity'
 import { TikoDataClient, type SequenceSettings, type SequenceState } from '@tiko/data'
-import { createI18n, createTikoIdentityLabels, defaultLanguage, tikoI18nKeys, tikoLanguageOptions, tikoLanguages, type TikoLanguage } from '@tiko/i18n'
+import { createI18n, createTikoIdentityLabels, createTikoShellLabels, normalizeTikoLanguage, tikoI18nKeys, tikoLanguageOptions, type TikoLanguage } from '@tiko/i18n'
 import {
   TikoAppShell,
   TikoSettingsPanel,
   TikoSquareTile,
   createTikoTtsClient,
+  normalizeTikoColorMode,
+  readTikoLocalJson,
+  resolveTikoAppApiBaseUrl,
+  resolveTikoContentApiBaseUrl,
+  resolveTikoIdentityBaseUrl,
+  tikoContentImageRefUrl,
+  useTikoAppDataRuntime,
+  useTikoColorModeEffect,
+  useTikoI18nRuntime,
   useIdentityRuntime,
+  writeTikoLocalJson,
   type IdentityRuntimeState,
   type TikoColorMode
 } from '@tiko/ui'
@@ -19,9 +29,9 @@ import './styles.scss'
 const storageKey = 'tiko:sequence'
 const identityStorageKey = 'tiko:identity:device-session'
 const appId = 'sequence' as const
-const apiBaseUrl = resolveApiBaseUrl()
-const identityBaseUrl = resolveIdentityBaseUrl()
-const contentBaseUrl = resolveContentBaseUrl()
+const apiBaseUrl = resolveTikoAppApiBaseUrl()
+const identityBaseUrl = resolveTikoIdentityBaseUrl()
+const contentBaseUrl = resolveTikoContentApiBaseUrl()
 
 interface SequenceStep {
   id: string
@@ -52,43 +62,6 @@ interface PersistedState {
 }
 
 
-
-function resolveApiBaseUrl() {
-  const env = (import.meta as ImportMeta & { env?: Record<string, string | undefined> }).env
-  return (env?.VITE_TIKO_API_BASE_URL ?? 'https://app.tikoapi.org/v1').replace(/\/$/, '')
-}
-
-function resolveIdentityBaseUrl() {
-  const env = (import.meta as ImportMeta & { env?: Record<string, string | undefined> }).env
-  return (env?.VITE_IDENTITY_API_URL ?? env?.VITE_TIKO_IDENTITY_BASE_URL ?? 'https://id.tikoapps.org/v1').replace(/\/$/, '')
-}
-
-function resolveContentBaseUrl() {
-  const env = (import.meta as ImportMeta & { env?: Record<string, string | undefined> }).env
-  return (env?.VITE_CONTENT_API_URL ?? 'https://content.tikoapi.org/v1').replace(/\/$/, '')
-}
-
-function readJson<T>(key: string, fallback: T): T {
-  if (typeof window === 'undefined') return fallback
-  try {
-    return JSON.parse(window.localStorage.getItem(key) ?? 'null') ?? fallback
-  } catch {
-    return fallback
-  }
-}
-
-function writeJson(key: string, value: unknown) {
-  if (typeof window === 'undefined') return
-  window.localStorage.setItem(key, JSON.stringify(value))
-}
-
-function toLanguage(value: string | undefined): TikoLanguage {
-  return tikoLanguages.includes(value as TikoLanguage) ? value as TikoLanguage : defaultLanguage
-}
-
-function toColorMode(value: string | undefined): TikoColorMode {
-  return value === 'light' || value === 'dark' || value === 'system' ? value : 'system'
-}
 
 function generateId(): string {
   return `seq-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`
@@ -127,10 +100,10 @@ function normalizeSequenceItem(item: unknown, source: SequenceItem['source']): S
   }
 }
 
-const stored = readJson<PersistedState>(storageKey, {})
-const i18n = createI18n({ app: appId, language: toLanguage(stored.language) })
-const language = ref<TikoLanguage>(toLanguage(stored.language))
-const colorMode = ref<TikoColorMode>(toColorMode(stored.colorMode))
+const stored = readTikoLocalJson<PersistedState>(storageKey, {})
+const i18n = createI18n({ app: appId, language: normalizeTikoLanguage(stored.language) })
+const language = ref<TikoLanguage>(normalizeTikoLanguage(stored.language))
+const colorMode = ref<TikoColorMode>(normalizeTikoColorMode(stored.colorMode))
 const defaultItems = ref<SequenceItem[]>([])
 const customItems = ref<SequenceItem[]>((stored.items ?? []).map(item => normalizeSequenceItem(item, 'user')))
 const playingId = ref<string | null>(null)
@@ -158,9 +131,23 @@ const runtimeState: IdentityRuntimeState = {
   parentMode, childModeEnabled, pinConfigured,
 }
 const runtime = useIdentityRuntime({ identityClient, state: runtimeState, deviceName: 'Sequence web', labels: () => createTikoIdentityLabels(i18n.t) })
+const dataRuntime = useTikoAppDataRuntime<typeof appId, SequenceSettings, SequenceState>({
+  app: appId,
+  sessionToken,
+  bootstrapped,
+  dataClient,
+  readSettings: () => ({
+    language: language.value,
+    colorMode: colorMode.value,
+  }),
+  readState: () => ({
+    items: customItems.value,
+  }),
+  applySettings,
+  applyState,
+})
 
 const labels = computed(() => {
-  void language.value
   return {
     appName: i18n.t(tikoI18nKeys.sequence.appName),
     emptyTitle: i18n.t(tikoI18nKeys.sequence.empty.title),
@@ -178,8 +165,11 @@ const labels = computed(() => {
     loadError: i18n.t(tikoI18nKeys.sequence.status.loadError),
     retry: i18n.t(tikoI18nKeys.sequence.status.retry),
     settings: i18n.t(tikoI18nKeys.common.settings),
+    shell: createTikoShellLabels(i18n.t),
     settingsPanel: {
       settings: i18n.t(tikoI18nKeys.common.settings),
+      appearance: i18n.t(tikoI18nKeys.common.appearance),
+      appPreferences: i18n.t(tikoI18nKeys.common.appPreferences),
       language: i18n.t(tikoI18nKeys.common.language),
       colorMode: i18n.t(tikoI18nKeys.common.colorMode),
       light: i18n.t(tikoI18nKeys.common.colorModeOptions.light),
@@ -208,14 +198,8 @@ const playingItem = computed(() =>
 const isPlaying = computed(() => playingItem.value !== null)
 const currentPlayingStep = computed(() => playingItem.value?.steps[currentStep.value] ?? null)
 
-function resolveColorMode(mode: TikoColorMode) {
-  if (mode !== 'system') return mode
-  if (typeof window === 'undefined') return 'light'
-  return window.matchMedia?.('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
-}
-
 function saveLocal() {
-  writeJson(storageKey, {
+  writeTikoLocalJson(storageKey, {
     language: language.value,
     colorMode: colorMode.value,
     items: customItems.value,
@@ -231,22 +215,12 @@ async function bootstrapIdentity() {
 }
 
 function applySettings(settings: SequenceSettings) {
-  language.value = toLanguage(settings.language)
-  colorMode.value = toColorMode(settings.colorMode)
+  language.value = normalizeTikoLanguage(settings.language)
+  colorMode.value = normalizeTikoColorMode(settings.colorMode)
 }
 
 function applyState(state: SequenceState) {
   if (state.items) customItems.value = (state.items as unknown[]).map(item => normalizeSequenceItem(item, 'user'))
-}
-
-async function hydrateRemoteData() {
-  if (!sessionToken.value) return
-  const [settings, state] = await Promise.all([
-    dataClient.getSettings(appId, sessionToken.value),
-    dataClient.getState(appId, sessionToken.value),
-  ])
-  applySettings(settings.settings)
-  applyState(state.state)
 }
 
 async function hydrateDefaultContent() {
@@ -262,31 +236,18 @@ async function hydrateDefaultContent() {
   }
 }
 
-async function persistRemote() {
-  if (!bootstrapped.value || !sessionToken.value) return
-  try {
-    await dataClient.putState(appId, sessionToken.value, {
-      items: customItems.value,
-    })
-  } catch {
-    // Local fallback already written
-  }
-}
+useTikoI18nRuntime({ app: appId, language, i18n, onLanguageChange: hydrateDefaultContent })
 
-watch(language, (value) => {
-  i18n.setLanguage(value)
-  void hydrateDefaultContent()
-}, { immediate: true })
+useTikoColorModeEffect(colorMode)
 
-watch(colorMode, (mode) => {
-  const effective = resolveColorMode(mode)
-  document.documentElement.dataset.colorMode = effective
-  document.documentElement.dataset.theme = effective
-}, { immediate: true })
-
-watch([language, colorMode, customItems], () => {
+watch([language, colorMode], () => {
   saveLocal()
-  void persistRemote()
+  void dataRuntime.persistSettingsRemote()
+})
+
+watch(customItems, () => {
+  saveLocal()
+  void dataRuntime.persistStateRemote()
 }, { deep: true })
 
 onMounted(async () => {
@@ -298,7 +259,7 @@ onMounted(async () => {
   }
 
   try {
-    await hydrateRemoteData()
+    await dataRuntime.hydrateRemoteData()
     await hydrateDefaultContent()
   } catch {
     // Remote sync failed — local state is still valid
@@ -368,7 +329,7 @@ function nextStep() {
 
 async function speakStep(text: string) {
   try {
-    await tts.speak({ text, language: language.value, provider: 'auto' })
+    await tts.speak({ text, language: language.value })
   } catch {
     // Browser fallback handled by TTS client
   }
@@ -380,18 +341,14 @@ function stepText(step: SequenceStep | null | undefined): string {
 
 function stepImages(step: SequenceStep | null | undefined): string[] {
   if (!step) return []
-  if (Array.isArray(step.imageRefs) && step.imageRefs.length > 0) return step.imageRefs.map(imageRefURL)
-  return step.imageRef ? [imageRefURL(step.imageRef)] : []
+  if (Array.isArray(step.imageRefs) && step.imageRefs.length > 0) return step.imageRefs.map(imageRef => tikoContentImageRefUrl(imageRef, contentBaseUrl))
+  return step.imageRef ? [tikoContentImageRefUrl(step.imageRef, contentBaseUrl)] : []
 }
 
 function itemImages(item: SequenceItem): string[] {
   const firstStep = item.steps.find(step => stepImages(step).length > 0)
   if (firstStep) return stepImages(firstStep)
-  return item.imageRef ? [imageRefURL(item.imageRef)] : []
-}
-
-function imageRefURL(imageRef: string) {
-  return `${contentBaseUrl}/content/images/${encodeURIComponent(imageRef)}`
+  return item.imageRef ? [tikoContentImageRefUrl(item.imageRef, contentBaseUrl)] : []
 }
 
 function itemBackground(item: SequenceItem): string {
@@ -419,7 +376,7 @@ async function retry() {
     // Identity still unavailable
   }
   try {
-    await hydrateRemoteData()
+    await dataRuntime.hydrateRemoteData()
     await hydrateDefaultContent()
   } catch {
     if (!sessionToken.value) loadError.value = true
@@ -437,6 +394,7 @@ async function retry() {
     :theme-color="appConfig.themeColor"
     avatar="ui/avatar"
     :actions="headerActions"
+    :labels="labels.shell"
     @header-action="headerAction"
     @avatar-click="runtime.handleAvatarClick"
   >

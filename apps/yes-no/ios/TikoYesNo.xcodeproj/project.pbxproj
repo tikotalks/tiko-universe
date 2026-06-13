@@ -29,6 +29,7 @@
 /* Begin PBXFileReference section */
 		0A03A3830F9E9D0D41C10399 /* tikokit-ios */ = {isa = PBXFileReference; lastKnownFileType = folder; name = "tikokit-ios"; path = "../../../packages/tikokit-ios"; sourceTree = SOURCE_ROOT; };
 		216C3B420E05057458B4A8FF /* TikoYesNoTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = TikoYesNoTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		2B19C1507B00190FDAF8CB2A /* TikoYesNo.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = TikoYesNo.entitlements; sourceTree = "<group>"; };
 		3C1243037126C3062F4D62D8 /* TikoYesNoTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TikoYesNoTests.swift; sourceTree = "<group>"; };
 		7357E5FCD5F592CEE258CE95 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		7C99E9A160668D93E2D88752 /* YesNoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YesNoView.swift; sourceTree = "<group>"; };
@@ -36,7 +37,7 @@
 		C29DD0F7C2038B0621DDB76E /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		CFF1B4E75F0388887506E441 /* YesNoAppConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YesNoAppConfig.swift; sourceTree = "<group>"; };
 		EF6BBD658EE7F2E3FFB60F4D /* TikoYesNoApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TikoYesNoApp.swift; sourceTree = "<group>"; };
-		FB09AA6545AC873DBC2EE38E /* TikoYesNo.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = TikoYesNo.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		FB09AA6545AC873DBC2EE38E /* TikoYesNo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TikoYesNo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -74,6 +75,7 @@
 			children = (
 				C29DD0F7C2038B0621DDB76E /* Assets.xcassets */,
 				7357E5FCD5F592CEE258CE95 /* Info.plist */,
+				2B19C1507B00190FDAF8CB2A /* TikoYesNo.entitlements */,
 				EF6BBD658EE7F2E3FFB60F4D /* TikoYesNoApp.swift */,
 				CFF1B4E75F0388887506E441 /* YesNoAppConfig.swift */,
 				ACA4B1596AEF26381F6234C3 /* YesNoSpeechService.swift */,
@@ -149,9 +151,6 @@
 				BuildIndependentTargetsInParallel = YES;
 				LastUpgradeCheck = 1430;
 				TargetAttributes = {
-					0286DE3209637543114F6F4E = {
-						DevelopmentTeam = "";
-					};
 					23B4F9754A956BEBA2CFFA61 = {
 						DevelopmentTeam = "";
 					};
@@ -347,7 +346,9 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = Sources/TikoYesNo.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				DEVELOPMENT_TEAM = 38MGF83L2L;
 				INFOPLIST_FILE = Sources/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -397,7 +398,9 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = Sources/TikoYesNo.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				DEVELOPMENT_TEAM = 38MGF83L2L;
 				INFOPLIST_FILE = Sources/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",

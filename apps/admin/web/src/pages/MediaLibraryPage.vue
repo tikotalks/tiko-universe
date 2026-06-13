@@ -7,7 +7,7 @@ import type { AdminMediaItem, AudioLibraryAlbum } from '../composables/useAdminM
 
 const bemm = useBemm('media-library', { return: 'string', includeBaseClass: true })
 
-const { items, total, page, totalPages, loading, uploading, error, list, upload, itemUrl, listAudioAlbums, createAudioAlbum, addAudioTrack } = useAdminMediaLibrary()
+const { items, total, page, totalPages, loading, uploading, error, list, upload, itemUrl, itemPreviewUrl, listAudioAlbums, createAudioAlbum, addAudioTrack } = useAdminMediaLibrary()
 
 const search = ref('')
 const type = ref('')
@@ -202,7 +202,7 @@ function formatDate(value?: string): string {
           <img
             v-if="mediaKind(item) === 'image'"
             :class="bemm('thumb')"
-            :src="itemUrl(item)"
+            :src="itemPreviewUrl(item, 160)"
             :alt="item.title || item.file_name || item.id"
           />
           <div v-else :class="bemm('thumb', { file: true })">

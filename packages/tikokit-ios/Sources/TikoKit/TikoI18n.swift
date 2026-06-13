@@ -19,6 +19,7 @@ public enum TikoAppKey: String, Sendable {
 public final class TikoI18n: ObservableObject {
     public let app: TikoAppKey
     @Published public private(set) var languageCode: String
+    @Published public private(set) var revision: Int = 0
 
     private let fallback = "en"
     private var bundles: [String: [String: String]] = [:]
@@ -59,6 +60,7 @@ public final class TikoI18n: ObservableObject {
         } else {
             bundles[k] = translations
         }
+        revision += 1
     }
 
     /// Fetch remote translations from the Tiko translations-api Worker.
@@ -362,8 +364,47 @@ enum TikoLocalTranslations {
         "common.settings": "Definições",
     ]
 
+    private static let radioMT: [String: String] = [
+        "radio.appName": "Radju",
+        "radio.collections.title": "Kollezzjonijiet",
+        "radio.collections.songs": "{count} kanzunetti",
+        "radio.collections.empty": "Ghad mhemmx kanzunetti",
+        "radio.collections.addHint": "Uza l-buttuna + fil-header biex iżżid kanzunetti ta YouTube ma din il-kollezzjoni.",
+        "radio.collections.moreInCollection": "Aktar f din il-kollezzjoni",
+        "radio.player.play": "Daqq",
+        "radio.player.pause": "Waqqaf ftit",
+        "radio.player.next": "Li jmiss",
+        "radio.player.previous": "Ta qabel",
+        "radio.player.shuffle": "Hawwad",
+        "radio.player.repeat": "Irrepeti",
+        "radio.library.addSong": "Zid kanzunetta",
+        "radio.library.songTitle": "Titlu tal-kanzunetta",
+        "radio.library.artist": "Artist",
+        "radio.library.collection": "Kollezzjoni",
+        "radio.library.newCollectionName": "Isem kollezzjoni ġdida",
+        "radio.library.fetchingInfo": "Qed tinġieb l-informazzjoni...",
+        "radio.library.addFromYouTube": "URL jew ID ta YouTube",
+        "radio.management.renameCollection": "Ibdel isem il-kollezzjoni",
+        "radio.management.deleteCollection": "Ħassar il-kollezzjoni",
+        "radio.management.renameSong": "Ibdel isem il-kanzunetta",
+        "radio.management.deleteSong": "Ħassar il-kanzunetta",
+        "radio.management.moveTo": "Mexxi lejn",
+        "radio.renameCollection.title": "Ibdel isem il-kollezzjoni",
+        "radio.renameCollection.label": "Isem il-kollezzjoni",
+        "radio.renameSong.title": "Ibdel isem il-kanzunetta",
+        "radio.renameSong.label": "Titlu tal-kanzunetta",
+        "radio.settings.title": "Radju",
+        "radio.settings.parentMode": "Modalita tal-ġenituri",
+        "radio.settings.shuffle": "Hawwad",
+        "radio.settings.repeat": "Irrepeti",
+        "common.cancel": "Ikkanċella",
+        "common.save": "Issejvja",
+        "common.add": "Żid",
+        "common.settings": "Impostazzjonijiet",
+    ]
+
     private static var radioBundles: [(String, [String: String])] {
-        [("en", radioEN), ("nl", radioNL), ("fr", radioFR), ("es", radioES), ("de", radioDE), ("pt", radioPT)]
+        [("en", radioEN), ("nl", radioNL), ("fr", radioFR), ("es", radioES), ("de", radioDE), ("pt", radioPT), ("mt", radioMT)]
     }
 
     // MARK: Yes No
@@ -1020,8 +1061,50 @@ enum TikoLocalTranslations {
         "common.settings": "Einstellungen",
     ]
 
+    private static let cardsMT: [String: String] = [
+        "cards.appName": "Karti",
+        "cards.collections.empty": "Ghad mhemmx kollezzjonijiet.",
+        "cards.collections.addNew": "Zid kollezzjoni",
+        "cards.collections.newName": "Isem kollezzjoni ġdida",
+        "cards.collections.create": "Oħloq",
+        "cards.tiles.empty": "Ghad mhemmx karti.",
+        "cards.tiles.addNew": "Zid karta",
+        "cards.settings.restoreDefaults": "Irrestawra d-defaults",
+        "cards.settings.restoreConfirm": "Dan jerga juri l-kollezzjonijiet default kollha.",
+        "cards.settings.title": "Karti",
+        "cards.settings.parentMode": "Modalita tal-ġenituri",
+        "cards.settings.collections": "Kollezzjonijiet",
+        "cards.settings.hideDefaultSets": "Aħbi s-settijiet default",
+        "cards.settings.display": "Wirja",
+        "cards.settings.showAnimations": "Uri animazzjonijiet",
+        "cards.settings.accessibility": "Aċċessibilita",
+        "cards.settings.cardSize": "Daqs tal-karta",
+        "cards.settings.labelSize": "Daqs tat-tikketta",
+        "cards.add.newCategory": "Kategorija ġdida",
+        "cards.add.editCategory": "Editja kategorija",
+        "cards.add.newCard": "Karta ġdida",
+        "cards.add.editCard": "Editja karta",
+        "cards.add.name": "Isem",
+        "cards.add.color": "Kulur",
+        "cards.add.image": "Immaġni",
+        "cards.add.spokenText": "Test mitkellem",
+        "cards.add.whatShouldBeSpoken": "X ghandu jinghad",
+        "cards.add.addCategory": "Zid kategorija",
+        "cards.add.addCard": "Zid karta",
+        "cards.add.saveChanges": "Issejvja l-bidliet",
+        "cards.add.suggestionsFromTiko": "Suggerimenti minn Tiko",
+        "cards.add.addImage": "Zid immaġni",
+        "cards.add.changeImage": "Ibdel immaġni",
+        "cards.add.tapToChooseDifferent": "Tektek biex tagħżel ohra",
+        "cards.add.namePlaceholderCategory": "eż. Ikel",
+        "cards.add.namePlaceholderCard": "eż. Tuffieħa",
+        "common.cancel": "Ikkanċella",
+        "common.save": "Issejvja",
+        "common.settings": "Impostazzjonijiet",
+    ]
+
     private static var cardsBundles: [(String, [String: String])] {
-        [("en", cardsEN), ("nl", cardsNL), ("fr", cardsFR), ("es", cardsES), ("de", cardsDE)]
+        [("en", cardsEN), ("nl", cardsNL), ("fr", cardsFR), ("es", cardsES), ("de", cardsDE), ("mt", cardsMT)]
     }
 
     // MARK: Timer
@@ -1100,8 +1183,26 @@ enum TikoLocalTranslations {
         "common.settings": "Einstellungen",
     ]
 
+    private static let timerMT: [String: String] = [
+        "timer.appName": "Timer",
+        "timer.display.expired": "Il-hin spicca!",
+        "timer.controls.start": "Ibda",
+        "timer.controls.pause": "Waqqaf ftit",
+        "timer.controls.resume": "Kompli",
+        "timer.controls.reset": "Irrisettja",
+        "timer.presets.oneMin": "Minuta",
+        "timer.presets.threeMin": "3 minuti",
+        "timer.presets.fiveMin": "5 minuti",
+        "timer.presets.tenMin": "10 minuti",
+        "timer.settings.title": "Timer",
+        "timer.settings.sound": "Hoss meta jispicca",
+        "common.cancel": "Ikkanċella",
+        "common.save": "Issejvja",
+        "common.settings": "Impostazzjonijiet",
+    ]
+
     private static var timerBundles: [(String, [String: String])] {
-        [("en", timerEN), ("nl", timerNL), ("fr", timerFR), ("es", timerES), ("de", timerDE)]
+        [("en", timerEN), ("nl", timerNL), ("fr", timerFR), ("es", timerES), ("de", timerDE), ("mt", timerMT)]
     }
 
     // MARK: Type
@@ -1162,8 +1263,22 @@ enum TikoLocalTranslations {
         "common.settings": "Ajustes",
     ]
 
+    private static let typeMT: [String: String] = [
+        "type.appName": "Ittajpja",
+        "type.compose.placeholder": "Ittajpja dak li trid tghid",
+        "type.compose.speak": "Ghid",
+        "type.compose.clear": "Neħħi",
+        "type.phrases.title": "Frażijiet salvati",
+        "type.phrases.empty": "Ghad mhemmx frażijiet salvati.",
+        "type.settings.title": "Ittajpja",
+        "type.settings.parentMode": "Modalita tal-ġenituri",
+        "common.cancel": "Ikkanċella",
+        "common.save": "Issejvja",
+        "common.settings": "Impostazzjonijiet",
+    ]
+
     private static var typeBundles: [(String, [String: String])] {
-        [("en", typeEN), ("nl", typeNL), ("fr", typeFR), ("es", typeES)]
+        [("en", typeEN), ("nl", typeNL), ("fr", typeFR), ("es", typeES), ("mt", typeMT)]
     }
 
     // MARK: Sequence
@@ -1179,7 +1294,18 @@ enum TikoLocalTranslations {
         "common.settings": "Settings",
     ]
 
-    private static var sequenceBundles: [(String, [String: String])] { [("en", sequenceEN)] }
+    private static let sequenceMT: [String: String] = [
+        "sequence.appName": "Sekwenza",
+        "sequence.empty.title": "Ghad mhemmx sekwenzi",
+        "sequence.empty.description": "Oħloq l-ewwel sekwenza biex tibda.",
+        "sequence.empty.create": "Oħloq sekwenza",
+        "sequence.settings.title": "Sekwenza",
+        "common.cancel": "Ikkanċella",
+        "common.save": "Issejvja",
+        "common.settings": "Impostazzjonijiet",
+    ]
+
+    private static var sequenceBundles: [(String, [String: String])] { [("en", sequenceEN), ("mt", sequenceMT)] }
 
     // MARK: Todo
 
@@ -1193,5 +1319,15 @@ enum TikoLocalTranslations {
         "common.settings": "Settings",
     ]
 
-    private static var todoBundles: [(String, [String: String])] { [("en", todoEN)] }
+    private static let todoMT: [String: String] = [
+        "todo.appName": "Xoghol",
+        "todo.empty.title": "Ghad mhemmx affarijiet",
+        "todo.empty.description": "Zid l-ewwel bicca xoghol biex tibda.",
+        "todo.settings.title": "Xoghol",
+        "common.cancel": "Ikkanċella",
+        "common.save": "Issejvja",
+        "common.settings": "Impostazzjonijiet",
+    ]
+
+    private static var todoBundles: [(String, [String: String])] { [("en", todoEN), ("mt", todoMT)] }
 }

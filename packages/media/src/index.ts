@@ -106,12 +106,11 @@ export function useTikoMedia() {
 
     loading.value = true
     try {
-      const results = await Promise.all(unique.map(category => fetchMedia(`${apiBaseUrl}/media`, {
+      return dedupeMedia(await fetchMedia(`${apiBaseUrl}/media`, {
         type: 'image',
-        category,
+        category: unique.join(','),
         limit: String(options?.limit ?? 30),
-      })))
-      return dedupeMedia(results.flat()).slice(0, options?.limit ?? 30)
+      })).slice(0, options?.limit ?? 30)
     } finally {
       loading.value = false
     }

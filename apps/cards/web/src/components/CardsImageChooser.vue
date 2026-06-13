@@ -2,7 +2,7 @@
 import { h, inject, markRaw } from 'vue'
 import { useBemm } from 'bemm'
 import { Button, type PopupService } from '@sil/ui'
-import { imageRefURL, resizedCDNURL } from '../composables/cardsMedia'
+import { imageRefURL } from '../composables/cardsMedia'
 import { resolveContentBaseUrl } from '../composables/cardsApi'
 import CardsImagePickerSheet from './CardsImagePickerSheet.vue'
 
@@ -29,7 +29,6 @@ const bemm = useBemm('cards-image-chooser', { return: 'string', includeBaseClass
 const popup = inject<PopupService>('popupService')!
 
 function imageRefPreview(value: string) {
-  if (/^https?:/.test(value)) return resizedCDNURL(value)
   return imageRefURL(value, resolveContentBaseUrl())
 }
 

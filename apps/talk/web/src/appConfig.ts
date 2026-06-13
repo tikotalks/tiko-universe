@@ -5,7 +5,7 @@ export const appConfig = {
   "title": "Talk",
   "appColor": "talk",
   "appIcon": "ui/talk",
-  "appIconImageUrl": "",
+  "appIconImageUrl": "https://media.tikoapi.org/v1/media/da85b30b-6865-41ef-9b75-71e46999de22/download",
   "appIconMediaCategory": "communication",
-  "themeColor": "#17131c"
+  "themeColor": "#FF6B6B"
 } satisfies TikoAppConfig

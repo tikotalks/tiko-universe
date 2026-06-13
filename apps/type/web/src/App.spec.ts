@@ -1,6 +1,7 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { mount } from '@vue/test-utils'
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
+import { flushPromises, mount } from '@vue/test-utils'
 import { nextTick } from 'vue'
+import { createWebAppFetchHandler } from '@tiko/testing'
 import App from './App.vue'
 
 function createLocalStorageMock() {
@@ -48,6 +49,13 @@ function mountApp(localStorageOverride?: Record<string, string>) {
 describe('Type App', () => {
   beforeEach(() => {
     vi.useFakeTimers()
+    vi.stubGlobal('fetch', vi.fn(createWebAppFetchHandler({ appId: 'type' })))
+  })
+
+  afterEach(() => {
+    vi.useRealTimers()
+    vi.unstubAllGlobals()
+    vi.restoreAllMocks()
   })
 
   it('opens immediately with compose area, no login wall', () => {
@@ -69,6 +77,39 @@ describe('Type App', () => {
     const allBtns = wrapper.findAll('button')
     const speakBtn = allBtns.find(b => b.attributes('aria-label') === 'Speak')
     expect(speakBtn).toBeTruthy()
+  })
+
+  it('speaks through the shared TTS client with the selected language', async () => {
+    const appHandler = createWebAppFetchHandler({ appId: 'type' })
+    const fetchMock = vi.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
+      const url = String(input)
+      if (url.includes('/atlas/speech')) {
+        return new Response(JSON.stringify({ success: true }), {
+          status: 200,
+          headers: { 'Content-Type': 'application/json' },
+        })
+      }
+      return appHandler(input, init)
+    })
+    vi.stubGlobal('fetch', fetchMock)
+
+    const { wrapper } = mountApp({
+      'tiko:type': JSON.stringify({ language: 'mt' }),
+    })
+    await wrapper.find('.type-app__textarea').setValue('Bongu')
+    const speakBtn = wrapper.find('.type-app__icon-btn--primary')
+    expect(speakBtn.exists()).toBe(true)
+    await speakBtn.trigger('click')
+    await flushPromises()
+
+    const speechCall = fetchMock.mock.calls.find(([, init]) => {
+      return typeof init?.body === 'string' && init.body.includes('speech-playback')
+    })
+    expect(speechCall).toBeTruthy()
+    expect(JSON.parse(speechCall![1]!.body as string)).toMatchObject({
+      text: 'Bongu',
+      language: 'mt',
+    })
   })
 
   it('clear button clears text', async () => {

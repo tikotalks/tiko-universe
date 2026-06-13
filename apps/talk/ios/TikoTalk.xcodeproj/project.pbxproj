@@ -1,0 +1,526 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		12CF09298DCE5079E4B90E3F /* TalkIdentityProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38C97CB7E65B65FA95666A1E /* TalkIdentityProvider.swift */; };
+		169C9FEBE153F758541D8E5D /* TalkView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 820D101697800A79D2C4E1E1 /* TalkView.swift */; };
+		321FC05D0E913C865DE72768 /* TalkSentenceStripView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 692C7E4BB3AC949B8FADC686 /* TalkSentenceStripView.swift */; };
+		3312C9FA70A4BD3EF6087A13 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9B58B0C603EC8CE19F84BFE7 /* Assets.xcassets */; };
+		4EFACA5C54FD710561D495DD /* TalkWordCloudView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 387FEDFECDE8E43A32482C13 /* TalkWordCloudView.swift */; };
+		568C4202EE9A45117A4705D1 /* TalkAppConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = B725E185378770B7E23F4F11 /* TalkAppConfig.swift */; };
+		5A5F1997F35DBE0CA759A914 /* TalkOfflineFallback.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CC797ADF257B86D2E456D72 /* TalkOfflineFallback.swift */; };
+		5C1562F4721F0219E8C7BDDF /* TikoTalkTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C28180253633CCA7AF8BDD1E /* TikoTalkTests.swift */; };
+		6034E98A36374180E7C39408 /* TalkAPIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C06815479F9E0E22500FF6E /* TalkAPIClient.swift */; };
+		609AF93AE98EEF0C63D5ADC8 /* TalkModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 870C35408411DAC47A6885F3 /* TalkModels.swift */; };
+		66AFD2FEC6ABC1637CBFE61A /* TalkAudioPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AEEC87869BDAF41EE48435F /* TalkAudioPlayer.swift */; };
+		AF9BA04E5960941D425B8A65 /* TalkStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81E23E3F758C83A521C7ED19 /* TalkStore.swift */; };
+		B379C27A34B65C0CB862DE8B /* TalkWordTileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43DB6C8EEA1428A0CB6C7AE4 /* TalkWordTileView.swift */; };
+		BAB1725E5E9A9D422BCCDDA8 /* TalkSpeechService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30D717BC9EDAA72FEFF66BE2 /* TalkSpeechService.swift */; };
+		CF4D3838E7EB0950C2B96A74 /* TikoKit in Frameworks */ = {isa = PBXBuildFile; productRef = EF7D29673FE059E4C522EC3E /* TikoKit */; };
+		DB2E56758D05A1B8A4E2E293 /* TikoTalkApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = B47BA6BF356E8FEC96EBFDD3 /* TikoTalkApp.swift */; };
+		DF570CA2493E33EB3A3EB5E6 /* TalkPosColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E7E75B53FE0F9C89AE7D68D /* TalkPosColor.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		D429171E078C7D162D86430D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CF67B2053F18C0D533C731F4 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 7D74BD43548CB29BC27EC2CF;
+			remoteInfo = TikoTalk;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		0CC797ADF257B86D2E456D72 /* TalkOfflineFallback.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TalkOfflineFallback.swift; sourceTree = "<group>"; };
+		0DA10278A51C551C951345EB /* TikoTalkTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = TikoTalkTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		1813987980B8571EEFA9C2FB /* TikoTalk.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = TikoTalk.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		1E7E75B53FE0F9C89AE7D68D /* TalkPosColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TalkPosColor.swift; sourceTree = "<group>"; };
+		30D717BC9EDAA72FEFF66BE2 /* TalkSpeechService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TalkSpeechService.swift; sourceTree = "<group>"; };
+		387FEDFECDE8E43A32482C13 /* TalkWordCloudView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TalkWordCloudView.swift; sourceTree = "<group>"; };
+		38C97CB7E65B65FA95666A1E /* TalkIdentityProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TalkIdentityProvider.swift; sourceTree = "<group>"; };
+		43DB6C8EEA1428A0CB6C7AE4 /* TalkWordTileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TalkWordTileView.swift; sourceTree = "<group>"; };
+		692C7E4BB3AC949B8FADC686 /* TalkSentenceStripView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TalkSentenceStripView.swift; sourceTree = "<group>"; };
+		6AEEC87869BDAF41EE48435F /* TalkAudioPlayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TalkAudioPlayer.swift; sourceTree = "<group>"; };
+		6FE5BD6396E25A4AAD107B6F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		721556FD3EF0C13A6AB0B372 /* TikoTalk.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = TikoTalk.entitlements; sourceTree = "<group>"; };
+		81E23E3F758C83A521C7ED19 /* TalkStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TalkStore.swift; sourceTree = "<group>"; };
+		820D101697800A79D2C4E1E1 /* TalkView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TalkView.swift; sourceTree = "<group>"; };
+		870C35408411DAC47A6885F3 /* TalkModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TalkModels.swift; sourceTree = "<group>"; };
+		8C06815479F9E0E22500FF6E /* TalkAPIClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TalkAPIClient.swift; sourceTree = "<group>"; };
+		9B58B0C603EC8CE19F84BFE7 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		9F440F1D32F6466F6EACB9DB /* tikokit-ios */ = {isa = PBXFileReference; lastKnownFileType = folder; name = "tikokit-ios"; path = "../../../packages/tikokit-ios"; sourceTree = SOURCE_ROOT; };
+		B47BA6BF356E8FEC96EBFDD3 /* TikoTalkApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TikoTalkApp.swift; sourceTree = "<group>"; };
+		B725E185378770B7E23F4F11 /* TalkAppConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TalkAppConfig.swift; sourceTree = "<group>"; };
+		C28180253633CCA7AF8BDD1E /* TikoTalkTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TikoTalkTests.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		2E864700E57371F1C20E5265 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CF4D3838E7EB0950C2B96A74 /* TikoKit in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		0344EC008810DE1D5572CACF = {
+			isa = PBXGroup;
+			children = (
+				E2CFD95516272ACFC84A0A63 /* Packages */,
+				545868600C725F0915A982FC /* Sources */,
+				DAE2E3931B6E088B92A4C1A8 /* Tests */,
+				51918100B66D8005BB7F7B2E /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		51918100B66D8005BB7F7B2E /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				1813987980B8571EEFA9C2FB /* TikoTalk.app */,
+				0DA10278A51C551C951345EB /* TikoTalkTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		545868600C725F0915A982FC /* Sources */ = {
+			isa = PBXGroup;
+			children = (
+				9B58B0C603EC8CE19F84BFE7 /* Assets.xcassets */,
+				6FE5BD6396E25A4AAD107B6F /* Info.plist */,
+				8C06815479F9E0E22500FF6E /* TalkAPIClient.swift */,
+				B725E185378770B7E23F4F11 /* TalkAppConfig.swift */,
+				6AEEC87869BDAF41EE48435F /* TalkAudioPlayer.swift */,
+				38C97CB7E65B65FA95666A1E /* TalkIdentityProvider.swift */,
+				870C35408411DAC47A6885F3 /* TalkModels.swift */,
+				0CC797ADF257B86D2E456D72 /* TalkOfflineFallback.swift */,
+				1E7E75B53FE0F9C89AE7D68D /* TalkPosColor.swift */,
+				692C7E4BB3AC949B8FADC686 /* TalkSentenceStripView.swift */,
+				30D717BC9EDAA72FEFF66BE2 /* TalkSpeechService.swift */,
+				81E23E3F758C83A521C7ED19 /* TalkStore.swift */,
+				820D101697800A79D2C4E1E1 /* TalkView.swift */,
+				387FEDFECDE8E43A32482C13 /* TalkWordCloudView.swift */,
+				43DB6C8EEA1428A0CB6C7AE4 /* TalkWordTileView.swift */,
+				721556FD3EF0C13A6AB0B372 /* TikoTalk.entitlements */,
+				B47BA6BF356E8FEC96EBFDD3 /* TikoTalkApp.swift */,
+			);
+			path = Sources;
+			sourceTree = "<group>";
+		};
+		DAE2E3931B6E088B92A4C1A8 /* Tests */ = {
+			isa = PBXGroup;
+			children = (
+				C28180253633CCA7AF8BDD1E /* TikoTalkTests.swift */,
+			);
+			path = Tests;
+			sourceTree = "<group>";
+		};
+		E2CFD95516272ACFC84A0A63 /* Packages */ = {
+			isa = PBXGroup;
+			children = (
+				9F440F1D32F6466F6EACB9DB /* tikokit-ios */,
+			);
+			name = Packages;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		7D74BD43548CB29BC27EC2CF /* TikoTalk */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 6DE1EBC2FA7F680BF72C538D /* Build configuration list for PBXNativeTarget "TikoTalk" */;
+			buildPhases = (
+				534B01BC449FDADA09B654AF /* Generate Tiko app config */,
+				0CF3FEC6F0C33FCC910F5326 /* Sources */,
+				A4BDEA593FE12D5D4DEF6FE4 /* Resources */,
+				2E864700E57371F1C20E5265 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = TikoTalk;
+			packageProductDependencies = (
+				EF7D29673FE059E4C522EC3E /* TikoKit */,
+			);
+			productName = TikoTalk;
+			productReference = 1813987980B8571EEFA9C2FB /* TikoTalk.app */;
+			productType = "com.apple.product-type.application";
+		};
+		9579C0262961485D17FCA2CA /* TikoTalkTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 2A942744F70045352118B6BC /* Build configuration list for PBXNativeTarget "TikoTalkTests" */;
+			buildPhases = (
+				EF2BA02396A8B360D57AEB6B /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				B18A210EFA0DB2BF61F90193 /* PBXTargetDependency */,
+			);
+			name = TikoTalkTests;
+			packageProductDependencies = (
+			);
+			productName = TikoTalkTests;
+			productReference = 0DA10278A51C551C951345EB /* TikoTalkTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		CF67B2053F18C0D533C731F4 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1430;
+				TargetAttributes = {
+					7D74BD43548CB29BC27EC2CF = {
+						DevelopmentTeam = "";
+					};
+					9579C0262961485D17FCA2CA = {
+						DevelopmentTeam = "";
+					};
+				};
+			};
+			buildConfigurationList = 1E7244DE7550818E605411D4 /* Build configuration list for PBXProject "TikoTalk" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = 0344EC008810DE1D5572CACF;
+			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				46DCAB29278B900C3607CF69 /* XCLocalSwiftPackageReference "../../../packages/tikokit-ios" */,
+			);
+			preferredProjectObjectVersion = 77;
+			productRefGroup = 51918100B66D8005BB7F7B2E /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				7D74BD43548CB29BC27EC2CF /* TikoTalk */,
+				9579C0262961485D17FCA2CA /* TikoTalkTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		A4BDEA593FE12D5D4DEF6FE4 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3312C9FA70A4BD3EF6087A13 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		534B01BC449FDADA09B654AF /* Generate Tiko app config */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Generate Tiko app config";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "set -euo pipefail\nREPO_ROOT=\"${SRCROOT}/../../..\"\nif ! command -v node >/dev/null 2>&1; then\n  echo \"error: node is required to generate Tiko app configs from admin before iOS build.\"\n  exit 1\nfi\nTIKO_APP_CONFIG_STRICT=1 node \"${REPO_ROOT}/tools/generate-app-configs.mjs\"\n";
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		0CF3FEC6F0C33FCC910F5326 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				6034E98A36374180E7C39408 /* TalkAPIClient.swift in Sources */,
+				568C4202EE9A45117A4705D1 /* TalkAppConfig.swift in Sources */,
+				66AFD2FEC6ABC1637CBFE61A /* TalkAudioPlayer.swift in Sources */,
+				12CF09298DCE5079E4B90E3F /* TalkIdentityProvider.swift in Sources */,
+				609AF93AE98EEF0C63D5ADC8 /* TalkModels.swift in Sources */,
+				5A5F1997F35DBE0CA759A914 /* TalkOfflineFallback.swift in Sources */,
+				DF570CA2493E33EB3A3EB5E6 /* TalkPosColor.swift in Sources */,
+				321FC05D0E913C865DE72768 /* TalkSentenceStripView.swift in Sources */,
+				BAB1725E5E9A9D422BCCDDA8 /* TalkSpeechService.swift in Sources */,
+				AF9BA04E5960941D425B8A65 /* TalkStore.swift in Sources */,
+				169C9FEBE153F758541D8E5D /* TalkView.swift in Sources */,
+				4EFACA5C54FD710561D495DD /* TalkWordCloudView.swift in Sources */,
+				B379C27A34B65C0CB862DE8B /* TalkWordTileView.swift in Sources */,
+				DB2E56758D05A1B8A4E2E293 /* TikoTalkApp.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		EF2BA02396A8B360D57AEB6B /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5C1562F4721F0219E8C7BDDF /* TikoTalkTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		B18A210EFA0DB2BF61F90193 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 7D74BD43548CB29BC27EC2CF /* TikoTalk */;
+			targetProxy = D429171E078C7D162D86430D /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		21DF8EC4035E3B3EA3758413 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = Sources/TikoTalk.entitlements;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				INFOPLIST_FILE = Sources/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = mt.tiko.talk;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		555D92C2AA8CD77257DD502D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = "";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		7A93927B3D90874FAF3E67C2 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = mt.tiko.TikoTalkTests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/TikoTalk.app/TikoTalk";
+			};
+			name = Debug;
+		};
+		8AFE78D4F164865473DEC9D1 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = Sources/TikoTalk.entitlements;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				INFOPLIST_FILE = Sources/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = mt.tiko.talk;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		BE48105721F67F52C933708B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = "";
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		F427B89FDBBB3598ED7B0786 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = mt.tiko.TikoTalkTests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/TikoTalk.app/TikoTalk";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		1E7244DE7550818E605411D4 /* Build configuration list for PBXProject "TikoTalk" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				BE48105721F67F52C933708B /* Debug */,
+				555D92C2AA8CD77257DD502D /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		2A942744F70045352118B6BC /* Build configuration list for PBXNativeTarget "TikoTalkTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				7A93927B3D90874FAF3E67C2 /* Debug */,
+				F427B89FDBBB3598ED7B0786 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		6DE1EBC2FA7F680BF72C538D /* Build configuration list for PBXNativeTarget "TikoTalk" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				8AFE78D4F164865473DEC9D1 /* Debug */,
+				21DF8EC4035E3B3EA3758413 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCLocalSwiftPackageReference section */
+		46DCAB29278B900C3607CF69 /* XCLocalSwiftPackageReference "../../../packages/tikokit-ios" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = "../../../packages/tikokit-ios";
+		};
+/* End XCLocalSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		EF7D29673FE059E4C522EC3E /* TikoKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = TikoKit;
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = CF67B2053F18C0D533C731F4 /* Project object */;
+}

@@ -15,7 +15,7 @@
 // Environment (set via wrangler secret put):
 //   LEZU_API_KEY      — lez_user_... key
 //   LEZU_PROJECT_ID   — project_... UUID
-//   WEBHOOK_SECRET    — optional, verifies Lezu webhook calls to /v1/sync
+//   WEBHOOK_SECRET    — verifies Lezu webhook calls to /v1/sync
 //
 // KV namespace:
 //   TRANSLATIONS_KV   — caches full locale bundles for 4 hours
@@ -40,6 +40,7 @@ interface KVNamespace {
 
 const LEZU_BASE = 'https://api.lezu.app'
 const KV_TTL = 4 * 60 * 60 // 4 hours
+const LEZU_TIMEOUT_MS = 15_000
 
 // Maps TikoAppKey values to their i18n key prefixes (always include 'common.')
 const APP_PREFIXES: Record<string, string[]> = {
@@ -76,13 +77,13 @@ function corsPrelight(): Response {
 
 function isAuthorized(request: Request, env: Env): boolean {
   const auth = request.headers.get('Authorization')
-  return auth === `ApiKey ${env.LEZU_API_KEY}` || auth === `ApiKey ${env.WEBHOOK_SECRET ?? ''}`
+  return auth === `ApiKey ${env.LEZU_API_KEY}` || (Boolean(env.WEBHOOK_SECRET) && auth === `ApiKey ${env.WEBHOOK_SECRET}`)
 }
 
 // ── Lezu API calls ────────────────────────────────────────────────────────────
 
 async function exportFromLezu(language: string, env: Env): Promise<Record<string, string>> {
-  const response = await fetch(`${LEZU_BASE}/v1/i18n/projects/${env.LEZU_PROJECT_ID}/export`, {
+  const response = await fetchWithRetry(`${LEZU_BASE}/v1/i18n/projects/${env.LEZU_PROJECT_ID}/export`, {
     method: 'POST',
     headers: {
       'Authorization': `ApiKey ${env.LEZU_API_KEY}`,
@@ -118,14 +119,19 @@ async function importToLezu(
   targetLocales: string[] | undefined,
   env: Env
 ): Promise<Response> {
-  const response = await fetch(`${LEZU_BASE}/v1/i18n/projects/${env.LEZU_PROJECT_ID}/import`, {
-    method: 'POST',
-    headers: {
-      'Authorization': `ApiKey ${env.LEZU_API_KEY}`,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({ locale, content, translateMissing, targetLocales }),
-  })
+  let response: Response
+  try {
+    response = await fetchWithRetry(`${LEZU_BASE}/v1/i18n/projects/${env.LEZU_PROJECT_ID}/import`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `ApiKey ${env.LEZU_API_KEY}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ locale, content, translateMissing, targetLocales }),
+    })
+  } catch {
+    return json({ error: 'Lezu import failed: upstream unavailable' }, 503)
+  }
 
   if (!response.ok) {
     const err = await response.text()
@@ -137,7 +143,7 @@ async function importToLezu(
 }
 
 async function addLocaleToLezu(language: string, env: Env): Promise<'created' | 'exists'> {
-  const response = await fetch(`${LEZU_BASE}/v1/i18n/projects/${env.LEZU_PROJECT_ID}/locales`, {
+  const response = await fetchWithRetry(`${LEZU_BASE}/v1/i18n/projects/${env.LEZU_PROJECT_ID}/locales`, {
     method: 'POST',
     headers: {
       'Authorization': `ApiKey ${env.LEZU_API_KEY}`,
@@ -220,12 +226,12 @@ async function handleSync(language: string | undefined, env: Env, request: Reque
   }
 
   const webhookSecret = env.WEBHOOK_SECRET
-  if (webhookSecret) {
-    const sig = request.headers.get('X-Lezu-Webhook-Secret')
-      || request.headers.get('Authorization')
-    if (sig !== webhookSecret && sig !== `ApiKey ${webhookSecret}`) {
-      return json({ error: 'Unauthorized' }, 401)
-    }
+  if (!webhookSecret) return json({ error: 'Webhook secret is not configured' }, 503)
+
+  const sig = request.headers.get('X-Lezu-Webhook-Secret')
+    || request.headers.get('Authorization')
+  if (sig !== webhookSecret && sig !== `ApiKey ${webhookSecret}`) {
+    return json({ error: 'Unauthorized' }, 401)
   }
 
   if (language) {
@@ -321,31 +327,67 @@ function languageName(language: string): string {
 
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
-    if (request.method === 'OPTIONS') return corsPrelight()
+    try {
+      if (request.method === 'OPTIONS') return corsPrelight()
 
-    const { pathname } = new URL(request.url)
-    const parts = pathname.split('/').filter(Boolean)
+      const { pathname } = new URL(request.url)
+      const parts = pathname.split('/').filter(Boolean)
 
-    // GET /v1/:app/:language
-    if (request.method === 'GET' && parts[0] === 'v1' && parts.length === 3) {
-      return handleGetTranslations(parts[1], parts[2], env)
+      // GET /v1/:app/:language
+      if (request.method === 'GET' && parts[0] === 'v1' && parts.length === 3) {
+        return handleGetTranslations(parts[1], parts[2], env)
+      }
+
+      // POST /v1/sync  or  POST /v1/sync/:language
+      if (request.method === 'POST' && parts[0] === 'v1' && parts[1] === 'sync') {
+        return handleSync(parts[2], env, request)
+      }
+
+      // POST /v1/import
+      if (request.method === 'POST' && parts[0] === 'v1' && parts[1] === 'import') {
+        return handleImport(request, env)
+      }
+
+      // PUT /v1/languages
+      if (request.method === 'PUT' && parts[0] === 'v1' && parts[1] === 'languages') {
+        return handleLanguages(request, env)
+      }
+
+      return json({ error: 'Not found' }, 404)
+    } catch (error) {
+      console.error('[translations-api] unhandled request error', error)
+      return json({ error: 'Internal error' }, 500)
     }
-
-    // POST /v1/sync  or  POST /v1/sync/:language
-    if (request.method === 'POST' && parts[0] === 'v1' && parts[1] === 'sync') {
-      return handleSync(parts[2], env, request)
-    }
-
-    // POST /v1/import
-    if (request.method === 'POST' && parts[0] === 'v1' && parts[1] === 'import') {
-      return handleImport(request, env)
-    }
-
-    // PUT /v1/languages
-    if (request.method === 'PUT' && parts[0] === 'v1' && parts[1] === 'languages') {
-      return handleLanguages(request, env)
-    }
-
-    return json({ error: 'Not found' }, 404)
   },
+}
+
+async function fetchWithRetry(input: RequestInfo | URL, init: RequestInit): Promise<Response> {
+  let lastError: unknown
+  for (let attempt = 0; attempt < 2; attempt += 1) {
+    const response = await fetchWithTimeout(input, init, LEZU_TIMEOUT_MS).catch((error) => {
+      lastError = error
+      return null
+    })
+    if (!response) continue
+    if (attempt === 0 && isRetryableStatus(response.status)) {
+      await response.body?.cancel().catch(() => undefined)
+      continue
+    }
+    return response
+  }
+  throw lastError instanceof Error ? lastError : new Error('fetch_failed')
+}
+
+async function fetchWithTimeout(input: RequestInfo | URL, init: RequestInit, timeoutMs: number): Promise<Response> {
+  const controller = new AbortController()
+  const timeout = setTimeout(() => controller.abort(), timeoutMs)
+  try {
+    return await fetch(input, { ...init, signal: controller.signal })
+  } finally {
+    clearTimeout(timeout)
+  }
+}
+
+function isRetryableStatus(status: number): boolean {
+  return status === 408 || status === 429 || status >= 500
 }

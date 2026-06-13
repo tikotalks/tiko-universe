@@ -3,12 +3,21 @@ import { computed, onMounted, ref, watch } from 'vue'
 import { Icon, Popup } from '@sil/ui'
 import { IdentityClient, type IdentityBundle } from '@tiko/identity'
 import { TikoDataClient, type TypeSettings, type TypeState } from '@tiko/data'
-import { createI18n, createTikoIdentityLabels, defaultLanguage, tikoI18nKeys, tikoLanguageOptions, tikoLanguages, type TikoLanguage } from '@tiko/i18n'
+import { createI18n, createTikoIdentityLabels, createTikoShellLabels, normalizeTikoLanguage, tikoI18nKeys, tikoLanguageOptions, type TikoLanguage } from '@tiko/i18n'
 import {
   TikoAppShell,
   TikoSettingsPanel,
   TikoColorMode,
+  createTikoTtsClient,
+  normalizeTikoColorMode,
+  readTikoLocalJson,
+  resolveTikoAppApiBaseUrl,
+  resolveTikoIdentityBaseUrl,
+  useTikoAppDataRuntime,
+  useTikoColorModeEffect,
+  useTikoI18nRuntime,
   useIdentityRuntime,
+  writeTikoLocalJson,
   type IdentityRuntimeState
 } from '@tiko/ui'
 import { appConfig } from './appConfig'
@@ -17,8 +26,8 @@ import './styles.scss'
 const storageKey = 'tiko:type'
 const identityStorageKey = 'tiko:identity:device-session'
 const appId = 'type' as const
-const apiBaseUrl = resolveApiBaseUrl()
-const identityBaseUrl = resolveIdentityBaseUrl()
+const apiBaseUrl = resolveTikoAppApiBaseUrl()
+const identityBaseUrl = resolveTikoIdentityBaseUrl()
 
 interface PersistedState {
   language?: string
@@ -31,38 +40,6 @@ interface PersistedState {
 
 
 
-function resolveApiBaseUrl() {
-  const env = (import.meta as ImportMeta & { env?: Record<string, string | undefined> }).env
-  return (env?.VITE_TIKO_API_BASE_URL ?? 'https://app.tikoapi.org/v1').replace(/\/$/, '')
-}
-
-function resolveIdentityBaseUrl() {
-  const env = (import.meta as ImportMeta & { env?: Record<string, string | undefined> }).env
-  return (env?.VITE_IDENTITY_API_URL ?? env?.VITE_TIKO_IDENTITY_BASE_URL ?? 'https://id.tikoapps.org/v1').replace(/\/$/, '')
-}
-
-function readJson<T>(key: string, fallback: T): T {
-  if (typeof window === 'undefined') return fallback
-  try {
-    return JSON.parse(window.localStorage.getItem(key) ?? 'null') ?? fallback
-  } catch {
-    return fallback
-  }
-}
-
-function writeJson(key: string, value: unknown) {
-  if (typeof window === 'undefined') return
-  window.localStorage.setItem(key, JSON.stringify(value))
-}
-
-function toLanguage(value: string | undefined): TikoLanguage {
-  return tikoLanguages.includes(value as TikoLanguage) ? value as TikoLanguage : defaultLanguage
-}
-
-function toColorMode(value: string | undefined): TikoColorMode {
-  return value === 'light' || value === 'dark' || value === 'system' ? value : 'system'
-}
-
 function normalizePrompts(value: unknown): string[] {
   if (!Array.isArray(value)) return []
   return value
@@ -71,18 +48,16 @@ function normalizePrompts(value: unknown): string[] {
     .filter(Boolean)
 }
 
-const stored = readJson<PersistedState>(storageKey, {})
-const i18n = createI18n({ app: appId, language: toLanguage(stored.language) })
-const language = ref<TikoLanguage>(toLanguage(stored.language))
-const colorMode = ref<TikoColorMode>(toColorMode(stored.colorMode))
+const stored = readTikoLocalJson<PersistedState>(storageKey, {})
+const i18n = createI18n({ app: appId, language: normalizeTikoLanguage(stored.language) })
+const language = ref<TikoLanguage>(normalizeTikoLanguage(stored.language))
+const colorMode = ref<TikoColorMode>(normalizeTikoColorMode(stored.colorMode))
 const keyboardLayout = ref<'qwerty' | 'azerty' | 'abc'>(stored.keyboardLayout ?? 'abc')
 const text = ref(stored.text ?? '')
 const prompts = ref<string[]>(normalizePrompts(stored.prompts))
 const completedPrompts = ref<string[]>(stored.completedPrompts ?? [])
 const phrasesOpen = ref(false)
 const settingsOpen = ref(false)
-const settingsVersion = ref<number | undefined>()
-const stateVersion = ref<number | undefined>()
 const sessionToken = ref<string>('')
 const userId = ref('')
 const accountEmail = ref('')
@@ -92,6 +67,7 @@ const parentMode = ref(true)
 const childModeEnabled = ref(false)
 const pinConfigured = ref(false)
 const bootstrapped = ref(false)
+const tts = createTikoTtsClient()
 const identityClient = new IdentityClient({ baseUrl: identityBaseUrl, credentials: 'include' })
 const dataClient = new TikoDataClient({ baseUrl: apiBaseUrl })
 
@@ -100,9 +76,26 @@ const runtimeState: IdentityRuntimeState = {
   parentMode, childModeEnabled, pinConfigured,
 }
 const runtime = useIdentityRuntime({ identityClient, state: runtimeState, deviceName: 'Type web', labels: () => createTikoIdentityLabels(i18n.t) })
+const dataRuntime = useTikoAppDataRuntime<typeof appId, TypeSettings, TypeState>({
+  app: appId,
+  sessionToken,
+  bootstrapped,
+  dataClient,
+  readSettings: () => ({
+    language: language.value,
+    colorMode: colorMode.value,
+    keyboardLayout: keyboardLayout.value,
+  }),
+  readState: () => ({
+    text: text.value,
+    prompts: prompts.value,
+    completedPrompts: completedPrompts.value,
+  }),
+  applySettings,
+  applyState,
+})
 
 const labels = computed(() => {
-  void language.value
   return {
     appName: i18n.t(tikoI18nKeys.type.appName),
     composeLabel: i18n.t(tikoI18nKeys.type.compose.label),
@@ -114,8 +107,11 @@ const labels = computed(() => {
     browserVoiceFallback: i18n.t(tikoI18nKeys.type.status.browserVoiceFallback),
     speechError: i18n.t(tikoI18nKeys.type.status.speechError),
     settings: i18n.t(tikoI18nKeys.common.settings),
+    shell: createTikoShellLabels(i18n.t),
     settingsPanel: {
       settings: i18n.t(tikoI18nKeys.common.settings),
+      appearance: i18n.t(tikoI18nKeys.common.appearance),
+      appPreferences: i18n.t(tikoI18nKeys.common.appPreferences),
       language: i18n.t(tikoI18nKeys.common.language),
       colorMode: i18n.t(tikoI18nKeys.common.colorMode),
       light: i18n.t(tikoI18nKeys.common.colorModeOptions.light),
@@ -159,14 +155,8 @@ const keyboardToggleLabel = computed(() => {
   return 'QWERTY'
 })
 
-function resolveColorMode(mode: TikoColorMode) {
-  if (mode !== 'system') return mode
-  if (typeof window === 'undefined') return 'light'
-  return window.matchMedia?.('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
-}
-
 function saveLocalFallback() {
-  writeJson(storageKey, {
+  writeTikoLocalJson(storageKey, {
     language: language.value,
     colorMode: colorMode.value,
     keyboardLayout: keyboardLayout.value,
@@ -184,16 +174,15 @@ async function bootstrapIdentity() {
   return runtime.bootstrapIdentity()
 }
 
-function applySettings(settings: TypeSettings, version?: number) {
-  language.value = toLanguage(settings.language)
-  colorMode.value = toColorMode(settings.colorMode)
+function applySettings(settings: TypeSettings) {
+  language.value = normalizeTikoLanguage(settings.language)
+  colorMode.value = normalizeTikoColorMode(settings.colorMode)
   if (settings.keyboardLayout === 'qwerty' || settings.keyboardLayout === 'azerty' || settings.keyboardLayout === 'abc') {
     keyboardLayout.value = settings.keyboardLayout
   }
-  settingsVersion.value = version
 }
 
-function applyState(state: TypeState, version?: number) {
+function applyState(state: TypeState) {
   if (typeof state.text === 'string') {
     text.value = state.text
   }
@@ -203,72 +192,27 @@ function applyState(state: TypeState, version?: number) {
   if (Array.isArray(state.completedPrompts)) {
     completedPrompts.value = state.completedPrompts
   }
-  stateVersion.value = version
 }
 
-async function hydrateRemoteData() {
-  if (!sessionToken.value) return
-  const [settings, state] = await Promise.all([
-    dataClient.getSettings(appId, sessionToken.value),
-    dataClient.getState(appId, sessionToken.value)
-  ])
-  applySettings(settings.settings, settings.version)
-  applyState(state.state, state.version)
-}
+useTikoI18nRuntime({ app: appId, language, i18n })
 
-async function persistSettingsRemote() {
-  if (!bootstrapped.value || !sessionToken.value) return
-  try {
-    const response = await dataClient.putSettings(appId, sessionToken.value, {
-      language: language.value,
-      colorMode: colorMode.value,
-      keyboardLayout: keyboardLayout.value
-    }, { version: settingsVersion.value })
-    settingsVersion.value = response.version
-  } catch {
-    // Local fallback is already written; remote will be retried on the next edit.
-  }
-}
-
-async function persistStateRemote() {
-  if (!bootstrapped.value || !sessionToken.value) return
-  try {
-    const response = await dataClient.putState(appId, sessionToken.value, {
-      text: text.value,
-      prompts: prompts.value,
-      completedPrompts: completedPrompts.value
-    }, { version: stateVersion.value })
-    stateVersion.value = response.version
-  } catch {
-    // Local fallback is already written; remote will be retried on the next change.
-  }
-}
-
-watch(language, (value) => {
-  i18n.setLanguage(value)
-}, { immediate: true })
-
-watch(colorMode, (mode) => {
-  const effective = resolveColorMode(mode)
-  document.documentElement.dataset.colorMode = effective
-  document.documentElement.dataset.theme = effective
-}, { immediate: true })
+useTikoColorModeEffect(colorMode)
 
 watch([language, colorMode, keyboardLayout], () => {
   saveLocalFallback()
-  void persistSettingsRemote()
+  void dataRuntime.persistSettingsRemote()
 })
 
 watch([text, completedPrompts], () => {
   saveLocalFallback()
-  void persistStateRemote()
+  void dataRuntime.persistStateRemote()
 }, { deep: true })
 
 onMounted(async () => {
   try {
     await runtime.bootstrapIdentity()
     await runtime.loadProfile()
-    await hydrateRemoteData()
+    await dataRuntime.hydrateRemoteData()
   } catch {
     // Keep the child-facing local flow available when API bootstrap is offline.
   } finally {
@@ -277,16 +221,13 @@ onMounted(async () => {
   }
 })
 
-function handleSpeak() {
+async function handleSpeak() {
   if (!text.value.trim()) return
-  if (typeof window === 'undefined' || !window.speechSynthesis) return
-
-  window.speechSynthesis.cancel()
-  const utterance = new SpeechSynthesisUtterance(text.value)
-  utterance.onerror = () => {
-    // Speech synthesis error — silently handled
+  try {
+    await tts.speak({ text: text.value, language: language.value })
+  } catch {
+    // Browser fallback is handled inside the shared TTS client.
   }
-  window.speechSynthesis.speak(utterance)
 }
 
 function handleClear() {
@@ -353,6 +294,7 @@ function headerAction(id: string) {
     :theme-color="appConfig.themeColor"
     avatar="ui/avatar"
     :actions="headerActions"
+    :labels="labels.shell"
     @header-action="headerAction"
     @avatar-click="runtime.handleAvatarClick"
   >

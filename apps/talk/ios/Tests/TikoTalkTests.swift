@@ -9,6 +9,14 @@ final class TikoTalkTests: XCTestCase {
         XCTAssertEqual(TalkAppConfig.app.title, "Talk")
     }
 
+    func testTalkAPIClientUsesBuildEnvironmentDefault() {
+        #if DEBUG
+        XCTAssertEqual(TalkAPIClient.defaultEnvironment, .development)
+        #else
+        XCTAssertEqual(TalkAPIClient.defaultEnvironment, .production)
+        #endif
+    }
+
     func testDecodesSentenceStartResponse() throws {
         let json = #"""
         {

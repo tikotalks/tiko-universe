@@ -1,11 +1,15 @@
 import { describe, expect, it, vi } from 'vitest'
+import { computed } from '@vue/reactivity'
 import {
   defaultLanguage,
   tikoAppKeys,
   tikoI18nKeys,
   createI18n,
   createLezuTranslationLoader,
+  createTikoIdentityLabels,
+  createTikoShellLabels,
   createTranslationBundle,
+  normalizeTikoLanguage,
   type TikoAppKey,
   type TikoLanguage,
 } from './index'
@@ -29,6 +33,12 @@ describe('@tiko/i18n fallback contract', () => {
     expect(talkI18n.t(tikoI18nKeys.talk.appName)).toBe('Talk')
     expect(talkI18n.t(tikoI18nKeys.talk.sentence.placeholder)).toBe('Build a sentence')
     expect(talkI18n.t(tikoI18nKeys.talk.status.offline)).toBe('Offline words active')
+  })
+
+  it('normalizes persisted language values through one shared helper', () => {
+    expect(normalizeTikoLanguage('mt')).toBe('mt')
+    expect(normalizeTikoLanguage('not-supported')).toBe(defaultLanguage)
+    expect(normalizeTikoLanguage(undefined)).toBe(defaultLanguage)
   })
 
   it('merges partial runtime bundles over local selected-language fallbacks and keeps track of missing keys', () => {
@@ -60,6 +70,72 @@ describe('@tiko/i18n fallback contract', () => {
     expect(i18n.language.value).toBe('fr')
     expect(i18n.t(tikoI18nKeys.yesNo.answers.yes)).toBe('Oui')
     expect(i18n.t(tikoI18nKeys.yesNo.status.answerCount, { count: 2 })).toBe('2 réponses')
+  })
+
+  it('invalidates Vue computed translations when the language changes', () => {
+    const i18n = createI18n({ app: 'yes-no', language: 'en' })
+    const label = computed(() => i18n.t(tikoI18nKeys.yesNo.answers.yes))
+
+    expect(label.value).toBe('Yes')
+    expect(i18n._revision.value).toBe(0)
+
+    i18n.setLanguage('nl')
+
+    expect(i18n._revision.value).toBe(1)
+    expect(label.value).toBe('Ja')
+  })
+
+  it('invalidates Vue computed translations when runtime bundles are added', () => {
+    const i18n = createI18n({ app: 'yes-no', language: 'hy' })
+    const label = computed(() => i18n.t(tikoI18nKeys.yesNo.answers.yes))
+
+    expect(label.value).toBe('Yes')
+
+    i18n.addBundle(createTranslationBundle({
+      app: 'yes-no',
+      language: 'hy',
+      source: 'runtime',
+      translations: {
+        [tikoI18nKeys.yesNo.answers.yes]: 'Iva',
+      },
+    }))
+
+    expect(i18n._revision.value).toBe(1)
+    expect(label.value).toBe('Iva')
+  })
+
+  it('keeps Maltese fallback coverage for current non-Talk app UI keys', () => {
+    const cases: Array<{ app: TikoAppKey, key: string, english: string }> = [
+      { app: 'type', key: tikoI18nKeys.type.compose.placeholder, english: 'Type what you want to say' },
+      { app: 'timer', key: tikoI18nKeys.timer.controls.start, english: 'Start' },
+      { app: 'radio', key: tikoI18nKeys.radio.player.noTracks, english: 'No tracks loaded' },
+      { app: 'cards', key: tikoI18nKeys.cards.collections.empty, english: 'No collections yet.' },
+      { app: 'sequence', key: tikoI18nKeys.sequence.empty.title, english: 'No sequences yet' },
+      { app: 'todo', key: tikoI18nKeys.todo.empty.title, english: 'No items yet' },
+    ]
+
+    for (const testCase of cases) {
+      const i18n = createI18n({ app: testCase.app, language: 'mt' })
+
+      expect(i18n.t(testCase.key)).not.toBe(testCase.english)
+      expect(i18n.t(testCase.key)).not.toBe(testCase.key)
+    }
+  })
+
+  it('exposes localized shared shell and PIN accessibility labels', () => {
+    const i18n = createI18n({ app: 'cards', language: 'mt' })
+    const shell = createTikoShellLabels(i18n.t)
+    const identity = createTikoIdentityLabels(i18n.t)
+
+    expect(shell).toMatchObject({
+      account: 'Kont',
+      back: 'Lura',
+      deselect: 'Neħħi l-għażla',
+      edit: 'Editja',
+      openIcons: 'Iftaħ l-ikoni',
+      select: 'Agħżel',
+    })
+    expect(identity.pin.digitLabel).toBe('Ċifra {index} minn {total}')
   })
 
   it('exposes typed app and language contracts for web, iOS, Android, and Lezu callers', () => {

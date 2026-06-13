@@ -48,23 +48,7 @@ export async function synthesizeSpeech(input: SpeechRequest, env: Env): Promise<
   const requestHash = await sha256Hex({ capability: 'speech.synthesize', ...normalized })
   const existing = await findCachedAsset(env, requestHash)
   if (existing) {
-    return {
-      provider: toSpeechProvider(existing.provider),
-      model: existing.model ?? normalized.model,
-      cached: true,
-      requestHash,
-      inputUnits: normalized.text.length,
-      outputUnits: existing.byte_size ?? null,
-      estimatedCostUsd: 0,
-      data: {
-        id: existing.id,
-        audioUrl: existing.public_url,
-        contentType: existing.content_type,
-        cached: true,
-        provider: { name: existing.provider, model: existing.model ?? normalized.model, voice: normalized.voice },
-        usage: { inputCharacters: normalized.text.length },
-      },
-    }
+    return cachedSpeechResult(existing, normalized, requestHash)
   }
 
   const providerStarted = Date.now()
@@ -81,7 +65,7 @@ export async function synthesizeSpeech(input: SpeechRequest, env: Env): Promise<
   await env.ATLAS_ASSETS_BUCKET?.put(r2Key, generated.bytes, {
     httpMetadata: { contentType: generated.contentType, cacheControl: 'public, max-age=31536000, immutable' },
   })
-  await storeCachedAsset(env, {
+  const stored = await storeCachedAsset(env, {
     id,
     capability: 'speech.synthesize',
     requestHash,
@@ -110,6 +94,7 @@ export async function synthesizeSpeech(input: SpeechRequest, env: Env): Promise<
       ...(generated.durationSeconds !== undefined ? { durationSeconds: generated.durationSeconds } : {}),
     },
   })
+  if (stored && stored.id !== id) return cachedSpeechResult(stored, normalized, requestHash)
 
   return {
     provider: normalized.provider,
@@ -327,6 +312,7 @@ function normalizeDataFetchRequest(input: DataFetchRequest): DataFetchRequest {
   if (!source && !url) throw capabilityError('missing_source', 400)
   if (!operation && !url) throw capabilityError('missing_operation', 400)
   if (url && !/^https?:\/\//i.test(url)) throw capabilityError('missing_url', 400)
+  if (url) assertPublicHttpUrl(url)
 
   if (sourceUrl || topLevelUrl) {
     return {
@@ -351,6 +337,8 @@ function isYoutubeUrl(url: string): boolean {
 async function fetchYoutubeMetadata(input: DataFetchRequest): Promise<unknown> {
   const url = String(input.input.url ?? input.input.videoUrl ?? '')
   if (!url) throw capabilityError('missing_url', 400)
+  assertPublicHttpUrl(url)
+  if (!isYoutubeUrl(url)) throw capabilityError('url_not_allowed', 400)
   const response = await fetch(`https://www.youtube.com/oembed?format=json&url=${encodeURIComponent(url)}`)
   if (!response.ok) throw capabilityError('youtube_metadata_failed', 502)
   return { source: 'youtube', operation: input.operation, metadata: await response.json() }
@@ -359,7 +347,9 @@ async function fetchYoutubeMetadata(input: DataFetchRequest): Promise<unknown> {
 async function fetchUrlMetadata(input: DataFetchRequest): Promise<unknown> {
   const url = String(input.input.url ?? '')
   if (!url || !/^https?:\/\//.test(url)) throw capabilityError('missing_url', 400)
-  const response = await fetch(url, { headers: { Accept: 'text/html,application/xhtml+xml' } })
+  assertPublicHttpUrl(url)
+  const response = await fetch(url, { headers: { Accept: 'text/html,application/xhtml+xml' }, redirect: 'manual' })
+  if (response.status >= 300 && response.status < 400) throw capabilityError('url_redirect_not_allowed', 400)
   if (!response.ok) throw capabilityError('url_metadata_failed', 502)
   const html = await response.text()
   const title = html.match(/<title[^>]*>([^<]*)<\/title>/i)?.[1]?.trim() ?? null
@@ -367,18 +357,76 @@ async function fetchUrlMetadata(input: DataFetchRequest): Promise<unknown> {
   return { source: 'url-metadata', operation: input.operation, metadata: { url, title, description } }
 }
 
+function assertPublicHttpUrl(value: string): void {
+  let url: URL
+  try {
+    url = new URL(value)
+  } catch {
+    throw capabilityError('missing_url', 400)
+  }
+  if (url.protocol !== 'http:' && url.protocol !== 'https:') throw capabilityError('missing_url', 400)
+  if (url.username || url.password) throw capabilityError('url_not_allowed', 400)
+  if (isBlockedHostname(url.hostname)) throw capabilityError('url_not_allowed', 400)
+}
+
+function isBlockedHostname(hostname: string): boolean {
+  const normalized = hostname.toLowerCase().replace(/^\[|\]$/g, '').replace(/\.$/, '')
+  if (!normalized) return true
+  if (normalized === 'localhost' || normalized.endsWith('.localhost')) return true
+  if (normalized === 'metadata.google.internal') return true
+  const isIpv6 = normalized.includes(':')
+  if (isIpv6 && (normalized === '::1' || normalized.startsWith('fc') || normalized.startsWith('fd') || normalized.startsWith('fe80:'))) return true
+
+  const parts = normalized.split('.')
+  if (parts.length === 4 && parts.every((part) => /^\d+$/.test(part))) {
+    const octets = parts.map(Number)
+    if (octets.some((part) => part < 0 || part > 255)) return true
+    const [a, b] = octets
+    if (a === 0 || a === 10 || a === 127) return true
+    if (a === 169 && b === 254) return true
+    if (a === 172 && b >= 16 && b <= 31) return true
+    if (a === 192 && b === 168) return true
+  }
+  return false
+}
+
 async function findCachedAsset(env: Env, requestHash: string): Promise<CachedAssetRow | null> {
   return env.ATLAS_DB?.prepare('SELECT id, public_url, r2_key, content_type, provider, model, byte_size FROM atlas_cached_assets WHERE request_hash = ? LIMIT 1').bind(requestHash).first<CachedAssetRow>() ?? null
 }
 
-async function storeCachedAsset(env: Env, params: { id: string; capability: string; requestHash: string; provider: string; model?: string; r2Key: string; publicUrl: string; contentType: string; byteSize?: number; metadata?: unknown }) {
-  if (!env.ATLAS_DB) return
-  await env.ATLAS_DB.prepare(`INSERT INTO atlas_cached_assets (
+async function storeCachedAsset(env: Env, params: { id: string; capability: string; requestHash: string; provider: string; model?: string; r2Key: string; publicUrl: string; contentType: string; byteSize?: number; metadata?: unknown }): Promise<CachedAssetRow | null> {
+  if (!env.ATLAS_DB) return null
+  await env.ATLAS_DB.prepare(`INSERT OR IGNORE INTO atlas_cached_assets (
     id, capability, request_hash, provider, model, r2_key, public_url, content_type, byte_size, metadata_json, created_at, expires_at
   ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`).bind(
     params.id, params.capability, params.requestHash, params.provider, params.model ?? null, params.r2Key,
     params.publicUrl, params.contentType, params.byteSize ?? null, JSON.stringify(params.metadata ?? {}), new Date().toISOString(), null,
   ).run()
+  return findCachedAsset(env, params.requestHash)
+}
+
+function cachedSpeechResult(
+  existing: CachedAssetRow,
+  normalized: { text: string; model: string; voice: string },
+  requestHash: string,
+): AtlasExecutionResult {
+  return {
+    provider: toSpeechProvider(existing.provider),
+    model: existing.model ?? normalized.model,
+    cached: true,
+    requestHash,
+    inputUnits: normalized.text.length,
+    outputUnits: existing.byte_size ?? null,
+    estimatedCostUsd: 0,
+    data: {
+      id: existing.id,
+      audioUrl: existing.public_url,
+      contentType: existing.content_type,
+      cached: true,
+      provider: { name: existing.provider, model: existing.model ?? normalized.model, voice: normalized.voice },
+      usage: { inputCharacters: normalized.text.length },
+    },
+  }
 }
 
 function validateSpeech(input: SpeechRequest): string | null {

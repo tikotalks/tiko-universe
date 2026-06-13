@@ -7,7 +7,7 @@ workers_dev = true
 [vars]
 ALLOWED_ORIGINS = "https://admin.tikoapps.org,https://dev.admin.tikoapps.org,http://localhost:5173,http://localhost:4173"
 MAGIC_LINK_FROM_EMAIL = "Tiko <noreply@tikotalks.com>"
-# Set COMMUNICATION_API_KEY with `wrangler secret put COMMUNICATION_API_KEY`; service callers use it as a bearer token.
+# Set TOKEN_PEPPER with `wrangler secret put TOKEN_PEPPER`; scoped service keys are stored in identity-api.
 # Set RESEND_API_KEY with `wrangler secret put RESEND_API_KEY`; do not commit real API keys.
 
 [[d1_databases]]
@@ -15,6 +15,11 @@ binding = "COMMUNICATION_DB"
 database_name = "tiko-db"
 database_id = "f99b61ae-6a78-4670-bb9c-cdc4f634264a"
 migrations_dir = "migrations"
+
+[[d1_databases]]
+binding = "AUTH_DB"
+database_name = "tiko-identity"
+database_id = "036a1726-ac16-48a9-ab76-22c3a88ca7ae"
 
 [[routes]]
 pattern = "dev.api.tikotalks.com/v1/communication/*"
@@ -36,6 +41,11 @@ binding = "COMMUNICATION_DB"
 database_name = "tiko-db"
 database_id = "f99b61ae-6a78-4670-bb9c-cdc4f634264a"
 migrations_dir = "migrations"
+
+[[env.production.d1_databases]]
+binding = "AUTH_DB"
+database_name = "tiko-identity"
+database_id = "036a1726-ac16-48a9-ab76-22c3a88ca7ae"
 
 [[env.production.routes]]
 pattern = "communication.tikoapi.org"

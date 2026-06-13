@@ -25,18 +25,31 @@ class MemoryD1 {
   byHash = new Map<string, StoredAudioRecord>()
   byId = new Map<string, StoredAudioRecord>()
   storyDrafts = new Map<string, Record<string, unknown>>()
+  stories = new Map<string, Record<string, unknown>>()
+  generatedImages = new Map<string, Record<string, unknown>>()
+  usageWindows = new Map<string, { request_count: number; unit_count: number }>()
+  conflictAudioOnInsert: StoredAudioRecord | null = null
 
   prepare(sql: string) {
     return {
       bind: (...values: unknown[]) => ({
         first: async <T>() => {
+          if (sql.includes('FROM generation_usage_windows')) {
+            const key = values.slice(0, 4).map(String).join('|')
+            return (this.usageWindows.get(key) ?? null) as T | null
+          }
           if (sql.includes('WHERE request_hash')) return (this.byHash.get(values[0] as string) ?? null) as T | null
+          if (sql.includes('FROM generated_images') && sql.includes('WHERE id')) return (this.generatedImages.get(values[0] as string) ?? null) as T | null
           if (sql.includes('FROM story_drafts') && sql.includes('WHERE id')) return (this.storyDrafts.get(values[0] as string) ?? null) as T | null
           if (sql.includes('WHERE id')) return (this.byId.get(values[0] as string) ?? null) as T | null
           return null
         },
         all: async <T>() => {
-          if (sql.includes('FROM story_drafts')) return { results: Array.from(this.storyDrafts.values()) as T[] }
+          if (sql.includes('FROM story_drafts')) {
+            let drafts = Array.from(this.storyDrafts.values())
+            if (sql.includes('created_by = ?')) drafts = drafts.filter((draft) => draft.created_by === values[0])
+            return { results: drafts as T[] }
+          }
           return { results: [] as T[] }
         },
         run: async () => {
@@ -52,14 +65,63 @@ class MemoryD1 {
               status: values[7],
               chapters: values[8],
               settings: values[9],
-              created_at: values[10],
-              updated_at: values[11],
+              created_by: values[10],
+              created_at: values[11],
+              updated_at: values[12],
             }
             this.storyDrafts.set(record.id as string, record)
             return { success: true, meta: { changes: 1 } }
           }
+          if (sql.includes('INSERT INTO stories')) {
+            const record = {
+              id: values[0],
+              title: values[1],
+              description: values[2],
+              voice: values[3],
+              speed: values[4],
+              segments: values[5],
+              status: values[6],
+              audio_url: values[7],
+              r2_key: values[8],
+              duration_seconds: values[9],
+              file_size_bytes: values[10],
+              category: values[11],
+              tags: values[12],
+              is_public: values[13],
+              created_by: values[14],
+              created_at: values[15],
+              updated_at: values[16],
+            }
+            this.stories.set(record.id as string, record)
+            return { success: true, meta: { changes: 1 } }
+          }
+          if (sql.includes('INSERT INTO generation_usage_windows')) {
+            const key = values.slice(0, 4).map(String).join('|')
+            const current = this.usageWindows.get(key) ?? { request_count: 0, unit_count: 0 }
+            current.request_count += Number(values[4])
+            current.unit_count += Number(values[5])
+            this.usageWindows.set(key, current)
+            return { success: true, meta: { changes: 1 } }
+          }
           if (sql.includes('INSERT INTO generated_images')) {
             return { success: true, meta: { changes: 1 } }
+          }
+          if (sql.includes('UPDATE generated_images')) {
+            const id = values.at(-1) as string
+            const existing = this.generatedImages.get(id)
+            if (!existing) return { success: true, meta: { changes: 0 } }
+            this.generatedImages.set(id, { ...existing, updated_at: values[0] })
+            return { success: true, meta: { changes: 1 } }
+          }
+          if (sql.includes('DELETE FROM generated_images')) {
+            const deleted = this.generatedImages.delete(values[0] as string)
+            return { success: true, meta: { changes: deleted ? 1 : 0 } }
+          }
+          if (sql.includes('INSERT OR IGNORE INTO generated_audio') && this.conflictAudioOnInsert) {
+            this.byHash.set(this.conflictAudioOnInsert.request_hash, this.conflictAudioOnInsert)
+            this.byId.set(this.conflictAudioOnInsert.id, this.conflictAudioOnInsert)
+            this.conflictAudioOnInsert = null
+            return { success: true, meta: { changes: 0 } }
           }
           const record: StoredAudioRecord = {
             id: values[0] as string,
@@ -76,6 +138,9 @@ class MemoryD1 {
             content_type: values[11] as string,
             file_size_bytes: values[12] as number,
             generated_at: values[13] as string,
+          }
+          if (sql.includes('INSERT OR IGNORE') && this.byHash.has(record.request_hash)) {
+            return { success: true, meta: { changes: 0 } }
           }
           this.byHash.set(record.request_hash, record)
           this.byId.set(record.id, record)
@@ -117,6 +182,7 @@ function makeEnv(overrides: Partial<Env> = {}): Env & { db: MemoryD1; bucket: Me
     ELEVENLABS_API_KEY: 'test-eleven-key',
     API_KEYS: 'test-api-key',
     IDENTITY_BASE_URL: 'https://identity.test/v1',
+    IDENTITY_SERVICE: sessionIdentityService({ 'test-api-key': 'service_user' }),
     ...overrides,
   }
 }
@@ -125,22 +191,85 @@ async function json(response: Response) {
   return response.json() as Promise<Record<string, any>>
 }
 
+function authHeaders(extra: HeadersInit = {}) {
+  return { authorization: 'Bearer test-api-key', ...extra }
+}
+
+function generationPost(path: string, body: unknown): Request {
+  return new Request(`https://api.test${path}`, {
+    method: 'POST',
+    headers: authHeaders({ 'content-type': 'application/json' }),
+    body: JSON.stringify(body),
+  })
+}
+
+function sessionIdentityService(usersByToken: Record<string, string>) {
+  return {
+    fetch: vi.fn(async (_input: Request | string, init?: RequestInit) => {
+      const authorization = new Headers(init?.headers).get('authorization') ?? ''
+      const token = authorization.replace(/^Bearer\s+/i, '')
+      const userId = usersByToken[token]
+      if (!userId) return new Response(JSON.stringify({ error: { code: 'unauthorized' } }), { status: 401 })
+      return new Response(JSON.stringify({ subject: { id: userId } }), {
+        status: 200,
+        headers: { 'content-type': 'application/json' },
+      })
+    }),
+  }
+}
+
+async function sha256HexForTest(value: string): Promise<string> {
+  const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(value))
+  return Array.from(new Uint8Array(digest)).map((byte) => byte.toString(16).padStart(2, '0')).join('')
+}
+
 beforeEach(() => {
   vi.restoreAllMocks()
 })
 
 describe('generation-api TTS contract', () => {
+  it('requires auth for paid TTS and voice catalog endpoints', async () => {
+    const env = makeEnv()
+    const tts = await worker.fetch(new Request('https://api.test/v1/generation/tts', {
+      method: 'POST',
+      body: JSON.stringify({ text: 'Hello', language: 'en' }),
+    }), env)
+    const voices = await worker.fetch(new Request('https://api.test/v1/generation/voices'), env)
+
+    expect(tts.status).toBe(401)
+    expect(voices.status).toBe(401)
+  })
+
   it('returns explicit validation errors for invalid TTS requests', async () => {
     const env = makeEnv()
-    const response = await worker.fetch(new Request('https://api.test/v1/generation/tts', {
-      method: 'POST',
-      body: JSON.stringify({ language: 'en' }),
-    }), env)
+    const response = await worker.fetch(generationPost('/v1/generation/tts', { language: 'en' }), env)
 
     expect(response.status).toBe(400)
     await expect(json(response)).resolves.toMatchObject({
       error: { code: 'missing_text', field: 'text' }
     })
+  })
+
+  it('enforces per-caller TTS rate and daily character budgets', async () => {
+    const env = makeEnv()
+    vi.spyOn(globalThis, 'fetch').mockImplementation(async () => new Response(new Uint8Array([1, 2, 3]), { status: 200 }))
+
+    for (let index = 0; index < 60; index += 1) {
+      const response = await worker.fetch(generationPost('/v1/generation/tts', { text: `Hello ${index}`, language: 'en' }), env)
+      expect([200, 201]).toContain(response.status)
+    }
+
+    const limited = await worker.fetch(generationPost('/v1/generation/tts', { text: 'Too many', language: 'en' }), env)
+    expect(limited.status).toBe(429)
+    await expect(json(limited)).resolves.toMatchObject({ error: { code: 'rate_limited' } })
+
+    const budgetEnv = makeEnv()
+    const dayStart = new Date().toISOString().slice(0, 10)
+    const subjectKey = 'session:service_user'
+    budgetEnv.db.usageWindows.set(`${subjectKey}|tts.generate|day|${dayStart}`, { request_count: 1, unit_count: 11999 })
+    const overBudget = await worker.fetch(generationPost('/v1/generation/tts', { text: 'No', language: 'en' }), budgetEnv)
+    expect(overBudget.status).toBe(429)
+    await expect(json(overBudget)).resolves.toMatchObject({ error: { code: 'budget_exceeded' } })
   })
 
   it('returns a D1-backed cache hit without calling the provider', async () => {
@@ -165,10 +294,7 @@ describe('generation-api TTS contract', () => {
     })
 
     const fetchSpy = vi.spyOn(globalThis, 'fetch')
-    const response = await worker.fetch(new Request('https://api.test/v1/generation/tts', {
-      method: 'POST',
-      body: JSON.stringify({ text: ' Yes ', language: 'EN', provider: 'auto' }),
-    }), env)
+    const response = await worker.fetch(generationPost('/v1/generation/tts', { text: ' Yes ', language: 'EN', provider: 'auto' }), env)
 
     expect(response.status).toBe(200)
     expect(fetchSpy).not.toHaveBeenCalled()
@@ -183,14 +309,15 @@ describe('generation-api TTS contract', () => {
     const atlasFetch = vi.fn(async (input: Request | string) => {
       const request = input instanceof Request ? input : new Request(input)
       expect(new URL(request.url).pathname).toBe('/v1/atlas/speech')
+      expect(request.headers.get('authorization')).toBe('Bearer test-atlas-key')
       const atlasBody = await request.json() as Record<string, unknown>
       expect(atlasBody).toMatchObject({
         app: 'generation-api',
         purpose: 'compatibility-tts',
         text: 'Hello',
         language: 'en',
-        provider: 'auto',
       })
+      expect(atlasBody).not.toHaveProperty('provider')
       expect(atlasBody).not.toHaveProperty('voice')
       expect(atlasBody).not.toHaveProperty('model')
       return new Response(JSON.stringify({
@@ -207,14 +334,12 @@ describe('generation-api TTS contract', () => {
     const providerFetch = vi.spyOn(globalThis, 'fetch')
     const env = makeEnv({
       ATLAS_SERVICE: { fetch: atlasFetch },
+      ATLAS_API_KEY: 'test-atlas-key',
       OPENAI_API_KEY: undefined,
       ELEVENLABS_API_KEY: undefined,
     } as Partial<Env> & Record<string, unknown>)
 
-    const response = await worker.fetch(new Request('https://api.test/v1/generation/tts', {
-      method: 'POST',
-      body: JSON.stringify({ text: 'Hello', language: 'en', provider: 'auto' }),
-    }), env)
+    const response = await worker.fetch(generationPost('/v1/generation/tts', { text: 'Hello', language: 'en', provider: 'auto' }), env)
     const generated = await json(response)
 
     expect(response.status).toBe(201)
@@ -232,12 +357,28 @@ describe('generation-api TTS contract', () => {
     })
   })
 
+  it('does not bypass Atlas when the compatibility TTS service binding is missing its service key', async () => {
+    const atlasFetch = vi.fn()
+    const providerFetch = vi.spyOn(globalThis, 'fetch')
+    const env = makeEnv({
+      ATLAS_SERVICE: { fetch: atlasFetch },
+      OPENAI_API_KEY: undefined,
+      ELEVENLABS_API_KEY: undefined,
+    } as Partial<Env>)
+
+    const response = await worker.fetch(generationPost('/v1/generation/tts', { text: 'Hello', language: 'en' }), env)
+
+    expect(response.status).toBe(503)
+    expect(atlasFetch).not.toHaveBeenCalled()
+    expect(providerFetch).not.toHaveBeenCalled()
+    await expect(json(response)).resolves.toMatchObject({
+      error: { code: 'atlas_service_key_not_configured', message: 'Atlas service key is not configured.' },
+    })
+  })
+
   it('returns a safe missing-provider-key error on cache miss', async () => {
     const env = makeEnv({ OPENAI_API_KEY: undefined, ELEVENLABS_API_KEY: undefined })
-    const response = await worker.fetch(new Request('https://api.test/v1/generation/tts', {
-      method: 'POST',
-      body: JSON.stringify({ text: 'Hello', language: 'en' }),
-    }), env)
+    const response = await worker.fetch(generationPost('/v1/generation/tts', { text: 'Hello', language: 'en' }), env)
 
     expect(response.status).toBe(503)
     await expect(json(response)).resolves.toMatchObject({
@@ -249,10 +390,7 @@ describe('generation-api TTS contract', () => {
     const env = makeEnv()
     vi.spyOn(globalThis, 'fetch').mockResolvedValue(new Response(new Uint8Array([1, 2, 3]), { status: 200 }))
 
-    const generateResponse = await worker.fetch(new Request('https://api.test/v1/generation/tts', {
-      method: 'POST',
-      body: JSON.stringify({ text: 'Hello', language: 'en' }),
-    }), env)
+    const generateResponse = await worker.fetch(generationPost('/v1/generation/tts', { text: 'Hello', language: 'en' }), env)
     const generated = await json(generateResponse)
 
     expect(generateResponse.status).toBe(201)
@@ -270,10 +408,41 @@ describe('generation-api TTS contract', () => {
     expect(unsafeResponse.status).toBe(404)
   })
 
+  it('returns the winning cache row when generated audio insert loses a request-hash race', async () => {
+    const env = makeEnv()
+    const normalized = internals.normalizeTtsRequest({ text: 'Hello race', language: 'en' })
+    const requestHash = await internals.generateRequestHash(normalized)
+    env.db.conflictAudioOnInsert = {
+      id: 'winner',
+      request_hash: requestHash,
+      text: normalized.text,
+      language: normalized.language,
+      provider: normalized.provider === 'auto' ? 'openai' : normalized.provider,
+      voice: normalized.voice,
+      model: normalized.model,
+      speed: normalized.speed,
+      pitch: normalized.pitch,
+      audio_url: '/v1/generation/audio/winner',
+      r2_key: 'audio/winner.mp3',
+      content_type: 'audio/mpeg',
+      file_size_bytes: 3,
+      generated_at: '2026-01-01T00:00:00.000Z',
+    }
+    vi.spyOn(globalThis, 'fetch').mockResolvedValue(new Response(new Uint8Array([1, 2, 3]), { status: 200 }))
+
+    const response = await worker.fetch(generationPost('/v1/generation/tts', { text: 'Hello race', language: 'en' }), env)
+
+    expect(response.status).toBe(200)
+    await expect(json(response)).resolves.toMatchObject({
+      data: { id: 'winner', audioUrl: '/v1/generation/audio/winner' },
+      meta: { cached: true },
+    })
+  })
+
   it('exposes health and sampled voice catalog for the story creator', async () => {
     const env = makeEnv()
     const health = await worker.fetch(new Request('https://api.test/v1/generation/health'), env)
-    const voices = await worker.fetch(new Request('https://api.test/v1/generation/voices'), env)
+    const voices = await worker.fetch(new Request('https://api.test/v1/generation/voices', { headers: authHeaders() }), env)
 
     expect(health.status).toBe(200)
     await expect(json(health)).resolves.toMatchObject({ data: { service: 'generation-api', status: 'ok' } })
@@ -311,6 +480,105 @@ describe('generation-api TTS contract', () => {
     expect(createDraft.status).toBe(201)
     expect(draftBody.data).toMatchObject({ title: 'The Mountain', coverMediaId: 'cover_1', targetAlbumId: 'album_1', defaultVoice: '21m00Tcm4TlvDq8ikWAM' })
     expect(draftBody.data.chapters).toHaveLength(2)
+  })
+
+  it('reuses cached story segment audio when a previous render failed mid-story', async () => {
+    const env = makeEnv()
+    const firstSegmentBytes = Uint8Array.from([1, 2, 3])
+    const secondSegmentBytes = Uint8Array.from([4, 5, 6])
+    const fetchMock = vi.spyOn(globalThis, 'fetch')
+      .mockResolvedValueOnce(new Response(firstSegmentBytes, { status: 200 }))
+      .mockResolvedValueOnce(new Response('temporary', { status: 503 }))
+      .mockResolvedValueOnce(new Response('still temporary', { status: 503 }))
+
+    const body = {
+      title: 'Resumable story',
+      language: 'en',
+      segments: [
+        { id: 'one', text: 'First segment', pauseAfterMs: 0 },
+        { id: 'two', text: 'Second segment', pauseAfterMs: 0 },
+      ],
+    }
+
+    const failed = await worker.fetch(generationPost('/v1/generation/stories/render', body), env)
+    expect(failed.status).toBe(502)
+    expect(Array.from(env.bucket.objects.keys()).filter((key) => key.startsWith('story-segments/'))).toHaveLength(1)
+
+    fetchMock.mockResolvedValueOnce(new Response(secondSegmentBytes, { status: 200 }))
+    const retried = await worker.fetch(generationPost('/v1/generation/stories/render', body), env)
+    const retriedBody = await json(retried)
+
+    expect(retried.status).toBe(201)
+    expect(fetchMock).toHaveBeenCalledTimes(4)
+    expect(Array.from(env.bucket.objects.keys()).filter((key) => key.startsWith('story-segments/'))).toHaveLength(2)
+    expect(env.db.stories.size).toBe(1)
+    expect(retriedBody.data).toMatchObject({ title: 'Resumable story', fileSizeBytes: 6 })
+  })
+
+  it('scopes story draft lists to the authenticated session owner', async () => {
+    const identity = sessionIdentityService({ 'token-a': 'user_a', 'token-b': 'user_b' })
+    const env = makeEnv({ API_KEYS: undefined, IDENTITY_SERVICE: identity } as Partial<Env>)
+
+    for (const [token, title] of [['token-a', 'Owner A'], ['token-b', 'Owner B']] as const) {
+      const response = await worker.fetch(new Request('https://api.test/v1/generation/story-drafts', {
+        method: 'POST',
+        headers: { authorization: `Bearer ${token}`, 'content-type': 'application/json' },
+        body: JSON.stringify({ title }),
+      }), env)
+      expect(response.status).toBe(201)
+    }
+
+    const ownerList = await worker.fetch(new Request('https://api.test/v1/generation/story-drafts', {
+      headers: { authorization: 'Bearer token-a' },
+    }), env)
+    const body = await json(ownerList)
+
+    expect(ownerList.status).toBe(200)
+    expect(body.data.map((draft: Record<string, unknown>) => draft.title)).toEqual(['Owner A'])
+  })
+
+  it('protects private image binaries and mutations by owner', async () => {
+    const identity = sessionIdentityService({ 'token-a': 'user_a', 'token-b': 'user_b' })
+    const env = makeEnv({ API_KEYS: undefined, IDENTITY_SERVICE: identity } as Partial<Env>)
+    env.db.generatedImages.set('image_private', {
+      id: 'image_private',
+      r2_key: 'images/private.png',
+      content_type: 'image/png',
+      is_public: 0,
+      created_by: 'user_a',
+    })
+    env.bucket.objects.set('images/private.png', {
+      body: new Uint8Array([1, 2, 3]).buffer,
+      httpMetadata: { contentType: 'image/png' },
+    })
+
+    const unauthenticated = await worker.fetch(new Request('https://api.test/v1/generation/images/image_private/binary'), env)
+    expect(unauthenticated.status).toBe(401)
+
+    const otherBinary = await worker.fetch(new Request('https://api.test/v1/generation/images/image_private/binary', {
+      headers: { authorization: 'Bearer token-b' },
+    }), env)
+    expect(otherBinary.status).toBe(403)
+
+    const ownerBinary = await worker.fetch(new Request('https://api.test/v1/generation/images/image_private/binary', {
+      headers: { authorization: 'Bearer token-a' },
+    }), env)
+    expect(ownerBinary.status).toBe(200)
+    expect(new Uint8Array(await ownerBinary.arrayBuffer())).toEqual(new Uint8Array([1, 2, 3]))
+
+    const otherDelete = await worker.fetch(new Request('https://api.test/v1/generation/images/image_private', {
+      method: 'DELETE',
+      headers: { authorization: 'Bearer token-b' },
+    }), env)
+    expect(otherDelete.status).toBe(403)
+    expect(env.db.generatedImages.has('image_private')).toBe(true)
+
+    const ownerDelete = await worker.fetch(new Request('https://api.test/v1/generation/images/image_private', {
+      method: 'DELETE',
+      headers: { authorization: 'Bearer token-a' },
+    }), env)
+    expect(ownerDelete.status).toBe(200)
+    expect(env.db.generatedImages.has('image_private')).toBe(false)
   })
 
   it('routes image generation through Atlas and stores the returned asset locally', async () => {

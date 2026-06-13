@@ -1,3 +1,5 @@
+import { requireServiceKey, type AuthEnv } from '../../shared/auth'
+
 type D1Value = string | number | boolean | null
 
 interface D1Result<T = unknown> {
@@ -8,9 +10,9 @@ interface D1Result<T = unknown> {
 
 interface D1PreparedStatement {
   bind(...values: D1Value[]): D1PreparedStatement
-  first<T = unknown>(): Promise<T | null> | T | null
-  all<T = unknown>(): Promise<D1Result<T>> | D1Result<T>
-  run(): Promise<D1Result> | D1Result
+  first<T = unknown>(): Promise<T | null>
+  all<T = unknown>(): Promise<D1Result<T>>
+  run(): Promise<D1Result>
 }
 
 interface D1Database {
@@ -19,7 +21,9 @@ interface D1Database {
 
 export interface Env {
   COMMUNICATION_DB: D1Database
-  COMMUNICATION_API_KEY: string
+  AUTH_DB?: D1Database
+  TOKEN_PEPPER?: string
+  ANKORE_TOKEN_PEPPER?: string
   RESEND_API_KEY?: string
   MAGIC_LINK_FROM_EMAIL?: string
   ALLOWED_ORIGINS?: string
@@ -70,7 +74,7 @@ export async function handleRequest(request: Request, env: Env): Promise<Respons
       return withCors(json({ data: { ok: true, service: 'communication-api' } }), cors)
     }
 
-    requireServiceAuth(request, env)
+    await requireServiceAuth(request, env)
 
     if (path === '/v1/communication/email/magic-link' && request.method === 'POST') {
       return withCors(await sendMagicLinkEmail(request, env), cors)
@@ -103,9 +107,12 @@ async function sendMagicLinkEmail(request: Request, env: Env): Promise<Response>
   const messageId = id('msg')
   const from = env.MAGIC_LINK_FROM_EMAIL ?? DEFAULT_MAGIC_LINK_FROM_EMAIL
   const subject = otp ? `${formatOtp(otp)} is your Tiko sign-in code` : 'Your Tiko sign-in link'
+  const storedSubject = otp ? 'Your Tiko sign-in code' : subject
   const otpLine = otp ? `Your sign-in code: ${formatOtp(otp)}\n\n` : ''
   const text = `${otpLine}Open this link to sign in to Tiko:\n\n${magicLinkUrl}\n\nThis link and code expire in 15 minutes.\n\nIf you did not request this, you can ignore this email.`
   const html = magicLinkHtml(magicLinkUrl, { otp, webLinkUrl })
+  const redactedText = redactMagicLinkMessage(text, magicLinkUrl, otp)
+  const redactedHtml = redactMagicLinkMessage(html, magicLinkUrl, otp)
 
   await insertMessage(env, {
     id: messageId,
@@ -115,9 +122,9 @@ async function sendMagicLinkEmail(request: Request, env: Env): Promise<Response>
     status: 'queued',
     from_address: from,
     to_address: to,
-    subject,
-    text_body: text,
-    html_body: html,
+    subject: storedSubject,
+    text_body: redactedText,
+    html_body: redactedHtml,
     provider: 'resend',
     provider_message_id: null,
     related_user_id: optionalString(body.relatedUserId),
@@ -272,16 +279,47 @@ function publicMessage(row: MessageRow) {
   }
 }
 
-function requireServiceAuth(request: Request, env: Env): void {
-  const bearer = getBearer(request)
-  if (!env.COMMUNICATION_API_KEY || !bearer || !timingSafeEqual(bearer, env.COMMUNICATION_API_KEY)) {
-    throw new HttpError(401, 'unauthorized', 'Communication service authorization is required.')
-  }
+async function requireServiceAuth(request: Request, env: Env): Promise<void> {
+  const auth = await requireServiceKey(request, {
+    AUTH_DB: env.AUTH_DB as unknown as AuthEnv['AUTH_DB'],
+    TOKEN_PEPPER: env.TOKEN_PEPPER,
+    ANKORE_TOKEN_PEPPER: env.ANKORE_TOKEN_PEPPER,
+  }, ['communication.send'])
+  if (auth instanceof Response) throw new HttpError(auth.status === 403 ? 403 : 401, auth.status === 403 ? 'service_key_required' : 'unauthorized', 'Communication service authorization is required.')
 }
 
 function formatOtp(otp: string): string {
   const digits = otp.replace(/\D/g, '')
   return digits.length === 6 ? `${digits.slice(0, 3)} ${digits.slice(3)}` : otp
+}
+
+function redactMagicLinkMessage(value: string, magicLinkUrl: string, otp?: string | null): string {
+  const redactedUrl = redactedMagicLinkUrl(magicLinkUrl)
+  let redacted = value
+    .split(magicLinkUrl).join(redactedUrl)
+    .split(escapeHtml(magicLinkUrl)).join(escapeHtml(redactedUrl))
+  if (otp) {
+    redacted = redacted
+      .split(otp).join('[REDACTED_OTP]')
+      .split(formatOtp(otp)).join('[REDACTED_OTP]')
+      .split(escapeHtml(formatOtp(otp))).join('[REDACTED_OTP]')
+  }
+  return redacted
+}
+
+function redactedMagicLinkUrl(value: string): string {
+  try {
+    const url = new URL(value)
+    for (const key of ['token', 'otp', 'code']) {
+      if (url.searchParams.has(key)) url.searchParams.set(key, '[REDACTED]')
+    }
+    if (!url.searchParams.has('token') && !url.searchParams.has('otp') && !url.searchParams.has('code')) {
+      return '[REDACTED_MAGIC_LINK]'
+    }
+    return url.toString()
+  } catch {
+    return '[REDACTED_MAGIC_LINK]'
+  }
 }
 
 function magicLinkHtml(magicLinkUrl: string, opts: { otp?: string | null; webLinkUrl?: string }): string {
@@ -423,22 +461,6 @@ function requiredUrl(value: unknown, field: string): string {
   } catch {
     throw new HttpError(400, 'invalid_url', `${field} must be a valid URL.`, field)
   }
-}
-
-function getBearer(request: Request): string | null {
-  const header = request.headers.get('authorization')
-  if (!header) return null
-  const match = /^Bearer\s+(.+)$/i.exec(header)
-  return match?.[1]?.trim() || null
-}
-
-function timingSafeEqual(a: string, b: string): boolean {
-  if (a.length !== b.length) return false
-  let result = 0
-  for (let index = 0; index < a.length; index += 1) {
-    result |= a.charCodeAt(index) ^ b.charCodeAt(index)
-  }
-  return result === 0
 }
 
 function clampNumber(value: number, min: number, max: number): number {

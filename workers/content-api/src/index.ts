@@ -1,13 +1,13 @@
 // Tiko content-api — D1-backed published content read model.
 // Public reads only for now; admin mutations belong in admin-api.
+import { requireRole, type AuthEnv } from '../../shared/auth'
 
-interface Env {
+interface Env extends AuthEnv {
   CONTENT_DB: D1Database
   CONTENT_CACHE?: KVNamespace
   USER_IMAGES?: R2Bucket
   ALLOWED_ORIGINS?: string
   APP_API_URL?: string
-  ADMIN_SECRET?: string
   IDENTITY_API_URL?: string
   MEDIA_API_URL?: string
   TRANSLATIONS_API_URL?: string
@@ -15,6 +15,7 @@ interface Env {
 
 interface D1Database {
   prepare(sql: string): D1PreparedStatement
+  batch<T = unknown>(statements: D1PreparedStatement[]): Promise<T[]>
 }
 
 interface D1PreparedStatement {
@@ -109,24 +110,29 @@ const CACHE_TTL_SECONDS = 300
 const CACHE_KEY_CARDS_COLLECTIONS = 'cards:collections'
 const CACHE_KEY_YES_NO_CONTENT = 'yes-no:content'
 const CACHE_KEY_SEQUENCE_CONTENT = 'sequence:content'
-const CARDS_CACHE_LANGUAGES = ['en', 'nl', 'fr', 'es', 'de', 'mt', 'it', 'pt', 'pt-br', 'ar']
+const CONTENT_ADMIN_ROLES = ['admin', 'content_editor']
+const CONTENT_ADMIN_CAPABILITIES = ['canEditContent']
+const CACHE_VERSION_PREFIX = 'content-cache-version'
 
 async function invalidateCardsCache(env: Env): Promise<void> {
-  if (!env.CONTENT_CACHE) return
-  await env.CONTENT_CACHE.delete(CACHE_KEY_CARDS_COLLECTIONS)
-  await Promise.all(CARDS_CACHE_LANGUAGES.map(language => env.CONTENT_CACHE!.delete(`${CACHE_KEY_CARDS_COLLECTIONS}:${language}`)))
+  await invalidateCacheNamespace(env, CACHE_KEY_CARDS_COLLECTIONS)
 }
 
 async function invalidateYesNoCache(env: Env): Promise<void> {
-  if (!env.CONTENT_CACHE) return
-  await env.CONTENT_CACHE.delete(CACHE_KEY_YES_NO_CONTENT)
-  await Promise.all(CARDS_CACHE_LANGUAGES.map(language => env.CONTENT_CACHE!.delete(`${CACHE_KEY_YES_NO_CONTENT}:${language}`)))
+  await invalidateCacheNamespace(env, CACHE_KEY_YES_NO_CONTENT)
 }
 
 async function invalidateSequenceCache(env: Env): Promise<void> {
+  await invalidateCacheNamespace(env, CACHE_KEY_SEQUENCE_CONTENT)
+}
+
+async function invalidateCacheNamespace(env: Env, namespace: string): Promise<void> {
   if (!env.CONTENT_CACHE) return
-  await env.CONTENT_CACHE.delete(CACHE_KEY_SEQUENCE_CONTENT)
-  await Promise.all(CARDS_CACHE_LANGUAGES.map(language => env.CONTENT_CACHE!.delete(`${CACHE_KEY_SEQUENCE_CONTENT}:${language}`)))
+  await env.CONTENT_CACHE.put(cacheVersionKey(namespace), `${Date.now()}-${crypto.randomUUID()}`)
+}
+
+function cacheVersionKey(namespace: string): string {
+  return `${CACHE_VERSION_PREFIX}:${namespace}`
 }
 
 interface UserImageRow {
@@ -285,6 +291,24 @@ function normalizeRow(row: JsonRecord): JsonRecord {
   return normalized
 }
 
+function stableJson(value: unknown): string {
+  if (value === null || typeof value !== 'object') return JSON.stringify(value)
+  if (Array.isArray(value)) return `[${value.map(stableJson).join(',')}]`
+  return `{${Object.entries(value as JsonRecord)
+    .sort(([a], [b]) => a.localeCompare(b))
+    .map(([key, item]) => `${JSON.stringify(key)}:${stableJson(item)}`)
+    .join(',')}}`
+}
+
+async function sha256Hex(value: unknown, length = 32): Promise<string> {
+  const bytes = new TextEncoder().encode(typeof value === 'string' ? value : stableJson(value))
+  const digest = await crypto.subtle.digest('SHA-256', bytes)
+  return Array.from(new Uint8Array(digest))
+    .map(byte => byte.toString(16).padStart(2, '0'))
+    .join('')
+    .slice(0, length)
+}
+
 async function cached<T>(request: Request, env: Env, key: string, loader: () => Promise<T>): Promise<T> {
   if (new URL(request.url).searchParams.get('no-cache') === '1' || !env.CONTENT_CACHE) return loader()
   const cachedValue = await env.CONTENT_CACHE.get(key)
@@ -292,6 +316,12 @@ async function cached<T>(request: Request, env: Env, key: string, loader: () => 
   const value = await loader()
   await env.CONTENT_CACHE.put(key, JSON.stringify(value), { expirationTtl: CACHE_TTL_SECONDS })
   return value
+}
+
+async function cachedInNamespace<T>(request: Request, env: Env, namespace: string, key: string, loader: () => Promise<T>): Promise<T> {
+  if (new URL(request.url).searchParams.get('no-cache') === '1' || !env.CONTENT_CACHE) return loader()
+  const version = await env.CONTENT_CACHE.get(cacheVersionKey(namespace)) ?? '0'
+  return cached(request, env, `${namespace}:${version}:${key}`, loader)
 }
 
 async function getProjects(env: Env): Promise<JsonRecord[]> {
@@ -763,18 +793,47 @@ async function putAdminCardsCollections(
     throw new Error('collections must be a non-empty array')
   }
 
-  await env.CONTENT_DB.prepare(`DELETE FROM content_item_translations WHERE item_id IN (SELECT id FROM content_items WHERE app_id = 'cards' AND owner_user_id IS NULL)`).run()
-  await env.CONTENT_DB.prepare(`DELETE FROM content_items WHERE app_id = 'cards' AND owner_user_id IS NULL`).run()
+  const existingRows = await env.CONTENT_DB.prepare(
+    `SELECT id FROM content_items WHERE app_id = ? AND owner_user_id IS NULL`,
+  ).bind('cards').all<{ id: string }>()
+  const incomingIds = new Set<string>()
+  for (const col of collections) {
+    incomingIds.add(col.id)
+    for (const tile of col.cards ?? []) incomingIds.add(tile.id)
+  }
+  const removedIds = (existingRows.results ?? []).map(row => row.id).filter(id => !incomingIds.has(id))
+  const statements = deleteRemovedDefaultItemStatements(env, removedIds)
 
   for (const col of collections) {
-    await env.CONTENT_DB.prepare(
-	      `INSERT INTO content_items (
+    statements.push(env.CONTENT_DB.prepare(
+      `INSERT INTO content_items (
 	         id, template_id, title, slug, status, language_code, tags, categories, data,
 	         app_id, type, parent_id, source_locale, speech, color_token, image_ref,
 	         sort_order, is_default, is_published, metadata_json
 	       )
 	       VALUES (?, 'cards.collection', ?, ?, 'published', 'en', NULL, '["cards"]', ?,
-         'cards', 'collection', NULL, 'en', ?, ?, ?, ?, 1, 1, ?)`,
+         'cards', 'collection', NULL, 'en', ?, ?, ?, ?, 1, 1, ?)
+       ON CONFLICT(id) DO UPDATE SET
+         template_id = excluded.template_id,
+         title = excluded.title,
+         slug = excluded.slug,
+         status = excluded.status,
+         language_code = excluded.language_code,
+         tags = excluded.tags,
+         categories = excluded.categories,
+         data = excluded.data,
+         app_id = excluded.app_id,
+         type = excluded.type,
+         parent_id = excluded.parent_id,
+         source_locale = excluded.source_locale,
+         speech = excluded.speech,
+         color_token = excluded.color_token,
+         image_ref = excluded.image_ref,
+         sort_order = excluded.sort_order,
+         is_default = excluded.is_default,
+         is_published = excluded.is_published,
+         metadata_json = excluded.metadata_json,
+         updated_at = datetime('now')`,
     )
       .bind(
         col.id,
@@ -786,19 +845,39 @@ async function putAdminCardsCollections(
 	        asImageRef(col.imageRef) ?? null,
 	        col.order ?? 0,
 	        JSON.stringify({ mediaCategories: col.mediaCategories ?? [] }),
-      )
-      .run()
+      ))
 
     if (Array.isArray(col.cards)) {
       for (const tile of col.cards) {
-        await env.CONTENT_DB.prepare(
-	          `INSERT INTO content_items (
+        statements.push(env.CONTENT_DB.prepare(
+          `INSERT INTO content_items (
 	             id, template_id, title, slug, status, language_code, tags, categories, data,
 	             app_id, type, parent_id, source_locale, speech, color_token, image_ref,
 	             sort_order, is_default, is_published, metadata_json
 	           )
 	           VALUES (?, 'cards.card', ?, ?, 'published', 'en', NULL, '["cards"]', ?,
-	             'cards', 'card', ?, 'en', ?, ?, ?, ?, 1, 1, ?)`,
+	             'cards', 'card', ?, 'en', ?, ?, ?, ?, 1, 1, ?)
+             ON CONFLICT(id) DO UPDATE SET
+               template_id = excluded.template_id,
+               title = excluded.title,
+               slug = excluded.slug,
+               status = excluded.status,
+               language_code = excluded.language_code,
+               tags = excluded.tags,
+               categories = excluded.categories,
+               data = excluded.data,
+               app_id = excluded.app_id,
+               type = excluded.type,
+               parent_id = excluded.parent_id,
+               source_locale = excluded.source_locale,
+               speech = excluded.speech,
+               color_token = excluded.color_token,
+               image_ref = excluded.image_ref,
+               sort_order = excluded.sort_order,
+               is_default = excluded.is_default,
+               is_published = excluded.is_published,
+               metadata_json = excluded.metadata_json,
+               updated_at = datetime('now')`,
         )
           .bind(
             tile.id,
@@ -811,11 +890,11 @@ async function putAdminCardsCollections(
 	            asImageRef(tile.imageRef) ?? null,
 	            tile.order ?? 0,
 	            JSON.stringify({ collectionId: col.id }),
-          )
-          .run()
+          ))
       }
     }
   }
+  await env.CONTENT_DB.batch(statements)
 
   return { success: true, count: collections.length }
 }
@@ -828,21 +907,57 @@ async function putAdminSequenceContent(
     throw new Error('sequences must be a non-empty array')
   }
 
-  await env.CONTENT_DB.prepare(`DELETE FROM content_item_translations WHERE item_id IN (SELECT id FROM content_items WHERE app_id = 'sequence' AND owner_user_id IS NULL)`).run()
-  await env.CONTENT_DB.prepare(`DELETE FROM content_items WHERE app_id = 'sequence' AND owner_user_id IS NULL`).run()
+  const sequenceIds = sequences.map((sequence) => asString(sequence.id) ?? `sequence_${crypto.randomUUID()}`)
+  const stepIds = sequences.map((sequence, sequenceIndex) =>
+    (sequence.steps ?? []).map((step, stepIndex) => asString(step.id) ?? `${sequenceIds[sequenceIndex]}_step_${stepIndex + 1}`),
+  )
+  const existingRows = await env.CONTENT_DB.prepare(
+    `SELECT id FROM content_items WHERE app_id = ? AND owner_user_id IS NULL`,
+  ).bind('sequence').all<{ id: string }>()
+  const incomingIds = new Set<string>()
+  for (const [sequenceIndex, sequence] of sequences.entries()) {
+    const sequenceId = sequenceIds[sequenceIndex]
+    incomingIds.add(sequenceId)
+    for (const [stepIndex] of (sequence.steps ?? []).entries()) {
+      incomingIds.add(stepIds[sequenceIndex][stepIndex])
+    }
+  }
+  const removedIds = (existingRows.results ?? []).map(row => row.id).filter(id => !incomingIds.has(id))
+  const statements = deleteRemovedDefaultItemStatements(env, removedIds)
 
   for (const [sequenceIndex, sequence] of sequences.entries()) {
-    const sequenceId = asString(sequence.id) ?? `sequence_${crypto.randomUUID()}`
+    const sequenceId = sequenceIds[sequenceIndex]
     const title = asString(sequence.title) ?? asString(sequence.name) ?? `Sequence ${sequenceIndex + 1}`
     const category = asString(sequence.category)
-    await env.CONTENT_DB.prepare(
+    statements.push(env.CONTENT_DB.prepare(
       `INSERT INTO content_items (
        id, template_id, title, slug, status, language_code, tags, categories, data,
          app_id, type, parent_id, source_locale, speech, color_token, image_ref,
          sort_order, is_default, is_published, metadata_json
        )
        VALUES (?, 'sequence.sequence', ?, ?, 'published', 'en', NULL, '["sequence"]', ?,
-         'sequence', 'sequence', NULL, 'en', ?, ?, ?, ?, 1, 1, ?)`,
+         'sequence', 'sequence', NULL, 'en', ?, ?, ?, ?, 1, 1, ?)
+       ON CONFLICT(id) DO UPDATE SET
+         template_id = excluded.template_id,
+         title = excluded.title,
+         slug = excluded.slug,
+         status = excluded.status,
+         language_code = excluded.language_code,
+         tags = excluded.tags,
+         categories = excluded.categories,
+         data = excluded.data,
+         app_id = excluded.app_id,
+         type = excluded.type,
+         parent_id = excluded.parent_id,
+         source_locale = excluded.source_locale,
+         speech = excluded.speech,
+         color_token = excluded.color_token,
+         image_ref = excluded.image_ref,
+         sort_order = excluded.sort_order,
+         is_default = excluded.is_default,
+         is_published = excluded.is_published,
+         metadata_json = excluded.metadata_json,
+         updated_at = datetime('now')`,
     )
       .bind(
         sequenceId,
@@ -854,11 +969,10 @@ async function putAdminSequenceContent(
         asImageRef(sequence.imageRef) ?? null,
         typeof sequence.order === 'number' ? sequence.order : sequenceIndex,
         JSON.stringify({ category }),
-      )
-      .run()
+      ))
 
     for (const [stepIndex, step] of (sequence.steps ?? []).entries()) {
-      const stepId = asString(step.id) ?? `${sequenceId}_step_${stepIndex + 1}`
+      const stepId = stepIds[sequenceIndex][stepIndex]
       const label = asString(step.label) ?? asString(step.text) ?? `Step ${stepIndex + 1}`
       const text = asString(step.text) ?? label
       const imageRefs = asImageRefs(step.imageRefs)
@@ -867,14 +981,34 @@ async function putAdminSequenceContent(
         imagePrompt: asString(step.imagePrompt) ?? null,
         imageRefs,
       }
-      await env.CONTENT_DB.prepare(
+      statements.push(env.CONTENT_DB.prepare(
         `INSERT INTO content_items (
            id, template_id, title, slug, status, language_code, tags, categories, data,
            app_id, type, parent_id, source_locale, speech, image_ref,
            sort_order, is_default, is_published, metadata_json
          )
          VALUES (?, 'sequence.step', ?, ?, 'published', 'en', NULL, '["sequence"]', ?,
-           'sequence', 'sequence_step', ?, 'en', ?, ?, ?, 1, 1, ?)`,
+           'sequence', 'sequence_step', ?, 'en', ?, ?, ?, 1, 1, ?)
+         ON CONFLICT(id) DO UPDATE SET
+           template_id = excluded.template_id,
+           title = excluded.title,
+           slug = excluded.slug,
+           status = excluded.status,
+           language_code = excluded.language_code,
+           tags = excluded.tags,
+           categories = excluded.categories,
+           data = excluded.data,
+           app_id = excluded.app_id,
+           type = excluded.type,
+           parent_id = excluded.parent_id,
+           source_locale = excluded.source_locale,
+           speech = excluded.speech,
+           image_ref = excluded.image_ref,
+           sort_order = excluded.sort_order,
+           is_default = excluded.is_default,
+           is_published = excluded.is_published,
+           metadata_json = excluded.metadata_json,
+           updated_at = datetime('now')`,
       )
         .bind(
           stepId,
@@ -886,12 +1020,21 @@ async function putAdminSequenceContent(
           asImageRef(step.imageRef) ?? null,
           stepIndex,
           JSON.stringify(metadata),
-        )
-        .run()
+        ))
     }
   }
+  await env.CONTENT_DB.batch(statements)
 
   return { success: true, count: sequences.length }
+}
+
+function deleteRemovedDefaultItemStatements(env: Env, itemIds: string[]): D1PreparedStatement[] {
+  if (itemIds.length === 0) return []
+  const placeholders = itemIds.map(() => '?').join(', ')
+  return [
+    env.CONTENT_DB.prepare(`DELETE FROM content_item_translations WHERE item_id IN (${placeholders})`).bind(...itemIds),
+    env.CONTENT_DB.prepare(`DELETE FROM content_items WHERE id IN (${placeholders})`).bind(...itemIds),
+  ]
 }
 
 // ---------------------------------------------------------------------------
@@ -988,7 +1131,7 @@ async function handlePostCards(request: Request, env: Env, segments: string[]): 
     const order = typeof body.order === 'number' ? body.order : 0
 
     if (isDefault) {
-      if (!(await verifyAdminFromSession(env, sessionToken))) {
+      if (!(await isContentAdmin(request, env))) {
         return error(request, env, 'forbidden', 'Admin role required to add cards to default collections', 403)
       }
       const id = `__default_${crypto.randomUUID().replace(/-/g, '')}`
@@ -1044,16 +1187,9 @@ async function handlePostCards(request: Request, env: Env, segments: string[]): 
   return error(request, env, 'not_found', 'Not found', 404)
 }
 
-function requireAdminSecret(request: Request, env: Env): Response | null {
-  const authHeader = request.headers.get('Authorization') ?? ''
-  const token = authHeader.startsWith('Bearer ') ? authHeader.slice(7) : ''
-  if (!env.ADMIN_SECRET || token !== env.ADMIN_SECRET) {
-    return new Response(JSON.stringify({ success: false, error: { code: 'unauthorized', message: 'Unauthorized' } }), {
-      status: 401,
-      headers: { ...corsHeaders(request, env), 'Content-Type': 'application/json; charset=utf-8' },
-    })
-  }
-  return null
+async function requireAdminSession(request: Request, env: Env): Promise<Response | null> {
+  const auth = await requireContentAdmin(request, env)
+  return auth instanceof Response ? auth : null
 }
 
 // ---------------------------------------------------------------------------
@@ -1062,12 +1198,8 @@ function requireAdminSecret(request: Request, env: Env): Response | null {
 
 async function handleUploadUserImage(request: Request, env: Env): Promise<Response> {
   if (!env.USER_IMAGES) return error(request, env, 'not_configured', 'Image storage not configured.', 503)
-  const authHeader = request.headers.get('Authorization') ?? ''
-  const sessionToken = authHeader.startsWith('Bearer ') ? authHeader.slice(7) : undefined
-  if (!sessionToken) return error(request, env, 'unauthorized', 'Authorization required', 401)
-  if (!(await verifyAdminFromSession(env, sessionToken))) {
-    return error(request, env, 'forbidden', 'Admin role required to upload images', 403)
-  }
+  const authError = await requireAdminSession(request, env)
+  if (authError) return authError
 
   const formData = await request.formData()
   const file = formData.get('file')
@@ -1134,7 +1266,7 @@ async function handleGet(request: Request, env: Env, segments: string[]): Promis
       return json(request, env, { success: true, data }, 200, { 'Cache-Control': 'no-store' })
     }
 
-    const data = await cached(request, env, `${CACHE_KEY_CARDS_COLLECTIONS}:${language}`, () => getCardsCollections(env, language))
+    const data = await cachedInNamespace(request, env, CACHE_KEY_CARDS_COLLECTIONS, language, () => getCardsCollections(env, language))
     return json(request, env, { success: true, data })
   }
 
@@ -1148,7 +1280,7 @@ async function handleGet(request: Request, env: Env, segments: string[]): Promis
       return json(request, env, { success: true, data }, 200, { 'Cache-Control': 'no-store' })
     }
 
-    const data = await cached(request, env, `${CACHE_KEY_YES_NO_CONTENT}:${language}`, () => getYesNoContent(env, language))
+    const data = await cachedInNamespace(request, env, CACHE_KEY_YES_NO_CONTENT, language, () => getYesNoContent(env, language))
     return json(request, env, { success: true, data })
   }
 
@@ -1162,7 +1294,7 @@ async function handleGet(request: Request, env: Env, segments: string[]): Promis
       return json(request, env, { success: true, data }, 200, { 'Cache-Control': 'no-store' })
     }
 
-    const data = await cached(request, env, `${CACHE_KEY_SEQUENCE_CONTENT}:${language}`, () => getSequenceContent(env, language))
+    const data = await cachedInNamespace(request, env, CACHE_KEY_SEQUENCE_CONTENT, language, () => getSequenceContent(env, language))
     return json(request, env, { success: true, data })
   }
 
@@ -1210,7 +1342,7 @@ async function handleQuery(request: Request, env: Env): Promise<Response> {
   if (!query.method) return error(request, env, 'bad_request', 'Query method is required', 400)
 
   try {
-    const cacheKey = `query:${JSON.stringify(query)}`
+    const cacheKey = `query:${await sha256Hex(query)}`
     const data = await cached(request, env, cacheKey, () => executeQuery(env, query))
     return json(request, env, { success: true, data })
   } catch (err) {
@@ -1238,7 +1370,7 @@ export default {
     if (request.method === 'POST' && segments[0] === 'v1' && segments[1] === 'images') return handleUploadUserImage(request, env)
 
     if (request.method === 'PUT' && url.pathname === '/v1/admin/cards/collections') {
-      const authError = requireAdminSecret(request, env)
+      const authError = await requireAdminSession(request, env)
       if (authError) return authError
       let body: { collections?: unknown }
       try {
@@ -1256,7 +1388,7 @@ export default {
     }
 
     if (request.method === 'PUT' && url.pathname === '/v1/admin/sequence/content') {
-      const authError = requireAdminSecret(request, env)
+      const authError = await requireAdminSession(request, env)
       if (authError) return authError
       let body: { sequences?: unknown }
       try {
@@ -1277,20 +1409,27 @@ export default {
   },
 }
 
-async function verifyAdminFromSession(env: Env, sessionToken: string): Promise<boolean> {
-  const baseURL = env.IDENTITY_API_URL ?? 'https://identity.tikoapi.org/v1'
-  try {
-    const resp = await fetch(`${baseURL}/identity/session`, {
-      headers: { Authorization: `Bearer ${sessionToken}`, Accept: 'application/json' },
-    })
-    if (!resp.ok) return false
-    const body = (await resp.json()) as { roles?: string[]; capabilities?: { canEditContent?: boolean } }
-    if (Array.isArray(body.roles) && (body.roles.includes('admin') || body.roles.includes('content_editor'))) return true
-    if (body.capabilities?.canEditContent === true) return true
-    return false
-  } catch {
-    return false
+function authEnv(env: Env): AuthEnv {
+  return {
+    ...env,
+    IDENTITY_BASE_URL: env.IDENTITY_BASE_URL ?? env.IDENTITY_API_URL ?? 'https://identity.tikoapi.org/v1',
   }
+}
+
+async function requireContentAdmin(request: Request, env: Env): Promise<Response | null> {
+  const auth = await requireRole(request, authEnv(env), CONTENT_ADMIN_ROLES, {
+    capabilities: CONTENT_ADMIN_CAPABILITIES,
+  })
+  if (!(auth instanceof Response)) return null
+
+  const body = await auth.json().catch(() => null) as { error?: { code?: string; message?: string } } | null
+  const code = body?.error?.code ?? (auth.status === 401 ? 'unauthorized' : 'forbidden')
+  const message = auth.status === 401 ? 'Unauthorized' : 'Admin access required'
+  return error(request, env, code, message, auth.status)
+}
+
+async function isContentAdmin(request: Request, env: Env): Promise<boolean> {
+  return (await requireContentAdmin(request, env)) === null
 }
 
 async function handlePutCards(request: Request, env: Env, segments: string[]): Promise<Response> {
@@ -1303,18 +1442,19 @@ async function handlePutCards(request: Request, env: Env, segments: string[]): P
     const collectionId = segments[3]
     const isDefault = !collectionId.startsWith('user_')
 
-    let body: { title?: unknown; color?: unknown; imageRef?: unknown; saveAsDefault?: unknown }
+    let body: { title?: unknown; color?: unknown; order?: unknown; imageRef?: unknown; saveAsDefault?: unknown }
     try { body = (await request.json()) as typeof body } catch {
       return error(request, env, 'bad_request', 'Request body must be valid JSON', 400)
     }
     const title = typeof body.title === 'string' ? body.title.trim() : ''
     if (!title) return error(request, env, 'bad_request', 'title is required', 400)
     const color = asColorToken(body.color)
+    const order = typeof body.order === 'number' && Number.isFinite(body.order) ? Math.max(0, Math.round(body.order)) : undefined
     const imageRef = asImageRef(body.imageRef)
     const saveAsDefault = body.saveAsDefault === true
 
     if (isDefault) {
-      const isAdmin = saveAsDefault && await verifyAdminFromSession(env, sessionToken)
+      const isAdmin = saveAsDefault && await isContentAdmin(request, env)
 
       if (!isAdmin) {
         // Non-admin or "just for me": store override in user state so it persists and is merged on next load
@@ -1330,7 +1470,7 @@ async function handlePutCards(request: Request, env: Env, segments: string[]): P
           id: collectionId,
           mediaCategories: base?.mediaCategories ?? [],
           cards: base?.cards ?? [],
-          order: base?.order ?? 0,
+          order: order ?? base?.order ?? 0,
           title,
           color,
           ...(imageRef !== undefined ? { imageRef } : {}),
@@ -1347,12 +1487,12 @@ async function handlePutCards(request: Request, env: Env, segments: string[]): P
 
       await env.CONTENT_DB.prepare(
         `UPDATE content_items
-         SET title = ?, speech = ?, color_token = ?, image_ref = ?, updated_at = datetime('now')
+         SET title = ?, speech = ?, color_token = ?, image_ref = ?, sort_order = COALESCE(?, sort_order), updated_at = datetime('now')
          WHERE id = ? AND app_id = 'cards' AND type = 'collection'`,
-      ).bind(title, title, color, imageRef ?? null, collectionId).run()
+      ).bind(title, title, color, imageRef ?? null, order ?? null, collectionId).run()
       await invalidateCardsCache(env)
 
-      const updated: CardCollection = { id: collectionId, title, color, order: 0, mediaCategories: [], ...(imageRef ? { imageRef } : {}), cards: [] }
+      const updated: CardCollection = { id: collectionId, title, color, order: order ?? 0, mediaCategories: [], ...(imageRef ? { imageRef } : {}), cards: [] }
       return json(request, env, { success: true, data: updated })
     }
 
@@ -1361,7 +1501,7 @@ async function handlePutCards(request: Request, env: Env, segments: string[]): P
     const idx = current.state.collections.findIndex(c => c.id === collectionId)
     if (idx === -1) return error(request, env, 'not_found', 'Collection not found', 404)
     const existing = current.state.collections[idx]
-    const updatedCollection: CardCollection = { ...existing, title, color, ...(imageRef ? { imageRef } : {}) }
+    const updatedCollection: CardCollection = { ...existing, title, color, order: order ?? existing.order, ...(imageRef ? { imageRef } : {}) }
     const updatedCollections = [...current.state.collections]
     updatedCollections[idx] = updatedCollection
     const ok = await putUserCardsState(env, sessionToken, { collections: updatedCollections }, current.version)
@@ -1375,7 +1515,7 @@ async function handlePutCards(request: Request, env: Env, segments: string[]): P
     const cardId = segments[5]
     const isDefault = !collectionId.startsWith('user_')
 
-    let body: { title?: unknown; speech?: unknown; color?: unknown; imageRef?: unknown }
+    let body: { title?: unknown; speech?: unknown; color?: unknown; order?: unknown; imageRef?: unknown }
     try { body = (await request.json()) as typeof body } catch {
       return error(request, env, 'bad_request', 'Request body must be valid JSON', 400)
     }
@@ -1383,19 +1523,20 @@ async function handlePutCards(request: Request, env: Env, segments: string[]): P
     if (!title) return error(request, env, 'bad_request', 'title is required', 400)
     const speech = typeof body.speech === 'string' && body.speech.trim() ? body.speech.trim() : title
     const color = asColorToken(body.color)
+    const order = typeof body.order === 'number' && Number.isFinite(body.order) ? Math.max(0, Math.round(body.order)) : undefined
 
     if (isDefault) {
-      if (!(await verifyAdminFromSession(env, sessionToken))) {
+      if (!(await isContentAdmin(request, env))) {
         return error(request, env, 'forbidden', 'Admin role required to edit default cards', 403)
       }
       const imageRef = asImageRef(body.imageRef) ?? null
       await env.CONTENT_DB.prepare(
         `UPDATE content_items
-         SET title = ?, speech = ?, color_token = ?, image_ref = ?, updated_at = datetime('now')
+         SET title = ?, speech = ?, color_token = ?, image_ref = ?, sort_order = COALESCE(?, sort_order), updated_at = datetime('now')
          WHERE id = ? AND app_id = 'cards' AND type = 'card'`,
-      ).bind(title, speech, color, imageRef, cardId).run()
+      ).bind(title, speech, color, imageRef, order ?? null, cardId).run()
       await invalidateCardsCache(env)
-      const updatedCard: CardTile = { id: cardId, title, speech, color, order: 0, ...(imageRef ? { imageRef } : {}) }
+      const updatedCard: CardTile = { id: cardId, title, speech, color, order: order ?? 0, ...(imageRef ? { imageRef } : {}) }
       return json(request, env, { success: true, data: updatedCard })
     }
 
@@ -1407,7 +1548,7 @@ async function handlePutCards(request: Request, env: Env, segments: string[]): P
     const cardIdx = collection.cards.findIndex(c => c.id === cardId)
     if (cardIdx === -1) return error(request, env, 'not_found', 'Card not found', 404)
     const existingCard = collection.cards[cardIdx]
-    const updatedCard: CardTile = { ...existingCard, title, speech, color }
+    const updatedCard: CardTile = { ...existingCard, title, speech, color, order: order ?? existingCard.order }
     const updatedCards = [...collection.cards]
     updatedCards[cardIdx] = updatedCard
     const updatedCollection: CardCollection = { ...collection, cards: updatedCards }
@@ -1432,7 +1573,7 @@ async function handleDeleteCards(request: Request, env: Env, segments: string[])
     const isDefault = !collectionId.startsWith('user_')
 
     if (isDefault) {
-      if (!(await verifyAdminFromSession(env, sessionToken))) {
+      if (!(await isContentAdmin(request, env))) {
         return error(request, env, 'forbidden', 'Admin role required to delete default collections', 403)
       }
       await env.CONTENT_DB.prepare(`DELETE FROM content_item_translations WHERE item_id IN (SELECT id FROM content_items WHERE app_id = 'cards' AND (id = ? OR parent_id = ?))`).bind(collectionId, collectionId).run()
@@ -1458,7 +1599,7 @@ async function handleDeleteCards(request: Request, env: Env, segments: string[])
     const isDefault = !collectionId.startsWith('user_')
 
     if (isDefault) {
-      if (!(await verifyAdminFromSession(env, sessionToken))) {
+      if (!(await isContentAdmin(request, env))) {
         return error(request, env, 'forbidden', 'Admin role required to delete default cards', 403)
       }
       await env.CONTENT_DB.prepare(`DELETE FROM content_item_translations WHERE item_id = ?`).bind(cardId).run()
@@ -1490,7 +1631,7 @@ async function handlePromoteCollection(request: Request, env: Env, _segments: st
   const authHeader = request.headers.get('Authorization') ?? ''
   const sessionToken = authHeader.startsWith('Bearer ') ? authHeader.slice(7) : undefined
   if (!sessionToken) return error(request, env, 'unauthorized', 'Authorization required', 401)
-  if (!(await verifyAdminFromSession(env, sessionToken))) {
+  if (!(await isContentAdmin(request, env))) {
     return error(request, env, 'forbidden', 'Admin role required to promote collections', 403)
   }
 

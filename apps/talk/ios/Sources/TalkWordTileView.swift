@@ -31,7 +31,7 @@ struct TalkWordTileView: View {
             .background(isSuggested ? appColor.palette.primary.opacity(0.14) : Color.white.opacity(0.75))
             .overlay(
                 RoundedRectangle(cornerRadius: 20, style: .continuous)
-                    .stroke(appColor.palette.primary.opacity(isSuggested ? 0.28 : 0.16), lineWidth: 1)
+                    .stroke(TalkPosColor.color(for: word.pos).opacity(isSuggested ? 0.55 : 0.4), lineWidth: 2)
             )
             .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
             .shadow(color: appColor.palette.dark.opacity(0.08), radius: 8, y: 4)

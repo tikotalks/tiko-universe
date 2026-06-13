@@ -1,3 +1,10 @@
+/*
+  X-Frame-Options: DENY
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: camera=(), microphone=(), geolocation=()
+  Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://data.tikocdn.org https://media.tikoapi.org https://*.tikoapi.org; font-src 'self' data:; connect-src 'self' https://*.tikoapi.org https://*.tikoapps.org https://api.tikotalks.com https://*.workers.dev; media-src 'self' blob: https://data.tikocdn.org https://media.tikoapi.org https://*.tikoapi.org; frame-src 'self' https://www.youtube.com https://www.youtube-nocookie.com; frame-ancestors 'none'; base-uri 'self'; form-action 'self'
+
 /robots.txt
   Content-Type: text/plain
   X-Robots-Tag: noindex

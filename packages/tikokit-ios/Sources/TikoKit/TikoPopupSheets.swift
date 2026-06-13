@@ -78,6 +78,79 @@ public struct TikoPopupCard<Content: View>: View {
     }
 }
 
+public struct TikoFormSheet<Content: View>: View {
+    private let title: String
+    private let subtitle: String?
+    private let icon: String
+    private let appColor: TikoAppColor
+    private let onClose: () -> Void
+    private let content: Content
+
+    public init(
+        title: String,
+        subtitle: String? = nil,
+        icon: String,
+        appColor: TikoAppColor,
+        onClose: @escaping () -> Void,
+        @ViewBuilder content: () -> Content
+    ) {
+        self.title = title
+        self.subtitle = subtitle
+        self.icon = icon
+        self.appColor = appColor
+        self.onClose = onClose
+        self.content = content()
+    }
+
+    public var body: some View {
+        VStack(spacing: 0) {
+            HStack(spacing: 14) {
+                Button(action: onClose) {
+                    Image(systemName: "xmark")
+                        .font(.system(size: 14, weight: .bold))
+                        .foregroundStyle(.primary.opacity(0.75))
+                        .frame(width: 44, height: 44)
+                        .background(Color.primary.opacity(0.055))
+                        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+                }
+                .buttonStyle(.plain)
+                .accessibilityLabel("Close")
+
+                VStack(alignment: .leading, spacing: 3) {
+                    Text(title)
+                        .font(.system(size: 24, weight: .heavy, design: .rounded))
+                        .foregroundStyle(.primary)
+                    if let subtitle, !subtitle.isEmpty {
+                        Text(subtitle)
+                            .font(.system(size: 13, weight: .bold, design: .rounded))
+                            .foregroundStyle(.secondary)
+                    }
+                }
+
+                Spacer()
+
+                Image(systemName: icon)
+                    .font(.system(size: 19, weight: .bold))
+                    .foregroundStyle(appColor.palette.primary)
+                    .frame(width: 44, height: 44)
+                    .background(appColor.palette.primary.opacity(0.12))
+                    .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+            }
+            .padding(.horizontal, 20)
+            .padding(.top, 18)
+            .padding(.bottom, 14)
+
+            ScrollView {
+                content
+                    .padding(.horizontal, 20)
+                    .padding(.bottom, 28)
+            }
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+        .background(Color(.systemGroupedBackground).ignoresSafeArea())
+    }
+}
+
 public enum TikoColorMode: String, CaseIterable, Codable, Sendable {
     case light
     case dark
@@ -173,7 +246,7 @@ public struct TikoSettingsLabels {
             )
         case "mt":
             TikoSettingsLabels(
-                settings: "Settings",
+                settings: "Impostazzjonijiet",
                 subtitle: "Lingwa, dehra u preferenzi tal-app.",
                 language: "Lingwa",
                 colorMode: "Modalità tal-kulur",
@@ -214,6 +287,119 @@ public struct TikoSettingsLabels {
         switch mode {
         case .light: light
         case .dark: dark
+        }
+    }
+}
+
+public struct TikoIdentityLabels {
+    public let chooseAvatar: String
+    public let delete: String
+    public let cancel: String
+    public let deleteUserTitle: String
+    public let deleteUserMessage: String
+    public let yourAccount: String
+    public let verifiedAccount: String
+    public let displayName: String
+    public let yourName: String
+    public let saveProfile: String
+    public let signOut: String
+    public let deleteAccount: String
+    public let signIn: String
+    public let signInSubtitle: String
+    public let email: String
+    public let emailPlaceholder: String
+    public let sendSignInCode: String
+    public let skipForNow: String
+    public let checkEmail: String
+    public let sentCode: String
+    public let codePlaceholder: String
+    public let verifyCode: String
+    public let resendCode: String
+    public let useDifferentEmail: String
+    public let invalidEmail: String
+    public let sendCodeError: String
+    public let saveProfileError: String
+    public let deleteAccountError: String
+    public let incorrectCode: String
+    public let profile: String
+    public let childMode: String
+    public let parentMode: String
+    public let parentModeSubtitle: String
+
+    public static func forLanguage(_ languageID: String) -> TikoIdentityLabels {
+        switch languageID {
+        case "mt":
+            TikoIdentityLabels(
+                chooseAvatar: "Agħżel avatar",
+                delete: "Ħassar",
+                cancel: "Ikkanċella",
+                deleteUserTitle: "Tħassar dan l-utent taʼ Tiko?",
+                deleteUserMessage: "Dan ineħħi l-kont u s-sessjonijiet.",
+                yourAccount: "Il-kont tiegħek",
+                verifiedAccount: "Kont ivverifikat",
+                displayName: "Isem murija",
+                yourName: "Ismek",
+                saveProfile: "Issejvja l-profil",
+                signOut: "Oħroġ",
+                deleteAccount: "Ħassar il-kont",
+                signIn: "Idħol",
+                signInSubtitle: "Daħħal l-email tiegħek biex tirċievi kodiċi tad-dħul.",
+                email: "Email",
+                emailPlaceholder: "int@example.com",
+                sendSignInCode: "Ibgħat kodiċi tad-dħul",
+                skipForNow: "Aqbeż għalissa",
+                checkEmail: "Iċċekkja l-email tiegħek",
+                sentCode: "Bgħatna kodiċi b’6 ċifri lil %@.",
+                codePlaceholder: "123 456",
+                verifyCode: "Ivverifika l-kodiċi",
+                resendCode: "Ibgħat il-kodiċi mill-ġdid",
+                useDifferentEmail: "Uża email differenti",
+                invalidEmail: "Daħħal indirizz tal-email validu.",
+                sendCodeError: "Ma setax jintbagħat il-kodiċi. Erġaʼ pprova.",
+                saveProfileError: "Ma setax jiġi ssejvjat il-profil. Erġaʼ pprova.",
+                deleteAccountError: "Ma setax jitħassar il-kont. Erġaʼ pprova.",
+                incorrectCode: "Kodiċi ħażin - erġaʼ pprova jew ibgħatu mill-ġdid.",
+                profile: "Profil",
+                childMode: "Modalità tat-tfal",
+                parentMode: "Modalità tal-ġenituri",
+                parentModeSubtitle: "Daħħal il-PIN b’4 ċifri biex tattiva l-modalità tal-ġenituri."
+            )
+        default:
+            TikoIdentityLabels(
+                chooseAvatar: "Choose avatar",
+                delete: "Delete",
+                cancel: "Cancel",
+                deleteUserTitle: "Delete this Tiko user?",
+                deleteUserMessage: "This removes the account and sessions.",
+                yourAccount: "Your account",
+                verifiedAccount: "Verified account",
+                displayName: "Display name",
+                yourName: "Your name",
+                saveProfile: "Save profile",
+                signOut: "Sign out",
+                deleteAccount: "Delete account",
+                signIn: "Sign in",
+                signInSubtitle: "Enter your email to receive a sign-in code.",
+                email: "Email",
+                emailPlaceholder: "you@example.com",
+                sendSignInCode: "Send sign-in code",
+                skipForNow: "Skip for now",
+                checkEmail: "Check your email",
+                sentCode: "We sent a 6-digit code to %@.",
+                codePlaceholder: "123 456",
+                verifyCode: "Verify code",
+                resendCode: "Resend code",
+                useDifferentEmail: "Use a different email",
+                invalidEmail: "Enter a valid email address.",
+                sendCodeError: "Could not send the code. Please try again.",
+                saveProfileError: "Could not save the profile. Please try again.",
+                deleteAccountError: "Could not delete the account. Please try again.",
+                incorrectCode: "Incorrect code - please try again or resend.",
+                profile: "Profile",
+                childMode: "Child mode",
+                parentMode: "Parent mode",
+                parentModeSubtitle: "Enter your 4-digit PIN to enable parent mode."
+            )
         }
     }
 }
@@ -767,6 +953,7 @@ public struct TikoAccountSheet: View {
 
     @AppStorage("tiko.userName") private var userName = ""
     @AppStorage("tiko.userEmail") private var userEmail = ""
+    @AppStorage("tiko.language") private var languageID = "en"
     @ObservedObject private var profilePrefs: TikoProfilePreferences
 
     // Session state — drives which screen is shown
@@ -795,13 +982,15 @@ public struct TikoAccountSheet: View {
     }
 
     public var body: some View {
+        let labels = TikoIdentityLabels.forLanguage(languageID)
+
         Group {
             if isSignedIn {
-                profileCard
+                profileCard(labels: labels)
             } else if emailSent {
-                otpCard
+                otpCard(labels: labels)
             } else {
-                loginCard
+                loginCard(labels: labels)
             }
         }
         .task {
@@ -817,7 +1006,7 @@ public struct TikoAccountSheet: View {
         .tikoMediaPickerPopup(
             isPresented: $showingAvatarPicker,
             appColor: appColor,
-            title: "Choose avatar"
+            title: labels.chooseAvatar
         ) { url in
             profilePrefs.setAvatarURL(url.absoluteString)
             if let token = (try? sessionStore.load())?.accessToken {
@@ -827,19 +1016,19 @@ public struct TikoAccountSheet: View {
         .tikoPopup(isPresented: $showingAccountActions) {
             accountActionsCard
         }
-        .alert("Delete this Tiko user?", isPresented: $showDeleteConfirmation) {
-            Button("Delete", role: .destructive) { Task { await deleteAccount() } }
-            Button("Cancel", role: .cancel) {}
+        .alert(labels.deleteUserTitle, isPresented: $showDeleteConfirmation) {
+            Button(labels.delete, role: .destructive) { Task { await deleteAccount() } }
+            Button(labels.cancel, role: .cancel) {}
         } message: {
-            Text("This removes the account and sessions.")
+            Text(labels.deleteUserMessage)
         }
     }
 
     // MARK: - Profile (signed-in state)
 
-    private var profileCard: some View {
+    private func profileCard(labels: TikoIdentityLabels) -> some View {
         TikoPopupCard(
-            title: "Your account",
+            title: labels.yourAccount,
             icon: "person.crop.circle.fill",
             appColor: appColor,
             onClose: onClose
@@ -895,7 +1084,7 @@ public struct TikoAccountSheet: View {
                             Text(signedInEmail ?? userEmail)
                                 .font(.system(size: 15, weight: .semibold, design: .rounded))
                                 .foregroundStyle(.primary)
-                            Text("Verified account")
+                            Text(labels.verifiedAccount)
                                 .font(.system(size: 12, weight: .semibold, design: .rounded))
                                 .foregroundStyle(appColor.palette.primary)
                             if let accountRoleTitle {
@@ -919,10 +1108,10 @@ public struct TikoAccountSheet: View {
 
                 // Editable display name
                 VStack(alignment: .leading, spacing: 7) {
-                    Text("Display name")
+                    Text(labels.displayName)
                         .font(.system(size: 13, weight: .heavy, design: .rounded))
                         .foregroundStyle(.secondary)
-                    TextField("Your name", text: $userName)
+                    TextField(labels.yourName, text: $userName)
                         .font(.system(size: 17, weight: .semibold, design: .rounded))
                         .textInputAutocapitalization(.words)
                         .padding(15)
@@ -939,7 +1128,7 @@ public struct TikoAccountSheet: View {
                 Button {
                     Task { await saveProfileName() }
                 } label: {
-                    Text("Save profile")
+                    Text(labels.saveProfile)
                         .font(.system(size: 16, weight: .heavy, design: .rounded))
                         .foregroundStyle(.white)
                         .frame(maxWidth: .infinity)
@@ -955,7 +1144,9 @@ public struct TikoAccountSheet: View {
     // MARK: - Account actions sheet (sign out / delete)
 
     private var accountActionsCard: some View {
-        TikoPopupCard(
+        let labels = TikoIdentityLabels.forLanguage(languageID)
+
+        return TikoPopupCard(
             title: signedInEmail ?? userEmail,
             icon: "person.crop.circle",
             appColor: appColor,
@@ -977,7 +1168,7 @@ public struct TikoAccountSheet: View {
                             .font(.system(size: 16, weight: .semibold))
                             .foregroundStyle(.secondary)
                             .frame(width: 28)
-                        Text("Sign out")
+                        Text(labels.signOut)
                             .font(.system(size: 16, weight: .semibold, design: .rounded))
                             .foregroundStyle(.primary)
                         Spacer()
@@ -997,7 +1188,7 @@ public struct TikoAccountSheet: View {
                             .font(.system(size: 16, weight: .semibold))
                             .foregroundStyle(.red)
                             .frame(width: 28)
-                        Text("Delete account")
+                        Text(labels.deleteAccount)
                             .font(.system(size: 16, weight: .semibold, design: .rounded))
                             .foregroundStyle(.red)
                         Spacer()
@@ -1014,20 +1205,20 @@ public struct TikoAccountSheet: View {
 
     // MARK: - Email input (start login)
 
-    private var loginCard: some View {
+    private func loginCard(labels: TikoIdentityLabels) -> some View {
         TikoPopupCard(
-            title: "Sign in",
-            subtitle: "Enter your email to receive a sign-in code.",
+            title: labels.signIn,
+            subtitle: labels.signInSubtitle,
             icon: "envelope.fill",
             appColor: appColor,
             onClose: onClose
         ) {
             VStack(spacing: 12) {
                 VStack(alignment: .leading, spacing: 7) {
-                    Text("Email")
+                    Text(labels.email)
                         .font(.system(size: 13, weight: .heavy, design: .rounded))
                         .foregroundStyle(.secondary)
-                    TextField("you@example.com", text: $emailInput)
+                    TextField(labels.emailPlaceholder, text: $emailInput)
                         .font(.system(size: 17, weight: .semibold, design: .rounded))
                         .keyboardType(.emailAddress)
                         .textInputAutocapitalization(.never)
@@ -1049,7 +1240,7 @@ public struct TikoAccountSheet: View {
                 } label: {
                     Group {
                         if isLoading { ProgressView().tint(.white) }
-                        else { Text("Send sign-in code") }
+                        else { Text(labels.sendSignInCode) }
                     }
                     .font(.system(size: 17, weight: .heavy, design: .rounded))
                     .foregroundStyle(.white)
@@ -1061,7 +1252,7 @@ public struct TikoAccountSheet: View {
                 .buttonStyle(.plain)
                 .disabled(isLoading || emailInput.trimmingCharacters(in: .whitespaces).isEmpty)
 
-                Button("Skip for now") { onClose() }
+                Button(labels.skipForNow) { onClose() }
                     .font(.system(size: 14, weight: .heavy, design: .rounded))
                     .foregroundStyle(.secondary)
             }
@@ -1070,16 +1261,16 @@ public struct TikoAccountSheet: View {
 
     // MARK: - OTP verification
 
-    private var otpCard: some View {
+    private func otpCard(labels: TikoIdentityLabels) -> some View {
         TikoPopupCard(
-            title: "Check your email",
-            subtitle: "We sent a 6-digit code to \(emailInput).",
+            title: labels.checkEmail,
+            subtitle: String(format: labels.sentCode, emailInput),
             icon: "envelope.badge.fill",
             appColor: appColor,
             onClose: onClose
         ) {
             VStack(spacing: 12) {
-                TextField("123 456", text: $otpCode)
+                TextField(labels.codePlaceholder, text: $otpCode)
                     .font(.system(size: 32, weight: .heavy, design: .monospaced))
                     .keyboardType(.numberPad)
                     .multilineTextAlignment(.center)
@@ -1103,7 +1294,7 @@ public struct TikoAccountSheet: View {
                 } label: {
                     Group {
                         if isLoading { ProgressView().tint(.white) }
-                        else { Text("Verify code") }
+                        else { Text(labels.verifyCode) }
                     }
                     .font(.system(size: 17, weight: .heavy, design: .rounded))
                     .foregroundStyle(.white)
@@ -1115,7 +1306,7 @@ public struct TikoAccountSheet: View {
                 .buttonStyle(.plain)
                 .disabled(isLoading || otpCode.filter(\.isNumber).count != 6)
 
-                Button("Resend code") {
+                Button(labels.resendCode) {
                     emailSent = false
                     otpCode = ""
                     identityError = nil
@@ -1123,7 +1314,7 @@ public struct TikoAccountSheet: View {
                 .font(.system(size: 14, weight: .heavy, design: .rounded))
                 .foregroundStyle(appColor.palette.primary)
 
-                Button("Use a different email") {
+                Button(labels.useDifferentEmail) {
                     emailSent = false
                     otpCode = ""
                     emailInput = ""
@@ -1177,7 +1368,7 @@ public struct TikoAccountSheet: View {
     private func sendMagicLink() async {
         let email = emailInput.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
         guard !email.isEmpty, email.contains("@") else {
-            identityError = "Enter a valid email address."
+            identityError = TikoIdentityLabels.forLanguage(languageID).invalidEmail
             return
         }
         isLoading = true
@@ -1188,7 +1379,7 @@ public struct TikoAccountSheet: View {
             userEmail = email
             emailSent = true
         } catch {
-            identityError = "Could not send the code. Please try again."
+            identityError = TikoIdentityLabels.forLanguage(languageID).sendCodeError
         }
         isLoading = false
     }
@@ -1203,7 +1394,7 @@ public struct TikoAccountSheet: View {
             identityError = nil
             onClose()
         } catch {
-            identityError = "Could not save the profile. Please try again."
+            identityError = TikoIdentityLabels.forLanguage(languageID).saveProfileError
         }
     }
 
@@ -1226,7 +1417,7 @@ public struct TikoAccountSheet: View {
             isLoading = false
             onClose()
         } catch {
-            identityError = "Could not delete the account. Please try again."
+            identityError = TikoIdentityLabels.forLanguage(languageID).deleteAccountError
             isLoading = false
         }
     }
@@ -1247,7 +1438,7 @@ public struct TikoAccountSheet: View {
             onClose()
         } catch {
             otpCode = ""
-            identityError = "Incorrect code — please try again or resend."
+            identityError = TikoIdentityLabels.forLanguage(languageID).incorrectCode
             isLoading = false
         }
     }
@@ -1258,6 +1449,7 @@ public struct TikoProfileMenuSheet: View {
     private let onProfile: () -> Void
     private let onChildMode: () -> Void
     private let onClose: () -> Void
+    @AppStorage("tiko.language") private var languageID = "en"
 
     public init(
         appColor: TikoAppColor,
@@ -1272,21 +1464,23 @@ public struct TikoProfileMenuSheet: View {
     }
 
     public var body: some View {
+        let labels = TikoIdentityLabels.forLanguage(languageID)
+
         TikoPopupCard(
-            title: "Profile",
+            title: labels.profile,
             icon: "person.crop.circle",
             appColor: appColor,
             onClose: onClose
         ) {
             VStack(spacing: 10) {
                 TikoSettingsActionRow(
-                    title: "Profile",
+                    title: labels.profile,
                     icon: "person.crop.circle",
                     appColor: appColor,
                     action: onProfile
                 )
                 TikoSettingsActionRow(
-                    title: "Child mode",
+                    title: labels.childMode,
                     icon: "figure.child",
                     appColor: appColor,
                     action: onChildMode
@@ -1304,6 +1498,7 @@ public struct TikoParentCodeEntrySheet: View {
     @State private var enteredCode = ""
     @State private var isLoading = false
     @State private var error: String? = nil
+    @AppStorage("tiko.language") private var languageID = "en"
 
     private let identityClient = TikoIdentityClient()
     private let sessionStore = TikoDeviceSessionStore()
@@ -1315,9 +1510,11 @@ public struct TikoParentCodeEntrySheet: View {
     }
 
     public var body: some View {
+        let labels = TikoIdentityLabels.forLanguage(languageID)
+
         TikoPopupCard(
-            title: "Parent mode",
-            subtitle: "Enter your 4-digit PIN to enable parent mode.",
+            title: labels.parentMode,
+            subtitle: labels.parentModeSubtitle,
             icon: "lock.fill",
             appColor: appColor,
             onClose: onClose

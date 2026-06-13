@@ -2,10 +2,13 @@ import { computed, ref } from 'vue'
 import { IdentityClient, type IdentityBundle } from '@tiko/identity'
 import type { AdminApiResponse, AdminConfig, AdminUser } from '../types/admin'
 
-const ADMIN_TOKEN_KEY = 'tiko_admin_token'
-const ADMIN_IDENTITY_KEY = 'tiko_admin_identity'
+const LEGACY_ADMIN_TOKEN_KEY = 'tiko_admin_token'
+const LEGACY_ADMIN_IDENTITY_KEY = 'tiko_admin_identity'
 
-const token = ref(localStorage.getItem(ADMIN_TOKEN_KEY) ?? '')
+localStorage.removeItem(LEGACY_ADMIN_TOKEN_KEY)
+localStorage.removeItem(LEGACY_ADMIN_IDENTITY_KEY)
+
+const token = ref('')
 const user = ref<AdminUser | null>(null)
 const config = ref<AdminConfig | null>(null)
 const loading = ref(false)
@@ -18,6 +21,13 @@ interface ApiErrorBody {
   error?: { message?: string } | string
 }
 
+class AdminFetchError extends Error {
+  constructor(message: string, readonly status: number) {
+    super(message)
+    this.name = 'AdminFetchError'
+  }
+}
+
 function adminApiBaseUrl(): string {
   const env = (import.meta as ImportMeta & { env?: Record<string, string | undefined> }).env
   return (env?.VITE_ADMIN_API_URL ?? 'https://admin.tikoapi.org/v1/admin').replace(/\/$/, '')
@@ -28,20 +38,9 @@ function identityApiBaseUrl(): string {
   return (env?.VITE_TIKO_API_BASE_URL ?? env?.VITE_IDENTITY_API_URL ?? 'https://identity.tikoapi.org/v1').replace(/\/$/, '')
 }
 
-function readStoredIdentity(): IdentityBundle | null {
-  try {
-    const value = localStorage.getItem(ADMIN_IDENTITY_KEY)
-    return value ? JSON.parse(value) as IdentityBundle : null
-  } catch {
-    return null
-  }
-}
-
 function storeIdentity(bundle: IdentityBundle) {
   const sessionToken = requireSessionToken(bundle)
   token.value = sessionToken
-  localStorage.setItem(ADMIN_IDENTITY_KEY, JSON.stringify(bundle))
-  localStorage.setItem(ADMIN_TOKEN_KEY, sessionToken)
 }
 
 function requireSessionToken(bundle: IdentityBundle): string {
@@ -71,28 +70,22 @@ async function adminFetch<T>(path: string): Promise<T> {
   const body = await response.json().catch(() => null) as ApiErrorBody | AdminApiResponse<T> | null
   if (!response.ok) {
     const apiError = body && 'error' in body ? body.error : undefined
-    throw new Error((typeof apiError === 'string' ? apiError : apiError?.message) ?? `Admin API error: ${response.status}`)
+    throw new AdminFetchError((typeof apiError === 'string' ? apiError : apiError?.message) ?? `Admin API error: ${response.status}`, response.status)
   }
   return (body as AdminApiResponse<T>).data
 }
 
 export function useAdminAuth() {
   const isAuthed = computed(() => Boolean(user.value))
-  const identityClient = new IdentityClient({ baseUrl: identityApiBaseUrl() })
+  const identityClient = new IdentityClient({ baseUrl: identityApiBaseUrl(), credentials: 'include' })
 
   async function ensureDeviceSession(): Promise<IdentityBundle> {
-    const stored = readStoredIdentity()
-    if (stored?.session?.token) {
-      try {
-        const current = await identityClient.getSession(stored.session.token)
-        const restored: IdentityBundle = { ...current, device: current.device ? { ...current.device, secret: stored.device?.secret } : null, session: stored.session }
-        storeIdentity(restored)
-        return restored
-      } catch {
-        localStorage.removeItem(ADMIN_IDENTITY_KEY)
-        localStorage.removeItem(ADMIN_TOKEN_KEY)
-        token.value = ''
-      }
+    try {
+      const current = await identityClient.getCookieSession()
+      storeIdentity(current)
+      return current
+    } catch {
+      token.value = ''
     }
 
     const bundle = await identityClient.bootstrapDevice({
@@ -122,15 +115,18 @@ export function useAdminAuth() {
     if (!silent) loading.value = true
     error.value = null
     try {
-      user.value = await adminFetch<AdminUser>('/me')
-      config.value = await adminFetch<AdminConfig>('/config')
-      localStorage.setItem(ADMIN_TOKEN_KEY, token.value)
+      const nextUser = await adminFetch<AdminUser>('/me')
+      const nextConfig = await adminFetch<AdminConfig>('/config')
+      user.value = nextUser
+      config.value = nextConfig
       loginMessage.value = null
       return true
     } catch (e) {
-      user.value = null
-      config.value = null
-      localStorage.removeItem(ADMIN_TOKEN_KEY)
+      if (e instanceof AdminFetchError && (e.status === 401 || e.status === 403)) {
+        user.value = null
+        config.value = null
+        token.value = ''
+      }
       if (!silent) error.value = e instanceof Error ? e.message : 'Admin verification failed.'
       return false
     } finally {
@@ -194,8 +190,8 @@ export function useAdminAuth() {
     config.value = null
     loginMessage.value = null
     error.value = null
-    localStorage.removeItem(ADMIN_TOKEN_KEY)
-    localStorage.removeItem(ADMIN_IDENTITY_KEY)
+    localStorage.removeItem(LEGACY_ADMIN_TOKEN_KEY)
+    localStorage.removeItem(LEGACY_ADMIN_IDENTITY_KEY)
   }
 
   return {

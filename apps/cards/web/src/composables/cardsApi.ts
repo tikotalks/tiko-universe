@@ -1,8 +1,8 @@
+import { resolveTikoContentApiBaseUrl } from '@tiko/ui'
 import type { CardCollection, CardsCardInput, CardsCollectionInput, CardsPayload, CommunicationCard } from '../types'
 
 export function resolveContentBaseUrl() {
-  const env = (import.meta as ImportMeta & { env?: Record<string, string | undefined> }).env
-  return (env?.VITE_TIKO_CONTENT_BASE_URL ?? env?.VITE_CONTENT_API_URL ?? 'https://content.tikoapi.org/v1').replace(/\/$/, '')
+  return resolveTikoContentApiBaseUrl()
 }
 
 export interface CardsApiOptions {

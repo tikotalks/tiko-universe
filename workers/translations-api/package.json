@@ -5,7 +5,9 @@
   "scripts": {
     "dev": "wrangler dev",
     "deploy": "wrangler deploy",
+    "deploy:dry-run": "wrangler deploy --dry-run",
     "deploy:production": "wrangler deploy --env production",
+    "test": "cd ../.. && vitest run tests/translations-api.test.ts",
     "kv:create:dev": "wrangler kv namespace create TRANSLATIONS_KV",
     "kv:create:prod": "wrangler kv namespace create TRANSLATIONS_KV --env production",
     "secret:lezu-key": "wrangler secret put LEZU_API_KEY",
@@ -13,6 +15,6 @@
     "secret:webhook": "wrangler secret put WEBHOOK_SECRET"
   },
   "devDependencies": {
-    "wrangler": "^3.0.0"
+    "wrangler": "^4.0.0"
   }
 }

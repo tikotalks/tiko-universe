@@ -1,7 +1,10 @@
 import { computed, ref, type Ref } from 'vue'
 import type {
+  AddUserWordResponse,
   Category,
   DeleteSentencePhraseResponse,
+  DeleteUserWordResponse,
+  ListUserWordsResponse,
   SavedPhrase,
   SaveSentencePhraseResponse,
   SentenceCompleteResponse,
@@ -12,6 +15,7 @@ import type {
   SentenceVocabularyResponse,
   StripState,
   Template,
+  UserWord,
   WordTile,
 } from '@tiko/talk-types'
 import fallbackPackEn from '../data/fallback-pack-en.json'
@@ -92,6 +96,7 @@ export function useSentenceApi(options: SentenceApiOptions) {
   const words = ref<WordTile[]>([])
   const suggestions = ref<WordTile[]>([])
   const savedPhrases = ref<SavedPhrase[]>([])
+  const customWords = ref<UserWord[]>([])
   const stripState = ref<StripState>({ display: '', validNext: [], canComplete: false })
   const lastCompletion = ref<SentenceCompleteResponse | null>(null)
 
@@ -148,6 +153,7 @@ export function useSentenceApi(options: SentenceApiOptions) {
       stripState.value = { display: '', validNext: data.stripState.validNext, canComplete: data.stripState.canComplete }
       mode.value = 'online'
       void loadVocabulary()
+      void listWords()
     } catch (currentError) {
       clearTimeout(timeoutId)
       // Already showing fallback; just record the error if it wasn't a deliberate abort
@@ -222,17 +228,81 @@ export function useSentenceApi(options: SentenceApiOptions) {
     }
   }
 
-  async function loadVocabulary(category?: string) {
-    if (isOffline.value) return
+  async function loadVocabulary(category?: string, query?: string) {
+    if (isOffline.value) {
+      // Filter the local fallback board so search still works offline.
+      const q = query?.trim().toLowerCase()
+      const base = category ? fallbackPack.words.filter((word) => word.category === category) : fallbackPack.words
+      words.value = q ? base.filter((word) => word.text.toLowerCase().includes(q)) : base
+      return
+    }
     try {
       const params = new URLSearchParams({ locale: options.language.value })
       if (category) params.set('category', category)
+      if (query && query.trim()) params.set('q', query.trim())
       const data = await requestJson<SentenceVocabularyResponse>(`/v1/sentence/vocabulary?${params.toString()}`)
       words.value = data.words
       categories.value = data.categories
     } catch (currentError) {
       error.value = currentError instanceof Error ? currentError.message : 'sentence_vocabulary_failed'
     }
+  }
+
+  /** Board filter: search words by free text (custom words included server-side). */
+  function filterBoard(query: string, category?: string) {
+    return loadVocabulary(category, query)
+  }
+
+  async function listWords() {
+    if (isOffline.value) return
+    try {
+      const params = new URLSearchParams({ locale: options.language.value })
+      const data = await requestJson<ListUserWordsResponse>(`/v1/sentence/words?${params.toString()}`)
+      customWords.value = data.words
+    } catch {
+      // Custom words are an enhancement; never block the board on them.
+    }
+  }
+
+  /**
+   * Add a word the board doesn't have (e.g. a name like "Sil"). When `afterWordIds`
+   * is the current strip, the word is learned for that position and surfaces there
+   * next time. Returns the created word, or null when offline.
+   */
+  async function addWord(
+    text: string,
+    opts: { pos?: string, category?: string, icon?: string, afterWordIds?: string[] } = {},
+  ): Promise<UserWord | null> {
+    if (isOffline.value) return null
+    error.value = null
+    const data = await requestJson<AddUserWordResponse>('/v1/sentence/words', {
+      method: 'POST',
+      body: JSON.stringify({
+        locale: options.language.value,
+        text,
+        ...(opts.pos ? { pos: opts.pos } : {}),
+        ...(opts.category ? { category: opts.category } : {}),
+        ...(opts.icon ? { icon: opts.icon } : {}),
+        ...(opts.afterWordIds ? { afterWordIds: opts.afterWordIds } : {}),
+      }),
+    })
+    // Surface it immediately on the board without waiting for a round-trip.
+    const merged = new Map(words.value.map((word) => [word.id, word]))
+    merged.set(data.word.id, { ...data.word, isCustom: true })
+    words.value = Array.from(merged.values())
+    await listWords()
+    return data.word
+  }
+
+  async function deleteWord(wordId: string) {
+    const params = new URLSearchParams({ locale: options.language.value })
+    const data = await requestJson<DeleteUserWordResponse>(
+      `/v1/sentence/words/${encodeURIComponent(wordId)}?${params.toString()}`,
+      { method: 'DELETE' },
+    )
+    words.value = words.value.filter((word) => word.id !== wordId)
+    await listWords()
+    return data
   }
 
   async function loadPhrases() {
@@ -298,6 +368,7 @@ export function useSentenceApi(options: SentenceApiOptions) {
     words,
     suggestions,
     savedPhrases,
+    customWords,
     stripState,
     lastCompletion,
     activeWordsByCategory,
@@ -307,6 +378,10 @@ export function useSentenceApi(options: SentenceApiOptions) {
     select,
     prefetchNext,
     loadVocabulary,
+    filterBoard,
+    listWords,
+    addWord,
+    deleteWord,
     loadPhrases,
     complete,
     savePhrase,

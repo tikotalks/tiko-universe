@@ -45,8 +45,6 @@ export interface UseIdentityRuntimeOptions {
 export interface StoredIdentity {
   userId?: string
   deviceId?: string
-  deviceSecret?: string
-  sessionToken?: string
   expiresAt?: string
   accountEmail?: string | null
   accountEmailVerified?: boolean
@@ -108,6 +106,7 @@ export interface TikoIdentityLabels {
     enterSubtitle: string
     codesDontMatch: string
     wrongCode: string
+    digitLabel: string
     back: string
     cancel: string
   }
@@ -190,6 +189,7 @@ const defaultIdentityLabels: TikoIdentityLabels = {
     enterSubtitle: 'to switch to parent mode',
     codesDontMatch: "Codes don't match",
     wrongCode: 'Wrong code',
+    digitLabel: 'Digit {index} of {total}',
     back: 'Back',
     cancel: 'Cancel',
   },
@@ -268,8 +268,6 @@ export function useIdentityRuntime(options: UseIdentityRuntimeOptions) {
     writeJson(storageKey, {
       userId: bundle.subject.id,
       deviceId: bundle.device?.id,
-      deviceSecret: bundle.device?.secret,
-      sessionToken: bundle.session.token,
       expiresAt: bundle.session.expiresAt,
       accountEmail: bundle.account?.email ?? null,
       accountEmailVerified: Boolean(bundle.account?.emailVerified),
@@ -301,23 +299,11 @@ export function useIdentityRuntime(options: UseIdentityRuntimeOptions) {
       saveIdentity(bundle)
       return
     } catch {
-      // Fall through to local bearer/device fallback.
-    }
-
-    if (storedIdentity.sessionToken) {
-      try {
-        const bundle = await identityClient.getSession(storedIdentity.sessionToken)
-        saveIdentity(bundle)
-        return
-      } catch {
-        // Fall through to device bootstrap.
-      }
+      // Fall through to device bootstrap when the HttpOnly cookie is missing or expired.
     }
 
     const bundle = await identityClient.bootstrapDevice({
       device: {
-        id: storedIdentity.deviceId,
-        secret: storedIdentity.deviceSecret,
         name: deviceName,
         platform: 'web',
       },
@@ -352,6 +338,7 @@ export function useIdentityRuntime(options: UseIdentityRuntimeOptions) {
 
   function openProfileMenu() {
     requirePopup().showPopup({
+      id: 'tiko-profile-menu',
       component: markRaw(TikoProfileMenu),
       title: '',
       props: {
@@ -380,6 +367,7 @@ export function useIdentityRuntime(options: UseIdentityRuntimeOptions) {
 
   function openAccountPopup() {
     requirePopup().showPopup({
+      id: 'tiko-account',
       component: markRaw({
         setup() {
           const nameInput = ref<string>(state.displayName.value ?? '')
@@ -507,6 +495,7 @@ export function useIdentityRuntime(options: UseIdentityRuntimeOptions) {
 
   function openParentCodePopup() {
     requirePopup().showPopup({
+      id: 'tiko-parent-code',
       component: markRaw(TikoPinPopup),
       title: '',
       props: {
@@ -542,6 +531,7 @@ export function useIdentityRuntime(options: UseIdentityRuntimeOptions) {
 
     if (!hasParentCode.value) {
       requirePopup().showPopup({
+        id: 'tiko-set-parent-code',
         component: markRaw(TikoPinPopup),
         title: '',
         props: { existingHash: undefined, labels: labels.value.pin },
@@ -580,6 +570,7 @@ export function useIdentityRuntime(options: UseIdentityRuntimeOptions) {
 
   function openChildAccounts() {
     requirePopup().showPopup({
+      id: 'tiko-child-accounts',
       component: markRaw(TikoChildAccountsPanel),
       title: '',
       props: {

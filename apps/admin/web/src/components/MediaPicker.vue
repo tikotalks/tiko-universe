@@ -15,7 +15,7 @@ const emit = defineEmits<{
 }>()
 
 const bemm = useBemm('media-picker', { return: 'string', includeBaseClass: true })
-const { items, loading, uploading, list, upload, itemUrl, itemPreviewUrl, previewUrl } = useAdminMediaLibrary()
+const { items, loading, uploading, list, upload, itemUrl, itemPreviewUrl, previewUrl, mediaRefPreviewUrl } = useAdminMediaLibrary()
 
 const open = ref(false)
 const search = ref('')
@@ -58,7 +58,7 @@ watch(open, (v) => { if (v) loadMedia() })
 function selectedPreviewUrl(value: string, size = 96): string {
   if (!props.emitId) return previewUrl(value, size)
   const selectedItem = items.value.find(item => item.id === value)
-  return selectedItem ? itemPreviewUrl(selectedItem, size) : `https://media.tikoapi.org/v1/media/${encodeURIComponent(value)}/download`
+  return selectedItem ? itemPreviewUrl(selectedItem, size) : mediaRefPreviewUrl(value, size)
 }
 </script>
 

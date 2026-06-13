@@ -36,7 +36,9 @@ actor TalkAPIClient: TalkSentenceAPI {
         var baseURL: URL {
             switch self {
             case .development:
-                URL(string: "https://dev-api.tikotalks.com/v1/sentence")!
+                // The sentence worker's dev route is the dedicated subdomain; the
+                // dev-api.tikotalks.com zone only serves the generation worker.
+                URL(string: "https://dev.sentence.tikoapi.org/v1/sentence")!
             case .production:
                 URL(string: "https://api.tikotalks.com/v1/sentence")!
             case .custom(let url):
@@ -50,8 +52,16 @@ actor TalkAPIClient: TalkSentenceAPI {
     private let decoder = JSONDecoder()
     private let encoder = JSONEncoder()
 
-    init(environment: Environment = .development, session: URLSession = .shared) {
-        self.environment = environment
+    static var defaultEnvironment: Environment {
+        #if DEBUG
+        return .development
+        #else
+        return .production
+        #endif
+    }
+
+    init(environment: Environment? = nil, session: URLSession = .shared) {
+        self.environment = environment ?? Self.defaultEnvironment
         self.session = session
     }
 

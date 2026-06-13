@@ -18,8 +18,9 @@ Tiko is a child-first universe of small, focused AAC (Augmentative and Alternati
 
 ```bash
 npm ci                          # Install all workspace dependencies
-npm run check                   # lint + typecheck + test (the full CI gate)
-npm run lint                    # Checks required scaffold files exist (NOT a code linter)
+npm run check                   # scaffold check + lint + typecheck + test (the full CI gate)
+npm run scaffold:check          # Checks required scaffold files exist
+npm run lint                    # Runs oxlint over the repo
 npm run typecheck               # vue-tsc --noEmit -p tsconfig.json
 npm run test                    # vitest run (all unit tests, jsdom environment)
 npm run test:contracts          # API contract tests only
@@ -38,7 +39,23 @@ npm run test --workspace=apps/yes-no/web      # App-specific unit tests
 npm run build --workspace=apps/talk/web       # Build one app
 ```
 
-App dev ports: yes-no:3056, timer:3057, type:3058, clock:3059, cards:3061, sequence:3062, todo:3065, radio:3067.
+App dev ports:
+
+| App | Port |
+| --- | ---: |
+| yes-no | 3056 |
+| timer | 3057 |
+| type | 3058 |
+| radio | 3059 |
+| website | 3060 |
+| media | 3061 |
+| admin | 3062 |
+| cards | 3063 |
+| sequence | 3064 |
+| todo | 3065 |
+| talk | 3066 |
+
+`apps/clock/web` is not a runnable workspace at the moment and should stay out of active app commands until the app is restored.
 
 ### E2E tests
 
@@ -47,7 +64,7 @@ npx playwright test --config=playwright.config.ts              # All apps
 npx playwright test --project=timer --config=playwright.config.ts  # Single app
 ```
 
-Admin uses Cypress separately: `apps/admin/web` has its own `cypress.config.mjs`.
+Current status: Playwright specs exist for several child-facing web apps, but `@playwright/test` is not currently declared in the root package manifest and E2E is not part of the default CI gate. Treat these commands as local/manual until the Playwright task in `REVIEW_TASKS.md` is completed. Admin uses Cypress separately: `apps/admin/web` has its own `cypress.config.mjs`.
 
 ### iOS
 
@@ -127,7 +144,7 @@ docs/                          # Doctrine, architecture, API contracts, app spec
 
 tools/                         # Build/codegen tools
   generate-app-configs.mjs     # Generates appConfig.ts for web + Swift for iOS
-  check-placeholders.mjs       # CI lint: verifies required scaffold files exist
+  check-placeholders.mjs       # CI scaffold check: verifies required scaffold files exist
   check-doctrine.mjs           # Verifies doctrine markdown exists
 
 tests/                         # Root-level integration/contract tests
@@ -270,6 +287,7 @@ Located in `tests/` at repo root. These test worker API contracts without runnin
 - Runs against real dev server on dedicated port
 - `testIdAttribute: 'data-test'` configured globally
 - Single worker, no parallelism (`workers: 1`)
+- Not currently part of the default CI gate; see `REVIEW_TASKS.md` before treating Playwright as restored.
 
 ### iOS tests
 - XCTest framework, one test file per app in `apps/<name>/ios/Tests/`
@@ -289,7 +307,7 @@ Production domains: `tiko.mt`, `tikotalks.com`, `tikoapps.org` subdomains.
 
 ## Gotchas and Non-Obvious Patterns
 
-- **`npm run lint` is NOT a code linter.** It runs `tools/check-placeholders.mjs` which only verifies required scaffold files exist. There is no ESLint/Prettier in this repo.
+- **`npm run lint` is a real code linter.** It runs `oxlint` across the repo. The old scaffold-file verification is now `npm run scaffold:check`.
 
 - **`appConfig.ts` files are auto-generated.** Do not edit them directly. Run `npm run generate:app-configs` to regenerate. The generator fetches from the app-api and falls back to hardcoded configs.
 

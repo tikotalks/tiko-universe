@@ -65,6 +65,12 @@ public struct TikoAppHeader: View {
     private let iconSize: CGFloat = 40
     private var squircle: RoundedRectangle { RoundedRectangle(cornerRadius: 10, style: .continuous) }
 
+    private var fallbackAppIcon: some View {
+        Image(systemName: appIcon)
+            .font(.system(size: 18, weight: .bold))
+            .foregroundStyle(.white)
+    }
+
     @ViewBuilder
     private var appIconContent: some View {
         if onIconTap != nil {
@@ -75,15 +81,13 @@ public struct TikoAppHeader: View {
                 .background(appColor.palette.primary)
                 .clipShape(squircle)
         } else if let appIconURL {
-            AsyncImage(url: appIconURL) { image in
-                image.resizable().scaledToFill()
-            } placeholder: {
-                Image(systemName: appIcon)
-                    .font(.system(size: 18, weight: .bold))
-                    .foregroundStyle(.white)
+            ZStack {
+                appColor.palette.primary
+                TikoCachedRemoteImage(url: appIconURL) {
+                    fallbackAppIcon
+                }
             }
             .frame(width: iconSize, height: iconSize)
-            .background(appColor.palette.primary)
             .clipShape(squircle)
         } else {
             Image(systemName: appIcon)
@@ -430,7 +434,7 @@ public struct TikoAppShell<Content: View, SettingsContent: View>: View {
 
     private func fetchIconIfNeeded() async {
         if let iconUrl = appIconImageUrl, let url = URL(string: iconUrl), !iconUrl.isEmpty {
-            fetchedIconURL = resizedCDNURL(url, size: 100)
+            fetchedIconURL = await resolveAppIconURL(url, size: 100)
             return
         }
         guard let category = appIconMediaCategory else { return }
@@ -467,6 +471,40 @@ public struct TikoAppShell<Content: View, SettingsContent: View>: View {
         guard let urlString = item["original_url"] as? String,
               let imageURL = URL(string: urlString) else { return nil }
         return resizedCDNURL(imageURL, size: 100)
+    }
+
+    private func resolveAppIconURL(_ url: URL, size: Int) async -> URL {
+        if let mediaId = mediaDownloadId(from: url) {
+            let mediaURL = url.deletingLastPathComponent()
+            if let originalURL = await fetchOriginalMediaURL(url: mediaURL) {
+                return resizedCDNURL(originalURL, size: size)
+            }
+            let fallbackMediaURL = URL(string: "https://media.tikoapi.org/v1/media/\(mediaId)")
+            if let fallbackMediaURL, let originalURL = await fetchOriginalMediaURL(url: fallbackMediaURL) {
+                return resizedCDNURL(originalURL, size: size)
+            }
+        }
+        return resizedCDNURL(url, size: size)
+    }
+
+    private func mediaDownloadId(from url: URL) -> String? {
+        guard url.host == "media.tikoapi.org" else { return nil }
+        let parts = url.pathComponents
+        guard let mediaIndex = parts.firstIndex(of: "media"),
+              parts.indices.contains(mediaIndex + 2),
+              parts[mediaIndex + 2] == "download" else { return nil }
+        return parts[mediaIndex + 1]
+    }
+
+    private func fetchOriginalMediaURL(url: URL) async -> URL? {
+        guard let (data, response) = try? await URLSession.shared.data(from: url),
+              let http = response as? HTTPURLResponse, (200..<300).contains(http.statusCode),
+              let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any] else { return nil }
+
+        let media = (json["data"] as? [String: Any]) ?? json
+        guard let urlString = media["original_url"] as? String,
+              let imageURL = URL(string: urlString) else { return nil }
+        return imageURL
     }
 
     private func resizedCDNURL(_ url: URL, size: Int) -> URL {

@@ -3,12 +3,20 @@ import { computed, onMounted, ref, watch } from 'vue'
 import { Button, Popup } from '@sil/ui'
 import { IdentityClient, type IdentityBundle } from '@tiko/identity'
 import { TikoDataClient, type TimerSettings, type TimerState } from '@tiko/data'
-import { createI18n, createTikoIdentityLabels, defaultLanguage, tikoI18nKeys, tikoLanguageOptions, tikoLanguages, type TikoLanguage } from '@tiko/i18n'
+import { createI18n, createTikoIdentityLabels, createTikoShellLabels, normalizeTikoLanguage, tikoI18nKeys, tikoLanguageOptions, type TikoLanguage } from '@tiko/i18n'
 import {
   TikoAppShell,
   TikoSettingsPanel,
   TikoColorMode,
+  normalizeTikoColorMode,
+  readTikoLocalJson,
+  resolveTikoAppApiBaseUrl,
+  resolveTikoIdentityBaseUrl,
+  useTikoAppDataRuntime,
+  useTikoColorModeEffect,
+  useTikoI18nRuntime,
   useIdentityRuntime,
+  writeTikoLocalJson,
   type IdentityRuntimeState
 } from '@tiko/ui'
 import { useTimer, type TimerMode } from './composables/useTimer'
@@ -18,8 +26,8 @@ import './styles.scss'
 const storageKey = 'tiko:timer'
 const identityStorageKey = 'tiko:identity:device-session'
 const appId = 'timer' as const
-const apiBaseUrl = resolveApiBaseUrl()
-const identityBaseUrl = resolveIdentityBaseUrl()
+const apiBaseUrl = resolveTikoAppApiBaseUrl()
+const identityBaseUrl = resolveTikoIdentityBaseUrl()
 
 interface PersistedState {
   language?: string
@@ -29,6 +37,7 @@ interface PersistedState {
   timerMode?: TimerMode
   targetMs?: number
   remainingMs?: number
+  totalDurationMs?: number
   startedAt?: number | null
   presets?: TimerPreset[]
 }
@@ -45,38 +54,6 @@ const defaultPresets: TimerPreset[] = [
   { id: '5m', label: '5 min', seconds: 300 },
   { id: '10m', label: '10 min', seconds: 600 },
 ]
-
-function resolveApiBaseUrl() {
-  const env = (import.meta as ImportMeta & { env?: Record<string, string | undefined> }).env
-  return (env?.VITE_TIKO_API_BASE_URL ?? 'https://app.tikoapi.org/v1').replace(/\/$/, '')
-}
-
-function resolveIdentityBaseUrl() {
-  const env = (import.meta as ImportMeta & { env?: Record<string, string | undefined> }).env
-  return (env?.VITE_IDENTITY_API_URL ?? env?.VITE_TIKO_IDENTITY_BASE_URL ?? 'https://id.tikoapps.org/v1').replace(/\/$/, '')
-}
-
-function readJson<T>(key: string, fallback: T): T {
-  if (typeof window === 'undefined') return fallback
-  try {
-    return JSON.parse(window.localStorage.getItem(key) ?? 'null') ?? fallback
-  } catch {
-    return fallback
-  }
-}
-
-function writeJson(key: string, value: unknown) {
-  if (typeof window === 'undefined') return
-  window.localStorage.setItem(key, JSON.stringify(value))
-}
-
-function toLanguage(value: string | undefined): TikoLanguage {
-  return tikoLanguages.includes(value as TikoLanguage) ? value as TikoLanguage : defaultLanguage
-}
-
-function toColorMode(value: string | undefined): TikoColorMode {
-  return value === 'light' || value === 'dark' || value === 'system' ? value : 'system'
-}
 
 function normalizePreset(value: unknown, index: number): TimerPreset | null {
   if (!value || typeof value !== 'object') return null
@@ -97,16 +74,14 @@ function normalizePresets(value: unknown): TimerPreset[] {
   return presets.length > 0 ? presets : defaultPresets
 }
 
-const stored = readJson<PersistedState>(storageKey, {})
-const i18n = createI18n({ app: appId, language: toLanguage(stored.language) })
-const language = ref<TikoLanguage>(toLanguage(stored.language))
-const colorMode = ref<TikoColorMode>(toColorMode(stored.colorMode))
+const stored = readTikoLocalJson<PersistedState>(storageKey, {})
+const i18n = createI18n({ app: appId, language: normalizeTikoLanguage(stored.language) })
+const language = ref<TikoLanguage>(normalizeTikoLanguage(stored.language))
+const colorMode = ref<TikoColorMode>(normalizeTikoColorMode(stored.colorMode))
 const customMinutes = ref(stored.customMinutes ?? 5)
 const customSeconds = ref(stored.customSeconds ?? 0)
 const presets = ref<TimerPreset[]>(normalizePresets(stored.presets))
 const settingsOpen = ref(false)
-const settingsVersion = ref<number | undefined>()
-const stateVersion = ref<number | undefined>()
 const sessionToken = ref<string>('')
 const userId = ref('')
 const accountEmail = ref('')
@@ -133,14 +108,40 @@ if (stored.timerMode && stored.timerMode !== 'idle') {
     mode: stored.timerMode,
     targetMs: stored.targetMs ?? 0,
     remainingMs: stored.remainingMs ?? 0,
+    totalDurationMs: stored.totalDurationMs ?? 0,
     startedAt: stored.startedAt ?? null
   })
 }
 
+const dataRuntime = useTikoAppDataRuntime<typeof appId, TimerSettings, TimerState>({
+  app: appId,
+  sessionToken,
+  bootstrapped,
+  dataClient,
+  readSettings: () => ({
+    language: language.value,
+    colorMode: colorMode.value,
+    defaultMinutes: customMinutes.value,
+    defaultSeconds: customSeconds.value,
+  }),
+  readState: () => {
+    const timerState = timer.getState()
+    return {
+      mode: timerState.mode,
+      targetMs: timerState.targetMs,
+      remainingMs: timerState.remainingMs,
+      totalDurationMs: timerState.totalDurationMs,
+      startedAt: timerState.startedAt,
+      presets: presets.value,
+    }
+  },
+  applySettings,
+  applyState,
+})
+
 const RING_CIRCUMFERENCE = 2 * Math.PI * 80
 
 const labels = computed(() => {
-  void language.value
   return {
     appName: i18n.t(tikoI18nKeys.timer.appName),
     expired: i18n.t(tikoI18nKeys.timer.display.expired),
@@ -153,8 +154,11 @@ const labels = computed(() => {
     minutes: i18n.t(tikoI18nKeys.timer.settings.minutes),
     seconds: i18n.t(tikoI18nKeys.timer.settings.seconds),
     settings: i18n.t(tikoI18nKeys.common.settings),
+    shell: createTikoShellLabels(i18n.t),
     settingsPanel: {
       settings: i18n.t(tikoI18nKeys.common.settings),
+      appearance: i18n.t(tikoI18nKeys.common.appearance),
+      appPreferences: i18n.t(tikoI18nKeys.common.appPreferences),
       language: i18n.t(tikoI18nKeys.common.language),
       colorMode: i18n.t(tikoI18nKeys.common.colorMode),
       light: i18n.t(tikoI18nKeys.common.colorModeOptions.light),
@@ -179,14 +183,8 @@ const ringDashoffset = computed(() => {
   return RING_CIRCUMFERENCE * (1 - p)
 })
 
-function resolveColorMode(mode: TikoColorMode) {
-  if (mode !== 'system') return mode
-  if (typeof window === 'undefined') return 'light'
-  return window.matchMedia?.('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
-}
-
 function saveLocalFallback() {
-  writeJson(storageKey, {
+  writeTikoLocalJson(storageKey, {
     language: language.value,
     colorMode: colorMode.value,
     customMinutes: customMinutes.value,
@@ -204,19 +202,18 @@ async function bootstrapIdentity() {
   return runtime.bootstrapIdentity()
 }
 
-function applySettings(settings: TimerSettings, version?: number) {
-  language.value = toLanguage(settings.language)
-  colorMode.value = toColorMode(settings.colorMode)
+function applySettings(settings: TimerSettings) {
+  language.value = normalizeTikoLanguage(settings.language)
+  colorMode.value = normalizeTikoColorMode(settings.colorMode)
   if (typeof settings.defaultMinutes === 'number' && settings.defaultMinutes >= 0) {
     customMinutes.value = settings.defaultMinutes
   }
   if (typeof settings.defaultSeconds === 'number' && settings.defaultSeconds >= 0) {
     customSeconds.value = settings.defaultSeconds
   }
-  settingsVersion.value = version
 }
 
-function applyState(state: TimerState, version?: number) {
+function applyState(state: TimerState) {
   if (Array.isArray(state.presets)) {
     presets.value = normalizePresets(state.presets)
   }
@@ -225,79 +222,31 @@ function applyState(state: TimerState, version?: number) {
       mode: state.mode,
       targetMs: state.targetMs ?? 0,
       remainingMs: state.remainingMs ?? 0,
+      totalDurationMs: state.totalDurationMs ?? 0,
       startedAt: state.startedAt ?? null
     })
   }
-  stateVersion.value = version
 }
 
-async function hydrateRemoteData() {
-  if (!sessionToken.value) return
-  const [settings, state] = await Promise.all([
-    dataClient.getSettings(appId, sessionToken.value),
-    dataClient.getState(appId, sessionToken.value)
-  ])
-  applySettings(settings.settings, settings.version)
-  applyState(state.state, state.version)
-}
+useTikoI18nRuntime({ app: appId, language, i18n })
 
-async function persistSettingsRemote() {
-  if (!bootstrapped.value || !sessionToken.value) return
-  try {
-    const response = await dataClient.putSettings(appId, sessionToken.value, {
-      language: language.value,
-      colorMode: colorMode.value,
-      defaultMinutes: customMinutes.value,
-      defaultSeconds: customSeconds.value
-    }, { version: settingsVersion.value })
-    settingsVersion.value = response.version
-  } catch {
-    // Local fallback is already written; remote will be retried on the next edit.
-  }
-}
-
-async function persistStateRemote() {
-  if (!bootstrapped.value || !sessionToken.value) return
-  try {
-    const timerState = timer.getState()
-    const response = await dataClient.putState(appId, sessionToken.value, {
-      mode: timerState.mode,
-      targetMs: timerState.targetMs,
-      remainingMs: timerState.remainingMs,
-      startedAt: timerState.startedAt,
-      presets: presets.value
-    }, { version: stateVersion.value })
-    stateVersion.value = response.version
-  } catch {
-    // Local fallback is already written; remote will be retried on the next change.
-  }
-}
-
-watch(language, (value) => {
-  i18n.setLanguage(value)
-}, { immediate: true })
-
-watch(colorMode, (mode) => {
-  const effective = resolveColorMode(mode)
-  document.documentElement.dataset.colorMode = effective
-  document.documentElement.dataset.theme = effective
-}, { immediate: true })
+useTikoColorModeEffect(colorMode)
 
 watch([language, colorMode, customMinutes, customSeconds], () => {
   saveLocalFallback()
-  void persistSettingsRemote()
+  void dataRuntime.persistSettingsRemote()
 })
 
 watch(timer.mode, () => {
   saveLocalFallback()
-  void persistStateRemote()
+  void dataRuntime.persistStateRemote()
 })
 
 onMounted(async () => {
   try {
     await runtime.bootstrapIdentity()
     await runtime.loadProfile()
-    await hydrateRemoteData()
+    await dataRuntime.hydrateRemoteData()
   } catch {
     // Keep the child-facing local flow available when API bootstrap is offline.
   } finally {
@@ -351,6 +300,7 @@ function headerAction(id: string) {
     :theme-color="appConfig.themeColor"
     avatar="ui/avatar"
     :actions="headerActions"
+    :labels="labels.shell"
     @header-action="headerAction"
     @avatar-click="runtime.handleAvatarClick"
   >

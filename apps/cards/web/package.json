@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite --host 0.0.0.0 --port 3063",
     "build": "vite build",
-    "test": "vitest run --root ../../.. apps/cards/web/src/App.spec.ts",
+    "test": "vitest run --root ../../.. apps/cards/web/src",
     "test:e2e": "npx playwright test --config=../../../playwright.config.ts --project=cards"
   },
   "dependencies": {

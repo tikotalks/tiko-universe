@@ -7,14 +7,17 @@ struct TalkWordTile: Codable, Equatable, Identifiable, Sendable {
     let category: String
     let icon: String?
     let image: String?
+    /// True when this is a user-added word rather than a curated pack word.
+    let isCustom: Bool?
 
-    init(id: String, text: String, pos: String, category: String, icon: String? = nil, image: String? = nil) {
+    init(id: String, text: String, pos: String, category: String, icon: String? = nil, image: String? = nil, isCustom: Bool? = nil) {
         self.id = id
         self.text = text
         self.pos = pos
         self.category = category
         self.icon = icon
         self.image = image
+        self.isCustom = isCustom
     }
 }
 

@@ -7,7 +7,7 @@
   "types": "src/index.ts",
   "scripts": {
     "typecheck": "tsc --noEmit --strict --lib ES2022,WebWorker --module ESNext --moduleResolution Bundler src/index.ts",
-    "test": "vitest run ../../tests/communication-api.test.ts",
+    "test": "cd ../.. && vitest run tests/communication-api.test.ts",
     "deploy:dry-run": "wrangler deploy --dry-run"
   }
 }

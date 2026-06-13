@@ -1,4 +1,4 @@
-import { shallowRef, triggerRef, type Ref } from '@vue/reactivity'
+import { shallowRef, type Ref } from '@vue/reactivity'
 
 export const defaultLanguage = 'en' as const
 
@@ -19,6 +19,10 @@ export const tikoLanguages = [
 ] as const
 
 export type TikoLanguage = typeof tikoLanguages[number]
+
+export function normalizeTikoLanguage(value: string | null | undefined): TikoLanguage {
+  return tikoLanguages.includes(value as TikoLanguage) ? value as TikoLanguage : defaultLanguage
+}
 
 export interface TikoLanguageOption {
   value: TikoLanguage
@@ -384,7 +388,11 @@ export const tikoI18nKeys = {
     cancel: 'common.cancel',
     create: 'common.create',
     delete: 'common.delete',
+    deselect: 'common.deselect',
+    edit: 'common.edit',
+    openIcons: 'common.openIcons',
     save: 'common.save',
+    select: 'common.select',
     settings: 'common.settings',
     language: 'common.language',
     appearance: 'common.appearance',
@@ -445,6 +453,7 @@ export const tikoI18nKeys = {
       pinEnterSubtitle: 'common.identity.pinEnterSubtitle',
       pinCodesDontMatch: 'common.identity.pinCodesDontMatch',
       pinWrongCode: 'common.identity.pinWrongCode',
+      pinDigitLabel: 'common.identity.pinDigitLabel',
       accountTitle: 'common.identity.accountTitle',
       setupUserTitle: 'common.identity.setupUserTitle',
       verifiedAccount: 'common.identity.verifiedAccount',
@@ -471,7 +480,11 @@ const commonEnglish: TranslationMap = {
   [tikoI18nKeys.common.cancel]: 'Cancel',
   [tikoI18nKeys.common.create]: 'Create',
   [tikoI18nKeys.common.delete]: 'Delete',
+  [tikoI18nKeys.common.deselect]: 'Deselect',
+  [tikoI18nKeys.common.edit]: 'Edit',
+  [tikoI18nKeys.common.openIcons]: 'Open icons',
   [tikoI18nKeys.common.save]: 'Save',
+  [tikoI18nKeys.common.select]: 'Select',
   [tikoI18nKeys.common.settings]: 'Settings',
   [tikoI18nKeys.common.language]: 'Language',
   [tikoI18nKeys.common.appearance]: 'Appearance',
@@ -527,6 +540,7 @@ const commonEnglish: TranslationMap = {
   [tikoI18nKeys.common.identity.pinEnterSubtitle]: 'to switch to parent mode',
   [tikoI18nKeys.common.identity.pinCodesDontMatch]: "Codes don't match",
   [tikoI18nKeys.common.identity.pinWrongCode]: 'Wrong code',
+  [tikoI18nKeys.common.identity.pinDigitLabel]: 'Digit {index} of {total}',
   [tikoI18nKeys.common.identity.accountTitle]: 'Your account',
   [tikoI18nKeys.common.identity.setupUserTitle]: 'Set up user',
   [tikoI18nKeys.common.identity.verifiedAccount]: 'Verified account',
@@ -547,6 +561,10 @@ const commonEnglish: TranslationMap = {
 }
 
 const commonFrench: TranslationMap = {
+  [tikoI18nKeys.common.deselect]: 'Désélectionner',
+  [tikoI18nKeys.common.edit]: 'Modifier',
+  [tikoI18nKeys.common.openIcons]: 'Ouvrir les icônes',
+  [tikoI18nKeys.common.select]: 'Sélectionner',
   [tikoI18nKeys.common.settings]: 'Réglages',
   [tikoI18nKeys.common.language]: 'Langue',
   [tikoI18nKeys.common.appearance]: 'Apparence',
@@ -561,6 +579,10 @@ const commonFrench: TranslationMap = {
 }
 
 const commonDutch: TranslationMap = {
+  [tikoI18nKeys.common.deselect]: 'Deselecteren',
+  [tikoI18nKeys.common.edit]: 'Bewerken',
+  [tikoI18nKeys.common.openIcons]: 'Iconen openen',
+  [tikoI18nKeys.common.select]: 'Selecteren',
   [tikoI18nKeys.common.settings]: 'Instellingen',
   [tikoI18nKeys.common.language]: 'Taal',
   [tikoI18nKeys.common.appearance]: 'Weergave',
@@ -575,6 +597,10 @@ const commonDutch: TranslationMap = {
 }
 
 const commonSpanish: TranslationMap = {
+  [tikoI18nKeys.common.deselect]: 'Deseleccionar',
+  [tikoI18nKeys.common.edit]: 'Editar',
+  [tikoI18nKeys.common.openIcons]: 'Abrir iconos',
+  [tikoI18nKeys.common.select]: 'Seleccionar',
   [tikoI18nKeys.common.settings]: 'Ajustes',
   [tikoI18nKeys.common.language]: 'Idioma',
   [tikoI18nKeys.common.appearance]: 'Apariencia',
@@ -593,7 +619,11 @@ const commonMaltese: TranslationMap = {
   [tikoI18nKeys.common.cancel]: 'Ikkanċella',
   [tikoI18nKeys.common.create]: 'Oħloq',
   [tikoI18nKeys.common.delete]: 'Ħassar',
+  [tikoI18nKeys.common.deselect]: 'Neħħi l-għażla',
+  [tikoI18nKeys.common.edit]: 'Editja',
+  [tikoI18nKeys.common.openIcons]: 'Iftaħ l-ikoni',
   [tikoI18nKeys.common.save]: 'Issejvja',
+  [tikoI18nKeys.common.select]: 'Agħżel',
   [tikoI18nKeys.common.settings]: 'Impostazzjonijiet',
   [tikoI18nKeys.common.language]: 'Lingwa',
   [tikoI18nKeys.common.appearance]: 'Dehra',
@@ -649,6 +679,7 @@ const commonMaltese: TranslationMap = {
   [tikoI18nKeys.common.identity.pinEnterSubtitle]: 'biex taqleb għall-modalità tal-ġenituri',
   [tikoI18nKeys.common.identity.pinCodesDontMatch]: 'Il-kodiċijiet ma jaqblux',
   [tikoI18nKeys.common.identity.pinWrongCode]: 'Kodiċi ħażin',
+  [tikoI18nKeys.common.identity.pinDigitLabel]: 'Ċifra {index} minn {total}',
   [tikoI18nKeys.common.identity.accountTitle]: 'Il-kont tiegħek',
   [tikoI18nKeys.common.identity.setupUserTitle]: 'Issettja utent',
   [tikoI18nKeys.common.identity.verifiedAccount]: 'Kont ivverifikat',
@@ -812,6 +843,19 @@ const typeEnglish: TranslationMap = {
   [tikoI18nKeys.type.status.speechError]: 'Could not speak yet. Try again.',
 }
 
+const typeMaltese: TranslationMap = {
+  ...commonMaltese,
+  [tikoI18nKeys.type.appName]: 'Ittajpja',
+  [tikoI18nKeys.type.compose.label]: 'Messagg biex jinghad',
+  [tikoI18nKeys.type.compose.placeholder]: 'Ittajpja dak li trid tghid',
+  [tikoI18nKeys.type.compose.speak]: 'Ghid',
+  [tikoI18nKeys.type.compose.clear]: 'Neħħi',
+  [tikoI18nKeys.type.phrases.title]: 'Frażijiet salvati',
+  [tikoI18nKeys.type.phrases.empty]: 'Ghad mhemmx frażijiet salvati.',
+  [tikoI18nKeys.type.status.browserVoiceFallback]: 'Intużat il-vuċi tal-browser',
+  [tikoI18nKeys.type.status.speechError]: 'Ghad ma setax jinghad. Erga pprova.',
+}
+
 const timerEnglish: TranslationMap = {
   ...commonEnglish,
   [tikoI18nKeys.timer.appName]: 'Timer',
@@ -828,6 +872,24 @@ const timerEnglish: TranslationMap = {
   [tikoI18nKeys.timer.presets.custom]: 'Custom',
   [tikoI18nKeys.timer.settings.minutes]: 'Minutes',
   [tikoI18nKeys.timer.settings.seconds]: 'Seconds',
+}
+
+const timerMaltese: TranslationMap = {
+  ...commonMaltese,
+  [tikoI18nKeys.timer.appName]: 'Timer',
+  [tikoI18nKeys.timer.display.expired]: 'Il-hin spicca!',
+  [tikoI18nKeys.timer.controls.start]: 'Ibda',
+  [tikoI18nKeys.timer.controls.pause]: 'Waqqaf ftit',
+  [tikoI18nKeys.timer.controls.resume]: 'Kompli',
+  [tikoI18nKeys.timer.controls.reset]: 'Irrisettja',
+  [tikoI18nKeys.timer.presets.label]: 'Ghazliet ta hin',
+  [tikoI18nKeys.timer.presets.oneMin]: 'Minuta',
+  [tikoI18nKeys.timer.presets.threeMin]: '3 minuti',
+  [tikoI18nKeys.timer.presets.fiveMin]: '5 minuti',
+  [tikoI18nKeys.timer.presets.tenMin]: '10 minuti',
+  [tikoI18nKeys.timer.presets.custom]: 'Personalizzat',
+  [tikoI18nKeys.timer.settings.minutes]: 'Minuti',
+  [tikoI18nKeys.timer.settings.seconds]: 'Sekondi',
 }
 
 const radioEnglish: TranslationMap = {
@@ -882,6 +944,58 @@ const radioEnglish: TranslationMap = {
   [tikoI18nKeys.radio.volume]: 'Volume',
 }
 
+const radioMaltese: TranslationMap = {
+  ...commonMaltese,
+  [tikoI18nKeys.radio.appName]: 'Radju',
+  [tikoI18nKeys.radio.player.play]: 'Daqq',
+  [tikoI18nKeys.radio.player.pause]: 'Waqqaf ftit',
+  [tikoI18nKeys.radio.player.next]: 'Li jmiss',
+  [tikoI18nKeys.radio.player.previous]: 'Ta qabel',
+  [tikoI18nKeys.radio.player.shuffle]: 'Hawwad',
+  [tikoI18nKeys.radio.player.repeat]: 'Irrepeti',
+  [tikoI18nKeys.radio.player.noTracks]: 'Mhemmx tracks',
+  [tikoI18nKeys.radio.playlist.title]: 'Playlist',
+  [tikoI18nKeys.radio.playlist.empty]: 'Ghad mhemmx tracks.',
+  [tikoI18nKeys.radio.library.title]: 'Librerija',
+  [tikoI18nKeys.radio.library.empty]: 'Ghad mhemmx tracks. Zied mużika biex tibda.',
+  [tikoI18nKeys.radio.library.addTrack]: 'Zid track',
+  [tikoI18nKeys.radio.library.addFromYouTube]: 'Zid minn YouTube',
+  [tikoI18nKeys.radio.library.addFromYouTubePlaceholder]: 'Wahhal link ta YouTube',
+  [tikoI18nKeys.radio.library.addFromYouTubeButton]: 'Zid',
+  [tikoI18nKeys.radio.library.adding]: 'Qed jiżdied...',
+  [tikoI18nKeys.radio.library.uploadFile]: 'Tella fajl',
+  [tikoI18nKeys.radio.library.removeTrack]: 'Neħħi',
+  [tikoI18nKeys.radio.status.nowPlaying]: 'Qed jindaqq',
+  [tikoI18nKeys.radio.categories.title]: 'Agħżel xi tisma',
+  [tikoI18nKeys.radio.categories.all]: 'Kollox',
+  [tikoI18nKeys.radio.categories.favorites]: 'Favoriti',
+  [tikoI18nKeys.radio.categories.animals]: 'Annimali',
+  [tikoI18nKeys.radio.categories.farm]: 'Razzett',
+  [tikoI18nKeys.radio.categories.bedtime]: 'Qabel l-irqad',
+  [tikoI18nKeys.radio.categories.songs]: 'Kanzunetti',
+  [tikoI18nKeys.radio.categories.dance]: 'Żfin',
+  [tikoI18nKeys.radio.categories.stories]: 'Stejjer',
+  [tikoI18nKeys.radio.management.title]: 'Immaniġġja vidjows',
+  [tikoI18nKeys.radio.management.subtitle]: 'Zid vidjows ta YouTube ma kategorija',
+  [tikoI18nKeys.radio.management.videosIn]: 'Vidjows f {category}',
+  [tikoI18nKeys.radio.management.addVideo]: 'Zid vidjow',
+  [tikoI18nKeys.radio.management.youtubeLink]: 'Wahhal link ta YouTube',
+  [tikoI18nKeys.radio.management.displayName]: 'Isem li jidher (mhux obbligatorju)',
+  [tikoI18nKeys.radio.management.preview]: 'Previżjoni',
+  [tikoI18nKeys.radio.management.addToCategory]: 'Zid mal-kategorija',
+  [tikoI18nKeys.radio.management.addVideoButton]: '+ Zid vidjow',
+  [tikoI18nKeys.radio.management.parentOnly]: 'Il-ġenituri biss jistgħu jimmaniġġjaw vidjows',
+  [tikoI18nKeys.radio.management.dragToReorder]: 'Gibed biex tirranġa mill-ġdid - agħfas it-trash biex tneħħi',
+  [tikoI18nKeys.radio.management.noVideos]: 'Ghad mhemmx vidjows. Zid l-ewwel vidjow!',
+  [tikoI18nKeys.radio.management.newCategory]: '+ Kategorija ġdida',
+  [tikoI18nKeys.radio.management.categoryName]: 'Isem il-kategorija',
+  [tikoI18nKeys.radio.management.createCategory]: 'Oħloq',
+  [tikoI18nKeys.radio.parentMode.enter]: 'Modalita tal-ġenituri',
+  [tikoI18nKeys.radio.parentMode.exit]: 'Ohrog mill-modalita tal-ġenituri',
+  [tikoI18nKeys.radio.parentMode.loginRequired]: 'Idhol biex timmaniġġja l-kontenut',
+  [tikoI18nKeys.radio.volume]: 'Volum',
+}
+
 const cardsEnglish: TranslationMap = {
   ...commonEnglish,
   [tikoI18nKeys.cards.appName]: 'Cards',
@@ -896,6 +1010,22 @@ const cardsEnglish: TranslationMap = {
   [tikoI18nKeys.cards.settings.restoreConfirm]: 'This will show all default collections again.',
   [tikoI18nKeys.cards.status.browserVoiceFallback]: 'Browser voice used',
   [tikoI18nKeys.cards.status.speechError]: 'Could not speak yet. Try again.',
+}
+
+const cardsMaltese: TranslationMap = {
+  ...commonMaltese,
+  [tikoI18nKeys.cards.appName]: 'Karti',
+  [tikoI18nKeys.cards.collections.empty]: 'Ghad mhemmx kollezzjonijiet.',
+  [tikoI18nKeys.cards.collections.addNew]: 'Zid kollezzjoni',
+  [tikoI18nKeys.cards.collections.newName]: 'Isem kollezzjoni ġdida',
+  [tikoI18nKeys.cards.collections.create]: 'Oħloq',
+  [tikoI18nKeys.cards.tiles.empty]: 'Ghad mhemmx madum.',
+  [tikoI18nKeys.cards.tiles.addNew]: 'Zid maduma',
+  [tikoI18nKeys.cards.tiles.newName]: 'Isem maduma ġdida',
+  [tikoI18nKeys.cards.settings.restoreDefaults]: 'Irrestawra d-defaults',
+  [tikoI18nKeys.cards.settings.restoreConfirm]: 'Dan jerga juri l-kollezzjonijiet default kollha.',
+  [tikoI18nKeys.cards.status.browserVoiceFallback]: 'Intużat il-vuċi tal-browser',
+  [tikoI18nKeys.cards.status.speechError]: 'Ghad ma setax jinghad. Erga pprova.',
 }
 
 const sequenceEnglish: TranslationMap = {
@@ -915,6 +1045,25 @@ const sequenceEnglish: TranslationMap = {
   [tikoI18nKeys.sequence.play.done]: 'Done',
   [tikoI18nKeys.sequence.status.loadError]: 'Could not load data.',
   [tikoI18nKeys.sequence.status.retry]: 'Retry',
+}
+
+const sequenceMaltese: TranslationMap = {
+  ...commonMaltese,
+  [tikoI18nKeys.sequence.appName]: 'Sekwenza',
+  [tikoI18nKeys.sequence.empty.title]: 'Ghad mhemmx sekwenzi',
+  [tikoI18nKeys.sequence.empty.description]: 'Oħloq l-ewwel sekwenza biex tibda.',
+  [tikoI18nKeys.sequence.empty.create]: 'Oħloq sekwenza',
+  [tikoI18nKeys.sequence.create.title]: 'Sekwenza ġdida',
+  [tikoI18nKeys.sequence.create.name]: 'Isem',
+  [tikoI18nKeys.sequence.create.namePlaceholder]: 'Daħħal isem is-sekwenza',
+  [tikoI18nKeys.sequence.create.submit]: 'Oħloq',
+  [tikoI18nKeys.sequence.create.cancel]: 'Ikkanċella',
+  [tikoI18nKeys.sequence.create.addStep]: '+ Zid pass',
+  [tikoI18nKeys.sequence.play.step]: 'Pass {current} minn {total}',
+  [tikoI18nKeys.sequence.play.next]: 'Li jmiss',
+  [tikoI18nKeys.sequence.play.done]: 'Lest',
+  [tikoI18nKeys.sequence.status.loadError]: 'Ma setgħetx titgħabba d-data.',
+  [tikoI18nKeys.sequence.status.retry]: 'Erga pprova',
 }
 
 const todoEnglish: TranslationMap = {
@@ -939,6 +1088,30 @@ const todoEnglish: TranslationMap = {
   [tikoI18nKeys.todo.item.remaining]: '{count} remaining',
   [tikoI18nKeys.todo.status.loadError]: 'Could not load data.',
   [tikoI18nKeys.todo.status.retry]: 'Retry',
+}
+
+const todoMaltese: TranslationMap = {
+  ...commonMaltese,
+  [tikoI18nKeys.todo.appName]: 'Xoghol',
+  [tikoI18nKeys.todo.empty.title]: 'Ghad mhemmx affarijiet',
+  [tikoI18nKeys.todo.empty.description]: 'Zid l-ewwel bicca xoghol biex tibda.',
+  [tikoI18nKeys.todo.empty.create]: 'Zid xoghol',
+  [tikoI18nKeys.todo.create.title]: 'Xoghol ġdid',
+  [tikoI18nKeys.todo.create.name]: 'Isem ix-xoghol',
+  [tikoI18nKeys.todo.create.namePlaceholder]: 'Daħħal isem ix-xoghol',
+  [tikoI18nKeys.todo.create.details]: 'Dettalji',
+  [tikoI18nKeys.todo.create.submit]: 'Zid',
+  [tikoI18nKeys.todo.create.cancel]: 'Ikkanċella',
+  [tikoI18nKeys.todo.create.selectImage]: 'Agħżel immaġni',
+  [tikoI18nKeys.todo.create.step]: 'Pass',
+  [tikoI18nKeys.todo.create.speak]: 'Ghid',
+  [tikoI18nKeys.todo.item.markComplete]: 'Immarka lest',
+  [tikoI18nKeys.todo.item.markIncomplete]: 'Immarka mhux lest',
+  [tikoI18nKeys.todo.item.done]: 'Lest',
+  [tikoI18nKeys.todo.item.pending]: 'Pendenti',
+  [tikoI18nKeys.todo.item.remaining]: 'Fadal {count}',
+  [tikoI18nKeys.todo.status.loadError]: 'Ma setgħetx titgħabba d-data.',
+  [tikoI18nKeys.todo.status.retry]: 'Erga pprova',
 }
 
 const talkEnglish: TranslationMap = {
@@ -984,11 +1157,17 @@ const localTranslationBundles = [
   createTranslationBundle({ app: 'yes-no', language: 'es', translations: yesNoSpanish }),
   createTranslationBundle({ app: 'yes-no', language: 'mt', translations: yesNoMaltese }),
   createTranslationBundle({ app: 'type', language: 'en', translations: typeEnglish }),
+  createTranslationBundle({ app: 'type', language: 'mt', translations: typeMaltese }),
   createTranslationBundle({ app: 'cards', language: 'en', translations: cardsEnglish }),
+  createTranslationBundle({ app: 'cards', language: 'mt', translations: cardsMaltese }),
   createTranslationBundle({ app: 'sequence', language: 'en', translations: sequenceEnglish }),
+  createTranslationBundle({ app: 'sequence', language: 'mt', translations: sequenceMaltese }),
   createTranslationBundle({ app: 'todo', language: 'en', translations: todoEnglish }),
+  createTranslationBundle({ app: 'todo', language: 'mt', translations: todoMaltese }),
   createTranslationBundle({ app: 'timer', language: 'en', translations: timerEnglish }),
+  createTranslationBundle({ app: 'timer', language: 'mt', translations: timerMaltese }),
   createTranslationBundle({ app: 'radio', language: 'en', translations: radioEnglish }),
+  createTranslationBundle({ app: 'radio', language: 'mt', translations: radioMaltese }),
   createTranslationBundle({ app: 'talk', language: 'en', translations: talkEnglish }),
 ]
 
@@ -1080,6 +1259,17 @@ export function createTikoTranslationLoader(
   }
 }
 
+export function createTikoShellLabels(t: (key: string, params?: TranslationParams) => string) {
+  return {
+    account: t(tikoI18nKeys.common.identity.account),
+    back: t(tikoI18nKeys.common.back),
+    deselect: t(tikoI18nKeys.common.deselect),
+    edit: t(tikoI18nKeys.common.edit),
+    openIcons: t(tikoI18nKeys.common.openIcons),
+    select: t(tikoI18nKeys.common.select),
+  }
+}
+
 export function createTikoIdentityLabels(t: (key: string) => string) {
   const keys = tikoI18nKeys.common.identity
   return {
@@ -1138,6 +1328,7 @@ export function createTikoIdentityLabels(t: (key: string) => string) {
       enterSubtitle: t(keys.pinEnterSubtitle),
       codesDontMatch: t(keys.pinCodesDontMatch),
       wrongCode: t(keys.pinWrongCode),
+      digitLabel: t(keys.pinDigitLabel),
       back: t(tikoI18nKeys.common.back),
       cancel: t(tikoI18nKeys.common.cancel),
     },
@@ -1200,12 +1391,13 @@ export function createI18n(options: CreateI18nOptions): TikoI18n {
       return interpolate(text, params)
     },
     setLanguage(language: TikoLanguage) {
+      if (currentLanguage.value === language) return
       currentLanguage.value = language
-      triggerRef(revision)
+      revision.value += 1
     },
     addBundle(bundle: TranslationBundle) {
       upsertBundle(bundles, bundle)
-      triggerRef(revision)
+      revision.value += 1
     },
     missingKeys() {
       return Array.from(missing)

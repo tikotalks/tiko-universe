@@ -17,10 +17,22 @@ targets:
       - Sources
     dependencies:
       - package: TikoKit
+    preBuildScripts:
+      - name: Generate Tiko app config
+        basedOnDependencyAnalysis: false
+        script: |
+          set -euo pipefail
+          REPO_ROOT="${SRCROOT}/../../.."
+          if ! command -v node >/dev/null 2>&1; then
+            echo "error: node is required to generate Tiko app configs from admin before iOS build."
+            exit 1
+          fi
+          TIKO_APP_CONFIG_STRICT=1 node "${REPO_ROOT}/tools/generate-app-configs.mjs"
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: mt.tiko.talk
         INFOPLIST_FILE: Sources/Info.plist
+        CODE_SIGN_ENTITLEMENTS: Sources/TikoTalk.entitlements
   TikoTalkTests:
     type: bundle.unit-test
     platform: iOS
@@ -28,3 +40,6 @@ targets:
       - Tests
     dependencies:
       - target: TikoTalk
+    settings:
+      base:
+        GENERATE_INFOPLIST_FILE: YES

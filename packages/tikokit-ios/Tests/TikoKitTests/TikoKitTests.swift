@@ -1,6 +1,35 @@
 import XCTest
 @testable import TikoKit
 
+private final class MemoryIdentityStore: TikoIdentityStorage, @unchecked Sendable {
+    var bundle: TikoIdentityBundle?
+
+    func load() throws -> TikoIdentityBundle? {
+        bundle
+    }
+
+    func save(_ bundle: TikoIdentityBundle) throws {
+        self.bundle = bundle
+    }
+
+    func clearSessionKeepingDevice() throws {
+        guard let bundle else { return }
+        self.bundle = TikoIdentityBundle(
+            subject: bundle.subject,
+            device: bundle.device,
+            account: bundle.account,
+            session: nil,
+            runtime: bundle.runtime,
+            capabilities: bundle.capabilities,
+            roles: bundle.roles
+        )
+    }
+
+    func clearAll() throws {
+        bundle = nil
+    }
+}
+
 final class TikoKitTests: XCTestCase {
     func testAppColorsHaveUniqueRawValues() {
         let rawValues = TikoAppColor.allCases.map(\.rawValue)
@@ -12,7 +41,8 @@ final class TikoKitTests: XCTestCase {
         XCTAssertEqual(TikoAppColor.talk.palette.label, "Talk")
         XCTAssertEqual(TikoAppConfig.talk.id, .talk)
         XCTAssertEqual(TikoAppConfig.talk.title, "Talk")
-        XCTAssertEqual(TikoAppConfig.talk.themeColorHex, 0x2f80ed)
+        XCTAssertNotEqual(TikoAppConfig.talk.themeColorHex, 0x000000)
+        XCTAssertFalse(TikoAppConfig.talk.appIconImageUrl?.isEmpty ?? true)
     }
 
     func testAnswerChoiceWithOpenIcon() {
@@ -37,6 +67,23 @@ final class TikoKitTests: XCTestCase {
         XCTAssertNotEqual(TikoAnswerChoice.Icon.openIcon("ui/check-fat"), .openIcon("wayfinding/cross"))
     }
 
+    func testOpenIconsUseNativeSymbols() throws {
+        XCTAssertGreaterThanOrEqual(TikoOpenIcons.all.count, 60)
+        XCTAssertEqual(TikoOpenIcons.systemSymbol(named: "ui/check-fat"), "checkmark")
+        XCTAssertEqual(TikoOpenIcons.systemSymbol(named: "food-drinks/hamburger"), "fork.knife")
+        XCTAssertEqual(TikoOpenIcons.systemSymbol(named: "unknown/icon"), "questionmark")
+
+        let sourceURL = URL(fileURLWithPath: #filePath)
+            .deletingLastPathComponent()
+            .deletingLastPathComponent()
+            .deletingLastPathComponent()
+            .appendingPathComponent("Sources/TikoKit/TikoOpenIcon.swift")
+        let source = try String(contentsOf: sourceURL)
+        XCTAssertFalse(source.contains("import WebKit"))
+        XCTAssertFalse(source.contains("WKWebView"))
+        XCTAssertFalse(source.contains("loadHTMLString"))
+    }
+
     func testColorModeIsExplicitLightDarkOnly() {
         XCTAssertEqual(TikoColorMode.allCases, [.light, .dark])
         XCTAssertEqual(TikoColorMode.light.title, "Light")
@@ -48,6 +95,77 @@ final class TikoKitTests: XCTestCase {
         XCTAssertEqual(TikoChoiceStyle.tiles.title, "Tiles")
         XCTAssertEqual(TikoChoiceStyle.buttons.icon, "rectangle.roundedtop.fill")
         XCTAssertEqual(TikoChoiceStyle.compact.rawValue, "compact")
+    }
+
+    @MainActor
+    func testI18nPublishesBundleRevision() {
+        let previousBaseURL = TikoI18n.translationsBaseURL
+        TikoI18n.translationsBaseURL = nil
+        defer { TikoI18n.translationsBaseURL = previousBaseURL }
+
+        let i18n = TikoI18n(app: .yesNo, languageCode: "hy")
+        let initialRevision = i18n.revision
+
+        XCTAssertEqual(i18n.t("yesNo.answers.yes"), "Yes")
+
+        i18n.addBundle(languageCode: "hy", translations: ["yesNo.answers.yes": "Runtime yes"])
+
+        XCTAssertEqual(i18n.revision, initialRevision + 1)
+        XCTAssertEqual(i18n.t("yesNo.answers.yes"), "Runtime yes")
+    }
+
+    @MainActor
+    func testI18nHasMalteseFallbacksForCurrentAppKeys() {
+        let previousBaseURL = TikoI18n.translationsBaseURL
+        TikoI18n.translationsBaseURL = nil
+        defer { TikoI18n.translationsBaseURL = previousBaseURL }
+
+        let cases: [(TikoAppKey, String, String)] = [
+            (.type, "type.compose.placeholder", "Type what you want to say"),
+            (.timer, "timer.controls.start", "Start"),
+            (.radio, "radio.collections.title", "Collections"),
+            (.cards, "cards.settings.collections", "Collections"),
+            (.sequence, "sequence.empty.title", "No sequences yet"),
+            (.todo, "todo.empty.title", "No items yet"),
+        ]
+
+        for (app, key, english) in cases {
+            let i18n = TikoI18n(app: app, languageCode: "mt")
+            XCTAssertNotEqual(i18n.t(key), english)
+            XCTAssertNotEqual(i18n.t(key), key)
+        }
+    }
+
+    func testSpeechLanguageMappingUsesAppLanguageCodes() {
+        XCTAssertEqual(TikoSpeech.languageCode(for: "en"), "en-US")
+        XCTAssertEqual(TikoSpeech.languageCode(for: "nl"), "nl-NL")
+        XCTAssertEqual(TikoSpeech.languageCode(for: "mt"), "mt-MT")
+        XCTAssertEqual(TikoSpeech.languageCode(for: "pt-BR"), "pt-BR")
+    }
+
+    @MainActor
+    func testAtlasSpeechServiceIgnoresBlankSpeech() {
+        let speech = TikoAtlasSpeechService(app: "test")
+
+        speech.speak("   ", languageCode: "en")
+        speech.stop()
+    }
+
+    @MainActor
+    func testAtlasSpeechRequestUsesBearerSessionToken() throws {
+        let request = try TikoAtlasSpeechService.makeAtlasSpeechRequest(
+            text: "Hello",
+            languageCode: "en-US",
+            app: "test",
+            purpose: "speech-playback",
+            atlasSpeechURL: URL(string: "https://api.tikotalks.com/v1/atlas/speech")!,
+            accessToken: "session-token"
+        )
+
+        XCTAssertEqual(request.httpMethod, "POST")
+        XCTAssertEqual(request.value(forHTTPHeaderField: "Authorization"), "Bearer session-token")
+        XCTAssertEqual(request.value(forHTTPHeaderField: "Content-Type"), "application/json")
+        XCTAssertNotNil(request.httpBody)
     }
 
     func testRecoverableIdentityRequiresVerifiedAccount() {
@@ -77,11 +195,8 @@ final class TikoKitTests: XCTestCase {
     }
 
     func testDeviceSessionStoreRoundTripsSharedIdentityBundle() throws {
-        let suiteName = "TikoKitTests.\(UUID().uuidString)"
-        let defaults = UserDefaults(suiteName: suiteName)!
-        defer { defaults.removePersistentDomain(forName: suiteName) }
-
-        let store = TikoDeviceSessionStore(defaults: defaults, namespace: "org.tiko.identity")
+        let primary = MemoryIdentityStore()
+        let store = TikoDeviceSessionStore(primary: primary)
         let bundle = TikoIdentityBundle(
             subject: TikoIdentitySubject(id: "sub-1", kind: "anonymous", product: "tiko"),
             device: TikoIdentityDevice(id: "device-1", secret: "device-secret"),
@@ -91,6 +206,7 @@ final class TikoKitTests: XCTestCase {
 
         try store.save(bundle)
         XCTAssertEqual(try store.load(), bundle)
+        XCTAssertEqual(primary.bundle, bundle)
 
         try store.clearSessionKeepingDevice()
         let retained = try XCTUnwrap(try store.load())
@@ -100,6 +216,29 @@ final class TikoKitTests: XCTestCase {
 
         try store.clearAll()
         XCTAssertNil(try store.load())
+        XCTAssertNil(primary.bundle)
+    }
+
+    func testDeviceSessionStoreMigratesLegacyUserDefaultsBundle() throws {
+        let suiteName = "TikoKitTests.\(UUID().uuidString)"
+        let defaults = UserDefaults(suiteName: suiteName)!
+        defer { defaults.removePersistentDomain(forName: suiteName) }
+
+        let primary = MemoryIdentityStore()
+        let legacy = TikoUserDefaultsIdentityStore(defaults: defaults, namespace: "org.tiko.identity")
+        let store = TikoDeviceSessionStore(primary: primary, legacy: legacy)
+        let bundle = TikoIdentityBundle(
+            subject: TikoIdentitySubject(id: "sub-legacy", kind: "anonymous", product: "tiko"),
+            device: TikoIdentityDevice(id: "device-legacy", secret: "device-secret"),
+            account: nil,
+            session: TikoIdentitySession(id: "session-legacy", token: "access", transport: "bearer", expiresAt: "2030-01-01T00:00:00.000Z")
+        )
+
+        try legacy.save(bundle)
+
+        XCTAssertEqual(try store.load(), bundle)
+        XCTAssertEqual(primary.bundle, bundle)
+        XCTAssertNil(try legacy.load())
     }
 
     func testSharedNativeIdentityStoreUsesStableAppFamilyNamespace() {

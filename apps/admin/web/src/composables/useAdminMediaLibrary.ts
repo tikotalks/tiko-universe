@@ -89,12 +89,19 @@ export function useAdminMediaLibrary() {
   const loading = ref(false)
   const uploading = ref(false)
   const error = ref<string | null>(null)
+  let listRequestId = 0
+  let listAbortController: AbortController | null = null
 
   function mediaBaseUrl(): string {
     return (config.value?.mediaApiUrl ?? 'https://media.tikoapi.org/v1').replace(/\/$/, '')
   }
 
   async function list(params: { search?: string; type?: string; page?: number; limit?: number } = {}) {
+    const requestId = listRequestId + 1
+    listRequestId = requestId
+    listAbortController?.abort()
+    const abortController = new AbortController()
+    listAbortController = abortController
     loading.value = true
     error.value = null
     try {
@@ -103,19 +110,27 @@ export function useAdminMediaLibrary() {
       if (params.type) url.searchParams.set('type', params.type)
       url.searchParams.set('page', String(params.page ?? page.value))
       url.searchParams.set('limit', String(params.limit ?? 20))
-      const response = await fetch(url, { headers: { authorization: `Bearer ${token.value}` } })
+      const response = await fetch(url, {
+        headers: { authorization: `Bearer ${token.value}` },
+        signal: abortController.signal,
+      })
       const body = await response.json().catch(() => null) as ApiErrorBody | MediaListResponse | null
       const apiError = body && 'error' in body ? body.error : undefined
       if (!response.ok) throw new Error((typeof apiError === 'string' ? apiError : apiError?.message) ?? `Media list failed: ${response.status}`)
+      if (requestId !== listRequestId) return
       const parsed = body as MediaListResponse
       items.value = parsed.data
       total.value = parsed.meta.total
       page.value = parsed.meta.page
       totalPages.value = parsed.meta.totalPages
     } catch (e) {
+      if (abortController.signal.aborted && requestId !== listRequestId) return
       error.value = e instanceof Error ? e.message : 'Could not load media.'
     } finally {
-      loading.value = false
+      if (requestId === listRequestId) {
+        loading.value = false
+        if (listAbortController === abortController) listAbortController = null
+      }
     }
   }
 
@@ -193,6 +208,14 @@ export function useAdminMediaLibrary() {
     return item.url || item.original_url || item.medium_url || item.thumbnailUrl || item.thumbnail_url || `${mediaBaseUrl()}/media/${item.id}/download`
   }
 
+  function mediaDownloadUrl(mediaId: string): string {
+    return `${mediaBaseUrl()}/media/${encodeURIComponent(mediaId)}/download`
+  }
+
+  function mediaRefPreviewUrl(mediaId: string, size = 160): string {
+    return resizedMediaUrl(mediaDownloadUrl(mediaId), size)
+  }
+
   function itemPreviewUrl(item: AdminMediaItem, size = 160): string {
     return resizedMediaUrl(item.thumbnailUrl || item.thumbnail_url || item.medium_url || item.url || item.original_url || itemUrl(item), size)
   }
@@ -201,5 +224,5 @@ export function useAdminMediaLibrary() {
     return resizedMediaUrl(url, size)
   }
 
-  return { items, total, page, totalPages, loading, uploading, error, list, upload, itemUrl, itemPreviewUrl, previewUrl, listAudioAlbums, createAudioAlbum, addAudioTrack }
+  return { items, total, page, totalPages, loading, uploading, error, list, upload, itemUrl, mediaDownloadUrl, mediaRefPreviewUrl, itemPreviewUrl, previewUrl, listAudioAlbums, createAudioAlbum, addAudioTrack }
 }

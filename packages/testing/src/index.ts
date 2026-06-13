@@ -121,6 +121,15 @@ export interface YesNoSmokeEvidence {
   ttsFallback?: TtsFallbackSmoke
 }
 
+export interface WebAppFetchMockOptions {
+  appId: string
+  settings?: JsonObject
+  state?: JsonObject
+  identity?: JsonObject
+  failCookieSession?: boolean
+  failBootstrap?: boolean
+}
+
 export const packageName = '@tiko/testing'
 
 export const jsonHeaders = {
@@ -187,6 +196,58 @@ export async function parseJsonResponse<TBody = unknown>(response: Response): Pr
   const contentType = response.headers.get('content-type') ?? ''
   const body = response.status === 204 ? null : contentType.includes('json') ? await response.json() : await safeJsonFromText(response)
   return { response, status: response.status, headers: response.headers, body: body as TBody }
+}
+
+export function jsonResponse(body: unknown, status = 200): Response {
+  return new Response(JSON.stringify(body), { status, headers: jsonHeaders })
+}
+
+export function createWebAppFetchHandler(options: WebAppFetchMockOptions): typeof fetch {
+  return (async (input: RequestInfo | URL, init?: RequestInit) => {
+    const url = String(input)
+    const method = init?.method ?? 'GET'
+    const identity = options.identity ?? createWebAppIdentityBundle()
+
+    if (url.endsWith('/identity/session') && method === 'GET') {
+      if (options.failCookieSession && !hasAuthorizationHeader(init?.headers)) {
+        return jsonResponse({ error: { code: 'unauthorized', message: 'Unauthorized' } }, 401)
+      }
+      return jsonResponse(identity)
+    }
+
+    if (url.endsWith('/identity/device') && method === 'POST') {
+      if (options.failBootstrap) return jsonResponse({ error: { code: 'offline', message: 'Offline' } }, 503)
+      return jsonResponse(identity)
+    }
+
+    if (url.endsWith('/identity/profile') && method === 'GET') {
+      return jsonResponse({ profile: {} })
+    }
+
+    if (url.endsWith('/identity/profile') && method === 'PUT') {
+      return jsonResponse({ profile: safeJsonParse(init?.body) ?? {} })
+    }
+
+    if (url.endsWith(`/apps/${options.appId}/settings`) && method === 'GET') {
+      return jsonResponse({ app: options.appId, updatedAt: null, version: 1, settings: options.settings ?? {} })
+    }
+
+    if (url.endsWith(`/apps/${options.appId}/state`) && method === 'GET') {
+      return jsonResponse({ app: options.appId, updatedAt: null, version: 1, state: options.state ?? {} })
+    }
+
+    if (url.endsWith(`/apps/${options.appId}/settings`) && method === 'PUT') {
+      const body = safeJsonParse(init?.body) as { settings?: JsonObject } | null
+      return jsonResponse({ app: options.appId, updatedAt: 'test', version: 2, settings: body?.settings ?? {} })
+    }
+
+    if (url.endsWith(`/apps/${options.appId}/state`) && method === 'PUT') {
+      const body = safeJsonParse(init?.body) as { state?: JsonObject } | null
+      return jsonResponse({ app: options.appId, updatedAt: 'test', version: 2, state: body?.state ?? {} })
+    }
+
+    return jsonResponse({ error: { code: 'unexpected_test_fetch', message: url } }, 500)
+  }) as typeof fetch
 }
 
 export function assertJsonResponse(parsed: ParsedJsonResponse, expectedStatus = 200): asserts parsed is ParsedJsonResponse<JsonObject> {
@@ -373,4 +434,36 @@ function hasBearer(request: Request | undefined): boolean {
 function requestEvidence(request: Request | undefined): string {
   if (!request) return 'No request evidence supplied.'
   return `${request.method} ${request.url}`
+}
+
+function createWebAppIdentityBundle(): JsonObject {
+  return {
+    subject: { id: 'user-device', kind: 'device', product: 'tiko' },
+    user: { id: 'user-device', accountType: 'temporary', recoverable: false },
+    device: { id: 'device-1', secret: 'device-secret' },
+    account: null,
+    session: { id: 'session-1', token: 'session-token', transport: 'bearer', expiresAt: '2099-01-01T00:00:00.000Z' },
+    runtime: { mode: 'parent', childModeEnabled: false, pinConfigured: false },
+    capabilities: {
+      canVerifyEmail: true,
+      canUseParentMode: false,
+      canUseChildMode: false,
+      canManageChildAccounts: false,
+      canDeleteAccount: false,
+    },
+  }
+}
+
+function hasAuthorizationHeader(headers: HeadersInit | undefined): boolean {
+  if (!headers) return false
+  return new Headers(headers).has('authorization')
+}
+
+function safeJsonParse(body: BodyInit | null | undefined): unknown {
+  if (typeof body !== 'string') return null
+  try {
+    return JSON.parse(body) as unknown
+  } catch {
+    return null
+  }
 }

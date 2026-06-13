@@ -22,7 +22,7 @@ function seedTracks(ls: ReturnType<typeof createLocalStorageMock>) {
   const tracks = [
     { id: 't1', title: 'Baby Shark', source: 'youtube', youtubeVideoId: 'abc', categoryId: 'animals', thumbnailUrl: 'https://img.youtube.com/abc/mqdefault.jpg', duration: 136 },
     { id: 't2', title: 'Wheels on the Bus', source: 'youtube', youtubeVideoId: 'def', categoryId: 'animals', thumbnailUrl: 'https://img.youtube.com/def/mqdefault.jpg', duration: 222 },
-    { id: 't3', title: 'Twinkle Twinkle', source: 'upload', audioUrl: 'blob:xyz', categoryId: 'songs' },
+    { id: 't3', title: 'Twinkle Twinkle', source: 'upload', audioUrl: 'https://media.tikoapi.org/v1/media/twinkle/download', categoryId: 'songs' },
   ]
   ls.store['tiko:radio:tracks'] = JSON.stringify(tracks)
 }
@@ -35,7 +35,10 @@ function seedCategories(ls: ReturnType<typeof createLocalStorageMock>) {
   ls.store['tiko:radio:categories'] = JSON.stringify(categories)
 }
 
-function mountApp(existingLs?: ReturnType<typeof createLocalStorageMock>) {
+function mountApp(
+  existingLs?: ReturnType<typeof createLocalStorageMock>,
+  popupService = { showPopup: vi.fn(), close: vi.fn(), closeAllPopups: vi.fn(), popups: { value: [] } },
+) {
   const ls = existingLs ?? createLocalStorageMock()
   const origLs = globalThis.localStorage
   Object.defineProperty(globalThis, 'localStorage', { value: ls, writable: true, configurable: true })
@@ -43,7 +46,7 @@ function mountApp(existingLs?: ReturnType<typeof createLocalStorageMock>) {
   const wrapper = mount(App, {
     global: {
       provide: {
-        popupService: { showPopup: vi.fn(), close: vi.fn(), closeAllPopups: vi.fn(), popups: { value: [] } }
+        popupService,
       },
       stubs: {
         'tiko-app-shell': {
@@ -71,7 +74,7 @@ function mountApp(existingLs?: ReturnType<typeof createLocalStorageMock>) {
     }
   })
 
-  return { wrapper, ls }
+  return { wrapper, ls, popupService }
 }
 
 async function flushAsync() {
@@ -338,5 +341,23 @@ describe('Radio App (unified layout)', () => {
     // Must use runtime-driven refs
     expect(source).toContain('childModeEnabled')
     expect(source).toContain('pinConfigured')
+  })
+
+  it('updates volume from the popup native range input', async () => {
+    const popupService = { showPopup: vi.fn(), close: vi.fn(), closeAllPopups: vi.fn(), popups: { value: [] } }
+    const { wrapper } = mountApp(undefined, popupService)
+    await nextTick()
+
+    ;(wrapper.vm as any).headerAction('volume')
+
+    expect(popupService.showPopup).toHaveBeenCalledTimes(1)
+    const popupConfig = popupService.showPopup.mock.calls[0][0]
+    const popupWrapper = mount(popupConfig.component, {
+      props: popupConfig.props,
+    })
+
+    await popupWrapper.find('input[type="range"]').setValue('0.35')
+
+    expect(popupWrapper.emitted('update:volume')?.[0]).toEqual([0.35])
   })
 })

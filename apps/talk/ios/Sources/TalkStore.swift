@@ -11,6 +11,8 @@ final class TalkStore {
     var userId: String?
     var sessionToken: String?
     var isLoading = false
+    // True while a /next prediction request is in flight (drives a subtle loader).
+    var isPredicting = false
     var isOfflineFallback = false
     var sentenceWords: [TalkWordTile] = []
     var templates: [TalkTemplate] = []
@@ -18,6 +20,8 @@ final class TalkStore {
     var wordsByCategory: [String: [TalkWordTile]] = [:]
     var visibleWords: [TalkWordTile] = []
     var suggestions: [TalkWordTile] = []
+    // The board's starting vocabulary, restored when the sentence is cleared.
+    private var baselineWords: [TalkWordTile] = []
     var savedPhrases: [TalkSavedPhrase] = []
     var selectedCategoryId: String?
     var errorMessage: String?
@@ -48,6 +52,20 @@ final class TalkStore {
         return visibleWords.filter { $0.category == selectedCategoryId }
     }
 
+    /// Every word for the board, ordered by likelihood: ranked next-word
+    /// suggestions first, then the rest of the vocabulary. Categories are not
+    /// split out — the whole board shows at once.
+    var boardWords: [TalkWordTile] {
+        guard !suggestions.isEmpty else { return visibleWords }
+        var seen = Set(suggestions.map(\.id))
+        var result = suggestions
+        for word in visibleWords where !seen.contains(word.id) {
+            result.append(word)
+            seen.insert(word.id)
+        }
+        return result
+    }
+
     func load() async {
         isLoading = true
         errorMessage = nil
@@ -56,12 +74,23 @@ final class TalkStore {
         await bootstrapIdentityIfNeeded()
 
         do {
-            let response = try await apiClient.start(locale: locale, userId: userId, sessionToken: sessionToken)
+            // Identity is carried by the session token (Authorization header); the
+            // server derives the subject from it. We deliberately do NOT pass userId
+            // — an unvalidatable userId is rejected, and the token is the source of
+            // truth (and the IDOR-safe contract).
+            let response = try await apiClient.start(locale: locale, userId: nil, sessionToken: sessionToken)
             applyStartResponse(response, fallback: false)
             await refreshVocabularyIfPossible()
-            await refreshSavedPhrasesIfPossible()
         } catch {
-            errorMessage = "Offline limited mode"
+            // Offline is an expected graceful-degrade state, not an error. The
+            // isOfflineFallback flag already drives the banner, so don't double it
+            // up in release — but in debug surface the real reason so we can see
+            // exactly why a request failed.
+            #if DEBUG
+            errorMessage = "offline: \(error.localizedDescription)"
+            #else
+            errorMessage = nil
+            #endif
             applyStartResponse(TalkOfflineFallback.startResponse, fallback: true)
         }
     }
@@ -95,6 +124,15 @@ final class TalkStore {
         audioURL = nil
         stripDisplay = ""
         serverCanComplete = false
+        // Clearing the sentence also returns the board to its starting options.
+        resetBoardToBaseline()
+    }
+
+    private func resetBoardToBaseline() {
+        guard !baselineWords.isEmpty else { return }
+        visibleWords = baselineWords
+        wordsByCategory = Dictionary(grouping: baselineWords, by: \.category)
+        selectedCategoryId = nil
     }
 
     func applyTemplate(_ template: TalkTemplate) async {
@@ -133,13 +171,20 @@ final class TalkStore {
 
     func completeSentence(autoSave: Bool = true) async -> TalkSentenceCompleteResponse? {
         guard !sentenceWords.isEmpty else { return nil }
+        // A locally-added custom word can't be resolved server-side; speak the
+        // built sentence with on-device speech instead of calling /complete.
+        if sentenceWords.contains(where: { $0.id.hasPrefix("uword-local-") }) {
+            completedSentence = sentenceText
+            audioURL = nil
+            return nil
+        }
 
         do {
             let response = try await apiClient.complete(
                 wordIds: sentenceWords.map(\.id),
                 locale: locale,
                 autoSave: autoSave,
-                userId: userId,
+                userId: nil,
                 sessionToken: sessionToken
             )
             completedSentence = response.sentence
@@ -202,6 +247,7 @@ final class TalkStore {
         templates = response.templates
         categories = response.initialCategories
         visibleWords = response.initialWords.deduplicatedById()
+        baselineWords = visibleWords
         wordsByCategory = Dictionary(grouping: visibleWords, by: \.category)
         suggestions = []
         savedPhrases = response.savedPhrases
@@ -222,6 +268,8 @@ final class TalkStore {
             suggestions = []
             stripDisplay = ""
             serverCanComplete = false
+            // Back to an empty sentence -> show the starting options again.
+            resetBoardToBaseline()
             return
         }
         guard !isOfflineFallback else {
@@ -230,12 +278,21 @@ final class TalkStore {
             serverCanComplete = true
             return
         }
+        // Locally-added custom words aren't in the language pack, so /next would
+        // reject the whole id list. Keep the current board and stay speakable.
+        guard !sentenceWords.contains(where: { $0.id.hasPrefix("uword-local-") }) else {
+            stripDisplay = sentenceText
+            serverCanComplete = true
+            return
+        }
 
+        isPredicting = true
+        defer { isPredicting = false }
         do {
             let response = try await apiClient.next(
                 currentWords: sentenceWords.map(\.id),
                 locale: locale,
-                userId: userId,
+                userId: nil,
                 sessionToken: sessionToken
             )
             suggestions = response.suggestions
@@ -249,10 +306,15 @@ final class TalkStore {
             validNext = response.stripState.validNext
             serverCanComplete = response.stripState.canComplete
         } catch {
-            suggestions = []
+            // Keep the board populated (don't wipe suggestions) and still allow
+            // speaking what's built. Only surface the reason in debug.
             stripDisplay = sentenceText
             serverCanComplete = true
-            errorMessage = "Suggestions unavailable"
+            #if DEBUG
+            errorMessage = "next: \(error.localizedDescription)"
+            #else
+            errorMessage = nil
+            #endif
         }
     }
 
@@ -263,6 +325,8 @@ final class TalkStore {
             mergeCategories(response.categories)
             let current = visibleWords + response.words
             visibleWords = current.deduplicatedById()
+            // The full vocabulary becomes the baseline the board resets to.
+            baselineWords = visibleWords
             wordsByCategory = Dictionary(grouping: visibleWords, by: \.category).mapValues { $0.deduplicatedById() }
         } catch {
             // Start response still provides enough initial data; keep the app usable.

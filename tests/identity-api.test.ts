@@ -56,6 +56,8 @@ class MemoryD1Database {
   roles: Row[] = []
   managedCredentials = new Map<string, Row>()
   deletionRequests = new Map<string, Row>()
+  pinGrants = new Map<string, Row>()
+  rateLimits = new Map<string, Row>()
   auditEvents: Row[] = []
 
   prepare(sql: string): MemoryStatement {
@@ -172,9 +174,15 @@ class MemoryD1Database {
       return new MemoryResult()
     }
     if (normalized.startsWith('UPDATE identity_accounts SET disabled_at')) {
-      const [disabledAt, updatedAt, subjectId, product] = values
+      const [disabledAt, updatedAt, metadataOrSubjectId, maybeSubjectId, maybeProduct] = values
+      const scrubsPii = normalized.includes('email_hash = NULL')
+      const subjectId = scrubsPii ? maybeSubjectId : metadataOrSubjectId
+      const product = scrubsPii ? maybeProduct : maybeSubjectId
       for (const row of this.accounts.values()) {
-        if (row.subject_id === subjectId && row.product === product && !row.disabled_at) Object.assign(row, { disabled_at: disabledAt, updated_at: updatedAt })
+        if (row.subject_id === subjectId && row.product === product && !row.disabled_at) {
+          Object.assign(row, { disabled_at: disabledAt, updated_at: updatedAt })
+          if (scrubsPii) Object.assign(row, { email_hash: null, email_plain: null, email_verified_at: null, metadata_json: metadataOrSubjectId })
+        }
       }
       return new MemoryResult()
     }
@@ -302,6 +310,34 @@ class MemoryD1Database {
       this.deletionRequests.set(String(id), { id, subject_id: subjectId, scope, status, child_account_id: childAccountId, pin_grant_token: pinGrantToken, created_at: createdAt, updated_at: updatedAt, completed_at: completedAt, metadata_json: metadataJson })
       return new MemoryResult()
     }
+    if (normalized.startsWith('INSERT INTO identity_pin_grants')) {
+      const [id, subjectId, product, tokenHash, purpose, createdAt, expiresAt, consumedAt, metadataJson] = values
+      this.pinGrants.set(String(id), { id, subject_id: subjectId, product, token_hash: tokenHash, purpose, created_at: createdAt, expires_at: expiresAt, consumed_at: consumedAt, metadata_json: metadataJson })
+      return new MemoryResult()
+    }
+    if (normalized.startsWith('SELECT * FROM identity_pin_grants WHERE token_hash =')) {
+      const row = [...this.pinGrants.values()].find((grant) => grant.token_hash === values[0])
+      return new MemoryResult(row ? [row] : [])
+    }
+    if (normalized.startsWith('UPDATE identity_pin_grants SET consumed_at')) {
+      const [consumedAt, id] = values
+      const row = this.pinGrants.get(String(id))
+      if (row && !row.consumed_at) row.consumed_at = consumedAt
+      return new MemoryResult()
+    }
+    if (normalized.startsWith('SELECT * FROM identity_rate_limits')) {
+      const row = this.rateLimits.get(`${values[0]}|${values[1]}`)
+      return new MemoryResult(row ? [row] : [])
+    }
+    if (normalized.startsWith('INSERT INTO identity_rate_limits')) {
+      const subjectKey = values[0]
+      const action = values[1]
+      const failCount = values.length === 3 ? 0 : values[2]
+      const lockedUntil = values.length === 3 ? null : values[3]
+      const updatedAt = values.length === 3 ? values[2] : values[4]
+      this.rateLimits.set(`${subjectKey}|${action}`, { subject_key: subjectKey, action, fail_count: failCount, locked_until: lockedUntil, updated_at: updatedAt })
+      return new MemoryResult()
+    }
     if (normalized.startsWith('SELECT * FROM identity_deletion_requests WHERE id =')) {
       const req = this.deletionRequests.get(String(values[0]))
       return new MemoryResult(req ? [req] : [])
@@ -364,6 +400,29 @@ async function fetchJson(path: string, init: RequestInit = {}, testEnv = env()) 
   return { response, body, env: testEnv }
 }
 
+async function verifiedAccountWithPin(testEnv = env()) {
+  const created = await fetchJson('/v1/identity/device', { method: 'POST', body: JSON.stringify({}) }, testEnv)
+  const token = (created.body as IdentityBundle).session?.token ?? ''
+  await fetchJson('/v1/identity/email', {
+    method: 'POST',
+    headers: { authorization: `Bearer ${token}` },
+    body: JSON.stringify({ email: `pin-${crypto.randomUUID()}@example.test`, purpose: 'recovery' })
+  }, testEnv)
+  const magicToken = testEnv.MAGIC_LINK_TEST_SINK.at(-1)?.token ?? ''
+  const verified = await fetchJson('/v1/identity/email/verify', {
+    method: 'POST',
+    body: JSON.stringify({ token: magicToken })
+  }, testEnv)
+  const verifiedToken = (verified.body as IdentityBundle).session?.token ?? ''
+  const setPin = await fetchJson('/v1/identity/pin', {
+    method: 'POST',
+    headers: { authorization: `Bearer ${verifiedToken}` },
+    body: JSON.stringify({ pin: '2468' })
+  }, testEnv)
+  expect(setPin.response.status).toBe(200)
+  return { testEnv, token: verifiedToken, subjectId: (verified.body as IdentityBundle).subject.id }
+}
+
 describeIdentityContract('identity-api published Ankore contract', { config: identityConfig, tokenPepper: 'test-pepper' })
 
 describe('identity-api Ankore contract', () => {
@@ -393,6 +452,30 @@ describe('identity-api endpoints', () => {
 
     expect(allowed.response.status).toBe(204)
     expect(allowed.response.headers.get('access-control-allow-origin')).toBe('https://app.tiko.test')
+    expect(denied.response.status).toBe(403)
+    expect(denied.response.headers.get('access-control-allow-origin')).toBeNull()
+  })
+
+  it('reflects allowed origins and PUT for managed identity preflights', async () => {
+    const allowed = await fetchJson('/v1/identity/child-accounts/sub_1', {
+      method: 'OPTIONS',
+      headers: {
+        origin: 'https://cards.tikoapps.org',
+        'access-control-request-method': 'PUT'
+      }
+    })
+    const denied = await fetchJson('/v1/identity/child-accounts/sub_1', {
+      method: 'OPTIONS',
+      headers: {
+        origin: 'https://evil.example',
+        'access-control-request-method': 'PUT'
+      }
+    })
+
+    expect(allowed.response.status).toBe(204)
+    expect(allowed.response.headers.get('access-control-allow-origin')).toBe('https://cards.tikoapps.org')
+    expect(allowed.response.headers.get('access-control-allow-credentials')).toBe('true')
+    expect(allowed.response.headers.get('access-control-allow-methods')).toContain('PUT')
     expect(denied.response.status).toBe(403)
     expect(denied.response.headers.get('access-control-allow-origin')).toBeNull()
   })
@@ -479,6 +562,28 @@ describe('identity-api endpoints', () => {
     expect(restoredBundle.subject.id).toBe(createdBundle.subject.id)
   })
 
+  it('accepts shared browser session cookies on managed identity endpoints', async () => {
+    const testEnv = env()
+    const created = await worker.fetch(new Request('https://id.tikoapps.org/v1/identity/device', {
+      method: 'POST',
+      headers: { origin: 'https://yesno.tikoapps.org', 'content-type': 'application/json' },
+      body: JSON.stringify({ device: { platform: 'web' } })
+    }), testEnv as never, {} as never)
+    const createdBundle = await created.json() as IdentityBundle
+    const cookie = created.headers.get('set-cookie')?.split(';')[0] ?? ''
+    await assignTestRole(testEnv.IDENTITY_DB, createdBundle.subject.id, 'profile_manager')
+
+    const listed = await worker.fetch(new Request('https://id.tikoapps.org/v1/identity/child-accounts', {
+      headers: { origin: 'https://cards.tikoapps.org', cookie }
+    }), testEnv as never, {} as never)
+    const body = await listed.json() as JsonBody
+
+    expect(listed.status).toBe(200)
+    expect(body.childAccounts).toEqual([])
+    expect(listed.headers.get('access-control-allow-origin')).toBe('https://cards.tikoapps.org')
+    expect(listed.headers.get('access-control-allow-credentials')).toBe('true')
+  })
+
   it('restores the same device with device credentials and creates a fresh session', async () => {
     const testEnv = env()
     const first = await fetchJson('/v1/identity/device', { method: 'POST', body: JSON.stringify({}) }, testEnv)
@@ -545,6 +650,7 @@ describe('identity-api endpoints', () => {
     expect([...testEnv.IDENTITY_DB.sessions.values()].filter((row) => row.subject_id === subjectId).every((row) => row.revoked_at)).toBe(true)
     expect([...testEnv.IDENTITY_DB.devices.values()].filter((row) => row.subject_id === subjectId).every((row) => row.revoked_at)).toBe(true)
     expect([...testEnv.IDENTITY_DB.accounts.values()].filter((row) => row.subject_id === subjectId).every((row) => row.disabled_at)).toBe(true)
+    expect([...testEnv.IDENTITY_DB.accounts.values()].filter((row) => row.subject_id === subjectId).every((row) => row.email_hash === null && row.email_plain === null && row.email_verified_at === null && row.metadata_json === '{}')).toBe(true)
     const afterDelete = await fetchJson('/v1/identity/session', { headers: { authorization: `Bearer ${verifiedToken}` } }, testEnv)
     expect(afterDelete.response.status).toBe(401)
   })
@@ -597,6 +703,25 @@ describe('identity-api endpoints', () => {
     expect(body.magicLinkUrl).toContain(testEnv.MAGIC_LINK_TEST_SINK[0]?.token)
     expect(body.otp).toBe(testEnv.MAGIC_LINK_TEST_SINK[0]?.otp)
     expect(body.otp).toMatch(/^\d{6}$/)
+  })
+
+  it('fails email challenge delivery when communication auth is not configured outside the test sink', async () => {
+    const { MAGIC_LINK_TEST_SINK: _sink, ...testEnv } = env()
+    const created = await worker.fetch(new Request('https://identity.test/v1/identity/device', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({}),
+    }), testEnv as never, {} as never)
+    const createdBody = await created.json() as IdentityBundle
+    const token = createdBody.session?.token ?? ''
+
+    const response = await worker.fetch(new Request('https://identity.test/v1/identity/email/challenge', {
+      method: 'POST',
+      headers: { authorization: `Bearer ${token}`, 'content-type': 'application/json' },
+      body: JSON.stringify({ email: 'caregiver@example.test', purpose: 'recover' })
+    }), testEnv as never, {} as never)
+
+    expect(response.status).toBeGreaterThanOrEqual(500)
   })
 
   it('verifies magic link token and OTP through Ankore and consumes challenges', async () => {
@@ -753,6 +878,118 @@ describe('identity-api endpoints', () => {
     expect((parent.body as IdentityBundle).runtime?.mode).toBe('parent')
   })
 
+  it('rate-limits repeated invalid PIN verification attempts', async () => {
+    const { testEnv, token, subjectId } = await verifiedAccountWithPin()
+
+    for (let attempt = 0; attempt < 5; attempt += 1) {
+      const response = await fetchJson('/v1/identity/pin/verify', {
+        method: 'POST',
+        headers: { authorization: `Bearer ${token}` },
+        body: JSON.stringify({ pin: '0000', purpose: 'parent_mode' })
+      }, testEnv)
+      expect(response.response.status).toBe(403)
+    }
+
+    const limited = await fetchJson('/v1/identity/pin/verify', {
+      method: 'POST',
+      headers: { authorization: `Bearer ${token}` },
+      body: JSON.stringify({ pin: '2468', purpose: 'parent_mode' })
+    }, testEnv)
+
+    expect(limited.response.status).toBe(429)
+    expect(limited.body.error).toBe('rate_limited')
+    expect(testEnv.IDENTITY_DB.rateLimits.get(`pin:${subjectId}|pin`)?.locked_until).toEqual(expect.any(String))
+  })
+
+  it('persists PIN grants and consumes them for account reset exactly once', async () => {
+    const { testEnv, token } = await verifiedAccountWithPin()
+
+    const unissued = await fetchJson('/v1/identity/reset', {
+      method: 'POST',
+      headers: { authorization: `Bearer ${token}` },
+      body: JSON.stringify({ confirmation: 'reset_my_data', pinGrantToken: 'grt_unissued' })
+    }, testEnv)
+    expect(unissued.response.status).toBe(403)
+    expect(unissued.body.error).toBe('invalid_pin_grant')
+
+    const expiredGrant = await fetchJson('/v1/identity/pin/verify', {
+      method: 'POST',
+      headers: { authorization: `Bearer ${token}` },
+      body: JSON.stringify({ pin: '2468', purpose: 'account_reset' })
+    }, testEnv)
+    const expiredGrantToken = String(expiredGrant.body.grant.token)
+    const expiredGrantRow = [...testEnv.IDENTITY_DB.pinGrants.values()][0]
+    if (expiredGrantRow) expiredGrantRow.expires_at = '2000-01-01T00:00:00.000Z'
+    const expired = await fetchJson('/v1/identity/reset', {
+      method: 'POST',
+      headers: { authorization: `Bearer ${token}` },
+      body: JSON.stringify({ confirmation: 'reset_my_data', pinGrantToken: expiredGrantToken })
+    }, testEnv)
+    expect(expired.response.status).toBe(403)
+    expect(expired.body.error).toBe('invalid_pin_grant')
+
+    const grant = await fetchJson('/v1/identity/pin/verify', {
+      method: 'POST',
+      headers: { authorization: `Bearer ${token}` },
+      body: JSON.stringify({ pin: '2468', purpose: 'account_reset' })
+    }, testEnv)
+    const grantToken = String(grant.body.grant.token)
+    expect(testEnv.IDENTITY_DB.pinGrants.size).toBe(2)
+    expect(JSON.stringify([...testEnv.IDENTITY_DB.pinGrants.values()])).not.toContain(grantToken)
+
+    const reset = await fetchJson('/v1/identity/reset', {
+      method: 'POST',
+      headers: { authorization: `Bearer ${token}` },
+      body: JSON.stringify({ confirmation: 'reset_my_data', pinGrantToken: grantToken })
+    }, testEnv)
+    expect(reset.response.status).toBe(202)
+    expect(reset.body).toMatchObject({ status: 'requested', completedAt: null })
+    expect(reset.body.categoriesRequested).toEqual(['preferences', 'app_state', 'user_content', 'progress', 'insights'])
+    expect([...testEnv.IDENTITY_DB.pinGrants.values()].some((row) => row.consumed_at)).toBe(true)
+
+    const replay = await fetchJson('/v1/identity/reset', {
+      method: 'POST',
+      headers: { authorization: `Bearer ${token}` },
+      body: JSON.stringify({ confirmation: 'reset_my_data', pinGrantToken: grantToken })
+    }, testEnv)
+    expect(replay.response.status).toBe(403)
+    expect(replay.body.error).toBe('invalid_pin_grant')
+  })
+
+  it('requires a purpose-matched PIN grant for account deletion requests', async () => {
+    const { testEnv, token } = await verifiedAccountWithPin()
+
+    const wrongPurpose = await fetchJson('/v1/identity/pin/verify', {
+      method: 'POST',
+      headers: { authorization: `Bearer ${token}` },
+      body: JSON.stringify({ pin: '2468', purpose: 'account_reset' })
+    }, testEnv)
+    const wrongPurposeToken = String(wrongPurpose.body.grant.token)
+    const rejected = await fetchJson('/v1/identity/deletion-requests', {
+      method: 'POST',
+      headers: { authorization: `Bearer ${token}` },
+      body: JSON.stringify({ scope: 'account', pinGrantToken: wrongPurposeToken })
+    }, testEnv)
+    expect(rejected.response.status).toBe(403)
+    expect(rejected.body.error).toBe('invalid_pin_grant')
+
+    const grant = await fetchJson('/v1/identity/pin/verify', {
+      method: 'POST',
+      headers: { authorization: `Bearer ${token}` },
+      body: JSON.stringify({ pin: '2468', purpose: 'account_deletion' })
+    }, testEnv)
+    const grantToken = String(grant.body.grant.token)
+    const deleted = await fetchJson('/v1/identity/deletion-requests', {
+      method: 'POST',
+      headers: { authorization: `Bearer ${token}` },
+      body: JSON.stringify({ scope: 'account', pinGrantToken: grantToken })
+    }, testEnv)
+    expect(deleted.response.status).toBe(202)
+    const request = [...testEnv.IDENTITY_DB.deletionRequests.values()][0]
+    expect(request?.pin_grant_token).toMatch(/^sha256:/)
+    expect(request?.pin_grant_token).not.toBe(grantToken)
+  })
+
   it('supports canonical Profile Manager child-account management endpoints', async () => {
     const testEnv = env()
     const manager = await fetchJson('/v1/identity/device', { method: 'POST', body: JSON.stringify({}) }, testEnv)
@@ -836,7 +1073,7 @@ describe('identity-api endpoints', () => {
     expect(testEnv.IDENTITY_DB.roles.some((role) => role.subject_id === created.body.child.subjectId && role.role === 'child')).toBe(true)
     const storedCredential = Array.from(testEnv.IDENTITY_DB.managedCredentials.values())[0]
     expect(storedCredential.code_hash).not.toBe('4829')
-    expect(String(storedCredential.code_hash)).toMatch(/^sha256:/)
+    expect(String(storedCredential.code_hash)).toMatch(/^pbkdf2-sha256:/)
 
     const badLogin = await fetchJson('/v1/identity/managed/login', {
       method: 'POST',
@@ -871,6 +1108,37 @@ describe('identity-api endpoints', () => {
     })
     expect(login.body.session.loginMethod).toBe('child_code')
     expect(login.body.managed).toMatchObject({ handle: 'Mila', displayName: 'Mila', managerSubjectId: managerBundle.subject.id })
+  })
+
+  it('rate-limits repeated invalid managed child code logins', async () => {
+    const testEnv = env()
+    const manager = await fetchJson('/v1/identity/device', { method: 'POST', body: JSON.stringify({}) }, testEnv)
+    const managerBundle = manager.body as IdentityBundle
+    const managerToken = managerBundle.session?.token ?? ''
+    await assignTestRole(testEnv.IDENTITY_DB, managerBundle.subject.id, 'profile_manager')
+
+    const created = await fetchJson('/v1/identity/child-accounts', {
+      method: 'POST',
+      headers: { authorization: `Bearer ${managerToken}` },
+      body: JSON.stringify({ name: 'Mila', code: '4829' })
+    }, testEnv)
+    expect(created.response.status).toBe(201)
+
+    for (let attempt = 0; attempt < 8; attempt += 1) {
+      const response = await fetchJson('/v1/identity/child-accounts/login', {
+        method: 'POST',
+        body: JSON.stringify({ name: 'Mila', code: '0000' })
+      }, testEnv)
+      expect(response.response.status).toBe(401)
+    }
+
+    const limited = await fetchJson('/v1/identity/child-accounts/login', {
+      method: 'POST',
+      body: JSON.stringify({ name: 'Mila', code: '4829' })
+    }, testEnv)
+
+    expect(limited.response.status).toBe(429)
+    expect(limited.body.error).toBe('rate_limited')
   })
 })
 

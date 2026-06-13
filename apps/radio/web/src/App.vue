@@ -5,16 +5,26 @@ import type { PopupService } from '@sil/ui'
 import { IdentityClient } from '@tiko/identity'
 import { TikoDataClient, type RadioSettings, type RadioState } from '@tiko/data'
 import type { RadioTrack, RadioCategory } from '@tiko/data'
-import { createI18n, createTikoIdentityLabels, defaultLanguage, tikoI18nKeys, tikoLanguageOptions, tikoLanguages, type TikoLanguage } from '@tiko/i18n'
+import { createI18n, createTikoIdentityLabels, createTikoShellLabels, normalizeTikoLanguage, tikoI18nKeys, tikoLanguageOptions, type TikoLanguage } from '@tiko/i18n'
 import {
   TikoAppShell,
   TikoColorMode,
+  normalizeTikoColorMode,
+  readTikoLocalJson,
+  resolveTikoAppApiBaseUrl,
+  resolveTikoGenerationApiBaseUrl,
+  resolveTikoIdentityBaseUrl,
+  resolveTikoMediaApiBaseUrl,
   tikoColors,
+  useTikoAppDataRuntime,
+  useTikoColorModeEffect,
+  useTikoI18nRuntime,
   useIdentityRuntime,
+  writeTikoLocalJson,
   type IdentityRuntimeState,
 } from '@tiko/ui'
 import { useAudioPlayer } from './composables/useAudioPlayer'
-import { useTrackLibrary } from './composables/useTrackLibrary'
+import { getPersistableRadioTracks, useTrackLibrary } from './composables/useTrackLibrary'
 import { useCategories } from './composables/useCategories'
 import AddAudioPopup from './components/AddAudioPopup.vue'
 import SettingsPopup from './components/SettingsPopup.vue'
@@ -27,10 +37,10 @@ const popup = inject<PopupService>('popupService')!
 // ---- Constants ------------------------------------------------------------
 const storageKey = 'tiko:radio'
 const appId = 'radio' as const
-const apiBaseUrl = resolveApiBaseUrl()
-const identityBaseUrl = resolveIdentityBaseUrl()
-const generationApiBaseUrl = resolveGenerationApiBaseUrl()
-const mediaApiBaseUrl = resolveMediaApiBaseUrl()
+const apiBaseUrl = resolveTikoAppApiBaseUrl()
+const identityBaseUrl = resolveTikoIdentityBaseUrl()
+const generationApiBaseUrl = resolveTikoGenerationApiBaseUrl()
+const mediaApiBaseUrl = resolveTikoMediaApiBaseUrl()
 
 // ---- Interfaces -----------------------------------------------------------
 interface PersistedState {
@@ -71,65 +81,15 @@ interface PublicAudioAlbum {
 }
 
 // ---- Utility functions ----------------------------------------------------
-function resolveApiBaseUrl() {
-  const env = (import.meta as ImportMeta & { env?: Record<string, string | undefined> }).env
-  return (env?.VITE_TIKO_API_BASE_URL ?? 'https://identity.tikoapi.org/v1').replace(/\/$/, '')
-}
-
-function resolveIdentityBaseUrl() {
-  const env = (import.meta as ImportMeta & { env?: Record<string, string | undefined> }).env
-  return (env?.VITE_IDENTITY_API_URL ?? env?.VITE_TIKO_IDENTITY_BASE_URL ?? 'https://id.tikoapps.org/v1').replace(/\/$/, '')
-}
-
-function resolveGenerationApiBaseUrl() {
-  const env = (import.meta as ImportMeta & { env?: Record<string, string | undefined> }).env
-  return (env?.VITE_GENERATION_API_URL ?? 'https://generation.tikoapi.org/v1/generation').replace(/\/$/, '')
-}
-
-function resolveMediaApiBaseUrl() {
-  const env = (import.meta as ImportMeta & { env?: Record<string, string | undefined> }).env
-  return (env?.VITE_MEDIA_API_URL ?? 'https://media.tikoapi.org/v1').replace(/\/$/, '')
-}
-
-function readJson<T>(key: string, fallback: T): T {
-  if (typeof window === 'undefined') return fallback
-  try {
-    return JSON.parse(window.localStorage.getItem(key) ?? 'null') ?? fallback
-  } catch {
-    return fallback
-  }
-}
-
-function writeJson(key: string, value: unknown) {
-  if (typeof window === 'undefined') return
-  window.localStorage.setItem(key, JSON.stringify(value))
-}
-
-function toLanguage(value: string | undefined): TikoLanguage {
-  return tikoLanguages.includes(value as TikoLanguage) ? value as TikoLanguage : defaultLanguage
-}
-
-function toColorMode(value: string | undefined): TikoColorMode {
-  return value === 'light' || value === 'dark' || value === 'system' ? value : 'system'
-}
-
-function resolveColorMode(mode: TikoColorMode) {
-  if (mode !== 'system') return mode
-  if (typeof window === 'undefined') return 'light'
-  return window.matchMedia?.('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
-}
-
 // ---- State initialization --------------------------------------------------
-const stored = readJson<PersistedState>(storageKey, {})
-const i18n = createI18n({ app: appId, language: toLanguage(stored.language) })
-const language = ref<TikoLanguage>(toLanguage(stored.language))
-const colorMode = ref<TikoColorMode>(toColorMode(stored.colorMode))
+const stored = readTikoLocalJson<PersistedState>(storageKey, {})
+const i18n = createI18n({ app: appId, language: normalizeTikoLanguage(stored.language) })
+const language = ref<TikoLanguage>(normalizeTikoLanguage(stored.language))
+const colorMode = ref<TikoColorMode>(normalizeTikoColorMode(stored.colorMode))
 const volume = ref(stored.volume ?? 1)
 const shuffleEnabled = ref(stored.shuffleEnabled ?? false)
 const repeatEnabled = ref(stored.repeatEnabled ?? false)
 const currentTrackIndex = ref(stored.currentTrackIndex ?? -1)
-const settingsVersion = ref<number | undefined>()
-const stateVersion = ref<number | undefined>()
 const bootstrapped = ref(false)
 const identityClient = new IdentityClient({ baseUrl: identityBaseUrl, credentials: 'include' })
 const dataClient = new TikoDataClient({ baseUrl: apiBaseUrl })
@@ -152,6 +112,26 @@ const runtime = useIdentityRuntime({
   storageKey: 'tiko:identity:device-session',
   labels: () => createTikoIdentityLabels(i18n.t),
 })
+const dataRuntime = useTikoAppDataRuntime<typeof appId, RadioSettings, RadioState>({
+  app: appId,
+  sessionToken: runtimeState.sessionToken,
+  bootstrapped,
+  dataClient,
+  readSettings: () => ({
+    language: language.value,
+    colorMode: colorMode.value,
+    volume: volume.value,
+  }),
+  readState: () => ({
+    currentTrackIndex: currentTrackIndex.value,
+    tracks: getPersistableRadioTracks(library.tracks.value),
+    categories: categories.categories.value,
+    shuffleEnabled: shuffleEnabled.value,
+    repeatEnabled: repeatEnabled.value,
+  }),
+  applySettings,
+  applyState,
+})
 
 // ---- Kid / parent mode (aliases into runtimeState) -------------------------
 const parentMode = runtimeState.parentMode
@@ -166,7 +146,6 @@ const categories = useCategories('tiko:radio:categories')
 
 // ---- Labels ---------------------------------------------------------------
 const labels = computed(() => {
-  void language.value
   return {
     appName: i18n.t(tikoI18nKeys.radio.appName),
     play: i18n.t(tikoI18nKeys.radio.player.play),
@@ -186,9 +165,13 @@ const labels = computed(() => {
     removeTrack: i18n.t(tikoI18nKeys.radio.library.removeTrack),
     uploadFile: i18n.t(tikoI18nKeys.radio.library.uploadFile),
     settings: i18n.t(tikoI18nKeys.common.settings),
+    shell: createTikoShellLabels(i18n.t),
     settingsPanel: {
+      settings: i18n.t(tikoI18nKeys.common.settings),
       language: i18n.t(tikoI18nKeys.common.language),
       appearance: i18n.t(tikoI18nKeys.common.appearance),
+      appPreferences: i18n.t(tikoI18nKeys.common.appPreferences),
+      colorMode: i18n.t(tikoI18nKeys.common.colorMode),
       light: i18n.t(tikoI18nKeys.common.colorModeOptions.light),
       dark: i18n.t(tikoI18nKeys.common.colorModeOptions.dark),
       system: i18n.t(tikoI18nKeys.common.colorModeOptions.system),
@@ -281,7 +264,7 @@ function handleProgressClick(event: MouseEvent) {
 
 // ---- Persistence -----------------------------------------------------------
 function saveLocalFallback() {
-  writeJson(storageKey, {
+  writeTikoLocalJson(storageKey, {
     language: language.value,
     colorMode: colorMode.value,
     volume: volume.value,
@@ -291,16 +274,15 @@ function saveLocalFallback() {
   })
 }
 
-function applySettings(settings: RadioSettings, version?: number) {
-  language.value = toLanguage(settings.language)
-  colorMode.value = toColorMode(settings.colorMode)
+function applySettings(settings: RadioSettings) {
+  language.value = normalizeTikoLanguage(settings.language)
+  colorMode.value = normalizeTikoColorMode(settings.colorMode)
   if (typeof settings.volume === 'number' && settings.volume >= 0 && settings.volume <= 1) {
     volume.value = settings.volume
   }
-  settingsVersion.value = version
 }
 
-function applyState(state: RadioState, version?: number) {
+function applyState(state: RadioState) {
   if (typeof state.currentTrackIndex === 'number' && state.currentTrackIndex >= 0) {
     currentTrackIndex.value = state.currentTrackIndex
   }
@@ -308,68 +290,13 @@ function applyState(state: RadioState, version?: number) {
     library.tracks.value = state.tracks
   }
   if (Array.isArray(state.categories) && state.categories.length > 0) {
-    for (const cat of state.categories) {
-      if (!categories.categories.value.find((c) => c.id === cat.id)) {
-        categories.addCategory(cat)
-      }
-    }
+    categories.replaceCategories(state.categories)
   }
   if (typeof state.shuffleEnabled === 'boolean') {
     shuffleEnabled.value = state.shuffleEnabled
   }
   if (typeof state.repeatEnabled === 'boolean') {
     repeatEnabled.value = state.repeatEnabled
-  }
-  stateVersion.value = version
-}
-
-async function hydrateRemoteData() {
-  if (!runtimeState.sessionToken.value) return
-  const [settings, state] = await Promise.all([
-    dataClient.getSettings(appId, runtimeState.sessionToken.value),
-    dataClient.getState(appId, runtimeState.sessionToken.value),
-  ])
-  applySettings(settings.settings, settings.version)
-  applyState(state.state, state.version)
-}
-
-async function persistSettingsRemote() {
-  if (!bootstrapped.value || !runtimeState.sessionToken.value) return
-  try {
-    const response = await dataClient.putSettings(
-      appId,
-      runtimeState.sessionToken.value,
-      {
-        language: language.value,
-        colorMode: colorMode.value,
-        volume: volume.value,
-      },
-      { version: settingsVersion.value },
-    )
-    settingsVersion.value = response.version
-  } catch {
-    // Local fallback is already written
-  }
-}
-
-async function persistStateRemote() {
-  if (!bootstrapped.value || !runtimeState.sessionToken.value) return
-  try {
-    const response = await dataClient.putState(
-      appId,
-      runtimeState.sessionToken.value,
-      {
-        currentTrackIndex: currentTrackIndex.value,
-        tracks: library.tracks.value,
-        categories: categories.categories.value,
-        shuffleEnabled: shuffleEnabled.value,
-        repeatEnabled: repeatEnabled.value,
-      },
-      { version: stateVersion.value },
-    )
-    stateVersion.value = response.version
-  } catch {
-    // Local fallback is already written
   }
 }
 
@@ -450,33 +377,27 @@ async function syncGeneratedStories() {
 }
 
 // ---- Watchers --------------------------------------------------------------
-watch(language, (value) => {
-  i18n.setLanguage(value)
-}, { immediate: true })
+useTikoI18nRuntime({ app: appId, language, i18n })
 
-watch(colorMode, (mode) => {
-  const effective = resolveColorMode(mode)
-  document.documentElement.dataset.colorMode = effective
-  document.documentElement.dataset.theme = effective
-}, { immediate: true })
+useTikoColorModeEffect(colorMode)
 
 watch([language, colorMode, volume], () => {
   saveLocalFallback()
-  void persistSettingsRemote()
+  void dataRuntime.persistSettingsRemote()
 })
 
 watch([currentTrackIndex, shuffleEnabled, repeatEnabled], () => {
   saveLocalFallback()
-  void persistStateRemote()
+  void dataRuntime.persistStateRemote()
 })
 
 watch(library.tracks, () => {
   saveLocalFallback()
-  void persistStateRemote()
+  void dataRuntime.persistStateRemote()
 }, { deep: true })
 
 watch(categories.categories, () => {
-  void persistStateRemote()
+  void dataRuntime.persistStateRemote()
 }, { deep: true })
 
 // Volume sync to player
@@ -485,22 +406,21 @@ watch(volume, (v) => {
 }, { immediate: true })
 
 // Track ended auto-advance
-watch(player.isPlaying, (playing, wasPlaying) => {
-  if (wasPlaying && !playing && player.currentTrack.value) {
-    if (repeatEnabled.value) {
-      player.play(player.currentTrack.value)
-      return
-    }
-    const len = library.tracks.value.length
-    if (len === 0) return
-    const nextIndex = shuffleEnabled.value
-      ? Math.floor(Math.random() * len)
-      : (currentTrackIndex.value + 1) % len
-    const nextTrack = library.tracks.value[nextIndex]
-    if (nextTrack) {
-      currentTrackIndex.value = nextIndex
-      player.play(nextTrack)
-    }
+watch(player.endedCount, () => {
+  if (!player.currentTrack.value) return
+  if (repeatEnabled.value) {
+    player.play(player.currentTrack.value)
+    return
+  }
+  const len = library.tracks.value.length
+  if (len === 0) return
+  const nextIndex = shuffleEnabled.value
+    ? Math.floor(Math.random() * len)
+    : (currentTrackIndex.value + 1) % len
+  const nextTrack = library.tracks.value[nextIndex]
+  if (nextTrack) {
+    currentTrackIndex.value = nextIndex
+    player.play(nextTrack)
   }
 })
 
@@ -509,7 +429,7 @@ watch(player.isPlaying, (playing, wasPlaying) => {
 onMounted(async () => {
   try {
     await runtime.bootstrapIdentity()
-    await hydrateRemoteData()
+    await dataRuntime.hydrateRemoteData()
     void runtime.loadProfile()
   } catch {
     // Keep the child-facing local flow available when API bootstrap is offline.
@@ -537,8 +457,8 @@ function openVolumePopup() {
               min: '0',
               max: '1',
               step: '0.05',
-              'onUpdate:modelValue': (v: string) => {
-                vol.value = parseFloat(v)
+              onInput: (event: Event) => {
+                vol.value = parseFloat((event.target as HTMLInputElement).value)
                 emit('update:volume', vol.value)
               },
               value: vol.value,
@@ -596,6 +516,7 @@ function openAddAudioPopup() {
           title: d.title,
           source: 'upload',
           audioUrl,
+          categoryId: d.categoryId,
         } as Parameters<typeof library.addTrack>[0] & { categoryId?: string })
         if (!player.isPlaying.value) {
           currentTrackIndex.value = library.tracks.value.length - 1
@@ -725,6 +646,7 @@ function handleCreateCategory() {
     :theme-color="appConfig.themeColor"
     avatar="ui/circle-user"
     :actions="headerActions"
+    :labels="labels.shell"
     @header-action="headerAction"
     @avatar-click="runtime.handleAvatarClick"
   >

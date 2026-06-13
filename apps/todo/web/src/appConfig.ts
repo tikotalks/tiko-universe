@@ -5,7 +5,7 @@ export const appConfig = {
   "title": "Todo",
   "appColor": "todo",
   "appIcon": "ui/check-list",
-  "appIconImageUrl": "",
+  "appIconImageUrl": "https://data.tikocdn.org/uploads/1754413862502-todo.png",
   "appIconMediaCategory": "routines",
-  "themeColor": "#2488ff"
+  "themeColor": "#FF6B6B"
 } satisfies TikoAppConfig

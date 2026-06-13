@@ -1,4 +1,4 @@
-import { authenticate, type AuthEnv } from '../../shared/auth'
+import { requireSession as requireSharedSession, type AuthEnv } from '../../shared/auth'
 type D1Value = string | number | boolean | null
 
 interface D1Result<T = unknown> {
@@ -20,7 +20,6 @@ interface D1Database {
 
 export interface Env extends AuthEnv {
   APP_DB: D1Database
-  IDENTITY_DB?: D1Database
   TOKEN_PEPPER?: string
   ALLOWED_ORIGINS?: string
 }
@@ -34,6 +33,8 @@ interface SessionJoinRow {
   user_id: string
   device_id: string | null
   expires_at: string
+  roles?: string[]
+  capabilities?: Record<string, unknown>
 }
 
 const DEFAULT_ALLOWED_ORIGINS = 'https://tiko.mt,https://www.tiko.mt,https://tiko.tikoapps.org,https://yesno.tikoapps.org,https://cards.tikoapps.org,https://sequence.tikoapps.org,https://type.tikoapps.org,https://timer.tikoapps.org,https://admin.tikoapps.org,https://admin.tikoapi.org,https://dev.tiko.tikoapps.org,https://dev.yesno.tikoapps.org,https://dev.cards.tikoapps.org,https://dev.sequence.tikoapps.org,https://dev.type.tikoapps.org,https://dev.timer.tikoapps.org,https://dev.admin.tikoapps.org,http://localhost:5173,http://localhost:4173,capacitor://localhost,ionic://localhost,tiko://native'
@@ -312,28 +313,10 @@ async function writeAppData(request: Request, env: Env, userId: string, app: Tik
   if (!isJsonObject(value)) throw new HttpError(400, 'invalid_request', `${key} must be a JSON object.`, key)
 
   const expectedVersion = optionalVersion(body.version)
-  const existing = await first<AppDataRow>(env.APP_DB.prepare(`
-    SELECT data_json, updated_at, version
-    FROM ${tableName(resource)}
-    WHERE user_id = ? AND app = ?
-  `).bind(userId, app))
-  const currentVersion = existing ? Number(existing.version) : 0
-  if (expectedVersion !== null && expectedVersion !== currentVersion) {
-    throw new HttpError(409, 'version_conflict', 'Stored version does not match requested version.', 'version')
-  }
-
   const now = new Date().toISOString()
-  const nextVersion = currentVersion + 1
-  await run(env.APP_DB.prepare(`
-    INSERT INTO ${tableName(resource)} (user_id, app, data_json, updated_at, version)
-    VALUES (?, ?, ?, ?, ?)
-    ON CONFLICT(user_id, app) DO UPDATE SET
-      data_json = excluded.data_json,
-      updated_at = excluded.updated_at,
-      version = excluded.version
-  `).bind(userId, app, JSON.stringify(value), now, nextVersion))
+  const row = await atomicWriteAppData(env.APP_DB, resource, userId, app, value as JsonValue, now, expectedVersion)
 
-  return json(payload(app, resource, value as JsonValue, now, nextVersion))
+  return json(payload(app, resource, parseStoredJson(row.data_json), row.updated_at, Number(row.version)))
 }
 
 // ---------------------------------------------------------------------------
@@ -357,26 +340,90 @@ async function writeDefaults(request: Request, env: Env, app: TikoAppId, resourc
   if (!isJsonObject(value)) throw new HttpError(400, 'invalid_request', `${key} must be a JSON object.`, key)
 
   const expectedVersion = optionalVersion(body.version)
-  const existing = await first<AppDataRow>(env.APP_DB.prepare(
-    'SELECT data_json, updated_at, version FROM app_defaults WHERE app = ? AND resource = ?'
-  ).bind(app, resource))
-  const currentVersion = existing ? Number(existing.version) : 0
-  if (expectedVersion !== null && expectedVersion !== currentVersion) {
-    throw new HttpError(409, 'version_conflict', 'Stored version does not match requested version.', 'version')
-  }
-
   const now = new Date().toISOString()
-  const nextVersion = currentVersion + 1
-  await run(env.APP_DB.prepare(
-    `INSERT INTO app_defaults (app, resource, data_json, updated_at, version)
-     VALUES (?, ?, ?, ?, ?)
-     ON CONFLICT(app, resource) DO UPDATE SET
-       data_json = excluded.data_json,
-       updated_at = excluded.updated_at,
-       version = excluded.version`
-  ).bind(app, resource, JSON.stringify(value), now, nextVersion))
+  const row = await atomicWriteDefaults(env.APP_DB, app, resource, value as JsonValue, now, expectedVersion)
 
-  return json(payload(app, resource, value as JsonValue, now, nextVersion))
+  return json(payload(app, resource, parseStoredJson(row.data_json), row.updated_at, Number(row.version)))
+}
+
+async function atomicWriteAppData(
+  db: D1Database,
+  resource: AppResource,
+  userId: string,
+  app: TikoAppId,
+  value: JsonValue,
+  updatedAt: string,
+  expectedVersion: number | null,
+): Promise<AppDataRow> {
+  const dataJson = JSON.stringify(value)
+  const table = tableName(resource)
+  let row: AppDataRow | null
+  if (expectedVersion === 0) {
+    row = await first<AppDataRow>(db.prepare(`
+      INSERT INTO ${table} (user_id, app, data_json, updated_at, version)
+      VALUES (?, ?, ?, ?, 1)
+      ON CONFLICT(user_id, app) DO NOTHING
+      RETURNING data_json, updated_at, version
+    `).bind(userId, app, dataJson, updatedAt))
+  } else if (expectedVersion !== null) {
+    row = await first<AppDataRow>(db.prepare(`
+      UPDATE ${table}
+      SET data_json = ?, updated_at = ?, version = version + 1
+      WHERE user_id = ? AND app = ? AND version = ?
+      RETURNING data_json, updated_at, version
+    `).bind(dataJson, updatedAt, userId, app, expectedVersion))
+  } else {
+    row = await first<AppDataRow>(db.prepare(`
+      INSERT INTO ${table} (user_id, app, data_json, updated_at, version)
+      VALUES (?, ?, ?, ?, 1)
+      ON CONFLICT(user_id, app) DO UPDATE SET
+        data_json = excluded.data_json,
+        updated_at = excluded.updated_at,
+        version = ${table}.version + 1
+      RETURNING data_json, updated_at, version
+    `).bind(userId, app, dataJson, updatedAt))
+  }
+  if (!row) throw new HttpError(409, 'version_conflict', 'Stored version does not match requested version.', 'version')
+  return row
+}
+
+async function atomicWriteDefaults(
+  db: D1Database,
+  app: TikoAppId,
+  resource: AppResource,
+  value: JsonValue,
+  updatedAt: string,
+  expectedVersion: number | null,
+): Promise<AppDataRow> {
+  const dataJson = JSON.stringify(value)
+  let row: AppDataRow | null
+  if (expectedVersion === 0) {
+    row = await first<AppDataRow>(db.prepare(`
+      INSERT INTO app_defaults (app, resource, data_json, updated_at, version)
+      VALUES (?, ?, ?, ?, 1)
+      ON CONFLICT(app, resource) DO NOTHING
+      RETURNING data_json, updated_at, version
+    `).bind(app, resource, dataJson, updatedAt))
+  } else if (expectedVersion !== null) {
+    row = await first<AppDataRow>(db.prepare(`
+      UPDATE app_defaults
+      SET data_json = ?, updated_at = ?, version = version + 1
+      WHERE app = ? AND resource = ? AND version = ?
+      RETURNING data_json, updated_at, version
+    `).bind(dataJson, updatedAt, app, resource, expectedVersion))
+  } else {
+    row = await first<AppDataRow>(db.prepare(`
+      INSERT INTO app_defaults (app, resource, data_json, updated_at, version)
+      VALUES (?, ?, ?, ?, 1)
+      ON CONFLICT(app, resource) DO UPDATE SET
+        data_json = excluded.data_json,
+        updated_at = excluded.updated_at,
+        version = app_defaults.version + 1
+      RETURNING data_json, updated_at, version
+    `).bind(app, resource, dataJson, updatedAt))
+  }
+  if (!row) throw new HttpError(409, 'version_conflict', 'Stored version does not match requested version.', 'version')
+  return row
 }
 
 function payload(app: TikoAppId, resource: AppResource, value: JsonValue, updatedAt: string | null, version: number) {
@@ -431,53 +478,31 @@ async function clearAppProgress(env: Env, userId: string, app: TikoAppId): Promi
 }
 
 async function requireSession(request: Request, env: Env): Promise<SessionJoinRow> {
-  const authed = await authenticate(request, env)
-  if (authed.ok && authed.method === 'session' && authed.userId) {
-    return { user_id: authed.userId, device_id: null, expires_at: '' }
+  const session = await requireSharedSession(request, env)
+  if (session instanceof Response) throw await authResponseToHttpError(session)
+  return {
+    user_id: session.userId!,
+    device_id: null,
+    expires_at: '',
+    roles: session.roles ?? [],
+    capabilities: session.capabilities ?? {},
   }
-
-  // Backward-compatible local fallback for older deployments/tests that validate
-  // app sessions directly from D1. Production should use identity-api validation
-  // through IDENTITY_SERVICE so app-api does not need a copied TOKEN_PEPPER secret.
-  if (env.IDENTITY_DB && env.TOKEN_PEPPER) {
-    const sessionToken = requireBearer(request)
-    const tokenHash = await hashToken(sessionToken, env.TOKEN_PEPPER)
-    const row = await first<SessionJoinRow>(env.IDENTITY_DB.prepare(`
-      SELECT s.subject_id AS user_id, s.device_id, s.expires_at
-      FROM identity_sessions s
-      JOIN identity_subjects u ON u.id = s.subject_id
-      WHERE s.token_hash = ? AND s.revoked_at IS NULL AND s.expires_at > ?
-    `).bind(tokenHash, new Date().toISOString()))
-    if (row) return row
-  }
-
-  if (authed.ok && authed.method === 'api_key') throw new HttpError(403, 'session_required', 'A Tiko user session is required.')
-  throw new HttpError(401, 'unauthorized', 'Session is invalid or expired.')
 }
 
 async function requireAdminSession(request: Request, env: Env): Promise<void> {
-  await requireSession(request, env)
-  const token = requireBearer(request)
-  const baseUrl = (env.IDENTITY_BASE_URL ?? 'https://api.tikotalks.com/v1').replace(/\/$/, '')
-  const url = `${baseUrl}/identity/session`
-  const init: RequestInit = { headers: { authorization: `Bearer ${token}`, 'content-type': 'application/json' } }
-  try {
-    const response = env.IDENTITY_SERVICE ? await env.IDENTITY_SERVICE.fetch(url, init) : await fetch(url, init)
-    if (!response.ok) throw new HttpError(403, 'forbidden', 'Admin access required.')
-    const body = (await response.json()) as { roles?: string[]; capabilities?: { canEditContent?: boolean } }
-    const isAdmin = (Array.isArray(body.roles) && (body.roles.includes('admin') || body.roles.includes('content_editor')))
-      || body.capabilities?.canEditContent === true
-    if (!isAdmin) throw new HttpError(403, 'forbidden', 'Admin access required.')
-  } catch (e) {
-    if (e instanceof HttpError) throw e
+  const session = await requireSession(request, env)
+  const roles = session.roles ?? []
+  const canEditContent = session.capabilities?.canEditContent === true
+  if (!roles.includes('admin') && !roles.includes('content_editor') && !canEditContent) {
     throw new HttpError(403, 'forbidden', 'Admin access required.')
   }
 }
 
-async function requireAnyAuth(request: Request, env: Env): Promise<void> {
-  const authed = await authenticate(request, env)
-  if (authed.ok) return
-  throw new HttpError(401, 'unauthorized', 'Authentication required.')
+async function authResponseToHttpError(response: Response): Promise<HttpError> {
+  const body = await response.json().catch(() => null) as { error?: { code?: string; message?: string } } | null
+  const code = body?.error?.code ?? (response.status === 403 ? 'forbidden' : 'unauthorized')
+  const message = body?.error?.message ?? (response.status === 403 ? 'Access denied.' : 'Session is invalid or expired.')
+  return new HttpError(response.status, code, message)
 }
 
 export async function hashToken(value: string, pepper: string): Promise<string> {
@@ -533,19 +558,6 @@ function optionalVersion(value: unknown): number | null {
   if (value === undefined || value === null) return null
   if (!Number.isInteger(value) || Number(value) < 0) throw new HttpError(400, 'invalid_request', 'version must be a non-negative integer.', 'version')
   return Number(value)
-}
-
-function getBearer(request: Request): string | null {
-  const header = request.headers.get('authorization')
-  if (!header) return null
-  const match = /^Bearer\s+(.+)$/i.exec(header)
-  return match?.[1]?.trim() || null
-}
-
-function requireBearer(request: Request): string {
-  const bearer = getBearer(request)
-  if (!bearer) throw new HttpError(401, 'unauthorized', 'Bearer session token is required.')
-  return bearer
 }
 
 function json(body: unknown, status = 200): Response {

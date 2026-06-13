@@ -1,13 +1,6 @@
 <script setup lang="ts">
-import { computed } from 'vue'
-import { useBemm } from 'bemm'
-import {
-  TikoEditBadge,
-  TikoPagedTileGrid,
-  TikoSelectionBadge,
-  TikoSquareTile,
-} from '@tiko/ui'
-import type { CardCollection, CardsGridItem, CommunicationCard } from '../types'
+import { TikoTileBoard } from '@tiko/ui'
+import type { CardsGridItem } from '../types'
 import { colorValue, isUserOwned } from '../composables/useCardsStore'
 import { imageForCard, imageForCollection } from '../composables/cardsMedia'
 
@@ -27,6 +20,11 @@ const props = defineProps<{
   contentBaseUrl: string
   speakingCardID?: string
   translateTitle?: (item: CardsGridItem) => string
+  labels?: {
+    deselect?: string
+    edit?: string
+    select?: string
+  }
 }>()
 
 const emit = defineEmits<{
@@ -38,13 +36,6 @@ const emit = defineEmits<{
   dropItem: [item: CardsGridItem]
   startEdit: []
 }>()
-
-const bemm = useBemm('cards-board', { return: 'string', includeBaseClass: true })
-
-const pageModel = computed({
-  get: () => props.page,
-  set: value => emit('update:page', value),
-})
 
 function selected(item: CardsGridItem) {
   return item.kind === 'collection'
@@ -71,50 +62,38 @@ function image(item: CardsGridItem) {
     : imageForCard(item.card, props.contentBaseUrl, props.cardImages)
 }
 
+function active(item: CardsGridItem) {
+  return item.kind === 'card' && props.speakingCardID === item.card.id
+}
+
 function itemID(item: CardsGridItem): string {
   return item.kind === 'collection' ? item.collection.id : item.card.id
 }
 </script>
 
 <template>
-  <TikoPagedTileGrid
-    v-model:page="pageModel"
+  <TikoTileBoard
     :items="items"
     :columns="columns"
     :items-per-page="itemsPerPage"
+    :page="page"
     :reduce-motion="reduceMotion"
-  >
-    <template #item="{ item }">
-      <article
-        :class="bemm('item', { editing, selected: selected(item) })"
-        draggable="true"
-        @dragstart="emit('dragStart', item)"
-        @dragover.prevent
-        @drop="emit('dropItem', item)"
-        @contextmenu.prevent="emit('edit', item)"
-        @dblclick="emit('startEdit')"
-      >
-        <TikoSquareTile
-          :title="title(item)"
-          :background="background(item)"
-          :image-src="image(item)"
-          :active="item.kind === 'card' && speakingCardID === item.card.id"
-          :editing="editing"
-          :selected="selected(item)"
-          :label-size="labelSize"
-          @press="emit('activate', item)"
-        />
-        <TikoSelectionBadge
-          v-if="editing"
-          :selected="selected(item)"
-          @toggle="emit('select', item)"
-        />
-        <TikoEditBadge
-          v-if="editing && canEdit(item)"
-          :user-owned="isUserOwned(itemID(item))"
-          @press="emit('edit', item)"
-        />
-      </article>
-    </template>
-  </TikoPagedTileGrid>
+    :editing="editing"
+    :label-size="labelSize"
+    :get-title="title"
+    :get-background="background"
+    :get-image="image"
+    :is-selected="selected"
+    :is-active="active"
+    :can-edit="canEdit"
+    :is-user-owned="item => isUserOwned(itemID(item))"
+    :labels="labels"
+    @update:page="emit('update:page', $event)"
+    @activate="emit('activate', $event)"
+    @edit="emit('edit', $event)"
+    @select="emit('select', $event)"
+    @drag-start="emit('dragStart', $event)"
+    @drop-item="emit('dropItem', $event)"
+    @start-edit="emit('startEdit')"
+  />
 </template>

@@ -24,7 +24,9 @@ function createFetchMock() {
 }
 
 beforeEach(() => {
-  window.localStorage.clear()
+  // jsdom in this config exposes localStorage without a callable clear(); reset defensively.
+  if (typeof window.localStorage?.clear === 'function') window.localStorage.clear()
+  else vi.stubGlobal('localStorage', { getItem: () => null, setItem: () => {}, removeItem: () => {}, clear: () => {} })
   vi.stubGlobal('fetch', createFetchMock())
   vi.stubGlobal('ResizeObserver', class ResizeObserverMock {
     observe() {}

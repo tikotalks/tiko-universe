@@ -41,12 +41,14 @@ CREATE TABLE IF NOT EXISTS generated_images (
   is_public INTEGER NOT NULL DEFAULT 1 CHECK (is_public IN (0, 1)),
   is_preview INTEGER NOT NULL DEFAULT 0 CHECK (is_preview IN (0, 1)),
   media_id TEXT,
+  created_by TEXT,
   created_at TEXT NOT NULL,
   updated_at TEXT NOT NULL
 );
 
 CREATE INDEX IF NOT EXISTS generated_images_created_idx ON generated_images (created_at DESC);
 CREATE INDEX IF NOT EXISTS generated_images_public_idx ON generated_images (is_public, created_at DESC);
+CREATE INDEX IF NOT EXISTS generated_images_owner_idx ON generated_images (created_by, created_at DESC);
 
 -- Story records (multi-segment TTS narratives)
 CREATE TABLE IF NOT EXISTS stories (
@@ -64,12 +66,14 @@ CREATE TABLE IF NOT EXISTS stories (
   category TEXT NOT NULL DEFAULT 'story',
   tags TEXT NOT NULL DEFAULT '[]',
   is_public INTEGER NOT NULL DEFAULT 1 CHECK (is_public IN (0, 1)),
+  created_by TEXT,
   created_at TEXT NOT NULL,
   updated_at TEXT NOT NULL
 );
 
 CREATE INDEX IF NOT EXISTS stories_status_idx ON stories (status, created_at DESC);
 CREATE INDEX IF NOT EXISTS stories_public_idx ON stories (is_public, created_at DESC);
+CREATE INDEX IF NOT EXISTS stories_owner_idx ON stories (created_by, created_at DESC);
 
 -- Story creator drafts: chapter model, cover, target audio album, settings.
 CREATE TABLE IF NOT EXISTS story_drafts (
@@ -83,8 +87,10 @@ CREATE TABLE IF NOT EXISTS story_drafts (
   status TEXT NOT NULL DEFAULT 'draft' CHECK (status IN ('draft', 'rendering', 'complete', 'error')),
   chapters TEXT NOT NULL DEFAULT '[]',
   settings TEXT NOT NULL DEFAULT '{}',
+  created_by TEXT,
   created_at TEXT NOT NULL,
   updated_at TEXT NOT NULL
 );
 
 CREATE INDEX IF NOT EXISTS story_drafts_status_updated_idx ON story_drafts (status, updated_at DESC);
+CREATE INDEX IF NOT EXISTS story_drafts_owner_updated_idx ON story_drafts (created_by, updated_at DESC);

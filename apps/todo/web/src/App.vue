@@ -1,23 +1,32 @@
 <script setup lang="ts">
 import { computed, onMounted, ref, watch } from 'vue'
 import { Button, InputTextArea } from '@sil/ui'
-import { IdentityClient, type IdentityBundle } from '@tiko/identity'
+import { IdentityClient } from '@tiko/identity'
 import { TikoDataClient, type TodoSettings, type TodoState } from '@tiko/data'
-import { createI18n, defaultLanguage, tikoI18nKeys, tikoLanguageOptions, tikoLanguages, type TikoLanguage } from '@tiko/i18n'
+import { createI18n, createTikoIdentityLabels, createTikoShellLabels, normalizeTikoLanguage, tikoI18nKeys, tikoLanguageOptions, type TikoLanguage } from '@tiko/i18n'
 import {
   TikoAppShell,
   TikoSettingsPanel,
   createTikoTtsClient,
+  normalizeTikoColorMode,
+  readTikoLocalJson,
+  resolveTikoAppApiBaseUrl,
+  resolveTikoIdentityBaseUrl,
+  useTikoAppDataRuntime,
+  useTikoColorModeEffect,
+  useTikoI18nRuntime,
+  useIdentityRuntime,
+  writeTikoLocalJson,
+  type IdentityRuntimeState,
   type TikoColorMode
 } from '@tiko/ui'
 import { appConfig } from './appConfig'
 import './styles.scss'
 
 const storageKey = 'tiko:todo'
-const identityStorageKey = 'tiko:identity:device-session'
 const appId = 'todo' as const
-const apiBaseUrl = resolveApiBaseUrl()
-const identityBaseUrl = resolveIdentityBaseUrl()
+const apiBaseUrl = resolveTikoAppApiBaseUrl()
+const identityBaseUrl = resolveTikoIdentityBaseUrl()
 
 interface TodoItem {
   id: string
@@ -32,54 +41,14 @@ interface PersistedState {
   items?: TodoItem[]
 }
 
-interface StoredIdentity {
-  userId?: string
-  deviceId?: string
-  deviceSecret?: string
-  sessionToken?: string
-  expiresAt?: string
-}
-
-function resolveApiBaseUrl() {
-  const env = (import.meta as ImportMeta & { env?: Record<string, string | undefined> }).env
-  return (env?.VITE_TIKO_API_BASE_URL ?? 'https://app.tikoapi.org/v1').replace(/\/$/, '')
-}
-
-function resolveIdentityBaseUrl() {
-  const env = (import.meta as ImportMeta & { env?: Record<string, string | undefined> }).env
-  return (env?.VITE_IDENTITY_API_URL ?? env?.VITE_TIKO_IDENTITY_BASE_URL ?? 'https://id.tikoapps.org/v1').replace(/\/$/, '')
-}
-
-function readJson<T>(key: string, fallback: T): T {
-  if (typeof window === 'undefined') return fallback
-  try {
-    return JSON.parse(window.localStorage.getItem(key) ?? 'null') ?? fallback
-  } catch {
-    return fallback
-  }
-}
-
-function writeJson(key: string, value: unknown) {
-  if (typeof window === 'undefined') return
-  window.localStorage.setItem(key, JSON.stringify(value))
-}
-
-function toLanguage(value: string | undefined): TikoLanguage {
-  return tikoLanguages.includes(value as TikoLanguage) ? value as TikoLanguage : defaultLanguage
-}
-
-function toColorMode(value: string | undefined): TikoColorMode {
-  return value === 'light' || value === 'dark' || value === 'system' ? value : 'system'
-}
-
 function generateId(): string {
   return `todo-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`
 }
 
-const stored = readJson<PersistedState>(storageKey, {})
-const i18n = createI18n({ app: appId, language: toLanguage(stored.language) })
-const language = ref<TikoLanguage>(toLanguage(stored.language))
-const colorMode = ref<TikoColorMode>(toColorMode(stored.colorMode))
+const stored = readTikoLocalJson<PersistedState>(storageKey, {})
+const i18n = createI18n({ app: appId, language: normalizeTikoLanguage(stored.language) })
+const language = ref<TikoLanguage>(normalizeTikoLanguage(stored.language))
+const colorMode = ref<TikoColorMode>(normalizeTikoColorMode(stored.colorMode))
 const items = ref<TodoItem[]>(stored.items ?? [])
 const settingsOpen = ref(false)
 const createOpen = ref(false)
@@ -87,13 +56,40 @@ const newName = ref('')
 const newSteps = ref<string[]>([])
 const loadError = ref(false)
 const sessionToken = ref('')
+const userId = ref('')
+const accountEmail = ref('')
+const accountEmailVerified = ref(false)
+const displayName = ref('')
+const parentMode = ref(true)
+const childModeEnabled = ref(false)
+const pinConfigured = ref(false)
 const bootstrapped = ref(false)
 const tts = createTikoTtsClient()
 const identityClient = new IdentityClient({ baseUrl: identityBaseUrl, credentials: 'include' })
 const dataClient = new TikoDataClient({ baseUrl: apiBaseUrl })
 
+const runtimeState: IdentityRuntimeState = {
+  sessionToken, userId, accountEmail, accountEmailVerified, displayName,
+  parentMode, childModeEnabled, pinConfigured,
+}
+const runtime = useIdentityRuntime({ identityClient, state: runtimeState, deviceName: 'Todo web', labels: () => createTikoIdentityLabels(i18n.t) })
+const dataRuntime = useTikoAppDataRuntime<typeof appId, TodoSettings, TodoState>({
+  app: appId,
+  sessionToken,
+  bootstrapped,
+  dataClient,
+  readSettings: () => ({
+    language: language.value,
+    colorMode: colorMode.value,
+  }),
+  readState: () => ({
+    items: items.value,
+  }),
+  applySettings,
+  applyState,
+})
+
 const labels = computed(() => {
-  void language.value
   return {
     appName: i18n.t(tikoI18nKeys.todo.appName),
     settings: i18n.t(tikoI18nKeys.common.settings),
@@ -116,8 +112,11 @@ const labels = computed(() => {
     remaining: (count: number) => i18n.t(tikoI18nKeys.todo.item.remaining, { count }),
     loadError: i18n.t(tikoI18nKeys.todo.status.loadError),
     retry: i18n.t(tikoI18nKeys.todo.status.retry),
+    shell: createTikoShellLabels(i18n.t),
     settingsPanel: {
       settings: i18n.t(tikoI18nKeys.common.settings),
+      appearance: i18n.t(tikoI18nKeys.common.appearance),
+      appPreferences: i18n.t(tikoI18nKeys.common.appPreferences),
       language: i18n.t(tikoI18nKeys.common.language),
       colorMode: i18n.t(tikoI18nKeys.common.colorMode),
       light: i18n.t(tikoI18nKeys.common.colorModeOptions.light),
@@ -134,125 +133,53 @@ const headerActions = computed(() => [
 
 const pendingCount = computed(() => items.value.filter(item => !item.done).length)
 
-function resolveColorMode(mode: TikoColorMode) {
-  if (mode !== 'system') return mode
-  if (typeof window === 'undefined') return 'light'
-  return window.matchMedia?.('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
-}
-
 function saveLocal() {
-  writeJson(storageKey, {
+  writeTikoLocalJson(storageKey, {
     language: language.value,
     colorMode: colorMode.value,
     items: items.value,
   })
 }
 
-function saveIdentity(bundle: IdentityBundle) {
-  if (!bundle.session?.token) throw new Error('Identity response did not include a session token.')
-  sessionToken.value = bundle.session.token
-  writeJson(identityStorageKey, {
-    userId: bundle.subject.id,
-    deviceId: bundle.device?.id,
-    deviceSecret: bundle.device?.secret,
-    sessionToken: bundle.session.token,
-    expiresAt: bundle.session.expiresAt,
-  } satisfies StoredIdentity)
-}
-
 async function bootstrapIdentity() {
-  const storedIdentity = readJson<StoredIdentity>(identityStorageKey, {})
-
-  try {
-    const bundle = await identityClient.getCookieSession()
-    saveIdentity(bundle)
-    return
-  } catch {
-    // Fall through to local bearer/device fallback when the shared app-family cookie is missing or expired.
-  }
-
-  if (storedIdentity.sessionToken) {
-    try {
-      const bundle = await identityClient.getSession(storedIdentity.sessionToken)
-      saveIdentity(bundle)
-      return
-    } catch {
-      // Fall through
-    }
-  }
-
-  const bundle = await identityClient.bootstrapDevice({
-    device: {
-      id: storedIdentity.deviceId,
-      secret: storedIdentity.deviceSecret,
-      name: 'Todo web',
-      platform: 'web',
-    },
-  })
-  saveIdentity(bundle)
+  return runtime.bootstrapIdentity()
 }
 
 function applySettings(settings: TodoSettings) {
-  language.value = toLanguage(settings.language)
-  colorMode.value = toColorMode(settings.colorMode)
+  language.value = normalizeTikoLanguage(settings.language)
+  colorMode.value = normalizeTikoColorMode(settings.colorMode)
 }
 
 function applyState(state: TodoState) {
   if (state.items) items.value = state.items as TodoItem[]
 }
 
-async function hydrateRemoteData() {
-  if (!sessionToken.value) return
-  const [settings, state] = await Promise.all([
-    dataClient.getSettings(appId, sessionToken.value),
-    dataClient.getState(appId, sessionToken.value),
-  ])
-  applySettings(settings.settings)
-  applyState(state.state)
-}
+useTikoI18nRuntime({ app: appId, language, i18n })
 
-async function persistRemote() {
-  if (!bootstrapped.value || !sessionToken.value) return
-  try {
-    await dataClient.putState(appId, sessionToken.value, {
-      items: items.value,
-    })
-  } catch {
-    // Local fallback already written
-  }
-}
+useTikoColorModeEffect(colorMode)
 
-watch(language, (value) => {
-  i18n.setLanguage(value)
-}, { immediate: true })
-
-watch(colorMode, (mode) => {
-  const effective = resolveColorMode(mode)
-  document.documentElement.dataset.colorMode = effective
-  document.documentElement.dataset.theme = effective
-}, { immediate: true })
-
-watch([language, colorMode, items], () => {
+watch([language, colorMode], () => {
   saveLocal()
-  void persistRemote()
+  void dataRuntime.persistSettingsRemote()
+})
+
+watch(items, () => {
+  saveLocal()
+  void dataRuntime.persistStateRemote()
 }, { deep: true })
 
 onMounted(async () => {
   try {
     await bootstrapIdentity()
+    await runtime.loadProfile()
   } catch {
     // Identity unavailable — app works locally
   }
 
-  try {
-    await hydrateRemoteData()
-  } catch {
-    // Remote sync failed — local state is still valid
-    if (!sessionToken.value) loadError.value = true
-  } finally {
-    bootstrapped.value = true
-    saveLocal()
-  }
+  const hydrated = await dataRuntime.hydrateRemoteData()
+  if (!hydrated && !sessionToken.value) loadError.value = true
+  bootstrapped.value = true
+  saveLocal()
 })
 
 function headerAction(id: string) {
@@ -306,7 +233,7 @@ function toggleStep(todoId: string, stepIndex: number) {
 
 async function speakName(name: string) {
   try {
-    await tts.speak({ text: name, language: language.value, provider: 'auto' })
+    await tts.speak({ text: name, language: language.value })
   } catch {
     // Browser fallback
   }
@@ -316,11 +243,13 @@ async function retry() {
   loadError.value = false
   try {
     await bootstrapIdentity()
+    await runtime.loadProfile()
   } catch {
     // Identity still unavailable
   }
   try {
-    await hydrateRemoteData()
+    const hydrated = await dataRuntime.hydrateRemoteData()
+    if (!hydrated && !sessionToken.value) loadError.value = true
   } catch {
     if (!sessionToken.value) loadError.value = true
   }
@@ -336,7 +265,9 @@ async function retry() {
     :app-color="appConfig.appColor"
     :theme-color="appConfig.themeColor"
     :actions="headerActions"
+    :labels="labels.shell"
     @header-action="headerAction"
+    @avatar-click="runtime.handleAvatarClick"
   >
     <section class="todo-app" :data-color-mode="colorMode">
       <!-- Error state with fallback to create -->

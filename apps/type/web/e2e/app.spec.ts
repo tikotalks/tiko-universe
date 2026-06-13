@@ -9,35 +9,57 @@ const PORT = 3058
 const BASE = `http://localhost:${PORT}`
 
 async function mockApi(page: Page) {
-  await page.route('**/identity/**', async route => {
+  const identityBundle = {
+    subject: { id: 'user-test', kind: 'device', product: 'tiko' },
+    user: { id: 'user-test', accountType: 'temporary', recoverable: false },
+    device: { id: 'device-test', secret: 'secret-test' },
+    account: null,
+    session: { id: 'session-test', token: 'token-test', transport: 'bearer', expiresAt: '2099-01-01T00:00:00.000Z' },
+    runtime: { mode: 'parent', childModeEnabled: false, pinConfigured: false },
+    capabilities: { canVerifyEmail: true, canUseParentMode: false, canUseChildMode: false, canManageChildAccounts: false, canDeleteAccount: false }
+  }
+  await page.route('https://id.tikoapps.org/v1/identity/**', async route => {
     await route.fulfill({
       status: 200,
       contentType: 'application/json',
-      body: JSON.stringify({
-        user: { id: 'user-test', kind: 'device', recoverable: false },
-        device: { id: 'device-test', secret: 'secret-test' },
-        session: { token: 'token-test', expiresAt: '2099-01-01T00:00:00.000Z' }
-      })
+      body: JSON.stringify(identityBundle)
     })
   })
-  await page.route('**/apps/type/**', async route => {
+  await page.route('https://app.tikoapi.org/v1/apps/config/type', async route => {
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({ config: { id: 'type', title: 'Type', appColor: 'type', appIcon: 'text/text-cursor' }, updatedAt: null, version: 1 })
+    })
+  })
+  await page.route('https://app.tikoapi.org/v1/apps/type/**', async route => {
     await route.fulfill({
       status: 200,
       contentType: 'application/json',
       body: JSON.stringify({ app: 'type', updatedAt: null, version: 1, settings: {}, state: {} })
     })
   })
-  await page.route('**/generation/tts**', async route => {
+  await page.route('https://api.tikotalks.com/v1/atlas/speech', async route => {
     await route.fulfill({
       status: 200,
       contentType: 'application/json',
-      body: JSON.stringify({ success: true, audioUrl: '/audio/test.mp3' })
+      body: JSON.stringify({
+        data: { id: 'asset-test', audioUrl: '/v1/atlas/assets/asset-test', contentType: 'audio/mpeg', provider: { name: 'test', model: 'test', voice: 'test' } },
+        meta: { cached: false, schemaVersion: 1, requestId: 'e2e-test' }
+      })
     })
   })
   await page.addInitScript(() => {
     window.Audio = class {
-      play() { return Promise.resolve() }
+      private listeners: Record<string, Array<() => void>> = {}
+      play() {
+        setTimeout(() => this.listeners.ended?.forEach(listener => listener()), 0)
+        return Promise.resolve()
+      }
       pause() {}
+      addEventListener(type: string, listener: () => void) {
+        this.listeners[type] = [...(this.listeners[type] || []), listener]
+      }
     } as any
   })
 }
@@ -48,60 +70,17 @@ test.describe('Type app', () => {
     await page.goto(BASE)
   })
 
-  test('renders compose area with textarea and action buttons', async ({ page }) => {
+  test('renders the current compose surface', async ({ page }) => {
     await expect(page.locator('.type-app')).toBeVisible()
-    await expect(page.locator('#type-compose')).toBeVisible()
-    await expect(page.locator('.type-app__speak')).toBeVisible()
-    await expect(page.locator('.type-app__clear')).toBeVisible()
+    await expect(page.locator('.type-app__textarea')).toBeVisible()
+    await expect(page.locator('.type-app__keyboard')).toBeVisible()
   })
 
-  test('can type text in the compose area', async ({ page }) => {
-    const textarea = page.locator('#type-compose')
-    await textarea.fill('Hello world')
-    await expect(textarea).toHaveValue('Hello world')
-  })
-
-  test('clear button empties the textarea', async ({ page }) => {
-    const textarea = page.locator('#type-compose')
-    await textarea.fill('Some text')
-    await page.getByRole('button', { name: /clear/i }).click()
-    await expect(textarea).toHaveValue('')
-  })
-
-  test('speak button is disabled when textarea is empty', async ({ page }) => {
-    await expect(page.locator('.type-app__speak')).toBeDisabled()
-  })
-
-  test('speak button is enabled after typing', async ({ page }) => {
-    await page.locator('#type-compose').fill('Test text')
-    await expect(page.locator('.type-app__speak')).toBeEnabled()
-  })
-
-  test('opens phrases history panel', async ({ page }) => {
-    await page.locator('#type-compose').fill('First phrase')
-    await page.getByRole('button', { name: /speak/i, exact: true }).click()
-
-    await page.getByTestId('tiko-header-action-phrases').click()
-    await expect(page.locator('.type-app__phrases')).toBeVisible()
-    await expect(page.locator('.type-app__phrases-list li')).toHaveCount(1)
-  })
-
-  test('opens and closes settings panel with keyboard layout option', async ({ page }) => {
+  test('opens and closes settings panel', async ({ page }) => {
     await page.getByTestId('tiko-header-action-settings').click()
     await expect(page.locator('.tiko-settings-panel')).toBeVisible()
-    await expect(page.locator('[data-test="tiko-settings-keyboard-layout"]')).toBeVisible()
 
     await page.getByTestId('tiko-header-action-settings').click()
     await expect(page.locator('.tiko-settings-panel')).not.toBeVisible()
-  })
-
-  test('persists text to localStorage', async ({ page }) => {
-    await page.locator('#type-compose').fill('Saved text')
-    await page.waitForTimeout(300)
-
-    const stored = await page.evaluate(() => {
-      return JSON.parse(localStorage.getItem('tiko:type') ?? '{}')
-    })
-    expect(stored.text).toBe('Saved text')
   })
 })

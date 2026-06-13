@@ -672,6 +672,7 @@ private struct TileEditorSheet: View {
     @State private var selectedSetId: String
     @State private var editingSet: YesNoAnswerSet?
     @State private var editingTile: TileEditSelection?
+    @State private var pendingScrollSetId: String?
 
     init(answerSets: [YesNoAnswerSet], selectedSetId: String, onSave: @escaping ([YesNoAnswerSet], String?) -> Void, onClose: @escaping () -> Void) {
         self.onSave = onSave
@@ -700,16 +701,25 @@ private struct TileEditorSheet: View {
                             .padding(.vertical, 12)
                     }
                 } else {
-                    ScrollView {
-                        LazyVStack(spacing: 10) {
-                            ForEach(Array(sets.enumerated()), id: \.element.id) { index, set in
-                                setSection(set: set, index: index)
+                    ScrollViewReader { proxy in
+                        ScrollView {
+                            LazyVStack(spacing: 10) {
+                                ForEach(Array(sets.enumerated()), id: \.element.id) { index, set in
+                                    setSection(set: set, index: index)
+                                        .id(set.id)
+                                }
+                            }
+                            .padding(.vertical, 2)
+                        }
+                        .scrollIndicators(.hidden)
+                        .frame(maxHeight: 420)
+                        .onChange(of: pendingScrollSetId) { _, id in
+                            guard let id else { return }
+                            withAnimation(.snappy) {
+                                proxy.scrollTo(id, anchor: .center)
                             }
                         }
-                        .padding(.vertical, 2)
                     }
-                    .scrollIndicators(.hidden)
-                    .frame(maxHeight: 420)
                 }
 
                 HStack(spacing: 10) {
@@ -775,8 +785,11 @@ private struct TileEditorSheet: View {
 
     private func addSet() {
         let id = "set-\(UUID().uuidString.prefix(8))"
-        sets.append(YesNoAnswerSet(id: id, title: "New set", color: TikoColors.teal.name, order: sets.count, answers: []))
+        let set = YesNoAnswerSet(id: id, title: "New set", color: TikoColors.teal.name, order: sets.count, answers: [])
+        sets.append(set)
         selectedSetId = id
+        pendingScrollSetId = id
+        editingSet = set
     }
 
     private func addTile(to setIndex: Int) {
@@ -960,6 +973,7 @@ private struct SetDetailEditView: View {
     @State private var imageURL: URL?
     @State private var imageRef: String?
     @State private var showingMediaPicker = false
+    @FocusState private var titleFocused: Bool
     @Environment(\.dismiss) private var dismiss
 
     init(set: YesNoAnswerSet, onSave: @escaping (YesNoAnswerSet) -> Void) {
@@ -977,6 +991,7 @@ private struct SetDetailEditView: View {
             Form {
                 Section("Set") {
                     TextField("Set title", text: $title)
+                        .focused($titleFocused)
                     TextField("Description", text: $description)
                 }
                 Section("Image") {
@@ -1016,6 +1031,9 @@ private struct SetDetailEditView: View {
             imageRef = selection.id
             imageURL = selection.id == nil ? nil : selection.url
         })
+        .onAppear {
+            titleFocused = true
+        }
     }
 
     private var colorSection: some View {

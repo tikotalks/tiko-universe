@@ -22,6 +22,9 @@ const labels = computed(() => {
   i18n.setLanguage(toLanguage(talk.language.value))
   return {
     settings: i18n.t(tikoI18nKeys.common.settings),
+    // TODO(i18n): promote search/add labels into the shared i18n key registry.
+    search: 'Search words',
+    add: 'Add',
     settingsPanel: {
       settings: i18n.t(tikoI18nKeys.common.settings),
       language: i18n.t(tikoI18nKeys.common.language),
@@ -32,6 +35,19 @@ const labels = computed(() => {
     },
   }
 })
+
+const trimmedFilter = computed(() => talk.boardFilter.value.trim())
+
+function onSearch(value: string) {
+  talk.applyBoardFilter(value)
+}
+
+async function onAddWord() {
+  const text = trimmedFilter.value
+  if (!text) return
+  await talk.addCustomWord(text)
+  talk.clearBoardFilter()
+}
 
 const headerActions = computed(() => talk.parentMode.value ? [
   { id: 'settings', label: labels.value.settings, icon: 'ui/settings-dual', active: talk.settingsOpen.value }
@@ -76,6 +92,26 @@ onMounted(() => {
           Identity: {{ talk.identityStatus.value === 'ready' ? 'ready' : talk.identityStatus.value }}
           <span v-if="talk.identityError.value">({{ talk.identityError.value }})</span>
         </p>
+      </section>
+
+      <section :class="bemm('toolbar')" aria-label="Find or add words">
+        <input
+          :class="bemm('search')"
+          type="search"
+          inputmode="search"
+          :value="talk.boardFilter.value"
+          :placeholder="labels.search"
+          :aria-label="labels.search"
+          @input="onSearch(($event.target as HTMLInputElement).value)"
+        >
+        <button
+          v-if="trimmedFilter"
+          :class="bemm('add-word')"
+          type="button"
+          @click="onAddWord"
+        >
+          {{ labels.add }} “{{ trimmedFilter }}”
+        </button>
       </section>
 
       <section :class="bemm('stage')" aria-label="Choose words">
@@ -143,6 +179,55 @@ onMounted(() => {
     min-height: 0;
     width: 100%;
     height: 100%;
+  }
+
+  &__toolbar {
+    position: absolute;
+    z-index: 15;
+    top: 1rem;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    width: min(32rem, calc(100vw - 2rem));
+  }
+
+  &__search {
+    flex: 1;
+    min-height: 2.75rem;
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 1.5rem;
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--talk-ink);
+    background: rgba(255, 252, 245, 0.96);
+    box-shadow: 0 0.6rem 1.8rem var(--talk-shadow);
+
+    &:focus-visible {
+      outline: 3px solid var(--talk-orange);
+      outline-offset: 2px;
+    }
+  }
+
+  &__add-word {
+    min-height: 2.75rem;
+    padding: 0.5rem 1.1rem;
+    border: none;
+    border-radius: 1.5rem;
+    font-size: 1rem;
+    font-weight: 800;
+    color: var(--color-background, #fff);
+    background: var(--talk-orange);
+    box-shadow: 0 0.6rem 1.8rem var(--talk-shadow);
+    cursor: pointer;
+    white-space: nowrap;
+
+    &:focus-visible {
+      outline: 3px solid var(--talk-ink);
+      outline-offset: 2px;
+    }
   }
 
   &__sentence {

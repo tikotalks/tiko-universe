@@ -1,4 +1,5 @@
 import { authenticate } from '../../shared/auth'
+import type { AuthSuccess } from '../../shared/auth'
 
 export interface Env {
   GENERATION_DB: D1DatabaseLike
@@ -18,6 +19,7 @@ export interface Env {
     fetch(input: Request | string, init?: RequestInit): Promise<Response>
   }
   ATLAS_BASE_URL?: string
+  ATLAS_API_KEY?: string
 }
 
 export interface D1DatabaseLike {
@@ -74,6 +76,22 @@ interface GenerateAudioFailure {
   status?: number
 }
 
+interface PaidAuthContext {
+  auth: AuthSuccess
+  subjectKey: string
+}
+
+interface GenerationAccessContext {
+  auth: AuthSuccess | null
+}
+
+interface UsagePolicy {
+  capability: string
+  units: number
+  maxRequestsPerMinute: number
+  maxUnitsPerDay: number
+}
+
 interface AtlasSpeechResponse {
   data?: {
     id?: string
@@ -110,6 +128,8 @@ const DEFAULT_ELEVENLABS_MODEL = 'eleven_multilingual_v2'
 const DEFAULT_ELEVENLABS_VOICE = '21m00Tcm4TlvDq8ikWAM'
 const ELEVENLABS_MODELS = new Set(['eleven_multilingual_v2', 'eleven_turbo_v2_5', 'eleven_flash_v2_5'])
 const ELEVENLABS_VOICE_ID_RE = /^[a-zA-Z0-9_-]{6,64}$/
+const PROVIDER_TIMEOUT_MS = 20_000
+const PROVIDER_IMAGE_TIMEOUT_MS = 45_000
 const DEFAULT_ELEVENLABS_VOICES = [
   { id: DEFAULT_ELEVENLABS_VOICE, label: 'Rachel' },
   { id: 'AZnzlk1XvdvUeBnXmlld', label: 'Domi' },
@@ -142,33 +162,38 @@ const VOICE_SAMPLE_KEY_RE = /^voice-samples\/[a-z0-9._-]+\/[a-zA-Z0-9_-]{6,64}\.
 
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
-    if (request.method === 'OPTIONS') return new Response(null, { headers: CORS_HEADERS })
+    try {
+      if (request.method === 'OPTIONS') return new Response(null, { headers: CORS_HEADERS })
 
-    const url = new URL(request.url)
-    if (url.pathname === '/v1/generation/health' && request.method === 'GET') return generationHealth()
-    if (url.pathname === '/v1/generation/voices' && request.method === 'GET') return listVoices(url, env)
-    if (url.pathname === '/v1/generation/tts' && request.method === 'POST') return generateTts(request, env)
-    if (url.pathname.startsWith('/v1/generation/voice-samples/') && request.method === 'GET') return getVoiceSample(url, env)
-    if (url.pathname.startsWith('/v1/generation/audio/') && request.method === 'GET') return getAudio(url.pathname, env)
-    if (url.pathname === '/v1/generation/image' && request.method === 'POST') return requireAuth(request, env, () => generateImage(request, env))
-    if (url.pathname.startsWith('/v1/generation/images/') && url.pathname.endsWith('/binary') && request.method === 'GET') return getImage(url.pathname, env)
-    if (url.pathname.startsWith('/v1/generation/images/') && url.pathname.endsWith('/promote') && request.method === 'POST') return requireAuth(request, env, () => promoteImage(url.pathname, env))
-    if (url.pathname.startsWith('/v1/generation/images/') && url.pathname.endsWith('/media-link') && request.method === 'POST') return requireAuth(request, env, () => linkImageMedia(url.pathname, request, env))
-    if (url.pathname.startsWith('/v1/generation/images/') && url.pathname.endsWith('/enrich') && request.method === 'POST') return requireAuth(request, env, () => enrichImage(url.pathname, env))
-    if (url.pathname.startsWith('/v1/generation/images/') && url.pathname.endsWith('/edit') && request.method === 'POST') return requireAuth(request, env, () => editImageVariant(url.pathname, request, env))
-    if (url.pathname.startsWith('/v1/generation/images/') && url.pathname.endsWith('/upscale') && request.method === 'POST') return requireAuth(request, env, () => upscaleImage(url.pathname, request, env))
-    if (url.pathname.startsWith('/v1/generation/images/') && request.method === 'DELETE') return requireAuth(request, env, () => deleteImage(url.pathname, env))
-    if (url.pathname === '/v1/generation/images' && request.method === 'GET') return listImages(request, env)
-    if (url.pathname === '/v1/generation/stories/tryout' && request.method === 'POST') return requireAuth(request, env, () => generateStoryTryout(request, env))
-    if (url.pathname === '/v1/generation/stories/render' && request.method === 'POST') return requireAuth(request, env, () => renderStory(request, env))
-    if (url.pathname === '/v1/generation/story-drafts' && request.method === 'POST') return requireAuth(request, env, () => createStoryDraft(request, env))
-    if (url.pathname === '/v1/generation/story-drafts' && request.method === 'GET') return listStoryDrafts(env)
-    if (url.pathname.startsWith('/v1/generation/stories/') && url.pathname.endsWith('/audio') && request.method === 'GET') return getStoryAudio(url.pathname, env)
-    if (url.pathname.startsWith('/v1/generation/stories/') && url.pathname.endsWith('/promote') && request.method === 'POST') return requireAuth(request, env, () => promoteStory(url.pathname, env))
-    if (url.pathname.startsWith('/v1/generation/stories/') && request.method === 'DELETE') return requireAuth(request, env, () => deleteStory(url.pathname, env))
-    if (url.pathname === '/v1/generation/stories' && request.method === 'GET') return listStories(request, env)
+      const url = new URL(request.url)
+      if (url.pathname === '/v1/generation/health' && request.method === 'GET') return generationHealth()
+      if (url.pathname === '/v1/generation/voices' && request.method === 'GET') return requirePaidAccess(request, env, { capability: 'voices.list', units: 1, maxRequestsPerMinute: 120, maxUnitsPerDay: 2000 }, () => listVoices(url, env))
+      if (url.pathname === '/v1/generation/tts' && request.method === 'POST') return generateTts(request, env)
+      if (url.pathname.startsWith('/v1/generation/voice-samples/') && request.method === 'GET') return requirePaidAccess(request, env, { capability: 'voice.sample', units: 40, maxRequestsPerMinute: 30, maxUnitsPerDay: 2000 }, () => getVoiceSample(url, env))
+      if (url.pathname.startsWith('/v1/generation/audio/') && request.method === 'GET') return getAudio(url.pathname, env)
+      if (url.pathname === '/v1/generation/image' && request.method === 'POST') return requireAuth(request, env, (access) => generateImage(request, env, access))
+      if (url.pathname.startsWith('/v1/generation/images/') && url.pathname.endsWith('/binary') && request.method === 'GET') return getImage(request, url.pathname, env)
+      if (url.pathname.startsWith('/v1/generation/images/') && url.pathname.endsWith('/promote') && request.method === 'POST') return requireAuth(request, env, (access) => promoteImage(url.pathname, env, access))
+      if (url.pathname.startsWith('/v1/generation/images/') && url.pathname.endsWith('/media-link') && request.method === 'POST') return requireAuth(request, env, (access) => linkImageMedia(url.pathname, request, env, access))
+      if (url.pathname.startsWith('/v1/generation/images/') && url.pathname.endsWith('/enrich') && request.method === 'POST') return requireAuth(request, env, (access) => enrichImage(url.pathname, env, access))
+      if (url.pathname.startsWith('/v1/generation/images/') && url.pathname.endsWith('/edit') && request.method === 'POST') return requireAuth(request, env, (access) => editImageVariant(url.pathname, request, env, access))
+      if (url.pathname.startsWith('/v1/generation/images/') && url.pathname.endsWith('/upscale') && request.method === 'POST') return requireAuth(request, env, (access) => upscaleImage(url.pathname, request, env, access))
+      if (url.pathname.startsWith('/v1/generation/images/') && request.method === 'DELETE') return requireAuth(request, env, (access) => deleteImage(url.pathname, env, access))
+      if (url.pathname === '/v1/generation/images' && request.method === 'GET') return listImages(request, env)
+      if (url.pathname === '/v1/generation/stories/tryout' && request.method === 'POST') return requireAuth(request, env, (access) => generateStoryTryout(request, env, access))
+      if (url.pathname === '/v1/generation/stories/render' && request.method === 'POST') return requireAuth(request, env, (access) => renderStory(request, env, access))
+      if (url.pathname === '/v1/generation/story-drafts' && request.method === 'POST') return requireAuth(request, env, (access) => createStoryDraft(request, env, access))
+      if (url.pathname === '/v1/generation/story-drafts' && request.method === 'GET') return requireAuth(request, env, (access) => listStoryDrafts(env, access))
+      if (url.pathname.startsWith('/v1/generation/stories/') && url.pathname.endsWith('/audio') && request.method === 'GET') return getStoryAudio(request, url.pathname, env)
+      if (url.pathname.startsWith('/v1/generation/stories/') && url.pathname.endsWith('/promote') && request.method === 'POST') return requireAuth(request, env, (access) => promoteStory(url.pathname, env, access))
+      if (url.pathname.startsWith('/v1/generation/stories/') && request.method === 'DELETE') return requireAuth(request, env, (access) => deleteStory(url.pathname, env, access))
+      if (url.pathname === '/v1/generation/stories' && request.method === 'GET') return listStories(request, env)
 
-    return apiError('not_found', 'Route not found.', 404)
+      return apiError('not_found', 'Route not found.', 404)
+    } catch (error) {
+      console.error('[generation-api] unhandled request error', error)
+      return apiError('internal_error', 'Generation request failed.', 500)
+    }
   },
 }
 
@@ -187,7 +212,7 @@ async function listVoices(url: URL, env: Env): Promise<Response> {
 
 async function fetchElevenLabsVoices(env: Env) {
   if (!env.ELEVENLABS_API_KEY) return ELEVENLABS_VOICE_CATALOG
-  const response = await fetch('https://api.elevenlabs.io/v1/voices', { headers: { 'xi-api-key': env.ELEVENLABS_API_KEY } })
+  const response = await fetchWithRetry('https://api.elevenlabs.io/v1/voices', { headers: { 'xi-api-key': env.ELEVENLABS_API_KEY } }, { timeoutMs: PROVIDER_TIMEOUT_MS })
   if (!response.ok) return ELEVENLABS_VOICE_CATALOG
   const body = await response.json() as { voices?: Array<{ voice_id?: string; name?: string; labels?: Record<string, string> }> }
   const voices = (body.voices ?? [])
@@ -214,14 +239,110 @@ function generationHealth(): Response {
   })
 }
 
-async function requireAuth(request: Request, env: Env, handler: () => Promise<Response>): Promise<Response> {
+async function requireAuth(request: Request, env: Env, handler: (context: GenerationAccessContext) => Promise<Response>): Promise<Response> {
   const authed = await authenticate(request, env)
   if (authed.ok === false) {
     const headers = new Headers(authed.response.headers)
     for (const [key, value] of Object.entries(CORS_HEADERS)) headers.set(key, value)
     return new Response(authed.response.body, { status: authed.response.status, statusText: authed.response.statusText, headers })
   }
-  return handler()
+  return handler({ auth: authed })
+}
+
+async function optionalAuth(request: Request, env: Env): Promise<GenerationAccessContext | Response> {
+  if (!request.headers.has('authorization')) return { auth: null }
+  const authed = await authenticate(request, env)
+  if (authed.ok === false) {
+    const headers = new Headers(authed.response.headers)
+    for (const [key, value] of Object.entries(CORS_HEADERS)) headers.set(key, value)
+    return new Response(authed.response.body, { status: authed.response.status, statusText: authed.response.statusText, headers })
+  }
+  return { auth: authed }
+}
+
+function isServiceAccess(context: GenerationAccessContext): boolean {
+  return context.auth?.method === 'api_key'
+}
+
+function sessionUserId(context: GenerationAccessContext): string | null {
+  return context.auth?.method === 'session' && context.auth.userId ? context.auth.userId : null
+}
+
+function createdBy(context: GenerationAccessContext): string | null {
+  return sessionUserId(context)
+}
+
+function canAccessOwnedRecord(context: GenerationAccessContext, record: { is_public?: unknown; created_by?: unknown }): boolean {
+  if (Number(record.is_public ?? 0) === 1) return true
+  if (isServiceAccess(context)) return true
+  const userId = sessionUserId(context)
+  return !!userId && typeof record.created_by === 'string' && record.created_by === userId
+}
+
+function canMutateOwnedRecord(context: GenerationAccessContext, record: { created_by?: unknown }): boolean {
+  if (isServiceAccess(context)) return true
+  const userId = sessionUserId(context)
+  return !!userId && typeof record.created_by === 'string' && record.created_by === userId
+}
+
+function forbiddenOrUnauthorized(context: GenerationAccessContext): Response {
+  return context.auth ? apiError('forbidden', 'You do not have access to this generated content.', 403) : apiError('unauthorized', 'Authentication is required.', 401)
+}
+
+async function requirePaidAccess(request: Request, env: Env, policy: UsagePolicy, handler: (context: PaidAuthContext) => Promise<Response>): Promise<Response> {
+  const context = await authenticatePaidRequest(request, env)
+  if (context instanceof Response) return context
+  const usageError = await recordUsageWindow(env, context.subjectKey, policy)
+  if (usageError) return usageError
+  return handler(context)
+}
+
+async function authenticatePaidRequest(request: Request, env: Env): Promise<PaidAuthContext | Response> {
+  const authed = await authenticate(request, env)
+  if (authed.ok === false) {
+    const headers = new Headers(authed.response.headers)
+    for (const [key, value] of Object.entries(CORS_HEADERS)) headers.set(key, value)
+    return new Response(authed.response.body, { status: authed.response.status, statusText: authed.response.statusText, headers })
+  }
+  const token = bearerToken(request)
+  const subjectKey = authed.method === 'session' && authed.userId
+    ? `session:${authed.userId}`
+    : `key:${await sha256Hex(token)}`
+  return { auth: authed, subjectKey }
+}
+
+async function recordUsageWindow(env: Env, subjectKey: string, policy: UsagePolicy): Promise<Response | null> {
+  const now = new Date()
+  const minuteStart = new Date(Math.floor(now.getTime() / 60000) * 60000).toISOString()
+  const dayStart = now.toISOString().slice(0, 10)
+  const minute = await readUsageWindow(env, subjectKey, policy.capability, 'minute', minuteStart)
+  if (minute.request_count >= policy.maxRequestsPerMinute) return apiError('rate_limited', 'Rate limit exceeded.', 429)
+  const day = await readUsageWindow(env, subjectKey, policy.capability, 'day', dayStart)
+  if (day.unit_count + policy.units > policy.maxUnitsPerDay) return apiError('budget_exceeded', 'Daily usage budget exceeded.', 429)
+  await incrementUsageWindow(env, subjectKey, policy.capability, 'minute', minuteStart, 1, policy.units)
+  await incrementUsageWindow(env, subjectKey, policy.capability, 'day', dayStart, 1, policy.units)
+  return null
+}
+
+async function readUsageWindow(env: Env, subjectKey: string, capability: string, windowKind: string, windowStart: string): Promise<{ request_count: number; unit_count: number }> {
+  const row = await env.GENERATION_DB.prepare(`
+    SELECT request_count, unit_count FROM generation_usage_windows
+    WHERE subject_key = ? AND capability = ? AND window_kind = ? AND window_start = ?
+    LIMIT 1
+  `).bind(subjectKey, capability, windowKind, windowStart).first<{ request_count: number; unit_count: number }>()
+  return { request_count: Number(row?.request_count ?? 0), unit_count: Number(row?.unit_count ?? 0) }
+}
+
+async function incrementUsageWindow(env: Env, subjectKey: string, capability: string, windowKind: string, windowStart: string, requests: number, units: number): Promise<void> {
+  const at = new Date().toISOString()
+  await env.GENERATION_DB.prepare(`
+    INSERT INTO generation_usage_windows (subject_key, capability, window_kind, window_start, request_count, unit_count, updated_at)
+    VALUES (?, ?, ?, ?, ?, ?, ?)
+    ON CONFLICT(subject_key, capability, window_kind, window_start) DO UPDATE SET
+      request_count = request_count + excluded.request_count,
+      unit_count = unit_count + excluded.unit_count,
+      updated_at = excluded.updated_at
+  `).bind(subjectKey, capability, windowKind, windowStart, requests, units, at).run()
 }
 
 interface StoryDraftChapter {
@@ -244,6 +365,7 @@ interface StoryDraftRow {
   status: string
   chapters: string
   settings: string
+  created_by: string | null
   created_at: string
   updated_at: string
 }
@@ -285,7 +407,7 @@ function parseJsonObject(value: unknown): Record<string, unknown> {
   }
 }
 
-async function createStoryDraft(request: Request, env: Env): Promise<Response> {
+async function createStoryDraft(request: Request, env: Env, access: GenerationAccessContext): Promise<Response> {
   let body: Record<string, unknown>
   try {
     body = await request.json() as Record<string, unknown>
@@ -310,14 +432,15 @@ async function createStoryDraft(request: Request, env: Env): Promise<Response> {
     status: 'draft',
     chapters: JSON.stringify(chapters),
     settings: JSON.stringify(body.settings && typeof body.settings === 'object' ? body.settings : {}),
+    created_by: createdBy(access),
     created_at: now,
     updated_at: now,
   }
 
   await env.GENERATION_DB.prepare(
-    `INSERT INTO story_drafts (id, title, description, cover_media_id, default_voice, default_speed, target_album_id, status, chapters, settings, created_at, updated_at)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-  ).bind(row.id, row.title, row.description, row.cover_media_id, row.default_voice, row.default_speed, row.target_album_id, row.status, row.chapters, row.settings, row.created_at, row.updated_at).run()
+    `INSERT INTO story_drafts (id, title, description, cover_media_id, default_voice, default_speed, target_album_id, status, chapters, settings, created_by, created_at, updated_at)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+  ).bind(row.id, row.title, row.description, row.cover_media_id, row.default_voice, row.default_speed, row.target_album_id, row.status, row.chapters, row.settings, row.created_by, row.created_at, row.updated_at).run()
 
   return json({ data: rowToStoryDraft(row), meta: { schemaVersion: 1 } }, 201)
 }
@@ -334,11 +457,13 @@ function normalizeDraftChapter(chapter: StoryDraftChapter, index: number, defaul
   }
 }
 
-async function listStoryDrafts(env: Env): Promise<Response> {
+async function listStoryDrafts(env: Env, access: GenerationAccessContext): Promise<Response> {
+  const where = isServiceAccess(access) ? '' : 'WHERE created_by = ?'
+  const values = isServiceAccess(access) ? [] : [sessionUserId(access)]
   const rows = await env.GENERATION_DB.prepare(
-    `SELECT id, title, description, cover_media_id, default_voice, default_speed, target_album_id, status, chapters, settings, created_at, updated_at
-     FROM story_drafts ORDER BY updated_at DESC`,
-  ).bind().all<StoryDraftRow>()
+    `SELECT id, title, description, cover_media_id, default_voice, default_speed, target_album_id, status, chapters, settings, created_by, created_at, updated_at
+     FROM story_drafts ${where} ORDER BY updated_at DESC`,
+  ).bind(...values).all<StoryDraftRow>()
   return json({ data: rows.results.map(rowToStoryDraft), meta: { total: rows.results.length, schemaVersion: 1 } })
 }
 
@@ -354,11 +479,21 @@ async function generateTts(request: Request, env: Env): Promise<Response> {
   if (validationError) return apiError(validationError.code, validationError.message, 400, validationError.field)
 
   const normalized = normalizeTtsRequest(body)
+  const access = await authenticatePaidRequest(request, env)
+  if (access instanceof Response) return access
+  const usageError = await recordUsageWindow(env, access.subjectKey, {
+    capability: 'tts.generate',
+    units: Math.max(1, normalized.text.length),
+    maxRequestsPerMinute: 60,
+    maxUnitsPerDay: 12000,
+  })
+  if (usageError) return usageError
+
   const requestHash = await generateRequestHash(normalized)
   const existing = await findAudioByHash(requestHash, env)
   if (existing) return json(ttsResponseFromRecord(existing, true))
 
-  const atlasResponse = await synthesizeWithAtlas(normalized, env, body.provider)
+  const atlasResponse = await synthesizeWithAtlas(normalized, env)
   if (atlasResponse) return atlasResponse
 
   const generated = await generateAudioBytes(normalized, env)
@@ -392,7 +527,7 @@ async function generateTts(request: Request, env: Env): Promise<Response> {
     generated_at: generatedAt,
   }
 
-  await env.GENERATION_DB.prepare(`INSERT INTO generated_audio (
+  await env.GENERATION_DB.prepare(`INSERT OR IGNORE INTO generated_audio (
     id, request_hash, text, language, provider, voice, model, speed, pitch, audio_url, r2_key, content_type, file_size_bytes, generated_at
   ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`).bind(
     record.id,
@@ -410,6 +545,9 @@ async function generateTts(request: Request, env: Env): Promise<Response> {
     record.file_size_bytes,
     record.generated_at,
   ).run()
+
+  const stored = await findAudioByHash(requestHash, env)
+  if (stored) return json(ttsResponseFromRecord(stored, stored.id !== record.id), stored.id === record.id ? 201 : 200)
 
   return json(ttsResponseFromRecord(record, false), 201)
 }
@@ -453,27 +591,22 @@ function ttsResponseFromRecord(record: GenerationAudioRecord, cached: boolean) {
   }
 }
 
-async function synthesizeWithAtlas(input: NormalizedTtsRequest, env: Env, requestedProvider?: TtsProvider): Promise<Response | null> {
+async function synthesizeWithAtlas(input: NormalizedTtsRequest, env: Env): Promise<Response | null> {
   if (!env.ATLAS_SERVICE) return null
+  if (!env.ATLAS_API_KEY) return apiError('atlas_service_key_not_configured', 'Atlas service key is not configured.', 503)
 
   const atlasUrl = `${(env.ATLAS_BASE_URL ?? 'https://tiko-atlas-api-dev.silvandiepen.workers.dev/v1/atlas').replace(/\/$/, '')}/speech`
-  const atlasProvider = requestedProvider && requestedProvider !== 'azure' ? requestedProvider : 'auto'
   const atlasPayload: Record<string, unknown> = {
     app: 'generation-api',
     purpose: 'compatibility-tts',
     text: input.text,
     language: input.language,
-    provider: atlasProvider,
     speed: input.speed,
-  }
-  if (atlasProvider !== 'auto') {
-    atlasPayload.voice = input.voice
-    atlasPayload.model = input.model
   }
 
   const response = await env.ATLAS_SERVICE.fetch(new Request(atlasUrl, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${env.ATLAS_API_KEY}` },
     body: JSON.stringify(atlasPayload),
   }))
   const body = await response.json().catch(() => null) as AtlasSpeechResponse | null
@@ -542,6 +675,10 @@ export async function generateRequestHash(input: NormalizedTtsRequest): Promise<
   return Array.from(new Uint8Array(digest)).map((byte) => byte.toString(16).padStart(2, '0')).join('').slice(0, 32)
 }
 
+async function storySegmentCacheKey(input: NormalizedTtsRequest): Promise<string> {
+  return `story-segments/${await generateRequestHash(input)}.mp3`
+}
+
 function audioKeyForHash(requestHash: string) {
   return `audio/${requestHash}.mp3`
 }
@@ -569,20 +706,25 @@ async function generateAudioBytes(input: NormalizedTtsRequest, env: Env): Promis
   if (input.provider === 'elevenlabs') return generateElevenLabsAudioBytes(input, env)
   if (!env.OPENAI_API_KEY) return { success: false, error: 'tts_generation_not_configured', status: 503 }
 
-  const response = await fetch('https://api.openai.com/v1/audio/speech', {
-    method: 'POST',
-    headers: {
-      Authorization: `Bearer ${env.OPENAI_API_KEY}`,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      model: input.model,
-      voice: input.voice,
-      input: input.text,
-      response_format: 'mp3',
-      speed: input.speed,
-    }),
-  })
+  let response: Response
+  try {
+    response = await fetchWithRetry('https://api.openai.com/v1/audio/speech', {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${env.OPENAI_API_KEY}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        model: input.model,
+        voice: input.voice,
+        input: input.text,
+        response_format: 'mp3',
+        speed: input.speed,
+      }),
+    }, { timeoutMs: PROVIDER_TIMEOUT_MS })
+  } catch {
+    return { success: false, error: 'tts_provider_unavailable', status: 503 }
+  }
 
   if (!response.ok) return { success: false, error: 'tts_provider_failed', status: 502 }
 
@@ -592,20 +734,25 @@ async function generateAudioBytes(input: NormalizedTtsRequest, env: Env): Promis
 async function generateElevenLabsAudioBytes(input: NormalizedTtsRequest, env: Env): Promise<GenerateAudioSuccess | GenerateAudioFailure> {
   if (!env.ELEVENLABS_API_KEY) return { success: false, error: 'elevenlabs_tts_not_configured', status: 503 }
   const model = ELEVENLABS_MODELS.has(input.model) ? input.model : DEFAULT_ELEVENLABS_MODEL
-  const response = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${encodeURIComponent(input.voice)}?output_format=mp3_44100_128`, {
-    method: 'POST',
-    headers: {
-      'xi-api-key': env.ELEVENLABS_API_KEY,
-      'Content-Type': 'application/json',
-      Accept: 'audio/mpeg',
-    },
-    body: JSON.stringify({
-      text: input.text,
-      model_id: model,
-      voice_settings: { stability: 0.5, similarity_boost: 0.75, style: 0, use_speaker_boost: true, speed: input.speed },
-      apply_text_normalization: 'auto',
-    }),
-  })
+  let response: Response
+  try {
+    response = await fetchWithRetry(`https://api.elevenlabs.io/v1/text-to-speech/${encodeURIComponent(input.voice)}?output_format=mp3_44100_128`, {
+      method: 'POST',
+      headers: {
+        'xi-api-key': env.ELEVENLABS_API_KEY,
+        'Content-Type': 'application/json',
+        Accept: 'audio/mpeg',
+      },
+      body: JSON.stringify({
+        text: input.text,
+        model_id: model,
+        voice_settings: { stability: 0.5, similarity_boost: 0.75, style: 0, use_speaker_boost: true, speed: input.speed },
+        apply_text_normalization: 'auto',
+      }),
+    }, { timeoutMs: PROVIDER_TIMEOUT_MS })
+  } catch {
+    return { success: false, error: 'tts_provider_unavailable', status: 503 }
+  }
   if (!response.ok) return { success: false, error: 'tts_provider_failed', status: 502 }
   return { success: true, bytes: new Uint8Array(await response.arrayBuffer()), contentType: 'audio/mpeg' }
 }
@@ -614,19 +761,19 @@ async function getVoiceSample(url: URL, env: Env): Promise<Response> {
   const voiceId = decodeURIComponent(url.pathname.replace('/v1/generation/voice-samples/', ''))
   if (!ELEVENLABS_VOICE_ID_RE.test(voiceId) && !OPENAI_VOICES.has(voiceId)) return apiError('invalid_voice_id', 'Voice id is invalid.', 400)
   const provider = url.searchParams.get('provider') === 'openai' ? 'openai' : 'elevenlabs'
-  const model = url.searchParams.get('model') || (provider === 'openai' ? 'tts-1' : DEFAULT_ELEVENLABS_MODEL)
-  const safeModel = model.replace(/[^a-zA-Z0-9._-]/g, '') || (provider === 'openai' ? 'tts-1' : DEFAULT_ELEVENLABS_MODEL)
-  const r2Key = `voice-samples/${safeModel}/${voiceId}.mp3`
-  if (!VOICE_SAMPLE_KEY_RE.test(r2Key)) return apiError('invalid_voice_sample', 'Voice sample path is invalid.', 400)
-  const existing = await env.GENERATED_MEDIA_BUCKET.get(r2Key)
-  if (existing) return audioResponse(existing, 'public, max-age=31536000, immutable')
-  const generated = await generateAudioBytes(normalizeTtsRequest({
+  const normalized = normalizeTtsRequest({
     text: 'Hello from Tiko. This is how this voice sounds.',
     language: 'en',
     provider,
     voice: voiceId,
-    model: safeModel,
-  }), env)
+    model: url.searchParams.get('model') || undefined,
+  })
+  const safeModel = normalized.model.replace(/[^a-zA-Z0-9._-]/g, '') || (normalized.provider === 'openai' ? 'tts-1' : DEFAULT_ELEVENLABS_MODEL)
+  const r2Key = `voice-samples/${safeModel}/${normalized.voice}.mp3`
+  if (!VOICE_SAMPLE_KEY_RE.test(r2Key)) return apiError('invalid_voice_sample', 'Voice sample path is invalid.', 400)
+  const existing = await env.GENERATED_MEDIA_BUCKET.get(r2Key)
+  if (existing) return audioResponse(existing, 'public, max-age=31536000, immutable')
+  const generated = await generateAudioBytes(normalized, env)
   if (generated.success === false) return apiError(generated.error, providerSafeMessage(generated.error), generated.status ?? 503)
   await env.GENERATED_MEDIA_BUCKET.put(r2Key, generated.bytes, { httpMetadata: { contentType: generated.contentType, cacheControl: 'public, max-age=31536000, immutable' } })
   return new Response(bytesBody(generated.bytes), { headers: { ...CORS_HEADERS, 'Content-Type': generated.contentType, 'Cache-Control': 'public, max-age=31536000, immutable' } })
@@ -644,6 +791,7 @@ function providerSafeMessage(code: string) {
     case 'tts_generation_not_configured': return 'TTS generation is not configured.'
     case 'elevenlabs_tts_not_configured': return 'ElevenLabs TTS is not configured.'
     case 'tts_provider_failed': return 'TTS provider failed.'
+    case 'tts_provider_unavailable': return 'TTS provider is temporarily unavailable.'
     default: return 'TTS generation failed.'
   }
 }
@@ -691,11 +839,12 @@ interface StoryRecord {
   category: string
   tags: string
   is_public: number
+  created_by: string | null
   created_at: string
   updated_at: string
 }
 
-async function generateStoryTryout(request: Request, env: Env): Promise<Response> {
+async function generateStoryTryout(request: Request, env: Env, _access: GenerationAccessContext): Promise<Response> {
   let body: StoryTryoutRequest
   try { body = await request.json() as StoryTryoutRequest } catch { return apiError('invalid_json', 'Request body must be valid JSON.', 400) }
 
@@ -714,7 +863,7 @@ async function generateStoryTryout(request: Request, env: Env): Promise<Response
   return json({ data: { id, audioUrl, contentType: generated.contentType, fileSizeBytes: generated.bytes.byteLength }, meta: { schemaVersion: 1 } }, 201)
 }
 
-async function renderStory(request: Request, env: Env): Promise<Response> {
+async function renderStory(request: Request, env: Env, access: GenerationAccessContext): Promise<Response> {
   let body: StoryRenderRequest
   try { body = await request.json() as StoryRenderRequest } catch { return apiError('invalid_json', 'Request body must be valid JSON.', 400) }
 
@@ -731,9 +880,17 @@ async function renderStory(request: Request, env: Env): Promise<Response> {
   const chunks: Uint8Array[] = []
 
   for (const segment of cleanSegments) {
-    const generated = await generateAudioBytes(normalizeTtsRequest({ text: segment.text, language: body.language || 'en', provider: 'elevenlabs', voice, model: body.model || DEFAULT_ELEVENLABS_MODEL, speed }), env)
-    if (generated.success === false) return apiError(generated.error, providerSafeMessage(generated.error), generated.status ?? 503)
-    chunks.push(generated.bytes)
+    const normalized = normalizeTtsRequest({ text: segment.text, language: body.language || 'en', provider: 'elevenlabs', voice, model: body.model || DEFAULT_ELEVENLABS_MODEL, speed })
+    const segmentKey = await storySegmentCacheKey(normalized)
+    const cached = await env.GENERATED_MEDIA_BUCKET.get(segmentKey)
+    if (cached) {
+      chunks.push(new Uint8Array(await new Response(cached.body).arrayBuffer()))
+    } else {
+      const generated = await generateAudioBytes(normalized, env)
+      if (generated.success === false) return apiError(generated.error, providerSafeMessage(generated.error), generated.status ?? 503)
+      await env.GENERATED_MEDIA_BUCKET.put(segmentKey, generated.bytes, { httpMetadata: { contentType: generated.contentType, cacheControl: 'public, max-age=31536000, immutable' } })
+      chunks.push(generated.bytes)
+    }
     if (segment.pauseAfterMs > 0) chunks.push(makeSilentMp3Padding())
   }
 
@@ -747,17 +904,20 @@ async function renderStory(request: Request, env: Env): Promise<Response> {
 
   await env.GENERATION_DB.prepare(`INSERT INTO stories (
     id, title, description, voice, speed, segments, status, audio_url, r2_key,
-    duration_seconds, file_size_bytes, category, tags, is_public, created_at, updated_at
-  ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`).bind(
+    duration_seconds, file_size_bytes, category, tags, is_public, created_by, created_at, updated_at
+  ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`).bind(
     id, body.title.trim(), body.description?.trim() || null, voice, speed, JSON.stringify(cleanSegments), 'complete', audioUrl, r2Key,
-    null, audioBytes.byteLength, body.category || 'story', JSON.stringify(body.tags || []), 0, now, now,
+    null, audioBytes.byteLength, body.category || 'story', JSON.stringify(body.tags || []), 0, createdBy(access), now, now,
   ).run()
 
   return json({ data: { id, title: body.title.trim(), audioUrl, voice, speed, fileSizeBytes: audioBytes.byteLength, createdAt: now }, meta: { schemaVersion: 1, segmentCount: cleanSegments.length } }, 201)
 }
 
-async function getStoryAudio(pathname: string, env: Env): Promise<Response> {
+async function getStoryAudio(request: Request, pathname: string, env: Env): Promise<Response> {
+  const access = await optionalAuth(request, env)
+  if (access instanceof Response) return access
   if (pathname.startsWith('/v1/generation/stories/tryouts/')) {
+    if (!access.auth) return forbiddenOrUnauthorized(access)
     const id = decodeURIComponent(pathname.replace('/v1/generation/stories/tryouts/', '').replace('/audio', ''))
     if (!isSafeId(id)) return apiError('invalid_tryout_id', 'Tryout id is invalid.', 400)
     const object = await env.GENERATED_MEDIA_BUCKET.get(`story-tryouts/${id}.mp3`)
@@ -767,8 +927,9 @@ async function getStoryAudio(pathname: string, env: Env): Promise<Response> {
 
   const id = decodeURIComponent(pathname.replace('/v1/generation/stories/', '').replace('/audio', ''))
   if (!isSafeId(id)) return apiError('invalid_story_id', 'Story id is invalid.', 400)
-  const record = await env.GENERATION_DB.prepare('SELECT r2_key FROM stories WHERE id = ? LIMIT 1').bind(id).first<{ r2_key: string | null }>()
+  const record = await env.GENERATION_DB.prepare('SELECT r2_key, is_public, created_by FROM stories WHERE id = ? LIMIT 1').bind(id).first<{ r2_key: string | null; is_public: number; created_by: string | null }>()
   if (!record?.r2_key) return apiError('story_not_found', 'Story not found.', 404)
+  if (!canAccessOwnedRecord(access, record)) return forbiddenOrUnauthorized(access)
   const object = await env.GENERATED_MEDIA_BUCKET.get(record.r2_key)
   if (!object) return apiError('story_not_found', 'Story audio not found.', 404)
   return audioResponse(object, 'public, max-age=31536000, immutable')
@@ -776,16 +937,21 @@ async function getStoryAudio(pathname: string, env: Env): Promise<Response> {
 
 async function listStories(request: Request, env: Env): Promise<Response> {
   const url = new URL(request.url)
+  const access = await optionalAuth(request, env)
+  if (access instanceof Response) return access
   const page = Math.max(parseInt(url.searchParams.get('page') || '1'), 1)
   const limit = Math.min(Math.max(parseInt(url.searchParams.get('limit') || '20'), 1), 100)
   const offset = (page - 1) * limit
   const status = url.searchParams.get('status') || 'promoted'
   const isPublic = status === 'draft' ? 0 : 1
+  if (isPublic === 0 && !access.auth) return forbiddenOrUnauthorized(access)
+  const ownerClause = isPublic === 0 && !isServiceAccess(access) ? ' AND created_by = ?' : ''
+  const ownerValues = ownerClause ? [sessionUserId(access)] : []
 
   const rows = await env.GENERATION_DB.prepare(`SELECT id, title, description, voice, speed, segments, status, audio_url, r2_key,
-      duration_seconds, file_size_bytes, category, tags, is_public, created_at, updated_at
-    FROM stories WHERE is_public = ? ORDER BY created_at DESC LIMIT ? OFFSET ?`).bind(isPublic, limit, offset).all<StoryRecord>()
-  const countRow = await env.GENERATION_DB.prepare('SELECT COUNT(*) AS count FROM stories WHERE is_public = ?').bind(isPublic).first<{ count: number }>()
+      duration_seconds, file_size_bytes, category, tags, is_public, created_by, created_at, updated_at
+    FROM stories WHERE is_public = ?${ownerClause} ORDER BY created_at DESC LIMIT ? OFFSET ?`).bind(isPublic, ...ownerValues, limit, offset).all<StoryRecord>()
+  const countRow = await env.GENERATION_DB.prepare(`SELECT COUNT(*) AS count FROM stories WHERE is_public = ?${ownerClause}`).bind(isPublic, ...ownerValues).first<{ count: number }>()
   const total = countRow?.count ?? 0
   return json({
     data: rows.results.map(row => ({ id: row.id, title: row.title, description: row.description, voice: row.voice, speed: row.speed, segmentCount: JSON.parse(row.segments || '[]').length, status: row.is_public === 1 ? 'promoted' : 'draft', renderStatus: row.status, audioUrl: row.audio_url, fileSizeBytes: row.file_size_bytes, category: row.category, tags: JSON.parse(row.tags || '[]'), createdAt: row.created_at })),
@@ -793,9 +959,13 @@ async function listStories(request: Request, env: Env): Promise<Response> {
   })
 }
 
-async function promoteStory(pathname: string, env: Env): Promise<Response> {
+async function promoteStory(pathname: string, env: Env, access: GenerationAccessContext): Promise<Response> {
   const id = pathname.replace('/v1/generation/stories/', '').replace('/promote', '')
   if (!isSafeId(id)) return apiError('invalid_story_id', 'Story id is invalid.', 400)
+
+  const record = await env.GENERATION_DB.prepare('SELECT created_by FROM stories WHERE id = ? LIMIT 1').bind(id).first<{ created_by: string | null }>()
+  if (!record) return apiError('story_not_found', 'Story not found.', 404)
+  if (!canMutateOwnedRecord(access, record)) return forbiddenOrUnauthorized(access)
 
   const now = new Date().toISOString()
   const result = await env.GENERATION_DB.prepare(
@@ -806,15 +976,16 @@ async function promoteStory(pathname: string, env: Env): Promise<Response> {
   return json({ data: { id, status: 'promoted', updatedAt: now } })
 }
 
-async function deleteStory(pathname: string, env: Env): Promise<Response> {
+async function deleteStory(pathname: string, env: Env, access: GenerationAccessContext): Promise<Response> {
   const id = pathname.replace('/v1/generation/stories/', '')
   if (!isSafeId(id)) return apiError('invalid_story_id', 'Story id is invalid.', 400)
 
   const record = await env.GENERATION_DB.prepare(
-    'SELECT r2_key FROM stories WHERE id = ? LIMIT 1',
-  ).bind(id).first<{ r2_key: string | null }>()
+    'SELECT r2_key, created_by FROM stories WHERE id = ? LIMIT 1',
+  ).bind(id).first<{ r2_key: string | null; created_by: string | null }>()
 
   if (!record) return apiError('story_not_found', 'Story not found.', 404)
+  if (!canMutateOwnedRecord(access, record)) return forbiddenOrUnauthorized(access)
   if (record.r2_key) await env.GENERATED_MEDIA_BUCKET.delete(record.r2_key).catch(() => null)
   await env.GENERATION_DB.prepare('DELETE FROM stories WHERE id = ?').bind(id).run()
 
@@ -880,6 +1051,7 @@ interface GeneratedImageRecord {
   is_public: number
   is_preview: number
   media_id: string | null
+  created_by: string | null
   created_at: string
   updated_at: string
 }
@@ -1170,7 +1342,7 @@ async function boostPrompt(subject: string, mode: ImageMode, tikoStyle: TikoStyl
   return (data.data?.output ?? '').trim()
 }
 
-async function generateImage(request: Request, env: Env): Promise<Response> {
+async function generateImage(request: Request, env: Env, access: GenerationAccessContext): Promise<Response> {
   let body: ImageGenerationRequest
   try {
     body = await request.json() as ImageGenerationRequest
@@ -1229,11 +1401,11 @@ async function generateImage(request: Request, env: Env): Promise<Response> {
           quality: 'medium',
           background: 'transparent',
         }
-        const openaiResponse = await fetch('https://api.openai.com/v1/images/generations', {
+        const openaiResponse = await fetchWithRetry('https://api.openai.com/v1/images/generations', {
           method: 'POST',
           headers: { Authorization: `Bearer ${env.OPENAI_API_KEY}`, 'Content-Type': 'application/json' },
           body: JSON.stringify(payload),
-        })
+        }, { timeoutMs: PROVIDER_IMAGE_TIMEOUT_MS })
         if (!openaiResponse.ok) {
           const errText = await openaiResponse.text().catch(() => '')
           console.error('[generate] OpenAI preview failed', { status: openaiResponse.status, body: errText, variation: i })
@@ -1247,7 +1419,7 @@ async function generateImage(request: Request, env: Env): Promise<Response> {
         if (imageItem.b64_json) {
           imageBytes = base64ToBytes(imageItem.b64_json)
         } else if (imageItem.url) {
-          const urlRes = await fetch(imageItem.url)
+          const urlRes = await fetchWithRetry(imageItem.url, {}, { timeoutMs: PROVIDER_IMAGE_TIMEOUT_MS })
           if (!urlRes.ok) return null
           imageBytes = new Uint8Array(await urlRes.arrayBuffer())
         } else {
@@ -1262,13 +1434,13 @@ async function generateImage(request: Request, env: Env): Promise<Response> {
         await env.GENERATION_DB.prepare(`INSERT INTO generated_images (
           id, prompt, revised_prompt, model, size, quality, style, image_url, r2_key,
           content_type, file_size_bytes, width, height, category, tags, title, description,
-          is_public, is_preview, created_at, updated_at
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`).bind(
+          is_public, is_preview, created_by, created_at, updated_at
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`).bind(
           id, body.prompt.trim(), imageItem.revised_prompt || null,
           'gpt-image-1-mini', size, 'medium', tikoStyle, imageUrl, r2Key,
           'image/png', imageBytes.byteLength, dims.width, dims.height,
           body.category || 'generated', JSON.stringify(body.tags || []), body.title || null, null,
-          0, 1, now, now,
+          0, 1, createdBy(access), now, now,
         ).run()
         return { id, imageUrl, prompt: body.prompt.trim(), revisedPrompt: imageItem.revised_prompt || null, size, quality: 'medium', style: tikoStyle, width: dims.width, height: dims.height, fileSizeBytes: imageBytes.byteLength, isPreview: true, createdAt: now }
       } catch (e) {
@@ -1332,12 +1504,12 @@ async function generateImage(request: Request, env: Env): Promise<Response> {
   await env.GENERATION_DB.prepare(`INSERT INTO generated_images (
     id, prompt, revised_prompt, model, size, quality, style, image_url, r2_key,
     content_type, file_size_bytes, width, height, category, tags, title, description,
-    is_public, created_at, updated_at
-  ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`).bind(
+    is_public, created_by, created_at, updated_at
+  ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`).bind(
     id, body.prompt.trim(), image.revisedPrompt || null, image.provider?.model ?? 'gpt-image-1',
     size, quality, style, imageUrl, r2Key, contentType, imageBytes.byteLength,
     dims.width, dims.height, body.category || 'generated', JSON.stringify(body.tags || []),
-    body.title || null, null, 0, now, now,
+    body.title || null, null, 0, createdBy(access), now, now,
   ).run()
 
   return json({
@@ -1347,7 +1519,7 @@ async function generateImage(request: Request, env: Env): Promise<Response> {
 }
 
 async function fetchAtlasImageAsset(mediaUrl: string, env: Env, atlasBase: string): Promise<Response> {
-  if (/^https?:\/\//i.test(mediaUrl)) return fetch(mediaUrl)
+  if (/^https?:\/\//i.test(mediaUrl)) return fetchWithRetry(mediaUrl, {}, { timeoutMs: PROVIDER_IMAGE_TIMEOUT_MS })
   if (!env.ATLAS_SERVICE) return new Response('Atlas service unavailable', { status: 503 })
   const origin = new URL(atlasBase).origin
   return env.ATLAS_SERVICE.fetch(new Request(`${origin}${mediaUrl.startsWith('/') ? mediaUrl : `/${mediaUrl}`}`))
@@ -1359,16 +1531,19 @@ function toAtlasImageSize(size: string): 'square' | 'portrait' | 'landscape' {
   return 'square'
 }
 
-async function getImage(pathname: string, env: Env): Promise<Response> {
+async function getImage(request: Request, pathname: string, env: Env): Promise<Response> {
+  const access = await optionalAuth(request, env)
+  if (access instanceof Response) return access
   const parts = pathname.replace('/v1/generation/images/', '').replace('/binary', '')
   const id = decodeURIComponent(parts)
   if (!isSafeId(id)) return apiError('invalid_image_id', 'Image id is invalid.', 400)
 
   const record = await env.GENERATION_DB.prepare(
-    'SELECT r2_key, content_type FROM generated_images WHERE id = ? LIMIT 1',
-  ).bind(id).first<{ r2_key: string; content_type: string }>()
+    'SELECT r2_key, content_type, is_public, created_by FROM generated_images WHERE id = ? LIMIT 1',
+  ).bind(id).first<{ r2_key: string; content_type: string; is_public: number; created_by: string | null }>()
 
   if (!record) return apiError('image_not_found', 'Image not found.', 404)
+  if (!canAccessOwnedRecord(access, record)) return forbiddenOrUnauthorized(access)
 
   const object = await env.GENERATED_MEDIA_BUCKET.get(record.r2_key)
   if (!object) return apiError('image_not_found', 'Image not found.', 404)
@@ -1384,25 +1559,30 @@ async function getImage(pathname: string, env: Env): Promise<Response> {
 
 async function listImages(request: Request, env: Env): Promise<Response> {
   const url = new URL(request.url)
+  const access = await optionalAuth(request, env)
+  if (access instanceof Response) return access
   const page = Math.max(parseInt(url.searchParams.get('page') || '1'), 1)
   const limit = Math.min(Math.max(parseInt(url.searchParams.get('limit') || '20'), 1), 100)
   const offset = (page - 1) * limit
   const status = url.searchParams.get('status') || 'promoted'
   const isPublic = status === 'draft' ? 0 : 1
+  if (isPublic === 0 && !access.auth) return forbiddenOrUnauthorized(access)
+  const ownerClause = isPublic === 0 && !isServiceAccess(access) ? ' AND created_by = ?' : ''
+  const ownerValues = ownerClause ? [sessionUserId(access)] : []
 
   const rows = await env.GENERATION_DB.prepare(
     `SELECT id, prompt, revised_prompt, model, size, quality, style, image_url, r2_key,
             content_type, file_size_bytes, width, height, category, tags, title, description,
-            is_public, is_preview, media_id, created_at, updated_at
+            is_public, is_preview, media_id, created_by, created_at, updated_at
      FROM generated_images
-     WHERE is_public = ?
+     WHERE is_public = ?${ownerClause}
      ORDER BY created_at DESC
      LIMIT ? OFFSET ?`,
-  ).bind(isPublic, limit, offset).all<GeneratedImageRecord>()
+  ).bind(isPublic, ...ownerValues, limit, offset).all<GeneratedImageRecord>()
 
   const countRow = await env.GENERATION_DB.prepare(
-    'SELECT COUNT(*) AS count FROM generated_images WHERE is_public = ?',
-  ).bind(isPublic).first<{ count: number }>()
+    `SELECT COUNT(*) AS count FROM generated_images WHERE is_public = ?${ownerClause}`,
+  ).bind(isPublic, ...ownerValues).first<{ count: number }>()
 
   const total = countRow?.count ?? 0
 
@@ -1432,14 +1612,15 @@ async function listImages(request: Request, env: Env): Promise<Response> {
   })
 }
 
-async function promoteImage(pathname: string, env: Env): Promise<Response> {
+async function promoteImage(pathname: string, env: Env, access: GenerationAccessContext): Promise<Response> {
   const id = pathname.replace('/v1/generation/images/', '').replace('/promote', '')
   if (!isSafeId(id)) return apiError('invalid_image_id', 'Image id is invalid.', 400)
 
   const record = await env.GENERATION_DB.prepare(
-    'SELECT is_preview FROM generated_images WHERE id = ? LIMIT 1',
-  ).bind(id).first<{ is_preview: number }>()
+    'SELECT is_preview, created_by FROM generated_images WHERE id = ? LIMIT 1',
+  ).bind(id).first<{ is_preview: number; created_by: string | null }>()
   if (!record) return apiError('image_not_found', 'Image not found.', 404)
+  if (!canMutateOwnedRecord(access, record)) return forbiddenOrUnauthorized(access)
   if (record.is_preview === 1) return apiError('preview_cannot_promote', 'Preview images must be upscaled before promoting.', 400)
 
   const now = new Date().toISOString()
@@ -1451,7 +1632,7 @@ async function promoteImage(pathname: string, env: Env): Promise<Response> {
   return json({ data: { id, status: 'promoted', updatedAt: now } })
 }
 
-async function linkImageMedia(pathname: string, request: Request, env: Env): Promise<Response> {
+async function linkImageMedia(pathname: string, request: Request, env: Env, access: GenerationAccessContext): Promise<Response> {
   const id = pathname.replace('/v1/generation/images/', '').replace('/media-link', '')
   if (!isSafeId(id)) return apiError('invalid_image_id', 'Image id is invalid.', 400)
 
@@ -1464,6 +1645,9 @@ async function linkImageMedia(pathname: string, request: Request, env: Env): Pro
 
   const mediaId = typeof body.mediaId === 'string' && body.mediaId.trim() ? body.mediaId.trim() : null
   if (!mediaId) return apiError('missing_media_id', 'mediaId is required.', 400, 'mediaId')
+  const record = await env.GENERATION_DB.prepare('SELECT created_by FROM generated_images WHERE id = ? LIMIT 1').bind(id).first<{ created_by: string | null }>()
+  if (!record) return apiError('image_not_found', 'Image not found.', 404)
+  if (!canMutateOwnedRecord(access, record)) return forbiddenOrUnauthorized(access)
 
   const now = new Date().toISOString()
   const result = await env.GENERATION_DB.prepare(
@@ -1474,22 +1658,23 @@ async function linkImageMedia(pathname: string, request: Request, env: Env): Pro
   return json({ data: { id, mediaId, updatedAt: now } })
 }
 
-async function enrichImage(pathname: string, env: Env): Promise<Response> {
+async function enrichImage(pathname: string, env: Env, access: GenerationAccessContext): Promise<Response> {
   const id = pathname.replace('/v1/generation/images/', '').replace('/enrich', '')
   if (!isSafeId(id)) return apiError('invalid_image_id', 'Image id is invalid.', 400)
   if (!env.OPENAI_API_KEY) return apiError('openai_not_configured', 'OpenAI is not configured.', 503)
 
   const record = await env.GENERATION_DB.prepare(
-    'SELECT id, title, prompt FROM generated_images WHERE id = ? LIMIT 1',
-  ).bind(id).first<{ id: string; title: string | null; prompt: string }>()
+    'SELECT id, title, prompt, created_by FROM generated_images WHERE id = ? LIMIT 1',
+  ).bind(id).first<{ id: string; title: string | null; prompt: string; created_by: string | null }>()
 
   if (!record) return apiError('image_not_found', 'Image not found.', 404)
+  if (!canMutateOwnedRecord(access, record)) return forbiddenOrUnauthorized(access)
 
   const publicBase = (env.GENERATION_PUBLIC_ROUTE ?? '').replace(/\/$/, '')
   const imageUrl = `${publicBase}/images/${id}/binary`
   const hint = record.title || record.prompt
 
-  const visionResponse = await fetch('https://api.openai.com/v1/chat/completions', {
+  const visionResponse = await fetchWithRetry('https://api.openai.com/v1/chat/completions', {
     method: 'POST',
     headers: { Authorization: `Bearer ${env.OPENAI_API_KEY}`, 'Content-Type': 'application/json' },
     body: JSON.stringify({
@@ -1500,7 +1685,7 @@ async function enrichImage(pathname: string, env: Env): Promise<Response> {
       ] }],
       max_tokens: 500,
     }),
-  })
+  }, { timeoutMs: PROVIDER_TIMEOUT_MS })
 
   if (!visionResponse.ok) {
     const errBody = await visionResponse.text().catch(() => '')
@@ -1567,7 +1752,7 @@ function parseImageVisionResponse(content: string): { title: string; description
   } catch { return null }
 }
 
-async function editImageVariant(pathname: string, request: Request, env: Env): Promise<Response> {
+async function editImageVariant(pathname: string, request: Request, env: Env, access: GenerationAccessContext): Promise<Response> {
   const id = pathname.replace('/v1/generation/images/', '').replace('/edit', '')
   if (!isSafeId(id)) return apiError('invalid_image_id', 'Image id is invalid.', 400)
   if (!env.OPENAI_API_KEY) return apiError('openai_not_configured', 'OpenAI is not configured.', 503)
@@ -1585,9 +1770,10 @@ async function editImageVariant(pathname: string, request: Request, env: Env): P
   const size = typeof body.size === 'string' && ALLOWED_IMAGE_SIZES.has(body.size) ? body.size as '1024x1024' | '1024x1792' | '1792x1024' : '1024x1024'
 
   const record = await env.GENERATION_DB.prepare(
-    'SELECT id, r2_key, prompt, category, tags, title FROM generated_images WHERE id = ? LIMIT 1',
-  ).bind(id).first<{ id: string; r2_key: string; prompt: string; category: string; tags: string; title: string | null }>()
+    'SELECT id, r2_key, prompt, category, tags, title, created_by FROM generated_images WHERE id = ? LIMIT 1',
+  ).bind(id).first<{ id: string; r2_key: string; prompt: string; category: string; tags: string; title: string | null; created_by: string | null }>()
   if (!record) return apiError('image_not_found', 'Image not found.', 404)
+  if (!canMutateOwnedRecord(access, record)) return forbiddenOrUnauthorized(access)
 
   const object = await env.GENERATED_MEDIA_BUCKET.get(record.r2_key)
   if (!object) return apiError('image_not_found', 'Image not found in storage.', 404)
@@ -1609,11 +1795,11 @@ async function editImageVariant(pathname: string, request: Request, env: Env): P
     form.append('mask', new Blob([maskBuffer], { type: 'image/png' }), 'mask.png')
   }
 
-  const editResponse = await fetch('https://api.openai.com/v1/images/edits', {
+  const editResponse = await fetchWithRetry('https://api.openai.com/v1/images/edits', {
     method: 'POST',
     headers: { Authorization: `Bearer ${env.OPENAI_API_KEY}` },
     body: form,
-  })
+  }, { timeoutMs: PROVIDER_IMAGE_TIMEOUT_MS })
 
   if (!editResponse.ok) {
     const errBody = await editResponse.text().catch(() => '')
@@ -1632,7 +1818,7 @@ async function editImageVariant(pathname: string, request: Request, env: Env): P
   if (imageItem.b64_json) {
     newImageBytes = base64ToBytes(imageItem.b64_json)
   } else if (imageItem.url) {
-    const urlRes = await fetch(imageItem.url)
+    const urlRes = await fetchWithRetry(imageItem.url, {}, { timeoutMs: PROVIDER_IMAGE_TIMEOUT_MS })
     if (!urlRes.ok) return apiError('image_edit_asset_failed', 'Could not fetch edited image asset.', 502)
     newImageBytes = new Uint8Array(await urlRes.arrayBuffer())
   } else {
@@ -1652,12 +1838,12 @@ async function editImageVariant(pathname: string, request: Request, env: Env): P
   await env.GENERATION_DB.prepare(`INSERT INTO generated_images (
     id, prompt, revised_prompt, model, size, quality, style, image_url, r2_key,
     content_type, file_size_bytes, width, height, category, tags, title, description,
-    is_public, created_at, updated_at
-  ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`).bind(
+    is_public, created_by, created_at, updated_at
+  ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`).bind(
     newId, prompt, null, editModel, size, 'standard', 'vivid', imageUrl, r2Key,
     'image/png', newImageBytes.byteLength, dims.width, dims.height,
     record.category || 'generated', record.tags || '[]', record.title || null, null,
-    0, now, now,
+    0, createdBy(access), now, now,
   ).run()
 
   return json({
@@ -1678,169 +1864,6 @@ async function editImageVariant(pathname: string, request: Request, env: Env): P
   }, 201)
 }
 
-function paethPredictor(a: number, b: number, c: number): number {
-  const p = a + b - c
-  const pa = Math.abs(p - a)
-  const pb = Math.abs(p - b)
-  const pc = Math.abs(p - c)
-  return pa <= pb && pa <= pc ? a : pb <= pc ? b : c
-}
-
-function crc32(data: Uint8Array): number {
-  let crc = 0xFFFFFFFF
-  for (let i = 0; i < data.length; i++) {
-    crc ^= data[i]
-    for (let j = 0; j < 8; j++) crc = crc & 1 ? (crc >>> 1) ^ 0xEDB88320 : crc >>> 1
-  }
-  return (crc ^ 0xFFFFFFFF) >>> 0
-}
-
-function pngChunk(type: string, data: Uint8Array): Uint8Array {
-  const chunk = new Uint8Array(12 + data.length)
-  const view = new DataView(chunk.buffer)
-  view.setUint32(0, data.length)
-  for (let i = 0; i < 4; i++) chunk[4 + i] = type.charCodeAt(i)
-  chunk.set(data, 8)
-  const crcInput = new Uint8Array(4 + data.length)
-  for (let i = 0; i < 4; i++) crcInput[i] = type.charCodeAt(i)
-  crcInput.set(data, 4)
-  view.setUint32(8 + data.length, crc32(crcInput))
-  return chunk
-}
-
-async function compressDeflate(data: Uint8Array): Promise<Uint8Array> {
-  const cs = new CompressionStream('deflate')
-  const writer = cs.writable.getWriter()
-  const reader = cs.readable.getReader()
-  writer.write(data.buffer as ArrayBuffer)
-  writer.close()
-  const chunks: Uint8Array[] = []
-  let done = false
-  while (!done) {
-    const { value, done: d } = await reader.read()
-    if (value) chunks.push(value)
-    done = d
-  }
-  const total = chunks.reduce((s, c) => s + c.length, 0)
-  const out = new Uint8Array(total)
-  let pos = 0
-  for (const c of chunks) { out.set(c, pos); pos += c.length }
-  return out
-}
-
-async function encodePng(pixels: Uint8Array, width: number, height: number, colorType: number): Promise<ArrayBuffer> {
-  const bpp = colorType === 6 ? 4 : 3
-  const rowLen = width * bpp
-  const filtered = new Uint8Array(height * (1 + rowLen))
-  for (let y = 0; y < height; y++) {
-    filtered[y * (1 + rowLen)] = 0 // filter type None
-    filtered.set(pixels.subarray(y * rowLen, (y + 1) * rowLen), y * (1 + rowLen) + 1)
-  }
-  const compressed = await compressDeflate(filtered)
-  const ihdrData = new Uint8Array(13)
-  const ihdrView = new DataView(ihdrData.buffer)
-  ihdrView.setUint32(0, width)
-  ihdrView.setUint32(4, height)
-  ihdrData[8] = 8; ihdrData[9] = colorType
-  const sig = new Uint8Array([0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A])
-  const ihdr = pngChunk('IHDR', ihdrData)
-  const idat = pngChunk('IDAT', compressed)
-  const iend = pngChunk('IEND', new Uint8Array(0))
-  const out = new Uint8Array(sig.length + ihdr.length + idat.length + iend.length)
-  let p = 0
-  out.set(sig, p); p += sig.length
-  out.set(ihdr, p); p += ihdr.length
-  out.set(idat, p); p += idat.length
-  out.set(iend, p)
-  return out.buffer
-}
-
-async function splitPngQuadrants(input: ArrayBuffer): Promise<ArrayBuffer[]> {
-  const src = new Uint8Array(input)
-  if (src[0] !== 0x89 || src[1] !== 0x50) throw new Error('Not a PNG')
-
-  let width = 0, height = 0, colorType = 0
-  const idatChunks: Uint8Array[] = []
-  let offset = 8
-  while (offset + 8 < src.length) {
-    const len = (src[offset] << 24 | src[offset + 1] << 16 | src[offset + 2] << 8 | src[offset + 3]) >>> 0
-    const type = String.fromCharCode(src[offset + 4], src[offset + 5], src[offset + 6], src[offset + 7])
-    if (type === 'IHDR') {
-      width = (src[offset + 8] << 24 | src[offset + 9] << 16 | src[offset + 10] << 8 | src[offset + 11]) >>> 0
-      height = (src[offset + 12] << 24 | src[offset + 13] << 16 | src[offset + 14] << 8 | src[offset + 15]) >>> 0
-      colorType = src[offset + 17]
-    } else if (type === 'IDAT') {
-      idatChunks.push(src.slice(offset + 8, offset + 8 + len))
-    } else if (type === 'IEND') {
-      break
-    }
-    offset += 12 + len
-  }
-
-  if (colorType !== 2 && colorType !== 6) throw new Error(`Unsupported PNG color type ${colorType}`)
-  const bpp = colorType === 6 ? 4 : 3
-
-  // Decompress IDAT
-  const combined = new Uint8Array(idatChunks.reduce((s, c) => s + c.length, 0))
-  let cpos = 0
-  for (const c of idatChunks) { combined.set(c, cpos); cpos += c.length }
-  const ds = new DecompressionStream('deflate')
-  const dWriter = ds.writable.getWriter()
-  const dReader = ds.readable.getReader()
-  dWriter.write(combined)
-  dWriter.close()
-  const dChunks: Uint8Array[] = []
-  let done = false
-  while (!done) {
-    const { value, done: d } = await dReader.read()
-    if (value) dChunks.push(value)
-    done = d
-  }
-  const filteredLen = dChunks.reduce((s, c) => s + c.length, 0)
-  const filtered = new Uint8Array(filteredLen)
-  let fp = 0
-  for (const c of dChunks) { filtered.set(c, fp); fp += c.length }
-
-  // Reconstruct pixels (undo PNG row filters)
-  const rowStride = 1 + width * bpp
-  const pixels = new Uint8Array(height * width * bpp)
-  for (let y = 0; y < height; y++) {
-    const fOff = y * rowStride
-    const ft = filtered[fOff]
-    const pOff = y * width * bpp
-    const pPrev = (y - 1) * width * bpp
-    for (let i = 0; i < width * bpp; i++) {
-      const raw = filtered[fOff + 1 + i]
-      const a = i >= bpp ? pixels[pOff + i - bpp] : 0
-      const b = y > 0 ? pixels[pPrev + i] : 0
-      const c = y > 0 && i >= bpp ? pixels[pPrev + i - bpp] : 0
-      let v: number
-      switch (ft) {
-        case 0: v = raw; break
-        case 1: v = raw + a; break
-        case 2: v = raw + b; break
-        case 3: v = raw + Math.floor((a + b) / 2); break
-        case 4: v = raw + paethPredictor(a, b, c); break
-        default: v = raw
-      }
-      pixels[pOff + i] = v & 0xFF
-    }
-  }
-
-  // Split into 4 quadrants (TL, TR, BL, BR)
-  const hw = width >> 1
-  const hh = height >> 1
-  const offsets: [number, number][] = [[0, 0], [hw, 0], [0, hh], [hw, hh]]
-  return Promise.all(offsets.map(async ([qx, qy]) => {
-    const qPixels = new Uint8Array(hh * hw * bpp)
-    for (let y = 0; y < hh; y++) {
-      const srcRow = ((qy + y) * width + qx) * bpp
-      qPixels.set(pixels.subarray(srcRow, srcRow + hw * bpp), y * hw * bpp)
-    }
-    return encodePng(qPixels, hw, hh, colorType)
-  }))
-}
-
 function pngHasAlpha(buffer: ArrayBuffer): boolean {
   // PNG IHDR color type byte is at offset 25 (8-byte sig + 4 length + 4 type + 4w + 4h + 1 bit-depth)
   // Color type 4 = grayscale+alpha, 6 = RGBA
@@ -1855,7 +1878,7 @@ function base64ToBytes(base64: string): Uint8Array {
   return bytes
 }
 
-async function upscaleImage(pathname: string, request: Request, env: Env): Promise<Response> {
+async function upscaleImage(pathname: string, request: Request, env: Env, access: GenerationAccessContext): Promise<Response> {
   const id = pathname.replace('/v1/generation/images/', '').replace('/upscale', '')
   if (!isSafeId(id)) return apiError('invalid_image_id', 'Image id is invalid.', 400)
   if (!env.OPENAI_API_KEY) return apiError('openai_not_configured', 'OpenAI is not configured.', 503)
@@ -1872,9 +1895,10 @@ async function upscaleImage(pathname: string, request: Request, env: Env): Promi
   const removeBackground = typeof body.removeBackground === 'boolean' ? body.removeBackground : true
 
   const record = await env.GENERATION_DB.prepare(
-    'SELECT id, r2_key, prompt, category, tags, title FROM generated_images WHERE id = ? LIMIT 1',
-  ).bind(id).first<{ id: string; r2_key: string; prompt: string; category: string; tags: string; title: string | null }>()
+    'SELECT id, r2_key, prompt, category, tags, title, created_by FROM generated_images WHERE id = ? LIMIT 1',
+  ).bind(id).first<{ id: string; r2_key: string; prompt: string; category: string; tags: string; title: string | null; created_by: string | null }>()
   if (!record) return apiError('image_not_found', 'Image not found.', 404)
+  if (!canMutateOwnedRecord(access, record)) return forbiddenOrUnauthorized(access)
 
   const object = await env.GENERATED_MEDIA_BUCKET.get(record.r2_key)
   if (!object) return apiError('image_not_found', 'Image not found in storage.', 404)
@@ -1898,11 +1922,11 @@ async function upscaleImage(pathname: string, request: Request, env: Env): Promi
   if (removeBackground) form.append('background', 'transparent')
   form.append('image', new Blob([imageBuffer], { type: 'image/png' }), 'image.png')
 
-  const editResponse = await fetch('https://api.openai.com/v1/images/edits', {
+  const editResponse = await fetchWithRetry('https://api.openai.com/v1/images/edits', {
     method: 'POST',
     headers: { Authorization: `Bearer ${env.OPENAI_API_KEY}` },
     body: form,
-  })
+  }, { timeoutMs: PROVIDER_IMAGE_TIMEOUT_MS })
 
   if (!editResponse.ok) {
     const errBody = await editResponse.text().catch(() => '')
@@ -1921,7 +1945,7 @@ async function upscaleImage(pathname: string, request: Request, env: Env): Promi
   if (imageItem.b64_json) {
     newImageBytes = base64ToBytes(imageItem.b64_json)
   } else if (imageItem.url) {
-    const urlRes = await fetch(imageItem.url)
+    const urlRes = await fetchWithRetry(imageItem.url, {}, { timeoutMs: PROVIDER_IMAGE_TIMEOUT_MS })
     if (!urlRes.ok) return apiError('image_upscale_asset_failed', 'Could not fetch upscaled image asset.', 502)
     newImageBytes = new Uint8Array(await urlRes.arrayBuffer())
   } else {
@@ -1941,12 +1965,12 @@ async function upscaleImage(pathname: string, request: Request, env: Env): Promi
   await env.GENERATION_DB.prepare(`INSERT INTO generated_images (
     id, prompt, revised_prompt, model, size, quality, style, image_url, r2_key,
     content_type, file_size_bytes, width, height, category, tags, title, description,
-    is_public, is_preview, created_at, updated_at
-  ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`).bind(
+    is_public, is_preview, created_by, created_at, updated_at
+  ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`).bind(
     newId, record.prompt, null, model, size, quality, 'tiko-v2', imageUrl, r2Key,
     'image/png', newImageBytes.byteLength, dims.width, dims.height,
     record.category || 'generated', record.tags || '[]', record.title || null, null,
-    0, 0, now, now,
+    0, 0, createdBy(access), now, now,
   ).run()
 
   return json({
@@ -1968,15 +1992,16 @@ async function upscaleImage(pathname: string, request: Request, env: Env): Promi
   }, 201)
 }
 
-async function deleteImage(pathname: string, env: Env): Promise<Response> {
+async function deleteImage(pathname: string, env: Env, access: GenerationAccessContext): Promise<Response> {
   const id = pathname.replace('/v1/generation/images/', '')
   if (!isSafeId(id)) return apiError('invalid_image_id', 'Image id is invalid.', 400)
 
   const record = await env.GENERATION_DB.prepare(
-    'SELECT r2_key FROM generated_images WHERE id = ? LIMIT 1',
-  ).bind(id).first<{ r2_key: string }>()
+    'SELECT r2_key, created_by FROM generated_images WHERE id = ? LIMIT 1',
+  ).bind(id).first<{ r2_key: string; created_by: string | null }>()
 
   if (!record) return apiError('image_not_found', 'Image not found.', 404)
+  if (!canMutateOwnedRecord(access, record)) return forbiddenOrUnauthorized(access)
 
   await env.GENERATED_MEDIA_BUCKET.delete(record.r2_key).catch(() => null)
   await env.GENERATION_DB.prepare('DELETE FROM generated_images WHERE id = ?').bind(id).run()
@@ -1989,12 +2014,54 @@ function parseImageSize(size: string): { width: number; height: number } {
   return { width: w || 1024, height: h || 1024 }
 }
 
+async function fetchWithRetry(input: RequestInfo | URL, init: RequestInit, options: { timeoutMs: number }): Promise<Response> {
+  let lastError: unknown
+  for (let attempt = 0; attempt < 2; attempt += 1) {
+    const response = await fetchWithTimeout(input, init, options.timeoutMs).catch((error) => {
+      lastError = error
+      return null
+    })
+    if (!response) continue
+    if (attempt === 0 && isRetryableStatus(response.status)) {
+      await response.body?.cancel().catch(() => undefined)
+      continue
+    }
+    return response
+  }
+  throw lastError instanceof Error ? lastError : new Error('fetch_failed')
+}
+
+async function fetchWithTimeout(input: RequestInfo | URL, init: RequestInit, timeoutMs: number): Promise<Response> {
+  const controller = new AbortController()
+  const timeout = setTimeout(() => controller.abort(), timeoutMs)
+  try {
+    return await fetch(input, { ...init, signal: controller.signal })
+  } finally {
+    clearTimeout(timeout)
+  }
+}
+
+function isRetryableStatus(status: number): boolean {
+  return status === 408 || status === 429 || status >= 500
+}
+
 function clamp(value: number, min: number, max: number) {
   return Math.min(max, Math.max(min, value))
 }
 
 function apiError(code: string, message: string, status = 400, field?: string): Response {
   return json({ error: { code, message, ...(field ? { field } : {}) } }, status)
+}
+
+function bearerToken(request: Request): string {
+  const match = /^Bearer\s+(.+)$/i.exec(request.headers.get('authorization') ?? '')
+  return match?.[1]?.trim() ?? ''
+}
+
+async function sha256Hex(value: string): Promise<string> {
+  const bytes = new TextEncoder().encode(value)
+  const digest = await crypto.subtle.digest('SHA-256', bytes)
+  return Array.from(new Uint8Array(digest)).map((byte) => byte.toString(16).padStart(2, '0')).join('')
 }
 
 function json(data: unknown, status = 200): Response {

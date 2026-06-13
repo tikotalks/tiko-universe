@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { Icon } from '@sil/ui'
+import { useBemm } from 'bemm'
 
 export interface ChildAccountItem {
   id: string
@@ -75,6 +76,7 @@ const props = withDefaults(defineProps<Props>(), {
     deleteError: 'Could not delete child account.',
   }),
 })
+const bemm = useBemm('tiko-child-accounts', { return: 'string', includeBaseClass: true })
 const emit = defineEmits<{ (e: 'close'): void }>()
 
 const children = ref<ChildAccountItem[]>([])
@@ -198,40 +200,40 @@ function cancelEdit() {
 </script>
 
 <template>
-  <div class="tiko-child-accounts" data-test="tiko-child-accounts">
-    <div class="tiko-child-accounts__header">
-      <button class="tiko-child-accounts__back" type="button" :aria-label="props.labels.back" @click="emit('close')">
+  <div :class="bemm('')" data-test="tiko-child-accounts">
+    <div :class="bemm('header')">
+      <button :class="bemm('back')" type="button" :aria-label="props.labels.back" @click="emit('close')">
         <Icon name="arrows/arrow-left" aria-hidden="true" />
       </button>
-      <div class="tiko-child-accounts__heading">
-        <h2 class="tiko-child-accounts__title">{{ props.labels.title }}</h2>
-        <p class="tiko-child-accounts__subtitle">{{ props.labels.subtitle }}</p>
+      <div :class="bemm('heading')">
+        <h2 :class="bemm('title')">{{ props.labels.title }}</h2>
+        <p :class="bemm('subtitle')">{{ props.labels.subtitle }}</p>
       </div>
-      <span class="tiko-child-accounts__badge" aria-hidden="true"><Icon name="product/baby-stroller" /></span>
+      <span :class="bemm('badge')" aria-hidden="true"><Icon name="product/baby-stroller" /></span>
     </div>
 
-    <div v-if="error" class="tiko-child-accounts__error" role="alert">{{ error }}</div>
+    <div v-if="error" :class="bemm('error')" role="alert">{{ error }}</div>
 
     <!-- Child list -->
-    <div class="tiko-child-accounts__list">
-      <div v-for="child in children" :key="child.id" class="tiko-child-accounts__item">
+    <div :class="bemm('list')">
+      <div v-for="child in children" :key="child.id" :class="bemm('item')">
         <!-- Normal view -->
         <template v-if="editingId !== child.id && resettingId !== child.id">
-          <div class="tiko-child-accounts__item-info">
-            <span class="tiko-child-accounts__item-icon"><Icon name="ui/user-s" /></span>
-            <div class="tiko-child-accounts__item-copy">
+          <div :class="bemm('item-info')">
+            <span :class="bemm('item-icon')"><Icon name="ui/user-s" /></span>
+            <div :class="bemm('item-copy')">
               <strong>{{ child.name }}</strong>
               <small>{{ props.labels.code }}: {{ child.code ? '****' : props.labels.codeNotSet }}</small>
             </div>
           </div>
-          <div class="tiko-child-accounts__item-actions">
-            <button class="tiko-child-accounts__action" type="button" :title="props.labels.rename" @click="startEdit(child)">
+          <div :class="bemm('item-actions')">
+            <button :class="bemm('action')" type="button" :title="props.labels.rename" @click="startEdit(child)">
               <Icon name="ui/pencil" aria-hidden="true" />
             </button>
-            <button class="tiko-child-accounts__action" type="button" :title="props.labels.resetCode" @click="startResetCode(child)">
+            <button :class="bemm('action')" type="button" :title="props.labels.resetCode" @click="startResetCode(child)">
               <Icon name="ui/lock" aria-hidden="true" />
             </button>
-            <button class="tiko-child-accounts__action tiko-child-accounts__action--danger" type="button" :title="props.labels.delete" @click="deleteChild(child.id)">
+            <button :class="bemm('action', { danger: true })" type="button" :title="props.labels.delete" @click="deleteChild(child.id)">
               <Icon name="wayfinding/cross" aria-hidden="true" />
             </button>
           </div>
@@ -239,48 +241,48 @@ function cancelEdit() {
 
         <!-- Edit name form -->
         <template v-else-if="editingId === child.id">
-          <div class="tiko-child-accounts__form">
-            <input v-model="editName" class="tiko-child-accounts__input" type="text" :placeholder="props.labels.name" :disabled="loading" @keyup.enter="saveEdit" @keyup.escape="cancelEdit" />
-            <div class="tiko-child-accounts__form-actions">
-              <button class="tiko-child-accounts__btn" type="button" :disabled="loading" @click="saveEdit">{{ props.labels.save }}</button>
-              <button class="tiko-child-accounts__btn tiko-child-accounts__btn--ghost" type="button" @click="cancelEdit">{{ props.labels.cancel }}</button>
+          <div :class="bemm('form')">
+            <input v-model="editName" :class="bemm('input')" type="text" :placeholder="props.labels.name" :disabled="loading" @keyup.enter="saveEdit" @keyup.escape="cancelEdit" />
+            <div :class="bemm('form-actions')">
+              <button :class="bemm('btn')" type="button" :disabled="loading" @click="saveEdit">{{ props.labels.save }}</button>
+              <button :class="bemm('btn', { ghost: true })" type="button" @click="cancelEdit">{{ props.labels.cancel }}</button>
             </div>
           </div>
         </template>
 
         <!-- Reset code form -->
         <template v-else-if="resettingId === child.id">
-          <div class="tiko-child-accounts__form">
-            <input v-model="resetCode" class="tiko-child-accounts__input" type="text" inputmode="numeric" maxlength="4" :placeholder="props.labels.newCode" :disabled="loading" @keyup.enter="saveResetCode" @keyup.escape="cancelEdit" />
-            <div class="tiko-child-accounts__form-actions">
-              <button class="tiko-child-accounts__btn" type="button" :disabled="loading" @click="saveResetCode">{{ props.labels.save }}</button>
-              <button class="tiko-child-accounts__btn tiko-child-accounts__btn--ghost" type="button" @click="cancelEdit">{{ props.labels.cancel }}</button>
+          <div :class="bemm('form')">
+            <input v-model="resetCode" :class="bemm('input')" type="text" inputmode="numeric" maxlength="4" :placeholder="props.labels.newCode" :disabled="loading" @keyup.enter="saveResetCode" @keyup.escape="cancelEdit" />
+            <div :class="bemm('form-actions')">
+              <button :class="bemm('btn')" type="button" :disabled="loading" @click="saveResetCode">{{ props.labels.save }}</button>
+              <button :class="bemm('btn', { ghost: true })" type="button" @click="cancelEdit">{{ props.labels.cancel }}</button>
             </div>
           </div>
         </template>
       </div>
 
       <!-- Empty state -->
-      <div v-if="!loading && children.length === 0" class="tiko-child-accounts__empty">
+      <div v-if="!loading && children.length === 0" :class="bemm('empty')">
         <p>{{ props.labels.empty }}</p>
       </div>
     </div>
 
     <!-- Add child -->
-    <div v-if="!showCreate && !editingId && !resettingId" class="tiko-child-accounts__add">
-      <button class="tiko-child-accounts__item tiko-child-accounts__item--add" type="button" @click="showCreate = true">
-        <span class="tiko-child-accounts__item-icon"><Icon name="ui/plus" /></span>
-        <span class="tiko-child-accounts__item-copy"><strong>{{ props.labels.addChildAccount }}</strong></span>
+    <div v-if="!showCreate && !editingId && !resettingId" :class="bemm('add')">
+      <button :class="bemm('item', { add: true })" type="button" @click="showCreate = true">
+        <span :class="bemm('item-icon')"><Icon name="ui/plus" /></span>
+        <span :class="bemm('item-copy')"><strong>{{ props.labels.addChildAccount }}</strong></span>
       </button>
     </div>
 
     <!-- Create form -->
-    <div v-if="showCreate" class="tiko-child-accounts__create-form">
-      <input v-model="newName" class="tiko-child-accounts__input" type="text" :placeholder="props.labels.childName" :disabled="loading" @keyup.enter="createChild" />
-      <input v-model="newCode" class="tiko-child-accounts__input" type="text" inputmode="numeric" maxlength="4" :placeholder="props.labels.loginCode" :disabled="loading" @keyup.enter="createChild" />
-      <div class="tiko-child-accounts__form-actions">
-        <button class="tiko-child-accounts__btn" type="button" :disabled="loading || !newName.trim() || !newCode.trim()" @click="createChild">{{ props.labels.create }}</button>
-        <button class="tiko-child-accounts__btn tiko-child-accounts__btn--ghost" type="button" @click="cancelEdit">{{ props.labels.cancel }}</button>
+    <div v-if="showCreate" :class="bemm('create-form')">
+      <input v-model="newName" :class="bemm('input')" type="text" :placeholder="props.labels.childName" :disabled="loading" @keyup.enter="createChild" />
+      <input v-model="newCode" :class="bemm('input')" type="text" inputmode="numeric" maxlength="4" :placeholder="props.labels.loginCode" :disabled="loading" @keyup.enter="createChild" />
+      <div :class="bemm('form-actions')">
+        <button :class="bemm('btn')" type="button" :disabled="loading || !newName.trim() || !newCode.trim()" @click="createChild">{{ props.labels.create }}</button>
+        <button :class="bemm('btn', { ghost: true })" type="button" @click="cancelEdit">{{ props.labels.cancel }}</button>
       </div>
     </div>
   </div>
@@ -292,13 +294,7 @@ function cancelEdit() {
   display: flex;
   flex-direction: column;
   gap: 1.2rem;
-  padding: clamp(1.25rem, 4vw, 2rem);
-  border-radius: clamp(1.75rem, 5vw, 2.6rem);
-  background: color-mix(in srgb, var(--color-background), var(--color-foreground) 6%);
   color: var(--color-foreground);
-  border: 1px solid color-mix(in srgb, var(--color-foreground), transparent 88%);
-  box-shadow: 0 24px 80px color-mix(in srgb, var(--color-foreground), transparent 82%);
-  backdrop-filter: blur(22px) saturate(1.15);
 }
 
 .tiko-child-accounts__header {

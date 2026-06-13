@@ -5,6 +5,7 @@ dist/
 .wrangler/
 *.tsbuildinfo
 test-results/
+coverage/
 .env
 .env.*
 !.env.example

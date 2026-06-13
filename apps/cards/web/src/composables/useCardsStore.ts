@@ -1,7 +1,7 @@
 import { computed, ref, type Ref } from 'vue'
 import { useTikoMedia } from '@tiko/media'
 import type { TikoColorName } from '@tiko/data'
-import { tikoColors } from '@tiko/ui'
+import { tikoColors, tikoContentImageRefUrl } from '@tiko/ui'
 import type { CardCollection, CardsCardInput, CardsCollectionInput, CardsGridItem, CommunicationCard, PersistedCards } from '../types'
 import { createCardsApi, resolveContentBaseUrl } from './cardsApi'
 import { matchCardsMedia } from './cardsMedia'
@@ -212,11 +212,15 @@ export function useCardsStore(options: UseCardsStoreOptions) {
       if (match.thumbnailURL) collectionThumbnails.value = { ...collectionThumbnails.value, [collectionID]: match.thumbnailURL }
       if (prefetchCards) {
         for (const card of collection.cards.slice(0, 12)) {
-          const url = card.imageRef ? `${api.baseUrl}/content/images/${encodeURIComponent(card.imageRef)}` : match.cardImages[card.id]
+          const url = card.imageRef ? tikoContentImageRefUrl(card.imageRef, api.baseUrl) : match.cardImages[card.id]
           if (url) void preload(url)
         }
       }
       collections.value = [...collections.value]
+    } catch {
+      const nextFetched = new Set(fetchedMediaIDs.value)
+      nextFetched.delete(collectionID)
+      fetchedMediaIDs.value = nextFetched
     } finally {
       const next = new Set(loadingMediaIDs.value)
       next.delete(collectionID)
@@ -282,15 +286,30 @@ export function useCardsStore(options: UseCardsStoreOptions) {
   async function moveSelected(targetCollectionID: string) {
     for (const id of selectedCollectionIDs.value) {
       const collection = collections.value.find(item => item.id === id)
-      if (collection) await updateCollection(id, { ...collection, parentID: targetCollectionID })
+      if (collection && isUserOwned(collection.id)) await updateCollection(id, { ...collection, parentID: targetCollectionID })
     }
     if (currentCollection.value) {
       const source = currentCollection.value
+      const target = collections.value.find(item => item.id === targetCollectionID)
+      if (!target || source.id === target.id) {
+        clearEditMode()
+        return
+      }
       for (const id of selectedCardIDs.value) {
         const card = source.cards.find(item => item.id === id)
-        if (!card) continue
-        await deleteCard(source.id, id)
-        await createCard(targetCollectionID, card)
+        if (!card || !isUserOwned(card.id)) continue
+        const order = target.cards.length
+        try {
+          const saved = await api.createCard(targetCollectionID, { ...card, id: card.id, order })
+          if (!saved) continue
+          await api.deleteCard(source.id, id)
+          source.cards = source.cards.filter(item => item.id !== id)
+          target.cards = [...target.cards, { ...saved, order }]
+          collections.value = [...collections.value]
+          persist()
+        } catch {
+          // Keep the source card intact when copying or deleting fails.
+        }
       }
     }
     clearEditMode()

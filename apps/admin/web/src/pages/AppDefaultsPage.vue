@@ -6,6 +6,7 @@ import { Button, Icon, InputText } from '@sil/ui'
 import { TikoAppHeader, tikoAppConfigs, tikoAppColors, type TikoAppColor, type TikoAppConfig } from '@tiko/ui'
 import { useAdminAppConfig, type AdminManagedAppConfig } from '../composables/useAdminAppConfig'
 import { useAppDefaults, type AppResource, type TikoManagedApp } from '../composables/useAppDefaults'
+import { useCardsDefaults, type CardsCollection } from '../composables/useCardsDefaults'
 import { useSequenceDefaults, type SequenceDefault } from '../composables/useSequenceDefaults'
 import MediaPicker from '../components/MediaPicker.vue'
 import ColorSwatchPicker from '../components/ColorSwatchPicker.vue'
@@ -38,6 +39,7 @@ const editorByApp: Partial<Record<DefaultsApp, Component>> = {
 
 const configApi = useAdminAppConfig()
 const defaultsApi = useAppDefaults()
+const cardsDefaultsApi = useCardsDefaults()
 const sequenceDefaultsApi = useSequenceDefaults()
 const configs = ref<Record<TikoAppColor, AdminManagedAppConfig>>({ ...tikoAppConfigs })
 const configDraft = reactive<AdminManagedAppConfig>({ ...tikoAppConfigs.cards, supportedLanguagesMode: 'tiko-defaults', supportedLanguages: [] })
@@ -49,6 +51,7 @@ const defaultsVersion = ref(0)
 const defaultsUpdatedAt = ref<string | null>(null)
 const defaultsSavedMessage = ref<string | null>(null)
 const defaultsDirty = ref(false)
+let defaultsLoadRequestId = 0
 
 const routeApp = computed<TikoAppColor | null>(() => {
   const param = Array.isArray(route.params.app) ? route.params.app[0] : route.params.app
@@ -63,9 +66,21 @@ const previewIcon = computed(() => configDraft.appIconImageUrl || configDraft.ap
 const defaultsApp = computed<DefaultsApp | null>(() => editableDefaultsApps.includes(selectedApp.value as DefaultsApp) ? selectedApp.value as DefaultsApp : null)
 const currentEditor = computed<Component | null>(() => defaultsApp.value ? editorByApp[defaultsApp.value] ?? null : null)
 const canEditDefaults = computed(() => Boolean(defaultsApp.value))
-const defaultsLoading = computed(() => defaultsApp.value === 'sequence' ? sequenceDefaultsApi.loading.value : defaultsApi.loading.value)
-const defaultsSaving = computed(() => defaultsApp.value === 'sequence' ? sequenceDefaultsApi.saving.value : defaultsApi.saving.value)
-const defaultsError = computed(() => defaultsApp.value === 'sequence' ? sequenceDefaultsApi.error.value : defaultsApi.error.value)
+const defaultsLoading = computed(() => {
+  if (defaultsApp.value === 'cards') return cardsDefaultsApi.loading.value
+  if (defaultsApp.value === 'sequence') return sequenceDefaultsApi.loading.value
+  return defaultsApi.loading.value
+})
+const defaultsSaving = computed(() => {
+  if (defaultsApp.value === 'cards') return cardsDefaultsApi.saving.value
+  if (defaultsApp.value === 'sequence') return sequenceDefaultsApi.saving.value
+  return defaultsApi.saving.value
+})
+const defaultsError = computed(() => {
+  if (defaultsApp.value === 'cards') return cardsDefaultsApi.error.value
+  if (defaultsApp.value === 'sequence') return sequenceDefaultsApi.error.value
+  return defaultsApi.error.value
+})
 const appSupportedLanguages = computed(() => normalizeLanguages(configDraft.supportedLanguages))
 
 function isImageSource(value: string | undefined) {
@@ -137,21 +152,32 @@ async function saveConfig() {
 }
 
 async function loadDefaults() {
+  const requestId = ++defaultsLoadRequestId
+  const app = defaultsApp.value
   defaultsSavedMessage.value = null
   stateValue.value = {}
   defaultsVersion.value = 0
   defaultsUpdatedAt.value = null
   defaultsDirty.value = false
-  if (!defaultsApp.value || isOverview.value) return
+  if (!app || isOverview.value) return
 
   try {
-    if (defaultsApp.value === 'sequence') {
+    if (app === 'cards') {
+      const payload = await cardsDefaultsApi.read()
+      if (requestId !== defaultsLoadRequestId || defaultsApp.value !== app) return
+      stateValue.value = { collections: payload.collections }
+      defaultsUpdatedAt.value = null
+      return
+    }
+    if (app === 'sequence') {
       const payload = await sequenceDefaultsApi.read()
+      if (requestId !== defaultsLoadRequestId || defaultsApp.value !== app) return
       stateValue.value = { sequences: payload.sequences }
       defaultsUpdatedAt.value = null
       return
     }
-    const payload = await defaultsApi.readDefaults(defaultsApp.value as TikoManagedApp, 'state' satisfies AppResource)
+    const payload = await defaultsApi.readDefaults(app as TikoManagedApp, 'state' satisfies AppResource)
+    if (requestId !== defaultsLoadRequestId || defaultsApp.value !== app) return
     stateValue.value = (payload.state ?? {}) as Record<string, unknown>
     defaultsVersion.value = payload.version
     defaultsUpdatedAt.value = payload.updatedAt
@@ -164,6 +190,13 @@ async function saveDefaults() {
   if (!defaultsApp.value) return
   defaultsSavedMessage.value = null
   try {
+    if (defaultsApp.value === 'cards') {
+      const collections = Array.isArray(stateValue.value.collections) ? stateValue.value.collections as CardsCollection[] : []
+      await cardsDefaultsApi.write(collections)
+      defaultsSavedMessage.value = `Saved ${selectedConfig.value.title} defaults.`
+      defaultsDirty.value = false
+      return
+    }
     if (defaultsApp.value === 'sequence') {
       const sequences = Array.isArray(stateValue.value.sequences) ? stateValue.value.sequences as SequenceDefault[] : []
       await sequenceDefaultsApi.write(sequences)

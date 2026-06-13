@@ -11,35 +11,71 @@ const PORT = 3056
 const BASE = `http://localhost:${PORT}`
 
 async function mockApi(page: Page) {
-  await page.route('**/identity/**', async route => {
+  const identityBundle = {
+    subject: { id: 'user-test', kind: 'device', product: 'tiko' },
+    user: { id: 'user-test', accountType: 'temporary', recoverable: false },
+    device: { id: 'device-test', secret: 'secret-test' },
+    account: null,
+    session: { id: 'session-test', token: 'token-test', transport: 'bearer', expiresAt: '2099-01-01T00:00:00.000Z' },
+    runtime: { mode: 'parent', childModeEnabled: false, pinConfigured: false },
+    capabilities: { canVerifyEmail: true, canUseParentMode: false, canUseChildMode: false, canManageChildAccounts: false, canDeleteAccount: false }
+  }
+  await page.route('https://id.tikoapps.org/v1/identity/**', async route => {
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify(identityBundle)
+    })
+  })
+  await page.route('https://app.tikoapi.org/v1/apps/config/yes-no', async route => {
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({ config: { id: 'yes-no', title: 'Yes No', appColor: 'yes-no', appIcon: 'ui/check-fat' }, updatedAt: null, version: 1 })
+    })
+  })
+  await page.route('https://app.tikoapi.org/v1/apps/yes-no/settings', async route => {
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({ app: 'yes-no', updatedAt: null, version: 1, settings: {} })
+    })
+  })
+  await page.route('https://app.tikoapi.org/v1/apps/yes-no/state', async route => {
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({ app: 'yes-no', updatedAt: null, version: 1, state: {} })
+    })
+  })
+  await page.route('https://content.tikoapi.org/v1/yes-no/content**', async route => {
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({ success: true, data: {} })
+    })
+  })
+  await page.route('https://api.tikotalks.com/v1/atlas/speech', async route => {
     await route.fulfill({
       status: 200,
       contentType: 'application/json',
       body: JSON.stringify({
-        user: { id: 'user-test', kind: 'device', recoverable: false },
-        device: { id: 'device-test', secret: 'secret-test' },
-        session: { token: 'token-test', expiresAt: '2099-01-01T00:00:00.000Z' }
+        data: { id: 'asset-test', audioUrl: '/v1/atlas/assets/asset-test', contentType: 'audio/mpeg', provider: { name: 'test', model: 'test', voice: 'test' } },
+        meta: { cached: false, schemaVersion: 1, requestId: 'e2e-test' }
       })
-    })
-  })
-  await page.route('**/apps/yes-no/**', async route => {
-    await route.fulfill({
-      status: 200,
-      contentType: 'application/json',
-      body: JSON.stringify({ app: 'yes-no', updatedAt: null, version: 1, settings: {}, state: {} })
-    })
-  })
-  await page.route('**/generation/tts**', async route => {
-    await route.fulfill({
-      status: 200,
-      contentType: 'application/json',
-      body: JSON.stringify({ success: true, audioUrl: '/audio/test.mp3' })
     })
   })
   await page.addInitScript(() => {
     window.Audio = class {
-      play() { return Promise.resolve() }
+      private listeners: Record<string, Array<() => void>> = {}
+      play() {
+        setTimeout(() => this.listeners.ended?.forEach(listener => listener()), 0)
+        return Promise.resolve()
+      }
       pause() {}
+      addEventListener(type: string, listener: () => void) {
+        this.listeners[type] = [...(this.listeners[type] || []), listener]
+      }
     } as any
   })
 }
@@ -53,26 +89,26 @@ test.describe('Yes-No app', () => {
   test('renders sentence textarea and choice buttons', async ({ page }) => {
     await expect(page.locator('.yes-no-app')).toBeVisible()
     await expect(page.locator('#yes-no-sentence')).toBeVisible()
-    await expect(page.locator('.tiko-choice-grid')).toBeVisible()
+    await expect(page.getByTestId('tiko-answer-button')).toHaveCount(2)
     await expect(page.locator('.yes-no-app__speak')).toBeVisible()
   })
 
   test('clicking Yes records an answer', async ({ page }) => {
-    const yesBtn = page.locator('.tiko-choice-grid__choice').first()
+    const yesBtn = page.getByTestId('tiko-answer-button').first()
     await yesBtn.click()
 
     await expect(page.locator('.yes-no-app__latest')).toContainText(/yes/i)
   })
 
   test('clicking No records an answer', async ({ page }) => {
-    const noBtn = page.locator('.tiko-choice-grid__choice').last()
+    const noBtn = page.getByTestId('tiko-answer-button').last()
     await noBtn.click()
 
     await expect(page.locator('.yes-no-app__latest')).toContainText(/no/i)
   })
 
   test('multiple answers build history', async ({ page }) => {
-    const choices = page.locator('.tiko-choice-grid__choice')
+    const choices = page.getByTestId('tiko-answer-button')
     await choices.first().click()
     await choices.last().click()
     await choices.first().click()
@@ -107,7 +143,7 @@ test.describe('Yes-No app', () => {
   })
 
   test('persists state to localStorage', async ({ page }) => {
-    await page.locator('.tiko-choice-grid__choice').first().click()
+    await page.getByTestId('tiko-answer-button').first().click()
 
     const stored = await page.evaluate(() => {
       return JSON.parse(localStorage.getItem('tiko:yes-no') ?? '{}')

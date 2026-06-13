@@ -2,6 +2,14 @@ import SwiftUI
 import TikoKit
 import UIKit
 
+private enum CardsSheet: String, Identifiable {
+    case add
+    case editCollection
+    case editCard
+
+    var id: String { rawValue }
+}
+
 struct CardsView: View {
     @StateObject private var store = CardsStore()
     private let speechService = CardsSpeechService()
@@ -15,7 +23,7 @@ struct CardsView: View {
     @State private var speakingCardID: String?
     @State private var collectionStack: [CardCollection] = []
     @State private var collectionsPage = 0
-    @State private var showingAdd = false
+    @State private var activeSheet: CardsSheet?
     @State private var isEditing = false
     @State private var draggingCollectionID: String?
     @State private var draggingCardID: String?
@@ -23,8 +31,6 @@ struct CardsView: View {
     @State private var editingCollection: CardCollection?
     @State private var editingCard: CommunicationCard?
     @State private var editingCardCollectionID: String?
-    @State private var showingEditCollection = false
-    @State private var showingEditCard = false
     @State private var selectedCollectionIDs: Set<String> = []
     @State private var showingRootBulkActions = false
     @State private var showingRootBulkMove = false
@@ -74,7 +80,9 @@ struct CardsView: View {
                 : [TikoHeaderAction(id: "add", label: "Add", systemImage: "plus")],
             onAction: { id in
                 switch id {
-                case "add":  showingAdd = true
+                case "add":
+                    refreshAdminStateFromStoredSession()
+                    activeSheet = .add
                 case "done": withAnimation(.spring(response: 0.25)) { isEditing = false; selectedCollectionIDs.removeAll() }
                 default: break
                 }
@@ -127,11 +135,15 @@ struct CardsView: View {
                         onEdit: { card in
                             editingCard = card
                             editingCardCollectionID = collection.id
-                            showingEditCard = true
+                            activeSheet = .editCard
                         },
                         onEditCollection: { col in
                             editingCollection = col
-                            showingEditCollection = true
+                            activeSheet = .editCollection
+                        },
+                        onStartEditing: {
+                            refreshAdminStateFromStoredSession()
+                            withAnimation(.spring(response: 0.25)) { isEditing = true }
                         },
                         onNavigate: { sub in
                             withAnimation(.spring(response: 0.38, dampingFraction: 0.85)) {
@@ -206,7 +218,7 @@ struct CardsView: View {
                                                 if isEditing && (isAdmin || collection.id.hasPrefix("user_")) {
                                                     Button {
                                                         editingCollection = collection
-                                                        showingEditCollection = true
+                                                        activeSheet = .editCollection
                                                     } label: {
                                                         editBadge(isUserOwned: collection.id.hasPrefix("user_"))
                                                     }
@@ -236,6 +248,7 @@ struct CardsView: View {
                                             .simultaneousGesture(LongPressGesture(minimumDuration: 0.5).onEnded { _ in
                                                 let isChild = (try? TikoDeviceSessionStore().load())?.isChildMode ?? false
                                                 guard !isChild else { return }
+                                                refreshAdminStateFromStoredSession()
                                                 UIImpactFeedbackGenerator(style: .medium).impactOccurred()
                                                 withAnimation(.spring(response: 0.25)) { isEditing = true }
                                             })
@@ -287,33 +300,11 @@ struct CardsView: View {
             }
             .onChange(of: store.collections) { _, _ in syncCollectionsFromStore() }
         }
-        .tikoPopup(isPresented: $showingAdd) {
-            if let collection = currentCollection {
-                AddCardSheet(collection: collection, store: store, isPresented: $showingAdd)
-                    .environmentObject(i18n)
-            } else {
-                AddCategorySheet(store: store, collections: visibleCollections.filter { $0.parentID == nil }, isPresented: $showingAdd)
-                    .environmentObject(i18n)
-            }
-        }
-        .tikoPopup(isPresented: $showingEditCollection) {
-            if let c = editingCollection {
-                EditCollectionSheet(collection: c, allCollections: localizedCollections, store: store, isAdmin: isAdmin, onClose: {
-                    showingEditCollection = false
-                    editingCollection = nil
-                })
+        .sheet(item: $activeSheet, onDismiss: clearSheetContext) { sheet in
+            cardsSheetContent(for: sheet)
                 .environmentObject(i18n)
-            }
-        }
-        .tikoPopup(isPresented: $showingEditCard) {
-            if let card = editingCard, let cid = editingCardCollectionID {
-                EditCardSheet(card: card, collectionID: cid, store: store, isAdmin: isAdmin, onClose: {
-                    showingEditCard = false
-                    editingCard = nil
-                    editingCardCollectionID = nil
-                })
-                .environmentObject(i18n)
-            }
+                .presentationDetents([.large])
+                .presentationDragIndicator(.hidden)
         }
         .tikoPopup(isPresented: $showingRootBulkActions) {
             BulkActionsSheet(
@@ -365,17 +356,65 @@ struct CardsView: View {
             isAdmin = false
             return
         }
+        isAdmin = Self.hasContentEditingAccess(bundle)
         guard let token = bundle.accessToken else {
-            isAdmin = bundle.capabilities?.canEditContent == true || bundle.roles?.contains("admin") == true || bundle.roles?.contains("content_editor") == true
             return
         }
         do {
             let refreshed = try await TikoIdentityClient().getSession(accessToken: token)
             let merged = refreshed.preservingSession(from: bundle)
             try sessionStore.save(merged)
-            isAdmin = merged.capabilities?.canEditContent == true || merged.roles?.contains("admin") == true || merged.roles?.contains("content_editor") == true
+            isAdmin = Self.hasContentEditingAccess(merged)
         } catch {
-            isAdmin = bundle.capabilities?.canEditContent == true || bundle.roles?.contains("admin") == true || bundle.roles?.contains("content_editor") == true
+            isAdmin = Self.hasContentEditingAccess(bundle)
+        }
+    }
+
+    private func refreshAdminStateFromStoredSession() {
+        isAdmin = Self.hasContentEditingAccess(try? TikoDeviceSessionStore().load())
+    }
+
+    static func hasContentEditingAccess(_ bundle: TikoIdentityBundle?) -> Bool {
+        bundle?.capabilities?.canEditContent == true ||
+        bundle?.roles?.contains("admin") == true ||
+        bundle?.roles?.contains("content_editor") == true
+    }
+
+    @ViewBuilder
+    private func cardsSheetContent(for sheet: CardsSheet) -> some View {
+        switch sheet {
+        case .add:
+            if let collection = currentCollection {
+                AddCardSheet(collection: collection, store: store, isPresented: Binding(
+                    get: { activeSheet == .add },
+                    set: { if !$0 { activeSheet = nil } }
+                ))
+            } else {
+                AddCategorySheet(store: store, collections: visibleCollections.filter { $0.parentID == nil }, isPresented: Binding(
+                    get: { activeSheet == .add },
+                    set: { if !$0 { activeSheet = nil } }
+                ))
+            }
+        case .editCollection:
+            if let collection = editingCollection {
+                EditCollectionSheet(collection: collection, allCollections: localizedCollections, store: store, isAdmin: isAdmin, onClose: {
+                    activeSheet = nil
+                })
+            }
+        case .editCard:
+            if let card = editingCard, let collectionID = editingCardCollectionID {
+                EditCardSheet(card: card, collectionID: collectionID, store: store, isAdmin: isAdmin, onClose: {
+                    activeSheet = nil
+                })
+            }
+        }
+    }
+
+    private func clearSheetContext() {
+        if activeSheet == nil {
+            editingCollection = nil
+            editingCard = nil
+            editingCardCollectionID = nil
         }
     }
 
@@ -396,7 +435,7 @@ struct CardsView: View {
     private func speak(_ card: CommunicationCard) {
         UIImpactFeedbackGenerator(style: .medium).impactOccurred()
         speakingCardID = card.id
-        speechService.speak(card.speech)
+        speechService.speak(card.speech, languageCode: languageCode)
 
         Task { @MainActor in
             try? await Task.sleep(nanoseconds: 450_000_000)
@@ -562,6 +601,7 @@ private struct CollectionDetailView: View {
     let onSpeak: (CommunicationCard) -> Void
     let onEdit: (CommunicationCard) -> Void
     let onEditCollection: (CardCollection) -> Void
+    let onStartEditing: () -> Void
     let onNavigate: (CardCollection) -> Void
 
     @State private var currentPage = 0
@@ -652,7 +692,7 @@ private struct CollectionDetailView: View {
                                         let isChild = (try? TikoDeviceSessionStore().load())?.isChildMode ?? false
                                         guard !isChild else { return }
                                         UIImpactFeedbackGenerator(style: .medium).impactOccurred()
-                                        withAnimation(.spring(response: 0.25)) { isEditing = true }
+                                        onStartEditing()
                                     })
                                     .animation(.spring(response: 0.25), value: isEditing)
 
@@ -722,7 +762,7 @@ private struct CollectionDetailView: View {
                                         if isChild {
                                             fullscreenCard = card
                                         } else {
-                                            withAnimation(.spring(response: 0.25)) { isEditing = true }
+                                            onStartEditing()
                                         }
                                     })
                                     .animation(.spring(response: 0.25), value: isEditing)
@@ -1173,7 +1213,7 @@ private struct AddCategorySheet: View {
     @State private var showingImagePicker = false
 
     var body: some View {
-        TikoPopupCard(
+        TikoFormSheet(
             title: i18n.t("cards.add.newCategory"),
             icon: "square.grid.2x2.fill",
             appColor: .cards,
@@ -1235,7 +1275,7 @@ private struct AddCardSheet: View {
     }
 
     var body: some View {
-        TikoPopupCard(
+        TikoFormSheet(
             title: i18n.t("cards.add.newCard"),
             icon: "rectangle.badge.plus",
             appColor: .cards,
@@ -1321,7 +1361,7 @@ private struct EditCollectionSheet: View {
     }
 
     var body: some View {
-        TikoPopupCard(
+        TikoFormSheet(
             title: i18n.t("cards.add.editCategory"),
             icon: "square.grid.2x2.fill",
             appColor: .cards,
@@ -1467,7 +1507,7 @@ private struct EditCardSheet: View {
     }
 
     var body: some View {
-        TikoPopupCard(
+        TikoFormSheet(
             title: i18n.t("cards.add.editCard"),
             icon: "rectangle.badge.plus",
             appColor: .cards,

@@ -1,9 +1,18 @@
 import { recordAtlasRequest } from './audit'
 import { findCapability, listCapabilities } from './capabilities/registry'
+import { sha256Hex } from './cache'
 import { executeAtlasCapability, generateImage, generateText, getAtlasAsset, synthesizeSpeech, fetchAtlasData } from './domains'
 import { aggregateUsageByProvider, getUsageRequest, listProviderStatus, listUsage } from './observability'
 import { apiError, createRequestId, json, optionsResponse, withCors } from './response'
-import type { AtlasCapability, AtlasExecutionResult, AtlasRunRequest, DataFetchRequest, Env, ImageRequest, SpeechRequest, TextRequest } from './types'
+import { authenticate, requireServiceKey } from '../../shared/auth'
+import type { AuthSuccess } from '../../shared/auth'
+import type { AtlasCapability, AtlasCapabilityDescriptor, AtlasExecutionResult, AtlasRunRequest, DataFetchRequest, Env, ImageRequest, SpeechRequest, TextRequest } from './types'
+
+interface AtlasAuthContext {
+  method: AuthSuccess['method']
+  subjectId: string | null
+  tokenHash: string
+}
 
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
@@ -75,6 +84,9 @@ function capabilities(requestId: string): Response {
 }
 
 async function runCapability(request: Request, env: Env, requestId: string): Promise<Response> {
+  const auth = await authenticateCapabilityRequest(request, env, requestId)
+  if (auth instanceof Response) return auth
+
   let body: AtlasRunRequest
   try {
     body = await request.json() as AtlasRunRequest
@@ -88,8 +100,12 @@ async function runCapability(request: Request, env: Env, requestId: string): Pro
   const descriptor = findCapability(body.capability)
   if (!descriptor) return apiError('unsupported_capability', 'Atlas does not support the requested capability.', 400, requestId)
   if (!descriptor.enabled) return apiError('capability_disabled', 'This Atlas capability is disabled.', 403, requestId)
+  const allowlistError = validateCapabilityAllowlist(descriptor, body.app, body.purpose)
+  if (allowlistError) return apiError(allowlistError, 'Atlas capability is not allowed for this app or purpose.', 403, requestId)
+  const rateLimitError = await enforceCapabilityRateLimit(env, descriptor, auth, requestId)
+  if (rateLimitError) return rateLimitError
 
-  return executeAndRespond({ requestId, env, capability: body.capability, app: body.app, purpose: body.purpose, input: body.input }, () => executeAtlasCapability(body, env))
+  return executeAndRespond({ requestId, env, capability: body.capability, app: body.app, purpose: body.purpose, input: body.input, subjectId: auth.subjectId }, () => executeAtlasCapability(body, env))
 }
 
 async function typedCapability<T extends SpeechRequest | ImageRequest | TextRequest | DataFetchRequest>(
@@ -99,6 +115,9 @@ async function typedCapability<T extends SpeechRequest | ImageRequest | TextRequ
   capability: AtlasCapability,
   handler: (body: T, env: Env) => Promise<AtlasExecutionResult>,
 ): Promise<Response> {
+  const auth = await authenticateCapabilityRequest(request, env, requestId)
+  if (auth instanceof Response) return auth
+
   let body: T
   try {
     body = await request.json() as T
@@ -108,7 +127,15 @@ async function typedCapability<T extends SpeechRequest | ImageRequest | TextRequ
 
   const app = typeof body.app === 'string' && body.app.trim() ? body.app.trim() : 'unknown'
   const purpose = typeof body.purpose === 'string' && body.purpose.trim() ? body.purpose.trim() : 'unknown'
-  return executeAndRespond({ requestId, env, capability, app, purpose, input: body }, () => handler(body, env))
+  const descriptor = findCapability(capability)
+  if (!descriptor) return apiError('unsupported_capability', 'Atlas does not support the requested capability.', 400, requestId)
+  if (!descriptor.enabled) return apiError('capability_disabled', 'This Atlas capability is disabled.', 403, requestId)
+  const allowlistError = validateCapabilityAllowlist(descriptor, app, purpose)
+  if (allowlistError) return apiError(allowlistError, 'Atlas capability is not allowed for this app or purpose.', 403, requestId)
+  const rateLimitError = await enforceCapabilityRateLimit(env, descriptor, auth, requestId)
+  if (rateLimitError) return rateLimitError
+
+  return executeAndRespond({ requestId, env, capability, app, purpose, input: body, subjectId: auth.subjectId }, () => handler(body, env))
 }
 
 async function executeAndRespond(params: {
@@ -118,6 +145,7 @@ async function executeAndRespond(params: {
   app: string
   purpose: string
   input: unknown
+  subjectId: string | null
 }, handler: () => Promise<AtlasExecutionResult>): Promise<Response> {
   const started = Date.now()
   try {
@@ -127,6 +155,7 @@ async function executeAndRespond(params: {
       capability: params.capability,
       app: params.app,
       purpose: params.purpose,
+      subjectId: params.subjectId,
       provider: result.provider,
       model: result.model,
       status: 'success',
@@ -162,6 +191,7 @@ async function executeAndRespond(params: {
       capability: params.capability,
       app: params.app,
       purpose: params.purpose,
+      subjectId: params.subjectId,
       provider: 'internal',
       status: 'error',
       input: params.input,
@@ -173,8 +203,53 @@ async function executeAndRespond(params: {
   }
 }
 
+async function authenticateCapabilityRequest(request: Request, env: Env, requestId: string): Promise<AtlasAuthContext | Response> {
+  const token = bearerToken(request)
+  if (!token) return apiError('unauthorized', 'Atlas capability routes require a Bearer token.', 401, requestId)
+
+  const auth = await authenticate(request, authEnv(env), { scopes: ['atlas.run'] })
+  if (auth.ok === false) return apiError('unauthorized', 'Atlas capability routes require a valid session token or service key.', 401, requestId)
+  return {
+    method: auth.method,
+    subjectId: auth.userId ?? auth.subjectId ?? null,
+    tokenHash: await sha256Hex({ token }),
+  }
+}
+
+function validateCapabilityAllowlist(descriptor: AtlasCapabilityDescriptor, app: string, purpose: string): string | null {
+  if (!isAllowedValue(descriptor.allowedApps, app)) return 'app_not_allowed'
+  if (!isAllowedValue(descriptor.allowedPurposes, purpose)) return 'purpose_not_allowed'
+  return null
+}
+
+function isAllowedValue(allowed: string[], value: string): boolean {
+  return allowed.includes('*') || allowed.includes(value)
+}
+
+async function enforceCapabilityRateLimit(env: Env, descriptor: AtlasCapabilityDescriptor, auth: AtlasAuthContext, requestId: string): Promise<Response | null> {
+  if (!env.ATLAS_CACHE) return apiError('rate_limit_not_configured', 'Atlas rate limiting is not configured.', 503, requestId)
+
+  const windowSeconds = 60
+  const windowId = Math.floor(Date.now() / (windowSeconds * 1000))
+  const key = `atlas:rate:${descriptor.capability}:${auth.tokenHash}:${windowId}`
+  const current = Number(await env.ATLAS_CACHE.get(key) ?? '0')
+  const limit = rateLimitForCostClass(descriptor.costClass)
+  if (current >= limit) return apiError('rate_limited', 'Atlas capability rate limit exceeded.', 429, requestId)
+  await env.ATLAS_CACHE.put(key, String(current + 1), { expirationTtl: windowSeconds + 10 })
+  return null
+}
+
+function rateLimitForCostClass(costClass: AtlasCapabilityDescriptor['costClass']): number {
+  switch (costClass) {
+    case 'high': return 20
+    case 'medium': return 60
+    case 'low': return 120
+    case 'free': return 300
+  }
+}
+
 async function adminUsage(request: Request, env: Env, requestId: string): Promise<Response> {
-  const authError = requireAdmin(request, env, requestId)
+  const authError = await requireAdmin(request, env, requestId)
   if (authError) return authError
   const url = new URL(request.url)
   const app = url.searchParams.get('app')
@@ -185,19 +260,19 @@ async function adminUsage(request: Request, env: Env, requestId: string): Promis
 }
 
 async function adminUsageByProvider(request: Request, env: Env, requestId: string): Promise<Response> {
-  const authError = requireAdmin(request, env, requestId)
+  const authError = await requireAdmin(request, env, requestId)
   if (authError) return authError
   return json({ data: { providers: await aggregateUsageByProvider(env) }, meta: { schemaVersion: 1, requestId } })
 }
 
 async function adminProviderStatus(request: Request, env: Env, requestId: string): Promise<Response> {
-  const authError = requireAdmin(request, env, requestId)
+  const authError = await requireAdmin(request, env, requestId)
   if (authError) return authError
   return json({ data: { providers: await listProviderStatus(env) }, meta: { schemaVersion: 1, requestId } })
 }
 
 async function adminRequestDetail(pathname: string, request: Request, env: Env, requestId: string): Promise<Response> {
-  const authError = requireAdmin(request, env, requestId)
+  const authError = await requireAdmin(request, env, requestId)
   if (authError) return authError
   const id = decodeURIComponent(pathname.replace('/v1/atlas/admin/requests/', ''))
   if (!/^[a-zA-Z0-9_-]{6,80}$/.test(id)) return apiError('invalid_request_id', 'Invalid Atlas request id.', 400, requestId)
@@ -205,18 +280,30 @@ async function adminRequestDetail(pathname: string, request: Request, env: Env, 
   return row ? json({ data: { request: row }, meta: { schemaVersion: 1, requestId } }) : apiError('request_not_found', 'Atlas request not found.', 404, requestId)
 }
 
-function requireAdmin(request: Request, env: Env, requestId: string): Response | null {
-  const configured = parseServiceKeys(env.SERVICE_API_KEYS)
-  if (configured.length === 0) return apiError('admin_auth_not_configured', 'Atlas admin API is not configured.', 503, requestId)
-  const header = request.headers.get('Authorization') ?? ''
-  const token = header.startsWith('Bearer ') ? header.slice('Bearer '.length).trim() : ''
-  if (!token || !configured.includes(token)) return apiError('unauthorized', 'Atlas admin API requires a service token.', 401, requestId)
+async function requireAdmin(request: Request, env: Env, requestId: string): Promise<Response | null> {
+  const auth = await requireServiceKey(request, authEnv(env), ['atlas.admin'])
+  if (auth instanceof Response) {
+    const status = auth.status === 403 ? 403 : 401
+    const code = status === 403 ? 'service_key_required' : 'unauthorized'
+    return apiError(code, 'Atlas admin API requires a scoped service token.', status, requestId)
+  }
   return null
 }
 
-function parseServiceKeys(value?: string): string[] {
-  if (!value) return []
-  return value.split(',').map((item) => item.trim()).filter(Boolean)
+function authEnv(env: Env) {
+  return {
+    AUTH_DB: env.AUTH_DB,
+    TOKEN_PEPPER: env.TOKEN_PEPPER,
+    ANKORE_TOKEN_PEPPER: env.ANKORE_TOKEN_PEPPER,
+    IDENTITY_BASE_URL: env.IDENTITY_BASE_URL,
+    IDENTITY_SERVICE: env.IDENTITY_SERVICE,
+  }
+}
+
+function bearerToken(request: Request): string {
+  const header = request.headers.get('Authorization') ?? ''
+  const match = /^Bearer\s+(.+)$/i.exec(header)
+  return match?.[1]?.trim() ?? ''
 }
 
 function validateRunRequest(body: AtlasRunRequest): string | null {

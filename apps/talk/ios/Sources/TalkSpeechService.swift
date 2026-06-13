@@ -1,5 +1,6 @@
 import AVFoundation
 import Foundation
+import TikoKit
 
 @MainActor
 final class TalkSpeechService {
@@ -13,8 +14,9 @@ final class TalkSpeechService {
             synthesizer.stopSpeaking(at: .immediate)
         }
 
+        TikoSpeech.configurePlaybackSession()
         let utterance = AVSpeechUtterance(string: trimmed)
-        utterance.voice = AVSpeechSynthesisVoice(language: languageCode)
+        utterance.voice = AVSpeechSynthesisVoice(language: TikoSpeech.languageCode(for: languageCode))
         utterance.rate = AVSpeechUtteranceDefaultSpeechRate * 0.92
         utterance.pitchMultiplier = 1.04
         synthesizer.speak(utterance)

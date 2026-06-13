@@ -33,31 +33,15 @@ This repo is the future active home for Tiko platform work. `tiko-mono` remains 
 ## Structure
 
 ```text
-apps/
-  web/          Vue clients per app
-  ios/          SwiftUI native clients
-  android/      Jetpack Compose native clients
-packages/
-  identity/     shared API contracts and web client
-  data/         app data clients and typed contracts
-  i18n/         Lezu/local fallback wrapper
-  media/        media contracts and clients
-  ui/           Tiko product UI for web
-  testing/      shared smoke/contract helpers
-workers/
-  identity-api/
-  app-api/
-  content-api/
-  media-api/
-  generation-api/
-  admin-api/
-docs/
-  doctrine/
-  architecture/
-  api/
-  apps/
-  migration/
+apps/<product>/<platform>/   Product-first apps: web, iOS, Android wrappers where present
+packages/                    Shared TS packages plus Swift TikoKit
+workers/                     Cloudflare Workers by bounded backend domain
+docs/                        Doctrine, architecture, API contracts, app specs, plans
+tools/                       Codegen, scaffold checks, Android wrapper helpers
+tests/                       Root contract and worker tests
 ```
+
+Current web workspaces are `admin`, `cards`, `media`, `radio`, `sequence`, `talk`, `timer`, `todo`, `type`, `website`, and `yes-no`. Native iOS projects and Android wrappers are present per app where implemented; Android wrappers are Capacitor shells for now, not Jetpack Compose clients.
 
 ## Generation and TTS
 
