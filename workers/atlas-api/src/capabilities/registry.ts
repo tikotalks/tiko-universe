@@ -26,8 +26,8 @@ export const ATLAS_CAPABILITIES: AtlasCapabilityDescriptor[] = [
   {
     capability: 'text.generate',
     enabled: true,
-    allowedApps: ['admin', 'media', 'radio', 'generation-api'],
-    allowedPurposes: ['admin-draft', 'story-draft', 'support-rewrite', 'internal-summary', 'image-art-director'],
+    allowedApps: ['admin', 'media', 'radio', 'generation-api', 'talk', 'sentence-api'],
+    allowedPurposes: ['admin-draft', 'story-draft', 'support-rewrite', 'internal-summary', 'image-art-director', 'word-prediction'],
     defaultRoute: { provider: 'cloudflare-workers-ai', model: '@cf/meta/llama-3.1-8b-instruct' },
     accepts: ['input', 'outputFormat', 'constraints'],
     returns: ['output', 'format', 'provider', 'usage'],

@@ -852,6 +852,7 @@ Return ONLY a JSON array of [wordId, probability] pairs with exactly ${target} e
         input: prompt,
         app: 'talk',
         purpose: 'word-prediction',
+        provider: 'openai',
         outputFormat: 'json',
         temperature: 0.2,
         maxTokens: 3000,
