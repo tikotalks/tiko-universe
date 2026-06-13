@@ -216,6 +216,7 @@ Approximate review spread: 7 Critical, about 35 High, about 70 Medium, and about
   - [x] Extract ImageGenerator queue panel into a focused component.
   - [x] Move ImageGenerator queue styles into the queue component so the page no longer owns its surface.
   - [x] Extract ImageGenerator edit modal and canvas mask editor into a focused component.
+  - [x] Extract ImageGenerator create form into a focused component.
   - `@tiko/ui` index into focused modules.
   - [x] Move `@tiko/ui` app config, app colors, palette, and open-icon constants into a focused module.
   - [x] Move `TikoOpenIconPicker` out of the `@tiko/ui` barrel into its own component module.

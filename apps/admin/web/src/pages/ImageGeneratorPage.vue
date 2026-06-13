@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import { computed, onMounted, ref, watch } from 'vue'
 import { useBemm } from 'bemm'
-import { Button, InputText, InputTextArea } from '@sil/ui'
+import { Button } from '@sil/ui'
+import ImageCreateForm from '../components/images/ImageCreateForm.vue'
 import ImageEditModal from '../components/images/ImageEditModal.vue'
 import ImageGenerationQueue from '../components/images/ImageGenerationQueue.vue'
-import type { EnrichInput, GenerateInput, QueueItem, TikoStyle, UpscaleInput } from '../components/images/imageGenerationQueueTypes'
+import type { EnrichInput, GenerateInput, QueueItem, UpscaleInput } from '../components/images/imageGenerationQueueTypes'
 import { useImageGeneration, type ImageGalleryItem } from '../composables/useImageGeneration'
 
 type Tab = 'library' | 'drafts' | 'create'
@@ -21,14 +22,6 @@ const draftItems = ref<ImageGalleryItem[]>([])
 const galleryLoading = ref(false)
 const galleryError = ref<string | null>(null)
 
-const prompt = ref('')
-const title = ref('')
-const category = ref('generated')
-const tagsText = ref('tiko, child-friendly')
-const size = ref<'1024x1024' | '1024x1792' | '1792x1024'>('1024x1024')
-const quality = ref<'standard' | 'hd'>('standard')
-const tikoStyle = ref<TikoStyle>('tiko-v2')
-const previewCount = ref(4)
 const pushingToMediaIds = ref<Set<string>>(new Set())
 
 const queue = ref<QueueItem[]>([])
@@ -48,20 +41,6 @@ const upscalingIds = computed(() => new Set(
 ))
 
 const editItem = ref<ImageGalleryItem | null>(null)
-
-const tikoStylePrompt = `
-Use the Tiko visual style: warm, child-friendly, simple readable shapes, rounded forms, soft tactile surfaces, clear subject silhouette, cheerful but not chaotic, suitable for young children, no text, no logos, no scary details.
-`.trim()
-
-const fullPrompt = computed(() => {
-  const base = prompt.value.trim()
-  if (!base) return ''
-  return `${base}\n\n${tikoStylePrompt}`
-})
-
-function parseTags(): string[] {
-  return tagsText.value.split(',').map(t => t.trim()).filter(Boolean)
-}
 
 async function loadLibrary() {
   galleryLoading.value = true
@@ -167,25 +146,13 @@ async function onDelete(item: ImageGalleryItem, list: 'library' | 'drafts') {
   }
 }
 
-function onGenerate() {
-  if (!prompt.value.trim()) return
-
+function onGenerate(input: GenerateInput) {
   queueCounter += 1
-  const label = title.value.trim() || prompt.value.trim().slice(0, 40)
+  const label = input.title || input.prompt.trim().split('\n')[0].slice(0, 40)
   const item: QueueItem = {
     id: `q${queueCounter}`,
     label,
-    input: {
-      type: 'generate',
-      prompt: fullPrompt.value,
-      title: title.value.trim() || undefined,
-      category: category.value.trim() || 'generated',
-      tags: parseTags(),
-      size: size.value,
-      quality: quality.value,
-      tikoStyle: tikoStyle.value,
-      count: previewCount.value,
-    },
+    input,
     status: 'pending',
     result: null,
     error: null,
@@ -303,24 +270,6 @@ function clearQueue() {
   queue.value = queue.value.filter(i => i.status === 'pending' || i.status === 'generating')
 }
 
-function useTemplate(kind: 'character' | 'scene' | 'object') {
-  if (kind === 'character') {
-    prompt.value = 'A friendly animal character for Tiko, standing clearly, expressive but simple, centered on a plain soft background.'
-    category.value = 'characters'
-    tagsText.value = 'tiko, character, animal, child-friendly'
-  }
-  if (kind === 'scene') {
-    prompt.value = 'A calm story scene for Tiko Radio with one clear focal subject and a cozy environment children can understand.'
-    category.value = 'story-scenes'
-    tagsText.value = 'tiko, story, radio, scene, child-friendly'
-  }
-  if (kind === 'object') {
-    prompt.value = 'A single everyday object for a child learning app, isolated, clear, recognizable, simple shape.'
-    category.value = 'objects'
-    tagsText.value = 'tiko, object, learning, child-friendly'
-  }
-}
-
 function viewDrafts() {
   activeTab.value = 'drafts'
 }
@@ -431,71 +380,10 @@ onMounted(() => { void loadLibrary() })
     </section>
 
     <section v-else :class="page('create')">
-      <form :class="page('form')" @submit.prevent="onGenerate">
-        <header :class="page('form-head')">
-          <h2 :class="page('panel-title')">Create new image</h2>
-          <div :class="page('templates')">
-            <Button type="button" variant="outline" size="small" @click="useTemplate('character')">Character</Button>
-            <Button type="button" variant="outline" size="small" @click="useTemplate('scene')">Scene</Button>
-            <Button type="button" variant="outline" size="small" @click="useTemplate('object')">Object</Button>
-          </div>
-        </header>
-
-        <InputTextArea
-          v-model="prompt"
-          label="Prompt"
-          :min-rows="6"
-          :max-rows="12"
-          :allow-resize="true"
-          placeholder="Describe the image to generate…"
-        />
-
-        <details :class="page('style-info')" open>
-          <summary :class="page('style-summary')">Tiko style suffix</summary>
-          <p :class="page('style-body')">{{ tikoStylePrompt }}</p>
-        </details>
-
-        <InputText v-model="title" label="Title" placeholder="Optional media title" />
-
-        <div :class="page('two-col')">
-          <InputText v-model="category" label="Category" />
-          <InputText v-model="tagsText" label="Tags" placeholder="comma, separated" />
-        </div>
-
-        <div :class="page('controls')">
-          <label :class="page('label')">
-            <span :class="page('label-text')">Style</span>
-            <select :class="page('select')" v-model="tikoStyle">
-              <option value="tiko-original">Tiko Original</option>
-              <option value="tiko-v2">Tiko V2</option>
-              <option value="tiko-natural">Tiko Natural</option>
-            </select>
-          </label>
-          <label :class="page('label')">
-            <span :class="page('label-text')">Previews</span>
-            <select :class="page('select')" v-model.number="previewCount">
-              <option :value="1">1</option>
-              <option :value="2">2</option>
-              <option :value="3">3</option>
-              <option :value="4">4</option>
-              <option :value="6">6</option>
-              <option :value="8">8</option>
-            </select>
-          </label>
-          <label :class="page('label')">
-            <span :class="page('label-text')">Size</span>
-            <select :class="page('select')" v-model="size">
-              <option value="1024x1024">Square</option>
-              <option value="1024x1792">Portrait</option>
-              <option value="1792x1024">Landscape</option>
-            </select>
-          </label>
-        </div>
-
-        <Button :disabled="!prompt.trim()" type="submit" block>Add to queue</Button>
-
-        <p :class="page('hint')">Generates {{ previewCount }} preview{{ previewCount > 1 ? 's' : '' }} in <button type="button" :class="page('inline-link')" @click="viewDrafts">Drafts</button>. Pick one and Upscale it to full quality.</p>
-      </form>
+      <ImageCreateForm
+        @submit="onGenerate"
+        @view-drafts="viewDrafts"
+      />
 
       <ImageGenerationQueue
         :queue="queue"
@@ -663,93 +551,6 @@ onMounted(() => { void loadLibrary() })
     @media (max-width: 900px) {
       grid-template-columns: 1fr;
     }
-  }
-
-  &__form {
-    background: var(--admin-surface);
-    border: 0;
-    border-radius: var(--admin-card-radius);
-    padding: var(--space-m);
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-s);
-  }
-
-  &__form-head {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: var(--space-s);
-    flex-wrap: wrap;
-  }
-
-  &__templates {
-    display: flex;
-    gap: var(--space-xs);
-    flex-wrap: wrap;
-  }
-
-  &__style-info {
-    color: var(--admin-text-muted);
-    font-size: var(--font-size-xs);
-    background: var(--admin-page-bg);
-    border: 1px solid var(--admin-border);
-    border-radius: var(--border-radius-s);
-    padding: var(--space-s);
-  }
-
-  &__style-summary {
-    cursor: pointer;
-    font-weight: 600;
-    color: var(--admin-text);
-  }
-
-  &__style-body {
-    line-height: 1.45;
-    padding-top: var(--space-xs);
-  }
-
-  &__two-col,
-  &__controls {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: var(--space-s);
-
-    @media (max-width: 640px) {
-      grid-template-columns: 1fr;
-    }
-  }
-
-  &__controls {
-    grid-template-columns: repeat(3, 1fr);
-  }
-
-  &__label {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-xs);
-  }
-
-  &__label-text {
-    font-size: var(--font-size-xs);
-    font-weight: 600;
-    color: var(--admin-text-muted);
-  }
-
-  &__select {
-    width: 100%;
-    box-sizing: border-box;
-    border: 1px solid var(--admin-border);
-    border-radius: var(--border-radius-s);
-    padding: var(--space-s);
-    background: var(--admin-page-bg);
-    color: var(--admin-text);
-    font: inherit;
-  }
-
-  &__hint {
-    color: var(--admin-text-muted);
-    font-size: var(--font-size-xs);
   }
 
   &__preview {
