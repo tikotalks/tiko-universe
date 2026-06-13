@@ -1,9 +1,11 @@
 import SwiftUI
 import TikoKit
 
-/// Board layout that places words on a big pannable canvas: the most-used words
-/// (earliest in the importance-ordered list) sit in the centre and larger, with
-/// rarer words spiralling outward and smaller. The user drags to explore.
+/// Board layout that places words in concentric rings: the single most-used word
+/// sits dead centre, the next-most-used form the first ring around it (slightly
+/// smaller), then progressively smaller rings outward. Semi-organised — evenly
+/// spaced on each ring with a per-ring angular stagger so it stays organic. The
+/// user drags to explore.
 ///
 /// Importance comes from list order — the Sentence API returns words sorted by
 /// frequency/likelihood, so index 0 is the most-used word.
@@ -12,11 +14,11 @@ struct TalkWordCloudView: View {
     let appColor: TikoAppColor
     let onTap: (TalkWordTile) -> Void
 
-    // Phyllotaxis (sunflower) spiral: even, organic distribution with no gaps.
-    private let goldenAngle = 2.399963229728653
-    private let ringSpacing: CGFloat = 132
+    private let centreDiameter: CGFloat = 96   // a touch smaller than before
+    private let minDiameter: CGFloat = 46
+    private let ringShrink = 0.84              // each ring is 84% of the previous
+    private let gap: CGFloat = 14
     private let margin: CGFloat = 110
-    private let baseDiameter: CGFloat = 92
 
     private struct Placed: Identifiable {
         let id: String
@@ -52,23 +54,48 @@ struct TalkWordCloudView: View {
     private func computeLayout() -> Layout {
         guard !words.isEmpty else { return Layout(placed: [], canvas: CGSize(width: 1, height: 1)) }
 
-        var raw: [(word: TalkWordTile, x: CGFloat, y: CGFloat, diameter: CGFloat)] = []
-        var minX = CGFloat.zero, minY = CGFloat.zero, maxX = CGFloat.zero, maxY = CGFloat.zero
+        var placed: [(word: TalkWordTile, x: CGFloat, y: CGFloat, diameter: CGFloat)] = []
 
-        for (index, word) in words.enumerated() {
-            let radius = ringSpacing * CGFloat(sqrt(Double(index)))
-            let angle = Double(index) * goldenAngle
-            let x = radius * CGFloat(cos(angle))
-            let y = radius * CGFloat(sin(angle))
-            // Most-used words (lowest index) are biggest; taper to a readable floor.
-            let scale = CGFloat(max(0.62, 1.5 - Double(index) * 0.035))
-            raw.append((word, x, y, baseDiameter * scale))
-            minX = min(minX, x); minY = min(minY, y)
-            maxX = max(maxX, x); maxY = max(maxY, y)
+        // Centre: the single most-used word.
+        placed.append((words[0], 0, 0, centreDiameter))
+
+        var index = 1
+        var ring = 1
+        var outerEdge = centreDiameter / 2          // radius to the edge of placed content
+        var diameter = centreDiameter
+
+        while index < words.count {
+            diameter = max(minDiameter, centreDiameter * CGFloat(pow(ringShrink, Double(ring))))
+            let radius = outerEdge + gap + diameter / 2
+            let circumference = 2 * Double.pi * Double(radius)
+            // Geometric packing: how many bubbles of this size fit on the ring.
+            let capacity = max(1, Int(floor(circumference / Double(diameter + gap))))
+            let count = min(capacity, words.count - index)
+            let step = (2 * Double.pi) / Double(count)
+            // Stagger each ring so the rings don't line up into rigid spokes.
+            let offset = Double(ring) * 0.55
+
+            for slot in 0..<count {
+                let angle = offset + Double(slot) * step
+                let x = radius * CGFloat(cos(angle))
+                let y = radius * CGFloat(sin(angle))
+                placed.append((words[index], x, y, diameter))
+                index += 1
+            }
+
+            outerEdge = radius + diameter / 2
+            ring += 1
         }
 
-        // Shift into positive canvas space (SwiftUI origin is top-left).
-        let placed = raw.map { item in
+        // Shift into positive canvas space (SwiftUI origin is top-left), padding by
+        // each bubble's radius so nothing clips at the edges.
+        var minX = CGFloat.zero, minY = CGFloat.zero, maxX = CGFloat.zero, maxY = CGFloat.zero
+        for item in placed {
+            minX = min(minX, item.x - item.diameter / 2); maxX = max(maxX, item.x + item.diameter / 2)
+            minY = min(minY, item.y - item.diameter / 2); maxY = max(maxY, item.y + item.diameter / 2)
+        }
+
+        let resolved = placed.map { item in
             Placed(
                 id: item.word.id,
                 word: item.word,
@@ -77,7 +104,7 @@ struct TalkWordCloudView: View {
             )
         }
         let canvas = CGSize(width: maxX - minX + margin * 2, height: maxY - minY + margin * 2)
-        return Layout(placed: placed, canvas: canvas)
+        return Layout(placed: resolved, canvas: canvas)
     }
 }
 

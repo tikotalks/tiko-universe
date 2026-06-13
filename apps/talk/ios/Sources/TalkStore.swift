@@ -70,10 +70,13 @@ final class TalkStore {
         await bootstrapIdentityIfNeeded()
 
         do {
-            let response = try await apiClient.start(locale: locale, userId: userId, sessionToken: sessionToken)
+            // Identity is carried by the session token (Authorization header); the
+            // server derives the subject from it. We deliberately do NOT pass userId
+            // — an unvalidatable userId is rejected, and the token is the source of
+            // truth (and the IDOR-safe contract).
+            let response = try await apiClient.start(locale: locale, userId: nil, sessionToken: sessionToken)
             applyStartResponse(response, fallback: false)
             await refreshVocabularyIfPossible()
-            await refreshSavedPhrasesIfPossible()
         } catch {
             // Offline is an expected graceful-degrade state, not an error. The
             // isOfflineFallback flag already drives the banner, so don't double it
@@ -161,7 +164,7 @@ final class TalkStore {
                 wordIds: sentenceWords.map(\.id),
                 locale: locale,
                 autoSave: autoSave,
-                userId: userId,
+                userId: nil,
                 sessionToken: sessionToken
             )
             completedSentence = response.sentence
@@ -257,7 +260,7 @@ final class TalkStore {
             let response = try await apiClient.next(
                 currentWords: sentenceWords.map(\.id),
                 locale: locale,
-                userId: userId,
+                userId: nil,
                 sessionToken: sessionToken
             )
             suggestions = response.suggestions
