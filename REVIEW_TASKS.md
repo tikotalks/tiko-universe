@@ -180,7 +180,7 @@ Approximate review spread: 7 Critical, about 35 High, about 70 Medium, and about
   - Shared user-flow components that are not app-specific.
   - Avoid giant one-file app implementations.
 
-- [ ] Fix popup and class conventions.
+- [x] Fix popup and class conventions.
   - Style `@sil/ui` popup surfaces through popup custom properties.
   - Add missing popup custom properties upstream if needed.
   - Do not style around popup borders from inside content.

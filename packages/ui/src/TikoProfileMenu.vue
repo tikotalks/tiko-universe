@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { Icon } from '@sil/ui'
+import { useBemm } from 'bemm'
 
 interface Props {
   /** Kept for the shared app-shell contract; the iOS-style menu is shown only while parent mode is active. */
@@ -38,6 +39,8 @@ const props = withDefaults(defineProps<Props>(), {
   })
 })
 
+const bemm = useBemm('tiko-profile-menu', { return: 'string', includeBaseClass: true })
+
 interface TikoProfileMenuLabels {
   close: string
   account: string
@@ -73,71 +76,71 @@ const emit = defineEmits<{
 </script>
 
 <template>
-  <div class="tiko-profile-menu" data-test="tiko-profile-menu">
-    <div class="tiko-profile-menu__header">
-      <button class="tiko-profile-menu__close" type="button" :aria-label="props.labels.close" @click="emit('close')">
+  <div :class="bemm('')" data-test="tiko-profile-menu">
+    <div :class="bemm('header')">
+      <button :class="bemm('close')" type="button" :aria-label="props.labels.close" @click="emit('close')">
         <Icon name="wayfinding/cross" aria-hidden="true" />
       </button>
-      <div class="tiko-profile-menu__heading">
-        <h2 class="tiko-profile-menu__title">{{ props.labels.account }}</h2>
-        <p class="tiko-profile-menu__subtitle">{{ props.isRecoverable ? props.userLabel : props.labels.temporaryDeviceUser }}</p>
+      <div :class="bemm('heading')">
+        <h2 :class="bemm('title')">{{ props.labels.account }}</h2>
+        <p :class="bemm('subtitle')">{{ props.isRecoverable ? props.userLabel : props.labels.temporaryDeviceUser }}</p>
       </div>
-      <span class="tiko-profile-menu__badge" aria-hidden="true"><Icon name="ui/user-s" /></span>
+      <span :class="bemm('badge')" aria-hidden="true"><Icon name="ui/user-s" /></span>
     </div>
 
-    <div class="tiko-profile-menu__items">
-      <button class="tiko-profile-menu__item" type="button" @click="emit('profile')">
-        <span class="tiko-profile-menu__icon"><Icon name="ui/user-s" /></span>
-        <span class="tiko-profile-menu__copy">
+    <div :class="bemm('items')">
+      <button :class="bemm('item')" type="button" @click="emit('profile')">
+        <span :class="bemm('icon')"><Icon name="ui/user-s" /></span>
+        <span :class="bemm('copy')">
           <strong>{{ props.isRecoverable ? props.labels.profile : props.labels.setNameAndEmail }}</strong>
           <small>{{ props.isRecoverable ? props.labels.profileDetail : props.labels.recoverableUserDetail }}</small>
         </span>
-        <span class="tiko-profile-menu__chevron" aria-hidden="true">›</span>
+        <span :class="bemm('chevron')" aria-hidden="true">›</span>
       </button>
 
-      <button v-if="!props.isRecoverable" class="tiko-profile-menu__item" type="button" @click="emit('login')">
-        <span class="tiko-profile-menu__icon"><Icon name="media/mail" /></span>
-        <span class="tiko-profile-menu__copy">
+      <button v-if="!props.isRecoverable" :class="bemm('item')" type="button" @click="emit('login')">
+        <span :class="bemm('icon')"><Icon name="media/mail" /></span>
+        <span :class="bemm('copy')">
           <strong>{{ props.labels.logIn }}</strong>
           <small>{{ props.labels.logInDetail }}</small>
         </span>
-        <span class="tiko-profile-menu__chevron" aria-hidden="true">›</span>
+        <span :class="bemm('chevron')" aria-hidden="true">›</span>
       </button>
 
-      <button v-if="props.isRecoverable" class="tiko-profile-menu__item" type="button" @click="emit('enter-child-mode')">
-        <span class="tiko-profile-menu__icon"><Icon name="product/baby-stroller" /></span>
-        <span class="tiko-profile-menu__copy">
+      <button v-if="props.isRecoverable" :class="bemm('item')" type="button" @click="emit('enter-child-mode')">
+        <span :class="bemm('icon')"><Icon name="product/baby-stroller" /></span>
+        <span :class="bemm('copy')">
           <strong>{{ props.labels.childMode }}</strong>
           <small>{{ props.hasCode ? props.labels.hideParentControls : props.labels.createParentCode }}</small>
         </span>
-        <span class="tiko-profile-menu__chevron" aria-hidden="true">›</span>
+        <span :class="bemm('chevron')" aria-hidden="true">›</span>
       </button>
 
-      <button v-if="props.isRecoverable" class="tiko-profile-menu__item" type="button" @click="emit('child-accounts')">
-        <span class="tiko-profile-menu__icon"><Icon name="ui/users" /></span>
-        <span class="tiko-profile-menu__copy">
+      <button v-if="props.isRecoverable" :class="bemm('item')" type="button" @click="emit('child-accounts')">
+        <span :class="bemm('icon')"><Icon name="ui/users" /></span>
+        <span :class="bemm('copy')">
           <strong>{{ props.labels.childAccounts }}</strong>
           <small>{{ props.labels.childAccountsDetail }}</small>
         </span>
-        <span class="tiko-profile-menu__chevron" aria-hidden="true">›</span>
+        <span :class="bemm('chevron')" aria-hidden="true">›</span>
       </button>
 
-      <button v-if="props.isRecoverable" class="tiko-profile-menu__item tiko-profile-menu__item--danger" type="button" @click="emit('delete-account')">
-        <span class="tiko-profile-menu__icon"><Icon name="wayfinding/cross" /></span>
-        <span class="tiko-profile-menu__copy">
+      <button v-if="props.isRecoverable" :class="bemm('item', { danger: true })" type="button" @click="emit('delete-account')">
+        <span :class="bemm('icon')"><Icon name="wayfinding/cross" /></span>
+        <span :class="bemm('copy')">
           <strong>{{ props.labels.deleteAccount }}</strong>
           <small>{{ props.labels.deleteAccountDetail }}</small>
         </span>
-        <span class="tiko-profile-menu__chevron" aria-hidden="true">›</span>
+        <span :class="bemm('chevron')" aria-hidden="true">›</span>
       </button>
 
-      <button v-if="props.isLoggedIn" class="tiko-profile-menu__item" type="button" @click="emit('logout')">
-        <span class="tiko-profile-menu__icon"><Icon name="arrows/arrow-headed-right" /></span>
-        <span class="tiko-profile-menu__copy">
+      <button v-if="props.isLoggedIn" :class="bemm('item')" type="button" @click="emit('logout')">
+        <span :class="bemm('icon')"><Icon name="arrows/arrow-headed-right" /></span>
+        <span :class="bemm('copy')">
           <strong>{{ props.labels.logOut }}</strong>
           <small>{{ props.labels.logOutDetail }}</small>
         </span>
-        <span class="tiko-profile-menu__chevron" aria-hidden="true">›</span>
+        <span :class="bemm('chevron')" aria-hidden="true">›</span>
       </button>
     </div>
   </div>
@@ -149,13 +152,7 @@ const emit = defineEmits<{
   display: flex;
   flex-direction: column;
   gap: 1.2rem;
-  padding: clamp(1.25rem, 4vw, 2rem);
-  border-radius: clamp(1.75rem, 5vw, 2.6rem);
-  background: color-mix(in srgb, var(--color-background), var(--color-foreground) 6%);
   color: var(--color-foreground);
-  border: 1px solid color-mix(in srgb, var(--color-foreground), transparent 88%);
-  box-shadow: 0 24px 80px color-mix(in srgb, var(--color-foreground), transparent 82%);
-  backdrop-filter: blur(22px) saturate(1.15);
 }
 
 .tiko-profile-menu__header {

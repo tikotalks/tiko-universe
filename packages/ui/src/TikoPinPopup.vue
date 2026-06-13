@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, computed, onUnmounted } from 'vue'
+import { useBemm } from 'bemm'
 import { hashParentPin } from './pin-crypto'
 
 const CODE_LENGTH = 4
@@ -32,6 +33,8 @@ const props = withDefaults(defineProps<Props>(), {
     cancel: 'Cancel',
   }),
 })
+
+const bemm = useBemm('tiko-pin-popup', { return: 'string', includeBaseClass: true })
 
 interface TikoPinPopupLabels {
   createTitle: string
@@ -205,26 +208,26 @@ async function hashCode(code: string): Promise<string> {
 </script>
 
 <template>
-  <div class="tiko-pin-popup" :class="{ 'tiko-pin-popup--shake': shake }">
+  <div :class="bemm('', { shake })">
     <template v-if="mode === 'setup'">
-      <div v-if="step === 'enter'" class="tiko-pin-popup__header">
-        <h2 class="tiko-pin-popup__title">{{ props.labels.createTitle }}</h2>
-        <p class="tiko-pin-popup__subtitle">{{ props.labels.createSubtitle }}</p>
+      <div v-if="step === 'enter'" :class="bemm('header')">
+        <h2 :class="bemm('title')">{{ props.labels.createTitle }}</h2>
+        <p :class="bemm('subtitle')">{{ props.labels.createSubtitle }}</p>
       </div>
-      <div v-else class="tiko-pin-popup__header">
-        <h2 class="tiko-pin-popup__title">{{ props.labels.confirmTitle }}</h2>
-        <p class="tiko-pin-popup__subtitle">{{ props.labels.confirmSubtitle }}</p>
+      <div v-else :class="bemm('header')">
+        <h2 :class="bemm('title')">{{ props.labels.confirmTitle }}</h2>
+        <p :class="bemm('subtitle')">{{ props.labels.confirmSubtitle }}</p>
       </div>
     </template>
 
     <template v-else>
-      <div class="tiko-pin-popup__header">
-        <h2 class="tiko-pin-popup__title">{{ props.labels.enterTitle }}</h2>
-        <p class="tiko-pin-popup__subtitle">{{ props.labels.enterSubtitle }}</p>
+      <div :class="bemm('header')">
+        <h2 :class="bemm('title')">{{ props.labels.enterTitle }}</h2>
+        <p :class="bemm('subtitle')">{{ props.labels.enterSubtitle }}</p>
       </div>
     </template>
 
-    <div class="tiko-pin-popup__digits">
+    <div :class="bemm('digits')">
       <template v-if="mode === 'setup' && step === 'confirm'">
         <input
           v-for="i in CODE_LENGTH"
@@ -233,7 +236,7 @@ async function hashCode(code: string): Promise<string> {
           type="tel"
           inputmode="numeric"
           maxlength="1"
-          class="tiko-pin-popup__digit"
+          :class="bemm('digit')"
           :value="confirmDigits[i - 1]"
           @input="onDigitInput(i - 1, $event)"
           @keydown="onKeydown(i - 1, $event)"
@@ -249,7 +252,7 @@ async function hashCode(code: string): Promise<string> {
           type="tel"
           inputmode="numeric"
           maxlength="1"
-          class="tiko-pin-popup__digit"
+          :class="bemm('digit')"
           :value="digits[i - 1]"
           @input="onDigitInput(i - 1, $event)"
           @keydown="onKeydown(i - 1, $event)"
@@ -259,11 +262,11 @@ async function hashCode(code: string): Promise<string> {
       </template>
     </div>
 
-    <p v-if="error" class="tiko-pin-popup__error">{{ error }}</p>
+    <p v-if="error" :class="bemm('error')">{{ error }}</p>
 
     <button
       v-if="mode === 'setup' && step === 'confirm'"
-      class="tiko-pin-popup__back"
+      :class="bemm('back')"
       @click="resetConfirm"
     >
       {{ props.labels.back }}
@@ -271,7 +274,7 @@ async function hashCode(code: string): Promise<string> {
 
     <button
       v-if="mode === 'verify'"
-      class="tiko-pin-popup__cancel"
+      :class="bemm('cancel')"
       @click="emit('cancel')"
     >
       {{ props.labels.cancel }}

@@ -1,4 +1,6 @@
 import { mount } from '@vue/test-utils'
+import { readFileSync } from 'node:fs'
+import { resolve } from 'node:path'
 import { describe, expect, it, vi } from 'vitest'
 import {
   TikoAnswerButton,
@@ -107,6 +109,38 @@ describe('TikoKit component contract', () => {
     expect(wrapper.get('.tiko-settings-panel__subtitle').text()).toBe('Lingwa, dehra u preferenzi tal-app.')
     expect(wrapper.get('[data-test="tiko-settings-language"]').text()).toContain('Malti')
     expect(wrapper.emitted('update:colorMode')).toEqual([['system']])
+  })
+
+  it('styles shared identity popups through sil/ui popup custom properties', () => {
+    const root = resolve(__dirname, '../../..')
+    const runtimeSource = readFileSync(resolve(root, 'packages/ui/src/identity-runtime.ts'), 'utf8')
+    const stylesSource = readFileSync(resolve(root, 'packages/ui/src/styles.scss'), 'utf8')
+    const profileSource = readFileSync(resolve(root, 'packages/ui/src/TikoProfileMenu.vue'), 'utf8')
+    const childAccountsSource = readFileSync(resolve(root, 'packages/ui/src/TikoChildAccountsPanel.vue'), 'utf8')
+    const pinSource = readFileSync(resolve(root, 'packages/ui/src/TikoPinPopup.vue'), 'utf8')
+    const identityWrapperRule = stylesSource.match(/\.tiko-identity-popup\s*\{[^}]*\}/)?.[0] ?? ''
+    const profileWrapperRule = profileSource.match(/\.tiko-profile-menu\s*\{[^}]*\}/)?.[0] ?? ''
+    const childAccountsWrapperRule = childAccountsSource.match(/\.tiko-child-accounts\s*\{[^}]*\}/)?.[0] ?? ''
+
+    for (const id of ['tiko-profile-menu', 'tiko-account', 'tiko-parent-code', 'tiko-set-parent-code', 'tiko-child-accounts']) {
+      expect(runtimeSource).toContain(`id: '${id}'`)
+      expect(stylesSource).toContain(`.popup--stack-${id}`)
+    }
+
+    expect(stylesSource).toContain('--popup-border-radius')
+    expect(stylesSource).toContain('--popup-container-background')
+    expect(identityWrapperRule).not.toContain('border-radius')
+    expect(identityWrapperRule).not.toContain('background:')
+    expect(identityWrapperRule).not.toContain('box-shadow')
+    expect(profileSource).toContain("useBemm('tiko-profile-menu'")
+    expect(childAccountsSource).toContain("useBemm('tiko-child-accounts'")
+    expect(pinSource).toContain("useBemm('tiko-pin-popup'")
+    expect(profileWrapperRule).not.toContain('border-radius')
+    expect(profileWrapperRule).not.toContain('background:')
+    expect(profileWrapperRule).not.toContain('box-shadow')
+    expect(childAccountsWrapperRule).not.toContain('border-radius')
+    expect(childAccountsWrapperRule).not.toContain('background:')
+    expect(childAccountsWrapperRule).not.toContain('box-shadow')
   })
 
   it('emits answer when an answer button is tapped', async () => {

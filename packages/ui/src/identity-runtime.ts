@@ -336,6 +336,7 @@ export function useIdentityRuntime(options: UseIdentityRuntimeOptions) {
 
   function openProfileMenu() {
     requirePopup().showPopup({
+      id: 'tiko-profile-menu',
       component: markRaw(TikoProfileMenu),
       title: '',
       props: {
@@ -364,6 +365,7 @@ export function useIdentityRuntime(options: UseIdentityRuntimeOptions) {
 
   function openAccountPopup() {
     requirePopup().showPopup({
+      id: 'tiko-account',
       component: markRaw({
         setup() {
           const nameInput = ref<string>(state.displayName.value ?? '')
@@ -491,6 +493,7 @@ export function useIdentityRuntime(options: UseIdentityRuntimeOptions) {
 
   function openParentCodePopup() {
     requirePopup().showPopup({
+      id: 'tiko-parent-code',
       component: markRaw(TikoPinPopup),
       title: '',
       props: {
@@ -526,6 +529,7 @@ export function useIdentityRuntime(options: UseIdentityRuntimeOptions) {
 
     if (!hasParentCode.value) {
       requirePopup().showPopup({
+        id: 'tiko-set-parent-code',
         component: markRaw(TikoPinPopup),
         title: '',
         props: { existingHash: undefined, labels: labels.value.pin },
@@ -564,6 +568,7 @@ export function useIdentityRuntime(options: UseIdentityRuntimeOptions) {
 
   function openChildAccounts() {
     requirePopup().showPopup({
+      id: 'tiko-child-accounts',
       component: markRaw(TikoChildAccountsPanel),
       title: '',
       props: {
