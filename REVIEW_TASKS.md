@@ -220,7 +220,7 @@ Approximate review spread: 7 Critical, about 35 High, about 70 Medium, and about
   - Mock current Atlas/TTS endpoints, not legacy generation endpoints.
   - Add CI smoke coverage.
 
-- [ ] Add focused tests for high-risk behavior.
+- [x] Add focused tests for high-risk behavior.
   - Timer countdown rendering.
   - Radio player pause/end/volume behavior.
   - Cards store move/delete/reorder behavior.
