@@ -192,7 +192,7 @@ Approximate review spread: 7 Critical, about 35 High, about 70 Medium, and about
   - Fix dialog/focus/listbox/touch-target accessibility.
   - Replace per-icon WKWebViews on iOS with lighter native assets/paths.
 
-- [ ] Delete confirmed dead code before extraction.
+- [x] Delete confirmed dead code before extraction.
   - `TikoMediaClient` unless matching worker routes are built.
   - Radio `AddVideoPopup`.
   - generation-api dead PNG code.

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, computed, onUnmounted } from 'vue'
-import { hashParentPin } from './parent-mode'
+import { hashParentPin } from './pin-crypto'
 
 const CODE_LENGTH = 4
 const EMPTY_DIGITS = () => Array<string>(CODE_LENGTH).fill('')
