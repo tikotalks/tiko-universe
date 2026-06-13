@@ -391,9 +391,11 @@ async function assignTestRole(db: MemoryD1Database, subjectId: string, role: str
 }
 
 async function fetchJson(path: string, init: RequestInit = {}, testEnv = env()) {
+  const headers = new Headers(init.headers)
+  headers.set('content-type', headers.get('content-type') ?? 'application/json')
   const request = new Request(`https://identity.test${path}`, {
     ...init,
-    headers: { 'content-type': 'application/json', ...(init.headers ?? {}) }
+    headers
   })
   const response = await worker.fetch(request, testEnv as never, {} as never)
   const body = response.status === 204 ? {} : await response.json().catch(() => ({})) as JsonBody

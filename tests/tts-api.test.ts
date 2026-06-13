@@ -92,10 +92,13 @@ async function json(response: Response) {
 }
 
 function ttsGenerate(body: unknown, init: RequestInit = {}) {
+  const headers = new Headers(init.headers)
+  headers.set('authorization', headers.get('authorization') ?? 'Bearer test-api-key')
+  headers.set('content-type', headers.get('content-type') ?? 'application/json')
   return new Request('https://tts.test/generate', {
     ...init,
     method: 'POST',
-    headers: { authorization: 'Bearer test-api-key', 'content-type': 'application/json', ...(init.headers ?? {}) },
+    headers,
     body: init.body ?? JSON.stringify(body),
   })
 }

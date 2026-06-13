@@ -900,7 +900,7 @@ async function sessionResponse(request: Request, env: Env): Promise<Response> {
   const accountType = await accountTypeForSubject(env, session.subjectId)
   const runtime = await deriveRuntime(env, session.subjectId, accountType)
   return Response.json({
-    ...(body ?? {}),
+    ...body,
     subject: body?.subject ?? { id: session.subjectId },
     runtime,
     user: { accountType, mode: runtime.mode, recoverable: accountType !== 'temporary', emailVerified: accountType !== 'temporary' }
