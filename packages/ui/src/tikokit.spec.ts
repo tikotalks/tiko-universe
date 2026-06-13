@@ -562,7 +562,16 @@ describe('TikoKit component contract', () => {
   })
 
   it('keeps a local audio response cache to avoid repeated TTS generation calls', async () => {
-    const fetcher = vi.fn(async () => new Response(JSON.stringify({ success: true, audioUrl: 'https://tts.tikocdn.org/audio/no.mp3' }), { status: 200 })) as unknown as typeof fetch
+    const fetcher = vi.fn(async () => new Response(JSON.stringify({
+      data: {
+        id: 'asset-no',
+        audioUrl: '/v1/atlas/assets/asset-no',
+        contentType: 'audio/mpeg',
+        cached: false,
+        provider: { name: 'openai', model: 'tts-1', voice: 'nova' }
+      },
+      meta: { cached: false, schemaVersion: 1, requestId: 'atlas-req-cache' }
+    }), { status: 200 })) as unknown as typeof fetch
     const client = createTikoTtsClient({ fetcher, audioFactory: () => ({ play: vi.fn() }) })
 
     await client.getAudio({ text: 'No', language: 'en' })

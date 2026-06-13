@@ -132,9 +132,21 @@ function createFetchMock(options: {
       return jsonResponse({ app: 'yes-no', updatedAt: 'now', version: 5, state: JSON.parse(String(init?.body)).state })
     }
 
-    if (url.endsWith('/generation/tts')) {
+    if (url.endsWith('/atlas/speech')) {
       if (options.failTts) return jsonResponse({ error: 'tts down' }, 503)
-      return jsonResponse({ success: true, audioUrl: '/audio?key=audio%2Ftest.mp3' })
+      return jsonResponse({
+        data: {
+          id: 'asset-test',
+          audioUrl: '/v1/atlas/assets/asset-test',
+          contentType: 'audio/mpeg',
+          provider: { name: 'test', model: 'test', voice: 'test' },
+          language: 'en',
+          voice: 'test',
+          model: 'test',
+          generatedAt: '2026-06-13T00:00:00.000Z'
+        },
+        meta: { cached: false, schemaVersion: 1, requestId: 'atlas-test' }
+      })
     }
 
     return jsonResponse({ error: { code: 'unexpected', message: url } }, 500)
@@ -337,7 +349,19 @@ describe('Yes No web app', () => {
     expect(wrapper.get('.yes-no-app__speak').attributes('aria-busy')).toBe('true')
     expect(wrapper.get('.yes-no-app__speak').attributes()).toHaveProperty('disabled')
 
-    resolveTts?.(jsonResponse({ success: true, audioUrl: '/audio?key=audio%2Fsentence.mp3' }))
+    resolveTts?.(jsonResponse({
+      data: {
+        id: 'asset-sentence',
+        audioUrl: '/v1/atlas/assets/asset-sentence',
+        contentType: 'audio/mpeg',
+        provider: { name: 'test', model: 'test', voice: 'test' },
+        language: 'en',
+        voice: 'test',
+        model: 'test',
+        generatedAt: '2026-06-13T00:00:00.000Z'
+      },
+      meta: { cached: false, schemaVersion: 1, requestId: 'atlas-sentence' }
+    }))
     await flushPromises()
 
     expect(wrapper.get('.yes-no-app__speak').attributes('data-state')).toBe('playing')
