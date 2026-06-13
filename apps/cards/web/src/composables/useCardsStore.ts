@@ -262,12 +262,20 @@ export function useCardsStore(options: UseCardsStoreOptions) {
   function toggleSelection(item: CardsGridItem) {
     if (item.kind === 'collection') {
       const next = new Set(selectedCollectionIDs.value)
-      next.has(item.collection.id) ? next.delete(item.collection.id) : next.add(item.collection.id)
+      if (next.has(item.collection.id)) {
+        next.delete(item.collection.id)
+      } else {
+        next.add(item.collection.id)
+      }
       selectedCollectionIDs.value = next
       return
     }
     const next = new Set(selectedCardIDs.value)
-    next.has(item.card.id) ? next.delete(item.card.id) : next.add(item.card.id)
+    if (next.has(item.card.id)) {
+      next.delete(item.card.id)
+    } else {
+      next.add(item.card.id)
+    }
     selectedCardIDs.value = next
   }
 
