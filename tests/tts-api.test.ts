@@ -167,7 +167,8 @@ function makeEnv(overrides: Record<string, unknown> = {}) {
     TTS_DB: db,
     AUTH_DB: db,
     AUDIO_BUCKET: bucket,
-    OPENAI_API_KEY: 'test-key',
+    ATLAS_SERVICE: { fetch: vi.fn(async (_input: Request | string) => atlasSpeechResponse()) },
+    ATLAS_API_KEY: 'test-atlas-key',
     TOKEN_PEPPER: 'test-pepper',
     db,
     bucket,
@@ -186,6 +187,21 @@ function ttsGenerate(body: unknown, init: RequestInit = {}) {
     headers: { authorization: 'Bearer test-api-key', 'content-type': 'application/json', ...(init.headers ?? {}) },
     body: init.body ?? JSON.stringify(body),
   })
+}
+
+function atlasSpeechResponse(overrides: Record<string, unknown> = {}) {
+  return new Response(JSON.stringify({
+    data: {
+      id: 'atlas-audio-1',
+      audioUrl: '/v1/atlas/assets/atlas-audio-1',
+      contentType: 'audio/mpeg',
+      cached: false,
+      provider: { name: 'elevenlabs', model: 'eleven_multilingual_v2', voice: 'voice-1' },
+      ...(overrides.data as Record<string, unknown> | undefined),
+    },
+    meta: { cached: false, schemaVersion: 1, requestId: 'atlas-req-1', ...(overrides.meta as Record<string, unknown> | undefined) },
+    ...(overrides.error ? { error: overrides.error } : {}),
+  }), { status: Number(overrides.status ?? 200), headers: { 'content-type': 'application/json' } })
 }
 
 beforeEach(() => {
@@ -376,18 +392,38 @@ describe('tts-api worker', () => {
       await expect(json(overBudget)).resolves.toMatchObject({ success: false, error: 'budget_exceeded' })
     })
 
-    it('retries a transient provider failure once before storing generated audio', async () => {
+    it('routes cache misses through Atlas without provider hints', async () => {
       const env = makeEnv()
-      const fetchMock = vi.spyOn(globalThis, 'fetch')
-        .mockResolvedValueOnce(new Response('temporary', { status: 503 }))
-        .mockResolvedValueOnce(new Response(new Uint8Array([0x49, 0x44, 0x33]), { status: 200 }))
+      const atlasFetch = vi.fn(async (input: Request | string) => {
+        const request = input instanceof Request ? input : new Request(input)
+        expect(new URL(request.url).pathname).toBe('/v1/atlas/speech')
+        expect(request.headers.get('authorization')).toBe('Bearer test-atlas-key')
+        const body = await request.json() as Record<string, unknown>
+        expect(body).toMatchObject({
+          app: 'tts-api',
+          purpose: 'compatibility-tts',
+          text: 'Route me',
+          language: 'en',
+        })
+        expect(body).not.toHaveProperty('provider')
+        expect(body).not.toHaveProperty('voice')
+        expect(body).not.toHaveProperty('model')
+        return atlasSpeechResponse()
+      })
+      env.ATLAS_SERVICE = { fetch: atlasFetch }
 
-      const response = await worker.fetch(ttsGenerate({ text: 'Retry me', language: 'en' }), env)
+      const response = await worker.fetch(ttsGenerate({ text: 'Route me', language: 'en', provider: 'openai', voice: 'nova', model: 'tts-1' }), env)
 
       expect(response.status).toBe(200)
-      expect(fetchMock).toHaveBeenCalledTimes(2)
-      expect(env.db.records).toHaveLength(1)
-      await expect(json(response)).resolves.toMatchObject({ success: true, cached: false })
+      expect(atlasFetch).toHaveBeenCalledTimes(1)
+      expect(env.db.records).toHaveLength(0)
+      expect(env.bucket.objects.size).toBe(0)
+      await expect(json(response)).resolves.toMatchObject({
+        success: true,
+        cached: false,
+        audioUrl: '/v1/atlas/assets/atlas-audio-1',
+        metadata: { id: 'atlas-audio-1', provider: 'elevenlabs', requestId: 'atlas-req-1' },
+      })
     })
 
     it('returns cached audio on D1 cache hit without calling the provider', async () => {
@@ -424,8 +460,8 @@ describe('tts-api worker', () => {
       expect(body.audioUrl).toBe(`/audio?key=audio%2F${textHash}.mp3`)
     })
 
-    it('returns 503 when no API key and no cache hit', async () => {
-      const env = makeEnv({ OPENAI_API_KEY: undefined })
+    it('returns 503 when Atlas is not configured and there is no cache hit', async () => {
+      const env = makeEnv({ ATLAS_SERVICE: undefined, ATLAS_API_KEY: undefined })
       const response = await worker.fetch(
         ttsGenerate({ text: 'Hello', language: 'en' }),
         env
@@ -433,25 +469,23 @@ describe('tts-api worker', () => {
       expect(response.status).toBe(503)
       const body = await json(response)
       expect(body.success).toBe(false)
-      expect(body.error).toBe('tts_generation_not_configured')
+      expect(body.error).toBe('atlas_tts_not_configured')
     })
 
-    it('returns 501 for azure provider', async () => {
+    it('lets Atlas handle legacy azure provider requests', async () => {
       const env = makeEnv()
       const response = await worker.fetch(
         ttsGenerate({ text: 'Hello', language: 'en', provider: 'azure' }),
         env
       )
-      expect(response.status).toBe(501)
+      expect(response.status).toBe(200)
       const body = await json(response)
-      expect(body.success).toBe(false)
-      expect(body.error).toBe('azure_tts_not_configured')
+      expect(body.success).toBe(true)
+      expect(body.audioUrl).toBe('/v1/atlas/assets/atlas-audio-1')
     })
 
-    it('generates audio, stores in R2 and D1, and returns URL', async () => {
+    it('returns the Atlas audio URL without storing duplicate audio', async () => {
       const env = makeEnv()
-      const audioBytes = new Uint8Array([0x49, 0x44, 0x33]) // fake MP3 header
-      vi.spyOn(globalThis, 'fetch').mockResolvedValue(new Response(audioBytes, { status: 200 }))
 
       const response = await worker.fetch(
         ttsGenerate({ text: 'Hello world', language: 'en' }),
@@ -462,25 +496,18 @@ describe('tts-api worker', () => {
       const body = await json(response)
       expect(body.success).toBe(true)
       expect(body.cached).toBe(false)
-      expect(body.audioUrl).toMatch(/^\/audio\?key=/)
-
-      // Verify R2 storage
-      expect(env.bucket.objects.size).toBe(1)
-      const r2Key = Array.from(env.bucket.objects.keys())[0]
-      expect(r2Key).toMatch(/^audio\/[a-f0-9]{32}\.mp3$/)
-
-      // Verify D1 record
-      expect(env.db.records.length).toBe(1)
-      expect(env.db.records[0].text).toBe('Hello world')
-      expect(env.db.records[0].language).toBe('en')
-      expect(env.db.records[0].file_size_bytes).toBe(3)
+      expect(body.audioUrl).toBe('/v1/atlas/assets/atlas-audio-1')
+      expect(env.bucket.objects.size).toBe(0)
+      expect(env.db.records.length).toBe(0)
     })
 
-    it('returns the winning cache row when insert loses a text-hash race', async () => {
+    it('returns existing legacy cache rows before calling Atlas', async () => {
       const env = makeEnv()
+      const atlasFetch = vi.fn(async () => atlasSpeechResponse())
+      env.ATLAS_SERVICE = { fetch: atlasFetch }
       const normalized = internals.normalizeRequest({ text: 'Hello race', language: 'en' })
       const textHash = await internals.generateTextHash(normalized)
-      env.db.conflictOnInsert = {
+      env.db.byHash.set(textHash, {
         id: 'winner',
         text_hash: textHash,
         text: normalized.text,
@@ -494,8 +521,7 @@ describe('tts-api worker', () => {
         r2_key: 'audio/winner.mp3',
         file_size_bytes: 3,
         generated_at: '2026-01-01T00:00:00.000Z',
-      }
-      vi.spyOn(globalThis, 'fetch').mockResolvedValue(new Response(new Uint8Array([0x49, 0x44, 0x33]), { status: 200 }))
+      })
 
       const response = await worker.fetch(
         ttsGenerate({ text: 'Hello race', language: 'en' }),
@@ -503,6 +529,7 @@ describe('tts-api worker', () => {
       )
 
       expect(response.status).toBe(200)
+      expect(atlasFetch).not.toHaveBeenCalled()
       await expect(json(response)).resolves.toMatchObject({
         success: true,
         cached: true,
@@ -511,21 +538,22 @@ describe('tts-api worker', () => {
       })
     })
 
-    it('handles OpenAI API error gracefully', async () => {
-      const env = makeEnv()
-      vi.spyOn(globalThis, 'fetch').mockResolvedValue(
-        new Response('Rate limit exceeded', { status: 429 })
-      )
+    it('returns Atlas errors without calling providers locally', async () => {
+      const env = makeEnv({
+        ATLAS_SERVICE: { fetch: vi.fn(async () => atlasSpeechResponse({ status: 429, error: { code: 'rate_limited' } })) },
+      })
+      const providerFetch = vi.spyOn(globalThis, 'fetch')
 
       const response = await worker.fetch(
         ttsGenerate({ text: 'Hello', language: 'en' }),
         env
       )
 
-      expect(response.status).toBe(502)
+      expect(response.status).toBe(429)
+      expect(providerFetch).not.toHaveBeenCalled()
       const body = await json(response)
       expect(body.success).toBe(false)
-      expect(body.error).toContain('openai_tts_failed')
+      expect(body.error).toBe('rate_limited')
     })
   })
 

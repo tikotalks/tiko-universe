@@ -2,10 +2,10 @@
 
 Temporary compatibility Worker for the original Yes No proof-app speech routes.
 
-TTS ownership has moved to `workers/generation-api` for P0. New web, iOS, and Android clients must use the versioned generation contract documented in `docs/api/openapi.yaml`:
+TTS ownership has moved to Atlas. New web, iOS, and Android clients must use the Atlas speech contract:
 
-- `POST /v1/generation/tts`
-- `GET /v1/generation/audio/{id}`
+- `POST /v1/atlas/speech`
+- `GET /v1/atlas/assets/{id}`
 
 ## Compatibility contract
 
@@ -14,24 +14,26 @@ This Worker keeps the old routes during one transition window only:
 - `POST /generate`
   - body: `{ "text": string, "language": string, "provider"?: "openai" | "azure" | "auto", "voice"?: string, "model"?: string, "speed"?: number, "pitch"?: number }`
   - returns legacy metadata: `{ "success": true, "audioUrl": string, "cached": boolean }`
-  - cache misses generate OpenAI MP3 audio when `OPENAI_API_KEY` is configured.
-  - if generation is not configured, returns a clear non-2xx error so clients can fall back to browser speech.
+  - existing legacy cache hits are returned from D1/R2.
+  - cache misses are routed to Atlas without provider, model, or voice hints.
+  - if Atlas is not configured, returns a clear non-2xx error so clients can fall back to platform speech.
 - `GET /audio?key=audio/<hash>.mp3`
   - returns cached audio bytes from R2 with immutable cache headers.
 
 ## Doctrine
 
 - Do not add new product behavior here.
-- D1 stores legacy metadata and is the durable source of truth for this compatibility worker while it exists.
-- R2 stores MP3 bytes.
-- The text/language/provider/voice/model/speed/pitch hash is the legacy cache key.
-- Remove this worker after Yes No web/iOS and Type use the generation API contract.
+- D1 stores legacy metadata only for audio already generated through this compatibility worker.
+- R2 stores legacy MP3 bytes only for existing `/audio` URLs.
+- Atlas is the source of truth for new speech generation, caching, and provider selection.
+- Remove this worker after all clients stop using `/generate` and `/audio`.
 
 ## Bindings expected
 
 - `TTS_DB` — D1 database with `tts_audio` table.
-- `AUDIO_BUCKET` — R2 bucket for generated audio.
-- `OPENAI_API_KEY` — configured as a worker secret, never committed.
+- `AUDIO_BUCKET` — R2 bucket for legacy generated audio.
+- `ATLAS_SERVICE` — service binding for the Atlas worker.
+- `ATLAS_API_KEY` — service key with `atlas.run`, configured as a worker secret, never committed.
 
 ## Validation
 

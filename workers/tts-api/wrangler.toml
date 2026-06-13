@@ -4,8 +4,8 @@ compatibility_date = "2026-05-27"
 account_id = "dc2b7d14a69351375cab6de9a13ddee9"
 workers_dev = true
 
-# Temporary compatibility Worker for the Yes No proof app.
-# Long-term TTS ownership moves into workers/generation-api.
+# Temporary compatibility Worker for legacy speech routes.
+# New speech generation and provider selection are owned by Atlas.
 
 [[d1_databases]]
 binding = "TTS_DB"
@@ -16,9 +16,14 @@ database_id = "ab7cdbd1-e50a-4862-b8eb-681d263c3f66"
 binding = "AUDIO_BUCKET"
 bucket_name = "tiko-tts-audio-dev"
 
+[[services]]
+binding = "ATLAS_SERVICE"
+service = "tiko-atlas-api-dev"
+
 [vars]
 TIKO_ENVIRONMENT = "development"
 TTS_PUBLIC_ROUTE = "https://dev.tts.tikotalks.com"
+ATLAS_BASE_URL = "https://api.tikotalks.com/v1/atlas"
 
 # ── Production environment ──────────────────────────────────────
 # Temporary production route for Yes No compatibility.
@@ -32,6 +37,7 @@ workers_dev = false
 [env.production.vars]
 TIKO_ENVIRONMENT = "production"
 TTS_PUBLIC_ROUTE = "https://tts.tikotalks.com"
+ATLAS_BASE_URL = "https://api.tikotalks.com/v1/atlas"
 
 [[env.production.d1_databases]]
 binding = "TTS_DB"
@@ -41,6 +47,10 @@ database_id = "ab7cdbd1-e50a-4862-b8eb-681d263c3f66"
 [[env.production.r2_buckets]]
 binding = "AUDIO_BUCKET"
 bucket_name = "tiko-tts-audio"
+
+[[env.production.services]]
+binding = "ATLAS_SERVICE"
+service = "tiko-atlas-api"
 
 [[env.production.routes]]
 pattern = "tts.tikotalks.com"

@@ -90,9 +90,24 @@ struct TalkView: View {
                         onClear: store.clearSentence
                     )
                     statusSection
+
+                    if store.isPredicting {
+                        // Non-intrusive "thinking" hint while the next set loads.
+                        HStack(spacing: 7) {
+                            ProgressView().scaleEffect(0.7)
+                            Text("Finding words…")
+                                .font(.system(.caption, design: .rounded).weight(.bold))
+                                .foregroundStyle(TikoAppColor.talk.palette.dark.opacity(0.6))
+                        }
+                        .padding(.horizontal, 12)
+                        .padding(.vertical, 6)
+                        .background(.regularMaterial, in: Capsule())
+                        .transition(.opacity.combined(with: .scale))
+                    }
                 }
                 .padding(.horizontal, 16)
                 .padding(.top, 12)
+                .animation(.easeInOut(duration: 0.2), value: store.isPredicting)
             }
             .overlay(alignment: .bottom) { searchControl }
             .task {
@@ -133,9 +148,20 @@ struct TalkView: View {
         ScrollView {
             LazyVGrid(columns: columns, spacing: 12) {
                 ForEach(visibleBoardWords) { word in
-                    TalkWordTileView(word: word, appColor: .talk) {
+                    Button {
                         Task { await addWord(word) }
+                    } label: {
+                        // Same square tile as the Cards app items: image at 75% + label.
+                        TikoSquareTile(
+                            title: word.text,
+                            background: TalkPosColor.color(for: word.pos).opacity(0.22)
+                        ) {
+                            if let image = word.image, let url = URL(string: image) {
+                                TikoCachedRemoteImage(url: url) { Color.clear }
+                            }
+                        }
                     }
+                    .buttonStyle(.plain)
                 }
             }
             .padding(.top, 96)

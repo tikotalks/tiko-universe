@@ -8,7 +8,11 @@ interface Env extends AuthEnv {
     get(key: string): Promise<{ body: BodyInit; httpMetadata?: { contentType?: string } } | null>
     put(key: string, value: ArrayBuffer | Uint8Array, options?: Record<string, unknown>): Promise<unknown>
   }
-  OPENAI_API_KEY?: string
+  ATLAS_SERVICE?: {
+    fetch(input: Request | string, init?: RequestInit): Promise<Response>
+  }
+  ATLAS_BASE_URL?: string
+  ATLAS_API_KEY?: string
 }
 
 interface GenerateRequest {
@@ -34,6 +38,18 @@ interface AudioRecord {
   duration_seconds?: number
 }
 
+interface AtlasSpeechResponse {
+  data?: {
+    id?: string
+    audioUrl?: string
+    contentType?: string
+    cached?: boolean
+    provider?: { name?: string; model?: string; voice?: string }
+  }
+  meta?: { cached?: boolean; schemaVersion?: number; requestId?: string }
+  error?: { code?: string; message?: string }
+}
+
 interface UsagePolicy {
   capability: string
   units: number
@@ -48,7 +64,6 @@ const CORS_HEADERS = {
 }
 
 const OPENAI_VOICES = new Set(['alloy', 'ash', 'ballad', 'coral', 'echo', 'fable', 'nova', 'onyx', 'sage', 'shimmer', 'verse'])
-const PROVIDER_TIMEOUT_MS = 15_000
 
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
@@ -100,38 +115,7 @@ async function generate(request: Request, env: Env, subjectKey: string): Promise
   const existing = await findAudio(textHash, env)
   if (existing) return json({ success: true, audioUrl: existing.audio_url, cached: true, metadata: existing })
 
-  const generated = await generateAudioBytes(normalized, env)
-  if ('error' in generated) return json({ success: false, error: generated.error }, generated.status ?? 503)
-
-  const r2Key = `audio/${textHash}.mp3`
-  await env.AUDIO_BUCKET.put(r2Key, generated.bytes, {
-    httpMetadata: { contentType: 'audio/mpeg', cacheControl: 'public, max-age=31536000, immutable' },
-  })
-
-  const audioUrl = `/audio?key=${encodeURIComponent(r2Key)}`
-  const id = crypto.randomUUID()
-  await env.TTS_DB.prepare(`INSERT OR IGNORE INTO tts_audio (
-    id, text_hash, text, language, provider, voice, model, speed, pitch, audio_url, r2_key, file_size_bytes, generated_at
-  ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`).bind(
-    id,
-    textHash,
-    normalized.text,
-    normalized.language,
-    normalized.provider,
-    normalized.voice,
-    normalized.model,
-    normalized.speed,
-    normalized.pitch,
-    audioUrl,
-    r2Key,
-    generated.bytes.byteLength,
-    new Date().toISOString(),
-  ).run()
-
-  const stored = await findAudio(textHash, env)
-  if (stored) return json({ success: true, audioUrl: stored.audio_url, cached: stored.id !== id, metadata: stored })
-
-  return json({ success: true, audioUrl, cached: false })
+  return synthesizeWithAtlas(normalized, env)
 }
 
 async function recordUsageWindow(env: Env, subjectKey: string, policy: UsagePolicy): Promise<Response | null> {
@@ -220,70 +204,44 @@ async function findAudio(textHash: string, env: Env): Promise<AudioRecord | null
     FROM tts_audio WHERE text_hash = ? LIMIT 1`).bind(textHash).first<AudioRecord>()
 }
 
-async function generateAudioBytes(input: Required<GenerateRequest>, env: Env): Promise<{ success: true; bytes: Uint8Array } | { success: false; error: string; status?: number }> {
-  if (input.provider === 'azure') return { success: false, error: 'azure_tts_not_configured', status: 501 }
-  if (!env.OPENAI_API_KEY) return { success: false, error: 'tts_generation_not_configured', status: 503 }
+async function synthesizeWithAtlas(input: Required<GenerateRequest>, env: Env): Promise<Response> {
+  if (!env.ATLAS_SERVICE || !env.ATLAS_API_KEY) return json({ success: false, error: 'atlas_tts_not_configured' }, 503)
 
-  let response: Response
-  try {
-    response = await fetchWithRetry('https://api.openai.com/v1/audio/speech', {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${env.OPENAI_API_KEY}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        model: input.model,
-        voice: input.voice,
-        input: input.text,
-        response_format: 'mp3',
-        speed: input.speed,
-      }),
-    }, { timeoutMs: PROVIDER_TIMEOUT_MS })
-  } catch {
-    return { success: false, error: 'openai_tts_unavailable', status: 503 }
-  }
+  const atlasBase = (env.ATLAS_BASE_URL ?? 'https://api.tikotalks.com/v1/atlas').replace(/\/$/, '')
+  const atlasURL = atlasBase.endsWith('/speech') ? atlasBase : `${atlasBase}/speech`
+  const response = await env.ATLAS_SERVICE.fetch(new Request(atlasURL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${env.ATLAS_API_KEY}` },
+    body: JSON.stringify({
+      app: 'tts-api',
+      purpose: 'compatibility-tts',
+      text: input.text,
+      language: input.language,
+      speed: input.speed,
+      pitch: input.pitch,
+    }),
+  }))
+  const body = await response.json().catch(() => null) as AtlasSpeechResponse | null
 
-  if (!response.ok) {
-    const message = await response.text().catch(() => '')
-    return { success: false, error: message ? `openai_tts_failed:${message.slice(0, 180)}` : 'openai_tts_failed', status: 502 }
-  }
+  if (!response.ok) return json({ success: false, error: body?.error?.code ?? 'atlas_tts_failed' }, response.status)
 
-  return { success: true, bytes: new Uint8Array(await response.arrayBuffer()) }
-}
+  const data = body?.data
+  if (!data?.audioUrl) return json({ success: false, error: 'atlas_tts_invalid_response' }, 502)
 
-async function fetchWithRetry(input: RequestInfo | URL, init: RequestInit, options: { timeoutMs: number }): Promise<Response> {
-  let lastError: unknown
-  for (let attempt = 0; attempt < 2; attempt += 1) {
-    const response = await fetchWithTimeout(input, init, options.timeoutMs).catch((error) => {
-      lastError = error
-      return null
-    })
-    if (!response) continue
-    if (attempt === 0 && isRetryableStatus(response.status)) {
-      await response.body?.cancel().catch(() => undefined)
-      continue
-    }
-    return response
-  }
-  throw lastError instanceof Error ? lastError : new Error('fetch_failed')
-}
-
-async function fetchWithTimeout(input: RequestInfo | URL, init: RequestInit, timeoutMs: number): Promise<Response> {
-  const controller = new AbortController()
-  const timeout = setTimeout(() => controller.abort(), timeoutMs)
-  try {
-    return await fetch(input, {
-      ...init,
-      signal: controller.signal,
-    })
-  } finally {
-    clearTimeout(timeout)
-  }
-}
-
-function isRetryableStatus(status: number): boolean {
-  return status === 408 || status === 429 || status >= 500
+  return json({
+    success: true,
+    audioUrl: data.audioUrl,
+    cached: body?.meta?.cached ?? data.cached ?? false,
+    metadata: {
+      id: data.id,
+      provider: data.provider?.name,
+      voice: data.provider?.voice,
+      model: data.provider?.model,
+      language: input.language,
+      requestId: body?.meta?.requestId,
+      schemaVersion: body?.meta?.schemaVersion,
+    },
+  })
 }
 
 function clamp(value: number, min: number, max: number) {

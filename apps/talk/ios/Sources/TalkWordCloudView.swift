@@ -33,6 +33,10 @@ struct TalkWordCloudView: View {
     }
 
     @State private var appeared = false
+    @State private var zoom: CGFloat = 1
+    @GestureState private var pinch: CGFloat = 1
+
+    private var currentZoom: CGFloat { min(2.5, max(0.6, zoom * pinch)) }
 
     var body: some View {
         let layout = computeLayout()
@@ -58,9 +62,16 @@ struct TalkWordCloudView: View {
                 .frame(width: layout.canvas.width, height: layout.canvas.height)
                 // Smoothly reflow when the board reorders (e.g. after a word is tapped).
                 .animation(.spring(response: 0.55, dampingFraction: 0.82), value: words.map(\.id))
+                .scaleEffect(currentZoom)
             }
             .defaultScrollAnchor(.center)
             .scrollClipDisabled()
+            // Pinch to zoom the whole cloud in/out (pan still works with one finger).
+            .simultaneousGesture(
+                MagnificationGesture()
+                    .updating($pinch) { value, state, _ in state = value }
+                    .onEnded { value in zoom = min(2.5, max(0.6, zoom * value)) }
+            )
             .onAppear { appeared = true }
             // When the set changes (a word was chosen), bring the new most-likely
             // word back to the middle.
@@ -156,19 +167,28 @@ private struct TalkCloudBubble: View {
                     .shadow(color: appColor.palette.dark.opacity(0.1), radius: diameter * 0.06, y: 3)
 
                 if let mediaURL {
-                    AsyncImage(url: mediaURL) { image in
-                        image.resizable().scaledToFill()
-                    } placeholder: {
+                    // Image at 75% of the circle, with a little label pill on the bottom.
+                    TikoCachedRemoteImage(url: mediaURL) {
                         Text(word.text)
-                            .font(.system(size: diameter * 0.18, weight: .heavy, design: .rounded))
+                            .font(.system(size: diameter * 0.16, weight: .heavy, design: .rounded))
                             .foregroundStyle(appColor.palette.dark)
-                            .lineLimit(2)
-                            .minimumScaleFactor(0.6)
-                            .multilineTextAlignment(.center)
-                            .padding(diameter * 0.14)
+                            .lineLimit(2).minimumScaleFactor(0.6).multilineTextAlignment(.center)
                     }
-                    .frame(width: diameter, height: diameter)
+                    .frame(width: diameter * 0.75, height: diameter * 0.75)
                     .clipShape(Circle())
+                    .position(x: diameter * 0.5, y: diameter * 0.45)
+
+                    VStack {
+                        Spacer()
+                        Text(word.text)
+                            .font(.system(size: diameter * 0.14, weight: .heavy, design: .rounded))
+                            .foregroundStyle(appColor.palette.dark)
+                            .lineLimit(1).minimumScaleFactor(0.6)
+                            .padding(.horizontal, diameter * 0.08)
+                            .padding(.vertical, diameter * 0.03)
+                            .background(.regularMaterial, in: Capsule())
+                    }
+                    .padding(.bottom, diameter * 0.06)
                 } else {
                     Text(word.text)
                         .font(.system(size: diameter * 0.2, weight: .heavy, design: .rounded))
