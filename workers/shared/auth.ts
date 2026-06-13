@@ -75,6 +75,7 @@ export interface AuthenticateOptions {
 
 export interface RequireRoleOptions {
   capabilities?: string[]
+  product?: string
 }
 
 // ── Session validation response from identity-api ────────────
@@ -213,6 +214,19 @@ async function validateSession(
   }
 }
 
+export async function loadIdentityRoles(env: AuthEnv, subjectId: string, product = 'tiko'): Promise<string[]> {
+  if (!env.AUTH_DB) return []
+  const { results } = await env.AUTH_DB.prepare(
+    'SELECT role FROM identity_role_assignments WHERE subject_id = ? AND product = ? AND revoked_at IS NULL',
+  )
+    .bind(subjectId, product)
+    .all()
+  return Array.from(new Set(results
+    .map((row) => (row && typeof row === 'object' && 'role' in row ? String((row as { role?: unknown }).role ?? '') : ''))
+    .filter(Boolean)))
+    .sort()
+}
+
 // ── Main authenticate function ───────────────────────────────
 
 export async function authenticate(
@@ -286,7 +300,16 @@ export async function requireRole(
   const session = await requireSession(request, env)
   if (session instanceof Response) return session
   const allowed = new Set(roles)
-  const hasRole = session.roles?.some((role) => allowed.has(role)) === true
+  const userId = session.userId
+  if (!userId) {
+    return new Response(
+      JSON.stringify({ error: { code: 'session_required', message: 'A Tiko user session is required.' } }),
+      { status: 403, headers: { 'content-type': 'application/json' } },
+    )
+  }
+  const sessionRoles = session.roles?.length ? session.roles : await loadIdentityRoles(env, userId, options.product ?? 'tiko')
+  session.roles = sessionRoles
+  const hasRole = sessionRoles.some((role) => allowed.has(role)) === true
   const hasCapability = options.capabilities?.some((capability) => session.capabilities?.[capability] === true) === true
   if (!hasRole && !hasCapability) {
     return new Response(

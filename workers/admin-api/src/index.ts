@@ -1,4 +1,4 @@
-import { authenticate, type AuthEnv } from '../../shared/auth'
+import { authenticate, loadIdentityRoles, type AuthEnv } from '../../shared/auth'
 import { DEFAULT_ATLAS_SPEECH_CONFIG, DEFAULT_NARAKEET_VOICE_BY_LOCALE, normalizeSpeechServiceConfig, type AtlasSpeechServiceConfig } from '../../shared/atlas-speech-config'
 
 type D1Value = string | number | boolean | null
@@ -577,10 +577,7 @@ async function requireAdmin(request: Request, env: Env): Promise<AdminSession | 
 }
 
 async function activeRoles(db: D1Database, subjectId: string): Promise<string[]> {
-  const { results } = await db.prepare('SELECT role FROM identity_role_assignments WHERE subject_id = ? AND product = ? AND revoked_at IS NULL')
-    .bind(subjectId, PRODUCT)
-    .all<{ role: string }>()
-  return Array.from(new Set(results.map((row) => row.role).filter(Boolean))).sort()
+  return loadIdentityRoles({ AUTH_DB: db }, subjectId, PRODUCT)
 }
 
 async function canBootstrapAdmin(env: Env, row: { email_hash: string | null }): Promise<boolean> {
