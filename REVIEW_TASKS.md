@@ -207,6 +207,7 @@ Approximate review spread: 7 Critical, about 35 High, about 70 Medium, and about
   - `@tiko/ui` index into focused modules.
   - [x] Move `@tiko/ui` app config, app colors, palette, and open-icon constants into a focused module.
   - [x] Move `TikoOpenIconPicker` out of the `@tiko/ui` barrel into its own component module.
+  - [x] Move Tiko app shell/header, choice grid, settings panel, and app meta helpers out of the `@tiko/ui` barrel.
 
 - [ ] Unify TTS architecture.
   - Retire tts-api and generation-api local provider path, or make Atlas persist into the one shared cache.
