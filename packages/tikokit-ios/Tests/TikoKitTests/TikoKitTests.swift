@@ -97,6 +97,28 @@ final class TikoKitTests: XCTestCase {
         XCTAssertEqual(i18n.t("yesNo.answers.yes"), "Runtime yes")
     }
 
+    @MainActor
+    func testI18nHasMalteseFallbacksForCurrentAppKeys() {
+        let previousBaseURL = TikoI18n.translationsBaseURL
+        TikoI18n.translationsBaseURL = nil
+        defer { TikoI18n.translationsBaseURL = previousBaseURL }
+
+        let cases: [(TikoAppKey, String, String)] = [
+            (.type, "type.compose.placeholder", "Type what you want to say"),
+            (.timer, "timer.controls.start", "Start"),
+            (.radio, "radio.collections.title", "Collections"),
+            (.cards, "cards.settings.collections", "Collections"),
+            (.sequence, "sequence.empty.title", "No sequences yet"),
+            (.todo, "todo.empty.title", "No items yet"),
+        ]
+
+        for (app, key, english) in cases {
+            let i18n = TikoI18n(app: app, languageCode: "mt")
+            XCTAssertNotEqual(i18n.t(key), english)
+            XCTAssertNotEqual(i18n.t(key), key)
+        }
+    }
+
     func testSpeechLanguageMappingUsesAppLanguageCodes() {
         XCTAssertEqual(TikoSpeech.languageCode(for: "en"), "en-US")
         XCTAssertEqual(TikoSpeech.languageCode(for: "nl"), "nl-NL")

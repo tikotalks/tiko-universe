@@ -95,6 +95,24 @@ describe('@tiko/i18n fallback contract', () => {
     expect(label.value).toBe('Iva')
   })
 
+  it('keeps Maltese fallback coverage for current non-Talk app UI keys', () => {
+    const cases: Array<{ app: TikoAppKey, key: string, english: string }> = [
+      { app: 'type', key: tikoI18nKeys.type.compose.placeholder, english: 'Type what you want to say' },
+      { app: 'timer', key: tikoI18nKeys.timer.controls.start, english: 'Start' },
+      { app: 'radio', key: tikoI18nKeys.radio.player.noTracks, english: 'No tracks loaded' },
+      { app: 'cards', key: tikoI18nKeys.cards.collections.empty, english: 'No collections yet.' },
+      { app: 'sequence', key: tikoI18nKeys.sequence.empty.title, english: 'No sequences yet' },
+      { app: 'todo', key: tikoI18nKeys.todo.empty.title, english: 'No items yet' },
+    ]
+
+    for (const testCase of cases) {
+      const i18n = createI18n({ app: testCase.app, language: 'mt' })
+
+      expect(i18n.t(testCase.key)).not.toBe(testCase.english)
+      expect(i18n.t(testCase.key)).not.toBe(testCase.key)
+    }
+  })
+
   it('exposes typed app and language contracts for web, iOS, Android, and Lezu callers', () => {
     const app: TikoAppKey = 'type'
     const language: TikoLanguage = 'hy'

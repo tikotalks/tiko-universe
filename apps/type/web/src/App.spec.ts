@@ -97,9 +97,9 @@ describe('Type App', () => {
       'tiko:type': JSON.stringify({ language: 'mt' }),
     })
     await wrapper.find('.type-app__textarea').setValue('Bongu')
-    const speakBtn = wrapper.findAll('button').find(b => b.attributes('aria-label') === 'Speak')
-    expect(speakBtn).toBeTruthy()
-    await speakBtn!.trigger('click')
+    const speakBtn = wrapper.find('.type-app__icon-btn--primary')
+    expect(speakBtn.exists()).toBe(true)
+    await speakBtn.trigger('click')
     await flushPromises()
 
     const speechCall = fetchMock.mock.calls.find(([, init]) => {

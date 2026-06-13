@@ -126,7 +126,7 @@ Approximate review spread: 7 Critical, about 35 High, about 70 Medium, and about
   - Use named Tiko color enum values, never per-item `colorHex`.
   - Resolve display URLs and hex values from shared Tiko-wide sources.
 
-- [ ] Fix app language behavior.
+- [x] Fix app language behavior.
   - Make UI i18n reactive on web and iOS.
   - Reload server-owned translated content when language changes.
   - Ensure Maltese and every configured supported language has coverage for shell/profile/settings/app UI.
