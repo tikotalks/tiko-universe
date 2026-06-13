@@ -218,6 +218,7 @@ Approximate review spread: 7 Critical, about 35 High, about 70 Medium, and about
 - [ ] Split god files.
   - generation-api routes into modules.
   - [x] Extract generation-api speech normalization and Atlas speech helpers into a focused module.
+  - [x] Extract generation-api image prompt and style helpers into a focused module.
   - [x] Extract generation-api HTTP response and provider fetch helpers into a focused module.
   - [x] Extract generation-api auth, ownership, and paid usage helpers into a focused module.
   - content/media/identity workers where useful.
