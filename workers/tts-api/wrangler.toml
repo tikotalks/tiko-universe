@@ -16,6 +16,11 @@ database_id = "036a1726-ac16-48a9-ab76-22c3a88ca7ae"
 binding = "ATLAS_SERVICE"
 service = "tiko-atlas-api-dev"
 
+[[secrets_store_secrets]]
+binding = "PEPPER_SECRET"
+store_id = "0ba6468063e04b779e529f5db651896b"
+secret_name = "TOKEN_PEPPER"
+
 [vars]
 TIKO_ENVIRONMENT = "development"
 TTS_PUBLIC_ROUTE = "https://dev.tts.tikotalks.com"
@@ -42,6 +47,11 @@ database_id = "036a1726-ac16-48a9-ab76-22c3a88ca7ae"
 [[env.production.services]]
 binding = "ATLAS_SERVICE"
 service = "tiko-atlas-api"
+
+[[env.production.secrets_store_secrets]]
+binding = "PEPPER_SECRET"
+store_id = "0ba6468063e04b779e529f5db651896b"
+secret_name = "TOKEN_PEPPER"
 
 [[env.production.routes]]
 pattern = "tts.tikotalks.com"
