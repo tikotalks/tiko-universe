@@ -3,7 +3,7 @@ import { computed, nextTick, onMounted, ref, watch } from 'vue'
 import { useBemm } from 'bemm'
 import { Button, InputText, InputTextArea } from '@sil/ui'
 import ImageGenerationQueue from '../components/images/ImageGenerationQueue.vue'
-import type { EditInput, EnrichInput, GenerateInput, QueueItem, TikoStyle } from '../components/images/imageGenerationQueueTypes'
+import type { EditInput, EnrichInput, GenerateInput, QueueItem, TikoStyle, UpscaleInput } from '../components/images/imageGenerationQueueTypes'
 import { useImageGeneration, type ImageGalleryItem } from '../composables/useImageGeneration'
 
 type Tab = 'library' | 'drafts' | 'create'
@@ -28,7 +28,6 @@ const size = ref<'1024x1024' | '1024x1792' | '1792x1024'>('1024x1024')
 const quality = ref<'standard' | 'hd'>('standard')
 const tikoStyle = ref<TikoStyle>('tiko-v2')
 const previewCount = ref(4)
-const upscalingId = ref<string | null>(null)
 const pushingToMediaIds = ref<Set<string>>(new Set())
 
 const queue = ref<QueueItem[]>([])
@@ -39,6 +38,12 @@ const enrichingIds = computed(() => new Set(
   queue.value
     .filter(i => i.input.type === 'enrich' && (i.status === 'pending' || i.status === 'generating'))
     .map(i => (i.input as EnrichInput).sourceId),
+))
+
+const upscalingIds = computed(() => new Set(
+  queue.value
+    .filter(i => i.input.type === 'upscale' && (i.status === 'pending' || i.status === 'generating'))
+    .map(i => (i.input as UpscaleInput).sourceId),
 ))
 
 const editItem = ref<ImageGalleryItem | null>(null)
@@ -134,38 +139,26 @@ function onEnrich(item: ImageGalleryItem, list: 'library' | 'drafts') {
   void processQueue()
 }
 
-async function onUpscale(item: ImageGalleryItem) {
-  upscalingId.value = item.id
-  galleryError.value = null
-  try {
-    const result = await upscaleImage(item.id, '1024x1024', 'medium')
-    draftItems.value = draftItems.value.filter(i => i.id !== item.id)
-    draftItems.value.unshift({
-      id: result.id,
-      imageUrl: result.imageUrl,
-      prompt: result.prompt,
-      revisedPrompt: result.revisedPrompt,
-      model: 'gpt-image-2',
-      size: result.size,
-      quality: result.quality,
-      style: result.style,
-      width: result.width,
-      height: result.height,
-      fileSizeBytes: result.fileSizeBytes,
-      title: item.title,
-      description: item.description,
+function onUpscale(item: ImageGalleryItem) {
+  queueCounter += 1
+  queue.value.push({
+    id: `q${queueCounter}`,
+    label: `Upscale: ${item.title || item.id.slice(0, 8)}`,
+    input: {
+      type: 'upscale',
+      sourceId: item.id,
+      size: '1024x1024',
+      quality: 'medium',
+      title: item.title ?? undefined,
+      description: item.description ?? undefined,
       category: item.category,
       tags: item.tags,
-      status: 'draft',
-      isPreview: false,
-      mediaId: null,
-      createdAt: result.createdAt,
-    })
-  } catch (e) {
-    galleryError.value = e instanceof Error ? e.message : 'Could not upscale image.'
-  } finally {
-    upscalingId.value = null
-  }
+    },
+    status: 'pending',
+    result: null,
+    error: null,
+  })
+  void processQueue()
 }
 
 async function onDelete(item: ImageGalleryItem, list: 'library' | 'drafts') {
@@ -228,6 +221,32 @@ async function processQueue() {
               category: result.categories[0] ?? items.value[idx].category,
             }
           }
+        } else if (pending.input.type === 'upscale') {
+          const input = pending.input
+          const result = await upscaleImage(input.sourceId, input.size, input.quality)
+          pending.result = result
+          draftItems.value = draftItems.value.filter(i => i.id !== input.sourceId)
+          draftItems.value.unshift({
+            id: result.id,
+            imageUrl: result.imageUrl,
+            prompt: result.prompt,
+            revisedPrompt: result.revisedPrompt,
+            model: 'gpt-image-2',
+            size: result.size,
+            quality: result.quality,
+            style: result.style,
+            width: result.width,
+            height: result.height,
+            fileSizeBytes: result.fileSizeBytes,
+            title: input.title ?? null,
+            description: input.description ?? null,
+            category: input.category ?? 'generated',
+            tags: input.tags ?? [],
+            status: 'draft',
+            isPreview: false,
+            mediaId: null,
+            createdAt: result.createdAt,
+          })
         } else if (pending.input.type === 'edit') {
           pending.result = await editImage(pending.input.sourceId, pending.input.prompt, pending.input.maskBase64, pending.input.size)
         } else {
@@ -491,7 +510,7 @@ onMounted(() => { void loadLibrary() })
             <p v-else :class="card('prompt')">{{ item.revisedPrompt || item.prompt }}</p>
             <div :class="card('actions')">
               <Button v-if="!item.isPreview" size="small" @click="onPromote(item)">Promote</Button>
-              <Button v-if="item.isPreview" size="small" variant="outline" :loading="upscalingId === item.id" :disabled="upscalingId !== null" @click="onUpscale(item)">Upscale</Button>
+              <Button v-if="item.isPreview" size="small" variant="outline" :loading="upscalingIds.has(item.id)" @click="onUpscale(item)">Upscale</Button>
               <Button size="small" variant="outline" :loading="enrichingIds.has(item.id)" @click="onEnrich(item, 'drafts')">Enrich</Button>
               <Button size="small" variant="outline" @click="openEdit(item)">Edit</Button>
               <Button variant="ghost" size="small" :href="imageSrc(item)" target="_blank" rel="noreferrer">Open</Button>
