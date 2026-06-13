@@ -10,6 +10,9 @@ struct TalkView: View {
     @State private var saveMessage: String?
     @AppStorage("tiko.language") private var languageCode = "en"
     @AppStorage("talk.nativeSpeechFallback") private var nativeSpeechFallback = true
+    @AppStorage("talk.boardMode") private var boardModeRaw = TalkBoardMode.cloud.rawValue
+
+    private var boardMode: TalkBoardMode { TalkBoardMode(rawValue: boardModeRaw) ?? .cloud }
 
     private let speechService = TalkSpeechService()
     private let audioPlayer = TalkAudioPlayer()
@@ -61,7 +64,16 @@ struct TalkView: View {
                     categoryTabs
                 }
 
-                wordGrid
+                boardModePicker
+
+                if boardMode == .cloud {
+                    TalkWordCloudView(words: store.filteredWords, appColor: .talk) { word in
+                        Task { await addWord(word) }
+                    }
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                } else {
+                    wordGrid
+                }
             }
             .padding(.horizontal, 16)
             .padding(.top, 12)
@@ -160,6 +172,15 @@ struct TalkView: View {
             }
             .padding(.vertical, 2)
         }
+    }
+
+    private var boardModePicker: some View {
+        Picker("Board layout", selection: $boardModeRaw) {
+            Label("Cloud", systemImage: "circle.hexagongrid.fill").tag(TalkBoardMode.cloud.rawValue)
+            Label("Tiles", systemImage: "square.grid.2x2.fill").tag(TalkBoardMode.tile.rawValue)
+        }
+        .pickerStyle(.segmented)
+        .accessibilityLabel("Board layout: cloud or tiles")
     }
 
     private var wordGrid: some View {
