@@ -7,6 +7,11 @@ workers_dev = true
 # Talk sentence-building API. Backend owns language packs, grammar, suggestions,
 # saved phrases, and AI-powered word predictions with usage-based score blending.
 
+# Nightly learning pass: folds click/usage data into transition weights and
+# prediction scores (handleScheduled in src/index.ts).
+[triggers]
+crons = ["0 3 * * *"]
+
 [vars]
 TIKO_ENVIRONMENT = "development"
 ALLOWED_ORIGINS = "https://talk.tikoapps.org,https://dev.talk.tikoapps.org,http://localhost:3066,http://localhost:5173,http://localhost:4173,capacitor://localhost,ionic://localhost,tiko://native"
@@ -44,6 +49,9 @@ custom_domain = true
 [env.production]
 name = "tiko-sentence-api"
 workers_dev = false
+
+[env.production.triggers]
+crons = ["0 3 * * *"]
 
 [env.production.vars]
 TIKO_ENVIRONMENT = "production"

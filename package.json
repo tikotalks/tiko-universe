@@ -14,6 +14,7 @@
     "check": "npm run lint && npm run typecheck && npm run test",
     "generate:app-configs": "node tools/generate-app-configs.mjs",
     "generate:colors": "node tools/generate-tiko-colors.mjs",
+    "generate:talk-seeds": "node tools/generate-talk-seeds.mjs",
     "prebuild": "npm run generate:colors && (npm run generate:app-configs || true)",
     "lint": "node tools/check-placeholders.mjs",
     "typecheck": "vue-tsc --noEmit -p tsconfig.json",
@@ -47,6 +48,7 @@
     "@capacitor/android": "^8.4.0",
     "@capacitor/cli": "^8.4.0",
     "@capacitor/core": "^8.4.0",
+    "@playwright/test": "^1.56.1",
     "@types/node": "^25.9.1",
     "wrangler": "^4.98.0"
   }

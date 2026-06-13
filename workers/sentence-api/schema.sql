@@ -115,3 +115,38 @@ CREATE TABLE IF NOT EXISTS talk_word_predictions (
 );
 
 CREATE INDEX IF NOT EXISTS idx_talk_word_predictions_seq ON talk_word_predictions(pack_id, sequence_hash, final_score DESC);
+
+-- User-added vocabulary: words a user typed in themselves (e.g. a name like "Sil")
+-- that are not in the curated pack. Scoped per subject + locale. Surfaced in the
+-- board and resolvable inside sentences/saved phrases for that user only.
+CREATE TABLE IF NOT EXISTS talk_user_words (
+  id TEXT PRIMARY KEY,
+  subject_id TEXT NOT NULL,
+  locale TEXT NOT NULL,
+  text TEXT NOT NULL,
+  normalized_text TEXT NOT NULL,
+  pos TEXT NOT NULL DEFAULT 'noun',
+  category TEXT NOT NULL DEFAULT 'mine',
+  icon TEXT,
+  usage_count INTEGER NOT NULL DEFAULT 1 CHECK (usage_count > 0),
+  created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  UNIQUE (subject_id, locale, normalized_text)
+);
+
+CREATE INDEX IF NOT EXISTS idx_talk_user_words_subject ON talk_user_words(subject_id, locale, pos);
+
+-- Per-user learning overlay: how often a specific subject picked a word after a
+-- given sequence. Personalizes ranking on top of the global predictions without
+-- polluting the shared model.
+CREATE TABLE IF NOT EXISTS talk_user_affinity (
+  subject_id TEXT NOT NULL,
+  locale TEXT NOT NULL,
+  sequence_hash TEXT NOT NULL,
+  word_id TEXT NOT NULL,
+  click_count INTEGER NOT NULL DEFAULT 1 CHECK (click_count > 0),
+  updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (subject_id, sequence_hash, word_id)
+);
+
+CREATE INDEX IF NOT EXISTS idx_talk_user_affinity_lookup ON talk_user_affinity(subject_id, sequence_hash, click_count DESC);

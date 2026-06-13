@@ -14,6 +14,8 @@ export interface WordTile {
   category: TalkCategoryId
   icon?: TalkIconName
   image?: string
+  /** True when this tile is a user-added word rather than a curated pack word. */
+  isCustom?: boolean
 }
 
 export interface Category {
@@ -147,12 +149,52 @@ export interface SentenceVocabularyRequest {
   locale: TalkLocale
   category?: TalkCategoryId
   pos?: TalkPartOfSpeech
+  /** Free-text board filter; matches word text case-insensitively. */
+  q?: string
+  /** Ankore subject id. When present, the user's custom words are merged in. */
+  userId?: string
 }
 
 export interface SentenceVocabularyResponse {
   words: WordTile[]
   categories: Category[]
   totalWords: number
+}
+
+/** A word a user added themselves (e.g. a name like "Sil") for their own vocabulary. */
+export interface UserWord {
+  id: TalkWordId
+  text: string
+  pos: TalkPartOfSpeech
+  category: TalkCategoryId
+  icon?: TalkIconName
+  usageCount: number
+}
+
+export interface ListUserWordsResponse {
+  words: UserWord[]
+}
+
+export interface AddUserWordRequest extends TalkUserScopedRequest {
+  text: string
+  /** Part of speech so grammar transitions keep working. Defaults to "noun". */
+  pos?: TalkPartOfSpeech
+  category?: TalkCategoryId
+  icon?: TalkIconName
+  /**
+   * Ordered word ids already in the strip when the word was added. When present,
+   * the new word is immediately learned for that position so it surfaces next time
+   * the same prefix is built (e.g. "My name is" -> "Sil").
+   */
+  afterWordIds?: TalkWordId[]
+}
+
+export interface AddUserWordResponse {
+  word: UserWord
+}
+
+export interface DeleteUserWordResponse {
+  deleted: true
 }
 
 export interface SentencePhrasesRequest {
@@ -203,6 +245,9 @@ export type SentenceApiRoute =
   | 'GET /v1/sentence/phrases'
   | 'POST /v1/sentence/phrases'
   | 'DELETE /v1/sentence/phrases/:phraseId'
+  | 'GET /v1/sentence/words'
+  | 'POST /v1/sentence/words'
+  | 'DELETE /v1/sentence/words/:wordId'
   | 'POST /v1/sentence-admin/generate-pack'
 
 export interface SentenceUsageAggregate {
@@ -225,6 +270,9 @@ export const sentenceApiRoutes = [
   'GET /v1/sentence/phrases',
   'POST /v1/sentence/phrases',
   'DELETE /v1/sentence/phrases/:phraseId',
+  'GET /v1/sentence/words',
+  'POST /v1/sentence/words',
+  'DELETE /v1/sentence/words/:wordId',
   'POST /v1/sentence-admin/generate-pack',
 ] as const satisfies readonly SentenceApiRoute[]
 
