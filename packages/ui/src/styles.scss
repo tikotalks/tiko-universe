@@ -827,6 +827,20 @@ body {
   background: color-mix(in srgb, var(--color-foreground), transparent 40%);
 }
 
+.tiko-tile-board__item {
+  position: relative;
+  aspect-ratio: 1;
+  min-width: 0;
+}
+
+.tiko-tile-board__item--editing {
+  cursor: grab;
+}
+
+.tiko-tile-board__item--selected {
+  z-index: 1;
+}
+
 .tiko-sheet {
   display: flex;
   flex-direction: column;

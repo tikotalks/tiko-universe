@@ -6,6 +6,7 @@ export { default as TikoProfileMenu } from './TikoProfileMenu.vue'
 export { default as TikoPinPopup } from './TikoPinPopup.vue'
 export { default as TikoSquareTile } from './TikoSquareTile.vue'
 export { default as TikoPagedTileGrid } from './TikoPagedTileGrid.vue'
+export { default as TikoTileBoard } from './TikoTileBoard.vue'
 export { default as TikoSheet } from './TikoSheet.vue'
 export { default as TikoField } from './TikoField.vue'
 export { default as TikoColorPicker } from './TikoColorPicker.vue'
@@ -287,6 +288,7 @@ export const tikoKitComponents = [
   'TikoChoiceGrid',
   'TikoSettingsPanel',
   'TikoOpenIconPicker',
+  'TikoTileBoard',
   'tikoAppColors',
   'tikoAppConfigs'
 ]

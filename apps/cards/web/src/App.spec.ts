@@ -55,12 +55,12 @@ describe('Cards web iOS parity architecture', () => {
     const boardSource = readSource('apps/cards/web/src/components/CardsBoard.vue')
     const uiSource = readSource('packages/ui/src/index.ts')
 
-    expect(boardSource).toContain('TikoPagedTileGrid')
-    expect(boardSource).toContain('TikoSquareTile')
-    expect(boardSource).toContain('TikoSelectionBadge')
-    expect(boardSource).toContain('TikoEditBadge')
+    expect(boardSource).toContain('TikoTileBoard')
+    expect(uiSource).toContain('TikoTileBoard')
     expect(uiSource).toContain('TikoPagedTileGrid')
     expect(uiSource).toContain('TikoSquareTile')
+    expect(uiSource).toContain('TikoSelectionBadge')
+    expect(uiSource).toContain('TikoEditBadge')
     expect(uiSource).toContain('TikoSheet')
   })
 

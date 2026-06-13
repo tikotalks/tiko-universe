@@ -48,20 +48,6 @@ textarea {
   color: #c92a2a;
 }
 
-.cards-board__item {
-  position: relative;
-  aspect-ratio: 1;
-  min-width: 0;
-}
-
-.cards-board__item--editing {
-  cursor: grab;
-}
-
-.cards-board__item--selected {
-  z-index: 1;
-}
-
 .cards-bulk-bar {
   position: absolute;
   right: 16px;

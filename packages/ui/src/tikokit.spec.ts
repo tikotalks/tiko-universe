@@ -11,6 +11,7 @@ import {
   TikoOpenIconPicker,
   TikoPagedTileGrid,
   TikoSettingsPanel,
+  TikoTileBoard,
   createTikoChoice,
   createTikoTtsClient,
   resolveTikoAppApiBaseUrl,
@@ -39,6 +40,7 @@ describe('TikoKit component contract', () => {
       'TikoChoiceGrid',
       'TikoSettingsPanel',
       'TikoOpenIconPicker',
+      'TikoTileBoard',
       'tikoAppColors',
       'tikoAppConfigs'
     ])
@@ -229,6 +231,37 @@ describe('TikoKit component contract', () => {
 
     expect(wrapper.emitted('update:page')).toEqual([[1]])
     expect(wrapper.emitted('pageChange')).toEqual([[1]])
+  })
+
+  it('renders reusable editable square tile boards', async () => {
+    const item = { id: 'Water' }
+    const wrapper = mount(TikoTileBoard, {
+      props: {
+        items: [item],
+        columns: 2,
+        itemsPerPage: 4,
+        page: 0,
+        editing: true,
+        getTitle: (value: typeof item) => value.id,
+        getBackground: () => '#2488ff',
+        isSelected: () => true,
+        canEdit: () => true,
+        isUserOwned: () => true,
+        labels: { select: 'Select', deselect: 'Deselect', edit: 'Edit' },
+      },
+    })
+
+    await flushMountedWork()
+    expect(wrapper.find('.tiko-tile-board__item--selected').exists()).toBe(true)
+    expect(wrapper.get('.tiko-square-tile').text()).toContain('Water')
+
+    await wrapper.get('.tiko-square-tile').trigger('click')
+    await wrapper.get('.tiko-selection-badge').trigger('click')
+    await wrapper.get('.tiko-edit-badge').trigger('click')
+
+    expect(wrapper.emitted('activate')).toEqual([[item]])
+    expect(wrapper.emitted('select')).toEqual([[item]])
+    expect(wrapper.emitted('edit')).toEqual([[item]])
   })
 
   it('toggles open-icon selections with accessible buttons', async () => {
