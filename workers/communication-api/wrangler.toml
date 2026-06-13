@@ -21,6 +21,11 @@ binding = "AUTH_DB"
 database_name = "tiko-identity"
 database_id = "036a1726-ac16-48a9-ab76-22c3a88ca7ae"
 
+[[secrets_store_secrets]]
+binding = "PEPPER_SECRET"
+store_id = "0ba6468063e04b779e529f5db651896b"
+secret_name = "TOKEN_PEPPER"
+
 [[routes]]
 pattern = "dev.api.tikotalks.com/v1/communication/*"
 zone_name = "tikotalks.com"
@@ -46,6 +51,11 @@ migrations_dir = "migrations"
 binding = "AUTH_DB"
 database_name = "tiko-identity"
 database_id = "036a1726-ac16-48a9-ab76-22c3a88ca7ae"
+
+[[env.production.secrets_store_secrets]]
+binding = "PEPPER_SECRET"
+store_id = "0ba6468063e04b779e529f5db651896b"
+secret_name = "TOKEN_PEPPER"
 
 [[env.production.routes]]
 pattern = "communication.tikoapi.org"
