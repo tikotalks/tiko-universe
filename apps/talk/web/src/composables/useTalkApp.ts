@@ -49,6 +49,7 @@ export function useTalkApp() {
   const colorMode = ref<TikoColorMode>(toColorMode(stored.colorMode))
   const settingsOpen = ref(false)
   const activeCategoryId = ref<string | null>(null)
+  const boardFilter = ref('')
   const speechStatus = ref<SpeechStatus>('idle')
   const speechError = ref<string | null>(null)
   const identityStatus = ref<'offline' | 'bootstrapping' | 'ready' | 'error'>('offline')
@@ -133,7 +134,35 @@ export function useTalkApp() {
 
   function selectCategory(category: CategoryShortcut) {
     activeCategoryId.value = category.id
-    void sentenceApi.loadVocabulary(category.source.id)
+    void sentenceApi.loadVocabulary(category.source.id, boardFilter.value || undefined)
+  }
+
+  // Board search: filter the visible words (custom words included server-side).
+  function applyBoardFilter(query: string) {
+    boardFilter.value = query
+    void sentenceApi.filterBoard(query, activeCategoryId.value ?? undefined)
+  }
+
+  function clearBoardFilter() {
+    if (!boardFilter.value) return
+    boardFilter.value = ''
+    void sentenceApi.loadVocabulary(activeCategoryId.value ?? undefined)
+  }
+
+  // Add a word that isn't on the board (e.g. a name like "Sil"). It is learned for
+  // the current strip position, so it returns to that spot next time.
+  async function addCustomWord(text: string, pos = 'noun') {
+    const trimmed = text.trim()
+    if (!trimmed) return null
+    const created = await sentenceApi.addWord(trimmed, { pos, afterWordIds: [...strip.wordIds.value] })
+    // Re-run suggestions so the new word appears immediately for the current strip.
+    if (created) await sentenceApi.next(strip.wordIds.value)
+    return created
+  }
+
+  async function removeCustomWord(wordId: string) {
+    await sentenceApi.deleteWord(wordId)
+    await sentenceApi.next(strip.wordIds.value)
   }
 
   function removeWord(index: number) {
@@ -175,6 +204,7 @@ export function useTalkApp() {
     colorMode,
     settingsOpen,
     activeCategoryId,
+    boardFilter,
     speechStatus,
     speechError,
     identityStatus,
@@ -185,6 +215,7 @@ export function useTalkApp() {
     strip,
     canSpeak,
     statusText,
+    customWords: sentenceApi.customWords,
     shortcuts: presentation.shortcuts,
     cloudWords: presentation.cloudWords,
     wordIcon,
@@ -192,6 +223,10 @@ export function useTalkApp() {
     start,
     selectWordNode,
     selectCategory,
+    applyBoardFilter,
+    clearBoardFilter,
+    addCustomWord,
+    removeCustomWord,
     removeWord,
     removeLastWord,
     speakSentence,
