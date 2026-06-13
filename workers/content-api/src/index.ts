@@ -1639,12 +1639,8 @@ async function handleDeleteCards(request: Request, env: Env, segments: string[])
 }
 
 async function handlePromoteCollection(request: Request, env: Env, _segments: string[]): Promise<Response> {
-  const auth = await requireUserSession(request, env)
-  if (auth instanceof Response) return auth
-  const { sessionToken } = auth
-  if (!(await isContentAdmin(request, env))) {
-    return error(request, env, 'forbidden', 'Admin role required to promote collections', 403)
-  }
+  const authError = await requireContentAdmin(request, env)
+  if (authError) return authError
 
   let body: { collection?: unknown }
   try { body = (await request.json()) as { collection?: unknown } } catch {
