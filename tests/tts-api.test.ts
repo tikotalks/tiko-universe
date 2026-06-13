@@ -130,40 +130,23 @@ describe('tts-api internals', () => {
     expect(result).toEqual({
       text: 'Hello',
       language: 'en',
-      provider: 'auto',
-      voice: 'nova',
-      model: 'tts-1',
       speed: 1,
       pitch: 0,
     })
   })
 
-  it('normalizes openai provider and valid voice', () => {
+  it('normalizes speech timing fields without provider hints', () => {
     const result = internals.normalizeRequest({
       text: 'Hi',
       language: 'nl',
-      provider: 'openai',
-      voice: 'alloy',
-      model: 'tts-1-hd',
       speed: 1.5,
       pitch: -5,
     })
-    expect(result.provider).toBe('openai')
-    expect(result.voice).toBe('alloy')
-    expect(result.model).toBe('tts-1-hd')
+    expect(result).not.toHaveProperty('provider')
+    expect(result).not.toHaveProperty('voice')
+    expect(result).not.toHaveProperty('model')
     expect(result.speed).toBe(1.5)
     expect(result.pitch).toBe(-5)
-  })
-
-  it('normalizes azure provider and falls back unknown voice to nova', () => {
-    const result = internals.normalizeRequest({
-      text: 'Test',
-      language: 'fr',
-      provider: 'azure',
-      voice: 'unknown-voice',
-    })
-    expect(result.provider).toBe('azure')
-    expect(result.voice).toBe('nova')
   })
 
   it('clamps speed and pitch to valid ranges', () => {
@@ -293,7 +276,7 @@ describe('tts-api worker', () => {
       })
       env.ATLAS_SERVICE = { fetch: atlasFetch }
 
-      const response = await worker.fetch(ttsGenerate({ text: 'Route me', language: 'en', provider: 'openai', voice: 'nova', model: 'tts-1' }), env)
+      const response = await worker.fetch(ttsGenerate({ text: 'Route me', language: 'en' }), env)
 
       expect(response.status).toBe(200)
       expect(atlasFetch).toHaveBeenCalledTimes(1)
@@ -317,16 +300,16 @@ describe('tts-api worker', () => {
       expect(body.error).toBe('atlas_tts_not_configured')
     })
 
-    it('lets Atlas handle old provider fields', async () => {
+    it('rejects provider fields because Atlas owns speech routing', async () => {
       const env = makeEnv()
       const response = await worker.fetch(
         ttsGenerate({ text: 'Hello', language: 'en', provider: 'azure' }),
         env
       )
-      expect(response.status).toBe(200)
+      expect(response.status).toBe(400)
       const body = await json(response)
-      expect(body.success).toBe(true)
-      expect(body.audioUrl).toBe('/v1/atlas/assets/atlas-audio-1')
+      expect(body.success).toBe(false)
+      expect(body.error).toBe('unsupported_speech_hint')
     })
 
     it('returns the Atlas audio URL without storing local audio', async () => {
