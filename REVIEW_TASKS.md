@@ -71,6 +71,9 @@ Approximate review spread: 7 Critical, about 35 High, about 70 Medium, and about
   - [x] Replace communication-api `COMMUNICATION_API_KEY` verification with shared scoped API-key auth.
   - [x] Remove app-api direct identity DB fallback completely.
   - [x] Replace content-api local admin role/capability verifier with shared `requireRole`.
+  - [x] Move identity role loading into shared auth and reuse it from admin-api.
+  - [x] Resolve API-key pepper through the shared auth layer, including Secrets Store bindings.
+  - [x] Remove the stale `API_KEYS` static-secret auth surface from worker contracts and tests.
 
 - [x] Move iOS identity storage to Keychain.
   - Make `TikoKeychainIdentityStore` the default.
@@ -178,7 +181,7 @@ Approximate review spread: 7 Critical, about 35 High, about 70 Medium, and about
   - [x] iOS: shared Atlas-first speech service with native speech as fallback only.
 
 - [ ] Move reusable UI/layout into TikoUI/TikoKit.
-  - Cards/choice tile layouts.
+  - [x] Cards/choice tile layouts.
   - [x] Shared media image-ref rendering.
   - [x] Shared iOS form-sheet surface for Cards add/edit flows.
   - Shared user-flow components that are not app-specific.
@@ -206,21 +209,30 @@ Approximate review spread: 7 Critical, about 35 High, about 70 Medium, and about
 
 - [ ] Split god files.
   - generation-api routes into modules.
+  - [x] Extract generation-api speech normalization and Atlas speech helpers into a focused module.
   - content/media/identity workers where useful.
   - admin StoryNarrator/ImageGenerator pages by tab or feature.
+  - [x] Extract StoryNarrator segment editor into a focused component.
+  - [x] Extract StoryNarrator drafts tab into a focused component.
+  - [x] Extract StoryNarrator publish settings card into a focused component.
   - [x] Extract ImageGenerator queue panel into a focused component.
+  - [x] Move ImageGenerator queue styles into the queue component so the page no longer owns its surface.
+  - [x] Extract ImageGenerator edit modal and canvas mask editor into a focused component.
+  - [x] Extract ImageGenerator create form into a focused component.
   - `@tiko/ui` index into focused modules.
   - [x] Move `@tiko/ui` app config, app colors, palette, and open-icon constants into a focused module.
   - [x] Move `TikoOpenIconPicker` out of the `@tiko/ui` barrel into its own component module.
   - [x] Move Tiko app shell/header, choice grid, settings panel, and app meta helpers out of the `@tiko/ui` barrel.
 
-- [ ] Unify TTS architecture.
-  - Retire tts-api and generation-api local provider path, or make Atlas persist into the one shared cache.
-  - Ensure one source of truth for speech generation, caching, and provider selection.
-  - App clients now send speech requests to Atlas without provider/model/voice hints; remaining work is worker-side service/cache consolidation.
-  - [x] Stop generation-api compatibility TTS from sending provider/model/voice hints to Atlas and require an authenticated Atlas service call.
+- [x] Unify TTS architecture.
+  - [x] Retire tts-api and generation-api local provider paths so Atlas owns provider choice and speech cache.
+  - [x] Ensure one source of truth for speech generation, caching, and provider selection.
+  - [x] App clients now send speech requests to Atlas without provider/model/voice hints; worker-side service/cache consolidation is complete for speech.
+  - [x] Stop generation-api app speech from sending provider/model/voice hints to Atlas and require an authenticated Atlas service call.
   - [x] Send web and iOS app speech requests to Atlas with the shared identity credentials before using native/browser speech fallback.
-  - [x] Convert legacy tts-api cache misses into an Atlas adapter instead of a second provider/cache owner.
+  - [x] Convert tts-api into an Atlas-only adapter with no local speech cache or provider path.
+  - [x] Remove generation-api local audio cache/provider fallback and drop its generated-audio table.
+  - [x] Route generation-api voice samples and story narration through Atlas assets instead of direct TTS providers.
 
 ## Phase 4 - Testing And CI Quality
 
@@ -229,7 +241,7 @@ Approximate review spread: 7 Critical, about 35 High, about 70 Medium, and about
   - Fix config shape and ports.
   - Remove or restore the clock project.
   - Rewrite stale suites for current flows/selectors.
-  - Mock current Atlas/TTS endpoints, not legacy generation endpoints.
+  - Mock current Atlas/TTS endpoints, not old generation endpoints.
   - Add CI smoke coverage.
 
 - [x] Add focused tests for high-risk behavior.

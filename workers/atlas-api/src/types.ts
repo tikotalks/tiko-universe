@@ -108,6 +108,7 @@ export interface Env {
   YOUTUBE_API_KEY?: string
   TOKEN_PEPPER?: string
   ANKORE_TOKEN_PEPPER?: string
+  PEPPER_SECRET?: { get(): Promise<string> }
   AUTH_DB?: {
     prepare(sql: string): { bind(...values: unknown[]): { first<T>(): Promise<T | null>; all(): Promise<{ results: unknown[] }>; run?(): Promise<unknown> } }
   }

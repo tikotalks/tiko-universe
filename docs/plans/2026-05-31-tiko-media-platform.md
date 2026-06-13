@@ -20,7 +20,7 @@
 - **`workers/media-api/`** — Unified media worker. D1 (`MEDIA_DB`, `ASSETS_DB`), R2 (`MEDIA_BUCKET`, `ASSETS_BUCKET`, `USER_MEDIA_BUCKET`). Routes scaffolded but scripts are `echo scaffold-only`.
 - **`workers/admin-api/`** — Scaffold only, empty `src/index.ts`.
 - **`workers/content-api/`** — Scaffold only, empty `src/index.ts`.
-- **`workers/shared/auth.ts`** — Bearer session token + API key auth. Works against identity-api or fallback `API_KEYS` env var.
+- **`workers/shared/auth.ts`** — Bearer session token + scoped API key auth backed by the identity database/service.
 
 ### Packages
 - **`@tiko/media`** — Contracts: `GenerationTtsRequest`, `GenerationTtsAudioAsset`, `LegacyTtsResponse`, `generationTtsCacheKey()`.

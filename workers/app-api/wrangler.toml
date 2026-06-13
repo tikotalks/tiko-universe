@@ -8,6 +8,11 @@ workers_dev = true
 binding = "IDENTITY_SERVICE"
 service = "tiko-identity-api-dev"
 
+[[secrets_store_secrets]]
+binding = "PEPPER_SECRET"
+store_id = "0ba6468063e04b779e529f5db651896b"
+secret_name = "TOKEN_PEPPER"
+
 [vars]
 ALLOWED_ORIGINS = "https://tiko.mt,https://www.tiko.mt,https://tiko.tikoapps.org,https://yesno.tikoapps.org,https://cards.tikoapps.org,https://sequence.tikoapps.org,https://type.tikoapps.org,https://timer.tikoapps.org,https://admin.tikoapps.org,https://admin.tikoapi.org,https://dev.tiko.tikoapps.org,https://dev.yesno.tikoapps.org,https://dev.cards.tikoapps.org,https://dev.sequence.tikoapps.org,https://dev.type.tikoapps.org,https://dev.timer.tikoapps.org,https://dev.admin.tikoapps.org,http://localhost:3060,http://localhost:3061,http://localhost:3062,http://localhost:3063,http://localhost:3064,http://localhost:3065,http://localhost:5173,http://localhost:4173,capacitor://localhost,ionic://localhost,tiko://native"
 # Set TOKEN_PEPPER with `wrangler secret put TOKEN_PEPPER`; it must match identity-api.
@@ -28,6 +33,11 @@ workers_dev = false
 [[env.production.services]]
 binding = "IDENTITY_SERVICE"
 service = "tiko-identity-api"
+
+[[env.production.secrets_store_secrets]]
+binding = "PEPPER_SECRET"
+store_id = "0ba6468063e04b779e529f5db651896b"
+secret_name = "TOKEN_PEPPER"
 
 [env.production.vars]
 ALLOWED_ORIGINS = "https://tiko.mt,https://www.tiko.mt,https://tiko.tikoapps.org,https://yesno.tikoapps.org,https://cards.tikoapps.org,https://sequence.tikoapps.org,https://type.tikoapps.org,https://timer.tikoapps.org,https://admin.tikoapps.org,https://admin.tikoapi.org,http://localhost:3060,http://localhost:3061,http://localhost:3062,http://localhost:3063,http://localhost:3064,http://localhost:3065,http://localhost:5173,http://localhost:4173,capacitor://localhost,ionic://localhost,tiko://native"

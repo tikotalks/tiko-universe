@@ -28,10 +28,21 @@ export interface EnrichInput {
   list: 'library' | 'drafts'
 }
 
+export interface UpscaleInput {
+  type: 'upscale'
+  sourceId: string
+  size: string
+  quality: string
+  title?: string
+  description?: string
+  category?: string
+  tags?: string[]
+}
+
 export interface QueueItem {
   id: string
   label: string
-  input: GenerateInput | EditInput | EnrichInput
+  input: GenerateInput | EditInput | EnrichInput | UpscaleInput
   status: 'pending' | 'generating' | 'done' | 'error'
   result: ImageGenerationResult | ImageGenerationResult[] | null
   error: string | null

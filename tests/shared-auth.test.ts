@@ -102,4 +102,32 @@ describe('shared worker auth API keys', () => {
     expect(wrongScope.ok).toBe(false)
     expect(missingPepper.ok).toBe(false)
   })
+
+  it('resolves the api-key pepper from a Secrets Store binding', async () => {
+    const db = new MemoryAuthDb()
+    const hash = await hashApiKey('secret-store-key', 'secret-store-pepper')
+    let secretReads = 0
+    db.keys.set(hash, {
+      id: 'key_secret_store',
+      subject_id: 'sub_secret_store',
+      name: 'Secrets Store key',
+      key_hash: hash,
+      scopes_json: JSON.stringify(['atlas.run']),
+      expires_at: null,
+      revoked_at: null,
+    })
+
+    const auth = await authenticate(request('secret-store-key'), {
+      AUTH_DB: db,
+      PEPPER_SECRET: {
+        async get() {
+          secretReads += 1
+          return 'secret-store-pepper'
+        },
+      },
+    }, { scopes: ['atlas.run'] })
+
+    expect(auth).toMatchObject({ ok: true, method: 'api_key', subjectId: 'sub_secret_store', scopes: ['atlas.run'] })
+    expect(secretReads).toBe(1)
+  })
 })

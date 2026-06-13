@@ -17,7 +17,6 @@ interface Env {
   AUTH_DB?: {
     prepare(sql: string): { bind(...values: unknown[]): { first<T>(): Promise<T | null>; all(): Promise<{ results: unknown[] }> } }
   }
-  API_KEYS?: string
   OPENAI_API_KEY?: string
   IDENTITY_BASE_URL?: string
 }

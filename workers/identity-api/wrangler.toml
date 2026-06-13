@@ -21,6 +21,11 @@ migrations_dir = "migrations"
 binding = "COMMUNICATION_SERVICE"
 service = "tiko-communication-api-dev"
 
+[[secrets_store_secrets]]
+binding = "PEPPER_SECRET"
+store_id = "0ba6468063e04b779e529f5db651896b"
+secret_name = "TOKEN_PEPPER"
+
 # ── Production environment ──────────────────────────────────────
 # Deploy with: npx wrangler deploy --env production
 
@@ -42,6 +47,11 @@ migrations_dir = "migrations"
 [[env.production.services]]
 binding = "COMMUNICATION_SERVICE"
 service = "tiko-communication-api"
+
+[[env.production.secrets_store_secrets]]
+binding = "PEPPER_SECRET"
+store_id = "0ba6468063e04b779e529f5db651896b"
+secret_name = "TOKEN_PEPPER"
 
 [[env.production.routes]]
 pattern = "identity.tikoapi.org"

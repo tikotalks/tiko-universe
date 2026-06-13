@@ -1,12 +1,26 @@
 import { authenticate } from '../../shared/auth'
 import type { AuthSuccess } from '../../shared/auth'
+import {
+  DEFAULT_ELEVENLABS_MODEL,
+  DEFAULT_ELEVENLABS_VOICE,
+  ELEVENLABS_VOICE_ID_RE,
+  OPENAI_VOICES,
+  generateAudioBytes,
+  generateRequestHash,
+  normalizeTtsRequest,
+  providerSafeMessage,
+  requestAtlasSpeech,
+  storySegmentCacheKey,
+  validateTtsRequest,
+  type GenerationTtsRequest,
+  type NormalizedTtsRequest,
+} from './speech'
 
 export interface Env {
   GENERATION_DB: D1DatabaseLike
   GENERATED_MEDIA_BUCKET: R2BucketLike
   OPENAI_API_KEY?: string
   ELEVENLABS_API_KEY?: string
-  API_KEYS?: string
   AUTH_DB?: {
     prepare(sql: string): { bind(...values: unknown[]): { first<T>(): Promise<T | null>; all(): Promise<{ results: unknown[] }> } }
   }
@@ -32,50 +46,6 @@ export interface R2BucketLike {
   delete(key: string): Promise<unknown>
 }
 
-export type TtsProvider = 'openai' | 'azure' | 'elevenlabs' | 'auto'
-
-export interface GenerationTtsRequest {
-  text: string
-  language: string
-  provider?: TtsProvider
-  voice?: string
-  model?: string
-  speed?: number
-  pitch?: number
-}
-
-interface NormalizedTtsRequest extends Required<GenerationTtsRequest> {}
-
-interface GenerationAudioRecord {
-  id: string
-  request_hash: string
-  text: string
-  language: string
-  provider: string
-  voice: string
-  model: string
-  speed: number
-  pitch: number
-  audio_url: string
-  r2_key: string
-  content_type: string
-  file_size_bytes?: number
-  duration_seconds?: number
-  generated_at: string
-}
-
-interface GenerateAudioSuccess {
-  success: true
-  bytes: Uint8Array
-  contentType: string
-}
-
-interface GenerateAudioFailure {
-  success: false
-  error: string
-  status?: number
-}
-
 interface PaidAuthContext {
   auth: AuthSuccess
   subjectKey: string
@@ -90,18 +60,6 @@ interface UsagePolicy {
   units: number
   maxRequestsPerMinute: number
   maxUnitsPerDay: number
-}
-
-interface AtlasSpeechResponse {
-  data?: {
-    id?: string
-    audioUrl?: string
-    contentType?: string
-    cached?: boolean
-    provider?: { name?: string; model?: string; voice?: string }
-  }
-  meta?: { cached?: boolean; schemaVersion?: number; requestId?: string }
-  error?: { code?: string; message?: string }
 }
 
 interface AtlasImageResponse {
@@ -123,11 +81,6 @@ const CORS_HEADERS = {
   'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
   'Access-Control-Allow-Headers': 'Content-Type, Authorization',
 }
-const OPENAI_VOICES = new Set(['alloy', 'ash', 'ballad', 'coral', 'echo', 'fable', 'nova', 'onyx', 'sage', 'shimmer', 'verse'])
-const DEFAULT_ELEVENLABS_MODEL = 'eleven_multilingual_v2'
-const DEFAULT_ELEVENLABS_VOICE = '21m00Tcm4TlvDq8ikWAM'
-const ELEVENLABS_MODELS = new Set(['eleven_multilingual_v2', 'eleven_turbo_v2_5', 'eleven_flash_v2_5'])
-const ELEVENLABS_VOICE_ID_RE = /^[a-zA-Z0-9_-]{6,64}$/
 const PROVIDER_TIMEOUT_MS = 20_000
 const PROVIDER_IMAGE_TIMEOUT_MS = 45_000
 const DEFAULT_ELEVENLABS_VOICES = [
@@ -155,9 +108,7 @@ const ELEVENLABS_VOICE_CATALOG = DEFAULT_ELEVENLABS_VOICES.map((voice) => ({
   label: voice.label,
   sampleUrl: `/v1/generation/voice-samples/${voice.id}?provider=elevenlabs&model=${DEFAULT_ELEVENLABS_MODEL}`,
 }))
-const VOICE_CATALOG = [...ELEVENLABS_VOICE_CATALOG, ...OPENAI_VOICE_CATALOG]
 
-const AUDIO_KEY_RE = /^audio\/[a-f0-9]{32}\.mp3$/
 const VOICE_SAMPLE_KEY_RE = /^voice-samples\/[a-z0-9._-]+\/[a-zA-Z0-9_-]{6,64}\.mp3$/
 
 export default {
@@ -170,7 +121,6 @@ export default {
       if (url.pathname === '/v1/generation/voices' && request.method === 'GET') return requirePaidAccess(request, env, { capability: 'voices.list', units: 1, maxRequestsPerMinute: 120, maxUnitsPerDay: 2000 }, () => listVoices(url, env))
       if (url.pathname === '/v1/generation/tts' && request.method === 'POST') return generateTts(request, env)
       if (url.pathname.startsWith('/v1/generation/voice-samples/') && request.method === 'GET') return requirePaidAccess(request, env, { capability: 'voice.sample', units: 40, maxRequestsPerMinute: 30, maxUnitsPerDay: 2000 }, () => getVoiceSample(url, env))
-      if (url.pathname.startsWith('/v1/generation/audio/') && request.method === 'GET') return getAudio(url.pathname, env)
       if (url.pathname === '/v1/generation/image' && request.method === 'POST') return requireAuth(request, env, (access) => generateImage(request, env, access))
       if (url.pathname.startsWith('/v1/generation/images/') && url.pathname.endsWith('/binary') && request.method === 'GET') return getImage(request, url.pathname, env)
       if (url.pathname.startsWith('/v1/generation/images/') && url.pathname.endsWith('/promote') && request.method === 'POST') return requireAuth(request, env, (access) => promoteImage(url.pathname, env, access))
@@ -489,137 +439,14 @@ async function generateTts(request: Request, env: Env): Promise<Response> {
   })
   if (usageError) return usageError
 
-  const requestHash = await generateRequestHash(normalized)
-  const existing = await findAudioByHash(requestHash, env)
-  if (existing) return json(ttsResponseFromRecord(existing, true))
-
-  const atlasResponse = await synthesizeWithAtlas(normalized, env)
-  if (atlasResponse) return atlasResponse
-
-  const generated = await generateAudioBytes(normalized, env)
-  if (generated.success === false) {
-    return apiError(generated.error, providerSafeMessage(generated.error), generated.status ?? 503)
-  }
-
-  const id = crypto.randomUUID()
-  const r2Key = audioKeyForHash(requestHash)
-  const audioUrl = `/v1/generation/audio/${encodeURIComponent(id)}`
-  const generatedAt = new Date().toISOString()
-
-  await env.GENERATED_MEDIA_BUCKET.put(r2Key, generated.bytes, {
-    httpMetadata: { contentType: generated.contentType, cacheControl: 'public, max-age=31536000, immutable' },
-  })
-
-  const record: GenerationAudioRecord = {
-    id,
-    request_hash: requestHash,
-    text: normalized.text,
-    language: normalized.language,
-    provider: normalized.provider === 'auto' ? 'openai' : normalized.provider,
-    voice: normalized.voice,
-    model: normalized.model,
-    speed: normalized.speed,
-    pitch: normalized.pitch,
-    audio_url: audioUrl,
-    r2_key: r2Key,
-    content_type: generated.contentType,
-    file_size_bytes: generated.bytes.byteLength,
-    generated_at: generatedAt,
-  }
-
-  await env.GENERATION_DB.prepare(`INSERT OR IGNORE INTO generated_audio (
-    id, request_hash, text, language, provider, voice, model, speed, pitch, audio_url, r2_key, content_type, file_size_bytes, generated_at
-  ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`).bind(
-    record.id,
-    record.request_hash,
-    record.text,
-    record.language,
-    record.provider,
-    record.voice,
-    record.model,
-    record.speed,
-    record.pitch,
-    record.audio_url,
-    record.r2_key,
-    record.content_type,
-    record.file_size_bytes,
-    record.generated_at,
-  ).run()
-
-  const stored = await findAudioByHash(requestHash, env)
-  if (stored) return json(ttsResponseFromRecord(stored, stored.id !== record.id), stored.id === record.id ? 201 : 200)
-
-  return json(ttsResponseFromRecord(record, false), 201)
+  return synthesizeWithAtlas(normalized, env)
 }
 
-async function getAudio(pathname: string, env: Env): Promise<Response> {
-  const id = decodeURIComponent(pathname.replace('/v1/generation/audio/', ''))
-  if (!isSafeId(id)) return apiError('invalid_audio_id', 'Audio id is invalid.', 400)
+async function synthesizeWithAtlas(input: NormalizedTtsRequest, env: Env): Promise<Response> {
+  const atlas = await requestAtlasSpeech(input, env, 'speech-playback')
+  if (atlas.success === false) return apiError(atlas.error, providerSafeMessage(atlas.error), atlas.status ?? 503)
 
-  const record = await findAudioById(id, env)
-  if (!record || !isSafeAudioKey(record.r2_key)) return apiError('audio_not_found', 'Audio not found.', 404)
-
-  const object = await env.GENERATED_MEDIA_BUCKET.get(record.r2_key)
-  if (!object) return apiError('audio_not_found', 'Audio not found.', 404)
-
-  return new Response(object.body, {
-    headers: {
-      ...CORS_HEADERS,
-      'Content-Type': object.httpMetadata?.contentType ?? record.content_type ?? 'audio/mpeg',
-      'Cache-Control': 'public, max-age=31536000, immutable',
-    },
-  })
-}
-
-function ttsResponseFromRecord(record: GenerationAudioRecord, cached: boolean) {
-  return {
-    data: {
-      id: record.id,
-      audioUrl: record.audio_url,
-      contentType: record.content_type ?? 'audio/mpeg',
-      fileSizeBytes: record.file_size_bytes,
-      generatedAt: record.generated_at,
-      provider: record.provider,
-      language: record.language,
-      voice: record.voice,
-      model: record.model,
-    },
-    meta: {
-      cached,
-      schemaVersion: 1,
-    },
-  }
-}
-
-async function synthesizeWithAtlas(input: NormalizedTtsRequest, env: Env): Promise<Response | null> {
-  if (!env.ATLAS_SERVICE) return null
-  if (!env.ATLAS_API_KEY) return apiError('atlas_service_key_not_configured', 'Atlas service key is not configured.', 503)
-
-  const atlasUrl = `${(env.ATLAS_BASE_URL ?? 'https://tiko-atlas-api-dev.silvandiepen.workers.dev/v1/atlas').replace(/\/$/, '')}/speech`
-  const atlasPayload: Record<string, unknown> = {
-    app: 'generation-api',
-    purpose: 'compatibility-tts',
-    text: input.text,
-    language: input.language,
-    speed: input.speed,
-  }
-
-  const response = await env.ATLAS_SERVICE.fetch(new Request(atlasUrl, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${env.ATLAS_API_KEY}` },
-    body: JSON.stringify(atlasPayload),
-  }))
-  const body = await response.json().catch(() => null) as AtlasSpeechResponse | null
-
-  if (!response.ok) {
-    return apiError(body?.error?.code ?? 'atlas_tts_failed', body?.error?.message ?? 'Atlas TTS request failed.', response.status)
-  }
-
-  const data = body?.data
-  if (!data?.id || !data.audioUrl) {
-    return apiError('atlas_tts_invalid_response', 'Atlas returned an invalid TTS response.', 502)
-  }
-
+  const data = atlas.body.data
   return json({
     data: {
       id: data.id,
@@ -631,130 +458,15 @@ async function synthesizeWithAtlas(input: NormalizedTtsRequest, env: Env): Promi
       model: data.provider?.model ?? input.model,
     },
     meta: {
-      cached: body?.meta?.cached ?? data.cached ?? false,
+      cached: atlas.body.meta?.cached ?? data.cached ?? false,
       schemaVersion: 1,
-      atlasRequestId: body?.meta?.requestId,
+      atlasRequestId: atlas.body.meta?.requestId,
     },
   }, 201)
 }
 
-export function normalizeTtsRequest(body: GenerationTtsRequest): NormalizedTtsRequest {
-  const requestedModel = body.model?.trim()
-  const modelProvider = requestedModel?.startsWith('eleven_') ? 'elevenlabs' : requestedModel?.startsWith('tts-') || requestedModel === 'gpt-4o-mini-tts' ? 'openai' : null
-  const provider = body.provider === 'azure' ? 'azure' : body.provider === 'openai' ? 'openai' : body.provider === 'elevenlabs' ? 'elevenlabs' : modelProvider ?? 'elevenlabs'
-  const voice = provider === 'openai'
-    ? (body.voice && OPENAI_VOICES.has(body.voice) ? body.voice : 'nova')
-    : (body.voice && ELEVENLABS_VOICE_ID_RE.test(body.voice) ? body.voice : DEFAULT_ELEVENLABS_VOICE)
-  const model = requestedModel || (provider === 'openai' ? 'tts-1' : DEFAULT_ELEVENLABS_MODEL)
-
-  return {
-    text: body.text.trim(),
-    language: body.language.trim().toLowerCase(),
-    provider,
-    voice,
-    model,
-    speed: clamp(body.speed ?? 1, 0.25, 4),
-    pitch: clamp(body.pitch ?? 0, -20, 20),
-  }
-}
-
-export function validateTtsRequest(body: GenerationTtsRequest): { code: string; message: string; field?: string } | null {
-  if (!body || typeof body !== 'object') return { code: 'invalid_body', message: 'Request body must be an object.' }
-  if (!body.text || typeof body.text !== 'string' || !body.text.trim()) return { code: 'missing_text', message: 'Text is required.', field: 'text' }
-  if (!body.language || typeof body.language !== 'string' || !body.language.trim()) return { code: 'missing_language', message: 'Language is required.', field: 'language' }
-  if (body.text.length > 500) return { code: 'text_too_long', message: 'Text must be 500 characters or fewer.', field: 'text' }
-  if (body.speed !== undefined && (typeof body.speed !== 'number' || Number.isNaN(body.speed))) return { code: 'invalid_speed', message: 'Speed must be a number.', field: 'speed' }
-  if (body.pitch !== undefined && (typeof body.pitch !== 'number' || Number.isNaN(body.pitch))) return { code: 'invalid_pitch', message: 'Pitch must be a number.', field: 'pitch' }
-  return null
-}
-
-export async function generateRequestHash(input: NormalizedTtsRequest): Promise<string> {
-  const str = [input.text, input.language, input.provider, input.voice, input.model, input.speed, input.pitch].join('|')
-  const bytes = new TextEncoder().encode(str)
-  const digest = await crypto.subtle.digest('SHA-256', bytes)
-  return Array.from(new Uint8Array(digest)).map((byte) => byte.toString(16).padStart(2, '0')).join('').slice(0, 32)
-}
-
-async function storySegmentCacheKey(input: NormalizedTtsRequest): Promise<string> {
-  return `story-segments/${await generateRequestHash(input)}.mp3`
-}
-
-function audioKeyForHash(requestHash: string) {
-  return `audio/${requestHash}.mp3`
-}
-
-export function isSafeAudioKey(key: string): boolean {
-  return AUDIO_KEY_RE.test(key)
-}
-
 function isSafeId(id: string): boolean {
   return /^[a-zA-Z0-9_-]{1,128}$/.test(id)
-}
-
-async function findAudioByHash(requestHash: string, env: Env): Promise<GenerationAudioRecord | null> {
-  return env.GENERATION_DB.prepare(`SELECT id, request_hash, text, language, provider, voice, model, speed, pitch, audio_url, r2_key, content_type, file_size_bytes, duration_seconds, generated_at
-    FROM generated_audio WHERE request_hash = ? LIMIT 1`).bind(requestHash).first<GenerationAudioRecord>()
-}
-
-async function findAudioById(id: string, env: Env): Promise<GenerationAudioRecord | null> {
-  return env.GENERATION_DB.prepare(`SELECT id, request_hash, text, language, provider, voice, model, speed, pitch, audio_url, r2_key, content_type, file_size_bytes, duration_seconds, generated_at
-    FROM generated_audio WHERE id = ? LIMIT 1`).bind(id).first<GenerationAudioRecord>()
-}
-
-async function generateAudioBytes(input: NormalizedTtsRequest, env: Env): Promise<GenerateAudioSuccess | GenerateAudioFailure> {
-  if (input.provider === 'azure') return { success: false, error: 'azure_tts_not_configured', status: 501 }
-  if (input.provider === 'elevenlabs') return generateElevenLabsAudioBytes(input, env)
-  if (!env.OPENAI_API_KEY) return { success: false, error: 'tts_generation_not_configured', status: 503 }
-
-  let response: Response
-  try {
-    response = await fetchWithRetry('https://api.openai.com/v1/audio/speech', {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${env.OPENAI_API_KEY}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        model: input.model,
-        voice: input.voice,
-        input: input.text,
-        response_format: 'mp3',
-        speed: input.speed,
-      }),
-    }, { timeoutMs: PROVIDER_TIMEOUT_MS })
-  } catch {
-    return { success: false, error: 'tts_provider_unavailable', status: 503 }
-  }
-
-  if (!response.ok) return { success: false, error: 'tts_provider_failed', status: 502 }
-
-  return { success: true, bytes: new Uint8Array(await response.arrayBuffer()), contentType: 'audio/mpeg' }
-}
-
-async function generateElevenLabsAudioBytes(input: NormalizedTtsRequest, env: Env): Promise<GenerateAudioSuccess | GenerateAudioFailure> {
-  if (!env.ELEVENLABS_API_KEY) return { success: false, error: 'elevenlabs_tts_not_configured', status: 503 }
-  const model = ELEVENLABS_MODELS.has(input.model) ? input.model : DEFAULT_ELEVENLABS_MODEL
-  let response: Response
-  try {
-    response = await fetchWithRetry(`https://api.elevenlabs.io/v1/text-to-speech/${encodeURIComponent(input.voice)}?output_format=mp3_44100_128`, {
-      method: 'POST',
-      headers: {
-        'xi-api-key': env.ELEVENLABS_API_KEY,
-        'Content-Type': 'application/json',
-        Accept: 'audio/mpeg',
-      },
-      body: JSON.stringify({
-        text: input.text,
-        model_id: model,
-        voice_settings: { stability: 0.5, similarity_boost: 0.75, style: 0, use_speaker_boost: true, speed: input.speed },
-        apply_text_normalization: 'auto',
-      }),
-    }, { timeoutMs: PROVIDER_TIMEOUT_MS })
-  } catch {
-    return { success: false, error: 'tts_provider_unavailable', status: 503 }
-  }
-  if (!response.ok) return { success: false, error: 'tts_provider_failed', status: 502 }
-  return { success: true, bytes: new Uint8Array(await response.arrayBuffer()), contentType: 'audio/mpeg' }
 }
 
 async function getVoiceSample(url: URL, env: Env): Promise<Response> {
@@ -773,7 +485,7 @@ async function getVoiceSample(url: URL, env: Env): Promise<Response> {
   if (!VOICE_SAMPLE_KEY_RE.test(r2Key)) return apiError('invalid_voice_sample', 'Voice sample path is invalid.', 400)
   const existing = await env.GENERATED_MEDIA_BUCKET.get(r2Key)
   if (existing) return audioResponse(existing, 'public, max-age=31536000, immutable')
-  const generated = await generateAudioBytes(normalized, env)
+  const generated = await generateAudioBytes(normalized, env, 'voice-sample')
   if (generated.success === false) return apiError(generated.error, providerSafeMessage(generated.error), generated.status ?? 503)
   await env.GENERATED_MEDIA_BUCKET.put(r2Key, generated.bytes, { httpMetadata: { contentType: generated.contentType, cacheControl: 'public, max-age=31536000, immutable' } })
   return new Response(bytesBody(generated.bytes), { headers: { ...CORS_HEADERS, 'Content-Type': generated.contentType, 'Cache-Control': 'public, max-age=31536000, immutable' } })
@@ -783,17 +495,6 @@ function bytesBody(bytes: Uint8Array): ArrayBuffer {
   const body = new ArrayBuffer(bytes.byteLength)
   new Uint8Array(body).set(bytes)
   return body
-}
-
-function providerSafeMessage(code: string) {
-  switch (code) {
-    case 'azure_tts_not_configured': return 'Azure TTS is not configured.'
-    case 'tts_generation_not_configured': return 'TTS generation is not configured.'
-    case 'elevenlabs_tts_not_configured': return 'ElevenLabs TTS is not configured.'
-    case 'tts_provider_failed': return 'TTS provider failed.'
-    case 'tts_provider_unavailable': return 'TTS provider is temporarily unavailable.'
-    default: return 'TTS generation failed.'
-  }
 }
 
 // ── Story narration (multi-segment TTS) ───────────────────────────
@@ -852,7 +553,7 @@ async function generateStoryTryout(request: Request, env: Env, _access: Generati
   if (body.text.length > 800) return apiError('text_too_long', 'Tryout text must be 800 characters or fewer.', 400, 'text')
 
   const normalized = normalizeTtsRequest({ text: body.text, language: body.language || 'en', provider: 'elevenlabs', voice: body.voice, model: body.model, speed: body.speed })
-  const generated = await generateAudioBytes(normalized, env)
+  const generated = await generateAudioBytes(normalized, env, 'story-narration')
   if (generated.success === false) return apiError(generated.error, providerSafeMessage(generated.error), generated.status ?? 503)
 
   const id = crypto.randomUUID()
@@ -886,7 +587,7 @@ async function renderStory(request: Request, env: Env, access: GenerationAccessC
     if (cached) {
       chunks.push(new Uint8Array(await new Response(cached.body).arrayBuffer()))
     } else {
-      const generated = await generateAudioBytes(normalized, env)
+      const generated = await generateAudioBytes(normalized, env, 'story-narration')
       if (generated.success === false) return apiError(generated.error, providerSafeMessage(generated.error), generated.status ?? 503)
       await env.GENERATED_MEDIA_BUCKET.put(segmentKey, generated.bytes, { httpMetadata: { contentType: generated.contentType, cacheControl: 'public, max-age=31536000, immutable' } })
       chunks.push(generated.bytes)
@@ -2071,4 +1772,4 @@ function json(data: unknown, status = 200): Response {
   })
 }
 
-export const internals = { generateRequestHash, normalizeTtsRequest, validateTtsRequest, isSafeAudioKey }
+export const internals = { generateRequestHash, normalizeTtsRequest, validateTtsRequest }

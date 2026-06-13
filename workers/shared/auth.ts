@@ -33,6 +33,12 @@ export type AuthResult = AuthSuccess | AuthFailure
 
 // ── Env contract (add these to your worker's Env interface) ──
 
+/**
+ * Secrets Store binding type — when `[[secrets_store_secrets]]` is configured,
+ * the binding exposes an async `.get()` that returns the secret value.
+ */
+export type SecretStoreSecret = { get(): Promise<string> }
+
 export interface AuthEnv {
   /** D1 database binding for the identity/auth database */
   AUTH_DB?: {
@@ -40,8 +46,8 @@ export interface AuthEnv {
   }
   TOKEN_PEPPER?: string
   ANKORE_TOKEN_PEPPER?: string
-  /** @deprecated Static API key fallback is intentionally not used. */
-  API_KEYS?: string
+  /** Secrets Store binding for TOKEN_PEPPER (centralized across workers) */
+  PEPPER_SECRET?: SecretStoreSecret
   /** Base URL of the identity service (e.g. https://api.tikotalks.com/v1) */
   IDENTITY_BASE_URL?: string
   /**
@@ -52,6 +58,41 @@ export interface AuthEnv {
   IDENTITY_SERVICE?: {
     fetch(input: Request | string, init?: RequestInit): Promise<Response>
   }
+}
+
+// ── Pepper resolution ─────────────────────────────────────────
+
+let cachedPepper: string | null = null
+let cachedPepperExpiresAt = 0
+const PEPPER_CACHE_TTL_MS = 5 * 60 * 1000
+
+/**
+ * Resolve the TOKEN_PEPPER from whichever source is available.
+ *
+ * Priority:
+ *   1. Secrets Store binding (`PEPPER_SECRET`) — centralized across workers
+ *   2. `ANKORE_TOKEN_PEPPER` env var (legacy alias)
+ *   3. `TOKEN_PEPPER` env var (direct wrangler secret)
+ *
+ * Results from the Secrets Store are cached in-memory for 5 minutes to avoid
+ * repeated async calls on every request.
+ */
+export async function resolvePepper(env: AuthEnv): Promise<string | undefined> {
+  if (env.PEPPER_SECRET) {
+    const now = Date.now()
+    if (cachedPepper && cachedPepperExpiresAt > now) return cachedPepper
+    try {
+      const value = await env.PEPPER_SECRET.get()
+      if (value) {
+        cachedPepper = value
+        cachedPepperExpiresAt = now + PEPPER_CACHE_TTL_MS
+        return value
+      }
+    } catch {
+      // Fall through to env vars
+    }
+  }
+  return env.ANKORE_TOKEN_PEPPER ?? env.TOKEN_PEPPER
 }
 
 // ── In-memory key cache ──────────────────────────────────────
@@ -75,6 +116,7 @@ export interface AuthenticateOptions {
 
 export interface RequireRoleOptions {
   capabilities?: string[]
+  product?: string
 }
 
 // ── Session validation response from identity-api ────────────
@@ -99,7 +141,7 @@ function getBearer(request: Request): string | null {
  * Load active API keys from D1 and refresh the in-memory cache.
  */
 async function hashApiKey(token: string, env: AuthEnv): Promise<string | null> {
-  const pepper = env.ANKORE_TOKEN_PEPPER ?? env.TOKEN_PEPPER
+  const pepper = await resolvePepper(env)
   if (!pepper) return null
   const material = `tiko:api-key:${pepper}:${token}`
   const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(material))
@@ -213,6 +255,19 @@ async function validateSession(
   }
 }
 
+export async function loadIdentityRoles(env: AuthEnv, subjectId: string, product = 'tiko'): Promise<string[]> {
+  if (!env.AUTH_DB) return []
+  const { results } = await env.AUTH_DB.prepare(
+    'SELECT role FROM identity_role_assignments WHERE subject_id = ? AND product = ? AND revoked_at IS NULL',
+  )
+    .bind(subjectId, product)
+    .all()
+  return Array.from(new Set(results
+    .map((row) => (row && typeof row === 'object' && 'role' in row ? String((row as { role?: unknown }).role ?? '') : ''))
+    .filter(Boolean)))
+    .sort()
+}
+
 // ── Main authenticate function ───────────────────────────────
 
 export async function authenticate(
@@ -286,7 +341,16 @@ export async function requireRole(
   const session = await requireSession(request, env)
   if (session instanceof Response) return session
   const allowed = new Set(roles)
-  const hasRole = session.roles?.some((role) => allowed.has(role)) === true
+  const userId = session.userId
+  if (!userId) {
+    return new Response(
+      JSON.stringify({ error: { code: 'session_required', message: 'A Tiko user session is required.' } }),
+      { status: 403, headers: { 'content-type': 'application/json' } },
+    )
+  }
+  const sessionRoles = session.roles?.length ? session.roles : await loadIdentityRoles(env, userId, options.product ?? 'tiko')
+  session.roles = sessionRoles
+  const hasRole = sessionRoles.some((role) => allowed.has(role)) === true
   const hasCapability = options.capabilities?.some((capability) => session.capabilities?.[capability] === true) === true
   if (!hasRole && !hasCapability) {
     return new Response(

@@ -1,34 +1,13 @@
 import { readFileSync } from 'node:fs'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import worker, { internals } from '../workers/generation-api/src/index'
+import worker from '../workers/generation-api/src/index'
 import type { Env } from '../workers/generation-api/src/index'
 
-interface StoredAudioRecord {
-  id: string
-  request_hash: string
-  text: string
-  language: string
-  provider: string
-  voice: string
-  model: string
-  speed: number
-  pitch: number
-  audio_url: string
-  r2_key: string
-  content_type: string
-  file_size_bytes?: number
-  duration_seconds?: number
-  generated_at: string
-}
-
 class MemoryD1 {
-  byHash = new Map<string, StoredAudioRecord>()
-  byId = new Map<string, StoredAudioRecord>()
   storyDrafts = new Map<string, Record<string, unknown>>()
   stories = new Map<string, Record<string, unknown>>()
   generatedImages = new Map<string, Record<string, unknown>>()
   usageWindows = new Map<string, { request_count: number; unit_count: number }>()
-  conflictAudioOnInsert: StoredAudioRecord | null = null
 
   prepare(sql: string) {
     return {
@@ -38,10 +17,9 @@ class MemoryD1 {
             const key = values.slice(0, 4).map(String).join('|')
             return (this.usageWindows.get(key) ?? null) as T | null
           }
-          if (sql.includes('WHERE request_hash')) return (this.byHash.get(values[0] as string) ?? null) as T | null
           if (sql.includes('FROM generated_images') && sql.includes('WHERE id')) return (this.generatedImages.get(values[0] as string) ?? null) as T | null
           if (sql.includes('FROM story_drafts') && sql.includes('WHERE id')) return (this.storyDrafts.get(values[0] as string) ?? null) as T | null
-          if (sql.includes('WHERE id')) return (this.byId.get(values[0] as string) ?? null) as T | null
+          if (sql.includes('WHERE id')) return null
           return null
         },
         all: async <T>() => {
@@ -117,33 +95,6 @@ class MemoryD1 {
             const deleted = this.generatedImages.delete(values[0] as string)
             return { success: true, meta: { changes: deleted ? 1 : 0 } }
           }
-          if (sql.includes('INSERT OR IGNORE INTO generated_audio') && this.conflictAudioOnInsert) {
-            this.byHash.set(this.conflictAudioOnInsert.request_hash, this.conflictAudioOnInsert)
-            this.byId.set(this.conflictAudioOnInsert.id, this.conflictAudioOnInsert)
-            this.conflictAudioOnInsert = null
-            return { success: true, meta: { changes: 0 } }
-          }
-          const record: StoredAudioRecord = {
-            id: values[0] as string,
-            request_hash: values[1] as string,
-            text: values[2] as string,
-            language: values[3] as string,
-            provider: values[4] as string,
-            voice: values[5] as string,
-            model: values[6] as string,
-            speed: values[7] as number,
-            pitch: values[8] as number,
-            audio_url: values[9] as string,
-            r2_key: values[10] as string,
-            content_type: values[11] as string,
-            file_size_bytes: values[12] as number,
-            generated_at: values[13] as string,
-          }
-          if (sql.includes('INSERT OR IGNORE') && this.byHash.has(record.request_hash)) {
-            return { success: true, meta: { changes: 0 } }
-          }
-          this.byHash.set(record.request_hash, record)
-          this.byId.set(record.id, record)
           return { success: true, meta: { changes: 1 } }
         }
       })
@@ -180,7 +131,6 @@ function makeEnv(overrides: Partial<Env> = {}): Env & { db: MemoryD1; bucket: Me
     GENERATED_MEDIA_BUCKET: bucket,
     OPENAI_API_KEY: 'test-key',
     ELEVENLABS_API_KEY: 'test-eleven-key',
-    API_KEYS: 'test-api-key',
     IDENTITY_BASE_URL: 'https://identity.test/v1',
     IDENTITY_SERVICE: sessionIdentityService({ 'test-api-key': 'service_user' }),
     ...overrides,
@@ -218,11 +168,6 @@ function sessionIdentityService(usersByToken: Record<string, string>) {
   }
 }
 
-async function sha256HexForTest(value: string): Promise<string> {
-  const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(value))
-  return Array.from(new Uint8Array(digest)).map((byte) => byte.toString(16).padStart(2, '0')).join('')
-}
-
 beforeEach(() => {
   vi.restoreAllMocks()
 })
@@ -251,8 +196,19 @@ describe('generation-api TTS contract', () => {
   })
 
   it('enforces per-caller TTS rate and daily character budgets', async () => {
-    const env = makeEnv()
-    vi.spyOn(globalThis, 'fetch').mockImplementation(async () => new Response(new Uint8Array([1, 2, 3]), { status: 200 }))
+    const atlasFetch = vi.fn(async () => new Response(JSON.stringify({
+      data: {
+        id: crypto.randomUUID(),
+        audioUrl: '/v1/atlas/assets/rate-limit-audio',
+        contentType: 'audio/mpeg',
+        provider: { name: 'elevenlabs', model: 'eleven_multilingual_v2', voice: 'cgSgspJ2msm6clMCkdW9' },
+      },
+      meta: { cached: false, schemaVersion: 1 },
+    }), { status: 200, headers: { 'content-type': 'application/json' } }))
+    const env = makeEnv({
+      ATLAS_SERVICE: { fetch: atlasFetch },
+      ATLAS_API_KEY: 'test-atlas-key',
+    } as Partial<Env> & Record<string, unknown>)
 
     for (let index = 0; index < 60; index += 1) {
       const response = await worker.fetch(generationPost('/v1/generation/tts', { text: `Hello ${index}`, language: 'en' }), env)
@@ -263,7 +219,10 @@ describe('generation-api TTS contract', () => {
     expect(limited.status).toBe(429)
     await expect(json(limited)).resolves.toMatchObject({ error: { code: 'rate_limited' } })
 
-    const budgetEnv = makeEnv()
+    const budgetEnv = makeEnv({
+      ATLAS_SERVICE: { fetch: atlasFetch },
+      ATLAS_API_KEY: 'test-atlas-key',
+    } as Partial<Env> & Record<string, unknown>)
     const dayStart = new Date().toISOString().slice(0, 10)
     const subjectKey = 'session:service_user'
     budgetEnv.db.usageWindows.set(`${subjectKey}|tts.generate|day|${dayStart}`, { request_count: 1, unit_count: 11999 })
@@ -272,40 +231,7 @@ describe('generation-api TTS contract', () => {
     await expect(json(overBudget)).resolves.toMatchObject({ error: { code: 'budget_exceeded' } })
   })
 
-  it('returns a D1-backed cache hit without calling the provider', async () => {
-    const normalized = internals.normalizeTtsRequest({ text: ' Yes ', language: 'EN', provider: 'auto' })
-    const requestHash = await internals.generateRequestHash(normalized)
-    const env = makeEnv({ OPENAI_API_KEY: undefined, ELEVENLABS_API_KEY: undefined })
-    env.db.byHash.set(requestHash, {
-      id: 'cached-audio',
-      request_hash: requestHash,
-      text: 'Yes',
-      language: 'en',
-      provider: 'openai',
-      voice: 'nova',
-      model: 'tts-1',
-      speed: 1,
-      pitch: 0,
-      audio_url: '/v1/generation/audio/cached-audio',
-      r2_key: `audio/${requestHash}.mp3`,
-      content_type: 'audio/mpeg',
-      file_size_bytes: 3,
-      generated_at: '2026-05-27T00:00:00.000Z',
-    })
-
-    const fetchSpy = vi.spyOn(globalThis, 'fetch')
-    const response = await worker.fetch(generationPost('/v1/generation/tts', { text: ' Yes ', language: 'EN', provider: 'auto' }), env)
-
-    expect(response.status).toBe(200)
-    expect(fetchSpy).not.toHaveBeenCalled()
-    await expect(json(response)).resolves.toMatchObject({
-      data: { id: 'cached-audio', audioUrl: '/v1/generation/audio/cached-audio' },
-      meta: { cached: true, schemaVersion: 1 }
-    })
-  })
-
-
-  it('routes compatibility TTS generation through Atlas instead of calling providers directly', async () => {
+  it('routes app speech generation through Atlas instead of calling providers directly', async () => {
     const atlasFetch = vi.fn(async (input: Request | string) => {
       const request = input instanceof Request ? input : new Request(input)
       expect(new URL(request.url).pathname).toBe('/v1/atlas/speech')
@@ -313,7 +239,7 @@ describe('generation-api TTS contract', () => {
       const atlasBody = await request.json() as Record<string, unknown>
       expect(atlasBody).toMatchObject({
         app: 'generation-api',
-        purpose: 'compatibility-tts',
+        purpose: 'speech-playback',
         text: 'Hello',
         language: 'en',
       })
@@ -357,7 +283,37 @@ describe('generation-api TTS contract', () => {
     })
   })
 
-  it('does not bypass Atlas when the compatibility TTS service binding is missing its service key', async () => {
+  it('does not use local audio records for app speech', async () => {
+    const atlasFetch = vi.fn(async () => new Response(JSON.stringify({
+      data: {
+        id: 'atlas-audio-2',
+        audioUrl: '/v1/atlas/assets/atlas-audio-2',
+        contentType: 'audio/mpeg',
+        cached: true,
+        provider: { name: 'elevenlabs', model: 'eleven_multilingual_v2', voice: 'cgSgspJ2msm6clMCkdW9' },
+      },
+      meta: { cached: true, schemaVersion: 1 },
+    }), { status: 200, headers: { 'content-type': 'application/json' } }))
+    const env = makeEnv({
+      ATLAS_SERVICE: { fetch: atlasFetch },
+      ATLAS_API_KEY: 'test-atlas-key',
+    } as Partial<Env> & Record<string, unknown>)
+    const dbSpy = vi.spyOn(env.db, 'prepare')
+    const bucketPutSpy = vi.spyOn(env.bucket, 'put')
+
+    const response = await worker.fetch(generationPost('/v1/generation/tts', { text: 'Hello', language: 'en' }), env)
+
+    expect(response.status).toBe(201)
+    expect(atlasFetch).toHaveBeenCalledTimes(1)
+    expect(dbSpy).not.toHaveBeenCalledWith(expect.stringContaining('generated_audio'))
+    expect(bucketPutSpy).not.toHaveBeenCalled()
+    await expect(json(response)).resolves.toMatchObject({
+      data: { id: 'atlas-audio-2', audioUrl: '/v1/atlas/assets/atlas-audio-2' },
+      meta: { cached: true },
+    })
+  })
+
+  it('does not bypass Atlas when the app speech service binding is missing its service key', async () => {
     const atlasFetch = vi.fn()
     const providerFetch = vi.spyOn(globalThis, 'fetch')
     const env = makeEnv({
@@ -376,66 +332,15 @@ describe('generation-api TTS contract', () => {
     })
   })
 
-  it('returns a safe missing-provider-key error on cache miss', async () => {
+  it('does not bypass Atlas when the app speech service binding is missing', async () => {
+    const providerFetch = vi.spyOn(globalThis, 'fetch')
     const env = makeEnv({ OPENAI_API_KEY: undefined, ELEVENLABS_API_KEY: undefined })
     const response = await worker.fetch(generationPost('/v1/generation/tts', { text: 'Hello', language: 'en' }), env)
 
     expect(response.status).toBe(503)
+    expect(providerFetch).not.toHaveBeenCalled()
     await expect(json(response)).resolves.toMatchObject({
-      error: { code: 'elevenlabs_tts_not_configured', message: 'ElevenLabs TTS is not configured.' }
-    })
-  })
-
-  it('stores generated audio metadata and retrieves safe R2 keys by audio id', async () => {
-    const env = makeEnv()
-    vi.spyOn(globalThis, 'fetch').mockResolvedValue(new Response(new Uint8Array([1, 2, 3]), { status: 200 }))
-
-    const generateResponse = await worker.fetch(generationPost('/v1/generation/tts', { text: 'Hello', language: 'en' }), env)
-    const generated = await json(generateResponse)
-
-    expect(generateResponse.status).toBe(201)
-    expect(generated.data.audioUrl).toMatch(/^\/v1\/generation\/audio\//)
-    expect(Array.from(env.bucket.objects.keys())[0]).toMatch(/^audio\/[a-f0-9]{32}\.mp3$/)
-
-    const audioResponse = await worker.fetch(new Request(`https://api.test${generated.data.audioUrl}`), env)
-    expect(audioResponse.status).toBe(200)
-    expect(audioResponse.headers.get('Content-Type')).toBe('audio/mpeg')
-    expect(new Uint8Array(await audioResponse.arrayBuffer())).toEqual(new Uint8Array([1, 2, 3]))
-
-    expect(internals.isSafeAudioKey('audio/../../secret.mp3')).toBe(false)
-    env.db.byId.set('bad-key', { ...env.db.byId.values().next().value!, id: 'bad-key', r2_key: '../secret' })
-    const unsafeResponse = await worker.fetch(new Request('https://api.test/v1/generation/audio/bad-key'), env)
-    expect(unsafeResponse.status).toBe(404)
-  })
-
-  it('returns the winning cache row when generated audio insert loses a request-hash race', async () => {
-    const env = makeEnv()
-    const normalized = internals.normalizeTtsRequest({ text: 'Hello race', language: 'en' })
-    const requestHash = await internals.generateRequestHash(normalized)
-    env.db.conflictAudioOnInsert = {
-      id: 'winner',
-      request_hash: requestHash,
-      text: normalized.text,
-      language: normalized.language,
-      provider: normalized.provider === 'auto' ? 'openai' : normalized.provider,
-      voice: normalized.voice,
-      model: normalized.model,
-      speed: normalized.speed,
-      pitch: normalized.pitch,
-      audio_url: '/v1/generation/audio/winner',
-      r2_key: 'audio/winner.mp3',
-      content_type: 'audio/mpeg',
-      file_size_bytes: 3,
-      generated_at: '2026-01-01T00:00:00.000Z',
-    }
-    vi.spyOn(globalThis, 'fetch').mockResolvedValue(new Response(new Uint8Array([1, 2, 3]), { status: 200 }))
-
-    const response = await worker.fetch(generationPost('/v1/generation/tts', { text: 'Hello race', language: 'en' }), env)
-
-    expect(response.status).toBe(200)
-    await expect(json(response)).resolves.toMatchObject({
-      data: { id: 'winner', audioUrl: '/v1/generation/audio/winner' },
-      meta: { cached: true },
+      error: { code: 'atlas_tts_not_configured', message: 'Atlas TTS is not configured.' }
     })
   })
 
@@ -483,13 +388,39 @@ describe('generation-api TTS contract', () => {
   })
 
   it('reuses cached story segment audio when a previous render failed mid-story', async () => {
-    const env = makeEnv()
     const firstSegmentBytes = Uint8Array.from([1, 2, 3])
     const secondSegmentBytes = Uint8Array.from([4, 5, 6])
-    const fetchMock = vi.spyOn(globalThis, 'fetch')
-      .mockResolvedValueOnce(new Response(firstSegmentBytes, { status: 200 }))
-      .mockResolvedValueOnce(new Response('temporary', { status: 503 }))
-      .mockResolvedValueOnce(new Response('still temporary', { status: 503 }))
+    let failedSecondSegmentOnce = false
+    const atlasFetch = vi.fn(async (input: Request | string) => {
+      const request = input instanceof Request ? input : new Request(input)
+      const path = new URL(request.url).pathname
+      if (path === '/v1/atlas/speech') {
+        const body = await request.json() as { text: string }
+        const id = body.text.startsWith('First') ? 'segment-one' : 'segment-two'
+        return new Response(JSON.stringify({
+          data: {
+            id,
+            audioUrl: `/v1/atlas/assets/${id}`,
+            contentType: 'audio/mpeg',
+            provider: { name: 'elevenlabs', model: 'eleven_multilingual_v2', voice: 'cgSgspJ2msm6clMCkdW9' },
+          },
+          meta: { cached: false, schemaVersion: 1 },
+        }), { status: 200, headers: { 'content-type': 'application/json' } })
+      }
+      if (path === '/v1/atlas/assets/segment-one') return new Response(firstSegmentBytes, { status: 200, headers: { 'content-type': 'audio/mpeg' } })
+      if (path === '/v1/atlas/assets/segment-two') {
+        if (!failedSecondSegmentOnce) {
+          failedSecondSegmentOnce = true
+          return new Response('temporary', { status: 503 })
+        }
+        return new Response(secondSegmentBytes, { status: 200, headers: { 'content-type': 'audio/mpeg' } })
+      }
+      return new Response('not found', { status: 404 })
+    })
+    const env = makeEnv({
+      ATLAS_SERVICE: { fetch: atlasFetch },
+      ATLAS_API_KEY: 'test-atlas-key',
+    } as Partial<Env> & Record<string, unknown>)
 
     const body = {
       title: 'Resumable story',
@@ -501,15 +432,14 @@ describe('generation-api TTS contract', () => {
     }
 
     const failed = await worker.fetch(generationPost('/v1/generation/stories/render', body), env)
-    expect(failed.status).toBe(502)
+    expect(failed.status).toBe(503)
     expect(Array.from(env.bucket.objects.keys()).filter((key) => key.startsWith('story-segments/'))).toHaveLength(1)
 
-    fetchMock.mockResolvedValueOnce(new Response(secondSegmentBytes, { status: 200 }))
     const retried = await worker.fetch(generationPost('/v1/generation/stories/render', body), env)
     const retriedBody = await json(retried)
 
     expect(retried.status).toBe(201)
-    expect(fetchMock).toHaveBeenCalledTimes(4)
+    expect(atlasFetch).toHaveBeenCalledTimes(6)
     expect(Array.from(env.bucket.objects.keys()).filter((key) => key.startsWith('story-segments/'))).toHaveLength(2)
     expect(env.db.stories.size).toBe(1)
     expect(retriedBody.data).toMatchObject({ title: 'Resumable story', fileSizeBytes: 6 })
@@ -517,7 +447,7 @@ describe('generation-api TTS contract', () => {
 
   it('scopes story draft lists to the authenticated session owner', async () => {
     const identity = sessionIdentityService({ 'token-a': 'user_a', 'token-b': 'user_b' })
-    const env = makeEnv({ API_KEYS: undefined, IDENTITY_SERVICE: identity } as Partial<Env>)
+    const env = makeEnv({ IDENTITY_SERVICE: identity } as Partial<Env>)
 
     for (const [token, title] of [['token-a', 'Owner A'], ['token-b', 'Owner B']] as const) {
       const response = await worker.fetch(new Request('https://api.test/v1/generation/story-drafts', {
@@ -539,7 +469,7 @@ describe('generation-api TTS contract', () => {
 
   it('protects private image binaries and mutations by owner', async () => {
     const identity = sessionIdentityService({ 'token-a': 'user_a', 'token-b': 'user_b' })
-    const env = makeEnv({ API_KEYS: undefined, IDENTITY_SERVICE: identity } as Partial<Env>)
+    const env = makeEnv({ IDENTITY_SERVICE: identity } as Partial<Env>)
     env.db.generatedImages.set('image_private', {
       id: 'image_private',
       r2_key: 'images/private.png',
@@ -633,7 +563,6 @@ describe('generation-api TTS contract', () => {
       })
     })
     const env = makeEnv({
-      API_KEYS: undefined,
       OPENAI_API_KEY: undefined,
       IDENTITY_SERVICE: { fetch: identityFetch },
     } as Partial<Env>)

@@ -1,5 +1,6 @@
 import { normalizeConfig, type AnkoreConfig, type NormalizedAnkoreConfig } from 'ankore'
 import { createIdentityWorker, type EmailMessage } from 'ankore/worker'
+import { resolvePepper, type SecretStoreSecret } from '../../shared/auth'
 
 interface D1PreparedStatement {
   bind(...values: unknown[]): D1PreparedStatement
@@ -20,6 +21,7 @@ export interface Env {
   IDENTITY_DB: D1Database
   TOKEN_PEPPER: string
   ANKORE_TOKEN_PEPPER?: string
+  PEPPER_SECRET?: SecretStoreSecret
   ADMIN_EMAIL?: string
   MAGIC_LINK_BASE_URL?: string
   COMMUNICATION_API_URL?: string
@@ -86,12 +88,22 @@ export default {
 
     const ankoreResponse = await createIdentityWorker(configForEnv(env), {
       sendEmail: message => requestMagicLinkDelivery(env, message)
-    }).fetch(request, {
-      ...env,
-      ANKORE_TOKEN_PEPPER: env.ANKORE_TOKEN_PEPPER ?? env.TOKEN_PEPPER
-    })
+    }).fetch(request, await ankoreEnv(env))
 
     return withIdentityCors(contractRequest, env, await withBrowserSessionCookie(contractRequest, await withTikoSessionContract(contractRequest, env, ankoreResponse)))
+  }
+}
+
+// Ankore hashes session tokens, magic links and device secrets synchronously from
+// the env it is handed, so it cannot await a Secrets Store binding itself. Resolve
+// the pepper up front and inject it into both vars Ankore may read, falling back to
+// the existing env values when no Store is configured.
+async function ankoreEnv(env: Env): Promise<Env & Record<string, unknown>> {
+  const pepper = await resolvePepper(env)
+  return {
+    ...env,
+    TOKEN_PEPPER: pepper ?? env.TOKEN_PEPPER,
+    ANKORE_TOKEN_PEPPER: pepper ?? env.ANKORE_TOKEN_PEPPER ?? env.TOKEN_PEPPER,
   }
 }
 
@@ -173,7 +185,7 @@ function normalizeEmailPurpose(purpose: string | undefined): 'verify_email' | 'r
   return 'recover'
 }
 
-function fetchAnkoreRoute(request: AnyRequest, env: Env, pathname: string, body: unknown): Promise<Response> {
+async function fetchAnkoreRoute(request: AnyRequest, env: Env, pathname: string, body: unknown): Promise<Response> {
   const url = new URL(request.url)
   url.pathname = pathname
   const headers = new Headers(request.headers)
@@ -184,10 +196,7 @@ function fetchAnkoreRoute(request: AnyRequest, env: Env, pathname: string, body:
     method: 'POST',
     headers,
     body: JSON.stringify(body)
-  }), {
-    ...env,
-    ANKORE_TOKEN_PEPPER: env.ANKORE_TOKEN_PEPPER ?? env.TOKEN_PEPPER
-  })
+  }), await ankoreEnv(env))
 }
 
 interface ManagedCredentialRow {
@@ -882,10 +891,7 @@ async function sessionResponse(request: Request, env: Env): Promise<Response> {
   url.pathname = '/v1/identity/session'
   const ankoreResponse = await createIdentityWorker(configForEnv(env), {
     sendEmail: message => requestMagicLinkDelivery(env, message)
-  }).fetch(new Request(url.toString(), { method: 'GET', headers: request.headers }), {
-    ...env,
-    ANKORE_TOKEN_PEPPER: env.ANKORE_TOKEN_PEPPER ?? env.TOKEN_PEPPER
-  })
+  }).fetch(new Request(url.toString(), { method: 'GET', headers: request.headers }), await ankoreEnv(env))
   const response = await withTikoSessionContract(request, env, ankoreResponse)
   const body = await response.clone().json().catch(() => null) as Record<string, any> | null
   if (body?.runtime) return response
@@ -1002,7 +1008,9 @@ async function canBootstrapAdmin(env: Env, subjectId: string): Promise<boolean> 
     .bind(subjectId, 'tiko')
     .first<{ email_hash: string | null }>()
   if (!row?.email_hash) return false
-  return row.email_hash === await hashEmail(normalizeEmail(env.ADMIN_EMAIL ?? ADMIN_EMAIL), env.TOKEN_PEPPER)
+  const pepper = await resolvePepper(env)
+  if (!pepper) return false
+  return row.email_hash === await hashEmail(normalizeEmail(env.ADMIN_EMAIL ?? ADMIN_EMAIL), pepper)
 }
 
 async function assignRole(db: D1Database, subjectId: string, role: string, source: string, actorSubjectId: string | null): Promise<void> {
@@ -1059,16 +1067,18 @@ function normalizeHandle(value: unknown): string | null {
 }
 
 async function hashSecret(secret: string, env: Env, purpose: string): Promise<string> {
-  const material = `tiko:${purpose}:${env.ANKORE_TOKEN_PEPPER ?? env.TOKEN_PEPPER}:${secret}`
+  const pepper = await requirePepper(env)
+  const material = `tiko:${purpose}:${pepper}:${secret}`
   const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(material))
   return `sha256:${Array.from(new Uint8Array(digest)).map((byte) => byte.toString(16).padStart(2, '0')).join('')}`
 }
 
 async function hashCredentialSecret(secret: string, env: Env, purpose: string): Promise<string> {
+  const pepper = await requirePepper(env)
   const salt = crypto.getRandomValues(new Uint8Array(16))
   const key = await crypto.subtle.importKey(
     'raw',
-    new TextEncoder().encode(`tiko:${purpose}:${env.ANKORE_TOKEN_PEPPER ?? env.TOKEN_PEPPER}:${secret}`),
+    new TextEncoder().encode(`tiko:${purpose}:${pepper}:${secret}`),
     'PBKDF2',
     false,
     ['deriveBits'],
@@ -1082,11 +1092,12 @@ async function verifyCredentialSecret(secret: string, storedHash: string, env: E
     const [, iterationsRaw, saltRaw, hashRaw] = storedHash.split(':')
     const iterations = Number(iterationsRaw)
     if (!Number.isFinite(iterations) || !saltRaw || !hashRaw) return false
+    const pepper = await requirePepper(env)
     const salt = base64UrlDecode(saltRaw)
     const expected = base64UrlDecode(hashRaw)
     const key = await crypto.subtle.importKey(
       'raw',
-      new TextEncoder().encode(`tiko:${purpose}:${env.ANKORE_TOKEN_PEPPER ?? env.TOKEN_PEPPER}:${secret}`),
+      new TextEncoder().encode(`tiko:${purpose}:${pepper}:${secret}`),
       'PBKDF2',
       false,
       ['deriveBits'],
@@ -1096,6 +1107,12 @@ async function verifyCredentialSecret(secret: string, storedHash: string, env: E
     return timingSafeEqual(bits, expected)
   }
   return storedHash === await hashSecret(secret, env, purpose)
+}
+
+async function requirePepper(env: Env): Promise<string> {
+  const pepper = await resolvePepper(env)
+  if (!pepper) throw new Error('identity_pepper_not_configured')
+  return pepper
 }
 
 function needsCredentialRehash(storedHash: string): boolean {

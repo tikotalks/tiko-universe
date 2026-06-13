@@ -19,6 +19,11 @@ migrations_dir = "../app-api/migrations"
 binding = "IDENTITY_SERVICE"
 service = "tiko-identity-api-dev"
 
+[[secrets_store_secrets]]
+binding = "PEPPER_SECRET"
+store_id = "0ba6468063e04b779e529f5db651896b"
+secret_name = "TOKEN_PEPPER"
+
 [vars]
 TIKO_ENVIRONMENT = "development"
 ADMIN_EMAIL = "me@sil.mt"
@@ -61,6 +66,11 @@ migrations_dir = "../app-api/migrations"
 [[env.production.services]]
 binding = "IDENTITY_SERVICE"
 service = "tiko-identity-api"
+
+[[env.production.secrets_store_secrets]]
+binding = "PEPPER_SECRET"
+store_id = "0ba6468063e04b779e529f5db651896b"
+secret_name = "TOKEN_PEPPER"
 
 [env.production.vars]
 TIKO_ENVIRONMENT = "production"

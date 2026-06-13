@@ -37,6 +37,11 @@ IDENTITY_BASE_URL = "https://api.tikotalks.com/v1"
 binding = "IDENTITY_SERVICE"
 service = "tiko-identity-api-dev"
 
+[[secrets_store_secrets]]
+binding = "PEPPER_SECRET"
+store_id = "0ba6468063e04b779e529f5db651896b"
+secret_name = "TOKEN_PEPPER"
+
 [[routes]]
 pattern = "dev.api.tikotalks.com/v1/atlas/*"
 zone_name = "tikotalks.com"
@@ -59,6 +64,11 @@ IDENTITY_BASE_URL = "https://api.tikotalks.com/v1"
 [[env.production.services]]
 binding = "IDENTITY_SERVICE"
 service = "tiko-identity-api"
+
+[[env.production.secrets_store_secrets]]
+binding = "PEPPER_SECRET"
+store_id = "0ba6468063e04b779e529f5db651896b"
+secret_name = "TOKEN_PEPPER"
 
 [[env.production.d1_databases]]
 binding = "ATLAS_DB"

@@ -4,21 +4,22 @@ compatibility_date = "2026-05-27"
 account_id = "dc2b7d14a69351375cab6de9a13ddee9"
 workers_dev = true
 
-# Temporary compatibility Worker for legacy speech routes.
-# New speech generation and provider selection are owned by Atlas.
+# Speech adapter route.
+# Speech generation, caching, and provider selection are owned by Atlas.
 
 [[d1_databases]]
-binding = "TTS_DB"
-database_name = "tiko-image-generation"
-database_id = "ab7cdbd1-e50a-4862-b8eb-681d263c3f66"
-
-[[r2_buckets]]
-binding = "AUDIO_BUCKET"
-bucket_name = "tiko-tts-audio-dev"
+binding = "AUTH_DB"
+database_name = "tiko-identity"
+database_id = "036a1726-ac16-48a9-ab76-22c3a88ca7ae"
 
 [[services]]
 binding = "ATLAS_SERVICE"
 service = "tiko-atlas-api-dev"
+
+[[secrets_store_secrets]]
+binding = "PEPPER_SECRET"
+store_id = "0ba6468063e04b779e529f5db651896b"
+secret_name = "TOKEN_PEPPER"
 
 [vars]
 TIKO_ENVIRONMENT = "development"
@@ -26,9 +27,8 @@ TTS_PUBLIC_ROUTE = "https://dev.tts.tikotalks.com"
 ATLAS_BASE_URL = "https://api.tikotalks.com/v1/atlas"
 
 # ── Production environment ──────────────────────────────────────
-# Temporary production route for Yes No compatibility.
+# Production speech adapter route.
 # Deploy with: npx wrangler deploy --env production
-# Remove after Yes No web/iOS migrate to generation-api.
 
 [env.production]
 name = "tiko-tts-api"
@@ -40,17 +40,18 @@ TTS_PUBLIC_ROUTE = "https://tts.tikotalks.com"
 ATLAS_BASE_URL = "https://api.tikotalks.com/v1/atlas"
 
 [[env.production.d1_databases]]
-binding = "TTS_DB"
-database_name = "tiko-image-generation"
-database_id = "ab7cdbd1-e50a-4862-b8eb-681d263c3f66"
-
-[[env.production.r2_buckets]]
-binding = "AUDIO_BUCKET"
-bucket_name = "tiko-tts-audio"
+binding = "AUTH_DB"
+database_name = "tiko-identity"
+database_id = "036a1726-ac16-48a9-ab76-22c3a88ca7ae"
 
 [[env.production.services]]
 binding = "ATLAS_SERVICE"
 service = "tiko-atlas-api"
+
+[[env.production.secrets_store_secrets]]
+binding = "PEPPER_SECRET"
+store_id = "0ba6468063e04b779e529f5db651896b"
+secret_name = "TOKEN_PEPPER"
 
 [[env.production.routes]]
 pattern = "tts.tikotalks.com"

@@ -5,7 +5,7 @@ export const ATLAS_CAPABILITIES: AtlasCapabilityDescriptor[] = [
     capability: 'speech.synthesize',
     enabled: true,
     allowedApps: ['*'],
-    allowedPurposes: ['child-button', 'sentence-speak', 'story-narration', 'voice-sample', 'admin-preview', 'speech-playback', 'compatibility-tts'],
+    allowedPurposes: ['child-button', 'sentence-speak', 'story-narration', 'voice-sample', 'admin-preview', 'speech-playback'],
     defaultRoute: { provider: 'openai', model: 'tts-1' },
     accepts: ['text', 'locale', 'format', 'voice'],
     returns: ['audioUrl', 'contentType', 'provider', 'usage'],

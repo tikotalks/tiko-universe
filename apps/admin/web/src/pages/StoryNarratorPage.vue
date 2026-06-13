@@ -1,7 +1,10 @@
 <script setup lang="ts">
 import { computed, onMounted, ref, watch } from 'vue'
 import { useBemm } from 'bemm'
-import { Button, Icon, InputRange, InputText, InputTextArea } from '@sil/ui'
+import { Button, Icon } from '@sil/ui'
+import StoryDraftsPanel from '../components/stories/StoryDraftsPanel.vue'
+import StoryPublishSettingsCard from '../components/stories/StoryPublishSettingsCard.vue'
+import StorySegmentsEditor from '../components/stories/StorySegmentsEditor.vue'
 import { useStoryNarration, type StoryDraft, type StoryGalleryItem, type VoiceSample } from '../composables/useStoryNarration'
 import { useAdminMediaLibrary, type AudioLibraryAlbum } from '../composables/useAdminMediaLibrary'
 import type { StorySegmentInput, StoryTryoutResult } from '../types/admin'
@@ -10,7 +13,6 @@ type Tab = 'library' | 'drafts' | 'create'
 
 const page = useBemm('story-page', { return: 'string', includeBaseClass: true })
 const card = useBemm('story-card', { return: 'string', includeBaseClass: true })
-const segment = useBemm('segment-card', { return: 'string', includeBaseClass: true })
 
 const fallbackVoices = [
   { id: '21m00Tcm4TlvDq8ikWAM', label: 'Rachel', provider: 'elevenlabs', model: 'eleven_multilingual_v2' },
@@ -56,6 +58,13 @@ const voicePreviewAudio = ref<HTMLAudioElement | null>(null)
 const voicePreviewPlayingId = ref<string | null>(null)
 
 const selectedSegment = computed(() => segments.value.find(s => s.id === selectedSegmentId.value) ?? segments.value[0])
+const selectedSegmentText = computed({
+  get: () => selectedSegment.value?.text ?? '',
+  set: value => {
+    const target = selectedSegment.value
+    if (target) target.text = value
+  },
+})
 const totalCharacters = computed(() => segments.value.reduce((sum, s) => sum + s.text.length, 0))
 const canRender = computed(() => title.value.trim() && segments.value.some(s => s.text.trim()))
 const voiceOptions = computed(() => {
@@ -366,58 +375,18 @@ onMounted(() => {
       </div>
     </section>
 
-    <section v-else-if="activeTab === 'drafts'" :class="page('panel')">
-      <header :class="page('panel-head')">
-        <div :class="page('panel-intro')">
-          <h2 :class="page('panel-title')">Story creator drafts</h2>
-          <p :class="page('panel-meta')">Chapter plans with voice, cover, and target Radio album settings.</p>
-        </div>
-        <Button variant="outline" :loading="galleryLoading" :disabled="galleryLoading" @click="loadDrafts">Reload</Button>
-      </header>
-
-      <div v-if="savedDrafts.length === 0" :class="page('empty')">
-        No creator drafts yet. <button type="button" :class="page('inline-link')" @click="activeTab = 'create'">Plan one</button>.
-      </div>
-      <div v-else :class="page('grid')">
-        <article v-for="draft in savedDrafts" :key="draft.id" :class="card('', { draft: true })">
-          <header :class="card('head')">
-            <h3 :class="card('title')">{{ draft.title }}</h3>
-            <p :class="card('meta')">{{ draft.defaultVoice }} · {{ draft.chapters.length }} chapters · {{ draft.status }}</p>
-          </header>
-          <p v-if="draft.description" :class="card('description')">{{ draft.description }}</p>
-          <p :class="card('description')">
-            Cover: {{ draft.coverMediaId || 'not assigned' }}<br />
-            Radio album: {{ audioAlbums.find(album => album.id === draft.targetAlbumId)?.title || draft.targetAlbumId || 'not assigned' }}
-          </p>
-        </article>
-      </div>
-
-      <header :class="page('panel-head')">
-        <div :class="page('panel-intro')">
-          <h2 :class="page('panel-title')">Generated drafts</h2>
-          <p :class="page('panel-meta')">Render output stays here until promoted to Tiko Radio.</p>
-        </div>
-      </header>
-
-      <div v-if="galleryLoading && draftItems.length === 0" :class="page('empty')">Loading drafts…</div>
-      <div v-else-if="draftItems.length === 0" :class="page('empty')">
-        No drafts yet. <button type="button" :class="page('inline-link')" @click="activeTab = 'create'">Create one</button>.
-      </div>
-      <div v-else :class="page('grid')">
-        <article v-for="item in draftItems" :key="item.id" :class="card('', { draft: true })">
-          <header :class="card('head')">
-            <h3 :class="card('title')">{{ item.title }}</h3>
-            <p :class="card('meta')">{{ item.voice }} · {{ item.segmentCount }} segments</p>
-          </header>
-          <p v-if="item.description" :class="card('description')">{{ item.description }}</p>
-          <audio v-if="item.audioUrl" :class="card('audio')" :src="audioSrc(item.audioUrl)" controls />
-          <div :class="card('actions')">
-            <Button size="small" @click="onPromote(item)">Promote</Button>
-            <Button variant="ghost" size="small" @click="onDelete(item, 'drafts')">Delete</Button>
-          </div>
-        </article>
-      </div>
-    </section>
+    <StoryDraftsPanel
+      v-else-if="activeTab === 'drafts'"
+      :saved-drafts="savedDrafts"
+      :rendered-drafts="draftItems"
+      :audio-albums="audioAlbums"
+      :loading="galleryLoading"
+      :audio-src="audioSrc"
+      @reload="loadDrafts"
+      @create="activeTab = 'create'"
+      @promote="onPromote"
+      @delete-rendered="onDelete($event, 'drafts')"
+    />
 
     <section v-else :class="page('create')">
       <form :class="page('form')" @submit.prevent="onRender">
@@ -471,28 +440,14 @@ onMounted(() => {
           </div>
         </div>
 
-        <section :class="page('editor')" aria-label="Story text editor">
-          <InputTextArea v-model="selectedSegment.text" label="Story text" :min-rows="10" :max-rows="18" :allow-resize="true" placeholder="Once upon a time…" />
-        </section>
-
-        <button type="button" :class="page('add-paragraph')" @click="addSegment">+ Add paragraph</button>
-
-        <section :class="page('segments')" aria-label="Story paragraphs">
-          <article
-            v-for="(item, index) in segments"
-            :key="item.id"
-            :class="segment('', { active: selectedSegmentId === item.id })"
-            @click="selectedSegmentId = item.id"
-          >
-            <div :class="segment('header')">
-              <strong :class="segment('label')">Paragraph {{ index + 1 }}</strong>
-              <div :class="segment('actions')">
-                <button type="button" :class="page('text-action')" @click.stop="duplicateSegment(item)">Copy</button>
-                <button type="button" :class="page('text-action')" :disabled="segments.length === 1" @click.stop="removeSegment(item.id)">Remove</button>
-              </div>
-            </div>
-          </article>
-        </section>
+        <StorySegmentsEditor
+          v-model:selected-segment-id="selectedSegmentId"
+          v-model:selected-text="selectedSegmentText"
+          :segments="segments"
+          @add="addSegment"
+          @duplicate="duplicateSegment"
+          @remove="removeSegment"
+        />
 
         <footer :class="page('form-meta')">
           <span><Icon name="ui/clock" size="small" /> Estimated length <strong>~{{ estimatedMinutes }} min</strong></span>
@@ -548,37 +503,14 @@ onMounted(() => {
           <audio v-if="selectedPreviewAudioUrl" :class="page('preview-audio')" :src="audioSrc(selectedPreviewAudioUrl)" controls />
         </section>
 
-        <section :class="page('side-card')">
-          <header :class="page('side-head')">
-            <Icon name="ui/on-target" size="small" />
-            <div>
-              <h3 :class="page('panel-title')">Publish settings</h3>
-              <p :class="page('panel-meta')">Choose where and how to publish.</p>
-            </div>
-          </header>
-          <label :class="page('label')">
-            <span :class="page('label-text')">Target Radio album</span>
-            <select :class="page('select')" v-model="targetAlbumId">
-              <option value="">No album assigned</option>
-              <option v-for="album in audioAlbums" :key="album.id" :value="album.id">{{ album.title }}</option>
-            </select>
-          </label>
-          <div :class="page('two-col')">
-            <label :class="page('label')">
-              <span :class="page('label-text')">Language</span>
-              <input v-model="language" :class="page('input')" type="text" placeholder="en" />
-            </label>
-            <label :class="page('label')">
-              <span :class="page('label-text')">Speed {{ speed.toFixed(2) }}×</span>
-              <InputRange v-model="speed" :min="0.5" :max="1.5" :step="0.05" />
-            </label>
-          </div>
-          <div :class="page('two-col')">
-            <InputText v-model="category" label="Category" />
-            <InputText v-model="tagsText" label="Tags" placeholder="comma, separated" />
-          </div>
-          <p :class="page('status-row')"><span>Draft</span> Only you can see this.</p>
-        </section>
+        <StoryPublishSettingsCard
+          v-model:target-album-id="targetAlbumId"
+          v-model:language="language"
+          v-model:speed="speed"
+          v-model:category="category"
+          v-model:tags-text="tagsText"
+          :audio-albums="audioAlbums"
+        />
       </aside>
 
       <footer :class="page('footer-bar')">
@@ -955,46 +887,6 @@ onMounted(() => {
     gap: var(--space-xs);
   }
 }
-
-.segment-card {
-  border: 1px solid var(--admin-border);
-  border-radius: var(--border-radius-s);
-  padding: var(--space-s);
-  background: var(--admin-page-bg);
-  cursor: pointer;
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-s);
-  transition: border-color 0.12s ease;
-
-  &:hover {
-    border-color: var(--admin-border-strong);
-  }
-
-  &--active {
-    border-color: var(--color-primary);
-    box-shadow: 0 0 0 1px var(--color-primary);
-  }
-
-  &__header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: var(--space-s);
-  }
-
-  &__label {
-    color: var(--admin-text);
-    font-weight: 600;
-    font-size: var(--font-size-s);
-  }
-
-  &__actions {
-    display: flex;
-    gap: var(--space-xs);
-  }
-}
-
 
 /* Reference-inspired Stories creator */
 .story-page {
@@ -1451,22 +1343,6 @@ onMounted(() => {
     }
   }
 
-  &__status-row {
-    color: var(--admin-text-muted);
-    font-size: var(--font-size-s);
-    display: flex;
-    align-items: center;
-    gap: var(--space-s);
-
-    span {
-      border: 1px solid color-mix(in srgb, var(--color-foreground), transparent 80%);
-      border-radius: var(--border-radius-s);
-      padding: var(--space-xs) var(--space-s);
-      color: var(--admin-text);
-      background: color-mix(in srgb, var(--color-background), var(--color-foreground) 6%);
-    }
-  }
-
   &__footer-bar {
     grid-area: footer;
     padding: var(--space-m) calc(var(--space) * 1.35);
@@ -1510,20 +1386,6 @@ onMounted(() => {
     &__form-meta {
       flex-direction: column;
     }
-  }
-}
-
-.segment-card {
-  padding: var(--space-s) 0;
-  background: transparent;
-  border-color: transparent;
-  border-top-color: color-mix(in srgb, var(--color-foreground), transparent 92%);
-  border-radius: 0;
-
-  &:hover,
-  &--active {
-    border-color: color-mix(in srgb, var(--color-foreground), transparent 86%);
-    box-shadow: none;
   }
 }
 
