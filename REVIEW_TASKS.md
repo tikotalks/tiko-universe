@@ -80,6 +80,7 @@ Approximate review spread: 7 Critical, about 35 High, about 70 Medium, and about
   - [x] Route content-api card mutation session validation through shared `requireSession` while preserving app-api token forwarding.
   - [x] Remove generation-api local bearer parsing from paid usage accounting.
   - [x] Route admin-api dashboard authentication through shared `requireSession`.
+  - [x] Route app-api session/admin checks through shared `requireSession` and `requireRole`.
 
 - [x] Move iOS identity storage to Keychain.
   - Make `TikoKeychainIdentityStore` the default.
