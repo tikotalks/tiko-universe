@@ -242,7 +242,7 @@ Approximate review spread: 7 Critical, about 35 High, about 70 Medium, and about
   - Rename current scaffold check.
   - Wire lint into `npm run check` and CI.
 
-- [ ] Make builds deterministic.
+- [x] Make builds deterministic.
   - Decide whether generated app configs are committed or generated in deploy.
   - Ensure CI validates the same artifacts deploy ships.
   - Validate fetched config values before writing Swift/TS source.

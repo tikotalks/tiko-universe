@@ -5,6 +5,7 @@ import { dirname, resolve } from 'node:path'
 const root = resolve(new URL('..', import.meta.url).pathname)
 const endpoint = (process.env.TIKO_APP_CONFIG_URL ?? process.env.VITE_TIKO_APP_CONFIG_URL ?? 'https://app.tikoapi.org/v1/apps/config').replace(/\/$/, '')
 const strict = process.env.TIKO_APP_CONFIG_STRICT === '1'
+const dryRun = process.env.TIKO_APP_CONFIG_DRY_RUN === '1'
 
 const fallbackConfigs = {
   'yes-no': { id: 'yes-no', title: 'Yes No', appColor: 'yes-no', appIcon: 'ui/check-fat', appIconMediaCategory: 'emotions', themeColor: '#9b3fbd', iosIcon: 'checkmark.circle' },
@@ -32,6 +33,10 @@ const iosApps = {
 
 async function main() {
   const configs = await fetchConfigs()
+  if (dryRun) {
+    console.log(`Validated app configs from ${endpoint}`)
+    return
+  }
   for (const app of webApps) {
     await writeWebConfig(app, configs[app] ?? fallbackConfigs[app])
   }
@@ -43,13 +48,13 @@ async function main() {
 }
 
 async function fetchConfigs() {
+  let configs
   try {
     const response = await fetch(endpoint)
     if (!response.ok) throw new Error(`HTTP ${response.status}`)
     const body = await response.json()
-    const configs = body.configs ?? body.data?.configs
+    configs = body.configs ?? body.data?.configs
     if (!configs || typeof configs !== 'object') throw new Error('No configs object in response')
-    return { ...fallbackConfigs, ...configs }
   } catch (error) {
     const message = error instanceof Error ? error.message : 'unknown error'
     if (strict) {
@@ -58,6 +63,40 @@ async function fetchConfigs() {
     console.warn(`Could not fetch app configs (${message}). Keeping fallback configs.`)
     return fallbackConfigs
   }
+  return mergeValidConfigs(configs)
+}
+
+function mergeValidConfigs(configs) {
+  const merged = { ...fallbackConfigs }
+  for (const app of Object.keys(fallbackConfigs)) {
+    if (!Object.hasOwn(configs, app)) continue
+    try {
+      merged[app] = validateConfig(app, configs[app])
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'invalid config'
+      if (strict) throw new Error(`${app}: ${message}`)
+      console.warn(`Ignoring invalid app config for ${app} (${message}). Keeping fallback config.`)
+    }
+  }
+  return merged
+}
+
+function validateConfig(app, config) {
+  if (!config || typeof config !== 'object' || Array.isArray(config)) {
+    throw new Error('config must be an object')
+  }
+  const fallback = fallbackConfigs[app]
+  const normalized = { ...fallback, ...config }
+  if (normalized.id !== app) throw new Error(`id must be "${app}"`)
+  requireNonEmptyString(normalized.title, 'title')
+  requireIdentifier(normalized.appColor, 'appColor')
+  if (!fallbackConfigs[normalized.appColor]) throw new Error(`appColor "${normalized.appColor}" is not a known Tiko app color`)
+  requireIconName(normalized.appIcon, 'appIcon')
+  requireOptionalUrl(normalized.appIconImageUrl, 'appIconImageUrl')
+  requireOptionalIdentifier(normalized.appIconMediaCategory, 'appIconMediaCategory')
+  requireHexColor(normalized.themeColor, 'themeColor')
+  requireOptionalSwiftSymbol(normalized.iosIcon, 'iosIcon')
+  return normalized
 }
 
 async function writeWebConfig(app, config) {
@@ -138,6 +177,57 @@ function swiftDarkHex(value) {
   const green = Math.max(0, Math.round(Number.parseInt(hex.slice(2, 4), 16) * 0.52))
   const blue = Math.max(0, Math.round(Number.parseInt(hex.slice(4, 6), 16) * 0.52))
   return `0x${[red, green, blue].map((part) => part.toString(16).padStart(2, '0')).join('')}`
+}
+
+function requireNonEmptyString(value, field) {
+  if (typeof value !== 'string' || value.trim() === '') {
+    throw new Error(`${field} must be a non-empty string`)
+  }
+}
+
+function requireIdentifier(value, field) {
+  requireNonEmptyString(value, field)
+  if (!/^[a-z][a-z0-9-]*$/.test(value)) {
+    throw new Error(`${field} must match /^[a-z][a-z0-9-]*$/`)
+  }
+}
+
+function requireOptionalIdentifier(value, field) {
+  if (value == null || value === '') return
+  requireIdentifier(value, field)
+}
+
+function requireIconName(value, field) {
+  requireNonEmptyString(value, field)
+  if (!/^[a-z][a-z0-9-]*\/[a-z][a-z0-9-]*$/.test(value)) {
+    throw new Error(`${field} must be an open-icon name like "ui/settings"`)
+  }
+}
+
+function requireOptionalUrl(value, field) {
+  if (value == null || value === '') return
+  requireNonEmptyString(value, field)
+  try {
+    const url = new URL(value)
+    if (url.protocol !== 'https:') throw new Error('must use https')
+  } catch {
+    throw new Error(`${field} must be a valid https URL`)
+  }
+}
+
+function requireHexColor(value, field) {
+  requireNonEmptyString(value, field)
+  if (!/^#[0-9a-fA-F]{6}$/.test(value)) {
+    throw new Error(`${field} must be a #RRGGBB hex color`)
+  }
+}
+
+function requireOptionalSwiftSymbol(value, field) {
+  if (value == null || value === '') return
+  requireNonEmptyString(value, field)
+  if (!/^[A-Za-z0-9._-]+$/.test(value)) {
+    throw new Error(`${field} contains unsupported characters`)
+  }
 }
 
 main().catch((error) => {

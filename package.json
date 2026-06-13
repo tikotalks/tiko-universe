@@ -15,7 +15,7 @@
     "generate:app-configs": "node tools/generate-app-configs.mjs",
     "generate:colors": "node tools/generate-tiko-colors.mjs",
     "generate:talk-seeds": "node tools/generate-talk-seeds.mjs",
-    "prebuild": "npm run generate:colors && (npm run generate:app-configs || true)",
+    "prebuild": "npm run generate:colors",
     "lint": "node tools/check-placeholders.mjs",
     "typecheck": "vue-tsc --noEmit -p tsconfig.json",
     "test": "vitest run",
