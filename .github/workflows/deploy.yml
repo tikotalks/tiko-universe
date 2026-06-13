@@ -285,6 +285,10 @@ jobs:
               echo "🗄️ Applying app-api production D1 migrations"
               npx wrangler d1 migrations apply tiko-db --remote --env production
             fi
+            if [[ "$WORKER" == "generation-api" ]]; then
+              echo "🗄️ Applying generation-api production D1 migrations"
+              npx wrangler d1 migrations apply tiko-image-generation --remote --env production
+            fi
             if [[ "$WORKER" == "media-api" ]]; then
               echo "🗄️ Applying media-api production D1 migrations"
               npx wrangler d1 migrations apply tiko-media --remote --env production
@@ -304,6 +308,10 @@ jobs:
             if [[ "$WORKER" == "app-api" ]]; then
               echo "🗄️ Applying app-api development D1 migrations"
               npx wrangler d1 migrations apply tiko-db --remote
+            fi
+            if [[ "$WORKER" == "generation-api" ]]; then
+              echo "🗄️ Applying generation-api development D1 migrations"
+              npx wrangler d1 migrations apply tiko-image-generation --remote
             fi
             if [[ "$WORKER" == "media-api" ]]; then
               echo "🗄️ Applying media-api development D1 migrations"
