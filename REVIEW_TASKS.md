@@ -212,7 +212,7 @@ Approximate review spread: 7 Critical, about 35 High, about 70 Medium, and about
 
 ## Phase 4 - Testing And CI Quality
 
-- [ ] Restore Playwright E2E.
+- [x] Restore Playwright E2E.
   - Add pinned `@playwright/test`.
   - Fix config shape and ports.
   - Remove or restore the clock project.

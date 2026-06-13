@@ -11,4 +11,7 @@ export default defineConfig({
       '@tiko/ui': fileURLToPath(new URL('../../../packages/ui/src/index.ts', import.meta.url)),
     },
   },
+  optimizeDeps: {
+    include: ['highlight.js/lib/core'],
+  },
 })

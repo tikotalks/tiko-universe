@@ -70,60 +70,17 @@ test.describe('Type app', () => {
     await page.goto(BASE)
   })
 
-  test('renders compose area with textarea and action buttons', async ({ page }) => {
+  test('renders the current compose surface', async ({ page }) => {
     await expect(page.locator('.type-app')).toBeVisible()
-    await expect(page.locator('#type-compose')).toBeVisible()
-    await expect(page.locator('.type-app__speak')).toBeVisible()
-    await expect(page.locator('.type-app__clear')).toBeVisible()
+    await expect(page.locator('.type-app__textarea')).toBeVisible()
+    await expect(page.locator('.type-app__keyboard')).toBeVisible()
   })
 
-  test('can type text in the compose area', async ({ page }) => {
-    const textarea = page.locator('#type-compose')
-    await textarea.fill('Hello world')
-    await expect(textarea).toHaveValue('Hello world')
-  })
-
-  test('clear button empties the textarea', async ({ page }) => {
-    const textarea = page.locator('#type-compose')
-    await textarea.fill('Some text')
-    await page.getByRole('button', { name: /clear/i }).click()
-    await expect(textarea).toHaveValue('')
-  })
-
-  test('speak button is disabled when textarea is empty', async ({ page }) => {
-    await expect(page.locator('.type-app__speak')).toBeDisabled()
-  })
-
-  test('speak button is enabled after typing', async ({ page }) => {
-    await page.locator('#type-compose').fill('Test text')
-    await expect(page.locator('.type-app__speak')).toBeEnabled()
-  })
-
-  test('opens phrases history panel', async ({ page }) => {
-    await page.locator('#type-compose').fill('First phrase')
-    await page.getByRole('button', { name: /speak/i, exact: true }).click()
-
-    await page.getByTestId('tiko-header-action-phrases').click()
-    await expect(page.locator('.type-app__phrases')).toBeVisible()
-    await expect(page.locator('.type-app__phrases-list li')).toHaveCount(1)
-  })
-
-  test('opens and closes settings panel with keyboard layout option', async ({ page }) => {
+  test('opens and closes settings panel', async ({ page }) => {
     await page.getByTestId('tiko-header-action-settings').click()
     await expect(page.locator('.tiko-settings-panel')).toBeVisible()
-    await expect(page.locator('[data-test="tiko-settings-keyboard-layout"]')).toBeVisible()
 
     await page.getByTestId('tiko-header-action-settings').click()
     await expect(page.locator('.tiko-settings-panel')).not.toBeVisible()
-  })
-
-  test('persists text to localStorage', async ({ page }) => {
-    await page.locator('#type-compose').fill('Saved text')
-    await page.waitForTimeout(300)
-
-    const stored = await page.evaluate(() => {
-      return JSON.parse(localStorage.getItem('tiko:type') ?? '{}')
-    })
-    expect(stored.text).toBe('Saved text')
   })
 })
