@@ -4,7 +4,7 @@ import { useBemm } from 'bemm'
 import { Button, Popup, type PopupService } from '@sil/ui'
 import { IdentityClient } from '@tiko/identity'
 import { TikoDataClient, type CardsSettings } from '@tiko/data'
-import { createI18n, createTikoIdentityLabels, createTikoShellLabels, createTikoTranslationLoader, normalizeTikoLanguage, tikoI18nKeys, tikoLanguageOptions, type TikoLanguage } from '@tiko/i18n'
+import { createI18n, createTikoIdentityLabels, createTikoShellLabels, normalizeTikoLanguage, tikoI18nKeys, tikoLanguageOptions, type TikoLanguage } from '@tiko/i18n'
 import {
   TikoAppShell,
   createTikoTtsClient,
@@ -14,6 +14,7 @@ import {
   resolveTikoIdentityBaseUrl,
   useTikoAppSettingsRuntime,
   useTikoColorModeEffect,
+  useTikoI18nRuntime,
   useIdentityRuntime,
   type IdentityRuntimeState,
   type TikoColorMode,
@@ -51,8 +52,6 @@ const speakStatus = ref<SpeakStatus>('idle')
 
 const stored = readStored()
 const i18n = createI18n({ app: appId, language: normalizeTikoLanguage(stored.language) })
-const translationLoader = createTikoTranslationLoader()
-const loadedTranslations = new Set<string>()
 const language = ref<TikoLanguage>(normalizeTikoLanguage(stored.language))
 const colorMode = ref<TikoColorMode>(normalizeTikoColorMode(stored.colorMode))
 const hideDefaultCollections = ref(stored.hideDefaultCollections ?? false)
@@ -395,19 +394,6 @@ function clampIndex(value: number) {
   return Math.min(2, Math.max(0, Number.isFinite(value) ? value : 1))
 }
 
-async function loadTranslations(value: TikoLanguage) {
-  if (loadedTranslations.has(value)) return
-  try {
-    const bundle = await translationLoader({ app: appId, language: value })
-    if (Object.keys(bundle.translations).length > 0) {
-      i18n.addBundle(bundle)
-    }
-    loadedTranslations.add(value)
-  } catch {
-    // Keep local fallbacks active and allow a later language switch to retry.
-  }
-}
-
 function applyRemoteSettings(settings: CardsSettings) {
   language.value = normalizeTikoLanguage(settings.language)
   colorMode.value = normalizeTikoColorMode(settings.colorMode)
@@ -425,11 +411,14 @@ function applyRemoteSettings(settings: CardsSettings) {
     : labelSizeIndex.value
 }
 
-watch(language, value => {
-  i18n.setLanguage(value)
-  void loadTranslations(value)
-  if (collectionsHydrated.value) void cards.loadCollections(value)
-}, { immediate: true })
+useTikoI18nRuntime({
+  app: appId,
+  language,
+  i18n,
+  onLanguageChange: value => {
+    if (collectionsHydrated.value) void cards.loadCollections(value)
+  },
+})
 
 useTikoColorModeEffect(colorMode)
 

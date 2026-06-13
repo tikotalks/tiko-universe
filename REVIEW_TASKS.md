@@ -155,7 +155,7 @@ Approximate review spread: 7 Critical, about 35 High, about 70 Medium, and about
 
 ## Phase 3 - Shared Runtime, UI, Media, And Architecture
 
-- [ ] Extract shared web app runtime.
+- [x] Extract shared web app runtime.
   - Base URL resolution.
   - Identity bootstrap.
   - Local storage helpers.

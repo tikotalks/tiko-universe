@@ -4,7 +4,7 @@ import { useBemm } from 'bemm'
 import { Icon, Popup } from '@sil/ui'
 import { IdentityClient } from '@tiko/identity'
 import { TikoDataClient, type YesNoSettings, type YesNoState } from '@tiko/data'
-import { createI18n, createTikoIdentityLabels, createTikoShellLabels, createTikoTranslationLoader, normalizeTikoLanguage, tikoI18nKeys, tikoLanguageOptions, type TikoLanguage } from '@tiko/i18n'
+import { createI18n, createTikoIdentityLabels, createTikoShellLabels, normalizeTikoLanguage, tikoI18nKeys, tikoLanguageOptions, type TikoLanguage } from '@tiko/i18n'
 import {
   TikoAppShell,
   TikoSettingsPanel,
@@ -19,6 +19,7 @@ import {
   tikoColors,
   useTikoAppDataRuntime,
   useTikoColorModeEffect,
+  useTikoI18nRuntime,
   useIdentityRuntime,
   writeTikoLocalJson,
   type IdentityRuntimeState,
@@ -129,8 +130,6 @@ function defaultsAnswers(state: unknown): AnswerTile[] {
 
 const stored = readTikoLocalJson<PersistedState>(storageKey, {})
 const i18n = createI18n({ app: appId, language: normalizeTikoLanguage(stored.language) })
-const translationLoader = createTikoTranslationLoader()
-const loadedTranslations = new Set<string>()
 const language = ref<TikoLanguage>(normalizeTikoLanguage(stored.language))
 const colorMode = ref<TikoColorMode>(normalizeTikoColorMode(stored.colorMode))
 const latestAnswerId = ref<string>(toAnswerId(stored.latestAnswerId ?? stored.latestAnswer))
@@ -302,24 +301,7 @@ async function loadAppConfig() {
   }
 }
 
-async function loadTranslations(value: TikoLanguage) {
-  if (loadedTranslations.has(value)) return
-  try {
-    const bundle = await translationLoader({ app: appId, language: value })
-    if (Object.keys(bundle.translations).length > 0) {
-      i18n.addBundle(bundle)
-    }
-    loadedTranslations.add(value)
-  } catch {
-    // Keep local fallbacks active and allow a later language switch to retry.
-  }
-}
-
-watch(language, (value) => {
-  i18n.setLanguage(value)
-  void loadTranslations(value)
-  void loadDefaultContent()
-}, { immediate: true })
+useTikoI18nRuntime({ app: appId, language, i18n, onLanguageChange: loadDefaultContent })
 
 useTikoColorModeEffect(colorMode)
 

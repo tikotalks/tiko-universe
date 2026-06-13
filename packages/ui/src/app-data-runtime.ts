@@ -26,6 +26,7 @@ export interface TikoAppDataRuntimeOptions<TApp extends string, TSettings extend
   readState: () => TState
   applySettings: (settings: TSettings, version?: number) => void
   applyState: (state: TState, version?: number) => void
+  remoteWriteDebounceMs?: number
   onError?: (phase: 'hydrate' | 'settings' | 'state', error: unknown) => void
 }
 
@@ -41,7 +42,47 @@ export interface TikoAppSettingsRuntimeOptions<TApp extends string, TSettings ex
   dataClient: TikoAppSettingsClient<TApp, TSettings>
   readSettings: () => TSettings
   applySettings: (settings: TSettings, version?: number) => void
+  remoteWriteDebounceMs?: number
   onError?: (phase: 'hydrate' | 'settings', error: unknown) => void
+}
+
+function createSerializedRemoteWrite(
+  write: () => Promise<boolean>,
+  debounceMs: number,
+) {
+  let timer: ReturnType<typeof setTimeout> | undefined
+  let inFlight = false
+  let pending = false
+  let pendingResolvers: Array<(value: boolean) => void> = []
+
+  function schedule() {
+    if (timer) clearTimeout(timer)
+    timer = setTimeout(() => {
+      timer = undefined
+      void flush()
+    }, debounceMs)
+  }
+
+  async function flush() {
+    if (inFlight || !pending) return
+    inFlight = true
+    pending = false
+    const batchResolvers = pendingResolvers
+    pendingResolvers = []
+    const result = await write()
+    for (const resolve of batchResolvers) resolve(result)
+    inFlight = false
+    if (pending) schedule()
+  }
+
+  return function requestWrite() {
+    pending = true
+    const promise = new Promise<boolean>(resolve => {
+      pendingResolvers.push(resolve)
+    })
+    if (!inFlight) schedule()
+    return promise
+  }
 }
 
 export function useTikoAppSettingsRuntime<TApp extends string, TSettings extends Record<string, unknown>>(
@@ -49,6 +90,7 @@ export function useTikoAppSettingsRuntime<TApp extends string, TSettings extends
 ) {
   const settingsVersion = ref<number | undefined>()
   const bootstrapped = options.bootstrapped ?? ref(false)
+  const remoteWriteDebounceMs = options.remoteWriteDebounceMs ?? 120
 
   async function hydrateRemoteSettings(): Promise<boolean> {
     if (!options.sessionToken.value) return false
@@ -64,7 +106,7 @@ export function useTikoAppSettingsRuntime<TApp extends string, TSettings extends
     }
   }
 
-  async function persistSettingsRemote(): Promise<boolean> {
+  const persistSettingsRemote = createSerializedRemoteWrite(async () => {
     if (!bootstrapped.value || !options.sessionToken.value) return false
 
     try {
@@ -75,7 +117,7 @@ export function useTikoAppSettingsRuntime<TApp extends string, TSettings extends
       options.onError?.('settings', error)
       return false
     }
-  }
+  }, remoteWriteDebounceMs)
 
   return {
     bootstrapped,
@@ -91,6 +133,7 @@ export function useTikoAppDataRuntime<TApp extends string, TSettings extends Rec
   const settingsVersion = ref<number | undefined>()
   const stateVersion = ref<number | undefined>()
   const bootstrapped = options.bootstrapped ?? ref(false)
+  const remoteWriteDebounceMs = options.remoteWriteDebounceMs ?? 120
 
   async function hydrateRemoteData(): Promise<boolean> {
     if (!options.sessionToken.value) return false
@@ -111,7 +154,7 @@ export function useTikoAppDataRuntime<TApp extends string, TSettings extends Rec
     }
   }
 
-  async function persistSettingsRemote(): Promise<boolean> {
+  const persistSettingsRemote = createSerializedRemoteWrite(async () => {
     if (!bootstrapped.value || !options.sessionToken.value) return false
 
     try {
@@ -122,9 +165,9 @@ export function useTikoAppDataRuntime<TApp extends string, TSettings extends Rec
       options.onError?.('settings', error)
       return false
     }
-  }
+  }, remoteWriteDebounceMs)
 
-  async function persistStateRemote(): Promise<boolean> {
+  const persistStateRemote = createSerializedRemoteWrite(async () => {
     if (!bootstrapped.value || !options.sessionToken.value) return false
 
     try {
@@ -135,7 +178,7 @@ export function useTikoAppDataRuntime<TApp extends string, TSettings extends Rec
       options.onError?.('state', error)
       return false
     }
-  }
+  }, remoteWriteDebounceMs)
 
   return {
     bootstrapped,

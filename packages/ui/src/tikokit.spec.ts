@@ -26,6 +26,7 @@ import {
   useTikoAppDataRuntime,
   useTikoAppSettingsRuntime,
   useTikoColorModeEffect,
+  useTikoI18nRuntime,
   writeTikoLocalJson,
   tikoAppColors,
   tikoAppConfigs,
@@ -181,6 +182,7 @@ describe('TikoKit component contract', () => {
       readState: () => state.value,
       applySettings: value => { settings.value = value },
       applyState: value => { state.value = value },
+      remoteWriteDebounceMs: 0,
     })
 
     expect(await runtime.hydrateRemoteData()).toBe(true)
@@ -195,6 +197,13 @@ describe('TikoKit component contract', () => {
     expect(await runtime.persistStateRemote()).toBe(true)
     expect(settingsWrites).toEqual([{ settings: { language: 'fr' }, version: 4 }])
     expect(stateWrites).toEqual([{ state: { text: 'Bonjour' }, version: 7 }])
+
+    settings.value = { language: 'mt' }
+    const firstQueuedWrite = runtime.persistSettingsRemote()
+    settings.value = { language: 'en' }
+    const secondQueuedWrite = runtime.persistSettingsRemote()
+    expect(await Promise.all([firstQueuedWrite, secondQueuedWrite])).toEqual([true, true])
+    expect(settingsWrites.at(-1)).toEqual({ settings: { language: 'en' }, version: 5 })
   })
 
   it('shares settings-only hydrate and persistence runtime', async () => {
@@ -216,6 +225,7 @@ describe('TikoKit component contract', () => {
       dataClient,
       readSettings: () => settings.value,
       applySettings: value => { settings.value = value },
+      remoteWriteDebounceMs: 0,
     })
 
     expect(await runtime.hydrateRemoteSettings()).toBe(true)
@@ -223,6 +233,43 @@ describe('TikoKit component contract', () => {
     settings.value = { colorMode: 'light' }
     expect(await runtime.persistSettingsRemote()).toBe(true)
     expect(writes).toEqual([{ settings: { colorMode: 'light' }, version: 2 }])
+  })
+
+  it('shares reactive i18n language loading with cache and app callbacks', async () => {
+    const language = ref<'en' | 'nl'>('en')
+    const i18n = {
+      setLanguage: vi.fn(),
+      addBundle: vi.fn(),
+    }
+    const loader = vi.fn(async ({ app, language: bundleLanguage }) => ({
+      app,
+      language: bundleLanguage,
+      source: 'lezu' as const,
+      translations: { hello: bundleLanguage },
+    }))
+    const onLanguageChange = vi.fn()
+
+    useTikoI18nRuntime({ app: 'cards', language, i18n, loader, onLanguageChange })
+    await flushMountedWork()
+
+    expect(i18n.setLanguage).toHaveBeenCalledWith('en')
+    expect(loader).toHaveBeenCalledTimes(1)
+    expect(i18n.addBundle).toHaveBeenCalledWith(expect.objectContaining({ app: 'cards', language: 'en' }))
+    expect(onLanguageChange).toHaveBeenCalledWith('en')
+
+    language.value = 'nl'
+    await flushMountedWork()
+
+    expect(i18n.setLanguage).toHaveBeenLastCalledWith('nl')
+    expect(loader).toHaveBeenCalledTimes(2)
+    expect(i18n.addBundle).toHaveBeenCalledWith(expect.objectContaining({ app: 'cards', language: 'nl' }))
+    expect(onLanguageChange).toHaveBeenLastCalledWith('nl')
+
+    language.value = 'en'
+    await flushMountedWork()
+
+    expect(loader).toHaveBeenCalledTimes(2)
+    expect(i18n.setLanguage).toHaveBeenLastCalledWith('en')
   })
 
   it('renders the design header with open-icon action names and app color token', async () => {

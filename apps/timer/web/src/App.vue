@@ -3,7 +3,7 @@ import { computed, onMounted, ref, watch } from 'vue'
 import { Button, Popup } from '@sil/ui'
 import { IdentityClient, type IdentityBundle } from '@tiko/identity'
 import { TikoDataClient, type TimerSettings, type TimerState } from '@tiko/data'
-import { createI18n, createTikoIdentityLabels, createTikoShellLabels, createTikoTranslationLoader, normalizeTikoLanguage, tikoI18nKeys, tikoLanguageOptions, type TikoLanguage } from '@tiko/i18n'
+import { createI18n, createTikoIdentityLabels, createTikoShellLabels, normalizeTikoLanguage, tikoI18nKeys, tikoLanguageOptions, type TikoLanguage } from '@tiko/i18n'
 import {
   TikoAppShell,
   TikoSettingsPanel,
@@ -14,6 +14,7 @@ import {
   resolveTikoIdentityBaseUrl,
   useTikoAppDataRuntime,
   useTikoColorModeEffect,
+  useTikoI18nRuntime,
   useIdentityRuntime,
   writeTikoLocalJson,
   type IdentityRuntimeState
@@ -75,7 +76,6 @@ function normalizePresets(value: unknown): TimerPreset[] {
 
 const stored = readTikoLocalJson<PersistedState>(storageKey, {})
 const i18n = createI18n({ app: appId, language: normalizeTikoLanguage(stored.language) })
-const translationLoader = createTikoTranslationLoader()
 const language = ref<TikoLanguage>(normalizeTikoLanguage(stored.language))
 const colorMode = ref<TikoColorMode>(normalizeTikoColorMode(stored.colorMode))
 const customMinutes = ref(stored.customMinutes ?? 5)
@@ -228,18 +228,7 @@ function applyState(state: TimerState) {
   }
 }
 
-async function loadTranslations(value: TikoLanguage) {
-  try {
-    i18n.addBundle(await translationLoader({ app: appId, language: value }))
-  } catch {
-    // Local fallbacks remain active; a later language switch can retry.
-  }
-}
-
-watch(language, (value) => {
-  i18n.setLanguage(value)
-  void loadTranslations(value)
-}, { immediate: true })
+useTikoI18nRuntime({ app: appId, language, i18n })
 
 useTikoColorModeEffect(colorMode)
 
