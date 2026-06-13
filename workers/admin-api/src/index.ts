@@ -1,4 +1,4 @@
-import { authenticate, loadIdentityRoles, type AuthEnv } from '../../shared/auth'
+import { authenticate, loadIdentityRoles, resolvePepper, type AuthEnv } from '../../shared/auth'
 import { DEFAULT_ATLAS_SPEECH_CONFIG, DEFAULT_NARAKEET_VOICE_BY_LOCALE, normalizeSpeechServiceConfig, type AtlasSpeechServiceConfig } from '../../shared/atlas-speech-config'
 
 type D1Value = string | number | boolean | null
@@ -582,7 +582,9 @@ async function activeRoles(db: D1Database, subjectId: string): Promise<string[]>
 
 async function canBootstrapAdmin(env: Env, row: { email_hash: string | null }): Promise<boolean> {
   const adminEmail = normalizeEmail(env.ADMIN_EMAIL || ADMIN_EMAIL)
-  const adminEmailHash = await hashToken(adminEmail, env.TOKEN_PEPPER)
+  const pepper = await resolvePepper(env)
+  if (!pepper) return false
+  const adminEmailHash = await hashToken(adminEmail, pepper)
   return row.email_hash === adminEmailHash
 }
 

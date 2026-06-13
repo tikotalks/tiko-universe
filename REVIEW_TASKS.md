@@ -72,6 +72,7 @@ Approximate review spread: 7 Critical, about 35 High, about 70 Medium, and about
   - [x] Remove app-api direct identity DB fallback completely.
   - [x] Replace content-api local admin role/capability verifier with shared `requireRole`.
   - [x] Move identity role loading into shared auth and reuse it from admin-api.
+  - [x] Resolve API-key pepper through the shared auth layer, including Secrets Store bindings.
 
 - [x] Move iOS identity storage to Keychain.
   - Make `TikoKeychainIdentityStore` the default.
