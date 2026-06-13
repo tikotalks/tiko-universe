@@ -4,7 +4,7 @@ import { useBemm } from 'bemm'
 import { Icon, Popup } from '@sil/ui'
 import { IdentityClient } from '@tiko/identity'
 import { TikoDataClient, type YesNoSettings, type YesNoState } from '@tiko/data'
-import { createI18n, createTikoIdentityLabels, createTikoTranslationLoader, defaultLanguage, tikoI18nKeys, tikoLanguageOptions, tikoLanguages, type TikoLanguage } from '@tiko/i18n'
+import { createI18n, createTikoIdentityLabels, createTikoShellLabels, createTikoTranslationLoader, defaultLanguage, tikoI18nKeys, tikoLanguageOptions, tikoLanguages, type TikoLanguage } from '@tiko/i18n'
 import {
   TikoAppShell,
   TikoSettingsPanel,
@@ -218,6 +218,7 @@ const labels = computed(() => {
     fallback: i18n.t(tikoI18nKeys.yesNo.status.browserVoiceFallback),
     speechError: i18n.t(tikoI18nKeys.yesNo.status.speechError),
     settings: i18n.t(tikoI18nKeys.common.settings),
+    shell: createTikoShellLabels(i18n.t),
     settingsPanel: {
       settings: i18n.t(tikoI18nKeys.common.settings),
       appearance: i18n.t(tikoI18nKeys.common.appearance),
@@ -485,6 +486,7 @@ function resetSentence() {
     avatar="ui/avatar"
     :actions="headerActions"
     :show-settings-button="parentMode"
+    :labels="labels.shell"
     @header-action="headerAction"
     @avatar-click="runtime.handleAvatarClick"
   >

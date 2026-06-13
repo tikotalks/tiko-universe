@@ -87,12 +87,14 @@ describe('TikoKit component contract', () => {
 
   it('renders app shell title and default slot', () => {
     const wrapper = mount(TikoAppShell, {
-      props: { appName: 'Yes No' },
+      props: { appName: 'Yes No', avatar: 'ui/avatar', showBack: true, labels: { account: 'Kont', back: 'Lura' } },
       slots: { default: '<p data-test="content">Ready</p>' }
     })
 
     expect(wrapper.get('.tiko-app-shell').attributes('data-app-color')).toBe('yes-no')
     expect(wrapper.get('[data-test="tiko-shell-title"]').text()).toBe('Yes No')
+    expect(wrapper.get('.tiko-app-header__back-btn').attributes('aria-label')).toBe('Lura')
+    expect(wrapper.get('.tiko-app-header__avatar').attributes('aria-label')).toBe('Kont')
     expect(wrapper.get('[data-test="content"]').text()).toBe('Ready')
   })
 
@@ -220,9 +222,11 @@ describe('TikoKit component contract', () => {
           { name: 'ui/check-fat', label: 'Check' },
           { name: 'ui/star-fat', label: 'Star' },
         ],
+        labels: { openIcons: 'Iftaħ l-ikoni' },
       },
     })
 
+    expect(wrapper.get('.tiko-open-icon-picker').attributes('aria-label')).toBe('Iftaħ l-ikoni')
     expect(wrapper.get('button[aria-label="Check"]').attributes('aria-pressed')).toBe('true')
 
     await wrapper.get('button[aria-label="Check"]').trigger('click')

@@ -384,7 +384,11 @@ export const tikoI18nKeys = {
     cancel: 'common.cancel',
     create: 'common.create',
     delete: 'common.delete',
+    deselect: 'common.deselect',
+    edit: 'common.edit',
+    openIcons: 'common.openIcons',
     save: 'common.save',
+    select: 'common.select',
     settings: 'common.settings',
     language: 'common.language',
     appearance: 'common.appearance',
@@ -445,6 +449,7 @@ export const tikoI18nKeys = {
       pinEnterSubtitle: 'common.identity.pinEnterSubtitle',
       pinCodesDontMatch: 'common.identity.pinCodesDontMatch',
       pinWrongCode: 'common.identity.pinWrongCode',
+      pinDigitLabel: 'common.identity.pinDigitLabel',
       accountTitle: 'common.identity.accountTitle',
       setupUserTitle: 'common.identity.setupUserTitle',
       verifiedAccount: 'common.identity.verifiedAccount',
@@ -471,7 +476,11 @@ const commonEnglish: TranslationMap = {
   [tikoI18nKeys.common.cancel]: 'Cancel',
   [tikoI18nKeys.common.create]: 'Create',
   [tikoI18nKeys.common.delete]: 'Delete',
+  [tikoI18nKeys.common.deselect]: 'Deselect',
+  [tikoI18nKeys.common.edit]: 'Edit',
+  [tikoI18nKeys.common.openIcons]: 'Open icons',
   [tikoI18nKeys.common.save]: 'Save',
+  [tikoI18nKeys.common.select]: 'Select',
   [tikoI18nKeys.common.settings]: 'Settings',
   [tikoI18nKeys.common.language]: 'Language',
   [tikoI18nKeys.common.appearance]: 'Appearance',
@@ -527,6 +536,7 @@ const commonEnglish: TranslationMap = {
   [tikoI18nKeys.common.identity.pinEnterSubtitle]: 'to switch to parent mode',
   [tikoI18nKeys.common.identity.pinCodesDontMatch]: "Codes don't match",
   [tikoI18nKeys.common.identity.pinWrongCode]: 'Wrong code',
+  [tikoI18nKeys.common.identity.pinDigitLabel]: 'Digit {index} of {total}',
   [tikoI18nKeys.common.identity.accountTitle]: 'Your account',
   [tikoI18nKeys.common.identity.setupUserTitle]: 'Set up user',
   [tikoI18nKeys.common.identity.verifiedAccount]: 'Verified account',
@@ -547,6 +557,10 @@ const commonEnglish: TranslationMap = {
 }
 
 const commonFrench: TranslationMap = {
+  [tikoI18nKeys.common.deselect]: 'Désélectionner',
+  [tikoI18nKeys.common.edit]: 'Modifier',
+  [tikoI18nKeys.common.openIcons]: 'Ouvrir les icônes',
+  [tikoI18nKeys.common.select]: 'Sélectionner',
   [tikoI18nKeys.common.settings]: 'Réglages',
   [tikoI18nKeys.common.language]: 'Langue',
   [tikoI18nKeys.common.appearance]: 'Apparence',
@@ -561,6 +575,10 @@ const commonFrench: TranslationMap = {
 }
 
 const commonDutch: TranslationMap = {
+  [tikoI18nKeys.common.deselect]: 'Deselecteren',
+  [tikoI18nKeys.common.edit]: 'Bewerken',
+  [tikoI18nKeys.common.openIcons]: 'Iconen openen',
+  [tikoI18nKeys.common.select]: 'Selecteren',
   [tikoI18nKeys.common.settings]: 'Instellingen',
   [tikoI18nKeys.common.language]: 'Taal',
   [tikoI18nKeys.common.appearance]: 'Weergave',
@@ -575,6 +593,10 @@ const commonDutch: TranslationMap = {
 }
 
 const commonSpanish: TranslationMap = {
+  [tikoI18nKeys.common.deselect]: 'Deseleccionar',
+  [tikoI18nKeys.common.edit]: 'Editar',
+  [tikoI18nKeys.common.openIcons]: 'Abrir iconos',
+  [tikoI18nKeys.common.select]: 'Seleccionar',
   [tikoI18nKeys.common.settings]: 'Ajustes',
   [tikoI18nKeys.common.language]: 'Idioma',
   [tikoI18nKeys.common.appearance]: 'Apariencia',
@@ -593,7 +615,11 @@ const commonMaltese: TranslationMap = {
   [tikoI18nKeys.common.cancel]: 'Ikkanċella',
   [tikoI18nKeys.common.create]: 'Oħloq',
   [tikoI18nKeys.common.delete]: 'Ħassar',
+  [tikoI18nKeys.common.deselect]: 'Neħħi l-għażla',
+  [tikoI18nKeys.common.edit]: 'Editja',
+  [tikoI18nKeys.common.openIcons]: 'Iftaħ l-ikoni',
   [tikoI18nKeys.common.save]: 'Issejvja',
+  [tikoI18nKeys.common.select]: 'Agħżel',
   [tikoI18nKeys.common.settings]: 'Impostazzjonijiet',
   [tikoI18nKeys.common.language]: 'Lingwa',
   [tikoI18nKeys.common.appearance]: 'Dehra',
@@ -649,6 +675,7 @@ const commonMaltese: TranslationMap = {
   [tikoI18nKeys.common.identity.pinEnterSubtitle]: 'biex taqleb għall-modalità tal-ġenituri',
   [tikoI18nKeys.common.identity.pinCodesDontMatch]: 'Il-kodiċijiet ma jaqblux',
   [tikoI18nKeys.common.identity.pinWrongCode]: 'Kodiċi ħażin',
+  [tikoI18nKeys.common.identity.pinDigitLabel]: 'Ċifra {index} minn {total}',
   [tikoI18nKeys.common.identity.accountTitle]: 'Il-kont tiegħek',
   [tikoI18nKeys.common.identity.setupUserTitle]: 'Issettja utent',
   [tikoI18nKeys.common.identity.verifiedAccount]: 'Kont ivverifikat',
@@ -1228,6 +1255,17 @@ export function createTikoTranslationLoader(
   }
 }
 
+export function createTikoShellLabels(t: (key: string, params?: TranslationParams) => string) {
+  return {
+    account: t(tikoI18nKeys.common.identity.account),
+    back: t(tikoI18nKeys.common.back),
+    deselect: t(tikoI18nKeys.common.deselect),
+    edit: t(tikoI18nKeys.common.edit),
+    openIcons: t(tikoI18nKeys.common.openIcons),
+    select: t(tikoI18nKeys.common.select),
+  }
+}
+
 export function createTikoIdentityLabels(t: (key: string) => string) {
   const keys = tikoI18nKeys.common.identity
   return {
@@ -1286,6 +1324,7 @@ export function createTikoIdentityLabels(t: (key: string) => string) {
       enterSubtitle: t(keys.pinEnterSubtitle),
       codesDontMatch: t(keys.pinCodesDontMatch),
       wrongCode: t(keys.pinWrongCode),
+      digitLabel: t(keys.pinDigitLabel),
       back: t(tikoI18nKeys.common.back),
       cancel: t(tikoI18nKeys.common.cancel),
     },

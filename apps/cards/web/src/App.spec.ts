@@ -102,6 +102,11 @@ describe('Cards web iOS parity architecture', () => {
         collectionThumbnails: {},
         cardImages: {},
         contentBaseUrl: 'https://content.tikoapi.org/v1',
+        labels: {
+          deselect: 'Deselect translated',
+          edit: 'Edit translated',
+          select: 'Select translated',
+        },
       },
       global: {
         stubs: {
@@ -116,5 +121,54 @@ describe('Cards web iOS parity architecture', () => {
     const tile = wrapper.get('.tiko-square-tile')
     expect(tile.attributes('style')).toContain('background-color: rgb(247, 103, 7)')
     expect(tile.get('img').attributes('src')).toBe('https://content.tikoapi.org/v1/content/images/media-food')
+  })
+
+  it('passes translated edit-mode labels to shared tile badges', () => {
+    const wrapper = mount(CardsBoard, {
+      props: {
+        items: [
+          {
+            id: 'card-hello',
+            kind: 'card',
+            collectionID: 'collection-1',
+            card: {
+              id: 'user_card_hello',
+              title: 'Hello',
+              speech: 'Hello',
+              color: 'green',
+              order: 0,
+            }
+          }
+        ],
+        columns: 3,
+        itemsPerPage: 6,
+        page: 0,
+        reduceMotion: false,
+        editing: true,
+        isAdmin: false,
+        labelSize: 'medium',
+        selectedCollectionIds: new Set<string>(),
+        selectedCardIds: new Set<string>(),
+        collectionThumbnails: {},
+        cardImages: {},
+        contentBaseUrl: 'https://content.tikoapi.org/v1',
+        labels: {
+          deselect: 'Deselect translated',
+          edit: 'Edit translated',
+          select: 'Select translated',
+        },
+      },
+      global: {
+        stubs: {
+          TikoPagedTileGrid: {
+            props: ['items'],
+            template: '<div><slot v-for="item in items" name="item" :item="item" /></div>'
+          }
+        }
+      }
+    })
+
+    expect(wrapper.get('.tiko-selection-badge').attributes('aria-label')).toBe('Select translated')
+    expect(wrapper.get('.tiko-edit-badge').attributes('aria-label')).toBe('Edit translated')
   })
 })

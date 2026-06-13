@@ -3,7 +3,7 @@ import { computed, onMounted, ref, watch } from 'vue'
 import { Button, Popup } from '@sil/ui'
 import { IdentityClient, type IdentityBundle } from '@tiko/identity'
 import { TikoDataClient, type TimerSettings, type TimerState } from '@tiko/data'
-import { createI18n, createTikoIdentityLabels, createTikoTranslationLoader, defaultLanguage, tikoI18nKeys, tikoLanguageOptions, tikoLanguages, type TikoLanguage } from '@tiko/i18n'
+import { createI18n, createTikoIdentityLabels, createTikoShellLabels, createTikoTranslationLoader, defaultLanguage, tikoI18nKeys, tikoLanguageOptions, tikoLanguages, type TikoLanguage } from '@tiko/i18n'
 import {
   TikoAppShell,
   TikoSettingsPanel,
@@ -155,6 +155,7 @@ const labels = computed(() => {
     minutes: i18n.t(tikoI18nKeys.timer.settings.minutes),
     seconds: i18n.t(tikoI18nKeys.timer.settings.seconds),
     settings: i18n.t(tikoI18nKeys.common.settings),
+    shell: createTikoShellLabels(i18n.t),
     settingsPanel: {
       settings: i18n.t(tikoI18nKeys.common.settings),
       appearance: i18n.t(tikoI18nKeys.common.appearance),
@@ -366,6 +367,7 @@ function headerAction(id: string) {
     :theme-color="appConfig.themeColor"
     avatar="ui/avatar"
     :actions="headerActions"
+    :labels="labels.shell"
     @header-action="headerAction"
     @avatar-click="runtime.handleAvatarClick"
   >

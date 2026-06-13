@@ -29,6 +29,7 @@ const props = withDefaults(defineProps<Props>(), {
     enterSubtitle: 'to switch to parent mode',
     codesDontMatch: "Codes don't match",
     wrongCode: 'Wrong code',
+    digitLabel: 'Digit {index} of {total}',
     back: 'Back',
     cancel: 'Cancel',
   }),
@@ -45,6 +46,7 @@ interface TikoPinPopupLabels {
   enterSubtitle: string
   codesDontMatch: string
   wrongCode: string
+  digitLabel: string
   back: string
   cancel: string
 }
@@ -194,6 +196,12 @@ function resetConfirm() {
   focusDigit(0)
 }
 
+function digitLabel(index: number): string {
+  return props.labels.digitLabel
+    .replace('{index}', String(index))
+    .replace('{total}', String(CODE_LENGTH))
+}
+
 let autoSubmitTimer: number | undefined
 let shakeTimer: number | undefined
 
@@ -240,7 +248,7 @@ async function hashCode(code: string): Promise<string> {
           :value="confirmDigits[i - 1]"
           @input="onDigitInput(i - 1, $event)"
           @keydown="onKeydown(i - 1, $event)"
-          :aria-label="`Digit ${i} of ${CODE_LENGTH}`"
+          :aria-label="digitLabel(i)"
           autocomplete="off"
         />
       </template>
@@ -256,7 +264,7 @@ async function hashCode(code: string): Promise<string> {
           :value="digits[i - 1]"
           @input="onDigitInput(i - 1, $event)"
           @keydown="onKeydown(i - 1, $event)"
-          :aria-label="`Digit ${i} of ${CODE_LENGTH}`"
+          :aria-label="digitLabel(i)"
           autocomplete="off"
         />
       </template>

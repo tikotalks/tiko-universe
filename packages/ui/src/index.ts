@@ -161,6 +161,15 @@ export interface TikoSettingsPanelLanguage {
   nativeLabel: string
 }
 
+export interface TikoShellLabels {
+  account?: string
+  back?: string
+  deselect?: string
+  edit?: string
+  openIcons?: string
+  select?: string
+}
+
 export const tikoOpenIcons: TikoOpenIconOption[] = [
   { name: 'ui/check-fat', label: 'Check' },
   { name: 'wayfinding/cross', label: 'Cross' },
@@ -521,10 +530,11 @@ export const TikoOpenIconPicker = defineComponent({
   props: {
     modelValue: { type: String, default: '' },
     icons: { type: Array as () => TikoOpenIconOption[], default: () => tikoOpenIcons },
+    labels: { type: Object as () => Pick<TikoShellLabels, 'openIcons'>, default: () => ({}) },
   },
   emits: ['update:modelValue'],
   setup(props, { emit }) {
-    return () => h('div', { class: 'tiko-open-icon-picker', 'aria-label': 'Open icons' }, props.icons.map(icon =>
+    return () => h('div', { class: 'tiko-open-icon-picker', 'aria-label': props.labels.openIcons ?? 'Open icons' }, props.icons.map(icon =>
       h('button', {
         key: icon.name,
         type: 'button',
@@ -551,6 +561,7 @@ export const TikoAppHeader = defineComponent({
     actions: { type: Array as () => TikoHeaderAction[], default: () => [] },
     showBack: { type: Boolean, default: false },
     showSettingsButton: { type: Boolean, default: true },
+    labels: { type: Object as () => Pick<TikoShellLabels, 'account' | 'back'>, default: () => ({}) },
   },
   emits: ['action', 'avatar-click', 'back-click', 'title-click'],
   setup(props, { emit }) {
@@ -589,7 +600,7 @@ export const TikoAppHeader = defineComponent({
         props.showBack
           ? h('button', {
               class: 'tiko-app-header__back-btn',
-              'aria-label': 'Back',
+              'aria-label': props.labels.back ?? 'Back',
               onClick: () => emit('back-click'),
             }, [iconSpan('arrows/arrow-left')])
           : h('span', { class: ['tiko-app-header__app-icon', (props.appIconImageUrl || mediaIconUrl.value) ? 'tiko-app-header__app-icon--image' : ''], 'aria-hidden': 'true' }, [iconSpan(props.appIconImageUrl || mediaIconUrl.value || props.appIcon, props.appName)]),
@@ -608,9 +619,9 @@ export const TikoAppHeader = defineComponent({
         })),
         props.avatar ? h('button', {
           class: 'tiko-app-header__avatar',
-          'aria-label': 'Account',
+          'aria-label': props.labels.account ?? 'Account',
           onClick: () => emit('avatar-click'),
-        }, [iconSpan(props.avatar, 'Account')]) : null
+        }, [iconSpan(props.avatar, props.labels.account ?? 'Account')]) : null
       ])
     ])
   }
@@ -629,6 +640,7 @@ export const TikoAppShell = defineComponent({
     actions: { type: Array as () => TikoHeaderAction[], default: () => [] },
     showBack: { type: Boolean, default: false },
     showSettingsButton: { type: Boolean, default: true },
+    labels: { type: Object as () => Pick<TikoShellLabels, 'account' | 'back'>, default: () => ({}) },
   },
   emits: ['headerAction', 'avatar-click', 'back-click', 'title-click'],
   setup(props, { slots, emit }) {
@@ -644,6 +656,7 @@ export const TikoAppShell = defineComponent({
         actions: props.actions,
         showBack: props.showBack,
         showSettingsButton: props.showSettingsButton,
+        labels: props.labels,
         onAction: (id: string) => emit('headerAction', id),
         onAvatarClick: () => emit('avatar-click'),
         onBackClick: () => emit('back-click'),

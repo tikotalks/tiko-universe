@@ -6,6 +6,8 @@ import {
   tikoI18nKeys,
   createI18n,
   createLezuTranslationLoader,
+  createTikoIdentityLabels,
+  createTikoShellLabels,
   createTranslationBundle,
   type TikoAppKey,
   type TikoLanguage,
@@ -111,6 +113,22 @@ describe('@tiko/i18n fallback contract', () => {
       expect(i18n.t(testCase.key)).not.toBe(testCase.english)
       expect(i18n.t(testCase.key)).not.toBe(testCase.key)
     }
+  })
+
+  it('exposes localized shared shell and PIN accessibility labels', () => {
+    const i18n = createI18n({ app: 'cards', language: 'mt' })
+    const shell = createTikoShellLabels(i18n.t)
+    const identity = createTikoIdentityLabels(i18n.t)
+
+    expect(shell).toMatchObject({
+      account: 'Kont',
+      back: 'Lura',
+      deselect: 'Neħħi l-għażla',
+      edit: 'Editja',
+      openIcons: 'Iftaħ l-ikoni',
+      select: 'Agħżel',
+    })
+    expect(identity.pin.digitLabel).toBe('Ċifra {index} minn {total}')
   })
 
   it('exposes typed app and language contracts for web, iOS, Android, and Lezu callers', () => {

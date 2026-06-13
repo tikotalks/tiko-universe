@@ -4,7 +4,7 @@ import { useBemm } from 'bemm'
 import { Button, Popup, type PopupService } from '@sil/ui'
 import { IdentityClient } from '@tiko/identity'
 import { TikoDataClient, type CardsSettings } from '@tiko/data'
-import { createI18n, createTikoIdentityLabels, createTikoTranslationLoader, defaultLanguage, tikoI18nKeys, tikoLanguageOptions, tikoLanguages, type TikoLanguage } from '@tiko/i18n'
+import { createI18n, createTikoIdentityLabels, createTikoShellLabels, createTikoTranslationLoader, defaultLanguage, tikoI18nKeys, tikoLanguageOptions, tikoLanguages, type TikoLanguage } from '@tiko/i18n'
 import {
   TikoAppShell,
   createTikoTtsClient,
@@ -93,6 +93,7 @@ const labels = computed(() => {
     loadingCards: i18n.t('cards.loadingCards'),
     loadingPictures: i18n.t('cards.add.suggestionsFromTiko'),
     selected: i18n.t('cards.selected'),
+    shell: createTikoShellLabels(i18n.t),
     emptyCollections: i18n.t(tikoI18nKeys.cards.collections.empty),
     emptyTiles: i18n.t(tikoI18nKeys.cards.tiles.empty),
     speechError: i18n.t(tikoI18nKeys.cards.status.speechError),
@@ -514,6 +515,7 @@ onMounted(async () => {
     avatar="ui/avatar"
     :show-back="cards.collectionStack.value.length > 0"
     :actions="headerActions"
+    :labels="labels.shell"
     @header-action="headerAction"
     @avatar-click="runtime.handleAvatarClick"
     @back-click="cards.navigateBack"
@@ -538,6 +540,7 @@ onMounted(async () => {
         :content-base-url="cards.contentBaseUrl"
         :speaking-card-i-d="speakingCardID"
         :translate-title="translateGridItemTitle"
+        :labels="labels.shell"
         @activate="activateItem"
         @edit="editItem"
         @select="cards.toggleSelection"

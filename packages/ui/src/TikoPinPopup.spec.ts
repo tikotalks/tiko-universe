@@ -47,4 +47,26 @@ describe('TikoPinPopup', () => {
     expect(wrapper.text()).toContain('Wrong code')
   })
 
+  it('uses the provided digit accessibility label template', () => {
+    const wrapper = mount(TikoPinPopup, {
+      props: {
+        labels: {
+          createTitle: 'Create',
+          createSubtitle: 'Create subtitle',
+          confirmTitle: 'Confirm',
+          confirmSubtitle: 'Confirm subtitle',
+          enterTitle: 'Enter',
+          enterSubtitle: 'Enter subtitle',
+          codesDontMatch: 'Mismatch',
+          wrongCode: 'Wrong',
+          digitLabel: 'Ċifra {index} minn {total}',
+          back: 'Lura',
+          cancel: 'Ikkanċella',
+        },
+      },
+    })
+
+    expect(wrapper.findAll<HTMLInputElement>('.tiko-pin-popup__digit')[0].attributes('aria-label')).toBe('Ċifra 1 minn 4')
+  })
+
 })

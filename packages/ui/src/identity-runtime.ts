@@ -106,6 +106,7 @@ export interface TikoIdentityLabels {
     enterSubtitle: string
     codesDontMatch: string
     wrongCode: string
+    digitLabel: string
     back: string
     cancel: string
   }
@@ -188,6 +189,7 @@ const defaultIdentityLabels: TikoIdentityLabels = {
     enterSubtitle: 'to switch to parent mode',
     codesDontMatch: "Codes don't match",
     wrongCode: 'Wrong code',
+    digitLabel: 'Digit {index} of {total}',
     back: 'Back',
     cancel: 'Cancel',
   },

@@ -5,7 +5,7 @@ import type { PopupService } from '@sil/ui'
 import { IdentityClient } from '@tiko/identity'
 import { TikoDataClient, type RadioSettings, type RadioState } from '@tiko/data'
 import type { RadioTrack, RadioCategory } from '@tiko/data'
-import { createI18n, createTikoIdentityLabels, createTikoTranslationLoader, defaultLanguage, tikoI18nKeys, tikoLanguageOptions, tikoLanguages, type TikoLanguage } from '@tiko/i18n'
+import { createI18n, createTikoIdentityLabels, createTikoShellLabels, createTikoTranslationLoader, defaultLanguage, tikoI18nKeys, tikoLanguageOptions, tikoLanguages, type TikoLanguage } from '@tiko/i18n'
 import {
   TikoAppShell,
   TikoColorMode,
@@ -186,6 +186,7 @@ const labels = computed(() => {
     removeTrack: i18n.t(tikoI18nKeys.radio.library.removeTrack),
     uploadFile: i18n.t(tikoI18nKeys.radio.library.uploadFile),
     settings: i18n.t(tikoI18nKeys.common.settings),
+    shell: createTikoShellLabels(i18n.t),
     settingsPanel: {
       settings: i18n.t(tikoI18nKeys.common.settings),
       language: i18n.t(tikoI18nKeys.common.language),
@@ -733,6 +734,7 @@ function handleCreateCategory() {
     :theme-color="appConfig.themeColor"
     avatar="ui/circle-user"
     :actions="headerActions"
+    :labels="labels.shell"
     @header-action="headerAction"
     @avatar-click="runtime.handleAvatarClick"
   >

@@ -27,6 +27,11 @@ const props = defineProps<{
   contentBaseUrl: string
   speakingCardID?: string
   translateTitle?: (item: CardsGridItem) => string
+  labels?: {
+    deselect?: string
+    edit?: string
+    select?: string
+  }
 }>()
 
 const emit = defineEmits<{
@@ -107,11 +112,14 @@ function itemID(item: CardsGridItem): string {
         <TikoSelectionBadge
           v-if="editing"
           :selected="selected(item)"
+          :select-label="labels?.select"
+          :deselect-label="labels?.deselect"
           @toggle="emit('select', item)"
         />
         <TikoEditBadge
           v-if="editing && canEdit(item)"
           :user-owned="isUserOwned(itemID(item))"
+          :edit-label="labels?.edit"
           @press="emit('edit', item)"
         />
       </article>
