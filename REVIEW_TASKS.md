@@ -206,6 +206,7 @@ Approximate review spread: 7 Critical, about 35 High, about 70 Medium, and about
   - admin StoryNarrator/ImageGenerator pages by tab or feature.
   - `@tiko/ui` index into focused modules.
   - [x] Move `@tiko/ui` app config, app colors, palette, and open-icon constants into a focused module.
+  - [x] Move `TikoOpenIconPicker` out of the `@tiko/ui` barrel into its own component module.
 
 - [ ] Unify TTS architecture.
   - Retire tts-api and generation-api local provider path, or make Atlas persist into the one shared cache.

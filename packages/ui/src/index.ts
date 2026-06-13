@@ -1,6 +1,6 @@
 import { defineComponent, h, onMounted, ref, watch } from 'vue'
 import type { CSSProperties } from 'vue'
-import { tikoNormalizeOpenIcon, tikoOpenIcons, type TikoAppColor, type TikoAppConfig, type TikoColorMode, type TikoOpenIconOption } from './app-config'
+import { tikoNormalizeOpenIcon, type TikoAppColor, type TikoAppConfig, type TikoColorMode } from './app-config'
 import { tikoMediaThumbnailUrl } from './media-images'
 export { default as TikoLogo } from './TikoLogo.vue'
 export { default as TikoChildAccountsPanel } from './TikoChildAccountsPanel.vue'
@@ -16,6 +16,7 @@ export { default as TikoToggleRow } from './TikoToggleRow.vue'
 export { default as TikoSegmentedControl } from './TikoSegmentedControl.vue'
 export { default as TikoSelectionBadge } from './TikoSelectionBadge.vue'
 export { default as TikoEditBadge } from './TikoEditBadge.vue'
+export { default as TikoOpenIconPicker, type TikoOpenIconPickerLabels } from './TikoOpenIconPicker'
 export { useIdentityRuntime, type UseIdentityRuntimeOptions, type IdentityRuntimeState, type StoredIdentity, type TikoIdentityLabels } from './identity-runtime'
 export { useTikoAppDataRuntime, useTikoAppSettingsRuntime, type TikoAppDataClient, type TikoAppDataRuntimeOptions, type TikoAppSettingsClient, type TikoAppSettingsRuntimeOptions, type TikoVersionedSettings, type TikoVersionedState } from './app-data-runtime'
 export { useTikoI18nRuntime, type UseTikoI18nRuntimeOptions } from './i18n-runtime'
@@ -240,31 +241,6 @@ function iconSpan(icon: string, alt = '') {
   const openIcon = tikoNormalizeOpenIcon(icon)
   return h(Icon, { class: 'tiko-icon', name: openIcon, size: 'medium', 'aria-hidden': 'true', 'data-icon': openIcon })
 }
-
-export const TikoOpenIconPicker = defineComponent({
-  name: 'TikoOpenIconPicker',
-  props: {
-    modelValue: { type: String, default: '' },
-    icons: { type: Array as () => TikoOpenIconOption[], default: () => tikoOpenIcons },
-    labels: { type: Object as () => Pick<TikoShellLabels, 'openIcons'>, default: () => ({}) },
-  },
-  emits: ['update:modelValue'],
-  setup(props, { emit }) {
-    return () => h('div', { class: 'tiko-open-icon-picker', role: 'listbox', 'aria-label': props.labels.openIcons ?? 'Open icons' }, props.icons.map(icon =>
-      h('button', {
-        key: icon.name,
-        type: 'button',
-        role: 'option',
-        class: ['tiko-open-icon-picker__item', tikoNormalizeOpenIcon(props.modelValue) === icon.name ? 'tiko-open-icon-picker__item--active' : ''],
-        title: icon.label,
-        'aria-label': icon.label,
-        'aria-pressed': tikoNormalizeOpenIcon(props.modelValue) === icon.name ? 'true' : 'false',
-        'aria-selected': tikoNormalizeOpenIcon(props.modelValue) === icon.name ? 'true' : 'false',
-        onClick: () => emit('update:modelValue', tikoNormalizeOpenIcon(props.modelValue) === icon.name ? '' : icon.name),
-      }, [h(Icon, { name: icon.name, size: 'medium', 'aria-hidden': 'true' })])
-    ))
-  }
-})
 
 export const TikoAppHeader = defineComponent({
   name: 'TikoAppHeader',
