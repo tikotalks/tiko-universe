@@ -59,14 +59,14 @@ Approximate review spread: 7 Critical, about 35 High, about 70 Medium, and about
   - Stop dev deploys from applying schema/seed to shared production-like data.
   - [x] Add a deploy guard that skips unsafe development worker deploys when D1 bindings still share production database IDs.
 
-- [ ] Consolidate D1 ownership.
+- [x] Consolidate D1 ownership.
   - Use one database per worker, or one migration directory per shared database.
   - [x] Move media-api table creation out of `schema.sql` into binding-specific D1 migration directories.
   - [x] Remove duplicate content-api and generation-api `schema.sql` files after confirming migrations own the schema.
   - Delete or move root `migration.sql` into the owning worker.
   - Keep schema creation out of runtime request handlers.
 
-- [ ] Finish one shared worker auth layer.
+- [x] Finish one shared worker auth layer.
   - Use shared `requireSession`, `requireRole`, and `requireServiceKey`.
   - Return roles/capabilities from one identity lookup.
   - Delete duplicated admin-role parsing and static-secret variants.
