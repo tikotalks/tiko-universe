@@ -67,6 +67,7 @@ Approximate review spread: 7 Critical, about 35 High, about 70 Medium, and about
   - Use shared `requireSession`, `requireRole`, and `requireServiceKey`.
   - Return roles/capabilities from one identity lookup.
   - Delete duplicated admin-role parsing and static-secret variants.
+  - [x] Replace Atlas `SERVICE_API_KEYS` string matching with shared scoped API-key auth.
   - Remove app-api direct identity DB fallback completely.
 
 - [x] Move iOS identity storage to Keychain.

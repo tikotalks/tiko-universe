@@ -9,6 +9,18 @@ type Row = Record<string, unknown>
 class MemoryD1 {
   assets = new Map<string, Row>()
   assetsByHash = new Map<string, Row>()
+  apiKeys = new Map<string, Row>([
+    ['sha256:ef1c708d294b1f55b2e41da7e3c8b0f630f61a2ae82348647942945c1d4fc737', {
+      id: 'key_service',
+      subject_id: 'sub_service',
+      product: 'tiko',
+      name: 'Atlas service key',
+      key_hash: 'sha256:ef1c708d294b1f55b2e41da7e3c8b0f630f61a2ae82348647942945c1d4fc737',
+      scopes_json: JSON.stringify(['atlas.run', 'atlas.admin']),
+      expires_at: null,
+      revoked_at: null,
+    }],
+  ])
   requests: Row[] = []
   providerStatuses = new Map<string, Row>()
   serviceConfigs = new Map<string, Row>()
@@ -18,6 +30,7 @@ class MemoryD1 {
     return {
       bind: (...values: unknown[]) => ({
         first: async <T>() => {
+          if (sql.includes('FROM identity_api_keys')) return (this.apiKeys.get(String(values[0])) ?? null) as T | null
           if (sql.includes('FROM atlas_cached_assets') && sql.includes('request_hash')) return (this.assetsByHash.get(String(values[0])) ?? null) as T | null
           if (sql.includes('FROM atlas_cached_assets') && sql.includes('WHERE id')) return (this.assets.get(String(values[0])) ?? null) as T | null
           if (sql.includes('FROM atlas_service_config')) return (this.serviceConfigs.get(String(values[0])) ?? null) as T | null
@@ -43,6 +56,11 @@ class MemoryD1 {
           return { results: [] as T[] }
         },
         run: async () => {
+          if (sql.includes('UPDATE identity_api_keys SET last_used_at')) {
+            const row = this.apiKeys.get(String(values[1]))
+            if (row) row.last_used_at = values[0]
+            return { success: true, meta: { changes: row ? 1 : 0 } }
+          }
           if (sql.includes('INSERT') && sql.includes('atlas_cached_assets')) {
             const row = {
               id: values[0], capability: values[1], request_hash: values[2], provider: values[3], model: values[4],
@@ -110,12 +128,13 @@ function makeEnv(overrides: Partial<Env> = {}): Env & { db: MemoryD1; bucket: Me
     bucket,
     kv,
     ATLAS_DB: db,
+    AUTH_DB: db,
     ATLAS_CACHE: kv,
     ATLAS_ASSETS_BUCKET: bucket,
     OPENAI_API_KEY: 'openai-key',
     ELEVENLABS_API_KEY: 'eleven-key',
     NARAKEET_API_KEY: 'narakeet-key',
-    SERVICE_API_KEYS: 'service-token',
+    TOKEN_PEPPER: 'test-pepper',
     AI: { run: vi.fn(async () => ({ response: 'Workers AI answer' })) },
     ...overrides,
   }
@@ -160,6 +179,20 @@ describe('atlas-api', () => {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
       body: JSON.stringify(body),
+    }), env)
+
+    expect(response.status).toBe(401)
+    await expect(json(response)).resolves.toMatchObject({ error: { code: 'unauthorized' } })
+  })
+
+  it('does not accept legacy static service tokens without shared auth storage', async () => {
+    const env = makeEnv({ AUTH_DB: undefined })
+
+    const response = await worker.fetch(atlasPost('/v1/atlas/speech', {
+      text: 'No auth db',
+      locale: 'en',
+      app: 'yes-no',
+      purpose: 'child-button',
     }), env)
 
     expect(response.status).toBe(401)
@@ -464,7 +497,7 @@ describe('atlas-api', () => {
 
 
   it('records redacted usage rows and exposes admin observability endpoints', async () => {
-    const env = makeEnv({ ELEVENLABS_API_KEY: undefined, NARAKEET_API_KEY: undefined, SERVICE_API_KEYS: 'service-token' })
+    const env = makeEnv({ ELEVENLABS_API_KEY: undefined, NARAKEET_API_KEY: undefined })
     vi.spyOn(globalThis, 'fetch').mockResolvedValue(new Response(new Uint8Array([1, 2, 3]), { status: 200 }))
 
     const generated = await worker.fetch(atlasPost('/v1/atlas/speech', { text: 'A'.repeat(160), locale: 'en', app: 'yes-no', purpose: 'child-button', provider: 'openai', apiKey: 'do-not-log' }), env)

@@ -4,12 +4,12 @@ import { sha256Hex } from './cache'
 import { executeAtlasCapability, generateImage, generateText, getAtlasAsset, synthesizeSpeech, fetchAtlasData } from './domains'
 import { aggregateUsageByProvider, getUsageRequest, listProviderStatus, listUsage } from './observability'
 import { apiError, createRequestId, json, optionsResponse, withCors } from './response'
-import { authenticate } from '../../shared/auth'
+import { authenticate, requireServiceKey } from '../../shared/auth'
 import type { AuthSuccess } from '../../shared/auth'
 import type { AtlasCapability, AtlasCapabilityDescriptor, AtlasExecutionResult, AtlasRunRequest, DataFetchRequest, Env, ImageRequest, SpeechRequest, TextRequest } from './types'
 
 interface AtlasAuthContext {
-  method: AuthSuccess['method'] | 'service_key'
+  method: AuthSuccess['method']
   subjectId: string | null
   tokenHash: string
 }
@@ -207,21 +207,11 @@ async function authenticateCapabilityRequest(request: Request, env: Env, request
   const token = bearerToken(request)
   if (!token) return apiError('unauthorized', 'Atlas capability routes require a Bearer token.', 401, requestId)
 
-  const serviceKeys = parseServiceKeys(env.SERVICE_API_KEYS)
-  if (serviceKeys.includes(token)) {
-    return { method: 'service_key', subjectId: null, tokenHash: await sha256Hex({ token }) }
-  }
-
-  const auth = await authenticate(request, {
-    AUTH_DB: env.AUTH_DB,
-    API_KEYS: env.API_KEYS ?? env.SERVICE_API_KEYS,
-    IDENTITY_BASE_URL: env.IDENTITY_BASE_URL,
-    IDENTITY_SERVICE: env.IDENTITY_SERVICE,
-  })
+  const auth = await authenticate(request, authEnv(env), { scopes: ['atlas.run'] })
   if (auth.ok === false) return apiError('unauthorized', 'Atlas capability routes require a valid session token or service key.', 401, requestId)
   return {
     method: auth.method,
-    subjectId: auth.userId ?? null,
+    subjectId: auth.userId ?? auth.subjectId ?? null,
     tokenHash: await sha256Hex({ token }),
   }
 }
@@ -259,7 +249,7 @@ function rateLimitForCostClass(costClass: AtlasCapabilityDescriptor['costClass']
 }
 
 async function adminUsage(request: Request, env: Env, requestId: string): Promise<Response> {
-  const authError = requireAdmin(request, env, requestId)
+  const authError = await requireAdmin(request, env, requestId)
   if (authError) return authError
   const url = new URL(request.url)
   const app = url.searchParams.get('app')
@@ -270,19 +260,19 @@ async function adminUsage(request: Request, env: Env, requestId: string): Promis
 }
 
 async function adminUsageByProvider(request: Request, env: Env, requestId: string): Promise<Response> {
-  const authError = requireAdmin(request, env, requestId)
+  const authError = await requireAdmin(request, env, requestId)
   if (authError) return authError
   return json({ data: { providers: await aggregateUsageByProvider(env) }, meta: { schemaVersion: 1, requestId } })
 }
 
 async function adminProviderStatus(request: Request, env: Env, requestId: string): Promise<Response> {
-  const authError = requireAdmin(request, env, requestId)
+  const authError = await requireAdmin(request, env, requestId)
   if (authError) return authError
   return json({ data: { providers: await listProviderStatus(env) }, meta: { schemaVersion: 1, requestId } })
 }
 
 async function adminRequestDetail(pathname: string, request: Request, env: Env, requestId: string): Promise<Response> {
-  const authError = requireAdmin(request, env, requestId)
+  const authError = await requireAdmin(request, env, requestId)
   if (authError) return authError
   const id = decodeURIComponent(pathname.replace('/v1/atlas/admin/requests/', ''))
   if (!/^[a-zA-Z0-9_-]{6,80}$/.test(id)) return apiError('invalid_request_id', 'Invalid Atlas request id.', 400, requestId)
@@ -290,24 +280,30 @@ async function adminRequestDetail(pathname: string, request: Request, env: Env, 
   return row ? json({ data: { request: row }, meta: { schemaVersion: 1, requestId } }) : apiError('request_not_found', 'Atlas request not found.', 404, requestId)
 }
 
-function requireAdmin(request: Request, env: Env, requestId: string): Response | null {
-  const configured = parseServiceKeys(env.SERVICE_API_KEYS)
-  if (configured.length === 0) return apiError('admin_auth_not_configured', 'Atlas admin API is not configured.', 503, requestId)
-  const header = request.headers.get('Authorization') ?? ''
-  const token = header.startsWith('Bearer ') ? header.slice('Bearer '.length).trim() : ''
-  if (!token || !configured.includes(token)) return apiError('unauthorized', 'Atlas admin API requires a service token.', 401, requestId)
+async function requireAdmin(request: Request, env: Env, requestId: string): Promise<Response | null> {
+  const auth = await requireServiceKey(request, authEnv(env), ['atlas.admin'])
+  if (auth instanceof Response) {
+    const status = auth.status === 403 ? 403 : 401
+    const code = status === 403 ? 'service_key_required' : 'unauthorized'
+    return apiError(code, 'Atlas admin API requires a scoped service token.', status, requestId)
+  }
   return null
+}
+
+function authEnv(env: Env) {
+  return {
+    AUTH_DB: env.AUTH_DB,
+    TOKEN_PEPPER: env.TOKEN_PEPPER,
+    ANKORE_TOKEN_PEPPER: env.ANKORE_TOKEN_PEPPER,
+    IDENTITY_BASE_URL: env.IDENTITY_BASE_URL,
+    IDENTITY_SERVICE: env.IDENTITY_SERVICE,
+  }
 }
 
 function bearerToken(request: Request): string {
   const header = request.headers.get('Authorization') ?? ''
   const match = /^Bearer\s+(.+)$/i.exec(header)
   return match?.[1]?.trim() ?? ''
-}
-
-function parseServiceKeys(value?: string): string[] {
-  if (!value) return []
-  return value.split(',').map((item) => item.trim()).filter(Boolean)
 }
 
 function validateRunRequest(body: AtlasRunRequest): string | null {
