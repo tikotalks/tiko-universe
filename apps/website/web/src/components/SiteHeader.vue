@@ -17,6 +17,7 @@ const navLinks = [
   { label: 'Apps', path: '/apps' },
   { label: 'Why Tiko', path: '/why-tiko' },
   { label: 'How it works', path: '/how-it-works' },
+  { label: 'Educators', path: '/educators' },
   { label: 'Caregivers', path: '/caregivers' },
   { label: 'Docs', path: '/docs' },
 ]
@@ -88,14 +89,6 @@ onMounted(() => {
         </RouterLink>
 
         <ThemeToggle :theme="colorMode" @toggle="cycleTheme" />
-
-        <RouterLink
-          to="/apps/yes-no"
-          :class="bemm('cta')"
-          @click="closeMobile"
-        >
-          Try Yes No
-        </RouterLink>
       </nav>
 
       <button
@@ -172,23 +165,6 @@ onMounted(() => {
     }
   }
 
-  &__cta {
-    padding: 8px clamp(14px, 1.5vw, 18px);
-    border-radius: 999px;
-    background: var(--app-yes-no);
-    color: white;
-    font-size: 0.875rem;
-    font-weight: 700;
-    text-decoration: none;
-    white-space: nowrap;
-    transition: opacity 0.15s;
-    flex-shrink: 0;
-
-    &:hover {
-      opacity: 0.88;
-    }
-  }
-
   &__toggle {
     display: none;
     flex-direction: column;
@@ -219,7 +195,7 @@ onMounted(() => {
   }
 }
 
-@media (max-width: 1120px) {
+@media (max-width: 1180px) {
   .site-header {
     &__nav {
       display: none;
@@ -245,13 +221,6 @@ onMounted(() => {
       padding: 12px 16px;
       border-radius: 8px;
       font-size: 1rem;
-    }
-
-    &__cta {
-      margin: calc(var(--space) * 0.75) 0 0;
-      padding: 12px 16px;
-      text-align: center;
-      border-radius: 12px;
     }
 
     &__toggle {

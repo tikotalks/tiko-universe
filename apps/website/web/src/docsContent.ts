@@ -37,7 +37,7 @@ export const docsPages: readonly DocsPage[] = [
     callouts: [
       {
         title: 'Tiny apps, shared platform',
-        body: 'Yes No, Type, Cards, Sequence, Timer, Radio, Media, and future apps should all reuse the same identity, state, content, media, generation, and UI contracts.'
+        body: 'Yes No, Talk, Type, Cards, Sequence, Timer, Radio, Media, and future apps should all reuse the same identity, state, content, media, generation, and UI contracts.'
       },
       {
         title: 'API first, Cloudflare native',

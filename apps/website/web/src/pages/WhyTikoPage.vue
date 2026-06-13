@@ -27,8 +27,8 @@ const bemm = useBemm('why-page', { return: 'string', includeBaseClass: true })
           <h2 class="display-2">One universe of tiny apps.</h2>
           <p class="body-lg">
             Tiko is not one big control panel. It is a universe of small, focused apps that each do one clear thing:
-            Yes No for quick answers, Type for spoken messages, Cards for visual choices, Sequence for routines,
-            and Timer for making time visible. Each one is beautiful, fast, and multilingual.
+            Yes No for quick answers, Talk for building sentences, Type for spoken messages, Cards for visual choices,
+            Sequence for routines, and Timer for making time visible. Each one is beautiful, fast, and multilingual.
           </p>
         </div>
       </div>

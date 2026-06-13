@@ -18,17 +18,19 @@
   --font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, sans-serif;
   --font-family-heading: 'Nunito', ui-sans-serif, system-ui, -apple-system, sans-serif;
 
-  // App palette
-  --app-yes-no: #9b3fbd;
-  --app-yes-no-light: #f3e8ff;
-  --app-type: #2488ff;
-  --app-type-light: #dbeafe;
-  --app-cards: #ff8a1f;
-  --app-cards-light: #fff3e0;
-  --app-sequence: #16b8a6;
-  --app-sequence-light: #ccfbf1;
-  --app-timer: #f8c22e;
-  --app-timer-light: #fef9c3;
+  // App palette (matches the admin-defined app configs)
+  --app-yes-no: #16b8a6;
+  --app-yes-no-light: #ccfbf1;
+  --app-type: #ff8a1f;
+  --app-type-light: #fff3e0;
+  --app-cards: #82b1ff;
+  --app-cards-light: #e8f0ff;
+  --app-sequence: #ef4f8f;
+  --app-sequence-light: #fce7f3;
+  --app-timer: #e84057;
+  --app-timer-light: #ffe4e6;
+  --app-talk: #ff6b6b;
+  --app-talk-light: #ffe4e1;
 
   // Surface tiers (--color-background covers page bg via @sil/ui)
   --surface-card: color-mix(in srgb, var(--color-background), var(--color-foreground) 0%);

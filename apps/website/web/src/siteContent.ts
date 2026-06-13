@@ -1,7 +1,7 @@
 import { appUniverse, stableRoutes, type StableRoute } from './content/appUniverse'
 import { docsPages } from './docsContent'
 
-export type WebsiteRouteId = 'home' | 'apps' | 'tools' | 'why-tiko' | 'how-it-works' | 'caregivers' | 'faq' | 'docs'
+export type WebsiteRouteId = 'home' | 'apps' | 'tools' | 'why-tiko' | 'how-it-works' | 'caregivers' | 'educators' | 'faq' | 'docs'
 
 export interface WebsiteRoute {
   id: WebsiteRouteId
@@ -29,9 +29,10 @@ export interface ContentPillar {
 
 export const routes: WebsiteRoute[] = [
   { id: 'home', path: '/', label: 'Home', title: 'TikoTalks', description: 'Beautiful, free communication apps for every child. No ads, no account, any language.' },
-  { id: 'apps', path: '/tools', label: 'Apps', title: 'Five tiny apps. One clear job each.', description: 'A simple look at the Tiko app universe.' },
+  { id: 'apps', path: '/tools', label: 'Apps', title: 'Tiny apps. One clear job each.', description: 'A simple look at the Tiko app universe.' },
   { id: 'why-tiko', path: '/why-tiko', label: 'Why Tiko', title: 'Why Tiko exists.', description: 'Why Tiko is small, free, beautiful, and built for every language.' },
   { id: 'how-it-works', path: '/how-it-works', label: 'How it works', title: 'One Tiko, many screens.', description: 'Tiko starts on the web and keeps native paths aligned.' },
+  { id: 'educators', path: '/educators', label: 'Educators', title: 'Manage multiple child accounts with Tiko Profile Manager.', description: 'Create child accounts, control what each child sees, and keep the child-facing experience calm.' },
   { id: 'caregivers', path: '/caregivers', label: 'Caregivers', title: 'Built so the first moment is not an account form.', description: 'Plain trust principles for adults choosing tools for children.' },
   { id: 'faq', path: '/faq', label: 'FAQ', title: 'Quick answers.', description: 'Short answers about accounts, ads, platforms, and what Tiko is.' },
   { id: 'docs', path: '/docs', label: 'Docs', title: 'Tiko Universe docs.', description: 'Technical architecture, product doctrine, and API docs for builders.' }
@@ -128,7 +129,7 @@ export const faqs = [
   },
   {
     question: 'Which app should I start with?',
-    answer: 'Start with the simplest tool that fits the moment. Yes No for quick answers, Type for spoken messages, Cards for visual choices, Sequence for step-by-step routines, and Timer for making time visible.'
+    answer: 'Start with the simplest tool that fits the moment. Yes No for quick answers, Talk for building sentences, Type for spoken messages, Cards for visual choices, Sequence for step-by-step routines, and Timer for making time visible.'
   },
   {
     question: 'Why separate tiny apps instead of one big app?',

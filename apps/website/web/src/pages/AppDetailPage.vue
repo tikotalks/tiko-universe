@@ -141,6 +141,7 @@ watch(slug, (newSlug) => {
         <div :class="bemm('hero-copy')">
           <RouterLink to="/apps" :class="bemm('back')">All apps</RouterLink>
           <p class="eyebrow" :style="{ color: app.color }">Tiko</p>
+          <img :src="app.iconUrl" :alt="`${app.name} app icon`" :class="bemm('hero-icon')" />
           <h1 :class="['display-1', bemm('name')]">{{ app.name }}</h1>
           <p :class="bemm('headline')">{{ app.headline }}</p>
           <p :class="['body-lg', bemm('desc')]">{{ app.description }}</p>
@@ -222,6 +223,16 @@ watch(slug, (newSlug) => {
               <div :class="bemm('mockup-timer-ring')">
                 <div :class="bemm('mockup-timer-arc')" :style="{ borderColor: app.color }" />
               </div>
+            </template>
+            <!-- Talk mockup -->
+            <template v-else-if="slug === 'talk'">
+              <p :class="bemm('mockup-label')">Build a sentence</p>
+              <div :class="bemm('mockup-talk')">
+                <span :class="bemm('mockup-talk-word')">I</span>
+                <span :class="bemm('mockup-talk-word')">want</span>
+                <span :class="bemm('mockup-talk-word')" :style="{ background: app.color, color: 'white' }">apple</span>
+              </div>
+              <button :class="bemm('mockup-speak')" :style="{ background: app.color }">Speak</button>
             </template>
           </div>
         </div>
@@ -409,6 +420,14 @@ watch(slug, (newSlug) => {
     &:hover { color: var(--text-secondary); }
   }
 
+  &__hero-icon {
+    width: 64px;
+    height: 64px;
+    object-fit: contain;
+    border-radius: 16px;
+    box-shadow: var(--shadow-s);
+  }
+
   &__name {
     max-width: 10ch;
     line-height: 1.0;
@@ -565,6 +584,24 @@ watch(slug, (newSlug) => {
     font-size: 0.8rem;
     color: var(--color-foreground);
     min-height: 60px;
+  }
+
+  &__mockup-talk {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  &__mockup-talk-word {
+    display: inline-grid;
+    place-items: center;
+    padding: 6px 10px;
+    min-height: 32px;
+    border-radius: 8px;
+    background: var(--surface-subtle);
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--color-foreground);
   }
 
   &__mockup-speak {

@@ -1,10 +1,10 @@
-export type TikoWebsiteAppSlug = 'yes-no' | 'type' | 'cards' | 'sequence' | 'timer'
+export type TikoWebsiteAppSlug = 'yes-no' | 'type' | 'cards' | 'sequence' | 'timer' | 'talk'
 
 export type TikoWebsiteAppStatus = 'available' | 'planned'
 export type AppStatus = TikoWebsiteAppStatus
-export type StableRoute = '/' | '/tools' | '/why-tiko' | '/how-it-works' | '/caregivers' | '/faq' | '/docs' | '/docs/philosophy' | '/docs/architecture' | '/docs/apis'
+export type StableRoute = '/' | '/tools' | '/why-tiko' | '/how-it-works' | '/caregivers' | '/educators' | '/faq' | '/docs' | '/docs/philosophy' | '/docs/architecture' | '/docs/apis'
 
-export const stableRoutes: StableRoute[] = ['/', '/tools', '/why-tiko', '/how-it-works', '/caregivers', '/faq', '/docs', '/docs/philosophy', '/docs/architecture', '/docs/apis']
+export const stableRoutes: StableRoute[] = ['/', '/tools', '/why-tiko', '/how-it-works', '/caregivers', '/educators', '/faq', '/docs', '/docs/philosophy', '/docs/architecture', '/docs/apis']
 
 export interface AppFeature {
   title: string
@@ -24,6 +24,8 @@ export interface TikoWebsiteAppMetadata {
   platformNotes: string
   color: string
   colorLight: string
+  appIcon: string
+  iconUrl: string
   useWhen: readonly string[]
   moment: string
   whySmall: string
@@ -43,8 +45,10 @@ export const tikoWebsiteAppUniverse = [
     status: 'available',
     availability: 'available',
     platformNotes: 'Open on the web now. iOS and Android keep the same simple two-choice shape.',
-    color: '#9b3fbd',
-    colorLight: '#f3e8ff',
+    color: '#16b8a6',
+    colorLight: '#ccfbf1',
+    appIcon: 'ui/check-fat',
+    iconUrl: 'https://media.tikoapi.org/v1/media/c8bfb9e8-0427-4cd9-89e2-74e09d20b8ec/download',
     useWhen: [
       'a child needs to answer quickly',
       'a caregiver wants a simple prompt',
@@ -71,8 +75,10 @@ export const tikoWebsiteAppUniverse = [
     status: 'planned',
     availability: 'planned',
     platformNotes: 'Coming to the web first, then native iOS and Android.',
-    color: '#2488ff',
-    colorLight: '#dbeafe',
+    color: '#ff8a1f',
+    colorLight: '#fff3e0',
+    appIcon: 'ui/type',
+    iconUrl: 'https://media.tikoapi.org/v1/media/eecf2917-a885-4025-a762-9c7a8783f5af/download',
     useWhen: [
       'a child wants to type a message',
       'saved phrases would help',
@@ -99,8 +105,10 @@ export const tikoWebsiteAppUniverse = [
     status: 'planned',
     availability: 'planned',
     platformNotes: 'Coming as a focused card experience — beautiful images, one tap to speak.',
-    color: '#ff8a1f',
-    colorLight: '#fff3e0',
+    color: '#82B1FF',
+    colorLight: '#e8f0ff',
+    appIcon: 'education/book-2',
+    iconUrl: 'https://media.tikoapi.org/v1/media/e37943b4-582c-40ee-be3a-c47be7c6e658/download',
     useWhen: [
       'pictures communicate faster than text',
       'choices should be visible and easy to tap',
@@ -127,8 +135,10 @@ export const tikoWebsiteAppUniverse = [
     status: 'planned',
     availability: 'planned',
     platformNotes: 'Coming for web and native — the next step always visible, always one tap forward.',
-    color: '#16b8a6',
-    colorLight: '#ccfbf1',
+    color: '#ef4f8f',
+    colorLight: '#fce7f3',
+    appIcon: 'ui/list',
+    iconUrl: 'https://media.tikoapi.org/v1/media/c2e7188c-1ac4-41d6-a29c-2b122ec812e8/download',
     useWhen: [
       'a routine needs a clear order',
       'the next step should always be visible',
@@ -155,8 +165,10 @@ export const tikoWebsiteAppUniverse = [
     status: 'planned',
     availability: 'planned',
     platformNotes: 'Coming as a focused screen — one thing, done beautifully, on web, iOS, and Android.',
-    color: '#f8c22e',
-    colorLight: '#fef9c3',
+    color: '#e84057',
+    colorLight: '#ffe4e6',
+    appIcon: 'ui/timer',
+    iconUrl: 'https://media.tikoapi.org/v1/media/ec6bad5e-8cbe-4934-b1c8-d66d80098f95/download',
     useWhen: [
       'transitions need a visible end point',
       'waiting feels less abstract when time is on screen',
@@ -171,6 +183,36 @@ export const tikoWebsiteAppUniverse = [
       { title: 'Gentle end signal', body: 'A calm visual and optional soft sound signals when time is up.' },
       { title: 'Quick presets', body: 'Set common intervals like 5, 10, or 15 minutes in one tap.' }
     ]
+  },
+  {
+    slug: 'talk',
+    appName: 'Talk',
+    shortSummary: 'Tap words, build a sentence, and hear it spoken.',
+    headline: 'Build sentences. Find your voice.',
+    description: 'Talk is a gentle, word-by-word communication app. Tap words to build a sentence on a clear strip, then speak it aloud. Built for children who are finding their voice — one word at a time.',
+    route: '/apps/talk',
+    appUrl: 'https://talk.tikoapps.org',
+    status: 'available',
+    availability: 'available',
+    platformNotes: 'Open on the web now. iOS and Android will follow the same calm, focused experience.',
+    color: '#FF6B6B',
+    colorLight: '#ffe4e1',
+    appIcon: 'ui/talk',
+    iconUrl: 'https://media.tikoapi.org/v1/media/da85b30b-6865-41ef-9b75-71e46999de22/download',
+    useWhen: [
+      'a child is building language, one word at a time',
+      'speaking a full sentence should take a few taps, not a keyboard',
+      'a calm, predictable word grid helps more than a busy screen'
+    ],
+    moment: 'Every word a child chooses is a small act of saying who they are. Talk keeps the path from thought to voice as short and gentle as it can be.',
+    whySmall: 'Talk stays focused on building and speaking one sentence. It is not a chat app, a content feed, or a general-purpose tablet.',
+    calmDetail: 'A predictable word grid, a clear sentence strip, and a single speak button keep the focus on the child\'s voice — not on the interface.',
+    features: [
+      { title: 'Word grid', body: 'Tap words to add them to the sentence strip. Categories keep related words close.' },
+      { title: 'Sentence strip', body: 'See the sentence build up, word by word, before speaking it.' },
+      { title: 'Speak aloud', body: 'One button speaks the whole sentence in a clear voice.' },
+      { title: 'Works offline', body: 'Core word packs load from local storage so Talk works without a network.' }
+    ]
   }
 ] as const satisfies readonly TikoWebsiteAppMetadata[]
 
@@ -183,6 +225,8 @@ export const tikoApps = tikoWebsiteAppUniverse.map((app) => ({
   appUrl: app.appUrl,
   color: app.color,
   colorLight: app.colorLight,
+  appIcon: app.appIcon,
+  iconUrl: app.iconUrl,
   status: app.status,
   statusLabel: app.status === 'available' ? 'Web available' : 'Planned',
   summary: app.shortSummary,

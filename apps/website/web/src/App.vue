@@ -14,6 +14,7 @@ watchEffect(() => {
     '/apps': 'Apps — TikoTalks',
     '/how-it-works': 'How it works — TikoTalks',
     '/caregivers': 'For caregivers — TikoTalks',
+    '/educators': 'For educators — TikoTalks',
     '/faq': 'FAQ — TikoTalks',
     '/docs': 'Docs — TikoTalks',
   }

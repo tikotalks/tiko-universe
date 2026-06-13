@@ -265,7 +265,7 @@ onUnmounted(() => {
             Try Yes No — it's free
           </RouterLink>
           <RouterLink to="/apps" :class="bemm('hero-btn', 'outline')">
-            See all five apps
+            See all apps
           </RouterLink>
         </div>
         <p :class="bemm('hero-note')">Free forever. No ads. Works on any device, in any language.</p>
@@ -342,8 +342,8 @@ onUnmounted(() => {
         >
           <div :class="bemm('app-card-image-wrap')">
             <img
-              :src="cdnUrl(appImages[app.id].original_url, 360)"
-              :alt="appImages[app.id].title"
+              :src="app.iconUrl"
+              :alt="`${app.name} app icon`"
               loading="lazy"
               :class="bemm('app-card-image')"
             />
@@ -588,7 +588,7 @@ onUnmounted(() => {
     display: flex;
     flex-direction: column;
     gap: 16px;
-    box-shadow: var(--shadow-l), 0 0 0 6px rgba(155, 63, 189, 0.15);
+    box-shadow: var(--shadow-l), 0 0 0 6px rgba(22, 184, 166, 0.15);
   }
 
   &__device-top {
@@ -720,7 +720,7 @@ onUnmounted(() => {
 
   &__apps-grid {
     display: grid;
-    grid-template-columns: repeat(5, minmax(0, 1fr));
+    grid-template-columns: repeat(6, minmax(0, 1fr));
     gap: calc(var(--space) * 0.75);
   }
 
