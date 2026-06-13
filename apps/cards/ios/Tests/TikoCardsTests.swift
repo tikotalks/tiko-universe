@@ -65,4 +65,23 @@ final class TikoCardsTests: XCTestCase {
         XCTAssertFalse(CardsView.hasContentEditingAccess(TikoIdentityBundle(subject: subject, roles: ["profile_manager"])))
         XCTAssertFalse(CardsView.hasContentEditingAccess(nil))
     }
+
+    @MainActor
+    func testUserCollectionPersistsAcrossStoreInstances() async throws {
+        let suiteName = "TikoCardsTests.\(UUID().uuidString)"
+        let defaults = try XCTUnwrap(UserDefaults(suiteName: suiteName))
+        defer { defaults.removePersistentDomain(forName: suiteName) }
+
+        let firstStore = CardsStore(defaults: defaults)
+        firstStore.addCollection(title: "My collection", color: "green")
+
+        let secondStore = CardsStore(defaults: defaults)
+        await secondStore.load(languageCode: "en")
+
+        XCTAssertTrue(secondStore.collections.contains { collection in
+            collection.id.hasPrefix("user_") &&
+            collection.title == "My collection" &&
+            collection.color == "green"
+        })
+    }
 }
