@@ -1,6 +1,6 @@
 // Tiko content-api — D1-backed published content read model.
 // Public reads only for now; admin mutations belong in admin-api.
-import { authenticate, type AuthEnv } from '../../shared/auth'
+import { requireRole, type AuthEnv } from '../../shared/auth'
 
 interface Env extends AuthEnv {
   CONTENT_DB: D1Database
@@ -110,6 +110,8 @@ const CACHE_TTL_SECONDS = 300
 const CACHE_KEY_CARDS_COLLECTIONS = 'cards:collections'
 const CACHE_KEY_YES_NO_CONTENT = 'yes-no:content'
 const CACHE_KEY_SEQUENCE_CONTENT = 'sequence:content'
+const CONTENT_ADMIN_ROLES = ['admin', 'content_editor']
+const CONTENT_ADMIN_CAPABILITIES = ['canEditContent']
 const CACHE_VERSION_PREFIX = 'content-cache-version'
 
 async function invalidateCardsCache(env: Env): Promise<void> {
@@ -1129,7 +1131,7 @@ async function handlePostCards(request: Request, env: Env, segments: string[]): 
     const order = typeof body.order === 'number' ? body.order : 0
 
     if (isDefault) {
-      if (!(await verifyAdminFromSession(env, sessionToken))) {
+      if (!(await isContentAdmin(request, env))) {
         return error(request, env, 'forbidden', 'Admin role required to add cards to default collections', 403)
       }
       const id = `__default_${crypto.randomUUID().replace(/-/g, '')}`
@@ -1186,21 +1188,8 @@ async function handlePostCards(request: Request, env: Env, segments: string[]): 
 }
 
 async function requireAdminSession(request: Request, env: Env): Promise<Response | null> {
-  const authHeader = request.headers.get('Authorization') ?? ''
-  const token = authHeader.startsWith('Bearer ') ? authHeader.slice(7) : ''
-  if (!token) {
-    return new Response(JSON.stringify({ success: false, error: { code: 'unauthorized', message: 'Unauthorized' } }), {
-      status: 401,
-      headers: { ...corsHeaders(request, env), 'Content-Type': 'application/json; charset=utf-8' },
-    })
-  }
-  if (!await verifyAdminFromSession(env, token)) {
-    return new Response(JSON.stringify({ success: false, error: { code: 'forbidden', message: 'Admin access required' } }), {
-      status: 403,
-      headers: { ...corsHeaders(request, env), 'Content-Type': 'application/json; charset=utf-8' },
-    })
-  }
-  return null
+  const auth = await requireContentAdmin(request, env)
+  return auth instanceof Response ? auth : null
 }
 
 // ---------------------------------------------------------------------------
@@ -1209,12 +1198,8 @@ async function requireAdminSession(request: Request, env: Env): Promise<Response
 
 async function handleUploadUserImage(request: Request, env: Env): Promise<Response> {
   if (!env.USER_IMAGES) return error(request, env, 'not_configured', 'Image storage not configured.', 503)
-  const authHeader = request.headers.get('Authorization') ?? ''
-  const sessionToken = authHeader.startsWith('Bearer ') ? authHeader.slice(7) : undefined
-  if (!sessionToken) return error(request, env, 'unauthorized', 'Authorization required', 401)
-  if (!(await verifyAdminFromSession(env, sessionToken))) {
-    return error(request, env, 'forbidden', 'Admin role required to upload images', 403)
-  }
+  const authError = await requireAdminSession(request, env)
+  if (authError) return authError
 
   const formData = await request.formData()
   const file = formData.get('file')
@@ -1424,22 +1409,27 @@ export default {
   },
 }
 
-async function verifyAdminFromSession(env: Env, sessionToken: string): Promise<boolean> {
-  const request = new Request('https://content-auth.local/session', {
-    headers: { Authorization: `Bearer ${sessionToken}` },
-  })
-  const auth = await authenticate(request, authEnv(env))
-  if (!auth.ok) return false
-  return auth.roles?.includes('admin') === true
-    || auth.roles?.includes('content_editor') === true
-    || auth.capabilities?.canEditContent === true
-}
-
 function authEnv(env: Env): AuthEnv {
   return {
     ...env,
     IDENTITY_BASE_URL: env.IDENTITY_BASE_URL ?? env.IDENTITY_API_URL ?? 'https://identity.tikoapi.org/v1',
   }
+}
+
+async function requireContentAdmin(request: Request, env: Env): Promise<Response | null> {
+  const auth = await requireRole(request, authEnv(env), CONTENT_ADMIN_ROLES, {
+    capabilities: CONTENT_ADMIN_CAPABILITIES,
+  })
+  if (!(auth instanceof Response)) return null
+
+  const body = await auth.json().catch(() => null) as { error?: { code?: string; message?: string } } | null
+  const code = body?.error?.code ?? (auth.status === 401 ? 'unauthorized' : 'forbidden')
+  const message = auth.status === 401 ? 'Unauthorized' : 'Admin access required'
+  return error(request, env, code, message, auth.status)
+}
+
+async function isContentAdmin(request: Request, env: Env): Promise<boolean> {
+  return (await requireContentAdmin(request, env)) === null
 }
 
 async function handlePutCards(request: Request, env: Env, segments: string[]): Promise<Response> {
@@ -1464,7 +1454,7 @@ async function handlePutCards(request: Request, env: Env, segments: string[]): P
     const saveAsDefault = body.saveAsDefault === true
 
     if (isDefault) {
-      const isAdmin = saveAsDefault && await verifyAdminFromSession(env, sessionToken)
+      const isAdmin = saveAsDefault && await isContentAdmin(request, env)
 
       if (!isAdmin) {
         // Non-admin or "just for me": store override in user state so it persists and is merged on next load
@@ -1536,7 +1526,7 @@ async function handlePutCards(request: Request, env: Env, segments: string[]): P
     const order = typeof body.order === 'number' && Number.isFinite(body.order) ? Math.max(0, Math.round(body.order)) : undefined
 
     if (isDefault) {
-      if (!(await verifyAdminFromSession(env, sessionToken))) {
+      if (!(await isContentAdmin(request, env))) {
         return error(request, env, 'forbidden', 'Admin role required to edit default cards', 403)
       }
       const imageRef = asImageRef(body.imageRef) ?? null
@@ -1583,7 +1573,7 @@ async function handleDeleteCards(request: Request, env: Env, segments: string[])
     const isDefault = !collectionId.startsWith('user_')
 
     if (isDefault) {
-      if (!(await verifyAdminFromSession(env, sessionToken))) {
+      if (!(await isContentAdmin(request, env))) {
         return error(request, env, 'forbidden', 'Admin role required to delete default collections', 403)
       }
       await env.CONTENT_DB.prepare(`DELETE FROM content_item_translations WHERE item_id IN (SELECT id FROM content_items WHERE app_id = 'cards' AND (id = ? OR parent_id = ?))`).bind(collectionId, collectionId).run()
@@ -1609,7 +1599,7 @@ async function handleDeleteCards(request: Request, env: Env, segments: string[])
     const isDefault = !collectionId.startsWith('user_')
 
     if (isDefault) {
-      if (!(await verifyAdminFromSession(env, sessionToken))) {
+      if (!(await isContentAdmin(request, env))) {
         return error(request, env, 'forbidden', 'Admin role required to delete default cards', 403)
       }
       await env.CONTENT_DB.prepare(`DELETE FROM content_item_translations WHERE item_id = ?`).bind(cardId).run()
@@ -1641,7 +1631,7 @@ async function handlePromoteCollection(request: Request, env: Env, _segments: st
   const authHeader = request.headers.get('Authorization') ?? ''
   const sessionToken = authHeader.startsWith('Bearer ') ? authHeader.slice(7) : undefined
   if (!sessionToken) return error(request, env, 'unauthorized', 'Authorization required', 401)
-  if (!(await verifyAdminFromSession(env, sessionToken))) {
+  if (!(await isContentAdmin(request, env))) {
     return error(request, env, 'forbidden', 'Admin role required to promote collections', 403)
   }
 

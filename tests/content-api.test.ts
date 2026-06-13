@@ -250,6 +250,23 @@ function mockUserSession() {
   }))
 }
 
+function mockContentCapabilitySession() {
+  vi.stubGlobal('fetch', vi.fn(async (input: RequestInfo | URL) => {
+    const url = String(input)
+    if (url.includes('/identity/session')) {
+      return new Response(JSON.stringify({
+        subject: { id: 'content-editor-capability-user' },
+        roles: ['user'],
+        capabilities: { canEditContent: true },
+      }), {
+        status: 200,
+        headers: { 'Content-Type': 'application/json' },
+      })
+    }
+    throw new Error(`Unexpected fetch ${url}`)
+  }))
+}
+
 afterEach(() => {
   vi.unstubAllGlobals()
 })
@@ -419,6 +436,29 @@ describe('content-api worker', () => {
 
     expect(response.status).toBe(403)
     expect(body.error.code).toBe('forbidden')
+  })
+
+  it('allows admin Cards bulk saves with the shared content-edit capability', async () => {
+    const env = makeEnv()
+    mockContentCapabilitySession()
+
+    const response = await worker.fetch(new Request('https://content.test/v1/admin/cards/collections', {
+      method: 'PUT',
+      headers: { authorization: 'Bearer capability-session', 'content-type': 'application/json' },
+      body: JSON.stringify({
+        collections: [{
+          id: '__default_animals',
+          title: 'Animals capability update',
+          color: 'green',
+          order: 0,
+          mediaCategories: ['animals'],
+          cards: [],
+        }],
+      }),
+    }), env as never)
+
+    expect(response.status).toBe(200)
+    expect(env.CONTENT_DB.appItems.find(row => row.id === '__default_animals')?.title).toBe('Animals capability update')
   })
 
   it('invalidates Cards content cache for every locale without hardcoded language keys', async () => {

@@ -73,6 +73,10 @@ export interface AuthenticateOptions {
   scopes?: string[]
 }
 
+export interface RequireRoleOptions {
+  capabilities?: string[]
+}
+
 // ── Session validation response from identity-api ────────────
 
 interface IdentitySessionBody {
@@ -273,11 +277,18 @@ export async function requireSession(request: Request, env: AuthEnv): Promise<Au
   return auth
 }
 
-export async function requireRole(request: Request, env: AuthEnv, roles: string[]): Promise<AuthSuccess | Response> {
+export async function requireRole(
+  request: Request,
+  env: AuthEnv,
+  roles: string[],
+  options: RequireRoleOptions = {},
+): Promise<AuthSuccess | Response> {
   const session = await requireSession(request, env)
   if (session instanceof Response) return session
   const allowed = new Set(roles)
-  if (!session.roles?.some((role) => allowed.has(role))) {
+  const hasRole = session.roles?.some((role) => allowed.has(role)) === true
+  const hasCapability = options.capabilities?.some((capability) => session.capabilities?.[capability] === true) === true
+  if (!hasRole && !hasCapability) {
     return new Response(
       JSON.stringify({ error: { code: 'forbidden', message: 'Required role is missing.' } }),
       { status: 403, headers: { 'content-type': 'application/json' } },

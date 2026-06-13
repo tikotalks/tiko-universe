@@ -70,6 +70,7 @@ Approximate review spread: 7 Critical, about 35 High, about 70 Medium, and about
   - [x] Replace Atlas `SERVICE_API_KEYS` string matching with shared scoped API-key auth.
   - [x] Replace communication-api `COMMUNICATION_API_KEY` verification with shared scoped API-key auth.
   - [x] Remove app-api direct identity DB fallback completely.
+  - [x] Replace content-api local admin role/capability verifier with shared `requireRole`.
 
 - [x] Move iOS identity storage to Keychain.
   - Make `TikoKeychainIdentityStore` the default.
