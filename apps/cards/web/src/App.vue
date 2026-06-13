@@ -11,8 +11,8 @@ import {
   normalizeTikoColorMode,
   readTikoLocalJson,
   resolveTikoAppApiBaseUrl,
-  resolveTikoColorMode,
   resolveTikoIdentityBaseUrl,
+  useTikoColorModeEffect,
   useIdentityRuntime,
   type IdentityRuntimeState,
   type TikoColorMode,
@@ -444,11 +444,7 @@ watch(language, value => {
   if (collectionsHydrated.value) void cards.loadCollections(value)
 }, { immediate: true })
 
-watch(colorMode, mode => {
-  const effective = resolveTikoColorMode(mode)
-  document.documentElement.dataset.colorMode = effective
-  document.documentElement.dataset.theme = effective
-}, { immediate: true })
+useTikoColorModeEffect(colorMode)
 
 watch([language, colorMode, hideDefaultCollections, showAnimations, cardSizeIndex, labelSizeIndex], () => cards.persist({
   language: language.value,

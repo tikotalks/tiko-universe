@@ -1,7 +1,7 @@
 import { mount } from '@vue/test-utils'
 import { readFileSync } from 'node:fs'
 import { resolve } from 'node:path'
-import { h, nextTick } from 'vue'
+import { defineComponent, h, nextTick, ref } from 'vue'
 import { describe, expect, it, vi } from 'vitest'
 import {
   TikoAnswerButton,
@@ -14,6 +14,7 @@ import {
   TikoTileBoard,
   createTikoChoice,
   createTikoTtsClient,
+  applyTikoColorMode,
   normalizeTikoColorMode,
   resolveTikoAppApiBaseUrl,
   readTikoLocalJson,
@@ -22,6 +23,7 @@ import {
   resolveTikoGenerationApiBaseUrl,
   resolveTikoIdentityBaseUrl,
   resolveTikoMediaApiBaseUrl,
+  useTikoColorModeEffect,
   writeTikoLocalJson,
   tikoAppColors,
   tikoAppConfigs,
@@ -110,6 +112,42 @@ describe('TikoKit component contract', () => {
     expect(normalizeTikoColorMode('dark')).toBe('dark')
     expect(normalizeTikoColorMode('bad')).toBe('system')
     expect(normalizeTikoColorMode(undefined)).toBe('system')
+  })
+
+  it('applies and reacts to shared system color mode changes', async () => {
+    const listeners = new Set<() => void>()
+    const query = {
+      matches: false,
+      addEventListener: (_type: 'change', listener: () => void) => { listeners.add(listener) },
+      removeEventListener: (_type: 'change', listener: () => void) => { listeners.delete(listener) },
+    }
+    const documentTarget = { documentElement: { dataset: {} as Record<string, string> } }
+    const windowTarget = { matchMedia: () => query }
+
+    expect(applyTikoColorMode('dark', documentTarget, windowTarget)).toBe('dark')
+    expect(documentTarget.documentElement.dataset).toMatchObject({ colorMode: 'dark', theme: 'dark' })
+
+    const wrapper = mount(defineComponent({
+      setup() {
+        const mode = ref<'light' | 'dark' | 'system'>('system')
+        useTikoColorModeEffect(mode, documentTarget, windowTarget)
+        return { mode }
+      },
+      template: '<button @click="mode = mode === \'light\' ? \'system\' : \'light\'">toggle</button>',
+    }))
+
+    await flushMountedWork()
+    expect(documentTarget.documentElement.dataset.colorMode).toBe('light')
+    expect(listeners.size).toBe(1)
+
+    query.matches = true
+    listeners.forEach(listener => listener())
+    expect(documentTarget.documentElement.dataset.colorMode).toBe('dark')
+
+    await wrapper.get('button').trigger('click')
+    expect(documentTarget.documentElement.dataset.colorMode).toBe('light')
+    await wrapper.unmount()
+    expect(listeners.size).toBe(0)
   })
 
   it('renders the design header with open-icon action names and app color token', async () => {

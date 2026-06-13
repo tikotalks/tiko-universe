@@ -14,10 +14,10 @@ import {
   normalizeTikoColorMode,
   readTikoLocalJson,
   resolveTikoAppApiBaseUrl,
-  resolveTikoColorMode,
   resolveTikoContentApiBaseUrl,
   resolveTikoIdentityBaseUrl,
   tikoColors,
+  useTikoColorModeEffect,
   useIdentityRuntime,
   writeTikoLocalJson,
   type IdentityRuntimeState,
@@ -345,11 +345,7 @@ watch(language, (value) => {
   void loadDefaultContent()
 }, { immediate: true })
 
-watch(colorMode, (mode) => {
-  const effective = resolveTikoColorMode(mode)
-  document.documentElement.dataset.colorMode = effective
-  document.documentElement.dataset.theme = effective
-}, { immediate: true })
+useTikoColorModeEffect(colorMode)
 
 watch([language, colorMode, sentence], () => {
   saveLocalFallback()
