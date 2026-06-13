@@ -19,6 +19,7 @@ public enum TikoAppKey: String, Sendable {
 public final class TikoI18n: ObservableObject {
     public let app: TikoAppKey
     @Published public private(set) var languageCode: String
+    @Published public private(set) var revision: Int = 0
 
     private let fallback = "en"
     private var bundles: [String: [String: String]] = [:]
@@ -53,13 +54,13 @@ public final class TikoI18n: ObservableObject {
     }
 
     public func addBundle(languageCode: String, translations: [String: String]) {
-        objectWillChange.send()
         let k = bundleKey(app.rawValue, languageCode)
         if bundles[k] != nil {
             for (key, val) in translations { bundles[k]![key] = val }
         } else {
             bundles[k] = translations
         }
+        revision += 1
     }
 
     /// Fetch remote translations from the Tiko translations-api Worker.

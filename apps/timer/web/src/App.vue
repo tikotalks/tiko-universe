@@ -143,8 +143,6 @@ if (stored.timerMode && stored.timerMode !== 'idle') {
 const RING_CIRCUMFERENCE = 2 * Math.PI * 80
 
 const labels = computed(() => {
-  void language.value
-  void i18n._revision.value
   return {
     appName: i18n.t(tikoI18nKeys.timer.appName),
     expired: i18n.t(tikoI18nKeys.timer.display.expired),

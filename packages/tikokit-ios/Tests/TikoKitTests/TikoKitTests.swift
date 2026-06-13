@@ -80,6 +80,23 @@ final class TikoKitTests: XCTestCase {
         XCTAssertEqual(TikoChoiceStyle.compact.rawValue, "compact")
     }
 
+    @MainActor
+    func testI18nPublishesBundleRevision() {
+        let previousBaseURL = TikoI18n.translationsBaseURL
+        TikoI18n.translationsBaseURL = nil
+        defer { TikoI18n.translationsBaseURL = previousBaseURL }
+
+        let i18n = TikoI18n(app: .yesNo, languageCode: "hy")
+        let initialRevision = i18n.revision
+
+        XCTAssertEqual(i18n.t("yesNo.answers.yes"), "Yes")
+
+        i18n.addBundle(languageCode: "hy", translations: ["yesNo.answers.yes": "Runtime yes"])
+
+        XCTAssertEqual(i18n.revision, initialRevision + 1)
+        XCTAssertEqual(i18n.t("yesNo.answers.yes"), "Runtime yes")
+    }
+
     func testSpeechLanguageMappingUsesAppLanguageCodes() {
         XCTAssertEqual(TikoSpeech.languageCode(for: "en"), "en-US")
         XCTAssertEqual(TikoSpeech.languageCode(for: "nl"), "nl-NL")

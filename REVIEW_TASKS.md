@@ -164,7 +164,7 @@ Approximate review spread: 7 Critical, about 35 High, about 70 Medium, and about
   - Reactive system color mode.
   - Language handling.
 
-- [ ] Make `@tiko/i18n` and TikoKit i18n truly reactive.
+- [x] Make `@tiko/i18n` and TikoKit i18n truly reactive.
   - Use Vue reactivity in the web i18n package.
   - Publish bundle/language revision changes.
   - Make Swift `TikoI18n` publish bundle changes.

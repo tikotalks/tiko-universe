@@ -167,8 +167,6 @@ const categories = useCategories('tiko:radio:categories')
 
 // ---- Labels ---------------------------------------------------------------
 const labels = computed(() => {
-  void language.value
-  void i18n._revision.value
   return {
     appName: i18n.t(tikoI18nKeys.radio.appName),
     play: i18n.t(tikoI18nKeys.radio.player.play),

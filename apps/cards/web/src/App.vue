@@ -46,7 +46,6 @@ const stored = readStored()
 const i18n = createI18n({ app: 'cards', language: toLanguage(stored.language) })
 const translationLoader = createTikoTranslationLoader()
 const loadedTranslations = new Set<string>()
-const translationsRevision = ref(0)
 const language = ref<TikoLanguage>(toLanguage(stored.language))
 const colorMode = ref<TikoColorMode>(toColorMode(stored.colorMode))
 const hideDefaultCollections = ref(stored.hideDefaultCollections ?? false)
@@ -84,8 +83,6 @@ const cards = useCardsStore({
 })
 
 const labels = computed(() => {
-  void language.value
-  void translationsRevision.value
   return {
     appName: i18n.t(tikoI18nKeys.cards.appName),
     add: i18n.t('cards.addCard'),
@@ -410,7 +407,6 @@ async function loadTranslations(value: TikoLanguage) {
     const bundle = await translationLoader({ app: 'cards', language: value })
     if (Object.keys(bundle.translations).length > 0) {
       i18n.addBundle(bundle)
-      translationsRevision.value += 1
     }
     loadedTranslations.add(value)
   } catch {

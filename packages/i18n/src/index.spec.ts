@@ -1,4 +1,5 @@
 import { describe, expect, it, vi } from 'vitest'
+import { computed } from '@vue/reactivity'
 import {
   defaultLanguage,
   tikoAppKeys,
@@ -60,6 +61,38 @@ describe('@tiko/i18n fallback contract', () => {
     expect(i18n.language.value).toBe('fr')
     expect(i18n.t(tikoI18nKeys.yesNo.answers.yes)).toBe('Oui')
     expect(i18n.t(tikoI18nKeys.yesNo.status.answerCount, { count: 2 })).toBe('2 réponses')
+  })
+
+  it('invalidates Vue computed translations when the language changes', () => {
+    const i18n = createI18n({ app: 'yes-no', language: 'en' })
+    const label = computed(() => i18n.t(tikoI18nKeys.yesNo.answers.yes))
+
+    expect(label.value).toBe('Yes')
+    expect(i18n._revision.value).toBe(0)
+
+    i18n.setLanguage('nl')
+
+    expect(i18n._revision.value).toBe(1)
+    expect(label.value).toBe('Ja')
+  })
+
+  it('invalidates Vue computed translations when runtime bundles are added', () => {
+    const i18n = createI18n({ app: 'yes-no', language: 'hy' })
+    const label = computed(() => i18n.t(tikoI18nKeys.yesNo.answers.yes))
+
+    expect(label.value).toBe('Yes')
+
+    i18n.addBundle(createTranslationBundle({
+      app: 'yes-no',
+      language: 'hy',
+      source: 'runtime',
+      translations: {
+        [tikoI18nKeys.yesNo.answers.yes]: 'Iva',
+      },
+    }))
+
+    expect(i18n._revision.value).toBe(1)
+    expect(label.value).toBe('Iva')
   })
 
   it('exposes typed app and language contracts for web, iOS, Android, and Lezu callers', () => {

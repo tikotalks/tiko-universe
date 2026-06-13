@@ -1,4 +1,4 @@
-import { shallowRef, triggerRef, type Ref } from '@vue/reactivity'
+import { shallowRef, type Ref } from '@vue/reactivity'
 
 export const defaultLanguage = 'en' as const
 
@@ -1200,12 +1200,13 @@ export function createI18n(options: CreateI18nOptions): TikoI18n {
       return interpolate(text, params)
     },
     setLanguage(language: TikoLanguage) {
+      if (currentLanguage.value === language) return
       currentLanguage.value = language
-      triggerRef(revision)
+      revision.value += 1
     },
     addBundle(bundle: TranslationBundle) {
       upsertBundle(bundles, bundle)
-      triggerRef(revision)
+      revision.value += 1
     },
     missingKeys() {
       return Array.from(missing)

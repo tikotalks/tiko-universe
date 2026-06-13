@@ -94,8 +94,6 @@ const identityClient = new IdentityClient({ baseUrl: identityBaseUrl, credential
 const dataClient = new TikoDataClient({ baseUrl: apiBaseUrl })
 
 const labels = computed(() => {
-  void language.value
-  void i18n._revision.value
   return {
     appName: i18n.t(tikoI18nKeys.todo.appName),
     settings: i18n.t(tikoI18nKeys.common.settings),

@@ -105,8 +105,6 @@ const runtimeState: IdentityRuntimeState = {
 const runtime = useIdentityRuntime({ identityClient, state: runtimeState, deviceName: 'Type web', labels: () => createTikoIdentityLabels(i18n.t) })
 
 const labels = computed(() => {
-  void language.value
-  void i18n._revision.value
   return {
     appName: i18n.t(tikoI18nKeys.type.appName),
     composeLabel: i18n.t(tikoI18nKeys.type.compose.label),

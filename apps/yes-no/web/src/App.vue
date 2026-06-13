@@ -160,7 +160,6 @@ const stored = readJson<PersistedState>(storageKey, {})
 const i18n = createI18n({ app: appId, language: toLanguage(stored.language) })
 const translationLoader = createTikoTranslationLoader()
 const loadedTranslations = new Set<string>()
-const translationsRevision = ref(0)
 const language = ref<TikoLanguage>(toLanguage(stored.language))
 const colorMode = ref<TikoColorMode>(toColorMode(stored.colorMode))
 const latestAnswerId = ref<string>(toAnswerId(stored.latestAnswerId ?? stored.latestAnswer))
@@ -201,13 +200,10 @@ const runtimeState: IdentityRuntimeState = {
 const runtime = useIdentityRuntime({ identityClient, state: runtimeState, deviceName: 'Yes No web', labels: () => createTikoIdentityLabels(i18n.t) })
 
 const defaultSentence = computed(() => {
-  void translationsRevision.value
   return i18n.t(tikoI18nKeys.yesNo.sentence.default)
 })
 
 const labels = computed(() => {
-  void language.value
-  void translationsRevision.value
   return {
     appName: i18n.t(tikoI18nKeys.yesNo.appName),
     sentenceLabel: i18n.t(tikoI18nKeys.yesNo.sentence.label),
@@ -244,7 +240,6 @@ const hardcodedAnswers = computed<AnswerTile[]>(() => [
 
 const defaultChoices = computed<AnswerTile[]>(() => {
   void language.value
-  void translationsRevision.value
   if (!defaultAnswers.value.length) return hardcodedAnswers.value
   return defaultAnswers.value.map(localizeDefaultAnswer)
 })
@@ -262,12 +257,10 @@ const headerActions = computed(() => parentMode.value ? [
 const canSpeakSentence = computed(() => sentence.value.trim().length > 0)
 const latestAnswerLabel = computed(() => {
   void language.value
-  void translationsRevision.value
   return answerLabel(latestAnswerId.value)
 })
 const answerHistoryLabels = computed(() => {
   void language.value
-  void translationsRevision.value
   return answerHistory.value.map(answerLabel)
 })
 
@@ -374,7 +367,6 @@ async function loadTranslations(value: TikoLanguage) {
     const bundle = await translationLoader({ app: appId, language: value })
     if (Object.keys(bundle.translations).length > 0) {
       i18n.addBundle(bundle)
-      translationsRevision.value += 1
     }
     loadedTranslations.add(value)
   } catch {
