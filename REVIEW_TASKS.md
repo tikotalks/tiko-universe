@@ -272,10 +272,10 @@ Approximate review spread: 7 Critical, about 35 High, about 70 Medium, and about
   - Content cache language invalidation.
   - KV key hashing for content query cache.
 
-- [ ] Reduce worker latency and subrequest count.
-  - Batch media album track queries.
-  - Batch identity/session/runtime queries where independent.
-  - Add pagination to admin users and media listings.
+- [x] Reduce worker latency and subrequest count.
+  - [x] Batch media album track queries.
+  - [x] Batch identity/session/runtime queries where independent.
+  - [x] Add pagination to admin users and media listings.
 
 ## Cross-Cutting Rules For Follow-Up Work
 
