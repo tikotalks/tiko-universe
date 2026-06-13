@@ -22,9 +22,6 @@ function mountApp(localStorageOverride?: Record<string, string>) {
     Object.entries(localStorageOverride).forEach(([k, v]) => { ls.store[k] = v })
   }
 
-  const originalWindow = globalThis.window
-  const originalDocument = globalThis.document
-
   // Ensure window/document exist for jsdom
   const win = globalThis.window as any
   if (win) {

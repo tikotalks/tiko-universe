@@ -2,7 +2,6 @@ import { ref, computed, onUnmounted, onScopeDispose } from 'vue'
 
 export type TimerMode = 'idle' | 'running' | 'paused' | 'expired'
 
-const MINUTE = 60_000
 const SECOND = 1_000
 
 function pad2(n: number): string {
