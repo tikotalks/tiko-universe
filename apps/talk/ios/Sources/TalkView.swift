@@ -4,15 +4,10 @@ import UIKit
 
 struct TalkView: View {
     @State private var store = TalkStore()
-    @State private var showingTemplates = false
-    @State private var showingPhrases = false
     @State private var isSpeaking = false
-    @State private var saveMessage: String?
     @AppStorage("tiko.language") private var languageCode = "en"
     @AppStorage("talk.nativeSpeechFallback") private var nativeSpeechFallback = true
-    @AppStorage("talk.boardMode") private var boardModeRaw = TalkBoardMode.cloud.rawValue
-
-    private var boardMode: TalkBoardMode { TalkBoardMode(rawValue: boardModeRaw) ?? .cloud }
+    @AppStorage("talk.cloudLayout") private var cloudLayout = true
 
     private let speechService = TalkSpeechService()
     private let audioPlayer = TalkAudioPlayer()
@@ -24,13 +19,16 @@ struct TalkView: View {
     var body: some View {
         TikoAppShell(
             appConfig: TalkAppConfig.app,
-            actions: [
-                TikoHeaderAction(id: "templates", label: "Templates", systemImage: "text.bubble.fill", isActive: showingTemplates),
-                TikoHeaderAction(id: "phrases", label: "Saved phrases", systemImage: "star.bubble.fill", isActive: showingPhrases)
-            ],
-            onAction: handleHeaderAction,
+            actions: [],
+            onAction: { _ in },
             settingsContent: {
                 TikoSettingsSection(title: "Talk") {
+                    TikoSettingsToggleRow(
+                        title: "Word cloud layout",
+                        icon: "circle.hexagongrid.fill",
+                        appColor: .talk,
+                        isOn: $cloudLayout
+                    )
                     TikoSettingsToggleRow(
                         title: "Native speech fallback",
                         icon: "speaker.wave.2.fill",
@@ -43,31 +41,18 @@ struct TalkView: View {
             VStack(spacing: 14) {
                 TalkSentenceStripView(
                     words: store.sentenceWords,
-                    displayText: store.stripDisplay,
                     canSpeak: store.canSpeak,
                     isSpeaking: isSpeaking,
                     appColor: .talk,
                     onRemove: { word in Task { await removeWord(word) } },
-                    onMove: { source, destination in Task { await moveWord(from: source, to: destination) } },
                     onSpeak: { Task { await speakSentence() } },
-                    onSave: { Task { await saveSentence() } },
                     onClear: store.clearSentence
                 )
 
                 statusSection
 
-                if !store.suggestions.isEmpty {
-                    suggestionSection
-                }
-
-                if !store.categories.isEmpty {
-                    categoryTabs
-                }
-
-                boardModePicker
-
-                if boardMode == .cloud {
-                    TalkWordCloudView(words: store.filteredWords, appColor: .talk) { word in
+                if cloudLayout {
+                    TalkWordCloudView(words: store.boardWords, appColor: .talk) { word in
                         Task { await addWord(word) }
                     }
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -87,40 +72,18 @@ struct TalkView: View {
                     await store.load()
                 }
             }
-            .sheet(isPresented: $showingTemplates) {
-                TalkTemplateSheet(templates: store.templates, appColor: .talk) { template in
-                    showingTemplates = false
-                    Task { await store.applyTemplate(template) }
-                }
-            }
-            .sheet(isPresented: $showingPhrases) {
-                TalkSavedPhrasesSheet(
-                    phrases: store.savedPhrases,
-                    appColor: .talk,
-                    onSelect: { phrase in
-                        showingPhrases = false
-                        store.selectPhrase(phrase)
-                    },
-                    onDelete: { phrase in
-                        Task { await store.deletePhrase(id: phrase.id) }
-                    }
-                )
-            }
         }
     }
 
     @ViewBuilder
     private var statusSection: some View {
-        if store.isOfflineFallback || store.errorMessage != nil || saveMessage != nil {
+        if store.isOfflineFallback || (store.errorMessage?.isEmpty == false) {
             HStack(spacing: 8) {
                 if store.isOfflineFallback {
                     Text("Offline limited mode")
                 }
                 if let error = store.errorMessage, !error.isEmpty {
                     Text(error)
-                }
-                if let saveMessage {
-                    Text(saveMessage)
                 }
             }
             .font(.system(.caption, design: .rounded).weight(.bold))
@@ -133,60 +96,10 @@ struct TalkView: View {
         }
     }
 
-    private var suggestionSection: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Text("Suggestions")
-                .font(.system(.caption, design: .rounded).weight(.heavy))
-                .foregroundStyle(.secondary)
-            ScrollView(.horizontal, showsIndicators: false) {
-                HStack(spacing: 10) {
-                    ForEach(store.suggestions) { word in
-                        TalkWordTileView(word: word, appColor: .talk, isSuggested: true) {
-                            Task { await addWord(word) }
-                        }
-                    }
-                }
-                .padding(.vertical, 2)
-            }
-        }
-    }
-
-    private var categoryTabs: some View {
-        ScrollView(.horizontal, showsIndicators: false) {
-            HStack(spacing: 8) {
-                ForEach(store.categories) { category in
-                    Button {
-                        store.selectCategory(id: category.id)
-                    } label: {
-                        Label(category.label, systemImage: category.icon ?? "square.grid.2x2.fill")
-                            .font(.system(.caption, design: .rounded).weight(.heavy))
-                            .foregroundStyle(store.selectedCategoryId == category.id ? .white : TikoAppColor.talk.palette.dark.opacity(0.72))
-                            .padding(.horizontal, 12)
-                            .padding(.vertical, 9)
-                            .background(store.selectedCategoryId == category.id ? TikoAppColor.talk.palette.primary : Color.white.opacity(0.55))
-                            .clipShape(Capsule())
-                    }
-                    .buttonStyle(.plain)
-                    .accessibilityLabel("Show \(category.label) words")
-                }
-            }
-            .padding(.vertical, 2)
-        }
-    }
-
-    private var boardModePicker: some View {
-        Picker("Board layout", selection: $boardModeRaw) {
-            Label("Cloud", systemImage: "circle.hexagongrid.fill").tag(TalkBoardMode.cloud.rawValue)
-            Label("Tiles", systemImage: "square.grid.2x2.fill").tag(TalkBoardMode.tile.rawValue)
-        }
-        .pickerStyle(.segmented)
-        .accessibilityLabel("Board layout: cloud or tiles")
-    }
-
     private var wordGrid: some View {
         ScrollView {
             LazyVGrid(columns: columns, spacing: 12) {
-                ForEach(store.filteredWords) { word in
+                ForEach(store.boardWords) { word in
                     TalkWordTileView(word: word, appColor: .talk) {
                         Task { await addWord(word) }
                     }
@@ -200,17 +113,6 @@ struct TalkView: View {
         TikoSpeech.languageCode(for: languageCode)
     }
 
-    private func handleHeaderAction(_ id: String) {
-        switch id {
-        case "templates":
-            showingTemplates = true
-        case "phrases":
-            showingPhrases = true
-        default:
-            break
-        }
-    }
-
     private func addWord(_ word: TalkWordTile) async {
         UIImpactFeedbackGenerator(style: .medium).impactOccurred()
         await store.addWord(word)
@@ -219,17 +121,6 @@ struct TalkView: View {
     private func removeWord(_ word: TalkWordTile) async {
         UIImpactFeedbackGenerator(style: .light).impactOccurred()
         await store.removeWord(id: word.id)
-    }
-
-    private func moveWord(from source: Int, to destination: Int) async {
-        UIImpactFeedbackGenerator(style: .light).impactOccurred()
-        await store.moveWord(from: source, to: destination)
-    }
-
-    private func saveSentence() async {
-        UIImpactFeedbackGenerator(style: .medium).impactOccurred()
-        let phrase = await store.saveCurrentPhrase(label: store.sentenceText)
-        saveMessage = phrase == nil ? "Save needs identity" : "Saved"
     }
 
     private func speakSentence() async {

@@ -48,6 +48,20 @@ final class TalkStore {
         return visibleWords.filter { $0.category == selectedCategoryId }
     }
 
+    /// Every word for the board, ordered by likelihood: ranked next-word
+    /// suggestions first, then the rest of the vocabulary. Categories are not
+    /// split out — the whole board shows at once.
+    var boardWords: [TalkWordTile] {
+        guard !suggestions.isEmpty else { return visibleWords }
+        var seen = Set(suggestions.map(\.id))
+        var result = suggestions
+        for word in visibleWords where !seen.contains(word.id) {
+            result.append(word)
+            seen.insert(word.id)
+        }
+        return result
+    }
+
     func load() async {
         isLoading = true
         errorMessage = nil
@@ -62,9 +76,14 @@ final class TalkStore {
             await refreshSavedPhrasesIfPossible()
         } catch {
             // Offline is an expected graceful-degrade state, not an error. The
-            // `isOfflineFallback` flag already drives the "Offline limited mode"
-            // banner, so don't also set errorMessage (that showed it twice).
+            // isOfflineFallback flag already drives the banner, so don't double it
+            // up in release — but in debug surface the real reason so we can see
+            // exactly why a request failed.
+            #if DEBUG
+            errorMessage = "offline: \(error.localizedDescription)"
+            #else
             errorMessage = nil
+            #endif
             applyStartResponse(TalkOfflineFallback.startResponse, fallback: true)
         }
     }

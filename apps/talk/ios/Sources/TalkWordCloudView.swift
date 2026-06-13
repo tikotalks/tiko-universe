@@ -1,20 +1,12 @@
 import SwiftUI
 import TikoKit
 
-/// How the word board is laid out. Persisted via @AppStorage; Cloud is the default.
-enum TalkBoardMode: String, CaseIterable, Sendable {
-    /// Pannable canvas, most-used in the centre, rarer words spiralling outward.
-    case cloud
-    /// Grid of equal tiles, most-used at the top, scroll down for more.
-    case tile
-}
-
 /// Board layout that places words on a big pannable canvas: the most-used words
 /// (earliest in the importance-ordered list) sit in the centre and larger, with
 /// rarer words spiralling outward and smaller. The user drags to explore.
 ///
 /// Importance comes from list order — the Sentence API returns words sorted by
-/// frequency/score, so index 0 is the most-used word.
+/// frequency/likelihood, so index 0 is the most-used word.
 struct TalkWordCloudView: View {
     let words: [TalkWordTile]
     let appColor: TikoAppColor
@@ -22,14 +14,15 @@ struct TalkWordCloudView: View {
 
     // Phyllotaxis (sunflower) spiral: even, organic distribution with no gaps.
     private let goldenAngle = 2.399963229728653
-    private let ringSpacing: CGFloat = 84
-    private let margin: CGFloat = 96
+    private let ringSpacing: CGFloat = 132
+    private let margin: CGFloat = 110
+    private let baseDiameter: CGFloat = 92
 
     private struct Placed: Identifiable {
         let id: String
         let word: TalkWordTile
         let point: CGPoint
-        let scale: CGFloat
+        let diameter: CGFloat
     }
 
     private struct Layout {
@@ -43,7 +36,7 @@ struct TalkWordCloudView: View {
         ScrollView([.horizontal, .vertical], showsIndicators: false) {
             ZStack {
                 ForEach(layout.placed) { item in
-                    TalkCloudBubble(word: item.word, scale: item.scale, appColor: appColor) {
+                    TalkCloudBubble(word: item.word, diameter: item.diameter, appColor: appColor) {
                         onTap(item.word)
                     }
                     .position(item.point)
@@ -59,7 +52,7 @@ struct TalkWordCloudView: View {
     private func computeLayout() -> Layout {
         guard !words.isEmpty else { return Layout(placed: [], canvas: CGSize(width: 1, height: 1)) }
 
-        var raw: [(word: TalkWordTile, x: CGFloat, y: CGFloat, scale: CGFloat)] = []
+        var raw: [(word: TalkWordTile, x: CGFloat, y: CGFloat, diameter: CGFloat)] = []
         var minX = CGFloat.zero, minY = CGFloat.zero, maxX = CGFloat.zero, maxY = CGFloat.zero
 
         for (index, word) in words.enumerated() {
@@ -68,8 +61,8 @@ struct TalkWordCloudView: View {
             let x = radius * CGFloat(cos(angle))
             let y = radius * CGFloat(sin(angle))
             // Most-used words (lowest index) are biggest; taper to a readable floor.
-            let scale = CGFloat(max(0.62, 1.45 - Double(index) * 0.035))
-            raw.append((word, x, y, scale))
+            let scale = CGFloat(max(0.62, 1.5 - Double(index) * 0.035))
+            raw.append((word, x, y, baseDiameter * scale))
             minX = min(minX, x); minY = min(minY, y)
             maxX = max(maxX, x); maxY = max(maxY, y)
         }
@@ -80,7 +73,7 @@ struct TalkWordCloudView: View {
                 id: item.word.id,
                 word: item.word,
                 point: CGPoint(x: item.x - minX + margin, y: item.y - minY + margin),
-                scale: item.scale
+                diameter: item.diameter
             )
         }
         let canvas = CGSize(width: maxX - minX + margin * 2, height: maxY - minY + margin * 2)
@@ -88,38 +81,52 @@ struct TalkWordCloudView: View {
     }
 }
 
+/// A single round (1:1) word in the cloud. Shows Tiko media when the word defines
+/// an image, otherwise just the word text centred. No decorative icons.
 private struct TalkCloudBubble: View {
     let word: TalkWordTile
-    let scale: CGFloat
+    let diameter: CGFloat
     let appColor: TikoAppColor
     let onTap: () -> Void
 
+    private var mediaURL: URL? {
+        guard let image = word.image, !image.isEmpty else { return nil }
+        return URL(string: image)
+    }
+
     var body: some View {
         Button(action: onTap) {
-            VStack(spacing: 4 * scale) {
-                if let icon = word.icon, !icon.isEmpty {
-                    Image(systemName: icon)
-                        .font(.system(size: 16 * scale, weight: .bold))
-                        .foregroundStyle(appColor.palette.primary)
+            ZStack {
+                Circle()
+                    .fill(word.isCustom == true ? appColor.palette.primary.opacity(0.18) : Color.white.opacity(0.85))
+                    .overlay(Circle().stroke(appColor.palette.primary.opacity(word.isCustom == true ? 0.4 : 0.16), lineWidth: 1))
+                    .shadow(color: appColor.palette.dark.opacity(0.1), radius: diameter * 0.06, y: 3)
+
+                if let mediaURL {
+                    AsyncImage(url: mediaURL) { image in
+                        image.resizable().scaledToFill()
+                    } placeholder: {
+                        Text(word.text)
+                            .font(.system(size: diameter * 0.18, weight: .heavy, design: .rounded))
+                            .foregroundStyle(appColor.palette.dark)
+                            .lineLimit(2)
+                            .minimumScaleFactor(0.6)
+                            .multilineTextAlignment(.center)
+                            .padding(diameter * 0.14)
+                    }
+                    .frame(width: diameter, height: diameter)
+                    .clipShape(Circle())
+                } else {
+                    Text(word.text)
+                        .font(.system(size: diameter * 0.2, weight: .heavy, design: .rounded))
+                        .foregroundStyle(appColor.palette.dark)
+                        .lineLimit(2)
+                        .minimumScaleFactor(0.6)
+                        .multilineTextAlignment(.center)
+                        .padding(diameter * 0.14)
                 }
-                Text(word.text)
-                    .font(.system(size: 15 * scale, weight: .heavy, design: .rounded))
-                    .foregroundStyle(appColor.palette.dark)
-                    .lineLimit(1)
-                    .minimumScaleFactor(0.7)
             }
-            .padding(.horizontal, 14 * scale)
-            .padding(.vertical, 10 * scale)
-            .background(
-                word.isCustom == true
-                    ? appColor.palette.primary.opacity(0.18)
-                    : Color.white.opacity(0.82)
-            )
-            .overlay(
-                Capsule().stroke(appColor.palette.primary.opacity(word.isCustom == true ? 0.4 : 0.16), lineWidth: 1)
-            )
-            .clipShape(Capsule())
-            .shadow(color: appColor.palette.dark.opacity(0.1), radius: 6 * scale, y: 3)
+            .frame(width: diameter, height: diameter)
         }
         .buttonStyle(.plain)
         .accessibilityLabel(word.text)
