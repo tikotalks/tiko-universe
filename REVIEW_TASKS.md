@@ -79,6 +79,7 @@ Approximate review spread: 7 Critical, about 35 High, about 70 Medium, and about
   - [x] Remove the stale `API_KEYS` static-secret auth surface from worker contracts and tests.
   - [x] Route content-api card mutation session validation through shared `requireSession` while preserving app-api token forwarding.
   - [x] Remove generation-api local bearer parsing from paid usage accounting.
+  - [x] Route admin-api dashboard authentication through shared `requireSession`.
 
 - [x] Move iOS identity storage to Keychain.
   - Make `TikoKeychainIdentityStore` the default.
