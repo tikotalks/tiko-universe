@@ -126,6 +126,7 @@ onUnmounted(() => {
         type="button"
         :class="bemm('dot', { active: page - 1 === currentPage })"
         :aria-label="`${pageLabel} ${page}`"
+        :aria-current="page - 1 === currentPage ? 'page' : undefined"
         @click="currentPage = page - 1"
       />
     </div>

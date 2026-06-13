@@ -207,6 +207,7 @@ describe('TikoKit component contract', () => {
     await flushMountedWork()
     expect(wrapper.findAll('.tile')).toHaveLength(3)
     expect(wrapper.findAll('.tiko-paged-tile-grid__dot')).toHaveLength(2)
+    expect(wrapper.findAll('.tiko-paged-tile-grid__dot')[0].attributes('aria-current')).toBe('page')
 
     await wrapper.findAll('.tiko-paged-tile-grid__dot')[1].trigger('click')
 
@@ -226,13 +227,31 @@ describe('TikoKit component contract', () => {
       },
     })
 
+    expect(wrapper.get('.tiko-open-icon-picker').attributes('role')).toBe('listbox')
     expect(wrapper.get('.tiko-open-icon-picker').attributes('aria-label')).toBe('Iftaħ l-ikoni')
+    expect(wrapper.get('button[aria-label="Check"]').attributes('role')).toBe('option')
     expect(wrapper.get('button[aria-label="Check"]').attributes('aria-pressed')).toBe('true')
+    expect(wrapper.get('button[aria-label="Check"]').attributes('aria-selected')).toBe('true')
 
     await wrapper.get('button[aria-label="Check"]').trigger('click')
     await wrapper.get('button[aria-label="Star"]').trigger('click')
 
     expect(wrapper.emitted('update:modelValue')).toEqual([[''], ['ui/star-fat']])
+  })
+
+  it('keeps compact shared controls at accessible touch target sizes', () => {
+    const root = resolve(__dirname, '../../..')
+    const stylesSource = readFileSync(resolve(root, 'packages/ui/src/styles.scss'), 'utf8')
+    const iconPickerRule = stylesSource.match(/\.tiko-open-icon-picker__item\s*\{[^}]*\}/)?.[0] ?? ''
+    const pagerDotRule = stylesSource.match(/\.tiko-paged-tile-grid__dot\s*\{[^}]*\}/)?.[0] ?? ''
+    const badgeRule = stylesSource.match(/\.tiko-selection-badge,\s*\n\.tiko-edit-badge\s*\{[^}]*\}/)?.[0] ?? ''
+
+    expect(iconPickerRule).toContain('min-width: 44px')
+    expect(iconPickerRule).toContain('min-height: 44px')
+    expect(pagerDotRule).toContain('width: 44px')
+    expect(pagerDotRule).toContain('height: 44px')
+    expect(badgeRule).toContain('width: 44px')
+    expect(badgeRule).toContain('height: 44px')
   })
 
   it('renders a two-choice grid and emits selected choice ids', async () => {

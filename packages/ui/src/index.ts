@@ -534,14 +534,16 @@ export const TikoOpenIconPicker = defineComponent({
   },
   emits: ['update:modelValue'],
   setup(props, { emit }) {
-    return () => h('div', { class: 'tiko-open-icon-picker', 'aria-label': props.labels.openIcons ?? 'Open icons' }, props.icons.map(icon =>
+    return () => h('div', { class: 'tiko-open-icon-picker', role: 'listbox', 'aria-label': props.labels.openIcons ?? 'Open icons' }, props.icons.map(icon =>
       h('button', {
         key: icon.name,
         type: 'button',
+        role: 'option',
         class: ['tiko-open-icon-picker__item', tikoNormalizeOpenIcon(props.modelValue) === icon.name ? 'tiko-open-icon-picker__item--active' : ''],
         title: icon.label,
         'aria-label': icon.label,
         'aria-pressed': tikoNormalizeOpenIcon(props.modelValue) === icon.name ? 'true' : 'false',
+        'aria-selected': tikoNormalizeOpenIcon(props.modelValue) === icon.name ? 'true' : 'false',
         onClick: () => emit('update:modelValue', tikoNormalizeOpenIcon(props.modelValue) === icon.name ? '' : icon.name),
       }, [h(Icon, { name: icon.name, size: 'medium', 'aria-hidden': 'true' })])
     ))

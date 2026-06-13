@@ -164,8 +164,8 @@ body {
   display: grid;
   place-items: center;
   aspect-ratio: 1;
-  min-width: 2.35rem;
-  min-height: 2.35rem;
+  min-width: 44px;
+  min-height: 44px;
   border: 1px solid color-mix(in srgb, var(--color-foreground), transparent 82%);
   border-radius: var(--border-radius-xs, 6px);
   background: color-mix(in srgb, var(--color-background), var(--color-foreground) 4%);
@@ -790,21 +790,38 @@ body {
   display: flex;
   flex-shrink: 0;
   justify-content: center;
-  gap: 7px;
-  padding: 6px 0 8px;
+  gap: 4px;
+  padding: 2px 0 4px;
 }
 
 .tiko-paged-tile-grid__dot {
-  width: 7px;
-  height: 7px;
+  position: relative;
+  width: 44px;
+  height: 44px;
   padding: 0;
-  background: color-mix(in srgb, var(--color-foreground), transparent 78%);
+  background: transparent;
   border: 0;
   border-radius: 999px;
   cursor: pointer;
 }
 
+.tiko-paged-tile-grid__dot::before {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 7px;
+  height: 7px;
+  content: "";
+  background: color-mix(in srgb, var(--color-foreground), transparent 78%);
+  border-radius: inherit;
+  transform: translate(-50%, -50%);
+}
+
 .tiko-paged-tile-grid__dot--active {
+  background: transparent;
+}
+
+.tiko-paged-tile-grid__dot--active::before {
   width: 9px;
   height: 9px;
   background: color-mix(in srgb, var(--color-foreground), transparent 40%);
@@ -957,8 +974,8 @@ body {
   position: absolute;
   z-index: 2;
   display: grid;
-  width: 28px;
-  height: 28px;
+  width: 44px;
+  height: 44px;
   place-items: center;
   padding: 0;
   border: 0;
@@ -968,8 +985,8 @@ body {
 }
 
 .tiko-selection-badge {
-  top: 6px;
-  left: 6px;
+  top: 0;
+  left: 0;
   background: color-mix(in srgb, var(--color-background), transparent 8%);
 }
 
@@ -991,8 +1008,8 @@ body {
 }
 
 .tiko-edit-badge {
-  top: 6px;
-  right: 6px;
+  top: 0;
+  right: 0;
   color: #fff;
   background: #ff922b;
   font-weight: 900;

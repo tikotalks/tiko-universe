@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, onUnmounted } from 'vue'
+import { ref, computed, nextTick, onMounted, onUnmounted } from 'vue'
 import { useBemm } from 'bemm'
 import { hashParentPin } from './pin-crypto'
 
@@ -208,6 +208,10 @@ let shakeTimer: number | undefined
 onUnmounted(() => {
   if (autoSubmitTimer !== undefined) clearTimeout(autoSubmitTimer)
   if (shakeTimer !== undefined) clearTimeout(shakeTimer)
+})
+
+onMounted(() => {
+  void nextTick(() => focusDigit(0))
 })
 
 async function hashCode(code: string): Promise<string> {

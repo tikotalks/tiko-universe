@@ -186,7 +186,7 @@ Approximate review spread: 7 Critical, about 35 High, about 70 Medium, and about
   - Do not style around popup borders from inside content.
   - Use BEM/Bemm-style classes consistently.
 
-- [ ] Clean up Tiko UI components.
+- [x] Clean up Tiko UI components.
   - Test PIN popup, child accounts panel, app shell, paged grid, icon picker.
   - Localize hardcoded labels.
   - Fix dialog/focus/listbox/touch-target accessibility.

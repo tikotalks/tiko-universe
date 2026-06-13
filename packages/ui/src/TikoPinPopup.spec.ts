@@ -69,4 +69,17 @@ describe('TikoPinPopup', () => {
     expect(wrapper.findAll<HTMLInputElement>('.tiko-pin-popup__digit')[0].attributes('aria-label')).toBe('Ċifra 1 minn 4')
   })
 
+  it('autofocuses the first digit when opened', async () => {
+    const host = document.createElement('div')
+    document.body.appendChild(host)
+    const wrapper = mount(TikoPinPopup, { attachTo: host })
+
+    await Promise.resolve()
+    await nextTick()
+
+    expect(document.activeElement).toBe(wrapper.findAll<HTMLInputElement>('.tiko-pin-popup__digit')[0].element)
+    wrapper.unmount()
+    host.remove()
+  })
+
 })
