@@ -17,6 +17,7 @@ import {
   resolveTikoContentApiBaseUrl,
   resolveTikoIdentityBaseUrl,
   tikoColors,
+  useTikoAppDataRuntime,
   useTikoColorModeEffect,
   useIdentityRuntime,
   writeTikoLocalJson,
@@ -142,8 +143,6 @@ const historyOpen = ref(false)
 const sentence = ref(stored.sentence || i18n.t(tikoI18nKeys.yesNo.sentence.default))
 const speakStatus = ref<SpeakStatus>('idle')
 const sentenceSpeechState = ref<SentenceSpeechState>('idle')
-const settingsVersion = ref<number | undefined>()
-const stateVersion = ref<number | undefined>()
 const sessionToken = ref<string>('')
 const userId = ref<string>('')
 const accountEmail = ref<string>('')
@@ -168,6 +167,25 @@ const runtimeState: IdentityRuntimeState = {
   pinConfigured,
 }
 const runtime = useIdentityRuntime({ identityClient, state: runtimeState, deviceName: 'Yes No web', labels: () => createTikoIdentityLabels(i18n.t) })
+const dataRuntime = useTikoAppDataRuntime<typeof appId, YesNoSettings, YesNoState>({
+  app: appId,
+  sessionToken,
+  bootstrapped,
+  dataClient,
+  readSettings: () => ({
+    language: language.value,
+    colorMode: colorMode.value,
+    spokenPrompt: sentence.value,
+  }),
+  readState: () => ({
+    prompt: sentence.value,
+    lastAnswer: latestAnswerId.value || null,
+    answerHistory: answerHistory.value,
+    answers: customAnswers.value,
+  }),
+  applySettings,
+  applyState,
+})
 
 const defaultSentence = computed(() => {
   return i18n.t(tikoI18nKeys.yesNo.sentence.default)
@@ -246,29 +264,16 @@ function saveLocalFallback() {
   })
 }
 
-function applySettings(settings: YesNoSettings, version?: number) {
+function applySettings(settings: YesNoSettings) {
   language.value = normalizeTikoLanguage(settings.language)
   colorMode.value = normalizeTikoColorMode(settings.colorMode)
   sentence.value = typeof settings.spokenPrompt === 'string' && settings.spokenPrompt.trim() ? settings.spokenPrompt : defaultSentence.value
-  settingsVersion.value = version
 }
 
-function applyState(state: YesNoState, version?: number) {
+function applyState(state: YesNoState) {
   latestAnswerId.value = toAnswerId(state.lastAnswer)
   answerHistory.value = toHistory(state.answerHistory)
   customAnswers.value = Array.isArray(state.answers) ? state.answers as AnswerTile[] : []
-  stateVersion.value = version
-}
-
-async function hydrateRemoteData() {
-  if (!sessionToken.value) return
-  const [settings, state] = await Promise.all([
-    dataClient.getSettings(appId, sessionToken.value),
-    dataClient.getState(appId, sessionToken.value)
-  ])
-  applySettings(settings.settings, settings.version)
-  applyState(state.state, state.version)
-  await loadDefaultContent()
 }
 
 async function loadDefaultContent() {
@@ -297,35 +302,6 @@ async function loadAppConfig() {
   }
 }
 
-async function persistSettingsRemote() {
-  if (!bootstrapped.value || !sessionToken.value) return
-  try {
-    const response = await dataClient.putSettings(appId, sessionToken.value, {
-      language: language.value,
-      colorMode: colorMode.value,
-      spokenPrompt: sentence.value
-    }, { version: settingsVersion.value })
-    settingsVersion.value = response.version
-  } catch {
-    // Local fallback is already written; remote will be retried on the next edit.
-  }
-}
-
-async function persistStateRemote() {
-  if (!bootstrapped.value || !sessionToken.value) return
-  try {
-    const response = await dataClient.putState(appId, sessionToken.value, {
-      prompt: sentence.value,
-      lastAnswer: latestAnswerId.value || null,
-      answerHistory: answerHistory.value,
-      answers: customAnswers.value
-    }, { version: stateVersion.value })
-    stateVersion.value = response.version
-  } catch {
-    // Local fallback is already written; remote will be retried on the next answer.
-  }
-}
-
 async function loadTranslations(value: TikoLanguage) {
   if (loadedTranslations.has(value)) return
   try {
@@ -349,12 +325,12 @@ useTikoColorModeEffect(colorMode)
 
 watch([language, colorMode, sentence], () => {
   saveLocalFallback()
-  void persistSettingsRemote()
+  void dataRuntime.persistSettingsRemote()
 })
 
 watch([latestAnswerId, answerHistory], () => {
   saveLocalFallback()
-  void persistStateRemote()
+  void dataRuntime.persistStateRemote()
 }, { deep: true })
 
 onMounted(async () => {
@@ -362,7 +338,8 @@ onMounted(async () => {
   try {
     await runtime.bootstrapIdentity()
     await runtime.loadProfile()
-    await hydrateRemoteData()
+    await dataRuntime.hydrateRemoteData()
+    await loadDefaultContent()
   } catch {
     // Keep the child-facing local flow available when API bootstrap is offline.
   } finally {

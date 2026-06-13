@@ -16,6 +16,7 @@ import {
   resolveTikoIdentityBaseUrl,
   resolveTikoMediaApiBaseUrl,
   tikoColors,
+  useTikoAppDataRuntime,
   useTikoColorModeEffect,
   useIdentityRuntime,
   writeTikoLocalJson,
@@ -89,8 +90,6 @@ const volume = ref(stored.volume ?? 1)
 const shuffleEnabled = ref(stored.shuffleEnabled ?? false)
 const repeatEnabled = ref(stored.repeatEnabled ?? false)
 const currentTrackIndex = ref(stored.currentTrackIndex ?? -1)
-const settingsVersion = ref<number | undefined>()
-const stateVersion = ref<number | undefined>()
 const bootstrapped = ref(false)
 const identityClient = new IdentityClient({ baseUrl: identityBaseUrl, credentials: 'include' })
 const dataClient = new TikoDataClient({ baseUrl: apiBaseUrl })
@@ -112,6 +111,26 @@ const runtime = useIdentityRuntime({
   deviceName: 'Radio web',
   storageKey: 'tiko:identity:device-session',
   labels: () => createTikoIdentityLabels(i18n.t),
+})
+const dataRuntime = useTikoAppDataRuntime<typeof appId, RadioSettings, RadioState>({
+  app: appId,
+  sessionToken: runtimeState.sessionToken,
+  bootstrapped,
+  dataClient,
+  readSettings: () => ({
+    language: language.value,
+    colorMode: colorMode.value,
+    volume: volume.value,
+  }),
+  readState: () => ({
+    currentTrackIndex: currentTrackIndex.value,
+    tracks: getPersistableRadioTracks(library.tracks.value),
+    categories: categories.categories.value,
+    shuffleEnabled: shuffleEnabled.value,
+    repeatEnabled: repeatEnabled.value,
+  }),
+  applySettings,
+  applyState,
 })
 
 // ---- Kid / parent mode (aliases into runtimeState) -------------------------
@@ -255,16 +274,15 @@ function saveLocalFallback() {
   })
 }
 
-function applySettings(settings: RadioSettings, version?: number) {
+function applySettings(settings: RadioSettings) {
   language.value = normalizeTikoLanguage(settings.language)
   colorMode.value = normalizeTikoColorMode(settings.colorMode)
   if (typeof settings.volume === 'number' && settings.volume >= 0 && settings.volume <= 1) {
     volume.value = settings.volume
   }
-  settingsVersion.value = version
 }
 
-function applyState(state: RadioState, version?: number) {
+function applyState(state: RadioState) {
   if (typeof state.currentTrackIndex === 'number' && state.currentTrackIndex >= 0) {
     currentTrackIndex.value = state.currentTrackIndex
   }
@@ -279,57 +297,6 @@ function applyState(state: RadioState, version?: number) {
   }
   if (typeof state.repeatEnabled === 'boolean') {
     repeatEnabled.value = state.repeatEnabled
-  }
-  stateVersion.value = version
-}
-
-async function hydrateRemoteData() {
-  if (!runtimeState.sessionToken.value) return
-  const [settings, state] = await Promise.all([
-    dataClient.getSettings(appId, runtimeState.sessionToken.value),
-    dataClient.getState(appId, runtimeState.sessionToken.value),
-  ])
-  applySettings(settings.settings, settings.version)
-  applyState(state.state, state.version)
-}
-
-async function persistSettingsRemote() {
-  if (!bootstrapped.value || !runtimeState.sessionToken.value) return
-  try {
-    const response = await dataClient.putSettings(
-      appId,
-      runtimeState.sessionToken.value,
-      {
-        language: language.value,
-        colorMode: colorMode.value,
-        volume: volume.value,
-      },
-      { version: settingsVersion.value },
-    )
-    settingsVersion.value = response.version
-  } catch {
-    // Local fallback is already written
-  }
-}
-
-async function persistStateRemote() {
-  if (!bootstrapped.value || !runtimeState.sessionToken.value) return
-  try {
-    const response = await dataClient.putState(
-      appId,
-      runtimeState.sessionToken.value,
-      {
-        currentTrackIndex: currentTrackIndex.value,
-        tracks: getPersistableRadioTracks(library.tracks.value),
-        categories: categories.categories.value,
-        shuffleEnabled: shuffleEnabled.value,
-        repeatEnabled: repeatEnabled.value,
-      },
-      { version: stateVersion.value },
-    )
-    stateVersion.value = response.version
-  } catch {
-    // Local fallback is already written
   }
 }
 
@@ -427,21 +394,21 @@ useTikoColorModeEffect(colorMode)
 
 watch([language, colorMode, volume], () => {
   saveLocalFallback()
-  void persistSettingsRemote()
+  void dataRuntime.persistSettingsRemote()
 })
 
 watch([currentTrackIndex, shuffleEnabled, repeatEnabled], () => {
   saveLocalFallback()
-  void persistStateRemote()
+  void dataRuntime.persistStateRemote()
 })
 
 watch(library.tracks, () => {
   saveLocalFallback()
-  void persistStateRemote()
+  void dataRuntime.persistStateRemote()
 }, { deep: true })
 
 watch(categories.categories, () => {
-  void persistStateRemote()
+  void dataRuntime.persistStateRemote()
 }, { deep: true })
 
 // Volume sync to player
@@ -473,7 +440,7 @@ watch(player.endedCount, () => {
 onMounted(async () => {
   try {
     await runtime.bootstrapIdentity()
-    await hydrateRemoteData()
+    await dataRuntime.hydrateRemoteData()
     void runtime.loadProfile()
   } catch {
     // Keep the child-facing local flow available when API bootstrap is offline.
