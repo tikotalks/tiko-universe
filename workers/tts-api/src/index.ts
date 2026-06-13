@@ -1,13 +1,6 @@
 import { requireServiceKey, type AuthEnv } from '../../shared/auth'
 
 interface Env extends AuthEnv {
-  TTS_DB: {
-    prepare(sql: string): { bind(...values: unknown[]): { first<T>(): Promise<T | null>; run(): Promise<unknown> } }
-  }
-  AUDIO_BUCKET: {
-    get(key: string): Promise<{ body: BodyInit; httpMetadata?: { contentType?: string } } | null>
-    put(key: string, value: ArrayBuffer | Uint8Array, options?: Record<string, unknown>): Promise<unknown>
-  }
   ATLAS_SERVICE?: {
     fetch(input: Request | string, init?: RequestInit): Promise<Response>
   }
@@ -25,19 +18,6 @@ interface GenerateRequest {
   pitch?: number
 }
 
-interface AudioRecord {
-  id: string
-  audio_url: string
-  r2_key: string
-  provider: string
-  language: string
-  voice: string
-  model: string
-  generated_at: string
-  file_size_bytes?: number
-  duration_seconds?: number
-}
-
 interface AtlasSpeechResponse {
   data?: {
     id?: string
@@ -48,13 +28,6 @@ interface AtlasSpeechResponse {
   }
   meta?: { cached?: boolean; schemaVersion?: number; requestId?: string }
   error?: { code?: string; message?: string }
-}
-
-interface UsagePolicy {
-  capability: string
-  units: number
-  maxRequestsPerMinute: number
-  maxUnitsPerDay: number
 }
 
 const CORS_HEADERS = {
@@ -74,9 +47,8 @@ export default {
       if (url.pathname === '/generate' && request.method === 'POST') {
         const auth = await requireServiceKey(request, env, ['tts.generate'])
         if (auth instanceof Response) return serviceAuthFailure(auth)
-        return generate(request, env, `api_key:${auth.subjectId ?? 'unknown'}`)
+        return generate(request, env)
       }
-      if (url.pathname === '/audio' && request.method === 'GET') return getAudio(request, env)
 
       return json({ success: false, error: 'not_found' }, 404)
     } catch (error) {
@@ -91,7 +63,7 @@ async function serviceAuthFailure(response: Response): Promise<Response> {
   return json({ success: false, error: body?.error?.code ?? 'unauthorized' }, response.status)
 }
 
-async function generate(request: Request, env: Env, subjectKey: string): Promise<Response> {
+async function generate(request: Request, env: Env): Promise<Response> {
   let body: GenerateRequest
   try {
     body = await request.json() as GenerateRequest
@@ -103,68 +75,7 @@ async function generate(request: Request, env: Env, subjectKey: string): Promise
   if (validationError) return json({ success: false, error: validationError }, 400)
 
   const normalized = normalizeRequest(body)
-  const usageError = await recordUsageWindow(env, subjectKey, {
-    capability: 'tts.generate',
-    units: Math.max(1, normalized.text.length),
-    maxRequestsPerMinute: 60,
-    maxUnitsPerDay: 12000,
-  })
-  if (usageError) return usageError
-
-  const textHash = await generateTextHash(normalized)
-  const existing = await findAudio(textHash, env)
-  if (existing) return json({ success: true, audioUrl: existing.audio_url, cached: true, metadata: existing })
-
   return synthesizeWithAtlas(normalized, env)
-}
-
-async function recordUsageWindow(env: Env, subjectKey: string, policy: UsagePolicy): Promise<Response | null> {
-  const now = new Date()
-  const minuteStart = new Date(Math.floor(now.getTime() / 60000) * 60000).toISOString()
-  const dayStart = now.toISOString().slice(0, 10)
-  const minute = await readUsageWindow(env, subjectKey, policy.capability, 'minute', minuteStart)
-  if (minute.request_count >= policy.maxRequestsPerMinute) return json({ success: false, error: 'rate_limited' }, 429)
-  const day = await readUsageWindow(env, subjectKey, policy.capability, 'day', dayStart)
-  if (day.unit_count + policy.units > policy.maxUnitsPerDay) return json({ success: false, error: 'budget_exceeded' }, 429)
-  await incrementUsageWindow(env, subjectKey, policy.capability, 'minute', minuteStart, 1, policy.units)
-  await incrementUsageWindow(env, subjectKey, policy.capability, 'day', dayStart, 1, policy.units)
-  return null
-}
-
-async function readUsageWindow(env: Env, subjectKey: string, capability: string, windowKind: string, windowStart: string): Promise<{ request_count: number; unit_count: number }> {
-  const row = await env.TTS_DB.prepare(`
-    SELECT request_count, unit_count FROM tts_usage_windows
-    WHERE subject_key = ? AND capability = ? AND window_kind = ? AND window_start = ?
-    LIMIT 1
-  `).bind(subjectKey, capability, windowKind, windowStart).first<{ request_count: number; unit_count: number }>()
-  return { request_count: Number(row?.request_count ?? 0), unit_count: Number(row?.unit_count ?? 0) }
-}
-
-async function incrementUsageWindow(env: Env, subjectKey: string, capability: string, windowKind: string, windowStart: string, requests: number, units: number): Promise<void> {
-  await env.TTS_DB.prepare(`
-    INSERT INTO tts_usage_windows (subject_key, capability, window_kind, window_start, request_count, unit_count, updated_at)
-    VALUES (?, ?, ?, ?, ?, ?, ?)
-    ON CONFLICT(subject_key, capability, window_kind, window_start) DO UPDATE SET
-      request_count = request_count + excluded.request_count,
-      unit_count = unit_count + excluded.unit_count,
-      updated_at = excluded.updated_at
-  `).bind(subjectKey, capability, windowKind, windowStart, requests, units, new Date().toISOString()).run()
-}
-
-async function getAudio(request: Request, env: Env): Promise<Response> {
-  const key = new URL(request.url).searchParams.get('key')
-  if (!key || !key.startsWith('audio/') || key.includes('..')) return new Response('Missing or invalid key', { status: 400, headers: CORS_HEADERS })
-
-  const object = await env.AUDIO_BUCKET.get(key)
-  if (!object) return new Response('Audio not found', { status: 404, headers: CORS_HEADERS })
-
-  return new Response(object.body, {
-    headers: {
-      ...CORS_HEADERS,
-      'Content-Type': object.httpMetadata?.contentType ?? 'audio/mpeg',
-      'Cache-Control': 'public, max-age=31536000, immutable',
-    },
-  })
 }
 
 function normalizeRequest(body: GenerateRequest): Required<GenerateRequest> {
@@ -190,18 +101,6 @@ function validate(body: GenerateRequest): string | null {
   if (body.speed !== undefined && (typeof body.speed !== 'number' || Number.isNaN(body.speed))) return 'invalid_speed'
   if (body.pitch !== undefined && (typeof body.pitch !== 'number' || Number.isNaN(body.pitch))) return 'invalid_pitch'
   return null
-}
-
-async function generateTextHash(input: Required<GenerateRequest>): Promise<string> {
-  const str = [input.text, input.language, input.provider, input.voice, input.model, input.speed, input.pitch].join('|')
-  const bytes = new TextEncoder().encode(str)
-  const digest = await crypto.subtle.digest('SHA-256', bytes)
-  return Array.from(new Uint8Array(digest)).map((byte) => byte.toString(16).padStart(2, '0')).join('').slice(0, 32)
-}
-
-async function findAudio(textHash: string, env: Env): Promise<AudioRecord | null> {
-  return env.TTS_DB.prepare(`SELECT audio_url, r2_key, provider, language, voice, model, generated_at, file_size_bytes, duration_seconds
-    FROM tts_audio WHERE text_hash = ? LIMIT 1`).bind(textHash).first<AudioRecord>()
 }
 
 async function synthesizeWithAtlas(input: Required<GenerateRequest>, env: Env): Promise<Response> {
@@ -255,4 +154,4 @@ function json(data: unknown, status = 200): Response {
   })
 }
 
-export const internals = { generateTextHash, normalizeRequest, validate }
+export const internals = { normalizeRequest, validate }
