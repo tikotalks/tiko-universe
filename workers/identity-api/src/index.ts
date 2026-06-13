@@ -1311,7 +1311,11 @@ async function requestMagicLinkDelivery(env: Env, message: EmailMessage): Promis
     ? await env.COMMUNICATION_SERVICE.fetch(endpoint, init)
     : await fetch(endpoint, init)
 
-  if (!response.ok) throw new Error('communication_send_failed')
+  if (!response.ok) {
+    const body = await response.text().catch(() => '')
+    console.error('[magic-link] communication-api failed', { status: response.status, body: body.slice(0, 500) })
+    throw new Error(`communication_send_failed (${response.status})`)
+  }
 }
 
 function magicLinkUrl(env: Env, magicToken: string): string {

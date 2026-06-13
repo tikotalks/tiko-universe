@@ -705,6 +705,26 @@ describe('identity-api endpoints', () => {
     expect(body.otp).toMatch(/^\d{6}$/)
   })
 
+  it('reports communication-api status when magic-link delivery fails', async () => {
+    vi.spyOn(globalThis, 'fetch').mockResolvedValue(new Response(JSON.stringify({ error: 'bad_service_key' }), { status: 403 }))
+    const consoleError = vi.spyOn(console, 'error').mockImplementation(() => undefined)
+    const testEnv = { ...env(), COMMUNICATION_API_URL: 'https://communication.test/v1/communication', COMMUNICATION_API_KEY: 'comm_test_key' }
+    const created = await fetchJson('/v1/identity/device', { method: 'POST', body: JSON.stringify({}) }, testEnv)
+    const token = (created.body as IdentityBundle).session?.token ?? ''
+
+    const response = await fetchJson('/v1/identity/email/challenge', {
+      method: 'POST',
+      headers: { authorization: `Bearer ${token}` },
+      body: JSON.stringify({ email: 'caregiver@example.test', purpose: 'recover' })
+    }, testEnv)
+
+    expect(response.response.status).toBeGreaterThanOrEqual(500)
+    expect(consoleError).toHaveBeenCalledWith('[magic-link] communication-api failed', expect.objectContaining({
+      status: 403,
+      body: expect.stringContaining('bad_service_key')
+    }))
+  })
+
   it('fails email challenge delivery when communication auth is not configured outside the test sink', async () => {
     const { MAGIC_LINK_TEST_SINK: _sink, ...testEnv } = env()
     const created = await worker.fetch(new Request('https://identity.test/v1/identity/device', {
