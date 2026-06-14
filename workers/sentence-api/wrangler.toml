@@ -14,7 +14,7 @@ crons = ["0 3 * * *"]
 
 [vars]
 TIKO_ENVIRONMENT = "development"
-ALLOWED_ORIGINS = "https://talk.tikoapps.org,https://dev.talk.tikoapps.org,http://localhost:3066,http://localhost:5173,http://localhost:4173,capacitor://localhost,ionic://localhost,tiko://native"
+ALLOWED_ORIGINS = "https://talk.tikoapps.org,https://dev.talk.tikoapps.org,https://admin.tikoapps.org,https://dev.admin.tikoapps.org,http://localhost:3066,http://localhost:3062,http://localhost:5173,http://localhost:4173,capacitor://localhost,ionic://localhost,tiko://native"
 
 [[d1_databases]]
 binding = "DB"
@@ -55,7 +55,7 @@ crons = ["0 3 * * *"]
 
 [env.production.vars]
 TIKO_ENVIRONMENT = "production"
-ALLOWED_ORIGINS = "https://talk.tikoapps.org,capacitor://localhost,ionic://localhost,tiko://native"
+ALLOWED_ORIGINS = "https://talk.tikoapps.org,https://admin.tikoapps.org,capacitor://localhost,ionic://localhost,tiko://native"
 
 [[env.production.d1_databases]]
 binding = "DB"

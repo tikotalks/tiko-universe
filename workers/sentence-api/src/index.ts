@@ -119,7 +119,10 @@ interface PhraseRow {
 const DEFAULT_ALLOWED_ORIGINS = [
   'https://talk.tikoapps.org',
   'https://dev.talk.tikoapps.org',
+  'https://admin.tikoapps.org',
+  'https://dev.admin.tikoapps.org',
   'http://localhost:3066',
+  'http://localhost:3062',
   'http://localhost:5173',
   'http://localhost:4173',
   'capacitor://localhost',

@@ -311,10 +311,13 @@ if (!isOverview.value && !routeApp.value) {
               Saved in Admin. Build scripts can export this into each app’s `appConfig.ts`.
             </p>
           </div>
-          <div :class="bemm('panel-actions')">
-            <Button variant="outline" :loading="configApi.loading.value" :disabled="configApi.loading.value" @click="loadConfigs">
-              Reload
-            </Button>
+      <div :class="bemm('panel-actions')">
+        <Button v-if="selectedApp === 'talk'" variant="outline" @click="router.push('/apps/talk/mapping')">
+          Image Mapping
+        </Button>
+        <Button variant="outline" :loading="configApi.loading.value" :disabled="configApi.loading.value" @click="loadConfigs">
+          Reload
+        </Button>
             <Button :loading="configApi.saving.value" :disabled="configApi.saving.value || !configDirty" @click="saveConfig">
               Save app settings
             </Button>

@@ -100,7 +100,7 @@ export interface GenerationJobDto {
 
 export function jobLabel(input: GenerationJobInput): string {
   if (input.type === 'edit') return `Edit: ${input.prompt.slice(0, 40)}`
-  if (input.type === 'upscale') return `Upscale: ${input.sourceId.slice(0, 8)}`
+  if (input.type === 'upscale') return `High quality: ${input.sourceId.slice(0, 8)}`
   return (input.title || input.prompt.split('\n')[0] || '').slice(0, 40) || 'Generate'
 }
 
