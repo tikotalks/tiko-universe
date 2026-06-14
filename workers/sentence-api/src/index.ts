@@ -527,7 +527,7 @@ async function completeSentence(request: Request, env: Env): Promise<Response> {
     await invalidatePhraseCaches(env, locale, subjectId)
   }
 
-  const audio = await generateSpeech(env, sentence, locale)
+  const audio = await generateSpeech(env, sentence, locale, request.headers.get('Authorization'))
   const response: SentenceCompleteResponse = {
     sentence,
     audioUrl: audio.audioUrl,
@@ -1438,10 +1438,14 @@ function formatSentence(words: PackWord[], locale: string): string {
   return /[.!?]$/.test(capitalized) ? capitalized : `${capitalized}.`
 }
 
-async function generateSpeech(env: Env, sentence: string, locale: string): Promise<{ audioUrl: string, cached: boolean }> {
+async function generateSpeech(env: Env, sentence: string, locale: string, authHeader: string | null): Promise<{ audioUrl: string, cached: boolean }> {
+  // generation /tts is auth-gated (requirePaidAccess) and forwards the credential
+  // on to Atlas, so the caller's session token must travel the whole chain.
+  const headers: Record<string, string> = { 'Content-Type': 'application/json' }
+  if (authHeader && /^Bearer\s+\S/i.test(authHeader)) headers.Authorization = authHeader
   const response = await env.GENERATION_SERVICE.fetch(new Request('https://generation.internal/v1/generation/tts', {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers,
     body: JSON.stringify({ text: sentence, language: locale, provider: 'auto' }),
   }))
   if (!response.ok) throw new HttpError(502, 'tts_generation_failed', 'Could not generate speech audio yet.')

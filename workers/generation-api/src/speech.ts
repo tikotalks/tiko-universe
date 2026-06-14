@@ -62,9 +62,16 @@ export const DEFAULT_ELEVENLABS_MODEL = 'eleven_multilingual_v2'
 export const DEFAULT_ELEVENLABS_VOICE = '21m00Tcm4TlvDq8ikWAM'
 export const ELEVENLABS_VOICE_ID_RE = /^[a-zA-Z0-9_-]{6,64}$/
 
-export async function requestAtlasSpeech(input: NormalizedTtsRequest, env: SpeechEnv, purpose: AtlasSpeechPurpose): Promise<AtlasSpeechSuccess | AtlasSpeechFailure> {
+export async function requestAtlasSpeech(input: NormalizedTtsRequest, env: SpeechEnv, purpose: AtlasSpeechPurpose, callerAuth?: string | null): Promise<AtlasSpeechSuccess | AtlasSpeechFailure> {
   if (!env.ATLAS_SERVICE) return { success: false, error: 'atlas_tts_not_configured', status: 503 }
-  if (!env.ATLAS_API_KEY) return { success: false, error: 'atlas_service_key_not_configured', status: 503 }
+  // Prefer the caller's own session token (Atlas accepts any valid session for
+  // capability routes); fall back to a configured service key. ATLAS_API_KEY is
+  // not a registered Atlas credential in every environment, so forwarding the
+  // signed-in user's token is what makes playback work end-to-end.
+  const authorization = callerAuth && /^Bearer\s+\S/i.test(callerAuth)
+    ? callerAuth
+    : env.ATLAS_API_KEY ? `Bearer ${env.ATLAS_API_KEY}` : null
+  if (!authorization) return { success: false, error: 'atlas_service_key_not_configured', status: 503 }
 
   const atlasPayload: Record<string, unknown> = {
     app: 'generation-api',
@@ -81,7 +88,7 @@ export async function requestAtlasSpeech(input: NormalizedTtsRequest, env: Speec
 
   const response = await env.ATLAS_SERVICE.fetch(new Request(atlasUrl(env, '/speech'), {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${env.ATLAS_API_KEY}` },
+    headers: { 'Content-Type': 'application/json', Authorization: authorization },
     body: JSON.stringify(atlasPayload),
   }))
   const body = await response.json().catch(() => null) as AtlasSpeechResponse | null
