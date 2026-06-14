@@ -6,7 +6,7 @@ import {
   canMutateOwnedRecord,
   createdBy,
   forbiddenOrUnauthorized,
-  isServiceAccess,
+  isElevatedAccess,
   optionalAuth,
   requireAuth,
   requirePaidAccess,
@@ -298,8 +298,8 @@ function normalizeDraftChapter(chapter: StoryDraftChapter, index: number, defaul
 }
 
 async function listStoryDrafts(env: Env, access: GenerationAccessContext): Promise<Response> {
-  const where = isServiceAccess(access) ? '' : 'WHERE created_by = ?'
-  const values = isServiceAccess(access) ? [] : [sessionUserId(access)]
+  const where = isElevatedAccess(access) ? '' : 'WHERE created_by = ?'
+  const values = isElevatedAccess(access) ? [] : [sessionUserId(access)]
   const rows = await env.GENERATION_DB.prepare(
     `SELECT id, title, description, cover_media_id, default_voice, default_speed, target_album_id, status, chapters, settings, created_by, created_at, updated_at
      FROM story_drafts ${where} ORDER BY updated_at DESC`,
@@ -531,7 +531,7 @@ async function listStories(request: Request, env: Env): Promise<Response> {
   const status = url.searchParams.get('status') || 'promoted'
   const isPublic = status === 'draft' ? 0 : 1
   if (isPublic === 0 && !access.auth) return forbiddenOrUnauthorized(access)
-  const ownerClause = isPublic === 0 && !isServiceAccess(access) ? ' AND created_by = ?' : ''
+  const ownerClause = isPublic === 0 && !isElevatedAccess(access) ? ' AND created_by = ?' : ''
   const ownerValues = ownerClause ? [sessionUserId(access)] : []
 
   const rows = await env.GENERATION_DB.prepare(`SELECT id, title, description, voice, speed, segments, status, audio_url, r2_key,
@@ -864,7 +864,7 @@ async function listImages(request: Request, env: Env): Promise<Response> {
   const status = url.searchParams.get('status') || 'promoted'
   const isPublic = status === 'draft' ? 0 : 1
   if (isPublic === 0 && !access.auth) return forbiddenOrUnauthorized(access)
-  const ownerClause = isPublic === 0 && !isServiceAccess(access) ? ' AND created_by = ?' : ''
+  const ownerClause = isPublic === 0 && !isElevatedAccess(access) ? ' AND created_by = ?' : ''
   const ownerValues = ownerClause ? [sessionUserId(access)] : []
 
   const rows = await env.GENERATION_DB.prepare(

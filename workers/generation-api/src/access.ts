@@ -47,6 +47,14 @@ export function isServiceAccess(context: GenerationAccessContext): boolean {
   return context.auth?.method === 'api_key'
 }
 
+// Service keys and Tiko admins manage all generated content, not just their own,
+// so they bypass the per-user created_by ownership filter.
+export function isElevatedAccess(context: GenerationAccessContext): boolean {
+  if (isServiceAccess(context)) return true
+  const roles = (context.auth as { roles?: unknown } | null)?.roles
+  return Array.isArray(roles) && roles.includes('admin')
+}
+
 export function sessionUserId(context: GenerationAccessContext): string | null {
   return context.auth?.method === 'session' && context.auth.userId ? context.auth.userId : null
 }
@@ -57,13 +65,13 @@ export function createdBy(context: GenerationAccessContext): string | null {
 
 export function canAccessOwnedRecord(context: GenerationAccessContext, record: { is_public?: unknown; created_by?: unknown }): boolean {
   if (Number(record.is_public ?? 0) === 1) return true
-  if (isServiceAccess(context)) return true
+  if (isElevatedAccess(context)) return true
   const userId = sessionUserId(context)
   return !!userId && typeof record.created_by === 'string' && record.created_by === userId
 }
 
 export function canMutateOwnedRecord(context: GenerationAccessContext, record: { created_by?: unknown }): boolean {
-  if (isServiceAccess(context)) return true
+  if (isElevatedAccess(context)) return true
   const userId = sessionUserId(context)
   return !!userId && typeof record.created_by === 'string' && record.created_by === userId
 }
