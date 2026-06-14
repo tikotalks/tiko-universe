@@ -24,14 +24,25 @@ const appConfigs = ref<Record<TikoAppColor, AdminManagedAppConfig>>({ ...tikoApp
 
 const appOrder: TikoAppColor[] = ['yes-no', 'type', 'cards', 'sequence', 'timer', 'radio', 'talk', 'todo', 'media', 'admin', 'tiko']
 
-const appSubItems = computed(() => appOrder.map(app => {
-  const config = appConfigs.value[app] ?? tikoAppConfigs[app]
-  return {
-    to: `/apps/${app}`,
-    label: config.title,
-    color: config.themeColor || tikoAppConfigs[app]?.themeColor || tikoAppColors[app]?.primary || '#2488ff',
+const appSubItems = computed(() => {
+  const items = appOrder.map(app => {
+    const config = appConfigs.value[app] ?? tikoAppConfigs[app]
+    return {
+      to: `/apps/${app}`,
+      label: config.title,
+      color: config.themeColor || tikoAppConfigs[app]?.themeColor || tikoAppColors[app]?.primary || '#2488ff',
+    }
+  })
+  const talkIdx = items.findIndex(i => i.to === '/apps/talk')
+  if (talkIdx !== -1) {
+    items.splice(talkIdx + 1, 0, {
+      to: '/apps/talk/mapping',
+      label: 'Talk — Image Mapping',
+      color: '#2488ff',
+    })
   }
-}))
+  return items
+})
 
 const navItems = computed(() => [
   { to: '/', label: 'Home', icon: 'ui/dashboard' },

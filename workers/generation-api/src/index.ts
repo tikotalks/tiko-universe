@@ -324,18 +324,27 @@ async function generateTts(request: Request, env: Env): Promise<Response> {
     units: Math.max(1, normalized.text.length),
     maxRequestsPerMinute: 60,
     maxUnitsPerDay: 12000,
-  }, () => synthesizeWithAtlas(normalized, env))
+  }, () => synthesizeWithAtlas(normalized, env, request.headers.get('Authorization')))
 }
 
-async function synthesizeWithAtlas(input: NormalizedTtsRequest, env: Env): Promise<Response> {
-  const atlas = await requestAtlasSpeech(input, env, 'speech-playback')
+async function synthesizeWithAtlas(input: NormalizedTtsRequest, env: Env, callerAuth?: string | null): Promise<Response> {
+  const atlas = await requestAtlasSpeech(input, env, 'speech-playback', callerAuth)
   if (atlas.success === false) return apiError(atlas.error, providerSafeMessage(atlas.error), atlas.status ?? 503)
 
   const data = atlas.body.data
+  // Atlas returns a host-relative asset path; clients (e.g. the iOS player) need
+  // an absolute URL. The /v1/atlas/assets/* endpoint is public, so resolve it
+  // against the Atlas origin.
+  let audioUrl = data.audioUrl
+  if (audioUrl && !audioUrl.startsWith('http')) {
+    let origin = 'https://api.tikotalks.com'
+    try { origin = new URL(env.ATLAS_BASE_URL ?? origin).origin } catch { /* keep default */ }
+    audioUrl = `${origin}${audioUrl.startsWith('/') ? '' : '/'}${audioUrl}`
+  }
   return json({
     data: {
       id: data.id,
-      audioUrl: data.audioUrl,
+      audioUrl,
       contentType: data.contentType ?? 'audio/mpeg',
       provider: data.provider?.name ?? input.provider,
       language: input.language,

@@ -42,11 +42,15 @@ struct TalkSentenceStripView: View {
                             }
                         }
                     }
-                    .padding(.leading, 14)
-                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.horizontal, 14)
+                    // Right-align so the most recently added word is flush to the
+                    // right and fully visible — both when the sentence is short
+                    // (content narrower than the strip) and when it overflows.
+                    .frame(maxWidth: .infinity, alignment: words.isEmpty ? .leading : .trailing)
                 }
+                .defaultScrollAnchor(.trailing)
                 .onChange(of: words.count) { _, _ in
-                    // Keep the most recently added word fully in view.
+                    // Keep the most recently added word fully in view on overflow.
                     if let last = words.last?.id {
                         withAnimation(.easeOut(duration: 0.25)) { proxy.scrollTo(last, anchor: .trailing) }
                     }
