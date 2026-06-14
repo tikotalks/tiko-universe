@@ -699,12 +699,13 @@ async function generateImage(request: Request, env: Env, access: GenerationAcces
     const calls = Array.from({ length: count }, async (_, i) => {
       const variedPrompt = `${boostedBrief}\n\nComposition hint: ${variationHints[i % variationHints.length]}`
       try {
+        const isTikoV3 = tikoStyle === 'tiko-v3'
         const payload: Record<string, unknown> = {
-          model: 'gpt-image-1-mini',
+          model: isTikoV3 ? 'gpt-image-1' : 'gpt-image-1-mini',
           prompt: variedPrompt,
           size,
           n: 1,
-          quality: 'medium',
+          quality: isTikoV3 ? 'high' : 'medium',
           background: 'transparent',
         }
         const openaiResponse = await fetchWithRetry('https://api.openai.com/v1/images/generations', {

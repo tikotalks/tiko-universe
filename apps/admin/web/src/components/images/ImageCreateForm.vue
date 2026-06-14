@@ -20,14 +20,25 @@ const quality = ref<'standard' | 'hd'>('standard')
 const tikoStyle = ref<TikoStyle>('tiko-v3')
 const previewCount = ref(4)
 
-const tikoStylePrompt = `
-Use the Tiko visual style: warm, child-friendly, simple readable shapes, rounded forms, soft tactile surfaces, clear subject silhouette, cheerful but not chaotic, suitable for young children, no text, no logos, no scary details.
-`.trim()
+const tikoStylePrompts: Record<TikoStyle, string> = {
+  'tiko-original': `
+Use the Tiko Original style: flat 2D sticker illustration, clean filled shapes, soft outlines, cheerful limited palette, no 3D depth, no text, no logos, no scary details.
+  `.trim(),
+  'tiko-v2': `
+Use the Tiko V2 style: soft 3D toy-like illustration, rounded forms, matte clay or vinyl feel, truthful balanced colors, gentle depth, soft studio lighting, no text, no logos, no scary details.
+  `.trim(),
+  'tiko-v3': `
+Use the Tiko V3 style: soft 3D matte toy illustration with rounded sculpted forms, clear volume, gentle studio depth, and balanced truthful colors. Keep lighting neutral-warm, not golden. Do not let yellow, orange, or red dominate. Avoid flat sticker art, printed-label compositions, poster-like front graphics, glossy plastic, photorealism, text, logos, or scary details.
+  `.trim(),
+  'tiko-natural': `
+Use the Tiko Natural style: soft 3D toy-like illustration with muted natural colors, matte clay feel, warm low-contrast studio lighting, sage greens, dusty reds, creams, warm greys, no vivid screen-bright colors, no text, no logos, no scary details.
+  `.trim(),
+}
 
 const fullPrompt = computed(() => {
   const base = prompt.value.trim()
   if (!base) return ''
-  return `${base}\n\n${tikoStylePrompt}`
+  return `${base}\n\n${tikoStylePrompts[tikoStyle.value]}`
 })
 
 function parseTags(): string[] {
@@ -90,7 +101,7 @@ function useTemplate(kind: 'character' | 'scene' | 'object') {
 
     <details :class="form('style-info')" open>
       <summary :class="form('style-summary')">Tiko style suffix</summary>
-      <p :class="form('style-body')">{{ tikoStylePrompt }}</p>
+      <p :class="form('style-body')">{{ tikoStylePrompts[tikoStyle] }}</p>
     </details>
 
     <InputText v-model="title" label="Title" placeholder="Optional media title" />
