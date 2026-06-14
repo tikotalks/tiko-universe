@@ -242,5 +242,14 @@ export function useImageGeneration() {
     await readJson(response, 'Could not delete job')
   }
 
-  return { generateImage, listImages, promoteImage, pushToMedia, deleteImage, enrichImage, editImage, upscaleImage, enqueueJobs, listJobs, deleteJob, imageSrc }
+  async function processJobs(): Promise<{ processed: number; remaining: number }> {
+    const response = await fetch(`${baseUrl()}/jobs/process`, {
+      method: 'POST',
+      headers: authHeaders(),
+    })
+    const body = await readJson<{ data: { processed: number; remaining: number } }>(response, 'Job processing failed')
+    return body.data
+  }
+
+  return { generateImage, listImages, promoteImage, pushToMedia, deleteImage, enrichImage, editImage, upscaleImage, enqueueJobs, listJobs, deleteJob, processJobs, imageSrc }
 }

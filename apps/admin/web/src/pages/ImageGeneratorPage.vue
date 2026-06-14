@@ -1,22 +1,26 @@
 <script setup lang="ts">
-import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 import { useBemm } from 'bemm'
 import { Button } from '@sil/ui'
 import ImageCreateForm from '../components/images/ImageCreateForm.vue'
 import ImageEditModal from '../components/images/ImageEditModal.vue'
 import ImageGenerationQueue from '../components/images/ImageGenerationQueue.vue'
-import type { EditInput, GenerateInput, JobDto, UpscaleInput } from '../components/images/imageGenerationQueueTypes'
-import { extractJobResults } from '../components/images/imageGenerationQueueTypes'
+import type { EditInput, GenerateInput, UpscaleInput } from '../components/images/imageGenerationQueueTypes'
 import { useImageGeneration, type ImageGalleryItem } from '../composables/useImageGeneration'
+import { useJobQueue } from '../composables/useJobQueue'
+import { useToast } from '../composables/useToast'
 
 type Tab = 'library' | 'drafts' | 'create'
 
 const page = useBemm('image-page', { return: 'string', includeBaseClass: true })
 const card = useBemm('image-card', { return: 'string', includeBaseClass: true })
 
-const { listImages, promoteImage, pushToMedia, deleteImage, enrichImage, enqueueJobs, listJobs, deleteJob, imageSrc } = useImageGeneration()
+const { listImages, promoteImage, pushToMedia, deleteImage, enrichImage, enqueueJobs, deleteJob, imageSrc } = useImageGeneration()
+const toast = useToast()
+const { jobs, activeCount, hasActiveJobs, refresh: refreshJobs, startPolling } = useJobQueue()
 
 const activeTab = ref<Tab>('library')
+const queueOpen = ref(false)
 
 const libraryItems = ref<ImageGalleryItem[]>([])
 const draftItems = ref<ImageGalleryItem[]>([])
@@ -25,11 +29,6 @@ const galleryError = ref<string | null>(null)
 
 const pushingToMediaIds = ref<Set<string>>(new Set())
 const enrichingIds = ref<Set<string>>(new Set())
-
-// Server-backed job queue — survives page reload because jobs live in D1.
-const jobs = ref<JobDto[]>([])
-const autoEnrichedJobIds = new Set<string>()
-let pollTimer: ReturnType<typeof setInterval> | null = null
 
 const upscalingIds = computed(() => new Set(
   jobs.value
@@ -65,7 +64,7 @@ async function loadDrafts() {
   }
 }
 
-async function refresh() {
+async function refreshGallery() {
   if (activeTab.value === 'library') await loadLibrary()
   else if (activeTab.value === 'drafts') await loadDrafts()
 }
@@ -74,8 +73,10 @@ async function onPromote(item: ImageGalleryItem) {
   try {
     await promoteImage(item.id, item)
     draftItems.value = draftItems.value.filter(i => i.id !== item.id)
+    toast.success(`Promoted "${item.title || item.id}" to library`)
   } catch (e) {
     galleryError.value = e instanceof Error ? e.message : 'Could not promote image.'
+    toast.error('Promote failed')
   }
 }
 
@@ -87,68 +88,16 @@ async function onPushToMedia(item: ImageGalleryItem) {
     if (mediaId) {
       const idx = libraryItems.value.findIndex(i => i.id === item.id)
       if (idx !== -1) libraryItems.value[idx] = { ...libraryItems.value[idx], mediaId }
+      toast.success('Sent to Tiko Media')
     }
   } catch (e) {
     galleryError.value = e instanceof Error ? e.message : 'Could not send image to Tiko Media.'
+    toast.error('Media upload failed')
   } finally {
     const next = new Set(pushingToMediaIds.value)
     next.delete(item.id)
     pushingToMediaIds.value = next
   }
-}
-
-// ── Server-backed job queue ────────────────────────────────────
-
-async function loadJobs() {
-  try {
-    jobs.value = await listJobs()
-  } catch (e) {
-    console.error('[jobs] Failed to load jobs', e)
-  }
-}
-
-function hasActiveJobs(): boolean {
-  return jobs.value.some(j => j.status === 'pending' || j.status === 'processing')
-}
-
-function startPolling() {
-  stopPolling()
-  pollTimer = setInterval(pollJobs, 2500)
-}
-
-function stopPolling() {
-  if (pollTimer !== null) {
-    clearInterval(pollTimer)
-    pollTimer = null
-  }
-}
-
-async function pollJobs() {
-  if (!hasActiveJobs()) {
-    stopPolling()
-    return
-  }
-
-  const prevStatuses = new Map(jobs.value.map(j => [j.id, j.status]))
-  await loadJobs()
-
-  let draftsChanged = false
-
-  for (const job of jobs.value) {
-    const prev = prevStatuses.get(job.id)
-    const wasActive = prev === 'pending' || prev === 'processing'
-    if (wasActive && job.status === 'done') {
-      draftsChanged = true
-      if (job.type === 'generate' && !autoEnrichedJobIds.has(job.id)) {
-        autoEnrichedJobIds.add(job.id)
-        for (const res of extractJobResults(job)) {
-          if (res?.id) void enrichImage(res.id).catch(e => console.warn('[jobs] Auto-enrich failed', e))
-        }
-      }
-    }
-  }
-
-  if (draftsChanged && activeTab.value === 'drafts') await loadDrafts()
 }
 
 // ── Enqueue handlers ───────────────────────────────────────────
@@ -158,9 +107,11 @@ async function onGenerate(input: GenerateInput) {
   try {
     const created = await enqueueJobs([input])
     jobs.value = [...created, ...jobs.value]
+    toast.info(`Added "${input.title || 'generation'}" to queue`)
     startPolling()
   } catch (e) {
     galleryError.value = e instanceof Error ? e.message : 'Failed to enqueue generation.'
+    toast.error('Failed to add to queue')
   }
 }
 
@@ -180,8 +131,10 @@ async function onEnrich(item: ImageGalleryItem, list: 'library' | 'drafts') {
         category: result.categories[0] ?? items.value[idx].category,
       }
     }
+    toast.success('Enriched image metadata')
   } catch (e) {
     galleryError.value = e instanceof Error ? e.message : 'Enrich failed.'
+    toast.error('Enrich failed')
   } finally {
     const next = new Set(enrichingIds.value)
     next.delete(item.id)
@@ -204,10 +157,11 @@ async function onUpscale(item: ImageGalleryItem) {
   try {
     const created = await enqueueJobs([input])
     jobs.value = [...created, ...jobs.value]
-    activeTab.value = 'create'
+    toast.info(`High quality render queued for "${item.title || item.id}"`)
     startPolling()
   } catch (e) {
-    galleryError.value = e instanceof Error ? e.message : 'Failed to enqueue upscale.'
+    galleryError.value = e instanceof Error ? e.message : 'Failed to enqueue.'
+    toast.error('Failed to add to queue')
   }
 }
 
@@ -217,8 +171,10 @@ async function onDelete(item: ImageGalleryItem, list: 'library' | 'drafts') {
     await deleteImage(item.id)
     if (list === 'library') libraryItems.value = libraryItems.value.filter(i => i.id !== item.id)
     else draftItems.value = draftItems.value.filter(i => i.id !== item.id)
+    toast.success('Image deleted')
   } catch (e) {
     galleryError.value = e instanceof Error ? e.message : 'Could not delete image.'
+    toast.error('Delete failed')
   }
 }
 
@@ -243,23 +199,26 @@ async function onSubmitEdit(input: { sourceId: string; prompt: string; maskBase6
     const created = await enqueueJobs([jobInput])
     jobs.value = [...created, ...jobs.value]
     closeEdit()
-    activeTab.value = 'create'
+    toast.info('Edit queued')
     startPolling()
   } catch (e) {
     galleryError.value = e instanceof Error ? e.message : 'Failed to enqueue edit.'
+    toast.error('Failed to add to queue')
   }
 }
 
-async function retryQueueItem(item: JobDto) {
+async function retryQueueItem(item: typeof jobs.value[number]) {
   galleryError.value = null
   try {
     const created = await enqueueJobs([item.input])
     jobs.value = [...created, ...jobs.value]
     await deleteJob(item.id).catch(() => {})
     jobs.value = jobs.value.filter(j => j.id !== item.id)
+    toast.info('Retry queued')
     startPolling()
   } catch (e) {
     galleryError.value = e instanceof Error ? e.message : 'Failed to retry job.'
+    toast.error('Retry failed')
   }
 }
 
@@ -275,15 +234,19 @@ function viewDrafts() {
   activeTab.value = 'drafts'
 }
 
-watch(activeTab, () => { void refresh() })
+watch(activeTab, () => { void refreshGallery() })
+
+watch(hasActiveJobs, (active) => {
+  if (!active && draftItems.value.length >= 0) {
+    void refreshJobs().then(() => {
+      if (activeTab.value === 'drafts') void loadDrafts()
+    })
+  }
+})
 
 onMounted(async () => {
   await loadLibrary()
-  await loadJobs()
-  if (hasActiveJobs()) startPolling()
 })
-
-onUnmounted(() => stopPolling())
 </script>
 
 <template>
@@ -295,7 +258,29 @@ onUnmounted(() => stopPolling())
           Browse the Tiko image library, review drafts from the generator, and create new images.
         </p>
       </div>
-      <Button v-if="activeTab !== 'create'" @click="activeTab = 'create'">Create new image</Button>
+      <div :class="page('header-actions')">
+        <div :class="page('queue-trigger-wrap')">
+          <Button
+            variant="outline"
+            size="small"
+            :class="page('queue-btn', { active: queueOpen })"
+            @click="queueOpen = !queueOpen"
+          >
+            <span>Queue</span>
+            <span v-if="activeCount" :class="page('queue-badge', { active: hasActiveJobs })">{{ activeCount }}</span>
+            <span v-else-if="jobs.length" :class="page('queue-badge')">{{ jobs.length }}</span>
+          </Button>
+          <div v-if="queueOpen" :class="page('queue-popover')">
+            <ImageGenerationQueue
+              :queue="jobs"
+              :image-src="imageSrc"
+              @clear="clearQueue"
+              @retry="retryQueueItem"
+            />
+          </div>
+        </div>
+        <Button v-if="activeTab !== 'create'" @click="activeTab = 'create'">Create new image</Button>
+      </div>
     </header>
 
     <nav :class="page('tabs')" aria-label="Image sections">
@@ -401,6 +386,8 @@ onUnmounted(() => stopPolling())
     </section>
   </section>
 
+  <div v-if="queueOpen" class="queue-popover-backdrop" @click="queueOpen = false" />
+
   <ImageEditModal
     v-if="editItem"
     :item="editItem"
@@ -424,6 +411,60 @@ onUnmounted(() => stopPolling())
     align-items: flex-start;
     gap: var(--space-m);
     flex-wrap: wrap;
+  }
+
+  &__header-actions {
+    display: flex;
+    align-items: center;
+    gap: var(--space-s);
+    flex-wrap: wrap;
+  }
+
+  &__queue-trigger-wrap {
+    position: relative;
+  }
+
+  &__queue-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-xs);
+
+    &--active {
+      border-color: var(--color-primary);
+    }
+  }
+
+  &__queue-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 18px;
+    height: 18px;
+    padding: 0 5px;
+    border-radius: 9px;
+    background: var(--admin-page-bg);
+    color: var(--admin-text-muted);
+    font-size: 11px;
+    font-weight: 700;
+
+    &--active {
+      background: var(--color-primary);
+      color: #fff;
+    }
+  }
+
+  &__queue-popover {
+    position: absolute;
+    top: calc(100% + var(--space-xs));
+    right: 0;
+    width: 400px;
+    max-width: calc(100vw - var(--space-l) * 2);
+    z-index: 100;
+    background: var(--admin-surface);
+    border: 1px solid var(--admin-border);
+    border-radius: var(--admin-card-radius);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+    overflow: hidden;
   }
 
   &__intro {
@@ -559,32 +600,12 @@ onUnmounted(() => stopPolling())
       grid-template-columns: 1fr;
     }
   }
+}
 
-  &__preview {
-    background: var(--admin-surface);
-    border: 0;
-    border-radius: var(--admin-card-radius);
-    padding: var(--space-m);
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-s);
-    align-self: start;
-  }
-
-  &__preview-image {
-    width: 100%;
-    aspect-ratio: 1;
-    object-fit: cover;
-    border-radius: var(--border-radius-xs);
-    @include checkeredBackground;
-  }
-
-  &__preview-meta {
-    color: var(--admin-text-muted);
-    font-size: var(--font-size-xs);
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-  }
+.queue-popover-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 99;
 }
 
 .image-card {
@@ -681,5 +702,4 @@ onUnmounted(() => stopPolling())
     -webkit-box-orient: vertical;
   }
 }
-
 </style>

@@ -147,6 +147,7 @@ export default {
       if (url.pathname === '/v1/generation/image' && request.method === 'POST') return await requireAuth(request, resolvedEnv, (access) => generateImage(request, resolvedEnv, access))
       if (url.pathname === '/v1/generation/jobs' && request.method === 'POST') return await enqueueJobRoute(request, resolvedEnv, ctx)
       if (url.pathname === '/v1/generation/jobs' && request.method === 'GET') return await listJobsRoute(request, resolvedEnv)
+      if (url.pathname === '/v1/generation/jobs/process' && request.method === 'POST') return await processJobsRoute(request, resolvedEnv, ctx)
       if (url.pathname.startsWith('/v1/generation/jobs/') && request.method === 'GET') return await getJobRoute(url.pathname, request, resolvedEnv)
       if (url.pathname.startsWith('/v1/generation/jobs/') && request.method === 'DELETE') return await requireAuth(request, resolvedEnv, (access) => deleteJobRoute(url.pathname, resolvedEnv, access))
       if (url.pathname.startsWith('/v1/generation/images/') && url.pathname.endsWith('/binary') && request.method === 'GET') return await getImage(request, url.pathname, resolvedEnv)
@@ -945,6 +946,28 @@ async function enqueueJobRoute(request: Request, env: Env, ctx?: ExecutionContex
   return json({ data: rows.map(toJobDto), meta: { schemaVersion: 1, count: rows.length } }, 202)
 }
 
+// Manual processing trigger — the client calls this after enqueue and during
+// polling. This is the primary processing path; ctx.waitUntil and cron are
+// backstops. Runs synchronously so the response reflects actual progress.
+async function processJobsRoute(request: Request, env: Env, ctx?: ExecutionContext): Promise<Response> {
+  const authed = await authenticate(request, env)
+  if (authed.ok === false) return authFailureResponse(authed.response)
+  const before = await countPendingJobs(env)
+  if (before === 0) return json({ data: { processed: 0, remaining: 0 } })
+  // Process up to 4 jobs synchronously, kick off more in background.
+  const processed = await processPendingJobs(env, 4)
+  const remaining = await countPendingJobs(env)
+  if (remaining > 0) ctx?.waitUntil(processPendingJobs(env, remaining))
+  return json({ data: { processed, remaining } })
+}
+
+async function countPendingJobs(env: Env): Promise<number> {
+  const row = await env.GENERATION_DB.prepare(
+    `SELECT COUNT(*) as count FROM generation_jobs WHERE status = 'pending' OR status = 'processing'`,
+  ).first<{ count: number }>()
+  return row?.count ?? 0
+}
+
 async function listJobsRoute(request: Request, env: Env): Promise<Response> {
   const authed = await authenticate(request, env)
   if (authed.ok === false) return authFailureResponse(authed.response)
@@ -1031,12 +1054,15 @@ export async function runJobToCompletion(env: Env, job: GenerationJobRow): Promi
 
 // Drains up to `limit` pending jobs sequentially. Sequential keeps provider rate
 // limits sane and lets each job store its result before the next starts.
-export async function processPendingJobs(env: Env, limit: number): Promise<void> {
+export async function processPendingJobs(env: Env, limit: number): Promise<number> {
+  let processed = 0
   for (let i = 0; i < limit; i += 1) {
     const job = await claimNextPendingJob(env)
     if (!job) break
     await runJobToCompletion(env, job)
+    processed += 1
   }
+  return processed
 }
 
 async function getImage(request: Request, pathname: string, env: Env): Promise<Response> {

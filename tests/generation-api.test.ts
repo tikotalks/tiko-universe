@@ -25,6 +25,10 @@ class MemoryD1 {
         }
         if (sql.includes('FROM generated_images') && sql.includes('WHERE id')) return (this.generatedImages.get(values[0] as string) ?? null) as T | null
         if (sql.includes('FROM story_drafts') && sql.includes('WHERE id')) return (this.storyDrafts.get(values[0] as string) ?? null) as T | null
+        if (sql.includes('FROM generation_jobs') && sql.includes('COUNT(*)')) {
+          const count = Array.from(this.generationJobs.values()).filter((j) => j.status === 'pending' || j.status === 'processing').length
+          return { count } as T | null
+        }
         if (sql.includes('FROM generation_jobs') && sql.includes('WHERE id')) return (this.generationJobs.get(values[0] as string) ?? null) as T | null
         if (sql.includes('FROM generation_jobs') && sql.includes("status = 'pending'")) {
           const pending = Array.from(this.generationJobs.values()).filter((j) => j.status === 'pending').sort((a, b) => String(a.created_at).localeCompare(String(b.created_at)))
