@@ -1,6 +1,6 @@
 import { CORS_HEADERS, apiError, fetchWithRetry, json } from './http'
 import { resolveSecrets } from '../../shared/secrets'
-import { ALLOWED_IMAGE_SIZES, boostPrompt, type ImageMode, type TikoStyle } from './image-prompts'
+import { ALLOWED_IMAGE_SIZES, atlasAuthorization as atlasAuth, boostPrompt, type ImageMode, type TikoStyle } from './image-prompts'
 import {
   canAccessOwnedRecord,
   canMutateOwnedRecord,
@@ -684,7 +684,7 @@ async function generateImage(request: Request, env: Env, access: GenerationAcces
 
     let boostedBrief = body.prompt.trim()
     try {
-      boostedBrief = await boostPrompt(body.prompt.trim(), mode, tikoStyle, env)
+      boostedBrief = await boostPrompt(body.prompt.trim(), mode, tikoStyle, env, request.headers.get('Authorization'))
     } catch {
       // fall back to raw prompt
     }
@@ -699,12 +699,13 @@ async function generateImage(request: Request, env: Env, access: GenerationAcces
     const calls = Array.from({ length: count }, async (_, i) => {
       const variedPrompt = `${boostedBrief}\n\nComposition hint: ${variationHints[i % variationHints.length]}`
       try {
+        const isTikoV3 = tikoStyle === 'tiko-v3'
         const payload: Record<string, unknown> = {
-          model: 'gpt-image-1-mini',
+          model: isTikoV3 ? 'gpt-image-1' : 'gpt-image-1-mini',
           prompt: variedPrompt,
           size,
           n: 1,
-          quality: 'medium',
+          quality: isTikoV3 ? 'high' : 'medium',
           background: 'transparent',
         }
         const openaiResponse = await fetchWithRetry('https://api.openai.com/v1/images/generations', {
@@ -763,15 +764,18 @@ async function generateImage(request: Request, env: Env, access: GenerationAcces
   // Single image: use art director boost then generate
   let artBrief: string
   try {
-    const boosted = await boostPrompt(body.prompt.trim(), mode, tikoStyle, env)
+    const boosted = await boostPrompt(body.prompt.trim(), mode, tikoStyle, env, request.headers.get('Authorization'))
     artBrief = boosted || body.prompt.trim()
   } catch {
     artBrief = body.prompt.trim()
   }
 
+  const atlasHeaders: Record<string, string> = { 'Content-Type': 'application/json' }
+  const atlasAuthorization = atlasAuth(env, request.headers.get('Authorization'))
+  if (atlasAuthorization) atlasHeaders.Authorization = atlasAuthorization
   const atlasResponse = await env.ATLAS_SERVICE.fetch(new Request(`${atlasBase}/run`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: atlasHeaders,
     body: JSON.stringify({
       capability: 'image.generate',
       app: 'generation-api',

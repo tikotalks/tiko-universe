@@ -6,6 +6,12 @@ export interface ImagePromptEnv {
     fetch(input: Request | string, init?: RequestInit): Promise<Response>
   }
   ATLAS_BASE_URL?: string
+  ATLAS_API_KEY?: string
+}
+
+export function atlasAuthorization(env: ImagePromptEnv, callerAuth?: string | null): string | null {
+  if (callerAuth && /^Bearer\s+\S/i.test(callerAuth)) return callerAuth
+  return env.ATLAS_API_KEY ? `Bearer ${env.ATLAS_API_KEY}` : null
 }
 
 export const ALLOWED_IMAGE_SIZES = new Set(['1024x1024', '1024x1792', '1792x1024'])
@@ -299,7 +305,7 @@ Rules:
 - Be directive, not optional. No meta talk. No lists. No JSON.`
 }
 
-export async function boostPrompt(subject: string, mode: ImageMode, tikoStyle: TikoStyle, env: ImagePromptEnv): Promise<string> {
+export async function boostPrompt(subject: string, mode: ImageMode, tikoStyle: TikoStyle, env: ImagePromptEnv, callerAuth?: string | null): Promise<string> {
   if (!env.ATLAS_SERVICE) throw new Error('Atlas service not available for prompt boost')
 
   const spec = mode === 'icon'
@@ -310,9 +316,12 @@ export async function boostPrompt(subject: string, mode: ImageMode, tikoStyle: T
     : ART_DIRECTOR_SYSTEM_PROMPTS[mode]
 
   const atlasBase = (env.ATLAS_BASE_URL ?? 'https://tiko-atlas-api-dev.silvandiepen.workers.dev/v1/atlas').replace(/\/$/, '')
+  const headers: Record<string, string> = { 'Content-Type': 'application/json' }
+  const authorization = atlasAuthorization(env, callerAuth)
+  if (authorization) headers.Authorization = authorization
   const response = await env.ATLAS_SERVICE.fetch(new Request(`${atlasBase}/run`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers,
     body: JSON.stringify({
       capability: 'text.generate',
       app: 'generation-api',
