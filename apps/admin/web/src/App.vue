@@ -33,14 +33,6 @@ const appSubItems = computed(() => {
       color: config.themeColor || tikoAppConfigs[app]?.themeColor || tikoAppColors[app]?.primary || '#2488ff',
     }
   })
-  const talkIdx = items.findIndex(i => i.to === '/apps/talk')
-  if (talkIdx !== -1) {
-    items.splice(talkIdx + 1, 0, {
-      to: '/apps/talk/mapping',
-      label: 'Talk — Image Mapping',
-      color: '#2488ff',
-    })
-  }
   return items
 })
 

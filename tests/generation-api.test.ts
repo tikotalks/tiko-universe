@@ -3,101 +3,140 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 import worker from '../workers/generation-api/src/index'
 import type { Env } from '../workers/generation-api/src/index'
 
+type Statement = {
+  first<T>(): Promise<T | null>
+  all<T>(): Promise<{ results: T[] }>
+  run(): Promise<{ success: boolean; meta: { changes: number } }>
+}
+
 class MemoryD1 {
   storyDrafts = new Map<string, Record<string, unknown>>()
   stories = new Map<string, Record<string, unknown>>()
   generatedImages = new Map<string, Record<string, unknown>>()
   usageWindows = new Map<string, { request_count: number; unit_count: number }>()
+  generationJobs = new Map<string, Record<string, unknown>>()
 
-  prepare(sql: string) {
+  private statement(sql: string, values: unknown[]): Statement {
     return {
-      bind: (...values: unknown[]) => ({
-        first: async <T>() => {
-          if (sql.includes('FROM generation_usage_windows')) {
-            const key = values.slice(0, 4).map(String).join('|')
-            return (this.usageWindows.get(key) ?? null) as T | null
+      first: async <T>() => {
+        if (sql.includes('FROM generation_usage_windows')) {
+          const key = values.slice(0, 4).map(String).join('|')
+          return (this.usageWindows.get(key) ?? null) as T | null
+        }
+        if (sql.includes('FROM generated_images') && sql.includes('WHERE id')) return (this.generatedImages.get(values[0] as string) ?? null) as T | null
+        if (sql.includes('FROM story_drafts') && sql.includes('WHERE id')) return (this.storyDrafts.get(values[0] as string) ?? null) as T | null
+        if (sql.includes('FROM generation_jobs') && sql.includes('WHERE id')) return (this.generationJobs.get(values[0] as string) ?? null) as T | null
+        if (sql.includes('FROM generation_jobs') && sql.includes("status = 'pending'")) {
+          const pending = Array.from(this.generationJobs.values()).filter((j) => j.status === 'pending').sort((a, b) => String(a.created_at).localeCompare(String(b.created_at)))
+          return (pending[0] ?? null) as T | null
+        }
+        if (sql.includes('FROM generation_jobs') && sql.includes("status = 'processing'")) {
+          const stalled = Array.from(this.generationJobs.values()).filter((j) => j.status === 'processing' && String(j.updated_at) < String(values[0])).sort((a, b) => String(a.created_at).localeCompare(String(b.created_at)))
+          return (stalled[0] ?? null) as T | null
+        }
+        if (sql.includes('WHERE id')) return null
+        return null
+      },
+      all: async <T>() => {
+        if (sql.includes('FROM story_drafts')) {
+          let drafts = Array.from(this.storyDrafts.values())
+          if (sql.includes('created_by = ?')) drafts = drafts.filter((draft) => draft.created_by === values[0])
+          return { results: drafts as T[] }
+        }
+        if (sql.includes('FROM generation_jobs')) {
+          let jobs = Array.from(this.generationJobs.values())
+          if (sql.includes('created_by = ?')) jobs = jobs.filter((j) => j.created_by === values[0])
+          jobs = jobs.sort((a, b) => String(b.created_at).localeCompare(String(a.created_at)))
+          return { results: jobs as T[] }
+        }
+        return { results: [] as T[] }
+      },
+      run: async () => {
+        if (sql.includes('INSERT INTO story_drafts')) {
+          const record = {
+            id: values[0], title: values[1], description: values[2], cover_media_id: values[3],
+            default_voice: values[4], default_speed: values[5], target_album_id: values[6],
+            status: values[7], chapters: values[8], settings: values[9],
+            created_by: values[10], created_at: values[11], updated_at: values[12],
           }
-          if (sql.includes('FROM generated_images') && sql.includes('WHERE id')) return (this.generatedImages.get(values[0] as string) ?? null) as T | null
-          if (sql.includes('FROM story_drafts') && sql.includes('WHERE id')) return (this.storyDrafts.get(values[0] as string) ?? null) as T | null
-          if (sql.includes('WHERE id')) return null
-          return null
-        },
-        all: async <T>() => {
-          if (sql.includes('FROM story_drafts')) {
-            let drafts = Array.from(this.storyDrafts.values())
-            if (sql.includes('created_by = ?')) drafts = drafts.filter((draft) => draft.created_by === values[0])
-            return { results: drafts as T[] }
-          }
-          return { results: [] as T[] }
-        },
-        run: async () => {
-          if (sql.includes('INSERT INTO story_drafts')) {
-            const record = {
-              id: values[0],
-              title: values[1],
-              description: values[2],
-              cover_media_id: values[3],
-              default_voice: values[4],
-              default_speed: values[5],
-              target_album_id: values[6],
-              status: values[7],
-              chapters: values[8],
-              settings: values[9],
-              created_by: values[10],
-              created_at: values[11],
-              updated_at: values[12],
-            }
-            this.storyDrafts.set(record.id as string, record)
-            return { success: true, meta: { changes: 1 } }
-          }
-          if (sql.includes('INSERT INTO stories')) {
-            const record = {
-              id: values[0],
-              title: values[1],
-              description: values[2],
-              voice: values[3],
-              speed: values[4],
-              segments: values[5],
-              status: values[6],
-              audio_url: values[7],
-              r2_key: values[8],
-              duration_seconds: values[9],
-              file_size_bytes: values[10],
-              category: values[11],
-              tags: values[12],
-              is_public: values[13],
-              created_by: values[14],
-              created_at: values[15],
-              updated_at: values[16],
-            }
-            this.stories.set(record.id as string, record)
-            return { success: true, meta: { changes: 1 } }
-          }
-          if (sql.includes('INSERT INTO generation_usage_windows')) {
-            const key = values.slice(0, 4).map(String).join('|')
-            const current = this.usageWindows.get(key) ?? { request_count: 0, unit_count: 0 }
-            current.request_count += Number(values[4])
-            current.unit_count += Number(values[5])
-            this.usageWindows.set(key, current)
-            return { success: true, meta: { changes: 1 } }
-          }
-          if (sql.includes('INSERT INTO generated_images')) {
-            return { success: true, meta: { changes: 1 } }
-          }
-          if (sql.includes('UPDATE generated_images')) {
-            const id = values.at(-1) as string
-            const existing = this.generatedImages.get(id)
-            if (!existing) return { success: true, meta: { changes: 0 } }
-            this.generatedImages.set(id, { ...existing, updated_at: values[0] })
-            return { success: true, meta: { changes: 1 } }
-          }
-          if (sql.includes('DELETE FROM generated_images')) {
-            const deleted = this.generatedImages.delete(values[0] as string)
-            return { success: true, meta: { changes: deleted ? 1 : 0 } }
-          }
+          this.storyDrafts.set(record.id as string, record)
           return { success: true, meta: { changes: 1 } }
         }
-      })
+        if (sql.includes('INSERT INTO stories')) {
+          const record = {
+            id: values[0], title: values[1], description: values[2], voice: values[3], speed: values[4],
+            segments: values[5], status: values[6], audio_url: values[7], r2_key: values[8],
+            duration_seconds: values[9], file_size_bytes: values[10], category: values[11], tags: values[12],
+            is_public: values[13], created_by: values[14], created_at: values[15], updated_at: values[16],
+          }
+          this.stories.set(record.id as string, record)
+          return { success: true, meta: { changes: 1 } }
+        }
+        if (sql.includes('INSERT INTO generation_usage_windows')) {
+          const key = values.slice(0, 4).map(String).join('|')
+          const current = this.usageWindows.get(key) ?? { request_count: 0, unit_count: 0 }
+          current.request_count += Number(values[4])
+          current.unit_count += Number(values[5])
+          this.usageWindows.set(key, current)
+          return { success: true, meta: { changes: 1 } }
+        }
+        if (sql.includes('INSERT INTO generated_images')) {
+          return { success: true, meta: { changes: 1 } }
+        }
+        if (sql.includes('INSERT INTO generation_jobs')) {
+          const record = {
+            id: values[0], type: values[1], input_json: values[2], status: 'pending',
+            result_json: null, error_code: null, error_message: null,
+            created_by: values[3], created_at: values[4], updated_at: values[5],
+          }
+          this.generationJobs.set(record.id as string, record)
+          return { success: true, meta: { changes: 1 } }
+        }
+        if (sql.includes('UPDATE generation_jobs')) {
+          const id = values.at(-1) as string
+          const existing = this.generationJobs.get(id)
+          if (!existing) return { success: true, meta: { changes: 0 } }
+          if (sql.includes("status = 'done'")) {
+            // result_json, updated_at, processed_at, id
+            Object.assign(existing, { status: 'done', result_json: values[0], updated_at: values[1], processed_at: values[2], error_code: null, error_message: null })
+          } else if (sql.includes("status = 'error'")) {
+            // error_code, error_message, updated_at, processed_at, id
+            Object.assign(existing, { status: 'error', error_code: values[0], error_message: values[1], updated_at: values[2], processed_at: values[3] })
+          } else if (sql.includes("status = 'processing'")) {
+            if (existing.status !== 'pending') return { success: true, meta: { changes: 0 } }
+            Object.assign(existing, { status: 'processing', updated_at: values[0] })
+          } else {
+            // updated_at, id
+            Object.assign(existing, { updated_at: values[0] })
+          }
+          this.generationJobs.set(id, existing)
+          return { success: true, meta: { changes: 1 } }
+        }
+        if (sql.includes('DELETE FROM generation_jobs')) {
+          const deleted = this.generationJobs.delete(values[0] as string)
+          return { success: true, meta: { changes: deleted ? 1 : 0 } }
+        }
+        if (sql.includes('UPDATE generated_images')) {
+          const id = values.at(-1) as string
+          const existing = this.generatedImages.get(id)
+          if (!existing) return { success: true, meta: { changes: 0 } }
+          this.generatedImages.set(id, { ...existing, updated_at: values[0] })
+          return { success: true, meta: { changes: 1 } }
+        }
+        if (sql.includes('DELETE FROM generated_images')) {
+          const deleted = this.generatedImages.delete(values[0] as string)
+          return { success: true, meta: { changes: deleted ? 1 : 0 } }
+        }
+        return { success: true, meta: { changes: 1 } }
+      },
+    }
+  }
+
+  prepare(sql: string): Statement & { bind(...values: unknown[]): Statement } {
+    const unbound = this.statement(sql, [])
+    return {
+      ...unbound,
+      bind: (...values: unknown[]) => this.statement(sql, values),
     }
   }
 }
@@ -617,5 +656,93 @@ describe('generation-api TTS contract', () => {
     expect(response.status).toBe(500)
     expect(response.headers.get('access-control-allow-origin')).toBe('*')
     await expect(json(response)).resolves.toMatchObject({ error: { code: 'internal_error' } })
+  })
+
+  it('enqueues durable generation jobs and processes them to completion', async () => {
+    const atlasFetch = vi.fn(async (input: Request | string) => {
+      const request = input instanceof Request ? input : new Request(input)
+      const path = new URL(request.url).pathname
+      if (path === '/v1/atlas/run' && request.method === 'POST') {
+        const payload = await request.json() as { capability?: string; input?: { prompt?: string } }
+        if (payload.capability === 'text.generate') {
+          return new Response(JSON.stringify({ data: { output: 'An art-directed brief' } }), { status: 200, headers: { 'content-type': 'application/json' } })
+        }
+        if (payload.capability === 'image.generate') {
+          return new Response(JSON.stringify({
+            data: { images: [{ id: 'job-img-1', mediaUrl: '/v1/atlas/assets/job-img-1', contentType: 'image/png', provider: { name: 'openai', model: 'gpt-image-1' } }] },
+            meta: { requestId: 'atlas-job-1' },
+          }), { status: 200, headers: { 'content-type': 'application/json' } })
+        }
+      }
+      if (path === '/v1/atlas/assets/job-img-1') return new Response(Uint8Array.from([1, 2, 3, 4]), { status: 200, headers: { 'content-type': 'image/png' } })
+      return new Response('not found', { status: 404 })
+    })
+    const env = makeEnv({ ATLAS_SERVICE: { fetch: atlasFetch }, ATLAS_API_KEY: 'test-atlas-key' } as Partial<Env>)
+
+    let background: Promise<unknown> = Promise.resolve()
+    const ctx = { waitUntil: vi.fn((p: Promise<unknown>) => { background = p }) }
+    const enqueue = await worker.fetch(new Request('https://api.test/v1/generation/jobs', {
+      method: 'POST',
+      headers: { authorization: 'Bearer test-api-key', 'content-type': 'application/json' },
+      body: JSON.stringify({ items: [{ type: 'generate', prompt: 'A cereal box', tikoStyle: 'tiko-v3' }] }),
+    }), env, ctx as unknown as ExecutionContext)
+
+    expect(enqueue.status).toBe(202)
+    const enqueued = await json(enqueue)
+    expect(enqueued.data).toHaveLength(1)
+    expect(enqueued.data[0].status).toBe('pending')
+    expect(enqueued.data[0].input).toMatchObject({ type: 'generate', prompt: 'A cereal box', tikoStyle: 'tiko-v3' })
+    expect(ctx.waitUntil).toHaveBeenCalledTimes(1)
+
+    // Flush the background processing the worker kicked off via waitUntil.
+    await background
+
+    const status = await worker.fetch(new Request(`https://api.test/v1/generation/jobs/${enqueued.data[0].id}`, {
+      headers: { authorization: 'Bearer test-api-key' },
+    }), env)
+    expect(status.status).toBe(200)
+    const job = (await json(status)).data
+    expect(job.status).toBe('done')
+    expect(job.result.data.imageUrl).toMatch(/^\/v1\/generation\/images\/.+\/binary$/)
+  })
+
+  it('scopes job listing and detail to the authenticated owner', async () => {
+    const identity = sessionIdentityService({ 'token-a': 'user_a', 'token-b': 'user_b' })
+    const env = makeEnv({ IDENTITY_SERVICE: identity } as Partial<Env> & Record<string, unknown>)
+
+    const ctx = { waitUntil: vi.fn(() => undefined) }
+    const create = await worker.fetch(new Request('https://api.test/v1/generation/jobs', {
+      method: 'POST',
+      headers: { authorization: 'Bearer token-a', 'content-type': 'application/json' },
+      body: JSON.stringify({ items: [{ type: 'upscale', sourceId: 'img-x', size: '1024x1024' }] }),
+    }), env, ctx as unknown as ExecutionContext)
+    const created = (await json(create)).data[0]
+
+    const otherList = await worker.fetch(new Request('https://api.test/v1/generation/jobs', { headers: { authorization: 'Bearer token-b' } }), env)
+    const otherBody = await json(otherList)
+    expect(otherBody.data).toEqual([])
+
+    const otherDetail = await worker.fetch(new Request(`https://api.test/v1/generation/jobs/${created.id}`, { headers: { authorization: 'Bearer token-b' } }), env)
+    expect(otherDetail.status).toBe(404)
+
+    const ownerDetail = await worker.fetch(new Request(`https://api.test/v1/generation/jobs/${created.id}`, { headers: { authorization: 'Bearer token-a' } }), env)
+    expect(ownerDetail.status).toBe(200)
+  })
+
+  it('rejects enqueue without authentication and validates job input', async () => {
+    const env = makeEnv()
+    const unauthed = await worker.fetch(new Request('https://api.test/v1/generation/jobs', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ items: [{ type: 'generate', prompt: 'x' }] }),
+    }), env)
+    expect(unauthed.status).toBe(401)
+
+    const badType = await worker.fetch(new Request('https://api.test/v1/generation/jobs', {
+      method: 'POST',
+      headers: { authorization: 'Bearer test-api-key', 'content-type': 'application/json' },
+      body: JSON.stringify({ items: [{ type: 'unknown' }] }),
+    }), env, { waitUntil: () => undefined } as unknown as ExecutionContext)
+    expect(badType.status).toBe(400)
   })
 })

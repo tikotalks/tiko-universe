@@ -1,11 +1,12 @@
 <script setup lang="ts">
-import { computed, onMounted, ref, watch } from 'vue'
+import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
 import { useBemm } from 'bemm'
 import { Button } from '@sil/ui'
 import ImageCreateForm from '../components/images/ImageCreateForm.vue'
 import ImageEditModal from '../components/images/ImageEditModal.vue'
 import ImageGenerationQueue from '../components/images/ImageGenerationQueue.vue'
-import type { EnrichInput, GenerateInput, QueueItem, UpscaleInput } from '../components/images/imageGenerationQueueTypes'
+import type { EditInput, GenerateInput, JobDto, UpscaleInput } from '../components/images/imageGenerationQueueTypes'
+import { extractJobResults } from '../components/images/imageGenerationQueueTypes'
 import { useImageGeneration, type ImageGalleryItem } from '../composables/useImageGeneration'
 
 type Tab = 'library' | 'drafts' | 'create'
@@ -13,7 +14,7 @@ type Tab = 'library' | 'drafts' | 'create'
 const page = useBemm('image-page', { return: 'string', includeBaseClass: true })
 const card = useBemm('image-card', { return: 'string', includeBaseClass: true })
 
-const { generateImage, listImages, promoteImage, pushToMedia, deleteImage, enrichImage, editImage, upscaleImage, imageSrc } = useImageGeneration()
+const { listImages, promoteImage, pushToMedia, deleteImage, enrichImage, enqueueJobs, listJobs, deleteJob, imageSrc } = useImageGeneration()
 
 const activeTab = ref<Tab>('library')
 
@@ -23,21 +24,17 @@ const galleryLoading = ref(false)
 const galleryError = ref<string | null>(null)
 
 const pushingToMediaIds = ref<Set<string>>(new Set())
+const enrichingIds = ref<Set<string>>(new Set())
 
-const queue = ref<QueueItem[]>([])
-const isProcessingQueue = ref(false)
-let queueCounter = 0
-
-const enrichingIds = computed(() => new Set(
-  queue.value
-    .filter(i => i.input.type === 'enrich' && (i.status === 'pending' || i.status === 'generating'))
-    .map(i => (i.input as EnrichInput).sourceId),
-))
+// Server-backed job queue — survives page reload because jobs live in D1.
+const jobs = ref<JobDto[]>([])
+const autoEnrichedJobIds = new Set<string>()
+let pollTimer: ReturnType<typeof setInterval> | null = null
 
 const upscalingIds = computed(() => new Set(
-  queue.value
-    .filter(i => i.input.type === 'upscale' && (i.status === 'pending' || i.status === 'generating'))
-    .map(i => (i.input as UpscaleInput).sourceId),
+  jobs.value
+    .filter(j => j.type === 'upscale' && (j.status === 'pending' || j.status === 'processing'))
+    .map(j => (j.input as UpscaleInput).sourceId),
 ))
 
 const editItem = ref<ImageGalleryItem | null>(null)
@@ -100,39 +97,118 @@ async function onPushToMedia(item: ImageGalleryItem) {
   }
 }
 
-function onEnrich(item: ImageGalleryItem, list: 'library' | 'drafts') {
-  queueCounter += 1
-  queue.value.push({
-    id: `q${queueCounter}`,
-    label: `Enrich: ${item.title || item.id.slice(0, 8)}`,
-    input: { type: 'enrich', sourceId: item.id, list },
-    status: 'pending',
-    result: null,
-    error: null,
-  })
-  void processQueue()
+// ── Server-backed job queue ────────────────────────────────────
+
+async function loadJobs() {
+  try {
+    jobs.value = await listJobs()
+  } catch (e) {
+    console.error('[jobs] Failed to load jobs', e)
+  }
 }
 
-function onUpscale(item: ImageGalleryItem) {
-  queueCounter += 1
-  queue.value.push({
-    id: `q${queueCounter}`,
-    label: `Upscale: ${item.title || item.id.slice(0, 8)}`,
-    input: {
-      type: 'upscale',
-      sourceId: item.id,
-      size: '1024x1024',
-      quality: 'medium',
-      title: item.title ?? undefined,
-      description: item.description ?? undefined,
-      category: item.category,
-      tags: item.tags,
-    },
-    status: 'pending',
-    result: null,
-    error: null,
-  })
-  void processQueue()
+function hasActiveJobs(): boolean {
+  return jobs.value.some(j => j.status === 'pending' || j.status === 'processing')
+}
+
+function startPolling() {
+  stopPolling()
+  pollTimer = setInterval(pollJobs, 2500)
+}
+
+function stopPolling() {
+  if (pollTimer !== null) {
+    clearInterval(pollTimer)
+    pollTimer = null
+  }
+}
+
+async function pollJobs() {
+  if (!hasActiveJobs()) {
+    stopPolling()
+    return
+  }
+
+  const prevStatuses = new Map(jobs.value.map(j => [j.id, j.status]))
+  await loadJobs()
+
+  let draftsChanged = false
+
+  for (const job of jobs.value) {
+    const prev = prevStatuses.get(job.id)
+    const wasActive = prev === 'pending' || prev === 'processing'
+    if (wasActive && job.status === 'done') {
+      draftsChanged = true
+      if (job.type === 'generate' && !autoEnrichedJobIds.has(job.id)) {
+        autoEnrichedJobIds.add(job.id)
+        for (const res of extractJobResults(job)) {
+          if (res?.id) void enrichImage(res.id).catch(e => console.warn('[jobs] Auto-enrich failed', e))
+        }
+      }
+    }
+  }
+
+  if (draftsChanged && activeTab.value === 'drafts') await loadDrafts()
+}
+
+// ── Enqueue handlers ───────────────────────────────────────────
+
+async function onGenerate(input: GenerateInput) {
+  galleryError.value = null
+  try {
+    const created = await enqueueJobs([input])
+    jobs.value = [...created, ...jobs.value]
+    startPolling()
+  } catch (e) {
+    galleryError.value = e instanceof Error ? e.message : 'Failed to enqueue generation.'
+  }
+}
+
+async function onEnrich(item: ImageGalleryItem, list: 'library' | 'drafts') {
+  enrichingIds.value = new Set([...enrichingIds.value, item.id])
+  galleryError.value = null
+  try {
+    const result = await enrichImage(item.id)
+    const items = list === 'library' ? libraryItems : draftItems
+    const idx = items.value.findIndex(i => i.id === item.id)
+    if (idx !== -1) {
+      items.value[idx] = {
+        ...items.value[idx],
+        title: result.title || items.value[idx].title,
+        description: result.description,
+        tags: result.tags,
+        category: result.categories[0] ?? items.value[idx].category,
+      }
+    }
+  } catch (e) {
+    galleryError.value = e instanceof Error ? e.message : 'Enrich failed.'
+  } finally {
+    const next = new Set(enrichingIds.value)
+    next.delete(item.id)
+    enrichingIds.value = next
+  }
+}
+
+async function onUpscale(item: ImageGalleryItem) {
+  galleryError.value = null
+  const input: UpscaleInput = {
+    type: 'upscale',
+    sourceId: item.id,
+    size: '1024x1024',
+    quality: 'medium',
+    title: item.title ?? undefined,
+    description: item.description ?? undefined,
+    category: item.category,
+    tags: item.tags,
+  }
+  try {
+    const created = await enqueueJobs([input])
+    jobs.value = [...created, ...jobs.value]
+    activeTab.value = 'create'
+    startPolling()
+  } catch (e) {
+    galleryError.value = e instanceof Error ? e.message : 'Failed to enqueue upscale.'
+  }
 }
 
 async function onDelete(item: ImageGalleryItem, list: 'library' | 'drafts') {
@@ -146,97 +222,6 @@ async function onDelete(item: ImageGalleryItem, list: 'library' | 'drafts') {
   }
 }
 
-function onGenerate(input: GenerateInput) {
-  queueCounter += 1
-  const label = input.title || input.prompt.trim().split('\n')[0].slice(0, 40)
-  const item: QueueItem = {
-    id: `q${queueCounter}`,
-    label,
-    input,
-    status: 'pending',
-    result: null,
-    error: null,
-  }
-  queue.value.push(item)
-  void processQueue()
-}
-
-async function processQueue() {
-  if (isProcessingQueue.value) return
-  isProcessingQueue.value = true
-  try {
-    while (true) {
-      const pending = queue.value.find(i => i.status === 'pending')
-      if (!pending) break
-      pending.status = 'generating'
-      try {
-        if (pending.input.type === 'enrich') {
-          const result = await enrichImage(pending.input.sourceId)
-          const items = pending.input.list === 'library' ? libraryItems : draftItems
-          const idx = items.value.findIndex(i => i.id === (pending.input as EnrichInput).sourceId)
-          if (idx !== -1) {
-            items.value[idx] = {
-              ...items.value[idx],
-              title: result.title || items.value[idx].title,
-              description: result.description,
-              tags: result.tags,
-              category: result.categories[0] ?? items.value[idx].category,
-            }
-          }
-        } else if (pending.input.type === 'upscale') {
-          const input = pending.input
-          const result = await upscaleImage(input.sourceId, input.size, input.quality)
-          pending.result = result
-          draftItems.value = draftItems.value.filter(i => i.id !== input.sourceId)
-          draftItems.value.unshift({
-            id: result.id,
-            imageUrl: result.imageUrl,
-            prompt: result.prompt,
-            revisedPrompt: result.revisedPrompt,
-            model: 'gpt-image-2',
-            size: result.size,
-            quality: result.quality,
-            style: result.style,
-            width: result.width,
-            height: result.height,
-            fileSizeBytes: result.fileSizeBytes,
-            title: input.title ?? null,
-            description: input.description ?? null,
-            category: input.category ?? 'generated',
-            tags: input.tags ?? [],
-            status: 'draft',
-            isPreview: false,
-            mediaId: null,
-            createdAt: result.createdAt,
-          })
-        } else if (pending.input.type === 'edit') {
-          pending.result = await editImage(pending.input.sourceId, pending.input.prompt, pending.input.maskBase64, pending.input.size)
-        } else {
-          pending.result = await generateImage(pending.input)
-          const results = Array.isArray(pending.result) ? pending.result : [pending.result]
-          for (const res of results) {
-            if (res?.id) {
-              try {
-                await enrichImage(res.id)
-              } catch (e) {
-                console.warn('[queue] Auto-enrich failed for', pending.label, e)
-              }
-            }
-          }
-        }
-        pending.status = 'done'
-      } catch (e) {
-        const errMsg = e instanceof Error ? e.message : 'Generation failed.'
-        console.error('[queue] Item failed:', pending.label, errMsg, e)
-        pending.error = errMsg
-        pending.status = 'error'
-      }
-    }
-  } finally {
-    isProcessingQueue.value = false
-  }
-}
-
 function openEdit(item: ImageGalleryItem) {
   editItem.value = item
 }
@@ -245,29 +230,45 @@ function closeEdit() {
   editItem.value = null
 }
 
-function onSubmitEdit(input: { sourceId: string; prompt: string; maskBase64?: string; size: '1024x1024' | '1024x1792' | '1792x1024' }) {
-  queueCounter += 1
-  queue.value.push({
-    id: `q${queueCounter}`,
-    label: `Edit: ${input.prompt.slice(0, 40)}`,
-    input: { type: 'edit', sourceId: input.sourceId, prompt: input.prompt, maskBase64: input.maskBase64, size: input.size },
-    status: 'pending',
-    result: null,
-    error: null,
-  })
-  closeEdit()
-  activeTab.value = 'create'
-  void processQueue()
+async function onSubmitEdit(input: { sourceId: string; prompt: string; maskBase64?: string; size: '1024x1024' | '1024x1792' | '1792x1024' }) {
+  galleryError.value = null
+  const jobInput: EditInput = {
+    type: 'edit',
+    sourceId: input.sourceId,
+    prompt: input.prompt,
+    maskBase64: input.maskBase64,
+    size: input.size,
+  }
+  try {
+    const created = await enqueueJobs([jobInput])
+    jobs.value = [...created, ...jobs.value]
+    closeEdit()
+    activeTab.value = 'create'
+    startPolling()
+  } catch (e) {
+    galleryError.value = e instanceof Error ? e.message : 'Failed to enqueue edit.'
+  }
 }
 
-function retryQueueItem(item: QueueItem) {
-  item.status = 'pending'
-  item.error = null
-  void processQueue()
+async function retryQueueItem(item: JobDto) {
+  galleryError.value = null
+  try {
+    const created = await enqueueJobs([item.input])
+    jobs.value = [...created, ...jobs.value]
+    await deleteJob(item.id).catch(() => {})
+    jobs.value = jobs.value.filter(j => j.id !== item.id)
+    startPolling()
+  } catch (e) {
+    galleryError.value = e instanceof Error ? e.message : 'Failed to retry job.'
+  }
 }
 
-function clearQueue() {
-  queue.value = queue.value.filter(i => i.status === 'pending' || i.status === 'generating')
+async function clearQueue() {
+  const finished = jobs.value.filter(j => j.status === 'done' || j.status === 'error')
+  for (const job of finished) {
+    await deleteJob(job.id).catch(() => {})
+  }
+  jobs.value = jobs.value.filter(j => j.status === 'pending' || j.status === 'processing')
 }
 
 function viewDrafts() {
@@ -276,7 +277,13 @@ function viewDrafts() {
 
 watch(activeTab, () => { void refresh() })
 
-onMounted(() => { void loadLibrary() })
+onMounted(async () => {
+  await loadLibrary()
+  await loadJobs()
+  if (hasActiveJobs()) startPolling()
+})
+
+onUnmounted(() => stopPolling())
 </script>
 
 <template>
@@ -324,7 +331,7 @@ onMounted(() => { void loadLibrary() })
         <article v-for="item in libraryItems" :key="item.id" :class="card('')">
           <div :class="card('image-wrap')">
             <img :class="card('image')" :src="imageSrc(item)" :alt="item.prompt" />
-            <span v-if="item.model === 'gpt-image-2'" :class="card('badge', { upscaled: true })">Upscaled</span>
+            <span v-if="item.model === 'gpt-image-2'" :class="card('badge', { upscaled: true })">High quality</span>
           </div>
           <div :class="card('body')">
             <strong :class="card('title')">{{ item.title || item.category }}</strong>
@@ -360,7 +367,7 @@ onMounted(() => { void loadLibrary() })
           <div :class="card('image-wrap')">
             <img :class="card('image')" :src="imageSrc(item)" :alt="item.prompt" />
             <span v-if="item.isPreview" :class="card('badge', { preview: true })">Preview</span>
-            <span v-else :class="card('badge', { upscaled: true })">Upscaled</span>
+            <span v-else :class="card('badge', { upscaled: true })">High quality</span>
           </div>
           <div :class="card('body')">
             <strong :class="card('title')">{{ item.title || item.category }}</strong>
@@ -368,7 +375,7 @@ onMounted(() => { void loadLibrary() })
             <p v-else :class="card('prompt')">{{ item.revisedPrompt || item.prompt }}</p>
             <div :class="card('actions')">
               <Button v-if="!item.isPreview" size="small" @click="onPromote(item)">Promote</Button>
-              <Button v-if="item.isPreview" size="small" variant="outline" :loading="upscalingIds.has(item.id)" @click="onUpscale(item)">Upscale</Button>
+              <Button v-if="item.isPreview" size="small" variant="outline" :loading="upscalingIds.has(item.id)" @click="onUpscale(item)">High quality</Button>
               <Button size="small" variant="outline" :loading="enrichingIds.has(item.id)" @click="onEnrich(item, 'drafts')">Enrich</Button>
               <Button size="small" variant="outline" @click="openEdit(item)">Edit</Button>
               <Button variant="ghost" size="small" :href="imageSrc(item)" target="_blank" rel="noreferrer">Open</Button>
@@ -386,7 +393,7 @@ onMounted(() => { void loadLibrary() })
       />
 
       <ImageGenerationQueue
-        :queue="queue"
+        :queue="jobs"
         :image-src="imageSrc"
         @clear="clearQueue"
         @retry="retryQueueItem"

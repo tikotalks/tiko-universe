@@ -2,16 +2,16 @@
 import { useBemm } from 'bemm'
 import { Button } from '@sil/ui'
 import type { ImageGenerationResult } from '../../types/admin'
-import type { QueueItem } from './imageGenerationQueueTypes'
+import { extractJobResults, type JobDto } from './imageGenerationQueueTypes'
 
 defineProps<{
-  queue: QueueItem[]
+  queue: JobDto[]
   imageSrc: (item: ImageGenerationResult) => string
 }>()
 
 const emit = defineEmits<{
   clear: []
-  retry: [item: QueueItem]
+  retry: [item: JobDto]
 }>()
 
 const bemm = useBemm('image-generation-queue', { return: 'string', includeBaseClass: true })
@@ -45,33 +45,27 @@ const bemm = useBemm('image-generation-queue', { return: 'string', includeBaseCl
       >
         <div :class="bemm('status')">
           <span v-if="item.status === 'pending'">...</span>
-          <span v-else-if="item.status === 'generating'" :class="bemm('spinner')">...</span>
+          <span v-else-if="item.status === 'processing'" :class="bemm('spinner')">...</span>
           <span v-else-if="item.status === 'done'">Done</span>
           <span v-else>Error</span>
         </div>
         <div :class="bemm('info')">
           <strong :class="bemm('label')">{{ item.label }}</strong>
-          <span v-if="item.status === 'generating'" :class="bemm('sub')">Generating...</span>
+          <span v-if="item.status === 'processing'" :class="bemm('sub')">Generating...</span>
           <span
             v-else-if="item.status === 'error'"
             :class="bemm('error')"
-            :title="item.error ?? undefined"
+            :title="item.error?.message ?? undefined"
           >
-            {{ item.error }}
+            {{ item.error?.message }}
           </span>
           <span v-else-if="item.status === 'done'" :class="bemm('sub')">
-            {{ item.input.type === 'enrich' ? 'Enriched' : Array.isArray(item.result) ? `${item.result.length} images - check Drafts` : 'Done - check Drafts' }}
+            {{ extractJobResults(item).length > 1 ? `${extractJobResults(item).length} images - check Drafts` : 'Done - check Drafts' }}
           </span>
         </div>
-        <img
-          v-if="item.result && !Array.isArray(item.result)"
-          :class="bemm('thumb')"
-          :src="imageSrc(item.result)"
-          :alt="item.label"
-        />
-        <div v-else-if="Array.isArray(item.result)" :class="bemm('thumbs')">
+        <div v-if="item.status === 'done' && extractJobResults(item).length" :class="bemm('thumbs')">
           <img
-            v-for="result in item.result.slice(0, 4)"
+            v-for="result in extractJobResults(item).slice(0, 4)"
             :key="result.id"
             :class="bemm('thumb')"
             :src="imageSrc(result)"
@@ -149,7 +143,7 @@ const bemm = useBemm('image-generation-queue', { return: 'string', includeBaseCl
     background: var(--admin-page-bg);
     border: 1px solid var(--admin-border);
 
-    &--generating {
+    &--processing {
       border-color: var(--color-primary);
     }
 

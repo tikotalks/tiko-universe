@@ -54,6 +54,12 @@ secret_name = "ATLAS_API_KEY"
 pattern = "dev-api.tikotalks.com/v1/generation/*"
 zone_name = "tikotalks.com"
 
+# Drains the durable image queue as a backstop to waitUntil. waitUntil starts a
+# job immediately on enqueue; this cron reclaims anything that slipped through
+# (Worker ended early) or stalled in 'processing'.
+[triggers]
+crons = ["*/1 * * * *"]
+
 # ── Production environment ──────────────────────────────────────
 # Deploy with: npx wrangler deploy --env production
 
@@ -112,3 +118,6 @@ custom_domain = true
 [[env.production.routes]]
 pattern = "api.tikotalks.com/v1/generation/*"
 zone_name = "tikotalks.com"
+
+[env.production.triggers]
+crons = ["*/1 * * * *"]

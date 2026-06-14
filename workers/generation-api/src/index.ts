@@ -1,7 +1,9 @@
 import { CORS_HEADERS, apiError, fetchWithRetry, json } from './http'
 import { resolveSecrets } from '../../shared/secrets'
+import { authenticate } from '../../shared/auth'
 import { ALLOWED_IMAGE_SIZES, atlasAuthorization as atlasAuth, boostPrompt, type ImageMode, type TikoStyle } from './image-prompts'
 import {
+  authFailureResponse,
   canAccessOwnedRecord,
   canMutateOwnedRecord,
   createdBy,
@@ -28,6 +30,20 @@ import {
   type GenerationTtsRequest,
   type NormalizedTtsRequest,
 } from './speech'
+import {
+  claimNextPendingJob,
+  claimStalledJob,
+  deleteJobRow,
+  enqueueJobs,
+  getJobRow,
+  listJobRows,
+  markJobDone,
+  markJobError,
+  toJobDto,
+  type GenerateJobInput,
+  type GenerationJobInput,
+  type GenerationJobRow,
+} from './jobs'
 
 export interface Env {
   GENERATION_DB: D1DatabaseLike
@@ -53,7 +69,18 @@ export interface Env {
 }
 
 export interface D1DatabaseLike {
-  prepare(sql: string): { bind(...values: unknown[]): { first<T>(): Promise<T | null>; all<T>(): Promise<{ results: T[] }>; run(): Promise<{ meta?: { changes?: number } }> } }
+  prepare(sql: string): {
+    bind(...values: unknown[]): D1StatementLike
+    first<T>(): Promise<T | null>
+    all<T>(): Promise<{ results: T[] }>
+    run(): Promise<{ meta?: { changes?: number } }>
+  }
+}
+
+interface D1StatementLike {
+  first<T>(): Promise<T | null>
+  all<T>(): Promise<{ results: T[] }>
+  run(): Promise<{ meta?: { changes?: number } }>
 }
 
 export interface R2BucketLike {
@@ -107,7 +134,7 @@ const ELEVENLABS_VOICE_CATALOG = DEFAULT_ELEVENLABS_VOICES.map((voice) => ({
 const VOICE_SAMPLE_KEY_RE = /^voice-samples\/[a-z0-9._-]+\/[a-zA-Z0-9_-]{6,64}\.mp3$/
 
 export default {
-  async fetch(request: Request, env: Env): Promise<Response> {
+  async fetch(request: Request, env: Env, ctx?: ExecutionContext): Promise<Response> {
     try {
       if (request.method === 'OPTIONS') return new Response(null, { headers: CORS_HEADERS })
       const resolvedEnv = await resolveSecrets(env)
@@ -118,6 +145,10 @@ export default {
       if (url.pathname === '/v1/generation/tts' && request.method === 'POST') return await generateTts(request, resolvedEnv)
       if (url.pathname.startsWith('/v1/generation/voice-samples/') && request.method === 'GET') return await requirePaidAccess(request, resolvedEnv, { capability: 'voice.sample', units: 40, maxRequestsPerMinute: 30, maxUnitsPerDay: 2000 }, () => getVoiceSample(url, resolvedEnv))
       if (url.pathname === '/v1/generation/image' && request.method === 'POST') return await requireAuth(request, resolvedEnv, (access) => generateImage(request, resolvedEnv, access))
+      if (url.pathname === '/v1/generation/jobs' && request.method === 'POST') return await enqueueJobRoute(request, resolvedEnv, ctx)
+      if (url.pathname === '/v1/generation/jobs' && request.method === 'GET') return await listJobsRoute(request, resolvedEnv)
+      if (url.pathname.startsWith('/v1/generation/jobs/') && request.method === 'GET') return await getJobRoute(url.pathname, request, resolvedEnv)
+      if (url.pathname.startsWith('/v1/generation/jobs/') && request.method === 'DELETE') return await requireAuth(request, resolvedEnv, (access) => deleteJobRoute(url.pathname, resolvedEnv, access))
       if (url.pathname.startsWith('/v1/generation/images/') && url.pathname.endsWith('/binary') && request.method === 'GET') return await getImage(request, url.pathname, resolvedEnv)
       if (url.pathname.startsWith('/v1/generation/images/') && url.pathname.endsWith('/promote') && request.method === 'POST') return await requireAuth(request, resolvedEnv, (access) => promoteImage(url.pathname, resolvedEnv, access))
       if (url.pathname.startsWith('/v1/generation/images/') && url.pathname.endsWith('/media-link') && request.method === 'POST') return await requireAuth(request, resolvedEnv, (access) => linkImageMedia(url.pathname, request, resolvedEnv, access))
@@ -140,6 +171,16 @@ export default {
       console.error('[generation-api] unhandled request error', error)
       return apiError('internal_error', 'Generation request failed.', 500)
     }
+  },
+
+  // Cron backstop: waitUntil on enqueue starts jobs immediately, but if a Worker
+  // is killed mid-run or a job is enqueued out-of-band, this drains the queue.
+  async scheduled(_controller: ScheduledController, env: Env): Promise<void> {
+    const resolvedEnv = await resolveSecrets(env)
+    await processPendingJobs(resolvedEnv, 4)
+    const stalledBefore = new Date(Date.now() - 5 * 60_000).toISOString()
+    const stalled = await claimStalledJob(resolvedEnv, stalledBefore)
+    if (stalled) await runJobToCompletion(resolvedEnv, stalled)
   },
 }
 
@@ -839,6 +880,163 @@ function toAtlasImageSize(size: string): 'square' | 'portrait' | 'landscape' {
   if (size === '1024x1792') return 'portrait'
   if (size === '1792x1024') return 'landscape'
   return 'square'
+}
+
+// ── Server-side generation queue ───────────────────────────────────────
+// Enqueue is a cheap write that returns immediately; processing happens in a
+// waitUntil (kicked off on enqueue) and/or the scheduled() cron backstop. The
+// client polls GET /jobs to render progress, so closing the laptop loses
+// nothing — jobs live in D1 and run to completion regardless of the client.
+
+const MAX_JOBS_PER_ENQUEUE = 8
+
+interface EnqueueRequestBody {
+  items?: unknown
+  input?: unknown
+}
+
+function coerceJobInputs(body: EnqueueRequestBody): GenerationJobInput[] | { error: Response } {
+  const candidates = Array.isArray(body.items) ? body.items : [body.input]
+  const inputs: GenerationJobInput[] = []
+  for (const raw of candidates) {
+    if (!raw || typeof raw !== 'object') return { error: apiError('invalid_job_input', 'Each job needs a type and input.', 400) }
+    const type = (raw as { type?: unknown }).type
+    if (type === 'generate') {
+      const g = raw as Record<string, unknown>
+      if (typeof g.prompt !== 'string' || !g.prompt.trim()) return { error: apiError('missing_prompt', 'Prompt is required.', 400, 'prompt') }
+      inputs.push({ type: 'generate', prompt: g.prompt, mode: g.mode as GenerateJobInput['mode'], tikoStyle: g.tikoStyle as GenerateJobInput['tikoStyle'], size: g.size as GenerateJobInput['size'], quality: g.quality as GenerateJobInput['quality'], style: g.style as GenerateJobInput['style'], transparent: g.transparent as boolean | undefined, title: g.title as string | undefined, category: g.category as string | undefined, tags: g.tags as string[] | undefined, count: g.count as number | undefined })
+    } else if (type === 'edit') {
+      const e = raw as Record<string, unknown>
+      if (typeof e.sourceId !== 'string' || typeof e.prompt !== 'string') return { error: apiError('invalid_job_input', 'Edit jobs need sourceId and prompt.', 400) }
+      inputs.push({ type: 'edit', sourceId: e.sourceId, prompt: e.prompt, maskBase64: e.maskBase64 as string | undefined, size: (e.size as GenerateJobInput['size']) ?? '1024x1024' })
+    } else if (type === 'upscale') {
+      const u = raw as Record<string, unknown>
+      if (typeof u.sourceId !== 'string') return { error: apiError('invalid_job_input', 'Upscale jobs need sourceId.', 400) }
+      inputs.push({ type: 'upscale', sourceId: u.sourceId, size: (u.size as GenerateJobInput['size']) ?? '1024x1024', quality: u.quality as string | undefined, title: u.title as string | undefined, description: u.description as string | undefined, category: u.category as string | undefined, tags: u.tags as string[] | undefined })
+    } else {
+      return { error: apiError('invalid_job_type', 'Job type must be generate, edit, or upscale.', 400) }
+    }
+    if (inputs.length > MAX_JOBS_PER_ENQUEUE) return { error: apiError('too_many_jobs', `At most ${MAX_JOBS_PER_ENQUEUE} jobs per request.`, 400) }
+  }
+  if (!inputs.length) return { error: apiError('invalid_job_input', 'No jobs provided.', 400) }
+  return inputs
+}
+
+async function enqueueJobRoute(request: Request, env: Env, ctx?: ExecutionContext): Promise<Response> {
+  const authed = await authenticate(request, env)
+  if (authed.ok === false) return authFailureResponse(authed.response)
+  const ownerId = authed.method === 'session' && authed.userId ? authed.userId : null
+
+  let body: EnqueueRequestBody
+  try {
+    body = await request.json() as EnqueueRequestBody
+  } catch {
+    return apiError('invalid_json', 'Request body must be valid JSON.', 400)
+  }
+
+  const coerced = coerceJobInputs(body)
+  if ('error' in coerced) return coerced.error
+  const rows = await enqueueJobs(env, ownerId, coerced)
+
+  // Kick off processing immediately so latency is sub-second under normal load.
+  // The cron handler covers the case where this Worker invocation ends early.
+  ctx?.waitUntil(processPendingJobs(env, rows.length))
+
+  return json({ data: rows.map(toJobDto), meta: { schemaVersion: 1, count: rows.length } }, 202)
+}
+
+async function listJobsRoute(request: Request, env: Env): Promise<Response> {
+  const authed = await authenticate(request, env)
+  if (authed.ok === false) return authFailureResponse(authed.response)
+  const ownerId = authed.method === 'session' && authed.userId ? authed.userId : null
+  // Service keys / admins (no session userId) see all jobs; users see their own.
+  const rows = await listJobRows(env, ownerId, 100)
+  return json({ data: rows.map(toJobDto), meta: { schemaVersion: 1, count: rows.length } })
+}
+
+async function getJobRoute(pathname: string, request: Request, env: Env): Promise<Response> {
+  const authed = await authenticate(request, env)
+  if (authed.ok === false) return authFailureResponse(authed.response)
+  const id = pathname.replace('/v1/generation/jobs/', '')
+  if (!isSafeId(id)) return apiError('invalid_job_id', 'Job id is invalid.', 400)
+  const row = await getJobRow(env, id)
+  if (!row) return apiError('job_not_found', 'Job not found.', 404)
+  // Scope to owner unless the caller is elevated (service key / admin).
+  if (row.created_by && authed.method === 'session' && authed.userId !== row.created_by && !isAdmin(authed)) {
+    return apiError('job_not_found', 'Job not found.', 404)
+  }
+  return json({ data: toJobDto(row) })
+}
+
+async function deleteJobRoute(pathname: string, env: Env, access: GenerationAccessContext): Promise<Response> {
+  const id = pathname.replace('/v1/generation/jobs/', '')
+  if (!isSafeId(id)) return apiError('invalid_job_id', 'Job id is invalid.', 400)
+  const row = await getJobRow(env, id)
+  if (!row) return apiError('job_not_found', 'Job not found.', 404)
+  if (row.created_by && !isElevatedAccess(access) && sessionUserId(access) !== row.created_by) return forbiddenOrUnauthorized(access)
+  const changes = await deleteJobRow(env, id)
+  if (!changes) return apiError('job_not_found', 'Job not found.', 404)
+  return json({ data: { id, deleted: true } })
+}
+
+function isAdmin(authed: { method: string; roles?: string[] }): boolean {
+  return Array.isArray(authed.roles) && authed.roles.includes('admin')
+}
+
+// Reconstruct the in-process auth context for a job owner. The job already passed
+// auth at enqueue time; here we only need createdBy() and ownership checks to
+// resolve to the same owner. Bearer token is intentionally absent — async Atlas
+// calls fall back to ATLAS_API_KEY (the service credential).
+function accessForJobOwner(createdByValue: string | null): GenerationAccessContext {
+  return {
+    auth: createdByValue
+      ? { ok: true, method: 'session', userId: createdByValue, roles: [], capabilities: {}, bearerToken: 'job' }
+      : { ok: true, method: 'api_key', subjectId: 'job', roles: [], capabilities: {}, bearerToken: 'job' },
+  }
+}
+
+function syntheticRequest(pathname: string, body: unknown): Request {
+  return new Request(`https://generation.local${pathname}`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body),
+  })
+}
+
+// Runs a single claimed job to completion, persisting result or error.
+export async function runJobToCompletion(env: Env, job: GenerationJobRow): Promise<void> {
+  try {
+    const input = JSON.parse(job.input_json) as GenerationJobInput
+    const access = accessForJobOwner(job.created_by)
+    let response: Response
+    if (input.type === 'edit') {
+      response = await editImageVariant(`/v1/generation/images/${input.sourceId}/edit`, syntheticRequest('/edit', { prompt: input.prompt, mask_base64: input.maskBase64, size: input.size }), env, access)
+    } else if (input.type === 'upscale') {
+      response = await upscaleImage(`/v1/generation/images/${input.sourceId}/upscale`, syntheticRequest('/upscale', { size: input.size, quality: input.quality }), env, access)
+    } else {
+      response = await generateImage(syntheticRequest('/v1/generation/image', input), env, access)
+    }
+    const body = await response.json().catch(() => null) as { error?: { code?: string; message?: string } } | null
+    if (!response.ok || body?.error) {
+      await markJobError(env, job.id, body?.error?.code ?? 'job_failed', body?.error?.message ?? `Generation failed with status ${response.status}.`)
+      return
+    }
+    await markJobDone(env, job.id, body)
+  } catch (error) {
+    const message = error instanceof Error ? error.message : 'Generation failed.'
+    console.error('[jobs] processing failed for', job.id, error)
+    await markJobError(env, job.id, 'job_failed', message)
+  }
+}
+
+// Drains up to `limit` pending jobs sequentially. Sequential keeps provider rate
+// limits sane and lets each job store its result before the next starts.
+export async function processPendingJobs(env: Env, limit: number): Promise<void> {
+  for (let i = 0; i < limit; i += 1) {
+    const job = await claimNextPendingJob(env)
+    if (!job) break
+    await runJobToCompletion(env, job)
+  }
 }
 
 async function getImage(request: Request, pathname: string, env: Env): Promise<Response> {

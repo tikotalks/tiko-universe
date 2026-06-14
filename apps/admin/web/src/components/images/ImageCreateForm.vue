@@ -18,7 +18,7 @@ const tagsText = ref('tiko, child-friendly')
 const size = ref<'1024x1024' | '1024x1792' | '1792x1024'>('1024x1024')
 const quality = ref<'standard' | 'hd'>('standard')
 const tikoStyle = ref<TikoStyle>('tiko-v3')
-const previewCount = ref(4)
+const previewCount = ref(2)
 
 const tikoStylePrompts: Record<TikoStyle, string> = {
   'tiko-original': `
@@ -147,7 +147,7 @@ function useTemplate(kind: 'character' | 'scene' | 'object') {
     <p :class="form('hint')">
       Generates {{ previewCount }} preview{{ previewCount > 1 ? 's' : '' }} in
       <button type="button" :class="form('inline-link')" @click="emit('view-drafts')">Drafts</button>.
-      Pick one and Upscale it to full quality.
+      Pick one and render it at high quality.
     </p>
   </form>
 </template>

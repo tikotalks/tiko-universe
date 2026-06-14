@@ -1,5 +1,6 @@
 import { reactive } from 'vue'
 import type { ImageGenerationResult, AdminApiResponse } from '../types/admin'
+import type { JobDto, JobInput } from '../components/images/imageGenerationQueueTypes'
 import { useAdminAuth } from './useAdminAuth'
 
 // Shared across every useImageGeneration() instance so each binary loads once.
@@ -217,5 +218,29 @@ export function useImageGeneration() {
     return body.data
   }
 
-  return { generateImage, listImages, promoteImage, pushToMedia, deleteImage, enrichImage, editImage, upscaleImage, imageSrc }
+  async function enqueueJobs(items: JobInput[]): Promise<JobDto[]> {
+    const response = await fetch(`${baseUrl()}/jobs`, {
+      method: 'POST',
+      headers: authHeaders({ 'content-type': 'application/json' }),
+      body: JSON.stringify({ items }),
+    })
+    const body = await readJson<{ data: JobDto[] }>(response, 'Job enqueue failed')
+    return body.data
+  }
+
+  async function listJobs(): Promise<JobDto[]> {
+    const response = await fetch(`${baseUrl()}/jobs`, { headers: authHeaders() })
+    const body = await readJson<{ data: JobDto[] }>(response, 'Could not load jobs')
+    return body.data
+  }
+
+  async function deleteJob(id: string): Promise<void> {
+    const response = await fetch(`${baseUrl()}/jobs/${encodeURIComponent(id)}`, {
+      method: 'DELETE',
+      headers: authHeaders(),
+    })
+    await readJson(response, 'Could not delete job')
+  }
+
+  return { generateImage, listImages, promoteImage, pushToMedia, deleteImage, enrichImage, editImage, upscaleImage, enqueueJobs, listJobs, deleteJob, imageSrc }
 }
