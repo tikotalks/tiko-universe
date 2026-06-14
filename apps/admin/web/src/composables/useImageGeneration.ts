@@ -1,5 +1,12 @@
+import { reactive } from 'vue'
 import type { ImageGenerationResult, AdminApiResponse } from '../types/admin'
 import { useAdminAuth } from './useAdminAuth'
+
+// Shared across every useImageGeneration() instance so each binary loads once.
+// <img> tags can't send a Bearer token, so private (draft) binaries 401 when
+// loaded directly; we fetch them with auth and cache an object URL keyed by id.
+const imageObjectUrls = reactive(new Map<string, string>())
+const loadingImageBlobs = new Set<string>()
 
 type TikoStyle = 'tiko-original' | 'tiko-v2' | 'tiko-natural'
 
@@ -91,13 +98,40 @@ export function useImageGeneration() {
     return readJson<ImageListResponse>(response, 'Could not load images')
   }
 
-  function imageSrc(item: { imageUrl: string }): string {
+  function binaryUrl(item: { imageUrl: string }): string {
     if (item.imageUrl.startsWith('http')) return item.imageUrl
     return `${baseUrl()}${item.imageUrl.replace('/v1/generation', '')}`
   }
 
+  async function ensureImageBlob(item: { id: string; imageUrl: string }): Promise<void> {
+    if (imageObjectUrls.has(item.id) || loadingImageBlobs.has(item.id)) return
+    loadingImageBlobs.add(item.id)
+    try {
+      const response = await fetch(binaryUrl(item), { headers: authHeaders() })
+      if (!response.ok) return
+      imageObjectUrls.set(item.id, URL.createObjectURL(await response.blob()))
+    } catch {
+      // Leave uncached; imageSrc will retry on a later render.
+    } finally {
+      loadingImageBlobs.delete(item.id)
+    }
+  }
+
+  // Returns a directly-usable src. Public binaries / data URLs pass through; for
+  // auth-gated draft binaries it returns the cached blob URL (kicking off an
+  // authed fetch on first use), so <img> renders without a Bearer header.
+  function imageSrc(item: { id: string; imageUrl: string }): string {
+    if (item.imageUrl.startsWith('http') || item.imageUrl.startsWith('data:') || item.imageUrl.startsWith('blob:')) {
+      return item.imageUrl
+    }
+    const cached = imageObjectUrls.get(item.id)
+    if (cached) return cached
+    void ensureImageBlob(item)
+    return ''
+  }
+
   async function pushToMedia(item: ImageGalleryItem): Promise<string> {
-    const imageUrl = imageSrc(item)
+    const imageUrl = binaryUrl(item)
     const imageResponse = await fetch(imageUrl, { headers: authHeaders() })
     if (!imageResponse.ok) throw new Error(`Failed to download image for media upload: ${imageResponse.status}`)
 
