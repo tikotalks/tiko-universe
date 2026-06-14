@@ -12,6 +12,7 @@ struct TalkView: View {
     @AppStorage("tiko.language") private var languageCode = "en"
     @AppStorage("talk.nativeSpeechFallback") private var nativeSpeechFallback = true
     @AppStorage("talk.cloudLayout") private var cloudLayout = true
+    @AppStorage("talk.speakWordOnTap") private var speakWordOnTap = true
 
     private let speechService = TalkSpeechService()
     private let audioPlayer = TalkAudioPlayer()
@@ -45,6 +46,12 @@ struct TalkView: View {
                         icon: "circle.hexagongrid.fill",
                         appColor: .talk,
                         isOn: $cloudLayout
+                    )
+                    TikoSettingsToggleRow(
+                        title: "Speak word on tap",
+                        icon: "hand.tap.fill",
+                        appColor: .talk,
+                        isOn: $speakWordOnTap
                     )
                     TikoSettingsToggleRow(
                         title: "Native speech fallback",
@@ -256,6 +263,11 @@ struct TalkView: View {
 
     private func addWord(_ word: TalkWordTile) async {
         UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+        // Speak the tapped word immediately (native speech for low latency);
+        // toggleable in Settings.
+        if speakWordOnTap {
+            speechService.speak(word.text, languageCode: speechLanguageCode)
+        }
         await store.addWord(word)
     }
 
