@@ -35,7 +35,13 @@ function adminApiBaseUrl(): string {
 
 function identityApiBaseUrl(): string {
   const env = (import.meta as ImportMeta & { env?: Record<string, string | undefined> }).env
-  return (env?.VITE_TIKO_API_BASE_URL ?? env?.VITE_IDENTITY_API_URL ?? 'https://identity.tikoapi.org/v1').replace(/\/$/, '')
+  // The admin app is served from admin.tikoapps.org and the browser session
+  // cookie is scoped Domain=.tikoapps.org. Identity must therefore be called on
+  // a *.tikoapps.org host (id.tikoapps.org) so the cookie is accepted by the
+  // browser and sent back same-site on refresh. Calling identity.tikoapi.org
+  // (a different registrable domain) makes the browser drop the cookie, which
+  // silently logs the admin out on reload.
+  return (env?.VITE_TIKO_API_BASE_URL ?? env?.VITE_IDENTITY_API_URL ?? 'https://id.tikoapps.org/v1').replace(/\/$/, '')
 }
 
 function storeIdentity(bundle: IdentityBundle) {
