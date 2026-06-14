@@ -1,4 +1,4 @@
-import type { GenerationTtsRequest, LegacyTtsResponse, TikoTtsProvider } from '@tiko/media'
+import type { GenerationTtsRequest, TikoTtsProvider } from '@tiko/media'
 import { generationTtsCacheKey, isGenerationTtsResponse } from '@tiko/media'
 
 export type { TikoTtsProvider }
@@ -15,7 +15,6 @@ export interface TikoTtsResponse {
 
 export interface TikoTtsClientOptions {
   workerUrl?: string
-  cdnUrl?: string
   fetcher?: typeof fetch
   credentials?: RequestCredentials
   audioFactory?: (url: string) => { play: () => Promise<void> | void }
@@ -37,7 +36,6 @@ function createBrowserFallback(fallbackUsed = false, error?: string): TikoTtsRes
 
 export function createTikoTtsClient(options: TikoTtsClientOptions = {}) {
   const workerUrl = normalizeBaseUrl(options.workerUrl ?? 'https://api.tikotalks.com/v1')
-  const cdnUrl = normalizeBaseUrl(options.cdnUrl ?? 'https://tts.tikocdn.org')
   const fetcher = options.fetcher ?? globalThis.fetch
   const credentials = options.credentials ?? 'include'
   const memoryCache = new Map<string, TikoTtsResponse>()
@@ -53,10 +51,6 @@ export function createTikoTtsClient(options: TikoTtsClientOptions = {}) {
       .replace(/\/generate$/, '')
   }
 
-  function generationBase(): string {
-    return workerUrl.replace('//identity.tikoapi.org/', '//generation.tikoapi.org/')
-  }
-
   function cacheKey(request: TikoTtsRequest) {
     return generationTtsCacheKey(request)
   }
@@ -68,39 +62,33 @@ export function createTikoTtsClient(options: TikoTtsClientOptions = {}) {
     return `${base}/v1/atlas/speech`
   }
 
-  function toCdnUrl(audioUrl: string) {
+  function normalizeAtlasAudioUrl(audioUrl: string) {
     if (audioUrl.startsWith('http')) return audioUrl
-    const key = audioUrl.match(/key=([^&]+)/)?.[1]
-    if (key) return `${cdnUrl}/${decodeURIComponent(key)}`
     if (audioUrl.startsWith('/v1/atlas/assets/')) return `${atlasBase().replace(/\/v1(?:\/atlas)?$/, '')}${audioUrl}`
-    if (audioUrl.startsWith('/v1/generation/audio/')) return `${generationBase().replace(/\/v1$/, '')}${audioUrl}`
-    return `${cdnUrl}${audioUrl.startsWith('/') ? '' : '/'}${audioUrl}`
+    throw new Error('invalid_atlas_audio_url')
   }
 
   function normalizeTtsResponse(data: unknown): TikoTtsResponse {
-    if (isGenerationTtsResponse(data)) {
-      const provider = typeof data.data.provider === 'object' && data.data.provider !== null
-        ? data.data.provider as { name?: string; model?: string; voice?: string }
-        : { name: data.data.provider as string | undefined, model: data.data.model, voice: data.data.voice }
-      const meta = data.meta as { cached?: boolean; schemaVersion?: number; requestId?: string } | undefined
-      return {
-        success: true,
-        audioUrl: toCdnUrl(data.data.audioUrl),
-        cached: data.meta?.cached ?? false,
-        metadata: {
-          id: data.data.id,
-          provider: provider.name,
-          language: data.data.language,
-          voice: provider.voice ?? data.data.voice,
-          model: provider.model ?? data.data.model,
-          schemaVersion: meta?.schemaVersion,
-          requestId: meta?.requestId
-        }
+    if (!isGenerationTtsResponse(data)) throw new Error('invalid_atlas_speech_response')
+
+    const provider = typeof data.data.provider === 'object' && data.data.provider !== null
+      ? data.data.provider as { name?: string; model?: string; voice?: string }
+      : { name: data.data.provider as string | undefined, model: data.data.model, voice: data.data.voice }
+    const meta = data.meta as { cached?: boolean; schemaVersion?: number; requestId?: string } | undefined
+    return {
+      success: true,
+      audioUrl: normalizeAtlasAudioUrl(data.data.audioUrl),
+      cached: data.meta?.cached ?? false,
+      metadata: {
+        id: data.data.id,
+        provider: provider.name,
+        language: data.data.language,
+        voice: provider.voice ?? data.data.voice,
+        model: provider.model ?? data.data.model,
+        schemaVersion: meta?.schemaVersion,
+        requestId: meta?.requestId
       }
     }
-
-    const legacy = data as LegacyTtsResponse
-    return legacy.audioUrl ? { ...legacy, audioUrl: toCdnUrl(legacy.audioUrl) } : legacy
   }
 
   async function getAudio(request: TikoTtsRequest): Promise<TikoTtsResponse> {

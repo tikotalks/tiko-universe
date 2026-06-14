@@ -44,10 +44,10 @@
    - Contract requires a normalized `SessionBundle` with `user`, `device`, `session`, `account`, `runtime`, and `capabilities`.
    - OpenAPI documents the newer shape, but package and worker implementation have not caught up.
 
-2. **Identity endpoint paths are still partly legacy/internal.**
-   - Implemented client paths include `/identity/email/challenge`, `/identity/email/verify`, `/identity/managed/children`, `/identity/managed/login`, and `DELETE /identity/me`.
-   - Contract paths are `/identity/email`, `/identity/otp/request`, `/identity/otp/verify`, `/identity/magic-links/verify`, `/identity/child-accounts`, `/identity/child-accounts/login`, and `/identity/deletion-requests`.
-   - Keep compatibility aliases only if needed, but make canonical docs paths the implemented/public paths.
+2. **Identity endpoint paths must stay canonical.**
+   - Public child-account login uses `/identity/child-accounts/login`.
+   - Public account deletion uses `/identity/deletion-requests`.
+   - Do not reintroduce managed-child aliases or direct self-delete routes.
 
 3. **Account types and runtime modes are not fully modelled.**
    - Current implementation infers roles such as `child`, `profile_manager`, etc.
@@ -68,8 +68,8 @@
    - Missing strict 4-digit code contract.
    - Missing admin-only promote/demote route in `admin-api` or an explicit admin contract implementation.
 
-6. **Deletion/reset flow is not contract-complete.**
-   - Current `DELETE /identity/me` hard-deletes/disables identity rows immediately.
+6. **Deletion/reset flow uses deletion requests.**
+   - Account deletion must go through `/identity/deletion-requests`.
    - Contract requires deletion requests with status/cancel paths and scope handling.
    - App API has settings/state only; progress, app reset, progress reset, reset-my-data category semantics need implementation.
 
@@ -145,7 +145,7 @@ npm run test:contracts
 
 **Tasks:**
 
-1. Add/adjust tests that assert canonical paths exist and legacy-only paths are not the only implementation:
+1. Add/adjust tests that assert canonical paths exist and removed aliases are not required:
    - `POST /v1/identity/email`
    - `POST /v1/identity/otp/request`
    - `POST /v1/identity/otp/verify`
@@ -215,7 +215,7 @@ npm run typecheck
 
 ---
 
-### Phase 2: Canonical identity endpoints and compatibility aliases
+### Phase 2: Canonical Identity Endpoints
 
 **Objective:** Implement the documented paths as first-class Tiko-facing endpoints by configuring/delegating to Ankore wherever possible. Only write adapter code in Tiko for product-specific path/response naming.
 
@@ -386,7 +386,7 @@ npm run typecheck
    - `child_account`
 4. Enforce PIN/recovery grant for Verified/Profile Manager deletion when required.
 5. After account deletion, the client should bootstrap a fresh Temporary Account.
-6. Keep `DELETE /identity/me` only as an internal compatibility endpoint if needed; public clients should use deletion requests.
+6. Keep account deletion on `/identity/deletion-requests`; do not add a direct self-delete route.
 
 **Acceptance criteria:**
 
@@ -524,7 +524,7 @@ npm run audit:doctrine
 8. **Phase 8:** native alignment.
 9. **Phase 9:** deploy/smoke gates.
 
-This order keeps every downstream app from building on the wrong session shape. The tempting alternative is to patch individual app UI first, but that would spread legacy identity assumptions everywhere.
+This order keeps every downstream app from building on the wrong session shape. Patching individual app UI first would spread outdated identity assumptions everywhere.
 
 ---
 

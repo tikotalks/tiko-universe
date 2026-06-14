@@ -1,5 +1,5 @@
 -- Ankore identity core schema for Tiko.
--- New identity installs use Ankore tables directly; legacy users/devices/sessions/magic_links
+-- New identity installs use Ankore tables directly. Removed users/devices/sessions/magic_links
 -- are intentionally not recreated here so the Worker cannot drift back to Tiko-local auth logic.
 
 CREATE TABLE IF NOT EXISTS identity_subjects (

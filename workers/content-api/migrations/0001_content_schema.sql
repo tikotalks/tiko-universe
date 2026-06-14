@@ -1,4 +1,4 @@
--- Initial content-api D1 schema. Kept in sync with ../schema.sql.
+-- Initial content-api D1 schema.
 CREATE TABLE IF NOT EXISTS content_projects (
   id TEXT PRIMARY KEY,
   name TEXT NOT NULL,

@@ -48,9 +48,9 @@ function cloneSettings(value: SpeechServiceConfig): SpeechServiceConfig {
     defaultProvider: value.defaultProvider,
     models: { ...value.models },
     voices: {
-      openai: { ...(value.voices.openai ?? {}) },
-      elevenlabs: { ...(value.voices.elevenlabs ?? {}) },
-      narakeet: { ...(value.voices.narakeet ?? {}) },
+      openai: { ...value.voices.openai },
+      elevenlabs: { ...value.voices.elevenlabs },
+      narakeet: { ...value.voices.narakeet },
     },
   }
 }
@@ -68,12 +68,12 @@ function updateModel(provider: SpeechProvider, value: string) {
 function updateNarakeetVoice(locale: string, voice: string) {
   settings.value.voices = {
     ...settings.value.voices,
-    narakeet: { ...(settings.value.voices.narakeet ?? {}), [locale]: voice.trim() },
+    narakeet: { ...settings.value.voices.narakeet, [locale]: voice.trim() },
   }
 }
 
 function resetNarakeetVoice(locale: string) {
-  const next = { ...(settings.value.voices.narakeet ?? {}) }
+  const next = { ...settings.value.voices.narakeet }
   next[locale] = defaults.value[locale]
   settings.value.voices = { ...settings.value.voices, narakeet: next }
 }

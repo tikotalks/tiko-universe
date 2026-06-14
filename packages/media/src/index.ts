@@ -31,14 +31,6 @@ export interface GenerationTtsResponse {
   }
 }
 
-export interface LegacyTtsResponse {
-  success: boolean
-  audioUrl?: string
-  cached?: boolean
-  metadata?: Record<string, unknown>
-  error?: string
-}
-
 export interface ApiErrorEnvelope {
   error: {
     code: string

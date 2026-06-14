@@ -42,6 +42,7 @@ const bemm = useBemm('site-footer', { return: 'string', includeBaseClass: true }
 
         <nav :class="bemm('col')" aria-label="For caregivers">
           <p :class="bemm('col-label')">Caregivers</p>
+          <RouterLink to="/educators" :class="bemm('link')">For educators</RouterLink>
           <RouterLink to="/caregivers" :class="bemm('link')">Trust principles</RouterLink>
           <RouterLink to="/faq" :class="bemm('link')">FAQ</RouterLink>
           <RouterLink to="/docs/philosophy" :class="bemm('link')">Philosophy</RouterLink>

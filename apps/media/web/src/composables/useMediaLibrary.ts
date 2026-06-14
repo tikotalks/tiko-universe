@@ -63,7 +63,7 @@ function normalizeMediaItem(raw: unknown): MediaItem {
     durationSeconds: numberValue(row.durationSeconds) ?? numberValue(row.duration),
     category: stringValue(row.category, stringValue(row.folder, 'media')),
     tags: arrayValue(row.tags),
-    isPublic: typeof row.isPublic === 'boolean' ? row.isPublic : !Boolean(row.is_private),
+    isPublic: typeof row.isPublic === 'boolean' ? row.isPublic : !row.is_private,
     source: stringValue(row.source, 'upload') as MediaItem['source'],
     generationPrompt: stringValue(row.generationPrompt, stringValue(row.prompt)) || undefined,
     createdAt: stringValue(row.createdAt, stringValue(row.created_at)),

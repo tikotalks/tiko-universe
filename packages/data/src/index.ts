@@ -5,17 +5,17 @@ export type { TikoColorName } from './tikoColors'
 export type JsonValue = null | boolean | number | string | JsonValue[] | { [key: string]: JsonValue }
 export type JsonObject = { [key: string]: JsonValue | undefined }
 
-export interface VersionedAppData<T extends Record<string, unknown> = Record<string, unknown>> {
+export interface VersionedAppData {
   app: TikoAppId
   updatedAt: string | null
   version: number
 }
 
-export interface AppSettingsResponse<T extends Record<string, unknown> = Record<string, unknown>> extends VersionedAppData<T> {
+export interface AppSettingsResponse<T extends Record<string, unknown> = Record<string, unknown>> extends VersionedAppData {
   settings: T
 }
 
-export interface AppStateResponse<T extends Record<string, unknown> = Record<string, unknown>> extends VersionedAppData<T> {
+export interface AppStateResponse<T extends Record<string, unknown> = Record<string, unknown>> extends VersionedAppData {
   state: T
 }
 

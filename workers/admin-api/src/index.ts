@@ -1,5 +1,6 @@
-import { authenticate, loadIdentityRoles, resolvePepper, type AuthEnv } from '../../shared/auth'
+import { loadIdentityRoles, requireSession, resolvePepper, type AuthEnv } from '../../shared/auth'
 import { DEFAULT_ATLAS_SPEECH_CONFIG, DEFAULT_NARAKEET_VOICE_BY_LOCALE, normalizeSpeechServiceConfig, type AtlasSpeechServiceConfig } from '../../shared/atlas-speech-config'
+import { resolveSecrets, type SecretStoreBinding } from '../../shared/secrets'
 
 type D1Value = string | number | boolean | null
 
@@ -63,6 +64,7 @@ export interface Env extends AuthEnv {
   MEDIA_API_URL?: string
   COMMUNICATION_API_URL?: string
   COMMUNICATION_API_KEY?: string
+  COMMUNICATION_SECRET?: SecretStoreBinding
   TRANSLATIONS_API_URL?: string
   TRANSLATIONS_API_KEY?: string
 }
@@ -113,7 +115,8 @@ const DEFAULT_ALLOWED_ORIGINS = 'https://admin.tikoapps.org,https://admin-dev.ti
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
     if (request.method === 'OPTIONS') return adminCorsPreflight(request, env)
-    return withAdminCors(request, env, await handleAdminRequest(request, env))
+    const resolvedEnv = await resolveSecrets(env)
+    return withAdminCors(request, resolvedEnv, await handleAdminRequest(request, resolvedEnv))
   },
 
   async scheduled(_event: { cron: string }, env: Env): Promise<void> {
@@ -546,14 +549,9 @@ async function readJson<T>(request: Request): Promise<T> {
 }
 
 async function requireAdmin(request: Request, env: Env): Promise<AdminSession | Response> {
-  const authed = await authenticate(request, env)
-  if (authed.ok === false) return authed.response
-
-  // The admin dashboard is intentionally session-only. API keys may call service-to-service
-  // APIs elsewhere, but they do not prove that the browser user is me@sil.mt.
-  if (authed.method !== 'session' || !authed.userId) {
-    return apiError('admin_session_required', 'Admin access requires a user session.', 403)
-  }
+  const authed = await requireSession(request, env)
+  if (authed instanceof Response) return authed
+  if (!authed.userId) return apiError('admin_session_required', 'Admin access requires a user session.', 403)
 
   const row = await env.AUTH_DB.prepare('SELECT subject_id AS id, email_hash, email_plain FROM identity_accounts WHERE subject_id = ? AND disabled_at IS NULL LIMIT 1')
     .bind(authed.userId)

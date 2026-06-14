@@ -4,7 +4,7 @@
 
 **Goal:** Build a unified media platform for Tiko — a public-facing media browser for discovering/searching/downloading all Tiko assets, plus an admin dashboard for generating images and narrating stories with TTS, with generated content flowing into Tiko Radio.
 
-**Architecture:** Two Vue 3 apps + backend workers. A public **media gallery** app (`apps/media/web`) for browsing, searching, and downloading assets. A protected **admin dashboard** app (`apps/admin/web`) for image generation, story narration with TTS, and asset management. Both consume the existing `generation-api`, `media-api`, and `tts-api` workers. Admin is gated to `me@sil.mt` only via the `admin-api` worker.
+**Architecture:** Two Vue 3 apps + backend workers. A public **media gallery** app (`apps/media/web`) for browsing, searching, and downloading assets. A protected **admin dashboard** app (`apps/admin/web`) for image generation, story narration with TTS, and asset management. Both consume the existing `generation-api`, `media-api`, and Atlas speech path. Admin is gated to `me@sil.mt` only via the `admin-api` worker.
 
 **Tech Stack:** Vue 3 + Vite + TypeScript, `@tiko/ui` (wraps `@sil/ui`), Cloudflare Workers (D1 + R2), OpenAI (DALL-E 3 for images, TTS-1 for audio), Vitest for testing.
 
@@ -15,7 +15,7 @@
 ## What Already Exists
 
 ### Workers (in tiko-universe)
-- **`workers/tts-api/`** — Legacy TTS worker. `POST /generate`, `GET /audio?key=...`. Uses OpenAI TTS. D1 `TTS_DB`, R2 `AUDIO_BUCKET`. 11 voices. Cache-by-hash. Working.
+- **`workers/tts-api/`** — Atlas-only speech adapter for `POST /generate`. It does not serve `/audio`, call providers directly, or own D1/R2 speech storage.
 - **`workers/generation-api/`** — New versioned generation worker. `POST /v1/generation/tts`, `GET /v1/generation/audio/{id}`. D1 `GENERATION_DB`, R2 `GENERATED_MEDIA_BUCKET`. Placeholder D1 ID (not deployed yet).
 - **`workers/media-api/`** — Unified media worker. D1 (`MEDIA_DB`, `ASSETS_DB`), R2 (`MEDIA_BUCKET`, `ASSETS_BUCKET`, `USER_MEDIA_BUCKET`). Routes scaffolded but scripts are `echo scaffold-only`.
 - **`workers/admin-api/`** — Scaffold only, empty `src/index.ts`.
@@ -23,7 +23,7 @@
 - **`workers/shared/auth.ts`** — Bearer session token + scoped API key auth backed by the identity database/service.
 
 ### Packages
-- **`@tiko/media`** — Contracts: `GenerationTtsRequest`, `GenerationTtsAudioAsset`, `LegacyTtsResponse`, `generationTtsCacheKey()`.
+- **`@tiko/media`** — Contracts: generated media, audio assets, and generation request helpers.
 - **`@tiko/ui`** — TikoAppShell, TikoHeader, TikoTtsClient, tikoAppColors (including `radio` color). Wraps `@sil/ui`.
 
 ### Apps

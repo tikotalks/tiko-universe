@@ -16,7 +16,7 @@ const allCopy = [
 
 describe('TikoTalks website app universe metadata', () => {
   it('keeps one local static entry for each v1 app', () => {
-    expect(tikoWebsiteAppUniverse.map((app) => app.slug)).toEqual(['yes-no', 'type', 'cards', 'sequence', 'timer'])
+    expect(tikoWebsiteAppUniverse.map((app) => app.slug)).toEqual(['yes-no', 'type', 'cards', 'sequence', 'timer', 'talk'])
   })
 
   it('exposes the typed fields the website needs', () => {
@@ -30,7 +30,8 @@ describe('TikoTalks website app universe metadata', () => {
       { appName: 'Type', route: '/apps/type', availability: 'planned', hasPlatformNotes: true },
       { appName: 'Cards', route: '/apps/cards', availability: 'planned', hasPlatformNotes: true },
       { appName: 'Sequence', route: '/apps/sequence', availability: 'planned', hasPlatformNotes: true },
-      { appName: 'Timer', route: '/apps/timer', availability: 'planned', hasPlatformNotes: true }
+      { appName: 'Timer', route: '/apps/timer', availability: 'planned', hasPlatformNotes: true },
+      { appName: 'Talk', route: '/apps/talk', availability: 'available', hasPlatformNotes: true }
     ])
   })
 

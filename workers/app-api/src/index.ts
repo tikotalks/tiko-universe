@@ -1,4 +1,4 @@
-import { requireSession as requireSharedSession, type AuthEnv } from '../../shared/auth'
+import { requireRole, requireSession as requireSharedSession, type AuthEnv } from '../../shared/auth'
 type D1Value = string | number | boolean | null
 
 interface D1Result<T = unknown> {
@@ -28,14 +28,6 @@ export type TikoAppId = 'yes-no' | 'type' | 'cards' | 'sequence' | 'timer' | 'ra
 type AppResource = 'settings' | 'state' | 'progress'
 
 type JsonValue = null | boolean | number | string | JsonValue[] | { [key: string]: JsonValue }
-
-interface SessionJoinRow {
-  user_id: string
-  device_id: string | null
-  expires_at: string
-  roles?: string[]
-  capabilities?: Record<string, unknown>
-}
 
 const DEFAULT_ALLOWED_ORIGINS = 'https://tiko.mt,https://www.tiko.mt,https://tiko.tikoapps.org,https://yesno.tikoapps.org,https://cards.tikoapps.org,https://sequence.tikoapps.org,https://type.tikoapps.org,https://timer.tikoapps.org,https://admin.tikoapps.org,https://admin.tikoapi.org,https://dev.tiko.tikoapps.org,https://dev.yesno.tikoapps.org,https://dev.cards.tikoapps.org,https://dev.sequence.tikoapps.org,https://dev.type.tikoapps.org,https://dev.timer.tikoapps.org,https://dev.admin.tikoapps.org,http://localhost:5173,http://localhost:4173,capacitor://localhost,ionic://localhost,tiko://native'
 
@@ -222,21 +214,21 @@ export async function handleRequest(request: Request, env: Env): Promise<Respons
       if (resetMatch) {
         const app = parseApp(resetMatch[1])
         const resetType = resetMatch[2]
-        const session = await requireSession(request, env)
+        const userId = await requireAppSession(request, env)
         if (request.method !== 'POST') return withCors(jsonError('method_not_allowed', 'Method not allowed.', 405), cors)
-        if (resetType === 'app') return withCors(await resetApp(env, session.user_id, app, request), cors)
-        return withCors(await resetAppProgress(env, session.user_id, app, request), cors)
+        if (resetType === 'app') return withCors(await resetApp(env, userId, app, request), cors)
+        return withCors(await resetAppProgress(env, userId, app, request), cors)
       }
       return withCors(jsonError('not_found', 'Route not found.', 404), cors)
     }
 
     const app = parseApp(match[1])
     const resource = match[2] as AppResource
-    const session = await requireSession(request, env)
+    const userId = await requireAppSession(request, env)
 
-    if (request.method === 'GET') return withCors(await readAppData(env, session.user_id, app, resource), cors)
-    if (request.method === 'PUT') return withCors(await writeAppData(request, env, session.user_id, app, resource), cors)
-    if (request.method === 'DELETE' && resource === 'progress') return withCors(await clearAppProgress(env, session.user_id, app), cors)
+    if (request.method === 'GET') return withCors(await readAppData(env, userId, app, resource), cors)
+    if (request.method === 'PUT') return withCors(await writeAppData(request, env, userId, app, resource), cors)
+    if (request.method === 'DELETE' && resource === 'progress') return withCors(await clearAppProgress(env, userId, app), cors)
 
     return withCors(jsonError('method_not_allowed', 'Method not allowed.', 405), cors)
   } catch (error) {
@@ -477,25 +469,15 @@ async function clearAppProgress(env: Env, userId: string, app: TikoAppId): Promi
   return json({ app, progress: {}, updatedAt: now, version: 1 })
 }
 
-async function requireSession(request: Request, env: Env): Promise<SessionJoinRow> {
+async function requireAppSession(request: Request, env: Env): Promise<string> {
   const session = await requireSharedSession(request, env)
   if (session instanceof Response) throw await authResponseToHttpError(session)
-  return {
-    user_id: session.userId!,
-    device_id: null,
-    expires_at: '',
-    roles: session.roles ?? [],
-    capabilities: session.capabilities ?? {},
-  }
+  return session.userId!
 }
 
 async function requireAdminSession(request: Request, env: Env): Promise<void> {
-  const session = await requireSession(request, env)
-  const roles = session.roles ?? []
-  const canEditContent = session.capabilities?.canEditContent === true
-  if (!roles.includes('admin') && !roles.includes('content_editor') && !canEditContent) {
-    throw new HttpError(403, 'forbidden', 'Admin access required.')
-  }
+  const session = await requireRole(request, env, ['admin', 'content_editor'], { capabilities: ['canEditContent'] })
+  if (session instanceof Response) throw await authResponseToHttpError(session)
 }
 
 async function authResponseToHttpError(response: Response): Promise<HttpError> {

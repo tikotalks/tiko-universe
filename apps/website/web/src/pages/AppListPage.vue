@@ -30,8 +30,8 @@ const bemm = useBemm('apps-page', { return: 'string', includeBaseClass: true })
             :style="{ '--app-color': app.color, '--app-color-light': app.colorLight }"
           >
             <div class="app-card__hero">
-              <div class="app-card__icon-wrap" aria-hidden="true">
-                <div class="app-card__icon" />
+              <div class="app-card__icon-wrap">
+                <img :src="app.iconUrl" :alt="`${app.name} app icon`" class="app-card__icon" loading="lazy" />
               </div>
               <h2 class="app-card__name">{{ app.name }}</h2>
             </div>
@@ -65,11 +65,11 @@ const bemm = useBemm('apps-page', { return: 'string', includeBaseClass: true })
     <section class="apps-note section">
       <div class="container">
         <div class="apps-note__inner">
-          <p class="eyebrow">Coming soon</p>
-          <h2 class="display-3">More apps are in the pipeline.</h2>
+          <p class="eyebrow">On the way</p>
+          <h2 class="display-3">More tiny apps are coming.</h2>
           <p class="body-lg">
-            Radio, Sequence, Timer, Type, and Cards are all built around the same
-            child-first contracts. Each one opens fast and does one thing only.
+            Type, Cards, Sequence, and Timer are built around the same child-first
+            contracts as the apps above. Each one opens fast and does one thing only.
           </p>
           <RouterLink to="/docs/architecture" class="apps-note__link">
             Read the architecture docs →
@@ -148,9 +148,7 @@ const bemm = useBemm('apps-page', { return: 'string', includeBaseClass: true })
   &__icon {
     width: 32px;
     height: 32px;
-    border-radius: 10px;
-    background: white;
-    opacity: 0.9;
+    object-fit: contain;
   }
 
   &__name {

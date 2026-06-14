@@ -6,6 +6,7 @@ import { aggregateUsageByProvider, getUsageRequest, listProviderStatus, listUsag
 import { apiError, createRequestId, json, optionsResponse, withCors } from './response'
 import { authenticate, requireServiceKey } from '../../shared/auth'
 import type { AuthSuccess } from '../../shared/auth'
+import { resolveSecrets } from '../../shared/secrets'
 import type { AtlasCapability, AtlasCapabilityDescriptor, AtlasExecutionResult, AtlasRunRequest, DataFetchRequest, Env, ImageRequest, SpeechRequest, TextRequest } from './types'
 
 interface AtlasAuthContext {
@@ -17,6 +18,7 @@ interface AtlasAuthContext {
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
     if (request.method === 'OPTIONS') return optionsResponse()
+    const resolvedEnv = await resolveSecrets(env)
 
     const url = new URL(request.url)
     const requestId = createRequestId()
@@ -24,17 +26,17 @@ export default {
 
     if (pathname === '/v1/atlas/health' && request.method === 'GET') return health(requestId)
     if (pathname === '/v1/atlas/capabilities' && request.method === 'GET') return capabilities(requestId)
-    if (pathname === '/v1/atlas/run' && request.method === 'POST') return runCapability(request, env, requestId)
-    if (pathname === '/v1/atlas/speech' && request.method === 'POST') return typedCapability(request, env, requestId, 'speech.synthesize', synthesizeSpeech)
-    if (pathname === '/v1/atlas/images' && request.method === 'POST') return typedCapability(request, env, requestId, 'image.generate', generateImage)
-    if (pathname === '/v1/atlas/text' && request.method === 'POST') return typedCapability(request, env, requestId, 'text.generate', generateText)
-    if (pathname === '/v1/atlas/data/fetch' && request.method === 'POST') return typedCapability(request, env, requestId, 'data.fetch', fetchAtlasData)
-    if (pathname === '/v1/atlas/admin/usage' && request.method === 'GET') return adminUsage(request, env, requestId)
-    if (pathname === '/v1/atlas/admin/usage/by-provider' && request.method === 'GET') return adminUsageByProvider(request, env, requestId)
-    if (pathname === '/v1/atlas/admin/provider-status' && request.method === 'GET') return adminProviderStatus(request, env, requestId)
-    if (pathname.startsWith('/v1/atlas/admin/requests/') && request.method === 'GET') return adminRequestDetail(pathname, request, env, requestId)
+    if (pathname === '/v1/atlas/run' && request.method === 'POST') return runCapability(request, resolvedEnv, requestId)
+    if (pathname === '/v1/atlas/speech' && request.method === 'POST') return typedCapability(request, resolvedEnv, requestId, 'speech.synthesize', synthesizeSpeech)
+    if (pathname === '/v1/atlas/images' && request.method === 'POST') return typedCapability(request, resolvedEnv, requestId, 'image.generate', generateImage)
+    if (pathname === '/v1/atlas/text' && request.method === 'POST') return typedCapability(request, resolvedEnv, requestId, 'text.generate', generateText)
+    if (pathname === '/v1/atlas/data/fetch' && request.method === 'POST') return typedCapability(request, resolvedEnv, requestId, 'data.fetch', fetchAtlasData)
+    if (pathname === '/v1/atlas/admin/usage' && request.method === 'GET') return adminUsage(request, resolvedEnv, requestId)
+    if (pathname === '/v1/atlas/admin/usage/by-provider' && request.method === 'GET') return adminUsageByProvider(request, resolvedEnv, requestId)
+    if (pathname === '/v1/atlas/admin/provider-status' && request.method === 'GET') return adminProviderStatus(request, resolvedEnv, requestId)
+    if (pathname.startsWith('/v1/atlas/admin/requests/') && request.method === 'GET') return adminRequestDetail(pathname, request, resolvedEnv, requestId)
     if (pathname.startsWith('/v1/atlas/assets/') && request.method === 'GET') {
-      const response = await getAtlasAsset(pathname, env)
+      const response = await getAtlasAsset(pathname, resolvedEnv)
       return response ? withCors(response) : apiError('asset_not_found', 'Atlas asset not found.', 404, requestId)
     }
 

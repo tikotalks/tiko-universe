@@ -103,7 +103,9 @@ export interface Env {
   ATLAS_ASSETS_BUCKET?: R2BucketLike
   AI?: { run(model: string, input: unknown): Promise<unknown> }
   OPENAI_API_KEY?: string
+  OPENAI_SECRET?: { get(): Promise<string> }
   ELEVENLABS_API_KEY?: string
+  ELEVENLABS_SECRET?: { get(): Promise<string> }
   NARAKEET_API_KEY?: string
   YOUTUBE_API_KEY?: string
   TOKEN_PEPPER?: string

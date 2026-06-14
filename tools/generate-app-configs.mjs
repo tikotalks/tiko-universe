@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 import { execFile } from 'node:child_process'
-import { mkdtemp, mkdir, readFile, writeFile } from 'node:fs/promises'
+import { mkdtemp, mkdir, readdir, readFile, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { dirname, resolve } from 'node:path'
 import { promisify } from 'node:util'
@@ -195,19 +195,29 @@ async function writeIosAppIcons(configs) {
       continue
     }
 
-    const sourceUrl = await resolveMediaImageUrl(config.appIconImageUrl)
-    const downloadUrl = resizedTikoCdnUrl(sourceUrl, 1024)
-    const sourceFile = resolve(tempDir, `${app}.source`)
-    await downloadImage(downloadUrl, sourceFile, `${app} app icon`)
-
     const appIconDir = resolve(root, sourceDir, 'Assets.xcassets/AppIcon.appiconset')
-    await mkdir(appIconDir, { recursive: true })
-    await writeIfChanged(resolve(root, sourceDir, 'Assets.xcassets/Contents.json'), assetCatalogContents())
-    await writeIfChanged(resolve(appIconDir, 'Contents.json'), appIconContents())
 
-    const uniqueSizes = [...new Set(iosAppIconImages.map(image => image.pixels))]
-    for (const pixels of uniqueSizes) {
-      await run('sips', ['-s', 'format', 'png', '-z', String(pixels), String(pixels), sourceFile, '--out', resolve(appIconDir, `app-icon-${pixels}.png`)])
+    try {
+      const sourceUrl = await resolveMediaImageUrl(config.appIconImageUrl)
+      const downloadUrl = resizedTikoCdnUrl(sourceUrl, 1024)
+      const sourceFile = resolve(tempDir, `${app}.source`)
+      await downloadImage(downloadUrl, sourceFile, `${app} app icon`)
+
+      await mkdir(appIconDir, { recursive: true })
+      await writeIfChanged(resolve(root, sourceDir, 'Assets.xcassets/Contents.json'), assetCatalogContents())
+      await writeIfChanged(resolve(appIconDir, 'Contents.json'), appIconContents())
+
+      const uniqueSizes = [...new Set(iosAppIconImages.map(image => image.pixels))]
+      for (const pixels of uniqueSizes) {
+        await run('sips', ['-s', 'format', 'png', '-z', String(pixels), String(pixels), sourceFile, '--out', resolve(appIconDir, `app-icon-${pixels}.png`)])
+      }
+    } catch (error) {
+      const existing = await readdir(appIconDir).then((files) => files.filter((f) => f.endsWith('.png'))).catch(() => [])
+      if (existing.length > 0) {
+        console.warn(`${app}: could not refresh app icon (${error.message}); keeping existing icon.`)
+        continue
+      }
+      throw error
     }
   }
 }

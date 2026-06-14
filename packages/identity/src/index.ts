@@ -427,11 +427,9 @@ export class IdentityClient {
     })
   }
 
-  /** @deprecated Use createDeletionRequest({ scope: 'account' }) instead */
   async deleteSelf(sessionToken: string): Promise<void> {
-    await this.request<void>('/identity/me', {
-      method: 'DELETE',
-      headers: bearerHeaders(sessionToken)
+    await this.createDeletionRequest(sessionToken, {
+      scope: 'account'
     })
   }
 
@@ -467,4 +465,3 @@ export class IdentityClient {
 function bearerHeaders(sessionToken: string): Record<string, string> {
   return { authorization: `Bearer ${sessionToken}` }
 }
-

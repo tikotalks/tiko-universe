@@ -57,13 +57,16 @@ Approximate review spread: 7 Critical, about 35 High, about 70 Medium, and about
   - Create separate D1 databases and KV namespaces for identity, app, atlas, media, communication, generation, and content caches.
   - Fix provisioning so production never reuses dev DB names.
   - Stop dev deploys from applying schema/seed to shared production-like data.
+  - [x] Add a deploy guard that skips unsafe development worker deploys when D1 bindings still share production database IDs.
 
-- [ ] Consolidate D1 ownership.
+- [x] Consolidate D1 ownership.
   - Use one database per worker, or one migration directory per shared database.
+  - [x] Move media-api table creation out of `schema.sql` into binding-specific D1 migration directories.
+  - [x] Remove duplicate content-api and generation-api `schema.sql` files after confirming migrations own the schema.
   - Delete or move root `migration.sql` into the owning worker.
   - Keep schema creation out of runtime request handlers.
 
-- [ ] Finish one shared worker auth layer.
+- [x] Finish one shared worker auth layer.
   - Use shared `requireSession`, `requireRole`, and `requireServiceKey`.
   - Return roles/capabilities from one identity lookup.
   - Delete duplicated admin-role parsing and static-secret variants.
@@ -74,6 +77,11 @@ Approximate review spread: 7 Critical, about 35 High, about 70 Medium, and about
   - [x] Move identity role loading into shared auth and reuse it from admin-api.
   - [x] Resolve API-key pepper through the shared auth layer, including Secrets Store bindings.
   - [x] Remove the stale `API_KEYS` static-secret auth surface from worker contracts and tests.
+  - [x] Route content-api card mutation session validation through shared `requireSession` while preserving app-api token forwarding.
+  - [x] Remove generation-api local bearer parsing from paid usage accounting.
+  - [x] Route admin-api dashboard authentication through shared `requireSession`.
+  - [x] Route app-api session/admin checks through shared `requireSession` and `requireRole`.
+  - [x] Remove obsolete identity routes for managed-child login and direct self-delete.
 
 - [x] Move iOS identity storage to Keychain.
   - Make `TikoKeychainIdentityStore` the default.
@@ -210,11 +218,15 @@ Approximate review spread: 7 Critical, about 35 High, about 70 Medium, and about
 - [ ] Split god files.
   - generation-api routes into modules.
   - [x] Extract generation-api speech normalization and Atlas speech helpers into a focused module.
+  - [x] Extract generation-api image prompt and style helpers into a focused module.
+  - [x] Extract generation-api HTTP response and provider fetch helpers into a focused module.
+  - [x] Extract generation-api auth, ownership, and paid usage helpers into a focused module.
   - content/media/identity workers where useful.
   - admin StoryNarrator/ImageGenerator pages by tab or feature.
   - [x] Extract StoryNarrator segment editor into a focused component.
   - [x] Extract StoryNarrator drafts tab into a focused component.
   - [x] Extract StoryNarrator publish settings card into a focused component.
+  - [x] Extract StoryNarrator voice picker into a focused component.
   - [x] Extract ImageGenerator queue panel into a focused component.
   - [x] Move ImageGenerator queue styles into the queue component so the page no longer owns its surface.
   - [x] Extract ImageGenerator edit modal and canvas mask editor into a focused component.
@@ -233,6 +245,7 @@ Approximate review spread: 7 Critical, about 35 High, about 70 Medium, and about
   - [x] Convert tts-api into an Atlas-only adapter with no local speech cache or provider path.
   - [x] Remove generation-api local audio cache/provider fallback and drop its generated-audio table.
   - [x] Route generation-api voice samples and story narration through Atlas assets instead of direct TTS providers.
+  - [x] Remove shared web TTS non-Atlas response decoding so non-Atlas speech responses fall back to native/browser speech.
 
 ## Phase 4 - Testing And CI Quality
 

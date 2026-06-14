@@ -31,7 +31,7 @@ These workers share a single consolidated API domain with path-based routing. A 
 | --- | --- | --- | --- |
 | media-api | `tiko-media-api` | `media-api.tikotalks.com/*` | `media-api.tikotalks.com` |
 | admin-api | `tiko-admin-api` | `admin-api.tikotalks.com/*` | `admin-api.tikotalks.com` |
-| tts-api (temp) | `tiko-tts-api` | `tts.tikotalks.com/*` | `tts.tikotalks.com` |
+| tts-api speech adapter | `tiko-tts-api` | `tts.tikotalks.com/*` | `tts.tikotalks.com` |
 
 ### Web apps (Cloudflare Pages)
 
@@ -56,7 +56,7 @@ These workers share a single consolidated API domain with path-based routing. A 
 | media-api | `media-api.tikotalks.com/*` (uses `-dev` suffix worker name) |
 | content-api | `dev.api.tikotalks.com/v1/content/*` |
 | admin-api | `dev.admin-api.tikotalks.com/*` |
-| tts-api (temp) | `dev.tts.tikotalks.com/*` |
+| tts-api speech adapter | `dev.tts.tikotalks.com/*` |
 
 ## Wrangler.toml configuration
 

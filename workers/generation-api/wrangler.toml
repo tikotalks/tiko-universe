@@ -30,6 +30,26 @@ service = "tiko-atlas-api-dev"
 binding = "IDENTITY_SERVICE"
 service = "tiko-identity-api-dev"
 
+[[secrets_store_secrets]]
+binding = "PEPPER_SECRET"
+store_id = "0ba6468063e04b779e529f5db651896b"
+secret_name = "TOKEN_PEPPER"
+
+[[secrets_store_secrets]]
+binding = "OPENAI_SECRET"
+store_id = "0ba6468063e04b779e529f5db651896b"
+secret_name = "OPENAI_API_KEY"
+
+[[secrets_store_secrets]]
+binding = "ELEVENLABS_SECRET"
+store_id = "0ba6468063e04b779e529f5db651896b"
+secret_name = "ELEVENLABS_API_KEY"
+
+[[secrets_store_secrets]]
+binding = "ATLAS_SECRET"
+store_id = "0ba6468063e04b779e529f5db651896b"
+secret_name = "ATLAS_API_KEY"
+
 [[routes]]
 pattern = "dev-api.tikotalks.com/v1/generation/*"
 zone_name = "tikotalks.com"
@@ -54,6 +74,26 @@ service = "tiko-atlas-api"
 [[env.production.services]]
 binding = "IDENTITY_SERVICE"
 service = "tiko-identity-api"
+
+[[env.production.secrets_store_secrets]]
+binding = "PEPPER_SECRET"
+store_id = "0ba6468063e04b779e529f5db651896b"
+secret_name = "TOKEN_PEPPER"
+
+[[env.production.secrets_store_secrets]]
+binding = "OPENAI_SECRET"
+store_id = "0ba6468063e04b779e529f5db651896b"
+secret_name = "OPENAI_API_KEY"
+
+[[env.production.secrets_store_secrets]]
+binding = "ELEVENLABS_SECRET"
+store_id = "0ba6468063e04b779e529f5db651896b"
+secret_name = "ELEVENLABS_API_KEY"
+
+[[env.production.secrets_store_secrets]]
+binding = "ATLAS_SECRET"
+store_id = "0ba6468063e04b779e529f5db651896b"
+secret_name = "ATLAS_API_KEY"
 
 [[env.production.d1_databases]]
 binding = "GENERATION_DB"

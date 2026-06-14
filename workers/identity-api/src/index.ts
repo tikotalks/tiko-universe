@@ -1,6 +1,7 @@
 import { normalizeConfig, type AnkoreConfig, type NormalizedAnkoreConfig } from 'ankore'
 import { createIdentityWorker, type EmailMessage } from 'ankore/worker'
 import { resolvePepper, type SecretStoreSecret } from '../../shared/auth'
+import { resolveSecrets, type SecretStoreBinding } from '../../shared/secrets'
 
 interface D1PreparedStatement {
   bind(...values: unknown[]): D1PreparedStatement
@@ -26,6 +27,7 @@ export interface Env {
   MAGIC_LINK_BASE_URL?: string
   COMMUNICATION_API_URL?: string
   COMMUNICATION_API_KEY?: string
+  COMMUNICATION_SECRET?: SecretStoreBinding
   COMMUNICATION_SERVICE?: ServiceBinding
   ALLOWED_ORIGINS?: string
   MAGIC_LINK_TEST_SINK?: Array<{ email: string; token: string; otp: string; url: string; webUrl: string }>
@@ -78,19 +80,20 @@ export const identityConfig: NormalizedAnkoreConfig = normalizeConfig(baseConfig
 export default {
   async fetch(request: Request, env: Env, _ctx?: unknown): Promise<Response> {
     if (request.method === 'OPTIONS') return corsPreflight(request, env)
+    const resolvedEnv = await resolveSecrets(env)
 
     const contractRequest = request.clone() as AnyRequest
-    const canonical = await handleCanonicalIdentity(request, env)
-    if (canonical) return withIdentityCors(contractRequest, env, await withBrowserSessionCookie(contractRequest, await withTikoSessionContract(contractRequest, env, canonical)))
+    const canonical = await handleCanonicalIdentity(request, resolvedEnv)
+    if (canonical) return withIdentityCors(contractRequest, resolvedEnv, await withBrowserSessionCookie(contractRequest, await withTikoSessionContract(contractRequest, resolvedEnv, canonical)))
 
-    const managed = await handleManagedIdentity(request, env)
-    if (managed) return withIdentityCors(contractRequest, env, await withBrowserSessionCookie(contractRequest, await withTikoSessionContract(contractRequest, env, managed)))
+    const managed = await handleManagedIdentity(request, resolvedEnv)
+    if (managed) return withIdentityCors(contractRequest, resolvedEnv, await withBrowserSessionCookie(contractRequest, await withTikoSessionContract(contractRequest, resolvedEnv, managed)))
 
-    const ankoreResponse = await createIdentityWorker(configForEnv(env), {
-      sendEmail: message => requestMagicLinkDelivery(env, message)
-    }).fetch(request, await ankoreEnv(env))
+    const ankoreResponse = await createIdentityWorker(configForEnv(resolvedEnv), {
+      sendEmail: message => requestMagicLinkDelivery(resolvedEnv, message)
+    }).fetch(request, await ankoreEnv(resolvedEnv))
 
-    return withIdentityCors(contractRequest, env, await withBrowserSessionCookie(contractRequest, await withTikoSessionContract(contractRequest, env, ankoreResponse)))
+    return withIdentityCors(contractRequest, resolvedEnv, await withBrowserSessionCookie(contractRequest, await withTikoSessionContract(contractRequest, resolvedEnv, ankoreResponse)))
   }
 }
 
@@ -280,9 +283,7 @@ async function handleManagedIdentity(request: Request, env: Env): Promise<Respon
   if (path === '/v1/identity/mode/parent' && request.method === 'POST') return enterParentMode(request, env)
   if (path === '/v1/identity/child-accounts' && request.method === 'GET') return listManagedChildren(request, env)
   if (path === '/v1/identity/child-accounts' && request.method === 'POST') return createManagedChild(request, env)
-  if (path === '/v1/identity/managed/children' && request.method === 'POST') return createManagedChild(request, env)
   if (path === '/v1/identity/child-accounts/login' && request.method === 'POST') return loginManagedChild(request, env)
-  if (path === '/v1/identity/managed/login' && request.method === 'POST') return loginManagedChild(request, env)
   const childMatch = path.match(/^\/v1\/identity\/child-accounts\/([^/]+)(?:\/(code\/reset|progress\/reset))?$/)
   if (childMatch && request.method === 'PUT') return updateManagedChild(request, env, childMatch[1])
   if (childMatch && request.method === 'POST' && childMatch[2] === 'code/reset') return resetManagedChildCode(request, env, childMatch[1])
@@ -292,7 +293,6 @@ async function handleManagedIdentity(request: Request, env: Env): Promise<Respon
   if (path === '/v1/identity/deletion-requests' && request.method === 'POST') return createDeletionRequest(request, env)
   const deletionMatch = path.match(/^\/v1\/identity\/deletion-requests\/([^/]+)$/)
   if (deletionMatch && request.method === 'GET') return getDeletionRequest(request, env, deletionMatch[1])
-  if (path === '/v1/identity/me' && request.method === 'DELETE') return deleteCurrentIdentity(request, env)
   if (path === '/v1/identity/profile' && request.method === 'GET') return getIdentityProfile(request, env)
   if (path === '/v1/identity/profile' && request.method === 'PUT') return updateIdentityProfile(request, env)
   return null
@@ -402,26 +402,6 @@ async function enterParentMode(request: Request, env: Env): Promise<Response> {
   }
   await updateRuntimeState(env, session.subjectId, { ...runtime, mode: 'parent' })
   return sessionResponse(request, env)
-}
-
-async function deleteCurrentIdentity(request: Request, env: Env): Promise<Response> {
-  // Legacy endpoint — delegates to the deletion-request contract
-  const session = await requireIdentitySession(request, env)
-  if (!session) return Response.json({ error: 'invalid_session' }, { status: 401 })
-
-  const requestId = id('del')
-  const at = new Date().toISOString()
-
-  await env.IDENTITY_DB.prepare(
-    'INSERT INTO identity_deletion_requests (id, subject_id, scope, status, child_account_id, pin_grant_token, created_at, updated_at, completed_at, metadata_json) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
-  ).bind(requestId, session.subjectId, 'account', 'requested', null, null, at, at, null, '{"legacy":true}').run()
-
-  await executeAccountDeletion(env, session.subjectId)
-  const completedAt = new Date().toISOString()
-  await env.IDENTITY_DB.prepare('UPDATE identity_deletion_requests SET status = ?, completed_at = ?, updated_at = ? WHERE id = ?')
-    .bind('completed', completedAt, completedAt, requestId).run()
-
-  return new Response(null, { status: 204 })
 }
 
 async function createManagedChild(request: Request, env: Env): Promise<Response> {
@@ -900,7 +880,7 @@ async function sessionResponse(request: Request, env: Env): Promise<Response> {
   const accountType = await accountTypeForSubject(env, session.subjectId)
   const runtime = await deriveRuntime(env, session.subjectId, accountType)
   return Response.json({
-    ...(body ?? {}),
+    ...body,
     subject: body?.subject ?? { id: session.subjectId },
     runtime,
     user: { accountType, mode: runtime.mode, recoverable: accountType !== 'temporary', emailVerified: accountType !== 'temporary' }
@@ -1232,7 +1212,7 @@ function deriveCapabilities(accountType: AccountType, runtime: { mode: RuntimeMo
 
 async function deriveLoginMethod(request: AnyRequest, body: Record<string, any>, accountType: AccountType): Promise<LoginMethod> {
   const path = new URL(request.url).pathname
-  if (accountType === 'child_account' || path.endsWith('/managed/login') || path.endsWith('/child-accounts/login')) return 'child_code'
+  if (accountType === 'child_account' || path.endsWith('/child-accounts/login')) return 'child_code'
   if (path.includes('/email/verify') || path.includes('/magic-links/verify') || path.includes('/otp/verify')) {
     const requestBody = await request.clone().json().catch(() => ({})) as { token?: unknown; otp?: unknown; code?: unknown }
     if (requestBody.token) return 'magic_link'
@@ -1249,7 +1229,7 @@ async function withBrowserSessionCookie(request: AnyRequest, response: Response)
   const url = new URL(request.url)
   const isTikoAppsIdentityHost = url.hostname === 'id.tikoapps.org' || url.hostname.endsWith('.id.tikoapps.org')
   const path = url.pathname.replace(/\/$/, '')
-  const shouldClearCookie = (request.method === 'POST' && path === '/v1/identity/logout') || (request.method === 'DELETE' && path === '/v1/identity/me') || (request.method === 'POST' && path === '/v1/identity/deletion-requests')
+  const shouldClearCookie = (request.method === 'POST' && path === '/v1/identity/logout') || (request.method === 'POST' && path === '/v1/identity/deletion-requests')
 
   if (shouldClearCookie && isTikoAppsIdentityHost) {
     headers.append('Set-Cookie', browserCookie('', 0))
@@ -1311,7 +1291,11 @@ async function requestMagicLinkDelivery(env: Env, message: EmailMessage): Promis
     ? await env.COMMUNICATION_SERVICE.fetch(endpoint, init)
     : await fetch(endpoint, init)
 
-  if (!response.ok) throw new Error('communication_send_failed')
+  if (!response.ok) {
+    const body = await response.text().catch(() => '')
+    console.error('[magic-link] communication-api failed', { status: response.status, body: body.slice(0, 500) })
+    throw new Error(`communication_send_failed (${response.status})`)
+  }
 }
 
 function magicLinkUrl(env: Env, magicToken: string): string {

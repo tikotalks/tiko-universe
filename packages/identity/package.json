@@ -7,6 +7,6 @@
   "types": "src/index.ts",
   "scripts": {
     "typecheck": "tsc --noEmit -p tsconfig.json",
-    "test": "vitest run ../../tests/identity-api.test.ts"
+    "test": "vitest run tests/identity-api.test.ts --root ../.."
   }
 }

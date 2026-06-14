@@ -40,6 +40,7 @@ async function mountAt(path: string) {
       { path: '/apps/:slug', component: () => import('./pages/AppDetailPage.vue') },
       { path: '/how-it-works', component: () => import('./pages/HowItWorksPage.vue') },
       { path: '/caregivers', component: () => import('./pages/CaregiversPage.vue') },
+      { path: '/educators', component: () => import('./pages/EducatorsPage.vue') },
       { path: '/faq', component: () => import('./pages/FaqPage.vue') },
       { path: '/docs', component: () => import('./pages/DocsPage.vue') },
       { path: '/docs/:section', component: () => import('./pages/DocsPage.vue') },
@@ -83,8 +84,10 @@ describe('TikoTalks website', () => {
     expect(header.find('a[href="/why-tiko"]').exists()).toBe(true)
     expect(header.find('a[href="/how-it-works"]').exists()).toBe(true)
     expect(header.find('a[href="/caregivers"]').exists()).toBe(true)
+    expect(header.find('a[href="/educators"]').exists()).toBe(true)
     expect(header.find('a[href="/docs"]').exists()).toBe(true)
     expect(header.find('a[href="/login"]').exists()).toBe(false)
+    expect(header.text()).not.toContain('Try Yes No')
   })
 
   it('shows the app universe on the apps route without overclaiming native availability', async () => {
@@ -110,6 +113,7 @@ describe('TikoTalks website', () => {
     expect((await mountAt('/why-tiko')).text()).toContain('No ads. Ever.')
     expect((await mountAt('/how-it-works')).text()).toContain('How Tiko works')
     expect((await mountAt('/caregivers')).text()).toContain('For caregivers')
+    expect((await mountAt('/educators')).text()).toContain('For educators')
     expect((await mountAt('/faq')).text()).toContain('Plain answers')
   })
 

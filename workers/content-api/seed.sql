@@ -1,3 +1,3 @@
 -- App default content is seeded and migrated in migrations/0005_app_content_items.sql.
--- Keep this file intentionally empty so local bootstrap does not recreate legacy
--- cards_collections/cards_tiles data after migrations/0006_drop_legacy_cards_tables.sql.
+-- Keep this file intentionally empty so local bootstrap does not recreate removed
+-- cards_collections/cards_tiles data after the table-drop migration.

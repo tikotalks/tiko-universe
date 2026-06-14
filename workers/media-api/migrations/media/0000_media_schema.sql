@@ -1,4 +1,3 @@
--- Media table (ported from media-cache / media-upload)
 CREATE TABLE IF NOT EXISTS media (
   id TEXT PRIMARY KEY,
   name TEXT,
@@ -13,7 +12,6 @@ CREATE TABLE IF NOT EXISTS media (
   categories TEXT NOT NULL DEFAULT '[]',
   tags TEXT NOT NULL DEFAULT '[]',
   is_private INTEGER NOT NULL DEFAULT 0 CHECK (is_private IN (0, 1)),
-  owner_user_id TEXT,
   original_url TEXT NOT NULL,
   thumbnail_url TEXT,
   medium_url TEXT,
@@ -24,41 +22,6 @@ CREATE TABLE IF NOT EXISTS media (
 CREATE INDEX IF NOT EXISTS media_private_created_idx
   ON media (is_private, created_at DESC);
 
-CREATE INDEX IF NOT EXISTS media_owner_created_idx
-  ON media (owner_user_id, created_at DESC);
-
--- Assets table (ported from assets-upload)
-CREATE TABLE IF NOT EXISTS assets (
-  id TEXT PRIMARY KEY,
-  title TEXT NOT NULL,
-  description TEXT,
-  filename TEXT NOT NULL,
-  original_filename TEXT NOT NULL,
-  file_path TEXT NOT NULL UNIQUE,
-  file_size INTEGER NOT NULL,
-  mime_type TEXT NOT NULL,
-  file_extension TEXT NOT NULL,
-  categories TEXT NOT NULL DEFAULT '[]',
-  tags TEXT NOT NULL DEFAULT '[]',
-  width INTEGER,
-  height INTEGER,
-  duration INTEGER,
-  is_public INTEGER NOT NULL DEFAULT 0 CHECK (is_public IN (0, 1)),
-  user_id TEXT,
-  created_at TEXT NOT NULL,
-  updated_at TEXT NOT NULL
-);
-
-CREATE INDEX IF NOT EXISTS assets_public_created_idx
-  ON assets (is_public, created_at DESC);
-
-CREATE INDEX IF NOT EXISTS assets_user_created_idx
-  ON assets (user_id, created_at DESC);
-
-CREATE INDEX IF NOT EXISTS assets_mime_created_idx
-  ON assets (mime_type, created_at DESC);
-
--- Audio library albums consumed by Radio and managed from admin.
 CREATE TABLE IF NOT EXISTS audio_albums (
   id TEXT PRIMARY KEY,
   title TEXT NOT NULL,

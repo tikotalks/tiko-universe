@@ -391,9 +391,11 @@ async function assignTestRole(db: MemoryD1Database, subjectId: string, role: str
 }
 
 async function fetchJson(path: string, init: RequestInit = {}, testEnv = env()) {
+  const headers = new Headers(init.headers)
+  headers.set('content-type', headers.get('content-type') ?? 'application/json')
   const request = new Request(`https://identity.test${path}`, {
     ...init,
-    headers: { 'content-type': 'application/json', ...(init.headers ?? {}) }
+    headers
   })
   const response = await worker.fetch(request, testEnv as never, {} as never)
   const body = response.status === 204 ? {} : await response.json().catch(() => ({})) as JsonBody
@@ -624,7 +626,7 @@ describe('identity-api endpoints', () => {
     expect(afterLogout.body.error).toBe('invalid_session')
   })
 
-  it('lets a signed-in user delete itself and revokes its sessions/devices/account rows', async () => {
+  it('deletes a signed-in user through the deletion-request contract and revokes its sessions/devices/account rows', async () => {
     const testEnv = env()
     const created = await fetchJson('/v1/identity/device', { method: 'POST', body: JSON.stringify({}) }, testEnv)
     const bundle = created.body as IdentityBundle
@@ -643,9 +645,13 @@ describe('identity-api endpoints', () => {
     const verifiedToken = verifiedBundle.session?.token ?? ''
     const subjectId = verifiedBundle.subject.id
 
-    const deleted = await fetchJson('/v1/identity/me', { method: 'DELETE', headers: { authorization: `Bearer ${verifiedToken}` } }, testEnv)
+    const deleted = await fetchJson('/v1/identity/deletion-requests', {
+      method: 'POST',
+      headers: { authorization: `Bearer ${verifiedToken}` },
+      body: JSON.stringify({ scope: 'account' })
+    }, testEnv)
 
-    expect(deleted.response.status).toBe(204)
+    expect(deleted.response.status).toBe(202)
     expect(testEnv.IDENTITY_DB.subjects.get(subjectId)?.disabled_at).toBeTruthy()
     expect([...testEnv.IDENTITY_DB.sessions.values()].filter((row) => row.subject_id === subjectId).every((row) => row.revoked_at)).toBe(true)
     expect([...testEnv.IDENTITY_DB.devices.values()].filter((row) => row.subject_id === subjectId).every((row) => row.revoked_at)).toBe(true)
@@ -703,6 +709,26 @@ describe('identity-api endpoints', () => {
     expect(body.magicLinkUrl).toContain(testEnv.MAGIC_LINK_TEST_SINK[0]?.token)
     expect(body.otp).toBe(testEnv.MAGIC_LINK_TEST_SINK[0]?.otp)
     expect(body.otp).toMatch(/^\d{6}$/)
+  })
+
+  it('reports communication-api status when magic-link delivery fails', async () => {
+    vi.spyOn(globalThis, 'fetch').mockResolvedValue(new Response(JSON.stringify({ error: 'bad_service_key' }), { status: 403 }))
+    const consoleError = vi.spyOn(console, 'error').mockImplementation(() => undefined)
+    const testEnv = { ...env(), COMMUNICATION_API_URL: 'https://communication.test/v1/communication', COMMUNICATION_API_KEY: 'comm_test_key' }
+    const created = await fetchJson('/v1/identity/device', { method: 'POST', body: JSON.stringify({}) }, testEnv)
+    const token = (created.body as IdentityBundle).session?.token ?? ''
+
+    const response = await fetchJson('/v1/identity/email/challenge', {
+      method: 'POST',
+      headers: { authorization: `Bearer ${token}` },
+      body: JSON.stringify({ email: 'caregiver@example.test', purpose: 'recover' })
+    }, testEnv)
+
+    expect(response.response.status).toBeGreaterThanOrEqual(500)
+    expect(consoleError).toHaveBeenCalledWith('[magic-link] communication-api failed', expect.objectContaining({
+      status: 403,
+      body: expect.stringContaining('bad_service_key')
+    }))
   })
 
   it('fails email challenge delivery when communication auth is not configured outside the test sink', async () => {
@@ -1075,14 +1101,14 @@ describe('identity-api endpoints', () => {
     expect(storedCredential.code_hash).not.toBe('4829')
     expect(String(storedCredential.code_hash)).toMatch(/^pbkdf2-sha256:/)
 
-    const badLogin = await fetchJson('/v1/identity/managed/login', {
+    const badLogin = await fetchJson('/v1/identity/child-accounts/login', {
       method: 'POST',
       body: JSON.stringify({ handle: 'Mila', accessCode: '0000' })
     }, testEnv)
     expect(badLogin.response.status).toBe(401)
     expect(badLogin.body.error).toBe('invalid_managed_login')
 
-    const login = await fetchJson('/v1/identity/managed/login', {
+    const login = await fetchJson('/v1/identity/child-accounts/login', {
       method: 'POST',
       body: JSON.stringify({ handle: 'Mila', accessCode: '4829' })
     }, testEnv)

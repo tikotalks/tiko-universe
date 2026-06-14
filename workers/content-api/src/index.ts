@@ -1,6 +1,7 @@
 // Tiko content-api — D1-backed published content read model.
 // Public reads only for now; admin mutations belong in admin-api.
-import { requireRole, type AuthEnv } from '../../shared/auth'
+import { requireRole, requireSession, type AuthEnv } from '../../shared/auth'
+import { resolveSecrets } from '../../shared/secrets'
 
 interface Env extends AuthEnv {
   CONTENT_DB: D1Database
@@ -48,23 +49,6 @@ interface R2Object {
 }
 
 type JsonRecord = Record<string, unknown>
-type QueryMethod =
-  | 'getProjects'
-  | 'getProject'
-  | 'getProjectBySlug'
-  | 'getPages'
-  | 'getPage'
-  | 'getPageBySlug'
-  | 'getPageWithFullContent'
-  | 'getLanguages'
-  | 'getItems'
-  | 'getItem'
-  | 'getItemBySlug'
-
-interface ContentQuery {
-  method?: QueryMethod
-  params?: JsonRecord
-}
 
 interface CardTile {
   id: string
@@ -118,10 +102,6 @@ async function invalidateCardsCache(env: Env): Promise<void> {
   await invalidateCacheNamespace(env, CACHE_KEY_CARDS_COLLECTIONS)
 }
 
-async function invalidateYesNoCache(env: Env): Promise<void> {
-  await invalidateCacheNamespace(env, CACHE_KEY_YES_NO_CONTENT)
-}
-
 async function invalidateSequenceCache(env: Env): Promise<void> {
   await invalidateCacheNamespace(env, CACHE_KEY_SEQUENCE_CONTENT)
 }
@@ -133,16 +113,6 @@ async function invalidateCacheNamespace(env: Env, namespace: string): Promise<vo
 
 function cacheVersionKey(namespace: string): string {
   return `${CACHE_VERSION_PREFIX}:${namespace}`
-}
-
-interface UserImageRow {
-  id: string
-  r2_key: string
-  content_type: string
-  file_size_bytes: number | null
-  width: number | null
-  height: number | null
-  uploaded_by: string | null
 }
 
 async function resolveImageRef(imageRef: string | null | undefined, env: Env): Promise<string | null> {
@@ -291,24 +261,6 @@ function normalizeRow(row: JsonRecord): JsonRecord {
   return normalized
 }
 
-function stableJson(value: unknown): string {
-  if (value === null || typeof value !== 'object') return JSON.stringify(value)
-  if (Array.isArray(value)) return `[${value.map(stableJson).join(',')}]`
-  return `{${Object.entries(value as JsonRecord)
-    .sort(([a], [b]) => a.localeCompare(b))
-    .map(([key, item]) => `${JSON.stringify(key)}:${stableJson(item)}`)
-    .join(',')}}`
-}
-
-async function sha256Hex(value: unknown, length = 32): Promise<string> {
-  const bytes = new TextEncoder().encode(typeof value === 'string' ? value : stableJson(value))
-  const digest = await crypto.subtle.digest('SHA-256', bytes)
-  return Array.from(new Uint8Array(digest))
-    .map(byte => byte.toString(16).padStart(2, '0'))
-    .join('')
-    .slice(0, length)
-}
-
 async function cached<T>(request: Request, env: Env, key: string, loader: () => Promise<T>): Promise<T> {
   if (new URL(request.url).searchParams.get('no-cache') === '1' || !env.CONTENT_CACHE) return loader()
   const cachedValue = await env.CONTENT_CACHE.get(key)
@@ -442,24 +394,6 @@ async function getItem(env: Env, params: JsonRecord): Promise<JsonRecord | null>
     `SELECT * FROM content_items WHERE ${id ? 'id = ?' : 'slug = ?'} AND COALESCE(status = 'published', 1) = 1 LIMIT 1`,
   ).bind(id ?? slug).first<JsonRecord>()
   return row ? normalizeRow(row) : null
-}
-
-async function executeQuery(env: Env, query: ContentQuery): Promise<unknown> {
-  const params = query.params ?? {}
-  switch (query.method) {
-    case 'getProjects': return getProjects(env)
-    case 'getProject': return getProject(env, params)
-    case 'getProjectBySlug': return getProject(env, { slug: params.slug })
-    case 'getPages': return getPages(env, params)
-    case 'getPage': return getPage(env, params)
-    case 'getPageBySlug': return getPage(env, params)
-    case 'getPageWithFullContent': return getPageWithFullContent(env, params)
-    case 'getLanguages': return getLanguages(env)
-    case 'getItems': return getItems(env, params)
-    case 'getItem': return getItem(env, params)
-    case 'getItemBySlug': return getItem(env, { slug: params.slug })
-    default: throw new Error(`Unknown method: ${query.method ?? 'missing'}`)
-  }
 }
 
 // ---------------------------------------------------------------------------
@@ -1084,9 +1018,9 @@ async function putUserCardsState(env: Env, sessionToken: string, state: UserCard
 // ---------------------------------------------------------------------------
 
 async function handlePostCards(request: Request, env: Env, segments: string[]): Promise<Response> {
-  const authHeader = request.headers.get('Authorization') ?? ''
-  const sessionToken = authHeader.startsWith('Bearer ') ? authHeader.slice(7) : undefined
-  if (!sessionToken) return error(request, env, 'unauthorized', 'Authorization required', 401)
+  const auth = await requireUserSession(request, env)
+  if (auth instanceof Response) return auth
+  const { sessionToken } = auth
 
   // POST /v1/cards/collections
   if (segments[2] === 'collections' && segments.length === 3) {
@@ -1332,27 +1266,10 @@ async function handleGet(request: Request, env: Env, segments: string[]): Promis
   return error(request, env, 'not_found', 'Not found', 404)
 }
 
-async function handleQuery(request: Request, env: Env): Promise<Response> {
-  let query: ContentQuery
-  try {
-    query = (await request.json()) as ContentQuery
-  } catch {
-    return error(request, env, 'bad_request', 'Request body must be valid JSON', 400)
-  }
-  if (!query.method) return error(request, env, 'bad_request', 'Query method is required', 400)
-
-  try {
-    const cacheKey = `query:${await sha256Hex(query)}`
-    const data = await cached(request, env, cacheKey, () => executeQuery(env, query))
-    return json(request, env, { success: true, data })
-  } catch (err) {
-    return error(request, env, 'bad_request', err instanceof Error ? err.message : 'Query failed', 400)
-  }
-}
-
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
     if (request.method === 'OPTIONS') return new Response(null, { status: 204, headers: corsHeaders(request, env) })
+    env = await resolveSecrets(env)
     const url = new URL(request.url)
     const path = url.pathname.replace(/^\/+|\/+$/g, '')
     const segments = path ? path.split('/') : []
@@ -1361,7 +1278,6 @@ export default {
       return json(request, env, { ok: true, service: 'content-api' }, 200, { 'Cache-Control': 'no-store' })
     }
     if (request.method === 'GET') return handleGet(request, env, segments)
-    if (request.method === 'POST' && (url.pathname === '/v1/query' || url.pathname === '/query')) return handleQuery(request, env)
     if (request.method === 'POST' && segments[0] === 'v1' && segments[1] === 'cards') return handlePostCards(request, env, segments)
 
     if (request.method === 'PUT' && segments[0] === 'v1' && segments[1] === 'cards') return handlePutCards(request, env, segments)
@@ -1422,9 +1338,20 @@ async function requireContentAdmin(request: Request, env: Env): Promise<Response
   })
   if (!(auth instanceof Response)) return null
 
+  return sharedAuthError(request, env, auth, 'Admin access required')
+}
+
+async function requireUserSession(request: Request, env: Env): Promise<{ sessionToken: string } | Response> {
+  const auth = await requireSession(request, authEnv(env))
+  if (auth instanceof Response) return sharedAuthError(request, env, auth, 'Authorization required')
+  if (!auth.bearerToken) return error(request, env, 'unauthorized', 'Authorization required', 401)
+  return { sessionToken: auth.bearerToken }
+}
+
+async function sharedAuthError(request: Request, env: Env, auth: Response, fallbackMessage: string): Promise<Response> {
   const body = await auth.json().catch(() => null) as { error?: { code?: string; message?: string } } | null
   const code = body?.error?.code ?? (auth.status === 401 ? 'unauthorized' : 'forbidden')
-  const message = auth.status === 401 ? 'Unauthorized' : 'Admin access required'
+  const message = auth.status === 401 ? 'Unauthorized' : fallbackMessage
   return error(request, env, code, message, auth.status)
 }
 
@@ -1433,9 +1360,9 @@ async function isContentAdmin(request: Request, env: Env): Promise<boolean> {
 }
 
 async function handlePutCards(request: Request, env: Env, segments: string[]): Promise<Response> {
-  const authHeader = request.headers.get('Authorization') ?? ''
-  const sessionToken = authHeader.startsWith('Bearer ') ? authHeader.slice(7) : undefined
-  if (!sessionToken) return error(request, env, 'unauthorized', 'Authorization required', 401)
+  const auth = await requireUserSession(request, env)
+  if (auth instanceof Response) return auth
+  const { sessionToken } = auth
 
   // PUT /v1/cards/collections/:id
   if (segments[2] === 'collections' && segments.length === 4) {
@@ -1563,9 +1490,9 @@ async function handlePutCards(request: Request, env: Env, segments: string[]): P
 }
 
 async function handleDeleteCards(request: Request, env: Env, segments: string[]): Promise<Response> {
-  const authHeader = request.headers.get('Authorization') ?? ''
-  const sessionToken = authHeader.startsWith('Bearer ') ? authHeader.slice(7) : undefined
-  if (!sessionToken) return error(request, env, 'unauthorized', 'Authorization required', 401)
+  const auth = await requireUserSession(request, env)
+  if (auth instanceof Response) return auth
+  const { sessionToken } = auth
 
   // DELETE /v1/cards/collections/:id
   if (segments[2] === 'collections' && segments.length === 4) {
@@ -1628,12 +1555,8 @@ async function handleDeleteCards(request: Request, env: Env, segments: string[])
 }
 
 async function handlePromoteCollection(request: Request, env: Env, _segments: string[]): Promise<Response> {
-  const authHeader = request.headers.get('Authorization') ?? ''
-  const sessionToken = authHeader.startsWith('Bearer ') ? authHeader.slice(7) : undefined
-  if (!sessionToken) return error(request, env, 'unauthorized', 'Authorization required', 401)
-  if (!(await isContentAdmin(request, env))) {
-    return error(request, env, 'forbidden', 'Admin role required to promote collections', 403)
-  }
+  const authError = await requireContentAdmin(request, env)
+  if (authError) return authError
 
   let body: { collection?: unknown }
   try { body = (await request.json()) as { collection?: unknown } } catch {
@@ -1693,7 +1616,6 @@ async function handlePromoteCollection(request: Request, env: Env, _segments: st
 }
 
 export const internals = {
-  executeQuery,
   getProjects,
   getProject,
   getPages,

@@ -16,6 +16,7 @@
 export interface AuthSuccess {
   ok: true
   method: 'session' | 'api_key'
+  bearerToken?: string
   /** Populated when method === 'session' */
   userId?: string
   subjectId?: string
@@ -291,7 +292,7 @@ export async function authenticate(
   // 1. Check API key first (cheapest check — cached D1 lookup, no external network call)
   const apiKey = await validateApiKey(token, env, options)
   if (apiKey) {
-    return apiKey
+    return { ...apiKey, bearerToken: token }
   }
 
   // 2. Validate as session token against identity service
@@ -300,6 +301,7 @@ export async function authenticate(
     return {
       ok: true,
       method: 'session',
+      bearerToken: token,
       userId: session.userId,
       roles: session.roles,
       capabilities: session.capabilities,

@@ -127,9 +127,11 @@ function env(db = new MemoryCommunicationDb()) {
 }
 
 async function fetchJson(path: string, init: RequestInit = {}, testEnv = env()) {
+  const headers = new Headers(init.headers)
+  headers.set('content-type', headers.get('content-type') ?? 'application/json')
   const request = new Request(`https://communication.test${path}`, {
     ...init,
-    headers: { 'content-type': 'application/json', ...(init.headers ?? {}) }
+    headers
   })
   const response = await handleRequest(request, testEnv as never)
   const body = response.status === 204 ? {} : await response.json() as JsonBody
@@ -175,7 +177,9 @@ describe('communication-api', () => {
     expect(JSON.stringify(message)).not.toContain('abc')
     expect(JSON.stringify(message)).not.toContain('123456')
     expect(JSON.stringify(message)).not.toContain('123 456')
-    const providerBody = JSON.parse(String((resendFetch.mock.calls[0]?.[1] as RequestInit).body))
+    const providerCall = resendFetch.mock.calls[0]
+    expect(providerCall).toBeDefined()
+    const providerBody = JSON.parse(String((providerCall[1] as RequestInit).body))
     expect(providerBody.subject).toContain('123 456')
     expect(providerBody.text).toContain('https://example.test/magic?token=abc')
     expect(providerBody.html).toContain('https://example.test/magic?token=abc')

@@ -24,6 +24,11 @@ binding = "PEPPER_SECRET"
 store_id = "0ba6468063e04b779e529f5db651896b"
 secret_name = "TOKEN_PEPPER"
 
+[[secrets_store_secrets]]
+binding = "COMMUNICATION_SECRET"
+store_id = "0ba6468063e04b779e529f5db651896b"
+secret_name = "COMMUNICATION_API_KEY"
+
 [vars]
 TIKO_ENVIRONMENT = "development"
 ADMIN_EMAIL = "me@sil.mt"
@@ -71,6 +76,11 @@ service = "tiko-identity-api"
 binding = "PEPPER_SECRET"
 store_id = "0ba6468063e04b779e529f5db651896b"
 secret_name = "TOKEN_PEPPER"
+
+[[env.production.secrets_store_secrets]]
+binding = "COMMUNICATION_SECRET"
+store_id = "0ba6468063e04b779e529f5db651896b"
+secret_name = "COMMUNICATION_API_KEY"
 
 [env.production.vars]
 TIKO_ENVIRONMENT = "production"

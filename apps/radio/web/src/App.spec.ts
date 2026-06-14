@@ -40,7 +40,6 @@ function mountApp(
   popupService = { showPopup: vi.fn(), close: vi.fn(), closeAllPopups: vi.fn(), popups: { value: [] } },
 ) {
   const ls = existingLs ?? createLocalStorageMock()
-  const origLs = globalThis.localStorage
   Object.defineProperty(globalThis, 'localStorage', { value: ls, writable: true, configurable: true })
 
   const wrapper = mount(App, {

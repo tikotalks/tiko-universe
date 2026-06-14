@@ -29,7 +29,6 @@ interface YesNoAnswerSet {
 
 interface YesNoState {
   prompt: string
-  answers: YesNoAnswerTile[]
   answerSets: YesNoAnswerSet[]
   selectedSetId?: string
 }
@@ -74,15 +73,9 @@ const answerPresets: Array<Omit<YesNoAnswerTile, 'id'>> = [
 
 const state = computed<YesNoState>(() => {
   const value = props.modelValue as Partial<YesNoState>
-  const legacyAnswers = Array.isArray(value?.answers) ? (value.answers as YesNoAnswerTile[]) : []
-  const answerSets = Array.isArray(value?.answerSets)
-    ? (value.answerSets as YesNoAnswerSet[])
-    : legacyAnswers.length
-      ? [{ id: 'custom', title: 'Custom answers', color: 'teal', order: 0, answers: legacyAnswers }]
-      : []
+  const answerSets = Array.isArray(value?.answerSets) ? (value.answerSets as YesNoAnswerSet[]) : []
   return {
     prompt: typeof value?.prompt === 'string' ? value.prompt : '',
-    answers: legacyAnswers,
     answerSets,
     selectedSetId: typeof value?.selectedSetId === 'string' ? value.selectedSetId : answerSets[0]?.id,
   }
@@ -129,7 +122,7 @@ function normalizeSet(set: YesNoAnswerSet, order: number): YesNoAnswerSet {
 function updateSets(sets: YesNoAnswerSet[], selectedSetId = state.value.selectedSetId) {
   const normalized = sets.map(normalizeSet)
   const selected = normalized.some(set => set.id === selectedSetId) ? selectedSetId : normalized[0]?.id
-  update({ answerSets: normalized, selectedSetId: selected, answers: normalized[0]?.answers ?? [] })
+  update({ answerSets: normalized, selectedSetId: selected })
 }
 
 function addSet() {

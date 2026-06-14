@@ -592,4 +592,19 @@ describe('generation-api TTS contract', () => {
     expect(wrangler).toContain('IDENTITY_BASE_URL = "https://api.tikotalks.com/v1"')
     expect(wrangler).toContain('IDENTITY_BASE_URL = "https://identity.tikoapi.org/v1"')
   })
+
+  it('returns CORS headers on internal errors so browser clients can read the error body', async () => {
+    const throwingDb = {
+      prepare: () => {
+        throw new Error('d1 connection refused')
+      },
+    }
+    const env = makeEnv({ GENERATION_DB: throwingDb as unknown as Env['GENERATION_DB'] })
+
+    const response = await worker.fetch(new Request('https://api.test/v1/generation/images?status=promoted'), env)
+
+    expect(response.status).toBe(500)
+    expect(response.headers.get('access-control-allow-origin')).toBe('*')
+    await expect(json(response)).resolves.toMatchObject({ error: { code: 'internal_error' } })
+  })
 })

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import worker from '../workers/app-api/src/index'
-import { TikoDataClient, TikoDataError, type AppSettingsResponse, type YesNoSettings } from '@tiko/data'
+import { TikoDataClient, type AppSettingsResponse, type YesNoSettings } from '@tiko/data'
 
 type Row = Record<string, unknown>
 type JsonBody = Record<string, any>
@@ -148,9 +148,11 @@ async function env() {
 }
 
 async function fetchJson(path: string, init: RequestInit = {}, testEnv?: Awaited<ReturnType<typeof env>>) {
+  const headers = new Headers(init.headers)
+  headers.set('content-type', headers.get('content-type') ?? 'application/json')
   const request = new Request(`https://app-api.test${path}`, {
     ...init,
-    headers: { 'content-type': 'application/json', ...(init.headers ?? {}) }
+    headers
   })
   const response = await worker.fetch(request, (testEnv ?? await env()) as never, {} as never)
   const body = response.status === 204 ? {} : await response.json() as JsonBody

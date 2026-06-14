@@ -327,37 +327,22 @@ describe('content-api worker', () => {
     expect(body.data.sections[0]).toMatchObject({ id: 'section_link_1', name: 'Animal choices' })
   })
 
-  it('supports legacy POST /query methods', async () => {
+  it('does not serve query compatibility routes', async () => {
     const response = await worker.fetch(new Request('https://content.test/query?no-cache=1', {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
       body: JSON.stringify({ method: 'getItemBySlug', params: { slug: 'cat' } }),
     }), makeEnv() as never)
-    const body = await parseJson(response)
-
-    expect(response.status).toBe(200)
-    expect(body.success).toBe(true)
-    expect(body.data).toMatchObject({ id: 'item_1', slug: 'cat', tags: ['animal'], data: { emoji: '🐱' } })
-  })
-
-  it('uses stable hashed cache keys for legacy query requests', async () => {
-    const env = makeEnv()
-    const first = await worker.fetch(new Request('https://content.test/query', {
-      method: 'POST',
-      headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({ method: 'getPages', params: { language: 'en', projectSlug: 'cards' } }),
-    }), env as never)
-    env.CONTENT_DB.pages[0].title = 'Changed after cache write'
-    const second = await worker.fetch(new Request('https://content.test/query', {
+    const versionedResponse = await worker.fetch(new Request('https://content.test/v1/query', {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
       body: JSON.stringify({ params: { projectSlug: 'cards', language: 'en' }, method: 'getPages' }),
-    }), env as never)
+    }), makeEnv() as never)
 
-    expect(first.status).toBe(200)
-    expect(second.status).toBe(200)
-    expect((await parseJson(second)).data[0].title).toBe('Animals')
-    expect([...env.CONTENT_CACHE.values.keys()]).toEqual([expect.stringMatching(/^query:[a-f0-9]{32}$/)])
+    expect(response.status).toBe(405)
+    expect((await parseJson(response)).error.code).toBe('method_not_allowed')
+    expect(versionedResponse.status).toBe(405)
+    expect((await parseJson(versionedResponse)).error.code).toBe('method_not_allowed')
   })
 
   it('localizes default cards collections from content item translations', async () => {
@@ -567,7 +552,7 @@ describe('content-api worker', () => {
     expect(env.CONTENT_DB.appTranslations.some(row => row.item_id === 'sequence_counting-apples_nine-apples')).toBe(false)
   })
 
-  it('rejects malformed query requests', async () => {
+  it('returns not found for unsupported POST routes', async () => {
     const invalidJson = await worker.fetch(new Request('https://content.test/v1/query', {
       method: 'POST', headers: { 'content-type': 'application/json' }, body: '{',
     }), makeEnv() as never)
@@ -575,9 +560,9 @@ describe('content-api worker', () => {
       method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ method: 'explode' }),
     }), makeEnv() as never)
 
-    expect(invalidJson.status).toBe(400)
-    expect((await parseJson(invalidJson)).error.code).toBe('bad_request')
-    expect(unknownMethod.status).toBe(400)
-    expect((await parseJson(unknownMethod)).error.message).toContain('Unknown method')
+    expect(invalidJson.status).toBe(405)
+    expect((await parseJson(invalidJson)).error.code).toBe('method_not_allowed')
+    expect(unknownMethod.status).toBe(405)
+    expect((await parseJson(unknownMethod)).error.code).toBe('method_not_allowed')
   })
 })

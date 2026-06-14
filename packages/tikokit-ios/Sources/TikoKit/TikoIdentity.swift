@@ -283,10 +283,8 @@ public actor TikoIdentityClient {
         let _: EmptyResponse = try await send(path: "/identity/logout", method: "POST", body: EmptyBody?.none, accessToken: accessToken)
     }
 
-    /// Legacy endpoint — prefer createDeletionRequest(scope: .account)
-    @available(*, deprecated, message: "Use createDeletionRequest(scope: .account) instead")
     public func deleteSelf(accessToken: String) async throws {
-        let _: EmptyResponse = try await send(path: "/identity/me", method: "DELETE", body: EmptyBody?.none, accessToken: accessToken)
+        let _: TikoDeletionRequest = try await createDeletionRequest(accessToken: accessToken, scope: .account)
     }
 
     // MARK: - Deletion & Reset

@@ -1,4 +1,4 @@
-import { ref, watch, computed, shallowRef, type ShallowRef, type ComputedRef } from 'vue'
+import { watch, computed, shallowRef, type ShallowRef, type ComputedRef } from 'vue'
 import type { RadioTrack, TrackSource } from '@tiko/data'
 
 type NewTrackInput = {

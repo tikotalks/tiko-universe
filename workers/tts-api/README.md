@@ -12,9 +12,9 @@ TTS ownership has moved to Atlas. New web, iOS, and Android clients must use the
 This Worker exposes one service-authenticated route:
 
 - `POST /generate`
-  - body: `{ "text": string, "language": string, "provider"?: "openai" | "azure" | "auto", "voice"?: string, "model"?: string, "speed"?: number, "pitch"?: number }`
+  - body: `{ "text": string, "language": string, "speed"?: number, "pitch"?: number }`
   - returns `{ "success": true, "audioUrl": string, "cached": boolean }`
-  - all valid requests are routed to Atlas without provider, model, or voice hints.
+  - provider, model, and voice hints are rejected because Atlas owns that decision.
   - if Atlas is not configured, returns a clear non-2xx error so clients can fall back to platform speech.
 - `GET /audio` is not served by this worker.
 
