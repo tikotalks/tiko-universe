@@ -22,12 +22,6 @@ export interface EditInput {
   size: '1024x1024' | '1024x1792' | '1792x1024'
 }
 
-export interface EnrichInput {
-  type: 'enrich'
-  sourceId: string
-  list: 'library' | 'drafts'
-}
-
 export interface UpscaleInput {
   type: 'upscale'
   sourceId: string
@@ -39,11 +33,26 @@ export interface UpscaleInput {
   tags?: string[]
 }
 
-export interface QueueItem {
+export type JobInput = GenerateInput | EditInput | UpscaleInput
+
+// Matches the GenerationJobDto from workers/generation-api/src/jobs.ts.
+export interface JobDto {
   id: string
+  type: 'generate' | 'edit' | 'upscale'
+  status: 'pending' | 'processing' | 'done' | 'error'
+  input: JobInput
   label: string
-  input: GenerateInput | EditInput | EnrichInput | UpscaleInput
-  status: 'pending' | 'generating' | 'done' | 'error'
-  result: ImageGenerationResult | ImageGenerationResult[] | null
-  error: string | null
+  result: { data: ImageGenerationResult | ImageGenerationResult[]; meta: Record<string, unknown> } | null
+  error: { code: string; message: string } | null
+  createdAt: string
+  updatedAt: string
+  processedAt: string | null
+}
+
+export function extractJobResults(job: JobDto): ImageGenerationResult[] {
+  if (!job.result) return []
+  const data = job.result.data
+  if (Array.isArray(data)) return data
+  if (data && typeof data === 'object') return [data]
+  return []
 }
