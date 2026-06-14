@@ -45,7 +45,7 @@ const adminBundle = {
 
 describe('admin OTP sign-in', () => {
   beforeEach(() => {
-    cy.intercept('POST', 'https://identity.tikoapi.org/v1/identity/device', (req) => {
+    cy.intercept('POST', 'https://id.tikoapps.org/v1/identity/device', (req) => {
       expect(req.body).to.deep.include({
         device: {
           name: 'Tiko Admin web',
@@ -55,13 +55,13 @@ describe('admin OTP sign-in', () => {
       req.reply(deviceBundle)
     }).as('bootstrapDevice')
 
-    cy.intercept('POST', 'https://identity.tikoapi.org/v1/identity/email', (req) => {
+    cy.intercept('POST', 'https://id.tikoapps.org/v1/identity/email', (req) => {
       expect(req.headers.authorization).to.equal('Bearer device-session-token')
       expect(req.body).to.deep.equal({ email: 'sil@example.com', purpose: 'recover' })
       req.reply({ ok: true, message: 'Check your email for the 6-digit code.' })
     }).as('requestCode')
 
-    cy.intercept('POST', 'https://identity.tikoapi.org/v1/identity/otp/verify', (req) => {
+    cy.intercept('POST', 'https://id.tikoapps.org/v1/identity/otp/verify', (req) => {
       expect(req.body).to.deep.equal({ code: '123456' })
       req.reply(adminBundle)
     }).as('verifyOtp')
