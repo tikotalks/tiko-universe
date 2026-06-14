@@ -1178,8 +1178,20 @@ async function withTikoSessionContract(request: AnyRequest, env: Env, response: 
   }
 
   const nextBody: Record<string, any> = { ...body, roles, user, account, runtime, capabilities }
-  if (body.session) {
-    nextBody.session = { ...body.session, loginMethod: await deriveLoginMethod(request, body, accountType) }
+  // The session token rides in the HttpOnly cookie and ankore omits it from the
+  // GET /session body. Cookie-only clients (e.g. the admin web, which must send a
+  // Bearer to admin-api on a different registrable domain the cookie can't reach)
+  // need it to rebuild their session on refresh — without it the client throws on
+  // the missing token and re-bootstraps a fresh anonymous session, clobbering the
+  // real one. Echo the caller's own session token when the body lacks one.
+  const requestToken = sessionTokenFromRequest(request)
+  const baseSession = body.session && typeof body.session === 'object' ? body.session : null
+  if (baseSession || requestToken) {
+    nextBody.session = {
+      ...(baseSession ?? {}),
+      loginMethod: await deriveLoginMethod(request, body, accountType),
+      ...(baseSession?.token ? {} : requestToken ? { token: requestToken } : {})
+    }
   }
   const headers = new Headers(response.headers)
   headers.set('content-type', 'application/json')
