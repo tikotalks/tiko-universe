@@ -1,6 +1,6 @@
 import type { ImageGenerationResult } from '../../types/admin'
 
-export type TikoStyle = 'tiko-original' | 'tiko-v2' | 'tiko-natural'
+export type TikoStyle = 'tiko-original' | 'tiko-v2' | 'tiko-v3' | 'tiko-natural'
 
 export interface GenerateInput {
   type: 'generate'

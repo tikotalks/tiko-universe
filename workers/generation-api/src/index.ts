@@ -671,7 +671,7 @@ async function generateImage(request: Request, env: Env, access: GenerationAcces
   const quality = body.quality === 'hd' ? 'hd' : 'standard'
   const style = body.style === 'natural' ? 'natural' : 'vivid'
   const mode: ImageMode = body.mode === 'coloring' || body.mode === 'background' ? body.mode : 'icon'
-  const tikoStyle: TikoStyle = body.tikoStyle === 'tiko-original' || body.tikoStyle === 'tiko-natural' ? body.tikoStyle : 'tiko-v2'
+  const tikoStyle: TikoStyle = body.tikoStyle === 'tiko-original' || body.tikoStyle === 'tiko-v2' || body.tikoStyle === 'tiko-natural' ? body.tikoStyle : 'tiko-v3'
   const transparent = body.transparent !== undefined ? body.transparent : (mode === 'icon')
 
   if (!env.ATLAS_SERVICE) return apiError('atlas_not_available', 'Atlas service is not available.', 503)

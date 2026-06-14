@@ -8,7 +8,7 @@ import { useAdminAuth } from './useAdminAuth'
 const imageObjectUrls = reactive(new Map<string, string>())
 const loadingImageBlobs = new Set<string>()
 
-type TikoStyle = 'tiko-original' | 'tiko-v2' | 'tiko-natural'
+type TikoStyle = 'tiko-original' | 'tiko-v2' | 'tiko-v3' | 'tiko-natural'
 
 interface GenerateImageInput {
   prompt: string

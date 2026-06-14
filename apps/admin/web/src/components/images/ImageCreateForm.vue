@@ -17,7 +17,7 @@ const category = ref('generated')
 const tagsText = ref('tiko, child-friendly')
 const size = ref<'1024x1024' | '1024x1792' | '1792x1024'>('1024x1024')
 const quality = ref<'standard' | 'hd'>('standard')
-const tikoStyle = ref<TikoStyle>('tiko-v2')
+const tikoStyle = ref<TikoStyle>('tiko-v3')
 const previewCount = ref(4)
 
 const tikoStylePrompt = `
@@ -106,6 +106,7 @@ function useTemplate(kind: 'character' | 'scene' | 'object') {
         <select v-model="tikoStyle" :class="form('select')">
           <option value="tiko-original">Tiko Original</option>
           <option value="tiko-v2">Tiko V2</option>
+          <option value="tiko-v3">Tiko V3</option>
           <option value="tiko-natural">Tiko Natural</option>
         </select>
       </label>
