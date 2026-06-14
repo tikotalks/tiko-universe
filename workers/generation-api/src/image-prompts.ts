@@ -1,5 +1,5 @@
 export type ImageMode = 'icon' | 'coloring' | 'background'
-export type TikoStyle = 'tiko-original' | 'tiko-v2' | 'tiko-natural'
+export type TikoStyle = 'tiko-original' | 'tiko-v2' | 'tiko-v3' | 'tiko-natural'
 
 export interface ImagePromptEnv {
   ATLAS_SERVICE?: {
@@ -85,6 +85,43 @@ const ICON_STYLE_SPECS: Record<TikoStyle, object> = {
       style_constraints: "No oversized features, blush, sparkles, heavy gloss, visible grain, leaves, foliage, vines, plant parts, text, letters, numbers, or typographic elements unless explicitly requested."
     }
   },
+  'tiko-v3': {
+    task: "Generate a soft 3D icon in the Tiko V3 style: toy-like, rounded, matte, chunky and slightly puffed, with clear volume and a simplified child-friendly silhouette. Absolutely no text, letters, numbers, labels, or busy backgrounds unless explicitly described in icon_idea.",
+    style_reference: "Soft 3D toy-like render with the polish of a clay-or-vinyl character/object. Never photorealistic, never flat like a 2D sticker. Chunky, smooth, slightly puffed forms with clean curves and minimal small details. Clear volume and gentle dimensionality. Balanced, truthful colors that are slightly bright but still natural - saturation controlled and harmonious, no single warm hue dominating.",
+    icon_idea: null,
+    render_style: {
+      materials: "Matte clay/vinyl feel with only the faintest soft texture to suggest the material. Never glossy plastic shine, harsh reflections, heavy texture, or realistic materials. Suggest material identity through form and color cues only.",
+      shapes: "Chunky, smooth, slightly puffed. Rounded forms with clean curves and minimal small details. Confident geometry, never overly complex.",
+      colors: "Balanced, truthful colors that are slightly bright but still natural. Soft fresh greens, calm clear blues, warm yellows, natural skin tones, earthy browns, creamy or warm-grey neutrals. Saturation controlled and harmonious - do not let red, orange, or any single warm hue dominate. Prefer color accuracy over stylized exaggeration.",
+      lighting: "Soft studio lighting with subtle light wrap, low-to-medium contrast, delicate ambient shading, and a soft grounded shadow beneath the subject. Adds depth without becoming dramatic. No harsh speculars.",
+      background: "transparent"
+    },
+    composition: {
+      camera: "Orthographic or slight 3/4 top-front.",
+      layout: "Centered, clean, easy to read, with generous breathing room and a strong silhouette. No busy backgrounds, no decorative clutter.",
+      aspect_ratio: "1:1 square, minimum 1024x1024px",
+      file_format: "High-res PNG"
+    },
+    surface_texture: {
+      enable: true,
+      texture_strength: "minimal",
+      texture_scale: "micro",
+      rules: "Faintest soft texture to suggest clay or vinyl. Suggest material through subtle cues, never through photorealistic texture maps."
+    },
+    material_hints: {
+      animal: "Matte soft form; no visible fur strands.",
+      plant: "Soft fresh green forms; no realistic leaf texture.",
+      fabric: "Smooth matte suggestion; no woven detail.",
+      metal: "Matte powder-coat hint; no bright streaks.",
+      plastic: "Soft satin polymer; no glossy shine."
+    },
+    details: {
+      expression: "Neutral; no faces unless specified.",
+      structure: "Chunky, smooth, slightly puffed. Clear volume and gentle dimensionality with a simplified child-friendly silhouette.",
+      pose: "Strong, readable silhouette; instantly recognizable at small sizes.",
+      style_constraints: "No text, letters, numbers, labels, or symbols. No glossy plastic shine, harsh reflections, heavy texture, or realistic materials. Do not make the result flat, overly red, oversaturated, inconsistent, or too realistic."
+    }
+  },
   'tiko-natural': {
     task: "Generate a soft 3D icon in a natural, lively style. Same rounded toy-like forms as Tiko V2 but with a grounded color palette that stays bright and cheerful - not oversaturated, not muted.",
     style_reference: "Soft 3D icon with natural but vibrant colors. Same rounded vinyl-toy aesthetic but colors feel like fresh matte paint - present and lively without being neon. Think high-quality children's wooden toy or Scandinavian illustration with punchy but natural hues - clear greens, warm reds, golden yellows, sky blues.",
@@ -125,7 +162,7 @@ const ICON_STYLE_SPECS: Record<TikoStyle, object> = {
 }
 
 const IMAGE_STYLE_SPECS: Record<ImageMode, object> = {
-  icon: ICON_STYLE_SPECS['tiko-v2'],
+  icon: ICON_STYLE_SPECS['tiko-v3'],
   coloring: {
     task: "Generate a black-and-white coloring page (clean line art only). The subject must be fully contained within the frame with no parts cut off. CRITICAL: Absolutely NO border lines, frames, or rectangles around the edge of the image.",
     style_reference: "Crisp, closed outlines with consistent stroke weight; pure black lines on white; no shading, gradients, textures, halftones, or colors. Subject fully visible with generous padding from edges. The edge of the image must be pure white with no lines.",
@@ -232,6 +269,7 @@ Rules:
 - Suggest material identity through form and color cues (rice kernels, wood warmth) - never through photorealistic texture.
 - Include: subject, camera, composition, lighting, palette, materials, textures, surface detail, silhouettes, dos/don'ts.
 - Be directive, not optional. No meta talk. No lists. No JSON.`,
+  'tiko-v3': `You are a senior art director. Convert the user's JSON style spec into one explicit 180-300 word image brief for an image-generation model. Write in a direct, confident art-direction voice. Do not mention JSON, prompts, specs, or the conversion process. Create a consistent Tiko V3 illustration style: soft 3D, toy-like, rounded, matte, friendly, and highly readable. The image must feel like a polished clay-or-vinyl character/object render, but never photorealistic and never flat like a 2D sticker. Every subject must have clear volume, gentle dimensionality, and a simplified child-friendly silhouette. Keep forms chunky, smooth, and slightly puffed, with clean curves and minimal small details. Use balanced, truthful colors that are slightly bright but still natural. Keep saturation controlled and harmonious. Do not let red, orange, or any single warm hue dominate the image. Greens should feel soft and fresh, blues calm and clear, yellows warm, skin tones natural, browns earthy, and neutrals creamy or warm grey. Prefer color accuracy over stylized exaggeration. Use soft studio lighting with subtle light wrap, low-to-medium contrast, delicate ambient shading, and a soft grounded shadow beneath the subject. This must add depth without becoming dramatic. Surfaces should be matte with only the faintest soft texture to suggest clay or vinyl. Never use glossy plastic shine, harsh reflections, heavy texture, or realistic materials. Keep the composition centered, clean, and easy to read, with generous breathing room and a strong silhouette. Do not use text, letters, numbers, labels, symbols, or busy backgrounds. Do not make the result flat, overly red, oversaturated, inconsistent, or too realistic.`,
   'tiko-natural': `You are a senior art director. Convert the user's JSON style spec into a single, explicit, 180-300 word image brief for an image-generation model.
 Rules:
 - Do not use any text or letters in the images.
@@ -245,7 +283,7 @@ Rules:
 }
 
 const ART_DIRECTOR_SYSTEM_PROMPTS: Record<ImageMode, string> = {
-  icon: ICON_ART_DIRECTOR_PROMPTS['tiko-v2'],
+  icon: ICON_ART_DIRECTOR_PROMPTS['tiko-v3'],
   coloring: `You are a senior art director. Convert the user's JSON style spec into a single, explicit, 180-300 word image brief for an image-generation model producing a coloring page.
 Rules:
 - EMPHASIZE no border lines or frames at the image edges. The image must have a pure white background that extends to the edges with no black lines forming a border or frame.
