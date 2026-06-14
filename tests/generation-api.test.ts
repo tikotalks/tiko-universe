@@ -235,7 +235,8 @@ describe('generation-api TTS contract', () => {
     const atlasFetch = vi.fn(async (input: Request | string) => {
       const request = input instanceof Request ? input : new Request(input)
       expect(new URL(request.url).pathname).toBe('/v1/atlas/speech')
-      expect(request.headers.get('authorization')).toBe('Bearer test-atlas-key')
+      // The caller's session token is forwarded to Atlas (service key is only a fallback).
+      expect(request.headers.get('authorization')).toBe('Bearer test-api-key')
       const atlasBody = await request.json() as Record<string, unknown>
       expect(atlasBody).toMatchObject({
         app: 'generation-api',
@@ -274,7 +275,7 @@ describe('generation-api TTS contract', () => {
     expect(generated).toMatchObject({
       data: {
         id: 'atlas-audio-1',
-        audioUrl: '/v1/atlas/assets/atlas-audio-1',
+        audioUrl: 'https://api.tikotalks.com/v1/atlas/assets/atlas-audio-1',
         provider: 'openai',
         voice: 'nova',
         model: 'tts-1',
@@ -308,13 +309,26 @@ describe('generation-api TTS contract', () => {
     expect(dbSpy).not.toHaveBeenCalledWith(expect.stringContaining('generated_audio'))
     expect(bucketPutSpy).not.toHaveBeenCalled()
     await expect(json(response)).resolves.toMatchObject({
-      data: { id: 'atlas-audio-2', audioUrl: '/v1/atlas/assets/atlas-audio-2' },
+      data: { id: 'atlas-audio-2', audioUrl: 'https://api.tikotalks.com/v1/atlas/assets/atlas-audio-2' },
       meta: { cached: true },
     })
   })
 
-  it('does not bypass Atlas when the app speech service binding is missing its service key', async () => {
-    const atlasFetch = vi.fn()
+  it('forwards the caller session token to Atlas when the service key is not configured', async () => {
+    const atlasFetch = vi.fn(async (input: Request | string) => {
+      const request = input instanceof Request ? input : new Request(input)
+      // With no ATLAS_API_KEY, the caller's own Bearer token must be forwarded.
+      expect(request.headers.get('authorization')).toBe('Bearer test-api-key')
+      return new Response(JSON.stringify({
+        data: {
+          id: 'atlas-audio-3',
+          audioUrl: '/v1/atlas/assets/atlas-audio-3',
+          contentType: 'audio/mpeg',
+          provider: { name: 'elevenlabs', model: 'eleven_multilingual_v2', voice: 'cgSgspJ2msm6clMCkdW9' },
+        },
+        meta: { cached: false, schemaVersion: 1 },
+      }), { status: 200, headers: { 'content-type': 'application/json' } })
+    })
     const providerFetch = vi.spyOn(globalThis, 'fetch')
     const env = makeEnv({
       ATLAS_SERVICE: { fetch: atlasFetch },
@@ -324,12 +338,9 @@ describe('generation-api TTS contract', () => {
 
     const response = await worker.fetch(generationPost('/v1/generation/tts', { text: 'Hello', language: 'en' }), env)
 
-    expect(response.status).toBe(503)
-    expect(atlasFetch).not.toHaveBeenCalled()
+    expect(response.status).toBe(201)
+    expect(atlasFetch).toHaveBeenCalledTimes(1)
     expect(providerFetch).not.toHaveBeenCalled()
-    await expect(json(response)).resolves.toMatchObject({
-      error: { code: 'atlas_service_key_not_configured', message: 'Atlas service key is not configured.' },
-    })
   })
 
   it('does not bypass Atlas when the app speech service binding is missing', async () => {
