@@ -105,6 +105,7 @@ struct RadioView: View {
                 onAddCategory: { name in library.addCategory(title: name) },
                 onDismiss: { showAddSheet = false }
             )
+            .environmentObject(i18n)
         }
         .sheet(item: $editTarget) { target in
             renameSheet(for: target)
@@ -142,8 +143,41 @@ struct RadioView: View {
                     .foregroundStyle(radioDark)
                     .padding(.horizontal, 20)
 
+                if tracks.isEmpty {
+                    VStack(spacing: 14) {
+                        Image(systemName: "antenna.radiowaves.left.and.right")
+                            .font(.system(size: 48, weight: .heavy))
+                            .foregroundStyle(radioPrimary)
+                        Text(i18n.t("radio.collections.empty"))
+                            .font(.system(.title3, design: .rounded).weight(.heavy))
+                            .foregroundStyle(radioDark)
+                            .multilineTextAlignment(.center)
+                        Text(i18n.t("radio.collections.addHint"))
+                            .font(.system(.body, design: .rounded).weight(.semibold))
+                            .foregroundStyle(radioDark.opacity(0.62))
+                            .multilineTextAlignment(.center)
+                        Button(action: { showAddSheet = true }) {
+                            HStack(spacing: 8) {
+                                Image(systemName: "plus")
+                                Text(i18n.t("radio.library.addSong"))
+                            }
+                            .font(.system(.body, design: .rounded).weight(.bold))
+                            .foregroundStyle(.white)
+                            .padding(.horizontal, 24)
+                            .padding(.vertical, 14)
+                            .background(radioPrimary)
+                            .clipShape(Capsule())
+                        }
+                    }
+                    .padding(32)
+                    .frame(maxWidth: .infinity)
+                    .background(cardBackground)
+                    .clipShape(RoundedRectangle(cornerRadius: 26, style: .continuous))
+                    .padding(.horizontal, 20)
+                }
+
                 LazyVGrid(columns: [GridItem(.adaptive(minimum: 145), spacing: 14)], spacing: 14) {
-                    ForEach(library.collectionsWithTracks) { category in
+                    ForEach(library.categories) { category in
                         collectionTile(category)
                     }
                 }
@@ -192,7 +226,7 @@ struct RadioView: View {
         }) {
             TikoSquareTile(
                 title: category.title,
-                subtitle: "\(count) songs",
+                subtitle: count == 0 ? i18n.t("radio.collections.empty") : "\(count) \(count == 1 ? "song" : "songs")",
                 background: TikoColors.color(named: category.color) ?? TikoColors.color(named: "gray")!
             ) {
                 Image(systemName: category.symbol)
