@@ -961,14 +961,20 @@ async function enrichImage(pathname: string, env: Env, access: GenerationAccessC
   if (!env.OPENAI_API_KEY) return apiError('openai_not_configured', 'OpenAI is not configured.', 503)
 
   const record = await env.GENERATION_DB.prepare(
-    'SELECT id, title, prompt, created_by FROM generated_images WHERE id = ? LIMIT 1',
-  ).bind(id).first<{ id: string; title: string | null; prompt: string; created_by: string | null }>()
+    'SELECT id, title, prompt, r2_key, content_type, created_by FROM generated_images WHERE id = ? LIMIT 1',
+  ).bind(id).first<{ id: string; title: string | null; prompt: string; r2_key: string | null; content_type: string | null; created_by: string | null }>()
 
   if (!record) return apiError('image_not_found', 'Image not found.', 404)
   if (!canMutateOwnedRecord(access, record)) return forbiddenOrUnauthorized(access)
 
-  const publicBase = (env.GENERATION_PUBLIC_ROUTE ?? '').replace(/\/$/, '')
-  const imageUrl = `${publicBase}/images/${id}/binary`
+  // Embed the image inline as a base64 data URL. The /binary endpoint is auth-gated
+  // (private drafts), so OpenAI cannot fetch it by URL — reading the bytes from R2
+  // and inlining them avoids the auth/reachability problem entirely.
+  if (!record.r2_key) return apiError('image_not_found', 'Image has no stored binary.', 404)
+  const object = await env.GENERATED_MEDIA_BUCKET.get(record.r2_key)
+  if (!object) return apiError('image_not_found', 'Image binary not found.', 404)
+  const contentType = object.httpMetadata?.contentType ?? record.content_type ?? 'image/png'
+  const imageUrl = `data:${contentType};base64,${bytesToBase64(await new Response(object.body).arrayBuffer())}`
   const hint = record.title || record.prompt
 
   const visionResponse = await fetchWithRetry('https://api.openai.com/v1/chat/completions', {
@@ -1173,6 +1179,16 @@ function base64ToBytes(base64: string): Uint8Array {
   const bytes = new Uint8Array(binary.length)
   for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i)
   return bytes
+}
+
+function bytesToBase64(buffer: ArrayBuffer): string {
+  const bytes = new Uint8Array(buffer)
+  let binary = ''
+  const chunk = 0x8000
+  for (let i = 0; i < bytes.length; i += chunk) {
+    binary += String.fromCharCode(...bytes.subarray(i, i + chunk))
+  }
+  return btoa(binary)
 }
 
 async function upscaleImage(pathname: string, request: Request, env: Env, access: GenerationAccessContext): Promise<Response> {
