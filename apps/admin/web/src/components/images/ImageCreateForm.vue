@@ -147,7 +147,7 @@ function useTemplate(kind: 'character' | 'scene' | 'object') {
     <p :class="form('hint')">
       Generates {{ previewCount }} preview{{ previewCount > 1 ? 's' : '' }} in
       <button type="button" :class="form('inline-link')" @click="emit('view-drafts')">Drafts</button>.
-      Pick one and render it at high quality.
+      Pick one and enhance it to full quality.
     </p>
   </form>
 </template>

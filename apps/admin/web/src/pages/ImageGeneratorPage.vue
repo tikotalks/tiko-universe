@@ -157,7 +157,7 @@ async function onUpscale(item: ImageGalleryItem) {
   try {
     const created = await enqueueJobs([input])
     jobs.value = [...created, ...jobs.value]
-    toast.info(`High quality render queued for "${item.title || item.id}"`)
+    toast.info(`Enhance queued for "${item.title || item.id}"`)
     startPolling()
   } catch (e) {
     galleryError.value = e instanceof Error ? e.message : 'Failed to enqueue.'
@@ -316,7 +316,7 @@ onMounted(async () => {
         <article v-for="item in libraryItems" :key="item.id" :class="card('')">
           <div :class="card('image-wrap')">
             <img :class="card('image')" :src="imageSrc(item)" :alt="item.prompt" />
-            <span v-if="item.model === 'gpt-image-2'" :class="card('badge', { upscaled: true })">High quality</span>
+            <span v-if="item.model === 'gpt-image-2'" :class="card('badge', { enhanced: true })">Enhanced</span>
           </div>
           <div :class="card('body')">
             <strong :class="card('title')">{{ item.title || item.category }}</strong>
@@ -352,7 +352,7 @@ onMounted(async () => {
           <div :class="card('image-wrap')">
             <img :class="card('image')" :src="imageSrc(item)" :alt="item.prompt" />
             <span v-if="item.isPreview" :class="card('badge', { preview: true })">Preview</span>
-            <span v-else :class="card('badge', { upscaled: true })">High quality</span>
+            <span v-else :class="card('badge', { enhanced: true })">Enhanced</span>
           </div>
           <div :class="card('body')">
             <strong :class="card('title')">{{ item.title || item.category }}</strong>
@@ -360,7 +360,7 @@ onMounted(async () => {
             <p v-else :class="card('prompt')">{{ item.revisedPrompt || item.prompt }}</p>
             <div :class="card('actions')">
               <Button v-if="!item.isPreview" size="small" @click="onPromote(item)">Promote</Button>
-              <Button v-if="item.isPreview" size="small" variant="outline" :loading="upscalingIds.has(item.id)" @click="onUpscale(item)">High quality</Button>
+              <Button v-if="item.isPreview" size="small" variant="outline" :loading="upscalingIds.has(item.id)" @click="onUpscale(item)">Enhance</Button>
               <Button size="small" variant="outline" :loading="enrichingIds.has(item.id)" @click="onEnrich(item, 'drafts')">Enrich</Button>
               <Button size="small" variant="outline" @click="openEdit(item)">Edit</Button>
               <Button variant="ghost" size="small" :href="imageSrc(item)" target="_blank" rel="noreferrer">Open</Button>
@@ -654,7 +654,7 @@ onMounted(async () => {
       background: rgba(0, 80, 200, 0.72);
     }
 
-    &--upscaled {
+    &--enhanced {
       background: rgba(20, 130, 60, 0.72);
     }
   }

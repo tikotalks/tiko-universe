@@ -147,7 +147,7 @@ export default {
       if (url.pathname === '/v1/generation/image' && request.method === 'POST') return await requireAuth(request, resolvedEnv, (access) => generateImage(request, resolvedEnv, access))
       if (url.pathname === '/v1/generation/jobs' && request.method === 'POST') return await enqueueJobRoute(request, resolvedEnv, ctx)
       if (url.pathname === '/v1/generation/jobs' && request.method === 'GET') return await listJobsRoute(request, resolvedEnv)
-      if (url.pathname === '/v1/generation/jobs/process' && request.method === 'POST') return await processJobsRoute(request, resolvedEnv, ctx)
+      if (url.pathname === '/v1/generation/jobs/process' && request.method === 'POST') return await processJobsRoute(request, resolvedEnv)
       if (url.pathname.startsWith('/v1/generation/jobs/') && request.method === 'GET') return await getJobRoute(url.pathname, request, resolvedEnv)
       if (url.pathname.startsWith('/v1/generation/jobs/') && request.method === 'DELETE') return await requireAuth(request, resolvedEnv, (access) => deleteJobRoute(url.pathname, resolvedEnv, access))
       if (url.pathname.startsWith('/v1/generation/images/') && url.pathname.endsWith('/binary') && request.method === 'GET') return await getImage(request, url.pathname, resolvedEnv)
@@ -912,10 +912,10 @@ function coerceJobInputs(body: EnqueueRequestBody): GenerationJobInput[] | { err
       inputs.push({ type: 'edit', sourceId: e.sourceId, prompt: e.prompt, maskBase64: e.maskBase64 as string | undefined, size: (e.size as GenerateJobInput['size']) ?? '1024x1024' })
     } else if (type === 'upscale') {
       const u = raw as Record<string, unknown>
-      if (typeof u.sourceId !== 'string') return { error: apiError('invalid_job_input', 'Upscale jobs need sourceId.', 400) }
+      if (typeof u.sourceId !== 'string') return { error: apiError('invalid_job_input', 'Enhance jobs need sourceId.', 400) }
       inputs.push({ type: 'upscale', sourceId: u.sourceId, size: (u.size as GenerateJobInput['size']) ?? '1024x1024', quality: u.quality as string | undefined, title: u.title as string | undefined, description: u.description as string | undefined, category: u.category as string | undefined, tags: u.tags as string[] | undefined })
     } else {
-      return { error: apiError('invalid_job_type', 'Job type must be generate, edit, or upscale.', 400) }
+      return { error: apiError('invalid_job_type', 'Job type must be generate, edit, or enhance.', 400) }
     }
     if (inputs.length > MAX_JOBS_PER_ENQUEUE) return { error: apiError('too_many_jobs', `At most ${MAX_JOBS_PER_ENQUEUE} jobs per request.`, 400) }
   }
@@ -948,16 +948,16 @@ async function enqueueJobRoute(request: Request, env: Env, ctx?: ExecutionContex
 
 // Manual processing trigger — the client calls this after enqueue and during
 // polling. This is the primary processing path; ctx.waitUntil and cron are
-// backstops. Runs synchronously so the response reflects actual progress.
-async function processJobsRoute(request: Request, env: Env, ctx?: ExecutionContext): Promise<Response> {
+// backstops. Processes one job per call so a single generate (30-60s) can't
+// blow the wall-time budget. The client polls every few seconds, providing
+// throughput without sequential stacking.
+async function processJobsRoute(request: Request, env: Env): Promise<Response> {
   const authed = await authenticate(request, env)
   if (authed.ok === false) return authFailureResponse(authed.response)
-  const before = await countPendingJobs(env)
-  if (before === 0) return json({ data: { processed: 0, remaining: 0 } })
-  // Process up to 4 jobs synchronously, kick off more in background.
-  const processed = await processPendingJobs(env, 4)
+  const active = await countPendingJobs(env)
+  if (active === 0) return json({ data: { processed: 0, remaining: 0 } })
+  const processed = await processPendingJobs(env, 1)
   const remaining = await countPendingJobs(env)
-  if (remaining > 0) ctx?.waitUntil(processPendingJobs(env, remaining))
   return json({ data: { processed, remaining } })
 }
 
@@ -1018,10 +1018,14 @@ function accessForJobOwner(createdByValue: string | null): GenerationAccessConte
   }
 }
 
-function syntheticRequest(pathname: string, body: unknown): Request {
+// Internal requests carry the service key so Atlas capability calls authenticate.
+function syntheticRequest(pathname: string, body: unknown, env: Env): Request {
+  const headers: Record<string, string> = { 'Content-Type': 'application/json' }
+  const auth = atlasAuth(env, null)
+  if (auth) headers.Authorization = auth
   return new Request(`https://generation.local${pathname}`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers,
     body: JSON.stringify(body),
   })
 }
@@ -1033,11 +1037,11 @@ export async function runJobToCompletion(env: Env, job: GenerationJobRow): Promi
     const access = accessForJobOwner(job.created_by)
     let response: Response
     if (input.type === 'edit') {
-      response = await editImageVariant(`/v1/generation/images/${input.sourceId}/edit`, syntheticRequest('/edit', { prompt: input.prompt, mask_base64: input.maskBase64, size: input.size }), env, access)
+      response = await editImageVariant(`/v1/generation/images/${input.sourceId}/edit`, syntheticRequest('/edit', { prompt: input.prompt, mask_base64: input.maskBase64, size: input.size }, env), env, access)
     } else if (input.type === 'upscale') {
-      response = await upscaleImage(`/v1/generation/images/${input.sourceId}/upscale`, syntheticRequest('/upscale', { size: input.size, quality: input.quality }), env, access)
+      response = await upscaleImage(`/v1/generation/images/${input.sourceId}/upscale`, syntheticRequest('/upscale', { size: input.size, quality: input.quality }, env), env, access)
     } else {
-      response = await generateImage(syntheticRequest('/v1/generation/image', input), env, access)
+      response = await generateImage(syntheticRequest('/v1/generation/image', input, env), env, access)
     }
     const body = await response.json().catch(() => null) as { error?: { code?: string; message?: string } } | null
     if (!response.ok || body?.error) {
@@ -1155,7 +1159,7 @@ async function promoteImage(pathname: string, env: Env, access: GenerationAccess
   ).bind(id).first<{ is_preview: number; created_by: string | null }>()
   if (!record) return apiError('image_not_found', 'Image not found.', 404)
   if (!canMutateOwnedRecord(access, record)) return forbiddenOrUnauthorized(access)
-  if (record.is_preview === 1) return apiError('preview_cannot_promote', 'Preview images must be upscaled before promoting.', 400)
+  if (record.is_preview === 1) return apiError('preview_cannot_promote', 'Preview images must be enhanced before promoting.', 400)
 
   const now = new Date().toISOString()
   const result = await env.GENERATION_DB.prepare(
@@ -1481,14 +1485,14 @@ async function upscaleImage(pathname: string, request: Request, env: Env, access
   if (!editResponse.ok) {
     const errBody = await editResponse.text().catch(() => '')
     console.error('[upscale] OpenAI images/edits failed', { status: editResponse.status, body: errBody, sourceId: id })
-    return apiError('image_upscale_failed', `Image upscale failed: ${editResponse.status}`, editResponse.status >= 500 ? 502 : editResponse.status)
+    return apiError('image_upscale_failed', `Image enhance failed: ${editResponse.status}`, editResponse.status >= 500 ? 502 : editResponse.status)
   }
 
   const editData = await editResponse.json() as { data?: Array<{ b64_json?: string; url?: string }> }
   const imageItem = editData.data?.[0]
   if (!imageItem) {
     console.error('[upscale] OpenAI returned no image data', { editData, sourceId: id })
-    return apiError('image_upscale_invalid_response', 'Image upscale returned no data.', 502)
+    return apiError('image_upscale_invalid_response', 'Image enhance returned no data.', 502)
   }
 
   let newImageBytes: Uint8Array
@@ -1499,7 +1503,7 @@ async function upscaleImage(pathname: string, request: Request, env: Env, access
     if (!urlRes.ok) return apiError('image_upscale_asset_failed', 'Could not fetch upscaled image asset.', 502)
     newImageBytes = new Uint8Array(await urlRes.arrayBuffer())
   } else {
-    return apiError('image_upscale_invalid_response', 'Image upscale returned no image data.', 502)
+    return apiError('image_upscale_invalid_response', 'Image enhance returned no image data.', 502)
   }
 
   const newId = crypto.randomUUID()
