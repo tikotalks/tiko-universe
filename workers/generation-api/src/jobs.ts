@@ -100,7 +100,7 @@ export interface GenerationJobDto {
 
 export function jobLabel(input: GenerationJobInput): string {
   if (input.type === 'edit') return `Edit: ${input.prompt.slice(0, 40)}`
-  if (input.type === 'upscale') return `High quality: ${input.sourceId.slice(0, 8)}`
+  if (input.type === 'upscale') return `Enhance: ${input.sourceId.slice(0, 8)}`
   return (input.title || input.prompt.split('\n')[0] || '').slice(0, 40) || 'Generate'
 }
 
@@ -173,10 +173,24 @@ export async function getJobRow(env: JobEnv, id: string): Promise<GenerationJobR
   ).bind(id).first<GenerationJobRow>()
 }
 
-// Claims the oldest pending job by flipping it to 'processing'. Returns null when
-// the queue is drained. The status filter makes concurrent claimers (cron vs
-// waitUntil) race-safe: only one UPDATE lands per row.
+// Claims the next job to run, preferring stalled 'processing' jobs (worker died
+// mid-run) over fresh 'pending' ones. The 90s staleness threshold is generous:
+// a single generate takes 30-60s, so an in-flight job won't be falsely reclaimed.
+// The status-conditioned UPDATE makes concurrent claimers race-safe.
 export async function claimNextPendingJob(env: JobEnv): Promise<GenerationJobRow | null> {
+  const stalledBefore = new Date(Date.now() - 90_000).toISOString()
+  const stalled = await env.GENERATION_DB.prepare(
+    `SELECT id, type, input_json, status, result_json, error_code, error_message, created_by, created_at, updated_at, processed_at
+     FROM generation_jobs WHERE status = 'processing' AND updated_at < ? ORDER BY created_at LIMIT 1`,
+  ).bind(stalledBefore).first<GenerationJobRow>()
+  if (stalled) {
+    const now = new Date().toISOString()
+    await env.GENERATION_DB.prepare(
+      `UPDATE generation_jobs SET updated_at = ? WHERE id = ? AND status = 'processing'`,
+    ).bind(now, stalled.id).run()
+    return stalled
+  }
+
   const candidate = await env.GENERATION_DB.prepare(
     `SELECT id, type, input_json, status, result_json, error_code, error_message, created_by, created_at, updated_at, processed_at
      FROM generation_jobs WHERE status = 'pending' ORDER BY created_at LIMIT 1`,

@@ -6,6 +6,7 @@ import { Button, Icon, InputText } from '@sil/ui'
 import { tikoAppConfigs, tikoAppColors, type TikoAppColor } from '@tiko/ui'
 import { useAdminAppConfig, type AdminManagedAppConfig } from './composables/useAdminAppConfig'
 import { useAdminAuth } from './composables/useAdminAuth'
+import ToastContainer from './components/ToastContainer.vue'
 
 const shell = useBemm('admin-shell', { return: 'string', includeBaseClass: true })
 const login = useBemm('admin-login', { return: 'string', includeBaseClass: true })
@@ -317,6 +318,8 @@ function navigateTo(path: string) {
       </div>
     </main>
   </div>
+
+  <ToastContainer />
 </template>
 
 <style lang="scss">
