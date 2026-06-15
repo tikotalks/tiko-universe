@@ -52,6 +52,11 @@ binding = "ELEVENLABS_SECRET"
 store_id = "0ba6468063e04b779e529f5db651896b"
 secret_name = "ELEVENLABS_API_KEY"
 
+[[secrets_store_secrets]]
+binding = "ATLAS_SECRET"
+store_id = "0ba6468063e04b779e529f5db651896b"
+secret_name = "ATLAS_API_KEY"
+
 [[routes]]
 pattern = "dev.api.tikotalks.com/v1/atlas/*"
 zone_name = "tikotalks.com"
@@ -108,6 +113,11 @@ id = "8d14d5480f274c5390fdf9a79ae21dd1"
 [[env.production.r2_buckets]]
 binding = "ATLAS_ASSETS_BUCKET"
 bucket_name = "tiko-atlas-assets"
+
+[[env.production.secrets_store_secrets]]
+binding = "ATLAS_SECRET"
+store_id = "0ba6468063e04b779e529f5db651896b"
+secret_name = "ATLAS_API_KEY"
 
 [[env.production.routes]]
 pattern = "api.tikotalks.com/v1/atlas/*"

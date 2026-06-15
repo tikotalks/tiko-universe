@@ -209,6 +209,13 @@ async function authenticateCapabilityRequest(request: Request, env: Env, request
   const token = bearerToken(request)
   if (!token) return apiError('unauthorized', 'Atlas capability routes require a Bearer token.', 401, requestId)
 
+  // Service-to-service: workers in the same Cloudflare account share ATLAS_API_KEY
+  // via the Secrets Store. Accept it directly as a trusted internal credential
+  // without a D1 lookup, so background jobs (no user session) can call Atlas.
+  if (env.ATLAS_API_KEY && token === env.ATLAS_API_KEY) {
+    return { method: 'api_key', subjectId: 'atlas-service', tokenHash: await sha256Hex({ token }) }
+  }
+
   const auth = await authenticate(request, authEnv(env), { scopes: ['atlas.run'] })
   if (auth.ok === false) return apiError('unauthorized', 'Atlas capability routes require a valid session token or service key.', 401, requestId)
   return {
