@@ -1,149 +1,78 @@
 <script setup lang="ts">
+import { onMounted, ref } from 'vue'
 import { RouterLink } from 'vue-router'
-import { useBemm } from 'bemm'
 import { faqs } from '../siteContent'
-import { ref } from 'vue'
+import PageSection from '../components/sections/PageSection.vue'
+import CardGrid from '../components/sections/CardGrid.vue'
+import ColorCard from '../components/sections/ColorCard.vue'
+import SplitMedia from '../components/sections/SplitMedia.vue'
+import MediaStream from '../components/sections/MediaStream.vue'
+import CtaBanner from '../components/sections/CtaBanner.vue'
 
-const bemm = useBemm('faq-page', { return: 'string', includeBaseClass: true })
-const bemmItem = useBemm('faq-item', { return: 'string', includeBaseClass: true })
+// Colour rotation so adjacent cards read as distinct Tiko colours.
+const tones = ['primary', 'secondary', 'tertiary', 'accent', 'warning', 'yes-no', 'cards', 'sequence']
 
-const openIndex = ref<number | null>(null)
-
-function toggle(i: number) {
-  openIndex.value = openIndex.value === i ? null : i
+// A small pool of Tiko Media images to give each section a real visual.
+const MEDIA_API = (import.meta as { env?: Record<string, string | undefined> }).env?.VITE_MEDIA_API_URL
+  ?? 'https://media.tikoapi.org/v1'
+const pool = ref<string[]>([])
+function poolImage(i: number): string | undefined {
+  return pool.value.length ? pool.value[i % pool.value.length] : undefined
 }
+onMounted(async () => {
+  try {
+    const res = await fetch(`${MEDIA_API}/media?type=image&limit=24&page=1`)
+    const body = await res.json() as { data?: Array<{ id?: string; original_url?: string }> }
+    pool.value = (body.data ?? [])
+      .map((m) => m.original_url || (m.id ? `${MEDIA_API}/media/${m.id}/download` : ''))
+      .filter(Boolean)
+  } catch { pool.value = [] }
+})
 </script>
 
 <template>
-  <div :class="bemm('')">
-    <header :class="[bemm('hero'), 'section']">
-      <div class="container">
-        <p class="eyebrow">Frequently asked questions</p>
-        <h1 :class="['display-1', bemm('heading')]">Plain answers<br />before setup.</h1>
-        <p :class="['body-lg', bemm('lede')]">
+  <div class="faq-page">
+    <PageSection
+      eyebrow="Frequently asked questions"
+      title="Plain answers before setup."
+    >
+      <SplitMedia :image="poolImage(0)" image-alt="Tiko in everyday use" media-side="right">
+        <p class="section__intro">
           Short answers to the questions caregivers, teachers, and developers ask most often.
         </p>
-      </div>
-    </header>
+      </SplitMedia>
+    </PageSection>
 
-    <section class="section section--flush-top">
-      <div class="container">
-        <div class="faq-list">
-          <article
-            v-for="(item, i) in faqs"
-            :key="item.question"
-            :class="bemmItem('', { open: openIndex === i })"
-          >
-            <button :class="bemmItem('question')" @click="toggle(i)" :aria-expanded="openIndex === i">
-              <span>{{ item.question }}</span>
-              <span :class="bemmItem('arrow')" aria-hidden="true">{{ openIndex === i ? '↑' : '↓' }}</span>
-            </button>
-            <div v-show="openIndex === i" :class="bemmItem('answer')">
-              <p class="body-sm">{{ item.answer }}</p>
-            </div>
-          </article>
-        </div>
-      </div>
-    </section>
+    <PageSection eyebrow="Answers" title="The questions we hear most.">
+      <CardGrid min="320px">
+        <ColorCard
+          v-for="(item, i) in faqs"
+          :key="item.question"
+          :tone="tones[i % tones.length]"
+          :title="item.question"
+          :body="item.answer"
+        />
+      </CardGrid>
+    </PageSection>
 
-    <section :class="[bemm('more'), 'section']">
-      <div class="container">
-        <div class="faq-more">
-          <p class="eyebrow">Still have questions?</p>
-          <h2 class="display-3">Read the full documentation.</h2>
-          <p class="body-lg">The docs cover philosophy, architecture, and API contracts in detail.</p>
-          <RouterLink to="/docs" class="faq-more__link">Go to docs →</RouterLink>
-        </div>
-      </div>
-    </section>
+    <PageSection
+      eyebrow="From the Tiko library"
+      title="Thousands of clear, colourful images."
+      align="center"
+    >
+      <MediaStream :limit="24" />
+    </PageSection>
+
+    <PageSection align="center">
+      <CtaBanner
+        tone="primary"
+        title="Read the full documentation."
+        body="Still have questions? The docs cover philosophy, architecture, and API contracts in detail."
+      >
+        <template #actions>
+          <RouterLink class="button button--light" to="/docs">Go to docs</RouterLink>
+        </template>
+      </CtaBanner>
+    </PageSection>
   </div>
 </template>
-
-<style lang="scss">
-.faq-page {
-  &__hero {
-    background: var(--surface-subtle);
-  }
-
-  &__heading {
-    max-width: 12ch;
-    margin-bottom: calc(var(--space) * 1.5);
-  }
-
-  &__lede {
-    max-width: 48ch;
-  }
-
-  &__more {
-    background: var(--surface-subtle);
-  }
-}
-
-.faq-list {
-  padding-top: calc(var(--space) * 3);
-  max-width: 720px;
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-s);
-}
-
-.faq-item {
-  background: var(--surface-card);
-  border-radius: 16px;
-  overflow: hidden;
-  box-shadow: var(--shadow-s);
-  transition: box-shadow 0.15s;
-
-  &--open {
-    box-shadow: var(--shadow-m);
-  }
-
-  &__question {
-    width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: var(--space);
-    padding: calc(var(--space) * 1.25) calc(var(--space) * 1.5);
-    background: none;
-    text-align: left;
-    cursor: pointer;
-    font-family: var(--font-family-heading);
-    font-size: 1.05rem;
-    font-weight: 700;
-    color: var(--color-foreground);
-    line-height: 1.35;
-
-    &:hover {
-      background: var(--surface-ink-wash);
-    }
-  }
-
-  &__arrow {
-    flex-shrink: 0;
-    font-size: 0.8rem;
-    color: var(--text-muted);
-  }
-
-  &__answer {
-    padding: 0 calc(var(--space) * 1.5) calc(var(--space) * 1.25);
-    padding-top: var(--space);
-  }
-}
-
-.faq-more {
-  max-width: 52ch;
-  display: flex;
-  flex-direction: column;
-  gap: var(--space);
-
-  &__link {
-    font-weight: 700;
-    font-size: 0.95rem;
-    color: var(--text-secondary);
-    text-decoration: none;
-
-    &:hover { color: var(--color-foreground); }
-  }
-}
-</style>

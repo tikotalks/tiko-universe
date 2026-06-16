@@ -1,8 +1,31 @@
 <script setup lang="ts">
+import { onMounted, ref } from 'vue'
 import { RouterLink } from 'vue-router'
-import { useBemm } from 'bemm'
+import PageSection from '../components/sections/PageSection.vue'
+import CardGrid from '../components/sections/CardGrid.vue'
+import ColorCard from '../components/sections/ColorCard.vue'
+import SplitMedia from '../components/sections/SplitMedia.vue'
+import CtaBanner from '../components/sections/CtaBanner.vue'
 
-const bemm = useBemm('edu-page', { return: 'string', includeBaseClass: true })
+// Colour rotation so adjacent cards read as distinct Tiko colours.
+const tones = ['primary', 'secondary', 'tertiary', 'accent', 'warning', 'yes-no', 'cards', 'sequence']
+
+// A small pool of Tiko Media images to give each section a real visual.
+const MEDIA_API = (import.meta as { env?: Record<string, string | undefined> }).env?.VITE_MEDIA_API_URL
+  ?? 'https://media.tikoapi.org/v1'
+const pool = ref<string[]>([])
+function poolImage(i: number): string | undefined {
+  return pool.value.length ? pool.value[i % pool.value.length] : undefined
+}
+onMounted(async () => {
+  try {
+    const res = await fetch(`${MEDIA_API}/media?type=image&limit=24&page=1`)
+    const body = await res.json() as { data?: Array<{ id?: string; original_url?: string }> }
+    pool.value = (body.data ?? [])
+      .map((m) => m.original_url || (m.id ? `${MEDIA_API}/media/${m.id}/download` : ''))
+      .filter(Boolean)
+  } catch { pool.value = [] }
+})
 
 const features = [
   {
@@ -52,208 +75,75 @@ const steps = [
 </script>
 
 <template>
-  <div :class="bemm('')">
-    <header :class="[bemm('hero'), 'section']">
-      <div class="container">
-        <p class="eyebrow">For educators &amp; caregivers</p>
-        <h1 :class="['display-1', bemm('heading')]">Manage many children. Keep each experience calm.</h1>
-        <p :class="['body-lg', bemm('lede')]">
+  <div class="edu-page">
+    <PageSection
+      eyebrow="For educators &amp; caregivers"
+      title="Manage many children. Keep each experience calm."
+    >
+      <SplitMedia :image="poolImage(0)" image-alt="Children using Tiko" media-side="right">
+        <p class="section__intro">
           Tiko Profile Manager lets a teacher or caregiver create a separate, lightweight
           account for each child — and decide exactly what each one can reach.
           Children get a simple, focused tool. Adults keep the controls safely out of view.
         </p>
-      </div>
-    </header>
+      </SplitMedia>
+    </PageSection>
 
-    <section class="section section--flush-top">
-      <div class="container">
-        <div class="edu-features">
-          <article
-            v-for="feature in features"
-            :key="feature.title"
-            class="edu-feature card card--raised"
-          >
-            <h3 class="edu-feature__title">{{ feature.title }}</h3>
-            <p class="body-sm">{{ feature.body }}</p>
-          </article>
-        </div>
-      </div>
-    </section>
+    <PageSection
+      eyebrow="What you get"
+      title="Everything a Profile Manager can do."
+    >
+      <CardGrid min="280px">
+        <ColorCard
+          v-for="(feature, i) in features"
+          :key="feature.title"
+          :tone="tones[i % tones.length]"
+          :title="feature.title"
+          :body="feature.body"
+          :image="poolImage(i + 1)"
+        />
+      </CardGrid>
+    </PageSection>
 
-    <section :class="[bemm('steps'), 'section']">
-      <div class="container">
-        <p class="eyebrow">How it works</p>
-        <h2 class="display-2 edu-steps__heading">From adult setup to a child-friendly screen.</h2>
-        <div class="edu-steps__grid">
-          <div v-for="(step, i) in steps" :key="step.title" class="edu-step">
-            <div class="edu-step__num">{{ i + 1 }}</div>
-            <div class="edu-step__body">
-              <h3 class="edu-step__title">{{ step.title }}</h3>
-              <p class="body-sm">{{ step.body }}</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
+    <PageSection
+      eyebrow="How it works"
+      title="From adult setup to a child-friendly screen."
+      tone="dark"
+    >
+      <CardGrid min="240px">
+        <ColorCard
+          v-for="(step, i) in steps"
+          :key="step.title"
+          :tone="tones[(i + 5) % tones.length]"
+          :eyebrow="`Step ${i + 1}`"
+          :title="step.title"
+          :body="step.body"
+          :image="poolImage(i + 8)"
+        />
+      </CardGrid>
+    </PageSection>
 
-    <section :class="[bemm('trust'), 'section']">
-      <div class="container">
-        <div class="edu-trust">
-          <p class="eyebrow">Why it stays safe</p>
-          <h2 class="display-3">Child accounts are intentionally minimal.</h2>
-          <p class="body-lg">
-            A child account has no email, no recovery flow, and no access to settings or management tools.
-            Everything the child can reach is calm and child-facing by design — and the path back to the
-            controls is always gated by the adult's PIN.
-          </p>
-        </div>
-      </div>
-    </section>
+    <PageSection eyebrow="Why it stays safe" title="Child accounts are intentionally minimal.">
+      <SplitMedia :image="poolImage(13)" image-alt="A calm child-facing Tiko screen" media-side="left">
+        <p class="section__intro">
+          A child account has no email, no recovery flow, and no access to settings or management tools.
+          Everything the child can reach is calm and child-facing by design — and the path back to the
+          controls is always gated by the adult's PIN.
+        </p>
+      </SplitMedia>
+    </PageSection>
 
-    <section :class="[bemm('cta'), 'section']">
-      <div class="container">
-        <div class="edu-cta">
-          <div>
-            <p class="eyebrow">See the apps children reach</p>
-            <h2 class="display-3">Explore the Tiko app universe.</h2>
-          </div>
-          <div class="edu-cta__links">
-            <RouterLink to="/apps" class="edu-cta__link edu-cta__link--primary">Browse all apps →</RouterLink>
-            <RouterLink to="/caregivers" class="edu-cta__link">Caregiver trust principles →</RouterLink>
-          </div>
-        </div>
-      </div>
-    </section>
+    <PageSection align="center">
+      <CtaBanner
+        tone="primary"
+        title="Explore the Tiko app universe."
+        body="See the apps children reach."
+      >
+        <template #actions>
+          <RouterLink class="button button--light" to="/apps">Browse all apps</RouterLink>
+          <RouterLink class="button button--ghost-light" to="/caregivers">Caregiver trust principles</RouterLink>
+        </template>
+      </CtaBanner>
+    </PageSection>
   </div>
 </template>
-
-<style lang="scss">
-.edu-page {
-  &__hero {
-    background: var(--surface-subtle);
-  }
-
-  &__heading {
-    max-width: 16ch;
-    margin-bottom: calc(var(--space) * 1.5);
-  }
-
-  &__lede {
-    max-width: 56ch;
-  }
-
-  &__steps,
-  &__cta {
-    background: var(--surface-subtle);
-  }
-}
-
-.edu-features {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: var(--space);
-  padding-top: calc(var(--space) * 3);
-}
-
-.edu-feature {
-  padding: calc(var(--space) * 1.5);
-  display: flex;
-  flex-direction: column;
-  gap: calc(var(--space) * 0.75);
-
-  &__title {
-    font-family: var(--font-family-heading);
-    font-size: 1rem;
-    font-weight: 800;
-    color: var(--color-foreground);
-    line-height: 1.3;
-  }
-}
-
-.edu-steps {
-  &__heading {
-    max-width: 18ch;
-    margin-top: var(--space-s);
-    margin-bottom: calc(var(--space) * 2);
-  }
-
-  &__grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: var(--space);
-  }
-}
-
-.edu-step {
-  display: flex;
-  gap: calc(var(--space) * 1.25);
-  padding: calc(var(--space) * 1.5);
-  background: var(--surface-card);
-  border-radius: 20px;
-  box-shadow: var(--shadow-s);
-
-  &__num {
-    flex-shrink: 0;
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    background: var(--color-foreground);
-    color: var(--color-background);
-    display: grid;
-    place-items: center;
-    font-family: var(--font-family-heading);
-    font-weight: 800;
-    font-size: 0.9rem;
-  }
-
-  &__title {
-    font-family: var(--font-family-heading);
-    font-size: 1rem;
-    font-weight: 800;
-    color: var(--color-foreground);
-    margin-bottom: var(--space-s);
-  }
-}
-
-.edu-trust {
-  max-width: 60ch;
-  display: flex;
-  flex-direction: column;
-  gap: var(--space);
-}
-
-.edu-cta {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: calc(var(--space) * 1.5);
-
-  &__links {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space);
-  }
-
-  &__link {
-    font-weight: 700;
-    font-size: 1rem;
-    color: var(--text-secondary);
-    text-decoration: none;
-    white-space: nowrap;
-
-    &:hover { color: var(--color-foreground); }
-
-    &--primary {
-      color: var(--color-foreground);
-    }
-  }
-}
-
-@media (max-width: 768px) {
-  .edu-cta {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-}
-</style>

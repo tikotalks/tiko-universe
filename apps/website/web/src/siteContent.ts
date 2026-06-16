@@ -28,7 +28,7 @@ export interface ContentPillar {
 }
 
 export const routes: WebsiteRoute[] = [
-  { id: 'home', path: '/', label: 'Home', title: 'TikoTalks', description: 'Beautiful, free communication apps for every child. No ads, no account, any language.' },
+  { id: 'home', path: '/', label: 'Home', title: 'TikoTalks', description: 'Beautiful, free education and communication apps for every child. No ads, no account, any language.' },
   { id: 'apps', path: '/tools', label: 'Apps', title: 'Tiny apps. One clear job each.', description: 'A simple look at the Tiko app universe.' },
   { id: 'why-tiko', path: '/why-tiko', label: 'Why Tiko', title: 'Why Tiko exists.', description: 'Why Tiko is small, free, beautiful, and built for every language.' },
   { id: 'how-it-works', path: '/how-it-works', label: 'How it works', title: 'One Tiko, many screens.', description: 'Tiko starts on the web and keeps native paths aligned.' },

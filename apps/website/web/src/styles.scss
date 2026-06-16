@@ -6,6 +6,14 @@
   'warning': #f8c22e,
   'dark': #111111,
   'light': #faf8f4,
+  // Per-app colors (canonical Tiko app theme colors). @sil/ui generates
+  // --color-{name}, --color-{name}-text/-contrast/-light/-dark for each.
+  'yes-no': #9b3fbd,
+  'type': #2488ff,
+  'cards': #ff8a1f,
+  'sequence': #16b8a6,
+  'timer': #f8c22e,
+  'talk': #17131c,
 ));
 
 @use '@sil/ui/styles/main.scss';
@@ -18,19 +26,27 @@
   --font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, sans-serif;
   --font-family-heading: 'Nunito', ui-sans-serif, system-ui, -apple-system, sans-serif;
 
-  // App palette (matches the admin-defined app configs)
-  --app-yes-no: #16b8a6;
-  --app-yes-no-light: #ccfbf1;
-  --app-type: #ff8a1f;
-  --app-type-light: #fff3e0;
-  --app-cards: #82b1ff;
-  --app-cards-light: #e8f0ff;
-  --app-sequence: #ef4f8f;
-  --app-sequence-light: #fce7f3;
-  --app-timer: #e84057;
-  --app-timer-light: #ffe4e6;
-  --app-talk: #ff6b6b;
-  --app-talk-light: #ffe4e1;
+  // App palette — alias the @sil/ui-generated canonical app colors. @sil/ui emits
+  // --color-{name} and --color-{name}-text/-contrast (auto readable text); the
+  // light tint is derived here via color-mix so it adapts to light/dark mode.
+  --app-yes-no: var(--color-yes-no);
+  --app-yes-no-light: color-mix(in srgb, var(--color-yes-no), var(--color-background) 84%);
+  --app-yes-no-text: var(--color-yes-no-text);
+  --app-type: var(--color-type);
+  --app-type-light: color-mix(in srgb, var(--color-type), var(--color-background) 84%);
+  --app-type-text: var(--color-type-text);
+  --app-cards: var(--color-cards);
+  --app-cards-light: color-mix(in srgb, var(--color-cards), var(--color-background) 84%);
+  --app-cards-text: var(--color-cards-text);
+  --app-sequence: var(--color-sequence);
+  --app-sequence-light: color-mix(in srgb, var(--color-sequence), var(--color-background) 84%);
+  --app-sequence-text: var(--color-sequence-text);
+  --app-timer: var(--color-timer);
+  --app-timer-light: color-mix(in srgb, var(--color-timer), var(--color-background) 84%);
+  --app-timer-text: var(--color-timer-text);
+  --app-talk: var(--color-talk);
+  --app-talk-light: color-mix(in srgb, var(--color-talk), var(--color-background) 84%);
+  --app-talk-text: var(--color-talk-text);
 
   // Surface tiers (--color-background covers page bg via @sil/ui)
   --surface-card: color-mix(in srgb, var(--color-background), var(--color-foreground) 0%);
@@ -150,20 +166,20 @@ code, pre {
 
 .display-1 {
   font-size: clamp(2.75rem, 7vw, 5.5rem);
-  line-height: 1.0;
-  letter-spacing: 0;
+  line-height: 0.8;
+  letter-spacing: -0.025em;
 }
 
 .display-2 {
   font-size: clamp(2rem, 4.5vw, 3.75rem);
-  line-height: 1.05;
-  letter-spacing: 0;
+  line-height: 0.8;
+  letter-spacing: -0.025em;
 }
 
 .display-3 {
   font-size: clamp(1.5rem, 3vw, 2.5rem);
-  line-height: 1.1;
-  letter-spacing: 0;
+  line-height: 0.8;
+  letter-spacing: -0.025em;
 }
 
 .body-lg {
