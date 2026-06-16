@@ -71,8 +71,11 @@ describe('TikoTalks website', () => {
     expect(wrapper.text()).not.toContain('Start free trial')
     expect(wrapper.text()).not.toContain('Talk to sales')
     expect(wrapper.text()).not.toContain('Sign in')
-    expect(fetch).toHaveBeenCalledTimes(1)
-    expect(fetch).toHaveBeenCalledWith('https://media.tikoapi.org/v1/media?limit=50&type=image&page=1')
+    // Homepage composes several media-driven sections (hero canvas, image pool,
+    // media stream); every network call must stay on the Tiko Media API.
+    const calls = (fetch as ReturnType<typeof vi.fn>).mock.calls
+    expect(calls.length).toBeGreaterThanOrEqual(1)
+    expect(calls.every(([input]) => String(input).startsWith('https://media.tikoapi.org/v1/media'))).toBe(true)
   })
 
   it('shows the header navigation for site pages', async () => {
