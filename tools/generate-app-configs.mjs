@@ -1,11 +1,8 @@
 #!/usr/bin/env node
-import { execFile } from 'node:child_process'
 import { mkdtemp, mkdir, readdir, readFile, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { dirname, resolve } from 'node:path'
-import { promisify } from 'node:util'
-
-const run = promisify(execFile)
+import sharp from 'sharp'
 
 const root = resolve(new URL('..', import.meta.url).pathname)
 const endpoint = (process.env.TIKO_APP_CONFIG_URL ?? process.env.VITE_TIKO_APP_CONFIG_URL ?? 'https://app.tikoapi.org/v1/apps/config').replace(/\/$/, '')
@@ -177,14 +174,6 @@ async function writeIosAppConfig(app, fileName) {
 }
 
 async function writeIosAppIcons(configs) {
-  const sips = await hasCommand('sips')
-  if (!sips) {
-    const message = 'sips is required to generate iOS app icon PNGs'
-    if (strict) throw new Error(message)
-    console.warn(`${message}; skipping iOS app icon generation.`)
-    return
-  }
-
   const tempDir = await mkdtemp(resolve(tmpdir(), 'tiko-app-icons-'))
   for (const [app, sourceDir] of Object.entries(iosAppIconSources)) {
     const config = configs[app] ?? fallbackConfigs[app]
@@ -207,9 +196,18 @@ async function writeIosAppIcons(configs) {
       await writeIfChanged(resolve(root, sourceDir, 'Assets.xcassets/Contents.json'), assetCatalogContents())
       await writeIfChanged(resolve(appIconDir, 'Contents.json'), appIconContents())
 
+      // App Store icons must be opaque (no alpha channel) and look like the
+      // in-app branding: the app's solid colour with the glyph centred on top.
+      const bg = hexToRgb(config.themeColor ?? fallbackConfigs[app]?.themeColor ?? '#000000')
+      const master = await composeAppIcon(sourceFile, bg, 1024)
+
       const uniqueSizes = [...new Set(iosAppIconImages.map(image => image.pixels))]
       for (const pixels of uniqueSizes) {
-        await run('sips', ['-s', 'format', 'png', '-z', String(pixels), String(pixels), sourceFile, '--out', resolve(appIconDir, `app-icon-${pixels}.png`)])
+        await sharp(master)
+          .resize(pixels, pixels, { fit: 'fill' })
+          .flatten({ background: bg }) // drop any alpha → opaque PNG
+          .png()
+          .toFile(resolve(appIconDir, `app-icon-${pixels}.png`))
       }
     } catch (error) {
       const existing = await readdir(appIconDir).then((files) => files.filter((f) => f.endsWith('.png'))).catch(() => [])
@@ -222,20 +220,36 @@ async function writeIosAppIcons(configs) {
   }
 }
 
+// Composite the (transparent) glyph centred on a solid app-colour background
+// and return an opaque PNG buffer at the given size.
+async function composeAppIcon(sourceFile, bg, size) {
+  const glyphSize = Math.round(size * 0.66)
+  const glyph = await sharp(sourceFile)
+    .resize(glyphSize, glyphSize, { fit: 'contain', background: { ...bg, alpha: 0 } })
+    .png()
+    .toBuffer()
+
+  return sharp({
+    create: { width: size, height: size, channels: 4, background: { ...bg, alpha: 1 } },
+  })
+    .composite([{ input: glyph, gravity: 'center' }])
+    .flatten({ background: bg }) // ensure no alpha channel
+    .png()
+    .toBuffer()
+}
+
+function hexToRgb(hex) {
+  const h = String(hex).trim().replace(/^#/, '')
+  const full = h.length === 3 ? h.split('').map((c) => c + c).join('') : h
+  const value = Number.parseInt(full, 16)
+  return { r: (value >> 16) & 0xff, g: (value >> 8) & 0xff, b: value & 0xff }
+}
+
 async function writeIfChanged(file, content) {
   await mkdir(dirname(file), { recursive: true })
   let old = ''
   try { old = await readFile(file, 'utf8') } catch {}
   if (old !== content) await writeFile(file, content)
-}
-
-async function hasCommand(command) {
-  try {
-    await run(command, ['--version'])
-    return true
-  } catch {
-    return false
-  }
 }
 
 async function resolveMediaImageUrl(value) {

@@ -56,6 +56,7 @@
     "@vitest/coverage-v8": "^4.1.7",
     "miniflare": "^4.20260611.0",
     "oxlint": "^1.69.0",
+    "sharp": "^0.34.5",
     "wrangler": "^4.98.0"
   }
 }
