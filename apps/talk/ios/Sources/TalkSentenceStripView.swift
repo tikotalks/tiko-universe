@@ -14,6 +14,12 @@ struct TalkSentenceStripView: View {
     let onSpeak: () -> Void
     let onClear: () -> Void
 
+    @Environment(\.colorScheme) private var colorScheme
+
+    private var surfaceColor: Color {
+        colorScheme == .dark ? Color(white: 0.16) : Color.white
+    }
+
     var body: some View {
         HStack(spacing: 8) {
             ScrollViewReader { proxy in
@@ -22,7 +28,7 @@ struct TalkSentenceStripView: View {
                         if words.isEmpty {
                             Text("Build a sentence")
                                 .font(.system(.title3, design: .rounded).weight(.bold))
-                                .foregroundStyle(appColor.palette.dark.opacity(0.46))
+                                .foregroundStyle(.primary.opacity(0.46))
                                 .frame(maxWidth: .infinity, alignment: .leading)
                         } else {
                             ForEach(words) { word in
@@ -61,9 +67,9 @@ struct TalkSentenceStripView: View {
                 Button(action: onClear) {
                     Image(systemName: "xmark")
                         .font(.system(size: 15, weight: .heavy))
-                        .foregroundStyle(appColor.palette.dark.opacity(0.6))
+                        .foregroundStyle(.primary.opacity(0.6))
                         .frame(width: 44, height: 44)
-                        .background(appColor.palette.dark.opacity(0.08))
+                        .background(.primary.opacity(0.08))
                         .clipShape(Circle())
                 }
                 .buttonStyle(.plain)
@@ -85,8 +91,8 @@ struct TalkSentenceStripView: View {
         }
         .padding(.vertical, 8)
         .frame(minHeight: 72)
-        .background(Color.white)
+        .background(surfaceColor)
         .clipShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
-        .shadow(color: appColor.palette.dark.opacity(0.12), radius: 12, y: 4)
+        .shadow(color: .black.opacity(colorScheme == .dark ? 0.4 : 0.12), radius: 12, y: 4)
     }
 }

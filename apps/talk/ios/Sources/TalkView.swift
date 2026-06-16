@@ -104,7 +104,7 @@ struct TalkView: View {
                             ProgressView().scaleEffect(0.7)
                             Text("Finding words…")
                                 .font(.system(.caption, design: .rounded).weight(.bold))
-                                .foregroundStyle(TikoAppColor.talk.palette.dark.opacity(0.6))
+                                .foregroundStyle(.primary.opacity(0.6))
                         }
                         .padding(.horizontal, 12)
                         .padding(.vertical, 6)
@@ -142,7 +142,7 @@ struct TalkView: View {
                 }
             }
             .font(.system(.caption, design: .rounded).weight(.bold))
-            .foregroundStyle(TikoAppColor.talk.palette.dark.opacity(0.7))
+            .foregroundStyle(.primary.opacity(0.7))
             .padding(.horizontal, 10)
             .padding(.vertical, 6)
             .background(TikoAppColor.talk.palette.primary.opacity(0.12))
@@ -185,7 +185,7 @@ struct TalkView: View {
         if searchExpanded {
             HStack(spacing: 8) {
                 Image(systemName: "magnifyingglass")
-                    .foregroundStyle(TikoAppColor.talk.palette.dark.opacity(0.5))
+                    .foregroundStyle(.primary.opacity(0.5))
                 TextField("Find or add a word", text: $searchText)
                     .focused($searchFocused)
                     .autocorrectionDisabled()
@@ -202,15 +202,15 @@ struct TalkView: View {
                 Button { closeSearch() } label: {
                     Image(systemName: "xmark.circle.fill")
                         .font(.system(size: 22, weight: .bold))
-                        .foregroundStyle(TikoAppColor.talk.palette.dark.opacity(0.35))
+                        .foregroundStyle(.primary.opacity(0.35))
                 }
                 .accessibilityLabel("Close search")
             }
             .padding(.horizontal, 16)
             .padding(.vertical, 12)
-            .background(Color.white)
+            .background(colorScheme == .dark ? Color(white: 0.16) : Color.white)
             .clipShape(Capsule())
-            .shadow(color: TikoAppColor.talk.palette.dark.opacity(0.18), radius: 14, y: 6)
+            .shadow(color: .black.opacity(colorScheme == .dark ? 0.4 : 0.18), radius: 14, y: 6)
             .frame(maxWidth: 460)
             .padding(.horizontal, 16)
             .padding(.bottom, 18)
@@ -222,7 +222,7 @@ struct TalkView: View {
                     .frame(width: 58, height: 58)
                     .background(TikoAppColor.talk.palette.primary)
                     .clipShape(Circle())
-                    .shadow(color: TikoAppColor.talk.palette.dark.opacity(0.25), radius: 12, y: 5)
+                    .shadow(color: .black.opacity(colorScheme == .dark ? 0.4 : 0.25), radius: 12, y: 5)
             }
             .buttonStyle(.plain)
             .accessibilityLabel("Search or add a word")
