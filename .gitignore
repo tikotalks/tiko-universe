@@ -10,8 +10,17 @@ coverage/
 .env.*
 !.env.example
 .DS_Store
+
+# Xcode / SwiftPM build + per-user state
 DerivedData/
-*.xcuserdata/
+**/xcuserdata/
+*.xcuserstate
+.build/
+**/.build/
+.swiftpm/
+# Library package resolved file (apps keep their xcshareddata Package.resolved)
+packages/tikokit-ios/Package.resolved
+
 apps/ios/**/*.xcodeproj/
 apps/android/**/.gradle/
 apps/android/**/build/
