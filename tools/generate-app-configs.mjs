@@ -223,7 +223,7 @@ async function writeIosAppIcons(configs) {
 // Composite the (transparent) glyph centred on a solid app-colour background
 // and return an opaque PNG buffer at the given size.
 async function composeAppIcon(sourceFile, bg, size) {
-  const glyphSize = Math.round(size * 0.80)
+  const glyphSize = Math.round(size * 0.95)
   const glyph = await sharp(sourceFile)
     .resize(glyphSize, glyphSize, { fit: 'contain', background: { ...bg, alpha: 0 } })
     .png()
