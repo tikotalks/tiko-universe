@@ -1518,7 +1518,7 @@ async function requireAdmin(request: Request, env: Env): Promise<void> {
   const auth = request.headers.get('Authorization')
   if (!auth?.startsWith('Bearer ')) throw new HttpError(401, 'identity_required', 'An admin identity session is required.', 'Authorization')
   try {
-    const response = await env.IDENTITY_SERVICE.fetch(new Request('https://identity.internal/v1/identity/me', {
+    const response = await env.IDENTITY_SERVICE.fetch(new Request('https://identity.internal/v1/identity/session', {
       headers: { Authorization: auth },
     }))
     if (!response.ok) throw new HttpError(403, 'admin_required', 'An admin role is required.', 'Authorization')
@@ -1554,7 +1554,7 @@ async function resolveSubjectId(request: Request, env: Env, explicitSubjectId?: 
   if (!auth?.startsWith('Bearer ')) return null
 
   try {
-    const response = await env.IDENTITY_SERVICE.fetch(new Request('https://identity.internal/v1/identity/me', {
+    const response = await env.IDENTITY_SERVICE.fetch(new Request('https://identity.internal/v1/identity/session', {
       headers: { Authorization: auth },
     }))
     if (!response.ok) return null
