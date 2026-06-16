@@ -45,12 +45,17 @@ const bemm = useBemm('site-footer', { return: 'string', includeBaseClass: true }
           <RouterLink to="/educators" :class="bemm('link')">For educators</RouterLink>
           <RouterLink to="/caregivers" :class="bemm('link')">Trust principles</RouterLink>
           <RouterLink to="/faq" :class="bemm('link')">FAQ</RouterLink>
+          <RouterLink to="/support" :class="bemm('link')">Support</RouterLink>
           <RouterLink to="/docs/philosophy" :class="bemm('link')">Philosophy</RouterLink>
         </nav>
       </div>
 
       <div :class="bemm('bottom')">
         <p :class="bemm('copy')">© 2026 TikoTalks</p>
+        <nav :class="bemm('legal')" aria-label="Legal">
+          <RouterLink to="/privacy-policy" :class="bemm('link')">Privacy policy</RouterLink>
+          <RouterLink to="/support" :class="bemm('link')">Support</RouterLink>
+        </nav>
       </div>
     </div>
   </footer>

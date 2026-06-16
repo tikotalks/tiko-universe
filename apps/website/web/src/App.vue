@@ -16,6 +16,8 @@ watchEffect(() => {
     '/caregivers': 'For caregivers — TikoTalks',
     '/educators': 'For educators — TikoTalks',
     '/faq': 'FAQ — TikoTalks',
+    '/support': 'Support — TikoTalks',
+    '/privacy-policy': 'Privacy policy — TikoTalks',
     '/docs': 'Docs — TikoTalks',
   }
   document.title = titles[route.path] ?? 'TikoTalks'
