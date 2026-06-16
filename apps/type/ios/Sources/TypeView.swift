@@ -467,6 +467,11 @@ private struct TypeKeyboard: View {
         }
         .padding(.horizontal, sidePadding)
         .padding(.vertical, sidePadding * 0.6)
+        // Pin the keyboard to the available width so `measuredWidth` reflects
+        // the parent, not the keyboard's own (key-size-derived) content width.
+        // Measuring the content created a feedback loop where keys could grow
+        // on rotation to landscape but never shrink back in portrait.
+        .frame(maxWidth: .infinity)
         .background(
             GeometryReader { proxy in
                 Color.clear
