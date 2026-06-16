@@ -379,6 +379,10 @@ private struct TypeKeyboard: View {
     let useCapitals: Bool
     let animate: Bool
     let coordSpace: String
+    /// Vertical space the keyboard may occupy. Keys are capped to this so they
+    /// don't become oversized on short layouts (e.g. iPhone landscape). 0 = no
+    /// height cap (size from width only).
+    let maxKeyboardHeight: CGFloat
     let onKey: (String, CGRect) -> Void
     let onBackspace: () -> Void
 
@@ -401,7 +405,20 @@ private struct TypeKeyboard: View {
         let contentWidth = measuredWidth - sidePadding * 2
         guard contentWidth > 0 else { return 32 }
         let totalSpacing = spacing * CGFloat(maxKeysPerRow - 1)
-        return max(28, (contentWidth - totalSpacing) / CGFloat(maxKeysPerRow))
+        var side = (contentWidth - totalSpacing) / CGFloat(maxKeysPerRow)
+
+        // Also cap by available height so wide-but-short layouts (iPhone
+        // landscape) don't blow the keys up. Total rows = letter rows + the
+        // bottom 123/space/delete row.
+        if maxKeyboardHeight > 0 {
+            let totalRows = rows.count + 1
+            let rowSpacing = spacing * CGFloat(totalRows - 1)
+            let verticalPadding = sidePadding * 0.6 * 2
+            let heightBased = (maxKeyboardHeight - rowSpacing - verticalPadding) / CGFloat(totalRows)
+            side = min(side, heightBased)
+        }
+
+        return max(28, side)
     }
 
     private var cornerRadius: CGFloat { keySide * 0.22 }
@@ -548,6 +565,7 @@ struct TypeView: View {
     @State private var flyingLetters: [FlyingLetter] = []
     @State private var barFrame: CGRect = .zero
     @State private var currentWordFrame: CGRect = .zero
+    @State private var availableHeight: CGFloat = 0
 
     private let coordSpace = "typeRoot"
     private let currentWordColor = Color(hex: 0x4dabf7)
@@ -680,11 +698,19 @@ struct TypeView: View {
                     useCapitals: useCapitals,
                     animate: showAnimations,
                     coordSpace: coordSpace,
+                    maxKeyboardHeight: availableHeight > 0 ? availableHeight * 0.55 : 0,
                     onKey: handleKey,
                     onBackspace: handleBackspace
                 )
             }
             .padding(.top, 8)
+            .background(
+                GeometryReader { proxy in
+                    Color.clear
+                        .onAppear { availableHeight = proxy.size.height }
+                        .onChange(of: proxy.size.height) { _, h in availableHeight = h }
+                }
+            )
 
             ForEach(flyingLetters) { letter in
                 FlyingLetterView(
