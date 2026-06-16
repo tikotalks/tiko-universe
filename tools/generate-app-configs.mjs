@@ -2,7 +2,6 @@
 import { mkdtemp, mkdir, readdir, readFile, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { dirname, resolve } from 'node:path'
-import sharp from 'sharp'
 
 const root = resolve(new URL('..', import.meta.url).pathname)
 const endpoint = (process.env.TIKO_APP_CONFIG_URL ?? process.env.VITE_TIKO_APP_CONFIG_URL ?? 'https://app.tikoapi.org/v1/apps/config').replace(/\/$/, '')
@@ -174,6 +173,17 @@ async function writeIosAppConfig(app, fileName) {
 }
 
 async function writeIosAppIcons(configs) {
+  // sharp is a native module only needed to (re)generate icons. CI iOS builds
+  // run this phase without it installed — the committed icons are already
+  // correct there, so skip rather than fail the whole build.
+  let sharp
+  try {
+    sharp = (await import('sharp')).default
+  } catch {
+    console.warn('sharp not available; skipping iOS app icon generation (keeping committed icons).')
+    return
+  }
+
   const tempDir = await mkdtemp(resolve(tmpdir(), 'tiko-app-icons-'))
   for (const [app, sourceDir] of Object.entries(iosAppIconSources)) {
     const config = configs[app] ?? fallbackConfigs[app]
@@ -199,7 +209,7 @@ async function writeIosAppIcons(configs) {
       // App Store icons must be opaque (no alpha channel) and look like the
       // in-app branding: the app's solid colour with the glyph centred on top.
       const bg = hexToRgb(config.themeColor ?? fallbackConfigs[app]?.themeColor ?? '#000000')
-      const master = await composeAppIcon(sourceFile, bg, 1024)
+      const master = await composeAppIcon(sharp, sourceFile, bg, 1024)
 
       const uniqueSizes = [...new Set(iosAppIconImages.map(image => image.pixels))]
       for (const pixels of uniqueSizes) {
@@ -222,7 +232,7 @@ async function writeIosAppIcons(configs) {
 
 // Composite the (transparent) glyph centred on a solid app-colour background
 // and return an opaque PNG buffer at the given size.
-async function composeAppIcon(sourceFile, bg, size) {
+async function composeAppIcon(sharp, sourceFile, bg, size) {
   const glyphSize = Math.round(size * 0.95)
   const glyph = await sharp(sourceFile)
     .resize(glyphSize, glyphSize, { fit: 'contain', background: { ...bg, alpha: 0 } })
