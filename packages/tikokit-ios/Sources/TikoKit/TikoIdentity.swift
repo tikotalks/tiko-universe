@@ -1,10 +1,13 @@
 import Foundation
+import OSLog
 #if canImport(FoundationNetworking)
 import FoundationNetworking
 #endif
 #if canImport(Security)
 import Security
 #endif
+
+private let tikoIdentityLog = Logger(subsystem: "org.tiko.identity", category: "deletion")
 
 // MARK: - Ankore-native identity types
 
@@ -267,7 +270,14 @@ public actor TikoIdentityClient {
 
     public func createEmailChallenge(email: String, purpose: String = "recover", accessToken: String? = nil) async throws {
         let body = EmailChallengeRequest(email: email, purpose: purpose)
-        let _: EmailChallengeResponse = try await send(path: "/identity/email/challenge", method: "POST", body: body, accessToken: accessToken)
+        tikoIdentityLog.notice("Email challenge → POST /identity/email/challenge purpose=\(purpose, privacy: .public) hasToken=\(accessToken != nil, privacy: .public)")
+        do {
+            let _: EmailChallengeResponse = try await send(path: "/identity/email/challenge", method: "POST", body: body, accessToken: accessToken)
+            tikoIdentityLog.notice("Email challenge sent OK")
+        } catch {
+            tikoIdentityLog.error("Email challenge FAILED: \(String(describing: error), privacy: .public)")
+            throw error
+        }
     }
 
     public func verifyEmail(token: String) async throws -> TikoIdentityBundle {
@@ -276,7 +286,15 @@ public actor TikoIdentityClient {
 
     public func verifyOtp(otp: String) async throws -> TikoIdentityBundle {
         let sanitized = otp.filter(\.isNumber)
-        return try await send(path: "/identity/email/verify", method: "POST", body: VerifyRequest(token: nil, otp: sanitized), accessToken: nil)
+        tikoIdentityLog.notice("OTP verify → POST /identity/email/verify digits=\(sanitized.count, privacy: .public)")
+        do {
+            let bundle: TikoIdentityBundle = try await send(path: "/identity/email/verify", method: "POST", body: VerifyRequest(token: nil, otp: sanitized), accessToken: nil)
+            tikoIdentityLog.notice("OTP verify OK subject=\(bundle.subject.id, privacy: .public) hasToken=\(bundle.accessToken != nil, privacy: .public)")
+            return bundle
+        } catch {
+            tikoIdentityLog.error("OTP verify FAILED: \(String(describing: error), privacy: .public)")
+            throw error
+        }
     }
 
     public func logout(accessToken: String) async throws {
@@ -293,7 +311,18 @@ public actor TikoIdentityClient {
         var body: [String: String] = ["scope": scope.rawValue]
         if let childAccountId { body["childAccountId"] = childAccountId }
         if let pinGrantToken { body["pinGrantToken"] = pinGrantToken }
-        return try await send(path: "/identity/deletion-requests", method: "POST", body: body, accessToken: accessToken)
+        tikoIdentityLog.notice("Deletion request → POST /identity/deletion-requests scope=\(scope.rawValue, privacy: .public)")
+        do {
+            let result: TikoDeletionRequest = try await send(path: "/identity/deletion-requests", method: "POST", body: body, accessToken: accessToken)
+            tikoIdentityLog.notice("Deletion request accepted id=\(result.id, privacy: .public) status=\(result.status, privacy: .public) canCancel=\(result.canCancel, privacy: .public) completedAt=\(result.completedAt ?? "nil", privacy: .public)")
+            if result.status != "completed" {
+                tikoIdentityLog.warning("Deletion NOT yet complete — server reports status=\(result.status, privacy: .public). Account still exists until this reaches 'completed'.")
+            }
+            return result
+        } catch {
+            tikoIdentityLog.error("Deletion request FAILED — account was NOT deleted: \(String(describing: error), privacy: .public)")
+            throw error
+        }
     }
 
     public func getDeletionRequest(accessToken: String, requestId: String) async throws -> TikoDeletionRequest {
