@@ -46,12 +46,24 @@ export interface YesNoAnswerTile {
   icon?: string
 }
 
+export interface YesNoAnswerSet {
+  id: string
+  title: string
+  description?: string
+  color?: string
+  imageRef?: string
+  order: number
+  answers: YesNoAnswerTile[]
+}
+
 export interface YesNoState {
   [key: string]: unknown
   prompt?: string
   lastAnswer?: string | null
   answerHistory?: string[]
   answers?: YesNoAnswerTile[]
+  answerSets?: YesNoAnswerSet[]
+  selectedSetId?: string | null
 }
 
 export interface TypeSettings extends JsonObject {

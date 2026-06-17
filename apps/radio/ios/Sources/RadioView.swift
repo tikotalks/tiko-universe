@@ -3,7 +3,7 @@ import TikoKit
 
 struct RadioView: View {
     @Environment(\.colorScheme) private var colorScheme
-    @AppStorage("tiko.colorMode") private var colorModeRawValue = TikoColorMode.light.rawValue
+    @AppStorage("tiko.colorMode") private var colorModeRawValue = TikoColorMode.system.rawValue
     @AppStorage("tiko.language") private var languageCode = "en"
 
     @AppStorage("radio.currentTrackIndex") private var currentTrackIndex = 0

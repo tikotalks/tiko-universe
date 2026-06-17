@@ -4,6 +4,7 @@ import TikoKit
 @main
 struct TikoTalkApp: App {
     init() {
+        TikoDeviceDefaults.register()
         // Debug builds talk to the dev backends end-to-end (identity, translations
         // and — via TalkAPIClient — the sentence worker), so a dev session token
         // validates against the dev sentence worker. Release builds use prod.
