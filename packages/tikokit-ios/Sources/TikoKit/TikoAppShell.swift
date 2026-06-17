@@ -191,6 +191,7 @@ public struct TikoAppShell<Content: View, SettingsContent: View>: View {
     private let actions: [TikoHeaderAction]
     private let onAction: (String) -> Void
     private let onAccountDeleted: () -> Void
+    private let onLoggedOut: () -> Void
     private let content: Content
     private let settingsContent: SettingsContent
 
@@ -222,6 +223,7 @@ public struct TikoAppShell<Content: View, SettingsContent: View>: View {
         actions: [TikoHeaderAction] = [],
         onAction: @escaping (String) -> Void = { _ in },
         onAccountDeleted: @escaping () -> Void = {},
+        onLoggedOut: @escaping () -> Void = {},
         @ViewBuilder settingsContent: () -> SettingsContent,
         @ViewBuilder content: () -> Content
     ) {
@@ -238,6 +240,7 @@ public struct TikoAppShell<Content: View, SettingsContent: View>: View {
             actions: actions,
             onAction: onAction,
             onAccountDeleted: onAccountDeleted,
+            onLoggedOut: onLoggedOut,
             settingsContent: settingsContent,
             content: content
         )
@@ -256,6 +259,7 @@ public struct TikoAppShell<Content: View, SettingsContent: View>: View {
         actions: [TikoHeaderAction] = [],
         onAction: @escaping (String) -> Void = { _ in },
         onAccountDeleted: @escaping () -> Void = {},
+        onLoggedOut: @escaping () -> Void = {},
         @ViewBuilder settingsContent: () -> SettingsContent,
         @ViewBuilder content: () -> Content
     ) {
@@ -271,6 +275,7 @@ public struct TikoAppShell<Content: View, SettingsContent: View>: View {
         self.actions = actions.filter { $0.id != "settings" }
         self.onAction = onAction
         self.onAccountDeleted = onAccountDeleted
+        self.onLoggedOut = onLoggedOut
         self.settingsContent = settingsContent()
         self.content = content()
     }
@@ -314,7 +319,7 @@ public struct TikoAppShell<Content: View, SettingsContent: View>: View {
                 fetchedAvatarURL = nil
                 await fetchAvatarIfNeeded()
             }
-        }, onAccountDeleted: onAccountDeleted)
+        }, onAccountDeleted: onAccountDeleted, onLoggedOut: onLoggedOut)
         .tikoPopup(isPresented: $showingProfileMenu) {
             TikoProfileMenuSheet(
                 appColor: appColor,

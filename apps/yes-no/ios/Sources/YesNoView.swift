@@ -335,6 +335,8 @@ struct YesNoView: View {
                 TikoHeaderAction(id: "history", label: i18n.t("yesNo.history.title"), systemImage: "clock", isActive: showingHistory)
             ],
             onAction: handleHeaderAction,
+            onAccountDeleted: { resetLocalDataToDefaults() },
+            onLoggedOut: { resetLocalDataToDefaults() },
             settingsContent: {
                 TikoSettingsSection(title: i18n.t("yesNo.settings.title")) {
                     TikoSettingsToggleRow(title: i18n.t("yesNo.settings.speakAnswers"), icon: "speaker.wave.2.fill", appColor: .yesNo, isOn: $speechEnabled)
@@ -539,6 +541,28 @@ struct YesNoView: View {
 
     private func saveCustomAnswerSets() {
         customAnswerSetsData = (try? JSONEncoder().encode(customAnswerSets)) ?? Data()
+    }
+
+    /// Called by the shell on logout and account deletion: wipe this user's
+    /// content and reset settings to their defaults so the next user doesn't
+    /// inherit the previous user's state. (Shared device-level prefs like
+    /// tiko.language / tiko.colorMode are intentionally left untouched.)
+    private func resetLocalDataToDefaults() {
+        // Content
+        sentence = ""
+        historyData = Data()
+        customAnswersData = Data()
+        customAnswerSetsData = Data()
+        selectedAnswerSetId = ""
+
+        // Settings → declared defaults
+        speechEnabled = true
+        choiceStyleRawValue = TikoChoiceStyle.tiles.rawValue
+
+        // Refresh in-memory state (rebuilds the default answer set, etc.)
+        loadHistory()
+        loadCustomAnswers()
+        loadCustomAnswerSets()
     }
 }
 

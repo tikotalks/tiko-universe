@@ -595,6 +595,7 @@ struct TypeView: View {
             appConfig: TypeAppConfig.app,
             appName: i18n.t("type.appName"),
             onAccountDeleted: { resetLocalDataAfterAccountDeletion() },
+            onLoggedOut: { resetLocalDataAfterAccountDeletion() },
             settingsContent: {
                 TikoSettingsSection(title: i18n.t("type.settings.title")) {
                     TikoSettingsToggleRow(

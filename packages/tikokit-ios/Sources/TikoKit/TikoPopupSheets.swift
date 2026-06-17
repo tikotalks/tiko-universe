@@ -952,6 +952,7 @@ public struct TikoAccountSheet: View {
     private let onClose: () -> Void
     private let onIdentityChanged: () -> Void
     private let onAccountDeleted: () -> Void
+    private let onLoggedOut: () -> Void
 
     @AppStorage("tiko.userName") private var userName = ""
     @AppStorage("tiko.userEmail") private var userEmail = ""
@@ -982,13 +983,14 @@ public struct TikoAccountSheet: View {
     private let identityClient = TikoIdentityClient()
     private let sessionStore = TikoDeviceSessionStore()
 
-    public init(appName: String, appColor: TikoAppColor, profilePrefs: TikoProfilePreferences, onClose: @escaping () -> Void, onIdentityChanged: @escaping () -> Void = {}, onAccountDeleted: @escaping () -> Void = {}) {
+    public init(appName: String, appColor: TikoAppColor, profilePrefs: TikoProfilePreferences, onClose: @escaping () -> Void, onIdentityChanged: @escaping () -> Void = {}, onAccountDeleted: @escaping () -> Void = {}, onLoggedOut: @escaping () -> Void = {}) {
         self.appName = appName
         self.appColor = appColor
         self._profilePrefs = ObservedObject(wrappedValue: profilePrefs)
         self.onClose = onClose
         self.onIdentityChanged = onIdentityChanged
         self.onAccountDeleted = onAccountDeleted
+        self.onLoggedOut = onLoggedOut
     }
 
     public var body: some View {
@@ -1175,6 +1177,9 @@ public struct TikoAccountSheet: View {
                     userEmail = ""
                     profilePrefs.setAvatarURL("")
                     profilePrefs.setFavoriteColor("")
+                    // Let the host app reset its local settings/data to defaults
+                    // so the next user doesn't inherit the previous user's state.
+                    onLoggedOut()
                     onIdentityChanged()
                     onClose()
                 } label: {
@@ -2029,14 +2034,14 @@ public extension View {
         tikoSettingsPopup(isPresented: isPresented, appColor: appColor) { EmptyView() }
     }
 
-    func tikoAccountPopup(isPresented: Binding<Bool>, appName: String, appColor: TikoAppColor, profilePrefs: TikoProfilePreferences, onIdentityChanged: @escaping () -> Void = {}, onAccountDeleted: @escaping () -> Void = {}) -> some View {
+    func tikoAccountPopup(isPresented: Binding<Bool>, appName: String, appColor: TikoAppColor, profilePrefs: TikoProfilePreferences, onIdentityChanged: @escaping () -> Void = {}, onAccountDeleted: @escaping () -> Void = {}, onLoggedOut: @escaping () -> Void = {}) -> some View {
         tikoPopup(isPresented: isPresented) {
             TikoAccountSheet(appName: appName, appColor: appColor, profilePrefs: profilePrefs, onClose: {
                 isPresented.wrappedValue = false
             }, onIdentityChanged: {
                 isPresented.wrappedValue = false
                 onIdentityChanged()
-            }, onAccountDeleted: onAccountDeleted)
+            }, onAccountDeleted: onAccountDeleted, onLoggedOut: onLoggedOut)
         }
     }
 }
