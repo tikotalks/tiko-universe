@@ -85,7 +85,7 @@ final class TikoKitTests: XCTestCase {
     }
 
     func testColorModeIsExplicitLightDarkOnly() {
-        XCTAssertEqual(TikoColorMode.allCases, [.light, .dark])
+        XCTAssertEqual(TikoColorMode.allCases, [.system, .light, .dark])
         XCTAssertEqual(TikoColorMode.light.title, "Light")
         XCTAssertEqual(TikoColorMode.dark.title, "Dark")
     }
