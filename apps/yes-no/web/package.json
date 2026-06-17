@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite --host 0.0.0.0 --port 3056",
     "build": "vite build",
-    "test": "vitest run --root ../../.. apps/yes-no/web/src/App.spec.ts"
+    "test": "vitest run --root ../../.. apps/yes-no/web/src"
   },
   "dependencies": {
     "@tiko/data": "file:../../../packages/data",

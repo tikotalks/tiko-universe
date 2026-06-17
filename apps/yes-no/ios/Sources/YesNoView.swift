@@ -98,10 +98,10 @@ struct YesNoAnswerSet: Codable, Identifiable, Equatable {
 private let yesNoContentAPIBase = "https://content.tikoapi.org/v1"
 
 private func yesNoImageURL(for imageRef: String?) -> URL? {
-    guard let imageRef else { return nil }
+    guard let imageRef, !imageRef.isEmpty else { return nil }
+    if imageRef.hasPrefix("http") { return URL(string: imageRef) }
     return URL(string: "\(yesNoContentAPIBase)/content/images/\(imageRef)")
 }
-
 private let builtInAnswerTranslations: [String: [String: String]] = [
     "yes": ["nl": "Ja", "fr": "Oui", "es": "Sí", "mt": "Iva", "de": "Ja"],
     "no": ["nl": "Nee", "fr": "Non", "es": "No", "mt": "Le", "de": "Nein"],
@@ -706,9 +706,19 @@ private struct TileEditorSheet: View {
     @EnvironmentObject private var i18n: TikoI18n
     @State private var sets: [YesNoAnswerSet]
     @State private var selectedSetId: String
-    @State private var presentingBuilder = false
-    @State private var builderEditSet: YesNoAnswerSet?
+    @State private var builderPresentation: BuilderPresentation?
     @State private var pendingScrollSetId: String?
+
+    private enum BuilderPresentation: Identifiable {
+        case create
+        case edit(YesNoAnswerSet)
+        var id: String {
+            switch self {
+            case .create: return "__create__"
+            case .edit(let set): return "edit-\(set.id)"
+            }
+        }
+    }
 
     init(answerSets: [YesNoAnswerSet], selectedSetId: String, onSave: @escaping ([YesNoAnswerSet], String?) -> Void, onPersist: @escaping ([YesNoAnswerSet], String?) -> Void, onClose: @escaping () -> Void) {
         self.onSave = onSave
@@ -795,8 +805,12 @@ private struct TileEditorSheet: View {
                 .buttonStyle(.plain)
             }
         }
-        .sheet(isPresented: $presentingBuilder) {
-            SetBuilderView(set: builderEditSet) { saved in
+        .sheet(item: $builderPresentation) { presentation in
+            let editSet: YesNoAnswerSet? = {
+                if case .edit(let s) = presentation { return s }
+                return nil
+            }()
+            SetBuilderView(set: editSet) { saved in
                 upsert(saved)
             }
         }
@@ -815,8 +829,7 @@ private struct TileEditorSheet: View {
     }
 
     private func startNewSet() {
-        builderEditSet = nil
-        presentingBuilder = true
+        builderPresentation = .create
     }
 
     private func resetSets() {
@@ -869,7 +882,7 @@ private struct TileEditorSheet: View {
             }
             .buttonStyle(.plain)
 
-            Button { builderEditSet = set; presentingBuilder = true } label: {
+            Button { builderPresentation = .edit(set) } label: {
                 Image(systemName: "pencil")
                     .font(.system(size: 13, weight: .bold))
                     .foregroundStyle(.secondary)
@@ -898,8 +911,8 @@ private struct TileEditorSheet: View {
     @ViewBuilder
     private func setThumb(_ set: YesNoAnswerSet) -> some View {
         let color = TikoColors.color(named: set.color ?? "") ?? Color(hexString: set.color ?? "") ?? TikoAppColor.yesNo.palette.primary
-        if let imageURL = yesNoImageURL(for: set.imageRef) {
-            TikoCachedRemoteImage(url: imageURL) { color.opacity(0.18) }
+        if let ref = set.imageRef, !ref.isEmpty {
+            TikoMediaImage(imageRef: ref) { color.opacity(0.18) }
                 .frame(width: 44, height: 44)
                 .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
         } else {
@@ -928,10 +941,9 @@ private struct SetBuilderView: View {
     @State private var imageRef: String?
     @State private var order: Int
     @State private var tiles: [YesNoAnswerTile]
-    @State private var editingTile: YesNoAnswerTile?
-    @State private var showingMediaPicker = false
     @FocusState private var titleFocused: Bool
     @Environment(\.dismiss) private var dismiss
+    @EnvironmentObject private var i18n: TikoI18n
 
     init(set: YesNoAnswerSet?, onSave: @escaping (YesNoAnswerSet) -> Void) {
         self.onSave = onSave
@@ -948,79 +960,104 @@ private struct SetBuilderView: View {
         _description = State(initialValue: base.description ?? "")
         _color = State(initialValue: base.color ?? TikoColors.teal.name)
         _imageRef = State(initialValue: base.imageRef)
-        _imageURL = State(initialValue: yesNoImageURL(for: base.imageRef))
+        _imageURL = State(initialValue: nil)
         _order = State(initialValue: base.order)
         _tiles = State(initialValue: base.answers)
     }
 
     private let columns = [GridItem(.adaptive(minimum: 96), spacing: 12)]
 
+    private enum SheetDest: Identifiable {
+        case tileEditor(YesNoAnswerTile)
+        case mediaPicker
+        var id: String {
+            switch self {
+            case .tileEditor(let t): return "tile-\(t.id)"
+            case .mediaPicker: return "media"
+            }
+        }
+    }
+    @State private var sheetDest: SheetDest?
+
     var body: some View {
-        NavigationStack {
-            ScrollView {
-                VStack(alignment: .leading, spacing: 24) {
-                    titleField
-                    tilesSection
-                    appearanceSection
-                }
-                .padding(20)
-            }
-            .navigationTitle(isNew ? "New set" : "Edit set")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .cancellationAction) { Button("Cancel") { dismiss() } }
-                ToolbarItem(placement: .confirmationAction) {
-                    Button("Save") { save() }
-                        .fontWeight(.bold)
-                }
-            }
-        }
-        .sheet(item: $editingTile) { tile in
-            TileDetailEditView(tile: tile) { updated in
-                if let i = tiles.firstIndex(where: { $0.id == updated.id }) {
-                    tiles[i] = updated
-                } else {
-                    tiles.append(updated)
-                }
-                editingTile = nil
+        TikoFormSheet(
+            title: isNew ? i18n.t("yesNo.sheet.newSet") : i18n.t("yesNo.sheet.editSet"),
+            icon: "square.grid.2x2.fill",
+            appColor: .yesNo,
+            onClose: { dismiss() }
+        ) {
+            VStack(spacing: 14) {
+                titleField
+                tilesSection
+                TikoCompactColorPicker(selectedColor: $color, label: i18n.t("yesNo.sheet.color"), appColor: .yesNo)
+                imageSection
+                TikoActionButton(
+                    label: i18n.t("yesNo.tileEditor.save"),
+                    appColor: .yesNo,
+                    disabled: title.trimmingCharacters(in: .whitespaces).isEmpty
+                ) { save() }
             }
         }
-        .tikoMediaPickerPopup(isPresented: $showingMediaPicker, appColor: .yesNo, title: "Choose set image", onSelectMedia: { selection in
-            imageRef = selection.id
-            imageURL = selection.id == nil ? nil : selection.url
-        })
+        .sheet(item: $sheetDest) { dest in
+            switch dest {
+            case .tileEditor(let tile):
+                TileDetailEditView(
+                    tile: tile,
+                    onSave: { updated in
+                        if let i = tiles.firstIndex(where: { $0.id == updated.id }) {
+                            tiles[i] = updated
+                        } else {
+                            tiles.append(updated)
+                        }
+                        sheetDest = nil
+                    },
+                    onCancel: { sheetDest = nil }
+                )
+            case .mediaPicker:
+                TikoMediaPickerSheet(
+                    appColor: .yesNo,
+                    title: i18n.t("yesNo.sheet.pickImage"),
+                    onSelectMedia: { selection in
+                        imageRef = selection.id
+                        imageURL = selection.url
+                        if let id = selection.id {
+                            Task { await MediaImageResolver.shared.cache(id, url: selection.url) }
+                        }
+                        sheetDest = nil
+                    },
+                    onClose: { sheetDest = nil }
+                )
+                .presentationDetents([.large])
+            }
+        }
         .onAppear { if isNew { titleFocused = true } }
+        .task(id: imageRef) {
+            if let imageRef, imageURL == nil {
+                imageURL = await MediaImageResolver.shared.resolve(imageRef)
+            }
+        }
     }
 
     // MARK: Sections
 
     private var titleField: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Text("Set name")
-                .font(.system(size: 13, weight: .heavy, design: .rounded))
-                .foregroundStyle(.secondary)
-            TextField("Name this set", text: $title)
-                .font(.system(size: 22, weight: .heavy, design: .rounded))
+        TikoFormField(label: i18n.t("yesNo.sheet.setName")) {
+            TextField(i18n.t("yesNo.sheet.setNamePlaceholder"), text: $title)
+                .font(.system(size: 18, weight: .heavy, design: .rounded))
                 .focused($titleFocused)
-                .padding(.vertical, 12)
-                .padding(.horizontal, 14)
-                .background(Color(.systemFill).opacity(0.5))
-                .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
         }
     }
 
     private var tilesSection: some View {
         VStack(alignment: .leading, spacing: 10) {
-            Text("Tiles")
-                .font(.system(size: 13, weight: .heavy, design: .rounded))
-                .foregroundStyle(.secondary)
+            TikoFieldLabel(i18n.t("yesNo.sheet.tiles"))
             LazyVGrid(columns: columns, spacing: 12) {
                 ForEach(tiles) { tile in
                     tileCell(tile)
-                        .onTapGesture { editingTile = tile }
+                        .onTapGesture { sheetDest = .tileEditor(tile) }
                         .contextMenu {
                             Button(role: .destructive) { removeTile(tile) } label: {
-                                Label("Delete tile", systemImage: "trash")
+                                Label(i18n.t("yesNo.sheet.delete"), systemImage: "trash")
                             }
                         }
                 }
@@ -1030,45 +1067,16 @@ private struct SetBuilderView: View {
         }
     }
 
-    private var appearanceSection: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            Text("Set colour")
-                .font(.system(size: 13, weight: .heavy, design: .rounded))
-                .foregroundStyle(.secondary)
-            LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 10), count: 7), spacing: 10) {
-                ForEach(TikoColors.all, id: \.name) { preset in
-                    Circle()
-                        .fill(preset.color)
-                        .frame(height: 34)
-                        .overlay {
-                            if color == preset.name {
-                                Circle().strokeBorder(.white, lineWidth: 2.5)
-                                Image(systemName: "checkmark")
-                                    .font(.system(size: 11, weight: .black))
-                                    .foregroundStyle(.white)
-                            }
-                        }
-                        .onTapGesture { color = preset.name }
-                }
-            }
-
-            HStack(spacing: 12) {
-                if let imageURL {
-                    TikoCachedRemoteImage(url: imageURL) { Color(.systemFill) }
-                        .frame(width: 56, height: 56)
-                        .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
-                }
-                Button(imageURL == nil ? "Choose set image" : "Change image") { showingMediaPicker = true }
-                    .font(.system(size: 15, weight: .heavy, design: .rounded))
-                    .foregroundStyle(TikoAppColor.yesNo.palette.primary)
-                if imageURL != nil {
-                    Button("Remove", role: .destructive) {
-                        imageRef = nil
-                        imageURL = nil
-                    }
-                    .font(.system(size: 15, weight: .semibold, design: .rounded))
-                }
-            }
+    private var imageSection: some View {
+        VStack(alignment: .leading, spacing: 7) {
+            TikoFieldLabel(i18n.t("yesNo.sheet.image"))
+            TikoImagePickerButton(
+                selectedURL: imageURL,
+                appColor: .yesNo,
+                addLabel: i18n.t("yesNo.sheet.addImage"),
+                changeLabel: i18n.t("yesNo.sheet.changeImage"),
+                action: { sheetDest = .mediaPicker }
+            )
         }
     }
 
@@ -1081,8 +1089,8 @@ private struct SetBuilderView: View {
                 .fill(tileColor)
                 .frame(height: 80)
                 .overlay {
-                    if let imageURL = yesNoImageURL(for: tile.imageRef) {
-                        TikoCachedRemoteImage(url: imageURL) { tileColor.opacity(0.18) }
+                    if let ref = tile.imageRef, !ref.isEmpty {
+                        TikoMediaImage(imageRef: ref) { tileColor.opacity(0.18) }
                             .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
                     } else if let icon = tile.icon, !icon.isEmpty {
                         TikoOpenIconView(icon)
@@ -1106,7 +1114,7 @@ private struct SetBuilderView: View {
                         .font(.system(size: 26, weight: .bold))
                         .foregroundStyle(TikoAppColor.yesNo.palette.primary)
                 }
-            Text("Add tile")
+            Text(i18n.t("yesNo.tileEditor.addTile"))
                 .font(.system(size: 13, weight: .heavy, design: .rounded))
                 .foregroundStyle(TikoAppColor.yesNo.palette.primary)
                 .lineLimit(1)
@@ -1117,12 +1125,12 @@ private struct SetBuilderView: View {
 
     private func addTile() {
         // Present the editor for a brand-new tile; it is appended only when saved.
-        editingTile = YesNoAnswerTile(
+        sheetDest = .tileEditor(YesNoAnswerTile(
             id: "answer-\(UUID().uuidString.prefix(8))",
             label: "",
             speech: "",
             color: color
-        )
+        ))
     }
 
     private func removeTile(_ tile: YesNoAnswerTile) {
@@ -1148,6 +1156,7 @@ private struct SetBuilderView: View {
 private struct TileDetailEditView: View {
     let tile: YesNoAnswerTile
     let onSave: (YesNoAnswerTile) -> Void
+    let onCancel: () -> Void
 
     @State private var label: String
     @State private var speech: String
@@ -1156,99 +1165,131 @@ private struct TileDetailEditView: View {
     @State private var imageURL: URL?
     @State private var imageRef: String?
     @State private var showingMediaPicker = false
-    @Environment(\.dismiss) private var dismiss
+    @EnvironmentObject private var i18n: TikoI18n
 
-    init(tile: YesNoAnswerTile, onSave: @escaping (YesNoAnswerTile) -> Void) {
+    init(tile: YesNoAnswerTile, onSave: @escaping (YesNoAnswerTile) -> Void, onCancel: @escaping () -> Void) {
         self.tile = tile
         self.onSave = onSave
+        self.onCancel = onCancel
         _label = State(initialValue: tile.label)
         _speech = State(initialValue: tile.speech)
         _color = State(initialValue: tile.color)
         _icon = State(initialValue: tile.icon ?? "")
         _imageRef = State(initialValue: tile.imageRef)
-        _imageURL = State(initialValue: yesNoImageURL(for: tile.imageRef))
+        _imageURL = State(initialValue: nil)
     }
 
     var body: some View {
-        NavigationStack {
-            Form {
-                Section("Label") {
-                    TextField("What to display", text: $label)
+        TikoFormSheet(
+            title: tile.label.isEmpty ? i18n.t("yesNo.sheet.newTile") : i18n.t("yesNo.sheet.editTile"),
+            icon: "rectangle.badge.plus",
+            appColor: .yesNo,
+            onClose: onCancel
+        ) {
+            VStack(spacing: 14) {
+                HStack {
+                    Spacer()
+                    tilePreview
+                        .frame(width: 88, height: 88)
+                        .allowsHitTesting(false)
+                    Spacer()
                 }
-                Section("Spoken text") {
-                    TextField("What to say when tapped", text: $speech)
-                }
-                Section("Icon") {
-                    TikoOpenIconPicker(selection: $icon)
-                        .onChange(of: icon) { _, newValue in
-                            if !newValue.isEmpty {
-                                imageRef = nil
-                                imageURL = nil
-                            }
+
+                TikoFormField(label: i18n.t("yesNo.sheet.name")) {
+                    TextField(i18n.t("yesNo.sheet.namePlaceholder"), text: $label)
+                        .font(.system(size: 16, weight: .semibold, design: .rounded))
+                        .onChange(of: label) { oldValue, newValue in
+                            if speech.isEmpty || speech == oldValue { speech = newValue }
                         }
                 }
-                Section("Image") {
-                    if let imageURL {
-                        TikoCachedRemoteImage(url: imageURL) {
-                            Color(.systemFill)
-                        }
-                        .frame(width: 80, height: 80)
-                        .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
-                    }
-                    Button(imageURL == nil ? "Choose image" : "Change image") { showingMediaPicker = true }
+
+                TikoFormField(label: i18n.t("yesNo.sheet.spokenText")) {
+                    TextField(i18n.t("yesNo.sheet.whatShouldBeSpoken"), text: $speech)
+                        .font(.system(size: 16, weight: .semibold, design: .rounded))
+                }
+
+                TikoCompactColorPicker(selectedColor: $color, label: i18n.t("yesNo.sheet.color"), appColor: .yesNo)
+
+                VStack(alignment: .leading, spacing: 7) {
+                    TikoFieldLabel(i18n.t("yesNo.sheet.image"))
+                    TikoImagePickerButton(
+                        selectedURL: imageURL,
+                        appColor: .yesNo,
+                        addLabel: i18n.t("yesNo.sheet.addImage"),
+                        changeLabel: i18n.t("yesNo.sheet.changeImage"),
+                        action: { showingMediaPicker = true }
+                    )
                     if imageURL != nil {
-                        Button("Remove image", role: .destructive) {
+                        Button(role: .destructive) {
                             imageRef = nil
                             imageURL = nil
+                        } label: {
+                            HStack(spacing: 8) {
+                                Image(systemName: "trash")
+                                    .font(.system(size: 14, weight: .bold))
+                                Text(i18n.t("yesNo.sheet.delete"))
+                                    .font(.system(size: 14, weight: .heavy, design: .rounded))
+                                Spacer()
+                            }
+                            .foregroundStyle(.red)
+                            .padding(12)
+                            .background(Color.red.opacity(0.08))
+                            .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
                         }
+                        .buttonStyle(.plain)
                     }
                 }
-                Section("Color") {
-                    LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 10), count: 7), spacing: 10) {
-                        ForEach(TikoColors.all, id: \.name) { preset in
-                            Circle()
-                                .fill(preset.color)
-                                .frame(height: 36)
-                                .overlay {
-                                    if color == preset.name {
-                                        Circle().strokeBorder(.white, lineWidth: 2.5)
-                                        Image(systemName: "checkmark")
-                                            .font(.system(size: 11, weight: .black))
-                                        .foregroundStyle(.white)
-                                    }
-                                }
-                                .onTapGesture { color = preset.name }
-                        }
-                    }
-                    .padding(.vertical, 6)
-                }
-            }
-            .navigationTitle("Edit answer")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel") { dismiss() }
-                }
-                ToolbarItem(placement: .confirmationAction) {
-                    Button("Save") {
-                        onSave(YesNoAnswerTile(
-                            id: tile.id,
-                            label: label.isEmpty ? "Answer" : label,
-                            speech: speech.isEmpty ? label : speech,
-                            color: color,
-                            imageRef: imageRef,
-                            icon: imageRef == nil && !icon.isEmpty ? icon : nil
-                        ))
-                    }
-                    .fontWeight(.bold)
+
+                TikoActionButton(
+                    label: i18n.t("yesNo.tileEditor.save"),
+                    appColor: .yesNo,
+                    disabled: label.trimmingCharacters(in: .whitespaces).isEmpty
+                ) {
+                    onSave(YesNoAnswerTile(
+                        id: tile.id,
+                        label: label.isEmpty ? "Answer" : label,
+                        speech: speech.isEmpty ? label : speech,
+                        color: color,
+                        imageRef: imageRef,
+                        icon: imageRef == nil && !icon.isEmpty ? icon : nil
+                    ))
                 }
             }
         }
-        .tikoMediaPickerPopup(isPresented: $showingMediaPicker, appColor: .yesNo, title: "Choose tile image", onSelectMedia: { selection in
+        .tikoMediaPickerSheet(isPresented: $showingMediaPicker, appColor: .yesNo, title: i18n.t("yesNo.sheet.pickImage"), onSelectMedia: { selection in
             imageRef = selection.id
-            imageURL = selection.id == nil ? nil : selection.url
+            imageURL = selection.url
             icon = ""
+            if let id = selection.id {
+                Task { await MediaImageResolver.shared.cache(id, url: selection.url) }
+            }
         })
+        .task(id: imageRef) {
+            if let imageRef, imageURL == nil {
+                imageURL = await MediaImageResolver.shared.resolve(imageRef)
+            }
+        }
+    }
+
+    @ViewBuilder
+    private var tilePreview: some View {
+        let tileColor = TikoColors.color(named: color) ?? TikoAppColor.yesNo.palette.primary
+        RoundedRectangle(cornerRadius: 18, style: .continuous)
+            .fill(tileColor)
+            .overlay {
+                if let imageURL {
+                    TikoCachedRemoteImage(url: imageURL) { tileColor.opacity(0.18) }
+                        .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
+                } else if !icon.isEmpty {
+                    TikoOpenIconView(icon)
+                        .frame(width: 30, height: 30)
+                } else {
+                    Image(systemName: "rectangle.badge.plus")
+                        .font(.system(size: 26, weight: .bold))
+                        .foregroundStyle(.white.opacity(0.85))
+                }
+            }
+            .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
     }
 }
 

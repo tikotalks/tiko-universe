@@ -8,8 +8,8 @@ export interface AnswerTile {
   id: string
   label: string
   speech: string
-  labelTranslations?: Partial<Record<string, string>>
-  speechTranslations?: Partial<Record<string, string>>
+  labelTranslations?: Record<string, string>
+  speechTranslations?: Record<string, string>
   color?: TikoColorName
   imageRef?: string
   icon?: string

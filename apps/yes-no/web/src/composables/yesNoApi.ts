@@ -34,9 +34,15 @@ export function createYesNoApi(options: YesNoApiOptions) {
     async fetchContent(language?: string): Promise<YesNoContentResponse> {
       const query = language ? `?language=${encodeURIComponent(language)}` : ''
       const body = await request<YesNoPayload>(`/yes-no/content${query}`)
-      return (body.data && typeof body.data === 'object' && 'answerSets' in body.data
-        ? body.data as YesNoContentResponse
-        : { answerSets: [], answers: [], selectedSetId: null })
+      if (body.data && typeof body.data === 'object') {
+        const data = body.data as YesNoContentResponse
+        return {
+          answerSets: Array.isArray(data.answerSets) ? data.answerSets : [],
+          answers: Array.isArray(data.answers) ? data.answers : [],
+          selectedSetId: typeof data.selectedSetId === 'string' ? data.selectedSetId : null,
+        }
+      }
+      return { answerSets: [], answers: [], selectedSetId: null }
     },
 
     async createAnswerSet(input: AnswerSetInput & { id: string; order: number }): Promise<AnswerSet | null> {
