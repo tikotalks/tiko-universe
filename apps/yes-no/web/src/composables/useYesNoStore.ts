@@ -36,7 +36,7 @@ export function useYesNoStore(options: UseYesNoStoreOptions) {
 
   function persist(extra: Partial<PersistedYesNo> = {}) {
     options.writeStored({
-      ...stored,
+      ...options.readStored(),
       ...extra,
       answerSets: answerSets.value.map(normalizeSet),
       selectedSetId: selectedSetId.value,
