@@ -17,6 +17,8 @@ export interface AdminMediaItem {
   thumbnailUrl?: string
   thumbnail_url?: string
   medium_url?: string
+  is_active?: boolean
+  is_hidden?: boolean
   created_at?: string
   createdAt?: string
 }
@@ -217,5 +219,37 @@ export function useAdminMediaLibrary() {
     return resizedMediaUrl(url, size)
   }
 
-  return { items, total, page, totalPages, loading, uploading, error, list, upload, itemUrl, mediaDownloadUrl, mediaRefPreviewUrl, itemPreviewUrl, previewUrl, listAudioAlbums, createAudioAlbum, addAudioTrack }
+  async function updateMedia(id: string, fields: { title?: string; description?: string; tags?: string[]; categories?: string[]; is_active?: boolean; is_hidden?: boolean }): Promise<void> {
+    const response = await fetch(`${mediaBaseUrl()}/media/${encodeURIComponent(id)}`, {
+      method: 'PUT',
+      headers: { authorization: `Bearer ${token.value}`, 'content-type': 'application/json' },
+      body: JSON.stringify(fields),
+    })
+    const body = await response.json().catch(() => null) as ApiErrorBody | { data: AdminMediaItem } | null
+    const apiError = body && 'error' in body ? body.error : undefined
+    if (!response.ok) throw new Error((typeof apiError === 'string' ? apiError : apiError?.message) ?? `Update failed: ${response.status}`)
+    const updated = (body as { data: AdminMediaItem }).data
+    items.value = items.value.map(item => item.id === id ? { ...item, ...updated } : item)
+  }
+
+  async function deleteMedia(id: string): Promise<void> {
+    const response = await fetch(`${mediaBaseUrl()}/media/${encodeURIComponent(id)}`, {
+      method: 'DELETE',
+      headers: { authorization: `Bearer ${token.value}` },
+    })
+    const body = await response.json().catch(() => null) as ApiErrorBody | null
+    const apiError = body && 'error' in body ? body.error : undefined
+    if (!response.ok) throw new Error((typeof apiError === 'string' ? apiError : apiError?.message) ?? `Delete failed: ${response.status}`)
+    items.value = items.value.filter(item => item.id !== id)
+  }
+
+  async function toggleActive(id: string, isActive: boolean): Promise<void> {
+    await updateMedia(id, { is_active: isActive })
+  }
+
+  async function toggleHidden(id: string, isHidden: boolean): Promise<void> {
+    await updateMedia(id, { is_hidden: isHidden })
+  }
+
+  return { items, total, page, totalPages, loading, uploading, error, list, upload, updateMedia, deleteMedia, toggleActive, toggleHidden, itemUrl, mediaDownloadUrl, mediaRefPreviewUrl, itemPreviewUrl, previewUrl, listAudioAlbums, createAudioAlbum, addAudioTrack }
 }

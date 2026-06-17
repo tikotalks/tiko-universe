@@ -49,6 +49,8 @@ interface MediaItem {
   folder?: string
   tags?: string[]
   is_private: boolean
+  is_active: boolean
+  is_hidden: boolean
   original_url: string
   thumbnail_url?: string
   medium_url?: string
@@ -243,6 +245,8 @@ function rowToMediaItem(row: Record<string, unknown>): MediaItem {
     folder: firstCategory(row.folder),
     tags: parseStringArray(row.tags),
     is_private: dbBoolean(row.is_private),
+    is_active: row.is_active === undefined ? true : dbBoolean(row.is_active),
+    is_hidden: dbBoolean(row.is_hidden),
     original_url: String(row.original_url),
     thumbnail_url: nullableString(row.thumbnail_url),
     medium_url: nullableString(row.medium_url),
@@ -794,6 +798,9 @@ async function handleListMedia(request: Request, env: Env): Promise<Response> {
     const sort = url.searchParams.get('sort') || 'created_at'
     const order = url.searchParams.get('order')?.toLowerCase() === 'asc' ? 'ASC' : 'DESC'
     const includePrivate = url.searchParams.get('private') === 'true'
+    const includeInactive = url.searchParams.get('includeInactive') === 'true'
+    const includeHidden = url.searchParams.get('includeHidden') === 'true'
+    const isAdmin = isServiceAccess(access) || (!!access.auth && !!sessionUserId(access))
 
     const allowedSorts = ['created_at', 'file_size', 'title']
     const safeSort = allowedSorts.includes(sort) ? sort : 'created_at'
@@ -807,6 +814,18 @@ async function handleListMedia(request: Request, env: Env): Promise<Response> {
     } else if (!isServiceAccess(access)) {
       clauses.push('(is_private = 0 OR owner_user_id = ?)')
       values.push(sessionUserId(access))
+    }
+
+    // Non-admin callers never see inactive items.
+    // Admin callers can opt in to see inactive via includeInactive=true.
+    if (!isAdmin || !includeInactive) {
+      clauses.push('is_active = 1')
+    }
+
+    // Hidden items are excluded from public lists (search/browse).
+    // Admin callers can opt in to see hidden via includeHidden=true.
+    if (!isAdmin || !includeHidden) {
+      clauses.push('is_hidden = 0')
     }
 
     if (search) {
@@ -832,7 +851,7 @@ async function handleListMedia(request: Request, env: Env): Promise<Response> {
 
     const rows = await env.MEDIA_DB.prepare(
       `SELECT id, filename AS file_name, file_size, mime_type, width, height, '' AS alt_text, title,
-              description, categories AS folder, tags, is_private, owner_user_id, original_url, thumbnail_url, medium_url, created_at, updated_at
+              description, categories AS folder, tags, is_private, is_active, is_hidden, owner_user_id, original_url, thumbnail_url, medium_url, created_at, updated_at
        FROM media
        ${where}
        ORDER BY ${safeSort} ${order}
@@ -871,7 +890,7 @@ async function handleGetMedia(request: Request, env: Env, id: string): Promise<R
     if (access instanceof Response) return access
     const row = await env.MEDIA_DB.prepare(
       `SELECT id, filename AS file_name, file_size, mime_type, width, height, '' AS alt_text, title,
-              description, categories AS folder, tags, is_private, owner_user_id, original_url, thumbnail_url, medium_url, created_at, updated_at
+              description, categories AS folder, tags, is_private, is_active, is_hidden, owner_user_id, original_url, thumbnail_url, medium_url, created_at, updated_at
        FROM media WHERE id = ? LIMIT 1`,
     )
       .bind(id)
@@ -896,6 +915,13 @@ const IMAGE_SIZES: Record<string, { width: number; quality: number }> = {
   original: { width: 0, quality: 0 },
 }
 
+function isMediaServeable(row: Record<string, unknown>, context: MediaAccessContext): boolean {
+  if (!canReadMedia(row, context)) return false
+  const isActive = row.is_active === undefined ? true : dbBoolean(row.is_active)
+  if (!isActive) return isServiceAccess(context) || (!!context.auth && !!sessionUserId(context))
+  return true
+}
+
 async function handleMediaImage(request: Request, env: Env, id: string, size: string): Promise<Response> {
   try {
     const config = IMAGE_SIZES[size]
@@ -904,33 +930,34 @@ async function handleMediaImage(request: Request, env: Env, id: string, size: st
     const access = await optionalAuth(request, env)
     if (access instanceof Response) return access
     const row = await env.MEDIA_DB.prepare(
-      'SELECT filename AS file_name, mime_type, is_private, owner_user_id, original_url FROM media WHERE id = ? LIMIT 1',
+      'SELECT filename AS file_name, mime_type, is_private, is_active, owner_user_id, original_url FROM media WHERE id = ? LIMIT 1',
     )
       .bind(id)
-      .first<{ file_name: string; mime_type: string; is_private: unknown; owner_user_id?: string | null; original_url: string }>()
+      .first<Record<string, unknown>>()
 
     if (!row) return err('Media not found', 404)
-    if (!canReadMedia(row as unknown as Record<string, unknown>, access)) return privateAccessResponse(access)
+    if (!isMediaServeable(row, access)) return privateAccessResponse(access)
     if (!String(row.mime_type ?? '').startsWith('image/')) return err('Media item is not an image', 400)
 
     const isPrivate = dbBoolean(row.is_private)
+    const fileName = String(row.file_name)
+    const mimeType = String(row.mime_type)
+    const originalUrl = String(row.original_url)
 
     // For private images, stream from R2 (CDN is public-only)
     if (isPrivate) {
-      const r2Key = row.file_name
-      const r2Object = await env.USER_MEDIA_BUCKET.get(r2Key)
+      const r2Object = await env.USER_MEDIA_BUCKET.get(fileName)
       if (!r2Object) return err('Media file not found', 404)
       return new Response(r2Object.body, {
         headers: {
           ...CORS_HEADERS,
-          'Content-Type': row.mime_type,
+          'Content-Type': mimeType,
           'Cache-Control': 'public, max-age=86400',
         },
       })
     }
 
     // For public images on the CDN, redirect to cdn-cgi/image resized URL
-    const originalUrl = row.original_url
     if (size === 'original') return Response.redirect(originalUrl, 302)
 
     const parsed = parseHttpUrl(originalUrl)
@@ -955,35 +982,100 @@ async function handleMediaDownload(request: Request, env: Env, id: string): Prom
     const access = await optionalAuth(request, env)
     if (access instanceof Response) return access
     const row = await env.MEDIA_DB.prepare(
-      'SELECT filename AS file_name, mime_type, is_private, owner_user_id, original_url FROM media WHERE id = ? LIMIT 1',
+      'SELECT filename AS file_name, mime_type, is_private, is_active, owner_user_id, original_url FROM media WHERE id = ? LIMIT 1',
     )
       .bind(id)
-      .first<{ file_name: string; mime_type: string; is_private: unknown; owner_user_id?: string | null; original_url: string }>()
+      .first<Record<string, unknown>>()
 
     if (!row) return err('Media not found', 404)
-    if (!canReadMedia(row as unknown as Record<string, unknown>, access)) return privateAccessResponse(access)
+    if (!isMediaServeable(row, access)) return privateAccessResponse(access)
 
     const isPrivate = dbBoolean(row.is_private)
-    const r2Key = isPrivate ? row.file_name : row.original_url.replace(/^https?:\/\/[^/]+\//, '')
+    const fileName = String(row.file_name)
+    const mimeType = String(row.mime_type)
+    const originalUrl = String(row.original_url)
+    const r2Key = isPrivate ? fileName : originalUrl.replace(/^https?:\/\/[^/]+\//, '')
     const r2Object = await (isPrivate ? env.USER_MEDIA_BUCKET : env.MEDIA_BUCKET).get(r2Key)
 
     if (r2Object) {
       return new Response(r2Object.body, {
         headers: {
           ...CORS_HEADERS,
-          'Content-Type': row.mime_type,
-          'Content-Disposition': `attachment; filename="${row.file_name}"`,
+          'Content-Type': mimeType,
+          'Content-Disposition': `attachment; filename="${fileName}"`,
         },
       })
     }
 
     if (isPrivate) return err('Media file not found', 404)
-    return Response.redirect(row.original_url, 302)
+    return Response.redirect(originalUrl, 302)
   } catch (error) {
     return json(
       { success: false, error: 'Download failed', details: (error as Error).message },
       500,
     )
+  }
+}
+
+// PUT /v1/media/:id — update media metadata (title, description, tags, categories, is_active, is_hidden)
+async function handleMediaUpdate(request: Request, env: Env, id: string): Promise<Response> {
+  try {
+    const body = await request.json() as Record<string, unknown>
+    const row = await env.MEDIA_DB.prepare('SELECT id FROM media WHERE id = ? LIMIT 1').bind(id).first()
+    if (!row) return err('Media not found', 404)
+
+    const sets: string[] = []
+    const values: unknown[] = []
+    const now = new Date().toISOString()
+
+    if (typeof body.title === 'string') { sets.push('title = ?'); values.push(body.title) }
+    if (typeof body.description === 'string') { sets.push('description = ?'); values.push(body.description || null) }
+    if (typeof body.name === 'string') { sets.push('name = ?'); values.push(body.name) }
+    if (Array.isArray(body.tags)) { sets.push('tags = ?'); values.push(JSON.stringify(body.tags.filter((t): t is string => typeof t === 'string'))) }
+    if (Array.isArray(body.categories)) { sets.push('categories = ?'); values.push(JSON.stringify(body.categories.filter((c): c is string => typeof c === 'string'))) }
+    if (typeof body.is_active === 'boolean') { sets.push('is_active = ?'); values.push(body.is_active ? 1 : 0) }
+    if (typeof body.is_hidden === 'boolean') { sets.push('is_hidden = ?'); values.push(body.is_hidden ? 1 : 0) }
+
+    if (sets.length === 0) return err('No valid fields to update')
+
+    sets.push('updated_at = ?')
+    values.push(now)
+    values.push(id)
+
+    await env.MEDIA_DB.prepare(`UPDATE media SET ${sets.join(', ')} WHERE id = ?`).bind(...values).run()
+
+    const updated = await env.MEDIA_DB.prepare(
+      `SELECT id, filename AS file_name, file_size, mime_type, width, height, '' AS alt_text, title,
+              description, categories AS folder, tags, is_private, is_active, is_hidden, owner_user_id, original_url, thumbnail_url, medium_url, created_at, updated_at
+       FROM media WHERE id = ? LIMIT 1`,
+    ).bind(id).first<Record<string, unknown>>()
+
+    return ok({ data: rowToMediaItem(updated!) })
+  } catch (error) {
+    return json({ success: false, error: 'Failed to update media', details: (error as Error).message }, 500)
+  }
+}
+
+// DELETE /v1/media/:id — delete media from R2 and D1
+async function handleMediaDelete(request: Request, env: Env, id: string): Promise<Response> {
+  try {
+    const row = await env.MEDIA_DB.prepare(
+      'SELECT id, filename, is_private, original_url FROM media WHERE id = ? LIMIT 1',
+    ).bind(id).first<{ id: string; filename: string; is_private: unknown; original_url: string }>()
+
+    if (!row) return err('Media not found', 404)
+
+    const isPrivate = dbBoolean(row.is_private)
+    const bucket = isPrivate ? env.USER_MEDIA_BUCKET : env.MEDIA_BUCKET
+    const r2Key = isPrivate ? row.filename : row.original_url.replace(/^https?:\/\/[^/]+\//, '')
+
+    try { await bucket.delete(r2Key) } catch { /* best-effort R2 cleanup */ }
+
+    await env.MEDIA_DB.prepare('DELETE FROM media WHERE id = ?').bind(id).run()
+
+    return ok({ deleted: true, id })
+  } catch (error) {
+    return json({ success: false, error: 'Failed to delete media', details: (error as Error).message }, 500)
   }
 }
 
@@ -1331,6 +1423,16 @@ export default {
         const authed = await authenticate(request, env)
         if (authed.ok === false) return withCors(authed.response)
         return withCors(await handleMediaAnalyze(request, env, { auth: authed }))
+      }
+      if (request.method === 'PUT' && id) {
+        const authed = await authenticate(request, env)
+        if (authed.ok === false) return withCors(authed.response)
+        return withCors(await handleMediaUpdate(request, env, id))
+      }
+      if (request.method === 'DELETE' && id) {
+        const authed = await authenticate(request, env)
+        if (authed.ok === false) return withCors(authed.response)
+        return withCors(await handleMediaDelete(request, env, id))
       }
       if (request.method === 'GET' && !id) return handleListMedia(request, env)
       if (request.method === 'GET' && id && segments[3] === 'image' && segments[4]) {

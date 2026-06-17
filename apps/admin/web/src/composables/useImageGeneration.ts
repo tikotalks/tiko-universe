@@ -251,5 +251,15 @@ export function useImageGeneration() {
     return body.data
   }
 
-  return { generateImage, listImages, promoteImage, pushToMedia, deleteImage, enrichImage, editImage, upscaleImage, enqueueJobs, listJobs, deleteJob, processJobs, imageSrc }
+  async function importImage(imageUrl: string, meta?: { title?: string; category?: string; tags?: string[] }): Promise<ImageGalleryItem> {
+    const response = await fetch(`${baseUrl()}/images/import`, {
+      method: 'POST',
+      headers: authHeaders({ 'content-type': 'application/json' }),
+      body: JSON.stringify({ imageUrl, ...meta }),
+    })
+    const body = await readJson<{ data: ImageGalleryItem }>(response, 'Image import failed')
+    return body.data
+  }
+
+  return { generateImage, listImages, promoteImage, pushToMedia, deleteImage, enrichImage, editImage, upscaleImage, enqueueJobs, listJobs, deleteJob, processJobs, imageSrc, importImage }
 }
