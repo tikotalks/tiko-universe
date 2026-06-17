@@ -111,6 +111,8 @@ export interface Env {
   TOKEN_PEPPER?: string
   ANKORE_TOKEN_PEPPER?: string
   PEPPER_SECRET?: { get(): Promise<string> }
+  ATLAS_SECRET?: { get(): Promise<string> }
+  ATLAS_API_KEY?: string
   AUTH_DB?: {
     prepare(sql: string): { bind(...values: unknown[]): { first<T>(): Promise<T | null>; all(): Promise<{ results: unknown[] }>; run?(): Promise<unknown> } }
   }

@@ -16,6 +16,8 @@ const router = createRouter({
     { path: '/caregivers', component: () => import('./pages/CaregiversPage.vue') },
     { path: '/educators', component: () => import('./pages/EducatorsPage.vue') },
     { path: '/faq', component: () => import('./pages/FaqPage.vue') },
+    { path: '/support', component: () => import('./pages/SupportPage.vue') },
+    { path: '/privacy-policy', component: () => import('./pages/PrivacyPolicyPage.vue') },
     { path: '/docs', component: () => import('./pages/DocsPage.vue') },
     { path: '/docs/:section', component: () => import('./pages/DocsPage.vue') },
   ],

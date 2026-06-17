@@ -27,7 +27,7 @@
 
 /* Begin PBXFileReference section */
 		074135D340258FEED1495621 /* TikoTypeTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = TikoTypeTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		17FEAA921D1BE9E6E0A21CE8 /* TikoType.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = TikoType.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		17FEAA921D1BE9E6E0A21CE8 /* TikoType.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TikoType.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		2784AE1A879155FBDA9A5ED1 /* TypeAppConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TypeAppConfig.swift; sourceTree = "<group>"; };
 		6F38F474C04DC7AFB45AED52 /* tikokit-ios */ = {isa = PBXFileReference; lastKnownFileType = folder; name = "tikokit-ios"; path = "../../../packages/tikokit-ios"; sourceTree = SOURCE_ROOT; };
 		8549F5329BFE78AA41AB74EB /* TikoTypeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TikoTypeTests.swift; sourceTree = "<group>"; };
@@ -123,6 +123,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 23C059A4D34D387B5C9E3325 /* Build configuration list for PBXNativeTarget "TikoType" */;
 			buildPhases = (
+				EAA68A503BFC14C186F75BA0 /* Generate Tiko app config */,
 				6FF1CF29ADD58449B83E9691 /* Sources */,
 				1D8C46986BC133F6F50B4B23 /* Resources */,
 				6355331E5B698F28F565542B /* Frameworks */,
@@ -149,9 +150,6 @@
 				LastUpgradeCheck = 1430;
 				TargetAttributes = {
 					298F397DBAD8E2C111A7E6C1 = {
-						DevelopmentTeam = "";
-					};
-					BEEC29EA76C68AA58B826DEB = {
 						DevelopmentTeam = "";
 					};
 				};
@@ -189,6 +187,28 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		EAA68A503BFC14C186F75BA0 /* Generate Tiko app config */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Generate Tiko app config";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "set -euo pipefail\nREPO_ROOT=\"${SRCROOT}/../../..\"\nif ! command -v node >/dev/null 2>&1; then\n  echo \"error: node is required to generate Tiko app configs from admin before iOS build.\"\n  exit 1\nfi\nTIKO_APP_CONFIG_STRICT=1 node \"${REPO_ROOT}/tools/generate-app-configs.mjs\"\n";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		661E179C5712173F76E9CEC9 /* Sources */ = {
@@ -299,6 +319,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = Sources/TikoType.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				DEVELOPMENT_TEAM = 38MGF83L2L;
 				INFOPLIST_FILE = Sources/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -316,6 +337,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = Sources/TikoType.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				DEVELOPMENT_TEAM = 38MGF83L2L;
 				INFOPLIST_FILE = Sources/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",

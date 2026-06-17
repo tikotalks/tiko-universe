@@ -1,9 +1,32 @@
 <script setup lang="ts">
+import { onMounted, ref } from 'vue'
 import { RouterLink } from 'vue-router'
-import { useBemm } from 'bemm'
 import { trustPrinciples } from '../siteContent'
+import PageSection from '../components/sections/PageSection.vue'
+import CardGrid from '../components/sections/CardGrid.vue'
+import ColorCard from '../components/sections/ColorCard.vue'
+import SplitMedia from '../components/sections/SplitMedia.vue'
+import CtaBanner from '../components/sections/CtaBanner.vue'
 
-const bemm = useBemm('care-page', { return: 'string', includeBaseClass: true })
+// Colour rotation so adjacent cards read as distinct Tiko colours.
+const tones = ['primary', 'secondary', 'tertiary', 'accent', 'warning', 'yes-no', 'cards', 'sequence']
+
+// A small pool of Tiko Media images to give each section a real visual.
+const MEDIA_API = (import.meta as { env?: Record<string, string | undefined> }).env?.VITE_MEDIA_API_URL
+  ?? 'https://media.tikoapi.org/v1'
+const pool = ref<string[]>([])
+function poolImage(i: number): string | undefined {
+  return pool.value.length ? pool.value[i % pool.value.length] : undefined
+}
+onMounted(async () => {
+  try {
+    const res = await fetch(`${MEDIA_API}/media?type=image&limit=24&page=1`)
+    const body = await res.json() as { data?: Array<{ id?: string; original_url?: string }> }
+    pool.value = (body.data ?? [])
+      .map((m) => m.original_url || (m.id ? `${MEDIA_API}/media/${m.id}/download` : ''))
+      .filter(Boolean)
+  } catch { pool.value = [] }
+})
 
 const sections = [
   {
@@ -16,7 +39,7 @@ const sections = [
   },
   {
     title: 'No medical claims',
-    body: 'Tiko is a set of communication and daily-life tools. It does not diagnose, treat, or promise outcomes. Caregivers and professionals decide whether a tool fits their situation.',
+    body: 'Tiko is a set of education and communication tools. It does not diagnose, treat, or promise outcomes. Caregivers and professionals decide whether a tool fits their situation.',
   },
   {
     title: 'Optional recovery only',
@@ -26,163 +49,62 @@ const sections = [
 </script>
 
 <template>
-  <div :class="bemm('')">
-    <header :class="[bemm('hero'), 'section']">
-      <div class="container">
-        <p class="eyebrow">For caregivers</p>
-        <h1 :class="['display-1', bemm('heading')]">Built so the first moment is not an account form.</h1>
-        <p :class="['body-lg', bemm('lede')]">
+  <div class="care-page">
+    <PageSection
+      eyebrow="For caregivers"
+      title="Built so the first moment is not an account form."
+    >
+      <SplitMedia :image="poolImage(0)" image-alt="A calm Tiko moment" media-side="right">
+        <p class="section__intro">
           You should be able to try a tool before trusting it.
           Tiko is designed so a caregiver can open an app, see whether it helps,
           and only add recovery or sync when that actually matters.
         </p>
-      </div>
-    </header>
+      </SplitMedia>
+    </PageSection>
 
-    <section class="section section--flush-top">
-      <div class="container">
-        <div class="care-principles">
-          <p class="eyebrow">Trust principles</p>
-          <h2 class="display-2 care-principles__heading">Our non-negotiables.</h2>
+    <PageSection
+      eyebrow="Trust principles"
+      title="Our non-negotiables."
+      tone="dark"
+    >
+      <CardGrid min="240px">
+        <ColorCard
+          v-for="(principle, i) in trustPrinciples"
+          :key="principle"
+          :tone="tones[i % tones.length]"
+          :body="principle"
+          :image="poolImage(i + 1)"
+        />
+      </CardGrid>
+    </PageSection>
 
-          <ul class="care-trust-list">
-            <li v-for="principle in trustPrinciples" :key="principle" class="care-trust-item">
-              <span class="care-trust-item__check" aria-hidden="true">✓</span>
-              <span>{{ principle }}</span>
-            </li>
-          </ul>
-        </div>
-      </div>
-    </section>
+    <PageSection
+      eyebrow="What we promise"
+      title="How that shows up in the product."
+    >
+      <CardGrid min="280px">
+        <ColorCard
+          v-for="(section, i) in sections"
+          :key="section.title"
+          :tone="tones[(i + 4) % tones.length]"
+          :title="section.title"
+          :body="section.body"
+          :image="poolImage(i + 9)"
+        />
+      </CardGrid>
+    </PageSection>
 
-    <section class="section care-sections">
-      <div class="container">
-        <div class="care-sections__grid">
-          <article
-            v-for="section in sections"
-            :key="section.title"
-            class="care-section card card--raised"
-          >
-            <h3 class="care-section__title">{{ section.title }}</h3>
-            <p class="body-sm">{{ section.body }}</p>
-          </article>
-        </div>
-      </div>
-    </section>
-
-    <section :class="[bemm('cta'), 'section']">
-      <div class="container">
-        <div class="care-cta">
-          <div>
-            <p class="eyebrow">Have questions?</p>
-            <h2 class="display-3">Check the FAQ for quick answers.</h2>
-          </div>
-          <RouterLink to="/faq" class="care-cta__link">Read the FAQ →</RouterLink>
-        </div>
-      </div>
-    </section>
+    <PageSection align="center">
+      <CtaBanner
+        tone="primary"
+        title="Check the FAQ for quick answers."
+        body="Have questions? Plain answers to what caregivers ask most, before any setup."
+      >
+        <template #actions>
+          <RouterLink class="button button--light" to="/faq">Read the FAQ</RouterLink>
+        </template>
+      </CtaBanner>
+    </PageSection>
   </div>
 </template>
-
-<style lang="scss">
-.care-page {
-  &__hero {
-    background: var(--surface-subtle);
-  }
-
-  &__heading {
-    max-width: 16ch;
-    margin-bottom: calc(var(--space) * 1.5);
-  }
-
-  &__lede {
-    max-width: 52ch;
-  }
-}
-
-.care-principles {
-  padding-top: calc(var(--space) * 3);
-
-  &__heading {
-    max-width: 16ch;
-    margin-top: var(--space-s);
-    margin-bottom: var(--space-l);
-  }
-}
-
-.care-trust-list {
-  display: flex;
-  flex-direction: column;
-  gap: calc(var(--space) * 0.75);
-  max-width: 560px;
-}
-
-.care-trust-item {
-  display: flex;
-  align-items: center;
-  gap: var(--space);
-  padding: var(--space) calc(var(--space) * 1.25);
-  background: var(--surface-card);
-  border-radius: 14px;
-  font-size: 0.95rem;
-  font-weight: 600;
-  color: var(--color-foreground);
-  box-shadow: var(--shadow-s);
-
-  &__check {
-    flex-shrink: 0;
-    width: 26px;
-    height: 26px;
-    background: #d1fae5;
-    border-radius: 50%;
-    display: grid;
-    place-items: center;
-    font-size: 0.7rem;
-    color: #065f46;
-    font-weight: 700;
-  }
-}
-
-.care-sections {
-  background: var(--surface-subtle);
-
-  &__grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: var(--space);
-  }
-}
-
-.care-section {
-  padding: calc(var(--space) * 1.5);
-  display: flex;
-  flex-direction: column;
-  gap: calc(var(--space) * 0.75);
-
-  &__title {
-    font-family: var(--font-family-heading);
-    font-size: 1rem;
-    font-weight: 800;
-    color: var(--color-foreground);
-    line-height: 1.3;
-  }
-}
-
-.care-cta {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: calc(var(--space) * 1.5);
-
-  &__link {
-    font-weight: 700;
-    font-size: 1rem;
-    color: var(--text-secondary);
-    text-decoration: none;
-    white-space: nowrap;
-
-    &:hover { color: var(--color-foreground); }
-  }
-}
-</style>

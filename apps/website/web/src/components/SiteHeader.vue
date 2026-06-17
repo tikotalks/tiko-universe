@@ -1,78 +1,91 @@
 <script setup lang="ts">
-import { RouterLink, useRoute } from 'vue-router'
-import { ref, onMounted } from 'vue'
-import { useBemm } from 'bemm'
-import { ThemeToggle } from '@sil/ui'
-import { TikoLogo } from '@tiko/ui'
+import { RouterLink, useRoute } from "vue-router";
+import { ref, onMounted } from "vue";
+import { useBemm } from "bemm";
+import { ThemeToggle } from "@sil/ui";
+import { TikoLogo } from "@tiko/ui";
 
-const bemm = useBemm('site-header', { return: 'string', includeBaseClass: true })
+const bemm = useBemm("site-header", { return: "string", includeBaseClass: true });
 
-const route = useRoute()
-const mobileOpen = ref(false)
+const route = useRoute();
+const mobileOpen = ref(false);
 
-type ColorMode = 'light' | 'dark' | 'system'
-const colorMode = ref<ColorMode>('system')
+type ColorMode = "light" | "dark" | "system";
+const colorMode = ref<ColorMode>("system");
 
 const navLinks = [
-  { label: 'Apps', path: '/apps' },
-  { label: 'Why Tiko', path: '/why-tiko' },
-  { label: 'How it works', path: '/how-it-works' },
-  { label: 'Educators', path: '/educators' },
-  { label: 'Caregivers', path: '/caregivers' },
-  { label: 'Docs', path: '/docs' },
-]
+  { label: "Apps", path: "/apps" },
+  { label: "Why Tiko", path: "/why-tiko" },
+  { label: "How it works", path: "/how-it-works" },
+  { label: "Educators", path: "/educators" },
+  { label: "Caregivers", path: "/caregivers" },
+  { label: "Docs", path: "/docs" },
+];
 
 function isActive(path: string) {
-  if (path === '/') return route.path === '/'
-  return route.path.startsWith(path)
+  if (path === "/") return route.path === "/";
+  return route.path.startsWith(path);
 }
 
 function toggleMobile() {
-  mobileOpen.value = !mobileOpen.value
+  mobileOpen.value = !mobileOpen.value;
 }
 
 function closeMobile() {
-  mobileOpen.value = false
+  mobileOpen.value = false;
 }
 
-function safeStorage(op: 'get', key: string): string | null
-function safeStorage(op: 'set', key: string, value: string): void
-function safeStorage(op: 'get' | 'set', key: string, value?: string): string | null | void {
+function safeStorage(op: "get", key: string): string | null;
+function safeStorage(op: "set", key: string, value: string): void;
+function safeStorage(
+  op: "get" | "set",
+  key: string,
+  value?: string
+): string | null | void {
   try {
-    if (op === 'get') return localStorage.getItem(key)
-    localStorage.setItem(key, value!)
+    if (op === "get") return localStorage.getItem(key);
+    localStorage.setItem(key, value!);
   } catch {
-    return op === 'get' ? null : undefined
+    return op === "get" ? null : undefined;
   }
 }
 
 function applyTheme(mode: ColorMode) {
-  const prefersDark = typeof window !== 'undefined' && window.matchMedia?.('(prefers-color-scheme: dark)').matches
-  const effective = mode === 'system' ? (prefersDark ? 'dark' : 'light') : mode
+  const prefersDark =
+    typeof window !== "undefined" &&
+    window.matchMedia?.("(prefers-color-scheme: dark)").matches;
+  const effective = mode === "system" ? (prefersDark ? "dark" : "light") : mode;
   try {
-    document.documentElement.setAttribute('data-theme', effective)
-    document.documentElement.setAttribute('data-color-mode', effective)
-  } catch { /* ignore in test env */ }
-  safeStorage('set', 'color-mode', mode)
+    document.documentElement.setAttribute("data-theme", effective);
+    document.documentElement.setAttribute("data-color-mode", effective);
+  } catch {
+    /* ignore in test env */
+  }
+  safeStorage("set", "color-mode", mode);
 }
 
 function cycleTheme() {
-  const modes: ColorMode[] = ['light', 'dark', 'system']
-  const idx = modes.indexOf(colorMode.value)
-  colorMode.value = modes[(idx + 1) % modes.length]
-  applyTheme(colorMode.value)
+  const modes: ColorMode[] = ["light", "dark", "system"];
+  const idx = modes.indexOf(colorMode.value);
+  colorMode.value = modes[(idx + 1) % modes.length];
+  applyTheme(colorMode.value);
 }
 
 onMounted(() => {
-  const stored = safeStorage('get', 'color-mode') as ColorMode | null
-  colorMode.value = stored || 'system'
-})
+  const stored = safeStorage("get", "color-mode") as ColorMode | null;
+  colorMode.value = stored || "system";
+});
 </script>
 
 <template>
   <header :class="bemm('')">
     <div :class="[bemm('inner'), 'container']">
-      <RouterLink :class="bemm('brand')" to="/" aria-label="TikoTalks home" @click="closeMobile">
+      <RouterLink
+        :class="bemm('brand')"
+        to="/"
+        aria-label="TikoTalks home"
+        @click="closeMobile"
+      >
         <TikoLogo />
       </RouterLink>
 
@@ -109,8 +122,13 @@ onMounted(() => {
 
 <style lang="scss">
 .site-header {
-  position: sticky;
+  position: fixed;
   top: 0;
+  width: calc(100% - (var(--spacing) * 2));
+
+  border-radius: var(--border-radius-xl);
+  padding: 0 var(--space);
+  margin: var(--space) var(--spacing);
   z-index: 100;
   background: var(--header-bg);
   backdrop-filter: blur(16px);
@@ -173,7 +191,8 @@ onMounted(() => {
     width: 36px;
     height: 36px;
     padding: 6px;
-    background: none;
+    border:none;
+    background: var(--color-primary);
     border-radius: 8px;
     cursor: pointer;
     flex-shrink: 0;

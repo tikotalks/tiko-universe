@@ -150,7 +150,13 @@ private struct TalkCloudBubble: View {
     let appColor: TikoAppColor
     let onTap: () -> Void
 
+    @Environment(\.colorScheme) private var colorScheme
+
     private var posColor: Color { TalkPosColor.color(for: word.pos) }
+
+    private var surfaceColor: Color {
+        colorScheme == .dark ? Color(white: 0.16) : Color.white
+    }
 
     private var mediaURL: URL? {
         guard let image = word.image, !image.isEmpty else { return nil }
@@ -161,17 +167,17 @@ private struct TalkCloudBubble: View {
         Button(action: onTap) {
             ZStack {
                 Circle()
-                    .fill(word.isCustom == true ? posColor.opacity(0.16) : Color.white.opacity(0.9))
+                    .fill(word.isCustom == true ? posColor.opacity(0.16) : surfaceColor.opacity(0.9))
                     // Subtle part-of-speech colour as the ring.
                     .overlay(Circle().stroke(posColor.opacity(word.isCustom == true ? 0.7 : 0.4), lineWidth: 2.5))
-                    .shadow(color: appColor.palette.dark.opacity(0.1), radius: diameter * 0.06, y: 3)
+                    .shadow(color: .black.opacity(colorScheme == .dark ? 0.3 : 0.1), radius: diameter * 0.06, y: 3)
 
                 if let mediaURL {
                     // Image at 75% of the circle, with a little label pill on the bottom.
                     TikoCachedRemoteImage(url: mediaURL) {
                         Text(word.text)
                             .font(.system(size: diameter * 0.16, weight: .heavy, design: .rounded))
-                            .foregroundStyle(appColor.palette.dark)
+                            .foregroundStyle(.primary)
                             .lineLimit(2).minimumScaleFactor(0.6).multilineTextAlignment(.center)
                     }
                     .frame(width: diameter * 0.75, height: diameter * 0.75)
@@ -182,7 +188,7 @@ private struct TalkCloudBubble: View {
                         Spacer()
                         Text(word.text)
                             .font(.system(size: diameter * 0.14, weight: .heavy, design: .rounded))
-                            .foregroundStyle(appColor.palette.dark)
+                            .foregroundStyle(.primary)
                             .lineLimit(1).minimumScaleFactor(0.6)
                             .padding(.horizontal, diameter * 0.08)
                             .padding(.vertical, diameter * 0.03)
@@ -192,7 +198,7 @@ private struct TalkCloudBubble: View {
                 } else {
                     Text(word.text)
                         .font(.system(size: diameter * 0.2, weight: .heavy, design: .rounded))
-                        .foregroundStyle(appColor.palette.dark)
+                        .foregroundStyle(.primary)
                         .lineLimit(2)
                         .minimumScaleFactor(0.6)
                         .multilineTextAlignment(.center)

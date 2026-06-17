@@ -333,8 +333,8 @@ public struct TikoIdentityLabels {
                 chooseAvatar: "Agħżel avatar",
                 delete: "Ħassar",
                 cancel: "Ikkanċella",
-                deleteUserTitle: "Tħassar dan l-utent taʼ Tiko?",
-                deleteUserMessage: "Dan ineħħi l-kont u s-sessjonijiet.",
+                deleteUserTitle: "Tħassar dan il-kont?",
+                deleteUserMessage: "Kolliċċa tad-data tiegħek tiġi mħassra b'mod permanenti — kontijiet, sessjonijiet, ismijiet, avatar u preferenzi. Ma tistax titra lura.",
                 yourAccount: "Il-kont tiegħek",
                 verifiedAccount: "Kont ivverifikat",
                 displayName: "Isem murija",
@@ -369,8 +369,8 @@ public struct TikoIdentityLabels {
                 chooseAvatar: "Choose avatar",
                 delete: "Delete",
                 cancel: "Cancel",
-                deleteUserTitle: "Delete this Tiko user?",
-                deleteUserMessage: "This removes the account and sessions.",
+                deleteUserTitle: "Delete this account?",
+                deleteUserMessage: "All your data will be permanently deleted—accounts, sessions, names, avatar and preferences. This cannot be undone. Tap Delete to confirm.",
                 yourAccount: "Your account",
                 verifiedAccount: "Verified account",
                 displayName: "Display name",
@@ -950,6 +950,8 @@ public struct TikoAccountSheet: View {
     private let appName: String
     private let appColor: TikoAppColor
     private let onClose: () -> Void
+    private let onIdentityChanged: () -> Void
+    private let onAccountDeleted: () -> Void
 
     @AppStorage("tiko.userName") private var userName = ""
     @AppStorage("tiko.userEmail") private var userEmail = ""
@@ -969,23 +971,33 @@ public struct TikoAccountSheet: View {
     @State private var otpCode = ""
     @State private var isLoading = false
     @State private var identityError: String? = nil
-    @State private var showDeleteConfirmation = false
+    @State private var deleteStage: DeleteStage = .none
+    @State private var deleteOtpCode = ""
+
+    /// Drives the account-deletion flow, rendered in the primary popup body so
+    /// state changes (typed code, errors, spinner) reliably re-render — unlike
+    /// a nested Exyte popup, whose captured content does not update in place.
+    private enum DeleteStage: Equatable { case none, confirm, otp, deleting }
 
     private let identityClient = TikoIdentityClient()
     private let sessionStore = TikoDeviceSessionStore()
 
-    public init(appName: String, appColor: TikoAppColor, profilePrefs: TikoProfilePreferences, onClose: @escaping () -> Void) {
+    public init(appName: String, appColor: TikoAppColor, profilePrefs: TikoProfilePreferences, onClose: @escaping () -> Void, onIdentityChanged: @escaping () -> Void = {}, onAccountDeleted: @escaping () -> Void = {}) {
         self.appName = appName
         self.appColor = appColor
         self._profilePrefs = ObservedObject(wrappedValue: profilePrefs)
         self.onClose = onClose
+        self.onIdentityChanged = onIdentityChanged
+        self.onAccountDeleted = onAccountDeleted
     }
 
     public var body: some View {
         let labels = TikoIdentityLabels.forLanguage(languageID)
 
         Group {
-            if isSignedIn {
+            if isSignedIn && deleteStage != .none {
+                deleteFlowCard(labels: labels)
+            } else if isSignedIn {
                 profileCard(labels: labels)
             } else if emailSent {
                 otpCard(labels: labels)
@@ -1015,12 +1027,6 @@ public struct TikoAccountSheet: View {
         }
         .tikoPopup(isPresented: $showingAccountActions) {
             accountActionsCard
-        }
-        .alert(labels.deleteUserTitle, isPresented: $showDeleteConfirmation) {
-            Button(labels.delete, role: .destructive) { Task { await deleteAccount() } }
-            Button(labels.cancel, role: .cancel) {}
-        } message: {
-            Text(labels.deleteUserMessage)
         }
     }
 
@@ -1155,6 +1161,9 @@ public struct TikoAccountSheet: View {
             VStack(spacing: 10) {
                 Button {
                     showingAccountActions = false
+                    if let token = (try? sessionStore.load())?.accessToken {
+                        Task { try? await identityClient.logout(accessToken: token) }
+                    }
                     try? sessionStore.clearAll()
                     isSignedIn = false
                     signedInEmail = nil
@@ -1162,6 +1171,12 @@ public struct TikoAccountSheet: View {
                     emailSent = false
                     otpCode = ""
                     identityError = nil
+                    userName = ""
+                    userEmail = ""
+                    profilePrefs.setAvatarURL("")
+                    profilePrefs.setFavoriteColor("")
+                    onIdentityChanged()
+                    onClose()
                 } label: {
                     HStack(spacing: 12) {
                         Image(systemName: "rectangle.portrait.and.arrow.right")
@@ -1181,7 +1196,12 @@ public struct TikoAccountSheet: View {
                 .buttonStyle(.plain)
 
                 Button {
-                    showDeleteConfirmation = true
+                    // Hand off to the deletion flow rendered in the primary popup
+                    // body (reliable re-render). Closing this nested popup reveals
+                    // the confirmation step underneath.
+                    identityError = nil
+                    deleteStage = .confirm
+                    showingAccountActions = false
                 } label: {
                     HStack(spacing: 12) {
                         Image(systemName: "trash.fill")
@@ -1201,6 +1221,160 @@ public struct TikoAccountSheet: View {
                 .buttonStyle(.plain)
             }
         }
+    }
+
+    // MARK: - Account deletion flow (confirm → email OTP → delete)
+
+    @ViewBuilder
+    private func deleteFlowCard(labels: TikoIdentityLabels) -> some View {
+        switch deleteStage {
+        case .confirm: deleteConfirmCard(labels)
+        case .otp: deleteOtpCard(labels)
+        case .deleting: deleteProgressCard(labels)
+        case .none: EmptyView()
+        }
+    }
+
+    /// Step 1 — warn, and explain we'll email a verification code first.
+    private func deleteConfirmCard(_ labels: TikoIdentityLabels) -> some View {
+        TikoPopupCard(
+            title: labels.deleteUserTitle,
+            icon: "exclamationmark.triangle.fill",
+            appColor: appColor,
+            onClose: { resetDeleteFlow() }
+        ) {
+            VStack(spacing: 18) {
+                Text(labels.deleteUserMessage)
+                    .font(.system(size: 15, weight: .medium, design: .rounded))
+                    .foregroundStyle(.secondary)
+                    .multilineTextAlignment(.center)
+                    .fixedSize(horizontal: false, vertical: true)
+
+                if let identityError {
+                    Text(identityError)
+                        .font(.system(size: 13, weight: .semibold, design: .rounded))
+                        .foregroundStyle(.red)
+                        .multilineTextAlignment(.center)
+                }
+
+                VStack(spacing: 10) {
+                    Button {
+                        Task { await sendDeletionCode() }
+                    } label: {
+                        Group {
+                            if isLoading { ProgressView().tint(.white) }
+                            else { Text(labels.delete) }
+                        }
+                        .font(.system(size: 17, weight: .heavy, design: .rounded))
+                        .foregroundStyle(.white)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 15)
+                        .background(Color.red)
+                        .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+                    }
+                    .buttonStyle(.plain)
+                    .disabled(isLoading)
+
+                    Button {
+                        resetDeleteFlow()
+                    } label: {
+                        Text(labels.cancel)
+                            .font(.system(size: 17, weight: .heavy, design: .rounded))
+                            .foregroundStyle(.primary)
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 15)
+                            .background(Color(.systemGray5))
+                            .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+                    }
+                    .buttonStyle(.plain)
+                    .disabled(isLoading)
+                }
+            }
+        }
+    }
+
+    /// Step 2 — confirm the emailed one-time code before deleting.
+    private func deleteOtpCard(_ labels: TikoIdentityLabels) -> some View {
+        TikoPopupCard(
+            title: labels.checkEmail,
+            subtitle: String(format: labels.sentCode, signedInEmail ?? userEmail),
+            icon: "envelope.badge.fill",
+            appColor: appColor,
+            onClose: { resetDeleteFlow() }
+        ) {
+            VStack(spacing: 12) {
+                TextField(labels.codePlaceholder, text: $deleteOtpCode)
+                    .font(.system(size: 32, weight: .heavy, design: .monospaced))
+                    .keyboardType(.numberPad)
+                    .multilineTextAlignment(.center)
+                    .padding(15)
+                    .background(Color(.systemBackground))
+                    .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+                    .onChange(of: deleteOtpCode) { _, new in
+                        let digits = new.filter(\.isNumber)
+                        deleteOtpCode = digits.count > 6 ? String(digits.prefix(6)) : digits
+                    }
+
+                if let msg = identityError {
+                    Text(msg)
+                        .font(.system(size: 13, weight: .semibold))
+                        .foregroundStyle(.red)
+                        .multilineTextAlignment(.center)
+                }
+
+                Button {
+                    Task { await confirmDeletionWithCode() }
+                } label: {
+                    Group {
+                        if isLoading { ProgressView().tint(.white) }
+                        else { Text(labels.delete) }
+                    }
+                    .font(.system(size: 17, weight: .heavy, design: .rounded))
+                    .foregroundStyle(.white)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 15)
+                    .background(Color.red)
+                    .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
+                }
+                .buttonStyle(.plain)
+                .disabled(isLoading || deleteOtpCode.filter(\.isNumber).count != 6)
+
+                Button(labels.cancel) { resetDeleteFlow() }
+                    .font(.system(size: 14, weight: .heavy, design: .rounded))
+                    .foregroundStyle(.secondary)
+                    .disabled(isLoading)
+            }
+        }
+    }
+
+    /// Step 3 — deletion in flight.
+    private func deleteProgressCard(_ labels: TikoIdentityLabels) -> some View {
+        TikoPopupCard(
+            title: labels.deleteAccount,
+            icon: "trash.fill",
+            appColor: appColor,
+            onClose: {}
+        ) {
+            VStack(spacing: 18) {
+                ProgressView()
+                    .scaleEffect(1.3)
+                    .padding(.top, 4)
+
+                Text(labels.deleteUserTitle)
+                    .font(.system(size: 15, weight: .medium, design: .rounded))
+                    .foregroundStyle(.secondary)
+                    .multilineTextAlignment(.center)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+            .padding(.vertical, 8)
+        }
+    }
+
+    private func resetDeleteFlow() {
+        deleteStage = .none
+        deleteOtpCode = ""
+        identityError = nil
+        isLoading = false
     }
 
     // MARK: - Email input (start login)
@@ -1398,10 +1572,57 @@ public struct TikoAccountSheet: View {
         }
     }
 
-    private func deleteAccount() async {
-        guard let accessToken = (try? sessionStore.load())?.accessToken else { return }
+    /// Step 1→2 — email a one-time code to the signed-in address so we can
+    /// re-verify the user actually controls that inbox before deleting.
+    private func sendDeletionCode() async {
+        let email = (signedInEmail ?? userEmail).trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+        guard !email.isEmpty, email.contains("@") else {
+            identityError = TikoIdentityLabels.forLanguage(languageID).deleteAccountError
+            return
+        }
         isLoading = true
         identityError = nil
+        do {
+            let accessToken = (try? sessionStore.load())?.accessToken
+            try await identityClient.requestRecoveryEmail(email: email, accessToken: accessToken)
+            deleteOtpCode = ""
+            isLoading = false
+            deleteStage = .otp
+        } catch {
+            identityError = TikoIdentityLabels.forLanguage(languageID).sendCodeError
+            isLoading = false
+        }
+    }
+
+    /// Step 2→3 — verify the emailed code, then delete using the freshly
+    /// verified session.
+    private func confirmDeletionWithCode() async {
+        let digits = deleteOtpCode.filter(\.isNumber)
+        guard digits.count == 6 else { return }
+        isLoading = true
+        identityError = nil
+        do {
+            let bundle = try await identityClient.verifyOtp(otp: digits)
+            try? sessionStore.save(bundle)
+            guard let accessToken = bundle.accessToken ?? (try? sessionStore.load())?.accessToken else {
+                identityError = TikoIdentityLabels.forLanguage(languageID).deleteAccountError
+                isLoading = false
+                return
+            }
+            deleteStage = .deleting
+            await performAccountDeletion(accessToken: accessToken)
+        } catch {
+            deleteOtpCode = ""
+            identityError = TikoIdentityLabels.forLanguage(languageID).incorrectCode
+            isLoading = false
+        }
+    }
+
+    /// Issues the server-side deletion. Only tears down the local session once
+    /// the server has actually accepted it — signing out while the account
+    /// still exists is exactly what Apple's reviewers reject for "Delete
+    /// account". On failure, returns to the confirmation step with an error.
+    private func performAccountDeletion(accessToken: String) async {
         do {
             _ = try await identityClient.createDeletionRequest(accessToken: accessToken, scope: .account)
             try? sessionStore.clearAll()
@@ -1414,11 +1635,21 @@ public struct TikoAccountSheet: View {
             emailInput = ""
             emailSent = false
             otpCode = ""
+            deleteOtpCode = ""
+            identityError = nil
             isLoading = false
+            showingAccountActions = false
+            deleteStage = .none
+            // Let the host app wipe its own local data (settings → defaults,
+            // saved text, etc.) now that the account is gone.
+            onAccountDeleted()
+            onIdentityChanged()
             onClose()
         } catch {
+            // Failure already logged in TikoIdentityClient.createDeletionRequest.
             identityError = TikoIdentityLabels.forLanguage(languageID).deleteAccountError
             isLoading = false
+            deleteStage = .confirm
         }
     }
 
@@ -1798,11 +2029,14 @@ public extension View {
         tikoSettingsPopup(isPresented: isPresented, appColor: appColor) { EmptyView() }
     }
 
-    func tikoAccountPopup(isPresented: Binding<Bool>, appName: String, appColor: TikoAppColor, profilePrefs: TikoProfilePreferences) -> some View {
+    func tikoAccountPopup(isPresented: Binding<Bool>, appName: String, appColor: TikoAppColor, profilePrefs: TikoProfilePreferences, onIdentityChanged: @escaping () -> Void = {}, onAccountDeleted: @escaping () -> Void = {}) -> some View {
         tikoPopup(isPresented: isPresented) {
-            TikoAccountSheet(appName: appName, appColor: appColor, profilePrefs: profilePrefs) {
+            TikoAccountSheet(appName: appName, appColor: appColor, profilePrefs: profilePrefs, onClose: {
                 isPresented.wrappedValue = false
-            }
+            }, onIdentityChanged: {
+                isPresented.wrappedValue = false
+                onIdentityChanged()
+            }, onAccountDeleted: onAccountDeleted)
         }
     }
 }

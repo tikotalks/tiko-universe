@@ -190,6 +190,7 @@ public struct TikoAppShell<Content: View, SettingsContent: View>: View {
     private let darkBackgroundColor: Color
     private let actions: [TikoHeaderAction]
     private let onAction: (String) -> Void
+    private let onAccountDeleted: () -> Void
     private let content: Content
     private let settingsContent: SettingsContent
 
@@ -220,6 +221,7 @@ public struct TikoAppShell<Content: View, SettingsContent: View>: View {
         darkBackgroundColor: Color = Color(red: 0.08, green: 0.055, blue: 0.095),
         actions: [TikoHeaderAction] = [],
         onAction: @escaping (String) -> Void = { _ in },
+        onAccountDeleted: @escaping () -> Void = {},
         @ViewBuilder settingsContent: () -> SettingsContent,
         @ViewBuilder content: () -> Content
     ) {
@@ -235,6 +237,7 @@ public struct TikoAppShell<Content: View, SettingsContent: View>: View {
             darkBackgroundColor: darkBackgroundColor,
             actions: actions,
             onAction: onAction,
+            onAccountDeleted: onAccountDeleted,
             settingsContent: settingsContent,
             content: content
         )
@@ -252,6 +255,7 @@ public struct TikoAppShell<Content: View, SettingsContent: View>: View {
         darkBackgroundColor: Color = Color(red: 0.08, green: 0.055, blue: 0.095),
         actions: [TikoHeaderAction] = [],
         onAction: @escaping (String) -> Void = { _ in },
+        onAccountDeleted: @escaping () -> Void = {},
         @ViewBuilder settingsContent: () -> SettingsContent,
         @ViewBuilder content: () -> Content
     ) {
@@ -266,6 +270,7 @@ public struct TikoAppShell<Content: View, SettingsContent: View>: View {
         self.darkBackgroundColor = darkBackgroundColor
         self.actions = actions.filter { $0.id != "settings" }
         self.onAction = onAction
+        self.onAccountDeleted = onAccountDeleted
         self.settingsContent = settingsContent()
         self.content = content()
     }
@@ -303,7 +308,13 @@ public struct TikoAppShell<Content: View, SettingsContent: View>: View {
         .tikoSettingsPopup(isPresented: $showingSettings, appColor: appColor) {
             settingsContent
         }
-        .tikoAccountPopup(isPresented: $showingAccount, appName: appName, appColor: appColor, profilePrefs: profilePrefs)
+        .tikoAccountPopup(isPresented: $showingAccount, appName: appName, appColor: appColor, profilePrefs: profilePrefs, onIdentityChanged: {
+            Task { @MainActor in
+                identityBundle = await rebootstrapIdentity()
+                fetchedAvatarURL = nil
+                await fetchAvatarIfNeeded()
+            }
+        }, onAccountDeleted: onAccountDeleted)
         .tikoPopup(isPresented: $showingProfileMenu) {
             TikoProfileMenuSheet(
                 appColor: appColor,
@@ -423,6 +434,18 @@ public struct TikoAppShell<Content: View, SettingsContent: View>: View {
             return merged
         } catch {
             return bundle
+        }
+    }
+
+    private func rebootstrapIdentity() async -> TikoIdentityBundle? {
+        let sessionStore = TikoDeviceSessionStore()
+        try? sessionStore.clearAll()
+        do {
+            let bundle = try await TikoIdentityClient().bootstrapDevice(platform: "ios")
+            try sessionStore.save(bundle)
+            return bundle
+        } catch {
+            return nil
         }
     }
 

@@ -9,13 +9,15 @@ const route = useRoute()
 watchEffect(() => {
   if (typeof document === 'undefined') return
   const titles: Record<string, string> = {
-    '/': 'TikoTalks — Beautiful free communication apps for every child',
+    '/': 'TikoTalks — Beautiful free education and communication apps for every child',
     '/why-tiko': 'Why Tiko exists — TikoTalks',
     '/apps': 'Apps — TikoTalks',
     '/how-it-works': 'How it works — TikoTalks',
     '/caregivers': 'For caregivers — TikoTalks',
     '/educators': 'For educators — TikoTalks',
     '/faq': 'FAQ — TikoTalks',
+    '/support': 'Support — TikoTalks',
+    '/privacy-policy': 'Privacy policy — TikoTalks',
     '/docs': 'Docs — TikoTalks',
   }
   document.title = titles[route.path] ?? 'TikoTalks'
