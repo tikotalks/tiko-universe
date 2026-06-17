@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
 import { useBemm } from 'bemm'
+import { tikoImageUrl } from '@tiko/ui'
 
 /** Auto-scrolling marquee of Tiko Media images. Pauses on hover; reduced-motion aware. */
 const props = withDefaults(defineProps<{ limit?: number; category?: string }>(), { limit: 24 })
@@ -11,14 +12,6 @@ const MEDIA_API = (import.meta as { env?: Record<string, string | undefined> }).
 
 const images = ref<string[]>([])
 
-function sized(url: string, w = 320): string {
-  try {
-    const u = new URL(url)
-    if (u.hostname === 'data.tikocdn.org') return `https://data.tikocdn.org/cdn-cgi/image/width=${w},quality=85,f=auto${u.pathname}`
-  } catch { /* ignore */ }
-  return url
-}
-
 onMounted(async () => {
   try {
     const q = props.category ? `&category=${encodeURIComponent(props.category)}` : ''
@@ -27,7 +20,7 @@ onMounted(async () => {
     images.value = (body.data ?? [])
       .map((m) => m.original_url || (m.id ? `${MEDIA_API}/media/${m.id}/download` : ''))
       .filter(Boolean)
-      .map((u) => sized(u))
+      .map((u) => tikoImageUrl(u, 'small'))
   } catch { images.value = [] }
 })
 </script>

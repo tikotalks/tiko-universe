@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { onBeforeUnmount, onMounted, ref } from 'vue'
+import { tikoImageUrl } from '@tiko/ui'
 
 /**
  * Hero canvas: a drifting field of Tiko Media image tiles that respond to the
@@ -12,12 +13,12 @@ const MEDIA_API = (import.meta as { env?: Record<string, string | undefined> }).
 
 // Fallback imagery if the media API is unreachable.
 const FALLBACK = [
-  'https://media.tikoapi.org/v1/media/c8bfb9e8-0427-4cd9-89e2-74e09d20b8ec/download',
-  'https://media.tikoapi.org/v1/media/eecf2917-a885-4025-a762-9c7a8783f5af/download',
-  'https://media.tikoapi.org/v1/media/e37943b4-582c-40ee-be3a-c47be7c6e658/download',
-  'https://media.tikoapi.org/v1/media/c2e7188c-1ac4-41d6-a29c-2b122ec812e8/download',
-  'https://media.tikoapi.org/v1/media/ec6bad5e-8cbe-4934-b1c8-d66d80098f95/download',
-  'https://media.tikoapi.org/v1/media/da85b30b-6865-41ef-9b75-71e46999de22/download',
+  'https://media.tikoapi.org/v1/media/c8bfb9e8-0427-4cd9-89e2-74e09d20b8ec/image/small',
+  'https://media.tikoapi.org/v1/media/eecf2917-a885-4025-a762-9c7a8783f5af/image/small',
+  'https://media.tikoapi.org/v1/media/e37943b4-582c-40ee-be3a-c47be7c6e658/image/small',
+  'https://media.tikoapi.org/v1/media/c2e7188c-1ac4-41d6-a29c-2b122ec812e8/image/small',
+  'https://media.tikoapi.org/v1/media/ec6bad5e-8cbe-4934-b1c8-d66d80098f95/image/small',
+  'https://media.tikoapi.org/v1/media/da85b30b-6865-41ef-9b75-71e46999de22/image/small',
 ]
 
 const canvas = ref<HTMLCanvasElement | null>(null)
@@ -57,6 +58,7 @@ async function fetchUrls(): Promise<string[]> {
     const urls = (body.data ?? [])
       .map((m) => m.original_url || (m.id ? `${MEDIA_API}/media/${m.id}/download` : ''))
       .filter(Boolean)
+      .map((u) => tikoImageUrl(u, 'small'))
     return urls.length ? urls : FALLBACK
   } catch {
     return FALLBACK

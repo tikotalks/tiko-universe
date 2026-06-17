@@ -2023,8 +2023,7 @@ private struct ImagePickerButton: View {
     }
 
     private func thumbnailURL(_ url: URL) -> URL {
-        guard url.host?.contains("tikocdn.org") == true else { return url }
-        return URL(string: "https://data.tikocdn.org/cdn-cgi/image/width=150,quality=80,f=auto\(url.path)") ?? url
+        TikoImageURL.resized(url, width: 150, quality: 80)
     }
 }
 

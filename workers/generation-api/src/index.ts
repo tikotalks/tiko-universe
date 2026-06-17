@@ -156,6 +156,7 @@ export default {
       if (url.pathname.startsWith('/v1/generation/images/') && url.pathname.endsWith('/enrich') && request.method === 'POST') return await requireAuth(request, resolvedEnv, (access) => enrichImage(url.pathname, resolvedEnv, access))
       if (url.pathname.startsWith('/v1/generation/images/') && url.pathname.endsWith('/edit') && request.method === 'POST') return await requireAuth(request, resolvedEnv, (access) => editImageVariant(url.pathname, request, resolvedEnv, access))
       if (url.pathname.startsWith('/v1/generation/images/') && url.pathname.endsWith('/upscale') && request.method === 'POST') return await requireAuth(request, resolvedEnv, (access) => upscaleImage(url.pathname, request, resolvedEnv, access))
+      if (url.pathname === '/v1/generation/images/import' && request.method === 'POST') return await requireAuth(request, resolvedEnv, (access) => importExternalImage(request, resolvedEnv, access))
       if (url.pathname.startsWith('/v1/generation/images/') && request.method === 'DELETE') return await requireAuth(request, resolvedEnv, (access) => deleteImage(url.pathname, resolvedEnv, access))
       if (url.pathname === '/v1/generation/images' && request.method === 'GET') return await listImages(request, resolvedEnv)
       if (url.pathname === '/v1/generation/stories/tryout' && request.method === 'POST') return await requireAuth(request, resolvedEnv, (access) => generateStoryTryout(request, resolvedEnv, access))
@@ -1294,6 +1295,78 @@ function parseImageVisionResponse(content: string): { title: string; description
       categories: Array.isArray(parsed.categories) ? parsed.categories : [],
     }
   } catch { return null }
+}
+
+async function importExternalImage(request: Request, env: Env, access: GenerationAccessContext): Promise<Response> {
+  let body: { imageUrl?: unknown; title?: unknown; category?: unknown; tags?: unknown }
+  try {
+    body = await request.json() as { imageUrl?: unknown; title?: unknown; category?: unknown; tags?: unknown }
+  } catch {
+    return apiError('invalid_json', 'Request body must be valid JSON.', 400)
+  }
+
+  const imageUrl = typeof body.imageUrl === 'string' ? body.imageUrl.trim() : ''
+  if (!imageUrl) return apiError('missing_image_url', 'imageUrl is required.', 400)
+
+  let imageResponse: Response
+  try {
+    imageResponse = await fetchWithRetry(imageUrl, {}, { timeoutMs: PROVIDER_IMAGE_TIMEOUT_MS })
+  } catch {
+    return apiError('image_fetch_failed', 'Could not fetch the source image.', 502)
+  }
+  if (!imageResponse.ok) return apiError('image_fetch_failed', `Could not fetch the source image: ${imageResponse.status}`, 502)
+
+  const imageBuffer = await imageResponse.arrayBuffer()
+  const contentType = imageResponse.headers.get('content-type') || 'image/png'
+
+  const id = crypto.randomUUID()
+  const r2Key = `images/${id}.png`
+  const now = new Date().toISOString()
+  const imageUrlPath = `/v1/generation/images/${id}/binary`
+
+  await env.GENERATED_MEDIA_BUCKET.put(r2Key, imageBuffer, {
+    httpMetadata: { contentType: 'image/png', cacheControl: 'public, max-age=31536000, immutable' },
+  })
+
+  const title = typeof body.title === 'string' ? body.title : null
+  const category = typeof body.category === 'string' ? body.category : 'imported'
+  const tags = Array.isArray(body.tags) ? JSON.stringify(body.tags.filter((t): t is string => typeof t === 'string')) : '[]'
+
+  await env.GENERATION_DB.prepare(`INSERT INTO generated_images (
+    id, prompt, revised_prompt, model, size, quality, style, image_url, r2_key,
+    content_type, file_size_bytes, width, height, category, tags, title, description,
+    is_public, created_by, created_at, updated_at
+  ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`).bind(
+    id, `Imported from ${imageUrl}`, null, 'import', 'unknown', 'standard', 'natural', imageUrlPath, r2Key,
+    contentType, imageBuffer.byteLength, null, null,
+    category, tags, title, null,
+    0, createdBy(access), now, now,
+  ).run()
+
+  return json({
+    data: {
+      id,
+      imageUrl: imageUrlPath,
+      prompt: `Imported from ${imageUrl}`,
+      revisedPrompt: null,
+      model: 'import',
+      size: 'unknown',
+      quality: 'standard',
+      style: 'natural',
+      width: null,
+      height: null,
+      fileSizeBytes: imageBuffer.byteLength,
+      title,
+      description: null,
+      category,
+      tags: Array.isArray(body.tags) ? body.tags.filter((t): t is string => typeof t === 'string') : [],
+      status: 'draft',
+      isPreview: false,
+      mediaId: null,
+      createdAt: now,
+    },
+    meta: { schemaVersion: 1 },
+  }, 201)
 }
 
 async function editImageVariant(pathname: string, request: Request, env: Env, access: GenerationAccessContext): Promise<Response> {

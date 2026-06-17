@@ -171,32 +171,39 @@ public struct TikoOpenIconPicker: View {
     @Binding private var selection: String
     private let icons: [TikoOpenIconOption]
     private let columns: [GridItem]
+    private let maxHeight: CGFloat?
 
-    public init(selection: Binding<String>, icons: [TikoOpenIconOption] = TikoOpenIcons.all, columns: Int = 4) {
+    public init(selection: Binding<String>, icons: [TikoOpenIconOption] = TikoOpenIcons.all, columns: Int = 4, maxHeight: CGFloat? = 200) {
         self._selection = selection
         self.icons = icons
         self.columns = Array(repeating: GridItem(.flexible(), spacing: 10), count: columns)
+        self.maxHeight = maxHeight
     }
 
     public var body: some View {
-        LazyVGrid(columns: columns, spacing: 10) {
-            ForEach(icons) { icon in
-                Button {
-                    selection = selection == icon.name ? "" : icon.name
-                } label: {
-                    TikoOpenIconView(icon.name, color: "#17131C")
-                        .frame(width: 30, height: 30)
-                        .frame(maxWidth: .infinity, minHeight: 48)
-                        .background(selection == icon.name ? Color.accentColor.opacity(0.18) : Color(.secondarySystemBackground))
-                        .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
-                        .overlay {
-                            RoundedRectangle(cornerRadius: 12, style: .continuous)
-                                .stroke(selection == icon.name ? Color.accentColor : Color.primary.opacity(0.08), lineWidth: selection == icon.name ? 2 : 1)
-                        }
+        ScrollView {
+            LazyVGrid(columns: columns, spacing: 10) {
+                ForEach(icons) { icon in
+                    Button {
+                        selection = selection == icon.name ? "" : icon.name
+                    } label: {
+                        TikoOpenIconView(icon.name, color: "#17131C")
+                            .frame(width: 30, height: 30)
+                            .frame(maxWidth: .infinity, minHeight: 48)
+                            .background(selection == icon.name ? Color.accentColor.opacity(0.18) : Color(.secondarySystemBackground))
+                            .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+                            .overlay {
+                                RoundedRectangle(cornerRadius: 12, style: .continuous)
+                                    .stroke(selection == icon.name ? Color.accentColor : Color.primary.opacity(0.08), lineWidth: selection == icon.name ? 2 : 1)
+                            }
+                    }
+                    .buttonStyle(.plain)
+                    .accessibilityLabel(icon.label)
                 }
-                .buttonStyle(.plain)
-                .accessibilityLabel(icon.label)
             }
+            .padding(.vertical, 2)
         }
+        .scrollIndicators(.hidden)
+        .frame(maxHeight: maxHeight)
     }
 }

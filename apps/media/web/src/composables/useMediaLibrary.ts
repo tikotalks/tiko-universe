@@ -1,4 +1,5 @@
 import { ref, computed } from 'vue'
+import { resolveTikoImageUrl } from '@tiko/media'
 import type {
   MediaItem,
   MediaListResponse,
@@ -41,14 +42,16 @@ function extensionFromName(fileName: string): string {
   return match?.[1]?.toLowerCase() ?? ''
 }
 
-function normalizeMediaItem(raw: unknown): MediaItem {
+function normalizeMediaItem(raw: unknown, apiBaseUrl: string): MediaItem {
   const row = asRecord(raw)
   const fileName = stringValue(row.fileName, stringValue(row.file_name, stringValue(row.filename, String(row.id ?? 'media'))))
   const mimeType = stringValue(row.mimeType, stringValue(row.mime_type, 'application/octet-stream'))
   const fileType = stringValue(row.fileType, stringValue(row.type)) as MediaType | ''
   const originalUrl = stringValue(row.url, stringValue(row.original_url, stringValue(row.imageUrl)))
+  const id = stringValue(row.id, fileName)
+  const resolvedThumb = resolveTikoImageUrl({ id, original_url: originalUrl, thumbnail_url: stringValue(row.thumbnail_url), medium_url: stringValue(row.medium_url) }, 'small', apiBaseUrl)
   return {
-    id: stringValue(row.id, fileName),
+    id,
     title: stringValue(row.title, fileName),
     description: stringValue(row.description) || undefined,
     fileName,
@@ -57,7 +60,7 @@ function normalizeMediaItem(raw: unknown): MediaItem {
     fileExtension: stringValue(row.fileExtension, extensionFromName(fileName)),
     fileSizeBytes: numberValue(row.fileSizeBytes) ?? numberValue(row.file_size) ?? 0,
     url: originalUrl,
-    thumbnailUrl: stringValue(row.thumbnailUrl, stringValue(row.thumbnail_url, originalUrl)) || undefined,
+    thumbnailUrl: resolvedThumb,
     width: numberValue(row.width),
     height: numberValue(row.height),
     durationSeconds: numberValue(row.durationSeconds) ?? numberValue(row.duration),
@@ -138,7 +141,7 @@ export function useMediaLibrary() {
       }
 
       const body = await response.json() as MediaListResponse | { data: unknown[]; meta: MediaListResponse['meta'] }
-      items.value = Array.isArray(body.data) ? body.data.map(normalizeMediaItem) : []
+      items.value = Array.isArray(body.data) ? body.data.map((raw) => normalizeMediaItem(raw, apiBaseUrl)) : []
       total.value = body.meta.total
       totalPages.value = body.meta.totalPages
     } catch (e) {
@@ -158,7 +161,7 @@ export function useMediaLibrary() {
         throw new Error(`API error: ${response.status}`)
       }
       const body = await response.json() as MediaDetailResponse | { data: unknown }
-      return normalizeMediaItem(body.data)
+      return normalizeMediaItem(body.data, apiBaseUrl)
     } catch (e) {
       error.value = e instanceof Error ? e.message : 'Failed to fetch media item'
       return null

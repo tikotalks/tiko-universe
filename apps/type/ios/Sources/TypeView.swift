@@ -595,6 +595,7 @@ struct TypeView: View {
             appConfig: TypeAppConfig.app,
             appName: i18n.t("type.appName"),
             onAccountDeleted: { resetLocalDataAfterAccountDeletion() },
+            onLoggedOut: { resetLocalDataAfterAccountDeletion() },
             settingsContent: {
                 TikoSettingsSection(title: i18n.t("type.settings.title")) {
                     TikoSettingsToggleRow(
@@ -904,6 +905,10 @@ struct TypeView: View {
         speakLetters = false
         useCapitals = true
         showAnimations = true
+
+        // Shared device-level prefs → device defaults (language follows the
+        // device locale / English; colour mode follows the device appearance).
+        TikoDeviceDefaults.resetSharedPreferences()
     }
 
     private func saveWords() {

@@ -603,8 +603,42 @@ async function getDefaultCollections(env: Env, language = 'en'): Promise<CardCol
   return mapCardsContentItems(items)
 }
 
-async function getYesNoContent(env: Env, language: string): Promise<{ answerSets: YesNoAnswerSet[]; answers: YesNoAnswerTile[]; selectedSetId: string | null }> {
-  const items = await getLocalizedContentItems(env, 'yes-no', language)
+async function getYesNoContent(env: Env, language: string, sessionToken?: string): Promise<{ answerSets: YesNoAnswerSet[]; answers: YesNoAnswerTile[]; selectedSetId: string | null }> {
+  const defaultItems = await getLocalizedContentItems(env, 'yes-no', language)
+  const defaultSets = mapYesNoContentItems(defaultItems)
+
+  if (!sessionToken) {
+    return finishYesNoContent(defaultSets)
+  }
+
+  try {
+    const userState = await getUserYesNoState(env, sessionToken)
+    if (userState && (userState.state.answerSets?.length ?? 0) > 0) {
+      const merged = new Map<string, YesNoAnswerSet>()
+      for (const set of defaultSets) merged.set(set.id, set)
+      for (const set of userState.state.answerSets) merged.set(set.id, normalizeYesNoSet(set))
+      const selectedSetId = typeof userState.state.selectedSetId === 'string' && userState.state.selectedSetId
+        ? userState.state.selectedSetId
+        : null
+      return finishYesNoContent(Array.from(merged.values()), selectedSetId)
+    }
+  } catch {
+    // fall through to defaults
+  }
+
+  return finishYesNoContent(defaultSets)
+}
+
+function finishYesNoContent(sets: YesNoAnswerSet[], selectedSetId?: string | null): { answerSets: YesNoAnswerSet[]; answers: YesNoAnswerTile[]; selectedSetId: string | null } {
+  const sortedSets = sets.slice().sort((a, b) => a.order - b.order)
+  return {
+    answerSets: sortedSets,
+    answers: sortedSets[0]?.answers ?? [],
+    selectedSetId: selectedSetId ?? sortedSets[0]?.id ?? null,
+  }
+}
+
+function mapYesNoContentItems(items: LocalizedContentItem[]): YesNoAnswerSet[] {
   const sets = items.filter(item => item.type === 'answer_set')
   const answers = items.filter(item => item.type === 'answer_tile')
   const answersBySet = new Map<string, LocalizedContentItem[]>()
@@ -639,12 +673,20 @@ async function getYesNoContent(env: Env, language: string): Promise<{ answerSets
       answers: mappedAnswers,
     })
   }
+  return answerSets
+}
 
-  const sortedSets = answerSets.sort((a, b) => a.order - b.order)
+function normalizeYesNoSet(set: YesNoAnswerSet): YesNoAnswerSet {
+  const setColor = asColorToken(set.color, 'teal')
   return {
-    answerSets: sortedSets,
-    answers: sortedSets[0]?.answers ?? [],
-    selectedSetId: sortedSets[0]?.id ?? null,
+    ...set,
+    color: setColor,
+    order: typeof set.order === 'number' ? set.order : 0,
+    answers: (set.answers ?? []).map((answer, index) => ({
+      ...answer,
+      speech: answer.speech || answer.label,
+      color: asColorToken(answer.color, setColor),
+    })).map((answer, index) => ({ ...answer, order: typeof (answer as { order?: number }).order === 'number' ? (answer as { order?: number }).order : index })),
   }
 }
 
@@ -1014,6 +1056,291 @@ async function putUserCardsState(env: Env, sessionToken: string, state: UserCard
 }
 
 // ---------------------------------------------------------------------------
+// User yes-no state helpers (reads/writes via app-api state blob)
+// ---------------------------------------------------------------------------
+
+interface UserYesNoState {
+  answerSets: YesNoAnswerSet[]
+  selectedSetId?: string | null
+}
+
+async function getUserYesNoState(
+  env: Env,
+  sessionToken: string,
+): Promise<{ state: UserYesNoState; version: number } | null> {
+  if (!env.APP_API_URL) return null
+  try {
+    const resp = await fetch(`${env.APP_API_URL}/v1/apps/yes-no/state`, {
+      headers: { Authorization: `Bearer ${sessionToken}` },
+    })
+    if (!resp.ok) return null
+    const body = (await resp.json()) as { state?: { answerSets?: unknown[]; selectedSetId?: unknown }; version?: number }
+    const rawSets = body?.state?.answerSets
+    return {
+      state: {
+        answerSets: Array.isArray(rawSets) ? (rawSets as YesNoAnswerSet[]).map(normalizeYesNoSet) : [],
+        selectedSetId: typeof body?.state?.selectedSetId === 'string' ? body.state.selectedSetId : null,
+      },
+      version: typeof body?.version === 'number' ? body.version : 0,
+    }
+  } catch {
+    return null
+  }
+}
+
+async function putUserYesNoState(env: Env, sessionToken: string, state: UserYesNoState, version: number): Promise<boolean> {
+  if (!env.APP_API_URL) return false
+  try {
+    const resp = await fetch(`${env.APP_API_URL}/v1/apps/yes-no/state`, {
+      method: 'PUT',
+      headers: { Authorization: `Bearer ${sessionToken}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ state, version }),
+    })
+    return resp.ok
+  } catch {
+    return false
+  }
+}
+
+// ---------------------------------------------------------------------------
+// User yes-no mutation handlers
+// ---------------------------------------------------------------------------
+
+async function handlePostYesNo(request: Request, env: Env, segments: string[]): Promise<Response> {
+  const auth = await requireUserSession(request, env)
+  if (auth instanceof Response) return auth
+  const { sessionToken } = auth
+
+  // POST /v1/yes-no/answer-sets
+  if (segments[2] === 'answer-sets' && segments.length === 3) {
+    let body: { id?: unknown; title?: unknown; description?: unknown; color?: unknown; order?: unknown; imageRef?: unknown; answers?: unknown }
+    try { body = (await request.json()) as typeof body } catch {
+      return error(request, env, 'bad_request', 'Request body must be valid JSON', 400)
+    }
+    const title = typeof body.title === 'string' ? body.title.trim() : ''
+    if (!title) return error(request, env, 'bad_request', 'title is required', 400)
+
+    const current = await getUserYesNoState(env, sessionToken)
+    if (!current) return error(request, env, 'unauthorized', 'Unauthorized', 401)
+
+    const id = typeof body.id === 'string' && body.id.startsWith('user_') ? body.id : `user_${crypto.randomUUID()}`
+    const color = asColorToken(body.color, fallbackCardColor(current.state.answerSets.length))
+    const order = typeof body.order === 'number' ? body.order : current.state.answerSets.length
+    const imageRef = asImageRef(body.imageRef)
+    const description = typeof body.description === 'string' && body.description.trim() ? body.description.trim() : undefined
+    const answers = Array.isArray(body.answers) ? (body.answers as YesNoAnswerTile[]).map((answer, index) => ({
+      id: typeof answer.id === 'string' && answer.id ? answer.id : `user_${crypto.randomUUID()}`,
+      label: typeof answer.label === 'string' ? answer.label : '',
+      speech: typeof answer.speech === 'string' && answer.speech ? answer.speech : (typeof answer.label === 'string' ? answer.label : ''),
+      color: asColorToken(answer.color, color),
+      ...(answer.imageRef ? { imageRef: asImageRef(answer.imageRef) ?? undefined } : {}),
+      ...(answer.icon ? { icon: String(answer.icon) } : {}),
+      order: index,
+    })) : []
+    const newSet: YesNoAnswerSet = {
+      id, title, order, color, answers,
+      ...(description ? { description } : {}),
+      ...(imageRef ? { imageRef } : {}),
+    }
+
+    const existing = current.state.answerSets.find(s => s.id === id)
+    const updatedSets: YesNoAnswerSet[] = existing
+      ? current.state.answerSets
+      : [...current.state.answerSets, newSet]
+    const ok = await putUserYesNoState(env, sessionToken, { answerSets: updatedSets, selectedSetId: current.state.selectedSetId }, current.version)
+    if (!ok) return error(request, env, 'internal_error', 'Failed to save answer set', 500)
+
+    return json(request, env, { success: true, data: newSet }, 201)
+  }
+
+  // POST /v1/yes-no/answer-sets/:setId/tiles
+  if (segments[2] === 'answer-sets' && segments[4] === 'tiles' && segments.length === 5) {
+    const setId = segments[3]
+    let body: { id?: unknown; label?: unknown; speech?: unknown; color?: unknown; imageRef?: unknown; icon?: unknown }
+    try { body = (await request.json()) as typeof body } catch {
+      return error(request, env, 'bad_request', 'Request body must be valid JSON', 400)
+    }
+    const label = typeof body.label === 'string' ? body.label.trim() : ''
+    if (!label) return error(request, env, 'bad_request', 'label is required', 400)
+    const speech = typeof body.speech === 'string' && body.speech.trim() ? body.speech.trim() : label
+
+    const current = await getUserYesNoState(env, sessionToken)
+    if (!current) return error(request, env, 'unauthorized', 'Unauthorized', 401)
+
+    const setIndex = current.state.answerSets.findIndex(s => s.id === setId)
+    if (setIndex === -1) return error(request, env, 'not_found', 'Answer set not found', 404)
+    const set = current.state.answerSets[setIndex]
+    const id = typeof body.id === 'string' && body.id.startsWith('user_') ? body.id : `user_${crypto.randomUUID()}`
+    const color = asColorToken(body.color, set.color ?? 'teal')
+    const imageRef = asImageRef(body.imageRef)
+    const icon = typeof body.icon === 'string' && body.icon.trim() ? body.icon.trim() : undefined
+    const newTile: YesNoAnswerTile = {
+      id, label, speech, color,
+      ...(imageRef ? { imageRef } : {}),
+      ...(icon ? { icon } : {}),
+    }
+
+    const alreadyExists = set.answers.some(a => a.id === id)
+    const updatedSet: YesNoAnswerSet = { ...set, answers: alreadyExists ? set.answers : [...set.answers, newTile] }
+    const updatedSets = [...current.state.answerSets]
+    updatedSets[setIndex] = updatedSet
+    const ok = await putUserYesNoState(env, sessionToken, { answerSets: updatedSets, selectedSetId: current.state.selectedSetId }, current.version)
+    if (!ok) return error(request, env, 'internal_error', 'Failed to save answer tile', 500)
+
+    return json(request, env, { success: true, data: newTile }, 201)
+  }
+
+  return error(request, env, 'not_found', 'Not found', 404)
+}
+
+async function handlePutYesNo(request: Request, env: Env, segments: string[]): Promise<Response> {
+  const auth = await requireUserSession(request, env)
+  if (auth instanceof Response) return auth
+  const { sessionToken } = auth
+
+  // PUT /v1/yes-no/answer-sets/:setId
+  if (segments[2] === 'answer-sets' && segments.length === 4) {
+    const setId = segments[3]
+    let body: { title?: unknown; description?: unknown; color?: unknown; order?: unknown; imageRef?: unknown; answers?: unknown; selectedSetId?: unknown }
+    try { body = (await request.json()) as typeof body } catch {
+      return error(request, env, 'bad_request', 'Request body must be valid JSON', 400)
+    }
+    const title = typeof body.title === 'string' ? body.title.trim() : ''
+    if (!title) return error(request, env, 'bad_request', 'title is required', 400)
+
+    const current = await getUserYesNoState(env, sessionToken)
+    if (!current) return error(request, env, 'unauthorized', 'Unauthorized', 401)
+    const idx = current.state.answerSets.findIndex(s => s.id === setId)
+    if (idx === -1) return error(request, env, 'not_found', 'Answer set not found', 404)
+    const existing = current.state.answerSets[idx]
+    const color = asColorToken(body.color, existing.color ?? 'teal')
+    const order = typeof body.order === 'number' && Number.isFinite(body.order) ? Math.max(0, Math.round(body.order)) : existing.order
+    const imageRef = asImageRef(body.imageRef)
+    const description = typeof body.description === 'string' && body.description.trim() ? body.description.trim() : existing.description
+    const answers = Array.isArray(body.answers)
+      ? (body.answers as YesNoAnswerTile[]).map((answer, index) => ({
+        id: typeof answer.id === 'string' && answer.id ? answer.id : `user_${crypto.randomUUID()}`,
+        label: typeof answer.label === 'string' ? answer.label : '',
+        speech: typeof answer.speech === 'string' && answer.speech ? answer.speech : (typeof answer.label === 'string' ? answer.label : ''),
+        color: asColorToken(answer.color, color),
+        ...(answer.imageRef ? { imageRef: asImageRef(answer.imageRef) ?? undefined } : {}),
+        ...(answer.icon ? { icon: String(answer.icon) } : {}),
+        order: index,
+      }))
+      : existing.answers
+    const updatedSet: YesNoAnswerSet = {
+      ...existing, id: setId, title, color, order, answers,
+      ...(description ? { description } : {}),
+      ...(imageRef !== undefined ? { imageRef } : {}),
+    }
+    const updatedSets = [...current.state.answerSets]
+    updatedSets[idx] = updatedSet
+    const selectedSetId = typeof body.selectedSetId === 'string' ? body.selectedSetId : current.state.selectedSetId
+    const ok = await putUserYesNoState(env, sessionToken, { answerSets: updatedSets, selectedSetId }, current.version)
+    if (!ok) return error(request, env, 'internal_error', 'Failed to save answer set', 500)
+    return json(request, env, { success: true, data: updatedSet })
+  }
+
+  // PUT /v1/yes-no/answer-sets/:setId/tiles/:tileId
+  if (segments[2] === 'answer-sets' && segments[4] === 'tiles' && segments.length === 6) {
+    const setId = segments[3]
+    const tileId = segments[5]
+    let body: { label?: unknown; speech?: unknown; color?: unknown; imageRef?: unknown; icon?: unknown }
+    try { body = (await request.json()) as typeof body } catch {
+      return error(request, env, 'bad_request', 'Request body must be valid JSON', 400)
+    }
+    const label = typeof body.label === 'string' ? body.label.trim() : ''
+    if (!label) return error(request, env, 'bad_request', 'label is required', 400)
+    const speech = typeof body.speech === 'string' && body.speech.trim() ? body.speech.trim() : label
+
+    const current = await getUserYesNoState(env, sessionToken)
+    if (!current) return error(request, env, 'unauthorized', 'Unauthorized', 401)
+    const setIdx = current.state.answerSets.findIndex(s => s.id === setId)
+    if (setIdx === -1) return error(request, env, 'not_found', 'Answer set not found', 404)
+    const set = current.state.answerSets[setIdx]
+    const tileIdx = set.answers.findIndex(a => a.id === tileId)
+    if (tileIdx === -1) return error(request, env, 'not_found', 'Answer tile not found', 404)
+    const existingTile = set.answers[tileIdx]
+    const color = asColorToken(body.color, existingTile.color ?? set.color ?? 'teal')
+    const imageRef = asImageRef(body.imageRef)
+    const icon = typeof body.icon === 'string' && body.icon.trim() ? body.icon.trim() : existingTile.icon
+    const updatedTile: YesNoAnswerTile = {
+      ...existingTile, id: tileId, label, speech, color,
+      ...(imageRef !== undefined ? { imageRef } : {}),
+      ...(icon ? { icon } : {}),
+    }
+    const updatedAnswers = [...set.answers]
+    updatedAnswers[tileIdx] = updatedTile
+    const updatedSet: YesNoAnswerSet = { ...set, answers: updatedAnswers }
+    const updatedSets = [...current.state.answerSets]
+    updatedSets[setIdx] = updatedSet
+    const ok = await putUserYesNoState(env, sessionToken, { answerSets: updatedSets, selectedSetId: current.state.selectedSetId }, current.version)
+    if (!ok) return error(request, env, 'internal_error', 'Failed to save answer tile', 500)
+    return json(request, env, { success: true, data: updatedTile })
+  }
+
+  // PUT /v1/yes-no/answer-sets (bulk replace + selection)
+  if (segments[2] === 'answer-sets' && segments.length === 3) {
+    let body: { answerSets?: unknown; selectedSetId?: unknown }
+    try { body = (await request.json()) as typeof body } catch {
+      return error(request, env, 'bad_request', 'Request body must be valid JSON', 400)
+    }
+    if (!Array.isArray(body.answerSets)) return error(request, env, 'bad_request', 'answerSets is required', 400)
+
+    const current = await getUserYesNoState(env, sessionToken)
+    if (!current) return error(request, env, 'unauthorized', 'Unauthorized', 401)
+
+    const incoming = (body.answerSets as YesNoAnswerSet[]).map(normalizeYesNoSet)
+    const selectedSetId = typeof body.selectedSetId === 'string' ? body.selectedSetId : current.state.selectedSetId
+    const ok = await putUserYesNoState(env, sessionToken, { answerSets: incoming, selectedSetId }, current.version)
+    if (!ok) return error(request, env, 'internal_error', 'Failed to save answer sets', 500)
+    return json(request, env, { success: true, data: { answerSets: incoming, selectedSetId: selectedSetId ?? null } })
+  }
+
+  return error(request, env, 'not_found', 'Not found', 404)
+}
+
+async function handleDeleteYesNo(request: Request, env: Env, segments: string[]): Promise<Response> {
+  const auth = await requireUserSession(request, env)
+  if (auth instanceof Response) return auth
+  const { sessionToken } = auth
+
+  // DELETE /v1/yes-no/answer-sets/:setId
+  if (segments[2] === 'answer-sets' && segments.length === 4) {
+    const setId = segments[3]
+    const current = await getUserYesNoState(env, sessionToken)
+    if (!current) return error(request, env, 'unauthorized', 'Unauthorized', 401)
+    const idx = current.state.answerSets.findIndex(s => s.id === setId)
+    if (idx === -1) return error(request, env, 'not_found', 'Answer set not found', 404)
+    const updatedSets = current.state.answerSets.filter(s => s.id !== setId)
+    const selectedSetId = current.state.selectedSetId === setId ? (updatedSets[0]?.id ?? null) : current.state.selectedSetId
+    const ok = await putUserYesNoState(env, sessionToken, { answerSets: updatedSets, selectedSetId }, current.version)
+    if (!ok) return error(request, env, 'internal_error', 'Failed to delete answer set', 500)
+    return json(request, env, { success: true })
+  }
+
+  // DELETE /v1/yes-no/answer-sets/:setId/tiles/:tileId
+  if (segments[2] === 'answer-sets' && segments[4] === 'tiles' && segments.length === 6) {
+    const setId = segments[3]
+    const tileId = segments[5]
+    const current = await getUserYesNoState(env, sessionToken)
+    if (!current) return error(request, env, 'unauthorized', 'Unauthorized', 401)
+    const setIdx = current.state.answerSets.findIndex(s => s.id === setId)
+    if (setIdx === -1) return error(request, env, 'not_found', 'Answer set not found', 404)
+    const set = current.state.answerSets[setIdx]
+    const updatedAnswers = set.answers.filter(a => a.id !== tileId)
+    const updatedSet: YesNoAnswerSet = { ...set, answers: updatedAnswers }
+    const updatedSets = [...current.state.answerSets]
+    updatedSets[setIdx] = updatedSet
+    const ok = await putUserYesNoState(env, sessionToken, { answerSets: updatedSets, selectedSetId: current.state.selectedSetId }, current.version)
+    if (!ok) return error(request, env, 'internal_error', 'Failed to delete answer tile', 500)
+    return json(request, env, { success: true })
+  }
+
+  return error(request, env, 'not_found', 'Not found', 404)
+}
+
+// ---------------------------------------------------------------------------
 // User cards mutation handlers
 // ---------------------------------------------------------------------------
 
@@ -1210,7 +1537,7 @@ async function handleGet(request: Request, env: Env, segments: string[]): Promis
     const language = await effectiveAppLanguage(request, env, 'yes-no', sessionToken)
 
     if (sessionToken) {
-      const data = await getYesNoContent(env, language)
+      const data = await getYesNoContent(env, language, sessionToken)
       return json(request, env, { success: true, data }, 200, { 'Cache-Control': 'no-store' })
     }
 
@@ -1282,6 +1609,9 @@ export default {
 
     if (request.method === 'PUT' && segments[0] === 'v1' && segments[1] === 'cards') return handlePutCards(request, env, segments)
     if (request.method === 'DELETE' && segments[0] === 'v1' && segments[1] === 'cards') return handleDeleteCards(request, env, segments)
+    if (request.method === 'POST' && segments[0] === 'v1' && segments[1] === 'yes-no') return handlePostYesNo(request, env, segments)
+    if (request.method === 'PUT' && segments[0] === 'v1' && segments[1] === 'yes-no') return handlePutYesNo(request, env, segments)
+    if (request.method === 'DELETE' && segments[0] === 'v1' && segments[1] === 'yes-no') return handleDeleteYesNo(request, env, segments)
     if (request.method === 'POST' && segments[0] === 'v1' && segments[1] === 'admin' && segments[2] === 'cards' && segments[3] === 'promote') return handlePromoteCollection(request, env, segments)
     if (request.method === 'POST' && segments[0] === 'v1' && segments[1] === 'images') return handleUploadUserImage(request, env)
 

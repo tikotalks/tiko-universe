@@ -191,10 +191,12 @@ public struct TikoAppShell<Content: View, SettingsContent: View>: View {
     private let actions: [TikoHeaderAction]
     private let onAction: (String) -> Void
     private let onAccountDeleted: () -> Void
+    private let onLoggedOut: () -> Void
     private let content: Content
     private let settingsContent: SettingsContent
 
-    @AppStorage("tiko.colorMode") private var colorModeRawValue = TikoColorMode.light.rawValue
+    @AppStorage("tiko.colorMode") private var colorModeRawValue = TikoColorMode.system.rawValue
+    @Environment(\.colorScheme) private var deviceScheme
     @AppStorage("tiko.userName") private var userName = ""
     @AppStorage("tiko.userEmail") private var userEmail = ""
     @StateObject private var profilePrefs = TikoProfilePreferences()
@@ -222,6 +224,7 @@ public struct TikoAppShell<Content: View, SettingsContent: View>: View {
         actions: [TikoHeaderAction] = [],
         onAction: @escaping (String) -> Void = { _ in },
         onAccountDeleted: @escaping () -> Void = {},
+        onLoggedOut: @escaping () -> Void = {},
         @ViewBuilder settingsContent: () -> SettingsContent,
         @ViewBuilder content: () -> Content
     ) {
@@ -238,6 +241,7 @@ public struct TikoAppShell<Content: View, SettingsContent: View>: View {
             actions: actions,
             onAction: onAction,
             onAccountDeleted: onAccountDeleted,
+            onLoggedOut: onLoggedOut,
             settingsContent: settingsContent,
             content: content
         )
@@ -256,6 +260,7 @@ public struct TikoAppShell<Content: View, SettingsContent: View>: View {
         actions: [TikoHeaderAction] = [],
         onAction: @escaping (String) -> Void = { _ in },
         onAccountDeleted: @escaping () -> Void = {},
+        onLoggedOut: @escaping () -> Void = {},
         @ViewBuilder settingsContent: () -> SettingsContent,
         @ViewBuilder content: () -> Content
     ) {
@@ -271,6 +276,7 @@ public struct TikoAppShell<Content: View, SettingsContent: View>: View {
         self.actions = actions.filter { $0.id != "settings" }
         self.onAction = onAction
         self.onAccountDeleted = onAccountDeleted
+        self.onLoggedOut = onLoggedOut
         self.settingsContent = settingsContent()
         self.content = content()
     }
@@ -279,7 +285,7 @@ public struct TikoAppShell<Content: View, SettingsContent: View>: View {
         content
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .background(selectedColorScheme == .dark ? darkBackgroundColor : backgroundColor)
-            .preferredColorScheme(selectedColorScheme)
+            .preferredColorScheme(preferredColorSchemeValue)
             .safeAreaInset(edge: .top, spacing: 0) {
                 TikoAppHeader(
                     appName: appName,
@@ -314,7 +320,7 @@ public struct TikoAppShell<Content: View, SettingsContent: View>: View {
                 fetchedAvatarURL = nil
                 await fetchAvatarIfNeeded()
             }
-        }, onAccountDeleted: onAccountDeleted)
+        }, onAccountDeleted: onAccountDeleted, onLoggedOut: onLoggedOut)
         .tikoPopup(isPresented: $showingProfileMenu) {
             TikoProfileMenuSheet(
                 appColor: appColor,
@@ -385,8 +391,25 @@ public struct TikoAppShell<Content: View, SettingsContent: View>: View {
         )
     }
 
+    private var colorMode: TikoColorMode { TikoColorMode(rawValue: colorModeRawValue) ?? .system }
+
+    /// What we hand to `.preferredColorScheme` — nil means "follow the device".
+    private var preferredColorSchemeValue: ColorScheme? {
+        switch colorMode {
+        case .system: nil
+        case .light: .light
+        case .dark: .dark
+        }
+    }
+
+    /// The scheme actually shown — resolves `.system` to the live device scheme
+    /// so background colours match.
     private var selectedColorScheme: ColorScheme {
-        (TikoColorMode(rawValue: colorModeRawValue) ?? .light) == .dark ? .dark : .light
+        switch colorMode {
+        case .system: deviceScheme
+        case .light: .light
+        case .dark: .dark
+        }
     }
 
     private func handleChildModeRequest() {
@@ -531,8 +554,7 @@ public struct TikoAppShell<Content: View, SettingsContent: View>: View {
     }
 
     private func resizedCDNURL(_ url: URL, size: Int) -> URL {
-        guard url.host == "data.tikocdn.org", url.path.hasPrefix("/uploads/") else { return url }
-        return URL(string: "https://data.tikocdn.org/cdn-cgi/image/width=\(size),quality=80,f=auto\(url.path)") ?? url
+        TikoImageURL.resized(url, width: size, quality: 80)
     }
 }
 

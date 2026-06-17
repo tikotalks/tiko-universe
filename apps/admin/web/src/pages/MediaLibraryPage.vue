@@ -3,14 +3,32 @@ import { onMounted, ref } from 'vue'
 import { useBemm } from 'bemm'
 import { Button, InputSearch } from '@sil/ui'
 import { useAdminMediaLibrary } from '../composables/useAdminMediaLibrary'
+import { useAdminAuth } from '../composables/useAdminAuth'
+import { useImageGeneration } from '../composables/useImageGeneration'
 import type { AdminMediaItem, AudioLibraryAlbum } from '../composables/useAdminMediaLibrary'
+import type { ImageGalleryItem } from '../composables/useImageGeneration'
+import type { ImageGenerationResult } from '../types/admin'
+import ImageEditModal from '../components/images/ImageEditModal.vue'
 
 const bemm = useBemm('media-library', { return: 'string', includeBaseClass: true })
 
-const { items, total, page, totalPages, loading, uploading, error, list, upload, itemUrl, itemPreviewUrl, listAudioAlbums, createAudioAlbum, addAudioTrack } = useAdminMediaLibrary()
+const {
+  items, total, page, totalPages, loading, uploading, error,
+  list, upload, updateMedia, deleteMedia, toggleActive, toggleHidden,
+  itemUrl, itemPreviewUrl, listAudioAlbums, createAudioAlbum, addAudioTrack,
+} = useAdminMediaLibrary()
+
+const { importImage, editImage, imageSrc } = useImageGeneration()
+const { token: adminToken } = useAdminAuth()
+
+function getAdminToken(): string {
+  return adminToken.value
+}
 
 const search = ref('')
 const type = ref('')
+const showInactive = ref(true)
+const showHidden = ref(true)
 const selectedFile = ref<File | null>(null)
 const selectedThumbnail = ref<File | null>(null)
 const uploadResult = ref<string | null>(null)
@@ -27,10 +45,34 @@ const selectedTrackTitle = ref('')
 const audioLibraryLoading = ref(false)
 const audioLibraryError = ref<string | null>(null)
 
+const editItem = ref<ImageGalleryItem | null>(null)
+const editSourceUrl = ref<string>('')
+const editSourceId = ref<string>('')
+const editResultUrl = ref<string | null>(null)
+const editResultItem = ref<ImageGenerationResult | null>(null)
+const editLoading = ref(false)
+const editMode = ref<'edit' | 'result'>('edit')
+const savingNew = ref(false)
+const applyingChange = ref(false)
+const actionError = ref<string | null>(null)
+const deleteConfirmId = ref<string | null>(null)
+
 onMounted(() => {
-  void list()
+  void refreshList()
   void loadAudioAlbums()
 })
+
+async function refreshList() {
+  await list({ search: search.value, type: type.value, page: 1, includeInactive: true, includeHidden: true } as Record<string, unknown>)
+}
+
+async function onSearch() {
+  await refreshList()
+}
+
+async function go(delta: number) {
+  await list({ search: search.value, type: type.value, page: page.value + delta, includeInactive: true, includeHidden: true } as Record<string, unknown>)
+}
 
 function onFileChange(event: Event) {
   selectedFile.value = (event.target as HTMLInputElement).files?.[0] ?? null
@@ -38,14 +80,6 @@ function onFileChange(event: Event) {
 
 function onThumbnailChange(event: Event) {
   selectedThumbnail.value = (event.target as HTMLInputElement).files?.[0] ?? null
-}
-
-async function onSearch() {
-  await list({ search: search.value, type: type.value, page: 1 })
-}
-
-async function go(delta: number) {
-  await list({ search: search.value, type: type.value, page: page.value + delta })
 }
 
 async function onUpload() {
@@ -147,6 +181,147 @@ function formatDate(value?: string): string {
     return value
   }
 }
+
+async function onToggleActive(item: AdminMediaItem) {
+  actionError.value = null
+  try {
+    await toggleActive(item.id, !item.is_active)
+  } catch (e) {
+    actionError.value = e instanceof Error ? e.message : 'Failed to toggle active state.'
+  }
+}
+
+async function onToggleHidden(item: AdminMediaItem) {
+  actionError.value = null
+  try {
+    await toggleHidden(item.id, !item.is_hidden)
+  } catch (e) {
+    actionError.value = e instanceof Error ? e.message : 'Failed to toggle hidden state.'
+  }
+}
+
+async function onDelete(item: AdminMediaItem) {
+  actionError.value = null
+  try {
+    await deleteMedia(item.id)
+    deleteConfirmId.value = null
+  } catch (e) {
+    actionError.value = e instanceof Error ? e.message : 'Failed to delete media.'
+  }
+}
+
+async function onEditImage(item: AdminMediaItem) {
+  actionError.value = null
+  editLoading.value = true
+  editMode.value = 'edit'
+  editResultUrl.value = null
+  editResultItem.value = null
+  editSourceUrl.value = itemUrl(item)
+  editSourceId.value = item.id
+  try {
+    const imported = await importImage(itemUrl(item), {
+      title: item.title || item.file_name,
+      category: item.category || 'imported',
+      tags: item.tags,
+    })
+    editItem.value = imported
+    editSourceId.value = imported.id
+  } catch (e) {
+    actionError.value = e instanceof Error ? e.message : 'Failed to import image for editing.'
+  } finally {
+    editLoading.value = false
+  }
+}
+
+async function onSubmitEdit(input: { sourceId: string; prompt: string; maskBase64?: string; size: string }) {
+  actionError.value = null
+  editLoading.value = true
+  try {
+    const result = await editImage(input.sourceId, input.prompt, input.maskBase64, input.size)
+    editResultItem.value = result
+    editResultUrl.value = imageSrc(result)
+    editMode.value = 'result'
+  } catch (e) {
+    actionError.value = e instanceof Error ? e.message : 'Image edit failed.'
+  } finally {
+    editLoading.value = false
+  }
+}
+
+function closeEdit() {
+  editItem.value = null
+  editResultItem.value = null
+  editResultUrl.value = null
+  editMode.value = 'edit'
+}
+
+async function onApplyChange() {
+  if (!editSourceUrl.value || !editResultUrl.value) return
+  applyingChange.value = true
+  actionError.value = null
+  try {
+    const originalItem = items.value.find(i => i.id === editSourceUrl.value.match(/\/media\/([^/]+)/)?.[1])
+    if (!originalItem) throw new Error('Could not find original media item')
+
+    const imgResponse = await fetch(editResultUrl.value)
+    const blob = await imgResponse.blob()
+    const fileName = (originalItem.title || 'edited').replace(/[^a-z0-9_-]/gi, '_')
+    const formData = new FormData()
+    formData.set('file', new File([blob], `${fileName}.png`, { type: blob.type || 'image/png' }))
+    if (originalItem.title) formData.set('title', originalItem.title)
+    if (originalItem.category) formData.set('categories', JSON.stringify([originalItem.category]))
+    if (originalItem.tags?.length) formData.set('tags', JSON.stringify(originalItem.tags))
+
+    const baseUrl = (import.meta as ImportMeta & { env?: Record<string, string | undefined> }).env?.VITE_MEDIA_API_URL ?? 'https://media.tikoapi.org/v1'
+    const uploadResponse = await fetch(`${baseUrl}/media/upload`, {
+      method: 'POST',
+      headers: { authorization: `Bearer ${getAdminToken()}` },
+      body: formData,
+    })
+    const uploadBody = await uploadResponse.json().catch(() => null) as { success?: boolean; id?: string; error?: string } | null
+    if (!uploadResponse.ok || !uploadBody?.success) throw new Error(uploadBody?.error ?? `Upload failed: ${uploadResponse.status}`)
+
+    await deleteMedia(originalItem.id)
+    await refreshList()
+    closeEdit()
+  } catch (e) {
+    actionError.value = e instanceof Error ? e.message : 'Failed to apply change.'
+  } finally {
+    applyingChange.value = false
+  }
+}
+
+async function onSaveAsNew() {
+  if (!editResultUrl.value || !editResultItem.value) return
+  savingNew.value = true
+  actionError.value = null
+  try {
+    const imgResponse = await fetch(editResultUrl.value)
+    const blob = await imgResponse.blob()
+    const fileName = (editItem.value?.title || 'edited').replace(/[^a-z0-9_-]/gi, '_')
+    const formData = new FormData()
+    formData.set('file', new File([blob], `${fileName}.png`, { type: blob.type || 'image/png' }))
+    if (editItem.value?.title) formData.set('title', editItem.value.title)
+    if (editItem.value?.category) formData.set('categories', JSON.stringify([editItem.value.category]))
+    if (editItem.value?.tags?.length) formData.set('tags', JSON.stringify(editItem.value.tags))
+
+    const baseUrl = (import.meta as ImportMeta & { env?: Record<string, string | undefined> }).env?.VITE_MEDIA_API_URL ?? 'https://media.tikoapi.org/v1'
+    const response = await fetch(`${baseUrl}/media/upload`, {
+      method: 'POST',
+      headers: { authorization: `Bearer ${getAdminToken()}` },
+      body: formData,
+    })
+    const body = await response.json().catch(() => null) as { success?: boolean; error?: string } | null
+    if (!response.ok || !body?.success) throw new Error(body?.error ?? `Upload failed: ${response.status}`)
+
+    await refreshList()
+    closeEdit()
+  } catch (e) {
+    actionError.value = e instanceof Error ? e.message : 'Failed to save as new image.'
+  } finally {
+    savingNew.value = false
+  }
+}
 </script>
 
 <template>
@@ -154,7 +329,7 @@ function formatDate(value?: string): string {
     <header :class="bemm('header')">
       <div :class="bemm('intro')">
         <h1 :class="bemm('title')">Media library</h1>
-        <p :class="bemm('subtitle')">Upload, inspect, search, and open assets in Tiko Media.</p>
+        <p :class="bemm('subtitle')">Upload, edit, search, and manage all Tiko Media assets.</p>
       </div>
       <span :class="bemm('total')">{{ total }} assets</span>
     </header>
@@ -179,8 +354,6 @@ function formatDate(value?: string): string {
       <p v-if="lastUploadedMediaId" :class="bemm('hint')">Media ID for covers/tracks: {{ lastUploadedMediaId }}</p>
     </section>
 
-
-
     <section :class="bemm('toolbar')">
       <InputSearch v-model="search" placeholder="Search media…" :search-action="onSearch" @search="onSearch" />
       <select :class="bemm('select')" v-model="type">
@@ -193,12 +366,17 @@ function formatDate(value?: string): string {
     </section>
 
     <p v-if="error" :class="bemm('error')">{{ error }}</p>
+    <p v-if="actionError" :class="bemm('error')">{{ actionError }}</p>
 
     <div :class="bemm('list-wrap')">
       <div v-if="loading" :class="bemm('empty')">Loading media…</div>
       <div v-else-if="items.length === 0" :class="bemm('empty')">No media found.</div>
       <ul v-else :class="bemm('list')">
-        <li v-for="item in items" :key="item.id" :class="bemm('row')">
+        <li
+          v-for="item in items"
+          :key="item.id"
+          :class="[bemm('row'), { 'media-library__row--inactive': item.is_active === false, 'media-library__row--hidden': item.is_hidden }]"
+        >
           <img
             v-if="mediaKind(item) === 'image'"
             :class="bemm('thumb')"
@@ -210,7 +388,11 @@ function formatDate(value?: string): string {
           </div>
 
           <div :class="bemm('row-body')">
-            <span :class="bemm('row-title')">{{ item.title || item.file_name || item.id }}</span>
+            <div :class="bemm('row-title-line')">
+              <span :class="bemm('row-title')">{{ item.title || item.file_name || item.id }}</span>
+              <span v-if="item.is_active === false" :class="bemm('badge', { inactive: true })">Inactive</span>
+              <span v-if="item.is_hidden" :class="bemm('badge', { hidden: true })">Hidden</span>
+            </div>
             <p v-if="item.description" :class="bemm('row-desc')">{{ item.description }}</p>
             <div v-if="item.tags?.length" :class="bemm('tags')">
               <span v-for="tag in (item.tags || []).slice(0, 5)" :key="tag" :class="bemm('tag')">{{ tag }}</span>
@@ -225,7 +407,36 @@ function formatDate(value?: string): string {
 
           <time :class="bemm('row-date')">{{ formatDate(item.createdAt || item.created_at) }}</time>
 
-          <a :class="bemm('row-action')" :href="itemUrl(item)" target="_blank" rel="noreferrer">Open</a>
+          <div :class="bemm('row-actions')">
+            <button
+              v-if="mediaKind(item) === 'image'"
+              :class="bemm('row-btn')"
+              title="Edit image"
+              :disabled="editLoading"
+              @click="onEditImage(item)"
+            >Edit</button>
+            <button
+              :class="bemm('row-btn')"
+              :title="item.is_hidden ? 'Unhide' : 'Hide from apps'"
+              @click="onToggleHidden(item)"
+            >{{ item.is_hidden ? 'Show' : 'Hide' }}</button>
+            <button
+              :class="bemm('row-btn')"
+              :title="item.is_active === false ? 'Activate' : 'Deactivate'"
+              @click="onToggleActive(item)"
+            >{{ item.is_active === false ? 'Enable' : 'Disable' }}</button>
+            <a :class="bemm('row-btn')" :href="itemUrl(item)" target="_blank" rel="noreferrer">Open</a>
+            <template v-if="deleteConfirmId === item.id">
+              <button :class="bemm('row-btn', { danger: true })" @click="onDelete(item)">Confirm?</button>
+              <button :class="bemm('row-btn')" @click="deleteConfirmId = null">Cancel</button>
+            </template>
+            <button
+              v-else
+              :class="bemm('row-btn', { danger: true })"
+              title="Delete permanently"
+              @click="deleteConfirmId = item.id"
+            >Delete</button>
+          </div>
         </li>
       </ul>
     </div>
@@ -235,6 +446,47 @@ function formatDate(value?: string): string {
       <span :class="bemm('pager-status')">Page {{ page }} / {{ totalPages }}</span>
       <Button variant="outline" :disabled="page >= totalPages || loading" @click="go(1)">Next</Button>
     </footer>
+
+    <!-- Edit Modal -->
+    <ImageEditModal
+      v-if="editItem"
+      :item="editItem"
+      :image-src="imageSrc"
+      @close="closeEdit"
+      @submit="onSubmitEdit"
+    />
+
+    <!-- Edit Result Modal -->
+    <div v-if="editResultUrl && editMode === 'result'" :class="bemm('result-overlay')" @click.self="closeEdit">
+      <div :class="bemm('result-panel')">
+        <header :class="bemm('result-header')">
+          <h3 :class="bemm('result-title')">Edit result</h3>
+          <button :class="bemm('result-close')" @click="closeEdit">Close</button>
+        </header>
+        <div :class="bemm('result-body')">
+          <div :class="bemm('result-compare')">
+            <div :class="bemm('result-col')">
+              <span :class="bemm('result-label')">Original</span>
+              <img :class="bemm('result-img')" :src="editSourceUrl" alt="Original" />
+            </div>
+            <div :class="bemm('result-col')">
+              <span :class="bemm('result-label')">Edited</span>
+              <img :class="bemm('result-img')" :src="editResultUrl" alt="Edited" />
+            </div>
+          </div>
+          <div :class="bemm('result-actions')">
+            <p v-if="actionError" :class="bemm('error')">{{ actionError }}</p>
+            <Button variant="outline" :loading="savingNew" @click="onSaveAsNew">Save as new</Button>
+            <Button :loading="applyingChange" @click="onApplyChange">Apply change (replace original)</Button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Loading overlay for edit/import -->
+    <div v-if="editLoading" :class="bemm('loading-overlay')">
+      <div :class="bemm('loading-spinner')"></div>
+    </div>
   </section>
 </template>
 
@@ -295,14 +547,6 @@ function formatDate(value?: string): string {
     color: var(--admin-text);
   }
 
-  &__panel-head {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    gap: var(--space-m);
-    flex-wrap: wrap;
-  }
-
   &__upload-grid {
     display: grid;
     grid-template-columns: 1fr 1fr auto;
@@ -321,41 +565,6 @@ function formatDate(value?: string): string {
     > *:first-child {
       flex: 1;
       min-width: 0;
-    }
-  }
-
-  &__audio-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(calc(var(--space) * 12), 1fr));
-    gap: var(--space-s);
-    align-items: end;
-  }
-
-  &__check {
-    display: flex;
-    gap: var(--space-xs);
-    align-items: center;
-    color: var(--admin-text);
-    font-size: var(--font-size-s);
-  }
-
-  &__album-list {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(calc(var(--space) * 16), 1fr));
-    gap: var(--space-s);
-  }
-
-  &__album-card {
-    border-radius: var(--border-radius-m);
-    padding: var(--space-s);
-    background: var(--admin-page-bg);
-    color: var(--admin-text);
-
-    ol {
-      margin: var(--space-xs) 0 0;
-      padding-inline-start: var(--space-m);
-      color: var(--admin-text-muted);
-      font-size: var(--font-size-s);
     }
   }
 
@@ -425,10 +634,18 @@ function formatDate(value?: string): string {
     padding: var(--space-m);
     background: var(--admin-surface);
     border-radius: var(--border-radius-m);
-    transition: background 0.12s ease;
+    transition: background 0.12s ease, opacity 0.12s ease;
 
     &:hover {
       background: var(--admin-surface-hover);
+    }
+
+    &--inactive {
+      opacity: 0.55;
+    }
+
+    &--hidden {
+      border-left: 3px solid var(--color-warning, #f59e0b);
     }
   }
 
@@ -438,7 +655,6 @@ function formatDate(value?: string): string {
     border-radius: var(--border-radius-m);
     object-fit: cover;
     flex-shrink: 0;
-    --block-size: 0.5em;
     @include checkeredBackground;
 
     &--file {
@@ -458,6 +674,12 @@ function formatDate(value?: string): string {
     gap: var(--space-xs);
   }
 
+  &__row-title-line {
+    display: flex;
+    align-items: center;
+    gap: var(--space-xs);
+  }
+
   &__row-title {
     font-weight: 600;
     font-size: var(--font-size-s);
@@ -465,7 +687,6 @@ function formatDate(value?: string): string {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    display: block;
   }
 
   &__row-desc {
@@ -476,6 +697,28 @@ function formatDate(value?: string): string {
     -webkit-line-clamp: 1;
     -webkit-box-orient: vertical;
     margin: 0;
+  }
+
+  &__badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 1px var(--space-s);
+    border-radius: var(--border-radius-s);
+    font-size: 0.65rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    white-space: nowrap;
+
+    &--inactive {
+      background: color-mix(in srgb, var(--color-error) 12%, transparent);
+      color: var(--color-error);
+    }
+
+    &--hidden {
+      background: color-mix(in srgb, #f59e0b 12%, transparent);
+      color: #b45309;
+    }
   }
 
   &__row-meta {
@@ -513,19 +756,45 @@ function formatDate(value?: string): string {
     text-align: right;
   }
 
-  &__row-action {
-    color: var(--color-primary);
-    text-decoration: none;
-    font-weight: 600;
-    font-size: var(--font-size-xs);
+  &__row-actions {
+    display: flex;
+    gap: var(--space-xs);
     flex-shrink: 0;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+
+  &__row-btn {
+    border: 1px solid var(--admin-border);
+    background: var(--admin-page-bg);
+    color: var(--admin-text);
+    font: inherit;
+    font-size: var(--font-size-xs);
+    font-weight: 600;
     padding: var(--space-xs) var(--space-s);
-    border-radius: var(--border-radius-m);
-    background: color-mix(in srgb, var(--color-primary), transparent 88%);
-    transition: background 0.12s ease;
+    border-radius: var(--border-radius-xs);
+    cursor: pointer;
+    text-decoration: none;
+    transition: background 0.12s ease, border-color 0.12s ease;
+    white-space: nowrap;
 
     &:hover {
-      background: color-mix(in srgb, var(--color-primary), transparent 76%);
+      background: var(--admin-surface-hover);
+      border-color: var(--admin-border-strong);
+    }
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    &--danger {
+      border-color: color-mix(in srgb, var(--color-error) 40%, transparent);
+      color: var(--color-error);
+
+      &:hover {
+        background: color-mix(in srgb, var(--color-error) 8%, transparent);
+      }
     }
   }
 
@@ -561,23 +830,124 @@ function formatDate(value?: string): string {
     font-size: var(--font-size-s);
   }
 
+  &__result-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.65);
+    padding: var(--space-m);
+  }
+
+  &__result-panel {
+    background: var(--admin-surface);
+    border: 1px solid var(--admin-border);
+    border-radius: var(--border-radius-m);
+    width: 100%;
+    max-width: 800px;
+    max-height: 92vh;
+    overflow-y: auto;
+  }
+
+  &__result-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--space-m);
+    border-bottom: 1px solid var(--admin-border);
+  }
+
+  &__result-title {
+    font-size: var(--font-size-m);
+    font-weight: 600;
+    color: var(--admin-text);
+  }
+
+  &__result-close {
+    border: 0;
+    background: transparent;
+    color: var(--admin-text-muted);
+    font: inherit;
+    cursor: pointer;
+    padding: var(--space-xs);
+    border-radius: var(--border-radius-xs);
+
+    &:hover { background: var(--admin-nav-hover); color: var(--admin-text); }
+  }
+
+  &__result-body {
+    padding: var(--space-m);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-m);
+  }
+
+  &__result-compare {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-m);
+  }
+
+  &__result-col {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+  }
+
+  &__result-label {
+    font-size: var(--font-size-xs);
+    font-weight: 600;
+    color: var(--admin-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  &__result-img {
+    width: 100%;
+    border-radius: var(--border-radius-s);
+    object-fit: cover;
+    @include checkeredBackground;
+  }
+
+  &__result-actions {
+    display: flex;
+    gap: var(--space-s);
+    justify-content: flex-end;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  &__loading-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 300;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.4);
+  }
+
+  &__loading-spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid var(--admin-border);
+    border-top-color: var(--color-primary);
+    border-radius: 50%;
+    animation: media-library-spin 0.7s linear infinite;
+  }
+
+  @keyframes media-library-spin {
+    to { transform: rotate(360deg); }
+  }
+
   @media (max-width: 860px) {
-    &__upload-grid {
-      grid-template-columns: 1fr;
-    }
-
-    &__toolbar {
-      flex-wrap: wrap;
-    }
-
-    &__row {
-      flex-wrap: wrap;
-    }
-
-    &__row-meta,
-    &__row-date {
-      display: none;
-    }
+    &__upload-grid { grid-template-columns: 1fr; }
+    &__toolbar { flex-wrap: wrap; }
+    &__row { flex-wrap: wrap; }
+    &__row-meta, &__row-date { display: none; }
+    &__result-compare { grid-template-columns: 1fr; }
   }
 }
 </style>

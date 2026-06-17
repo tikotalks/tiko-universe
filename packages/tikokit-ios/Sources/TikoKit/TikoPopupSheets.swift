@@ -152,14 +152,49 @@ public struct TikoFormSheet<Content: View>: View {
 }
 
 public enum TikoColorMode: String, CaseIterable, Codable, Sendable {
+    case system
     case light
     case dark
 
     public var title: String {
         switch self {
+        case .system: "System"
         case .light: "Light"
         case .dark: "Dark"
         }
+    }
+}
+
+/// Device-derived defaults for the shared `tiko.language` / `tiko.colorMode`
+/// preferences. Language follows the device locale (falling back to English),
+/// colour mode follows the device appearance (`.system`).
+public enum TikoDeviceDefaults {
+    /// The device's preferred language reduced to a supported Tiko code, or
+    /// "en" when none of the device languages are supported.
+    public static func resolvedLanguageCode(supported: [String] = TikoLanguage.supportedLanguageCodes) -> String {
+        for identifier in Locale.preferredLanguages {
+            let code = String(identifier.prefix(2)).lowercased()
+            if supported.contains(code) { return code }
+        }
+        return "en"
+    }
+
+    /// Register dynamic defaults so a fresh install follows the device language
+    /// and appearance until the user explicitly chooses otherwise. Call once at
+    /// app launch (before any view reads the preferences).
+    public static func register() {
+        UserDefaults.standard.register(defaults: [
+            "tiko.language": resolvedLanguageCode(),
+            "tiko.colorMode": TikoColorMode.system.rawValue,
+        ])
+    }
+
+    /// Reset the shared preferences back to the device defaults — used on logout
+    /// and account deletion so the next user doesn't inherit the previous one's
+    /// language or appearance choice.
+    public static func resetSharedPreferences() {
+        UserDefaults.standard.set(resolvedLanguageCode(), forKey: "tiko.language")
+        UserDefaults.standard.set(TikoColorMode.system.rawValue, forKey: "tiko.colorMode")
     }
 }
 
@@ -205,6 +240,8 @@ public struct TikoSettingsLabels {
     public let colorModeSubtitle: String
     public let light: String
     public let dark: String
+    // Defaulted so the per-locale memberwise initializers don't all need updating.
+    public var system: String = "System"
 
     public static func forLanguage(_ languageID: String) -> TikoSettingsLabels {
         switch languageID {
@@ -285,6 +322,7 @@ public struct TikoSettingsLabels {
 
     public func title(for mode: TikoColorMode) -> String {
         switch mode {
+        case .system: system
         case .light: light
         case .dark: dark
         }
@@ -694,7 +732,7 @@ public struct TikoSettingsSheet<AppSettings: View>: View {
     private let appSettings: AppSettings
 
     @AppStorage("tiko.language") private var languageID = "en"
-    @AppStorage("tiko.colorMode") private var colorModeRawValue = TikoColorMode.light.rawValue
+    @AppStorage("tiko.colorMode") private var colorModeRawValue = TikoColorMode.system.rawValue
     @State private var showingLanguagePicker = false
     @State private var showingColorModePicker = false
 
@@ -952,6 +990,7 @@ public struct TikoAccountSheet: View {
     private let onClose: () -> Void
     private let onIdentityChanged: () -> Void
     private let onAccountDeleted: () -> Void
+    private let onLoggedOut: () -> Void
 
     @AppStorage("tiko.userName") private var userName = ""
     @AppStorage("tiko.userEmail") private var userEmail = ""
@@ -982,13 +1021,14 @@ public struct TikoAccountSheet: View {
     private let identityClient = TikoIdentityClient()
     private let sessionStore = TikoDeviceSessionStore()
 
-    public init(appName: String, appColor: TikoAppColor, profilePrefs: TikoProfilePreferences, onClose: @escaping () -> Void, onIdentityChanged: @escaping () -> Void = {}, onAccountDeleted: @escaping () -> Void = {}) {
+    public init(appName: String, appColor: TikoAppColor, profilePrefs: TikoProfilePreferences, onClose: @escaping () -> Void, onIdentityChanged: @escaping () -> Void = {}, onAccountDeleted: @escaping () -> Void = {}, onLoggedOut: @escaping () -> Void = {}) {
         self.appName = appName
         self.appColor = appColor
         self._profilePrefs = ObservedObject(wrappedValue: profilePrefs)
         self.onClose = onClose
         self.onIdentityChanged = onIdentityChanged
         self.onAccountDeleted = onAccountDeleted
+        self.onLoggedOut = onLoggedOut
     }
 
     public var body: some View {
@@ -1175,6 +1215,9 @@ public struct TikoAccountSheet: View {
                     userEmail = ""
                     profilePrefs.setAvatarURL("")
                     profilePrefs.setFavoriteColor("")
+                    // Let the host app reset its local settings/data to defaults
+                    // so the next user doesn't inherit the previous user's state.
+                    onLoggedOut()
                     onIdentityChanged()
                     onClose()
                 } label: {
@@ -2029,14 +2072,14 @@ public extension View {
         tikoSettingsPopup(isPresented: isPresented, appColor: appColor) { EmptyView() }
     }
 
-    func tikoAccountPopup(isPresented: Binding<Bool>, appName: String, appColor: TikoAppColor, profilePrefs: TikoProfilePreferences, onIdentityChanged: @escaping () -> Void = {}, onAccountDeleted: @escaping () -> Void = {}) -> some View {
+    func tikoAccountPopup(isPresented: Binding<Bool>, appName: String, appColor: TikoAppColor, profilePrefs: TikoProfilePreferences, onIdentityChanged: @escaping () -> Void = {}, onAccountDeleted: @escaping () -> Void = {}, onLoggedOut: @escaping () -> Void = {}) -> some View {
         tikoPopup(isPresented: isPresented) {
             TikoAccountSheet(appName: appName, appColor: appColor, profilePrefs: profilePrefs, onClose: {
                 isPresented.wrappedValue = false
             }, onIdentityChanged: {
                 isPresented.wrappedValue = false
                 onIdentityChanged()
-            }, onAccountDeleted: onAccountDeleted)
+            }, onAccountDeleted: onAccountDeleted, onLoggedOut: onLoggedOut)
         }
     }
 }
