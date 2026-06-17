@@ -1,5 +1,8 @@
 <script setup lang="ts">
-defineProps<{
+import { computed } from 'vue'
+import { tikoImageUrl } from '@tiko/media'
+
+const props = defineProps<{
   src: string
   alt: string
   width?: number
@@ -9,13 +12,15 @@ defineProps<{
 const emit = defineEmits<{
   download: []
 }>()
+
+const previewSrc = computed(() => tikoImageUrl(props.src, 'medium') || props.src)
 </script>
 
 <template>
   <div class="image-preview">
     <div class="image-preview__frame">
       <img
-        :src="src"
+        :src="previewSrc"
         :alt="alt"
         class="image-preview__img"
         :width="width"

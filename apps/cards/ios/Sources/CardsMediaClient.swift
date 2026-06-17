@@ -88,10 +88,7 @@ struct CardsMediaMatcher {
     }
 
     static func resizedCDNURL(_ originalURL: URL) -> URL {
-        guard originalURL.host == "data.tikocdn.org", originalURL.path.hasPrefix("/uploads/") else {
-            return originalURL
-        }
-        return URL(string: "https://data.tikocdn.org/cdn-cgi/image/width=300,quality=80,f=auto\(originalURL.path)") ?? originalURL
+        TikoImageURL.resized(originalURL, width: 300, quality: 80)
     }
 
     private static func normalize(_ value: String) -> String {

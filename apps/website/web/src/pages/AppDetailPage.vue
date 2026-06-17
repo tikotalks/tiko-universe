@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { RouterLink, useRoute } from 'vue-router'
 import { computed, ref, watch, onMounted } from 'vue'
+import { tikoImageUrl } from '@tiko/ui'
 import { getAppBySlug } from '../content/appUniverse'
 import PageSection from '../components/sections/PageSection.vue'
 import CardGrid from '../components/sections/CardGrid.vue'
@@ -64,7 +65,7 @@ const hasMediaSection = computed(() => Boolean(mediaSection.value))
 const visibleMediaImages = computed(() => mediaImages.value.length ? mediaImages.value : FALLBACK_CARD_MEDIA)
 const heroMediaImage = computed(() => {
   const first = visibleMediaImages.value[0]
-  return first ? cdnUrl(resolveOriginalUrl(first), 700) : undefined
+  return first ? tikoImageUrl(resolveOriginalUrl(first), 'large') : undefined
 })
 
 function resolveOriginalUrl(item: MediaImage): string {
@@ -72,12 +73,7 @@ function resolveOriginalUrl(item: MediaImage): string {
 }
 
 function cdnUrl(originalUrl: string, width = 400): string {
-  try {
-    const u = new URL(originalUrl)
-    return `https://${CDN_ORIGIN}/cdn-cgi/image/width=${width},quality=85,f=auto${u.pathname}`
-  } catch {
-    return originalUrl
-  }
+  return tikoImageUrl(originalUrl, width <= 400 ? 'small' : 'large')
 }
 
 function normalizeMediaImages(items: MediaImage[]): MediaImage[] {

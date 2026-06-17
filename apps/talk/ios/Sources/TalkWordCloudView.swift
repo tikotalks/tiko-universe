@@ -160,7 +160,7 @@ private struct TalkCloudBubble: View {
 
     private var mediaURL: URL? {
         guard let image = word.image, !image.isEmpty else { return nil }
-        return URL(string: image)
+        return URL(string: TikoImageURL.resized(image, size: .small))
     }
 
     var body: some View {

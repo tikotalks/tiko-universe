@@ -1,5 +1,6 @@
 const DEFAULT_CONTENT_BASE_URL = 'https://content.tikoapi.org/v1'
-const TIKO_MEDIA_CDN_HOST = 'data.tikocdn.org'
+
+export { tikoImageUrl, tikoMediaImageUrl, resolveTikoImageUrl, type TikoImageSize } from '@tiko/media'
 
 export function tikoContentImageRefUrl(imageRef: string, contentBaseUrl = DEFAULT_CONTENT_BASE_URL): string {
   const normalizedBase = contentBaseUrl.replace(/\/+$/, '')
@@ -10,8 +11,8 @@ export function tikoMediaThumbnailUrl(originalUrl: string | undefined, size = 30
   if (!originalUrl) return ''
   try {
     const url = new URL(originalUrl)
-    if (url.hostname === TIKO_MEDIA_CDN_HOST && url.pathname.startsWith('/uploads/')) {
-      return `https://${TIKO_MEDIA_CDN_HOST}/cdn-cgi/image/width=${size},height=${size},fit=cover,quality=85,f=auto${url.pathname}`
+    if (url.hostname === 'data.tikocdn.org' && url.pathname.startsWith('/uploads/')) {
+      return `https://data.tikocdn.org/cdn-cgi/image/width=${size},height=${size},fit=cover,quality=85,f=auto${url.pathname}`
     }
     return url.toString()
   } catch {

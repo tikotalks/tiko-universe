@@ -1,5 +1,78 @@
 export type TikoTtsProvider = 'openai' | 'azure' | 'elevenlabs' | 'narakeet' | 'browser' | 'auto'
 
+export type TikoImageSize = 'small' | 'medium' | 'large' | 'original'
+
+export const TIKO_IMAGE_SIZES: Record<TikoImageSize, number> = {
+  small: 200,
+  medium: 800,
+  large: 1200,
+  original: 0,
+}
+
+export const TIKO_MEDIA_CDN_HOST = 'data.tikocdn.org'
+
+/**
+ * Build a CDN-resized image URL from a media original_url or upload path.
+ *
+ * For URLs on data.tikocdn.org, this produces a Cloudflare Image Resizing URL.
+ * For other URLs, the original is returned unchanged.
+ *
+ * @param originalUrl - The original image URL (typically from media API)
+ * @param size - Named size: small (200px), medium (800px), large (1200px), or original
+ * @returns CDN-resized URL or original URL if not on CDN
+ */
+export function tikoImageUrl(originalUrl: string | undefined, size: TikoImageSize = 'small'): string {
+  if (!originalUrl) return ''
+  if (size === 'original') return originalUrl
+  try {
+    const url = new URL(originalUrl)
+    if (url.hostname === TIKO_MEDIA_CDN_HOST && url.pathname.startsWith('/uploads/')) {
+      const width = TIKO_IMAGE_SIZES[size]
+      return `https://${TIKO_MEDIA_CDN_HOST}/cdn-cgi/image/width=${width},quality=${size === 'small' ? 80 : 85},f=auto${url.pathname}`
+    }
+    return url.toString()
+  } catch {
+    return ''
+  }
+}
+
+/**
+ * Build a media-API image URL: /v1/media/{id}/image/{size}
+ * This 302-redirects to the CDN-resized URL and works for both public and private images.
+ *
+ * @param mediaId - The media item ID
+ * @param size - Named size: small, medium, large, or original
+ * @param apiBaseUrl - Media API base URL (default: https://media.tikoapi.org/v1)
+ */
+export function tikoMediaImageUrl(
+  mediaId: string,
+  size: TikoImageSize = 'small',
+  apiBaseUrl = 'https://media.tikoapi.org/v1',
+): string {
+  return `${apiBaseUrl.replace(/\/$/, '')}/media/${encodeURIComponent(mediaId)}/image/${size}`
+}
+
+/**
+ * Resolve the best available image URL for display at a given size.
+ * Prefers an explicit thumbnail_url/medium_url from the API, then falls back
+ * to CDN resizing of the original_url.
+ *
+ * @param item - Media item with optional thumbnail_url, medium_url, original_url
+ * @param size - Desired display size
+ * @param apiBaseUrl - Media API base URL for building image routes from IDs
+ */
+export function resolveTikoImageUrl(
+  item: { id?: string; original_url?: string; thumbnail_url?: string; medium_url?: string },
+  size: TikoImageSize = 'small',
+  apiBaseUrl = 'https://media.tikoapi.org/v1',
+): string {
+  if (size === 'original') return item.original_url || ''
+  if (size === 'small' && item.thumbnail_url) return item.thumbnail_url
+  if (size === 'medium' && item.medium_url) return item.medium_url
+  if (item.id && !item.original_url) return tikoMediaImageUrl(item.id, size, apiBaseUrl)
+  return tikoImageUrl(item.original_url, size)
+}
+
 export interface GenerationTtsRequest {
   text: string
   language: string

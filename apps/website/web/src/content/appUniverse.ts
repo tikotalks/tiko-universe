@@ -48,7 +48,7 @@ export const tikoWebsiteAppUniverse = [
     color: '#16b8a6',
     colorLight: '#ccfbf1',
     appIcon: 'ui/check-fat',
-    iconUrl: 'https://media.tikoapi.org/v1/media/c8bfb9e8-0427-4cd9-89e2-74e09d20b8ec/download',
+    iconUrl: 'https://media.tikoapi.org/v1/media/c8bfb9e8-0427-4cd9-89e2-74e09d20b8ec/image/small',
     useWhen: [
       'a child needs to answer quickly',
       'a caregiver wants a simple prompt',
@@ -78,7 +78,7 @@ export const tikoWebsiteAppUniverse = [
     color: '#ff8a1f',
     colorLight: '#fff3e0',
     appIcon: 'ui/type',
-    iconUrl: 'https://media.tikoapi.org/v1/media/eecf2917-a885-4025-a762-9c7a8783f5af/download',
+    iconUrl: 'https://media.tikoapi.org/v1/media/eecf2917-a885-4025-a762-9c7a8783f5af/image/small',
     useWhen: [
       'a child wants to type a message',
       'saved phrases would help',
@@ -108,7 +108,7 @@ export const tikoWebsiteAppUniverse = [
     color: '#82B1FF',
     colorLight: '#e8f0ff',
     appIcon: 'education/book-2',
-    iconUrl: 'https://media.tikoapi.org/v1/media/e37943b4-582c-40ee-be3a-c47be7c6e658/download',
+    iconUrl: 'https://media.tikoapi.org/v1/media/e37943b4-582c-40ee-be3a-c47be7c6e658/image/small',
     useWhen: [
       'pictures communicate faster than text',
       'choices should be visible and easy to tap',
@@ -138,7 +138,7 @@ export const tikoWebsiteAppUniverse = [
     color: '#ef4f8f',
     colorLight: '#fce7f3',
     appIcon: 'ui/list',
-    iconUrl: 'https://media.tikoapi.org/v1/media/c2e7188c-1ac4-41d6-a29c-2b122ec812e8/download',
+    iconUrl: 'https://media.tikoapi.org/v1/media/c2e7188c-1ac4-41d6-a29c-2b122ec812e8/image/small',
     useWhen: [
       'a routine needs a clear order',
       'the next step should always be visible',
@@ -168,7 +168,7 @@ export const tikoWebsiteAppUniverse = [
     color: '#e84057',
     colorLight: '#ffe4e6',
     appIcon: 'ui/timer',
-    iconUrl: 'https://media.tikoapi.org/v1/media/ec6bad5e-8cbe-4934-b1c8-d66d80098f95/download',
+    iconUrl: 'https://media.tikoapi.org/v1/media/ec6bad5e-8cbe-4934-b1c8-d66d80098f95/image/small',
     useWhen: [
       'transitions need a visible end point',
       'waiting feels less abstract when time is on screen',
@@ -198,7 +198,7 @@ export const tikoWebsiteAppUniverse = [
     color: '#FF6B6B',
     colorLight: '#ffe4e1',
     appIcon: 'ui/talk',
-    iconUrl: 'https://media.tikoapi.org/v1/media/da85b30b-6865-41ef-9b75-71e46999de22/download',
+    iconUrl: 'https://media.tikoapi.org/v1/media/da85b30b-6865-41ef-9b75-71e46999de22/image/small',
     useWhen: [
       'a child is building language, one word at a time',
       'speaking a full sentence should take a few taps, not a keyboard',

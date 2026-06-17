@@ -226,8 +226,7 @@ public struct TikoMediaPickerSheet: View {
     }
 
     private func thumbnailURL(_ url: URL) -> URL {
-        guard url.host == "data.tikocdn.org", url.path.hasPrefix("/uploads/") else { return url }
-        return URL(string: "https://data.tikocdn.org/cdn-cgi/image/width=150,quality=80,f=auto\(url.path)") ?? url
+        TikoImageURL.resized(url, width: 150, quality: 80)
     }
 
     private struct PickerItem: Identifiable {

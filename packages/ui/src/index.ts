@@ -33,7 +33,7 @@ export {
   type TikoOpenIconOption,
   type TikoSupportedLanguagesMode,
 } from './app-config'
-export { tikoContentImageRefUrl, tikoMediaThumbnailUrl } from './media-images'
+export { tikoContentImageRefUrl, tikoMediaThumbnailUrl, tikoImageUrl, tikoMediaImageUrl, resolveTikoImageUrl, type TikoImageSize } from './media-images'
 export {
   applyTikoColorMode,
   normalizeTikoColorMode,

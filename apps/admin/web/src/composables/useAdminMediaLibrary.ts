@@ -1,4 +1,5 @@
 import { ref } from 'vue'
+import { tikoImageUrl } from '@tiko/ui'
 import { useAdminAuth } from './useAdminAuth'
 
 export interface AdminMediaItem {
@@ -193,15 +194,7 @@ export function useAdminMediaLibrary() {
   }
 
   function resizedMediaUrl(url: string, size = 160): string {
-    try {
-      const parsed = new URL(url)
-      if (parsed.host === 'data.tikocdn.org' && parsed.pathname.startsWith('/uploads/')) {
-        return `https://data.tikocdn.org/cdn-cgi/image/width=${size},height=${size},fit=cover,quality=80,f=auto${parsed.pathname}`
-      }
-    } catch {
-      // Keep non-URL values as-is.
-    }
-    return url
+    return tikoImageUrl(url, size <= 200 ? 'small' : 'medium')
   }
 
   function itemUrl(item: AdminMediaItem): string {

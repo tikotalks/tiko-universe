@@ -50,7 +50,7 @@ export async function fetchTikoMediaIcon(category: string): Promise<string> {
 }
 
 export function imageSpan(src: string, alt = '') {
-  return h('img', { class: 'tiko-icon tiko-icon--image', src, alt, loading: 'lazy', decoding: 'async', 'aria-hidden': alt ? undefined : 'true' })
+  return h('img', { class: 'tiko-icon tiko-icon--image', src: tikoMediaThumbnailUrl(src, 96), alt, loading: 'lazy', decoding: 'async', 'aria-hidden': alt ? undefined : 'true' })
 }
 
 export function iconSpan(icon: string, alt = '') {

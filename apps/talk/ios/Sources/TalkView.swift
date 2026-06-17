@@ -163,7 +163,7 @@ struct TalkView: View {
                             title: word.text,
                             background: TalkPosColor.color(for: word.pos).opacity(0.22)
                         ) {
-                            if let image = word.image, let url = URL(string: image) {
+                            if let image = word.image, let url = URL(string: TikoImageURL.resized(image, size: .small)) {
                                 TikoCachedRemoteImage(url: url) { Color.clear }
                             }
                         }

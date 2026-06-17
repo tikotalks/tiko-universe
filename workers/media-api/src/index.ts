@@ -50,6 +50,8 @@ interface MediaItem {
   tags?: string[]
   is_private: boolean
   original_url: string
+  thumbnail_url?: string
+  medium_url?: string
   created_at: string
   updated_at: string
 }
@@ -242,6 +244,8 @@ function rowToMediaItem(row: Record<string, unknown>): MediaItem {
     tags: parseStringArray(row.tags),
     is_private: dbBoolean(row.is_private),
     original_url: String(row.original_url),
+    thumbnail_url: nullableString(row.thumbnail_url),
+    medium_url: nullableString(row.medium_url),
     created_at: String(row.created_at),
     updated_at: String(row.updated_at),
   }
@@ -549,6 +553,7 @@ async function analyzeWithOpenAI(
 // POST /v1/media/upload — upload media to R2, optionally analyze, return metadata
 async function handleMediaUpload(request: Request, env: Env, access: MediaAccessContext): Promise<Response> {
   try {
+    const apiOrigin = new URL(request.url).origin
     const formData = await request.formData()
     const file = formData.get('file') as File | null
     const thumbnail = formData.get('thumbnail') as File | null
@@ -620,8 +625,8 @@ async function handleMediaUpload(request: Request, env: Env, access: MediaAccess
     const width = widthParam ? parseInt(widthParam) : undefined
     const height = heightParam ? parseInt(heightParam) : undefined
 
-    const thumbnailUrl2 = isImage ? `${baseUrl}?width=200` : (thumbnailUrl || baseUrl)
-    const mediumUrl = isImage ? `${baseUrl}?width=800` : baseUrl
+    const thumbnailUrl2 = isImage ? `${apiOrigin}/v1/media/${id}/image/small` : (thumbnailUrl || baseUrl)
+    const mediumUrl = isImage ? `${apiOrigin}/v1/media/${id}/image/medium` : baseUrl
 
     const insertSql = `INSERT INTO media (
           id, name, filename, file_size, mime_type, width, height, title, description,
@@ -665,8 +670,8 @@ async function handleMediaUpload(request: Request, env: Env, access: MediaAccess
       id,
       filename: baseKey,
       url: baseUrl,
-      thumbnail: isImage ? `${baseUrl}?width=200` : (thumbnailUrl || baseUrl),
-      medium: isImage ? `${baseUrl}?width=800` : baseUrl,
+      thumbnail: isImage ? `${apiOrigin}/v1/media/${id}/image/small` : (thumbnailUrl || baseUrl),
+      medium: isImage ? `${apiOrigin}/v1/media/${id}/image/medium` : baseUrl,
       size: file.size,
       type: file.type,
       ...metadata,
@@ -827,7 +832,7 @@ async function handleListMedia(request: Request, env: Env): Promise<Response> {
 
     const rows = await env.MEDIA_DB.prepare(
       `SELECT id, filename AS file_name, file_size, mime_type, width, height, '' AS alt_text, title,
-              description, categories AS folder, tags, is_private, owner_user_id, original_url, created_at, updated_at
+              description, categories AS folder, tags, is_private, owner_user_id, original_url, thumbnail_url, medium_url, created_at, updated_at
        FROM media
        ${where}
        ORDER BY ${safeSort} ${order}
@@ -866,7 +871,7 @@ async function handleGetMedia(request: Request, env: Env, id: string): Promise<R
     if (access instanceof Response) return access
     const row = await env.MEDIA_DB.prepare(
       `SELECT id, filename AS file_name, file_size, mime_type, width, height, '' AS alt_text, title,
-              description, categories AS folder, tags, is_private, owner_user_id, original_url, created_at, updated_at
+              description, categories AS folder, tags, is_private, owner_user_id, original_url, thumbnail_url, medium_url, created_at, updated_at
        FROM media WHERE id = ? LIMIT 1`,
     )
       .bind(id)
@@ -878,6 +883,67 @@ async function handleGetMedia(request: Request, env: Env, id: string): Promise<R
   } catch (error) {
     return json(
       { success: false, error: 'Failed to get media', details: (error as Error).message },
+      500,
+    )
+  }
+}
+
+// GET /v1/media/:id/image/:size — redirect to CDN-resized image (public) or stream (private)
+const IMAGE_SIZES: Record<string, { width: number; quality: number }> = {
+  small: { width: 200, quality: 80 },
+  medium: { width: 800, quality: 85 },
+  large: { width: 1200, quality: 85 },
+  original: { width: 0, quality: 0 },
+}
+
+async function handleMediaImage(request: Request, env: Env, id: string, size: string): Promise<Response> {
+  try {
+    const config = IMAGE_SIZES[size]
+    if (!config) return err(`Invalid size. Use one of: ${Object.keys(IMAGE_SIZES).join(', ')}`, 400)
+
+    const access = await optionalAuth(request, env)
+    if (access instanceof Response) return access
+    const row = await env.MEDIA_DB.prepare(
+      'SELECT filename AS file_name, mime_type, is_private, owner_user_id, original_url FROM media WHERE id = ? LIMIT 1',
+    )
+      .bind(id)
+      .first<{ file_name: string; mime_type: string; is_private: unknown; owner_user_id?: string | null; original_url: string }>()
+
+    if (!row) return err('Media not found', 404)
+    if (!canReadMedia(row as unknown as Record<string, unknown>, access)) return privateAccessResponse(access)
+    if (!String(row.mime_type ?? '').startsWith('image/')) return err('Media item is not an image', 400)
+
+    const isPrivate = dbBoolean(row.is_private)
+
+    // For private images, stream from R2 (CDN is public-only)
+    if (isPrivate) {
+      const r2Key = row.file_name
+      const r2Object = await env.USER_MEDIA_BUCKET.get(r2Key)
+      if (!r2Object) return err('Media file not found', 404)
+      return new Response(r2Object.body, {
+        headers: {
+          ...CORS_HEADERS,
+          'Content-Type': row.mime_type,
+          'Cache-Control': 'public, max-age=86400',
+        },
+      })
+    }
+
+    // For public images on the CDN, redirect to cdn-cgi/image resized URL
+    const originalUrl = row.original_url
+    if (size === 'original') return Response.redirect(originalUrl, 302)
+
+    const parsed = parseHttpUrl(originalUrl)
+    if (parsed && parsed.hostname === 'data.tikocdn.org' && parsed.pathname.startsWith('/uploads/')) {
+      const cdnUrl = `https://data.tikocdn.org/cdn-cgi/image/width=${config.width},quality=${config.quality},f=auto${parsed.pathname}`
+      return Response.redirect(cdnUrl, 302)
+    }
+
+    // Fallback: redirect to original URL
+    return Response.redirect(originalUrl, 302)
+  } catch (error) {
+    return json(
+      { success: false, error: 'Image resize failed', details: (error as Error).message },
       500,
     )
   }
@@ -1267,6 +1333,9 @@ export default {
         return withCors(await handleMediaAnalyze(request, env, { auth: authed }))
       }
       if (request.method === 'GET' && !id) return handleListMedia(request, env)
+      if (request.method === 'GET' && id && segments[3] === 'image' && segments[4]) {
+        return handleMediaImage(request, env, id, segments[4])
+      }
       if (request.method === 'GET' && id && segments[3] === 'download') {
         return handleMediaDownload(request, env, id)
       }
