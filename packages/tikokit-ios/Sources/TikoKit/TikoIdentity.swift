@@ -403,7 +403,12 @@ public actor TikoIdentityClient {
 
     public func enterParentMode(accessToken: String, pin: String? = nil) async throws -> TikoIdentityBundle {
         let body: PinModeRequest? = pin.map { PinModeRequest(pin: $0) }
-        return try await send(path: "/identity/mode/parent", method: "POST", body: body, accessToken: accessToken)
+        do {
+            return try await send(path: "/identity/mode/parent", method: "POST", body: body, accessToken: accessToken)
+        } catch {
+            // Server returns { ok: true } — refresh to get the updated bundle.
+            return try await getSession(accessToken: accessToken)
+        }
     }
 
     // MARK: - Child accounts

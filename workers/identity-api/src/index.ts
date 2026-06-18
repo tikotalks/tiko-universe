@@ -1161,7 +1161,17 @@ async function withTikoSessionContract(request: AnyRequest, env: Env, response: 
   const initialRoles = Array.isArray(body.roles) ? body.roles.map(String) : await activeRoles(env.IDENTITY_DB, String(body.subject.id)).catch(() => [])
   const roles = await activeRolesWithBootstrap(env, String(body.subject.id), initialRoles).catch(() => initialRoles)
   const accountType = deriveAccountType(body, roles)
-  const runtime = await deriveRuntime(env, String(body.subject.id), accountType)
+  let runtime = await deriveRuntime(env, String(body.subject.id), accountType)
+
+  // A fresh login (email verification / magic link) should always start in
+  // parent mode — reset any leftover child mode from a previous session.
+  const requestPath = new URL(request.url).pathname
+  const isFreshLogin = requestPath.includes('/email/verify') || requestPath.includes('/magic-links/verify')
+  if (isFreshLogin && runtime.mode === 'child') {
+    await updateRuntimeState(env, String(body.subject.id), { ...runtime, mode: 'parent' })
+    runtime = { ...runtime, mode: 'parent' }
+  }
+
   const capabilities = deriveCapabilities(accountType, runtime, roles)
   const displayName = typeof body.managed?.displayName === 'string'
     ? body.managed.displayName
