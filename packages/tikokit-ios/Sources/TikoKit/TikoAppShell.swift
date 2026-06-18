@@ -367,7 +367,10 @@ public struct TikoAppShell<Content: View, SettingsContent: View>: View {
                 VStack(spacing: 14) {
                     Button {
                         showingChildModeVerifyPrompt = false
-                        showingAccount = true
+                        Task { @MainActor in
+                            try? await Task.sleep(nanoseconds: 300_000_000)
+                            showingAccount = true
+                        }
                     } label: {
                         Text("Add email")
                             .font(.system(size: 17, weight: .heavy, design: .rounded))
