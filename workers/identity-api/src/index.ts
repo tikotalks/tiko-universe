@@ -335,11 +335,8 @@ async function setPin(request: Request, env: Env): Promise<Response> {
   } catch (err) {
     return Response.json({ error: 'update_failed', detail: String(err) }, { status: 500 })
   }
-  try {
-    return await sessionResponse(request, env)
-  } catch (err) {
-    return Response.json({ error: 'session_response_failed', detail: String(err) }, { status: 500 })
-  }
+  // Return a simple success — the client refreshes the full session via getSession.
+  return Response.json({ ok: true })
 }
 
 async function verifyPin(request: Request, env: Env): Promise<Response> {
