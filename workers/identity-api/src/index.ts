@@ -301,8 +301,15 @@ async function handleManagedIdentity(request: Request, env: Env): Promise<Respon
 async function setPin(request: Request, env: Env): Promise<Response> {
   const session = await requireIdentitySession(request, env)
   if (!session) return Response.json({ error: 'invalid_session' }, { status: 401 })
-  const { accountType, runtime: currentRuntime } = await subjectContextForSubject(env, session.subjectId)
-  if (accountType === 'temporary' || accountType === 'child_account') return Response.json({ error: 'pin_not_allowed' }, { status: 403 })
+  let accountType: string, currentRuntime: RuntimeState
+  try {
+    const ctx = await subjectContextForSubject(env, session.subjectId)
+    accountType = ctx.accountType
+    currentRuntime = ctx.runtime
+  } catch (err) {
+    return Response.json({ error: 'context_failed', detail: String(err) }, { status: 500 })
+  }
+  if (accountType === 'temporary' || accountType === 'child_account') return Response.json({ error: 'pin_not_allowed', accountType }, { status: 403 })
 
   const body = await request.json().catch(() => ({})) as { pin?: string; currentPin?: string }
   const pin = String(body.pin ?? '')
@@ -316,9 +323,23 @@ async function setPin(request: Request, env: Env): Promise<Response> {
   }
   await clearRateLimit(env, rateKey, 'pin')
 
-  const nextRuntime = { ...currentRuntime, pinHash: await hashCredentialSecret(pin, env, 'pin') }
-  await updateRuntimeState(env, session.subjectId, nextRuntime)
-  return sessionResponse(request, env)
+  let pinHash: string
+  try {
+    pinHash = await hashCredentialSecret(pin, env, 'pin')
+  } catch (err) {
+    return Response.json({ error: 'hash_failed', detail: String(err) }, { status: 500 })
+  }
+  const nextRuntime = { ...currentRuntime, pinHash }
+  try {
+    await updateRuntimeState(env, session.subjectId, nextRuntime)
+  } catch (err) {
+    return Response.json({ error: 'update_failed', detail: String(err) }, { status: 500 })
+  }
+  try {
+    return await sessionResponse(request, env)
+  } catch (err) {
+    return Response.json({ error: 'session_response_failed', detail: String(err) }, { status: 500 })
+  }
 }
 
 async function verifyPin(request: Request, env: Env): Promise<Response> {
