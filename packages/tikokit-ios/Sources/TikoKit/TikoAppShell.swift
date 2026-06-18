@@ -206,6 +206,7 @@ public struct TikoAppShell<Content: View, SettingsContent: View>: View {
     @State private var showingProfileMenu = false
     @State private var showingParentCodeEntry = false
     @State private var showingCreateParentCode = false
+    @State private var showingChildModeVerifyPrompt = false
     @State private var fetchedIconURL: URL? = nil
     @State private var fetchedAvatarURL: URL? = nil
     @State private var splashVisible = true
@@ -355,6 +356,40 @@ public struct TikoAppShell<Content: View, SettingsContent: View>: View {
                 onClose: { showingCreateParentCode = false }
             )
         }
+        .tikoPopup(isPresented: $showingChildModeVerifyPrompt) {
+            TikoPopupCard(
+                title: "Verify your email",
+                subtitle: "Child mode needs a verified email so you can recover your account if you forget your PIN.",
+                icon: "envelope.fill",
+                appColor: appColor,
+                onClose: { showingChildModeVerifyPrompt = false }
+            ) {
+                VStack(spacing: 14) {
+                    Button {
+                        showingChildModeVerifyPrompt = false
+                        showingProfileMenu = true
+                    } label: {
+                        Text("Add email")
+                            .font(.system(size: 17, weight: .heavy, design: .rounded))
+                            .foregroundStyle(.white)
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 15)
+                            .background(appColor.palette.primary)
+                            .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
+                    }
+                    .buttonStyle(.plain)
+
+                    Button {
+                        showingChildModeVerifyPrompt = false
+                    } label: {
+                        Text("Not now")
+                            .font(.system(size: 15, weight: .heavy, design: .rounded))
+                            .foregroundStyle(.secondary)
+                    }
+                    .buttonStyle(.plain)
+                }
+            }
+        }
         .overlay {
             if splashVisible {
                 TikoSplashOverlay(appColor: appColor)
@@ -421,6 +456,12 @@ public struct TikoAppShell<Content: View, SettingsContent: View>: View {
             // show the PIN entry to EXIT child mode rather than trying to enter again.
             if storedBundle?.isChildMode == true {
                 showingParentCodeEntry = true
+                return
+            }
+            // Child mode requires a verified email so the account can be recovered
+            // if the parent forgets their PIN.
+            if storedBundle?.account?.emailVerified != true {
+                showingChildModeVerifyPrompt = true
                 return
             }
             if storedBundle?.isPinConfigured == true {
