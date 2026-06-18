@@ -1089,17 +1089,14 @@ public struct TikoAccountSheet: View {
                             // Background: favourite colour or default
                             Circle().fill(profileFavoriteColor ?? appColor.palette.primary.opacity(0.18))
 
-                            // Image (assumed transparent background, sits on the colour)
-                            if let url = URL(string: profilePrefs.avatarURL), !profilePrefs.avatarURL.isEmpty {
-                                AsyncImage(url: url) { phase in
-                                    if case .success(let image) = phase {
-                                        image.resizable().scaledToFit()
-                                    } else {
-                                        Image(systemName: "person.crop.circle.fill")
-                                            .font(.system(size: 46))
-                                            .foregroundStyle(.white.opacity(0.6))
-                                    }
+                            // Image (resolved from media ID)
+                            if !profilePrefs.avatarURL.isEmpty {
+                                TikoMediaImage(imageRef: profilePrefs.avatarURL) {
+                                    Image(systemName: "person.crop.circle.fill")
+                                        .font(.system(size: 46))
+                                        .foregroundStyle(.white.opacity(0.6))
                                 }
+                                .scaledToFit()
                             } else {
                                 Image(systemName: "person.crop.circle.fill")
                                     .font(.system(size: 46))
