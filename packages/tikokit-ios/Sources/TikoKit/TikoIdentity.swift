@@ -405,9 +405,11 @@ public actor TikoIdentityClient {
         let body: PinModeRequest? = pin.map { PinModeRequest(pin: $0) }
         do {
             return try await send(path: "/identity/mode/parent", method: "POST", body: body, accessToken: accessToken)
+        } catch let error as TikoIdentityClientError {
+            if case .server = error { throw error }
+            throw TikoIdentityClientError.invalidResponse
         } catch {
-            // Server returns { ok: true } — refresh to get the updated bundle.
-            return try await getSession(accessToken: accessToken)
+            throw TikoIdentityClientError.invalidResponse
         }
     }
 

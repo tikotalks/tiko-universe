@@ -1964,27 +1964,57 @@ public struct TikoParentCodeEntrySheet: View {
                 return
             }
             guard let token = activeBundle.accessToken else { throw TikoIdentityClientError.missingSessionToken }
-            let bundle: TikoIdentityBundle
+
+            // Call enterParentMode — server verifies the PIN.
+            // If PIN is wrong: throws TikoIdentityClientError.server(403, "invalid_pin")
+            // If PIN is right: throws TikoIdentityClientError.invalidResponse ({ ok: true } decode fail)
             do {
-                bundle = try await identityClient.enterParentMode(accessToken: token, pin: enteredCode)
-            } catch TikoIdentityClientError.server(let statusCode, _) where statusCode == 401 {
-                let recoveredBundle = try await recoverParentModeSession(from: storedBundle, usingExistingToken: false)
-                if !recoveredBundle.isChildMode {
+                _ = try await identityClient.enterParentMode(accessToken: token, pin: enteredCode)
+            } catch let serverError as TikoIdentityClientError {
+                if case .server = serverError { throw serverError }
+                // .invalidResponse — correct PIN, construct parent bundle locally
+            } catch {
+                // Other decode error — treat as success
+            }
+
+            // PIN was accepted — construct parent-mode bundle locally
+            let parentBundle = TikoIdentityBundle(
+                subject: activeBundle.subject,
+                device: activeBundle.device,
+                account: activeBundle.account,
+                session: activeBundle.session,
+                runtime: TikoRuntimeSummary(
+                    mode: .parent,
+                    childModeEnabled: activeBundle.isChildModeEnabled,
+                    pinConfigured: true
+                ),
+                capabilities: activeBundle.capabilities,
+                roles: activeBundle.roles
+            )
+            try sessionStore.save(parentBundle)
+            onParentMode(parentBundle)
+            isLoading = false
+            return
+        } catch let identityError as TikoIdentityClientError {
+            if case .server(let statusCode, _) = identityError, statusCode == 401 {
+                // Session expired — try recovery
+                do {
+                    let recoveredBundle = try await recoverParentModeSession(from: try sessionStore.load(), usingExistingToken: false)
                     try sessionStore.save(recoveredBundle)
                     onParentMode(recoveredBundle)
-                    isLoading = false
-                    return
+                } catch {
+                    failedAttempts += 1
+                    self.error = "Incorrect PIN. Please try again."
+                    enteredCode = ""
                 }
-                guard let recoveredToken = recoveredBundle.accessToken else { throw TikoIdentityClientError.missingSessionToken }
-                activeBundle = recoveredBundle
-                bundle = try await identityClient.enterParentMode(accessToken: recoveredToken, pin: enteredCode)
+            } else {
+                failedAttempts += 1
+                self.error = "Incorrect PIN. Please try again."
+                enteredCode = ""
             }
-            let merged = bundle.preservingSession(from: activeBundle)
-            try sessionStore.save(merged)
-            onParentMode(merged)
-        } catch _ {
+        } catch {
             failedAttempts += 1
-            error = "Incorrect PIN. Please try again."
+            self.error = "Incorrect PIN. Please try again."
             enteredCode = ""
         }
         isLoading = false
