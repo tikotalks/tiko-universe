@@ -376,7 +376,7 @@ async function removePin(request: Request, env: Env): Promise<Response> {
   }
   await clearRateLimit(env, rateKey, 'pin')
   await updateRuntimeState(env, session.subjectId, { mode: 'parent', childModeEnabled: false })
-  return sessionResponse(request, env)
+  return Response.json({ ok: true })
 }
 
 async function enableChildMode(request: Request, env: Env): Promise<Response> {
@@ -386,18 +386,18 @@ async function enableChildMode(request: Request, env: Env): Promise<Response> {
   if (accountType !== 'verified' && accountType !== 'profile_manager') return Response.json({ error: 'child_mode_not_allowed' }, { status: 403 })
   if (!runtime.pinHash) return Response.json({ error: 'pin_required' }, { status: 409 })
   await updateRuntimeState(env, session.subjectId, { ...runtime, childModeEnabled: true })
-  return sessionResponse(request, env)
+  return Response.json({ ok: true })
 }
 
 async function enterChildMode(request: Request, env: Env): Promise<Response> {
   const session = await requireIdentitySession(request, env)
   if (!session) return Response.json({ error: 'invalid_session' }, { status: 401 })
   const { accountType, runtime } = await subjectContextForSubject(env, session.subjectId)
-  if (accountType === 'child_account') return sessionResponse(request, env)
+  if (accountType === 'child_account') return Response.json({ ok: true })
   if (accountType !== 'verified' && accountType !== 'profile_manager') return Response.json({ error: 'child_mode_not_allowed' }, { status: 403 })
   if (!runtime.pinHash || !runtime.childModeEnabled) return Response.json({ error: 'child_mode_not_enabled' }, { status: 409 })
   await updateRuntimeState(env, session.subjectId, { ...runtime, mode: 'child' })
-  return sessionResponse(request, env)
+  return Response.json({ ok: true })
 }
 
 async function enterParentMode(request: Request, env: Env): Promise<Response> {
@@ -419,7 +419,7 @@ async function enterParentMode(request: Request, env: Env): Promise<Response> {
     if (needsCredentialRehash(runtime.pinHash)) await updateRuntimeState(env, session.subjectId, { ...runtime, pinHash: await hashCredentialSecret(pin, env, 'pin') })
   }
   await updateRuntimeState(env, session.subjectId, { ...runtime, mode: 'parent' })
-  return sessionResponse(request, env)
+  return Response.json({ ok: true })
 }
 
 async function createManagedChild(request: Request, env: Env): Promise<Response> {

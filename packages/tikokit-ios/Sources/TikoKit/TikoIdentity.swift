@@ -386,11 +386,19 @@ public actor TikoIdentityClient {
     // MARK: - Runtime mode transitions
 
     public func enableChildMode(accessToken: String) async throws -> TikoIdentityBundle {
-        try await send(path: "/identity/mode/child/enable", method: "POST", body: EmptyBody?.none, accessToken: accessToken)
+        do {
+            return try await send(path: "/identity/mode/child/enable", method: "POST", body: EmptyBody?.none, accessToken: accessToken)
+        } catch {
+            return try await getSession(accessToken: accessToken)
+        }
     }
 
     public func enterChildMode(accessToken: String) async throws -> TikoIdentityBundle {
-        try await send(path: "/identity/mode/child", method: "POST", body: EmptyBody?.none, accessToken: accessToken)
+        do {
+            return try await send(path: "/identity/mode/child", method: "POST", body: EmptyBody?.none, accessToken: accessToken)
+        } catch {
+            return try await getSession(accessToken: accessToken)
+        }
     }
 
     public func enterParentMode(accessToken: String, pin: String? = nil) async throws -> TikoIdentityBundle {
