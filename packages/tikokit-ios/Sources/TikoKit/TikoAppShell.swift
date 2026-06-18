@@ -417,7 +417,13 @@ public struct TikoAppShell<Content: View, SettingsContent: View>: View {
             }
         }
         .onChange(of: profilePrefs.avatarURL) { _, newValue in
-            fetchedAvatarURL = URL(string: newValue)
+            Task {
+                if newValue.isEmpty {
+                    fetchedAvatarURL = nil
+                } else {
+                    fetchedAvatarURL = await MediaImageResolver.shared.resolve(newValue)
+                }
+            }
         }
         .task {
             await fetchIconIfNeeded()
@@ -546,8 +552,12 @@ public struct TikoAppShell<Content: View, SettingsContent: View>: View {
 
     private func syncAvatarFromProfile(accessToken: String) async {
         guard let profile = try? await TikoIdentityClient().getProfile(accessToken: accessToken),
-              let avatarUrl = profile.avatarUrl, !avatarUrl.isEmpty else { return }
-        profilePrefs.setAvatarURL(avatarUrl)
+              let avatarId = profile.avatarUrl, !avatarId.isEmpty else { return }
+        profilePrefs.setAvatarURL(avatarId)
+        // Pre-populate cache if we can resolve quickly
+        if let resolved = await MediaImageResolver.shared.resolve(avatarId) {
+            fetchedAvatarURL = resolved
+        }
     }
 
     private func fetchIconIfNeeded() async {
@@ -568,14 +578,36 @@ public struct TikoAppShell<Content: View, SettingsContent: View>: View {
     }
 
     private func fetchAvatarIfNeeded() async {
-        if !profilePrefs.avatarURL.isEmpty, let url = URL(string: profilePrefs.avatarURL) {
-            fetchedAvatarURL = url
+        if !profilePrefs.avatarURL.isEmpty {
+            // profilePrefs.avatarURL stores a media ID — resolve to URL for display
+            let resolved = await MediaImageResolver.shared.resolve(profilePrefs.avatarURL)
+            fetchedAvatarURL = resolved
             return
         }
-        if let url = await fetchMediaImage(urlString: "https://media.tikoapi.org/v1/media?type=image&limit=100", random: true) {
-            profilePrefs.setAvatarURL(url.absoluteString)
-            fetchedAvatarURL = url
+        // Pick a random avatar and store its media ID
+        if let mediaId = await fetchRandomMediaId() {
+            profilePrefs.setAvatarURL(mediaId)
+            // Sync to server profile
+            if let token = identityBundle?.accessToken {
+                try? await TikoIdentityClient().updateProfile(
+                    accessToken: token,
+                    patch: TikoIdentityProfile(avatarUrl: mediaId)
+                )
+            }
+            let resolved = await MediaImageResolver.shared.resolve(mediaId)
+            fetchedAvatarURL = resolved
         }
+    }
+
+    private func fetchRandomMediaId() async -> String? {
+        guard let url = URL(string: "https://media.tikoapi.org/v1/media?type=image&limit=100"),
+              let (data, response) = try? await URLSession.shared.data(from: url),
+              let http = response as? HTTPURLResponse, (200..<300).contains(http.statusCode),
+              let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
+              let items = json["data"] as? [[String: Any]],
+              !items.isEmpty else { return nil }
+        let item = items.randomElement()!
+        return item["id"] as? String
     }
 
     private func fetchMediaImage(urlString: String, random: Bool) async -> URL? {

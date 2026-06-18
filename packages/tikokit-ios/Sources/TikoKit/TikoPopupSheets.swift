@@ -1058,13 +1058,15 @@ public struct TikoAccountSheet: View {
         .tikoMediaPickerPopup(
             isPresented: $showingAvatarPicker,
             appColor: appColor,
-            title: labels.chooseAvatar
-        ) { url in
-            profilePrefs.setAvatarURL(url.absoluteString)
-            if let token = (try? sessionStore.load())?.accessToken {
-                Task { try? await identityClient.updateProfile(accessToken: token, patch: TikoIdentityProfile(avatarUrl: url.absoluteString)) }
+            title: labels.chooseAvatar,
+            onSelectMedia: { selection in
+                let avatarId = selection.id ?? selection.url.absoluteString
+                profilePrefs.setAvatarURL(avatarId)
+                if let token = (try? sessionStore.load())?.accessToken {
+                    Task { try? await identityClient.updateProfile(accessToken: token, patch: TikoIdentityProfile(avatarUrl: avatarId)) }
+                }
             }
-        }
+        )
         .tikoPopup(isPresented: $showingAccountActions) {
             accountActionsCard
         }
