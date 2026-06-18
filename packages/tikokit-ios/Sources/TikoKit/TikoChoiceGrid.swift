@@ -11,12 +11,14 @@ public enum TikoChoiceStyle: String, CaseIterable, Codable, Sendable {
     case tiles
     case buttons
     case compact
+    case textTile
 
     public var title: String {
         switch self {
         case .tiles: "Tiles"
         case .buttons: "Buttons"
         case .compact: "Compact"
+        case .textTile: "Text"
         }
     }
 
@@ -25,6 +27,7 @@ public enum TikoChoiceStyle: String, CaseIterable, Codable, Sendable {
         case .tiles: "square.grid.2x2.fill"
         case .buttons: "rectangle.roundedtop.fill"
         case .compact: "rectangle.grid.1x2.fill"
+        case .textTile: "textformat.size"
         }
     }
 }
@@ -77,6 +80,7 @@ public struct TikoAnswerButton: View {
     private let style: TikoChoiceStyle
     private let action: () -> Void
     @Environment(\.colorScheme) private var colorScheme
+    @Environment(\.horizontalSizeClass) private var sizeClass
 
     public init(choice: TikoAnswerChoice, style: TikoChoiceStyle = .tiles, action: @escaping () -> Void) {
         self.choice = choice
@@ -98,7 +102,10 @@ public struct TikoAnswerButton: View {
         case .tiles:
             TikoSquareTile(
                 title: choice.label,
-                background: choice.resolvedColor ?? tileColor
+                background: choice.resolvedColor ?? tileColor,
+                labelFont: sizeClass == .regular
+                    ? Font.system(.title2, design: .rounded).weight(.heavy)
+                    : Font.system(.caption, design: .rounded).weight(.heavy)
             ) {
                 if let ref = choice.imageRef, !ref.isEmpty {
                     TikoMediaImage(imageRef: ref) {
@@ -162,6 +169,17 @@ public struct TikoAnswerButton: View {
             .background(tileColor)
             .clipShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
             .shadow(color: .black.opacity(0.16), radius: 12, x: 0, y: 10)
+        case .textTile:
+            Text(choice.label)
+                .font(.system(size: sizeClass == .regular ? 64 : 48, weight: .heavy, design: .rounded))
+                .foregroundStyle(.white)
+                .minimumScaleFactor(0.5)
+                .lineLimit(2)
+                .multilineTextAlignment(.center)
+                .frame(maxWidth: .infinity, minHeight: sizeClass == .regular ? 140 : 110)
+                .background(tileColor)
+                .clipShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
+                .shadow(color: .black.opacity(0.16), radius: 12, x: 0, y: 10)
         }
     }
 
@@ -218,7 +236,7 @@ public struct TikoChoiceGrid: View {
 
     public var body: some View {
         Group {
-            if style == .tiles {
+            if style == .tiles || style == .textTile {
                 LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: tileSpacing) {
                     answerButtons
                 }
