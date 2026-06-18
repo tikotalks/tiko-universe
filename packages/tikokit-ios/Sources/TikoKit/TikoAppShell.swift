@@ -565,12 +565,12 @@ private struct TikoSplashOverlay: View {
         appColor.palette.primary
             .overlay {
                 GeometryReader { geo in
-                    Image("TikoLogo")
+                    Image("TikoLogo", bundle: .module)
                         .resizable()
                         .renderingMode(.template)
                         .scaledToFit()
-                        .frame(width: geo.size.width * 0.3, height: geo.size.width * 0.3)
-                        .foregroundColor(.white.opacity(0.5))
+                        .frame(width: geo.size.width * 0.28, height: geo.size.width * 0.28)
+                        .foregroundColor(.white.opacity(0.88))
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
                 }
             }
