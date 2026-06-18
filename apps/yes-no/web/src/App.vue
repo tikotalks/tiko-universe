@@ -223,8 +223,8 @@ const labels = computed(() => {
 const shellAppName = computed(() => runtimeAppConfig.value.title || labels.value.appName)
 
 const hardcodedAnswers = computed<AnswerTile[]>(() => [
-  { id: 'yes', label: labels.value.yes, speech: labels.value.yes, color: 'green', icon: 'ui/check-fat' },
-  { id: 'no', label: labels.value.no, speech: labels.value.no, color: 'red', icon: 'wayfinding/cross' }
+  { id: 'yes', label: labels.value.yes, speech: labels.value.yes, color: 'green', icon: 'ui/check-fat', imageRef: 'c8bfb9e8-0427-4cd9-89e2-74e09d20b8ec' },
+  { id: 'no', label: labels.value.no, speech: labels.value.no, color: 'red', icon: 'wayfinding/cross', imageRef: 'c3c40f22-8968-413c-82d5-8cbd5bf57c55' }
 ])
 
 const defaultChoices = computed<AnswerTile[]>(() => {

@@ -113,7 +113,7 @@ private let builtInAnswerTranslations: [String: [String: String]] = [
     "later": ["nl": "Later", "fr": "Plus tard", "es": "Más tarde", "mt": "Aktar tard", "de": "Später"],
 ]
 
-private func builtInAnswerTile(id: String, label: String, color: String, icon: String) -> YesNoAnswerTile {
+private func builtInAnswerTile(id: String, label: String, color: String, icon: String, imageRef: String? = nil) -> YesNoAnswerTile {
     let translations = builtInAnswerTranslations[id]
     return YesNoAnswerTile(
         id: id,
@@ -122,6 +122,7 @@ private func builtInAnswerTile(id: String, label: String, color: String, icon: S
         labelTranslations: translations,
         speechTranslations: translations,
         color: color,
+        imageRef: imageRef,
         icon: icon
     )
 }
@@ -134,8 +135,8 @@ private let builtInAnswerSets: [YesNoAnswerSet] = [
         color: TikoColors.green.name,
         order: 0,
         answers: [
-            builtInAnswerTile(id: "yes", label: "Yes", color: TikoColors.green.name, icon: "ui/check-fat"),
-            builtInAnswerTile(id: "no", label: "No", color: TikoColors.red.name, icon: "wayfinding/cross")
+            builtInAnswerTile(id: "yes", label: "Yes", color: TikoColors.green.name, icon: "ui/check-fat", imageRef: "c8bfb9e8-0427-4cd9-89e2-74e09d20b8ec"),
+            builtInAnswerTile(id: "no", label: "No", color: TikoColors.red.name, icon: "wayfinding/cross", imageRef: "c3c40f22-8968-413c-82d5-8cbd5bf57c55")
         ]
     ),
     YesNoAnswerSet(
@@ -296,8 +297,8 @@ struct YesNoView: View {
 
     private var hardcodedChoices: [TikoAnswerChoice] {
         [
-            TikoAnswerChoice(id: "yes", label: i18n.t("yesNo.answers.yes"), icon: .openIcon("ui/check-fat"), tone: .primary),
-            TikoAnswerChoice(id: "no", label: i18n.t("yesNo.answers.no"), icon: .openIcon("wayfinding/cross"), tone: .secondary)
+            TikoAnswerChoice(id: "yes", label: i18n.t("yesNo.answers.yes"), icon: .openIcon("ui/check-fat"), tone: .primary, imageRef: "c8bfb9e8-0427-4cd9-89e2-74e09d20b8ec"),
+            TikoAnswerChoice(id: "no", label: i18n.t("yesNo.answers.no"), icon: .openIcon("wayfinding/cross"), tone: .secondary, imageRef: "c3c40f22-8968-413c-82d5-8cbd5bf57c55")
         ]
     }
 
