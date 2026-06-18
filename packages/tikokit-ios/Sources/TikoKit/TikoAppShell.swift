@@ -483,22 +483,30 @@ public struct TikoAppShell<Content: View, SettingsContent: View>: View {
                     showingCreateParentCode = true
                     return
                 }
-                do {
-                    let client = TikoIdentityClient()
-                    var bundle = storedBundle!
-                    if !bundle.isChildModeEnabled {
-                        bundle = try await client.enableChildMode(accessToken: token)
-                        try TikoDeviceSessionStore().save(bundle.preservingSession(from: storedBundle!))
-                    }
-                    let childBundle = try await client.enterChildMode(accessToken: bundle.accessToken ?? token)
-                    let mergedChild = childBundle.preservingSession(from: storedBundle!)
-                    try TikoDeviceSessionStore().save(mergedChild)
-                    identityBundle = mergedChild
-                } catch {
-                    // Enable/enter failed — show the PIN sheet so the user gets
-                    // feedback and can retry the full flow.
+                // PIN already set — just enable + enter child mode.
+                // Ignore decode errors (server returns { ok: true }).
+                let client = TikoIdentityClient()
+                do { _ = try await client.enableChildMode(accessToken: token) } catch TikoIdentityClientError.server(let statusCode, let body) {
                     showingCreateParentCode = true
-                }
+                    return
+                } catch {}
+                do { _ = try await client.enterChildMode(accessToken: token) } catch TikoIdentityClientError.server(let statusCode, let body) {
+                    showingCreateParentCode = true
+                    return
+                } catch {}
+
+                // Construct child-mode bundle locally
+                let childBundle = TikoIdentityBundle(
+                    subject: storedBundle!.subject,
+                    device: storedBundle!.device,
+                    account: storedBundle!.account,
+                    session: storedBundle!.session,
+                    runtime: TikoRuntimeSummary(mode: .child, childModeEnabled: true, pinConfigured: true),
+                    capabilities: storedBundle!.capabilities,
+                    roles: storedBundle!.roles
+                )
+                try? TikoDeviceSessionStore().save(childBundle)
+                identityBundle = childBundle
             } else {
                 // No PIN yet — show create flow
                 showingCreateParentCode = true
