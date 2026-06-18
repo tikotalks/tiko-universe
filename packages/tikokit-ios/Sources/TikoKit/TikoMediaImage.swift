@@ -14,6 +14,10 @@ public actor MediaImageResolver {
     private var cache: [String: URL] = [:]
 
     private struct MediaResponse: Decodable {
+        let data: MediaItem?
+    }
+
+    private struct MediaItem: Decodable {
         let original_url: String?
     }
 
@@ -35,7 +39,7 @@ public actor MediaImageResolver {
             let (data, response) = try await URLSession.shared.data(from: url)
             guard let http = response as? HTTPURLResponse, (200..<300).contains(http.statusCode) else { return nil }
             let result = try JSONDecoder().decode(MediaResponse.self, from: data)
-            if let originalURLString = result.original_url, let resolved = URL(string: originalURLString) {
+            if let originalURLString = result.data?.original_url, let resolved = URL(string: originalURLString) {
                 cache[imageRef] = resolved
                 return resolved
             }
