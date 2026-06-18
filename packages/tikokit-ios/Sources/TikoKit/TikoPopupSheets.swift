@@ -1708,7 +1708,10 @@ public struct TikoAccountSheet: View {
                 userName = name
             }
             userEmail = bundle.account?.email ?? emailInput
+            isSignedIn = bundle.account?.emailVerified == true
+            signedInEmail = bundle.account?.email
             isLoading = false
+            onIdentityChanged()
             onClose()
         } catch {
             otpCode = ""
@@ -2014,8 +2017,10 @@ public struct TikoCreateParentCodeSheet: View {
             let childBundle = bundle.preservingSession(from: initialBundle)
             try sessionStore.save(childBundle)
             onChildMode(childBundle)
+        } catch TikoIdentityClientError.server(let statusCode, let body) {
+            self.error = "Could not save PIN (\(statusCode)). \(body)"
         } catch {
-            self.error = "Could not save PIN. Please try again."
+            self.error = "Could not save PIN. \(error.localizedDescription)"
         }
         isLoading = false
     }
