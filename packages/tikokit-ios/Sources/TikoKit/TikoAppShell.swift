@@ -317,7 +317,7 @@ public struct TikoAppShell<Content: View, SettingsContent: View>: View {
         }
         .tikoAccountPopup(isPresented: $showingAccount, appName: appName, appColor: appColor, profilePrefs: profilePrefs, onIdentityChanged: {
             Task { @MainActor in
-                identityBundle = await rebootstrapIdentity()
+                identityBundle = await refreshIdentityBundle()
                 fetchedAvatarURL = nil
                 await fetchAvatarIfNeeded()
             }
