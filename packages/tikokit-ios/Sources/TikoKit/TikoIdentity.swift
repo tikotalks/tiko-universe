@@ -284,11 +284,11 @@ public actor TikoIdentityClient {
         try await send(path: "/identity/email/verify", method: "POST", body: VerifyRequest(token: token, otp: nil), accessToken: nil)
     }
 
-    public func verifyOtp(otp: String) async throws -> TikoIdentityBundle {
+    public func verifyOtp(otp: String, accessToken: String? = nil) async throws -> TikoIdentityBundle {
         let sanitized = otp.filter(\.isNumber)
-        tikoIdentityLog.notice("OTP verify → POST /identity/email/verify digits=\(sanitized.count, privacy: .public)")
+        tikoIdentityLog.notice("OTP verify → POST /identity/email/verify digits=\(sanitized.count, privacy: .public) hasToken=\(accessToken != nil, privacy: .public)")
         do {
-            let bundle: TikoIdentityBundle = try await send(path: "/identity/email/verify", method: "POST", body: VerifyRequest(token: nil, otp: sanitized), accessToken: nil)
+            let bundle: TikoIdentityBundle = try await send(path: "/identity/email/verify", method: "POST", body: VerifyRequest(token: nil, otp: sanitized), accessToken: accessToken)
             tikoIdentityLog.notice("OTP verify OK subject=\(bundle.subject.id, privacy: .public) hasToken=\(bundle.accessToken != nil, privacy: .public)")
             return bundle
         } catch {

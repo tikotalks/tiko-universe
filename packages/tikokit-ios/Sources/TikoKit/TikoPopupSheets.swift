@@ -1934,7 +1934,8 @@ public struct TikoParentCodeEntrySheet: View {
         isLoading = true
         resetError = nil
         do {
-            let bundle = try await identityClient.verifyOtp(otp: resetOtp)
+            let token = (try? sessionStore.load())?.accessToken
+            let bundle = try await identityClient.verifyOtp(otp: resetOtp, accessToken: token)
             try sessionStore.save(bundle)
             // Server already reset to parent mode and cleared the PIN.
             // Refresh to get the clean bundle.
