@@ -1775,6 +1775,11 @@ public struct TikoParentCodeEntrySheet: View {
     @State private var enteredCode = ""
     @State private var isLoading = false
     @State private var error: String? = nil
+    @State private var failedAttempts = 0
+    @State private var showingResetFlow = false
+    @State private var resetOtp = ""
+    @State private var resetOtpSent = false
+    @State private var resetError: String? = nil
     @AppStorage("tiko.language") private var languageID = "en"
 
     private let identityClient = TikoIdentityClient()
@@ -1790,38 +1795,107 @@ public struct TikoParentCodeEntrySheet: View {
         let labels = TikoIdentityLabels.forLanguage(languageID)
 
         TikoPopupCard(
-            title: labels.parentMode,
-            subtitle: labels.parentModeSubtitle,
-            icon: "lock.fill",
+            title: showingResetFlow ? "Reset PIN" : labels.parentMode,
+            subtitle: showingResetFlow ? "Enter the code sent to your email." : labels.parentModeSubtitle,
+            icon: showingResetFlow ? "envelope.fill" : "lock.fill",
             appColor: appColor,
             onClose: onClose
         ) {
-            VStack(spacing: 12) {
-                TextField("••••", text: $enteredCode)
+            if showingResetFlow {
+                resetFlowContent(labels: labels)
+            } else {
+                pinEntryContent(labels: labels)
+            }
+        }
+    }
+
+    @ViewBuilder
+    private func pinEntryContent(labels: TikoIdentityLabels) -> some View {
+        VStack(spacing: 12) {
+            TextField("••••", text: $enteredCode)
+                .font(.system(size: 28, weight: .heavy, design: .monospaced))
+                .multilineTextAlignment(.center)
+                .keyboardType(.numberPad)
+                .padding(15)
+                .background(Color(.systemBackground))
+                .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+                .onChange(of: enteredCode) { _, new in
+                    let filtered = String(new.filter { $0.isNumber }.prefix(4))
+                    if filtered != new { enteredCode = filtered }
+                }
+
+            if let error {
+                Text(error)
+                    .font(.system(size: 13, weight: .semibold))
+                    .foregroundStyle(.red)
+                    .multilineTextAlignment(.center)
+            }
+
+            Button {
+                Task { await verifyCode() }
+            } label: {
+                Group {
+                    if isLoading { ProgressView().tint(.white) }
+                    else { Text("Enable parent mode") }
+                }
+                .font(.system(size: 17, weight: .heavy, design: .rounded))
+                .foregroundStyle(.white)
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 15)
+                .background(appColor.palette.primary)
+                .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
+            }
+            .buttonStyle(.plain)
+            .disabled(enteredCode.count != 4 || isLoading)
+
+            if failedAttempts >= 3 {
+                Button {
+                    Task { await sendResetOtp() }
+                } label: {
+                    Text("Forgot PIN? Reset via email")
+                        .font(.system(size: 14, weight: .heavy, design: .rounded))
+                        .foregroundStyle(appColor.palette.primary)
+                }
+                .buttonStyle(.plain)
+                .disabled(isLoading)
+            }
+        }
+    }
+
+    @ViewBuilder
+    private func resetFlowContent(labels: TikoIdentityLabels) -> some View {
+        VStack(spacing: 12) {
+            if !resetOtpSent {
+                Text("Sending code to your email…")
+                    .font(.system(size: 14, weight: .semibold))
+                    .foregroundStyle(.secondary)
+                ProgressView()
+            } else {
+                TextField("••••••", text: $resetOtp)
                     .font(.system(size: 28, weight: .heavy, design: .monospaced))
                     .multilineTextAlignment(.center)
                     .keyboardType(.numberPad)
                     .padding(15)
                     .background(Color(.systemBackground))
                     .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
-                    .onChange(of: enteredCode) { _, new in
-                        let filtered = String(new.filter { $0.isNumber }.prefix(4))
-                        if filtered != new { enteredCode = filtered }
+                    .onChange(of: resetOtp) { _, new in
+                        let filtered = String(new.filter { $0.isNumber }.prefix(6))
+                        if filtered != new { resetOtp = filtered }
                     }
 
-                if let error {
-                    Text(error)
+                if let resetError {
+                    Text(resetError)
                         .font(.system(size: 13, weight: .semibold))
                         .foregroundStyle(.red)
                         .multilineTextAlignment(.center)
                 }
 
                 Button {
-                    Task { await verifyCode() }
+                    Task { await verifyResetOtp() }
                 } label: {
                     Group {
                         if isLoading { ProgressView().tint(.white) }
-                        else { Text("Enable parent mode") }
+                        else { Text("Verify and reset PIN") }
                     }
                     .font(.system(size: 17, weight: .heavy, design: .rounded))
                     .foregroundStyle(.white)
@@ -1831,9 +1905,48 @@ public struct TikoParentCodeEntrySheet: View {
                     .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
                 }
                 .buttonStyle(.plain)
-                .disabled(enteredCode.count != 4 || isLoading)
+                .disabled(resetOtp.count != 6 || isLoading)
             }
         }
+    }
+
+    private func sendResetOtp() async {
+        isLoading = true
+        error = nil
+        do {
+            let bundle = try sessionStore.load()
+            let email = bundle?.account?.email ?? ""
+            let token = bundle?.accessToken
+            if !email.isEmpty {
+                try await identityClient.requestRecoveryEmail(email: email, accessToken: token)
+            }
+            showingResetFlow = true
+            resetOtpSent = true
+            resetError = nil
+        } catch {
+            self.error = "Could not send reset code. Check your connection."
+        }
+        isLoading = false
+    }
+
+    private func verifyResetOtp() async {
+        guard resetOtp.count == 6 else { return }
+        isLoading = true
+        resetError = nil
+        do {
+            let bundle = try await identityClient.verifyOtp(otp: resetOtp)
+            try sessionStore.save(bundle)
+            // Server already reset to parent mode and cleared the PIN.
+            // Refresh to get the clean bundle.
+            let refreshed = try await identityClient.getSession(accessToken: bundle.accessToken ?? "")
+            let merged = refreshed.preservingSession(from: bundle)
+            try sessionStore.save(merged)
+            onParentMode(merged)
+        } catch {
+            resetError = "Incorrect code. Please try again."
+            resetOtp = ""
+        }
+        isLoading = false
     }
 
     private func verifyCode() async {
@@ -1869,6 +1982,7 @@ public struct TikoParentCodeEntrySheet: View {
             try sessionStore.save(merged)
             onParentMode(merged)
         } catch _ {
+            failedAttempts += 1
             error = "Incorrect PIN. Please try again."
             enteredCode = ""
         }

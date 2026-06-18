@@ -1168,8 +1168,10 @@ async function withTikoSessionContract(request: AnyRequest, env: Env, response: 
   const requestPath = new URL(request.url).pathname
   const isFreshLogin = requestPath.includes('/email/verify') || requestPath.includes('/magic-links/verify')
   if (isFreshLogin && runtime.mode === 'child') {
-    await updateRuntimeState(env, String(body.subject.id), { ...runtime, mode: 'parent' })
-    runtime = { ...runtime, mode: 'parent' }
+    // OTP verification is stronger auth than PIN — reset to parent and
+    // clear the PIN so child mode setup starts fresh.
+    await updateRuntimeState(env, String(body.subject.id), { mode: 'parent', childModeEnabled: false })
+    runtime = { mode: 'parent', childModeEnabled: false, pinConfigured: false }
   }
 
   const capabilities = deriveCapabilities(accountType, runtime, roles)
