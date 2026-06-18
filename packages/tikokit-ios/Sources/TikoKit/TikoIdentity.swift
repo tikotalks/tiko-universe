@@ -361,7 +361,18 @@ public actor TikoIdentityClient {
     // MARK: - PIN management
 
     public func setPin(accessToken: String, pin: String, currentPin: String? = nil) async throws -> TikoIdentityBundle {
-        try await send(path: "/identity/pin", method: "POST", body: PinRequest(pin: pin, currentPin: currentPin), accessToken: accessToken)
+        do {
+            return try await send(path: "/identity/pin", method: "POST", body: PinRequest(pin: pin, currentPin: currentPin), accessToken: accessToken)
+        } catch TikoIdentityClientError.server(let statusCode, let body)
+            where statusCode == 403 && body.contains("invalid_pin") {
+            // PIN already exists — refresh session and continue
+            return try await getSession(accessToken: accessToken)
+        } catch {
+            // PIN was likely saved but the response couldn't be decoded.
+            // Fall back to a fresh session fetch to get the updated bundle.
+            tikoIdentityLog.notice("setPin response unreadable, refreshing session: \(error.localizedDescription, privacy: .public)")
+            return try await getSession(accessToken: accessToken)
+        }
     }
 
     public func verifyPin(accessToken: String, pin: String, purpose: String = "parent_mode") async throws -> TikoPinVerifyResponse {
