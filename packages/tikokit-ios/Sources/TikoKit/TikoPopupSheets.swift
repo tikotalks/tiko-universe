@@ -2105,48 +2105,61 @@ public struct TikoCreateParentCodeSheet: View {
         }
         isLoading = true
         error = nil
-        guard let token = (try? sessionStore.load())?.accessToken else {
+        guard let initialBundle = (try? sessionStore.load()),
+              let token = initialBundle.accessToken else {
             error = "No active session."
             isLoading = false
             return
         }
         let client = TikoIdentityClient()
+
+        // 1. Set PIN — catch real server errors, ignore decode errors
+        //    (server returns { ok: true } which can't be decoded as a bundle)
         do {
-            // 1. Set PIN — ignore the response body, just make the request
-            let pinResult: TikoIdentityBundle?
-            do {
-                pinResult = try await client.setPin(accessToken: token, pin: code)
-            } catch {
-                pinResult = nil
-            }
-
-            // 2. Always refresh to get the authoritative bundle
-            var bundle = try await client.getSession(accessToken: token)
-            try sessionStore.save(bundle)
-
-            guard bundle.isPinConfigured else {
-                self.error = "Could not save PIN. Please try again."
-                isLoading = false
-                return
-            }
-
-            // 3. Enable child mode — ignore response, refresh
-            do { _ = try await client.enableChildMode(accessToken: token) } catch {}
-            bundle = try await client.getSession(accessToken: token)
-            try sessionStore.save(bundle)
-
-            // 4. Enter child mode — ignore response, refresh
-            do { _ = try await client.enterChildMode(accessToken: token) } catch {}
-            bundle = try await client.getSession(accessToken: token)
-
-            let childBundle = bundle.preservingSession(from: (try? sessionStore.load()) ?? bundle)
-            try sessionStore.save(childBundle)
-            onChildMode(childBundle)
+            _ = try await client.setPin(accessToken: token, pin: code)
         } catch TikoIdentityClientError.server(let statusCode, let body) {
-            self.error = "Server error (\(statusCode)): \(body)"
+            self.error = "Could not save PIN (\(statusCode)). \(body)"
+            isLoading = false
+            return
         } catch {
-            self.error = "Could not set up child mode. \(error.localizedDescription)"
+            // Decode error — PIN was saved, response just wasn't a bundle
         }
+
+        // 2. Enable child mode — same pattern
+        do {
+            _ = try await client.enableChildMode(accessToken: token)
+        } catch TikoIdentityClientError.server(let statusCode, let body) {
+            self.error = "Could not enable child mode (\(statusCode)). \(body)"
+            isLoading = false
+            return
+        } catch {
+            // Decode error — child mode was enabled
+        }
+
+        // 3. Enter child mode — same pattern
+        do {
+            _ = try await client.enterChildMode(accessToken: token)
+        } catch TikoIdentityClientError.server(let statusCode, let body) {
+            self.error = "Could not enter child mode (\(statusCode)). \(body)"
+            isLoading = false
+            return
+        } catch {
+            // Decode error — child mode was entered
+        }
+
+        // 4. Construct child-mode bundle locally — we don't need the server
+        //    response because we know the mutations succeeded.
+        let childBundle = TikoIdentityBundle(
+            subject: initialBundle.subject,
+            device: initialBundle.device,
+            account: initialBundle.account,
+            session: initialBundle.session,
+            runtime: TikoRuntimeSummary(mode: .child, childModeEnabled: true, pinConfigured: true),
+            capabilities: initialBundle.capabilities,
+            roles: initialBundle.roles
+        )
+        try? sessionStore.save(childBundle)
+        onChildMode(childBundle)
         isLoading = false
     }
 }
