@@ -319,14 +319,18 @@ public struct TikoAppShell<Content: View, SettingsContent: View>: View {
             Task { @MainActor in
                 let bundle = await refreshIdentityBundle()
                 identityBundle = bundle
-                // Load preferences for the (possibly new) subject
                 let subjectId = bundle?.account?.subjectId ?? bundle?.subject.id
                 profilePrefs.load(for: subjectId)
-                // Fetch avatar and display name from the profile
+                // Fetch full profile (name, avatar, color) and restore locally
                 if let token = bundle?.accessToken {
-                    await syncAvatarFromProfile(accessToken: token)
-                    if let name = try? await TikoIdentityClient().getProfile(accessToken: token).displayName, !name.isEmpty {
-                        userName = name
+                    if let profile = try? await TikoIdentityClient().getProfile(accessToken: token) {
+                        if let name = profile.displayName, !name.isEmpty { userName = name }
+                        if let avatar = profile.avatarUrl, !avatar.isEmpty {
+                            profilePrefs.setAvatarURL(avatar)
+                        }
+                        if let color = profile.favoriteColor, !color.isEmpty {
+                            profilePrefs.setFavoriteColor(color)
+                        }
                     }
                 }
                 fetchedAvatarURL = nil

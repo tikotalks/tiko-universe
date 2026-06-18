@@ -1606,7 +1606,11 @@ public struct TikoAccountSheet: View {
         do {
             _ = try await identityClient.updateProfile(
                 accessToken: accessToken,
-                patch: TikoIdentityProfile(displayName: userName.trimmingCharacters(in: .whitespacesAndNewlines))
+                patch: TikoIdentityProfile(
+                    displayName: userName.trimmingCharacters(in: .whitespacesAndNewlines),
+                    avatarUrl: profilePrefs.avatarURL.isEmpty ? nil : profilePrefs.avatarURL,
+                    favoriteColor: profilePrefs.favoriteColor.isEmpty ? nil : profilePrefs.favoriteColor
+                )
             )
             identityError = nil
             onClose()

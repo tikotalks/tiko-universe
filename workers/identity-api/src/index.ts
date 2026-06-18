@@ -822,6 +822,7 @@ async function getIdentityProfile(request: Request, env: Env): Promise<Response>
     profile: {
       displayName: typeof metadata.displayName === 'string' ? metadata.displayName : null,
       avatarUrl: typeof metadata.avatarUrl === 'string' ? metadata.avatarUrl : null,
+      favoriteColor: typeof metadata.favoriteColor === 'string' ? metadata.favoriteColor : null,
     }
   })
 }
@@ -830,13 +831,13 @@ async function updateIdentityProfile(request: Request, env: Env): Promise<Respon
   const session = await requireIdentitySession(request, env)
   if (!session) return Response.json({ error: 'invalid_session' }, { status: 401 })
   const raw = await request.json().catch(() => ({})) as Record<string, unknown>
-  // Accept both flat { displayName, avatarUrl } and Ankore-wrapped { profile: { ... } }
   const fields: Record<string, unknown> = (raw.profile && typeof raw.profile === 'object' ? raw.profile : raw) as Record<string, unknown>
   const row = await env.IDENTITY_DB.prepare('SELECT metadata_json FROM identity_subjects WHERE id = ? LIMIT 1')
     .bind(session.subjectId).first<{ metadata_json?: string }>()
   const metadata: Record<string, unknown> = parseJson(row?.metadata_json)
   if (typeof fields.displayName === 'string') metadata.displayName = fields.displayName.trim() || null
   if (typeof fields.avatarUrl === 'string') metadata.avatarUrl = fields.avatarUrl.trim() || null
+  if (typeof fields.favoriteColor === 'string') metadata.favoriteColor = fields.favoriteColor.trim() || null
   const now = new Date().toISOString()
   await env.IDENTITY_DB.prepare('UPDATE identity_subjects SET metadata_json = ?, updated_at = ? WHERE id = ?')
     .bind(JSON.stringify(metadata), now, session.subjectId).run()
@@ -844,6 +845,7 @@ async function updateIdentityProfile(request: Request, env: Env): Promise<Respon
     profile: {
       displayName: typeof metadata.displayName === 'string' ? metadata.displayName : null,
       avatarUrl: typeof metadata.avatarUrl === 'string' ? metadata.avatarUrl : null,
+      favoriteColor: typeof metadata.favoriteColor === 'string' ? metadata.favoriteColor : null,
     }
   })
 }
