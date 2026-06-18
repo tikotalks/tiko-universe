@@ -579,11 +579,12 @@ async function createDeletionRequest(request: Request, env: Env): Promise<Respon
     return Response.json({ error: 'forbidden' }, { status: 403 })
   }
 
-  // If PIN is configured, require a grant token for destructive scopes
-  if (runtime.pinHash && scope !== 'local-device' && !body.pinGrantToken) {
+  // PIN grant only needed for child_account deletion, not for self-account
+  // deletion (which already requires email OTP verification in the client flow).
+  if (runtime.pinHash && scope === 'child_account' && !body.pinGrantToken) {
     return Response.json({ error: 'pin_grant_required' }, { status: 403 })
   }
-  const pinGrantHash = runtime.pinHash && scope !== 'local-device'
+  const pinGrantHash = runtime.pinHash && scope === 'child_account'
     ? await consumePinGrant(env, session.subjectId, String(body.pinGrantToken), 'account_deletion')
     : null
   if (pinGrantHash && !pinGrantHash.ok) return pinGrantHash.response
