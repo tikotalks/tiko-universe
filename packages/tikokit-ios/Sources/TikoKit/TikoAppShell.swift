@@ -468,7 +468,10 @@ public struct TikoAppShell<Content: View, SettingsContent: View>: View {
                 return
             }
             if storedBundle?.isPinConfigured == true {
-                guard let token = storedBundle?.accessToken else { return }
+                guard let token = storedBundle?.accessToken else {
+                    showingCreateParentCode = true
+                    return
+                }
                 do {
                     let client = TikoIdentityClient()
                     var bundle = storedBundle!
@@ -481,7 +484,9 @@ public struct TikoAppShell<Content: View, SettingsContent: View>: View {
                     try TikoDeviceSessionStore().save(mergedChild)
                     identityBundle = mergedChild
                 } catch {
-                    // Silent fail — stay in parent mode
+                    // Enable/enter failed — show the PIN sheet so the user gets
+                    // feedback and can retry the full flow.
+                    showingCreateParentCode = true
                 }
             } else {
                 // No PIN yet — show create flow
