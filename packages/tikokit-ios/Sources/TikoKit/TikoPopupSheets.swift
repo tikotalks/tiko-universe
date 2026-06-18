@@ -1990,37 +1990,47 @@ public struct TikoCreateParentCodeSheet: View {
         }
         isLoading = true
         error = nil
+        guard let token = (try? sessionStore.load())?.accessToken else {
+            error = "No active session."
+            isLoading = false
+            return
+        }
+        let client = TikoIdentityClient()
         do {
-            guard let token = try sessionStore.load()?.accessToken else {
-                error = "No active session."
+            // 1. Set PIN — ignore the response body, just make the request
+            let pinResult: TikoIdentityBundle?
+            do {
+                pinResult = try await client.setPin(accessToken: token, pin: code)
+            } catch {
+                pinResult = nil
+            }
+
+            // 2. Always refresh to get the authoritative bundle
+            var bundle = try await client.getSession(accessToken: token)
+            try sessionStore.save(bundle)
+
+            guard bundle.isPinConfigured else {
+                self.error = "Could not save PIN. Please try again."
                 isLoading = false
                 return
             }
-            let initialBundle = try sessionStore.load()!
-            var bundle: TikoIdentityBundle
-            do {
-                // Set PIN on the server
-                bundle = try await identityClient.setPin(accessToken: token, pin: code)
-            } catch TikoIdentityClientError.server(let statusCode, let body)
-                where statusCode == 403 && body.contains("invalid_pin") {
-                bundle = try await identityClient.getSession(accessToken: token)
-                guard bundle.isPinConfigured else { throw TikoIdentityClientError.server(statusCode: statusCode, body: body) }
-            }
-            try sessionStore.save(bundle.preservingSession(from: initialBundle))
-            // Enable child mode (one-time opt-in)
-            if !(bundle.isChildModeEnabled) {
-                bundle = try await identityClient.enableChildMode(accessToken: token)
-                try sessionStore.save(bundle.preservingSession(from: initialBundle))
-            }
-            // Enter child mode — preserve session so exit PIN works without re-auth
-            bundle = try await identityClient.enterChildMode(accessToken: token)
-            let childBundle = bundle.preservingSession(from: initialBundle)
+
+            // 3. Enable child mode — ignore response, refresh
+            do { _ = try await client.enableChildMode(accessToken: token) } catch {}
+            bundle = try await client.getSession(accessToken: token)
+            try sessionStore.save(bundle)
+
+            // 4. Enter child mode — ignore response, refresh
+            do { _ = try await client.enterChildMode(accessToken: token) } catch {}
+            bundle = try await client.getSession(accessToken: token)
+
+            let childBundle = bundle.preservingSession(from: (try? sessionStore.load()) ?? bundle)
             try sessionStore.save(childBundle)
             onChildMode(childBundle)
         } catch TikoIdentityClientError.server(let statusCode, let body) {
-            self.error = "Could not save PIN (\(statusCode)). \(body)"
+            self.error = "Server error (\(statusCode)): \(body)"
         } catch {
-            self.error = "Could not save PIN. \(error.localizedDescription)"
+            self.error = "Could not set up child mode. \(error.localizedDescription)"
         }
         isLoading = false
     }

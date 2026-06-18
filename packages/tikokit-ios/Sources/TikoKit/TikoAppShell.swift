@@ -317,7 +317,18 @@ public struct TikoAppShell<Content: View, SettingsContent: View>: View {
         }
         .tikoAccountPopup(isPresented: $showingAccount, appName: appName, appColor: appColor, profilePrefs: profilePrefs, onIdentityChanged: {
             Task { @MainActor in
-                identityBundle = await refreshIdentityBundle()
+                let bundle = await refreshIdentityBundle()
+                identityBundle = bundle
+                // Load preferences for the (possibly new) subject
+                let subjectId = bundle?.account?.subjectId ?? bundle?.subject.id
+                profilePrefs.load(for: subjectId)
+                // Fetch avatar and display name from the profile
+                if let token = bundle?.accessToken {
+                    await syncAvatarFromProfile(accessToken: token)
+                    if let name = try? await TikoIdentityClient().getProfile(accessToken: token).displayName, !name.isEmpty {
+                        userName = name
+                    }
+                }
                 fetchedAvatarURL = nil
                 await fetchAvatarIfNeeded()
             }
