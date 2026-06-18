@@ -91,7 +91,7 @@ final class TikoKitTests: XCTestCase {
     }
 
     func testChoiceStylesExposeSettingsLabels() {
-        XCTAssertEqual(TikoChoiceStyle.allCases, [.tiles, .buttons, .compact])
+        XCTAssertEqual(TikoChoiceStyle.allCases, [.tiles, .buttons, .compact, .textTile])
         XCTAssertEqual(TikoChoiceStyle.tiles.title, "Tiles")
         XCTAssertEqual(TikoChoiceStyle.buttons.icon, "rectangle.roundedtop.fill")
         XCTAssertEqual(TikoChoiceStyle.compact.rawValue, "compact")

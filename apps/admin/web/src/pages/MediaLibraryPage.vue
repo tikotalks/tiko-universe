@@ -1,16 +1,19 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
 import { useBemm } from 'bemm'
-import { Button, InputSearch } from '@sil/ui'
+import { Button, InputSearch, Icon, useConfirm } from '@sil/ui'
 import { useAdminMediaLibrary } from '../composables/useAdminMediaLibrary'
 import { useAdminAuth } from '../composables/useAdminAuth'
 import { useImageGeneration } from '../composables/useImageGeneration'
+import { useToast } from '../composables/useToast'
 import type { AdminMediaItem, AudioLibraryAlbum } from '../composables/useAdminMediaLibrary'
 import type { ImageGalleryItem } from '../composables/useImageGeneration'
 import type { ImageGenerationResult } from '../types/admin'
 import ImageEditModal from '../components/images/ImageEditModal.vue'
 
 const bemm = useBemm('media-library', { return: 'string', includeBaseClass: true })
+const toast = useToast()
+const { confirmDelete } = useConfirm()
 
 const {
   items, total, page, totalPages, loading, uploading, error,
@@ -54,8 +57,8 @@ const editLoading = ref(false)
 const editMode = ref<'edit' | 'result'>('edit')
 const savingNew = ref(false)
 const applyingChange = ref(false)
-const actionError = ref<string | null>(null)
 const deleteConfirmId = ref<string | null>(null)
+const actionError = ref<string | null>(null)
 
 onMounted(() => {
   void refreshList()
@@ -183,35 +186,35 @@ function formatDate(value?: string): string {
 }
 
 async function onToggleActive(item: AdminMediaItem) {
-  actionError.value = null
   try {
     await toggleActive(item.id, !item.is_active)
+    toast.success(`${item.is_active === false ? 'Activated' : 'Deactivated'} "${item.title || item.id}"`)
   } catch (e) {
-    actionError.value = e instanceof Error ? e.message : 'Failed to toggle active state.'
+    toast.error(e instanceof Error ? e.message : 'Failed to toggle active state.')
   }
 }
 
 async function onToggleHidden(item: AdminMediaItem) {
-  actionError.value = null
   try {
     await toggleHidden(item.id, !item.is_hidden)
+    toast.success(`${item.is_hidden ? 'Unhid' : 'Hid'} "${item.title || item.id}"`)
   } catch (e) {
-    actionError.value = e instanceof Error ? e.message : 'Failed to toggle hidden state.'
+    toast.error(e instanceof Error ? e.message : 'Failed to toggle hidden state.')
   }
 }
 
 async function onDelete(item: AdminMediaItem) {
-  actionError.value = null
+  const ok = await confirmDelete(item.title || item.file_name || item.id)
+  if (!ok) return
   try {
     await deleteMedia(item.id)
-    deleteConfirmId.value = null
+    toast.success('Image deleted')
   } catch (e) {
-    actionError.value = e instanceof Error ? e.message : 'Failed to delete media.'
+    toast.error(e instanceof Error ? e.message : 'Failed to delete media.')
   }
 }
 
 async function onEditImage(item: AdminMediaItem) {
-  actionError.value = null
   editLoading.value = true
   editMode.value = 'edit'
   editResultUrl.value = null
@@ -227,14 +230,13 @@ async function onEditImage(item: AdminMediaItem) {
     editItem.value = imported
     editSourceId.value = imported.id
   } catch (e) {
-    actionError.value = e instanceof Error ? e.message : 'Failed to import image for editing.'
+    toast.error(e instanceof Error ? e.message : 'Failed to import image for editing.')
   } finally {
     editLoading.value = false
   }
 }
 
 async function onSubmitEdit(input: { sourceId: string; prompt: string; maskBase64?: string; size: string }) {
-  actionError.value = null
   editLoading.value = true
   try {
     const result = await editImage(input.sourceId, input.prompt, input.maskBase64, input.size)
@@ -242,7 +244,7 @@ async function onSubmitEdit(input: { sourceId: string; prompt: string; maskBase6
     editResultUrl.value = imageSrc(result)
     editMode.value = 'result'
   } catch (e) {
-    actionError.value = e instanceof Error ? e.message : 'Image edit failed.'
+    toast.error(e instanceof Error ? e.message : 'Image edit failed.')
   } finally {
     editLoading.value = false
   }
@@ -258,7 +260,6 @@ function closeEdit() {
 async function onApplyChange() {
   if (!editSourceUrl.value || !editResultUrl.value) return
   applyingChange.value = true
-  actionError.value = null
   try {
     const originalItem = items.value.find(i => i.id === editSourceUrl.value.match(/\/media\/([^/]+)/)?.[1])
     if (!originalItem) throw new Error('Could not find original media item')
@@ -284,8 +285,9 @@ async function onApplyChange() {
     await deleteMedia(originalItem.id)
     await refreshList()
     closeEdit()
+    toast.success('Applied change — original replaced')
   } catch (e) {
-    actionError.value = e instanceof Error ? e.message : 'Failed to apply change.'
+    toast.error(e instanceof Error ? e.message : 'Failed to apply change.')
   } finally {
     applyingChange.value = false
   }
@@ -294,7 +296,6 @@ async function onApplyChange() {
 async function onSaveAsNew() {
   if (!editResultUrl.value || !editResultItem.value) return
   savingNew.value = true
-  actionError.value = null
   try {
     const imgResponse = await fetch(editResultUrl.value)
     const blob = await imgResponse.blob()
@@ -316,8 +317,9 @@ async function onSaveAsNew() {
 
     await refreshList()
     closeEdit()
+    toast.success('Saved as new image')
   } catch (e) {
-    actionError.value = e instanceof Error ? e.message : 'Failed to save as new image.'
+    toast.error(e instanceof Error ? e.message : 'Failed to save as new image.')
   } finally {
     savingNew.value = false
   }
@@ -366,7 +368,6 @@ async function onSaveAsNew() {
     </section>
 
     <p v-if="error" :class="bemm('error')">{{ error }}</p>
-    <p v-if="actionError" :class="bemm('error')">{{ actionError }}</p>
 
     <div :class="bemm('list-wrap')">
       <div v-if="loading" :class="bemm('empty')">Loading media…</div>
@@ -410,32 +411,31 @@ async function onSaveAsNew() {
           <div :class="bemm('row-actions')">
             <button
               v-if="mediaKind(item) === 'image'"
-              :class="bemm('row-btn')"
+              :class="bemm('icon-btn')"
               title="Edit image"
               :disabled="editLoading"
               @click="onEditImage(item)"
-            >Edit</button>
+            ><Icon name="ui/edit-fat" size="small" aria-hidden="true" /></button>
             <button
-              :class="bemm('row-btn')"
-              :title="item.is_hidden ? 'Unhide' : 'Hide from apps'"
+              :class="bemm('icon-btn')"
+              :title="item.is_hidden ? 'Unhide from apps' : 'Hide from apps'"
               @click="onToggleHidden(item)"
-            >{{ item.is_hidden ? 'Show' : 'Hide' }}</button>
+            ><Icon :name="item.is_hidden ? 'ui/eye-closed' : 'ui/eye'" size="small" aria-hidden="true" /></button>
             <button
-              :class="bemm('row-btn')"
+              :class="bemm('icon-btn')"
               :title="item.is_active === false ? 'Activate' : 'Deactivate'"
               @click="onToggleActive(item)"
-            >{{ item.is_active === false ? 'Enable' : 'Disable' }}</button>
-            <a :class="bemm('row-btn')" :href="itemUrl(item)" target="_blank" rel="noreferrer">Open</a>
-            <template v-if="deleteConfirmId === item.id">
-              <button :class="bemm('row-btn', { danger: true })" @click="onDelete(item)">Confirm?</button>
-              <button :class="bemm('row-btn')" @click="deleteConfirmId = null">Cancel</button>
-            </template>
+            >
+              <Icon :name="item.is_active === false ? 'ui/play' : 'ui/pause'" size="small" aria-hidden="true" />
+            </button>
+            <a :class="bemm('icon-btn')" :href="itemUrl(item)" target="_blank" rel="noreferrer" title="Open">
+              <Icon name="ui/external-link" size="small" aria-hidden="true" />
+            </a>
             <button
-              v-else
-              :class="bemm('row-btn', { danger: true })"
+              :class="bemm('icon-btn', { danger: true })"
               title="Delete permanently"
-              @click="deleteConfirmId = item.id"
-            >Delete</button>
+              @click="onDelete(item)"
+            ><Icon name="ui/trash" size="small" aria-hidden="true" /></button>
           </div>
         </li>
       </ul>
