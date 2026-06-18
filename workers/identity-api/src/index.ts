@@ -579,15 +579,7 @@ async function createDeletionRequest(request: Request, env: Env): Promise<Respon
     return Response.json({ error: 'forbidden' }, { status: 403 })
   }
 
-  // PIN grant only needed for child_account deletion, not for self-account
-  // deletion (which already requires email OTP verification in the client flow).
-  if (runtime.pinHash && scope === 'child_account' && !body.pinGrantToken) {
-    return Response.json({ error: 'pin_grant_required' }, { status: 403 })
-  }
-  const pinGrantHash = runtime.pinHash && scope === 'child_account'
-    ? await consumePinGrant(env, session.subjectId, String(body.pinGrantToken), 'account_deletion')
-    : null
-  if (pinGrantHash && !pinGrantHash.ok) return pinGrantHash.response
+  // No PIN grant needed — deletion requires parent mode + email OTP verification.
 
   if (scope === 'child_account') {
     if (!body.childAccountId) return Response.json({ error: 'child_account_id_required' }, { status: 400 })
@@ -602,7 +594,7 @@ async function createDeletionRequest(request: Request, env: Env): Promise<Respon
     'INSERT INTO identity_deletion_requests (id, subject_id, scope, status, child_account_id, pin_grant_token, created_at, updated_at, completed_at, metadata_json) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
   ).bind(
     requestId, session.subjectId, scope, 'requested',
-    body.childAccountId ?? null, pinGrantHash?.tokenHash ?? null,
+    body.childAccountId ?? null, null,
     at, at, null, '{}'
   ).run()
 
