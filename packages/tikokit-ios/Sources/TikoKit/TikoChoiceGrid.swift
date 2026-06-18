@@ -42,6 +42,7 @@ public struct TikoAnswerChoice: Identifiable, Equatable, Sendable {
     public let color: String?
     public let imageURL: URL?
     public let imageURLs: [URL]
+    public let imageRef: String?
 
     public init(
         id: String,
@@ -51,7 +52,8 @@ public struct TikoAnswerChoice: Identifiable, Equatable, Sendable {
         tone: TikoChoiceTone,
         color: String? = nil,
         imageURL: URL? = nil,
-        imageURLs: [URL] = []
+        imageURLs: [URL] = [],
+        imageRef: String? = nil
     ) {
         self.id = id
         self.label = label
@@ -61,6 +63,7 @@ public struct TikoAnswerChoice: Identifiable, Equatable, Sendable {
         self.color = color
         self.imageURL = imageURL
         self.imageURLs = imageURLs
+        self.imageRef = imageRef
     }
 
     /// Convenience initializer accepting an open-icon name.
@@ -97,20 +100,29 @@ public struct TikoAnswerButton: View {
                 title: choice.label,
                 background: choice.resolvedColor ?? tileColor
             ) {
-                let imageURLs = choice.resolvedImageURLs
-                if imageURLs.count > 1 {
-                    TikoMultiImageTileContent(imageURLs: imageURLs)
-                } else if let url = imageURLs.first {
-                    TikoCachedRemoteImage(url: url) {
+                if let ref = choice.imageRef, !ref.isEmpty {
+                    TikoMediaImage(imageRef: ref) {
                         ProgressView()
                             .frame(maxWidth: .infinity, maxHeight: .infinity)
                             .background(.white.opacity(0.18))
                     }
                     .clipped()
                 } else {
-                    iconView
-                        .foregroundStyle(.white.opacity(0.88))
-                        .font(.system(size: 52, weight: .bold))
+                    let imageURLs = choice.resolvedImageURLs
+                    if imageURLs.count > 1 {
+                        TikoMultiImageTileContent(imageURLs: imageURLs)
+                    } else if let url = imageURLs.first {
+                        TikoCachedRemoteImage(url: url) {
+                            ProgressView()
+                                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                                .background(.white.opacity(0.18))
+                        }
+                        .clipped()
+                    } else {
+                        iconView
+                            .foregroundStyle(.white.opacity(0.88))
+                            .font(.system(size: 52, weight: .bold))
+                    }
                 }
             }
         case .buttons:
@@ -123,11 +135,19 @@ public struct TikoAnswerButton: View {
                 .shadow(color: .black.opacity(0.16), radius: 12, x: 0, y: 10)
         case .compact:
             HStack(spacing: 16) {
-                iconView
-                    .font(.system(size: 30, weight: .bold))
-                    .frame(width: 64, height: 64)
-                    .background(.white.opacity(0.18))
-                    .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
+                Group {
+                    if let ref = choice.imageRef, !ref.isEmpty {
+                        TikoMediaImage(imageRef: ref) { iconView }
+                    } else if let url = choice.resolvedImageURLs.first {
+                        TikoCachedRemoteImage(url: url) { iconView }
+                    } else {
+                        iconView
+                    }
+                }
+                .font(.system(size: 30, weight: .bold))
+                .frame(width: 64, height: 64)
+                .background(.white.opacity(0.18))
+                .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
 
                 Text(choice.label)
                     .font(.system(size: 32, weight: .heavy, design: .rounded))

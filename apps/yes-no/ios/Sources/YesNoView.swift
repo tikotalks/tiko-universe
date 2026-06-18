@@ -22,7 +22,7 @@ struct YesNoAnswerTile: Codable, Identifiable, Equatable {
             icon: .openIcon(icon ?? "ui/check-fat"),
             tone: .primary,
             color: color,
-            imageURL: yesNoImageURL(for: imageRef)
+            imageRef: imageRef
         )
     }
 
