@@ -268,7 +268,7 @@ interface RateLimitRow {
   updated_at: string
 }
 
-const LOW_ENTROPY_SECRET_ITERATIONS = 120_000
+const LOW_ENTROPY_SECRET_ITERATIONS = 100_000
 const PIN_RATE_LIMIT = { maxFailures: 5, lockMs: 15 * 60 * 1000 }
 const CHILD_CODE_RATE_LIMIT = { maxFailures: 8, lockMs: 15 * 60 * 1000 }
 
