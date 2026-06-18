@@ -219,6 +219,7 @@ public struct TikoChoiceGrid: View {
     private let choices: [TikoAnswerChoice]
     private let style: TikoChoiceStyle
     private let onSelect: (TikoAnswerChoice) -> Void
+    @Environment(\.horizontalSizeClass) private var sizeClass
 
     public init(
         choices: [TikoAnswerChoice],
@@ -231,7 +232,8 @@ public struct TikoChoiceGrid: View {
     }
 
     private var tileSpacing: CGFloat {
-        choices.allSatisfy { $0.color != nil || !$0.resolvedImageURLs.isEmpty } ? 12 : 40
+        let base: CGFloat = choices.allSatisfy { $0.color != nil || !$0.resolvedImageURLs.isEmpty } ? 12 : 40
+        return sizeClass == .regular ? max(base, 22) : base
     }
 
     public var body: some View {
@@ -247,6 +249,8 @@ public struct TikoChoiceGrid: View {
             }
         }
         .padding(.horizontal, 24)
+        .frame(maxWidth: sizeClass == .regular ? 620 : nil)
+        .frame(maxWidth: .infinity)
     }
 
     @ViewBuilder
