@@ -669,13 +669,19 @@ private struct TikoSplashOverlay: View {
         appColor.palette.primary
             .overlay {
                 GeometryReader { geo in
-                    Image("TikoLogo", bundle: .module)
-                        .resizable()
-                        .renderingMode(.template)
-                        .scaledToFit()
-                        .frame(width: geo.size.width * 0.28, height: geo.size.width * 0.28)
-                        .foregroundColor(.white.opacity(0.88))
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    // Try main bundle first (each app has TikoLogo in Assets.xcassets),
+                    // then TikoKit's SPM bundle as fallback.
+                    let logo = UIImage(named: "TikoLogo")
+                        ?? UIImage(named: "TikoLogo", in: .module, with: nil)
+                    if let logo {
+                        Image(uiImage: logo)
+                            .renderingMode(.template)
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: geo.size.width * 0.28, height: geo.size.width * 0.28)
+                            .foregroundColor(.white.opacity(0.88))
+                            .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    }
                 }
             }
     }
