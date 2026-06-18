@@ -475,7 +475,6 @@ async function onSaveAsNew() {
             </div>
           </div>
           <div :class="bemm('result-actions')">
-            <p v-if="actionError" :class="bemm('error')">{{ actionError }}</p>
             <Button variant="outline" :loading="savingNew" @click="onSaveAsNew">Save as new</Button>
             <Button :loading="applyingChange" @click="onApplyChange">Apply change (replace original)</Button>
           </div>
@@ -758,42 +757,39 @@ async function onSaveAsNew() {
 
   &__row-actions {
     display: flex;
-    gap: var(--space-xs);
+    gap: 2px;
     flex-shrink: 0;
-    flex-wrap: wrap;
-    justify-content: flex-end;
+    align-items: center;
   }
 
-  &__row-btn {
-    border: 1px solid var(--admin-border);
-    background: var(--admin-page-bg);
-    color: var(--admin-text);
-    font: inherit;
-    font-size: var(--font-size-xs);
-    font-weight: 600;
-    padding: var(--space-xs) var(--space-s);
+  &__icon-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border: 1px solid transparent;
+    background: transparent;
+    color: var(--admin-text-muted);
     border-radius: var(--border-radius-xs);
     cursor: pointer;
     text-decoration: none;
-    transition: background 0.12s ease, border-color 0.12s ease;
-    white-space: nowrap;
+    transition: background 0.12s ease, color 0.12s ease;
 
     &:hover {
       background: var(--admin-surface-hover);
-      border-color: var(--admin-border-strong);
+      color: var(--admin-text);
     }
 
     &:disabled {
-      opacity: 0.5;
+      opacity: 0.4;
       cursor: not-allowed;
     }
 
     &--danger {
-      border-color: color-mix(in srgb, var(--color-error) 40%, transparent);
-      color: var(--color-error);
-
       &:hover {
         background: color-mix(in srgb, var(--color-error) 8%, transparent);
+        color: var(--color-error);
       }
     }
   }
