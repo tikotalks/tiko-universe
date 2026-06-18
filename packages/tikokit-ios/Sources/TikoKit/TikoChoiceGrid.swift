@@ -239,7 +239,10 @@ public struct TikoChoiceGrid: View {
     public var body: some View {
         Group {
             if style == .tiles || style == .textTile {
-                LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: tileSpacing) {
+                LazyVGrid(
+                    columns: [GridItem(.flexible(), spacing: tileSpacing), GridItem(.flexible())],
+                    spacing: tileSpacing
+                ) {
                     answerButtons
                 }
             } else {

@@ -15,6 +15,7 @@ public struct TikoMediaSelection: Sendable {
 public struct TikoMediaPickerSheet: View {
     private let appColor: TikoAppColor
     private let title: String
+    private let plain: Bool
     private let onSelect: (TikoMediaSelection) -> Void
     private let onClose: () -> Void
 
@@ -30,11 +31,13 @@ public struct TikoMediaPickerSheet: View {
     public init(
         appColor: TikoAppColor,
         title: String = "Choose image",
+        plain: Bool = false,
         onSelect: @escaping (URL) -> Void,
         onClose: @escaping () -> Void
     ) {
         self.appColor = appColor
         self.title = title
+        self.plain = plain
         self.onSelect = { onSelect($0.url) }
         self.onClose = onClose
     }
@@ -42,18 +45,42 @@ public struct TikoMediaPickerSheet: View {
     public init(
         appColor: TikoAppColor,
         title: String = "Choose image",
+        plain: Bool = false,
         onSelectMedia: @escaping (TikoMediaSelection) -> Void,
         onClose: @escaping () -> Void
     ) {
         self.appColor = appColor
         self.title = title
+        self.plain = plain
         self.onSelect = onSelectMedia
         self.onClose = onClose
     }
 
     public var body: some View {
-        TikoPopupCard(title: title, icon: "photo.fill", appColor: appColor, onClose: onClose) {
-            VStack(spacing: 12) {
+        if plain {
+            NavigationStack {
+                ScrollView {
+                    pickerContent
+                        .padding(20)
+                }
+                .background(Color(.systemGroupedBackground).ignoresSafeArea())
+                .navigationTitle(title)
+                .navigationBarTitleDisplayMode(.inline)
+                .toolbar {
+                    ToolbarItem(placement: .cancellationAction) {
+                        Button(action: onClose) { Image(systemName: "xmark") }
+                    }
+                }
+            }
+        } else {
+            TikoPopupCard(title: title, icon: "photo.fill", appColor: appColor, onClose: onClose) {
+                pickerContent
+            }
+        }
+    }
+
+    private var pickerContent: some View {
+        VStack(spacing: 12) {
                 // Search bar
                 HStack(spacing: 8) {
                     TextField("Search images (e.g. banana, elephant)…", text: $query)
@@ -153,7 +180,6 @@ public struct TikoMediaPickerSheet: View {
                         }
                     }
                 }
-            }
         }
         .onDisappear {
             searchTask?.cancel()
@@ -280,6 +306,7 @@ public extension View {
             TikoMediaPickerSheet(
                 appColor: appColor,
                 title: title,
+                plain: true,
                 onSelectMedia: { selection in
                     onSelectMedia(selection)
                     isPresented.wrappedValue = false

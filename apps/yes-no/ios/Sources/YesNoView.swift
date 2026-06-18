@@ -1103,6 +1103,7 @@ private struct SetBuilderView: View {
                 .foregroundStyle(.primary)
                 .lineLimit(1)
         }
+        .contentShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
     }
 
     private var addTileCell: some View {
