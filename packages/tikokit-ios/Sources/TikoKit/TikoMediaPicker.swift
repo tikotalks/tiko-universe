@@ -267,4 +267,26 @@ public extension View {
             )
         }
     }
+
+    /// Sheet-based media picker — use inside deeply nested views (sheets within
+    /// popups) where PopupView-based `tikoMediaPickerPopup` may not present.
+    func tikoMediaPickerSheet(
+        isPresented: Binding<Bool>,
+        appColor: TikoAppColor,
+        title: String = "Choose image",
+        onSelectMedia: @escaping (TikoMediaSelection) -> Void
+    ) -> some View {
+        sheet(isPresented: isPresented) {
+            TikoMediaPickerSheet(
+                appColor: appColor,
+                title: title,
+                onSelectMedia: { selection in
+                    onSelectMedia(selection)
+                    isPresented.wrappedValue = false
+                },
+                onClose: { isPresented.wrappedValue = false }
+            )
+            .presentationDetents([.large])
+        }
+    }
 }

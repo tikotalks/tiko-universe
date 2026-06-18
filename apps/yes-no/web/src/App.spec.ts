@@ -445,4 +445,53 @@ describe('Yes No web app', () => {
     expect(wrapper.text()).not.toContain('👍')
     expect(wrapper.text()).not.toContain('👎')
   })
+
+  it('shows the Answer Tiles action row inside settings with the selected set name', async () => {
+    vi.stubGlobal('fetch', createFetchMock({
+      defaults: {
+        answerSets: [
+          {
+            id: 'yes-no-set-basic-needs',
+            title: 'Basic needs',
+            color: 'teal',
+            order: 0,
+            answers: [
+              { id: 'help', label: 'Help', speech: 'Help', color: 'blue' },
+            ],
+          },
+        ],
+        selectedSetId: 'yes-no-set-basic-needs',
+      },
+    }))
+
+    const { wrapper } = mountApp()
+    await flushPromises()
+
+    await wrapper.get('[data-test="tiko-header-action-settings"]').trigger('click')
+    const action = wrapper.get('[data-test="tiko-settings-answer-tiles"]')
+    expect(action.text()).toContain('Answer tiles')
+    expect(action.text()).toContain('Basic needs')
+  })
+
+  it('opens the Answer Tiles management sheet when the settings action is tapped', async () => {
+    vi.stubGlobal('fetch', createFetchMock({
+      defaults: {
+        answerSets: [
+          { id: 'yes-no-set-yes-no', title: 'Yes / No', color: 'green', order: 0, answers: [] },
+        ],
+        selectedSetId: 'yes-no-set-yes-no',
+      },
+    }))
+
+    const { wrapper, popupService } = mountApp()
+    await flushPromises()
+
+    await wrapper.get('[data-test="tiko-header-action-settings"]').trigger('click')
+    await wrapper.get('[data-test="tiko-settings-answer-tiles"]').trigger('click')
+
+    expect(popupService.showPopup).toHaveBeenCalledWith(expect.objectContaining({
+      id: 'yes-no-answer-tiles',
+      config: expect.objectContaining({ position: 'center' }),
+    }))
+  })
 })

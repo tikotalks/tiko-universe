@@ -686,7 +686,8 @@ function normalizeYesNoSet(set: YesNoAnswerSet): YesNoAnswerSet {
       ...answer,
       speech: answer.speech || answer.label,
       color: asColorToken(answer.color, setColor),
-    })).map((answer, index) => ({ ...answer, order: typeof (answer as { order?: number }).order === 'number' ? (answer as { order?: number }).order : index })),
+      order: typeof (answer as { order?: number }).order === 'number' ? (answer as { order?: number }).order : index,
+    })),
   }
 }
 

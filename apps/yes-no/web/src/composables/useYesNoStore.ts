@@ -36,7 +36,7 @@ export function useYesNoStore(options: UseYesNoStoreOptions) {
 
   function persist(extra: Partial<PersistedYesNo> = {}) {
     options.writeStored({
-      ...stored,
+      ...options.readStored(),
       ...extra,
       answerSets: answerSets.value.map(normalizeSet),
       selectedSetId: selectedSetId.value,
@@ -55,6 +55,17 @@ export function useYesNoStore(options: UseYesNoStoreOptions) {
         } else if (!selectedSetId.value || !sets.some(set => set.id === selectedSetId.value)) {
           selectedSetId.value = sets[0]?.id ?? null
         }
+      } else if (Array.isArray(data.answers) && data.answers.length) {
+        // Legacy flat-answers payload: synthesize a single default set so the
+        // rest of the app can treat everything as answer sets uniformly.
+        const synthetic: AnswerSet = {
+          id: 'default',
+          title: 'Default',
+          order: 0,
+          answers: data.answers.map((answer, index) => normalizeAnswer(answer, 'teal', index)),
+        }
+        answerSets.value = [synthetic]
+        selectedSetId.value = synthetic.id
       }
     } catch {
       // keep local fallback when content-api is unavailable
@@ -214,12 +225,16 @@ export function normalizeSet(set: AnswerSet): AnswerSet {
     ...set,
     color: setColor,
     order: typeof set.order === 'number' ? set.order : 0,
-    answers: (set.answers ?? []).map((answer, index) => ({
-      ...answer,
-      speech: answer.speech || answer.label,
-      color: normalizeColor(answer.color, setColor),
-      order: typeof answer.order === 'number' ? answer.order : index,
-    })),
+    answers: (set.answers ?? []).map((answer, index) => normalizeAnswer(answer, setColor, index)),
+  }
+}
+
+export function normalizeAnswer(answer: AnswerTile, fallbackColor: TikoColorName = 'teal', index = 0): AnswerTile {
+  return {
+    ...answer,
+    speech: answer.speech || answer.label,
+    color: normalizeColor(answer.color, fallbackColor),
+    order: typeof answer.order === 'number' ? answer.order : index,
   }
 }
 

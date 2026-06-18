@@ -31,7 +31,7 @@ export const TikoSettingsPanel = defineComponent({
     ] }
   },
   emits: ['update:language', 'update:colorMode'],
-  setup(props, { emit }) {
+  setup(props, { emit, slots }) {
     watch(() => props.colorMode, (mode) => {
       if (!['light', 'dark', 'system'].includes(mode)) emit('update:colorMode', 'system')
     }, { immediate: true })
@@ -49,7 +49,8 @@ export const TikoSettingsPanel = defineComponent({
           h('option', { value: 'dark' }, text('dark', 'Dark')),
           h('option', { value: 'system' }, text('system', 'System'))
         ])])
-      ])
+      ]),
+      slots.default ? slots.default() : null,
     ])
   }
 })

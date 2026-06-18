@@ -256,3 +256,230 @@ html[data-color-mode="dark"] .tiko-app-shell[data-app-color="yes-no"] {
     font-size: clamp(1.7rem, 12vw, 3rem);
   }
 }
+
+// Settings: Answer Tiles action row (rendered inside TikoSettingsPanel slot)
+.yes-no-app__settings-action {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  align-items: center;
+  gap: 0.6rem;
+  width: 100%;
+  margin-top: 0.75rem;
+  padding: 0.7rem 0.9rem;
+  border: none;
+  border-radius: 1rem;
+  background: var(--tiko-card, #fffdfa);
+  color: var(--tiko-foreground, currentColor);
+  text-align: left;
+  cursor: pointer;
+  font: inherit;
+  box-shadow: 0 8px 18px color-mix(in srgb, #20180f, transparent 90%);
+}
+
+.yes-no-app__settings-action-label {
+  font-weight: 700;
+}
+
+.yes-no-app__settings-action-value {
+  font-size: 0.85rem;
+  opacity: 0.7;
+  max-width: 12ch;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+// Answer Tiles management sheet + nested sheets
+.yes-no-tiles-sheet__subtitle {
+  margin: 0 0 0.75rem;
+  color: color-mix(in srgb, var(--tiko-foreground, #05312d), transparent 30%);
+  font-weight: 600;
+}
+
+.yes-no-tiles-sheet__empty {
+  margin: 0 0 0.75rem;
+  padding: 1rem;
+  text-align: center;
+  opacity: 0.6;
+}
+
+.yes-no-tiles-sheet__list,
+.yes-no-set-sheet__tiles-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.yes-no-tiles-sheet__row {
+  display: grid;
+  grid-template-columns: auto 1fr auto auto auto;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.55rem 0.65rem;
+  border-radius: 0.85rem;
+  background: color-mix(in srgb, var(--tiko-card, #fffdfa), transparent 20%);
+}
+
+.yes-no-tiles-sheet__row--selected {
+  outline: 2px solid color-mix(in srgb, var(--tiko-answer-primary, #006c67), transparent 30%);
+}
+
+.yes-no-tiles-sheet__thumb,
+.yes-no-set-sheet__tile-thumb {
+  width: 2.4rem;
+  height: 2.4rem;
+  border-radius: 0.6rem;
+  display: inline-grid;
+  place-items: center;
+  overflow: hidden;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+}
+
+.yes-no-tiles-sheet__info strong,
+.yes-no-set-sheet__tile-info strong {
+  display: block;
+  font-weight: 700;
+}
+
+.yes-no-tiles-sheet__info small,
+.yes-no-set-sheet__tile-info small {
+  display: block;
+  font-size: 0.78rem;
+  opacity: 0.65;
+}
+
+.yes-no-tiles-sheet__action,
+.yes-no-set-sheet__tile-action {
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  display: inline-grid;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 0.6rem;
+  color: var(--tiko-foreground, currentColor);
+}
+
+.yes-no-tiles-sheet__action--active {
+  color: var(--tiko-answer-primary, #006c67);
+}
+
+.yes-no-tiles-sheet__action--danger {
+  color: var(--tiko-answer-secondary, #f25538);
+}
+
+.yes-no-tiles-sheet__add,
+.yes-no-set-sheet__add-tile {
+  margin-top: 0.6rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.yes-no-set-sheet__tiles {
+  margin-top: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.yes-no-set-sheet__tiles-label {
+  font-weight: 700;
+}
+
+.yes-no-set-sheet__tiles-empty,
+.yes-no-set-sheet__readonly {
+  margin: 0;
+  opacity: 0.65;
+}
+
+.yes-no-set-sheet__tile {
+  display: grid;
+  grid-template-columns: auto 1fr auto auto;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.5rem;
+  border-radius: 0.75rem;
+  background: color-mix(in srgb, var(--tiko-card, #fffdfa), transparent 20%);
+}
+
+// Image chooser + picker (shared shape with cards)
+.yes-no-image-chooser {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  margin-top: 0.4rem;
+}
+
+.yes-no-image-chooser__label {
+  font-weight: 700;
+}
+
+.yes-no-image-chooser__preview {
+  position: relative;
+  width: fit-content;
+
+  img {
+    width: 3.5rem;
+    height: 3.5rem;
+    object-fit: cover;
+    border-radius: 0.75rem;
+  }
+
+  button {
+    position: absolute;
+    top: -0.4rem;
+    right: -0.4rem;
+    width: 1.4rem;
+    height: 1.4rem;
+    border-radius: 999px;
+    border: none;
+    background: rgba(0, 0, 0, 0.55);
+    color: #fff;
+    cursor: pointer;
+  }
+}
+
+.yes-no-image-picker__search {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 0.5rem;
+  align-items: end;
+  margin-bottom: 0.75rem;
+}
+
+.yes-no-image-picker__grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.5rem;
+  max-height: 18rem;
+  overflow: auto;
+}
+
+.yes-no-image-picker__result {
+  padding: 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+
+  img {
+    width: 100%;
+    aspect-ratio: 1;
+    object-fit: cover;
+    border-radius: 0.6rem;
+  }
+}
+
+.yes-no-image-picker__empty {
+  opacity: 0.6;
+  text-align: center;
+}

@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { computed, onMounted, ref, watch } from 'vue'
+import { computed, h, inject, markRaw, onMounted, ref, watch } from 'vue'
 import { useBemm } from 'bemm'
-import { Icon, Popup } from '@sil/ui'
+import { Icon, Popup, type PopupService } from '@sil/ui'
 import { IdentityClient } from '@tiko/identity'
 import { TikoDataClient, type YesNoSettings, type YesNoState } from '@tiko/data'
 import { createI18n, createTikoIdentityLabels, createTikoShellLabels, normalizeTikoLanguage, tikoI18nKeys, tikoLanguageOptions, type TikoLanguage } from '@tiko/i18n'
@@ -28,6 +28,9 @@ import {
   type TikoColorMode
 } from '@tiko/ui'
 import { appConfig } from './appConfig'
+import type { AnswerSet, AnswerTile, PersistedYesNo } from './types'
+import { useYesNoStore } from './composables/useYesNoStore'
+import YesNoAnswerTilesSheet from './components/YesNoAnswerTilesSheet.vue'
 import './styles.scss'
 
 const storageKey = 'tiko:yes-no'
@@ -40,44 +43,8 @@ const bemm = useBemm('yes-no-app', { return: 'string', includeBaseClass: true })
 type SpeakStatus = 'idle' | 'speaking' | 'fallback' | 'error'
 type SentenceSpeechState = 'idle' | 'generating' | 'playing'
 
-interface AnswerTile {
-  id: string
-  label: string
-  speech: string
-  labelTranslations?: Partial<Record<TikoLanguage, string>>
-  speechTranslations?: Partial<Record<TikoLanguage, string>>
-  color?: string
-  imageRef?: string
-  icon?: string
-}
-
-interface AnswerSet {
-  id: string
-  answers?: AnswerTile[]
-}
-
-interface DefaultsState {
-  answers?: AnswerTile[]
-  answerSets?: AnswerSet[]
-  selectedSetId?: string
-}
-
 interface AppConfigResponse {
   config?: Partial<TikoAppConfig>
-}
-
-interface ContentResponse {
-  data?: DefaultsState
-}
-
-interface PersistedState {
-  language?: string
-  colorMode?: TikoColorMode
-  sentence?: string
-  latestAnswer?: string | null
-  latestAnswerId?: string | null
-  answerHistory?: string[]
-  answers?: AnswerTile[]
 }
 
 function toAnswerId(value: unknown): string {
@@ -113,19 +80,7 @@ function localizeDefaultAnswer(answer: AnswerTile): AnswerTile {
   return { ...answer, label, speech }
 }
 
-function defaultsAnswers(state: unknown): AnswerTile[] {
-  const value = state as DefaultsState | undefined
-  if (Array.isArray(value?.answerSets)) {
-    const selected = typeof value?.selectedSetId === 'string'
-      ? value.answerSets.find(set => set.id === value.selectedSetId)
-      : undefined
-    const activeSet = selected ?? value.answerSets[0]
-    return Array.isArray(activeSet?.answers) ? activeSet.answers : []
-  }
-  return Array.isArray(value?.answers) ? value.answers : []
-}
-
-const stored = readTikoLocalJson<PersistedState>(storageKey, {})
+const stored = readTikoLocalJson<PersistedYesNo>(storageKey, {})
 const i18n = createI18n({ app: appId, language: normalizeTikoLanguage(stored.language) })
 const language = ref<TikoLanguage>(normalizeTikoLanguage(stored.language))
 const colorMode = ref<TikoColorMode>(normalizeTikoColorMode(stored.colorMode))
@@ -163,6 +118,15 @@ const runtimeState: IdentityRuntimeState = {
   pinConfigured,
 }
 const runtime = useIdentityRuntime({ identityClient, state: runtimeState, deviceName: 'Yes No web', labels: () => createTikoIdentityLabels(i18n.t) })
+const popup = inject<PopupService>('popupService')!
+
+const store = useYesNoStore({
+  storageKey,
+  sessionToken,
+  readStored: () => readTikoLocalJson<PersistedYesNo>(storageKey, {}),
+  writeStored: (state) => writeTikoLocalJson(storageKey, state),
+})
+
 const dataRuntime = useTikoAppDataRuntime<typeof appId, YesNoSettings, YesNoState>({
   app: appId,
   sessionToken,
@@ -178,6 +142,8 @@ const dataRuntime = useTikoAppDataRuntime<typeof appId, YesNoSettings, YesNoStat
     lastAnswer: latestAnswerId.value || null,
     answerHistory: answerHistory.value,
     answers: customAnswers.value,
+    answerSets: store.answerSets.value,
+    selectedSetId: store.selectedSetId.value ?? null,
   }),
   applySettings,
   applyState,
@@ -203,6 +169,8 @@ const labels = computed(() => {
     speechError: i18n.t(tikoI18nKeys.yesNo.status.speechError),
     settings: i18n.t(tikoI18nKeys.common.settings),
     shell: createTikoShellLabels(i18n.t),
+    answerTiles: i18n.t(tikoI18nKeys.yesNo.settings.answerTiles),
+    answerTilesDefault: i18n.t(tikoI18nKeys.yesNo.settings.answerTilesDefault),
     settingsPanel: {
       settings: i18n.t(tikoI18nKeys.common.settings),
       appearance: i18n.t(tikoI18nKeys.common.appearance),
@@ -212,7 +180,43 @@ const labels = computed(() => {
       light: i18n.t(tikoI18nKeys.common.colorModeOptions.light),
       dark: i18n.t(tikoI18nKeys.common.colorModeOptions.dark),
       system: i18n.t(tikoI18nKeys.common.colorModeOptions.system),
-    }
+    },
+    sheet: {
+      title: i18n.t(tikoI18nKeys.yesNo.tileEditor.title),
+      subtitle: i18n.t(tikoI18nKeys.yesNo.tileEditor.subtitle),
+      empty: i18n.t(tikoI18nKeys.yesNo.tileEditor.empty),
+      save: i18n.t(tikoI18nKeys.yesNo.tileEditor.save),
+      addSet: i18n.t(tikoI18nKeys.yesNo.sheet.addSet),
+      newSet: i18n.t(tikoI18nKeys.yesNo.sheet.newSet),
+      editSet: i18n.t(tikoI18nKeys.yesNo.sheet.editSet),
+      setName: i18n.t(tikoI18nKeys.yesNo.sheet.setName),
+      setNamePlaceholder: i18n.t(tikoI18nKeys.yesNo.sheet.setNamePlaceholder),
+      description: i18n.t(tikoI18nKeys.yesNo.sheet.description),
+      descriptionPlaceholder: i18n.t(tikoI18nKeys.yesNo.sheet.descriptionPlaceholder),
+      color: i18n.t(tikoI18nKeys.yesNo.sheet.color),
+      image: i18n.t(tikoI18nKeys.yesNo.sheet.image),
+      changeImage: i18n.t(tikoI18nKeys.yesNo.sheet.changeImage),
+      addImage: i18n.t(tikoI18nKeys.yesNo.sheet.addImage),
+      pickImage: i18n.t(tikoI18nKeys.yesNo.sheet.pickImage),
+      search: i18n.t(tikoI18nKeys.yesNo.sheet.search),
+      searching: i18n.t(tikoI18nKeys.yesNo.sheet.searching),
+      searchImages: i18n.t(tikoI18nKeys.yesNo.sheet.searchImages),
+      typeToSearch: i18n.t(tikoI18nKeys.yesNo.sheet.typeToSearch),
+      cancel: i18n.t(tikoI18nKeys.yesNo.sheet.cancel),
+      tiles: i18n.t(tikoI18nKeys.yesNo.sheet.tiles),
+      tilesEmpty: i18n.t(tikoI18nKeys.yesNo.sheet.tilesEmpty),
+      tileCount: i18n.t(tikoI18nKeys.yesNo.sheet.tileCount),
+      select: i18n.t(tikoI18nKeys.yesNo.sheet.select),
+      delete: i18n.t(tikoI18nKeys.yesNo.sheet.delete),
+      readonlySet: i18n.t(tikoI18nKeys.yesNo.sheet.readonlySet),
+      newTile: i18n.t(tikoI18nKeys.yesNo.sheet.newTile),
+      editTile: i18n.t(tikoI18nKeys.yesNo.sheet.editTile),
+      name: i18n.t(tikoI18nKeys.yesNo.sheet.name),
+      namePlaceholder: i18n.t(tikoI18nKeys.yesNo.sheet.namePlaceholder),
+      spokenText: i18n.t(tikoI18nKeys.yesNo.sheet.spokenText),
+      whatShouldBeSpoken: i18n.t(tikoI18nKeys.yesNo.sheet.whatShouldBeSpoken),
+      addTile: i18n.t(tikoI18nKeys.yesNo.tileEditor.addTile),
+    },
   }
 })
 
@@ -229,10 +233,20 @@ const defaultChoices = computed<AnswerTile[]>(() => {
   return defaultAnswers.value.map(localizeDefaultAnswer)
 })
 
+const selectedSetAnswers = computed<AnswerTile[]>(() => {
+  void language.value
+  const set = store.selectedSet.value
+  if (!set?.answers?.length) return []
+  return set.answers.map(localizeDefaultAnswer)
+})
+
 const choices = computed<AnswerTile[]>(() => {
+  if (selectedSetAnswers.value.length) return selectedSetAnswers.value
   if (customAnswers.value.length) return customAnswers.value
   return defaultChoices.value
 })
+
+const selectedSetName = computed(() => store.selectedSet.value?.title ?? labels.value.answerTilesDefault)
 
 const headerActions = computed(() => parentMode.value ? [
   { id: 'history', label: labels.value.historyTitle, icon: 'ui/clock', active: historyOpen.value },
@@ -256,7 +270,9 @@ function saveLocalFallback() {
     sentence: sentence.value,
     latestAnswerId: latestAnswerId.value || null,
     answerHistory: answerHistory.value,
-    answers: customAnswers.value
+    answers: customAnswers.value,
+    answerSets: store.answerSets.value,
+    selectedSetId: store.selectedSetId.value,
   })
 }
 
@@ -270,16 +286,18 @@ function applyState(state: YesNoState) {
   latestAnswerId.value = toAnswerId(state.lastAnswer)
   answerHistory.value = toHistory(state.answerHistory)
   customAnswers.value = Array.isArray(state.answers) ? state.answers as AnswerTile[] : []
+  if (Array.isArray(state.answerSets) && state.answerSets.length) {
+    store.answerSets.value = state.answerSets as unknown as AnswerSet[]
+    if (typeof state.selectedSetId === 'string' && state.selectedSetId) {
+      store.selectedSetId.value = state.selectedSetId
+    }
+  }
 }
 
 async function loadDefaultContent() {
-  const headers: Record<string, string> = { Accept: 'application/json' }
-  if (sessionToken.value) headers.Authorization = `Bearer ${sessionToken.value}`
   try {
-    const response = await fetch(`${contentBaseUrl}/yes-no/content?language=${encodeURIComponent(language.value)}`, { headers })
-    if (!response.ok) return
-    const body = await response.json() as ContentResponse
-    defaultAnswers.value = defaultsAnswers(body.data)
+    await store.loadContent(language.value)
+    defaultAnswers.value = store.selectedSet.value?.answers ?? []
   } catch {
     // Keep built-in fallbacks active when content-api is unavailable.
   }
@@ -311,6 +329,46 @@ watch([latestAnswerId, answerHistory], () => {
   saveLocalFallback()
   void dataRuntime.persistStateRemote()
 }, { deep: true })
+
+watch([() => store.answerSets.value, () => store.selectedSetId.value], () => {
+  saveLocalFallback()
+  void dataRuntime.persistStateRemote()
+}, { deep: true })
+
+function openAnswerTilesSheet() {
+  popup.showPopup({
+    id: 'yes-no-answer-tiles',
+    closePopups: true,
+    title: '',
+    component: markRaw({
+      setup() {
+        return () => h(YesNoAnswerTilesSheet, {
+          answerSets: store.answerSets.value,
+          selectedSetId: store.selectedSetId.value,
+          contentBaseUrl: store.contentBaseUrl,
+          labels: labels.value.sheet,
+          onClose: popup.closeAllPopups,
+          onSelect: (id: string) => store.selectSet(id),
+          onCreateSet: async (value) => {
+            await store.createSet(value)
+          },
+          onUpdateSet: async (id: string, value) => {
+            await store.updateSet(id, value)
+          },
+          onDeleteSet: async (id: string) => {
+            await store.deleteSet(id)
+          },
+        })
+      },
+    }),
+    config: {
+      position: 'center',
+      canClose: true,
+      background: true,
+      width: '30rem',
+    },
+  })
+}
 
 onMounted(async () => {
   void loadAppConfig()
@@ -451,7 +509,18 @@ function resetSentence() {
         v-model:color-mode="colorMode"
         :languages="tikoLanguageOptions"
         :labels="labels.settingsPanel"
-      />
+      >
+        <button
+          type="button"
+          class="yes-no-app__settings-action"
+          data-test="tiko-settings-answer-tiles"
+          @click="openAnswerTilesSheet"
+        >
+          <span class="yes-no-app__settings-action-label">{{ labels.answerTiles }}</span>
+          <span class="yes-no-app__settings-action-value">{{ selectedSetName }}</span>
+          <Icon name="ui/edit-fat" size="small" aria-hidden="true" />
+        </button>
+      </TikoSettingsPanel>
 
       <aside v-if="historyOpen" :class="bemm('history')" :aria-label="labels.historyLabel">
         <strong>{{ labels.historyTitle }}</strong>
