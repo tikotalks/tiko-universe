@@ -141,6 +141,7 @@ export default {
 
       const url = new URL(request.url)
       if (url.pathname === '/v1/generation/health' && request.method === 'GET') return generationHealth()
+      if (url.pathname === '/v1/generation/openai-status' && request.method === 'GET') return await openaiStatus(resolvedEnv)
       if (url.pathname === '/v1/generation/voices' && request.method === 'GET') return await requirePaidAccess(request, resolvedEnv, { capability: 'voices.list', units: 1, maxRequestsPerMinute: 120, maxUnitsPerDay: 2000 }, () => listVoices(url, resolvedEnv))
       if (url.pathname === '/v1/generation/tts' && request.method === 'POST') return await generateTts(request, resolvedEnv)
       if (url.pathname.startsWith('/v1/generation/voice-samples/') && request.method === 'GET') return await requirePaidAccess(request, resolvedEnv, { capability: 'voice.sample', units: 40, maxRequestsPerMinute: 30, maxUnitsPerDay: 2000 }, () => getVoiceSample(url, resolvedEnv))
@@ -226,6 +227,28 @@ function generationHealth(): Response {
     },
     meta: { schemaVersion: 1 },
   })
+}
+
+async function openaiStatus(env: Env): Promise<Response> {
+  if (!env.OPENAI_API_KEY) {
+    return json({ data: { configured: false, keyValid: false, error: 'OPENAI_API_KEY not set' } })
+  }
+  try {
+    const resp = await fetch('https://api.openai.com/v1/models?limit=1', {
+      headers: { Authorization: `Bearer ${env.OPENAI_API_KEY}` },
+    })
+    if (resp.ok) {
+      return json({ data: { configured: true, keyValid: true, error: null } })
+    }
+    const body = await resp.text().catch(() => '')
+    const error = resp.status === 429 ? 'Rate limited or insufficient quota'
+      : resp.status === 401 ? 'Invalid API key'
+      : resp.status === 402 ? 'Payment required — check billing'
+      : `HTTP ${resp.status}: ${body.slice(0, 200)}`
+    return json({ data: { configured: true, keyValid: false, error } })
+  } catch (err) {
+    return json({ data: { configured: true, keyValid: false, error: `Network error: ${String(err)}` } })
+  }
 }
 
 interface StoryDraftChapter {

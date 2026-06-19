@@ -9,6 +9,7 @@ import type { EditInput, GenerateInput, UpscaleInput } from '../components/image
 import { useImageGeneration, type ImageGalleryItem } from '../composables/useImageGeneration'
 import { useJobQueue } from '../composables/useJobQueue'
 import { useToast } from '../composables/useToast'
+import { useAdminAuth } from '../composables/useAdminAuth'
 
 type Tab = 'library' | 'drafts' | 'create'
 
@@ -18,6 +19,7 @@ const card = useBemm('image-card', { return: 'string', includeBaseClass: true })
 const { listImages, promoteImage, pushToMedia, deleteImage, enrichImage, enqueueJobs, deleteJob, imageSrc } = useImageGeneration()
 const toast = useToast()
 const { jobs, activeCount, hasActiveJobs, refresh: refreshJobs, startPolling } = useJobQueue()
+const { config } = useAdminAuth()
 
 const activeTab = ref<Tab>('library')
 const queueOpen = ref(false)
@@ -244,13 +246,32 @@ watch(hasActiveJobs, (active) => {
   }
 })
 
+const openaiStatus = ref<{ configured: boolean; keyValid: boolean; error: string | null } | null>(null)
+
+async function checkOpenAIStatus() {
+  try {
+    const baseUrl = (config.value?.generationApiUrl ?? 'https://generation.tikoapi.org/v1/generation').replace(/\/generation$/, '')
+    const resp = await fetch(`${baseUrl}/generation/openai-status`)
+    if (resp.ok) {
+    const body = await resp.json() as { data?: { configured: boolean; keyValid: boolean; error: string | null } }
+    openaiStatus.value = body.data ?? null
+    }
+  } catch {
+    // silent — status is informational
+  }
+}
+
 onMounted(async () => {
+  void checkOpenAIStatus()
   await loadLibrary()
 })
 </script>
 
 <template>
   <section :class="page('')">
+    <div v-if="openaiStatus" :class="page('openai-status', { ok: openaiStatus.keyValid, error: !openaiStatus.keyValid })">
+      <span>{{ openaiStatus.keyValid ? '✓ OpenAI connected' : '✗ OpenAI: ' + (openaiStatus.error || 'Not configured') }}</span>
+    </div>
     <header :class="page('header')">
       <div :class="page('intro')">
         <h1 :class="page('title')">Images</h1>
@@ -691,6 +712,29 @@ onMounted(async () => {
   }
 
   &__description {
+
+    font-size: var(--font-size-xs);
+    color: var(--admin-text-muted);
+  }
+
+  &__openai-status {
+    padding: var(--space-xs) var(--space);
+    border-radius: var(--radius);
+    font-size: var(--font-size-sm);
+    font-weight: 600;
+    margin-bottom: var(--space);
+
+    &--ok {
+      background: color-mix(in srgb, #51cf66, transparent 88%);
+      color: #2f9e44;
+    }
+
+    &--error {
+      background: color-mix(in srgb, #e03131, transparent 88%);
+      color: #c92a2a;
+    }
+  }
+}
     color: var(--admin-text-muted);
     font-size: var(--font-size-xs);
     line-height: 1.4;
