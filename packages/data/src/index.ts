@@ -32,6 +32,7 @@ export interface YesNoSettings extends JsonObject {
   language?: string
   colorMode?: 'light' | 'dark' | 'system'
   spokenPrompt?: string
+  labelSizeIndex?: number
 }
 
 export interface YesNoAnswerTile {

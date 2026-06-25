@@ -38,7 +38,7 @@ const images = computed(() => {
 <template>
   <button
     type="button"
-    :class="bemm('', { active, editing, selected, [`label-${labelSize}`]: true })"
+    :class="bemm('', { active, editing, selected, image: images.length > 0, [`label-${labelSize}`]: true })"
     :style="{ backgroundColor: background }"
     :aria-label="title"
     @click="emit('press')"

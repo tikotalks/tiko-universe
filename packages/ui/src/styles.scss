@@ -745,6 +745,19 @@ body {
   font-size: 0.98rem;
 }
 
+.tiko-square-tile--image .tiko-square-tile__label {
+  padding: 8px 10px;
+  font-size: 1rem;
+}
+
+.tiko-square-tile--image.tiko-square-tile--label-small .tiko-square-tile__label {
+  font-size: 0.84rem;
+}
+
+.tiko-square-tile--image.tiko-square-tile--label-large .tiko-square-tile__label {
+  font-size: clamp(1.2rem, 8vw, 1.65rem);
+}
+
 .tiko-paged-tile-grid {
   display: flex;
   flex: 1;

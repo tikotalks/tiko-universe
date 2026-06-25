@@ -78,13 +78,15 @@ public struct TikoAnswerChoice: Identifiable, Equatable, Sendable {
 public struct TikoAnswerButton: View {
     private let choice: TikoAnswerChoice
     private let style: TikoChoiceStyle
+    private let labelFont: Font?
     private let action: () -> Void
     @Environment(\.colorScheme) private var colorScheme
     @Environment(\.horizontalSizeClass) private var sizeClass
 
-    public init(choice: TikoAnswerChoice, style: TikoChoiceStyle = .tiles, action: @escaping () -> Void) {
+    public init(choice: TikoAnswerChoice, style: TikoChoiceStyle = .tiles, labelFont: Font? = nil, action: @escaping () -> Void) {
         self.choice = choice
         self.style = style
+        self.labelFont = labelFont
         self.action = action
     }
 
@@ -103,9 +105,9 @@ public struct TikoAnswerButton: View {
             TikoSquareTile(
                 title: choice.label,
                 background: choice.resolvedColor ?? tileColor,
-                labelFont: sizeClass == .regular
+                labelFont: labelFont ?? (sizeClass == .regular
                     ? Font.system(.title2, design: .rounded).weight(.heavy)
-                    : Font.system(.caption, design: .rounded).weight(.heavy)
+                    : Font.system(.caption, design: .rounded).weight(.heavy))
             ) {
                 if let ref = choice.imageRef, !ref.isEmpty {
                     TikoMediaImage(imageRef: ref) {
@@ -218,16 +220,19 @@ private extension TikoAnswerChoice {
 public struct TikoChoiceGrid: View {
     private let choices: [TikoAnswerChoice]
     private let style: TikoChoiceStyle
+    private let labelFont: Font?
     private let onSelect: (TikoAnswerChoice) -> Void
     @Environment(\.horizontalSizeClass) private var sizeClass
 
     public init(
         choices: [TikoAnswerChoice],
         style: TikoChoiceStyle = .tiles,
+        labelFont: Font? = nil,
         onSelect: @escaping (TikoAnswerChoice) -> Void
     ) {
         self.choices = choices
         self.style = style
+        self.labelFont = labelFont
         self.onSelect = onSelect
     }
 
@@ -259,7 +264,7 @@ public struct TikoChoiceGrid: View {
     @ViewBuilder
     private var answerButtons: some View {
         ForEach(choices) { choice in
-            TikoAnswerButton(choice: choice, style: style) {
+            TikoAnswerButton(choice: choice, style: style, labelFont: labelFont) {
                 onSelect(choice)
             }
         }

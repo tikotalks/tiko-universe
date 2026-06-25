@@ -213,6 +213,7 @@ struct YesNoView: View {
     @AppStorage("yesno.sentence") private var sentence = ""
     @AppStorage("yesno.speechEnabled") private var speechEnabled = true
     @AppStorage("yesno.choiceStyle") private var choiceStyleRawValue = TikoChoiceStyle.tiles.rawValue
+    @AppStorage("yesno.labelSizeIndex") private var labelSizeIndex = 2
     @AppStorage("tiko.colorMode") private var colorModeRawValue = TikoColorMode.system.rawValue
     @AppStorage("tiko.language") private var languageCode = "en"
     @AppStorage("yesno.questionHistory") private var historyData = Data()
@@ -295,6 +296,14 @@ struct YesNoView: View {
         TikoChoiceStyle(rawValue: choiceStyleRawValue) ?? .tiles
     }
 
+    private var labelFont: Font {
+        switch labelSizeIndex {
+        case 0: return Font.system(.caption, design: .rounded).weight(.heavy)
+        case 1: return Font.system(.title3, design: .rounded).weight(.heavy)
+        default: return Font.system(.title2, design: .rounded).weight(.heavy)
+        }
+    }
+
     private var hardcodedChoices: [TikoAnswerChoice] {
         [
             TikoAnswerChoice(id: "yes", label: i18n.t("yesNo.answers.yes"), icon: .openIcon("ui/check-fat"), tone: .primary, imageRef: "c8bfb9e8-0427-4cd9-89e2-74e09d20b8ec"),
@@ -357,6 +366,12 @@ struct YesNoView: View {
                     ) {
                         showingTileEditor = true
                     }
+                    TikoSettingsSizeRow(
+                        title: i18n.t("yesNo.settings.labelSize"),
+                        icon: "textformat.size",
+                        appColor: .yesNo,
+                        selectedIndex: $labelSizeIndex
+                    )
                 }
             }
         ) {
@@ -399,7 +414,7 @@ struct YesNoView: View {
                     .accessibilityLabel("Clear sentence")
                 }
 
-                TikoChoiceGrid(choices: effectiveChoices, style: choiceStyle, onSelect: selectChoice)
+                TikoChoiceGrid(choices: effectiveChoices, style: choiceStyle, labelFont: labelFont, onSelect: selectChoice)
             }
             .padding(.top, 18)
         }
@@ -566,6 +581,7 @@ struct YesNoView: View {
         // Settings → declared defaults
         speechEnabled = true
         choiceStyleRawValue = TikoChoiceStyle.tiles.rawValue
+        labelSizeIndex = 2
 
         // Shared device-level prefs → device defaults (language follows the
         // device locale / English; colour mode follows the device appearance).

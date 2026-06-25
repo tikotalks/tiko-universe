@@ -27,7 +27,7 @@
 
 /* Begin PBXFileReference section */
 		074135D340258FEED1495621 /* TikoTypeTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = TikoTypeTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		17FEAA921D1BE9E6E0A21CE8 /* TikoType.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TikoType.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		17FEAA921D1BE9E6E0A21CE8 /* TikoType.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = TikoType.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		2784AE1A879155FBDA9A5ED1 /* TypeAppConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TypeAppConfig.swift; sourceTree = "<group>"; };
 		6F38F474C04DC7AFB45AED52 /* tikokit-ios */ = {isa = PBXFileReference; lastKnownFileType = folder; name = "tikokit-ios"; path = "../../../packages/tikokit-ios"; sourceTree = SOURCE_ROOT; };
 		8549F5329BFE78AA41AB74EB /* TikoTypeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TikoTypeTests.swift; sourceTree = "<group>"; };
@@ -150,6 +150,9 @@
 				LastUpgradeCheck = 1430;
 				TargetAttributes = {
 					298F397DBAD8E2C111A7E6C1 = {
+						DevelopmentTeam = "";
+					};
+					BEEC29EA76C68AA58B826DEB = {
 						DevelopmentTeam = "";
 					};
 				};
@@ -319,7 +322,6 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = Sources/TikoType.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
-				DEVELOPMENT_TEAM = 38MGF83L2L;
 				INFOPLIST_FILE = Sources/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -337,7 +339,6 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = Sources/TikoType.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
-				DEVELOPMENT_TEAM = 38MGF83L2L;
 				INFOPLIST_FILE = Sources/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",

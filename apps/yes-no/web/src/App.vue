@@ -7,6 +7,7 @@ import { TikoDataClient, type YesNoSettings, type YesNoState } from '@tiko/data'
 import { createI18n, createTikoIdentityLabels, createTikoShellLabels, normalizeTikoLanguage, tikoI18nKeys, tikoLanguageOptions, type TikoLanguage } from '@tiko/i18n'
 import {
   TikoAppShell,
+  TikoSegmentedControl,
   TikoSettingsPanel,
   TikoSquareTile,
   createTikoTtsClient,
@@ -42,6 +43,7 @@ const bemm = useBemm('yes-no-app', { return: 'string', includeBaseClass: true })
 
 type SpeakStatus = 'idle' | 'speaking' | 'fallback' | 'error'
 type SentenceSpeechState = 'idle' | 'generating' | 'playing'
+type LabelSize = 'small' | 'medium' | 'large'
 
 interface AppConfigResponse {
   config?: Partial<TikoAppConfig>
@@ -53,6 +55,12 @@ function toAnswerId(value: unknown): string {
 
 function toHistory(value: unknown): string[] {
   return Array.isArray(value) ? value.map(toAnswerId).filter(Boolean).slice(0, 6) : []
+}
+
+function clampIndex(value: unknown): number {
+  return typeof value === 'number' && Number.isFinite(value)
+    ? Math.min(2, Math.max(0, Math.round(value)))
+    : 2
 }
 
 function colorTokenToHex(color: string | undefined, fallback: string) {
@@ -84,6 +92,7 @@ const stored = readTikoLocalJson<PersistedYesNo>(storageKey, {})
 const i18n = createI18n({ app: appId, language: normalizeTikoLanguage(stored.language) })
 const language = ref<TikoLanguage>(normalizeTikoLanguage(stored.language))
 const colorMode = ref<TikoColorMode>(normalizeTikoColorMode(stored.colorMode))
+const labelSizeIndex = ref(clampIndex(stored.labelSizeIndex))
 const latestAnswerId = ref<string>(toAnswerId(stored.latestAnswerId ?? stored.latestAnswer))
 const answerHistory = ref<string[]>(toHistory(stored.answerHistory))
 const defaultAnswers = ref<AnswerTile[]>([])
@@ -136,6 +145,7 @@ const dataRuntime = useTikoAppDataRuntime<typeof appId, YesNoSettings, YesNoStat
     language: language.value,
     colorMode: colorMode.value,
     spokenPrompt: sentence.value,
+    labelSizeIndex: labelSizeIndex.value,
   }),
   readState: () => ({
     prompt: sentence.value,
@@ -171,6 +181,10 @@ const labels = computed(() => {
     shell: createTikoShellLabels(i18n.t),
     answerTiles: i18n.t(tikoI18nKeys.yesNo.settings.answerTiles),
     answerTilesDefault: i18n.t(tikoI18nKeys.yesNo.settings.answerTilesDefault),
+    labelSize: i18n.t(tikoI18nKeys.yesNo.settings.labelSize),
+    small: i18n.t(tikoI18nKeys.common.size.small),
+    medium: i18n.t(tikoI18nKeys.common.size.medium),
+    large: i18n.t(tikoI18nKeys.common.size.large),
     settingsPanel: {
       settings: i18n.t(tikoI18nKeys.common.settings),
       appearance: i18n.t(tikoI18nKeys.common.appearance),
@@ -247,6 +261,7 @@ const choices = computed<AnswerTile[]>(() => {
 })
 
 const selectedSetName = computed(() => store.selectedSet.value?.title ?? labels.value.answerTilesDefault)
+const labelSize = computed<LabelSize>(() => labelSizeIndex.value === 0 ? 'small' : labelSizeIndex.value === 1 ? 'medium' : 'large')
 
 const headerActions = computed(() => parentMode.value ? [
   { id: 'history', label: labels.value.historyTitle, icon: 'ui/clock', active: historyOpen.value },
@@ -273,6 +288,7 @@ function saveLocalFallback() {
     answers: customAnswers.value,
     answerSets: store.answerSets.value,
     selectedSetId: store.selectedSetId.value,
+    labelSizeIndex: labelSizeIndex.value,
   })
 }
 
@@ -280,6 +296,9 @@ function applySettings(settings: YesNoSettings) {
   language.value = normalizeTikoLanguage(settings.language)
   colorMode.value = normalizeTikoColorMode(settings.colorMode)
   sentence.value = typeof settings.spokenPrompt === 'string' && settings.spokenPrompt.trim() ? settings.spokenPrompt : defaultSentence.value
+  labelSizeIndex.value = typeof settings.labelSizeIndex === 'number'
+    ? clampIndex(settings.labelSizeIndex)
+    : labelSizeIndex.value
 }
 
 function applyState(state: YesNoState) {
@@ -320,7 +339,7 @@ useTikoI18nRuntime({ app: appId, language, i18n, onLanguageChange: loadDefaultCo
 
 useTikoColorModeEffect(colorMode)
 
-watch([language, colorMode, sentence], () => {
+watch([language, colorMode, sentence, labelSizeIndex], () => {
   saveLocalFallback()
   void dataRuntime.persistSettingsRemote()
 })
@@ -510,6 +529,11 @@ function resetSentence() {
         :languages="tikoLanguageOptions"
         :labels="labels.settingsPanel"
       >
+        <TikoSegmentedControl
+          v-model="labelSizeIndex"
+          :label="labels.labelSize"
+          :options="[labels.small, labels.medium, labels.large]"
+        />
         <button
           type="button"
           class="yes-no-app__settings-action"
@@ -539,7 +563,7 @@ function resetSentence() {
           :title="choice.label"
           :background="colorTokenToHex(choice.color, choice.id === 'no' ? '#E03131' : '#2F9E44')"
           :image-src="answerImageSrc(choice)"
-          label-size="large"
+          :label-size="labelSize"
           @press="answer(choice.id)"
         />
       </div>

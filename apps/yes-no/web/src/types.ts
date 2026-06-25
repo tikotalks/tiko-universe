@@ -62,4 +62,5 @@ export interface PersistedYesNo {
   answers?: AnswerTile[]
   answerSets?: AnswerSet[]
   selectedSetId?: string | null
+  labelSizeIndex?: number
 }
