@@ -298,6 +298,12 @@ async function handleManagedIdentity(request: Request, env: Env): Promise<Respon
   return null
 }
 
+async function okWithRuntime(env: Env, subjectId: string): Promise<Response> {
+  const accountType = await accountTypeForSubject(env, subjectId)
+  const runtime = await deriveRuntime(env, subjectId, accountType)
+  return Response.json({ ok: true, runtime })
+}
+
 async function setPin(request: Request, env: Env): Promise<Response> {
   const session = await requireIdentitySession(request, env)
   if (!session) return Response.json({ error: 'invalid_session' }, { status: 401 })
@@ -335,8 +341,7 @@ async function setPin(request: Request, env: Env): Promise<Response> {
   } catch (err) {
     return Response.json({ error: 'update_failed', detail: String(err) }, { status: 500 })
   }
-  // Return a simple success — the client refreshes the full session via getSession.
-  return Response.json({ ok: true })
+  return okWithRuntime(env, session.subjectId)
 }
 
 async function verifyPin(request: Request, env: Env): Promise<Response> {
@@ -386,7 +391,7 @@ async function enableChildMode(request: Request, env: Env): Promise<Response> {
   if (accountType !== 'verified' && accountType !== 'profile_manager') return Response.json({ error: 'child_mode_not_allowed' }, { status: 403 })
   if (!runtime.pinHash) return Response.json({ error: 'pin_required' }, { status: 409 })
   await updateRuntimeState(env, session.subjectId, { ...runtime, childModeEnabled: true })
-  return Response.json({ ok: true })
+  return okWithRuntime(env, session.subjectId)
 }
 
 async function enterChildMode(request: Request, env: Env): Promise<Response> {
@@ -397,7 +402,7 @@ async function enterChildMode(request: Request, env: Env): Promise<Response> {
   if (accountType !== 'verified' && accountType !== 'profile_manager') return Response.json({ error: 'child_mode_not_allowed' }, { status: 403 })
   if (!runtime.pinHash || !runtime.childModeEnabled) return Response.json({ error: 'child_mode_not_enabled' }, { status: 409 })
   await updateRuntimeState(env, session.subjectId, { ...runtime, mode: 'child' })
-  return Response.json({ ok: true })
+  return okWithRuntime(env, session.subjectId)
 }
 
 async function enterParentMode(request: Request, env: Env): Promise<Response> {
@@ -419,7 +424,7 @@ async function enterParentMode(request: Request, env: Env): Promise<Response> {
     if (needsCredentialRehash(runtime.pinHash)) await updateRuntimeState(env, session.subjectId, { ...runtime, pinHash: await hashCredentialSecret(pin, env, 'pin') })
   }
   await updateRuntimeState(env, session.subjectId, { ...runtime, mode: 'parent' })
-  return Response.json({ ok: true })
+  return okWithRuntime(env, session.subjectId)
 }
 
 async function createManagedChild(request: Request, env: Env): Promise<Response> {
@@ -579,7 +584,17 @@ async function createDeletionRequest(request: Request, env: Env): Promise<Respon
     return Response.json({ error: 'forbidden' }, { status: 403 })
   }
 
-  // No PIN grant needed — deletion requires parent mode + email OTP verification.
+  // Account deletion is a PIN-gated step-up: when a PIN is configured, require a
+  // grant issued specifically for account_deletion (mirrors resetAccountData).
+  let pinGrantTokenHash: string | null = null
+  if (scope === 'account' && runtime.pinHash) {
+    if (!body.pinGrantToken) {
+      return Response.json({ error: 'pin_grant_required' }, { status: 403 })
+    }
+    const grant = await consumePinGrant(env, session.subjectId, String(body.pinGrantToken), 'account_deletion')
+    if (!grant.ok) return grant.response
+    pinGrantTokenHash = grant.tokenHash
+  }
 
   if (scope === 'child_account') {
     if (!body.childAccountId) return Response.json({ error: 'child_account_id_required' }, { status: 400 })
@@ -594,7 +609,7 @@ async function createDeletionRequest(request: Request, env: Env): Promise<Respon
     'INSERT INTO identity_deletion_requests (id, subject_id, scope, status, child_account_id, pin_grant_token, created_at, updated_at, completed_at, metadata_json) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
   ).bind(
     requestId, session.subjectId, scope, 'requested',
-    body.childAccountId ?? null, null,
+    body.childAccountId ?? null, pinGrantTokenHash,
     at, at, null, '{}'
   ).run()
 
