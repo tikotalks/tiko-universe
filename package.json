@@ -23,7 +23,7 @@
     "deploy:dry-run:generation": "npm --workspace @tiko-worker/generation-api run deploy:dry-run"
   },
   "dependencies": {
-    "@sil/ui": "^2.6.0",
+    "@sil/ui": "^2.6.1",
     "@vitejs/plugin-vue": "^6.0.1",
     "@vue/test-utils": "^2.4.6",
     "bemm": "^1.4.0",
