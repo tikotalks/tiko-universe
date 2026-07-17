@@ -118,18 +118,61 @@ jobs:
 
       - run: npm ci
 
-      - name: Typecheck
-        run: npm run typecheck
-
-      - name: Test
-        run: npm run test
+      # Full CI gate before any deploy: scaffold check, lint, typecheck, and unit
+      # tests (`npm run check`) plus a full build. Previously only typecheck+test+build
+      # ran here, so a lint or scaffold-check failure could still ship to production.
+      - name: Check (scaffold, lint, typecheck, test)
+        run: npm run check
 
       - name: Build
         run: npm run build
 
+  admin-e2e:
+    name: Admin Cypress E2E
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10
+
+      - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - name: Run admin Cypress tests
+        uses: cypress-io/github-action@948d67d3074f1bbb6379c8bdbb04e95d2f8e593f
+        with:
+          working-directory: apps/admin/web
+          install: false
+          build: npm run build
+          start: npm run preview
+          wait-on: http://127.0.0.1:3062
+          config-file: cypress.config.mjs
+          spec: cypress/e2e/admin-auth.cy.js
+
+  app-e2e:
+    name: App Playwright E2E
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10
+
+      - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium
+
+      - name: Run app Playwright smoke tests
+        run: npx playwright test --config=playwright.config.ts
+
   deploy-apps:
     name: Deploy Apps
-    needs: [detect-changes, verify]
+    needs: [detect-changes, verify, admin-e2e, app-e2e]
     if: needs.detect-changes.outputs.apps-changed != '[]' || needs.detect-changes.outputs.deploy-all == 'true'
     runs-on: ubuntu-latest
     environment: ${{ needs.detect-changes.outputs.environment }}
@@ -206,7 +249,7 @@ jobs:
 
   deploy-workers:
     name: Deploy Workers
-    needs: [detect-changes, verify]
+    needs: [detect-changes, verify, admin-e2e, app-e2e]
     if: needs.detect-changes.outputs.workers-changed != '[]' || needs.detect-changes.outputs.deploy-all == 'true'
     runs-on: ubuntu-latest
     environment: ${{ needs.detect-changes.outputs.environment }}
