@@ -1,5 +1,7 @@
 # Tiko app account navigation and parent/child mode
 
+> **Canonical source:** `docs/flows/shared/identity-and-profiles.md` is the authoritative contract for account types, capabilities, and the profile-menu item set. This document covers navigation *structure and parity* (header affordances, mode switching, settings composition) and must track that contract — where the two disagree, identity-and-profiles.md wins. The concrete menu items listed below are illustrative and are reconciled against the shipped `@tiko/ui` `TikoProfileMenu`; see board task TIKO-011.
+
 This is the shared app contract for Tiko account navigation across iOS and web. The platforms use different UI systems, but the navigation items, labels, and flows must match. If a behavior changes, update the shared contract first and then bring both platform implementations back into parity.
 
 ## Shared principle

@@ -55,11 +55,36 @@ Owns upload authorization, media metadata, user media, and R2 object access.
 
 ### `generation-api`
 
-Owns TTS, sentence generation, image generation, and asynchronous generation queues.
+Owns TTS, image generation, story generation, and asynchronous generation queues. (Sentence building is owned by `sentence-api`, not here.)
 
 ### `admin-api`
 
 Owns dangerous/admin-only operations: reports, removal, moderation, support tooling.
+
+### `atlas-api`
+
+Data/AI gateway: gated capability access, usage/observability, and audit logging in front of downstream providers (see `docs/architecture/atlas.md`).
+
+### `communication-api`
+
+Owns inbound/outbound communication (e.g. inbound email) and related messaging surfaces.
+
+### `sentence-api`
+
+Owns Talk sentence building: user phrases, learned words/affinity, and sentence assembly (see `docs/adrs/2026-06-05-talk-app-and-sentence-api-domains.md`).
+
+### `translations-api`
+
+Lezu-backed translation delivery: cached per-app/per-language bundles consumed by `@tiko/i18n`.
+
+### `tts-api`
+
+Temporary compatibility shim for legacy `/generate` and `/audio` proof-app calls; new clients use `generation-api`. Slated for removal once callers migrate.
+
+> This ownership list must track the `workers/` directory. Current workers:
+> `admin-api`, `app-api`, `atlas-api`, `communication-api`, `content-api`,
+> `generation-api`, `identity-api`, `media-api`, `sentence-api`,
+> `translations-api`, `tts-api` (plus the shared `workers/shared` library).
 
 ## Client packages
 
