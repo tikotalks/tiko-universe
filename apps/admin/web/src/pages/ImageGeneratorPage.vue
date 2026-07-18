@@ -735,15 +735,4 @@ onMounted(async () => {
     }
   }
 }
-    color: var(--admin-text-muted);
-    font-size: var(--font-size-xs);
-    line-height: 1.4;
-    max-height: calc(var(--space) * 4);
-    overflow: hidden;
-    text-overflow: ellipsis;
-    display: -webkit-box;
-    -webkit-line-clamp: 3;
-    -webkit-box-orient: vertical;
-  }
-}
 </style>

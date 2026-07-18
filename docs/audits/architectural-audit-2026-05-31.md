@@ -1,3 +1,5 @@
+> **Superseded (historical).** This audit predates several workers (atlas, communication, sentence, translations), the admin and talk apps, and the atlas/talk-types packages. Its "critical" items (placeholder D1 IDs, empty scaffold workers, unwired cards/sequence, account-id inconsistency) have since been resolved. For the current state see the deep Sills audit at `project-assets/Tiko/audit/2026-07-17`. Kept for history; do not treat its findings as current.
+
 # Tiko Universe — Architectural Audit
 **Date:** 2026-05-31
 **Repo:** `/home/hermes/workspace/tiko-universe`

@@ -33,6 +33,14 @@ jobs:
       - name: Typecheck
         run: npm run typecheck
 
+      # Generated colour files (web/data/iOS) must stay in sync with their
+      # single source (packages/ui/tiko-colors.json). Regenerate and fail if
+      # anything changed — catches a colour edit that skipped `generate:colors`.
+      - name: Colour generation drift
+        run: |
+          npm run generate:colors
+          git diff --exit-code
+
   test:
     name: Unit Tests
     runs-on: ubuntu-latest

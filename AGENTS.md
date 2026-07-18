@@ -24,7 +24,7 @@ npm run lint                    # Runs oxlint over the repo
 npm run typecheck               # vue-tsc --noEmit -p tsconfig.json
 npm run test                    # vitest run (all unit tests, jsdom environment)
 npm run test:contracts          # API contract tests only
-npm run build                   # Build all workspaces (runs generate:app-configs first)
+npm run build                   # Build all workspaces (prebuild runs generate:colors)
 npm run generate:app-configs    # Regenerates appConfig.ts for each app from API + fallbacks
 npm run audit:doctrine          # Checks doctrine markdown files exist
 ```
@@ -55,8 +55,6 @@ App dev ports:
 | todo | 3065 |
 | talk | 3066 |
 
-`apps/clock/web` is not a runnable workspace at the moment and should stay out of active app commands until the app is restored.
-
 ### E2E tests
 
 ```bash
@@ -64,7 +62,7 @@ npx playwright test --config=playwright.config.ts              # All apps
 npx playwright test --project=timer --config=playwright.config.ts  # Single app
 ```
 
-Current status: Playwright specs exist for several child-facing web apps, but `@playwright/test` is not currently declared in the root package manifest and E2E is not part of the default CI gate. Treat these commands as local/manual until the Playwright task in `REVIEW_TASKS.md` is completed. Admin uses Cypress separately: `apps/admin/web` has its own `cypress.config.mjs`.
+Current status: `@playwright/test` is declared in the root manifest and the Playwright app E2E runs in CI (the `app-e2e` job in `ci.yml`); it also gates production deploys (`deploy.yml`). Admin uses Cypress separately: `apps/admin/web` has its own `cypress.config.mjs` (the `admin-e2e` job).
 
 ### iOS
 
@@ -252,12 +250,14 @@ The identity worker is the most complex. It uses the `ankore` package as a found
 
 - All API paths versioned with `/v1`
 - JSON request/response bodies
-- Error shape: `{ error: string, message?: string }`
+- Error shape: the structured `ApiErrorEnvelope` in `docs/api/openapi.yaml` is canonical — `{ error: { code, message, field?, retryAfterSeconds? }, meta }`. Some workers still emit a legacy `{ error: string }`; those are being migrated onto the shared envelope (see board task TIKO-009).
 - Bearer token auth for native: `Authorization: Bearer <token>`
 - Cookie auth for web: `tiko_session` HttpOnly Secure cookie on `.tikoapps.org`
 - Settings/state use optimistic concurrency with `version` fields
 
 ### Key API endpoints
+
+> `docs/api/openapi.yaml` is the canonical contract. Services are currently deployed on per-subdomain hosts (below); the single `api.tikotalks.com/v1` gateway in the OpenAPI `servers` block is the documented target, not yet the deployed reality.
 
 | Service | Base URL (dev) | Key paths |
 |---------|---------------|-----------|
@@ -287,7 +287,7 @@ Located in `tests/` at repo root. These test worker API contracts without runnin
 - Runs against real dev server on dedicated port
 - `testIdAttribute: 'data-test'` configured globally
 - Single worker, no parallelism (`workers: 1`)
-- Not currently part of the default CI gate; see `REVIEW_TASKS.md` before treating Playwright as restored.
+- Runs in CI as the `app-e2e` job and gates production deploys.
 
 ### iOS tests
 - XCTest framework, one test file per app in `apps/<name>/ios/Tests/`
@@ -296,7 +296,7 @@ Located in `tests/` at repo root. These test worker API contracts without runnin
 
 Deployment is fully automated via GitHub Actions:
 
-- **`ci.yml`**: On push to development/main — lint, typecheck, unit tests, admin Cypress E2E, build all
+- **`ci.yml`**: On push/PR to development/main — check (scaffold-check, lint, typecheck), unit tests with coverage, admin Cypress E2E, app Playwright E2E, build all
 - **`deploy.yml`**: On push to development/main — detects changed paths, selectively deploys:
   - Web apps → Cloudflare Pages (project names: `tiko-<app>` for prod, `tiko-<app>-dev` for dev)
   - Workers → Cloudflare Workers (with D1 migrations for app-api)
