@@ -42,3 +42,36 @@ targets:
       - Tests
     dependencies:
       - target: TikoTimer
+      - package: TikoKit
+    settings:
+      base:
+        GENERATE_INFOPLIST_FILE: YES
+  TikoTimerUITests:
+    type: bundle.ui-testing
+    platform: iOS
+    sources:
+      - UITests
+    dependencies:
+      - target: TikoTimer
+    settings:
+      base:
+        GENERATE_INFOPLIST_FILE: YES
+        TEST_TARGET_NAME: TikoTimer
+schemes:
+  TikoTimer:
+    build:
+      targets:
+        TikoTimer: all
+    test:
+      targets:
+        - TikoTimerTests
+        - TikoTimerUITests
+      gatherCoverageData: false
+    run:
+      config: Debug
+    profile:
+      config: Release
+    analyze:
+      config: Debug
+    archive:
+      config: Release

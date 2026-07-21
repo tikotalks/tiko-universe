@@ -174,6 +174,74 @@ final class TikoTalkTests: XCTestCase {
         XCTAssertEqual(store.userId, "subject-1")
         XCTAssertEqual(store.sessionToken, "token-1")
     }
+
+    // MARK: - Offline / no-account usability (Req 1, 6, 14)
+
+    /// Req 1 / 14: the deterministic offline capture seed populates the board with
+    /// the built-in starter words and no network — this is what a fresh, offline,
+    /// no-account launch (and the UI tests) rely on.
+    func testLoadOfflineFallbackForCapturePopulatesBoard() {
+        let store = TalkStore(apiClient: FakeTalkAPIClient(), identityProvider: FakeTalkIdentityProvider())
+
+        store.loadOfflineFallbackForCapture()
+
+        XCTAssertTrue(store.isOfflineFallback)
+        XCTAssertFalse(store.boardWords.isEmpty)
+        XCTAssertTrue(store.boardWords.contains { $0.id == "want" }, "starter board should include the 'want' tile the UI test taps")
+        XCTAssertTrue(store.sentenceWords.isEmpty, "no words should be in the sentence before any tap")
+    }
+
+    /// Req 6: a custom typed word (not in the language pack) is added to the
+    /// sentence, contributes to the spoken text, and keeps the sentence speakable
+    /// without calling the sentence API.
+    func testCustomTypedWordJoinsSentenceAndStaysSpeakable() async {
+        let store = TalkStore(apiClient: FakeTalkAPIClient(), identityProvider: FakeTalkIdentityProvider())
+        await store.load()
+
+        await store.addWord(TalkWordTile(id: "i", text: "I", pos: "pronoun", category: "pronouns"))
+        await store.addWord(TalkWordTile(id: "uword-local-\(UUID().uuidString)", text: "Sil", pos: "noun", category: "mine", isCustom: true))
+
+        XCTAssertEqual(store.sentenceText, "I Sil")
+        XCTAssertTrue(store.canSpeak, "a locally-typed custom word should still be speakable")
+    }
+
+    /// A completed sentence built purely from custom words falls back to on-device
+    /// speech (no /complete call, no audio URL) so it works offline.
+    func testCompleteSentenceWithCustomWordUsesNativeFallback() async {
+        let store = TalkStore(apiClient: FakeTalkAPIClient(), identityProvider: FakeTalkIdentityProvider())
+        await store.load()
+        await store.addWord(TalkWordTile(id: "uword-local-abc", text: "Mum", pos: "noun", category: "mine", isCustom: true))
+
+        let response = await store.completeSentence()
+
+        XCTAssertNil(response, "custom-word sentences skip the /complete API")
+        XCTAssertNil(store.audioURL)
+        XCTAssertEqual(store.completedSentence, "Mum")
+    }
+
+    // MARK: - Model helpers (Req 5, 6)
+
+    /// Deduplication keeps the first occurrence of each id, preserving order.
+    func testDeduplicatedByIdKeepsFirstOccurrenceInOrder() {
+        let words = [
+            TalkWordTile(id: "a", text: "A", pos: "noun", category: "c"),
+            TalkWordTile(id: "b", text: "B", pos: "noun", category: "c"),
+            TalkWordTile(id: "a", text: "A2", pos: "noun", category: "c")
+        ]
+
+        let deduped = words.deduplicatedById()
+
+        XCTAssertEqual(deduped.map(\.id), ["a", "b"])
+        XCTAssertEqual(deduped.first?.text, "A", "the first occurrence is kept")
+    }
+
+    /// `matching(ids:)` resolves saved-phrase / template word ids to tiles in the
+    /// requested order, dropping ids it doesn't know.
+    func testMatchingIdsResolvesInOrderAndDropsUnknown() {
+        let resolved = TalkOfflineFallback.words.matching(ids: ["help", "i", "unknown", "want"])
+
+        XCTAssertEqual(resolved.map(\.id), ["help", "i", "want"])
+    }
 }
 
 private final class FakeTalkIdentityProvider: TalkIdentityProviding, @unchecked Sendable {

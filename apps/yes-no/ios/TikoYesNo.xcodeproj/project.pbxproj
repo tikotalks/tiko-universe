@@ -10,9 +10,11 @@
 		05A0DFBE3E8BEF5F79148D2B /* TikoYesNoTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C1243037126C3062F4D62D8 /* TikoYesNoTests.swift */; };
 		2BF1E91528BDF2CC5A5DD228 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C29DD0F7C2038B0621DDB76E /* Assets.xcassets */; };
 		2EE9175E29F28F467782D280 /* TikoKit in Frameworks */ = {isa = PBXBuildFile; productRef = D7247D1EFCE9E72267767EB4 /* TikoKit */; };
+		629A1978303D3BC9CAA97D70 /* TikoYesNoUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 133D3D2D7AC17B903D1A4C77 /* TikoYesNoUITests.swift */; };
 		A28C1B0D174587280817DCA0 /* YesNoSpeechService.swift in Sources */ = {isa = PBXBuildFile; fileRef = ACA4B1596AEF26381F6234C3 /* YesNoSpeechService.swift */; };
 		AEF826E4C08B5590BC419989 /* YesNoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C99E9A160668D93E2D88752 /* YesNoView.swift */; };
 		C31BF34E6E940946F38A5CB7 /* YesNoAppConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFF1B4E75F0388887506E441 /* YesNoAppConfig.swift */; };
+		E12D28C0AF2CC81C15B5790F /* TikoKit in Frameworks */ = {isa = PBXBuildFile; productRef = 2ED94DA5FDFB546A53D31506 /* TikoKit */; };
 		EC6CE986289B68B4B9EF34F6 /* TikoYesNoApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF6BBD658EE7F2E3FFB60F4D /* TikoYesNoApp.swift */; };
 /* End PBXBuildFile section */
 
@@ -24,10 +26,18 @@
 			remoteGlobalIDString = 0286DE3209637543114F6F4E;
 			remoteInfo = TikoYesNo;
 		};
+		B21B27848001CD796DBB1815 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = C63585DBACC3A18EB0C3AA33 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 0286DE3209637543114F6F4E;
+			remoteInfo = TikoYesNo;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		0A03A3830F9E9D0D41C10399 /* tikokit-ios */ = {isa = PBXFileReference; lastKnownFileType = folder; name = "tikokit-ios"; path = "../../../packages/tikokit-ios"; sourceTree = SOURCE_ROOT; };
+		133D3D2D7AC17B903D1A4C77 /* TikoYesNoUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TikoYesNoUITests.swift; sourceTree = "<group>"; };
 		216C3B420E05057458B4A8FF /* TikoYesNoTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = TikoYesNoTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		2B19C1507B00190FDAF8CB2A /* TikoYesNo.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = TikoYesNo.entitlements; sourceTree = "<group>"; };
 		3C1243037126C3062F4D62D8 /* TikoYesNoTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TikoYesNoTests.swift; sourceTree = "<group>"; };
@@ -35,12 +45,21 @@
 		7C99E9A160668D93E2D88752 /* YesNoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YesNoView.swift; sourceTree = "<group>"; };
 		ACA4B1596AEF26381F6234C3 /* YesNoSpeechService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YesNoSpeechService.swift; sourceTree = "<group>"; };
 		C29DD0F7C2038B0621DDB76E /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		C5DF4B04108334360E51DCC3 /* TikoYesNoUITests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = TikoYesNoUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		CFF1B4E75F0388887506E441 /* YesNoAppConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YesNoAppConfig.swift; sourceTree = "<group>"; };
 		EF6BBD658EE7F2E3FFB60F4D /* TikoYesNoApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TikoYesNoApp.swift; sourceTree = "<group>"; };
 		FB09AA6545AC873DBC2EE38E /* TikoYesNo.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = TikoYesNo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		06084E665F62C562D1F539F6 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E12D28C0AF2CC81C15B5790F /* TikoKit in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		7066D60C661A2D55122E7378 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -66,6 +85,7 @@
 				0EAE49D8484A026F1CD71404 /* Packages */,
 				6F252DBBC82FABF459FB1F38 /* Sources */,
 				738A4A9C7946C7DC6C91EE50 /* Tests */,
+				C153B1285C8EFAD3A764AAD5 /* UITests */,
 				D161094920912CD4DE1A244F /* Products */,
 			);
 			sourceTree = "<group>";
@@ -92,11 +112,20 @@
 			path = Tests;
 			sourceTree = "<group>";
 		};
+		C153B1285C8EFAD3A764AAD5 /* UITests */ = {
+			isa = PBXGroup;
+			children = (
+				133D3D2D7AC17B903D1A4C77 /* TikoYesNoUITests.swift */,
+			);
+			path = UITests;
+			sourceTree = "<group>";
+		};
 		D161094920912CD4DE1A244F /* Products */ = {
 			isa = PBXGroup;
 			children = (
 				FB09AA6545AC873DBC2EE38E /* TikoYesNo.app */,
 				216C3B420E05057458B4A8FF /* TikoYesNoTests.xctest */,
+				C5DF4B04108334360E51DCC3 /* TikoYesNoUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -130,6 +159,7 @@
 			buildConfigurationList = 7C743DB268798AD33A7C3F8D /* Build configuration list for PBXNativeTarget "TikoYesNoTests" */;
 			buildPhases = (
 				D4E2B013E56ABB9074B2D920 /* Sources */,
+				06084E665F62C562D1F539F6 /* Frameworks */,
 			);
 			buildRules = (
 			);
@@ -138,10 +168,29 @@
 			);
 			name = TikoYesNoTests;
 			packageProductDependencies = (
+				2ED94DA5FDFB546A53D31506 /* TikoKit */,
 			);
 			productName = TikoYesNoTests;
 			productReference = 216C3B420E05057458B4A8FF /* TikoYesNoTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		9DC0009B162012C7A5EA190B /* TikoYesNoUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 5EED55B8EFA458191391770E /* Build configuration list for PBXNativeTarget "TikoYesNoUITests" */;
+			buildPhases = (
+				178F9D62223C4A28D2AF9E00 /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				86B4E17F98CB046D07774BA4 /* PBXTargetDependency */,
+			);
+			name = TikoYesNoUITests;
+			packageProductDependencies = (
+			);
+			productName = TikoYesNoUITests;
+			productReference = C5DF4B04108334360E51DCC3 /* TikoYesNoUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
 		};
 /* End PBXNativeTarget section */
 
@@ -157,6 +206,10 @@
 					};
 					23B4F9754A956BEBA2CFFA61 = {
 						DevelopmentTeam = "";
+					};
+					9DC0009B162012C7A5EA190B = {
+						DevelopmentTeam = "";
+						TestTargetID = 0286DE3209637543114F6F4E;
 					};
 				};
 			};
@@ -179,6 +232,7 @@
 			targets = (
 				0286DE3209637543114F6F4E /* TikoYesNo */,
 				23B4F9754A956BEBA2CFFA61 /* TikoYesNoTests */,
+				9DC0009B162012C7A5EA190B /* TikoYesNoUITests */,
 			);
 		};
 /* End PBXProject section */
@@ -228,6 +282,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		178F9D62223C4A28D2AF9E00 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				629A1978303D3BC9CAA97D70 /* TikoYesNoUITests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		D4E2B013E56ABB9074B2D920 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -243,6 +305,11 @@
 			isa = PBXTargetDependency;
 			target = 0286DE3209637543114F6F4E /* TikoYesNo */;
 			targetProxy = 026E40E9D6AB9AAFCF4D1C77 /* PBXContainerItemProxy */;
+		};
+		86B4E17F98CB046D07774BA4 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 0286DE3209637543114F6F4E /* TikoYesNo */;
+			targetProxy = B21B27848001CD796DBB1815 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -303,6 +370,23 @@
 				SWIFT_VERSION = 5.0;
 			};
 			name = Release;
+		};
+		256C9D717C4007A191394869 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = mt.tiko.TikoYesNoUITests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = TikoYesNo;
+			};
+			name = Debug;
 		};
 		72C20CB92C4A1844A889B48D /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -440,6 +524,23 @@
 			};
 			name = Debug;
 		};
+		E01D0F16C60BD0754649C626 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = mt.tiko.TikoYesNoUITests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = TikoYesNo;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -448,6 +549,15 @@
 			buildConfigurations = (
 				C56264099708FF92B9401BAD /* Debug */,
 				840FBAB12BB94FAB542F87A0 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		5EED55B8EFA458191391770E /* Build configuration list for PBXNativeTarget "TikoYesNoUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				256C9D717C4007A191394869 /* Debug */,
+				E01D0F16C60BD0754649C626 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
@@ -480,6 +590,10 @@
 /* End XCLocalSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		2ED94DA5FDFB546A53D31506 /* TikoKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = TikoKit;
+		};
 		D7247D1EFCE9E72267767EB4 /* TikoKit */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = TikoKit;

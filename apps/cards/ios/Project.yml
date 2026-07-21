@@ -45,3 +45,32 @@ targets:
     settings:
       base:
         GENERATE_INFOPLIST_FILE: YES
+  TikoCardsUITests:
+    type: bundle.ui-testing
+    platform: iOS
+    sources:
+      - UITests
+    dependencies:
+      - target: TikoCards
+    settings:
+      base:
+        GENERATE_INFOPLIST_FILE: YES
+        TEST_TARGET_NAME: TikoCards
+schemes:
+  TikoCards:
+    build:
+      targets:
+        TikoCards: all
+    test:
+      targets:
+        - TikoCardsTests
+        - TikoCardsUITests
+      gatherCoverageData: false
+    run:
+      config: Debug
+    profile:
+      config: Release
+    analyze:
+      config: Debug
+    archive:
+      config: Release

@@ -1,0 +1,152 @@
+{
+  "app": "talk",
+  "name": "Talk",
+  "scheme": "TikoTalk",
+  "project": "apps/talk/ios/TikoTalk.xcodeproj",
+  "iosDir": "apps/talk/ios",
+  "bundleId": "mt.tiko.talk",
+  "appleId": "",
+  "appStoreId": "",
+  "appStoreUrl": "",
+  "validation": {
+    "script": "apps/talk/ios/scripts/validate-local.sh"
+  },
+  "screenshots": {
+    "outputDir": "/Users/silvandiepen/Projects/Tiko/apps/talk",
+    "configuration": "Debug",
+    "eraseBeforeCapture": false,
+    "defaultWaitSeconds": 2,
+    "baseLaunchArgs": [
+      "--screenshot-mode"
+    ],
+    "statusBar": {
+      "time": "9:41",
+      "wifiBars": 3,
+      "cellularBars": 4,
+      "batteryState": "charged",
+      "batteryLevel": 100
+    },
+    "devices": [
+      {
+        "name": "iPhone 17 Pro Max",
+        "os": "26.2",
+        "displayType": "APP_IPHONE_67",
+        "createIfMissing": true
+      },
+      {
+        "name": "iPad Pro 13-inch (M5)",
+        "os": "26.2",
+        "displayType": "APP_IPAD_PRO_13",
+        "createIfMissing": true
+      }
+    ],
+    "locales": [
+      {
+        "id": "en-US",
+        "appLanguage": "en"
+      }
+    ],
+    "colorModes": [
+      {
+        "id": "light",
+        "userDefaults": {
+          "tiko.colorMode": "light"
+        }
+      },
+      {
+        "id": "dark",
+        "userDefaults": {
+          "tiko.colorMode": "dark"
+        }
+      }
+    ],
+    "scenarios": [
+      {
+        "id": "tiles-light",
+        "filename": "01-{deviceSlug}-tiles-en-light.png",
+        "launchArgs": [
+          "--screenshot",
+          "tiles"
+        ],
+        "locales": [
+          {
+            "id": "en-US",
+            "appLanguage": "en"
+          }
+        ],
+        "colorModes": [
+          "light"
+        ],
+        "waitSeconds": 2
+      },
+      {
+        "id": "tiles-dark",
+        "filename": "02-{deviceSlug}-tiles-en-dark.png",
+        "launchArgs": [
+          "--screenshot",
+          "tiles"
+        ],
+        "locales": [
+          {
+            "id": "en-US",
+            "appLanguage": "en"
+          }
+        ],
+        "colorModes": [
+          "dark"
+        ],
+        "waitSeconds": 2
+      },
+      {
+        "id": "sentence-light",
+        "filename": "03-{deviceSlug}-sentence-en-light.png",
+        "launchArgs": [
+          "--screenshot",
+          "sentence"
+        ],
+        "locales": [
+          {
+            "id": "en-US",
+            "appLanguage": "en"
+          }
+        ],
+        "colorModes": [
+          "light"
+        ],
+        "waitSeconds": 2
+      },
+      {
+        "id": "settings-light",
+        "filename": "04-{deviceSlug}-settings-en-light.png",
+        "launchArgs": [
+          "--screenshot",
+          "settings"
+        ],
+        "locales": [
+          {
+            "id": "en-US",
+            "appLanguage": "en"
+          }
+        ],
+        "colorModes": [
+          "light"
+        ],
+        "waitSeconds": 3
+      }
+    ],
+    "scenarioBudgetPerDevice": 10
+  },
+  "archive": {
+    "configuration": "Release",
+    "archivePath": "artifacts/archives/talk/TikoTalk.xcarchive",
+    "exportPath": "artifacts/archives/talk/export",
+    "exportOptionsPlist": null,
+    "allowProvisioningUpdates": true
+  },
+  "upload": {
+    "ipaPath": "artifacts/archives/talk/export/TikoTalk.ipa",
+    "deliverDir": "artifacts/app-store/talk",
+    "apiKeyEnv": "APP_STORE_CONNECT_KEY_ID",
+    "apiIssuerEnv": "APP_STORE_CONNECT_ISSUER_ID"
+  }
+}

@@ -4,13 +4,13 @@ import AVFoundation
 
 // MARK: - Keyboard layouts
 
-private struct KeyboardLayout: Identifiable, Hashable {
+struct KeyboardLayout: Identifiable, Hashable {
     let id: String
     let label: String
     let rows: [[String]]
 }
 
-private enum KeyboardLayouts {
+enum KeyboardLayouts {
     static let all: [KeyboardLayout] = [
         KeyboardLayout(id: "qwerty", label: "QWERTY", rows: [
             ["q","w","e","r","t","y","u","i","o","p"],
@@ -52,7 +52,7 @@ private enum KeyboardLayouts {
 
 // MARK: - Key themes
 
-private struct KeyThemeColors {
+struct KeyThemeColors {
     let key: (String, Int) -> Color
     let keyText: Color
     let special: Color
@@ -72,7 +72,7 @@ private let colorfulPalette: [Color] = [
     Color(hex: 0x63E6BE),
 ]
 
-private enum KeyTheme: String, CaseIterable, Identifiable {
+enum KeyTheme: String, CaseIterable, Identifiable {
     case classic, warm, cool, colorful, contrast, ghost
 
     var id: String { rawValue }
@@ -338,6 +338,8 @@ private struct KeyCap: View {
                 )
         }
         .buttonStyle(.plain)
+        // Stable identifier for UI tests, independent of capitalisation.
+        .accessibilityIdentifier("key-\(key)")
     }
 
     private func triggerPress() {
@@ -676,6 +678,7 @@ struct TypeView: View {
                         .buttonStyle(.plain)
                         .disabled(!hasContent)
                         .accessibilityLabel("Speak")
+                        .accessibilityIdentifier("speakButton")
 
                         Button(action: clearAll) {
                             Image(systemName: "xmark.circle.fill")
@@ -688,6 +691,7 @@ struct TypeView: View {
                         .buttonStyle(.plain)
                         .disabled(!hasContent)
                         .accessibilityLabel("Clear")
+                        .accessibilityIdentifier("clearButton")
                     }
                 }
 
@@ -726,6 +730,10 @@ struct TypeView: View {
         .environmentObject(i18n)
         .onAppear {
             i18n.setLanguage(languageCode)
+            if TikoScreenshotMode.isActive {
+                if TikoScreenshotMode.scene == "sentence" { words = ["Hello", "world"] }
+                return
+            }
             loadWords()
             migrateOldText()
         }
@@ -776,9 +784,11 @@ struct TypeView: View {
                         }
                     )
                     .accessibilityLabel(currentWord)
+                    .accessibilityIdentifier("typeCurrentWord")
             }
         }
         .frame(maxWidth: .infinity, minHeight: 52, alignment: .leading)
+        .accessibilityIdentifier("typeBar")
         .padding(.horizontal, 24)
         .background(
             GeometryReader { geo in
@@ -794,7 +804,7 @@ struct TypeView: View {
     private func handleKey(_ key: String, from frame: CGRect) {
         if key == " " {
             if !currentWord.isEmpty {
-                words.append(currentWord)
+                words = TypeText.committing(words: words, currentWord: currentWord)
                 currentWord = ""
                 saveWords()
             }
@@ -862,7 +872,7 @@ struct TypeView: View {
     // MARK: - Speech
 
     private func speakAll() {
-        let full = (words + (currentWord.isEmpty ? [] : [currentWord])).joined(separator: " ")
+        let full = TypeText.speechString(words: words, currentWord: currentWord)
         guard !full.isEmpty else { return }
         speechService.speak(full, languageCode: languageCode) { state in
             isSpeaking = state == .playing
@@ -927,13 +937,9 @@ struct TypeView: View {
         guard words.isEmpty, currentWord.isEmpty else { return }
         let defaults = UserDefaults.standard
         if let oldText = defaults.string(forKey: "type.text"), !oldText.isEmpty {
-            let parts = oldText.split(separator: " ").map(String.init)
-            if let last = parts.last, !oldText.hasSuffix(" ") {
-                words = Array(parts.dropLast())
-                currentWord = last
-            } else {
-                words = parts
-            }
+            let split = TypeText.split(sentence: oldText)
+            words = split.words
+            currentWord = split.current
             saveWords()
             defaults.removeObject(forKey: "type.text")
         }

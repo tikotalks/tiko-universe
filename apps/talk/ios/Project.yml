@@ -45,3 +45,32 @@ targets:
     settings:
       base:
         GENERATE_INFOPLIST_FILE: YES
+  TikoTalkUITests:
+    type: bundle.ui-testing
+    platform: iOS
+    sources:
+      - UITests
+    dependencies:
+      - target: TikoTalk
+    settings:
+      base:
+        GENERATE_INFOPLIST_FILE: YES
+        TEST_TARGET_NAME: TikoTalk
+schemes:
+  TikoTalk:
+    build:
+      targets:
+        TikoTalk: all
+    test:
+      targets:
+        - TikoTalkTests
+        - TikoTalkUITests
+      gatherCoverageData: false
+    run:
+      config: Debug
+    profile:
+      config: Release
+    analyze:
+      config: Debug
+    archive:
+      config: Release

@@ -1,0 +1,152 @@
+{
+  "app": "timer",
+  "name": "Timer",
+  "scheme": "TikoTimer",
+  "project": "apps/timer/ios/TikoTimer.xcodeproj",
+  "iosDir": "apps/timer/ios",
+  "bundleId": "mt.tiko.timer",
+  "appleId": "",
+  "appStoreId": "",
+  "appStoreUrl": "",
+  "validation": {
+    "script": "apps/timer/ios/scripts/validate-local.sh"
+  },
+  "screenshots": {
+    "outputDir": "/Users/silvandiepen/Projects/Tiko/apps/timer",
+    "configuration": "Debug",
+    "eraseBeforeCapture": false,
+    "defaultWaitSeconds": 2,
+    "baseLaunchArgs": [
+      "--screenshot-mode"
+    ],
+    "statusBar": {
+      "time": "9:41",
+      "wifiBars": 3,
+      "cellularBars": 4,
+      "batteryState": "charged",
+      "batteryLevel": 100
+    },
+    "devices": [
+      {
+        "name": "iPhone 17 Pro Max",
+        "os": "26.2",
+        "displayType": "APP_IPHONE_67",
+        "createIfMissing": true
+      },
+      {
+        "name": "iPad Pro 13-inch (M5)",
+        "os": "26.2",
+        "displayType": "APP_IPAD_PRO_13",
+        "createIfMissing": true
+      }
+    ],
+    "locales": [
+      {
+        "id": "en-US",
+        "appLanguage": "en"
+      }
+    ],
+    "colorModes": [
+      {
+        "id": "light",
+        "userDefaults": {
+          "tiko.colorMode": "light"
+        }
+      },
+      {
+        "id": "dark",
+        "userDefaults": {
+          "tiko.colorMode": "dark"
+        }
+      }
+    ],
+    "scenarios": [
+      {
+        "id": "running-light",
+        "filename": "01-{deviceSlug}-running-en-light.png",
+        "launchArgs": [
+          "--screenshot",
+          "running"
+        ],
+        "locales": [
+          {
+            "id": "en-US",
+            "appLanguage": "en"
+          }
+        ],
+        "colorModes": [
+          "light"
+        ],
+        "waitSeconds": 2
+      },
+      {
+        "id": "running-dark",
+        "filename": "02-{deviceSlug}-running-en-dark.png",
+        "launchArgs": [
+          "--screenshot",
+          "running"
+        ],
+        "locales": [
+          {
+            "id": "en-US",
+            "appLanguage": "en"
+          }
+        ],
+        "colorModes": [
+          "dark"
+        ],
+        "waitSeconds": 2
+      },
+      {
+        "id": "set-light",
+        "filename": "03-{deviceSlug}-set-en-light.png",
+        "launchArgs": [
+          "--screenshot",
+          "set"
+        ],
+        "locales": [
+          {
+            "id": "en-US",
+            "appLanguage": "en"
+          }
+        ],
+        "colorModes": [
+          "light"
+        ],
+        "waitSeconds": 2
+      },
+      {
+        "id": "settings-light",
+        "filename": "04-{deviceSlug}-settings-en-light.png",
+        "launchArgs": [
+          "--screenshot",
+          "settings"
+        ],
+        "locales": [
+          {
+            "id": "en-US",
+            "appLanguage": "en"
+          }
+        ],
+        "colorModes": [
+          "light"
+        ],
+        "waitSeconds": 3
+      }
+    ],
+    "scenarioBudgetPerDevice": 10
+  },
+  "archive": {
+    "configuration": "Release",
+    "archivePath": "artifacts/archives/timer/TikoTimer.xcarchive",
+    "exportPath": "artifacts/archives/timer/export",
+    "exportOptionsPlist": null,
+    "allowProvisioningUpdates": true
+  },
+  "upload": {
+    "ipaPath": "artifacts/archives/timer/export/TikoTimer.ipa",
+    "deliverDir": "artifacts/app-store/timer",
+    "apiKeyEnv": "APP_STORE_CONNECT_KEY_ID",
+    "apiIssuerEnv": "APP_STORE_CONNECT_ISSUER_ID"
+  }
+}

@@ -42,3 +42,36 @@ targets:
       - Tests
     dependencies:
       - target: TikoRadio
+      - package: TikoKit
+    settings:
+      base:
+        GENERATE_INFOPLIST_FILE: YES
+  TikoRadioUITests:
+    type: bundle.ui-testing
+    platform: iOS
+    sources:
+      - UITests
+    dependencies:
+      - target: TikoRadio
+    settings:
+      base:
+        GENERATE_INFOPLIST_FILE: YES
+        TEST_TARGET_NAME: TikoRadio
+schemes:
+  TikoRadio:
+    build:
+      targets:
+        TikoRadio: all
+    test:
+      targets:
+        - TikoRadioTests
+        - TikoRadioUITests
+      gatherCoverageData: false
+    run:
+      config: Debug
+    profile:
+      config: Release
+    analyze:
+      config: Debug
+    archive:
+      config: Release

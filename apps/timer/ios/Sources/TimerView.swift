@@ -12,48 +12,24 @@ struct TimerView: View {
 
     @StateObject private var i18n = TikoI18n(app: .timer)
 
-    @State private var mode: TimerMode = .idle
-    @State private var targetDate = Date()
-    @State private var remainingMs: Double = 0
-    @State private var totalDuration: Double = 0
-    @State private var tickCounter = 0
+    /// All countdown state + math lives in the pure, unit-tested engine.
+    @State private var engine = TimerEngine()
+    /// Updated on every tick so SwiftUI recomputes the derived values.
+    @State private var now = Date()
 
     private let timer = Timer.publish(every: 0.25, on: .main, in: .common).autoconnect()
 
     private var presets: [(label: String, ms: Double)] {
         [
-            (i18n.t("timer.presets.oneMin"), 60_000),
-            (i18n.t("timer.presets.threeMin"), 180_000),
-            (i18n.t("timer.presets.fiveMin"), 300_000),
-            (i18n.t("timer.presets.tenMin"), 600_000),
+            (i18n.t("timer.presets.oneMin"), TimerEngine.presetsMs[0]),
+            (i18n.t("timer.presets.threeMin"), TimerEngine.presetsMs[1]),
+            (i18n.t("timer.presets.fiveMin"), TimerEngine.presetsMs[2]),
+            (i18n.t("timer.presets.tenMin"), TimerEngine.presetsMs[3]),
         ]
     }
 
-    private enum TimerMode: String {
-        case idle, running, paused, expired
-    }
-
-    private var remaining: Double {
-        switch mode {
-        case .idle: return 0
-        case .running: return max(0, targetDate.timeIntervalSinceNow * 1000)
-        case .paused: return remainingMs
-        case .expired: return 0
-        }
-    }
-
-    private var progress: Double {
-        guard totalDuration > 0 else { return 0 }
-        if mode == .expired { return 1 }
-        return 1 - remaining / totalDuration
-    }
-
-    private var displayTime: String {
-        let totalSeconds = Int(max(0, remaining / 1000))
-        let minutes = totalSeconds / 60
-        let seconds = totalSeconds % 60
-        return String(format: "%02d:%02d", minutes, seconds)
-    }
+    private var displayTime: String { engine.displayTime(now: now) }
+    private var progress: Double { engine.progress(now: now) }
 
     private let ringCircumference = 2 * Double.pi * 80
 
@@ -88,8 +64,9 @@ struct TimerView: View {
                             .font(.system(size: 44, weight: .bold, design: .rounded))
                             .foregroundStyle(timerDark)
                             .monospacedDigit()
+                            .accessibilityIdentifier("timer.display")
 
-                        if mode == .expired {
+                        if engine.mode == .expired {
                             Text(i18n.t("timer.display.expired"))
                                 .font(.system(.headline, design: .rounded).weight(.heavy))
                                 .foregroundStyle(timerDark.opacity(0.82))
@@ -99,7 +76,7 @@ struct TimerView: View {
                 .padding(.top, 18)
 
                 // Preset buttons (only when idle)
-                if mode == .idle {
+                if engine.mode == .idle {
                     LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 12), count: 2), spacing: 12) {
                         ForEach(presets.indices, id: \.self) { index in
                             Button(presets[index].label) {
@@ -110,6 +87,7 @@ struct TimerView: View {
                             .frame(maxWidth: .infinity, minHeight: 56)
                             .background(.white)
                             .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+                            .accessibilityIdentifier("timer.preset.\(index)")
                         }
                     }
                     .padding(.horizontal, 24)
@@ -117,7 +95,7 @@ struct TimerView: View {
 
                 // Controls
                 HStack(spacing: 16) {
-                    if mode == .idle || mode == .expired {
+                    if engine.mode == .idle || engine.mode == .expired {
                         Button(action: startCustom) {
                             Image(systemName: "play.fill")
                                 .font(.title2.weight(.bold))
@@ -127,9 +105,10 @@ struct TimerView: View {
                                 .clipShape(Circle())
                         }
                         .accessibilityLabel("Start")
+                        .accessibilityIdentifier("timer.start")
                     }
 
-                    if mode == .running {
+                    if engine.mode == .running {
                         Button(action: pause) {
                             Image(systemName: "pause.fill")
                                 .font(.title2.weight(.bold))
@@ -139,9 +118,10 @@ struct TimerView: View {
                                 .clipShape(Circle())
                         }
                         .accessibilityLabel("Pause")
+                        .accessibilityIdentifier("timer.pause")
                     }
 
-                    if mode == .paused {
+                    if engine.mode == .paused {
                         Button(action: resume) {
                             Image(systemName: "play.fill")
                                 .font(.title2.weight(.bold))
@@ -151,9 +131,10 @@ struct TimerView: View {
                                 .clipShape(Circle())
                         }
                         .accessibilityLabel("Resume")
+                        .accessibilityIdentifier("timer.resume")
                     }
 
-                    if mode != .idle {
+                    if engine.mode != .idle {
                         Button(action: reset) {
                             Image(systemName: "arrow.counterclockwise")
                                 .font(.title2.weight(.bold))
@@ -163,6 +144,7 @@ struct TimerView: View {
                                 .clipShape(Circle())
                         }
                         .accessibilityLabel("Reset")
+                        .accessibilityIdentifier("timer.reset")
                     }
                 }
             }
@@ -170,16 +152,16 @@ struct TimerView: View {
         .environmentObject(i18n)
         .onAppear {
             i18n.setLanguage(languageCode)
+            if TikoScreenshotMode.isActive { return }
             restoreFromPersisted()
         }
         .onChange(of: languageCode) { _, code in
             i18n.setLanguage(code)
         }
         .onReceive(timer) { _ in
-            guard mode == .running else { return }
-            tickCounter += 1
-            if remaining <= 0 {
-                mode = .expired
+            guard engine.mode == .running else { return }
+            now = Date()
+            if engine.expireIfElapsed(now: now) {
                 if soundEnabled {
                     // TODO: play shared Tiko completion sound when the audio asset is available.
                 }
@@ -189,64 +171,50 @@ struct TimerView: View {
     }
 
     private func start(durationMs: Double) {
-        totalDuration = durationMs
-        targetDate = Date().addingTimeInterval(durationMs / 1000)
-        mode = .running
+        now = Date()
+        engine.start(durationMs: durationMs, now: now)
         persist()
     }
 
     private func startCustom() {
-        let ms = (Double(customMinutes) * 60 + Double(customSeconds)) * 1000
-        guard ms > 0 else { return }
-        start(durationMs: ms)
+        now = Date()
+        engine.startCustom(minutes: customMinutes, seconds: customSeconds, now: now)
+        guard engine.mode == .running else { return }
+        persist()
     }
 
     private func pause() {
-        guard mode == .running else { return }
-        remainingMs = max(0, targetDate.timeIntervalSinceNow * 1000)
-        mode = .paused
+        now = Date()
+        engine.pause(now: now)
         persist()
     }
 
     private func resume() {
-        guard mode == .paused else { return }
-        targetDate = Date().addingTimeInterval(remainingMs / 1000)
-        mode = .running
+        now = Date()
+        engine.resume(now: now)
         persist()
     }
 
     private func reset() {
-        mode = .idle
-        totalDuration = 0
-        remainingMs = 0
+        engine.reset()
         persist()
     }
 
     private func persist() {
-        persistedMode = mode.rawValue
-        persistedTargetMs = targetDate.timeIntervalSince1970 * 1000
-        persistedRemainingMs = remainingMs
+        persistedMode = engine.mode.rawValue
+        persistedTargetMs = engine.targetDate.timeIntervalSince1970 * 1000
+        persistedRemainingMs = engine.remainingMs
     }
 
     private func restoreFromPersisted() {
-        guard persistedMode != "idle" else { return }
-        if persistedMode == "running" {
-            let target = Date(timeIntervalSince1970: persistedTargetMs / 1000)
-            let left = target.timeIntervalSinceNow * 1000
-            if left > 0 {
-                targetDate = target
-                mode = .running
-                // totalDuration unknown after restore; approximate from remaining
-                totalDuration = left
-            } else {
-                mode = .expired
-            }
-        } else if persistedMode == "paused" {
-            remainingMs = persistedRemainingMs
-            mode = .paused
-        } else if persistedMode == "expired" {
-            mode = .expired
-        }
+        guard persistedMode != TimerEngine.Mode.idle.rawValue else { return }
+        now = Date()
+        engine = TimerEngine.restored(
+            persistedMode: persistedMode,
+            targetMs: persistedTargetMs,
+            remainingMs: persistedRemainingMs,
+            now: now
+        )
     }
 }
 

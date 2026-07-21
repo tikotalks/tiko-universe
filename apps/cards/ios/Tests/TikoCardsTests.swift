@@ -84,4 +84,99 @@ final class TikoCardsTests: XCTestCase {
             collection.color == "green"
         })
     }
+
+    // MARK: - Colour fallbacks (Req 4)
+
+    /// Req 4: an unknown colour on a card or collection falls back to a valid
+    /// default ("orange") so every tile is always renderable.
+    func testUnknownColorFallsBackToDefault() {
+        let card = CommunicationCard(id: "x", title: "X", speech: "X", color: "not-a-real-color")
+        XCTAssertEqual(card.color, "orange")
+        let collection = CardCollection(id: "c", title: "C", color: "definitely-bogus", order: 0, cards: [])
+        XCTAssertEqual(collection.color, "orange")
+    }
+
+    /// Req 7: a card round-trips losslessly through Codable, preserving its
+    /// colour, image ref and order.
+    func testCardColorRoundTrips() throws {
+        let card = CommunicationCard(id: "c1", title: "Cat", speech: "Cat", imageRef: "abc-123", color: "green", order: 2)
+        let data = try JSONEncoder().encode(card)
+        let decoded = try JSONDecoder().decode(CommunicationCard.self, from: data)
+        XCTAssertEqual(decoded, card)
+        XCTAssertEqual(decoded.color, "green")
+    }
+
+    // MARK: - Custom content: collections & cards (Req 8, 9, 10)
+
+    /// Creates a `CardsStore` backed by an isolated, empty UserDefaults suite so
+    /// custom-content tests never touch real app state. The caller is responsible
+    /// for removing the suite (see each test's `defer`).
+    @MainActor
+    private func makeIsolatedStore() throws -> (CardsStore, String) {
+        let suiteName = "TikoCardsTests.\(UUID().uuidString)"
+        let defaults = try XCTUnwrap(UserDefaults(suiteName: suiteName))
+        return (CardsStore(defaults: defaults), suiteName)
+    }
+
+    /// Req 8: adding a collection creates a locally-owned `user_…` collection with
+    /// the requested title and colour — no account required.
+    @MainActor
+    func testAddCollectionCreatesUserCollection() throws {
+        let (store, suiteName) = try makeIsolatedStore()
+        defer { UserDefaults().removePersistentDomain(forName: suiteName) }
+
+        store.addCollection(title: "Vehicles", color: "blue")
+
+        let created = store.collections.first { $0.title == "Vehicles" }
+        XCTAssertNotNil(created)
+        XCTAssertTrue(created?.id.hasPrefix("user_") == true)
+        XCTAssertEqual(created?.color, "blue")
+    }
+
+    /// Req 9: adding a card appends it to the target collection with its title and
+    /// spoken text.
+    @MainActor
+    func testAddCardAppendsToCollection() throws {
+        let (store, suiteName) = try makeIsolatedStore()
+        defer { UserDefaults().removePersistentDomain(forName: suiteName) }
+
+        store.addCollection(title: "Toys", color: "green")
+        let collectionID = try XCTUnwrap(store.collections.first { $0.title == "Toys" }?.id)
+        store.addCard(title: "Ball", speech: "Ball", color: "red", to: collectionID)
+
+        let collection = store.collections.first { $0.id == collectionID }
+        XCTAssertEqual(collection?.cards.count, 1)
+        XCTAssertEqual(collection?.cards.first?.title, "Ball")
+        XCTAssertEqual(collection?.cards.first?.speech, "Ball")
+    }
+
+    /// Req 3 / 9: a custom card added with blank spoken text falls back to its
+    /// title, so tap-to-speak always has something to say.
+    @MainActor
+    func testAddedCardSpeechFallsBackToTitle() throws {
+        let (store, suiteName) = try makeIsolatedStore()
+        defer { UserDefaults().removePersistentDomain(forName: suiteName) }
+
+        store.addCollection(title: "Toys", color: "green")
+        let collectionID = try XCTUnwrap(store.collections.first { $0.title == "Toys" }?.id)
+        store.addCard(title: "Teddy", speech: "   ", color: "red", to: collectionID)
+
+        let card = store.collections.first { $0.id == collectionID }?.cards.first
+        XCTAssertEqual(card?.speech, "Teddy")
+    }
+
+    /// Req 10: collections can be nested — a collection created with a parent keeps
+    /// that `parentID`.
+    @MainActor
+    func testAddNestedCollectionKeepsParent() throws {
+        let (store, suiteName) = try makeIsolatedStore()
+        defer { UserDefaults().removePersistentDomain(forName: suiteName) }
+
+        store.addCollection(title: "Parent", color: "green")
+        let parentID = try XCTUnwrap(store.collections.first { $0.title == "Parent" }?.id)
+        store.addCollection(title: "Child", color: "blue", parentID: parentID)
+
+        let child = store.collections.first { $0.title == "Child" }
+        XCTAssertEqual(child?.parentID, parentID)
+    }
 }

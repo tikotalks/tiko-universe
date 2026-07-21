@@ -432,6 +432,13 @@ struct YesNoView: View {
             }
         }
         .task {
+            // App Store capture: render a fixed, offline-stable scene and skip
+            // the network fetch so screenshots are deterministic. Other apps
+            // follow the same TikoScreenshotMode pattern in their root view.
+            if TikoScreenshotMode.isActive {
+                selectedAnswerSetId = TikoScreenshotMode.scene == "answered" ? "yes-no" : "yes-no"
+                return
+            }
             await store.fetchDefaults(languageCode: languageCode)
             if customAnswerSets.isEmpty {
                 if let defaultSelected = store.defaultSelectedSetId,

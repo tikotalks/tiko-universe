@@ -42,3 +42,36 @@ targets:
       - Tests
     dependencies:
       - target: TikoType
+      - package: TikoKit
+    settings:
+      base:
+        GENERATE_INFOPLIST_FILE: YES
+  TikoTypeUITests:
+    type: bundle.ui-testing
+    platform: iOS
+    sources:
+      - UITests
+    dependencies:
+      - target: TikoType
+    settings:
+      base:
+        GENERATE_INFOPLIST_FILE: YES
+        TEST_TARGET_NAME: TikoType
+schemes:
+  TikoType:
+    build:
+      targets:
+        TikoType: all
+    test:
+      targets:
+        - TikoTypeTests
+        - TikoTypeUITests
+      gatherCoverageData: false
+    run:
+      config: Debug
+    profile:
+      config: Release
+    analyze:
+      config: Debug
+    archive:
+      config: Release

@@ -113,6 +113,13 @@ struct RadioView: View {
         .environmentObject(i18n)
         .onAppear {
             i18n.setLanguage(languageCode)
+            if TikoScreenshotMode.isActive {
+                // Deterministic, offline launch for UI tests / screenshots:
+                // populate the collection grid and track tiles from the built-in
+                // sample library with no network or account dependency.
+                library.loadOfflineDefaults()
+                return
+            }
             library.load()
         }
         .onChange(of: languageCode) { _, code in
@@ -236,6 +243,7 @@ struct RadioView: View {
             }
         }
         .buttonStyle(.plain)
+        .accessibilityIdentifier(category.title)
         .contextMenu {
             Button { editTarget = .category(category.id) } label: {
                 Label(i18n.t("radio.management.renameCollection"), systemImage: "pencil")
@@ -263,6 +271,7 @@ struct RadioView: View {
                 .frame(height: 112)
                 .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
         }
+        .accessibilityIdentifier(track.title)
         .contextMenu {
             Button { editTarget = .track(track.id) } label: {
                 Label(i18n.t("radio.management.renameSong"), systemImage: "pencil")
@@ -348,15 +357,25 @@ struct RadioView: View {
 
             HStack(spacing: 20) {
                 controlButton("backward.fill", size: 50, action: previousTrack)
+                    .accessibilityIdentifier("PreviousTrack")
                 controlButton(playback.isPlaying ? "pause.fill" : "play.fill", size: 66, action: togglePlay)
+                    .accessibilityIdentifier("PlayPause")
                 controlButton("forward.fill", size: 50, action: nextTrack)
+                    .accessibilityIdentifier("NextTrack")
             }
 
             HStack(spacing: 14) {
                 togglePill("shuffle", active: shuffleEnabled) { shuffleEnabled.toggle() }
+                    .accessibilityIdentifier("ShuffleToggle")
                 togglePill("repeat", active: repeatEnabled) { repeatEnabled.toggle() }
+                    .accessibilityIdentifier("RepeatToggle")
             }
         }
+        // NOTE: Do not set an accessibilityIdentifier on this container. A
+        // container-level identifier propagates down and overrides each child
+        // control's own identifier (PlayPause / PreviousTrack / NextTrack / …),
+        // collapsing all five controls to one id — which breaks both automation
+        // and assistive-tech distinction between the controls.
     }
 
     private func controlButton(_ symbol: String, size: CGFloat, action: @escaping () -> Void) -> some View {
@@ -472,23 +491,15 @@ struct RadioView: View {
     }
 
     private func nextTrack() {
-        guard !tracks.isEmpty else { return }
-        if shuffleEnabled {
-            currentTrackIndex = Int.random(in: 0..<tracks.count)
-        } else {
-            currentTrackIndex = (currentTrackIndex + 1) % tracks.count
-        }
+        guard let index = RadioQueue.advance(current: currentTrackIndex, count: tracks.count, shuffle: shuffleEnabled) else { return }
+        currentTrackIndex = index
         selectedTrackID = currentTrack?.id
         playCurrentTrack()
     }
 
     private func previousTrack() {
-        guard !tracks.isEmpty else { return }
-        if shuffleEnabled {
-            currentTrackIndex = Int.random(in: 0..<tracks.count)
-        } else {
-            currentTrackIndex = (currentTrackIndex - 1 + tracks.count) % tracks.count
-        }
+        guard let index = RadioQueue.rewind(current: currentTrackIndex, count: tracks.count, shuffle: shuffleEnabled) else { return }
+        currentTrackIndex = index
         selectedTrackID = currentTrack?.id
         playCurrentTrack()
     }

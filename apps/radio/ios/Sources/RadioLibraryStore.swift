@@ -172,6 +172,43 @@ final class RadioLibraryStore {
         save(userDefaults: userDefaults)
     }
 
+    /// Loads a small set of built-in sample tracks into the default collections
+    /// synchronously, without any network, account, or persistence dependency.
+    /// Used for deterministic UI-test / screenshot launches so the collection
+    /// grid and track tiles are populated even with no connectivity.
+    func loadOfflineDefaults() {
+        categories = defaultRadioCategories
+        tracks = Self.offlineSampleTracks
+        selectedCategoryID = nil
+    }
+
+    static let offlineSampleTracks: [RadioTrack] = [
+        RadioTrack(
+            title: "Twinkle Twinkle Little Star",
+            artist: "Kids Songs",
+            source: .youtube,
+            youtubeVideoId: "yCjJyiqpAuU",
+            thumbnailUrl: "https://img.youtube.com/vi/yCjJyiqpAuU/hqdefault.jpg",
+            categoryId: "music"
+        ),
+        RadioTrack(
+            title: "The Wheels on the Bus",
+            artist: "Kids Songs",
+            source: .youtube,
+            youtubeVideoId: "e_04ZrNroTo",
+            thumbnailUrl: "https://img.youtube.com/vi/e_04ZrNroTo/hqdefault.jpg",
+            categoryId: "music"
+        ),
+        RadioTrack(
+            title: "Old MacDonald Had a Farm",
+            artist: "Farm Friends",
+            source: .youtube,
+            youtubeVideoId: "_6HzoUcx3eo",
+            thumbnailUrl: "https://img.youtube.com/vi/_6HzoUcx3eo/hqdefault.jpg",
+            categoryId: "animals"
+        )
+    ]
+
     private func uniqueCategoryID(_ base: String) -> String {
         var candidate = base
         var suffix = 2

@@ -10,12 +10,22 @@
 		24864309C825A7CC228088D0 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = FC88CA0AE8A939383526F8FE /* Assets.xcassets */; };
 		2631178230D390774853A218 /* TypeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E062EA54CFDC1CAC1F084BAA /* TypeView.swift */; };
 		3FC710BDE7A1812E56C830F1 /* TikoTypeApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92EFF279CA932F698DEC1B11 /* TikoTypeApp.swift */; };
+		52F4952C0D22A89637972827 /* TikoKit in Frameworks */ = {isa = PBXBuildFile; productRef = B22DD31D9FF06FE5EEE9ABB0 /* TikoKit */; };
 		5C76BC10D8536C268FF32327 /* TypeAppConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2784AE1A879155FBDA9A5ED1 /* TypeAppConfig.swift */; };
+		7B962932ED8A08F3F5084E43 /* TypeText.swift in Sources */ = {isa = PBXBuildFile; fileRef = B98B308FCDCFD1859C93E243 /* TypeText.swift */; };
+		9F7EA37642AC2FE60B1294FD /* TikoTypeUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00FB8AD8DA8535EDAE75F85 /* TikoTypeUITests.swift */; };
 		D2902A334828ECFA42E8A9AE /* TikoKit in Frameworks */ = {isa = PBXBuildFile; productRef = E698A794872B2F90B85DF6AE /* TikoKit */; };
 		DA8155367CA22F31AC35C7E3 /* TikoTypeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8549F5329BFE78AA41AB74EB /* TikoTypeTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		35C70192017BA78FD21F7C29 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 3A020E1CCC81503AF58BB6DF /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = BEEC29EA76C68AA58B826DEB;
+			remoteInfo = TikoType;
+		};
 		4304FBCC3328F9CBAA6FA0A7 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 3A020E1CCC81503AF58BB6DF /* Project object */;
@@ -28,10 +38,13 @@
 /* Begin PBXFileReference section */
 		074135D340258FEED1495621 /* TikoTypeTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = TikoTypeTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		17FEAA921D1BE9E6E0A21CE8 /* TikoType.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = TikoType.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		1BDA36853E471D55F1877979 /* TikoTypeUITests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = TikoTypeUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		2784AE1A879155FBDA9A5ED1 /* TypeAppConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TypeAppConfig.swift; sourceTree = "<group>"; };
 		6F38F474C04DC7AFB45AED52 /* tikokit-ios */ = {isa = PBXFileReference; lastKnownFileType = folder; name = "tikokit-ios"; path = "../../../packages/tikokit-ios"; sourceTree = SOURCE_ROOT; };
 		8549F5329BFE78AA41AB74EB /* TikoTypeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TikoTypeTests.swift; sourceTree = "<group>"; };
 		92EFF279CA932F698DEC1B11 /* TikoTypeApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TikoTypeApp.swift; sourceTree = "<group>"; };
+		A00FB8AD8DA8535EDAE75F85 /* TikoTypeUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TikoTypeUITests.swift; sourceTree = "<group>"; };
+		B98B308FCDCFD1859C93E243 /* TypeText.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TypeText.swift; sourceTree = "<group>"; };
 		C9A5E22E6D4B935B93398565 /* TikoType.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = TikoType.entitlements; sourceTree = "<group>"; };
 		E062EA54CFDC1CAC1F084BAA /* TypeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TypeView.swift; sourceTree = "<group>"; };
 		E7215D55E4A61BC100115801 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
@@ -47,6 +60,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		9C652B37409B16FAC32D4CF5 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				52F4952C0D22A89637972827 /* TikoKit in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -58,6 +79,7 @@
 				C9A5E22E6D4B935B93398565 /* TikoType.entitlements */,
 				92EFF279CA932F698DEC1B11 /* TikoTypeApp.swift */,
 				2784AE1A879155FBDA9A5ED1 /* TypeAppConfig.swift */,
+				B98B308FCDCFD1859C93E243 /* TypeText.swift */,
 				E062EA54CFDC1CAC1F084BAA /* TypeView.swift */,
 			);
 			path = Sources;
@@ -68,6 +90,7 @@
 			children = (
 				17FEAA921D1BE9E6E0A21CE8 /* TikoType.app */,
 				074135D340258FEED1495621 /* TikoTypeTests.xctest */,
+				1BDA36853E471D55F1877979 /* TikoTypeUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -78,8 +101,17 @@
 				DD3E3A7C2F29D1347FE9CFF2 /* Packages */,
 				19005478C89AB7D2580252DF /* Sources */,
 				E8175F363F5F86C4884BB733 /* Tests */,
+				ADE3FE43A7830848792DB6AF /* UITests */,
 				69B3106C49BC55E93309CC27 /* Products */,
 			);
+			sourceTree = "<group>";
+		};
+		ADE3FE43A7830848792DB6AF /* UITests */ = {
+			isa = PBXGroup;
+			children = (
+				A00FB8AD8DA8535EDAE75F85 /* TikoTypeUITests.swift */,
+			);
+			path = UITests;
 			sourceTree = "<group>";
 		};
 		DD3E3A7C2F29D1347FE9CFF2 /* Packages */ = {
@@ -101,11 +133,30 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		1FFDAFFA0D374AED7FC8279C /* TikoTypeUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 580FD1FB51833E2E812F8D11 /* Build configuration list for PBXNativeTarget "TikoTypeUITests" */;
+			buildPhases = (
+				0A8E0C842003AF1FA835995E /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				8D13A86761DF8AAF8BE73F72 /* PBXTargetDependency */,
+			);
+			name = TikoTypeUITests;
+			packageProductDependencies = (
+			);
+			productName = TikoTypeUITests;
+			productReference = 1BDA36853E471D55F1877979 /* TikoTypeUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
 		298F397DBAD8E2C111A7E6C1 /* TikoTypeTests */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 5AB4543A6FB2B5C216952260 /* Build configuration list for PBXNativeTarget "TikoTypeTests" */;
 			buildPhases = (
 				661E179C5712173F76E9CEC9 /* Sources */,
+				9C652B37409B16FAC32D4CF5 /* Frameworks */,
 			);
 			buildRules = (
 			);
@@ -114,6 +165,7 @@
 			);
 			name = TikoTypeTests;
 			packageProductDependencies = (
+				B22DD31D9FF06FE5EEE9ABB0 /* TikoKit */,
 			);
 			productName = TikoTypeTests;
 			productReference = 074135D340258FEED1495621 /* TikoTypeTests.xctest */;
@@ -149,6 +201,10 @@
 				BuildIndependentTargetsInParallel = YES;
 				LastUpgradeCheck = 1430;
 				TargetAttributes = {
+					1FFDAFFA0D374AED7FC8279C = {
+						DevelopmentTeam = "";
+						TestTargetID = BEEC29EA76C68AA58B826DEB;
+					};
 					298F397DBAD8E2C111A7E6C1 = {
 						DevelopmentTeam = "";
 					};
@@ -176,6 +232,7 @@
 			targets = (
 				BEEC29EA76C68AA58B826DEB /* TikoType */,
 				298F397DBAD8E2C111A7E6C1 /* TikoTypeTests */,
+				1FFDAFFA0D374AED7FC8279C /* TikoTypeUITests */,
 			);
 		};
 /* End PBXProject section */
@@ -214,6 +271,14 @@
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		0A8E0C842003AF1FA835995E /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				9F7EA37642AC2FE60B1294FD /* TikoTypeUITests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		661E179C5712173F76E9CEC9 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -228,6 +293,7 @@
 			files = (
 				3FC710BDE7A1812E56C830F1 /* TikoTypeApp.swift in Sources */,
 				5C76BC10D8536C268FF32327 /* TypeAppConfig.swift in Sources */,
+				7B962932ED8A08F3F5084E43 /* TypeText.swift in Sources */,
 				2631178230D390774853A218 /* TypeView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -239,6 +305,11 @@
 			isa = PBXTargetDependency;
 			target = BEEC29EA76C68AA58B826DEB /* TikoType */;
 			targetProxy = 4304FBCC3328F9CBAA6FA0A7 /* PBXContainerItemProxy */;
+		};
+		8D13A86761DF8AAF8BE73F72 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = BEEC29EA76C68AA58B826DEB /* TikoType */;
+			targetProxy = 35C70192017BA78FD21F7C29 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -300,10 +371,45 @@
 			};
 			name = Release;
 		};
+		1E69DFA338DC1CA7D4F1362B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = mt.tiko.TikoTypeUITests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = TikoType;
+			};
+			name = Debug;
+		};
+		2481A29542949A95A22A6B41 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = mt.tiko.TikoTypeUITests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = TikoType;
+			};
+			name = Release;
+		};
 		7E3458C23D7C54655C6F4A58 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -358,6 +464,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -446,6 +553,15 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
+		580FD1FB51833E2E812F8D11 /* Build configuration list for PBXNativeTarget "TikoTypeUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1E69DFA338DC1CA7D4F1362B /* Debug */,
+				2481A29542949A95A22A6B41 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
 		5AB4543A6FB2B5C216952260 /* Build configuration list for PBXNativeTarget "TikoTypeTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -474,6 +590,10 @@
 /* End XCLocalSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		B22DD31D9FF06FE5EEE9ABB0 /* TikoKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = TikoKit;
+		};
 		E698A794872B2F90B85DF6AE /* TikoKit */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = TikoKit;

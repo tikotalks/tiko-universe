@@ -209,5 +209,7 @@ private struct TalkCloudBubble: View {
         }
         .buttonStyle(.plain)
         .accessibilityLabel(word.text)
+        // Stable identifier so UI tests can tap a specific board word.
+        .accessibilityIdentifier("talk.board.word.\(word.id)")
     }
 }
