@@ -8,6 +8,7 @@ import CardGrid from '../components/sections/CardGrid.vue'
 import ColorCard from '../components/sections/ColorCard.vue'
 import SplitMedia from '../components/sections/SplitMedia.vue'
 import CtaBanner from '../components/sections/CtaBanner.vue'
+import AppStoreButton from '../components/AppStoreButton.vue'
 
 const route = useRoute()
 const slug = computed(() => route.params.slug as string)
@@ -150,6 +151,7 @@ watch(slug, (newSlug) => {
             Open {{ app.name }}
           </a>
           <span v-else class="button button--ghost-light">Coming soon</span>
+          <AppStoreButton v-if="app.appStoreUrl" :href="app.appStoreUrl" />
         </div>
       </SplitMedia>
     </PageSection>
@@ -250,6 +252,7 @@ watch(slug, (newSlug) => {
           >
             Open {{ app.name }}
           </a>
+          <AppStoreButton v-if="app.appStoreUrl" :href="app.appStoreUrl" />
           <RouterLink to="/apps" class="button button--ghost-light">All apps</RouterLink>
         </template>
       </CtaBanner>

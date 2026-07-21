@@ -51,9 +51,9 @@ const bemm = useBemm('hero', { return: 'string', includeBaseClass: true })
 
   &__title {
     font-family: var(--font-family-heading);
-    font-size: clamp(2.5rem, 6vw, 4.5rem);
-    line-height: 1.02;
-    letter-spacing: -0.02em;
+    font-size: clamp(2.75rem, 7vw, 5.25rem);
+    line-height: 0.98;
+    letter-spacing: -0.03em;
     margin-block: 0.5rem 0.75rem;
   }
 

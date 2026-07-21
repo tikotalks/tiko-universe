@@ -67,6 +67,10 @@
   // Layout
   --max-width: 1200px;
   --header-height: 64px;
+
+  // Motion — custom easing only (never default `ease`/`linear`).
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
 }
 
 // Derived color variables use color-mix() so they adapt automatically between modes.
@@ -92,7 +96,18 @@ body {
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  transition: background 0.2s ease, color 0.2s ease;
+  transition: background 0.2s var(--ease-out), color 0.2s var(--ease-out);
+}
+
+// Branded text selection — works across light/dark via auto text colour.
+::selection {
+  background: var(--color-primary);
+  color: var(--color-primary-text);
+}
+
+// Balanced line breaks on headings prevent orphan words.
+h1, h2, h3 {
+  text-wrap: balance;
 }
 
 *, *::before, *::after {

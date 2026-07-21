@@ -88,7 +88,7 @@ export const whyFreePillars: ContentPillar[] = [
 
 export const platformNotes = [
   { label: 'Web', copy: 'The fastest way to try Tiko. A link is all it takes — no app store, no download required.' },
-  { label: 'iOS', copy: 'Native iOS apps planned with the same simple, focused experience as the web.' },
+  { label: 'iOS', copy: 'Native iOS apps are arriving — Type is on the App Store now, with the rest following the same calm, focused experience.' },
   { label: 'Android', copy: 'Android follows the same approach — small tools, one job each, consistent behaviour.' }
 ]
 
