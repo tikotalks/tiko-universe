@@ -18,9 +18,11 @@ suite verifies. Each requirement notes how it is covered:
    account, sign-in, or network being required. **[ui]** (`testAppIsUsableWithoutLogin`)
 2. The default answer set is the built-in "Yes / No" set: exactly two answers,
    "Yes" (green) and "No" (red). **[unit]** (`testDefaultSetsContainYesNo`) **[ui]**
+   (`testDefaultBoardRendersYesAndNo`)
 3. Tapping an answer speaks its spoken text aloud when speech is enabled
    (tap-to-speak). The spoken text defaults to the answer's label. **[unit]**
-   (`testTileSpeechDefaultsToLabel`, `testAnswerChoiceMapsSpeech`)
+   (`testTileSpeechDefaultsToLabel`, `testAnswerChoiceMapsSpeech`) **[ui]**
+   (`testTappingNoAnswerKeepsAppUsable` — answering stays usable, no login/crash)
 4. Each answer carries a display label and a distinct spoken string that may
    differ from the label. **[unit]** (`testTileDistinctLabelAndSpeech`)
 5. Answers can be localized: a tile exposes per-language label/speech
@@ -29,8 +31,11 @@ suite verifies. Each requirement notes how it is covered:
 
 ## Typed sentence
 
-6. The user can type a custom sentence and have it spoken via the speak button. **[manual]**
-7. The sentence can be cleared with a dedicated clear button. **[manual]**
+6. The user can type a custom sentence and have it spoken via the speak button.
+   **[ui]** (`testTypedSentenceCanBeEnteredAndCleared` — typing into the field;
+   the speak button dispatch is unit-covered by the speech-service tests)
+7. The sentence can be cleared with a dedicated clear button. **[ui]**
+   (`testTypedSentenceCanBeEnteredAndCleared`)
 
 ## Answer sets & customisation
 
@@ -40,12 +45,20 @@ suite verifies. Each requirement notes how it is covered:
    colour, optional image/icon and custom spoken text. **[unit]** (model:
    `testTileEncodesAndDecodesRoundTrip`, `testAnswerSetInitAndOrdering`) **[manual]** (editor UI)
 10. Answer style is configurable (tiles / buttons / compact / text). **[unit]**
-    (`testChoiceStyleCatalog`)
-11. Label size is adjustable. **[manual]**
+    (`testChoiceStyleCatalog`) **[ui]** (`testSettingsShowsAnswerOptions` — the
+    "Answer style" settings row). NB: the answer-style *picker* itself opens a
+    second popup on top of settings; that stacked-popup flow is intentionally not
+    UI-tested (unstable under the automation harness — see the note in the UI test
+    file), the style catalog being fully unit-covered.
+11. Label size is adjustable. **[ui]** (`testSettingsShowsAnswerOptions` — the
+    "Label size" settings row)
 
 ## History, language, appearance
 
-12. Recently used sentences are kept in a question history and can be re-selected. **[manual]**
+12. Recently used sentences are kept in a question history and can be re-selected.
+    **[ui]** (`testHistoryActionShowsEmptyState` — empty history state;
+    `testAnsweringRecordsQuestionInHistory` — answering records a question and it
+    can be re-selected back into the sentence field)
 13. Language is selectable and drives localisation. **[unit]** (translation model) **[manual]** (picker UI)
 14. Colour mode (system / light / dark) is selectable. **[manual]**
 
@@ -76,8 +89,14 @@ suite verifies. Each requirement notes how it is covered:
 ### Coverage summary
 
 - **Unit (XCTest):** requirements 2, 3, 4, 5, 8, 9 (model), 10, 13 (model) — the
-  answer model, speech/label content, translations and the built-in catalog.
-- **UI (XCUITest):** requirements 1, 15, 16, 17 — launch usability without an
-  account, "Skip for now", and the non-dismissible login-popup regression.
-- **Manual / not yet automated:** 6, 7, 9 (editor UI), 11, 12, 13 (UI), 14, 18,
-  19, 20, 21, 22. These need additional UI coverage in future iterations.
+  answer model, speech/label content, translations, the built-in catalog, the
+  Codable round-trips, the app config and the speech-service surface.
+- **UI (XCUITest):** requirements 1, 2, 3, 6, 7, 10, 11, 12, 15, 16, 17 — launch
+  usability without an account, the two-answer board rendering, answering staying
+  usable, typed-sentence entry + clear, the settings answer options, question
+  history (empty state + record/re-select), "Skip for now", and the
+  non-dismissible login-popup regression.
+- **Manual / not yet automated:** 9 (full editor UI), 13 (language picker UI), 14,
+  18, 19, 20, 21, 22, and the answer-style *picker* popup (stacked-popup flow —
+  unstable under the harness; catalog is unit-covered). These need additional
+  coverage in future iterations.

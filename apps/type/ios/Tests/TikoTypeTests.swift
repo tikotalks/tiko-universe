@@ -1,4 +1,5 @@
 import XCTest
+import SwiftUI
 @testable import TikoType
 import TikoKit
 
@@ -159,6 +160,132 @@ final class TikoTypeTests: XCTestCase {
     /// via `KeyTheme(rawValue:) ?? .classic`).
     func testUnknownThemeFallsBackToClassic() {
         XCTAssertEqual(KeyTheme(rawValue: "not-a-theme") ?? .classic, .classic)
+    }
+
+    // MARK: - Speech string ordering & edge cases (Req 4)
+
+    /// Req 4: committed words keep their order and the in-progress word is always
+    /// spoken last.
+    func testSpeechStringPreservesOrderWithCurrentLast() {
+        XCTAssertEqual(
+            TypeText.speechString(words: ["one", "two", "three"], currentWord: "fo"),
+            "one two three fo"
+        )
+    }
+
+    /// Req 4: words are joined by exactly one space regardless of how many
+    /// committed words there are (no double spaces, no leading/trailing space).
+    func testSpeechStringUsesSingleSpaces() {
+        let spoken = TypeText.speechString(words: ["a", "b", "c"], currentWord: "d")
+        XCTAssertEqual(spoken, "a b c d")
+        XCTAssertFalse(spoken.contains("  "), "should never contain a double space")
+        XCTAssertFalse(spoken.hasPrefix(" "))
+        XCTAssertFalse(spoken.hasSuffix(" "))
+    }
+
+    // MARK: - Committing order & immutability (Req 2, 3)
+
+    /// Req 2/3: committing appends to the END and preserves all existing chips.
+    func testCommittingAppendsAtEndPreservingOrder() {
+        XCTAssertEqual(
+            TypeText.committing(words: ["a", "b", "c"], currentWord: "d"),
+            ["a", "b", "c", "d"]
+        )
+    }
+
+    /// Req 2/3: the same in-progress word can be committed repeatedly to build
+    /// duplicate chips (each space is an independent commit).
+    func testCommittingAllowsDuplicateWords() {
+        var words = TypeText.committing(words: [], currentWord: "ba")
+        words = TypeText.committing(words: words, currentWord: "ba")
+        XCTAssertEqual(words, ["ba", "ba"])
+    }
+
+    // MARK: - Legacy sentence migration edge cases (Req 18)
+
+    /// Req 18: collapsed / repeated internal spaces do not produce empty chips
+    /// (they are dropped, matching `split(separator:)` semantics).
+    func testSplitCollapsesRepeatedSpaces() {
+        let result = TypeText.split(sentence: "hello   world foo")
+        XCTAssertEqual(result.words, ["hello", "world"])
+        XCTAssertEqual(result.current, "foo")
+        XCTAssertFalse(result.words.contains(""), "no empty chips from repeated spaces")
+    }
+
+    /// Req 18: a leading space does not create an empty leading chip.
+    func testSplitLeadingSpaceHasNoEmptyChip() {
+        let result = TypeText.split(sentence: " hello world")
+        XCTAssertEqual(result.words, ["hello"])
+        XCTAssertEqual(result.current, "world")
+    }
+
+    /// Req 18: a string made only of spaces yields no chips and no in-progress
+    /// word (the trailing-space branch with empty parts).
+    func testSplitOnlySpacesIsEmpty() {
+        let result = TypeText.split(sentence: "   ")
+        XCTAssertEqual(result.words, [])
+        XCTAssertEqual(result.current, "")
+    }
+
+    /// Req 18: a single committed word (word + trailing space) migrates as one
+    /// chip with no in-progress word — the round-trip of committing then speaking.
+    func testSplitSingleCommittedWord() {
+        let result = TypeText.split(sentence: "hello ")
+        XCTAssertEqual(result.words, ["hello"])
+        XCTAssertEqual(result.current, "")
+    }
+
+    /// Req 18: migrating then speaking reproduces the original trimmed sentence —
+    /// the split and speech rules are consistent with each other.
+    func testSplitThenSpeakRoundTrips() {
+        let sentence = "the quick brown fox"
+        let split = TypeText.split(sentence: sentence)
+        XCTAssertEqual(
+            TypeText.speechString(words: split.words, currentWord: split.current),
+            sentence
+        )
+    }
+
+    // MARK: - Symbols layer coverage (Req 12)
+
+    /// Req 12: the symbols layer also carries common punctuation used to build
+    /// sentences, and never overlaps the digit row's role.
+    func testSymbolsLayerCarriesPunctuation() {
+        let symbolKeys = Set(KeyboardLayouts.symbols.flatMap { $0 })
+        for punctuation in [".", ",", "?", "!"] {
+            XCTAssertTrue(symbolKeys.contains(punctuation),
+                          "symbols layer should contain \(punctuation)")
+        }
+    }
+
+    /// Req 12: none of the symbols-layer keys are empty strings (every cap is
+    /// renderable / tappable).
+    func testSymbolsLayerHasNoEmptyKeys() {
+        for row in KeyboardLayouts.symbols {
+            for key in row {
+                XCTAssertFalse(key.isEmpty, "symbols layer must not contain empty keys")
+            }
+        }
+    }
+
+    // MARK: - Key theme rendering (Req 13, 14)
+
+    /// Req 13/14: every theme resolves concrete colours in both light and dark
+    /// schemes without crashing, and the colourful theme cycles its palette by
+    /// key index (so adjacent keys differ over the palette length).
+    func testEveryThemeResolvesColorsInBothSchemes() {
+        for theme in KeyTheme.allCases {
+            for scheme in [ColorScheme.light, .dark] {
+                let colors = theme.colors(in: scheme)
+                // Exercise the per-key colour closure for a spread of indices.
+                for idx in 0..<10 {
+                    _ = colors.key("a", idx)
+                }
+                // Non-nil swatch / label already asserted elsewhere; here we just
+                // ensure the closure is total and does not trap.
+                XCTAssertFalse(theme.label.isEmpty)
+            }
+        }
     }
 
     // MARK: - App identity

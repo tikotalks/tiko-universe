@@ -141,6 +141,47 @@ final class TikoYesNoTests: XCTestCase {
         XCTAssertEqual(all, expected)
     }
 
+    /// An answer set survives a Codable round-trip with all of its tiles and
+    /// metadata intact (custom sets persist to UserDefaults as JSON — Req 9).
+    func testAnswerSetEncodesAndDecodesRoundTrip() throws {
+        let set = YesNoAnswerSet(
+            id: "needs",
+            title: "Basic needs",
+            description: "Common requests",
+            color: "teal",
+            imageRef: "img-1",
+            order: 2,
+            answers: [
+                YesNoAnswerTile(id: "help", label: "Help", speech: "Help me", color: "blue", icon: "ui/pointer-hand"),
+                YesNoAnswerTile(id: "more", label: "More", speech: "More", color: "teal", icon: "ui/add-fat"),
+            ]
+        )
+        let data = try JSONEncoder().encode(set)
+        let decoded = try JSONDecoder().decode(YesNoAnswerSet.self, from: data)
+        XCTAssertEqual(decoded, set)
+    }
+
+    /// Req 9: an answer set decodes from a minimal payload (only id, title and
+    /// answers), with optional metadata absent.
+    func testAnswerSetDecodesFromMinimalPayload() throws {
+        let json = #"{"id":"s","title":"Set","order":0,"answers":[{"id":"yes","label":"Yes","color":"green"}]}"#
+            .data(using: .utf8)!
+        let set = try JSONDecoder().decode(YesNoAnswerSet.self, from: json)
+        XCTAssertEqual(set.id, "s")
+        XCTAssertEqual(set.title, "Set")
+        XCTAssertNil(set.description)
+        XCTAssertEqual(set.answers.count, 1)
+        XCTAssertEqual(set.answers.first?.speech, "Yes", "tile speech should fall back to label")
+    }
+
+    // MARK: - App config (Req 13 / identity)
+
+    /// The app config wired into the shell is the shared Yes-No config.
+    func testAppConfigIsYesNo() {
+        XCTAssertEqual(YesNoAppConfig.app.id, .yesNo)
+        XCTAssertEqual(YesNoAppConfig.app.title, "Yes No")
+    }
+
     // MARK: - Speech playback state
 
     /// Speech playback exposes the three states the speak button reacts to.
@@ -150,5 +191,14 @@ final class TikoYesNoTests: XCTestCase {
         XCTAssertEqual(states.count, 3)
         // The service constructs without a network dependency.
         _ = YesNoSpeechService()
+    }
+
+    /// The speech service exposes `speak` / `stop` and constructs without any
+    /// network activity (the Atlas client is lazy). Calling `stop` on a freshly
+    /// built service is a no-op and must not crash.
+    @MainActor
+    func testSpeechServiceStopIsSafeWhenIdle() {
+        let service = YesNoSpeechService()
+        service.stop()
     }
 }

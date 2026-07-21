@@ -1,3 +1,4 @@
+import SwiftUI
 import XCTest
 @testable import TikoTalk
 
@@ -241,6 +242,173 @@ final class TikoTalkTests: XCTestCase {
         let resolved = TalkOfflineFallback.words.matching(ids: ["help", "i", "unknown", "want"])
 
         XCTAssertEqual(resolved.map(\.id), ["help", "i", "want"])
+    }
+
+    // MARK: - Part-of-speech colour mapping (sentence-chip / cloud tinting)
+
+    /// Each recognised part of speech maps to a stable, distinct colour so the
+    /// sentence chips and cloud borders are visually differentiated.
+    func testPosColorIsStableAndDistinctPerPartOfSpeech() {
+        let posTypes = [
+            "pronoun", "verb", "noun", "adjective", "adverb",
+            "determiner", "question", "preposition", "conjunction", "social"
+        ]
+
+        // Stable: the same pos always yields the same colour.
+        for pos in posTypes {
+            XCTAssertEqual(TalkPosColor.color(for: pos), TalkPosColor.color(for: pos), "\(pos) colour should be stable")
+        }
+
+        // Distinct: no two recognised parts of speech share a colour.
+        let colors = posTypes.map { TalkPosColor.color(for: $0) }
+        for i in colors.indices {
+            for j in colors.indices where j > i {
+                XCTAssertNotEqual(colors[i], colors[j], "\(posTypes[i]) and \(posTypes[j]) should have different colours")
+            }
+        }
+    }
+
+    /// An unrecognised (or empty) part of speech falls back to the single shared
+    /// Talk default colour, distinct from every recognised pos colour.
+    func testUnknownPartOfSpeechUsesSharedDefaultColor() {
+        let fallbackA = TalkPosColor.color(for: "made-up-pos")
+        let fallbackB = TalkPosColor.color(for: "")
+
+        XCTAssertEqual(fallbackA, fallbackB, "all unknown pos values share the one fallback colour")
+        XCTAssertNotEqual(fallbackA, TalkPosColor.color(for: "pronoun"), "the fallback differs from a real pos colour")
+    }
+
+    // MARK: - Offline fallback template + seed data
+
+    /// Every offline template resolves to its exact ready-made word set, and an
+    /// unknown template id resolves to nothing (so the store falls through to the
+    /// pattern-prefill / slot logic instead).
+    func testTemplateWordsForEachOfflineTemplate() {
+        func words(_ id: String, pattern: String) -> [String] {
+            TalkOfflineFallback.templateWords(for: TalkTemplate(id: id, pattern: pattern, category: "needs", icon: nil, slotCount: 0)).map(\.id)
+        }
+
+        XCTAssertEqual(words("fallback-i-want", pattern: "I want ___"), ["i", "want"])
+        XCTAssertEqual(words("fallback-help", pattern: "I need help"), ["i", "need", "help"])
+        XCTAssertEqual(words("fallback-more", pattern: "More ___ please"), ["more", "please"])
+        XCTAssertTrue(words("not-a-template", pattern: "x").isEmpty, "unknown templates resolve to no words")
+    }
+
+    /// The deterministic offline start seed exposes the starter categories and a
+    /// ready-to-tap saved phrase — the no-network baseline the app degrades to.
+    func testOfflineStartResponseSeedsCategoriesAndSavedPhrase() {
+        let start = TalkOfflineFallback.startResponse
+
+        XCTAssertEqual(start.initialCategories.map(\.id), ["pronouns", "actions", "extras"])
+        XCTAssertEqual(start.stripState.validNext, ["pronoun", "verb", "modifier"])
+        XCTAssertFalse(start.stripState.canComplete, "an empty seeded strip cannot complete yet")
+
+        let phrase = start.savedPhrases.first { $0.id == "fallback-help-phrase" }
+        XCTAssertEqual(phrase?.wordIds, ["i", "need", "help"])
+        XCTAssertEqual(phrase?.sentence, "I need help")
+    }
+
+    // MARK: - Store board ordering, phrase recall, clearing, and guards
+
+    /// The board lists ranked next-word suggestions first, then the remaining
+    /// vocabulary, with no id appearing twice.
+    func testBoardWordsPlacesSuggestionsFirstThenRemainingVocabulary() async {
+        let store = TalkStore(apiClient: FakeTalkAPIClient(), identityProvider: FakeTalkIdentityProvider())
+        await store.load()
+        await store.addWord(TalkWordTile(id: "i", text: "I", pos: "pronoun", category: "pronouns"))
+
+        // Suggestion "want" comes first; the vocabulary ("i", "juice") follows.
+        XCTAssertEqual(store.boardWords.first?.id, "want")
+        XCTAssertEqual(store.boardWords.map(\.id), store.boardWords.map(\.id).reduce(into: [String]()) { acc, id in
+            if !acc.contains(id) { acc.append(id) }
+        }, "board words must not contain duplicate ids")
+        XCTAssertTrue(store.boardWords.contains { $0.id == "juice" })
+    }
+
+    /// Clearing the sentence restores the board to its baseline vocabulary and
+    /// drops any category filter.
+    func testClearSentenceRestoresBaselineBoardAndFilter() async {
+        let store = TalkStore(apiClient: FakeTalkAPIClient(), identityProvider: FakeTalkIdentityProvider())
+        await store.load()
+        await store.addWord(TalkWordTile(id: "i", text: "I", pos: "pronoun", category: "pronouns"))
+        store.selectCategory(id: "drinks")
+
+        store.clearSentence()
+
+        XCTAssertTrue(store.sentenceWords.isEmpty)
+        XCTAssertTrue(store.suggestions.isEmpty)
+        XCTAssertNil(store.selectedCategoryId, "clearing drops the category filter")
+        XCTAssertEqual(Set(store.visibleWords.map(\.id)), ["i", "juice"], "board returns to the baseline vocabulary")
+    }
+
+    /// Recalling a saved phrase loads its words from the known vocabulary and
+    /// leaves the sentence immediately speakable.
+    func testSelectPhraseLoadsWordsAndIsSpeakable() {
+        let store = TalkStore(apiClient: FakeTalkAPIClient(), identityProvider: FakeTalkIdentityProvider())
+        store.loadOfflineFallbackForCapture()
+
+        store.selectPhrase(TalkSavedPhrase(id: "p", sentence: "I want", wordIds: ["i", "want"], isAuto: false, usageCount: 1, label: nil))
+
+        XCTAssertEqual(store.sentenceWords.map(\.id), ["i", "want"])
+        XCTAssertEqual(store.completedSentence, "I want")
+        XCTAssertTrue(store.canSpeak)
+    }
+
+    /// A regular (non-custom) sentence completes through the Sentence API, taking
+    /// the returned sentence text and audio URL.
+    func testCompleteSentenceThroughAPISetsSentenceAndAudioURL() async {
+        let store = TalkStore(apiClient: FakeTalkAPIClient(), identityProvider: FakeTalkIdentityProvider())
+        await store.load()
+        await store.addWord(TalkWordTile(id: "i", text: "I", pos: "pronoun", category: "pronouns"))
+        await store.addWord(TalkWordTile(id: "want", text: "want", pos: "verb", category: "actions"))
+
+        let response = await store.completeSentence()
+
+        XCTAssertEqual(response?.sentence, "I want.")
+        XCTAssertEqual(store.completedSentence, "I want.")
+        XCTAssertEqual(store.audioURL, URL(string: "https://example.com/i-want.mp3"))
+    }
+
+    /// Without an identity (no user id) a phrase cannot be saved server-side, so
+    /// the save is a no-op that returns nil without hitting the API.
+    func testSaveCurrentPhraseWithoutIdentityReturnsNil() async {
+        let api = FakeTalkAPIClient()
+        let store = TalkStore(apiClient: api, identityProvider: nil)
+        store.isOfflineFallback = true
+        await store.addWord(TalkWordTile(id: "help", text: "help", pos: "verb", category: "actions"))
+
+        let saved = await store.saveCurrentPhrase(label: "Help")
+
+        XCTAssertNil(saved)
+        XCTAssertFalse(api.didSavePhrase, "no identity means no save request")
+    }
+
+    /// Reordering with out-of-range indices is a safe no-op — the sentence is left
+    /// unchanged.
+    func testMoveWordIgnoresOutOfRangeIndices() async {
+        let store = TalkStore(apiClient: FakeTalkAPIClient())
+        store.isOfflineFallback = true
+        await store.addWord(TalkWordTile(id: "i", text: "I", pos: "pronoun", category: "pronouns"))
+
+        await store.moveWord(from: 5, to: 0)
+        await store.moveWord(from: 0, to: 9)
+
+        XCTAssertEqual(store.sentenceWords.map(\.id), ["i"])
+    }
+
+    /// Applying an offline template fills the sentence with its ready-made words
+    /// and shows the template pattern as the strip display.
+    func testApplyOfflineTemplatePopulatesSentence() async {
+        let store = TalkStore(apiClient: FakeTalkAPIClient())
+        store.isOfflineFallback = true
+
+        await store.applyTemplate(TalkTemplate(id: "fallback-more", pattern: "More ___ please", category: "extras", icon: nil, slotCount: 1))
+
+        XCTAssertEqual(store.sentenceWords.map(\.id), ["more", "please"])
+        XCTAssertEqual(store.sentenceText, "more please")
+        // Offline, the strip mirrors the built sentence and is speakable.
+        XCTAssertEqual(store.stripDisplay, store.sentenceText)
+        XCTAssertTrue(store.canSpeak)
     }
 }
 

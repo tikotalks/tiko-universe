@@ -179,4 +179,322 @@ final class TikoCardsTests: XCTestCase {
         let child = store.collections.first { $0.title == "Child" }
         XCTAssertEqual(child?.parentID, parentID)
     }
+
+    // MARK: - Offline defaults loading (Req 1 / 15)
+
+    /// The deterministic offline path used by UI tests / screenshots populates the
+    /// full built-in catalogue synchronously, with no network or session.
+    @MainActor
+    func testLoadOfflineDefaultsPopulatesBuiltInCatalogue() throws {
+        let (store, suiteName) = try makeIsolatedStore()
+        defer { UserDefaults().removePersistentDomain(forName: suiteName) }
+
+        XCTAssertTrue(store.collections.isEmpty)
+        store.loadOfflineDefaults()
+
+        XCTAssertEqual(store.collections.count, defaultCardCollections.count)
+        XCTAssertEqual(
+            store.collections.map(\.id),
+            defaultCardCollections.sorted { $0.order < $1.order }.map(\.id)
+        )
+        XCTAssertTrue(store.collections.contains { $0.id == "__default_animals" && $0.title == "Animals" })
+    }
+
+    /// Offline defaults are merged with any locally-owned user collections that
+    /// were persisted earlier (so custom content survives an offline launch).
+    @MainActor
+    func testLoadOfflineDefaultsMergesLocalUserCollections() throws {
+        let (store, suiteName) = try makeIsolatedStore()
+        defer { UserDefaults().removePersistentDomain(forName: suiteName) }
+
+        store.addCollection(title: "My Set", color: "blue")
+        store.loadOfflineDefaults()
+
+        XCTAssertTrue(store.collections.contains { $0.title == "My Set" && $0.id.hasPrefix("user_") })
+        XCTAssertTrue(store.collections.contains { $0.id == "__default_food" })
+    }
+
+    // MARK: - Editing cards & collections (Req 9 / 11)
+
+    @MainActor
+    func testUpdateCardChangesTitleSpeechAndColor() throws {
+        let (store, suiteName) = try makeIsolatedStore()
+        defer { UserDefaults().removePersistentDomain(forName: suiteName) }
+
+        store.addCollection(title: "Toys", color: "green")
+        let cid = try XCTUnwrap(store.collections.first { $0.title == "Toys" }?.id)
+        store.addCard(title: "Ball", speech: "Ball", color: "red", to: cid)
+        let cardID = try XCTUnwrap(store.collections.first { $0.id == cid }?.cards.first?.id)
+
+        store.updateCard(id: cardID, title: "Red Ball", speech: "A red ball", color: "blue", imageURL: nil, inCollectionID: cid)
+
+        let card = try XCTUnwrap(store.collections.first { $0.id == cid }?.cards.first { $0.id == cardID })
+        XCTAssertEqual(card.title, "Red Ball")
+        XCTAssertEqual(card.speech, "A red ball")
+        XCTAssertEqual(card.color, "blue")
+    }
+
+    @MainActor
+    func testUpdateCollectionChangesTitleAndColor() throws {
+        let (store, suiteName) = try makeIsolatedStore()
+        defer { UserDefaults().removePersistentDomain(forName: suiteName) }
+
+        store.addCollection(title: "Vehicles", color: "blue")
+        let cid = try XCTUnwrap(store.collections.first { $0.title == "Vehicles" }?.id)
+
+        store.updateCollection(id: cid, title: "Cars", color: "red", imageURL: nil)
+
+        let collection = try XCTUnwrap(store.collections.first { $0.id == cid })
+        XCTAssertEqual(collection.title, "Cars")
+        XCTAssertEqual(collection.color, "red")
+    }
+
+    // MARK: - Removing cards & collections (Req 11)
+
+    @MainActor
+    func testDeleteCardRemovesItFromCollection() throws {
+        let (store, suiteName) = try makeIsolatedStore()
+        defer { UserDefaults().removePersistentDomain(forName: suiteName) }
+
+        store.addCollection(title: "Toys", color: "green")
+        let cid = try XCTUnwrap(store.collections.first { $0.title == "Toys" }?.id)
+        store.addCard(title: "Ball", speech: "Ball", color: "red", to: cid)
+        store.addCard(title: "Kite", speech: "Kite", color: "red", to: cid)
+        let ballID = try XCTUnwrap(store.collections.first { $0.id == cid }?.cards.first { $0.title == "Ball" }?.id)
+
+        store.deleteCard(id: ballID, inCollectionID: cid)
+
+        let cards = try XCTUnwrap(store.collections.first { $0.id == cid }?.cards)
+        XCTAssertEqual(cards.map(\.title), ["Kite"])
+    }
+
+    @MainActor
+    func testDeleteCollectionRemovesIt() throws {
+        let (store, suiteName) = try makeIsolatedStore()
+        defer { UserDefaults().removePersistentDomain(forName: suiteName) }
+
+        store.addCollection(title: "Vehicles", color: "blue")
+        let cid = try XCTUnwrap(store.collections.first { $0.title == "Vehicles" }?.id)
+
+        store.deleteCollection(id: cid)
+
+        XCTAssertFalse(store.collections.contains { $0.id == cid })
+    }
+
+    @MainActor
+    func testDeleteCardsRemovesOnlySelected() throws {
+        let (store, suiteName) = try makeIsolatedStore()
+        defer { UserDefaults().removePersistentDomain(forName: suiteName) }
+
+        store.addCollection(title: "Toys", color: "green")
+        let cid = try XCTUnwrap(store.collections.first { $0.title == "Toys" }?.id)
+        for name in ["A", "B", "C"] { store.addCard(title: name, speech: name, color: "red", to: cid) }
+        let cards = try XCTUnwrap(store.collections.first { $0.id == cid }?.cards)
+        let toDelete = Set(cards.filter { $0.title == "A" || $0.title == "C" }.map(\.id))
+
+        store.deleteCards(ids: toDelete, fromCollectionID: cid)
+
+        let remaining = try XCTUnwrap(store.collections.first { $0.id == cid }?.cards)
+        XCTAssertEqual(remaining.map(\.title), ["B"])
+    }
+
+    // MARK: - Moving, recolouring & reparenting (Req 11 / 12)
+
+    @MainActor
+    func testMoveCardsBetweenCollections() throws {
+        let (store, suiteName) = try makeIsolatedStore()
+        defer { UserDefaults().removePersistentDomain(forName: suiteName) }
+
+        store.addCollection(title: "Source", color: "green")
+        store.addCollection(title: "Target", color: "blue")
+        let sourceID = try XCTUnwrap(store.collections.first { $0.title == "Source" }?.id)
+        let targetID = try XCTUnwrap(store.collections.first { $0.title == "Target" }?.id)
+        store.addCard(title: "Ball", speech: "Ball", color: "red", to: sourceID)
+        let ballID = try XCTUnwrap(store.collections.first { $0.id == sourceID }?.cards.first?.id)
+
+        store.moveCards(ids: [ballID], fromCollectionID: sourceID, toCollectionID: targetID)
+
+        XCTAssertTrue(store.collections.first { $0.id == sourceID }?.cards.isEmpty == true)
+        XCTAssertEqual(store.collections.first { $0.id == targetID }?.cards.map(\.title), ["Ball"])
+    }
+
+    @MainActor
+    func testRecolorCardsAppliesColorToSelection() throws {
+        let (store, suiteName) = try makeIsolatedStore()
+        defer { UserDefaults().removePersistentDomain(forName: suiteName) }
+
+        store.addCollection(title: "Toys", color: "green")
+        let cid = try XCTUnwrap(store.collections.first { $0.title == "Toys" }?.id)
+        store.addCard(title: "A", speech: "A", color: "red", to: cid)
+        store.addCard(title: "B", speech: "B", color: "red", to: cid)
+        let ids = Set(try XCTUnwrap(store.collections.first { $0.id == cid }?.cards).map(\.id))
+
+        store.recolorCards(ids: ids, inCollectionID: cid, color: "purple")
+
+        let cards = try XCTUnwrap(store.collections.first { $0.id == cid }?.cards)
+        XCTAssertTrue(cards.allSatisfy { $0.color == "purple" })
+    }
+
+    @MainActor
+    func testReparentCollectionsMovesThemUnderNewParent() throws {
+        let (store, suiteName) = try makeIsolatedStore()
+        defer { UserDefaults().removePersistentDomain(forName: suiteName) }
+
+        store.addCollection(title: "Parent", color: "green")
+        store.addCollection(title: "Loose", color: "blue")
+        let parentID = try XCTUnwrap(store.collections.first { $0.title == "Parent" }?.id)
+        let looseID = try XCTUnwrap(store.collections.first { $0.title == "Loose" }?.id)
+
+        store.reparentCollections(ids: [looseID], toParentID: parentID)
+
+        XCTAssertEqual(store.collections.first { $0.id == looseID }?.parentID, parentID)
+    }
+
+    // MARK: - Reordering (Req 12)
+
+    @MainActor
+    func testReorderCardMovesCardWithinCollection() throws {
+        let (store, suiteName) = try makeIsolatedStore()
+        defer { UserDefaults().removePersistentDomain(forName: suiteName) }
+
+        store.addCollection(title: "Toys", color: "green")
+        let cid = try XCTUnwrap(store.collections.first { $0.title == "Toys" }?.id)
+        for name in ["A", "B", "C"] { store.addCard(title: name, speech: name, color: "red", to: cid) }
+        let cards = try XCTUnwrap(store.collections.first { $0.id == cid }?.cards)
+        let a = try XCTUnwrap(cards.first { $0.title == "A" }?.id)
+        let c = try XCTUnwrap(cards.first { $0.title == "C" }?.id)
+
+        // Drag "A" onto "C" — "A" should end up after its original neighbours.
+        store.reorderCard(draggingID: a, targetID: c, inCollectionID: cid)
+
+        let order = try XCTUnwrap(store.collections.first { $0.id == cid }?.cards).map(\.title)
+        XCTAssertEqual(order, ["B", "C", "A"])
+        // Order indices are re-normalised to match the new positions.
+        let reindexed = try XCTUnwrap(store.collections.first { $0.id == cid }?.cards)
+        XCTAssertEqual(reindexed.map(\.order), [0, 1, 2])
+    }
+
+    // MARK: - Promotion to default (admin, Req 13)
+
+    /// Promoting a locally-owned collection strips the `user_` prefix so it becomes
+    /// a shareable default; its cards are preserved.
+    @MainActor
+    func testPromoteCollectionToDefaultStripsUserPrefix() throws {
+        let (store, suiteName) = try makeIsolatedStore()
+        defer { UserDefaults().removePersistentDomain(forName: suiteName) }
+
+        store.addCollection(title: "Space", color: "purple")
+        let collection = try XCTUnwrap(store.collections.first { $0.title == "Space" })
+        XCTAssertTrue(collection.id.hasPrefix("user_"))
+        store.addCard(title: "Rocket", speech: "Rocket", color: "purple", to: collection.id)
+        let promotedInput = try XCTUnwrap(store.collections.first { $0.id == collection.id })
+
+        store.promoteCollectionToDefault(promotedInput)
+
+        let expectedID = String(collection.id.dropFirst("user_".count))
+        let promoted = try XCTUnwrap(store.collections.first { $0.title == "Space" })
+        XCTAssertEqual(promoted.id, expectedID)
+        XCTAssertFalse(promoted.id.hasPrefix("user_"))
+        XCTAssertEqual(promoted.cards.map(\.title), ["Rocket"])
+    }
+
+    // MARK: - Image URL resolution
+
+    @MainActor
+    func testImageURLForCardUsesContentImageRef() throws {
+        let (store, suiteName) = try makeIsolatedStore()
+        defer { UserDefaults().removePersistentDomain(forName: suiteName) }
+
+        let card = CommunicationCard(id: "c1", title: "Cat", speech: "Cat", imageRef: "abc-123", color: "green")
+        let url = store.imageURL(for: card)
+        XCTAssertEqual(url?.absoluteString, "\(CardsContentClient.baseURL)/content/images/abc-123")
+    }
+
+    @MainActor
+    func testImageURLForCardWithoutImageRefIsNil() throws {
+        let (store, suiteName) = try makeIsolatedStore()
+        defer { UserDefaults().removePersistentDomain(forName: suiteName) }
+
+        let card = CommunicationCard(id: "c1", title: "Cat", speech: "Cat", color: "green")
+        XCTAssertNil(store.imageURL(for: card))
+    }
+
+    // MARK: - Media matching (offline-safe pure logic, Req 2)
+
+    /// Decodes the media list from the documented API contract and confirms the
+    /// derived `name` strips the file extension.
+    func testMediaItemDecodesContractAndDerivesName() throws {
+        let json = Data("""
+        {"data":[
+          {"id":"1","file_name":"cat.png","title":"Cat","folder":"animals","tags":["cat","pet"],"original_url":"https://data.tikocdn.org/uploads/cards/cat.png"}
+        ]}
+        """.utf8)
+        let items = try JSONDecoder().decode(TikoMediaListResponse.self, from: json).data
+        XCTAssertEqual(items.count, 1)
+        XCTAssertEqual(items.first?.name, "cat")
+        XCTAssertEqual(items.first?.fileName, "cat.png")
+        XCTAssertEqual(items.first?.tags, ["cat", "pet"])
+    }
+
+    /// A card whose title matches a media item's name gets that item's resized CDN
+    /// image; the first item also becomes the collection thumbnail.
+    func testMediaMatcherMatchesByTitleAndSetsThumbnail() throws {
+        let json = Data("""
+        {"data":[
+          {"id":"1","file_name":"cat.png","title":"Cat","folder":"animals","tags":["cat"],"original_url":"https://data.tikocdn.org/uploads/cards/cat.png"},
+          {"id":"2","file_name":"dog.png","title":"Dog","folder":"animals","tags":["dog"],"original_url":"https://data.tikocdn.org/uploads/cards/dog.png"}
+        ]}
+        """.utf8)
+        let items = try JSONDecoder().decode(TikoMediaListResponse.self, from: json).data
+        let collection = CardCollection(id: "c", title: "Animals", color: "green", order: 0, cards: [
+            CommunicationCard(id: "cat", title: "Cat", speech: "Cat", color: "green"),
+            CommunicationCard(id: "dog", title: "Dog", speech: "Dog", color: "green"),
+        ])
+
+        let result = CardsMediaMatcher.match(collection: collection, mediaItems: items)
+
+        let catSource = try XCTUnwrap(URL(string: "https://data.tikocdn.org/uploads/cards/cat.png"))
+        XCTAssertEqual(result.cardImages["cat"], CardsMediaMatcher.resizedCDNURL(catSource))
+        XCTAssertEqual(result.thumbnailURL, CardsMediaMatcher.resizedCDNURL(catSource))
+        XCTAssertNotNil(result.cardImages["dog"])
+    }
+
+    /// When a card already carries an explicit `imageRef`, that content image wins
+    /// over any media-library match.
+    func testMediaMatcherPrefersExplicitImageRef() throws {
+        let json = Data("""
+        {"data":[
+          {"id":"1","file_name":"cat.png","title":"Cat","folder":"animals","tags":["cat"],"original_url":"https://data.tikocdn.org/uploads/cards/cat.png"}
+        ]}
+        """.utf8)
+        let items = try JSONDecoder().decode(TikoMediaListResponse.self, from: json).data
+        let collection = CardCollection(id: "c", title: "Animals", color: "green", order: 0, cards: [
+            CommunicationCard(id: "cat", title: "Cat", speech: "Cat", imageRef: "custom-ref", color: "green"),
+        ])
+
+        let result = CardsMediaMatcher.match(collection: collection, mediaItems: items)
+
+        XCTAssertEqual(
+            result.cardImages["cat"]?.absoluteString,
+            "\(CardsContentClient.baseURL)/content/images/custom-ref"
+        )
+    }
+
+    /// A card with no name match still resolves an image via a shared tag word.
+    func testMediaMatcherFallsBackToTagWordMatch() throws {
+        let json = Data("""
+        {"data":[
+          {"id":"1","file_name":"young-dog.png","title":"Young Dog","folder":"animals","tags":["puppy","dog"],"original_url":"https://data.tikocdn.org/uploads/cards/young-dog.png"}
+        ]}
+        """.utf8)
+        let items = try JSONDecoder().decode(TikoMediaListResponse.self, from: json).data
+        let collection = CardCollection(id: "c", title: "Animals", color: "green", order: 0, cards: [
+            CommunicationCard(id: "puppy", title: "Puppy", speech: "Puppy", color: "green"),
+        ])
+
+        let result = CardsMediaMatcher.match(collection: collection, mediaItems: items)
+
+        let source = try XCTUnwrap(URL(string: "https://data.tikocdn.org/uploads/cards/young-dog.png"))
+        XCTAssertEqual(result.cardImages["puppy"], CardsMediaMatcher.resizedCDNURL(source))
+    }
 }

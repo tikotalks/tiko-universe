@@ -131,6 +131,38 @@ final class TikoCardsUITests: XCTestCase {
         XCTAssertTrue(element(withIdentifier: "Cat").exists, "App should keep working after tapping a card")
     }
 
+    // MARK: - Req 2: a collection renders its full set of picture cards
+
+    func testCollectionRendersMultipleCards() {
+        let animals = element(withIdentifier: "Animals")
+        XCTAssertTrue(animals.waitForExistence(timeout: 20), "Animals collection should be present")
+        XCTAssertTrue(waitUntilHittable(animals, timeout: 10), "Animals collection should be hittable")
+        animals.tap()
+
+        // Several distinct animal cards from the offline defaults must render.
+        for title in ["Cat", "Dog", "Bird"] {
+            let card = element(withIdentifier: title)
+            XCTAssertTrue(card.waitForExistence(timeout: 15), "Card '\(title)' should render inside Animals")
+        }
+    }
+
+    // MARK: - Req 2 / 3: category navigation shows category-scoped cards
+
+    /// Opening a *different* collection shows that collection's own cards and not
+    /// another collection's — proving the grid is category-scoped, not a flat list.
+    func testDifferentCollectionShowsItsOwnCards() {
+        let food = element(withIdentifier: "Food")
+        XCTAssertTrue(food.waitForExistence(timeout: 20), "Food collection should be present on launch")
+        XCTAssertTrue(waitUntilHittable(food, timeout: 10), "Food collection should be hittable")
+        food.tap()
+
+        // Food's own cards are present…
+        let apple = element(withIdentifier: "Apple")
+        XCTAssertTrue(apple.waitForExistence(timeout: 15), "A food card ('Apple') should render inside Food")
+        // …and an animals-only card is not shown inside Food.
+        XCTAssertFalse(app.buttons["Cat"].exists, "An Animals card ('Cat') must not appear inside the Food collection")
+    }
+
     // MARK: - Req 17: REGRESSION — login popup survives email input
 
     func testLoginPopupSurvivesEmailInput() {

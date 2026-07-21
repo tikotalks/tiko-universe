@@ -42,13 +42,66 @@ final class TikoTalkUITests: XCTestCase {
         let account = app.buttons["Account"]
         XCTAssertTrue(account.waitForExistence(timeout: 20), "Account button should exist on launch")
         // Splash overlay fades after ~1s; wait until the button is hittable.
-        XCTAssertTrue(waitUntilHittable(account, timeout: 10), "Account button should become hittable")
-        account.tap()
+        XCTAssertTrue(waitUntilHittable(account, timeout: 15), "Account button should become hittable")
 
+        // Tapping Account (parent mode is the default with no signed-in identity)
+        // presents the profile menu as an animated PopupView card. Re-open the menu
+        // until the "Profile" row is in the tree, guarding the re-tap so we never
+        // dismiss an already-open menu (which would also fail to hit the covered
+        // Account button).
         let profileRow = app.buttons["Profile"]
-        XCTAssertTrue(profileRow.waitForExistence(timeout: 10), "Profile menu should present a Profile row")
-        XCTAssertTrue(waitUntilHittable(profileRow, timeout: 5), "Profile row should be hittable")
-        profileRow.tap()
+        for _ in 0..<8 {
+            // Only (re)tap when the menu is closed — once it's open the popup
+            // covers the Account button, so isHittable guards against toggling it
+            // shut. Re-tap when a previous tap was swallowed mid-splash.
+            if !profileRow.exists, waitUntilHittable(account, timeout: 3) { account.tap() }
+            if profileRow.waitForExistence(timeout: 6) { break }
+        }
+        XCTAssertTrue(profileRow.exists, "Profile menu should present a Profile row")
+
+        // Tap Profile to open the login card, and confirm the card's "Sign in" title
+        // actually appears — the identity subsystem is slow to present on the first
+        // (cold) open. Retry the Profile tap, re-opening the account menu if it got
+        // dismissed, until the login card is on screen. A coordinate tap is used
+        // because a direct element.tap() can fail with "element no longer valid after
+        // interruption handling" while the popups animate.
+        let signIn = loginCardTitle
+        for _ in 0..<4 {
+            if signIn.exists { break }
+            if profileRow.exists {
+                _ = waitUntilHittable(profileRow, timeout: 12)
+                robustTap(profileRow)
+            } else if waitUntilHittable(account, timeout: 3) {
+                // Menu dismissed without opening the card — reopen it.
+                account.tap()
+                _ = profileRow.waitForExistence(timeout: 6)
+            }
+            if signIn.waitForExistence(timeout: 12) { break }
+        }
+        XCTAssertTrue(signIn.exists, "Login card ('Sign in') should be presented after tapping Profile")
+    }
+
+    /// Tap an element via its centre coordinate (a raw screen point), which is more
+    /// resilient than `element.tap()` when popups animate / auto-dismiss under load.
+    private func robustTap(_ element: XCUIElement) {
+        element.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap()
+    }
+
+    /// Reliably move a board word into the sentence bar. Cloud bubbles pop in with
+    /// staggered spring animations, so a single tap can be swallowed mid-animation.
+    /// Retry the tap until the word appears in the sentence bar, checking for the
+    /// result before every tap so a word is never added twice.
+    private func addBoardWordToSentence(_ id: String, file: StaticString = #filePath, line: UInt = #line) {
+        let tile = app.buttons["talk.board.word.\(id)"]
+        XCTAssertTrue(tile.waitForExistence(timeout: 20), "Board word '\(id)' should exist", file: file, line: line)
+        let sentenceWord = app.staticTexts["talk.sentence.word.\(id)"]
+        var attempts = 0
+        while !sentenceWord.exists && attempts < 8 {
+            if waitUntilHittable(tile, timeout: 10) { robustTap(tile) }
+            _ = sentenceWord.waitForExistence(timeout: 4)
+            attempts += 1
+        }
+        XCTAssertTrue(sentenceWord.exists, "Board word '\(id)' should land in the sentence bar", file: file, line: line)
     }
 
     /// Poll for hittability (XCUIElement has no built-in wait-for-hittable).
@@ -105,9 +158,9 @@ final class TikoTalkUITests: XCTestCase {
         XCTAssertTrue(waitUntilHittable(wantTile, timeout: 10), "Word tile should become hittable")
 
         // Tapping a tile must not crash or require an account.
-        wantTile.tap()
+        addBoardWordToSentence("want")
         XCTAssertTrue(
-            app.buttons["talk.board.word.want"].waitForExistence(timeout: 10),
+            app.staticTexts["talk.sentence.word.want"].exists,
             "App should keep working after tapping a word"
         )
     }
@@ -119,18 +172,10 @@ final class TikoTalkUITests: XCTestCase {
         let placeholder = app.staticTexts["talk.sentence.placeholder"]
         XCTAssertTrue(placeholder.waitForExistence(timeout: 20), "Sentence bar should start empty")
 
-        // Tap the "want" word tile on the board.
-        let wantTile = app.buttons["talk.board.word.want"]
-        XCTAssertTrue(wantTile.waitForExistence(timeout: 20), "The 'want' word tile should exist on the board")
-        XCTAssertTrue(waitUntilHittable(wantTile, timeout: 10), "The 'want' word tile should be hittable")
-        wantTile.tap()
+        // Tap the "want" word tile on the board — the tapped word must appear in
+        // the sentence bar.
+        addBoardWordToSentence("want")
 
-        // THE ASSERTION: the tapped word now appears in the sentence bar.
-        let sentenceWord = app.staticTexts["talk.sentence.word.want"]
-        XCTAssertTrue(
-            sentenceWord.waitForExistence(timeout: 10),
-            "Tapping a word tile should place that word into the sentence bar"
-        )
         // And the empty-state placeholder is gone now that a word is present.
         XCTAssertTrue(
             waitUntilGone(placeholder, timeout: 5),
@@ -177,11 +222,25 @@ final class TikoTalkUITests: XCTestCase {
     func testSkipForNowReturnsToUsableApp() {
         openLoginCard()
         XCTAssertTrue(skipButton.waitForExistence(timeout: 10), "Login card should offer 'Skip for now'")
-        XCTAssertTrue(waitUntilHittable(skipButton, timeout: 5), "'Skip for now' should be hittable")
-        skipButton.tap()
+
+        // The login card slides in as a popup too; tap once settled, with the same
+        // coordinate-tap fallback when hit-testing still refuses the centre. Retry
+        // until the card is gone — a tap can be swallowed mid-animation under the
+        // parallel-simulator load, and the dismiss animation itself can be slow.
+        var dismissed = false
+        for _ in 0..<4 where !dismissed {
+            if skipButton.exists {
+                if waitUntilHittable(skipButton, timeout: 12) {
+                    skipButton.tap()
+                } else {
+                    skipButton.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap()
+                }
+            }
+            dismissed = waitUntilGone(loginCardTitle, timeout: 8)
+        }
 
         // Popup dismissed → login card gone, app usable again.
-        XCTAssertTrue(waitUntilGone(loginCardTitle, timeout: 10), "'Skip for now' should dismiss the login card")
+        XCTAssertTrue(dismissed, "'Skip for now' should dismiss the login card")
         XCTAssertTrue(
             app.buttons["talk.board.word.want"].waitForExistence(timeout: 10),
             "App should be usable (word board present) after skipping login"

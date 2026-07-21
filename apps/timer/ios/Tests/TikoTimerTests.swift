@@ -152,6 +152,57 @@ final class TikoTimerTests: XCTestCase {
         XCTAssertEqual(engine.displayTime(now: t0.addingTimeInterval(90)), "00:00")
     }
 
+    /// Progress reflects the frozen remaining time while paused (it doesn't keep
+    /// advancing with wall-clock time).
+    func testProgressIsFrozenWhilePaused() {
+        var engine = TimerEngine()
+        engine.start(durationMs: 300_000, now: t0)
+        engine.pause(now: t0.addingTimeInterval(150)) // halfway → 150s left
+
+        XCTAssertEqual(engine.progress(now: t0.addingTimeInterval(150)), 0.5, accuracy: 0.001)
+        // Real time passing while paused does not move the ring.
+        XCTAssertEqual(engine.progress(now: t0.addingTimeInterval(600)), 0.5, accuracy: 0.001)
+    }
+
+    /// `hasReachedZero` is only ever true for a *running* countdown at/after its
+    /// target — never while idle, paused or already expired.
+    func testHasReachedZeroOnlyWhileRunning() {
+        var engine = TimerEngine()
+        XCTAssertFalse(engine.hasReachedZero(now: t0), "idle never reaches zero")
+
+        engine.start(durationMs: 60_000, now: t0)
+        XCTAssertFalse(engine.hasReachedZero(now: t0.addingTimeInterval(30)), "mid-run is not zero")
+        XCTAssertTrue(engine.hasReachedZero(now: t0.addingTimeInterval(60)), "running-and-elapsed is zero")
+
+        engine.pause(now: t0.addingTimeInterval(30)) // pause with time left
+        XCTAssertFalse(engine.hasReachedZero(now: t0.addingTimeInterval(999)), "paused never reaches zero")
+    }
+
+    /// `expireIfElapsed` is a guarded no-op unless the engine is running-and-elapsed.
+    func testExpireIfElapsedGuards() {
+        var engine = TimerEngine()
+        XCTAssertFalse(engine.expireIfElapsed(now: t0), "idle can't expire")
+        XCTAssertEqual(engine.mode, .idle)
+
+        engine.start(durationMs: 60_000, now: t0)
+        engine.pause(now: t0.addingTimeInterval(10))
+        XCTAssertFalse(engine.expireIfElapsed(now: t0.addingTimeInterval(999)), "paused can't expire")
+        XCTAssertEqual(engine.mode, .paused)
+    }
+
+    /// Starting again from a running/paused state restarts cleanly at the new
+    /// duration (the previous run's remaining time is discarded).
+    func testStartRestartsFromActiveState() {
+        var engine = TimerEngine()
+        engine.start(durationMs: 300_000, now: t0)
+        engine.pause(now: t0.addingTimeInterval(60))
+
+        engine.start(durationMs: 120_000, now: t0.addingTimeInterval(100)) // restart, 2 min
+        XCTAssertEqual(engine.mode, .running)
+        XCTAssertEqual(engine.totalDuration, 120_000)
+        XCTAssertEqual(engine.remaining(now: t0.addingTimeInterval(100)), 120_000, accuracy: 0.001)
+    }
+
     // MARK: - Reset (Req 12)
 
     /// Req 12: reset returns the engine to idle from any active state, clearing
@@ -230,6 +281,21 @@ final class TikoTimerTests: XCTestCase {
             persistedMode: "idle", targetMs: 0, remainingMs: 0, now: t0
         )
         XCTAssertEqual(idle.mode, .idle)
+    }
+
+    /// Req 14: an expired timer restores as expired; an unknown persisted mode
+    /// falls back to a fresh idle engine.
+    func testRestoreExpiredAndUnknown() {
+        let expired = TimerEngine.restored(
+            persistedMode: "expired", targetMs: 0, remainingMs: 0, now: t0
+        )
+        XCTAssertEqual(expired.mode, .expired)
+        XCTAssertEqual(expired.remaining(now: t0), 0)
+
+        let unknown = TimerEngine.restored(
+            persistedMode: "garbage", targetMs: 999, remainingMs: 999, now: t0
+        )
+        XCTAssertEqual(unknown.mode, .idle)
     }
 
     // MARK: - Shared kit sanity

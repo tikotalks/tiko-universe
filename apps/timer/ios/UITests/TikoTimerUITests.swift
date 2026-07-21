@@ -38,15 +38,12 @@ final class TikoTimerUITests: XCTestCase {
     /// profile menu in parent mode), then tap "Profile" to reach the login card.
     private func openLoginCard() {
         let account = app.buttons["Account"]
-        XCTAssertTrue(account.waitForExistence(timeout: 20), "Account button should exist on launch")
-        // Splash overlay fades after ~1s; wait until the button is hittable.
-        XCTAssertTrue(waitUntilHittable(account, timeout: 10), "Account button should become hittable")
-        account.tap()
-
+        XCTAssertTrue(account.waitForExistence(timeout: 25), "Account button should exist on launch")
+        // Splash overlay fades after ~1s; taps land only once it is gone, so tap
+        // (patiently retrying dropped taps) until the profile menu appears.
         let profileRow = app.buttons["Profile"]
-        XCTAssertTrue(profileRow.waitForExistence(timeout: 10), "Profile menu should present a Profile row")
-        XCTAssertTrue(waitUntilHittable(profileRow, timeout: 5), "Profile row should be hittable")
-        profileRow.tap()
+        XCTAssertTrue(tapUntil(account, appears: profileRow), "Profile menu should present a Profile row")
+        XCTAssertTrue(tapUntil(profileRow, appears: app.staticTexts["Sign in"]), "Tapping Profile should reveal the login card")
     }
 
     /// Poll for hittability (XCUIElement has no built-in wait-for-hittable).
@@ -58,6 +55,25 @@ final class TikoTimerUITests: XCTestCase {
             RunLoop.current.run(until: Date().addingTimeInterval(0.2))
         }
         return element.isHittable
+    }
+
+    /// Tap `control` (once hittable) and wait for `expected` to appear, retrying
+    /// the tap a few times. SwiftUI occasionally drops the first tap while the
+    /// launch/splash transition is still settling under simulator load; a lost
+    /// tap otherwise leaves the app in its previous state and fails spuriously.
+    @discardableResult
+    private func tapUntil(_ control: XCUIElement, appears expected: XCUIElement, attempts: Int = 6) -> Bool {
+        for _ in 0..<attempts {
+            if expected.exists { return true }
+            guard waitUntilHittable(control, timeout: 10), control.exists else { break }
+            // Let any launch/splash overlay finish fading before tapping — while
+            // it is still fading `isHittable` can be true yet the tap is eaten,
+            // which is why the lower controls (Start) drop early taps.
+            RunLoop.current.run(until: Date().addingTimeInterval(0.4))
+            control.tap()
+            if expected.waitForExistence(timeout: 6) { return true }
+        }
+        return expected.exists
     }
 
     @discardableResult
@@ -102,16 +118,73 @@ final class TikoTimerUITests: XCTestCase {
     func testSelectingPresetStartsCountdown() {
         let firstPreset = app.buttons["timer.preset.0"] // "1 min"
         XCTAssertTrue(firstPreset.waitForExistence(timeout: 20), "Preset button should exist")
-        XCTAssertTrue(waitUntilHittable(firstPreset, timeout: 10), "Preset button should be hittable")
-        firstPreset.tap()
 
         // Once running: pause + reset controls appear and the preset grid is gone.
         let pause = app.buttons["Pause"]
-        XCTAssertTrue(pause.waitForExistence(timeout: 10), "Selecting a preset should start the timer (Pause control appears)")
+        XCTAssertTrue(tapUntil(firstPreset, appears: pause), "Selecting a preset should start the timer (Pause control appears)")
         XCTAssertTrue(app.buttons["Reset"].waitForExistence(timeout: 5), "A running timer should offer Reset")
         XCTAssertTrue(waitUntilGone(app.buttons["timer.preset.0"], timeout: 5), "Preset grid should hide once the timer is running")
 
         // The countdown display keeps showing time while running.
+        XCTAssertTrue(app.staticTexts["timer.display"].exists, "Countdown display should remain visible while running")
+    }
+
+    // MARK: - Req 9 / 10: pause then resume keeps the timer running (Timer-specific)
+
+    func testPauseThenResumeKeepsTimerRunning() {
+        let firstPreset = app.buttons["timer.preset.0"]
+        XCTAssertTrue(firstPreset.waitForExistence(timeout: 20), "Preset button should exist")
+
+        // Running → Pause is offered.
+        let pause = app.buttons["timer.pause"]
+        XCTAssertTrue(tapUntil(firstPreset, appears: pause), "A running timer should offer Pause")
+        XCTAssertTrue(waitUntilHittable(pause, timeout: 5), "Pause should be hittable")
+        pause.tap()
+
+        // Paused → Resume replaces Pause; Reset stays; display remains.
+        let resume = app.buttons["timer.resume"]
+        XCTAssertTrue(resume.waitForExistence(timeout: 10), "Pausing should offer Resume")
+        XCTAssertTrue(waitUntilGone(app.buttons["timer.pause"], timeout: 5), "Pause should be replaced by Resume while paused")
+        XCTAssertTrue(app.buttons["timer.reset"].exists, "Reset should stay available while paused")
+        XCTAssertTrue(app.staticTexts["timer.display"].exists, "Countdown display should remain visible while paused")
+
+        // Resume → back to running (Pause returns, Resume gone).
+        XCTAssertTrue(waitUntilHittable(resume, timeout: 5), "Resume should be hittable")
+        resume.tap()
+        XCTAssertTrue(app.buttons["timer.pause"].waitForExistence(timeout: 10), "Resuming should return to the running state (Pause returns)")
+        XCTAssertTrue(waitUntilGone(app.buttons["timer.resume"], timeout: 5), "Resume should be gone once running again")
+    }
+
+    // MARK: - Req 12: reset returns the timer to idle (presets reappear) (Timer-specific)
+
+    func testResetReturnsTimerToIdle() {
+        let firstPreset = app.buttons["timer.preset.0"]
+        XCTAssertTrue(firstPreset.waitForExistence(timeout: 20), "Preset button should exist")
+
+        // Running — the preset grid is hidden.
+        let reset = app.buttons["timer.reset"]
+        XCTAssertTrue(tapUntil(firstPreset, appears: reset), "A running timer should offer Reset")
+        XCTAssertTrue(waitUntilGone(app.buttons["timer.preset.0"], timeout: 5), "Preset grid should hide while running")
+        XCTAssertTrue(waitUntilHittable(reset, timeout: 5), "Reset should be hittable")
+        reset.tap()
+
+        // Idle again — presets reappear and Pause/Resume/Reset controls are gone.
+        XCTAssertTrue(app.buttons["timer.preset.0"].waitForExistence(timeout: 10), "Reset should return to idle so the preset grid reappears")
+        XCTAssertTrue(waitUntilGone(app.buttons["timer.pause"], timeout: 5), "Pause control should be gone once idle")
+        XCTAssertTrue(app.buttons["timer.start"].exists, "The Start (custom) control should be present again while idle")
+    }
+
+    // MARK: - Req 13: the Start control begins a custom countdown (Timer-specific)
+
+    func testCustomStartControlStartsCountdown() {
+        // While idle the play/Start control (custom duration) is present.
+        let start = app.buttons["timer.start"]
+        XCTAssertTrue(start.waitForExistence(timeout: 20), "The Start (custom) control should be present while idle")
+
+        // Starting switches to running: Pause + Reset appear, presets hide.
+        XCTAssertTrue(tapUntil(start, appears: app.buttons["timer.pause"]), "The Start control should begin a running countdown (Pause appears)")
+        XCTAssertTrue(app.buttons["timer.reset"].exists, "A running custom timer should offer Reset")
+        XCTAssertTrue(waitUntilGone(app.buttons["timer.preset.0"], timeout: 5), "Preset grid should hide once the custom timer is running")
         XCTAssertTrue(app.staticTexts["timer.display"].exists, "Countdown display should remain visible while running")
     }
 

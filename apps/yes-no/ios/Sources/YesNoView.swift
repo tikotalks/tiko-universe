@@ -385,6 +385,7 @@ struct YesNoView: View {
                     .background(fieldBackground)
                     .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
                     .padding(.horizontal, 24)
+                    .accessibilityIdentifier("YesNoSentenceField")
 
                 HStack(spacing: 12) {
                     Button(action: speakSentence) {
@@ -400,6 +401,7 @@ struct YesNoView: View {
                     }
                     .disabled(!speechEnabled || sentenceSpeechState != .idle || effectiveSentence.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
                     .accessibilityLabel("Speak sentence")
+                    .accessibilityIdentifier("YesNoSpeakButton")
                     .accessibilityValue(sentenceSpeechState == .generating ? "Generating" : sentenceSpeechState == .playing ? "Playing" : "")
 
                     Button(action: { sentence = "" }) {
@@ -412,6 +414,7 @@ struct YesNoView: View {
                     }
                     .buttonStyle(.plain)
                     .accessibilityLabel("Clear sentence")
+                    .accessibilityIdentifier("YesNoClearSentenceButton")
                 }
 
                 TikoChoiceGrid(choices: effectiveChoices, style: choiceStyle, labelFont: labelFont, onSelect: selectChoice)

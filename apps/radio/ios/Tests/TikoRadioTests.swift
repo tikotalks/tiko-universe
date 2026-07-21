@@ -245,6 +245,259 @@ final class TikoRadioTests: XCTestCase {
         XCTAssertEqual(playback.progress, 0)
     }
 
+    // MARK: - Track model & sources (Req 1)
+
+    /// `withCategory(nil)` clears the collection while preserving identity.
+    func testWithCategoryNilClearsCollection() {
+        let track = RadioTrack(title: "Song", source: .youtube, youtubeVideoId: "abc", categoryId: "music")
+        let cleared = track.withCategory(nil)
+        XCTAssertNil(cleared.categoryId)
+        XCTAssertEqual(cleared.id, track.id)
+        XCTAssertEqual(cleared.title, track.title)
+    }
+
+    /// A caller-supplied `addedAt` is preserved (not overwritten by "now").
+    func testRadioTrackPreservesSuppliedAddedAt() {
+        let stamp = "2020-01-02T03:04:05Z"
+        let track = RadioTrack(title: "Song", source: .youtube, youtubeVideoId: "abc", addedAt: stamp)
+        XCTAssertEqual(track.addedAt, stamp)
+    }
+
+    func testTrackSourceRawValues() {
+        XCTAssertEqual(TrackSource.youtube.rawValue, "youtube")
+        XCTAssertEqual(TrackSource.r2.rawValue, "r2")
+        XCTAssertEqual(TrackSource.upload.rawValue, "upload")
+        XCTAssertEqual(TrackSource(rawValue: "youtube"), .youtube)
+        XCTAssertNil(TrackSource(rawValue: "spotify"))
+    }
+
+    func testCategoryColorNameMirrorsColor() {
+        let category = RadioCategory(id: "x", title: "X", symbol: "star.fill", color: "blue")
+        XCTAssertEqual(category.colorName, "blue")
+    }
+
+    /// The full library snapshot (tracks + collections + selection) round-trips through JSON.
+    func testRadioLibrarySnapshotRoundTripsJSON() throws {
+        let snapshot = RadioLibrarySnapshot(
+            tracks: [RadioTrack(title: "S", source: .youtube, youtubeVideoId: "abc", categoryId: "music")],
+            categories: defaultRadioCategories,
+            selectedCategoryID: "music"
+        )
+        let data = try JSONEncoder().encode(snapshot)
+        let decoded = try JSONDecoder().decode(RadioLibrarySnapshot.self, from: data)
+        XCTAssertEqual(decoded, snapshot)
+    }
+
+    // MARK: - YouTube id parser — remaining forms (Req 2)
+
+    func testYouTubeVideoIDParserHandlesEmbedURL() {
+        XCTAssertEqual(YouTubeVideoIDParser.parse("https://www.youtube.com/embed/abc123XYZ"), "abc123XYZ")
+    }
+
+    func testYouTubeVideoIDParserHandlesLiveURL() {
+        XCTAssertEqual(YouTubeVideoIDParser.parse("https://www.youtube.com/live/abc123XYZ"), "abc123XYZ")
+    }
+
+    func testYouTubeVideoIDParserTrimsWhitespace() {
+        XCTAssertEqual(YouTubeVideoIDParser.parse("  abc123XYZ  "), "abc123XYZ")
+    }
+
+    func testYouTubeVideoIDParserReturnsInputForNonYouTubeURL() {
+        let other = "https://example.com/watch?v=abc123XYZ"
+        XCTAssertEqual(YouTubeVideoIDParser.parse(other), other, "a non-YouTube URL is returned unchanged")
+    }
+
+    func testYouTubeVideoIDParserHandlesEmptyString() {
+        XCTAssertEqual(YouTubeVideoIDParser.parse(""), "")
+    }
+
+    // MARK: - Store computed views (Req 3, 5)
+
+    @MainActor
+    func testSelectedCategoryReturnsMatchingCategory() {
+        let (store, defaults, suite) = makeStore()
+        defer { defaults.removePersistentDomain(forName: suite) }
+        XCTAssertNil(store.selectedCategory, "no selection ⇒ nil")
+        store.selectedCategoryID = "music"
+        XCTAssertEqual(store.selectedCategory?.title, "Music")
+        store.selectedCategoryID = "does-not-exist"
+        XCTAssertNil(store.selectedCategory, "unknown id ⇒ nil")
+    }
+
+    /// `collectionsWithTracks` hides empty collections but keeps the selected one visible.
+    @MainActor
+    func testCollectionsWithTracksHidesEmptyButKeepsSelected() {
+        let (store, defaults, suite) = makeStore()
+        defer { defaults.removePersistentDomain(forName: suite) }
+        store.addTrack(RadioTrack(title: "A", source: .youtube, youtubeVideoId: "a", categoryId: "music"), userDefaults: defaults)
+        var ids = store.collectionsWithTracks.map(\.id)
+        XCTAssertTrue(ids.contains("music"), "a collection with tracks is shown")
+        XCTAssertFalse(ids.contains("animals"), "an empty collection is hidden")
+        store.selectedCategoryID = "animals"
+        ids = store.collectionsWithTracks.map(\.id)
+        XCTAssertTrue(ids.contains("animals"), "the selected collection stays visible even when empty")
+    }
+
+    // MARK: - Store management — remaining paths (Req 6, 7)
+
+    @MainActor
+    func testRemoveTrackDeletesTrack() {
+        let (store, defaults, suite) = makeStore()
+        defer { defaults.removePersistentDomain(forName: suite) }
+        let track = RadioTrack(title: "A", source: .youtube, youtubeVideoId: "a", categoryId: "music")
+        store.addTrack(track, userDefaults: defaults)
+        XCTAssertEqual(store.tracks.count, 1)
+        store.removeTrack(id: track.id, userDefaults: defaults)
+        XCTAssertTrue(store.tracks.isEmpty)
+    }
+
+    @MainActor
+    func testMoveTrackChangesCollectionAndPersists() {
+        let (store, defaults, suite) = makeStore()
+        defer { defaults.removePersistentDomain(forName: suite) }
+        let track = RadioTrack(title: "A", source: .youtube, youtubeVideoId: "a", categoryId: "music")
+        store.addTrack(track, userDefaults: defaults)
+        store.moveTrack(track, to: "animals", userDefaults: defaults)
+        XCTAssertEqual(store.tracks.first?.categoryId, "animals")
+
+        let reloaded = RadioLibraryStore()
+        reloaded.load(userDefaults: defaults)
+        XCTAssertEqual(reloaded.tracks.first?.categoryId, "animals", "the move is persisted")
+
+        store.moveTrack(track, to: nil, userDefaults: defaults)
+        XCTAssertNil(store.tracks.first?.categoryId, "a track can be moved out of every collection")
+    }
+
+    @MainActor
+    func testRenameTrackIgnoresBlankTitle() {
+        let (store, defaults, suite) = makeStore()
+        defer { defaults.removePersistentDomain(forName: suite) }
+        let track = RadioTrack(title: "Keep Me", source: .youtube, youtubeVideoId: "a", categoryId: "music")
+        store.addTrack(track, userDefaults: defaults)
+        store.renameTrack(id: track.id, title: "   ", userDefaults: defaults)
+        XCTAssertEqual(store.tracks.first?.title, "Keep Me", "a blank title is ignored")
+    }
+
+    @MainActor
+    func testRenameCategoryIgnoresBlankTitle() {
+        let (store, defaults, suite) = makeStore()
+        defer { defaults.removePersistentDomain(forName: suite) }
+        let collection = store.addCategory(title: "Bedtime", userDefaults: defaults)
+        store.renameCategory(id: collection.id, title: "   ", userDefaults: defaults)
+        XCTAssertEqual(store.categories.first { $0.id == collection.id }?.title, "Bedtime", "a blank title is ignored")
+    }
+
+    /// Adding a collection auto-selects it (so the Add sheet targets the new one).
+    @MainActor
+    func testAddCategorySelectsNewCollection() {
+        let (store, defaults, suite) = makeStore()
+        defer { defaults.removePersistentDomain(forName: suite) }
+        let collection = store.addCategory(title: "Bedtime", userDefaults: defaults)
+        XCTAssertEqual(store.selectedCategoryID, collection.id)
+    }
+
+    /// Deleting the currently-selected collection clears the selection.
+    @MainActor
+    func testRemoveSelectedCategoryClearsSelection() {
+        let (store, defaults, suite) = makeStore()
+        defer { defaults.removePersistentDomain(forName: suite) }
+        let collection = store.addCategory(title: "Bedtime", userDefaults: defaults)
+        XCTAssertEqual(store.selectedCategoryID, collection.id)
+        store.removeCategory(id: collection.id, userDefaults: defaults)
+        XCTAssertNil(store.selectedCategoryID, "removing the selected collection clears the selection")
+    }
+
+    @MainActor
+    func testReplaceTracksReplacesEntireLibrary() {
+        let (store, defaults, suite) = makeStore()
+        defer { defaults.removePersistentDomain(forName: suite) }
+        store.addTrack(RadioTrack(title: "A", source: .youtube, youtubeVideoId: "a", categoryId: "music"), userDefaults: defaults)
+        store.replaceTracks([
+            RadioTrack(title: "X", source: .youtube, youtubeVideoId: "x", categoryId: "calm"),
+            RadioTrack(title: "Y", source: .youtube, youtubeVideoId: "y", categoryId: "calm")
+        ], userDefaults: defaults)
+        XCTAssertEqual(store.tracks.map(\.title), ["X", "Y"])
+    }
+
+    /// Legacy migration: a bare `radio.tracks` array is upgraded to the v2 snapshot,
+    /// with untagged tracks filed under "Unsorted".
+    @MainActor
+    func testLegacyTrackArrayMigratesToSnapshot() throws {
+        let suite = "TikoRadioTests.\(UUID().uuidString)"
+        let defaults = UserDefaults(suiteName: suite)!
+        defer { defaults.removePersistentDomain(forName: suite) }
+        let legacy = [RadioTrack(title: "Old Song", source: .youtube, youtubeVideoId: "abc")]
+        defaults.set(try JSONEncoder().encode(legacy), forKey: "radio.tracks")
+
+        let store = RadioLibraryStore()
+        store.load(userDefaults: defaults)
+        XCTAssertEqual(store.tracks.count, 1)
+        XCTAssertEqual(store.tracks.first?.categoryId, defaultUncategorizedCategoryID, "legacy tracks are filed under Unsorted")
+        XCTAssertNotNil(defaults.data(forKey: "radio.library.snapshot.v2"), "migration writes the v2 snapshot")
+    }
+
+    /// A snapshot that stored no collections falls back to the built-in defaults on load.
+    @MainActor
+    func testLoadRestoresDefaultCategoriesWhenSnapshotHasNone() throws {
+        let suite = "TikoRadioTests.\(UUID().uuidString)"
+        let defaults = UserDefaults(suiteName: suite)!
+        defer { defaults.removePersistentDomain(forName: suite) }
+        let snapshot = RadioLibrarySnapshot(tracks: [], categories: [], selectedCategoryID: nil)
+        defaults.set(try JSONEncoder().encode(snapshot), forKey: "radio.library.snapshot.v2")
+
+        let store = RadioLibraryStore()
+        store.load(userDefaults: defaults)
+        XCTAssertEqual(store.categories.map(\.id), defaultRadioCategories.map(\.id))
+    }
+
+    // MARK: - Playback queue — remaining shuffle path (Req 12)
+
+    /// Req 12: shuffle rewind also always returns an in-range index.
+    func testQueueRewindShuffleStaysInRange() {
+        var rng = SeededGenerator(seed: 99)
+        for _ in 0..<200 {
+            let index = RadioQueue.rewind(current: 0, count: 6, shuffle: true, using: &rng)
+            XCTAssertNotNil(index)
+            XCTAssertTrue((0..<6).contains(index!), "shuffle rewind index \(index!) out of range")
+        }
+    }
+
+    // MARK: - Playback service — playing a track (Req 9, 14)
+
+    /// Playing a track marks the service playing with a current track; pause keeps
+    /// the track, resume re-arms, and stop fully resets. Uses a local (upload)
+    /// source URL so the AVPlayer state machine is exercised with no network — the
+    /// YouTube branch is covered separately without loading the embed page.
+    @MainActor
+    func testPlaybackPlayPauseResumeStopLifecycle() {
+        let playback = RadioPlaybackService()
+        let track = RadioTrack(title: "Song", source: .upload, audioUrl: "file:///tmp/does-not-exist.m4a")
+        playback.play(track)
+        XCTAssertTrue(playback.isPlaying)
+        XCTAssertTrue(playback.hasCurrentTrack)
+        XCTAssertEqual(playback.currentTrack?.id, track.id)
+
+        playback.pause()
+        XCTAssertFalse(playback.isPlaying)
+        XCTAssertTrue(playback.hasCurrentTrack, "pause keeps the current track")
+
+        playback.resume()
+        XCTAssertTrue(playback.isPlaying, "resume re-arms playback for the retained YouTube track")
+
+        playback.stop()
+        XCTAssertFalse(playback.isPlaying)
+        XCTAssertFalse(playback.hasCurrentTrack)
+        XCTAssertEqual(playback.progress, 0)
+    }
+
+    /// A YouTube track with no video id is a no-op (no crash, stays idle).
+    @MainActor
+    func testPlaybackIgnoresYouTubeTrackWithoutVideoId() {
+        let playback = RadioPlaybackService()
+        playback.play(RadioTrack(title: "Broken", source: .youtube, youtubeVideoId: nil))
+        XCTAssertFalse(playback.isPlaying)
+    }
+
     // MARK: - Helpers
 
     @MainActor

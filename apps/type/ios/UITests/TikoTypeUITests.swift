@@ -119,6 +119,112 @@ final class TikoTypeUITests: XCTestCase {
         XCTAssertTrue(key("h").exists, "App should keep working after speaking")
     }
 
+    // MARK: - Req 3: space commits the in-progress word as a chip
+
+    func testSpaceCommitsWordAndKeepsTyping() {
+        let h = key("h")
+        XCTAssertTrue(h.waitForExistence(timeout: 20), "Keyboard should be present")
+        XCTAssertTrue(waitUntilHittable(h, timeout: 10), "Keys should be hittable")
+
+        // Type "hi", commit with space, then type "yo".
+        h.tap()
+        key("i").tap()
+        let space = app.buttons["key-space"]
+        XCTAssertTrue(space.waitForExistence(timeout: 5), "Space key should exist")
+        space.tap()
+        key("y").tap()
+        key("o").tap()
+
+        // The committed word 'hi' persists as its own chip (accessibilityLabel
+        // "hi"), separate from the in-progress word. Once a committed chip exists
+        // the bar no longer collapses into one element, so assert on the chips.
+        let committed = app.staticTexts.matching(NSPredicate(format: "label ==[c] %@", "hi")).firstMatch
+        XCTAssertTrue(committed.waitForExistence(timeout: 5),
+                      "Committed word chip 'hi' should remain after typing more")
+
+        // The in-progress word 'yo' shows as its own current-word chip.
+        let current = app.staticTexts.matching(NSPredicate(format: "label ==[c] %@", "yo")).firstMatch
+        XCTAssertTrue(current.waitForExistence(timeout: 5),
+                      "In-progress word chip 'yo' should exist alongside the committed word")
+    }
+
+    // MARK: - Req 7: backspace deletes the last letter
+
+    func testBackspaceDeletesLastLetter() {
+        let h = key("h")
+        XCTAssertTrue(h.waitForExistence(timeout: 20), "Keyboard should be present")
+        XCTAssertTrue(waitUntilHittable(h, timeout: 10), "Keys should be hittable")
+
+        // Type "hi", then backspace twice to empty the in-progress word.
+        h.tap()
+        key("i").tap()
+
+        let typeBar = elementWithIdentifier("typeBar")
+        XCTAssertTrue(typeBar.waitForExistence(timeout: 5), "Sentence bar should exist")
+        XCTAssertTrue(typeBar.label.lowercased().contains("hi"), "Bar should show 'hi' before deleting")
+
+        let backspace = app.buttons["key-backspace"]
+        XCTAssertTrue(backspace.waitForExistence(timeout: 5), "Backspace key should exist")
+        backspace.tap()
+        backspace.tap()
+
+        // With nothing typed, the placeholder returns and 'hi' is gone.
+        XCTAssertTrue(waitUntil(timeout: 5) {
+            !self.elementWithIdentifier("typeBar").label.lowercased().contains("hi")
+        }, "Backspacing should remove the typed letters, bar was: \(self.elementWithIdentifier("typeBar").label)")
+    }
+
+    // MARK: - Req 6: clear button empties the sentence
+
+    func testClearButtonEmptiesSentence() {
+        let h = key("h")
+        XCTAssertTrue(h.waitForExistence(timeout: 20), "Keyboard should be present")
+        XCTAssertTrue(waitUntilHittable(h, timeout: 10), "Keys should be hittable")
+
+        h.tap()
+        key("i").tap()
+
+        let clear = app.buttons["clearButton"]
+        XCTAssertTrue(clear.waitForExistence(timeout: 5), "Clear button should exist")
+        XCTAssertTrue(waitUntilHittable(clear, timeout: 5), "Clear should be hittable once there is content")
+        clear.tap()
+
+        // The typed text is gone from the bar…
+        XCTAssertTrue(waitUntil(timeout: 5) {
+            !self.elementWithIdentifier("typeBar").label.lowercased().contains("hi")
+        }, "Clear should remove the typed text, bar was: \(self.elementWithIdentifier("typeBar").label)")
+
+        // …and the app remains usable (keyboard still there).
+        XCTAssertTrue(key("h").exists, "App should keep working after clearing")
+    }
+
+    // MARK: - Req 12: symbols/numbers layer is reachable and types digits
+
+    func testSymbolsLayerTypesDigits() {
+        let toggle = app.buttons["key-symbols-toggle"]
+        XCTAssertTrue(toggle.waitForExistence(timeout: 20), "Symbols toggle should exist")
+        XCTAssertTrue(waitUntilHittable(toggle, timeout: 10), "Symbols toggle should be hittable")
+
+        // Letters visible before toggling; digit keys should not be.
+        XCTAssertTrue(key("q").exists, "Letter keys should be present before toggling")
+
+        toggle.tap()
+
+        // After toggling, the digit "1" key appears and can be typed.
+        let one = key("1")
+        XCTAssertTrue(one.waitForExistence(timeout: 5), "Digit '1' key should appear on the symbols layer")
+        XCTAssertTrue(waitUntilHittable(one, timeout: 5), "Digit key should be hittable")
+        one.tap()
+
+        let typeBar = elementWithIdentifier("typeBar")
+        XCTAssertTrue(typeBar.waitForExistence(timeout: 5), "Sentence bar should exist")
+        XCTAssertTrue(typeBar.label.contains("1"), "Typed digit should appear in the bar, was: \(typeBar.label)")
+
+        // Toggling back returns to letters.
+        app.buttons["key-symbols-toggle"].tap()
+        XCTAssertTrue(key("q").waitForExistence(timeout: 5), "Letters should return after toggling back")
+    }
+
     // MARK: - Req 21: REGRESSION — login popup survives email input
 
     func testLoginPopupSurvivesEmailInput() {
@@ -183,6 +289,17 @@ final class TikoTypeUITests: XCTestCase {
         let other = app.otherElements[identifier]
         if other.exists { return other }
         return staticText
+    }
+
+    /// Poll an arbitrary condition until it becomes true or the timeout elapses.
+    @discardableResult
+    private func waitUntil(timeout: TimeInterval, _ condition: () -> Bool) -> Bool {
+        let deadline = Date().addingTimeInterval(timeout)
+        while Date() < deadline {
+            if condition() { return true }
+            RunLoop.current.run(until: Date().addingTimeInterval(0.2))
+        }
+        return condition()
     }
 
     @discardableResult

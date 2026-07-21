@@ -459,6 +459,7 @@ private struct TypeKeyboard: View {
                         .clipShape(RoundedRectangle(cornerRadius: cornerRadius, style: .continuous))
                 }
                 .buttonStyle(.plain)
+                .accessibilityIdentifier("key-symbols-toggle")
 
                 Button { onKey(" ", .zero) } label: {
                     ZStack {
@@ -472,6 +473,8 @@ private struct TypeKeyboard: View {
                     .frame(height: keySide)
                 }
                 .buttonStyle(.plain)
+                .accessibilityLabel("Space")
+                .accessibilityIdentifier("key-space")
 
                 Button(action: onBackspace) {
                     Image(systemName: "delete.left")
@@ -482,6 +485,8 @@ private struct TypeKeyboard: View {
                         .clipShape(RoundedRectangle(cornerRadius: cornerRadius, style: .continuous))
                 }
                 .buttonStyle(.plain)
+                .accessibilityLabel("Backspace")
+                .accessibilityIdentifier("key-backspace")
             }
         }
         .padding(.horizontal, sidePadding)
@@ -731,6 +736,10 @@ struct TypeView: View {
         .onAppear {
             i18n.setLanguage(languageCode)
             if TikoScreenshotMode.isActive {
+                // Screenshot / UI-test mode is deterministic: never inherit the
+                // persisted in-progress word or saved chips from a previous run.
+                words = []
+                currentWord = ""
                 if TikoScreenshotMode.scene == "sentence" { words = ["Hello", "world"] }
                 return
             }

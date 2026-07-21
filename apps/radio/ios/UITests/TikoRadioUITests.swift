@@ -44,11 +44,19 @@ final class TikoRadioUITests: XCTestCase {
         XCTAssertTrue(account.waitForExistence(timeout: 20), "Account button should exist on launch")
         // Splash overlay fades after ~1s; wait until the button is hittable.
         XCTAssertTrue(waitUntilHittable(account, timeout: 10), "Account button should become hittable")
-        account.tap()
 
+        // The profile menu is presented with an animation. Tap once, and if the
+        // Profile row hasn't appeared (a tap dropped during the splash fade),
+        // make a single recovery tap. Avoid polling `isHittable` on the account
+        // avatar while the menu animates — its activation point is transiently
+        // invalid mid-animation, which raises a hittability error.
         let profileRow = app.buttons["Profile"]
+        account.tap()
+        if !profileRow.waitForExistence(timeout: 10), account.exists {
+            account.tap()
+        }
         XCTAssertTrue(profileRow.waitForExistence(timeout: 10), "Profile menu should present a Profile row")
-        XCTAssertTrue(waitUntilHittable(profileRow, timeout: 5), "Profile row should be hittable")
+        // `tap()` waits for hittability internally, so no separate isHittable probe.
         profileRow.tap()
     }
 
@@ -133,6 +141,136 @@ final class TikoRadioUITests: XCTestCase {
         // The app keeps working after toggling playback.
         playPause.tap()
         XCTAssertTrue(element(withIdentifier: "PlayPause").exists, "App should keep working after toggling playback")
+    }
+
+    /// Opens Music → the first sample track → the player detail, returning once
+    /// the play/pause control is present and hittable.
+    private func openMusicTrackPlayer() {
+        let music = element(withIdentifier: "Music")
+        XCTAssertTrue(music.waitForExistence(timeout: 20), "Music collection should be present")
+        XCTAssertTrue(waitUntilHittable(music, timeout: 10), "Music collection should be hittable")
+
+        // Retry the collection tap until its tracks appear — the LazyVGrid
+        // occasionally needs a second tap when the first lands during the
+        // splash fade under simulator load.
+        var track = element(withIdentifier: "Twinkle Twinkle Little Star")
+        for _ in 0..<5 {
+            if music.isHittable { music.tap() }
+            track = element(withIdentifier: "Twinkle Twinkle Little Star")
+            if track.waitForExistence(timeout: 8) { break }
+        }
+        XCTAssertTrue(track.exists, "A track should be present inside Music")
+        XCTAssertTrue(waitUntilHittable(track, timeout: 10), "The track tile should be hittable")
+
+        // Retry opening the track until the player controls appear — under load
+        // the first tap can be dropped while the collection view settles.
+        var playPause = element(withIdentifier: "PlayPause")
+        for _ in 0..<5 {
+            if track.isHittable { track.tap() }
+            playPause = element(withIdentifier: "PlayPause")
+            if playPause.waitForExistence(timeout: 8) { break }
+        }
+        XCTAssertTrue(playPause.exists, "Playback controls should appear after opening a track")
+        XCTAssertTrue(waitUntilHittable(playPause, timeout: 10), "Play / pause should be hittable")
+    }
+
+    // MARK: - Req 10 (Radio player): all five transport controls are present & distinct
+
+    /// The player detail must vend all five playback controls under their own
+    /// individual identifiers — this is the regression guard for the removed
+    /// container-level "PlaybackControls" identifier that had collapsed them.
+    func testPlayerShowsAllTransportControls() {
+        openMusicTrackPlayer()
+        for identifier in ["PreviousTrack", "PlayPause", "NextTrack", "ShuffleToggle", "RepeatToggle"] {
+            let control = element(withIdentifier: identifier)
+            XCTAssertTrue(control.waitForExistence(timeout: 10), "Control '\(identifier)' should be present in the player")
+            XCTAssertTrue(waitUntilHittable(control, timeout: 10), "Control '\(identifier)' should be hittable")
+        }
+    }
+
+    // MARK: - Req 11: next / previous keep the player usable
+
+    func testNextAndPreviousTrackKeepPlayerVisible() {
+        openMusicTrackPlayer()
+
+        let next = element(withIdentifier: "NextTrack")
+        XCTAssertTrue(next.waitForExistence(timeout: 10), "Next control should exist")
+        next.tap()
+        XCTAssertTrue(element(withIdentifier: "PlayPause").waitForExistence(timeout: 10), "Player stays after Next")
+
+        let previous = element(withIdentifier: "PreviousTrack")
+        XCTAssertTrue(previous.waitForExistence(timeout: 10), "Previous control should exist")
+        previous.tap()
+        XCTAssertTrue(element(withIdentifier: "PlayPause").waitForExistence(timeout: 10), "Player stays after Previous")
+    }
+
+    // MARK: - Req 12: shuffle / repeat toggles are interactive
+
+    func testShuffleAndRepeatTogglesAreInteractive() {
+        openMusicTrackPlayer()
+
+        let shuffle = element(withIdentifier: "ShuffleToggle")
+        XCTAssertTrue(shuffle.waitForExistence(timeout: 10), "Shuffle toggle should exist")
+        XCTAssertTrue(waitUntilHittable(shuffle, timeout: 10), "Shuffle toggle should be hittable")
+        shuffle.tap()
+
+        let repeatToggle = element(withIdentifier: "RepeatToggle")
+        XCTAssertTrue(repeatToggle.waitForExistence(timeout: 10), "Repeat toggle should exist")
+        XCTAssertTrue(waitUntilHittable(repeatToggle, timeout: 10), "Repeat toggle should be hittable")
+        repeatToggle.tap()
+
+        // Toggling shuffle/repeat must not tear down the player.
+        XCTAssertTrue(element(withIdentifier: "PlayPause").exists, "Player stays usable after toggling shuffle/repeat")
+    }
+
+    // MARK: - Req 5: a second collection opens and shows its own track
+
+    func testOpeningAnimalsCollectionShowsItsTrack() {
+        let animals = element(withIdentifier: "Animals")
+        XCTAssertTrue(animals.waitForExistence(timeout: 20), "Animals collection should be present")
+        XCTAssertTrue(waitUntilHittable(animals, timeout: 10), "Animals collection should be hittable")
+        animals.tap()
+
+        let track = element(withIdentifier: "Old MacDonald Had a Farm")
+        XCTAssertTrue(track.waitForExistence(timeout: 15), "The Animals collection should list its sample track")
+    }
+
+    // MARK: - Req 10: "More in collection" navigates between tracks
+
+    func testRelatedTrackNavigationSwitchesPlayer() {
+        openMusicTrackPlayer()
+
+        // The other Music sample track appears as a "More in collection" row.
+        let related = app.buttons["The Wheels on the Bus"]
+        XCTAssertTrue(related.waitForExistence(timeout: 10), "A related track should be listed under the player")
+        XCTAssertTrue(waitUntilHittable(related, timeout: 10), "The related track row should be hittable")
+        related.tap()
+
+        // The player now shows the newly selected track, controls intact.
+        XCTAssertTrue(app.staticTexts["The Wheels on the Bus"].waitForExistence(timeout: 10), "Player switches to the related track")
+        XCTAssertTrue(element(withIdentifier: "PlayPause").exists, "Playback controls remain after switching track")
+    }
+
+    // MARK: - Req: settings popup exposes the shuffle & repeat toggles
+
+    func testSettingsExposesShuffleAndRepeatToggles() {
+        // Ensure the grid (and thus the parent-mode header) is loaded.
+        let music = element(withIdentifier: "Music")
+        XCTAssertTrue(music.waitForExistence(timeout: 20), "Home grid should be present")
+        XCTAssertTrue(waitUntilHittable(music, timeout: 10), "Home grid should be interactive")
+
+        let settings = app.buttons["Settings"]
+        XCTAssertTrue(settings.waitForExistence(timeout: 10), "Settings button should be present in parent mode")
+        XCTAssertTrue(waitUntilHittable(settings, timeout: 10), "Settings button should be hittable")
+
+        // Retry opening the settings popup until its toggles appear.
+        let shuffle = app.switches["Shuffle"]
+        for _ in 0..<5 {
+            if settings.isHittable { settings.tap() }
+            if shuffle.waitForExistence(timeout: 8) { break }
+        }
+        XCTAssertTrue(shuffle.exists, "Settings should show a Shuffle toggle (persisted via AppStorage)")
+        XCTAssertTrue(app.switches["Repeat"].waitForExistence(timeout: 8), "Settings should show a Repeat toggle (persisted via AppStorage)")
     }
 
     // MARK: - Req 18: REGRESSION — login popup survives email input
