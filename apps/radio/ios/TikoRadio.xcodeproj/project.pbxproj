@@ -138,6 +138,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 1FEC512A2D4630069370A6E4 /* Build configuration list for PBXNativeTarget "TikoRadio" */;
 			buildPhases = (
+				A0A2359C58EF66A6C90E5DA1 /* Generate Tiko app config */,
 				4BFB0CBBFAF7E121DC408F1A /* Sources */,
 				4E8A79E308E0DB7216F5477C /* Resources */,
 				F6CE61FC27D040FC2E9E7254 /* Frameworks */,
@@ -204,6 +205,28 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		A0A2359C58EF66A6C90E5DA1 /* Generate Tiko app config */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Generate Tiko app config";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "set -euo pipefail\nREPO_ROOT=\"${SRCROOT}/../../..\"\nif ! command -v node >/dev/null 2>&1; then\n  echo \"error: node is required to generate Tiko app configs from admin before iOS build.\"\n  exit 1\nfi\nTIKO_APP_CONFIG_STRICT=1 node \"${REPO_ROOT}/tools/generate-app-configs.mjs\"\n";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		4BFB0CBBFAF7E121DC408F1A /* Sources */ = {
@@ -383,11 +406,13 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = Sources/TikoRadio.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CURRENT_PROJECT_VERSION = 2;
 				INFOPLIST_FILE = Sources/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = mt.tiko.radio;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -400,11 +425,13 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = Sources/TikoRadio.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CURRENT_PROJECT_VERSION = 2;
 				INFOPLIST_FILE = Sources/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = mt.tiko.radio;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
