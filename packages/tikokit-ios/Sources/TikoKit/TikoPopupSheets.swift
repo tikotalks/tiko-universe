@@ -344,6 +344,7 @@ public struct TikoIdentityLabels {
     public let deleteAccount: String
     public let signIn: String
     public let signInSubtitle: String
+    public let signInHelp: String
     public let email: String
     public let emailPlaceholder: String
     public let sendSignInCode: String
@@ -382,6 +383,7 @@ public struct TikoIdentityLabels {
                 deleteAccount: "Ħassar il-kont",
                 signIn: "Idħol",
                 signInSubtitle: "Daħħal l-email tiegħek biex tirċievi kodiċi tad-dħul.",
+                signInHelp: "Uża kwalunkwe indirizz tal-email — il-kont jinħoloq awtomatikament, u tista' tħassru wara.",
                 email: "Email",
                 emailPlaceholder: "int@example.com",
                 sendSignInCode: "Ibgħat kodiċi tad-dħul",
@@ -418,6 +420,7 @@ public struct TikoIdentityLabels {
                 deleteAccount: "Delete account",
                 signIn: "Sign in",
                 signInSubtitle: "Enter your email to receive a sign-in code.",
+                signInHelp: "Use any email address — your account is created automatically, and you can delete it afterwards.",
                 email: "Email",
                 emailPlaceholder: "you@example.com",
                 sendSignInCode: "Send sign-in code",
@@ -1444,6 +1447,12 @@ public struct TikoAccountSheet: View {
                         .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
                 }
 
+                Text(labels.signInHelp)
+                    .font(.system(size: 12, weight: .medium, design: .rounded))
+                    .foregroundStyle(.secondary)
+                    .multilineTextAlignment(.center)
+                    .fixedSize(horizontal: false, vertical: true)
+
                 if let msg = identityError {
                     Text(msg)
                         .font(.system(size: 13, weight: .semibold))
@@ -2212,6 +2221,7 @@ extension View {
 public extension View {
     func tikoPopup<PopupContent: View>(
         isPresented: Binding<Bool>,
+        dismissible: Bool = true,
         @ViewBuilder content: @escaping () -> PopupContent
     ) -> some View {
         popup(isPresented: isPresented) {
@@ -2222,9 +2232,9 @@ public extension View {
                 .position(.center)
                 .appearFrom(.centerScale)
                 .animation(.spring(response: 0.32, dampingFraction: 0.86))
-                .closeOnTapOutside(true)
+                .closeOnTapOutside(dismissible)
                 .closeOnTap(false)
-                .dragToDismiss(true)
+                .dragToDismiss(dismissible)
                 .backgroundColor(.black.opacity(0.22))
                 .useKeyboardSafeArea(true)
         }
@@ -2249,7 +2259,12 @@ public extension View {
     }
 
     func tikoAccountPopup(isPresented: Binding<Bool>, appName: String, appColor: TikoAppColor, profilePrefs: TikoProfilePreferences, onIdentityChanged: @escaping () -> Void = {}, onAccountDeleted: @escaping () -> Void = {}, onLoggedOut: @escaping () -> Void = {}) -> some View {
-        tikoPopup(isPresented: isPresented) {
+        // Non-dismissible by drag / outside-tap: the account sheet hosts the
+        // email + OTP login form, which on iPad was being dismissed mid-input
+        // when the keyboard appeared (looked like the app "reverted back" and
+        // login was broken — App Review 2.1(a)). Close only via the explicit
+        // close/skip/sign-out buttons.
+        tikoPopup(isPresented: isPresented, dismissible: false) {
             TikoAccountSheet(appName: appName, appColor: appColor, profilePrefs: profilePrefs, onClose: {
                 isPresented.wrappedValue = false
             }, onIdentityChanged: {
