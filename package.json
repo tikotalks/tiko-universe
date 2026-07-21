@@ -31,7 +31,20 @@
     "audit:doctrine": "node tools/check-doctrine.mjs",
     "deploy:dry-run:tts": "npm --workspace @tiko-worker/tts-api run deploy:dry-run",
     "deploy:dry-run:generation": "npm --workspace @tiko-worker/generation-api run deploy:dry-run",
-    "deploy:dry-run:sentence": "npm --workspace @tiko-worker/sentence-api run deploy:dry-run"
+    "deploy:dry-run:sentence": "npm --workspace @tiko-worker/sentence-api run deploy:dry-run",
+    "ios:bump": "node tools/bump-ios-version.mjs",
+    "release:preflight": "npx --yes --package @sil/app-release app-release-all --mode preflight",
+    "release:validate": "npx --yes --package @sil/app-release app-release-all --mode validate",
+    "release:screenshots": "npx --yes --package @sil/app-release app-release-all --mode screenshots --output-root /Users/silvandiepen/Projects/Tiko/apps",
+    "release:promo-videos": "npx --yes --package @sil/app-release app-release-all --mode promo-video --output-root /Users/silvandiepen/Projects/Tiko/apps",
+    "release:archive": "npx --yes --package @sil/app-release app-release-all --mode archive",
+    "release:upload-build": "npx --yes --package @sil/app-release app-release-all --mode upload-build",
+    "release:prepare-metadata": "npx --yes --package @sil/app-release app-release-all --mode prepare-metadata",
+    "release:upload-metadata": "npx --yes --package @sil/app-release app-release-all --mode upload-metadata",
+    "release:prepare-screenshots": "npx --yes --package @sil/app-release app-release-all --mode prepare-screenshots",
+    "release:upload-screenshots": "npx --yes --package @sil/app-release app-release-all --mode upload-screenshots",
+    "release:distribute": "npx --yes --package @sil/app-release app-release-all --mode distribute",
+    "release:all": "npx --yes --package @sil/app-release app-release-all --mode all --output-root /Users/silvandiepen/Projects/Tiko/apps"
   },
   "dependencies": {
     "@sil/ui": "^2.6.0",

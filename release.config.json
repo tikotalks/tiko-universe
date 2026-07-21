@@ -1,0 +1,11 @@
+{
+  "$schema": "./node_modules/@sil/app-release/release.config.schema.json",
+  "apps": [
+    { "slug": "yes-no", "releaseConfig": "apps/yes-no/release/ios.json" },
+    { "slug": "cards", "releaseConfig": "apps/cards/release/ios.json" },
+    { "slug": "talk", "releaseConfig": "apps/talk/release/ios.json" },
+    { "slug": "radio", "releaseConfig": "apps/radio/release/ios.json" },
+    { "slug": "timer", "releaseConfig": "apps/timer/release/ios.json" },
+    { "slug": "type", "releaseConfig": "apps/type/release/ios.json" }
+  ]
+}
