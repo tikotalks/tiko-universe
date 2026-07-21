@@ -762,6 +762,7 @@ async function generateImage(request: Request, env: Env, access: GenerationAcces
       'Eye-level view, soft grounded shadow.',
     ]
     const now = new Date().toISOString()
+    const variationErrors: Array<{ status: number; code: string | null; message: string }> = []
     const calls = Array.from({ length: count }, async (_, i) => {
       const variedPrompt = `${boostedBrief}\n\nComposition hint: ${variationHints[i % variationHints.length]}`
       try {
@@ -782,20 +783,28 @@ async function generateImage(request: Request, env: Env, access: GenerationAcces
         if (!openaiResponse.ok) {
           const errText = await openaiResponse.text().catch(() => '')
           console.error('[generate] OpenAI preview failed', { status: openaiResponse.status, body: errText, variation: i })
+          variationErrors.push(parseOpenAIImageError(openaiResponse.status, errText))
           return null
         }
         const openaiBody = await openaiResponse.json() as { data?: Array<{ b64_json?: string; url?: string; revised_prompt?: string }> }
         const imageItem = openaiBody.data?.[0]
-        if (!imageItem) return null
+        if (!imageItem) {
+          variationErrors.push({ status: 502, code: null, message: 'OpenAI returned no image data.' })
+          return null
+        }
 
         let imageBytes: Uint8Array
         if (imageItem.b64_json) {
           imageBytes = base64ToBytes(imageItem.b64_json)
         } else if (imageItem.url) {
           const urlRes = await fetchWithRetry(imageItem.url, {}, { timeoutMs: PROVIDER_IMAGE_TIMEOUT_MS })
-          if (!urlRes.ok) return null
+          if (!urlRes.ok) {
+            variationErrors.push(parseOpenAIImageError(urlRes.status, await urlRes.text().catch(() => '')))
+            return null
+          }
           imageBytes = new Uint8Array(await urlRes.arrayBuffer())
         } else {
+          variationErrors.push({ status: 502, code: null, message: 'OpenAI returned no image bytes.' })
           return null
         }
 
@@ -817,13 +826,18 @@ async function generateImage(request: Request, env: Env, access: GenerationAcces
         ).run()
         return { id, imageUrl, prompt: body.prompt.trim(), revisedPrompt: imageItem.revised_prompt || null, size, quality: 'medium', style: tikoStyle, width: dims.width, height: dims.height, fileSizeBytes: imageBytes.byteLength, isPreview: true, createdAt: now }
       } catch (e) {
+        const message = e instanceof Error ? e.message : 'Variation failed.'
         console.error('[generate] Variation', i, 'failed', e)
+        variationErrors.push({ status: 502, code: null, message })
         return null
       }
     })
     const settled = await Promise.all(calls)
     const results = settled.filter(Boolean) as Array<{ id: string; imageUrl: string; prompt: string; revisedPrompt: string | null; size: string; quality: string; style: string; width: number; height: number; fileSizeBytes: number; isPreview: boolean; createdAt: string }>
-    if (!results.length) return apiError('openai_failed', 'All image variations failed.', 502)
+    if (!results.length) {
+      const { code, message } = deriveOpenAIVariationError(variationErrors)
+      return apiError(code, message, 502)
+    }
     return json({ data: results, meta: { schemaVersion: 1, count: results.length } }, 201)
   }
 
@@ -1662,6 +1676,31 @@ async function deleteImage(pathname: string, env: Env, access: GenerationAccessC
 function parseImageSize(size: string): { width: number; height: number } {
   const [w, h] = size.split('x').map(Number)
   return { width: w || 1024, height: h || 1024 }
+}
+
+function parseOpenAIImageError(status: number, body: string): { status: number; code: string | null; message: string } {
+  try {
+    const parsed = JSON.parse(body) as { error?: { code?: string; message?: string } }
+    return { status, code: parsed.error?.code ?? null, message: parsed.error?.message ?? `OpenAI returned status ${status}` }
+  } catch {
+    return { status, code: null, message: body?.trim() || `OpenAI returned status ${status}` }
+  }
+}
+
+// Maps the first/representative provider failure into a clear job error so the
+// admin queue surfaces the real reason (e.g. billing cap) instead of a generic
+// "All image variations failed." that gives no actionable signal.
+function deriveOpenAIVariationError(errors: Array<{ status: number; code: string | null; message: string }>): { code: string; message: string } {
+  if (!errors.length) return { code: 'openai_failed', message: 'All image variations failed.' }
+  const billing = errors.find((e) => e.code === 'billing_hard_limit_reached' || e.code === 'insufficient_quota' || e.status === 402)
+  if (billing) {
+    return {
+      code: 'openai_billing_limit',
+      message: 'OpenAI billing limit reached — raise the spending limit in the OpenAI dashboard, then retry.',
+    }
+  }
+  const first = errors[0]
+  return { code: 'openai_failed', message: `All image variations failed (${first.status}${first.code ? ` ${first.code}` : ''}): ${first.message}` }
 }
 
 function clamp(value: number, min: number, max: number) {
