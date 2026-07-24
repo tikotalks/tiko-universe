@@ -11,6 +11,7 @@ public enum TikoAppKey: String, Sendable {
     case cards = "cards"
     case sequence = "sequence"
     case todo = "todo"
+    case say = "say"
 }
 
 // MARK: - TikoI18n
@@ -125,6 +126,7 @@ enum TikoLocalTranslations {
         case .type:     return typeBundles
         case .sequence: return sequenceBundles
         case .todo:     return todoBundles
+        case .say:      return sayBundles
         }
     }
 

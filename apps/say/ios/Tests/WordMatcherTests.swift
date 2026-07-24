@@ -1,0 +1,135 @@
+import XCTest
+@testable import TikoSay
+
+final class WordMatcherTests: XCTestCase {
+    private let en = WordMatcher(languageCode: "en")
+    private let nl = WordMatcher(languageCode: "nl")
+    private let fr = WordMatcher(languageCode: "fr")
+
+    // MARK: - Exact matches
+
+    func testExactMatchOnPrimaryTarget() {
+        XCTAssertEqual(en.match(transcript: "dog", listenFor: ["dog"]), .exact)
+    }
+
+    func testAlternativeMatch() {
+        XCTAssertEqual(en.match(transcript: "doggy", listenFor: ["dog", "doggy"]), .alternative)
+    }
+
+    // MARK: - Capitalization, punctuation, whitespace
+
+    func testCapitalizationAndPunctuationIgnored() {
+        XCTAssertEqual(en.match(transcript: "Dog!", listenFor: ["dog"]), .exact)
+        XCTAssertEqual(en.match(transcript: "DOG.", listenFor: ["dog"]), .exact)
+    }
+
+    func testWhitespaceCollapsed() {
+        XCTAssertEqual(en.match(transcript: "  dog \n ", listenFor: ["dog"]), .exact)
+        XCTAssertEqual(en.match(transcript: "a   dog", listenFor: ["dog"]), .approvedPhrase)
+    }
+
+    // MARK: - Approved phrases per language
+
+    func testEnglishLeadingArticles() {
+        XCTAssertEqual(en.match(transcript: "a dog", listenFor: ["dog"]), .approvedPhrase)
+        XCTAssertEqual(en.match(transcript: "an elephant", listenFor: ["elephant"]), .approvedPhrase)
+        XCTAssertEqual(en.match(transcript: "the dog", listenFor: ["dog"]), .approvedPhrase)
+        XCTAssertEqual(en.match(transcript: "it's a dog", listenFor: ["dog"]), .approvedPhrase)
+    }
+
+    func testDutchLeadingArticles() {
+        XCTAssertEqual(nl.match(transcript: "de hond", listenFor: ["hond"]), .approvedPhrase)
+        XCTAssertEqual(nl.match(transcript: "een hond", listenFor: ["hond"]), .approvedPhrase)
+        XCTAssertEqual(nl.match(transcript: "het ei", listenFor: ["ei"]), .approvedPhrase)
+    }
+
+    func testFrenchElision() {
+        XCTAssertEqual(fr.match(transcript: "l'éléphant", listenFor: ["éléphant"]), .approvedPhrase)
+        XCTAssertEqual(fr.match(transcript: "un chien", listenFor: ["chien"]), .approvedPhrase)
+    }
+
+    func testArticleFromWrongLanguageDoesNotMatch() {
+        XCTAssertNil(en.match(transcript: "de dog", listenFor: ["dog"]))
+    }
+
+    // MARK: - Empty input
+
+    func testEmptyTranscriptNeverMatches() {
+        XCTAssertNil(en.match(transcript: "", listenFor: ["dog"]))
+        XCTAssertNil(en.match(transcript: "   ", listenFor: ["dog"]))
+    }
+
+    func testEmptyTargetsNeverMatch() {
+        XCTAssertNil(en.match(transcript: "dog", listenFor: []))
+        XCTAssertNil(en.match(transcript: "dog", listenFor: ["", "  "]))
+    }
+
+    // MARK: - Short-word safety (no fuzzy under 4 characters)
+
+    func testShortWordsRejectNearbyWords() {
+        XCTAssertNil(en.match(transcript: "dot", listenFor: ["dog"]))
+        XCTAssertNil(en.match(transcript: "hat", listenFor: ["cat"]))
+        XCTAssertNil(en.match(transcript: "card", listenFor: ["car"]))
+        XCTAssertNil(en.match(transcript: "bus stop", listenFor: ["bus"]))
+    }
+
+    // MARK: - Fuzzy boundaries
+
+    func testFourToFiveCharacterWordsAllowOneEdit() {
+        // One edit (plural s) is accepted for 4–5 character targets…
+        XCTAssertEqual(en.match(transcript: "trains", listenFor: ["train"]), .fuzzy)
+        // …but two edits are not, and unrelated words never match.
+        XCTAssertNil(en.match(transcript: "trane", listenFor: ["train"]))
+        XCTAssertNil(en.match(transcript: "trolley", listenFor: ["train"]))
+    }
+
+    func testLongWordSimilarityThreshold() {
+        // banana → bannana: distance 1 over 7 chars ≈ 0.857 similarity → accepted.
+        XCTAssertEqual(en.match(transcript: "bannana", listenFor: ["banana"]), .fuzzy)
+        // Clearly different word stays rejected.
+        XCTAssertNil(en.match(transcript: "bandana factory", listenFor: ["banana"]))
+    }
+
+    func testFuzzyThresholdIsConfigurable() {
+        let strict = WordMatcher(
+            languageCode: "en",
+            config: WordMatcherConfig(longWordSimilarityThreshold: 0.95)
+        )
+        XCTAssertNil(strict.match(transcript: "bannana", listenFor: ["banana"]))
+
+        let relaxed = WordMatcher(languageCode: "en", config: .relaxed)
+        XCTAssertEqual(relaxed.match(transcript: "elefant", listenFor: ["elephant"]), .fuzzy)
+    }
+
+    func testRelaxedConfigDoesNotLoosenShortWords() {
+        let relaxed = WordMatcher(languageCode: "en", config: .relaxed)
+        XCTAssertNil(relaxed.match(transcript: "dot", listenFor: ["dog"]))
+        XCTAssertNil(relaxed.match(transcript: "card", listenFor: ["car"]))
+    }
+
+    // MARK: - Locale-specific characters
+
+    func testLocaleSpecificCharacters() {
+        XCTAssertEqual(fr.match(transcript: "Œuf", listenFor: ["œuf", "oeuf"]), .exact)
+        let mt = WordMatcher(languageCode: "mt")
+        XCTAssertEqual(mt.match(transcript: "Ħalib", listenFor: ["ħalib"]), .exact)
+        XCTAssertEqual(mt.match(transcript: "il-kelb", listenFor: ["kelb"]), .approvedPhrase)
+    }
+
+    // MARK: - Similar incorrect words
+
+    func testSimilarIncorrectWordsRejected() {
+        XCTAssertNil(en.match(transcript: "melon", listenFor: ["milk"]))
+        XCTAssertNil(en.match(transcript: "plain sight", listenFor: ["plane", "airplane"]))
+    }
+
+    // MARK: - Levenshtein
+
+    func testLevenshteinDistance() {
+        XCTAssertEqual(WordMatcher.levenshtein("", ""), 0)
+        XCTAssertEqual(WordMatcher.levenshtein("cat", ""), 3)
+        XCTAssertEqual(WordMatcher.levenshtein("cat", "cat"), 0)
+        XCTAssertEqual(WordMatcher.levenshtein("cat", "hat"), 1)
+        XCTAssertEqual(WordMatcher.levenshtein("banana", "bannana"), 1)
+    }
+}

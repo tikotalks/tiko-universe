@@ -20,10 +20,11 @@ const fallbackConfigs = {
   tiko: { id: 'tiko', title: 'Tiko', appColor: 'tiko', appIcon: 'ui/heart', appIconMediaCategory: 'tiko', themeColor: '#ef4f8f', iosIcon: 'heart.fill' },
   todo: { id: 'todo', title: 'Todo', appColor: 'todo', appIcon: 'ui/check-list', appIconMediaCategory: 'routines', themeColor: '#2488ff', iosIcon: 'checklist' },
   talk: { id: 'talk', title: 'Talk', appColor: 'talk', appIcon: 'ui/talk', appIconMediaCategory: 'communication', themeColor: '#17131c', iosIcon: 'message.fill' },
+  say: { id: 'say', title: 'Say', appColor: 'say', appIcon: 'ui/microphone', appIconMediaCategory: 'communication', appIconImageUrl: 'https://data.tikocdn.org/uploads/1781443432968-speech-balloon.png', themeColor: '#8b5cf6', iosIcon: 'waveform' },
 }
 
 const webApps = ['yes-no', 'type', 'cards', 'sequence', 'timer', 'radio', 'todo', 'talk']
-const iosSharedApps = ['yes-no', 'type', 'cards', 'sequence', 'timer', 'radio', 'talk', 'tiko']
+const iosSharedApps = ['yes-no', 'type', 'cards', 'sequence', 'timer', 'radio', 'talk', 'tiko', 'say']
 const iosApps = {
   'yes-no': 'YesNoAppConfig.swift',
   type: 'TypeAppConfig.swift',
@@ -38,6 +39,7 @@ const iosAppIconSources = {
   timer: 'apps/timer/ios/Sources',
   radio: 'apps/radio/ios/Sources',
   talk: 'apps/talk/ios/Sources',
+  say: 'apps/say/ios/Sources',
 }
 const iosAppIconImages = [
   { idiom: 'iphone', size: '20x20', scale: '2x', pixels: 40 },

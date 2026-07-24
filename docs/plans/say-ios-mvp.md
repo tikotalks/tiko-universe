@@ -2,20 +2,50 @@
 
 ## Status
 
-Planned.
+Implemented (see `apps/say/IMPLEMENTATION_STATUS.md`), with post-MVP product revisions applied on top of this plan — `docs/apps/say.md` is the current source of truth where they differ:
+
+- Six default categories (~56 localised cards) instead of the initial 3×5.
+- Card images resolve from the Tiko media library (per-category matching, disk-cached) with the bundled emoji as offline fallback; parents pick images via the shared media picker.
+- Word playback uses the Tiko Atlas voice service with a persistent per-word offline cache and session prefetch; `AVSpeechSynthesizer` is the offline fallback.
+- A miss plays one soft acknowledgement tone (still no harsh buzzer or red cross).
+- Celebrations randomly vary style (confetti/stars/hearts/fireworks/bubbles) and chime.
+- Replay/Next are icon-only round buttons; the listening state is an animated waveform, not text; UI copy is minimal.
+- Parent Mode editing uses the shared Tiko popup sheets (`TikoPopupCard`/`TikoFormSheet`) and `tikoMediaPickerPopup`.
 
 ## Objective
 
 Validate a simple speech-practice loop on physical iOS devices:
 
 1. Choose a category.
-2. See one large image.
+2. See one large card.
 3. Hear the target word.
 4. Repeat the word.
 5. Receive immediate positive feedback.
-6. Continue automatically to the next item.
+6. Continue automatically to the next card.
 
-The first version is native iOS and iPadOS only. It deliberately avoids backend, account, cross-platform, and content-management work until the interaction has been tested with real child speech.
+The first version is native iOS and iPadOS only. It deliberately avoids backend content-catalogue and cross-platform work until the interaction has been tested with real child speech — but it ships on the standard Tiko harness like every other Tiko app: `TikoAppShell`, `TikoIdentity`, the shared Parent Mode / Child Mode model, and full localisation.
+
+## Tiko harness
+
+Say uses the same native harness as every other Tiko iOS app. No exclusions.
+
+- Depend on `TikoKit` (`packages/tikokit-ios`): `TikoAppShell`, `TikoIdentity`, `TikoI18n`, `TikoPopupSheets`, `TikoSpeech`, `TikoMediaPicker` where applicable.
+- Add a `.say` case to `TikoAppColor` in TikoKit first and use it as the canonical app colour.
+- Identity follows [`docs/flows/shared/user-modes.md`](../flows/shared/user-modes.md): automatic Temporary Account on first launch, Parent Mode by default, Child Mode behind verification + PIN, PIN-gated exit from Child Mode.
+- Parent Mode owns: card editing, category management, language, settings, account/verification, delete/reset.
+- Child Mode owns: category grid and the practice loop only. No editing, no settings, no account surfaces.
+- All strings go through `TikoI18n` / `Localizable.xcstrings`.
+
+## Languages
+
+Say must work in as many languages as possible.
+
+- The active language comes from the shared shell language setting.
+- Default cards ship localised (title, speak text, listen-for) for every Tiko-supported language, with standard fallback rules.
+- TTS voice selection and `SFSpeechRecognizer` locale derive from the active language.
+- Query `SFSpeechRecognizer.supportedLocales()` at runtime; if the active language is unsupported, show a parent-facing notice in Parent Mode and offer the nearest supported locale. Never fail silently and never block Child Mode with a technical error.
+- Normalisation and approved wrappers are per language (`a dog` in English, `de hond` in Dutch, `un perro` in Spanish), driven by configuration, not code branches.
+- Prefer on-device recognition when `supportsOnDeviceRecognition` is true for the locale.
 
 ## Platform decision
 
@@ -42,7 +72,7 @@ Target-word playback uses:
 - `AVSpeechUtterance`
 - `AVSpeechSynthesisVoice`
 
-Prefer on-device recognition when `supportsOnDeviceRecognition` is true. The first proof may limit supported locales rather than silently falling back to a network-dependent experience.
+Prefer on-device recognition when `supportsOnDeviceRecognition` is true. Locales without on-device support may use Apple's server-based recognition with the standard privacy notes, or be surfaced as limited in Parent Mode — never a silent degradation.
 
 ## Repository structure
 
@@ -50,6 +80,7 @@ Create:
 
 ```text
 apps/say/ios/
+├── Project.yml
 ├── TikoSay.xcodeproj
 ├── TikoSay/
 │   ├── App/
@@ -57,13 +88,15 @@ apps/say/ios/
 │   │   └── AppEnvironment.swift
 │   ├── Models/
 │   │   ├── SayCategory.swift
-│   │   ├── SayItem.swift
+│   │   ├── SayCard.swift
+│   │   ├── SayCardOverride.swift
 │   │   ├── PracticeSession.swift
 │   │   └── RecognitionResult.swift
 │   ├── Content/
 │   │   ├── SayCatalog.swift
+│   │   ├── SayCardStore.swift
 │   │   ├── categories.json
-│   │   └── items.json
+│   │   └── cards.json
 │   ├── Speech/
 │   │   ├── SpeechPracticeService.swift
 │   │   ├── WordMatcher.swift
@@ -79,6 +112,10 @@ apps/say/ios/
 │   │   │   ├── PracticeImageView.swift
 │   │   │   ├── ListeningIndicator.swift
 │   │   │   └── PracticeControls.swift
+│   │   ├── ParentMode/
+│   │   │   ├── CardListView.swift
+│   │   │   ├── CardEditView.swift
+│   │   │   └── CardEditViewModel.swift
 │   │   ├── Celebration/
 │   │   │   ├── CelebrationOverlay.swift
 │   │   │   └── CelebrationParticle.swift
@@ -92,11 +129,12 @@ apps/say/ios/
 │   └── Tests/
 │       ├── WordMatcherTests.swift
 │       ├── PracticeViewModelTests.swift
+│       ├── SayCardStoreTests.swift
 │       └── SayCatalogTests.swift
 └── README.md
 ```
 
-The implementation may adapt to existing native project conventions in `tiko-universe`, but the feature boundaries should remain intact.
+The app depends on the local `TikoKit` package (`packages/tikokit-ios`) via XcodeGen, matching the other native apps (see Talk/Yes-No project setups). The implementation may adapt to existing native project conventions in `tiko-universe`, but the feature boundaries should remain intact.
 
 ## Models
 
@@ -111,19 +149,48 @@ struct SayCategory: Identifiable, Codable, Hashable {
 }
 ```
 
-### Item
+### Card
+
+The practice unit is a card. Every card has a shown title, a speak text, and one or more listen-for targets, all per language.
 
 ```swift
-struct SayItem: Identifiable, Codable, Hashable {
+struct SayCard: Identifiable, Codable, Hashable {
     let id: String
     let categoryID: String
-    let labelKey: String
-    let spokenText: String
-    let acceptedAlternatives: [String]
+    /// Written label shown on the practice screen.
+    let title: String
+    /// What AVSpeechSynthesizer says. Defaults to the title but is editable separately.
+    let speakText: String
+    /// Recognition targets. First entry is the primary target, the rest are accepted alternatives.
+    let listenFor: [String]
     let imageName: String
     let difficulty: Int
+    let isCustom: Bool
+    let isHidden: Bool
+    let sortOrder: Int
 }
 ```
+
+Bundled default cards resolve `title`, `speakText`, and `listenFor` per language from the localised catalogue. Custom cards and edits are stored per language.
+
+### Card override
+
+Default cards are editable. An edit never mutates the bundled catalogue; it is stored as an override keyed by card ID and language, so a card can always be reset to its default and an English edit does not affect the Dutch defaults.
+
+```swift
+struct SayCardOverride: Codable, Hashable {
+    let cardID: String
+    let languageCode: String
+    var title: String?
+    var speakText: String?
+    var listenFor: [String]?
+    var imageName: String?
+    var isHidden: Bool
+    var sortOrder: Int?
+}
+```
+
+`SayCardStore` merges the bundled catalogue with overrides and custom cards for the active account and language, and is the only content source the practice and parent-mode features read from. Persistence is local-first (per account, via the standard TikoKit storage conventions); sync through the Tiko data layer follows the same path as the other apps.
 
 ### Recognition result
 
@@ -163,7 +230,7 @@ enum PracticeState: Equatable {
 
 ## Content
 
-Bundle three categories and fifteen items locally.
+Bundle three categories and fifteen default cards locally, localised for every Tiko-supported language.
 
 ### Animals
 
@@ -189,7 +256,26 @@ Bundle three categories and fifteen items locally.
 - Boat
 - Plane
 
-Do not connect the MVP to the media API. Bundled content makes speech behaviour easier to test and removes unrelated failure modes.
+Do not connect the MVP to the remote media catalogue. Bundled default content makes speech behaviour easier to test and removes unrelated failure modes. These are **default cards**: Parent Mode can edit, hide, reset, reorder, and extend them (see Parent Mode below).
+
+## Parent Mode: card editing
+
+All content management lives in Parent Mode, behind the standard shell surfaces. Child Mode never shows any of it.
+
+Per category, Parent Mode shows the card list with:
+
+- **Edit** a card: title (shown), speak text (said), listen-for list (heard) — each field editable independently, with speak text defaulting to the title and the primary listen-for target defaulting to a normalised title. Image editable via the standard picker (bundled assets first; `TikoMediaPicker`/photo import may land later).
+- **Hide / show** a card in practice.
+- **Reset** an edited default card back to its bundled values for the active language.
+- **Add** a custom card to any category (title required; speak text and listen-for prefilled from the title).
+- **Delete** custom cards (default cards can only be hidden, not deleted).
+- **Reorder** cards within a category.
+
+Rules:
+
+- Edits and custom cards are stored per account and per language via `SayCardOverride`.
+- A category must always have at least one visible card to be playable; an all-hidden category is shown as disabled in Child Mode.
+- The listen-for editor should make it easy to add multiple accepted alternatives and should warn (not block) on entries shorter than four characters, where fuzzy matching is disabled.
 
 ## Child flow
 
@@ -198,21 +284,21 @@ Do not connect the MVP to the media API. Bundled content makes speech behaviour 
 - Large visual tiles
 - Category image and translated title
 - No nested category hierarchy
-- No account or setup wall
+- No login or setup wall (Temporary Account bootstrap via `TikoIdentity`, like every Tiko app)
 
 ### Practice screen
 
-- One image dominates the screen
-- Written target word remains visible
+- One card image dominates the screen
+- The card title remains visible
 - Microphone state is shown through a calm pulse or ring
 - Child transcript remains hidden
 - Controls: Replay, Skip, Back
 
 ### Item sequence
 
-1. Present image and label.
+1. Present card image and title.
 2. Wait approximately 300 milliseconds.
-3. Speak the target word.
+3. Speak the card's speak text.
 4. Wait for `AVSpeechSynthesizer` completion.
 5. Wait approximately 250 milliseconds.
 6. Begin recognition.
@@ -269,7 +355,7 @@ Before every recognition attempt:
 6. Create a new recognition request.
 7. Set `shouldReportPartialResults = true`.
 8. Set `taskHint = .confirmation`.
-9. Add target words and alternatives to `contextualStrings`.
+9. Add the card's listen-for targets to `contextualStrings`.
 10. Set `requiresOnDeviceRecognition = true` only when supported.
 11. Install a new input tap.
 12. Start the audio engine and recognition task.
@@ -323,22 +409,22 @@ If denied, show a parent-facing recovery screen with a button to open the app’
 
 ## Matching
 
-The matcher answers only whether Apple heard the target or an approved equivalent.
+The matcher answers only whether Apple heard one of the card's listen-for targets or an approved equivalent.
 
 ### Normalisation
 
-- lowercase using the selected locale
+- lowercase using the active language's locale
 - remove punctuation
 - trim and collapse whitespace
 - normalize apostrophes where appropriate
-- allow approved wrappers such as `a dog` or `the dog`
-- compare against explicit alternatives
+- allow per-language approved wrappers such as `a dog` / `the dog` (English), `de hond` (Dutch), configured per language
+- compare against the card's listen-for alternatives
 
 ### Matching order
 
-1. Exact normalized target
-2. Explicit alternative
-3. Approved phrase wrapper
+1. Exact normalized primary listen-for target
+2. Other listen-for alternatives
+3. Approved per-language phrase wrapper
 4. Conservative fuzzy match
 
 ### Fuzzy rules
@@ -406,18 +492,19 @@ Respect Reduce Motion by replacing particles with a gentle scale and colour tran
 ```swift
 struct PracticeSession {
     let category: SayCategory
-    let items: [SayItem]
+    let cards: [SayCard]
     var currentIndex: Int
-    var attemptsByItem: [String: Int]
-    var completedItemIDs: Set<String>
-    var skippedItemIDs: Set<String>
+    var attemptsByCard: [String: Int]
+    var completedCardIDs: Set<String>
+    var skippedCardIDs: Set<String>
 }
 ```
 
 MVP behaviour:
 
-- shuffle the five category items at session start
-- complete after all five items
+- build the session from `SayCardStore` (defaults + overrides + custom cards, hidden cards excluded)
+- shuffle the category's visible cards at session start
+- complete after all cards in the category
 - show a final celebration
 - offer Restart and Choose Category
 - do not save scores or accuracy percentages
@@ -434,7 +521,7 @@ Display:
 Locale: en-US
 State: listening
 Target: elephant
-Alternatives: an elephant, elefant
+Listen for: elephant, an elephant, elefant
 Partial transcript: an elephant
 Final transcript: an elephant
 Match type: alternative
@@ -503,6 +590,20 @@ Cover:
 - recognition unavailable
 - cancellation and backgrounding
 
+### SayCardStoreTests
+
+Cover:
+
+- default cards resolve for the active language
+- language fallback for missing localisations
+- an override changes title, speak text, and listen-for independently
+- overrides are scoped per language (an English edit leaves Dutch defaults untouched)
+- reset removes the override and restores bundled values
+- hidden cards are excluded from practice sessions
+- custom cards persist, edit, and delete
+- default cards cannot be deleted
+- an all-hidden category is reported as unplayable
+
 ### SayCatalogTests
 
 Cover:
@@ -510,7 +611,7 @@ Cover:
 - unique IDs
 - valid category references
 - existing image assets
-- non-empty spoken text
+- non-empty title, speak text, and listen-for values in every supported language
 - valid difficulty values
 
 ### Manual device matrix
@@ -531,14 +632,17 @@ Simulator testing is not sufficient for recognition quality.
 
 ## Milestones
 
-### 1. Static app shell
+### 1. Static app shell on the Tiko harness
 
 Build:
 
-- Xcode project and app target
+- Xcode project and app target with the `TikoKit` dependency
+- `.say` case in `TikoAppColor`
+- `TikoAppShell` integration: header, settings sheet, account surface, language selection
+- shared Parent Mode / Child Mode model with PIN-gated Child Mode exit
 - category grid
 - practice screen
-- bundled catalogue
+- bundled localised default-card catalogue
 - navigation
 - mock state machine
 - Replay, Skip, Back
@@ -546,28 +650,52 @@ Build:
 
 Acceptance:
 
+- app boots on a Temporary Account without login, like the other Tiko apps
+- Parent Mode and Child Mode behave per the shared user-modes contract
 - categories open
-- items advance through mocked results
+- cards advance through mocked results
+- all text goes through `TikoI18n` and switches with the app language
 - layout works on iPad and iPhone
 - catalogue and state tests pass
 
-### 2. Speech playback
+### 2. Parent Mode card editing
 
 Build:
 
-- `AVSpeechSynthesizer` service
-- locale-specific voice selection
+- `SayCardStore` merging bundled defaults, per-language overrides, and custom cards
+- card list per category in Parent Mode
+- card editor: title, speak text, listen-for list, image
+- hide/show, reset-to-default, reorder
+- add and delete custom cards
+- local per-account persistence
+
+Acceptance:
+
+- editing a default card changes what is shown, said, and accepted in practice
+- reset restores the bundled default for the active language
+- edits in one language do not affect another language
+- hidden cards never appear in Child Mode
+- custom cards survive relaunch
+- Child Mode exposes no editing surface
+- card-store tests pass
+
+### 3. Speech playback
+
+Build:
+
+- `AVSpeechSynthesizer` service speaking the card's speak text
+- voice selection driven by the active app language
 - async completion
 - replay handling
 - interruption handling
 
 Acceptance:
 
-- each item is spoken once
+- each card is spoken once
 - replay does not queue duplicate utterances
 - listening cannot start during playback
 
-### 3. Live recognition
+### 4. Live recognition
 
 Build:
 
@@ -577,7 +705,7 @@ Build:
 - partial and final transcripts
 - contextual strings
 - timeout and cancellation
-- on-device support checks
+- on-device and locale support checks, with the parent-facing unsupported-language notice
 - recognition debug data
 
 Acceptance:
@@ -587,13 +715,13 @@ Acceptance:
 - app speech cannot trigger success
 - microphone does not remain active after navigation
 
-### 4. Matching and retries
+### 5. Matching and retries
 
 Build:
 
-- normalization
-- exact and alternative matches
-- approved phrases
+- locale-aware normalization
+- exact and listen-for alternative matches
+- per-language approved phrases
 - conservative fuzzy matching
 - retry sequence
 - automatic replay
@@ -606,7 +734,7 @@ Acceptance:
 - no child can become trapped
 - incorrect attempts receive no negative feedback
 
-### 5. Celebration and polish
+### 6. Celebration and polish
 
 Build:
 
@@ -620,9 +748,9 @@ Acceptance:
 
 - success feels immediate
 - repeated celebrations remain smooth
-- animation does not delay the next item unnecessarily
+- animation does not delay the next card unnecessarily
 
-### 6. Real-child validation
+### 7. Real-child validation
 
 Evaluate:
 
@@ -639,27 +767,28 @@ Do not expand content before this milestone.
 
 ## MVP definition of done
 
-- App launches without login.
-- Three categories and fifteen items are available.
-- Target word is spoken automatically.
-- Recognition begins after playback finishes.
+- App launches without login on a Temporary Account via `TikoIdentity`.
+- App runs inside `TikoAppShell` with the shared Parent Mode / Child Mode model and PIN-gated Child Mode exit.
+- Three categories and fifteen default cards are available, localised for supported languages.
+- The card's speak text is spoken automatically in the active language.
+- Recognition begins after playback finishes, using the active language's locale.
 - Correct recognition celebrates and advances.
 - Unrecognised speech retries calmly.
 - Replay and Skip always work.
+- Parent Mode can edit a default card's title, speak text, and listen-for list; hide it; reset it; add and delete custom cards. Edits persist across relaunch and are scoped per language.
+- Switching the app language switches card content, TTS voice, and recognition locale; unsupported recognition locales show a parent-facing notice.
 - Permission failures have a recovery path.
 - Recognition stops on backgrounding and navigation.
 - No recording is retained.
 - Debug mode exposes recognition behaviour.
-- Unit tests cover matching and state transitions.
+- Unit tests cover matching, card store resolution/overrides, and state transitions.
 - The complete flow works on a physical iPad.
 
 ## Explicit non-goals
 
-- backend content API
-- Tiko identity or parent PIN
-- user-created content
+- backend content catalogue API (edits are local-first; sync follows the standard Tiko data path later)
 - remote media catalogue
-- saved progress
+- saved progress or progress sync
 - points or streaks
 - pronunciation percentages
 - AI or clinical feedback
@@ -669,40 +798,63 @@ Do not expand content before this milestone.
 
 ## Codex task sequence
 
-### Task 1: Static SwiftUI proof
+### Task 1: Static SwiftUI proof on the Tiko harness
 
 ```text
 Create the initial native SwiftUI app structure for Tiko Say under apps/say/ios.
 
 Requirements:
-- Follow the existing tiko-universe product-first structure.
+- Follow the existing tiko-universe product-first structure and XcodeGen setup used by the other native apps.
 - Target iOS and iPadOS 18 or later.
 - Use SwiftUI.
+- Depend on the local TikoKit package (packages/tikokit-ios).
+- Add a .say case to TikoAppColor in TikoKit with a unit test.
+- Wrap the app in TikoAppShell: shared header, settings sheet, account surface, language selection.
+- Use the shared Parent Mode / Child Mode model from docs/flows/shared/user-modes.md, including PIN-gated Child Mode exit.
+- Route all strings through TikoI18n / Localizable.xcstrings; no hardcoded text.
 - Add three bundled categories: Animals, Food and Vehicles.
-- Add five bundled practice items per category.
-- Build a category grid and a single-item practice screen.
+- Add five default cards per category. Each card has: title (shown), speakText (said), listenFor (accepted recognition targets), image — localised per supported language.
+- Build a category grid and a single-card practice screen.
 - Implement the PracticeState state machine.
 - Use a mock speech service for now.
 - Add Replay, Skip and Back actions.
 - Add a development-only debug overlay.
 - Add unit tests for catalogue loading and practice-state transitions.
 - Do not implement real speech recognition yet.
-- Do not add a backend or cross-platform abstraction.
 - Document build and test instructions in apps/say/ios/README.md.
 ```
 
-### Task 2: Apple speech integration
+### Task 2: Parent Mode card editing
+
+```text
+Implement editable cards for Tiko Say.
+
+Requirements:
+- The bundled cards are defaults, not fixed content.
+- Add a SayCardStore that merges bundled defaults, per-language overrides (SayCardOverride), and custom cards, per account.
+- In Parent Mode, per category: list cards; edit title, speak text, and listen-for list independently; edit the image; hide/show; reset an edited default card to its bundled values; add custom cards; delete custom cards (defaults can only be hidden); reorder.
+- Prefill speak text and the primary listen-for target from the title when creating or clearing fields.
+- Warn (do not block) on listen-for entries shorter than four characters.
+- Store edits per account and per language; an English edit must not affect Dutch defaults.
+- Persist locally and survive relaunch; follow TikoKit storage conventions so backend sync can attach later.
+- Child Mode must never expose any editing surface; practice sessions read only from SayCardStore and exclude hidden cards.
+- Treat an all-hidden category as disabled in Child Mode.
+- Add SayCardStoreTests covering resolution, overrides, per-language scoping, reset, hiding, and custom-card lifecycle.
+```
+
+### Task 3: Apple speech integration
 
 ```text
 Implement the native Apple speech service for Tiko Say.
 
 Requirements:
-- Use AVSpeechSynthesizer to speak the target word.
+- Use AVSpeechSynthesizer to speak the card's speak text.
 - Use SFSpeechRecognizer, SFSpeechAudioBufferRecognitionRequest and AVAudioEngine to recognise microphone input.
 - Request microphone and speech-recognition permissions.
-- Use the selected item locale.
+- Drive TTS voice and recognizer locale from the active app language, never a hardcoded locale.
+- Check SFSpeechRecognizer.supportedLocales(); show a parent-facing notice when the active language is unsupported and offer the nearest supported locale.
 - Enable partial recognition results.
-- Add the target and accepted alternatives to contextualStrings.
+- Add the card's listen-for targets to contextualStrings.
 - Prefer on-device recognition when supportsOnDeviceRecognition is true.
 - Never start listening until AVSpeechSynthesizer has finished.
 - Cancel and clean up all previous recognition state before a new attempt.
@@ -713,23 +865,23 @@ Requirements:
 - Add tests where framework boundaries can be mocked.
 ```
 
-### Task 3: Matching, retries, and celebration
+### Task 4: Matching, retries, and celebration
 
 ```text
 Implement target-word matching, retry behaviour and celebration for Tiko Say.
 
 Requirements:
-- Normalize case, punctuation and whitespace.
-- Support explicit accepted alternatives.
-- Support approved leading phrases such as “a dog” for English.
+- Normalize case (locale-aware), punctuation and whitespace.
+- Match against the card's listen-for list: primary target first, then alternatives.
+- Support per-language approved leading phrases (for example "a dog" in English, "de hond" in Dutch), driven by configuration.
 - Do not fuzzy-match words shorter than four characters.
 - Add conservative configurable fuzzy matching for longer words.
-- Add unit tests for accepted and rejected examples.
+- Add unit tests for accepted and rejected examples in at least two languages.
 - Retry calmly when no match is found.
 - Automatically replay the word after the third unsuccessful attempt.
 - Make Skip more prominent after the fifth attempt.
 - Never show negative visual or audio feedback.
 - Trigger a SwiftUI particle celebration, success sound and haptic on success.
 - Respect Reduce Motion.
-- Automatically move to the next item after celebration.
+- Automatically move to the next card after celebration.
 ```
