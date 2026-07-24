@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>manageAppVersionAndBuildNumber</key>
+	<false/>
+	<key>method</key>
+	<string>app-store-connect</string>
+	<key>provisioningProfiles</key>
+	<dict>
+		<key>mt.tiko.say</key>
+		<string>mt.tiko.say AppStore</string>
+	</dict>
+	<key>signingCertificate</key>
+	<string>F64C1A62EB1BB12ABBBDAD3820BC3C1B00CC27D0</string>
+	<key>signingStyle</key>
+	<string>manual</string>
+	<key>teamID</key>
+	<string>38MGF83L2L</string>
+	<key>uploadSymbols</key>
+	<true/>
+</dict>
+</plist>

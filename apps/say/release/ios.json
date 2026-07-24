@@ -5,9 +5,9 @@
   "project": "apps/say/ios/TikoSay.xcodeproj",
   "iosDir": "apps/say/ios",
   "bundleId": "mt.tiko.say",
-  "appleId": "",
-  "appStoreId": "",
-  "appStoreUrl": "",
+  "appleId": "me@sil.mt",
+  "appStoreId": "6794481329",
+  "appStoreUrl": "https://apps.apple.com/app/id6794481329",
   "validation": {
     "script": "apps/say/ios/scripts/validate-local.sh"
   },
@@ -64,33 +64,73 @@
       {
         "id": "home-light",
         "filename": "01-{deviceSlug}-home-en-light.png",
-        "launchArgs": ["--screenshot", "home"],
-        "locales": [{ "id": "en-US", "appLanguage": "en" }],
-        "colorModes": ["light"],
+        "launchArgs": [
+          "--screenshot",
+          "home"
+        ],
+        "locales": [
+          {
+            "id": "en-US",
+            "appLanguage": "en"
+          }
+        ],
+        "colorModes": [
+          "light"
+        ],
         "waitSeconds": 2
       },
       {
         "id": "home-dark",
         "filename": "02-{deviceSlug}-home-en-dark.png",
-        "launchArgs": ["--screenshot", "home"],
-        "locales": [{ "id": "en-US", "appLanguage": "en" }],
-        "colorModes": ["dark"],
+        "launchArgs": [
+          "--screenshot",
+          "home"
+        ],
+        "locales": [
+          {
+            "id": "en-US",
+            "appLanguage": "en"
+          }
+        ],
+        "colorModes": [
+          "dark"
+        ],
         "waitSeconds": 2
       },
       {
         "id": "practice-light",
         "filename": "03-{deviceSlug}-practice-en-light.png",
-        "launchArgs": ["--screenshot", "practice"],
-        "locales": [{ "id": "en-US", "appLanguage": "en" }],
-        "colorModes": ["light"],
+        "launchArgs": [
+          "--screenshot",
+          "practice"
+        ],
+        "locales": [
+          {
+            "id": "en-US",
+            "appLanguage": "en"
+          }
+        ],
+        "colorModes": [
+          "light"
+        ],
         "waitSeconds": 3
       },
       {
         "id": "practice-dark",
         "filename": "04-{deviceSlug}-practice-en-dark.png",
-        "launchArgs": ["--screenshot", "practice"],
-        "locales": [{ "id": "en-US", "appLanguage": "en" }],
-        "colorModes": ["dark"],
+        "launchArgs": [
+          "--screenshot",
+          "practice"
+        ],
+        "locales": [
+          {
+            "id": "en-US",
+            "appLanguage": "en"
+          }
+        ],
+        "colorModes": [
+          "dark"
+        ],
         "waitSeconds": 3
       }
     ]
@@ -99,7 +139,7 @@
     "configuration": "Release",
     "archivePath": "artifacts/archives/say/TikoSay.xcarchive",
     "exportPath": "artifacts/archives/say/export",
-    "exportOptionsPlist": null,
+    "exportOptionsPlist": "apps/say/release/exportOptions.plist",
     "allowProvisioningUpdates": true
   },
   "upload": {
