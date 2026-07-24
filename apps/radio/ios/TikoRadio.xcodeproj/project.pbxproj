@@ -7,21 +7,31 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1E85AC3057416E3D0CAAF5CA /* TikoRadioUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 750A303A548F74195B314679 /* TikoRadioUITests.swift */; };
 		3CEB20E474AC7A4755794223 /* RadioSupportViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59529CBA793A9109D0A98D4C /* RadioSupportViews.swift */; };
 		3E791C15BEC079CF6FC7E59E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 75E41645927137FAEBA203E8 /* Assets.xcassets */; };
 		4714C61492F287F7C3C0C019 /* YouTubePlaybackBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C73BBE6FEDFFA5DE99385BC /* YouTubePlaybackBridge.swift */; };
 		654F2A20607027BDDA8B3BE6 /* TikoRadioApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18B4D8C1E3F12BD0E675A7AA /* TikoRadioApp.swift */; };
 		65C078326585EB201431867D /* TikoKit in Frameworks */ = {isa = PBXBuildFile; productRef = 6D03E6727B5D6130BEC614CC /* TikoKit */; };
+		676CC2F80A9C9C523991024B /* TikoKit in Frameworks */ = {isa = PBXBuildFile; productRef = 46BBB23D8755875035E57897 /* TikoKit */; };
 		6A4B14D0B5A456E7C99F9962 /* RadioView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D554990F8B6D5214203045EF /* RadioView.swift */; };
 		795955A8BBCF0D6FBF9E276E /* RadioLibraryStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DC2F0CE35E3A79F4815DE3D /* RadioLibraryStore.swift */; };
 		7E8CCD072CB513BCC46CF3A1 /* RadioPlaybackService.swift in Sources */ = {isa = PBXBuildFile; fileRef = D79EE4617893EC2DA91D30CC /* RadioPlaybackService.swift */; };
 		8FA44C8F5278E6B7304ACCCF /* TikoRadioTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C10F4D15A1B9E163D45B6C7E /* TikoRadioTests.swift */; };
+		966B76A43408EAB631586B41 /* RadioQueue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 854A3DFC586080EA41233273 /* RadioQueue.swift */; };
 		974158368AEA9ED06A3260D9 /* RadioModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = F03EEB0E43F08257135FD2ED /* RadioModels.swift */; };
 		E8D82874EF218F9F21FEFAF8 /* RadioAppConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = B17B677C7C8F49D6E855D8E7 /* RadioAppConfig.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
 		A083EBDB82BF8B2E82839A70 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D3FE3C4442AC74025175806C /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 9DE0C920168534855696A955;
+			remoteInfo = TikoRadio;
+		};
+		B4E7B1F4CBE8E5C92CF9D83F /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = D3FE3C4442AC74025175806C /* Project object */;
 			proxyType = 1;
@@ -37,18 +47,29 @@
 		2DC2F0CE35E3A79F4815DE3D /* RadioLibraryStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RadioLibraryStore.swift; sourceTree = "<group>"; };
 		3F8B67EBA4AAB2F3AF4067C6 /* tikokit-ios */ = {isa = PBXFileReference; lastKnownFileType = folder; name = "tikokit-ios"; path = "../../../packages/tikokit-ios"; sourceTree = SOURCE_ROOT; };
 		59529CBA793A9109D0A98D4C /* RadioSupportViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RadioSupportViews.swift; sourceTree = "<group>"; };
+		750A303A548F74195B314679 /* TikoRadioUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TikoRadioUITests.swift; sourceTree = "<group>"; };
 		75E41645927137FAEBA203E8 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		7F3786B8F2D3DF95A603F404 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		854A3DFC586080EA41233273 /* RadioQueue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RadioQueue.swift; sourceTree = "<group>"; };
 		88B1A13F79D6851C959281CE /* TikoRadio.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = TikoRadio.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		8C73BBE6FEDFFA5DE99385BC /* YouTubePlaybackBridge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YouTubePlaybackBridge.swift; sourceTree = "<group>"; };
 		B17B677C7C8F49D6E855D8E7 /* RadioAppConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RadioAppConfig.swift; sourceTree = "<group>"; };
 		C10F4D15A1B9E163D45B6C7E /* TikoRadioTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TikoRadioTests.swift; sourceTree = "<group>"; };
+		CC9D5CDF642192A5606145EE /* TikoRadioUITests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = TikoRadioUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		D554990F8B6D5214203045EF /* RadioView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RadioView.swift; sourceTree = "<group>"; };
 		D79EE4617893EC2DA91D30CC /* RadioPlaybackService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RadioPlaybackService.swift; sourceTree = "<group>"; };
 		F03EEB0E43F08257135FD2ED /* RadioModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RadioModels.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		B777BE8A7B28758482DE1F17 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				676CC2F80A9C9C523991024B /* TikoKit in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		F6CE61FC27D040FC2E9E7254 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -66,6 +87,7 @@
 				D8B103984FF8DAF4C4B7A3DB /* Packages */,
 				0FAF6FBA6C8BAE4E9E4E53CC /* Sources */,
 				CC7B8F8170919DD2F6C4A2DB /* Tests */,
+				EE7C33EFC00E3385A3CEC3DD /* UITests */,
 				33686173E62ED79ABC7F801D /* Products */,
 			);
 			sourceTree = "<group>";
@@ -79,6 +101,7 @@
 				2DC2F0CE35E3A79F4815DE3D /* RadioLibraryStore.swift */,
 				F03EEB0E43F08257135FD2ED /* RadioModels.swift */,
 				D79EE4617893EC2DA91D30CC /* RadioPlaybackService.swift */,
+				854A3DFC586080EA41233273 /* RadioQueue.swift */,
 				59529CBA793A9109D0A98D4C /* RadioSupportViews.swift */,
 				D554990F8B6D5214203045EF /* RadioView.swift */,
 				2D8DE4E3971AE54756A07782 /* TikoRadio.entitlements */,
@@ -93,6 +116,7 @@
 			children = (
 				88B1A13F79D6851C959281CE /* TikoRadio.app */,
 				03715B4CD12D3D040F425685 /* TikoRadioTests.xctest */,
+				CC9D5CDF642192A5606145EE /* TikoRadioUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -113,6 +137,14 @@
 			name = Packages;
 			sourceTree = "<group>";
 		};
+		EE7C33EFC00E3385A3CEC3DD /* UITests */ = {
+			isa = PBXGroup;
+			children = (
+				750A303A548F74195B314679 /* TikoRadioUITests.swift */,
+			);
+			path = UITests;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -121,6 +153,7 @@
 			buildConfigurationList = F8CBB58E71E83D4DECAED284 /* Build configuration list for PBXNativeTarget "TikoRadioTests" */;
 			buildPhases = (
 				B4703BE5DFB1A04F40765E5A /* Sources */,
+				B777BE8A7B28758482DE1F17 /* Frameworks */,
 			);
 			buildRules = (
 			);
@@ -129,6 +162,7 @@
 			);
 			name = TikoRadioTests;
 			packageProductDependencies = (
+				46BBB23D8755875035E57897 /* TikoKit */,
 			);
 			productName = TikoRadioTests;
 			productReference = 03715B4CD12D3D040F425685 /* TikoRadioTests.xctest */;
@@ -138,6 +172,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 1FEC512A2D4630069370A6E4 /* Build configuration list for PBXNativeTarget "TikoRadio" */;
 			buildPhases = (
+				A0A2359C58EF66A6C90E5DA1 /* Generate Tiko app config */,
 				4BFB0CBBFAF7E121DC408F1A /* Sources */,
 				4E8A79E308E0DB7216F5477C /* Resources */,
 				F6CE61FC27D040FC2E9E7254 /* Frameworks */,
@@ -154,6 +189,24 @@
 			productReference = 88B1A13F79D6851C959281CE /* TikoRadio.app */;
 			productType = "com.apple.product-type.application";
 		};
+		AF9414A1F1C8E705C1CF23B5 /* TikoRadioUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 8E6528C51558EC100C01F4E1 /* Build configuration list for PBXNativeTarget "TikoRadioUITests" */;
+			buildPhases = (
+				5E63367B5CF4A98D48A31604 /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				155F90FDE6185D209B28DFA8 /* PBXTargetDependency */,
+			);
+			name = TikoRadioUITests;
+			packageProductDependencies = (
+			);
+			productName = TikoRadioUITests;
+			productReference = CC9D5CDF642192A5606145EE /* TikoRadioUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -168,6 +221,10 @@
 					};
 					9DE0C920168534855696A955 = {
 						DevelopmentTeam = "";
+					};
+					AF9414A1F1C8E705C1CF23B5 = {
+						DevelopmentTeam = "";
+						TestTargetID = 9DE0C920168534855696A955;
 					};
 				};
 			};
@@ -190,6 +247,7 @@
 			targets = (
 				9DE0C920168534855696A955 /* TikoRadio */,
 				445BD80438A57C23FFC7B6CC /* TikoRadioTests */,
+				AF9414A1F1C8E705C1CF23B5 /* TikoRadioUITests */,
 			);
 		};
 /* End PBXProject section */
@@ -205,6 +263,28 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		A0A2359C58EF66A6C90E5DA1 /* Generate Tiko app config */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Generate Tiko app config";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "set -euo pipefail\nREPO_ROOT=\"${SRCROOT}/../../..\"\nif ! command -v node >/dev/null 2>&1; then\n  echo \"error: node is required to generate Tiko app configs from admin before iOS build.\"\n  exit 1\nfi\nTIKO_APP_CONFIG_STRICT=1 node \"${REPO_ROOT}/tools/generate-app-configs.mjs\"\n";
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		4BFB0CBBFAF7E121DC408F1A /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
@@ -214,10 +294,19 @@
 				795955A8BBCF0D6FBF9E276E /* RadioLibraryStore.swift in Sources */,
 				974158368AEA9ED06A3260D9 /* RadioModels.swift in Sources */,
 				7E8CCD072CB513BCC46CF3A1 /* RadioPlaybackService.swift in Sources */,
+				966B76A43408EAB631586B41 /* RadioQueue.swift in Sources */,
 				3CEB20E474AC7A4755794223 /* RadioSupportViews.swift in Sources */,
 				6A4B14D0B5A456E7C99F9962 /* RadioView.swift in Sources */,
 				654F2A20607027BDDA8B3BE6 /* TikoRadioApp.swift in Sources */,
 				4714C61492F287F7C3C0C019 /* YouTubePlaybackBridge.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		5E63367B5CF4A98D48A31604 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1E85AC3057416E3D0CAAF5CA /* TikoRadioUITests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -232,6 +321,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		155F90FDE6185D209B28DFA8 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 9DE0C920168534855696A955 /* TikoRadio */;
+			targetProxy = B4E7B1F4CBE8E5C92CF9D83F /* PBXContainerItemProxy */;
+		};
 		D7952073E63B1B9658922DD2 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 9DE0C920168534855696A955 /* TikoRadio */;
@@ -244,6 +338,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -313,6 +408,23 @@
 			};
 			name = Release;
 		};
+		9B3976197A46477DB0CF448D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = mt.tiko.TikoRadioUITests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = TikoRadio;
+			};
+			name = Release;
+		};
 		B4197C9DC7770D92AB59B5FD /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -377,17 +489,36 @@
 			};
 			name = Debug;
 		};
+		B6A6E44F0457251D402FC6BE /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = mt.tiko.TikoRadioUITests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = TikoRadio;
+			};
+			name = Debug;
+		};
 		C4B37271B76D9AE9CE191F0F /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = Sources/TikoRadio.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CURRENT_PROJECT_VERSION = 2;
 				INFOPLIST_FILE = Sources/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = mt.tiko.radio;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -400,11 +531,13 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = Sources/TikoRadio.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CURRENT_PROJECT_VERSION = 2;
 				INFOPLIST_FILE = Sources/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = mt.tiko.radio;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -415,6 +548,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -435,6 +569,15 @@
 			buildConfigurations = (
 				C4B37271B76D9AE9CE191F0F /* Debug */,
 				D7CBC5ECF5805C95EA37F330 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		8E6528C51558EC100C01F4E1 /* Build configuration list for PBXNativeTarget "TikoRadioUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B6A6E44F0457251D402FC6BE /* Debug */,
+				9B3976197A46477DB0CF448D /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
@@ -467,6 +610,10 @@
 /* End XCLocalSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		46BBB23D8755875035E57897 /* TikoKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = TikoKit;
+		};
 		6D03E6727B5D6130BEC614CC /* TikoKit */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = TikoKit;

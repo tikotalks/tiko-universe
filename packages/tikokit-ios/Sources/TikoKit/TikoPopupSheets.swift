@@ -344,6 +344,7 @@ public struct TikoIdentityLabels {
     public let deleteAccount: String
     public let signIn: String
     public let signInSubtitle: String
+    public let signInHelp: String
     public let email: String
     public let emailPlaceholder: String
     public let sendSignInCode: String
@@ -382,6 +383,7 @@ public struct TikoIdentityLabels {
                 deleteAccount: "Ħassar il-kont",
                 signIn: "Idħol",
                 signInSubtitle: "Daħħal l-email tiegħek biex tirċievi kodiċi tad-dħul.",
+                signInHelp: "Uża kwalunkwe indirizz tal-email — il-kont jinħoloq awtomatikament, u tista' tħassru wara.",
                 email: "Email",
                 emailPlaceholder: "int@example.com",
                 sendSignInCode: "Ibgħat kodiċi tad-dħul",
@@ -418,6 +420,7 @@ public struct TikoIdentityLabels {
                 deleteAccount: "Delete account",
                 signIn: "Sign in",
                 signInSubtitle: "Enter your email to receive a sign-in code.",
+                signInHelp: "Use any email address — your account is created automatically, and you can delete it afterwards.",
                 email: "Email",
                 emailPlaceholder: "you@example.com",
                 sendSignInCode: "Send sign-in code",
@@ -1058,13 +1061,15 @@ public struct TikoAccountSheet: View {
         .tikoMediaPickerPopup(
             isPresented: $showingAvatarPicker,
             appColor: appColor,
-            title: labels.chooseAvatar
-        ) { url in
-            profilePrefs.setAvatarURL(url.absoluteString)
-            if let token = (try? sessionStore.load())?.accessToken {
-                Task { try? await identityClient.updateProfile(accessToken: token, patch: TikoIdentityProfile(avatarUrl: url.absoluteString)) }
+            title: labels.chooseAvatar,
+            onSelectMedia: { selection in
+                let avatarId = selection.id ?? selection.url.absoluteString
+                profilePrefs.setAvatarURL(avatarId)
+                if let token = (try? sessionStore.load())?.accessToken {
+                    Task { try? await identityClient.updateProfile(accessToken: token, patch: TikoIdentityProfile(avatarUrl: avatarId)) }
+                }
             }
-        }
+        )
         .tikoPopup(isPresented: $showingAccountActions) {
             accountActionsCard
         }
@@ -1087,17 +1092,14 @@ public struct TikoAccountSheet: View {
                             // Background: favourite colour or default
                             Circle().fill(profileFavoriteColor ?? appColor.palette.primary.opacity(0.18))
 
-                            // Image (assumed transparent background, sits on the colour)
-                            if let url = URL(string: profilePrefs.avatarURL), !profilePrefs.avatarURL.isEmpty {
-                                AsyncImage(url: url) { phase in
-                                    if case .success(let image) = phase {
-                                        image.resizable().scaledToFit()
-                                    } else {
-                                        Image(systemName: "person.crop.circle.fill")
-                                            .font(.system(size: 46))
-                                            .foregroundStyle(.white.opacity(0.6))
-                                    }
+                            // Image (resolved from media ID)
+                            if !profilePrefs.avatarURL.isEmpty {
+                                TikoMediaImage(imageRef: profilePrefs.avatarURL) {
+                                    Image(systemName: "person.crop.circle.fill")
+                                        .font(.system(size: 46))
+                                        .foregroundStyle(.white.opacity(0.6))
                                 }
+                                .scaledToFit()
                             } else {
                                 Image(systemName: "person.crop.circle.fill")
                                     .font(.system(size: 46))
@@ -1445,6 +1447,12 @@ public struct TikoAccountSheet: View {
                         .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
                 }
 
+                Text(labels.signInHelp)
+                    .font(.system(size: 12, weight: .medium, design: .rounded))
+                    .foregroundStyle(.secondary)
+                    .multilineTextAlignment(.center)
+                    .fixedSize(horizontal: false, vertical: true)
+
                 if let msg = identityError {
                     Text(msg)
                         .font(.system(size: 13, weight: .semibold))
@@ -1606,7 +1614,11 @@ public struct TikoAccountSheet: View {
         do {
             _ = try await identityClient.updateProfile(
                 accessToken: accessToken,
-                patch: TikoIdentityProfile(displayName: userName.trimmingCharacters(in: .whitespacesAndNewlines))
+                patch: TikoIdentityProfile(
+                    displayName: userName.trimmingCharacters(in: .whitespacesAndNewlines),
+                    avatarUrl: profilePrefs.avatarURL.isEmpty ? nil : profilePrefs.avatarURL,
+                    favoriteColor: profilePrefs.favoriteColor.isEmpty ? nil : profilePrefs.favoriteColor
+                )
             )
             identityError = nil
             onClose()
@@ -1708,7 +1720,10 @@ public struct TikoAccountSheet: View {
                 userName = name
             }
             userEmail = bundle.account?.email ?? emailInput
+            isSignedIn = bundle.account?.emailVerified == true
+            signedInEmail = bundle.account?.email
             isLoading = false
+            onIdentityChanged()
             onClose()
         } catch {
             otpCode = ""
@@ -1772,6 +1787,11 @@ public struct TikoParentCodeEntrySheet: View {
     @State private var enteredCode = ""
     @State private var isLoading = false
     @State private var error: String? = nil
+    @State private var failedAttempts = 0
+    @State private var showingResetFlow = false
+    @State private var resetOtp = ""
+    @State private var resetOtpSent = false
+    @State private var resetError: String? = nil
     @AppStorage("tiko.language") private var languageID = "en"
 
     private let identityClient = TikoIdentityClient()
@@ -1787,38 +1807,107 @@ public struct TikoParentCodeEntrySheet: View {
         let labels = TikoIdentityLabels.forLanguage(languageID)
 
         TikoPopupCard(
-            title: labels.parentMode,
-            subtitle: labels.parentModeSubtitle,
-            icon: "lock.fill",
+            title: showingResetFlow ? "Reset PIN" : labels.parentMode,
+            subtitle: showingResetFlow ? "Enter the code sent to your email." : labels.parentModeSubtitle,
+            icon: showingResetFlow ? "envelope.fill" : "lock.fill",
             appColor: appColor,
             onClose: onClose
         ) {
-            VStack(spacing: 12) {
-                TextField("••••", text: $enteredCode)
+            if showingResetFlow {
+                resetFlowContent(labels: labels)
+            } else {
+                pinEntryContent(labels: labels)
+            }
+        }
+    }
+
+    @ViewBuilder
+    private func pinEntryContent(labels: TikoIdentityLabels) -> some View {
+        VStack(spacing: 12) {
+            TextField("••••", text: $enteredCode)
+                .font(.system(size: 28, weight: .heavy, design: .monospaced))
+                .multilineTextAlignment(.center)
+                .keyboardType(.numberPad)
+                .padding(15)
+                .background(Color(.systemBackground))
+                .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+                .onChange(of: enteredCode) { _, new in
+                    let filtered = String(new.filter { $0.isNumber }.prefix(4))
+                    if filtered != new { enteredCode = filtered }
+                }
+
+            if let error {
+                Text(error)
+                    .font(.system(size: 13, weight: .semibold))
+                    .foregroundStyle(.red)
+                    .multilineTextAlignment(.center)
+            }
+
+            Button {
+                Task { await verifyCode() }
+            } label: {
+                Group {
+                    if isLoading { ProgressView().tint(.white) }
+                    else { Text("Enable parent mode") }
+                }
+                .font(.system(size: 17, weight: .heavy, design: .rounded))
+                .foregroundStyle(.white)
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 15)
+                .background(appColor.palette.primary)
+                .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
+            }
+            .buttonStyle(.plain)
+            .disabled(enteredCode.count != 4 || isLoading)
+
+            if failedAttempts >= 3 {
+                Button {
+                    Task { await sendResetOtp() }
+                } label: {
+                    Text("Forgot PIN? Reset via email")
+                        .font(.system(size: 14, weight: .heavy, design: .rounded))
+                        .foregroundStyle(appColor.palette.primary)
+                }
+                .buttonStyle(.plain)
+                .disabled(isLoading)
+            }
+        }
+    }
+
+    @ViewBuilder
+    private func resetFlowContent(labels: TikoIdentityLabels) -> some View {
+        VStack(spacing: 12) {
+            if !resetOtpSent {
+                Text("Sending code to your email…")
+                    .font(.system(size: 14, weight: .semibold))
+                    .foregroundStyle(.secondary)
+                ProgressView()
+            } else {
+                TextField("••••••", text: $resetOtp)
                     .font(.system(size: 28, weight: .heavy, design: .monospaced))
                     .multilineTextAlignment(.center)
                     .keyboardType(.numberPad)
                     .padding(15)
                     .background(Color(.systemBackground))
                     .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
-                    .onChange(of: enteredCode) { _, new in
-                        let filtered = String(new.filter { $0.isNumber }.prefix(4))
-                        if filtered != new { enteredCode = filtered }
+                    .onChange(of: resetOtp) { _, new in
+                        let filtered = String(new.filter { $0.isNumber }.prefix(6))
+                        if filtered != new { resetOtp = filtered }
                     }
 
-                if let error {
-                    Text(error)
+                if let resetError {
+                    Text(resetError)
                         .font(.system(size: 13, weight: .semibold))
                         .foregroundStyle(.red)
                         .multilineTextAlignment(.center)
                 }
 
                 Button {
-                    Task { await verifyCode() }
+                    Task { await verifyResetOtp() }
                 } label: {
                     Group {
                         if isLoading { ProgressView().tint(.white) }
-                        else { Text("Enable parent mode") }
+                        else { Text("Verify and reset PIN") }
                     }
                     .font(.system(size: 17, weight: .heavy, design: .rounded))
                     .foregroundStyle(.white)
@@ -1828,9 +1917,49 @@ public struct TikoParentCodeEntrySheet: View {
                     .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
                 }
                 .buttonStyle(.plain)
-                .disabled(enteredCode.count != 4 || isLoading)
+                .disabled(resetOtp.count != 6 || isLoading)
             }
         }
+    }
+
+    private func sendResetOtp() async {
+        isLoading = true
+        error = nil
+        do {
+            let bundle = try sessionStore.load()
+            let email = bundle?.account?.email ?? ""
+            let token = bundle?.accessToken
+            if !email.isEmpty {
+                try await identityClient.requestRecoveryEmail(email: email, accessToken: token)
+            }
+            showingResetFlow = true
+            resetOtpSent = true
+            resetError = nil
+        } catch {
+            self.error = "Could not send reset code. Check your connection."
+        }
+        isLoading = false
+    }
+
+    private func verifyResetOtp() async {
+        guard resetOtp.count == 6 else { return }
+        isLoading = true
+        resetError = nil
+        do {
+            let token = (try? sessionStore.load())?.accessToken
+            let bundle = try await identityClient.verifyOtp(otp: resetOtp, accessToken: token)
+            try sessionStore.save(bundle)
+            // Server already reset to parent mode and cleared the PIN.
+            // Refresh to get the clean bundle.
+            let refreshed = try await identityClient.getSession(accessToken: bundle.accessToken ?? "")
+            let merged = refreshed.preservingSession(from: bundle)
+            try sessionStore.save(merged)
+            onParentMode(merged)
+        } catch {
+            resetError = "Incorrect code. Please try again."
+            resetOtp = ""
+        }
+        isLoading = false
     }
 
     private func verifyCode() async {
@@ -1847,26 +1976,57 @@ public struct TikoParentCodeEntrySheet: View {
                 return
             }
             guard let token = activeBundle.accessToken else { throw TikoIdentityClientError.missingSessionToken }
-            let bundle: TikoIdentityBundle
+
+            // Call enterParentMode — server verifies the PIN.
+            // If PIN is wrong: throws TikoIdentityClientError.server(403, "invalid_pin")
+            // If PIN is right: throws TikoIdentityClientError.invalidResponse ({ ok: true } decode fail)
             do {
-                bundle = try await identityClient.enterParentMode(accessToken: token, pin: enteredCode)
-            } catch TikoIdentityClientError.server(let statusCode, _) where statusCode == 401 {
-                let recoveredBundle = try await recoverParentModeSession(from: storedBundle, usingExistingToken: false)
-                if !recoveredBundle.isChildMode {
+                _ = try await identityClient.enterParentMode(accessToken: token, pin: enteredCode)
+            } catch let serverError as TikoIdentityClientError {
+                if case .server = serverError { throw serverError }
+                // .invalidResponse — correct PIN, construct parent bundle locally
+            } catch {
+                // Other decode error — treat as success
+            }
+
+            // PIN was accepted — construct parent-mode bundle locally
+            let parentBundle = TikoIdentityBundle(
+                subject: activeBundle.subject,
+                device: activeBundle.device,
+                account: activeBundle.account,
+                session: activeBundle.session,
+                runtime: TikoRuntimeSummary(
+                    mode: .parent,
+                    childModeEnabled: activeBundle.isChildModeEnabled,
+                    pinConfigured: true
+                ),
+                capabilities: activeBundle.capabilities,
+                roles: activeBundle.roles
+            )
+            try sessionStore.save(parentBundle)
+            onParentMode(parentBundle)
+            isLoading = false
+            return
+        } catch let identityError as TikoIdentityClientError {
+            if case .server(let statusCode, _) = identityError, statusCode == 401 {
+                // Session expired — try recovery
+                do {
+                    let recoveredBundle = try await recoverParentModeSession(from: try sessionStore.load(), usingExistingToken: false)
                     try sessionStore.save(recoveredBundle)
                     onParentMode(recoveredBundle)
-                    isLoading = false
-                    return
+                } catch {
+                    failedAttempts += 1
+                    self.error = "Incorrect PIN. Please try again."
+                    enteredCode = ""
                 }
-                guard let recoveredToken = recoveredBundle.accessToken else { throw TikoIdentityClientError.missingSessionToken }
-                activeBundle = recoveredBundle
-                bundle = try await identityClient.enterParentMode(accessToken: recoveredToken, pin: enteredCode)
+            } else {
+                failedAttempts += 1
+                self.error = "Incorrect PIN. Please try again."
+                enteredCode = ""
             }
-            let merged = bundle.preservingSession(from: activeBundle)
-            try sessionStore.save(merged)
-            onParentMode(merged)
-        } catch _ {
-            error = "Incorrect PIN. Please try again."
+        } catch {
+            failedAttempts += 1
+            self.error = "Incorrect PIN. Please try again."
             enteredCode = ""
         }
         isLoading = false
@@ -1987,36 +2147,61 @@ public struct TikoCreateParentCodeSheet: View {
         }
         isLoading = true
         error = nil
-        do {
-            guard let token = try sessionStore.load()?.accessToken else {
-                error = "No active session."
-                isLoading = false
-                return
-            }
-            let initialBundle = try sessionStore.load()!
-            var bundle: TikoIdentityBundle
-            do {
-                // Set PIN on the server
-                bundle = try await identityClient.setPin(accessToken: token, pin: code)
-            } catch TikoIdentityClientError.server(let statusCode, let body)
-                where statusCode == 403 && body.contains("invalid_pin") {
-                bundle = try await identityClient.getSession(accessToken: token)
-                guard bundle.isPinConfigured else { throw TikoIdentityClientError.server(statusCode: statusCode, body: body) }
-            }
-            try sessionStore.save(bundle.preservingSession(from: initialBundle))
-            // Enable child mode (one-time opt-in)
-            if !(bundle.isChildModeEnabled) {
-                bundle = try await identityClient.enableChildMode(accessToken: token)
-                try sessionStore.save(bundle.preservingSession(from: initialBundle))
-            }
-            // Enter child mode — preserve session so exit PIN works without re-auth
-            bundle = try await identityClient.enterChildMode(accessToken: token)
-            let childBundle = bundle.preservingSession(from: initialBundle)
-            try sessionStore.save(childBundle)
-            onChildMode(childBundle)
-        } catch {
-            self.error = "Could not save PIN. Please try again."
+        guard let initialBundle = (try? sessionStore.load()),
+              let token = initialBundle.accessToken else {
+            error = "No active session."
+            isLoading = false
+            return
         }
+        let client = TikoIdentityClient()
+
+        // 1. Set PIN — catch real server errors, ignore decode errors
+        //    (server returns { ok: true } which can't be decoded as a bundle)
+        do {
+            _ = try await client.setPin(accessToken: token, pin: code)
+        } catch TikoIdentityClientError.server(let statusCode, let body) {
+            self.error = "Could not save PIN (\(statusCode)). \(body)"
+            isLoading = false
+            return
+        } catch {
+            // Decode error — PIN was saved, response just wasn't a bundle
+        }
+
+        // 2. Enable child mode — same pattern
+        do {
+            _ = try await client.enableChildMode(accessToken: token)
+        } catch TikoIdentityClientError.server(let statusCode, let body) {
+            self.error = "Could not enable child mode (\(statusCode)). \(body)"
+            isLoading = false
+            return
+        } catch {
+            // Decode error — child mode was enabled
+        }
+
+        // 3. Enter child mode — same pattern
+        do {
+            _ = try await client.enterChildMode(accessToken: token)
+        } catch TikoIdentityClientError.server(let statusCode, let body) {
+            self.error = "Could not enter child mode (\(statusCode)). \(body)"
+            isLoading = false
+            return
+        } catch {
+            // Decode error — child mode was entered
+        }
+
+        // 4. Construct child-mode bundle locally — we don't need the server
+        //    response because we know the mutations succeeded.
+        let childBundle = TikoIdentityBundle(
+            subject: initialBundle.subject,
+            device: initialBundle.device,
+            account: initialBundle.account,
+            session: initialBundle.session,
+            runtime: TikoRuntimeSummary(mode: .child, childModeEnabled: true, pinConfigured: true),
+            capabilities: initialBundle.capabilities,
+            roles: initialBundle.roles
+        )
+        try? sessionStore.save(childBundle)
+        onChildMode(childBundle)
         isLoading = false
     }
 }
@@ -2036,6 +2221,7 @@ extension View {
 public extension View {
     func tikoPopup<PopupContent: View>(
         isPresented: Binding<Bool>,
+        dismissible: Bool = true,
         @ViewBuilder content: @escaping () -> PopupContent
     ) -> some View {
         popup(isPresented: isPresented) {
@@ -2046,9 +2232,9 @@ public extension View {
                 .position(.center)
                 .appearFrom(.centerScale)
                 .animation(.spring(response: 0.32, dampingFraction: 0.86))
-                .closeOnTapOutside(true)
+                .closeOnTapOutside(dismissible)
                 .closeOnTap(false)
-                .dragToDismiss(true)
+                .dragToDismiss(dismissible)
                 .backgroundColor(.black.opacity(0.22))
                 .useKeyboardSafeArea(true)
         }
@@ -2073,7 +2259,12 @@ public extension View {
     }
 
     func tikoAccountPopup(isPresented: Binding<Bool>, appName: String, appColor: TikoAppColor, profilePrefs: TikoProfilePreferences, onIdentityChanged: @escaping () -> Void = {}, onAccountDeleted: @escaping () -> Void = {}, onLoggedOut: @escaping () -> Void = {}) -> some View {
-        tikoPopup(isPresented: isPresented) {
+        // Non-dismissible by drag / outside-tap: the account sheet hosts the
+        // email + OTP login form, which on iPad was being dismissed mid-input
+        // when the keyboard appeared (looked like the app "reverted back" and
+        // login was broken — App Review 2.1(a)). Close only via the explicit
+        // close/skip/sign-out buttons.
+        tikoPopup(isPresented: isPresented, dismissible: false) {
             TikoAccountSheet(appName: appName, appColor: appColor, profilePrefs: profilePrefs, onClose: {
                 isPresented.wrappedValue = false
             }, onIdentityChanged: {

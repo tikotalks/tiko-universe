@@ -20,10 +20,18 @@
 		C10DDF329DCF42F8DE76218D /* CardsStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBAEDE295147575574F99882 /* CardsStore.swift */; };
 		CFA37503A1451C2C7EBCACD2 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = EAABAA67B164E6D6DD4EF4DD /* Assets.xcassets */; };
 		E0C38A9E661265F40153CF99 /* CardsContentClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89B173082F6A106521659C40 /* CardsContentClient.swift */; };
+		C1A0D5000000000000000001 /* TikoCardsUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1A0D5000000000000000002 /* TikoCardsUITests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
 		03767D2C422E2181E8CB22CC /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 3E5B31B70DD1B6A770D4D819 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 650267ADF518BF5D371346B7;
+			remoteInfo = TikoCards;
+		};
+		C1A0D5000000000000000008 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 3E5B31B70DD1B6A770D4D819 /* Project object */;
 			proxyType = 1;
@@ -36,7 +44,7 @@
 		0C3D2678AD8AA655C17E7D44 /* TikoCards.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = TikoCards.entitlements; sourceTree = "<group>"; };
 		1F976EA464A8D7FD09CFC50E /* CardsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardsView.swift; sourceTree = "<group>"; };
 		207A42348432F2BFF126FFBE /* CardsMediaClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardsMediaClient.swift; sourceTree = "<group>"; };
-		440E1EA00776E4B4C4B2BF15 /* TikoCards.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TikoCards.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		440E1EA00776E4B4C4B2BF15 /* TikoCards.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = TikoCards.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		524C104FBEF1095D1213B1BC /* TikoCardsApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TikoCardsApp.swift; sourceTree = "<group>"; };
 		59DD41843CC3101D47DCA6D8 /* TikoCardsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TikoCardsTests.swift; sourceTree = "<group>"; };
 		752D7B95F673E108C9D9D5A1 /* CardsModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardsModels.swift; sourceTree = "<group>"; };
@@ -50,6 +58,8 @@
 		E9CB42D014C3BD083A309E34 /* CardsAppConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardsAppConfig.swift; sourceTree = "<group>"; };
 		EAABAA67B164E6D6DD4EF4DD /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		EBAEDE295147575574F99882 /* CardsStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardsStore.swift; sourceTree = "<group>"; };
+		C1A0D5000000000000000002 /* TikoCardsUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TikoCardsUITests.swift; sourceTree = "<group>"; };
+		C1A0D5000000000000000003 /* TikoCardsUITests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = TikoCardsUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -70,8 +80,17 @@
 				99DD2C254CBD26FF4938455D /* Packages */,
 				A14ACF2362BE6753BB8D7AA0 /* Sources */,
 				64096A06A3B5B38D11E2D152 /* Tests */,
+				C1A0D5000000000000000004 /* UITests */,
 				682AF43EDAC51ACFA2C530E0 /* Products */,
 			);
+			sourceTree = "<group>";
+		};
+		C1A0D5000000000000000004 /* UITests */ = {
+			isa = PBXGroup;
+			children = (
+				C1A0D5000000000000000002 /* TikoCardsUITests.swift */,
+			);
+			path = UITests;
 			sourceTree = "<group>";
 		};
 		64096A06A3B5B38D11E2D152 /* Tests */ = {
@@ -87,6 +106,7 @@
 			children = (
 				440E1EA00776E4B4C4B2BF15 /* TikoCards.app */,
 				9696034586F8E01566BDD1DC /* TikoCardsTests.xctest */,
+				C1A0D5000000000000000003 /* TikoCardsUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -161,6 +181,24 @@
 			productReference = 9696034586F8E01566BDD1DC /* TikoCardsTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
+		C1A0D5000000000000000005 /* TikoCardsUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C1A0D5000000000000000009 /* Build configuration list for PBXNativeTarget "TikoCardsUITests" */;
+			buildPhases = (
+				C1A0D5000000000000000006 /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				C1A0D5000000000000000007 /* PBXTargetDependency */,
+			);
+			name = TikoCardsUITests;
+			packageProductDependencies = (
+			);
+			productName = TikoCardsUITests;
+			productReference = C1A0D5000000000000000003 /* TikoCardsUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -170,8 +208,15 @@
 				BuildIndependentTargetsInParallel = YES;
 				LastUpgradeCheck = 1430;
 				TargetAttributes = {
+					650267ADF518BF5D371346B7 = {
+						DevelopmentTeam = "";
+					};
 					8E1D196099A93F7831BFD805 = {
 						DevelopmentTeam = "";
+					};
+					C1A0D5000000000000000005 = {
+						DevelopmentTeam = "";
+						TestTargetID = 650267ADF518BF5D371346B7;
 					};
 				};
 			};
@@ -194,6 +239,7 @@
 			targets = (
 				650267ADF518BF5D371346B7 /* TikoCards */,
 				8E1D196099A93F7831BFD805 /* TikoCardsTests */,
+				C1A0D5000000000000000005 /* TikoCardsUITests */,
 			);
 		};
 /* End PBXProject section */
@@ -257,6 +303,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		C1A0D5000000000000000006 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C1A0D5000000000000000001 /* TikoCardsUITests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -264,6 +318,11 @@
 			isa = PBXTargetDependency;
 			target = 650267ADF518BF5D371346B7 /* TikoCards */;
 			targetProxy = 03767D2C422E2181E8CB22CC /* PBXContainerItemProxy */;
+		};
+		C1A0D5000000000000000007 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 650267ADF518BF5D371346B7 /* TikoCards */;
+			targetProxy = C1A0D5000000000000000008 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -274,12 +333,13 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = Sources/TikoCards.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
-				DEVELOPMENT_TEAM = 38MGF83L2L;
+				CURRENT_PROJECT_VERSION = 2;
 				INFOPLIST_FILE = Sources/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = mt.tiko.cards;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -413,12 +473,13 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = Sources/TikoCards.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
-				DEVELOPMENT_TEAM = 38MGF83L2L;
+				CURRENT_PROJECT_VERSION = 2;
 				INFOPLIST_FILE = Sources/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = mt.tiko.cards;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -459,6 +520,38 @@
 			};
 			name = Release;
 		};
+		C1A0D500000000000000000A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = mt.tiko.TikoCardsUITests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = TikoCards;
+			};
+			name = Debug;
+		};
+		C1A0D500000000000000000B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = mt.tiko.TikoCardsUITests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = TikoCards;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -485,6 +578,15 @@
 			buildConfigurations = (
 				5992F4C20B61C1A6F8F12D1E /* Debug */,
 				09B08A0B0DE64FE73DDB0ED0 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		C1A0D5000000000000000009 /* Build configuration list for PBXNativeTarget "TikoCardsUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C1A0D500000000000000000A /* Debug */,
+				C1A0D500000000000000000B /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;

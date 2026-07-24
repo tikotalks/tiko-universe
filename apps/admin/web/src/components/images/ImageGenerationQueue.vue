@@ -193,10 +193,9 @@ const bemm = useBemm('image-generation-queue', { return: 'string', includeBaseCl
   &__error {
     font-size: var(--font-size-xs);
     color: var(--color-error);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    max-width: 200px;
+    line-height: 1.35;
+    word-break: break-word;
+    overflow-wrap: anywhere;
   }
 
   &__retry {

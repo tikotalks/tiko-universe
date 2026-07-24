@@ -268,7 +268,7 @@ interface RateLimitRow {
   updated_at: string
 }
 
-const LOW_ENTROPY_SECRET_ITERATIONS = 120_000
+const LOW_ENTROPY_SECRET_ITERATIONS = 100_000
 const PIN_RATE_LIMIT = { maxFailures: 5, lockMs: 15 * 60 * 1000 }
 const CHILD_CODE_RATE_LIMIT = { maxFailures: 8, lockMs: 15 * 60 * 1000 }
 
@@ -298,11 +298,24 @@ async function handleManagedIdentity(request: Request, env: Env): Promise<Respon
   return null
 }
 
+async function okWithRuntime(env: Env, subjectId: string): Promise<Response> {
+  const accountType = await accountTypeForSubject(env, subjectId)
+  const runtime = await deriveRuntime(env, subjectId, accountType)
+  return Response.json({ ok: true, runtime })
+}
+
 async function setPin(request: Request, env: Env): Promise<Response> {
   const session = await requireIdentitySession(request, env)
   if (!session) return Response.json({ error: 'invalid_session' }, { status: 401 })
-  const { accountType, runtime: currentRuntime } = await subjectContextForSubject(env, session.subjectId)
-  if (accountType === 'temporary' || accountType === 'child_account') return Response.json({ error: 'pin_not_allowed' }, { status: 403 })
+  let accountType: string, currentRuntime: RuntimeState
+  try {
+    const ctx = await subjectContextForSubject(env, session.subjectId)
+    accountType = ctx.accountType
+    currentRuntime = ctx.runtime
+  } catch (err) {
+    return Response.json({ error: 'context_failed', detail: String(err) }, { status: 500 })
+  }
+  if (accountType === 'temporary' || accountType === 'child_account') return Response.json({ error: 'pin_not_allowed', accountType }, { status: 403 })
 
   const body = await request.json().catch(() => ({})) as { pin?: string; currentPin?: string }
   const pin = String(body.pin ?? '')
@@ -316,9 +329,19 @@ async function setPin(request: Request, env: Env): Promise<Response> {
   }
   await clearRateLimit(env, rateKey, 'pin')
 
-  const nextRuntime = { ...currentRuntime, pinHash: await hashCredentialSecret(pin, env, 'pin') }
-  await updateRuntimeState(env, session.subjectId, nextRuntime)
-  return sessionResponse(request, env)
+  let pinHash: string
+  try {
+    pinHash = await hashCredentialSecret(pin, env, 'pin')
+  } catch (err) {
+    return Response.json({ error: 'hash_failed', detail: String(err) }, { status: 500 })
+  }
+  const nextRuntime = { ...currentRuntime, pinHash }
+  try {
+    await updateRuntimeState(env, session.subjectId, nextRuntime)
+  } catch (err) {
+    return Response.json({ error: 'update_failed', detail: String(err) }, { status: 500 })
+  }
+  return okWithRuntime(env, session.subjectId)
 }
 
 async function verifyPin(request: Request, env: Env): Promise<Response> {
@@ -358,7 +381,7 @@ async function removePin(request: Request, env: Env): Promise<Response> {
   }
   await clearRateLimit(env, rateKey, 'pin')
   await updateRuntimeState(env, session.subjectId, { mode: 'parent', childModeEnabled: false })
-  return sessionResponse(request, env)
+  return Response.json({ ok: true })
 }
 
 async function enableChildMode(request: Request, env: Env): Promise<Response> {
@@ -368,18 +391,18 @@ async function enableChildMode(request: Request, env: Env): Promise<Response> {
   if (accountType !== 'verified' && accountType !== 'profile_manager') return Response.json({ error: 'child_mode_not_allowed' }, { status: 403 })
   if (!runtime.pinHash) return Response.json({ error: 'pin_required' }, { status: 409 })
   await updateRuntimeState(env, session.subjectId, { ...runtime, childModeEnabled: true })
-  return sessionResponse(request, env)
+  return okWithRuntime(env, session.subjectId)
 }
 
 async function enterChildMode(request: Request, env: Env): Promise<Response> {
   const session = await requireIdentitySession(request, env)
   if (!session) return Response.json({ error: 'invalid_session' }, { status: 401 })
   const { accountType, runtime } = await subjectContextForSubject(env, session.subjectId)
-  if (accountType === 'child_account') return sessionResponse(request, env)
+  if (accountType === 'child_account') return Response.json({ ok: true })
   if (accountType !== 'verified' && accountType !== 'profile_manager') return Response.json({ error: 'child_mode_not_allowed' }, { status: 403 })
   if (!runtime.pinHash || !runtime.childModeEnabled) return Response.json({ error: 'child_mode_not_enabled' }, { status: 409 })
   await updateRuntimeState(env, session.subjectId, { ...runtime, mode: 'child' })
-  return sessionResponse(request, env)
+  return okWithRuntime(env, session.subjectId)
 }
 
 async function enterParentMode(request: Request, env: Env): Promise<Response> {
@@ -401,7 +424,7 @@ async function enterParentMode(request: Request, env: Env): Promise<Response> {
     if (needsCredentialRehash(runtime.pinHash)) await updateRuntimeState(env, session.subjectId, { ...runtime, pinHash: await hashCredentialSecret(pin, env, 'pin') })
   }
   await updateRuntimeState(env, session.subjectId, { ...runtime, mode: 'parent' })
-  return sessionResponse(request, env)
+  return okWithRuntime(env, session.subjectId)
 }
 
 async function createManagedChild(request: Request, env: Env): Promise<Response> {
@@ -561,14 +584,17 @@ async function createDeletionRequest(request: Request, env: Env): Promise<Respon
     return Response.json({ error: 'forbidden' }, { status: 403 })
   }
 
-  // If PIN is configured, require a grant token for destructive scopes
-  if (runtime.pinHash && scope !== 'local-device' && !body.pinGrantToken) {
-    return Response.json({ error: 'pin_grant_required' }, { status: 403 })
+  // Account deletion is a PIN-gated step-up: when a PIN is configured, require a
+  // grant issued specifically for account_deletion (mirrors resetAccountData).
+  let pinGrantTokenHash: string | null = null
+  if (scope === 'account' && runtime.pinHash) {
+    if (!body.pinGrantToken) {
+      return Response.json({ error: 'pin_grant_required' }, { status: 403 })
+    }
+    const grant = await consumePinGrant(env, session.subjectId, String(body.pinGrantToken), 'account_deletion')
+    if (!grant.ok) return grant.response
+    pinGrantTokenHash = grant.tokenHash
   }
-  const pinGrantHash = runtime.pinHash && scope !== 'local-device'
-    ? await consumePinGrant(env, session.subjectId, String(body.pinGrantToken), 'account_deletion')
-    : null
-  if (pinGrantHash && !pinGrantHash.ok) return pinGrantHash.response
 
   if (scope === 'child_account') {
     if (!body.childAccountId) return Response.json({ error: 'child_account_id_required' }, { status: 400 })
@@ -583,7 +609,7 @@ async function createDeletionRequest(request: Request, env: Env): Promise<Respon
     'INSERT INTO identity_deletion_requests (id, subject_id, scope, status, child_account_id, pin_grant_token, created_at, updated_at, completed_at, metadata_json) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
   ).bind(
     requestId, session.subjectId, scope, 'requested',
-    body.childAccountId ?? null, pinGrantHash?.tokenHash ?? null,
+    body.childAccountId ?? null, pinGrantTokenHash,
     at, at, null, '{}'
   ).run()
 
@@ -811,6 +837,7 @@ async function getIdentityProfile(request: Request, env: Env): Promise<Response>
     profile: {
       displayName: typeof metadata.displayName === 'string' ? metadata.displayName : null,
       avatarUrl: typeof metadata.avatarUrl === 'string' ? metadata.avatarUrl : null,
+      favoriteColor: typeof metadata.favoriteColor === 'string' ? metadata.favoriteColor : null,
     }
   })
 }
@@ -819,13 +846,13 @@ async function updateIdentityProfile(request: Request, env: Env): Promise<Respon
   const session = await requireIdentitySession(request, env)
   if (!session) return Response.json({ error: 'invalid_session' }, { status: 401 })
   const raw = await request.json().catch(() => ({})) as Record<string, unknown>
-  // Accept both flat { displayName, avatarUrl } and Ankore-wrapped { profile: { ... } }
   const fields: Record<string, unknown> = (raw.profile && typeof raw.profile === 'object' ? raw.profile : raw) as Record<string, unknown>
   const row = await env.IDENTITY_DB.prepare('SELECT metadata_json FROM identity_subjects WHERE id = ? LIMIT 1')
     .bind(session.subjectId).first<{ metadata_json?: string }>()
   const metadata: Record<string, unknown> = parseJson(row?.metadata_json)
   if (typeof fields.displayName === 'string') metadata.displayName = fields.displayName.trim() || null
   if (typeof fields.avatarUrl === 'string') metadata.avatarUrl = fields.avatarUrl.trim() || null
+  if (typeof fields.favoriteColor === 'string') metadata.favoriteColor = fields.favoriteColor.trim() || null
   const now = new Date().toISOString()
   await env.IDENTITY_DB.prepare('UPDATE identity_subjects SET metadata_json = ?, updated_at = ? WHERE id = ?')
     .bind(JSON.stringify(metadata), now, session.subjectId).run()
@@ -833,6 +860,7 @@ async function updateIdentityProfile(request: Request, env: Env): Promise<Respon
     profile: {
       displayName: typeof metadata.displayName === 'string' ? metadata.displayName : null,
       avatarUrl: typeof metadata.avatarUrl === 'string' ? metadata.avatarUrl : null,
+      favoriteColor: typeof metadata.favoriteColor === 'string' ? metadata.favoriteColor : null,
     }
   })
 }
@@ -1150,7 +1178,19 @@ async function withTikoSessionContract(request: AnyRequest, env: Env, response: 
   const initialRoles = Array.isArray(body.roles) ? body.roles.map(String) : await activeRoles(env.IDENTITY_DB, String(body.subject.id)).catch(() => [])
   const roles = await activeRolesWithBootstrap(env, String(body.subject.id), initialRoles).catch(() => initialRoles)
   const accountType = deriveAccountType(body, roles)
-  const runtime = await deriveRuntime(env, String(body.subject.id), accountType)
+  let runtime = await deriveRuntime(env, String(body.subject.id), accountType)
+
+  // A fresh login (email verification / magic link) should always start in
+  // parent mode — reset any leftover child mode from a previous session.
+  const requestPath = new URL(request.url).pathname
+  const isFreshLogin = requestPath.includes('/email/verify') || requestPath.includes('/magic-links/verify')
+  if (isFreshLogin && runtime.mode === 'child') {
+    // OTP verification is stronger auth than PIN — reset to parent and
+    // clear the PIN so child mode setup starts fresh.
+    await updateRuntimeState(env, String(body.subject.id), { mode: 'parent', childModeEnabled: false })
+    runtime = { mode: 'parent', childModeEnabled: false, pinConfigured: false }
+  }
+
   const capabilities = deriveCapabilities(accountType, runtime, roles)
   const displayName = typeof body.managed?.displayName === 'string'
     ? body.managed.displayName

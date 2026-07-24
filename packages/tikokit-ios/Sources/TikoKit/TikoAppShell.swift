@@ -206,6 +206,7 @@ public struct TikoAppShell<Content: View, SettingsContent: View>: View {
     @State private var showingProfileMenu = false
     @State private var showingParentCodeEntry = false
     @State private var showingCreateParentCode = false
+    @State private var showingChildModeVerifyPrompt = false
     @State private var fetchedIconURL: URL? = nil
     @State private var fetchedAvatarURL: URL? = nil
     @State private var splashVisible = true
@@ -316,7 +317,22 @@ public struct TikoAppShell<Content: View, SettingsContent: View>: View {
         }
         .tikoAccountPopup(isPresented: $showingAccount, appName: appName, appColor: appColor, profilePrefs: profilePrefs, onIdentityChanged: {
             Task { @MainActor in
-                identityBundle = await rebootstrapIdentity()
+                let bundle = await refreshIdentityBundle()
+                identityBundle = bundle
+                let subjectId = bundle?.account?.subjectId ?? bundle?.subject.id
+                profilePrefs.load(for: subjectId)
+                // Fetch full profile (name, avatar, color) and restore locally
+                if let token = bundle?.accessToken {
+                    if let profile = try? await TikoIdentityClient().getProfile(accessToken: token) {
+                        if let name = profile.displayName, !name.isEmpty { userName = name }
+                        if let avatar = profile.avatarUrl, !avatar.isEmpty {
+                            profilePrefs.setAvatarURL(avatar)
+                        }
+                        if let color = profile.favoriteColor, !color.isEmpty {
+                            profilePrefs.setFavoriteColor(color)
+                        }
+                    }
+                }
                 fetchedAvatarURL = nil
                 await fetchAvatarIfNeeded()
             }
@@ -355,6 +371,43 @@ public struct TikoAppShell<Content: View, SettingsContent: View>: View {
                 onClose: { showingCreateParentCode = false }
             )
         }
+        .tikoPopup(isPresented: $showingChildModeVerifyPrompt) {
+            TikoPopupCard(
+                title: "Verify your email",
+                subtitle: "Child mode needs a verified email so you can recover your account if you forget your PIN.",
+                icon: "envelope.fill",
+                appColor: appColor,
+                onClose: { showingChildModeVerifyPrompt = false }
+            ) {
+                VStack(spacing: 14) {
+                    Button {
+                        showingChildModeVerifyPrompt = false
+                        Task { @MainActor in
+                            try? await Task.sleep(nanoseconds: 300_000_000)
+                            showingAccount = true
+                        }
+                    } label: {
+                        Text("Add email")
+                            .font(.system(size: 17, weight: .heavy, design: .rounded))
+                            .foregroundStyle(.white)
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 15)
+                            .background(appColor.palette.primary)
+                            .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
+                    }
+                    .buttonStyle(.plain)
+
+                    Button {
+                        showingChildModeVerifyPrompt = false
+                    } label: {
+                        Text("Not now")
+                            .font(.system(size: 15, weight: .heavy, design: .rounded))
+                            .foregroundStyle(.secondary)
+                    }
+                    .buttonStyle(.plain)
+                }
+            }
+        }
         .overlay {
             if splashVisible {
                 TikoSplashOverlay(appColor: appColor)
@@ -364,7 +417,13 @@ public struct TikoAppShell<Content: View, SettingsContent: View>: View {
             }
         }
         .onChange(of: profilePrefs.avatarURL) { _, newValue in
-            fetchedAvatarURL = URL(string: newValue)
+            Task {
+                if newValue.isEmpty {
+                    fetchedAvatarURL = nil
+                } else {
+                    fetchedAvatarURL = await MediaImageResolver.shared.resolve(newValue)
+                }
+            }
         }
         .task {
             await fetchIconIfNeeded()
@@ -423,22 +482,41 @@ public struct TikoAppShell<Content: View, SettingsContent: View>: View {
                 showingParentCodeEntry = true
                 return
             }
+            // Child mode requires a verified email so the account can be recovered
+            // if the parent forgets their PIN.
+            if storedBundle?.account?.emailVerified != true {
+                showingChildModeVerifyPrompt = true
+                return
+            }
             if storedBundle?.isPinConfigured == true {
-                guard let token = storedBundle?.accessToken else { return }
-                do {
-                    let client = TikoIdentityClient()
-                    var bundle = storedBundle!
-                    if !bundle.isChildModeEnabled {
-                        bundle = try await client.enableChildMode(accessToken: token)
-                        try TikoDeviceSessionStore().save(bundle.preservingSession(from: storedBundle!))
-                    }
-                    let childBundle = try await client.enterChildMode(accessToken: bundle.accessToken ?? token)
-                    let mergedChild = childBundle.preservingSession(from: storedBundle!)
-                    try TikoDeviceSessionStore().save(mergedChild)
-                    identityBundle = mergedChild
-                } catch {
-                    // Silent fail — stay in parent mode
+                guard let token = storedBundle?.accessToken else {
+                    showingCreateParentCode = true
+                    return
                 }
+                // PIN already set — just enable + enter child mode.
+                // Ignore decode errors (server returns { ok: true }).
+                let client = TikoIdentityClient()
+                do { _ = try await client.enableChildMode(accessToken: token) } catch TikoIdentityClientError.server(let statusCode, let body) {
+                    showingCreateParentCode = true
+                    return
+                } catch {}
+                do { _ = try await client.enterChildMode(accessToken: token) } catch TikoIdentityClientError.server(let statusCode, let body) {
+                    showingCreateParentCode = true
+                    return
+                } catch {}
+
+                // Construct child-mode bundle locally
+                let childBundle = TikoIdentityBundle(
+                    subject: storedBundle!.subject,
+                    device: storedBundle!.device,
+                    account: storedBundle!.account,
+                    session: storedBundle!.session,
+                    runtime: TikoRuntimeSummary(mode: .child, childModeEnabled: true, pinConfigured: true),
+                    capabilities: storedBundle!.capabilities,
+                    roles: storedBundle!.roles
+                )
+                try? TikoDeviceSessionStore().save(childBundle)
+                identityBundle = childBundle
             } else {
                 // No PIN yet — show create flow
                 showingCreateParentCode = true
@@ -474,8 +552,12 @@ public struct TikoAppShell<Content: View, SettingsContent: View>: View {
 
     private func syncAvatarFromProfile(accessToken: String) async {
         guard let profile = try? await TikoIdentityClient().getProfile(accessToken: accessToken),
-              let avatarUrl = profile.avatarUrl, !avatarUrl.isEmpty else { return }
-        profilePrefs.setAvatarURL(avatarUrl)
+              let avatarId = profile.avatarUrl, !avatarId.isEmpty else { return }
+        profilePrefs.setAvatarURL(avatarId)
+        // Pre-populate cache if we can resolve quickly
+        if let resolved = await MediaImageResolver.shared.resolve(avatarId) {
+            fetchedAvatarURL = resolved
+        }
     }
 
     private func fetchIconIfNeeded() async {
@@ -496,14 +578,36 @@ public struct TikoAppShell<Content: View, SettingsContent: View>: View {
     }
 
     private func fetchAvatarIfNeeded() async {
-        if !profilePrefs.avatarURL.isEmpty, let url = URL(string: profilePrefs.avatarURL) {
-            fetchedAvatarURL = url
+        if !profilePrefs.avatarURL.isEmpty {
+            // profilePrefs.avatarURL stores a media ID — resolve to URL for display
+            let resolved = await MediaImageResolver.shared.resolve(profilePrefs.avatarURL)
+            fetchedAvatarURL = resolved
             return
         }
-        if let url = await fetchMediaImage(urlString: "https://media.tikoapi.org/v1/media?type=image&limit=100", random: true) {
-            profilePrefs.setAvatarURL(url.absoluteString)
-            fetchedAvatarURL = url
+        // Pick a random avatar and store its media ID
+        if let mediaId = await fetchRandomMediaId() {
+            profilePrefs.setAvatarURL(mediaId)
+            // Sync to server profile
+            if let token = identityBundle?.accessToken {
+                try? await TikoIdentityClient().updateProfile(
+                    accessToken: token,
+                    patch: TikoIdentityProfile(avatarUrl: mediaId)
+                )
+            }
+            let resolved = await MediaImageResolver.shared.resolve(mediaId)
+            fetchedAvatarURL = resolved
         }
+    }
+
+    private func fetchRandomMediaId() async -> String? {
+        guard let url = URL(string: "https://media.tikoapi.org/v1/media?type=image&limit=100"),
+              let (data, response) = try? await URLSession.shared.data(from: url),
+              let http = response as? HTTPURLResponse, (200..<300).contains(http.statusCode),
+              let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
+              let items = json["data"] as? [[String: Any]],
+              !items.isEmpty else { return nil }
+        let item = items.randomElement()!
+        return item["id"] as? String
     }
 
     private func fetchMediaImage(urlString: String, random: Bool) async -> URL? {
@@ -565,13 +669,19 @@ private struct TikoSplashOverlay: View {
         appColor.palette.primary
             .overlay {
                 GeometryReader { geo in
-                    Image("TikoLogo")
-                        .resizable()
-                        .renderingMode(.template)
-                        .scaledToFit()
-                        .frame(width: geo.size.width * 0.3, height: geo.size.width * 0.3)
-                        .foregroundColor(.white.opacity(0.5))
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    // Try main bundle first (each app has TikoLogo in Assets.xcassets),
+                    // then TikoKit's SPM bundle as fallback.
+                    let logo = UIImage(named: "TikoLogo")
+                        ?? UIImage(named: "TikoLogo", in: .module, with: nil)
+                    if let logo {
+                        Image(uiImage: logo)
+                            .renderingMode(.template)
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: geo.size.width * 0.28, height: geo.size.width * 0.28)
+                            .foregroundColor(.white.opacity(0.88))
+                            .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    }
                 }
             }
     }

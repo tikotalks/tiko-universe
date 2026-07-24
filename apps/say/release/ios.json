@@ -1,0 +1,111 @@
+{
+  "app": "say",
+  "name": "Say",
+  "scheme": "TikoSay",
+  "project": "apps/say/ios/TikoSay.xcodeproj",
+  "iosDir": "apps/say/ios",
+  "bundleId": "mt.tiko.say",
+  "appleId": "",
+  "appStoreId": "",
+  "appStoreUrl": "",
+  "validation": {
+    "script": "apps/say/ios/scripts/validate-local.sh"
+  },
+  "screenshots": {
+    "outputDir": "/Users/silvandiepen/Projects/Tiko/apps/say",
+    "configuration": "Debug",
+    "eraseBeforeCapture": false,
+    "defaultWaitSeconds": 2,
+    "baseLaunchArgs": [
+      "--screenshot-mode"
+    ],
+    "statusBar": {
+      "time": "9:41",
+      "wifiBars": 3,
+      "cellularBars": 4,
+      "batteryState": "charged",
+      "batteryLevel": 100
+    },
+    "devices": [
+      {
+        "name": "iPhone 17 Pro Max",
+        "os": "26.2",
+        "displayType": "APP_IPHONE_67",
+        "createIfMissing": true
+      },
+      {
+        "name": "iPad Pro 13-inch (M5)",
+        "os": "26.2",
+        "displayType": "APP_IPAD_PRO_13",
+        "createIfMissing": true
+      }
+    ],
+    "locales": [
+      {
+        "id": "en-US",
+        "appLanguage": "en"
+      }
+    ],
+    "colorModes": [
+      {
+        "id": "light",
+        "userDefaults": {
+          "tiko.colorMode": "light"
+        }
+      },
+      {
+        "id": "dark",
+        "userDefaults": {
+          "tiko.colorMode": "dark"
+        }
+      }
+    ],
+    "scenarios": [
+      {
+        "id": "home-light",
+        "filename": "01-{deviceSlug}-home-en-light.png",
+        "launchArgs": ["--screenshot", "home"],
+        "locales": [{ "id": "en-US", "appLanguage": "en" }],
+        "colorModes": ["light"],
+        "waitSeconds": 2
+      },
+      {
+        "id": "home-dark",
+        "filename": "02-{deviceSlug}-home-en-dark.png",
+        "launchArgs": ["--screenshot", "home"],
+        "locales": [{ "id": "en-US", "appLanguage": "en" }],
+        "colorModes": ["dark"],
+        "waitSeconds": 2
+      },
+      {
+        "id": "practice-light",
+        "filename": "03-{deviceSlug}-practice-en-light.png",
+        "launchArgs": ["--screenshot", "practice"],
+        "locales": [{ "id": "en-US", "appLanguage": "en" }],
+        "colorModes": ["light"],
+        "waitSeconds": 3
+      },
+      {
+        "id": "practice-dark",
+        "filename": "04-{deviceSlug}-practice-en-dark.png",
+        "launchArgs": ["--screenshot", "practice"],
+        "locales": [{ "id": "en-US", "appLanguage": "en" }],
+        "colorModes": ["dark"],
+        "waitSeconds": 3
+      }
+    ]
+  },
+  "archive": {
+    "configuration": "Release",
+    "archivePath": "artifacts/archives/say/TikoSay.xcarchive",
+    "exportPath": "artifacts/archives/say/export",
+    "exportOptionsPlist": null,
+    "allowProvisioningUpdates": true
+  },
+  "upload": {
+    "ipaPath": "artifacts/archives/say/export/TikoSay.ipa",
+    "deliverDir": "artifacts/app-store/say",
+    "apiKeyEnv": "APP_STORE_CONNECT_KEY_ID",
+    "apiIssuerEnv": "APP_STORE_CONNECT_ISSUER_ID"
+  }
+}

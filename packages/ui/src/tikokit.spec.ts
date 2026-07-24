@@ -11,6 +11,7 @@ import {
   TikoOpenIconPicker,
   TikoPagedTileGrid,
   TikoSettingsPanel,
+  TikoSquareTile,
   TikoTileBoard,
   createTikoChoice,
   createTikoTtsClient,
@@ -459,6 +460,20 @@ describe('TikoKit component contract', () => {
     expect(wrapper.emitted('activate')).toEqual([[item]])
     expect(wrapper.emitted('select')).toEqual([[item]])
     expect(wrapper.emitted('edit')).toEqual([[item]])
+  })
+
+  it('marks square tiles with images for image-aware label sizing', () => {
+    const wrapper = mount(TikoSquareTile, {
+      props: {
+        title: 'Yes',
+        background: '#2f9e44',
+        imageSrc: 'https://example.test/yes.png',
+        labelSize: 'large',
+      },
+    })
+
+    expect(wrapper.get('.tiko-square-tile').classes()).toContain('tiko-square-tile--image')
+    expect(wrapper.get('.tiko-square-tile').classes()).toContain('tiko-square-tile--label-large')
   })
 
   it('toggles open-icon selections with accessible buttons', async () => {

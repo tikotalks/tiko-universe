@@ -1,0 +1,152 @@
+{
+  "app": "type",
+  "name": "Type",
+  "scheme": "TikoType",
+  "project": "apps/type/ios/TikoType.xcodeproj",
+  "iosDir": "apps/type/ios",
+  "bundleId": "mt.tiko.type",
+  "appleId": "",
+  "appStoreId": "",
+  "appStoreUrl": "",
+  "validation": {
+    "script": "apps/type/ios/scripts/validate-local.sh"
+  },
+  "screenshots": {
+    "outputDir": "/Users/silvandiepen/Projects/Tiko/apps/type",
+    "configuration": "Debug",
+    "eraseBeforeCapture": false,
+    "defaultWaitSeconds": 2,
+    "baseLaunchArgs": [
+      "--screenshot-mode"
+    ],
+    "statusBar": {
+      "time": "9:41",
+      "wifiBars": 3,
+      "cellularBars": 4,
+      "batteryState": "charged",
+      "batteryLevel": 100
+    },
+    "devices": [
+      {
+        "name": "iPhone 17 Pro Max",
+        "os": "26.2",
+        "displayType": "APP_IPHONE_67",
+        "createIfMissing": true
+      },
+      {
+        "name": "iPad Pro 13-inch (M5)",
+        "os": "26.2",
+        "displayType": "APP_IPAD_PRO_13",
+        "createIfMissing": true
+      }
+    ],
+    "locales": [
+      {
+        "id": "en-US",
+        "appLanguage": "en"
+      }
+    ],
+    "colorModes": [
+      {
+        "id": "light",
+        "userDefaults": {
+          "tiko.colorMode": "light"
+        }
+      },
+      {
+        "id": "dark",
+        "userDefaults": {
+          "tiko.colorMode": "dark"
+        }
+      }
+    ],
+    "scenarios": [
+      {
+        "id": "keyboard-light",
+        "filename": "01-{deviceSlug}-keyboard-en-light.png",
+        "launchArgs": [
+          "--screenshot",
+          "keyboard"
+        ],
+        "locales": [
+          {
+            "id": "en-US",
+            "appLanguage": "en"
+          }
+        ],
+        "colorModes": [
+          "light"
+        ],
+        "waitSeconds": 2
+      },
+      {
+        "id": "keyboard-dark",
+        "filename": "02-{deviceSlug}-keyboard-en-dark.png",
+        "launchArgs": [
+          "--screenshot",
+          "keyboard"
+        ],
+        "locales": [
+          {
+            "id": "en-US",
+            "appLanguage": "en"
+          }
+        ],
+        "colorModes": [
+          "dark"
+        ],
+        "waitSeconds": 2
+      },
+      {
+        "id": "sentence-light",
+        "filename": "03-{deviceSlug}-sentence-en-light.png",
+        "launchArgs": [
+          "--screenshot",
+          "sentence"
+        ],
+        "locales": [
+          {
+            "id": "en-US",
+            "appLanguage": "en"
+          }
+        ],
+        "colorModes": [
+          "light"
+        ],
+        "waitSeconds": 2
+      },
+      {
+        "id": "settings-light",
+        "filename": "04-{deviceSlug}-settings-en-light.png",
+        "launchArgs": [
+          "--screenshot",
+          "settings"
+        ],
+        "locales": [
+          {
+            "id": "en-US",
+            "appLanguage": "en"
+          }
+        ],
+        "colorModes": [
+          "light"
+        ],
+        "waitSeconds": 3
+      }
+    ],
+    "scenarioBudgetPerDevice": 10
+  },
+  "archive": {
+    "configuration": "Release",
+    "archivePath": "artifacts/archives/type/TikoType.xcarchive",
+    "exportPath": "artifacts/archives/type/export",
+    "exportOptionsPlist": null,
+    "allowProvisioningUpdates": true
+  },
+  "upload": {
+    "ipaPath": "artifacts/archives/type/export/TikoType.ipa",
+    "deliverDir": "artifacts/app-store/type",
+    "apiKeyEnv": "APP_STORE_CONNECT_KEY_ID",
+    "apiIssuerEnv": "APP_STORE_CONNECT_ISSUER_ID"
+  }
+}

@@ -1,0 +1,49 @@
+name: Release Validate
+
+# Fast gate on PRs / pushes touching iOS: verifies every app's XcodeGen project
+# generates, versions come from build settings (not Info.plist literals), and the
+# encryption-exemption key is present. Full simulator builds run in ios-ci.yml
+# and the per-app `release:validate` (local); this keeps the gate fast.
+
+on:
+  pull_request:
+    paths:
+      - 'apps/*/ios/**'
+      - 'packages/tikokit-ios/**'
+      - 'release.config.json'
+      - 'apps/*/release/**'
+      - '.github/workflows/release-validate.yml'
+  push:
+    branches: [development, main]
+    paths:
+      - 'apps/*/ios/**'
+
+jobs:
+  ios-config:
+    name: iOS project config
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install xcodegen
+        run: brew install xcodegen
+
+      - name: Generate & sanity-check every iOS app
+        run: |
+          set -euo pipefail
+          APPS="yes-no cards talk radio timer type say"
+          for app in $APPS; do
+            echo "::group::$app"
+            ( cd "apps/$app/ios" && xcodegen generate >/dev/null )
+            grep -q 'MARKETING_VERSION:' "apps/$app/ios/Project.yml" \
+              || { echo "::error::$app Project.yml missing MARKETING_VERSION"; exit 1; }
+            grep -A1 'CFBundleShortVersionString' "apps/$app/ios/Sources/Info.plist" | grep -q '\$(MARKETING_VERSION)' \
+              || { echo "::error::$app Info.plist must use \$(MARKETING_VERSION)"; exit 1; }
+            grep -A1 'CFBundleVersion' "apps/$app/ios/Sources/Info.plist" | grep -q '\$(CURRENT_PROJECT_VERSION)' \
+              || { echo "::error::$app Info.plist must use \$(CURRENT_PROJECT_VERSION)"; exit 1; }
+            grep -q 'ITSAppUsesNonExemptEncryption' "apps/$app/ios/Sources/Info.plist" \
+              || { echo "::error::$app Info.plist missing ITSAppUsesNonExemptEncryption"; exit 1; }
+            [ -f "apps/$app/release/ios.json" ] \
+              || { echo "::error::$app missing release/ios.json"; exit 1; }
+            echo "::endgroup::"
+          done

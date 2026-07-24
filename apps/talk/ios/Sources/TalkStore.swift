@@ -95,6 +95,13 @@ final class TalkStore {
         }
     }
 
+    /// Seeds the deterministic offline starter board with no network access, so
+    /// screenshot capture and UI tests get a populated, stable board without a
+    /// backend. Mirrors the offline-fallback scene the app already degrades to.
+    func loadOfflineFallbackForCapture() {
+        applyStartResponse(TalkOfflineFallback.startResponse, fallback: true)
+    }
+
     func addWord(_ word: TalkWordTile) async {
         sentenceWords.append(word)
         await refreshSuggestions()

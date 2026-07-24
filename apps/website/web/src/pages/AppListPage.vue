@@ -28,7 +28,7 @@ import CtaBanner from '../components/sections/CtaBanner.vue'
     <PageSection
       eyebrow="On the way"
       title="More tiny apps are coming."
-      intro="Type, Cards, Sequence, and Timer are built around the same child-first contracts as the apps above. Each one opens fast and does one thing only."
+      intro="Cards, Sequence, and Timer are built around the same child-first contracts as the apps above. Each one opens fast and does one thing only."
       align="center"
     >
       <CtaBanner

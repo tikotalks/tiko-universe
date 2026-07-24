@@ -1,0 +1,152 @@
+{
+  "app": "radio",
+  "name": "Radio",
+  "scheme": "TikoRadio",
+  "project": "apps/radio/ios/TikoRadio.xcodeproj",
+  "iosDir": "apps/radio/ios",
+  "bundleId": "mt.tiko.radio",
+  "appleId": "",
+  "appStoreId": "",
+  "appStoreUrl": "",
+  "validation": {
+    "script": "apps/radio/ios/scripts/validate-local.sh"
+  },
+  "screenshots": {
+    "outputDir": "/Users/silvandiepen/Projects/Tiko/apps/radio",
+    "configuration": "Debug",
+    "eraseBeforeCapture": false,
+    "defaultWaitSeconds": 2,
+    "baseLaunchArgs": [
+      "--screenshot-mode"
+    ],
+    "statusBar": {
+      "time": "9:41",
+      "wifiBars": 3,
+      "cellularBars": 4,
+      "batteryState": "charged",
+      "batteryLevel": 100
+    },
+    "devices": [
+      {
+        "name": "iPhone 17 Pro Max",
+        "os": "26.2",
+        "displayType": "APP_IPHONE_67",
+        "createIfMissing": true
+      },
+      {
+        "name": "iPad Pro 13-inch (M5)",
+        "os": "26.2",
+        "displayType": "APP_IPAD_PRO_13",
+        "createIfMissing": true
+      }
+    ],
+    "locales": [
+      {
+        "id": "en-US",
+        "appLanguage": "en"
+      }
+    ],
+    "colorModes": [
+      {
+        "id": "light",
+        "userDefaults": {
+          "tiko.colorMode": "light"
+        }
+      },
+      {
+        "id": "dark",
+        "userDefaults": {
+          "tiko.colorMode": "dark"
+        }
+      }
+    ],
+    "scenarios": [
+      {
+        "id": "library-light",
+        "filename": "01-{deviceSlug}-library-en-light.png",
+        "launchArgs": [
+          "--screenshot",
+          "library"
+        ],
+        "locales": [
+          {
+            "id": "en-US",
+            "appLanguage": "en"
+          }
+        ],
+        "colorModes": [
+          "light"
+        ],
+        "waitSeconds": 2
+      },
+      {
+        "id": "library-dark",
+        "filename": "02-{deviceSlug}-library-en-dark.png",
+        "launchArgs": [
+          "--screenshot",
+          "library"
+        ],
+        "locales": [
+          {
+            "id": "en-US",
+            "appLanguage": "en"
+          }
+        ],
+        "colorModes": [
+          "dark"
+        ],
+        "waitSeconds": 2
+      },
+      {
+        "id": "now-playing-light",
+        "filename": "03-{deviceSlug}-playing-en-light.png",
+        "launchArgs": [
+          "--screenshot",
+          "playing"
+        ],
+        "locales": [
+          {
+            "id": "en-US",
+            "appLanguage": "en"
+          }
+        ],
+        "colorModes": [
+          "light"
+        ],
+        "waitSeconds": 2
+      },
+      {
+        "id": "settings-light",
+        "filename": "04-{deviceSlug}-settings-en-light.png",
+        "launchArgs": [
+          "--screenshot",
+          "settings"
+        ],
+        "locales": [
+          {
+            "id": "en-US",
+            "appLanguage": "en"
+          }
+        ],
+        "colorModes": [
+          "light"
+        ],
+        "waitSeconds": 3
+      }
+    ],
+    "scenarioBudgetPerDevice": 10
+  },
+  "archive": {
+    "configuration": "Release",
+    "archivePath": "artifacts/archives/radio/TikoRadio.xcarchive",
+    "exportPath": "artifacts/archives/radio/export",
+    "exportOptionsPlist": null,
+    "allowProvisioningUpdates": true
+  },
+  "upload": {
+    "ipaPath": "artifacts/archives/radio/export/TikoRadio.ipa",
+    "deliverDir": "artifacts/app-store/radio",
+    "apiKeyEnv": "APP_STORE_CONNECT_KEY_ID",
+    "apiIssuerEnv": "APP_STORE_CONNECT_ISSUER_ID"
+  }
+}

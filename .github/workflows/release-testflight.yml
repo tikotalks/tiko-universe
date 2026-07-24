@@ -1,0 +1,115 @@
+name: Release TestFlight
+
+# Manually archive and upload one or all Tiko iOS apps to TestFlight.
+# Destructive (writes to App Store Connect), so it requires the literal confirm
+# string and the App Store Connect + signing secrets. One app per matrix slot,
+# no parallelism, so concurrent uploads can't collide.
+
+on:
+  workflow_dispatch:
+    inputs:
+      app:
+        description: 'App slug (yes-no, cards, talk, radio, timer, type) or all'
+        required: true
+        default: 'all'
+      confirm:
+        description: 'Type UPLOAD_TESTFLIGHT to confirm'
+        required: true
+        default: ''
+
+concurrency:
+  group: release-testflight-${{ github.ref }}-${{ inputs.app }}
+  cancel-in-progress: false
+
+jobs:
+  resolve:
+    name: Resolve apps
+    runs-on: ubuntu-latest
+    outputs:
+      apps: ${{ steps.set.outputs.apps }}
+    steps:
+      - id: set
+        run: |
+          if [ "${{ inputs.confirm }}" != "UPLOAD_TESTFLIGHT" ]; then
+            echo "::error::confirm must be the literal string UPLOAD_TESTFLIGHT"
+            exit 1
+          fi
+          APP="${{ inputs.app }}"
+          if [ "$APP" = "all" ]; then
+            echo 'apps=["yes-no","cards","talk","radio","timer","type"]' >> "$GITHUB_OUTPUT"
+          else
+            echo "apps=[\"$APP\"]" >> "$GITHUB_OUTPUT"
+          fi
+
+  upload:
+    needs: resolve
+    name: ${{ matrix.app }} → TestFlight
+    runs-on: macos-15
+    fail-fast: false
+    max-parallel: 1
+    strategy:
+      matrix:
+        app: ${{ fromJSON(needs.resolve.outputs.apps) }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Select Xcode
+        run: |
+          sudo xcode-select -s /Applications/Xcode.app/Contents/Developer
+          xcodebuild -version
+
+      - name: Install xcodegen
+        run: brew install xcodegen
+
+      - name: Generate app config + Xcode project
+        run: |
+          npm ci
+          TIKO_APP_CONFIG_STRICT=1 node tools/generate-app-configs.mjs
+          ( cd "apps/${{ matrix.app }}/ios" && xcodegen generate )
+
+      - name: Import signing certificate
+        env:
+          IOS_CERTIFICATE_BASE64: ${{ secrets.IOS_CERTIFICATE_BASE64 }}
+          IOS_CERTIFICATE_PASSWORD: ${{ secrets.IOS_CERTIFICATE_PASSWORD }}
+        run: |
+          set -euo pipefail
+          KEYCHAIN="$RUNNER_TEMP/app-signing.keychain-db"
+          security create-keychain -p actions "$KEYCHAIN"
+          security set-keychain-settings -lut 21600 "$KEYCHAIN"
+          echo "$IOS_CERTIFICATE_BASE64" | base64 --decode > "$RUNNER_TEMP/cert.p12"
+          security import "$RUNNER_TEMP/cert.p12" -P "$IOS_CERTIFICATE_PASSWORD" -A -t cert -f pkcs12 -k "$KEYCHAIN"
+          security set-key-partition-list -S apple-tool:,apple: -s -k actions "$KEYCHAIN"
+          security list-keychain -d user -s "$KEYCHAIN"
+
+      - name: Write App Store Connect API key
+        env:
+          APP_STORE_CONNECT_KEY_ID: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
+          APP_STORE_CONNECT_API_KEY: ${{ secrets.APP_STORE_CONNECT_API_KEY }}
+        run: |
+          set -euo pipefail
+          mkdir -p "$HOME/.appstoreconnect/private_keys"
+          printf '%s' "$APP_STORE_CONNECT_API_KEY" | base64 --decode \
+            > "$HOME/.appstoreconnect/private_keys/AuthKey_${APP_STORE_CONNECT_KEY_ID}.p8"
+          chmod 600 "$HOME/.appstoreconnect/private_keys/AuthKey_${APP_STORE_CONNECT_KEY_ID}.p8"
+
+      - name: Archive + export IPA
+        env:
+          APP_STORE_CONNECT_KEY_ID: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
+          APP_STORE_CONNECT_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+        run: |
+          npx --yes --package @sil/app-release app-release \
+            --config "apps/${{ matrix.app }}/release/ios.json" --mode archive
+
+      - name: Upload to TestFlight
+        env:
+          APP_STORE_CONNECT_KEY_ID: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
+          APP_STORE_CONNECT_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
+        run: |
+          npx --yes --package @sil/app-release app-release \
+            --config "apps/${{ matrix.app }}/release/ios.json" --mode upload-build

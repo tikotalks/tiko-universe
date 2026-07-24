@@ -42,6 +42,15 @@ final class CardsStore: ObservableObject {
         }
     }
 
+    /// Loads the built-in offline default collections synchronously, without any
+    /// network or session dependency. Used for deterministic UI-test / screenshot
+    /// launches so the card grid is populated even with no connectivity.
+    func loadOfflineDefaults() {
+        let localCollections = loadLocalUserCollections()
+        collections = mergeRemoteCollections(defaultCardCollections, withLocalUserCollections: localCollections)
+            .sorted { $0.order < $1.order }
+    }
+
     func hydrateRootThumbnails() async {
         for collection in collections {
             guard collectionThumbnails[collection.id] == nil else { continue }

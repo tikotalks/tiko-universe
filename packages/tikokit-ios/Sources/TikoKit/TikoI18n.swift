@@ -11,6 +11,7 @@ public enum TikoAppKey: String, Sendable {
     case cards = "cards"
     case sequence = "sequence"
     case todo = "todo"
+    case say = "say"
 }
 
 // MARK: - TikoI18n
@@ -125,6 +126,7 @@ enum TikoLocalTranslations {
         case .type:     return typeBundles
         case .sequence: return sequenceBundles
         case .todo:     return todoBundles
+        case .say:      return sayBundles
         }
     }
 
@@ -427,6 +429,7 @@ enum TikoLocalTranslations {
         "yesNo.settings.answerStyle": "Answer style",
         "yesNo.settings.answerTiles": "Answer tiles",
         "yesNo.settings.answerTilesDefault": "Default",
+        "yesNo.settings.labelSize": "Label size",
         "yesNo.question.empty": "No questions yet",
         "yesNo.question.hint": "Questions appear here after you ask them with Yes or No.",
         "yesNo.history.popup.title": "Question history",
@@ -483,6 +486,7 @@ enum TikoLocalTranslations {
         "yesNo.settings.answerStyle": "Antwoordstijl",
         "yesNo.settings.answerTiles": "Antwoordtegels",
         "yesNo.settings.answerTilesDefault": "Standaard",
+        "yesNo.settings.labelSize": "Labelgrootte",
         "yesNo.question.empty": "Nog geen vragen",
         "yesNo.question.hint": "Vragen verschijnen hier nadat je ze stelt.",
         "yesNo.history.popup.title": "Vraaggeschiedenis",
@@ -539,6 +543,7 @@ enum TikoLocalTranslations {
         "yesNo.settings.answerStyle": "Style de réponse",
         "yesNo.settings.answerTiles": "Tuiles de réponse",
         "yesNo.settings.answerTilesDefault": "Par défaut",
+        "yesNo.settings.labelSize": "Taille des étiquettes",
         "yesNo.question.empty": "Pas encore de questions",
         "yesNo.question.hint": "Les questions apparaissent ici après avoir répondu.",
         "yesNo.history.popup.title": "Historique des questions",
@@ -595,6 +600,7 @@ enum TikoLocalTranslations {
         "yesNo.settings.answerStyle": "Estilo de respuesta",
         "yesNo.settings.answerTiles": "Tarjetas de respuesta",
         "yesNo.settings.answerTilesDefault": "Predeterminado",
+        "yesNo.settings.labelSize": "Tamaño de etiqueta",
         "yesNo.question.empty": "Aún no hay preguntas",
         "yesNo.question.hint": "Las preguntas aparecerán aquí después de responder.",
         "yesNo.history.popup.title": "Historial de preguntas",
@@ -651,6 +657,7 @@ enum TikoLocalTranslations {
         "yesNo.settings.answerStyle": "Antwortstil",
         "yesNo.settings.answerTiles": "Antwortkacheln",
         "yesNo.settings.answerTilesDefault": "Standard",
+        "yesNo.settings.labelSize": "Beschriftungsgröße",
         "yesNo.question.empty": "Noch keine Fragen",
         "yesNo.question.hint": "Fragen erscheinen hier nach dem Antworten.",
         "yesNo.history.popup.title": "Fragenverlauf",
@@ -708,6 +715,7 @@ enum TikoLocalTranslations {
         "yesNo.settings.answerStyle": "Stil tar-risposti",
         "yesNo.settings.answerTiles": "Madum tar-risposti",
         "yesNo.settings.answerTilesDefault": "Default",
+        "yesNo.settings.labelSize": "Daqs tat-tikketta",
         "yesNo.tileEditor.title": "Madum tar-risposti",
         "yesNo.tileEditor.subtitle": "Agħżel ir-risposti murija lit-tifel jew tifla.",
         "yesNo.tileEditor.empty": "Qed jintużaw ir-risposti default Iva u Le.",

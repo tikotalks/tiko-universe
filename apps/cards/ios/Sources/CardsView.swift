@@ -293,6 +293,13 @@ struct CardsView: View {
             }
             .animation(showAnimations ? .spring(response: 0.38, dampingFraction: 0.85) : .linear(duration: 0), value: currentCollection?.id)
             .task {
+                if TikoScreenshotMode.isActive {
+                    // Deterministic, offline launch for UI tests / screenshots:
+                    // populate the grid from the built-in defaults with no network.
+                    store.loadOfflineDefaults()
+                    syncCollectionsFromStore()
+                    return
+                }
                 await store.load(languageCode: languageCode)
                 syncCollectionsFromStore()
                 await store.hydrateRootThumbnails()
@@ -575,7 +582,10 @@ private struct SubCollectionTile: View {
                 .strokeBorder(.white.opacity(0.15), lineWidth: 1)
         }
         .contentShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
+        .accessibilityElement(children: .ignore)
         .accessibilityLabel(collection.title)
+        .accessibilityIdentifier(collection.title)
+        .accessibilityAddTraits(.isButton)
     }
 }
 
@@ -1085,6 +1095,7 @@ private struct CommunicationCardTile: View {
         }
         .buttonStyle(.plain)
         .accessibilityLabel(card.speech)
+        .accessibilityIdentifier(card.title)
     }
 }
 

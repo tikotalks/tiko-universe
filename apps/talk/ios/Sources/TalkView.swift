@@ -118,6 +118,11 @@ struct TalkView: View {
             }
             .overlay(alignment: .bottom) { searchControl }
             .task {
+                if TikoScreenshotMode.isActive {
+                    // Deterministic, offline board for screenshot capture / UI tests.
+                    store.loadOfflineFallbackForCapture()
+                    return
+                }
                 store.locale = languageCode
                 await store.load()
             }

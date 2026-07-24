@@ -169,7 +169,7 @@ onMounted(() => {
     font-weight: 600;
     color: var(--text-secondary);
     text-decoration: none;
-    transition: color 0.15s, background 0.15s;
+    transition: color 0.15s var(--ease-out), background 0.15s var(--ease-out);
     white-space: nowrap;
 
     &:hover {

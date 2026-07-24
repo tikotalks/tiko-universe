@@ -24,3 +24,9 @@ packages/tikokit-ios/Package.resolved
 apps/ios/**/*.xcodeproj/
 apps/android/**/.gradle/
 apps/android/**/build/
+
+# iOS release artifacts (screenshots, archives, videos, generated metadata)
+artifacts/
+
+# iOS build output (archives, .ipa, dSYMs)
+apps/*/ios/build/

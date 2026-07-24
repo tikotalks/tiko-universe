@@ -14,6 +14,8 @@ Tiko helps children communicate, learn, and practice through calm, immediate, ac
 4. Sequence
 5. Timer
 
+Exploratory and future app specs may live beside the active priorities when they define product boundaries early. Tiko Chess is documented as a future calm Chess learning app in `docs/apps/chess.md`; its shared-engine boundary is documented in `docs/adrs/2026-07-01-tiko-chess-and-mazzi-engine-boundary.md`.
+
 ## Repository status
 
 This repo is the future active home for Tiko platform work. `tiko-mono` remains the frozen reference implementation until each app/domain is intentionally migrated and verified.

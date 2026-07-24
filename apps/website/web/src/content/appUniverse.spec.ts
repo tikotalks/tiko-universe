@@ -27,7 +27,7 @@ describe('TikoTalks website app universe metadata', () => {
       hasPlatformNotes: app.platformNotes.length > 40
     }))).toEqual([
       { appName: 'Yes No', route: '/apps/yes-no', availability: 'available', hasPlatformNotes: true },
-      { appName: 'Type', route: '/apps/type', availability: 'planned', hasPlatformNotes: true },
+      { appName: 'Type', route: '/apps/type', availability: 'available', hasPlatformNotes: true },
       { appName: 'Cards', route: '/apps/cards', availability: 'planned', hasPlatformNotes: true },
       { appName: 'Sequence', route: '/apps/sequence', availability: 'planned', hasPlatformNotes: true },
       { appName: 'Timer', route: '/apps/timer', availability: 'planned', hasPlatformNotes: true },

@@ -69,6 +69,7 @@ public struct TikoSquareTile<Content: View>: View {
     public let isActive: Bool
     public let labelFont: Font
     public let content: () -> Content
+    @Environment(\.horizontalSizeClass) private var sizeClass
 
     public init(
         title: String,
@@ -88,16 +89,20 @@ public struct TikoSquareTile<Content: View>: View {
         self.content = content
     }
 
+    private var effectiveCornerRadius: CGFloat {
+        sizeClass == .regular ? max(cornerRadius, 36) : cornerRadius
+    }
+
     public var body: some View {
         ZStack {
-            RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
+            RoundedRectangle(cornerRadius: effectiveCornerRadius, style: .continuous)
                 .fill(background)
 
             // Image at 60% tile size, centre at 33% from top / 50% horizontal
             GeometryReader { geo in
                 content()
                     .frame(width: geo.size.width * 0.75, height: geo.size.width * 0.75)
-                    .clipShape(RoundedRectangle(cornerRadius: cornerRadius * 0.55, style: .continuous))
+                    .clipShape(RoundedRectangle(cornerRadius: effectiveCornerRadius * 0.55, style: .continuous))
                     .position(x: geo.size.width * 0.5, y: geo.size.height * 0.45)
             }
 
@@ -118,9 +123,9 @@ public struct TikoSquareTile<Content: View>: View {
             .padding(8)
         }
         .aspectRatio(1, contentMode: .fit)
-        .contentShape(RoundedRectangle(cornerRadius: cornerRadius, style: .continuous))
+        .contentShape(RoundedRectangle(cornerRadius: effectiveCornerRadius, style: .continuous))
         .overlay {
-            RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
+            RoundedRectangle(cornerRadius: effectiveCornerRadius, style: .continuous)
                 .stroke(isActive ? Color(hex: 0xff8a1f) : .white.opacity(0.28), lineWidth: isActive ? 5 : 1)
         }
         .shadow(color: .black.opacity(isActive ? 0.18 : 0.10), radius: isActive ? 13 : 8, x: 0, y: isActive ? 9 : 5)

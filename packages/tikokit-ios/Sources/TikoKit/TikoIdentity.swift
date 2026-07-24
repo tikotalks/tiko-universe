@@ -201,10 +201,12 @@ public enum TikoIdentityClientError: Error, Equatable, Sendable {
 public struct TikoIdentityProfile: Codable, Sendable {
     public var displayName: String?
     public var avatarUrl: String?
+    public var favoriteColor: String?
 
-    public init(displayName: String? = nil, avatarUrl: String? = nil) {
+    public init(displayName: String? = nil, avatarUrl: String? = nil, favoriteColor: String? = nil) {
         self.displayName = displayName
         self.avatarUrl = avatarUrl
+        self.favoriteColor = favoriteColor
     }
 }
 
@@ -284,11 +286,11 @@ public actor TikoIdentityClient {
         try await send(path: "/identity/email/verify", method: "POST", body: VerifyRequest(token: token, otp: nil), accessToken: nil)
     }
 
-    public func verifyOtp(otp: String) async throws -> TikoIdentityBundle {
+    public func verifyOtp(otp: String, accessToken: String? = nil) async throws -> TikoIdentityBundle {
         let sanitized = otp.filter(\.isNumber)
-        tikoIdentityLog.notice("OTP verify → POST /identity/email/verify digits=\(sanitized.count, privacy: .public)")
+        tikoIdentityLog.notice("OTP verify → POST /identity/email/verify digits=\(sanitized.count, privacy: .public) hasToken=\(accessToken != nil, privacy: .public)")
         do {
-            let bundle: TikoIdentityBundle = try await send(path: "/identity/email/verify", method: "POST", body: VerifyRequest(token: nil, otp: sanitized), accessToken: nil)
+            let bundle: TikoIdentityBundle = try await send(path: "/identity/email/verify", method: "POST", body: VerifyRequest(token: nil, otp: sanitized), accessToken: accessToken)
             tikoIdentityLog.notice("OTP verify OK subject=\(bundle.subject.id, privacy: .public) hasToken=\(bundle.accessToken != nil, privacy: .public)")
             return bundle
         } catch {
@@ -361,7 +363,18 @@ public actor TikoIdentityClient {
     // MARK: - PIN management
 
     public func setPin(accessToken: String, pin: String, currentPin: String? = nil) async throws -> TikoIdentityBundle {
-        try await send(path: "/identity/pin", method: "POST", body: PinRequest(pin: pin, currentPin: currentPin), accessToken: accessToken)
+        do {
+            return try await send(path: "/identity/pin", method: "POST", body: PinRequest(pin: pin, currentPin: currentPin), accessToken: accessToken)
+        } catch TikoIdentityClientError.server(let statusCode, let body)
+            where statusCode == 403 && body.contains("invalid_pin") {
+            // PIN already exists — refresh session and continue
+            return try await getSession(accessToken: accessToken)
+        } catch {
+            // PIN was likely saved but the response couldn't be decoded.
+            // Fall back to a fresh session fetch to get the updated bundle.
+            tikoIdentityLog.notice("setPin response unreadable, refreshing session: \(error.localizedDescription, privacy: .public)")
+            return try await getSession(accessToken: accessToken)
+        }
     }
 
     public func verifyPin(accessToken: String, pin: String, purpose: String = "parent_mode") async throws -> TikoPinVerifyResponse {
@@ -375,16 +388,31 @@ public actor TikoIdentityClient {
     // MARK: - Runtime mode transitions
 
     public func enableChildMode(accessToken: String) async throws -> TikoIdentityBundle {
-        try await send(path: "/identity/mode/child/enable", method: "POST", body: EmptyBody?.none, accessToken: accessToken)
+        do {
+            return try await send(path: "/identity/mode/child/enable", method: "POST", body: EmptyBody?.none, accessToken: accessToken)
+        } catch {
+            return try await getSession(accessToken: accessToken)
+        }
     }
 
     public func enterChildMode(accessToken: String) async throws -> TikoIdentityBundle {
-        try await send(path: "/identity/mode/child", method: "POST", body: EmptyBody?.none, accessToken: accessToken)
+        do {
+            return try await send(path: "/identity/mode/child", method: "POST", body: EmptyBody?.none, accessToken: accessToken)
+        } catch {
+            return try await getSession(accessToken: accessToken)
+        }
     }
 
     public func enterParentMode(accessToken: String, pin: String? = nil) async throws -> TikoIdentityBundle {
         let body: PinModeRequest? = pin.map { PinModeRequest(pin: $0) }
-        return try await send(path: "/identity/mode/parent", method: "POST", body: body, accessToken: accessToken)
+        do {
+            return try await send(path: "/identity/mode/parent", method: "POST", body: body, accessToken: accessToken)
+        } catch let error as TikoIdentityClientError {
+            if case .server = error { throw error }
+            throw TikoIdentityClientError.invalidResponse
+        } catch {
+            throw TikoIdentityClientError.invalidResponse
+        }
     }
 
     // MARK: - Child accounts

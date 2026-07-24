@@ -1,0 +1,98 @@
+name: Release Metadata
+
+# Sync App Store listing metadata (and optionally screenshots) for one or all
+# apps via fastlane deliver. `export` mode renders the repo-owned JSON into a
+# Fastlane Deliver folder and uploads it as an artifact (no ASC writes).
+# `upload` mode pushes metadata to App Store Connect and needs the confirm guard.
+
+on:
+  workflow_dispatch:
+    inputs:
+      app:
+        description: 'App slug or all'
+        required: true
+        default: 'all'
+      mode:
+        description: 'export (dry) or upload (push to App Store Connect)'
+        required: true
+        default: 'export'
+      confirm:
+        description: 'Required only for upload — type SYNC_METADATA'
+        required: false
+        default: ''
+
+concurrency:
+  group: release-metadata-${{ github.ref }}-${{ inputs.app }}
+  cancel-in-progress: false
+
+jobs:
+  resolve:
+    name: Resolve apps
+    runs-on: ubuntu-latest
+    outputs:
+      apps: ${{ steps.set.outputs.apps }}
+    steps:
+      - id: set
+        run: |
+          APP="${{ inputs.app }}"
+          if [ "${{ inputs.mode }}" = "upload" ] && [ "${{ inputs.confirm }}" != "SYNC_METADATA" ]; then
+            echo "::error::upload mode requires confirm = SYNC_METADATA"
+            exit 1
+          fi
+          if [ "$APP" = "all" ]; then
+            echo 'apps=["yes-no","cards","talk","radio","timer","type"]' >> "$GITHUB_OUTPUT"
+          else
+            echo "apps=[\"$APP\"]" >> "$GITHUB_OUTPUT"
+          fi
+
+  sync:
+    needs: resolve
+    name: ${{ matrix.app }} metadata (${{ inputs.mode }})
+    runs-on: macos-15
+    strategy:
+      matrix:
+        app: ${{ fromJSON(needs.resolve.outputs.apps) }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Prepare metadata (Fastlane Deliver layout)
+        run: |
+          npx --yes --package @sil/app-release app-release \
+            --config "apps/${{ matrix.app }}/release/ios.json" --mode prepare-metadata
+
+      - name: Upload metadata artifact
+        if: ${{ inputs.mode == 'export' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-store-metadata-${{ matrix.app }}
+          path: artifacts/app-store/${{ matrix.app }}
+          if-no-files-found: error
+
+      - name: Install fastlane
+        if: ${{ inputs.mode == 'upload' }}
+        run: brew install fastlane
+
+      - name: Write App Store Connect API key
+        if: ${{ inputs.mode == 'upload' }}
+        env:
+          APP_STORE_CONNECT_KEY_ID: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
+          APP_STORE_CONNECT_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
+          APP_STORE_CONNECT_API_KEY: ${{ secrets.APP_STORE_CONNECT_API_KEY }}
+        run: |
+          set -euo pipefail
+          KEY_PEM="$(printf '%s' "$APP_STORE_CONNECT_API_KEY" | base64 --decode)"
+          cat > "$RUNNER_TEMP/app-store-connect-api-key.json" <<EOF
+          {"key_id":"$APP_STORE_CONNECT_KEY_ID","issuer_id":"$APP_STORE_CONNECT_ISSUER_ID","key":$(printf '%s' "$KEY_PEM" | python3 -c 'import json,sys; print(json.dumps(sys.stdin.read()))'),"duration":1200,"in_house":false}
+          EOF
+          echo "FASTLANE_API_KEY_PATH=$RUNNER_TEMP/app-store-connect-api-key.json" >> "$GITHUB_ENV"
+
+      - name: Push metadata to App Store Connect
+        if: ${{ inputs.mode == 'upload' }}
+        run: |
+          npx --yes --package @sil/app-release app-release \
+            --config "apps/${{ matrix.app }}/release/ios.json" --mode upload-metadata

@@ -7,15 +7,25 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		2CE7350DE29638F01E387B6B /* TimerEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6BE423B7BCB42CE6A1439E6 /* TimerEngine.swift */; };
+		31FE2CECD46AF0855495F372 /* TikoTimerUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45C478B85A81C7918B32AA20 /* TikoTimerUITests.swift */; };
 		323134D99698474D059938C1 /* TimerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48078D80322BE65093677655 /* TimerView.swift */; };
 		5556B64C5B9B337F370A22DD /* TikoKit in Frameworks */ = {isa = PBXBuildFile; productRef = 7E98E3E3020F601127CD4DE8 /* TikoKit */; };
 		706593CA96493CC971FD35FF /* TikoTimerApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CA11BAD580A7FF1BA151E12 /* TikoTimerApp.swift */; };
 		73A60CE65E67CE28698D1A55 /* TikoTimerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A42A62D5D1C08136AE41EF3F /* TikoTimerTests.swift */; };
+		DEFC7DF1298208E4A113A4E9 /* TikoKit in Frameworks */ = {isa = PBXBuildFile; productRef = F90566CDB25E6005658995DD /* TikoKit */; };
 		DF4AD65A13BFA95429B1AC45 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8DD9428740D5FF24A90C0CBC /* Assets.xcassets */; };
 		F8D454E2ABEFDF8D878C86CC /* TimerAppConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57CC96EA50F45F53D8E9B3C0 /* TimerAppConfig.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		4DDA517F8D9C07A7A61C2829 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 8D3B07D6393B5F87C953DDFC /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 6FD9C811BB9FB0F3579318D4;
+			remoteInfo = TikoTimer;
+		};
 		EBE01100BDDCFA9E30793F26 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 8D3B07D6393B5F87C953DDFC /* Project object */;
@@ -27,18 +37,29 @@
 
 /* Begin PBXFileReference section */
 		3E455AE7E0B07A31A8DE0E67 /* tikokit-ios */ = {isa = PBXFileReference; lastKnownFileType = folder; name = "tikokit-ios"; path = "../../../packages/tikokit-ios"; sourceTree = SOURCE_ROOT; };
+		45C478B85A81C7918B32AA20 /* TikoTimerUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TikoTimerUITests.swift; sourceTree = "<group>"; };
 		48078D80322BE65093677655 /* TimerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimerView.swift; sourceTree = "<group>"; };
 		4CA11BAD580A7FF1BA151E12 /* TikoTimerApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TikoTimerApp.swift; sourceTree = "<group>"; };
 		57CC96EA50F45F53D8E9B3C0 /* TimerAppConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimerAppConfig.swift; sourceTree = "<group>"; };
+		7CC7E0CFFC8AA09B2CA6532A /* TikoTimerUITests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = TikoTimerUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		7E01878316543CE6EE05D643 /* TikoTimerTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = TikoTimerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		7E120971C8392093444885A9 /* TikoTimer.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = TikoTimer.entitlements; sourceTree = "<group>"; };
 		8DD9428740D5FF24A90C0CBC /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		966FBC3F7D18BDE3ABB2F850 /* TikoTimer.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = TikoTimer.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9D193448D237A305A42B23E8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		A42A62D5D1C08136AE41EF3F /* TikoTimerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TikoTimerTests.swift; sourceTree = "<group>"; };
+		B6BE423B7BCB42CE6A1439E6 /* TimerEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimerEngine.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		611CD664DCDD247474501781 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				DEFC7DF1298208E4A113A4E9 /* TikoKit in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		97D1BFCECB83D40670266CF3 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -58,6 +79,14 @@
 			name = Packages;
 			sourceTree = "<group>";
 		};
+		334BBE3D389F3A72B6C5FB65 /* UITests */ = {
+			isa = PBXGroup;
+			children = (
+				45C478B85A81C7918B32AA20 /* TikoTimerUITests.swift */,
+			);
+			path = UITests;
+			sourceTree = "<group>";
+		};
 		639FC610C8930DF5A821949B /* Tests */ = {
 			isa = PBXGroup;
 			children = (
@@ -71,6 +100,7 @@
 			children = (
 				966FBC3F7D18BDE3ABB2F850 /* TikoTimer.app */,
 				7E01878316543CE6EE05D643 /* TikoTimerTests.xctest */,
+				7CC7E0CFFC8AA09B2CA6532A /* TikoTimerUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -81,6 +111,7 @@
 				07C5E4480E954400C132DBF5 /* Packages */,
 				E7AB9D2EC625B19B8D50174A /* Sources */,
 				639FC610C8930DF5A821949B /* Tests */,
+				334BBE3D389F3A72B6C5FB65 /* UITests */,
 				9A878F05E376ED947F63A61B /* Products */,
 			);
 			sourceTree = "<group>";
@@ -93,6 +124,7 @@
 				7E120971C8392093444885A9 /* TikoTimer.entitlements */,
 				4CA11BAD580A7FF1BA151E12 /* TikoTimerApp.swift */,
 				57CC96EA50F45F53D8E9B3C0 /* TimerAppConfig.swift */,
+				B6BE423B7BCB42CE6A1439E6 /* TimerEngine.swift */,
 				48078D80322BE65093677655 /* TimerView.swift */,
 			);
 			path = Sources;
@@ -106,6 +138,7 @@
 			buildConfigurationList = E7BB26AA649428FC1EE8E17E /* Build configuration list for PBXNativeTarget "TikoTimerTests" */;
 			buildPhases = (
 				14AB77C8BB61EF35D108C878 /* Sources */,
+				611CD664DCDD247474501781 /* Frameworks */,
 			);
 			buildRules = (
 			);
@@ -114,6 +147,7 @@
 			);
 			name = TikoTimerTests;
 			packageProductDependencies = (
+				F90566CDB25E6005658995DD /* TikoKit */,
 			);
 			productName = TikoTimerTests;
 			productReference = 7E01878316543CE6EE05D643 /* TikoTimerTests.xctest */;
@@ -123,6 +157,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 654E01DA1F0F28A5A9BB78A8 /* Build configuration list for PBXNativeTarget "TikoTimer" */;
 			buildPhases = (
+				6DCD05D063CC7BA510A1CC8C /* Generate Tiko app config */,
 				D7650B9FACEDF70FEBEA6440 /* Sources */,
 				DBF23B2486B4CB5E7F1A3CF8 /* Resources */,
 				97D1BFCECB83D40670266CF3 /* Frameworks */,
@@ -139,6 +174,24 @@
 			productReference = 966FBC3F7D18BDE3ABB2F850 /* TikoTimer.app */;
 			productType = "com.apple.product-type.application";
 		};
+		95B3746F3F2B2A196A4684B3 /* TikoTimerUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 2A2F03167678DDBD5DC9467D /* Build configuration list for PBXNativeTarget "TikoTimerUITests" */;
+			buildPhases = (
+				60B85A16D18764EF8B4063FE /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				48DECCD06A0B71587B9C3EA5 /* PBXTargetDependency */,
+			);
+			name = TikoTimerUITests;
+			packageProductDependencies = (
+			);
+			productName = TikoTimerUITests;
+			productReference = 7CC7E0CFFC8AA09B2CA6532A /* TikoTimerUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -153,6 +206,10 @@
 					};
 					6FD9C811BB9FB0F3579318D4 = {
 						DevelopmentTeam = "";
+					};
+					95B3746F3F2B2A196A4684B3 = {
+						DevelopmentTeam = "";
+						TestTargetID = 6FD9C811BB9FB0F3579318D4;
 					};
 				};
 			};
@@ -175,6 +232,7 @@
 			targets = (
 				6FD9C811BB9FB0F3579318D4 /* TikoTimer */,
 				0F41108524EF8F6774AC86D4 /* TikoTimerTests */,
+				95B3746F3F2B2A196A4684B3 /* TikoTimerUITests */,
 			);
 		};
 /* End PBXProject section */
@@ -190,6 +248,28 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		6DCD05D063CC7BA510A1CC8C /* Generate Tiko app config */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Generate Tiko app config";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "set -euo pipefail\nREPO_ROOT=\"${SRCROOT}/../../..\"\nif ! command -v node >/dev/null 2>&1; then\n  echo \"error: node is required to generate Tiko app configs from admin before iOS build.\"\n  exit 1\nfi\nTIKO_APP_CONFIG_STRICT=1 node \"${REPO_ROOT}/tools/generate-app-configs.mjs\"\n";
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		14AB77C8BB61EF35D108C878 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
@@ -199,12 +279,21 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		60B85A16D18764EF8B4063FE /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				31FE2CECD46AF0855495F372 /* TikoTimerUITests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		D7650B9FACEDF70FEBEA6440 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 				706593CA96493CC971FD35FF /* TikoTimerApp.swift in Sources */,
 				F8D454E2ABEFDF8D878C86CC /* TimerAppConfig.swift in Sources */,
+				2CE7350DE29638F01E387B6B /* TimerEngine.swift in Sources */,
 				323134D99698474D059938C1 /* TimerView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -212,6 +301,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		48DECCD06A0B71587B9C3EA5 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 6FD9C811BB9FB0F3579318D4 /* TikoTimer */;
+			targetProxy = 4DDA517F8D9C07A7A61C2829 /* PBXContainerItemProxy */;
+		};
 		C16C0CF1D7898BF7A83B0B82 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 6FD9C811BB9FB0F3579318D4 /* TikoTimer */;
@@ -288,6 +382,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -306,11 +401,13 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = Sources/TikoTimer.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CURRENT_PROJECT_VERSION = 2;
 				INFOPLIST_FILE = Sources/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = mt.tiko.timer;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -374,17 +471,36 @@
 			};
 			name = Release;
 		};
+		B582D773C975A8F74D44BE61 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = mt.tiko.TikoTimerUITests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = TikoTimer;
+			};
+			name = Release;
+		};
 		C6B373AEE53953B8E9548089 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = Sources/TikoTimer.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CURRENT_PROJECT_VERSION = 2;
 				INFOPLIST_FILE = Sources/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = mt.tiko.timer;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -395,6 +511,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -407,9 +524,35 @@
 			};
 			name = Debug;
 		};
+		F785B2EAD7BB74BE760C1322 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = mt.tiko.TikoTimerUITests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = TikoTimer;
+			};
+			name = Debug;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		2A2F03167678DDBD5DC9467D /* Build configuration list for PBXNativeTarget "TikoTimerUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F785B2EAD7BB74BE760C1322 /* Debug */,
+				B582D773C975A8F74D44BE61 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
 		654E01DA1F0F28A5A9BB78A8 /* Build configuration list for PBXNativeTarget "TikoTimer" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -448,6 +591,10 @@
 
 /* Begin XCSwiftPackageProductDependency section */
 		7E98E3E3020F601127CD4DE8 /* TikoKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = TikoKit;
+		};
+		F90566CDB25E6005658995DD /* TikoKit */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = TikoKit;
 		};

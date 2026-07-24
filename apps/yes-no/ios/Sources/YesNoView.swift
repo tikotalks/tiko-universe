@@ -22,7 +22,7 @@ struct YesNoAnswerTile: Codable, Identifiable, Equatable {
             icon: .openIcon(icon ?? "ui/check-fat"),
             tone: .primary,
             color: color,
-            imageURL: yesNoImageURL(for: imageRef)
+            imageRef: imageRef
         )
     }
 
@@ -113,7 +113,7 @@ private let builtInAnswerTranslations: [String: [String: String]] = [
     "later": ["nl": "Later", "fr": "Plus tard", "es": "Más tarde", "mt": "Aktar tard", "de": "Später"],
 ]
 
-private func builtInAnswerTile(id: String, label: String, color: String, icon: String) -> YesNoAnswerTile {
+private func builtInAnswerTile(id: String, label: String, color: String, icon: String, imageRef: String? = nil) -> YesNoAnswerTile {
     let translations = builtInAnswerTranslations[id]
     return YesNoAnswerTile(
         id: id,
@@ -122,6 +122,7 @@ private func builtInAnswerTile(id: String, label: String, color: String, icon: S
         labelTranslations: translations,
         speechTranslations: translations,
         color: color,
+        imageRef: imageRef,
         icon: icon
     )
 }
@@ -134,8 +135,8 @@ private let builtInAnswerSets: [YesNoAnswerSet] = [
         color: TikoColors.green.name,
         order: 0,
         answers: [
-            builtInAnswerTile(id: "yes", label: "Yes", color: TikoColors.green.name, icon: "ui/check-fat"),
-            builtInAnswerTile(id: "no", label: "No", color: TikoColors.red.name, icon: "wayfinding/cross")
+            builtInAnswerTile(id: "yes", label: "Yes", color: TikoColors.green.name, icon: "ui/check-fat", imageRef: "c8bfb9e8-0427-4cd9-89e2-74e09d20b8ec"),
+            builtInAnswerTile(id: "no", label: "No", color: TikoColors.red.name, icon: "wayfinding/cross", imageRef: "c3c40f22-8968-413c-82d5-8cbd5bf57c55")
         ]
     ),
     YesNoAnswerSet(
@@ -212,6 +213,7 @@ struct YesNoView: View {
     @AppStorage("yesno.sentence") private var sentence = ""
     @AppStorage("yesno.speechEnabled") private var speechEnabled = true
     @AppStorage("yesno.choiceStyle") private var choiceStyleRawValue = TikoChoiceStyle.tiles.rawValue
+    @AppStorage("yesno.labelSizeIndex") private var labelSizeIndex = 2
     @AppStorage("tiko.colorMode") private var colorModeRawValue = TikoColorMode.system.rawValue
     @AppStorage("tiko.language") private var languageCode = "en"
     @AppStorage("yesno.questionHistory") private var historyData = Data()
@@ -294,10 +296,18 @@ struct YesNoView: View {
         TikoChoiceStyle(rawValue: choiceStyleRawValue) ?? .tiles
     }
 
+    private var labelFont: Font {
+        switch labelSizeIndex {
+        case 0: return Font.system(.caption, design: .rounded).weight(.heavy)
+        case 1: return Font.system(.title3, design: .rounded).weight(.heavy)
+        default: return Font.system(.title2, design: .rounded).weight(.heavy)
+        }
+    }
+
     private var hardcodedChoices: [TikoAnswerChoice] {
         [
-            TikoAnswerChoice(id: "yes", label: i18n.t("yesNo.answers.yes"), icon: .openIcon("ui/check-fat"), tone: .primary),
-            TikoAnswerChoice(id: "no", label: i18n.t("yesNo.answers.no"), icon: .openIcon("wayfinding/cross"), tone: .secondary)
+            TikoAnswerChoice(id: "yes", label: i18n.t("yesNo.answers.yes"), icon: .openIcon("ui/check-fat"), tone: .primary, imageRef: "c8bfb9e8-0427-4cd9-89e2-74e09d20b8ec"),
+            TikoAnswerChoice(id: "no", label: i18n.t("yesNo.answers.no"), icon: .openIcon("wayfinding/cross"), tone: .secondary, imageRef: "c3c40f22-8968-413c-82d5-8cbd5bf57c55")
         ]
     }
 
@@ -356,6 +366,12 @@ struct YesNoView: View {
                     ) {
                         showingTileEditor = true
                     }
+                    TikoSettingsSizeRow(
+                        title: i18n.t("yesNo.settings.labelSize"),
+                        icon: "textformat.size",
+                        appColor: .yesNo,
+                        selectedIndex: $labelSizeIndex
+                    )
                 }
             }
         ) {
@@ -369,6 +385,7 @@ struct YesNoView: View {
                     .background(fieldBackground)
                     .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
                     .padding(.horizontal, 24)
+                    .accessibilityIdentifier("YesNoSentenceField")
 
                 HStack(spacing: 12) {
                     Button(action: speakSentence) {
@@ -384,6 +401,7 @@ struct YesNoView: View {
                     }
                     .disabled(!speechEnabled || sentenceSpeechState != .idle || effectiveSentence.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
                     .accessibilityLabel("Speak sentence")
+                    .accessibilityIdentifier("YesNoSpeakButton")
                     .accessibilityValue(sentenceSpeechState == .generating ? "Generating" : sentenceSpeechState == .playing ? "Playing" : "")
 
                     Button(action: { sentence = "" }) {
@@ -396,9 +414,10 @@ struct YesNoView: View {
                     }
                     .buttonStyle(.plain)
                     .accessibilityLabel("Clear sentence")
+                    .accessibilityIdentifier("YesNoClearSentenceButton")
                 }
 
-                TikoChoiceGrid(choices: effectiveChoices, style: choiceStyle, onSelect: selectChoice)
+                TikoChoiceGrid(choices: effectiveChoices, style: choiceStyle, labelFont: labelFont, onSelect: selectChoice)
             }
             .padding(.top, 18)
         }
@@ -416,6 +435,13 @@ struct YesNoView: View {
             }
         }
         .task {
+            // App Store capture: render a fixed, offline-stable scene and skip
+            // the network fetch so screenshots are deterministic. Other apps
+            // follow the same TikoScreenshotMode pattern in their root view.
+            if TikoScreenshotMode.isActive {
+                selectedAnswerSetId = TikoScreenshotMode.scene == "answered" ? "yes-no" : "yes-no"
+                return
+            }
             await store.fetchDefaults(languageCode: languageCode)
             if customAnswerSets.isEmpty {
                 if let defaultSelected = store.defaultSelectedSetId,
@@ -565,6 +591,7 @@ struct YesNoView: View {
         // Settings → declared defaults
         speechEnabled = true
         choiceStyleRawValue = TikoChoiceStyle.tiles.rawValue
+        labelSizeIndex = 2
 
         // Shared device-level prefs → device defaults (language follows the
         // device locale / English; colour mode follows the device appearance).
@@ -1102,6 +1129,7 @@ private struct SetBuilderView: View {
                 .foregroundStyle(.primary)
                 .lineLimit(1)
         }
+        .contentShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
     }
 
     private var addTileCell: some View {

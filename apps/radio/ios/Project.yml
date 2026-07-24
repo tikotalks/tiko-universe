@@ -32,6 +32,8 @@ targets:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: mt.tiko.radio
         INFOPLIST_FILE: Sources/Info.plist
+        MARKETING_VERSION: "1.0"
+        CURRENT_PROJECT_VERSION: "2"
         CODE_SIGN_ENTITLEMENTS: Sources/TikoRadio.entitlements
   TikoRadioTests:
     type: bundle.unit-test
@@ -40,3 +42,36 @@ targets:
       - Tests
     dependencies:
       - target: TikoRadio
+      - package: TikoKit
+    settings:
+      base:
+        GENERATE_INFOPLIST_FILE: YES
+  TikoRadioUITests:
+    type: bundle.ui-testing
+    platform: iOS
+    sources:
+      - UITests
+    dependencies:
+      - target: TikoRadio
+    settings:
+      base:
+        GENERATE_INFOPLIST_FILE: YES
+        TEST_TARGET_NAME: TikoRadio
+schemes:
+  TikoRadio:
+    build:
+      targets:
+        TikoRadio: all
+    test:
+      targets:
+        - TikoRadioTests
+        - TikoRadioUITests
+      gatherCoverageData: false
+    run:
+      config: Debug
+    profile:
+      config: Release
+    analyze:
+      config: Debug
+    archive:
+      config: Release

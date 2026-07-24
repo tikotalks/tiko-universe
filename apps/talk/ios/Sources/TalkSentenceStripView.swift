@@ -30,6 +30,7 @@ struct TalkSentenceStripView: View {
                                 .font(.system(.title3, design: .rounded).weight(.bold))
                                 .foregroundStyle(.primary.opacity(0.46))
                                 .frame(maxWidth: .infinity, alignment: .leading)
+                                .accessibilityIdentifier("talk.sentence.placeholder")
                         } else {
                             ForEach(words) { word in
                                 Text(word.text)
@@ -45,6 +46,9 @@ struct TalkSentenceStripView: View {
                                     .onTapGesture(count: 1) { onSpeakWord(word) }
                                     .accessibilityLabel(word.text)
                                     .accessibilityHint("Tap to say, double tap to remove")
+                                    // Stable identifier so UI tests can assert a word
+                                    // landed in the sentence bar.
+                                    .accessibilityIdentifier("talk.sentence.word.\(word.id)")
                             }
                         }
                     }

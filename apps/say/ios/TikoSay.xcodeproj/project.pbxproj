@@ -1,0 +1,704 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		07F7C8FD176704F033E98E37 /* TikoSayApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = F03CC73964A908B37B5E00F3 /* TikoSayApp.swift */; };
+		0F3368F8237EF61AC3E638BF /* TikoKit in Frameworks */ = {isa = PBXBuildFile; productRef = E0E9BCC43C849CB67C82E3B8 /* TikoKit */; };
+		11A939391885762A13722919 /* SayModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC6195C64D01A882B9041560 /* SayModels.swift */; };
+		165A556849E14961EE0D3AEE /* say-success-1.wav in Resources */ = {isa = PBXBuildFile; fileRef = 815F68B05960DD8AB25A13AD /* say-success-1.wav */; };
+		21A6B089EC6014A739869A58 /* RecognitionDebugOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EB25578E14B277197B4D33B /* RecognitionDebugOverlay.swift */; };
+		21D14F6ED4CBF6090EC6296A /* SayMediaLibrary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8296E2B0B947BD6D99AB6525 /* SayMediaLibrary.swift */; };
+		4476427CD8327930351BD851 /* say-pop-1.wav in Resources */ = {isa = PBXBuildFile; fileRef = 249B2265E7723E0BEB81E68A /* say-pop-1.wav */; };
+		4543D16528C6ADA1675E97A0 /* PracticeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0F4267BDF2D0702A14CF9FC /* PracticeView.swift */; };
+		57C1503313D44C80193C7085 /* say-pop-3.wav in Resources */ = {isa = PBXBuildFile; fileRef = 6A7FCA432222B70CB1C9F316 /* say-pop-3.wav */; };
+		5A20207661CC86E3862C5441 /* say-success-4.wav in Resources */ = {isa = PBXBuildFile; fileRef = 29BFA32CF25A0ABEA7B77E0B /* say-success-4.wav */; };
+		6203F2D67F9AE2E11C17AEB3 /* PracticeViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 506E836AB582AF3EBCB96F00 /* PracticeViewModelTests.swift */; };
+		6921D5D73E9E09334282F3C3 /* CelebrationOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F2C81239DE4AF5342BFED1C /* CelebrationOverlay.swift */; };
+		74ADD9763F8B681168402213 /* WordMatcherTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 860C3E87D7A1400E86A14289 /* WordMatcherTests.swift */; };
+		7F5E9E481A81D13FBB00BBE9 /* SayCardStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CA35CCBDABDD64C3985F332 /* SayCardStore.swift */; };
+		900F99DE95C60101D1C9B992 /* TikoSayUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F361157E0E496B9DDED3264C /* TikoSayUITests.swift */; };
+		9A71197CE27396D3AB8511EB /* TikoKit in Frameworks */ = {isa = PBXBuildFile; productRef = 95046C43185C2CA4ED7E56EE /* TikoKit */; };
+		9E304D1EED2ED5059041468E /* say-success-2.wav in Resources */ = {isa = PBXBuildFile; fileRef = A2E92BC890FAB054498A2A35 /* say-success-2.wav */; };
+		9F4595A801DD763F7341594E /* SayScreenshotSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA178901202B3CB5FB8CCA47 /* SayScreenshotSupport.swift */; };
+		A5EE7D19960F9E9C7F64345A /* SayCatalogTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2214DF6E0914B7CB426F522C /* SayCatalogTests.swift */; };
+		AD1A0004A4F2240F1FF5ED9F /* say-success-3.wav in Resources */ = {isa = PBXBuildFile; fileRef = E3AC8810B237EBFBF45F48CB /* say-success-3.wav */; };
+		AE808BB4E3CB151713DF9032 /* SpeechPracticeService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6BDD3211ECB9BB480AA5596 /* SpeechPracticeService.swift */; };
+		BAEB9513D85F67491A2D83A8 /* say-success-5.wav in Resources */ = {isa = PBXBuildFile; fileRef = 21ACA736D8C2C3F2E6A1B7BB /* say-success-5.wav */; };
+		C1C8F2FBA8D44CAE07A4A27A /* SayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6010741A428103FB5D7241C0 /* SayView.swift */; };
+		C321D5D4042ABC6CD4901252 /* SayVoiceServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 946AB1A39445A01AC2CF139B /* SayVoiceServiceTests.swift */; };
+		C3333D6D2FD7F431988329E4 /* PracticeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F2C29FB588E206C7336C9F0 /* PracticeViewModel.swift */; };
+		C3CE02B45AAE18D8E4414248 /* SayVoiceService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 395D265353EBCAC9E81E657A /* SayVoiceService.swift */; };
+		C5866E85663400288FF2AE08 /* SayCardStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B5CE5F5247FE10B87FAD3A0 /* SayCardStoreTests.swift */; };
+		DDE8665D9493D3F4CBDF27EC /* SayAppConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA6380D40022B0CA7216AA55 /* SayAppConfig.swift */; };
+		E27C4E75089F48E2C17AE591 /* SayCatalog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2965972D587CDBD400B0481D /* SayCatalog.swift */; };
+		E5F7D2EAB39EB10E4DB278BA /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5A8275B629B9253839733E58 /* Assets.xcassets */; };
+		E6A91B0A3A6811314F05D30D /* WordMatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = EAABB6F8F1F2F188ECEB7F59 /* WordMatcher.swift */; };
+		EA4FC7168A8AB37737B3C2FD /* say-pop-2.wav in Resources */ = {isa = PBXBuildFile; fileRef = FF14D3397DBC122823119504 /* say-pop-2.wav */; };
+		F496D92B61A9A01CB30D4167 /* SayParentEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7696B7DB2003A3B904043FE /* SayParentEditor.swift */; };
+		F4D2D33A17D20EC2B74FAB7E /* say-retry.wav in Resources */ = {isa = PBXBuildFile; fileRef = 3ACB890FC9ED82D792664BFA /* say-retry.wav */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		1FEBCB2EAB5CC11F8FB23CDA /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 58A5EB5720EE17C1F82F5795 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 2A323E3AF931A31167244F1B;
+			remoteInfo = TikoSay;
+		};
+		491B293786A37A3F634391CD /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 58A5EB5720EE17C1F82F5795 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 2A323E3AF931A31167244F1B;
+			remoteInfo = TikoSay;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		199E5DBC7451FA98E71DAB8E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		21ACA736D8C2C3F2E6A1B7BB /* say-success-5.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = "say-success-5.wav"; sourceTree = "<group>"; };
+		2214DF6E0914B7CB426F522C /* SayCatalogTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SayCatalogTests.swift; sourceTree = "<group>"; };
+		249B2265E7723E0BEB81E68A /* say-pop-1.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = "say-pop-1.wav"; sourceTree = "<group>"; };
+		2965972D587CDBD400B0481D /* SayCatalog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SayCatalog.swift; sourceTree = "<group>"; };
+		29BFA32CF25A0ABEA7B77E0B /* say-success-4.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = "say-success-4.wav"; sourceTree = "<group>"; };
+		371B938967D81DD22F3C6E3C /* TikoSayTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = TikoSayTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		395D265353EBCAC9E81E657A /* SayVoiceService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SayVoiceService.swift; sourceTree = "<group>"; };
+		3ACB890FC9ED82D792664BFA /* say-retry.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = "say-retry.wav"; sourceTree = "<group>"; };
+		506E836AB582AF3EBCB96F00 /* PracticeViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PracticeViewModelTests.swift; sourceTree = "<group>"; };
+		595105385D4AD3DB5FC1E427 /* TikoSayUITests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = TikoSayUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		5A8275B629B9253839733E58 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		5EB25578E14B277197B4D33B /* RecognitionDebugOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecognitionDebugOverlay.swift; sourceTree = "<group>"; };
+		6010741A428103FB5D7241C0 /* SayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SayView.swift; sourceTree = "<group>"; };
+		6A7FCA432222B70CB1C9F316 /* say-pop-3.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = "say-pop-3.wav"; sourceTree = "<group>"; };
+		6B5CE5F5247FE10B87FAD3A0 /* SayCardStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SayCardStoreTests.swift; sourceTree = "<group>"; };
+		7A2D941D717EB2FAD12D6962 /* TikoSay.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = TikoSay.entitlements; sourceTree = "<group>"; };
+		815F68B05960DD8AB25A13AD /* say-success-1.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = "say-success-1.wav"; sourceTree = "<group>"; };
+		8296E2B0B947BD6D99AB6525 /* SayMediaLibrary.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SayMediaLibrary.swift; sourceTree = "<group>"; };
+		860C3E87D7A1400E86A14289 /* WordMatcherTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WordMatcherTests.swift; sourceTree = "<group>"; };
+		8F2C29FB588E206C7336C9F0 /* PracticeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PracticeViewModel.swift; sourceTree = "<group>"; };
+		946AB1A39445A01AC2CF139B /* SayVoiceServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SayVoiceServiceTests.swift; sourceTree = "<group>"; };
+		9CA35CCBDABDD64C3985F332 /* SayCardStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SayCardStore.swift; sourceTree = "<group>"; };
+		9F2C81239DE4AF5342BFED1C /* CelebrationOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CelebrationOverlay.swift; sourceTree = "<group>"; };
+		A2E92BC890FAB054498A2A35 /* say-success-2.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = "say-success-2.wav"; sourceTree = "<group>"; };
+		A6BDD3211ECB9BB480AA5596 /* SpeechPracticeService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeechPracticeService.swift; sourceTree = "<group>"; };
+		BA6380D40022B0CA7216AA55 /* SayAppConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SayAppConfig.swift; sourceTree = "<group>"; };
+		C300E2C9E566D84268441611 /* tikokit-ios */ = {isa = PBXFileReference; lastKnownFileType = folder; name = "tikokit-ios"; path = "../../../packages/tikokit-ios"; sourceTree = SOURCE_ROOT; };
+		C7696B7DB2003A3B904043FE /* SayParentEditor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SayParentEditor.swift; sourceTree = "<group>"; };
+		E0F4267BDF2D0702A14CF9FC /* PracticeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PracticeView.swift; sourceTree = "<group>"; };
+		E3AC8810B237EBFBF45F48CB /* say-success-3.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = "say-success-3.wav"; sourceTree = "<group>"; };
+		EA178901202B3CB5FB8CCA47 /* SayScreenshotSupport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SayScreenshotSupport.swift; sourceTree = "<group>"; };
+		EAABB6F8F1F2F188ECEB7F59 /* WordMatcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WordMatcher.swift; sourceTree = "<group>"; };
+		F03CC73964A908B37B5E00F3 /* TikoSayApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TikoSayApp.swift; sourceTree = "<group>"; };
+		F361157E0E496B9DDED3264C /* TikoSayUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TikoSayUITests.swift; sourceTree = "<group>"; };
+		FC6195C64D01A882B9041560 /* SayModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SayModels.swift; sourceTree = "<group>"; };
+		FF14D3397DBC122823119504 /* say-pop-2.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = "say-pop-2.wav"; sourceTree = "<group>"; };
+		FFC18727DE06245AFEDD09CA /* TikoSay.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = TikoSay.app; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		406D35B211469B16C8B3C796 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0F3368F8237EF61AC3E638BF /* TikoKit in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		73CB85692393B639F2540F14 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				9A71197CE27396D3AB8511EB /* TikoKit in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		345C28E24590A9D3D48B24CD /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				FFC18727DE06245AFEDD09CA /* TikoSay.app */,
+				371B938967D81DD22F3C6E3C /* TikoSayTests.xctest */,
+				595105385D4AD3DB5FC1E427 /* TikoSayUITests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		375FFBA36FC2E8A012660B6B /* UITests */ = {
+			isa = PBXGroup;
+			children = (
+				F361157E0E496B9DDED3264C /* TikoSayUITests.swift */,
+			);
+			path = UITests;
+			sourceTree = "<group>";
+		};
+		3BC8375E0708CC7650ACD311 /* Sources */ = {
+			isa = PBXGroup;
+			children = (
+				5A8275B629B9253839733E58 /* Assets.xcassets */,
+				9F2C81239DE4AF5342BFED1C /* CelebrationOverlay.swift */,
+				199E5DBC7451FA98E71DAB8E /* Info.plist */,
+				E0F4267BDF2D0702A14CF9FC /* PracticeView.swift */,
+				8F2C29FB588E206C7336C9F0 /* PracticeViewModel.swift */,
+				5EB25578E14B277197B4D33B /* RecognitionDebugOverlay.swift */,
+				249B2265E7723E0BEB81E68A /* say-pop-1.wav */,
+				FF14D3397DBC122823119504 /* say-pop-2.wav */,
+				6A7FCA432222B70CB1C9F316 /* say-pop-3.wav */,
+				3ACB890FC9ED82D792664BFA /* say-retry.wav */,
+				815F68B05960DD8AB25A13AD /* say-success-1.wav */,
+				A2E92BC890FAB054498A2A35 /* say-success-2.wav */,
+				E3AC8810B237EBFBF45F48CB /* say-success-3.wav */,
+				29BFA32CF25A0ABEA7B77E0B /* say-success-4.wav */,
+				21ACA736D8C2C3F2E6A1B7BB /* say-success-5.wav */,
+				BA6380D40022B0CA7216AA55 /* SayAppConfig.swift */,
+				9CA35CCBDABDD64C3985F332 /* SayCardStore.swift */,
+				2965972D587CDBD400B0481D /* SayCatalog.swift */,
+				8296E2B0B947BD6D99AB6525 /* SayMediaLibrary.swift */,
+				FC6195C64D01A882B9041560 /* SayModels.swift */,
+				C7696B7DB2003A3B904043FE /* SayParentEditor.swift */,
+				EA178901202B3CB5FB8CCA47 /* SayScreenshotSupport.swift */,
+				6010741A428103FB5D7241C0 /* SayView.swift */,
+				395D265353EBCAC9E81E657A /* SayVoiceService.swift */,
+				A6BDD3211ECB9BB480AA5596 /* SpeechPracticeService.swift */,
+				7A2D941D717EB2FAD12D6962 /* TikoSay.entitlements */,
+				F03CC73964A908B37B5E00F3 /* TikoSayApp.swift */,
+				EAABB6F8F1F2F188ECEB7F59 /* WordMatcher.swift */,
+			);
+			path = Sources;
+			sourceTree = "<group>";
+		};
+		5F92291BE312A2DC5C9E07DA = {
+			isa = PBXGroup;
+			children = (
+				A5A8868CF67B39E6AA48D6CE /* Packages */,
+				3BC8375E0708CC7650ACD311 /* Sources */,
+				E9A73529D0C7AB995C9464EC /* Tests */,
+				375FFBA36FC2E8A012660B6B /* UITests */,
+				345C28E24590A9D3D48B24CD /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		A5A8868CF67B39E6AA48D6CE /* Packages */ = {
+			isa = PBXGroup;
+			children = (
+				C300E2C9E566D84268441611 /* tikokit-ios */,
+			);
+			name = Packages;
+			sourceTree = "<group>";
+		};
+		E9A73529D0C7AB995C9464EC /* Tests */ = {
+			isa = PBXGroup;
+			children = (
+				506E836AB582AF3EBCB96F00 /* PracticeViewModelTests.swift */,
+				6B5CE5F5247FE10B87FAD3A0 /* SayCardStoreTests.swift */,
+				2214DF6E0914B7CB426F522C /* SayCatalogTests.swift */,
+				946AB1A39445A01AC2CF139B /* SayVoiceServiceTests.swift */,
+				860C3E87D7A1400E86A14289 /* WordMatcherTests.swift */,
+			);
+			path = Tests;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		2A323E3AF931A31167244F1B /* TikoSay */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 730680A34C0B586B2D18FBE2 /* Build configuration list for PBXNativeTarget "TikoSay" */;
+			buildPhases = (
+				53F2611B6556D52391EC8A20 /* Generate Tiko app config */,
+				A1B81660709471C610EB7B2C /* Sources */,
+				EE687C2AAF988F427313A0D3 /* Resources */,
+				406D35B211469B16C8B3C796 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = TikoSay;
+			packageProductDependencies = (
+				E0E9BCC43C849CB67C82E3B8 /* TikoKit */,
+			);
+			productName = TikoSay;
+			productReference = FFC18727DE06245AFEDD09CA /* TikoSay.app */;
+			productType = "com.apple.product-type.application";
+		};
+		5C30FD2761526558783E8E33 /* TikoSayTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D41938D51179B67EE29CD43E /* Build configuration list for PBXNativeTarget "TikoSayTests" */;
+			buildPhases = (
+				DD48B64A38D1CDA1DAFC65FB /* Sources */,
+				73CB85692393B639F2540F14 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				04C9BFF4732187B9E7CE6F3E /* PBXTargetDependency */,
+			);
+			name = TikoSayTests;
+			packageProductDependencies = (
+				95046C43185C2CA4ED7E56EE /* TikoKit */,
+			);
+			productName = TikoSayTests;
+			productReference = 371B938967D81DD22F3C6E3C /* TikoSayTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		D40CE34CDFCB63B914BE5282 /* TikoSayUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 222BB5F7EB1D0F1B56DFEE3E /* Build configuration list for PBXNativeTarget "TikoSayUITests" */;
+			buildPhases = (
+				89ABB72604AF669F0CA256AB /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				3DAF895492A8E11FCCDA344E /* PBXTargetDependency */,
+			);
+			name = TikoSayUITests;
+			packageProductDependencies = (
+			);
+			productName = TikoSayUITests;
+			productReference = 595105385D4AD3DB5FC1E427 /* TikoSayUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		58A5EB5720EE17C1F82F5795 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1430;
+				TargetAttributes = {
+					2A323E3AF931A31167244F1B = {
+						DevelopmentTeam = "";
+					};
+					5C30FD2761526558783E8E33 = {
+						DevelopmentTeam = "";
+					};
+					D40CE34CDFCB63B914BE5282 = {
+						DevelopmentTeam = "";
+						TestTargetID = 2A323E3AF931A31167244F1B;
+					};
+				};
+			};
+			buildConfigurationList = 14E65B15DAAC6780B61CF1A1 /* Build configuration list for PBXProject "TikoSay" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = 5F92291BE312A2DC5C9E07DA;
+			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				D50AB5299D86E420DA1C37FC /* XCLocalSwiftPackageReference "../../../packages/tikokit-ios" */,
+			);
+			preferredProjectObjectVersion = 77;
+			productRefGroup = 345C28E24590A9D3D48B24CD /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				2A323E3AF931A31167244F1B /* TikoSay */,
+				5C30FD2761526558783E8E33 /* TikoSayTests */,
+				D40CE34CDFCB63B914BE5282 /* TikoSayUITests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		EE687C2AAF988F427313A0D3 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E5F7D2EAB39EB10E4DB278BA /* Assets.xcassets in Resources */,
+				4476427CD8327930351BD851 /* say-pop-1.wav in Resources */,
+				EA4FC7168A8AB37737B3C2FD /* say-pop-2.wav in Resources */,
+				57C1503313D44C80193C7085 /* say-pop-3.wav in Resources */,
+				F4D2D33A17D20EC2B74FAB7E /* say-retry.wav in Resources */,
+				165A556849E14961EE0D3AEE /* say-success-1.wav in Resources */,
+				9E304D1EED2ED5059041468E /* say-success-2.wav in Resources */,
+				AD1A0004A4F2240F1FF5ED9F /* say-success-3.wav in Resources */,
+				5A20207661CC86E3862C5441 /* say-success-4.wav in Resources */,
+				BAEB9513D85F67491A2D83A8 /* say-success-5.wav in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		53F2611B6556D52391EC8A20 /* Generate Tiko app config */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Generate Tiko app config";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "set -euo pipefail\nREPO_ROOT=\"${SRCROOT}/../../..\"\nif ! command -v node >/dev/null 2>&1; then\n  echo \"error: node is required to generate Tiko app configs from admin before iOS build.\"\n  exit 1\nfi\nTIKO_APP_CONFIG_STRICT=1 node \"${REPO_ROOT}/tools/generate-app-configs.mjs\"\n";
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		89ABB72604AF669F0CA256AB /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				900F99DE95C60101D1C9B992 /* TikoSayUITests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A1B81660709471C610EB7B2C /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				6921D5D73E9E09334282F3C3 /* CelebrationOverlay.swift in Sources */,
+				4543D16528C6ADA1675E97A0 /* PracticeView.swift in Sources */,
+				C3333D6D2FD7F431988329E4 /* PracticeViewModel.swift in Sources */,
+				21A6B089EC6014A739869A58 /* RecognitionDebugOverlay.swift in Sources */,
+				DDE8665D9493D3F4CBDF27EC /* SayAppConfig.swift in Sources */,
+				7F5E9E481A81D13FBB00BBE9 /* SayCardStore.swift in Sources */,
+				E27C4E75089F48E2C17AE591 /* SayCatalog.swift in Sources */,
+				21D14F6ED4CBF6090EC6296A /* SayMediaLibrary.swift in Sources */,
+				11A939391885762A13722919 /* SayModels.swift in Sources */,
+				F496D92B61A9A01CB30D4167 /* SayParentEditor.swift in Sources */,
+				9F4595A801DD763F7341594E /* SayScreenshotSupport.swift in Sources */,
+				C1C8F2FBA8D44CAE07A4A27A /* SayView.swift in Sources */,
+				C3CE02B45AAE18D8E4414248 /* SayVoiceService.swift in Sources */,
+				AE808BB4E3CB151713DF9032 /* SpeechPracticeService.swift in Sources */,
+				07F7C8FD176704F033E98E37 /* TikoSayApp.swift in Sources */,
+				E6A91B0A3A6811314F05D30D /* WordMatcher.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		DD48B64A38D1CDA1DAFC65FB /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				6203F2D67F9AE2E11C17AEB3 /* PracticeViewModelTests.swift in Sources */,
+				C5866E85663400288FF2AE08 /* SayCardStoreTests.swift in Sources */,
+				A5EE7D19960F9E9C7F64345A /* SayCatalogTests.swift in Sources */,
+				C321D5D4042ABC6CD4901252 /* SayVoiceServiceTests.swift in Sources */,
+				74ADD9763F8B681168402213 /* WordMatcherTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		04C9BFF4732187B9E7CE6F3E /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 2A323E3AF931A31167244F1B /* TikoSay */;
+			targetProxy = 491B293786A37A3F634391CD /* PBXContainerItemProxy */;
+		};
+		3DAF895492A8E11FCCDA344E /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 2A323E3AF931A31167244F1B /* TikoSay */;
+			targetProxy = 1FEBCB2EAB5CC11F8FB23CDA /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		31DAB96FC92DB8162440F3BB /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = Sources/TikoSay.entitlements;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CURRENT_PROJECT_VERSION = 1;
+				INFOPLIST_FILE = Sources/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = mt.tiko.say;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		5F1E151A536E52470D368C98 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = Sources/TikoSay.entitlements;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CURRENT_PROJECT_VERSION = 1;
+				INFOPLIST_FILE = Sources/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = mt.tiko.say;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		997842F603595AC8B8E0E92D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = mt.tiko.TikoSayUITests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = TikoSay;
+			};
+			name = Debug;
+		};
+		D9DC8B576F035EF0CBFB8F34 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = mt.tiko.TikoSayUITests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = TikoSay;
+			};
+			name = Release;
+		};
+		DB5DDB89517E3D4F76F313E0 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = "";
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		DFF6F998451BDA5795EFB90E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = "";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		EA0B7F5624BAB579B39EE1E3 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = mt.tiko.TikoSayTests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/TikoSay.app/TikoSay";
+			};
+			name = Release;
+		};
+		F2F8A22F3D30E7328A099560 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = mt.tiko.TikoSayTests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/TikoSay.app/TikoSay";
+			};
+			name = Debug;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		14E65B15DAAC6780B61CF1A1 /* Build configuration list for PBXProject "TikoSay" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				DB5DDB89517E3D4F76F313E0 /* Debug */,
+				DFF6F998451BDA5795EFB90E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		222BB5F7EB1D0F1B56DFEE3E /* Build configuration list for PBXNativeTarget "TikoSayUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				997842F603595AC8B8E0E92D /* Debug */,
+				D9DC8B576F035EF0CBFB8F34 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		730680A34C0B586B2D18FBE2 /* Build configuration list for PBXNativeTarget "TikoSay" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5F1E151A536E52470D368C98 /* Debug */,
+				31DAB96FC92DB8162440F3BB /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		D41938D51179B67EE29CD43E /* Build configuration list for PBXNativeTarget "TikoSayTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F2F8A22F3D30E7328A099560 /* Debug */,
+				EA0B7F5624BAB579B39EE1E3 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCLocalSwiftPackageReference section */
+		D50AB5299D86E420DA1C37FC /* XCLocalSwiftPackageReference "../../../packages/tikokit-ios" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = "../../../packages/tikokit-ios";
+		};
+/* End XCLocalSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		95046C43185C2CA4ED7E56EE /* TikoKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = TikoKit;
+		};
+		E0E9BCC43C849CB67C82E3B8 /* TikoKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = TikoKit;
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = 58A5EB5720EE17C1F82F5795 /* Project object */;
+}

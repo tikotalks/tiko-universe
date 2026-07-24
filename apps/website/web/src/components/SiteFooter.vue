@@ -89,7 +89,7 @@ const bemm = useBemm('site-footer', { return: 'string', includeBaseClass: true }
     color: white;
     opacity: 0.85;
     letter-spacing: 0;
-    transition: opacity 0.15s;
+    transition: opacity 0.15s var(--ease-out);
 
     &:hover {
       opacity: 1;
@@ -126,7 +126,7 @@ const bemm = useBemm('site-footer', { return: 'string', includeBaseClass: true }
     font-size: 0.9rem;
     color: rgba(255,255,255,0.6);
     text-decoration: none;
-    transition: color 0.15s;
+    transition: color 0.15s var(--ease-out);
 
     &:hover {
       color: white;
