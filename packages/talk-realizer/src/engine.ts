@@ -327,6 +327,7 @@ export function realizeWith(
   }
 
   const sov = rules.profile.wordOrder === 'sov'
+  const vso = rules.profile.wordOrder === 'vso'
   const strategy = rules.profile.questionStrategy
 
   if (isQuestion && strategy === 'inversion') {
@@ -357,6 +358,17 @@ export function realizeWith(
     } else if (chunks.subject) {
       emitNounPhrase(chunks.subject, 'subject')
     }
+  } else if (vso) {
+    // The Celtic order: the verb first, and whatever the verb leaves for later —
+    // the "yn bwyta" of Welsh, the "ag ithe" of Irish — after the subject.
+    deferTail = true
+    emitVerb()
+    if (chunks.subject) emitNounPhrase(chunks.subject, 'subject')
+    const tail = chunks.verb?.features.verbTailPosition === 'clauseFinal'
+      ? undefined
+      : chunks.verb?.features.verbTail
+    if (tail && chunks.verb) push(builder, tail, chunks.verb.id)
+    deferTail = false
   } else {
     if (chunks.subject) emitNounPhrase(chunks.subject, 'subject')
     // Hungarian puts its question word in focus, immediately before the verb:

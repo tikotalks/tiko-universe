@@ -18,12 +18,12 @@ describe('maturity gating', () => {
     const beta = supportedLanguages.find((code) => languages[code].profile.maturity === 'beta')
     expect(beta, 'expected at least one beta language').toBeTruthy()
     const result = realize(select(beta!, ids), { locale: beta!, minMaturity: 'production' })
-    // The fallback is exactly what the app does today: the tiles, joined.
-    expect(result.text).toBe(
-      select(beta!, ids).map((word, index) => (index === 0
-        ? word.text.charAt(0).toLocaleUpperCase() + word.text.slice(1)
-        : word.text)).join(' '),
-    )
+    // The fallback is what the app does today — the tiles, joined — with the
+    // language's own capitalisation and full stop, which we do know.
+    const joined = select(beta!, ids).map((word, index) => (index === 0
+      ? word.text.charAt(0).toLocaleUpperCase() + word.text.slice(1)
+      : word.text)).join(' ')
+    expect(result.text).toBe(`${joined}${languages[beta!].profile.punctuation.statement}`)
     expect(result.notes[0]).toContain('below the requested production')
   })
 

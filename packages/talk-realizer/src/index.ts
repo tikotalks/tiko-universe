@@ -65,6 +65,10 @@ import { papiamentu } from './languages/pap'
 import { icelandic } from './languages/is'
 import { luxembourgish } from './languages/lb'
 import { montenegrin } from './languages/cnr'
+import { welsh } from './languages/cy'
+import { irish } from './languages/ga'
+import { basque } from './languages/eu'
+import { georgian } from './languages/ka'
 import { english } from './languages/en'
 import { dutch } from './languages/nl'
 import type { LanguageRules } from './profile'
@@ -112,6 +116,10 @@ import { papiamentuLexicon } from './lexicon/pap'
 import { icelandicLexicon } from './lexicon/is'
 import { luxembourgishLexicon } from './lexicon/lb'
 import { montenegrinLexicon } from './lexicon/cnr'
+import { welshLexicon } from './lexicon/cy'
+import { irishLexicon } from './lexicon/ga'
+import { basqueLexicon } from './lexicon/eu'
+import { georgianLexicon } from './lexicon/ka'
 import { englishLexicon } from './lexicon/en'
 import { dutchLexicon } from './lexicon/nl'
 
@@ -154,7 +162,7 @@ export { romanianLexicon } from './lexicon/ro'
 export { greekLexicon } from './lexicon/el'
 
 /** Languages this prototype realizes. */
-export const supportedLanguages = ['en', 'nl', 'de', 'fr', 'es', 'it', 'pt', 'mt', 'zh', 'ja', 'ko', 'ar', 'hy', 'sv', 'da', 'nb', 'id', 'vi', 'ro', 'el', 'ms', 'ca', 'gl', 'af', 'ru', 'pl', 'bg', 'sq', 'uk', 'mk', 'sr', 'hr', 'cs', 'sk', 'tr', 'hu', 'fi', 'et', 'sl', 'bs', 'be', 'lt', 'lv', 'pap', 'is', 'lb', 'cnr'] as const
+export const supportedLanguages = ['en', 'nl', 'de', 'fr', 'es', 'it', 'pt', 'mt', 'zh', 'ja', 'ko', 'ar', 'hy', 'sv', 'da', 'nb', 'id', 'vi', 'ro', 'el', 'ms', 'ca', 'gl', 'af', 'ru', 'pl', 'bg', 'sq', 'uk', 'mk', 'sr', 'hr', 'cs', 'sk', 'tr', 'hu', 'fi', 'et', 'sl', 'bs', 'be', 'lt', 'lv', 'pap', 'is', 'lb', 'cnr', 'cy', 'ga', 'eu', 'ka'] as const
 export type SupportedLanguage = (typeof supportedLanguages)[number]
 
 /** The bundled feature overlays, by language. */
@@ -205,6 +213,10 @@ export const lexicons: Record<string, Lexicon> = {
   is: icelandicLexicon,
   lb: luxembourgishLexicon,
   cnr: montenegrinLexicon,
+  cy: welshLexicon,
+  ga: irishLexicon,
+  eu: basqueLexicon,
+  ka: georgianLexicon,
 }
 
 /** Every language's rule set, by language code. */
@@ -256,6 +268,10 @@ export const languages: Record<string, LanguageRules> = {
   is: icelandic,
   lb: luxembourgish,
   cnr: montenegrin,
+  cy: welsh,
+  ga: irish,
+  eu: basque,
+  ka: georgian,
 }
 
 /** The closed set of function words each language is allowed to insert. */
@@ -304,7 +320,7 @@ export function realize(
   // A language the caller does not trust yet falls back too, for the same reason.
   const required = options.minMaturity ?? 'beta'
   if (MATURITY_ORDER[rules.profile.maturity] < MATURITY_ORDER[required]) {
-    const plain = fallback(words)
+    const plain = fallback(words, rules.profile.capitalize, rules.profile.punctuation.statement)
     return {
       ...plain,
       notes: [`${language} is ${rules.profile.maturity}, below the requested ${required}: tiles joined as-is`],
@@ -329,10 +345,13 @@ function ensureNonEmpty(realization: Realization, words: SelectedWord[]): Realiz
   }
 }
 
-function fallback(words: SelectedWord[]): Realization {
-  const text = words.map((word) => word.text).join(' ').replace(/\s+/g, ' ').trim()
+function fallback(words: SelectedWord[], capitalize = true, terminator = ''): Realization {
+  const joined = words.map((word) => word.text).join(' ').replace(/\s+/g, ' ').trim()
+  // Georgian and the CJK scripts have no capital letters to reach for.
+  const cased = joined && capitalize ? `${joined.charAt(0).toUpperCase()}${joined.slice(1)}` : joined
+  const text = cased ? `${cased}${terminator}` : ''
   return {
-    text: text ? `${text.charAt(0).toUpperCase()}${text.slice(1)}` : '',
+    text,
     tokens: words.map((word) => ({ text: word.text, from: word.id })),
     inserted: [],
     notes: ['no realizer for this language: tiles joined as-is'],

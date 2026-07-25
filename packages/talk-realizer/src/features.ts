@@ -74,6 +74,12 @@ export interface Features {
   /** Plural form; absent means the noun is not pluralised by the realizer. */
   plural?: string
   /**
+   * The definite form, where a suffixing language spells it irregularly: Basque
+   * "ur" → "ura" while every other -r noun doubles it ("sagar" → "sagarra").
+   * Which words double is lexical, so the exceptions are curated.
+   */
+  definiteForm?: string
+  /**
    * Curated case forms, where a rule would be wrong: the accusative and genitive
    * for the Slavic languages, and the partitive for Finnish, whose stem changes
    * ("vesi" → "vettä") are not recoverable from the nominative.
@@ -221,6 +227,11 @@ export interface Features {
    * the plural: "два печива", not "два печива".
    */
   smallNumber?: boolean
+  /**
+   * True where this word mutates the start of the word after it: Irish "dhá
+   * bhriosca", Welsh "dwy fisgeden". Which words do this is lexical.
+   */
+  lenites?: boolean
 
   /**
    * English a/an is about sound, not spelling ("an hour", "a unicorn"), so it

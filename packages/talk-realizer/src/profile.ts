@@ -27,7 +27,12 @@ export interface LanguageProfile {
   maturity: 'production' | 'beta' | 'draft'
 
   /** Where the finite verb sits. */
-  wordOrder: 'svo' | 'sov'
+  /**
+   * The order of subject, verb and object. `vso` is the Celtic one: the verb comes
+   * first and its non-finite part waits until after the subject — "Dwi'n bwyta
+   * afal" is literally "am-I eating apple".
+   */
+  wordOrder: 'svo' | 'sov' | 'vso'
 
   /**
    * How the language forms a question once a question tile is present.
