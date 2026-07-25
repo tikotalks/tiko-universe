@@ -73,6 +73,11 @@ export interface Features {
   gender?: Gender
   /** Plural form; absent means the noun is not pluralised by the realizer. */
   plural?: string
+  /**
+   * Curated case forms, for the Slavic languages, where a rule would be wrong.
+   * Keys are the cases this package models: accusative and genitive.
+   */
+  cases?: Partial<Record<'acc' | 'gen', string>>
   /** Mass nouns (water, music) take no indefinite article. */
   mass?: boolean
   proper?: boolean
@@ -136,6 +141,17 @@ export interface Features {
   verbTailPosition?: 'afterVerb' | 'clauseFinal'
   /** A measure word required when counting this noun (zh 个, 块, 本). */
   measureWord?: string
+  /**
+   * The case a preposition governs. Slavic prepositions each demand one — Polish
+   * "do" takes the genitive, Russian "к" the dative — and getting it wrong is
+   * one of the most audible errors in these languages.
+   */
+  governsCase?: 'acc' | 'gen' | 'dat' | 'loc' | 'ins'
+  /**
+   * The predicative form of an adjective, where a language distinguishes it.
+   * Russian says "я счастлив", not "я счастливый".
+   */
+  predicative?: string
 
   // Adjectives
   /** Form used directly before a noun. Dutch inflects here ("groot" → "grote"). */

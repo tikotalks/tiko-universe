@@ -43,7 +43,9 @@ export function realizeWith(
 
   // Negation can live inside an indefinite object phrase instead of, or as well
   // as, next to the verb.
-  const negatableObjectPhrase = chunks.negated ? negatableObject(chunks) : undefined
+  const negatableObjectPhrase = chunks.negated
+    ? negatableObject(chunks, plan.negatesAnyObject === true)
+    : undefined
   const negateInPhrase = !!negatableObjectPhrase && !!plan.phraseNegation
   const suppressVerbParticle = negateInPhrase && plan.phraseNegation === 'replace'
   const particleAfterObject =
@@ -52,15 +54,26 @@ export function realizeWith(
     && hasDefiniteObject(chunks)
     && !suppressVerbParticle
 
-  const phraseContext = (role: Role, np: Phrase | undefined, afterPreposition: boolean): PhraseContext => ({
+  const phraseContext = (
+    role: Role,
+    np: Phrase | undefined,
+    afterPreposition: boolean,
+    preposition?: typeof chunks.verb,
+  ): PhraseContext => ({
     ...ctx,
     role,
     afterPreposition,
+    preposition,
     negateHere: negateInPhrase && np === negatableObjectPhrase,
   })
 
-  const emitNounPhrase = (np: NounPhrase, role: Role, afterPreposition = false): void => {
-    const phraseCtx = phraseContext(role, np, afterPreposition)
+  const emitNounPhrase = (
+    np: NounPhrase,
+    role: Role,
+    afterPreposition = false,
+    preposition?: typeof chunks.verb,
+  ): void => {
+    const phraseCtx = phraseContext(role, np, afterPreposition, preposition)
     const startedAt = builder.tokens.length
 
     if (np.pronoun) {
@@ -116,7 +129,7 @@ export function realizeWith(
       case 'pp': {
         const after = rules.profile.prepositionPosition === 'after'
         if (!after) push(builder, phrase.preposition.text, phrase.preposition.id)
-        if (phrase.object) emitNounPhrase(phrase.object, 'oblique', true)
+        if (phrase.object) emitNounPhrase(phrase.object, 'oblique', true, phrase.preposition)
         if (after) {
           // A postposition attaches to the phrase it marks: "こうえんへ".
           const previous = builder.tokens[builder.tokens.length - 1]
@@ -330,9 +343,10 @@ function auxiliaryFor(ctx: SentenceContext): string {
 }
 
 /** An object noun phrase a language can negate in place (geen, kein, pas de). */
-function negatableObject(chunks: Chunks): NounPhrase | undefined {
+function negatableObject(chunks: Chunks, anyObject: boolean): NounPhrase | undefined {
   const np = firstNounComplement(chunks)
   if (!np) return undefined
+  if (anyObject) return np
   const kind = np.determiner?.features.determinerKind
   if (kind && kind !== 'indefinite') return undefined
   return np

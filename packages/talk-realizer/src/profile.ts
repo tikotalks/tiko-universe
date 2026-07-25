@@ -142,6 +142,8 @@ export interface PhraseContext extends SentenceContext {
   role: Role
   /** True when this phrase sits inside a prepositional phrase. */
   afterPreposition: boolean
+  /** The preposition governing this phrase, when there is one. */
+  preposition?: Word
   /** True when negation should be realized on this phrase (geen / kein). */
   negateHere: boolean
 }
@@ -159,6 +161,12 @@ export interface PhraseContext extends SentenceContext {
  */
 export interface NegationCommon {
   phraseNegation?: 'replace' | 'also'
+  /**
+   * Whether the phrase negation reaches *any* object rather than only an
+   * indefinite one. The Slavic genitive of negation does, because these
+   * languages have no definiteness to condition it on.
+   */
+  negatesAnyObject?: boolean
 }
 
 export type NegationPlan = NegationCommon & (
