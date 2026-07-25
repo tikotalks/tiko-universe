@@ -1,0 +1,185 @@
+{
+  "app": "first",
+  "name": "First",
+  "scheme": "TikoFirst",
+  "project": "apps/first/ios/TikoFirst.xcodeproj",
+  "iosDir": "apps/first/ios",
+  "bundleId": "mt.tiko.first",
+  "appleId": "me@sil.mt",
+  "validation": {
+    "script": "apps/first/ios/scripts/validate-local.sh"
+  },
+  "screenshots": {
+    "outputDir": "/Users/silvandiepen/Projects/Tiko/apps/first",
+    "configuration": "Debug",
+    "eraseBeforeCapture": false,
+    "defaultWaitSeconds": 2,
+    "baseLaunchArgs": [
+      "--screenshot-mode"
+    ],
+    "statusBar": {
+      "time": "9:41",
+      "wifiBars": 3,
+      "cellularBars": 4,
+      "batteryState": "charged",
+      "batteryLevel": 100
+    },
+    "devices": [
+      {
+        "name": "iPhone 17 Pro Max",
+        "os": "26.2",
+        "displayType": "APP_IPHONE_67",
+        "createIfMissing": true
+      },
+      {
+        "name": "iPad Pro 13-inch (M5)",
+        "os": "26.2",
+        "displayType": "APP_IPAD_PRO_13",
+        "createIfMissing": true
+      }
+    ],
+    "locales": [
+      {
+        "id": "en-US",
+        "appLanguage": "en"
+      }
+    ],
+    "colorModes": [
+      {
+        "id": "light",
+        "userDefaults": {
+          "tiko.colorMode": "light"
+        }
+      },
+      {
+        "id": "dark",
+        "userDefaults": {
+          "tiko.colorMode": "dark"
+        }
+      }
+    ],
+    "scenarios": [
+      {
+        "id": "home-light",
+        "filename": "01-{deviceSlug}-home-en-light.png",
+        "launchArgs": [
+          "--screenshot",
+          "home"
+        ],
+        "locales": [
+          {
+            "id": "en-US",
+            "appLanguage": "en"
+          }
+        ],
+        "colorModes": [
+          "light"
+        ],
+        "waitSeconds": 2
+      },
+      {
+        "id": "home-dark",
+        "filename": "02-{deviceSlug}-home-en-dark.png",
+        "launchArgs": [
+          "--screenshot",
+          "home"
+        ],
+        "locales": [
+          {
+            "id": "en-US",
+            "appLanguage": "en"
+          }
+        ],
+        "colorModes": [
+          "dark"
+        ],
+        "waitSeconds": 2
+      },
+      {
+        "id": "routine-light",
+        "filename": "03-{deviceSlug}-routine-en-light.png",
+        "launchArgs": [
+          "--screenshot",
+          "routine"
+        ],
+        "locales": [
+          {
+            "id": "en-US",
+            "appLanguage": "en"
+          }
+        ],
+        "colorModes": [
+          "light"
+        ],
+        "waitSeconds": 4
+      },
+      {
+        "id": "routine-dark",
+        "filename": "04-{deviceSlug}-routine-en-dark.png",
+        "launchArgs": [
+          "--screenshot",
+          "routine"
+        ],
+        "locales": [
+          {
+            "id": "en-US",
+            "appLanguage": "en"
+          }
+        ],
+        "colorModes": [
+          "dark"
+        ],
+        "waitSeconds": 4
+      },
+      {
+        "id": "celebrate-light",
+        "filename": "05-{deviceSlug}-celebrate-en-light.png",
+        "launchArgs": [
+          "--screenshot",
+          "celebrate"
+        ],
+        "locales": [
+          {
+            "id": "en-US",
+            "appLanguage": "en"
+          }
+        ],
+        "colorModes": [
+          "light"
+        ],
+        "waitSeconds": 6
+      },
+      {
+        "id": "celebrate-dark",
+        "filename": "06-{deviceSlug}-celebrate-en-dark.png",
+        "launchArgs": [
+          "--screenshot",
+          "celebrate"
+        ],
+        "locales": [
+          {
+            "id": "en-US",
+            "appLanguage": "en"
+          }
+        ],
+        "colorModes": [
+          "dark"
+        ],
+        "waitSeconds": 6
+      }
+    ]
+  },
+  "archive": {
+    "configuration": "Release",
+    "archivePath": "artifacts/archives/first/TikoFirst.xcarchive",
+    "exportPath": "artifacts/archives/first/export",
+    "exportOptionsPlist": "apps/first/release/exportOptions.plist",
+    "allowProvisioningUpdates": true
+  },
+  "upload": {
+    "ipaPath": "artifacts/archives/first/export/TikoFirst.ipa",
+    "deliverDir": "artifacts/app-store/first",
+    "apiKeyEnv": "APP_STORE_CONNECT_KEY_ID",
+    "apiIssuerEnv": "APP_STORE_CONNECT_ISSUER_ID"
+  }
+}
