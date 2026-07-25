@@ -1,21 +1,19 @@
 import Foundation
 import TikoKit
 
-/// The single content source for paths and operator pronunciation. Bundled
-/// defaults merged with per-language `SumPathOverride`s and custom paths,
-/// scoped to the active account subject — the family override pattern.
+/// The single content source for parent-authored paths and operator
+/// pronunciation, scoped to the active account subject — the family override
+/// pattern. Presets need no store: they are generated, not authored.
 @MainActor
 final class SumPathStore: ObservableObject {
     @Published private(set) var revision = 0
-    /// Tiko media-library images for the path tiles, emoji as fallback.
-    @Published private(set) var pathImages: [String: URL] = [:]
+    /// Tiko media-library images for the tiles, emoji as fallback.
+    @Published private(set) var tileImages: [String: URL] = [:]
 
     private let defaults: UserDefaults
     private let subjectIDProvider: () -> String
-    /// language → pathID → override
-    private var overrides: [String: [String: SumPathOverride]] = [:]
-    /// language → custom paths
-    private var customPaths: [String: [SumPath]] = [:]
+    /// language → paths
+    private var paths: [String: [SumPath]] = [:]
     /// language → operator word overrides
     private var operatorWords: [String: SumCatalog.OperatorWords] = [:]
 
@@ -34,8 +32,8 @@ final class SumPathStore: ObservableObject {
     private let mediaClient = TikoMediaClient()
     private var hydratedMedia = false
 
-    /// Resolves Tiko media images for the path tiles and remembers the URLs
-    /// so later launches render instantly and offline.
+    /// Resolves Tiko media images for the preset and path tiles and remembers
+    /// the URLs so later launches render instantly and offline.
     func hydrateMedia(language: String) async {
         guard !hydratedMedia else { return }
         hydratedMedia = true
@@ -43,13 +41,13 @@ final class SumPathStore: ObservableObject {
             hydratedMedia = false
             return
         }
-        var keys = SumCatalog.defaultPaths.map { (cardID: $0.id, matchKey: $0.mediaMatchKey) }
+        var keys = SumCatalog.presets.map { (cardID: $0.id, matchKey: $0.mediaMatchKey) }
         let lang = TikoLanguageCode.normalized(language)
-        for custom in (customPaths[lang] ?? []) {
-            keys.append((cardID: custom.id, matchKey: custom.title))
+        for path in (paths[lang] ?? []) {
+            keys.append((cardID: path.id, matchKey: path.title))
         }
         let matches = TikoMediaMatcher.match(cards: keys, mediaItems: items)
-        pathImages.merge(matches) { _, new in new }
+        tileImages.merge(matches) { _, new in new }
         persistResolvedMedia()
         for url in matches.values {
             _ = await TikoRemoteImageCache.shared.image(for: url)
@@ -61,40 +59,24 @@ final class SumPathStore: ObservableObject {
     private func loadResolvedMedia() {
         guard let data = defaults.data(forKey: mediaKey),
               let decoded = try? JSONDecoder().decode([String: String].self, from: data) else { return }
-        pathImages = decoded.compactMapValues(URL.init(string:))
+        tileImages = decoded.compactMapValues(URL.init(string:))
     }
 
     private func persistResolvedMedia() {
-        if let data = try? JSONEncoder().encode(pathImages.mapValues(\.absoluteString)) {
+        if let data = try? JSONEncoder().encode(tileImages.mapValues(\.absoluteString)) {
             defaults.set(data, forKey: mediaKey)
         }
     }
 
     // MARK: - Reading
 
-    func visiblePaths(language: String, i18n: TikoI18n) -> [SumPath] {
-        allPaths(language: language, i18n: i18n).filter { !$0.isHidden }
+    func visiblePaths(language: String) -> [SumPath] {
+        allPaths(language: language).filter { !$0.isHidden }
     }
 
-    func allPaths(language: String, i18n: TikoI18n) -> [SumPath] {
-        let lang = TikoLanguageCode.normalized(language)
-        let langOverrides = overrides[lang] ?? [:]
-        var merged = SumCatalog.defaultPaths.map { defaultPath -> SumPath in
-            var path = SumCatalog.path(defaultPath, i18n: i18n)
-            guard let override = langOverrides[path.id] else { return path }
-            if let title = override.title { path.title = title }
-            if let emoji = override.emoji { path.emoji = emoji }
-            if let formulas = override.formulas { path.formulas = formulas }
-            if let order = override.sortOrder { path.sortOrder = order }
-            path.isHidden = override.isHidden
-            return path
-        }
-        merged.append(contentsOf: customPaths[lang] ?? [])
-        return merged.sorted { ($0.sortOrder, $0.id) < ($1.sortOrder, $1.id) }
-    }
-
-    func isEdited(pathID: String, language: String) -> Bool {
-        overrides[TikoLanguageCode.normalized(language)]?[pathID] != nil
+    func allPaths(language: String) -> [SumPath] {
+        (paths[TikoLanguageCode.normalized(language)] ?? [])
+            .sorted { ($0.sortOrder, $0.id) < ($1.sortOrder, $1.id) }
     }
 
     // MARK: - Operator words
@@ -119,7 +101,6 @@ final class SumPathStore: ObservableObject {
     func updatePath(
         id: String,
         language: String,
-        i18n: TikoI18n,
         title: String,
         emoji: String,
         formulas: [Formula]
@@ -127,81 +108,55 @@ final class SumPathStore: ObservableObject {
         let lang = TikoLanguageCode.normalized(language)
         let trimmedTitle = title.trimmingCharacters(in: .whitespacesAndNewlines)
         let validFormulas = formulas.filter(\.isValid)
-        guard !trimmedTitle.isEmpty, !validFormulas.isEmpty else { return }
-
-        if let index = customPathIndex(id: id, language: lang) {
-            customPaths[lang]![index].title = trimmedTitle
-            customPaths[lang]![index].emoji = emoji
-            customPaths[lang]![index].formulas = validFormulas
-            persist()
-            return
-        }
-
-        guard let defaultPath = SumCatalog.defaultPaths.first(where: { $0.id == id }) else { return }
-        let bundled = SumCatalog.path(defaultPath, i18n: i18n)
-        var override = overrides[lang]?[id] ?? SumPathOverride(pathID: id, languageCode: lang)
-        override.title = trimmedTitle == bundled.title ? nil : trimmedTitle
-        override.emoji = emoji == bundled.emoji ? nil : emoji
-        override.formulas = validFormulas == bundled.formulas ? nil : validFormulas
-        setOverride(override, language: lang)
+        guard !trimmedTitle.isEmpty, !validFormulas.isEmpty,
+              let index = pathIndex(id: id, language: lang) else { return }
+        paths[lang]![index].title = trimmedTitle
+        paths[lang]![index].emoji = emoji
+        paths[lang]![index].formulas = validFormulas
+        persist()
     }
 
     func setHidden(_ hidden: Bool, pathID: String, language: String) {
         let lang = TikoLanguageCode.normalized(language)
-        if let index = customPathIndex(id: pathID, language: lang) {
-            customPaths[lang]![index].isHidden = hidden
-            persist()
-            return
-        }
-        var override = overrides[lang]?[pathID] ?? SumPathOverride(pathID: pathID, languageCode: lang)
-        override.isHidden = hidden
-        setOverride(override, language: lang)
-    }
-
-    func resetToDefault(pathID: String, language: String) {
-        overrides[TikoLanguageCode.normalized(language)]?.removeValue(forKey: pathID)
+        guard let index = pathIndex(id: pathID, language: lang) else { return }
+        paths[lang]![index].isHidden = hidden
         persist()
     }
 
     @discardableResult
-    func addCustomPath(language: String, title: String, emoji: String, formulas: [Formula], i18n: TikoI18n) -> SumPath? {
+    func addPath(language: String, title: String, emoji: String, formulas: [Formula]) -> SumPath? {
         let lang = TikoLanguageCode.normalized(language)
         let trimmedTitle = title.trimmingCharacters(in: .whitespacesAndNewlines)
         let validFormulas = formulas.filter(\.isValid)
         guard !trimmedTitle.isEmpty, !validFormulas.isEmpty else { return nil }
-        let order = (allPaths(language: lang, i18n: i18n).map(\.sortOrder).max() ?? -1) + 1
+        let order = (allPaths(language: lang).map(\.sortOrder).max() ?? -1) + 1
         let path = SumPath(
             id: "user_\(UUID().uuidString.lowercased())",
             title: trimmedTitle,
             emoji: emoji.isEmpty ? "⭐️" : emoji,
             formulas: validFormulas,
-            isCustom: true,
             isHidden: false,
             sortOrder: order
         )
-        customPaths[lang, default: []].append(path)
+        paths[lang, default: []].append(path)
         persist()
         return path
     }
 
-    func deleteCustomPath(id: String, language: String) {
+    func deletePath(id: String, language: String) {
         let lang = TikoLanguageCode.normalized(language)
-        guard customPathIndex(id: id, language: lang) != nil else { return }
-        customPaths[lang]?.removeAll { $0.id == id }
+        guard pathIndex(id: id, language: lang) != nil else { return }
+        paths[lang]?.removeAll { $0.id == id }
         persist()
     }
 
-    func movePath(language: String, i18n: TikoI18n, fromOffsets: IndexSet, toOffset: Int) {
+    func movePath(language: String, fromOffsets: IndexSet, toOffset: Int) {
         let lang = TikoLanguageCode.normalized(language)
-        var paths = allPaths(language: lang, i18n: i18n)
-        paths.move(fromOffsets: fromOffsets, toOffset: toOffset)
-        for (index, path) in paths.enumerated() where path.sortOrder != index {
-            if let customIndex = customPathIndex(id: path.id, language: lang) {
-                customPaths[lang]![customIndex].sortOrder = index
-            } else {
-                var override = overrides[lang]?[path.id] ?? SumPathOverride(pathID: path.id, languageCode: lang)
-                override.sortOrder = index
-                overrides[lang, default: [:]][path.id] = override.isEmpty ? nil : override
+        var ordered = allPaths(language: lang)
+        ordered.move(fromOffsets: fromOffsets, toOffset: toOffset)
+        for (index, path) in ordered.enumerated() {
+            if let pathIndex = pathIndex(id: path.id, language: lang) {
+                paths[lang]![pathIndex].sortOrder = index
             }
         }
         persist()
@@ -209,31 +164,17 @@ final class SumPathStore: ObservableObject {
 
     // MARK: - Persistence
 
-    private func customPathIndex(id: String, language: String) -> Int? {
-        customPaths[language]?.firstIndex { $0.id == id }
+    private func pathIndex(id: String, language: String) -> Int? {
+        paths[language]?.firstIndex { $0.id == id }
     }
 
-    private func setOverride(_ override: SumPathOverride, language: String) {
-        if override.isEmpty {
-            overrides[language]?.removeValue(forKey: override.pathID)
-        } else {
-            overrides[language, default: [:]][override.pathID] = override
-        }
-        persist()
-    }
-
-    private var overridesKey: String { "tiko.sum.ios.pathOverrides.\(subjectIDProvider())" }
-    private var customKey: String { "tiko.sum.ios.customPaths.\(subjectIDProvider())" }
+    private var pathsKey: String { "tiko.sum.ios.customPaths.\(subjectIDProvider())" }
     private var wordsKey: String { "tiko.sum.ios.operatorWords.\(subjectIDProvider())" }
 
     private func load() {
-        if let data = defaults.data(forKey: overridesKey),
-           let decoded = try? JSONDecoder().decode([String: [String: SumPathOverride]].self, from: data) {
-            overrides = decoded
-        }
-        if let data = defaults.data(forKey: customKey),
+        if let data = defaults.data(forKey: pathsKey),
            let decoded = try? JSONDecoder().decode([String: [SumPath]].self, from: data) {
-            customPaths = decoded
+            paths = decoded
         }
         if let data = defaults.data(forKey: wordsKey),
            let decoded = try? JSONDecoder().decode([String: SumCatalog.OperatorWords].self, from: data) {
@@ -242,9 +183,7 @@ final class SumPathStore: ObservableObject {
     }
 
     private func persist() {
-        overrides = overrides.compactMapValues { $0.isEmpty ? nil : $0 }
-        write(overrides, to: overridesKey)
-        write(customPaths.compactMapValues { $0.isEmpty ? nil : $0 }, to: customKey)
+        write(paths.compactMapValues { $0.isEmpty ? nil : $0 }, to: pathsKey)
         write(operatorWords, to: wordsKey)
         revision += 1
     }

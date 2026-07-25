@@ -1,9 +1,10 @@
 import SwiftUI
 import TikoKit
 
-/// Parent Mode path management on the shared Tiko popup sheets. Paths are
-/// defaults, not fixed content: edit, hide, reset, reorder, add, delete —
-/// per language, per account. Child Mode never reaches these.
+/// Parent Mode path management on the shared Tiko popup sheets. A path is a
+/// family's own fixed run of sums, next to the generated difficulty presets:
+/// write, edit, hide, reorder, delete — per language, per account. Child Mode
+/// never reaches these.
 struct SumPathManagerSheet: View {
     @ObservedObject var store: SumPathStore
     @ObservedObject var i18n: TikoI18n
@@ -23,7 +24,7 @@ struct SumPathManagerSheet: View {
             VStack(spacing: 10) {
                 ScrollView {
                     VStack(spacing: 8) {
-                        let paths = store.allPaths(language: languageCode, i18n: i18n)
+                        let paths = store.allPaths(language: languageCode)
                         ForEach(Array(paths.enumerated()), id: \.element.id) { index, path in
                             pathRow(path, index: index, total: paths.count)
                         }
@@ -69,7 +70,6 @@ struct SumPathManagerSheet: View {
                             .lineLimit(1)
                     }
                     Spacer(minLength: 4)
-                    if path.isCustom { tag(i18n.t("sum.edit.customTag")) }
                     if path.isHidden {
                         Image(systemName: "eye.slash")
                             .font(.system(size: 13, weight: .bold))
@@ -85,10 +85,10 @@ struct SumPathManagerSheet: View {
 
             VStack(spacing: 2) {
                 reorderButton("chevron.up", disabled: index == 0) {
-                    store.movePath(language: languageCode, i18n: i18n, fromOffsets: IndexSet(integer: index), toOffset: index - 1)
+                    store.movePath(language: languageCode, fromOffsets: IndexSet(integer: index), toOffset: index - 1)
                 }
                 reorderButton("chevron.down", disabled: index >= total - 1) {
-                    store.movePath(language: languageCode, i18n: i18n, fromOffsets: IndexSet(integer: index), toOffset: index + 2)
+                    store.movePath(language: languageCode, fromOffsets: IndexSet(integer: index), toOffset: index + 2)
                 }
             }
         }
@@ -109,15 +109,6 @@ struct SumPathManagerSheet: View {
         .disabled(disabled)
     }
 
-    private func tag(_ text: String) -> some View {
-        Text(text)
-            .font(.system(size: 10, weight: .heavy, design: .rounded))
-            .padding(.vertical, 3)
-            .padding(.horizontal, 7)
-            .background(Color.secondary.opacity(0.14))
-            .clipShape(Capsule())
-            .foregroundStyle(.secondary)
-    }
 }
 
 // MARK: - Path editor
@@ -195,7 +186,7 @@ struct SumPathEditSheet: View {
         .confirmationDialog(i18n.t("sum.edit.deleteConfirm"), isPresented: $confirmingDelete, titleVisibility: .visible) {
             Button(i18n.t("sum.edit.delete"), role: .destructive) {
                 if let path {
-                    store.deleteCustomPath(id: path.id, language: languageCode)
+                    store.deletePath(id: path.id, language: languageCode)
                 }
                 onClose()
             }
@@ -266,51 +257,29 @@ struct SumPathEditSheet: View {
             .tint(TikoAppColor.sum.palette.primary)
             .padding(.vertical, 4)
 
-            if !path.isCustom, store.isEdited(pathID: path.id, language: languageCode) {
-                Button {
-                    store.resetToDefault(pathID: path.id, language: languageCode)
-                    onClose()
-                } label: {
-                    HStack(spacing: 8) {
-                        Image(systemName: "arrow.uturn.backward")
-                            .font(.system(size: 15, weight: .bold))
-                        Text(i18n.t("sum.edit.reset"))
-                            .font(.system(size: 15, weight: .heavy, design: .rounded))
-                        Spacer()
-                    }
-                    .foregroundStyle(TikoAppColor.sum.palette.primary)
-                    .padding(12)
-                    .background(TikoAppColor.sum.palette.primary.opacity(0.1))
-                    .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+            Button(role: .destructive) {
+                confirmingDelete = true
+            } label: {
+                HStack(spacing: 8) {
+                    Image(systemName: "trash")
+                        .font(.system(size: 15, weight: .bold))
+                    Text(i18n.t("sum.edit.delete"))
+                        .font(.system(size: 15, weight: .heavy, design: .rounded))
+                    Spacer()
                 }
-                .buttonStyle(.plain)
+                .foregroundStyle(.red)
+                .padding(12)
+                .background(Color.red.opacity(0.08))
+                .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
             }
-
-            if path.isCustom {
-                Button(role: .destructive) {
-                    confirmingDelete = true
-                } label: {
-                    HStack(spacing: 8) {
-                        Image(systemName: "trash")
-                            .font(.system(size: 15, weight: .bold))
-                        Text(i18n.t("sum.edit.delete"))
-                            .font(.system(size: 15, weight: .heavy, design: .rounded))
-                        Spacer()
-                    }
-                    .foregroundStyle(.red)
-                    .padding(12)
-                    .background(Color.red.opacity(0.08))
-                    .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
-                }
-                .buttonStyle(.plain)
-            }
+            .buttonStyle(.plain)
         }
     }
 
     private func hiddenBinding(_ path: SumPath) -> Binding<Bool> {
         Binding(
             get: {
-                store.allPaths(language: languageCode, i18n: i18n)
+                store.allPaths(language: languageCode)
                     .first { $0.id == path.id }?.isHidden ?? false
             },
             set: { store.setHidden($0, pathID: path.id, language: languageCode) }
@@ -334,18 +303,16 @@ struct SumPathEditSheet: View {
             store.updatePath(
                 id: path.id,
                 language: languageCode,
-                i18n: i18n,
                 title: title,
                 emoji: emoji,
                 formulas: validFormulas
             )
         } else {
-            store.addCustomPath(
+            store.addPath(
                 language: languageCode,
                 title: title,
                 emoji: emoji,
-                formulas: validFormulas,
-                i18n: i18n
+                formulas: validFormulas
             )
         }
     }

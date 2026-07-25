@@ -23,10 +23,16 @@ struct FormulaSpeaker {
 
     var equalsWord: String { words.equals }
 
-    /// "three plus five is…" — the full formula, spoken on equals and on
-    /// automatic presentation in paths.
+    /// "three plus five is…" — the full formula in one breath.
     func formulaUtterance(_ formula: Formula) -> String {
         "\(number(formula.a)) \(operatorWord(formula.op)) \(number(formula.b)) \(equalsWord)"
+    }
+
+    /// The formula split the way it lands on screen: "three", "plus", "five".
+    /// Each part is spoken as its tile pops in, so the voice and the display
+    /// tell the same story at the same speed.
+    func partTexts(_ formula: Formula) -> [String] {
+        [number(formula.a), operatorWord(formula.op), number(formula.b)]
     }
 
     /// Everything a session might say — used to prefetch the voice cache so
@@ -34,6 +40,7 @@ struct FormulaSpeaker {
     func prefetchTexts(for formulas: [Formula]) -> [String] {
         var texts = Set<String>()
         for formula in formulas {
+            texts.formUnion(partTexts(formula))
             texts.insert(formulaUtterance(formula))
             if let result = formula.result {
                 texts.insert(number(result))
