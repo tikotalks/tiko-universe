@@ -43,7 +43,7 @@ export function definiteArticle(word: string): string {
 function feminineAdjective(features: Features, base: string): string {
   if (features.feminine) return features.feminine
   if (/[aeiou]$/.test(base)) return base
-  if (/i$/.test(base)) return `${base.slice(0, -1)}ja`
+  if (base.endsWith('i')) return `${base.slice(0, -1)}ja`
   return `${base}a`
 }
 
@@ -152,7 +152,7 @@ export const maltese: LanguageRules = {
 
   adjectivePosition: 'after',
 
-  adjective(adjective, np, ctx) {
+  adjective(adjective, np) {
     const head = np.head
     const feminine = head?.features.gender === 'feminine'
     const base = feminine ? feminineAdjective(adjective.features, adjective.text) : adjective.text

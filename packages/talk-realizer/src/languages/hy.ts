@@ -114,7 +114,7 @@ export const armenian: LanguageRules = {
     return word.features.accusative ?? word.text
   },
 
-  negation(ctx) {
+  negation() {
     // Carried by the auxiliary, which verbForm and copula both handle.
     return { kind: 'none' }
   },

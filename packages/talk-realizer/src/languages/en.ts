@@ -49,7 +49,8 @@ export const english: LanguageRules = {
     if (np.determiner) return { text: np.determiner.text, from: np.determiner.id }
     const head = np.head
     if (!head) return null
-    const plural = np.determiner?.features.forcesNumber === 'pl'
+    // With no determiner there is no quantifier, so the phrase is singular.
+    const plural = false
     if (ctx.afterPreposition && head.features.institutional) {
       note(ctx.builder, `no article: "${head.text}" is institutional after a preposition`)
       return null

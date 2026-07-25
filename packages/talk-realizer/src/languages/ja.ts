@@ -78,7 +78,7 @@ export const japanese: LanguageRules = {
       note(ctx.builder, 'no article: Japanese has none')
       return null
     }
-    if (determiner.features.forcesNumber === 'pl' && np.head && !/の$/.test(determiner.text)) {
+    if (determiner.features.forcesNumber === 'pl' && np.head && !determiner.text.endsWith('の')) {
       // A counted noun is linked with の: ふたつのクッキー.
       note(ctx.builder, 'の links the count to the noun')
       return { text: `${determiner.text}の`, from: determiner.id }
@@ -108,7 +108,7 @@ export const japanese: LanguageRules = {
   },
 
   /** は marks the subject, を the object — but ほしい and すき take が. */
-  particle(phrase: Phrase, ctx: PhraseContext, realized: string): string | null {
+  particle(phrase: Phrase, ctx: PhraseContext): string | null {
     if (phrase.kind !== 'np') return null
     if (ctx.role === 'subject') return 'は'
     if (ctx.role === 'object') {

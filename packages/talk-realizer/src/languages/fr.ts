@@ -1,6 +1,6 @@
 import type { Features, SelectedWord } from '../features'
 import { agreeAdjective, conjugateRegular, elide, extractObjectClitic, induceGender, pluralize, startsWithVowel } from '../morphology/romance'
-import { formFor, note, type LanguageRules, type SentenceContext } from '../profile'
+import { formFor, note, type LanguageRules } from '../profile'
 
 /**
  * French. Four things make it more than concatenation:
@@ -25,7 +25,8 @@ const PRENOMINAL = new Set(['big', 'small', 'new', 'old', 'kind', 'same', 'diffe
 const VOWEL = '[aeiouâàéèêëîïôöûüyh]'
 
 /** Contractions that merge two tokens into one. */
-const CONTRACTIONS: Array<[RegExp, string]> = [
+type Replacement = string | ((match: string, ...groups: string[]) => string)
+const CONTRACTIONS: Array<[RegExp, Replacement]> = [
   [new RegExp(`^de la (?=${VOWEL})`, 'i'), "de l'"],
   [new RegExp(`^(je|ne|me|te|se|le|la|de|que) (?=${VOWEL})`, 'i'), (_m: string, word: string) => `${word.slice(0, -1)}'`],
   [/^à le$/i, 'au'],
@@ -129,14 +130,14 @@ export const french: LanguageRules = {
 
   adjectivePosition: 'after',
 
-  adjective(adjective, np, ctx) {
+  adjective(adjective, np) {
     const head = np.head
     const gender = head?.features.gender
     const number = np.determiner?.features.forcesNumber === 'pl' ? 'pl' : 'sg'
     return agreeAdjective(adjective.features, adjective.text, 'fr', gender, number)
   },
 
-  noun(head, np, ctx) {
+  noun(head, np) {
     if (np.determiner?.features.forcesNumber === 'pl') {
       return head.features.plural ?? pluralize(head.text, 'fr')
     }

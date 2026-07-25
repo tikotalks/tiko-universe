@@ -68,13 +68,13 @@ export function conjugateRegular(
   let form = `${stem}${ending}`
   // Orthographic repairs that keep the stem's sound: French "mangeons",
   // "commençons"; Italian and Portuguese g/c softening.
-  if (language === 'fr' && /g$/.test(stem) && ending.startsWith('o')) form = `${stem}e${ending}`
-  if (language === 'fr' && /c$/.test(stem) && ending.startsWith('o')) form = `${stem.slice(0, -1)}ç${ending}`
-  if (language === 'it' && /c$/.test(stem) && (ending.startsWith('i') || ending.startsWith('e'))) {
+  if (language === 'fr' && stem.endsWith('g') && ending.startsWith('o')) form = `${stem}e${ending}`
+  if (language === 'fr' && stem.endsWith('c') && ending.startsWith('o')) form = `${stem.slice(0, -1)}ç${ending}`
+  if (language === 'it' && stem.endsWith('c') && (ending.startsWith('i') || ending.startsWith('e'))) {
     form = `${stem}h${ending}`
   }
   // Italian -iare verbs keep one i: "mangi", not "mangii".
-  if (language === 'it' && /i$/.test(stem) && ending.startsWith('i')) {
+  if (language === 'it' && stem.endsWith('i') && ending.startsWith('i')) {
     form = `${stem}${ending.slice(1)}`
   }
   return [form, ...tail].join(' ')
@@ -93,15 +93,15 @@ export function induceGender(text: string, language: RomanceLanguage): Gender | 
     case 'pt': {
       if (/(ción|ção|sión|dad|tà|tù|zione|gione|agem|ã)$/.test(word)) return 'feminine'
       if (/(ma|ema|oma)$/.test(word)) return 'masculine'
-      if (/o$/.test(word)) return 'masculine'
-      if (/a$/.test(word)) return 'feminine'
+      if (word.endsWith('o')) return 'masculine'
+      if (word.endsWith('a')) return 'feminine'
       if (/(or|ón|ém|im|um|el|il|ol|ul)$/.test(word)) return 'masculine'
       return undefined
     }
     case 'fr': {
       if (/(tion|sion|té|ette|elle|ille|ure|ence|ance|eur$)/.test(word)) return 'feminine'
       if (/(ment|age|eau|isme|ier|oir)$/.test(word)) return 'masculine'
-      if (/e$/.test(word)) return 'feminine'
+      if (word.endsWith('e')) return 'feminine'
       return 'masculine'
     }
   }
@@ -115,29 +115,29 @@ export function pluralize(text: string, language: RomanceLanguage): string {
   switch (language) {
     case 'it': {
       // Italian pluralises by changing the final vowel.
-      if (/a$/.test(word)) plural = `${word.slice(0, -1)}e`
+      if (word.endsWith('a')) plural = `${word.slice(0, -1)}e`
       else if (/[oe]$/.test(word)) plural = `${word.slice(0, -1)}i`
       else plural = word
       break
     }
     case 'pt': {
-      if (/ão$/.test(word)) plural = `${word.slice(0, -2)}ões`
-      else if (/l$/.test(word)) plural = `${word.slice(0, -1)}is`
+      if (word.endsWith('ão')) plural = `${word.slice(0, -2)}ões`
+      else if (word.endsWith('l')) plural = `${word.slice(0, -1)}is`
       else if (/(r|z|s)$/.test(word)) plural = `${word}es`
-      else if (/m$/.test(word)) plural = `${word.slice(0, -1)}ns`
+      else if (word.endsWith('m')) plural = `${word.slice(0, -1)}ns`
       else plural = `${word}s`
       break
     }
     case 'es': {
       if (/[aeiou]$/.test(word)) plural = `${word}s`
-      else if (/z$/.test(word)) plural = `${word.slice(0, -1)}ces`
+      else if (word.endsWith('z')) plural = `${word.slice(0, -1)}ces`
       else plural = `${word}es`
       break
     }
     case 'fr': {
       if (/(s|x|z)$/.test(word)) plural = word
       else if (/(au|eu)$/.test(word)) plural = `${word}x`
-      else if (/al$/.test(word)) plural = `${word.slice(0, -2)}aux`
+      else if (word.endsWith('al')) plural = `${word.slice(0, -2)}aux`
       else plural = `${word}s`
       break
     }
@@ -177,25 +177,25 @@ function femininize(base: string, language: RomanceLanguage): string {
   let form = word
   switch (language) {
     case 'fr': {
-      if (/eux$/.test(word)) form = `${word.slice(0, -3)}euse`
-      else if (/f$/.test(word)) form = `${word.slice(0, -1)}ve`
-      else if (/er$/.test(word)) form = `${word.slice(0, -2)}ère`
+      if (word.endsWith('eux')) form = `${word.slice(0, -3)}euse`
+      else if (word.endsWith('f')) form = `${word.slice(0, -1)}ve`
+      else if (word.endsWith('er')) form = `${word.slice(0, -2)}ère`
       else if (/(en|on)$/.test(word)) form = `${word}ne`
-      else if (/et$/.test(word)) form = `${word}te`
-      else if (/os$/.test(word)) form = `${word}se`
-      else if (/e$/.test(word)) form = word
+      else if (word.endsWith('et')) form = `${word}te`
+      else if (word.endsWith('os')) form = `${word}se`
+      else if (word.endsWith('e')) form = word
       else form = `${word}e`
       break
     }
     case 'es':
     case 'pt': {
-      if (/o$/.test(word)) form = `${word.slice(0, -1)}a`
+      if (word.endsWith('o')) form = `${word.slice(0, -1)}a`
       else if (/(or|ón)$/.test(word)) form = `${word}a`
       else form = word
       break
     }
     case 'it': {
-      if (/o$/.test(word)) form = `${word.slice(0, -1)}a`
+      if (word.endsWith('o')) form = `${word.slice(0, -1)}a`
       else form = word
       break
     }
