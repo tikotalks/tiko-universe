@@ -49,9 +49,15 @@ export type DeterminerKind =
   | 'quantifier'
   | 'possessive'
 
-/** Verb form keys. `pl` covers every plural person; that is all Dutch and
- *  English distinguish in the present tense. */
-export type VerbFormKey = '1sg' | '2sg' | '3sg' | 'pl' | 'inf' | 'past' | 'participle'
+/**
+ * Verb form keys. English, Dutch and German need only `pl` for the whole plural;
+ * the Romance languages distinguish first from third ("queremos" vs "quieren"),
+ * so those keys exist too. Lookup falls back from `1pl` to `pl`.
+ */
+export type VerbFormKey =
+  | '1sg' | '2sg' | '3sg'
+  | '1pl' | '2pl' | '3pl' | 'pl'
+  | 'inf' | 'past' | 'participle'
 
 export interface Features {
   /**
@@ -80,6 +86,15 @@ export interface Features {
   pronounCase?: PronounCase
   /** Object form, when the tile shows the subject form ("I" → "me"). */
   accusative?: string
+  /** Feminine form of an adjective or determiner ("gros" → "grosse"). */
+  feminine?: string
+  /**
+   * Overrides the language's default adjective position. French puts most
+   * adjectives after the noun but a short closed set before it.
+   */
+  adjectivePosition?: 'before' | 'after'
+  /** Plural of an adjective, when it is not base + s. */
+  pluralForm?: string
   /** Dative form, for languages that distinguish it ("ich" → "mir"). */
   dative?: string
 
@@ -92,6 +107,13 @@ export interface Features {
    * ("Du hilfst mir"), which no ending rule can guess.
    */
   objectCase?: 'accusative' | 'dative'
+  /**
+   * Verbs like Spanish "gustar" and Italian "piacere", where the experiencer is
+   * a clitic and the thing liked is the grammatical subject: "Me gusta el pan".
+   */
+  experiencerDative?: boolean
+  /** A preposition this verb requires before its object (pt "gosto **de** pão"). */
+  objectPreposition?: string
 
   // Adjectives
   /** Form used directly before a noun. Dutch inflects here ("groot" → "grote"). */
@@ -129,6 +151,12 @@ export interface RealizedToken {
    * invent content.
    */
   from: string | null
+  /**
+   * Other concept ids folded into this token. Elision and contraction merge
+   * words — French "tu m'aides" is one token carrying both the pronoun and the
+   * verb — and the audit trail has to survive that.
+   */
+  merged?: string[]
 }
 
 export interface Realization {

@@ -25,6 +25,7 @@ export function realizeWith(
 
   const ctx: SentenceContext = {
     verb: chunks.verb,
+    scratch: {},
     person,
     number,
     tense: options.tense ?? 'present',
@@ -33,6 +34,10 @@ export function realizeWith(
     needsCopula,
     builder,
   }
+
+  // A language may restructure the clause before anything is emitted.
+  rules.transform?.(chunks, ctx)
+  ctx.verb = chunks.verb
 
   const plan: NegationPlan = chunks.negated ? rules.negation(ctx) : { kind: 'none' }
 
@@ -63,15 +68,18 @@ export function realizeWith(
       const determiner = rules.determiner(np, phraseCtx)
       if (determiner) push(builder, determiner.text, determiner.from)
 
-      const emitAdjectives = (): void => {
+      // Each adjective may override the language's default position.
+      const fallbackPosition = rules.adjectivePosition ?? 'before'
+      const emitAdjectives = (where: 'before' | 'after'): void => {
         for (const adjective of np.adjectives) {
+          const position = adjective.features.adjectivePosition ?? fallbackPosition
+          if (position !== where) continue
           push(builder, rules.adjective(adjective, np, phraseCtx), adjective.id)
         }
       }
-      const position = rules.adjectivePosition ?? 'before'
-      if (position === 'before') emitAdjectives()
+      emitAdjectives('before')
       if (np.head) push(builder, rules.noun(np.head, np, phraseCtx), np.head.id)
-      if (position === 'after') emitAdjectives()
+      emitAdjectives('after')
     }
 
     const particle = rules.particle?.(np, phraseCtx)
@@ -103,6 +111,13 @@ export function realizeWith(
   const emitVerb = (bare = false): void => {
     if (needsCopula) {
       const copula = rules.copula(ctx)
+      // A circumfix language wraps the copula too: "je **ne** suis **pas** …".
+      if (chunks.negated && plan.kind === 'circumfix' && !suppressVerbParticle) {
+        push(builder, plan.before, null)
+      }
+      if (chunks.negated && plan.kind === 'beforeVerb' && !suppressVerbParticle) {
+        push(builder, plan.word, null)
+      }
       if (copula) {
         push(builder, copula, null)
         note(builder, `copula "${copula}": a subject and a predicate with no verb tile`)
@@ -110,7 +125,7 @@ export function realizeWith(
         note(builder, 'no copula: this language leaves it out here')
       }
       if (chunks.negated && !suppressVerbParticle) {
-        const word = plan.kind === 'afterVerb' || plan.kind === 'beforeVerb'
+        const word = plan.kind === 'afterVerb'
           ? plan.word
           : plan.kind === 'circumfix' ? plan.after : plan.kind === 'auxiliary' ? plan.word : null
         if (word) push(builder, word, null)
@@ -120,12 +135,19 @@ export function realizeWith(
     if (!chunks.verb) return
     const verb = chunks.verb
 
+    // A preverbal object clitic, parked by the language's transform hook.
+    const emitClitic = (): void => {
+      const clitic = ctx.scratch.clitic as { text: string, from: string } | undefined
+      if (clitic) push(builder, clitic.text, clitic.from)
+    }
+
     if (bare) {
       push(builder, verb.text, verb.id)
       return
     }
 
     if (!chunks.negated || suppressVerbParticle) {
+      emitClitic()
       push(builder, rules.verbForm(verb, ctx), verb.id)
       if (suppressVerbParticle) {
         note(builder, 'the negation is carried by the object phrase')
@@ -142,16 +164,19 @@ export function realizeWith(
         return
       case 'circumfix':
         push(builder, plan.before, null)
+        emitClitic()
         push(builder, rules.verbForm(verb, ctx), verb.id)
         push(builder, plan.after, null)
         note(builder, `"${plan.before} … ${plan.after}": negation around the verb`)
         return
       case 'beforeVerb':
         push(builder, plan.word, null)
+        emitClitic()
         push(builder, rules.verbForm(verb, ctx), verb.id)
         note(builder, `"${plan.word}": negation before the verb`)
         return
       case 'afterVerb':
+        emitClitic()
         push(builder, rules.verbForm(verb, ctx), verb.id)
         if (!particleAfterObject) {
           push(builder, plan.word, null)
@@ -168,7 +193,8 @@ export function realizeWith(
   for (const social of chunks.leadingSocials) {
     push(builder, social.text, social.id)
   }
-  if (chunks.question) {
+  const questionWordFinal = rules.profile.questionWordPosition === 'final'
+  if (chunks.question && !questionWordFinal) {
     push(builder, chunks.question.text, chunks.question.id)
   }
 
@@ -213,6 +239,11 @@ export function realizeWith(
 
   for (const adverb of chunks.adverbs) {
     push(builder, adverb.text, adverb.id)
+  }
+
+  if (chunks.question && questionWordFinal) {
+    push(builder, chunks.question.text, chunks.question.id)
+    note(builder, 'the question word goes at the end, as in speech')
   }
 
   if (isQuestion && strategy === 'particle' && rules.profile.questionParticle) {

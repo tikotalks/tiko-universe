@@ -38,8 +38,10 @@ describe('realizer invariants', () => {
           const chosen = new Set(selected.map((word) => word.id))
           const result = realize(selected, { locale: language })
           for (const token of result.tokens) {
-            if (token.from === null) continue
-            expect(chosen, `token "${token.text}" came from nowhere`).toContain(token.from)
+            for (const id of [token.from, ...(token.merged ?? [])]) {
+              if (id === null || id === undefined) continue
+              expect(chosen, `token "${token.text}" came from nowhere`).toContain(id)
+            }
           }
         }
       })
@@ -48,7 +50,9 @@ describe('realizer invariants', () => {
         for (const ids of selections) {
           const selected = select(language, ids)
           const result = realize(selected, { locale: language })
-          const used = new Set(result.tokens.map((token) => token.from).filter(Boolean))
+          const used = new Set(
+            result.tokens.flatMap((token) => [token.from, ...(token.merged ?? [])]).filter(Boolean),
+          )
           for (const word of selected) {
             // Negation is realized as a function word (do not / geen), so the
             // tile itself legitimately disappears from the output.

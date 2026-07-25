@@ -1,4 +1,4 @@
-import type { NounPhrase, Phrase, Word } from './chunk'
+import type { Chunks, NounPhrase, Phrase, Word } from './chunk'
 import type { Features, RealizedToken, SelectedWord } from './features'
 
 /**
@@ -43,6 +43,13 @@ export interface LanguageProfile {
   /** The sentence-final question particle, for `questionStrategy: 'particle'`. */
   questionParticle?: string
 
+  /**
+   * Where the question word goes. Spoken French puts it at the end — "Tu veux
+   * quoi ?" — which is what a child hears, and it avoids inventing the
+   * "qu'est-ce que" scaffolding.
+   */
+  questionWordPosition?: 'initial' | 'final'
+
   /** CJK scripts do not separate words with spaces. */
   spacing: 'space' | 'none'
 
@@ -86,9 +93,26 @@ export function note(builder: Builder, message: string): void {
   builder.notes.push(message)
 }
 
+/**
+ * Picks a verb form for a person and number, falling back from the specific
+ * plural key to the generic one so languages that do not distinguish them can
+ * write a single `pl` entry.
+ */
+export function formFor(
+  forms: Partial<Record<string, string>> | undefined,
+  person: 1 | 2 | 3,
+  number: 'sg' | 'pl',
+): string | undefined {
+  if (!forms) return undefined
+  const specific = `${person}${number}`
+  return forms[specific] ?? (number === 'pl' ? forms.pl : undefined)
+}
+
 export interface SentenceContext {
   /** The verb tile, when the child chose one. */
   verb?: Word
+  /** Per-language scratch space, for rules that need to pass state along. */
+  scratch: Record<string, unknown>
   person: 1 | 2 | 3
   number: 'sg' | 'pl'
   tense: 'present' | 'past'
@@ -186,4 +210,11 @@ export interface LanguageRules {
 
   /** Hand-authored facts, keyed by pack concept id. Overrides induction. */
   curated?: Record<string, Features>
+
+  /**
+   * Rewrites the parse before assembly. Used where a language restructures the
+   * clause rather than just inflecting it — Spanish "Me gusta el pan" turns the
+   * child's subject into a clitic and the object into the grammatical subject.
+   */
+  transform?(chunks: Chunks, ctx: SentenceContext): void
 }

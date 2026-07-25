@@ -22,10 +22,18 @@ import { annotate } from './chunk'
 import type { Lexicon, RealizeOptions, Realization, SelectedWord } from './features'
 import { realizeWith } from './engine'
 import { german } from './languages/de'
+import { french } from './languages/fr'
+import { spanish } from './languages/es'
+import { italian } from './languages/it'
+import { portuguese } from './languages/pt'
 import { english } from './languages/en'
 import { dutch } from './languages/nl'
 import type { LanguageRules } from './profile'
 import { germanLexicon } from './lexicon/de'
+import { frenchLexicon } from './lexicon/fr'
+import { spanishLexicon } from './lexicon/es'
+import { italianLexicon } from './lexicon/it'
+import { portugueseLexicon } from './lexicon/pt'
 import { englishLexicon } from './lexicon/en'
 import { dutchLexicon } from './lexicon/nl'
 
@@ -47,9 +55,13 @@ export { annotate, chunk } from './chunk'
 export { englishLexicon } from './lexicon/en'
 export { dutchLexicon } from './lexicon/nl'
 export { germanLexicon } from './lexicon/de'
+export { frenchLexicon } from './lexicon/fr'
+export { spanishLexicon } from './lexicon/es'
+export { italianLexicon } from './lexicon/it'
+export { portugueseLexicon } from './lexicon/pt'
 
 /** Languages this prototype realizes. */
-export const supportedLanguages = ['en', 'nl', 'de'] as const
+export const supportedLanguages = ['en', 'nl', 'de', 'fr', 'es', 'it', 'pt'] as const
 export type SupportedLanguage = (typeof supportedLanguages)[number]
 
 /** The bundled feature overlays, by language. */
@@ -57,6 +69,10 @@ export const lexicons: Record<string, Lexicon> = {
   en: englishLexicon,
   nl: dutchLexicon,
   de: germanLexicon,
+  fr: frenchLexicon,
+  es: spanishLexicon,
+  it: italianLexicon,
+  pt: portugueseLexicon,
 }
 
 /** Every language's rule set, by language code. */
@@ -64,6 +80,10 @@ export const languages: Record<string, LanguageRules> = {
   en: english,
   nl: dutch,
   de: german,
+  fr: french,
+  es: spanish,
+  it: italian,
+  pt: portuguese,
 }
 
 /** The closed set of function words each language is allowed to insert. */

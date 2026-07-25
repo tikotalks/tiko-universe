@@ -1,4 +1,4 @@
-import { note, type LanguageRules, type SentenceContext } from '../profile'
+import { formFor, note, type LanguageRules, type SentenceContext } from '../profile'
 
 /**
  * Dutch. Three rules carry the weight, and each is one that plain tile
@@ -38,7 +38,7 @@ export const dutch: LanguageRules = {
     if (ctx.isQuestion && ctx.person === 2 && ctx.number === 'sg') {
       return forms['1sg'] ?? verb.text
     }
-    return forms[ctx.number === 'pl' ? 'pl' : (`${ctx.person}sg` as const)] ?? verb.text
+    return formFor(forms, ctx.person, ctx.number) ?? verb.text
   },
 
   copula(ctx) {

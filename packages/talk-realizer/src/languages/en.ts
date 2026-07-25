@@ -1,5 +1,5 @@
 import type { NounPhrase, Word } from '../chunk'
-import { note, type LanguageRules, type PhraseContext, type SentenceContext } from '../profile'
+import { formFor, note, type LanguageRules, type PhraseContext, type SentenceContext } from '../profile'
 
 /**
  * English. Little morphology, but two rules that concatenation always misses:
@@ -34,7 +34,7 @@ export const english: LanguageRules = {
     const forms = verb.features.forms ?? {}
     if (ctx.tense === 'past') return forms.past ?? verb.text
     if (verb.features.copula) return COPULA[key(ctx)] ?? verb.text
-    const direct = forms[ctx.number === 'pl' ? 'pl' : (`${ctx.person}sg` as const)]
+    const direct = formFor(forms, ctx.person, ctx.number)
     if (direct) return direct
     // Only the third person singular is marked.
     if (ctx.person === 3 && ctx.number === 'sg') return forms['3sg'] ?? `${verb.text}s`
