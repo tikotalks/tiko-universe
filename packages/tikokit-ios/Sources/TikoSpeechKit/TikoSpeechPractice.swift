@@ -1,6 +1,7 @@
 import AVFoundation
 import Foundation
 import Speech
+import TikoKit
 
 public enum TikoPermissionState: Equatable, Sendable {
     case notDetermined

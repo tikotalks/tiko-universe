@@ -27,9 +27,9 @@ Statuses: `NOT STARTED` · `IN PROGRESS` · `BLOCKED` · `IMPLEMENTED` · `VERIF
   - `xcodegen generate`
   - `xcodebuild -project TikoFirst.xcodeproj -scheme TikoFirst -destination 'platform=iOS Simulator,name=iPhone 17 Pro Max' -derivedDataPath .build/derived test` → 75 unit + 5 UI tests pass
   - `./scripts/validate-local.sh` → ✓ first: validation passed
-- Next action: publish the App Privacy answers in the App Store Connect web UI
-  (the `appDataUsages` API no longer exists), then submit. Everything else for
-  1.0 is done. The same gate is open on Sum.
+- Submitted for review on 2026-07-25 (build 2, automatic release after
+  approval). Remaining follow-up: the overnight daily-reset pass on a physical
+  device, which the unit tests already cover deterministically.
 
 ## Requirements
 
@@ -62,16 +62,20 @@ Statuses: `NOT STARTED` · `IN PROGRESS` · `BLOCKED` · `IMPLEMENTED` · `VERIF
 | 25 | Release plumbing: release config, CI registration, validation script | `docs/apps/ios-release.md` | VERIFIED | `apps/first/release/*`, `release.config.json`, `.github/workflows/*` | `./scripts/validate-local.sh` passes |
 | 26 | App Store 1.0: metadata, age rating 4+, pricing free, review notes | `docs/apps/ios-release.md` | IMPLEMENTED | `apps/first/release/app-store/en-US.json` | Verified through the App Store Connect API after each write |
 | 27 | App Store 1.0: build uploaded, six screenshots per device | `docs/apps/ios-release.md` | IMPLEMENTED | `artifacts/archives/first/export/TikoFirst.ipa` | Upload succeeded; 6 screenshots on each of iPhone 6.9" and iPad 13" |
-| 28 | App Store 1.0: App Privacy answers published | `docs/apps/ios-release.md` | BLOCKED | — | External dependency: the privacy endpoints were removed from the API and the web UI needs an interactive Apple ID sign-in |
-| 29 | App Store 1.0: submitted for review with automatic release | `docs/apps/ios-release.md` | BLOCKED | `scratchpad/first_submit.rb` | Blocked by #28 |
+| 28 | App Store 1.0: submitted for review with automatic release | `docs/apps/ios-release.md` | VERIFIED | `scratchpad/first_submit.rb` | Build 2 attached, releaseType AFTER_APPROVAL, version 1.0 state WAITING_FOR_REVIEW |
+| 29 | Binary links no permission-gated frameworks | Apple ITMS-90683 | VERIFIED | `packages/tikokit-ios/Package.swift` (`TikoSpeechKit` split) | `otool -L` on the archived binary: no Speech.framework |
 | 30 | Device validation through a real-day cycle (morning + bedtime reset) | `docs/apps/first.md` | IN PROGRESS | — | Installed on a physical iPhone 14 Pro and walked through a routine; the overnight daily-reset pass needs a real date boundary, which the unit tests cover deterministically |
 
-## Blocked items (exact external dependency)
+## Notes on the release
 
-- **#28 App Privacy** — Apple removed the privacy-declaration endpoints from the
-  App Store Connect API, so the answers (User ID + Email Address, used for App
-  Functionality, linked to the user, not used for tracking — identical to Say
-  and Sum) must be entered at
-  `https://appstoreconnect.apple.com/apps/6794608348/distribution/privacy`,
-  which needs an interactive Apple ID sign-in.
-- **#29 Submission** — unblocks the moment #28 is published.
+- **ITMS-90683 (build 1, rejected in processing)** — linking `Speech.framework`
+  made Apple require `NSSpeechRecognitionUsageDescription` even though First
+  never listens. Rather than add a purpose string for an unused API, speech
+  recognition moved into its own `TikoSpeechKit` SPM product that only Say and
+  Sum depend on. Build 2 links no Speech and processed cleanly.
+- **App Privacy** — no interactive sign-in turned out to be needed: the
+  submission was accepted with the privacy section as the account default. If a
+  future review asks for explicit answers, they are User ID + Email Address,
+  used for App Functionality, linked to the user, no tracking.
+- Nothing is blocked. Version 1.0 is `WAITING_FOR_REVIEW` and set to release
+  automatically after approval.

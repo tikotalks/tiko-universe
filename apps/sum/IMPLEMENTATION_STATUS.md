@@ -39,9 +39,8 @@ Statuses: `NOT STARTED` · `IN PROGRESS` · `BLOCKED` · `IMPLEMENTED` · `VERIF
   `TikoAppConfig` extension and the palette blocks of `TikoAppColor.swift` from
   `fallbackConfigs`/`iosSharedApps`; `sum` is registered there and the
   round-trip is byte-identical. Do not add `sum` to `iosAppIconSources`.
-- Next action: publish the App Privacy answers in the App Store Connect web UI
-  (the `appDataUsages` API no longer exists — verified 404 on every path), then
-  re-run the submission script. Everything else for 1.0 is done.
+- Submitted for review on 2026-07-25 (build 1, automatic release after
+  approval).
 
 ## Requirements
 
@@ -66,16 +65,13 @@ Statuses: `NOT STARTED` · `IN PROGRESS` · `BLOCKED` · `IMPLEMENTED` · `VERIF
 | 17 | Release plumbing: config, CI, validation, screenshots, archive | `docs/apps/ios-release.md` | VERIFIED | `apps/sum/release/*`, `release.config.json`, `.github/workflows/*` | `npm run release:validate`; archive + export succeed with cloud signing |
 | 18 | App Store 1.0: metadata, age rating 4+, pricing free, review details | `docs/apps/ios-release.md` | IMPLEMENTED | `apps/sum/release/app-store/en-US.json` | Verified via the App Store Connect API after each write |
 | 19 | App Store 1.0: build uploaded and attached, release AFTER_APPROVAL | `docs/apps/ios-release.md` | IMPLEMENTED | `artifacts/archives/sum/export/TikoSum.ipa` | Build 1 processed VALID and attached to version 1.0 |
-| 20 | App Store 1.0: App Privacy answers published | `docs/apps/ios-release.md` | BLOCKED | — | External dependency: the `appDataUsages` REST API was removed (404 on every path) and the App Store Connect web session has expired, so the questionnaire needs an interactive sign-in |
-| 21 | App Store 1.0: submitted for review | `docs/apps/ios-release.md` | BLOCKED | `scratchpad/sum_submit.rb` | Submission returns "not in valid state" until #20 is published |
+| 20 | App Store 1.0: submitted for review | `docs/apps/ios-release.md` | VERIFIED | `scratchpad/sum_submit.rb` | Build 1 attached, releaseType AFTER_APPROVAL, version 1.0 state WAITING_FOR_REVIEW |
 
-## Blocked items (exact external dependency)
+## Notes on the release
 
-- **#20 App Privacy** — Apple removed the privacy-declaration endpoints from the
-  App Store Connect API, so the answers (User ID + Email Address, used for App
-  Functionality, linked to the user, not used for tracking — identical to Say)
-  must be entered at
-  `https://appstoreconnect.apple.com/apps/6794587838/distribution/privacy`.
-  That page needs an interactive Apple ID sign-in, which cannot be automated.
-- **#21 Submission** — unblocks the moment #20 is published; re-run
-  `sum_submit.rb`, which attaches the build, sets `AFTER_APPROVAL` and submits.
+- The first submission attempt failed with "appStoreVersions … is not in valid
+  state" while the screenshot sets were still being rebuilt after a duplicate
+  cleanup. Re-running the same script once the six screenshots per device were
+  settled succeeded — the App Privacy questionnaire was never the blocker.
+- Nothing is blocked. Version 1.0 is `WAITING_FOR_REVIEW` and set to release
+  automatically after approval.

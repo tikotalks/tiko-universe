@@ -1,5 +1,6 @@
 import SwiftUI
 import TikoKit
+import TikoSpeechKit
 
 /// Free-play settings, stored per the family's simple-settings convention.
 enum SumSettings {

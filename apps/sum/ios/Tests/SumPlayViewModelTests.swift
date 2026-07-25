@@ -1,5 +1,6 @@
 import XCTest
 import TikoKit
+import TikoSpeechKit
 @testable import TikoSum
 
 // MARK: - Scripted speech mock

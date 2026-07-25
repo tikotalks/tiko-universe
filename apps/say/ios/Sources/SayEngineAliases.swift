@@ -1,4 +1,5 @@
 import TikoKit
+import TikoSpeechKit
 
 // Say pioneered the shared speech/celebration engine; it now lives in TikoKit
 // (TikoVoice, TikoCelebrate, TikoSpeechPractice, TikoWordMatcher). These
