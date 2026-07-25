@@ -11,6 +11,15 @@ struct TikoFirstApp: App {
             }
         }
 
+        // Screenshot captures must be deterministic: a routine that a previous
+        // scene finished would otherwise open on its completion screen.
+        if TikoScreenshotMode.isActive {
+            let defaults = UserDefaults.standard
+            for key in defaults.dictionaryRepresentation().keys where key.hasPrefix("tiko.first.ios.progress.") {
+                defaults.removeObject(forKey: key)
+            }
+        }
+
         TikoDeviceDefaults.register()
         TikoI18n.translationsBaseURL = "https://translations.tikoapi.org"
         TikoIdentityClient.identityBaseURL = "https://identity.tikoapi.org/v1"

@@ -62,7 +62,7 @@ struct RoutineScreen: View {
             if TikoScreenshotMode.isActive, TikoScreenshotMode.scene == "celebrate" {
                 Task { @MainActor in
                     while viewModel.state != .completed {
-                        try? await Task.sleep(nanoseconds: 350_000_000)
+                        try? await Task.sleep(nanoseconds: 120_000_000)
                         guard let step = viewModel.currentStep else { break }
                         viewModel.complete(step: step)
                     }
@@ -121,13 +121,14 @@ struct RoutineScreen: View {
         GeometryReader { geo in
             let isCompact = geo.size.width < 500
             let isLandscape = geo.size.width > geo.size.height
+            let isLarge = min(geo.size.width, geo.size.height) >= 700
             VStack(spacing: isCompact ? 12 : 20) {
                 Spacer(minLength: 0)
 
                 if let step = viewModel.currentStep {
                     currentStepCard(
                         step,
-                        size: min(geo.size.width, geo.size.height) * (isLandscape ? 0.42 : (isCompact ? 0.56 : 0.48))
+                        size: min(geo.size.width, geo.size.height) * (isLandscape ? 0.42 : (isCompact ? 0.56 : (isLarge ? 0.62 : 0.48)))
                     )
                 }
 
@@ -214,15 +215,28 @@ struct RoutineScreen: View {
     /// Tapping ahead previews the step out loud — it can never complete it.
     private var stepStrip: some View {
         ScrollViewReader { proxy in
-            ScrollView(.horizontal, showsIndicators: false) {
+            // Short routines sit centred; long ones scroll and follow the
+            // current step.
+            ViewThatFits(in: .horizontal) {
                 HStack(spacing: 10) {
                     ForEach(viewModel.orderedSteps) { step in
                         stripItem(step)
                             .id(step.id)
                     }
                 }
-                .padding(.horizontal, 4)
                 .padding(.vertical, 6)
+                .frame(maxWidth: .infinity)
+
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack(spacing: 10) {
+                        ForEach(viewModel.orderedSteps) { step in
+                            stripItem(step)
+                                .id(step.id)
+                        }
+                    }
+                    .padding(.horizontal, 4)
+                    .padding(.vertical, 6)
+                }
             }
             .frame(height: 92)
             .onChange(of: viewModel.currentStep?.id) { _, id in
@@ -355,13 +369,48 @@ struct RoutineScreen: View {
     private var completionView: some View {
         VStack(spacing: 24) {
             Spacer()
-            Text(viewModel.routine.emoji)
-                .font(.system(size: 120))
-                .accessibilityHidden(true)
-            Image(systemName: "checkmark.circle.fill")
-                .font(.system(size: 64, weight: .heavy))
-                .foregroundStyle(appColor.palette.primary)
-                .accessibilityHidden(true)
+
+            // What the child just did, all of it, ticked.
+            ZStack {
+                if let url = store.image(for: viewModel.routine.id) {
+                    TikoCachedRemoteImage(url: url) {
+                        Text(viewModel.routine.emoji).font(.system(size: 110))
+                    }
+                } else {
+                    Text(viewModel.routine.emoji).font(.system(size: 110))
+                }
+                Image(systemName: "checkmark.circle.fill")
+                    .font(.system(size: 76, weight: .heavy))
+                    .foregroundStyle(appColor.palette.primary)
+                    .background(Circle().fill(.white).frame(width: 66, height: 66))
+            }
+            .frame(width: 190, height: 190)
+            .clipShape(RoundedRectangle(cornerRadius: 36, style: .continuous))
+            .accessibilityHidden(true)
+
+            HStack(spacing: 10) {
+                ForEach(viewModel.orderedSteps) { step in
+                    ZStack {
+                        if let url = store.image(for: step.id) ?? step.imageURL {
+                            TikoCachedRemoteImage(url: url) {
+                                Text(step.emoji).font(.system(size: 24))
+                            }
+                        } else {
+                            Text(step.emoji).font(.system(size: 24))
+                        }
+                        RoundedRectangle(cornerRadius: 14, style: .continuous)
+                            .fill(.black.opacity(0.4))
+                        Image(systemName: viewModel.isSkipped(step) ? "arrow.uturn.forward" : "checkmark")
+                            .font(.system(size: 18, weight: .heavy))
+                            .foregroundStyle(.white)
+                    }
+                    .frame(width: 54, height: 54)
+                    .background(appColor.palette.primary.opacity(0.14))
+                    .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+                }
+            }
+            .accessibilityHidden(true)
+
             Spacer()
             HStack(spacing: 18) {
                 roundButton(systemImage: "arrow.counterclockwise", prominent: false) {

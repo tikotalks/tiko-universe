@@ -147,7 +147,7 @@
         "colorModes": [
           "light"
         ],
-        "waitSeconds": 6
+        "waitSeconds": 5.5
       },
       {
         "id": "celebrate-dark",
@@ -165,7 +165,7 @@
         "colorModes": [
           "dark"
         ],
-        "waitSeconds": 6
+        "waitSeconds": 5.5
       }
     ]
   },
