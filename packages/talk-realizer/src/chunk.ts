@@ -55,9 +55,23 @@ export interface Chunks {
   negated: boolean
 }
 
-export function annotate(words: SelectedWord[], lexicon: Lexicon): Word[] {
+/**
+ * Resolves each tile's features. Three layers, later winning over earlier:
+ * induced from the word's own form, the language's curated facts, then any
+ * lexicon the caller passed (a pack can ship its own).
+ */
+export function annotate(
+  words: SelectedWord[],
+  lexicon: Lexicon,
+  induce?: (word: SelectedWord) => Features,
+  curated?: Record<string, Features>,
+): Word[] {
   return words.map((word) => {
-    const features = lexicon[word.id] ?? {}
+    const features: Features = {
+      ...(induce?.(word) ?? {}),
+      ...(curated?.[word.id] ?? {}),
+      ...(lexicon[word.id] ?? {}),
+    }
     return {
       ...word,
       features,

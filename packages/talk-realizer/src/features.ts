@@ -31,8 +31,12 @@ export type Pos =
   | 'social'
   | 'negation'
 
-/** Grammatical gender. Dutch only needs the de/het (common/neuter) split. */
-export type Gender = 'common' | 'neuter'
+/**
+ * Grammatical gender. Dutch needs only the de/het split (`common` vs `neuter`);
+ * German needs three; the Romance languages need masculine/feminine; Arabic and
+ * Maltese need masculine/feminine.
+ */
+export type Gender = 'common' | 'neuter' | 'masculine' | 'feminine'
 
 export type GrammaticalNumber = 'sg' | 'pl'
 
@@ -76,11 +80,18 @@ export interface Features {
   pronounCase?: PronounCase
   /** Object form, when the tile shows the subject form ("I" → "me"). */
   accusative?: string
+  /** Dative form, for languages that distinguish it ("ich" → "mir"). */
+  dative?: string
 
   // Verbs
   forms?: Partial<Record<VerbFormKey, string>>
   /** True for the copula, which negates and inverts without an auxiliary. */
   copula?: boolean
+  /**
+   * The case this verb gives its object. German "helfen" takes the dative
+   * ("Du hilfst mir"), which no ending rule can guess.
+   */
+  objectCase?: 'accusative' | 'dative'
 
   // Adjectives
   /** Form used directly before a noun. Dutch inflects here ("groot" → "grote"). */

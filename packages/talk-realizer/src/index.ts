@@ -20,8 +20,12 @@
  */
 import { annotate } from './chunk'
 import type { Lexicon, RealizeOptions, Realization, SelectedWord } from './features'
-import { FUNCTION_WORDS as EN_FUNCTION_WORDS, realizeEnglish } from './languages/en'
-import { FUNCTION_WORDS as NL_FUNCTION_WORDS, realizeDutch } from './languages/nl'
+import { realizeWith } from './engine'
+import { german } from './languages/de'
+import { english } from './languages/en'
+import { dutch } from './languages/nl'
+import type { LanguageRules } from './profile'
+import { germanLexicon } from './lexicon/de'
 import { englishLexicon } from './lexicon/en'
 import { dutchLexicon } from './lexicon/nl'
 
@@ -42,22 +46,30 @@ export type {
 export { annotate, chunk } from './chunk'
 export { englishLexicon } from './lexicon/en'
 export { dutchLexicon } from './lexicon/nl'
+export { germanLexicon } from './lexicon/de'
 
 /** Languages this prototype realizes. */
-export const supportedLanguages = ['en', 'nl'] as const
+export const supportedLanguages = ['en', 'nl', 'de'] as const
 export type SupportedLanguage = (typeof supportedLanguages)[number]
 
 /** The bundled feature overlays, by language. */
-export const lexicons: Record<SupportedLanguage, Lexicon> = {
+export const lexicons: Record<string, Lexicon> = {
   en: englishLexicon,
   nl: dutchLexicon,
+  de: germanLexicon,
+}
+
+/** Every language's rule set, by language code. */
+export const languages: Record<string, LanguageRules> = {
+  en: english,
+  nl: dutch,
+  de: german,
 }
 
 /** The closed set of function words each language is allowed to insert. */
-export const functionWords: Record<SupportedLanguage, readonly string[]> = {
-  en: EN_FUNCTION_WORDS,
-  nl: NL_FUNCTION_WORDS,
-}
+export const functionWords: Record<string, readonly string[]> = Object.fromEntries(
+  Object.entries(languages).map(([code, rules]) => [code, rules.profile.functionWords]),
+)
 
 export function languageOf(locale: string): string {
   return locale.replace('_', '-').split('-')[0]?.toLowerCase() ?? 'en'
@@ -78,20 +90,18 @@ export function realize(
   const language = languageOf(options.locale)
   const lexicon = 'lexicon' in options && options.lexicon
     ? options.lexicon
-    : lexicons[language as SupportedLanguage] ?? {}
-  const annotated = annotate(words, lexicon)
+    : lexicons[language] ?? {}
+  const rulesForLanguage = languages[language]
+  const annotated = annotate(words, lexicon, rulesForLanguage?.induce, rulesForLanguage?.curated)
   const realizeOptions = { negated: options.negated, tense: options.tense }
 
-  switch (language) {
-    case 'nl':
-      return ensureNonEmpty(realizeDutch(annotated, realizeOptions), words)
-    case 'en':
-      return ensureNonEmpty(realizeEnglish(annotated, realizeOptions), words)
-    default:
-      // No rules for this language yet: fall back to what sentence-api does
-      // today rather than guessing. Honest concatenation beats wrong grammar.
-      return fallback(words)
+  const rules = rulesForLanguage
+  if (!rules) {
+    // No rules for this language yet: fall back to what sentence-api does today
+    // rather than guessing. Honest concatenation beats wrong grammar.
+    return fallback(words)
   }
+  return ensureNonEmpty(realizeWith(rules, annotated, realizeOptions), words)
 }
 
 /**
