@@ -1,5 +1,5 @@
 import type { Chunks, NounPhrase, Phrase, Word } from './chunk'
-import type { Features, RealizedToken, SelectedWord } from './features'
+import type { Features, Gender, RealizedToken, SelectedWord } from './features'
 
 /**
  * A language's declarative shape. Everything that can be stated as a parameter
@@ -39,6 +39,13 @@ export interface LanguageProfile {
    *   Maltese, Korean, Armenian, Arabic)
    */
   questionStrategy: 'auxiliary' | 'inversion' | 'particle' | 'intonation'
+
+  /**
+   * True where the present tense has no copula: Russian "я счастлив", Arabic
+   * "التفاحة كبيرة". A copula tile the child chose is absorbed rather than
+   * conjugated, because there is no word to conjugate.
+   */
+  noPresentCopula?: boolean
 
   /** The sentence-final question particle, for `questionStrategy: 'particle'`. */
   questionParticle?: string
@@ -95,13 +102,40 @@ export interface Builder {
   tokens: RealizedToken[]
   inserted: string[]
   notes: string[]
+  /**
+   * Tiles the language does not spell out, waiting to be attached to the next
+   * token. A copula in a language that has none still has to appear in the audit
+   * trail — the child tapped it.
+   */
+  pending?: string[]
 }
 
 export function push(builder: Builder, text: string, from: string | null, merged?: string[]): void {
   const trimmed = text?.trim()
   if (!trimmed) return
-  builder.tokens.push(merged?.length ? { text: trimmed, from, merged } : { text: trimmed, from })
+  // Anything absorbed since the last token rides along with this one.
+  const all = [...(merged ?? []), ...(builder.pending ?? [])]
+  builder.pending = []
+  builder.tokens.push(all.length ? { text: trimmed, from, merged: all } : { text: trimmed, from })
   if (from === null) builder.inserted.push(trimmed)
+}
+
+/**
+ * Records a tile this language does not spell out. It attaches to the next token
+ * pushed, or to the last one if nothing follows, so no tile is ever lost.
+ */
+export function absorb(builder: Builder, id: string): void {
+  (builder.pending ??= []).push(id)
+}
+
+/** Attaches anything still pending to the last token emitted. */
+export function flushPending(builder: Builder): void {
+  const pending = builder.pending
+  if (!pending?.length) return
+  builder.pending = []
+  const last = builder.tokens[builder.tokens.length - 1]
+  if (!last) return
+  last.merged = [...(last.merged ?? []), ...pending]
 }
 
 export function note(builder: Builder, message: string): void {
@@ -123,9 +157,51 @@ export function formFor(
   return forms[specific] ?? (number === 'pl' ? forms.pl : undefined)
 }
 
+/**
+ * What an adjective agrees with. Attributively that is the noun it sits next to;
+ * as a predicate there is no noun in the phrase at all, and it agrees with the
+ * subject instead — "Äpplet är stort", "La pomme est grosse".
+ */
+/**
+ * True where this predicate should be said with "have" and a noun rather than a
+ * copula and an adjective: a sensation, felt by someone who can feel it.
+ */
+export function isSensation(ctx: SentenceContext): string | undefined {
+  if (!ctx.subjectAnimate) return undefined
+  return ctx.predicate?.features.sensation
+}
+
+/**
+ * True where this predicate takes a dative experiencer instead of a subject:
+ * German "mir ist kalt".
+ */
+export function isDativeSensation(ctx: SentenceContext): boolean {
+  return ctx.subjectAnimate === true && ctx.predicate?.features.dativeSensation === true
+}
+
+export function agreesWith(
+  np: { head?: Word, determiner?: Word } | undefined,
+  ctx: PhraseContext,
+): { gender?: Gender, plural: boolean } {
+  if (ctx.role === 'predicate') {
+    // "Nous sommes contents": the subject is a pronoun, so its number comes from
+    // the agreement the verb already used, not from a determiner.
+    return { gender: ctx.subjectGender, plural: ctx.subjectPlural === true || ctx.number === 'pl' }
+  }
+  return {
+    gender: np?.head?.features.gender,
+    plural: np?.determiner?.features.forcesNumber === 'pl',
+  }
+}
+
 export interface SentenceContext {
   /** The verb tile, when the child chose one. */
   verb?: Word
+  /**
+   * The predicate adjective, where the sentence has one and no verb. The copula
+   * can depend on it: Spanish picks "ser" for a quality and "estar" for a state.
+   */
+  predicate?: Word
   /** Per-language scratch space, for rules that need to pass state along. */
   scratch: Record<string, unknown>
   person: 1 | 2 | 3
@@ -135,6 +211,20 @@ export interface SentenceContext {
   isQuestion: boolean
   /** True when the language must supply a copula (no verb tile was chosen). */
   needsCopula: boolean
+  /**
+   * The subject's gender, where the subject is a noun. A predicate adjective
+   * agrees with it: "Äpplet är stort", "La pomme est grosse". Undefined for a
+   * pronoun subject, whose gender the tiles do not carry.
+   */
+  subjectGender?: Gender
+  /** True when the subject is plural, for the same agreement. */
+  subjectPlural?: boolean
+  /**
+   * True when the subject is a person rather than a thing. It decides between the
+   * two readings of the same tile: "tengo frío" (I feel cold) and "el agua está
+   * fría" (the water is cold).
+   */
+  subjectAnimate?: boolean
   builder: Builder
 }
 

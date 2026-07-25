@@ -24,7 +24,8 @@ export const koreanLexicon: Lexicon = {
   three: { pos: 'determiner', determinerKind: 'quantifier', forcesNumber: 'pl', attributive: '세' },
   many: { pos: 'determiner', determinerKind: 'quantifier', forcesNumber: 'pl' },
   little: { pos: 'determiner', determinerKind: 'quantifier' },
-  big: { pos: 'adjective' },
+  // "큰" is attributive; only the finite form can end a sentence.
+  big: { pos: 'adjective', predicative: '커' },
 
   not: { pos: 'negation' },
 }

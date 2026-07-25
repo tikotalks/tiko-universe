@@ -8,7 +8,7 @@ const golden: Array<[string, string[], string]> = [
   ["demonstrative takes a measure word", ["i", "want", "the", "apple"], "我要这个苹果。"],
   ["nothing inflects", ["he", "want", "apple"], "他要苹果。"],
   ["counting needs a measure word", ["i", "want", "two", "cookie"], "我要两块饼干。"],
-  ["adjective needs no copula", ["i", "happy"], "我开心。"],
+  ["no copula, but a degree word", ["i", "happy"], "我很开心。"],
   ["不 before the verb", ["i", "not", "want", "apple"], "我不要苹果。"],
   ["没 for 有", ["i", "not", "have", "apple"], "我没有苹果。"],
   ["object pronoun", ["you", "help", "me"], "你帮助我。"],

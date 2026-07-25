@@ -102,6 +102,36 @@ export interface Features {
   /** Feminine form of an adjective or determiner ("gros" → "grosse"). */
   feminine?: string
   /**
+   * Neuter form of an adjective or determiner, for the three-gender languages
+   * ("голям" → "голямо", "stor" → "stort").
+   */
+  neuter?: string
+  /**
+   * True where the adjective names an inherent quality rather than a passing
+   * state. Spanish and its neighbours choose their copula by it: "la manzana **es**
+   * grande" (a quality) but "yo **estoy** triste" (a state).
+   */
+  inherent?: boolean
+  /**
+   * The noun a language uses with "have" for a bodily sensation: French "j'ai
+   * **faim**", Spanish "tengo **hambre**", Dutch "ik heb **honger**". English and
+   * German say it with an adjective and a copula, most of Europe does not, and
+   * "je suis faim" is not a sentence.
+   */
+  sensation?: string
+  /**
+   * True where the language says this sensation with a dative experiencer and no
+   * subject at all: German "**mir** ist kalt". "Ich bin kalt" says something else
+   * — that the speaker is a cold person.
+   */
+  dativeSensation?: boolean
+  /**
+   * A Spanish feminine noun that begins with a stressed "a" and therefore takes
+   * the masculine singular article: "el agua", "un área". The noun stays
+   * feminine — its adjectives still agree as feminine ("el agua fría").
+   */
+  stressedInitialA?: boolean
+  /**
    * Overrides the language's default adjective position. French puts most
    * adjectives after the noun but a short closed set before it.
    */
@@ -218,4 +248,12 @@ export interface RealizeOptions {
    */
   negated?: boolean
   tense?: 'present' | 'past'
+  /**
+   * The lowest maturity this caller will accept. A language below it falls back
+   * to plain concatenation — the same output the app produces today — so
+   * shipping this package never means shipping every language at once.
+   *
+   * Defaults to `beta`: production and beta languages realize, drafts do not.
+   */
+  minMaturity?: 'production' | 'beta' | 'draft'
 }

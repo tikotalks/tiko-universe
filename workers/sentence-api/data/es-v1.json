@@ -1281,7 +1281,7 @@
     },
     {
       "id": "hot",
-      "text": "con calor",
+      "text": "caliente",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
@@ -1289,7 +1289,7 @@
     },
     {
       "id": "cold",
-      "text": "con frío",
+      "text": "frío",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,

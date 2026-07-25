@@ -9,6 +9,9 @@ import type { Lexicon } from '../features'
  * and precisely what a small multilingual model gets wrong.
  */
 export const dutchLexicon: Lexicon = {
+  thirsty: { pos: 'adjective', sensation: 'dorst' },
+  cold: { pos: 'adjective', sensation: 'het koud' },
+  hot: { pos: 'adjective', sensation: 'het warm' },
   // Pronouns
   i: { pos: 'pronoun', person: 1, number: 'sg', pronounCase: 'nom', accusative: 'mij' },
   you: { pos: 'pronoun', person: 2, number: 'sg', pronounCase: 'nom', accusative: 'jou' },
@@ -68,7 +71,7 @@ export const dutchLexicon: Lexicon = {
   small: { pos: 'adjective', attributive: 'kleine' },
   happy: { pos: 'adjective', attributive: 'blije' },
   sad: { pos: 'adjective', attributive: 'verdrietige' },
-  hungry: { pos: 'adjective' },
+  hungry: { pos: 'adjective', sensation: 'honger' },
   red: { pos: 'adjective', attributive: 'rode' },
   hurt: { pos: 'adjective' },
 
@@ -82,7 +85,6 @@ export const dutchLexicon: Lexicon = {
   please: { pos: 'social' },
   'thank-you': { pos: 'social' },
   hello: { pos: 'social' },
-  more: { pos: 'social' },
 
   /** Not in the packs yet — see the note in the English overlay. */
   not: { pos: 'negation' },

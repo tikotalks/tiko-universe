@@ -1,6 +1,7 @@
 import type { Features, SelectedWord } from '../features'
-import { applyExperiencer, extractObjectClitic } from '../morphology/romance'
-import { formFor, note, type LanguageRules, type SentenceContext } from '../profile'
+import { applyExperiencer } from '../morphology/romance'
+import { extractObjectClitic } from '../morphology/clitic'
+import { agreesWith, formFor, note, type LanguageRules, type SentenceContext } from '../profile'
 
 /**
  * Romanian. A Romance language that postposes its definite article, so it needs
@@ -148,12 +149,13 @@ export const romanian: LanguageRules = {
 
   adjectivePosition: 'after',
 
-  adjective(adjective, np) {
-    const feminine = np.head?.features.gender === 'feminine'
-    const plural = np.determiner?.features.forcesNumber === 'pl'
+  adjective(adjective, np, ctx) {
+    const { gender, plural } = agreesWith(np, ctx)
+    const feminine = gender === 'feminine'
     let form = adjective.text
-    if (feminine) form = adjective.features.feminine ?? (form.endsWith('u') ? `${form.slice(0, -1)}ă` : `${form}ă`)
-    if (plural) form = feminine ? `${form.slice(0, -1)}e` : `${form}i`
+    // An adjective in -e is the same in both genders ("mare", "rece").
+    if (feminine && !form.endsWith('e')) form = adjective.features.feminine ?? `${form}ă`
+    if (plural) form = feminine ? `${form.replace(/ă$/, '')}e` : `${form}i`
     return form
   },
 

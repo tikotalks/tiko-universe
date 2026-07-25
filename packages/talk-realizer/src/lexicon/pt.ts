@@ -2,6 +2,11 @@ import type { Lexicon } from '../features'
 
 /** Portuguese overlay: irregular verbs, gostar's preposition, mass nouns. */
 export const portugueseLexicon: Lexicon = {
+  hungry: { pos: 'adjective', sensation: 'fome' },
+  thirsty: { pos: 'adjective', sensation: 'sede' },
+  cold: { pos: 'adjective', sensation: 'frio' },
+  hot: { pos: 'adjective', sensation: 'calor' },
+  scared: { pos: 'adjective', sensation: 'medo' },
   i: { pos: 'pronoun', person: 1, number: 'sg', accusative: 'me' },
   you: { pos: 'pronoun', person: 2, number: 'sg', accusative: 'te' },
   we: { pos: 'pronoun', person: 1, number: 'pl', accusative: 'nos' },

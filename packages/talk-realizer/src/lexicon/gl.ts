@@ -5,6 +5,11 @@ import type { Lexicon } from '../features'
  * ending rule gets wrong.
  */
 export const galicianLexicon: Lexicon = {
+  hungry: { pos: 'adjective', sensation: 'fame' },
+  thirsty: { pos: 'adjective', sensation: 'sede' },
+  cold: { pos: 'adjective', sensation: 'frío' },
+  hot: { pos: 'adjective', sensation: 'calor' },
+  scared: { pos: 'adjective', sensation: 'medo' },
   i: { pos: 'pronoun', person: 1, number: 'sg', accusative: 'me' },
   you: { pos: 'pronoun', person: 2, number: 'sg', accusative: 'te' },
   we: { pos: 'pronoun', person: 1, number: 'pl', accusative: 'nos' },

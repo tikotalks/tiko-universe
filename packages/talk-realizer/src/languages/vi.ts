@@ -59,6 +59,12 @@ export const vietnamese: LanguageRules = {
       return null
     }
     if (determinerKind === 'definite' && head) {
+      if (head.features.mass) {
+        // A mass noun is not counted, so there is no classifier to carry the
+        // definiteness: "nước", not "cái nước".
+        note(ctx.builder, 'no classifier: mass nouns are not counted')
+        return { text: '', from: determiner.id }
+      }
       // Definiteness is carried by the classifier: "quả táo".
       const classifier = head.features.measureWord ?? 'cái'
       note(ctx.builder, `classifier "${classifier}" marks the definite noun`)

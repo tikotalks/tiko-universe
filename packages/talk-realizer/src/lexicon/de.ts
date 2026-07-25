@@ -10,6 +10,13 @@ import type { Lexicon } from '../features'
  * (essen → isst, sehen → sieht, laufen → läuft) that no ending rule produces.
  */
 export const germanLexicon: Lexicon = {
+  // "Mir ist kalt", never "ich bin kalt".
+  hot: { pos: 'adjective', dativeSensation: true },
+  // "Mir ist kalt", never "ich bin kalt".
+  cold: { pos: 'adjective', dativeSensation: true },
+  hungry: { pos: 'adjective', sensation: 'Hunger' },
+  thirsty: { pos: 'adjective', sensation: 'Durst' },
+  scared: { pos: 'adjective', sensation: 'Angst' },
   // ---- Pronouns ----
   i: { pos: 'pronoun', person: 1, number: 'sg', pronounCase: 'nom', accusative: 'mich', dative: 'mir' },
   you: { pos: 'pronoun', person: 2, number: 'sg', pronounCase: 'nom', accusative: 'dich', dative: 'dir' },

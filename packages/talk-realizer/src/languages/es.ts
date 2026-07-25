@@ -1,6 +1,7 @@
 import type { Features, SelectedWord } from '../features'
-import { agreeAdjective, applyExperiencer, conjugateRegular, elide, extractObjectClitic, induceGender, pluralize, possessiveForm } from '../morphology/romance'
-import { formFor, note, type LanguageRules } from '../profile'
+import { agreeAdjective, applyExperiencer, conjugateRegular, elide, induceGender, pluralize, possessiveForm } from '../morphology/romance'
+import { extractObjectClitic } from '../morphology/clitic'
+import { agreesWith, formFor, isSensation, note, type LanguageRules } from '../profile'
 
 /**
  * Spanish. The pack stores infinitives, so conjugation is the main job; the
@@ -17,8 +18,16 @@ const COPULA: Record<string, string> = {
 const COPULA_PAST: Record<string, string> = {
   '1sg': 'estaba', '2sg': 'estabas', '3sg': 'estaba', '1pl': 'estábamos', '2pl': 'estabais', '3pl': 'estaban',
 }
+const SER: Record<string, string> = {
+  '1sg': 'soy', '2sg': 'eres', '3sg': 'es', '1pl': 'somos', '2pl': 'sois', '3pl': 'son',
+}
+
 const DATIVE_CLITICS: Record<string, string> = {
   '1sg': 'me', '2sg': 'te', '3sg': 'le', '1pl': 'nos', '2pl': 'os', '3pl': 'les',
+}
+
+const HAVE: Record<string, string> = {
+  '1sg': 'tengo', '2sg': 'tienes', '3sg': 'tiene', '1pl': 'tenemos', '2pl': 'tenéis', '3pl': 'tienen',
 }
 
 export const spanish: LanguageRules = {
@@ -63,6 +72,21 @@ export const spanish: LanguageRules = {
   },
 
   copula(ctx) {
+    // A sensation is said with "have" and a noun in this language:
+    // "j'ai faim", not "je suis faim".
+    const sensation = isSensation(ctx)
+    if (sensation && ctx.tense === 'present') {
+      const form = HAVE[`${ctx.person}${ctx.number}`] ?? 'tiene'
+      note(ctx.builder, `"${form} ${sensation}": a sensation takes "have" and a noun`)
+      return form
+    }
+    // A quality takes "ser", a state takes "estar": "la manzana es grande"
+    // but "yo estoy triste".
+    if (ctx.predicate?.features.inherent && ctx.tense === 'present') {
+      const form = SER[`${ctx.person}${ctx.number}`] ?? 'es'
+      note(ctx.builder, `copula "${form}": an inherent quality, not a state`)
+      return form
+    }
     return (ctx.tense === 'past' ? COPULA_PAST : COPULA)[`${ctx.person}${ctx.number}`] ?? 'está'
   },
 
@@ -71,13 +95,18 @@ export const spanish: LanguageRules = {
     const determiner = np.determiner
     const plural = determiner?.features.forcesNumber === 'pl'
     const feminine = head?.features.gender === 'feminine'
-    const definite = plural ? (feminine ? 'las' : 'los') : (feminine ? 'la' : 'el')
+    // "el agua", not "la agua": a stressed initial "a" takes the masculine
+    // article in the singular, while the noun itself stays feminine.
+    const stressedA = head?.features.stressedInitialA === true && !plural
+    const definite = plural
+      ? (feminine ? 'las' : 'los')
+      : (feminine && !stressedA ? 'la' : 'el')
 
     if (determiner) {
       const kind = determiner.features.determinerKind
       if (kind === 'definite') return { text: definite, from: determiner.id }
       if (kind === 'indefinite') {
-        return { text: plural ? (feminine ? 'unas' : 'unos') : (feminine ? 'una' : 'un'), from: determiner.id }
+        return { text: plural ? (feminine ? 'unas' : 'unos') : (feminine && !stressedA ? 'una' : 'un'), from: determiner.id }
       }
       if (determiner.features.pronounCase === 'poss') {
         return { text: possessiveForm(determiner.features, determiner.text, feminine), from: determiner.id }
@@ -101,14 +130,17 @@ export const spanish: LanguageRules = {
       return null
     }
     if (plural) return { text: feminine ? 'unas' : 'unos', from: null }
-    return { text: feminine ? 'una' : 'un', from: null }
+    return { text: feminine && !stressedA ? 'una' : 'un', from: null }
   },
 
   adjectivePosition: 'after',
 
-  adjective(adjective, np) {
-    const number = np.determiner?.features.forcesNumber === 'pl' ? 'pl' : 'sg'
-    return agreeAdjective(adjective.features, adjective.text, 'es', np.head?.features.gender, number)
+  adjective(adjective, np, ctx) {
+    // The sensation noun replaces the adjective entirely.
+    const sensation = ctx.role === 'predicate' ? isSensation(ctx) : undefined
+    if (sensation && ctx.tense === 'present') return sensation
+    const { gender, plural } = agreesWith(np, ctx)
+    return agreeAdjective(adjective.features, adjective.text, 'es', gender, plural ? 'pl' : 'sg')
   },
 
   noun(head, np) {

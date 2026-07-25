@@ -7,6 +7,11 @@ import type { Lexicon } from '../features'
  * "la meva pilota".
  */
 export const catalanLexicon: Lexicon = {
+  hungry: { pos: 'adjective', sensation: 'gana' },
+  thirsty: { pos: 'adjective', sensation: 'set' },
+  cold: { pos: 'adjective', sensation: 'fred' },
+  hot: { pos: 'adjective', sensation: 'calor' },
+  scared: { pos: 'adjective', sensation: 'por' },
   i: { pos: 'pronoun', person: 1, number: 'sg', accusative: 'em' },
   you: { pos: 'pronoun', person: 2, number: 'sg', accusative: 'et' },
   we: { pos: 'pronoun', person: 1, number: 'pl', accusative: 'ens' },

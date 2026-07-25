@@ -1,5 +1,5 @@
 import type { Features, SelectedWord } from '../features'
-import { formFor, note, type LanguageRules } from '../profile'
+import { agreesWith, formFor, note, type LanguageRules } from '../profile'
 
 /**
  * Arabic. Three rules carry most of it:
@@ -109,10 +109,12 @@ export const arabic: LanguageRules = {
   adjectivePosition: 'after',
 
   adjective(adjective, np, ctx) {
-    const feminine = np.head?.features.gender === 'feminine'
+    const { gender } = agreesWith(np, ctx)
+    const feminine = gender === 'feminine'
     const base = feminine ? (adjective.features.feminine ?? `${adjective.text}ة`) : adjective.text
-    // A definite noun takes a definite adjective: "الخبز الكبير".
-    if (np.determiner?.features.determinerKind === 'definite') {
+    // A definite noun takes a definite adjective: "الخبز الكبير". A predicate is
+    // indefinite, which is exactly what makes it a predicate: "التفاحة كبيرة".
+    if (ctx.role !== 'predicate' && np.determiner?.features.determinerKind === 'definite') {
       note(ctx.builder, 'the adjective agrees in definiteness')
       return `${DEFINITE}${base}`
     }

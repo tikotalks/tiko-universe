@@ -2,6 +2,11 @@ import type { Lexicon } from '../features'
 
 /** Italian overlay: irregular verbs, reflexives, mass nouns, gender exceptions. */
 export const italianLexicon: Lexicon = {
+  hungry: { pos: 'adjective', sensation: 'fame' },
+  thirsty: { pos: 'adjective', sensation: 'sete' },
+  cold: { pos: 'adjective', sensation: 'freddo' },
+  hot: { pos: 'adjective', sensation: 'caldo' },
+  scared: { pos: 'adjective', sensation: 'paura' },
   i: { pos: 'pronoun', person: 1, number: 'sg', accusative: 'mi' },
   you: { pos: 'pronoun', person: 2, number: 'sg', accusative: 'ti' },
   we: { pos: 'pronoun', person: 1, number: 'pl', accusative: 'ci' },

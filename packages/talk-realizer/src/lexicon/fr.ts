@@ -7,6 +7,10 @@ import type { Lexicon } from '../features'
  * nouns that take the partitive.
  */
 export const frenchLexicon: Lexicon = {
+  cold: { pos: 'adjective', sensation: 'froid' },
+  hot: { pos: 'adjective', sensation: 'chaud' },
+  scared: { pos: 'adjective', sensation: 'peur' },
+  sick: { pos: 'adjective', sensation: 'mal' },
   // Pronouns — the object forms are the preverbal clitics.
   i: { pos: 'pronoun', person: 1, number: 'sg', accusative: 'me' },
   you: { pos: 'pronoun', person: 2, number: 'sg', accusative: 'te' },
@@ -59,8 +63,8 @@ export const frenchLexicon: Lexicon = {
   happy: { pos: 'adjective', feminine: 'contente' },
   sad: { pos: 'adjective', feminine: 'triste' },
   tired: { pos: 'adjective', feminine: 'fatiguée' },
-  hungry: { pos: 'adjective' },
-  thirsty: { pos: 'adjective' },
+  hungry: { pos: 'adjective', sensation: 'faim' },
+  thirsty: { pos: 'adjective', sensation: 'soif' },
 
   // Mass nouns take the partitive ("du pain", "de l'eau")
   water: { pos: 'noun', gender: 'feminine', mass: true },

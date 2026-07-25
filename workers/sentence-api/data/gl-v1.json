@@ -1285,7 +1285,7 @@
       "category": "feelings",
       "frequency": 9,
       "icon": "smile",
-      "text": "com calor"
+      "text": "quente"
     },
     {
       "id": "cold",
@@ -1293,7 +1293,7 @@
       "category": "feelings",
       "frequency": 9,
       "icon": "smile",
-      "text": "com frio"
+      "text": "frío"
     },
     {
       "id": "hungry",

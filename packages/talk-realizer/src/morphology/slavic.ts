@@ -126,9 +126,12 @@ export function declineAdjective(
   if (curated) return curated
 
   if (language === 'ru') {
-    // Russian adjectives end in -ый/-ий/-ой in the masculine nominative.
-    const stem = text.replace(/(ый|ий|ой|ая|ое|ее)$/, '')
-    if (stem === text) return text
+    // Russian adjectives end in -ый/-ий/-ой in the masculine nominative, and
+    // which one is a property of the word: "большой" is not "большый".
+    const match = /(ый|ий|ой|ая|ое|ее)$/.exec(text)
+    const stem = match ? text.slice(0, -match[1].length) : text
+    if (!match) return text
+    const stressed = match[1] === 'ой'
     const soft = /(ний|кий|гий|хий|чий|щий|жий|ший)$/.test(text)
     if (gender === 'feminine') {
       return grammaticalCase === 'nom' ? `${stem}ая` : grammaticalCase === 'acc' ? `${stem}ую` : `${stem}ой`
@@ -137,7 +140,7 @@ export function declineAdjective(
       return grammaticalCase === 'gen' ? `${stem}ого` : `${stem}ое`
     }
     if (grammaticalCase === 'gen' || (grammaticalCase === 'acc' && animate)) return `${stem}ого`
-    return `${stem}${soft ? 'ий' : 'ый'}`
+    return `${stem}${stressed ? 'ой' : soft ? 'ий' : 'ый'}`
   }
 
   // Polish adjectives end in -y/-i in the masculine nominative.

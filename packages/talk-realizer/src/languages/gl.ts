@@ -1,6 +1,7 @@
 import type { Features, SelectedWord } from '../features'
-import { agreeAdjective, applyExperiencer, conjugateRegular, elide, extractObjectClitic, induceGender, pluralize } from '../morphology/romance'
-import { formFor, note, type LanguageRules } from '../profile'
+import { agreeAdjective, applyExperiencer, conjugateRegular, elide, induceGender, pluralize } from '../morphology/romance'
+import { extractObjectClitic } from '../morphology/clitic'
+import { agreesWith, formFor, isSensation, note, type LanguageRules } from '../profile'
 
 /**
  * Galician. Closest to Portuguese, which is what its morphology reuses, with its
@@ -12,6 +13,14 @@ import { formFor, note, type LanguageRules } from '../profile'
  */
 const COPULA: Record<string, string> = {
   '1sg': 'estou', '2sg': 'estás', '3sg': 'está', '1pl': 'estamos', '2pl': 'estades', '3pl': 'están',
+}
+
+const SER: Record<string, string> = {
+  '1sg': 'son', '2sg': 'es', '3sg': 'é', '1pl': 'somos', '2pl': 'sodes', '3pl': 'son',
+}
+
+const HAVE: Record<string, string> = {
+  '1sg': 'teño', '2sg': 'tes', '3sg': 'ten', '1pl': 'temos', '2pl': 'tendes', '3pl': 'teñen',
 }
 
 export const galician: LanguageRules = {
@@ -49,6 +58,21 @@ export const galician: LanguageRules = {
   },
 
   copula(ctx) {
+    // A sensation is said with "have" and a noun in this language:
+    // "j'ai faim", not "je suis faim".
+    const sensation = isSensation(ctx)
+    if (sensation && ctx.tense === 'present') {
+      const form = HAVE[`${ctx.person}${ctx.number}`] ?? 'ten'
+      note(ctx.builder, `"${form} ${sensation}": a sensation takes "have" and a noun`)
+      return form
+    }
+    // A quality takes "ser", a state takes "estar": "la manzana es grande"
+    // but "yo estoy triste".
+    if (ctx.predicate?.features.inherent && ctx.tense === 'present') {
+      const form = SER[`${ctx.person}${ctx.number}`] ?? 'é'
+      note(ctx.builder, `copula "${form}": an inherent quality, not a state`)
+      return form
+    }
     return COPULA[`${ctx.person}${ctx.number}`] ?? 'está'
   },
 
@@ -93,9 +117,12 @@ export const galician: LanguageRules = {
 
   adjectivePosition: 'after',
 
-  adjective(adjective, np) {
-    const number = np.determiner?.features.forcesNumber === 'pl' ? 'pl' : 'sg'
-    return agreeAdjective(adjective.features, adjective.text, 'gl', np.head?.features.gender, number)
+  adjective(adjective, np, ctx) {
+    // The sensation noun replaces the adjective entirely.
+    const sensation = ctx.role === 'predicate' ? isSensation(ctx) : undefined
+    if (sensation && ctx.tense === 'present') return sensation
+    const { gender, plural } = agreesWith(np, ctx)
+    return agreeAdjective(adjective.features, adjective.text, 'gl', gender, plural ? 'pl' : 'sg')
   },
 
   noun(head, np) {

@@ -1,6 +1,7 @@
 import type { Features, SelectedWord } from '../features'
-import { applyExperiencer, extractObjectClitic } from '../morphology/romance'
-import { formFor, note, type LanguageRules, type SentenceContext } from '../profile'
+import { applyExperiencer } from '../morphology/romance'
+import { extractObjectClitic } from '../morphology/clitic'
+import { agreesWith, formFor, note, type LanguageRules, type SentenceContext } from '../profile'
 
 /**
  * Greek. Three genders and a case system, but a regular one — which makes it the
@@ -174,10 +175,14 @@ export const greek: LanguageRules = {
 
   adjective(adjective, np, ctx) {
     const head = np.head
-    if (!head) return adjective.text
-    const gender = genderOf(head.features)
-    const plural = np.determiner?.features.forcesNumber === 'pl'
-    const grammaticalCase: Case = ctx.role === 'subject' ? 'nom' : 'acc'
+    const predicate = ctx.role === 'predicate'
+    if (!head && !predicate) return adjective.text
+    const { gender: subjectGender, plural } = agreesWith(np, ctx)
+    const gender = predicate
+      ? (subjectGender === 'feminine' ? 'f' : subjectGender === 'neuter' ? 'n' : 'm')
+      : genderOf(head!.features)
+    // A predicate is in the nominative, like the subject it describes.
+    const grammaticalCase: Case = ctx.role === 'subject' || predicate ? 'nom' : 'acc'
     // Adjectives in -ος follow the ος/η/ο pattern.
     const stem = adjective.text.replace(/(ος|η|ο)$/, '')
     if (stem === adjective.text) return adjective.text

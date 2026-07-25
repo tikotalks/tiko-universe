@@ -89,7 +89,6 @@ export const englishLexicon: Lexicon = {
   please: { pos: 'social' },
   'thank-you': { pos: 'social' },
   hello: { pos: 'social' },
-  more: { pos: 'social' },
 
   /**
    * Not in the packs yet. Talk has no negation tile — only the social "no" —

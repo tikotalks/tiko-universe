@@ -1,5 +1,5 @@
 import type { Features, SelectedWord } from '../features'
-import { formFor, note, type LanguageRules, type PhraseContext, type SentenceContext } from '../profile'
+import { formFor, isDativeSensation, isSensation, note, type LanguageRules, type PhraseContext, type SentenceContext } from '../profile'
 
 /**
  * German. The hardest of the European languages here, because articles and
@@ -87,6 +87,10 @@ function conjugate(stem: string, ctx: SentenceContext): string {
   }
 }
 
+const HAVE: Record<string, string> = {
+  '1sg': 'habe', '2sg': 'hast', '3sg': 'hat', '1pl': 'haben', '2pl': 'habt', '3pl': 'haben',
+}
+
 export const german: LanguageRules = {
   profile: {
     language: 'de',
@@ -128,6 +132,20 @@ export const german: LanguageRules = {
   },
 
   copula(ctx) {
+    // With a dative experiencer there is no subject to agree with: "mir ist kalt",
+    // "uns ist warm".
+    if (isDativeSensation(ctx) && ctx.tense === 'present') {
+      note(ctx.builder, 'the copula stays third person: there is no subject')
+      return 'ist'
+    }
+    // A sensation is said with "have" and a noun in this language:
+    // "j'ai faim", not "je suis faim".
+    const sensation = isSensation(ctx)
+    if (sensation && ctx.tense === 'present') {
+      const form = HAVE[`${ctx.person}${ctx.number}`] ?? 'hat'
+      note(ctx.builder, `"${form} ${sensation}": a sensation takes "have" and a noun`)
+      return form
+    }
     return (ctx.tense === 'past' ? COPULA_PAST : COPULA)[key(ctx)] ?? 'ist'
   },
 
@@ -192,6 +210,9 @@ export const german: LanguageRules = {
   },
 
   adjective(adjective, np, ctx) {
+    // The sensation noun replaces the adjective entirely.
+    const sensation = ctx.role === 'predicate' ? isSensation(ctx) : undefined
+    if (sensation && ctx.tense === 'present') return sensation
     const head = np.head
     if (!head) return adjective.text
     const plural = np.determiner?.features.forcesNumber === 'pl'
@@ -226,7 +247,14 @@ export const german: LanguageRules = {
   },
 
   pronoun(word, ctx) {
-    if (ctx.role === 'subject') return word.text
+    if (ctx.role === 'subject') {
+      // "Mir ist kalt": the one who feels cold is a dative, not a subject.
+      if (isDativeSensation(ctx) && word.features.dative) {
+        note(ctx.builder, `"${word.features.dative}": a dative experiencer, not a subject`)
+        return word.features.dative
+      }
+      return word.text
+    }
     const dativeVerb = ctx.verb?.features.objectCase === 'dative'
     if (dativeVerb || ctx.afterPreposition) {
       const dative = word.features.dative ?? DATIVE_FALLBACK[word.text]

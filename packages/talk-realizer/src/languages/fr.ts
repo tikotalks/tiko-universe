@@ -1,6 +1,7 @@
 import type { Features, SelectedWord } from '../features'
-import { agreeAdjective, conjugateRegular, elide, extractObjectClitic, induceGender, pluralize, startsWithVowel } from '../morphology/romance'
-import { formFor, note, type LanguageRules } from '../profile'
+import { agreeAdjective, conjugateRegular, elide, induceGender, pluralize, startsWithVowel } from '../morphology/romance'
+import { extractObjectClitic } from '../morphology/clitic'
+import { agreesWith, formFor, isSensation, note, type LanguageRules } from '../profile'
 
 /**
  * French. Four things make it more than concatenation:
@@ -37,6 +38,10 @@ const CONTRACTIONS: Array<[RegExp, Replacement]> = [
 
 /** Elision inside a single token, e.g. the clitic glued to its verb. */
 const INNER_ELISION = new RegExp(`\\b(je|ne|me|te|se|le|la|de|que) (?=${VOWEL})`, 'gi')
+
+const HAVE: Record<string, string> = {
+  '1sg': 'ai', '2sg': 'as', '3sg': 'a', '1pl': 'avons', '2pl': 'avez', '3pl': 'ont',
+}
 
 export const french: LanguageRules = {
   profile: {
@@ -78,6 +83,14 @@ export const french: LanguageRules = {
   },
 
   copula(ctx) {
+    // A sensation is said with "have" and a noun in this language:
+    // "j'ai faim", not "je suis faim".
+    const sensation = isSensation(ctx)
+    if (sensation && ctx.tense === 'present') {
+      const form = HAVE[`${ctx.person}${ctx.number}`] ?? 'a'
+      note(ctx.builder, `"${form} ${sensation}": a sensation takes "have" and a noun`)
+      return form
+    }
     const table = ctx.tense === 'past' ? COPULA_PAST : COPULA
     return table[`${ctx.person}${ctx.number}`] ?? 'est'
   },
@@ -130,11 +143,12 @@ export const french: LanguageRules = {
 
   adjectivePosition: 'after',
 
-  adjective(adjective, np) {
-    const head = np.head
-    const gender = head?.features.gender
-    const number = np.determiner?.features.forcesNumber === 'pl' ? 'pl' : 'sg'
-    return agreeAdjective(adjective.features, adjective.text, 'fr', gender, number)
+  adjective(adjective, np, ctx) {
+    // The sensation noun replaces the adjective entirely.
+    const sensation = ctx.role === 'predicate' ? isSensation(ctx) : undefined
+    if (sensation && ctx.tense === 'present') return sensation
+    const { gender, plural } = agreesWith(np, ctx)
+    return agreeAdjective(adjective.features, adjective.text, 'fr', gender, plural ? 'pl' : 'sg')
   },
 
   noun(head, np) {

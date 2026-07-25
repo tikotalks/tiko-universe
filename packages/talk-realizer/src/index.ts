@@ -44,6 +44,8 @@ import { galician } from './languages/gl'
 import { afrikaans } from './languages/af'
 import { russian } from './languages/ru'
 import { polish } from './languages/pl'
+import { bulgarian } from './languages/bg'
+import { albanian } from './languages/sq'
 import { english } from './languages/en'
 import { dutch } from './languages/nl'
 import type { LanguageRules } from './profile'
@@ -70,6 +72,8 @@ import { galicianLexicon } from './lexicon/gl'
 import { afrikaansLexicon } from './lexicon/af'
 import { russianLexicon } from './lexicon/ru'
 import { polishLexicon } from './lexicon/pl'
+import { bulgarianLexicon } from './lexicon/bg'
+import { albanianLexicon } from './lexicon/sq'
 import { englishLexicon } from './lexicon/en'
 import { dutchLexicon } from './lexicon/nl'
 
@@ -112,7 +116,7 @@ export { romanianLexicon } from './lexicon/ro'
 export { greekLexicon } from './lexicon/el'
 
 /** Languages this prototype realizes. */
-export const supportedLanguages = ['en', 'nl', 'de', 'fr', 'es', 'it', 'pt', 'mt', 'zh', 'ja', 'ko', 'ar', 'hy', 'sv', 'da', 'nb', 'id', 'vi', 'ro', 'el', 'ms', 'ca', 'gl', 'af', 'ru', 'pl'] as const
+export const supportedLanguages = ['en', 'nl', 'de', 'fr', 'es', 'it', 'pt', 'mt', 'zh', 'ja', 'ko', 'ar', 'hy', 'sv', 'da', 'nb', 'id', 'vi', 'ro', 'el', 'ms', 'ca', 'gl', 'af', 'ru', 'pl', 'bg', 'sq'] as const
 export type SupportedLanguage = (typeof supportedLanguages)[number]
 
 /** The bundled feature overlays, by language. */
@@ -142,6 +146,8 @@ export const lexicons: Record<string, Lexicon> = {
   af: afrikaansLexicon,
   ru: russianLexicon,
   pl: polishLexicon,
+  bg: bulgarianLexicon,
+  sq: albanianLexicon,
 }
 
 /** Every language's rule set, by language code. */
@@ -172,6 +178,8 @@ export const languages: Record<string, LanguageRules> = {
   af: afrikaans,
   ru: russian,
   pl: polish,
+  bg: bulgarian,
+  sq: albanian,
 }
 
 /** The closed set of function words each language is allowed to insert. */
@@ -191,9 +199,16 @@ export function isSupported(locale: string): locale is SupportedLanguage {
  * Realizes a selection. Pass a `lexicon` to override the bundled overlay (a pack
  * can ship its own); omit it and the language's default is used.
  */
+const MATURITY_ORDER = { draft: 0, beta: 1, production: 2 } as const
+
 export function realize(
   words: SelectedWord[],
-  options: RealizeOptions | { locale: string, negated?: boolean, tense?: 'present' | 'past' },
+  options: RealizeOptions | {
+    locale: string
+    negated?: boolean
+    tense?: 'present' | 'past'
+    minMaturity?: 'production' | 'beta' | 'draft'
+  },
 ): Realization {
   const language = languageOf(options.locale)
   const lexicon = 'lexicon' in options && options.lexicon
@@ -209,6 +224,17 @@ export function realize(
     // rather than guessing. Honest concatenation beats wrong grammar.
     return fallback(words)
   }
+
+  // A language the caller does not trust yet falls back too, for the same reason.
+  const required = options.minMaturity ?? 'beta'
+  if (MATURITY_ORDER[rules.profile.maturity] < MATURITY_ORDER[required]) {
+    const plain = fallback(words)
+    return {
+      ...plain,
+      notes: [`${language} is ${rules.profile.maturity}, below the requested ${required}: tiles joined as-is`],
+    }
+  }
+
   return ensureNonEmpty(realizeWith(rules, annotated, realizeOptions), words)
 }
 

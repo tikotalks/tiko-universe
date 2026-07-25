@@ -1,6 +1,6 @@
 import { chunk, firstNounComplement, subjectPerson, type Chunks, type NounPhrase, type Phrase } from './chunk'
 import type { Realization, RealizedToken } from './features'
-import { note, push, type Builder, type LanguageRules, type NegationPlan, type PhraseContext, type Role, type SentenceContext } from './profile'
+import { absorb, flushPending, note, push, type Builder, type LanguageRules, type NegationPlan, type PhraseContext, type Role, type SentenceContext } from './profile'
 
 /**
  * The one sentence-building flow, shared by every language.
@@ -21,10 +21,12 @@ export function realizeWith(
 
   const predicate = chunks.complements.find((phrase) => phrase.kind === 'adjp')
   const isQuestion = !!chunks.question
-  const needsCopula = !chunks.verb && !!chunks.subject && (!!predicate || isQuestion)
+  let needsCopula = !chunks.verb && !!chunks.subject && (!!predicate || isQuestion)
+  const subjectHead = chunks.subject?.kind === 'np' ? chunks.subject.head : undefined
 
   const ctx: SentenceContext = {
     verb: chunks.verb,
+    predicate: predicate?.kind === 'adjp' ? predicate.adjectives[0] : undefined,
     scratch: {},
     person,
     number,
@@ -32,12 +34,32 @@ export function realizeWith(
     negated: chunks.negated,
     isQuestion,
     needsCopula,
+    subjectGender: subjectHead?.features.gender,
+    subjectPlural: chunks.subject?.kind === 'np'
+      ? chunks.subject.determiner?.features.forcesNumber === 'pl'
+      : undefined,
+    subjectAnimate: chunks.subject?.kind === 'np'
+      ? !!chunks.subject.pronoun || subjectHead?.features.animate === true
+      : undefined,
     builder,
   }
 
   // A language may restructure the clause before anything is emitted.
   rules.transform?.(chunks, ctx)
   ctx.verb = chunks.verb
+
+  /**
+   * An "is" tile takes the same path as a copula the language supplies: the same
+   * word, chosen by the same hook. This matters most where the language has no
+   * copula to choose — Russian "Яблоко большое", Arabic "التفاحة كبيرة" — because
+   * then there is nothing to conjugate and the tile is absorbed instead.
+   */
+  const copulaTile = chunks.verb?.features.copula ? chunks.verb : undefined
+  if (copulaTile) {
+    chunks.verb = undefined
+    ctx.verb = undefined
+    needsCopula = true
+  }
 
   const plan: NegationPlan = chunks.negated ? rules.negation(ctx) : { kind: 'none' }
 
@@ -80,7 +102,15 @@ export function realizeWith(
       push(builder, rules.pronoun(np.pronoun, phraseCtx), np.pronoun.id)
     } else {
       const determiner = rules.determiner(np, phraseCtx)
-      if (determiner) push(builder, determiner.text, determiner.from, determiner.merged)
+      if (determiner) {
+        // A language may render a determiner as nothing at all (Vietnamese does
+        // for mass nouns). The tile still has to reach the audit trail.
+        if (determiner.text.trim() || !determiner.from) {
+          push(builder, determiner.text, determiner.from, determiner.merged)
+        } else {
+          absorb(builder, determiner.from)
+        }
+      }
 
       // Each adjective may override the language's default position.
       const fallbackPosition = rules.adjectivePosition ?? 'before'
@@ -166,10 +196,15 @@ export function realizeWith(
         push(builder, plan.word, null)
       }
       if (copula) {
-        push(builder, copula, null)
-        note(builder, `copula "${copula}": a subject and a predicate with no verb tile`)
+        push(builder, copula, copulaTile?.id ?? null)
+        note(builder, copulaTile
+          ? `copula "${copula}", from the tile the child chose`
+          : `copula "${copula}": a subject and a predicate with no verb tile`)
       } else {
-        note(builder, 'no copula: this language leaves it out here')
+        note(builder, copulaTile
+          ? `no copula in this language: "${copulaTile.text}" is not spoken`
+          : 'no copula: this language leaves it out here')
+        if (copulaTile) absorb(builder, copulaTile.id)
       }
       if (chunks.negated && !suppressVerbParticle) {
         const word = plan.kind === 'afterVerb'
@@ -333,7 +368,9 @@ export function realizeWith(
   let tokens = builder.tokens
   if (rules.postprocess) tokens = rules.postprocess(tokens, ctx)
 
-  return finish(rules, { ...builder, tokens }, chunks, isQuestion)
+  const flushed = { ...builder, tokens }
+  flushPending(flushed)
+  return finish(rules, flushed, chunks, isQuestion)
 }
 
 /** English do-support auxiliary for the subject and tense. */

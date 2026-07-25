@@ -1,6 +1,7 @@
 import type { Features, SelectedWord } from '../features'
-import { agreeAdjective, conjugateRegular, elide, extractObjectClitic, induceGender, pluralize, possessiveForm } from '../morphology/romance'
-import { formFor, note, type LanguageRules } from '../profile'
+import { agreeAdjective, conjugateRegular, elide, induceGender, pluralize, possessiveForm } from '../morphology/romance'
+import { extractObjectClitic } from '../morphology/clitic'
+import { agreesWith, formFor, isSensation, note, type LanguageRules } from '../profile'
 
 /**
  * Portuguese. Closest to Spanish here, with two differences that matter:
@@ -12,6 +13,14 @@ const COPULA: Record<string, string> = {
 }
 const COPULA_PAST: Record<string, string> = {
   '1sg': 'estava', '2sg': 'estavas', '3sg': 'estava', '1pl': 'estávamos', '2pl': 'estáveis', '3pl': 'estavam',
+}
+
+const SER: Record<string, string> = {
+  '1sg': 'sou', '2sg': 'és', '3sg': 'é', '1pl': 'somos', '2pl': 'sois', '3pl': 'são',
+}
+
+const HAVE: Record<string, string> = {
+  '1sg': 'tenho', '2sg': 'tens', '3sg': 'tem', '1pl': 'temos', '2pl': 'tendes', '3pl': 'têm',
 }
 
 export const portuguese: LanguageRules = {
@@ -53,6 +62,21 @@ export const portuguese: LanguageRules = {
   },
 
   copula(ctx) {
+    // A sensation is said with "have" and a noun in this language:
+    // "j'ai faim", not "je suis faim".
+    const sensation = isSensation(ctx)
+    if (sensation && ctx.tense === 'present') {
+      const form = HAVE[`${ctx.person}${ctx.number}`] ?? 'tem'
+      note(ctx.builder, `"${form} ${sensation}": a sensation takes "have" and a noun`)
+      return form
+    }
+    // A quality takes "ser", a state takes "estar": "la manzana es grande"
+    // but "yo estoy triste".
+    if (ctx.predicate?.features.inherent && ctx.tense === 'present') {
+      const form = SER[`${ctx.person}${ctx.number}`] ?? 'é'
+      note(ctx.builder, `copula "${form}": an inherent quality, not a state`)
+      return form
+    }
     return (ctx.tense === 'past' ? COPULA_PAST : COPULA)[`${ctx.person}${ctx.number}`] ?? 'está'
   },
 
@@ -91,9 +115,12 @@ export const portuguese: LanguageRules = {
 
   adjectivePosition: 'after',
 
-  adjective(adjective, np) {
-    const number = np.determiner?.features.forcesNumber === 'pl' ? 'pl' : 'sg'
-    return agreeAdjective(adjective.features, adjective.text, 'pt', np.head?.features.gender, number)
+  adjective(adjective, np, ctx) {
+    // The sensation noun replaces the adjective entirely.
+    const sensation = ctx.role === 'predicate' ? isSensation(ctx) : undefined
+    if (sensation && ctx.tense === 'present') return sensation
+    const { gender, plural } = agreesWith(np, ctx)
+    return agreeAdjective(adjective.features, adjective.text, 'pt', gender, plural ? 'pl' : 'sg')
   },
 
   noun(head, np) {

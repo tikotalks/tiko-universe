@@ -109,10 +109,21 @@ export function createSlavic(config: SlavicConfig): LanguageRules {
 
     adjective(adjective, np, ctx) {
       const grammaticalCase = caseFor(ctx)
-      // Russian uses a short form as a predicate: "я счастлив", not "счастливый".
-      if (ctx.role === 'predicate' && adjective.features.predicative) {
-        note(ctx.builder, `"${adjective.features.predicative}": predicative form`)
-        return adjective.features.predicative
+      if (ctx.role === 'predicate') {
+        // With a noun subject the predicate agrees with it: "Яблоко большое".
+        if (ctx.subjectGender) {
+          const form = declineAdjective(
+            adjective.text, adjective.features, ctx.subjectGender, 'nom', false, language,
+          )
+          note(ctx.builder, `"${form}": a predicate agreeing with the subject`)
+          return form
+        }
+        // With a pronoun subject the tiles carry no gender, and Russian prefers
+        // the short form there anyway: "я счастлив", not "я счастливый".
+        if (adjective.features.predicative) {
+          note(ctx.builder, `"${adjective.features.predicative}": predicative form`)
+          return adjective.features.predicative
+        }
       }
       return declineAdjective(
         adjective.text, adjective.features, np.head?.features.gender,

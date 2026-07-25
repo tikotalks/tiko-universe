@@ -1,6 +1,7 @@
 import type { Features, SelectedWord } from '../features'
-import { agreeAdjective, applyExperiencer, conjugateRegular, elide, extractObjectClitic, induceGender, pluralize, possessiveForm } from '../morphology/romance'
-import { formFor, note, type LanguageRules } from '../profile'
+import { agreeAdjective, applyExperiencer, conjugateRegular, elide, induceGender, pluralize, possessiveForm } from '../morphology/romance'
+import { extractObjectClitic } from '../morphology/clitic'
+import { agreesWith, formFor, isSensation, note, type LanguageRules } from '../profile'
 
 /**
  * Italian. Two things beyond the shared Romance machinery:
@@ -44,6 +45,10 @@ function indefiniteArticle(word: string, feminine: boolean): string {
   return needsLo(word) ? 'uno' : 'un'
 }
 
+const HAVE: Record<string, string> = {
+  '1sg': 'ho', '2sg': 'hai', '3sg': 'ha', '1pl': 'abbiamo', '2pl': 'avete', '3pl': 'hanno',
+}
+
 export const italian: LanguageRules = {
   profile: {
     language: 'it',
@@ -85,6 +90,14 @@ export const italian: LanguageRules = {
   },
 
   copula(ctx) {
+    // A sensation is said with "have" and a noun in this language:
+    // "j'ai faim", not "je suis faim".
+    const sensation = isSensation(ctx)
+    if (sensation && ctx.tense === 'present') {
+      const form = HAVE[`${ctx.person}${ctx.number}`] ?? 'ha'
+      note(ctx.builder, `"${form} ${sensation}": a sensation takes "have" and a noun`)
+      return form
+    }
     return (ctx.tense === 'past' ? COPULA_PAST : COPULA)[`${ctx.person}${ctx.number}`] ?? 'è'
   },
 
@@ -139,9 +152,12 @@ export const italian: LanguageRules = {
 
   adjectivePosition: 'after',
 
-  adjective(adjective, np) {
-    const number = np.determiner?.features.forcesNumber === 'pl' ? 'pl' : 'sg'
-    return agreeAdjective(adjective.features, adjective.text, 'it', np.head?.features.gender, number)
+  adjective(adjective, np, ctx) {
+    // The sensation noun replaces the adjective entirely.
+    const sensation = ctx.role === 'predicate' ? isSensation(ctx) : undefined
+    if (sensation && ctx.tense === 'present') return sensation
+    const { gender, plural } = agreesWith(np, ctx)
+    return agreeAdjective(adjective.features, adjective.text, 'it', gender, plural ? 'pl' : 'sg')
   },
 
   noun(head, np) {

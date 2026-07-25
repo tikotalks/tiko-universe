@@ -209,6 +209,9 @@ function femininize(base: string, language: RomanceLanguage): string {
     case 'gl': {
       if (word.endsWith('o')) form = `${word.slice(0, -1)}a`
       else if (/(or|ón)$/.test(word)) form = `${word}a`
+      // Catalan adds -a to a consonant stem: "fred" → "freda". The invariable
+      // adjectives ("gran", "feliç") are curated, because no rule finds them.
+      else if (language === 'ca' && /[bcdfgjlmnprtvz]$/.test(word)) form = `${word}a`
       else form = word
       break
     }
@@ -265,28 +268,6 @@ export function startsWithVowel(text: string): boolean {
   return /^[aeiouâàéèêëîïôöûüh]/i.test(text)
 }
 
-/**
- * Romance object pronouns are preverbal clitics: "tu **m'**aides", "**me**
- * ayudas", "**mi** aiuti". This pulls a pronoun-only object out of the
- * complements and parks its clitic form in scratch, where the language's
- * `verbForm` picks it up.
- */
-export function extractObjectClitic(
-  chunks: { complements: Array<{ kind: string, pronoun?: { id: string, features: Features, text: string } }> },
-  scratch: Record<string, unknown>,
-): void {
-  const index = chunks.complements.findIndex(
-    (phrase) => phrase.kind === 'np' && !!phrase.pronoun,
-  )
-  if (index === -1) return
-  const phrase = chunks.complements[index]
-  const pronoun = phrase.pronoun
-  if (!pronoun) return
-  // Kept as its own token so the audit trail still shows the child's tile; the
-  // language's elision step merges it with the verb where the spelling requires.
-  scratch.clitic = { text: pronoun.features.accusative ?? pronoun.text, from: pronoun.id }
-  chunks.complements.splice(index, 1)
-}
 
 /**
  * Spanish "gustar" and Italian "piacere" invert the clause: the experiencer

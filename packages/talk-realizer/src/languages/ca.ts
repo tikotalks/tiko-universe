@@ -1,6 +1,7 @@
 import type { Features, SelectedWord } from '../features'
-import { agreeAdjective, applyExperiencer, conjugateRegular, elide, extractObjectClitic, induceGender, pluralize } from '../morphology/romance'
-import { formFor, note, type LanguageRules } from '../profile'
+import { agreeAdjective, applyExperiencer, conjugateRegular, elide, induceGender, pluralize } from '../morphology/romance'
+import { extractObjectClitic } from '../morphology/clitic'
+import { agreesWith, formFor, isSensation, note, type LanguageRules } from '../profile'
 
 /**
  * Catalan. Structurally close to Spanish, with its own articles (el/la/els/les),
@@ -15,8 +16,16 @@ import { formFor, note, type LanguageRules } from '../profile'
 const COPULA: Record<string, string> = {
   '1sg': 'estic', '2sg': 'estàs', '3sg': 'està', '1pl': 'estem', '2pl': 'esteu', '3pl': 'estan',
 }
+const SER: Record<string, string> = {
+  '1sg': 'sóc', '2sg': 'ets', '3sg': 'és', '1pl': 'som', '2pl': 'sou', '3pl': 'són',
+}
+
 const DATIVE_CLITICS: Record<string, string> = {
   '1sg': 'em', '2sg': 'et', '3sg': 'li', '1pl': 'ens', '2pl': 'us', '3pl': 'els',
+}
+
+const HAVE: Record<string, string> = {
+  '1sg': 'tinc', '2sg': 'tens', '3sg': 'té', '1pl': 'tenim', '2pl': 'teniu', '3pl': 'tenen',
 }
 
 export const catalan: LanguageRules = {
@@ -58,6 +67,21 @@ export const catalan: LanguageRules = {
   },
 
   copula(ctx) {
+    // A sensation is said with "have" and a noun in this language:
+    // "j'ai faim", not "je suis faim".
+    const sensation = isSensation(ctx)
+    if (sensation && ctx.tense === 'present') {
+      const form = HAVE[`${ctx.person}${ctx.number}`] ?? 'té'
+      note(ctx.builder, `"${form} ${sensation}": a sensation takes "have" and a noun`)
+      return form
+    }
+    // A quality takes "ser", a state takes "estar": "la manzana es grande"
+    // but "yo estoy triste".
+    if (ctx.predicate?.features.inherent && ctx.tense === 'present') {
+      const form = SER[`${ctx.person}${ctx.number}`] ?? 'és'
+      note(ctx.builder, `copula "${form}": an inherent quality, not a state`)
+      return form
+    }
     return COPULA[`${ctx.person}${ctx.number}`] ?? 'està'
   },
 
@@ -103,9 +127,12 @@ export const catalan: LanguageRules = {
 
   adjectivePosition: 'after',
 
-  adjective(adjective, np) {
-    const number = np.determiner?.features.forcesNumber === 'pl' ? 'pl' : 'sg'
-    return agreeAdjective(adjective.features, adjective.text, 'ca', np.head?.features.gender, number)
+  adjective(adjective, np, ctx) {
+    // The sensation noun replaces the adjective entirely.
+    const sensation = ctx.role === 'predicate' ? isSensation(ctx) : undefined
+    if (sensation && ctx.tense === 'present') return sensation
+    const { gender, plural } = agreesWith(np, ctx)
+    return agreeAdjective(adjective.features, adjective.text, 'ca', gender, plural ? 'pl' : 'sg')
   },
 
   noun(head, np) {

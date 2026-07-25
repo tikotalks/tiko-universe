@@ -1,5 +1,5 @@
 import type { Features, SelectedWord } from '../features'
-import { formFor, note, type LanguageRules } from '../profile'
+import { agreesWith, formFor, note, type LanguageRules } from '../profile'
 
 /**
  * Maltese — the language that settles the whole rules-versus-model argument,
@@ -152,16 +152,16 @@ export const maltese: LanguageRules = {
 
   adjectivePosition: 'after',
 
-  adjective(adjective, np) {
-    const head = np.head
-    const plural = np.determiner?.features.forcesNumber === 'pl'
-    const feminine = head?.features.gender === 'feminine'
+  adjective(adjective, np, ctx) {
+    const { gender, plural } = agreesWith(np, ctx)
+    const feminine = gender === 'feminine'
     // A plural noun takes the plural adjective, which is its own lexical form.
     const base = plural
       ? (adjective.features.pluralForm ?? adjective.text)
       : feminine ? feminineAdjective(adjective.features, adjective.text) : adjective.text
-    // A definite noun makes its adjective definite too: "it-tuffieħa l-kbira".
-    if (np.determiner?.features.determinerKind === 'definite') {
+    // A definite noun makes its adjective definite too: "it-tuffieħa l-kbira" —
+    // but a predicate stays indefinite: "It-tuffieħa kbira".
+    if (ctx.role !== 'predicate' && np.determiner?.features.determinerKind === 'definite') {
       return `${definiteArticle(base)}${base}`
     }
     return base

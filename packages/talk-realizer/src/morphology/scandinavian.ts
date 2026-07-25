@@ -1,5 +1,5 @@
 import type { Features, SelectedWord } from '../features'
-import { note, type LanguageRules, type SentenceContext } from '../profile'
+import { agreesWith, note, type LanguageRules, type SentenceContext } from '../profile'
 
 /**
  * Swedish, Danish and Norwegian share one grammar with three sets of dials, so
@@ -133,6 +133,16 @@ export function createScandinavian(config: ScandinavianConfig): LanguageRules {
     },
 
     adjective(adjective, np, ctx) {
+      if (ctx.role === 'predicate') {
+        const { gender, plural } = agreesWith(np, ctx)
+        if (plural) return adjective.features.pluralForm ?? `${adjective.text}a`
+        if (gender === 'neuter') {
+          const form = adjective.features.neuter ?? `${adjective.text}${config.adjectiveNeuterEnding}`
+          note(ctx.builder, `"${form}": a predicate agreeing with a neuter subject`)
+          return form
+        }
+        return adjective.text
+      }
       const neuter = np.head?.features.gender === 'neuter'
       const kind = np.determiner?.features.determinerKind
       const definite = kind === 'definite' || kind === 'demonstrative'
@@ -145,7 +155,7 @@ export function createScandinavian(config: ScandinavianConfig): LanguageRules {
         return form
       }
       if (neuter) {
-        const form = adjective.features.pluralForm ?? `${adjective.text}${config.adjectiveNeuterEnding}`
+        const form = adjective.features.neuter ?? `${adjective.text}${config.adjectiveNeuterEnding}`
         note(ctx.builder, `"${form}": indefinite neuter adjective`)
         return form
       }

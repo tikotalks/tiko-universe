@@ -1,4 +1,4 @@
-import { formFor, note, type LanguageRules, type SentenceContext } from '../profile'
+import { formFor, isSensation, note, type LanguageRules, type SentenceContext } from '../profile'
 
 /**
  * Dutch. Three rules carry the weight, and each is one that plain tile
@@ -16,6 +16,10 @@ const COPULA_PAST: Record<string, string> = { '1sg': 'was', '2sg': 'was', '3sg':
 
 function key(ctx: SentenceContext): string {
   return ctx.number === 'pl' ? 'pl' : `${ctx.person}sg`
+}
+
+const HAVE: Record<string, string> = {
+  '1sg': 'heb', '2sg': 'hebt', '3sg': 'heeft', '1pl': 'hebben', '2pl': 'hebben', '3pl': 'hebben',
 }
 
 export const dutch: LanguageRules = {
@@ -42,6 +46,14 @@ export const dutch: LanguageRules = {
   },
 
   copula(ctx) {
+    // A sensation is said with "have" and a noun in this language:
+    // "j'ai faim", not "je suis faim".
+    const sensation = isSensation(ctx)
+    if (sensation && ctx.tense === 'present') {
+      const form = HAVE[`${ctx.person}${ctx.number}`] ?? 'heeft'
+      note(ctx.builder, `"${form} ${sensation}": a sensation takes "have" and a noun`)
+      return form
+    }
     return (ctx.tense === 'past' ? COPULA_PAST : COPULA)[key(ctx)] ?? 'is'
   },
 
@@ -85,6 +97,9 @@ export const dutch: LanguageRules = {
   },
 
   adjective(adjective, np, ctx) {
+    // The sensation noun replaces the adjective entirely.
+    const sensation = ctx.role === 'predicate' ? isSensation(ctx) : undefined
+    if (sensation && ctx.tense === 'present') return sensation
     const head = np.head
     if (!head) return adjective.text
     const inflected = adjective.features.attributive ?? `${adjective.text}e`

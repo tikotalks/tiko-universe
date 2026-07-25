@@ -22,7 +22,7 @@ export const chinese: LanguageRules = {
     spacing: 'none',
     capitalize: false,
     punctuation: { statement: '。', question: '？' },
-    functionWords: ['不', '没', '个', '两', '吗', '是'],
+    functionWords: ['不', '没', '个', '两', '吗', '是', '很'],
     notes: 'Aspect markers (了, 过) and the 是…的 construction are not generated; the plain present is used throughout.',
   },
 
@@ -70,7 +70,13 @@ export const chinese: LanguageRules = {
     return { text: determiner.text, from: determiner.id }
   },
 
-  adjective(adjective) {
+  adjective(adjective, np, ctx) {
+    // An adjective is a verb in Chinese, and a bare predicate one needs a degree
+    // word: "这个苹果很大". Negated, 不 already fills that slot.
+    if (ctx.role === 'predicate' && !ctx.negated && !ctx.isQuestion) {
+      note(ctx.builder, '很: a predicate adjective needs a degree word')
+      return `很${adjective.text}`
+    }
     return adjective.text
   },
 

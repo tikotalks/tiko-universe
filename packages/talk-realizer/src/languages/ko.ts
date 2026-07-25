@@ -64,12 +64,19 @@ export const korean: LanguageRules = {
   },
 
   adjective(adjective, _np, ctx) {
+    // Korean adjectives are verbs, and the pack stores most of them in a finite
+    // form already ("기뻐"). The exceptions are the tiles the packs file as
+    // determiners ("큰"), which cannot end a sentence and are curated.
+    const predicate = ctx.role === 'predicate'
+    const form = predicate
+      ? adjective.features.predicative ?? adjective.text
+      : adjective.text
     // 안 goes in front of the predicate when there is no verb: "안 기뻐".
-    if (ctx.negated && ctx.role === 'predicate') {
+    if (ctx.negated && predicate) {
       note(ctx.builder, '안 before the predicate')
-      return `안 ${adjective.text}`
+      return `안 ${form}`
     }
-    return adjective.text
+    return form
   },
 
   noun(head) {

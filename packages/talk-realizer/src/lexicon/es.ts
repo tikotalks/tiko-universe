@@ -6,6 +6,11 @@ import type { Lexicon } from '../features'
  * the handful of gender exceptions.
  */
 export const spanishLexicon: Lexicon = {
+  hungry: { pos: 'adjective', sensation: 'hambre' },
+  thirsty: { pos: 'adjective', sensation: 'sed' },
+  cold: { pos: 'adjective', sensation: 'frío' },
+  hot: { pos: 'adjective', sensation: 'calor' },
+  scared: { pos: 'adjective', sensation: 'miedo' },
   i: { pos: 'pronoun', person: 1, number: 'sg', accusative: 'me' },
   you: { pos: 'pronoun', person: 2, number: 'sg', accusative: 'te' },
   we: { pos: 'pronoun', person: 1, number: 'pl', accusative: 'nos' },
@@ -46,7 +51,7 @@ export const spanishLexicon: Lexicon = {
   sleep: { pos: 'verb', forms: { '1sg': 'duermo', '2sg': 'duermes', '3sg': 'duerme', '1pl': 'dormimos', '3pl': 'duermen' } },
 
   // Mass nouns and gender exceptions
-  water: { pos: 'noun', gender: 'feminine', mass: true },
+  water: { pos: 'noun', gender: 'feminine', mass: true, stressedInitialA: true },
   milk: { pos: 'noun', gender: 'feminine', mass: true },
   juice: { pos: 'noun', gender: 'masculine', mass: true },
   tea: { pos: 'noun', gender: 'masculine', mass: true },
