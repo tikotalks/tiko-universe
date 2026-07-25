@@ -798,7 +798,7 @@ Do not expand content before this milestone.
 
 ## Follow-up: Letters category
 
-Add a seventh default category to the shipped app (and, once the shared word catalogue exists per [`listen-ios-mvp.md`](./listen-ios-mvp.md) Phase 0b, it reaches Listen automatically):
+Add a seventh default category to the shipped app (and, once the shared word catalogue exists per [`listen-ios.md`](./listen-ios.md) Phase 0b, it reaches Listen automatically):
 
 1. **Catalog** — `letters` category (`say.category.letters` i18n key ×6 languages, media category `letters`/`alphabet`), 26 default cards `letter_a`…`letter_z`, difficulty 1, glyph shown as the card visual with media-library images on top. Maltese adds `letter_c_dot`(ċ), `letter_g_dot`(ġ), `letter_gh`(għ), `letter_h_bar`(ħ), `letter_ie`(ie), `letter_z_dot`(ż) for the `mt` language only (per-language card visibility: a default card may declare the languages it exists in).
 2. **Speech** — speak text = the letter (TTS says the letter name in the active language); phonics sounds remain parent-authorable via speak text. `listenFor` per language includes the letter plus common recognizer homophones (en: `b`, `bee`, `be`; `c`, `see`, `sea`; …) — data, curated per language, with the digits-style reasoning documented inline.

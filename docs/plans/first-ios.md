@@ -1,12 +1,12 @@
-# Tiko First: Native iOS MVP Plan
+# Tiko First: Native iOS Production Plan
 
 ## Status
 
-Planned. Depends on the TikoKit engine extraction defined in [`sum-ios-mvp.md`](./sum-ios-mvp.md) Phase 0 (`TikoVoice`, `TikoCelebrate`) — build after or alongside Sum.
+Planned. Depends on the TikoKit engine extraction defined in [`sum-ios.md`](./sum-ios.md) Phase 0 (`TikoVoice`, `TikoCelebrate`) — build after or alongside Sum.
 
 ## Objective
 
-Ship the visual-routine loop natively: ordered picture steps, spoken, crossed off strictly in order, celebrated, fully parent-editable. Spec: [`docs/apps/first.md`](../apps/first.md).
+Ship Tiko First **to the App Store**: ordered picture steps, spoken, crossed off strictly in order, celebrated, fully parent-editable, in six languages, with the release pipeline from day one. Spec: [`docs/apps/first.md`](../apps/first.md). The exit criterion is a submitted, review-ready App Store release.
 
 First is the simplest app in the family: **no microphone, no recognizer, no permissions at all.** It is voice-out + tap only.
 
@@ -26,7 +26,7 @@ apps/first/ios/
 │   ├── TikoFirstApp.swift
 │   ├── FirstAppConfig.swift
 │   ├── FirstModels.swift          # Routine, RoutineStep, RoutineOverride, RoutineProgress
-│   ├── FirstCatalog.swift         # 5 default routines, localized step content (en/nl/fr/es/de/mt)
+│   ├── FirstCatalog.swift         # 8 default routines, localized step content (en/nl/fr/es/de/mt)
 │   ├── FirstStore.swift           # defaults + per-language overrides + custom routines (Say store pattern)
 │   ├── FirstProgressStore.swift   # per-routine tick state, daily reset, resume
 │   ├── RoutineViewModel.swift     # order enforcement, speak-on-advance, celebrations
@@ -102,28 +102,31 @@ Rules (unit-tested):
 
 Default routines/steps localized in `FirstCatalog` for en, nl, fr, es, de, mt (data, not code). UI strings via `TikoI18n` (`first.*` keys). Custom content is per language, same rules as Say.
 
-## Tests
+## Tests (production bar)
 
-- `FirstCatalogTests` — 5 routines, unique IDs, complete content per language, sensible step counts.
-- `FirstStoreTests` — override/custom/hide/reset lifecycle, per-language + per-account scoping, relaunch persistence.
-- `FirstProgressTests` — in-order enforcement, undo-last, skip semantics, resume, daily reset across a simulated date boundary, manual reset.
+- `FirstCatalogTests` — 8 routines, unique IDs, complete content per language, sensible step counts.
+- `FirstStoreTests` — override/custom/hide/reset/duplicate lifecycle, per-language + per-account scoping, relaunch persistence.
+- `FirstProgressTests` — in-order enforcement, undo-last, skip semantics, resume after background/force-quit/language switch, daily reset across simulated date boundaries (incl. DST), manual reset, all-hidden routine handling.
 - `RoutineViewModelTests` (mock voice) — speak-on-advance, preview, completion celebration trigger, background/resume.
-- UI tests — launch shows routines; open Morning, tick first step, progress strip updates; parent editor opens from the header pencil.
+- UI tests — launch shows routines; open Morning, tick first step, progress strip updates; pinned routine opens directly; parent editor opens from the header pencil.
+- Release validation (`validate-local.sh`) and both CI workflows green.
 
 ## Milestones
 
-1. **Shell + catalog** — harness, routine grid, localized defaults, mock voice.
+1. **Shell + catalog** — harness, routine grid, eight localized defaults, mock voice.
 2. **Routine loop** — big-step view, in-order ticking, progress strip, undo-last, resume; celebrations wired.
-3. **Progress rules** — daily reset, pinned routine direct-open, allow-skip.
-4. **Parent Mode** — full editor on Tiko sheets (routines, steps, images via media picker, settings), defaults resettable per language.
-5. **Polish + release scaffolding** — screenshot scenes, store metadata, validate, device run.
+3. **Progress rules** — daily reset (date-boundary tested), pinned routine direct-open, allow-skip.
+4. **Parent Mode** — full editor on Tiko sheets (routines, steps, images via media picker incl. photo upload, duplication, settings), defaults resettable per language.
+5. **Accessibility + polish pass** — VoiceOver audit, Dynamic Type on parent surfaces, Reduce Motion, dark mode, iPad layouts, empty states.
+6. **Release** — icon, screenshot scenes (`home`, `routine`, `celebrate` auto-play), App Store metadata + reviewer notes, privacy labels, age rating, pricing, archive/upload/**submit for review with automatic release** via the Say pipeline.
+7. **Device validation** — physical iPhone + iPad through a real-day cycle (morning + bedtime with daily reset).
 
 ## Codex task sequence
 
-Task 1 — Scaffold `apps/first/ios` on the harness (`.first` registered), routine grid + `FirstCatalog` with five localized default routines, mock voice, catalog tests.
+Task 1 — Scaffold `apps/first/ios` on the harness (`.first` registered), routine grid + `FirstCatalog` with eight localized default routines, mock voice, catalog tests.
 
-Task 2 — Routine loop: current-step view, strict in-order ticking with undo-last, progress strip, resume, TikoVoice speak-on-advance + prefetch, TikoCelebrate step/finish celebrations; progress + view-model tests.
+Task 2 — Routine loop: current-step view, strict in-order ticking with undo-last, progress strip, resume, TikoVoice speak-on-advance + prefetch, TikoCelebrate step/finish celebrations; progress + view-model tests incl. date-boundary daily reset.
 
-Task 3 — `FirstStore` overrides/custom routines per language and account + Parent Mode editor on the shared Tiko sheets incl. media picker, per-routine settings (daily reset, allow skip, pin); store tests.
+Task 3 — `FirstStore` overrides/custom routines per language and account + Parent Mode editor on the shared Tiko sheets incl. media picker with photo upload, duplication, per-routine settings (daily reset, allow skip, pin); store tests.
 
-Task 4 — Release scaffolding, screenshot scenes, CI registration, validation, physical-device pass.
+Task 4 — Accessibility/polish pass, release scaffolding (icon, screenshot scenes, metadata, reviewer notes, privacy, CI registration), archive + upload + submit for review per the Say release runbook, physical-device validation.

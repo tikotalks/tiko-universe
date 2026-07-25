@@ -1,4 +1,4 @@
-# Tiko Sum: Native iOS MVP Plan
+# Tiko Sum: Native iOS Production Plan
 
 ## Status
 
@@ -6,7 +6,7 @@ Planned.
 
 ## Objective
 
-Ship the math-communication loop natively on iOS/iPadOS: speak every key press, answer by choice (tap or voice), celebrate with the shared engine, and gamify predefined formula paths — all on the standard Tiko harness. Spec: [`docs/apps/sum.md`](../apps/sum.md).
+Ship Tiko Sum **to the App Store**: speak every key press, answer by choice (tap or voice), celebrate with the shared engine, gamified formula paths across all four operators — on the standard Tiko harness, in six languages, with the release pipeline from day one. Spec: [`docs/apps/sum.md`](../apps/sum.md). This is a production plan: the exit criterion is a submitted, review-ready App Store release, not a proof of concept.
 
 Sum is the first app built **on the engine Say produced**, so this plan starts by promoting that engine into TikoKit instead of copying it.
 
@@ -40,7 +40,7 @@ apps/sum/ios/
 │   ├── TikoSumApp.swift
 │   ├── SumAppConfig.swift
 │   ├── SumModels.swift            # Formula, FormulaToken, AnswerChoice, SumPath, PathOverride, PlayState
-│   ├── SumCatalog.swift           # default paths, localized number/operator words 0–20
+│   ├── SumCatalog.swift           # 12 default paths, NumberSpeller rules, operator vocabulary
 │   ├── SumPathStore.swift         # defaults + per-language overrides + custom paths (Say store pattern)
 │   ├── FormulaSpeaker.swift       # token → spoken string per language; drives TikoVoice
 │   ├── DistractorGenerator.swift  # answer-tile generation rules
@@ -60,13 +60,13 @@ apps/sum/ios/
 ```swift
 enum FormulaToken: Codable, Hashable {
     case digit(Int)          // composes multi-digit operands
-    case plus, minus, equals
+    case plus, minus, times, dividedBy, equals
 }
 
 struct Formula: Codable, Hashable {
     var tokens: [FormulaToken]
     var operands: [Int]      // derived
-    var result: Int          // derived; MVP guarantees 0...100, never negative
+    var result: Int          // derived; guaranteed 0...100, never negative, division always exact
 }
 
 struct AnswerChoice: Hashable {
@@ -104,8 +104,24 @@ completed (path end) → big celebration → Restart / Choose path
 
 ## Speech
 
-- **Output**: `FormulaSpeaker` renders token sequences to per-language utterances (“drie… plus… vijf… is…”), each token spoken on key press, whole formula on equals. All utterances prefetched per session through `TikoVoice` so the keypad is offline-capable.
-- **Input (optional)**: when the parent enables voice answering, `TikoSpeechPractice` listens after the tiles appear; `listenFor` = the correct value's digits + number word in the active language (the Say numbers catalog already localises 1–10; Sum extends 0–20 plus tens). Permission flow, availability fallback, and privacy rules identical to Say. Tap always works in parallel.
+### NumberSpeller (the hard production detail)
+
+Numbers 0–100 must be spoken as correct words in every supported language. This is per-language grammar, implemented as data-driven rules in a `NumberSpeller` component with exhaustive unit tests (0–100 golden lists per language):
+
+| Language | Rule shape | Examples |
+| --- | --- | --- |
+| en | tens-units | twenty-one, ninety-nine |
+| nl | units-"en"-tens (inverted) | eenentwintig, tweeënnegentig (diaeresis rules) |
+| de | units-"und"-tens (inverted) | einundzwanzig ("ein", not "eins", in compounds) |
+| fr | mixed vigesimal | vingt et un, soixante-dix, quatre-vingts, quatre-vingt-onze |
+| es | fused twenties, "y" thirties+ | veintiuno, treinta y uno, cien |
+| mt | units-"u"-tens | wieħed u għoxrin, ħamsa u disgħin |
+
+`FormulaSpeaker` renders token sequences to per-language utterances (“drie… plus… vijf… is…”) via `NumberSpeller` + the operator vocabulary; each token spoken on key press, whole formula on equals. All utterances prefetched per session through `TikoVoice` so the keypad is offline-capable.
+
+### Input
+
+Voice answering ships at launch (opt-in, per the spec): `TikoSpeechPractice` listens after the tiles appear; `listenFor` = the correct value's digits + the `NumberSpeller` word in the active language. Permission flow, availability fallback, and privacy rules identical to Say. Tap always works in parallel.
 
 ## Distractor rules (unit-tested)
 
@@ -115,34 +131,40 @@ completed (path end) → big celebration → Restart / Choose path
 
 ## Localisation
 
-Number words 0–20 + “ten/twenty…” tens + plus/minus/equals words for en, nl, fr, es, de, mt live in `SumCatalog` (data, not code). Parent-editable pronunciation overrides per language follow the Say override pattern. UI strings via `TikoI18n` (`sum.*` keys).
+Operator vocabulary and the `NumberSpeller` rules for en, nl, fr, es, de, mt live in `SumCatalog` (data plus per-language rule tables, not code branches). Parent-editable pronunciation overrides per language follow the Say override pattern. UI strings via `TikoI18n` (`sum.*` keys). Twelve default paths localised (titles + emoji) per language.
 
-## Tests
+## Tests (production bar)
 
-- `DistractorGeneratorTests` — rules, bounds, uniqueness, determinism.
-- `FormulaSpeakerTests` — token → utterance per language, multi-digit composition (“1”,“2” → “twelve”), equals phrasing.
+- `NumberSpellerTests` — golden lists 0–100 for **all six languages**, including the inversion, diaeresis, "ein/eins", vigesimal, and conjunction rules.
+- `DistractorGeneratorTests` — rules, bounds, uniqueness, determinism, ×/÷ candidates, exact-division guarantee.
+- `FormulaSpeakerTests` — token → utterance per language, multi-digit composition, all four operators, equals phrasing.
 - `SumPathStoreTests` — defaults per language, overrides scoped per language/account, hide/reset/custom lifecycle, relaunch persistence.
-- `SumPlayViewModelTests` (mock voice + recognizer) — full state machine, retry ladder incl. tile fading and guided second retry, path completion, skip, interruption, voice-answer accept/ignore paths.
-- UI tests: launch, keypad → tiles, parent editor via header pencil.
+- `SumPlayViewModelTests` (mock voice + recognizer) — full state machine, retry ladder incl. tile fading and guided second retry, path completion, skip, interruption/resume, voice-answer accept/ignore/denied/unavailable paths.
+- UI tests: launch, keypad → tiles, path plays, parent editor via header pencil, settings toggles.
+- Release validation (`validate-local.sh`) and both CI workflows green.
 
 ## Milestones
 
 1. **Engine extraction** (Phase 0) — TikoKit modules, Say migrated, all Say tests green.
-2. **Static shell** — harness, keypad UI, mode picker, catalog, mock voice; keypad “speaks” via mock.
-3. **Speaking keypad + tiles** — TikoVoice wired, per-press speech, equals → distractor tiles, celebrations on correct, retry ladder.
-4. **Paths** — path list, session flow, end celebration, default paths localised.
-5. **Parent Mode** — path editor, pronunciation overrides, constraints, voice-answer toggle (all on Tiko sheets).
-6. **Voice answering** — TikoSpeechPractice integration behind the toggle, permission flow.
-7. **Polish + release scaffolding** — screenshot scenes, App Store metadata, validate, device run.
+2. **NumberSpeller** — all six languages with golden-list tests; this unblocks everything spoken.
+3. **Speaking keypad + tiles** — harness shell, TikoVoice per-press speech, all four operators, equals → distractor tiles, celebrations, full retry ladder.
+4. **Paths** — twelve localised default paths, session flow, end celebration, interruption/resume.
+5. **Parent Mode** — path editor, pronunciation overrides, free-play constraints, voice-answer toggle (all on Tiko sheets), defaults resettable.
+6. **Voice answering** — TikoSpeechPractice behind the toggle with the complete permission/denial/unavailable flows, tested in all six languages.
+7. **Accessibility + polish pass** — VoiceOver audit, Dynamic Type on parent surfaces, Reduce Motion, dark mode, iPad layouts, empty/edge states.
+8. **Release** — icon (media-library asset via the shared generator), screenshot scenes (`home`, `practice`, `celebrate` auto-play), App Store metadata + reviewer notes, privacy labels (User ID/Email only if identity used — mirror Say), age rating, pricing, archive via cloud signing, upload, **submit for review with automatic release** using the pipeline established for Say.
+9. **Device validation** — physical iPhone + iPad, real voice-answer sessions, offline run-through.
 
 ## Codex task sequence
 
 Task 1 — Extract Say's voice/celebration/recognition/matcher engine into TikoKit (`TikoVoice`, `TikoCelebrate`, `TikoSpeechPractice`, `TikoWordMatcher`), migrate Say to it, keep every Say test green.
 
-Task 2 — Scaffold `apps/sum/ios` on the harness (`.sum` color/config/i18n key registered), keypad + mode picker + `SumCatalog` with localized number/operator words 0–20 and five default paths, mock voice, unit tests for catalog and speaker.
+Task 2 — Implement `NumberSpeller` for en/nl/fr/es/de/mt with golden-list tests 0–100, plus the operator vocabulary and `FormulaSpeaker`.
 
-Task 3 — Wire TikoVoice (per-press speech, prefetch), implement `DistractorGenerator` + answer tiles + play state machine with the retry ladder and celebrations; view-model and generator tests.
+Task 3 — Scaffold `apps/sum/ios` on the harness (`.sum` color/config/i18n registered), keypad with all four operators + mode picker, TikoVoice per-press speech with prefetch, `DistractorGenerator` + answer tiles + play state machine with retry ladder and celebrations; generator and view-model tests.
 
-Task 4 — Paths end-to-end + `SumPathStore` with per-language overrides and custom paths + Parent Mode editor on the shared Tiko sheets; store tests.
+Task 4 — Paths end-to-end (twelve localised defaults) + `SumPathStore` overrides/custom + Parent Mode editor, pronunciation overrides, and constraints on the shared Tiko sheets; store tests.
 
-Task 5 — Optional voice answering via TikoSpeechPractice behind a parent toggle with the Say permission flow; add release scaffolding, screenshot scenes, and CI registration.
+Task 5 — Voice answering via TikoSpeechPractice behind the parent toggle with the full Say permission flow, tested per language.
+
+Task 6 — Accessibility/polish pass, release scaffolding (icon, screenshot scenes, metadata, reviewer notes, privacy, CI registration), archive + upload + submit for review per the Say release runbook.

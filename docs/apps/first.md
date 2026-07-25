@@ -7,12 +7,12 @@ A calm visual todo app for children. A caregiver builds routines as ordered list
 ## Product boundary
 
 - **First is not Sequence.** Sequence is a logic activity: figure out the correct order. First is execution support: the order is given, the child follows and checks it off.
-- **First is not Timer.** Steps have no clocks or countdowns in the MVP; pace belongs to the child. (A per-step Timer hand-off is a possible follow-up.)
+- **First is not Timer.** Steps have no clocks or countdowns; pace belongs to the child. (A per-step Timer hand-off may come later, as its own decision.)
 - Any number of steps (two-step “first/then” up to long routines) — the classic first-then board is just a two-step list.
 
 ## Tiko harness
 
-First is a Tiko app and uses the same harness as every other Tiko app. No exclusions.
+First is a Tiko app and uses the same harness as every other Tiko app. No exclusions. It follows the family's [design principles](../flows/shared/design-principles.md) — icon-only round child controls, no in-app descriptions or explanations, one thing at a time, everything speaks, everything editable, celebration never punishment.
 
 - `TikoAppShell` (header, settings with shared language/colour pickers, account), `TikoIdentity` no-login bootstrap, Parent Mode / Child Mode per [`docs/flows/shared/user-modes.md`](../flows/shared/user-modes.md).
 - `TikoI18n` for all text; the Tiko voice service (Atlas, disk-cached) speaks steps; the shared celebration engine rewards completion.
@@ -49,11 +49,16 @@ All content is per language and fully editable — the bundled routines are defa
 
 ### Bundled default routines
 
+Eight at launch, localised in all six languages:
+
 - **Morning** — wake up, toilet, brush teeth, get dressed, breakfast
 - **Bedtime** — pyjamas, brush teeth, toilet, story, sleep
 - **Leaving the house** — toilet, shoes, coat, bag, go
 - **Mealtime** — wash hands, sit down, eat, bring plate
-- **First / Then** — a two-step template parents duplicate for quick boards
+- **Bath time** — undress, bath, dry off, pyjamas
+- **Tidy up** — toys in the box, books on the shelf, clothes in the basket
+- **School day** — bag, lunch box, shoes, coat, bus
+- **First / Then** — a two-step template parents duplicate for quick boards (duplication is one tap)
 
 ### Progress and reset
 
@@ -65,9 +70,10 @@ All content is per language and fully editable — the bundled routines are defa
 
 On the shared Tiko popup sheets:
 
-- Create, edit, duplicate, hide, reorder routines; edit, reorder, add, delete steps (title / speak text / image).
+- Create, edit, duplicate, hide, reorder routines; edit, reorder, add, delete steps (title / speak text / image — media library or photo upload; family photos of the child's own bathroom/shoes/bag make routines dramatically more effective).
 - Defaults are editable per language and resettable, per the family override pattern.
 - Per-routine settings: daily reset, allow skip, pin as current.
+- Reset any routine's progress; see at a glance which routines are done today.
 - Child Mode never sees editing.
 
 ## Privacy
@@ -82,24 +88,29 @@ On the shared Tiko popup sheets:
 - Reduce Motion: transitions become gentle fades; celebrations use the shared calm path.
 - Guided Access friendly — a pinned routine plus Guided Access is a complete transition tool.
 
-## MVP non-goals
+## Non-goals
 
-- Times, schedules, reminders, or calendar integration
-- Per-step timers (possible Timer hand-off later)
-- Sync of routines across devices (local-first; standard Tiko data path later)
+These are product boundaries, not deferrals:
+
+- Times, schedules, reminders, or calendar integration — First communicates order, not clock time
+- Per-step timers (a Timer-app hand-off may come later, as its own decision)
 - Rewards economies (stars/tokens) — celebrations only
-- Web or Android
+- Cross-device sync (local-first; joins the standard Tiko data path when the family does)
+- Web or Android (after the iOS product is proven, like the rest of the family)
 
-## Definition of done
+## Definition of done (production)
 
-- Opens without login on the shared harness; Parent/Child Mode per contract.
-- Child can pick a routine, hear each step spoken, cross steps off strictly in order, see progress, and get step + finish celebrations.
-- Interruptions resume at the right step; daily-reset routines are fresh the next day.
-- Parent Mode: full routine/step editing per language on the Tiko sheets, defaults resettable, per-routine settings work; everything survives relaunch, account-scoped.
-- Step images resolve from the media library with emoji fallback, offline-capable once seen.
-- Unit tests: routine store (overrides, custom, per-language, persistence), progress/reset logic, view-model order enforcement.
-- Works on a physical iPad.
+First is done when it is **live on the App Store**, not when it compiles:
+
+- Opens without login on the shared harness; Parent/Child Mode per contract; both colour modes; portrait and landscape on iPhone and iPad.
+- Child can pick a routine (or land in the pinned one), hear each step spoken in the active language, cross steps off strictly in order with undo-last, see progress, and get step + finish celebrations.
+- Interruptions, force-quits, and language switches resume at the right step; daily-reset routines are fresh the next day across a real date boundary.
+- Eight localised default routines; Parent Mode does full routine/step editing per language on the Tiko sheets (incl. photo upload), duplication, defaults resettable, per-routine settings; everything survives relaunch, account-scoped.
+- Step images resolve from the media library with emoji fallback; the whole app works offline after first use; zero permission prompts (photo upload uses the system picker, which needs none).
+- Complete test suite green (store, progress/reset incl. date boundaries, order enforcement, view model, UI tests); release validation and CI pass; VoiceOver/Dynamic Type/Reduce Motion audited.
+- App Store: record, metadata, screenshots, privacy labels, age rating, pricing, reviewer notes — submitted for review with automatic release via the Say pipeline.
+- Validated on physical iPhone and iPad through a full real-day cycle (morning + bedtime with daily reset).
 
 ## Implementation plan
 
-See [`docs/plans/first-ios-mvp.md`](../plans/first-ios-mvp.md).
+See [`docs/plans/first-ios.md`](../plans/first-ios.md).

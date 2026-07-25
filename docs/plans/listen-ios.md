@@ -1,12 +1,12 @@
-# Tiko Listen: Native iOS MVP Plan
+# Tiko Listen: Native iOS Production Plan
 
 ## Status
 
-Planned. Depends on the TikoKit engine extraction from [`sum-ios-mvp.md`](./sum-ios-mvp.md) Phase 0 (`TikoVoice`, `TikoCelebrate`) **plus one extra extraction: the shared word catalogue** (below). Cheapest build in the family — no microphone, no recognizer, no permissions.
+Planned. Depends on the TikoKit engine extraction from [`sum-ios.md`](./sum-ios.md) Phase 0 (`TikoVoice`, `TikoCelebrate`) **plus one extra extraction: the shared word catalogue** (below). Cheapest build in the family — no microphone, no recognizer, no permissions.
 
 ## Objective
 
-Ship the hear-and-find loop natively on the standard harness, sharing Say's vocabulary. Spec: [`docs/apps/listen.md`](../apps/listen.md).
+Ship Tiko Listen **to the App Store**: the hear-and-find loop on the standard harness, sharing Say's vocabulary, all seven categories (incl. Letters) in six languages, release pipeline from day one. Spec: [`docs/apps/listen.md`](../apps/listen.md). The exit criterion is a submitted, review-ready App Store release. The Say Letters follow-up ([`say-ios-mvp.md`](./say-ios-mvp.md) “Follow-up: Letters category”) is part of this launch train, landing in the shared catalogue.
 
 ## Phase 0b — shared word catalogue
 
@@ -108,17 +108,22 @@ Defaults come localized from `TikoWordCatalog` (all six categories, en/nl/fr/es/
 ## Milestones
 
 1. **Catalogue extraction** (Phase 0b) — `TikoWordCatalog` in TikoKit, Say migrated, Say tests green.
-2. **Shell + rounds** — harness, category grid, RoundBuilder, mock voice, full loop with celebrations.
-3. **Adaptivity + session polish** — invisible difficulty, resume, replay/next buttons.
-4. **Parent Mode** — editor on Tiko sheets, hide-titles + pin-count settings, custom cards.
-5. **Release scaffolding** — screenshot scenes, store metadata, validate, device run.
+2. **Letters in the catalogue** — execute the Say Letters follow-up (26+ localised letter cards, Maltese extras, homophone listen-for for Say's benefit); both apps gain the category.
+3. **Shell + rounds** — harness, category grid, RoundBuilder, mock voice, full loop with celebrations.
+4. **Adaptivity + session polish** — invisible difficulty, resume, replay/next buttons.
+5. **Parent Mode** — editor on Tiko sheets, hide-titles + pin-count settings, custom cards incl. photo upload.
+6. **Accessibility + polish pass** — VoiceOver audit (hide-titles keeps labels), Dynamic Type, Reduce Motion, dark mode, iPad layouts.
+7. **Release** — icon, screenshot scenes (`home`, `round`, `celebrate` auto-play), App Store metadata + reviewer notes, privacy labels, age rating, pricing, archive/upload/**submit for review with automatic release** via the Say pipeline.
+8. **Device validation** — physical iPhone + iPad.
 
 ## Codex task sequence
 
 Task 1 — Extract the shared word catalogue (`TikoWordCatalog` incl. media matcher + language normalisation) into TikoKit; migrate Say to it with all Say tests green.
 
-Task 2 — Scaffold `apps/listen/ios` on the harness (`.listen` registered), category grid with media thumbnails, `RoundBuilder` + session view model + full loop with TikoVoice/TikoCelebrate; round/adaptivity/view-model tests. No mic keys, no permissions.
+Task 2 — Add the Letters category to the shared catalogue per the Say plan's Letters follow-up (localised letter cards + Maltese extras + homophone listen-for), updating Say's catalog tests.
 
-Task 3 — `ListenCardStore` (per-language overrides, custom cards) + Parent Mode editor on the shared Tiko sheets with hide-titles and pin-count settings; store tests.
+Task 3 — Scaffold `apps/listen/ios` on the harness (`.listen` registered), category grid with media thumbnails, `RoundBuilder` + session view model + full loop with TikoVoice/TikoCelebrate; round/adaptivity/view-model tests. No mic keys, no permissions.
 
-Task 4 — Release scaffolding, screenshot scenes, CI registration, validation, physical-device pass.
+Task 4 — `ListenCardStore` (per-language overrides, custom cards incl. photo upload) + Parent Mode editor on the shared Tiko sheets with hide-titles and pin-count settings; store tests.
+
+Task 5 — Accessibility/polish pass, release scaffolding (icon, screenshot scenes, metadata, reviewer notes, privacy, CI registration), archive + upload + submit for review per the Say release runbook, physical-device validation.

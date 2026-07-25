@@ -11,7 +11,7 @@ A calm child-facing listening app — the mirror of Say. The app speaks a word; 
 
 ## Tiko harness
 
-Listen is a Tiko app and uses the same harness as every other Tiko app. No exclusions.
+Listen is a Tiko app and uses the same harness as every other Tiko app. No exclusions. It follows the family's [design principles](../flows/shared/design-principles.md) — icon-only round child controls, no in-app descriptions or explanations, one thing at a time, everything speaks, everything editable, celebration never punishment.
 
 - `TikoAppShell`, `TikoIdentity` no-login bootstrap, Parent Mode / Child Mode per [`docs/flows/shared/user-modes.md`](../flows/shared/user-modes.md), `TikoI18n` for all text.
 - The Tiko voice service (Atlas, disk-cached, synthesizer fallback) speaks the target words; the shared celebration engine rewards a correct pick.
@@ -23,7 +23,7 @@ Listen is a Tiko app and uses the same harness as every other Tiko app. No exclu
 ## Core child flow
 
 1. Open without login.
-2. Choose a visual category (same six as Say: Animals, Food, Vehicles, Body, Colors, Numbers — plus Letters when Say ships it).
+2. Choose a visual category — the full shared vocabulary at launch: Animals, Food, Vehicles, Body, Colors, Numbers, and Letters (the Say Letters work lands in the shared catalogue as part of Listen's launch train).
 3. The app speaks a word: “dog”.
 4. Two to four picture cards appear; exactly one matches.
 5. The child taps a card. The right one triggers the celebration engine (the card dances, its emoji rains); the next word follows automatically.
@@ -70,23 +70,29 @@ Distractor cards are drawn from the same category (a “dog” round shows other
 - Reduce Motion via the shared celebration engine; no colour-only state communication.
 - Optional hidden titles never remove VoiceOver labels.
 
-## MVP non-goals
+## Non-goals
 
-- Speech recognition of any kind
+These are product boundaries, not deferrals:
+
+- Speech recognition of any kind (that is Say's job — Listen stays permission-free)
 - Phrases or sentences (single words only)
 - Progress tracking, levels, or reports
-- Web or Android
+- Web or Android (after the iOS product is proven, like the rest of the family)
 
-## Definition of done
+## Definition of done (production)
 
-- Opens without login on the shared harness; Parent/Child Mode per contract; zero permission prompts ever.
-- Full loop works: word spoken, 2–4 same-category cards, correct pick celebrates and advances, miss = soft tone + dim + re-speak; session completes with the big celebration.
-- Calm adaptivity grows/shrinks the card count invisibly; parent can pin it.
-- Cards are shared-model with Say: defaults for all six categories in all six languages, editable/hidable/resettable per language, custom cards with library or uploaded images.
-- Fully offline after first category visit.
-- Unit tests: round generation (distractor same-category rule, no duplicates), adaptivity rules, store overrides, catalog completeness.
-- Works on a physical iPad.
+Listen is done when it is **live on the App Store**, not when it compiles:
+
+- Opens without login on the shared harness; Parent/Child Mode per contract; both colour modes; portrait and landscape on iPhone and iPad; **zero permission prompts ever**.
+- Full loop works in all six languages: word spoken, 2–4 same-category cards, correct pick celebrates and advances, miss = soft tone + dim + re-speak; session completes with the big celebration; interruption resumes.
+- All seven categories at launch (including Letters via the shared catalogue), every card localised in all six languages.
+- Calm adaptivity grows/shrinks the card count invisibly; parent can pin it; hide-titles per category works with VoiceOver labels intact.
+- Cards are shared-model with Say: defaults editable/hidable/resettable per language, custom cards with library or uploaded family photos, account-scoped, relaunch-persistent.
+- Fully offline after first category visit (voice + image caches).
+- Complete test suite green (round builder, adaptivity, store, session view model, catalog completeness, UI tests); release validation and CI pass; VoiceOver/Dynamic Type/Reduce Motion audited.
+- App Store: record, metadata, screenshots, privacy labels (nothing collected beyond the shared identity), age rating, pricing, reviewer notes — submitted for review with automatic release via the Say pipeline.
+- Validated on physical iPhone and iPad.
 
 ## Implementation plan
 
-See [`docs/plans/listen-ios-mvp.md`](../plans/listen-ios-mvp.md).
+See [`docs/plans/listen-ios.md`](../plans/listen-ios.md).
