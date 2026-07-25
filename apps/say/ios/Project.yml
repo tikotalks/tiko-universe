@@ -17,6 +17,9 @@ targets:
       - Sources
     dependencies:
       - package: TikoKit
+        product: TikoKit
+      - package: TikoKit
+        product: TikoSpeechKit
     preBuildScripts:
       - name: Generate Tiko app config
         basedOnDependencyAnalysis: false
@@ -43,6 +46,9 @@ targets:
     dependencies:
       - target: TikoSay
       - package: TikoKit
+        product: TikoKit
+      - package: TikoKit
+        product: TikoSpeechKit
     settings:
       base:
         GENERATE_INFOPLIST_FILE: YES

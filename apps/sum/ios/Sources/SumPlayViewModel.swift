@@ -1,6 +1,7 @@
 import Foundation
 import SwiftUI
 import TikoKit
+import TikoSpeechKit
 
 /// Free-play formula input state.
 struct FormulaDraft: Equatable {

@@ -21,6 +21,7 @@
 		68919E5B047E750D11A94444 /* SumView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD030A6F762C42E48114EE22 /* SumView.swift */; };
 		6B174D63798D1E2FF3AC7C46 /* TikoKit in Frameworks */ = {isa = PBXBuildFile; productRef = 163C677DE827D6D16A9E1CD2 /* TikoKit */; };
 		71692F003E00802600EC0427 /* SumCatalog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C6CF8952638FE65FB56766F /* SumCatalog.swift */; };
+		7A61AFA69C4A1DCFB889332D /* TikoSpeechKit in Frameworks */ = {isa = PBXBuildFile; productRef = 11D9E42513A41A3ACEE04B59 /* TikoSpeechKit */; };
 		7C357C68077804DEA1A2FBBC /* SumPathStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD425AEEE765C7F1B22E6D01 /* SumPathStoreTests.swift */; };
 		8AE8B523DBED6D0A1F5CD926 /* SumPlayViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D60A0EDBA6F8FA3752A8E465 /* SumPlayViewModel.swift */; };
 		93A92401B43731D25DB97C74 /* NumberSpellerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 582AC46D722C12A9760BBEB3 /* NumberSpellerTests.swift */; };
@@ -28,6 +29,7 @@
 		BB23203399F5F0C9AF84CD4D /* FormulaSpeaker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CDAEB66B858952E30A1DECF /* FormulaSpeaker.swift */; };
 		BFBB6F35206D3FA71E3887CE /* SumAppConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = FEFE07865972914CD62A3A63 /* SumAppConfig.swift */; };
 		D8869E3F0C31B36B0A65B8AA /* SumPlayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E238E6727F107233EADD8360 /* SumPlayView.swift */; };
+		DA8071F5B61D4AB7787CB956 /* TikoSpeechKit in Frameworks */ = {isa = PBXBuildFile; productRef = 7669FF70392255426CBDFFE0 /* TikoSpeechKit */; };
 		EF319DA62DF73A92DCB141B5 /* TikoSumUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D840F666230BDABBC74CA73 /* TikoSumUITests.swift */; };
 /* End PBXBuildFile section */
 
@@ -83,6 +85,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				58C7F9EB05D4F98A6C209D49 /* TikoKit in Frameworks */,
+				7A61AFA69C4A1DCFB889332D /* TikoSpeechKit in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -91,6 +94,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				6B174D63798D1E2FF3AC7C46 /* TikoKit in Frameworks */,
+				DA8071F5B61D4AB7787CB956 /* TikoSpeechKit in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -188,6 +192,7 @@
 			name = TikoSum;
 			packageProductDependencies = (
 				D77A259FA7ACA35B7559689B /* TikoKit */,
+				11D9E42513A41A3ACEE04B59 /* TikoSpeechKit */,
 			);
 			productName = TikoSum;
 			productReference = E156BDEDFF5DB1F2D2F287B2 /* TikoSum.app */;
@@ -226,6 +231,7 @@
 			name = TikoSumTests;
 			packageProductDependencies = (
 				163C677DE827D6D16A9E1CD2 /* TikoKit */,
+				7669FF70392255426CBDFFE0 /* TikoSpeechKit */,
 			);
 			productName = TikoSumTests;
 			productReference = 90E1A75D54AECB146E116310 /* TikoSumTests.xctest */;
@@ -642,9 +648,17 @@
 /* End XCLocalSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		11D9E42513A41A3ACEE04B59 /* TikoSpeechKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = TikoSpeechKit;
+		};
 		163C677DE827D6D16A9E1CD2 /* TikoKit */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = TikoKit;
+		};
+		7669FF70392255426CBDFFE0 /* TikoSpeechKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = TikoSpeechKit;
 		};
 		D77A259FA7ACA35B7559689B /* TikoKit */ = {
 			isa = XCSwiftPackageProductDependency;

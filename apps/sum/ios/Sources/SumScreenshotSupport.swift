@@ -1,5 +1,6 @@
 import Foundation
 import TikoKit
+import TikoSpeechKit
 
 /// Deterministic speech stand-in for App Store screenshot capture
 /// (`--screenshot-mode`). Permissions read as granted, playback returns

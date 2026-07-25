@@ -10,8 +10,10 @@
 		07F7C8FD176704F033E98E37 /* TikoSayApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = F03CC73964A908B37B5E00F3 /* TikoSayApp.swift */; };
 		0F3368F8237EF61AC3E638BF /* TikoKit in Frameworks */ = {isa = PBXBuildFile; productRef = E0E9BCC43C849CB67C82E3B8 /* TikoKit */; };
 		11A939391885762A13722919 /* SayModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC6195C64D01A882B9041560 /* SayModels.swift */; };
+		13DD441220B4771A7D0B3555 /* TikoSpeechKit in Frameworks */ = {isa = PBXBuildFile; productRef = 1D141B56A04972C3D66FFB0D /* TikoSpeechKit */; };
 		21A6B089EC6014A739869A58 /* RecognitionDebugOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EB25578E14B277197B4D33B /* RecognitionDebugOverlay.swift */; };
 		21D14F6ED4CBF6090EC6296A /* SayMediaLibrary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8296E2B0B947BD6D99AB6525 /* SayMediaLibrary.swift */; };
+		410A9B84D09DB66E7552D1A2 /* TikoSpeechKit in Frameworks */ = {isa = PBXBuildFile; productRef = DA6C666AFEB7E7FF4A39F476 /* TikoSpeechKit */; };
 		4543D16528C6ADA1675E97A0 /* PracticeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0F4267BDF2D0702A14CF9FC /* PracticeView.swift */; };
 		6203F2D67F9AE2E11C17AEB3 /* PracticeViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 506E836AB582AF3EBCB96F00 /* PracticeViewModelTests.swift */; };
 		7F5E9E481A81D13FBB00BBE9 /* SayCardStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CA35CCBDABDD64C3985F332 /* SayCardStore.swift */; };
@@ -79,6 +81,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				0F3368F8237EF61AC3E638BF /* TikoKit in Frameworks */,
+				410A9B84D09DB66E7552D1A2 /* TikoSpeechKit in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -87,6 +90,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				9A71197CE27396D3AB8511EB /* TikoKit in Frameworks */,
+				13DD441220B4771A7D0B3555 /* TikoSpeechKit in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -182,6 +186,7 @@
 			name = TikoSay;
 			packageProductDependencies = (
 				E0E9BCC43C849CB67C82E3B8 /* TikoKit */,
+				DA6C666AFEB7E7FF4A39F476 /* TikoSpeechKit */,
 			);
 			productName = TikoSay;
 			productReference = FFC18727DE06245AFEDD09CA /* TikoSay.app */;
@@ -202,6 +207,7 @@
 			name = TikoSayTests;
 			packageProductDependencies = (
 				95046C43185C2CA4ED7E56EE /* TikoKit */,
+				1D141B56A04972C3D66FFB0D /* TikoSpeechKit */,
 			);
 			productName = TikoSayTests;
 			productReference = 371B938967D81DD22F3C6E3C /* TikoSayTests.xctest */;
@@ -634,9 +640,17 @@
 /* End XCLocalSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		1D141B56A04972C3D66FFB0D /* TikoSpeechKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = TikoSpeechKit;
+		};
 		95046C43185C2CA4ED7E56EE /* TikoKit */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = TikoKit;
+		};
+		DA6C666AFEB7E7FF4A39F476 /* TikoSpeechKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = TikoSpeechKit;
 		};
 		E0E9BCC43C849CB67C82E3B8 /* TikoKit */ = {
 			isa = XCSwiftPackageProductDependency;
