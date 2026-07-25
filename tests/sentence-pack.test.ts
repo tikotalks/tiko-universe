@@ -6,7 +6,10 @@ const DATA_DIR = 'workers/sentence-api/data'
 const DB_DIR = 'workers/sentence-api/db'
 const emojiPattern = /[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}]/u
 
-const packFiles = readdirSync(DATA_DIR).filter((name) => /^[a-z]{2}-v\d+\.json$/.test(name)).sort()
+// Two- and three-letter codes both: `pap` and `cnr` were silently excluded while
+// this only matched two, which meant two language packs were never tested.
+const packFiles = readdirSync(DATA_DIR).filter((name) => /^[a-z]{2,3}-v\d+\.json$/.test(name)).sort()
+const localeOf = (fileName: string): string => fileName.replace(/-v\d+\.json$/, '')
 const packs = new Map<string, LanguagePack>(
   packFiles.map((name) => [name, JSON.parse(readFileSync(`${DATA_DIR}/${name}`, 'utf8')) as LanguagePack]),
 )
@@ -61,17 +64,22 @@ describe('Talk English v1 language pack seed', () => {
 })
 
 describe('Talk language packs — all supported locales', () => {
-  it('covers every supported Tiko language', () => {
-    // The platform language list (packages/i18n tikoLanguageOptions).
-    const supported = ['en', 'de', 'es', 'fr', 'nl', 'pt', 'ja', 'zh', 'ko', 'mt', 'it', 'ar', 'hy']
-    const present = packFiles.map((name) => name.slice(0, 2))
-    for (const locale of supported) {
-      expect(present, `missing language pack for "${locale}" — every supported language must be seeded`).toContain(locale)
+  it('covers every language the app offers', async () => {
+    // Read the real list rather than a copy of it: this test used to hold its own
+    // thirteen locales and call them "the platform language list", which is how the
+    // registry drifted in the first place.
+    const { locales } = await import('../tools/locales.mjs')
+    const present = packFiles.map(localeOf)
+    for (const locale of locales) {
+      expect(
+        present,
+        `missing language pack for "${locale.code}" (${locale.name}) — every language the picker offers must be seeded`,
+      ).toContain(locale.code)
     }
   })
 
   for (const [fileName, pack] of packs) {
-    const locale = fileName.slice(0, 2)
+    const locale = localeOf(fileName)
 
     describe(`${fileName}`, () => {
       it('declares the right locale and version', () => {
