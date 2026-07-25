@@ -1,0 +1,656 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		0BE78BB7DE37BA8635EAC213 /* SumPlayViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2B7C454BDBB2AF55329A247 /* SumPlayViewModelTests.swift */; };
+		0FD02F0972DCE5E7CCDA8DB0 /* DistractorGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0617F5809F00DFA03A1AD814 /* DistractorGenerator.swift */; };
+		1E0E905DFB3516E74D4CDE37 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 283E64894BAB6EA5955923F1 /* Assets.xcassets */; };
+		3C0DDD9BFF0FEC8E4326300B /* SumPathStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F3CE2989DC02A0364269C2E /* SumPathStore.swift */; };
+		4249DEAAB02CF6D24DDB365C /* SumParentEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE741DBB9C104F0B9E28FF70 /* SumParentEditor.swift */; };
+		4861C308873A7BFE738AC9A2 /* DistractorGeneratorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E66D24FFA7189BC6CF114FF7 /* DistractorGeneratorTests.swift */; };
+		4BD8E5C632A371B17D57330B /* TikoSumApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBA39DFC1B75DC3580E095B0 /* TikoSumApp.swift */; };
+		53BD7441E4867F1A71D74AB6 /* SumModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D3C268A96A61234C6971018 /* SumModels.swift */; };
+		5668727971D8ED40CD0958AE /* FormulaSpeakerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F72DCBC6E280EE41A3179346 /* FormulaSpeakerTests.swift */; };
+		58C7F9EB05D4F98A6C209D49 /* TikoKit in Frameworks */ = {isa = PBXBuildFile; productRef = D77A259FA7ACA35B7559689B /* TikoKit */; };
+		6768DA4C16BD0A10C2DFCBE9 /* NumberSpeller.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23565D79568C332C08CFE09E /* NumberSpeller.swift */; };
+		68919E5B047E750D11A94444 /* SumView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD030A6F762C42E48114EE22 /* SumView.swift */; };
+		6B174D63798D1E2FF3AC7C46 /* TikoKit in Frameworks */ = {isa = PBXBuildFile; productRef = 163C677DE827D6D16A9E1CD2 /* TikoKit */; };
+		71692F003E00802600EC0427 /* SumCatalog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C6CF8952638FE65FB56766F /* SumCatalog.swift */; };
+		7C357C68077804DEA1A2FBBC /* SumPathStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD425AEEE765C7F1B22E6D01 /* SumPathStoreTests.swift */; };
+		8AE8B523DBED6D0A1F5CD926 /* SumPlayViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D60A0EDBA6F8FA3752A8E465 /* SumPlayViewModel.swift */; };
+		93A92401B43731D25DB97C74 /* NumberSpellerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 582AC46D722C12A9760BBEB3 /* NumberSpellerTests.swift */; };
+		93E0C92C9A9D5B29BA8D74C7 /* SumScreenshotSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E0E0CAF5CC8C30BF9DDA6C3 /* SumScreenshotSupport.swift */; };
+		BB23203399F5F0C9AF84CD4D /* FormulaSpeaker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CDAEB66B858952E30A1DECF /* FormulaSpeaker.swift */; };
+		BFBB6F35206D3FA71E3887CE /* SumAppConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = FEFE07865972914CD62A3A63 /* SumAppConfig.swift */; };
+		D8869E3F0C31B36B0A65B8AA /* SumPlayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E238E6727F107233EADD8360 /* SumPlayView.swift */; };
+		EF319DA62DF73A92DCB141B5 /* TikoSumUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D840F666230BDABBC74CA73 /* TikoSumUITests.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		C27F5A2640C5EFAADC5BA11E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = C9D6E5EC502DAD6505D06CF8 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 359C2C3613CCDB87E9E7A1CD;
+			remoteInfo = TikoSum;
+		};
+		F66221966E38FCAB32401871 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = C9D6E5EC502DAD6505D06CF8 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 359C2C3613CCDB87E9E7A1CD;
+			remoteInfo = TikoSum;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		0617F5809F00DFA03A1AD814 /* DistractorGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DistractorGenerator.swift; sourceTree = "<group>"; };
+		1D4D014A2664C8201A560108 /* tikokit-ios */ = {isa = PBXFileReference; lastKnownFileType = folder; name = "tikokit-ios"; path = "../../../packages/tikokit-ios"; sourceTree = SOURCE_ROOT; };
+		1E0E0CAF5CC8C30BF9DDA6C3 /* SumScreenshotSupport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SumScreenshotSupport.swift; sourceTree = "<group>"; };
+		23565D79568C332C08CFE09E /* NumberSpeller.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NumberSpeller.swift; sourceTree = "<group>"; };
+		283E64894BAB6EA5955923F1 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		2D3C268A96A61234C6971018 /* SumModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SumModels.swift; sourceTree = "<group>"; };
+		4CDAEB66B858952E30A1DECF /* FormulaSpeaker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FormulaSpeaker.swift; sourceTree = "<group>"; };
+		582AC46D722C12A9760BBEB3 /* NumberSpellerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NumberSpellerTests.swift; sourceTree = "<group>"; };
+		6EC567EF489C49BC3285A9C6 /* TikoSumUITests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = TikoSumUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		6F3CE2989DC02A0364269C2E /* SumPathStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SumPathStore.swift; sourceTree = "<group>"; };
+		715E72E630AE9DD7A7CD6DDF /* TikoSum.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = TikoSum.entitlements; sourceTree = "<group>"; };
+		8C6CF8952638FE65FB56766F /* SumCatalog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SumCatalog.swift; sourceTree = "<group>"; };
+		8D840F666230BDABBC74CA73 /* TikoSumUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TikoSumUITests.swift; sourceTree = "<group>"; };
+		90E1A75D54AECB146E116310 /* TikoSumTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = TikoSumTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		A2B7C454BDBB2AF55329A247 /* SumPlayViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SumPlayViewModelTests.swift; sourceTree = "<group>"; };
+		BE741DBB9C104F0B9E28FF70 /* SumParentEditor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SumParentEditor.swift; sourceTree = "<group>"; };
+		CBA39DFC1B75DC3580E095B0 /* TikoSumApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TikoSumApp.swift; sourceTree = "<group>"; };
+		CD030A6F762C42E48114EE22 /* SumView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SumView.swift; sourceTree = "<group>"; };
+		D60A0EDBA6F8FA3752A8E465 /* SumPlayViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SumPlayViewModel.swift; sourceTree = "<group>"; };
+		DD425AEEE765C7F1B22E6D01 /* SumPathStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SumPathStoreTests.swift; sourceTree = "<group>"; };
+		E156BDEDFF5DB1F2D2F287B2 /* TikoSum.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = TikoSum.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		E238E6727F107233EADD8360 /* SumPlayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SumPlayView.swift; sourceTree = "<group>"; };
+		E66D24FFA7189BC6CF114FF7 /* DistractorGeneratorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DistractorGeneratorTests.swift; sourceTree = "<group>"; };
+		F72DCBC6E280EE41A3179346 /* FormulaSpeakerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FormulaSpeakerTests.swift; sourceTree = "<group>"; };
+		FCF48E28C1DDC8F7CF9301CB /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		FEFE07865972914CD62A3A63 /* SumAppConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SumAppConfig.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		0E91068DC4D75711E0E83FB8 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				58C7F9EB05D4F98A6C209D49 /* TikoKit in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		619960EDCE5F4EEA04F45E72 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				6B174D63798D1E2FF3AC7C46 /* TikoKit in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		49F3D5563ACD39FD6C6179C7 = {
+			isa = PBXGroup;
+			children = (
+				8395D98A408A675D06FC5349 /* Packages */,
+				B4F0A2C00CC6111B83773479 /* Sources */,
+				AE164203C70726BB2E7F1DF0 /* Tests */,
+				5F2A95169CD2FC6A4F9A17AD /* UITests */,
+				762A1D0C9054EFD0185FCC1B /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		5F2A95169CD2FC6A4F9A17AD /* UITests */ = {
+			isa = PBXGroup;
+			children = (
+				8D840F666230BDABBC74CA73 /* TikoSumUITests.swift */,
+			);
+			path = UITests;
+			sourceTree = "<group>";
+		};
+		762A1D0C9054EFD0185FCC1B /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				E156BDEDFF5DB1F2D2F287B2 /* TikoSum.app */,
+				90E1A75D54AECB146E116310 /* TikoSumTests.xctest */,
+				6EC567EF489C49BC3285A9C6 /* TikoSumUITests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		8395D98A408A675D06FC5349 /* Packages */ = {
+			isa = PBXGroup;
+			children = (
+				1D4D014A2664C8201A560108 /* tikokit-ios */,
+			);
+			name = Packages;
+			sourceTree = "<group>";
+		};
+		AE164203C70726BB2E7F1DF0 /* Tests */ = {
+			isa = PBXGroup;
+			children = (
+				E66D24FFA7189BC6CF114FF7 /* DistractorGeneratorTests.swift */,
+				F72DCBC6E280EE41A3179346 /* FormulaSpeakerTests.swift */,
+				582AC46D722C12A9760BBEB3 /* NumberSpellerTests.swift */,
+				DD425AEEE765C7F1B22E6D01 /* SumPathStoreTests.swift */,
+				A2B7C454BDBB2AF55329A247 /* SumPlayViewModelTests.swift */,
+			);
+			path = Tests;
+			sourceTree = "<group>";
+		};
+		B4F0A2C00CC6111B83773479 /* Sources */ = {
+			isa = PBXGroup;
+			children = (
+				283E64894BAB6EA5955923F1 /* Assets.xcassets */,
+				0617F5809F00DFA03A1AD814 /* DistractorGenerator.swift */,
+				4CDAEB66B858952E30A1DECF /* FormulaSpeaker.swift */,
+				FCF48E28C1DDC8F7CF9301CB /* Info.plist */,
+				23565D79568C332C08CFE09E /* NumberSpeller.swift */,
+				FEFE07865972914CD62A3A63 /* SumAppConfig.swift */,
+				8C6CF8952638FE65FB56766F /* SumCatalog.swift */,
+				2D3C268A96A61234C6971018 /* SumModels.swift */,
+				BE741DBB9C104F0B9E28FF70 /* SumParentEditor.swift */,
+				6F3CE2989DC02A0364269C2E /* SumPathStore.swift */,
+				E238E6727F107233EADD8360 /* SumPlayView.swift */,
+				D60A0EDBA6F8FA3752A8E465 /* SumPlayViewModel.swift */,
+				1E0E0CAF5CC8C30BF9DDA6C3 /* SumScreenshotSupport.swift */,
+				CD030A6F762C42E48114EE22 /* SumView.swift */,
+				715E72E630AE9DD7A7CD6DDF /* TikoSum.entitlements */,
+				CBA39DFC1B75DC3580E095B0 /* TikoSumApp.swift */,
+			);
+			path = Sources;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		359C2C3613CCDB87E9E7A1CD /* TikoSum */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 97855D1D6FCBFFB5DA93CB82 /* Build configuration list for PBXNativeTarget "TikoSum" */;
+			buildPhases = (
+				E9A49D41D1EACE0D05456FBD /* Generate Tiko app config */,
+				017DAB84D3F638D87DECC57B /* Sources */,
+				45B81E89354C15C12A0592AE /* Resources */,
+				0E91068DC4D75711E0E83FB8 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = TikoSum;
+			packageProductDependencies = (
+				D77A259FA7ACA35B7559689B /* TikoKit */,
+			);
+			productName = TikoSum;
+			productReference = E156BDEDFF5DB1F2D2F287B2 /* TikoSum.app */;
+			productType = "com.apple.product-type.application";
+		};
+		494755881B7074C81D55296A /* TikoSumUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 0384E8C57A1D33C6AD1B7135 /* Build configuration list for PBXNativeTarget "TikoSumUITests" */;
+			buildPhases = (
+				6F12612D8DD98ECEFF878771 /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				796B52A4EDA4CF6FF2F8A59A /* PBXTargetDependency */,
+			);
+			name = TikoSumUITests;
+			packageProductDependencies = (
+			);
+			productName = TikoSumUITests;
+			productReference = 6EC567EF489C49BC3285A9C6 /* TikoSumUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+		6F484AEEB15E279AF0EECF8D /* TikoSumTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 48A9B1721B6AC96FB381FD0C /* Build configuration list for PBXNativeTarget "TikoSumTests" */;
+			buildPhases = (
+				9BD300A164EA63C6C7E805A2 /* Sources */,
+				619960EDCE5F4EEA04F45E72 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				15AD4BE036325E7AC730E00C /* PBXTargetDependency */,
+			);
+			name = TikoSumTests;
+			packageProductDependencies = (
+				163C677DE827D6D16A9E1CD2 /* TikoKit */,
+			);
+			productName = TikoSumTests;
+			productReference = 90E1A75D54AECB146E116310 /* TikoSumTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		C9D6E5EC502DAD6505D06CF8 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1430;
+				TargetAttributes = {
+					359C2C3613CCDB87E9E7A1CD = {
+						DevelopmentTeam = "";
+					};
+					494755881B7074C81D55296A = {
+						DevelopmentTeam = "";
+						TestTargetID = 359C2C3613CCDB87E9E7A1CD;
+					};
+					6F484AEEB15E279AF0EECF8D = {
+						DevelopmentTeam = "";
+					};
+				};
+			};
+			buildConfigurationList = 8A2FC4009C1E1A775005479D /* Build configuration list for PBXProject "TikoSum" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = 49F3D5563ACD39FD6C6179C7;
+			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				BF5D8109C4DB739A9DD8FD6A /* XCLocalSwiftPackageReference "../../../packages/tikokit-ios" */,
+			);
+			preferredProjectObjectVersion = 77;
+			productRefGroup = 762A1D0C9054EFD0185FCC1B /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				359C2C3613CCDB87E9E7A1CD /* TikoSum */,
+				6F484AEEB15E279AF0EECF8D /* TikoSumTests */,
+				494755881B7074C81D55296A /* TikoSumUITests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		45B81E89354C15C12A0592AE /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1E0E905DFB3516E74D4CDE37 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		E9A49D41D1EACE0D05456FBD /* Generate Tiko app config */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Generate Tiko app config";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "set -euo pipefail\nREPO_ROOT=\"${SRCROOT}/../../..\"\nif ! command -v node >/dev/null 2>&1; then\n  echo \"error: node is required to generate Tiko app configs from admin before iOS build.\"\n  exit 1\nfi\nTIKO_APP_CONFIG_STRICT=1 node \"${REPO_ROOT}/tools/generate-app-configs.mjs\"\n";
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		017DAB84D3F638D87DECC57B /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0FD02F0972DCE5E7CCDA8DB0 /* DistractorGenerator.swift in Sources */,
+				BB23203399F5F0C9AF84CD4D /* FormulaSpeaker.swift in Sources */,
+				6768DA4C16BD0A10C2DFCBE9 /* NumberSpeller.swift in Sources */,
+				BFBB6F35206D3FA71E3887CE /* SumAppConfig.swift in Sources */,
+				71692F003E00802600EC0427 /* SumCatalog.swift in Sources */,
+				53BD7441E4867F1A71D74AB6 /* SumModels.swift in Sources */,
+				4249DEAAB02CF6D24DDB365C /* SumParentEditor.swift in Sources */,
+				3C0DDD9BFF0FEC8E4326300B /* SumPathStore.swift in Sources */,
+				D8869E3F0C31B36B0A65B8AA /* SumPlayView.swift in Sources */,
+				8AE8B523DBED6D0A1F5CD926 /* SumPlayViewModel.swift in Sources */,
+				93E0C92C9A9D5B29BA8D74C7 /* SumScreenshotSupport.swift in Sources */,
+				68919E5B047E750D11A94444 /* SumView.swift in Sources */,
+				4BD8E5C632A371B17D57330B /* TikoSumApp.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		6F12612D8DD98ECEFF878771 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				EF319DA62DF73A92DCB141B5 /* TikoSumUITests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		9BD300A164EA63C6C7E805A2 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4861C308873A7BFE738AC9A2 /* DistractorGeneratorTests.swift in Sources */,
+				5668727971D8ED40CD0958AE /* FormulaSpeakerTests.swift in Sources */,
+				93A92401B43731D25DB97C74 /* NumberSpellerTests.swift in Sources */,
+				7C357C68077804DEA1A2FBBC /* SumPathStoreTests.swift in Sources */,
+				0BE78BB7DE37BA8635EAC213 /* SumPlayViewModelTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		15AD4BE036325E7AC730E00C /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 359C2C3613CCDB87E9E7A1CD /* TikoSum */;
+			targetProxy = F66221966E38FCAB32401871 /* PBXContainerItemProxy */;
+		};
+		796B52A4EDA4CF6FF2F8A59A /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 359C2C3613CCDB87E9E7A1CD /* TikoSum */;
+			targetProxy = C27F5A2640C5EFAADC5BA11E /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		0724764B09123CD9101669AB /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = "";
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		2155D47FD18ED3C2BCB8E1FB /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = mt.tiko.TikoSumTests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/TikoSum.app/TikoSum";
+			};
+			name = Debug;
+		};
+		6A44A9D7B8CC172F4513EB19 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = mt.tiko.TikoSumUITests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = TikoSum;
+			};
+			name = Release;
+		};
+		8986D616DDC917D7BAE7E328 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = mt.tiko.TikoSumUITests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = TikoSum;
+			};
+			name = Debug;
+		};
+		A9D607F25E8C5F1F1C9215E9 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = Sources/TikoSum.entitlements;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CURRENT_PROJECT_VERSION = 1;
+				INFOPLIST_FILE = Sources/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = mt.tiko.sum;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		C85893D97F410706DB16E983 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = Sources/TikoSum.entitlements;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CURRENT_PROJECT_VERSION = 1;
+				INFOPLIST_FILE = Sources/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = mt.tiko.sum;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		EDD1B9DC89E37779AE39E09B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = "";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		F7E144B125E32B6B3CB3914D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = mt.tiko.TikoSumTests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/TikoSum.app/TikoSum";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		0384E8C57A1D33C6AD1B7135 /* Build configuration list for PBXNativeTarget "TikoSumUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				8986D616DDC917D7BAE7E328 /* Debug */,
+				6A44A9D7B8CC172F4513EB19 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		48A9B1721B6AC96FB381FD0C /* Build configuration list for PBXNativeTarget "TikoSumTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				2155D47FD18ED3C2BCB8E1FB /* Debug */,
+				F7E144B125E32B6B3CB3914D /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		8A2FC4009C1E1A775005479D /* Build configuration list for PBXProject "TikoSum" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				0724764B09123CD9101669AB /* Debug */,
+				EDD1B9DC89E37779AE39E09B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		97855D1D6FCBFFB5DA93CB82 /* Build configuration list for PBXNativeTarget "TikoSum" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C85893D97F410706DB16E983 /* Debug */,
+				A9D607F25E8C5F1F1C9215E9 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCLocalSwiftPackageReference section */
+		BF5D8109C4DB739A9DD8FD6A /* XCLocalSwiftPackageReference "../../../packages/tikokit-ios" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = "../../../packages/tikokit-ios";
+		};
+/* End XCLocalSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		163C677DE827D6D16A9E1CD2 /* TikoKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = TikoKit;
+		};
+		D77A259FA7ACA35B7559689B /* TikoKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = TikoKit;
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = C9D6E5EC502DAD6505D06CF8 /* Project object */;
+}

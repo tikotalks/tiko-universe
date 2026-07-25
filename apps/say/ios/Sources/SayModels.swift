@@ -62,12 +62,7 @@ struct SayCardOverride: Codable, Hashable {
 
 // MARK: - Recognition
 
-enum MatchType: Equatable {
-    case exact
-    case alternative
-    case approvedPhrase
-    case fuzzy
-}
+// MatchType is TikoKit's TikoMatchType (see SayEngineAliases.swift).
 
 struct RecognitionResult: Equatable {
     let transcript: String

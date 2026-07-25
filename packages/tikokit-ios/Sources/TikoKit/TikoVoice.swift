@@ -1,16 +1,21 @@
 import AVFoundation
 import CryptoKit
 import Foundation
-import TikoKit
 
-/// Word playback through the Tiko Atlas voice service (the same generated
-/// voices the other apps use), with a persistent disk cache keyed by
-/// text + locale so previously heard words keep working fully offline.
-/// Falls back to on-device `AVSpeechSynthesizer` when a word has no cached
-/// audio and the network is unreachable.
+/// Word/utterance playback through the Tiko Atlas voice service (the same
+/// generated voices across the family), with a persistent disk cache keyed by
+/// text + locale so previously heard utterances keep working fully offline.
+/// Falls back to on-device `AVSpeechSynthesizer` when an utterance has no
+/// cached audio and the network is unreachable.
+///
+/// Apps configure the app name once at startup:
+/// `TikoVoiceService.appName = "say"`.
 @MainActor
-final class SayVoiceService: NSObject, AVAudioPlayerDelegate, AVSpeechSynthesizerDelegate {
-    static let shared = SayVoiceService()
+public final class TikoVoiceService: NSObject, AVAudioPlayerDelegate, AVSpeechSynthesizerDelegate {
+    public static let shared = TikoVoiceService()
+
+    /// The Tiko app slug sent to Atlas, set once at app startup.
+    public static var appName = "tiko"
 
     private let atlasSpeechURL = URL(string: "https://api.tikotalks.com/v1/atlas/speech")!
     private let synthesizer = AVSpeechSynthesizer()
@@ -18,12 +23,12 @@ final class SayVoiceService: NSObject, AVAudioPlayerDelegate, AVSpeechSynthesize
     private var playbackContinuation: CheckedContinuation<Void, Never>?
     private let cacheDirectory: URL
 
-    private(set) var isSpeaking = false
+    public private(set) var isSpeaking = false
 
-    override init() {
+    override public init() {
         let base = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first
             ?? FileManager.default.temporaryDirectory
-        cacheDirectory = base.appending(path: "SayVoiceCache", directoryHint: .isDirectory)
+        cacheDirectory = base.appending(path: "TikoVoiceCache", directoryHint: .isDirectory)
         try? FileManager.default.createDirectory(at: cacheDirectory, withIntermediateDirectories: true)
         super.init()
         synthesizer.delegate = self
@@ -33,7 +38,7 @@ final class SayVoiceService: NSObject, AVAudioPlayerDelegate, AVSpeechSynthesize
 
     /// Speaks and returns when playback finishes. Cached audio → Atlas fetch
     /// (cached for next time) → on-device synthesizer fallback.
-    func speak(_ text: String, languageCode: String) async {
+    public func speak(_ text: String, languageCode: String) async {
         let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmed.isEmpty else { return }
         stop()
@@ -50,7 +55,7 @@ final class SayVoiceService: NSObject, AVAudioPlayerDelegate, AVSpeechSynthesize
     }
 
     /// Quietly downloads and caches audio so later sessions work offline.
-    func prefetch(texts: [String], languageCode: String) async {
+    public func prefetch(texts: [String], languageCode: String) async {
         let locale = TikoSpeech.languageCode(for: languageCode)
         for text in texts {
             let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -59,7 +64,7 @@ final class SayVoiceService: NSObject, AVAudioPlayerDelegate, AVSpeechSynthesize
         }
     }
 
-    func stop() {
+    public func stop() {
         player?.stop()
         player = nil
         if synthesizer.isSpeaking {
@@ -88,11 +93,9 @@ final class SayVoiceService: NSObject, AVAudioPlayerDelegate, AVSpeechSynthesize
         if let token = try? TikoDeviceSessionStore().load()?.accessToken, !token.isEmpty {
             request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
         }
-        // "speech-playback" is the purpose the Atlas registry allows for all
-        // apps (workers/atlas-api capabilities registry) — "word-playback"
-        // gets rejected with purpose_not_allowed.
+        // "speech-playback" is the purpose the Atlas registry allows for all apps.
         request.httpBody = try JSONEncoder().encode(AtlasSpeechRequest(
-            app: "say", purpose: "speech-playback", text: text, language: locale
+            app: Self.appName, purpose: "speech-playback", text: text, language: locale
         ))
 
         let (data, response) = try await URLSession.shared.data(for: request)
@@ -157,19 +160,19 @@ final class SayVoiceService: NSObject, AVAudioPlayerDelegate, AVSpeechSynthesize
 
     // MARK: - Delegates
 
-    nonisolated func audioPlayerDidFinishPlaying(_ player: AVAudioPlayer, successfully flag: Bool) {
+    public nonisolated func audioPlayerDidFinishPlaying(_ player: AVAudioPlayer, successfully flag: Bool) {
         Task { @MainActor in self.resumePlayback() }
     }
 
-    nonisolated func audioPlayerDecodeErrorDidOccur(_ player: AVAudioPlayer, error: Error?) {
+    public nonisolated func audioPlayerDecodeErrorDidOccur(_ player: AVAudioPlayer, error: Error?) {
         Task { @MainActor in self.resumePlayback() }
     }
 
-    nonisolated func speechSynthesizer(_ synthesizer: AVSpeechSynthesizer, didFinish utterance: AVSpeechUtterance) {
+    public nonisolated func speechSynthesizer(_ synthesizer: AVSpeechSynthesizer, didFinish utterance: AVSpeechUtterance) {
         Task { @MainActor in self.resumePlayback() }
     }
 
-    nonisolated func speechSynthesizer(_ synthesizer: AVSpeechSynthesizer, didCancel utterance: AVSpeechUtterance) {
+    public nonisolated func speechSynthesizer(_ synthesizer: AVSpeechSynthesizer, didCancel utterance: AVSpeechUtterance) {
         Task { @MainActor in self.resumePlayback() }
     }
 

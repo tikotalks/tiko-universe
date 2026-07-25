@@ -1,10 +1,10 @@
 import XCTest
-@testable import TikoSay
+import TikoKit
 
-final class WordMatcherTests: XCTestCase {
-    private let en = WordMatcher(languageCode: "en")
-    private let nl = WordMatcher(languageCode: "nl")
-    private let fr = WordMatcher(languageCode: "fr")
+final class TikoWordMatcherTests: XCTestCase {
+    private let en = TikoWordMatcher(languageCode: "en")
+    private let nl = TikoWordMatcher(languageCode: "nl")
+    private let fr = TikoWordMatcher(languageCode: "fr")
 
     // MARK: - Exact matches
 
@@ -91,18 +91,18 @@ final class WordMatcherTests: XCTestCase {
     }
 
     func testFuzzyThresholdIsConfigurable() {
-        let strict = WordMatcher(
+        let strict = TikoWordMatcher(
             languageCode: "en",
-            config: WordMatcherConfig(longWordSimilarityThreshold: 0.95)
+            config: TikoWordMatcherConfig(longWordSimilarityThreshold: 0.95)
         )
         XCTAssertNil(strict.match(transcript: "bannana", listenFor: ["banana"]))
 
-        let relaxed = WordMatcher(languageCode: "en", config: .relaxed)
+        let relaxed = TikoWordMatcher(languageCode: "en", config: .relaxed)
         XCTAssertEqual(relaxed.match(transcript: "elefant", listenFor: ["elephant"]), .fuzzy)
     }
 
     func testRelaxedConfigDoesNotLoosenShortWords() {
-        let relaxed = WordMatcher(languageCode: "en", config: .relaxed)
+        let relaxed = TikoWordMatcher(languageCode: "en", config: .relaxed)
         XCTAssertNil(relaxed.match(transcript: "dot", listenFor: ["dog"]))
         XCTAssertNil(relaxed.match(transcript: "card", listenFor: ["car"]))
     }
@@ -111,7 +111,7 @@ final class WordMatcherTests: XCTestCase {
 
     func testLocaleSpecificCharacters() {
         XCTAssertEqual(fr.match(transcript: "Œuf", listenFor: ["œuf", "oeuf"]), .exact)
-        let mt = WordMatcher(languageCode: "mt")
+        let mt = TikoWordMatcher(languageCode: "mt")
         XCTAssertEqual(mt.match(transcript: "Ħalib", listenFor: ["ħalib"]), .exact)
         XCTAssertEqual(mt.match(transcript: "il-kelb", listenFor: ["kelb"]), .approvedPhrase)
     }
@@ -126,10 +126,10 @@ final class WordMatcherTests: XCTestCase {
     // MARK: - Levenshtein
 
     func testLevenshteinDistance() {
-        XCTAssertEqual(WordMatcher.levenshtein("", ""), 0)
-        XCTAssertEqual(WordMatcher.levenshtein("cat", ""), 3)
-        XCTAssertEqual(WordMatcher.levenshtein("cat", "cat"), 0)
-        XCTAssertEqual(WordMatcher.levenshtein("cat", "hat"), 1)
-        XCTAssertEqual(WordMatcher.levenshtein("banana", "bannana"), 1)
+        XCTAssertEqual(TikoWordMatcher.levenshtein("", ""), 0)
+        XCTAssertEqual(TikoWordMatcher.levenshtein("cat", ""), 3)
+        XCTAssertEqual(TikoWordMatcher.levenshtein("cat", "cat"), 0)
+        XCTAssertEqual(TikoWordMatcher.levenshtein("cat", "hat"), 1)
+        XCTAssertEqual(TikoWordMatcher.levenshtein("banana", "bannana"), 1)
     }
 }

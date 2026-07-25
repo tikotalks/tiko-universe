@@ -1,32 +1,55 @@
 import Foundation
 
-/// Conservative matcher: answers only whether Apple heard one of the card's
-/// listen-for targets or an approved equivalent. Never a pronunciation score.
-struct WordMatcherConfig: Equatable {
+// MARK: - Language code helper
+
+public enum TikoLanguageCode {
+    /// "nl-BE" → "nl"
+    public static func normalized(_ code: String) -> String {
+        code.replacingOccurrences(of: "_", with: "-")
+            .split(separator: "-").first.map { String($0).lowercased() } ?? "en"
+    }
+}
+
+// MARK: - Match result
+
+public enum TikoMatchType: Equatable, Sendable {
+    case exact
+    case alternative
+    case approvedPhrase
+    case fuzzy
+}
+
+// MARK: - Config
+
+/// Conservative matcher configuration: answers only whether the transcript
+/// contains a configured target or an approved equivalent — never a score.
+public struct TikoWordMatcherConfig: Equatable, Sendable {
     /// Words shorter than this never fuzzy-match.
-    var fuzzyMinLength = 4
+    public var fuzzyMinLength: Int
     /// 4–5 character words allow at most this many edits.
-    var shortWordMaxEdits = 1
+    public var shortWordMaxEdits: Int
     /// Words of 6+ characters need at least this normalized similarity.
-    var longWordSimilarityThreshold = 0.8
+    public var longWordSimilarityThreshold: Double
 
-    static let standard = WordMatcherConfig()
-    /// Attempt-4 "relaxed" matcher: still conservative, slightly wider net for
-    /// long words only. Short-word rules never relax.
-    static let relaxed = WordMatcherConfig(longWordSimilarityThreshold: 0.72)
+    public static let standard = TikoWordMatcherConfig()
+    /// "Relaxed" matcher for late attempts: still conservative, slightly wider
+    /// net for long words only. Short-word rules never relax.
+    public static let relaxed = TikoWordMatcherConfig(longWordSimilarityThreshold: 0.72)
 
-    init(fuzzyMinLength: Int = 4, shortWordMaxEdits: Int = 1, longWordSimilarityThreshold: Double = 0.8) {
+    public init(fuzzyMinLength: Int = 4, shortWordMaxEdits: Int = 1, longWordSimilarityThreshold: Double = 0.8) {
         self.fuzzyMinLength = fuzzyMinLength
         self.shortWordMaxEdits = shortWordMaxEdits
         self.longWordSimilarityThreshold = longWordSimilarityThreshold
     }
 }
 
+// MARK: - Per-language approved phrases
+
 /// Per-language approved leading phrases: `a dog`, `de hond`, `un perro`…
 /// Data, not code branches, so new languages only add entries here.
-enum SayLanguageRules {
-    static func approvedPrefixes(for languageCode: String) -> [String] {
-        switch SayCatalog.normalizedLanguage(languageCode) {
+public enum TikoLanguageRules {
+    public static func approvedPrefixes(for languageCode: String) -> [String] {
+        switch TikoLanguageCode.normalized(languageCode) {
         case "en":
             return ["a", "an", "the", "it s a", "it s an", "it is a", "it is an", "that s a", "that s an"]
         case "nl":
@@ -45,15 +68,22 @@ enum SayLanguageRules {
     }
 }
 
-struct WordMatcher {
-    let languageCode: String
-    var config: WordMatcherConfig = .standard
+// MARK: - Matcher
+
+public struct TikoWordMatcher {
+    public let languageCode: String
+    public var config: TikoWordMatcherConfig
+
+    public init(languageCode: String, config: TikoWordMatcherConfig = .standard) {
+        self.languageCode = languageCode
+        self.config = config
+    }
 
     private var locale: Locale { Locale(identifier: languageCode) }
 
-    /// Matching order per the plan: exact primary target → other listen-for
-    /// alternatives → approved per-language phrase wrapper → conservative fuzzy.
-    func match(transcript: String, listenFor: [String]) -> MatchType? {
+    /// Matching order: exact primary target → other listen-for alternatives →
+    /// approved per-language phrase wrapper → conservative fuzzy.
+    public func match(transcript: String, listenFor: [String]) -> TikoMatchType? {
         let normalizedTranscript = normalize(transcript)
         guard !normalizedTranscript.isEmpty else { return nil }
         let targets = listenFor.map(normalize).filter { !$0.isEmpty }
@@ -63,7 +93,7 @@ struct WordMatcher {
             return index == 0 ? .exact : .alternative
         }
 
-        for prefix in SayLanguageRules.approvedPrefixes(for: languageCode) {
+        for prefix in TikoLanguageRules.approvedPrefixes(for: languageCode) {
             let normalizedPrefix = normalize(prefix)
             guard !normalizedPrefix.isEmpty,
                   normalizedTranscript.hasPrefix(normalizedPrefix + " ") else { continue }
@@ -83,7 +113,7 @@ struct WordMatcher {
     /// Locale-aware lowercase, punctuation removal (apostrophes and hyphens
     /// become spaces so elisions like "l'éléphant" and "il-kelb" split
     /// cleanly), whitespace trimmed and collapsed.
-    func normalize(_ text: String) -> String {
+    public func normalize(_ text: String) -> String {
         let separatorSet = CharacterSet(charactersIn: "'\u{2019}\u{02BC}-\u{2010}\u{2011}")
         var scalars = String.UnicodeScalarView()
         for scalar in text.unicodeScalars {
@@ -115,7 +145,7 @@ struct WordMatcher {
         return similarity >= config.longWordSimilarityThreshold
     }
 
-    static func levenshtein(_ a: String, _ b: String) -> Int {
+    public static func levenshtein(_ a: String, _ b: String) -> Int {
         let aChars = Array(a), bChars = Array(b)
         if aChars.isEmpty { return bChars.count }
         if bChars.isEmpty { return aChars.count }
