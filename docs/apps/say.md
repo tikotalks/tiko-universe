@@ -105,6 +105,7 @@ Six bundled categories with a rich default set (~56 cards), localised for every 
 - **Body** (8): head, nose, mouth, ear, eye, hand, foot, hair
 - **Colors** (10): red, blue, green, yellow, orange, pink, purple, white, black, brown
 - **Numbers** (10): one through ten (spoken digits also count as correct)
+- **Letters** (26+): the alphabet, spoken by letter name — planned addition, see the implementation plan's Letters tasks. Each letter accepts its common homophone transcriptions ("b", "bee", "be"); Maltese adds its extra letters (ċ, ġ, ħ, ż, għ, ie). Letter *sounds* (phonics) stay authorable per card via the speak-text field.
 
 Default card text is bundled locally; images resolve from the Tiko media library per category with emoji fallback. Parent Mode edits and custom cards persist locally per account first; sync through the standard Tiko data layer follows the same path as the other apps.
 

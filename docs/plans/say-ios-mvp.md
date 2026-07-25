@@ -796,6 +796,16 @@ Do not expand content before this milestone.
 - web or Android implementation
 - shared TypeScript speech layer
 
+## Follow-up: Letters category
+
+Add a seventh default category to the shipped app (and, once the shared word catalogue exists per [`listen-ios-mvp.md`](./listen-ios-mvp.md) Phase 0b, it reaches Listen automatically):
+
+1. **Catalog** — `letters` category (`say.category.letters` i18n key ×6 languages, media category `letters`/`alphabet`), 26 default cards `letter_a`…`letter_z`, difficulty 1, glyph shown as the card visual with media-library images on top. Maltese adds `letter_c_dot`(ċ), `letter_g_dot`(ġ), `letter_gh`(għ), `letter_h_bar`(ħ), `letter_ie`(ie), `letter_z_dot`(ż) for the `mt` language only (per-language card visibility: a default card may declare the languages it exists in).
+2. **Speech** — speak text = the letter (TTS says the letter name in the active language); phonics sounds remain parent-authorable via speak text. `listenFor` per language includes the letter plus common recognizer homophones (en: `b`, `bee`, `be`; `c`, `see`, `sea`; …) — data, curated per language, with the digits-style reasoning documented inline.
+3. **Matching** — single characters are exact-match only under the existing <4-char rule; verify the homophone lists carry the load. Add `WordMatcherTests` letters cases (accept `bee`→b card, reject `d`→b card).
+4. **Tests** — catalog tests updated for the 7th category, per-language completeness incl. Maltese extras, listen-for non-empty; card-store tests unaffected.
+5. **Content check** — confirm the media library `letters` category matches by glyph/name; add match keys (`letter a`) to the media matcher keys if needed.
+
 ## Codex task sequence
 
 ### Task 1: Static SwiftUI proof on the Tiko harness

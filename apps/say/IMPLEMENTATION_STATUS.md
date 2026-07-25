@@ -228,6 +228,17 @@ Statuses: `NOT STARTED` · `IN PROGRESS` · `BLOCKED` · `IMPLEMENTED` · `VERIF
 - Debug + Release builds: clean, 0 warnings in Say sources.
 - Full test suite (unit + UI) green; shared validator green; TikoKit tests green.
 
+## Follow-up: Letters category (planned)
+
+| # | Task | Status | Source |
+|---|---|---|---|
+| LT1 | `letters` category + 26 localized default cards (+ Maltese extras, per-language card visibility) | NOT STARTED | plan “Follow-up: Letters category” |
+| LT2 | Per-language homophone listen-for lists (b/bee/be …), curated data | NOT STARTED | plan |
+| LT3 | Letter-name speech via speak text; phonics stays parent-authorable | NOT STARTED | plan |
+| LT4 | Matcher + catalog tests for letters (exact-only single chars, homophone accept/reject) | NOT STARTED | plan |
+| LT5 | Media-library `letters` match keys verified | NOT STARTED | plan |
+| LT6 | Ships to Listen automatically once `TikoWordCatalog` extraction lands (listen plan Phase 0b) | NOT STARTED | listen-ios-mvp.md |
+
 ## Assumptions
 
 - App icon: the "Speech Balloon" media asset (`575d659f-f984-4948-8800-5d40fc63bda7`,
