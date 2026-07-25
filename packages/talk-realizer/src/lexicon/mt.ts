@@ -27,7 +27,7 @@ export const malteseLexicon: Lexicon = {
   three: { pos: 'determiner', determinerKind: 'quantifier', forcesNumber: 'pl', attributive: 'tliet' },
   many: { pos: 'determiner', determinerKind: 'quantifier', forcesNumber: 'pl' },
   little: { pos: 'determiner', determinerKind: 'quantifier' },
-  big: { pos: 'adjective', feminine: 'kbira' },
+  big: { pos: 'adjective', feminine: 'kbira', pluralForm: 'kbar' },
 
   // Verbs where the prefix rule needs help
   want: { pos: 'verb', forms: { '1sg': 'irrid', '2sg': 'trid', '3sg': 'irid', '1pl': 'irridu', '3pl': 'iridu' } },
@@ -48,7 +48,7 @@ export const malteseLexicon: Lexicon = {
   tired: { pos: 'adjective', feminine: 'għajjiena' },
   cold: { pos: 'adjective', feminine: 'kiesħa' },
   hot: { pos: 'adjective', feminine: 'sħuna' },
-  small: { pos: 'adjective', feminine: 'ċkejkna' },
+  small: { pos: 'adjective', feminine: 'ċkejkna', pluralForm: 'ċkejknin' },
 
   // Mass nouns and the broken plurals of common words
   water: { pos: 'noun', gender: 'masculine', mass: true },

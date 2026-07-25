@@ -154,8 +154,12 @@ export const maltese: LanguageRules = {
 
   adjective(adjective, np) {
     const head = np.head
+    const plural = np.determiner?.features.forcesNumber === 'pl'
     const feminine = head?.features.gender === 'feminine'
-    const base = feminine ? feminineAdjective(adjective.features, adjective.text) : adjective.text
+    // A plural noun takes the plural adjective, which is its own lexical form.
+    const base = plural
+      ? (adjective.features.pluralForm ?? adjective.text)
+      : feminine ? feminineAdjective(adjective.features, adjective.text) : adjective.text
     // A definite noun makes its adjective definite too: "it-tuffieħa l-kbira".
     if (np.determiner?.features.determinerKind === 'definite') {
       return `${definiteArticle(base)}${base}`
