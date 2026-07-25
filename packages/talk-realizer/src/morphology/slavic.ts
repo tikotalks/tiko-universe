@@ -26,7 +26,7 @@ import type { Features, Gender } from '../features'
  * instrumental and vocative are not generated.
  */
 
-export type SlavicLanguage = 'ru' | 'pl' | 'uk' | 'sr' | 'hr' | 'bs' | 'cs' | 'sk' | 'sl' | 'be' | 'lt' | 'lv'
+export type SlavicLanguage = 'ru' | 'pl' | 'uk' | 'sr' | 'hr' | 'bs' | 'cs' | 'sk' | 'sl' | 'be' | 'lt' | 'lv' | 'cnr'
 export type SlavicCase = 'nom' | 'acc' | 'gen' | 'dat' | 'loc'
 
 export interface DeclensionResult {
@@ -134,6 +134,16 @@ const DECLENSIONS: Record<SlavicLanguage, Record<NounClass, ClassEndings>> = {
     'masc-j': { acc: 'nominative', gen: { strip: 1, add: 'a' }, dat: { strip: 1, add: 'u' }, loc: { strip: 1, add: 'u' } },
   },
   bs: {
+    'fem-a': { acc: { strip: 1, add: 'u' }, gen: { strip: 1, add: 'e' }, dat: { strip: 1, add: 'i' }, loc: { strip: 1, add: 'i' } },
+    'fem-ja': { acc: { strip: 1, add: 'u' }, gen: { strip: 1, add: 'e' }, dat: { strip: 1, add: 'i' }, loc: { strip: 1, add: 'i' } },
+    'fem-soft': { acc: 'nominative', gen: { add: 'i' }, dat: { add: 'i' }, loc: { add: 'i' } },
+    'neut-o': { acc: 'nominative', gen: { strip: 1, add: 'a' }, dat: { strip: 1, add: 'u' }, loc: { strip: 1, add: 'u' } },
+    'neut-e': { acc: 'nominative', gen: { strip: 1, add: 'a' }, dat: { strip: 1, add: 'u' }, loc: { strip: 1, add: 'u' } },
+    'masc-hard': { acc: 'nominative', gen: { add: 'a' }, dat: { add: 'u' }, loc: { add: 'u' } },
+    'masc-soft': { acc: 'nominative', gen: { add: 'a' }, dat: { add: 'u' }, loc: { add: 'u' } },
+    'masc-j': { acc: 'nominative', gen: { strip: 1, add: 'a' }, dat: { strip: 1, add: 'u' }, loc: { strip: 1, add: 'u' } },
+  },
+  cnr: {
     'fem-a': { acc: { strip: 1, add: 'u' }, gen: { strip: 1, add: 'e' }, dat: { strip: 1, add: 'i' }, loc: { strip: 1, add: 'i' } },
     'fem-ja': { acc: { strip: 1, add: 'u' }, gen: { strip: 1, add: 'e' }, dat: { strip: 1, add: 'i' }, loc: { strip: 1, add: 'i' } },
     'fem-soft': { acc: 'nominative', gen: { add: 'i' }, dat: { add: 'i' }, loc: { add: 'i' } },
@@ -354,6 +364,15 @@ const ADJECTIVES: Record<SlavicLanguage, {
     plural: { nom: 'i', acc: 'e', gen: 'ih', dat: 'im', loc: 'ih' },
   },
   bs: {
+    strip: /(i|a|o|e)$/,
+    feminine: { nom: 'a', acc: 'u', gen: 'e', dat: 'oj', loc: 'oj' },
+    neuter: { nom: 'o', acc: 'o', gen: 'og', dat: 'om', loc: 'om' },
+    masculine: { gen: 'og', dat: 'om', loc: 'om' },
+    masculineNominative: 'i',
+    bareMasculine: true,
+    plural: { nom: 'i', acc: 'e', gen: 'ih', dat: 'im', loc: 'im' },
+  },
+  cnr: {
     strip: /(i|a|o|e)$/,
     feminine: { nom: 'a', acc: 'u', gen: 'e', dat: 'oj', loc: 'oj' },
     neuter: { nom: 'o', acc: 'o', gen: 'og', dat: 'om', loc: 'om' },
