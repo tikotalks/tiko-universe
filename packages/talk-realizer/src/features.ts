@@ -152,7 +152,7 @@ export interface Features {
    * objects by whether the action completes: `total` is "näen kaverin" against
    * the partitive default of "haluan omenaa".
    */
-  objectCase?: 'accusative' | 'dative' | 'total'
+  objectCase?: 'accusative' | 'dative' | 'genitive' | 'total'
   /**
    * Verbs like Spanish "gustar" and Italian "piacere", where the experiencer is
    * a clitic and the thing liked is the grammatical subject: "Me gusta el pan".
@@ -180,6 +180,11 @@ export interface Features {
    * one of the most audible errors in these languages.
    */
   governsCase?: 'acc' | 'gen' | 'dat' | 'loc' | 'ins' | 'abl'
+  /**
+   * True where a preposition tile is realized purely as a case ending, with no
+   * word of its own: Lithuanian "sode" for "in the garden", Turkish "parka".
+   */
+  caseOnly?: boolean
   /**
    * True where this word follows its noun phrase instead of preceding it:
    * Turkish "ile", and every Japanese and Korean particle.

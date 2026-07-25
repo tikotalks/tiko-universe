@@ -3,8 +3,8 @@ import { realize } from '../index'
 import { select } from './pack'
 
 /**
- * The Slavic family, tested together, because what varies between these seven
- * languages is exactly what the golden lists have to pin down:
+ * The Slavic family and its Baltic neighbours, tested together, because what varies
+ * between these twelve languages is exactly what the golden lists have to pin down:
  *
  * - **the copula**: Polish, Serbian, Croatian, Czech and Slovak have one; Russian
  *   and Ukrainian do not — "Я щасливий" is a complete sentence;
@@ -14,7 +14,8 @@ import { select } from './pack'
  * - **the genitive of negation**: obligatory in Russian, Polish and Ukrainian,
  *   absent in the rest — "Я не хочу яблука" but "Ja ne želim jabuku";
  * - **the paucal**: after two, East and South Slavic take the genitive singular
- *   ("два кекса"), while Czech, Slovak and Polish take the plural ("dvě sušenky");
+ *   ("два кекса"), while Czech, Slovak, Polish, Belarusian and the Baltic pair take
+ *   the plural ("dvě sušenky", "du sausainiai");
  * - **animacy**, everywhere: "Я бачу друга", not "друг".
  */
 const golden: Array<[string, string[], string]> = [
@@ -84,9 +85,57 @@ const golden: Array<[string, string[], string]> = [
   ['sk', ['we', 'happy'], 'My sme šťastní.'],
   ['sk', ['you', 'help', 'me'], 'Ty mi pomáhaš.'],
   ['sk', ['i', 'want', 'my', 'ball'], 'Ja chcem moju loptu.'],
+  // Slovenian: a copula, clitics, and the dual it is not asked to produce.
+  ['sl', ['i', 'want', 'apple'], 'Jaz hočem jabolko.'],
+  ['sl', ['i', 'want', 'water'], 'Jaz hočem vodo.'],
+  ['sl', ['i', 'happy'], 'Jaz sem srečen.'],
+  ['sl', ['we', 'happy'], 'Mi smo srečni.'],
+  ['sl', ['i', 'not', 'happy'], 'Jaz nisem srečen.'],
+  ['sl', ['you', 'help', 'me'], 'Ti mi pomagaš.'],
+  ['sl', ['i', 'see', 'the', 'friend'], 'Jaz vidim prijatelja.'],
+  ['sl', ['i', 'want', 'two', 'cookie'], 'Jaz hočem dva piškota.'],
+
+  // Bosnian: Croatian's grammar, Bosnian's words.
+  ['bs', ['i', 'want', 'apple'], 'Ja želim jabuku.'],
+  ['bs', ['i', 'want', 'bread'], 'Ja želim hljeb.'],
+  ['bs', ['i', 'not', 'happy'], 'Ja nisam sretan.'],
+  ['bs', ['you', 'help', 'me'], 'Ti mi pomažeš.'],
+  ['bs', ['what', 'you', 'want'], 'Šta ti želiš?'],
+
+  // Belarusian: East Slavic, no copula, the genitive of negation.
+  ['be', ['i', 'want', 'apple'], 'Я хачу яблык.'],
+  ['be', ['i', 'want', 'water'], 'Я хачу ваду.'],
+  ['be', ['i', 'not', 'want', 'apple'], 'Я не хачу яблыка.'],
+  ['be', ['i', 'happy'], 'Я шчаслівы.'],
+  ['be', ['we', 'happy'], 'Мы шчаслівыя.'],
+  ['be', ['i', 'see', 'the', 'friend'], 'Я бачу друга.'],
+  ['be', ['you', 'help', 'me'], 'Ты дапамагаеш мне.'],
+
+  // Lithuanian: Baltic, and "norėti" governs the genitive.
+  ['lt', ['i', 'want', 'apple'], 'Aš noriu obuolio.'],
+  ['lt', ['i', 'want', 'big', 'apple'], 'Aš noriu didelio obuolio.'],
+  ['lt', ['i', 'not', 'want', 'apple'], 'Aš nenoriu obuolio.'],
+  ['lt', ['i', 'happy'], 'Aš esu laimingas.'],
+  ['lt', ['we', 'happy'], 'Mes esame laimingi.'],
+  ['lt', ['i', 'not', 'happy'], 'Aš nesu laimingas.'],
+  ['lt', ['i', 'see', 'the', 'friend'], 'Aš matau draugą.'],
+  ['lt', ['you', 'help', 'me'], 'Tu padedi man.'],
+  ['lt', ['i', 'play', 'in', 'the', 'garden'], 'Aš žaidžiu sode.'],
+  ['lt', ['i', 'want', 'two', 'cookie'], 'Aš noriu du sausainiai.'],
+
+  // Latvian: the same shape with shorter endings.
+  ['lv', ['i', 'want', 'apple'], 'Es gribu ābolu.'],
+  ['lv', ['i', 'want', 'big', 'apple'], 'Es gribu lielu ābolu.'],
+  ['lv', ['i', 'not', 'want', 'apple'], 'Es negribu ābolu.'],
+  ['lv', ['i', 'happy'], 'Es esmu laimīgs.'],
+  ['lv', ['we', 'happy'], 'Mēs esam laimīgi.'],
+  ['lv', ['i', 'not', 'happy'], 'Es neesmu laimīgs.'],
+  ['lv', ['you', 'help', 'me'], 'Tu palīdzi man.'],
+  ['lv', ['we', 'go', 'to', 'the', 'park'], 'Mēs ejam pie parka.'],
+  ['lv', ['i', 'play', 'in', 'the', 'garden'], 'Es spēlēju dārzā.'],
 ]
 
-describe('Slavic realizers', () => {
+describe('Slavic and Baltic realizers', () => {
   for (const [language, ids, expected] of golden) {
     it(`${language}: ${ids.join(' + ')} → "${expected}"`, () => {
       expect(realize(select(language, ids), { locale: language }).text).toBe(expected)

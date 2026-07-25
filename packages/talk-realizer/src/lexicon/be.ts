@@ -1,0 +1,66 @@
+import type { Lexicon } from '../features'
+
+/** Belarusian overlay: verb persons, animacy, and the case forms a rule misses. */
+export const belarusianLexicon: Lexicon = {
+  i: { pos: 'pronoun', person: 1, number: 'sg', accusative: 'мяне', dative: 'мне', cases: { gen: 'мяне' } },
+  you: { pos: 'pronoun', person: 2, number: 'sg', accusative: 'цябе', dative: 'табе', cases: { gen: 'цябе' } },
+  we: { pos: 'pronoun', person: 1, number: 'pl', accusative: 'нас', dative: 'нам', cases: { gen: 'нас' } },
+  he: { pos: 'pronoun', person: 3, number: 'sg', accusative: 'яго', dative: 'яму', cases: { gen: 'яго' } },
+  she: { pos: 'pronoun', person: 3, number: 'sg', accusative: 'яе', dative: 'ёй', cases: { gen: 'яе' } },
+  they: { pos: 'pronoun', person: 3, number: 'pl', accusative: 'іх', dative: 'ім', cases: { gen: 'іх' } },
+  me: { pos: 'pronoun', person: 1, number: 'sg', pronounCase: 'acc', accusative: 'мяне', dative: 'мне' },
+  my: { pos: 'pronoun', person: 1, number: 'sg', pronounCase: 'poss' },
+  your: { pos: 'pronoun', person: 2, number: 'sg', pronounCase: 'poss' },
+
+  want: { pos: 'verb', forms: { '1sg': 'хачу', '2sg': 'хочаш', '3sg': 'хоча', '1pl': 'хочам', '2pl': 'хочаце', '3pl': 'хочуць' } },
+  like: { pos: 'verb', forms: { '1sg': 'люблю', '2sg': 'любіш', '3sg': 'любіць', '1pl': 'любім', '3pl': 'любяць' } },
+  see: { pos: 'verb', forms: { '1sg': 'бачу', '2sg': 'бачыш', '3sg': 'бачыць', '1pl': 'бачым', '3pl': 'бачаць' } },
+  hear: { pos: 'verb', forms: { '1sg': 'чую', '2sg': 'чуеш', '3sg': 'чуе', '1pl': 'чуем', '3pl': 'чуюць' } },
+  have: { pos: 'verb', forms: { '1sg': 'маю', '2sg': 'маеш', '3sg': 'мае', '1pl': 'маем', '3pl': 'маюць' } },
+  eat: { pos: 'verb', forms: { '1sg': 'ем', '2sg': 'ясі', '3sg': 'есць', '1pl': 'ямо', '3pl': 'ядуць' } },
+  drink: { pos: 'verb', forms: { '1sg': 'п’ю', '2sg': 'п’еш', '3sg': 'п’е', '1pl': 'п’ём', '3pl': 'п’юць' } },
+  go: { pos: 'verb', forms: { '1sg': 'іду', '2sg': 'ідзеш', '3sg': 'ідзе', '1pl': 'ідзем', '3pl': 'ідуць' } },
+  play: { pos: 'verb', forms: { '1sg': 'гуляю', '2sg': 'гуляеш', '3sg': 'гуляе', '1pl': 'гуляем', '3pl': 'гуляюць' } },
+  read: { pos: 'verb', forms: { '1sg': 'чытаю', '2sg': 'чытаеш', '3sg': 'чытае', '1pl': 'чытаем', '3pl': 'чытаюць' } },
+  sleep: { pos: 'verb', forms: { '1sg': 'сплю', '2sg': 'спіш', '3sg': 'спіць', '1pl': 'спім', '3pl': 'спяць' } },
+  talk: { pos: 'verb', forms: { '1sg': 'размаўляю', '2sg': 'размаўляеш', '3sg': 'размаўляе', '1pl': 'размаўляем', '3pl': 'размаўляюць' } },
+  // дапамагаць governs the dative.
+  help: { pos: 'verb', objectCase: 'dative', forms: { '1sg': 'дапамагаю', '2sg': 'дапамагаеш', '3sg': 'дапамагае', '1pl': 'дапамагаем', '3pl': 'дапамагаюць' } },
+
+  friend: { pos: 'noun', gender: 'masculine', animate: true, cases: { acc: 'друга', gen: 'друга' } },
+  brother: { pos: 'noun', gender: 'masculine', animate: true, cases: { acc: 'брата', gen: 'брата' } },
+  doctor: { pos: 'noun', gender: 'masculine', animate: true, cases: { acc: 'доктара', gen: 'доктара' } },
+  teddy: { pos: 'noun', gender: 'masculine', animate: true, cases: { acc: 'мядзведзіка', gen: 'мядзведзіка' } },
+  mum: { pos: 'noun', gender: 'feminine', animate: true, proper: true },
+  dad: { pos: 'noun', gender: 'masculine', animate: true, proper: true },
+
+  water: { pos: 'noun', gender: 'feminine', mass: true },
+  milk: { pos: 'noun', gender: 'neuter', mass: true },
+  bread: { pos: 'noun', gender: 'masculine', mass: true, cases: { gen: 'хлеба' } },
+  rice: { pos: 'noun', gender: 'masculine', mass: true },
+  cheese: { pos: 'noun', gender: 'masculine', mass: true },
+  juice: { pos: 'noun', gender: 'masculine', mass: true },
+  tea: { pos: 'noun', gender: 'masculine', mass: true },
+  music: { pos: 'noun', gender: 'feminine', mass: true },
+  paper: { pos: 'noun', gender: 'feminine', mass: true },
+
+  apple: { pos: 'noun', gender: 'masculine', cases: { gen: 'яблыка' }, plural: 'яблыкі' },
+  book: { pos: 'noun', gender: 'feminine', cases: { acc: 'кнігу', gen: 'кнігі' }, plural: 'кнігі' },
+  ball: { pos: 'noun', gender: 'masculine', cases: { gen: 'мяча' } },
+  cookie: { pos: 'noun', gender: 'neuter', cases: { gen: 'печыва' }, plural: 'печыва' },
+  egg: { pos: 'noun', gender: 'neuter', cases: { gen: 'яйка' }, plural: 'яйкі' },
+  school: { pos: 'noun', gender: 'feminine', cases: { acc: 'школу', gen: 'школы' }, institutional: true },
+  home: { pos: 'noun', gender: 'masculine', proper: true, institutional: true },
+  bed: { pos: 'noun', gender: 'masculine', institutional: true },
+  park: { pos: 'noun', gender: 'masculine', cases: { gen: 'парку' } },
+  garden: { pos: 'noun', gender: 'masculine', cases: { gen: 'саду' } },
+  table: { pos: 'noun', gender: 'masculine', cases: { gen: 'стала' } },
+
+  to: { pos: 'preposition', governsCase: 'gen' },
+  in: { pos: 'preposition', governsCase: 'loc' },
+  on: { pos: 'preposition', governsCase: 'loc' },
+  from: { pos: 'preposition', governsCase: 'gen' },
+  without: { pos: 'preposition', governsCase: 'gen' },
+
+  not: { pos: 'negation' },
+}

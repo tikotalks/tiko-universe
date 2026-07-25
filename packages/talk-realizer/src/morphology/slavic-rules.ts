@@ -57,8 +57,10 @@ function caseFor(ctx: PhraseContext, genitiveOfNegation: boolean): SlavicCase {
   // The genitive of negation: a negated object changes case, where the language
   // has that rule.
   if (ctx.negateHere && genitiveOfNegation) return 'gen'
-  // Verbs like помогать and pomagać govern the dative.
+  // Verbs like помогать and pomagać govern the dative; Lithuanian "norėti" and
+  // its relatives govern the genitive.
   if (ctx.verb?.features.objectCase === 'dative') return 'dat'
+  if (ctx.verb?.features.objectCase === 'genitive') return 'gen'
   return 'acc'
 }
 
@@ -111,6 +113,14 @@ export function createSlavic(config: SlavicConfig): LanguageRules {
         return null
       }
       return config.copula[`${ctx.person}${ctx.number}`] ?? null
+    },
+
+    preposition(word, ctx) {
+      if (word.features.caseOnly) {
+        note(ctx.builder, `"${word.text}" is a case ending on the noun, not a word`)
+        return null
+      }
+      return word.text
     },
 
     determiner(np, ctx) {

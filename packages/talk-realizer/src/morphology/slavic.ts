@@ -18,13 +18,15 @@ import type { Features, Gender } from '../features'
  * thing and the genitive when it is a being: "widzę stół" but "widzę kota".
  *
  * The endings are **data**, not code: one table per language, keyed by declension
- * class. Adding a Slavic language is a table plus a vocabulary, which is why
- * seven of them share this file. Scope is deliberate — nominative, accusative,
+ * class. Adding one is a table plus a vocabulary, which is why ten Slavic
+ * languages and the two Baltic ones share this file — Lithuanian and Latvian are
+ * not Slavic, but they are built the same way: cases, no articles, adjectives
+ * agreeing in gender and case. Scope is deliberate — nominative, accusative,
  * genitive, dative and locative, the cases Talk's sentence shapes produce. The
  * instrumental and vocative are not generated.
  */
 
-export type SlavicLanguage = 'ru' | 'pl' | 'uk' | 'sr' | 'hr' | 'cs' | 'sk'
+export type SlavicLanguage = 'ru' | 'pl' | 'uk' | 'sr' | 'hr' | 'bs' | 'cs' | 'sk' | 'sl' | 'be' | 'lt' | 'lv'
 export type SlavicCase = 'nom' | 'acc' | 'gen' | 'dat' | 'loc'
 
 export interface DeclensionResult {
@@ -121,7 +123,58 @@ const DECLENSIONS: Record<SlavicLanguage, Record<NounClass, ClassEndings>> = {
     'masc-soft': { acc: 'nominative', gen: { add: 'a' }, dat: { add: 'ovi' }, loc: { add: 'ovi' } },
     'masc-j': { acc: 'nominative', gen: { strip: 1, add: 'a' }, dat: { strip: 1, add: 'ovi' }, loc: { strip: 1, add: 'ovi' } },
   },
-}
+  sl: {
+    'fem-a': { acc: { strip: 1, add: 'o' }, gen: { strip: 1, add: 'e' }, dat: { strip: 1, add: 'i' }, loc: { strip: 1, add: 'i' } },
+    'fem-ja': { acc: { strip: 1, add: 'o' }, gen: { strip: 1, add: 'e' }, dat: { strip: 1, add: 'i' }, loc: { strip: 1, add: 'i' } },
+    'fem-soft': { acc: 'nominative', gen: { add: 'i' }, dat: { add: 'i' }, loc: { add: 'i' } },
+    'neut-o': { acc: 'nominative', gen: { strip: 1, add: 'a' }, dat: { strip: 1, add: 'u' }, loc: { strip: 1, add: 'u' } },
+    'neut-e': { acc: 'nominative', gen: { strip: 1, add: 'a' }, dat: { strip: 1, add: 'u' }, loc: { strip: 1, add: 'u' } },
+    'masc-hard': { acc: 'nominative', gen: { add: 'a' }, dat: { add: 'u' }, loc: { add: 'u' } },
+    'masc-soft': { acc: 'nominative', gen: { add: 'a' }, dat: { add: 'u' }, loc: { add: 'u' } },
+    'masc-j': { acc: 'nominative', gen: { strip: 1, add: 'a' }, dat: { strip: 1, add: 'u' }, loc: { strip: 1, add: 'u' } },
+  },
+  bs: {
+    'fem-a': { acc: { strip: 1, add: 'u' }, gen: { strip: 1, add: 'e' }, dat: { strip: 1, add: 'i' }, loc: { strip: 1, add: 'i' } },
+    'fem-ja': { acc: { strip: 1, add: 'u' }, gen: { strip: 1, add: 'e' }, dat: { strip: 1, add: 'i' }, loc: { strip: 1, add: 'i' } },
+    'fem-soft': { acc: 'nominative', gen: { add: 'i' }, dat: { add: 'i' }, loc: { add: 'i' } },
+    'neut-o': { acc: 'nominative', gen: { strip: 1, add: 'a' }, dat: { strip: 1, add: 'u' }, loc: { strip: 1, add: 'u' } },
+    'neut-e': { acc: 'nominative', gen: { strip: 1, add: 'a' }, dat: { strip: 1, add: 'u' }, loc: { strip: 1, add: 'u' } },
+    'masc-hard': { acc: 'nominative', gen: { add: 'a' }, dat: { add: 'u' }, loc: { add: 'u' } },
+    'masc-soft': { acc: 'nominative', gen: { add: 'a' }, dat: { add: 'u' }, loc: { add: 'u' } },
+    'masc-j': { acc: 'nominative', gen: { strip: 1, add: 'a' }, dat: { strip: 1, add: 'u' }, loc: { strip: 1, add: 'u' } },
+  },
+  be: {
+    'fem-a': { acc: { strip: 1, add: 'у' }, gen: { strip: 1, add: 'ы' }, dat: { strip: 1, add: 'е' }, loc: { strip: 1, add: 'е' } },
+    'fem-ja': { acc: { strip: 1, add: 'ю' }, gen: { strip: 1, add: 'і' }, dat: { strip: 1, add: 'і' }, loc: { strip: 1, add: 'і' } },
+    'fem-soft': { acc: 'nominative', gen: { strip: 1, add: 'і' }, dat: { strip: 1, add: 'і' }, loc: { strip: 1, add: 'і' } },
+    'neut-o': { acc: 'nominative', gen: { strip: 1, add: 'а' }, dat: { strip: 1, add: 'у' }, loc: { strip: 1, add: 'е' } },
+    'neut-e': { acc: 'nominative', gen: { strip: 1, add: 'я' }, dat: { strip: 1, add: 'ю' }, loc: { strip: 1, add: 'і' } },
+    'masc-hard': { acc: 'nominative', gen: { add: 'а' }, dat: { add: 'у' }, loc: { add: 'е' } },
+    'masc-soft': { acc: 'nominative', gen: { strip: 1, add: 'я' }, dat: { strip: 1, add: 'ю' }, loc: { strip: 1, add: 'і' } },
+    'masc-j': { acc: 'nominative', gen: { strip: 1, add: 'я' }, dat: { strip: 1, add: 'ю' }, loc: { strip: 1, add: 'і' } },
+  },
+  lt: {
+    // Lithuanian: -as/-is/-us for masculines, -a/-ė for feminines.
+    'fem-a': { acc: { strip: 1, add: 'ą' }, gen: { strip: 1, add: 'os' }, dat: { strip: 1, add: 'ai' }, loc: { strip: 1, add: 'oje' } },
+    'fem-ja': { acc: { strip: 1, add: 'ę' }, gen: { strip: 1, add: 'ės' }, dat: { strip: 1, add: 'ei' }, loc: { strip: 1, add: 'ėje' } },
+    'fem-soft': { acc: { strip: 1, add: 'į' }, gen: { strip: 1, add: 'ies' }, dat: { strip: 1, add: 'iai' }, loc: { strip: 1, add: 'yje' } },
+    'neut-o': { acc: 'nominative', gen: { add: 'o' }, dat: { add: 'ui' }, loc: { add: 'e' } },
+    'neut-e': { acc: 'nominative', gen: { add: 'o' }, dat: { add: 'ui' }, loc: { add: 'e' } },
+    'masc-hard': { acc: { strip: 2, add: 'ą' }, gen: { strip: 2, add: 'o' }, dat: { strip: 2, add: 'ui' }, loc: { strip: 2, add: 'e' } },
+    'masc-soft': { acc: { strip: 2, add: 'į' }, gen: { strip: 2, add: 'io' }, dat: { strip: 2, add: 'iui' }, loc: { strip: 2, add: 'yje' } },
+    'masc-j': { acc: { strip: 2, add: 'ų' }, gen: { strip: 2, add: 'aus' }, dat: { strip: 2, add: 'ui' }, loc: { strip: 2, add: 'uje' } },
+  },
+  lv: {
+    // Latvian: -s/-is for masculines, -a/-e for feminines.
+    'fem-a': { acc: { strip: 1, add: 'u' }, gen: { strip: 1, add: 'as' }, dat: { strip: 1, add: 'ai' }, loc: { strip: 1, add: 'ā' } },
+    'fem-ja': { acc: { strip: 1, add: 'i' }, gen: { strip: 1, add: 'es' }, dat: { strip: 1, add: 'ei' }, loc: { strip: 1, add: 'ē' } },
+    'fem-soft': { acc: { strip: 1, add: 'i' }, gen: { strip: 1, add: 's' }, dat: { strip: 1, add: 'ij' }, loc: { strip: 1, add: 'ī' } },
+    'neut-o': { acc: 'nominative', gen: { add: 'a' }, dat: { add: 'am' }, loc: { add: 'ā' } },
+    'neut-e': { acc: 'nominative', gen: { add: 'a' }, dat: { add: 'am' }, loc: { add: 'ā' } },
+    'masc-hard': { acc: { strip: 1, add: 'u' }, gen: { strip: 1, add: 'a' }, dat: { strip: 1, add: 'am' }, loc: { strip: 1, add: 'ā' } },
+    'masc-soft': { acc: { strip: 2, add: 'i' }, gen: { strip: 2, add: 'a' }, dat: { strip: 2, add: 'im' }, loc: { strip: 2, add: 'ī' } },
+    'masc-j': { acc: { strip: 1, add: 'u' }, gen: { strip: 1, add: 'a' }, dat: { strip: 1, add: 'am' }, loc: { strip: 1, add: 'ā' } },
+  },}
 
 /** The soft signs and semivowels that mark a soft stem, by script. */
 const SOFT_ENDINGS = ['ь', 'й', 'ř', 'ě', 'ň', 'ť', 'ď', 'j']
@@ -217,6 +270,12 @@ const ADJECTIVES: Record<SlavicLanguage, {
    * this file failed to recognise.
    */
   bareMasculine?: boolean
+  /**
+   * Endings that depend on the nominative the pack shipped. Lithuanian
+   * "didelis" takes the accusative -į where "laimingas" takes -ą, and the
+   * nominative is the only clue.
+   */
+  byEnding?: Record<string, Partial<Record<SlavicCase, string>>>
 }> = {
   ru: {
     strip: /(ый|ий|ой|ая|ое|ее)$/,
@@ -285,6 +344,52 @@ const ADJECTIVES: Record<SlavicLanguage, {
     soft: /(ní|cí|ší|ží|čí)$/,
     plural: { nom: 'í', acc: 'é', gen: 'ých', dat: 'ým', loc: 'ých' },
   },
+  sl: {
+    strip: /(i|a|o|e)$/,
+    feminine: { nom: 'a', acc: 'o', gen: 'e', dat: 'i', loc: 'i' },
+    neuter: { nom: 'o', acc: 'o', gen: 'ega', dat: 'emu', loc: 'em' },
+    masculine: { gen: 'ega', dat: 'emu', loc: 'em' },
+    masculineNominative: 'i',
+    bareMasculine: true,
+    plural: { nom: 'i', acc: 'e', gen: 'ih', dat: 'im', loc: 'ih' },
+  },
+  bs: {
+    strip: /(i|a|o|e)$/,
+    feminine: { nom: 'a', acc: 'u', gen: 'e', dat: 'oj', loc: 'oj' },
+    neuter: { nom: 'o', acc: 'o', gen: 'og', dat: 'om', loc: 'om' },
+    masculine: { gen: 'og', dat: 'om', loc: 'om' },
+    masculineNominative: 'i',
+    bareMasculine: true,
+    plural: { nom: 'i', acc: 'e', gen: 'ih', dat: 'im', loc: 'im' },
+  },
+  be: {
+    strip: /(ы|і|ая|яя|ое|ае)$/,
+    feminine: { nom: 'ая', acc: 'ую', gen: 'ай', dat: 'ай', loc: 'ай' },
+    neuter: { nom: 'ае', acc: 'ае', gen: 'ага', dat: 'аму', loc: 'ым' },
+    masculine: { gen: 'ага', dat: 'аму', loc: 'ым' },
+    masculineNominative: 'ы',
+    plural: { nom: 'ыя', acc: 'ыя', gen: 'ых', dat: 'ым', loc: 'ых' },
+  },
+  lt: {
+    strip: /(as|is|us|a|i|ė)$/,
+    feminine: { nom: 'a', acc: 'ą', gen: 'os', dat: 'ai', loc: 'oje' },
+    neuter: { nom: 'a', acc: 'a', gen: 'o', dat: 'am', loc: 'ame' },
+    masculine: { acc: 'ą', gen: 'o', dat: 'am', loc: 'ame' },
+    masculineNominative: 'as',
+    byEnding: {
+      is: { acc: 'į', gen: 'io', dat: 'iam', loc: 'iame' },
+      us: { acc: 'ų', gen: 'aus', dat: 'iam', loc: 'iame' },
+    },
+    plural: { nom: 'i', acc: 'us', gen: 'ų', dat: 'iems', loc: 'uose' },
+  },
+  lv: {
+    strip: /(s|a|is|e)$/,
+    feminine: { nom: 'a', acc: 'u', gen: 'as', dat: 'ai', loc: 'ā' },
+    neuter: { nom: 's', acc: 'u', gen: 'a', dat: 'am', loc: 'ā' },
+    masculine: { acc: 'u', gen: 'a', dat: 'am', loc: 'ā' },
+    masculineNominative: 's',
+    plural: { nom: 'i', acc: 'us', gen: 'u', dat: 'iem', loc: 'os' },
+  },
 }
 
 /** Declines an attributive adjective to agree with its noun. */
@@ -323,6 +428,8 @@ export function declineAdjective(
   }
 
   if (plural) {
+    // A curated plural wins: "srečen" → "srečni" loses a vowel no rule predicts.
+    if (features.pluralForm && grammaticalCase === 'nom') return features.pluralForm
     const ending = table.plural[grammaticalCase]
     return ending ? `${stem}${ending}` : text
   }
@@ -339,6 +446,8 @@ export function declineAdjective(
     const ending = table.masculine.gen
     return ending ? `${stem}${ending}` : text
   }
+  const conditional = match ? table.byEnding?.[match[1]]?.[grammaticalCase] : undefined
+  if (conditional) return `${stem}${conditional}`
   const ending = table.masculine[grammaticalCase]
   if (ending) return `${stem}${ending}`
   // The nominative: keep whatever form the pack shipped, because which ending a
