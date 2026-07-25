@@ -8,7 +8,7 @@ metadata sync.
 
 ## What ships
 
-Seven apps, declared in [`release.config.json`](../../release.config.json):
+Eight apps, declared in [`release.config.json`](../../release.config.json):
 
 | Slug | App | Bundle ID | Config |
 | --- | --- | --- | --- |
@@ -19,6 +19,7 @@ Seven apps, declared in [`release.config.json`](../../release.config.json):
 | timer | Tiko Timer | `mt.tiko.timer` | `apps/timer/release/ios.json` |
 | type | Tiko Type | `mt.tiko.type` | `apps/type/release/ios.json` |
 | say | Tiko Say | `mt.tiko.say` | `apps/say/release/ios.json` |
+| sum | Tiko Sum | `mt.tiko.sum` | `apps/sum/release/ios.json` |
 
 Store copy lives in `apps/<app>/release/app-store/en-US.json`.
 

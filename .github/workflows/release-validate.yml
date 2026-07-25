@@ -31,7 +31,7 @@ jobs:
       - name: Generate & sanity-check every iOS app
         run: |
           set -euo pipefail
-          APPS="yes-no cards talk radio timer type say"
+          APPS="yes-no cards talk radio timer type say sum"
           for app in $APPS; do
             echo "::group::$app"
             ( cd "apps/$app/ios" && xcodegen generate >/dev/null )

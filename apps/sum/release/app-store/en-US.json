@@ -1,0 +1,12 @@
+{
+  "name": "Tiko Sum",
+  "subtitle": "Math that talks, for kids",
+  "promotional_text": "A calm, ad-free math app that speaks every number and never says \"wrong\". The answer is always a choice — tap it or say it out loud.",
+  "description": "Tiko Sum is a friendly talking math app for children — and it is not a calculator: it never shows the result. Every key your child presses is spoken aloud (\"three… plus… five…\"), and the answer is always a choice between three big tiles. Pick the right one and the screen celebrates; pick another and Sum simply says the formula again — no buzzer, no red cross, no pressure.\n\n- A big speaking keypad: every number and symbol is read aloud in your language\n- The answer is a choice: three tiles, one right, two clever look-alikes\n- Paths: playful rows of five sums, from first counting to times tables and fair shares\n- Answer by voice: turn it on and your child can just say the number (off by default, nothing is ever recorded)\n- Every path is editable and parents can build their own\n- Speaks and counts in English, Dutch, French, Spanish, German and Maltese — including proper number words like \"eenentwintig\" and \"quatre-vingt-onze\"\n- Works offline after first use; no ads, no scores, no streaks\n- Child mode keeps the screen focused and distraction-free\n\nTiko Sum is part of Tiko, a child-first universe of small, focused communication and learning tools.",
+  "keywords": "math,maths,counting,numbers,addition,subtraction,times tables,kids,learning,speech,education",
+  "release_notes": "Welcome to Tiko Sum 1.0 — math that talks.\n\n- A speaking keypad: every number and symbol is read aloud\n- Answers are always a choice of three tiles — never a buzzer, never \"wrong\"\n- Twelve playful paths from first counting to times tables and fair shares\n- Optional answering by voice — just say the number\n- Every path is editable, and parents can create their own\n- Counts in English, Dutch, French, Spanish, German and Maltese",
+  "support_url": "https://tikoapps.org/support",
+  "privacy_url": "https://tikoapps.org/privacy",
+  "marketing_url": "https://tikoapps.org/sum",
+  "copyright": "© 2026 Tiko"
+}

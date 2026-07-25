@@ -10,6 +10,7 @@ public enum TikoAppColor: String, CaseIterable, Sendable {
     case talk
     case tiko
     case say
+    case sum
 }
 
 
@@ -51,6 +52,7 @@ public extension TikoAppConfig {
     static let tiko = TikoAppConfig(id: .tiko, title: "Tiko", appColor: .tiko, appIconSystemName: "heart.fill", appIconMediaCategory: "tiko", appIconImageUrl: "https://data.tikocdn.org/uploads/1756901709154-boy-saying-hi-disney-pixar-style-1.png", themeColorHex: 0xa8e6cf)
     static let talk = TikoAppConfig(id: .talk, title: "Talk", appColor: .talk, appIconSystemName: "message.fill", appIconMediaCategory: "communication", appIconImageUrl: "https://media.tikoapi.org/v1/media/da85b30b-6865-41ef-9b75-71e46999de22/download", themeColorHex: 0xff6b6b)
     static let say = TikoAppConfig(id: .say, title: "Say", appColor: .say, appIconSystemName: "waveform", appIconMediaCategory: "communication", appIconImageUrl: "https://data.tikocdn.org/uploads/1781443432968-speech-balloon.png", themeColorHex: 0x8b5cf6)
+    static let sum = TikoAppConfig(id: .sum, title: "Sum", appColor: .sum, appIconSystemName: "plus.forwardslash.minus", appIconMediaCategory: "numbers", appIconImageUrl: "https://data.tikocdn.org/uploads/1755105954065-calculator.png", themeColorHex: 0xdd8966)
 }
 
 public struct TikoAppPalette {
@@ -86,6 +88,8 @@ public extension TikoAppColor {
             TikoAppPalette(label: "Talk", primary: Color(hex: 0xff6b6b), dark: Color(hex: 0x853838))
         case .say:
             TikoAppPalette(label: "Say", primary: Color(hex: 0x8b5cf6), dark: Color(hex: 0x483080))
+        case .sum:
+            TikoAppPalette(label: "Sum", primary: Color(hex: 0xdd8966), dark: Color(hex: 0x734735))
         }
     }
 }

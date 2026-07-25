@@ -50,6 +50,12 @@ final class TikoKitTests: XCTestCase {
         XCTAssertEqual(TikoAppConfig.say.id, .say)
         XCTAssertEqual(TikoAppConfig.say.title, "Say")
         XCTAssertEqual(TikoAppConfig.say.themeColorHex, 0x8b5cf6)
+
+        XCTAssertTrue(TikoAppColor.allCases.contains(.sum))
+        XCTAssertEqual(TikoAppColor.sum.rawValue, "sum")
+        XCTAssertEqual(TikoAppColor.sum.palette.label, "Sum")
+        XCTAssertEqual(TikoAppConfig.sum.id, .sum)
+        XCTAssertEqual(TikoAppConfig.sum.themeColorHex, 0xdd8966)
     }
 
     func testAnswerChoiceWithOpenIcon() {
