@@ -58,6 +58,8 @@ export type VerbFormKey =
   | '1sg' | '2sg' | '3sg'
   | '1pl' | '2pl' | '3pl' | 'pl'
   | 'inf' | 'past' | 'participle'
+  /** The negative form, for languages where the verb itself carries negation. */
+  | 'negative'
 
 export interface Features {
   /**
@@ -114,6 +116,8 @@ export interface Features {
   experiencerDative?: boolean
   /** A preposition this verb requires before its object (pt "gosto **de** pão"). */
   objectPreposition?: string
+  /** A measure word required when counting this noun (zh 个, 块, 本). */
+  measureWord?: string
 
   // Adjectives
   /** Form used directly before a noun. Dutch inflects here ("groot" → "grote"). */

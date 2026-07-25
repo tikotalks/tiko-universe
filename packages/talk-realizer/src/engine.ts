@@ -61,12 +61,13 @@ export function realizeWith(
 
   const emitNounPhrase = (np: NounPhrase, role: Role, afterPreposition = false): void => {
     const phraseCtx = phraseContext(role, np, afterPreposition)
+    const startedAt = builder.tokens.length
 
     if (np.pronoun) {
       push(builder, rules.pronoun(np.pronoun, phraseCtx), np.pronoun.id)
     } else {
       const determiner = rules.determiner(np, phraseCtx)
-      if (determiner) push(builder, determiner.text, determiner.from)
+      if (determiner) push(builder, determiner.text, determiner.from, determiner.merged)
 
       // Each adjective may override the language's default position.
       const fallbackPosition = rules.adjectivePosition ?? 'before'
@@ -80,10 +81,20 @@ export function realizeWith(
       emitAdjectives('before')
       if (np.head) push(builder, rules.noun(np.head, np, phraseCtx), np.head.id)
       emitAdjectives('after')
+      const postposed = rules.postposed?.(np, phraseCtx)
+      if (postposed) push(builder, postposed.text, postposed.from, postposed.merged)
     }
 
-    const particle = rules.particle?.(np, phraseCtx)
-    if (particle) push(builder, particle, null)
+    const realized = builder.tokens.slice(startedAt).map((token) => token.text).join('')
+    const particle = rules.particle?.(np, phraseCtx, realized)
+    if (particle) {
+      if (rules.profile.glueParticles && builder.tokens.length) {
+        const previous = builder.tokens[builder.tokens.length - 1]
+        previous.text = `${previous.text}${particle}`
+      } else {
+        push(builder, particle, null)
+      }
+    }
   }
 
   const emitPhrase = (phrase: Phrase): void => {
@@ -98,10 +109,25 @@ export function realizeWith(
         }
         return
       }
-      case 'pp':
-        push(builder, phrase.preposition.text, phrase.preposition.id)
+      case 'pp': {
+        const after = rules.profile.prepositionPosition === 'after'
+        if (!after) push(builder, phrase.preposition.text, phrase.preposition.id)
         if (phrase.object) emitNounPhrase(phrase.object, 'oblique', true)
+        if (after) {
+          // A postposition attaches to the phrase it marks: "こうえんへ".
+          const previous = builder.tokens[builder.tokens.length - 1]
+          if (previous && rules.profile.spacing === 'none') {
+            previous.text = `${previous.text}${phrase.preposition.text}`
+            previous.merged = [...(previous.merged ?? []), phrase.preposition.id]
+          } else if (previous && rules.profile.glueParticles) {
+            previous.text = `${previous.text}${phrase.preposition.text}`
+            previous.merged = [...(previous.merged ?? []), phrase.preposition.id]
+          } else {
+            push(builder, phrase.preposition.text, phrase.preposition.id)
+          }
+        }
         return
+      }
       default:
         emitNounPhrase(phrase, 'object')
     }
@@ -295,10 +321,9 @@ function finish(
 
   let text = body
   if (chunks.trailingSocials.length) {
-    const tail = chunks.trailingSocials.map((social) => social.text).join(separator === '' ? '' : ', ')
-    text = text
-      ? (separator === '' ? `${text}${tail}` : `${text}, ${tail}`)
-      : tail
+    const listSeparator = rules.profile.listSeparator ?? (separator === '' ? '，' : ', ')
+    const tail = chunks.trailingSocials.map((social) => social.text).join(listSeparator)
+    text = text ? `${text}${listSeparator}${tail}` : tail
     for (const social of chunks.trailingSocials) {
       tokens.push({ text: social.text, from: social.id })
     }

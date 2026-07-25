@@ -53,6 +53,21 @@ export interface LanguageProfile {
   /** CJK scripts do not separate words with spaces. */
   spacing: 'space' | 'none'
 
+  /**
+   * Japanese and Korean are postpositional: the marker follows its noun phrase
+   * ("こうえんへ", "공원에"), where European prepositions precede it.
+   */
+  prepositionPosition?: 'before' | 'after'
+
+  /**
+   * Whether a grammatical particle attaches to the previous word without a
+   * space. Korean writes "사과를", not "사과 를".
+   */
+  glueParticles?: boolean
+
+  /** Separator before a trailing social. Full-width for CJK. */
+  listSeparator?: string
+
   /** Scripts without letter case skip sentence capitalisation. */
   capitalize: boolean
 
@@ -82,10 +97,10 @@ export interface Builder {
   notes: string[]
 }
 
-export function push(builder: Builder, text: string, from: string | null): void {
+export function push(builder: Builder, text: string, from: string | null, merged?: string[]): void {
   const trimmed = text?.trim()
   if (!trimmed) return
-  builder.tokens.push({ text: trimmed, from })
+  builder.tokens.push(merged?.length ? { text: trimmed, from, merged } : { text: trimmed, from })
   if (from === null) builder.inserted.push(trimmed)
 }
 
@@ -174,8 +189,12 @@ export interface LanguageRules {
    */
   copula(ctx: SentenceContext): string | null
 
-  /** The determiner for a noun phrase, or `null` for none. */
-  determiner(np: NounPhrase, ctx: PhraseContext): { text: string, from: string | null } | null
+  /**
+   * The determiner for a noun phrase, or `null` for none. `merged` lets a
+   * language fold neighbouring tiles into this token — Maltese writes the
+   * article and the noun as one word, "il-ħobż".
+   */
+  determiner(np: NounPhrase, ctx: PhraseContext): { text: string, from: string | null, merged?: string[] } | null
 
   /** An adjective's form inside this noun phrase. */
   adjective(adjective: Word, np: NounPhrase, ctx: PhraseContext): string
@@ -191,8 +210,21 @@ export interface LanguageRules {
   /** Adjectives before or after the noun. */
   adjectivePosition?: 'before' | 'after'
 
-  /** Grammatical particle after a phrase (Japanese は/を, Korean 는/를). */
-  particle?(phrase: Phrase, ctx: PhraseContext): string | null
+  /**
+   * An element that follows the noun phrase. Maltese possessives are postposed:
+   * "il-ballun tiegħi" is literally "the-ball of-mine".
+   */
+  postposed?(np: NounPhrase, ctx: PhraseContext): { text: string, from: string | null, merged?: string[] } | null
+
+  /**
+   * Grammatical particle after a phrase (Japanese は/を, Korean 는/를).
+   * `realized` is the text just emitted for the phrase — Korean chooses the
+   * particle by its final sound, which the tile's own text may not share.
+   */
+  particle?(phrase: Phrase, ctx: PhraseContext, realized: string): string | null
+
+  /** The particle a verb wants on its object, overriding the default. */
+  objectParticle?(ctx: SentenceContext): string | null
 
   /** Contractions, elisions and clitics, applied to the finished token list. */
   postprocess?(tokens: RealizedToken[], ctx: SentenceContext): RealizedToken[]

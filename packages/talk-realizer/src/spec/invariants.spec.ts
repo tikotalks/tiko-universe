@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { functionWords, realize, supportedLanguages, type SupportedLanguage } from '../index'
+import { functionWords, languages, realize, supportedLanguages, type SupportedLanguage } from '../index'
 import { packWords, select } from './pack'
 
 /**
@@ -71,17 +71,22 @@ describe('realizer invariants', () => {
       })
 
       it('always ends in a single sentence-final mark', () => {
+        const { statement, question } = languages[language].profile.punctuation
         for (const ids of selections) {
           const text = realize(select(language, ids), { locale: language }).text
-          expect(text).toMatch(/[.?]$/)
-          expect(text.match(/[.?]/g)?.length).toBe(1)
+          const ends = text.endsWith(statement) || text.endsWith(question)
+          expect(ends, `"${text}" does not end in ${statement} or ${question}`).toBe(true)
+          const marks = [...text].filter((ch) => ch === statement.trim() || ch === question.trim())
+          expect(marks.length, `"${text}" has ${marks.length} final marks`).toBe(1)
         }
       })
 
-      it('starts with a capital and has no double spaces', () => {
+      it('has no double spaces, and capitalises where the script has case', () => {
         for (const ids of selections) {
           const text = realize(select(language, ids), { locale: language }).text
-          expect(text.charAt(0)).toBe(text.charAt(0).toUpperCase())
+          if (languages[language].profile.capitalize) {
+            expect(text.charAt(0)).toBe(text.charAt(0).toUpperCase())
+          }
           expect(text).not.toContain('  ')
         }
       })
@@ -89,7 +94,8 @@ describe('realizer invariants', () => {
   }
 
   it('falls back to plain concatenation for a language with no rules', () => {
-    const result = realize(select('en', ['i', 'want', 'apple']), { locale: 'mt' })
+    // Swahili has no pack and no rules: the honest answer is the child's tiles.
+    const result = realize(select('en', ['i', 'want', 'apple']), { locale: 'sw' })
     expect(result.text).toBe('I want apple')
     expect(result.inserted).toEqual([])
     expect(result.notes[0]).toContain('no realizer for this language')
