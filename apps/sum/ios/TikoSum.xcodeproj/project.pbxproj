@@ -75,7 +75,7 @@
 		D0B9AB8A479E18E8F8ACFB48 /* SumGeneratorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SumGeneratorTests.swift; sourceTree = "<group>"; };
 		D60A0EDBA6F8FA3752A8E465 /* SumPlayViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SumPlayViewModel.swift; sourceTree = "<group>"; };
 		DD425AEEE765C7F1B22E6D01 /* SumPathStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SumPathStoreTests.swift; sourceTree = "<group>"; };
-		E156BDEDFF5DB1F2D2F287B2 /* TikoSum.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = TikoSum.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		E156BDEDFF5DB1F2D2F287B2 /* TikoSum.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TikoSum.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E238E6727F107233EADD8360 /* SumPlayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SumPlayView.swift; sourceTree = "<group>"; };
 		E66D24FFA7189BC6CF114FF7 /* DistractorGeneratorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DistractorGeneratorTests.swift; sourceTree = "<group>"; };
 		F72DCBC6E280EE41A3179346 /* FormulaSpeakerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FormulaSpeakerTests.swift; sourceTree = "<group>"; };
@@ -252,9 +252,6 @@
 				BuildIndependentTargetsInParallel = YES;
 				LastUpgradeCheck = 1430;
 				TargetAttributes = {
-					359C2C3613CCDB87E9E7A1CD = {
-						DevelopmentTeam = "";
-					};
 					494755881B7074C81D55296A = {
 						DevelopmentTeam = "";
 						TestTargetID = 359C2C3613CCDB87E9E7A1CD;
@@ -502,6 +499,7 @@
 				CODE_SIGN_ENTITLEMENTS = Sources/TikoSum.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 38MGF83L2L;
 				INFOPLIST_FILE = Sources/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -521,6 +519,7 @@
 				CODE_SIGN_ENTITLEMENTS = Sources/TikoSum.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 38MGF83L2L;
 				INFOPLIST_FILE = Sources/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
