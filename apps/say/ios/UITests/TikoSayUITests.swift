@@ -39,14 +39,18 @@ final class TikoSayUITests: XCTestCase {
         XCTAssertTrue(animals.waitForExistence(timeout: 10))
         animals.tap()
 
-        // Fresh installs land on the parent-facing permission explanation;
-        // simulators with granted permissions go straight to practice.
+        // Three legitimate destinations: the parent-facing permission
+        // explanation (fresh install), practice (permissions granted), or the
+        // calm unavailable screen (host has no usable audio input, which is
+        // the case on simulators without a routed microphone).
         let permissionContinue = app.buttons["say.permission.continue"]
         let openSettings = app.buttons["say.permission.openSettings"]
         let replay = app.buttons["say.practice.replay"]
+        let unavailableBack = app.buttons["say.recognitionUnavailable.back"]
         let reachedNextScreen = permissionContinue.waitForExistence(timeout: 10)
             || openSettings.exists
             || replay.exists
-        XCTAssertTrue(reachedNextScreen, "category tap should lead to permission explanation or practice screen")
+            || unavailableBack.waitForExistence(timeout: 20)
+        XCTAssertTrue(reachedNextScreen, "category tap should lead to permission, practice or unavailable screen")
     }
 }

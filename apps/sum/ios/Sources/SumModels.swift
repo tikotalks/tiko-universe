@@ -54,6 +54,22 @@ struct Formula: Codable, Hashable {
     var isValid: Bool { result != nil }
 }
 
+/// How the child answers: pick a tile, type the number, or say it.
+/// Parent-selectable; voice is the only mode that ever touches the mic.
+enum SumAnswerMode: String, Codable, CaseIterable {
+    case choice
+    case type
+    case voice
+
+    var systemImage: String {
+        switch self {
+        case .choice: return "square.grid.3x1.below.line.grid.1x2"
+        case .type: return "keyboard"
+        case .voice: return "mic"
+        }
+    }
+}
+
 // MARK: - Answer choice
 
 struct AnswerChoice: Hashable, Identifiable {

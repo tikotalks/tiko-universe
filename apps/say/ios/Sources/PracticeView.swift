@@ -542,6 +542,7 @@ struct RecognitionUnavailableView: View {
                     .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
             }
             .buttonStyle(.plain)
+            .accessibilityIdentifier("say.recognitionUnavailable.back")
             .padding(.bottom, 24)
         }
         .padding(.horizontal, 28)

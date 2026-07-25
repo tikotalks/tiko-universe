@@ -24,7 +24,7 @@ Sum is a Tiko app and uses the same harness as every other Tiko app. No exclusio
 ### Free play
 
 1. Open without login.
-2. A large friendly keypad: digits 0–9, plus, minus, times, divide, equals, delete. (A parent can hide operators the child isn't ready for; new accounts start with plus and minus visible.)
+2. A large friendly keypad: digits 0–9, plus, minus, times, divide, equals, delete. (All four operators are available by default; a parent can hide any the child isn't ready for.)
 3. Every key press is spoken instantly in the app language: “three… plus… five…”.
 4. Tapping equals speaks the whole formula once (“three plus five equals…”) and presents **three answer tiles**.
 5. The child answers by tapping a tile — or, when voice answering is enabled, by saying the number.
@@ -57,13 +57,15 @@ Twelve default paths at launch. There are no points, streaks, timers, or leaderb
 - Distractors never repeat the correct value and never go below zero; division formulas only ever have exact results (no remainders anywhere in the app).
 - Tiles are spoken when tapped-and-held (audio preview without committing), supporting choice-making the AAC way.
 
-## Voice answering
+## Answer modes
 
-A full launch feature, not an add-on — but off by default, because privacy-by-default is also a feature:
+How the child answers is a parent setting — **choose, type, or say**:
 
-- A parent switches it on in settings; only then are microphone and speech-recognition permissions requested, with the same parent-facing explanation and recovery flow as Say.
-- Uses the shared recognition engine: conservative matcher, digits and number words accepted (“8”, “eight”, “acht”) in every supported language, unsupported-locale fallback with a parent notice, on-device preferred, nothing recorded.
-- Tapping always keeps working; voice is an addition, never a requirement.
+- **Choose** (default) — three answer tiles, as described above. No permissions, ever.
+- **Type** — a digits-only pad appears and the child types the result. A miss clears calmly and re-speaks; after repeated misses the round falls back to two guided tiles so it still ends in success. No permissions.
+- **Say** — the tiles stay and the child can simply say the number. Selecting this mode requests microphone and speech-recognition permissions in the parent context (never in the child flow), uses the shared recognition engine (digits and number words in every supported language, on-device preferred, nothing recorded), and tapping always keeps working.
+
+Playback never touches the microphone: speaking uses a plain playback audio session; only the Say mode ever opens a recording session.
 
 ## Everything speaks
 
@@ -102,7 +104,6 @@ A full launch feature, not an add-on — but off by default, because privacy-by-
 
 These are product boundaries, not deferrals:
 
-- Written answer entry (the answer is always a choice — that is the product)
 - Progress reports, mastery tracking, or any per-child analytics
 - Negative numbers, decimals, fractions, remainders
 - Points, streaks, timers, leaderboards
@@ -115,8 +116,8 @@ Sum is done when it is **live on the App Store**, not when it compiles:
 - Opens without login inside the shared harness; Parent/Child Mode per contract; both colour modes; portrait and landscape on iPhone and iPad.
 - Free play: keypad speaks every press in the active language (numbers to 100 composed correctly per language); all four operators; equals produces three tiles; correct celebrates; miss = soft tone + re-speak + one tile fades; second miss pulses the correct tile.
 - Paths: twelve default paths across + − × ÷, playable end-to-end with per-answer and end-of-path celebrations; Skip always works; interruption resumes correctly.
-- Parent Mode: paths and operator pronunciations editable per language on the shared Tiko sheets; free-play constraints; voice-answer toggle; edits survive relaunch, account-scoped, defaults resettable.
-- Voice answering accepts spoken digits/number words via the shared recognizer in all six languages, handles denial/unavailability with the parent-facing flows, and never blocks tapping.
+- Parent Mode: paths and operator pronunciations editable per language on the shared Tiko sheets; free-play constraints; answer-mode picker; edits survive relaunch, account-scoped, defaults resettable.
+- All three answer modes work: choice tiles, typed answers with the guided-tile fallback, and voice (spoken digits/number words in all six languages, permission flows handled, tapping never blocked). Choice and type modes never trigger a permission prompt.
 - Fully offline after first use; zero permission prompts unless voice answering is enabled.
 - Complete test suite green: number composer per language, distractor rules, path store, play state machine, voice-answer paths, UI tests; release validation and CI pass.
 - App Store: record, metadata, screenshots (scenes for home/practice/celebrate), privacy labels, age rating, pricing, reviewer notes — submitted for review with automatic release, via the pipeline established for Say.

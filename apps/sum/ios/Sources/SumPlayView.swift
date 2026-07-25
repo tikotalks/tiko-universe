@@ -16,8 +16,8 @@ struct SumPlayView: View {
     @State private var winStyle: TikoCardWinStyle = .pop
 
     @AppStorage(SumSettings.minusEnabledKey) private var minusEnabled = true
-    @AppStorage(SumSettings.timesEnabledKey) private var timesEnabled = false
-    @AppStorage(SumSettings.divideEnabledKey) private var divideEnabled = false
+    @AppStorage(SumSettings.timesEnabledKey) private var timesEnabled = true
+    @AppStorage(SumSettings.divideEnabledKey) private var divideEnabled = true
 
     private let appColor = SumAppConfig.app.appColor
 
@@ -36,14 +36,14 @@ struct SumPlayView: View {
         let speaker = FormulaSpeaker(languageCode: languageCode, words: words)
         let defaults = UserDefaults.standard
         let maxNumber = defaults.object(forKey: SumSettings.maxNumberKey) as? Int ?? 20
-        let voiceEnabled = defaults.bool(forKey: SumSettings.voiceAnswerKey)
+        let answerMode = SumAnswerMode(rawValue: defaults.string(forKey: SumSettings.answerModeKey) ?? "") ?? .choice
         _viewModel = StateObject(wrappedValue: SumPlayViewModel(
             path: path,
             languageCode: languageCode,
             speaker: speaker,
             speech: speech ?? TikoSpeechPracticeService(),
             maxNumber: maxNumber,
-            voiceAnsweringEnabled: voiceEnabled,
+            answerMode: answerMode,
             timings: timings
         ))
     }
@@ -108,6 +108,11 @@ struct SumPlayView: View {
         }
     }
 
+    private var isRetrying: Bool {
+        if case .retrying = viewModel.state { return true }
+        return false
+    }
+
     // MARK: - Play content
 
     private var playContent: some View {
@@ -132,8 +137,22 @@ struct SumPlayView: View {
                         onEquals: { viewModel.pressEquals() }
                     )
                     .frame(maxWidth: 460)
-                } else if !viewModel.choices.isEmpty {
-                    answerTiles(compact: isCompact)
+                } else if viewModel.state == .choosing || viewModel.state == .celebrating || isRetrying {
+                    if viewModel.showsChoiceTiles {
+                        if !viewModel.choices.isEmpty {
+                            answerTiles(compact: isCompact)
+                        }
+                    } else {
+                        AnswerTypePad(
+                            i18n: i18n,
+                            appColor: appColor,
+                            canSubmit: viewModel.canSubmitTyped,
+                            onDigit: { viewModel.typeDigit($0) },
+                            onDelete: { viewModel.typeDelete() },
+                            onSubmit: { viewModel.submitTyped() }
+                        )
+                        .frame(maxWidth: 380)
+                    }
                 }
 
                 Spacer(minLength: 0)
@@ -181,6 +200,9 @@ struct SumPlayView: View {
         if let formula = viewModel.activeFormula {
             if viewModel.state == .celebrating, let result = formula.result {
                 return "\(formula.a) \(formula.op.symbol) \(formula.b) = \(result)"
+            }
+            if viewModel.answerMode == .type, !viewModel.typedAnswer.isEmpty {
+                return "\(formula.a) \(formula.op.symbol) \(formula.b) = \(viewModel.typedAnswer)"
             }
             return "\(formula.a) \(formula.op.symbol) \(formula.b) ="
         }
@@ -405,5 +427,68 @@ struct KeypadView: View {
                 .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
         }
         .buttonStyle(.plain)
+    }
+}
+
+
+// MARK: - Type-mode answer pad
+
+/// Digits + delete + check: the child types the result. Same big friendly
+/// keys as the free-play keypad, no operators.
+struct AnswerTypePad: View {
+    @ObservedObject var i18n: TikoI18n
+    let appColor: TikoAppColor
+    let canSubmit: Bool
+    let onDigit: (Int) -> Void
+    let onDelete: () -> Void
+    let onSubmit: () -> Void
+
+    var body: some View {
+        VStack(spacing: 12) {
+            ForEach([[7, 8, 9], [4, 5, 6], [1, 2, 3]], id: \.self) { row in
+                HStack(spacing: 12) {
+                    ForEach(row, id: \.self) { digit in
+                        digitKey(digit)
+                    }
+                }
+            }
+            HStack(spacing: 12) {
+                iconKey("delete.left", enabled: true, filled: false, action: onDelete)
+                    .accessibilityIdentifier("sum.type.delete")
+                    .accessibilityLabel(i18n.t("sum.practice.delete"))
+                digitKey(0)
+                iconKey("checkmark", enabled: canSubmit, filled: true, action: onSubmit)
+                    .accessibilityIdentifier("sum.type.submit")
+                    .accessibilityLabel(i18n.t("common.done"))
+            }
+        }
+    }
+
+    private func digitKey(_ digit: Int) -> some View {
+        Button {
+            onDigit(digit)
+        } label: {
+            Text("\(digit)")
+                .font(.system(size: 30, weight: .heavy, design: .rounded))
+                .foregroundStyle(.primary)
+                .frame(width: 72, height: 64)
+                .background(appColor.palette.primary.opacity(0.1))
+                .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
+        }
+        .buttonStyle(.plain)
+        .accessibilityIdentifier("sum.type.\(digit)")
+    }
+
+    private func iconKey(_ systemImage: String, enabled: Bool, filled: Bool, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            Image(systemName: systemImage)
+                .font(.system(size: 24, weight: .heavy))
+                .foregroundStyle(filled ? .white.opacity(enabled ? 1 : 0.6) : Color.secondary)
+                .frame(width: 72, height: 64)
+                .background(filled ? appColor.palette.primary.opacity(enabled ? 1 : 0.35) : appColor.palette.primary.opacity(0.08))
+                .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
+        }
+        .buttonStyle(.plain)
+        .disabled(!enabled)
     }
 }

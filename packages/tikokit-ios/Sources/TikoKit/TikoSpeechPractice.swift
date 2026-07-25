@@ -123,9 +123,11 @@ public final class TikoSpeechPracticeService: NSObject, TikoSpeechServicing {
         let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmed.isEmpty else { return }
 
-        // The app must never recognise its own playback.
+        // The app must never recognise its own playback. Playback uses a
+        // plain .playback session — only listening may touch the microphone
+        // (a .playAndRecord session triggers the mic permission prompt).
         stopListening()
-        configureAudioSession()
+        TikoSpeech.configurePlaybackSession()
         await voice.speak(trimmed, languageCode: languageCode)
     }
 
@@ -158,12 +160,20 @@ public final class TikoSpeechPracticeService: NSObject, TikoSpeechServicing {
         }
         recognitionRequest = request
 
-        configureAudioSession()
+        configureRecordingSession()
 
         let inputNode = audioEngine.inputNode
-        let format = inputNode.outputFormat(forBus: 0)
-        // Simulators and broken audio routes report a 0 Hz / 0-channel input
-        // format; installing a tap with it raises an Objective-C exception
+        var format = inputNode.outputFormat(forBus: 0)
+        if format.sampleRate <= 0 || format.channelCount == 0 {
+            // The engine caches its input format from the session that was
+            // active when it was last configured — after playback that is a
+            // .playback session with no input. Resetting makes it pick up the
+            // recording route configured just above.
+            audioEngine.reset()
+            format = inputNode.outputFormat(forBus: 0)
+        }
+        // Broken audio routes still report a 0 Hz / 0-channel input format;
+        // installing a tap with it raises an Objective-C exception
         // (IsFormatSampleRateAndChannelCountValid) that would crash the app.
         guard format.sampleRate > 0, format.channelCount > 0 else {
             recognitionRequest = nil
@@ -271,7 +281,7 @@ public final class TikoSpeechPracticeService: NSObject, TikoSpeechServicing {
         onAudioLevel?(0)
     }
 
-    private func configureAudioSession() {
+    private func configureRecordingSession() {
         let session = AVAudioSession.sharedInstance()
         do {
             try session.setCategory(
