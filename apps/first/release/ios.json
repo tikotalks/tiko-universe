@@ -181,5 +181,7 @@
     "deliverDir": "artifacts/app-store/first",
     "apiKeyEnv": "APP_STORE_CONNECT_KEY_ID",
     "apiIssuerEnv": "APP_STORE_CONNECT_ISSUER_ID"
-  }
+  },
+  "appStoreId": "6794608348",
+  "appStoreUrl": "https://apps.apple.com/app/id6794608348"
 }
