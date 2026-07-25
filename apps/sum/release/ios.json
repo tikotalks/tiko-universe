@@ -132,6 +132,42 @@
           "dark"
         ],
         "waitSeconds": 4
+      },
+      {
+        "id": "keypad-light",
+        "filename": "05-{deviceSlug}-keypad-en-light.png",
+        "launchArgs": [
+          "--screenshot",
+          "keypad"
+        ],
+        "locales": [
+          {
+            "id": "en-US",
+            "appLanguage": "en"
+          }
+        ],
+        "colorModes": [
+          "light"
+        ],
+        "waitSeconds": 3
+      },
+      {
+        "id": "keypad-dark",
+        "filename": "06-{deviceSlug}-keypad-en-dark.png",
+        "launchArgs": [
+          "--screenshot",
+          "keypad"
+        ],
+        "locales": [
+          {
+            "id": "en-US",
+            "appLanguage": "en"
+          }
+        ],
+        "colorModes": [
+          "dark"
+        ],
+        "waitSeconds": 3
       }
     ]
   },
