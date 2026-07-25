@@ -11,7 +11,7 @@ const golden: Array<[string, string[], string]> = [
   ["adjectives do not agree", ["i", "want", "big", "apple"], "Ես մեծ խնձոր ուզում եմ։"],
   ["copula at the end", ["i", "happy"], "Ես ուրախ եմ։"],
   // The question mark is a diacritic over the questioned word, not final punctuation.
-  ["the question mark sits over the question word", ["what", "you", "want"], "Ի՞նչ դու ուզում ես"],
+  ["the question mark sits over the question word", ["what", "you", "want"], "Ի՞նչ դու ուզում ես։"],
   ["negation moves the auxiliary forward", ["i", "not", "want", "apple"], "Ես խնձոր չեմ ուզում։"],
   ["negated copula", ["i", "not", "happy"], "Ես ուրախ չեմ։"],
   ["object case", ["you", "help", "me"], "Դու ինձ օգնում ես։"],

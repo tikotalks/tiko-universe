@@ -43,7 +43,8 @@ export const armenian: LanguageRules = {
     questionStrategy: 'intonation',
     spacing: 'space',
     capitalize: true,
-    punctuation: { statement: '։', question: '' },
+    // A question still closes with the verjaket; the ՞ is a diacritic inside it.
+    punctuation: { statement: '։', question: '։' },
     functionWords: [
       'եմ', 'ես', 'է', 'ենք', 'եք', 'են',
       'չեմ', 'չես', 'չէ', 'չենք', 'չեք', 'չեն',
