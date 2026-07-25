@@ -199,8 +199,12 @@ export interface LanguageRules {
   /** An adjective's form inside this noun phrase. */
   adjective(adjective: Word, np: NounPhrase, ctx: PhraseContext): string
 
-  /** The head noun's form: plural, definite suffix, case. */
-  noun(head: Word, np: NounPhrase, ctx: PhraseContext): string
+  /**
+   * The head noun's form: plural, definite suffix, case. Returning an object
+   * lets a language report tiles folded into the noun — Armenian writes the
+   * definite article as a suffix, "խնձորը".
+   */
+  noun(head: Word, np: NounPhrase, ctx: PhraseContext): string | { text: string, merged?: string[] }
 
   /** A pronoun's form in this role. */
   pronoun(word: Word, ctx: PhraseContext): string

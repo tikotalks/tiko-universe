@@ -79,7 +79,11 @@ export function realizeWith(
         }
       }
       emitAdjectives('before')
-      if (np.head) push(builder, rules.noun(np.head, np, phraseCtx), np.head.id)
+      if (np.head) {
+        const noun = rules.noun(np.head, np, phraseCtx)
+        if (typeof noun === 'string') push(builder, noun, np.head.id)
+        else push(builder, noun.text, np.head.id, noun.merged)
+      }
       emitAdjectives('after')
       const postposed = rules.postposed?.(np, phraseCtx)
       if (postposed) push(builder, postposed.text, postposed.from, postposed.merged)

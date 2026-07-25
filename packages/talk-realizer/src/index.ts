@@ -30,6 +30,8 @@ import { maltese } from './languages/mt'
 import { chinese } from './languages/zh'
 import { japanese } from './languages/ja'
 import { korean } from './languages/ko'
+import { arabic } from './languages/ar'
+import { armenian } from './languages/hy'
 import { english } from './languages/en'
 import { dutch } from './languages/nl'
 import type { LanguageRules } from './profile'
@@ -42,6 +44,8 @@ import { malteseLexicon } from './lexicon/mt'
 import { chineseLexicon } from './lexicon/zh'
 import { japaneseLexicon } from './lexicon/ja'
 import { koreanLexicon } from './lexicon/ko'
+import { arabicLexicon } from './lexicon/ar'
+import { armenianLexicon } from './lexicon/hy'
 import { englishLexicon } from './lexicon/en'
 import { dutchLexicon } from './lexicon/nl'
 
@@ -60,6 +64,8 @@ export type {
   VerbFormKey,
 } from './features'
 export { annotate, chunk } from './chunk'
+export { sharedStructure } from './lexicon/shared'
+export { coverageFor, type LanguageCoverage } from './coverage'
 export { englishLexicon } from './lexicon/en'
 export { dutchLexicon } from './lexicon/nl'
 export { germanLexicon } from './lexicon/de'
@@ -71,9 +77,11 @@ export { malteseLexicon } from './lexicon/mt'
 export { chineseLexicon } from './lexicon/zh'
 export { japaneseLexicon } from './lexicon/ja'
 export { koreanLexicon } from './lexicon/ko'
+export { arabicLexicon } from './lexicon/ar'
+export { armenianLexicon } from './lexicon/hy'
 
 /** Languages this prototype realizes. */
-export const supportedLanguages = ['en', 'nl', 'de', 'fr', 'es', 'it', 'pt', 'mt', 'zh', 'ja', 'ko'] as const
+export const supportedLanguages = ['en', 'nl', 'de', 'fr', 'es', 'it', 'pt', 'mt', 'zh', 'ja', 'ko', 'ar', 'hy'] as const
 export type SupportedLanguage = (typeof supportedLanguages)[number]
 
 /** The bundled feature overlays, by language. */
@@ -89,6 +97,8 @@ export const lexicons: Record<string, Lexicon> = {
   zh: chineseLexicon,
   ja: japaneseLexicon,
   ko: koreanLexicon,
+  ar: arabicLexicon,
+  hy: armenianLexicon,
 }
 
 /** Every language's rule set, by language code. */
@@ -104,6 +114,8 @@ export const languages: Record<string, LanguageRules> = {
   zh: chinese,
   ja: japanese,
   ko: korean,
+  ar: arabic,
+  hy: armenian,
 }
 
 /** The closed set of function words each language is allowed to insert. */

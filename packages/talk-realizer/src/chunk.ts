@@ -1,4 +1,5 @@
 import type { Features, Lexicon, Pos, SelectedWord } from './features'
+import { sharedStructure } from './lexicon/shared'
 
 /**
  * The shallow parse every language shares. A child's tile sequence is short and
@@ -68,6 +69,7 @@ export function annotate(
 ): Word[] {
   return words.map((word) => {
     const features: Features = {
+      ...(sharedStructure[word.id] ?? {}),
       ...(induce?.(word) ?? {}),
       ...(curated?.[word.id] ?? {}),
       ...(lexicon[word.id] ?? {}),
