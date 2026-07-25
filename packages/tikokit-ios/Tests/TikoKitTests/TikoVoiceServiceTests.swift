@@ -1,30 +1,29 @@
 import XCTest
 import TikoKit
-@testable import TikoSay
 
 /// Integration check for the Atlas voice pipeline: with a device session,
 /// prefetching a word must produce cached audio on disk (that cache is what
 /// makes playback work offline). Skips when the network or identity service
 /// is unreachable so offline test runs stay green.
 @MainActor
-final class SayVoiceServiceTests: XCTestCase {
+final class TikoVoiceServiceTests: XCTestCase {
     func testPrefetchCachesAtlasAudioForOfflineUse() async throws {
         // The voice service reads the session token from the shared device
         // session store; bootstrap one if this test host has none yet.
         if (try? TikoDeviceSessionStore().load()?.accessToken) == nil {
             TikoIdentityClient.identityBaseURL = "https://identity.tikoapi.org/v1"
-            guard let bundle = try? await TikoIdentityClient().bootstrapDevice(name: "say-tests", platform: "ios") else {
+            guard let bundle = try? await TikoIdentityClient().bootstrapDevice(name: "tikokit-tests", platform: "ios") else {
                 throw XCTSkip("identity service unreachable — skipping Atlas integration check")
             }
             try? TikoDeviceSessionStore().save(bundle)
         }
 
-        let service = SayVoiceService()
+        let service = TikoVoiceService()
         let word = "Dog"
         await service.prefetch(texts: [word], languageCode: "en")
 
         let base = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first!
-        let cacheDir = base.appending(path: "SayVoiceCache", directoryHint: .isDirectory)
+        let cacheDir = base.appending(path: "TikoVoiceCache", directoryHint: .isDirectory)
         let cached = (try? FileManager.default.contentsOfDirectory(at: cacheDir, includingPropertiesForKeys: [.fileSizeKey])) ?? []
         guard !cached.isEmpty else {
             throw XCTSkip("Atlas speech unreachable — skipping (playback falls back to the on-device voice)")

@@ -1,15 +1,14 @@
 import AVFoundation
 import Foundation
 import Speech
-import TikoKit
 
-enum SayPermissionState: Equatable {
+public enum TikoPermissionState: Equatable, Sendable {
     case notDetermined
     case denied
     case granted
 }
 
-enum SayRecognitionAvailability: Equatable {
+public enum TikoRecognitionAvailability: Equatable, Sendable {
     case available(onDevice: Bool)
     /// The device has no recognizer for this language at all.
     case unsupportedLocale(suggestedLanguageCode: String?)
@@ -17,53 +16,64 @@ enum SayRecognitionAvailability: Equatable {
     case unavailable
 }
 
-struct SayTranscriptUpdate: Equatable {
-    let transcript: String
-    let isFinal: Bool
+public struct TikoTranscriptUpdate: Equatable, Sendable {
+    public let transcript: String
+    public let isFinal: Bool
     /// True when the attempt never really listened (audio engine or recognizer
-    /// failed to start). Lets the view model distinguish a broken microphone
-    /// from a child who stayed quiet.
-    var didFail: Bool = false
+    /// failed to start). Lets callers distinguish a broken microphone from a
+    /// child who stayed quiet.
+    public var didFail: Bool
+
+    public init(transcript: String, isFinal: Bool, didFail: Bool = false) {
+        self.transcript = transcript
+        self.isFinal = isFinal
+        self.didFail = didFail
+    }
 }
 
-/// Abstraction over the Apple speech stack so the practice view model is
-/// fully unit-testable with a scripted mock.
+/// Abstraction over the Apple speech stack so practice view models are fully
+/// unit-testable with scripted mocks.
 @MainActor
-protocol SaySpeechServicing: AnyObject {
+public protocol TikoSpeechServicing: AnyObject {
     var onAudioLevel: ((Float) -> Void)? { get set }
-    func permissionState() -> SayPermissionState
+    func permissionState() -> TikoPermissionState
     func requestPermissions() async -> Bool
-    func recognitionAvailability(languageCode: String) -> SayRecognitionAvailability
+    func recognitionAvailability(languageCode: String) -> TikoRecognitionAvailability
     /// Speaks and returns when playback has finished. Never overlaps listening.
     func speak(_ text: String, languageCode: String) async
-    /// Warms the offline voice cache for upcoming words.
+    /// Warms the offline voice cache for upcoming utterances.
     func prefetch(texts: [String], languageCode: String) async
     /// Starts one recognition attempt. The stream yields partial transcripts
     /// and ends with a final update (possibly empty on silence/timeout).
-    func listen(languageCode: String, contextualWords: [String], timeout: TimeInterval) -> AsyncStream<SayTranscriptUpdate>
+    func listen(languageCode: String, contextualWords: [String], timeout: TimeInterval) -> AsyncStream<TikoTranscriptUpdate>
     func stopListening()
     func stopAll()
 }
 
-/// Owns every Apple audio and speech object, per the plan. Only one
-/// recognition task is ever active; every attempt starts from a clean slate.
-/// No audio is stored, transcripts live only for the current attempt.
+/// Owns every Apple audio and speech object. Only one recognition task is
+/// ever active; every attempt starts from a clean slate. No audio is stored,
+/// transcripts live only for the current attempt. Playback goes through
+/// `TikoVoiceService` (Atlas voices, cached offline).
 @MainActor
-final class SpeechPracticeService: NSObject, SaySpeechServicing {
-    var onAudioLevel: ((Float) -> Void)?
+public final class TikoSpeechPracticeService: NSObject, TikoSpeechServicing {
+    public var onAudioLevel: ((Float) -> Void)?
 
-    private let voice = SayVoiceService.shared
+    private let voice = TikoVoiceService.shared
     private let audioEngine = AVAudioEngine()
     private var recognizer: SFSpeechRecognizer?
     private var recognitionRequest: SFSpeechAudioBufferRecognitionRequest?
     private var recognitionTask: SFSpeechRecognitionTask?
     private var timeoutTask: Task<Void, Never>?
-    private var streamContinuation: AsyncStream<SayTranscriptUpdate>.Continuation?
+    private var streamContinuation: AsyncStream<TikoTranscriptUpdate>.Continuation?
     private var latestTranscript = ""
+
+    override public init() {
+        super.init()
+    }
 
     // MARK: - Permissions
 
-    func permissionState() -> SayPermissionState {
+    public func permissionState() -> TikoPermissionState {
         let speech = SFSpeechRecognizer.authorizationStatus()
         let mic = AVAudioApplication.shared.recordPermission
         if speech == .authorized && mic == .granted { return .granted }
@@ -71,7 +81,7 @@ final class SpeechPracticeService: NSObject, SaySpeechServicing {
         return .notDetermined
     }
 
-    func requestPermissions() async -> Bool {
+    public func requestPermissions() async -> Bool {
         let speechGranted = await withCheckedContinuation { continuation in
             SFSpeechRecognizer.requestAuthorization { status in
                 continuation.resume(returning: status == .authorized)
@@ -84,7 +94,7 @@ final class SpeechPracticeService: NSObject, SaySpeechServicing {
 
     // MARK: - Availability
 
-    func recognitionAvailability(languageCode: String) -> SayRecognitionAvailability {
+    public func recognitionAvailability(languageCode: String) -> TikoRecognitionAvailability {
         let localeIdentifier = TikoSpeech.languageCode(for: languageCode)
         let locale = Locale(identifier: localeIdentifier)
         guard let recognizer = SFSpeechRecognizer(locale: locale) else {
@@ -95,8 +105,8 @@ final class SpeechPracticeService: NSObject, SaySpeechServicing {
     }
 
     /// Nearest supported language: same language family first, English otherwise.
-    static func suggestedLanguage(for languageCode: String) -> String? {
-        let requested = SayCatalog.normalizedLanguage(languageCode)
+    public static func suggestedLanguage(for languageCode: String) -> String? {
+        let requested = TikoLanguageCode.normalized(languageCode)
         let supported = SFSpeechRecognizer.supportedLocales()
         if supported.contains(where: { $0.language.languageCode?.identifier == requested }) {
             return requested
@@ -109,7 +119,7 @@ final class SpeechPracticeService: NSObject, SaySpeechServicing {
 
     // MARK: - Speaking
 
-    func speak(_ text: String, languageCode: String) async {
+    public func speak(_ text: String, languageCode: String) async {
         let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmed.isEmpty else { return }
 
@@ -119,13 +129,13 @@ final class SpeechPracticeService: NSObject, SaySpeechServicing {
         await voice.speak(trimmed, languageCode: languageCode)
     }
 
-    func prefetch(texts: [String], languageCode: String) async {
+    public func prefetch(texts: [String], languageCode: String) async {
         await voice.prefetch(texts: texts, languageCode: languageCode)
     }
 
     // MARK: - Listening
 
-    func listen(languageCode: String, contextualWords: [String], timeout: TimeInterval) -> AsyncStream<SayTranscriptUpdate> {
+    public func listen(languageCode: String, contextualWords: [String], timeout: TimeInterval) -> AsyncStream<TikoTranscriptUpdate> {
         // Clean slate before every attempt, in the documented order.
         stopListening()
         latestTranscript = ""
@@ -189,7 +199,7 @@ final class SpeechPracticeService: NSObject, SaySpeechServicing {
                             self.finishListening(final: self.latestTranscript)
                         } else {
                             self.streamContinuation?.yield(
-                                SayTranscriptUpdate(transcript: self.latestTranscript, isFinal: false)
+                                TikoTranscriptUpdate(transcript: self.latestTranscript, isFinal: false)
                             )
                         }
                     }
@@ -215,14 +225,14 @@ final class SpeechPracticeService: NSObject, SaySpeechServicing {
         }
     }
 
-    func stopListening() {
+    public func stopListening() {
         let continuation = streamContinuation
         streamContinuation = nil
         teardownRecognition()
         continuation?.finish()
     }
 
-    func stopAll() {
+    public func stopAll() {
         stopListening()
         voice.stop()
         latestTranscript = ""
@@ -231,9 +241,9 @@ final class SpeechPracticeService: NSObject, SaySpeechServicing {
     // MARK: - Internals
 
     /// A stream for attempts that never started listening.
-    private static func failedAttemptStream() -> AsyncStream<SayTranscriptUpdate> {
+    private static func failedAttemptStream() -> AsyncStream<TikoTranscriptUpdate> {
         AsyncStream { continuation in
-            continuation.yield(SayTranscriptUpdate(transcript: "", isFinal: true, didFail: true))
+            continuation.yield(TikoTranscriptUpdate(transcript: "", isFinal: true, didFail: true))
             continuation.finish()
         }
     }
@@ -241,7 +251,7 @@ final class SpeechPracticeService: NSObject, SaySpeechServicing {
     private func finishListening(final transcript: String) {
         guard let continuation = streamContinuation else { return }
         streamContinuation = nil
-        continuation.yield(SayTranscriptUpdate(transcript: transcript, isFinal: true))
+        continuation.yield(TikoTranscriptUpdate(transcript: transcript, isFinal: true))
         continuation.finish()
         teardownRecognition()
     }
@@ -286,7 +296,7 @@ final class SpeechPracticeService: NSObject, SaySpeechServicing {
             sum += sample * sample
         }
         let rms = sqrt(sum / Float(frameLength))
-        // Perceptual-ish 0…1 scaling for the calm listening pulse.
+        // Perceptual-ish 0…1 scaling for calm listening indicators.
         return min(1, rms * 12)
     }
 }

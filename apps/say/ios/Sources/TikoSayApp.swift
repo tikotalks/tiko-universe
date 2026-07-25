@@ -18,6 +18,7 @@ struct TikoSayApp: App {
         TikoDeviceDefaults.register()
         TikoI18n.translationsBaseURL = "https://translations.tikoapi.org"
         TikoIdentityClient.identityBaseURL = "https://identity.tikoapi.org/v1"
+        TikoVoiceService.appName = "say"
     }
 
     var body: some Scene {

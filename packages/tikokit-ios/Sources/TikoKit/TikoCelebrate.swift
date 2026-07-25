@@ -1,13 +1,12 @@
 import AVFoundation
 import SwiftUI
-import TikoKit
 import UIKit
 
 // MARK: - Variants
 
-/// Reward styles — one is picked at random per success so celebrations stay
+/// Reward styles — pick one at random per success so celebrations stay
 /// surprising. All render with SwiftUI `Canvas`, no third-party dependencies.
-enum CelebrationVariant: CaseIterable {
+public enum TikoCelebrationVariant: CaseIterable, Sendable {
     case explosion
     case confettiRain
     case emojiRain
@@ -17,20 +16,26 @@ enum CelebrationVariant: CaseIterable {
     case bubbles
 }
 
-/// How the card image itself dances on a win — picked at random per success.
-enum CardWinStyle: CaseIterable {
+/// How the hero element dances on a win — picked at random per success.
+public enum TikoCardWinStyle: CaseIterable, Sendable {
     case pop
     case spin
     case bounce
     case wiggle
 
-    struct Phase: Equatable {
-        var scale: Double = 1
-        var rotation: Double = 0
-        var y: Double = 0
+    public struct Phase: Equatable, Sendable {
+        public var scale: Double
+        public var rotation: Double
+        public var y: Double
+
+        public init(scale: Double = 1, rotation: Double = 0, y: Double = 0) {
+            self.scale = scale
+            self.rotation = rotation
+            self.y = y
+        }
     }
 
-    var phases: [Phase] {
+    public var phases: [Phase] {
         switch self {
         case .pop:
             return [.init(), .init(scale: 1.45), .init(scale: 0.9), .init(scale: 1.18), .init()]
@@ -49,10 +54,10 @@ enum CardWinStyle: CaseIterable {
 
 /// Full-screen particle celebration. With Reduce Motion, particles are
 /// replaced by a gentle colour pulse.
-struct CelebrationOverlay: View {
+public struct TikoCelebrationOverlay: View {
     let trigger: Int
-    let variant: CelebrationVariant
-    /// The celebrated card's emoji — rains from the sky in `.emojiRain`.
+    let variant: TikoCelebrationVariant
+    /// The celebrated element's emoji — rains from the sky in `.emojiRain`.
     let emoji: String
     let appColor: TikoAppColor
 
@@ -61,8 +66,15 @@ struct CelebrationOverlay: View {
 
     private let duration = 1.6
 
+    public init(trigger: Int, variant: TikoCelebrationVariant, emoji: String, appColor: TikoAppColor) {
+        self.trigger = trigger
+        self.variant = variant
+        self.emoji = emoji
+        self.appColor = appColor
+    }
+
     private struct Particle {
-        let seedX: Double      // 0…1 horizontal position or angle share
+        let seedX: Double
         let angle: Double
         let speed: Double
         let size: Double
@@ -79,8 +91,7 @@ struct CelebrationOverlay: View {
     ]
 
     private var particles: [Particle] {
-        // Deterministic per trigger so re-renders don't reshuffle mid-burst.
-        var generator = SeededGenerator(seed: UInt64(max(trigger, 1)) &* 7919)
+        var generator = TikoSeededGenerator(seed: UInt64(max(trigger, 1)) &* 7919)
         let palette = Self.palettes[trigger % Self.palettes.count]
         let count: Int
         switch variant {
@@ -103,7 +114,7 @@ struct CelebrationOverlay: View {
         }
     }
 
-    private func particleDelay(index: Int, generator: inout SeededGenerator) -> Double {
+    private func particleDelay(index: Int, generator: inout TikoSeededGenerator) -> Double {
         switch variant {
         case .fireworks: return Double(index / 20) * 0.28
         case .confettiRain, .emojiRain: return Double.random(in: 0...0.5, using: &generator)
@@ -111,7 +122,7 @@ struct CelebrationOverlay: View {
         }
     }
 
-    var body: some View {
+    public var body: some View {
         Group {
             if reduceMotion {
                 appColor.palette.primary.opacity(0.18)
@@ -173,7 +184,7 @@ struct CelebrationOverlay: View {
 
         switch variant {
         case .explosion:
-            let burst = 1 - pow(1 - progress, 3) // fast out, easing
+            let burst = 1 - pow(1 - progress, 3)
             let distance = particle.speed * 1.15 * burst
             let gravity = 330 * progress * progress
             let position = CGPoint(
@@ -295,14 +306,14 @@ struct CelebrationOverlay: View {
 }
 
 /// Deterministic RNG for stable particle layouts per burst.
-struct SeededGenerator: RandomNumberGenerator {
+public struct TikoSeededGenerator: RandomNumberGenerator {
     private var state: UInt64
 
-    init(seed: UInt64) {
+    public init(seed: UInt64) {
         state = seed &* 0x9E3779B97F4A7C15 &+ 1
     }
 
-    mutating func next() -> UInt64 {
+    public mutating func next() -> UInt64 {
         state ^= state << 13
         state ^= state >> 7
         state ^= state << 17
@@ -316,17 +327,16 @@ struct SeededGenerator: RandomNumberGenerator {
 /// pops sprinkled through the burst; retry is one soft, quiet acknowledgement
 /// — never a buzzer. Missing files degrade to haptics alone.
 @MainActor
-enum SayFeedback {
+public enum TikoFeedback {
     private static var players: [AVAudioPlayer] = []
     private static var popTask: Task<Void, Never>?
-    private static let successSounds = ["say-success-1", "say-success-2", "say-success-3", "say-success-4", "say-success-5"]
-    private static let popSounds = ["say-pop-1", "say-pop-2", "say-pop-3"]
+    private static let successSounds = ["tiko-success-1", "tiko-success-2", "tiko-success-3", "tiko-success-4", "tiko-success-5"]
+    private static let popSounds = ["tiko-pop-1", "tiko-pop-2", "tiko-pop-3"]
 
-    static func playSuccess() {
+    public static func playSuccess() {
         UINotificationFeedbackGenerator().notificationOccurred(.success)
         play(name: successSounds.randomElement()!, volume: 0.7)
 
-        // Little pops riding along with the particle burst.
         popTask?.cancel()
         popTask = Task { @MainActor in
             for delay in [0.18, 0.34, 0.52, 0.74].shuffled().prefix(Int.random(in: 2...4)) {
@@ -338,20 +348,20 @@ enum SayFeedback {
         }
     }
 
-    static func playRetry() {
+    public static func playRetry() {
         popTask?.cancel()
         UIImpactFeedbackGenerator(style: .soft).impactOccurred()
-        play(name: "say-retry", volume: 0.28)
+        play(name: "tiko-retry", volume: 0.28)
     }
 
-    static func stop() {
+    public static func stop() {
         popTask?.cancel()
         players.forEach { $0.stop() }
         players.removeAll()
     }
 
     private static func play(name: String, volume: Float) {
-        guard let url = Bundle.main.url(forResource: name, withExtension: "wav"),
+        guard let url = Bundle.module.url(forResource: name, withExtension: "wav"),
               let player = try? AVAudioPlayer(contentsOf: url) else { return }
         player.volume = volume
         player.play()
