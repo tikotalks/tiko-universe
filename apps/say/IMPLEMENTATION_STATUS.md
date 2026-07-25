@@ -93,6 +93,19 @@ Statuses: `NOT STARTED` · `IN PROGRESS` · `BLOCKED` · `IMPLEMENTED` · `VERIF
   with more overshoot, letter cascade gentler (80% scale, 0.15em rise, 0.55s,
   0.09s stagger). Tests green; installed on simulator + iPhone 14 Pro.
 
+- Cycle 7 (2026-07-25): **Released to App Review.** Build 1.0(1) exported via
+  ASC-API cloud signing (`-authenticationKey*`, no local keychain needed) and
+  uploaded (Delivery UUID 00927be4). Store name is "Tiko Say" (plain "Say" is
+  taken). Metadata/version localization/categories (Education)/age rating (4+
+  incl. the 2025 questionnaire attrs)/copyright/content rights/review contact
+  (copied from yes-no)/pricing (Free via appPriceSchedules) set through the
+  ASC API (spaceship + raw REST; deliver used for screenshots only — its
+  first-version metadata path crashes). App Privacy (Email + User ID, app
+  functionality, linked, no tracking) filled and published via the ASC web UI
+  (Apple removed the appDataUsages API). Submitted for review with
+  releaseType AFTER_APPROVAL — goes live automatically when Apple approves.
+  ASC record: appStoreId 6794481329. Everything merged to main.
+
 ## Harness requirements
 
 | # | Requirement | Status | Files | Verification |
