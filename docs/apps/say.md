@@ -12,7 +12,7 @@ Cards is a communication and visual-choice tool. Say has a different interaction
 
 ## Tiko harness
 
-Say is a Tiko app and uses the same harness as every other Tiko app. No exclusions.
+Say is a Tiko app and uses the same harness as every other Tiko app. No exclusions. It follows the family's [design principles](../flows/shared/design-principles.md) — icon-only round child controls, no in-app descriptions or explanations, one thing at a time, everything speaks, everything editable, celebration never punishment.
 
 - `TikoAppShell` from `packages/tikokit-ios` for the shared header, settings sheet, account/setup surfaces, language selection, and colour mode.
 - `TikoIdentity` for device-first session bootstrap: the app opens immediately on a Temporary Account, exactly like every other Tiko app.
