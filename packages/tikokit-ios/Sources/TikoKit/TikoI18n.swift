@@ -13,6 +13,7 @@ public enum TikoAppKey: String, Sendable {
     case todo = "todo"
     case say = "say"
     case sum = "sum"
+    case first = "first"
 }
 
 // MARK: - TikoI18n
@@ -129,6 +130,7 @@ enum TikoLocalTranslations {
         case .todo:     return todoBundles
         case .say:      return sayBundles
         case .sum:      return sumBundles
+        case .first:    return firstBundles
         }
     }
 

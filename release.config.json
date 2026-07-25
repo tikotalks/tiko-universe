@@ -32,6 +32,10 @@
     {
       "slug": "sum",
       "releaseConfig": "apps/sum/release/ios.json"
+    },
+    {
+      "slug": "first",
+      "releaseConfig": "apps/first/release/ios.json"
     }
   ]
 }

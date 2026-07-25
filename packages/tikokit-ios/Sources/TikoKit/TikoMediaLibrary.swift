@@ -50,6 +50,26 @@ public actor TikoMediaClient {
         return merged
     }
 
+    /// Searches the library by free text. Routine-style content (a toothbrush,
+    /// a lunch box, a bus stop) lives across many folders rather than in one
+    /// category, so apps like First resolve each image by its English key.
+    public func searchMedia(query: String, limit: Int = 8) async throws -> [TikoMediaItem] {
+        let trimmed = query.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else { return [] }
+        var components = URLComponents(url: baseURL.appending(path: "media"), resolvingAgainstBaseURL: false)!
+        components.queryItems = [
+            URLQueryItem(name: "type", value: "image"),
+            URLQueryItem(name: "search", value: trimmed),
+            URLQueryItem(name: "limit", value: String(limit)),
+        ]
+        guard let url = components.url else { return [] }
+        let (data, response) = try await session.data(from: url)
+        guard let http = response as? HTTPURLResponse, (200..<300).contains(http.statusCode) else {
+            throw URLError(.badServerResponse)
+        }
+        return try JSONDecoder().decode(TikoMediaListResponse.self, from: data).data
+    }
+
     private func fetchMedia(category: String, limit: Int) async throws -> [TikoMediaItem] {
         var components = URLComponents(url: baseURL.appending(path: "media"), resolvingAgainstBaseURL: false)!
         components.queryItems = [

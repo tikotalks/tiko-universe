@@ -15,7 +15,7 @@ on:
   workflow_dispatch:
     inputs:
       app:
-        description: 'App to build: changed, all, yes-no, cards, radio, talk, timer, type, say, sum'
+        description: 'App to build: changed, all, yes-no, cards, radio, talk, timer, type, say, sum, first'
         required: false
         default: changed
 
@@ -83,11 +83,12 @@ jobs:
               type) printf '{"app":"type","path":"apps/type/ios","scheme":"TikoType"}' ;;
               say) printf '{"app":"say","path":"apps/say/ios","scheme":"TikoSay"}' ;;
               sum) printf '{"app":"sum","path":"apps/sum/ios","scheme":"TikoSum"}' ;;
+              first) printf '{"app":"first","path":"apps/first/ios","scheme":"TikoFirst"}' ;;
               *) return 1 ;;
             esac
           }
 
-          all_apps=(yes-no cards radio talk timer type say sum)
+          all_apps=(yes-no cards radio talk timer type say sum first)
 
           if [[ "$requested" != "changed" && "$requested" != "all" ]]; then
             apps=("$requested")
