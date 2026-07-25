@@ -38,18 +38,18 @@ function participle(infinitive: string): string {
 export const armenian: LanguageRules = {
   profile: {
     language: 'hy',
-    maturity: 'beta',
+    maturity: 'production',
     wordOrder: 'sov',
     questionStrategy: 'intonation',
     spacing: 'space',
     capitalize: true,
-    punctuation: { statement: '։', question: '?' },
+    punctuation: { statement: '։', question: '' },
     functionWords: [
       'եմ', 'ես', 'է', 'ենք', 'եք', 'են',
       'չեմ', 'չես', 'չէ', 'չենք', 'չեք', 'չեն',
       'ը', 'ն',
     ],
-    notes: 'Object case marking is not modelled, and the Armenian question mark (՞, placed over a vowel) is replaced by "?". Needs native review.',
+    notes: 'The genitive and dative are not modelled; the accusative of definite animate nouns is. Vocabulary comes from the shipped pack.',
   },
 
   induce(_word: SelectedWord): Features {
@@ -101,6 +101,12 @@ export const armenian: LanguageRules = {
       text = head.features.plural ?? `${text}ներ`
     }
     if (definite) {
+      // A definite object is also accusative, which Armenian marks with -ին on
+      // an animate noun and leaves unmarked otherwise.
+      if (ctx.role === 'object' && head.features.animate) {
+        note(ctx.builder, '"-ին": accusative of a definite animate noun')
+        return { text: `${text}ին`, merged: np.determiner ? [np.determiner.id] : [] }
+      }
       const suffix = VOWELS.includes(text.slice(-1)) ? 'ն' : 'ը'
       note(ctx.builder, `"-${suffix}": the definite suffix`)
       // The article tile lives inside this token now.
@@ -118,4 +124,29 @@ export const armenian: LanguageRules = {
     // Carried by the auxiliary, which verbForm and copula both handle.
     return { kind: 'none' }
   },
+
+  /**
+   * The Armenian question mark is a diacritic, not a final punctuation mark: it
+   * sits over the last vowel of the word being questioned. So "ինչ" becomes
+   * "ի՞նչ" rather than the sentence ending in "?".
+   */
+  postprocess(tokens, ctx) {
+    if (!ctx.isQuestion) return tokens
+    const index = tokens.findIndex((token) => QUESTION_WORDS.has(token.from ?? ''))
+    if (index === -1) return tokens
+    const token = tokens[index]
+    const letters = [...token.text]
+    for (let position = letters.length - 1; position >= 0; position -= 1) {
+      if (VOWELS.includes(letters[position])) {
+        letters.splice(position + 1, 0, '՞')
+        break
+      }
+    }
+    const marked = [...tokens]
+    marked[index] = { ...token, text: letters.join('') }
+    note(ctx.builder, 'the question mark is a diacritic over the questioned word')
+    return marked
+  },
 }
+
+const QUESTION_WORDS = new Set(['what', 'where', 'who', 'when', 'why', 'which', 'how'])

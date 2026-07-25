@@ -33,6 +33,18 @@ export const armenianLexicon: Lexicon = {
   need: { pos: 'verb', forms: { '1sg': 'պետք', '2sg': 'պետք', '3sg': 'պետք', '1pl': 'պետք', '3pl': 'պետք' } },
   come: { pos: 'verb', forms: { '1sg': 'գալիս' } },
 
+  // Animate nouns take the accusative -ին when definite.
+  mum: { pos: 'noun', animate: true, proper: true },
+  dad: { pos: 'noun', animate: true, proper: true },
+  teacher: { pos: 'noun', animate: true },
+  friend: { pos: 'noun', animate: true },
+  brother: { pos: 'noun', animate: true },
+  sister: { pos: 'noun', animate: true },
+  grandma: { pos: 'noun', animate: true, proper: true },
+  grandpa: { pos: 'noun', animate: true, proper: true },
+  doctor: { pos: 'noun', animate: true },
+  helper: { pos: 'noun', animate: true },
+
   water: { pos: 'noun', mass: true },
   milk: { pos: 'noun', mass: true },
   bread: { pos: 'noun', mass: true },

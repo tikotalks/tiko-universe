@@ -37,6 +37,8 @@ import { danish } from './languages/da'
 import { norwegian } from './languages/nb'
 import { indonesian } from './languages/id'
 import { vietnamese } from './languages/vi'
+import { romanian } from './languages/ro'
+import { greek } from './languages/el'
 import { english } from './languages/en'
 import { dutch } from './languages/nl'
 import type { LanguageRules } from './profile'
@@ -56,6 +58,8 @@ import { danishLexicon } from './lexicon/da'
 import { norwegianLexicon } from './lexicon/nb'
 import { indonesianLexicon } from './lexicon/id'
 import { vietnameseLexicon } from './lexicon/vi'
+import { romanianLexicon } from './lexicon/ro'
+import { greekLexicon } from './lexicon/el'
 import { englishLexicon } from './lexicon/en'
 import { dutchLexicon } from './lexicon/nl'
 
@@ -94,9 +98,11 @@ export { danishLexicon } from './lexicon/da'
 export { norwegianLexicon } from './lexicon/nb'
 export { indonesianLexicon } from './lexicon/id'
 export { vietnameseLexicon } from './lexicon/vi'
+export { romanianLexicon } from './lexicon/ro'
+export { greekLexicon } from './lexicon/el'
 
 /** Languages this prototype realizes. */
-export const supportedLanguages = ['en', 'nl', 'de', 'fr', 'es', 'it', 'pt', 'mt', 'zh', 'ja', 'ko', 'ar', 'hy', 'sv', 'da', 'nb', 'id', 'vi'] as const
+export const supportedLanguages = ['en', 'nl', 'de', 'fr', 'es', 'it', 'pt', 'mt', 'zh', 'ja', 'ko', 'ar', 'hy', 'sv', 'da', 'nb', 'id', 'vi', 'ro', 'el'] as const
 export type SupportedLanguage = (typeof supportedLanguages)[number]
 
 /** The bundled feature overlays, by language. */
@@ -119,6 +125,8 @@ export const lexicons: Record<string, Lexicon> = {
   nb: norwegianLexicon,
   id: indonesianLexicon,
   vi: vietnameseLexicon,
+  ro: romanianLexicon,
+  el: greekLexicon,
 }
 
 /** Every language's rule set, by language code. */
@@ -141,6 +149,8 @@ export const languages: Record<string, LanguageRules> = {
   nb: norwegian,
   id: indonesian,
   vi: vietnamese,
+  ro: romanian,
+  el: greek,
 }
 
 /** The closed set of function words each language is allowed to insert. */

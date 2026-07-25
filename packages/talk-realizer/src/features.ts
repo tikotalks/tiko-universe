@@ -77,6 +77,12 @@ export interface Features {
   mass?: boolean
   proper?: boolean
   /**
+   * Animate nouns behave differently in several languages: Armenian marks a
+   * definite animate object with -ին, and Slavic languages need it for the
+   * accusative.
+   */
+  animate?: boolean
+  /**
    * Institutional nouns drop the article after a preposition: "to school",
    * "in bed", "naar school". They still take one elsewhere ("a school").
    */
