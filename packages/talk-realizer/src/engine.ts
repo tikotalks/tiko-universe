@@ -359,6 +359,12 @@ export function realizeWith(
     }
   } else {
     if (chunks.subject) emitNounPhrase(chunks.subject, 'subject')
+    // Hungarian puts its question word in focus, immediately before the verb:
+    // "Te mit akarsz?"
+    if (chunks.question && questionWordPosition === 'preverbal' && !sov) {
+      push(builder, chunks.question.text, chunks.question.id)
+      note(builder, 'the question word stands in focus, before the verb')
+    }
     if (!sov) emitVerb()
   }
 
@@ -368,7 +374,7 @@ export function realizeWith(
 
   // A verb-final language may keep its question word in the object's slot,
   // immediately before the verb: "Sen ne istiyorsun?"
-  if (chunks.question && questionWordPosition === 'preverbal') {
+  if (chunks.question && questionWordPosition === 'preverbal' && sov) {
     push(builder, chunks.question.text, chunks.question.id)
     note(builder, 'the question word stands where the object would')
   }
@@ -410,7 +416,17 @@ export function realizeWith(
   }
 
   let tokens = builder.tokens
-  if (rules.postprocess) tokens = rules.postprocess(tokens, ctx)
+  if (rules.postprocess) {
+    tokens = rules.postprocess(tokens, ctx)
+    // A language may add a word here — the Finnish negative verb, the Hungarian
+    // copula — and the audit of inserted words has to know about it, because that
+    // list is what proves nothing was invented.
+    for (const token of tokens) {
+      if (token.from === null && !builder.inserted.includes(token.text)) {
+        builder.inserted.push(token.text)
+      }
+    }
+  }
 
   const flushed = { ...builder, tokens }
   flushPending(flushed)

@@ -53,6 +53,8 @@ import { croatian } from './languages/hr'
 import { czech } from './languages/cs'
 import { slovak } from './languages/sk'
 import { turkish } from './languages/tr'
+import { hungarian } from './languages/hu'
+import { finnish } from './languages/fi'
 import { english } from './languages/en'
 import { dutch } from './languages/nl'
 import type { LanguageRules } from './profile'
@@ -88,6 +90,8 @@ import { croatianLexicon } from './lexicon/hr'
 import { czechLexicon } from './lexicon/cs'
 import { slovakLexicon } from './lexicon/sk'
 import { turkishLexicon } from './lexicon/tr'
+import { hungarianLexicon } from './lexicon/hu'
+import { finnishLexicon } from './lexicon/fi'
 import { englishLexicon } from './lexicon/en'
 import { dutchLexicon } from './lexicon/nl'
 
@@ -130,7 +134,7 @@ export { romanianLexicon } from './lexicon/ro'
 export { greekLexicon } from './lexicon/el'
 
 /** Languages this prototype realizes. */
-export const supportedLanguages = ['en', 'nl', 'de', 'fr', 'es', 'it', 'pt', 'mt', 'zh', 'ja', 'ko', 'ar', 'hy', 'sv', 'da', 'nb', 'id', 'vi', 'ro', 'el', 'ms', 'ca', 'gl', 'af', 'ru', 'pl', 'bg', 'sq', 'uk', 'mk', 'sr', 'hr', 'cs', 'sk', 'tr'] as const
+export const supportedLanguages = ['en', 'nl', 'de', 'fr', 'es', 'it', 'pt', 'mt', 'zh', 'ja', 'ko', 'ar', 'hy', 'sv', 'da', 'nb', 'id', 'vi', 'ro', 'el', 'ms', 'ca', 'gl', 'af', 'ru', 'pl', 'bg', 'sq', 'uk', 'mk', 'sr', 'hr', 'cs', 'sk', 'tr', 'hu', 'fi'] as const
 export type SupportedLanguage = (typeof supportedLanguages)[number]
 
 /** The bundled feature overlays, by language. */
@@ -169,6 +173,8 @@ export const lexicons: Record<string, Lexicon> = {
   cs: czechLexicon,
   sk: slovakLexicon,
   tr: turkishLexicon,
+  hu: hungarianLexicon,
+  fi: finnishLexicon,
 }
 
 /** Every language's rule set, by language code. */
@@ -208,6 +214,8 @@ export const languages: Record<string, LanguageRules> = {
   cs: czech,
   sk: slovak,
   tr: turkish,
+  hu: hungarian,
+  fi: finnish,
 }
 
 /** The closed set of function words each language is allowed to insert. */

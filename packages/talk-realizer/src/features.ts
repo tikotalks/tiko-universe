@@ -74,10 +74,11 @@ export interface Features {
   /** Plural form; absent means the noun is not pluralised by the realizer. */
   plural?: string
   /**
-   * Curated case forms, for the Slavic languages, where a rule would be wrong.
-   * Keys are the cases this package models: accusative and genitive.
+   * Curated case forms, where a rule would be wrong: the accusative and genitive
+   * for the Slavic languages, and the partitive for Finnish, whose stem changes
+   * ("vesi" → "vettä") are not recoverable from the nominative.
    */
-  cases?: Partial<Record<'acc' | 'gen', string>>
+  cases?: Partial<Record<'acc' | 'gen' | 'par', string>>
   /** Mass nouns (water, music) take no indefinite article. */
   mass?: boolean
   proper?: boolean
@@ -147,9 +148,11 @@ export interface Features {
   copula?: boolean
   /**
    * The case this verb gives its object. German "helfen" takes the dative
-   * ("Du hilfst mir"), which no ending rule can guess.
+   * ("Du hilfst mir"), which no ending rule can guess, and Finnish splits its
+   * objects by whether the action completes: `total` is "näen kaverin" against
+   * the partitive default of "haluan omenaa".
    */
-  objectCase?: 'accusative' | 'dative'
+  objectCase?: 'accusative' | 'dative' | 'total'
   /**
    * Verbs like Spanish "gustar" and Italian "piacere", where the experiencer is
    * a clitic and the thing liked is the grammatical subject: "Me gusta el pan".
@@ -188,6 +191,11 @@ export interface Features {
    * ship a finished word, so the stem itself has to be curated.
    */
   stem?: string
+  /**
+   * A Hungarian "-ik verb" — alszik, játszik, eszik — which takes the ending that
+   * looks like the definite one even with no object at all: "alszom", "játszom".
+   */
+  ikVerb?: boolean
   /**
    * The predicative form of an adjective, where a language distinguishes it.
    * Russian says "я счастлив", not "я счастливый".
