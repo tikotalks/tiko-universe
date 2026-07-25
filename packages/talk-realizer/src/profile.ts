@@ -164,8 +164,12 @@ export interface NegationCommon {
 export type NegationPlan = NegationCommon & (
   /** English: do/does/did + not, with the verb going bare. */
   | { kind: 'auxiliary', auxiliary: string, word: string }
-  /** Dutch, German: a particle after the verb, or after a definite object. */
-  | { kind: 'afterVerb', word: string, afterDefiniteObject?: boolean }
+  /**
+   * Dutch, German: a particle after the verb, or after a definite object.
+   * `closing` adds a second element at the end of the clause, which is how
+   * Afrikaans brackets a negation: "nie … nie".
+   */
+  | { kind: 'afterVerb', word: string, afterDefiniteObject?: boolean, closing?: string }
   /** Spanish, Italian, Portuguese, Chinese, Korean: a particle before the verb. */
   | { kind: 'beforeVerb', word: string }
   /** French, Maltese: a particle on each side of the verb. */

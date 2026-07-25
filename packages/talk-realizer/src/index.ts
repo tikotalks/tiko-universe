@@ -35,10 +35,13 @@ import { armenian } from './languages/hy'
 import { swedish } from './languages/sv'
 import { danish } from './languages/da'
 import { norwegian } from './languages/nb'
-import { indonesian } from './languages/id'
+import { indonesian, malay } from './languages/id'
 import { vietnamese } from './languages/vi'
 import { romanian } from './languages/ro'
 import { greek } from './languages/el'
+import { catalan } from './languages/ca'
+import { galician } from './languages/gl'
+import { afrikaans } from './languages/af'
 import { english } from './languages/en'
 import { dutch } from './languages/nl'
 import type { LanguageRules } from './profile'
@@ -60,6 +63,9 @@ import { indonesianLexicon } from './lexicon/id'
 import { vietnameseLexicon } from './lexicon/vi'
 import { romanianLexicon } from './lexicon/ro'
 import { greekLexicon } from './lexicon/el'
+import { catalanLexicon } from './lexicon/ca'
+import { galicianLexicon } from './lexicon/gl'
+import { afrikaansLexicon } from './lexicon/af'
 import { englishLexicon } from './lexicon/en'
 import { dutchLexicon } from './lexicon/nl'
 
@@ -102,7 +108,7 @@ export { romanianLexicon } from './lexicon/ro'
 export { greekLexicon } from './lexicon/el'
 
 /** Languages this prototype realizes. */
-export const supportedLanguages = ['en', 'nl', 'de', 'fr', 'es', 'it', 'pt', 'mt', 'zh', 'ja', 'ko', 'ar', 'hy', 'sv', 'da', 'nb', 'id', 'vi', 'ro', 'el'] as const
+export const supportedLanguages = ['en', 'nl', 'de', 'fr', 'es', 'it', 'pt', 'mt', 'zh', 'ja', 'ko', 'ar', 'hy', 'sv', 'da', 'nb', 'id', 'vi', 'ro', 'el', 'ms', 'ca', 'gl', 'af'] as const
 export type SupportedLanguage = (typeof supportedLanguages)[number]
 
 /** The bundled feature overlays, by language. */
@@ -127,6 +133,9 @@ export const lexicons: Record<string, Lexicon> = {
   vi: vietnameseLexicon,
   ro: romanianLexicon,
   el: greekLexicon,
+  ca: catalanLexicon,
+  gl: galicianLexicon,
+  af: afrikaansLexicon,
 }
 
 /** Every language's rule set, by language code. */
@@ -151,6 +160,10 @@ export const languages: Record<string, LanguageRules> = {
   vi: vietnamese,
   ro: romanian,
   el: greek,
+  ms: malay,
+  ca: catalan,
+  gl: galician,
+  af: afrikaans,
 }
 
 /** The closed set of function words each language is allowed to insert. */

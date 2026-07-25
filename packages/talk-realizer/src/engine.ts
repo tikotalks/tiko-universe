@@ -180,7 +180,8 @@ export function realizeWith(
       return
     }
 
-    const tail = deferTail ? undefined : verb.features.verbTail
+    const clauseFinalTail = verb.features.verbTailPosition === 'clauseFinal'
+    const tail = deferTail || clauseFinalTail ? undefined : verb.features.verbTail
 
     if (!chunks.negated || suppressVerbParticle) {
       emitClitic()
@@ -248,7 +249,11 @@ export function realizeWith(
     emitVerb()
     note(builder, 'verb-second: the verb precedes the subject in a question')
     if (chunks.subject) emitNounPhrase(chunks.subject, 'subject')
-    const tail = chunks.verb?.features.verbTail
+    // Only a verb-adjacent tail follows the subject; a clause-final one waits
+    // for the complements.
+    const tail = chunks.verb?.features.verbTailPosition === 'clauseFinal'
+      ? undefined
+      : chunks.verb?.features.verbTail
     if (tail && chunks.verb) push(builder, tail, chunks.verb.id)
     deferTail = false
   } else if (isQuestion && strategy === 'auxiliary') {
@@ -281,6 +286,21 @@ export function realizeWith(
   if (particleAfterObject && plan.kind === 'afterVerb') {
     push(builder, plan.word, null)
     note(builder, `"${plan.word}": negation after a definite object`)
+  }
+
+  // A clause-final verb tail comes after the complements: "wil … hê".
+  if (chunks.verb?.features.verbTailPosition === 'clauseFinal' && chunks.verb.features.verbTail) {
+    push(builder, chunks.verb.features.verbTail, chunks.verb.id)
+    note(builder, 'the infinitive closes the clause')
+  }
+
+  // A bracketing negation closes the clause: Afrikaans "nie … nie".
+  if (chunks.negated && plan.kind === 'afterVerb' && plan.closing) {
+    const last = builder.tokens[builder.tokens.length - 1]
+    if (last?.text !== plan.closing) {
+      push(builder, plan.closing, null)
+      note(builder, `"${plan.closing}": the negation brackets the clause`)
+    }
   }
 
   for (const adverb of chunks.adverbs) {

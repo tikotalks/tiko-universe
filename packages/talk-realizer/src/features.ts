@@ -128,6 +128,12 @@ export interface Features {
    * same way.
    */
   verbTail?: string
+  /**
+   * Where that tail goes. Scandinavian keeps it next to the verb ("vil have et
+   * æble"); Afrikaans and Dutch send the infinitive to the end of the clause
+   * ("wil nie 'n appel hê nie").
+   */
+  verbTailPosition?: 'afterVerb' | 'clauseFinal'
   /** A measure word required when counting this noun (zh 个, 块, 本). */
   measureWord?: string
 

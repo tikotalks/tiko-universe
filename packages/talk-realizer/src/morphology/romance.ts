@@ -10,7 +10,7 @@ import type { Features, Gender } from '../features'
  * language actually ships are curated in its own module.
  */
 
-export type RomanceLanguage = 'fr' | 'es' | 'it' | 'pt'
+export type RomanceLanguage = 'fr' | 'es' | 'it' | 'pt' | 'ca' | 'gl'
 export type Person = 1 | 2 | 3
 export type Num = 'sg' | 'pl'
 
@@ -34,6 +34,17 @@ const ENDINGS: Record<RomanceLanguage, Record<string, Record<string, string>>> =
     ar: { '1sg': 'o', '2sg': 'as', '3sg': 'a', '1pl': 'amos', '2pl': 'ais', '3pl': 'am' },
     er: { '1sg': 'o', '2sg': 'es', '3sg': 'e', '1pl': 'emos', '2pl': 'eis', '3pl': 'em' },
     ir: { '1sg': 'o', '2sg': 'es', '3sg': 'e', '1pl': 'imos', '2pl': 'is', '3pl': 'em' },
+  },
+  // Catalan's plural endings are its own: "volem", not "volemos".
+  ca: {
+    ar: { '1sg': 'o', '2sg': 'es', '3sg': 'a', '1pl': 'em', '2pl': 'eu', '3pl': 'en' },
+    er: { '1sg': 'o', '2sg': 's', '3sg': '', '1pl': 'em', '2pl': 'eu', '3pl': 'en' },
+    ir: { '1sg': 'o', '2sg': 's', '3sg': '', '1pl': 'im', '2pl': 'iu', '3pl': 'en' },
+  },
+  gl: {
+    ar: { '1sg': 'o', '2sg': 'as', '3sg': 'a', '1pl': 'amos', '2pl': 'ades', '3pl': 'an' },
+    er: { '1sg': 'o', '2sg': 'es', '3sg': 'e', '1pl': 'emos', '2pl': 'edes', '3pl': 'en' },
+    ir: { '1sg': 'o', '2sg': 'es', '3sg': 'e', '1pl': 'imos', '2pl': 'ides', '3pl': 'en' },
   },
 }
 
@@ -90,9 +101,12 @@ export function induceGender(text: string, language: RomanceLanguage): Gender | 
   switch (language) {
     case 'es':
     case 'it':
-    case 'pt': {
+    case 'pt':
+    case 'ca':
+    case 'gl': {
       if (/(ción|ção|sión|dad|tà|tù|zione|gione|agem|ã)$/.test(word)) return 'feminine'
-      if (/(ma|ema|oma)$/.test(word)) return 'masculine'
+      // Greek-origin -ma masculines (problema, tema) are curated, not induced:
+      // the rule would wrongly claim "poma", "goma" and "crema".
       if (word.endsWith('o')) return 'masculine'
       if (word.endsWith('a')) return 'feminine'
       if (/(or|ón|ém|im|um|el|il|ol|ul)$/.test(word)) return 'masculine'
@@ -128,6 +142,8 @@ export function pluralize(text: string, language: RomanceLanguage): string {
       else plural = `${word}s`
       break
     }
+    case 'ca':
+    case 'gl':
     case 'es': {
       if (/[aeiou]$/.test(word)) plural = `${word}s`
       else if (word.endsWith('z')) plural = `${word.slice(0, -1)}ces`
@@ -188,7 +204,9 @@ function femininize(base: string, language: RomanceLanguage): string {
       break
     }
     case 'es':
-    case 'pt': {
+    case 'pt':
+    case 'ca':
+    case 'gl': {
       if (word.endsWith('o')) form = `${word.slice(0, -1)}a`
       else if (/(or|ón)$/.test(word)) form = `${word}a`
       else form = word
@@ -290,8 +308,9 @@ export function applyExperiencer(
   const subject = chunks.subject?.pronoun
   if (!subject) return false
   const clitic = clitics[`${person}${number}`]
-  if (!clitic) return false
-  scratch.clitic = { text: clitic, from: subject.id }
+  if (clitic === undefined) return false
+  // An empty clitic means the language spells it inside the verb form instead.
+  if (clitic) scratch.clitic = { text: clitic, from: subject.id }
   scratch.experiencer = true
   chunks.subject = undefined
   return true

@@ -15,9 +15,14 @@ import { note, type LanguageRules } from '../profile'
  * Marked `beta`: the grammar is tested, but the vocabulary was generated against
  * the shared concept ids and needs review by an Indonesian speaker.
  */
-export const indonesian: LanguageRules = {
+/**
+ * Malay and Indonesian are the same grammar with different words, so they share
+ * this implementation — the only difference is which pack is loaded.
+ */
+export function createMalayic(language: 'id' | 'ms', notes: string): LanguageRules {
+  return {
   profile: {
-    language: 'id',
+    language,
     maturity: 'beta',
     wordOrder: 'svo',
     questionStrategy: 'intonation',
@@ -27,7 +32,7 @@ export const indonesian: LanguageRules = {
     capitalize: true,
     punctuation: { statement: '.', question: '?' },
     functionWords: ['tidak', 'bukan'],
-    notes: 'Reduplicated plurals and the meN-/di- verb affixes are not generated. Vocabulary was generated against the shared concept ids and needs review by an Indonesian speaker.',
+    notes,
   },
 
   induce(_word: SelectedWord): Features {
@@ -98,4 +103,15 @@ export const indonesian: LanguageRules = {
     }
     return { kind: 'beforeVerb', word: 'tidak' }
   },
+  }
 }
+
+export const indonesian = createMalayic(
+  'id',
+  'Reduplicated plurals and the meN-/di- verb affixes are not generated. Vocabulary was generated against the shared concept ids and needs review by an Indonesian speaker.',
+)
+
+export const malay = createMalayic(
+  'ms',
+  'Same grammar as Indonesian, which is linguistically accurate. Vocabulary was generated against the shared concept ids and needs review by a Malay speaker.',
+)
