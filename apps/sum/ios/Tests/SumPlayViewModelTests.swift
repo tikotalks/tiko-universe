@@ -60,7 +60,7 @@ final class SumPlayViewModelTests: XCTestCase {
     private func makeViewModel(
         path: SumPath?,
         speech: MockSpeech,
-        voice: Bool = false,
+        mode: SumAnswerMode = .choice,
         maxNumber: Int = 100
     ) -> SumPlayViewModel {
         SumPlayViewModel(
@@ -69,7 +69,7 @@ final class SumPlayViewModelTests: XCTestCase {
             speaker: FormulaSpeaker(languageCode: "en"),
             speech: speech,
             maxNumber: maxNumber,
-            voiceAnsweringEnabled: voice,
+            answerMode: mode,
             timings: .instant
         )
     }
@@ -253,7 +253,7 @@ final class SumPlayViewModelTests: XCTestCase {
     func testVoiceAnswerSelectsCorrectTile() async {
         let speech = MockSpeech()
         speech.scriptedAttempts = [[TikoTranscriptUpdate(transcript: "eight", isFinal: false)]]
-        let vm = makeViewModel(path: path([Formula(a: 3, op: .plus, b: 5)]), speech: speech, voice: true)
+        let vm = makeViewModel(path: path([Formula(a: 3, op: .plus, b: 5)]), speech: speech, mode: .voice)
         vm.begin()
         await waitFor("completed via voice") { vm.state == .completed }
         XCTAssertEqual(vm.session.completedCount, 1)
@@ -261,7 +261,7 @@ final class SumPlayViewModelTests: XCTestCase {
 
     func testVoiceDisabledNeverListens() async {
         let speech = MockSpeech()
-        let vm = makeViewModel(path: path([Formula(a: 3, op: .plus, b: 5)]), speech: speech, voice: false)
+        let vm = makeViewModel(path: path([Formula(a: 3, op: .plus, b: 5)]), speech: speech, mode: .choice)
         vm.begin()
         await waitFor("choosing") { vm.state == .choosing }
         XCTAssertEqual(speech.listenCount, 0)
@@ -271,11 +271,80 @@ final class SumPlayViewModelTests: XCTestCase {
     func testVoiceIgnoresWrongWords() async {
         let speech = MockSpeech()
         speech.scriptedAttempts = [[TikoTranscriptUpdate(transcript: "banana", isFinal: true)]]
-        let vm = makeViewModel(path: path([Formula(a: 3, op: .plus, b: 5)]), speech: speech, voice: true)
+        let vm = makeViewModel(path: path([Formula(a: 3, op: .plus, b: 5)]), speech: speech, mode: .voice)
         vm.begin()
         await waitFor("choosing") { vm.state == .choosing }
         try? await Task.sleep(nanoseconds: 100_000_000)
         XCTAssertEqual(vm.state, .choosing, "wrong word never advances")
+        vm.cancel()
+    }
+}
+
+
+// MARK: - Type mode
+
+@MainActor
+final class SumTypeModeTests: XCTestCase {
+    private func makeVM(_ speech: MockSpeech) -> SumPlayViewModel {
+        SumPlayViewModel(
+            path: SumPath(id: "t", title: "T", emoji: "🧪", formulas: [Formula(a: 3, op: .plus, b: 5)],
+                          isCustom: false, isHidden: false, sortOrder: 0),
+            languageCode: "en",
+            speaker: FormulaSpeaker(languageCode: "en"),
+            speech: speech,
+            answerMode: .type,
+            timings: .instant
+        )
+    }
+
+    private func waitFor(_ condition: @escaping () -> Bool) async {
+        let deadline = Date().addingTimeInterval(2)
+        while !condition() && Date() < deadline {
+            try? await Task.sleep(nanoseconds: 10_000_000)
+        }
+        XCTAssertTrue(condition())
+    }
+
+    func testTypedCorrectAnswerCelebrates() async {
+        let speech = MockSpeech()
+        let vm = makeVM(speech)
+        vm.begin()
+        await waitFor { vm.state == .choosing }
+        XCTAssertFalse(vm.showsChoiceTiles, "type mode hides the tiles")
+        vm.typeDigit(8)
+        XCTAssertTrue(vm.canSubmitTyped)
+        vm.submitTyped()
+        XCTAssertEqual(vm.state, .celebrating)
+        await waitFor { vm.state == .completed }
+    }
+
+    func testTypedWrongAnswerRetriesAndFallsBackToTiles() async {
+        let speech = MockSpeech()
+        let vm = makeVM(speech)
+        vm.begin()
+        await waitFor { vm.state == .choosing }
+
+        vm.typeDigit(7)
+        vm.submitTyped()
+        XCTAssertEqual(vm.typedAnswer, "", "miss clears the input")
+        await waitFor { vm.state == .choosing }
+
+        vm.typeDigit(9)
+        vm.submitTyped()
+        await waitFor { vm.state == .choosing }
+        XCTAssertTrue(vm.showsChoiceTiles, "third round falls back to guided tiles")
+        let visible = vm.choices.filter { !vm.fadedValues.contains($0.value) }
+        XCTAssertLessThanOrEqual(visible.count, 2, "fallback narrows to two tiles")
+        vm.choose(vm.choices.first(where: \.isCorrect)!)
+        await waitFor { vm.state == .completed }
+    }
+
+    func testTypeModeNeverListens() async {
+        let speech = MockSpeech()
+        let vm = makeVM(speech)
+        vm.begin()
+        await waitFor { vm.state == .choosing }
+        XCTAssertEqual(speech.listenCount, 0)
         vm.cancel()
     }
 }

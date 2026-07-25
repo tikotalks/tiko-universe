@@ -42,6 +42,7 @@ public final class TikoVoiceService: NSObject, AVAudioPlayerDelegate, AVSpeechSy
         let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmed.isEmpty else { return }
         stop()
+        TikoSpeech.configurePlaybackSession()
         isSpeaking = true
         defer { isSpeaking = false }
 

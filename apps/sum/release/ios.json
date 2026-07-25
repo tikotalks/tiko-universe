@@ -5,9 +5,9 @@
   "project": "apps/sum/ios/TikoSum.xcodeproj",
   "iosDir": "apps/sum/ios",
   "bundleId": "mt.tiko.sum",
-  "appleId": "",
-  "appStoreId": "",
-  "appStoreUrl": "",
+  "appleId": "me@sil.mt",
+  "appStoreId": "6794587838",
+  "appStoreUrl": "https://apps.apple.com/app/id6794587838",
   "validation": {
     "script": "apps/sum/ios/scripts/validate-local.sh"
   },

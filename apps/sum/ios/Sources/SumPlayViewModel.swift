@@ -43,6 +43,11 @@ final class SumPlayViewModel: ObservableObject {
     @Published private(set) var choices: [AnswerChoice] = []
     @Published private(set) var fadedValues: Set<Int> = []
     @Published private(set) var pulseCorrect = false
+    /// Type mode: the digits entered so far.
+    @Published private(set) var typedAnswer = ""
+    /// Type mode falls back to two choice tiles after repeated misses so the
+    /// loop always ends in success.
+    @Published private(set) var typeFallbackActive = false
     @Published private(set) var attempt = 1
     @Published private(set) var isPausedForInterruption = false
     @Published private(set) var audioLevel: Float = 0
@@ -50,7 +55,7 @@ final class SumPlayViewModel: ObservableObject {
     let languageCode: String
     let timings: Timings
     let maxNumber: Int
-    let voiceAnsweringEnabled: Bool
+    let answerMode: SumAnswerMode
 
     private let speech: TikoSpeechServicing
     private let speaker: FormulaSpeaker
@@ -66,7 +71,7 @@ final class SumPlayViewModel: ObservableObject {
         speaker: FormulaSpeaker,
         speech: TikoSpeechServicing,
         maxNumber: Int = 100,
-        voiceAnsweringEnabled: Bool = false,
+        answerMode: SumAnswerMode = .choice,
         timings: Timings = .standard
     ) {
         self.session = SumSession(path: path)
@@ -74,7 +79,7 @@ final class SumPlayViewModel: ObservableObject {
         self.speaker = speaker
         self.speech = speech
         self.maxNumber = maxNumber
-        self.voiceAnsweringEnabled = voiceAnsweringEnabled
+        self.answerMode = answerMode
         self.timings = timings
         speech.onAudioLevel = { [weak self] level in
             self?.audioLevel = level
@@ -217,6 +222,8 @@ final class SumPlayViewModel: ObservableObject {
         attempt = 1
         fadedValues = []
         pulseCorrect = false
+        typedAnswer = ""
+        typeFallbackActive = false
         choices = DistractorGenerator.choices(for: formula, maxNumber: 100)
 
         runTask?.cancel()
@@ -289,6 +296,47 @@ final class SumPlayViewModel: ObservableObject {
         }
     }
 
+    // MARK: - Type mode
+
+    var showsChoiceTiles: Bool {
+        answerMode != .type || typeFallbackActive
+    }
+
+    func typeDigit(_ digit: Int) {
+        guard state == .choosing, answerMode == .type, !typeFallbackActive else { return }
+        let candidate = typedAnswer + String(digit)
+        guard candidate.count <= 3, Int(candidate) != nil else { return }
+        typedAnswer = candidate
+    }
+
+    func typeDelete() {
+        guard state == .choosing, !typedAnswer.isEmpty else { return }
+        typedAnswer.removeLast()
+    }
+
+    var canSubmitTyped: Bool {
+        state == .choosing && answerMode == .type && !typeFallbackActive && Int(typedAnswer) != nil
+    }
+
+    func submitTyped() {
+        guard canSubmitTyped, let value = Int(typedAnswer),
+              let correct = activeFormula?.result else { return }
+        if value == correct {
+            choose(AnswerChoice(value: correct, isCorrect: true))
+            return
+        }
+        // Calm miss: soft tone, re-speak, clear; third miss falls back to two
+        // choice tiles so the child always gets there.
+        attempt += 1
+        typedAnswer = ""
+        if attempt >= 3 {
+            typeFallbackActive = true
+            fadedValues = Set(choices.filter { !$0.isCorrect }.dropFirst().map(\.value))
+        }
+        state = .retrying(attempt: attempt)
+        respeakAndChoose()
+    }
+
     private func advance() {
         session.currentIndex += 1
         activeFormula = nil
@@ -310,7 +358,7 @@ final class SumPlayViewModel: ObservableObject {
     // MARK: - Voice answering
 
     private func startListeningIfEnabled() {
-        guard voiceAnsweringEnabled,
+        guard answerMode == .voice,
               speech.permissionState() == .granted,
               let formula = activeFormula,
               let correct = formula.result,

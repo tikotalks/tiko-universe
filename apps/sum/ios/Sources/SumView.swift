@@ -7,7 +7,7 @@ enum SumSettings {
     static let timesEnabledKey = "tiko.sum.op.times"
     static let divideEnabledKey = "tiko.sum.op.dividedBy"
     static let minusEnabledKey = "tiko.sum.op.minus"
-    static let voiceAnswerKey = "tiko.sum.voiceAnswer"
+    static let answerModeKey = "tiko.sum.answerMode"
 }
 
 struct SumView: View {
@@ -218,9 +218,9 @@ struct SumSettingsContent: View {
 
     @AppStorage(SumSettings.maxNumberKey) private var maxNumber = 20
     @AppStorage(SumSettings.minusEnabledKey) private var minusEnabled = true
-    @AppStorage(SumSettings.timesEnabledKey) private var timesEnabled = false
-    @AppStorage(SumSettings.divideEnabledKey) private var divideEnabled = false
-    @AppStorage(SumSettings.voiceAnswerKey) private var voiceAnswer = false
+    @AppStorage(SumSettings.timesEnabledKey) private var timesEnabled = true
+    @AppStorage(SumSettings.divideEnabledKey) private var divideEnabled = true
+    @AppStorage(SumSettings.answerModeKey) private var answerModeRaw = SumAnswerMode.choice.rawValue
 
     private let appColor = SumAppConfig.app.appColor
 
@@ -260,37 +260,42 @@ struct SumSettingsContent: View {
                 operatorToggle("divide", isOn: $divideEnabled)
             }
 
-            Toggle(isOn: voiceAnswerBinding) {
-                VStack(alignment: .leading, spacing: 2) {
-                    Text(i18n.t("sum.settings.voiceAnswer"))
-                        .font(.system(.body, design: .rounded).weight(.bold))
+            VStack(alignment: .leading, spacing: 6) {
+                TikoFieldLabel(i18n.t("sum.settings.answerMode"))
+                Picker(i18n.t("sum.settings.answerMode"), selection: answerModeBinding) {
+                    ForEach(SumAnswerMode.allCases, id: \.self) { mode in
+                        Image(systemName: mode.systemImage).tag(mode)
+                    }
+                }
+                .pickerStyle(.segmented)
+                if answerModeBinding.wrappedValue == .voice {
                     Text(i18n.t("sum.settings.voiceAnswerHint"))
                         .font(.system(.caption, design: .rounded))
                         .foregroundStyle(.secondary)
                 }
             }
-            .tint(appColor.palette.primary)
 
             SumSpokenWordsEditor(i18n: i18n, store: store, languageCode: languageCode)
         }
     }
 
-    /// Enabling voice answering requests permissions right here, in the
-    /// parent context — the child flow never prompts.
-    private var voiceAnswerBinding: Binding<Bool> {
+    /// Selecting the voice mode requests permissions right here, in the
+    /// parent context — the child flow never prompts. Choice and type modes
+    /// never touch the microphone at all.
+    private var answerModeBinding: Binding<SumAnswerMode> {
         Binding(
-            get: { voiceAnswer },
-            set: { enabled in
-                guard enabled else {
-                    voiceAnswer = false
+            get: { SumAnswerMode(rawValue: answerModeRaw) ?? .choice },
+            set: { mode in
+                guard mode == .voice else {
+                    answerModeRaw = mode.rawValue
                     return
                 }
                 Task { @MainActor in
                     let service = TikoSpeechPracticeService()
                     if service.permissionState() == .granted {
-                        voiceAnswer = true
-                    } else {
-                        voiceAnswer = await service.requestPermissions()
+                        answerModeRaw = SumAnswerMode.voice.rawValue
+                    } else if await service.requestPermissions() {
+                        answerModeRaw = SumAnswerMode.voice.rawValue
                     }
                 }
             }
