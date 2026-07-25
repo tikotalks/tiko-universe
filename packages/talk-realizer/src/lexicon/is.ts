@@ -6,6 +6,16 @@ import type { Lexicon } from '../features'
  * be told, so both are curated.
  */
 export const icelandicLexicon: Lexicon = {
+  // The strong verbs, whose stem vowel changes: no rule finds these.
+  need: { pos: 'verb', forms: { '1sg': 'þarf', '2sg': 'þarft', '3sg': 'þarf', '1pl': 'þurfum', '2pl': 'þurfið', '3pl': 'þurfa' } },
+  feel: { pos: 'verb', forms: { '1sg': 'finn', '2sg': 'finnur', '3sg': 'finnur', '1pl': 'finnum', '2pl': 'finnið', '3pl': 'finna' } },
+  sit: { pos: 'verb', forms: { '1sg': 'sit', '2sg': 'situr', '3sg': 'situr', '1pl': 'sitjum', '2pl': 'sitjið', '3pl': 'sitja' } },
+  stand: { pos: 'verb', forms: { '1sg': 'stend', '2sg': 'stendur', '3sg': 'stendur', '1pl': 'stöndum', '2pl': 'standið', '3pl': 'standa' } },
+  walk: { pos: 'verb', forms: { '1sg': 'geng', '2sg': 'gengur', '3sg': 'gengur', '1pl': 'göngum', '2pl': 'gangið', '3pl': 'ganga' } },
+  run: { pos: 'verb', forms: { '1sg': 'hleyp', '2sg': 'hleypur', '3sg': 'hleypur', '1pl': 'hlaupum', '2pl': 'hlaupið', '3pl': 'hlaupa' } },
+  wait: { pos: 'verb', forms: { '1sg': 'bíð', '2sg': 'bíður', '3sg': 'bíður', '1pl': 'bíðum', '2pl': 'bíðið', '3pl': 'bíða' } },
+  wash: { pos: 'verb', forms: { '1sg': 'þvæ', '2sg': 'þværð', '3sg': 'þvær', '1pl': 'þvoum', '2pl': 'þvoið', '3pl': 'þvo' } },
+  can: { pos: 'verb', forms: { '1sg': 'get', '2sg': 'getur', '3sg': 'getur', '1pl': 'getum', '2pl': 'getið', '3pl': 'geta' } },
   i: { pos: 'pronoun', person: 1, number: 'sg', accusative: 'mig', dative: 'mér' },
   you: { pos: 'pronoun', person: 2, number: 'sg', accusative: 'þig', dative: 'þér' },
   we: { pos: 'pronoun', person: 1, number: 'pl', accusative: 'okkur', dative: 'okkur' },

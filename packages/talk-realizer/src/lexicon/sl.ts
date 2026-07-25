@@ -2,6 +2,8 @@ import type { Lexicon } from '../features'
 
 /** Slovenian overlay: verb persons, animacy, and the case forms a rule misses. */
 export const slovenianLexicon: Lexicon = {
+  // "lahko" is an adverb doing a modal's work: it does not conjugate at all.
+  can: { pos: 'verb', forms: { '1sg': 'lahko', '2sg': 'lahko', '3sg': 'lahko', pl: 'lahko' } },
   i: { pos: 'pronoun', person: 1, number: 'sg', accusative: 'me', dative: 'mi' },
   you: { pos: 'pronoun', person: 2, number: 'sg', accusative: 'te', dative: 'ti' },
   we: { pos: 'pronoun', person: 1, number: 'pl', accusative: 'nas', dative: 'nam' },
@@ -68,6 +70,11 @@ export const slovenianLexicon: Lexicon = {
   on: { pos: 'preposition', governsCase: 'loc' },
   from: { pos: 'preposition', governsCase: 'gen' },
   without: { pos: 'preposition', governsCase: 'gen' },
+
+  // "with" governs the instrumental — the case this file's tables generate.
+  with: { pos: 'preposition', governsCase: 'ins' },
+  'next-to': { pos: 'preposition', governsCase: 'gen' },
+  under: { pos: 'preposition', governsCase: 'ins' },
 
   not: { pos: 'negation' },
 }

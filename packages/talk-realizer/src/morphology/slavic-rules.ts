@@ -1,6 +1,8 @@
 import type { Features, SelectedWord } from '../features'
 import { declineAdjective, declineNoun, declinePossessive, induceSlavicGender, type SlavicCase, type SlavicLanguage } from './slavic'
 import { extractObjectClitic } from './clitic'
+import { derivePerson, type PersonKey } from './persons'
+import { SLAVIC_CONJUGATION } from './slavic-conjugation'
 import { agreesWith, formFor, note, type LanguageRules, type PhraseContext } from '../profile'
 
 /**
@@ -53,7 +55,7 @@ function caseFor(ctx: PhraseContext, genitiveOfNegation: boolean): SlavicCase {
   // A preposition governs its own case, and each one demands a specific one —
   // Polish "do" the genitive, Russian "к" the dative.
   const governed = ctx.preposition?.features.governsCase
-  if (governed && governed !== 'ins' && governed !== 'abl') return governed
+  if (governed && governed !== 'abl') return governed
   // The genitive of negation: a negated object changes case, where the language
   // has that rule.
   if (ctx.negateHere && genitiveOfNegation) return 'gen'
@@ -93,12 +95,22 @@ export function createSlavic(config: SlavicConfig): LanguageRules {
       if (verb.features.copula && config.copula) {
         return config.copula[`${ctx.person}${ctx.number}`] ?? verb.text
       }
+      // Curated always wins: these languages have irregular verbs and the packs
+      // ship only the first person.
       const curated = formFor(forms, ctx.person, ctx.number)
       if (curated) return curated
-      // The pack stores a first-person form; other persons are curated, because
-      // Slavic conjugation classes are not recoverable from one form.
       if (ctx.person === 1 && ctx.number === 'sg') return verb.text
-      note(ctx.builder, `no ${ctx.person}${ctx.number} form for "${verb.text}" — needs curation`)
+
+      // Otherwise the ending of the first person tells us the class.
+      const key = `${ctx.person}${ctx.number}` as PersonKey
+      const derived = derivePerson(verb.text, key, SLAVIC_CONJUGATION[language])
+      if (derived) {
+        note(ctx.builder, derived.because
+          ? `"${derived.text}": ${derived.because}`
+          : `"${derived.text}": conjugated from the first person`)
+        return derived.text
+      }
+      note(ctx.builder, `no ${key} form for "${verb.text}" — the class is ambiguous and needs curation`)
       return verb.text
     },
 

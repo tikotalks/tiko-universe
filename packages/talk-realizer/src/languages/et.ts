@@ -1,5 +1,6 @@
 import type { Features, SelectedWord } from '../features'
 import type { Word } from '../chunk'
+import { derivePerson, type Conjugation, type PersonKey } from '../morphology/persons'
 import { formFor, note, type LanguageRules } from '../profile'
 
 /**
@@ -22,6 +23,16 @@ import { formFor, note, type LanguageRules } from '../profile'
  */
 const COPULA: Record<string, string> = {
   '1sg': 'olen', '2sg': 'oled', '3sg': 'on', '1pl': 'oleme', '2pl': 'olete', '3pl': 'on',
+}
+
+/**
+ * Estonian is the most regular language in this package on this point: strip the
+ * -n of the first person and the rest of the present tense is one ending each.
+ */
+const CONJUGATION: Conjugation = {
+  rules: [
+    { when: 'n', forms: { '2sg': 'd', '3sg': 'b', '1pl': 'me', '2pl': 'te', '3pl': 'vad' } },
+  ],
 }
 
 /**
@@ -93,7 +104,13 @@ export const estonian: LanguageRules = {
     const curated = formFor(verb.features.forms, ctx.person, ctx.number)
     if (curated) return curated
     if (ctx.person === 1 && ctx.number === 'sg') return verb.text
-    note(ctx.builder, `no ${ctx.person}${ctx.number} form for "${verb.text}" — needs curation`)
+    const key = `${ctx.person}${ctx.number}` as PersonKey
+    const derived = derivePerson(verb.text, key, CONJUGATION)
+    if (derived) {
+      note(ctx.builder, `"${derived.text}": conjugated from the first person`)
+      return derived.text
+    }
+    note(ctx.builder, `no ${key} form for "${verb.text}" — needs curation`)
     return verb.text
   },
 

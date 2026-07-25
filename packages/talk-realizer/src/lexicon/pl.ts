@@ -6,6 +6,11 @@ import type { Lexicon } from '../features'
  * accusative, and the genitive of negation is obligatory here.
  */
 export const polishLexicon: Lexicon = {
+  hear: { pos: 'verb', forms: { '1sg': 'słyszę', '2sg': 'słyszysz', '3sg': 'słyszy', '1pl': 'słyszymy', '2pl': 'słyszycie', '3pl': 'słyszą' } },
+  come: { pos: 'verb', forms: { '1sg': 'przychodzę', '2sg': 'przychodzisz', '3sg': 'przychodzi', '1pl': 'przychodzimy', '2pl': 'przychodzicie', '3pl': 'przychodzą' } },
+  sit: { pos: 'verb', forms: { '1sg': 'siedzę', '2sg': 'siedzisz', '3sg': 'siedzi', '1pl': 'siedzimy', '2pl': 'siedzicie', '3pl': 'siedzą' } },
+  run: { pos: 'verb', forms: { '1sg': 'biegnę', '2sg': 'biegniesz', '3sg': 'biegnie', '1pl': 'biegniemy', '2pl': 'biegniecie', '3pl': 'biegną' } },
+  can: { pos: 'verb', forms: { '1sg': 'mogę', '2sg': 'możesz', '3sg': 'może', '1pl': 'możemy', '2pl': 'możecie', '3pl': 'mogą' } },
   // "dwa" for a masculine, "dwie" for a feminine: Slavic numerals agree.
   two: { pos: 'determiner', determinerKind: 'quantifier', forcesNumber: 'pl', feminine: 'dwie' },
   i: { pos: 'pronoun', person: 1, number: 'sg', accusative: 'mnie', dative: 'mi', cases: { gen: 'mnie' } },
@@ -76,6 +81,11 @@ export const polishLexicon: Lexicon = {
   on: { pos: 'preposition', governsCase: 'loc' },
   from: { pos: 'preposition', governsCase: 'gen' },
   without: { pos: 'preposition', governsCase: 'gen' },
+
+  // "with" governs the instrumental — the case this file's tables generate.
+  with: { pos: 'preposition', governsCase: 'ins' },
+  'next-to': { pos: 'preposition', governsCase: 'gen' },
+  under: { pos: 'preposition', governsCase: 'ins' },
 
   not: { pos: 'negation' },
 }

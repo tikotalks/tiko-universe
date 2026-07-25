@@ -2,6 +2,7 @@ import type { Lexicon } from '../features'
 
 /** Croatian overlay: the same structure as Serbian, in Latin script and its own words. */
 export const croatianLexicon: Lexicon = {
+  can: { pos: 'verb', forms: { '1sg': 'mogu', '2sg': 'možeš', '3sg': 'može', '1pl': 'možemo', '2pl': 'možete', '3pl': 'mogu' } },
   // "dva" for a masculine, "dvije" for a feminine: Slavic numerals agree.
   two: { pos: 'determiner', determinerKind: 'quantifier', forcesNumber: 'pl', feminine: 'dvije' },
   i: { pos: 'pronoun', person: 1, number: 'sg', accusative: 'me', dative: 'mi' },
@@ -60,6 +61,11 @@ export const croatianLexicon: Lexicon = {
   on: { pos: 'preposition', governsCase: 'loc' },
   from: { pos: 'preposition', governsCase: 'gen' },
   without: { pos: 'preposition', governsCase: 'gen' },
+
+  // "with" governs the instrumental — the case this file's tables generate.
+  with: { pos: 'preposition', governsCase: 'ins' },
+  'next-to': { pos: 'preposition', governsCase: 'gen' },
+  under: { pos: 'preposition', governsCase: 'ins' },
 
   not: { pos: 'negation' },
 }

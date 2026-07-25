@@ -1,6 +1,7 @@
 import type { Features, SelectedWord } from '../features'
 import type { Word } from '../chunk'
 import { applySuffix, FINNISH_HARMONY } from '../morphology/agglutinative'
+import { derivePerson, type Conjugation, type PersonKey } from '../morphology/persons'
 import { formFor, note, type LanguageRules } from '../profile'
 
 /**
@@ -33,6 +34,17 @@ const NEGATIVE: Record<string, string> = {
 
 const COPULA: Record<string, string> = {
   '1sg': 'olen', '2sg': 'olet', '3sg': 'on', '1pl': 'olemme', '2pl': 'olette', '3pl': 'ovat',
+}
+
+/**
+ * Finnish strips the -n of the first person and adds one ending each — except the
+ * third person, which lengthens the stem's final vowel instead of adding anything
+ * ("halua" → "haluaa"), so it is built separately below.
+ */
+const CONJUGATION: Conjugation = {
+  rules: [
+    { when: 'n', forms: { '2sg': 't', '1pl': 'mme', '2pl': 'tte', '3pl': 'vat' } },
+  ],
 }
 
 const COPULA_NEGATIVE: Record<string, string> = {
@@ -124,6 +136,21 @@ export const finnish: LanguageRules = {
     const curated = formFor(verb.features.forms, ctx.person, ctx.number)
     if (curated) return curated
     if (key === '1sg') return verb.text
+    if (key === '3sg') {
+      // The third person lengthens the final vowel: "haluan" → "haluaa".
+      const stem = verb.text.replace(/n$/, '')
+      const final = stem[stem.length - 1] ?? ''
+      if (FINNISH_HARMONY.vowels.includes(final)) {
+        const form = `${stem}${final}`
+        note(ctx.builder, `"${form}": the third person lengthens the final vowel`)
+        return form
+      }
+    }
+    const derived = derivePerson(verb.text, key as PersonKey, CONJUGATION)
+    if (derived) {
+      note(ctx.builder, `"${derived.text}": conjugated from the first person`)
+      return derived.text
+    }
     note(ctx.builder, `no ${key} form for "${verb.text}" — needs curation`)
     return verb.text
   },

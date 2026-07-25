@@ -32,6 +32,9 @@ export const estonianLexicon: Lexicon = {
   help: { pos: 'verb', stem: 'aita', forms: { '2sg': 'aitad', '3sg': 'aitab', '1pl': 'aitame', '3pl': 'aitavad' } },
   wait: { pos: 'verb', stem: 'oota', forms: { '2sg': 'ootad', '3sg': 'ootab', '1pl': 'ootame', '3pl': 'ootavad' } },
 
+  // Estonian has no verb "to have" either: "mul on" is "at me is".
+  have: { pos: 'verb', stem: 'ole', forms: { '1sg': 'mul on', '2sg': 'sul on', '3sg': 'tal on', '1pl': 'meil on', '2pl': 'teil on', '3pl': 'neil on' } },
+
   // Case forms no rule reaches: the nominative hides the stem.
   water: { pos: 'noun', mass: true, cases: { par: 'vett', gen: 'vee' } },
   bread: { pos: 'noun', mass: true, cases: { par: 'leiba', gen: 'leiva' } },

@@ -6,6 +6,7 @@ import type { Lexicon } from '../features'
  * and the irregular stems are curated along with the verb persons.
  */
 export const lithuanianLexicon: Lexicon = {
+  need: { pos: 'verb', forms: { '1sg': 'reikia', '2sg': 'reikia', '3sg': 'reikia', pl: 'reikia' } },
   i: { pos: 'pronoun', person: 1, number: 'sg', accusative: 'mane', dative: 'man' },
   you: { pos: 'pronoun', person: 2, number: 'sg', accusative: 'tave', dative: 'tau' },
   we: { pos: 'pronoun', person: 1, number: 'pl', accusative: 'mus', dative: 'mums' },
@@ -66,6 +67,11 @@ export const lithuanianLexicon: Lexicon = {
   on: { pos: 'preposition', governsCase: 'loc' },
   from: { pos: 'preposition', governsCase: 'gen' },
   without: { pos: 'preposition', governsCase: 'gen' },
+
+  // "with" governs the instrumental — the case this file's tables generate.
+  with: { pos: 'preposition', governsCase: 'ins' },
+  'next-to': { pos: 'preposition', governsCase: 'gen' },
+  under: { pos: 'preposition', governsCase: 'ins' },
 
   not: { pos: 'negation' },
 }

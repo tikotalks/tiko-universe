@@ -1,6 +1,7 @@
 import type { Features, SelectedWord } from '../features'
 import { extractObjectClitic } from '../morphology/clitic'
 import { applyExperiencer } from '../morphology/romance'
+import { derivePerson, type Conjugation, type PersonKey } from '../morphology/persons'
 import { agreesWith, formFor, note, type LanguageRules } from '../profile'
 
 /**
@@ -90,6 +91,20 @@ function agree(
   return `${linker} ${base}`
 }
 
+/**
+ * Albanian conjugation, from the first person the packs ship: the -oj class is the
+ * large regular one, and -em marks the middle voice.
+ */
+const CONJUGATION: Conjugation = {
+  rules: [
+    { when: 'oj', forms: { '2sg': 'on', '3sg': 'on', '1pl': 'ojmë', '2pl': 'oni', '3pl': 'ojnë' } },
+    { when: 'aj', forms: { '2sg': 'an', '3sg': 'an', '1pl': 'ajmë', '2pl': 'ani', '3pl': 'ajnë' } },
+    { when: 'ej', forms: { '2sg': 'en', '3sg': 'en', '1pl': 'ejmë', '2pl': 'eni', '3pl': 'ejnë' } },
+    { when: 'em', forms: { '2sg': 'esh', '3sg': 'et', '1pl': 'emi', '2pl': 'eni', '3pl': 'en' } },
+    { when: 'ë', forms: { '2sg': 'ësh', '3sg': 'ë', '1pl': 'ëmë', '2pl': 'ëni', '3pl': 'ën' } },
+  ],
+}
+
 export const albanian: LanguageRules = {
   profile: {
     language: 'sq',
@@ -124,7 +139,13 @@ export const albanian: LanguageRules = {
     const curated = formFor(forms, ctx.person, ctx.number)
     if (curated) return curated
     if (ctx.person === 1 && ctx.number === 'sg') return verb.text
-    note(ctx.builder, `no ${ctx.person}${ctx.number} form for "${verb.text}" — needs curation`)
+    const key = `${ctx.person}${ctx.number}` as PersonKey
+    const derived = derivePerson(verb.text, key, CONJUGATION)
+    if (derived) {
+      note(ctx.builder, `"${derived.text}": conjugated from the first person`)
+      return derived.text
+    }
+    note(ctx.builder, `no ${key} form for "${verb.text}" — needs curation`)
     return verb.text
   },
 

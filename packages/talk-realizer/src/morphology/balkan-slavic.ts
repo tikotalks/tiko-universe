@@ -1,5 +1,6 @@
 import type { Features, SelectedWord } from '../features'
 import { extractObjectClitic } from '../morphology/clitic'
+import { derivePerson, type Conjugation, type PersonKey } from './persons'
 import { agreesWith, formFor, note, type LanguageRules, type PhraseContext } from '../profile'
 
 /**
@@ -25,6 +26,7 @@ import { agreesWith, formFor, note, type LanguageRules, type PhraseContext } fro
  * particle "ли" — which Talk never generates, because every question it builds
  * starts with a question word. All of it needs review by a Bulgarian speaker.
  */
+/** How the first person singular's ending tells you the rest of the paradigm. */
 export interface BalkanSlavicConfig {
   language: 'bg' | 'mk'
   maturity: 'production' | 'beta' | 'draft'
@@ -54,6 +56,8 @@ export interface BalkanSlavicConfig {
   fullShortDistinction: boolean
   notes: string
   functionWords: readonly string[]
+  /** Present-tense endings, keyed by the ending of the first person singular. */
+  conjugation: Conjugation
 }
 
 /** Writes the definite article onto a noun. */
@@ -128,7 +132,14 @@ export function createBalkanSlavic(config: BalkanSlavicConfig): LanguageRules {
     const curated = formFor(forms, ctx.person, ctx.number)
     if (curated) return curated
     if (ctx.person === 1 && ctx.number === 'sg') return verb.text
-    note(ctx.builder, `no ${ctx.person}${ctx.number} form for "${verb.text}" — needs curation`)
+    // The first person's ending identifies the class: "искам" → "искаш".
+    const key = `${ctx.person}${ctx.number}` as PersonKey
+    const derived = derivePerson(verb.text, key, config.conjugation)
+    if (derived) {
+      note(ctx.builder, `"${derived.text}": conjugated from the first person`)
+      return derived.text
+    }
+    note(ctx.builder, `no ${key} form for "${verb.text}" — the class is ambiguous and needs curation`)
     return verb.text
   },
 

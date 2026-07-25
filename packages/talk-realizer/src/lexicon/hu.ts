@@ -76,5 +76,11 @@ export const hungarianLexicon: Lexicon = {
   from: { pos: 'preposition' },
   with: { pos: 'preposition' },
 
+  // The stems the pack's finished forms hide.
+  need: { pos: 'verb', stem: 'kell', forms: { '1sg': 'kell', '2sg': 'kell', '3sg': 'kell', pl: 'kell' } },
+  stop: { pos: 'verb', stem: 'megáll' },
+  start: { pos: 'verb', stem: 'kezd' },
+  can: { pos: 'verb', stem: 'tud' },
+
   not: { pos: 'negation' },
 }

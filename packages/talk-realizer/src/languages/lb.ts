@@ -1,4 +1,5 @@
 import type { Features, SelectedWord } from '../features'
+import { derivePerson, type Conjugation, type PersonKey } from '../morphology/persons'
 import { formFor, isSensation, note, type LanguageRules } from '../profile'
 
 /**
@@ -18,6 +19,17 @@ const COPULA: Record<string, string> = {
 
 const HAVE: Record<string, string> = {
   '1sg': 'hunn', '2sg': 'hues', '3sg': 'huet', '1pl': 'hunn', '2pl': 'hutt', '3pl': 'hunn',
+}
+
+/**
+ * Luxembourgish verbs: the first person looks like the infinitive ("ech spillen"),
+ * and the second and third are built on the stem behind it.
+ */
+const CONJUGATION: Conjugation = {
+  rules: [
+    { when: 'en', forms: { '2sg': 's', '3sg': 't', '1pl': 'en', '2pl': 't', '3pl': 'en' } },
+    { when: 'n', forms: { '2sg': 's', '3sg': 't', '1pl': 'n', '2pl': 't', '3pl': 'n' } },
+  ],
 }
 
 export const luxembourgish: LanguageRules = {
@@ -50,7 +62,13 @@ export const luxembourgish: LanguageRules = {
     const curated = formFor(verb.features.forms, ctx.person, ctx.number)
     if (curated) return curated
     if (ctx.person === 1 && ctx.number === 'sg') return verb.text
-    note(ctx.builder, `no ${ctx.person}${ctx.number} form for "${verb.text}" — needs curation`)
+    const key = `${ctx.person}${ctx.number}` as PersonKey
+    const derived = derivePerson(verb.text, key, CONJUGATION)
+    if (derived) {
+      note(ctx.builder, `"${derived.text}": conjugated from the first person`)
+      return derived.text
+    }
+    note(ctx.builder, `no ${key} form for "${verb.text}" — needs curation`)
     return verb.text
   },
 

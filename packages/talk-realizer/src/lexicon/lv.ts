@@ -6,6 +6,8 @@ import type { Lexicon } from '../features'
  * persons.
  */
 export const latvianLexicon: Lexicon = {
+  need: { pos: 'verb', forms: { '1sg': 'vajag', '2sg': 'vajag', '3sg': 'vajag', pl: 'vajag' } },
+  have: { pos: 'verb', forms: { '1sg': 'man ir', '2sg': 'tev ir', '3sg': 'viņam ir', '1pl': 'mums ir', '2pl': 'jums ir', '3pl': 'viņiem ir' } },
   i: { pos: 'pronoun', person: 1, number: 'sg', accusative: 'mani', dative: 'man' },
   you: { pos: 'pronoun', person: 2, number: 'sg', accusative: 'tevi', dative: 'tev' },
   we: { pos: 'pronoun', person: 1, number: 'pl', accusative: 'mūs', dative: 'mums' },
@@ -64,6 +66,11 @@ export const latvianLexicon: Lexicon = {
   on: { pos: 'preposition', governsCase: 'loc' },
   from: { pos: 'preposition', governsCase: 'gen' },
   without: { pos: 'preposition', governsCase: 'gen' },
+
+  // Latvian says "ar" plus the accusative where the others use a case.
+  with: { pos: 'preposition', governsCase: 'acc' },
+  'next-to': { pos: 'preposition', governsCase: 'gen' },
+  under: { pos: 'preposition', governsCase: 'acc' },
 
   not: { pos: 'negation' },
 }

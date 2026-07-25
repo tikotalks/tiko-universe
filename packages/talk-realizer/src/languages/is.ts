@@ -1,4 +1,5 @@
 import type { Features, SelectedWord } from '../features'
+import { derivePerson, type Conjugation, type PersonKey } from '../morphology/persons'
 import { formFor, note, type LanguageRules, type PhraseContext } from '../profile'
 
 /**
@@ -54,6 +55,17 @@ function accusative(text: string, features: Features): string {
   return text
 }
 
+/**
+ * Icelandic conjugation for the weak verbs, which is what a rule can reach. The
+ * strong verbs change their stem vowel ("fer" → "förum") and are curated.
+ */
+const CONJUGATION: Conjugation = {
+  rules: [
+    { when: 'a', forms: { '2sg': 'ar', '3sg': 'ar', '1pl': 'um', '2pl': 'ið', '3pl': 'a' } },
+    { when: 'i', forms: { '2sg': 'ir', '3sg': 'ir', '1pl': 'um', '2pl': 'ið', '3pl': 'a' } },
+  ],
+}
+
 export const icelandic: LanguageRules = {
   profile: {
     language: 'is',
@@ -82,7 +94,13 @@ export const icelandic: LanguageRules = {
     const curated = formFor(verb.features.forms, ctx.person, ctx.number)
     if (curated) return curated
     if (ctx.person === 1 && ctx.number === 'sg') return verb.text
-    note(ctx.builder, `no ${ctx.person}${ctx.number} form for "${verb.text}" — needs curation`)
+    const key = `${ctx.person}${ctx.number}` as PersonKey
+    const derived = derivePerson(verb.text, key, CONJUGATION)
+    if (derived) {
+      note(ctx.builder, `"${derived.text}": a weak verb, conjugated from the first person`)
+      return derived.text
+    }
+    note(ctx.builder, `no ${key} form for "${verb.text}" — a strong verb needs curation`)
     return verb.text
   },
 

@@ -6,6 +6,12 @@ import type { Lexicon } from '../features'
  * told), and the feminine of an adjective, which is not always base + e.
  */
 export const albanianLexicon: Lexicon = {
+  need: { pos: 'verb', forms: { '1sg': 'kam nevojë', '2sg': 'ke nevojë', '3sg': 'ka nevojë', '1pl': 'kemi nevojë', '2pl': 'keni nevojë', '3pl': 'kanë nevojë' } },
+  walk: { pos: 'verb', forms: { '1sg': 'shëtit', '2sg': 'shëtitesh', '3sg': 'shëtit', '1pl': 'shëtitim', '2pl': 'shëtitni', '3pl': 'shëtitin' } },
+  wait: { pos: 'verb', forms: { '1sg': 'pres', '2sg': 'pret', '3sg': 'pret', '1pl': 'presim', '2pl': 'prisni', '3pl': 'presin' } },
+  choose: { pos: 'verb', forms: { '1sg': 'zgjedh', '2sg': 'zgjedh', '3sg': 'zgjedh', '1pl': 'zgjedhim', '2pl': 'zgjidhni', '3pl': 'zgjedhin' } },
+  open: { pos: 'verb', forms: { '1sg': 'hap', '2sg': 'hap', '3sg': 'hap', '1pl': 'hapim', '2pl': 'hapni', '3pl': 'hapin' } },
+  close: { pos: 'verb', forms: { '1sg': 'mbyll', '2sg': 'mbyll', '3sg': 'mbyll', '1pl': 'mbyllim', '2pl': 'mbyllni', '3pl': 'mbyllin' } },
   i: { pos: 'pronoun', person: 1, number: 'sg', accusative: 'më' },
   you: { pos: 'pronoun', person: 2, number: 'sg', accusative: 'të' },
   we: { pos: 'pronoun', person: 1, number: 'pl', accusative: 'na' },

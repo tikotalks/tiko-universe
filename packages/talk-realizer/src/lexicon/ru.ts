@@ -6,6 +6,10 @@ import type { Lexicon } from '../features'
  * animate — animacy decides the masculine accusative.
  */
 export const russianLexicon: Lexicon = {
+  // Impersonal: "мне нужно" has no person, so every form is the same word.
+  need: { pos: 'verb', forms: { '1sg': 'нужно', '2sg': 'нужно', '3sg': 'нужно', pl: 'нужно' } },
+  // A reflexive verb conjugates inside the -ся.
+  stop: { pos: 'verb', forms: { '1sg': 'останавливаюсь', '2sg': 'останавливаешься', '3sg': 'останавливается', '1pl': 'останавливаемся', '2pl': 'останавливаетесь', '3pl': 'останавливаются' } },
   // "два" for a masculine, "две" for a feminine: Slavic numerals agree.
   two: { pos: 'determiner', determinerKind: 'quantifier', forcesNumber: 'pl', feminine: 'две' },
   i: { pos: 'pronoun', person: 1, number: 'sg', accusative: 'меня', dative: 'мне', cases: { gen: 'меня' } },
@@ -81,6 +85,11 @@ export const russianLexicon: Lexicon = {
   tired: { pos: 'adjective', predicative: 'устал' },
   sick: { pos: 'adjective', predicative: 'болен' },
   sad: { pos: 'adjective', predicative: 'расстроен' },
+
+  // "with" governs the instrumental — the case this file's tables generate.
+  with: { pos: 'preposition', governsCase: 'ins' },
+  'next-to': { pos: 'preposition', governsCase: 'gen' },
+  under: { pos: 'preposition', governsCase: 'ins' },
 
   not: { pos: 'negation' },
 }

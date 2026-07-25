@@ -22,6 +22,16 @@ export const bulgarian = createBalkanSlavic({
     adjectiveMasculineFull: 'ият', adjectiveMasculineShort: 'ия',
   },
   fullShortDistinction: true,
+  conjugation: {
+    rules: [
+      { when: 'ам', forms: { '2sg': 'аш', '3sg': 'а', '1pl': 'аме', '2pl': 'ате', '3pl': 'ат' } },
+      { when: 'ям', forms: { '2sg': 'яш', '3sg': 'я', '1pl': 'яме', '2pl': 'яте', '3pl': 'ят' } },
+      { when: 'вам', forms: { '2sg': 'ваш', '3sg': 'ва', '1pl': 'ваме', '2pl': 'вате', '3pl': 'ват' } },
+      { when: 'я', forms: { '2sg': 'иш', '3sg': 'и', '1pl': 'им', '2pl': 'ите', '3pl': 'ят' } },
+      { when: 'а', forms: { '2sg': 'еш', '3sg': 'е', '1pl': 'ем', '2pl': 'ете', '3pl': 'ат' } },
+      { when: 'ъм', forms: { '2sg': 'си', '3sg': 'е', '1pl': 'сме', '2pl': 'сте', '3pl': 'са' } },
+    ],
+  },
   functionWords: ['съм', 'си', 'е', 'сме', 'сте', 'са', 'бях', 'беше', 'бяхме', 'бяха', 'не'],
   notes: 'The soft masculine declension is not modelled. Yes/no questions need the particle "ли", which Talk never generates, because every question it builds starts with a question word. Vocabulary needs review by a Bulgarian speaker.',
 })

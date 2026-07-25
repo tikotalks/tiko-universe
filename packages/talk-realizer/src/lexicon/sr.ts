@@ -6,6 +6,8 @@ import type { Lexicon } from '../features'
  * Bulgarian rather than declining in place.
  */
 export const serbianLexicon: Lexicon = {
+  need: { pos: 'verb', forms: { '1sg': 'треба ми', '2sg': 'треба ти', '3sg': 'треба му', '1pl': 'треба нам', '2pl': 'треба вам', '3pl': 'треба им' } },
+  can: { pos: 'verb', forms: { '1sg': 'могу', '2sg': 'можеш', '3sg': 'може', '1pl': 'можемо', '2pl': 'можете', '3pl': 'могу' } },
   // "два" for a masculine, "две" for a feminine: Slavic numerals agree.
   two: { pos: 'determiner', determinerKind: 'quantifier', forcesNumber: 'pl', feminine: 'две' },
   i: { pos: 'pronoun', person: 1, number: 'sg', accusative: 'ме', dative: 'ми' },
@@ -65,6 +67,11 @@ export const serbianLexicon: Lexicon = {
   on: { pos: 'preposition', governsCase: 'loc' },
   from: { pos: 'preposition', governsCase: 'gen' },
   without: { pos: 'preposition', governsCase: 'gen' },
+
+  // "with" governs the instrumental — the case this file's tables generate.
+  with: { pos: 'preposition', governsCase: 'ins' },
+  'next-to': { pos: 'preposition', governsCase: 'gen' },
+  under: { pos: 'preposition', governsCase: 'ins' },
 
   not: { pos: 'negation' },
 }

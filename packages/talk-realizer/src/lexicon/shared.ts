@@ -100,6 +100,17 @@ export const sharedStructure: Lexicon = {
   helper: { pos: 'noun', animate: true },
   doctor: { pos: 'noun', animate: true },
 
+  /**
+   * Filed as prepositions in every pack, but they take no object and govern no
+   * case: "inside", not "inside the box". Left as prepositions they make a dozen
+   * case languages ask which case follows them, and the answer is that nothing
+   * does.
+   */
+  inside: { pos: 'adverb' },
+  outside: { pos: 'adverb' },
+  near: { pos: 'adverb' },
+  far: { pos: 'adverb' },
+
   // Question words
   what: { pos: 'question' },
   where: { pos: 'question' },

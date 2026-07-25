@@ -73,5 +73,8 @@ export const finnishLexicon: Lexicon = {
   to: { pos: 'preposition' },
   from: { pos: 'preposition' },
 
+  // Finnish has no verb "to have": possession is "on" plus an adessive subject.
+  have: { pos: 'verb', stem: 'ole', forms: { '1sg': 'minulla on', '2sg': 'sinulla on', '3sg': 'hänellä on', '1pl': 'meillä on', '2pl': 'teillä on', '3pl': 'heillä on' } },
+
   not: { pos: 'negation' },
 }

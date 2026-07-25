@@ -2,6 +2,12 @@ import type { Lexicon } from '../features'
 
 /** Belarusian overlay: verb persons, animacy, and the case forms a rule misses. */
 export const belarusianLexicon: Lexicon = {
+  need: { pos: 'verb', forms: { '1sg': 'патрэбна', '2sg': 'патрэбна', '3sg': 'патрэбна', pl: 'патрэбна' } },
+  draw: { pos: 'verb', forms: { '1sg': 'малюю', '2sg': 'малюеш', '3sg': 'малюе', '1pl': 'малюем', '2pl': 'малюеце', '3pl': 'малююць' } },
+  run: { pos: 'verb', forms: { '1sg': 'бягу', '2sg': 'бяжыш', '3sg': 'бяжыць', '1pl': 'бяжым', '2pl': 'бяжыце', '3pl': 'бягуць' } },
+  stop: { pos: 'verb', forms: { '1sg': 'спыняюся', '2sg': 'спыняешся', '3sg': 'спыняецца', '1pl': 'спыняемся', '2pl': 'спыняецеся', '3pl': 'спыняюцца' } },
+  wash: { pos: 'verb', forms: { '1sg': 'мыю', '2sg': 'мыеш', '3sg': 'мые', '1pl': 'мыем', '2pl': 'мыеце', '3pl': 'мыюць' } },
+  can: { pos: 'verb', forms: { '1sg': 'магу', '2sg': 'можаш', '3sg': 'можа', '1pl': 'можам', '2pl': 'можаце', '3pl': 'могуць' } },
   i: { pos: 'pronoun', person: 1, number: 'sg', accusative: 'мяне', dative: 'мне', cases: { gen: 'мяне' } },
   you: { pos: 'pronoun', person: 2, number: 'sg', accusative: 'цябе', dative: 'табе', cases: { gen: 'цябе' } },
   we: { pos: 'pronoun', person: 1, number: 'pl', accusative: 'нас', dative: 'нам', cases: { gen: 'нас' } },
@@ -61,6 +67,11 @@ export const belarusianLexicon: Lexicon = {
   on: { pos: 'preposition', governsCase: 'loc' },
   from: { pos: 'preposition', governsCase: 'gen' },
   without: { pos: 'preposition', governsCase: 'gen' },
+
+  // "with" governs the instrumental — the case this file's tables generate.
+  with: { pos: 'preposition', governsCase: 'ins' },
+  'next-to': { pos: 'preposition', governsCase: 'gen' },
+  under: { pos: 'preposition', governsCase: 'ins' },
 
   not: { pos: 'negation' },
 }

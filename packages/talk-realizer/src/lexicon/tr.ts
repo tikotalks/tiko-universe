@@ -74,5 +74,8 @@ export const turkishLexicon: Lexicon = {
   with: { pos: 'preposition', postposition: true },
   without: { pos: 'preposition', postposition: true },
 
+  // A modal, which Turkish builds inside the verb rather than beside it.
+  can: { pos: 'verb', stem: 'yapabil' },
+
   not: { pos: 'negation' },
 }

@@ -6,6 +6,9 @@ import type { Lexicon } from '../features'
  * which nouns are animate, because that decides the masculine accusative.
  */
 export const ukrainianLexicon: Lexicon = {
+  stand: { pos: 'verb', forms: { '1sg': 'стою', '2sg': 'стоїш', '3sg': 'стоїть', '1pl': 'стоїмо', '2pl': 'стоїте', '3pl': 'стоять' } },
+  stop: { pos: 'verb', forms: { '1sg': 'зупиняюся', '2sg': 'зупиняєшся', '3sg': 'зупиняється', '1pl': 'зупиняємося', '2pl': 'зупиняєтеся', '3pl': 'зупиняються' } },
+  wash: { pos: 'verb', forms: { '1sg': 'мию', '2sg': 'миєш', '3sg': 'миє', '1pl': 'миємо', '2pl': 'миєте', '3pl': 'миють' } },
   // "два" for a masculine, "дві" for a feminine: Slavic numerals agree.
   two: { pos: 'determiner', determinerKind: 'quantifier', forcesNumber: 'pl', feminine: 'дві' },
   i: { pos: 'pronoun', person: 1, number: 'sg', accusative: 'мене', dative: 'мені', cases: { gen: 'мене' } },
@@ -68,6 +71,11 @@ export const ukrainianLexicon: Lexicon = {
   on: { pos: 'preposition', governsCase: 'loc' },
   from: { pos: 'preposition', governsCase: 'gen' },
   without: { pos: 'preposition', governsCase: 'gen' },
+
+  // "with" governs the instrumental — the case this file's tables generate.
+  with: { pos: 'preposition', governsCase: 'ins' },
+  'next-to': { pos: 'preposition', governsCase: 'gen' },
+  under: { pos: 'preposition', governsCase: 'ins' },
 
   not: { pos: 'negation' },
 }
