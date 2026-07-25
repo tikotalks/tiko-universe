@@ -23,7 +23,12 @@ GET https://translations.tikoapi.org/v1/radio/nl
 ```
 
 Apps: `yes-no`, `type`, `timer`, `radio`, `cards`, `sequence`, `todo`, `website`, `admin`  
-Languages: `en`, `nl`, `fr`, `de`, `es`, `pt`, `it`, `mt`, `ja`, `zh`, `ko`, `ar`, `hy`
+Languages: all 52 in `tools/locales.mjs` — `en`, `nl`, `de`, `fr`, `es`, `pt`, `it`, `mt`, `ja`, `zh`, `ko`, `ar`, `hy`, `id`, `ms`, `vi`, `af`, `sv`, `da`, `nb`, `is`, `fy`, `lb`, `ca`, `gl`, `ro`, `pap`, `ru`, `uk`, `be`, `pl`, `cs`, `sk`, `sl`, `hr`, `sr`, `bs`, `cnr`, `bg`, `mk`, `lt`, `lv`, `fi`, `et`, `hu`, `cy`, `ga`, `el`, `sq`, `tr`, `eu`, `ka`.
+
+The list is generated into both clients (`packages/i18n/src/locales.generated.ts` and
+`TikoLocales.generated.swift`); this README follows it rather than leading it. A locale
+the worker has no translations for returns what Lezu has, and the client falls back to
+English per key — see `tools/generate-ui-translations.mjs`.
 
 ### POST /v1/import
 

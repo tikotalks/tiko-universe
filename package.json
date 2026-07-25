@@ -11,7 +11,7 @@
     "workers/*"
   ],
   "scripts": {
-    "check": "npm run scaffold:check && npm run lint && npm run typecheck && npm run test",
+    "check": "npm run scaffold:check && npm run generated:check && npm run lint && npm run typecheck && npm run test",
     "generate:app-configs": "node tools/generate-app-configs.mjs",
     "generate:colors": "node tools/generate-tiko-colors.mjs",
     "generate:talk-seeds": "node tools/generate-talk-seeds.mjs",
@@ -44,7 +44,11 @@
     "release:prepare-screenshots": "npx --yes --package @sil/app-release app-release-all --mode prepare-screenshots",
     "release:upload-screenshots": "npx --yes --package @sil/app-release app-release-all --mode upload-screenshots",
     "release:distribute": "npx --yes --package @sil/app-release app-release-all --mode distribute",
-    "release:all": "npx --yes --package @sil/app-release app-release-all --mode all --output-root /Users/silvandiepen/Projects/Tiko/apps"
+    "release:all": "npx --yes --package @sil/app-release app-release-all --mode all --output-root /Users/silvandiepen/Projects/Tiko/apps",
+    "generate:locales": "node tools/generate-locales.mjs",
+    "generate:ui-translations": "node tools/generate-ui-translations.mjs",
+    "i18n:report": "node tools/generate-ui-translations.mjs --report",
+    "generated:check": "node tools/generate-locales.mjs --check && node tools/generate-ui-translations.mjs --check && node tools/generate-talk-seeds.mjs --check"
   },
   "dependencies": {
     "@sil/ui": "^2.6.0",

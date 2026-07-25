@@ -125,20 +125,35 @@ if (existsSync(TRANSLATIONS)) {
 }
 
 if (REPORT) {
-  console.log(`${distinct.size} distinct English strings across ${APPS.length} apps.`)
+  // The core is the set every locale is expected to have: the strings a parent
+  // meets on every screen. The rest is longer copy and the default card labels,
+  // which fall back to English until Lezu or a person fills them in.
+  const corePath = join(TRANSLATIONS, '_core.json')
+  const core = existsSync(corePath) ? JSON.parse(readFileSync(corePath, 'utf8')) : []
+  console.log(`${distinct.size} distinct English strings across ${APPS.length} apps; ${core.length} of them core.`)
   console.log('')
-  console.log('locale  translated  of  coverage')
+  console.log('locale   core        all   language')
   const rows = locales.map((locale) => {
-    const table = tables.get(locale.code) ?? {}
-    const done = [...distinct.keys()].filter((value) => typeof table[value] === 'string' && table[value].length > 0)
-    return { code: locale.code, name: locale.name, done: done.length }
+    const table = locale.code === 'en' ? null : tables.get(locale.code) ?? {}
+    const has = (value) => locale.code === 'en'
+      || (typeof table[value] === 'string' && table[value].length > 0)
+    return {
+      code: locale.code,
+      name: locale.name,
+      core: core.filter(has).length,
+      all: [...distinct.keys()].filter(has).length,
+    }
   })
-  for (const row of rows.sort((a, b) => b.done - a.done)) {
-    const percent = Math.round((row.done / distinct.size) * 100)
+  for (const row of rows.sort((a, b) => b.core - a.core || b.all - a.all)) {
+    const coreMark = row.core === core.length ? '\u2713' : ' '
     console.log(
-      `${row.code.padEnd(6)} ${String(row.done).padStart(10)}  ${String(distinct.size).padStart(3)}  ${String(percent).padStart(3)}%  ${row.name}`,
+      `${row.code.padEnd(6)} ${String(row.core).padStart(3)}/${core.length} ${coreMark}  `
+      + `${String(row.all).padStart(3)}/${distinct.size}   ${row.name}`,
     )
   }
+  const complete = rows.filter((row) => row.core === core.length).length
+  console.log('')
+  console.log(`${complete} of ${rows.length} locales have the complete core.`)
   process.exit(0)
 }
 
