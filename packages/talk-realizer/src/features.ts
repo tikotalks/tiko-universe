@@ -176,7 +176,18 @@ export interface Features {
    * "do" takes the genitive, Russian "к" the dative — and getting it wrong is
    * one of the most audible errors in these languages.
    */
-  governsCase?: 'acc' | 'gen' | 'dat' | 'loc' | 'ins'
+  governsCase?: 'acc' | 'gen' | 'dat' | 'loc' | 'ins' | 'abl'
+  /**
+   * True where this word follows its noun phrase instead of preceding it:
+   * Turkish "ile", and every Japanese and Korean particle.
+   */
+  postposition?: boolean
+  /**
+   * The verb's stem, for a language that builds its forms by stacking suffixes.
+   * Turkish "iste" yields "istiyorum", "istemiyorum" and "istiyorsun"; the packs
+   * ship a finished word, so the stem itself has to be curated.
+   */
+  stem?: string
   /**
    * The predicative form of an adjective, where a language distinguishes it.
    * Russian says "я счастлив", not "я счастливый".

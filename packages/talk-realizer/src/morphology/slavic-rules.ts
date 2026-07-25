@@ -53,7 +53,7 @@ function caseFor(ctx: PhraseContext, genitiveOfNegation: boolean): SlavicCase {
   // A preposition governs its own case, and each one demands a specific one —
   // Polish "do" the genitive, Russian "к" the dative.
   const governed = ctx.preposition?.features.governsCase
-  if (governed && governed !== 'ins') return governed
+  if (governed && governed !== 'ins' && governed !== 'abl') return governed
   // The genitive of negation: a negated object changes case, where the language
   // has that rule.
   if (ctx.negateHere && genitiveOfNegation) return 'gen'

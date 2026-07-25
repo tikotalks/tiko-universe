@@ -55,7 +55,12 @@ export interface LanguageProfile {
    * quoi ?" — which is what a child hears, and it avoids inventing the
    * "qu'est-ce que" scaffolding.
    */
-  questionWordPosition?: 'initial' | 'final'
+  /**
+   * Where the question word goes. `preverbal` is the verb-final languages' answer:
+   * the question word takes the object's slot rather than fronting, which is why
+   * Turkish says "Sen ne istiyorsun?" and not "Ne sen istiyorsun?".
+   */
+  questionWordPosition?: 'initial' | 'final' | 'preverbal'
 
   /** CJK scripts do not separate words with spaces. */
   spacing: 'space' | 'none'
@@ -305,6 +310,13 @@ export interface LanguageRules {
    * emits no separate particle.
    */
   negatedCopula?(ctx: SentenceContext): string | null
+
+  /**
+   * How to realize a preposition. Returning `null` suppresses the word entirely,
+   * which is what a language does when the relation is spelled as a case suffix
+   * on the noun instead: Turkish "okula", not "okul e".
+   */
+  preposition?(word: Word, ctx: SentenceContext): string | null
 
   /**
    * The determiner for a noun phrase, or `null` for none. `merged` lets a

@@ -158,7 +158,18 @@ export function realizeWith(
       }
       case 'pp': {
         const after = rules.profile.prepositionPosition === 'after'
-        if (!after) push(builder, phrase.preposition.text, phrase.preposition.id)
+        // A language may render the relation as a case suffix and no word at all.
+        const written = rules.preposition
+          ? rules.preposition(phrase.preposition, ctx)
+          : phrase.preposition.text
+        if (!written) {
+          // The relation is spelled on the noun, so the preposition tile rides
+          // along with it rather than disappearing.
+          absorb(builder, phrase.preposition.id)
+          if (phrase.object) emitNounPhrase(phrase.object, 'oblique', true, phrase.preposition)
+          return
+        }
+        if (!after) push(builder, written, phrase.preposition.id)
         if (phrase.object) emitNounPhrase(phrase.object, 'oblique', true, phrase.preposition)
         if (after) {
           // A postposition attaches to the phrase it marks: "こうえんへ".
@@ -309,8 +320,9 @@ export function realizeWith(
   for (const social of chunks.leadingSocials) {
     push(builder, social.text, social.id)
   }
-  const questionWordFinal = rules.profile.questionWordPosition === 'final'
-  if (chunks.question && !questionWordFinal) {
+  const questionWordPosition = rules.profile.questionWordPosition ?? 'initial'
+  const questionWordFinal = questionWordPosition === 'final'
+  if (chunks.question && questionWordPosition === 'initial') {
     push(builder, chunks.question.text, chunks.question.id)
   }
 
@@ -352,6 +364,13 @@ export function realizeWith(
 
   for (const phrase of chunks.complements) {
     emitPhrase(phrase)
+  }
+
+  // A verb-final language may keep its question word in the object's slot,
+  // immediately before the verb: "Sen ne istiyorsun?"
+  if (chunks.question && questionWordPosition === 'preverbal') {
+    push(builder, chunks.question.text, chunks.question.id)
+    note(builder, 'the question word stands where the object would')
   }
 
   if (sov) emitVerb()
