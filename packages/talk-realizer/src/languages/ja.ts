@@ -17,11 +17,11 @@ import type { Phrase } from '../chunk'
 
 /** Turns a plain verb into its negative. Curated forms win. */
 function negativeForm(text: string): string | null {
-  if (/い$/.test(text)) return `${text.slice(0, -1)}くない` // i-adjective: ほしい → ほしくない
+  if (text.endsWith('い')) return `${text.slice(0, -1)}くない` // i-adjective: ほしい → ほしくない
   if (text === 'くる') return 'こない'
   if (text === 'する') return 'しない'
   if (text === 'ある') return 'ない'
-  if (/る$/.test(text)) return `${text.slice(0, -1)}ない` // ichidan: たべる → たべない
+  if (text.endsWith('る')) return `${text.slice(0, -1)}ない` // ichidan: たべる → たべない
   const godan: Record<string, string> = {
     う: 'わ', く: 'か', ぐ: 'が', す: 'さ', つ: 'た', ぬ: 'な', ぶ: 'ば', む: 'ま', る: 'ら',
   }

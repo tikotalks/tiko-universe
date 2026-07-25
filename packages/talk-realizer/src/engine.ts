@@ -137,6 +137,10 @@ export function realizeWith(
     }
   }
 
+  // Under verb-second inversion a verb's tail follows the subject rather than
+  // the verb: "Vad vill du ha?", not "Vad vill ha du?".
+  let deferTail = false
+
   /** The finite verb (or the copula), with any verb-adjacent negation. */
   const emitVerb = (bare = false): void => {
     if (needsCopula) {
@@ -176,9 +180,12 @@ export function realizeWith(
       return
     }
 
+    const tail = deferTail ? undefined : verb.features.verbTail
+
     if (!chunks.negated || suppressVerbParticle) {
       emitClitic()
       push(builder, rules.verbForm(verb, ctx), verb.id)
+      if (tail) push(builder, tail, verb.id)
       if (suppressVerbParticle) {
         note(builder, 'the negation is carried by the object phrase')
       }
@@ -191,18 +198,21 @@ export function realizeWith(
         push(builder, plan.word, null)
         note(builder, `"${plan.auxiliary} ${plan.word}": auxiliary negation, verb stays bare`)
         push(builder, verb.text, verb.id)
+        if (tail) push(builder, tail, verb.id)
         return
       case 'circumfix':
         push(builder, plan.before, null)
         emitClitic()
         push(builder, rules.verbForm(verb, ctx), verb.id)
         push(builder, plan.after, null)
+        if (tail) push(builder, tail, verb.id)
         note(builder, `"${plan.before} … ${plan.after}": negation around the verb`)
         return
       case 'beforeVerb':
         push(builder, plan.word, null)
         emitClitic()
         push(builder, rules.verbForm(verb, ctx), verb.id)
+        if (tail) push(builder, tail, verb.id)
         note(builder, `"${plan.word}": negation before the verb`)
         return
       case 'afterVerb':
@@ -212,6 +222,8 @@ export function realizeWith(
           push(builder, plan.word, null)
           note(builder, `"${plan.word}": negation after the verb`)
         }
+        // The tail follows the negation: "vill inte ha".
+        if (tail) push(builder, tail, verb.id)
         return
       default:
         push(builder, rules.verbForm(verb, ctx), verb.id)
@@ -232,9 +244,13 @@ export function realizeWith(
   const strategy = rules.profile.questionStrategy
 
   if (isQuestion && strategy === 'inversion') {
+    deferTail = true
     emitVerb()
     note(builder, 'verb-second: the verb precedes the subject in a question')
     if (chunks.subject) emitNounPhrase(chunks.subject, 'subject')
+    const tail = chunks.verb?.features.verbTail
+    if (tail && chunks.verb) push(builder, tail, chunks.verb.id)
+    deferTail = false
   } else if (isQuestion && strategy === 'auxiliary') {
     if (needsCopula || chunks.verb?.features.copula) {
       emitVerb()

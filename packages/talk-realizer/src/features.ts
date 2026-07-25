@@ -116,6 +116,12 @@ export interface Features {
   experiencerDative?: boolean
   /** A preposition this verb requires before its object (pt "gosto **de** pão"). */
   objectPreposition?: string
+  /**
+   * A word that follows the verb and that negation splits from it: Swedish
+   * "vill **ha**" becomes "vill inte ha". German separable prefixes behave the
+   * same way.
+   */
+  verbTail?: string
   /** A measure word required when counting this noun (zh 个, 块, 本). */
   measureWord?: string
 

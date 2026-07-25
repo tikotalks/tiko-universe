@@ -51,7 +51,7 @@ export const arabic: LanguageRules = {
   induce(word: SelectedWord): Features {
     if (word.pos === 'noun') {
       // The ta marbuta marks feminine gender reliably.
-      return { gender: /ة$/.test(word.text) ? 'feminine' : 'masculine' }
+      return { gender: word.text.endsWith('ة') ? 'feminine' : 'masculine' }
     }
     return {}
   },

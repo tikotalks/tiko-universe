@@ -69,10 +69,10 @@ export function annotate(
 ): Word[] {
   return words.map((word) => {
     const features: Features = {
-      ...(sharedStructure[word.id] ?? {}),
-      ...(induce?.(word) ?? {}),
-      ...(curated?.[word.id] ?? {}),
-      ...(lexicon[word.id] ?? {}),
+      ...sharedStructure[word.id],
+      ...induce?.(word),
+      ...curated?.[word.id],
+      ...lexicon[word.id],
     }
     return {
       ...word,
