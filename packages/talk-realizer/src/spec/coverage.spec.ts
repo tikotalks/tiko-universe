@@ -47,7 +47,7 @@ describe('language coverage', () => {
   }
 
   it('covers every pack that exists', () => {
-    // Thirteen shipped packs plus Swedish, whose pack was authored here.
-    expect(supportedLanguages.length).toBe(14)
+    // Thirteen shipped packs plus Swedish, Danish and Norwegian, authored here.
+    expect(supportedLanguages.length).toBe(16)
   })
 })

@@ -33,6 +33,8 @@ import { korean } from './languages/ko'
 import { arabic } from './languages/ar'
 import { armenian } from './languages/hy'
 import { swedish } from './languages/sv'
+import { danish } from './languages/da'
+import { norwegian } from './languages/nb'
 import { english } from './languages/en'
 import { dutch } from './languages/nl'
 import type { LanguageRules } from './profile'
@@ -48,6 +50,8 @@ import { koreanLexicon } from './lexicon/ko'
 import { arabicLexicon } from './lexicon/ar'
 import { armenianLexicon } from './lexicon/hy'
 import { swedishLexicon } from './lexicon/sv'
+import { danishLexicon } from './lexicon/da'
+import { norwegianLexicon } from './lexicon/nb'
 import { englishLexicon } from './lexicon/en'
 import { dutchLexicon } from './lexicon/nl'
 
@@ -82,9 +86,11 @@ export { koreanLexicon } from './lexicon/ko'
 export { arabicLexicon } from './lexicon/ar'
 export { armenianLexicon } from './lexicon/hy'
 export { swedishLexicon } from './lexicon/sv'
+export { danishLexicon } from './lexicon/da'
+export { norwegianLexicon } from './lexicon/nb'
 
 /** Languages this prototype realizes. */
-export const supportedLanguages = ['en', 'nl', 'de', 'fr', 'es', 'it', 'pt', 'mt', 'zh', 'ja', 'ko', 'ar', 'hy', 'sv'] as const
+export const supportedLanguages = ['en', 'nl', 'de', 'fr', 'es', 'it', 'pt', 'mt', 'zh', 'ja', 'ko', 'ar', 'hy', 'sv', 'da', 'nb'] as const
 export type SupportedLanguage = (typeof supportedLanguages)[number]
 
 /** The bundled feature overlays, by language. */
@@ -103,6 +109,8 @@ export const lexicons: Record<string, Lexicon> = {
   ar: arabicLexicon,
   hy: armenianLexicon,
   sv: swedishLexicon,
+  da: danishLexicon,
+  nb: norwegianLexicon,
 }
 
 /** Every language's rule set, by language code. */
@@ -121,6 +129,8 @@ export const languages: Record<string, LanguageRules> = {
   ar: arabic,
   hy: armenian,
   sv: swedish,
+  da: danish,
+  nb: norwegian,
 }
 
 /** The closed set of function words each language is allowed to insert. */
