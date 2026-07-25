@@ -34,8 +34,9 @@ export const sharedStructure: Lexicon = {
   that: { pos: 'determiner', determinerKind: 'demonstrative' },
   some: { pos: 'determiner', determinerKind: 'quantifier' },
   one: { pos: 'determiner', determinerKind: 'quantifier', forcesNumber: 'sg' },
-  two: { pos: 'determiner', determinerKind: 'quantifier', forcesNumber: 'pl' },
-  three: { pos: 'determiner', determinerKind: 'quantifier', forcesNumber: 'pl' },
+  // Two and three are the numerals Slavic treats specially (the paucal).
+  two: { pos: 'determiner', determinerKind: 'quantifier', forcesNumber: 'pl', smallNumber: true },
+  three: { pos: 'determiner', determinerKind: 'quantifier', forcesNumber: 'pl', smallNumber: true },
   many: { pos: 'determiner', determinerKind: 'quantifier', forcesNumber: 'pl' },
   little: { pos: 'determiner', determinerKind: 'quantifier' },
   // Filed as a determiner in every pack; it is an adjective, and a quality.

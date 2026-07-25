@@ -46,6 +46,12 @@ import { russian } from './languages/ru'
 import { polish } from './languages/pl'
 import { bulgarian } from './languages/bg'
 import { albanian } from './languages/sq'
+import { ukrainian } from './languages/uk'
+import { macedonian } from './languages/mk'
+import { serbian } from './languages/sr'
+import { croatian } from './languages/hr'
+import { czech } from './languages/cs'
+import { slovak } from './languages/sk'
 import { english } from './languages/en'
 import { dutch } from './languages/nl'
 import type { LanguageRules } from './profile'
@@ -74,6 +80,12 @@ import { russianLexicon } from './lexicon/ru'
 import { polishLexicon } from './lexicon/pl'
 import { bulgarianLexicon } from './lexicon/bg'
 import { albanianLexicon } from './lexicon/sq'
+import { ukrainianLexicon } from './lexicon/uk'
+import { macedonianLexicon } from './lexicon/mk'
+import { serbianLexicon } from './lexicon/sr'
+import { croatianLexicon } from './lexicon/hr'
+import { czechLexicon } from './lexicon/cs'
+import { slovakLexicon } from './lexicon/sk'
 import { englishLexicon } from './lexicon/en'
 import { dutchLexicon } from './lexicon/nl'
 
@@ -116,7 +128,7 @@ export { romanianLexicon } from './lexicon/ro'
 export { greekLexicon } from './lexicon/el'
 
 /** Languages this prototype realizes. */
-export const supportedLanguages = ['en', 'nl', 'de', 'fr', 'es', 'it', 'pt', 'mt', 'zh', 'ja', 'ko', 'ar', 'hy', 'sv', 'da', 'nb', 'id', 'vi', 'ro', 'el', 'ms', 'ca', 'gl', 'af', 'ru', 'pl', 'bg', 'sq'] as const
+export const supportedLanguages = ['en', 'nl', 'de', 'fr', 'es', 'it', 'pt', 'mt', 'zh', 'ja', 'ko', 'ar', 'hy', 'sv', 'da', 'nb', 'id', 'vi', 'ro', 'el', 'ms', 'ca', 'gl', 'af', 'ru', 'pl', 'bg', 'sq', 'uk', 'mk', 'sr', 'hr', 'cs', 'sk'] as const
 export type SupportedLanguage = (typeof supportedLanguages)[number]
 
 /** The bundled feature overlays, by language. */
@@ -148,6 +160,12 @@ export const lexicons: Record<string, Lexicon> = {
   pl: polishLexicon,
   bg: bulgarianLexicon,
   sq: albanianLexicon,
+  uk: ukrainianLexicon,
+  mk: macedonianLexicon,
+  sr: serbianLexicon,
+  hr: croatianLexicon,
+  cs: czechLexicon,
+  sk: slovakLexicon,
 }
 
 /** Every language's rule set, by language code. */
@@ -180,6 +198,12 @@ export const languages: Record<string, LanguageRules> = {
   pl: polish,
   bg: bulgarian,
   sq: albanian,
+  uk: ukrainian,
+  mk: macedonian,
+  sr: serbian,
+  hr: croatian,
+  cs: czech,
+  sk: slovak,
 }
 
 /** The closed set of function words each language is allowed to insert. */

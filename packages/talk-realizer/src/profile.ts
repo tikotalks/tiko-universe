@@ -270,6 +270,13 @@ export type NegationPlan = NegationCommon & (
   | { kind: 'afterVerb', word: string, afterDefiniteObject?: boolean, closing?: string }
   /** Spanish, Italian, Portuguese, Chinese, Korean: a particle before the verb. */
   | { kind: 'beforeVerb', word: string }
+  /**
+   * Czech, Slovak, Hungarian: the negation is written onto the front of the verb
+   * as one word — "nechci", "nemám". It is the same position as `beforeVerb` and
+   * a different spelling, which is exactly the kind of thing that has to be in
+   * the engine rather than in each language's string handling.
+   */
+  | { kind: 'prefixVerb', prefix: string }
   /** French, Maltese: a particle on each side of the verb. */
   | { kind: 'circumfix', before: string, after: string }
   /** Japanese: the verb form itself carries the negation. */
@@ -290,6 +297,14 @@ export interface LanguageRules {
    * Arabic in the present).
    */
   copula(ctx: SentenceContext): string | null
+
+  /**
+   * The negated copula, where the language fuses the two into a form no rule
+   * derives: Serbian "нисам", Czech "není" — not "ne jsem" or "neje". Returning a
+   * string means this language has taken care of the negation, and the engine
+   * emits no separate particle.
+   */
+  negatedCopula?(ctx: SentenceContext): string | null
 
   /**
    * The determiner for a noun phrase, or `null` for none. `merged` lets a

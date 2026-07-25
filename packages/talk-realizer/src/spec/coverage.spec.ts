@@ -48,6 +48,6 @@ describe('language coverage', () => {
 
   it('covers every pack that exists', () => {
     // Thirteen shipped packs plus five authored here.
-    expect(supportedLanguages.length).toBe(28)
+    expect(supportedLanguages.length).toBe(34)
   })
 })

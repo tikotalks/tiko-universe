@@ -6,6 +6,8 @@ import type { Lexicon } from '../features'
  * animate — animacy decides the masculine accusative.
  */
 export const russianLexicon: Lexicon = {
+  // "два" for a masculine, "две" for a feminine: Slavic numerals agree.
+  two: { pos: 'determiner', determinerKind: 'quantifier', forcesNumber: 'pl', feminine: 'две' },
   i: { pos: 'pronoun', person: 1, number: 'sg', accusative: 'меня', dative: 'мне', cases: { gen: 'меня' } },
   you: { pos: 'pronoun', person: 2, number: 'sg', accusative: 'тебя', dative: 'тебе', cases: { gen: 'тебя' } },
   we: { pos: 'pronoun', person: 1, number: 'pl', accusative: 'нас', dative: 'нам', cases: { gen: 'нас' } },

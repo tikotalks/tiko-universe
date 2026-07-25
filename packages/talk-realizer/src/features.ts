@@ -191,6 +191,12 @@ export interface Features {
   determinerKind?: DeterminerKind
   /** A quantifier that forces its noun into the plural ("two apples"). */
   forcesNumber?: GrammaticalNumber
+  /**
+   * A numeral small enough to have its own syntax. Slavic puts the noun in the
+   * genitive singular after two, three and four — the paucal — rather than in
+   * the plural: "два печива", not "два печива".
+   */
+  smallNumber?: boolean
 
   /**
    * English a/an is about sound, not spelling ("an hour", "a unicorn"), so it

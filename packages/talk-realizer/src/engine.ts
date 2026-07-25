@@ -187,6 +187,15 @@ export function realizeWith(
   /** The finite verb (or the copula), with any verb-adjacent negation. */
   const emitVerb = (bare = false): void => {
     if (needsCopula) {
+      // A language may spell its negated copula as one indivisible form.
+      if (chunks.negated && !suppressVerbParticle) {
+        const fused = rules.negatedCopula?.(ctx)
+        if (fused) {
+          push(builder, fused, copulaTile?.id ?? null)
+          note(builder, `"${fused}": the negated copula is a form of its own`)
+          return
+        }
+      }
       const copula = rules.copula(ctx)
       // A circumfix language wraps the copula too: "je **ne** suis **pas** …".
       if (chunks.negated && plan.kind === 'circumfix' && !suppressVerbParticle) {
@@ -196,6 +205,13 @@ export function realizeWith(
         push(builder, plan.word, null)
       }
       if (copula) {
+        // A prefixing language writes the negation onto the copula: "nejsem".
+        if (chunks.negated && plan.kind === 'prefixVerb' && !suppressVerbParticle) {
+          const negated = `${plan.prefix}${copula}`
+          push(builder, negated, copulaTile?.id ?? null)
+          note(builder, `"${negated}": the negation is written onto the copula`)
+          return
+        }
         push(builder, copula, copulaTile?.id ?? null)
         note(builder, copulaTile
           ? `copula "${copula}", from the tile the child chose`
@@ -264,6 +280,15 @@ export function realizeWith(
         if (tail) push(builder, tail, verb.id)
         note(builder, `"${plan.word}": negation before the verb`)
         return
+      case 'prefixVerb': {
+        emitClitic()
+        // One word, so the tile that carries it is the verb.
+        const negated = `${plan.prefix}${rules.verbForm(verb, ctx)}`
+        push(builder, negated, verb.id)
+        if (tail) push(builder, tail, verb.id)
+        note(builder, `"${negated}": the negation is a prefix on the verb`)
+        return
+      }
       case 'afterVerb':
         emitClitic()
         push(builder, rules.verbForm(verb, ctx), verb.id)

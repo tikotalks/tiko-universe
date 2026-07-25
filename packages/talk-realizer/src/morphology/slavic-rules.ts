@@ -1,31 +1,62 @@
 import type { Features, SelectedWord } from '../features'
 import { declineAdjective, declineNoun, declinePossessive, induceSlavicGender, type SlavicCase, type SlavicLanguage } from './slavic'
-import { formFor, note, type LanguageRules, type PhraseContext } from '../profile'
+import { extractObjectClitic } from './clitic'
+import { agreesWith, formFor, note, type LanguageRules, type PhraseContext } from '../profile'
 
 /**
- * Russian and Polish share one grammar with two sets of words and one real
- * difference — Polish has a present copula ("jestem") and Russian does not
- * ("я счастлив" is a complete sentence) — so they share this implementation.
+ * Seven Slavic languages share this grammar. What varies between them is small
+ * and declarative:
+ *
+ * - whether the present tense has a **copula** at all (Polish "jestem", Russian
+ *   and Ukrainian nothing);
+ * - whether the negation is a **word** before the verb ("не chcę") or a **prefix**
+ *   written onto it (Czech "nechci", Slovak "nechcem");
+ * - whether negating a verb puts its object in the **genitive** — obligatory in
+ *   Russian, Polish and Ukrainian, not standard in Serbian, Croatian, Czech or
+ *   Slovak.
+ *
+ * Everything else — the case system, animacy, the clitics — is shared.
  */
 export interface SlavicConfig {
   language: SlavicLanguage
   maturity: 'production' | 'beta' | 'draft'
   negation: string
+  /** True where the negation is written onto the verb: "nechci", not "ne chci". */
+  negationPrefix?: boolean
   /** Present-tense copula forms, or null where the language has none. */
   copula: Record<string, string> | null
+  /**
+   * The negated copula, where it is one form rather than the negation plus the
+   * copula: Serbian "нисам", Czech "není", Slovak "nie som".
+   */
+  copulaNegated?: Record<string, string>
+  /**
+   * True where an object pronoun is a clitic in front of the verb — "Ti mi
+   * pomažeš". Russian and Ukrainian have no clitics and leave it after the verb.
+   */
+  clitics?: boolean
+  /**
+   * True where two, three and four take the genitive singular rather than the
+   * plural: Russian "два печенья", Serbian "два кекса". Czech, Slovak and Polish
+   * use the nominative plural instead.
+   */
+  paucalGenitive?: boolean
+  /** True where a negated object goes into the genitive. */
+  genitiveOfNegation?: boolean
   notes: string
   functionWords: readonly string[]
 }
 
 /** The case a noun phrase takes in this role. */
-function caseFor(ctx: PhraseContext): SlavicCase {
+function caseFor(ctx: PhraseContext, genitiveOfNegation: boolean): SlavicCase {
   if (ctx.role === 'subject' || ctx.role === 'predicate') return 'nom'
   // A preposition governs its own case, and each one demands a specific one —
   // Polish "do" the genitive, Russian "к" the dative.
   const governed = ctx.preposition?.features.governsCase
   if (governed && governed !== 'ins') return governed
-  // The genitive of negation: a negated object changes case.
-  if (ctx.negateHere) return 'gen'
+  // The genitive of negation: a negated object changes case, where the language
+  // has that rule.
+  if (ctx.negateHere && genitiveOfNegation) return 'gen'
   // Verbs like помогать and pomagać govern the dative.
   if (ctx.verb?.features.objectCase === 'dative') return 'dat'
   return 'acc'
@@ -33,6 +64,8 @@ function caseFor(ctx: PhraseContext): SlavicCase {
 
 export function createSlavic(config: SlavicConfig): LanguageRules {
   const { language } = config
+  const genitiveOfNegation = config.genitiveOfNegation === true
+  const caseIn = (ctx: PhraseContext): SlavicCase => caseFor(ctx, genitiveOfNegation)
 
   return {
     profile: {
@@ -67,6 +100,11 @@ export function createSlavic(config: SlavicConfig): LanguageRules {
       return verb.text
     },
 
+    negatedCopula(ctx) {
+      if (!config.copulaNegated) return null
+      return config.copulaNegated[`${ctx.person}${ctx.number}`] ?? null
+    },
+
     copula(ctx) {
       if (!config.copula) {
         note(ctx.builder, 'no copula: this language has none in the present tense')
@@ -93,7 +131,7 @@ export function createSlavic(config: SlavicConfig): LanguageRules {
       }
       if (determiner.features.pronounCase === 'poss') {
         // Possessives have their own paradigm, close to the adjective one.
-        const grammaticalCase = caseFor(ctx)
+        const grammaticalCase = caseIn(ctx)
         const animate = np.head?.features.animate === true
         const possessive = declinePossessive(
           determiner.text, np.head?.features.gender, grammaticalCase, animate, language,
@@ -104,12 +142,29 @@ export function createSlavic(config: SlavicConfig): LanguageRules {
         }
         return { text: determiner.text, from: determiner.id }
       }
+      // A numeral agrees in gender where the language marks it: "два" but "две".
+      const gender = np.head?.features.gender
+      const agreed = gender === 'feminine'
+        ? determiner.features.feminine
+        : gender === 'neuter' ? determiner.features.neuter : undefined
+      if (agreed) {
+        note(ctx.builder, `"${agreed}": the numeral agrees with the noun`)
+        return { text: agreed, from: determiner.id }
+      }
       return { text: determiner.text, from: determiner.id }
     },
 
     adjective(adjective, np, ctx) {
-      const grammaticalCase = caseFor(ctx)
+      const grammaticalCase = caseIn(ctx)
       if (ctx.role === 'predicate') {
+        // A plural subject takes a plural predicate: "Ми щасливі".
+        if (ctx.number === 'pl' || ctx.subjectPlural === true) {
+          const form = declineAdjective(
+            adjective.text, adjective.features, ctx.subjectGender, 'nom', false, language, true,
+          )
+          note(ctx.builder, `"${form}": a plural predicate`)
+          return form
+        }
         // With a noun subject the predicate agrees with it: "Яблоко большое".
         if (ctx.subjectGender) {
           const form = declineAdjective(
@@ -125,14 +180,15 @@ export function createSlavic(config: SlavicConfig): LanguageRules {
           return adjective.features.predicative
         }
       }
+      const { gender, plural } = agreesWith(np, ctx)
       return declineAdjective(
-        adjective.text, adjective.features, np.head?.features.gender,
-        grammaticalCase, np.head?.features.animate === true, language,
+        adjective.text, adjective.features, gender,
+        grammaticalCase, np.head?.features.animate === true, language, plural,
       )
     },
 
     noun(head, np, ctx) {
-      const grammaticalCase = caseFor(ctx)
+      const grammaticalCase = caseIn(ctx)
       if (ctx.afterPreposition && !ctx.preposition?.features.governsCase) {
         // Without knowing which case this preposition governs, leaving the noun
         // alone is more honest than guessing an ending.
@@ -151,6 +207,13 @@ export function createSlavic(config: SlavicConfig): LanguageRules {
         : undefined
 
       if (plural) {
+        // After two or three these languages want the genitive singular, not the
+        // plural: "два кекса".
+        if (config.paucalGenitive && np.determiner?.features.smallNumber) {
+          const paucal = declineNoun(head.text, head.features, 'gen', language)
+          note(ctx.builder, `"${paucal.text}": the paucal after a small numeral`)
+          return { text: paucal.text, merged: absorbed }
+        }
         return { text: head.features.plural ?? head.text, merged: absorbed }
       }
       const declined = declineNoun(head.text, head.features, grammaticalCase, language)
@@ -165,7 +228,9 @@ export function createSlavic(config: SlavicConfig): LanguageRules {
 
     pronoun(word, ctx) {
       if (ctx.role === 'subject') return word.text
-      if (ctx.negateHere) return word.features.cases?.gen ?? word.features.accusative ?? word.text
+      if (ctx.negateHere && genitiveOfNegation) {
+        return word.features.cases?.gen ?? word.features.accusative ?? word.text
+      }
       if (ctx.verb?.features.objectCase === 'dative' && word.features.dative) {
         note(ctx.builder, `"${word.features.dative}": dative, governed by the verb`)
         return word.features.dative
@@ -173,14 +238,34 @@ export function createSlavic(config: SlavicConfig): LanguageRules {
       return word.features.accusative ?? word.text
     },
 
+    transform(chunks, ctx) {
+      if (!config.clitics) return
+      // "Ti mi pomažeš": these languages put an object pronoun before the verb.
+      extractObjectClitic(chunks, ctx.scratch, (pronoun) => (
+        ctx.verb?.features.objectCase === 'dative'
+          ? pronoun.features.dative ?? pronoun.features.accusative ?? pronoun.text
+          : pronoun.features.accusative ?? pronoun.text
+      ))
+    },
+
     negation() {
-      // The particle goes before the verb, and the object goes genitive —
-      // whatever its definiteness, because these languages have none.
+      // The negation sits before the verb — as its own word in most of these
+      // languages and written onto it in Czech and Slovak. Where the genitive of
+      // negation applies it reaches the object too, whatever its definiteness,
+      // because none of these languages has any.
+      if (config.negationPrefix) {
+        return {
+          kind: 'prefixVerb',
+          prefix: config.negation,
+          phraseNegation: genitiveOfNegation ? 'also' : undefined,
+          negatesAnyObject: genitiveOfNegation,
+        }
+      }
       return {
         kind: 'beforeVerb',
         word: config.negation,
-        phraseNegation: 'also',
-        negatesAnyObject: true,
+        phraseNegation: genitiveOfNegation ? 'also' : undefined,
+        negatesAnyObject: genitiveOfNegation,
       }
     },
   }

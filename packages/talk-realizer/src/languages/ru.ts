@@ -13,6 +13,8 @@ import { createSlavic } from '../morphology/slavic-rules'
 export const russian = createSlavic({
   language: 'ru',
   maturity: 'beta',
+  genitiveOfNegation: true,
+  paucalGenitive: true,
   negation: 'не',
   // Russian has no present copula at all.
   copula: null,

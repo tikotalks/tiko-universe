@@ -6,6 +6,8 @@ import type { Lexicon } from '../features'
  * accusative, and the genitive of negation is obligatory here.
  */
 export const polishLexicon: Lexicon = {
+  // "dwa" for a masculine, "dwie" for a feminine: Slavic numerals agree.
+  two: { pos: 'determiner', determinerKind: 'quantifier', forcesNumber: 'pl', feminine: 'dwie' },
   i: { pos: 'pronoun', person: 1, number: 'sg', accusative: 'mnie', dative: 'mi', cases: { gen: 'mnie' } },
   you: { pos: 'pronoun', person: 2, number: 'sg', accusative: 'cię', dative: 'ci', cases: { gen: 'ciebie' } },
   we: { pos: 'pronoun', person: 1, number: 'pl', accusative: 'nas', dative: 'nam', cases: { gen: 'nas' } },

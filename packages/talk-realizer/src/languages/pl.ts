@@ -14,6 +14,7 @@ import { createSlavic } from '../morphology/slavic-rules'
 export const polish = createSlavic({
   language: 'pl',
   maturity: 'beta',
+  genitiveOfNegation: true,
   negation: 'nie',
   copula: {
     '1sg': 'jestem', '2sg': 'jesteś', '3sg': 'jest',

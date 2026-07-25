@@ -7,6 +7,8 @@ import type { Lexicon } from '../features'
  * but "голямата" as a definite).
  */
 export const bulgarianLexicon: Lexicon = {
+  // "два" for a masculine, "две" for a feminine: Slavic numerals agree.
+  two: { pos: 'determiner', determinerKind: 'quantifier', forcesNumber: 'pl', feminine: 'две', neuter: 'две' },
   i: { pos: 'pronoun', person: 1, number: 'sg', accusative: 'ме', dative: 'ми' },
   you: { pos: 'pronoun', person: 2, number: 'sg', accusative: 'те', dative: 'ти' },
   we: { pos: 'pronoun', person: 1, number: 'pl', accusative: 'ни', dative: 'ни' },
