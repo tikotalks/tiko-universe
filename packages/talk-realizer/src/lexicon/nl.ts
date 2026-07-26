@@ -9,6 +9,9 @@ import type { Lexicon } from '../features'
  * and precisely what a small multilingual model gets wrong.
  */
 export const dutchLexicon: Lexicon = {
+  // "omdat" sends the verb to the end of its clause; "en" does not.
+  because: { pos: 'conjunction', subordinating: true },
+
   thirsty: { pos: 'adjective', sensation: 'dorst' },
   cold: { pos: 'adjective', sensation: 'het koud' },
   hot: { pos: 'adjective', sensation: 'het warm' },

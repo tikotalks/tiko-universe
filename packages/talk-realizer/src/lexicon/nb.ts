@@ -5,6 +5,9 @@ import type { Lexicon } from '../features'
  * the definite suffix and the adjective ending, and it is not derivable.
  */
 export const norwegianLexicon: Lexicon = {
+  // A subordinate clause moves its negation in front of the verb.
+  because: { pos: 'conjunction', subordinating: true },
+
   // "vil" needs an infinitive; negation splits the pair: "vil ikke ha".
   want: { pos: 'verb', verbTail: 'ha' },
   need: { pos: 'verb', verbTail: 'ha' },

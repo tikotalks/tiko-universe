@@ -1,4 +1,4 @@
-import { chunk, firstNounComplement, subjectPerson, type Chunks, type NounPhrase, type Phrase } from './chunk'
+import { chunk, firstNounComplement, splitClause, subjectPerson, type Chunks, type NounPhrase, type Phrase, type Word } from './chunk'
 import type { Realization, RealizedToken } from './features'
 import { absorb, flushPending, note, push, type Builder, type LanguageRules, type NegationPlan, type PhraseContext, type Role, type SentenceContext } from './profile'
 
@@ -17,8 +17,33 @@ export function realizeWith(
     negated?: boolean
     tense?: 'present' | 'past'
     speakerGender?: 'masculine' | 'feminine'
+    /**
+     * Realize this as one clause of a longer sentence: no capital at the start, no
+     * mark at the end. The caller adds both once, around the whole thing.
+     */
+    asClause?: boolean
+    /** True where a subordinating conjunction introduced this clause. */
+    subordinate?: boolean
   } = {},
 ): Realization {
+  // Two clauses joined by a conjunction are two sentences, and each needs the whole
+  // grammar. Splitting first is what makes "I am sad because I want Mum" possible.
+  const split = splitClause(words)
+  if (split) {
+    return joinClauses(
+      rules,
+      realizeWith(rules, split.left, { ...options, asClause: true }),
+      split.conjunction,
+      realizeWith(rules, split.right, {
+        ...options,
+        asClause: true,
+        subordinate: split.conjunction.features.subordinating === true,
+      }),
+      isQuestionSelection(split.left),
+      options.asClause === true,
+    )
+  }
+
   const chunks = chunk(words, options.negated ?? false)
   const builder: Builder = { tokens: [], inserted: [], notes: [] }
   const { person, number } = subjectPerson(chunks)
@@ -244,6 +269,17 @@ export function realizeWith(
   const verbTailOf = (verb: typeof chunks.verb): string | undefined =>
     hasVerbComplement && !rules.profile.verbTailIsVerb ? undefined : verb?.features.verbTail
 
+  /**
+   * In a Scandinavian subordinate clause the negation moves in front of the verb —
+   * "för att jag **inte** vill", not "för att jag vill **inte**". Swedish teaches it
+   * as the BIFF rule; Dutch and German reorder the verb instead.
+   */
+  const negationBeforeVerbHere = options.subordinate === true
+    && rules.profile.subordinateNegationBeforeVerb === true
+    && chunks.negated
+    && !suppressVerbParticle
+    && plan.kind === 'afterVerb'
+
   // Under verb-second inversion a verb's tail follows the subject rather than
   // the verb: "Vad vill du ha?", not "Vad vill ha du?".
   let deferTail = false
@@ -269,6 +305,10 @@ export function realizeWith(
       }
       if (chunks.negated && plan.kind === 'beforeVerb' && !suppressVerbParticle) {
         push(builder, plan.word, null)
+      }
+      if (negationBeforeVerbHere) {
+        push(builder, plan.word, null)
+        note(builder, `"${plan.word}": the negation precedes the verb in a subordinate clause`)
       }
       if (copula) {
         // A prefixing language writes the negation onto the copula: "nejsem".
@@ -357,8 +397,12 @@ export function realizeWith(
       }
       case 'afterVerb':
         emitClitic()
+        if (negationBeforeVerbHere) {
+          push(builder, plan.word, null)
+          note(builder, `"${plan.word}": the negation precedes the verb in a subordinate clause`)
+        }
         push(builder, rules.verbForm(verb, ctx), verb.id)
-        if (!particleAfterObject && !deferNegation) {
+        if (!particleAfterObject && !deferNegation && !negationBeforeVerbHere) {
           push(builder, plan.word, null)
           note(builder, `"${plan.word}": negation after the verb`)
         }
@@ -381,7 +425,10 @@ export function realizeWith(
     push(builder, chunks.question.text, chunks.question.id)
   }
 
+  // A subordinate clause is verb-final in Dutch and German, which is the same shape
+  // the verb-final languages have all the time.
   const sov = rules.profile.wordOrder === 'sov'
+    || (options.subordinate === true && rules.profile.subordinateVerbFinal === true)
   const vso = rules.profile.wordOrder === 'vso'
   const strategy = rules.profile.questionStrategy
 
@@ -518,7 +565,56 @@ export function realizeWith(
 
   const flushed = { ...builder, tokens }
   flushPending(flushed)
-  return finish(rules, flushed, chunks, isQuestion)
+  return finish(rules, flushed, chunks, isQuestion, options.asClause === true)
+}
+
+/** True where this clause asks something, which decides the whole sentence's mark. */
+function isQuestionSelection(words: Word[]): boolean {
+  if (words.some((word) => word.effectivePos === 'question')) return true
+  // A copula before its subject asks a yes/no question: "is the apple big".
+  const first = words[0]
+  return !!first?.features.copula
+}
+
+/**
+ * Two realized clauses and the conjunction between them, as one sentence. The halves
+ * were built without a capital or a final mark, so this adds one of each — around the
+ * whole sentence, not around each half.
+ */
+function joinClauses(
+  rules: LanguageRules,
+  left: Realization,
+  conjunction: Word,
+  right: Realization,
+  isQuestion: boolean,
+  asClause: boolean,
+): Realization {
+  const separator = rules.profile.spacing === 'none' ? '' : ' '
+  const parts = [left.text, conjunction.text, right.text].filter(Boolean)
+  let text = parts.join(separator)
+  const tokens: RealizedToken[] = [
+    ...left.tokens,
+    { text: conjunction.text, from: conjunction.id },
+    ...right.tokens,
+  ]
+  const notes = [
+    ...left.notes,
+    `"${conjunction.text}" joins two clauses, each built on its own`,
+    ...right.notes,
+  ]
+
+  if (!asClause && text) {
+    if (rules.profile.capitalize) text = text.charAt(0).toLocaleUpperCase() + text.slice(1)
+    const { statement, question, questionPrefix } = rules.profile.punctuation
+    text = isQuestion ? `${questionPrefix ?? ''}${text}${question}` : `${text}${statement}`
+  }
+
+  return {
+    text,
+    tokens,
+    inserted: [...left.inserted, ...right.inserted],
+    notes,
+  }
 }
 
 /** English do-support auxiliary for the subject and tense. */
@@ -553,6 +649,7 @@ function finish(
   builder: Builder,
   chunks: Chunks,
   isQuestion: boolean,
+  asClause = false,
 ): Realization {
   const separator = rules.profile.spacing === 'none' ? '' : ' '
   const tokens = [...builder.tokens]
@@ -568,7 +665,9 @@ function finish(
     }
   }
 
-  if (text) {
+  // One clause of a longer sentence gets neither: the caller capitalises the first
+  // word of the whole thing and marks the end of it, once.
+  if (text && !asClause) {
     if (rules.profile.capitalize) {
       text = text.charAt(0).toLocaleUpperCase() + text.slice(1)
     }

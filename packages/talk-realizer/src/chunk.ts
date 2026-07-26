@@ -269,6 +269,62 @@ export function chunk(words: Word[], forceNegated = false): Chunks {
   return chunks
 }
 
+/** Two clauses and the conjunction between them. */
+export interface ClauseSplit {
+  left: Word[]
+  conjunction: Word
+  right: Word[]
+}
+
+/**
+ * True where this run of tiles is a clause in its own right: something to talk about,
+ * and something said about it.
+ *
+ * The adjective test is the careful part. "the small banana" is a noun phrase, and
+ * "dad sad" is a clause, and the difference is only that the adjective comes after
+ * the last noun rather than before it.
+ */
+function isClause(words: Word[]): boolean {
+  let lastNoun = -1
+  words.forEach((word, at) => { if (word.effectivePos === 'noun') lastNoun = at })
+  const subject = words.some((word) => word.effectivePos === 'pronoun' || word.effectivePos === 'noun')
+  const predicate = words.some((word, at) => (
+    word.effectivePos === 'verb'
+    || (word.effectivePos === 'adjective' && at > lastNoun)
+  ))
+  return subject && predicate
+}
+
+/**
+ * Where a selection is really two sentences joined by a conjunction: "I am sad
+ * **because** I want Mum".
+ *
+ * The chunker is one clause deep, and left to itself it melted the two halves
+ * together — the second subject became an object pronoun and "I am sad because I
+ * want Mum" came out as "I want sad because me mum". Splitting first means each half
+ * gets the whole grammar: its own subject, its own verb, its own agreement.
+ *
+ * A conjunction only splits when **both** sides stand on their own. That is what
+ * keeps "I want an apple and a banana" as one clause with two objects, and "I want to
+ * eat and drink" as one clause with two verbs.
+ *
+ * The **last** such conjunction wins, and each half is then split again. Taking the
+ * first one strands a coordination: "I want an apple and a banana because I am hungry"
+ * would break at "and", leaving "a banana because I am hungry" as one half, which is
+ * not a sentence. Splitting at "because" leaves the "and" inside a clause, where the
+ * chunker already reads it as a list.
+ */
+export function splitClause(words: Word[]): ClauseSplit | undefined {
+  for (let at = words.length - 2; at >= 1; at -= 1) {
+    if (words[at].effectivePos !== 'conjunction') continue
+    const left = words.slice(0, at)
+    const right = words.slice(at + 1)
+    if (!isClause(left) || !isClause(right)) continue
+    return { left, conjunction: words[at], right }
+  }
+  return undefined
+}
+
 /** The noun phrase a language should attach negation to, if any. */
 export function firstNounComplement(chunks: Chunks): NounPhrase | undefined {
   for (const phrase of chunks.complements) {

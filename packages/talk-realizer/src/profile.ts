@@ -79,6 +79,20 @@ export interface LanguageProfile {
   verbCitation?: 'infinitive' | 'finite' | 'invariant'
 
   /**
+   * True where a subordinate clause puts its verb last: "omdat ik mama wil", "weil
+   * ich Mama will". The Scandinavian languages do not — they keep the verb second
+   * and only move the negation — so this is not simply "Germanic".
+   */
+  subordinateVerbFinal?: boolean
+
+  /**
+   * True where a subordinate clause moves its negation in front of the verb, the way
+   * Swedish, Danish and Norwegian do: "för att jag **inte** vill". Their verb stays
+   * where it is, which is why this is a separate dial from `subordinateVerbFinal`.
+   */
+  subordinateNegationBeforeVerb?: boolean
+
+  /**
    * True where the verb's tail *is* the verb — the Celtic languages realize every
    * verb as an auxiliary plus a verbnoun, so "dwi" alone says only "I am". A tail
    * like that is never dropped, where Swedish "vill **ha**" is.

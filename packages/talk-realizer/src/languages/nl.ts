@@ -86,6 +86,7 @@ export const dutch: LanguageRules = {
     language: 'nl',
     maturity: 'production',
     wordOrder: 'svo',
+    subordinateVerbFinal: true,
     verbComplementPosition: 'clauseFinal',
     questionStrategy: 'inversion',
     spacing: 'space',

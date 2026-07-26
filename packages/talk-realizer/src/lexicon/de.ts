@@ -10,6 +10,9 @@ import type { Lexicon } from '../features'
  * (essen → isst, sehen → sieht, laufen → läuft) that no ending rule produces.
  */
 export const germanLexicon: Lexicon = {
+  // "omdat" sends the verb to the end of its clause; "en" does not.
+  because: { pos: 'conjunction', subordinating: true },
+
   // "Mir ist kalt", never "ich bin kalt".
   hot: { pos: 'adjective', dativeSensation: true },
   // "Mir ist kalt", never "ich bin kalt".

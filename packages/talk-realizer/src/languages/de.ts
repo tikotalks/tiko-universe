@@ -96,6 +96,7 @@ export const german: LanguageRules = {
     language: 'de',
     maturity: 'production',
     wordOrder: 'svo',
+    subordinateVerbFinal: true,
     verbComplementPosition: 'clauseFinal',
     questionStrategy: 'inversion',
     spacing: 'space',

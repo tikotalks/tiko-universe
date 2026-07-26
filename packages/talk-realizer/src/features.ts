@@ -161,6 +161,14 @@ export interface Features {
    */
   adjectivePosition?: 'before' | 'after'
   /**
+   * A conjunction that subordinates its clause rather than coordinating it. It
+   * matters where the language reorders a subordinate clause: Dutch "omdat ik mama
+   * **wil**" sends the verb to the end, while "en ik **wil** mama" does not. Which
+   * word does which is lexical — Afrikaans "want" coordinates where Dutch "omdat"
+   * subordinates.
+   */
+  subordinating?: boolean
+  /**
    * A quantifier that wants the definite article after it: "tous **les** biscuits",
    * "todas **las** galletas". Leaving it out is an error rather than a register.
    */

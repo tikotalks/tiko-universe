@@ -33,6 +33,22 @@ Two more known gaps, both flagged in notes rather than silently wrong: `all` tak
 article outside the Romance languages that were given one, and Turkish could derive
 its infinitive (`-mek`/`-mak`) from the progressive the pack lists but does not yet.
 
+## Two clauses
+
+A conjunction between two clauses now splits the sentence, and each half is built with
+the whole grammar — its own subject, verb, agreement and negation. What a reviewer
+should check for their language:
+
+- **Does a subordinating conjunction reorder the clause?** Dutch and German send the
+  verb to the end ("omdat ik mama wil"); Swedish, Danish and Norwegian keep the verb
+  and move the negation in front of it ("för att jag inte vill"); Afrikaans "want"
+  does neither, because it coordinates. Both behaviours are dials:
+  `subordinateVerbFinal` and `subordinateNegationBeforeVerb` in the profile, and
+  `subordinating: true` on the conjunction in `lexicon/<code>.ts`.
+- **Is the conjunction itself the word a child would use?** "because" is `omdat` in
+  Dutch, `want` in Afrikaans, `だって` in Japanese — the last of which is very
+  colloquial and may want changing.
+
 ## Needs a native reader (41)
 
 | | language | grammar | sample: "I want the apple" |

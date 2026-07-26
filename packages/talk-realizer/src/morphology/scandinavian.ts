@@ -66,6 +66,8 @@ export function createScandinavian(config: ScandinavianConfig): LanguageRules {
       language: config.language,
       maturity: config.maturity,
       wordOrder: 'svo',
+      // The BIFF rule: a subordinate clause puts its negation before the verb.
+      subordinateNegationBeforeVerb: true,
       questionStrategy: 'inversion',
       spacing: 'space',
       capitalize: true,
