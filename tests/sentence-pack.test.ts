@@ -2,7 +2,7 @@ import { existsSync, readFileSync, readdirSync } from 'node:fs'
 import { describe, expect, it } from 'vitest'
 import type { LanguagePack } from '@tiko/talk-types'
 
-const DATA_DIR = 'workers/sentence-api/data'
+const DATA_DIR = 'packages/talk-packs/data'
 const DB_DIR = 'workers/sentence-api/db'
 const emojiPattern = /[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}]/u
 

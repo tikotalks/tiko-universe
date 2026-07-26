@@ -106,18 +106,43 @@ describe('useSentenceApi', () => {
     expect(api.lastCompletion.value).toBeNull()
   })
 
-  it('activates offline fallback when /start is unavailable', async () => {
+  it('works from the pack on the device when the API is unavailable', async () => {
     const fetcher = vi.fn(async () => json({ error: { message: 'offline' } }, 503)) as unknown as typeof fetch
     const api = useSentenceApi({ language: ref('en'), sessionToken: ref(''), fetcher, baseUrl: 'https://sentence.test' })
 
     await api.start()
-    await api.next(['en-i'])
-    const completed = await api.complete(['en-i', 'en-want', 'en-water'])
+    await api.next(['i'])
+    const completed = await api.complete(['i', 'want', 'water'])
 
     expect(api.mode.value).toBe('offline')
-    expect(api.words.value.length).toBeGreaterThan(0)
-    expect(api.suggestions.value.some((word) => word.id === 'en-i')).toBe(false)
+    // The whole pack, not a stub: this used to be seven words.
+    expect(api.words.value.length).toBe(295)
+    expect(api.suggestions.value.length).toBeGreaterThan(0)
+    // Built by the realizer on the device, article and full stop included.
     expect(completed.sentence).toBe('I want water.')
+  })
+
+  it('builds the strip with grammar while offline', async () => {
+    const fetcher = vi.fn(async () => json({ error: { message: 'offline' } }, 503)) as unknown as typeof fetch
+    const api = useSentenceApi({ language: ref('en'), sessionToken: ref(''), fetcher, baseUrl: 'https://sentence.test' })
+
+    await api.start()
+    await api.next(['i', 'want', 'apple'])
+
+    // "I want apple" is what joining the tiles gives; this is what the realizer does.
+    expect(api.stripState.value.display).toBe('I want an apple')
+    // …and no full stop, because the child has not finished yet.
+    expect(api.stripState.value.canComplete).toBe(true)
+  })
+
+  it('speaks another language offline, from its own pack', async () => {
+    const fetcher = vi.fn(async () => json({ error: { message: 'offline' } }, 503)) as unknown as typeof fetch
+    const api = useSentenceApi({ language: ref('nl'), sessionToken: ref(''), fetcher, baseUrl: 'https://sentence.test' })
+
+    await api.start()
+    const completed = await api.complete(['i', 'want', 'apple'])
+
+    expect(completed.sentence).toBe('Ik wil een appel.')
   })
 
   it('saves and deletes manual phrases through the authenticated sentence API contract', async () => {

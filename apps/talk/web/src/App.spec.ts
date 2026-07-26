@@ -36,7 +36,7 @@ beforeEach(() => {
 })
 
 describe('Talk web app', () => {
-  it('opens with account avatar and offline fallback words instead of an empty stage', async () => {
+  it('opens with the account avatar and the board from the device, not an empty stage', async () => {
     const wrapper = mount(App)
 
     expect(wrapper.text()).toContain('Talk')
@@ -44,11 +44,14 @@ describe('Talk web app', () => {
     const accountButton = wrapper.get('button[aria-label="Account"]')
     expect(accountButton.find('[data-icon="ui/avatar"]').exists()).toBe(true)
 
-    await flushPromises()
+    // The pack is a dynamic import, so wait for it rather than guessing how many
+    // microtask flushes it takes — that guess is what made this flaky.
+    await vi.waitFor(() => {
+      expect(wrapper.findAll('.word-cloud__bubble').length).toBeGreaterThan(0)
+    }, { timeout: 5000 })
 
     expect(wrapper.text()).toContain('I')
     expect(wrapper.text()).toContain('want')
-    expect(wrapper.findAll('.word-cloud__bubble').length).toBeGreaterThan(0)
   })
 
   it('calls handleAvatarClick when the avatar is tapped', async () => {

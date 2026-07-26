@@ -18,7 +18,7 @@ import { join, dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..')
-const DATA_DIR = join(ROOT, 'workers/sentence-api/data')
+const DATA_DIR = join(ROOT, 'packages/talk-packs/data')
 const MEDIA_API = process.env.TIKO_MEDIA_API_URL?.replace(/\/$/, '') || 'https://media.tikoapi.org'
 const DRY_RUN = process.argv.includes('--dry-run')
 const CONCURRENCY = 8

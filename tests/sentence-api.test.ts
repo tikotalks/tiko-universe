@@ -6,7 +6,7 @@ import type { LanguagePack, PackTemplate, PackWord } from '@tiko/talk-types'
 type Row = Record<string, unknown>
 type JsonBody = Record<string, any>
 
-const pack = JSON.parse(readFileSync('workers/sentence-api/data/en-v1.json', 'utf8')) as LanguagePack
+const pack = JSON.parse(readFileSync('packages/talk-packs/data/en-v1.json', 'utf8')) as LanguagePack
 
 class MemoryResult {
   constructor(private rows: Row[] = [], private metaValues: Record<string, unknown> = {}) {}

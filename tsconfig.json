@@ -28,6 +28,12 @@
       "@tiko/media/*": [
         "packages/media/src/*"
       ],
+      "@tiko/talk-packs": [
+        "packages/talk-packs/src/index.ts"
+      ],
+      "@tiko/talk-packs/*": [
+        "packages/talk-packs/*"
+      ],
       "@tiko/talk-realizer": [
         "packages/talk-realizer/src/index.ts"
       ],
