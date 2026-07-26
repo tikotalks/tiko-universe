@@ -1081,6 +1081,48 @@ extension TikoLocalTranslations {
         "common.settings": "Socruithe",
     ]
 
+    static let radio_bn: [String: String] = [
+        "radio.appName": "রেডিও",
+        "radio.collections.empty": "এখনও কোনো গান নেই",
+        "radio.player.play": "বাজান",
+        "radio.player.pause": "বিরতি",
+        "radio.player.next": "পরবর্তী",
+        "radio.player.previous": "পূর্ববর্তী",
+        "radio.player.shuffle": "এলোমেলো",
+        "radio.player.repeat": "পুনরাবৃত্তি",
+        "radio.library.fetchingInfo": "তথ্য আনা হচ্ছে…",
+        "radio.management.moveTo": "সরান",
+        "radio.settings.title": "রেডিও",
+        "radio.settings.parentMode": "অভিভাবক মোড",
+        "radio.settings.shuffle": "এলোমেলো",
+        "radio.settings.repeat": "পুনরাবৃত্তি",
+        "common.cancel": "বাতিল",
+        "common.save": "সংরক্ষণ",
+        "common.add": "যোগ করুন",
+        "common.settings": "সেটিংস",
+    ]
+
+    static let radio_hi: [String: String] = [
+        "radio.appName": "रेडियो",
+        "radio.collections.empty": "अभी कोई गाना नहीं",
+        "radio.player.play": "चलाएँ",
+        "radio.player.pause": "रोकें",
+        "radio.player.next": "आगे",
+        "radio.player.previous": "पिछला",
+        "radio.player.shuffle": "मिलाएँ",
+        "radio.player.repeat": "दोहराएँ",
+        "radio.library.fetchingInfo": "जानकारी लाई जा रही है…",
+        "radio.management.moveTo": "यहाँ ले जाएँ",
+        "radio.settings.title": "रेडियो",
+        "radio.settings.parentMode": "अभिभावक मोड",
+        "radio.settings.shuffle": "मिलाएँ",
+        "radio.settings.repeat": "दोहराएँ",
+        "common.cancel": "रद्द करें",
+        "common.save": "सहेजें",
+        "common.add": "जोड़ें",
+        "common.settings": "सेटिंग्स",
+    ]
+
     static let radio_el: [String: String] = [
         "radio.appName": "Ράδιο",
         "radio.collections.empty": "Κανένα τραγούδι ακόμη",
@@ -2681,6 +2723,64 @@ extension TikoLocalTranslations {
         "common.settings": "Socruithe",
     ]
 
+    static let yesNo_bn: [String: String] = [
+        "yesNo.sentence.label": "বলার বাক্য",
+        "yesNo.sentence.reset": "রিসেট",
+        "yesNo.answers.yes": "হ্যাঁ",
+        "yesNo.answers.no": "না",
+        "yesNo.history.title": "ইতিহাস",
+        "yesNo.history.empty": "এখনও কোনো উত্তর নেই।",
+        "yesNo.settings.answerTilesDefault": "ডিফল্ট",
+        "yesNo.settings.labelSize": "লেখার আকার",
+        "yesNo.question.empty": "এখনও কোনো প্রশ্ন নেই",
+        "yesNo.tileEditor.reset": "রিসেট",
+        "yesNo.tileEditor.save": "সংরক্ষণ",
+        "yesNo.sheet.description": "বিবরণ",
+        "yesNo.sheet.descriptionPlaceholder": "বিবরণ (ঐচ্ছিক)",
+        "yesNo.sheet.color": "রং",
+        "yesNo.sheet.image": "ছবি",
+        "yesNo.sheet.search": "খুঁজুন",
+        "yesNo.sheet.searching": "খোঁজা হচ্ছে…",
+        "yesNo.sheet.cancel": "বাতিল",
+        "yesNo.sheet.tiles": "টাইল",
+        "yesNo.sheet.select": "এই সেট ব্যবহার করুন",
+        "yesNo.sheet.delete": "মুছুন",
+        "yesNo.sheet.name": "উত্তর",
+        "yesNo.sheet.spokenText": "উচ্চারিত লেখা",
+        "common.cancel": "বাতিল",
+        "common.save": "সংরক্ষণ",
+        "common.settings": "সেটিংস",
+    ]
+
+    static let yesNo_hi: [String: String] = [
+        "yesNo.sentence.label": "कहने का वाक्य",
+        "yesNo.sentence.reset": "रीसेट",
+        "yesNo.answers.yes": "हाँ",
+        "yesNo.answers.no": "नहीं",
+        "yesNo.history.title": "इतिहास",
+        "yesNo.history.empty": "अभी कोई जवाब नहीं।",
+        "yesNo.settings.answerTilesDefault": "डिफ़ॉल्ट",
+        "yesNo.settings.labelSize": "पाठ का आकार",
+        "yesNo.question.empty": "अभी कोई सवाल नहीं",
+        "yesNo.tileEditor.reset": "रीसेट",
+        "yesNo.tileEditor.save": "सहेजें",
+        "yesNo.sheet.description": "विवरण",
+        "yesNo.sheet.descriptionPlaceholder": "विवरण (वैकल्पिक)",
+        "yesNo.sheet.color": "रंग",
+        "yesNo.sheet.image": "तस्वीर",
+        "yesNo.sheet.search": "खोजें",
+        "yesNo.sheet.searching": "खोज रहे हैं…",
+        "yesNo.sheet.cancel": "रद्द करें",
+        "yesNo.sheet.tiles": "टाइलें",
+        "yesNo.sheet.select": "यह सेट इस्तेमाल करें",
+        "yesNo.sheet.delete": "मिटाएँ",
+        "yesNo.sheet.name": "जवाब",
+        "yesNo.sheet.spokenText": "बोला गया पाठ",
+        "common.cancel": "रद्द करें",
+        "common.save": "सहेजें",
+        "common.settings": "सेटिंग्स",
+    ]
+
     static let yesNo_el: [String: String] = [
         "yesNo.sentence.label": "Πρόταση για εκφώνηση",
         "yesNo.sentence.reset": "Επαναφορά",
@@ -4082,6 +4182,56 @@ extension TikoLocalTranslations {
         "common.settings": "Socruithe",
     ]
 
+    static let cards_bn: [String: String] = [
+        "cards.appName": "কার্ড",
+        "cards.collections.empty": "এখনও কোনো সংগ্রহ নেই।",
+        "cards.collections.create": "তৈরি করুন",
+        "cards.tiles.empty": "এখনও কোনো টাইল নেই।",
+        "cards.settings.restoreDefaults": "ডিফল্ট ফিরিয়ে আনুন",
+        "cards.settings.title": "কার্ড",
+        "cards.settings.parentMode": "অভিভাবক মোড",
+        "cards.settings.display": "প্রদর্শন",
+        "cards.settings.showAnimations": "অ্যানিমেশন দেখান",
+        "cards.settings.accessibility": "প্রবেশযোগ্যতা",
+        "cards.settings.cardSize": "কার্ডের আকার",
+        "cards.settings.labelSize": "লেখার আকার",
+        "cards.add.name": "নাম",
+        "cards.add.color": "রং",
+        "cards.add.image": "ছবি",
+        "cards.add.spokenText": "উচ্চারিত লেখা",
+        "cards.add.saveChanges": "পরিবর্তন সংরক্ষণ",
+        "cards.default.__default_colors": "রংগুলো",
+        "cards.default.body_back": "পিছনে",
+        "common.cancel": "বাতিল",
+        "common.save": "সংরক্ষণ",
+        "common.settings": "সেটিংস",
+    ]
+
+    static let cards_hi: [String: String] = [
+        "cards.appName": "कार्ड",
+        "cards.collections.empty": "अभी कोई संग्रह नहीं।",
+        "cards.collections.create": "बनाएँ",
+        "cards.tiles.empty": "अभी कोई टाइल नहीं।",
+        "cards.settings.restoreDefaults": "डिफ़ॉल्ट वापस लाएँ",
+        "cards.settings.title": "कार्ड",
+        "cards.settings.parentMode": "अभिभावक मोड",
+        "cards.settings.display": "प्रदर्शन",
+        "cards.settings.showAnimations": "एनिमेशन दिखाएँ",
+        "cards.settings.accessibility": "सुलभता",
+        "cards.settings.cardSize": "कार्ड का आकार",
+        "cards.settings.labelSize": "पाठ का आकार",
+        "cards.add.name": "नाम",
+        "cards.add.color": "रंग",
+        "cards.add.image": "तस्वीर",
+        "cards.add.spokenText": "बोला गया पाठ",
+        "cards.add.saveChanges": "बदलाव सहेजें",
+        "cards.default.__default_colors": "रंग",
+        "cards.default.body_back": "पीछे",
+        "common.cancel": "रद्द करें",
+        "common.save": "सहेजें",
+        "common.settings": "सेटिंग्स",
+    ]
+
     static let cards_el: [String: String] = [
         "cards.appName": "Κάρτες",
         "cards.collections.empty": "Καμία συλλογή ακόμη.",
@@ -4855,6 +5005,34 @@ extension TikoLocalTranslations {
         "common.settings": "Socruithe",
     ]
 
+    static let timer_bn: [String: String] = [
+        "timer.appName": "টাইমার",
+        "timer.display.expired": "সময় শেষ!",
+        "timer.controls.start": "শুরু",
+        "timer.controls.pause": "বিরতি",
+        "timer.controls.resume": "চালিয়ে যান",
+        "timer.controls.reset": "রিসেট",
+        "timer.settings.title": "টাইমার",
+        "timer.settings.sound": "শেষ হলে শব্দ",
+        "common.cancel": "বাতিল",
+        "common.save": "সংরক্ষণ",
+        "common.settings": "সেটিংস",
+    ]
+
+    static let timer_hi: [String: String] = [
+        "timer.appName": "टाइमर",
+        "timer.display.expired": "समय समाप्त!",
+        "timer.controls.start": "शुरू",
+        "timer.controls.pause": "रोकें",
+        "timer.controls.resume": "जारी रखें",
+        "timer.controls.reset": "रीसेट",
+        "timer.settings.title": "टाइमर",
+        "timer.settings.sound": "पूरा होने पर आवाज़",
+        "common.cancel": "रद्द करें",
+        "common.save": "सहेजें",
+        "common.settings": "सेटिंग्स",
+    ]
+
     static let timer_el: [String: String] = [
         "timer.appName": "Χρονόμετρο",
         "timer.display.expired": "Ο χρόνος τελείωσε!",
@@ -5485,6 +5663,30 @@ extension TikoLocalTranslations {
         "common.settings": "Socruithe",
     ]
 
+    static let type_bn: [String: String] = [
+        "type.appName": "লিখুন",
+        "type.compose.speak": "বলুন",
+        "type.compose.clear": "পরিষ্কার",
+        "type.phrases.empty": "এখনও কোনো সংরক্ষিত বাক্য নেই।",
+        "type.settings.title": "লিখুন",
+        "type.settings.parentMode": "অভিভাবক মোড",
+        "common.cancel": "বাতিল",
+        "common.save": "সংরক্ষণ",
+        "common.settings": "সেটিংস",
+    ]
+
+    static let type_hi: [String: String] = [
+        "type.appName": "लिखें",
+        "type.compose.speak": "कहो",
+        "type.compose.clear": "साफ़ करें",
+        "type.phrases.empty": "अभी कोई सहेजा गया वाक्य नहीं।",
+        "type.settings.title": "लिखें",
+        "type.settings.parentMode": "अभिभावक मोड",
+        "common.cancel": "रद्द करें",
+        "common.save": "सहेजें",
+        "common.settings": "सेटिंग्स",
+    ]
+
     static let type_el: [String: String] = [
         "type.appName": "Γράψε",
         "type.compose.speak": "Πες",
@@ -5961,6 +6163,24 @@ extension TikoLocalTranslations {
         "common.settings": "Socruithe",
     ]
 
+    static let sequence_bn: [String: String] = [
+        "sequence.appName": "ক্রম",
+        "sequence.empty.title": "এখনও কোনো ক্রম নেই",
+        "sequence.settings.title": "ক্রম",
+        "common.cancel": "বাতিল",
+        "common.save": "সংরক্ষণ",
+        "common.settings": "সেটিংস",
+    ]
+
+    static let sequence_hi: [String: String] = [
+        "sequence.appName": "क्रम",
+        "sequence.empty.title": "अभी कोई क्रम नहीं",
+        "sequence.settings.title": "क्रम",
+        "common.cancel": "रद्द करें",
+        "common.save": "सहेजें",
+        "common.settings": "सेटिंग्स",
+    ]
+
     static let sequence_el: [String: String] = [
         "sequence.appName": "Σειρά",
         "sequence.empty.title": "Καμία σειρά ακόμη",
@@ -6419,6 +6639,24 @@ extension TikoLocalTranslations {
         "common.cancel": "Cealaigh",
         "common.save": "Sábháil",
         "common.settings": "Socruithe",
+    ]
+
+    static let todo_bn: [String: String] = [
+        "todo.appName": "করণীয়",
+        "todo.empty.title": "এখনও কিছু নেই",
+        "todo.settings.title": "করণীয়",
+        "common.cancel": "বাতিল",
+        "common.save": "সংরক্ষণ",
+        "common.settings": "সেটিংস",
+    ]
+
+    static let todo_hi: [String: String] = [
+        "todo.appName": "काम",
+        "todo.empty.title": "अभी कुछ नहीं",
+        "todo.settings.title": "काम",
+        "common.cancel": "रद्द करें",
+        "common.save": "सहेजें",
+        "common.settings": "सेटिंग्स",
     ]
 
     static let todo_el: [String: String] = [
@@ -7874,6 +8112,62 @@ extension TikoLocalTranslations {
         "common.settings": "Socruithe",
     ]
 
+    static let say_bn: [String: String] = [
+        "say.appName": "বলুন",
+        "say.categories.empty": "কোনো কার্ড নেই",
+        "say.category.body": "লেখা",
+        "say.category.colors": "রংগুলো",
+        "say.practice.replay": "আবার বাজান",
+        "say.practice.skip": "পরবর্তী",
+        "say.practice.back": "পিছনে",
+        "say.practice.listening": "শুনছে",
+        "say.permission.continue": "চালিয়ে যান",
+        "say.permission.openSettings": "সেটিংস খুলুন",
+        "say.edit.cardsTitle": "কার্ড",
+        "say.edit.cardTitle": "শিরোনাম",
+        "say.edit.listenFor": "শুনছে",
+        "say.edit.emoji": "ইমোজি",
+        "say.edit.image": "ছবি",
+        "say.edit.hide": "লুকান",
+        "say.edit.reset": "ডিফল্টে ফিরিয়ে দিন",
+        "say.edit.delete": "মুছুন",
+        "say.edit.hiddenTag": "লুকানো",
+        "say.edit.customTag": "নিজের",
+        "common.cancel": "বাতিল",
+        "common.save": "সংরক্ষণ",
+        "common.add": "যোগ করুন",
+        "common.done": "সম্পন্ন",
+        "common.settings": "সেটিংস",
+    ]
+
+    static let say_hi: [String: String] = [
+        "say.appName": "कहो",
+        "say.categories.empty": "कोई कार्ड नहीं",
+        "say.category.body": "पाठ",
+        "say.category.colors": "रंग",
+        "say.practice.replay": "फिर चलाएँ",
+        "say.practice.skip": "आगे",
+        "say.practice.back": "पीछे",
+        "say.practice.listening": "सुन रहा है",
+        "say.permission.continue": "जारी रखें",
+        "say.permission.openSettings": "सेटिंग्स खोलें",
+        "say.edit.cardsTitle": "कार्ड",
+        "say.edit.cardTitle": "शीर्षक",
+        "say.edit.listenFor": "यह सुन रहा है",
+        "say.edit.emoji": "इमोजी",
+        "say.edit.image": "तस्वीर",
+        "say.edit.hide": "छिपाएँ",
+        "say.edit.reset": "डिफ़ॉल्ट पर लौटाएँ",
+        "say.edit.delete": "मिटाएँ",
+        "say.edit.hiddenTag": "छिपा हुआ",
+        "say.edit.customTag": "अपना",
+        "common.cancel": "रद्द करें",
+        "common.save": "सहेजें",
+        "common.add": "जोड़ें",
+        "common.done": "पूरा हुआ",
+        "common.settings": "सेटिंग्स",
+    ]
+
     static let say_el: [String: String] = [
         "say.appName": "Πες",
         "say.categories.empty": "Καμία κάρτα",
@@ -9017,6 +9311,46 @@ extension TikoLocalTranslations {
         "common.add": "Cuir leis",
         "common.done": "Déanta",
         "common.settings": "Socruithe",
+    ]
+
+    static let sum_bn: [String: String] = [
+        "sum.appName": "যোগ",
+        "sum.play.playAgain": "আবার বাজান",
+        "sum.practice.skip": "পরবর্তী",
+        "sum.practice.back": "পিছনে",
+        "sum.practice.delete": "মুছুন",
+        "sum.edit.pathTitle": "শিরোনাম",
+        "sum.edit.emoji": "ইমোজি",
+        "sum.edit.delete": "মুছুন",
+        "sum.edit.hide": "লুকান",
+        "sum.edit.hiddenTag": "লুকানো",
+        "sum.settings.answerMode": "উত্তর দিচ্ছে",
+        "sum.settings.spokenWords": "উচ্চারিত শব্দ",
+        "common.cancel": "বাতিল",
+        "common.save": "সংরক্ষণ",
+        "common.add": "যোগ করুন",
+        "common.done": "সম্পন্ন",
+        "common.settings": "সেটিংস",
+    ]
+
+    static let sum_hi: [String: String] = [
+        "sum.appName": "जोड़",
+        "sum.play.playAgain": "फिर चलाएँ",
+        "sum.practice.skip": "आगे",
+        "sum.practice.back": "पीछे",
+        "sum.practice.delete": "मिटाएँ",
+        "sum.edit.pathTitle": "शीर्षक",
+        "sum.edit.emoji": "इमोजी",
+        "sum.edit.delete": "मिटाएँ",
+        "sum.edit.hide": "छिपाएँ",
+        "sum.edit.hiddenTag": "छिपा हुआ",
+        "sum.settings.answerMode": "जवाब दे रहा है",
+        "sum.settings.spokenWords": "बोले गए शब्द",
+        "common.cancel": "रद्द करें",
+        "common.save": "सहेजें",
+        "common.add": "जोड़ें",
+        "common.done": "पूरा हुआ",
+        "common.settings": "सेटिंग्स",
     ]
 
     static let sum_el: [String: String] = [
@@ -10571,6 +10905,64 @@ extension TikoLocalTranslations {
         "common.settings": "Socruithe",
     ]
 
+    static let first_bn: [String: String] = [
+        "first.appName": "প্রথমে",
+        "first.routine.done": "সম্পন্ন",
+        "first.routine.skip": "এড়িয়ে যান",
+        "first.routine.undo": "ফিরিয়ে নিন",
+        "first.routine.back": "পিছনে",
+        "first.routine.stepDone": "সম্পন্ন",
+        "first.finish.again": "আবার",
+        "first.finish.done": "সম্পন্ন",
+        "first.home.empty": "এখনও কোনো রুটিন নেই",
+        "first.edit.routineTitle": "শিরোনাম",
+        "first.edit.emoji": "ইমোজি",
+        "first.edit.image": "ছবি",
+        "first.edit.steps": "ধাপ",
+        "first.edit.stepTitle": "শিরোনাম",
+        "first.edit.duplicate": "নকল করুন",
+        "first.edit.delete": "মুছুন",
+        "first.edit.hide": "লুকান",
+        "first.edit.reset": "ডিফল্টে ফিরিয়ে দিন",
+        "first.edit.hiddenTag": "লুকানো",
+        "first.edit.customTag": "নিজের",
+        "first.edit.resetProgress": "আবার শুরু",
+        "common.cancel": "বাতিল",
+        "common.save": "সংরক্ষণ",
+        "common.add": "যোগ করুন",
+        "common.done": "সম্পন্ন",
+        "common.settings": "সেটিংস",
+    ]
+
+    static let first_hi: [String: String] = [
+        "first.appName": "पहले",
+        "first.routine.done": "पूरा हुआ",
+        "first.routine.skip": "छोड़ें",
+        "first.routine.undo": "पहले जैसा",
+        "first.routine.back": "पीछे",
+        "first.routine.stepDone": "पूरा हुआ",
+        "first.finish.again": "फिर से",
+        "first.finish.done": "पूरा हुआ",
+        "first.home.empty": "अभी कोई रूटीन नहीं",
+        "first.edit.routineTitle": "शीर्षक",
+        "first.edit.emoji": "इमोजी",
+        "first.edit.image": "चित्र",
+        "first.edit.steps": "चरण",
+        "first.edit.stepTitle": "शीर्षक",
+        "first.edit.duplicate": "नकल करें",
+        "first.edit.delete": "मिटाएँ",
+        "first.edit.hide": "छिपाएँ",
+        "first.edit.reset": "डिफ़ॉल्ट पर लौटाएँ",
+        "first.edit.hiddenTag": "छिपा हुआ",
+        "first.edit.customTag": "अपना",
+        "first.edit.resetProgress": "फिर से शुरू",
+        "common.cancel": "रद्द करें",
+        "common.save": "सहेजें",
+        "common.add": "जोड़ें",
+        "common.done": "पूरा हुआ",
+        "common.settings": "सेटिंग्स",
+    ]
+
     static let first_el: [String: String] = [
         "first.appName": "Πρώτα",
         "first.routine.done": "Έτοιμο",
@@ -10719,16 +11111,16 @@ extension TikoLocalTranslations {
     /// The generated bundles for one app, in locale order.
     static func generatedBundles(for app: TikoAppKey) -> [(String, [String: String])] {
         switch app {
-        case .radio: return [("nl", radio_nl), ("de", radio_de), ("fr", radio_fr), ("es", radio_es), ("pt", radio_pt), ("it", radio_it), ("mt", radio_mt), ("ja", radio_ja), ("zh", radio_zh), ("ko", radio_ko), ("ar", radio_ar), ("hy", radio_hy), ("id", radio_id), ("ms", radio_ms), ("vi", radio_vi), ("af", radio_af), ("sv", radio_sv), ("da", radio_da), ("nb", radio_nb), ("is", radio_is), ("fy", radio_fy), ("lb", radio_lb), ("ca", radio_ca), ("gl", radio_gl), ("ro", radio_ro), ("pap", radio_pap), ("ru", radio_ru), ("uk", radio_uk), ("be", radio_be), ("pl", radio_pl), ("cs", radio_cs), ("sk", radio_sk), ("sl", radio_sl), ("hr", radio_hr), ("sr", radio_sr), ("bs", radio_bs), ("cnr", radio_cnr), ("bg", radio_bg), ("mk", radio_mk), ("lt", radio_lt), ("lv", radio_lv), ("fi", radio_fi), ("et", radio_et), ("hu", radio_hu), ("cy", radio_cy), ("ga", radio_ga), ("el", radio_el), ("sq", radio_sq), ("tr", radio_tr), ("eu", radio_eu), ("ka", radio_ka)]
-        case .yesNo: return [("nl", yesNo_nl), ("de", yesNo_de), ("fr", yesNo_fr), ("es", yesNo_es), ("pt", yesNo_pt), ("it", yesNo_it), ("mt", yesNo_mt), ("ja", yesNo_ja), ("zh", yesNo_zh), ("ko", yesNo_ko), ("ar", yesNo_ar), ("hy", yesNo_hy), ("id", yesNo_id), ("ms", yesNo_ms), ("vi", yesNo_vi), ("af", yesNo_af), ("sv", yesNo_sv), ("da", yesNo_da), ("nb", yesNo_nb), ("is", yesNo_is), ("fy", yesNo_fy), ("lb", yesNo_lb), ("ca", yesNo_ca), ("gl", yesNo_gl), ("ro", yesNo_ro), ("pap", yesNo_pap), ("ru", yesNo_ru), ("uk", yesNo_uk), ("be", yesNo_be), ("pl", yesNo_pl), ("cs", yesNo_cs), ("sk", yesNo_sk), ("sl", yesNo_sl), ("hr", yesNo_hr), ("sr", yesNo_sr), ("bs", yesNo_bs), ("cnr", yesNo_cnr), ("bg", yesNo_bg), ("mk", yesNo_mk), ("lt", yesNo_lt), ("lv", yesNo_lv), ("fi", yesNo_fi), ("et", yesNo_et), ("hu", yesNo_hu), ("cy", yesNo_cy), ("ga", yesNo_ga), ("el", yesNo_el), ("sq", yesNo_sq), ("tr", yesNo_tr), ("eu", yesNo_eu), ("ka", yesNo_ka)]
-        case .cards: return [("nl", cards_nl), ("de", cards_de), ("fr", cards_fr), ("es", cards_es), ("pt", cards_pt), ("it", cards_it), ("mt", cards_mt), ("ja", cards_ja), ("zh", cards_zh), ("ko", cards_ko), ("ar", cards_ar), ("hy", cards_hy), ("id", cards_id), ("ms", cards_ms), ("vi", cards_vi), ("af", cards_af), ("sv", cards_sv), ("da", cards_da), ("nb", cards_nb), ("is", cards_is), ("fy", cards_fy), ("lb", cards_lb), ("ca", cards_ca), ("gl", cards_gl), ("ro", cards_ro), ("pap", cards_pap), ("ru", cards_ru), ("uk", cards_uk), ("be", cards_be), ("pl", cards_pl), ("cs", cards_cs), ("sk", cards_sk), ("sl", cards_sl), ("hr", cards_hr), ("sr", cards_sr), ("bs", cards_bs), ("cnr", cards_cnr), ("bg", cards_bg), ("mk", cards_mk), ("lt", cards_lt), ("lv", cards_lv), ("fi", cards_fi), ("et", cards_et), ("hu", cards_hu), ("cy", cards_cy), ("ga", cards_ga), ("el", cards_el), ("sq", cards_sq), ("tr", cards_tr), ("eu", cards_eu), ("ka", cards_ka)]
-        case .timer: return [("nl", timer_nl), ("de", timer_de), ("fr", timer_fr), ("es", timer_es), ("pt", timer_pt), ("it", timer_it), ("mt", timer_mt), ("ja", timer_ja), ("zh", timer_zh), ("ko", timer_ko), ("ar", timer_ar), ("hy", timer_hy), ("id", timer_id), ("ms", timer_ms), ("vi", timer_vi), ("af", timer_af), ("sv", timer_sv), ("da", timer_da), ("nb", timer_nb), ("is", timer_is), ("fy", timer_fy), ("lb", timer_lb), ("ca", timer_ca), ("gl", timer_gl), ("ro", timer_ro), ("pap", timer_pap), ("ru", timer_ru), ("uk", timer_uk), ("be", timer_be), ("pl", timer_pl), ("cs", timer_cs), ("sk", timer_sk), ("sl", timer_sl), ("hr", timer_hr), ("sr", timer_sr), ("bs", timer_bs), ("cnr", timer_cnr), ("bg", timer_bg), ("mk", timer_mk), ("lt", timer_lt), ("lv", timer_lv), ("fi", timer_fi), ("et", timer_et), ("hu", timer_hu), ("cy", timer_cy), ("ga", timer_ga), ("el", timer_el), ("sq", timer_sq), ("tr", timer_tr), ("eu", timer_eu), ("ka", timer_ka)]
-        case .type: return [("nl", type_nl), ("de", type_de), ("fr", type_fr), ("es", type_es), ("pt", type_pt), ("it", type_it), ("mt", type_mt), ("ja", type_ja), ("zh", type_zh), ("ko", type_ko), ("ar", type_ar), ("hy", type_hy), ("id", type_id), ("ms", type_ms), ("vi", type_vi), ("af", type_af), ("sv", type_sv), ("da", type_da), ("nb", type_nb), ("is", type_is), ("fy", type_fy), ("lb", type_lb), ("ca", type_ca), ("gl", type_gl), ("ro", type_ro), ("pap", type_pap), ("ru", type_ru), ("uk", type_uk), ("be", type_be), ("pl", type_pl), ("cs", type_cs), ("sk", type_sk), ("sl", type_sl), ("hr", type_hr), ("sr", type_sr), ("bs", type_bs), ("cnr", type_cnr), ("bg", type_bg), ("mk", type_mk), ("lt", type_lt), ("lv", type_lv), ("fi", type_fi), ("et", type_et), ("hu", type_hu), ("cy", type_cy), ("ga", type_ga), ("el", type_el), ("sq", type_sq), ("tr", type_tr), ("eu", type_eu), ("ka", type_ka)]
-        case .sequence: return [("nl", sequence_nl), ("de", sequence_de), ("fr", sequence_fr), ("es", sequence_es), ("pt", sequence_pt), ("it", sequence_it), ("mt", sequence_mt), ("ja", sequence_ja), ("zh", sequence_zh), ("ko", sequence_ko), ("ar", sequence_ar), ("hy", sequence_hy), ("id", sequence_id), ("ms", sequence_ms), ("vi", sequence_vi), ("af", sequence_af), ("sv", sequence_sv), ("da", sequence_da), ("nb", sequence_nb), ("is", sequence_is), ("fy", sequence_fy), ("lb", sequence_lb), ("ca", sequence_ca), ("gl", sequence_gl), ("ro", sequence_ro), ("pap", sequence_pap), ("ru", sequence_ru), ("uk", sequence_uk), ("be", sequence_be), ("pl", sequence_pl), ("cs", sequence_cs), ("sk", sequence_sk), ("sl", sequence_sl), ("hr", sequence_hr), ("sr", sequence_sr), ("bs", sequence_bs), ("cnr", sequence_cnr), ("bg", sequence_bg), ("mk", sequence_mk), ("lt", sequence_lt), ("lv", sequence_lv), ("fi", sequence_fi), ("et", sequence_et), ("hu", sequence_hu), ("cy", sequence_cy), ("ga", sequence_ga), ("el", sequence_el), ("sq", sequence_sq), ("tr", sequence_tr), ("eu", sequence_eu), ("ka", sequence_ka)]
-        case .todo: return [("nl", todo_nl), ("de", todo_de), ("fr", todo_fr), ("es", todo_es), ("pt", todo_pt), ("it", todo_it), ("mt", todo_mt), ("ja", todo_ja), ("zh", todo_zh), ("ko", todo_ko), ("ar", todo_ar), ("hy", todo_hy), ("id", todo_id), ("ms", todo_ms), ("vi", todo_vi), ("af", todo_af), ("sv", todo_sv), ("da", todo_da), ("nb", todo_nb), ("is", todo_is), ("fy", todo_fy), ("lb", todo_lb), ("ca", todo_ca), ("gl", todo_gl), ("ro", todo_ro), ("pap", todo_pap), ("ru", todo_ru), ("uk", todo_uk), ("be", todo_be), ("pl", todo_pl), ("cs", todo_cs), ("sk", todo_sk), ("sl", todo_sl), ("hr", todo_hr), ("sr", todo_sr), ("bs", todo_bs), ("cnr", todo_cnr), ("bg", todo_bg), ("mk", todo_mk), ("lt", todo_lt), ("lv", todo_lv), ("fi", todo_fi), ("et", todo_et), ("hu", todo_hu), ("cy", todo_cy), ("ga", todo_ga), ("el", todo_el), ("sq", todo_sq), ("tr", todo_tr), ("eu", todo_eu), ("ka", todo_ka)]
-        case .say: return [("nl", say_nl), ("de", say_de), ("fr", say_fr), ("es", say_es), ("pt", say_pt), ("it", say_it), ("mt", say_mt), ("ja", say_ja), ("zh", say_zh), ("ko", say_ko), ("ar", say_ar), ("hy", say_hy), ("id", say_id), ("ms", say_ms), ("vi", say_vi), ("af", say_af), ("sv", say_sv), ("da", say_da), ("nb", say_nb), ("is", say_is), ("fy", say_fy), ("lb", say_lb), ("ca", say_ca), ("gl", say_gl), ("ro", say_ro), ("pap", say_pap), ("ru", say_ru), ("uk", say_uk), ("be", say_be), ("pl", say_pl), ("cs", say_cs), ("sk", say_sk), ("sl", say_sl), ("hr", say_hr), ("sr", say_sr), ("bs", say_bs), ("cnr", say_cnr), ("bg", say_bg), ("mk", say_mk), ("lt", say_lt), ("lv", say_lv), ("fi", say_fi), ("et", say_et), ("hu", say_hu), ("cy", say_cy), ("ga", say_ga), ("el", say_el), ("sq", say_sq), ("tr", say_tr), ("eu", say_eu), ("ka", say_ka)]
-        case .sum: return [("nl", sum_nl), ("de", sum_de), ("fr", sum_fr), ("es", sum_es), ("pt", sum_pt), ("it", sum_it), ("mt", sum_mt), ("ja", sum_ja), ("zh", sum_zh), ("ko", sum_ko), ("ar", sum_ar), ("hy", sum_hy), ("id", sum_id), ("ms", sum_ms), ("vi", sum_vi), ("af", sum_af), ("sv", sum_sv), ("da", sum_da), ("nb", sum_nb), ("is", sum_is), ("fy", sum_fy), ("lb", sum_lb), ("ca", sum_ca), ("gl", sum_gl), ("ro", sum_ro), ("pap", sum_pap), ("ru", sum_ru), ("uk", sum_uk), ("be", sum_be), ("pl", sum_pl), ("cs", sum_cs), ("sk", sum_sk), ("sl", sum_sl), ("hr", sum_hr), ("sr", sum_sr), ("bs", sum_bs), ("cnr", sum_cnr), ("bg", sum_bg), ("mk", sum_mk), ("lt", sum_lt), ("lv", sum_lv), ("fi", sum_fi), ("et", sum_et), ("hu", sum_hu), ("cy", sum_cy), ("ga", sum_ga), ("el", sum_el), ("sq", sum_sq), ("tr", sum_tr), ("eu", sum_eu), ("ka", sum_ka)]
-        case .first: return [("nl", first_nl), ("de", first_de), ("fr", first_fr), ("es", first_es), ("pt", first_pt), ("it", first_it), ("mt", first_mt), ("ja", first_ja), ("zh", first_zh), ("ko", first_ko), ("ar", first_ar), ("hy", first_hy), ("id", first_id), ("ms", first_ms), ("vi", first_vi), ("af", first_af), ("sv", first_sv), ("da", first_da), ("nb", first_nb), ("is", first_is), ("fy", first_fy), ("lb", first_lb), ("ca", first_ca), ("gl", first_gl), ("ro", first_ro), ("pap", first_pap), ("ru", first_ru), ("uk", first_uk), ("be", first_be), ("pl", first_pl), ("cs", first_cs), ("sk", first_sk), ("sl", first_sl), ("hr", first_hr), ("sr", first_sr), ("bs", first_bs), ("cnr", first_cnr), ("bg", first_bg), ("mk", first_mk), ("lt", first_lt), ("lv", first_lv), ("fi", first_fi), ("et", first_et), ("hu", first_hu), ("cy", first_cy), ("ga", first_ga), ("el", first_el), ("sq", first_sq), ("tr", first_tr), ("eu", first_eu), ("ka", first_ka)]
+        case .radio: return [("nl", radio_nl), ("de", radio_de), ("fr", radio_fr), ("es", radio_es), ("pt", radio_pt), ("it", radio_it), ("mt", radio_mt), ("ja", radio_ja), ("zh", radio_zh), ("ko", radio_ko), ("ar", radio_ar), ("hy", radio_hy), ("id", radio_id), ("ms", radio_ms), ("vi", radio_vi), ("af", radio_af), ("sv", radio_sv), ("da", radio_da), ("nb", radio_nb), ("is", radio_is), ("fy", radio_fy), ("lb", radio_lb), ("ca", radio_ca), ("gl", radio_gl), ("ro", radio_ro), ("pap", radio_pap), ("ru", radio_ru), ("uk", radio_uk), ("be", radio_be), ("pl", radio_pl), ("cs", radio_cs), ("sk", radio_sk), ("sl", radio_sl), ("hr", radio_hr), ("sr", radio_sr), ("bs", radio_bs), ("cnr", radio_cnr), ("bg", radio_bg), ("mk", radio_mk), ("lt", radio_lt), ("lv", radio_lv), ("fi", radio_fi), ("et", radio_et), ("hu", radio_hu), ("cy", radio_cy), ("ga", radio_ga), ("bn", radio_bn), ("hi", radio_hi), ("el", radio_el), ("sq", radio_sq), ("tr", radio_tr), ("eu", radio_eu), ("ka", radio_ka)]
+        case .yesNo: return [("nl", yesNo_nl), ("de", yesNo_de), ("fr", yesNo_fr), ("es", yesNo_es), ("pt", yesNo_pt), ("it", yesNo_it), ("mt", yesNo_mt), ("ja", yesNo_ja), ("zh", yesNo_zh), ("ko", yesNo_ko), ("ar", yesNo_ar), ("hy", yesNo_hy), ("id", yesNo_id), ("ms", yesNo_ms), ("vi", yesNo_vi), ("af", yesNo_af), ("sv", yesNo_sv), ("da", yesNo_da), ("nb", yesNo_nb), ("is", yesNo_is), ("fy", yesNo_fy), ("lb", yesNo_lb), ("ca", yesNo_ca), ("gl", yesNo_gl), ("ro", yesNo_ro), ("pap", yesNo_pap), ("ru", yesNo_ru), ("uk", yesNo_uk), ("be", yesNo_be), ("pl", yesNo_pl), ("cs", yesNo_cs), ("sk", yesNo_sk), ("sl", yesNo_sl), ("hr", yesNo_hr), ("sr", yesNo_sr), ("bs", yesNo_bs), ("cnr", yesNo_cnr), ("bg", yesNo_bg), ("mk", yesNo_mk), ("lt", yesNo_lt), ("lv", yesNo_lv), ("fi", yesNo_fi), ("et", yesNo_et), ("hu", yesNo_hu), ("cy", yesNo_cy), ("ga", yesNo_ga), ("bn", yesNo_bn), ("hi", yesNo_hi), ("el", yesNo_el), ("sq", yesNo_sq), ("tr", yesNo_tr), ("eu", yesNo_eu), ("ka", yesNo_ka)]
+        case .cards: return [("nl", cards_nl), ("de", cards_de), ("fr", cards_fr), ("es", cards_es), ("pt", cards_pt), ("it", cards_it), ("mt", cards_mt), ("ja", cards_ja), ("zh", cards_zh), ("ko", cards_ko), ("ar", cards_ar), ("hy", cards_hy), ("id", cards_id), ("ms", cards_ms), ("vi", cards_vi), ("af", cards_af), ("sv", cards_sv), ("da", cards_da), ("nb", cards_nb), ("is", cards_is), ("fy", cards_fy), ("lb", cards_lb), ("ca", cards_ca), ("gl", cards_gl), ("ro", cards_ro), ("pap", cards_pap), ("ru", cards_ru), ("uk", cards_uk), ("be", cards_be), ("pl", cards_pl), ("cs", cards_cs), ("sk", cards_sk), ("sl", cards_sl), ("hr", cards_hr), ("sr", cards_sr), ("bs", cards_bs), ("cnr", cards_cnr), ("bg", cards_bg), ("mk", cards_mk), ("lt", cards_lt), ("lv", cards_lv), ("fi", cards_fi), ("et", cards_et), ("hu", cards_hu), ("cy", cards_cy), ("ga", cards_ga), ("bn", cards_bn), ("hi", cards_hi), ("el", cards_el), ("sq", cards_sq), ("tr", cards_tr), ("eu", cards_eu), ("ka", cards_ka)]
+        case .timer: return [("nl", timer_nl), ("de", timer_de), ("fr", timer_fr), ("es", timer_es), ("pt", timer_pt), ("it", timer_it), ("mt", timer_mt), ("ja", timer_ja), ("zh", timer_zh), ("ko", timer_ko), ("ar", timer_ar), ("hy", timer_hy), ("id", timer_id), ("ms", timer_ms), ("vi", timer_vi), ("af", timer_af), ("sv", timer_sv), ("da", timer_da), ("nb", timer_nb), ("is", timer_is), ("fy", timer_fy), ("lb", timer_lb), ("ca", timer_ca), ("gl", timer_gl), ("ro", timer_ro), ("pap", timer_pap), ("ru", timer_ru), ("uk", timer_uk), ("be", timer_be), ("pl", timer_pl), ("cs", timer_cs), ("sk", timer_sk), ("sl", timer_sl), ("hr", timer_hr), ("sr", timer_sr), ("bs", timer_bs), ("cnr", timer_cnr), ("bg", timer_bg), ("mk", timer_mk), ("lt", timer_lt), ("lv", timer_lv), ("fi", timer_fi), ("et", timer_et), ("hu", timer_hu), ("cy", timer_cy), ("ga", timer_ga), ("bn", timer_bn), ("hi", timer_hi), ("el", timer_el), ("sq", timer_sq), ("tr", timer_tr), ("eu", timer_eu), ("ka", timer_ka)]
+        case .type: return [("nl", type_nl), ("de", type_de), ("fr", type_fr), ("es", type_es), ("pt", type_pt), ("it", type_it), ("mt", type_mt), ("ja", type_ja), ("zh", type_zh), ("ko", type_ko), ("ar", type_ar), ("hy", type_hy), ("id", type_id), ("ms", type_ms), ("vi", type_vi), ("af", type_af), ("sv", type_sv), ("da", type_da), ("nb", type_nb), ("is", type_is), ("fy", type_fy), ("lb", type_lb), ("ca", type_ca), ("gl", type_gl), ("ro", type_ro), ("pap", type_pap), ("ru", type_ru), ("uk", type_uk), ("be", type_be), ("pl", type_pl), ("cs", type_cs), ("sk", type_sk), ("sl", type_sl), ("hr", type_hr), ("sr", type_sr), ("bs", type_bs), ("cnr", type_cnr), ("bg", type_bg), ("mk", type_mk), ("lt", type_lt), ("lv", type_lv), ("fi", type_fi), ("et", type_et), ("hu", type_hu), ("cy", type_cy), ("ga", type_ga), ("bn", type_bn), ("hi", type_hi), ("el", type_el), ("sq", type_sq), ("tr", type_tr), ("eu", type_eu), ("ka", type_ka)]
+        case .sequence: return [("nl", sequence_nl), ("de", sequence_de), ("fr", sequence_fr), ("es", sequence_es), ("pt", sequence_pt), ("it", sequence_it), ("mt", sequence_mt), ("ja", sequence_ja), ("zh", sequence_zh), ("ko", sequence_ko), ("ar", sequence_ar), ("hy", sequence_hy), ("id", sequence_id), ("ms", sequence_ms), ("vi", sequence_vi), ("af", sequence_af), ("sv", sequence_sv), ("da", sequence_da), ("nb", sequence_nb), ("is", sequence_is), ("fy", sequence_fy), ("lb", sequence_lb), ("ca", sequence_ca), ("gl", sequence_gl), ("ro", sequence_ro), ("pap", sequence_pap), ("ru", sequence_ru), ("uk", sequence_uk), ("be", sequence_be), ("pl", sequence_pl), ("cs", sequence_cs), ("sk", sequence_sk), ("sl", sequence_sl), ("hr", sequence_hr), ("sr", sequence_sr), ("bs", sequence_bs), ("cnr", sequence_cnr), ("bg", sequence_bg), ("mk", sequence_mk), ("lt", sequence_lt), ("lv", sequence_lv), ("fi", sequence_fi), ("et", sequence_et), ("hu", sequence_hu), ("cy", sequence_cy), ("ga", sequence_ga), ("bn", sequence_bn), ("hi", sequence_hi), ("el", sequence_el), ("sq", sequence_sq), ("tr", sequence_tr), ("eu", sequence_eu), ("ka", sequence_ka)]
+        case .todo: return [("nl", todo_nl), ("de", todo_de), ("fr", todo_fr), ("es", todo_es), ("pt", todo_pt), ("it", todo_it), ("mt", todo_mt), ("ja", todo_ja), ("zh", todo_zh), ("ko", todo_ko), ("ar", todo_ar), ("hy", todo_hy), ("id", todo_id), ("ms", todo_ms), ("vi", todo_vi), ("af", todo_af), ("sv", todo_sv), ("da", todo_da), ("nb", todo_nb), ("is", todo_is), ("fy", todo_fy), ("lb", todo_lb), ("ca", todo_ca), ("gl", todo_gl), ("ro", todo_ro), ("pap", todo_pap), ("ru", todo_ru), ("uk", todo_uk), ("be", todo_be), ("pl", todo_pl), ("cs", todo_cs), ("sk", todo_sk), ("sl", todo_sl), ("hr", todo_hr), ("sr", todo_sr), ("bs", todo_bs), ("cnr", todo_cnr), ("bg", todo_bg), ("mk", todo_mk), ("lt", todo_lt), ("lv", todo_lv), ("fi", todo_fi), ("et", todo_et), ("hu", todo_hu), ("cy", todo_cy), ("ga", todo_ga), ("bn", todo_bn), ("hi", todo_hi), ("el", todo_el), ("sq", todo_sq), ("tr", todo_tr), ("eu", todo_eu), ("ka", todo_ka)]
+        case .say: return [("nl", say_nl), ("de", say_de), ("fr", say_fr), ("es", say_es), ("pt", say_pt), ("it", say_it), ("mt", say_mt), ("ja", say_ja), ("zh", say_zh), ("ko", say_ko), ("ar", say_ar), ("hy", say_hy), ("id", say_id), ("ms", say_ms), ("vi", say_vi), ("af", say_af), ("sv", say_sv), ("da", say_da), ("nb", say_nb), ("is", say_is), ("fy", say_fy), ("lb", say_lb), ("ca", say_ca), ("gl", say_gl), ("ro", say_ro), ("pap", say_pap), ("ru", say_ru), ("uk", say_uk), ("be", say_be), ("pl", say_pl), ("cs", say_cs), ("sk", say_sk), ("sl", say_sl), ("hr", say_hr), ("sr", say_sr), ("bs", say_bs), ("cnr", say_cnr), ("bg", say_bg), ("mk", say_mk), ("lt", say_lt), ("lv", say_lv), ("fi", say_fi), ("et", say_et), ("hu", say_hu), ("cy", say_cy), ("ga", say_ga), ("bn", say_bn), ("hi", say_hi), ("el", say_el), ("sq", say_sq), ("tr", say_tr), ("eu", say_eu), ("ka", say_ka)]
+        case .sum: return [("nl", sum_nl), ("de", sum_de), ("fr", sum_fr), ("es", sum_es), ("pt", sum_pt), ("it", sum_it), ("mt", sum_mt), ("ja", sum_ja), ("zh", sum_zh), ("ko", sum_ko), ("ar", sum_ar), ("hy", sum_hy), ("id", sum_id), ("ms", sum_ms), ("vi", sum_vi), ("af", sum_af), ("sv", sum_sv), ("da", sum_da), ("nb", sum_nb), ("is", sum_is), ("fy", sum_fy), ("lb", sum_lb), ("ca", sum_ca), ("gl", sum_gl), ("ro", sum_ro), ("pap", sum_pap), ("ru", sum_ru), ("uk", sum_uk), ("be", sum_be), ("pl", sum_pl), ("cs", sum_cs), ("sk", sum_sk), ("sl", sum_sl), ("hr", sum_hr), ("sr", sum_sr), ("bs", sum_bs), ("cnr", sum_cnr), ("bg", sum_bg), ("mk", sum_mk), ("lt", sum_lt), ("lv", sum_lv), ("fi", sum_fi), ("et", sum_et), ("hu", sum_hu), ("cy", sum_cy), ("ga", sum_ga), ("bn", sum_bn), ("hi", sum_hi), ("el", sum_el), ("sq", sum_sq), ("tr", sum_tr), ("eu", sum_eu), ("ka", sum_ka)]
+        case .first: return [("nl", first_nl), ("de", first_de), ("fr", first_fr), ("es", first_es), ("pt", first_pt), ("it", first_it), ("mt", first_mt), ("ja", first_ja), ("zh", first_zh), ("ko", first_ko), ("ar", first_ar), ("hy", first_hy), ("id", first_id), ("ms", first_ms), ("vi", first_vi), ("af", first_af), ("sv", first_sv), ("da", first_da), ("nb", first_nb), ("is", first_is), ("fy", first_fy), ("lb", first_lb), ("ca", first_ca), ("gl", first_gl), ("ro", first_ro), ("pap", first_pap), ("ru", first_ru), ("uk", first_uk), ("be", first_be), ("pl", first_pl), ("cs", first_cs), ("sk", first_sk), ("sl", first_sl), ("hr", first_hr), ("sr", first_sr), ("bs", first_bs), ("cnr", first_cnr), ("bg", first_bg), ("mk", first_mk), ("lt", first_lt), ("lv", first_lv), ("fi", first_fi), ("et", first_et), ("hu", first_hu), ("cy", first_cy), ("ga", first_ga), ("bn", first_bn), ("hi", first_hi), ("el", first_el), ("sq", first_sq), ("tr", first_tr), ("eu", first_eu), ("ka", first_ka)]
         }
     }
 }

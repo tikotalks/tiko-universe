@@ -54,6 +54,8 @@ public extension TikoLanguage {
         TikoLanguage(id: "hu", title: "Hungarian", nativeTitle: "Magyar", isRightToLeft: false, hasTalkGrammar: true, interfaceCoverage: .core),
         TikoLanguage(id: "cy", title: "Welsh", nativeTitle: "Cymraeg", isRightToLeft: false, hasTalkGrammar: true, interfaceCoverage: .core),
         TikoLanguage(id: "ga", title: "Irish", nativeTitle: "Gaeilge", isRightToLeft: false, hasTalkGrammar: true, interfaceCoverage: .core),
+        TikoLanguage(id: "bn", title: "Bengali", nativeTitle: "বাংলা", isRightToLeft: false, hasTalkGrammar: true, interfaceCoverage: .core),
+        TikoLanguage(id: "hi", title: "Hindi", nativeTitle: "हिन्दी", isRightToLeft: false, hasTalkGrammar: true, interfaceCoverage: .core),
         TikoLanguage(id: "el", title: "Greek", nativeTitle: "Ελληνικά", isRightToLeft: false, hasTalkGrammar: true, interfaceCoverage: .core),
         TikoLanguage(id: "sq", title: "Albanian", nativeTitle: "Shqip", isRightToLeft: false, hasTalkGrammar: true, interfaceCoverage: .core),
         TikoLanguage(id: "tr", title: "Turkish", nativeTitle: "Türkçe", isRightToLeft: false, hasTalkGrammar: true, interfaceCoverage: .core),

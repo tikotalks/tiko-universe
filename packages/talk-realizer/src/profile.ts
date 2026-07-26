@@ -227,6 +227,14 @@ export interface SentenceContext {
    * pronoun subject, whose gender the tiles do not carry.
    */
   subjectGender?: Gender
+  /**
+   * The gender the speaker's own verbs agree with, for the languages that mark it.
+   * Defaults to masculine, which is a placeholder rather than a claim — see
+   * `RealizeOptions.speakerGender`.
+   */
+  speakerGender: 'masculine' | 'feminine'
+  /** True where the caller did not say, so the default is standing in. */
+  speakerGenderAssumed: boolean
   /** True when the subject is plural, for the same agreement. */
   subjectPlural?: boolean
   /**

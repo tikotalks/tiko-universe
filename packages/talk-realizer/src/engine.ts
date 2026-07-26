@@ -13,7 +13,11 @@ import { absorb, flushPending, note, push, type Builder, type LanguageRules, typ
 export function realizeWith(
   rules: LanguageRules,
   words: Parameters<typeof chunk>[0],
-  options: { negated?: boolean, tense?: 'present' | 'past' } = {},
+  options: {
+    negated?: boolean
+    tense?: 'present' | 'past'
+    speakerGender?: 'masculine' | 'feminine'
+  } = {},
 ): Realization {
   const chunks = chunk(words, options.negated ?? false)
   const builder: Builder = { tokens: [], inserted: [], notes: [] }
@@ -31,6 +35,8 @@ export function realizeWith(
     person,
     number,
     tense: options.tense ?? 'present',
+    speakerGender: options.speakerGender ?? 'masculine',
+    speakerGenderAssumed: options.speakerGender === undefined,
     negated: chunks.negated,
     isQuestion,
     needsCopula,

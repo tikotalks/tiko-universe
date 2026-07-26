@@ -70,6 +70,8 @@ import { irish } from './languages/ga'
 import { basque } from './languages/eu'
 import { georgian } from './languages/ka'
 import { frisian } from './languages/fy'
+import { bengali } from './languages/bn'
+import { hindi } from './languages/hi'
 import { english } from './languages/en'
 import { dutch } from './languages/nl'
 import type { LanguageRules } from './profile'
@@ -122,6 +124,8 @@ import { irishLexicon } from './lexicon/ga'
 import { basqueLexicon } from './lexicon/eu'
 import { georgianLexicon } from './lexicon/ka'
 import { frisianLexicon } from './lexicon/fy'
+import { bengaliLexicon } from './lexicon/bn'
+import { hindiLexicon } from './lexicon/hi'
 import { englishLexicon } from './lexicon/en'
 import { dutchLexicon } from './lexicon/nl'
 
@@ -164,7 +168,7 @@ export { romanianLexicon } from './lexicon/ro'
 export { greekLexicon } from './lexicon/el'
 
 /** Languages this prototype realizes. */
-export const supportedLanguages = ['en', 'nl', 'de', 'fr', 'es', 'it', 'pt', 'mt', 'zh', 'ja', 'ko', 'ar', 'hy', 'sv', 'da', 'nb', 'id', 'vi', 'ro', 'el', 'ms', 'ca', 'gl', 'af', 'ru', 'pl', 'bg', 'sq', 'uk', 'mk', 'sr', 'hr', 'cs', 'sk', 'tr', 'hu', 'fi', 'et', 'sl', 'bs', 'be', 'lt', 'lv', 'pap', 'is', 'lb', 'cnr', 'cy', 'ga', 'eu', 'ka', 'fy'] as const
+export const supportedLanguages = ['en', 'nl', 'de', 'fr', 'es', 'it', 'pt', 'mt', 'zh', 'ja', 'ko', 'ar', 'hy', 'sv', 'da', 'nb', 'id', 'vi', 'ro', 'el', 'ms', 'ca', 'gl', 'af', 'ru', 'pl', 'bg', 'sq', 'uk', 'mk', 'sr', 'hr', 'cs', 'sk', 'tr', 'hu', 'fi', 'et', 'sl', 'bs', 'be', 'lt', 'lv', 'pap', 'is', 'lb', 'cnr', 'cy', 'ga', 'eu', 'ka', 'fy', 'bn', 'hi'] as const
 export type SupportedLanguage = (typeof supportedLanguages)[number]
 
 /** The bundled feature overlays, by language. */
@@ -220,6 +224,8 @@ export const lexicons: Record<string, Lexicon> = {
   eu: basqueLexicon,
   ka: georgianLexicon,
   fy: frisianLexicon,
+  bn: bengaliLexicon,
+  hi: hindiLexicon,
 }
 
 /** Every language's rule set, by language code. */
@@ -276,6 +282,8 @@ export const languages: Record<string, LanguageRules> = {
   eu: basque,
   ka: georgian,
   fy: frisian,
+  bn: bengali,
+  hi: hindi,
 }
 
 /** The closed set of function words each language is allowed to insert. */
@@ -304,6 +312,7 @@ export function realize(
     negated?: boolean
     tense?: 'present' | 'past'
     minMaturity?: 'production' | 'beta' | 'draft'
+    speakerGender?: 'masculine' | 'feminine'
   },
 ): Realization {
   const language = languageOf(options.locale)
@@ -312,7 +321,11 @@ export function realize(
     : lexicons[language] ?? {}
   const rulesForLanguage = languages[language]
   const annotated = annotate(words, lexicon, rulesForLanguage?.induce, rulesForLanguage?.curated)
-  const realizeOptions = { negated: options.negated, tense: options.tense }
+  const realizeOptions = {
+    negated: options.negated,
+    tense: options.tense,
+    speakerGender: options.speakerGender,
+  }
 
   const rules = rulesForLanguage
   if (!rules) {

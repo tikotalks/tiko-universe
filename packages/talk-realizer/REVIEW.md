@@ -4,17 +4,17 @@ The realizer's **grammar** is tested: every language has a golden list, and 49 o
 52 produce no "needs curation" note for any of the 295 tiles in any sentence shape Talk
 builds. That is a claim about rules.
 
-This file is about the other half: **the words themselves.** 39 of the 52 packs
+This file is about the other half: **the words themselves.** 41 of the 54 packs
 contain vocabulary generated against the shared concept ids and read by no native
 speaker. The grammar around those words is right; whether "kuki" is what a Curaçaoan
 child calls a biscuit is not something this package can know.
 
 **Reviewing one language means checking 295 words and one sample sentence.** Both are
-below. The sample is what the realizer produces for `i + want + the + apple`, which
+below. The sample is what the realizer produces for , which
 exercises the article, the object case and the verb at once — if that reads wrong to a
 speaker, the grammar file needs attention as well as the pack.
 
-## Needs a native reader (39)
+## Needs a native reader (41)
 
 | | language | grammar | sample: "I want the apple" |
 |---|---|---|---|
@@ -22,6 +22,7 @@ speaker, the grammar file needs attention as well as the pack.
 | `sq` | Albanian | beta | Unë dua mollën. |
 | `eu` | Basque | beta | Nik sagarra nahi dut. |
 | `be` | Belarusian | beta | Я хачу яблык. |
+| `bn` | bn | beta | আমি আপেলটা চাই। |
 | `bs` | Bosnian | beta | Ja želim jabuku. |
 | `bg` | Bulgarian | beta | Аз искам ябълката. |
 | `ca` | Catalan | beta | Jo vull la poma. |
@@ -33,6 +34,7 @@ speaker, the grammar file needs attention as well as the pack.
 | `gl` | Galician | beta | Eu quero a mazá. |
 | `ka` | Georgian | draft | მე ვაშლი მინდა. |
 | `el` | Greek | beta | Εγώ θέλω το μήλο. |
+| `hi` | hi | beta | मैं सेब चाहता हूँ। |
 | `hu` | Hungarian | beta | Én akarom az almát. |
 | `is` | Icelandic | beta | Ég vil eplið. |
 | `id` | Indonesian | beta | Saya mau apel itu. |

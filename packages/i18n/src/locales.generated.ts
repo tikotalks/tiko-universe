@@ -53,6 +53,8 @@ export const tikoLocaleEntries: readonly TikoLocaleEntry[] = [
   { code: 'hu', name: "Hungarian", native: "Magyar", talk: true, ui: 'core' },
   { code: 'cy', name: "Welsh", native: "Cymraeg", talk: true, ui: 'core' },
   { code: 'ga', name: "Irish", native: "Gaeilge", talk: true, ui: 'core' },
+  { code: 'bn', name: "Bengali", native: "বাংলা", talk: true, ui: 'core' },
+  { code: 'hi', name: "Hindi", native: "हिन्दी", talk: true, ui: 'core' },
   { code: 'el', name: "Greek", native: "Ελληνικά", talk: true, ui: 'core' },
   { code: 'sq', name: "Albanian", native: "Shqip", talk: true, ui: 'core' },
   { code: 'tr', name: "Turkish", native: "Türkçe", talk: true, ui: 'core' },

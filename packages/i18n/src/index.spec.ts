@@ -175,7 +175,7 @@ describe('the generated locale registry', () => {
   it('offers every language the Talk realizer understands', () => {
     // 52 locales, all of them with grammar: the picker and the realizer agreed on
     // nothing at all before this was generated from one list.
-    expect(tikoLanguages.length).toBe(52)
+    expect(tikoLanguages.length).toBe(54)
     expect(tikoLanguageOptions.every((option) => option.talk)).toBe(true)
   })
 
@@ -195,7 +195,7 @@ describe('the generated locale registry', () => {
     for (const [app, byLocale] of Object.entries(generatedBundles)) {
       const locales = Object.keys(byLocale)
       // English is the source and lives in the app itself, so it is not generated.
-      expect(locales.length, `${app} has bundles for only ${locales.length} locales`).toBe(51)
+      expect(locales.length, `${app} has bundles for only ${locales.length} locales`).toBe(53)
       for (const [locale, strings] of Object.entries(byLocale)) {
         expect(Object.keys(strings).length, `${app}/${locale} is empty`).toBeGreaterThan(0)
       }

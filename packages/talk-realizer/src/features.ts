@@ -290,6 +290,17 @@ export interface RealizeOptions {
   negated?: boolean
   tense?: 'present' | 'past'
   /**
+   * The gender the speaker's own verbs agree with. Hindi and Urdu need it for
+   * every first-person sentence a child makes — "मैं चाहता हूँ" from a boy, "मैं
+   * चाहती हूँ" from a girl — and the Slavic past tenses will want it too.
+   *
+   * Tiko does not record a child's gender, so this defaults to `masculine` and the
+   * realizer says so in its notes. That is a placeholder for a decision, not an
+   * answer: a language that needs this is wrong for half its users until the
+   * profile carries it.
+   */
+  speakerGender?: 'masculine' | 'feminine'
+  /**
    * The lowest maturity this caller will accept. A language below it falls back
    * to plain concatenation — the same output the app produces today — so
    * shipping this package never means shipping every language at once.

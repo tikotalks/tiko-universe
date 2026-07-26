@@ -85,6 +85,10 @@ export const locales = [
   { code: 'cy', name: 'Welsh', native: 'Cymraeg', talk: true, ui: 'core' },
   { code: 'ga', name: 'Irish', native: 'Gaeilge', talk: true, ui: 'core' },
 
+  // South Asia
+  { code: 'bn', name: 'Bengali', native: 'বাংলা', talk: true, ui: 'core' },
+  { code: 'hi', name: 'Hindi', native: 'हिन्दी', talk: true, ui: 'core' },
+
   // The rest of Europe
   { code: 'el', name: 'Greek', native: 'Ελληνικά', talk: true, ui: 'core' },
   { code: 'sq', name: 'Albanian', native: 'Shqip', talk: true, ui: 'core' },
