@@ -13,7 +13,6 @@
 		3312C9FA70A4BD3EF6087A13 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9B58B0C603EC8CE19F84BFE7 /* Assets.xcassets */; };
 		4EFACA5C54FD710561D495DD /* TalkWordCloudView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 387FEDFECDE8E43A32482C13 /* TalkWordCloudView.swift */; };
 		568C4202EE9A45117A4705D1 /* TalkAppConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = B725E185378770B7E23F4F11 /* TalkAppConfig.swift */; };
-		5A5F1997F35DBE0CA759A914 /* TalkOfflineFallback.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CC797ADF257B86D2E456D72 /* TalkOfflineFallback.swift */; };
 		5C1562F4721F0219E8C7BDDF /* TikoTalkTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C28180253633CCA7AF8BDD1E /* TikoTalkTests.swift */; };
 		6034E98A36374180E7C39408 /* TalkAPIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C06815479F9E0E22500FF6E /* TalkAPIClient.swift */; };
 		609AF93AE98EEF0C63D5ADC8 /* TalkModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 870C35408411DAC47A6885F3 /* TalkModels.swift */; };
@@ -25,6 +24,7 @@
 		CF4D3838E7EB0950C2B96A74 /* TikoKit in Frameworks */ = {isa = PBXBuildFile; productRef = EF7D29673FE059E4C522EC3E /* TikoKit */; };
 		DB2E56758D05A1B8A4E2E293 /* TikoTalkApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = B47BA6BF356E8FEC96EBFDD3 /* TikoTalkApp.swift */; };
 		DF570CA2493E33EB3A3EB5E6 /* TalkPosColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E7E75B53FE0F9C89AE7D68D /* TalkPosColor.swift */; };
+		DFB1814F0F19E04CBCB2D760 /* TalkLocalBoard.swift in Sources */ = {isa = PBXBuildFile; fileRef = D44B1AF5E827C6D4AD730D6E /* TalkLocalBoard.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -45,7 +45,6 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		0CC797ADF257B86D2E456D72 /* TalkOfflineFallback.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TalkOfflineFallback.swift; sourceTree = "<group>"; };
 		0DA10278A51C551C951345EB /* TikoTalkTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = TikoTalkTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		1813987980B8571EEFA9C2FB /* TikoTalk.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = TikoTalk.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1E7E75B53FE0F9C89AE7D68D /* TalkPosColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TalkPosColor.swift; sourceTree = "<group>"; };
@@ -68,6 +67,7 @@
 		B47BA6BF356E8FEC96EBFDD3 /* TikoTalkApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TikoTalkApp.swift; sourceTree = "<group>"; };
 		B725E185378770B7E23F4F11 /* TalkAppConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TalkAppConfig.swift; sourceTree = "<group>"; };
 		C28180253633CCA7AF8BDD1E /* TikoTalkTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TikoTalkTests.swift; sourceTree = "<group>"; };
+		D44B1AF5E827C6D4AD730D6E /* TalkLocalBoard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TalkLocalBoard.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -120,8 +120,8 @@
 				B725E185378770B7E23F4F11 /* TalkAppConfig.swift */,
 				6AEEC87869BDAF41EE48435F /* TalkAudioPlayer.swift */,
 				38C97CB7E65B65FA95666A1E /* TalkIdentityProvider.swift */,
+				D44B1AF5E827C6D4AD730D6E /* TalkLocalBoard.swift */,
 				870C35408411DAC47A6885F3 /* TalkModels.swift */,
-				0CC797ADF257B86D2E456D72 /* TalkOfflineFallback.swift */,
 				1E7E75B53FE0F9C89AE7D68D /* TalkPosColor.swift */,
 				692C7E4BB3AC949B8FADC686 /* TalkSentenceStripView.swift */,
 				30D717BC9EDAA72FEFF66BE2 /* TalkSpeechService.swift */,
@@ -298,8 +298,8 @@
 				568C4202EE9A45117A4705D1 /* TalkAppConfig.swift in Sources */,
 				66AFD2FEC6ABC1637CBFE61A /* TalkAudioPlayer.swift in Sources */,
 				12CF09298DCE5079E4B90E3F /* TalkIdentityProvider.swift in Sources */,
+				DFB1814F0F19E04CBCB2D760 /* TalkLocalBoard.swift in Sources */,
 				609AF93AE98EEF0C63D5ADC8 /* TalkModels.swift in Sources */,
-				5A5F1997F35DBE0CA759A914 /* TalkOfflineFallback.swift in Sources */,
 				DF570CA2493E33EB3A3EB5E6 /* TalkPosColor.swift in Sources */,
 				321FC05D0E913C865DE72768 /* TalkSentenceStripView.swift in Sources */,
 				BAB1725E5E9A9D422BCCDDA8 /* TalkSpeechService.swift in Sources */,

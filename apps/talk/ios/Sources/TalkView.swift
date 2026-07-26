@@ -120,7 +120,7 @@ struct TalkView: View {
             .task {
                 if TikoScreenshotMode.isActive {
                     // Deterministic, offline board for screenshot capture / UI tests.
-                    store.loadOfflineFallbackForCapture()
+                    store.loadLocalBoardForCapture()
                     return
                 }
                 store.locale = languageCode
@@ -137,10 +137,12 @@ struct TalkView: View {
 
     @ViewBuilder
     private var statusSection: some View {
-        if store.isOfflineFallback || (store.errorMessage?.isEmpty == false) {
+        if store.isOffline || (store.errorMessage?.isEmpty == false) {
             HStack(spacing: 8) {
-                if store.isOfflineFallback {
-                    Text("Offline limited mode")
+                if store.isOffline {
+                    // The board and the sentences are on the device; what is missing
+                    // without a server is the learned word order and saved phrases.
+                    Text("Working offline")
                 }
                 if let error = store.errorMessage, !error.isEmpty {
                     Text(error)
