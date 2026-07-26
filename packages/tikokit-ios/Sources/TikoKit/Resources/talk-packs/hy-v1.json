@@ -168,10 +168,7 @@
       "pos": "verb",
       "category": "actions",
       "frequency": 10,
-      "icon": "play",
-      "inflections": {
-        "past": "ուզեց"
-      }
+      "icon": "play"
     },
     {
       "id": "need",
@@ -179,10 +176,7 @@
       "pos": "verb",
       "category": "actions",
       "frequency": 10,
-      "icon": "play",
-      "inflections": {
-        "past": "պետք էր"
-      }
+      "icon": "play"
     },
     {
       "id": "like",
@@ -190,10 +184,7 @@
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "հավանեց"
-      }
+      "icon": "play"
     },
     {
       "id": "feel",
@@ -201,10 +192,7 @@
       "pos": "verb",
       "category": "actions",
       "frequency": 10,
-      "icon": "play",
-      "inflections": {
-        "past": "զգաց"
-      }
+      "icon": "play"
     },
     {
       "id": "see",
@@ -212,10 +200,7 @@
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "տեսավ"
-      }
+      "icon": "play"
     },
     {
       "id": "hear",
@@ -223,10 +208,7 @@
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "լսեց"
-      }
+      "icon": "play"
     },
     {
       "id": "have",
@@ -234,10 +216,7 @@
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "ուներ"
-      }
+      "icon": "play"
     },
     {
       "id": "go",
@@ -253,10 +232,7 @@
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "եկավ"
-      }
+      "icon": "play"
     },
     {
       "id": "play",
@@ -264,10 +240,7 @@
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "խաղաց"
-      }
+      "icon": "play"
     },
     {
       "id": "read",
@@ -275,10 +248,7 @@
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "կարդաց"
-      }
+      "icon": "play"
     },
     {
       "id": "draw",
@@ -286,10 +256,7 @@
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "նկարեց"
-      }
+      "icon": "play"
     },
     {
       "id": "eat",
@@ -329,10 +296,7 @@
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "քայլեց"
-      }
+      "icon": "play"
     },
     {
       "id": "run",
@@ -348,10 +312,7 @@
       "pos": "verb",
       "category": "actions",
       "frequency": 10,
-      "icon": "play",
-      "inflections": {
-        "past": "կանգնեց"
-      }
+      "icon": "play"
     },
     {
       "id": "start",
@@ -359,10 +320,7 @@
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "սկսեց"
-      }
+      "icon": "play"
     },
     {
       "id": "wait",
@@ -370,10 +328,7 @@
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "սպասեց"
-      }
+      "icon": "play"
     },
     {
       "id": "help",
@@ -381,10 +336,7 @@
       "pos": "verb",
       "category": "actions",
       "frequency": 10,
-      "icon": "play",
-      "inflections": {
-        "past": "օգնեց"
-      }
+      "icon": "play"
     },
     {
       "id": "choose",
@@ -392,10 +344,7 @@
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "ընտրեց"
-      }
+      "icon": "play"
     },
     {
       "id": "open",
@@ -403,10 +352,7 @@
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "բացեց"
-      }
+      "icon": "play"
     },
     {
       "id": "close",
@@ -414,10 +360,7 @@
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "փակեց"
-      }
+      "icon": "play"
     },
     {
       "id": "wash",
@@ -425,10 +368,7 @@
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "լվաց"
-      }
+      "icon": "play"
     },
     {
       "id": "sleep",
@@ -444,10 +384,7 @@
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "հանգստացավ"
-      }
+      "icon": "play"
     },
     {
       "id": "try",
@@ -455,10 +392,7 @@
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "փորձեց"
-      }
+      "icon": "play"
     },
     {
       "id": "talk",
@@ -466,10 +400,7 @@
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "խոսեց"
-      }
+      "icon": "play"
     },
     {
       "id": "yes",

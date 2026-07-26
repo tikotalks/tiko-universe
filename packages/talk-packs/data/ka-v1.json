@@ -1,2435 +1,2368 @@
 {
   "locale": "ka",
   "version": 1,
+  "source": "generated",
+  "reviewStatus": "needs-correction",
   "words": [
     {
       "id": "i",
+      "text": "მე",
       "pos": "pronoun",
       "category": "people",
       "frequency": 10,
-      "icon": "user",
-      "text": "მე"
+      "icon": "user"
     },
     {
       "id": "you",
+      "text": "შენ",
       "pos": "pronoun",
       "category": "people",
       "frequency": 10,
-      "icon": "user",
-      "text": "შენ"
+      "icon": "user"
     },
     {
       "id": "we",
+      "text": "ჩვენ",
       "pos": "pronoun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "ჩვენ"
+      "icon": "user"
     },
     {
       "id": "me",
+      "text": "მე",
       "pos": "pronoun",
       "category": "people",
       "frequency": 10,
-      "icon": "user",
-      "text": "მე"
+      "icon": "user"
     },
     {
       "id": "my",
+      "text": "ჩემი",
       "pos": "pronoun",
       "category": "people",
       "frequency": 10,
-      "icon": "user",
-      "text": "ჩემი"
+      "icon": "user"
     },
     {
       "id": "your",
+      "text": "შენი",
       "pos": "pronoun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "შენი"
+      "icon": "user"
     },
     {
       "id": "he",
+      "text": "ის",
       "pos": "pronoun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "ის"
+      "icon": "user"
     },
     {
       "id": "she",
+      "text": "ის",
       "pos": "pronoun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "ის"
+      "icon": "user"
     },
     {
       "id": "they",
+      "text": "ისინი",
       "pos": "pronoun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "ისინი"
+      "icon": "user"
     },
     {
       "id": "mum",
+      "text": "დედა",
       "pos": "noun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "დედა"
+      "icon": "user"
     },
     {
       "id": "dad",
+      "text": "მამა",
       "pos": "noun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "მამა"
+      "icon": "user"
     },
     {
       "id": "teacher",
+      "text": "მასწავლებელი",
       "pos": "noun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "მასწავლებელი"
+      "icon": "user"
     },
     {
       "id": "friend",
+      "text": "მეგობარი",
       "pos": "noun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "მეგობარი"
+      "icon": "user"
     },
     {
       "id": "brother",
+      "text": "ძმა",
       "pos": "noun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "ძმა"
+      "icon": "user"
     },
     {
       "id": "sister",
+      "text": "და",
       "pos": "noun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "და"
+      "icon": "user"
     },
     {
       "id": "grandma",
+      "text": "ბებია",
       "pos": "noun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "ბებია"
+      "icon": "user"
     },
     {
       "id": "grandpa",
+      "text": "ბაბუა",
       "pos": "noun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "ბაბუა"
+      "icon": "user"
     },
     {
       "id": "helper",
+      "text": "დამხმარე",
       "pos": "noun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "დამხმარე"
+      "icon": "user"
     },
     {
       "id": "doctor",
+      "text": "ექიმი",
       "pos": "noun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "ექიმი"
+      "icon": "user"
     },
     {
       "id": "class",
+      "text": "კლასი",
       "pos": "noun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "კლასი"
+      "icon": "user"
     },
     {
       "id": "want",
+      "text": "მინდა",
       "pos": "verb",
       "category": "actions",
       "frequency": 10,
-      "icon": "play",
-      "inflections": {
-        "past": "wanted"
-      },
-      "text": "მინდა"
+      "icon": "play"
     },
     {
       "id": "need",
+      "text": "მჭირდება",
       "pos": "verb",
       "category": "actions",
       "frequency": 10,
-      "icon": "play",
-      "inflections": {
-        "past": "needed"
-      },
-      "text": "მჭირდება"
+      "icon": "play"
     },
     {
       "id": "like",
+      "text": "მიყვარს",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "likeed"
-      },
-      "text": "მიყვარს"
+      "icon": "play"
     },
     {
       "id": "feel",
+      "text": "ვგრძნობ",
       "pos": "verb",
       "category": "actions",
       "frequency": 10,
-      "icon": "play",
-      "inflections": {
-        "past": "feeled"
-      },
-      "text": "ვგრძნობ"
+      "icon": "play"
     },
     {
       "id": "see",
+      "text": "ვხედავ",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "seeed"
-      },
-      "text": "ვხედავ"
+      "icon": "play"
     },
     {
       "id": "hear",
+      "text": "მესმის",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "heared"
-      },
-      "text": "მესმის"
+      "icon": "play"
     },
     {
       "id": "have",
+      "text": "მაქვს",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "haveed"
-      },
-      "text": "მაქვს"
+      "icon": "play"
     },
     {
       "id": "go",
+      "text": "მივდივარ",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "text": "მივდივარ"
+      "icon": "play"
     },
     {
       "id": "come",
+      "text": "მოვდივარ",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "comeed"
-      },
-      "text": "მოვდივარ"
+      "icon": "play"
     },
     {
       "id": "play",
+      "text": "ვთამაშობ",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "played"
-      },
-      "text": "ვთამაშობ"
+      "icon": "play"
     },
     {
       "id": "read",
+      "text": "ვკითხულობ",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "readed"
-      },
-      "text": "ვკითხულობ"
+      "icon": "play"
     },
     {
       "id": "draw",
+      "text": "ვხატავ",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "drawed"
-      },
-      "text": "ვხატავ"
+      "icon": "play"
     },
     {
       "id": "eat",
+      "text": "ვჭამ",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "text": "ვჭამ"
+      "icon": "play"
     },
     {
       "id": "drink",
+      "text": "ვსვამ",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "text": "ვსვამ"
+      "icon": "play"
     },
     {
       "id": "sit",
+      "text": "ვჯდები",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "text": "ვჯდები"
+      "icon": "play"
     },
     {
       "id": "stand",
+      "text": "ვდგები",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "text": "ვდგები"
+      "icon": "play"
     },
     {
       "id": "walk",
+      "text": "დავდივარ",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "walked"
-      },
-      "text": "დავდივარ"
+      "icon": "play"
     },
     {
       "id": "run",
+      "text": "ვრბენ",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "text": "ვრბენ"
+      "icon": "play"
     },
     {
       "id": "stop",
+      "text": "ვჩერდები",
       "pos": "verb",
       "category": "actions",
       "frequency": 10,
-      "icon": "play",
-      "inflections": {
-        "past": "stoped"
-      },
-      "text": "ვჩერდები"
+      "icon": "play"
     },
     {
       "id": "start",
+      "text": "ვიწყებ",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "started"
-      },
-      "text": "ვიწყებ"
+      "icon": "play"
     },
     {
       "id": "wait",
+      "text": "ვიცდი",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "waited"
-      },
-      "text": "ვიცდი"
+      "icon": "play"
     },
     {
       "id": "help",
+      "text": "ვეხმარები",
       "pos": "verb",
       "category": "actions",
       "frequency": 10,
-      "icon": "play",
-      "inflections": {
-        "past": "helped"
-      },
-      "text": "ვეხმარები"
+      "icon": "play"
     },
     {
       "id": "choose",
+      "text": "ვირჩევ",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "chooseed"
-      },
-      "text": "ვირჩევ"
+      "icon": "play"
     },
     {
       "id": "open",
+      "text": "ვხსნი",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "opened"
-      },
-      "text": "ვხსნი"
+      "icon": "play"
     },
     {
       "id": "close",
+      "text": "ვხურავ",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "closeed"
-      },
-      "text": "ვხურავ"
+      "icon": "play"
     },
     {
       "id": "wash",
+      "text": "ვრეცხავ",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "washed"
-      },
-      "text": "ვრეცხავ"
+      "icon": "play"
     },
     {
       "id": "sleep",
+      "text": "მეძინება",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "text": "მეძინება"
+      "icon": "play"
     },
     {
       "id": "rest",
+      "text": "ვისვენებ",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "rested"
-      },
-      "text": "ვისვენებ"
+      "icon": "play"
     },
     {
       "id": "try",
+      "text": "ვცდი",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "tryed"
-      },
-      "text": "ვცდი"
+      "icon": "play"
     },
     {
       "id": "talk",
+      "text": "ვსაუბრობ",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "talked"
-      },
-      "text": "ვსაუბრობ"
+      "icon": "play"
     },
     {
       "id": "yes",
+      "text": "კი",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "კი"
+      "icon": "chat-bubble"
     },
     {
       "id": "no",
+      "text": "არა",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "არა"
+      "icon": "chat-bubble"
     },
     {
       "id": "please",
+      "text": "თუ შეიძლება",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "თუ შეიძლება"
+      "icon": "chat-bubble"
     },
     {
       "id": "thank-you",
+      "text": "გმადლობთ",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "გმადლობთ"
+      "icon": "chat-bubble"
     },
     {
       "id": "sorry",
+      "text": "ბოდიში",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "ბოდიში"
+      "icon": "chat-bubble"
     },
     {
       "id": "hello",
+      "text": "გამარჯობა",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "გამარჯობა"
+      "icon": "chat-bubble"
     },
     {
       "id": "goodbye",
+      "text": "ნახვამდის",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "ნახვამდის"
+      "icon": "chat-bubble"
     },
     {
       "id": "more",
+      "text": "მეტი",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "მეტი"
+      "icon": "chat-bubble"
     },
     {
       "id": "all-done",
+      "text": "დამთავრდა",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "დამთავრდა"
+      "icon": "chat-bubble"
     },
     {
       "id": "again",
+      "text": "ისევ",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "ისევ"
+      "icon": "chat-bubble"
     },
     {
       "id": "finished",
+      "text": "დავამთავრე",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "დავამთავრე"
+      "icon": "chat-bubble"
     },
     {
       "id": "okay",
+      "text": "კარგი",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "კარგი"
+      "icon": "chat-bubble"
     },
     {
       "id": "not-yet",
+      "text": "ჯერ არა",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "ჯერ არა"
+      "icon": "chat-bubble"
     },
     {
       "id": "maybe",
+      "text": "შესაძლოა",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "შესაძლოა"
+      "icon": "chat-bubble"
     },
     {
       "id": "what",
+      "text": "რა",
       "pos": "question",
       "category": "questions",
       "frequency": 8,
-      "icon": "question-circle",
-      "text": "რა"
+      "icon": "question-circle"
     },
     {
       "id": "where",
+      "text": "სად",
       "pos": "question",
       "category": "questions",
       "frequency": 8,
-      "icon": "question-circle",
-      "text": "სად"
+      "icon": "question-circle"
     },
     {
       "id": "who",
+      "text": "ვინ",
       "pos": "question",
       "category": "questions",
       "frequency": 8,
-      "icon": "question-circle",
-      "text": "ვინ"
+      "icon": "question-circle"
     },
     {
       "id": "when",
+      "text": "როდის",
       "pos": "question",
       "category": "questions",
       "frequency": 8,
-      "icon": "question-circle",
-      "text": "როდის"
+      "icon": "question-circle"
     },
     {
       "id": "why",
+      "text": "რატომ",
       "pos": "question",
       "category": "questions",
       "frequency": 8,
-      "icon": "question-circle",
-      "text": "რატომ"
+      "icon": "question-circle"
     },
     {
       "id": "which",
+      "text": "რომელი",
       "pos": "question",
       "category": "questions",
       "frequency": 8,
-      "icon": "question-circle",
-      "text": "რომელი"
+      "icon": "question-circle"
     },
     {
       "id": "how",
+      "text": "როგორ",
       "pos": "question",
       "category": "questions",
       "frequency": 8,
-      "icon": "question-circle",
-      "text": "როგორ"
+      "icon": "question-circle"
     },
     {
       "id": "can",
+      "text": "შემიძლია",
       "pos": "question",
       "category": "questions",
       "frequency": 8,
-      "icon": "question-circle",
-      "text": "შემიძლია"
+      "icon": "question-circle"
     },
     {
       "id": "is",
+      "text": "არის",
       "pos": "question",
       "category": "questions",
       "frequency": 8,
-      "icon": "question-circle",
-      "text": "არის"
+      "icon": "question-circle"
     },
     {
       "id": "are",
+      "text": "არიან",
       "pos": "question",
       "category": "questions",
       "frequency": 8,
-      "icon": "question-circle",
-      "text": "არიან"
+      "icon": "question-circle"
     },
     {
       "id": "a",
+      "text": "ერთი",
       "pos": "determiner",
       "category": "helpers",
       "frequency": 8,
-      "icon": "text",
-      "text": "ერთი"
+      "icon": "text"
     },
     {
       "id": "the",
+      "text": "ეს",
       "pos": "determiner",
       "category": "helpers",
       "frequency": 8,
-      "icon": "text",
-      "text": "ეს"
+      "icon": "text"
     },
     {
       "id": "this",
+      "text": "ეს",
       "pos": "determiner",
       "category": "helpers",
       "frequency": 8,
-      "icon": "text",
-      "text": "ეს"
+      "icon": "text"
     },
     {
       "id": "that",
+      "text": "ის",
       "pos": "determiner",
       "category": "helpers",
       "frequency": 8,
-      "icon": "text",
-      "text": "ის"
+      "icon": "text"
     },
     {
       "id": "some",
+      "text": "ცოტა",
       "pos": "determiner",
       "category": "helpers",
       "frequency": 8,
-      "icon": "text",
-      "text": "ცოტა"
+      "icon": "text"
     },
     {
       "id": "one",
+      "text": "ერთი",
       "pos": "determiner",
       "category": "helpers",
       "frequency": 8,
-      "icon": "text",
-      "text": "ერთი"
+      "icon": "text"
     },
     {
       "id": "two",
+      "text": "ორი",
       "pos": "determiner",
       "category": "helpers",
       "frequency": 8,
-      "icon": "text",
-      "text": "ორი"
+      "icon": "text"
     },
     {
       "id": "three",
+      "text": "სამი",
       "pos": "determiner",
       "category": "helpers",
       "frequency": 8,
-      "icon": "text",
-      "text": "სამი"
+      "icon": "text"
     },
     {
       "id": "many",
+      "text": "ბევრი",
       "pos": "determiner",
       "category": "helpers",
       "frequency": 8,
-      "icon": "text",
-      "text": "ბევრი"
+      "icon": "text"
     },
     {
       "id": "little",
+      "text": "ცოტა",
       "pos": "determiner",
       "category": "helpers",
       "frequency": 8,
-      "icon": "text",
-      "text": "ცოტა"
+      "icon": "text"
     },
     {
       "id": "big",
+      "text": "დიდი",
       "pos": "determiner",
       "category": "helpers",
       "frequency": 8,
-      "icon": "text",
-      "text": "დიდი"
+      "icon": "text"
     },
     {
       "id": "in",
+      "text": "ში",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "ში"
+      "icon": "arrow-right"
     },
     {
       "id": "on",
+      "text": "ზე",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "ზე"
+      "icon": "arrow-right"
     },
     {
       "id": "under",
+      "text": "ქვეშ",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "ქვეშ"
+      "icon": "arrow-right"
     },
     {
       "id": "next-to",
+      "text": "გვერდით",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "გვერდით"
+      "icon": "arrow-right"
     },
     {
       "id": "with",
+      "text": "თან",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "თან"
+      "icon": "arrow-right"
     },
     {
       "id": "without",
+      "text": "გარეშე",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "გარეშე"
+      "icon": "arrow-right"
     },
     {
       "id": "to",
+      "text": "კენ",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "კენ"
+      "icon": "arrow-right"
     },
     {
       "id": "from",
+      "text": "დან",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "დან"
+      "icon": "arrow-right"
     },
     {
       "id": "inside",
+      "text": "შიგნით",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "შიგნით"
+      "icon": "arrow-right"
     },
     {
       "id": "outside",
+      "text": "გარეთ",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "გარეთ"
+      "icon": "arrow-right"
     },
     {
       "id": "near",
+      "text": "ახლოს",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "ახლოს"
+      "icon": "arrow-right"
     },
     {
       "id": "far",
+      "text": "შორს",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "შორს"
+      "icon": "arrow-right"
     },
     {
       "id": "and",
+      "text": "და",
       "pos": "conjunction",
       "category": "helpers",
       "frequency": 6,
-      "icon": "branch",
-      "text": "და"
+      "icon": "branch"
     },
     {
       "id": "or",
+      "text": "ან",
       "pos": "conjunction",
       "category": "helpers",
       "frequency": 6,
-      "icon": "branch",
-      "text": "ან"
+      "icon": "branch"
     },
     {
       "id": "because",
+      "text": "იმიტომ",
       "pos": "conjunction",
       "category": "helpers",
       "frequency": 6,
-      "icon": "branch",
-      "text": "იმიტომ"
+      "icon": "branch"
     },
     {
       "id": "then",
+      "text": "შემდეგ",
       "pos": "conjunction",
       "category": "helpers",
       "frequency": 6,
-      "icon": "branch",
-      "text": "შემდეგ"
+      "icon": "branch"
     },
     {
       "id": "but",
+      "text": "მაგრამ",
       "pos": "conjunction",
       "category": "helpers",
       "frequency": 6,
-      "icon": "branch",
-      "text": "მაგრამ"
+      "icon": "branch"
     },
     {
       "id": "water",
+      "text": "წყალი",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "წყალი"
+      "icon": "water"
     },
     {
       "id": "milk",
+      "text": "რძე",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "რძე"
+      "icon": "water"
     },
     {
       "id": "juice",
+      "text": "ხილის წყალი",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "ხილის წყალი"
+      "icon": "water"
     },
     {
       "id": "tea",
+      "text": "ჩაი",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "ჩაი"
+      "icon": "water"
     },
     {
       "id": "smoothie",
+      "text": "სმუზი",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "სმუზი"
+      "icon": "water"
     },
     {
       "id": "lemonade",
+      "text": "ლიმონათი",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "ლიმონათი"
+      "icon": "water"
     },
     {
       "id": "hot-drink",
+      "text": "ცხელი სასმელი",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "ცხელი სასმელი"
+      "icon": "water"
     },
     {
       "id": "cold-drink",
+      "text": "ცივი სასმელი",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "ცივი სასმელი"
+      "icon": "water"
     },
     {
       "id": "cup",
+      "text": "ჭიქა",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "ჭიქა"
+      "icon": "water"
     },
     {
       "id": "straw",
+      "text": "ჩხირი",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "ჩხირი"
+      "icon": "water"
     },
     {
       "id": "bottle",
+      "text": "ბოთლი",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "ბოთლი"
+      "icon": "water"
     },
     {
       "id": "sip",
+      "text": "ყლუპი",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "ყლუპი"
+      "icon": "water"
     },
     {
       "id": "apple",
+      "text": "ვაშლი",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "ვაშლი"
+      "icon": "apple"
     },
     {
       "id": "banana",
+      "text": "ბანანი",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "ბანანი"
+      "icon": "apple"
     },
     {
       "id": "bread",
+      "text": "პური",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "პური"
+      "icon": "apple"
     },
     {
       "id": "toast",
+      "text": "ტოსტი",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "ტოსტი"
+      "icon": "apple"
     },
     {
       "id": "sandwich",
+      "text": "სენდვიჩი",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "სენდვიჩი"
+      "icon": "apple"
     },
     {
       "id": "rice",
+      "text": "ბრინჯი",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "ბრინჯი"
+      "icon": "apple"
     },
     {
       "id": "pasta",
+      "text": "მაკარონი",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "მაკარონი"
+      "icon": "apple"
     },
     {
       "id": "soup",
+      "text": "სუპი",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "სუპი"
+      "icon": "apple"
     },
     {
       "id": "yogurt",
+      "text": "იოგურტი",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "იოგურტი"
+      "icon": "apple"
     },
     {
       "id": "cheese",
+      "text": "ყველი",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "ყველი"
+      "icon": "apple"
     },
     {
       "id": "cracker",
+      "text": "კრეკერი",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "კრეკერი"
+      "icon": "apple"
     },
     {
       "id": "carrot",
+      "text": "სტაფილო",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "სტაფილო"
+      "icon": "apple"
     },
     {
       "id": "chips",
+      "text": "ჩიფსი",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "ჩიფსი"
+      "icon": "apple"
     },
     {
       "id": "cookie",
+      "text": "ნამცხვარი",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "ნამცხვარი"
+      "icon": "apple"
     },
     {
       "id": "egg",
+      "text": "კვერცხი",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "კვერცხი"
+      "icon": "apple"
     },
     {
       "id": "cereal",
+      "text": "ფაფა",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "ფაფა"
+      "icon": "apple"
     },
     {
       "id": "fruit",
+      "text": "ხილი",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "ხილი"
+      "icon": "apple"
     },
     {
       "id": "snack",
+      "text": "სნეკი",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "სნეკი"
+      "icon": "apple"
     },
     {
       "id": "dinner",
+      "text": "ვახშამი",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "ვახშამი"
+      "icon": "apple"
     },
     {
       "id": "lunch",
+      "text": "სადილი",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "სადილი"
+      "icon": "apple"
     },
     {
       "id": "happy",
+      "text": "ბედნიერი",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "ბედნიერი"
+      "icon": "smile"
     },
     {
       "id": "sad",
+      "text": "მოწყენილი",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "მოწყენილი"
+      "icon": "smile"
     },
     {
       "id": "angry",
+      "text": "გაბრაზებული",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "გაბრაზებული"
+      "icon": "smile"
     },
     {
       "id": "worried",
+      "text": "შეწუხებული",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "შეწუხებული"
+      "icon": "smile"
     },
     {
       "id": "scared",
+      "text": "შეშინებული",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "შეშინებული"
+      "icon": "smile"
     },
     {
       "id": "tired",
+      "text": "დაღლილი",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "დაღლილი"
+      "icon": "smile"
     },
     {
       "id": "sick",
+      "text": "ავად",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "ავად"
+      "icon": "smile"
     },
     {
       "id": "hurt",
+      "text": "მტკივა",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "მტკივა"
+      "icon": "smile"
     },
     {
       "id": "calm",
+      "text": "მშვიდი",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "მშვიდი"
+      "icon": "smile"
     },
     {
       "id": "excited",
+      "text": "აღელვებული",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "აღელვებული"
+      "icon": "smile"
     },
     {
       "id": "confused",
+      "text": "დაბნეული",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "დაბნეული"
+      "icon": "smile"
     },
     {
       "id": "proud",
+      "text": "ამაყი",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "ამაყი"
+      "icon": "smile"
     },
     {
       "id": "lonely",
+      "text": "მარტო",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "მარტო"
+      "icon": "smile"
     },
     {
       "id": "bored",
+      "text": "მოსაწყენი",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "მოსაწყენი"
+      "icon": "smile"
     },
     {
       "id": "safe",
+      "text": "უსაფრთხო",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "უსაფრთხო"
+      "icon": "smile"
     },
     {
       "id": "upset",
+      "text": "დანაღვლიანებული",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "დანაღვლიანებული"
+      "icon": "smile"
     },
     {
       "id": "okay-2",
+      "text": "კარგად",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "კარგად"
+      "icon": "smile"
     },
     {
       "id": "hot",
+      "text": "ცხელი",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "ცხელი"
+      "icon": "smile"
     },
     {
       "id": "cold",
+      "text": "ცივი",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "ცივი"
+      "icon": "smile"
     },
     {
       "id": "hungry",
+      "text": "მშიერი",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "მშიერი"
+      "icon": "smile"
     },
     {
       "id": "thirsty",
+      "text": "მწყურვალი",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "მწყურვალი"
+      "icon": "smile"
     },
     {
       "id": "head",
+      "text": "თავი",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "თავი"
+      "icon": "body"
     },
     {
       "id": "hand",
+      "text": "ხელი",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "ხელი"
+      "icon": "body"
     },
     {
       "id": "foot",
+      "text": "ფეხი",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "ფეხი"
+      "icon": "body"
     },
     {
       "id": "tummy",
+      "text": "მუცელი",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "მუცელი"
+      "icon": "body"
     },
     {
       "id": "mouth",
+      "text": "პირი",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "პირი"
+      "icon": "body"
     },
     {
       "id": "ear",
+      "text": "ყური",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "ყური"
+      "icon": "body"
     },
     {
       "id": "eye",
+      "text": "თვალი",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "თვალი"
+      "icon": "body"
     },
     {
       "id": "arm",
+      "text": "ხელი",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "ხელი"
+      "icon": "body"
     },
     {
       "id": "leg",
+      "text": "ფეხი",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "ფეხი"
+      "icon": "body"
     },
     {
       "id": "back",
+      "text": "ზურგი",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "ზურგი"
+      "icon": "body"
     },
     {
       "id": "tooth",
+      "text": "კბილი",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "კბილი"
+      "icon": "body"
     },
     {
       "id": "hair",
+      "text": "თმა",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "თმა"
+      "icon": "body"
     },
     {
       "id": "nose",
+      "text": "ცხვირი",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "ცხვირი"
+      "icon": "body"
     },
     {
       "id": "skin",
+      "text": "კანი",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "კანი"
+      "icon": "body"
     },
     {
       "id": "heart",
+      "text": "გული",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "გული"
+      "icon": "body"
     },
     {
       "id": "home",
+      "text": "სახლი",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "სახლი"
+      "icon": "home"
     },
     {
       "id": "school",
+      "text": "სკოლა",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "სკოლა"
+      "icon": "home"
     },
     {
       "id": "classroom",
+      "text": "საკლასო ოთახი",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "საკლასო ოთახი"
+      "icon": "home"
     },
     {
       "id": "bathroom",
+      "text": "აბაზანა",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "აბაზანა"
+      "icon": "home"
     },
     {
       "id": "kitchen",
+      "text": "სამზარეულო",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "სამზარეულო"
+      "icon": "home"
     },
     {
       "id": "bedroom",
+      "text": "საძინებელი",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "საძინებელი"
+      "icon": "home"
     },
     {
       "id": "garden",
+      "text": "ბაღი",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "ბაღი"
+      "icon": "home"
     },
     {
       "id": "shop",
+      "text": "მაღაზია",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "მაღაზია"
+      "icon": "home"
     },
     {
       "id": "car",
+      "text": "მანქანა",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "მანქანა"
+      "icon": "home"
     },
     {
       "id": "bus",
+      "text": "ავტობუსი",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "ავტობუსი"
+      "icon": "home"
     },
     {
       "id": "park",
+      "text": "პარკი",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "პარკი"
+      "icon": "home"
     },
     {
       "id": "playground",
+      "text": "სათამაშო მოედანი",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "სათამაშო მოედანი"
+      "icon": "home"
     },
     {
       "id": "library",
+      "text": "ბიბლიოთეკა",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "ბიბლიოთეკა"
+      "icon": "home"
     },
     {
       "id": "pool",
+      "text": "აუზი",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "აუზი"
+      "icon": "home"
     },
     {
       "id": "table",
+      "text": "მაგიდა",
       "pos": "noun",
       "category": "home",
       "frequency": 7,
-      "icon": "home",
-      "text": "მაგიდა"
+      "icon": "home"
     },
     {
       "id": "chair",
+      "text": "სკამი",
       "pos": "noun",
       "category": "home",
       "frequency": 7,
-      "icon": "home",
-      "text": "სკამი"
+      "icon": "home"
     },
     {
       "id": "sofa",
+      "text": "დივანი",
       "pos": "noun",
       "category": "home",
       "frequency": 7,
-      "icon": "home",
-      "text": "დივანი"
+      "icon": "home"
     },
     {
       "id": "bed",
+      "text": "საწოლი",
       "pos": "noun",
       "category": "home",
       "frequency": 7,
-      "icon": "home",
-      "text": "საწოლი"
+      "icon": "home"
     },
     {
       "id": "door",
+      "text": "კარი",
       "pos": "noun",
       "category": "home",
       "frequency": 7,
-      "icon": "home",
-      "text": "კარი"
+      "icon": "home"
     },
     {
       "id": "window",
+      "text": "ფანჯარა",
       "pos": "noun",
       "category": "home",
       "frequency": 7,
-      "icon": "home",
-      "text": "ფანჯარა"
+      "icon": "home"
     },
     {
       "id": "book",
+      "text": "წიგნი",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "წიგნი"
+      "icon": "book"
     },
     {
       "id": "pencil",
+      "text": "ფანქარი",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "ფანქარი"
+      "icon": "book"
     },
     {
       "id": "paper",
+      "text": "ქაღალდი",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "ქაღალდი"
+      "icon": "book"
     },
     {
       "id": "bag",
+      "text": "ჩანთა",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "ჩანთა"
+      "icon": "book"
     },
     {
       "id": "coat",
+      "text": "ქურთუკი",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "ქურთუკი"
+      "icon": "book"
     },
     {
       "id": "shoes",
+      "text": "ფეხსაცმელი",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "ფეხსაცმელი"
+      "icon": "book"
     },
     {
       "id": "lunchbox",
+      "text": "საკვების ყუთი",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "საკვების ყუთი"
+      "icon": "book"
     },
     {
       "id": "tablet",
+      "text": "ტაბლეტი",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "ტაბლეტი"
+      "icon": "book"
     },
     {
       "id": "screen",
+      "text": "ეკრანი",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "ეკრანი"
+      "icon": "book"
     },
     {
       "id": "timer",
+      "text": "ტაიმერი",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "ტაიმერი"
+      "icon": "book"
     },
     {
       "id": "schedule",
+      "text": "განრიგი",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "განრიგი"
+      "icon": "book"
     },
     {
       "id": "picture",
+      "text": "სურათი",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "სურათი"
+      "icon": "book"
     },
     {
       "id": "card",
+      "text": "ბარათი",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "ბარათი"
+      "icon": "book"
     },
     {
       "id": "story",
+      "text": "ზღაპარი",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "ზღაპარი"
+      "icon": "book"
     },
     {
       "id": "music",
+      "text": "მუსიკა",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "მუსიკა"
+      "icon": "book"
     },
     {
       "id": "ball",
+      "text": "ბურთი",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "ბურთი"
+      "icon": "puzzle"
     },
     {
       "id": "blocks",
+      "text": "კუბიკები",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "კუბიკები"
+      "icon": "puzzle"
     },
     {
       "id": "doll",
+      "text": "თოჯინა",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "თოჯინა"
+      "icon": "puzzle"
     },
     {
       "id": "car-toy",
+      "text": "სათამაშო მანქანა",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "სათამაშო მანქანა"
+      "icon": "puzzle"
     },
     {
       "id": "train",
+      "text": "მატარებელი",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "მატარებელი"
+      "icon": "puzzle"
     },
     {
       "id": "puzzle",
+      "text": "თავსატეხი",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "თავსატეხი"
+      "icon": "puzzle"
     },
     {
       "id": "game",
+      "text": "თამაში",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "თამაში"
+      "icon": "puzzle"
     },
     {
       "id": "paint",
+      "text": "საღებავი",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "საღებავი"
+      "icon": "puzzle"
     },
     {
       "id": "clay",
+      "text": "პლასტილინი",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "პლასტილინი"
+      "icon": "puzzle"
     },
     {
       "id": "bubbles",
+      "text": "ბუშტები",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "ბუშტები"
+      "icon": "puzzle"
     },
     {
       "id": "swing",
+      "text": "საქანელა",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "საქანელა"
+      "icon": "puzzle"
     },
     {
       "id": "slide",
+      "text": "სასრიალო",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "სასრიალო"
+      "icon": "puzzle"
     },
     {
       "id": "bike",
+      "text": "ველოსიპედი",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "ველოსიპედი"
+      "icon": "puzzle"
     },
     {
       "id": "teddy",
+      "text": "დათუნია",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "დათუნია"
+      "icon": "puzzle"
     },
     {
       "id": "lego",
+      "text": "ლეგო",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "ლეგო"
+      "icon": "puzzle"
     },
     {
       "id": "red",
+      "text": "წითელი",
       "pos": "adjective",
       "category": "colors",
       "frequency": 5,
-      "icon": "palette",
-      "text": "წითელი"
+      "icon": "palette"
     },
     {
       "id": "blue",
+      "text": "ლურჯი",
       "pos": "adjective",
       "category": "colors",
       "frequency": 5,
-      "icon": "palette",
-      "text": "ლურჯი"
+      "icon": "palette"
     },
     {
       "id": "green",
+      "text": "მწვანე",
       "pos": "adjective",
       "category": "colors",
       "frequency": 5,
-      "icon": "palette",
-      "text": "მწვანე"
+      "icon": "palette"
     },
     {
       "id": "yellow",
+      "text": "ყვითელი",
       "pos": "adjective",
       "category": "colors",
       "frequency": 5,
-      "icon": "palette",
-      "text": "ყვითელი"
+      "icon": "palette"
     },
     {
       "id": "orange",
+      "text": "ნარინჯისფერი",
       "pos": "adjective",
       "category": "colors",
       "frequency": 5,
-      "icon": "palette",
-      "text": "ნარინჯისფერი"
+      "icon": "palette"
     },
     {
       "id": "purple",
+      "text": "იასამნისფერი",
       "pos": "adjective",
       "category": "colors",
       "frequency": 5,
-      "icon": "palette",
-      "text": "იასამნისფერი"
+      "icon": "palette"
     },
     {
       "id": "pink",
+      "text": "ვარდისფერი",
       "pos": "adjective",
       "category": "colors",
       "frequency": 5,
-      "icon": "palette",
-      "text": "ვარდისფერი"
+      "icon": "palette"
     },
     {
       "id": "brown",
+      "text": "ყავისფერი",
       "pos": "adjective",
       "category": "colors",
       "frequency": 5,
-      "icon": "palette",
-      "text": "ყავისფერი"
+      "icon": "palette"
     },
     {
       "id": "black",
+      "text": "შავი",
       "pos": "adjective",
       "category": "colors",
       "frequency": 5,
-      "icon": "palette",
-      "text": "შავი"
+      "icon": "palette"
     },
     {
       "id": "white",
+      "text": "თეთრი",
       "pos": "adjective",
       "category": "colors",
       "frequency": 5,
-      "icon": "palette",
-      "text": "თეთრი"
+      "icon": "palette"
     },
     {
       "id": "grey",
+      "text": "რუხი",
       "pos": "adjective",
       "category": "colors",
       "frequency": 5,
-      "icon": "palette",
-      "text": "რუხი"
+      "icon": "palette"
     },
     {
       "id": "bright",
+      "text": "ნათელი",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "ნათელი"
+      "icon": "palette"
     },
     {
       "id": "dark",
+      "text": "ბნელი",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "ბნელი"
+      "icon": "palette"
     },
     {
       "id": "soft",
+      "text": "რბილი",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "რბილი"
+      "icon": "palette"
     },
     {
       "id": "hard",
+      "text": "მაგარი",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "მაგარი"
+      "icon": "palette"
     },
     {
       "id": "quiet",
+      "text": "მშვიდი",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "მშვიდი"
+      "icon": "palette"
     },
     {
       "id": "loud",
+      "text": "ხმამაღალი",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "ხმამაღალი"
+      "icon": "palette"
     },
     {
       "id": "fast",
+      "text": "სწრაფი",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "სწრაფი"
+      "icon": "palette"
     },
     {
       "id": "slow",
+      "text": "ნელი",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "ნელი"
+      "icon": "palette"
     },
     {
       "id": "clean",
+      "text": "სუფთა",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "სუფთა"
+      "icon": "palette"
     },
     {
       "id": "dirty",
+      "text": "ჭუჭყიანი",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "ჭუჭყიანი"
+      "icon": "palette"
     },
     {
       "id": "wet",
+      "text": "სველი",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "სველი"
+      "icon": "palette"
     },
     {
       "id": "dry",
+      "text": "მშრალი",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "მშრალი"
+      "icon": "palette"
     },
     {
       "id": "new",
+      "text": "ახალი",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "ახალი"
+      "icon": "palette"
     },
     {
       "id": "old",
+      "text": "ძველი",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "ძველი"
+      "icon": "palette"
     },
     {
       "id": "now",
+      "text": "ახლა",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "ახლა"
+      "icon": "clock"
     },
     {
       "id": "later",
+      "text": "მოგვიანებით",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "მოგვიანებით"
+      "icon": "clock"
     },
     {
       "id": "today",
+      "text": "დღეს",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "დღეს"
+      "icon": "clock"
     },
     {
       "id": "tomorrow",
+      "text": "ხვალ",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "ხვალ"
+      "icon": "clock"
     },
     {
       "id": "morning",
+      "text": "დილა",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "დილა"
+      "icon": "clock"
     },
     {
       "id": "afternoon",
+      "text": "შუადღე",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "შუადღე"
+      "icon": "clock"
     },
     {
       "id": "night",
+      "text": "ღამე",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "ღამე"
+      "icon": "clock"
     },
     {
       "id": "before",
+      "text": "მდე",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "მდე"
+      "icon": "clock"
     },
     {
       "id": "after",
+      "text": "შემდეგ",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "შემდეგ"
+      "icon": "clock"
     },
     {
       "id": "soon",
+      "text": "მალე",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "მალე"
+      "icon": "clock"
     },
     {
       "id": "first",
+      "text": "პირველად",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "პირველად"
+      "icon": "clock"
     },
     {
       "id": "next",
+      "text": "შემდეგი",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "შემდეგი"
+      "icon": "clock"
     },
     {
       "id": "last",
+      "text": "ბოლო",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "ბოლო"
+      "icon": "clock"
     },
     {
       "id": "minute",
+      "text": "წუთი",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "წუთი"
+      "icon": "clock"
     },
     {
       "id": "hour",
+      "text": "საათი",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "საათი"
+      "icon": "clock"
     },
     {
       "id": "break",
+      "text": "შესვენება",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "შესვენება"
+      "icon": "heart-hand"
     },
     {
       "id": "quiet-time",
+      "text": "მშვიდი დრო",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "მშვიდი დრო"
+      "icon": "heart-hand"
     },
     {
       "id": "hug",
+      "text": "ჩახუტება",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "ჩახუტება"
+      "icon": "heart-hand"
     },
     {
       "id": "space",
+      "text": "ადგილი",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "ადგილი"
+      "icon": "heart-hand"
     },
     {
       "id": "toilet",
+      "text": "ტუალეტი",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "ტუალეტი"
+      "icon": "heart-hand"
     },
     {
       "id": "medicine",
+      "text": "წამალი",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "წამალი"
+      "icon": "heart-hand"
     },
     {
       "id": "light",
+      "text": "შუქი",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "შუქი"
+      "icon": "heart-hand"
     },
     {
       "id": "dark-2",
+      "text": "სიბნელე",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "სიბნელე"
+      "icon": "heart-hand"
     },
     {
       "id": "noise",
+      "text": "ხმაური",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "ხმაური"
+      "icon": "heart-hand"
     },
     {
       "id": "headphones",
+      "text": "ყურსასმენები",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "ყურსასმენები"
+      "icon": "heart-hand"
     },
     {
       "id": "blanket",
+      "text": "საბანი",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "საბანი"
+      "icon": "heart-hand"
     },
     {
       "id": "charger",
+      "text": "დამტენი",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "დამტენი"
+      "icon": "heart-hand"
     },
     {
       "id": "choice",
+      "text": "არჩევანი",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "არჩევანი"
+      "icon": "heart-hand"
     },
     {
       "id": "turn",
+      "text": "რიგი",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "რიგი"
+      "icon": "heart-hand"
     },
     {
       "id": "help-please",
+      "text": "დამეხმარე თუ შეიძლება",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "დამეხმარე თუ შეიძლება"
+      "icon": "heart-hand"
     },
     {
       "id": "different",
+      "text": "სხვა",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "სხვა"
+      "icon": "sparkles"
     },
     {
       "id": "same",
+      "text": "იგივე",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "იგივე"
+      "icon": "sparkles"
     },
     {
       "id": "easy",
+      "text": "მარტივი",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "მარტივი"
+      "icon": "sparkles"
     },
     {
       "id": "harder",
+      "text": "უფრო რთული",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "უფრო რთული"
+      "icon": "sparkles"
     },
     {
       "id": "favorite",
+      "text": "საყვარელი",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "საყვარელი"
+      "icon": "sparkles"
     },
     {
       "id": "missing",
+      "text": "აკლია",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "აკლია"
+      "icon": "sparkles"
     },
     {
       "id": "broken",
+      "text": "გატეხილი",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "გატეხილი"
+      "icon": "sparkles"
     },
     {
       "id": "ready",
+      "text": "მზად",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "მზად"
+      "icon": "sparkles"
     },
     {
       "id": "busy",
+      "text": "დაკავებული",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "დაკავებული"
+      "icon": "sparkles"
     },
     {
       "id": "empty",
+      "text": "ცარიელი",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "ცარიელი"
+      "icon": "sparkles"
     },
     {
       "id": "full",
+      "text": "სავსე",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "სავსე"
+      "icon": "sparkles"
     },
     {
       "id": "small",
+      "text": "პატარა",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "პატარა"
+      "icon": "sparkles"
     },
     {
       "id": "tall",
+      "text": "მაღალი",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "მაღალი"
+      "icon": "sparkles"
     },
     {
       "id": "short",
+      "text": "მოკლე",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "მოკლე"
+      "icon": "sparkles"
     },
     {
       "id": "round",
+      "text": "მრგვალი",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "მრგვალი"
+      "icon": "sparkles"
     },
     {
       "id": "square",
+      "text": "კვადრატი",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "კვადრატი"
+      "icon": "sparkles"
     },
     {
       "id": "kind",
+      "text": "კეთილი",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "კეთილი"
+      "icon": "sparkles"
     },
     {
       "id": "gentle",
+      "text": "ნაზი",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "ნაზი"
+      "icon": "sparkles"
     },
     {
       "id": "careful",
+      "text": "ფრთხილად",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "ფრთხილად"
+      "icon": "sparkles"
     },
     {
       "id": "safe-place",
+      "text": "უსაფრთხო ადგილი",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "უსაფრთხო ადგილი"
+      "icon": "sparkles"
     }
   ],
   "templates": [
@@ -3130,7 +3063,5 @@
         "არ"
       ]
     }
-  },
-  "source": "generated",
-  "reviewStatus": "needs-correction"
+  }
 }

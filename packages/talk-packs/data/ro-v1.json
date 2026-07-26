@@ -1,2435 +1,2368 @@
 {
   "locale": "ro",
   "version": 1,
+  "source": "generated",
+  "reviewStatus": "needs-native-review",
   "words": [
     {
       "id": "i",
+      "text": "eu",
       "pos": "pronoun",
       "category": "people",
       "frequency": 10,
-      "icon": "user",
-      "text": "eu"
+      "icon": "user"
     },
     {
       "id": "you",
+      "text": "tu",
       "pos": "pronoun",
       "category": "people",
       "frequency": 10,
-      "icon": "user",
-      "text": "tu"
+      "icon": "user"
     },
     {
       "id": "we",
+      "text": "noi",
       "pos": "pronoun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "noi"
+      "icon": "user"
     },
     {
       "id": "me",
+      "text": "mine",
       "pos": "pronoun",
       "category": "people",
       "frequency": 10,
-      "icon": "user",
-      "text": "mine"
+      "icon": "user"
     },
     {
       "id": "my",
+      "text": "meu",
       "pos": "pronoun",
       "category": "people",
       "frequency": 10,
-      "icon": "user",
-      "text": "meu"
+      "icon": "user"
     },
     {
       "id": "your",
+      "text": "tău",
       "pos": "pronoun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "tău"
+      "icon": "user"
     },
     {
       "id": "he",
+      "text": "el",
       "pos": "pronoun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "el"
+      "icon": "user"
     },
     {
       "id": "she",
+      "text": "ea",
       "pos": "pronoun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "ea"
+      "icon": "user"
     },
     {
       "id": "they",
+      "text": "ei",
       "pos": "pronoun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "ei"
+      "icon": "user"
     },
     {
       "id": "mum",
+      "text": "mama",
       "pos": "noun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "mama"
+      "icon": "user"
     },
     {
       "id": "dad",
+      "text": "tata",
       "pos": "noun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "tata"
+      "icon": "user"
     },
     {
       "id": "teacher",
+      "text": "profesoară",
       "pos": "noun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "profesoară"
+      "icon": "user"
     },
     {
       "id": "friend",
+      "text": "prieten",
       "pos": "noun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "prieten"
+      "icon": "user"
     },
     {
       "id": "brother",
+      "text": "frate",
       "pos": "noun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "frate"
+      "icon": "user"
     },
     {
       "id": "sister",
+      "text": "soră",
       "pos": "noun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "soră"
+      "icon": "user"
     },
     {
       "id": "grandma",
+      "text": "bunica",
       "pos": "noun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "bunica"
+      "icon": "user"
     },
     {
       "id": "grandpa",
+      "text": "bunicul",
       "pos": "noun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "bunicul"
+      "icon": "user"
     },
     {
       "id": "helper",
+      "text": "ajutor",
       "pos": "noun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "ajutor"
+      "icon": "user"
     },
     {
       "id": "doctor",
+      "text": "doctor",
       "pos": "noun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "doctor"
+      "icon": "user"
     },
     {
       "id": "class",
+      "text": "clasă",
       "pos": "noun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "clasă"
+      "icon": "user"
     },
     {
       "id": "want",
+      "text": "vrea",
       "pos": "verb",
       "category": "actions",
       "frequency": 10,
-      "icon": "play",
-      "inflections": {
-        "past": "wanted"
-      },
-      "text": "vrea"
+      "icon": "play"
     },
     {
       "id": "need",
+      "text": "avea nevoie",
       "pos": "verb",
       "category": "actions",
       "frequency": 10,
-      "icon": "play",
-      "inflections": {
-        "past": "needed"
-      },
-      "text": "avea nevoie"
+      "icon": "play"
     },
     {
       "id": "like",
+      "text": "plăcea",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "likeed"
-      },
-      "text": "plăcea"
+      "icon": "play"
     },
     {
       "id": "feel",
+      "text": "simți",
       "pos": "verb",
       "category": "actions",
       "frequency": 10,
-      "icon": "play",
-      "inflections": {
-        "past": "feeled"
-      },
-      "text": "simți"
+      "icon": "play"
     },
     {
       "id": "see",
+      "text": "vedea",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "seeed"
-      },
-      "text": "vedea"
+      "icon": "play"
     },
     {
       "id": "hear",
+      "text": "auzi",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "heared"
-      },
-      "text": "auzi"
+      "icon": "play"
     },
     {
       "id": "have",
+      "text": "avea",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "haveed"
-      },
-      "text": "avea"
+      "icon": "play"
     },
     {
       "id": "go",
+      "text": "merge",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "text": "merge"
+      "icon": "play"
     },
     {
       "id": "come",
+      "text": "veni",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "comeed"
-      },
-      "text": "veni"
+      "icon": "play"
     },
     {
       "id": "play",
+      "text": "juca",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "played"
-      },
-      "text": "juca"
+      "icon": "play"
     },
     {
       "id": "read",
+      "text": "citi",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "readed"
-      },
-      "text": "citi"
+      "icon": "play"
     },
     {
       "id": "draw",
+      "text": "desena",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "drawed"
-      },
-      "text": "desena"
+      "icon": "play"
     },
     {
       "id": "eat",
+      "text": "mânca",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "text": "mânca"
+      "icon": "play"
     },
     {
       "id": "drink",
+      "text": "bea",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "text": "bea"
+      "icon": "play"
     },
     {
       "id": "sit",
+      "text": "sta",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "text": "sta"
+      "icon": "play"
     },
     {
       "id": "stand",
+      "text": "ridica",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "text": "ridica"
+      "icon": "play"
     },
     {
       "id": "walk",
+      "text": "plimba",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "walked"
-      },
-      "text": "plimba"
+      "icon": "play"
     },
     {
       "id": "run",
+      "text": "alerga",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "text": "alerga"
+      "icon": "play"
     },
     {
       "id": "stop",
+      "text": "opri",
       "pos": "verb",
       "category": "actions",
       "frequency": 10,
-      "icon": "play",
-      "inflections": {
-        "past": "stoped"
-      },
-      "text": "opri"
+      "icon": "play"
     },
     {
       "id": "start",
+      "text": "începe",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "started"
-      },
-      "text": "începe"
+      "icon": "play"
     },
     {
       "id": "wait",
+      "text": "aștepta",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "waited"
-      },
-      "text": "aștepta"
+      "icon": "play"
     },
     {
       "id": "help",
+      "text": "ajuta",
       "pos": "verb",
       "category": "actions",
       "frequency": 10,
-      "icon": "play",
-      "inflections": {
-        "past": "helped"
-      },
-      "text": "ajuta"
+      "icon": "play"
     },
     {
       "id": "choose",
+      "text": "alege",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "chooseed"
-      },
-      "text": "alege"
+      "icon": "play"
     },
     {
       "id": "open",
+      "text": "deschide",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "opened"
-      },
-      "text": "deschide"
+      "icon": "play"
     },
     {
       "id": "close",
+      "text": "închide",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "closeed"
-      },
-      "text": "închide"
+      "icon": "play"
     },
     {
       "id": "wash",
+      "text": "spăla",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "washed"
-      },
-      "text": "spăla"
+      "icon": "play"
     },
     {
       "id": "sleep",
+      "text": "dormi",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "text": "dormi"
+      "icon": "play"
     },
     {
       "id": "rest",
+      "text": "odihni",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "rested"
-      },
-      "text": "odihni"
+      "icon": "play"
     },
     {
       "id": "try",
+      "text": "încerca",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "tryed"
-      },
-      "text": "încerca"
+      "icon": "play"
     },
     {
       "id": "talk",
+      "text": "vorbi",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "talked"
-      },
-      "text": "vorbi"
+      "icon": "play"
     },
     {
       "id": "yes",
+      "text": "da",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "da"
+      "icon": "chat-bubble"
     },
     {
       "id": "no",
+      "text": "nu",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "nu"
+      "icon": "chat-bubble"
     },
     {
       "id": "please",
+      "text": "te rog",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "te rog"
+      "icon": "chat-bubble"
     },
     {
       "id": "thank-you",
+      "text": "mulțumesc",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "mulțumesc"
+      "icon": "chat-bubble"
     },
     {
       "id": "sorry",
+      "text": "îmi pare rău",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "îmi pare rău"
+      "icon": "chat-bubble"
     },
     {
       "id": "hello",
+      "text": "bună",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "bună"
+      "icon": "chat-bubble"
     },
     {
       "id": "goodbye",
+      "text": "la revedere",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "la revedere"
+      "icon": "chat-bubble"
     },
     {
       "id": "more",
+      "text": "mai mult",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "mai mult"
+      "icon": "chat-bubble"
     },
     {
       "id": "all-done",
+      "text": "gata tot",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "gata tot"
+      "icon": "chat-bubble"
     },
     {
       "id": "again",
+      "text": "din nou",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "din nou"
+      "icon": "chat-bubble"
     },
     {
       "id": "finished",
+      "text": "gata",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "gata"
+      "icon": "chat-bubble"
     },
     {
       "id": "okay",
+      "text": "bine",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "bine"
+      "icon": "chat-bubble"
     },
     {
       "id": "not-yet",
+      "text": "nu încă",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "nu încă"
+      "icon": "chat-bubble"
     },
     {
       "id": "maybe",
+      "text": "poate",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "poate"
+      "icon": "chat-bubble"
     },
     {
       "id": "what",
+      "text": "ce",
       "pos": "question",
       "category": "questions",
       "frequency": 8,
-      "icon": "question-circle",
-      "text": "ce"
+      "icon": "question-circle"
     },
     {
       "id": "where",
+      "text": "unde",
       "pos": "question",
       "category": "questions",
       "frequency": 8,
-      "icon": "question-circle",
-      "text": "unde"
+      "icon": "question-circle"
     },
     {
       "id": "who",
+      "text": "cine",
       "pos": "question",
       "category": "questions",
       "frequency": 8,
-      "icon": "question-circle",
-      "text": "cine"
+      "icon": "question-circle"
     },
     {
       "id": "when",
+      "text": "când",
       "pos": "question",
       "category": "questions",
       "frequency": 8,
-      "icon": "question-circle",
-      "text": "când"
+      "icon": "question-circle"
     },
     {
       "id": "why",
+      "text": "de ce",
       "pos": "question",
       "category": "questions",
       "frequency": 8,
-      "icon": "question-circle",
-      "text": "de ce"
+      "icon": "question-circle"
     },
     {
       "id": "which",
+      "text": "care",
       "pos": "question",
       "category": "questions",
       "frequency": 8,
-      "icon": "question-circle",
-      "text": "care"
+      "icon": "question-circle"
     },
     {
       "id": "how",
+      "text": "cum",
       "pos": "question",
       "category": "questions",
       "frequency": 8,
-      "icon": "question-circle",
-      "text": "cum"
+      "icon": "question-circle"
     },
     {
       "id": "can",
+      "text": "putea",
       "pos": "question",
       "category": "questions",
       "frequency": 8,
-      "icon": "question-circle",
-      "text": "putea"
+      "icon": "question-circle"
     },
     {
       "id": "is",
+      "text": "este",
       "pos": "question",
       "category": "questions",
       "frequency": 8,
-      "icon": "question-circle",
-      "text": "este"
+      "icon": "question-circle"
     },
     {
       "id": "are",
+      "text": "sunt",
       "pos": "question",
       "category": "questions",
       "frequency": 8,
-      "icon": "question-circle",
-      "text": "sunt"
+      "icon": "question-circle"
     },
     {
       "id": "a",
+      "text": "un",
       "pos": "determiner",
       "category": "helpers",
       "frequency": 8,
-      "icon": "text",
-      "text": "un"
+      "icon": "text"
     },
     {
       "id": "the",
+      "text": "cel",
       "pos": "determiner",
       "category": "helpers",
       "frequency": 8,
-      "icon": "text",
-      "text": "cel"
+      "icon": "text"
     },
     {
       "id": "this",
+      "text": "acesta",
       "pos": "determiner",
       "category": "helpers",
       "frequency": 8,
-      "icon": "text",
-      "text": "acesta"
+      "icon": "text"
     },
     {
       "id": "that",
+      "text": "acela",
       "pos": "determiner",
       "category": "helpers",
       "frequency": 8,
-      "icon": "text",
-      "text": "acela"
+      "icon": "text"
     },
     {
       "id": "some",
+      "text": "niște",
       "pos": "determiner",
       "category": "helpers",
       "frequency": 8,
-      "icon": "text",
-      "text": "niște"
+      "icon": "text"
     },
     {
       "id": "one",
+      "text": "unu",
       "pos": "determiner",
       "category": "helpers",
       "frequency": 8,
-      "icon": "text",
-      "text": "unu"
+      "icon": "text"
     },
     {
       "id": "two",
+      "text": "doi",
       "pos": "determiner",
       "category": "helpers",
       "frequency": 8,
-      "icon": "text",
-      "text": "doi"
+      "icon": "text"
     },
     {
       "id": "three",
+      "text": "trei",
       "pos": "determiner",
       "category": "helpers",
       "frequency": 8,
-      "icon": "text",
-      "text": "trei"
+      "icon": "text"
     },
     {
       "id": "many",
+      "text": "mulți",
       "pos": "determiner",
       "category": "helpers",
       "frequency": 8,
-      "icon": "text",
-      "text": "mulți"
+      "icon": "text"
     },
     {
       "id": "little",
+      "text": "puțin",
       "pos": "determiner",
       "category": "helpers",
       "frequency": 8,
-      "icon": "text",
-      "text": "puțin"
+      "icon": "text"
     },
     {
       "id": "big",
+      "text": "mare",
       "pos": "determiner",
       "category": "helpers",
       "frequency": 8,
-      "icon": "text",
-      "text": "mare"
+      "icon": "text"
     },
     {
       "id": "in",
+      "text": "în",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "în"
+      "icon": "arrow-right"
     },
     {
       "id": "on",
+      "text": "pe",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "pe"
+      "icon": "arrow-right"
     },
     {
       "id": "under",
+      "text": "sub",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "sub"
+      "icon": "arrow-right"
     },
     {
       "id": "next-to",
+      "text": "lângă",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "lângă"
+      "icon": "arrow-right"
     },
     {
       "id": "with",
+      "text": "cu",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "cu"
+      "icon": "arrow-right"
     },
     {
       "id": "without",
+      "text": "fără",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "fără"
+      "icon": "arrow-right"
     },
     {
       "id": "to",
+      "text": "la",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "la"
+      "icon": "arrow-right"
     },
     {
       "id": "from",
+      "text": "de la",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "de la"
+      "icon": "arrow-right"
     },
     {
       "id": "inside",
+      "text": "înăuntru",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "înăuntru"
+      "icon": "arrow-right"
     },
     {
       "id": "outside",
+      "text": "afară",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "afară"
+      "icon": "arrow-right"
     },
     {
       "id": "near",
+      "text": "aproape",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "aproape"
+      "icon": "arrow-right"
     },
     {
       "id": "far",
+      "text": "departe",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "departe"
+      "icon": "arrow-right"
     },
     {
       "id": "and",
+      "text": "și",
       "pos": "conjunction",
       "category": "helpers",
       "frequency": 6,
-      "icon": "branch",
-      "text": "și"
+      "icon": "branch"
     },
     {
       "id": "or",
+      "text": "sau",
       "pos": "conjunction",
       "category": "helpers",
       "frequency": 6,
-      "icon": "branch",
-      "text": "sau"
+      "icon": "branch"
     },
     {
       "id": "because",
+      "text": "pentru că",
       "pos": "conjunction",
       "category": "helpers",
       "frequency": 6,
-      "icon": "branch",
-      "text": "pentru că"
+      "icon": "branch"
     },
     {
       "id": "then",
+      "text": "apoi",
       "pos": "conjunction",
       "category": "helpers",
       "frequency": 6,
-      "icon": "branch",
-      "text": "apoi"
+      "icon": "branch"
     },
     {
       "id": "but",
+      "text": "dar",
       "pos": "conjunction",
       "category": "helpers",
       "frequency": 6,
-      "icon": "branch",
-      "text": "dar"
+      "icon": "branch"
     },
     {
       "id": "water",
+      "text": "apă",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "apă"
+      "icon": "water"
     },
     {
       "id": "milk",
+      "text": "lapte",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "lapte"
+      "icon": "water"
     },
     {
       "id": "juice",
+      "text": "suc",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "suc"
+      "icon": "water"
     },
     {
       "id": "tea",
+      "text": "ceai",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "ceai"
+      "icon": "water"
     },
     {
       "id": "smoothie",
+      "text": "smoothie",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "smoothie"
+      "icon": "water"
     },
     {
       "id": "lemonade",
+      "text": "limonadă",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "limonadă"
+      "icon": "water"
     },
     {
       "id": "hot-drink",
+      "text": "băutură caldă",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "băutură caldă"
+      "icon": "water"
     },
     {
       "id": "cold-drink",
+      "text": "băutură rece",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "băutură rece"
+      "icon": "water"
     },
     {
       "id": "cup",
+      "text": "cană",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "cană"
+      "icon": "water"
     },
     {
       "id": "straw",
+      "text": "pai",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "pai"
+      "icon": "water"
     },
     {
       "id": "bottle",
+      "text": "sticlă",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "sticlă"
+      "icon": "water"
     },
     {
       "id": "sip",
+      "text": "înghițitură",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "înghițitură"
+      "icon": "water"
     },
     {
       "id": "apple",
+      "text": "măr",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "măr"
+      "icon": "apple"
     },
     {
       "id": "banana",
+      "text": "banană",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "banană"
+      "icon": "apple"
     },
     {
       "id": "bread",
+      "text": "pâine",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "pâine"
+      "icon": "apple"
     },
     {
       "id": "toast",
+      "text": "pâine prăjită",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "pâine prăjită"
+      "icon": "apple"
     },
     {
       "id": "sandwich",
+      "text": "sandviș",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "sandviș"
+      "icon": "apple"
     },
     {
       "id": "rice",
+      "text": "orez",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "orez"
+      "icon": "apple"
     },
     {
       "id": "pasta",
+      "text": "paste",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "paste"
+      "icon": "apple"
     },
     {
       "id": "soup",
+      "text": "supă",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "supă"
+      "icon": "apple"
     },
     {
       "id": "yogurt",
+      "text": "iaurt",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "iaurt"
+      "icon": "apple"
     },
     {
       "id": "cheese",
+      "text": "brânză",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "brânză"
+      "icon": "apple"
     },
     {
       "id": "cracker",
+      "text": "biscuit sărat",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "biscuit sărat"
+      "icon": "apple"
     },
     {
       "id": "carrot",
+      "text": "morcov",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "morcov"
+      "icon": "apple"
     },
     {
       "id": "chips",
+      "text": "chipsuri",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "chipsuri"
+      "icon": "apple"
     },
     {
       "id": "cookie",
+      "text": "biscuit",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "biscuit"
+      "icon": "apple"
     },
     {
       "id": "egg",
+      "text": "ou",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "ou"
+      "icon": "apple"
     },
     {
       "id": "cereal",
+      "text": "cereale",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "cereale"
+      "icon": "apple"
     },
     {
       "id": "fruit",
+      "text": "fruct",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "fruct"
+      "icon": "apple"
     },
     {
       "id": "snack",
+      "text": "gustare",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "gustare"
+      "icon": "apple"
     },
     {
       "id": "dinner",
+      "text": "cină",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "cină"
+      "icon": "apple"
     },
     {
       "id": "lunch",
+      "text": "prânz",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "prânz"
+      "icon": "apple"
     },
     {
       "id": "happy",
+      "text": "fericit",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "fericit"
+      "icon": "smile"
     },
     {
       "id": "sad",
+      "text": "trist",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "trist"
+      "icon": "smile"
     },
     {
       "id": "angry",
+      "text": "supărat",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "supărat"
+      "icon": "smile"
     },
     {
       "id": "worried",
+      "text": "îngrijorat",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "îngrijorat"
+      "icon": "smile"
     },
     {
       "id": "scared",
+      "text": "speriat",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "speriat"
+      "icon": "smile"
     },
     {
       "id": "tired",
+      "text": "obosit",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "obosit"
+      "icon": "smile"
     },
     {
       "id": "sick",
+      "text": "bolnav",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "bolnav"
+      "icon": "smile"
     },
     {
       "id": "hurt",
+      "text": "rănit",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "rănit"
+      "icon": "smile"
     },
     {
       "id": "calm",
+      "text": "calm",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "calm"
+      "icon": "smile"
     },
     {
       "id": "excited",
+      "text": "entuziasmat",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "entuziasmat"
+      "icon": "smile"
     },
     {
       "id": "confused",
+      "text": "confuz",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "confuz"
+      "icon": "smile"
     },
     {
       "id": "proud",
+      "text": "mândru",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "mândru"
+      "icon": "smile"
     },
     {
       "id": "lonely",
+      "text": "singur",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "singur"
+      "icon": "smile"
     },
     {
       "id": "bored",
+      "text": "plictisit",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "plictisit"
+      "icon": "smile"
     },
     {
       "id": "safe",
+      "text": "în siguranță",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "în siguranță"
+      "icon": "smile"
     },
     {
       "id": "upset",
+      "text": "necăjit",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "necăjit"
+      "icon": "smile"
     },
     {
       "id": "okay-2",
+      "text": "bine",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "bine"
+      "icon": "smile"
     },
     {
       "id": "hot",
+      "text": "cald",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "cald"
+      "icon": "smile"
     },
     {
       "id": "cold",
+      "text": "rece",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "rece"
+      "icon": "smile"
     },
     {
       "id": "hungry",
+      "text": "flămând",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "flămând"
+      "icon": "smile"
     },
     {
       "id": "thirsty",
+      "text": "însetat",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "însetat"
+      "icon": "smile"
     },
     {
       "id": "head",
+      "text": "cap",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "cap"
+      "icon": "body"
     },
     {
       "id": "hand",
+      "text": "mână",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "mână"
+      "icon": "body"
     },
     {
       "id": "foot",
+      "text": "picior",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "picior"
+      "icon": "body"
     },
     {
       "id": "tummy",
+      "text": "burtă",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "burtă"
+      "icon": "body"
     },
     {
       "id": "mouth",
+      "text": "gură",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "gură"
+      "icon": "body"
     },
     {
       "id": "ear",
+      "text": "ureche",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "ureche"
+      "icon": "body"
     },
     {
       "id": "eye",
+      "text": "ochi",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "ochi"
+      "icon": "body"
     },
     {
       "id": "arm",
+      "text": "braț",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "braț"
+      "icon": "body"
     },
     {
       "id": "leg",
+      "text": "picior",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "picior"
+      "icon": "body"
     },
     {
       "id": "back",
+      "text": "spate",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "spate"
+      "icon": "body"
     },
     {
       "id": "tooth",
+      "text": "dinte",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "dinte"
+      "icon": "body"
     },
     {
       "id": "hair",
+      "text": "păr",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "păr"
+      "icon": "body"
     },
     {
       "id": "nose",
+      "text": "nas",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "nas"
+      "icon": "body"
     },
     {
       "id": "skin",
+      "text": "piele",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "piele"
+      "icon": "body"
     },
     {
       "id": "heart",
+      "text": "inimă",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "inimă"
+      "icon": "body"
     },
     {
       "id": "home",
+      "text": "casă",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "casă"
+      "icon": "home"
     },
     {
       "id": "school",
+      "text": "școală",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "școală"
+      "icon": "home"
     },
     {
       "id": "classroom",
+      "text": "sală de clasă",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "sală de clasă"
+      "icon": "home"
     },
     {
       "id": "bathroom",
+      "text": "baie",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "baie"
+      "icon": "home"
     },
     {
       "id": "kitchen",
+      "text": "bucătărie",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "bucătărie"
+      "icon": "home"
     },
     {
       "id": "bedroom",
+      "text": "dormitor",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "dormitor"
+      "icon": "home"
     },
     {
       "id": "garden",
+      "text": "grădină",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "grădină"
+      "icon": "home"
     },
     {
       "id": "shop",
+      "text": "magazin",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "magazin"
+      "icon": "home"
     },
     {
       "id": "car",
+      "text": "mașină",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "mașină"
+      "icon": "home"
     },
     {
       "id": "bus",
+      "text": "autobuz",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "autobuz"
+      "icon": "home"
     },
     {
       "id": "park",
+      "text": "parc",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "parc"
+      "icon": "home"
     },
     {
       "id": "playground",
+      "text": "loc de joacă",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "loc de joacă"
+      "icon": "home"
     },
     {
       "id": "library",
+      "text": "bibliotecă",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "bibliotecă"
+      "icon": "home"
     },
     {
       "id": "pool",
+      "text": "piscină",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "piscină"
+      "icon": "home"
     },
     {
       "id": "table",
+      "text": "masă",
       "pos": "noun",
       "category": "home",
       "frequency": 7,
-      "icon": "home",
-      "text": "masă"
+      "icon": "home"
     },
     {
       "id": "chair",
+      "text": "scaun",
       "pos": "noun",
       "category": "home",
       "frequency": 7,
-      "icon": "home",
-      "text": "scaun"
+      "icon": "home"
     },
     {
       "id": "sofa",
+      "text": "canapea",
       "pos": "noun",
       "category": "home",
       "frequency": 7,
-      "icon": "home",
-      "text": "canapea"
+      "icon": "home"
     },
     {
       "id": "bed",
+      "text": "pat",
       "pos": "noun",
       "category": "home",
       "frequency": 7,
-      "icon": "home",
-      "text": "pat"
+      "icon": "home"
     },
     {
       "id": "door",
+      "text": "ușă",
       "pos": "noun",
       "category": "home",
       "frequency": 7,
-      "icon": "home",
-      "text": "ușă"
+      "icon": "home"
     },
     {
       "id": "window",
+      "text": "fereastră",
       "pos": "noun",
       "category": "home",
       "frequency": 7,
-      "icon": "home",
-      "text": "fereastră"
+      "icon": "home"
     },
     {
       "id": "book",
+      "text": "carte",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "carte"
+      "icon": "book"
     },
     {
       "id": "pencil",
+      "text": "creion",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "creion"
+      "icon": "book"
     },
     {
       "id": "paper",
+      "text": "hârtie",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "hârtie"
+      "icon": "book"
     },
     {
       "id": "bag",
+      "text": "ghiozdan",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "ghiozdan"
+      "icon": "book"
     },
     {
       "id": "coat",
+      "text": "geacă",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "geacă"
+      "icon": "book"
     },
     {
       "id": "shoes",
+      "text": "pantofi",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "pantofi"
+      "icon": "book"
     },
     {
       "id": "lunchbox",
+      "text": "cutie de prânz",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "cutie de prânz"
+      "icon": "book"
     },
     {
       "id": "tablet",
+      "text": "tabletă",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "tabletă"
+      "icon": "book"
     },
     {
       "id": "screen",
+      "text": "ecran",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "ecran"
+      "icon": "book"
     },
     {
       "id": "timer",
+      "text": "cronometru",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "cronometru"
+      "icon": "book"
     },
     {
       "id": "schedule",
+      "text": "orar",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "orar"
+      "icon": "book"
     },
     {
       "id": "picture",
+      "text": "imagine",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "imagine"
+      "icon": "book"
     },
     {
       "id": "card",
+      "text": "card",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "card"
+      "icon": "book"
     },
     {
       "id": "story",
+      "text": "poveste",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "poveste"
+      "icon": "book"
     },
     {
       "id": "music",
+      "text": "muzică",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "muzică"
+      "icon": "book"
     },
     {
       "id": "ball",
+      "text": "minge",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "minge"
+      "icon": "puzzle"
     },
     {
       "id": "blocks",
+      "text": "cuburi",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "cuburi"
+      "icon": "puzzle"
     },
     {
       "id": "doll",
+      "text": "păpușă",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "păpușă"
+      "icon": "puzzle"
     },
     {
       "id": "car-toy",
+      "text": "mașinuță",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "mașinuță"
+      "icon": "puzzle"
     },
     {
       "id": "train",
+      "text": "tren",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "tren"
+      "icon": "puzzle"
     },
     {
       "id": "puzzle",
+      "text": "puzzle",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "puzzle"
+      "icon": "puzzle"
     },
     {
       "id": "game",
+      "text": "joc",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "joc"
+      "icon": "puzzle"
     },
     {
       "id": "paint",
+      "text": "vopsea",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "vopsea"
+      "icon": "puzzle"
     },
     {
       "id": "clay",
+      "text": "plastilină",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "plastilină"
+      "icon": "puzzle"
     },
     {
       "id": "bubbles",
+      "text": "baloane",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "baloane"
+      "icon": "puzzle"
     },
     {
       "id": "swing",
+      "text": "leagăn",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "leagăn"
+      "icon": "puzzle"
     },
     {
       "id": "slide",
+      "text": "tobogan",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "tobogan"
+      "icon": "puzzle"
     },
     {
       "id": "bike",
+      "text": "bicicletă",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "bicicletă"
+      "icon": "puzzle"
     },
     {
       "id": "teddy",
+      "text": "ursuleț",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "ursuleț"
+      "icon": "puzzle"
     },
     {
       "id": "lego",
+      "text": "lego",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "lego"
+      "icon": "puzzle"
     },
     {
       "id": "red",
+      "text": "roșu",
       "pos": "adjective",
       "category": "colors",
       "frequency": 5,
-      "icon": "palette",
-      "text": "roșu"
+      "icon": "palette"
     },
     {
       "id": "blue",
+      "text": "albastru",
       "pos": "adjective",
       "category": "colors",
       "frequency": 5,
-      "icon": "palette",
-      "text": "albastru"
+      "icon": "palette"
     },
     {
       "id": "green",
+      "text": "verde",
       "pos": "adjective",
       "category": "colors",
       "frequency": 5,
-      "icon": "palette",
-      "text": "verde"
+      "icon": "palette"
     },
     {
       "id": "yellow",
+      "text": "galben",
       "pos": "adjective",
       "category": "colors",
       "frequency": 5,
-      "icon": "palette",
-      "text": "galben"
+      "icon": "palette"
     },
     {
       "id": "orange",
+      "text": "portocaliu",
       "pos": "adjective",
       "category": "colors",
       "frequency": 5,
-      "icon": "palette",
-      "text": "portocaliu"
+      "icon": "palette"
     },
     {
       "id": "purple",
+      "text": "mov",
       "pos": "adjective",
       "category": "colors",
       "frequency": 5,
-      "icon": "palette",
-      "text": "mov"
+      "icon": "palette"
     },
     {
       "id": "pink",
+      "text": "roz",
       "pos": "adjective",
       "category": "colors",
       "frequency": 5,
-      "icon": "palette",
-      "text": "roz"
+      "icon": "palette"
     },
     {
       "id": "brown",
+      "text": "maro",
       "pos": "adjective",
       "category": "colors",
       "frequency": 5,
-      "icon": "palette",
-      "text": "maro"
+      "icon": "palette"
     },
     {
       "id": "black",
+      "text": "negru",
       "pos": "adjective",
       "category": "colors",
       "frequency": 5,
-      "icon": "palette",
-      "text": "negru"
+      "icon": "palette"
     },
     {
       "id": "white",
+      "text": "alb",
       "pos": "adjective",
       "category": "colors",
       "frequency": 5,
-      "icon": "palette",
-      "text": "alb"
+      "icon": "palette"
     },
     {
       "id": "grey",
+      "text": "gri",
       "pos": "adjective",
       "category": "colors",
       "frequency": 5,
-      "icon": "palette",
-      "text": "gri"
+      "icon": "palette"
     },
     {
       "id": "bright",
+      "text": "luminos",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "luminos"
+      "icon": "palette"
     },
     {
       "id": "dark",
+      "text": "întunecat",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "întunecat"
+      "icon": "palette"
     },
     {
       "id": "soft",
+      "text": "moale",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "moale"
+      "icon": "palette"
     },
     {
       "id": "hard",
+      "text": "tare",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "tare"
+      "icon": "palette"
     },
     {
       "id": "quiet",
+      "text": "liniștit",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "liniștit"
+      "icon": "palette"
     },
     {
       "id": "loud",
+      "text": "zgomotos",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "zgomotos"
+      "icon": "palette"
     },
     {
       "id": "fast",
+      "text": "rapid",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "rapid"
+      "icon": "palette"
     },
     {
       "id": "slow",
+      "text": "încet",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "încet"
+      "icon": "palette"
     },
     {
       "id": "clean",
+      "text": "curat",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "curat"
+      "icon": "palette"
     },
     {
       "id": "dirty",
+      "text": "murdar",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "murdar"
+      "icon": "palette"
     },
     {
       "id": "wet",
+      "text": "ud",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "ud"
+      "icon": "palette"
     },
     {
       "id": "dry",
+      "text": "uscat",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "uscat"
+      "icon": "palette"
     },
     {
       "id": "new",
+      "text": "nou",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "nou"
+      "icon": "palette"
     },
     {
       "id": "old",
+      "text": "vechi",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "vechi"
+      "icon": "palette"
     },
     {
       "id": "now",
+      "text": "acum",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "acum"
+      "icon": "clock"
     },
     {
       "id": "later",
+      "text": "mai târziu",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "mai târziu"
+      "icon": "clock"
     },
     {
       "id": "today",
+      "text": "astăzi",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "astăzi"
+      "icon": "clock"
     },
     {
       "id": "tomorrow",
+      "text": "mâine",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "mâine"
+      "icon": "clock"
     },
     {
       "id": "morning",
+      "text": "dimineață",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "dimineață"
+      "icon": "clock"
     },
     {
       "id": "afternoon",
+      "text": "după-amiază",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "după-amiază"
+      "icon": "clock"
     },
     {
       "id": "night",
+      "text": "noapte",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "noapte"
+      "icon": "clock"
     },
     {
       "id": "before",
+      "text": "înainte",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "înainte"
+      "icon": "clock"
     },
     {
       "id": "after",
+      "text": "după",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "după"
+      "icon": "clock"
     },
     {
       "id": "soon",
+      "text": "curând",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "curând"
+      "icon": "clock"
     },
     {
       "id": "first",
+      "text": "primul",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "primul"
+      "icon": "clock"
     },
     {
       "id": "next",
+      "text": "următorul",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "următorul"
+      "icon": "clock"
     },
     {
       "id": "last",
+      "text": "ultimul",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "ultimul"
+      "icon": "clock"
     },
     {
       "id": "minute",
+      "text": "minut",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "minut"
+      "icon": "clock"
     },
     {
       "id": "hour",
+      "text": "oră",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "oră"
+      "icon": "clock"
     },
     {
       "id": "break",
+      "text": "pauză",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "pauză"
+      "icon": "heart-hand"
     },
     {
       "id": "quiet-time",
+      "text": "timp liniștit",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "timp liniștit"
+      "icon": "heart-hand"
     },
     {
       "id": "hug",
+      "text": "îmbrățișare",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "îmbrățișare"
+      "icon": "heart-hand"
     },
     {
       "id": "space",
+      "text": "spațiu",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "spațiu"
+      "icon": "heart-hand"
     },
     {
       "id": "toilet",
+      "text": "toaletă",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "toaletă"
+      "icon": "heart-hand"
     },
     {
       "id": "medicine",
+      "text": "medicament",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "medicament"
+      "icon": "heart-hand"
     },
     {
       "id": "light",
+      "text": "lumină",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "lumină"
+      "icon": "heart-hand"
     },
     {
       "id": "dark-2",
+      "text": "întuneric",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "întuneric"
+      "icon": "heart-hand"
     },
     {
       "id": "noise",
+      "text": "zgomot",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "zgomot"
+      "icon": "heart-hand"
     },
     {
       "id": "headphones",
+      "text": "căști",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "căști"
+      "icon": "heart-hand"
     },
     {
       "id": "blanket",
+      "text": "pătură",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "pătură"
+      "icon": "heart-hand"
     },
     {
       "id": "charger",
+      "text": "încărcător",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "încărcător"
+      "icon": "heart-hand"
     },
     {
       "id": "choice",
+      "text": "alegere",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "alegere"
+      "icon": "heart-hand"
     },
     {
       "id": "turn",
+      "text": "rând",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "rând"
+      "icon": "heart-hand"
     },
     {
       "id": "help-please",
+      "text": "ajutor te rog",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "ajutor te rog"
+      "icon": "heart-hand"
     },
     {
       "id": "different",
+      "text": "diferit",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "diferit"
+      "icon": "sparkles"
     },
     {
       "id": "same",
+      "text": "același",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "același"
+      "icon": "sparkles"
     },
     {
       "id": "easy",
+      "text": "ușor",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "ușor"
+      "icon": "sparkles"
     },
     {
       "id": "harder",
+      "text": "mai greu",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "mai greu"
+      "icon": "sparkles"
     },
     {
       "id": "favorite",
+      "text": "favorit",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "favorit"
+      "icon": "sparkles"
     },
     {
       "id": "missing",
+      "text": "lipsește",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "lipsește"
+      "icon": "sparkles"
     },
     {
       "id": "broken",
+      "text": "stricat",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "stricat"
+      "icon": "sparkles"
     },
     {
       "id": "ready",
+      "text": "gata",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "gata"
+      "icon": "sparkles"
     },
     {
       "id": "busy",
+      "text": "ocupat",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "ocupat"
+      "icon": "sparkles"
     },
     {
       "id": "empty",
+      "text": "gol",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "gol"
+      "icon": "sparkles"
     },
     {
       "id": "full",
+      "text": "plin",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "plin"
+      "icon": "sparkles"
     },
     {
       "id": "small",
+      "text": "mic",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "mic"
+      "icon": "sparkles"
     },
     {
       "id": "tall",
+      "text": "înalt",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "înalt"
+      "icon": "sparkles"
     },
     {
       "id": "short",
+      "text": "scurt",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "scurt"
+      "icon": "sparkles"
     },
     {
       "id": "round",
+      "text": "rotund",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "rotund"
+      "icon": "sparkles"
     },
     {
       "id": "square",
+      "text": "pătrat",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "pătrat"
+      "icon": "sparkles"
     },
     {
       "id": "kind",
+      "text": "bun",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "bun"
+      "icon": "sparkles"
     },
     {
       "id": "gentle",
+      "text": "blând",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "blând"
+      "icon": "sparkles"
     },
     {
       "id": "careful",
+      "text": "atent",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "atent"
+      "icon": "sparkles"
     },
     {
       "id": "safe-place",
+      "text": "loc sigur",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "loc sigur"
+      "icon": "sparkles"
     }
   ],
   "templates": [
@@ -3132,7 +3065,5 @@
         "nu"
       ]
     }
-  },
-  "source": "generated",
-  "reviewStatus": "needs-native-review"
+  }
 }

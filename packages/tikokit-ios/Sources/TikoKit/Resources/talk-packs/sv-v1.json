@@ -1,2435 +1,2368 @@
 {
   "locale": "sv",
   "version": 1,
+  "source": "generated",
+  "reviewStatus": "needs-native-review",
   "words": [
     {
       "id": "i",
+      "text": "jag",
       "pos": "pronoun",
       "category": "people",
       "frequency": 10,
-      "icon": "user",
-      "text": "jag"
+      "icon": "user"
     },
     {
       "id": "you",
+      "text": "du",
       "pos": "pronoun",
       "category": "people",
       "frequency": 10,
-      "icon": "user",
-      "text": "du"
+      "icon": "user"
     },
     {
       "id": "we",
+      "text": "vi",
       "pos": "pronoun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "vi"
+      "icon": "user"
     },
     {
       "id": "me",
+      "text": "mig",
       "pos": "pronoun",
       "category": "people",
       "frequency": 10,
-      "icon": "user",
-      "text": "mig"
+      "icon": "user"
     },
     {
       "id": "my",
+      "text": "min",
       "pos": "pronoun",
       "category": "people",
       "frequency": 10,
-      "icon": "user",
-      "text": "min"
+      "icon": "user"
     },
     {
       "id": "your",
+      "text": "din",
       "pos": "pronoun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "din"
+      "icon": "user"
     },
     {
       "id": "he",
+      "text": "han",
       "pos": "pronoun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "han"
+      "icon": "user"
     },
     {
       "id": "she",
+      "text": "hon",
       "pos": "pronoun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "hon"
+      "icon": "user"
     },
     {
       "id": "they",
+      "text": "de",
       "pos": "pronoun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "de"
+      "icon": "user"
     },
     {
       "id": "mum",
+      "text": "mamma",
       "pos": "noun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "mamma"
+      "icon": "user"
     },
     {
       "id": "dad",
+      "text": "pappa",
       "pos": "noun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "pappa"
+      "icon": "user"
     },
     {
       "id": "teacher",
+      "text": "lärare",
       "pos": "noun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "lärare"
+      "icon": "user"
     },
     {
       "id": "friend",
+      "text": "kompis",
       "pos": "noun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "kompis"
+      "icon": "user"
     },
     {
       "id": "brother",
+      "text": "bror",
       "pos": "noun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "bror"
+      "icon": "user"
     },
     {
       "id": "sister",
+      "text": "syster",
       "pos": "noun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "syster"
+      "icon": "user"
     },
     {
       "id": "grandma",
+      "text": "mormor",
       "pos": "noun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "mormor"
+      "icon": "user"
     },
     {
       "id": "grandpa",
+      "text": "morfar",
       "pos": "noun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "morfar"
+      "icon": "user"
     },
     {
       "id": "helper",
+      "text": "hjälpare",
       "pos": "noun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "hjälpare"
+      "icon": "user"
     },
     {
       "id": "doctor",
+      "text": "doktor",
       "pos": "noun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "doktor"
+      "icon": "user"
     },
     {
       "id": "class",
+      "text": "klass",
       "pos": "noun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "klass"
+      "icon": "user"
     },
     {
       "id": "want",
+      "text": "vill",
       "pos": "verb",
       "category": "actions",
       "frequency": 10,
-      "icon": "play",
-      "inflections": {
-        "past": "wanted"
-      },
-      "text": "vill"
+      "icon": "play"
     },
     {
       "id": "need",
+      "text": "behöver",
       "pos": "verb",
       "category": "actions",
       "frequency": 10,
-      "icon": "play",
-      "inflections": {
-        "past": "needed"
-      },
-      "text": "behöver"
+      "icon": "play"
     },
     {
       "id": "like",
+      "text": "tycker om",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "likeed"
-      },
-      "text": "tycker om"
+      "icon": "play"
     },
     {
       "id": "feel",
+      "text": "känner",
       "pos": "verb",
       "category": "actions",
       "frequency": 10,
-      "icon": "play",
-      "inflections": {
-        "past": "feeled"
-      },
-      "text": "känner"
+      "icon": "play"
     },
     {
       "id": "see",
+      "text": "ser",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "seeed"
-      },
-      "text": "ser"
+      "icon": "play"
     },
     {
       "id": "hear",
+      "text": "hör",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "heared"
-      },
-      "text": "hör"
+      "icon": "play"
     },
     {
       "id": "have",
+      "text": "har",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "haveed"
-      },
-      "text": "har"
+      "icon": "play"
     },
     {
       "id": "go",
+      "text": "går",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "text": "går"
+      "icon": "play"
     },
     {
       "id": "come",
+      "text": "kommer",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "comeed"
-      },
-      "text": "kommer"
+      "icon": "play"
     },
     {
       "id": "play",
+      "text": "leker",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "played"
-      },
-      "text": "leker"
+      "icon": "play"
     },
     {
       "id": "read",
+      "text": "läser",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "readed"
-      },
-      "text": "läser"
+      "icon": "play"
     },
     {
       "id": "draw",
+      "text": "ritar",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "drawed"
-      },
-      "text": "ritar"
+      "icon": "play"
     },
     {
       "id": "eat",
+      "text": "äter",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "text": "äter"
+      "icon": "play"
     },
     {
       "id": "drink",
+      "text": "dricker",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "text": "dricker"
+      "icon": "play"
     },
     {
       "id": "sit",
+      "text": "sitter",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "text": "sitter"
+      "icon": "play"
     },
     {
       "id": "stand",
+      "text": "står",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "text": "står"
+      "icon": "play"
     },
     {
       "id": "walk",
+      "text": "promenerar",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "walked"
-      },
-      "text": "promenerar"
+      "icon": "play"
     },
     {
       "id": "run",
+      "text": "springer",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "text": "springer"
+      "icon": "play"
     },
     {
       "id": "stop",
+      "text": "stannar",
       "pos": "verb",
       "category": "actions",
       "frequency": 10,
-      "icon": "play",
-      "inflections": {
-        "past": "stoped"
-      },
-      "text": "stannar"
+      "icon": "play"
     },
     {
       "id": "start",
+      "text": "börjar",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "started"
-      },
-      "text": "börjar"
+      "icon": "play"
     },
     {
       "id": "wait",
+      "text": "väntar",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "waited"
-      },
-      "text": "väntar"
+      "icon": "play"
     },
     {
       "id": "help",
+      "text": "hjälper",
       "pos": "verb",
       "category": "actions",
       "frequency": 10,
-      "icon": "play",
-      "inflections": {
-        "past": "helped"
-      },
-      "text": "hjälper"
+      "icon": "play"
     },
     {
       "id": "choose",
+      "text": "väljer",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "chooseed"
-      },
-      "text": "väljer"
+      "icon": "play"
     },
     {
       "id": "open",
+      "text": "öppnar",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "opened"
-      },
-      "text": "öppnar"
+      "icon": "play"
     },
     {
       "id": "close",
+      "text": "stänger",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "closeed"
-      },
-      "text": "stänger"
+      "icon": "play"
     },
     {
       "id": "wash",
+      "text": "tvättar",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "washed"
-      },
-      "text": "tvättar"
+      "icon": "play"
     },
     {
       "id": "sleep",
+      "text": "sover",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "text": "sover"
+      "icon": "play"
     },
     {
       "id": "rest",
+      "text": "vilar",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "rested"
-      },
-      "text": "vilar"
+      "icon": "play"
     },
     {
       "id": "try",
+      "text": "försöker",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "tryed"
-      },
-      "text": "försöker"
+      "icon": "play"
     },
     {
       "id": "talk",
+      "text": "pratar",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "talked"
-      },
-      "text": "pratar"
+      "icon": "play"
     },
     {
       "id": "yes",
+      "text": "ja",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "ja"
+      "icon": "chat-bubble"
     },
     {
       "id": "no",
+      "text": "nej",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "nej"
+      "icon": "chat-bubble"
     },
     {
       "id": "please",
+      "text": "snälla",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "snälla"
+      "icon": "chat-bubble"
     },
     {
       "id": "thank-you",
+      "text": "tack",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "tack"
+      "icon": "chat-bubble"
     },
     {
       "id": "sorry",
+      "text": "förlåt",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "förlåt"
+      "icon": "chat-bubble"
     },
     {
       "id": "hello",
+      "text": "hej",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "hej"
+      "icon": "chat-bubble"
     },
     {
       "id": "goodbye",
+      "text": "hej då",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "hej då"
+      "icon": "chat-bubble"
     },
     {
       "id": "more",
+      "text": "mer",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "mer"
+      "icon": "chat-bubble"
     },
     {
       "id": "all-done",
+      "text": "allt klart",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "allt klart"
+      "icon": "chat-bubble"
     },
     {
       "id": "again",
+      "text": "igen",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "igen"
+      "icon": "chat-bubble"
     },
     {
       "id": "finished",
+      "text": "färdig",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "färdig"
+      "icon": "chat-bubble"
     },
     {
       "id": "okay",
+      "text": "okej",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "okej"
+      "icon": "chat-bubble"
     },
     {
       "id": "not-yet",
+      "text": "inte än",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "inte än"
+      "icon": "chat-bubble"
     },
     {
       "id": "maybe",
+      "text": "kanske",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "kanske"
+      "icon": "chat-bubble"
     },
     {
       "id": "what",
+      "text": "vad",
       "pos": "question",
       "category": "questions",
       "frequency": 8,
-      "icon": "question-circle",
-      "text": "vad"
+      "icon": "question-circle"
     },
     {
       "id": "where",
+      "text": "var",
       "pos": "question",
       "category": "questions",
       "frequency": 8,
-      "icon": "question-circle",
-      "text": "var"
+      "icon": "question-circle"
     },
     {
       "id": "who",
+      "text": "vem",
       "pos": "question",
       "category": "questions",
       "frequency": 8,
-      "icon": "question-circle",
-      "text": "vem"
+      "icon": "question-circle"
     },
     {
       "id": "when",
+      "text": "när",
       "pos": "question",
       "category": "questions",
       "frequency": 8,
-      "icon": "question-circle",
-      "text": "när"
+      "icon": "question-circle"
     },
     {
       "id": "why",
+      "text": "varför",
       "pos": "question",
       "category": "questions",
       "frequency": 8,
-      "icon": "question-circle",
-      "text": "varför"
+      "icon": "question-circle"
     },
     {
       "id": "which",
+      "text": "vilken",
       "pos": "question",
       "category": "questions",
       "frequency": 8,
-      "icon": "question-circle",
-      "text": "vilken"
+      "icon": "question-circle"
     },
     {
       "id": "how",
+      "text": "hur",
       "pos": "question",
       "category": "questions",
       "frequency": 8,
-      "icon": "question-circle",
-      "text": "hur"
+      "icon": "question-circle"
     },
     {
       "id": "can",
+      "text": "kan",
       "pos": "question",
       "category": "questions",
       "frequency": 8,
-      "icon": "question-circle",
-      "text": "kan"
+      "icon": "question-circle"
     },
     {
       "id": "is",
+      "text": "är",
       "pos": "question",
       "category": "questions",
       "frequency": 8,
-      "icon": "question-circle",
-      "text": "är"
+      "icon": "question-circle"
     },
     {
       "id": "are",
+      "text": "är",
       "pos": "question",
       "category": "questions",
       "frequency": 8,
-      "icon": "question-circle",
-      "text": "är"
+      "icon": "question-circle"
     },
     {
       "id": "a",
+      "text": "en",
       "pos": "determiner",
       "category": "helpers",
       "frequency": 8,
-      "icon": "text",
-      "text": "en"
+      "icon": "text"
     },
     {
       "id": "the",
+      "text": "den",
       "pos": "determiner",
       "category": "helpers",
       "frequency": 8,
-      "icon": "text",
-      "text": "den"
+      "icon": "text"
     },
     {
       "id": "this",
+      "text": "den här",
       "pos": "determiner",
       "category": "helpers",
       "frequency": 8,
-      "icon": "text",
-      "text": "den här"
+      "icon": "text"
     },
     {
       "id": "that",
+      "text": "den där",
       "pos": "determiner",
       "category": "helpers",
       "frequency": 8,
-      "icon": "text",
-      "text": "den där"
+      "icon": "text"
     },
     {
       "id": "some",
+      "text": "några",
       "pos": "determiner",
       "category": "helpers",
       "frequency": 8,
-      "icon": "text",
-      "text": "några"
+      "icon": "text"
     },
     {
       "id": "one",
+      "text": "en",
       "pos": "determiner",
       "category": "helpers",
       "frequency": 8,
-      "icon": "text",
-      "text": "en"
+      "icon": "text"
     },
     {
       "id": "two",
+      "text": "två",
       "pos": "determiner",
       "category": "helpers",
       "frequency": 8,
-      "icon": "text",
-      "text": "två"
+      "icon": "text"
     },
     {
       "id": "three",
+      "text": "tre",
       "pos": "determiner",
       "category": "helpers",
       "frequency": 8,
-      "icon": "text",
-      "text": "tre"
+      "icon": "text"
     },
     {
       "id": "many",
+      "text": "många",
       "pos": "determiner",
       "category": "helpers",
       "frequency": 8,
-      "icon": "text",
-      "text": "många"
+      "icon": "text"
     },
     {
       "id": "little",
+      "text": "lite",
       "pos": "determiner",
       "category": "helpers",
       "frequency": 8,
-      "icon": "text",
-      "text": "lite"
+      "icon": "text"
     },
     {
       "id": "big",
+      "text": "stor",
       "pos": "determiner",
       "category": "helpers",
       "frequency": 8,
-      "icon": "text",
-      "text": "stor"
+      "icon": "text"
     },
     {
       "id": "in",
+      "text": "i",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "i"
+      "icon": "arrow-right"
     },
     {
       "id": "on",
+      "text": "på",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "på"
+      "icon": "arrow-right"
     },
     {
       "id": "under",
+      "text": "under",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "under"
+      "icon": "arrow-right"
     },
     {
       "id": "next-to",
+      "text": "bredvid",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "bredvid"
+      "icon": "arrow-right"
     },
     {
       "id": "with",
+      "text": "med",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "med"
+      "icon": "arrow-right"
     },
     {
       "id": "without",
+      "text": "utan",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "utan"
+      "icon": "arrow-right"
     },
     {
       "id": "to",
+      "text": "till",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "till"
+      "icon": "arrow-right"
     },
     {
       "id": "from",
+      "text": "från",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "från"
+      "icon": "arrow-right"
     },
     {
       "id": "inside",
+      "text": "inne",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "inne"
+      "icon": "arrow-right"
     },
     {
       "id": "outside",
+      "text": "ute",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "ute"
+      "icon": "arrow-right"
     },
     {
       "id": "near",
+      "text": "nära",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "nära"
+      "icon": "arrow-right"
     },
     {
       "id": "far",
+      "text": "långt",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "långt"
+      "icon": "arrow-right"
     },
     {
       "id": "and",
+      "text": "och",
       "pos": "conjunction",
       "category": "helpers",
       "frequency": 6,
-      "icon": "branch",
-      "text": "och"
+      "icon": "branch"
     },
     {
       "id": "or",
+      "text": "eller",
       "pos": "conjunction",
       "category": "helpers",
       "frequency": 6,
-      "icon": "branch",
-      "text": "eller"
+      "icon": "branch"
     },
     {
       "id": "because",
+      "text": "för att",
       "pos": "conjunction",
       "category": "helpers",
       "frequency": 6,
-      "icon": "branch",
-      "text": "för att"
+      "icon": "branch"
     },
     {
       "id": "then",
+      "text": "sedan",
       "pos": "conjunction",
       "category": "helpers",
       "frequency": 6,
-      "icon": "branch",
-      "text": "sedan"
+      "icon": "branch"
     },
     {
       "id": "but",
+      "text": "men",
       "pos": "conjunction",
       "category": "helpers",
       "frequency": 6,
-      "icon": "branch",
-      "text": "men"
+      "icon": "branch"
     },
     {
       "id": "water",
+      "text": "vatten",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "vatten"
+      "icon": "water"
     },
     {
       "id": "milk",
+      "text": "mjölk",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "mjölk"
+      "icon": "water"
     },
     {
       "id": "juice",
+      "text": "juice",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "juice"
+      "icon": "water"
     },
     {
       "id": "tea",
+      "text": "te",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "te"
+      "icon": "water"
     },
     {
       "id": "smoothie",
+      "text": "smoothie",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "smoothie"
+      "icon": "water"
     },
     {
       "id": "lemonade",
+      "text": "saft",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "saft"
+      "icon": "water"
     },
     {
       "id": "hot-drink",
+      "text": "varm dryck",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "varm dryck"
+      "icon": "water"
     },
     {
       "id": "cold-drink",
+      "text": "kall dryck",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "kall dryck"
+      "icon": "water"
     },
     {
       "id": "cup",
+      "text": "mugg",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "mugg"
+      "icon": "water"
     },
     {
       "id": "straw",
+      "text": "sugrör",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "sugrör"
+      "icon": "water"
     },
     {
       "id": "bottle",
+      "text": "flaska",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "flaska"
+      "icon": "water"
     },
     {
       "id": "sip",
+      "text": "klunk",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "klunk"
+      "icon": "water"
     },
     {
       "id": "apple",
+      "text": "äpple",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "äpple"
+      "icon": "apple"
     },
     {
       "id": "banana",
+      "text": "banan",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "banan"
+      "icon": "apple"
     },
     {
       "id": "bread",
+      "text": "bröd",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "bröd"
+      "icon": "apple"
     },
     {
       "id": "toast",
+      "text": "rostat bröd",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "rostat bröd"
+      "icon": "apple"
     },
     {
       "id": "sandwich",
+      "text": "smörgås",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "smörgås"
+      "icon": "apple"
     },
     {
       "id": "rice",
+      "text": "ris",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "ris"
+      "icon": "apple"
     },
     {
       "id": "pasta",
+      "text": "pasta",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "pasta"
+      "icon": "apple"
     },
     {
       "id": "soup",
+      "text": "soppa",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "soppa"
+      "icon": "apple"
     },
     {
       "id": "yogurt",
+      "text": "yoghurt",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "yoghurt"
+      "icon": "apple"
     },
     {
       "id": "cheese",
+      "text": "ost",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "ost"
+      "icon": "apple"
     },
     {
       "id": "cracker",
+      "text": "kex",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "kex"
+      "icon": "apple"
     },
     {
       "id": "carrot",
+      "text": "morot",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "morot"
+      "icon": "apple"
     },
     {
       "id": "chips",
+      "text": "chips",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "chips"
+      "icon": "apple"
     },
     {
       "id": "cookie",
+      "text": "kaka",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "kaka"
+      "icon": "apple"
     },
     {
       "id": "egg",
+      "text": "ägg",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "ägg"
+      "icon": "apple"
     },
     {
       "id": "cereal",
+      "text": "flingor",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "flingor"
+      "icon": "apple"
     },
     {
       "id": "fruit",
+      "text": "frukt",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "frukt"
+      "icon": "apple"
     },
     {
       "id": "snack",
+      "text": "mellanmål",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "mellanmål"
+      "icon": "apple"
     },
     {
       "id": "dinner",
+      "text": "middag",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "middag"
+      "icon": "apple"
     },
     {
       "id": "lunch",
+      "text": "lunch",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "lunch"
+      "icon": "apple"
     },
     {
       "id": "happy",
+      "text": "glad",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "glad"
+      "icon": "smile"
     },
     {
       "id": "sad",
+      "text": "ledsen",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "ledsen"
+      "icon": "smile"
     },
     {
       "id": "angry",
+      "text": "arg",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "arg"
+      "icon": "smile"
     },
     {
       "id": "worried",
+      "text": "oroad",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "oroad"
+      "icon": "smile"
     },
     {
       "id": "scared",
+      "text": "rädd",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "rädd"
+      "icon": "smile"
     },
     {
       "id": "tired",
+      "text": "trött",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "trött"
+      "icon": "smile"
     },
     {
       "id": "sick",
+      "text": "sjuk",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "sjuk"
+      "icon": "smile"
     },
     {
       "id": "hurt",
+      "text": "har ont",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "har ont"
+      "icon": "smile"
     },
     {
       "id": "calm",
+      "text": "lugn",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "lugn"
+      "icon": "smile"
     },
     {
       "id": "excited",
+      "text": "uppspelt",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "uppspelt"
+      "icon": "smile"
     },
     {
       "id": "confused",
+      "text": "förvirrad",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "förvirrad"
+      "icon": "smile"
     },
     {
       "id": "proud",
+      "text": "stolt",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "stolt"
+      "icon": "smile"
     },
     {
       "id": "lonely",
+      "text": "ensam",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "ensam"
+      "icon": "smile"
     },
     {
       "id": "bored",
+      "text": "uttråkad",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "uttråkad"
+      "icon": "smile"
     },
     {
       "id": "safe",
+      "text": "trygg",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "trygg"
+      "icon": "smile"
     },
     {
       "id": "upset",
+      "text": "upprörd",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "upprörd"
+      "icon": "smile"
     },
     {
       "id": "okay-2",
+      "text": "okej",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "okej"
+      "icon": "smile"
     },
     {
       "id": "hot",
+      "text": "varm",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "varm"
+      "icon": "smile"
     },
     {
       "id": "cold",
+      "text": "kall",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "kall"
+      "icon": "smile"
     },
     {
       "id": "hungry",
+      "text": "hungrig",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "hungrig"
+      "icon": "smile"
     },
     {
       "id": "thirsty",
+      "text": "törstig",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "törstig"
+      "icon": "smile"
     },
     {
       "id": "head",
+      "text": "huvud",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "huvud"
+      "icon": "body"
     },
     {
       "id": "hand",
+      "text": "hand",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "hand"
+      "icon": "body"
     },
     {
       "id": "foot",
+      "text": "fot",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "fot"
+      "icon": "body"
     },
     {
       "id": "tummy",
+      "text": "mage",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "mage"
+      "icon": "body"
     },
     {
       "id": "mouth",
+      "text": "mun",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "mun"
+      "icon": "body"
     },
     {
       "id": "ear",
+      "text": "öra",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "öra"
+      "icon": "body"
     },
     {
       "id": "eye",
+      "text": "öga",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "öga"
+      "icon": "body"
     },
     {
       "id": "arm",
+      "text": "arm",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "arm"
+      "icon": "body"
     },
     {
       "id": "leg",
+      "text": "ben",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "ben"
+      "icon": "body"
     },
     {
       "id": "back",
+      "text": "rygg",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "rygg"
+      "icon": "body"
     },
     {
       "id": "tooth",
+      "text": "tand",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "tand"
+      "icon": "body"
     },
     {
       "id": "hair",
+      "text": "hår",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "hår"
+      "icon": "body"
     },
     {
       "id": "nose",
+      "text": "näsa",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "näsa"
+      "icon": "body"
     },
     {
       "id": "skin",
+      "text": "hud",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "hud"
+      "icon": "body"
     },
     {
       "id": "heart",
+      "text": "hjärta",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "hjärta"
+      "icon": "body"
     },
     {
       "id": "home",
+      "text": "hemma",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "hemma"
+      "icon": "home"
     },
     {
       "id": "school",
+      "text": "skola",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "skola"
+      "icon": "home"
     },
     {
       "id": "classroom",
+      "text": "klassrum",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "klassrum"
+      "icon": "home"
     },
     {
       "id": "bathroom",
+      "text": "badrum",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "badrum"
+      "icon": "home"
     },
     {
       "id": "kitchen",
+      "text": "kök",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "kök"
+      "icon": "home"
     },
     {
       "id": "bedroom",
+      "text": "sovrum",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "sovrum"
+      "icon": "home"
     },
     {
       "id": "garden",
+      "text": "trädgård",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "trädgård"
+      "icon": "home"
     },
     {
       "id": "shop",
+      "text": "affär",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "affär"
+      "icon": "home"
     },
     {
       "id": "car",
+      "text": "bil",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "bil"
+      "icon": "home"
     },
     {
       "id": "bus",
+      "text": "buss",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "buss"
+      "icon": "home"
     },
     {
       "id": "park",
+      "text": "park",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "park"
+      "icon": "home"
     },
     {
       "id": "playground",
+      "text": "lekplats",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "lekplats"
+      "icon": "home"
     },
     {
       "id": "library",
+      "text": "bibliotek",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "bibliotek"
+      "icon": "home"
     },
     {
       "id": "pool",
+      "text": "pool",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "pool"
+      "icon": "home"
     },
     {
       "id": "table",
+      "text": "bord",
       "pos": "noun",
       "category": "home",
       "frequency": 7,
-      "icon": "home",
-      "text": "bord"
+      "icon": "home"
     },
     {
       "id": "chair",
+      "text": "stol",
       "pos": "noun",
       "category": "home",
       "frequency": 7,
-      "icon": "home",
-      "text": "stol"
+      "icon": "home"
     },
     {
       "id": "sofa",
+      "text": "soffa",
       "pos": "noun",
       "category": "home",
       "frequency": 7,
-      "icon": "home",
-      "text": "soffa"
+      "icon": "home"
     },
     {
       "id": "bed",
+      "text": "säng",
       "pos": "noun",
       "category": "home",
       "frequency": 7,
-      "icon": "home",
-      "text": "säng"
+      "icon": "home"
     },
     {
       "id": "door",
+      "text": "dörr",
       "pos": "noun",
       "category": "home",
       "frequency": 7,
-      "icon": "home",
-      "text": "dörr"
+      "icon": "home"
     },
     {
       "id": "window",
+      "text": "fönster",
       "pos": "noun",
       "category": "home",
       "frequency": 7,
-      "icon": "home",
-      "text": "fönster"
+      "icon": "home"
     },
     {
       "id": "book",
+      "text": "bok",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "bok"
+      "icon": "book"
     },
     {
       "id": "pencil",
+      "text": "penna",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "penna"
+      "icon": "book"
     },
     {
       "id": "paper",
+      "text": "papper",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "papper"
+      "icon": "book"
     },
     {
       "id": "bag",
+      "text": "väska",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "väska"
+      "icon": "book"
     },
     {
       "id": "coat",
+      "text": "jacka",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "jacka"
+      "icon": "book"
     },
     {
       "id": "shoes",
+      "text": "skor",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "skor"
+      "icon": "book"
     },
     {
       "id": "lunchbox",
+      "text": "matlåda",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "matlåda"
+      "icon": "book"
     },
     {
       "id": "tablet",
+      "text": "tablet",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "tablet"
+      "icon": "book"
     },
     {
       "id": "screen",
+      "text": "skärm",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "skärm"
+      "icon": "book"
     },
     {
       "id": "timer",
+      "text": "timer",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "timer"
+      "icon": "book"
     },
     {
       "id": "schedule",
+      "text": "schema",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "schema"
+      "icon": "book"
     },
     {
       "id": "picture",
+      "text": "bild",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "bild"
+      "icon": "book"
     },
     {
       "id": "card",
+      "text": "kort",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "kort"
+      "icon": "book"
     },
     {
       "id": "story",
+      "text": "saga",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "saga"
+      "icon": "book"
     },
     {
       "id": "music",
+      "text": "musik",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "musik"
+      "icon": "book"
     },
     {
       "id": "ball",
+      "text": "boll",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "boll"
+      "icon": "puzzle"
     },
     {
       "id": "blocks",
+      "text": "klossar",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "klossar"
+      "icon": "puzzle"
     },
     {
       "id": "doll",
+      "text": "docka",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "docka"
+      "icon": "puzzle"
     },
     {
       "id": "car-toy",
+      "text": "leksaksbil",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "leksaksbil"
+      "icon": "puzzle"
     },
     {
       "id": "train",
+      "text": "tåg",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "tåg"
+      "icon": "puzzle"
     },
     {
       "id": "puzzle",
+      "text": "pussel",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "pussel"
+      "icon": "puzzle"
     },
     {
       "id": "game",
+      "text": "spel",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "spel"
+      "icon": "puzzle"
     },
     {
       "id": "paint",
+      "text": "färg",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "färg"
+      "icon": "puzzle"
     },
     {
       "id": "clay",
+      "text": "lera",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "lera"
+      "icon": "puzzle"
     },
     {
       "id": "bubbles",
+      "text": "bubblor",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "bubblor"
+      "icon": "puzzle"
     },
     {
       "id": "swing",
+      "text": "gunga",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "gunga"
+      "icon": "puzzle"
     },
     {
       "id": "slide",
+      "text": "rutschkana",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "rutschkana"
+      "icon": "puzzle"
     },
     {
       "id": "bike",
+      "text": "cykel",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "cykel"
+      "icon": "puzzle"
     },
     {
       "id": "teddy",
+      "text": "nalle",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "nalle"
+      "icon": "puzzle"
     },
     {
       "id": "lego",
+      "text": "lego",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "lego"
+      "icon": "puzzle"
     },
     {
       "id": "red",
+      "text": "röd",
       "pos": "adjective",
       "category": "colors",
       "frequency": 5,
-      "icon": "palette",
-      "text": "röd"
+      "icon": "palette"
     },
     {
       "id": "blue",
+      "text": "blå",
       "pos": "adjective",
       "category": "colors",
       "frequency": 5,
-      "icon": "palette",
-      "text": "blå"
+      "icon": "palette"
     },
     {
       "id": "green",
+      "text": "grön",
       "pos": "adjective",
       "category": "colors",
       "frequency": 5,
-      "icon": "palette",
-      "text": "grön"
+      "icon": "palette"
     },
     {
       "id": "yellow",
+      "text": "gul",
       "pos": "adjective",
       "category": "colors",
       "frequency": 5,
-      "icon": "palette",
-      "text": "gul"
+      "icon": "palette"
     },
     {
       "id": "orange",
+      "text": "orange",
       "pos": "adjective",
       "category": "colors",
       "frequency": 5,
-      "icon": "palette",
-      "text": "orange"
+      "icon": "palette"
     },
     {
       "id": "purple",
+      "text": "lila",
       "pos": "adjective",
       "category": "colors",
       "frequency": 5,
-      "icon": "palette",
-      "text": "lila"
+      "icon": "palette"
     },
     {
       "id": "pink",
+      "text": "rosa",
       "pos": "adjective",
       "category": "colors",
       "frequency": 5,
-      "icon": "palette",
-      "text": "rosa"
+      "icon": "palette"
     },
     {
       "id": "brown",
+      "text": "brun",
       "pos": "adjective",
       "category": "colors",
       "frequency": 5,
-      "icon": "palette",
-      "text": "brun"
+      "icon": "palette"
     },
     {
       "id": "black",
+      "text": "svart",
       "pos": "adjective",
       "category": "colors",
       "frequency": 5,
-      "icon": "palette",
-      "text": "svart"
+      "icon": "palette"
     },
     {
       "id": "white",
+      "text": "vit",
       "pos": "adjective",
       "category": "colors",
       "frequency": 5,
-      "icon": "palette",
-      "text": "vit"
+      "icon": "palette"
     },
     {
       "id": "grey",
+      "text": "grå",
       "pos": "adjective",
       "category": "colors",
       "frequency": 5,
-      "icon": "palette",
-      "text": "grå"
+      "icon": "palette"
     },
     {
       "id": "bright",
+      "text": "ljus",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "ljus"
+      "icon": "palette"
     },
     {
       "id": "dark",
+      "text": "mörk",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "mörk"
+      "icon": "palette"
     },
     {
       "id": "soft",
+      "text": "mjuk",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "mjuk"
+      "icon": "palette"
     },
     {
       "id": "hard",
+      "text": "hård",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "hård"
+      "icon": "palette"
     },
     {
       "id": "quiet",
+      "text": "tyst",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "tyst"
+      "icon": "palette"
     },
     {
       "id": "loud",
+      "text": "hög",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "hög"
+      "icon": "palette"
     },
     {
       "id": "fast",
+      "text": "snabb",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "snabb"
+      "icon": "palette"
     },
     {
       "id": "slow",
+      "text": "långsam",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "långsam"
+      "icon": "palette"
     },
     {
       "id": "clean",
+      "text": "ren",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "ren"
+      "icon": "palette"
     },
     {
       "id": "dirty",
+      "text": "smutsig",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "smutsig"
+      "icon": "palette"
     },
     {
       "id": "wet",
+      "text": "blöt",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "blöt"
+      "icon": "palette"
     },
     {
       "id": "dry",
+      "text": "torr",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "torr"
+      "icon": "palette"
     },
     {
       "id": "new",
+      "text": "ny",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "ny"
+      "icon": "palette"
     },
     {
       "id": "old",
+      "text": "gammal",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "gammal"
+      "icon": "palette"
     },
     {
       "id": "now",
+      "text": "nu",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "nu"
+      "icon": "clock"
     },
     {
       "id": "later",
+      "text": "senare",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "senare"
+      "icon": "clock"
     },
     {
       "id": "today",
+      "text": "idag",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "idag"
+      "icon": "clock"
     },
     {
       "id": "tomorrow",
+      "text": "imorgon",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "imorgon"
+      "icon": "clock"
     },
     {
       "id": "morning",
+      "text": "morgon",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "morgon"
+      "icon": "clock"
     },
     {
       "id": "afternoon",
+      "text": "eftermiddag",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "eftermiddag"
+      "icon": "clock"
     },
     {
       "id": "night",
+      "text": "natt",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "natt"
+      "icon": "clock"
     },
     {
       "id": "before",
+      "text": "före",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "före"
+      "icon": "clock"
     },
     {
       "id": "after",
+      "text": "efter",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "efter"
+      "icon": "clock"
     },
     {
       "id": "soon",
+      "text": "snart",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "snart"
+      "icon": "clock"
     },
     {
       "id": "first",
+      "text": "först",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "först"
+      "icon": "clock"
     },
     {
       "id": "next",
+      "text": "nästa",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "nästa"
+      "icon": "clock"
     },
     {
       "id": "last",
+      "text": "sist",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "sist"
+      "icon": "clock"
     },
     {
       "id": "minute",
+      "text": "minut",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "minut"
+      "icon": "clock"
     },
     {
       "id": "hour",
+      "text": "timme",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "timme"
+      "icon": "clock"
     },
     {
       "id": "break",
+      "text": "paus",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "paus"
+      "icon": "heart-hand"
     },
     {
       "id": "quiet-time",
+      "text": "tyst stund",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "tyst stund"
+      "icon": "heart-hand"
     },
     {
       "id": "hug",
+      "text": "kram",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "kram"
+      "icon": "heart-hand"
     },
     {
       "id": "space",
+      "text": "plats",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "plats"
+      "icon": "heart-hand"
     },
     {
       "id": "toilet",
+      "text": "toalett",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "toalett"
+      "icon": "heart-hand"
     },
     {
       "id": "medicine",
+      "text": "medicin",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "medicin"
+      "icon": "heart-hand"
     },
     {
       "id": "light",
+      "text": "ljus",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "ljus"
+      "icon": "heart-hand"
     },
     {
       "id": "dark-2",
+      "text": "mörker",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "mörker"
+      "icon": "heart-hand"
     },
     {
       "id": "noise",
+      "text": "ljud",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "ljud"
+      "icon": "heart-hand"
     },
     {
       "id": "headphones",
+      "text": "hörlurar",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "hörlurar"
+      "icon": "heart-hand"
     },
     {
       "id": "blanket",
+      "text": "filt",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "filt"
+      "icon": "heart-hand"
     },
     {
       "id": "charger",
+      "text": "laddare",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "laddare"
+      "icon": "heart-hand"
     },
     {
       "id": "choice",
+      "text": "val",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "val"
+      "icon": "heart-hand"
     },
     {
       "id": "turn",
+      "text": "tur",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "tur"
+      "icon": "heart-hand"
     },
     {
       "id": "help-please",
+      "text": "hjälp tack",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "hjälp tack"
+      "icon": "heart-hand"
     },
     {
       "id": "different",
+      "text": "olika",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "olika"
+      "icon": "sparkles"
     },
     {
       "id": "same",
+      "text": "samma",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "samma"
+      "icon": "sparkles"
     },
     {
       "id": "easy",
+      "text": "lätt",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "lätt"
+      "icon": "sparkles"
     },
     {
       "id": "harder",
+      "text": "svårare",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "svårare"
+      "icon": "sparkles"
     },
     {
       "id": "favorite",
+      "text": "favorit",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "favorit"
+      "icon": "sparkles"
     },
     {
       "id": "missing",
+      "text": "saknas",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "saknas"
+      "icon": "sparkles"
     },
     {
       "id": "broken",
+      "text": "trasig",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "trasig"
+      "icon": "sparkles"
     },
     {
       "id": "ready",
+      "text": "klar",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "klar"
+      "icon": "sparkles"
     },
     {
       "id": "busy",
+      "text": "upptagen",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "upptagen"
+      "icon": "sparkles"
     },
     {
       "id": "empty",
+      "text": "tom",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "tom"
+      "icon": "sparkles"
     },
     {
       "id": "full",
+      "text": "full",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "full"
+      "icon": "sparkles"
     },
     {
       "id": "small",
+      "text": "liten",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "liten"
+      "icon": "sparkles"
     },
     {
       "id": "tall",
+      "text": "lång",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "lång"
+      "icon": "sparkles"
     },
     {
       "id": "short",
+      "text": "kort",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "kort"
+      "icon": "sparkles"
     },
     {
       "id": "round",
+      "text": "rund",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "rund"
+      "icon": "sparkles"
     },
     {
       "id": "square",
+      "text": "kvadratisk",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "kvadratisk"
+      "icon": "sparkles"
     },
     {
       "id": "kind",
+      "text": "snäll",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "snäll"
+      "icon": "sparkles"
     },
     {
       "id": "gentle",
+      "text": "varsam",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "varsam"
+      "icon": "sparkles"
     },
     {
       "id": "careful",
+      "text": "försiktig",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "försiktig"
+      "icon": "sparkles"
     },
     {
       "id": "safe-place",
+      "text": "trygg plats",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "trygg plats"
+      "icon": "sparkles"
     }
   ],
   "templates": [
@@ -3132,7 +3065,5 @@
         "inte"
       ]
     }
-  },
-  "source": "generated",
-  "reviewStatus": "needs-native-review"
+  }
 }

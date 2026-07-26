@@ -1,2435 +1,2368 @@
 {
   "locale": "uk",
   "version": 1,
+  "source": "generated",
+  "reviewStatus": "needs-native-review",
   "words": [
     {
       "id": "i",
+      "text": "я",
       "pos": "pronoun",
       "category": "people",
       "frequency": 10,
-      "icon": "user",
-      "text": "я"
+      "icon": "user"
     },
     {
       "id": "you",
+      "text": "ти",
       "pos": "pronoun",
       "category": "people",
       "frequency": 10,
-      "icon": "user",
-      "text": "ти"
+      "icon": "user"
     },
     {
       "id": "we",
+      "text": "ми",
       "pos": "pronoun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "ми"
+      "icon": "user"
     },
     {
       "id": "me",
+      "text": "мене",
       "pos": "pronoun",
       "category": "people",
       "frequency": 10,
-      "icon": "user",
-      "text": "мене"
+      "icon": "user"
     },
     {
       "id": "my",
+      "text": "мій",
       "pos": "pronoun",
       "category": "people",
       "frequency": 10,
-      "icon": "user",
-      "text": "мій"
+      "icon": "user"
     },
     {
       "id": "your",
+      "text": "твій",
       "pos": "pronoun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "твій"
+      "icon": "user"
     },
     {
       "id": "he",
+      "text": "він",
       "pos": "pronoun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "він"
+      "icon": "user"
     },
     {
       "id": "she",
+      "text": "вона",
       "pos": "pronoun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "вона"
+      "icon": "user"
     },
     {
       "id": "they",
+      "text": "вони",
       "pos": "pronoun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "вони"
+      "icon": "user"
     },
     {
       "id": "mum",
+      "text": "мама",
       "pos": "noun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "мама"
+      "icon": "user"
     },
     {
       "id": "dad",
+      "text": "тато",
       "pos": "noun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "тато"
+      "icon": "user"
     },
     {
       "id": "teacher",
+      "text": "вчителька",
       "pos": "noun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "вчителька"
+      "icon": "user"
     },
     {
       "id": "friend",
+      "text": "друг",
       "pos": "noun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "друг"
+      "icon": "user"
     },
     {
       "id": "brother",
+      "text": "брат",
       "pos": "noun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "брат"
+      "icon": "user"
     },
     {
       "id": "sister",
+      "text": "сестра",
       "pos": "noun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "сестра"
+      "icon": "user"
     },
     {
       "id": "grandma",
+      "text": "бабуся",
       "pos": "noun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "бабуся"
+      "icon": "user"
     },
     {
       "id": "grandpa",
+      "text": "дідусь",
       "pos": "noun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "дідусь"
+      "icon": "user"
     },
     {
       "id": "helper",
+      "text": "помічник",
       "pos": "noun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "помічник"
+      "icon": "user"
     },
     {
       "id": "doctor",
+      "text": "лікар",
       "pos": "noun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "лікар"
+      "icon": "user"
     },
     {
       "id": "class",
+      "text": "клас",
       "pos": "noun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "клас"
+      "icon": "user"
     },
     {
       "id": "want",
+      "text": "хочу",
       "pos": "verb",
       "category": "actions",
       "frequency": 10,
-      "icon": "play",
-      "inflections": {
-        "past": "wanted"
-      },
-      "text": "хочу"
+      "icon": "play"
     },
     {
       "id": "need",
+      "text": "потребую",
       "pos": "verb",
       "category": "actions",
       "frequency": 10,
-      "icon": "play",
-      "inflections": {
-        "past": "needed"
-      },
-      "text": "потребую"
+      "icon": "play"
     },
     {
       "id": "like",
+      "text": "люблю",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "likeed"
-      },
-      "text": "люблю"
+      "icon": "play"
     },
     {
       "id": "feel",
+      "text": "відчуваю",
       "pos": "verb",
       "category": "actions",
       "frequency": 10,
-      "icon": "play",
-      "inflections": {
-        "past": "feeled"
-      },
-      "text": "відчуваю"
+      "icon": "play"
     },
     {
       "id": "see",
+      "text": "бачу",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "seeed"
-      },
-      "text": "бачу"
+      "icon": "play"
     },
     {
       "id": "hear",
+      "text": "чую",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "heared"
-      },
-      "text": "чую"
+      "icon": "play"
     },
     {
       "id": "have",
+      "text": "маю",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "haveed"
-      },
-      "text": "маю"
+      "icon": "play"
     },
     {
       "id": "go",
+      "text": "йду",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "text": "йду"
+      "icon": "play"
     },
     {
       "id": "come",
+      "text": "приходжу",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "comeed"
-      },
-      "text": "приходжу"
+      "icon": "play"
     },
     {
       "id": "play",
+      "text": "граю",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "played"
-      },
-      "text": "граю"
+      "icon": "play"
     },
     {
       "id": "read",
+      "text": "читаю",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "readed"
-      },
-      "text": "читаю"
+      "icon": "play"
     },
     {
       "id": "draw",
+      "text": "малюю",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "drawed"
-      },
-      "text": "малюю"
+      "icon": "play"
     },
     {
       "id": "eat",
+      "text": "їм",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "text": "їм"
+      "icon": "play"
     },
     {
       "id": "drink",
+      "text": "п’ю",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "text": "п’ю"
+      "icon": "play"
     },
     {
       "id": "sit",
+      "text": "сиджу",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "text": "сиджу"
+      "icon": "play"
     },
     {
       "id": "stand",
+      "text": "стою",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "text": "стою"
+      "icon": "play"
     },
     {
       "id": "walk",
+      "text": "ходжу",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "walked"
-      },
-      "text": "ходжу"
+      "icon": "play"
     },
     {
       "id": "run",
+      "text": "бігаю",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "text": "бігаю"
+      "icon": "play"
     },
     {
       "id": "stop",
+      "text": "зупиняюся",
       "pos": "verb",
       "category": "actions",
       "frequency": 10,
-      "icon": "play",
-      "inflections": {
-        "past": "stoped"
-      },
-      "text": "зупиняюся"
+      "icon": "play"
     },
     {
       "id": "start",
+      "text": "починаю",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "started"
-      },
-      "text": "починаю"
+      "icon": "play"
     },
     {
       "id": "wait",
+      "text": "чекаю",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "waited"
-      },
-      "text": "чекаю"
+      "icon": "play"
     },
     {
       "id": "help",
+      "text": "допомагаю",
       "pos": "verb",
       "category": "actions",
       "frequency": 10,
-      "icon": "play",
-      "inflections": {
-        "past": "helped"
-      },
-      "text": "допомагаю"
+      "icon": "play"
     },
     {
       "id": "choose",
+      "text": "вибираю",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "chooseed"
-      },
-      "text": "вибираю"
+      "icon": "play"
     },
     {
       "id": "open",
+      "text": "відкриваю",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "opened"
-      },
-      "text": "відкриваю"
+      "icon": "play"
     },
     {
       "id": "close",
+      "text": "закриваю",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "closeed"
-      },
-      "text": "закриваю"
+      "icon": "play"
     },
     {
       "id": "wash",
+      "text": "мию",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "washed"
-      },
-      "text": "мию"
+      "icon": "play"
     },
     {
       "id": "sleep",
+      "text": "сплю",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "text": "сплю"
+      "icon": "play"
     },
     {
       "id": "rest",
+      "text": "відпочиваю",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "rested"
-      },
-      "text": "відпочиваю"
+      "icon": "play"
     },
     {
       "id": "try",
+      "text": "пробую",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "tryed"
-      },
-      "text": "пробую"
+      "icon": "play"
     },
     {
       "id": "talk",
+      "text": "говорю",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "talked"
-      },
-      "text": "говорю"
+      "icon": "play"
     },
     {
       "id": "yes",
+      "text": "так",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "так"
+      "icon": "chat-bubble"
     },
     {
       "id": "no",
+      "text": "ні",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "ні"
+      "icon": "chat-bubble"
     },
     {
       "id": "please",
+      "text": "будь ласка",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "будь ласка"
+      "icon": "chat-bubble"
     },
     {
       "id": "thank-you",
+      "text": "дякую",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "дякую"
+      "icon": "chat-bubble"
     },
     {
       "id": "sorry",
+      "text": "вибач",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "вибач"
+      "icon": "chat-bubble"
     },
     {
       "id": "hello",
+      "text": "привіт",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "привіт"
+      "icon": "chat-bubble"
     },
     {
       "id": "goodbye",
+      "text": "до побачення",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "до побачення"
+      "icon": "chat-bubble"
     },
     {
       "id": "more",
+      "text": "ще",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "ще"
+      "icon": "chat-bubble"
     },
     {
       "id": "all-done",
+      "text": "усе готово",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "усе готово"
+      "icon": "chat-bubble"
     },
     {
       "id": "again",
+      "text": "знову",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "знову"
+      "icon": "chat-bubble"
     },
     {
       "id": "finished",
+      "text": "закінчив",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "закінчив"
+      "icon": "chat-bubble"
     },
     {
       "id": "okay",
+      "text": "добре",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "добре"
+      "icon": "chat-bubble"
     },
     {
       "id": "not-yet",
+      "text": "ще ні",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "ще ні"
+      "icon": "chat-bubble"
     },
     {
       "id": "maybe",
+      "text": "можливо",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "можливо"
+      "icon": "chat-bubble"
     },
     {
       "id": "what",
+      "text": "що",
       "pos": "question",
       "category": "questions",
       "frequency": 8,
-      "icon": "question-circle",
-      "text": "що"
+      "icon": "question-circle"
     },
     {
       "id": "where",
+      "text": "де",
       "pos": "question",
       "category": "questions",
       "frequency": 8,
-      "icon": "question-circle",
-      "text": "де"
+      "icon": "question-circle"
     },
     {
       "id": "who",
+      "text": "хто",
       "pos": "question",
       "category": "questions",
       "frequency": 8,
-      "icon": "question-circle",
-      "text": "хто"
+      "icon": "question-circle"
     },
     {
       "id": "when",
+      "text": "коли",
       "pos": "question",
       "category": "questions",
       "frequency": 8,
-      "icon": "question-circle",
-      "text": "коли"
+      "icon": "question-circle"
     },
     {
       "id": "why",
+      "text": "чому",
       "pos": "question",
       "category": "questions",
       "frequency": 8,
-      "icon": "question-circle",
-      "text": "чому"
+      "icon": "question-circle"
     },
     {
       "id": "which",
+      "text": "який",
       "pos": "question",
       "category": "questions",
       "frequency": 8,
-      "icon": "question-circle",
-      "text": "який"
+      "icon": "question-circle"
     },
     {
       "id": "how",
+      "text": "як",
       "pos": "question",
       "category": "questions",
       "frequency": 8,
-      "icon": "question-circle",
-      "text": "як"
+      "icon": "question-circle"
     },
     {
       "id": "can",
+      "text": "можу",
       "pos": "question",
       "category": "questions",
       "frequency": 8,
-      "icon": "question-circle",
-      "text": "можу"
+      "icon": "question-circle"
     },
     {
       "id": "is",
+      "text": "є",
       "pos": "question",
       "category": "questions",
       "frequency": 8,
-      "icon": "question-circle",
-      "text": "є"
+      "icon": "question-circle"
     },
     {
       "id": "are",
+      "text": "є",
       "pos": "question",
       "category": "questions",
       "frequency": 8,
-      "icon": "question-circle",
-      "text": "є"
+      "icon": "question-circle"
     },
     {
       "id": "a",
+      "text": "один",
       "pos": "determiner",
       "category": "helpers",
       "frequency": 8,
-      "icon": "text",
-      "text": "один"
+      "icon": "text"
     },
     {
       "id": "the",
+      "text": "цей",
       "pos": "determiner",
       "category": "helpers",
       "frequency": 8,
-      "icon": "text",
-      "text": "цей"
+      "icon": "text"
     },
     {
       "id": "this",
+      "text": "цей",
       "pos": "determiner",
       "category": "helpers",
       "frequency": 8,
-      "icon": "text",
-      "text": "цей"
+      "icon": "text"
     },
     {
       "id": "that",
+      "text": "той",
       "pos": "determiner",
       "category": "helpers",
       "frequency": 8,
-      "icon": "text",
-      "text": "той"
+      "icon": "text"
     },
     {
       "id": "some",
+      "text": "трохи",
       "pos": "determiner",
       "category": "helpers",
       "frequency": 8,
-      "icon": "text",
-      "text": "трохи"
+      "icon": "text"
     },
     {
       "id": "one",
+      "text": "один",
       "pos": "determiner",
       "category": "helpers",
       "frequency": 8,
-      "icon": "text",
-      "text": "один"
+      "icon": "text"
     },
     {
       "id": "two",
+      "text": "два",
       "pos": "determiner",
       "category": "helpers",
       "frequency": 8,
-      "icon": "text",
-      "text": "два"
+      "icon": "text"
     },
     {
       "id": "three",
+      "text": "три",
       "pos": "determiner",
       "category": "helpers",
       "frequency": 8,
-      "icon": "text",
-      "text": "три"
+      "icon": "text"
     },
     {
       "id": "many",
+      "text": "багато",
       "pos": "determiner",
       "category": "helpers",
       "frequency": 8,
-      "icon": "text",
-      "text": "багато"
+      "icon": "text"
     },
     {
       "id": "little",
+      "text": "мало",
       "pos": "determiner",
       "category": "helpers",
       "frequency": 8,
-      "icon": "text",
-      "text": "мало"
+      "icon": "text"
     },
     {
       "id": "big",
+      "text": "великий",
       "pos": "determiner",
       "category": "helpers",
       "frequency": 8,
-      "icon": "text",
-      "text": "великий"
+      "icon": "text"
     },
     {
       "id": "in",
+      "text": "у",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "у"
+      "icon": "arrow-right"
     },
     {
       "id": "on",
+      "text": "на",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "на"
+      "icon": "arrow-right"
     },
     {
       "id": "under",
+      "text": "під",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "під"
+      "icon": "arrow-right"
     },
     {
       "id": "next-to",
+      "text": "біля",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "біля"
+      "icon": "arrow-right"
     },
     {
       "id": "with",
+      "text": "з",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "з"
+      "icon": "arrow-right"
     },
     {
       "id": "without",
+      "text": "без",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "без"
+      "icon": "arrow-right"
     },
     {
       "id": "to",
+      "text": "до",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "до"
+      "icon": "arrow-right"
     },
     {
       "id": "from",
+      "text": "з",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "з"
+      "icon": "arrow-right"
     },
     {
       "id": "inside",
+      "text": "всередині",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "всередині"
+      "icon": "arrow-right"
     },
     {
       "id": "outside",
+      "text": "зовні",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "зовні"
+      "icon": "arrow-right"
     },
     {
       "id": "near",
+      "text": "близько",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "близько"
+      "icon": "arrow-right"
     },
     {
       "id": "far",
+      "text": "далеко",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "далеко"
+      "icon": "arrow-right"
     },
     {
       "id": "and",
+      "text": "і",
       "pos": "conjunction",
       "category": "helpers",
       "frequency": 6,
-      "icon": "branch",
-      "text": "і"
+      "icon": "branch"
     },
     {
       "id": "or",
+      "text": "або",
       "pos": "conjunction",
       "category": "helpers",
       "frequency": 6,
-      "icon": "branch",
-      "text": "або"
+      "icon": "branch"
     },
     {
       "id": "because",
+      "text": "бо",
       "pos": "conjunction",
       "category": "helpers",
       "frequency": 6,
-      "icon": "branch",
-      "text": "бо"
+      "icon": "branch"
     },
     {
       "id": "then",
+      "text": "потім",
       "pos": "conjunction",
       "category": "helpers",
       "frequency": 6,
-      "icon": "branch",
-      "text": "потім"
+      "icon": "branch"
     },
     {
       "id": "but",
+      "text": "але",
       "pos": "conjunction",
       "category": "helpers",
       "frequency": 6,
-      "icon": "branch",
-      "text": "але"
+      "icon": "branch"
     },
     {
       "id": "water",
+      "text": "вода",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "вода"
+      "icon": "water"
     },
     {
       "id": "milk",
+      "text": "молоко",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "молоко"
+      "icon": "water"
     },
     {
       "id": "juice",
+      "text": "сік",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "сік"
+      "icon": "water"
     },
     {
       "id": "tea",
+      "text": "чай",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "чай"
+      "icon": "water"
     },
     {
       "id": "smoothie",
+      "text": "смузі",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "смузі"
+      "icon": "water"
     },
     {
       "id": "lemonade",
+      "text": "лимонад",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "лимонад"
+      "icon": "water"
     },
     {
       "id": "hot-drink",
+      "text": "гарячий напій",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "гарячий напій"
+      "icon": "water"
     },
     {
       "id": "cold-drink",
+      "text": "холодний напій",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "холодний напій"
+      "icon": "water"
     },
     {
       "id": "cup",
+      "text": "чашка",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "чашка"
+      "icon": "water"
     },
     {
       "id": "straw",
+      "text": "соломинка",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "соломинка"
+      "icon": "water"
     },
     {
       "id": "bottle",
+      "text": "бутилка",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "бутилка"
+      "icon": "water"
     },
     {
       "id": "sip",
+      "text": "глоток",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "глоток"
+      "icon": "water"
     },
     {
       "id": "apple",
+      "text": "яблуко",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "яблуко"
+      "icon": "apple"
     },
     {
       "id": "banana",
+      "text": "банан",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "банан"
+      "icon": "apple"
     },
     {
       "id": "bread",
+      "text": "хліб",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "хліб"
+      "icon": "apple"
     },
     {
       "id": "toast",
+      "text": "тост",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "тост"
+      "icon": "apple"
     },
     {
       "id": "sandwich",
+      "text": "сандвіч",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "сандвіч"
+      "icon": "apple"
     },
     {
       "id": "rice",
+      "text": "рис",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "рис"
+      "icon": "apple"
     },
     {
       "id": "pasta",
+      "text": "макарони",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "макарони"
+      "icon": "apple"
     },
     {
       "id": "soup",
+      "text": "суп",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "суп"
+      "icon": "apple"
     },
     {
       "id": "yogurt",
+      "text": "йогурт",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "йогурт"
+      "icon": "apple"
     },
     {
       "id": "cheese",
+      "text": "сир",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "сир"
+      "icon": "apple"
     },
     {
       "id": "cracker",
+      "text": "крекер",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "крекер"
+      "icon": "apple"
     },
     {
       "id": "carrot",
+      "text": "морква",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "морква"
+      "icon": "apple"
     },
     {
       "id": "chips",
+      "text": "чіпси",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "чіпси"
+      "icon": "apple"
     },
     {
       "id": "cookie",
+      "text": "печиво",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "печиво"
+      "icon": "apple"
     },
     {
       "id": "egg",
+      "text": "яйце",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "яйце"
+      "icon": "apple"
     },
     {
       "id": "cereal",
+      "text": "пластівці",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "пластівці"
+      "icon": "apple"
     },
     {
       "id": "fruit",
+      "text": "фрукт",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "фрукт"
+      "icon": "apple"
     },
     {
       "id": "snack",
+      "text": "перекус",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "перекус"
+      "icon": "apple"
     },
     {
       "id": "dinner",
+      "text": "вечеря",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "вечеря"
+      "icon": "apple"
     },
     {
       "id": "lunch",
+      "text": "обід",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "обід"
+      "icon": "apple"
     },
     {
       "id": "happy",
+      "text": "щасливий",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "щасливий"
+      "icon": "smile"
     },
     {
       "id": "sad",
+      "text": "сумний",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "сумний"
+      "icon": "smile"
     },
     {
       "id": "angry",
+      "text": "злий",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "злий"
+      "icon": "smile"
     },
     {
       "id": "worried",
+      "text": "занепокоєний",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "занепокоєний"
+      "icon": "smile"
     },
     {
       "id": "scared",
+      "text": "зляканий",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "зляканий"
+      "icon": "smile"
     },
     {
       "id": "tired",
+      "text": "втомлений",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "втомлений"
+      "icon": "smile"
     },
     {
       "id": "sick",
+      "text": "хворий",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "хворий"
+      "icon": "smile"
     },
     {
       "id": "hurt",
+      "text": "болить",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "болить"
+      "icon": "smile"
     },
     {
       "id": "calm",
+      "text": "спокійний",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "спокійний"
+      "icon": "smile"
     },
     {
       "id": "excited",
+      "text": "радісний",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "радісний"
+      "icon": "smile"
     },
     {
       "id": "confused",
+      "text": "збентежений",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "збентежений"
+      "icon": "smile"
     },
     {
       "id": "proud",
+      "text": "горджуся",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "горджуся"
+      "icon": "smile"
     },
     {
       "id": "lonely",
+      "text": "самотній",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "самотній"
+      "icon": "smile"
     },
     {
       "id": "bored",
+      "text": "нудно",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "нудно"
+      "icon": "smile"
     },
     {
       "id": "safe",
+      "text": "у безпеці",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "у безпеці"
+      "icon": "smile"
     },
     {
       "id": "upset",
+      "text": "засмучений",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "засмучений"
+      "icon": "smile"
     },
     {
       "id": "okay-2",
+      "text": "нормально",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "нормально"
+      "icon": "smile"
     },
     {
       "id": "hot",
+      "text": "гарячий",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "гарячий"
+      "icon": "smile"
     },
     {
       "id": "cold",
+      "text": "холодний",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "холодний"
+      "icon": "smile"
     },
     {
       "id": "hungry",
+      "text": "голодний",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "голодний"
+      "icon": "smile"
     },
     {
       "id": "thirsty",
+      "text": "спраглий",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "спраглий"
+      "icon": "smile"
     },
     {
       "id": "head",
+      "text": "голова",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "голова"
+      "icon": "body"
     },
     {
       "id": "hand",
+      "text": "рука",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "рука"
+      "icon": "body"
     },
     {
       "id": "foot",
+      "text": "нога",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "нога"
+      "icon": "body"
     },
     {
       "id": "tummy",
+      "text": "живіт",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "живіт"
+      "icon": "body"
     },
     {
       "id": "mouth",
+      "text": "рот",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "рот"
+      "icon": "body"
     },
     {
       "id": "ear",
+      "text": "вухо",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "вухо"
+      "icon": "body"
     },
     {
       "id": "eye",
+      "text": "око",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "око"
+      "icon": "body"
     },
     {
       "id": "arm",
+      "text": "рука",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "рука"
+      "icon": "body"
     },
     {
       "id": "leg",
+      "text": "нога",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "нога"
+      "icon": "body"
     },
     {
       "id": "back",
+      "text": "спина",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "спина"
+      "icon": "body"
     },
     {
       "id": "tooth",
+      "text": "зуб",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "зуб"
+      "icon": "body"
     },
     {
       "id": "hair",
+      "text": "волосся",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "волосся"
+      "icon": "body"
     },
     {
       "id": "nose",
+      "text": "ніс",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "ніс"
+      "icon": "body"
     },
     {
       "id": "skin",
+      "text": "шкіра",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "шкіра"
+      "icon": "body"
     },
     {
       "id": "heart",
+      "text": "серце",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "серце"
+      "icon": "body"
     },
     {
       "id": "home",
+      "text": "дім",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "дім"
+      "icon": "home"
     },
     {
       "id": "school",
+      "text": "школа",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "школа"
+      "icon": "home"
     },
     {
       "id": "classroom",
+      "text": "класна кімната",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "класна кімната"
+      "icon": "home"
     },
     {
       "id": "bathroom",
+      "text": "ванна",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "ванна"
+      "icon": "home"
     },
     {
       "id": "kitchen",
+      "text": "кухня",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "кухня"
+      "icon": "home"
     },
     {
       "id": "bedroom",
+      "text": "спальня",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "спальня"
+      "icon": "home"
     },
     {
       "id": "garden",
+      "text": "сад",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "сад"
+      "icon": "home"
     },
     {
       "id": "shop",
+      "text": "магазин",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "магазин"
+      "icon": "home"
     },
     {
       "id": "car",
+      "text": "машина",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "машина"
+      "icon": "home"
     },
     {
       "id": "bus",
+      "text": "автобус",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "автобус"
+      "icon": "home"
     },
     {
       "id": "park",
+      "text": "парк",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "парк"
+      "icon": "home"
     },
     {
       "id": "playground",
+      "text": "дитячий майданчик",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "дитячий майданчик"
+      "icon": "home"
     },
     {
       "id": "library",
+      "text": "бібліотека",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "бібліотека"
+      "icon": "home"
     },
     {
       "id": "pool",
+      "text": "басейн",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "басейн"
+      "icon": "home"
     },
     {
       "id": "table",
+      "text": "стіл",
       "pos": "noun",
       "category": "home",
       "frequency": 7,
-      "icon": "home",
-      "text": "стіл"
+      "icon": "home"
     },
     {
       "id": "chair",
+      "text": "стілець",
       "pos": "noun",
       "category": "home",
       "frequency": 7,
-      "icon": "home",
-      "text": "стілець"
+      "icon": "home"
     },
     {
       "id": "sofa",
+      "text": "диван",
       "pos": "noun",
       "category": "home",
       "frequency": 7,
-      "icon": "home",
-      "text": "диван"
+      "icon": "home"
     },
     {
       "id": "bed",
+      "text": "ліжко",
       "pos": "noun",
       "category": "home",
       "frequency": 7,
-      "icon": "home",
-      "text": "ліжко"
+      "icon": "home"
     },
     {
       "id": "door",
+      "text": "двері",
       "pos": "noun",
       "category": "home",
       "frequency": 7,
-      "icon": "home",
-      "text": "двері"
+      "icon": "home"
     },
     {
       "id": "window",
+      "text": "вікно",
       "pos": "noun",
       "category": "home",
       "frequency": 7,
-      "icon": "home",
-      "text": "вікно"
+      "icon": "home"
     },
     {
       "id": "book",
+      "text": "книга",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "книга"
+      "icon": "book"
     },
     {
       "id": "pencil",
+      "text": "олівець",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "олівець"
+      "icon": "book"
     },
     {
       "id": "paper",
+      "text": "папір",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "папір"
+      "icon": "book"
     },
     {
       "id": "bag",
+      "text": "сумка",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "сумка"
+      "icon": "book"
     },
     {
       "id": "coat",
+      "text": "куртка",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "куртка"
+      "icon": "book"
     },
     {
       "id": "shoes",
+      "text": "взуття",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "взуття"
+      "icon": "book"
     },
     {
       "id": "lunchbox",
+      "text": "ланчбокс",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "ланчбокс"
+      "icon": "book"
     },
     {
       "id": "tablet",
+      "text": "планшет",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "планшет"
+      "icon": "book"
     },
     {
       "id": "screen",
+      "text": "екран",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "екран"
+      "icon": "book"
     },
     {
       "id": "timer",
+      "text": "таймер",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "таймер"
+      "icon": "book"
     },
     {
       "id": "schedule",
+      "text": "розпорядок",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "розпорядок"
+      "icon": "book"
     },
     {
       "id": "picture",
+      "text": "малюнок",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "малюнок"
+      "icon": "book"
     },
     {
       "id": "card",
+      "text": "картка",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "картка"
+      "icon": "book"
     },
     {
       "id": "story",
+      "text": "історія",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "історія"
+      "icon": "book"
     },
     {
       "id": "music",
+      "text": "музика",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "музика"
+      "icon": "book"
     },
     {
       "id": "ball",
+      "text": "мʼяч",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "мʼяч"
+      "icon": "puzzle"
     },
     {
       "id": "blocks",
+      "text": "кубики",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "кубики"
+      "icon": "puzzle"
     },
     {
       "id": "doll",
+      "text": "лялька",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "лялька"
+      "icon": "puzzle"
     },
     {
       "id": "car-toy",
+      "text": "машинка",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "машинка"
+      "icon": "puzzle"
     },
     {
       "id": "train",
+      "text": "поїзд",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "поїзд"
+      "icon": "puzzle"
     },
     {
       "id": "puzzle",
+      "text": "пазл",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "пазл"
+      "icon": "puzzle"
     },
     {
       "id": "game",
+      "text": "гра",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "гра"
+      "icon": "puzzle"
     },
     {
       "id": "paint",
+      "text": "фарба",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "фарба"
+      "icon": "puzzle"
     },
     {
       "id": "clay",
+      "text": "пластилін",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "пластилін"
+      "icon": "puzzle"
     },
     {
       "id": "bubbles",
+      "text": "бульбашки",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "бульбашки"
+      "icon": "puzzle"
     },
     {
       "id": "swing",
+      "text": "гойдалка",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "гойдалка"
+      "icon": "puzzle"
     },
     {
       "id": "slide",
+      "text": "гірка",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "гірка"
+      "icon": "puzzle"
     },
     {
       "id": "bike",
+      "text": "велосипед",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "велосипед"
+      "icon": "puzzle"
     },
     {
       "id": "teddy",
+      "text": "ведмедик",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "ведмедик"
+      "icon": "puzzle"
     },
     {
       "id": "lego",
+      "text": "лего",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "лего"
+      "icon": "puzzle"
     },
     {
       "id": "red",
+      "text": "червоний",
       "pos": "adjective",
       "category": "colors",
       "frequency": 5,
-      "icon": "palette",
-      "text": "червоний"
+      "icon": "palette"
     },
     {
       "id": "blue",
+      "text": "синій",
       "pos": "adjective",
       "category": "colors",
       "frequency": 5,
-      "icon": "palette",
-      "text": "синій"
+      "icon": "palette"
     },
     {
       "id": "green",
+      "text": "зелений",
       "pos": "adjective",
       "category": "colors",
       "frequency": 5,
-      "icon": "palette",
-      "text": "зелений"
+      "icon": "palette"
     },
     {
       "id": "yellow",
+      "text": "жовтий",
       "pos": "adjective",
       "category": "colors",
       "frequency": 5,
-      "icon": "palette",
-      "text": "жовтий"
+      "icon": "palette"
     },
     {
       "id": "orange",
+      "text": "оранжевий",
       "pos": "adjective",
       "category": "colors",
       "frequency": 5,
-      "icon": "palette",
-      "text": "оранжевий"
+      "icon": "palette"
     },
     {
       "id": "purple",
+      "text": "фіолетовий",
       "pos": "adjective",
       "category": "colors",
       "frequency": 5,
-      "icon": "palette",
-      "text": "фіолетовий"
+      "icon": "palette"
     },
     {
       "id": "pink",
+      "text": "рожевий",
       "pos": "adjective",
       "category": "colors",
       "frequency": 5,
-      "icon": "palette",
-      "text": "рожевий"
+      "icon": "palette"
     },
     {
       "id": "brown",
+      "text": "коричневий",
       "pos": "adjective",
       "category": "colors",
       "frequency": 5,
-      "icon": "palette",
-      "text": "коричневий"
+      "icon": "palette"
     },
     {
       "id": "black",
+      "text": "чорний",
       "pos": "adjective",
       "category": "colors",
       "frequency": 5,
-      "icon": "palette",
-      "text": "чорний"
+      "icon": "palette"
     },
     {
       "id": "white",
+      "text": "білий",
       "pos": "adjective",
       "category": "colors",
       "frequency": 5,
-      "icon": "palette",
-      "text": "білий"
+      "icon": "palette"
     },
     {
       "id": "grey",
+      "text": "сірий",
       "pos": "adjective",
       "category": "colors",
       "frequency": 5,
-      "icon": "palette",
-      "text": "сірий"
+      "icon": "palette"
     },
     {
       "id": "bright",
+      "text": "яскравий",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "яскравий"
+      "icon": "palette"
     },
     {
       "id": "dark",
+      "text": "темний",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "темний"
+      "icon": "palette"
     },
     {
       "id": "soft",
+      "text": "мʼякий",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "мʼякий"
+      "icon": "palette"
     },
     {
       "id": "hard",
+      "text": "твердий",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "твердий"
+      "icon": "palette"
     },
     {
       "id": "quiet",
+      "text": "тихий",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "тихий"
+      "icon": "palette"
     },
     {
       "id": "loud",
+      "text": "гучний",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "гучний"
+      "icon": "palette"
     },
     {
       "id": "fast",
+      "text": "швидкий",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "швидкий"
+      "icon": "palette"
     },
     {
       "id": "slow",
+      "text": "повільний",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "повільний"
+      "icon": "palette"
     },
     {
       "id": "clean",
+      "text": "чистий",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "чистий"
+      "icon": "palette"
     },
     {
       "id": "dirty",
+      "text": "брудний",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "брудний"
+      "icon": "palette"
     },
     {
       "id": "wet",
+      "text": "мокрий",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "мокрий"
+      "icon": "palette"
     },
     {
       "id": "dry",
+      "text": "сухий",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "сухий"
+      "icon": "palette"
     },
     {
       "id": "new",
+      "text": "новий",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "новий"
+      "icon": "palette"
     },
     {
       "id": "old",
+      "text": "старий",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "старий"
+      "icon": "palette"
     },
     {
       "id": "now",
+      "text": "зараз",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "зараз"
+      "icon": "clock"
     },
     {
       "id": "later",
+      "text": "пізніше",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "пізніше"
+      "icon": "clock"
     },
     {
       "id": "today",
+      "text": "сьогодні",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "сьогодні"
+      "icon": "clock"
     },
     {
       "id": "tomorrow",
+      "text": "завтра",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "завтра"
+      "icon": "clock"
     },
     {
       "id": "morning",
+      "text": "ранок",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "ранок"
+      "icon": "clock"
     },
     {
       "id": "afternoon",
+      "text": "день",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "день"
+      "icon": "clock"
     },
     {
       "id": "night",
+      "text": "ніч",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "ніч"
+      "icon": "clock"
     },
     {
       "id": "before",
+      "text": "до",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "до"
+      "icon": "clock"
     },
     {
       "id": "after",
+      "text": "після",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "після"
+      "icon": "clock"
     },
     {
       "id": "soon",
+      "text": "скоро",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "скоро"
+      "icon": "clock"
     },
     {
       "id": "first",
+      "text": "спочатку",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "спочатку"
+      "icon": "clock"
     },
     {
       "id": "next",
+      "text": "наступний",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "наступний"
+      "icon": "clock"
     },
     {
       "id": "last",
+      "text": "останній",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "останній"
+      "icon": "clock"
     },
     {
       "id": "minute",
+      "text": "хвилина",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "хвилина"
+      "icon": "clock"
     },
     {
       "id": "hour",
+      "text": "година",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "година"
+      "icon": "clock"
     },
     {
       "id": "break",
+      "text": "перерва",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "перерва"
+      "icon": "heart-hand"
     },
     {
       "id": "quiet-time",
+      "text": "тихий час",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "тихий час"
+      "icon": "heart-hand"
     },
     {
       "id": "hug",
+      "text": "обійми",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "обійми"
+      "icon": "heart-hand"
     },
     {
       "id": "space",
+      "text": "місце",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "місце"
+      "icon": "heart-hand"
     },
     {
       "id": "toilet",
+      "text": "туалет",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "туалет"
+      "icon": "heart-hand"
     },
     {
       "id": "medicine",
+      "text": "ліки",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "ліки"
+      "icon": "heart-hand"
     },
     {
       "id": "light",
+      "text": "світло",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "світло"
+      "icon": "heart-hand"
     },
     {
       "id": "dark-2",
+      "text": "темрява",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "темрява"
+      "icon": "heart-hand"
     },
     {
       "id": "noise",
+      "text": "шум",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "шум"
+      "icon": "heart-hand"
     },
     {
       "id": "headphones",
+      "text": "навушники",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "навушники"
+      "icon": "heart-hand"
     },
     {
       "id": "blanket",
+      "text": "ковдра",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "ковдра"
+      "icon": "heart-hand"
     },
     {
       "id": "charger",
+      "text": "зарядка",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "зарядка"
+      "icon": "heart-hand"
     },
     {
       "id": "choice",
+      "text": "вибір",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "вибір"
+      "icon": "heart-hand"
     },
     {
       "id": "turn",
+      "text": "черга",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "черга"
+      "icon": "heart-hand"
     },
     {
       "id": "help-please",
+      "text": "допоможи будь ласка",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "допоможи будь ласка"
+      "icon": "heart-hand"
     },
     {
       "id": "different",
+      "text": "інший",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "інший"
+      "icon": "sparkles"
     },
     {
       "id": "same",
+      "text": "такий самий",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "такий самий"
+      "icon": "sparkles"
     },
     {
       "id": "easy",
+      "text": "легкий",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "легкий"
+      "icon": "sparkles"
     },
     {
       "id": "harder",
+      "text": "важче",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "важче"
+      "icon": "sparkles"
     },
     {
       "id": "favorite",
+      "text": "улюблений",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "улюблений"
+      "icon": "sparkles"
     },
     {
       "id": "missing",
+      "text": "зникло",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "зникло"
+      "icon": "sparkles"
     },
     {
       "id": "broken",
+      "text": "зламаний",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "зламаний"
+      "icon": "sparkles"
     },
     {
       "id": "ready",
+      "text": "готовий",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "готовий"
+      "icon": "sparkles"
     },
     {
       "id": "busy",
+      "text": "зайнятий",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "зайнятий"
+      "icon": "sparkles"
     },
     {
       "id": "empty",
+      "text": "порожній",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "порожній"
+      "icon": "sparkles"
     },
     {
       "id": "full",
+      "text": "повний",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "повний"
+      "icon": "sparkles"
     },
     {
       "id": "small",
+      "text": "малий",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "малий"
+      "icon": "sparkles"
     },
     {
       "id": "tall",
+      "text": "високий",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "високий"
+      "icon": "sparkles"
     },
     {
       "id": "short",
+      "text": "короткий",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "короткий"
+      "icon": "sparkles"
     },
     {
       "id": "round",
+      "text": "круглий",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "круглий"
+      "icon": "sparkles"
     },
     {
       "id": "square",
+      "text": "квадратний",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "квадратний"
+      "icon": "sparkles"
     },
     {
       "id": "kind",
+      "text": "добрий",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "добрий"
+      "icon": "sparkles"
     },
     {
       "id": "gentle",
+      "text": "лагідний",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "лагідний"
+      "icon": "sparkles"
     },
     {
       "id": "careful",
+      "text": "обережний",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "обережний"
+      "icon": "sparkles"
     },
     {
       "id": "safe-place",
+      "text": "безпечне місце",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "безпечне місце"
+      "icon": "sparkles"
     }
   ],
   "templates": [
@@ -3131,7 +3064,5 @@
         "не"
       ]
     }
-  },
-  "source": "generated",
-  "reviewStatus": "needs-native-review"
+  }
 }

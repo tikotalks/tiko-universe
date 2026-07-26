@@ -1,2435 +1,2368 @@
 {
   "locale": "tr",
   "version": 1,
+  "source": "generated",
+  "reviewStatus": "needs-native-review",
   "words": [
     {
       "id": "i",
+      "text": "ben",
       "pos": "pronoun",
       "category": "people",
       "frequency": 10,
-      "icon": "user",
-      "text": "ben"
+      "icon": "user"
     },
     {
       "id": "you",
+      "text": "sen",
       "pos": "pronoun",
       "category": "people",
       "frequency": 10,
-      "icon": "user",
-      "text": "sen"
+      "icon": "user"
     },
     {
       "id": "we",
+      "text": "biz",
       "pos": "pronoun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "biz"
+      "icon": "user"
     },
     {
       "id": "me",
+      "text": "beni",
       "pos": "pronoun",
       "category": "people",
       "frequency": 10,
-      "icon": "user",
-      "text": "beni"
+      "icon": "user"
     },
     {
       "id": "my",
+      "text": "benim",
       "pos": "pronoun",
       "category": "people",
       "frequency": 10,
-      "icon": "user",
-      "text": "benim"
+      "icon": "user"
     },
     {
       "id": "your",
+      "text": "senin",
       "pos": "pronoun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "senin"
+      "icon": "user"
     },
     {
       "id": "he",
+      "text": "o",
       "pos": "pronoun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "o"
+      "icon": "user"
     },
     {
       "id": "she",
+      "text": "o",
       "pos": "pronoun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "o"
+      "icon": "user"
     },
     {
       "id": "they",
+      "text": "onlar",
       "pos": "pronoun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "onlar"
+      "icon": "user"
     },
     {
       "id": "mum",
+      "text": "anne",
       "pos": "noun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "anne"
+      "icon": "user"
     },
     {
       "id": "dad",
+      "text": "baba",
       "pos": "noun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "baba"
+      "icon": "user"
     },
     {
       "id": "teacher",
+      "text": "öğretmen",
       "pos": "noun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "öğretmen"
+      "icon": "user"
     },
     {
       "id": "friend",
+      "text": "arkadaş",
       "pos": "noun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "arkadaş"
+      "icon": "user"
     },
     {
       "id": "brother",
+      "text": "kardeş",
       "pos": "noun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "kardeş"
+      "icon": "user"
     },
     {
       "id": "sister",
+      "text": "abla",
       "pos": "noun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "abla"
+      "icon": "user"
     },
     {
       "id": "grandma",
+      "text": "anneanne",
       "pos": "noun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "anneanne"
+      "icon": "user"
     },
     {
       "id": "grandpa",
+      "text": "dede",
       "pos": "noun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "dede"
+      "icon": "user"
     },
     {
       "id": "helper",
+      "text": "yardımcı",
       "pos": "noun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "yardımcı"
+      "icon": "user"
     },
     {
       "id": "doctor",
+      "text": "doktor",
       "pos": "noun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "doktor"
+      "icon": "user"
     },
     {
       "id": "class",
+      "text": "sınıf",
       "pos": "noun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "sınıf"
+      "icon": "user"
     },
     {
       "id": "want",
+      "text": "istiyorum",
       "pos": "verb",
       "category": "actions",
       "frequency": 10,
-      "icon": "play",
-      "inflections": {
-        "past": "wanted"
-      },
-      "text": "istiyorum"
+      "icon": "play"
     },
     {
       "id": "need",
+      "text": "ihtiyacım var",
       "pos": "verb",
       "category": "actions",
       "frequency": 10,
-      "icon": "play",
-      "inflections": {
-        "past": "needed"
-      },
-      "text": "ihtiyacım var"
+      "icon": "play"
     },
     {
       "id": "like",
+      "text": "seviyorum",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "likeed"
-      },
-      "text": "seviyorum"
+      "icon": "play"
     },
     {
       "id": "feel",
+      "text": "hissediyorum",
       "pos": "verb",
       "category": "actions",
       "frequency": 10,
-      "icon": "play",
-      "inflections": {
-        "past": "feeled"
-      },
-      "text": "hissediyorum"
+      "icon": "play"
     },
     {
       "id": "see",
+      "text": "görüyorum",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "seeed"
-      },
-      "text": "görüyorum"
+      "icon": "play"
     },
     {
       "id": "hear",
+      "text": "duyuyorum",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "heared"
-      },
-      "text": "duyuyorum"
+      "icon": "play"
     },
     {
       "id": "have",
+      "text": "var",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "haveed"
-      },
-      "text": "var"
+      "icon": "play"
     },
     {
       "id": "go",
+      "text": "gidiyorum",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "text": "gidiyorum"
+      "icon": "play"
     },
     {
       "id": "come",
+      "text": "geliyorum",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "comeed"
-      },
-      "text": "geliyorum"
+      "icon": "play"
     },
     {
       "id": "play",
+      "text": "oynuyorum",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "played"
-      },
-      "text": "oynuyorum"
+      "icon": "play"
     },
     {
       "id": "read",
+      "text": "okuyorum",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "readed"
-      },
-      "text": "okuyorum"
+      "icon": "play"
     },
     {
       "id": "draw",
+      "text": "çiziyorum",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "drawed"
-      },
-      "text": "çiziyorum"
+      "icon": "play"
     },
     {
       "id": "eat",
+      "text": "yiyorum",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "text": "yiyorum"
+      "icon": "play"
     },
     {
       "id": "drink",
+      "text": "içiyorum",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "text": "içiyorum"
+      "icon": "play"
     },
     {
       "id": "sit",
+      "text": "oturuyorum",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "text": "oturuyorum"
+      "icon": "play"
     },
     {
       "id": "stand",
+      "text": "kalkıyorum",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "text": "kalkıyorum"
+      "icon": "play"
     },
     {
       "id": "walk",
+      "text": "yürüyorum",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "walked"
-      },
-      "text": "yürüyorum"
+      "icon": "play"
     },
     {
       "id": "run",
+      "text": "koşuyorum",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "text": "koşuyorum"
+      "icon": "play"
     },
     {
       "id": "stop",
+      "text": "duruyorum",
       "pos": "verb",
       "category": "actions",
       "frequency": 10,
-      "icon": "play",
-      "inflections": {
-        "past": "stoped"
-      },
-      "text": "duruyorum"
+      "icon": "play"
     },
     {
       "id": "start",
+      "text": "başlıyorum",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "started"
-      },
-      "text": "başlıyorum"
+      "icon": "play"
     },
     {
       "id": "wait",
+      "text": "bekliyorum",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "waited"
-      },
-      "text": "bekliyorum"
+      "icon": "play"
     },
     {
       "id": "help",
+      "text": "yardım ediyorum",
       "pos": "verb",
       "category": "actions",
       "frequency": 10,
-      "icon": "play",
-      "inflections": {
-        "past": "helped"
-      },
-      "text": "yardım ediyorum"
+      "icon": "play"
     },
     {
       "id": "choose",
+      "text": "seçiyorum",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "chooseed"
-      },
-      "text": "seçiyorum"
+      "icon": "play"
     },
     {
       "id": "open",
+      "text": "açıyorum",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "opened"
-      },
-      "text": "açıyorum"
+      "icon": "play"
     },
     {
       "id": "close",
+      "text": "kapatıyorum",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "closeed"
-      },
-      "text": "kapatıyorum"
+      "icon": "play"
     },
     {
       "id": "wash",
+      "text": "yıkıyorum",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "washed"
-      },
-      "text": "yıkıyorum"
+      "icon": "play"
     },
     {
       "id": "sleep",
+      "text": "uyuyorum",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "text": "uyuyorum"
+      "icon": "play"
     },
     {
       "id": "rest",
+      "text": "dinleniyorum",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "rested"
-      },
-      "text": "dinleniyorum"
+      "icon": "play"
     },
     {
       "id": "try",
+      "text": "deniyorum",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "tryed"
-      },
-      "text": "deniyorum"
+      "icon": "play"
     },
     {
       "id": "talk",
+      "text": "konuşuyorum",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "talked"
-      },
-      "text": "konuşuyorum"
+      "icon": "play"
     },
     {
       "id": "yes",
+      "text": "evet",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "evet"
+      "icon": "chat-bubble"
     },
     {
       "id": "no",
+      "text": "hayır",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "hayır"
+      "icon": "chat-bubble"
     },
     {
       "id": "please",
+      "text": "lütfen",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "lütfen"
+      "icon": "chat-bubble"
     },
     {
       "id": "thank-you",
+      "text": "teşekkürler",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "teşekkürler"
+      "icon": "chat-bubble"
     },
     {
       "id": "sorry",
+      "text": "özür dilerim",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "özür dilerim"
+      "icon": "chat-bubble"
     },
     {
       "id": "hello",
+      "text": "merhaba",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "merhaba"
+      "icon": "chat-bubble"
     },
     {
       "id": "goodbye",
+      "text": "hoşça kal",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "hoşça kal"
+      "icon": "chat-bubble"
     },
     {
       "id": "more",
+      "text": "daha",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "daha"
+      "icon": "chat-bubble"
     },
     {
       "id": "all-done",
+      "text": "bitti",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "bitti"
+      "icon": "chat-bubble"
     },
     {
       "id": "again",
+      "text": "tekrar",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "tekrar"
+      "icon": "chat-bubble"
     },
     {
       "id": "finished",
+      "text": "bitirdim",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "bitirdim"
+      "icon": "chat-bubble"
     },
     {
       "id": "okay",
+      "text": "tamam",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "tamam"
+      "icon": "chat-bubble"
     },
     {
       "id": "not-yet",
+      "text": "henüz değil",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "henüz değil"
+      "icon": "chat-bubble"
     },
     {
       "id": "maybe",
+      "text": "belki",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "belki"
+      "icon": "chat-bubble"
     },
     {
       "id": "what",
+      "text": "ne",
       "pos": "question",
       "category": "questions",
       "frequency": 8,
-      "icon": "question-circle",
-      "text": "ne"
+      "icon": "question-circle"
     },
     {
       "id": "where",
+      "text": "nerede",
       "pos": "question",
       "category": "questions",
       "frequency": 8,
-      "icon": "question-circle",
-      "text": "nerede"
+      "icon": "question-circle"
     },
     {
       "id": "who",
+      "text": "kim",
       "pos": "question",
       "category": "questions",
       "frequency": 8,
-      "icon": "question-circle",
-      "text": "kim"
+      "icon": "question-circle"
     },
     {
       "id": "when",
+      "text": "ne zaman",
       "pos": "question",
       "category": "questions",
       "frequency": 8,
-      "icon": "question-circle",
-      "text": "ne zaman"
+      "icon": "question-circle"
     },
     {
       "id": "why",
+      "text": "neden",
       "pos": "question",
       "category": "questions",
       "frequency": 8,
-      "icon": "question-circle",
-      "text": "neden"
+      "icon": "question-circle"
     },
     {
       "id": "which",
+      "text": "hangi",
       "pos": "question",
       "category": "questions",
       "frequency": 8,
-      "icon": "question-circle",
-      "text": "hangi"
+      "icon": "question-circle"
     },
     {
       "id": "how",
+      "text": "nasıl",
       "pos": "question",
       "category": "questions",
       "frequency": 8,
-      "icon": "question-circle",
-      "text": "nasıl"
+      "icon": "question-circle"
     },
     {
       "id": "can",
+      "text": "yapabilirim",
       "pos": "question",
       "category": "questions",
       "frequency": 8,
-      "icon": "question-circle",
-      "text": "yapabilirim"
+      "icon": "question-circle"
     },
     {
       "id": "is",
+      "text": "dir",
       "pos": "question",
       "category": "questions",
       "frequency": 8,
-      "icon": "question-circle",
-      "text": "dir"
+      "icon": "question-circle"
     },
     {
       "id": "are",
+      "text": "dirler",
       "pos": "question",
       "category": "questions",
       "frequency": 8,
-      "icon": "question-circle",
-      "text": "dirler"
+      "icon": "question-circle"
     },
     {
       "id": "a",
+      "text": "bir",
       "pos": "determiner",
       "category": "helpers",
       "frequency": 8,
-      "icon": "text",
-      "text": "bir"
+      "icon": "text"
     },
     {
       "id": "the",
+      "text": "bu",
       "pos": "determiner",
       "category": "helpers",
       "frequency": 8,
-      "icon": "text",
-      "text": "bu"
+      "icon": "text"
     },
     {
       "id": "this",
+      "text": "bu",
       "pos": "determiner",
       "category": "helpers",
       "frequency": 8,
-      "icon": "text",
-      "text": "bu"
+      "icon": "text"
     },
     {
       "id": "that",
+      "text": "şu",
       "pos": "determiner",
       "category": "helpers",
       "frequency": 8,
-      "icon": "text",
-      "text": "şu"
+      "icon": "text"
     },
     {
       "id": "some",
+      "text": "biraz",
       "pos": "determiner",
       "category": "helpers",
       "frequency": 8,
-      "icon": "text",
-      "text": "biraz"
+      "icon": "text"
     },
     {
       "id": "one",
+      "text": "bir",
       "pos": "determiner",
       "category": "helpers",
       "frequency": 8,
-      "icon": "text",
-      "text": "bir"
+      "icon": "text"
     },
     {
       "id": "two",
+      "text": "iki",
       "pos": "determiner",
       "category": "helpers",
       "frequency": 8,
-      "icon": "text",
-      "text": "iki"
+      "icon": "text"
     },
     {
       "id": "three",
+      "text": "üç",
       "pos": "determiner",
       "category": "helpers",
       "frequency": 8,
-      "icon": "text",
-      "text": "üç"
+      "icon": "text"
     },
     {
       "id": "many",
+      "text": "çok",
       "pos": "determiner",
       "category": "helpers",
       "frequency": 8,
-      "icon": "text",
-      "text": "çok"
+      "icon": "text"
     },
     {
       "id": "little",
+      "text": "az",
       "pos": "determiner",
       "category": "helpers",
       "frequency": 8,
-      "icon": "text",
-      "text": "az"
+      "icon": "text"
     },
     {
       "id": "big",
+      "text": "büyük",
       "pos": "determiner",
       "category": "helpers",
       "frequency": 8,
-      "icon": "text",
-      "text": "büyük"
+      "icon": "text"
     },
     {
       "id": "in",
+      "text": "içinde",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "içinde"
+      "icon": "arrow-right"
     },
     {
       "id": "on",
+      "text": "üstünde",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "üstünde"
+      "icon": "arrow-right"
     },
     {
       "id": "under",
+      "text": "altında",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "altında"
+      "icon": "arrow-right"
     },
     {
       "id": "next-to",
+      "text": "yanında",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "yanında"
+      "icon": "arrow-right"
     },
     {
       "id": "with",
+      "text": "ile",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "ile"
+      "icon": "arrow-right"
     },
     {
       "id": "without",
+      "text": "olmadan",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "olmadan"
+      "icon": "arrow-right"
     },
     {
       "id": "to",
+      "text": "e",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "e"
+      "icon": "arrow-right"
     },
     {
       "id": "from",
+      "text": "den",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "den"
+      "icon": "arrow-right"
     },
     {
       "id": "inside",
+      "text": "içeride",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "içeride"
+      "icon": "arrow-right"
     },
     {
       "id": "outside",
+      "text": "dışarıda",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "dışarıda"
+      "icon": "arrow-right"
     },
     {
       "id": "near",
+      "text": "yakın",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "yakın"
+      "icon": "arrow-right"
     },
     {
       "id": "far",
+      "text": "uzak",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "uzak"
+      "icon": "arrow-right"
     },
     {
       "id": "and",
+      "text": "ve",
       "pos": "conjunction",
       "category": "helpers",
       "frequency": 6,
-      "icon": "branch",
-      "text": "ve"
+      "icon": "branch"
     },
     {
       "id": "or",
+      "text": "veya",
       "pos": "conjunction",
       "category": "helpers",
       "frequency": 6,
-      "icon": "branch",
-      "text": "veya"
+      "icon": "branch"
     },
     {
       "id": "because",
+      "text": "çünkü",
       "pos": "conjunction",
       "category": "helpers",
       "frequency": 6,
-      "icon": "branch",
-      "text": "çünkü"
+      "icon": "branch"
     },
     {
       "id": "then",
+      "text": "sonra",
       "pos": "conjunction",
       "category": "helpers",
       "frequency": 6,
-      "icon": "branch",
-      "text": "sonra"
+      "icon": "branch"
     },
     {
       "id": "but",
+      "text": "ama",
       "pos": "conjunction",
       "category": "helpers",
       "frequency": 6,
-      "icon": "branch",
-      "text": "ama"
+      "icon": "branch"
     },
     {
       "id": "water",
+      "text": "su",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "su"
+      "icon": "water"
     },
     {
       "id": "milk",
+      "text": "süt",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "süt"
+      "icon": "water"
     },
     {
       "id": "juice",
+      "text": "meyve suyu",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "meyve suyu"
+      "icon": "water"
     },
     {
       "id": "tea",
+      "text": "çay",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "çay"
+      "icon": "water"
     },
     {
       "id": "smoothie",
+      "text": "smoothie",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "smoothie"
+      "icon": "water"
     },
     {
       "id": "lemonade",
+      "text": "limonata",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "limonata"
+      "icon": "water"
     },
     {
       "id": "hot-drink",
+      "text": "sıcak içecek",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "sıcak içecek"
+      "icon": "water"
     },
     {
       "id": "cold-drink",
+      "text": "soğuk içecek",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "soğuk içecek"
+      "icon": "water"
     },
     {
       "id": "cup",
+      "text": "bardak",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "bardak"
+      "icon": "water"
     },
     {
       "id": "straw",
+      "text": "pipet",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "pipet"
+      "icon": "water"
     },
     {
       "id": "bottle",
+      "text": "şişe",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "şişe"
+      "icon": "water"
     },
     {
       "id": "sip",
+      "text": "yudum",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "yudum"
+      "icon": "water"
     },
     {
       "id": "apple",
+      "text": "elma",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "elma"
+      "icon": "apple"
     },
     {
       "id": "banana",
+      "text": "muz",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "muz"
+      "icon": "apple"
     },
     {
       "id": "bread",
+      "text": "ekmek",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "ekmek"
+      "icon": "apple"
     },
     {
       "id": "toast",
+      "text": "tost",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "tost"
+      "icon": "apple"
     },
     {
       "id": "sandwich",
+      "text": "sandviç",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "sandviç"
+      "icon": "apple"
     },
     {
       "id": "rice",
+      "text": "pilav",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "pilav"
+      "icon": "apple"
     },
     {
       "id": "pasta",
+      "text": "makarna",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "makarna"
+      "icon": "apple"
     },
     {
       "id": "soup",
+      "text": "çorba",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "çorba"
+      "icon": "apple"
     },
     {
       "id": "yogurt",
+      "text": "yoğurt",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "yoğurt"
+      "icon": "apple"
     },
     {
       "id": "cheese",
+      "text": "peynir",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "peynir"
+      "icon": "apple"
     },
     {
       "id": "cracker",
+      "text": "kraker",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "kraker"
+      "icon": "apple"
     },
     {
       "id": "carrot",
+      "text": "havuç",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "havuç"
+      "icon": "apple"
     },
     {
       "id": "chips",
+      "text": "cips",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "cips"
+      "icon": "apple"
     },
     {
       "id": "cookie",
+      "text": "kurabiye",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "kurabiye"
+      "icon": "apple"
     },
     {
       "id": "egg",
+      "text": "yumurta",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "yumurta"
+      "icon": "apple"
     },
     {
       "id": "cereal",
+      "text": "mısır gevreği",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "mısır gevreği"
+      "icon": "apple"
     },
     {
       "id": "fruit",
+      "text": "meyve",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "meyve"
+      "icon": "apple"
     },
     {
       "id": "snack",
+      "text": "atıştırmalık",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "atıştırmalık"
+      "icon": "apple"
     },
     {
       "id": "dinner",
+      "text": "akşam yemeği",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "akşam yemeği"
+      "icon": "apple"
     },
     {
       "id": "lunch",
+      "text": "öğle yemeği",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "öğle yemeği"
+      "icon": "apple"
     },
     {
       "id": "happy",
+      "text": "mutlu",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "mutlu"
+      "icon": "smile"
     },
     {
       "id": "sad",
+      "text": "üzgün",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "üzgün"
+      "icon": "smile"
     },
     {
       "id": "angry",
+      "text": "kızgın",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "kızgın"
+      "icon": "smile"
     },
     {
       "id": "worried",
+      "text": "endişeli",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "endişeli"
+      "icon": "smile"
     },
     {
       "id": "scared",
+      "text": "korkmuş",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "korkmuş"
+      "icon": "smile"
     },
     {
       "id": "tired",
+      "text": "yorgun",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "yorgun"
+      "icon": "smile"
     },
     {
       "id": "sick",
+      "text": "hasta",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "hasta"
+      "icon": "smile"
     },
     {
       "id": "hurt",
+      "text": "canım acıyor",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "canım acıyor"
+      "icon": "smile"
     },
     {
       "id": "calm",
+      "text": "sakin",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "sakin"
+      "icon": "smile"
     },
     {
       "id": "excited",
+      "text": "heyecanlı",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "heyecanlı"
+      "icon": "smile"
     },
     {
       "id": "confused",
+      "text": "kafam karıştı",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "kafam karıştı"
+      "icon": "smile"
     },
     {
       "id": "proud",
+      "text": "gururlu",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "gururlu"
+      "icon": "smile"
     },
     {
       "id": "lonely",
+      "text": "yalnız",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "yalnız"
+      "icon": "smile"
     },
     {
       "id": "bored",
+      "text": "sıkıldım",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "sıkıldım"
+      "icon": "smile"
     },
     {
       "id": "safe",
+      "text": "güvende",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "güvende"
+      "icon": "smile"
     },
     {
       "id": "upset",
+      "text": "üzgün",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "üzgün"
+      "icon": "smile"
     },
     {
       "id": "okay-2",
+      "text": "iyi",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "iyi"
+      "icon": "smile"
     },
     {
       "id": "hot",
+      "text": "sıcak",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "sıcak"
+      "icon": "smile"
     },
     {
       "id": "cold",
+      "text": "soğuk",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "soğuk"
+      "icon": "smile"
     },
     {
       "id": "hungry",
+      "text": "aç",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "aç"
+      "icon": "smile"
     },
     {
       "id": "thirsty",
+      "text": "susuz",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "susuz"
+      "icon": "smile"
     },
     {
       "id": "head",
+      "text": "kafa",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "kafa"
+      "icon": "body"
     },
     {
       "id": "hand",
+      "text": "el",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "el"
+      "icon": "body"
     },
     {
       "id": "foot",
+      "text": "ayak",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "ayak"
+      "icon": "body"
     },
     {
       "id": "tummy",
+      "text": "karın",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "karın"
+      "icon": "body"
     },
     {
       "id": "mouth",
+      "text": "ağız",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "ağız"
+      "icon": "body"
     },
     {
       "id": "ear",
+      "text": "kulak",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "kulak"
+      "icon": "body"
     },
     {
       "id": "eye",
+      "text": "göz",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "göz"
+      "icon": "body"
     },
     {
       "id": "arm",
+      "text": "kol",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "kol"
+      "icon": "body"
     },
     {
       "id": "leg",
+      "text": "bacak",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "bacak"
+      "icon": "body"
     },
     {
       "id": "back",
+      "text": "sırt",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "sırt"
+      "icon": "body"
     },
     {
       "id": "tooth",
+      "text": "diş",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "diş"
+      "icon": "body"
     },
     {
       "id": "hair",
+      "text": "saç",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "saç"
+      "icon": "body"
     },
     {
       "id": "nose",
+      "text": "burun",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "burun"
+      "icon": "body"
     },
     {
       "id": "skin",
+      "text": "cilt",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "cilt"
+      "icon": "body"
     },
     {
       "id": "heart",
+      "text": "kalp",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "kalp"
+      "icon": "body"
     },
     {
       "id": "home",
+      "text": "ev",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "ev"
+      "icon": "home"
     },
     {
       "id": "school",
+      "text": "okul",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "okul"
+      "icon": "home"
     },
     {
       "id": "classroom",
+      "text": "sınıf",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "sınıf"
+      "icon": "home"
     },
     {
       "id": "bathroom",
+      "text": "banyo",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "banyo"
+      "icon": "home"
     },
     {
       "id": "kitchen",
+      "text": "mutfak",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "mutfak"
+      "icon": "home"
     },
     {
       "id": "bedroom",
+      "text": "yatak odası",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "yatak odası"
+      "icon": "home"
     },
     {
       "id": "garden",
+      "text": "bahçe",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "bahçe"
+      "icon": "home"
     },
     {
       "id": "shop",
+      "text": "dükkan",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "dükkan"
+      "icon": "home"
     },
     {
       "id": "car",
+      "text": "araba",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "araba"
+      "icon": "home"
     },
     {
       "id": "bus",
+      "text": "otobüs",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "otobüs"
+      "icon": "home"
     },
     {
       "id": "park",
+      "text": "park",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "park"
+      "icon": "home"
     },
     {
       "id": "playground",
+      "text": "oyun parkı",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "oyun parkı"
+      "icon": "home"
     },
     {
       "id": "library",
+      "text": "kütüphane",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "kütüphane"
+      "icon": "home"
     },
     {
       "id": "pool",
+      "text": "havuz",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "havuz"
+      "icon": "home"
     },
     {
       "id": "table",
+      "text": "masa",
       "pos": "noun",
       "category": "home",
       "frequency": 7,
-      "icon": "home",
-      "text": "masa"
+      "icon": "home"
     },
     {
       "id": "chair",
+      "text": "sandalye",
       "pos": "noun",
       "category": "home",
       "frequency": 7,
-      "icon": "home",
-      "text": "sandalye"
+      "icon": "home"
     },
     {
       "id": "sofa",
+      "text": "kanepe",
       "pos": "noun",
       "category": "home",
       "frequency": 7,
-      "icon": "home",
-      "text": "kanepe"
+      "icon": "home"
     },
     {
       "id": "bed",
+      "text": "yatak",
       "pos": "noun",
       "category": "home",
       "frequency": 7,
-      "icon": "home",
-      "text": "yatak"
+      "icon": "home"
     },
     {
       "id": "door",
+      "text": "kapı",
       "pos": "noun",
       "category": "home",
       "frequency": 7,
-      "icon": "home",
-      "text": "kapı"
+      "icon": "home"
     },
     {
       "id": "window",
+      "text": "pencere",
       "pos": "noun",
       "category": "home",
       "frequency": 7,
-      "icon": "home",
-      "text": "pencere"
+      "icon": "home"
     },
     {
       "id": "book",
+      "text": "kitap",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "kitap"
+      "icon": "book"
     },
     {
       "id": "pencil",
+      "text": "kalem",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "kalem"
+      "icon": "book"
     },
     {
       "id": "paper",
+      "text": "kağıt",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "kağıt"
+      "icon": "book"
     },
     {
       "id": "bag",
+      "text": "çanta",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "çanta"
+      "icon": "book"
     },
     {
       "id": "coat",
+      "text": "mont",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "mont"
+      "icon": "book"
     },
     {
       "id": "shoes",
+      "text": "ayakkabı",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "ayakkabı"
+      "icon": "book"
     },
     {
       "id": "lunchbox",
+      "text": "beslenme kutusu",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "beslenme kutusu"
+      "icon": "book"
     },
     {
       "id": "tablet",
+      "text": "tablet",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "tablet"
+      "icon": "book"
     },
     {
       "id": "screen",
+      "text": "ekran",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "ekran"
+      "icon": "book"
     },
     {
       "id": "timer",
+      "text": "zamanlayıcı",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "zamanlayıcı"
+      "icon": "book"
     },
     {
       "id": "schedule",
+      "text": "program",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "program"
+      "icon": "book"
     },
     {
       "id": "picture",
+      "text": "resim",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "resim"
+      "icon": "book"
     },
     {
       "id": "card",
+      "text": "kart",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "kart"
+      "icon": "book"
     },
     {
       "id": "story",
+      "text": "hikaye",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "hikaye"
+      "icon": "book"
     },
     {
       "id": "music",
+      "text": "müzik",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "müzik"
+      "icon": "book"
     },
     {
       "id": "ball",
+      "text": "top",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "top"
+      "icon": "puzzle"
     },
     {
       "id": "blocks",
+      "text": "bloklar",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "bloklar"
+      "icon": "puzzle"
     },
     {
       "id": "doll",
+      "text": "oyuncak bebek",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "oyuncak bebek"
+      "icon": "puzzle"
     },
     {
       "id": "car-toy",
+      "text": "oyuncak araba",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "oyuncak araba"
+      "icon": "puzzle"
     },
     {
       "id": "train",
+      "text": "tren",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "tren"
+      "icon": "puzzle"
     },
     {
       "id": "puzzle",
+      "text": "yapboz",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "yapboz"
+      "icon": "puzzle"
     },
     {
       "id": "game",
+      "text": "oyun",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "oyun"
+      "icon": "puzzle"
     },
     {
       "id": "paint",
+      "text": "boya",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "boya"
+      "icon": "puzzle"
     },
     {
       "id": "clay",
+      "text": "oyun hamuru",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "oyun hamuru"
+      "icon": "puzzle"
     },
     {
       "id": "bubbles",
+      "text": "baloncuk",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "baloncuk"
+      "icon": "puzzle"
     },
     {
       "id": "swing",
+      "text": "salıncak",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "salıncak"
+      "icon": "puzzle"
     },
     {
       "id": "slide",
+      "text": "kaydırak",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "kaydırak"
+      "icon": "puzzle"
     },
     {
       "id": "bike",
+      "text": "bisiklet",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "bisiklet"
+      "icon": "puzzle"
     },
     {
       "id": "teddy",
+      "text": "ayıcık",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "ayıcık"
+      "icon": "puzzle"
     },
     {
       "id": "lego",
+      "text": "lego",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "lego"
+      "icon": "puzzle"
     },
     {
       "id": "red",
+      "text": "kırmızı",
       "pos": "adjective",
       "category": "colors",
       "frequency": 5,
-      "icon": "palette",
-      "text": "kırmızı"
+      "icon": "palette"
     },
     {
       "id": "blue",
+      "text": "mavi",
       "pos": "adjective",
       "category": "colors",
       "frequency": 5,
-      "icon": "palette",
-      "text": "mavi"
+      "icon": "palette"
     },
     {
       "id": "green",
+      "text": "yeşil",
       "pos": "adjective",
       "category": "colors",
       "frequency": 5,
-      "icon": "palette",
-      "text": "yeşil"
+      "icon": "palette"
     },
     {
       "id": "yellow",
+      "text": "sarı",
       "pos": "adjective",
       "category": "colors",
       "frequency": 5,
-      "icon": "palette",
-      "text": "sarı"
+      "icon": "palette"
     },
     {
       "id": "orange",
+      "text": "turuncu",
       "pos": "adjective",
       "category": "colors",
       "frequency": 5,
-      "icon": "palette",
-      "text": "turuncu"
+      "icon": "palette"
     },
     {
       "id": "purple",
+      "text": "mor",
       "pos": "adjective",
       "category": "colors",
       "frequency": 5,
-      "icon": "palette",
-      "text": "mor"
+      "icon": "palette"
     },
     {
       "id": "pink",
+      "text": "pembe",
       "pos": "adjective",
       "category": "colors",
       "frequency": 5,
-      "icon": "palette",
-      "text": "pembe"
+      "icon": "palette"
     },
     {
       "id": "brown",
+      "text": "kahverengi",
       "pos": "adjective",
       "category": "colors",
       "frequency": 5,
-      "icon": "palette",
-      "text": "kahverengi"
+      "icon": "palette"
     },
     {
       "id": "black",
+      "text": "siyah",
       "pos": "adjective",
       "category": "colors",
       "frequency": 5,
-      "icon": "palette",
-      "text": "siyah"
+      "icon": "palette"
     },
     {
       "id": "white",
+      "text": "beyaz",
       "pos": "adjective",
       "category": "colors",
       "frequency": 5,
-      "icon": "palette",
-      "text": "beyaz"
+      "icon": "palette"
     },
     {
       "id": "grey",
+      "text": "gri",
       "pos": "adjective",
       "category": "colors",
       "frequency": 5,
-      "icon": "palette",
-      "text": "gri"
+      "icon": "palette"
     },
     {
       "id": "bright",
+      "text": "parlak",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "parlak"
+      "icon": "palette"
     },
     {
       "id": "dark",
+      "text": "karanlık",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "karanlık"
+      "icon": "palette"
     },
     {
       "id": "soft",
+      "text": "yumuşak",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "yumuşak"
+      "icon": "palette"
     },
     {
       "id": "hard",
+      "text": "sert",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "sert"
+      "icon": "palette"
     },
     {
       "id": "quiet",
+      "text": "sessiz",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "sessiz"
+      "icon": "palette"
     },
     {
       "id": "loud",
+      "text": "gürültülü",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "gürültülü"
+      "icon": "palette"
     },
     {
       "id": "fast",
+      "text": "hızlı",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "hızlı"
+      "icon": "palette"
     },
     {
       "id": "slow",
+      "text": "yavaş",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "yavaş"
+      "icon": "palette"
     },
     {
       "id": "clean",
+      "text": "temiz",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "temiz"
+      "icon": "palette"
     },
     {
       "id": "dirty",
+      "text": "kirli",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "kirli"
+      "icon": "palette"
     },
     {
       "id": "wet",
+      "text": "ıslak",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "ıslak"
+      "icon": "palette"
     },
     {
       "id": "dry",
+      "text": "kuru",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "kuru"
+      "icon": "palette"
     },
     {
       "id": "new",
+      "text": "yeni",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "yeni"
+      "icon": "palette"
     },
     {
       "id": "old",
+      "text": "eski",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "eski"
+      "icon": "palette"
     },
     {
       "id": "now",
+      "text": "şimdi",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "şimdi"
+      "icon": "clock"
     },
     {
       "id": "later",
+      "text": "sonra",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "sonra"
+      "icon": "clock"
     },
     {
       "id": "today",
+      "text": "bugün",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "bugün"
+      "icon": "clock"
     },
     {
       "id": "tomorrow",
+      "text": "yarın",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "yarın"
+      "icon": "clock"
     },
     {
       "id": "morning",
+      "text": "sabah",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "sabah"
+      "icon": "clock"
     },
     {
       "id": "afternoon",
+      "text": "öğleden sonra",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "öğleden sonra"
+      "icon": "clock"
     },
     {
       "id": "night",
+      "text": "gece",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "gece"
+      "icon": "clock"
     },
     {
       "id": "before",
+      "text": "önce",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "önce"
+      "icon": "clock"
     },
     {
       "id": "after",
+      "text": "sonra",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "sonra"
+      "icon": "clock"
     },
     {
       "id": "soon",
+      "text": "yakında",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "yakında"
+      "icon": "clock"
     },
     {
       "id": "first",
+      "text": "ilk",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "ilk"
+      "icon": "clock"
     },
     {
       "id": "next",
+      "text": "sonraki",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "sonraki"
+      "icon": "clock"
     },
     {
       "id": "last",
+      "text": "son",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "son"
+      "icon": "clock"
     },
     {
       "id": "minute",
+      "text": "dakika",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "dakika"
+      "icon": "clock"
     },
     {
       "id": "hour",
+      "text": "saat",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "saat"
+      "icon": "clock"
     },
     {
       "id": "break",
+      "text": "mola",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "mola"
+      "icon": "heart-hand"
     },
     {
       "id": "quiet-time",
+      "text": "sessiz zaman",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "sessiz zaman"
+      "icon": "heart-hand"
     },
     {
       "id": "hug",
+      "text": "kucak",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "kucak"
+      "icon": "heart-hand"
     },
     {
       "id": "space",
+      "text": "alan",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "alan"
+      "icon": "heart-hand"
     },
     {
       "id": "toilet",
+      "text": "tuvalet",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "tuvalet"
+      "icon": "heart-hand"
     },
     {
       "id": "medicine",
+      "text": "ilaç",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "ilaç"
+      "icon": "heart-hand"
     },
     {
       "id": "light",
+      "text": "ışık",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "ışık"
+      "icon": "heart-hand"
     },
     {
       "id": "dark-2",
+      "text": "karanlık",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "karanlık"
+      "icon": "heart-hand"
     },
     {
       "id": "noise",
+      "text": "gürültü",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "gürültü"
+      "icon": "heart-hand"
     },
     {
       "id": "headphones",
+      "text": "kulaklık",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "kulaklık"
+      "icon": "heart-hand"
     },
     {
       "id": "blanket",
+      "text": "battaniye",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "battaniye"
+      "icon": "heart-hand"
     },
     {
       "id": "charger",
+      "text": "şarj aleti",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "şarj aleti"
+      "icon": "heart-hand"
     },
     {
       "id": "choice",
+      "text": "seçim",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "seçim"
+      "icon": "heart-hand"
     },
     {
       "id": "turn",
+      "text": "sıra",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "sıra"
+      "icon": "heart-hand"
     },
     {
       "id": "help-please",
+      "text": "yardım lütfen",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "yardım lütfen"
+      "icon": "heart-hand"
     },
     {
       "id": "different",
+      "text": "farklı",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "farklı"
+      "icon": "sparkles"
     },
     {
       "id": "same",
+      "text": "aynı",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "aynı"
+      "icon": "sparkles"
     },
     {
       "id": "easy",
+      "text": "kolay",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "kolay"
+      "icon": "sparkles"
     },
     {
       "id": "harder",
+      "text": "daha zor",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "daha zor"
+      "icon": "sparkles"
     },
     {
       "id": "favorite",
+      "text": "favori",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "favori"
+      "icon": "sparkles"
     },
     {
       "id": "missing",
+      "text": "kayıp",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "kayıp"
+      "icon": "sparkles"
     },
     {
       "id": "broken",
+      "text": "bozuk",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "bozuk"
+      "icon": "sparkles"
     },
     {
       "id": "ready",
+      "text": "hazır",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "hazır"
+      "icon": "sparkles"
     },
     {
       "id": "busy",
+      "text": "meşgul",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "meşgul"
+      "icon": "sparkles"
     },
     {
       "id": "empty",
+      "text": "boş",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "boş"
+      "icon": "sparkles"
     },
     {
       "id": "full",
+      "text": "dolu",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "dolu"
+      "icon": "sparkles"
     },
     {
       "id": "small",
+      "text": "küçük",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "küçük"
+      "icon": "sparkles"
     },
     {
       "id": "tall",
+      "text": "uzun",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "uzun"
+      "icon": "sparkles"
     },
     {
       "id": "short",
+      "text": "kısa",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "kısa"
+      "icon": "sparkles"
     },
     {
       "id": "round",
+      "text": "yuvarlak",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "yuvarlak"
+      "icon": "sparkles"
     },
     {
       "id": "square",
+      "text": "kare",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "kare"
+      "icon": "sparkles"
     },
     {
       "id": "kind",
+      "text": "nazik",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "nazik"
+      "icon": "sparkles"
     },
     {
       "id": "gentle",
+      "text": "yumuşak",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "yumuşak"
+      "icon": "sparkles"
     },
     {
       "id": "careful",
+      "text": "dikkatli",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "dikkatli"
+      "icon": "sparkles"
     },
     {
       "id": "safe-place",
+      "text": "güvenli yer",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "güvenli yer"
+      "icon": "sparkles"
     }
   ],
   "templates": [
@@ -3133,7 +3066,5 @@
         "ma"
       ]
     }
-  },
-  "source": "generated",
-  "reviewStatus": "needs-native-review"
+  }
 }

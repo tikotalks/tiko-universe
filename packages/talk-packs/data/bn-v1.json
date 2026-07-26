@@ -1,2435 +1,2368 @@
 {
   "locale": "bn",
   "version": 1,
+  "source": "generated",
+  "reviewStatus": "needs-native-review",
   "words": [
     {
       "id": "i",
+      "text": "আমি",
       "pos": "pronoun",
       "category": "people",
       "frequency": 10,
-      "icon": "user",
-      "text": "আমি"
+      "icon": "user"
     },
     {
       "id": "you",
+      "text": "তুমি",
       "pos": "pronoun",
       "category": "people",
       "frequency": 10,
-      "icon": "user",
-      "text": "তুমি"
+      "icon": "user"
     },
     {
       "id": "we",
+      "text": "আমরা",
       "pos": "pronoun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "আমরা"
+      "icon": "user"
     },
     {
       "id": "me",
+      "text": "আমাকে",
       "pos": "pronoun",
       "category": "people",
       "frequency": 10,
-      "icon": "user",
-      "text": "আমাকে"
+      "icon": "user"
     },
     {
       "id": "my",
+      "text": "আমার",
       "pos": "pronoun",
       "category": "people",
       "frequency": 10,
-      "icon": "user",
-      "text": "আমার"
+      "icon": "user"
     },
     {
       "id": "your",
+      "text": "তোমার",
       "pos": "pronoun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "তোমার"
+      "icon": "user"
     },
     {
       "id": "he",
+      "text": "সে",
       "pos": "pronoun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "সে"
+      "icon": "user"
     },
     {
       "id": "she",
+      "text": "সে",
       "pos": "pronoun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "সে"
+      "icon": "user"
     },
     {
       "id": "they",
+      "text": "তারা",
       "pos": "pronoun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "তারা"
+      "icon": "user"
     },
     {
       "id": "mum",
+      "text": "মা",
       "pos": "noun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "মা"
+      "icon": "user"
     },
     {
       "id": "dad",
+      "text": "বাবা",
       "pos": "noun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "বাবা"
+      "icon": "user"
     },
     {
       "id": "teacher",
+      "text": "শিক্ষক",
       "pos": "noun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "শিক্ষক"
+      "icon": "user"
     },
     {
       "id": "friend",
+      "text": "বন্ধু",
       "pos": "noun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "বন্ধু"
+      "icon": "user"
     },
     {
       "id": "brother",
+      "text": "ভাই",
       "pos": "noun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "ভাই"
+      "icon": "user"
     },
     {
       "id": "sister",
+      "text": "বোন",
       "pos": "noun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "বোন"
+      "icon": "user"
     },
     {
       "id": "grandma",
+      "text": "দিদা",
       "pos": "noun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "দিদা"
+      "icon": "user"
     },
     {
       "id": "grandpa",
+      "text": "দাদু",
       "pos": "noun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "দাদু"
+      "icon": "user"
     },
     {
       "id": "helper",
+      "text": "সহায়ক",
       "pos": "noun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "সহায়ক"
+      "icon": "user"
     },
     {
       "id": "doctor",
+      "text": "ডাক্তার",
       "pos": "noun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "ডাক্তার"
+      "icon": "user"
     },
     {
       "id": "class",
+      "text": "ক্লাস",
       "pos": "noun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "ক্লাস"
+      "icon": "user"
     },
     {
       "id": "want",
+      "text": "চাই",
       "pos": "verb",
       "category": "actions",
       "frequency": 10,
-      "icon": "play",
-      "inflections": {
-        "past": "wanted"
-      },
-      "text": "চাই"
+      "icon": "play"
     },
     {
       "id": "need",
+      "text": "দরকার",
       "pos": "verb",
       "category": "actions",
       "frequency": 10,
-      "icon": "play",
-      "inflections": {
-        "past": "needed"
-      },
-      "text": "দরকার"
+      "icon": "play"
     },
     {
       "id": "like",
+      "text": "ভালোবাসি",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "likeed"
-      },
-      "text": "ভালোবাসি"
+      "icon": "play"
     },
     {
       "id": "feel",
+      "text": "অনুভব করি",
       "pos": "verb",
       "category": "actions",
       "frequency": 10,
-      "icon": "play",
-      "inflections": {
-        "past": "feeled"
-      },
-      "text": "অনুভব করি"
+      "icon": "play"
     },
     {
       "id": "see",
+      "text": "দেখি",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "seeed"
-      },
-      "text": "দেখি"
+      "icon": "play"
     },
     {
       "id": "hear",
+      "text": "শুনি",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "heared"
-      },
-      "text": "শুনি"
+      "icon": "play"
     },
     {
       "id": "have",
+      "text": "আছে",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "haveed"
-      },
-      "text": "আছে"
+      "icon": "play"
     },
     {
       "id": "go",
+      "text": "যাই",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "text": "যাই"
+      "icon": "play"
     },
     {
       "id": "come",
+      "text": "আসি",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "comeed"
-      },
-      "text": "আসি"
+      "icon": "play"
     },
     {
       "id": "play",
+      "text": "খেলি",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "played"
-      },
-      "text": "খেলি"
+      "icon": "play"
     },
     {
       "id": "read",
+      "text": "পড়ি",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "readed"
-      },
-      "text": "পড়ি"
+      "icon": "play"
     },
     {
       "id": "draw",
+      "text": "আঁকি",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "drawed"
-      },
-      "text": "আঁকি"
+      "icon": "play"
     },
     {
       "id": "eat",
+      "text": "খাই",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "text": "খাই"
+      "icon": "play"
     },
     {
       "id": "drink",
+      "text": "পান করি",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "text": "পান করি"
+      "icon": "play"
     },
     {
       "id": "sit",
+      "text": "বসি",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "text": "বসি"
+      "icon": "play"
     },
     {
       "id": "stand",
+      "text": "দাঁড়াই",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "text": "দাঁড়াই"
+      "icon": "play"
     },
     {
       "id": "walk",
+      "text": "হাঁটি",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "walked"
-      },
-      "text": "হাঁটি"
+      "icon": "play"
     },
     {
       "id": "run",
+      "text": "দৌড়াই",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "text": "দৌড়াই"
+      "icon": "play"
     },
     {
       "id": "stop",
+      "text": "থামি",
       "pos": "verb",
       "category": "actions",
       "frequency": 10,
-      "icon": "play",
-      "inflections": {
-        "past": "stoped"
-      },
-      "text": "থামি"
+      "icon": "play"
     },
     {
       "id": "start",
+      "text": "শুরু করি",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "started"
-      },
-      "text": "শুরু করি"
+      "icon": "play"
     },
     {
       "id": "wait",
+      "text": "অপেক্ষা করি",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "waited"
-      },
-      "text": "অপেক্ষা করি"
+      "icon": "play"
     },
     {
       "id": "help",
+      "text": "সাহায্য করি",
       "pos": "verb",
       "category": "actions",
       "frequency": 10,
-      "icon": "play",
-      "inflections": {
-        "past": "helped"
-      },
-      "text": "সাহায্য করি"
+      "icon": "play"
     },
     {
       "id": "choose",
+      "text": "বাছি",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "chooseed"
-      },
-      "text": "বাছি"
+      "icon": "play"
     },
     {
       "id": "open",
+      "text": "খুলি",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "opened"
-      },
-      "text": "খুলি"
+      "icon": "play"
     },
     {
       "id": "close",
+      "text": "বন্ধ করি",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "closeed"
-      },
-      "text": "বন্ধ করি"
+      "icon": "play"
     },
     {
       "id": "wash",
+      "text": "ধুই",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "washed"
-      },
-      "text": "ধুই"
+      "icon": "play"
     },
     {
       "id": "sleep",
+      "text": "ঘুমাই",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "text": "ঘুমাই"
+      "icon": "play"
     },
     {
       "id": "rest",
+      "text": "বিশ্রাম নিই",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "rested"
-      },
-      "text": "বিশ্রাম নিই"
+      "icon": "play"
     },
     {
       "id": "try",
+      "text": "চেষ্টা করি",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "tryed"
-      },
-      "text": "চেষ্টা করি"
+      "icon": "play"
     },
     {
       "id": "talk",
+      "text": "কথা বলি",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "talked"
-      },
-      "text": "কথা বলি"
+      "icon": "play"
     },
     {
       "id": "yes",
+      "text": "হ্যাঁ",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "হ্যাঁ"
+      "icon": "chat-bubble"
     },
     {
       "id": "no",
+      "text": "না",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "না"
+      "icon": "chat-bubble"
     },
     {
       "id": "please",
+      "text": "দয়া করে",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "দয়া করে"
+      "icon": "chat-bubble"
     },
     {
       "id": "thank-you",
+      "text": "ধন্যবাদ",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "ধন্যবাদ"
+      "icon": "chat-bubble"
     },
     {
       "id": "sorry",
+      "text": "দুঃখিত",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "দুঃখিত"
+      "icon": "chat-bubble"
     },
     {
       "id": "hello",
+      "text": "নমস্কার",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "নমস্কার"
+      "icon": "chat-bubble"
     },
     {
       "id": "goodbye",
+      "text": "বিদায়",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "বিদায়"
+      "icon": "chat-bubble"
     },
     {
       "id": "more",
+      "text": "আরও",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "আরও"
+      "icon": "chat-bubble"
     },
     {
       "id": "all-done",
+      "text": "শেষ",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "শেষ"
+      "icon": "chat-bubble"
     },
     {
       "id": "again",
+      "text": "আবার",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "আবার"
+      "icon": "chat-bubble"
     },
     {
       "id": "finished",
+      "text": "শেষ হয়েছে",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "শেষ হয়েছে"
+      "icon": "chat-bubble"
     },
     {
       "id": "okay",
+      "text": "ঠিক আছে",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "ঠিক আছে"
+      "icon": "chat-bubble"
     },
     {
       "id": "not-yet",
+      "text": "এখনও না",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "এখনও না"
+      "icon": "chat-bubble"
     },
     {
       "id": "maybe",
+      "text": "হয়তো",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "হয়তো"
+      "icon": "chat-bubble"
     },
     {
       "id": "what",
+      "text": "কী",
       "pos": "question",
       "category": "questions",
       "frequency": 8,
-      "icon": "question-circle",
-      "text": "কী"
+      "icon": "question-circle"
     },
     {
       "id": "where",
+      "text": "কোথায়",
       "pos": "question",
       "category": "questions",
       "frequency": 8,
-      "icon": "question-circle",
-      "text": "কোথায়"
+      "icon": "question-circle"
     },
     {
       "id": "who",
+      "text": "কে",
       "pos": "question",
       "category": "questions",
       "frequency": 8,
-      "icon": "question-circle",
-      "text": "কে"
+      "icon": "question-circle"
     },
     {
       "id": "when",
+      "text": "কখন",
       "pos": "question",
       "category": "questions",
       "frequency": 8,
-      "icon": "question-circle",
-      "text": "কখন"
+      "icon": "question-circle"
     },
     {
       "id": "why",
+      "text": "কেন",
       "pos": "question",
       "category": "questions",
       "frequency": 8,
-      "icon": "question-circle",
-      "text": "কেন"
+      "icon": "question-circle"
     },
     {
       "id": "which",
+      "text": "কোন",
       "pos": "question",
       "category": "questions",
       "frequency": 8,
-      "icon": "question-circle",
-      "text": "কোন"
+      "icon": "question-circle"
     },
     {
       "id": "how",
+      "text": "কেমন",
       "pos": "question",
       "category": "questions",
       "frequency": 8,
-      "icon": "question-circle",
-      "text": "কেমন"
+      "icon": "question-circle"
     },
     {
       "id": "can",
+      "text": "পারি",
       "pos": "question",
       "category": "questions",
       "frequency": 8,
-      "icon": "question-circle",
-      "text": "পারি"
+      "icon": "question-circle"
     },
     {
       "id": "is",
+      "text": "হয়",
       "pos": "question",
       "category": "questions",
       "frequency": 8,
-      "icon": "question-circle",
-      "text": "হয়"
+      "icon": "question-circle"
     },
     {
       "id": "are",
+      "text": "হয়",
       "pos": "question",
       "category": "questions",
       "frequency": 8,
-      "icon": "question-circle",
-      "text": "হয়"
+      "icon": "question-circle"
     },
     {
       "id": "a",
+      "text": "একটা",
       "pos": "determiner",
       "category": "helpers",
       "frequency": 8,
-      "icon": "text",
-      "text": "একটা"
+      "icon": "text"
     },
     {
       "id": "the",
+      "text": "টা",
       "pos": "determiner",
       "category": "helpers",
       "frequency": 8,
-      "icon": "text",
-      "text": "টা"
+      "icon": "text"
     },
     {
       "id": "this",
+      "text": "এই",
       "pos": "determiner",
       "category": "helpers",
       "frequency": 8,
-      "icon": "text",
-      "text": "এই"
+      "icon": "text"
     },
     {
       "id": "that",
+      "text": "সেই",
       "pos": "determiner",
       "category": "helpers",
       "frequency": 8,
-      "icon": "text",
-      "text": "সেই"
+      "icon": "text"
     },
     {
       "id": "some",
+      "text": "কিছু",
       "pos": "determiner",
       "category": "helpers",
       "frequency": 8,
-      "icon": "text",
-      "text": "কিছু"
+      "icon": "text"
     },
     {
       "id": "one",
+      "text": "এক",
       "pos": "determiner",
       "category": "helpers",
       "frequency": 8,
-      "icon": "text",
-      "text": "এক"
+      "icon": "text"
     },
     {
       "id": "two",
+      "text": "দুই",
       "pos": "determiner",
       "category": "helpers",
       "frequency": 8,
-      "icon": "text",
-      "text": "দুই"
+      "icon": "text"
     },
     {
       "id": "three",
+      "text": "তিন",
       "pos": "determiner",
       "category": "helpers",
       "frequency": 8,
-      "icon": "text",
-      "text": "তিন"
+      "icon": "text"
     },
     {
       "id": "many",
+      "text": "অনেক",
       "pos": "determiner",
       "category": "helpers",
       "frequency": 8,
-      "icon": "text",
-      "text": "অনেক"
+      "icon": "text"
     },
     {
       "id": "little",
+      "text": "অল্প",
       "pos": "determiner",
       "category": "helpers",
       "frequency": 8,
-      "icon": "text",
-      "text": "অল্প"
+      "icon": "text"
     },
     {
       "id": "big",
+      "text": "বড়",
       "pos": "determiner",
       "category": "helpers",
       "frequency": 8,
-      "icon": "text",
-      "text": "বড়"
+      "icon": "text"
     },
     {
       "id": "in",
+      "text": "এ",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "এ"
+      "icon": "arrow-right"
     },
     {
       "id": "on",
+      "text": "উপরে",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "উপরে"
+      "icon": "arrow-right"
     },
     {
       "id": "under",
+      "text": "নিচে",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "নিচে"
+      "icon": "arrow-right"
     },
     {
       "id": "next-to",
+      "text": "পাশে",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "পাশে"
+      "icon": "arrow-right"
     },
     {
       "id": "with",
+      "text": "সঙ্গে",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "সঙ্গে"
+      "icon": "arrow-right"
     },
     {
       "id": "without",
+      "text": "ছাড়া",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "ছাড়া"
+      "icon": "arrow-right"
     },
     {
       "id": "to",
+      "text": "তে",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "তে"
+      "icon": "arrow-right"
     },
     {
       "id": "from",
+      "text": "থেকে",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "থেকে"
+      "icon": "arrow-right"
     },
     {
       "id": "inside",
+      "text": "ভিতরে",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "ভিতরে"
+      "icon": "arrow-right"
     },
     {
       "id": "outside",
+      "text": "বাইরে",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "বাইরে"
+      "icon": "arrow-right"
     },
     {
       "id": "near",
+      "text": "কাছে",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "কাছে"
+      "icon": "arrow-right"
     },
     {
       "id": "far",
+      "text": "দূরে",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "দূরে"
+      "icon": "arrow-right"
     },
     {
       "id": "and",
+      "text": "এবং",
       "pos": "conjunction",
       "category": "helpers",
       "frequency": 6,
-      "icon": "branch",
-      "text": "এবং"
+      "icon": "branch"
     },
     {
       "id": "or",
+      "text": "অথবা",
       "pos": "conjunction",
       "category": "helpers",
       "frequency": 6,
-      "icon": "branch",
-      "text": "অথবা"
+      "icon": "branch"
     },
     {
       "id": "because",
+      "text": "কারণ",
       "pos": "conjunction",
       "category": "helpers",
       "frequency": 6,
-      "icon": "branch",
-      "text": "কারণ"
+      "icon": "branch"
     },
     {
       "id": "then",
+      "text": "তারপর",
       "pos": "conjunction",
       "category": "helpers",
       "frequency": 6,
-      "icon": "branch",
-      "text": "তারপর"
+      "icon": "branch"
     },
     {
       "id": "but",
+      "text": "কিন্তু",
       "pos": "conjunction",
       "category": "helpers",
       "frequency": 6,
-      "icon": "branch",
-      "text": "কিন্তু"
+      "icon": "branch"
     },
     {
       "id": "water",
+      "text": "জল",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "জল"
+      "icon": "water"
     },
     {
       "id": "milk",
+      "text": "দুধ",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "দুধ"
+      "icon": "water"
     },
     {
       "id": "juice",
+      "text": "রস",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "রস"
+      "icon": "water"
     },
     {
       "id": "tea",
+      "text": "চা",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "চা"
+      "icon": "water"
     },
     {
       "id": "smoothie",
+      "text": "স্মুদি",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "স্মুদি"
+      "icon": "water"
     },
     {
       "id": "lemonade",
+      "text": "লেবুর শরবত",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "লেবুর শরবত"
+      "icon": "water"
     },
     {
       "id": "hot-drink",
+      "text": "গরম পানীয়",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "গরম পানীয়"
+      "icon": "water"
     },
     {
       "id": "cold-drink",
+      "text": "ঠান্ডা পানীয়",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "ঠান্ডা পানীয়"
+      "icon": "water"
     },
     {
       "id": "cup",
+      "text": "কাপ",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "কাপ"
+      "icon": "water"
     },
     {
       "id": "straw",
+      "text": "স্ট্র",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "স্ট্র"
+      "icon": "water"
     },
     {
       "id": "bottle",
+      "text": "বোতল",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "বোতল"
+      "icon": "water"
     },
     {
       "id": "sip",
+      "text": "চুমুক",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "চুমুক"
+      "icon": "water"
     },
     {
       "id": "apple",
+      "text": "আপেল",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "আপেল"
+      "icon": "apple"
     },
     {
       "id": "banana",
+      "text": "কলা",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "কলা"
+      "icon": "apple"
     },
     {
       "id": "bread",
+      "text": "রুটি",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "রুটি"
+      "icon": "apple"
     },
     {
       "id": "toast",
+      "text": "টোস্ট",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "টোস্ট"
+      "icon": "apple"
     },
     {
       "id": "sandwich",
+      "text": "স্যান্ডউইচ",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "স্যান্ডউইচ"
+      "icon": "apple"
     },
     {
       "id": "rice",
+      "text": "ভাত",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "ভাত"
+      "icon": "apple"
     },
     {
       "id": "pasta",
+      "text": "পাস্তা",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "পাস্তা"
+      "icon": "apple"
     },
     {
       "id": "soup",
+      "text": "সুপ",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "সুপ"
+      "icon": "apple"
     },
     {
       "id": "yogurt",
+      "text": "দই",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "দই"
+      "icon": "apple"
     },
     {
       "id": "cheese",
+      "text": "পনির",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "পনির"
+      "icon": "apple"
     },
     {
       "id": "cracker",
+      "text": "বিস্কুট",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "বিস্কুট"
+      "icon": "apple"
     },
     {
       "id": "carrot",
+      "text": "গাজর",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "গাজর"
+      "icon": "apple"
     },
     {
       "id": "chips",
+      "text": "চিপস",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "চিপস"
+      "icon": "apple"
     },
     {
       "id": "cookie",
+      "text": "কুকি",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "কুকি"
+      "icon": "apple"
     },
     {
       "id": "egg",
+      "text": "ডিম",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "ডিম"
+      "icon": "apple"
     },
     {
       "id": "cereal",
+      "text": "সিরিয়াল",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "সিরিয়াল"
+      "icon": "apple"
     },
     {
       "id": "fruit",
+      "text": "ফল",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "ফল"
+      "icon": "apple"
     },
     {
       "id": "snack",
+      "text": "জলখাবার",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "জলখাবার"
+      "icon": "apple"
     },
     {
       "id": "dinner",
+      "text": "রাতের খাবার",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "রাতের খাবার"
+      "icon": "apple"
     },
     {
       "id": "lunch",
+      "text": "দুপুরের খাবার",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "দুপুরের খাবার"
+      "icon": "apple"
     },
     {
       "id": "happy",
+      "text": "খুশি",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "খুশি"
+      "icon": "smile"
     },
     {
       "id": "sad",
+      "text": "দুঃখী",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "দুঃখী"
+      "icon": "smile"
     },
     {
       "id": "angry",
+      "text": "রাগী",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "রাগী"
+      "icon": "smile"
     },
     {
       "id": "worried",
+      "text": "চিন্তিত",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "চিন্তিত"
+      "icon": "smile"
     },
     {
       "id": "scared",
+      "text": "ভয় পেয়েছি",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "ভয় পেয়েছি"
+      "icon": "smile"
     },
     {
       "id": "tired",
+      "text": "ক্লান্ত",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "ক্লান্ত"
+      "icon": "smile"
     },
     {
       "id": "sick",
+      "text": "অসুস্থ",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "অসুস্থ"
+      "icon": "smile"
     },
     {
       "id": "hurt",
+      "text": "ব্যথা",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "ব্যথা"
+      "icon": "smile"
     },
     {
       "id": "calm",
+      "text": "শান্ত",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "শান্ত"
+      "icon": "smile"
     },
     {
       "id": "excited",
+      "text": "উত্তেজিত",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "উত্তেজিত"
+      "icon": "smile"
     },
     {
       "id": "confused",
+      "text": "বিভ্রান্ত",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "বিভ্রান্ত"
+      "icon": "smile"
     },
     {
       "id": "proud",
+      "text": "গর্বিত",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "গর্বিত"
+      "icon": "smile"
     },
     {
       "id": "lonely",
+      "text": "একা",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "একা"
+      "icon": "smile"
     },
     {
       "id": "bored",
+      "text": "বিরক্ত",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "বিরক্ত"
+      "icon": "smile"
     },
     {
       "id": "safe",
+      "text": "নিরাপদ",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "নিরাপদ"
+      "icon": "smile"
     },
     {
       "id": "upset",
+      "text": "মন খারাপ",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "মন খারাপ"
+      "icon": "smile"
     },
     {
       "id": "okay-2",
+      "text": "ভালো",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "ভালো"
+      "icon": "smile"
     },
     {
       "id": "hot",
+      "text": "গরম",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "গরম"
+      "icon": "smile"
     },
     {
       "id": "cold",
+      "text": "ঠান্ডা",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "ঠান্ডা"
+      "icon": "smile"
     },
     {
       "id": "hungry",
+      "text": "ক্ষুধার্ত",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "ক্ষুধার্ত"
+      "icon": "smile"
     },
     {
       "id": "thirsty",
+      "text": "তৃষ্ণার্ত",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "তৃষ্ণার্ত"
+      "icon": "smile"
     },
     {
       "id": "head",
+      "text": "মাথা",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "মাথা"
+      "icon": "body"
     },
     {
       "id": "hand",
+      "text": "হাত",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "হাত"
+      "icon": "body"
     },
     {
       "id": "foot",
+      "text": "পা",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "পা"
+      "icon": "body"
     },
     {
       "id": "tummy",
+      "text": "পেট",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "পেট"
+      "icon": "body"
     },
     {
       "id": "mouth",
+      "text": "মুখ",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "মুখ"
+      "icon": "body"
     },
     {
       "id": "ear",
+      "text": "কান",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "কান"
+      "icon": "body"
     },
     {
       "id": "eye",
+      "text": "চোখ",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "চোখ"
+      "icon": "body"
     },
     {
       "id": "arm",
+      "text": "বাহু",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "বাহু"
+      "icon": "body"
     },
     {
       "id": "leg",
+      "text": "পা",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "পা"
+      "icon": "body"
     },
     {
       "id": "back",
+      "text": "পিঠ",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "পিঠ"
+      "icon": "body"
     },
     {
       "id": "tooth",
+      "text": "দাঁত",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "দাঁত"
+      "icon": "body"
     },
     {
       "id": "hair",
+      "text": "চুল",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "চুল"
+      "icon": "body"
     },
     {
       "id": "nose",
+      "text": "নাক",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "নাক"
+      "icon": "body"
     },
     {
       "id": "skin",
+      "text": "ত্বক",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "ত্বক"
+      "icon": "body"
     },
     {
       "id": "heart",
+      "text": "হৃদয়",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "হৃদয়"
+      "icon": "body"
     },
     {
       "id": "home",
+      "text": "বাড়ি",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "বাড়ি"
+      "icon": "home"
     },
     {
       "id": "school",
+      "text": "স্কুল",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "স্কুল"
+      "icon": "home"
     },
     {
       "id": "classroom",
+      "text": "শ্রেণিকক্ষ",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "শ্রেণিকক্ষ"
+      "icon": "home"
     },
     {
       "id": "bathroom",
+      "text": "বাথরুম",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "বাথরুম"
+      "icon": "home"
     },
     {
       "id": "kitchen",
+      "text": "রান্নাঘর",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "রান্নাঘর"
+      "icon": "home"
     },
     {
       "id": "bedroom",
+      "text": "শোবার ঘর",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "শোবার ঘর"
+      "icon": "home"
     },
     {
       "id": "garden",
+      "text": "বাগান",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "বাগান"
+      "icon": "home"
     },
     {
       "id": "shop",
+      "text": "দুকান",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "দুকান"
+      "icon": "home"
     },
     {
       "id": "car",
+      "text": "গাড়ি",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "গাড়ি"
+      "icon": "home"
     },
     {
       "id": "bus",
+      "text": "বাস",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "বাস"
+      "icon": "home"
     },
     {
       "id": "park",
+      "text": "পার্ক",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "পার্ক"
+      "icon": "home"
     },
     {
       "id": "playground",
+      "text": "খেলার মাঠ",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "খেলার মাঠ"
+      "icon": "home"
     },
     {
       "id": "library",
+      "text": "গ্রন্থাগার",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "গ্রন্থাগার"
+      "icon": "home"
     },
     {
       "id": "pool",
+      "text": "পুল",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "পুল"
+      "icon": "home"
     },
     {
       "id": "table",
+      "text": "টেবিল",
       "pos": "noun",
       "category": "home",
       "frequency": 7,
-      "icon": "home",
-      "text": "টেবিল"
+      "icon": "home"
     },
     {
       "id": "chair",
+      "text": "চেয়ার",
       "pos": "noun",
       "category": "home",
       "frequency": 7,
-      "icon": "home",
-      "text": "চেয়ার"
+      "icon": "home"
     },
     {
       "id": "sofa",
+      "text": "সোফা",
       "pos": "noun",
       "category": "home",
       "frequency": 7,
-      "icon": "home",
-      "text": "সোফা"
+      "icon": "home"
     },
     {
       "id": "bed",
+      "text": "বিছানা",
       "pos": "noun",
       "category": "home",
       "frequency": 7,
-      "icon": "home",
-      "text": "বিছানা"
+      "icon": "home"
     },
     {
       "id": "door",
+      "text": "দরজা",
       "pos": "noun",
       "category": "home",
       "frequency": 7,
-      "icon": "home",
-      "text": "দরজা"
+      "icon": "home"
     },
     {
       "id": "window",
+      "text": "জানালা",
       "pos": "noun",
       "category": "home",
       "frequency": 7,
-      "icon": "home",
-      "text": "জানালা"
+      "icon": "home"
     },
     {
       "id": "book",
+      "text": "বই",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "বই"
+      "icon": "book"
     },
     {
       "id": "pencil",
+      "text": "পেন্সিল",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "পেন্সিল"
+      "icon": "book"
     },
     {
       "id": "paper",
+      "text": "কাগজ",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "কাগজ"
+      "icon": "book"
     },
     {
       "id": "bag",
+      "text": "ব্যাগ",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "ব্যাগ"
+      "icon": "book"
     },
     {
       "id": "coat",
+      "text": "কোট",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "কোট"
+      "icon": "book"
     },
     {
       "id": "shoes",
+      "text": "জুতো",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "জুতো"
+      "icon": "book"
     },
     {
       "id": "lunchbox",
+      "text": "টিফিন বাক্স",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "টিফিন বাক্স"
+      "icon": "book"
     },
     {
       "id": "tablet",
+      "text": "ট্যাবলেট",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "ট্যাবলেট"
+      "icon": "book"
     },
     {
       "id": "screen",
+      "text": "পর্দা",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "পর্দা"
+      "icon": "book"
     },
     {
       "id": "timer",
+      "text": "টাইমার",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "টাইমার"
+      "icon": "book"
     },
     {
       "id": "schedule",
+      "text": "সময়সূচি",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "সময়সূচি"
+      "icon": "book"
     },
     {
       "id": "picture",
+      "text": "ছবি",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "ছবি"
+      "icon": "book"
     },
     {
       "id": "card",
+      "text": "কার্ড",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "কার্ড"
+      "icon": "book"
     },
     {
       "id": "story",
+      "text": "গল্প",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "গল্প"
+      "icon": "book"
     },
     {
       "id": "music",
+      "text": "গান",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "গান"
+      "icon": "book"
     },
     {
       "id": "ball",
+      "text": "বল",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "বল"
+      "icon": "puzzle"
     },
     {
       "id": "blocks",
+      "text": "ব্লক",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "ব্লক"
+      "icon": "puzzle"
     },
     {
       "id": "doll",
+      "text": "পুতুল",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "পুতুল"
+      "icon": "puzzle"
     },
     {
       "id": "car-toy",
+      "text": "খেলনা গাড়ি",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "খেলনা গাড়ি"
+      "icon": "puzzle"
     },
     {
       "id": "train",
+      "text": "ট্রেন",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "ট্রেন"
+      "icon": "puzzle"
     },
     {
       "id": "puzzle",
+      "text": "পাজল",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "পাজল"
+      "icon": "puzzle"
     },
     {
       "id": "game",
+      "text": "খেলা",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "খেলা"
+      "icon": "puzzle"
     },
     {
       "id": "paint",
+      "text": "রং",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "রং"
+      "icon": "puzzle"
     },
     {
       "id": "clay",
+      "text": "মাটি",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "মাটি"
+      "icon": "puzzle"
     },
     {
       "id": "bubbles",
+      "text": "বুদবুদ",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "বুদবুদ"
+      "icon": "puzzle"
     },
     {
       "id": "swing",
+      "text": "দোলনা",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "দোলনা"
+      "icon": "puzzle"
     },
     {
       "id": "slide",
+      "text": "স্লাইড",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "স্লাইড"
+      "icon": "puzzle"
     },
     {
       "id": "bike",
+      "text": "সাইকেল",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "সাইকেল"
+      "icon": "puzzle"
     },
     {
       "id": "teddy",
+      "text": "টেডি",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "টেডি"
+      "icon": "puzzle"
     },
     {
       "id": "lego",
+      "text": "লেগো",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "লেগো"
+      "icon": "puzzle"
     },
     {
       "id": "red",
+      "text": "লাল",
       "pos": "adjective",
       "category": "colors",
       "frequency": 5,
-      "icon": "palette",
-      "text": "লাল"
+      "icon": "palette"
     },
     {
       "id": "blue",
+      "text": "নীল",
       "pos": "adjective",
       "category": "colors",
       "frequency": 5,
-      "icon": "palette",
-      "text": "নীল"
+      "icon": "palette"
     },
     {
       "id": "green",
+      "text": "সবুজ",
       "pos": "adjective",
       "category": "colors",
       "frequency": 5,
-      "icon": "palette",
-      "text": "সবুজ"
+      "icon": "palette"
     },
     {
       "id": "yellow",
+      "text": "হলুদ",
       "pos": "adjective",
       "category": "colors",
       "frequency": 5,
-      "icon": "palette",
-      "text": "হলুদ"
+      "icon": "palette"
     },
     {
       "id": "orange",
+      "text": "কমলা",
       "pos": "adjective",
       "category": "colors",
       "frequency": 5,
-      "icon": "palette",
-      "text": "কমলা"
+      "icon": "palette"
     },
     {
       "id": "purple",
+      "text": "বেগুনি",
       "pos": "adjective",
       "category": "colors",
       "frequency": 5,
-      "icon": "palette",
-      "text": "বেগুনি"
+      "icon": "palette"
     },
     {
       "id": "pink",
+      "text": "গোলাপি",
       "pos": "adjective",
       "category": "colors",
       "frequency": 5,
-      "icon": "palette",
-      "text": "গোলাপি"
+      "icon": "palette"
     },
     {
       "id": "brown",
+      "text": "বাদামি",
       "pos": "adjective",
       "category": "colors",
       "frequency": 5,
-      "icon": "palette",
-      "text": "বাদামি"
+      "icon": "palette"
     },
     {
       "id": "black",
+      "text": "কালো",
       "pos": "adjective",
       "category": "colors",
       "frequency": 5,
-      "icon": "palette",
-      "text": "কালো"
+      "icon": "palette"
     },
     {
       "id": "white",
+      "text": "সাদা",
       "pos": "adjective",
       "category": "colors",
       "frequency": 5,
-      "icon": "palette",
-      "text": "সাদা"
+      "icon": "palette"
     },
     {
       "id": "grey",
+      "text": "ধূসর",
       "pos": "adjective",
       "category": "colors",
       "frequency": 5,
-      "icon": "palette",
-      "text": "ধূসর"
+      "icon": "palette"
     },
     {
       "id": "bright",
+      "text": "উজ্জ্বল",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "উজ্জ্বল"
+      "icon": "palette"
     },
     {
       "id": "dark",
+      "text": "অন্ধকার",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "অন্ধকার"
+      "icon": "palette"
     },
     {
       "id": "soft",
+      "text": "নরম",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "নরম"
+      "icon": "palette"
     },
     {
       "id": "hard",
+      "text": "শক্ত",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "শক্ত"
+      "icon": "palette"
     },
     {
       "id": "quiet",
+      "text": "শান্ত",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "শান্ত"
+      "icon": "palette"
     },
     {
       "id": "loud",
+      "text": "জোরে",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "জোরে"
+      "icon": "palette"
     },
     {
       "id": "fast",
+      "text": "দ্রুত",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "দ্রুত"
+      "icon": "palette"
     },
     {
       "id": "slow",
+      "text": "ধীর",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "ধীর"
+      "icon": "palette"
     },
     {
       "id": "clean",
+      "text": "পরিষ্কার",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "পরিষ্কার"
+      "icon": "palette"
     },
     {
       "id": "dirty",
+      "text": "নোংরা",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "নোংরা"
+      "icon": "palette"
     },
     {
       "id": "wet",
+      "text": "ভেজা",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "ভেজা"
+      "icon": "palette"
     },
     {
       "id": "dry",
+      "text": "শুকনো",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "শুকনো"
+      "icon": "palette"
     },
     {
       "id": "new",
+      "text": "নতুন",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "নতুন"
+      "icon": "palette"
     },
     {
       "id": "old",
+      "text": "পুরনো",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "পুরনো"
+      "icon": "palette"
     },
     {
       "id": "now",
+      "text": "এখন",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "এখন"
+      "icon": "clock"
     },
     {
       "id": "later",
+      "text": "পরে",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "পরে"
+      "icon": "clock"
     },
     {
       "id": "today",
+      "text": "আজ",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "আজ"
+      "icon": "clock"
     },
     {
       "id": "tomorrow",
+      "text": "কাল",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "কাল"
+      "icon": "clock"
     },
     {
       "id": "morning",
+      "text": "সকাল",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "সকাল"
+      "icon": "clock"
     },
     {
       "id": "afternoon",
+      "text": "বিকাল",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "বিকাল"
+      "icon": "clock"
     },
     {
       "id": "night",
+      "text": "রাত",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "রাত"
+      "icon": "clock"
     },
     {
       "id": "before",
+      "text": "আগে",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "আগে"
+      "icon": "clock"
     },
     {
       "id": "after",
+      "text": "পরে",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "পরে"
+      "icon": "clock"
     },
     {
       "id": "soon",
+      "text": "শীঘ্রই",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "শীঘ্রই"
+      "icon": "clock"
     },
     {
       "id": "first",
+      "text": "প্রথমে",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "প্রথমে"
+      "icon": "clock"
     },
     {
       "id": "next",
+      "text": "পরের",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "পরের"
+      "icon": "clock"
     },
     {
       "id": "last",
+      "text": "শেষ",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "শেষ"
+      "icon": "clock"
     },
     {
       "id": "minute",
+      "text": "মিনিট",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "মিনিট"
+      "icon": "clock"
     },
     {
       "id": "hour",
+      "text": "ঘন্টা",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "ঘন্টা"
+      "icon": "clock"
     },
     {
       "id": "break",
+      "text": "বিরতি",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "বিরতি"
+      "icon": "heart-hand"
     },
     {
       "id": "quiet-time",
+      "text": "শান্ত সময়",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "শান্ত সময়"
+      "icon": "heart-hand"
     },
     {
       "id": "hug",
+      "text": "আলিঙ্গন",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "আলিঙ্গন"
+      "icon": "heart-hand"
     },
     {
       "id": "space",
+      "text": "জায়গা",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "জায়গা"
+      "icon": "heart-hand"
     },
     {
       "id": "toilet",
+      "text": "টয়লেট",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "টয়লেট"
+      "icon": "heart-hand"
     },
     {
       "id": "medicine",
+      "text": "ঔষধ",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "ঔষধ"
+      "icon": "heart-hand"
     },
     {
       "id": "light",
+      "text": "আলো",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "আলো"
+      "icon": "heart-hand"
     },
     {
       "id": "dark-2",
+      "text": "অন্ধকার",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "অন্ধকার"
+      "icon": "heart-hand"
     },
     {
       "id": "noise",
+      "text": "শব্দ",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "শব্দ"
+      "icon": "heart-hand"
     },
     {
       "id": "headphones",
+      "text": "হেডফোন",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "হেডফোন"
+      "icon": "heart-hand"
     },
     {
       "id": "blanket",
+      "text": "কম্বল",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "কম্বল"
+      "icon": "heart-hand"
     },
     {
       "id": "charger",
+      "text": "চার্জার",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "চার্জার"
+      "icon": "heart-hand"
     },
     {
       "id": "choice",
+      "text": "পছন্দ",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "পছন্দ"
+      "icon": "heart-hand"
     },
     {
       "id": "turn",
+      "text": "পালা",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "পালা"
+      "icon": "heart-hand"
     },
     {
       "id": "help-please",
+      "text": "সাহায্য করো দয়া করে",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "সাহায্য করো দয়া করে"
+      "icon": "heart-hand"
     },
     {
       "id": "different",
+      "text": "আলাদা",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "আলাদা"
+      "icon": "sparkles"
     },
     {
       "id": "same",
+      "text": "একই",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "একই"
+      "icon": "sparkles"
     },
     {
       "id": "easy",
+      "text": "সহজ",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "সহজ"
+      "icon": "sparkles"
     },
     {
       "id": "harder",
+      "text": "আরও কঠিন",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "আরও কঠিন"
+      "icon": "sparkles"
     },
     {
       "id": "favorite",
+      "text": "প্রিয়",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "প্রিয়"
+      "icon": "sparkles"
     },
     {
       "id": "missing",
+      "text": "নেই",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "নেই"
+      "icon": "sparkles"
     },
     {
       "id": "broken",
+      "text": "ভাঙা",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "ভাঙা"
+      "icon": "sparkles"
     },
     {
       "id": "ready",
+      "text": "তৈরি",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "তৈরি"
+      "icon": "sparkles"
     },
     {
       "id": "busy",
+      "text": "ব্যস্ত",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "ব্যস্ত"
+      "icon": "sparkles"
     },
     {
       "id": "empty",
+      "text": "খালি",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "খালি"
+      "icon": "sparkles"
     },
     {
       "id": "full",
+      "text": "ভরা",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "ভরা"
+      "icon": "sparkles"
     },
     {
       "id": "small",
+      "text": "ছোট",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "ছোট"
+      "icon": "sparkles"
     },
     {
       "id": "tall",
+      "text": "লম্বা",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "লম্বা"
+      "icon": "sparkles"
     },
     {
       "id": "short",
+      "text": "ছোট",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "ছোট"
+      "icon": "sparkles"
     },
     {
       "id": "round",
+      "text": "গোল",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "গোল"
+      "icon": "sparkles"
     },
     {
       "id": "square",
+      "text": "চৌকো",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "চৌকো"
+      "icon": "sparkles"
     },
     {
       "id": "kind",
+      "text": "দয়ালু",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "দয়ালু"
+      "icon": "sparkles"
     },
     {
       "id": "gentle",
+      "text": "নরম",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "নরম"
+      "icon": "sparkles"
     },
     {
       "id": "careful",
+      "text": "সাবধান",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "সাবধান"
+      "icon": "sparkles"
     },
     {
       "id": "safe-place",
+      "text": "নিরাপদ জায়গা",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "নিরাপদ জায়গা"
+      "icon": "sparkles"
     }
   ],
   "templates": [
@@ -3129,7 +3062,5 @@
         "না"
       ]
     }
-  },
-  "source": "generated",
-  "reviewStatus": "needs-native-review"
+  }
 }

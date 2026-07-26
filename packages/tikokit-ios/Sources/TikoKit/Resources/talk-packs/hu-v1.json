@@ -1,2435 +1,2368 @@
 {
   "locale": "hu",
   "version": 1,
+  "source": "generated",
+  "reviewStatus": "needs-native-review",
   "words": [
     {
       "id": "i",
+      "text": "én",
       "pos": "pronoun",
       "category": "people",
       "frequency": 10,
-      "icon": "user",
-      "text": "én"
+      "icon": "user"
     },
     {
       "id": "you",
+      "text": "te",
       "pos": "pronoun",
       "category": "people",
       "frequency": 10,
-      "icon": "user",
-      "text": "te"
+      "icon": "user"
     },
     {
       "id": "we",
+      "text": "mi",
       "pos": "pronoun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "mi"
+      "icon": "user"
     },
     {
       "id": "me",
+      "text": "engem",
       "pos": "pronoun",
       "category": "people",
       "frequency": 10,
-      "icon": "user",
-      "text": "engem"
+      "icon": "user"
     },
     {
       "id": "my",
+      "text": "enyém",
       "pos": "pronoun",
       "category": "people",
       "frequency": 10,
-      "icon": "user",
-      "text": "enyém"
+      "icon": "user"
     },
     {
       "id": "your",
+      "text": "tiéd",
       "pos": "pronoun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "tiéd"
+      "icon": "user"
     },
     {
       "id": "he",
+      "text": "ő",
       "pos": "pronoun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "ő"
+      "icon": "user"
     },
     {
       "id": "she",
+      "text": "ő",
       "pos": "pronoun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "ő"
+      "icon": "user"
     },
     {
       "id": "they",
+      "text": "ők",
       "pos": "pronoun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "ők"
+      "icon": "user"
     },
     {
       "id": "mum",
+      "text": "anya",
       "pos": "noun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "anya"
+      "icon": "user"
     },
     {
       "id": "dad",
+      "text": "apa",
       "pos": "noun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "apa"
+      "icon": "user"
     },
     {
       "id": "teacher",
+      "text": "tanító",
       "pos": "noun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "tanító"
+      "icon": "user"
     },
     {
       "id": "friend",
+      "text": "barát",
       "pos": "noun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "barát"
+      "icon": "user"
     },
     {
       "id": "brother",
+      "text": "báty",
       "pos": "noun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "báty"
+      "icon": "user"
     },
     {
       "id": "sister",
+      "text": "nővér",
       "pos": "noun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "nővér"
+      "icon": "user"
     },
     {
       "id": "grandma",
+      "text": "nagyi",
       "pos": "noun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "nagyi"
+      "icon": "user"
     },
     {
       "id": "grandpa",
+      "text": "nagypapa",
       "pos": "noun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "nagypapa"
+      "icon": "user"
     },
     {
       "id": "helper",
+      "text": "segítő",
       "pos": "noun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "segítő"
+      "icon": "user"
     },
     {
       "id": "doctor",
+      "text": "orvos",
       "pos": "noun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "orvos"
+      "icon": "user"
     },
     {
       "id": "class",
+      "text": "osztály",
       "pos": "noun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "osztály"
+      "icon": "user"
     },
     {
       "id": "want",
+      "text": "akarok",
       "pos": "verb",
       "category": "actions",
       "frequency": 10,
-      "icon": "play",
-      "inflections": {
-        "past": "wanted"
-      },
-      "text": "akarok"
+      "icon": "play"
     },
     {
       "id": "need",
+      "text": "kell",
       "pos": "verb",
       "category": "actions",
       "frequency": 10,
-      "icon": "play",
-      "inflections": {
-        "past": "needed"
-      },
-      "text": "kell"
+      "icon": "play"
     },
     {
       "id": "like",
+      "text": "szeretem",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "likeed"
-      },
-      "text": "szeretem"
+      "icon": "play"
     },
     {
       "id": "feel",
+      "text": "érzem",
       "pos": "verb",
       "category": "actions",
       "frequency": 10,
-      "icon": "play",
-      "inflections": {
-        "past": "feeled"
-      },
-      "text": "érzem"
+      "icon": "play"
     },
     {
       "id": "see",
+      "text": "látok",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "seeed"
-      },
-      "text": "látok"
+      "icon": "play"
     },
     {
       "id": "hear",
+      "text": "hallok",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "heared"
-      },
-      "text": "hallok"
+      "icon": "play"
     },
     {
       "id": "have",
+      "text": "van",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "haveed"
-      },
-      "text": "van"
+      "icon": "play"
     },
     {
       "id": "go",
+      "text": "megyek",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "text": "megyek"
+      "icon": "play"
     },
     {
       "id": "come",
+      "text": "jövök",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "comeed"
-      },
-      "text": "jövök"
+      "icon": "play"
     },
     {
       "id": "play",
+      "text": "játszom",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "played"
-      },
-      "text": "játszom"
+      "icon": "play"
     },
     {
       "id": "read",
+      "text": "olvasok",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "readed"
-      },
-      "text": "olvasok"
+      "icon": "play"
     },
     {
       "id": "draw",
+      "text": "rajzolok",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "drawed"
-      },
-      "text": "rajzolok"
+      "icon": "play"
     },
     {
       "id": "eat",
+      "text": "eszem",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "text": "eszem"
+      "icon": "play"
     },
     {
       "id": "drink",
+      "text": "iszom",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "text": "iszom"
+      "icon": "play"
     },
     {
       "id": "sit",
+      "text": "ülök",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "text": "ülök"
+      "icon": "play"
     },
     {
       "id": "stand",
+      "text": "állok",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "text": "állok"
+      "icon": "play"
     },
     {
       "id": "walk",
+      "text": "sétálok",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "walked"
-      },
-      "text": "sétálok"
+      "icon": "play"
     },
     {
       "id": "run",
+      "text": "futok",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "text": "futok"
+      "icon": "play"
     },
     {
       "id": "stop",
+      "text": "megállok",
       "pos": "verb",
       "category": "actions",
       "frequency": 10,
-      "icon": "play",
-      "inflections": {
-        "past": "stoped"
-      },
-      "text": "megállok"
+      "icon": "play"
     },
     {
       "id": "start",
+      "text": "kezdem",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "started"
-      },
-      "text": "kezdem"
+      "icon": "play"
     },
     {
       "id": "wait",
+      "text": "várok",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "waited"
-      },
-      "text": "várok"
+      "icon": "play"
     },
     {
       "id": "help",
+      "text": "segítek",
       "pos": "verb",
       "category": "actions",
       "frequency": 10,
-      "icon": "play",
-      "inflections": {
-        "past": "helped"
-      },
-      "text": "segítek"
+      "icon": "play"
     },
     {
       "id": "choose",
+      "text": "választok",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "chooseed"
-      },
-      "text": "választok"
+      "icon": "play"
     },
     {
       "id": "open",
+      "text": "kinyitom",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "opened"
-      },
-      "text": "kinyitom"
+      "icon": "play"
     },
     {
       "id": "close",
+      "text": "becsukom",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "closeed"
-      },
-      "text": "becsukom"
+      "icon": "play"
     },
     {
       "id": "wash",
+      "text": "mosom",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "washed"
-      },
-      "text": "mosom"
+      "icon": "play"
     },
     {
       "id": "sleep",
+      "text": "alszom",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "text": "alszom"
+      "icon": "play"
     },
     {
       "id": "rest",
+      "text": "pihenek",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "rested"
-      },
-      "text": "pihenek"
+      "icon": "play"
     },
     {
       "id": "try",
+      "text": "próbálok",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "tryed"
-      },
-      "text": "próbálok"
+      "icon": "play"
     },
     {
       "id": "talk",
+      "text": "beszélek",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "talked"
-      },
-      "text": "beszélek"
+      "icon": "play"
     },
     {
       "id": "yes",
+      "text": "igen",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "igen"
+      "icon": "chat-bubble"
     },
     {
       "id": "no",
+      "text": "nem",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "nem"
+      "icon": "chat-bubble"
     },
     {
       "id": "please",
+      "text": "kérem",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "kérem"
+      "icon": "chat-bubble"
     },
     {
       "id": "thank-you",
+      "text": "köszönöm",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "köszönöm"
+      "icon": "chat-bubble"
     },
     {
       "id": "sorry",
+      "text": "bocsánat",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "bocsánat"
+      "icon": "chat-bubble"
     },
     {
       "id": "hello",
+      "text": "szia",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "szia"
+      "icon": "chat-bubble"
     },
     {
       "id": "goodbye",
+      "text": "viszlát",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "viszlát"
+      "icon": "chat-bubble"
     },
     {
       "id": "more",
+      "text": "még",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "még"
+      "icon": "chat-bubble"
     },
     {
       "id": "all-done",
+      "text": "kész",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "kész"
+      "icon": "chat-bubble"
     },
     {
       "id": "again",
+      "text": "újra",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "újra"
+      "icon": "chat-bubble"
     },
     {
       "id": "finished",
+      "text": "befejeztem",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "befejeztem"
+      "icon": "chat-bubble"
     },
     {
       "id": "okay",
+      "text": "jó",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "jó"
+      "icon": "chat-bubble"
     },
     {
       "id": "not-yet",
+      "text": "még nem",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "még nem"
+      "icon": "chat-bubble"
     },
     {
       "id": "maybe",
+      "text": "talán",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "talán"
+      "icon": "chat-bubble"
     },
     {
       "id": "what",
+      "text": "mit",
       "pos": "question",
       "category": "questions",
       "frequency": 8,
-      "icon": "question-circle",
-      "text": "mit"
+      "icon": "question-circle"
     },
     {
       "id": "where",
+      "text": "hol",
       "pos": "question",
       "category": "questions",
       "frequency": 8,
-      "icon": "question-circle",
-      "text": "hol"
+      "icon": "question-circle"
     },
     {
       "id": "who",
+      "text": "ki",
       "pos": "question",
       "category": "questions",
       "frequency": 8,
-      "icon": "question-circle",
-      "text": "ki"
+      "icon": "question-circle"
     },
     {
       "id": "when",
+      "text": "mikor",
       "pos": "question",
       "category": "questions",
       "frequency": 8,
-      "icon": "question-circle",
-      "text": "mikor"
+      "icon": "question-circle"
     },
     {
       "id": "why",
+      "text": "miért",
       "pos": "question",
       "category": "questions",
       "frequency": 8,
-      "icon": "question-circle",
-      "text": "miért"
+      "icon": "question-circle"
     },
     {
       "id": "which",
+      "text": "melyik",
       "pos": "question",
       "category": "questions",
       "frequency": 8,
-      "icon": "question-circle",
-      "text": "melyik"
+      "icon": "question-circle"
     },
     {
       "id": "how",
+      "text": "hogyan",
       "pos": "question",
       "category": "questions",
       "frequency": 8,
-      "icon": "question-circle",
-      "text": "hogyan"
+      "icon": "question-circle"
     },
     {
       "id": "can",
+      "text": "tudok",
       "pos": "question",
       "category": "questions",
       "frequency": 8,
-      "icon": "question-circle",
-      "text": "tudok"
+      "icon": "question-circle"
     },
     {
       "id": "is",
+      "text": "van",
       "pos": "question",
       "category": "questions",
       "frequency": 8,
-      "icon": "question-circle",
-      "text": "van"
+      "icon": "question-circle"
     },
     {
       "id": "are",
+      "text": "vannak",
       "pos": "question",
       "category": "questions",
       "frequency": 8,
-      "icon": "question-circle",
-      "text": "vannak"
+      "icon": "question-circle"
     },
     {
       "id": "a",
+      "text": "egy",
       "pos": "determiner",
       "category": "helpers",
       "frequency": 8,
-      "icon": "text",
-      "text": "egy"
+      "icon": "text"
     },
     {
       "id": "the",
+      "text": "a",
       "pos": "determiner",
       "category": "helpers",
       "frequency": 8,
-      "icon": "text",
-      "text": "a"
+      "icon": "text"
     },
     {
       "id": "this",
+      "text": "ez",
       "pos": "determiner",
       "category": "helpers",
       "frequency": 8,
-      "icon": "text",
-      "text": "ez"
+      "icon": "text"
     },
     {
       "id": "that",
+      "text": "az",
       "pos": "determiner",
       "category": "helpers",
       "frequency": 8,
-      "icon": "text",
-      "text": "az"
+      "icon": "text"
     },
     {
       "id": "some",
+      "text": "néhány",
       "pos": "determiner",
       "category": "helpers",
       "frequency": 8,
-      "icon": "text",
-      "text": "néhány"
+      "icon": "text"
     },
     {
       "id": "one",
+      "text": "egy",
       "pos": "determiner",
       "category": "helpers",
       "frequency": 8,
-      "icon": "text",
-      "text": "egy"
+      "icon": "text"
     },
     {
       "id": "two",
+      "text": "kettő",
       "pos": "determiner",
       "category": "helpers",
       "frequency": 8,
-      "icon": "text",
-      "text": "kettő"
+      "icon": "text"
     },
     {
       "id": "three",
+      "text": "három",
       "pos": "determiner",
       "category": "helpers",
       "frequency": 8,
-      "icon": "text",
-      "text": "három"
+      "icon": "text"
     },
     {
       "id": "many",
+      "text": "sok",
       "pos": "determiner",
       "category": "helpers",
       "frequency": 8,
-      "icon": "text",
-      "text": "sok"
+      "icon": "text"
     },
     {
       "id": "little",
+      "text": "kevés",
       "pos": "determiner",
       "category": "helpers",
       "frequency": 8,
-      "icon": "text",
-      "text": "kevés"
+      "icon": "text"
     },
     {
       "id": "big",
+      "text": "nagy",
       "pos": "determiner",
       "category": "helpers",
       "frequency": 8,
-      "icon": "text",
-      "text": "nagy"
+      "icon": "text"
     },
     {
       "id": "in",
+      "text": "ban",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "ban"
+      "icon": "arrow-right"
     },
     {
       "id": "on",
+      "text": "on",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "on"
+      "icon": "arrow-right"
     },
     {
       "id": "under",
+      "text": "alatt",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "alatt"
+      "icon": "arrow-right"
     },
     {
       "id": "next-to",
+      "text": "mellett",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "mellett"
+      "icon": "arrow-right"
     },
     {
       "id": "with",
+      "text": "val",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "val"
+      "icon": "arrow-right"
     },
     {
       "id": "without",
+      "text": "nélkül",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "nélkül"
+      "icon": "arrow-right"
     },
     {
       "id": "to",
+      "text": "hoz",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "hoz"
+      "icon": "arrow-right"
     },
     {
       "id": "from",
+      "text": "tól",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "tól"
+      "icon": "arrow-right"
     },
     {
       "id": "inside",
+      "text": "belül",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "belül"
+      "icon": "arrow-right"
     },
     {
       "id": "outside",
+      "text": "kívül",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "kívül"
+      "icon": "arrow-right"
     },
     {
       "id": "near",
+      "text": "közel",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "közel"
+      "icon": "arrow-right"
     },
     {
       "id": "far",
+      "text": "messze",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "messze"
+      "icon": "arrow-right"
     },
     {
       "id": "and",
+      "text": "és",
       "pos": "conjunction",
       "category": "helpers",
       "frequency": 6,
-      "icon": "branch",
-      "text": "és"
+      "icon": "branch"
     },
     {
       "id": "or",
+      "text": "vagy",
       "pos": "conjunction",
       "category": "helpers",
       "frequency": 6,
-      "icon": "branch",
-      "text": "vagy"
+      "icon": "branch"
     },
     {
       "id": "because",
+      "text": "mert",
       "pos": "conjunction",
       "category": "helpers",
       "frequency": 6,
-      "icon": "branch",
-      "text": "mert"
+      "icon": "branch"
     },
     {
       "id": "then",
+      "text": "aztán",
       "pos": "conjunction",
       "category": "helpers",
       "frequency": 6,
-      "icon": "branch",
-      "text": "aztán"
+      "icon": "branch"
     },
     {
       "id": "but",
+      "text": "de",
       "pos": "conjunction",
       "category": "helpers",
       "frequency": 6,
-      "icon": "branch",
-      "text": "de"
+      "icon": "branch"
     },
     {
       "id": "water",
+      "text": "víz",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "víz"
+      "icon": "water"
     },
     {
       "id": "milk",
+      "text": "tej",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "tej"
+      "icon": "water"
     },
     {
       "id": "juice",
+      "text": "gyümölcslé",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "gyümölcslé"
+      "icon": "water"
     },
     {
       "id": "tea",
+      "text": "tea",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "tea"
+      "icon": "water"
     },
     {
       "id": "smoothie",
+      "text": "smoothie",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "smoothie"
+      "icon": "water"
     },
     {
       "id": "lemonade",
+      "text": "limonádé",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "limonádé"
+      "icon": "water"
     },
     {
       "id": "hot-drink",
+      "text": "meleg ital",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "meleg ital"
+      "icon": "water"
     },
     {
       "id": "cold-drink",
+      "text": "hideg ital",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "hideg ital"
+      "icon": "water"
     },
     {
       "id": "cup",
+      "text": "pohár",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "pohár"
+      "icon": "water"
     },
     {
       "id": "straw",
+      "text": "szívószál",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "szívószál"
+      "icon": "water"
     },
     {
       "id": "bottle",
+      "text": "üveg",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "üveg"
+      "icon": "water"
     },
     {
       "id": "sip",
+      "text": "korty",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "korty"
+      "icon": "water"
     },
     {
       "id": "apple",
+      "text": "alma",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "alma"
+      "icon": "apple"
     },
     {
       "id": "banana",
+      "text": "banán",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "banán"
+      "icon": "apple"
     },
     {
       "id": "bread",
+      "text": "kenyér",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "kenyér"
+      "icon": "apple"
     },
     {
       "id": "toast",
+      "text": "pirítós",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "pirítós"
+      "icon": "apple"
     },
     {
       "id": "sandwich",
+      "text": "szendvics",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "szendvics"
+      "icon": "apple"
     },
     {
       "id": "rice",
+      "text": "rizs",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "rizs"
+      "icon": "apple"
     },
     {
       "id": "pasta",
+      "text": "tészta",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "tészta"
+      "icon": "apple"
     },
     {
       "id": "soup",
+      "text": "leves",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "leves"
+      "icon": "apple"
     },
     {
       "id": "yogurt",
+      "text": "joghurt",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "joghurt"
+      "icon": "apple"
     },
     {
       "id": "cheese",
+      "text": "sajt",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "sajt"
+      "icon": "apple"
     },
     {
       "id": "cracker",
+      "text": "keksz",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "keksz"
+      "icon": "apple"
     },
     {
       "id": "carrot",
+      "text": "sárgarépa",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "sárgarépa"
+      "icon": "apple"
     },
     {
       "id": "chips",
+      "text": "chips",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "chips"
+      "icon": "apple"
     },
     {
       "id": "cookie",
+      "text": "süti",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "süti"
+      "icon": "apple"
     },
     {
       "id": "egg",
+      "text": "tojás",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "tojás"
+      "icon": "apple"
     },
     {
       "id": "cereal",
+      "text": "müzli",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "müzli"
+      "icon": "apple"
     },
     {
       "id": "fruit",
+      "text": "gyümölcs",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "gyümölcs"
+      "icon": "apple"
     },
     {
       "id": "snack",
+      "text": "nassolás",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "nassolás"
+      "icon": "apple"
     },
     {
       "id": "dinner",
+      "text": "vacsora",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "vacsora"
+      "icon": "apple"
     },
     {
       "id": "lunch",
+      "text": "ebéd",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "ebéd"
+      "icon": "apple"
     },
     {
       "id": "happy",
+      "text": "boldog",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "boldog"
+      "icon": "smile"
     },
     {
       "id": "sad",
+      "text": "szomorú",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "szomorú"
+      "icon": "smile"
     },
     {
       "id": "angry",
+      "text": "dühös",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "dühös"
+      "icon": "smile"
     },
     {
       "id": "worried",
+      "text": "aggódó",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "aggódó"
+      "icon": "smile"
     },
     {
       "id": "scared",
+      "text": "félek",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "félek"
+      "icon": "smile"
     },
     {
       "id": "tired",
+      "text": "fáradt",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "fáradt"
+      "icon": "smile"
     },
     {
       "id": "sick",
+      "text": "beteg",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "beteg"
+      "icon": "smile"
     },
     {
       "id": "hurt",
+      "text": "fáj",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "fáj"
+      "icon": "smile"
     },
     {
       "id": "calm",
+      "text": "nyugodt",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "nyugodt"
+      "icon": "smile"
     },
     {
       "id": "excited",
+      "text": "izgatott",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "izgatott"
+      "icon": "smile"
     },
     {
       "id": "confused",
+      "text": "összezavarodott",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "összezavarodott"
+      "icon": "smile"
     },
     {
       "id": "proud",
+      "text": "büszke",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "büszke"
+      "icon": "smile"
     },
     {
       "id": "lonely",
+      "text": "magányos",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "magányos"
+      "icon": "smile"
     },
     {
       "id": "bored",
+      "text": "unatkozom",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "unatkozom"
+      "icon": "smile"
     },
     {
       "id": "safe",
+      "text": "biztonságban",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "biztonságban"
+      "icon": "smile"
     },
     {
       "id": "upset",
+      "text": "ideges",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "ideges"
+      "icon": "smile"
     },
     {
       "id": "okay-2",
+      "text": "jól",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "jól"
+      "icon": "smile"
     },
     {
       "id": "hot",
+      "text": "meleg",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "meleg"
+      "icon": "smile"
     },
     {
       "id": "cold",
+      "text": "hideg",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "hideg"
+      "icon": "smile"
     },
     {
       "id": "hungry",
+      "text": "éhes",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "éhes"
+      "icon": "smile"
     },
     {
       "id": "thirsty",
+      "text": "szomjas",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "szomjas"
+      "icon": "smile"
     },
     {
       "id": "head",
+      "text": "fej",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "fej"
+      "icon": "body"
     },
     {
       "id": "hand",
+      "text": "kéz",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "kéz"
+      "icon": "body"
     },
     {
       "id": "foot",
+      "text": "lábfej",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "lábfej"
+      "icon": "body"
     },
     {
       "id": "tummy",
+      "text": "pocak",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "pocak"
+      "icon": "body"
     },
     {
       "id": "mouth",
+      "text": "száj",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "száj"
+      "icon": "body"
     },
     {
       "id": "ear",
+      "text": "fül",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "fül"
+      "icon": "body"
     },
     {
       "id": "eye",
+      "text": "szem",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "szem"
+      "icon": "body"
     },
     {
       "id": "arm",
+      "text": "kar",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "kar"
+      "icon": "body"
     },
     {
       "id": "leg",
+      "text": "láb",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "láb"
+      "icon": "body"
     },
     {
       "id": "back",
+      "text": "hát",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "hát"
+      "icon": "body"
     },
     {
       "id": "tooth",
+      "text": "fog",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "fog"
+      "icon": "body"
     },
     {
       "id": "hair",
+      "text": "haj",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "haj"
+      "icon": "body"
     },
     {
       "id": "nose",
+      "text": "orr",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "orr"
+      "icon": "body"
     },
     {
       "id": "skin",
+      "text": "bőr",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "bőr"
+      "icon": "body"
     },
     {
       "id": "heart",
+      "text": "szív",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "szív"
+      "icon": "body"
     },
     {
       "id": "home",
+      "text": "otthon",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "otthon"
+      "icon": "home"
     },
     {
       "id": "school",
+      "text": "iskola",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "iskola"
+      "icon": "home"
     },
     {
       "id": "classroom",
+      "text": "osztály",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "osztály"
+      "icon": "home"
     },
     {
       "id": "bathroom",
+      "text": "fürdőszoba",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "fürdőszoba"
+      "icon": "home"
     },
     {
       "id": "kitchen",
+      "text": "konyha",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "konyha"
+      "icon": "home"
     },
     {
       "id": "bedroom",
+      "text": "hálószoba",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "hálószoba"
+      "icon": "home"
     },
     {
       "id": "garden",
+      "text": "kert",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "kert"
+      "icon": "home"
     },
     {
       "id": "shop",
+      "text": "bolt",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "bolt"
+      "icon": "home"
     },
     {
       "id": "car",
+      "text": "autó",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "autó"
+      "icon": "home"
     },
     {
       "id": "bus",
+      "text": "busz",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "busz"
+      "icon": "home"
     },
     {
       "id": "park",
+      "text": "park",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "park"
+      "icon": "home"
     },
     {
       "id": "playground",
+      "text": "játszótér",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "játszótér"
+      "icon": "home"
     },
     {
       "id": "library",
+      "text": "könyvtár",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "könyvtár"
+      "icon": "home"
     },
     {
       "id": "pool",
+      "text": "uszoda",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "uszoda"
+      "icon": "home"
     },
     {
       "id": "table",
+      "text": "asztal",
       "pos": "noun",
       "category": "home",
       "frequency": 7,
-      "icon": "home",
-      "text": "asztal"
+      "icon": "home"
     },
     {
       "id": "chair",
+      "text": "szék",
       "pos": "noun",
       "category": "home",
       "frequency": 7,
-      "icon": "home",
-      "text": "szék"
+      "icon": "home"
     },
     {
       "id": "sofa",
+      "text": "kanapé",
       "pos": "noun",
       "category": "home",
       "frequency": 7,
-      "icon": "home",
-      "text": "kanapé"
+      "icon": "home"
     },
     {
       "id": "bed",
+      "text": "ágy",
       "pos": "noun",
       "category": "home",
       "frequency": 7,
-      "icon": "home",
-      "text": "ágy"
+      "icon": "home"
     },
     {
       "id": "door",
+      "text": "ajtó",
       "pos": "noun",
       "category": "home",
       "frequency": 7,
-      "icon": "home",
-      "text": "ajtó"
+      "icon": "home"
     },
     {
       "id": "window",
+      "text": "ablak",
       "pos": "noun",
       "category": "home",
       "frequency": 7,
-      "icon": "home",
-      "text": "ablak"
+      "icon": "home"
     },
     {
       "id": "book",
+      "text": "könyv",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "könyv"
+      "icon": "book"
     },
     {
       "id": "pencil",
+      "text": "ceruza",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "ceruza"
+      "icon": "book"
     },
     {
       "id": "paper",
+      "text": "papír",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "papír"
+      "icon": "book"
     },
     {
       "id": "bag",
+      "text": "táska",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "táska"
+      "icon": "book"
     },
     {
       "id": "coat",
+      "text": "kabát",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "kabát"
+      "icon": "book"
     },
     {
       "id": "shoes",
+      "text": "cipő",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "cipő"
+      "icon": "book"
     },
     {
       "id": "lunchbox",
+      "text": "ételhordó",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "ételhordó"
+      "icon": "book"
     },
     {
       "id": "tablet",
+      "text": "tablet",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "tablet"
+      "icon": "book"
     },
     {
       "id": "screen",
+      "text": "képernyő",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "képernyő"
+      "icon": "book"
     },
     {
       "id": "timer",
+      "text": "időzítő",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "időzítő"
+      "icon": "book"
     },
     {
       "id": "schedule",
+      "text": "napirend",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "napirend"
+      "icon": "book"
     },
     {
       "id": "picture",
+      "text": "kép",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "kép"
+      "icon": "book"
     },
     {
       "id": "card",
+      "text": "kártya",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "kártya"
+      "icon": "book"
     },
     {
       "id": "story",
+      "text": "mese",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "mese"
+      "icon": "book"
     },
     {
       "id": "music",
+      "text": "zene",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "zene"
+      "icon": "book"
     },
     {
       "id": "ball",
+      "text": "labda",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "labda"
+      "icon": "puzzle"
     },
     {
       "id": "blocks",
+      "text": "kockák",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "kockák"
+      "icon": "puzzle"
     },
     {
       "id": "doll",
+      "text": "baba",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "baba"
+      "icon": "puzzle"
     },
     {
       "id": "car-toy",
+      "text": "kisautó",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "kisautó"
+      "icon": "puzzle"
     },
     {
       "id": "train",
+      "text": "vonat",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "vonat"
+      "icon": "puzzle"
     },
     {
       "id": "puzzle",
+      "text": "kirakó",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "kirakó"
+      "icon": "puzzle"
     },
     {
       "id": "game",
+      "text": "játék",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "játék"
+      "icon": "puzzle"
     },
     {
       "id": "paint",
+      "text": "festék",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "festék"
+      "icon": "puzzle"
     },
     {
       "id": "clay",
+      "text": "gyurma",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "gyurma"
+      "icon": "puzzle"
     },
     {
       "id": "bubbles",
+      "text": "buborék",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "buborék"
+      "icon": "puzzle"
     },
     {
       "id": "swing",
+      "text": "hinta",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "hinta"
+      "icon": "puzzle"
     },
     {
       "id": "slide",
+      "text": "csúszda",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "csúszda"
+      "icon": "puzzle"
     },
     {
       "id": "bike",
+      "text": "bicikli",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "bicikli"
+      "icon": "puzzle"
     },
     {
       "id": "teddy",
+      "text": "maci",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "maci"
+      "icon": "puzzle"
     },
     {
       "id": "lego",
+      "text": "lego",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "lego"
+      "icon": "puzzle"
     },
     {
       "id": "red",
+      "text": "piros",
       "pos": "adjective",
       "category": "colors",
       "frequency": 5,
-      "icon": "palette",
-      "text": "piros"
+      "icon": "palette"
     },
     {
       "id": "blue",
+      "text": "kék",
       "pos": "adjective",
       "category": "colors",
       "frequency": 5,
-      "icon": "palette",
-      "text": "kék"
+      "icon": "palette"
     },
     {
       "id": "green",
+      "text": "zöld",
       "pos": "adjective",
       "category": "colors",
       "frequency": 5,
-      "icon": "palette",
-      "text": "zöld"
+      "icon": "palette"
     },
     {
       "id": "yellow",
+      "text": "sárga",
       "pos": "adjective",
       "category": "colors",
       "frequency": 5,
-      "icon": "palette",
-      "text": "sárga"
+      "icon": "palette"
     },
     {
       "id": "orange",
+      "text": "narancssárga",
       "pos": "adjective",
       "category": "colors",
       "frequency": 5,
-      "icon": "palette",
-      "text": "narancssárga"
+      "icon": "palette"
     },
     {
       "id": "purple",
+      "text": "lila",
       "pos": "adjective",
       "category": "colors",
       "frequency": 5,
-      "icon": "palette",
-      "text": "lila"
+      "icon": "palette"
     },
     {
       "id": "pink",
+      "text": "rózsaszín",
       "pos": "adjective",
       "category": "colors",
       "frequency": 5,
-      "icon": "palette",
-      "text": "rózsaszín"
+      "icon": "palette"
     },
     {
       "id": "brown",
+      "text": "barna",
       "pos": "adjective",
       "category": "colors",
       "frequency": 5,
-      "icon": "palette",
-      "text": "barna"
+      "icon": "palette"
     },
     {
       "id": "black",
+      "text": "fekete",
       "pos": "adjective",
       "category": "colors",
       "frequency": 5,
-      "icon": "palette",
-      "text": "fekete"
+      "icon": "palette"
     },
     {
       "id": "white",
+      "text": "fehér",
       "pos": "adjective",
       "category": "colors",
       "frequency": 5,
-      "icon": "palette",
-      "text": "fehér"
+      "icon": "palette"
     },
     {
       "id": "grey",
+      "text": "szürke",
       "pos": "adjective",
       "category": "colors",
       "frequency": 5,
-      "icon": "palette",
-      "text": "szürke"
+      "icon": "palette"
     },
     {
       "id": "bright",
+      "text": "világos",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "világos"
+      "icon": "palette"
     },
     {
       "id": "dark",
+      "text": "sötét",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "sötét"
+      "icon": "palette"
     },
     {
       "id": "soft",
+      "text": "puha",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "puha"
+      "icon": "palette"
     },
     {
       "id": "hard",
+      "text": "kemény",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "kemény"
+      "icon": "palette"
     },
     {
       "id": "quiet",
+      "text": "csendes",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "csendes"
+      "icon": "palette"
     },
     {
       "id": "loud",
+      "text": "hangos",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "hangos"
+      "icon": "palette"
     },
     {
       "id": "fast",
+      "text": "gyors",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "gyors"
+      "icon": "palette"
     },
     {
       "id": "slow",
+      "text": "lassú",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "lassú"
+      "icon": "palette"
     },
     {
       "id": "clean",
+      "text": "tiszta",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "tiszta"
+      "icon": "palette"
     },
     {
       "id": "dirty",
+      "text": "koszos",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "koszos"
+      "icon": "palette"
     },
     {
       "id": "wet",
+      "text": "nedves",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "nedves"
+      "icon": "palette"
     },
     {
       "id": "dry",
+      "text": "száraz",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "száraz"
+      "icon": "palette"
     },
     {
       "id": "new",
+      "text": "új",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "új"
+      "icon": "palette"
     },
     {
       "id": "old",
+      "text": "öreg",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "öreg"
+      "icon": "palette"
     },
     {
       "id": "now",
+      "text": "most",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "most"
+      "icon": "clock"
     },
     {
       "id": "later",
+      "text": "később",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "később"
+      "icon": "clock"
     },
     {
       "id": "today",
+      "text": "ma",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "ma"
+      "icon": "clock"
     },
     {
       "id": "tomorrow",
+      "text": "holnap",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "holnap"
+      "icon": "clock"
     },
     {
       "id": "morning",
+      "text": "reggel",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "reggel"
+      "icon": "clock"
     },
     {
       "id": "afternoon",
+      "text": "délután",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "délután"
+      "icon": "clock"
     },
     {
       "id": "night",
+      "text": "éjszaka",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "éjszaka"
+      "icon": "clock"
     },
     {
       "id": "before",
+      "text": "előtt",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "előtt"
+      "icon": "clock"
     },
     {
       "id": "after",
+      "text": "után",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "után"
+      "icon": "clock"
     },
     {
       "id": "soon",
+      "text": "hamarosan",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "hamarosan"
+      "icon": "clock"
     },
     {
       "id": "first",
+      "text": "először",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "először"
+      "icon": "clock"
     },
     {
       "id": "next",
+      "text": "következő",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "következő"
+      "icon": "clock"
     },
     {
       "id": "last",
+      "text": "utolsó",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "utolsó"
+      "icon": "clock"
     },
     {
       "id": "minute",
+      "text": "perc",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "perc"
+      "icon": "clock"
     },
     {
       "id": "hour",
+      "text": "óra",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "óra"
+      "icon": "clock"
     },
     {
       "id": "break",
+      "text": "szünet",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "szünet"
+      "icon": "heart-hand"
     },
     {
       "id": "quiet-time",
+      "text": "csendes idő",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "csendes idő"
+      "icon": "heart-hand"
     },
     {
       "id": "hug",
+      "text": "ölelés",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "ölelés"
+      "icon": "heart-hand"
     },
     {
       "id": "space",
+      "text": "hely",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "hely"
+      "icon": "heart-hand"
     },
     {
       "id": "toilet",
+      "text": "wc",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "wc"
+      "icon": "heart-hand"
     },
     {
       "id": "medicine",
+      "text": "gyógyszer",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "gyógyszer"
+      "icon": "heart-hand"
     },
     {
       "id": "light",
+      "text": "fény",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "fény"
+      "icon": "heart-hand"
     },
     {
       "id": "dark-2",
+      "text": "sötétség",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "sötétség"
+      "icon": "heart-hand"
     },
     {
       "id": "noise",
+      "text": "zaj",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "zaj"
+      "icon": "heart-hand"
     },
     {
       "id": "headphones",
+      "text": "fejhallgató",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "fejhallgató"
+      "icon": "heart-hand"
     },
     {
       "id": "blanket",
+      "text": "takaró",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "takaró"
+      "icon": "heart-hand"
     },
     {
       "id": "charger",
+      "text": "töltő",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "töltő"
+      "icon": "heart-hand"
     },
     {
       "id": "choice",
+      "text": "választás",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "választás"
+      "icon": "heart-hand"
     },
     {
       "id": "turn",
+      "text": "sor",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "sor"
+      "icon": "heart-hand"
     },
     {
       "id": "help-please",
+      "text": "segítséget kérek",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "segítséget kérek"
+      "icon": "heart-hand"
     },
     {
       "id": "different",
+      "text": "más",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "más"
+      "icon": "sparkles"
     },
     {
       "id": "same",
+      "text": "ugyanaz",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "ugyanaz"
+      "icon": "sparkles"
     },
     {
       "id": "easy",
+      "text": "könnyű",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "könnyű"
+      "icon": "sparkles"
     },
     {
       "id": "harder",
+      "text": "nehezebb",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "nehezebb"
+      "icon": "sparkles"
     },
     {
       "id": "favorite",
+      "text": "kedvenc",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "kedvenc"
+      "icon": "sparkles"
     },
     {
       "id": "missing",
+      "text": "hiányzik",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "hiányzik"
+      "icon": "sparkles"
     },
     {
       "id": "broken",
+      "text": "törött",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "törött"
+      "icon": "sparkles"
     },
     {
       "id": "ready",
+      "text": "kész",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "kész"
+      "icon": "sparkles"
     },
     {
       "id": "busy",
+      "text": "elfoglalt",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "elfoglalt"
+      "icon": "sparkles"
     },
     {
       "id": "empty",
+      "text": "üres",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "üres"
+      "icon": "sparkles"
     },
     {
       "id": "full",
+      "text": "tele",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "tele"
+      "icon": "sparkles"
     },
     {
       "id": "small",
+      "text": "kicsi",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "kicsi"
+      "icon": "sparkles"
     },
     {
       "id": "tall",
+      "text": "magas",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "magas"
+      "icon": "sparkles"
     },
     {
       "id": "short",
+      "text": "rövid",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "rövid"
+      "icon": "sparkles"
     },
     {
       "id": "round",
+      "text": "kerek",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "kerek"
+      "icon": "sparkles"
     },
     {
       "id": "square",
+      "text": "négyzet",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "négyzet"
+      "icon": "sparkles"
     },
     {
       "id": "kind",
+      "text": "kedves",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "kedves"
+      "icon": "sparkles"
     },
     {
       "id": "gentle",
+      "text": "gyengéd",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "gyengéd"
+      "icon": "sparkles"
     },
     {
       "id": "careful",
+      "text": "óvatos",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "óvatos"
+      "icon": "sparkles"
     },
     {
       "id": "safe-place",
+      "text": "biztonságos hely",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "biztonságos hely"
+      "icon": "sparkles"
     }
   ],
   "templates": [
@@ -3132,7 +3065,5 @@
         "nem"
       ]
     }
-  },
-  "source": "generated",
-  "reviewStatus": "needs-native-review"
+  }
 }

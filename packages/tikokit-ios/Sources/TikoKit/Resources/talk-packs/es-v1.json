@@ -168,10 +168,7 @@
       "pos": "verb",
       "category": "actions",
       "frequency": 10,
-      "icon": "play",
-      "inflections": {
-        "past": "querido"
-      }
+      "icon": "play"
     },
     {
       "id": "need",
@@ -179,10 +176,7 @@
       "pos": "verb",
       "category": "actions",
       "frequency": 10,
-      "icon": "play",
-      "inflections": {
-        "past": "necesitado"
-      }
+      "icon": "play"
     },
     {
       "id": "like",
@@ -190,10 +184,7 @@
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "gustado"
-      }
+      "icon": "play"
     },
     {
       "id": "feel",
@@ -201,10 +192,7 @@
       "pos": "verb",
       "category": "actions",
       "frequency": 10,
-      "icon": "play",
-      "inflections": {
-        "past": "sentido"
-      }
+      "icon": "play"
     },
     {
       "id": "see",
@@ -212,10 +200,7 @@
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "visto"
-      }
+      "icon": "play"
     },
     {
       "id": "hear",
@@ -223,10 +208,7 @@
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "oído"
-      }
+      "icon": "play"
     },
     {
       "id": "have",
@@ -234,10 +216,7 @@
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "tenido"
-      }
+      "icon": "play"
     },
     {
       "id": "go",
@@ -253,10 +232,7 @@
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "venido"
-      }
+      "icon": "play"
     },
     {
       "id": "play",
@@ -264,10 +240,7 @@
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "jugado"
-      }
+      "icon": "play"
     },
     {
       "id": "read",
@@ -275,10 +248,7 @@
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "leído"
-      }
+      "icon": "play"
     },
     {
       "id": "draw",
@@ -286,10 +256,7 @@
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "dibujado"
-      }
+      "icon": "play"
     },
     {
       "id": "eat",
@@ -329,10 +296,7 @@
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "caminado"
-      }
+      "icon": "play"
     },
     {
       "id": "run",
@@ -348,10 +312,7 @@
       "pos": "verb",
       "category": "actions",
       "frequency": 10,
-      "icon": "play",
-      "inflections": {
-        "past": "parado"
-      }
+      "icon": "play"
     },
     {
       "id": "start",
@@ -359,10 +320,7 @@
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "empezado"
-      }
+      "icon": "play"
     },
     {
       "id": "wait",
@@ -370,10 +328,7 @@
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "esperado"
-      }
+      "icon": "play"
     },
     {
       "id": "help",
@@ -381,10 +336,7 @@
       "pos": "verb",
       "category": "actions",
       "frequency": 10,
-      "icon": "play",
-      "inflections": {
-        "past": "ayudado"
-      }
+      "icon": "play"
     },
     {
       "id": "choose",
@@ -392,10 +344,7 @@
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "elegido"
-      }
+      "icon": "play"
     },
     {
       "id": "open",
@@ -403,10 +352,7 @@
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "abierto"
-      }
+      "icon": "play"
     },
     {
       "id": "close",
@@ -414,10 +360,7 @@
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "cerrado"
-      }
+      "icon": "play"
     },
     {
       "id": "wash",
@@ -425,10 +368,7 @@
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "lavado"
-      }
+      "icon": "play"
     },
     {
       "id": "sleep",
@@ -444,10 +384,7 @@
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "descansado"
-      }
+      "icon": "play"
     },
     {
       "id": "try",
@@ -455,10 +392,7 @@
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "intentado"
-      }
+      "icon": "play"
     },
     {
       "id": "talk",
@@ -466,10 +400,7 @@
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "hablado"
-      }
+      "icon": "play"
     },
     {
       "id": "yes",

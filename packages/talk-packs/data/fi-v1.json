@@ -1,2435 +1,2368 @@
 {
   "locale": "fi",
   "version": 1,
+  "source": "generated",
+  "reviewStatus": "needs-native-review",
   "words": [
     {
       "id": "i",
+      "text": "minä",
       "pos": "pronoun",
       "category": "people",
       "frequency": 10,
-      "icon": "user",
-      "text": "minä"
+      "icon": "user"
     },
     {
       "id": "you",
+      "text": "sinä",
       "pos": "pronoun",
       "category": "people",
       "frequency": 10,
-      "icon": "user",
-      "text": "sinä"
+      "icon": "user"
     },
     {
       "id": "we",
+      "text": "me",
       "pos": "pronoun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "me"
+      "icon": "user"
     },
     {
       "id": "me",
+      "text": "minua",
       "pos": "pronoun",
       "category": "people",
       "frequency": 10,
-      "icon": "user",
-      "text": "minua"
+      "icon": "user"
     },
     {
       "id": "my",
+      "text": "minun",
       "pos": "pronoun",
       "category": "people",
       "frequency": 10,
-      "icon": "user",
-      "text": "minun"
+      "icon": "user"
     },
     {
       "id": "your",
+      "text": "sinun",
       "pos": "pronoun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "sinun"
+      "icon": "user"
     },
     {
       "id": "he",
+      "text": "hän",
       "pos": "pronoun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "hän"
+      "icon": "user"
     },
     {
       "id": "she",
+      "text": "hän",
       "pos": "pronoun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "hän"
+      "icon": "user"
     },
     {
       "id": "they",
+      "text": "he",
       "pos": "pronoun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "he"
+      "icon": "user"
     },
     {
       "id": "mum",
+      "text": "äiti",
       "pos": "noun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "äiti"
+      "icon": "user"
     },
     {
       "id": "dad",
+      "text": "isä",
       "pos": "noun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "isä"
+      "icon": "user"
     },
     {
       "id": "teacher",
+      "text": "opettaja",
       "pos": "noun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "opettaja"
+      "icon": "user"
     },
     {
       "id": "friend",
+      "text": "kaveri",
       "pos": "noun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "kaveri"
+      "icon": "user"
     },
     {
       "id": "brother",
+      "text": "veli",
       "pos": "noun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "veli"
+      "icon": "user"
     },
     {
       "id": "sister",
+      "text": "sisko",
       "pos": "noun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "sisko"
+      "icon": "user"
     },
     {
       "id": "grandma",
+      "text": "mummo",
       "pos": "noun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "mummo"
+      "icon": "user"
     },
     {
       "id": "grandpa",
+      "text": "vaari",
       "pos": "noun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "vaari"
+      "icon": "user"
     },
     {
       "id": "helper",
+      "text": "avustaja",
       "pos": "noun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "avustaja"
+      "icon": "user"
     },
     {
       "id": "doctor",
+      "text": "lääkäri",
       "pos": "noun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "lääkäri"
+      "icon": "user"
     },
     {
       "id": "class",
+      "text": "luokka",
       "pos": "noun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "luokka"
+      "icon": "user"
     },
     {
       "id": "want",
+      "text": "haluan",
       "pos": "verb",
       "category": "actions",
       "frequency": 10,
-      "icon": "play",
-      "inflections": {
-        "past": "wanted"
-      },
-      "text": "haluan"
+      "icon": "play"
     },
     {
       "id": "need",
+      "text": "tarvitsen",
       "pos": "verb",
       "category": "actions",
       "frequency": 10,
-      "icon": "play",
-      "inflections": {
-        "past": "needed"
-      },
-      "text": "tarvitsen"
+      "icon": "play"
     },
     {
       "id": "like",
+      "text": "tykkään",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "likeed"
-      },
-      "text": "tykkään"
+      "icon": "play"
     },
     {
       "id": "feel",
+      "text": "tunnen",
       "pos": "verb",
       "category": "actions",
       "frequency": 10,
-      "icon": "play",
-      "inflections": {
-        "past": "feeled"
-      },
-      "text": "tunnen"
+      "icon": "play"
     },
     {
       "id": "see",
+      "text": "näen",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "seeed"
-      },
-      "text": "näen"
+      "icon": "play"
     },
     {
       "id": "hear",
+      "text": "kuulen",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "heared"
-      },
-      "text": "kuulen"
+      "icon": "play"
     },
     {
       "id": "have",
+      "text": "minulla on",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "haveed"
-      },
-      "text": "minulla on"
+      "icon": "play"
     },
     {
       "id": "go",
+      "text": "menen",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "text": "menen"
+      "icon": "play"
     },
     {
       "id": "come",
+      "text": "tulen",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "comeed"
-      },
-      "text": "tulen"
+      "icon": "play"
     },
     {
       "id": "play",
+      "text": "leikin",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "played"
-      },
-      "text": "leikin"
+      "icon": "play"
     },
     {
       "id": "read",
+      "text": "luen",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "readed"
-      },
-      "text": "luen"
+      "icon": "play"
     },
     {
       "id": "draw",
+      "text": "piirrän",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "drawed"
-      },
-      "text": "piirrän"
+      "icon": "play"
     },
     {
       "id": "eat",
+      "text": "syön",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "text": "syön"
+      "icon": "play"
     },
     {
       "id": "drink",
+      "text": "juon",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "text": "juon"
+      "icon": "play"
     },
     {
       "id": "sit",
+      "text": "istun",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "text": "istun"
+      "icon": "play"
     },
     {
       "id": "stand",
+      "text": "seison",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "text": "seison"
+      "icon": "play"
     },
     {
       "id": "walk",
+      "text": "kävelen",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "walked"
-      },
-      "text": "kävelen"
+      "icon": "play"
     },
     {
       "id": "run",
+      "text": "juoksen",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "text": "juoksen"
+      "icon": "play"
     },
     {
       "id": "stop",
+      "text": "pysähdyn",
       "pos": "verb",
       "category": "actions",
       "frequency": 10,
-      "icon": "play",
-      "inflections": {
-        "past": "stoped"
-      },
-      "text": "pysähdyn"
+      "icon": "play"
     },
     {
       "id": "start",
+      "text": "aloitan",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "started"
-      },
-      "text": "aloitan"
+      "icon": "play"
     },
     {
       "id": "wait",
+      "text": "odotan",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "waited"
-      },
-      "text": "odotan"
+      "icon": "play"
     },
     {
       "id": "help",
+      "text": "auttan",
       "pos": "verb",
       "category": "actions",
       "frequency": 10,
-      "icon": "play",
-      "inflections": {
-        "past": "helped"
-      },
-      "text": "auttan"
+      "icon": "play"
     },
     {
       "id": "choose",
+      "text": "valitsen",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "chooseed"
-      },
-      "text": "valitsen"
+      "icon": "play"
     },
     {
       "id": "open",
+      "text": "avaan",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "opened"
-      },
-      "text": "avaan"
+      "icon": "play"
     },
     {
       "id": "close",
+      "text": "suljen",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "closeed"
-      },
-      "text": "suljen"
+      "icon": "play"
     },
     {
       "id": "wash",
+      "text": "pesen",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "washed"
-      },
-      "text": "pesen"
+      "icon": "play"
     },
     {
       "id": "sleep",
+      "text": "nukun",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "text": "nukun"
+      "icon": "play"
     },
     {
       "id": "rest",
+      "text": "lepään",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "rested"
-      },
-      "text": "lepään"
+      "icon": "play"
     },
     {
       "id": "try",
+      "text": "yritän",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "tryed"
-      },
-      "text": "yritän"
+      "icon": "play"
     },
     {
       "id": "talk",
+      "text": "puhun",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "talked"
-      },
-      "text": "puhun"
+      "icon": "play"
     },
     {
       "id": "yes",
+      "text": "kyllä",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "kyllä"
+      "icon": "chat-bubble"
     },
     {
       "id": "no",
+      "text": "ei",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "ei"
+      "icon": "chat-bubble"
     },
     {
       "id": "please",
+      "text": "kiitos",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "kiitos"
+      "icon": "chat-bubble"
     },
     {
       "id": "thank-you",
+      "text": "kiitos",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "kiitos"
+      "icon": "chat-bubble"
     },
     {
       "id": "sorry",
+      "text": "anteeksi",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "anteeksi"
+      "icon": "chat-bubble"
     },
     {
       "id": "hello",
+      "text": "hei",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "hei"
+      "icon": "chat-bubble"
     },
     {
       "id": "goodbye",
+      "text": "näkemiin",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "näkemiin"
+      "icon": "chat-bubble"
     },
     {
       "id": "more",
+      "text": "lisää",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "lisää"
+      "icon": "chat-bubble"
     },
     {
       "id": "all-done",
+      "text": "valmis",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "valmis"
+      "icon": "chat-bubble"
     },
     {
       "id": "again",
+      "text": "uudestaan",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "uudestaan"
+      "icon": "chat-bubble"
     },
     {
       "id": "finished",
+      "text": "lopetin",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "lopetin"
+      "icon": "chat-bubble"
     },
     {
       "id": "okay",
+      "text": "okei",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "okei"
+      "icon": "chat-bubble"
     },
     {
       "id": "not-yet",
+      "text": "ei vielä",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "ei vielä"
+      "icon": "chat-bubble"
     },
     {
       "id": "maybe",
+      "text": "ehkä",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "ehkä"
+      "icon": "chat-bubble"
     },
     {
       "id": "what",
+      "text": "mitä",
       "pos": "question",
       "category": "questions",
       "frequency": 8,
-      "icon": "question-circle",
-      "text": "mitä"
+      "icon": "question-circle"
     },
     {
       "id": "where",
+      "text": "missä",
       "pos": "question",
       "category": "questions",
       "frequency": 8,
-      "icon": "question-circle",
-      "text": "missä"
+      "icon": "question-circle"
     },
     {
       "id": "who",
+      "text": "kuka",
       "pos": "question",
       "category": "questions",
       "frequency": 8,
-      "icon": "question-circle",
-      "text": "kuka"
+      "icon": "question-circle"
     },
     {
       "id": "when",
+      "text": "milloin",
       "pos": "question",
       "category": "questions",
       "frequency": 8,
-      "icon": "question-circle",
-      "text": "milloin"
+      "icon": "question-circle"
     },
     {
       "id": "why",
+      "text": "miksi",
       "pos": "question",
       "category": "questions",
       "frequency": 8,
-      "icon": "question-circle",
-      "text": "miksi"
+      "icon": "question-circle"
     },
     {
       "id": "which",
+      "text": "mikä",
       "pos": "question",
       "category": "questions",
       "frequency": 8,
-      "icon": "question-circle",
-      "text": "mikä"
+      "icon": "question-circle"
     },
     {
       "id": "how",
+      "text": "miten",
       "pos": "question",
       "category": "questions",
       "frequency": 8,
-      "icon": "question-circle",
-      "text": "miten"
+      "icon": "question-circle"
     },
     {
       "id": "can",
+      "text": "voin",
       "pos": "question",
       "category": "questions",
       "frequency": 8,
-      "icon": "question-circle",
-      "text": "voin"
+      "icon": "question-circle"
     },
     {
       "id": "is",
+      "text": "on",
       "pos": "question",
       "category": "questions",
       "frequency": 8,
-      "icon": "question-circle",
-      "text": "on"
+      "icon": "question-circle"
     },
     {
       "id": "are",
+      "text": "ovat",
       "pos": "question",
       "category": "questions",
       "frequency": 8,
-      "icon": "question-circle",
-      "text": "ovat"
+      "icon": "question-circle"
     },
     {
       "id": "a",
+      "text": "yksi",
       "pos": "determiner",
       "category": "helpers",
       "frequency": 8,
-      "icon": "text",
-      "text": "yksi"
+      "icon": "text"
     },
     {
       "id": "the",
+      "text": "se",
       "pos": "determiner",
       "category": "helpers",
       "frequency": 8,
-      "icon": "text",
-      "text": "se"
+      "icon": "text"
     },
     {
       "id": "this",
+      "text": "tämä",
       "pos": "determiner",
       "category": "helpers",
       "frequency": 8,
-      "icon": "text",
-      "text": "tämä"
+      "icon": "text"
     },
     {
       "id": "that",
+      "text": "tuo",
       "pos": "determiner",
       "category": "helpers",
       "frequency": 8,
-      "icon": "text",
-      "text": "tuo"
+      "icon": "text"
     },
     {
       "id": "some",
+      "text": "vähän",
       "pos": "determiner",
       "category": "helpers",
       "frequency": 8,
-      "icon": "text",
-      "text": "vähän"
+      "icon": "text"
     },
     {
       "id": "one",
+      "text": "yksi",
       "pos": "determiner",
       "category": "helpers",
       "frequency": 8,
-      "icon": "text",
-      "text": "yksi"
+      "icon": "text"
     },
     {
       "id": "two",
+      "text": "kaksi",
       "pos": "determiner",
       "category": "helpers",
       "frequency": 8,
-      "icon": "text",
-      "text": "kaksi"
+      "icon": "text"
     },
     {
       "id": "three",
+      "text": "kolme",
       "pos": "determiner",
       "category": "helpers",
       "frequency": 8,
-      "icon": "text",
-      "text": "kolme"
+      "icon": "text"
     },
     {
       "id": "many",
+      "text": "monta",
       "pos": "determiner",
       "category": "helpers",
       "frequency": 8,
-      "icon": "text",
-      "text": "monta"
+      "icon": "text"
     },
     {
       "id": "little",
+      "text": "vähän",
       "pos": "determiner",
       "category": "helpers",
       "frequency": 8,
-      "icon": "text",
-      "text": "vähän"
+      "icon": "text"
     },
     {
       "id": "big",
+      "text": "iso",
       "pos": "determiner",
       "category": "helpers",
       "frequency": 8,
-      "icon": "text",
-      "text": "iso"
+      "icon": "text"
     },
     {
       "id": "in",
+      "text": "ssa",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "ssa"
+      "icon": "arrow-right"
     },
     {
       "id": "on",
+      "text": "lla",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "lla"
+      "icon": "arrow-right"
     },
     {
       "id": "under",
+      "text": "alla",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "alla"
+      "icon": "arrow-right"
     },
     {
       "id": "next-to",
+      "text": "vieressä",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "vieressä"
+      "icon": "arrow-right"
     },
     {
       "id": "with",
+      "text": "kanssa",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "kanssa"
+      "icon": "arrow-right"
     },
     {
       "id": "without",
+      "text": "ilman",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "ilman"
+      "icon": "arrow-right"
     },
     {
       "id": "to",
+      "text": "lle",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "lle"
+      "icon": "arrow-right"
     },
     {
       "id": "from",
+      "text": "sta",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "sta"
+      "icon": "arrow-right"
     },
     {
       "id": "inside",
+      "text": "sisällä",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "sisällä"
+      "icon": "arrow-right"
     },
     {
       "id": "outside",
+      "text": "ulkona",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "ulkona"
+      "icon": "arrow-right"
     },
     {
       "id": "near",
+      "text": "lähellä",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "lähellä"
+      "icon": "arrow-right"
     },
     {
       "id": "far",
+      "text": "kaukana",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "kaukana"
+      "icon": "arrow-right"
     },
     {
       "id": "and",
+      "text": "ja",
       "pos": "conjunction",
       "category": "helpers",
       "frequency": 6,
-      "icon": "branch",
-      "text": "ja"
+      "icon": "branch"
     },
     {
       "id": "or",
+      "text": "tai",
       "pos": "conjunction",
       "category": "helpers",
       "frequency": 6,
-      "icon": "branch",
-      "text": "tai"
+      "icon": "branch"
     },
     {
       "id": "because",
+      "text": "koska",
       "pos": "conjunction",
       "category": "helpers",
       "frequency": 6,
-      "icon": "branch",
-      "text": "koska"
+      "icon": "branch"
     },
     {
       "id": "then",
+      "text": "sitten",
       "pos": "conjunction",
       "category": "helpers",
       "frequency": 6,
-      "icon": "branch",
-      "text": "sitten"
+      "icon": "branch"
     },
     {
       "id": "but",
+      "text": "mutta",
       "pos": "conjunction",
       "category": "helpers",
       "frequency": 6,
-      "icon": "branch",
-      "text": "mutta"
+      "icon": "branch"
     },
     {
       "id": "water",
+      "text": "vesi",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "vesi"
+      "icon": "water"
     },
     {
       "id": "milk",
+      "text": "maito",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "maito"
+      "icon": "water"
     },
     {
       "id": "juice",
+      "text": "mehu",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "mehu"
+      "icon": "water"
     },
     {
       "id": "tea",
+      "text": "tee",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "tee"
+      "icon": "water"
     },
     {
       "id": "smoothie",
+      "text": "smoothie",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "smoothie"
+      "icon": "water"
     },
     {
       "id": "lemonade",
+      "text": "limonadi",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "limonadi"
+      "icon": "water"
     },
     {
       "id": "hot-drink",
+      "text": "kuuma juoma",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "kuuma juoma"
+      "icon": "water"
     },
     {
       "id": "cold-drink",
+      "text": "kylmä juoma",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "kylmä juoma"
+      "icon": "water"
     },
     {
       "id": "cup",
+      "text": "muki",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "muki"
+      "icon": "water"
     },
     {
       "id": "straw",
+      "text": "pilli",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "pilli"
+      "icon": "water"
     },
     {
       "id": "bottle",
+      "text": "pullo",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "pullo"
+      "icon": "water"
     },
     {
       "id": "sip",
+      "text": "siemaus",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "siemaus"
+      "icon": "water"
     },
     {
       "id": "apple",
+      "text": "omena",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "omena"
+      "icon": "apple"
     },
     {
       "id": "banana",
+      "text": "banaani",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "banaani"
+      "icon": "apple"
     },
     {
       "id": "bread",
+      "text": "leipä",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "leipä"
+      "icon": "apple"
     },
     {
       "id": "toast",
+      "text": "paahtoleipä",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "paahtoleipä"
+      "icon": "apple"
     },
     {
       "id": "sandwich",
+      "text": "voileipä",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "voileipä"
+      "icon": "apple"
     },
     {
       "id": "rice",
+      "text": "riisi",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "riisi"
+      "icon": "apple"
     },
     {
       "id": "pasta",
+      "text": "pasta",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "pasta"
+      "icon": "apple"
     },
     {
       "id": "soup",
+      "text": "keitto",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "keitto"
+      "icon": "apple"
     },
     {
       "id": "yogurt",
+      "text": "jogurtti",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "jogurtti"
+      "icon": "apple"
     },
     {
       "id": "cheese",
+      "text": "juusto",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "juusto"
+      "icon": "apple"
     },
     {
       "id": "cracker",
+      "text": "keksi",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "keksi"
+      "icon": "apple"
     },
     {
       "id": "carrot",
+      "text": "porkkana",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "porkkana"
+      "icon": "apple"
     },
     {
       "id": "chips",
+      "text": "sipsit",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "sipsit"
+      "icon": "apple"
     },
     {
       "id": "cookie",
+      "text": "pikkuleipä",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "pikkuleipä"
+      "icon": "apple"
     },
     {
       "id": "egg",
+      "text": "kananmuna",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "kananmuna"
+      "icon": "apple"
     },
     {
       "id": "cereal",
+      "text": "muroja",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "muroja"
+      "icon": "apple"
     },
     {
       "id": "fruit",
+      "text": "hedelmä",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "hedelmä"
+      "icon": "apple"
     },
     {
       "id": "snack",
+      "text": "välipala",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "välipala"
+      "icon": "apple"
     },
     {
       "id": "dinner",
+      "text": "päivällinen",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "päivällinen"
+      "icon": "apple"
     },
     {
       "id": "lunch",
+      "text": "lounas",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "lounas"
+      "icon": "apple"
     },
     {
       "id": "happy",
+      "text": "iloinen",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "iloinen"
+      "icon": "smile"
     },
     {
       "id": "sad",
+      "text": "surullinen",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "surullinen"
+      "icon": "smile"
     },
     {
       "id": "angry",
+      "text": "vihainen",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "vihainen"
+      "icon": "smile"
     },
     {
       "id": "worried",
+      "text": "huolissaan",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "huolissaan"
+      "icon": "smile"
     },
     {
       "id": "scared",
+      "text": "pelokas",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "pelokas"
+      "icon": "smile"
     },
     {
       "id": "tired",
+      "text": "väsynyt",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "väsynyt"
+      "icon": "smile"
     },
     {
       "id": "sick",
+      "text": "kipeä",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "kipeä"
+      "icon": "smile"
     },
     {
       "id": "hurt",
+      "text": "sattuu",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "sattuu"
+      "icon": "smile"
     },
     {
       "id": "calm",
+      "text": "rauhallinen",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "rauhallinen"
+      "icon": "smile"
     },
     {
       "id": "excited",
+      "text": "innostunut",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "innostunut"
+      "icon": "smile"
     },
     {
       "id": "confused",
+      "text": "hämmentynyt",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "hämmentynyt"
+      "icon": "smile"
     },
     {
       "id": "proud",
+      "text": "ylpeä",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "ylpeä"
+      "icon": "smile"
     },
     {
       "id": "lonely",
+      "text": "yksinäinen",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "yksinäinen"
+      "icon": "smile"
     },
     {
       "id": "bored",
+      "text": "kyllästynyt",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "kyllästynyt"
+      "icon": "smile"
     },
     {
       "id": "safe",
+      "text": "turvassa",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "turvassa"
+      "icon": "smile"
     },
     {
       "id": "upset",
+      "text": "harmissaan",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "harmissaan"
+      "icon": "smile"
     },
     {
       "id": "okay-2",
+      "text": "hyvä",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "hyvä"
+      "icon": "smile"
     },
     {
       "id": "hot",
+      "text": "kuuma",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "kuuma"
+      "icon": "smile"
     },
     {
       "id": "cold",
+      "text": "kylmä",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "kylmä"
+      "icon": "smile"
     },
     {
       "id": "hungry",
+      "text": "nälkäinen",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "nälkäinen"
+      "icon": "smile"
     },
     {
       "id": "thirsty",
+      "text": "janoinen",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "janoinen"
+      "icon": "smile"
     },
     {
       "id": "head",
+      "text": "pää",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "pää"
+      "icon": "body"
     },
     {
       "id": "hand",
+      "text": "käsi",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "käsi"
+      "icon": "body"
     },
     {
       "id": "foot",
+      "text": "jalka",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "jalka"
+      "icon": "body"
     },
     {
       "id": "tummy",
+      "text": "vatsa",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "vatsa"
+      "icon": "body"
     },
     {
       "id": "mouth",
+      "text": "suu",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "suu"
+      "icon": "body"
     },
     {
       "id": "ear",
+      "text": "korva",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "korva"
+      "icon": "body"
     },
     {
       "id": "eye",
+      "text": "silmä",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "silmä"
+      "icon": "body"
     },
     {
       "id": "arm",
+      "text": "käsi",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "käsi"
+      "icon": "body"
     },
     {
       "id": "leg",
+      "text": "jalka",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "jalka"
+      "icon": "body"
     },
     {
       "id": "back",
+      "text": "selkä",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "selkä"
+      "icon": "body"
     },
     {
       "id": "tooth",
+      "text": "hammas",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "hammas"
+      "icon": "body"
     },
     {
       "id": "hair",
+      "text": "hiukset",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "hiukset"
+      "icon": "body"
     },
     {
       "id": "nose",
+      "text": "nenä",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "nenä"
+      "icon": "body"
     },
     {
       "id": "skin",
+      "text": "iho",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "iho"
+      "icon": "body"
     },
     {
       "id": "heart",
+      "text": "sydän",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "sydän"
+      "icon": "body"
     },
     {
       "id": "home",
+      "text": "koti",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "koti"
+      "icon": "home"
     },
     {
       "id": "school",
+      "text": "koulu",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "koulu"
+      "icon": "home"
     },
     {
       "id": "classroom",
+      "text": "luokka",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "luokka"
+      "icon": "home"
     },
     {
       "id": "bathroom",
+      "text": "kylpyhuone",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "kylpyhuone"
+      "icon": "home"
     },
     {
       "id": "kitchen",
+      "text": "keittiö",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "keittiö"
+      "icon": "home"
     },
     {
       "id": "bedroom",
+      "text": "makuuhuone",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "makuuhuone"
+      "icon": "home"
     },
     {
       "id": "garden",
+      "text": "puutarha",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "puutarha"
+      "icon": "home"
     },
     {
       "id": "shop",
+      "text": "kauppa",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "kauppa"
+      "icon": "home"
     },
     {
       "id": "car",
+      "text": "auto",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "auto"
+      "icon": "home"
     },
     {
       "id": "bus",
+      "text": "bussi",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "bussi"
+      "icon": "home"
     },
     {
       "id": "park",
+      "text": "puisto",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "puisto"
+      "icon": "home"
     },
     {
       "id": "playground",
+      "text": "leikkipuisto",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "leikkipuisto"
+      "icon": "home"
     },
     {
       "id": "library",
+      "text": "kirjasto",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "kirjasto"
+      "icon": "home"
     },
     {
       "id": "pool",
+      "text": "uima-allas",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "uima-allas"
+      "icon": "home"
     },
     {
       "id": "table",
+      "text": "pöytä",
       "pos": "noun",
       "category": "home",
       "frequency": 7,
-      "icon": "home",
-      "text": "pöytä"
+      "icon": "home"
     },
     {
       "id": "chair",
+      "text": "tuoli",
       "pos": "noun",
       "category": "home",
       "frequency": 7,
-      "icon": "home",
-      "text": "tuoli"
+      "icon": "home"
     },
     {
       "id": "sofa",
+      "text": "sohva",
       "pos": "noun",
       "category": "home",
       "frequency": 7,
-      "icon": "home",
-      "text": "sohva"
+      "icon": "home"
     },
     {
       "id": "bed",
+      "text": "sänky",
       "pos": "noun",
       "category": "home",
       "frequency": 7,
-      "icon": "home",
-      "text": "sänky"
+      "icon": "home"
     },
     {
       "id": "door",
+      "text": "ovi",
       "pos": "noun",
       "category": "home",
       "frequency": 7,
-      "icon": "home",
-      "text": "ovi"
+      "icon": "home"
     },
     {
       "id": "window",
+      "text": "ikkuna",
       "pos": "noun",
       "category": "home",
       "frequency": 7,
-      "icon": "home",
-      "text": "ikkuna"
+      "icon": "home"
     },
     {
       "id": "book",
+      "text": "kirja",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "kirja"
+      "icon": "book"
     },
     {
       "id": "pencil",
+      "text": "kynä",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "kynä"
+      "icon": "book"
     },
     {
       "id": "paper",
+      "text": "paperi",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "paperi"
+      "icon": "book"
     },
     {
       "id": "bag",
+      "text": "laukku",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "laukku"
+      "icon": "book"
     },
     {
       "id": "coat",
+      "text": "takki",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "takki"
+      "icon": "book"
     },
     {
       "id": "shoes",
+      "text": "kengät",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "kengät"
+      "icon": "book"
     },
     {
       "id": "lunchbox",
+      "text": "eväsrasia",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "eväsrasia"
+      "icon": "book"
     },
     {
       "id": "tablet",
+      "text": "tabletti",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "tabletti"
+      "icon": "book"
     },
     {
       "id": "screen",
+      "text": "näyttö",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "näyttö"
+      "icon": "book"
     },
     {
       "id": "timer",
+      "text": "ajastin",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "ajastin"
+      "icon": "book"
     },
     {
       "id": "schedule",
+      "text": "aikataulu",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "aikataulu"
+      "icon": "book"
     },
     {
       "id": "picture",
+      "text": "kuva",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "kuva"
+      "icon": "book"
     },
     {
       "id": "card",
+      "text": "kortti",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "kortti"
+      "icon": "book"
     },
     {
       "id": "story",
+      "text": "tarina",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "tarina"
+      "icon": "book"
     },
     {
       "id": "music",
+      "text": "musiikki",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "musiikki"
+      "icon": "book"
     },
     {
       "id": "ball",
+      "text": "pallo",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "pallo"
+      "icon": "puzzle"
     },
     {
       "id": "blocks",
+      "text": "palikat",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "palikat"
+      "icon": "puzzle"
     },
     {
       "id": "doll",
+      "text": "nukke",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "nukke"
+      "icon": "puzzle"
     },
     {
       "id": "car-toy",
+      "text": "leluauto",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "leluauto"
+      "icon": "puzzle"
     },
     {
       "id": "train",
+      "text": "juna",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "juna"
+      "icon": "puzzle"
     },
     {
       "id": "puzzle",
+      "text": "palapeli",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "palapeli"
+      "icon": "puzzle"
     },
     {
       "id": "game",
+      "text": "peli",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "peli"
+      "icon": "puzzle"
     },
     {
       "id": "paint",
+      "text": "maali",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "maali"
+      "icon": "puzzle"
     },
     {
       "id": "clay",
+      "text": "muovailuvaha",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "muovailuvaha"
+      "icon": "puzzle"
     },
     {
       "id": "bubbles",
+      "text": "kuplat",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "kuplat"
+      "icon": "puzzle"
     },
     {
       "id": "swing",
+      "text": "keinu",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "keinu"
+      "icon": "puzzle"
     },
     {
       "id": "slide",
+      "text": "liukumäki",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "liukumäki"
+      "icon": "puzzle"
     },
     {
       "id": "bike",
+      "text": "pyörä",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "pyörä"
+      "icon": "puzzle"
     },
     {
       "id": "teddy",
+      "text": "nalle",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "nalle"
+      "icon": "puzzle"
     },
     {
       "id": "lego",
+      "text": "lego",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "lego"
+      "icon": "puzzle"
     },
     {
       "id": "red",
+      "text": "punainen",
       "pos": "adjective",
       "category": "colors",
       "frequency": 5,
-      "icon": "palette",
-      "text": "punainen"
+      "icon": "palette"
     },
     {
       "id": "blue",
+      "text": "sininen",
       "pos": "adjective",
       "category": "colors",
       "frequency": 5,
-      "icon": "palette",
-      "text": "sininen"
+      "icon": "palette"
     },
     {
       "id": "green",
+      "text": "vihreä",
       "pos": "adjective",
       "category": "colors",
       "frequency": 5,
-      "icon": "palette",
-      "text": "vihreä"
+      "icon": "palette"
     },
     {
       "id": "yellow",
+      "text": "keltainen",
       "pos": "adjective",
       "category": "colors",
       "frequency": 5,
-      "icon": "palette",
-      "text": "keltainen"
+      "icon": "palette"
     },
     {
       "id": "orange",
+      "text": "oranssi",
       "pos": "adjective",
       "category": "colors",
       "frequency": 5,
-      "icon": "palette",
-      "text": "oranssi"
+      "icon": "palette"
     },
     {
       "id": "purple",
+      "text": "violetti",
       "pos": "adjective",
       "category": "colors",
       "frequency": 5,
-      "icon": "palette",
-      "text": "violetti"
+      "icon": "palette"
     },
     {
       "id": "pink",
+      "text": "vaaleanpunainen",
       "pos": "adjective",
       "category": "colors",
       "frequency": 5,
-      "icon": "palette",
-      "text": "vaaleanpunainen"
+      "icon": "palette"
     },
     {
       "id": "brown",
+      "text": "ruskea",
       "pos": "adjective",
       "category": "colors",
       "frequency": 5,
-      "icon": "palette",
-      "text": "ruskea"
+      "icon": "palette"
     },
     {
       "id": "black",
+      "text": "musta",
       "pos": "adjective",
       "category": "colors",
       "frequency": 5,
-      "icon": "palette",
-      "text": "musta"
+      "icon": "palette"
     },
     {
       "id": "white",
+      "text": "valkoinen",
       "pos": "adjective",
       "category": "colors",
       "frequency": 5,
-      "icon": "palette",
-      "text": "valkoinen"
+      "icon": "palette"
     },
     {
       "id": "grey",
+      "text": "harmaa",
       "pos": "adjective",
       "category": "colors",
       "frequency": 5,
-      "icon": "palette",
-      "text": "harmaa"
+      "icon": "palette"
     },
     {
       "id": "bright",
+      "text": "kirkas",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "kirkas"
+      "icon": "palette"
     },
     {
       "id": "dark",
+      "text": "tumma",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "tumma"
+      "icon": "palette"
     },
     {
       "id": "soft",
+      "text": "pehmeä",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "pehmeä"
+      "icon": "palette"
     },
     {
       "id": "hard",
+      "text": "kova",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "kova"
+      "icon": "palette"
     },
     {
       "id": "quiet",
+      "text": "hiljainen",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "hiljainen"
+      "icon": "palette"
     },
     {
       "id": "loud",
+      "text": "kova",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "kova"
+      "icon": "palette"
     },
     {
       "id": "fast",
+      "text": "nopea",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "nopea"
+      "icon": "palette"
     },
     {
       "id": "slow",
+      "text": "hidas",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "hidas"
+      "icon": "palette"
     },
     {
       "id": "clean",
+      "text": "puhdas",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "puhdas"
+      "icon": "palette"
     },
     {
       "id": "dirty",
+      "text": "likainen",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "likainen"
+      "icon": "palette"
     },
     {
       "id": "wet",
+      "text": "märkä",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "märkä"
+      "icon": "palette"
     },
     {
       "id": "dry",
+      "text": "kuiva",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "kuiva"
+      "icon": "palette"
     },
     {
       "id": "new",
+      "text": "uusi",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "uusi"
+      "icon": "palette"
     },
     {
       "id": "old",
+      "text": "vanha",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "vanha"
+      "icon": "palette"
     },
     {
       "id": "now",
+      "text": "nyt",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "nyt"
+      "icon": "clock"
     },
     {
       "id": "later",
+      "text": "myöhemmin",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "myöhemmin"
+      "icon": "clock"
     },
     {
       "id": "today",
+      "text": "tänään",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "tänään"
+      "icon": "clock"
     },
     {
       "id": "tomorrow",
+      "text": "huomenna",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "huomenna"
+      "icon": "clock"
     },
     {
       "id": "morning",
+      "text": "aamu",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "aamu"
+      "icon": "clock"
     },
     {
       "id": "afternoon",
+      "text": "iltapäivä",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "iltapäivä"
+      "icon": "clock"
     },
     {
       "id": "night",
+      "text": "yö",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "yö"
+      "icon": "clock"
     },
     {
       "id": "before",
+      "text": "ennen",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "ennen"
+      "icon": "clock"
     },
     {
       "id": "after",
+      "text": "jälkeen",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "jälkeen"
+      "icon": "clock"
     },
     {
       "id": "soon",
+      "text": "pian",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "pian"
+      "icon": "clock"
     },
     {
       "id": "first",
+      "text": "ensin",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "ensin"
+      "icon": "clock"
     },
     {
       "id": "next",
+      "text": "seuraava",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "seuraava"
+      "icon": "clock"
     },
     {
       "id": "last",
+      "text": "viimeinen",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "viimeinen"
+      "icon": "clock"
     },
     {
       "id": "minute",
+      "text": "minuutti",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "minuutti"
+      "icon": "clock"
     },
     {
       "id": "hour",
+      "text": "tunti",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "tunti"
+      "icon": "clock"
     },
     {
       "id": "break",
+      "text": "tauko",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "tauko"
+      "icon": "heart-hand"
     },
     {
       "id": "quiet-time",
+      "text": "hiljainen hetki",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "hiljainen hetki"
+      "icon": "heart-hand"
     },
     {
       "id": "hug",
+      "text": "halaus",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "halaus"
+      "icon": "heart-hand"
     },
     {
       "id": "space",
+      "text": "tila",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "tila"
+      "icon": "heart-hand"
     },
     {
       "id": "toilet",
+      "text": "vessa",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "vessa"
+      "icon": "heart-hand"
     },
     {
       "id": "medicine",
+      "text": "lääke",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "lääke"
+      "icon": "heart-hand"
     },
     {
       "id": "light",
+      "text": "valo",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "valo"
+      "icon": "heart-hand"
     },
     {
       "id": "dark-2",
+      "text": "pimeys",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "pimeys"
+      "icon": "heart-hand"
     },
     {
       "id": "noise",
+      "text": "melu",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "melu"
+      "icon": "heart-hand"
     },
     {
       "id": "headphones",
+      "text": "kuulokkeet",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "kuulokkeet"
+      "icon": "heart-hand"
     },
     {
       "id": "blanket",
+      "text": "peitto",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "peitto"
+      "icon": "heart-hand"
     },
     {
       "id": "charger",
+      "text": "laturi",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "laturi"
+      "icon": "heart-hand"
     },
     {
       "id": "choice",
+      "text": "valinta",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "valinta"
+      "icon": "heart-hand"
     },
     {
       "id": "turn",
+      "text": "vuoro",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "vuoro"
+      "icon": "heart-hand"
     },
     {
       "id": "help-please",
+      "text": "apua kiitos",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "apua kiitos"
+      "icon": "heart-hand"
     },
     {
       "id": "different",
+      "text": "erilainen",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "erilainen"
+      "icon": "sparkles"
     },
     {
       "id": "same",
+      "text": "sama",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "sama"
+      "icon": "sparkles"
     },
     {
       "id": "easy",
+      "text": "helppo",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "helppo"
+      "icon": "sparkles"
     },
     {
       "id": "harder",
+      "text": "vaikeampi",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "vaikeampi"
+      "icon": "sparkles"
     },
     {
       "id": "favorite",
+      "text": "lempi",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "lempi"
+      "icon": "sparkles"
     },
     {
       "id": "missing",
+      "text": "puuttuu",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "puuttuu"
+      "icon": "sparkles"
     },
     {
       "id": "broken",
+      "text": "rikki",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "rikki"
+      "icon": "sparkles"
     },
     {
       "id": "ready",
+      "text": "valmis",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "valmis"
+      "icon": "sparkles"
     },
     {
       "id": "busy",
+      "text": "kiireinen",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "kiireinen"
+      "icon": "sparkles"
     },
     {
       "id": "empty",
+      "text": "tyhjä",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "tyhjä"
+      "icon": "sparkles"
     },
     {
       "id": "full",
+      "text": "täysi",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "täysi"
+      "icon": "sparkles"
     },
     {
       "id": "small",
+      "text": "pieni",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "pieni"
+      "icon": "sparkles"
     },
     {
       "id": "tall",
+      "text": "pitkä",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "pitkä"
+      "icon": "sparkles"
     },
     {
       "id": "short",
+      "text": "lyhyt",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "lyhyt"
+      "icon": "sparkles"
     },
     {
       "id": "round",
+      "text": "pyöreä",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "pyöreä"
+      "icon": "sparkles"
     },
     {
       "id": "square",
+      "text": "neliö",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "neliö"
+      "icon": "sparkles"
     },
     {
       "id": "kind",
+      "text": "kiltti",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "kiltti"
+      "icon": "sparkles"
     },
     {
       "id": "gentle",
+      "text": "lempeä",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "lempeä"
+      "icon": "sparkles"
     },
     {
       "id": "careful",
+      "text": "varovainen",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "varovainen"
+      "icon": "sparkles"
     },
     {
       "id": "safe-place",
+      "text": "turvallinen paikka",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "turvallinen paikka"
+      "icon": "sparkles"
     }
   ],
   "templates": [
@@ -3134,7 +3067,5 @@
         "ei"
       ]
     }
-  },
-  "source": "generated",
-  "reviewStatus": "needs-native-review"
+  }
 }

@@ -168,10 +168,7 @@
       "pos": "verb",
       "category": "actions",
       "frequency": 10,
-      "icon": "play",
-      "inflections": {
-        "past": "ridt"
-      }
+      "icon": "play"
     },
     {
       "id": "need",
@@ -179,10 +176,7 @@
       "pos": "verb",
       "category": "actions",
       "frequency": 10,
-      "icon": "play",
-      "inflections": {
-        "past": "kelli bżonn"
-      }
+      "icon": "play"
     },
     {
       "id": "like",
@@ -190,10 +184,7 @@
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "ħabbejt"
-      }
+      "icon": "play"
     },
     {
       "id": "feel",
@@ -201,10 +192,7 @@
       "pos": "verb",
       "category": "actions",
       "frequency": 10,
-      "icon": "play",
-      "inflections": {
-        "past": "ħassejtni"
-      }
+      "icon": "play"
     },
     {
       "id": "see",
@@ -212,10 +200,7 @@
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "rajt"
-      }
+      "icon": "play"
     },
     {
       "id": "hear",
@@ -223,10 +208,7 @@
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "smajt"
-      }
+      "icon": "play"
     },
     {
       "id": "have",
@@ -234,10 +216,7 @@
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "kelli"
-      }
+      "icon": "play"
     },
     {
       "id": "go",
@@ -253,10 +232,7 @@
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "ġejt"
-      }
+      "icon": "play"
     },
     {
       "id": "play",
@@ -264,10 +240,7 @@
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "lgħabt"
-      }
+      "icon": "play"
     },
     {
       "id": "read",
@@ -275,10 +248,7 @@
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "qrajt"
-      }
+      "icon": "play"
     },
     {
       "id": "draw",
@@ -286,10 +256,7 @@
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "pinġejt"
-      }
+      "icon": "play"
     },
     {
       "id": "eat",
@@ -329,10 +296,7 @@
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "imxejt"
-      }
+      "icon": "play"
     },
     {
       "id": "run",
@@ -348,10 +312,7 @@
       "pos": "verb",
       "category": "actions",
       "frequency": 10,
-      "icon": "play",
-      "inflections": {
-        "past": "waqaft"
-      }
+      "icon": "play"
     },
     {
       "id": "start",
@@ -359,10 +320,7 @@
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "bdejt"
-      }
+      "icon": "play"
     },
     {
       "id": "wait",
@@ -370,10 +328,7 @@
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "stennejt"
-      }
+      "icon": "play"
     },
     {
       "id": "help",
@@ -381,10 +336,7 @@
       "pos": "verb",
       "category": "actions",
       "frequency": 10,
-      "icon": "play",
-      "inflections": {
-        "past": "għent"
-      }
+      "icon": "play"
     },
     {
       "id": "choose",
@@ -392,10 +344,7 @@
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "għażilt"
-      }
+      "icon": "play"
     },
     {
       "id": "open",
@@ -403,10 +352,7 @@
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "ftaħt"
-      }
+      "icon": "play"
     },
     {
       "id": "close",
@@ -414,10 +360,7 @@
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "għalaqt"
-      }
+      "icon": "play"
     },
     {
       "id": "wash",
@@ -425,10 +368,7 @@
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "ħsilt"
-      }
+      "icon": "play"
     },
     {
       "id": "sleep",
@@ -444,10 +384,7 @@
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "strieħt"
-      }
+      "icon": "play"
     },
     {
       "id": "try",
@@ -455,10 +392,7 @@
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "ippruvajt"
-      }
+      "icon": "play"
     },
     {
       "id": "talk",
@@ -466,10 +400,7 @@
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "tkellimt"
-      }
+      "icon": "play"
     },
     {
       "id": "yes",

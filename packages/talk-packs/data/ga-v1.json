@@ -1,2435 +1,2368 @@
 {
   "locale": "ga",
   "version": 1,
+  "source": "generated",
+  "reviewStatus": "needs-native-review",
   "words": [
     {
       "id": "i",
+      "text": "mé",
       "pos": "pronoun",
       "category": "people",
       "frequency": 10,
-      "icon": "user",
-      "text": "mé"
+      "icon": "user"
     },
     {
       "id": "you",
+      "text": "tú",
       "pos": "pronoun",
       "category": "people",
       "frequency": 10,
-      "icon": "user",
-      "text": "tú"
+      "icon": "user"
     },
     {
       "id": "we",
+      "text": "muid",
       "pos": "pronoun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "muid"
+      "icon": "user"
     },
     {
       "id": "me",
+      "text": "mé",
       "pos": "pronoun",
       "category": "people",
       "frequency": 10,
-      "icon": "user",
-      "text": "mé"
+      "icon": "user"
     },
     {
       "id": "my",
+      "text": "mo",
       "pos": "pronoun",
       "category": "people",
       "frequency": 10,
-      "icon": "user",
-      "text": "mo"
+      "icon": "user"
     },
     {
       "id": "your",
+      "text": "do",
       "pos": "pronoun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "do"
+      "icon": "user"
     },
     {
       "id": "he",
+      "text": "sé",
       "pos": "pronoun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "sé"
+      "icon": "user"
     },
     {
       "id": "she",
+      "text": "sí",
       "pos": "pronoun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "sí"
+      "icon": "user"
     },
     {
       "id": "they",
+      "text": "siad",
       "pos": "pronoun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "siad"
+      "icon": "user"
     },
     {
       "id": "mum",
+      "text": "mamaí",
       "pos": "noun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "mamaí"
+      "icon": "user"
     },
     {
       "id": "dad",
+      "text": "daidí",
       "pos": "noun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "daidí"
+      "icon": "user"
     },
     {
       "id": "teacher",
+      "text": "múinteoir",
       "pos": "noun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "múinteoir"
+      "icon": "user"
     },
     {
       "id": "friend",
+      "text": "cara",
       "pos": "noun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "cara"
+      "icon": "user"
     },
     {
       "id": "brother",
+      "text": "deartháir",
       "pos": "noun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "deartháir"
+      "icon": "user"
     },
     {
       "id": "sister",
+      "text": "deirfiúr",
       "pos": "noun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "deirfiúr"
+      "icon": "user"
     },
     {
       "id": "grandma",
+      "text": "mamó",
       "pos": "noun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "mamó"
+      "icon": "user"
     },
     {
       "id": "grandpa",
+      "text": "daideo",
       "pos": "noun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "daideo"
+      "icon": "user"
     },
     {
       "id": "helper",
+      "text": "cúntóir",
       "pos": "noun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "cúntóir"
+      "icon": "user"
     },
     {
       "id": "doctor",
+      "text": "dochtúir",
       "pos": "noun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "dochtúir"
+      "icon": "user"
     },
     {
       "id": "class",
+      "text": "rang",
       "pos": "noun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "rang"
+      "icon": "user"
     },
     {
       "id": "want",
+      "text": "ag iarraidh",
       "pos": "verb",
       "category": "actions",
       "frequency": 10,
-      "icon": "play",
-      "inflections": {
-        "past": "wanted"
-      },
-      "text": "ag iarraidh"
+      "icon": "play"
     },
     {
       "id": "need",
+      "text": "ag teastáil",
       "pos": "verb",
       "category": "actions",
       "frequency": 10,
-      "icon": "play",
-      "inflections": {
-        "past": "needed"
-      },
-      "text": "ag teastáil"
+      "icon": "play"
     },
     {
       "id": "like",
+      "text": "is maith liom",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "likeed"
-      },
-      "text": "is maith liom"
+      "icon": "play"
     },
     {
       "id": "feel",
+      "text": "ag mothú",
       "pos": "verb",
       "category": "actions",
       "frequency": 10,
-      "icon": "play",
-      "inflections": {
-        "past": "feeled"
-      },
-      "text": "ag mothú"
+      "icon": "play"
     },
     {
       "id": "see",
+      "text": "ag feiceáil",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "seeed"
-      },
-      "text": "ag feiceáil"
+      "icon": "play"
     },
     {
       "id": "hear",
+      "text": "ag cloisteáil",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "heared"
-      },
-      "text": "ag cloisteáil"
+      "icon": "play"
     },
     {
       "id": "have",
+      "text": "agam",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "haveed"
-      },
-      "text": "agam"
+      "icon": "play"
     },
     {
       "id": "go",
+      "text": "ag dul",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "text": "ag dul"
+      "icon": "play"
     },
     {
       "id": "come",
+      "text": "ag teacht",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "comeed"
-      },
-      "text": "ag teacht"
+      "icon": "play"
     },
     {
       "id": "play",
+      "text": "ag imirt",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "played"
-      },
-      "text": "ag imirt"
+      "icon": "play"
     },
     {
       "id": "read",
+      "text": "ag léamh",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "readed"
-      },
-      "text": "ag léamh"
+      "icon": "play"
     },
     {
       "id": "draw",
+      "text": "ag tarraingt",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "drawed"
-      },
-      "text": "ag tarraingt"
+      "icon": "play"
     },
     {
       "id": "eat",
+      "text": "ag ithe",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "text": "ag ithe"
+      "icon": "play"
     },
     {
       "id": "drink",
+      "text": "ag ól",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "text": "ag ól"
+      "icon": "play"
     },
     {
       "id": "sit",
+      "text": "ag suí",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "text": "ag suí"
+      "icon": "play"
     },
     {
       "id": "stand",
+      "text": "ag seasamh",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "text": "ag seasamh"
+      "icon": "play"
     },
     {
       "id": "walk",
+      "text": "ag siúl",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "walked"
-      },
-      "text": "ag siúl"
+      "icon": "play"
     },
     {
       "id": "run",
+      "text": "ag rith",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "text": "ag rith"
+      "icon": "play"
     },
     {
       "id": "stop",
+      "text": "ag stopadh",
       "pos": "verb",
       "category": "actions",
       "frequency": 10,
-      "icon": "play",
-      "inflections": {
-        "past": "stoped"
-      },
-      "text": "ag stopadh"
+      "icon": "play"
     },
     {
       "id": "start",
+      "text": "ag tosú",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "started"
-      },
-      "text": "ag tosú"
+      "icon": "play"
     },
     {
       "id": "wait",
+      "text": "ag fanacht",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "waited"
-      },
-      "text": "ag fanacht"
+      "icon": "play"
     },
     {
       "id": "help",
+      "text": "ag cabhrú",
       "pos": "verb",
       "category": "actions",
       "frequency": 10,
-      "icon": "play",
-      "inflections": {
-        "past": "helped"
-      },
-      "text": "ag cabhrú"
+      "icon": "play"
     },
     {
       "id": "choose",
+      "text": "ag roghnú",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "chooseed"
-      },
-      "text": "ag roghnú"
+      "icon": "play"
     },
     {
       "id": "open",
+      "text": "ag oscailt",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "opened"
-      },
-      "text": "ag oscailt"
+      "icon": "play"
     },
     {
       "id": "close",
+      "text": "ag dúnadh",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "closeed"
-      },
-      "text": "ag dúnadh"
+      "icon": "play"
     },
     {
       "id": "wash",
+      "text": "ag ní",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "washed"
-      },
-      "text": "ag ní"
+      "icon": "play"
     },
     {
       "id": "sleep",
+      "text": "ag codladh",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "text": "ag codladh"
+      "icon": "play"
     },
     {
       "id": "rest",
+      "text": "ag ligean scíthe",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "rested"
-      },
-      "text": "ag ligean scíthe"
+      "icon": "play"
     },
     {
       "id": "try",
+      "text": "ag iarraidh",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "tryed"
-      },
-      "text": "ag iarraidh"
+      "icon": "play"
     },
     {
       "id": "talk",
+      "text": "ag caint",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "talked"
-      },
-      "text": "ag caint"
+      "icon": "play"
     },
     {
       "id": "yes",
+      "text": "sea",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "sea"
+      "icon": "chat-bubble"
     },
     {
       "id": "no",
+      "text": "níl",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "níl"
+      "icon": "chat-bubble"
     },
     {
       "id": "please",
+      "text": "le do thoil",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "le do thoil"
+      "icon": "chat-bubble"
     },
     {
       "id": "thank-you",
+      "text": "go raibh maith agat",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "go raibh maith agat"
+      "icon": "chat-bubble"
     },
     {
       "id": "sorry",
+      "text": "tá brón orm",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "tá brón orm"
+      "icon": "chat-bubble"
     },
     {
       "id": "hello",
+      "text": "dia duit",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "dia duit"
+      "icon": "chat-bubble"
     },
     {
       "id": "goodbye",
+      "text": "slán",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "slán"
+      "icon": "chat-bubble"
     },
     {
       "id": "more",
+      "text": "níos mó",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "níos mó"
+      "icon": "chat-bubble"
     },
     {
       "id": "all-done",
+      "text": "críochnaithe",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "críochnaithe"
+      "icon": "chat-bubble"
     },
     {
       "id": "again",
+      "text": "arís",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "arís"
+      "icon": "chat-bubble"
     },
     {
       "id": "finished",
+      "text": "críochnaithe",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "críochnaithe"
+      "icon": "chat-bubble"
     },
     {
       "id": "okay",
+      "text": "ceart go leor",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "ceart go leor"
+      "icon": "chat-bubble"
     },
     {
       "id": "not-yet",
+      "text": "níl fós",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "níl fós"
+      "icon": "chat-bubble"
     },
     {
       "id": "maybe",
+      "text": "b’fhéidir",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "b’fhéidir"
+      "icon": "chat-bubble"
     },
     {
       "id": "what",
+      "text": "cad",
       "pos": "question",
       "category": "questions",
       "frequency": 8,
-      "icon": "question-circle",
-      "text": "cad"
+      "icon": "question-circle"
     },
     {
       "id": "where",
+      "text": "cá",
       "pos": "question",
       "category": "questions",
       "frequency": 8,
-      "icon": "question-circle",
-      "text": "cá"
+      "icon": "question-circle"
     },
     {
       "id": "who",
+      "text": "cé",
       "pos": "question",
       "category": "questions",
       "frequency": 8,
-      "icon": "question-circle",
-      "text": "cé"
+      "icon": "question-circle"
     },
     {
       "id": "when",
+      "text": "cathain",
       "pos": "question",
       "category": "questions",
       "frequency": 8,
-      "icon": "question-circle",
-      "text": "cathain"
+      "icon": "question-circle"
     },
     {
       "id": "why",
+      "text": "cén fáth",
       "pos": "question",
       "category": "questions",
       "frequency": 8,
-      "icon": "question-circle",
-      "text": "cén fáth"
+      "icon": "question-circle"
     },
     {
       "id": "which",
+      "text": "cén",
       "pos": "question",
       "category": "questions",
       "frequency": 8,
-      "icon": "question-circle",
-      "text": "cén"
+      "icon": "question-circle"
     },
     {
       "id": "how",
+      "text": "conas",
       "pos": "question",
       "category": "questions",
       "frequency": 8,
-      "icon": "question-circle",
-      "text": "conas"
+      "icon": "question-circle"
     },
     {
       "id": "can",
+      "text": "is féidir liom",
       "pos": "question",
       "category": "questions",
       "frequency": 8,
-      "icon": "question-circle",
-      "text": "is féidir liom"
+      "icon": "question-circle"
     },
     {
       "id": "is",
+      "text": "tá",
       "pos": "question",
       "category": "questions",
       "frequency": 8,
-      "icon": "question-circle",
-      "text": "tá"
+      "icon": "question-circle"
     },
     {
       "id": "are",
+      "text": "tá",
       "pos": "question",
       "category": "questions",
       "frequency": 8,
-      "icon": "question-circle",
-      "text": "tá"
+      "icon": "question-circle"
     },
     {
       "id": "a",
+      "text": "ceann",
       "pos": "determiner",
       "category": "helpers",
       "frequency": 8,
-      "icon": "text",
-      "text": "ceann"
+      "icon": "text"
     },
     {
       "id": "the",
+      "text": "an",
       "pos": "determiner",
       "category": "helpers",
       "frequency": 8,
-      "icon": "text",
-      "text": "an"
+      "icon": "text"
     },
     {
       "id": "this",
+      "text": "seo",
       "pos": "determiner",
       "category": "helpers",
       "frequency": 8,
-      "icon": "text",
-      "text": "seo"
+      "icon": "text"
     },
     {
       "id": "that",
+      "text": "sin",
       "pos": "determiner",
       "category": "helpers",
       "frequency": 8,
-      "icon": "text",
-      "text": "sin"
+      "icon": "text"
     },
     {
       "id": "some",
+      "text": "roinnt",
       "pos": "determiner",
       "category": "helpers",
       "frequency": 8,
-      "icon": "text",
-      "text": "roinnt"
+      "icon": "text"
     },
     {
       "id": "one",
+      "text": "ceann",
       "pos": "determiner",
       "category": "helpers",
       "frequency": 8,
-      "icon": "text",
-      "text": "ceann"
+      "icon": "text"
     },
     {
       "id": "two",
+      "text": "dhá",
       "pos": "determiner",
       "category": "helpers",
       "frequency": 8,
-      "icon": "text",
-      "text": "dhá"
+      "icon": "text"
     },
     {
       "id": "three",
+      "text": "trí",
       "pos": "determiner",
       "category": "helpers",
       "frequency": 8,
-      "icon": "text",
-      "text": "trí"
+      "icon": "text"
     },
     {
       "id": "many",
+      "text": "go leor",
       "pos": "determiner",
       "category": "helpers",
       "frequency": 8,
-      "icon": "text",
-      "text": "go leor"
+      "icon": "text"
     },
     {
       "id": "little",
+      "text": "beagán",
       "pos": "determiner",
       "category": "helpers",
       "frequency": 8,
-      "icon": "text",
-      "text": "beagán"
+      "icon": "text"
     },
     {
       "id": "big",
+      "text": "mór",
       "pos": "determiner",
       "category": "helpers",
       "frequency": 8,
-      "icon": "text",
-      "text": "mór"
+      "icon": "text"
     },
     {
       "id": "in",
+      "text": "i",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "i"
+      "icon": "arrow-right"
     },
     {
       "id": "on",
+      "text": "ar",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "ar"
+      "icon": "arrow-right"
     },
     {
       "id": "under",
+      "text": "faoi",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "faoi"
+      "icon": "arrow-right"
     },
     {
       "id": "next-to",
+      "text": "in aice",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "in aice"
+      "icon": "arrow-right"
     },
     {
       "id": "with",
+      "text": "le",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "le"
+      "icon": "arrow-right"
     },
     {
       "id": "without",
+      "text": "gan",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "gan"
+      "icon": "arrow-right"
     },
     {
       "id": "to",
+      "text": "chuig",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "chuig"
+      "icon": "arrow-right"
     },
     {
       "id": "from",
+      "text": "ó",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "ó"
+      "icon": "arrow-right"
     },
     {
       "id": "inside",
+      "text": "istigh",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "istigh"
+      "icon": "arrow-right"
     },
     {
       "id": "outside",
+      "text": "amuigh",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "amuigh"
+      "icon": "arrow-right"
     },
     {
       "id": "near",
+      "text": "in aice",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "in aice"
+      "icon": "arrow-right"
     },
     {
       "id": "far",
+      "text": "i bhfad",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "i bhfad"
+      "icon": "arrow-right"
     },
     {
       "id": "and",
+      "text": "agus",
       "pos": "conjunction",
       "category": "helpers",
       "frequency": 6,
-      "icon": "branch",
-      "text": "agus"
+      "icon": "branch"
     },
     {
       "id": "or",
+      "text": "nó",
       "pos": "conjunction",
       "category": "helpers",
       "frequency": 6,
-      "icon": "branch",
-      "text": "nó"
+      "icon": "branch"
     },
     {
       "id": "because",
+      "text": "mar",
       "pos": "conjunction",
       "category": "helpers",
       "frequency": 6,
-      "icon": "branch",
-      "text": "mar"
+      "icon": "branch"
     },
     {
       "id": "then",
+      "text": "ansin",
       "pos": "conjunction",
       "category": "helpers",
       "frequency": 6,
-      "icon": "branch",
-      "text": "ansin"
+      "icon": "branch"
     },
     {
       "id": "but",
+      "text": "ach",
       "pos": "conjunction",
       "category": "helpers",
       "frequency": 6,
-      "icon": "branch",
-      "text": "ach"
+      "icon": "branch"
     },
     {
       "id": "water",
+      "text": "uisce",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "uisce"
+      "icon": "water"
     },
     {
       "id": "milk",
+      "text": "bainne",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "bainne"
+      "icon": "water"
     },
     {
       "id": "juice",
+      "text": "sú",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "sú"
+      "icon": "water"
     },
     {
       "id": "tea",
+      "text": "tae",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "tae"
+      "icon": "water"
     },
     {
       "id": "smoothie",
+      "text": "smoothie",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "smoothie"
+      "icon": "water"
     },
     {
       "id": "lemonade",
+      "text": "liomanáid",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "liomanáid"
+      "icon": "water"
     },
     {
       "id": "hot-drink",
+      "text": "deoch te",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "deoch te"
+      "icon": "water"
     },
     {
       "id": "cold-drink",
+      "text": "deoch fhuar",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "deoch fhuar"
+      "icon": "water"
     },
     {
       "id": "cup",
+      "text": "cupán",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "cupán"
+      "icon": "water"
     },
     {
       "id": "straw",
+      "text": "cána",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "cána"
+      "icon": "water"
     },
     {
       "id": "bottle",
+      "text": "buidéal",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "buidéal"
+      "icon": "water"
     },
     {
       "id": "sip",
+      "text": "bolgam",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "bolgam"
+      "icon": "water"
     },
     {
       "id": "apple",
+      "text": "úll",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "úll"
+      "icon": "apple"
     },
     {
       "id": "banana",
+      "text": "banana",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "banana"
+      "icon": "apple"
     },
     {
       "id": "bread",
+      "text": "arán",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "arán"
+      "icon": "apple"
     },
     {
       "id": "toast",
+      "text": "tósta",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "tósta"
+      "icon": "apple"
     },
     {
       "id": "sandwich",
+      "text": "ceapaire",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "ceapaire"
+      "icon": "apple"
     },
     {
       "id": "rice",
+      "text": "rís",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "rís"
+      "icon": "apple"
     },
     {
       "id": "pasta",
+      "text": "pasta",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "pasta"
+      "icon": "apple"
     },
     {
       "id": "soup",
+      "text": "anraith",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "anraith"
+      "icon": "apple"
     },
     {
       "id": "yogurt",
+      "text": "iógart",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "iógart"
+      "icon": "apple"
     },
     {
       "id": "cheese",
+      "text": "cáis",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "cáis"
+      "icon": "apple"
     },
     {
       "id": "cracker",
+      "text": "craicear",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "craicear"
+      "icon": "apple"
     },
     {
       "id": "carrot",
+      "text": "cairéad",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "cairéad"
+      "icon": "apple"
     },
     {
       "id": "chips",
+      "text": "sceallóga",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "sceallóga"
+      "icon": "apple"
     },
     {
       "id": "cookie",
+      "text": "briosca",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "briosca"
+      "icon": "apple"
     },
     {
       "id": "egg",
+      "text": "ubh",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "ubh"
+      "icon": "apple"
     },
     {
       "id": "cereal",
+      "text": "gránach",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "gránach"
+      "icon": "apple"
     },
     {
       "id": "fruit",
+      "text": "toradh",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "toradh"
+      "icon": "apple"
     },
     {
       "id": "snack",
+      "text": "sneaic",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "sneaic"
+      "icon": "apple"
     },
     {
       "id": "dinner",
+      "text": "dinnéar",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "dinnéar"
+      "icon": "apple"
     },
     {
       "id": "lunch",
+      "text": "lón",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "lón"
+      "icon": "apple"
     },
     {
       "id": "happy",
+      "text": "sásta",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "sásta"
+      "icon": "smile"
     },
     {
       "id": "sad",
+      "text": "brónach",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "brónach"
+      "icon": "smile"
     },
     {
       "id": "angry",
+      "text": "feargach",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "feargach"
+      "icon": "smile"
     },
     {
       "id": "worried",
+      "text": "buartha",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "buartha"
+      "icon": "smile"
     },
     {
       "id": "scared",
+      "text": "eaglach",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "eaglach"
+      "icon": "smile"
     },
     {
       "id": "tired",
+      "text": "tuirseach",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "tuirseach"
+      "icon": "smile"
     },
     {
       "id": "sick",
+      "text": "tinn",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "tinn"
+      "icon": "smile"
     },
     {
       "id": "hurt",
+      "text": "gortaithe",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "gortaithe"
+      "icon": "smile"
     },
     {
       "id": "calm",
+      "text": "socair",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "socair"
+      "icon": "smile"
     },
     {
       "id": "excited",
+      "text": "corraithe",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "corraithe"
+      "icon": "smile"
     },
     {
       "id": "confused",
+      "text": "trína chéile",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "trína chéile"
+      "icon": "smile"
     },
     {
       "id": "proud",
+      "text": "bródúil",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "bródúil"
+      "icon": "smile"
     },
     {
       "id": "lonely",
+      "text": "uaigneach",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "uaigneach"
+      "icon": "smile"
     },
     {
       "id": "bored",
+      "text": "leamh",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "leamh"
+      "icon": "smile"
     },
     {
       "id": "safe",
+      "text": "sábháilte",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "sábháilte"
+      "icon": "smile"
     },
     {
       "id": "upset",
+      "text": "trína chéile",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "trína chéile"
+      "icon": "smile"
     },
     {
       "id": "okay-2",
+      "text": "ceart go leor",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "ceart go leor"
+      "icon": "smile"
     },
     {
       "id": "hot",
+      "text": "te",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "te"
+      "icon": "smile"
     },
     {
       "id": "cold",
+      "text": "fuar",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "fuar"
+      "icon": "smile"
     },
     {
       "id": "hungry",
+      "text": "ocras",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "ocras"
+      "icon": "smile"
     },
     {
       "id": "thirsty",
+      "text": "tart",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "tart"
+      "icon": "smile"
     },
     {
       "id": "head",
+      "text": "ceann",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "ceann"
+      "icon": "body"
     },
     {
       "id": "hand",
+      "text": "lámh",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "lámh"
+      "icon": "body"
     },
     {
       "id": "foot",
+      "text": "cos",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "cos"
+      "icon": "body"
     },
     {
       "id": "tummy",
+      "text": "bolg",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "bolg"
+      "icon": "body"
     },
     {
       "id": "mouth",
+      "text": "béal",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "béal"
+      "icon": "body"
     },
     {
       "id": "ear",
+      "text": "cluas",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "cluas"
+      "icon": "body"
     },
     {
       "id": "eye",
+      "text": "súil",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "súil"
+      "icon": "body"
     },
     {
       "id": "arm",
+      "text": "lámh",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "lámh"
+      "icon": "body"
     },
     {
       "id": "leg",
+      "text": "cos",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "cos"
+      "icon": "body"
     },
     {
       "id": "back",
+      "text": "droim",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "droim"
+      "icon": "body"
     },
     {
       "id": "tooth",
+      "text": "fiacail",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "fiacail"
+      "icon": "body"
     },
     {
       "id": "hair",
+      "text": "gruaig",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "gruaig"
+      "icon": "body"
     },
     {
       "id": "nose",
+      "text": "srón",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "srón"
+      "icon": "body"
     },
     {
       "id": "skin",
+      "text": "craiceann",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "craiceann"
+      "icon": "body"
     },
     {
       "id": "heart",
+      "text": "croí",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "croí"
+      "icon": "body"
     },
     {
       "id": "home",
+      "text": "baile",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "baile"
+      "icon": "home"
     },
     {
       "id": "school",
+      "text": "scoil",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "scoil"
+      "icon": "home"
     },
     {
       "id": "classroom",
+      "text": "seomra ranga",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "seomra ranga"
+      "icon": "home"
     },
     {
       "id": "bathroom",
+      "text": "seomra folctha",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "seomra folctha"
+      "icon": "home"
     },
     {
       "id": "kitchen",
+      "text": "cistin",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "cistin"
+      "icon": "home"
     },
     {
       "id": "bedroom",
+      "text": "seomra leapa",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "seomra leapa"
+      "icon": "home"
     },
     {
       "id": "garden",
+      "text": "gairdín",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "gairdín"
+      "icon": "home"
     },
     {
       "id": "shop",
+      "text": "siopa",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "siopa"
+      "icon": "home"
     },
     {
       "id": "car",
+      "text": "carr",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "carr"
+      "icon": "home"
     },
     {
       "id": "bus",
+      "text": "bus",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "bus"
+      "icon": "home"
     },
     {
       "id": "park",
+      "text": "páirc",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "páirc"
+      "icon": "home"
     },
     {
       "id": "playground",
+      "text": "clós súgradh",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "clós súgradh"
+      "icon": "home"
     },
     {
       "id": "library",
+      "text": "leabharlann",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "leabharlann"
+      "icon": "home"
     },
     {
       "id": "pool",
+      "text": "linn snámha",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "linn snámha"
+      "icon": "home"
     },
     {
       "id": "table",
+      "text": "bord",
       "pos": "noun",
       "category": "home",
       "frequency": 7,
-      "icon": "home",
-      "text": "bord"
+      "icon": "home"
     },
     {
       "id": "chair",
+      "text": "cathaoir",
       "pos": "noun",
       "category": "home",
       "frequency": 7,
-      "icon": "home",
-      "text": "cathaoir"
+      "icon": "home"
     },
     {
       "id": "sofa",
+      "text": "tolg",
       "pos": "noun",
       "category": "home",
       "frequency": 7,
-      "icon": "home",
-      "text": "tolg"
+      "icon": "home"
     },
     {
       "id": "bed",
+      "text": "leaba",
       "pos": "noun",
       "category": "home",
       "frequency": 7,
-      "icon": "home",
-      "text": "leaba"
+      "icon": "home"
     },
     {
       "id": "door",
+      "text": "doras",
       "pos": "noun",
       "category": "home",
       "frequency": 7,
-      "icon": "home",
-      "text": "doras"
+      "icon": "home"
     },
     {
       "id": "window",
+      "text": "fuinneog",
       "pos": "noun",
       "category": "home",
       "frequency": 7,
-      "icon": "home",
-      "text": "fuinneog"
+      "icon": "home"
     },
     {
       "id": "book",
+      "text": "leabhar",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "leabhar"
+      "icon": "book"
     },
     {
       "id": "pencil",
+      "text": "peann luaidhe",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "peann luaidhe"
+      "icon": "book"
     },
     {
       "id": "paper",
+      "text": "páipéar",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "páipéar"
+      "icon": "book"
     },
     {
       "id": "bag",
+      "text": "mála",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "mála"
+      "icon": "book"
     },
     {
       "id": "coat",
+      "text": "cóta",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "cóta"
+      "icon": "book"
     },
     {
       "id": "shoes",
+      "text": "bróga",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "bróga"
+      "icon": "book"
     },
     {
       "id": "lunchbox",
+      "text": "bosca lóin",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "bosca lóin"
+      "icon": "book"
     },
     {
       "id": "tablet",
+      "text": "táibléad",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "táibléad"
+      "icon": "book"
     },
     {
       "id": "screen",
+      "text": "scáileán",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "scáileán"
+      "icon": "book"
     },
     {
       "id": "timer",
+      "text": "uaireadóir",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "uaireadóir"
+      "icon": "book"
     },
     {
       "id": "schedule",
+      "text": "clár ama",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "clár ama"
+      "icon": "book"
     },
     {
       "id": "picture",
+      "text": "pictiúr",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "pictiúr"
+      "icon": "book"
     },
     {
       "id": "card",
+      "text": "cárta",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "cárta"
+      "icon": "book"
     },
     {
       "id": "story",
+      "text": "scéal",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "scéal"
+      "icon": "book"
     },
     {
       "id": "music",
+      "text": "ceol",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "ceol"
+      "icon": "book"
     },
     {
       "id": "ball",
+      "text": "liathróid",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "liathróid"
+      "icon": "puzzle"
     },
     {
       "id": "blocks",
+      "text": "bloic",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "bloic"
+      "icon": "puzzle"
     },
     {
       "id": "doll",
+      "text": "bábóg",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "bábóg"
+      "icon": "puzzle"
     },
     {
       "id": "car-toy",
+      "text": "carr bréagáin",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "carr bréagáin"
+      "icon": "puzzle"
     },
     {
       "id": "train",
+      "text": "traein",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "traein"
+      "icon": "puzzle"
     },
     {
       "id": "puzzle",
+      "text": "puzal",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "puzal"
+      "icon": "puzzle"
     },
     {
       "id": "game",
+      "text": "cluiche",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "cluiche"
+      "icon": "puzzle"
     },
     {
       "id": "paint",
+      "text": "péint",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "péint"
+      "icon": "puzzle"
     },
     {
       "id": "clay",
+      "text": "cré",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "cré"
+      "icon": "puzzle"
     },
     {
       "id": "bubbles",
+      "text": "boilgeoga",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "boilgeoga"
+      "icon": "puzzle"
     },
     {
       "id": "swing",
+      "text": "suíomh",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "suíomh"
+      "icon": "puzzle"
     },
     {
       "id": "slide",
+      "text": "sleamhnán",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "sleamhnán"
+      "icon": "puzzle"
     },
     {
       "id": "bike",
+      "text": "rothar",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "rothar"
+      "icon": "puzzle"
     },
     {
       "id": "teddy",
+      "text": "béirín",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "béirín"
+      "icon": "puzzle"
     },
     {
       "id": "lego",
+      "text": "lego",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "lego"
+      "icon": "puzzle"
     },
     {
       "id": "red",
+      "text": "dearg",
       "pos": "adjective",
       "category": "colors",
       "frequency": 5,
-      "icon": "palette",
-      "text": "dearg"
+      "icon": "palette"
     },
     {
       "id": "blue",
+      "text": "gorm",
       "pos": "adjective",
       "category": "colors",
       "frequency": 5,
-      "icon": "palette",
-      "text": "gorm"
+      "icon": "palette"
     },
     {
       "id": "green",
+      "text": "glas",
       "pos": "adjective",
       "category": "colors",
       "frequency": 5,
-      "icon": "palette",
-      "text": "glas"
+      "icon": "palette"
     },
     {
       "id": "yellow",
+      "text": "buí",
       "pos": "adjective",
       "category": "colors",
       "frequency": 5,
-      "icon": "palette",
-      "text": "buí"
+      "icon": "palette"
     },
     {
       "id": "orange",
+      "text": "oráiste",
       "pos": "adjective",
       "category": "colors",
       "frequency": 5,
-      "icon": "palette",
-      "text": "oráiste"
+      "icon": "palette"
     },
     {
       "id": "purple",
+      "text": "corcra",
       "pos": "adjective",
       "category": "colors",
       "frequency": 5,
-      "icon": "palette",
-      "text": "corcra"
+      "icon": "palette"
     },
     {
       "id": "pink",
+      "text": "bándearg",
       "pos": "adjective",
       "category": "colors",
       "frequency": 5,
-      "icon": "palette",
-      "text": "bándearg"
+      "icon": "palette"
     },
     {
       "id": "brown",
+      "text": "donn",
       "pos": "adjective",
       "category": "colors",
       "frequency": 5,
-      "icon": "palette",
-      "text": "donn"
+      "icon": "palette"
     },
     {
       "id": "black",
+      "text": "dubh",
       "pos": "adjective",
       "category": "colors",
       "frequency": 5,
-      "icon": "palette",
-      "text": "dubh"
+      "icon": "palette"
     },
     {
       "id": "white",
+      "text": "bán",
       "pos": "adjective",
       "category": "colors",
       "frequency": 5,
-      "icon": "palette",
-      "text": "bán"
+      "icon": "palette"
     },
     {
       "id": "grey",
+      "text": "liath",
       "pos": "adjective",
       "category": "colors",
       "frequency": 5,
-      "icon": "palette",
-      "text": "liath"
+      "icon": "palette"
     },
     {
       "id": "bright",
+      "text": "geal",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "geal"
+      "icon": "palette"
     },
     {
       "id": "dark",
+      "text": "dorcha",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "dorcha"
+      "icon": "palette"
     },
     {
       "id": "soft",
+      "text": "bog",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "bog"
+      "icon": "palette"
     },
     {
       "id": "hard",
+      "text": "crua",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "crua"
+      "icon": "palette"
     },
     {
       "id": "quiet",
+      "text": "ciúin",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "ciúin"
+      "icon": "palette"
     },
     {
       "id": "loud",
+      "text": "ard",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "ard"
+      "icon": "palette"
     },
     {
       "id": "fast",
+      "text": "tapa",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "tapa"
+      "icon": "palette"
     },
     {
       "id": "slow",
+      "text": "mall",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "mall"
+      "icon": "palette"
     },
     {
       "id": "clean",
+      "text": "glan",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "glan"
+      "icon": "palette"
     },
     {
       "id": "dirty",
+      "text": "salach",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "salach"
+      "icon": "palette"
     },
     {
       "id": "wet",
+      "text": "fliuch",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "fliuch"
+      "icon": "palette"
     },
     {
       "id": "dry",
+      "text": "tirim",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "tirim"
+      "icon": "palette"
     },
     {
       "id": "new",
+      "text": "nua",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "nua"
+      "icon": "palette"
     },
     {
       "id": "old",
+      "text": "sean",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "sean"
+      "icon": "palette"
     },
     {
       "id": "now",
+      "text": "anois",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "anois"
+      "icon": "clock"
     },
     {
       "id": "later",
+      "text": "níos déanaí",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "níos déanaí"
+      "icon": "clock"
     },
     {
       "id": "today",
+      "text": "inniu",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "inniu"
+      "icon": "clock"
     },
     {
       "id": "tomorrow",
+      "text": "amárach",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "amárach"
+      "icon": "clock"
     },
     {
       "id": "morning",
+      "text": "maidin",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "maidin"
+      "icon": "clock"
     },
     {
       "id": "afternoon",
+      "text": "tráthnóna",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "tráthnóna"
+      "icon": "clock"
     },
     {
       "id": "night",
+      "text": "oíche",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "oíche"
+      "icon": "clock"
     },
     {
       "id": "before",
+      "text": "roimh",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "roimh"
+      "icon": "clock"
     },
     {
       "id": "after",
+      "text": "tar éis",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "tar éis"
+      "icon": "clock"
     },
     {
       "id": "soon",
+      "text": "go luath",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "go luath"
+      "icon": "clock"
     },
     {
       "id": "first",
+      "text": "ar dtús",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "ar dtús"
+      "icon": "clock"
     },
     {
       "id": "next",
+      "text": "ar aghaidh",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "ar aghaidh"
+      "icon": "clock"
     },
     {
       "id": "last",
+      "text": "deireanach",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "deireanach"
+      "icon": "clock"
     },
     {
       "id": "minute",
+      "text": "nóiméad",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "nóiméad"
+      "icon": "clock"
     },
     {
       "id": "hour",
+      "text": "uair",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "uair"
+      "icon": "clock"
     },
     {
       "id": "break",
+      "text": "sos",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "sos"
+      "icon": "heart-hand"
     },
     {
       "id": "quiet-time",
+      "text": "am ciúin",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "am ciúin"
+      "icon": "heart-hand"
     },
     {
       "id": "hug",
+      "text": "barróg",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "barróg"
+      "icon": "heart-hand"
     },
     {
       "id": "space",
+      "text": "spás",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "spás"
+      "icon": "heart-hand"
     },
     {
       "id": "toilet",
+      "text": "leithreas",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "leithreas"
+      "icon": "heart-hand"
     },
     {
       "id": "medicine",
+      "text": "cógas",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "cógas"
+      "icon": "heart-hand"
     },
     {
       "id": "light",
+      "text": "solas",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "solas"
+      "icon": "heart-hand"
     },
     {
       "id": "dark-2",
+      "text": "dorchadas",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "dorchadas"
+      "icon": "heart-hand"
     },
     {
       "id": "noise",
+      "text": "torann",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "torann"
+      "icon": "heart-hand"
     },
     {
       "id": "headphones",
+      "text": "cluasáin",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "cluasáin"
+      "icon": "heart-hand"
     },
     {
       "id": "blanket",
+      "text": "blaincéad",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "blaincéad"
+      "icon": "heart-hand"
     },
     {
       "id": "charger",
+      "text": "luchtaire",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "luchtaire"
+      "icon": "heart-hand"
     },
     {
       "id": "choice",
+      "text": "rogha",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "rogha"
+      "icon": "heart-hand"
     },
     {
       "id": "turn",
+      "text": "seal",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "seal"
+      "icon": "heart-hand"
     },
     {
       "id": "help-please",
+      "text": "cabhraigh liom le do thoil",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "cabhraigh liom le do thoil"
+      "icon": "heart-hand"
     },
     {
       "id": "different",
+      "text": "difriúil",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "difriúil"
+      "icon": "sparkles"
     },
     {
       "id": "same",
+      "text": "céanna",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "céanna"
+      "icon": "sparkles"
     },
     {
       "id": "easy",
+      "text": "furasta",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "furasta"
+      "icon": "sparkles"
     },
     {
       "id": "harder",
+      "text": "níos deacra",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "níos deacra"
+      "icon": "sparkles"
     },
     {
       "id": "favorite",
+      "text": "is fearr",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "is fearr"
+      "icon": "sparkles"
     },
     {
       "id": "missing",
+      "text": "ar iarraidh",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "ar iarraidh"
+      "icon": "sparkles"
     },
     {
       "id": "broken",
+      "text": "briste",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "briste"
+      "icon": "sparkles"
     },
     {
       "id": "ready",
+      "text": "réidh",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "réidh"
+      "icon": "sparkles"
     },
     {
       "id": "busy",
+      "text": "gnóthach",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "gnóthach"
+      "icon": "sparkles"
     },
     {
       "id": "empty",
+      "text": "folamh",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "folamh"
+      "icon": "sparkles"
     },
     {
       "id": "full",
+      "text": "lán",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "lán"
+      "icon": "sparkles"
     },
     {
       "id": "small",
+      "text": "beag",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "beag"
+      "icon": "sparkles"
     },
     {
       "id": "tall",
+      "text": "ard",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "ard"
+      "icon": "sparkles"
     },
     {
       "id": "short",
+      "text": "gearr",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "gearr"
+      "icon": "sparkles"
     },
     {
       "id": "round",
+      "text": "cruinn",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "cruinn"
+      "icon": "sparkles"
     },
     {
       "id": "square",
+      "text": "cearnóg",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "cearnóg"
+      "icon": "sparkles"
     },
     {
       "id": "kind",
+      "text": "cineálta",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "cineálta"
+      "icon": "sparkles"
     },
     {
       "id": "gentle",
+      "text": "séimh",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "séimh"
+      "icon": "sparkles"
     },
     {
       "id": "careful",
+      "text": "cúramach",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "cúramach"
+      "icon": "sparkles"
     },
     {
       "id": "safe-place",
+      "text": "áit shábháilte",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "áit shábháilte"
+      "icon": "sparkles"
     }
   ],
   "templates": [
@@ -3128,7 +3061,5 @@
         "ní"
       ]
     }
-  },
-  "source": "generated",
-  "reviewStatus": "needs-native-review"
+  }
 }

@@ -1,2435 +1,2368 @@
 {
   "locale": "pap",
   "version": 1,
+  "source": "generated",
+  "reviewStatus": "needs-native-review",
   "words": [
     {
       "id": "i",
+      "text": "mi",
       "pos": "pronoun",
       "category": "people",
       "frequency": 10,
-      "icon": "user",
-      "text": "mi"
+      "icon": "user"
     },
     {
       "id": "you",
+      "text": "bo",
       "pos": "pronoun",
       "category": "people",
       "frequency": 10,
-      "icon": "user",
-      "text": "bo"
+      "icon": "user"
     },
     {
       "id": "we",
+      "text": "nos",
       "pos": "pronoun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "nos"
+      "icon": "user"
     },
     {
       "id": "me",
+      "text": "mi",
       "pos": "pronoun",
       "category": "people",
       "frequency": 10,
-      "icon": "user",
-      "text": "mi"
+      "icon": "user"
     },
     {
       "id": "my",
+      "text": "mi",
       "pos": "pronoun",
       "category": "people",
       "frequency": 10,
-      "icon": "user",
-      "text": "mi"
+      "icon": "user"
     },
     {
       "id": "your",
+      "text": "bo",
       "pos": "pronoun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "bo"
+      "icon": "user"
     },
     {
       "id": "he",
+      "text": "e",
       "pos": "pronoun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "e"
+      "icon": "user"
     },
     {
       "id": "she",
+      "text": "e",
       "pos": "pronoun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "e"
+      "icon": "user"
     },
     {
       "id": "they",
+      "text": "nan",
       "pos": "pronoun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "nan"
+      "icon": "user"
     },
     {
       "id": "mum",
+      "text": "mama",
       "pos": "noun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "mama"
+      "icon": "user"
     },
     {
       "id": "dad",
+      "text": "tata",
       "pos": "noun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "tata"
+      "icon": "user"
     },
     {
       "id": "teacher",
+      "text": "dosente",
       "pos": "noun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "dosente"
+      "icon": "user"
     },
     {
       "id": "friend",
+      "text": "amigu",
       "pos": "noun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "amigu"
+      "icon": "user"
     },
     {
       "id": "brother",
+      "text": "ruman",
       "pos": "noun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "ruman"
+      "icon": "user"
     },
     {
       "id": "sister",
+      "text": "ruman muhé",
       "pos": "noun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "ruman muhé"
+      "icon": "user"
     },
     {
       "id": "grandma",
+      "text": "wela",
       "pos": "noun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "wela"
+      "icon": "user"
     },
     {
       "id": "grandpa",
+      "text": "welo",
       "pos": "noun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "welo"
+      "icon": "user"
     },
     {
       "id": "helper",
+      "text": "yudansa",
       "pos": "noun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "yudansa"
+      "icon": "user"
     },
     {
       "id": "doctor",
+      "text": "dòkter",
       "pos": "noun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "dòkter"
+      "icon": "user"
     },
     {
       "id": "class",
+      "text": "klas",
       "pos": "noun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "klas"
+      "icon": "user"
     },
     {
       "id": "want",
+      "text": "ke",
       "pos": "verb",
       "category": "actions",
       "frequency": 10,
-      "icon": "play",
-      "inflections": {
-        "past": "wanted"
-      },
-      "text": "ke"
+      "icon": "play"
     },
     {
       "id": "need",
+      "text": "mester",
       "pos": "verb",
       "category": "actions",
       "frequency": 10,
-      "icon": "play",
-      "inflections": {
-        "past": "needed"
-      },
-      "text": "mester"
+      "icon": "play"
     },
     {
       "id": "like",
+      "text": "gusta",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "likeed"
-      },
-      "text": "gusta"
+      "icon": "play"
     },
     {
       "id": "feel",
+      "text": "sinti",
       "pos": "verb",
       "category": "actions",
       "frequency": 10,
-      "icon": "play",
-      "inflections": {
-        "past": "feeled"
-      },
-      "text": "sinti"
+      "icon": "play"
     },
     {
       "id": "see",
+      "text": "mira",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "seeed"
-      },
-      "text": "mira"
+      "icon": "play"
     },
     {
       "id": "hear",
+      "text": "tende",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "heared"
-      },
-      "text": "tende"
+      "icon": "play"
     },
     {
       "id": "have",
+      "text": "tin",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "haveed"
-      },
-      "text": "tin"
+      "icon": "play"
     },
     {
       "id": "go",
+      "text": "bai",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "text": "bai"
+      "icon": "play"
     },
     {
       "id": "come",
+      "text": "bini",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "comeed"
-      },
-      "text": "bini"
+      "icon": "play"
     },
     {
       "id": "play",
+      "text": "hunga",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "played"
-      },
-      "text": "hunga"
+      "icon": "play"
     },
     {
       "id": "read",
+      "text": "lesa",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "readed"
-      },
-      "text": "lesa"
+      "icon": "play"
     },
     {
       "id": "draw",
+      "text": "dibuhá",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "drawed"
-      },
-      "text": "dibuhá"
+      "icon": "play"
     },
     {
       "id": "eat",
+      "text": "kome",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "text": "kome"
+      "icon": "play"
     },
     {
       "id": "drink",
+      "text": "bebe",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "text": "bebe"
+      "icon": "play"
     },
     {
       "id": "sit",
+      "text": "sinta",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "text": "sinta"
+      "icon": "play"
     },
     {
       "id": "stand",
+      "text": "lanta",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "text": "lanta"
+      "icon": "play"
     },
     {
       "id": "walk",
+      "text": "kana",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "walked"
-      },
-      "text": "kana"
+      "icon": "play"
     },
     {
       "id": "run",
+      "text": "kore",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "text": "kore"
+      "icon": "play"
     },
     {
       "id": "stop",
+      "text": "stòp",
       "pos": "verb",
       "category": "actions",
       "frequency": 10,
-      "icon": "play",
-      "inflections": {
-        "past": "stoped"
-      },
-      "text": "stòp"
+      "icon": "play"
     },
     {
       "id": "start",
+      "text": "kuminsá",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "started"
-      },
-      "text": "kuminsá"
+      "icon": "play"
     },
     {
       "id": "wait",
+      "text": "warda",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "waited"
-      },
-      "text": "warda"
+      "icon": "play"
     },
     {
       "id": "help",
+      "text": "yuda",
       "pos": "verb",
       "category": "actions",
       "frequency": 10,
-      "icon": "play",
-      "inflections": {
-        "past": "helped"
-      },
-      "text": "yuda"
+      "icon": "play"
     },
     {
       "id": "choose",
+      "text": "skohe",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "chooseed"
-      },
-      "text": "skohe"
+      "icon": "play"
     },
     {
       "id": "open",
+      "text": "habri",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "opened"
-      },
-      "text": "habri"
+      "icon": "play"
     },
     {
       "id": "close",
+      "text": "sera",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "closeed"
-      },
-      "text": "sera"
+      "icon": "play"
     },
     {
       "id": "wash",
+      "text": "laba",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "washed"
-      },
-      "text": "laba"
+      "icon": "play"
     },
     {
       "id": "sleep",
+      "text": "drumi",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "text": "drumi"
+      "icon": "play"
     },
     {
       "id": "rest",
+      "text": "sosegá",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "rested"
-      },
-      "text": "sosegá"
+      "icon": "play"
     },
     {
       "id": "try",
+      "text": "purba",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "tryed"
-      },
-      "text": "purba"
+      "icon": "play"
     },
     {
       "id": "talk",
+      "text": "papia",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "talked"
-      },
-      "text": "papia"
+      "icon": "play"
     },
     {
       "id": "yes",
+      "text": "sí",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "sí"
+      "icon": "chat-bubble"
     },
     {
       "id": "no",
+      "text": "nò",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "nò"
+      "icon": "chat-bubble"
     },
     {
       "id": "please",
+      "text": "por fabor",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "por fabor"
+      "icon": "chat-bubble"
     },
     {
       "id": "thank-you",
+      "text": "danki",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "danki"
+      "icon": "chat-bubble"
     },
     {
       "id": "sorry",
+      "text": "dispensá",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "dispensá"
+      "icon": "chat-bubble"
     },
     {
       "id": "hello",
+      "text": "bon dia",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "bon dia"
+      "icon": "chat-bubble"
     },
     {
       "id": "goodbye",
+      "text": "ayó",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "ayó"
+      "icon": "chat-bubble"
     },
     {
       "id": "more",
+      "text": "mas",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "mas"
+      "icon": "chat-bubble"
     },
     {
       "id": "all-done",
+      "text": "kaba",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "kaba"
+      "icon": "chat-bubble"
     },
     {
       "id": "again",
+      "text": "atrobe",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "atrobe"
+      "icon": "chat-bubble"
     },
     {
       "id": "finished",
+      "text": "kaba",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "kaba"
+      "icon": "chat-bubble"
     },
     {
       "id": "okay",
+      "text": "bon",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "bon"
+      "icon": "chat-bubble"
     },
     {
       "id": "not-yet",
+      "text": "ainda nò",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "ainda nò"
+      "icon": "chat-bubble"
     },
     {
       "id": "maybe",
+      "text": "kisas",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "kisas"
+      "icon": "chat-bubble"
     },
     {
       "id": "what",
+      "text": "kiko",
       "pos": "question",
       "category": "questions",
       "frequency": 8,
-      "icon": "question-circle",
-      "text": "kiko"
+      "icon": "question-circle"
     },
     {
       "id": "where",
+      "text": "unda",
       "pos": "question",
       "category": "questions",
       "frequency": 8,
-      "icon": "question-circle",
-      "text": "unda"
+      "icon": "question-circle"
     },
     {
       "id": "who",
+      "text": "ken",
       "pos": "question",
       "category": "questions",
       "frequency": 8,
-      "icon": "question-circle",
-      "text": "ken"
+      "icon": "question-circle"
     },
     {
       "id": "when",
+      "text": "ki ora",
       "pos": "question",
       "category": "questions",
       "frequency": 8,
-      "icon": "question-circle",
-      "text": "ki ora"
+      "icon": "question-circle"
     },
     {
       "id": "why",
+      "text": "pakiko",
       "pos": "question",
       "category": "questions",
       "frequency": 8,
-      "icon": "question-circle",
-      "text": "pakiko"
+      "icon": "question-circle"
     },
     {
       "id": "which",
+      "text": "kua",
       "pos": "question",
       "category": "questions",
       "frequency": 8,
-      "icon": "question-circle",
-      "text": "kua"
+      "icon": "question-circle"
     },
     {
       "id": "how",
+      "text": "kon",
       "pos": "question",
       "category": "questions",
       "frequency": 8,
-      "icon": "question-circle",
-      "text": "kon"
+      "icon": "question-circle"
     },
     {
       "id": "can",
+      "text": "por",
       "pos": "question",
       "category": "questions",
       "frequency": 8,
-      "icon": "question-circle",
-      "text": "por"
+      "icon": "question-circle"
     },
     {
       "id": "is",
+      "text": "ta",
       "pos": "question",
       "category": "questions",
       "frequency": 8,
-      "icon": "question-circle",
-      "text": "ta"
+      "icon": "question-circle"
     },
     {
       "id": "are",
+      "text": "ta",
       "pos": "question",
       "category": "questions",
       "frequency": 8,
-      "icon": "question-circle",
-      "text": "ta"
+      "icon": "question-circle"
     },
     {
       "id": "a",
+      "text": "un",
       "pos": "determiner",
       "category": "helpers",
       "frequency": 8,
-      "icon": "text",
-      "text": "un"
+      "icon": "text"
     },
     {
       "id": "the",
+      "text": "e",
       "pos": "determiner",
       "category": "helpers",
       "frequency": 8,
-      "icon": "text",
-      "text": "e"
+      "icon": "text"
     },
     {
       "id": "this",
+      "text": "esaki",
       "pos": "determiner",
       "category": "helpers",
       "frequency": 8,
-      "icon": "text",
-      "text": "esaki"
+      "icon": "text"
     },
     {
       "id": "that",
+      "text": "esei",
       "pos": "determiner",
       "category": "helpers",
       "frequency": 8,
-      "icon": "text",
-      "text": "esei"
+      "icon": "text"
     },
     {
       "id": "some",
+      "text": "algu",
       "pos": "determiner",
       "category": "helpers",
       "frequency": 8,
-      "icon": "text",
-      "text": "algu"
+      "icon": "text"
     },
     {
       "id": "one",
+      "text": "un",
       "pos": "determiner",
       "category": "helpers",
       "frequency": 8,
-      "icon": "text",
-      "text": "un"
+      "icon": "text"
     },
     {
       "id": "two",
+      "text": "dos",
       "pos": "determiner",
       "category": "helpers",
       "frequency": 8,
-      "icon": "text",
-      "text": "dos"
+      "icon": "text"
     },
     {
       "id": "three",
+      "text": "tres",
       "pos": "determiner",
       "category": "helpers",
       "frequency": 8,
-      "icon": "text",
-      "text": "tres"
+      "icon": "text"
     },
     {
       "id": "many",
+      "text": "hopi",
       "pos": "determiner",
       "category": "helpers",
       "frequency": 8,
-      "icon": "text",
-      "text": "hopi"
+      "icon": "text"
     },
     {
       "id": "little",
+      "text": "poko",
       "pos": "determiner",
       "category": "helpers",
       "frequency": 8,
-      "icon": "text",
-      "text": "poko"
+      "icon": "text"
     },
     {
       "id": "big",
+      "text": "grandi",
       "pos": "determiner",
       "category": "helpers",
       "frequency": 8,
-      "icon": "text",
-      "text": "grandi"
+      "icon": "text"
     },
     {
       "id": "in",
+      "text": "den",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "den"
+      "icon": "arrow-right"
     },
     {
       "id": "on",
+      "text": "riba",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "riba"
+      "icon": "arrow-right"
     },
     {
       "id": "under",
+      "text": "bou",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "bou"
+      "icon": "arrow-right"
     },
     {
       "id": "next-to",
+      "text": "banda di",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "banda di"
+      "icon": "arrow-right"
     },
     {
       "id": "with",
+      "text": "ku",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "ku"
+      "icon": "arrow-right"
     },
     {
       "id": "without",
+      "text": "sin",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "sin"
+      "icon": "arrow-right"
     },
     {
       "id": "to",
+      "text": "na",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "na"
+      "icon": "arrow-right"
     },
     {
       "id": "from",
+      "text": "for di",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "for di"
+      "icon": "arrow-right"
     },
     {
       "id": "inside",
+      "text": "paden",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "paden"
+      "icon": "arrow-right"
     },
     {
       "id": "outside",
+      "text": "pafó",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "pafó"
+      "icon": "arrow-right"
     },
     {
       "id": "near",
+      "text": "serka",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "serka"
+      "icon": "arrow-right"
     },
     {
       "id": "far",
+      "text": "leu",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "leu"
+      "icon": "arrow-right"
     },
     {
       "id": "and",
+      "text": "i",
       "pos": "conjunction",
       "category": "helpers",
       "frequency": 6,
-      "icon": "branch",
-      "text": "i"
+      "icon": "branch"
     },
     {
       "id": "or",
+      "text": "of",
       "pos": "conjunction",
       "category": "helpers",
       "frequency": 6,
-      "icon": "branch",
-      "text": "of"
+      "icon": "branch"
     },
     {
       "id": "because",
+      "text": "pasobra",
       "pos": "conjunction",
       "category": "helpers",
       "frequency": 6,
-      "icon": "branch",
-      "text": "pasobra"
+      "icon": "branch"
     },
     {
       "id": "then",
+      "text": "anto",
       "pos": "conjunction",
       "category": "helpers",
       "frequency": 6,
-      "icon": "branch",
-      "text": "anto"
+      "icon": "branch"
     },
     {
       "id": "but",
+      "text": "ma",
       "pos": "conjunction",
       "category": "helpers",
       "frequency": 6,
-      "icon": "branch",
-      "text": "ma"
+      "icon": "branch"
     },
     {
       "id": "water",
+      "text": "awa",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "awa"
+      "icon": "water"
     },
     {
       "id": "milk",
+      "text": "lechi",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "lechi"
+      "icon": "water"
     },
     {
       "id": "juice",
+      "text": "jus",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "jus"
+      "icon": "water"
     },
     {
       "id": "tea",
+      "text": "te",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "te"
+      "icon": "water"
     },
     {
       "id": "smoothie",
+      "text": "smoothie",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "smoothie"
+      "icon": "water"
     },
     {
       "id": "lemonade",
+      "text": "limonada",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "limonada"
+      "icon": "water"
     },
     {
       "id": "hot-drink",
+      "text": "bebida kayente",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "bebida kayente"
+      "icon": "water"
     },
     {
       "id": "cold-drink",
+      "text": "bebida friu",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "bebida friu"
+      "icon": "water"
     },
     {
       "id": "cup",
+      "text": "kònchi",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "kònchi"
+      "icon": "water"
     },
     {
       "id": "straw",
+      "text": "kalki",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "kalki"
+      "icon": "water"
     },
     {
       "id": "bottle",
+      "text": "bòter",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "bòter"
+      "icon": "water"
     },
     {
       "id": "sip",
+      "text": "zonk",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "zonk"
+      "icon": "water"
     },
     {
       "id": "apple",
+      "text": "apel",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "apel"
+      "icon": "apple"
     },
     {
       "id": "banana",
+      "text": "bakoba",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "bakoba"
+      "icon": "apple"
     },
     {
       "id": "bread",
+      "text": "pan",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "pan"
+      "icon": "apple"
     },
     {
       "id": "toast",
+      "text": "pan tostá",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "pan tostá"
+      "icon": "apple"
     },
     {
       "id": "sandwich",
+      "text": "sandwich",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "sandwich"
+      "icon": "apple"
     },
     {
       "id": "rice",
+      "text": "aros",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "aros"
+      "icon": "apple"
     },
     {
       "id": "pasta",
+      "text": "pasta",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "pasta"
+      "icon": "apple"
     },
     {
       "id": "soup",
+      "text": "sòpi",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "sòpi"
+      "icon": "apple"
     },
     {
       "id": "yogurt",
+      "text": "yogurt",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "yogurt"
+      "icon": "apple"
     },
     {
       "id": "cheese",
+      "text": "keshi",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "keshi"
+      "icon": "apple"
     },
     {
       "id": "cracker",
+      "text": "krèkel",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "krèkel"
+      "icon": "apple"
     },
     {
       "id": "carrot",
+      "text": "wortel",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "wortel"
+      "icon": "apple"
     },
     {
       "id": "chips",
+      "text": "chips",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "chips"
+      "icon": "apple"
     },
     {
       "id": "cookie",
+      "text": "kuki",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "kuki"
+      "icon": "apple"
     },
     {
       "id": "egg",
+      "text": "webu",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "webu"
+      "icon": "apple"
     },
     {
       "id": "cereal",
+      "text": "serial",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "serial"
+      "icon": "apple"
     },
     {
       "id": "fruit",
+      "text": "fruta",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "fruta"
+      "icon": "apple"
     },
     {
       "id": "snack",
+      "text": "snak",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "snak"
+      "icon": "apple"
     },
     {
       "id": "dinner",
+      "text": "kuminda di anochi",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "kuminda di anochi"
+      "icon": "apple"
     },
     {
       "id": "lunch",
+      "text": "kuminda di merdia",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "kuminda di merdia"
+      "icon": "apple"
     },
     {
       "id": "happy",
+      "text": "kontentu",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "kontentu"
+      "icon": "smile"
     },
     {
       "id": "sad",
+      "text": "tristu",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "tristu"
+      "icon": "smile"
     },
     {
       "id": "angry",
+      "text": "rabiá",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "rabiá"
+      "icon": "smile"
     },
     {
       "id": "worried",
+      "text": "preokupá",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "preokupá"
+      "icon": "smile"
     },
     {
       "id": "scared",
+      "text": "spantá",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "spantá"
+      "icon": "smile"
     },
     {
       "id": "tired",
+      "text": "kansá",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "kansá"
+      "icon": "smile"
     },
     {
       "id": "sick",
+      "text": "malu",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "malu"
+      "icon": "smile"
     },
     {
       "id": "hurt",
+      "text": "ta duel",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "ta duel"
+      "icon": "smile"
     },
     {
       "id": "calm",
+      "text": "kalmu",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "kalmu"
+      "icon": "smile"
     },
     {
       "id": "excited",
+      "text": "entusiasmá",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "entusiasmá"
+      "icon": "smile"
     },
     {
       "id": "confused",
+      "text": "konfundí",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "konfundí"
+      "icon": "smile"
     },
     {
       "id": "proud",
+      "text": "orguyoso",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "orguyoso"
+      "icon": "smile"
     },
     {
       "id": "lonely",
+      "text": "solitario",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "solitario"
+      "icon": "smile"
     },
     {
       "id": "bored",
+      "text": "fadá",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "fadá"
+      "icon": "smile"
     },
     {
       "id": "safe",
+      "text": "sigur",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "sigur"
+      "icon": "smile"
     },
     {
       "id": "upset",
+      "text": "molestá",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "molestá"
+      "icon": "smile"
     },
     {
       "id": "okay-2",
+      "text": "bon",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "bon"
+      "icon": "smile"
     },
     {
       "id": "hot",
+      "text": "kayente",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "kayente"
+      "icon": "smile"
     },
     {
       "id": "cold",
+      "text": "friu",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "friu"
+      "icon": "smile"
     },
     {
       "id": "hungry",
+      "text": "hamber",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "hamber"
+      "icon": "smile"
     },
     {
       "id": "thirsty",
+      "text": "set",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "set"
+      "icon": "smile"
     },
     {
       "id": "head",
+      "text": "kabes",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "kabes"
+      "icon": "body"
     },
     {
       "id": "hand",
+      "text": "man",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "man"
+      "icon": "body"
     },
     {
       "id": "foot",
+      "text": "pia",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "pia"
+      "icon": "body"
     },
     {
       "id": "tummy",
+      "text": "barika",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "barika"
+      "icon": "body"
     },
     {
       "id": "mouth",
+      "text": "boka",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "boka"
+      "icon": "body"
     },
     {
       "id": "ear",
+      "text": "orea",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "orea"
+      "icon": "body"
     },
     {
       "id": "eye",
+      "text": "wowo",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "wowo"
+      "icon": "body"
     },
     {
       "id": "arm",
+      "text": "brasa",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "brasa"
+      "icon": "body"
     },
     {
       "id": "leg",
+      "text": "pia",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "pia"
+      "icon": "body"
     },
     {
       "id": "back",
+      "text": "lomba",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "lomba"
+      "icon": "body"
     },
     {
       "id": "tooth",
+      "text": "djente",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "djente"
+      "icon": "body"
     },
     {
       "id": "hair",
+      "text": "kabei",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "kabei"
+      "icon": "body"
     },
     {
       "id": "nose",
+      "text": "nanishi",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "nanishi"
+      "icon": "body"
     },
     {
       "id": "skin",
+      "text": "kueru",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "kueru"
+      "icon": "body"
     },
     {
       "id": "heart",
+      "text": "kurason",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "kurason"
+      "icon": "body"
     },
     {
       "id": "home",
+      "text": "kas",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "kas"
+      "icon": "home"
     },
     {
       "id": "school",
+      "text": "skol",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "skol"
+      "icon": "home"
     },
     {
       "id": "classroom",
+      "text": "klas",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "klas"
+      "icon": "home"
     },
     {
       "id": "bathroom",
+      "text": "baño",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "baño"
+      "icon": "home"
     },
     {
       "id": "kitchen",
+      "text": "kushina",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "kushina"
+      "icon": "home"
     },
     {
       "id": "bedroom",
+      "text": "kamber",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "kamber"
+      "icon": "home"
     },
     {
       "id": "garden",
+      "text": "hòfi",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "hòfi"
+      "icon": "home"
     },
     {
       "id": "shop",
+      "text": "tienda",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "tienda"
+      "icon": "home"
     },
     {
       "id": "car",
+      "text": "outo",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "outo"
+      "icon": "home"
     },
     {
       "id": "bus",
+      "text": "bus",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "bus"
+      "icon": "home"
     },
     {
       "id": "park",
+      "text": "parke",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "parke"
+      "icon": "home"
     },
     {
       "id": "playground",
+      "text": "plenchi di hunga",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "plenchi di hunga"
+      "icon": "home"
     },
     {
       "id": "library",
+      "text": "biblioteka",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "biblioteka"
+      "icon": "home"
     },
     {
       "id": "pool",
+      "text": "pisina",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "pisina"
+      "icon": "home"
     },
     {
       "id": "table",
+      "text": "mesa",
       "pos": "noun",
       "category": "home",
       "frequency": 7,
-      "icon": "home",
-      "text": "mesa"
+      "icon": "home"
     },
     {
       "id": "chair",
+      "text": "stul",
       "pos": "noun",
       "category": "home",
       "frequency": 7,
-      "icon": "home",
-      "text": "stul"
+      "icon": "home"
     },
     {
       "id": "sofa",
+      "text": "bank",
       "pos": "noun",
       "category": "home",
       "frequency": 7,
-      "icon": "home",
-      "text": "bank"
+      "icon": "home"
     },
     {
       "id": "bed",
+      "text": "kama",
       "pos": "noun",
       "category": "home",
       "frequency": 7,
-      "icon": "home",
-      "text": "kama"
+      "icon": "home"
     },
     {
       "id": "door",
+      "text": "porta",
       "pos": "noun",
       "category": "home",
       "frequency": 7,
-      "icon": "home",
-      "text": "porta"
+      "icon": "home"
     },
     {
       "id": "window",
+      "text": "bentana",
       "pos": "noun",
       "category": "home",
       "frequency": 7,
-      "icon": "home",
-      "text": "bentana"
+      "icon": "home"
     },
     {
       "id": "book",
+      "text": "buki",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "buki"
+      "icon": "book"
     },
     {
       "id": "pencil",
+      "text": "pòtlot",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "pòtlot"
+      "icon": "book"
     },
     {
       "id": "paper",
+      "text": "papel",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "papel"
+      "icon": "book"
     },
     {
       "id": "bag",
+      "text": "saku",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "saku"
+      "icon": "book"
     },
     {
       "id": "coat",
+      "text": "chaki",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "chaki"
+      "icon": "book"
     },
     {
       "id": "shoes",
+      "text": "sapatu",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "sapatu"
+      "icon": "book"
     },
     {
       "id": "lunchbox",
+      "text": "baki di kuminda",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "baki di kuminda"
+      "icon": "book"
     },
     {
       "id": "tablet",
+      "text": "tablet",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "tablet"
+      "icon": "book"
     },
     {
       "id": "screen",
+      "text": "skèrmu",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "skèrmu"
+      "icon": "book"
     },
     {
       "id": "timer",
+      "text": "oloshi",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "oloshi"
+      "icon": "book"
     },
     {
       "id": "schedule",
+      "text": "orario",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "orario"
+      "icon": "book"
     },
     {
       "id": "picture",
+      "text": "plachi",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "plachi"
+      "icon": "book"
     },
     {
       "id": "card",
+      "text": "kartchi",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "kartchi"
+      "icon": "book"
     },
     {
       "id": "story",
+      "text": "kuenta",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "kuenta"
+      "icon": "book"
     },
     {
       "id": "music",
+      "text": "músika",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "músika"
+      "icon": "book"
     },
     {
       "id": "ball",
+      "text": "bala",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "bala"
+      "icon": "puzzle"
     },
     {
       "id": "blocks",
+      "text": "blòki",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "blòki"
+      "icon": "puzzle"
     },
     {
       "id": "doll",
+      "text": "popchi",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "popchi"
+      "icon": "puzzle"
     },
     {
       "id": "car-toy",
+      "text": "outo di hunga",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "outo di hunga"
+      "icon": "puzzle"
     },
     {
       "id": "train",
+      "text": "trein",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "trein"
+      "icon": "puzzle"
     },
     {
       "id": "puzzle",
+      "text": "puzzle",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "puzzle"
+      "icon": "puzzle"
     },
     {
       "id": "game",
+      "text": "wega",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "wega"
+      "icon": "puzzle"
     },
     {
       "id": "paint",
+      "text": "penta",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "penta"
+      "icon": "puzzle"
     },
     {
       "id": "clay",
+      "text": "klei",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "klei"
+      "icon": "puzzle"
     },
     {
       "id": "bubbles",
+      "text": "bubbelchi",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "bubbelchi"
+      "icon": "puzzle"
     },
     {
       "id": "swing",
+      "text": "zwaai",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "zwaai"
+      "icon": "puzzle"
     },
     {
       "id": "slide",
+      "text": "glidó",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "glidó"
+      "icon": "puzzle"
     },
     {
       "id": "bike",
+      "text": "baiskel",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "baiskel"
+      "icon": "puzzle"
     },
     {
       "id": "teddy",
+      "text": "beer",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "beer"
+      "icon": "puzzle"
     },
     {
       "id": "lego",
+      "text": "lego",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "lego"
+      "icon": "puzzle"
     },
     {
       "id": "red",
+      "text": "kòrá",
       "pos": "adjective",
       "category": "colors",
       "frequency": 5,
-      "icon": "palette",
-      "text": "kòrá"
+      "icon": "palette"
     },
     {
       "id": "blue",
+      "text": "blou",
       "pos": "adjective",
       "category": "colors",
       "frequency": 5,
-      "icon": "palette",
-      "text": "blou"
+      "icon": "palette"
     },
     {
       "id": "green",
+      "text": "berde",
       "pos": "adjective",
       "category": "colors",
       "frequency": 5,
-      "icon": "palette",
-      "text": "berde"
+      "icon": "palette"
     },
     {
       "id": "yellow",
+      "text": "hel",
       "pos": "adjective",
       "category": "colors",
       "frequency": 5,
-      "icon": "palette",
-      "text": "hel"
+      "icon": "palette"
     },
     {
       "id": "orange",
+      "text": "oraño",
       "pos": "adjective",
       "category": "colors",
       "frequency": 5,
-      "icon": "palette",
-      "text": "oraño"
+      "icon": "palette"
     },
     {
       "id": "purple",
+      "text": "lila",
       "pos": "adjective",
       "category": "colors",
       "frequency": 5,
-      "icon": "palette",
-      "text": "lila"
+      "icon": "palette"
     },
     {
       "id": "pink",
+      "text": "rosa",
       "pos": "adjective",
       "category": "colors",
       "frequency": 5,
-      "icon": "palette",
-      "text": "rosa"
+      "icon": "palette"
     },
     {
       "id": "brown",
+      "text": "brùin",
       "pos": "adjective",
       "category": "colors",
       "frequency": 5,
-      "icon": "palette",
-      "text": "brùin"
+      "icon": "palette"
     },
     {
       "id": "black",
+      "text": "pretu",
       "pos": "adjective",
       "category": "colors",
       "frequency": 5,
-      "icon": "palette",
-      "text": "pretu"
+      "icon": "palette"
     },
     {
       "id": "white",
+      "text": "blanku",
       "pos": "adjective",
       "category": "colors",
       "frequency": 5,
-      "icon": "palette",
-      "text": "blanku"
+      "icon": "palette"
     },
     {
       "id": "grey",
+      "text": "shinishi",
       "pos": "adjective",
       "category": "colors",
       "frequency": 5,
-      "icon": "palette",
-      "text": "shinishi"
+      "icon": "palette"
     },
     {
       "id": "bright",
+      "text": "klaru",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "klaru"
+      "icon": "palette"
     },
     {
       "id": "dark",
+      "text": "skur",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "skur"
+      "icon": "palette"
     },
     {
       "id": "soft",
+      "text": "moli",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "moli"
+      "icon": "palette"
     },
     {
       "id": "hard",
+      "text": "duru",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "duru"
+      "icon": "palette"
     },
     {
       "id": "quiet",
+      "text": "ketu",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "ketu"
+      "icon": "palette"
     },
     {
       "id": "loud",
+      "text": "duru",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "duru"
+      "icon": "palette"
     },
     {
       "id": "fast",
+      "text": "lihé",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "lihé"
+      "icon": "palette"
     },
     {
       "id": "slow",
+      "text": "poko poko",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "poko poko"
+      "icon": "palette"
     },
     {
       "id": "clean",
+      "text": "limpi",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "limpi"
+      "icon": "palette"
     },
     {
       "id": "dirty",
+      "text": "sushi",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "sushi"
+      "icon": "palette"
     },
     {
       "id": "wet",
+      "text": "muhá",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "muhá"
+      "icon": "palette"
     },
     {
       "id": "dry",
+      "text": "seku",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "seku"
+      "icon": "palette"
     },
     {
       "id": "new",
+      "text": "nobo",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "nobo"
+      "icon": "palette"
     },
     {
       "id": "old",
+      "text": "bieu",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "bieu"
+      "icon": "palette"
     },
     {
       "id": "now",
+      "text": "awor",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "awor"
+      "icon": "clock"
     },
     {
       "id": "later",
+      "text": "despues",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "despues"
+      "icon": "clock"
     },
     {
       "id": "today",
+      "text": "awe",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "awe"
+      "icon": "clock"
     },
     {
       "id": "tomorrow",
+      "text": "mayan",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "mayan"
+      "icon": "clock"
     },
     {
       "id": "morning",
+      "text": "mainta",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "mainta"
+      "icon": "clock"
     },
     {
       "id": "afternoon",
+      "text": "atardi",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "atardi"
+      "icon": "clock"
     },
     {
       "id": "night",
+      "text": "anochi",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "anochi"
+      "icon": "clock"
     },
     {
       "id": "before",
+      "text": "promé",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "promé"
+      "icon": "clock"
     },
     {
       "id": "after",
+      "text": "despues",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "despues"
+      "icon": "clock"
     },
     {
       "id": "soon",
+      "text": "pronto",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "pronto"
+      "icon": "clock"
     },
     {
       "id": "first",
+      "text": "promé",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "promé"
+      "icon": "clock"
     },
     {
       "id": "next",
+      "text": "siguiente",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "siguiente"
+      "icon": "clock"
     },
     {
       "id": "last",
+      "text": "último",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "último"
+      "icon": "clock"
     },
     {
       "id": "minute",
+      "text": "minüt",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "minüt"
+      "icon": "clock"
     },
     {
       "id": "hour",
+      "text": "ora",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "ora"
+      "icon": "clock"
     },
     {
       "id": "break",
+      "text": "pousa",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "pousa"
+      "icon": "heart-hand"
     },
     {
       "id": "quiet-time",
+      "text": "ora ketu",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "ora ketu"
+      "icon": "heart-hand"
     },
     {
       "id": "hug",
+      "text": "brasa",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "brasa"
+      "icon": "heart-hand"
     },
     {
       "id": "space",
+      "text": "espasio",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "espasio"
+      "icon": "heart-hand"
     },
     {
       "id": "toilet",
+      "text": "baño",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "baño"
+      "icon": "heart-hand"
     },
     {
       "id": "medicine",
+      "text": "remedi",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "remedi"
+      "icon": "heart-hand"
     },
     {
       "id": "light",
+      "text": "lus",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "lus"
+      "icon": "heart-hand"
     },
     {
       "id": "dark-2",
+      "text": "skuridat",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "skuridat"
+      "icon": "heart-hand"
     },
     {
       "id": "noise",
+      "text": "boroto",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "boroto"
+      "icon": "heart-hand"
     },
     {
       "id": "headphones",
+      "text": "oudífono",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "oudífono"
+      "icon": "heart-hand"
     },
     {
       "id": "blanket",
+      "text": "deken",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "deken"
+      "icon": "heart-hand"
     },
     {
       "id": "charger",
+      "text": "kargadó",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "kargadó"
+      "icon": "heart-hand"
     },
     {
       "id": "choice",
+      "text": "skoho",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "skoho"
+      "icon": "heart-hand"
     },
     {
       "id": "turn",
+      "text": "turno",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "turno"
+      "icon": "heart-hand"
     },
     {
       "id": "help-please",
+      "text": "yudami por fabor",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "yudami por fabor"
+      "icon": "heart-hand"
     },
     {
       "id": "different",
+      "text": "otro",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "otro"
+      "icon": "sparkles"
     },
     {
       "id": "same",
+      "text": "meskos",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "meskos"
+      "icon": "sparkles"
     },
     {
       "id": "easy",
+      "text": "fásil",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "fásil"
+      "icon": "sparkles"
     },
     {
       "id": "harder",
+      "text": "mas difísil",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "mas difísil"
+      "icon": "sparkles"
     },
     {
       "id": "favorite",
+      "text": "faborito",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "faborito"
+      "icon": "sparkles"
     },
     {
       "id": "missing",
+      "text": "ta falta",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "ta falta"
+      "icon": "sparkles"
     },
     {
       "id": "broken",
+      "text": "kibrá",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "kibrá"
+      "icon": "sparkles"
     },
     {
       "id": "ready",
+      "text": "kla",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "kla"
+      "icon": "sparkles"
     },
     {
       "id": "busy",
+      "text": "okupá",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "okupá"
+      "icon": "sparkles"
     },
     {
       "id": "empty",
+      "text": "bashí",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "bashí"
+      "icon": "sparkles"
     },
     {
       "id": "full",
+      "text": "yen",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "yen"
+      "icon": "sparkles"
     },
     {
       "id": "small",
+      "text": "chikitu",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "chikitu"
+      "icon": "sparkles"
     },
     {
       "id": "tall",
+      "text": "haltu",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "haltu"
+      "icon": "sparkles"
     },
     {
       "id": "short",
+      "text": "kòrtiku",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "kòrtiku"
+      "icon": "sparkles"
     },
     {
       "id": "round",
+      "text": "rondó",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "rondó"
+      "icon": "sparkles"
     },
     {
       "id": "square",
+      "text": "kuadrá",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "kuadrá"
+      "icon": "sparkles"
     },
     {
       "id": "kind",
+      "text": "bon",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "bon"
+      "icon": "sparkles"
     },
     {
       "id": "gentle",
+      "text": "suave",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "suave"
+      "icon": "sparkles"
     },
     {
       "id": "careful",
+      "text": "kuidadoso",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "kuidadoso"
+      "icon": "sparkles"
     },
     {
       "id": "safe-place",
+      "text": "lugá sigur",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "lugá sigur"
+      "icon": "sparkles"
     }
   ],
   "templates": [
@@ -3128,7 +3061,5 @@
         "no"
       ]
     }
-  },
-  "source": "generated",
-  "reviewStatus": "needs-native-review"
+  }
 }

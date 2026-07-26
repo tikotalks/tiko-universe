@@ -1,2435 +1,2368 @@
 {
   "locale": "cs",
   "version": 1,
+  "source": "generated",
+  "reviewStatus": "needs-native-review",
   "words": [
     {
       "id": "i",
+      "text": "já",
       "pos": "pronoun",
       "category": "people",
       "frequency": 10,
-      "icon": "user",
-      "text": "já"
+      "icon": "user"
     },
     {
       "id": "you",
+      "text": "ty",
       "pos": "pronoun",
       "category": "people",
       "frequency": 10,
-      "icon": "user",
-      "text": "ty"
+      "icon": "user"
     },
     {
       "id": "we",
+      "text": "my",
       "pos": "pronoun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "my"
+      "icon": "user"
     },
     {
       "id": "me",
+      "text": "mě",
       "pos": "pronoun",
       "category": "people",
       "frequency": 10,
-      "icon": "user",
-      "text": "mě"
+      "icon": "user"
     },
     {
       "id": "my",
+      "text": "můj",
       "pos": "pronoun",
       "category": "people",
       "frequency": 10,
-      "icon": "user",
-      "text": "můj"
+      "icon": "user"
     },
     {
       "id": "your",
+      "text": "tvůj",
       "pos": "pronoun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "tvůj"
+      "icon": "user"
     },
     {
       "id": "he",
+      "text": "on",
       "pos": "pronoun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "on"
+      "icon": "user"
     },
     {
       "id": "she",
+      "text": "ona",
       "pos": "pronoun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "ona"
+      "icon": "user"
     },
     {
       "id": "they",
+      "text": "oni",
       "pos": "pronoun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "oni"
+      "icon": "user"
     },
     {
       "id": "mum",
+      "text": "máma",
       "pos": "noun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "máma"
+      "icon": "user"
     },
     {
       "id": "dad",
+      "text": "táta",
       "pos": "noun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "táta"
+      "icon": "user"
     },
     {
       "id": "teacher",
+      "text": "učitelka",
       "pos": "noun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "učitelka"
+      "icon": "user"
     },
     {
       "id": "friend",
+      "text": "kamarád",
       "pos": "noun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "kamarád"
+      "icon": "user"
     },
     {
       "id": "brother",
+      "text": "bratr",
       "pos": "noun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "bratr"
+      "icon": "user"
     },
     {
       "id": "sister",
+      "text": "sestra",
       "pos": "noun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "sestra"
+      "icon": "user"
     },
     {
       "id": "grandma",
+      "text": "babička",
       "pos": "noun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "babička"
+      "icon": "user"
     },
     {
       "id": "grandpa",
+      "text": "dědeček",
       "pos": "noun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "dědeček"
+      "icon": "user"
     },
     {
       "id": "helper",
+      "text": "pomocník",
       "pos": "noun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "pomocník"
+      "icon": "user"
     },
     {
       "id": "doctor",
+      "text": "doktor",
       "pos": "noun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "doktor"
+      "icon": "user"
     },
     {
       "id": "class",
+      "text": "třída",
       "pos": "noun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "třída"
+      "icon": "user"
     },
     {
       "id": "want",
+      "text": "chci",
       "pos": "verb",
       "category": "actions",
       "frequency": 10,
-      "icon": "play",
-      "inflections": {
-        "past": "wanted"
-      },
-      "text": "chci"
+      "icon": "play"
     },
     {
       "id": "need",
+      "text": "potřebuji",
       "pos": "verb",
       "category": "actions",
       "frequency": 10,
-      "icon": "play",
-      "inflections": {
-        "past": "needed"
-      },
-      "text": "potřebuji"
+      "icon": "play"
     },
     {
       "id": "like",
+      "text": "mám rád",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "likeed"
-      },
-      "text": "mám rád"
+      "icon": "play"
     },
     {
       "id": "feel",
+      "text": "cítím",
       "pos": "verb",
       "category": "actions",
       "frequency": 10,
-      "icon": "play",
-      "inflections": {
-        "past": "feeled"
-      },
-      "text": "cítím"
+      "icon": "play"
     },
     {
       "id": "see",
+      "text": "vidím",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "seeed"
-      },
-      "text": "vidím"
+      "icon": "play"
     },
     {
       "id": "hear",
+      "text": "slyším",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "heared"
-      },
-      "text": "slyším"
+      "icon": "play"
     },
     {
       "id": "have",
+      "text": "mám",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "haveed"
-      },
-      "text": "mám"
+      "icon": "play"
     },
     {
       "id": "go",
+      "text": "jdu",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "text": "jdu"
+      "icon": "play"
     },
     {
       "id": "come",
+      "text": "přicházím",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "comeed"
-      },
-      "text": "přicházím"
+      "icon": "play"
     },
     {
       "id": "play",
+      "text": "hraji",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "played"
-      },
-      "text": "hraji"
+      "icon": "play"
     },
     {
       "id": "read",
+      "text": "čtu",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "readed"
-      },
-      "text": "čtu"
+      "icon": "play"
     },
     {
       "id": "draw",
+      "text": "kreslím",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "drawed"
-      },
-      "text": "kreslím"
+      "icon": "play"
     },
     {
       "id": "eat",
+      "text": "jím",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "text": "jím"
+      "icon": "play"
     },
     {
       "id": "drink",
+      "text": "piji",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "text": "piji"
+      "icon": "play"
     },
     {
       "id": "sit",
+      "text": "sedím",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "text": "sedím"
+      "icon": "play"
     },
     {
       "id": "stand",
+      "text": "stojím",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "text": "stojím"
+      "icon": "play"
     },
     {
       "id": "walk",
+      "text": "chodím",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "walked"
-      },
-      "text": "chodím"
+      "icon": "play"
     },
     {
       "id": "run",
+      "text": "běžím",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "text": "běžím"
+      "icon": "play"
     },
     {
       "id": "stop",
+      "text": "zastavuji",
       "pos": "verb",
       "category": "actions",
       "frequency": 10,
-      "icon": "play",
-      "inflections": {
-        "past": "stoped"
-      },
-      "text": "zastavuji"
+      "icon": "play"
     },
     {
       "id": "start",
+      "text": "začínám",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "started"
-      },
-      "text": "začínám"
+      "icon": "play"
     },
     {
       "id": "wait",
+      "text": "čekám",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "waited"
-      },
-      "text": "čekám"
+      "icon": "play"
     },
     {
       "id": "help",
+      "text": "pomáhám",
       "pos": "verb",
       "category": "actions",
       "frequency": 10,
-      "icon": "play",
-      "inflections": {
-        "past": "helped"
-      },
-      "text": "pomáhám"
+      "icon": "play"
     },
     {
       "id": "choose",
+      "text": "vybírám",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "chooseed"
-      },
-      "text": "vybírám"
+      "icon": "play"
     },
     {
       "id": "open",
+      "text": "otevírám",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "opened"
-      },
-      "text": "otevírám"
+      "icon": "play"
     },
     {
       "id": "close",
+      "text": "zavírám",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "closeed"
-      },
-      "text": "zavírám"
+      "icon": "play"
     },
     {
       "id": "wash",
+      "text": "myji",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "washed"
-      },
-      "text": "myji"
+      "icon": "play"
     },
     {
       "id": "sleep",
+      "text": "spím",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "text": "spím"
+      "icon": "play"
     },
     {
       "id": "rest",
+      "text": "odpočívám",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "rested"
-      },
-      "text": "odpočívám"
+      "icon": "play"
     },
     {
       "id": "try",
+      "text": "zkouším",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "tryed"
-      },
-      "text": "zkouším"
+      "icon": "play"
     },
     {
       "id": "talk",
+      "text": "mluvím",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "talked"
-      },
-      "text": "mluvím"
+      "icon": "play"
     },
     {
       "id": "yes",
+      "text": "ano",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "ano"
+      "icon": "chat-bubble"
     },
     {
       "id": "no",
+      "text": "ne",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "ne"
+      "icon": "chat-bubble"
     },
     {
       "id": "please",
+      "text": "prosím",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "prosím"
+      "icon": "chat-bubble"
     },
     {
       "id": "thank-you",
+      "text": "děkuji",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "děkuji"
+      "icon": "chat-bubble"
     },
     {
       "id": "sorry",
+      "text": "promiň",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "promiň"
+      "icon": "chat-bubble"
     },
     {
       "id": "hello",
+      "text": "ahoj",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "ahoj"
+      "icon": "chat-bubble"
     },
     {
       "id": "goodbye",
+      "text": "na shledanou",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "na shledanou"
+      "icon": "chat-bubble"
     },
     {
       "id": "more",
+      "text": "ještě",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "ještě"
+      "icon": "chat-bubble"
     },
     {
       "id": "all-done",
+      "text": "hotovo",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "hotovo"
+      "icon": "chat-bubble"
     },
     {
       "id": "again",
+      "text": "znovu",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "znovu"
+      "icon": "chat-bubble"
     },
     {
       "id": "finished",
+      "text": "skončil",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "skončil"
+      "icon": "chat-bubble"
     },
     {
       "id": "okay",
+      "text": "dobře",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "dobře"
+      "icon": "chat-bubble"
     },
     {
       "id": "not-yet",
+      "text": "ještě ne",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "ještě ne"
+      "icon": "chat-bubble"
     },
     {
       "id": "maybe",
+      "text": "možná",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "možná"
+      "icon": "chat-bubble"
     },
     {
       "id": "what",
+      "text": "co",
       "pos": "question",
       "category": "questions",
       "frequency": 8,
-      "icon": "question-circle",
-      "text": "co"
+      "icon": "question-circle"
     },
     {
       "id": "where",
+      "text": "kde",
       "pos": "question",
       "category": "questions",
       "frequency": 8,
-      "icon": "question-circle",
-      "text": "kde"
+      "icon": "question-circle"
     },
     {
       "id": "who",
+      "text": "kdo",
       "pos": "question",
       "category": "questions",
       "frequency": 8,
-      "icon": "question-circle",
-      "text": "kdo"
+      "icon": "question-circle"
     },
     {
       "id": "when",
+      "text": "kdy",
       "pos": "question",
       "category": "questions",
       "frequency": 8,
-      "icon": "question-circle",
-      "text": "kdy"
+      "icon": "question-circle"
     },
     {
       "id": "why",
+      "text": "proč",
       "pos": "question",
       "category": "questions",
       "frequency": 8,
-      "icon": "question-circle",
-      "text": "proč"
+      "icon": "question-circle"
     },
     {
       "id": "which",
+      "text": "který",
       "pos": "question",
       "category": "questions",
       "frequency": 8,
-      "icon": "question-circle",
-      "text": "který"
+      "icon": "question-circle"
     },
     {
       "id": "how",
+      "text": "jak",
       "pos": "question",
       "category": "questions",
       "frequency": 8,
-      "icon": "question-circle",
-      "text": "jak"
+      "icon": "question-circle"
     },
     {
       "id": "can",
+      "text": "mohu",
       "pos": "question",
       "category": "questions",
       "frequency": 8,
-      "icon": "question-circle",
-      "text": "mohu"
+      "icon": "question-circle"
     },
     {
       "id": "is",
+      "text": "je",
       "pos": "question",
       "category": "questions",
       "frequency": 8,
-      "icon": "question-circle",
-      "text": "je"
+      "icon": "question-circle"
     },
     {
       "id": "are",
+      "text": "jsou",
       "pos": "question",
       "category": "questions",
       "frequency": 8,
-      "icon": "question-circle",
-      "text": "jsou"
+      "icon": "question-circle"
     },
     {
       "id": "a",
+      "text": "jeden",
       "pos": "determiner",
       "category": "helpers",
       "frequency": 8,
-      "icon": "text",
-      "text": "jeden"
+      "icon": "text"
     },
     {
       "id": "the",
+      "text": "ten",
       "pos": "determiner",
       "category": "helpers",
       "frequency": 8,
-      "icon": "text",
-      "text": "ten"
+      "icon": "text"
     },
     {
       "id": "this",
+      "text": "tento",
       "pos": "determiner",
       "category": "helpers",
       "frequency": 8,
-      "icon": "text",
-      "text": "tento"
+      "icon": "text"
     },
     {
       "id": "that",
+      "text": "ten",
       "pos": "determiner",
       "category": "helpers",
       "frequency": 8,
-      "icon": "text",
-      "text": "ten"
+      "icon": "text"
     },
     {
       "id": "some",
+      "text": "trochu",
       "pos": "determiner",
       "category": "helpers",
       "frequency": 8,
-      "icon": "text",
-      "text": "trochu"
+      "icon": "text"
     },
     {
       "id": "one",
+      "text": "jeden",
       "pos": "determiner",
       "category": "helpers",
       "frequency": 8,
-      "icon": "text",
-      "text": "jeden"
+      "icon": "text"
     },
     {
       "id": "two",
+      "text": "dva",
       "pos": "determiner",
       "category": "helpers",
       "frequency": 8,
-      "icon": "text",
-      "text": "dva"
+      "icon": "text"
     },
     {
       "id": "three",
+      "text": "tři",
       "pos": "determiner",
       "category": "helpers",
       "frequency": 8,
-      "icon": "text",
-      "text": "tři"
+      "icon": "text"
     },
     {
       "id": "many",
+      "text": "mnoho",
       "pos": "determiner",
       "category": "helpers",
       "frequency": 8,
-      "icon": "text",
-      "text": "mnoho"
+      "icon": "text"
     },
     {
       "id": "little",
+      "text": "málo",
       "pos": "determiner",
       "category": "helpers",
       "frequency": 8,
-      "icon": "text",
-      "text": "málo"
+      "icon": "text"
     },
     {
       "id": "big",
+      "text": "velký",
       "pos": "determiner",
       "category": "helpers",
       "frequency": 8,
-      "icon": "text",
-      "text": "velký"
+      "icon": "text"
     },
     {
       "id": "in",
+      "text": "v",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "v"
+      "icon": "arrow-right"
     },
     {
       "id": "on",
+      "text": "na",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "na"
+      "icon": "arrow-right"
     },
     {
       "id": "under",
+      "text": "pod",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "pod"
+      "icon": "arrow-right"
     },
     {
       "id": "next-to",
+      "text": "vedle",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "vedle"
+      "icon": "arrow-right"
     },
     {
       "id": "with",
+      "text": "s",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "s"
+      "icon": "arrow-right"
     },
     {
       "id": "without",
+      "text": "bez",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "bez"
+      "icon": "arrow-right"
     },
     {
       "id": "to",
+      "text": "do",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "do"
+      "icon": "arrow-right"
     },
     {
       "id": "from",
+      "text": "z",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "z"
+      "icon": "arrow-right"
     },
     {
       "id": "inside",
+      "text": "vevnitř",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "vevnitř"
+      "icon": "arrow-right"
     },
     {
       "id": "outside",
+      "text": "venku",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "venku"
+      "icon": "arrow-right"
     },
     {
       "id": "near",
+      "text": "blízko",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "blízko"
+      "icon": "arrow-right"
     },
     {
       "id": "far",
+      "text": "daleko",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "daleko"
+      "icon": "arrow-right"
     },
     {
       "id": "and",
+      "text": "a",
       "pos": "conjunction",
       "category": "helpers",
       "frequency": 6,
-      "icon": "branch",
-      "text": "a"
+      "icon": "branch"
     },
     {
       "id": "or",
+      "text": "nebo",
       "pos": "conjunction",
       "category": "helpers",
       "frequency": 6,
-      "icon": "branch",
-      "text": "nebo"
+      "icon": "branch"
     },
     {
       "id": "because",
+      "text": "protože",
       "pos": "conjunction",
       "category": "helpers",
       "frequency": 6,
-      "icon": "branch",
-      "text": "protože"
+      "icon": "branch"
     },
     {
       "id": "then",
+      "text": "potom",
       "pos": "conjunction",
       "category": "helpers",
       "frequency": 6,
-      "icon": "branch",
-      "text": "potom"
+      "icon": "branch"
     },
     {
       "id": "but",
+      "text": "ale",
       "pos": "conjunction",
       "category": "helpers",
       "frequency": 6,
-      "icon": "branch",
-      "text": "ale"
+      "icon": "branch"
     },
     {
       "id": "water",
+      "text": "voda",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "voda"
+      "icon": "water"
     },
     {
       "id": "milk",
+      "text": "mléko",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "mléko"
+      "icon": "water"
     },
     {
       "id": "juice",
+      "text": "džus",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "džus"
+      "icon": "water"
     },
     {
       "id": "tea",
+      "text": "čaj",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "čaj"
+      "icon": "water"
     },
     {
       "id": "smoothie",
+      "text": "smoothie",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "smoothie"
+      "icon": "water"
     },
     {
       "id": "lemonade",
+      "text": "limonáda",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "limonáda"
+      "icon": "water"
     },
     {
       "id": "hot-drink",
+      "text": "teplý nápoj",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "teplý nápoj"
+      "icon": "water"
     },
     {
       "id": "cold-drink",
+      "text": "studený nápoj",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "studený nápoj"
+      "icon": "water"
     },
     {
       "id": "cup",
+      "text": "hrnek",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "hrnek"
+      "icon": "water"
     },
     {
       "id": "straw",
+      "text": "brčko",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "brčko"
+      "icon": "water"
     },
     {
       "id": "bottle",
+      "text": "láhev",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "láhev"
+      "icon": "water"
     },
     {
       "id": "sip",
+      "text": "hlt",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "hlt"
+      "icon": "water"
     },
     {
       "id": "apple",
+      "text": "jablko",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "jablko"
+      "icon": "apple"
     },
     {
       "id": "banana",
+      "text": "banán",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "banán"
+      "icon": "apple"
     },
     {
       "id": "bread",
+      "text": "chléb",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "chléb"
+      "icon": "apple"
     },
     {
       "id": "toast",
+      "text": "toast",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "toast"
+      "icon": "apple"
     },
     {
       "id": "sandwich",
+      "text": "sendvič",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "sendvič"
+      "icon": "apple"
     },
     {
       "id": "rice",
+      "text": "rýže",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "rýže"
+      "icon": "apple"
     },
     {
       "id": "pasta",
+      "text": "těstoviny",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "těstoviny"
+      "icon": "apple"
     },
     {
       "id": "soup",
+      "text": "polévka",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "polévka"
+      "icon": "apple"
     },
     {
       "id": "yogurt",
+      "text": "jogurt",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "jogurt"
+      "icon": "apple"
     },
     {
       "id": "cheese",
+      "text": "sýr",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "sýr"
+      "icon": "apple"
     },
     {
       "id": "cracker",
+      "text": "kreker",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "kreker"
+      "icon": "apple"
     },
     {
       "id": "carrot",
+      "text": "mrkev",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "mrkev"
+      "icon": "apple"
     },
     {
       "id": "chips",
+      "text": "chipsy",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "chipsy"
+      "icon": "apple"
     },
     {
       "id": "cookie",
+      "text": "sušenka",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "sušenka"
+      "icon": "apple"
     },
     {
       "id": "egg",
+      "text": "vejce",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "vejce"
+      "icon": "apple"
     },
     {
       "id": "cereal",
+      "text": "müsli",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "müsli"
+      "icon": "apple"
     },
     {
       "id": "fruit",
+      "text": "ovoce",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "ovoce"
+      "icon": "apple"
     },
     {
       "id": "snack",
+      "text": "svačina",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "svačina"
+      "icon": "apple"
     },
     {
       "id": "dinner",
+      "text": "večeře",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "večeře"
+      "icon": "apple"
     },
     {
       "id": "lunch",
+      "text": "oběd",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "oběd"
+      "icon": "apple"
     },
     {
       "id": "happy",
+      "text": "šťastný",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "šťastný"
+      "icon": "smile"
     },
     {
       "id": "sad",
+      "text": "smutný",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "smutný"
+      "icon": "smile"
     },
     {
       "id": "angry",
+      "text": "rozzlobený",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "rozzlobený"
+      "icon": "smile"
     },
     {
       "id": "worried",
+      "text": "znepokojený",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "znepokojený"
+      "icon": "smile"
     },
     {
       "id": "scared",
+      "text": "vyděšený",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "vyděšený"
+      "icon": "smile"
     },
     {
       "id": "tired",
+      "text": "unavený",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "unavený"
+      "icon": "smile"
     },
     {
       "id": "sick",
+      "text": "nemocný",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "nemocný"
+      "icon": "smile"
     },
     {
       "id": "hurt",
+      "text": "bolí mě",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "bolí mě"
+      "icon": "smile"
     },
     {
       "id": "calm",
+      "text": "klidný",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "klidný"
+      "icon": "smile"
     },
     {
       "id": "excited",
+      "text": "nadšený",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "nadšený"
+      "icon": "smile"
     },
     {
       "id": "confused",
+      "text": "zmatený",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "zmatený"
+      "icon": "smile"
     },
     {
       "id": "proud",
+      "text": "pyšný",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "pyšný"
+      "icon": "smile"
     },
     {
       "id": "lonely",
+      "text": "sám",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "sám"
+      "icon": "smile"
     },
     {
       "id": "bored",
+      "text": "nudím se",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "nudím se"
+      "icon": "smile"
     },
     {
       "id": "safe",
+      "text": "v bezpečí",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "v bezpečí"
+      "icon": "smile"
     },
     {
       "id": "upset",
+      "text": "rozrušený",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "rozrušený"
+      "icon": "smile"
     },
     {
       "id": "okay-2",
+      "text": "dobře",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "dobře"
+      "icon": "smile"
     },
     {
       "id": "hot",
+      "text": "horký",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "horký"
+      "icon": "smile"
     },
     {
       "id": "cold",
+      "text": "studený",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "studený"
+      "icon": "smile"
     },
     {
       "id": "hungry",
+      "text": "hladový",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "hladový"
+      "icon": "smile"
     },
     {
       "id": "thirsty",
+      "text": "žíznivý",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "žíznivý"
+      "icon": "smile"
     },
     {
       "id": "head",
+      "text": "hlava",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "hlava"
+      "icon": "body"
     },
     {
       "id": "hand",
+      "text": "ruka",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "ruka"
+      "icon": "body"
     },
     {
       "id": "foot",
+      "text": "chodidlo",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "chodidlo"
+      "icon": "body"
     },
     {
       "id": "tummy",
+      "text": "bříško",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "bříško"
+      "icon": "body"
     },
     {
       "id": "mouth",
+      "text": "ústa",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "ústa"
+      "icon": "body"
     },
     {
       "id": "ear",
+      "text": "ucho",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "ucho"
+      "icon": "body"
     },
     {
       "id": "eye",
+      "text": "oko",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "oko"
+      "icon": "body"
     },
     {
       "id": "arm",
+      "text": "paže",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "paže"
+      "icon": "body"
     },
     {
       "id": "leg",
+      "text": "noha",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "noha"
+      "icon": "body"
     },
     {
       "id": "back",
+      "text": "záda",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "záda"
+      "icon": "body"
     },
     {
       "id": "tooth",
+      "text": "zub",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "zub"
+      "icon": "body"
     },
     {
       "id": "hair",
+      "text": "vlasy",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "vlasy"
+      "icon": "body"
     },
     {
       "id": "nose",
+      "text": "nos",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "nos"
+      "icon": "body"
     },
     {
       "id": "skin",
+      "text": "kůže",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "kůže"
+      "icon": "body"
     },
     {
       "id": "heart",
+      "text": "srdce",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "srdce"
+      "icon": "body"
     },
     {
       "id": "home",
+      "text": "domov",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "domov"
+      "icon": "home"
     },
     {
       "id": "school",
+      "text": "škola",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "škola"
+      "icon": "home"
     },
     {
       "id": "classroom",
+      "text": "třída",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "třída"
+      "icon": "home"
     },
     {
       "id": "bathroom",
+      "text": "koupelna",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "koupelna"
+      "icon": "home"
     },
     {
       "id": "kitchen",
+      "text": "kuchyně",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "kuchyně"
+      "icon": "home"
     },
     {
       "id": "bedroom",
+      "text": "ložnice",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "ložnice"
+      "icon": "home"
     },
     {
       "id": "garden",
+      "text": "zahrada",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "zahrada"
+      "icon": "home"
     },
     {
       "id": "shop",
+      "text": "obchod",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "obchod"
+      "icon": "home"
     },
     {
       "id": "car",
+      "text": "auto",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "auto"
+      "icon": "home"
     },
     {
       "id": "bus",
+      "text": "autobus",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "autobus"
+      "icon": "home"
     },
     {
       "id": "park",
+      "text": "park",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "park"
+      "icon": "home"
     },
     {
       "id": "playground",
+      "text": "hřiště",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "hřiště"
+      "icon": "home"
     },
     {
       "id": "library",
+      "text": "knihovna",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "knihovna"
+      "icon": "home"
     },
     {
       "id": "pool",
+      "text": "bazén",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "bazén"
+      "icon": "home"
     },
     {
       "id": "table",
+      "text": "stůl",
       "pos": "noun",
       "category": "home",
       "frequency": 7,
-      "icon": "home",
-      "text": "stůl"
+      "icon": "home"
     },
     {
       "id": "chair",
+      "text": "židle",
       "pos": "noun",
       "category": "home",
       "frequency": 7,
-      "icon": "home",
-      "text": "židle"
+      "icon": "home"
     },
     {
       "id": "sofa",
+      "text": "pohovka",
       "pos": "noun",
       "category": "home",
       "frequency": 7,
-      "icon": "home",
-      "text": "pohovka"
+      "icon": "home"
     },
     {
       "id": "bed",
+      "text": "postel",
       "pos": "noun",
       "category": "home",
       "frequency": 7,
-      "icon": "home",
-      "text": "postel"
+      "icon": "home"
     },
     {
       "id": "door",
+      "text": "dveře",
       "pos": "noun",
       "category": "home",
       "frequency": 7,
-      "icon": "home",
-      "text": "dveře"
+      "icon": "home"
     },
     {
       "id": "window",
+      "text": "okno",
       "pos": "noun",
       "category": "home",
       "frequency": 7,
-      "icon": "home",
-      "text": "okno"
+      "icon": "home"
     },
     {
       "id": "book",
+      "text": "kniha",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "kniha"
+      "icon": "book"
     },
     {
       "id": "pencil",
+      "text": "pastelka",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "pastelka"
+      "icon": "book"
     },
     {
       "id": "paper",
+      "text": "papír",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "papír"
+      "icon": "book"
     },
     {
       "id": "bag",
+      "text": "taška",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "taška"
+      "icon": "book"
     },
     {
       "id": "coat",
+      "text": "kabát",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "kabát"
+      "icon": "book"
     },
     {
       "id": "shoes",
+      "text": "boty",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "boty"
+      "icon": "book"
     },
     {
       "id": "lunchbox",
+      "text": "krabička na jídlo",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "krabička na jídlo"
+      "icon": "book"
     },
     {
       "id": "tablet",
+      "text": "tablet",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "tablet"
+      "icon": "book"
     },
     {
       "id": "screen",
+      "text": "obrazovka",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "obrazovka"
+      "icon": "book"
     },
     {
       "id": "timer",
+      "text": "časovač",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "časovač"
+      "icon": "book"
     },
     {
       "id": "schedule",
+      "text": "rozvrh",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "rozvrh"
+      "icon": "book"
     },
     {
       "id": "picture",
+      "text": "obrázek",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "obrázek"
+      "icon": "book"
     },
     {
       "id": "card",
+      "text": "kartička",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "kartička"
+      "icon": "book"
     },
     {
       "id": "story",
+      "text": "pohádka",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "pohádka"
+      "icon": "book"
     },
     {
       "id": "music",
+      "text": "hudba",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "hudba"
+      "icon": "book"
     },
     {
       "id": "ball",
+      "text": "míč",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "míč"
+      "icon": "puzzle"
     },
     {
       "id": "blocks",
+      "text": "kostky",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "kostky"
+      "icon": "puzzle"
     },
     {
       "id": "doll",
+      "text": "panenka",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "panenka"
+      "icon": "puzzle"
     },
     {
       "id": "car-toy",
+      "text": "autíčko",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "autíčko"
+      "icon": "puzzle"
     },
     {
       "id": "train",
+      "text": "vlak",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "vlak"
+      "icon": "puzzle"
     },
     {
       "id": "puzzle",
+      "text": "puzzle",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "puzzle"
+      "icon": "puzzle"
     },
     {
       "id": "game",
+      "text": "hra",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "hra"
+      "icon": "puzzle"
     },
     {
       "id": "paint",
+      "text": "barva",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "barva"
+      "icon": "puzzle"
     },
     {
       "id": "clay",
+      "text": "modelína",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "modelína"
+      "icon": "puzzle"
     },
     {
       "id": "bubbles",
+      "text": "bubliny",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "bubliny"
+      "icon": "puzzle"
     },
     {
       "id": "swing",
+      "text": "houpačka",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "houpačka"
+      "icon": "puzzle"
     },
     {
       "id": "slide",
+      "text": "skluzavka",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "skluzavka"
+      "icon": "puzzle"
     },
     {
       "id": "bike",
+      "text": "kolo",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "kolo"
+      "icon": "puzzle"
     },
     {
       "id": "teddy",
+      "text": "medvídek",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "medvídek"
+      "icon": "puzzle"
     },
     {
       "id": "lego",
+      "text": "lego",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "lego"
+      "icon": "puzzle"
     },
     {
       "id": "red",
+      "text": "červený",
       "pos": "adjective",
       "category": "colors",
       "frequency": 5,
-      "icon": "palette",
-      "text": "červený"
+      "icon": "palette"
     },
     {
       "id": "blue",
+      "text": "modrý",
       "pos": "adjective",
       "category": "colors",
       "frequency": 5,
-      "icon": "palette",
-      "text": "modrý"
+      "icon": "palette"
     },
     {
       "id": "green",
+      "text": "zelený",
       "pos": "adjective",
       "category": "colors",
       "frequency": 5,
-      "icon": "palette",
-      "text": "zelený"
+      "icon": "palette"
     },
     {
       "id": "yellow",
+      "text": "žlutý",
       "pos": "adjective",
       "category": "colors",
       "frequency": 5,
-      "icon": "palette",
-      "text": "žlutý"
+      "icon": "palette"
     },
     {
       "id": "orange",
+      "text": "oranžový",
       "pos": "adjective",
       "category": "colors",
       "frequency": 5,
-      "icon": "palette",
-      "text": "oranžový"
+      "icon": "palette"
     },
     {
       "id": "purple",
+      "text": "fialový",
       "pos": "adjective",
       "category": "colors",
       "frequency": 5,
-      "icon": "palette",
-      "text": "fialový"
+      "icon": "palette"
     },
     {
       "id": "pink",
+      "text": "růžový",
       "pos": "adjective",
       "category": "colors",
       "frequency": 5,
-      "icon": "palette",
-      "text": "růžový"
+      "icon": "palette"
     },
     {
       "id": "brown",
+      "text": "hnědý",
       "pos": "adjective",
       "category": "colors",
       "frequency": 5,
-      "icon": "palette",
-      "text": "hnědý"
+      "icon": "palette"
     },
     {
       "id": "black",
+      "text": "černý",
       "pos": "adjective",
       "category": "colors",
       "frequency": 5,
-      "icon": "palette",
-      "text": "černý"
+      "icon": "palette"
     },
     {
       "id": "white",
+      "text": "bílý",
       "pos": "adjective",
       "category": "colors",
       "frequency": 5,
-      "icon": "palette",
-      "text": "bílý"
+      "icon": "palette"
     },
     {
       "id": "grey",
+      "text": "šedý",
       "pos": "adjective",
       "category": "colors",
       "frequency": 5,
-      "icon": "palette",
-      "text": "šedý"
+      "icon": "palette"
     },
     {
       "id": "bright",
+      "text": "světlý",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "světlý"
+      "icon": "palette"
     },
     {
       "id": "dark",
+      "text": "tmavý",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "tmavý"
+      "icon": "palette"
     },
     {
       "id": "soft",
+      "text": "měkký",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "měkký"
+      "icon": "palette"
     },
     {
       "id": "hard",
+      "text": "tvrdý",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "tvrdý"
+      "icon": "palette"
     },
     {
       "id": "quiet",
+      "text": "tichý",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "tichý"
+      "icon": "palette"
     },
     {
       "id": "loud",
+      "text": "hlasitý",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "hlasitý"
+      "icon": "palette"
     },
     {
       "id": "fast",
+      "text": "rychlý",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "rychlý"
+      "icon": "palette"
     },
     {
       "id": "slow",
+      "text": "pomalý",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "pomalý"
+      "icon": "palette"
     },
     {
       "id": "clean",
+      "text": "čistý",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "čistý"
+      "icon": "palette"
     },
     {
       "id": "dirty",
+      "text": "špinavý",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "špinavý"
+      "icon": "palette"
     },
     {
       "id": "wet",
+      "text": "mokrý",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "mokrý"
+      "icon": "palette"
     },
     {
       "id": "dry",
+      "text": "suchý",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "suchý"
+      "icon": "palette"
     },
     {
       "id": "new",
+      "text": "nový",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "nový"
+      "icon": "palette"
     },
     {
       "id": "old",
+      "text": "starý",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "starý"
+      "icon": "palette"
     },
     {
       "id": "now",
+      "text": "teď",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "teď"
+      "icon": "clock"
     },
     {
       "id": "later",
+      "text": "později",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "později"
+      "icon": "clock"
     },
     {
       "id": "today",
+      "text": "dnes",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "dnes"
+      "icon": "clock"
     },
     {
       "id": "tomorrow",
+      "text": "zítra",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "zítra"
+      "icon": "clock"
     },
     {
       "id": "morning",
+      "text": "ráno",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "ráno"
+      "icon": "clock"
     },
     {
       "id": "afternoon",
+      "text": "odpoledne",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "odpoledne"
+      "icon": "clock"
     },
     {
       "id": "night",
+      "text": "noc",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "noc"
+      "icon": "clock"
     },
     {
       "id": "before",
+      "text": "před",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "před"
+      "icon": "clock"
     },
     {
       "id": "after",
+      "text": "po",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "po"
+      "icon": "clock"
     },
     {
       "id": "soon",
+      "text": "brzy",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "brzy"
+      "icon": "clock"
     },
     {
       "id": "first",
+      "text": "nejprve",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "nejprve"
+      "icon": "clock"
     },
     {
       "id": "next",
+      "text": "další",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "další"
+      "icon": "clock"
     },
     {
       "id": "last",
+      "text": "poslední",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "poslední"
+      "icon": "clock"
     },
     {
       "id": "minute",
+      "text": "minuta",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "minuta"
+      "icon": "clock"
     },
     {
       "id": "hour",
+      "text": "hodina",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "hodina"
+      "icon": "clock"
     },
     {
       "id": "break",
+      "text": "pauza",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "pauza"
+      "icon": "heart-hand"
     },
     {
       "id": "quiet-time",
+      "text": "tichý čas",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "tichý čas"
+      "icon": "heart-hand"
     },
     {
       "id": "hug",
+      "text": "objetí",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "objetí"
+      "icon": "heart-hand"
     },
     {
       "id": "space",
+      "text": "místo",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "místo"
+      "icon": "heart-hand"
     },
     {
       "id": "toilet",
+      "text": "toaleta",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "toaleta"
+      "icon": "heart-hand"
     },
     {
       "id": "medicine",
+      "text": "lék",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "lék"
+      "icon": "heart-hand"
     },
     {
       "id": "light",
+      "text": "světlo",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "světlo"
+      "icon": "heart-hand"
     },
     {
       "id": "dark-2",
+      "text": "tma",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "tma"
+      "icon": "heart-hand"
     },
     {
       "id": "noise",
+      "text": "hluk",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "hluk"
+      "icon": "heart-hand"
     },
     {
       "id": "headphones",
+      "text": "sluchátka",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "sluchátka"
+      "icon": "heart-hand"
     },
     {
       "id": "blanket",
+      "text": "deka",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "deka"
+      "icon": "heart-hand"
     },
     {
       "id": "charger",
+      "text": "nabíječka",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "nabíječka"
+      "icon": "heart-hand"
     },
     {
       "id": "choice",
+      "text": "volba",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "volba"
+      "icon": "heart-hand"
     },
     {
       "id": "turn",
+      "text": "řada",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "řada"
+      "icon": "heart-hand"
     },
     {
       "id": "help-please",
+      "text": "pomoc prosím",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "pomoc prosím"
+      "icon": "heart-hand"
     },
     {
       "id": "different",
+      "text": "jiný",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "jiný"
+      "icon": "sparkles"
     },
     {
       "id": "same",
+      "text": "stejný",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "stejný"
+      "icon": "sparkles"
     },
     {
       "id": "easy",
+      "text": "snadný",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "snadný"
+      "icon": "sparkles"
     },
     {
       "id": "harder",
+      "text": "těžší",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "těžší"
+      "icon": "sparkles"
     },
     {
       "id": "favorite",
+      "text": "nejmilejší",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "nejmilejší"
+      "icon": "sparkles"
     },
     {
       "id": "missing",
+      "text": "chybí",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "chybí"
+      "icon": "sparkles"
     },
     {
       "id": "broken",
+      "text": "rozbitý",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "rozbitý"
+      "icon": "sparkles"
     },
     {
       "id": "ready",
+      "text": "hotový",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "hotový"
+      "icon": "sparkles"
     },
     {
       "id": "busy",
+      "text": "zaneprázdněný",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "zaneprázdněný"
+      "icon": "sparkles"
     },
     {
       "id": "empty",
+      "text": "prázdný",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "prázdný"
+      "icon": "sparkles"
     },
     {
       "id": "full",
+      "text": "plný",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "plný"
+      "icon": "sparkles"
     },
     {
       "id": "small",
+      "text": "malý",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "malý"
+      "icon": "sparkles"
     },
     {
       "id": "tall",
+      "text": "vysoký",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "vysoký"
+      "icon": "sparkles"
     },
     {
       "id": "short",
+      "text": "krátký",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "krátký"
+      "icon": "sparkles"
     },
     {
       "id": "round",
+      "text": "kulatý",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "kulatý"
+      "icon": "sparkles"
     },
     {
       "id": "square",
+      "text": "čtvercový",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "čtvercový"
+      "icon": "sparkles"
     },
     {
       "id": "kind",
+      "text": "hodný",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "hodný"
+      "icon": "sparkles"
     },
     {
       "id": "gentle",
+      "text": "jemný",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "jemný"
+      "icon": "sparkles"
     },
     {
       "id": "careful",
+      "text": "opatrný",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "opatrný"
+      "icon": "sparkles"
     },
     {
       "id": "safe-place",
+      "text": "bezpečné místo",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "bezpečné místo"
+      "icon": "sparkles"
     }
   ],
   "templates": [
@@ -3131,7 +3064,5 @@
         "ne"
       ]
     }
-  },
-  "source": "generated",
-  "reviewStatus": "needs-native-review"
+  }
 }

@@ -168,8 +168,7 @@
       "pos": "verb",
       "category": "actions",
       "frequency": 10,
-      "icon": "play",
-      "inflections": {}
+      "icon": "play"
     },
     {
       "id": "need",
@@ -177,8 +176,7 @@
       "pos": "verb",
       "category": "actions",
       "frequency": 10,
-      "icon": "play",
-      "inflections": {}
+      "icon": "play"
     },
     {
       "id": "like",
@@ -186,8 +184,7 @@
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {}
+      "icon": "play"
     },
     {
       "id": "feel",
@@ -195,8 +192,7 @@
       "pos": "verb",
       "category": "actions",
       "frequency": 10,
-      "icon": "play",
-      "inflections": {}
+      "icon": "play"
     },
     {
       "id": "see",
@@ -204,8 +200,7 @@
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {}
+      "icon": "play"
     },
     {
       "id": "hear",
@@ -213,8 +208,7 @@
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {}
+      "icon": "play"
     },
     {
       "id": "have",
@@ -222,8 +216,7 @@
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {}
+      "icon": "play"
     },
     {
       "id": "go",
@@ -239,8 +232,7 @@
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {}
+      "icon": "play"
     },
     {
       "id": "play",
@@ -248,8 +240,7 @@
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {}
+      "icon": "play"
     },
     {
       "id": "read",
@@ -257,8 +248,7 @@
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {}
+      "icon": "play"
     },
     {
       "id": "draw",
@@ -266,8 +256,7 @@
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {}
+      "icon": "play"
     },
     {
       "id": "eat",
@@ -307,8 +296,7 @@
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {}
+      "icon": "play"
     },
     {
       "id": "run",
@@ -324,8 +312,7 @@
       "pos": "verb",
       "category": "actions",
       "frequency": 10,
-      "icon": "play",
-      "inflections": {}
+      "icon": "play"
     },
     {
       "id": "start",
@@ -333,8 +320,7 @@
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {}
+      "icon": "play"
     },
     {
       "id": "wait",
@@ -342,8 +328,7 @@
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {}
+      "icon": "play"
     },
     {
       "id": "help",
@@ -351,8 +336,7 @@
       "pos": "verb",
       "category": "actions",
       "frequency": 10,
-      "icon": "play",
-      "inflections": {}
+      "icon": "play"
     },
     {
       "id": "choose",
@@ -360,8 +344,7 @@
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {}
+      "icon": "play"
     },
     {
       "id": "open",
@@ -369,8 +352,7 @@
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {}
+      "icon": "play"
     },
     {
       "id": "close",
@@ -378,8 +360,7 @@
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {}
+      "icon": "play"
     },
     {
       "id": "wash",
@@ -387,8 +368,7 @@
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {}
+      "icon": "play"
     },
     {
       "id": "sleep",
@@ -404,8 +384,7 @@
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {}
+      "icon": "play"
     },
     {
       "id": "try",
@@ -413,8 +392,7 @@
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {}
+      "icon": "play"
     },
     {
       "id": "talk",
@@ -422,8 +400,7 @@
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {}
+      "icon": "play"
     },
     {
       "id": "yes",

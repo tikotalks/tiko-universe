@@ -1,2435 +1,2368 @@
 {
   "locale": "el",
   "version": 1,
+  "source": "generated",
+  "reviewStatus": "needs-native-review",
   "words": [
     {
       "id": "i",
+      "text": "εγώ",
       "pos": "pronoun",
       "category": "people",
       "frequency": 10,
-      "icon": "user",
-      "text": "εγώ"
+      "icon": "user"
     },
     {
       "id": "you",
+      "text": "εσύ",
       "pos": "pronoun",
       "category": "people",
       "frequency": 10,
-      "icon": "user",
-      "text": "εσύ"
+      "icon": "user"
     },
     {
       "id": "we",
+      "text": "εμείς",
       "pos": "pronoun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "εμείς"
+      "icon": "user"
     },
     {
       "id": "me",
+      "text": "εμένα",
       "pos": "pronoun",
       "category": "people",
       "frequency": 10,
-      "icon": "user",
-      "text": "εμένα"
+      "icon": "user"
     },
     {
       "id": "my",
+      "text": "μου",
       "pos": "pronoun",
       "category": "people",
       "frequency": 10,
-      "icon": "user",
-      "text": "μου"
+      "icon": "user"
     },
     {
       "id": "your",
+      "text": "σου",
       "pos": "pronoun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "σου"
+      "icon": "user"
     },
     {
       "id": "he",
+      "text": "αυτός",
       "pos": "pronoun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "αυτός"
+      "icon": "user"
     },
     {
       "id": "she",
+      "text": "αυτή",
       "pos": "pronoun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "αυτή"
+      "icon": "user"
     },
     {
       "id": "they",
+      "text": "αυτοί",
       "pos": "pronoun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "αυτοί"
+      "icon": "user"
     },
     {
       "id": "mum",
+      "text": "μαμά",
       "pos": "noun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "μαμά"
+      "icon": "user"
     },
     {
       "id": "dad",
+      "text": "μπαμπάς",
       "pos": "noun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "μπαμπάς"
+      "icon": "user"
     },
     {
       "id": "teacher",
+      "text": "δασκάλα",
       "pos": "noun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "δασκάλα"
+      "icon": "user"
     },
     {
       "id": "friend",
+      "text": "φίλος",
       "pos": "noun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "φίλος"
+      "icon": "user"
     },
     {
       "id": "brother",
+      "text": "αδερφός",
       "pos": "noun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "αδερφός"
+      "icon": "user"
     },
     {
       "id": "sister",
+      "text": "αδερφή",
       "pos": "noun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "αδερφή"
+      "icon": "user"
     },
     {
       "id": "grandma",
+      "text": "γιαγιά",
       "pos": "noun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "γιαγιά"
+      "icon": "user"
     },
     {
       "id": "grandpa",
+      "text": "παππούς",
       "pos": "noun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "παππούς"
+      "icon": "user"
     },
     {
       "id": "helper",
+      "text": "βοηθός",
       "pos": "noun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "βοηθός"
+      "icon": "user"
     },
     {
       "id": "doctor",
+      "text": "γιατρός",
       "pos": "noun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "γιατρός"
+      "icon": "user"
     },
     {
       "id": "class",
+      "text": "τάξη",
       "pos": "noun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "τάξη"
+      "icon": "user"
     },
     {
       "id": "want",
+      "text": "θέλω",
       "pos": "verb",
       "category": "actions",
       "frequency": 10,
-      "icon": "play",
-      "inflections": {
-        "past": "wanted"
-      },
-      "text": "θέλω"
+      "icon": "play"
     },
     {
       "id": "need",
+      "text": "χρειάζομαι",
       "pos": "verb",
       "category": "actions",
       "frequency": 10,
-      "icon": "play",
-      "inflections": {
-        "past": "needed"
-      },
-      "text": "χρειάζομαι"
+      "icon": "play"
     },
     {
       "id": "like",
+      "text": "μου αρέσει",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "likeed"
-      },
-      "text": "μου αρέσει"
+      "icon": "play"
     },
     {
       "id": "feel",
+      "text": "νιώθω",
       "pos": "verb",
       "category": "actions",
       "frequency": 10,
-      "icon": "play",
-      "inflections": {
-        "past": "feeled"
-      },
-      "text": "νιώθω"
+      "icon": "play"
     },
     {
       "id": "see",
+      "text": "βλέπω",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "seeed"
-      },
-      "text": "βλέπω"
+      "icon": "play"
     },
     {
       "id": "hear",
+      "text": "ακούω",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "heared"
-      },
-      "text": "ακούω"
+      "icon": "play"
     },
     {
       "id": "have",
+      "text": "έχω",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "haveed"
-      },
-      "text": "έχω"
+      "icon": "play"
     },
     {
       "id": "go",
+      "text": "πηγαίνω",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "text": "πηγαίνω"
+      "icon": "play"
     },
     {
       "id": "come",
+      "text": "έρχομαι",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "comeed"
-      },
-      "text": "έρχομαι"
+      "icon": "play"
     },
     {
       "id": "play",
+      "text": "παίζω",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "played"
-      },
-      "text": "παίζω"
+      "icon": "play"
     },
     {
       "id": "read",
+      "text": "διαβάζω",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "readed"
-      },
-      "text": "διαβάζω"
+      "icon": "play"
     },
     {
       "id": "draw",
+      "text": "ζωγραφίζω",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "drawed"
-      },
-      "text": "ζωγραφίζω"
+      "icon": "play"
     },
     {
       "id": "eat",
+      "text": "τρώω",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "text": "τρώω"
+      "icon": "play"
     },
     {
       "id": "drink",
+      "text": "πίνω",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "text": "πίνω"
+      "icon": "play"
     },
     {
       "id": "sit",
+      "text": "κάθομαι",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "text": "κάθομαι"
+      "icon": "play"
     },
     {
       "id": "stand",
+      "text": "στέκομαι",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "text": "στέκομαι"
+      "icon": "play"
     },
     {
       "id": "walk",
+      "text": "περπατώ",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "walked"
-      },
-      "text": "περπατώ"
+      "icon": "play"
     },
     {
       "id": "run",
+      "text": "τρέχω",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "text": "τρέχω"
+      "icon": "play"
     },
     {
       "id": "stop",
+      "text": "σταματώ",
       "pos": "verb",
       "category": "actions",
       "frequency": 10,
-      "icon": "play",
-      "inflections": {
-        "past": "stoped"
-      },
-      "text": "σταματώ"
+      "icon": "play"
     },
     {
       "id": "start",
+      "text": "αρχίζω",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "started"
-      },
-      "text": "αρχίζω"
+      "icon": "play"
     },
     {
       "id": "wait",
+      "text": "περιμένω",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "waited"
-      },
-      "text": "περιμένω"
+      "icon": "play"
     },
     {
       "id": "help",
+      "text": "βοηθώ",
       "pos": "verb",
       "category": "actions",
       "frequency": 10,
-      "icon": "play",
-      "inflections": {
-        "past": "helped"
-      },
-      "text": "βοηθώ"
+      "icon": "play"
     },
     {
       "id": "choose",
+      "text": "διαλέγω",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "chooseed"
-      },
-      "text": "διαλέγω"
+      "icon": "play"
     },
     {
       "id": "open",
+      "text": "ανοίγω",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "opened"
-      },
-      "text": "ανοίγω"
+      "icon": "play"
     },
     {
       "id": "close",
+      "text": "κλείνω",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "closeed"
-      },
-      "text": "κλείνω"
+      "icon": "play"
     },
     {
       "id": "wash",
+      "text": "πλένω",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "washed"
-      },
-      "text": "πλένω"
+      "icon": "play"
     },
     {
       "id": "sleep",
+      "text": "κοιμάμαι",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "text": "κοιμάμαι"
+      "icon": "play"
     },
     {
       "id": "rest",
+      "text": "ξεκουράζομαι",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "rested"
-      },
-      "text": "ξεκουράζομαι"
+      "icon": "play"
     },
     {
       "id": "try",
+      "text": "προσπαθώ",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "tryed"
-      },
-      "text": "προσπαθώ"
+      "icon": "play"
     },
     {
       "id": "talk",
+      "text": "μιλώ",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "talked"
-      },
-      "text": "μιλώ"
+      "icon": "play"
     },
     {
       "id": "yes",
+      "text": "ναι",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "ναι"
+      "icon": "chat-bubble"
     },
     {
       "id": "no",
+      "text": "όχι",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "όχι"
+      "icon": "chat-bubble"
     },
     {
       "id": "please",
+      "text": "σε παρακαλώ",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "σε παρακαλώ"
+      "icon": "chat-bubble"
     },
     {
       "id": "thank-you",
+      "text": "ευχαριστώ",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "ευχαριστώ"
+      "icon": "chat-bubble"
     },
     {
       "id": "sorry",
+      "text": "συγγνώμη",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "συγγνώμη"
+      "icon": "chat-bubble"
     },
     {
       "id": "hello",
+      "text": "γεια",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "γεια"
+      "icon": "chat-bubble"
     },
     {
       "id": "goodbye",
+      "text": "αντίο",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "αντίο"
+      "icon": "chat-bubble"
     },
     {
       "id": "more",
+      "text": "άλλο",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "άλλο"
+      "icon": "chat-bubble"
     },
     {
       "id": "all-done",
+      "text": "τελείωσαν όλα",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "τελείωσαν όλα"
+      "icon": "chat-bubble"
     },
     {
       "id": "again",
+      "text": "ξανά",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "ξανά"
+      "icon": "chat-bubble"
     },
     {
       "id": "finished",
+      "text": "τέλειωσα",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "τέλειωσα"
+      "icon": "chat-bubble"
     },
     {
       "id": "okay",
+      "text": "εντάξει",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "εντάξει"
+      "icon": "chat-bubble"
     },
     {
       "id": "not-yet",
+      "text": "όχι ακόμα",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "όχι ακόμα"
+      "icon": "chat-bubble"
     },
     {
       "id": "maybe",
+      "text": "ίσως",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "ίσως"
+      "icon": "chat-bubble"
     },
     {
       "id": "what",
+      "text": "τι",
       "pos": "question",
       "category": "questions",
       "frequency": 8,
-      "icon": "question-circle",
-      "text": "τι"
+      "icon": "question-circle"
     },
     {
       "id": "where",
+      "text": "πού",
       "pos": "question",
       "category": "questions",
       "frequency": 8,
-      "icon": "question-circle",
-      "text": "πού"
+      "icon": "question-circle"
     },
     {
       "id": "who",
+      "text": "ποιος",
       "pos": "question",
       "category": "questions",
       "frequency": 8,
-      "icon": "question-circle",
-      "text": "ποιος"
+      "icon": "question-circle"
     },
     {
       "id": "when",
+      "text": "πότε",
       "pos": "question",
       "category": "questions",
       "frequency": 8,
-      "icon": "question-circle",
-      "text": "πότε"
+      "icon": "question-circle"
     },
     {
       "id": "why",
+      "text": "γιατί",
       "pos": "question",
       "category": "questions",
       "frequency": 8,
-      "icon": "question-circle",
-      "text": "γιατί"
+      "icon": "question-circle"
     },
     {
       "id": "which",
+      "text": "ποιο",
       "pos": "question",
       "category": "questions",
       "frequency": 8,
-      "icon": "question-circle",
-      "text": "ποιο"
+      "icon": "question-circle"
     },
     {
       "id": "how",
+      "text": "πώς",
       "pos": "question",
       "category": "questions",
       "frequency": 8,
-      "icon": "question-circle",
-      "text": "πώς"
+      "icon": "question-circle"
     },
     {
       "id": "can",
+      "text": "μπορώ",
       "pos": "question",
       "category": "questions",
       "frequency": 8,
-      "icon": "question-circle",
-      "text": "μπορώ"
+      "icon": "question-circle"
     },
     {
       "id": "is",
+      "text": "είναι",
       "pos": "question",
       "category": "questions",
       "frequency": 8,
-      "icon": "question-circle",
-      "text": "είναι"
+      "icon": "question-circle"
     },
     {
       "id": "are",
+      "text": "είναι",
       "pos": "question",
       "category": "questions",
       "frequency": 8,
-      "icon": "question-circle",
-      "text": "είναι"
+      "icon": "question-circle"
     },
     {
       "id": "a",
+      "text": "ένας",
       "pos": "determiner",
       "category": "helpers",
       "frequency": 8,
-      "icon": "text",
-      "text": "ένας"
+      "icon": "text"
     },
     {
       "id": "the",
+      "text": "ο",
       "pos": "determiner",
       "category": "helpers",
       "frequency": 8,
-      "icon": "text",
-      "text": "ο"
+      "icon": "text"
     },
     {
       "id": "this",
+      "text": "αυτό",
       "pos": "determiner",
       "category": "helpers",
       "frequency": 8,
-      "icon": "text",
-      "text": "αυτό"
+      "icon": "text"
     },
     {
       "id": "that",
+      "text": "εκείνο",
       "pos": "determiner",
       "category": "helpers",
       "frequency": 8,
-      "icon": "text",
-      "text": "εκείνο"
+      "icon": "text"
     },
     {
       "id": "some",
+      "text": "μερικά",
       "pos": "determiner",
       "category": "helpers",
       "frequency": 8,
-      "icon": "text",
-      "text": "μερικά"
+      "icon": "text"
     },
     {
       "id": "one",
+      "text": "ένα",
       "pos": "determiner",
       "category": "helpers",
       "frequency": 8,
-      "icon": "text",
-      "text": "ένα"
+      "icon": "text"
     },
     {
       "id": "two",
+      "text": "δύο",
       "pos": "determiner",
       "category": "helpers",
       "frequency": 8,
-      "icon": "text",
-      "text": "δύο"
+      "icon": "text"
     },
     {
       "id": "three",
+      "text": "τρία",
       "pos": "determiner",
       "category": "helpers",
       "frequency": 8,
-      "icon": "text",
-      "text": "τρία"
+      "icon": "text"
     },
     {
       "id": "many",
+      "text": "πολλά",
       "pos": "determiner",
       "category": "helpers",
       "frequency": 8,
-      "icon": "text",
-      "text": "πολλά"
+      "icon": "text"
     },
     {
       "id": "little",
+      "text": "λίγο",
       "pos": "determiner",
       "category": "helpers",
       "frequency": 8,
-      "icon": "text",
-      "text": "λίγο"
+      "icon": "text"
     },
     {
       "id": "big",
+      "text": "μεγάλος",
       "pos": "determiner",
       "category": "helpers",
       "frequency": 8,
-      "icon": "text",
-      "text": "μεγάλος"
+      "icon": "text"
     },
     {
       "id": "in",
+      "text": "σε",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "σε"
+      "icon": "arrow-right"
     },
     {
       "id": "on",
+      "text": "πάνω",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "πάνω"
+      "icon": "arrow-right"
     },
     {
       "id": "under",
+      "text": "κάτω",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "κάτω"
+      "icon": "arrow-right"
     },
     {
       "id": "next-to",
+      "text": "δίπλα",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "δίπλα"
+      "icon": "arrow-right"
     },
     {
       "id": "with",
+      "text": "με",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "με"
+      "icon": "arrow-right"
     },
     {
       "id": "without",
+      "text": "χωρίς",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "χωρίς"
+      "icon": "arrow-right"
     },
     {
       "id": "to",
+      "text": "προς",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "προς"
+      "icon": "arrow-right"
     },
     {
       "id": "from",
+      "text": "από",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "από"
+      "icon": "arrow-right"
     },
     {
       "id": "inside",
+      "text": "μέσα",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "μέσα"
+      "icon": "arrow-right"
     },
     {
       "id": "outside",
+      "text": "έξω",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "έξω"
+      "icon": "arrow-right"
     },
     {
       "id": "near",
+      "text": "κοντά",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "κοντά"
+      "icon": "arrow-right"
     },
     {
       "id": "far",
+      "text": "μακριά",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "μακριά"
+      "icon": "arrow-right"
     },
     {
       "id": "and",
+      "text": "και",
       "pos": "conjunction",
       "category": "helpers",
       "frequency": 6,
-      "icon": "branch",
-      "text": "και"
+      "icon": "branch"
     },
     {
       "id": "or",
+      "text": "ή",
       "pos": "conjunction",
       "category": "helpers",
       "frequency": 6,
-      "icon": "branch",
-      "text": "ή"
+      "icon": "branch"
     },
     {
       "id": "because",
+      "text": "γιατί",
       "pos": "conjunction",
       "category": "helpers",
       "frequency": 6,
-      "icon": "branch",
-      "text": "γιατί"
+      "icon": "branch"
     },
     {
       "id": "then",
+      "text": "μετά",
       "pos": "conjunction",
       "category": "helpers",
       "frequency": 6,
-      "icon": "branch",
-      "text": "μετά"
+      "icon": "branch"
     },
     {
       "id": "but",
+      "text": "αλλά",
       "pos": "conjunction",
       "category": "helpers",
       "frequency": 6,
-      "icon": "branch",
-      "text": "αλλά"
+      "icon": "branch"
     },
     {
       "id": "water",
+      "text": "νερό",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "νερό"
+      "icon": "water"
     },
     {
       "id": "milk",
+      "text": "γάλα",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "γάλα"
+      "icon": "water"
     },
     {
       "id": "juice",
+      "text": "χυμός",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "χυμός"
+      "icon": "water"
     },
     {
       "id": "tea",
+      "text": "τσάι",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "τσάι"
+      "icon": "water"
     },
     {
       "id": "smoothie",
+      "text": "σμούθι",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "σμούθι"
+      "icon": "water"
     },
     {
       "id": "lemonade",
+      "text": "λεμονάδα",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "λεμονάδα"
+      "icon": "water"
     },
     {
       "id": "hot-drink",
+      "text": "ζεστό ρόφημα",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "ζεστό ρόφημα"
+      "icon": "water"
     },
     {
       "id": "cold-drink",
+      "text": "κρύο ρόφημα",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "κρύο ρόφημα"
+      "icon": "water"
     },
     {
       "id": "cup",
+      "text": "κούπα",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "κούπα"
+      "icon": "water"
     },
     {
       "id": "straw",
+      "text": "καλαμάκι",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "καλαμάκι"
+      "icon": "water"
     },
     {
       "id": "bottle",
+      "text": "μπουκάλι",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "μπουκάλι"
+      "icon": "water"
     },
     {
       "id": "sip",
+      "text": "γουλιά",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "γουλιά"
+      "icon": "water"
     },
     {
       "id": "apple",
+      "text": "μήλο",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "μήλο"
+      "icon": "apple"
     },
     {
       "id": "banana",
+      "text": "μπανάνα",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "μπανάνα"
+      "icon": "apple"
     },
     {
       "id": "bread",
+      "text": "ψωμί",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "ψωμί"
+      "icon": "apple"
     },
     {
       "id": "toast",
+      "text": "τοστ",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "τοστ"
+      "icon": "apple"
     },
     {
       "id": "sandwich",
+      "text": "σάντουιτς",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "σάντουιτς"
+      "icon": "apple"
     },
     {
       "id": "rice",
+      "text": "ρύζι",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "ρύζι"
+      "icon": "apple"
     },
     {
       "id": "pasta",
+      "text": "μακαρόνια",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "μακαρόνια"
+      "icon": "apple"
     },
     {
       "id": "soup",
+      "text": "σούπα",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "σούπα"
+      "icon": "apple"
     },
     {
       "id": "yogurt",
+      "text": "γιαούρτι",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "γιαούρτι"
+      "icon": "apple"
     },
     {
       "id": "cheese",
+      "text": "τυρί",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "τυρί"
+      "icon": "apple"
     },
     {
       "id": "cracker",
+      "text": "κρακεράκι",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "κρακεράκι"
+      "icon": "apple"
     },
     {
       "id": "carrot",
+      "text": "καρότο",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "καρότο"
+      "icon": "apple"
     },
     {
       "id": "chips",
+      "text": "πατατάκια",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "πατατάκια"
+      "icon": "apple"
     },
     {
       "id": "cookie",
+      "text": "μπισκότο",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "μπισκότο"
+      "icon": "apple"
     },
     {
       "id": "egg",
+      "text": "αυγό",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "αυγό"
+      "icon": "apple"
     },
     {
       "id": "cereal",
+      "text": "δημητριακά",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "δημητριακά"
+      "icon": "apple"
     },
     {
       "id": "fruit",
+      "text": "φρούτο",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "φρούτο"
+      "icon": "apple"
     },
     {
       "id": "snack",
+      "text": "σνακ",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "σνακ"
+      "icon": "apple"
     },
     {
       "id": "dinner",
+      "text": "βραδινό",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "βραδινό"
+      "icon": "apple"
     },
     {
       "id": "lunch",
+      "text": "μεσημεριανό",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "μεσημεριανό"
+      "icon": "apple"
     },
     {
       "id": "happy",
+      "text": "χαρούμενος",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "χαρούμενος"
+      "icon": "smile"
     },
     {
       "id": "sad",
+      "text": "λυπημένος",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "λυπημένος"
+      "icon": "smile"
     },
     {
       "id": "angry",
+      "text": "θυμωμένος",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "θυμωμένος"
+      "icon": "smile"
     },
     {
       "id": "worried",
+      "text": "ανήσυχος",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "ανήσυχος"
+      "icon": "smile"
     },
     {
       "id": "scared",
+      "text": "φοβισμένος",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "φοβισμένος"
+      "icon": "smile"
     },
     {
       "id": "tired",
+      "text": "κουρασμένος",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "κουρασμένος"
+      "icon": "smile"
     },
     {
       "id": "sick",
+      "text": "άρρωστος",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "άρρωστος"
+      "icon": "smile"
     },
     {
       "id": "hurt",
+      "text": "πονάω",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "πονάω"
+      "icon": "smile"
     },
     {
       "id": "calm",
+      "text": "ήρεμος",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "ήρεμος"
+      "icon": "smile"
     },
     {
       "id": "excited",
+      "text": "ενθουσιασμένος",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "ενθουσιασμένος"
+      "icon": "smile"
     },
     {
       "id": "confused",
+      "text": "μπερδεμένος",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "μπερδεμένος"
+      "icon": "smile"
     },
     {
       "id": "proud",
+      "text": "περήφανος",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "περήφανος"
+      "icon": "smile"
     },
     {
       "id": "lonely",
+      "text": "μόνος",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "μόνος"
+      "icon": "smile"
     },
     {
       "id": "bored",
+      "text": "βαριέμαι",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "βαριέμαι"
+      "icon": "smile"
     },
     {
       "id": "safe",
+      "text": "ασφαλής",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "ασφαλής"
+      "icon": "smile"
     },
     {
       "id": "upset",
+      "text": "στενοχωρημένος",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "στενοχωρημένος"
+      "icon": "smile"
     },
     {
       "id": "okay-2",
+      "text": "εντάξει",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "εντάξει"
+      "icon": "smile"
     },
     {
       "id": "hot",
+      "text": "ζεστός",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "ζεστός"
+      "icon": "smile"
     },
     {
       "id": "cold",
+      "text": "κρύος",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "κρύος"
+      "icon": "smile"
     },
     {
       "id": "hungry",
+      "text": "πεινασμένος",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "πεινασμένος"
+      "icon": "smile"
     },
     {
       "id": "thirsty",
+      "text": "διψασμένος",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "διψασμένος"
+      "icon": "smile"
     },
     {
       "id": "head",
+      "text": "κεφάλι",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "κεφάλι"
+      "icon": "body"
     },
     {
       "id": "hand",
+      "text": "χέρι",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "χέρι"
+      "icon": "body"
     },
     {
       "id": "foot",
+      "text": "πόδι",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "πόδι"
+      "icon": "body"
     },
     {
       "id": "tummy",
+      "text": "κοιλιά",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "κοιλιά"
+      "icon": "body"
     },
     {
       "id": "mouth",
+      "text": "στόμα",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "στόμα"
+      "icon": "body"
     },
     {
       "id": "ear",
+      "text": "αυτί",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "αυτί"
+      "icon": "body"
     },
     {
       "id": "eye",
+      "text": "μάτι",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "μάτι"
+      "icon": "body"
     },
     {
       "id": "arm",
+      "text": "μπράτσο",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "μπράτσο"
+      "icon": "body"
     },
     {
       "id": "leg",
+      "text": "πόδι",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "πόδι"
+      "icon": "body"
     },
     {
       "id": "back",
+      "text": "πλάτη",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "πλάτη"
+      "icon": "body"
     },
     {
       "id": "tooth",
+      "text": "δόντι",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "δόντι"
+      "icon": "body"
     },
     {
       "id": "hair",
+      "text": "μαλλιά",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "μαλλιά"
+      "icon": "body"
     },
     {
       "id": "nose",
+      "text": "μύτη",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "μύτη"
+      "icon": "body"
     },
     {
       "id": "skin",
+      "text": "δέρμα",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "δέρμα"
+      "icon": "body"
     },
     {
       "id": "heart",
+      "text": "καρδιά",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "καρδιά"
+      "icon": "body"
     },
     {
       "id": "home",
+      "text": "σπίτι",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "σπίτι"
+      "icon": "home"
     },
     {
       "id": "school",
+      "text": "σχολείο",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "σχολείο"
+      "icon": "home"
     },
     {
       "id": "classroom",
+      "text": "τάξη",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "τάξη"
+      "icon": "home"
     },
     {
       "id": "bathroom",
+      "text": "μπάνιο",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "μπάνιο"
+      "icon": "home"
     },
     {
       "id": "kitchen",
+      "text": "κουζίνα",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "κουζίνα"
+      "icon": "home"
     },
     {
       "id": "bedroom",
+      "text": "υπνοδωμάτιο",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "υπνοδωμάτιο"
+      "icon": "home"
     },
     {
       "id": "garden",
+      "text": "κήπος",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "κήπος"
+      "icon": "home"
     },
     {
       "id": "shop",
+      "text": "μαγαζί",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "μαγαζί"
+      "icon": "home"
     },
     {
       "id": "car",
+      "text": "αυτοκίνητο",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "αυτοκίνητο"
+      "icon": "home"
     },
     {
       "id": "bus",
+      "text": "λεωφορείο",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "λεωφορείο"
+      "icon": "home"
     },
     {
       "id": "park",
+      "text": "πάρκο",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "πάρκο"
+      "icon": "home"
     },
     {
       "id": "playground",
+      "text": "παιδική χαρά",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "παιδική χαρά"
+      "icon": "home"
     },
     {
       "id": "library",
+      "text": "βιβλιοθήκη",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "βιβλιοθήκη"
+      "icon": "home"
     },
     {
       "id": "pool",
+      "text": "πισίνα",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "πισίνα"
+      "icon": "home"
     },
     {
       "id": "table",
+      "text": "τραπέζι",
       "pos": "noun",
       "category": "home",
       "frequency": 7,
-      "icon": "home",
-      "text": "τραπέζι"
+      "icon": "home"
     },
     {
       "id": "chair",
+      "text": "καρέκλα",
       "pos": "noun",
       "category": "home",
       "frequency": 7,
-      "icon": "home",
-      "text": "καρέκλα"
+      "icon": "home"
     },
     {
       "id": "sofa",
+      "text": "καναπές",
       "pos": "noun",
       "category": "home",
       "frequency": 7,
-      "icon": "home",
-      "text": "καναπές"
+      "icon": "home"
     },
     {
       "id": "bed",
+      "text": "κρεβάτι",
       "pos": "noun",
       "category": "home",
       "frequency": 7,
-      "icon": "home",
-      "text": "κρεβάτι"
+      "icon": "home"
     },
     {
       "id": "door",
+      "text": "πόρτα",
       "pos": "noun",
       "category": "home",
       "frequency": 7,
-      "icon": "home",
-      "text": "πόρτα"
+      "icon": "home"
     },
     {
       "id": "window",
+      "text": "παράθυρο",
       "pos": "noun",
       "category": "home",
       "frequency": 7,
-      "icon": "home",
-      "text": "παράθυρο"
+      "icon": "home"
     },
     {
       "id": "book",
+      "text": "βιβλίο",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "βιβλίο"
+      "icon": "book"
     },
     {
       "id": "pencil",
+      "text": "μολύβι",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "μολύβι"
+      "icon": "book"
     },
     {
       "id": "paper",
+      "text": "χαρτί",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "χαρτί"
+      "icon": "book"
     },
     {
       "id": "bag",
+      "text": "τσάντα",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "τσάντα"
+      "icon": "book"
     },
     {
       "id": "coat",
+      "text": "μπουφάν",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "μπουφάν"
+      "icon": "book"
     },
     {
       "id": "shoes",
+      "text": "παπούτσια",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "παπούτσια"
+      "icon": "book"
     },
     {
       "id": "lunchbox",
+      "text": "φαγητοδοχείο",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "φαγητοδοχείο"
+      "icon": "book"
     },
     {
       "id": "tablet",
+      "text": "τάμπλετ",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "τάμπλετ"
+      "icon": "book"
     },
     {
       "id": "screen",
+      "text": "οθόνη",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "οθόνη"
+      "icon": "book"
     },
     {
       "id": "timer",
+      "text": "χρονόμετρο",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "χρονόμετρο"
+      "icon": "book"
     },
     {
       "id": "schedule",
+      "text": "πρόγραμμα",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "πρόγραμμα"
+      "icon": "book"
     },
     {
       "id": "picture",
+      "text": "εικόνα",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "εικόνα"
+      "icon": "book"
     },
     {
       "id": "card",
+      "text": "κάρτα",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "κάρτα"
+      "icon": "book"
     },
     {
       "id": "story",
+      "text": "ιστορία",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "ιστορία"
+      "icon": "book"
     },
     {
       "id": "music",
+      "text": "μουσική",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "μουσική"
+      "icon": "book"
     },
     {
       "id": "ball",
+      "text": "μπάλα",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "μπάλα"
+      "icon": "puzzle"
     },
     {
       "id": "blocks",
+      "text": "τουβλάκια",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "τουβλάκια"
+      "icon": "puzzle"
     },
     {
       "id": "doll",
+      "text": "κούκλα",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "κούκλα"
+      "icon": "puzzle"
     },
     {
       "id": "car-toy",
+      "text": "αυτοκινητάκι",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "αυτοκινητάκι"
+      "icon": "puzzle"
     },
     {
       "id": "train",
+      "text": "τρένο",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "τρένο"
+      "icon": "puzzle"
     },
     {
       "id": "puzzle",
+      "text": "παζλ",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "παζλ"
+      "icon": "puzzle"
     },
     {
       "id": "game",
+      "text": "παιχνίδι",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "παιχνίδι"
+      "icon": "puzzle"
     },
     {
       "id": "paint",
+      "text": "μπογιά",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "μπογιά"
+      "icon": "puzzle"
     },
     {
       "id": "clay",
+      "text": "πλαστελίνη",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "πλαστελίνη"
+      "icon": "puzzle"
     },
     {
       "id": "bubbles",
+      "text": "φυσαλίδες",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "φυσαλίδες"
+      "icon": "puzzle"
     },
     {
       "id": "swing",
+      "text": "κούνια",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "κούνια"
+      "icon": "puzzle"
     },
     {
       "id": "slide",
+      "text": "τσουλήθρα",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "τσουλήθρα"
+      "icon": "puzzle"
     },
     {
       "id": "bike",
+      "text": "ποδήλατο",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "ποδήλατο"
+      "icon": "puzzle"
     },
     {
       "id": "teddy",
+      "text": "αρκουδάκι",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "αρκουδάκι"
+      "icon": "puzzle"
     },
     {
       "id": "lego",
+      "text": "λέγκο",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "λέγκο"
+      "icon": "puzzle"
     },
     {
       "id": "red",
+      "text": "κόκκινος",
       "pos": "adjective",
       "category": "colors",
       "frequency": 5,
-      "icon": "palette",
-      "text": "κόκκινος"
+      "icon": "palette"
     },
     {
       "id": "blue",
+      "text": "μπλε",
       "pos": "adjective",
       "category": "colors",
       "frequency": 5,
-      "icon": "palette",
-      "text": "μπλε"
+      "icon": "palette"
     },
     {
       "id": "green",
+      "text": "πράσινος",
       "pos": "adjective",
       "category": "colors",
       "frequency": 5,
-      "icon": "palette",
-      "text": "πράσινος"
+      "icon": "palette"
     },
     {
       "id": "yellow",
+      "text": "κίτρινος",
       "pos": "adjective",
       "category": "colors",
       "frequency": 5,
-      "icon": "palette",
-      "text": "κίτρινος"
+      "icon": "palette"
     },
     {
       "id": "orange",
+      "text": "πορτοκαλί",
       "pos": "adjective",
       "category": "colors",
       "frequency": 5,
-      "icon": "palette",
-      "text": "πορτοκαλί"
+      "icon": "palette"
     },
     {
       "id": "purple",
+      "text": "μωβ",
       "pos": "adjective",
       "category": "colors",
       "frequency": 5,
-      "icon": "palette",
-      "text": "μωβ"
+      "icon": "palette"
     },
     {
       "id": "pink",
+      "text": "ροζ",
       "pos": "adjective",
       "category": "colors",
       "frequency": 5,
-      "icon": "palette",
-      "text": "ροζ"
+      "icon": "palette"
     },
     {
       "id": "brown",
+      "text": "καφέ",
       "pos": "adjective",
       "category": "colors",
       "frequency": 5,
-      "icon": "palette",
-      "text": "καφέ"
+      "icon": "palette"
     },
     {
       "id": "black",
+      "text": "μαύρος",
       "pos": "adjective",
       "category": "colors",
       "frequency": 5,
-      "icon": "palette",
-      "text": "μαύρος"
+      "icon": "palette"
     },
     {
       "id": "white",
+      "text": "άσπρος",
       "pos": "adjective",
       "category": "colors",
       "frequency": 5,
-      "icon": "palette",
-      "text": "άσπρος"
+      "icon": "palette"
     },
     {
       "id": "grey",
+      "text": "γκρι",
       "pos": "adjective",
       "category": "colors",
       "frequency": 5,
-      "icon": "palette",
-      "text": "γκρι"
+      "icon": "palette"
     },
     {
       "id": "bright",
+      "text": "φωτεινός",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "φωτεινός"
+      "icon": "palette"
     },
     {
       "id": "dark",
+      "text": "σκοτεινός",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "σκοτεινός"
+      "icon": "palette"
     },
     {
       "id": "soft",
+      "text": "μαλακός",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "μαλακός"
+      "icon": "palette"
     },
     {
       "id": "hard",
+      "text": "σκληρός",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "σκληρός"
+      "icon": "palette"
     },
     {
       "id": "quiet",
+      "text": "ήσυχος",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "ήσυχος"
+      "icon": "palette"
     },
     {
       "id": "loud",
+      "text": "δυνατός",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "δυνατός"
+      "icon": "palette"
     },
     {
       "id": "fast",
+      "text": "γρήγορος",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "γρήγορος"
+      "icon": "palette"
     },
     {
       "id": "slow",
+      "text": "αργός",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "αργός"
+      "icon": "palette"
     },
     {
       "id": "clean",
+      "text": "καθαρός",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "καθαρός"
+      "icon": "palette"
     },
     {
       "id": "dirty",
+      "text": "βρώμικος",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "βρώμικος"
+      "icon": "palette"
     },
     {
       "id": "wet",
+      "text": "βρεγμένος",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "βρεγμένος"
+      "icon": "palette"
     },
     {
       "id": "dry",
+      "text": "ξηρός",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "ξηρός"
+      "icon": "palette"
     },
     {
       "id": "new",
+      "text": "νέος",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "νέος"
+      "icon": "palette"
     },
     {
       "id": "old",
+      "text": "παλιός",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "παλιός"
+      "icon": "palette"
     },
     {
       "id": "now",
+      "text": "τώρα",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "τώρα"
+      "icon": "clock"
     },
     {
       "id": "later",
+      "text": "μετά",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "μετά"
+      "icon": "clock"
     },
     {
       "id": "today",
+      "text": "σήμερα",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "σήμερα"
+      "icon": "clock"
     },
     {
       "id": "tomorrow",
+      "text": "αύριο",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "αύριο"
+      "icon": "clock"
     },
     {
       "id": "morning",
+      "text": "πρωί",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "πρωί"
+      "icon": "clock"
     },
     {
       "id": "afternoon",
+      "text": "απόγευμα",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "απόγευμα"
+      "icon": "clock"
     },
     {
       "id": "night",
+      "text": "νύχτα",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "νύχτα"
+      "icon": "clock"
     },
     {
       "id": "before",
+      "text": "πριν",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "πριν"
+      "icon": "clock"
     },
     {
       "id": "after",
+      "text": "μετά",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "μετά"
+      "icon": "clock"
     },
     {
       "id": "soon",
+      "text": "σύντομα",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "σύντομα"
+      "icon": "clock"
     },
     {
       "id": "first",
+      "text": "πρώτα",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "πρώτα"
+      "icon": "clock"
     },
     {
       "id": "next",
+      "text": "επόμενο",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "επόμενο"
+      "icon": "clock"
     },
     {
       "id": "last",
+      "text": "τελευταίο",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "τελευταίο"
+      "icon": "clock"
     },
     {
       "id": "minute",
+      "text": "λεπτό",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "λεπτό"
+      "icon": "clock"
     },
     {
       "id": "hour",
+      "text": "ώρα",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "ώρα"
+      "icon": "clock"
     },
     {
       "id": "break",
+      "text": "διάλειμμα",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "διάλειμμα"
+      "icon": "heart-hand"
     },
     {
       "id": "quiet-time",
+      "text": "ήσυχη ώρα",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "ήσυχη ώρα"
+      "icon": "heart-hand"
     },
     {
       "id": "hug",
+      "text": "αγκαλιά",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "αγκαλιά"
+      "icon": "heart-hand"
     },
     {
       "id": "space",
+      "text": "χώρος",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "χώρος"
+      "icon": "heart-hand"
     },
     {
       "id": "toilet",
+      "text": "τουαλέτα",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "τουαλέτα"
+      "icon": "heart-hand"
     },
     {
       "id": "medicine",
+      "text": "φάρμακο",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "φάρμακο"
+      "icon": "heart-hand"
     },
     {
       "id": "light",
+      "text": "φως",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "φως"
+      "icon": "heart-hand"
     },
     {
       "id": "dark-2",
+      "text": "σκοτάδι",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "σκοτάδι"
+      "icon": "heart-hand"
     },
     {
       "id": "noise",
+      "text": "θόρυβος",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "θόρυβος"
+      "icon": "heart-hand"
     },
     {
       "id": "headphones",
+      "text": "ακουστικά",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "ακουστικά"
+      "icon": "heart-hand"
     },
     {
       "id": "blanket",
+      "text": "κουβέρτα",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "κουβέρτα"
+      "icon": "heart-hand"
     },
     {
       "id": "charger",
+      "text": "φορτιστής",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "φορτιστής"
+      "icon": "heart-hand"
     },
     {
       "id": "choice",
+      "text": "επιλογή",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "επιλογή"
+      "icon": "heart-hand"
     },
     {
       "id": "turn",
+      "text": "σειρά",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "σειρά"
+      "icon": "heart-hand"
     },
     {
       "id": "help-please",
+      "text": "βοήθεια παρακαλώ",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "βοήθεια παρακαλώ"
+      "icon": "heart-hand"
     },
     {
       "id": "different",
+      "text": "διαφορετικός",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "διαφορετικός"
+      "icon": "sparkles"
     },
     {
       "id": "same",
+      "text": "ίδιος",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "ίδιος"
+      "icon": "sparkles"
     },
     {
       "id": "easy",
+      "text": "εύκολος",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "εύκολος"
+      "icon": "sparkles"
     },
     {
       "id": "harder",
+      "text": "πιο δύσκολος",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "πιο δύσκολος"
+      "icon": "sparkles"
     },
     {
       "id": "favorite",
+      "text": "αγαπημένος",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "αγαπημένος"
+      "icon": "sparkles"
     },
     {
       "id": "missing",
+      "text": "λείπει",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "λείπει"
+      "icon": "sparkles"
     },
     {
       "id": "broken",
+      "text": "χαλασμένος",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "χαλασμένος"
+      "icon": "sparkles"
     },
     {
       "id": "ready",
+      "text": "έτοιμος",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "έτοιμος"
+      "icon": "sparkles"
     },
     {
       "id": "busy",
+      "text": "απασχολημένος",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "απασχολημένος"
+      "icon": "sparkles"
     },
     {
       "id": "empty",
+      "text": "άδειος",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "άδειος"
+      "icon": "sparkles"
     },
     {
       "id": "full",
+      "text": "γεμάτος",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "γεμάτος"
+      "icon": "sparkles"
     },
     {
       "id": "small",
+      "text": "μικρός",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "μικρός"
+      "icon": "sparkles"
     },
     {
       "id": "tall",
+      "text": "ψηλός",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "ψηλός"
+      "icon": "sparkles"
     },
     {
       "id": "short",
+      "text": "κοντός",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "κοντός"
+      "icon": "sparkles"
     },
     {
       "id": "round",
+      "text": "στρογγυλός",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "στρογγυλός"
+      "icon": "sparkles"
     },
     {
       "id": "square",
+      "text": "τετράγωνος",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "τετράγωνος"
+      "icon": "sparkles"
     },
     {
       "id": "kind",
+      "text": "καλός",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "καλός"
+      "icon": "sparkles"
     },
     {
       "id": "gentle",
+      "text": "ευγενικός",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "ευγενικός"
+      "icon": "sparkles"
     },
     {
       "id": "careful",
+      "text": "προσεκτικός",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "προσεκτικός"
+      "icon": "sparkles"
     },
     {
       "id": "safe-place",
+      "text": "ασφαλές μέρος",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "ασφαλές μέρος"
+      "icon": "sparkles"
     }
   ],
   "templates": [
@@ -3134,7 +3067,5 @@
         "δεν"
       ]
     }
-  },
-  "source": "generated",
-  "reviewStatus": "needs-native-review"
+  }
 }

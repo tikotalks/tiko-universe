@@ -1,2435 +1,2368 @@
 {
   "locale": "id",
   "version": 1,
+  "source": "generated",
+  "reviewStatus": "needs-native-review",
   "words": [
     {
       "id": "i",
+      "text": "saya",
       "pos": "pronoun",
       "category": "people",
       "frequency": 10,
-      "icon": "user",
-      "text": "saya"
+      "icon": "user"
     },
     {
       "id": "you",
+      "text": "kamu",
       "pos": "pronoun",
       "category": "people",
       "frequency": 10,
-      "icon": "user",
-      "text": "kamu"
+      "icon": "user"
     },
     {
       "id": "we",
+      "text": "kami",
       "pos": "pronoun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "kami"
+      "icon": "user"
     },
     {
       "id": "me",
+      "text": "saya",
       "pos": "pronoun",
       "category": "people",
       "frequency": 10,
-      "icon": "user",
-      "text": "saya"
+      "icon": "user"
     },
     {
       "id": "my",
+      "text": "saya",
       "pos": "pronoun",
       "category": "people",
       "frequency": 10,
-      "icon": "user",
-      "text": "saya"
+      "icon": "user"
     },
     {
       "id": "your",
+      "text": "kamu",
       "pos": "pronoun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "kamu"
+      "icon": "user"
     },
     {
       "id": "he",
+      "text": "dia",
       "pos": "pronoun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "dia"
+      "icon": "user"
     },
     {
       "id": "she",
+      "text": "dia",
       "pos": "pronoun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "dia"
+      "icon": "user"
     },
     {
       "id": "they",
+      "text": "mereka",
       "pos": "pronoun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "mereka"
+      "icon": "user"
     },
     {
       "id": "mum",
+      "text": "ibu",
       "pos": "noun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "ibu"
+      "icon": "user"
     },
     {
       "id": "dad",
+      "text": "ayah",
       "pos": "noun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "ayah"
+      "icon": "user"
     },
     {
       "id": "teacher",
+      "text": "guru",
       "pos": "noun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "guru"
+      "icon": "user"
     },
     {
       "id": "friend",
+      "text": "teman",
       "pos": "noun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "teman"
+      "icon": "user"
     },
     {
       "id": "brother",
+      "text": "kakak",
       "pos": "noun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "kakak"
+      "icon": "user"
     },
     {
       "id": "sister",
+      "text": "kakak perempuan",
       "pos": "noun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "kakak perempuan"
+      "icon": "user"
     },
     {
       "id": "grandma",
+      "text": "nenek",
       "pos": "noun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "nenek"
+      "icon": "user"
     },
     {
       "id": "grandpa",
+      "text": "kakek",
       "pos": "noun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "kakek"
+      "icon": "user"
     },
     {
       "id": "helper",
+      "text": "pembantu",
       "pos": "noun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "pembantu"
+      "icon": "user"
     },
     {
       "id": "doctor",
+      "text": "dokter",
       "pos": "noun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "dokter"
+      "icon": "user"
     },
     {
       "id": "class",
+      "text": "kelas",
       "pos": "noun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "kelas"
+      "icon": "user"
     },
     {
       "id": "want",
+      "text": "mau",
       "pos": "verb",
       "category": "actions",
       "frequency": 10,
-      "icon": "play",
-      "inflections": {
-        "past": "wanted"
-      },
-      "text": "mau"
+      "icon": "play"
     },
     {
       "id": "need",
+      "text": "butuh",
       "pos": "verb",
       "category": "actions",
       "frequency": 10,
-      "icon": "play",
-      "inflections": {
-        "past": "needed"
-      },
-      "text": "butuh"
+      "icon": "play"
     },
     {
       "id": "like",
+      "text": "suka",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "likeed"
-      },
-      "text": "suka"
+      "icon": "play"
     },
     {
       "id": "feel",
+      "text": "merasa",
       "pos": "verb",
       "category": "actions",
       "frequency": 10,
-      "icon": "play",
-      "inflections": {
-        "past": "feeled"
-      },
-      "text": "merasa"
+      "icon": "play"
     },
     {
       "id": "see",
+      "text": "lihat",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "seeed"
-      },
-      "text": "lihat"
+      "icon": "play"
     },
     {
       "id": "hear",
+      "text": "dengar",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "heared"
-      },
-      "text": "dengar"
+      "icon": "play"
     },
     {
       "id": "have",
+      "text": "punya",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "haveed"
-      },
-      "text": "punya"
+      "icon": "play"
     },
     {
       "id": "go",
+      "text": "pergi",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "text": "pergi"
+      "icon": "play"
     },
     {
       "id": "come",
+      "text": "datang",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "comeed"
-      },
-      "text": "datang"
+      "icon": "play"
     },
     {
       "id": "play",
+      "text": "bermain",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "played"
-      },
-      "text": "bermain"
+      "icon": "play"
     },
     {
       "id": "read",
+      "text": "baca",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "readed"
-      },
-      "text": "baca"
+      "icon": "play"
     },
     {
       "id": "draw",
+      "text": "gambar",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "drawed"
-      },
-      "text": "gambar"
+      "icon": "play"
     },
     {
       "id": "eat",
+      "text": "makan",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "text": "makan"
+      "icon": "play"
     },
     {
       "id": "drink",
+      "text": "minum",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "text": "minum"
+      "icon": "play"
     },
     {
       "id": "sit",
+      "text": "duduk",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "text": "duduk"
+      "icon": "play"
     },
     {
       "id": "stand",
+      "text": "berdiri",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "text": "berdiri"
+      "icon": "play"
     },
     {
       "id": "walk",
+      "text": "jalan",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "walked"
-      },
-      "text": "jalan"
+      "icon": "play"
     },
     {
       "id": "run",
+      "text": "lari",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "text": "lari"
+      "icon": "play"
     },
     {
       "id": "stop",
+      "text": "berhenti",
       "pos": "verb",
       "category": "actions",
       "frequency": 10,
-      "icon": "play",
-      "inflections": {
-        "past": "stoped"
-      },
-      "text": "berhenti"
+      "icon": "play"
     },
     {
       "id": "start",
+      "text": "mulai",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "started"
-      },
-      "text": "mulai"
+      "icon": "play"
     },
     {
       "id": "wait",
+      "text": "tunggu",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "waited"
-      },
-      "text": "tunggu"
+      "icon": "play"
     },
     {
       "id": "help",
+      "text": "bantu",
       "pos": "verb",
       "category": "actions",
       "frequency": 10,
-      "icon": "play",
-      "inflections": {
-        "past": "helped"
-      },
-      "text": "bantu"
+      "icon": "play"
     },
     {
       "id": "choose",
+      "text": "pilih",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "chooseed"
-      },
-      "text": "pilih"
+      "icon": "play"
     },
     {
       "id": "open",
+      "text": "buka",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "opened"
-      },
-      "text": "buka"
+      "icon": "play"
     },
     {
       "id": "close",
+      "text": "tutup",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "closeed"
-      },
-      "text": "tutup"
+      "icon": "play"
     },
     {
       "id": "wash",
+      "text": "cuci",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "washed"
-      },
-      "text": "cuci"
+      "icon": "play"
     },
     {
       "id": "sleep",
+      "text": "tidur",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "text": "tidur"
+      "icon": "play"
     },
     {
       "id": "rest",
+      "text": "istirahat",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "rested"
-      },
-      "text": "istirahat"
+      "icon": "play"
     },
     {
       "id": "try",
+      "text": "coba",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "tryed"
-      },
-      "text": "coba"
+      "icon": "play"
     },
     {
       "id": "talk",
+      "text": "bicara",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "talked"
-      },
-      "text": "bicara"
+      "icon": "play"
     },
     {
       "id": "yes",
+      "text": "ya",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "ya"
+      "icon": "chat-bubble"
     },
     {
       "id": "no",
+      "text": "tidak",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "tidak"
+      "icon": "chat-bubble"
     },
     {
       "id": "please",
+      "text": "tolong",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "tolong"
+      "icon": "chat-bubble"
     },
     {
       "id": "thank-you",
+      "text": "terima kasih",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "terima kasih"
+      "icon": "chat-bubble"
     },
     {
       "id": "sorry",
+      "text": "maaf",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "maaf"
+      "icon": "chat-bubble"
     },
     {
       "id": "hello",
+      "text": "halo",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "halo"
+      "icon": "chat-bubble"
     },
     {
       "id": "goodbye",
+      "text": "selamat tinggal",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "selamat tinggal"
+      "icon": "chat-bubble"
     },
     {
       "id": "more",
+      "text": "lagi",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "lagi"
+      "icon": "chat-bubble"
     },
     {
       "id": "all-done",
+      "text": "sudah selesai",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "sudah selesai"
+      "icon": "chat-bubble"
     },
     {
       "id": "again",
+      "text": "lagi",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "lagi"
+      "icon": "chat-bubble"
     },
     {
       "id": "finished",
+      "text": "selesai",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "selesai"
+      "icon": "chat-bubble"
     },
     {
       "id": "okay",
+      "text": "oke",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "oke"
+      "icon": "chat-bubble"
     },
     {
       "id": "not-yet",
+      "text": "belum",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "belum"
+      "icon": "chat-bubble"
     },
     {
       "id": "maybe",
+      "text": "mungkin",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "mungkin"
+      "icon": "chat-bubble"
     },
     {
       "id": "what",
+      "text": "apa",
       "pos": "question",
       "category": "questions",
       "frequency": 8,
-      "icon": "question-circle",
-      "text": "apa"
+      "icon": "question-circle"
     },
     {
       "id": "where",
+      "text": "di mana",
       "pos": "question",
       "category": "questions",
       "frequency": 8,
-      "icon": "question-circle",
-      "text": "di mana"
+      "icon": "question-circle"
     },
     {
       "id": "who",
+      "text": "siapa",
       "pos": "question",
       "category": "questions",
       "frequency": 8,
-      "icon": "question-circle",
-      "text": "siapa"
+      "icon": "question-circle"
     },
     {
       "id": "when",
+      "text": "kapan",
       "pos": "question",
       "category": "questions",
       "frequency": 8,
-      "icon": "question-circle",
-      "text": "kapan"
+      "icon": "question-circle"
     },
     {
       "id": "why",
+      "text": "kenapa",
       "pos": "question",
       "category": "questions",
       "frequency": 8,
-      "icon": "question-circle",
-      "text": "kenapa"
+      "icon": "question-circle"
     },
     {
       "id": "which",
+      "text": "yang mana",
       "pos": "question",
       "category": "questions",
       "frequency": 8,
-      "icon": "question-circle",
-      "text": "yang mana"
+      "icon": "question-circle"
     },
     {
       "id": "how",
+      "text": "bagaimana",
       "pos": "question",
       "category": "questions",
       "frequency": 8,
-      "icon": "question-circle",
-      "text": "bagaimana"
+      "icon": "question-circle"
     },
     {
       "id": "can",
+      "text": "bisa",
       "pos": "question",
       "category": "questions",
       "frequency": 8,
-      "icon": "question-circle",
-      "text": "bisa"
+      "icon": "question-circle"
     },
     {
       "id": "is",
+      "text": "adalah",
       "pos": "question",
       "category": "questions",
       "frequency": 8,
-      "icon": "question-circle",
-      "text": "adalah"
+      "icon": "question-circle"
     },
     {
       "id": "are",
+      "text": "adalah",
       "pos": "question",
       "category": "questions",
       "frequency": 8,
-      "icon": "question-circle",
-      "text": "adalah"
+      "icon": "question-circle"
     },
     {
       "id": "a",
+      "text": "sebuah",
       "pos": "determiner",
       "category": "helpers",
       "frequency": 8,
-      "icon": "text",
-      "text": "sebuah"
+      "icon": "text"
     },
     {
       "id": "the",
+      "text": "itu",
       "pos": "determiner",
       "category": "helpers",
       "frequency": 8,
-      "icon": "text",
-      "text": "itu"
+      "icon": "text"
     },
     {
       "id": "this",
+      "text": "ini",
       "pos": "determiner",
       "category": "helpers",
       "frequency": 8,
-      "icon": "text",
-      "text": "ini"
+      "icon": "text"
     },
     {
       "id": "that",
+      "text": "itu",
       "pos": "determiner",
       "category": "helpers",
       "frequency": 8,
-      "icon": "text",
-      "text": "itu"
+      "icon": "text"
     },
     {
       "id": "some",
+      "text": "beberapa",
       "pos": "determiner",
       "category": "helpers",
       "frequency": 8,
-      "icon": "text",
-      "text": "beberapa"
+      "icon": "text"
     },
     {
       "id": "one",
+      "text": "satu",
       "pos": "determiner",
       "category": "helpers",
       "frequency": 8,
-      "icon": "text",
-      "text": "satu"
+      "icon": "text"
     },
     {
       "id": "two",
+      "text": "dua",
       "pos": "determiner",
       "category": "helpers",
       "frequency": 8,
-      "icon": "text",
-      "text": "dua"
+      "icon": "text"
     },
     {
       "id": "three",
+      "text": "tiga",
       "pos": "determiner",
       "category": "helpers",
       "frequency": 8,
-      "icon": "text",
-      "text": "tiga"
+      "icon": "text"
     },
     {
       "id": "many",
+      "text": "banyak",
       "pos": "determiner",
       "category": "helpers",
       "frequency": 8,
-      "icon": "text",
-      "text": "banyak"
+      "icon": "text"
     },
     {
       "id": "little",
+      "text": "sedikit",
       "pos": "determiner",
       "category": "helpers",
       "frequency": 8,
-      "icon": "text",
-      "text": "sedikit"
+      "icon": "text"
     },
     {
       "id": "big",
+      "text": "besar",
       "pos": "determiner",
       "category": "helpers",
       "frequency": 8,
-      "icon": "text",
-      "text": "besar"
+      "icon": "text"
     },
     {
       "id": "in",
+      "text": "di",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "di"
+      "icon": "arrow-right"
     },
     {
       "id": "on",
+      "text": "di atas",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "di atas"
+      "icon": "arrow-right"
     },
     {
       "id": "under",
+      "text": "di bawah",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "di bawah"
+      "icon": "arrow-right"
     },
     {
       "id": "next-to",
+      "text": "di samping",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "di samping"
+      "icon": "arrow-right"
     },
     {
       "id": "with",
+      "text": "dengan",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "dengan"
+      "icon": "arrow-right"
     },
     {
       "id": "without",
+      "text": "tanpa",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "tanpa"
+      "icon": "arrow-right"
     },
     {
       "id": "to",
+      "text": "ke",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "ke"
+      "icon": "arrow-right"
     },
     {
       "id": "from",
+      "text": "dari",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "dari"
+      "icon": "arrow-right"
     },
     {
       "id": "inside",
+      "text": "di dalam",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "di dalam"
+      "icon": "arrow-right"
     },
     {
       "id": "outside",
+      "text": "di luar",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "di luar"
+      "icon": "arrow-right"
     },
     {
       "id": "near",
+      "text": "dekat",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "dekat"
+      "icon": "arrow-right"
     },
     {
       "id": "far",
+      "text": "jauh",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "jauh"
+      "icon": "arrow-right"
     },
     {
       "id": "and",
+      "text": "dan",
       "pos": "conjunction",
       "category": "helpers",
       "frequency": 6,
-      "icon": "branch",
-      "text": "dan"
+      "icon": "branch"
     },
     {
       "id": "or",
+      "text": "atau",
       "pos": "conjunction",
       "category": "helpers",
       "frequency": 6,
-      "icon": "branch",
-      "text": "atau"
+      "icon": "branch"
     },
     {
       "id": "because",
+      "text": "karena",
       "pos": "conjunction",
       "category": "helpers",
       "frequency": 6,
-      "icon": "branch",
-      "text": "karena"
+      "icon": "branch"
     },
     {
       "id": "then",
+      "text": "lalu",
       "pos": "conjunction",
       "category": "helpers",
       "frequency": 6,
-      "icon": "branch",
-      "text": "lalu"
+      "icon": "branch"
     },
     {
       "id": "but",
+      "text": "tapi",
       "pos": "conjunction",
       "category": "helpers",
       "frequency": 6,
-      "icon": "branch",
-      "text": "tapi"
+      "icon": "branch"
     },
     {
       "id": "water",
+      "text": "air",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "air"
+      "icon": "water"
     },
     {
       "id": "milk",
+      "text": "susu",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "susu"
+      "icon": "water"
     },
     {
       "id": "juice",
+      "text": "jus",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "jus"
+      "icon": "water"
     },
     {
       "id": "tea",
+      "text": "teh",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "teh"
+      "icon": "water"
     },
     {
       "id": "smoothie",
+      "text": "smoothie",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "smoothie"
+      "icon": "water"
     },
     {
       "id": "lemonade",
+      "text": "limun",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "limun"
+      "icon": "water"
     },
     {
       "id": "hot-drink",
+      "text": "minuman panas",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "minuman panas"
+      "icon": "water"
     },
     {
       "id": "cold-drink",
+      "text": "minuman dingin",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "minuman dingin"
+      "icon": "water"
     },
     {
       "id": "cup",
+      "text": "gelas",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "gelas"
+      "icon": "water"
     },
     {
       "id": "straw",
+      "text": "sedotan",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "sedotan"
+      "icon": "water"
     },
     {
       "id": "bottle",
+      "text": "botol",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "botol"
+      "icon": "water"
     },
     {
       "id": "sip",
+      "text": "seruput",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "seruput"
+      "icon": "water"
     },
     {
       "id": "apple",
+      "text": "apel",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "apel"
+      "icon": "apple"
     },
     {
       "id": "banana",
+      "text": "pisang",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "pisang"
+      "icon": "apple"
     },
     {
       "id": "bread",
+      "text": "roti",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "roti"
+      "icon": "apple"
     },
     {
       "id": "toast",
+      "text": "roti bakar",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "roti bakar"
+      "icon": "apple"
     },
     {
       "id": "sandwich",
+      "text": "roti isi",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "roti isi"
+      "icon": "apple"
     },
     {
       "id": "rice",
+      "text": "nasi",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "nasi"
+      "icon": "apple"
     },
     {
       "id": "pasta",
+      "text": "pasta",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "pasta"
+      "icon": "apple"
     },
     {
       "id": "soup",
+      "text": "sup",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "sup"
+      "icon": "apple"
     },
     {
       "id": "yogurt",
+      "text": "yogurt",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "yogurt"
+      "icon": "apple"
     },
     {
       "id": "cheese",
+      "text": "keju",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "keju"
+      "icon": "apple"
     },
     {
       "id": "cracker",
+      "text": "biskuit",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "biskuit"
+      "icon": "apple"
     },
     {
       "id": "carrot",
+      "text": "wortel",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "wortel"
+      "icon": "apple"
     },
     {
       "id": "chips",
+      "text": "keripik",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "keripik"
+      "icon": "apple"
     },
     {
       "id": "cookie",
+      "text": "kue",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "kue"
+      "icon": "apple"
     },
     {
       "id": "egg",
+      "text": "telur",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "telur"
+      "icon": "apple"
     },
     {
       "id": "cereal",
+      "text": "sereal",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "sereal"
+      "icon": "apple"
     },
     {
       "id": "fruit",
+      "text": "buah",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "buah"
+      "icon": "apple"
     },
     {
       "id": "snack",
+      "text": "camilan",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "camilan"
+      "icon": "apple"
     },
     {
       "id": "dinner",
+      "text": "makan malam",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "makan malam"
+      "icon": "apple"
     },
     {
       "id": "lunch",
+      "text": "makan siang",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "makan siang"
+      "icon": "apple"
     },
     {
       "id": "happy",
+      "text": "senang",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "senang"
+      "icon": "smile"
     },
     {
       "id": "sad",
+      "text": "sedih",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "sedih"
+      "icon": "smile"
     },
     {
       "id": "angry",
+      "text": "marah",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "marah"
+      "icon": "smile"
     },
     {
       "id": "worried",
+      "text": "khawatir",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "khawatir"
+      "icon": "smile"
     },
     {
       "id": "scared",
+      "text": "takut",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "takut"
+      "icon": "smile"
     },
     {
       "id": "tired",
+      "text": "lelah",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "lelah"
+      "icon": "smile"
     },
     {
       "id": "sick",
+      "text": "sakit",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "sakit"
+      "icon": "smile"
     },
     {
       "id": "hurt",
+      "text": "kesakitan",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "kesakitan"
+      "icon": "smile"
     },
     {
       "id": "calm",
+      "text": "tenang",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "tenang"
+      "icon": "smile"
     },
     {
       "id": "excited",
+      "text": "bersemangat",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "bersemangat"
+      "icon": "smile"
     },
     {
       "id": "confused",
+      "text": "bingung",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "bingung"
+      "icon": "smile"
     },
     {
       "id": "proud",
+      "text": "bangga",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "bangga"
+      "icon": "smile"
     },
     {
       "id": "lonely",
+      "text": "kesepian",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "kesepian"
+      "icon": "smile"
     },
     {
       "id": "bored",
+      "text": "bosan",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "bosan"
+      "icon": "smile"
     },
     {
       "id": "safe",
+      "text": "aman",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "aman"
+      "icon": "smile"
     },
     {
       "id": "upset",
+      "text": "kecewa",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "kecewa"
+      "icon": "smile"
     },
     {
       "id": "okay-2",
+      "text": "oke",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "oke"
+      "icon": "smile"
     },
     {
       "id": "hot",
+      "text": "panas",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "panas"
+      "icon": "smile"
     },
     {
       "id": "cold",
+      "text": "dingin",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "dingin"
+      "icon": "smile"
     },
     {
       "id": "hungry",
+      "text": "lapar",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "lapar"
+      "icon": "smile"
     },
     {
       "id": "thirsty",
+      "text": "haus",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "haus"
+      "icon": "smile"
     },
     {
       "id": "head",
+      "text": "kepala",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "kepala"
+      "icon": "body"
     },
     {
       "id": "hand",
+      "text": "tangan",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "tangan"
+      "icon": "body"
     },
     {
       "id": "foot",
+      "text": "kaki",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "kaki"
+      "icon": "body"
     },
     {
       "id": "tummy",
+      "text": "perut",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "perut"
+      "icon": "body"
     },
     {
       "id": "mouth",
+      "text": "mulut",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "mulut"
+      "icon": "body"
     },
     {
       "id": "ear",
+      "text": "telinga",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "telinga"
+      "icon": "body"
     },
     {
       "id": "eye",
+      "text": "mata",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "mata"
+      "icon": "body"
     },
     {
       "id": "arm",
+      "text": "lengan",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "lengan"
+      "icon": "body"
     },
     {
       "id": "leg",
+      "text": "kaki",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "kaki"
+      "icon": "body"
     },
     {
       "id": "back",
+      "text": "punggung",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "punggung"
+      "icon": "body"
     },
     {
       "id": "tooth",
+      "text": "gigi",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "gigi"
+      "icon": "body"
     },
     {
       "id": "hair",
+      "text": "rambut",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "rambut"
+      "icon": "body"
     },
     {
       "id": "nose",
+      "text": "hidung",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "hidung"
+      "icon": "body"
     },
     {
       "id": "skin",
+      "text": "kulit",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "kulit"
+      "icon": "body"
     },
     {
       "id": "heart",
+      "text": "hati",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "hati"
+      "icon": "body"
     },
     {
       "id": "home",
+      "text": "rumah",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "rumah"
+      "icon": "home"
     },
     {
       "id": "school",
+      "text": "sekolah",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "sekolah"
+      "icon": "home"
     },
     {
       "id": "classroom",
+      "text": "ruang kelas",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "ruang kelas"
+      "icon": "home"
     },
     {
       "id": "bathroom",
+      "text": "kamar mandi",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "kamar mandi"
+      "icon": "home"
     },
     {
       "id": "kitchen",
+      "text": "dapur",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "dapur"
+      "icon": "home"
     },
     {
       "id": "bedroom",
+      "text": "kamar tidur",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "kamar tidur"
+      "icon": "home"
     },
     {
       "id": "garden",
+      "text": "taman",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "taman"
+      "icon": "home"
     },
     {
       "id": "shop",
+      "text": "toko",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "toko"
+      "icon": "home"
     },
     {
       "id": "car",
+      "text": "mobil",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "mobil"
+      "icon": "home"
     },
     {
       "id": "bus",
+      "text": "bus",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "bus"
+      "icon": "home"
     },
     {
       "id": "park",
+      "text": "taman",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "taman"
+      "icon": "home"
     },
     {
       "id": "playground",
+      "text": "taman bermain",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "taman bermain"
+      "icon": "home"
     },
     {
       "id": "library",
+      "text": "perpustakaan",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "perpustakaan"
+      "icon": "home"
     },
     {
       "id": "pool",
+      "text": "kolam",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "kolam"
+      "icon": "home"
     },
     {
       "id": "table",
+      "text": "meja",
       "pos": "noun",
       "category": "home",
       "frequency": 7,
-      "icon": "home",
-      "text": "meja"
+      "icon": "home"
     },
     {
       "id": "chair",
+      "text": "kursi",
       "pos": "noun",
       "category": "home",
       "frequency": 7,
-      "icon": "home",
-      "text": "kursi"
+      "icon": "home"
     },
     {
       "id": "sofa",
+      "text": "sofa",
       "pos": "noun",
       "category": "home",
       "frequency": 7,
-      "icon": "home",
-      "text": "sofa"
+      "icon": "home"
     },
     {
       "id": "bed",
+      "text": "tempat tidur",
       "pos": "noun",
       "category": "home",
       "frequency": 7,
-      "icon": "home",
-      "text": "tempat tidur"
+      "icon": "home"
     },
     {
       "id": "door",
+      "text": "pintu",
       "pos": "noun",
       "category": "home",
       "frequency": 7,
-      "icon": "home",
-      "text": "pintu"
+      "icon": "home"
     },
     {
       "id": "window",
+      "text": "jendela",
       "pos": "noun",
       "category": "home",
       "frequency": 7,
-      "icon": "home",
-      "text": "jendela"
+      "icon": "home"
     },
     {
       "id": "book",
+      "text": "buku",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "buku"
+      "icon": "book"
     },
     {
       "id": "pencil",
+      "text": "pensil",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "pensil"
+      "icon": "book"
     },
     {
       "id": "paper",
+      "text": "kertas",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "kertas"
+      "icon": "book"
     },
     {
       "id": "bag",
+      "text": "tas",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "tas"
+      "icon": "book"
     },
     {
       "id": "coat",
+      "text": "jaket",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "jaket"
+      "icon": "book"
     },
     {
       "id": "shoes",
+      "text": "sepatu",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "sepatu"
+      "icon": "book"
     },
     {
       "id": "lunchbox",
+      "text": "kotak makan",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "kotak makan"
+      "icon": "book"
     },
     {
       "id": "tablet",
+      "text": "tablet",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "tablet"
+      "icon": "book"
     },
     {
       "id": "screen",
+      "text": "layar",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "layar"
+      "icon": "book"
     },
     {
       "id": "timer",
+      "text": "pengatur waktu",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "pengatur waktu"
+      "icon": "book"
     },
     {
       "id": "schedule",
+      "text": "jadwal",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "jadwal"
+      "icon": "book"
     },
     {
       "id": "picture",
+      "text": "gambar",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "gambar"
+      "icon": "book"
     },
     {
       "id": "card",
+      "text": "kartu",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "kartu"
+      "icon": "book"
     },
     {
       "id": "story",
+      "text": "cerita",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "cerita"
+      "icon": "book"
     },
     {
       "id": "music",
+      "text": "musik",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "musik"
+      "icon": "book"
     },
     {
       "id": "ball",
+      "text": "bola",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "bola"
+      "icon": "puzzle"
     },
     {
       "id": "blocks",
+      "text": "balok",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "balok"
+      "icon": "puzzle"
     },
     {
       "id": "doll",
+      "text": "boneka",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "boneka"
+      "icon": "puzzle"
     },
     {
       "id": "car-toy",
+      "text": "mobil mainan",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "mobil mainan"
+      "icon": "puzzle"
     },
     {
       "id": "train",
+      "text": "kereta",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "kereta"
+      "icon": "puzzle"
     },
     {
       "id": "puzzle",
+      "text": "puzzle",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "puzzle"
+      "icon": "puzzle"
     },
     {
       "id": "game",
+      "text": "permainan",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "permainan"
+      "icon": "puzzle"
     },
     {
       "id": "paint",
+      "text": "cat",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "cat"
+      "icon": "puzzle"
     },
     {
       "id": "clay",
+      "text": "tanah liat",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "tanah liat"
+      "icon": "puzzle"
     },
     {
       "id": "bubbles",
+      "text": "gelembung",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "gelembung"
+      "icon": "puzzle"
     },
     {
       "id": "swing",
+      "text": "ayunan",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "ayunan"
+      "icon": "puzzle"
     },
     {
       "id": "slide",
+      "text": "perosotan",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "perosotan"
+      "icon": "puzzle"
     },
     {
       "id": "bike",
+      "text": "sepeda",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "sepeda"
+      "icon": "puzzle"
     },
     {
       "id": "teddy",
+      "text": "boneka beruang",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "boneka beruang"
+      "icon": "puzzle"
     },
     {
       "id": "lego",
+      "text": "lego",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "lego"
+      "icon": "puzzle"
     },
     {
       "id": "red",
+      "text": "merah",
       "pos": "adjective",
       "category": "colors",
       "frequency": 5,
-      "icon": "palette",
-      "text": "merah"
+      "icon": "palette"
     },
     {
       "id": "blue",
+      "text": "biru",
       "pos": "adjective",
       "category": "colors",
       "frequency": 5,
-      "icon": "palette",
-      "text": "biru"
+      "icon": "palette"
     },
     {
       "id": "green",
+      "text": "hijau",
       "pos": "adjective",
       "category": "colors",
       "frequency": 5,
-      "icon": "palette",
-      "text": "hijau"
+      "icon": "palette"
     },
     {
       "id": "yellow",
+      "text": "kuning",
       "pos": "adjective",
       "category": "colors",
       "frequency": 5,
-      "icon": "palette",
-      "text": "kuning"
+      "icon": "palette"
     },
     {
       "id": "orange",
+      "text": "oranye",
       "pos": "adjective",
       "category": "colors",
       "frequency": 5,
-      "icon": "palette",
-      "text": "oranye"
+      "icon": "palette"
     },
     {
       "id": "purple",
+      "text": "ungu",
       "pos": "adjective",
       "category": "colors",
       "frequency": 5,
-      "icon": "palette",
-      "text": "ungu"
+      "icon": "palette"
     },
     {
       "id": "pink",
+      "text": "pink",
       "pos": "adjective",
       "category": "colors",
       "frequency": 5,
-      "icon": "palette",
-      "text": "pink"
+      "icon": "palette"
     },
     {
       "id": "brown",
+      "text": "coklat",
       "pos": "adjective",
       "category": "colors",
       "frequency": 5,
-      "icon": "palette",
-      "text": "coklat"
+      "icon": "palette"
     },
     {
       "id": "black",
+      "text": "hitam",
       "pos": "adjective",
       "category": "colors",
       "frequency": 5,
-      "icon": "palette",
-      "text": "hitam"
+      "icon": "palette"
     },
     {
       "id": "white",
+      "text": "putih",
       "pos": "adjective",
       "category": "colors",
       "frequency": 5,
-      "icon": "palette",
-      "text": "putih"
+      "icon": "palette"
     },
     {
       "id": "grey",
+      "text": "abu-abu",
       "pos": "adjective",
       "category": "colors",
       "frequency": 5,
-      "icon": "palette",
-      "text": "abu-abu"
+      "icon": "palette"
     },
     {
       "id": "bright",
+      "text": "terang",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "terang"
+      "icon": "palette"
     },
     {
       "id": "dark",
+      "text": "gelap",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "gelap"
+      "icon": "palette"
     },
     {
       "id": "soft",
+      "text": "lembut",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "lembut"
+      "icon": "palette"
     },
     {
       "id": "hard",
+      "text": "keras",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "keras"
+      "icon": "palette"
     },
     {
       "id": "quiet",
+      "text": "tenang",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "tenang"
+      "icon": "palette"
     },
     {
       "id": "loud",
+      "text": "berisik",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "berisik"
+      "icon": "palette"
     },
     {
       "id": "fast",
+      "text": "cepat",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "cepat"
+      "icon": "palette"
     },
     {
       "id": "slow",
+      "text": "lambat",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "lambat"
+      "icon": "palette"
     },
     {
       "id": "clean",
+      "text": "bersih",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "bersih"
+      "icon": "palette"
     },
     {
       "id": "dirty",
+      "text": "kotor",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "kotor"
+      "icon": "palette"
     },
     {
       "id": "wet",
+      "text": "basah",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "basah"
+      "icon": "palette"
     },
     {
       "id": "dry",
+      "text": "kering",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "kering"
+      "icon": "palette"
     },
     {
       "id": "new",
+      "text": "baru",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "baru"
+      "icon": "palette"
     },
     {
       "id": "old",
+      "text": "lama",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "lama"
+      "icon": "palette"
     },
     {
       "id": "now",
+      "text": "sekarang",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "sekarang"
+      "icon": "clock"
     },
     {
       "id": "later",
+      "text": "nanti",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "nanti"
+      "icon": "clock"
     },
     {
       "id": "today",
+      "text": "hari ini",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "hari ini"
+      "icon": "clock"
     },
     {
       "id": "tomorrow",
+      "text": "besok",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "besok"
+      "icon": "clock"
     },
     {
       "id": "morning",
+      "text": "pagi",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "pagi"
+      "icon": "clock"
     },
     {
       "id": "afternoon",
+      "text": "siang",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "siang"
+      "icon": "clock"
     },
     {
       "id": "night",
+      "text": "malam",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "malam"
+      "icon": "clock"
     },
     {
       "id": "before",
+      "text": "sebelum",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "sebelum"
+      "icon": "clock"
     },
     {
       "id": "after",
+      "text": "sesudah",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "sesudah"
+      "icon": "clock"
     },
     {
       "id": "soon",
+      "text": "segera",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "segera"
+      "icon": "clock"
     },
     {
       "id": "first",
+      "text": "pertama",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "pertama"
+      "icon": "clock"
     },
     {
       "id": "next",
+      "text": "berikutnya",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "berikutnya"
+      "icon": "clock"
     },
     {
       "id": "last",
+      "text": "terakhir",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "terakhir"
+      "icon": "clock"
     },
     {
       "id": "minute",
+      "text": "menit",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "menit"
+      "icon": "clock"
     },
     {
       "id": "hour",
+      "text": "jam",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "jam"
+      "icon": "clock"
     },
     {
       "id": "break",
+      "text": "istirahat",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "istirahat"
+      "icon": "heart-hand"
     },
     {
       "id": "quiet-time",
+      "text": "waktu tenang",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "waktu tenang"
+      "icon": "heart-hand"
     },
     {
       "id": "hug",
+      "text": "pelukan",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "pelukan"
+      "icon": "heart-hand"
     },
     {
       "id": "space",
+      "text": "ruang",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "ruang"
+      "icon": "heart-hand"
     },
     {
       "id": "toilet",
+      "text": "toilet",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "toilet"
+      "icon": "heart-hand"
     },
     {
       "id": "medicine",
+      "text": "obat",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "obat"
+      "icon": "heart-hand"
     },
     {
       "id": "light",
+      "text": "lampu",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "lampu"
+      "icon": "heart-hand"
     },
     {
       "id": "dark-2",
+      "text": "kegelapan",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "kegelapan"
+      "icon": "heart-hand"
     },
     {
       "id": "noise",
+      "text": "suara",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "suara"
+      "icon": "heart-hand"
     },
     {
       "id": "headphones",
+      "text": "headphone",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "headphone"
+      "icon": "heart-hand"
     },
     {
       "id": "blanket",
+      "text": "selimut",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "selimut"
+      "icon": "heart-hand"
     },
     {
       "id": "charger",
+      "text": "pengisi daya",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "pengisi daya"
+      "icon": "heart-hand"
     },
     {
       "id": "choice",
+      "text": "pilihan",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "pilihan"
+      "icon": "heart-hand"
     },
     {
       "id": "turn",
+      "text": "giliran",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "giliran"
+      "icon": "heart-hand"
     },
     {
       "id": "help-please",
+      "text": "tolong bantu",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "tolong bantu"
+      "icon": "heart-hand"
     },
     {
       "id": "different",
+      "text": "berbeda",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "berbeda"
+      "icon": "sparkles"
     },
     {
       "id": "same",
+      "text": "sama",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "sama"
+      "icon": "sparkles"
     },
     {
       "id": "easy",
+      "text": "mudah",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "mudah"
+      "icon": "sparkles"
     },
     {
       "id": "harder",
+      "text": "lebih sulit",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "lebih sulit"
+      "icon": "sparkles"
     },
     {
       "id": "favorite",
+      "text": "favorit",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "favorit"
+      "icon": "sparkles"
     },
     {
       "id": "missing",
+      "text": "hilang",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "hilang"
+      "icon": "sparkles"
     },
     {
       "id": "broken",
+      "text": "rusak",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "rusak"
+      "icon": "sparkles"
     },
     {
       "id": "ready",
+      "text": "siap",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "siap"
+      "icon": "sparkles"
     },
     {
       "id": "busy",
+      "text": "sibuk",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "sibuk"
+      "icon": "sparkles"
     },
     {
       "id": "empty",
+      "text": "kosong",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "kosong"
+      "icon": "sparkles"
     },
     {
       "id": "full",
+      "text": "penuh",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "penuh"
+      "icon": "sparkles"
     },
     {
       "id": "small",
+      "text": "kecil",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "kecil"
+      "icon": "sparkles"
     },
     {
       "id": "tall",
+      "text": "tinggi",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "tinggi"
+      "icon": "sparkles"
     },
     {
       "id": "short",
+      "text": "pendek",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "pendek"
+      "icon": "sparkles"
     },
     {
       "id": "round",
+      "text": "bulat",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "bulat"
+      "icon": "sparkles"
     },
     {
       "id": "square",
+      "text": "kotak",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "kotak"
+      "icon": "sparkles"
     },
     {
       "id": "kind",
+      "text": "baik",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "baik"
+      "icon": "sparkles"
     },
     {
       "id": "gentle",
+      "text": "lembut",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "lembut"
+      "icon": "sparkles"
     },
     {
       "id": "careful",
+      "text": "hati-hati",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "hati-hati"
+      "icon": "sparkles"
     },
     {
       "id": "safe-place",
+      "text": "tempat aman",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "tempat aman"
+      "icon": "sparkles"
     }
   ],
   "templates": [
@@ -3125,7 +3058,5 @@
         "tidak"
       ]
     }
-  },
-  "source": "generated",
-  "reviewStatus": "needs-native-review"
+  }
 }

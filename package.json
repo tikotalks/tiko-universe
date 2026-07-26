@@ -48,8 +48,9 @@
     "generate:locales": "node tools/generate-locales.mjs",
     "generate:ui-translations": "node tools/generate-ui-translations.mjs",
     "i18n:report": "node tools/generate-ui-translations.mjs --report",
-    "generated:check": "node tools/generate-locales.mjs --check && node tools/generate-ui-translations.mjs --check && node tools/generate-talk-packs-index.mjs --check && node tools/generate-talk-realizer-bundle.mjs --check && node tools/generate-talk-seeds.mjs --check",
-    "generate:talk-packs": "node tools/generate-talk-packs-index.mjs",
+    "generated:check": "node tools/generate-locales.mjs --check && node tools/generate-ui-translations.mjs --check && node tools/generate-talk-packs.mjs --check && node tools/generate-talk-packs-index.mjs --check && node tools/generate-talk-realizer-bundle.mjs --check && node tools/generate-talk-seeds.mjs --check",
+    "generate:talk-packs": "node tools/generate-talk-packs.mjs",
+    "generate:talk-packs-index": "node tools/generate-talk-packs-index.mjs",
     "generate:talk-bundle": "node tools/generate-talk-realizer-bundle.mjs"
   },
   "dependencies": {

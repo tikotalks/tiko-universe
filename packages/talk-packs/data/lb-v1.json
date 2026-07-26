@@ -1,2435 +1,2368 @@
 {
   "locale": "lb",
   "version": 1,
+  "source": "generated",
+  "reviewStatus": "needs-native-review",
   "words": [
     {
       "id": "i",
+      "text": "ech",
       "pos": "pronoun",
       "category": "people",
       "frequency": 10,
-      "icon": "user",
-      "text": "ech"
+      "icon": "user"
     },
     {
       "id": "you",
+      "text": "du",
       "pos": "pronoun",
       "category": "people",
       "frequency": 10,
-      "icon": "user",
-      "text": "du"
+      "icon": "user"
     },
     {
       "id": "we",
+      "text": "mir",
       "pos": "pronoun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "mir"
+      "icon": "user"
     },
     {
       "id": "me",
+      "text": "mech",
       "pos": "pronoun",
       "category": "people",
       "frequency": 10,
-      "icon": "user",
-      "text": "mech"
+      "icon": "user"
     },
     {
       "id": "my",
+      "text": "mäi",
       "pos": "pronoun",
       "category": "people",
       "frequency": 10,
-      "icon": "user",
-      "text": "mäi"
+      "icon": "user"
     },
     {
       "id": "your",
+      "text": "däi",
       "pos": "pronoun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "däi"
+      "icon": "user"
     },
     {
       "id": "he",
+      "text": "hien",
       "pos": "pronoun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "hien"
+      "icon": "user"
     },
     {
       "id": "she",
+      "text": "hatt",
       "pos": "pronoun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "hatt"
+      "icon": "user"
     },
     {
       "id": "they",
+      "text": "si",
       "pos": "pronoun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "si"
+      "icon": "user"
     },
     {
       "id": "mum",
+      "text": "mamm",
       "pos": "noun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "mamm"
+      "icon": "user"
     },
     {
       "id": "dad",
+      "text": "papp",
       "pos": "noun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "papp"
+      "icon": "user"
     },
     {
       "id": "teacher",
+      "text": "Léierin",
       "pos": "noun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "Léierin"
+      "icon": "user"
     },
     {
       "id": "friend",
+      "text": "Frënd",
       "pos": "noun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "Frënd"
+      "icon": "user"
     },
     {
       "id": "brother",
+      "text": "Brudder",
       "pos": "noun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "Brudder"
+      "icon": "user"
     },
     {
       "id": "sister",
+      "text": "Schwëster",
       "pos": "noun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "Schwëster"
+      "icon": "user"
     },
     {
       "id": "grandma",
+      "text": "Bomi",
       "pos": "noun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "Bomi"
+      "icon": "user"
     },
     {
       "id": "grandpa",
+      "text": "Bopi",
       "pos": "noun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "Bopi"
+      "icon": "user"
     },
     {
       "id": "helper",
+      "text": "Hëllefer",
       "pos": "noun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "Hëllefer"
+      "icon": "user"
     },
     {
       "id": "doctor",
+      "text": "Dokter",
       "pos": "noun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "Dokter"
+      "icon": "user"
     },
     {
       "id": "class",
+      "text": "Klass",
       "pos": "noun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "Klass"
+      "icon": "user"
     },
     {
       "id": "want",
+      "text": "wëll",
       "pos": "verb",
       "category": "actions",
       "frequency": 10,
-      "icon": "play",
-      "inflections": {
-        "past": "wanted"
-      },
-      "text": "wëll"
+      "icon": "play"
     },
     {
       "id": "need",
+      "text": "brauch",
       "pos": "verb",
       "category": "actions",
       "frequency": 10,
-      "icon": "play",
-      "inflections": {
-        "past": "needed"
-      },
-      "text": "brauch"
+      "icon": "play"
     },
     {
       "id": "like",
+      "text": "hunn gär",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "likeed"
-      },
-      "text": "hunn gär"
+      "icon": "play"
     },
     {
       "id": "feel",
+      "text": "spieren",
       "pos": "verb",
       "category": "actions",
       "frequency": 10,
-      "icon": "play",
-      "inflections": {
-        "past": "feeled"
-      },
-      "text": "spieren"
+      "icon": "play"
     },
     {
       "id": "see",
+      "text": "gesinn",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "seeed"
-      },
-      "text": "gesinn"
+      "icon": "play"
     },
     {
       "id": "hear",
+      "text": "héieren",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "heared"
-      },
-      "text": "héieren"
+      "icon": "play"
     },
     {
       "id": "have",
+      "text": "hunn",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "haveed"
-      },
-      "text": "hunn"
+      "icon": "play"
     },
     {
       "id": "go",
+      "text": "ginn",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "text": "ginn"
+      "icon": "play"
     },
     {
       "id": "come",
+      "text": "kommen",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "comeed"
-      },
-      "text": "kommen"
+      "icon": "play"
     },
     {
       "id": "play",
+      "text": "spillen",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "played"
-      },
-      "text": "spillen"
+      "icon": "play"
     },
     {
       "id": "read",
+      "text": "liesen",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "readed"
-      },
-      "text": "liesen"
+      "icon": "play"
     },
     {
       "id": "draw",
+      "text": "molen",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "drawed"
-      },
-      "text": "molen"
+      "icon": "play"
     },
     {
       "id": "eat",
+      "text": "iessen",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "text": "iessen"
+      "icon": "play"
     },
     {
       "id": "drink",
+      "text": "drénken",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "text": "drénken"
+      "icon": "play"
     },
     {
       "id": "sit",
+      "text": "sëtzen",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "text": "sëtzen"
+      "icon": "play"
     },
     {
       "id": "stand",
+      "text": "stinn",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "text": "stinn"
+      "icon": "play"
     },
     {
       "id": "walk",
+      "text": "goen",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "walked"
-      },
-      "text": "goen"
+      "icon": "play"
     },
     {
       "id": "run",
+      "text": "lafen",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "text": "lafen"
+      "icon": "play"
     },
     {
       "id": "stop",
+      "text": "stoppen",
       "pos": "verb",
       "category": "actions",
       "frequency": 10,
-      "icon": "play",
-      "inflections": {
-        "past": "stoped"
-      },
-      "text": "stoppen"
+      "icon": "play"
     },
     {
       "id": "start",
+      "text": "ufänken",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "started"
-      },
-      "text": "ufänken"
+      "icon": "play"
     },
     {
       "id": "wait",
+      "text": "waarden",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "waited"
-      },
-      "text": "waarden"
+      "icon": "play"
     },
     {
       "id": "help",
+      "text": "hëllefen",
       "pos": "verb",
       "category": "actions",
       "frequency": 10,
-      "icon": "play",
-      "inflections": {
-        "past": "helped"
-      },
-      "text": "hëllefen"
+      "icon": "play"
     },
     {
       "id": "choose",
+      "text": "wielen",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "chooseed"
-      },
-      "text": "wielen"
+      "icon": "play"
     },
     {
       "id": "open",
+      "text": "opmaachen",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "opened"
-      },
-      "text": "opmaachen"
+      "icon": "play"
     },
     {
       "id": "close",
+      "text": "zoumaachen",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "closeed"
-      },
-      "text": "zoumaachen"
+      "icon": "play"
     },
     {
       "id": "wash",
+      "text": "wäschen",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "washed"
-      },
-      "text": "wäschen"
+      "icon": "play"
     },
     {
       "id": "sleep",
+      "text": "schlofen",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "text": "schlofen"
+      "icon": "play"
     },
     {
       "id": "rest",
+      "text": "raschten",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "rested"
-      },
-      "text": "raschten"
+      "icon": "play"
     },
     {
       "id": "try",
+      "text": "probéieren",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "tryed"
-      },
-      "text": "probéieren"
+      "icon": "play"
     },
     {
       "id": "talk",
+      "text": "schwätzen",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "talked"
-      },
-      "text": "schwätzen"
+      "icon": "play"
     },
     {
       "id": "yes",
+      "text": "jo",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "jo"
+      "icon": "chat-bubble"
     },
     {
       "id": "no",
+      "text": "nee",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "nee"
+      "icon": "chat-bubble"
     },
     {
       "id": "please",
+      "text": "wann ech gelift",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "wann ech gelift"
+      "icon": "chat-bubble"
     },
     {
       "id": "thank-you",
+      "text": "merci",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "merci"
+      "icon": "chat-bubble"
     },
     {
       "id": "sorry",
+      "text": "entschuldegung",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "entschuldegung"
+      "icon": "chat-bubble"
     },
     {
       "id": "hello",
+      "text": "moien",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "moien"
+      "icon": "chat-bubble"
     },
     {
       "id": "goodbye",
+      "text": "awuer",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "awuer"
+      "icon": "chat-bubble"
     },
     {
       "id": "more",
+      "text": "méi",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "méi"
+      "icon": "chat-bubble"
     },
     {
       "id": "all-done",
+      "text": "fäerdeg",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "fäerdeg"
+      "icon": "chat-bubble"
     },
     {
       "id": "again",
+      "text": "nach eng Kéier",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "nach eng Kéier"
+      "icon": "chat-bubble"
     },
     {
       "id": "finished",
+      "text": "fäerdeg",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "fäerdeg"
+      "icon": "chat-bubble"
     },
     {
       "id": "okay",
+      "text": "gutt",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "gutt"
+      "icon": "chat-bubble"
     },
     {
       "id": "not-yet",
+      "text": "nach net",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "nach net"
+      "icon": "chat-bubble"
     },
     {
       "id": "maybe",
+      "text": "vläicht",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "vläicht"
+      "icon": "chat-bubble"
     },
     {
       "id": "what",
+      "text": "wat",
       "pos": "question",
       "category": "questions",
       "frequency": 8,
-      "icon": "question-circle",
-      "text": "wat"
+      "icon": "question-circle"
     },
     {
       "id": "where",
+      "text": "wou",
       "pos": "question",
       "category": "questions",
       "frequency": 8,
-      "icon": "question-circle",
-      "text": "wou"
+      "icon": "question-circle"
     },
     {
       "id": "who",
+      "text": "wien",
       "pos": "question",
       "category": "questions",
       "frequency": 8,
-      "icon": "question-circle",
-      "text": "wien"
+      "icon": "question-circle"
     },
     {
       "id": "when",
+      "text": "wéini",
       "pos": "question",
       "category": "questions",
       "frequency": 8,
-      "icon": "question-circle",
-      "text": "wéini"
+      "icon": "question-circle"
     },
     {
       "id": "why",
+      "text": "firwat",
       "pos": "question",
       "category": "questions",
       "frequency": 8,
-      "icon": "question-circle",
-      "text": "firwat"
+      "icon": "question-circle"
     },
     {
       "id": "which",
+      "text": "wéijen",
       "pos": "question",
       "category": "questions",
       "frequency": 8,
-      "icon": "question-circle",
-      "text": "wéijen"
+      "icon": "question-circle"
     },
     {
       "id": "how",
+      "text": "wéi",
       "pos": "question",
       "category": "questions",
       "frequency": 8,
-      "icon": "question-circle",
-      "text": "wéi"
+      "icon": "question-circle"
     },
     {
       "id": "can",
+      "text": "kann",
       "pos": "question",
       "category": "questions",
       "frequency": 8,
-      "icon": "question-circle",
-      "text": "kann"
+      "icon": "question-circle"
     },
     {
       "id": "is",
+      "text": "ass",
       "pos": "question",
       "category": "questions",
       "frequency": 8,
-      "icon": "question-circle",
-      "text": "ass"
+      "icon": "question-circle"
     },
     {
       "id": "are",
+      "text": "sinn",
       "pos": "question",
       "category": "questions",
       "frequency": 8,
-      "icon": "question-circle",
-      "text": "sinn"
+      "icon": "question-circle"
     },
     {
       "id": "a",
+      "text": "eng",
       "pos": "determiner",
       "category": "helpers",
       "frequency": 8,
-      "icon": "text",
-      "text": "eng"
+      "icon": "text"
     },
     {
       "id": "the",
+      "text": "den",
       "pos": "determiner",
       "category": "helpers",
       "frequency": 8,
-      "icon": "text",
-      "text": "den"
+      "icon": "text"
     },
     {
       "id": "this",
+      "text": "dëse",
       "pos": "determiner",
       "category": "helpers",
       "frequency": 8,
-      "icon": "text",
-      "text": "dëse"
+      "icon": "text"
     },
     {
       "id": "that",
+      "text": "deen",
       "pos": "determiner",
       "category": "helpers",
       "frequency": 8,
-      "icon": "text",
-      "text": "deen"
+      "icon": "text"
     },
     {
       "id": "some",
+      "text": "e bëssen",
       "pos": "determiner",
       "category": "helpers",
       "frequency": 8,
-      "icon": "text",
-      "text": "e bëssen"
+      "icon": "text"
     },
     {
       "id": "one",
+      "text": "eent",
       "pos": "determiner",
       "category": "helpers",
       "frequency": 8,
-      "icon": "text",
-      "text": "eent"
+      "icon": "text"
     },
     {
       "id": "two",
+      "text": "zwee",
       "pos": "determiner",
       "category": "helpers",
       "frequency": 8,
-      "icon": "text",
-      "text": "zwee"
+      "icon": "text"
     },
     {
       "id": "three",
+      "text": "dräi",
       "pos": "determiner",
       "category": "helpers",
       "frequency": 8,
-      "icon": "text",
-      "text": "dräi"
+      "icon": "text"
     },
     {
       "id": "many",
+      "text": "vill",
       "pos": "determiner",
       "category": "helpers",
       "frequency": 8,
-      "icon": "text",
-      "text": "vill"
+      "icon": "text"
     },
     {
       "id": "little",
+      "text": "wéineg",
       "pos": "determiner",
       "category": "helpers",
       "frequency": 8,
-      "icon": "text",
-      "text": "wéineg"
+      "icon": "text"
     },
     {
       "id": "big",
+      "text": "grouss",
       "pos": "determiner",
       "category": "helpers",
       "frequency": 8,
-      "icon": "text",
-      "text": "grouss"
+      "icon": "text"
     },
     {
       "id": "in",
+      "text": "an",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "an"
+      "icon": "arrow-right"
     },
     {
       "id": "on",
+      "text": "op",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "op"
+      "icon": "arrow-right"
     },
     {
       "id": "under",
+      "text": "ënner",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "ënner"
+      "icon": "arrow-right"
     },
     {
       "id": "next-to",
+      "text": "nieft",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "nieft"
+      "icon": "arrow-right"
     },
     {
       "id": "with",
+      "text": "mat",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "mat"
+      "icon": "arrow-right"
     },
     {
       "id": "without",
+      "text": "ouni",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "ouni"
+      "icon": "arrow-right"
     },
     {
       "id": "to",
+      "text": "op",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "op"
+      "icon": "arrow-right"
     },
     {
       "id": "from",
+      "text": "vun",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "vun"
+      "icon": "arrow-right"
     },
     {
       "id": "inside",
+      "text": "dobannen",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "dobannen"
+      "icon": "arrow-right"
     },
     {
       "id": "outside",
+      "text": "dobausse",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "dobausse"
+      "icon": "arrow-right"
     },
     {
       "id": "near",
+      "text": "no",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "no"
+      "icon": "arrow-right"
     },
     {
       "id": "far",
+      "text": "wäit",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "wäit"
+      "icon": "arrow-right"
     },
     {
       "id": "and",
+      "text": "an",
       "pos": "conjunction",
       "category": "helpers",
       "frequency": 6,
-      "icon": "branch",
-      "text": "an"
+      "icon": "branch"
     },
     {
       "id": "or",
+      "text": "oder",
       "pos": "conjunction",
       "category": "helpers",
       "frequency": 6,
-      "icon": "branch",
-      "text": "oder"
+      "icon": "branch"
     },
     {
       "id": "because",
+      "text": "well",
       "pos": "conjunction",
       "category": "helpers",
       "frequency": 6,
-      "icon": "branch",
-      "text": "well"
+      "icon": "branch"
     },
     {
       "id": "then",
+      "text": "dann",
       "pos": "conjunction",
       "category": "helpers",
       "frequency": 6,
-      "icon": "branch",
-      "text": "dann"
+      "icon": "branch"
     },
     {
       "id": "but",
+      "text": "mee",
       "pos": "conjunction",
       "category": "helpers",
       "frequency": 6,
-      "icon": "branch",
-      "text": "mee"
+      "icon": "branch"
     },
     {
       "id": "water",
+      "text": "Waasser",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "Waasser"
+      "icon": "water"
     },
     {
       "id": "milk",
+      "text": "Mëllech",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "Mëllech"
+      "icon": "water"
     },
     {
       "id": "juice",
+      "text": "Jus",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "Jus"
+      "icon": "water"
     },
     {
       "id": "tea",
+      "text": "Téi",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "Téi"
+      "icon": "water"
     },
     {
       "id": "smoothie",
+      "text": "Smoothie",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "Smoothie"
+      "icon": "water"
     },
     {
       "id": "lemonade",
+      "text": "Limonad",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "Limonad"
+      "icon": "water"
     },
     {
       "id": "hot-drink",
+      "text": "waarm Gedrénk",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "waarm Gedrénk"
+      "icon": "water"
     },
     {
       "id": "cold-drink",
+      "text": "kal Gedrénk",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "kal Gedrénk"
+      "icon": "water"
     },
     {
       "id": "cup",
+      "text": "Taass",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "Taass"
+      "icon": "water"
     },
     {
       "id": "straw",
+      "text": "Strohaalm",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "Strohaalm"
+      "icon": "water"
     },
     {
       "id": "bottle",
+      "text": "Fläsch",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "Fläsch"
+      "icon": "water"
     },
     {
       "id": "sip",
+      "text": "Schlupp",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "Schlupp"
+      "icon": "water"
     },
     {
       "id": "apple",
+      "text": "Apel",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "Apel"
+      "icon": "apple"
     },
     {
       "id": "banana",
+      "text": "Banann",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "Banann"
+      "icon": "apple"
     },
     {
       "id": "bread",
+      "text": "Brout",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "Brout"
+      "icon": "apple"
     },
     {
       "id": "toast",
+      "text": "Toast",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "Toast"
+      "icon": "apple"
     },
     {
       "id": "sandwich",
+      "text": "Sandwich",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "Sandwich"
+      "icon": "apple"
     },
     {
       "id": "rice",
+      "text": "Reis",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "Reis"
+      "icon": "apple"
     },
     {
       "id": "pasta",
+      "text": "Nuddelen",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "Nuddelen"
+      "icon": "apple"
     },
     {
       "id": "soup",
+      "text": "Supp",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "Supp"
+      "icon": "apple"
     },
     {
       "id": "yogurt",
+      "text": "Joghurt",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "Joghurt"
+      "icon": "apple"
     },
     {
       "id": "cheese",
+      "text": "Kéis",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "Kéis"
+      "icon": "apple"
     },
     {
       "id": "cracker",
+      "text": "Krëchel",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "Krëchel"
+      "icon": "apple"
     },
     {
       "id": "carrot",
+      "text": "Muert",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "Muert"
+      "icon": "apple"
     },
     {
       "id": "chips",
+      "text": "Chips",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "Chips"
+      "icon": "apple"
     },
     {
       "id": "cookie",
+      "text": "Kichelchen",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "Kichelchen"
+      "icon": "apple"
     },
     {
       "id": "egg",
+      "text": "Ee",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "Ee"
+      "icon": "apple"
     },
     {
       "id": "cereal",
+      "text": "Cerealien",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "Cerealien"
+      "icon": "apple"
     },
     {
       "id": "fruit",
+      "text": "Fruucht",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "Fruucht"
+      "icon": "apple"
     },
     {
       "id": "snack",
+      "text": "Snack",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "Snack"
+      "icon": "apple"
     },
     {
       "id": "dinner",
+      "text": "Owesiessen",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "Owesiessen"
+      "icon": "apple"
     },
     {
       "id": "lunch",
+      "text": "Mëttegiessen",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "Mëttegiessen"
+      "icon": "apple"
     },
     {
       "id": "happy",
+      "text": "frou",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "frou"
+      "icon": "smile"
     },
     {
       "id": "sad",
+      "text": "traureg",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "traureg"
+      "icon": "smile"
     },
     {
       "id": "angry",
+      "text": "rosen",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "rosen"
+      "icon": "smile"
     },
     {
       "id": "worried",
+      "text": "besuergt",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "besuergt"
+      "icon": "smile"
     },
     {
       "id": "scared",
+      "text": "Angscht",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "Angscht"
+      "icon": "smile"
     },
     {
       "id": "tired",
+      "text": "midd",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "midd"
+      "icon": "smile"
     },
     {
       "id": "sick",
+      "text": "krank",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "krank"
+      "icon": "smile"
     },
     {
       "id": "hurt",
+      "text": "deet wéi",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "deet wéi"
+      "icon": "smile"
     },
     {
       "id": "calm",
+      "text": "roueg",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "roueg"
+      "icon": "smile"
     },
     {
       "id": "excited",
+      "text": "opgereegt",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "opgereegt"
+      "icon": "smile"
     },
     {
       "id": "confused",
+      "text": "duercherneen",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "duercherneen"
+      "icon": "smile"
     },
     {
       "id": "proud",
+      "text": "stolz",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "stolz"
+      "icon": "smile"
     },
     {
       "id": "lonely",
+      "text": "eleng",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "eleng"
+      "icon": "smile"
     },
     {
       "id": "bored",
+      "text": "langweileg",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "langweileg"
+      "icon": "smile"
     },
     {
       "id": "safe",
+      "text": "sécher",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "sécher"
+      "icon": "smile"
     },
     {
       "id": "upset",
+      "text": "opgereegt",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "opgereegt"
+      "icon": "smile"
     },
     {
       "id": "okay-2",
+      "text": "gutt",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "gutt"
+      "icon": "smile"
     },
     {
       "id": "hot",
+      "text": "waarm",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "waarm"
+      "icon": "smile"
     },
     {
       "id": "cold",
+      "text": "kal",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "kal"
+      "icon": "smile"
     },
     {
       "id": "hungry",
+      "text": "Hunger",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "Hunger"
+      "icon": "smile"
     },
     {
       "id": "thirsty",
+      "text": "Duuscht",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "Duuscht"
+      "icon": "smile"
     },
     {
       "id": "head",
+      "text": "Kapp",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "Kapp"
+      "icon": "body"
     },
     {
       "id": "hand",
+      "text": "Hand",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "Hand"
+      "icon": "body"
     },
     {
       "id": "foot",
+      "text": "Fouss",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "Fouss"
+      "icon": "body"
     },
     {
       "id": "tummy",
+      "text": "Bauch",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "Bauch"
+      "icon": "body"
     },
     {
       "id": "mouth",
+      "text": "Mond",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "Mond"
+      "icon": "body"
     },
     {
       "id": "ear",
+      "text": "Ouer",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "Ouer"
+      "icon": "body"
     },
     {
       "id": "eye",
+      "text": "Aa",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "Aa"
+      "icon": "body"
     },
     {
       "id": "arm",
+      "text": "Aarm",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "Aarm"
+      "icon": "body"
     },
     {
       "id": "leg",
+      "text": "Been",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "Been"
+      "icon": "body"
     },
     {
       "id": "back",
+      "text": "Réck",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "Réck"
+      "icon": "body"
     },
     {
       "id": "tooth",
+      "text": "Zant",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "Zant"
+      "icon": "body"
     },
     {
       "id": "hair",
+      "text": "Hoer",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "Hoer"
+      "icon": "body"
     },
     {
       "id": "nose",
+      "text": "Nues",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "Nues"
+      "icon": "body"
     },
     {
       "id": "skin",
+      "text": "Haut",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "Haut"
+      "icon": "body"
     },
     {
       "id": "heart",
+      "text": "Häerz",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "Häerz"
+      "icon": "body"
     },
     {
       "id": "home",
+      "text": "Heem",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "Heem"
+      "icon": "home"
     },
     {
       "id": "school",
+      "text": "Schoul",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "Schoul"
+      "icon": "home"
     },
     {
       "id": "classroom",
+      "text": "Klass",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "Klass"
+      "icon": "home"
     },
     {
       "id": "bathroom",
+      "text": "Buedzëmmer",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "Buedzëmmer"
+      "icon": "home"
     },
     {
       "id": "kitchen",
+      "text": "Kichen",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "Kichen"
+      "icon": "home"
     },
     {
       "id": "bedroom",
+      "text": "Schlofzëmmer",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "Schlofzëmmer"
+      "icon": "home"
     },
     {
       "id": "garden",
+      "text": "Gaart",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "Gaart"
+      "icon": "home"
     },
     {
       "id": "shop",
+      "text": "Buttek",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "Buttek"
+      "icon": "home"
     },
     {
       "id": "car",
+      "text": "Auto",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "Auto"
+      "icon": "home"
     },
     {
       "id": "bus",
+      "text": "Bus",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "Bus"
+      "icon": "home"
     },
     {
       "id": "park",
+      "text": "Park",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "Park"
+      "icon": "home"
     },
     {
       "id": "playground",
+      "text": "Spillplaz",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "Spillplaz"
+      "icon": "home"
     },
     {
       "id": "library",
+      "text": "Bibliothek",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "Bibliothek"
+      "icon": "home"
     },
     {
       "id": "pool",
+      "text": "Schwämm",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "Schwämm"
+      "icon": "home"
     },
     {
       "id": "table",
+      "text": "Dësch",
       "pos": "noun",
       "category": "home",
       "frequency": 7,
-      "icon": "home",
-      "text": "Dësch"
+      "icon": "home"
     },
     {
       "id": "chair",
+      "text": "Stull",
       "pos": "noun",
       "category": "home",
       "frequency": 7,
-      "icon": "home",
-      "text": "Stull"
+      "icon": "home"
     },
     {
       "id": "sofa",
+      "text": "Sofa",
       "pos": "noun",
       "category": "home",
       "frequency": 7,
-      "icon": "home",
-      "text": "Sofa"
+      "icon": "home"
     },
     {
       "id": "bed",
+      "text": "Bett",
       "pos": "noun",
       "category": "home",
       "frequency": 7,
-      "icon": "home",
-      "text": "Bett"
+      "icon": "home"
     },
     {
       "id": "door",
+      "text": "Dier",
       "pos": "noun",
       "category": "home",
       "frequency": 7,
-      "icon": "home",
-      "text": "Dier"
+      "icon": "home"
     },
     {
       "id": "window",
+      "text": "Fënster",
       "pos": "noun",
       "category": "home",
       "frequency": 7,
-      "icon": "home",
-      "text": "Fënster"
+      "icon": "home"
     },
     {
       "id": "book",
+      "text": "Buch",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "Buch"
+      "icon": "book"
     },
     {
       "id": "pencil",
+      "text": "Bläistëft",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "Bläistëft"
+      "icon": "book"
     },
     {
       "id": "paper",
+      "text": "Pabeier",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "Pabeier"
+      "icon": "book"
     },
     {
       "id": "bag",
+      "text": "Tut",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "Tut"
+      "icon": "book"
     },
     {
       "id": "coat",
+      "text": "Jackett",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "Jackett"
+      "icon": "book"
     },
     {
       "id": "shoes",
+      "text": "Schung",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "Schung"
+      "icon": "book"
     },
     {
       "id": "lunchbox",
+      "text": "Iessboxa",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "Iessboxa"
+      "icon": "book"
     },
     {
       "id": "tablet",
+      "text": "Tablet",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "Tablet"
+      "icon": "book"
     },
     {
       "id": "screen",
+      "text": "Ecran",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "Ecran"
+      "icon": "book"
     },
     {
       "id": "timer",
+      "text": "Timer",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "Timer"
+      "icon": "book"
     },
     {
       "id": "schedule",
+      "text": "Plang",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "Plang"
+      "icon": "book"
     },
     {
       "id": "picture",
+      "text": "Bild",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "Bild"
+      "icon": "book"
     },
     {
       "id": "card",
+      "text": "Kaart",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "Kaart"
+      "icon": "book"
     },
     {
       "id": "story",
+      "text": "Geschicht",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "Geschicht"
+      "icon": "book"
     },
     {
       "id": "music",
+      "text": "Musek",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "Musek"
+      "icon": "book"
     },
     {
       "id": "ball",
+      "text": "Ball",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "Ball"
+      "icon": "puzzle"
     },
     {
       "id": "blocks",
+      "text": "Bausteng",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "Bausteng"
+      "icon": "puzzle"
     },
     {
       "id": "doll",
+      "text": "Popp",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "Popp"
+      "icon": "puzzle"
     },
     {
       "id": "car-toy",
+      "text": "Spillauto",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "Spillauto"
+      "icon": "puzzle"
     },
     {
       "id": "train",
+      "text": "Zuch",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "Zuch"
+      "icon": "puzzle"
     },
     {
       "id": "puzzle",
+      "text": "Puzzel",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "Puzzel"
+      "icon": "puzzle"
     },
     {
       "id": "game",
+      "text": "Spill",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "Spill"
+      "icon": "puzzle"
     },
     {
       "id": "paint",
+      "text": "Faarf",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "Faarf"
+      "icon": "puzzle"
     },
     {
       "id": "clay",
+      "text": "Knet",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "Knet"
+      "icon": "puzzle"
     },
     {
       "id": "bubbles",
+      "text": "Bulle",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "Bulle"
+      "icon": "puzzle"
     },
     {
       "id": "swing",
+      "text": "Schaukel",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "Schaukel"
+      "icon": "puzzle"
     },
     {
       "id": "slide",
+      "text": "Rutsch",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "Rutsch"
+      "icon": "puzzle"
     },
     {
       "id": "bike",
+      "text": "Vëlo",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "Vëlo"
+      "icon": "puzzle"
     },
     {
       "id": "teddy",
+      "text": "Teddy",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "Teddy"
+      "icon": "puzzle"
     },
     {
       "id": "lego",
+      "text": "Lego",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "Lego"
+      "icon": "puzzle"
     },
     {
       "id": "red",
+      "text": "rout",
       "pos": "adjective",
       "category": "colors",
       "frequency": 5,
-      "icon": "palette",
-      "text": "rout"
+      "icon": "palette"
     },
     {
       "id": "blue",
+      "text": "blo",
       "pos": "adjective",
       "category": "colors",
       "frequency": 5,
-      "icon": "palette",
-      "text": "blo"
+      "icon": "palette"
     },
     {
       "id": "green",
+      "text": "gréng",
       "pos": "adjective",
       "category": "colors",
       "frequency": 5,
-      "icon": "palette",
-      "text": "gréng"
+      "icon": "palette"
     },
     {
       "id": "yellow",
+      "text": "giel",
       "pos": "adjective",
       "category": "colors",
       "frequency": 5,
-      "icon": "palette",
-      "text": "giel"
+      "icon": "palette"
     },
     {
       "id": "orange",
+      "text": "orange",
       "pos": "adjective",
       "category": "colors",
       "frequency": 5,
-      "icon": "palette",
-      "text": "orange"
+      "icon": "palette"
     },
     {
       "id": "purple",
+      "text": "violett",
       "pos": "adjective",
       "category": "colors",
       "frequency": 5,
-      "icon": "palette",
-      "text": "violett"
+      "icon": "palette"
     },
     {
       "id": "pink",
+      "text": "rosa",
       "pos": "adjective",
       "category": "colors",
       "frequency": 5,
-      "icon": "palette",
-      "text": "rosa"
+      "icon": "palette"
     },
     {
       "id": "brown",
+      "text": "brong",
       "pos": "adjective",
       "category": "colors",
       "frequency": 5,
-      "icon": "palette",
-      "text": "brong"
+      "icon": "palette"
     },
     {
       "id": "black",
+      "text": "schwaarz",
       "pos": "adjective",
       "category": "colors",
       "frequency": 5,
-      "icon": "palette",
-      "text": "schwaarz"
+      "icon": "palette"
     },
     {
       "id": "white",
+      "text": "wäiss",
       "pos": "adjective",
       "category": "colors",
       "frequency": 5,
-      "icon": "palette",
-      "text": "wäiss"
+      "icon": "palette"
     },
     {
       "id": "grey",
+      "text": "gro",
       "pos": "adjective",
       "category": "colors",
       "frequency": 5,
-      "icon": "palette",
-      "text": "gro"
+      "icon": "palette"
     },
     {
       "id": "bright",
+      "text": "hell",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "hell"
+      "icon": "palette"
     },
     {
       "id": "dark",
+      "text": "däischter",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "däischter"
+      "icon": "palette"
     },
     {
       "id": "soft",
+      "text": "mëll",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "mëll"
+      "icon": "palette"
     },
     {
       "id": "hard",
+      "text": "haart",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "haart"
+      "icon": "palette"
     },
     {
       "id": "quiet",
+      "text": "roueg",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "roueg"
+      "icon": "palette"
     },
     {
       "id": "loud",
+      "text": "haart",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "haart"
+      "icon": "palette"
     },
     {
       "id": "fast",
+      "text": "séier",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "séier"
+      "icon": "palette"
     },
     {
       "id": "slow",
+      "text": "langsam",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "langsam"
+      "icon": "palette"
     },
     {
       "id": "clean",
+      "text": "propper",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "propper"
+      "icon": "palette"
     },
     {
       "id": "dirty",
+      "text": "knaschteg",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "knaschteg"
+      "icon": "palette"
     },
     {
       "id": "wet",
+      "text": "naass",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "naass"
+      "icon": "palette"
     },
     {
       "id": "dry",
+      "text": "dréchen",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "dréchen"
+      "icon": "palette"
     },
     {
       "id": "new",
+      "text": "nei",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "nei"
+      "icon": "palette"
     },
     {
       "id": "old",
+      "text": "alt",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "alt"
+      "icon": "palette"
     },
     {
       "id": "now",
+      "text": "jetzt",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "jetzt"
+      "icon": "clock"
     },
     {
       "id": "later",
+      "text": "spéider",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "spéider"
+      "icon": "clock"
     },
     {
       "id": "today",
+      "text": "haut",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "haut"
+      "icon": "clock"
     },
     {
       "id": "tomorrow",
+      "text": "muer",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "muer"
+      "icon": "clock"
     },
     {
       "id": "morning",
+      "text": "Moien",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "Moien"
+      "icon": "clock"
     },
     {
       "id": "afternoon",
+      "text": "Nomëtteg",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "Nomëtteg"
+      "icon": "clock"
     },
     {
       "id": "night",
+      "text": "Nuecht",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "Nuecht"
+      "icon": "clock"
     },
     {
       "id": "before",
+      "text": "virdrun",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "virdrun"
+      "icon": "clock"
     },
     {
       "id": "after",
+      "text": "duerno",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "duerno"
+      "icon": "clock"
     },
     {
       "id": "soon",
+      "text": "geschwënn",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "geschwënn"
+      "icon": "clock"
     },
     {
       "id": "first",
+      "text": "als éischt",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "als éischt"
+      "icon": "clock"
     },
     {
       "id": "next",
+      "text": "nächst",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "nächst"
+      "icon": "clock"
     },
     {
       "id": "last",
+      "text": "lescht",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "lescht"
+      "icon": "clock"
     },
     {
       "id": "minute",
+      "text": "Minutt",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "Minutt"
+      "icon": "clock"
     },
     {
       "id": "hour",
+      "text": "Stonn",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "Stonn"
+      "icon": "clock"
     },
     {
       "id": "break",
+      "text": "Paus",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "Paus"
+      "icon": "heart-hand"
     },
     {
       "id": "quiet-time",
+      "text": "roueg Zäit",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "roueg Zäit"
+      "icon": "heart-hand"
     },
     {
       "id": "hug",
+      "text": "Knuddel",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "Knuddel"
+      "icon": "heart-hand"
     },
     {
       "id": "space",
+      "text": "Plaz",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "Plaz"
+      "icon": "heart-hand"
     },
     {
       "id": "toilet",
+      "text": "Toilette",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "Toilette"
+      "icon": "heart-hand"
     },
     {
       "id": "medicine",
+      "text": "Medezin",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "Medezin"
+      "icon": "heart-hand"
     },
     {
       "id": "light",
+      "text": "Luucht",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "Luucht"
+      "icon": "heart-hand"
     },
     {
       "id": "dark-2",
+      "text": "Däischtert",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "Däischtert"
+      "icon": "heart-hand"
     },
     {
       "id": "noise",
+      "text": "Kaméidi",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "Kaméidi"
+      "icon": "heart-hand"
     },
     {
       "id": "headphones",
+      "text": "Kopfhörer",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "Kopfhörer"
+      "icon": "heart-hand"
     },
     {
       "id": "blanket",
+      "text": "Decken",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "Decken"
+      "icon": "heart-hand"
     },
     {
       "id": "charger",
+      "text": "Luedgerät",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "Luedgerät"
+      "icon": "heart-hand"
     },
     {
       "id": "choice",
+      "text": "Wiel",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "Wiel"
+      "icon": "heart-hand"
     },
     {
       "id": "turn",
+      "text": "Rei",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "Rei"
+      "icon": "heart-hand"
     },
     {
       "id": "help-please",
+      "text": "Hëllef wann ech gelift",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "Hëllef wann ech gelift"
+      "icon": "heart-hand"
     },
     {
       "id": "different",
+      "text": "aneschters",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "aneschters"
+      "icon": "sparkles"
     },
     {
       "id": "same",
+      "text": "d’selwecht",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "d’selwecht"
+      "icon": "sparkles"
     },
     {
       "id": "easy",
+      "text": "einfach",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "einfach"
+      "icon": "sparkles"
     },
     {
       "id": "harder",
+      "text": "méi schwéier",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "méi schwéier"
+      "icon": "sparkles"
     },
     {
       "id": "favorite",
+      "text": "Lieblings",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "Lieblings"
+      "icon": "sparkles"
     },
     {
       "id": "missing",
+      "text": "fehlt",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "fehlt"
+      "icon": "sparkles"
     },
     {
       "id": "broken",
+      "text": "futti",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "futti"
+      "icon": "sparkles"
     },
     {
       "id": "ready",
+      "text": "fäerdeg",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "fäerdeg"
+      "icon": "sparkles"
     },
     {
       "id": "busy",
+      "text": "beschäftegt",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "beschäftegt"
+      "icon": "sparkles"
     },
     {
       "id": "empty",
+      "text": "eidel",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "eidel"
+      "icon": "sparkles"
     },
     {
       "id": "full",
+      "text": "voll",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "voll"
+      "icon": "sparkles"
     },
     {
       "id": "small",
+      "text": "kleng",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "kleng"
+      "icon": "sparkles"
     },
     {
       "id": "tall",
+      "text": "grouss",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "grouss"
+      "icon": "sparkles"
     },
     {
       "id": "short",
+      "text": "kuerz",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "kuerz"
+      "icon": "sparkles"
     },
     {
       "id": "round",
+      "text": "ronn",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "ronn"
+      "icon": "sparkles"
     },
     {
       "id": "square",
+      "text": "quadratesch",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "quadratesch"
+      "icon": "sparkles"
     },
     {
       "id": "kind",
+      "text": "léif",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "léif"
+      "icon": "sparkles"
     },
     {
       "id": "gentle",
+      "text": "sanft",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "sanft"
+      "icon": "sparkles"
     },
     {
       "id": "careful",
+      "text": "virsichteg",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "virsichteg"
+      "icon": "sparkles"
     },
     {
       "id": "safe-place",
+      "text": "sécher Plaz",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "sécher Plaz"
+      "icon": "sparkles"
     }
   ],
   "templates": [
@@ -3124,7 +3057,5 @@
         "net"
       ]
     }
-  },
-  "source": "generated",
-  "reviewStatus": "needs-native-review"
+  }
 }

@@ -1,2435 +1,2368 @@
 {
   "locale": "lv",
   "version": 1,
+  "source": "generated",
+  "reviewStatus": "needs-native-review",
   "words": [
     {
       "id": "i",
+      "text": "es",
       "pos": "pronoun",
       "category": "people",
       "frequency": 10,
-      "icon": "user",
-      "text": "es"
+      "icon": "user"
     },
     {
       "id": "you",
+      "text": "tu",
       "pos": "pronoun",
       "category": "people",
       "frequency": 10,
-      "icon": "user",
-      "text": "tu"
+      "icon": "user"
     },
     {
       "id": "we",
+      "text": "mēs",
       "pos": "pronoun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "mēs"
+      "icon": "user"
     },
     {
       "id": "me",
+      "text": "mani",
       "pos": "pronoun",
       "category": "people",
       "frequency": 10,
-      "icon": "user",
-      "text": "mani"
+      "icon": "user"
     },
     {
       "id": "my",
+      "text": "mans",
       "pos": "pronoun",
       "category": "people",
       "frequency": 10,
-      "icon": "user",
-      "text": "mans"
+      "icon": "user"
     },
     {
       "id": "your",
+      "text": "tavs",
       "pos": "pronoun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "tavs"
+      "icon": "user"
     },
     {
       "id": "he",
+      "text": "viņš",
       "pos": "pronoun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "viņš"
+      "icon": "user"
     },
     {
       "id": "she",
+      "text": "viņa",
       "pos": "pronoun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "viņa"
+      "icon": "user"
     },
     {
       "id": "they",
+      "text": "viņi",
       "pos": "pronoun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "viņi"
+      "icon": "user"
     },
     {
       "id": "mum",
+      "text": "mamma",
       "pos": "noun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "mamma"
+      "icon": "user"
     },
     {
       "id": "dad",
+      "text": "tētis",
       "pos": "noun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "tētis"
+      "icon": "user"
     },
     {
       "id": "teacher",
+      "text": "skolotāja",
       "pos": "noun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "skolotāja"
+      "icon": "user"
     },
     {
       "id": "friend",
+      "text": "draugs",
       "pos": "noun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "draugs"
+      "icon": "user"
     },
     {
       "id": "brother",
+      "text": "brālis",
       "pos": "noun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "brālis"
+      "icon": "user"
     },
     {
       "id": "sister",
+      "text": "māsa",
       "pos": "noun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "māsa"
+      "icon": "user"
     },
     {
       "id": "grandma",
+      "text": "vecmāmiņa",
       "pos": "noun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "vecmāmiņa"
+      "icon": "user"
     },
     {
       "id": "grandpa",
+      "text": "vectētiņš",
       "pos": "noun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "vectētiņš"
+      "icon": "user"
     },
     {
       "id": "helper",
+      "text": "palīgs",
       "pos": "noun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "palīgs"
+      "icon": "user"
     },
     {
       "id": "doctor",
+      "text": "ārsts",
       "pos": "noun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "ārsts"
+      "icon": "user"
     },
     {
       "id": "class",
+      "text": "klase",
       "pos": "noun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "klase"
+      "icon": "user"
     },
     {
       "id": "want",
+      "text": "gribu",
       "pos": "verb",
       "category": "actions",
       "frequency": 10,
-      "icon": "play",
-      "inflections": {
-        "past": "wanted"
-      },
-      "text": "gribu"
+      "icon": "play"
     },
     {
       "id": "need",
+      "text": "vajag",
       "pos": "verb",
       "category": "actions",
       "frequency": 10,
-      "icon": "play",
-      "inflections": {
-        "past": "needed"
-      },
-      "text": "vajag"
+      "icon": "play"
     },
     {
       "id": "like",
+      "text": "mīlu",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "likeed"
-      },
-      "text": "mīlu"
+      "icon": "play"
     },
     {
       "id": "feel",
+      "text": "jūtu",
       "pos": "verb",
       "category": "actions",
       "frequency": 10,
-      "icon": "play",
-      "inflections": {
-        "past": "feeled"
-      },
-      "text": "jūtu"
+      "icon": "play"
     },
     {
       "id": "see",
+      "text": "redzu",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "seeed"
-      },
-      "text": "redzu"
+      "icon": "play"
     },
     {
       "id": "hear",
+      "text": "dzirdu",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "heared"
-      },
-      "text": "dzirdu"
+      "icon": "play"
     },
     {
       "id": "have",
+      "text": "man ir",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "haveed"
-      },
-      "text": "man ir"
+      "icon": "play"
     },
     {
       "id": "go",
+      "text": "eju",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "text": "eju"
+      "icon": "play"
     },
     {
       "id": "come",
+      "text": "nāku",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "comeed"
-      },
-      "text": "nāku"
+      "icon": "play"
     },
     {
       "id": "play",
+      "text": "spēlēju",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "played"
-      },
-      "text": "spēlēju"
+      "icon": "play"
     },
     {
       "id": "read",
+      "text": "lasu",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "readed"
-      },
-      "text": "lasu"
+      "icon": "play"
     },
     {
       "id": "draw",
+      "text": "zīmēju",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "drawed"
-      },
-      "text": "zīmēju"
+      "icon": "play"
     },
     {
       "id": "eat",
+      "text": "ēdu",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "text": "ēdu"
+      "icon": "play"
     },
     {
       "id": "drink",
+      "text": "dzeru",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "text": "dzeru"
+      "icon": "play"
     },
     {
       "id": "sit",
+      "text": "sēžu",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "text": "sēžu"
+      "icon": "play"
     },
     {
       "id": "stand",
+      "text": "stāvu",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "text": "stāvu"
+      "icon": "play"
     },
     {
       "id": "walk",
+      "text": "staigāju",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "walked"
-      },
-      "text": "staigāju"
+      "icon": "play"
     },
     {
       "id": "run",
+      "text": "skrienu",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "text": "skrienu"
+      "icon": "play"
     },
     {
       "id": "stop",
+      "text": "apstājos",
       "pos": "verb",
       "category": "actions",
       "frequency": 10,
-      "icon": "play",
-      "inflections": {
-        "past": "stoped"
-      },
-      "text": "apstājos"
+      "icon": "play"
     },
     {
       "id": "start",
+      "text": "sāku",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "started"
-      },
-      "text": "sāku"
+      "icon": "play"
     },
     {
       "id": "wait",
+      "text": "gaidu",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "waited"
-      },
-      "text": "gaidu"
+      "icon": "play"
     },
     {
       "id": "help",
+      "text": "palīdzu",
       "pos": "verb",
       "category": "actions",
       "frequency": 10,
-      "icon": "play",
-      "inflections": {
-        "past": "helped"
-      },
-      "text": "palīdzu"
+      "icon": "play"
     },
     {
       "id": "choose",
+      "text": "izvēlos",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "chooseed"
-      },
-      "text": "izvēlos"
+      "icon": "play"
     },
     {
       "id": "open",
+      "text": "atveru",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "opened"
-      },
-      "text": "atveru"
+      "icon": "play"
     },
     {
       "id": "close",
+      "text": "aizveru",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "closeed"
-      },
-      "text": "aizveru"
+      "icon": "play"
     },
     {
       "id": "wash",
+      "text": "mazgāju",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "washed"
-      },
-      "text": "mazgāju"
+      "icon": "play"
     },
     {
       "id": "sleep",
+      "text": "guļu",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "text": "guļu"
+      "icon": "play"
     },
     {
       "id": "rest",
+      "text": "atpūšos",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "rested"
-      },
-      "text": "atpūšos"
+      "icon": "play"
     },
     {
       "id": "try",
+      "text": "mēģinu",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "tryed"
-      },
-      "text": "mēģinu"
+      "icon": "play"
     },
     {
       "id": "talk",
+      "text": "runāju",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "talked"
-      },
-      "text": "runāju"
+      "icon": "play"
     },
     {
       "id": "yes",
+      "text": "jā",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "jā"
+      "icon": "chat-bubble"
     },
     {
       "id": "no",
+      "text": "nē",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "nē"
+      "icon": "chat-bubble"
     },
     {
       "id": "please",
+      "text": "lūdzu",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "lūdzu"
+      "icon": "chat-bubble"
     },
     {
       "id": "thank-you",
+      "text": "paldies",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "paldies"
+      "icon": "chat-bubble"
     },
     {
       "id": "sorry",
+      "text": "atvaino",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "atvaino"
+      "icon": "chat-bubble"
     },
     {
       "id": "hello",
+      "text": "sveiki",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "sveiki"
+      "icon": "chat-bubble"
     },
     {
       "id": "goodbye",
+      "text": "atā",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "atā"
+      "icon": "chat-bubble"
     },
     {
       "id": "more",
+      "text": "vēl",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "vēl"
+      "icon": "chat-bubble"
     },
     {
       "id": "all-done",
+      "text": "gatavs",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "gatavs"
+      "icon": "chat-bubble"
     },
     {
       "id": "again",
+      "text": "atkal",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "atkal"
+      "icon": "chat-bubble"
     },
     {
       "id": "finished",
+      "text": "pabeidzu",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "pabeidzu"
+      "icon": "chat-bubble"
     },
     {
       "id": "okay",
+      "text": "labi",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "labi"
+      "icon": "chat-bubble"
     },
     {
       "id": "not-yet",
+      "text": "vēl nē",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "vēl nē"
+      "icon": "chat-bubble"
     },
     {
       "id": "maybe",
+      "text": "varbūt",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "varbūt"
+      "icon": "chat-bubble"
     },
     {
       "id": "what",
+      "text": "ko",
       "pos": "question",
       "category": "questions",
       "frequency": 8,
-      "icon": "question-circle",
-      "text": "ko"
+      "icon": "question-circle"
     },
     {
       "id": "where",
+      "text": "kur",
       "pos": "question",
       "category": "questions",
       "frequency": 8,
-      "icon": "question-circle",
-      "text": "kur"
+      "icon": "question-circle"
     },
     {
       "id": "who",
+      "text": "kas",
       "pos": "question",
       "category": "questions",
       "frequency": 8,
-      "icon": "question-circle",
-      "text": "kas"
+      "icon": "question-circle"
     },
     {
       "id": "when",
+      "text": "kad",
       "pos": "question",
       "category": "questions",
       "frequency": 8,
-      "icon": "question-circle",
-      "text": "kad"
+      "icon": "question-circle"
     },
     {
       "id": "why",
+      "text": "kāpēc",
       "pos": "question",
       "category": "questions",
       "frequency": 8,
-      "icon": "question-circle",
-      "text": "kāpēc"
+      "icon": "question-circle"
     },
     {
       "id": "which",
+      "text": "kurš",
       "pos": "question",
       "category": "questions",
       "frequency": 8,
-      "icon": "question-circle",
-      "text": "kurš"
+      "icon": "question-circle"
     },
     {
       "id": "how",
+      "text": "kā",
       "pos": "question",
       "category": "questions",
       "frequency": 8,
-      "icon": "question-circle",
-      "text": "kā"
+      "icon": "question-circle"
     },
     {
       "id": "can",
+      "text": "varu",
       "pos": "question",
       "category": "questions",
       "frequency": 8,
-      "icon": "question-circle",
-      "text": "varu"
+      "icon": "question-circle"
     },
     {
       "id": "is",
+      "text": "ir",
       "pos": "question",
       "category": "questions",
       "frequency": 8,
-      "icon": "question-circle",
-      "text": "ir"
+      "icon": "question-circle"
     },
     {
       "id": "are",
+      "text": "ir",
       "pos": "question",
       "category": "questions",
       "frequency": 8,
-      "icon": "question-circle",
-      "text": "ir"
+      "icon": "question-circle"
     },
     {
       "id": "a",
+      "text": "viens",
       "pos": "determiner",
       "category": "helpers",
       "frequency": 8,
-      "icon": "text",
-      "text": "viens"
+      "icon": "text"
     },
     {
       "id": "the",
+      "text": "šis",
       "pos": "determiner",
       "category": "helpers",
       "frequency": 8,
-      "icon": "text",
-      "text": "šis"
+      "icon": "text"
     },
     {
       "id": "this",
+      "text": "šis",
       "pos": "determiner",
       "category": "helpers",
       "frequency": 8,
-      "icon": "text",
-      "text": "šis"
+      "icon": "text"
     },
     {
       "id": "that",
+      "text": "tas",
       "pos": "determiner",
       "category": "helpers",
       "frequency": 8,
-      "icon": "text",
-      "text": "tas"
+      "icon": "text"
     },
     {
       "id": "some",
+      "text": "mazliet",
       "pos": "determiner",
       "category": "helpers",
       "frequency": 8,
-      "icon": "text",
-      "text": "mazliet"
+      "icon": "text"
     },
     {
       "id": "one",
+      "text": "viens",
       "pos": "determiner",
       "category": "helpers",
       "frequency": 8,
-      "icon": "text",
-      "text": "viens"
+      "icon": "text"
     },
     {
       "id": "two",
+      "text": "divi",
       "pos": "determiner",
       "category": "helpers",
       "frequency": 8,
-      "icon": "text",
-      "text": "divi"
+      "icon": "text"
     },
     {
       "id": "three",
+      "text": "trīs",
       "pos": "determiner",
       "category": "helpers",
       "frequency": 8,
-      "icon": "text",
-      "text": "trīs"
+      "icon": "text"
     },
     {
       "id": "many",
+      "text": "daudz",
       "pos": "determiner",
       "category": "helpers",
       "frequency": 8,
-      "icon": "text",
-      "text": "daudz"
+      "icon": "text"
     },
     {
       "id": "little",
+      "text": "maz",
       "pos": "determiner",
       "category": "helpers",
       "frequency": 8,
-      "icon": "text",
-      "text": "maz"
+      "icon": "text"
     },
     {
       "id": "big",
+      "text": "liels",
       "pos": "determiner",
       "category": "helpers",
       "frequency": 8,
-      "icon": "text",
-      "text": "liels"
+      "icon": "text"
     },
     {
       "id": "in",
+      "text": "iekš",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "iekš"
+      "icon": "arrow-right"
     },
     {
       "id": "on",
+      "text": "uz",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "uz"
+      "icon": "arrow-right"
     },
     {
       "id": "under",
+      "text": "zem",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "zem"
+      "icon": "arrow-right"
     },
     {
       "id": "next-to",
+      "text": "blakus",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "blakus"
+      "icon": "arrow-right"
     },
     {
       "id": "with",
+      "text": "ar",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "ar"
+      "icon": "arrow-right"
     },
     {
       "id": "without",
+      "text": "bez",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "bez"
+      "icon": "arrow-right"
     },
     {
       "id": "to",
+      "text": "pie",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "pie"
+      "icon": "arrow-right"
     },
     {
       "id": "from",
+      "text": "no",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "no"
+      "icon": "arrow-right"
     },
     {
       "id": "inside",
+      "text": "iekšā",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "iekšā"
+      "icon": "arrow-right"
     },
     {
       "id": "outside",
+      "text": "ārā",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "ārā"
+      "icon": "arrow-right"
     },
     {
       "id": "near",
+      "text": "tuvu",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "tuvu"
+      "icon": "arrow-right"
     },
     {
       "id": "far",
+      "text": "tālu",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "tālu"
+      "icon": "arrow-right"
     },
     {
       "id": "and",
+      "text": "un",
       "pos": "conjunction",
       "category": "helpers",
       "frequency": 6,
-      "icon": "branch",
-      "text": "un"
+      "icon": "branch"
     },
     {
       "id": "or",
+      "text": "vai",
       "pos": "conjunction",
       "category": "helpers",
       "frequency": 6,
-      "icon": "branch",
-      "text": "vai"
+      "icon": "branch"
     },
     {
       "id": "because",
+      "text": "jo",
       "pos": "conjunction",
       "category": "helpers",
       "frequency": 6,
-      "icon": "branch",
-      "text": "jo"
+      "icon": "branch"
     },
     {
       "id": "then",
+      "text": "tad",
       "pos": "conjunction",
       "category": "helpers",
       "frequency": 6,
-      "icon": "branch",
-      "text": "tad"
+      "icon": "branch"
     },
     {
       "id": "but",
+      "text": "bet",
       "pos": "conjunction",
       "category": "helpers",
       "frequency": 6,
-      "icon": "branch",
-      "text": "bet"
+      "icon": "branch"
     },
     {
       "id": "water",
+      "text": "ūdens",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "ūdens"
+      "icon": "water"
     },
     {
       "id": "milk",
+      "text": "piens",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "piens"
+      "icon": "water"
     },
     {
       "id": "juice",
+      "text": "sula",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "sula"
+      "icon": "water"
     },
     {
       "id": "tea",
+      "text": "tēja",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "tēja"
+      "icon": "water"
     },
     {
       "id": "smoothie",
+      "text": "smūtijs",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "smūtijs"
+      "icon": "water"
     },
     {
       "id": "lemonade",
+      "text": "limonāde",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "limonāde"
+      "icon": "water"
     },
     {
       "id": "hot-drink",
+      "text": "karsts dzēriens",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "karsts dzēriens"
+      "icon": "water"
     },
     {
       "id": "cold-drink",
+      "text": "auksts dzēriens",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "auksts dzēriens"
+      "icon": "water"
     },
     {
       "id": "cup",
+      "text": "krūze",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "krūze"
+      "icon": "water"
     },
     {
       "id": "straw",
+      "text": "salmiņš",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "salmiņš"
+      "icon": "water"
     },
     {
       "id": "bottle",
+      "text": "pudele",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "pudele"
+      "icon": "water"
     },
     {
       "id": "sip",
+      "text": "malks",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "malks"
+      "icon": "water"
     },
     {
       "id": "apple",
+      "text": "ābols",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "ābols"
+      "icon": "apple"
     },
     {
       "id": "banana",
+      "text": "banāns",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "banāns"
+      "icon": "apple"
     },
     {
       "id": "bread",
+      "text": "maize",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "maize"
+      "icon": "apple"
     },
     {
       "id": "toast",
+      "text": "tosts",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "tosts"
+      "icon": "apple"
     },
     {
       "id": "sandwich",
+      "text": "sviestmaize",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "sviestmaize"
+      "icon": "apple"
     },
     {
       "id": "rice",
+      "text": "rīsi",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "rīsi"
+      "icon": "apple"
     },
     {
       "id": "pasta",
+      "text": "makaroni",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "makaroni"
+      "icon": "apple"
     },
     {
       "id": "soup",
+      "text": "zupa",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "zupa"
+      "icon": "apple"
     },
     {
       "id": "yogurt",
+      "text": "jogurts",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "jogurts"
+      "icon": "apple"
     },
     {
       "id": "cheese",
+      "text": "siers",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "siers"
+      "icon": "apple"
     },
     {
       "id": "cracker",
+      "text": "krekeris",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "krekeris"
+      "icon": "apple"
     },
     {
       "id": "carrot",
+      "text": "burkāns",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "burkāns"
+      "icon": "apple"
     },
     {
       "id": "chips",
+      "text": "čipsi",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "čipsi"
+      "icon": "apple"
     },
     {
       "id": "cookie",
+      "text": "cepums",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "cepums"
+      "icon": "apple"
     },
     {
       "id": "egg",
+      "text": "ola",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "ola"
+      "icon": "apple"
     },
     {
       "id": "cereal",
+      "text": "pārslas",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "pārslas"
+      "icon": "apple"
     },
     {
       "id": "fruit",
+      "text": "auglis",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "auglis"
+      "icon": "apple"
     },
     {
       "id": "snack",
+      "text": "uzkoda",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "uzkoda"
+      "icon": "apple"
     },
     {
       "id": "dinner",
+      "text": "vakariņas",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "vakariņas"
+      "icon": "apple"
     },
     {
       "id": "lunch",
+      "text": "pusdienas",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "pusdienas"
+      "icon": "apple"
     },
     {
       "id": "happy",
+      "text": "laimīgs",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "laimīgs"
+      "icon": "smile"
     },
     {
       "id": "sad",
+      "text": "skumjš",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "skumjš"
+      "icon": "smile"
     },
     {
       "id": "angry",
+      "text": "dusmīgs",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "dusmīgs"
+      "icon": "smile"
     },
     {
       "id": "worried",
+      "text": "noraizējies",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "noraizējies"
+      "icon": "smile"
     },
     {
       "id": "scared",
+      "text": "nobijies",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "nobijies"
+      "icon": "smile"
     },
     {
       "id": "tired",
+      "text": "noguris",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "noguris"
+      "icon": "smile"
     },
     {
       "id": "sick",
+      "text": "slims",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "slims"
+      "icon": "smile"
     },
     {
       "id": "hurt",
+      "text": "sāp",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "sāp"
+      "icon": "smile"
     },
     {
       "id": "calm",
+      "text": "mierīgs",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "mierīgs"
+      "icon": "smile"
     },
     {
       "id": "excited",
+      "text": "satraukts",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "satraukts"
+      "icon": "smile"
     },
     {
       "id": "confused",
+      "text": "apjucis",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "apjucis"
+      "icon": "smile"
     },
     {
       "id": "proud",
+      "text": "lepns",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "lepns"
+      "icon": "smile"
     },
     {
       "id": "lonely",
+      "text": "vientuļš",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "vientuļš"
+      "icon": "smile"
     },
     {
       "id": "bored",
+      "text": "apnicis",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "apnicis"
+      "icon": "smile"
     },
     {
       "id": "safe",
+      "text": "drošs",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "drošs"
+      "icon": "smile"
     },
     {
       "id": "upset",
+      "text": "sarūgtināts",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "sarūgtināts"
+      "icon": "smile"
     },
     {
       "id": "okay-2",
+      "text": "labi",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "labi"
+      "icon": "smile"
     },
     {
       "id": "hot",
+      "text": "karsts",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "karsts"
+      "icon": "smile"
     },
     {
       "id": "cold",
+      "text": "auksts",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "auksts"
+      "icon": "smile"
     },
     {
       "id": "hungry",
+      "text": "izsalcis",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "izsalcis"
+      "icon": "smile"
     },
     {
       "id": "thirsty",
+      "text": "izslāpis",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "izslāpis"
+      "icon": "smile"
     },
     {
       "id": "head",
+      "text": "galva",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "galva"
+      "icon": "body"
     },
     {
       "id": "hand",
+      "text": "roka",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "roka"
+      "icon": "body"
     },
     {
       "id": "foot",
+      "text": "kāja",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "kāja"
+      "icon": "body"
     },
     {
       "id": "tummy",
+      "text": "vēders",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "vēders"
+      "icon": "body"
     },
     {
       "id": "mouth",
+      "text": "mute",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "mute"
+      "icon": "body"
     },
     {
       "id": "ear",
+      "text": "auss",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "auss"
+      "icon": "body"
     },
     {
       "id": "eye",
+      "text": "acs",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "acs"
+      "icon": "body"
     },
     {
       "id": "arm",
+      "text": "roka",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "roka"
+      "icon": "body"
     },
     {
       "id": "leg",
+      "text": "kāja",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "kāja"
+      "icon": "body"
     },
     {
       "id": "back",
+      "text": "mugura",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "mugura"
+      "icon": "body"
     },
     {
       "id": "tooth",
+      "text": "zobs",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "zobs"
+      "icon": "body"
     },
     {
       "id": "hair",
+      "text": "mati",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "mati"
+      "icon": "body"
     },
     {
       "id": "nose",
+      "text": "deguns",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "deguns"
+      "icon": "body"
     },
     {
       "id": "skin",
+      "text": "āda",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "āda"
+      "icon": "body"
     },
     {
       "id": "heart",
+      "text": "sirds",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "sirds"
+      "icon": "body"
     },
     {
       "id": "home",
+      "text": "mājas",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "mājas"
+      "icon": "home"
     },
     {
       "id": "school",
+      "text": "skola",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "skola"
+      "icon": "home"
     },
     {
       "id": "classroom",
+      "text": "klase",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "klase"
+      "icon": "home"
     },
     {
       "id": "bathroom",
+      "text": "vannasistaba",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "vannasistaba"
+      "icon": "home"
     },
     {
       "id": "kitchen",
+      "text": "virtuve",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "virtuve"
+      "icon": "home"
     },
     {
       "id": "bedroom",
+      "text": "guļamistaba",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "guļamistaba"
+      "icon": "home"
     },
     {
       "id": "garden",
+      "text": "dārzs",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "dārzs"
+      "icon": "home"
     },
     {
       "id": "shop",
+      "text": "veikals",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "veikals"
+      "icon": "home"
     },
     {
       "id": "car",
+      "text": "mašīna",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "mašīna"
+      "icon": "home"
     },
     {
       "id": "bus",
+      "text": "autobuss",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "autobuss"
+      "icon": "home"
     },
     {
       "id": "park",
+      "text": "parks",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "parks"
+      "icon": "home"
     },
     {
       "id": "playground",
+      "text": "rotaļu laukums",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "rotaļu laukums"
+      "icon": "home"
     },
     {
       "id": "library",
+      "text": "bibliotēka",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "bibliotēka"
+      "icon": "home"
     },
     {
       "id": "pool",
+      "text": "baseins",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "baseins"
+      "icon": "home"
     },
     {
       "id": "table",
+      "text": "galds",
       "pos": "noun",
       "category": "home",
       "frequency": 7,
-      "icon": "home",
-      "text": "galds"
+      "icon": "home"
     },
     {
       "id": "chair",
+      "text": "krēsls",
       "pos": "noun",
       "category": "home",
       "frequency": 7,
-      "icon": "home",
-      "text": "krēsls"
+      "icon": "home"
     },
     {
       "id": "sofa",
+      "text": "dīvāns",
       "pos": "noun",
       "category": "home",
       "frequency": 7,
-      "icon": "home",
-      "text": "dīvāns"
+      "icon": "home"
     },
     {
       "id": "bed",
+      "text": "gulta",
       "pos": "noun",
       "category": "home",
       "frequency": 7,
-      "icon": "home",
-      "text": "gulta"
+      "icon": "home"
     },
     {
       "id": "door",
+      "text": "durvis",
       "pos": "noun",
       "category": "home",
       "frequency": 7,
-      "icon": "home",
-      "text": "durvis"
+      "icon": "home"
     },
     {
       "id": "window",
+      "text": "logs",
       "pos": "noun",
       "category": "home",
       "frequency": 7,
-      "icon": "home",
-      "text": "logs"
+      "icon": "home"
     },
     {
       "id": "book",
+      "text": "grāmata",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "grāmata"
+      "icon": "book"
     },
     {
       "id": "pencil",
+      "text": "zīmulis",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "zīmulis"
+      "icon": "book"
     },
     {
       "id": "paper",
+      "text": "papīrs",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "papīrs"
+      "icon": "book"
     },
     {
       "id": "bag",
+      "text": "soma",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "soma"
+      "icon": "book"
     },
     {
       "id": "coat",
+      "text": "jaka",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "jaka"
+      "icon": "book"
     },
     {
       "id": "shoes",
+      "text": "kurpes",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "kurpes"
+      "icon": "book"
     },
     {
       "id": "lunchbox",
+      "text": "pusdienu kaste",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "pusdienu kaste"
+      "icon": "book"
     },
     {
       "id": "tablet",
+      "text": "planšete",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "planšete"
+      "icon": "book"
     },
     {
       "id": "screen",
+      "text": "ekrāns",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "ekrāns"
+      "icon": "book"
     },
     {
       "id": "timer",
+      "text": "taimeris",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "taimeris"
+      "icon": "book"
     },
     {
       "id": "schedule",
+      "text": "saraksts",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "saraksts"
+      "icon": "book"
     },
     {
       "id": "picture",
+      "text": "bilde",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "bilde"
+      "icon": "book"
     },
     {
       "id": "card",
+      "text": "kartīte",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "kartīte"
+      "icon": "book"
     },
     {
       "id": "story",
+      "text": "pasaka",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "pasaka"
+      "icon": "book"
     },
     {
       "id": "music",
+      "text": "mūzika",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "mūzika"
+      "icon": "book"
     },
     {
       "id": "ball",
+      "text": "bumba",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "bumba"
+      "icon": "puzzle"
     },
     {
       "id": "blocks",
+      "text": "kubiņi",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "kubiņi"
+      "icon": "puzzle"
     },
     {
       "id": "doll",
+      "text": "lelle",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "lelle"
+      "icon": "puzzle"
     },
     {
       "id": "car-toy",
+      "text": "mašīniņa",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "mašīniņa"
+      "icon": "puzzle"
     },
     {
       "id": "train",
+      "text": "vilciens",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "vilciens"
+      "icon": "puzzle"
     },
     {
       "id": "puzzle",
+      "text": "puzle",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "puzle"
+      "icon": "puzzle"
     },
     {
       "id": "game",
+      "text": "spēle",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "spēle"
+      "icon": "puzzle"
     },
     {
       "id": "paint",
+      "text": "krāsa",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "krāsa"
+      "icon": "puzzle"
     },
     {
       "id": "clay",
+      "text": "plastilīns",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "plastilīns"
+      "icon": "puzzle"
     },
     {
       "id": "bubbles",
+      "text": "burbuļi",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "burbuļi"
+      "icon": "puzzle"
     },
     {
       "id": "swing",
+      "text": "šūpoles",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "šūpoles"
+      "icon": "puzzle"
     },
     {
       "id": "slide",
+      "text": "slidkalniņš",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "slidkalniņš"
+      "icon": "puzzle"
     },
     {
       "id": "bike",
+      "text": "velosipēds",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "velosipēds"
+      "icon": "puzzle"
     },
     {
       "id": "teddy",
+      "text": "lācītis",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "lācītis"
+      "icon": "puzzle"
     },
     {
       "id": "lego",
+      "text": "lego",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "lego"
+      "icon": "puzzle"
     },
     {
       "id": "red",
+      "text": "sarkans",
       "pos": "adjective",
       "category": "colors",
       "frequency": 5,
-      "icon": "palette",
-      "text": "sarkans"
+      "icon": "palette"
     },
     {
       "id": "blue",
+      "text": "zils",
       "pos": "adjective",
       "category": "colors",
       "frequency": 5,
-      "icon": "palette",
-      "text": "zils"
+      "icon": "palette"
     },
     {
       "id": "green",
+      "text": "zaļš",
       "pos": "adjective",
       "category": "colors",
       "frequency": 5,
-      "icon": "palette",
-      "text": "zaļš"
+      "icon": "palette"
     },
     {
       "id": "yellow",
+      "text": "dzeltens",
       "pos": "adjective",
       "category": "colors",
       "frequency": 5,
-      "icon": "palette",
-      "text": "dzeltens"
+      "icon": "palette"
     },
     {
       "id": "orange",
+      "text": "oranžs",
       "pos": "adjective",
       "category": "colors",
       "frequency": 5,
-      "icon": "palette",
-      "text": "oranžs"
+      "icon": "palette"
     },
     {
       "id": "purple",
+      "text": "violets",
       "pos": "adjective",
       "category": "colors",
       "frequency": 5,
-      "icon": "palette",
-      "text": "violets"
+      "icon": "palette"
     },
     {
       "id": "pink",
+      "text": "rozā",
       "pos": "adjective",
       "category": "colors",
       "frequency": 5,
-      "icon": "palette",
-      "text": "rozā"
+      "icon": "palette"
     },
     {
       "id": "brown",
+      "text": "brūns",
       "pos": "adjective",
       "category": "colors",
       "frequency": 5,
-      "icon": "palette",
-      "text": "brūns"
+      "icon": "palette"
     },
     {
       "id": "black",
+      "text": "melns",
       "pos": "adjective",
       "category": "colors",
       "frequency": 5,
-      "icon": "palette",
-      "text": "melns"
+      "icon": "palette"
     },
     {
       "id": "white",
+      "text": "balts",
       "pos": "adjective",
       "category": "colors",
       "frequency": 5,
-      "icon": "palette",
-      "text": "balts"
+      "icon": "palette"
     },
     {
       "id": "grey",
+      "text": "pelēks",
       "pos": "adjective",
       "category": "colors",
       "frequency": 5,
-      "icon": "palette",
-      "text": "pelēks"
+      "icon": "palette"
     },
     {
       "id": "bright",
+      "text": "gaišs",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "gaišs"
+      "icon": "palette"
     },
     {
       "id": "dark",
+      "text": "tumšs",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "tumšs"
+      "icon": "palette"
     },
     {
       "id": "soft",
+      "text": "mīksts",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "mīksts"
+      "icon": "palette"
     },
     {
       "id": "hard",
+      "text": "ciets",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "ciets"
+      "icon": "palette"
     },
     {
       "id": "quiet",
+      "text": "kluss",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "kluss"
+      "icon": "palette"
     },
     {
       "id": "loud",
+      "text": "skaļš",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "skaļš"
+      "icon": "palette"
     },
     {
       "id": "fast",
+      "text": "ātrs",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "ātrs"
+      "icon": "palette"
     },
     {
       "id": "slow",
+      "text": "lēns",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "lēns"
+      "icon": "palette"
     },
     {
       "id": "clean",
+      "text": "tīrs",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "tīrs"
+      "icon": "palette"
     },
     {
       "id": "dirty",
+      "text": "netīrs",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "netīrs"
+      "icon": "palette"
     },
     {
       "id": "wet",
+      "text": "slapjš",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "slapjš"
+      "icon": "palette"
     },
     {
       "id": "dry",
+      "text": "sauss",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "sauss"
+      "icon": "palette"
     },
     {
       "id": "new",
+      "text": "jauns",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "jauns"
+      "icon": "palette"
     },
     {
       "id": "old",
+      "text": "vecs",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "vecs"
+      "icon": "palette"
     },
     {
       "id": "now",
+      "text": "tagad",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "tagad"
+      "icon": "clock"
     },
     {
       "id": "later",
+      "text": "vēlāk",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "vēlāk"
+      "icon": "clock"
     },
     {
       "id": "today",
+      "text": "šodien",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "šodien"
+      "icon": "clock"
     },
     {
       "id": "tomorrow",
+      "text": "rīt",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "rīt"
+      "icon": "clock"
     },
     {
       "id": "morning",
+      "text": "rīts",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "rīts"
+      "icon": "clock"
     },
     {
       "id": "afternoon",
+      "text": "pēcpusdiena",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "pēcpusdiena"
+      "icon": "clock"
     },
     {
       "id": "night",
+      "text": "nakts",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "nakts"
+      "icon": "clock"
     },
     {
       "id": "before",
+      "text": "pirms",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "pirms"
+      "icon": "clock"
     },
     {
       "id": "after",
+      "text": "pēc",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "pēc"
+      "icon": "clock"
     },
     {
       "id": "soon",
+      "text": "drīz",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "drīz"
+      "icon": "clock"
     },
     {
       "id": "first",
+      "text": "vispirms",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "vispirms"
+      "icon": "clock"
     },
     {
       "id": "next",
+      "text": "nākamais",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "nākamais"
+      "icon": "clock"
     },
     {
       "id": "last",
+      "text": "pēdējais",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "pēdējais"
+      "icon": "clock"
     },
     {
       "id": "minute",
+      "text": "minūte",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "minūte"
+      "icon": "clock"
     },
     {
       "id": "hour",
+      "text": "stunda",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "stunda"
+      "icon": "clock"
     },
     {
       "id": "break",
+      "text": "pauze",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "pauze"
+      "icon": "heart-hand"
     },
     {
       "id": "quiet-time",
+      "text": "kluss laiks",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "kluss laiks"
+      "icon": "heart-hand"
     },
     {
       "id": "hug",
+      "text": "apskāviens",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "apskāviens"
+      "icon": "heart-hand"
     },
     {
       "id": "space",
+      "text": "vieta",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "vieta"
+      "icon": "heart-hand"
     },
     {
       "id": "toilet",
+      "text": "tualete",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "tualete"
+      "icon": "heart-hand"
     },
     {
       "id": "medicine",
+      "text": "zāles",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "zāles"
+      "icon": "heart-hand"
     },
     {
       "id": "light",
+      "text": "gaisma",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "gaisma"
+      "icon": "heart-hand"
     },
     {
       "id": "dark-2",
+      "text": "tumsa",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "tumsa"
+      "icon": "heart-hand"
     },
     {
       "id": "noise",
+      "text": "troksnis",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "troksnis"
+      "icon": "heart-hand"
     },
     {
       "id": "headphones",
+      "text": "austiņas",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "austiņas"
+      "icon": "heart-hand"
     },
     {
       "id": "blanket",
+      "text": "sega",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "sega"
+      "icon": "heart-hand"
     },
     {
       "id": "charger",
+      "text": "lādētājs",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "lādētājs"
+      "icon": "heart-hand"
     },
     {
       "id": "choice",
+      "text": "izvēle",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "izvēle"
+      "icon": "heart-hand"
     },
     {
       "id": "turn",
+      "text": "rinda",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "rinda"
+      "icon": "heart-hand"
     },
     {
       "id": "help-please",
+      "text": "palīdzi lūdzu",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "palīdzi lūdzu"
+      "icon": "heart-hand"
     },
     {
       "id": "different",
+      "text": "cits",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "cits"
+      "icon": "sparkles"
     },
     {
       "id": "same",
+      "text": "tāds pats",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "tāds pats"
+      "icon": "sparkles"
     },
     {
       "id": "easy",
+      "text": "viegls",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "viegls"
+      "icon": "sparkles"
     },
     {
       "id": "harder",
+      "text": "grūtāk",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "grūtāk"
+      "icon": "sparkles"
     },
     {
       "id": "favorite",
+      "text": "mīļākais",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "mīļākais"
+      "icon": "sparkles"
     },
     {
       "id": "missing",
+      "text": "nav",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "nav"
+      "icon": "sparkles"
     },
     {
       "id": "broken",
+      "text": "salūzis",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "salūzis"
+      "icon": "sparkles"
     },
     {
       "id": "ready",
+      "text": "gatavs",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "gatavs"
+      "icon": "sparkles"
     },
     {
       "id": "busy",
+      "text": "aizņemts",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "aizņemts"
+      "icon": "sparkles"
     },
     {
       "id": "empty",
+      "text": "tukšs",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "tukšs"
+      "icon": "sparkles"
     },
     {
       "id": "full",
+      "text": "pilns",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "pilns"
+      "icon": "sparkles"
     },
     {
       "id": "small",
+      "text": "mazs",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "mazs"
+      "icon": "sparkles"
     },
     {
       "id": "tall",
+      "text": "garš",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "garš"
+      "icon": "sparkles"
     },
     {
       "id": "short",
+      "text": "īss",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "īss"
+      "icon": "sparkles"
     },
     {
       "id": "round",
+      "text": "apaļš",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "apaļš"
+      "icon": "sparkles"
     },
     {
       "id": "square",
+      "text": "kvadrāts",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "kvadrāts"
+      "icon": "sparkles"
     },
     {
       "id": "kind",
+      "text": "labs",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "labs"
+      "icon": "sparkles"
     },
     {
       "id": "gentle",
+      "text": "maigs",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "maigs"
+      "icon": "sparkles"
     },
     {
       "id": "careful",
+      "text": "uzmanīgs",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "uzmanīgs"
+      "icon": "sparkles"
     },
     {
       "id": "safe-place",
+      "text": "droša vieta",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "droša vieta"
+      "icon": "sparkles"
     }
   ],
   "templates": [
@@ -3131,7 +3064,5 @@
         "ne"
       ]
     }
-  },
-  "source": "generated",
-  "reviewStatus": "needs-native-review"
+  }
 }

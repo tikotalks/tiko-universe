@@ -168,10 +168,7 @@
       "pos": "verb",
       "category": "actions",
       "frequency": 10,
-      "icon": "play",
-      "inflections": {
-        "past": "أردت"
-      }
+      "icon": "play"
     },
     {
       "id": "need",
@@ -179,10 +176,7 @@
       "pos": "verb",
       "category": "actions",
       "frequency": 10,
-      "icon": "play",
-      "inflections": {
-        "past": "احتجت"
-      }
+      "icon": "play"
     },
     {
       "id": "like",
@@ -190,10 +184,7 @@
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "أحببت"
-      }
+      "icon": "play"
     },
     {
       "id": "feel",
@@ -201,10 +192,7 @@
       "pos": "verb",
       "category": "actions",
       "frequency": 10,
-      "icon": "play",
-      "inflections": {
-        "past": "شعرت"
-      }
+      "icon": "play"
     },
     {
       "id": "see",
@@ -212,10 +200,7 @@
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "رأيت"
-      }
+      "icon": "play"
     },
     {
       "id": "hear",
@@ -223,10 +208,7 @@
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "سمعت"
-      }
+      "icon": "play"
     },
     {
       "id": "have",
@@ -234,10 +216,7 @@
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "كان عندي"
-      }
+      "icon": "play"
     },
     {
       "id": "go",
@@ -253,10 +232,7 @@
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "أتيت"
-      }
+      "icon": "play"
     },
     {
       "id": "play",
@@ -264,10 +240,7 @@
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "لعبت"
-      }
+      "icon": "play"
     },
     {
       "id": "read",
@@ -275,10 +248,7 @@
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "قرأت"
-      }
+      "icon": "play"
     },
     {
       "id": "draw",
@@ -286,10 +256,7 @@
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "رسمت"
-      }
+      "icon": "play"
     },
     {
       "id": "eat",
@@ -329,10 +296,7 @@
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "مشيت"
-      }
+      "icon": "play"
     },
     {
       "id": "run",
@@ -348,10 +312,7 @@
       "pos": "verb",
       "category": "actions",
       "frequency": 10,
-      "icon": "play",
-      "inflections": {
-        "past": "توقفت"
-      }
+      "icon": "play"
     },
     {
       "id": "start",
@@ -359,10 +320,7 @@
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "بدأت"
-      }
+      "icon": "play"
     },
     {
       "id": "wait",
@@ -370,10 +328,7 @@
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "انتظرت"
-      }
+      "icon": "play"
     },
     {
       "id": "help",
@@ -381,10 +336,7 @@
       "pos": "verb",
       "category": "actions",
       "frequency": 10,
-      "icon": "play",
-      "inflections": {
-        "past": "ساعدت"
-      }
+      "icon": "play"
     },
     {
       "id": "choose",
@@ -392,10 +344,7 @@
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "اخترت"
-      }
+      "icon": "play"
     },
     {
       "id": "open",
@@ -403,10 +352,7 @@
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "فتحت"
-      }
+      "icon": "play"
     },
     {
       "id": "close",
@@ -414,10 +360,7 @@
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "أغلقت"
-      }
+      "icon": "play"
     },
     {
       "id": "wash",
@@ -425,10 +368,7 @@
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "غسلت"
-      }
+      "icon": "play"
     },
     {
       "id": "sleep",
@@ -444,10 +384,7 @@
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "استرحت"
-      }
+      "icon": "play"
     },
     {
       "id": "try",
@@ -455,10 +392,7 @@
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "حاولت"
-      }
+      "icon": "play"
     },
     {
       "id": "talk",
@@ -466,10 +400,7 @@
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "تكلمت"
-      }
+      "icon": "play"
     },
     {
       "id": "yes",

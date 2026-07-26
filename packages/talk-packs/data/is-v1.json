@@ -1,2435 +1,2368 @@
 {
   "locale": "is",
   "version": 1,
+  "source": "generated",
+  "reviewStatus": "needs-native-review",
   "words": [
     {
       "id": "i",
+      "text": "ég",
       "pos": "pronoun",
       "category": "people",
       "frequency": 10,
-      "icon": "user",
-      "text": "ég"
+      "icon": "user"
     },
     {
       "id": "you",
+      "text": "þú",
       "pos": "pronoun",
       "category": "people",
       "frequency": 10,
-      "icon": "user",
-      "text": "þú"
+      "icon": "user"
     },
     {
       "id": "we",
+      "text": "við",
       "pos": "pronoun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "við"
+      "icon": "user"
     },
     {
       "id": "me",
+      "text": "mig",
       "pos": "pronoun",
       "category": "people",
       "frequency": 10,
-      "icon": "user",
-      "text": "mig"
+      "icon": "user"
     },
     {
       "id": "my",
+      "text": "minn",
       "pos": "pronoun",
       "category": "people",
       "frequency": 10,
-      "icon": "user",
-      "text": "minn"
+      "icon": "user"
     },
     {
       "id": "your",
+      "text": "þinn",
       "pos": "pronoun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "þinn"
+      "icon": "user"
     },
     {
       "id": "he",
+      "text": "hann",
       "pos": "pronoun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "hann"
+      "icon": "user"
     },
     {
       "id": "she",
+      "text": "hún",
       "pos": "pronoun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "hún"
+      "icon": "user"
     },
     {
       "id": "they",
+      "text": "þeir",
       "pos": "pronoun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "þeir"
+      "icon": "user"
     },
     {
       "id": "mum",
+      "text": "mamma",
       "pos": "noun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "mamma"
+      "icon": "user"
     },
     {
       "id": "dad",
+      "text": "pabbi",
       "pos": "noun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "pabbi"
+      "icon": "user"
     },
     {
       "id": "teacher",
+      "text": "kennari",
       "pos": "noun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "kennari"
+      "icon": "user"
     },
     {
       "id": "friend",
+      "text": "vinur",
       "pos": "noun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "vinur"
+      "icon": "user"
     },
     {
       "id": "brother",
+      "text": "bróðir",
       "pos": "noun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "bróðir"
+      "icon": "user"
     },
     {
       "id": "sister",
+      "text": "systir",
       "pos": "noun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "systir"
+      "icon": "user"
     },
     {
       "id": "grandma",
+      "text": "amma",
       "pos": "noun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "amma"
+      "icon": "user"
     },
     {
       "id": "grandpa",
+      "text": "afi",
       "pos": "noun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "afi"
+      "icon": "user"
     },
     {
       "id": "helper",
+      "text": "hjálpari",
       "pos": "noun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "hjálpari"
+      "icon": "user"
     },
     {
       "id": "doctor",
+      "text": "læknir",
       "pos": "noun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "læknir"
+      "icon": "user"
     },
     {
       "id": "class",
+      "text": "bekkur",
       "pos": "noun",
       "category": "people",
       "frequency": 7,
-      "icon": "user",
-      "text": "bekkur"
+      "icon": "user"
     },
     {
       "id": "want",
+      "text": "vil",
       "pos": "verb",
       "category": "actions",
       "frequency": 10,
-      "icon": "play",
-      "inflections": {
-        "past": "wanted"
-      },
-      "text": "vil"
+      "icon": "play"
     },
     {
       "id": "need",
+      "text": "þarf",
       "pos": "verb",
       "category": "actions",
       "frequency": 10,
-      "icon": "play",
-      "inflections": {
-        "past": "needed"
-      },
-      "text": "þarf"
+      "icon": "play"
     },
     {
       "id": "like",
+      "text": "elska",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "likeed"
-      },
-      "text": "elska"
+      "icon": "play"
     },
     {
       "id": "feel",
+      "text": "finn",
       "pos": "verb",
       "category": "actions",
       "frequency": 10,
-      "icon": "play",
-      "inflections": {
-        "past": "feeled"
-      },
-      "text": "finn"
+      "icon": "play"
     },
     {
       "id": "see",
+      "text": "sé",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "seeed"
-      },
-      "text": "sé"
+      "icon": "play"
     },
     {
       "id": "hear",
+      "text": "heyri",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "heared"
-      },
-      "text": "heyri"
+      "icon": "play"
     },
     {
       "id": "have",
+      "text": "hef",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "haveed"
-      },
-      "text": "hef"
+      "icon": "play"
     },
     {
       "id": "go",
+      "text": "fer",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "text": "fer"
+      "icon": "play"
     },
     {
       "id": "come",
+      "text": "kem",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "comeed"
-      },
-      "text": "kem"
+      "icon": "play"
     },
     {
       "id": "play",
+      "text": "leik",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "played"
-      },
-      "text": "leik"
+      "icon": "play"
     },
     {
       "id": "read",
+      "text": "les",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "readed"
-      },
-      "text": "les"
+      "icon": "play"
     },
     {
       "id": "draw",
+      "text": "teikna",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "drawed"
-      },
-      "text": "teikna"
+      "icon": "play"
     },
     {
       "id": "eat",
+      "text": "borða",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "text": "borða"
+      "icon": "play"
     },
     {
       "id": "drink",
+      "text": "drekk",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "text": "drekk"
+      "icon": "play"
     },
     {
       "id": "sit",
+      "text": "sit",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "text": "sit"
+      "icon": "play"
     },
     {
       "id": "stand",
+      "text": "stend",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "text": "stend"
+      "icon": "play"
     },
     {
       "id": "walk",
+      "text": "geng",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "walked"
-      },
-      "text": "geng"
+      "icon": "play"
     },
     {
       "id": "run",
+      "text": "hleyp",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "text": "hleyp"
+      "icon": "play"
     },
     {
       "id": "stop",
+      "text": "stoppa",
       "pos": "verb",
       "category": "actions",
       "frequency": 10,
-      "icon": "play",
-      "inflections": {
-        "past": "stoped"
-      },
-      "text": "stoppa"
+      "icon": "play"
     },
     {
       "id": "start",
+      "text": "byrja",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "started"
-      },
-      "text": "byrja"
+      "icon": "play"
     },
     {
       "id": "wait",
+      "text": "bíð",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "waited"
-      },
-      "text": "bíð"
+      "icon": "play"
     },
     {
       "id": "help",
+      "text": "hjálpa",
       "pos": "verb",
       "category": "actions",
       "frequency": 10,
-      "icon": "play",
-      "inflections": {
-        "past": "helped"
-      },
-      "text": "hjálpa"
+      "icon": "play"
     },
     {
       "id": "choose",
+      "text": "velja",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "chooseed"
-      },
-      "text": "velja"
+      "icon": "play"
     },
     {
       "id": "open",
+      "text": "opna",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "opened"
-      },
-      "text": "opna"
+      "icon": "play"
     },
     {
       "id": "close",
+      "text": "loka",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "closeed"
-      },
-      "text": "loka"
+      "icon": "play"
     },
     {
       "id": "wash",
+      "text": "þvæ",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "washed"
-      },
-      "text": "þvæ"
+      "icon": "play"
     },
     {
       "id": "sleep",
+      "text": "sef",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "text": "sef"
+      "icon": "play"
     },
     {
       "id": "rest",
+      "text": "hvíli",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "rested"
-      },
-      "text": "hvíli"
+      "icon": "play"
     },
     {
       "id": "try",
+      "text": "prófa",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "tryed"
-      },
-      "text": "prófa"
+      "icon": "play"
     },
     {
       "id": "talk",
+      "text": "tala",
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play",
-      "inflections": {
-        "past": "talked"
-      },
-      "text": "tala"
+      "icon": "play"
     },
     {
       "id": "yes",
+      "text": "já",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "já"
+      "icon": "chat-bubble"
     },
     {
       "id": "no",
+      "text": "nei",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "nei"
+      "icon": "chat-bubble"
     },
     {
       "id": "please",
+      "text": "takk",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "takk"
+      "icon": "chat-bubble"
     },
     {
       "id": "thank-you",
+      "text": "þakka þér",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "þakka þér"
+      "icon": "chat-bubble"
     },
     {
       "id": "sorry",
+      "text": "fyrirgefðu",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "fyrirgefðu"
+      "icon": "chat-bubble"
     },
     {
       "id": "hello",
+      "text": "hæ",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "hæ"
+      "icon": "chat-bubble"
     },
     {
       "id": "goodbye",
+      "text": "bless",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "bless"
+      "icon": "chat-bubble"
     },
     {
       "id": "more",
+      "text": "meira",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "meira"
+      "icon": "chat-bubble"
     },
     {
       "id": "all-done",
+      "text": "búið",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "búið"
+      "icon": "chat-bubble"
     },
     {
       "id": "again",
+      "text": "aftur",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "aftur"
+      "icon": "chat-bubble"
     },
     {
       "id": "finished",
+      "text": "lokið",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "lokið"
+      "icon": "chat-bubble"
     },
     {
       "id": "okay",
+      "text": "allt í lagi",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "allt í lagi"
+      "icon": "chat-bubble"
     },
     {
       "id": "not-yet",
+      "text": "ekki enn",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "ekki enn"
+      "icon": "chat-bubble"
     },
     {
       "id": "maybe",
+      "text": "kannski",
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble",
-      "text": "kannski"
+      "icon": "chat-bubble"
     },
     {
       "id": "what",
+      "text": "hvað",
       "pos": "question",
       "category": "questions",
       "frequency": 8,
-      "icon": "question-circle",
-      "text": "hvað"
+      "icon": "question-circle"
     },
     {
       "id": "where",
+      "text": "hvar",
       "pos": "question",
       "category": "questions",
       "frequency": 8,
-      "icon": "question-circle",
-      "text": "hvar"
+      "icon": "question-circle"
     },
     {
       "id": "who",
+      "text": "hver",
       "pos": "question",
       "category": "questions",
       "frequency": 8,
-      "icon": "question-circle",
-      "text": "hver"
+      "icon": "question-circle"
     },
     {
       "id": "when",
+      "text": "hvenær",
       "pos": "question",
       "category": "questions",
       "frequency": 8,
-      "icon": "question-circle",
-      "text": "hvenær"
+      "icon": "question-circle"
     },
     {
       "id": "why",
+      "text": "af hverju",
       "pos": "question",
       "category": "questions",
       "frequency": 8,
-      "icon": "question-circle",
-      "text": "af hverju"
+      "icon": "question-circle"
     },
     {
       "id": "which",
+      "text": "hvaða",
       "pos": "question",
       "category": "questions",
       "frequency": 8,
-      "icon": "question-circle",
-      "text": "hvaða"
+      "icon": "question-circle"
     },
     {
       "id": "how",
+      "text": "hvernig",
       "pos": "question",
       "category": "questions",
       "frequency": 8,
-      "icon": "question-circle",
-      "text": "hvernig"
+      "icon": "question-circle"
     },
     {
       "id": "can",
+      "text": "get",
       "pos": "question",
       "category": "questions",
       "frequency": 8,
-      "icon": "question-circle",
-      "text": "get"
+      "icon": "question-circle"
     },
     {
       "id": "is",
+      "text": "er",
       "pos": "question",
       "category": "questions",
       "frequency": 8,
-      "icon": "question-circle",
-      "text": "er"
+      "icon": "question-circle"
     },
     {
       "id": "are",
+      "text": "eru",
       "pos": "question",
       "category": "questions",
       "frequency": 8,
-      "icon": "question-circle",
-      "text": "eru"
+      "icon": "question-circle"
     },
     {
       "id": "a",
+      "text": "einn",
       "pos": "determiner",
       "category": "helpers",
       "frequency": 8,
-      "icon": "text",
-      "text": "einn"
+      "icon": "text"
     },
     {
       "id": "the",
+      "text": "sá",
       "pos": "determiner",
       "category": "helpers",
       "frequency": 8,
-      "icon": "text",
-      "text": "sá"
+      "icon": "text"
     },
     {
       "id": "this",
+      "text": "þessi",
       "pos": "determiner",
       "category": "helpers",
       "frequency": 8,
-      "icon": "text",
-      "text": "þessi"
+      "icon": "text"
     },
     {
       "id": "that",
+      "text": "sá",
       "pos": "determiner",
       "category": "helpers",
       "frequency": 8,
-      "icon": "text",
-      "text": "sá"
+      "icon": "text"
     },
     {
       "id": "some",
+      "text": "smá",
       "pos": "determiner",
       "category": "helpers",
       "frequency": 8,
-      "icon": "text",
-      "text": "smá"
+      "icon": "text"
     },
     {
       "id": "one",
+      "text": "einn",
       "pos": "determiner",
       "category": "helpers",
       "frequency": 8,
-      "icon": "text",
-      "text": "einn"
+      "icon": "text"
     },
     {
       "id": "two",
+      "text": "tveir",
       "pos": "determiner",
       "category": "helpers",
       "frequency": 8,
-      "icon": "text",
-      "text": "tveir"
+      "icon": "text"
     },
     {
       "id": "three",
+      "text": "þrír",
       "pos": "determiner",
       "category": "helpers",
       "frequency": 8,
-      "icon": "text",
-      "text": "þrír"
+      "icon": "text"
     },
     {
       "id": "many",
+      "text": "margir",
       "pos": "determiner",
       "category": "helpers",
       "frequency": 8,
-      "icon": "text",
-      "text": "margir"
+      "icon": "text"
     },
     {
       "id": "little",
+      "text": "lítið",
       "pos": "determiner",
       "category": "helpers",
       "frequency": 8,
-      "icon": "text",
-      "text": "lítið"
+      "icon": "text"
     },
     {
       "id": "big",
+      "text": "stór",
       "pos": "determiner",
       "category": "helpers",
       "frequency": 8,
-      "icon": "text",
-      "text": "stór"
+      "icon": "text"
     },
     {
       "id": "in",
+      "text": "í",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "í"
+      "icon": "arrow-right"
     },
     {
       "id": "on",
+      "text": "á",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "á"
+      "icon": "arrow-right"
     },
     {
       "id": "under",
+      "text": "undir",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "undir"
+      "icon": "arrow-right"
     },
     {
       "id": "next-to",
+      "text": "við",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "við"
+      "icon": "arrow-right"
     },
     {
       "id": "with",
+      "text": "með",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "með"
+      "icon": "arrow-right"
     },
     {
       "id": "without",
+      "text": "án",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "án"
+      "icon": "arrow-right"
     },
     {
       "id": "to",
+      "text": "í",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "í"
+      "icon": "arrow-right"
     },
     {
       "id": "from",
+      "text": "frá",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "frá"
+      "icon": "arrow-right"
     },
     {
       "id": "inside",
+      "text": "inni",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "inni"
+      "icon": "arrow-right"
     },
     {
       "id": "outside",
+      "text": "úti",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "úti"
+      "icon": "arrow-right"
     },
     {
       "id": "near",
+      "text": "nálægt",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "nálægt"
+      "icon": "arrow-right"
     },
     {
       "id": "far",
+      "text": "fjarri",
       "pos": "preposition",
       "category": "positions",
       "frequency": 7,
-      "icon": "arrow-right",
-      "text": "fjarri"
+      "icon": "arrow-right"
     },
     {
       "id": "and",
+      "text": "og",
       "pos": "conjunction",
       "category": "helpers",
       "frequency": 6,
-      "icon": "branch",
-      "text": "og"
+      "icon": "branch"
     },
     {
       "id": "or",
+      "text": "eða",
       "pos": "conjunction",
       "category": "helpers",
       "frequency": 6,
-      "icon": "branch",
-      "text": "eða"
+      "icon": "branch"
     },
     {
       "id": "because",
+      "text": "því",
       "pos": "conjunction",
       "category": "helpers",
       "frequency": 6,
-      "icon": "branch",
-      "text": "því"
+      "icon": "branch"
     },
     {
       "id": "then",
+      "text": "svo",
       "pos": "conjunction",
       "category": "helpers",
       "frequency": 6,
-      "icon": "branch",
-      "text": "svo"
+      "icon": "branch"
     },
     {
       "id": "but",
+      "text": "en",
       "pos": "conjunction",
       "category": "helpers",
       "frequency": 6,
-      "icon": "branch",
-      "text": "en"
+      "icon": "branch"
     },
     {
       "id": "water",
+      "text": "vatn",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "vatn"
+      "icon": "water"
     },
     {
       "id": "milk",
+      "text": "mjólk",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "mjólk"
+      "icon": "water"
     },
     {
       "id": "juice",
+      "text": "safi",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "safi"
+      "icon": "water"
     },
     {
       "id": "tea",
+      "text": "te",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "te"
+      "icon": "water"
     },
     {
       "id": "smoothie",
+      "text": "smoothie",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "smoothie"
+      "icon": "water"
     },
     {
       "id": "lemonade",
+      "text": "límonaði",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "límonaði"
+      "icon": "water"
     },
     {
       "id": "hot-drink",
+      "text": "heitur drykkur",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "heitur drykkur"
+      "icon": "water"
     },
     {
       "id": "cold-drink",
+      "text": "kaldur drykkur",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "kaldur drykkur"
+      "icon": "water"
     },
     {
       "id": "cup",
+      "text": "kaffibolli",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "kaffibolli"
+      "icon": "water"
     },
     {
       "id": "straw",
+      "text": "rör",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "rör"
+      "icon": "water"
     },
     {
       "id": "bottle",
+      "text": "flaska",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "flaska"
+      "icon": "water"
     },
     {
       "id": "sip",
+      "text": "sopi",
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water",
-      "text": "sopi"
+      "icon": "water"
     },
     {
       "id": "apple",
+      "text": "epli",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "epli"
+      "icon": "apple"
     },
     {
       "id": "banana",
+      "text": "banani",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "banani"
+      "icon": "apple"
     },
     {
       "id": "bread",
+      "text": "brauð",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "brauð"
+      "icon": "apple"
     },
     {
       "id": "toast",
+      "text": "ristað brauð",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "ristað brauð"
+      "icon": "apple"
     },
     {
       "id": "sandwich",
+      "text": "samloka",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "samloka"
+      "icon": "apple"
     },
     {
       "id": "rice",
+      "text": "hrísgrjón",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "hrísgrjón"
+      "icon": "apple"
     },
     {
       "id": "pasta",
+      "text": "pasta",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "pasta"
+      "icon": "apple"
     },
     {
       "id": "soup",
+      "text": "súpa",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "súpa"
+      "icon": "apple"
     },
     {
       "id": "yogurt",
+      "text": "jógúrt",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "jógúrt"
+      "icon": "apple"
     },
     {
       "id": "cheese",
+      "text": "ostur",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "ostur"
+      "icon": "apple"
     },
     {
       "id": "cracker",
+      "text": "kex",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "kex"
+      "icon": "apple"
     },
     {
       "id": "carrot",
+      "text": "gulrót",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "gulrót"
+      "icon": "apple"
     },
     {
       "id": "chips",
+      "text": "kartöfluflögur",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "kartöfluflögur"
+      "icon": "apple"
     },
     {
       "id": "cookie",
+      "text": "smákaka",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "smákaka"
+      "icon": "apple"
     },
     {
       "id": "egg",
+      "text": "egg",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "egg"
+      "icon": "apple"
     },
     {
       "id": "cereal",
+      "text": "morgunkorn",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "morgunkorn"
+      "icon": "apple"
     },
     {
       "id": "fruit",
+      "text": "ávöxtur",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "ávöxtur"
+      "icon": "apple"
     },
     {
       "id": "snack",
+      "text": "snarl",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "snarl"
+      "icon": "apple"
     },
     {
       "id": "dinner",
+      "text": "kvöldmatur",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "kvöldmatur"
+      "icon": "apple"
     },
     {
       "id": "lunch",
+      "text": "hádegismatur",
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple",
-      "text": "hádegismatur"
+      "icon": "apple"
     },
     {
       "id": "happy",
+      "text": "glaður",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "glaður"
+      "icon": "smile"
     },
     {
       "id": "sad",
+      "text": "leiður",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "leiður"
+      "icon": "smile"
     },
     {
       "id": "angry",
+      "text": "reiður",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "reiður"
+      "icon": "smile"
     },
     {
       "id": "worried",
+      "text": "áhyggjufullur",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "áhyggjufullur"
+      "icon": "smile"
     },
     {
       "id": "scared",
+      "text": "hræddur",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "hræddur"
+      "icon": "smile"
     },
     {
       "id": "tired",
+      "text": "þreyttur",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "þreyttur"
+      "icon": "smile"
     },
     {
       "id": "sick",
+      "text": "veikur",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "veikur"
+      "icon": "smile"
     },
     {
       "id": "hurt",
+      "text": "sárt",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "sárt"
+      "icon": "smile"
     },
     {
       "id": "calm",
+      "text": "rólegur",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "rólegur"
+      "icon": "smile"
     },
     {
       "id": "excited",
+      "text": "spenntur",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "spenntur"
+      "icon": "smile"
     },
     {
       "id": "confused",
+      "text": "ruglaður",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "ruglaður"
+      "icon": "smile"
     },
     {
       "id": "proud",
+      "text": "stoltur",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "stoltur"
+      "icon": "smile"
     },
     {
       "id": "lonely",
+      "text": "einmana",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "einmana"
+      "icon": "smile"
     },
     {
       "id": "bored",
+      "text": "leiðist",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "leiðist"
+      "icon": "smile"
     },
     {
       "id": "safe",
+      "text": "óhultur",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "óhultur"
+      "icon": "smile"
     },
     {
       "id": "upset",
+      "text": "ósáttur",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "ósáttur"
+      "icon": "smile"
     },
     {
       "id": "okay-2",
+      "text": "gott",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "gott"
+      "icon": "smile"
     },
     {
       "id": "hot",
+      "text": "heitur",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "heitur"
+      "icon": "smile"
     },
     {
       "id": "cold",
+      "text": "kaldur",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "kaldur"
+      "icon": "smile"
     },
     {
       "id": "hungry",
+      "text": "svangur",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "svangur"
+      "icon": "smile"
     },
     {
       "id": "thirsty",
+      "text": "þyrstur",
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile",
-      "text": "þyrstur"
+      "icon": "smile"
     },
     {
       "id": "head",
+      "text": "höfuð",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "höfuð"
+      "icon": "body"
     },
     {
       "id": "hand",
+      "text": "hönd",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "hönd"
+      "icon": "body"
     },
     {
       "id": "foot",
+      "text": "fótur",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "fótur"
+      "icon": "body"
     },
     {
       "id": "tummy",
+      "text": "magi",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "magi"
+      "icon": "body"
     },
     {
       "id": "mouth",
+      "text": "munnur",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "munnur"
+      "icon": "body"
     },
     {
       "id": "ear",
+      "text": "eyra",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "eyra"
+      "icon": "body"
     },
     {
       "id": "eye",
+      "text": "auga",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "auga"
+      "icon": "body"
     },
     {
       "id": "arm",
+      "text": "armur",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "armur"
+      "icon": "body"
     },
     {
       "id": "leg",
+      "text": "fótur",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "fótur"
+      "icon": "body"
     },
     {
       "id": "back",
+      "text": "bak",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "bak"
+      "icon": "body"
     },
     {
       "id": "tooth",
+      "text": "tönn",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "tönn"
+      "icon": "body"
     },
     {
       "id": "hair",
+      "text": "hár",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "hár"
+      "icon": "body"
     },
     {
       "id": "nose",
+      "text": "nef",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "nef"
+      "icon": "body"
     },
     {
       "id": "skin",
+      "text": "húð",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "húð"
+      "icon": "body"
     },
     {
       "id": "heart",
+      "text": "hjarta",
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body",
-      "text": "hjarta"
+      "icon": "body"
     },
     {
       "id": "home",
+      "text": "heima",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "heima"
+      "icon": "home"
     },
     {
       "id": "school",
+      "text": "skóli",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "skóli"
+      "icon": "home"
     },
     {
       "id": "classroom",
+      "text": "skólastofa",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "skólastofa"
+      "icon": "home"
     },
     {
       "id": "bathroom",
+      "text": "baðherbergi",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "baðherbergi"
+      "icon": "home"
     },
     {
       "id": "kitchen",
+      "text": "eldhús",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "eldhús"
+      "icon": "home"
     },
     {
       "id": "bedroom",
+      "text": "svefnherbergi",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "svefnherbergi"
+      "icon": "home"
     },
     {
       "id": "garden",
+      "text": "garður",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "garður"
+      "icon": "home"
     },
     {
       "id": "shop",
+      "text": "búð",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "búð"
+      "icon": "home"
     },
     {
       "id": "car",
+      "text": "bíll",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "bíll"
+      "icon": "home"
     },
     {
       "id": "bus",
+      "text": "strætó",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "strætó"
+      "icon": "home"
     },
     {
       "id": "park",
+      "text": "garður",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "garður"
+      "icon": "home"
     },
     {
       "id": "playground",
+      "text": "leikvöllur",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "leikvöllur"
+      "icon": "home"
     },
     {
       "id": "library",
+      "text": "bókasafn",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "bókasafn"
+      "icon": "home"
     },
     {
       "id": "pool",
+      "text": "sundlaug",
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home",
-      "text": "sundlaug"
+      "icon": "home"
     },
     {
       "id": "table",
+      "text": "borð",
       "pos": "noun",
       "category": "home",
       "frequency": 7,
-      "icon": "home",
-      "text": "borð"
+      "icon": "home"
     },
     {
       "id": "chair",
+      "text": "stóll",
       "pos": "noun",
       "category": "home",
       "frequency": 7,
-      "icon": "home",
-      "text": "stóll"
+      "icon": "home"
     },
     {
       "id": "sofa",
+      "text": "sófi",
       "pos": "noun",
       "category": "home",
       "frequency": 7,
-      "icon": "home",
-      "text": "sófi"
+      "icon": "home"
     },
     {
       "id": "bed",
+      "text": "rúm",
       "pos": "noun",
       "category": "home",
       "frequency": 7,
-      "icon": "home",
-      "text": "rúm"
+      "icon": "home"
     },
     {
       "id": "door",
+      "text": "hurð",
       "pos": "noun",
       "category": "home",
       "frequency": 7,
-      "icon": "home",
-      "text": "hurð"
+      "icon": "home"
     },
     {
       "id": "window",
+      "text": "gluggi",
       "pos": "noun",
       "category": "home",
       "frequency": 7,
-      "icon": "home",
-      "text": "gluggi"
+      "icon": "home"
     },
     {
       "id": "book",
+      "text": "bók",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "bók"
+      "icon": "book"
     },
     {
       "id": "pencil",
+      "text": "blýantur",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "blýantur"
+      "icon": "book"
     },
     {
       "id": "paper",
+      "text": "pappír",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "pappír"
+      "icon": "book"
     },
     {
       "id": "bag",
+      "text": "taska",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "taska"
+      "icon": "book"
     },
     {
       "id": "coat",
+      "text": "jakki",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "jakki"
+      "icon": "book"
     },
     {
       "id": "shoes",
+      "text": "skór",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "skór"
+      "icon": "book"
     },
     {
       "id": "lunchbox",
+      "text": "matarbox",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "matarbox"
+      "icon": "book"
     },
     {
       "id": "tablet",
+      "text": "spjaldtölva",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "spjaldtölva"
+      "icon": "book"
     },
     {
       "id": "screen",
+      "text": "skjár",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "skjár"
+      "icon": "book"
     },
     {
       "id": "timer",
+      "text": "tímamælir",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "tímamælir"
+      "icon": "book"
     },
     {
       "id": "schedule",
+      "text": "stundaskrá",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "stundaskrá"
+      "icon": "book"
     },
     {
       "id": "picture",
+      "text": "mynd",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "mynd"
+      "icon": "book"
     },
     {
       "id": "card",
+      "text": "kort",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "kort"
+      "icon": "book"
     },
     {
       "id": "story",
+      "text": "saga",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "saga"
+      "icon": "book"
     },
     {
       "id": "music",
+      "text": "tónlist",
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book",
-      "text": "tónlist"
+      "icon": "book"
     },
     {
       "id": "ball",
+      "text": "bolti",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "bolti"
+      "icon": "puzzle"
     },
     {
       "id": "blocks",
+      "text": "kubbar",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "kubbar"
+      "icon": "puzzle"
     },
     {
       "id": "doll",
+      "text": "dúkka",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "dúkka"
+      "icon": "puzzle"
     },
     {
       "id": "car-toy",
+      "text": "leikfangabíll",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "leikfangabíll"
+      "icon": "puzzle"
     },
     {
       "id": "train",
+      "text": "lest",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "lest"
+      "icon": "puzzle"
     },
     {
       "id": "puzzle",
+      "text": "púsl",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "púsl"
+      "icon": "puzzle"
     },
     {
       "id": "game",
+      "text": "leikur",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "leikur"
+      "icon": "puzzle"
     },
     {
       "id": "paint",
+      "text": "málning",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "málning"
+      "icon": "puzzle"
     },
     {
       "id": "clay",
+      "text": "leir",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "leir"
+      "icon": "puzzle"
     },
     {
       "id": "bubbles",
+      "text": "sápukúlur",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "sápukúlur"
+      "icon": "puzzle"
     },
     {
       "id": "swing",
+      "text": "róla",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "róla"
+      "icon": "puzzle"
     },
     {
       "id": "slide",
+      "text": "rennibraut",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "rennibraut"
+      "icon": "puzzle"
     },
     {
       "id": "bike",
+      "text": "hjól",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "hjól"
+      "icon": "puzzle"
     },
     {
       "id": "teddy",
+      "text": "bangsi",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "bangsi"
+      "icon": "puzzle"
     },
     {
       "id": "lego",
+      "text": "lego",
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle",
-      "text": "lego"
+      "icon": "puzzle"
     },
     {
       "id": "red",
+      "text": "rauður",
       "pos": "adjective",
       "category": "colors",
       "frequency": 5,
-      "icon": "palette",
-      "text": "rauður"
+      "icon": "palette"
     },
     {
       "id": "blue",
+      "text": "blár",
       "pos": "adjective",
       "category": "colors",
       "frequency": 5,
-      "icon": "palette",
-      "text": "blár"
+      "icon": "palette"
     },
     {
       "id": "green",
+      "text": "grænn",
       "pos": "adjective",
       "category": "colors",
       "frequency": 5,
-      "icon": "palette",
-      "text": "grænn"
+      "icon": "palette"
     },
     {
       "id": "yellow",
+      "text": "gulur",
       "pos": "adjective",
       "category": "colors",
       "frequency": 5,
-      "icon": "palette",
-      "text": "gulur"
+      "icon": "palette"
     },
     {
       "id": "orange",
+      "text": "appelsínugulur",
       "pos": "adjective",
       "category": "colors",
       "frequency": 5,
-      "icon": "palette",
-      "text": "appelsínugulur"
+      "icon": "palette"
     },
     {
       "id": "purple",
+      "text": "fjólublár",
       "pos": "adjective",
       "category": "colors",
       "frequency": 5,
-      "icon": "palette",
-      "text": "fjólublár"
+      "icon": "palette"
     },
     {
       "id": "pink",
+      "text": "bleikur",
       "pos": "adjective",
       "category": "colors",
       "frequency": 5,
-      "icon": "palette",
-      "text": "bleikur"
+      "icon": "palette"
     },
     {
       "id": "brown",
+      "text": "brúnn",
       "pos": "adjective",
       "category": "colors",
       "frequency": 5,
-      "icon": "palette",
-      "text": "brúnn"
+      "icon": "palette"
     },
     {
       "id": "black",
+      "text": "svartur",
       "pos": "adjective",
       "category": "colors",
       "frequency": 5,
-      "icon": "palette",
-      "text": "svartur"
+      "icon": "palette"
     },
     {
       "id": "white",
+      "text": "hvítur",
       "pos": "adjective",
       "category": "colors",
       "frequency": 5,
-      "icon": "palette",
-      "text": "hvítur"
+      "icon": "palette"
     },
     {
       "id": "grey",
+      "text": "grár",
       "pos": "adjective",
       "category": "colors",
       "frequency": 5,
-      "icon": "palette",
-      "text": "grár"
+      "icon": "palette"
     },
     {
       "id": "bright",
+      "text": "ljós",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "ljós"
+      "icon": "palette"
     },
     {
       "id": "dark",
+      "text": "dimmur",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "dimmur"
+      "icon": "palette"
     },
     {
       "id": "soft",
+      "text": "mjúkur",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "mjúkur"
+      "icon": "palette"
     },
     {
       "id": "hard",
+      "text": "harður",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "harður"
+      "icon": "palette"
     },
     {
       "id": "quiet",
+      "text": "hljóður",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "hljóður"
+      "icon": "palette"
     },
     {
       "id": "loud",
+      "text": "hávær",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "hávær"
+      "icon": "palette"
     },
     {
       "id": "fast",
+      "text": "hraður",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "hraður"
+      "icon": "palette"
     },
     {
       "id": "slow",
+      "text": "hægur",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "hægur"
+      "icon": "palette"
     },
     {
       "id": "clean",
+      "text": "hreinn",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "hreinn"
+      "icon": "palette"
     },
     {
       "id": "dirty",
+      "text": "óhreinn",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "óhreinn"
+      "icon": "palette"
     },
     {
       "id": "wet",
+      "text": "blautur",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "blautur"
+      "icon": "palette"
     },
     {
       "id": "dry",
+      "text": "þurr",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "þurr"
+      "icon": "palette"
     },
     {
       "id": "new",
+      "text": "nýr",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "nýr"
+      "icon": "palette"
     },
     {
       "id": "old",
+      "text": "gamall",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette",
-      "text": "gamall"
+      "icon": "palette"
     },
     {
       "id": "now",
+      "text": "núna",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "núna"
+      "icon": "clock"
     },
     {
       "id": "later",
+      "text": "seinna",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "seinna"
+      "icon": "clock"
     },
     {
       "id": "today",
+      "text": "í dag",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "í dag"
+      "icon": "clock"
     },
     {
       "id": "tomorrow",
+      "text": "á morgun",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "á morgun"
+      "icon": "clock"
     },
     {
       "id": "morning",
+      "text": "morgunn",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "morgunn"
+      "icon": "clock"
     },
     {
       "id": "afternoon",
+      "text": "eftirmiðdagur",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "eftirmiðdagur"
+      "icon": "clock"
     },
     {
       "id": "night",
+      "text": "nótt",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "nótt"
+      "icon": "clock"
     },
     {
       "id": "before",
+      "text": "fyrir",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "fyrir"
+      "icon": "clock"
     },
     {
       "id": "after",
+      "text": "eftir",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "eftir"
+      "icon": "clock"
     },
     {
       "id": "soon",
+      "text": "strax",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "strax"
+      "icon": "clock"
     },
     {
       "id": "first",
+      "text": "fyrst",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "fyrst"
+      "icon": "clock"
     },
     {
       "id": "next",
+      "text": "næst",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "næst"
+      "icon": "clock"
     },
     {
       "id": "last",
+      "text": "síðast",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "síðast"
+      "icon": "clock"
     },
     {
       "id": "minute",
+      "text": "mínúta",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "mínúta"
+      "icon": "clock"
     },
     {
       "id": "hour",
+      "text": "klukkutími",
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock",
-      "text": "klukkutími"
+      "icon": "clock"
     },
     {
       "id": "break",
+      "text": "pása",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "pása"
+      "icon": "heart-hand"
     },
     {
       "id": "quiet-time",
+      "text": "hljóður tími",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "hljóður tími"
+      "icon": "heart-hand"
     },
     {
       "id": "hug",
+      "text": "knús",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "knús"
+      "icon": "heart-hand"
     },
     {
       "id": "space",
+      "text": "pláss",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "pláss"
+      "icon": "heart-hand"
     },
     {
       "id": "toilet",
+      "text": "klósett",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "klósett"
+      "icon": "heart-hand"
     },
     {
       "id": "medicine",
+      "text": "lyf",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "lyf"
+      "icon": "heart-hand"
     },
     {
       "id": "light",
+      "text": "ljós",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "ljós"
+      "icon": "heart-hand"
     },
     {
       "id": "dark-2",
+      "text": "dimma",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "dimma"
+      "icon": "heart-hand"
     },
     {
       "id": "noise",
+      "text": "hávaði",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "hávaði"
+      "icon": "heart-hand"
     },
     {
       "id": "headphones",
+      "text": "heyrnartól",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "heyrnartól"
+      "icon": "heart-hand"
     },
     {
       "id": "blanket",
+      "text": "teppi",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "teppi"
+      "icon": "heart-hand"
     },
     {
       "id": "charger",
+      "text": "hleðslutæki",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "hleðslutæki"
+      "icon": "heart-hand"
     },
     {
       "id": "choice",
+      "text": "val",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "val"
+      "icon": "heart-hand"
     },
     {
       "id": "turn",
+      "text": "röð",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "röð"
+      "icon": "heart-hand"
     },
     {
       "id": "help-please",
+      "text": "hjálp takk",
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand",
-      "text": "hjálp takk"
+      "icon": "heart-hand"
     },
     {
       "id": "different",
+      "text": "annar",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "annar"
+      "icon": "sparkles"
     },
     {
       "id": "same",
+      "text": "sami",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "sami"
+      "icon": "sparkles"
     },
     {
       "id": "easy",
+      "text": "auðvelt",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "auðvelt"
+      "icon": "sparkles"
     },
     {
       "id": "harder",
+      "text": "erfiðara",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "erfiðara"
+      "icon": "sparkles"
     },
     {
       "id": "favorite",
+      "text": "besti",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "besti"
+      "icon": "sparkles"
     },
     {
       "id": "missing",
+      "text": "vantar",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "vantar"
+      "icon": "sparkles"
     },
     {
       "id": "broken",
+      "text": "brotinn",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "brotinn"
+      "icon": "sparkles"
     },
     {
       "id": "ready",
+      "text": "til í það",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "til í það"
+      "icon": "sparkles"
     },
     {
       "id": "busy",
+      "text": "upptekinn",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "upptekinn"
+      "icon": "sparkles"
     },
     {
       "id": "empty",
+      "text": "tómur",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "tómur"
+      "icon": "sparkles"
     },
     {
       "id": "full",
+      "text": "fullur",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "fullur"
+      "icon": "sparkles"
     },
     {
       "id": "small",
+      "text": "lítill",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "lítill"
+      "icon": "sparkles"
     },
     {
       "id": "tall",
+      "text": "hár",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "hár"
+      "icon": "sparkles"
     },
     {
       "id": "short",
+      "text": "stuttur",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "stuttur"
+      "icon": "sparkles"
     },
     {
       "id": "round",
+      "text": "hringlaga",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "hringlaga"
+      "icon": "sparkles"
     },
     {
       "id": "square",
+      "text": "ferningur",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "ferningur"
+      "icon": "sparkles"
     },
     {
       "id": "kind",
+      "text": "góður",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "góður"
+      "icon": "sparkles"
     },
     {
       "id": "gentle",
+      "text": "blíður",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "blíður"
+      "icon": "sparkles"
     },
     {
       "id": "careful",
+      "text": "varkár",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "varkár"
+      "icon": "sparkles"
     },
     {
       "id": "safe-place",
+      "text": "öruggur staður",
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles",
-      "text": "öruggur staður"
+      "icon": "sparkles"
     }
   ],
   "templates": [
@@ -3135,7 +3068,5 @@
         "ekki"
       ]
     }
-  },
-  "source": "generated",
-  "reviewStatus": "needs-native-review"
+  }
 }
