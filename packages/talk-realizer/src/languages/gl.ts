@@ -28,6 +28,7 @@ export const galician: LanguageRules = {
     language: 'gl',
     maturity: 'beta',
     wordOrder: 'svo',
+    verbCitation: 'infinitive',
     questionStrategy: 'inversion',
     spacing: 'space',
     capitalize: true,

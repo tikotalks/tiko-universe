@@ -54,6 +54,7 @@ export const italian: LanguageRules = {
     language: 'it',
     maturity: 'production',
     wordOrder: 'svo',
+    verbCitation: 'infinitive',
     questionStrategy: 'intonation',
     spacing: 'space',
     capitalize: true,

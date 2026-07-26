@@ -36,6 +36,12 @@ export interface ScandinavianConfig {
   adjectiveDefiniteEnding: string
   /** The indefinite neuter adjective ending. */
   adjectiveNeuterEnding: string
+  /**
+   * The infinitive ending: "-a" in Swedish ("leka"), "-e" in Danish and Norwegian
+   * ("lege", "leke"). The packs list verbs in the present, and these languages
+   * form the infinitive from it regularly enough to derive.
+   */
+  infinitiveEnding: string
   copula: { present: string, past: string }
   negation: string
   /** The negated indefinite object, if the language has one. */
@@ -85,6 +91,31 @@ export function createScandinavian(config: ScandinavianConfig): LanguageRules {
       if (ctx.tense === 'past') return verb.features.forms?.past ?? verb.text
       if (verb.features.copula) return config.copula.present
       return verb.features.forms?.['1sg'] ?? verb.text
+    },
+
+    /**
+     * A second verb takes the infinitive, which these languages form from the
+     * present: "-ar"/"-er" gives way to the infinitive ending ("väntar" → "vänta",
+     * "leger" → "lege"), and a bare "-r" after a vowel simply goes ("går" → "gå").
+     * A compound like "har brug for" inflects on its first word.
+     */
+    verbComplement(verb, ctx) {
+      const curated = verb.features.forms?.inf
+      if (curated) return curated
+      const [first, ...rest] = verb.text.split(' ')
+      let infinitive = first
+      const stem = /[ae]r$/i.test(first) ? first.slice(0, -2) : ''
+      if (/[aeiouyåäöæø]/i.test(stem)) {
+        // "leker" → "lek" → "leka"; "väntar" → "vänt" → "vänta".
+        infinitive = stem + config.infinitiveEnding
+      } else if (/[aeiouyåäöæø]r$/i.test(first)) {
+        // A one-syllable verb has no ending to trade, only an -r to drop:
+        // "går" → "gå", "ser" → "se".
+        infinitive = first.slice(0, -1)
+      }
+      const written = [infinitive, ...rest].join(' ')
+      note(ctx.builder, `"${written}": the infinitive, from the present tense`)
+      return written
     },
 
     copula(ctx) {

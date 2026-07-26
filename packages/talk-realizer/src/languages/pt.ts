@@ -28,6 +28,7 @@ export const portuguese: LanguageRules = {
     language: 'pt',
     maturity: 'production',
     wordOrder: 'svo',
+    verbCitation: 'infinitive',
     questionStrategy: 'intonation',
     spacing: 'space',
     capitalize: true,

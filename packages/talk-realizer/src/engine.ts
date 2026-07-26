@@ -155,6 +155,27 @@ export function realizeWith(
       case 'raw':
         push(builder, phrase.word.text, phrase.word.id)
         return
+      case 'vp': {
+        // A second verb wants the infinitive. The packs disagree about which form
+        // they list a verb in — the Romance ones give the infinitive, but Dutch,
+        // German and the Slavic ones give a finite form — so it comes from the
+        // curated `inf` where there is one, and otherwise from the tile with a note
+        // saying so, because the alternative is dropping the word the child chose.
+        const infinitive = phrase.verb.features.forms?.inf
+        const base = infinitive ?? phrase.verb.text
+        const written = rules.verbComplement?.(phrase.verb, ctx, base)
+        if (!infinitive && !written && (rules.profile.verbCitation ?? 'finite') === 'finite') {
+          note(builder, `no infinitive for "${phrase.verb.text}": the second verb is left as the pack lists it`)
+        }
+        const supplied = written ?? [base]
+        const parts = typeof supplied === 'string' ? [supplied] : supplied
+        // The last part is the verb itself and carries the tile; anything in front
+        // of it is a marker the language inserted.
+        parts.forEach((part, at) => {
+          push(builder, part, at === parts.length - 1 ? phrase.verb.id : null)
+        })
+        return
+      }
       case 'adjp': {
         const phraseCtx = phraseContext('predicate', phrase, false)
         for (const adjective of phrase.adjectives) {
@@ -196,6 +217,15 @@ export function realizeWith(
         emitNounPhrase(phrase, 'object')
     }
   }
+
+  /**
+   * A verb whose lexical half is a separate word — Swedish "vill **ha**", Afrikaans
+   * "wil … **hê**" — does not want it when a second verb follows: "Jag vill leka",
+   * not "Jag vill ha leker".
+   */
+  const hasVerbComplement = chunks.complements.some((phrase) => phrase.kind === 'vp')
+  const verbTailOf = (verb: typeof chunks.verb): string | undefined =>
+    hasVerbComplement ? undefined : verb?.features.verbTail
 
   // Under verb-second inversion a verb's tail follows the subject rather than
   // the verb: "Vad vill du ha?", not "Vad vill ha du?".
@@ -262,7 +292,7 @@ export function realizeWith(
     }
 
     const clauseFinalTail = verb.features.verbTailPosition === 'clauseFinal'
-    const tail = deferTail || clauseFinalTail ? undefined : verb.features.verbTail
+    const tail = deferTail || clauseFinalTail ? undefined : verbTailOf(verb)
 
     if (!chunks.negated || suppressVerbParticle) {
       emitClitic()
@@ -345,7 +375,7 @@ export function realizeWith(
     // for the complements.
     const tail = chunks.verb?.features.verbTailPosition === 'clauseFinal'
       ? undefined
-      : chunks.verb?.features.verbTail
+      : verbTailOf(chunks.verb)
     if (tail && chunks.verb) push(builder, tail, chunks.verb.id)
     deferTail = false
   } else if (isQuestion && strategy === 'auxiliary') {
@@ -372,7 +402,7 @@ export function realizeWith(
     if (chunks.subject) emitNounPhrase(chunks.subject, 'subject')
     const tail = chunks.verb?.features.verbTailPosition === 'clauseFinal'
       ? undefined
-      : chunks.verb?.features.verbTail
+      : verbTailOf(chunks.verb)
     if (tail && chunks.verb) push(builder, tail, chunks.verb.id)
     deferTail = false
   } else {
@@ -386,8 +416,18 @@ export function realizeWith(
     if (!sov) emitVerb()
   }
 
+  // A Germanic infinitive waits for the end of the clause, behind the object.
+  const complementLast = rules.profile.verbComplementPosition === 'clauseFinal'
   for (const phrase of chunks.complements) {
+    if (complementLast && phrase.kind === 'vp') continue
     emitPhrase(phrase)
+  }
+  if (complementLast) {
+    for (const phrase of chunks.complements) {
+      if (phrase.kind !== 'vp') continue
+      emitPhrase(phrase)
+      note(builder, 'the second verb closes the clause')
+    }
   }
 
   // A verb-final language may keep its question word in the object's slot,
@@ -405,8 +445,8 @@ export function realizeWith(
   }
 
   // A clause-final verb tail comes after the complements: "wil … hê".
-  if (chunks.verb?.features.verbTailPosition === 'clauseFinal' && chunks.verb.features.verbTail) {
-    push(builder, chunks.verb.features.verbTail, chunks.verb.id)
+  if (chunks.verb?.features.verbTailPosition === 'clauseFinal' && verbTailOf(chunks.verb)) {
+    push(builder, chunks.verb.features.verbTail as string, chunks.verb.id)
     note(builder, 'the infinitive closes the clause')
   }
 

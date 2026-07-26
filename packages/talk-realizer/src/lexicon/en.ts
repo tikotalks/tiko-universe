@@ -48,7 +48,10 @@ export const englishLexicon: Lexicon = {
   drink: { pos: 'verb', forms: { past: 'drank' } },
   play: { pos: 'verb', forms: { past: 'played' } },
   see: { pos: 'verb', forms: { past: 'saw' } },
-  help: { pos: 'verb', forms: { past: 'helped' } },
+  // "help" and "rest" spell their noun the same way, and after another verb that
+  // is the reading: "I need help", not "I need to help" — which says the opposite.
+  help: { pos: 'verb', forms: { past: 'helped' }, nominal: true, mass: true },
+  rest: { pos: 'verb', forms: { past: 'rested' }, nominal: true, mass: true },
   read: { pos: 'verb', forms: { past: 'read' } },
   sleep: { pos: 'verb', forms: { past: 'slept' } },
 

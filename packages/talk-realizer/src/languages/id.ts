@@ -25,6 +25,7 @@ export function createMalayic(language: 'id' | 'ms', notes: string): LanguageRul
     language,
     maturity: 'beta',
     wordOrder: 'svo',
+    verbCitation: 'invariant',
     questionStrategy: 'intonation',
     // "Kamu mau apa?" — the question word stays where the answer would be.
     questionWordPosition: 'final',

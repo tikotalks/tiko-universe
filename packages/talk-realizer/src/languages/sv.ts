@@ -18,6 +18,7 @@ export const swedish = createScandinavian({
   pluralEnding: 'ar',
   adjectiveDefiniteEnding: 'a',
   adjectiveNeuterEnding: 't',
+  infinitiveEnding: 'a',
   copula: { present: 'är', past: 'var' },
   negation: 'inte',
   notes: 'Grammar is rule-based and tested; the vocabulary was generated against the shared concept ids and needs review by a Swedish speaker.',

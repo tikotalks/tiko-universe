@@ -27,6 +27,7 @@ export const dutch: LanguageRules = {
     language: 'nl',
     maturity: 'production',
     wordOrder: 'svo',
+    verbComplementPosition: 'clauseFinal',
     questionStrategy: 'inversion',
     spacing: 'space',
     capitalize: true,
@@ -43,6 +44,17 @@ export const dutch: LanguageRules = {
       return forms['1sg'] ?? verb.text
     }
     return formFor(forms, ctx.person, ctx.number) ?? verb.text
+  },
+
+  /**
+   * A second verb takes the infinitive, and Dutch spells that exactly like the
+   * third person plural — "willen", "spelen", "lezen" — so the form the plural
+   * takes is the form to use, and no separate list of infinitives is needed.
+   */
+  verbComplement(verb, ctx) {
+    const infinitive = dutch.verbForm(verb, { ...ctx, person: 3, number: 'pl', tense: 'present' })
+    note(ctx.builder, `"${infinitive}": the infinitive, spelled like the plural`)
+    return infinitive
   },
 
   copula(ctx) {

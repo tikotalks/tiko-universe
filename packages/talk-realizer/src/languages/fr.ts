@@ -48,6 +48,7 @@ export const french: LanguageRules = {
     language: 'fr',
     maturity: 'production',
     wordOrder: 'svo',
+    verbCitation: 'infinitive',
     questionStrategy: 'intonation',
     // Spoken French: "Tu veux quoi ?" rather than inventing "qu'est-ce que".
     questionWordPosition: 'final',

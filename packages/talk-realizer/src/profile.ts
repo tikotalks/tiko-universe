@@ -67,6 +67,24 @@ export interface LanguageProfile {
    */
   questionWordPosition?: 'initial' | 'final' | 'preverbal'
 
+  /**
+   * Which form of a verb the language's pack lists, which decides what a second
+   * verb needs. The Romance packs give the infinitive, so it can be used as it
+   * stands; the Dutch, German and Slavic packs give a finite form, so a verbal
+   * complement needs the curated `inf` and is flagged for review without one; and
+   * an `invariant` language — Chinese, Japanese, Afrikaans, Papiamentu — has no
+   * such distinction to make. `finite` is the default because it is the one that
+   * asks to be checked.
+   */
+  verbCitation?: 'infinitive' | 'finite' | 'invariant'
+
+  /**
+   * Where a second verb goes. The Germanic languages send the infinitive to the end
+   * of the clause — "Ik wil een appel eten", not "Ik wil eten een appel" — which is
+   * the same rule their `verbTail` already follows.
+   */
+  verbComplementPosition?: 'afterVerb' | 'clauseFinal'
+
   /** CJK scripts do not separate words with spaces. */
   spacing: 'space' | 'none'
 
@@ -323,6 +341,18 @@ export interface LanguageRules {
    * emits no separate particle.
    */
   negatedCopula?(ctx: SentenceContext): string | null
+
+  /**
+   * A second verb, complementing the first: the "play" of "I want to play". `base`
+   * is the infinitive — the verb's curated `inf`, or the tile's own text where the
+   * language has none yet. A language implements this when it needs a marker in
+   * front of that: English "to", Swedish "att", Irish "a". Return the parts in
+   * order; the last one is taken to be the verb itself, and anything before it
+   * counts as inserted, so a marker must also appear in `functionWords`. Returning
+   * nothing declines, and the engine falls back to `base` and says in a note that
+   * the form was not checked.
+   */
+  verbComplement?(verb: Word, ctx: SentenceContext, base: string): string | string[] | undefined
 
   /**
    * How to realize a preposition. Returning `null` suppresses the word entirely,

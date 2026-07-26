@@ -35,6 +35,7 @@ export const spanish: LanguageRules = {
     language: 'es',
     maturity: 'production',
     wordOrder: 'svo',
+    verbCitation: 'infinitive',
     questionStrategy: 'intonation',
     spacing: 'space',
     capitalize: true,

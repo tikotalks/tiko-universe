@@ -15,6 +15,7 @@ export const chinese: LanguageRules = {
     language: 'zh',
     maturity: 'production',
     wordOrder: 'svo',
+    verbCitation: 'invariant',
     questionStrategy: 'particle',
     questionParticle: '',
     // A question word stays where the thing it asks about would be: 你要什么？

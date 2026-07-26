@@ -20,6 +20,7 @@ export const danish = createScandinavian({
   pluralEnding: 'er',
   adjectiveDefiniteEnding: 'e',
   adjectiveNeuterEnding: 't',
+  infinitiveEnding: 'e',
   copula: { present: 'er', past: 'var' },
   negation: 'ikke',
   notes: 'Grammar is rule-based and tested; the vocabulary was generated against the shared concept ids and needs review by a Danish speaker.',

@@ -20,8 +20,6 @@ import type {
 } from '@tiko/talk-types'
 import {
   buildSentence,
-  buildStrip,
-  canComplete as canCompleteLocally,
   loadLocalBoard,
   localStripState,
   localSuggestions,

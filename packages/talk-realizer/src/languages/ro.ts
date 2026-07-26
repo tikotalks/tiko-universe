@@ -63,6 +63,7 @@ export const romanian: LanguageRules = {
     language: 'ro',
     maturity: 'beta',
     wordOrder: 'svo',
+    verbCitation: 'infinitive',
     questionStrategy: 'inversion',
     spacing: 'space',
     capitalize: true,

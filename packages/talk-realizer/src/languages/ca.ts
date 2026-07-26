@@ -33,6 +33,7 @@ export const catalan: LanguageRules = {
     language: 'ca',
     maturity: 'beta',
     wordOrder: 'svo',
+    verbCitation: 'infinitive',
     questionStrategy: 'inversion',
     spacing: 'space',
     capitalize: true,

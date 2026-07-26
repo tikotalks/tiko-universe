@@ -23,11 +23,12 @@ export const english: LanguageRules = {
     language: 'en',
     maturity: 'production',
     wordOrder: 'svo',
+    verbCitation: 'infinitive',
     questionStrategy: 'auxiliary',
     spacing: 'space',
     capitalize: true,
     punctuation: { statement: '.', question: '?' },
-    functionWords: ['a', 'an', 'the', 'am', 'is', 'are', 'was', 'were', 'do', 'does', 'did', 'not'],
+    functionWords: ['a', 'an', 'the', 'am', 'is', 'are', 'was', 'were', 'do', 'does', 'did', 'not', 'to'],
   },
 
   verbForm(verb, ctx) {
@@ -43,6 +44,12 @@ export const english: LanguageRules = {
 
   copula(ctx) {
     return (ctx.tense === 'past' ? COPULA_PAST : COPULA)[key(ctx)] ?? 'is'
+  },
+
+  /** English marks a verbal complement with "to": "I want to play". */
+  verbComplement(verb, ctx, base) {
+    note(ctx.builder, `"to ${base}": the infinitive after a first verb`)
+    return ['to', base]
   },
 
   determiner(np, ctx) {

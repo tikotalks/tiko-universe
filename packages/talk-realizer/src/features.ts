@@ -89,6 +89,12 @@ export interface Features {
   mass?: boolean
   proper?: boolean
   /**
+   * A verb tile whose noun is the same word, so that after another verb it reads as
+   * the object: English "I need help", not "I need to help". Only worth declaring
+   * where the two forms are spelled alike — elsewhere the pack has no noun to use.
+   */
+  nominal?: boolean
+  /**
    * Animate nouns behave differently in several languages: Armenian marks a
    * definite animate object with -ին, and Slavic languages need it for the
    * accusative.
