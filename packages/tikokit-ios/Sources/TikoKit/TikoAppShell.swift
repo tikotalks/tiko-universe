@@ -197,6 +197,7 @@ public struct TikoAppShell<Content: View, SettingsContent: View>: View {
 
     @AppStorage("tiko.colorMode") private var colorModeRawValue = TikoColorMode.system.rawValue
     @Environment(\.colorScheme) private var deviceScheme
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @AppStorage("tiko.userName") private var userName = ""
     @AppStorage("tiko.userEmail") private var userEmail = ""
     @StateObject private var profilePrefs = TikoProfilePreferences()
@@ -425,7 +426,12 @@ public struct TikoAppShell<Content: View, SettingsContent: View>: View {
                 }
             }
         }
+        .tikoUpdateNotice(accent: appColor.palette.primary)
         .task {
+            // Hold the splash long enough for the wordmark to finish drawing
+            // itself, however quickly the identity work happens to return.
+            async let markFinished: Void = Task.sleep(nanoseconds: reduceMotion ? 400_000_000 : 1_300_000_000)
+
             await fetchIconIfNeeded()
             // Load identity first so avatar is scoped to the correct user
             identityBundle = await refreshIdentityBundle()
@@ -435,7 +441,7 @@ public struct TikoAppShell<Content: View, SettingsContent: View>: View {
                 await syncAvatarFromProfile(accessToken: token)
             }
             await fetchAvatarIfNeeded()
-            try? await Task.sleep(nanoseconds: 500_000_000)
+            try? await markFinished
             withAnimation(.easeOut(duration: 0.4)) { splashVisible = false }
         }
     }
@@ -669,19 +675,9 @@ private struct TikoSplashOverlay: View {
         appColor.palette.primary
             .overlay {
                 GeometryReader { geo in
-                    // Try main bundle first (each app has TikoLogo in Assets.xcassets),
-                    // then TikoKit's SPM bundle as fallback.
-                    let logo = UIImage(named: "TikoLogo")
-                        ?? UIImage(named: "TikoLogo", in: .module, with: nil)
-                    if let logo {
-                        Image(uiImage: logo)
-                            .renderingMode(.template)
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: geo.size.width * 0.28, height: geo.size.width * 0.28)
-                            .foregroundColor(.white.opacity(0.88))
-                            .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    }
+                    TikoAnimatedLogo(markColor: .white.opacity(0.88))
+                        .frame(width: geo.size.width * 0.44)
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
                 }
             }
     }
