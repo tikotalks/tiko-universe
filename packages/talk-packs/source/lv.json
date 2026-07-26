@@ -23,6 +23,7 @@
     "helper": "palīgs",
     "doctor": "ārsts",
     "class": "klase",
+    "mine": "manējais",
     "want": "gribu",
     "need": "vajag",
     "like": "mīlu",
@@ -53,6 +54,47 @@
     "rest": "atpūšos",
     "try": "mēģinu",
     "talk": "runāju",
+    "get": "saņemu",
+    "give": "dodu",
+    "put": "lieku",
+    "take": "ņemu",
+    "make": "daru",
+    "look": "skatos",
+    "know": "zinu",
+    "listen": "klausos",
+    "watch": "vēroju",
+    "finish": "nobeidzu",
+    "find": "atrodu",
+    "think": "domāju",
+    "tell": "stāstu",
+    "show": "parādu",
+    "hold": "turu",
+    "jump": "lecu",
+    "write": "rakstu",
+    "let": "ļauju",
+    "work": "strādāju",
+    "share": "dalos",
+    "smell": "smaržoju",
+    "taste": "garšoju",
+    "touch": "pieskaros",
+    "dance": "dejoju",
+    "sing": "dziedu",
+    "cut": "griežu",
+    "build": "būvēju",
+    "swim": "peldu",
+    "ride": "braucu",
+    "brush": "tīru",
+    "push": "stumju",
+    "pull": "velku",
+    "throw": "metu",
+    "catch": "ķeru",
+    "count": "skaitu",
+    "wake": "pamostos",
+    "cry": "raudu",
+    "laugh": "smejos",
+    "fix": "remontēju",
+    "cook": "gatavoju",
+    "climb": "kāpju",
     "yes": "jā",
     "no": "nē",
     "please": "lūdzu",
@@ -100,11 +142,21 @@
     "outside": "ārā",
     "near": "tuvu",
     "far": "tālu",
+    "here": "šeit",
+    "there": "tur",
+    "up": "augšup",
+    "down": "lejup",
+    "off": "izslēgts",
+    "away": "prom",
+    "together": "kopā",
     "and": "un",
     "or": "vai",
     "because": "jo",
     "then": "tad",
     "but": "bet",
+    "not": "ne",
+    "all": "visi",
+    "another": "vēl viens",
     "water": "ūdens",
     "milk": "piens",
     "juice": "sula",
@@ -297,7 +349,8 @@
     "kind": "labs",
     "gentle": "maigs",
     "careful": "uzmanīgs",
-    "safe-place": "droša vieta"
+    "safe-place": "droša vieta",
+    "very": "ļoti"
   },
   "templates": {
     "want-object": "I want {thing}.",
@@ -331,7 +384,9 @@
       "pronoun": [
         "verb",
         "noun",
-        "adjective"
+        "adjective",
+        "negation",
+        "adverb"
       ],
       "determiner": [
         "noun",
@@ -342,23 +397,27 @@
         "noun",
         "adjective",
         "preposition",
-        "social"
+        "social",
+        "adverb"
       ],
       "noun": [
         "verb",
         "preposition",
         "conjunction",
-        "social"
+        "social",
+        "adverb"
       ],
       "adjective": [
         "noun",
         "social",
-        "conjunction"
+        "conjunction",
+        "adverb"
       ],
       "question": [
         "verb",
         "pronoun",
-        "determiner"
+        "determiner",
+        "adverb"
       ],
       "preposition": [
         "determiner",
@@ -369,11 +428,27 @@
         "pronoun",
         "determiner",
         "noun",
-        "verb"
+        "verb",
+        "negation"
       ],
       "social": [
         "noun",
-        "verb"
+        "verb",
+        "negation"
+      ],
+      "negation": [
+        "verb",
+        "determiner",
+        "noun",
+        "adjective",
+        "adverb"
+      ],
+      "adverb": [
+        "verb",
+        "noun",
+        "adjective",
+        "preposition",
+        "social"
       ]
     },
     "cases": [

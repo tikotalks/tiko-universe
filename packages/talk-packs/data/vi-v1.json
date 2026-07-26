@@ -165,6 +165,14 @@
       "icon": "user"
     },
     {
+      "id": "mine",
+      "text": "cái của tôi",
+      "pos": "pronoun",
+      "category": "people",
+      "frequency": 8,
+      "icon": "user"
+    },
+    {
       "id": "want",
       "text": "muốn",
       "pos": "verb",
@@ -402,6 +410,334 @@
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
+      "icon": "play"
+    },
+    {
+      "id": "get",
+      "text": "lấy được",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 9,
+      "icon": "play"
+    },
+    {
+      "id": "give",
+      "text": "cho",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 9,
+      "icon": "play"
+    },
+    {
+      "id": "put",
+      "text": "đặt",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 8,
+      "icon": "play"
+    },
+    {
+      "id": "take",
+      "text": "lấy",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 8,
+      "icon": "play"
+    },
+    {
+      "id": "make",
+      "text": "làm",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 8,
+      "icon": "play"
+    },
+    {
+      "id": "look",
+      "text": "nhìn",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 8,
+      "icon": "play"
+    },
+    {
+      "id": "know",
+      "text": "biết",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 8,
+      "icon": "play"
+    },
+    {
+      "id": "listen",
+      "text": "lắng nghe",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 8,
+      "icon": "play"
+    },
+    {
+      "id": "watch",
+      "text": "xem",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 8,
+      "icon": "play"
+    },
+    {
+      "id": "finish",
+      "text": "làm xong",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 8,
+      "icon": "play"
+    },
+    {
+      "id": "find",
+      "text": "tìm",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play"
+    },
+    {
+      "id": "think",
+      "text": "nghĩ",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play"
+    },
+    {
+      "id": "tell",
+      "text": "kể",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play"
+    },
+    {
+      "id": "show",
+      "text": "chỉ",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play"
+    },
+    {
+      "id": "hold",
+      "text": "giữ",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play"
+    },
+    {
+      "id": "jump",
+      "text": "nhảy",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play"
+    },
+    {
+      "id": "write",
+      "text": "viết",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play"
+    },
+    {
+      "id": "let",
+      "text": "cho phép",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 6,
+      "icon": "play"
+    },
+    {
+      "id": "work",
+      "text": "làm việc",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 6,
+      "icon": "play"
+    },
+    {
+      "id": "share",
+      "text": "chia",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 6,
+      "icon": "play"
+    },
+    {
+      "id": "smell",
+      "text": "ngửi",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 6,
+      "icon": "play"
+    },
+    {
+      "id": "taste",
+      "text": "nếm",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 6,
+      "icon": "play"
+    },
+    {
+      "id": "touch",
+      "text": "chạm",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 6,
+      "icon": "play"
+    },
+    {
+      "id": "dance",
+      "text": "múa",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 6,
+      "icon": "play"
+    },
+    {
+      "id": "sing",
+      "text": "hát",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 6,
+      "icon": "play"
+    },
+    {
+      "id": "cut",
+      "text": "cắt",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 6,
+      "icon": "play"
+    },
+    {
+      "id": "build",
+      "text": "xây",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 6,
+      "icon": "play"
+    },
+    {
+      "id": "swim",
+      "text": "bơi",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 6,
+      "icon": "play"
+    },
+    {
+      "id": "ride",
+      "text": "đi xe",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 6,
+      "icon": "play"
+    },
+    {
+      "id": "brush",
+      "text": "chải",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 6,
+      "icon": "play"
+    },
+    {
+      "id": "push",
+      "text": "đẩy",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 6,
+      "icon": "play"
+    },
+    {
+      "id": "pull",
+      "text": "kéo",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 6,
+      "icon": "play"
+    },
+    {
+      "id": "throw",
+      "text": "ném",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 6,
+      "icon": "play"
+    },
+    {
+      "id": "catch",
+      "text": "bắt",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 6,
+      "icon": "play"
+    },
+    {
+      "id": "count",
+      "text": "đếm",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 6,
+      "icon": "play"
+    },
+    {
+      "id": "wake",
+      "text": "thức",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 6,
+      "icon": "play"
+    },
+    {
+      "id": "cry",
+      "text": "khóc",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 6,
+      "icon": "play"
+    },
+    {
+      "id": "laugh",
+      "text": "cười",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 6,
+      "icon": "play"
+    },
+    {
+      "id": "fix",
+      "text": "sửa",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 5,
+      "icon": "play"
+    },
+    {
+      "id": "cook",
+      "text": "nấu",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 5,
+      "icon": "play"
+    },
+    {
+      "id": "climb",
+      "text": "leo",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 5,
       "icon": "play"
     },
     {
@@ -781,6 +1117,62 @@
       "icon": "arrow-right"
     },
     {
+      "id": "here",
+      "text": "ở đây",
+      "pos": "adverb",
+      "category": "positions",
+      "frequency": 9,
+      "icon": "arrow-right"
+    },
+    {
+      "id": "there",
+      "text": "ở đó",
+      "pos": "adverb",
+      "category": "positions",
+      "frequency": 9,
+      "icon": "arrow-right"
+    },
+    {
+      "id": "up",
+      "text": "lên",
+      "pos": "adverb",
+      "category": "positions",
+      "frequency": 8,
+      "icon": "arrow-right"
+    },
+    {
+      "id": "down",
+      "text": "xuống",
+      "pos": "adverb",
+      "category": "positions",
+      "frequency": 8,
+      "icon": "arrow-right"
+    },
+    {
+      "id": "off",
+      "text": "tắt",
+      "pos": "adverb",
+      "category": "positions",
+      "frequency": 7,
+      "icon": "arrow-right"
+    },
+    {
+      "id": "away",
+      "text": "đi xa",
+      "pos": "adverb",
+      "category": "positions",
+      "frequency": 7,
+      "icon": "arrow-right"
+    },
+    {
+      "id": "together",
+      "text": "cùng nhau",
+      "pos": "adverb",
+      "category": "positions",
+      "frequency": 6,
+      "icon": "arrow-right"
+    },
+    {
       "id": "and",
       "text": "và",
       "pos": "conjunction",
@@ -819,6 +1211,30 @@
       "category": "helpers",
       "frequency": 6,
       "icon": "branch"
+    },
+    {
+      "id": "not",
+      "text": "không",
+      "pos": "negation",
+      "category": "helpers",
+      "frequency": 10,
+      "icon": "text"
+    },
+    {
+      "id": "all",
+      "text": "tất cả",
+      "pos": "determiner",
+      "category": "helpers",
+      "frequency": 8,
+      "icon": "text"
+    },
+    {
+      "id": "another",
+      "text": "một cái nữa",
+      "pos": "determiner",
+      "category": "helpers",
+      "frequency": 7,
+      "icon": "text"
     },
     {
       "id": "water",
@@ -2363,6 +2779,14 @@
       "category": "describing",
       "frequency": 5,
       "icon": "sparkles"
+    },
+    {
+      "id": "very",
+      "text": "rất",
+      "pos": "adverb",
+      "category": "describing",
+      "frequency": 7,
+      "icon": "sparkles"
     }
   ],
   "templates": [
@@ -3006,7 +3430,9 @@
       "pronoun": [
         "verb",
         "noun",
-        "adjective"
+        "adjective",
+        "negation",
+        "adverb"
       ],
       "determiner": [
         "noun",
@@ -3017,23 +3443,27 @@
         "noun",
         "adjective",
         "preposition",
-        "social"
+        "social",
+        "adverb"
       ],
       "noun": [
         "verb",
         "preposition",
         "conjunction",
-        "social"
+        "social",
+        "adverb"
       ],
       "adjective": [
         "noun",
         "social",
-        "conjunction"
+        "conjunction",
+        "adverb"
       ],
       "question": [
         "verb",
         "pronoun",
-        "determiner"
+        "determiner",
+        "adverb"
       ],
       "preposition": [
         "determiner",
@@ -3044,11 +3474,27 @@
         "pronoun",
         "determiner",
         "noun",
-        "verb"
+        "verb",
+        "negation"
       ],
       "social": [
         "noun",
-        "verb"
+        "verb",
+        "negation"
+      ],
+      "negation": [
+        "verb",
+        "determiner",
+        "noun",
+        "adjective",
+        "adverb"
+      ],
+      "adverb": [
+        "verb",
+        "noun",
+        "adjective",
+        "preposition",
+        "social"
       ]
     },
     "articles": {},

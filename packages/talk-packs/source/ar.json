@@ -21,6 +21,7 @@
     "helper": "مساعد",
     "doctor": "طبيب",
     "class": "فصل",
+    "mine": "لي",
     "want": "أريد",
     "need": "أحتاج",
     "like": "أحب",
@@ -51,6 +52,47 @@
     "rest": "أستريح",
     "try": "أحاول",
     "talk": "أتكلم",
+    "get": "أحصل",
+    "give": "أعطي",
+    "put": "أضع",
+    "take": "آخذ",
+    "make": "أصنع",
+    "look": "أنظر",
+    "know": "أعرف",
+    "listen": "أستمع",
+    "watch": "أشاهد",
+    "finish": "أنهي",
+    "find": "أجد",
+    "think": "أفكر",
+    "tell": "أحكي",
+    "show": "أظهر",
+    "hold": "أمسك",
+    "jump": "أقفز",
+    "write": "أكتب",
+    "let": "أسمح",
+    "work": "أعمل",
+    "share": "أشارك",
+    "smell": "أشم",
+    "taste": "أتذوق",
+    "touch": "ألمس",
+    "dance": "أرقص",
+    "sing": "أغني",
+    "cut": "أقطع",
+    "build": "أبني",
+    "swim": "أسبح",
+    "ride": "أركب",
+    "brush": "أفرش",
+    "push": "أدفع",
+    "pull": "أسحب",
+    "throw": "أرمي",
+    "catch": "ألتقط",
+    "count": "أعد",
+    "wake": "أستيقظ",
+    "cry": "أبكي",
+    "laugh": "أضحك",
+    "fix": "أصلح",
+    "cook": "أطبخ",
+    "climb": "أتسلق",
     "yes": "نعم",
     "no": "لا",
     "please": "من فضلك",
@@ -98,11 +140,21 @@
     "outside": "خارج",
     "near": "قرب",
     "far": "بعيد",
+    "here": "هنا",
+    "there": "هناك",
+    "up": "فوق",
+    "down": "إلى أسفل",
+    "off": "مطفأ",
+    "away": "بعيدا",
+    "together": "معا",
     "and": "و",
     "or": "أو",
     "because": "لأن",
     "then": "ثم",
     "but": "لكن",
+    "not": "لا",
+    "all": "كل",
+    "another": "واحد آخر",
     "water": "ماء",
     "milk": "حليب",
     "juice": "عصير",
@@ -295,7 +347,8 @@
     "kind": "لطيف",
     "gentle": "رفيق",
     "careful": "حذر",
-    "safe-place": "مكان آمن"
+    "safe-place": "مكان آمن",
+    "very": "جدا"
   },
   "templates": {
     "want-object": "أريد {thing}.",
@@ -329,7 +382,9 @@
       "pronoun": [
         "verb",
         "noun",
-        "adjective"
+        "adjective",
+        "negation",
+        "adverb"
       ],
       "determiner": [
         "noun",
@@ -340,25 +395,29 @@
         "noun",
         "adjective",
         "preposition",
-        "social"
+        "social",
+        "adverb"
       ],
       "noun": [
         "adjective",
         "verb",
         "preposition",
         "conjunction",
-        "social"
+        "social",
+        "adverb"
       ],
       "adjective": [
         "noun",
         "social",
-        "conjunction"
+        "conjunction",
+        "adverb"
       ],
       "question": [
         "verb",
         "pronoun",
         "determiner",
-        "noun"
+        "noun",
+        "adverb"
       ],
       "preposition": [
         "determiner",
@@ -369,11 +428,27 @@
         "pronoun",
         "determiner",
         "noun",
-        "verb"
+        "verb",
+        "negation"
       ],
       "social": [
         "noun",
-        "verb"
+        "verb",
+        "negation"
+      ],
+      "negation": [
+        "verb",
+        "determiner",
+        "noun",
+        "adjective",
+        "adverb"
+      ],
+      "adverb": [
+        "verb",
+        "noun",
+        "adjective",
+        "preposition",
+        "social"
       ]
     },
     "articles": {

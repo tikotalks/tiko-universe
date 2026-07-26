@@ -22,6 +22,65 @@ const HAVE: Record<string, string> = {
   '1sg': 'heb', '2sg': 'hebt', '3sg': 'heeft', '1pl': 'hebben', '2pl': 'hebben', '3pl': 'hebben',
 }
 
+/**
+ * Dutch spelling, from the first person the packs list to the rest of the paradigm.
+ * Only twelve verbs were ever curated, so the other sixty-one came out as the
+ * first-person form whatever the subject was: "wij lees", "hij vang".
+ *
+ * The plural is also the infinitive, so getting this right fixes both "wij spelen"
+ * and the "spelen" of "ik wil spelen".
+ */
+const VOICED: Record<string, string> = { s: 'z', f: 'v' }
+
+/**
+ * True where a stem's final syllable is unstressed and therefore does not double:
+ * "teken" → "tekenen", not "tekennen". It takes two syllables to be unstressed, and
+ * an unstressed prefix does not count as one — "vertel" is stressed on "-tel", so it
+ * does double, to "vertellen".
+ */
+function unstressedEnding(stem: string): boolean {
+  if (!/e[lmnr]$/.test(stem)) return false
+  if (/^(?:ver|be|ge|ont|her|er)/.test(stem)) return false
+  return (stem.match(/[aeiou]+/g) ?? []).length > 1
+}
+
+function dutchPlural(stem: string): string {
+  // A multi-word verb inflects on its first word: "doe open" → "doen open".
+  const [first, ...rest] = stem.split(' ')
+  let base = first
+
+  const long = base.match(/^(.*?)(aa|ee|oo|uu)([bcdfghjklmnpqrstvwxz])$/)
+  if (long) {
+    // A long vowel is written once in an open syllable, and a consonant devoiced at
+    // the end of a word gets its voice back: "speel" → "spelen", "lees" → "lezen".
+    base = long[1] + long[2][0] + (VOICED[long[3]] ?? long[3])
+  } else if (/(aa|ee|oo|uu|ie|oe|eu|ui|ij|ei|au|ou)[sf]$/.test(base)) {
+    base = base.slice(0, -1) + VOICED[base.slice(-1)]
+  } else if (/[aeiou]i$/.test(base)) {
+    // A glide closes the syllable already: "gooi" → "gooien".
+    return [`${base}en`, ...rest].join(' ')
+  } else if (/[aeiou]$/.test(base)) {
+    // "doe" → "doen", "zie" → "zien" take only -n; a single vowel doubles first,
+    // "ga" → "gaan".
+    base = /(?:oe|ie)$/.test(base) ? base : base + base.slice(-1)
+    return [`${base}n`, ...rest].join(' ')
+  } else if (
+    !unstressedEnding(base)
+    && /[^aeiou][aeiou][bcdfgklmnprst]$/.test(base)
+  ) {
+    // A short vowel keeps its syllable closed by doubling: "ren" → "rennen".
+    base = base + base.slice(-1)
+  }
+  return [`${base}en`, ...rest].join(' ')
+}
+
+function dutchThirdPerson(stem: string): string {
+  const [first, ...rest] = stem.split(' ')
+  // "-dt" for a stem in -d ("word" → "wordt"), nothing for a stem already in -t.
+  const inflected = /t$/.test(first) ? first : `${first}t`
+  return [inflected, ...rest].join(' ')
+}
+
 export const dutch: LanguageRules = {
   profile: {
     language: 'nl',
@@ -43,7 +102,13 @@ export const dutch: LanguageRules = {
     if (ctx.isQuestion && ctx.person === 2 && ctx.number === 'sg') {
       return forms['1sg'] ?? verb.text
     }
-    return formFor(forms, ctx.person, ctx.number) ?? verb.text
+    const direct = formFor(forms, ctx.person, ctx.number)
+    if (direct) return direct
+    // Nothing curated: derive it. The plural is the infinitive, and the second and
+    // third person singular add -t.
+    if (ctx.number === 'pl') return dutchPlural(verb.text)
+    if (ctx.person === 1) return verb.text
+    return dutchThirdPerson(verb.text)
   },
 
   /**

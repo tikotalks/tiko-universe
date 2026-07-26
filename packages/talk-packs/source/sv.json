@@ -23,6 +23,7 @@
     "helper": "hjälpare",
     "doctor": "doktor",
     "class": "klass",
+    "mine": "min egen",
     "want": "vill",
     "need": "behöver",
     "like": "tycker om",
@@ -53,6 +54,47 @@
     "rest": "vilar",
     "try": "försöker",
     "talk": "pratar",
+    "get": "får",
+    "give": "ger",
+    "put": "sätter",
+    "take": "tar",
+    "make": "gör",
+    "look": "tittar",
+    "know": "vet",
+    "listen": "lyssnar",
+    "watch": "ser på",
+    "finish": "gör klart",
+    "find": "hittar",
+    "think": "tänker",
+    "tell": "berättar",
+    "show": "visar",
+    "hold": "håller",
+    "jump": "hoppar",
+    "write": "skriver",
+    "let": "låter",
+    "work": "arbetar",
+    "share": "delar",
+    "smell": "luktar",
+    "taste": "smakar",
+    "touch": "rör",
+    "dance": "dansar",
+    "sing": "sjunger",
+    "cut": "klipper",
+    "build": "bygger",
+    "swim": "simmar",
+    "ride": "åker",
+    "brush": "borstar",
+    "push": "trycker",
+    "pull": "drar",
+    "throw": "kastar",
+    "catch": "fångar",
+    "count": "räknar",
+    "wake": "vaknar",
+    "cry": "gråter",
+    "laugh": "skrattar",
+    "fix": "lagar",
+    "cook": "lagar mat",
+    "climb": "klättrar",
     "yes": "ja",
     "no": "nej",
     "please": "snälla",
@@ -100,11 +142,21 @@
     "outside": "ute",
     "near": "nära",
     "far": "långt",
+    "here": "här",
+    "there": "där",
+    "up": "upp",
+    "down": "ner",
+    "off": "av",
+    "away": "bort",
+    "together": "tillsammans",
     "and": "och",
     "or": "eller",
     "because": "för att",
     "then": "sedan",
     "but": "men",
+    "not": "inte",
+    "all": "alla",
+    "another": "en till",
     "water": "vatten",
     "milk": "mjölk",
     "juice": "juice",
@@ -297,7 +349,8 @@
     "kind": "snäll",
     "gentle": "varsam",
     "careful": "försiktig",
-    "safe-place": "trygg plats"
+    "safe-place": "trygg plats",
+    "very": "mycket"
   },
   "templates": {
     "want-object": "Jag vill ha {thing}.",
@@ -331,7 +384,9 @@
       "pronoun": [
         "verb",
         "noun",
-        "adjective"
+        "adjective",
+        "negation",
+        "adverb"
       ],
       "determiner": [
         "noun",
@@ -342,23 +397,27 @@
         "noun",
         "adjective",
         "preposition",
-        "social"
+        "social",
+        "adverb"
       ],
       "noun": [
         "verb",
         "preposition",
         "conjunction",
-        "social"
+        "social",
+        "adverb"
       ],
       "adjective": [
         "noun",
         "social",
-        "conjunction"
+        "conjunction",
+        "adverb"
       ],
       "question": [
         "verb",
         "pronoun",
-        "determiner"
+        "determiner",
+        "adverb"
       ],
       "preposition": [
         "determiner",
@@ -369,11 +428,27 @@
         "pronoun",
         "determiner",
         "noun",
-        "verb"
+        "verb",
+        "negation"
       ],
       "social": [
         "noun",
-        "verb"
+        "verb",
+        "negation"
+      ],
+      "negation": [
+        "verb",
+        "determiner",
+        "noun",
+        "adjective",
+        "adverb"
+      ],
+      "adverb": [
+        "verb",
+        "noun",
+        "adjective",
+        "preposition",
+        "social"
       ]
     },
     "articles": {

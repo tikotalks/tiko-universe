@@ -1,4 +1,4 @@
-import { lexicons, realize, sharedStructure, type Lexicon, type SelectedWord } from '@tiko/talk-realizer'
+import { customNounFeatures, lexicons, realize, sharedStructure, type Lexicon, type SelectedWord } from '@tiko/talk-realizer'
 import type {
   AddUserWordRequest,
   AddUserWordResponse,
@@ -1437,8 +1437,9 @@ function lexiconFor(locale: string, words: PackWord[]): Lexicon {
   const custom: Lexicon = {}
   for (const word of words) {
     if (word.isCustom === true && !sharedStructure[word.id] && !language[word.id]) {
-      // Only a custom *noun* is treated as a name; a custom verb is just a verb.
-      if (word.pos === 'noun') custom[word.id] = { pos: 'noun', proper: true }
+      // Only a custom *noun* can be a name, and only when it is written like one:
+      // "Mum" takes no article, "trampoline" does.
+      if (word.pos === 'noun') custom[word.id] = customNounFeatures(word.text, locale)
     }
   }
   return Object.keys(custom).length > 0 ? { ...language, ...custom } : language

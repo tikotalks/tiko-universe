@@ -23,6 +23,7 @@
     "helper": "axudante",
     "doctor": "médico",
     "class": "clase",
+    "mine": "o meu",
     "want": "querer",
     "need": "necesitar",
     "like": "gustar",
@@ -53,6 +54,47 @@
     "rest": "descansar",
     "try": "intentar",
     "talk": "falar",
+    "get": "conseguir",
+    "give": "dar",
+    "put": "poñer",
+    "take": "coller",
+    "make": "fabricar",
+    "look": "mirar",
+    "know": "saber",
+    "listen": "escoitar",
+    "watch": "observar",
+    "finish": "acabar",
+    "find": "atopar",
+    "think": "pensar",
+    "tell": "explicar",
+    "show": "amosar",
+    "hold": "suxeitar",
+    "jump": "saltar",
+    "write": "escribir",
+    "let": "deixar",
+    "work": "traballar",
+    "share": "compartir",
+    "smell": "cheirar",
+    "taste": "probar",
+    "touch": "tocar",
+    "dance": "bailar",
+    "sing": "cantar",
+    "cut": "cortar",
+    "build": "construír",
+    "swim": "nadar",
+    "ride": "andar en bici",
+    "brush": "cepillar",
+    "push": "empurrar",
+    "pull": "tirar",
+    "throw": "lanzar",
+    "catch": "apañar",
+    "count": "contar",
+    "wake": "espertar",
+    "cry": "chorar",
+    "laugh": "rir",
+    "fix": "arranxar",
+    "cook": "cociñar",
+    "climb": "trepar",
     "yes": "si",
     "no": "non",
     "please": "por favor",
@@ -100,11 +142,21 @@
     "outside": "fora de",
     "near": "perto de",
     "far": "longe",
+    "here": "aquí",
+    "there": "alí",
+    "up": "arriba",
+    "down": "abaixo",
+    "off": "apagado",
+    "away": "lonxe",
+    "together": "xuntos",
     "and": "e",
     "or": "ou",
     "because": "porque",
     "then": "despois",
     "but": "pero",
+    "not": "non",
+    "all": "todos",
+    "another": "outro",
     "water": "auga",
     "milk": "leite",
     "juice": "zume",
@@ -297,7 +349,8 @@
     "kind": "simpático",
     "gentle": "gentil",
     "careful": "cuidadoso",
-    "safe-place": "lugar seguro"
+    "safe-place": "lugar seguro",
+    "very": "moi"
   },
   "templates": {
     "want-object": "I want {thing}.",
@@ -331,7 +384,9 @@
       "pronoun": [
         "verb",
         "noun",
-        "adjective"
+        "adjective",
+        "negation",
+        "adverb"
       ],
       "determiner": [
         "noun",
@@ -342,23 +397,27 @@
         "noun",
         "adjective",
         "preposition",
-        "social"
+        "social",
+        "adverb"
       ],
       "noun": [
         "verb",
         "preposition",
         "conjunction",
-        "social"
+        "social",
+        "adverb"
       ],
       "adjective": [
         "noun",
         "social",
-        "conjunction"
+        "conjunction",
+        "adverb"
       ],
       "question": [
         "verb",
         "pronoun",
-        "determiner"
+        "determiner",
+        "adverb"
       ],
       "preposition": [
         "determiner",
@@ -369,11 +428,27 @@
         "pronoun",
         "determiner",
         "noun",
-        "verb"
+        "verb",
+        "negation"
       ],
       "social": [
         "noun",
-        "verb"
+        "verb",
+        "negation"
+      ],
+      "negation": [
+        "verb",
+        "determiner",
+        "noun",
+        "adjective",
+        "adverb"
+      ],
+      "adverb": [
+        "verb",
+        "noun",
+        "adjective",
+        "preposition",
+        "social"
       ]
     },
     "articles": {

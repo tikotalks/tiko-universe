@@ -21,6 +21,7 @@
     "helper": "ayudante",
     "doctor": "doctor",
     "class": "clase",
+    "mine": "mío",
     "want": "querer",
     "need": "necesitar",
     "like": "gustar",
@@ -51,6 +52,47 @@
     "rest": "descansar",
     "try": "intentar",
     "talk": "hablar",
+    "get": "conseguir",
+    "give": "dar",
+    "put": "poner",
+    "take": "tomar",
+    "make": "fabricar",
+    "look": "mirar",
+    "know": "saber",
+    "listen": "escuchar",
+    "watch": "observar",
+    "finish": "terminar",
+    "find": "encontrar",
+    "think": "pensar",
+    "tell": "explicar",
+    "show": "mostrar",
+    "hold": "sujetar",
+    "jump": "saltar",
+    "write": "escribir",
+    "let": "dejar",
+    "work": "trabajar",
+    "share": "compartir",
+    "smell": "oler",
+    "taste": "probar",
+    "touch": "tocar",
+    "dance": "bailar",
+    "sing": "cantar",
+    "cut": "cortar",
+    "build": "construir",
+    "swim": "nadar",
+    "ride": "montar",
+    "brush": "cepillar",
+    "push": "empujar",
+    "pull": "estirar",
+    "throw": "lanzar",
+    "catch": "atrapar",
+    "count": "contar",
+    "wake": "despertar",
+    "cry": "llorar",
+    "laugh": "reír",
+    "fix": "arreglar",
+    "cook": "cocinar",
+    "climb": "trepar",
     "yes": "sí",
     "no": "no",
     "please": "por favor",
@@ -98,11 +140,21 @@
     "outside": "fuera de",
     "near": "cerca de",
     "far": "lejos de",
+    "here": "aquí",
+    "there": "allí",
+    "up": "arriba",
+    "down": "abajo",
+    "off": "apagado",
+    "away": "lejos",
+    "together": "juntos",
     "and": "y",
     "or": "o",
     "because": "porque",
     "then": "luego",
     "but": "pero",
+    "not": "no",
+    "all": "todos",
+    "another": "otro",
     "water": "agua",
     "milk": "leche",
     "juice": "jugo",
@@ -295,7 +347,8 @@
     "kind": "amable",
     "gentle": "delicado",
     "careful": "cuidadoso",
-    "safe-place": "lugar seguro"
+    "safe-place": "lugar seguro",
+    "very": "muy"
   },
   "templates": {
     "want-object": "Quiero {thing}.",
@@ -329,7 +382,9 @@
       "pronoun": [
         "verb",
         "noun",
-        "adjective"
+        "adjective",
+        "negation",
+        "adverb"
       ],
       "determiner": [
         "noun"
@@ -339,24 +394,28 @@
         "noun",
         "adjective",
         "preposition",
-        "social"
+        "social",
+        "adverb"
       ],
       "noun": [
         "adjective",
         "verb",
         "preposition",
         "conjunction",
-        "social"
+        "social",
+        "adverb"
       ],
       "adjective": [
         "conjunction",
         "social",
-        "verb"
+        "verb",
+        "adverb"
       ],
       "question": [
         "verb",
         "pronoun",
-        "determiner"
+        "determiner",
+        "adverb"
       ],
       "preposition": [
         "determiner",
@@ -367,11 +426,27 @@
         "pronoun",
         "determiner",
         "noun",
-        "verb"
+        "verb",
+        "negation"
       ],
       "social": [
         "noun",
-        "verb"
+        "verb",
+        "negation"
+      ],
+      "negation": [
+        "verb",
+        "determiner",
+        "noun",
+        "adjective",
+        "adverb"
+      ],
+      "adverb": [
+        "verb",
+        "noun",
+        "adjective",
+        "preposition",
+        "social"
       ]
     },
     "articles": {

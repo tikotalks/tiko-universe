@@ -23,6 +23,7 @@
     "helper": "памочнік",
     "doctor": "доктар",
     "class": "клас",
+    "mine": "маё",
     "want": "хачу",
     "need": "патрэбна",
     "like": "люблю",
@@ -53,6 +54,47 @@
     "rest": "адпачываю",
     "try": "спрабую",
     "talk": "размаўляю",
+    "get": "атрымліваю",
+    "give": "даю",
+    "put": "кладу",
+    "take": "бяру",
+    "make": "раблю",
+    "look": "гляджу",
+    "know": "ведаю",
+    "listen": "слухаю",
+    "watch": "наглядаю",
+    "finish": "заканчваю",
+    "find": "знаходжу",
+    "think": "думаю",
+    "tell": "расказваю",
+    "show": "паказваю",
+    "hold": "трымаю",
+    "jump": "скачу",
+    "write": "пішу",
+    "let": "дазваляю",
+    "work": "працую",
+    "share": "дзялюся",
+    "smell": "нюхаю",
+    "taste": "смакую",
+    "touch": "чапаю",
+    "dance": "танчу",
+    "sing": "спяваю",
+    "cut": "рэжу",
+    "build": "будую",
+    "swim": "плаваю",
+    "ride": "катаюся",
+    "brush": "чышчу",
+    "push": "штурхаю",
+    "pull": "цягну",
+    "throw": "кідаю",
+    "catch": "лаўлю",
+    "count": "лічу",
+    "wake": "прасыпаюся",
+    "cry": "плачу",
+    "laugh": "смяюся",
+    "fix": "рамантую",
+    "cook": "гатую",
+    "climb": "лезу",
     "yes": "так",
     "no": "не",
     "please": "калі ласка",
@@ -100,11 +142,21 @@
     "outside": "звонку",
     "near": "блізка",
     "far": "далёка",
+    "here": "тут",
+    "there": "там",
+    "up": "уверх",
+    "down": "уніз",
+    "off": "выключана",
+    "away": "прэч",
+    "together": "разам",
     "and": "і",
     "or": "або",
     "because": "бо",
     "then": "потым",
     "but": "але",
+    "not": "не",
+    "all": "усе",
+    "another": "яшчэ адзін",
     "water": "вада",
     "milk": "малако",
     "juice": "сок",
@@ -297,7 +349,8 @@
     "kind": "добры",
     "gentle": "лагодны",
     "careful": "асцярожны",
-    "safe-place": "бяспечнае месца"
+    "safe-place": "бяспечнае месца",
+    "very": "вельмі"
   },
   "templates": {
     "want-object": "I want {thing}.",
@@ -331,7 +384,9 @@
       "pronoun": [
         "verb",
         "noun",
-        "adjective"
+        "adjective",
+        "negation",
+        "adverb"
       ],
       "determiner": [
         "noun",
@@ -342,23 +397,27 @@
         "noun",
         "adjective",
         "preposition",
-        "social"
+        "social",
+        "adverb"
       ],
       "noun": [
         "verb",
         "preposition",
         "conjunction",
-        "social"
+        "social",
+        "adverb"
       ],
       "adjective": [
         "noun",
         "social",
-        "conjunction"
+        "conjunction",
+        "adverb"
       ],
       "question": [
         "verb",
         "pronoun",
-        "determiner"
+        "determiner",
+        "adverb"
       ],
       "preposition": [
         "determiner",
@@ -369,11 +428,27 @@
         "pronoun",
         "determiner",
         "noun",
-        "verb"
+        "verb",
+        "negation"
       ],
       "social": [
         "noun",
-        "verb"
+        "verb",
+        "negation"
+      ],
+      "negation": [
+        "verb",
+        "determiner",
+        "noun",
+        "adjective",
+        "adverb"
+      ],
+      "adverb": [
+        "verb",
+        "noun",
+        "adjective",
+        "preposition",
+        "social"
       ]
     },
     "cases": [

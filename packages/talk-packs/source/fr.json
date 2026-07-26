@@ -21,6 +21,7 @@
     "helper": "aide",
     "doctor": "docteur",
     "class": "classe",
+    "mine": "le mien",
     "want": "vouloir",
     "need": "avoir besoin",
     "like": "aimer",
@@ -51,6 +52,47 @@
     "rest": "se reposer",
     "try": "essayer",
     "talk": "parler",
+    "get": "obtenir",
+    "give": "donner",
+    "put": "mettre",
+    "take": "prendre",
+    "make": "fabriquer",
+    "look": "regarder",
+    "know": "savoir",
+    "listen": "écouter",
+    "watch": "observer",
+    "finish": "finir",
+    "find": "trouver",
+    "think": "penser",
+    "tell": "raconter",
+    "show": "montrer",
+    "hold": "tenir",
+    "jump": "sauter",
+    "write": "écrire",
+    "let": "laisser",
+    "work": "travailler",
+    "share": "partager",
+    "smell": "sentir",
+    "taste": "déguster",
+    "touch": "toucher",
+    "dance": "danser",
+    "sing": "chanter",
+    "cut": "couper",
+    "build": "construire",
+    "swim": "nager",
+    "ride": "rouler",
+    "brush": "brosser",
+    "push": "pousser",
+    "pull": "tirer",
+    "throw": "lancer",
+    "catch": "attraper",
+    "count": "compter",
+    "wake": "se réveiller",
+    "cry": "pleurer",
+    "laugh": "rire",
+    "fix": "réparer",
+    "cook": "cuisiner",
+    "climb": "grimper",
     "yes": "oui",
     "no": "non",
     "please": "s'il te plaît",
@@ -98,11 +140,21 @@
     "outside": "dehors",
     "near": "près de",
     "far": "loin",
+    "here": "ici",
+    "there": "là",
+    "up": "en haut",
+    "down": "en bas",
+    "off": "éteint",
+    "away": "au loin",
+    "together": "ensemble",
     "and": "et",
     "or": "ou",
     "because": "parce que",
     "then": "puis",
     "but": "mais",
+    "not": "pas",
+    "all": "tous",
+    "another": "un autre",
     "water": "eau",
     "milk": "lait",
     "juice": "jus",
@@ -295,7 +347,8 @@
     "kind": "gentil",
     "gentle": "doux",
     "careful": "prudent",
-    "safe-place": "endroit sûr"
+    "safe-place": "endroit sûr",
+    "very": "très"
   },
   "templates": {
     "want-object": "Je veux {thing}.",
@@ -329,7 +382,9 @@
       "pronoun": [
         "verb",
         "noun",
-        "adjective"
+        "adjective",
+        "negation",
+        "adverb"
       ],
       "determiner": [
         "noun",
@@ -340,24 +395,28 @@
         "noun",
         "adjective",
         "preposition",
-        "social"
+        "social",
+        "adverb"
       ],
       "noun": [
         "adjective",
         "verb",
         "preposition",
         "conjunction",
-        "social"
+        "social",
+        "adverb"
       ],
       "adjective": [
         "conjunction",
         "social",
-        "noun"
+        "noun",
+        "adverb"
       ],
       "question": [
         "verb",
         "pronoun",
-        "determiner"
+        "determiner",
+        "adverb"
       ],
       "preposition": [
         "determiner",
@@ -368,11 +427,27 @@
         "pronoun",
         "determiner",
         "noun",
-        "verb"
+        "verb",
+        "negation"
       ],
       "social": [
         "noun",
-        "verb"
+        "verb",
+        "negation"
+      ],
+      "negation": [
+        "verb",
+        "determiner",
+        "noun",
+        "adjective",
+        "adverb"
+      ],
+      "adverb": [
+        "verb",
+        "noun",
+        "adjective",
+        "preposition",
+        "social"
       ]
     },
     "articles": {

@@ -1,5 +1,5 @@
 import type { Features, SelectedWord } from '../features'
-import { agreeAdjective, applyExperiencer, conjugateRegular, elide, induceGender, pluralize, possessiveForm } from '../morphology/romance'
+import { agreeAdjective, applyExperiencer, conjugateRegular, elide, induceGender, pluralize, possessiveForm, quantifierPhrase } from '../morphology/romance'
 import { extractObjectClitic } from '../morphology/clitic'
 import { agreesWith, formFor, isSensation, note, type LanguageRules } from '../profile'
 
@@ -112,7 +112,10 @@ export const spanish: LanguageRules = {
       if (determiner.features.pronounCase === 'poss') {
         return { text: possessiveForm(determiner.features, determiner.text, feminine), from: determiner.id }
       }
-      return { text: determiner.text, from: determiner.id }
+      return {
+        text: quantifierPhrase(determiner.features, determiner.text, 'es', feminine, plural),
+        from: determiner.id,
+      }
     }
 
     if (!head) return null

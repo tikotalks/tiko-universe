@@ -23,12 +23,13 @@
     "helper": "pomoćnik",
     "doctor": "doktor",
     "class": "razred",
+    "mine": "moje",
     "want": "želim",
     "need": "trebam",
     "like": "volim",
     "feel": "osjećam",
     "see": "vidim",
-    "hear": "slušam",
+    "hear": "čujem",
     "have": "imam",
     "go": "idem",
     "come": "dolazim",
@@ -53,6 +54,47 @@
     "rest": "odmaram",
     "try": "pokušavam",
     "talk": "govorim",
+    "get": "dobivam",
+    "give": "dajem",
+    "put": "stavljam",
+    "take": "uzimam",
+    "make": "radim",
+    "look": "gledam",
+    "know": "znam",
+    "listen": "slušam",
+    "watch": "promatram",
+    "finish": "završavam",
+    "find": "nalazim",
+    "think": "mislim",
+    "tell": "pripovijedam",
+    "show": "pokazujem",
+    "hold": "držim",
+    "jump": "skačem",
+    "write": "pišem",
+    "let": "dopuštam",
+    "work": "radim posao",
+    "share": "dijelim",
+    "smell": "mirišem",
+    "taste": "kušam",
+    "touch": "dotičem",
+    "dance": "plešem",
+    "sing": "pjevam",
+    "cut": "režem",
+    "build": "gradim",
+    "swim": "plivam",
+    "ride": "vozim",
+    "brush": "četkam",
+    "push": "gurnem",
+    "pull": "vučem",
+    "throw": "bacam",
+    "catch": "hvatam",
+    "count": "brojim",
+    "wake": "budim se",
+    "cry": "plačem",
+    "laugh": "smijem se",
+    "fix": "popravljam",
+    "cook": "kuham",
+    "climb": "penjem se",
     "yes": "da",
     "no": "ne",
     "please": "molim",
@@ -100,11 +142,21 @@
     "outside": "vani",
     "near": "blizu",
     "far": "daleko",
+    "here": "ovdje",
+    "there": "tamo",
+    "up": "gore",
+    "down": "dolje",
+    "off": "isključeno",
+    "away": "daleko od",
+    "together": "zajedno",
     "and": "i",
     "or": "ili",
     "because": "jer",
     "then": "onda",
     "but": "ali",
+    "not": "ne",
+    "all": "sve",
+    "another": "još jedan",
     "water": "voda",
     "milk": "mlijeko",
     "juice": "sok",
@@ -297,7 +349,8 @@
     "kind": "dobar",
     "gentle": "nježan",
     "careful": "pažljiv",
-    "safe-place": "sigurno mjesto"
+    "safe-place": "sigurno mjesto",
+    "very": "vrlo"
   },
   "templates": {
     "want-object": "I want {thing}.",
@@ -331,7 +384,9 @@
       "pronoun": [
         "verb",
         "noun",
-        "adjective"
+        "adjective",
+        "negation",
+        "adverb"
       ],
       "determiner": [
         "noun",
@@ -342,23 +397,27 @@
         "noun",
         "adjective",
         "preposition",
-        "social"
+        "social",
+        "adverb"
       ],
       "noun": [
         "verb",
         "preposition",
         "conjunction",
-        "social"
+        "social",
+        "adverb"
       ],
       "adjective": [
         "noun",
         "social",
-        "conjunction"
+        "conjunction",
+        "adverb"
       ],
       "question": [
         "verb",
         "pronoun",
-        "determiner"
+        "determiner",
+        "adverb"
       ],
       "preposition": [
         "determiner",
@@ -369,11 +428,27 @@
         "pronoun",
         "determiner",
         "noun",
-        "verb"
+        "verb",
+        "negation"
       ],
       "social": [
         "noun",
-        "verb"
+        "verb",
+        "negation"
+      ],
+      "negation": [
+        "verb",
+        "determiner",
+        "noun",
+        "adjective",
+        "adverb"
+      ],
+      "adverb": [
+        "verb",
+        "noun",
+        "adjective",
+        "preposition",
+        "social"
       ]
     },
     "cases": [

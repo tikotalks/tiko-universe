@@ -2,6 +2,9 @@ import type { Lexicon } from '../features'
 
 /** Portuguese overlay: irregular verbs, gostar's preposition, mass nouns. */
 export const portugueseLexicon: Lexicon = {
+  // "All" agrees and takes the definite article after it.
+  all: { pos: 'determiner', determinerKind: 'quantifier', forcesNumber: 'pl', withDefinite: true, feminine: 'todas' },
+
   hungry: { pos: 'adjective', sensation: 'fome' },
   thirsty: { pos: 'adjective', sensation: 'sede' },
   cold: { pos: 'adjective', sensation: 'frio' },
@@ -29,6 +32,11 @@ export const portugueseLexicon: Lexicon = {
   little: { pos: 'determiner', determinerKind: 'quantifier' },
   big: { pos: 'adjective' },
 
+  // The verbs added in the core rebalance, where the rule is not enough.
+  give: { pos: 'verb', forms: { '1sg': 'dou', '2sg': 'dás', '3sg': 'dá', pl: 'damos', '3pl': 'dão' } },
+  put: { pos: 'verb', forms: { '1sg': 'ponho', '2sg': 'pões', '3sg': 'põe', pl: 'pomos', '3pl': 'põem' } },
+  build: { pos: 'verb', forms: { '1sg': 'construo', '2sg': 'constróis', '3sg': 'constrói', pl: 'construímos', '3pl': 'constroem' } },
+  laugh: { pos: 'verb', forms: { '1sg': 'rio', '2sg': 'ris', '3sg': 'ri', pl: 'rimos', '3pl': 'riem' } },
   want: { pos: 'verb', forms: { '1sg': 'quero', '2sg': 'queres', '3sg': 'quer', '1pl': 'queremos', '3pl': 'querem', past: 'queria' } },
   // gostar takes "de": "gosto de pão", contracting to "do pão" with an article.
   like: { pos: 'verb', objectPreposition: 'de' },

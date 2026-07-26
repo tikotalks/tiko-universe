@@ -21,6 +21,7 @@
     "helper": "aiutante",
     "doctor": "dottore",
     "class": "classe",
+    "mine": "il mio",
     "want": "volere",
     "need": "avere bisogno",
     "like": "piacere",
@@ -51,6 +52,47 @@
     "rest": "riposare",
     "try": "provare",
     "talk": "parlare",
+    "get": "ottenere",
+    "give": "dare",
+    "put": "mettere",
+    "take": "prendere",
+    "make": "fabbricare",
+    "look": "guardare",
+    "know": "sapere",
+    "listen": "ascoltare",
+    "watch": "osservare",
+    "finish": "finire",
+    "find": "trovare",
+    "think": "pensare",
+    "tell": "raccontare",
+    "show": "mostrare",
+    "hold": "tenere",
+    "jump": "saltare",
+    "write": "scrivere",
+    "let": "lasciare",
+    "work": "lavorare",
+    "share": "condividere",
+    "smell": "annusare",
+    "taste": "assaggiare",
+    "touch": "toccare",
+    "dance": "ballare",
+    "sing": "cantare",
+    "cut": "tagliare",
+    "build": "costruire",
+    "swim": "nuotare",
+    "ride": "andare in bici",
+    "brush": "spazzolare",
+    "push": "spingere",
+    "pull": "tirare",
+    "throw": "lanciare",
+    "catch": "acchiappare",
+    "count": "contare",
+    "wake": "svegliarsi",
+    "cry": "piangere",
+    "laugh": "ridere",
+    "fix": "riparare",
+    "cook": "cucinare",
+    "climb": "arrampicarsi",
     "yes": "sì",
     "no": "no",
     "please": "per favore",
@@ -98,11 +140,21 @@
     "outside": "fuori",
     "near": "vicino",
     "far": "lontano",
+    "here": "qui",
+    "there": "là",
+    "up": "in su",
+    "down": "giù",
+    "off": "spento",
+    "away": "via",
+    "together": "insieme",
     "and": "e",
     "or": "o",
     "because": "siccome",
     "then": "poi",
     "but": "ma",
+    "not": "non",
+    "all": "tutti",
+    "another": "un altro",
     "water": "acqua",
     "milk": "latte",
     "juice": "succo",
@@ -295,7 +347,8 @@
     "kind": "gentile",
     "gentle": "delicato",
     "careful": "attento",
-    "safe-place": "posto sicuro"
+    "safe-place": "posto sicuro",
+    "very": "molto"
   },
   "templates": {
     "want-object": "Io voglio {thing}.",
@@ -329,7 +382,9 @@
       "pronoun": [
         "verb",
         "noun",
-        "adjective"
+        "adjective",
+        "negation",
+        "adverb"
       ],
       "determiner": [
         "noun"
@@ -339,23 +394,27 @@
         "noun",
         "adjective",
         "preposition",
-        "social"
+        "social",
+        "adverb"
       ],
       "noun": [
         "adjective",
         "verb",
         "preposition",
         "conjunction",
-        "social"
+        "social",
+        "adverb"
       ],
       "adjective": [
         "conjunction",
-        "social"
+        "social",
+        "adverb"
       ],
       "question": [
         "verb",
         "pronoun",
-        "determiner"
+        "determiner",
+        "adverb"
       ],
       "preposition": [
         "determiner",
@@ -366,11 +425,27 @@
         "pronoun",
         "determiner",
         "noun",
-        "verb"
+        "verb",
+        "negation"
       ],
       "social": [
         "noun",
-        "verb"
+        "verb",
+        "negation"
+      ],
+      "negation": [
+        "verb",
+        "determiner",
+        "noun",
+        "adjective",
+        "adverb"
+      ],
+      "adverb": [
+        "verb",
+        "noun",
+        "adjective",
+        "preposition",
+        "social"
       ]
     },
     "articles": {

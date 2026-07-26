@@ -128,8 +128,11 @@ export const german: LanguageRules = {
     const direct = formFor(forms, ctx.person, ctx.number)
     if (direct) return direct
     // The pack stores a first-person form ("gehe", "will"); strip the -e for a stem.
-    const stem = verb.text.replace(/e$/, '')
-    return conjugate(stem, ctx)
+    // A separable prefix or a second word rides along unchanged — "höre zu" becomes
+    // "hört zu", not "höre zut".
+    const [first, ...rest] = verb.text.split(' ')
+    const inflected = conjugate(first.replace(/e$/, ''), ctx)
+    return [inflected, ...rest].join(' ')
   },
 
   /**

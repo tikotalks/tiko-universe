@@ -8,6 +8,6 @@ describe('talk-packs', () => {
     expect(hasPack('nl-BE')).toBe(true)
     const pack = await loadPack('en')
     expect(pack.locale).toBe('en')
-    expect(pack.words.length).toBe(295)
+    expect(pack.words.length).toBe(348)
   })
 })

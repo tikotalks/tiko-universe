@@ -1,5 +1,5 @@
 import type { Features, SelectedWord } from '../features'
-import { agreeAdjective, applyExperiencer, conjugateRegular, elide, induceGender, pluralize } from '../morphology/romance'
+import { agreeAdjective, applyExperiencer, conjugateRegular, elide, induceGender, pluralize, quantifierPhrase } from '../morphology/romance'
 import { extractObjectClitic } from '../morphology/clitic'
 import { agreesWith, formFor, isSensation, note, type LanguageRules } from '../profile'
 
@@ -87,8 +87,13 @@ export const galician: LanguageRules = {
     if (determiner) {
       const kind = determiner.features.determinerKind
       if (kind === 'definite') return { text: definite, from: determiner.id }
-      if (determiner.features.forcesNumber === 'pl' && feminine && determiner.features.feminine) {
-        return { text: determiner.features.feminine, from: determiner.id }
+      if (determiner.features.forcesNumber === 'pl' && determiner.features.feminine) {
+        // "dues galetes": the numeral agrees — and "totes les galetes" also wants
+        // the article, which the helper adds.
+        return {
+          text: quantifierPhrase(determiner.features, determiner.text, 'gl', feminine, plural),
+          from: determiner.id,
+        }
       }
       if (determiner.features.pronounCase === 'poss' && head) {
         // "a miña pelota": Galician keeps the article before a possessive.
@@ -99,7 +104,10 @@ export const galician: LanguageRules = {
       if (kind === 'indefinite') {
         return { text: plural ? (feminine ? 'unhas' : 'uns') : (feminine ? 'unha' : 'un'), from: determiner.id }
       }
-      return { text: determiner.text, from: determiner.id }
+      return {
+        text: quantifierPhrase(determiner.features, determiner.text, 'gl', feminine, plural),
+        from: determiner.id,
+      }
     }
 
     if (!head) return null

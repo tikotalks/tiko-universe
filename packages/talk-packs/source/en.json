@@ -21,6 +21,7 @@
     "helper": "helper",
     "doctor": "doctor",
     "class": "class",
+    "mine": "mine",
     "want": "want",
     "need": "need",
     "like": "like",
@@ -51,6 +52,47 @@
     "rest": "rest",
     "try": "try",
     "talk": "talk",
+    "get": "get",
+    "give": "give",
+    "put": "put",
+    "take": "take",
+    "make": "make",
+    "look": "look",
+    "know": "know",
+    "listen": "listen",
+    "watch": "watch",
+    "finish": "finish",
+    "find": "find",
+    "think": "think",
+    "tell": "tell",
+    "show": "show",
+    "hold": "hold",
+    "jump": "jump",
+    "write": "write",
+    "let": "let",
+    "work": "work",
+    "share": "share",
+    "smell": "smell",
+    "taste": "taste",
+    "touch": "touch",
+    "dance": "dance",
+    "sing": "sing",
+    "cut": "cut",
+    "build": "build",
+    "swim": "swim",
+    "ride": "ride",
+    "brush": "brush",
+    "push": "push",
+    "pull": "pull",
+    "throw": "throw",
+    "catch": "catch",
+    "count": "count",
+    "wake": "wake",
+    "cry": "cry",
+    "laugh": "laugh",
+    "fix": "fix",
+    "cook": "cook",
+    "climb": "climb",
     "yes": "yes",
     "no": "no",
     "please": "please",
@@ -98,11 +140,21 @@
     "outside": "outside",
     "near": "near",
     "far": "far",
+    "here": "here",
+    "there": "there",
+    "up": "up",
+    "down": "down",
+    "off": "off",
+    "away": "away",
+    "together": "together",
     "and": "and",
     "or": "or",
     "because": "because",
     "then": "then",
     "but": "but",
+    "not": "not",
+    "all": "all",
+    "another": "another",
     "water": "water",
     "milk": "milk",
     "juice": "juice",
@@ -295,7 +347,8 @@
     "kind": "kind",
     "gentle": "gentle",
     "careful": "careful",
-    "safe-place": "safe place"
+    "safe-place": "safe place",
+    "very": "very"
   },
   "templates": {
     "want-object": "I want {thing}.",
@@ -329,7 +382,9 @@
       "pronoun": [
         "verb",
         "noun",
-        "adjective"
+        "adjective",
+        "negation",
+        "adverb"
       ],
       "determiner": [
         "noun",
@@ -340,23 +395,27 @@
         "noun",
         "adjective",
         "preposition",
-        "social"
+        "social",
+        "adverb"
       ],
       "noun": [
         "verb",
         "preposition",
         "conjunction",
-        "social"
+        "social",
+        "adverb"
       ],
       "adjective": [
         "noun",
         "social",
-        "conjunction"
+        "conjunction",
+        "adverb"
       ],
       "question": [
         "verb",
         "pronoun",
-        "determiner"
+        "determiner",
+        "adverb"
       ],
       "preposition": [
         "determiner",
@@ -367,11 +426,27 @@
         "pronoun",
         "determiner",
         "noun",
-        "verb"
+        "verb",
+        "negation"
       ],
       "social": [
         "noun",
-        "verb"
+        "verb",
+        "negation"
+      ],
+      "negation": [
+        "verb",
+        "determiner",
+        "noun",
+        "adjective",
+        "adverb"
+      ],
+      "adverb": [
+        "verb",
+        "noun",
+        "adjective",
+        "preposition",
+        "social"
       ]
     },
     "articles": {

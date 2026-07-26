@@ -23,6 +23,7 @@
     "helper": "सहायक",
     "doctor": "डॉक्टर",
     "class": "कक्षा",
+    "mine": "मेरा वाला",
     "want": "चाह",
     "need": "ज़रूरत",
     "like": "पसंद",
@@ -34,7 +35,7 @@
     "come": "आ",
     "play": "खेल",
     "read": "पढ़",
-    "draw": "बना",
+    "draw": "चित्र बना",
     "eat": "खा",
     "drink": "पी",
     "sit": "बैठ",
@@ -53,6 +54,47 @@
     "rest": "आराम कर",
     "try": "कोशिश कर",
     "talk": "बात कर",
+    "get": "पा",
+    "give": "दे",
+    "put": "रख",
+    "take": "ले",
+    "make": "बना",
+    "look": "नज़र डाल",
+    "know": "जान",
+    "listen": "ध्यान से सुन",
+    "watch": "निहार",
+    "finish": "ख़त्म कर",
+    "find": "ढूंढ",
+    "think": "सोच",
+    "tell": "बता",
+    "show": "दिखा",
+    "hold": "थाम",
+    "jump": "कूद",
+    "write": "लिख",
+    "let": "होने दे",
+    "work": "काम कर",
+    "share": "बाँट",
+    "smell": "सूंघ",
+    "taste": "चख",
+    "touch": "छू",
+    "dance": "नाच",
+    "sing": "गा",
+    "cut": "काट",
+    "build": "निर्माण कर",
+    "swim": "तैर",
+    "ride": "चला",
+    "brush": "ब्रश कर",
+    "push": "धक्का दे",
+    "pull": "खींच",
+    "throw": "फेंक",
+    "catch": "पकड़",
+    "count": "गिन",
+    "wake": "जाग",
+    "cry": "रो",
+    "laugh": "हंस",
+    "fix": "ठीक कर",
+    "cook": "पका",
+    "climb": "चढ़",
     "yes": "हाँ",
     "no": "नहीं",
     "please": "कृपया",
@@ -100,11 +142,21 @@
     "outside": "बाहर",
     "near": "नज़दीक",
     "far": "दूर",
+    "here": "यहाँ",
+    "there": "वहाँ",
+    "up": "ऊपर",
+    "down": "नीचे की ओर",
+    "off": "बंद",
+    "away": "दूर हट",
+    "together": "मिलकर",
     "and": "और",
     "or": "या",
     "because": "क्योंकि",
     "then": "फिर",
     "but": "लेकिन",
+    "not": "नहीं",
+    "all": "सब",
+    "another": "एक और",
     "water": "पानी",
     "milk": "दूध",
     "juice": "जूस",
@@ -297,7 +349,8 @@
     "kind": "दयालु",
     "gentle": "कोमल",
     "careful": "सावधान",
-    "safe-place": "सुरक्षित जगह"
+    "safe-place": "सुरक्षित जगह",
+    "very": "काफ़ी"
   },
   "templates": {
     "want-object": "I want {thing}.",
@@ -331,7 +384,9 @@
       "pronoun": [
         "verb",
         "noun",
-        "adjective"
+        "adjective",
+        "negation",
+        "adverb"
       ],
       "determiner": [
         "noun",
@@ -342,23 +397,27 @@
         "noun",
         "adjective",
         "preposition",
-        "social"
+        "social",
+        "adverb"
       ],
       "noun": [
         "verb",
         "preposition",
         "conjunction",
-        "social"
+        "social",
+        "adverb"
       ],
       "adjective": [
         "noun",
         "social",
-        "conjunction"
+        "conjunction",
+        "adverb"
       ],
       "question": [
         "verb",
         "pronoun",
-        "determiner"
+        "determiner",
+        "adverb"
       ],
       "preposition": [
         "determiner",
@@ -369,11 +428,27 @@
         "pronoun",
         "determiner",
         "noun",
-        "verb"
+        "verb",
+        "negation"
       ],
       "social": [
         "noun",
-        "verb"
+        "verb",
+        "negation"
+      ],
+      "negation": [
+        "verb",
+        "determiner",
+        "noun",
+        "adjective",
+        "adverb"
+      ],
+      "adverb": [
+        "verb",
+        "noun",
+        "adjective",
+        "preposition",
+        "social"
       ]
     },
     "gender": [

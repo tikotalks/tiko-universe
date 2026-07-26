@@ -23,6 +23,7 @@
     "helper": "Hëllefer",
     "doctor": "Dokter",
     "class": "Klass",
+    "mine": "mäinen",
     "want": "wëll",
     "need": "brauch",
     "like": "hunn gär",
@@ -30,7 +31,7 @@
     "see": "gesinn",
     "hear": "héieren",
     "have": "hunn",
-    "go": "ginn",
+    "go": "goen",
     "come": "kommen",
     "play": "spillen",
     "read": "liesen",
@@ -39,7 +40,7 @@
     "drink": "drénken",
     "sit": "sëtzen",
     "stand": "stinn",
-    "walk": "goen",
+    "walk": "trëppelen",
     "run": "lafen",
     "stop": "stoppen",
     "start": "ufänken",
@@ -53,6 +54,47 @@
     "rest": "raschten",
     "try": "probéieren",
     "talk": "schwätzen",
+    "get": "kréien",
+    "give": "ginn",
+    "put": "setzen",
+    "take": "huelen",
+    "make": "maachen",
+    "look": "kucken",
+    "know": "wëssen",
+    "listen": "lauschteren",
+    "watch": "nokucken",
+    "finish": "fäerdegmaachen",
+    "find": "fannen",
+    "think": "denken",
+    "tell": "erzielen",
+    "show": "weisen",
+    "hold": "halen",
+    "jump": "sprangen",
+    "write": "schreiwen",
+    "let": "loossen",
+    "work": "schaffen",
+    "share": "deelen",
+    "smell": "richen",
+    "taste": "schmaachen",
+    "touch": "beréieren",
+    "dance": "danzen",
+    "sing": "sangen",
+    "cut": "schneiden",
+    "build": "bauen",
+    "swim": "schwammen",
+    "ride": "fueren",
+    "brush": "botzen",
+    "push": "drécken",
+    "pull": "zéien",
+    "throw": "geheien",
+    "catch": "fänken",
+    "count": "zielen",
+    "wake": "erwächen",
+    "cry": "kräischen",
+    "laugh": "laachen",
+    "fix": "reparéieren",
+    "cook": "kachen",
+    "climb": "klammen",
     "yes": "jo",
     "no": "nee",
     "please": "wann ech gelift",
@@ -100,11 +142,21 @@
     "outside": "dobausse",
     "near": "no",
     "far": "wäit",
+    "here": "hei",
+    "there": "do",
+    "up": "uewen",
+    "down": "ënnen",
+    "off": "aus",
+    "away": "ewech",
+    "together": "zesummen",
     "and": "an",
     "or": "oder",
     "because": "well",
     "then": "dann",
     "but": "mee",
+    "not": "net",
+    "all": "all",
+    "another": "nach een",
     "water": "Waasser",
     "milk": "Mëllech",
     "juice": "Jus",
@@ -297,7 +349,8 @@
     "kind": "léif",
     "gentle": "sanft",
     "careful": "virsichteg",
-    "safe-place": "sécher Plaz"
+    "safe-place": "sécher Plaz",
+    "very": "ganz"
   },
   "templates": {
     "want-object": "I want {thing}.",
@@ -331,7 +384,9 @@
       "pronoun": [
         "verb",
         "noun",
-        "adjective"
+        "adjective",
+        "negation",
+        "adverb"
       ],
       "determiner": [
         "noun",
@@ -342,23 +397,27 @@
         "noun",
         "adjective",
         "preposition",
-        "social"
+        "social",
+        "adverb"
       ],
       "noun": [
         "verb",
         "preposition",
         "conjunction",
-        "social"
+        "social",
+        "adverb"
       ],
       "adjective": [
         "noun",
         "social",
-        "conjunction"
+        "conjunction",
+        "adverb"
       ],
       "question": [
         "verb",
         "pronoun",
-        "determiner"
+        "determiner",
+        "adverb"
       ],
       "preposition": [
         "determiner",
@@ -369,11 +428,27 @@
         "pronoun",
         "determiner",
         "noun",
-        "verb"
+        "verb",
+        "negation"
       ],
       "social": [
         "noun",
-        "verb"
+        "verb",
+        "negation"
+      ],
+      "negation": [
+        "verb",
+        "determiner",
+        "noun",
+        "adjective",
+        "adverb"
+      ],
+      "adverb": [
+        "verb",
+        "noun",
+        "adjective",
+        "preposition",
+        "social"
       ]
     },
     "negation": {

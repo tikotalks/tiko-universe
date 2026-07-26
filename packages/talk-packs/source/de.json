@@ -21,6 +21,7 @@
     "helper": "Helfer",
     "doctor": "Arzt",
     "class": "Klasse",
+    "mine": "meins",
     "want": "will",
     "need": "brauche",
     "like": "mag",
@@ -51,6 +52,47 @@
     "rest": "ruhe",
     "try": "versuche",
     "talk": "rede",
+    "get": "hole",
+    "give": "gebe",
+    "put": "lege",
+    "take": "nehme",
+    "make": "mache",
+    "look": "schaue",
+    "know": "kenne",
+    "listen": "höre zu",
+    "watch": "schaue zu",
+    "finish": "mache fertig",
+    "find": "finde",
+    "think": "denke",
+    "tell": "erzähle",
+    "show": "zeige",
+    "hold": "halte",
+    "jump": "springe",
+    "write": "schreibe",
+    "let": "lasse",
+    "work": "arbeite",
+    "share": "teile",
+    "smell": "rieche",
+    "taste": "schmecke",
+    "touch": "berühre",
+    "dance": "tanze",
+    "sing": "singe",
+    "cut": "schneide",
+    "build": "baue",
+    "swim": "schwimme",
+    "ride": "fahre",
+    "brush": "putze",
+    "push": "drücke",
+    "pull": "ziehe",
+    "throw": "werfe",
+    "catch": "fange",
+    "count": "zähle",
+    "wake": "wache auf",
+    "cry": "weine",
+    "laugh": "lache",
+    "fix": "repariere",
+    "cook": "koche",
+    "climb": "klettere",
     "yes": "ja",
     "no": "nein",
     "please": "bitte",
@@ -98,11 +140,21 @@
     "outside": "draußen",
     "near": "nah",
     "far": "weit",
+    "here": "hier",
+    "there": "da",
+    "up": "nach oben",
+    "down": "runter",
+    "off": "aus",
+    "away": "fort",
+    "together": "zusammen",
     "and": "und",
     "or": "oder",
     "because": "weil",
     "then": "dann",
     "but": "aber",
+    "not": "nicht",
+    "all": "alle",
+    "another": "noch ein",
     "water": "Wasser",
     "milk": "Milch",
     "juice": "Saft",
@@ -295,7 +347,8 @@
     "kind": "nett",
     "gentle": "sanft",
     "careful": "vorsichtig",
-    "safe-place": "sicherer Ort"
+    "safe-place": "sicherer Ort",
+    "very": "sehr"
   },
   "templates": {
     "want-object": "Ich will {thing}.",
@@ -329,7 +382,9 @@
       "pronoun": [
         "verb",
         "noun",
-        "adjective"
+        "adjective",
+        "negation",
+        "adverb"
       ],
       "determiner": [
         "noun",
@@ -341,23 +396,27 @@
         "noun",
         "adjective",
         "preposition",
-        "social"
+        "social",
+        "adverb"
       ],
       "noun": [
         "verb",
         "preposition",
         "conjunction",
-        "social"
+        "social",
+        "adverb"
       ],
       "adjective": [
         "noun",
         "social",
-        "conjunction"
+        "conjunction",
+        "adverb"
       ],
       "question": [
         "verb",
         "pronoun",
-        "determiner"
+        "determiner",
+        "adverb"
       ],
       "preposition": [
         "determiner",
@@ -368,11 +427,27 @@
         "pronoun",
         "determiner",
         "noun",
-        "verb"
+        "verb",
+        "negation"
       ],
       "social": [
         "noun",
-        "verb"
+        "verb",
+        "negation"
+      ],
+      "negation": [
+        "verb",
+        "determiner",
+        "noun",
+        "adjective",
+        "adverb"
+      ],
+      "adverb": [
+        "verb",
+        "noun",
+        "adjective",
+        "preposition",
+        "social"
       ]
     },
     "articles": {

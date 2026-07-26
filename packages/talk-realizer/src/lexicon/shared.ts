@@ -26,6 +26,15 @@ export const sharedStructure: Lexicon = {
   me: { pos: 'pronoun', person: 1, number: 'sg', pronounCase: 'acc' },
   my: { pos: 'pronoun', person: 1, number: 'sg', pronounCase: 'poss' },
   your: { pos: 'pronoun', person: 2, number: 'sg', pronounCase: 'poss' },
+  /**
+   * "Mine" stands on its own, which is exactly what a clitic cannot do: French
+   * says "je veux **le mien**", never "je **le mien** veux". `tonic` keeps it out
+   * of the preverbal clitic slot the object pronouns use.
+   */
+  mine: { pos: 'pronoun', person: 1, number: 'sg', tonic: true },
+
+  // A degree adverb, which belongs in front of what it strengthens.
+  very: { pos: 'adverb', degree: true },
 
   // Determiners
   a: { pos: 'determiner', determinerKind: 'indefinite' },
@@ -38,6 +47,8 @@ export const sharedStructure: Lexicon = {
   two: { pos: 'determiner', determinerKind: 'quantifier', forcesNumber: 'pl', smallNumber: true },
   three: { pos: 'determiner', determinerKind: 'quantifier', forcesNumber: 'pl', smallNumber: true },
   many: { pos: 'determiner', determinerKind: 'quantifier', forcesNumber: 'pl' },
+  all: { pos: 'determiner', determinerKind: 'quantifier', forcesNumber: 'pl' },
+  another: { pos: 'determiner', determinerKind: 'indefinite', forcesNumber: 'sg' },
   little: { pos: 'determiner', determinerKind: 'quantifier' },
   // Filed as a determiner in every pack; it is an adjective, and a quality.
   big: { pos: 'adjective', inherent: true },

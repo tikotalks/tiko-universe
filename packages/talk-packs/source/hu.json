@@ -23,6 +23,7 @@
     "helper": "segítő",
     "doctor": "orvos",
     "class": "osztály",
+    "mine": "az enyém",
     "want": "akarok",
     "need": "kell",
     "like": "szeretem",
@@ -53,6 +54,47 @@
     "rest": "pihenek",
     "try": "próbálok",
     "talk": "beszélek",
+    "get": "kapok",
+    "give": "adok",
+    "put": "teszek",
+    "take": "veszek",
+    "make": "csinálok",
+    "look": "nézek",
+    "know": "ismerek",
+    "listen": "hallgatok",
+    "watch": "figyelek",
+    "finish": "befejezek",
+    "find": "találok",
+    "think": "gondolok",
+    "tell": "elmondok",
+    "show": "megmutatok",
+    "hold": "tartok",
+    "jump": "ugrok",
+    "write": "írok",
+    "let": "hagyok",
+    "work": "dolgozok",
+    "share": "osztok",
+    "smell": "szagolok",
+    "taste": "kóstolok",
+    "touch": "megérintek",
+    "dance": "táncolok",
+    "sing": "énekelek",
+    "cut": "vágok",
+    "build": "építek",
+    "swim": "úszom",
+    "ride": "biciklizem",
+    "brush": "fésülök",
+    "push": "tolok",
+    "pull": "húzok",
+    "throw": "dobok",
+    "catch": "elkapok",
+    "count": "számolok",
+    "wake": "felkelek",
+    "cry": "sírok",
+    "laugh": "nevetek",
+    "fix": "megjavítok",
+    "cook": "főzök",
+    "climb": "mászok",
     "yes": "igen",
     "no": "nem",
     "please": "kérem",
@@ -100,11 +142,21 @@
     "outside": "kívül",
     "near": "közel",
     "far": "messze",
+    "here": "itt",
+    "there": "ott",
+    "up": "fel",
+    "down": "le",
+    "off": "kikapcsolva",
+    "away": "el",
+    "together": "együtt",
     "and": "és",
     "or": "vagy",
     "because": "mert",
     "then": "aztán",
     "but": "de",
+    "not": "nem",
+    "all": "az összes",
+    "another": "még egy",
     "water": "víz",
     "milk": "tej",
     "juice": "gyümölcslé",
@@ -297,7 +349,8 @@
     "kind": "kedves",
     "gentle": "gyengéd",
     "careful": "óvatos",
-    "safe-place": "biztonságos hely"
+    "safe-place": "biztonságos hely",
+    "very": "nagyon"
   },
   "templates": {
     "want-object": "I want {thing}.",
@@ -331,7 +384,9 @@
       "pronoun": [
         "verb",
         "noun",
-        "adjective"
+        "adjective",
+        "negation",
+        "adverb"
       ],
       "determiner": [
         "noun",
@@ -342,23 +397,27 @@
         "noun",
         "adjective",
         "preposition",
-        "social"
+        "social",
+        "adverb"
       ],
       "noun": [
         "verb",
         "preposition",
         "conjunction",
-        "social"
+        "social",
+        "adverb"
       ],
       "adjective": [
         "noun",
         "social",
-        "conjunction"
+        "conjunction",
+        "adverb"
       ],
       "question": [
         "verb",
         "pronoun",
-        "determiner"
+        "determiner",
+        "adverb"
       ],
       "preposition": [
         "determiner",
@@ -369,11 +428,27 @@
         "pronoun",
         "determiner",
         "noun",
-        "verb"
+        "verb",
+        "negation"
       ],
       "social": [
         "noun",
-        "verb"
+        "verb",
+        "negation"
+      ],
+      "negation": [
+        "verb",
+        "determiner",
+        "noun",
+        "adjective",
+        "adverb"
+      ],
+      "adverb": [
+        "verb",
+        "noun",
+        "adjective",
+        "preposition",
+        "social"
       ]
     },
     "cases": [

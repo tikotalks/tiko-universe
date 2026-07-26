@@ -85,6 +85,17 @@ export interface Features {
    * ("vesi" → "vettä") are not recoverable from the nominative.
    */
   cases?: Partial<Record<'acc' | 'gen' | 'par', string>>
+  /**
+   * A pronoun that stands on its own and never becomes a preverbal clitic:
+   * "je veux le mien", not *"je le mien veux".
+   */
+  tonic?: boolean
+  /**
+   * A degree adverb — "very", "too" — which modifies the word after it rather than
+   * the clause. It goes in front of the adjective it strengthens instead of at the
+   * end of the sentence, where the other adverbs go.
+   */
+  degree?: boolean
   /** Mass nouns (water, music) take no indefinite article. */
   mass?: boolean
   proper?: boolean
@@ -149,6 +160,11 @@ export interface Features {
    * adjectives after the noun but a short closed set before it.
    */
   adjectivePosition?: 'before' | 'after'
+  /**
+   * A quantifier that wants the definite article after it: "tous **les** biscuits",
+   * "todas **las** galletas". Leaving it out is an error rather than a register.
+   */
+  withDefinite?: boolean
   /** Plural of an adjective, when it is not base + s. */
   pluralForm?: string
   /** Dative form, for languages that distinguish it ("ich" → "mir"). */

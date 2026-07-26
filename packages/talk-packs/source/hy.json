@@ -21,6 +21,7 @@
     "helper": "օգնական",
     "doctor": "բժիշկ",
     "class": "դասարան",
+    "mine": "իմը",
     "want": "ուզել",
     "need": "պետք",
     "like": "հավանել",
@@ -51,6 +52,47 @@
     "rest": "հանգստանալ",
     "try": "փորձել",
     "talk": "խոսել",
+    "get": "ստանալ",
+    "give": "տալ",
+    "put": "դնել",
+    "take": "վերցնել",
+    "make": "պատրաստել",
+    "look": "նայել",
+    "know": "իմանալ",
+    "listen": "ականջ դնել",
+    "watch": "դիտել",
+    "finish": "ավարտել",
+    "find": "գտնել",
+    "think": "մտածել",
+    "tell": "պատմել",
+    "show": "ցույց տալ",
+    "hold": "պահել",
+    "jump": "ցատկել",
+    "write": "գրել",
+    "let": "թույլ տալ",
+    "work": "աշխատել",
+    "share": "կիսվել",
+    "smell": "հոտոտել",
+    "taste": "համտեսել",
+    "touch": "դիպչել",
+    "dance": "պարել",
+    "sing": "երգել",
+    "cut": "կտրել",
+    "build": "կառուցել",
+    "swim": "լողալ",
+    "ride": "հեծանիվ վարել",
+    "brush": "խոզանակել",
+    "push": "հրել",
+    "pull": "քաշել",
+    "throw": "նետել",
+    "catch": "բռնել",
+    "count": "հաշվել",
+    "wake": "արթնանալ",
+    "cry": "լաց լինել",
+    "laugh": "ծիծաղել",
+    "fix": "նորոգել",
+    "cook": "եփել",
+    "climb": "բարձրանալ",
     "yes": "այո",
     "no": "ոչ",
     "please": "խնդրում եմ",
@@ -98,11 +140,21 @@
     "outside": "դրսում",
     "near": "մոտ",
     "far": "հեռու",
+    "here": "այստեղ",
+    "there": "այնտեղ",
+    "up": "վեր",
+    "down": "վար",
+    "off": "անջատված",
+    "away": "մի կողմ",
+    "together": "միասին",
     "and": "և",
     "or": "կամ",
     "because": "որովհետև",
     "then": "հետո",
     "but": "բայց",
+    "not": "ոչ",
+    "all": "ամեն ինչ",
+    "another": "ևս մեկ",
     "water": "ջուր",
     "milk": "կաթ",
     "juice": "հյութ",
@@ -295,7 +347,8 @@
     "kind": "բարի",
     "gentle": "նուրբ",
     "careful": "զգույշ",
-    "safe-place": "ապահով տեղ"
+    "safe-place": "ապահով տեղ",
+    "very": "խիստ"
   },
   "templates": {
     "want-object": "Ես ուզում եմ {thing}:",
@@ -329,7 +382,9 @@
       "pronoun": [
         "noun",
         "adjective",
-        "verb"
+        "verb",
+        "negation",
+        "adverb"
       ],
       "determiner": [
         "noun",
@@ -337,23 +392,27 @@
       ],
       "verb": [
         "social",
-        "conjunction"
+        "conjunction",
+        "adverb"
       ],
       "noun": [
         "verb",
         "adjective",
         "preposition",
-        "conjunction"
+        "conjunction",
+        "adverb"
       ],
       "adjective": [
         "noun",
         "verb",
-        "social"
+        "social",
+        "adverb"
       ],
       "question": [
         "pronoun",
         "noun",
-        "verb"
+        "verb",
+        "adverb"
       ],
       "preposition": [
         "noun",
@@ -363,11 +422,27 @@
       "conjunction": [
         "pronoun",
         "determiner",
-        "noun"
+        "noun",
+        "negation"
       ],
       "social": [
         "noun",
-        "verb"
+        "verb",
+        "negation"
+      ],
+      "negation": [
+        "verb",
+        "determiner",
+        "noun",
+        "adjective",
+        "adverb"
+      ],
+      "adverb": [
+        "verb",
+        "noun",
+        "adjective",
+        "preposition",
+        "social"
       ]
     },
     "articles": {

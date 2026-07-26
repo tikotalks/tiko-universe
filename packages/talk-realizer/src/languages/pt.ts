@@ -1,5 +1,5 @@
 import type { Features, SelectedWord } from '../features'
-import { agreeAdjective, conjugateRegular, elide, induceGender, pluralize, possessiveForm } from '../morphology/romance'
+import { agreeAdjective, conjugateRegular, elide, induceGender, pluralize, possessiveForm, quantifierPhrase } from '../morphology/romance'
 import { extractObjectClitic } from '../morphology/clitic'
 import { agreesWith, formFor, isSensation, note, type LanguageRules } from '../profile'
 
@@ -97,7 +97,10 @@ export const portuguese: LanguageRules = {
       if (determiner.features.pronounCase === 'poss') {
         return { text: possessiveForm(determiner.features, determiner.text, feminine), from: determiner.id }
       }
-      return { text: determiner.text, from: determiner.id }
+      return {
+        text: quantifierPhrase(determiner.features, determiner.text, 'pt', feminine, plural),
+        from: determiner.id,
+      }
     }
 
     if (!head) return null

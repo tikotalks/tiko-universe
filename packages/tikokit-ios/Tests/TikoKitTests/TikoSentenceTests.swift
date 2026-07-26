@@ -71,7 +71,7 @@ final class TikoSentenceTests: XCTestCase {
 
         let pack = try builder.pack(for: "nl")
         XCTAssertEqual(pack.locale, "nl")
-        XCTAssertEqual(pack.words.count, 295)
+        XCTAssertEqual(pack.words.count, 348)
     }
 
     func testEveryOfferedLanguageHasAPack() {

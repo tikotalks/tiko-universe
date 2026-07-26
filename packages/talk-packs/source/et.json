@@ -23,6 +23,7 @@
     "helper": "abiline",
     "doctor": "arst",
     "class": "klass",
+    "mine": "minu oma",
     "want": "tahan",
     "need": "vajan",
     "like": "armastan",
@@ -53,6 +54,47 @@
     "rest": "puhkan",
     "try": "proovin",
     "talk": "räägin",
+    "get": "saan kätte",
+    "give": "annan",
+    "put": "panen",
+    "take": "võtan",
+    "make": "teen",
+    "look": "vaatan",
+    "know": "tean",
+    "listen": "kuulan",
+    "watch": "jälgin",
+    "finish": "lõpetan",
+    "find": "leian",
+    "think": "mõtlen",
+    "tell": "jutustan",
+    "show": "näitan",
+    "hold": "hoian",
+    "jump": "hüppan",
+    "write": "kirjutan",
+    "let": "luban",
+    "work": "töötan",
+    "share": "jagan",
+    "smell": "nuusutan",
+    "taste": "maitsen",
+    "touch": "puudutan",
+    "dance": "tantsin",
+    "sing": "laulan",
+    "cut": "lõikan",
+    "build": "ehitan",
+    "swim": "ujun",
+    "ride": "sõidan",
+    "brush": "harjan",
+    "push": "lükkan",
+    "pull": "tõmban",
+    "throw": "viskan",
+    "catch": "püüan",
+    "count": "loendan",
+    "wake": "ärkan",
+    "cry": "nutan",
+    "laugh": "naeran",
+    "fix": "parandan",
+    "cook": "kokkan",
+    "climb": "ronin",
     "yes": "jah",
     "no": "ei",
     "please": "palun",
@@ -100,11 +142,21 @@
     "outside": "väljas",
     "near": "lähedal",
     "far": "kaugel",
+    "here": "siin",
+    "there": "seal",
+    "up": "üles",
+    "down": "alla",
+    "off": "välja lülitatud",
+    "away": "ära",
+    "together": "üheskoos",
     "and": "ja",
     "or": "või",
     "because": "sest",
     "then": "siis",
     "but": "aga",
+    "not": "ei",
+    "all": "kõik",
+    "another": "veel üks",
     "water": "vesi",
     "milk": "piim",
     "juice": "mahl",
@@ -297,7 +349,8 @@
     "kind": "lahke",
     "gentle": "õrn",
     "careful": "ettevaatlik",
-    "safe-place": "turvaline koht"
+    "safe-place": "turvaline koht",
+    "very": "väga"
   },
   "templates": {
     "want-object": "I want {thing}.",
@@ -331,7 +384,9 @@
       "pronoun": [
         "verb",
         "noun",
-        "adjective"
+        "adjective",
+        "negation",
+        "adverb"
       ],
       "determiner": [
         "noun",
@@ -342,23 +397,27 @@
         "noun",
         "adjective",
         "preposition",
-        "social"
+        "social",
+        "adverb"
       ],
       "noun": [
         "verb",
         "preposition",
         "conjunction",
-        "social"
+        "social",
+        "adverb"
       ],
       "adjective": [
         "noun",
         "social",
-        "conjunction"
+        "conjunction",
+        "adverb"
       ],
       "question": [
         "verb",
         "pronoun",
-        "determiner"
+        "determiner",
+        "adverb"
       ],
       "preposition": [
         "determiner",
@@ -369,11 +428,27 @@
         "pronoun",
         "determiner",
         "noun",
-        "verb"
+        "verb",
+        "negation"
       ],
       "social": [
         "noun",
-        "verb"
+        "verb",
+        "negation"
+      ],
+      "negation": [
+        "verb",
+        "determiner",
+        "noun",
+        "adjective",
+        "adverb"
+      ],
+      "adverb": [
+        "verb",
+        "noun",
+        "adjective",
+        "preposition",
+        "social"
       ]
     },
     "cases": [

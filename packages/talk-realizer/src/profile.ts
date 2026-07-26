@@ -79,6 +79,13 @@ export interface LanguageProfile {
   verbCitation?: 'infinitive' | 'finite' | 'invariant'
 
   /**
+   * True where the verb's tail *is* the verb — the Celtic languages realize every
+   * verb as an auxiliary plus a verbnoun, so "dwi" alone says only "I am". A tail
+   * like that is never dropped, where Swedish "vill **ha**" is.
+   */
+  verbTailIsVerb?: boolean
+
+  /**
    * Where a second verb goes. The Germanic languages send the infinitive to the end
    * of the clause — "Ik wil een appel eten", not "Ik wil eten een appel" — which is
    * the same rule their `verbTail` already follows.

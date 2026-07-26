@@ -116,7 +116,7 @@ describe('useSentenceApi', () => {
 
     expect(api.mode.value).toBe('offline')
     // The whole pack, not a stub: this used to be seven words.
-    expect(api.words.value.length).toBe(295)
+    expect(api.words.value.length).toBe(348)
     expect(api.suggestions.value.length).toBeGreaterThan(0)
     // Built by the realizer on the device, article and full stop included.
     expect(completed.sentence).toBe('I want water.')

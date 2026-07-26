@@ -420,7 +420,7 @@ describe('sentence-api foundation', () => {
     expect(first.response.status).toBe(200)
     expect(first.body.stripState.display).toBe('I want')
     // verb→noun has curated weight 9, so noun outranks the grammar-order default.
-    expect(first.body.stripState.validNext).toEqual(['noun', 'determiner', 'adjective', 'preposition', 'social'])
+    expect(first.body.stripState.validNext).toEqual(['noun', 'determiner', 'adjective', 'preposition', 'social', 'adverb'])
     expect(first.body.suggestions.length).toBeLessThanOrEqual(50)
     expect(first.body.suggestions.some((word: JsonBody) => word.id === 'water')).toBe(true)
     // Deterministic fallback -> both calls equal even though neither is cached.
@@ -709,7 +709,7 @@ describe('sentence-api foundation', () => {
       body: JSON.stringify({ locale: 'en', currentWords: ['i', 'want'] }),
     }, testEnv)
 
-    expect(body.stripState.validNext).toEqual(['social', 'noun', 'determiner', 'adjective', 'preposition'])
+    expect(body.stripState.validNext).toEqual(['social', 'noun', 'determiner', 'adjective', 'preposition', 'adverb'])
   })
 
   it('keeps admin pack generation shell behind an admin role gate', async () => {

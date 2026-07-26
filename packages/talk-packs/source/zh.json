@@ -21,6 +21,7 @@
     "helper": "帮手",
     "doctor": "医生",
     "class": "班级",
+    "mine": "属于我",
     "want": "要",
     "need": "需要",
     "like": "喜欢",
@@ -51,6 +52,47 @@
     "rest": "休息",
     "try": "试试",
     "talk": "说话",
+    "get": "得到",
+    "give": "给",
+    "put": "放",
+    "take": "拿",
+    "make": "做",
+    "look": "看",
+    "know": "知道",
+    "listen": "听",
+    "watch": "观看",
+    "finish": "完成",
+    "find": "找到",
+    "think": "想",
+    "tell": "告诉",
+    "show": "给看",
+    "hold": "拿着",
+    "jump": "跳",
+    "write": "写",
+    "let": "让",
+    "work": "工作",
+    "share": "分享",
+    "smell": "闻",
+    "taste": "尝",
+    "touch": "摸",
+    "dance": "跳舞",
+    "sing": "唱歌",
+    "cut": "剪",
+    "build": "搭",
+    "swim": "游泳",
+    "ride": "骑",
+    "brush": "刷",
+    "push": "推",
+    "pull": "拉",
+    "throw": "扔",
+    "catch": "接",
+    "count": "数",
+    "wake": "醒",
+    "cry": "哭",
+    "laugh": "笑",
+    "fix": "修",
+    "cook": "做饭",
+    "climb": "爬",
     "yes": "是的",
     "no": "不",
     "please": "请",
@@ -98,11 +140,21 @@
     "outside": "外面",
     "near": "附近",
     "far": "远",
+    "here": "这里",
+    "there": "那里",
+    "up": "上",
+    "down": "下",
+    "off": "关掉",
+    "away": "走开",
+    "together": "一起",
     "and": "和",
     "or": "或者",
     "because": "因为",
     "then": "然后",
     "but": "但是",
+    "not": "不",
+    "all": "全部",
+    "another": "再一个",
     "water": "水",
     "milk": "牛奶",
     "juice": "果汁",
@@ -295,7 +347,8 @@
     "kind": "善良",
     "gentle": "温柔",
     "careful": "小心",
-    "safe-place": "安全的地方"
+    "safe-place": "安全的地方",
+    "very": "很"
   },
   "templates": {
     "want-object": "我要{thing}。",
@@ -329,7 +382,9 @@
       "pronoun": [
         "verb",
         "adjective",
-        "noun"
+        "noun",
+        "negation",
+        "adverb"
       ],
       "determiner": [
         "adjective",
@@ -341,24 +396,28 @@
         "adjective",
         "noun",
         "preposition",
-        "social"
+        "social",
+        "adverb"
       ],
       "noun": [
         "verb",
         "preposition",
         "conjunction",
-        "social"
+        "social",
+        "adverb"
       ],
       "adjective": [
         "noun",
         "conjunction",
-        "social"
+        "social",
+        "adverb"
       ],
       "question": [
         "verb",
         "pronoun",
         "determiner",
-        "noun"
+        "noun",
+        "adverb"
       ],
       "preposition": [
         "determiner",
@@ -369,11 +428,27 @@
         "pronoun",
         "determiner",
         "noun",
-        "verb"
+        "verb",
+        "negation"
       ],
       "social": [
         "verb",
-        "noun"
+        "noun",
+        "negation"
+      ],
+      "negation": [
+        "verb",
+        "determiner",
+        "noun",
+        "adjective",
+        "adverb"
+      ],
+      "adverb": [
+        "verb",
+        "noun",
+        "adjective",
+        "preposition",
+        "social"
       ]
     },
     "articles": {

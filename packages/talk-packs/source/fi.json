@@ -23,6 +23,7 @@
     "helper": "avustaja",
     "doctor": "lääkäri",
     "class": "luokka",
+    "mine": "minun oma",
     "want": "haluan",
     "need": "tarvitsen",
     "like": "tykkään",
@@ -53,6 +54,47 @@
     "rest": "lepään",
     "try": "yritän",
     "talk": "puhun",
+    "get": "saan",
+    "give": "annan",
+    "put": "laitan",
+    "take": "otan",
+    "make": "teen",
+    "look": "katson",
+    "know": "tiedän",
+    "listen": "kuuntelen",
+    "watch": "seuraan",
+    "finish": "lopetan",
+    "find": "löydän",
+    "think": "ajattelen",
+    "tell": "kerron",
+    "show": "näytän",
+    "hold": "pidän",
+    "jump": "hyppään",
+    "write": "kirjoitan",
+    "let": "annan luvan",
+    "work": "teen työtä",
+    "share": "jaan",
+    "smell": "haistan",
+    "taste": "maistan",
+    "touch": "kosketan",
+    "dance": "tanssin",
+    "sing": "laulan",
+    "cut": "leikkaan",
+    "build": "rakennan",
+    "swim": "uin",
+    "ride": "ajan",
+    "brush": "harjaan",
+    "push": "työnnän",
+    "pull": "vedän",
+    "throw": "heitän",
+    "catch": "otan kiinni",
+    "count": "lasken",
+    "wake": "herään",
+    "cry": "itken",
+    "laugh": "nauran",
+    "fix": "korjaan",
+    "cook": "kokkaan",
+    "climb": "kiipeän",
     "yes": "kyllä",
     "no": "ei",
     "please": "kiitos",
@@ -100,11 +142,21 @@
     "outside": "ulkona",
     "near": "lähellä",
     "far": "kaukana",
+    "here": "täällä",
+    "there": "siellä",
+    "up": "ylös",
+    "down": "alas",
+    "off": "pois päältä",
+    "away": "pois",
+    "together": "yhdessä",
     "and": "ja",
     "or": "tai",
     "because": "koska",
     "then": "sitten",
     "but": "mutta",
+    "not": "ei",
+    "all": "kaikki",
+    "another": "vielä yksi",
     "water": "vesi",
     "milk": "maito",
     "juice": "mehu",
@@ -297,7 +349,8 @@
     "kind": "kiltti",
     "gentle": "lempeä",
     "careful": "varovainen",
-    "safe-place": "turvallinen paikka"
+    "safe-place": "turvallinen paikka",
+    "very": "hyvin"
   },
   "templates": {
     "want-object": "I want {thing}.",
@@ -331,7 +384,9 @@
       "pronoun": [
         "verb",
         "noun",
-        "adjective"
+        "adjective",
+        "negation",
+        "adverb"
       ],
       "determiner": [
         "noun",
@@ -342,23 +397,27 @@
         "noun",
         "adjective",
         "preposition",
-        "social"
+        "social",
+        "adverb"
       ],
       "noun": [
         "verb",
         "preposition",
         "conjunction",
-        "social"
+        "social",
+        "adverb"
       ],
       "adjective": [
         "noun",
         "social",
-        "conjunction"
+        "conjunction",
+        "adverb"
       ],
       "question": [
         "verb",
         "pronoun",
-        "determiner"
+        "determiner",
+        "adverb"
       ],
       "preposition": [
         "determiner",
@@ -369,11 +428,27 @@
         "pronoun",
         "determiner",
         "noun",
-        "verb"
+        "verb",
+        "negation"
       ],
       "social": [
         "noun",
-        "verb"
+        "verb",
+        "negation"
+      ],
+      "negation": [
+        "verb",
+        "determiner",
+        "noun",
+        "adjective",
+        "adverb"
+      ],
+      "adverb": [
+        "verb",
+        "noun",
+        "adjective",
+        "preposition",
+        "social"
       ]
     },
     "cases": [

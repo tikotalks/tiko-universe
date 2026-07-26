@@ -21,6 +21,7 @@
     "helper": "おてつだいさん",
     "doctor": "おいしゃさん",
     "class": "クラス",
+    "mine": "わたしのもの",
     "want": "ほしい",
     "need": "ひつよう",
     "like": "すき",
@@ -51,6 +52,47 @@
     "rest": "やすむ",
     "try": "やってみる",
     "talk": "はなす",
+    "get": "もらう",
+    "give": "あげる",
+    "put": "おく",
+    "take": "とる",
+    "make": "つくる",
+    "look": "ながめる",
+    "know": "しる",
+    "listen": "みみをすます",
+    "watch": "かんさつする",
+    "finish": "おわる",
+    "find": "みつける",
+    "think": "おもう",
+    "tell": "つたえる",
+    "show": "みせる",
+    "hold": "もつ",
+    "jump": "ジャンプする",
+    "write": "もじをかく",
+    "let": "させる",
+    "work": "はたらく",
+    "share": "わける",
+    "smell": "におう",
+    "taste": "あじわう",
+    "touch": "さわる",
+    "dance": "おどる",
+    "sing": "うたう",
+    "cut": "きる",
+    "build": "くみたてる",
+    "swim": "およぐ",
+    "ride": "のる",
+    "brush": "みがく",
+    "push": "おす",
+    "pull": "ひく",
+    "throw": "なげる",
+    "catch": "キャッチする",
+    "count": "かぞえる",
+    "wake": "おきる",
+    "cry": "なく",
+    "laugh": "わらう",
+    "fix": "なおす",
+    "cook": "りょうりする",
+    "climb": "のぼる",
     "yes": "はい",
     "no": "いいえ",
     "please": "ください",
@@ -98,11 +140,21 @@
     "outside": "そと",
     "near": "のちかく",
     "far": "とおく",
+    "here": "ここ",
+    "there": "そこ",
+    "up": "うえ",
+    "down": "した",
+    "off": "けす",
+    "away": "はなれて",
+    "together": "いっしょに",
     "and": "と",
     "or": "か",
     "because": "だって",
     "then": "それから",
     "but": "でも",
+    "not": "ない",
+    "all": "ぜんぶ",
+    "another": "もういっこ",
     "water": "みず",
     "milk": "ぎゅうにゅう",
     "juice": "ジュース",
@@ -295,7 +347,8 @@
     "kind": "やさしい",
     "gentle": "そっと",
     "careful": "きをつけて",
-    "safe-place": "あんしんできるばしょ"
+    "safe-place": "あんしんできるばしょ",
+    "very": "とても"
   },
   "templates": {
     "want-object": "わたしは{thing}がほしい。",
@@ -329,7 +382,9 @@
       "pronoun": [
         "noun",
         "adjective",
-        "determiner"
+        "determiner",
+        "negation",
+        "adverb"
       ],
       "determiner": [
         "noun",
@@ -337,24 +392,28 @@
       ],
       "verb": [
         "social",
-        "conjunction"
+        "conjunction",
+        "adverb"
       ],
       "noun": [
         "verb",
         "adjective",
         "noun",
-        "preposition"
+        "preposition",
+        "adverb"
       ],
       "adjective": [
         "noun",
         "verb",
         "social",
-        "conjunction"
+        "conjunction",
+        "adverb"
       ],
       "question": [
         "verb",
         "noun",
-        "social"
+        "social",
+        "adverb"
       ],
       "preposition": [
         "verb",
@@ -364,11 +423,27 @@
         "pronoun",
         "noun",
         "determiner",
-        "verb"
+        "verb",
+        "negation"
       ],
       "social": [
         "pronoun",
         "noun",
+        "social",
+        "negation"
+      ],
+      "negation": [
+        "verb",
+        "determiner",
+        "noun",
+        "adjective",
+        "adverb"
+      ],
+      "adverb": [
+        "verb",
+        "noun",
+        "adjective",
+        "preposition",
         "social"
       ]
     },

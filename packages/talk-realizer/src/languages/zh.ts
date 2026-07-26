@@ -57,11 +57,15 @@ export const chinese: LanguageRules = {
       return { text: determiner.text, from: determiner.id }
     }
     if ((kind === 'demonstrative' || kind === 'definite') && head) {
-      // A demonstrative needs its measure word: 这个公园.
+      // A demonstrative needs its measure word: 这个公园. The pack may already
+      // carry the general one, and 这个块饼干 has two.
       const measure = head.features.measureWord ?? '个'
-      return { text: `${determiner.text}${measure}`, from: determiner.id }
+      const bare = determiner.text.replace(/个$/, '')
+      return { text: `${bare}${measure}`, from: determiner.id }
     }
-    if (determiner.features.forcesNumber === 'pl' && head) {
+    // Only a numeral takes a measure word. "全部饼干" and "很多饼干" take none —
+    // 个 belongs with counting, not with quantity.
+    if (determiner.features.forcesNumber === 'pl' && head && /^[一二三四五六七八九十两]+$/.test(determiner.text)) {
       const measure = head.features.measureWord ?? '个'
       // 二 is not used before a measure word; 两 is.
       const numeral = determiner.text === '二' ? '两' : determiner.text

@@ -99,12 +99,12 @@ final class TikoTalkTests: XCTestCase {
         )
     }
 
-    /// The board with no network is the whole pack that ships with the app — 295
+    /// The board with no network is the whole pack that ships with the app — 348
     /// words and its templates — not a seven-word stub.
     func testLocalBoardIsTheFullPack() throws {
         let board = try XCTUnwrap(TalkLocalBoard.startResponse(locale: "en"))
 
-        XCTAssertEqual(board.initialWords.count, 295)
+        XCTAssertEqual(board.initialWords.count, 348)
         XCTAssertTrue(board.initialWords.contains { $0.id == "i" })
         XCTAssertTrue(board.initialWords.contains { $0.id == "apple" })
         XCTAssertFalse(board.templates.isEmpty)
@@ -115,7 +115,7 @@ final class TikoTalkTests: XCTestCase {
     func testLocalBoardExistsForOtherLanguages() throws {
         for locale in ["nl", "de", "fr", "es", "pl", "ar", "ja"] {
             let board = try XCTUnwrap(TalkLocalBoard.startResponse(locale: locale), "no pack for \(locale)")
-            XCTAssertEqual(board.initialWords.count, 295, "\(locale) pack is the wrong size")
+            XCTAssertEqual(board.initialWords.count, 348, "\(locale) pack is the wrong size")
         }
         let dutch = try XCTUnwrap(TalkLocalBoard.startResponse(locale: "nl"))
         XCTAssertEqual(dutch.initialWords.first { $0.id == "apple" }?.text, "appel")

@@ -23,6 +23,7 @@
     "helper": "cynorthwyydd",
     "doctor": "meddyg",
     "class": "dosbarth",
+    "mine": "fy un i",
     "want": "eisiau",
     "need": "angen",
     "like": "hoffi",
@@ -53,6 +54,47 @@
     "rest": "gorffwys",
     "try": "ceisio",
     "talk": "siarad",
+    "get": "nôl",
+    "give": "rhoi",
+    "put": "gosod",
+    "take": "cymryd",
+    "make": "gwneud",
+    "look": "edrych",
+    "know": "gwybod",
+    "listen": "gwrando",
+    "watch": "gwylio",
+    "finish": "gorffen",
+    "find": "ffeindio",
+    "think": "meddwl",
+    "tell": "dweud",
+    "show": "dangos",
+    "hold": "gafael",
+    "jump": "neidio",
+    "write": "ysgrifennu",
+    "let": "gadael",
+    "work": "gweithio",
+    "share": "rhannu",
+    "smell": "arogli",
+    "taste": "blasu",
+    "touch": "cyffwrdd",
+    "dance": "dawnsio",
+    "sing": "canu",
+    "cut": "torri",
+    "build": "adeiladu",
+    "swim": "nofio",
+    "ride": "reidio",
+    "brush": "brwsio",
+    "push": "gwthio",
+    "pull": "tynnu",
+    "throw": "taflu",
+    "catch": "dal",
+    "count": "cyfrif",
+    "wake": "deffro",
+    "cry": "crio",
+    "laugh": "chwerthin",
+    "fix": "trwsio",
+    "cook": "coginio",
+    "climb": "dringo",
     "yes": "ie",
     "no": "na",
     "please": "os gwelwch yn dda",
@@ -100,11 +142,21 @@
     "outside": "tu allan",
     "near": "agos",
     "far": "pell",
+    "here": "yma",
+    "there": "yna",
+    "up": "i fyny",
+    "down": "i lawr",
+    "off": "wedi diffodd",
+    "away": "i ffwrdd",
+    "together": "gyda'n gilydd",
     "and": "a",
     "or": "neu",
     "because": "oherwydd",
     "then": "wedyn",
     "but": "ond",
+    "not": "ddim",
+    "all": "popeth",
+    "another": "un arall",
     "water": "dŵr",
     "milk": "llaeth",
     "juice": "sudd",
@@ -297,7 +349,8 @@
     "kind": "caredig",
     "gentle": "tyner",
     "careful": "gofalus",
-    "safe-place": "lle diogel"
+    "safe-place": "lle diogel",
+    "very": "tra"
   },
   "templates": {
     "want-object": "I want {thing}.",
@@ -331,7 +384,9 @@
       "pronoun": [
         "verb",
         "noun",
-        "adjective"
+        "adjective",
+        "negation",
+        "adverb"
       ],
       "determiner": [
         "noun",
@@ -342,23 +397,27 @@
         "noun",
         "adjective",
         "preposition",
-        "social"
+        "social",
+        "adverb"
       ],
       "noun": [
         "verb",
         "preposition",
         "conjunction",
-        "social"
+        "social",
+        "adverb"
       ],
       "adjective": [
         "noun",
         "social",
-        "conjunction"
+        "conjunction",
+        "adverb"
       ],
       "question": [
         "verb",
         "pronoun",
-        "determiner"
+        "determiner",
+        "adverb"
       ],
       "preposition": [
         "determiner",
@@ -369,11 +428,27 @@
         "pronoun",
         "determiner",
         "noun",
-        "verb"
+        "verb",
+        "negation"
       ],
       "social": [
         "noun",
-        "verb"
+        "verb",
+        "negation"
+      ],
+      "negation": [
+        "verb",
+        "determiner",
+        "noun",
+        "adjective",
+        "adverb"
+      ],
+      "adverb": [
+        "verb",
+        "noun",
+        "adjective",
+        "preposition",
+        "social"
       ]
     },
     "articles": {

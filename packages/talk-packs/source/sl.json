@@ -23,6 +23,7 @@
     "helper": "pomočnik",
     "doctor": "zdravnik",
     "class": "razred",
+    "mine": "moje",
     "want": "hočem",
     "need": "potrebujem",
     "like": "rad imam",
@@ -53,6 +54,47 @@
     "rest": "počivam",
     "try": "poskusim",
     "talk": "govorim",
+    "get": "dobim",
+    "give": "dam",
+    "put": "položim",
+    "take": "vzamem",
+    "make": "naredim",
+    "look": "gledam",
+    "know": "vem",
+    "listen": "poslušam",
+    "watch": "opazujem",
+    "finish": "končam",
+    "find": "najdem",
+    "think": "mislim",
+    "tell": "pripovedujem",
+    "show": "pokažem",
+    "hold": "držim",
+    "jump": "skačem",
+    "write": "pišem",
+    "let": "dovolim",
+    "work": "delam",
+    "share": "delim",
+    "smell": "vonjam",
+    "taste": "pokusim",
+    "touch": "dotaknem se",
+    "dance": "plešem",
+    "sing": "pojem",
+    "cut": "režem",
+    "build": "gradim",
+    "swim": "plavam",
+    "ride": "kolesarim",
+    "brush": "krtačim",
+    "push": "potiskam",
+    "pull": "vlečem",
+    "throw": "vržem",
+    "catch": "ujamem",
+    "count": "štejem",
+    "wake": "zbudim se",
+    "cry": "jokam",
+    "laugh": "smejem se",
+    "fix": "popravim",
+    "cook": "kuham",
+    "climb": "plezam",
     "yes": "ja",
     "no": "ne",
     "please": "prosim",
@@ -100,11 +142,21 @@
     "outside": "zunaj",
     "near": "blizu",
     "far": "daleč",
+    "here": "tukaj",
+    "there": "tam",
+    "up": "gor",
+    "down": "dol",
+    "off": "izklopljeno",
+    "away": "stran",
+    "together": "skupaj",
     "and": "in",
     "or": "ali",
     "because": "ker",
     "then": "potem",
     "but": "ampak",
+    "not": "ne",
+    "all": "vse",
+    "another": "še en",
     "water": "voda",
     "milk": "mleko",
     "juice": "sok",
@@ -297,7 +349,8 @@
     "kind": "prijazen",
     "gentle": "nežen",
     "careful": "previden",
-    "safe-place": "varno mesto"
+    "safe-place": "varno mesto",
+    "very": "zelo"
   },
   "templates": {
     "want-object": "I want {thing}.",
@@ -331,7 +384,9 @@
       "pronoun": [
         "verb",
         "noun",
-        "adjective"
+        "adjective",
+        "negation",
+        "adverb"
       ],
       "determiner": [
         "noun",
@@ -342,23 +397,27 @@
         "noun",
         "adjective",
         "preposition",
-        "social"
+        "social",
+        "adverb"
       ],
       "noun": [
         "verb",
         "preposition",
         "conjunction",
-        "social"
+        "social",
+        "adverb"
       ],
       "adjective": [
         "noun",
         "social",
-        "conjunction"
+        "conjunction",
+        "adverb"
       ],
       "question": [
         "verb",
         "pronoun",
-        "determiner"
+        "determiner",
+        "adverb"
       ],
       "preposition": [
         "determiner",
@@ -369,11 +428,27 @@
         "pronoun",
         "determiner",
         "noun",
-        "verb"
+        "verb",
+        "negation"
       ],
       "social": [
         "noun",
-        "verb"
+        "verb",
+        "negation"
+      ],
+      "negation": [
+        "verb",
+        "determiner",
+        "noun",
+        "adjective",
+        "adverb"
+      ],
+      "adverb": [
+        "verb",
+        "noun",
+        "adjective",
+        "preposition",
+        "social"
       ]
     },
     "cases": [

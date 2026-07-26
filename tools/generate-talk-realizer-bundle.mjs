@@ -39,7 +39,7 @@ const CHECK = process.argv.includes('--check')
  * should be able to ask.
  */
 const ENTRY = `
-import { realize, lexicons, languages, supportedLanguages } from './packages/talk-realizer/src/index'
+import { realize, lexicons, languages, supportedLanguages, customNounFeatures } from './packages/talk-realizer/src/index'
 
 /**
  * @param {string} payload JSON: { words, locale, negated?, tense?, speakerGender?, custom? }
@@ -50,10 +50,11 @@ globalThis.tikoRealize = function tikoRealize(payload) {
     const input = JSON.parse(payload)
     const code = String(input.locale || 'en').split('-')[0].toLowerCase()
     const lexicon = Object.assign({}, lexicons[code] || {})
-    // A word the child added is a name, and a name takes no article.
+    // A word the parent typed is a name if it is written like one: "Mum" takes no
+    // article, "trampoline" does.
     for (const id of input.custom || []) {
       const word = (input.words || []).find((candidate) => candidate.id === id)
-      if (word && word.pos === 'noun') lexicon[id] = { pos: 'noun', proper: true }
+      if (word && word.pos === 'noun') lexicon[id] = customNounFeatures(word.text, code)
     }
     const result = realize(input.words || [], {
       locale: code,

@@ -23,6 +23,7 @@
     "helper": "laguntzaile",
     "doctor": "mediku",
     "class": "gela",
+    "mine": "nirea",
     "want": "nahi",
     "need": "behar",
     "like": "gustatu",
@@ -53,6 +54,47 @@
     "rest": "atseden hartu",
     "try": "saiatu",
     "talk": "hitz egin",
+    "get": "lortu",
+    "give": "eman",
+    "put": "jarri",
+    "take": "hartu",
+    "make": "egin",
+    "look": "begiratu",
+    "know": "jakin",
+    "listen": "arretaz entzun",
+    "watch": "behatu",
+    "finish": "amaitu",
+    "find": "aurkitu",
+    "think": "pentsatu",
+    "tell": "kontatu",
+    "show": "erakutsi",
+    "hold": "eduki",
+    "jump": "salto egin",
+    "write": "idatzi",
+    "let": "utzi",
+    "work": "lan egin",
+    "share": "partekatu",
+    "smell": "usaindu",
+    "taste": "dastatu",
+    "touch": "ukitu",
+    "dance": "dantzatu",
+    "sing": "kantatu",
+    "cut": "moztu",
+    "build": "eraiki",
+    "swim": "igeri egin",
+    "ride": "bizikletan ibili",
+    "brush": "orraztu",
+    "push": "bultzatu",
+    "pull": "tiratu",
+    "throw": "bota",
+    "catch": "harrapatu",
+    "count": "zenbatu",
+    "wake": "esnatu",
+    "cry": "negar egin",
+    "laugh": "barre egin",
+    "fix": "konpondu",
+    "cook": "sukaldatu",
+    "climb": "igo",
     "yes": "bai",
     "no": "ez",
     "please": "mesedez",
@@ -100,11 +142,21 @@
     "outside": "kanpoan",
     "near": "gertu",
     "far": "urrun",
+    "here": "hemen",
+    "there": "han",
+    "up": "gora",
+    "down": "behera",
+    "off": "itzalita",
+    "away": "urrunera",
+    "together": "batera",
     "and": "eta",
     "or": "edo",
     "because": "zeren",
     "then": "gero",
     "but": "baina",
+    "not": "ez",
+    "all": "dena",
+    "another": "beste bat",
     "water": "ur",
     "milk": "esne",
     "juice": "zuku",
@@ -297,7 +349,8 @@
     "kind": "jator",
     "gentle": "leun",
     "careful": "kontuz",
-    "safe-place": "leku seguru"
+    "safe-place": "leku seguru",
+    "very": "oso"
   },
   "templates": {
     "want-object": "I want {thing}.",
@@ -331,7 +384,9 @@
       "pronoun": [
         "verb",
         "noun",
-        "adjective"
+        "adjective",
+        "negation",
+        "adverb"
       ],
       "determiner": [
         "noun",
@@ -342,23 +397,27 @@
         "noun",
         "adjective",
         "preposition",
-        "social"
+        "social",
+        "adverb"
       ],
       "noun": [
         "verb",
         "preposition",
         "conjunction",
-        "social"
+        "social",
+        "adverb"
       ],
       "adjective": [
         "noun",
         "social",
-        "conjunction"
+        "conjunction",
+        "adverb"
       ],
       "question": [
         "verb",
         "pronoun",
-        "determiner"
+        "determiner",
+        "adverb"
       ],
       "preposition": [
         "determiner",
@@ -369,11 +428,27 @@
         "pronoun",
         "determiner",
         "noun",
-        "verb"
+        "verb",
+        "negation"
       ],
       "social": [
         "noun",
-        "verb"
+        "verb",
+        "negation"
+      ],
+      "negation": [
+        "verb",
+        "determiner",
+        "noun",
+        "adjective",
+        "adverb"
+      ],
+      "adverb": [
+        "verb",
+        "noun",
+        "adjective",
+        "preposition",
+        "social"
       ]
     },
     "articles": {

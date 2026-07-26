@@ -21,6 +21,7 @@
     "helper": "assistent",
     "doctor": "tabib",
     "class": "klassi",
+    "mine": "tiegħi stess",
     "want": "irrid",
     "need": "għandi bżonn",
     "like": "inħobb",
@@ -51,6 +52,47 @@
     "rest": "nistrieħ",
     "try": "nipprova",
     "talk": "nitkellem",
+    "get": "nikseb",
+    "give": "nagħti",
+    "put": "nqiegħed",
+    "take": "nieħu",
+    "make": "nagħmel",
+    "look": "nħares",
+    "know": "naf",
+    "listen": "nisma' sew",
+    "watch": "nosserva",
+    "finish": "nlesti",
+    "find": "nsib",
+    "think": "naħseb",
+    "tell": "ngħid",
+    "show": "nuri",
+    "hold": "nżomm",
+    "jump": "naqbeż",
+    "write": "nikteb",
+    "let": "inħalli",
+    "work": "naħdem",
+    "share": "naqsam",
+    "smell": "inxomm",
+    "taste": "nduq",
+    "touch": "nmiss",
+    "dance": "niżfen",
+    "sing": "nkanta",
+    "cut": "naqta'",
+    "build": "nibni",
+    "swim": "ngħum",
+    "ride": "nsuq",
+    "brush": "nippettina",
+    "push": "nimbotta",
+    "pull": "niġbed",
+    "throw": "nitfa'",
+    "catch": "naqbad",
+    "count": "ngħodd",
+    "wake": "nqum",
+    "cry": "nibki",
+    "laugh": "nidħaq",
+    "fix": "nsewwi",
+    "cook": "nsajjar",
+    "climb": "nitla'",
     "yes": "iva",
     "no": "le",
     "please": "jekk jogħġbok",
@@ -98,11 +140,21 @@
     "outside": "barra",
     "near": "qrib",
     "far": "bogħod",
+    "here": "hawn",
+    "there": "hemm",
+    "up": "'il fuq",
+    "down": "'il isfel",
+    "off": "mitfi",
+    "away": "'il bogħod",
+    "together": "flimkien",
     "and": "u",
     "or": "jew",
     "because": "għax",
     "then": "imbagħad",
     "but": "imma",
+    "not": "mhux",
+    "all": "kollox",
+    "another": "oħra",
     "water": "ilma",
     "milk": "ħalib",
     "juice": "ġus",
@@ -295,7 +347,8 @@
     "kind": "twajjeb",
     "gentle": "ġentili",
     "careful": "attent",
-    "safe-place": "post sigur"
+    "safe-place": "post sigur",
+    "very": "tassew"
   },
   "templates": {
     "want-object": "Jien irrid {thing}.",
@@ -329,7 +382,9 @@
       "pronoun": [
         "verb",
         "noun",
-        "adjective"
+        "adjective",
+        "negation",
+        "adverb"
       ],
       "determiner": [
         "noun",
@@ -340,24 +395,28 @@
         "noun",
         "adjective",
         "preposition",
-        "social"
+        "social",
+        "adverb"
       ],
       "noun": [
         "verb",
         "preposition",
         "conjunction",
         "social",
-        "adjective"
+        "adjective",
+        "adverb"
       ],
       "adjective": [
         "noun",
         "social",
-        "conjunction"
+        "conjunction",
+        "adverb"
       ],
       "question": [
         "verb",
         "pronoun",
-        "determiner"
+        "determiner",
+        "adverb"
       ],
       "preposition": [
         "determiner",
@@ -368,11 +427,27 @@
         "pronoun",
         "determiner",
         "noun",
-        "verb"
+        "verb",
+        "negation"
       ],
       "social": [
         "noun",
-        "verb"
+        "verb",
+        "negation"
+      ],
+      "negation": [
+        "verb",
+        "determiner",
+        "noun",
+        "adjective",
+        "adverb"
+      ],
+      "adverb": [
+        "verb",
+        "noun",
+        "adjective",
+        "preposition",
+        "social"
       ]
     },
     "articles": {

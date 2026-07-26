@@ -23,6 +23,7 @@
     "helper": "დამხმარე",
     "doctor": "ექიმი",
     "class": "კლასი",
+    "mine": "ჩემია",
     "want": "მინდა",
     "need": "მჭირდება",
     "like": "მიყვარს",
@@ -53,6 +54,47 @@
     "rest": "ვისვენებ",
     "try": "ვცდი",
     "talk": "ვსაუბრობ",
+    "get": "ვიღებ",
+    "give": "ვაძლევ",
+    "put": "ვდებ",
+    "take": "ავიღებ",
+    "make": "ვაკეთებ",
+    "look": "ვიყურები",
+    "know": "ვიცი",
+    "listen": "ვუსმენ",
+    "watch": "ვათვალიერებ",
+    "finish": "ვამთავრებ",
+    "find": "ვპოულობ",
+    "think": "ვფიქრობ",
+    "tell": "ვყვები",
+    "show": "ვაჩვენებ",
+    "hold": "ვიკავებ",
+    "jump": "ვხტები",
+    "write": "ვწერ",
+    "let": "ნებას ვრთავ",
+    "work": "ვმუშაობ",
+    "share": "ვიზიარებ",
+    "smell": "ვყნოსავ",
+    "taste": "ვსინჯავ",
+    "touch": "ვეხები",
+    "dance": "ვცეკვავ",
+    "sing": "ვმღერი",
+    "cut": "ვჭრი",
+    "build": "ვაშენებ",
+    "swim": "ვცურავ",
+    "ride": "ვმგზავრობ",
+    "brush": "ვიხეხავ",
+    "push": "ვბიძგებ",
+    "pull": "ვქაჩავ",
+    "throw": "ვაგდებ",
+    "catch": "ვიჭერ",
+    "count": "ვთვლი",
+    "wake": "ვიღვიძებ",
+    "cry": "ვტირი",
+    "laugh": "ვიცინი",
+    "fix": "ვარემონტებ",
+    "cook": "ვამზადებ",
+    "climb": "ავდივარ",
     "yes": "კი",
     "no": "არა",
     "please": "თუ შეიძლება",
@@ -100,11 +142,21 @@
     "outside": "გარეთ",
     "near": "ახლოს",
     "far": "შორს",
+    "here": "აქ",
+    "there": "იქ",
+    "up": "ზემოთ",
+    "down": "ქვემოთ",
+    "off": "გამორთული",
+    "away": "განზე",
+    "together": "ერთად",
     "and": "და",
     "or": "ან",
     "because": "იმიტომ",
     "then": "შემდეგ",
     "but": "მაგრამ",
+    "not": "არ",
+    "all": "ყველაფერი",
+    "another": "კიდევ ერთი",
     "water": "წყალი",
     "milk": "რძე",
     "juice": "ხილის წყალი",
@@ -297,7 +349,8 @@
     "kind": "კეთილი",
     "gentle": "ნაზი",
     "careful": "ფრთხილად",
-    "safe-place": "უსაფრთხო ადგილი"
+    "safe-place": "უსაფრთხო ადგილი",
+    "very": "ძალიან"
   },
   "templates": {
     "want-object": "I want {thing}.",
@@ -331,7 +384,9 @@
       "pronoun": [
         "verb",
         "noun",
-        "adjective"
+        "adjective",
+        "negation",
+        "adverb"
       ],
       "determiner": [
         "noun",
@@ -342,23 +397,27 @@
         "noun",
         "adjective",
         "preposition",
-        "social"
+        "social",
+        "adverb"
       ],
       "noun": [
         "verb",
         "preposition",
         "conjunction",
-        "social"
+        "social",
+        "adverb"
       ],
       "adjective": [
         "noun",
         "social",
-        "conjunction"
+        "conjunction",
+        "adverb"
       ],
       "question": [
         "verb",
         "pronoun",
-        "determiner"
+        "determiner",
+        "adverb"
       ],
       "preposition": [
         "determiner",
@@ -369,11 +428,27 @@
         "pronoun",
         "determiner",
         "noun",
-        "verb"
+        "verb",
+        "negation"
       ],
       "social": [
         "noun",
-        "verb"
+        "verb",
+        "negation"
+      ],
+      "negation": [
+        "verb",
+        "determiner",
+        "noun",
+        "adjective",
+        "adverb"
+      ],
+      "adverb": [
+        "verb",
+        "noun",
+        "adjective",
+        "preposition",
+        "social"
       ]
     },
     "cases": [

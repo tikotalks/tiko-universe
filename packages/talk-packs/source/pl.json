@@ -23,6 +23,7 @@
     "helper": "pomocnik",
     "doctor": "lekarz",
     "class": "klasa",
+    "mine": "moje",
     "want": "chcę",
     "need": "potrzebuję",
     "like": "lubię",
@@ -53,6 +54,47 @@
     "rest": "odpoczywam",
     "try": "próbuję",
     "talk": "mówię",
+    "get": "dostaję",
+    "give": "daję",
+    "put": "kładę",
+    "take": "biorę",
+    "make": "robię",
+    "look": "patrzę",
+    "know": "wiem",
+    "listen": "słucham",
+    "watch": "oglądam",
+    "finish": "kończę",
+    "find": "znajduję",
+    "think": "myślę",
+    "tell": "opowiadam",
+    "show": "pokazuję",
+    "hold": "trzymam",
+    "jump": "skaczę",
+    "write": "piszę",
+    "let": "pozwalam",
+    "work": "pracuję",
+    "share": "dzielę się",
+    "smell": "wącham",
+    "taste": "smakuję",
+    "touch": "dotykam",
+    "dance": "tańczę",
+    "sing": "śpiewam",
+    "cut": "kroję",
+    "build": "buduję",
+    "swim": "pływam",
+    "ride": "jeżdżę",
+    "brush": "szczotkuję",
+    "push": "pcham",
+    "pull": "ciągnę",
+    "throw": "rzucam",
+    "catch": "łapię",
+    "count": "liczę",
+    "wake": "budzę się",
+    "cry": "płaczę",
+    "laugh": "śmieję się",
+    "fix": "naprawiam",
+    "cook": "gotuję",
+    "climb": "wspinam się",
     "yes": "tak",
     "no": "nie",
     "please": "proszę",
@@ -100,11 +142,21 @@
     "outside": "na zewnątrz",
     "near": "blisko",
     "far": "daleko",
+    "here": "tutaj",
+    "there": "tam",
+    "up": "do góry",
+    "down": "w dół",
+    "off": "wyłączone",
+    "away": "precz",
+    "together": "razem",
     "and": "i",
     "or": "albo",
     "because": "bo",
     "then": "potem",
     "but": "ale",
+    "not": "nie",
+    "all": "wszystko",
+    "another": "jeszcze jeden",
     "water": "woda",
     "milk": "mleko",
     "juice": "sok",
@@ -297,7 +349,8 @@
     "kind": "miły",
     "gentle": "delikatny",
     "careful": "ostrożny",
-    "safe-place": "bezpieczne miejsce"
+    "safe-place": "bezpieczne miejsce",
+    "very": "bardzo"
   },
   "templates": {
     "want-object": "I want {thing}.",
@@ -331,7 +384,9 @@
       "pronoun": [
         "verb",
         "noun",
-        "adjective"
+        "adjective",
+        "negation",
+        "adverb"
       ],
       "determiner": [
         "noun",
@@ -342,23 +397,27 @@
         "noun",
         "adjective",
         "preposition",
-        "social"
+        "social",
+        "adverb"
       ],
       "noun": [
         "verb",
         "preposition",
         "conjunction",
-        "social"
+        "social",
+        "adverb"
       ],
       "adjective": [
         "noun",
         "social",
-        "conjunction"
+        "conjunction",
+        "adverb"
       ],
       "question": [
         "verb",
         "pronoun",
-        "determiner"
+        "determiner",
+        "adverb"
       ],
       "preposition": [
         "determiner",
@@ -369,11 +428,27 @@
         "pronoun",
         "determiner",
         "noun",
-        "verb"
+        "verb",
+        "negation"
       ],
       "social": [
         "noun",
-        "verb"
+        "verb",
+        "negation"
+      ],
+      "negation": [
+        "verb",
+        "determiner",
+        "noun",
+        "adjective",
+        "adverb"
+      ],
+      "adverb": [
+        "verb",
+        "noun",
+        "adjective",
+        "preposition",
+        "social"
       ]
     },
     "articles": {},

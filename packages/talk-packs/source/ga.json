@@ -23,6 +23,7 @@
     "helper": "cúntóir",
     "doctor": "dochtúir",
     "class": "rang",
+    "mine": "liomsa",
     "want": "ag iarraidh",
     "need": "ag teastáil",
     "like": "is maith liom",
@@ -53,6 +54,47 @@
     "rest": "ag ligean scíthe",
     "try": "ag iarraidh",
     "talk": "ag caint",
+    "get": "ag fáil",
+    "give": "ag tabhairt",
+    "put": "ag cur",
+    "take": "ag glacadh",
+    "make": "ag déanamh",
+    "look": "ag breathnú",
+    "know": "eolas agam",
+    "listen": "ag éisteacht",
+    "watch": "ag féachaint",
+    "finish": "ag críochnú",
+    "find": "ag aimsiú",
+    "think": "ag smaoineamh",
+    "tell": "ag insint",
+    "show": "ag taispeáint",
+    "hold": "ag coinneáil",
+    "jump": "ag léim",
+    "write": "ag scríobh",
+    "let": "ag ligean",
+    "work": "ag obair",
+    "share": "ag roinnt",
+    "smell": "ag boladh",
+    "taste": "ag blaiseadh",
+    "touch": "ag baint",
+    "dance": "ag damhsa",
+    "sing": "ag canadh",
+    "cut": "ag gearradh",
+    "build": "ag tógáil",
+    "swim": "ag snámh",
+    "ride": "ag rothaíocht",
+    "brush": "ag scuabadh",
+    "push": "ag brú",
+    "pull": "ag streachailt",
+    "throw": "ag caitheamh",
+    "catch": "ag breith",
+    "count": "ag comhaireamh",
+    "wake": "ag dúiseacht",
+    "cry": "ag caoineadh",
+    "laugh": "ag gáire",
+    "fix": "ag deisiú",
+    "cook": "ag cócaireacht",
+    "climb": "ag dreapadh",
     "yes": "sea",
     "no": "níl",
     "please": "le do thoil",
@@ -100,11 +142,21 @@
     "outside": "amuigh",
     "near": "in aice",
     "far": "i bhfad",
+    "here": "anseo",
+    "there": "ansiúd",
+    "up": "suas",
+    "down": "síos",
+    "off": "múchta",
+    "away": "ar shiúl",
+    "together": "le chéile",
     "and": "agus",
     "or": "nó",
     "because": "mar",
     "then": "ansin",
     "but": "ach",
+    "not": "ní",
+    "all": "gach rud",
+    "another": "ceann eile",
     "water": "uisce",
     "milk": "bainne",
     "juice": "sú",
@@ -297,7 +349,8 @@
     "kind": "cineálta",
     "gentle": "séimh",
     "careful": "cúramach",
-    "safe-place": "áit shábháilte"
+    "safe-place": "áit shábháilte",
+    "very": "an-mhaith"
   },
   "templates": {
     "want-object": "I want {thing}.",
@@ -331,7 +384,9 @@
       "pronoun": [
         "verb",
         "noun",
-        "adjective"
+        "adjective",
+        "negation",
+        "adverb"
       ],
       "determiner": [
         "noun",
@@ -342,23 +397,27 @@
         "noun",
         "adjective",
         "preposition",
-        "social"
+        "social",
+        "adverb"
       ],
       "noun": [
         "verb",
         "preposition",
         "conjunction",
-        "social"
+        "social",
+        "adverb"
       ],
       "adjective": [
         "noun",
         "social",
-        "conjunction"
+        "conjunction",
+        "adverb"
       ],
       "question": [
         "verb",
         "pronoun",
-        "determiner"
+        "determiner",
+        "adverb"
       ],
       "preposition": [
         "determiner",
@@ -369,11 +428,27 @@
         "pronoun",
         "determiner",
         "noun",
-        "verb"
+        "verb",
+        "negation"
       ],
       "social": [
         "noun",
-        "verb"
+        "verb",
+        "negation"
+      ],
+      "negation": [
+        "verb",
+        "determiner",
+        "noun",
+        "adjective",
+        "adverb"
+      ],
+      "adverb": [
+        "verb",
+        "noun",
+        "adjective",
+        "preposition",
+        "social"
       ]
     },
     "articles": {

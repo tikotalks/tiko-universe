@@ -1,4 +1,4 @@
-import { lexicons, realize } from '@tiko/talk-realizer'
+import { customNounFeatures, lexicons, realize } from '@tiko/talk-realizer'
 import { hasPack, loadPack } from '@tiko/talk-packs'
 import type {
   Category,
@@ -152,8 +152,11 @@ export function buildSentence(
   const code = locale.split('-')[0].toLowerCase()
   const lexicon = { ...(lexicons[code] ?? {}) }
   for (const word of chosen) {
-    // A word the child added is a name, and a name takes no article.
-    if (customIds.has(word.id) && word.pos === 'noun') lexicon[word.id] = { pos: 'noun', proper: true }
+    // A word the parent typed is a name if it is written like one — "Mum" takes no
+    // article, "trampoline" does.
+    if (customIds.has(word.id) && word.pos === 'noun') {
+      lexicon[word.id] = customNounFeatures(word.text, code)
+    }
   }
   return realize(
     chosen.map((word) => ({ id: word.id, text: word.text, pos: word.pos, category: word.category })),

@@ -23,6 +23,7 @@
     "helper": "yudansa",
     "doctor": "dòkter",
     "class": "klas",
+    "mine": "di mi",
     "want": "ke",
     "need": "mester",
     "like": "gusta",
@@ -53,6 +54,47 @@
     "rest": "sosegá",
     "try": "purba",
     "talk": "papia",
+    "get": "haña",
+    "give": "duna",
+    "put": "pone",
+    "take": "kohe",
+    "make": "traha",
+    "look": "wak",
+    "know": "sa",
+    "listen": "skucha",
+    "watch": "mira bon",
+    "finish": "termina",
+    "find": "haña bèk",
+    "think": "pensa",
+    "tell": "konta",
+    "show": "mustra",
+    "hold": "tene",
+    "jump": "salta",
+    "write": "skirbi",
+    "let": "laga",
+    "work": "traha trabou",
+    "share": "parti",
+    "smell": "hole",
+    "taste": "purba kome",
+    "touch": "mishi",
+    "dance": "balia",
+    "sing": "kanta",
+    "cut": "kòrta",
+    "build": "konstruí",
+    "swim": "landa",
+    "ride": "kore ku baiskel",
+    "brush": "brùs",
+    "push": "pusha",
+    "pull": "hala",
+    "throw": "tira",
+    "catch": "kohe na laira",
+    "count": "konta number",
+    "wake": "lanta for di soño",
+    "cry": "yora",
+    "laugh": "hari",
+    "fix": "drecha",
+    "cook": "kushiná",
+    "climb": "subi",
     "yes": "sí",
     "no": "nò",
     "please": "por fabor",
@@ -100,11 +142,21 @@
     "outside": "pafó",
     "near": "serka",
     "far": "leu",
+    "here": "aki",
+    "there": "ayanan",
+    "up": "ariba",
+    "down": "abou",
+    "off": "paga",
+    "away": "bai leu",
+    "together": "huntu",
     "and": "i",
     "or": "of",
     "because": "pasobra",
     "then": "anto",
     "but": "ma",
+    "not": "no",
+    "all": "tur",
+    "another": "un otro",
     "water": "awa",
     "milk": "lechi",
     "juice": "jus",
@@ -297,7 +349,8 @@
     "kind": "bon",
     "gentle": "suave",
     "careful": "kuidadoso",
-    "safe-place": "lugá sigur"
+    "safe-place": "lugá sigur",
+    "very": "masha"
   },
   "templates": {
     "want-object": "I want {thing}.",
@@ -331,7 +384,9 @@
       "pronoun": [
         "verb",
         "noun",
-        "adjective"
+        "adjective",
+        "negation",
+        "adverb"
       ],
       "determiner": [
         "noun",
@@ -342,23 +397,27 @@
         "noun",
         "adjective",
         "preposition",
-        "social"
+        "social",
+        "adverb"
       ],
       "noun": [
         "verb",
         "preposition",
         "conjunction",
-        "social"
+        "social",
+        "adverb"
       ],
       "adjective": [
         "noun",
         "social",
-        "conjunction"
+        "conjunction",
+        "adverb"
       ],
       "question": [
         "verb",
         "pronoun",
-        "determiner"
+        "determiner",
+        "adverb"
       ],
       "preposition": [
         "determiner",
@@ -369,11 +428,27 @@
         "pronoun",
         "determiner",
         "noun",
-        "verb"
+        "verb",
+        "negation"
       ],
       "social": [
         "noun",
-        "verb"
+        "verb",
+        "negation"
+      ],
+      "negation": [
+        "verb",
+        "determiner",
+        "noun",
+        "adjective",
+        "adverb"
+      ],
+      "adverb": [
+        "verb",
+        "noun",
+        "adjective",
+        "preposition",
+        "social"
       ]
     },
     "articles": {

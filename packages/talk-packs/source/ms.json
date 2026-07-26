@@ -23,6 +23,7 @@
     "helper": "pembantu",
     "doctor": "doktor",
     "class": "kelas",
+    "mine": "milik saya",
     "want": "nak",
     "need": "perlu",
     "like": "suka",
@@ -53,6 +54,47 @@
     "rest": "istirahat",
     "try": "coba",
     "talk": "bercakap",
+    "get": "dapat",
+    "give": "beri",
+    "put": "letak",
+    "take": "ambil",
+    "make": "buat",
+    "look": "pandang",
+    "know": "tahu",
+    "listen": "dengarkan",
+    "watch": "tonton",
+    "finish": "menyiapkan",
+    "find": "cari",
+    "think": "fikir",
+    "tell": "beritahu",
+    "show": "tunjuk",
+    "hold": "pegang",
+    "jump": "lompat",
+    "write": "tulis",
+    "let": "izinkan",
+    "work": "kerja",
+    "share": "kongsi",
+    "smell": "hidu",
+    "taste": "rasa",
+    "touch": "sentuh",
+    "dance": "menari",
+    "sing": "menyanyi",
+    "cut": "potong",
+    "build": "bina",
+    "swim": "berenang",
+    "ride": "naik",
+    "brush": "sikat",
+    "push": "tolak",
+    "pull": "tarik",
+    "throw": "baling",
+    "catch": "tangkap",
+    "count": "kira",
+    "wake": "bangun",
+    "cry": "menangis",
+    "laugh": "ketawa",
+    "fix": "betulkan",
+    "cook": "masak",
+    "climb": "panjat",
     "yes": "ya",
     "no": "tidak",
     "please": "tolong",
@@ -100,11 +142,21 @@
     "outside": "di luar",
     "near": "dekat",
     "far": "jauh",
+    "here": "di sini",
+    "there": "di sana",
+    "up": "ke atas",
+    "down": "ke bawah",
+    "off": "padam",
+    "away": "menjauh",
+    "together": "bersama",
     "and": "dan",
     "or": "atau",
     "because": "karena",
     "then": "lalu",
     "but": "tapi",
+    "not": "tidak",
+    "all": "semua",
+    "another": "satu lagi",
     "water": "air",
     "milk": "susu",
     "juice": "jus",
@@ -297,7 +349,8 @@
     "kind": "baik",
     "gentle": "lembut",
     "careful": "hati-hati",
-    "safe-place": "tempat aman"
+    "safe-place": "tempat aman",
+    "very": "sangat"
   },
   "templates": {
     "want-object": "I want {thing}.",
@@ -331,7 +384,9 @@
       "pronoun": [
         "verb",
         "noun",
-        "adjective"
+        "adjective",
+        "negation",
+        "adverb"
       ],
       "determiner": [
         "noun",
@@ -342,23 +397,27 @@
         "noun",
         "adjective",
         "preposition",
-        "social"
+        "social",
+        "adverb"
       ],
       "noun": [
         "verb",
         "preposition",
         "conjunction",
-        "social"
+        "social",
+        "adverb"
       ],
       "adjective": [
         "noun",
         "social",
-        "conjunction"
+        "conjunction",
+        "adverb"
       ],
       "question": [
         "verb",
         "pronoun",
-        "determiner"
+        "determiner",
+        "adverb"
       ],
       "preposition": [
         "determiner",
@@ -369,11 +428,27 @@
         "pronoun",
         "determiner",
         "noun",
-        "verb"
+        "verb",
+        "negation"
       ],
       "social": [
         "noun",
-        "verb"
+        "verb",
+        "negation"
+      ],
+      "negation": [
+        "verb",
+        "determiner",
+        "noun",
+        "adjective",
+        "adverb"
+      ],
+      "adverb": [
+        "verb",
+        "noun",
+        "adjective",
+        "preposition",
+        "social"
       ]
     },
     "articles": {},

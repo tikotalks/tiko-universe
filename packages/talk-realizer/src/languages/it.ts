@@ -1,5 +1,5 @@
 import type { Features, SelectedWord } from '../features'
-import { agreeAdjective, applyExperiencer, conjugateRegular, elide, induceGender, pluralize, possessiveForm } from '../morphology/romance'
+import { agreeAdjective, applyExperiencer, conjugateRegular, elide, induceGender, pluralize, possessiveForm, quantifierPhrase } from '../morphology/romance'
 import { extractObjectClitic } from '../morphology/clitic'
 import { agreesWith, formFor, isSensation, note, type LanguageRules } from '../profile'
 
@@ -130,7 +130,10 @@ export const italian: LanguageRules = {
         note(ctx.builder, `"${article} ${possessive}": Italian keeps the article before a possessive`)
         return { text: `${article} ${possessive}`, from: determiner.id }
       }
-      return { text: determiner.text, from: determiner.id }
+      return {
+        text: quantifierPhrase(determiner.features, determiner.text, 'it', feminine, plural),
+        from: determiner.id,
+      }
     }
 
     if (!head) return null

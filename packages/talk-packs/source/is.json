@@ -23,10 +23,11 @@
     "helper": "hjálpari",
     "doctor": "læknir",
     "class": "bekkur",
+    "mine": "mitt",
     "want": "vil",
     "need": "þarf",
     "like": "elska",
-    "feel": "finn",
+    "feel": "finn til",
     "see": "sé",
     "hear": "heyri",
     "have": "hef",
@@ -53,6 +54,47 @@
     "rest": "hvíli",
     "try": "prófa",
     "talk": "tala",
+    "get": "fæ",
+    "give": "gef",
+    "put": "set",
+    "take": "tek",
+    "make": "geri",
+    "look": "skoða",
+    "know": "veit",
+    "listen": "hlusta",
+    "watch": "horfi á",
+    "finish": "klára",
+    "find": "finn",
+    "think": "hugsa",
+    "tell": "segi frá",
+    "show": "sýni",
+    "hold": "held",
+    "jump": "hoppa",
+    "write": "skrifa",
+    "let": "leyfi",
+    "work": "vinn",
+    "share": "deili",
+    "smell": "finn lykt",
+    "taste": "smakka",
+    "touch": "kem við",
+    "dance": "dansa",
+    "sing": "syng",
+    "cut": "klippi",
+    "build": "byggi",
+    "swim": "syndi",
+    "ride": "hjóla",
+    "brush": "bursta",
+    "push": "ýti",
+    "pull": "dreg",
+    "throw": "kasta",
+    "catch": "grípa",
+    "count": "tel",
+    "wake": "vakna",
+    "cry": "græt",
+    "laugh": "hlæ",
+    "fix": "geri við",
+    "cook": "kokka",
+    "climb": "klifra",
     "yes": "já",
     "no": "nei",
     "please": "takk",
@@ -100,11 +142,21 @@
     "outside": "úti",
     "near": "nálægt",
     "far": "fjarri",
+    "here": "hérna",
+    "there": "þarna",
+    "up": "upp",
+    "down": "niður",
+    "off": "af",
+    "away": "í burtu",
+    "together": "saman",
     "and": "og",
     "or": "eða",
     "because": "því",
     "then": "svo",
     "but": "en",
+    "not": "ekki",
+    "all": "allt",
+    "another": "annan",
     "water": "vatn",
     "milk": "mjólk",
     "juice": "safi",
@@ -297,7 +349,8 @@
     "kind": "góður",
     "gentle": "blíður",
     "careful": "varkár",
-    "safe-place": "öruggur staður"
+    "safe-place": "öruggur staður",
+    "very": "mjög"
   },
   "templates": {
     "want-object": "I want {thing}.",
@@ -331,7 +384,9 @@
       "pronoun": [
         "verb",
         "noun",
-        "adjective"
+        "adjective",
+        "negation",
+        "adverb"
       ],
       "determiner": [
         "noun",
@@ -342,23 +397,27 @@
         "noun",
         "adjective",
         "preposition",
-        "social"
+        "social",
+        "adverb"
       ],
       "noun": [
         "verb",
         "preposition",
         "conjunction",
-        "social"
+        "social",
+        "adverb"
       ],
       "adjective": [
         "noun",
         "social",
-        "conjunction"
+        "conjunction",
+        "adverb"
       ],
       "question": [
         "verb",
         "pronoun",
-        "determiner"
+        "determiner",
+        "adverb"
       ],
       "preposition": [
         "determiner",
@@ -369,11 +428,27 @@
         "pronoun",
         "determiner",
         "noun",
-        "verb"
+        "verb",
+        "negation"
       ],
       "social": [
         "noun",
-        "verb"
+        "verb",
+        "negation"
+      ],
+      "negation": [
+        "verb",
+        "determiner",
+        "noun",
+        "adjective",
+        "adverb"
+      ],
+      "adverb": [
+        "verb",
+        "noun",
+        "adjective",
+        "preposition",
+        "social"
       ]
     },
     "articles": {

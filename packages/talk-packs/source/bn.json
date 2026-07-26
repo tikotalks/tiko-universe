@@ -23,6 +23,7 @@
     "helper": "সহায়ক",
     "doctor": "ডাক্তার",
     "class": "ক্লাস",
+    "mine": "আমারটা",
     "want": "চাই",
     "need": "দরকার",
     "like": "ভালোবাসি",
@@ -53,6 +54,47 @@
     "rest": "বিশ্রাম নিই",
     "try": "চেষ্টা করি",
     "talk": "কথা বলি",
+    "get": "পাই",
+    "give": "দিই",
+    "put": "রাখি",
+    "take": "নিই",
+    "make": "বানাই",
+    "look": "তাকাই",
+    "know": "জানি",
+    "listen": "মন দিয়ে শুনি",
+    "watch": "দেখতে থাকি",
+    "finish": "শেষ করি",
+    "find": "খুঁজে পাই",
+    "think": "ভাবি",
+    "tell": "বলি",
+    "show": "দেখাই",
+    "hold": "ধরি",
+    "jump": "লাফাই",
+    "write": "লিখি",
+    "let": "অনুমতি দিই",
+    "work": "কাজ করি",
+    "share": "ভাগ করি",
+    "smell": "শুঁকি",
+    "taste": "চাখি",
+    "touch": "ছুঁই",
+    "dance": "নাচি",
+    "sing": "গাই",
+    "cut": "কাটি",
+    "build": "গড়ি",
+    "swim": "সাঁতার কাটি",
+    "ride": "চড়ি",
+    "brush": "ব্রাশ করি",
+    "push": "ঠেলি",
+    "pull": "টানি",
+    "throw": "ছুঁড়ি",
+    "catch": "ধরে ফেলি",
+    "count": "গুনি",
+    "wake": "জাগি",
+    "cry": "কাঁদি",
+    "laugh": "হাসি",
+    "fix": "ঠিক করি",
+    "cook": "রান্না করি",
+    "climb": "উঠি",
     "yes": "হ্যাঁ",
     "no": "না",
     "please": "দয়া করে",
@@ -100,11 +142,21 @@
     "outside": "বাইরে",
     "near": "কাছে",
     "far": "দূরে",
+    "here": "এখানে",
+    "there": "ওখানে",
+    "up": "উপরের দিকে",
+    "down": "নিচের দিকে",
+    "off": "বন্ধ",
+    "away": "দূরে সরে",
+    "together": "একসাথে",
     "and": "এবং",
     "or": "অথবা",
     "because": "কারণ",
     "then": "তারপর",
     "but": "কিন্তু",
+    "not": "না",
+    "all": "সব",
+    "another": "আরেকটা",
     "water": "জল",
     "milk": "দুধ",
     "juice": "রস",
@@ -297,7 +349,8 @@
     "kind": "দয়ালু",
     "gentle": "নরম",
     "careful": "সাবধান",
-    "safe-place": "নিরাপদ জায়গা"
+    "safe-place": "নিরাপদ জায়গা",
+    "very": "খুব"
   },
   "templates": {
     "want-object": "I want {thing}.",
@@ -331,7 +384,9 @@
       "pronoun": [
         "verb",
         "noun",
-        "adjective"
+        "adjective",
+        "negation",
+        "adverb"
       ],
       "determiner": [
         "noun",
@@ -342,23 +397,27 @@
         "noun",
         "adjective",
         "preposition",
-        "social"
+        "social",
+        "adverb"
       ],
       "noun": [
         "verb",
         "preposition",
         "conjunction",
-        "social"
+        "social",
+        "adverb"
       ],
       "adjective": [
         "noun",
         "social",
-        "conjunction"
+        "conjunction",
+        "adverb"
       ],
       "question": [
         "verb",
         "pronoun",
-        "determiner"
+        "determiner",
+        "adverb"
       ],
       "preposition": [
         "determiner",
@@ -369,11 +428,27 @@
         "pronoun",
         "determiner",
         "noun",
-        "verb"
+        "verb",
+        "negation"
       ],
       "social": [
         "noun",
-        "verb"
+        "verb",
+        "negation"
+      ],
+      "negation": [
+        "verb",
+        "determiner",
+        "noun",
+        "adjective",
+        "adverb"
+      ],
+      "adverb": [
+        "verb",
+        "noun",
+        "adjective",
+        "preposition",
+        "social"
       ]
     },
     "articles": {

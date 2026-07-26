@@ -23,6 +23,7 @@
     "helper": "pomocník",
     "doctor": "doktor",
     "class": "trieda",
+    "mine": "moje",
     "want": "chcem",
     "need": "potrebujem",
     "like": "mám rád",
@@ -53,6 +54,47 @@
     "rest": "odpočívam",
     "try": "skúšam",
     "talk": "hovorím",
+    "get": "dostávam",
+    "give": "dávam",
+    "put": "kladiem",
+    "take": "beriem",
+    "make": "robím",
+    "look": "pozerám",
+    "know": "viem",
+    "listen": "počúvam",
+    "watch": "sledujem",
+    "finish": "dokončujem",
+    "find": "nachádzam",
+    "think": "myslím",
+    "tell": "rozprávam",
+    "show": "ukazujem",
+    "hold": "držím",
+    "jump": "skáčem",
+    "write": "píšem",
+    "let": "dovoľujem",
+    "work": "pracujem",
+    "share": "delím sa",
+    "smell": "voniam",
+    "taste": "chutnám",
+    "touch": "dotýkam sa",
+    "dance": "tancujem",
+    "sing": "spievam",
+    "cut": "strihám",
+    "build": "stavím",
+    "swim": "plávam",
+    "ride": "jazdím",
+    "brush": "čistím",
+    "push": "tlačím",
+    "pull": "tiahnem",
+    "throw": "hodím",
+    "catch": "chytám",
+    "count": "počítam",
+    "wake": "prebúdzam sa",
+    "cry": "plačem",
+    "laugh": "smejem sa",
+    "fix": "opravujem",
+    "cook": "varím",
+    "climb": "leziem",
     "yes": "áno",
     "no": "nie",
     "please": "prosím",
@@ -100,11 +142,21 @@
     "outside": "vonku",
     "near": "blízko",
     "far": "ďaleko",
+    "here": "tu",
+    "there": "tam",
+    "up": "nahor",
+    "down": "dolu",
+    "off": "vypnuté",
+    "away": "preč",
+    "together": "spolu",
     "and": "a",
     "or": "alebo",
     "because": "pretože",
     "then": "potom",
     "but": "ale",
+    "not": "ne",
+    "all": "všetko",
+    "another": "ešte jeden",
     "water": "voda",
     "milk": "mlieko",
     "juice": "džús",
@@ -297,7 +349,8 @@
     "kind": "dobrý",
     "gentle": "jemný",
     "careful": "opatrný",
-    "safe-place": "bezpečné miesto"
+    "safe-place": "bezpečné miesto",
+    "very": "veľmi"
   },
   "templates": {
     "want-object": "I want {thing}.",
@@ -331,7 +384,9 @@
       "pronoun": [
         "verb",
         "noun",
-        "adjective"
+        "adjective",
+        "negation",
+        "adverb"
       ],
       "determiner": [
         "noun",
@@ -342,23 +397,27 @@
         "noun",
         "adjective",
         "preposition",
-        "social"
+        "social",
+        "adverb"
       ],
       "noun": [
         "verb",
         "preposition",
         "conjunction",
-        "social"
+        "social",
+        "adverb"
       ],
       "adjective": [
         "noun",
         "social",
-        "conjunction"
+        "conjunction",
+        "adverb"
       ],
       "question": [
         "verb",
         "pronoun",
-        "determiner"
+        "determiner",
+        "adverb"
       ],
       "preposition": [
         "determiner",
@@ -369,11 +428,27 @@
         "pronoun",
         "determiner",
         "noun",
-        "verb"
+        "verb",
+        "negation"
       ],
       "social": [
         "noun",
-        "verb"
+        "verb",
+        "negation"
+      ],
+      "negation": [
+        "verb",
+        "determiner",
+        "noun",
+        "adjective",
+        "adverb"
+      ],
+      "adverb": [
+        "verb",
+        "noun",
+        "adjective",
+        "preposition",
+        "social"
       ]
     },
     "cases": [

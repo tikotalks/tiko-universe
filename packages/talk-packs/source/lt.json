@@ -23,6 +23,7 @@
     "helper": "pagalbininkas",
     "doctor": "daktaras",
     "class": "klasė",
+    "mine": "mano",
     "want": "noriu",
     "need": "reikia",
     "like": "myliu",
@@ -53,6 +54,47 @@
     "rest": "ilsiuosi",
     "try": "bandau",
     "talk": "kalbu",
+    "get": "gaunu",
+    "give": "duodu",
+    "put": "dedu",
+    "take": "imu",
+    "make": "darau",
+    "look": "žiūriu",
+    "know": "žinau",
+    "listen": "klausausi",
+    "watch": "stebiu",
+    "finish": "baigiu",
+    "find": "randu",
+    "think": "manau",
+    "tell": "pasakoju",
+    "show": "parodau",
+    "hold": "laikau",
+    "jump": "šokinėju",
+    "write": "rašau",
+    "let": "leidžiu",
+    "work": "dirbu",
+    "share": "dalinuosi",
+    "smell": "uostau",
+    "taste": "ragauju",
+    "touch": "prisilieču",
+    "dance": "šoku",
+    "sing": "dainuoju",
+    "cut": "kerpu",
+    "build": "statau",
+    "swim": "plaukiu",
+    "ride": "važiuoju",
+    "brush": "šveičiu",
+    "push": "stumiu",
+    "pull": "traukiu",
+    "throw": "metu",
+    "catch": "gaudau",
+    "count": "skaičiuoju",
+    "wake": "pabundu",
+    "cry": "verkiu",
+    "laugh": "juokiuosi",
+    "fix": "remontuoju",
+    "cook": "gaminu",
+    "climb": "lipu",
     "yes": "taip",
     "no": "ne",
     "please": "prašau",
@@ -100,11 +142,21 @@
     "outside": "lauke",
     "near": "netoli",
     "far": "toli",
+    "here": "čia",
+    "there": "ten",
+    "up": "aukštyn",
+    "down": "žemyn",
+    "off": "išjungta",
+    "away": "šalin",
+    "together": "kartu",
     "and": "ir",
     "or": "arba",
     "because": "nes",
     "then": "tada",
     "but": "bet",
+    "not": "ne",
+    "all": "visi",
+    "another": "dar vienas",
     "water": "vanduo",
     "milk": "pienas",
     "juice": "sultys",
@@ -297,7 +349,8 @@
     "kind": "geras",
     "gentle": "švelnus",
     "careful": "atsargus",
-    "safe-place": "saugi vieta"
+    "safe-place": "saugi vieta",
+    "very": "labai"
   },
   "templates": {
     "want-object": "I want {thing}.",
@@ -331,7 +384,9 @@
       "pronoun": [
         "verb",
         "noun",
-        "adjective"
+        "adjective",
+        "negation",
+        "adverb"
       ],
       "determiner": [
         "noun",
@@ -342,23 +397,27 @@
         "noun",
         "adjective",
         "preposition",
-        "social"
+        "social",
+        "adverb"
       ],
       "noun": [
         "verb",
         "preposition",
         "conjunction",
-        "social"
+        "social",
+        "adverb"
       ],
       "adjective": [
         "noun",
         "social",
-        "conjunction"
+        "conjunction",
+        "adverb"
       ],
       "question": [
         "verb",
         "pronoun",
-        "determiner"
+        "determiner",
+        "adverb"
       ],
       "preposition": [
         "determiner",
@@ -369,11 +428,27 @@
         "pronoun",
         "determiner",
         "noun",
-        "verb"
+        "verb",
+        "negation"
       ],
       "social": [
         "noun",
-        "verb"
+        "verb",
+        "negation"
+      ],
+      "negation": [
+        "verb",
+        "determiner",
+        "noun",
+        "adjective",
+        "adverb"
+      ],
+      "adverb": [
+        "verb",
+        "noun",
+        "adjective",
+        "preposition",
+        "social"
       ]
     },
     "cases": [

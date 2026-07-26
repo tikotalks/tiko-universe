@@ -21,6 +21,7 @@
     "helper": "ajudante",
     "doctor": "médico",
     "class": "turma",
+    "mine": "o meu",
     "want": "querer",
     "need": "precisar",
     "like": "gostar",
@@ -51,6 +52,47 @@
     "rest": "descansar",
     "try": "tentar",
     "talk": "falar",
+    "get": "conseguir",
+    "give": "dar",
+    "put": "pôr",
+    "take": "pegar",
+    "make": "fabricar",
+    "look": "olhar",
+    "know": "saber",
+    "listen": "escutar",
+    "watch": "assistir",
+    "finish": "terminar",
+    "find": "encontrar",
+    "think": "pensar",
+    "tell": "explicar",
+    "show": "mostrar",
+    "hold": "segurar",
+    "jump": "saltar",
+    "write": "escrever",
+    "let": "deixar",
+    "work": "trabalhar",
+    "share": "partilhar",
+    "smell": "cheirar",
+    "taste": "provar",
+    "touch": "tocar",
+    "dance": "dançar",
+    "sing": "cantar",
+    "cut": "cortar",
+    "build": "construir",
+    "swim": "nadar",
+    "ride": "andar de bicicleta",
+    "brush": "escovar",
+    "push": "empurrar",
+    "pull": "puxar",
+    "throw": "atirar",
+    "catch": "apanhar",
+    "count": "contar",
+    "wake": "acordar",
+    "cry": "chorar",
+    "laugh": "rir",
+    "fix": "arranjar",
+    "cook": "cozinhar",
+    "climb": "trepar",
     "yes": "sim",
     "no": "não",
     "please": "por favor",
@@ -98,11 +140,21 @@
     "outside": "fora de",
     "near": "perto de",
     "far": "longe",
+    "here": "aqui",
+    "there": "ali",
+    "up": "acima",
+    "down": "abaixo",
+    "off": "desligado",
+    "away": "para longe",
+    "together": "juntos",
     "and": "e",
     "or": "ou",
     "because": "porque",
     "then": "então",
     "but": "mas",
+    "not": "não",
+    "all": "todos",
+    "another": "outro",
     "water": "água",
     "milk": "leite",
     "juice": "sumo",
@@ -295,7 +347,8 @@
     "kind": "simpático",
     "gentle": "gentil",
     "careful": "cuidadoso",
-    "safe-place": "lugar seguro"
+    "safe-place": "lugar seguro",
+    "very": "muito"
   },
   "templates": {
     "want-object": "Eu quero {thing}.",
@@ -329,7 +382,9 @@
       "pronoun": [
         "verb",
         "noun",
-        "adjective"
+        "adjective",
+        "negation",
+        "adverb"
       ],
       "determiner": [
         "noun",
@@ -340,24 +395,28 @@
         "noun",
         "adjective",
         "preposition",
-        "social"
+        "social",
+        "adverb"
       ],
       "noun": [
         "adjective",
         "verb",
         "preposition",
         "conjunction",
-        "social"
+        "social",
+        "adverb"
       ],
       "adjective": [
         "noun",
         "social",
-        "conjunction"
+        "conjunction",
+        "adverb"
       ],
       "question": [
         "verb",
         "pronoun",
-        "determiner"
+        "determiner",
+        "adverb"
       ],
       "preposition": [
         "determiner",
@@ -368,11 +427,27 @@
         "pronoun",
         "determiner",
         "noun",
-        "verb"
+        "verb",
+        "negation"
       ],
       "social": [
         "noun",
-        "verb"
+        "verb",
+        "negation"
+      ],
+      "negation": [
+        "verb",
+        "determiner",
+        "noun",
+        "adjective",
+        "adverb"
+      ],
+      "adverb": [
+        "verb",
+        "noun",
+        "adjective",
+        "preposition",
+        "social"
       ]
     },
     "articles": {

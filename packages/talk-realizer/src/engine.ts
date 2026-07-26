@@ -150,6 +150,9 @@ export function realizeWith(
     }
   }
 
+  /** Degree adverbs already placed in front of the word they strengthen. */
+  const placedDegrees = new Set<string>()
+
   const emitPhrase = (phrase: Phrase): void => {
     switch (phrase.kind) {
       case 'raw':
@@ -179,7 +182,21 @@ export function realizeWith(
       case 'adjp': {
         const phraseCtx = phraseContext('predicate', phrase, false)
         for (const adjective of phrase.adjectives) {
-          push(builder, rules.adjective(adjective, { kind: 'np', adjectives: [] }, phraseCtx), adjective.id)
+          const written = rules.adjective(adjective, { kind: 'np', adjectives: [] }, phraseCtx)
+          // "very" belongs in front of what it strengthens — "I am very happy", not
+          // "I am happy very", which is where the clause adverbs go.
+          for (const degree of chunks.adverbs.filter((adverb) => adverb.features.degree)) {
+            // Chinese marks an adjectival predicate with 很, which is also its word
+            // for "very": "我很开心", not "我很很开心".
+            placedDegrees.add(degree.id)
+            if (written.startsWith(degree.text)) {
+              absorb(builder, degree.id)
+              note(builder, `"${degree.text}" is already there, as the predicate marker`)
+              continue
+            }
+            push(builder, degree.text, degree.id)
+          }
+          push(builder, written, adjective.id)
         }
         return
       }
@@ -225,7 +242,7 @@ export function realizeWith(
    */
   const hasVerbComplement = chunks.complements.some((phrase) => phrase.kind === 'vp')
   const verbTailOf = (verb: typeof chunks.verb): string | undefined =>
-    hasVerbComplement ? undefined : verb?.features.verbTail
+    hasVerbComplement && !rules.profile.verbTailIsVerb ? undefined : verb?.features.verbTail
 
   // Under verb-second inversion a verb's tail follows the subject rather than
   // the verb: "Vad vill du ha?", not "Vad vill ha du?".
@@ -460,6 +477,9 @@ export function realizeWith(
   }
 
   for (const adverb of chunks.adverbs) {
+    // A degree adverb has already gone in front of the word it strengthens, unless
+    // there was no such word — in which case the child still chose the tile.
+    if (placedDegrees.has(adverb.id)) continue
     push(builder, adverb.text, adverb.id)
   }
 

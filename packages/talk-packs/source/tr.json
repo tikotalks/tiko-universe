@@ -23,6 +23,7 @@
     "helper": "yardımcı",
     "doctor": "doktor",
     "class": "sınıf",
+    "mine": "benimki",
     "want": "istiyorum",
     "need": "ihtiyacım var",
     "like": "seviyorum",
@@ -53,6 +54,47 @@
     "rest": "dinleniyorum",
     "try": "deniyorum",
     "talk": "konuşuyorum",
+    "get": "getiriyorum",
+    "give": "veriyorum",
+    "put": "koyuyorum",
+    "take": "alıyorum",
+    "make": "yapıyorum",
+    "look": "bakıyorum",
+    "know": "biliyorum",
+    "listen": "dinliyorum",
+    "watch": "izliyorum",
+    "finish": "bitiriyorum",
+    "find": "buluyorum",
+    "think": "düşünüyorum",
+    "tell": "anlatıyorum",
+    "show": "gösteriyorum",
+    "hold": "tutuyorum",
+    "jump": "zıplıyorum",
+    "write": "yazıyorum",
+    "let": "izin veriyorum",
+    "work": "çalışıyorum",
+    "share": "paylaşıyorum",
+    "smell": "kokluyorum",
+    "taste": "tadıyorum",
+    "touch": "dokunuyorum",
+    "dance": "dans ediyorum",
+    "sing": "şarkı söylüyorum",
+    "cut": "kesiyorum",
+    "build": "inşa ediyorum",
+    "swim": "yüzüyorum",
+    "ride": "biniyorum",
+    "brush": "fırçalıyorum",
+    "push": "itiyorum",
+    "pull": "çekiyorum",
+    "throw": "atıyorum",
+    "catch": "yakalıyorum",
+    "count": "sayıyorum",
+    "wake": "uyanıyorum",
+    "cry": "ağlıyorum",
+    "laugh": "gülüyorum",
+    "fix": "tamir ediyorum",
+    "cook": "yemek yapıyorum",
+    "climb": "tırmanıyorum",
     "yes": "evet",
     "no": "hayır",
     "please": "lütfen",
@@ -100,11 +142,21 @@
     "outside": "dışarıda",
     "near": "yakın",
     "far": "uzak",
+    "here": "burada",
+    "there": "orada",
+    "up": "yukarı",
+    "down": "aşağı",
+    "off": "kapalı",
+    "away": "uzağa",
+    "together": "birlikte",
     "and": "ve",
     "or": "veya",
     "because": "çünkü",
     "then": "sonra",
     "but": "ama",
+    "not": "değil",
+    "all": "hepsi",
+    "another": "bir tane daha",
     "water": "su",
     "milk": "süt",
     "juice": "meyve suyu",
@@ -297,7 +349,8 @@
     "kind": "nazik",
     "gentle": "yumuşak",
     "careful": "dikkatli",
-    "safe-place": "güvenli yer"
+    "safe-place": "güvenli yer",
+    "very": "pek"
   },
   "templates": {
     "want-object": "I want {thing}.",
@@ -331,7 +384,9 @@
       "pronoun": [
         "verb",
         "noun",
-        "adjective"
+        "adjective",
+        "negation",
+        "adverb"
       ],
       "determiner": [
         "noun",
@@ -342,23 +397,27 @@
         "noun",
         "adjective",
         "preposition",
-        "social"
+        "social",
+        "adverb"
       ],
       "noun": [
         "verb",
         "preposition",
         "conjunction",
-        "social"
+        "social",
+        "adverb"
       ],
       "adjective": [
         "noun",
         "social",
-        "conjunction"
+        "conjunction",
+        "adverb"
       ],
       "question": [
         "verb",
         "pronoun",
-        "determiner"
+        "determiner",
+        "adverb"
       ],
       "preposition": [
         "determiner",
@@ -369,11 +428,27 @@
         "pronoun",
         "determiner",
         "noun",
-        "verb"
+        "verb",
+        "negation"
       ],
       "social": [
         "noun",
-        "verb"
+        "verb",
+        "negation"
+      ],
+      "negation": [
+        "verb",
+        "determiner",
+        "noun",
+        "adjective",
+        "adverb"
+      ],
+      "adverb": [
+        "verb",
+        "noun",
+        "adjective",
+        "preposition",
+        "social"
       ]
     },
     "cases": [
