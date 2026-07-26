@@ -1,0 +1,3135 @@
+{
+  "locale": "sq",
+  "version": 1,
+  "words": [
+    {
+      "id": "i",
+      "pos": "pronoun",
+      "category": "people",
+      "frequency": 10,
+      "icon": "user",
+      "text": "unë"
+    },
+    {
+      "id": "you",
+      "pos": "pronoun",
+      "category": "people",
+      "frequency": 10,
+      "icon": "user",
+      "text": "ti"
+    },
+    {
+      "id": "we",
+      "pos": "pronoun",
+      "category": "people",
+      "frequency": 7,
+      "icon": "user",
+      "text": "ne"
+    },
+    {
+      "id": "me",
+      "pos": "pronoun",
+      "category": "people",
+      "frequency": 10,
+      "icon": "user",
+      "text": "mua"
+    },
+    {
+      "id": "my",
+      "pos": "pronoun",
+      "category": "people",
+      "frequency": 10,
+      "icon": "user",
+      "text": "im"
+    },
+    {
+      "id": "your",
+      "pos": "pronoun",
+      "category": "people",
+      "frequency": 7,
+      "icon": "user",
+      "text": "jotë"
+    },
+    {
+      "id": "he",
+      "pos": "pronoun",
+      "category": "people",
+      "frequency": 7,
+      "icon": "user",
+      "text": "ai"
+    },
+    {
+      "id": "she",
+      "pos": "pronoun",
+      "category": "people",
+      "frequency": 7,
+      "icon": "user",
+      "text": "ajo"
+    },
+    {
+      "id": "they",
+      "pos": "pronoun",
+      "category": "people",
+      "frequency": 7,
+      "icon": "user",
+      "text": "ata"
+    },
+    {
+      "id": "mum",
+      "pos": "noun",
+      "category": "people",
+      "frequency": 7,
+      "icon": "user",
+      "text": "mami"
+    },
+    {
+      "id": "dad",
+      "pos": "noun",
+      "category": "people",
+      "frequency": 7,
+      "icon": "user",
+      "text": "babi"
+    },
+    {
+      "id": "teacher",
+      "pos": "noun",
+      "category": "people",
+      "frequency": 7,
+      "icon": "user",
+      "text": "mësuese"
+    },
+    {
+      "id": "friend",
+      "pos": "noun",
+      "category": "people",
+      "frequency": 7,
+      "icon": "user",
+      "text": "shok"
+    },
+    {
+      "id": "brother",
+      "pos": "noun",
+      "category": "people",
+      "frequency": 7,
+      "icon": "user",
+      "text": "vëlla"
+    },
+    {
+      "id": "sister",
+      "pos": "noun",
+      "category": "people",
+      "frequency": 7,
+      "icon": "user",
+      "text": "motër"
+    },
+    {
+      "id": "grandma",
+      "pos": "noun",
+      "category": "people",
+      "frequency": 7,
+      "icon": "user",
+      "text": "gjyshe"
+    },
+    {
+      "id": "grandpa",
+      "pos": "noun",
+      "category": "people",
+      "frequency": 7,
+      "icon": "user",
+      "text": "gjysh"
+    },
+    {
+      "id": "helper",
+      "pos": "noun",
+      "category": "people",
+      "frequency": 7,
+      "icon": "user",
+      "text": "ndihmës"
+    },
+    {
+      "id": "doctor",
+      "pos": "noun",
+      "category": "people",
+      "frequency": 7,
+      "icon": "user",
+      "text": "doktor"
+    },
+    {
+      "id": "class",
+      "pos": "noun",
+      "category": "people",
+      "frequency": 7,
+      "icon": "user",
+      "text": "klasë"
+    },
+    {
+      "id": "want",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 10,
+      "icon": "play",
+      "inflections": {
+        "past": "wanted"
+      },
+      "text": "dua"
+    },
+    {
+      "id": "need",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 10,
+      "icon": "play",
+      "inflections": {
+        "past": "needed"
+      },
+      "text": "kam nevojë"
+    },
+    {
+      "id": "like",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play",
+      "inflections": {
+        "past": "likeed"
+      },
+      "text": "pëlqej"
+    },
+    {
+      "id": "feel",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 10,
+      "icon": "play",
+      "inflections": {
+        "past": "feeled"
+      },
+      "text": "ndihem"
+    },
+    {
+      "id": "see",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play",
+      "inflections": {
+        "past": "seeed"
+      },
+      "text": "shoh"
+    },
+    {
+      "id": "hear",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play",
+      "inflections": {
+        "past": "heared"
+      },
+      "text": "dëgjoj"
+    },
+    {
+      "id": "have",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play",
+      "inflections": {
+        "past": "haveed"
+      },
+      "text": "kam"
+    },
+    {
+      "id": "go",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play",
+      "text": "shkoj"
+    },
+    {
+      "id": "come",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play",
+      "inflections": {
+        "past": "comeed"
+      },
+      "text": "vij"
+    },
+    {
+      "id": "play",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play",
+      "inflections": {
+        "past": "played"
+      },
+      "text": "luaj"
+    },
+    {
+      "id": "read",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play",
+      "inflections": {
+        "past": "readed"
+      },
+      "text": "lexoj"
+    },
+    {
+      "id": "draw",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play",
+      "inflections": {
+        "past": "drawed"
+      },
+      "text": "vizatoj"
+    },
+    {
+      "id": "eat",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play",
+      "text": "ha"
+    },
+    {
+      "id": "drink",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play",
+      "text": "pi"
+    },
+    {
+      "id": "sit",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play",
+      "text": "ulem"
+    },
+    {
+      "id": "stand",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play",
+      "text": "ngrihem"
+    },
+    {
+      "id": "walk",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play",
+      "inflections": {
+        "past": "walked"
+      },
+      "text": "shëtit"
+    },
+    {
+      "id": "run",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play",
+      "text": "vrapoj"
+    },
+    {
+      "id": "stop",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 10,
+      "icon": "play",
+      "inflections": {
+        "past": "stoped"
+      },
+      "text": "ndalem"
+    },
+    {
+      "id": "start",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play",
+      "inflections": {
+        "past": "started"
+      },
+      "text": "filloj"
+    },
+    {
+      "id": "wait",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play",
+      "inflections": {
+        "past": "waited"
+      },
+      "text": "pres"
+    },
+    {
+      "id": "help",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 10,
+      "icon": "play",
+      "inflections": {
+        "past": "helped"
+      },
+      "text": "ndihmoj"
+    },
+    {
+      "id": "choose",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play",
+      "inflections": {
+        "past": "chooseed"
+      },
+      "text": "zgjedh"
+    },
+    {
+      "id": "open",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play",
+      "inflections": {
+        "past": "opened"
+      },
+      "text": "hap"
+    },
+    {
+      "id": "close",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play",
+      "inflections": {
+        "past": "closeed"
+      },
+      "text": "mbyll"
+    },
+    {
+      "id": "wash",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play",
+      "inflections": {
+        "past": "washed"
+      },
+      "text": "laj"
+    },
+    {
+      "id": "sleep",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play",
+      "text": "fle"
+    },
+    {
+      "id": "rest",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play",
+      "inflections": {
+        "past": "rested"
+      },
+      "text": "pushoj"
+    },
+    {
+      "id": "try",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play",
+      "inflections": {
+        "past": "tryed"
+      },
+      "text": "provoj"
+    },
+    {
+      "id": "talk",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play",
+      "inflections": {
+        "past": "talked"
+      },
+      "text": "flas"
+    },
+    {
+      "id": "yes",
+      "pos": "social",
+      "category": "social",
+      "frequency": 9,
+      "icon": "chat-bubble",
+      "text": "po"
+    },
+    {
+      "id": "no",
+      "pos": "social",
+      "category": "social",
+      "frequency": 9,
+      "icon": "chat-bubble",
+      "text": "jo"
+    },
+    {
+      "id": "please",
+      "pos": "social",
+      "category": "social",
+      "frequency": 9,
+      "icon": "chat-bubble",
+      "text": "të lutem"
+    },
+    {
+      "id": "thank-you",
+      "pos": "social",
+      "category": "social",
+      "frequency": 9,
+      "icon": "chat-bubble",
+      "text": "faleminderit"
+    },
+    {
+      "id": "sorry",
+      "pos": "social",
+      "category": "social",
+      "frequency": 9,
+      "icon": "chat-bubble",
+      "text": "më vjen keq"
+    },
+    {
+      "id": "hello",
+      "pos": "social",
+      "category": "social",
+      "frequency": 9,
+      "icon": "chat-bubble",
+      "text": "përshëndetje"
+    },
+    {
+      "id": "goodbye",
+      "pos": "social",
+      "category": "social",
+      "frequency": 9,
+      "icon": "chat-bubble",
+      "text": "mirupafshim"
+    },
+    {
+      "id": "more",
+      "pos": "social",
+      "category": "social",
+      "frequency": 9,
+      "icon": "chat-bubble",
+      "text": "më shumë"
+    },
+    {
+      "id": "all-done",
+      "pos": "social",
+      "category": "social",
+      "frequency": 9,
+      "icon": "chat-bubble",
+      "text": "gjithçka gati"
+    },
+    {
+      "id": "again",
+      "pos": "social",
+      "category": "social",
+      "frequency": 9,
+      "icon": "chat-bubble",
+      "text": "përsëri"
+    },
+    {
+      "id": "finished",
+      "pos": "social",
+      "category": "social",
+      "frequency": 9,
+      "icon": "chat-bubble",
+      "text": "mbaroi"
+    },
+    {
+      "id": "okay",
+      "pos": "social",
+      "category": "social",
+      "frequency": 9,
+      "icon": "chat-bubble",
+      "text": "në rregull"
+    },
+    {
+      "id": "not-yet",
+      "pos": "social",
+      "category": "social",
+      "frequency": 9,
+      "icon": "chat-bubble",
+      "text": "jo tani"
+    },
+    {
+      "id": "maybe",
+      "pos": "social",
+      "category": "social",
+      "frequency": 9,
+      "icon": "chat-bubble",
+      "text": "ndoshta"
+    },
+    {
+      "id": "what",
+      "pos": "question",
+      "category": "questions",
+      "frequency": 8,
+      "icon": "question-circle",
+      "text": "çfarë"
+    },
+    {
+      "id": "where",
+      "pos": "question",
+      "category": "questions",
+      "frequency": 8,
+      "icon": "question-circle",
+      "text": "ku"
+    },
+    {
+      "id": "who",
+      "pos": "question",
+      "category": "questions",
+      "frequency": 8,
+      "icon": "question-circle",
+      "text": "kush"
+    },
+    {
+      "id": "when",
+      "pos": "question",
+      "category": "questions",
+      "frequency": 8,
+      "icon": "question-circle",
+      "text": "kur"
+    },
+    {
+      "id": "why",
+      "pos": "question",
+      "category": "questions",
+      "frequency": 8,
+      "icon": "question-circle",
+      "text": "pse"
+    },
+    {
+      "id": "which",
+      "pos": "question",
+      "category": "questions",
+      "frequency": 8,
+      "icon": "question-circle",
+      "text": "cili"
+    },
+    {
+      "id": "how",
+      "pos": "question",
+      "category": "questions",
+      "frequency": 8,
+      "icon": "question-circle",
+      "text": "si"
+    },
+    {
+      "id": "can",
+      "pos": "question",
+      "category": "questions",
+      "frequency": 8,
+      "icon": "question-circle",
+      "text": "mundem"
+    },
+    {
+      "id": "is",
+      "pos": "question",
+      "category": "questions",
+      "frequency": 8,
+      "icon": "question-circle",
+      "text": "është"
+    },
+    {
+      "id": "are",
+      "pos": "question",
+      "category": "questions",
+      "frequency": 8,
+      "icon": "question-circle",
+      "text": "janë"
+    },
+    {
+      "id": "a",
+      "pos": "determiner",
+      "category": "helpers",
+      "frequency": 8,
+      "icon": "text",
+      "text": "një"
+    },
+    {
+      "id": "the",
+      "pos": "determiner",
+      "category": "helpers",
+      "frequency": 8,
+      "icon": "text",
+      "text": "ky"
+    },
+    {
+      "id": "this",
+      "pos": "determiner",
+      "category": "helpers",
+      "frequency": 8,
+      "icon": "text",
+      "text": "ky"
+    },
+    {
+      "id": "that",
+      "pos": "determiner",
+      "category": "helpers",
+      "frequency": 8,
+      "icon": "text",
+      "text": "ai"
+    },
+    {
+      "id": "some",
+      "pos": "determiner",
+      "category": "helpers",
+      "frequency": 8,
+      "icon": "text",
+      "text": "disa"
+    },
+    {
+      "id": "one",
+      "pos": "determiner",
+      "category": "helpers",
+      "frequency": 8,
+      "icon": "text",
+      "text": "një"
+    },
+    {
+      "id": "two",
+      "pos": "determiner",
+      "category": "helpers",
+      "frequency": 8,
+      "icon": "text",
+      "text": "dy"
+    },
+    {
+      "id": "three",
+      "pos": "determiner",
+      "category": "helpers",
+      "frequency": 8,
+      "icon": "text",
+      "text": "tre"
+    },
+    {
+      "id": "many",
+      "pos": "determiner",
+      "category": "helpers",
+      "frequency": 8,
+      "icon": "text",
+      "text": "shumë"
+    },
+    {
+      "id": "little",
+      "pos": "determiner",
+      "category": "helpers",
+      "frequency": 8,
+      "icon": "text",
+      "text": "pak"
+    },
+    {
+      "id": "big",
+      "pos": "determiner",
+      "category": "helpers",
+      "frequency": 8,
+      "icon": "text",
+      "text": "i madh"
+    },
+    {
+      "id": "in",
+      "pos": "preposition",
+      "category": "positions",
+      "frequency": 7,
+      "icon": "arrow-right",
+      "text": "në"
+    },
+    {
+      "id": "on",
+      "pos": "preposition",
+      "category": "positions",
+      "frequency": 7,
+      "icon": "arrow-right",
+      "text": "mbi"
+    },
+    {
+      "id": "under",
+      "pos": "preposition",
+      "category": "positions",
+      "frequency": 7,
+      "icon": "arrow-right",
+      "text": "nën"
+    },
+    {
+      "id": "next-to",
+      "pos": "preposition",
+      "category": "positions",
+      "frequency": 7,
+      "icon": "arrow-right",
+      "text": "pranë"
+    },
+    {
+      "id": "with",
+      "pos": "preposition",
+      "category": "positions",
+      "frequency": 7,
+      "icon": "arrow-right",
+      "text": "me"
+    },
+    {
+      "id": "without",
+      "pos": "preposition",
+      "category": "positions",
+      "frequency": 7,
+      "icon": "arrow-right",
+      "text": "pa"
+    },
+    {
+      "id": "to",
+      "pos": "preposition",
+      "category": "positions",
+      "frequency": 7,
+      "icon": "arrow-right",
+      "text": "te"
+    },
+    {
+      "id": "from",
+      "pos": "preposition",
+      "category": "positions",
+      "frequency": 7,
+      "icon": "arrow-right",
+      "text": "nga"
+    },
+    {
+      "id": "inside",
+      "pos": "preposition",
+      "category": "positions",
+      "frequency": 7,
+      "icon": "arrow-right",
+      "text": "brenda"
+    },
+    {
+      "id": "outside",
+      "pos": "preposition",
+      "category": "positions",
+      "frequency": 7,
+      "icon": "arrow-right",
+      "text": "jashtë"
+    },
+    {
+      "id": "near",
+      "pos": "preposition",
+      "category": "positions",
+      "frequency": 7,
+      "icon": "arrow-right",
+      "text": "afër"
+    },
+    {
+      "id": "far",
+      "pos": "preposition",
+      "category": "positions",
+      "frequency": 7,
+      "icon": "arrow-right",
+      "text": "larg"
+    },
+    {
+      "id": "and",
+      "pos": "conjunction",
+      "category": "helpers",
+      "frequency": 6,
+      "icon": "branch",
+      "text": "dhe"
+    },
+    {
+      "id": "or",
+      "pos": "conjunction",
+      "category": "helpers",
+      "frequency": 6,
+      "icon": "branch",
+      "text": "ose"
+    },
+    {
+      "id": "because",
+      "pos": "conjunction",
+      "category": "helpers",
+      "frequency": 6,
+      "icon": "branch",
+      "text": "sepse"
+    },
+    {
+      "id": "then",
+      "pos": "conjunction",
+      "category": "helpers",
+      "frequency": 6,
+      "icon": "branch",
+      "text": "pastaj"
+    },
+    {
+      "id": "but",
+      "pos": "conjunction",
+      "category": "helpers",
+      "frequency": 6,
+      "icon": "branch",
+      "text": "por"
+    },
+    {
+      "id": "water",
+      "pos": "noun",
+      "category": "drinks",
+      "frequency": 8,
+      "icon": "water",
+      "text": "ujë"
+    },
+    {
+      "id": "milk",
+      "pos": "noun",
+      "category": "drinks",
+      "frequency": 8,
+      "icon": "water",
+      "text": "qumësht"
+    },
+    {
+      "id": "juice",
+      "pos": "noun",
+      "category": "drinks",
+      "frequency": 8,
+      "icon": "water",
+      "text": "lëng"
+    },
+    {
+      "id": "tea",
+      "pos": "noun",
+      "category": "drinks",
+      "frequency": 8,
+      "icon": "water",
+      "text": "çaj"
+    },
+    {
+      "id": "smoothie",
+      "pos": "noun",
+      "category": "drinks",
+      "frequency": 8,
+      "icon": "water",
+      "text": "smoothie"
+    },
+    {
+      "id": "lemonade",
+      "pos": "noun",
+      "category": "drinks",
+      "frequency": 8,
+      "icon": "water",
+      "text": "limonadë"
+    },
+    {
+      "id": "hot-drink",
+      "pos": "noun",
+      "category": "drinks",
+      "frequency": 8,
+      "icon": "water",
+      "text": "pije e ngrohtë"
+    },
+    {
+      "id": "cold-drink",
+      "pos": "noun",
+      "category": "drinks",
+      "frequency": 8,
+      "icon": "water",
+      "text": "pije e ftohtë"
+    },
+    {
+      "id": "cup",
+      "pos": "noun",
+      "category": "drinks",
+      "frequency": 8,
+      "icon": "water",
+      "text": "gotë"
+    },
+    {
+      "id": "straw",
+      "pos": "noun",
+      "category": "drinks",
+      "frequency": 8,
+      "icon": "water",
+      "text": "pipë"
+    },
+    {
+      "id": "bottle",
+      "pos": "noun",
+      "category": "drinks",
+      "frequency": 8,
+      "icon": "water",
+      "text": "shishe"
+    },
+    {
+      "id": "sip",
+      "pos": "noun",
+      "category": "drinks",
+      "frequency": 8,
+      "icon": "water",
+      "text": "gllënjkë"
+    },
+    {
+      "id": "apple",
+      "pos": "noun",
+      "category": "food",
+      "frequency": 8,
+      "icon": "apple",
+      "text": "mollë"
+    },
+    {
+      "id": "banana",
+      "pos": "noun",
+      "category": "food",
+      "frequency": 8,
+      "icon": "apple",
+      "text": "banane"
+    },
+    {
+      "id": "bread",
+      "pos": "noun",
+      "category": "food",
+      "frequency": 8,
+      "icon": "apple",
+      "text": "bukë"
+    },
+    {
+      "id": "toast",
+      "pos": "noun",
+      "category": "food",
+      "frequency": 8,
+      "icon": "apple",
+      "text": "tost"
+    },
+    {
+      "id": "sandwich",
+      "pos": "noun",
+      "category": "food",
+      "frequency": 8,
+      "icon": "apple",
+      "text": "sanduiç"
+    },
+    {
+      "id": "rice",
+      "pos": "noun",
+      "category": "food",
+      "frequency": 8,
+      "icon": "apple",
+      "text": "oriz"
+    },
+    {
+      "id": "pasta",
+      "pos": "noun",
+      "category": "food",
+      "frequency": 8,
+      "icon": "apple",
+      "text": "makarona"
+    },
+    {
+      "id": "soup",
+      "pos": "noun",
+      "category": "food",
+      "frequency": 8,
+      "icon": "apple",
+      "text": "supë"
+    },
+    {
+      "id": "yogurt",
+      "pos": "noun",
+      "category": "food",
+      "frequency": 8,
+      "icon": "apple",
+      "text": "kos"
+    },
+    {
+      "id": "cheese",
+      "pos": "noun",
+      "category": "food",
+      "frequency": 8,
+      "icon": "apple",
+      "text": "djathë"
+    },
+    {
+      "id": "cracker",
+      "pos": "noun",
+      "category": "food",
+      "frequency": 8,
+      "icon": "apple",
+      "text": "krisur"
+    },
+    {
+      "id": "carrot",
+      "pos": "noun",
+      "category": "food",
+      "frequency": 8,
+      "icon": "apple",
+      "text": "karotë"
+    },
+    {
+      "id": "chips",
+      "pos": "noun",
+      "category": "food",
+      "frequency": 8,
+      "icon": "apple",
+      "text": "patatina"
+    },
+    {
+      "id": "cookie",
+      "pos": "noun",
+      "category": "food",
+      "frequency": 8,
+      "icon": "apple",
+      "text": "biskotë"
+    },
+    {
+      "id": "egg",
+      "pos": "noun",
+      "category": "food",
+      "frequency": 8,
+      "icon": "apple",
+      "text": "vezë"
+    },
+    {
+      "id": "cereal",
+      "pos": "noun",
+      "category": "food",
+      "frequency": 8,
+      "icon": "apple",
+      "text": "drithëra"
+    },
+    {
+      "id": "fruit",
+      "pos": "noun",
+      "category": "food",
+      "frequency": 8,
+      "icon": "apple",
+      "text": "frutë"
+    },
+    {
+      "id": "snack",
+      "pos": "noun",
+      "category": "food",
+      "frequency": 8,
+      "icon": "apple",
+      "text": "meze"
+    },
+    {
+      "id": "dinner",
+      "pos": "noun",
+      "category": "food",
+      "frequency": 8,
+      "icon": "apple",
+      "text": "darkë"
+    },
+    {
+      "id": "lunch",
+      "pos": "noun",
+      "category": "food",
+      "frequency": 8,
+      "icon": "apple",
+      "text": "drekë"
+    },
+    {
+      "id": "happy",
+      "pos": "adjective",
+      "category": "feelings",
+      "frequency": 9,
+      "icon": "smile",
+      "text": "i lumtur"
+    },
+    {
+      "id": "sad",
+      "pos": "adjective",
+      "category": "feelings",
+      "frequency": 9,
+      "icon": "smile",
+      "text": "i trishtuar"
+    },
+    {
+      "id": "angry",
+      "pos": "adjective",
+      "category": "feelings",
+      "frequency": 9,
+      "icon": "smile",
+      "text": "i zemëruar"
+    },
+    {
+      "id": "worried",
+      "pos": "adjective",
+      "category": "feelings",
+      "frequency": 9,
+      "icon": "smile",
+      "text": "i shqetësuar"
+    },
+    {
+      "id": "scared",
+      "pos": "adjective",
+      "category": "feelings",
+      "frequency": 9,
+      "icon": "smile",
+      "text": "i frikësuar"
+    },
+    {
+      "id": "tired",
+      "pos": "adjective",
+      "category": "feelings",
+      "frequency": 9,
+      "icon": "smile",
+      "text": "i lodhur"
+    },
+    {
+      "id": "sick",
+      "pos": "adjective",
+      "category": "feelings",
+      "frequency": 9,
+      "icon": "smile",
+      "text": "i sëmurë"
+    },
+    {
+      "id": "hurt",
+      "pos": "adjective",
+      "category": "feelings",
+      "frequency": 9,
+      "icon": "smile",
+      "text": "më dhemb"
+    },
+    {
+      "id": "calm",
+      "pos": "adjective",
+      "category": "feelings",
+      "frequency": 9,
+      "icon": "smile",
+      "text": "i qetë"
+    },
+    {
+      "id": "excited",
+      "pos": "adjective",
+      "category": "feelings",
+      "frequency": 9,
+      "icon": "smile",
+      "text": "i emocionuar"
+    },
+    {
+      "id": "confused",
+      "pos": "adjective",
+      "category": "feelings",
+      "frequency": 9,
+      "icon": "smile",
+      "text": "i hutuar"
+    },
+    {
+      "id": "proud",
+      "pos": "adjective",
+      "category": "feelings",
+      "frequency": 9,
+      "icon": "smile",
+      "text": "krenar"
+    },
+    {
+      "id": "lonely",
+      "pos": "adjective",
+      "category": "feelings",
+      "frequency": 9,
+      "icon": "smile",
+      "text": "i vetmuar"
+    },
+    {
+      "id": "bored",
+      "pos": "adjective",
+      "category": "feelings",
+      "frequency": 9,
+      "icon": "smile",
+      "text": "i mërzitur"
+    },
+    {
+      "id": "safe",
+      "pos": "adjective",
+      "category": "feelings",
+      "frequency": 9,
+      "icon": "smile",
+      "text": "i sigurt"
+    },
+    {
+      "id": "upset",
+      "pos": "adjective",
+      "category": "feelings",
+      "frequency": 9,
+      "icon": "smile",
+      "text": "i mërzitur"
+    },
+    {
+      "id": "okay-2",
+      "pos": "adjective",
+      "category": "feelings",
+      "frequency": 9,
+      "icon": "smile",
+      "text": "mirë"
+    },
+    {
+      "id": "hot",
+      "pos": "adjective",
+      "category": "feelings",
+      "frequency": 9,
+      "icon": "smile",
+      "text": "i nxehtë"
+    },
+    {
+      "id": "cold",
+      "pos": "adjective",
+      "category": "feelings",
+      "frequency": 9,
+      "icon": "smile",
+      "text": "i ftohtë"
+    },
+    {
+      "id": "hungry",
+      "pos": "adjective",
+      "category": "feelings",
+      "frequency": 9,
+      "icon": "smile",
+      "text": "i uritur"
+    },
+    {
+      "id": "thirsty",
+      "pos": "adjective",
+      "category": "feelings",
+      "frequency": 9,
+      "icon": "smile",
+      "text": "i etur"
+    },
+    {
+      "id": "head",
+      "pos": "noun",
+      "category": "body",
+      "frequency": 6,
+      "icon": "body",
+      "text": "kokë"
+    },
+    {
+      "id": "hand",
+      "pos": "noun",
+      "category": "body",
+      "frequency": 6,
+      "icon": "body",
+      "text": "dorë"
+    },
+    {
+      "id": "foot",
+      "pos": "noun",
+      "category": "body",
+      "frequency": 6,
+      "icon": "body",
+      "text": "shputë"
+    },
+    {
+      "id": "tummy",
+      "pos": "noun",
+      "category": "body",
+      "frequency": 6,
+      "icon": "body",
+      "text": "bark"
+    },
+    {
+      "id": "mouth",
+      "pos": "noun",
+      "category": "body",
+      "frequency": 6,
+      "icon": "body",
+      "text": "gojë"
+    },
+    {
+      "id": "ear",
+      "pos": "noun",
+      "category": "body",
+      "frequency": 6,
+      "icon": "body",
+      "text": "vesh"
+    },
+    {
+      "id": "eye",
+      "pos": "noun",
+      "category": "body",
+      "frequency": 6,
+      "icon": "body",
+      "text": "sy"
+    },
+    {
+      "id": "arm",
+      "pos": "noun",
+      "category": "body",
+      "frequency": 6,
+      "icon": "body",
+      "text": "krah"
+    },
+    {
+      "id": "leg",
+      "pos": "noun",
+      "category": "body",
+      "frequency": 6,
+      "icon": "body",
+      "text": "këmbë"
+    },
+    {
+      "id": "back",
+      "pos": "noun",
+      "category": "body",
+      "frequency": 6,
+      "icon": "body",
+      "text": "shpinë"
+    },
+    {
+      "id": "tooth",
+      "pos": "noun",
+      "category": "body",
+      "frequency": 6,
+      "icon": "body",
+      "text": "dhëmb"
+    },
+    {
+      "id": "hair",
+      "pos": "noun",
+      "category": "body",
+      "frequency": 6,
+      "icon": "body",
+      "text": "flokë"
+    },
+    {
+      "id": "nose",
+      "pos": "noun",
+      "category": "body",
+      "frequency": 6,
+      "icon": "body",
+      "text": "hundë"
+    },
+    {
+      "id": "skin",
+      "pos": "noun",
+      "category": "body",
+      "frequency": 6,
+      "icon": "body",
+      "text": "lëkurë"
+    },
+    {
+      "id": "heart",
+      "pos": "noun",
+      "category": "body",
+      "frequency": 6,
+      "icon": "body",
+      "text": "zemër"
+    },
+    {
+      "id": "home",
+      "pos": "noun",
+      "category": "places",
+      "frequency": 7,
+      "icon": "home",
+      "text": "shtëpi"
+    },
+    {
+      "id": "school",
+      "pos": "noun",
+      "category": "places",
+      "frequency": 7,
+      "icon": "home",
+      "text": "shkollë"
+    },
+    {
+      "id": "classroom",
+      "pos": "noun",
+      "category": "places",
+      "frequency": 7,
+      "icon": "home",
+      "text": "klasë"
+    },
+    {
+      "id": "bathroom",
+      "pos": "noun",
+      "category": "places",
+      "frequency": 7,
+      "icon": "home",
+      "text": "banjë"
+    },
+    {
+      "id": "kitchen",
+      "pos": "noun",
+      "category": "places",
+      "frequency": 7,
+      "icon": "home",
+      "text": "kuzhinë"
+    },
+    {
+      "id": "bedroom",
+      "pos": "noun",
+      "category": "places",
+      "frequency": 7,
+      "icon": "home",
+      "text": "dhomë gjumi"
+    },
+    {
+      "id": "garden",
+      "pos": "noun",
+      "category": "places",
+      "frequency": 7,
+      "icon": "home",
+      "text": "kopsht"
+    },
+    {
+      "id": "shop",
+      "pos": "noun",
+      "category": "places",
+      "frequency": 7,
+      "icon": "home",
+      "text": "dyqan"
+    },
+    {
+      "id": "car",
+      "pos": "noun",
+      "category": "places",
+      "frequency": 7,
+      "icon": "home",
+      "text": "makinë"
+    },
+    {
+      "id": "bus",
+      "pos": "noun",
+      "category": "places",
+      "frequency": 7,
+      "icon": "home",
+      "text": "autobus"
+    },
+    {
+      "id": "park",
+      "pos": "noun",
+      "category": "places",
+      "frequency": 7,
+      "icon": "home",
+      "text": "park"
+    },
+    {
+      "id": "playground",
+      "pos": "noun",
+      "category": "places",
+      "frequency": 7,
+      "icon": "home",
+      "text": "shesh lojrash"
+    },
+    {
+      "id": "library",
+      "pos": "noun",
+      "category": "places",
+      "frequency": 7,
+      "icon": "home",
+      "text": "bibliotekë"
+    },
+    {
+      "id": "pool",
+      "pos": "noun",
+      "category": "places",
+      "frequency": 7,
+      "icon": "home",
+      "text": "pishinë"
+    },
+    {
+      "id": "table",
+      "pos": "noun",
+      "category": "home",
+      "frequency": 7,
+      "icon": "home",
+      "text": "tavolinë"
+    },
+    {
+      "id": "chair",
+      "pos": "noun",
+      "category": "home",
+      "frequency": 7,
+      "icon": "home",
+      "text": "karrige"
+    },
+    {
+      "id": "sofa",
+      "pos": "noun",
+      "category": "home",
+      "frequency": 7,
+      "icon": "home",
+      "text": "divan"
+    },
+    {
+      "id": "bed",
+      "pos": "noun",
+      "category": "home",
+      "frequency": 7,
+      "icon": "home",
+      "text": "krevat"
+    },
+    {
+      "id": "door",
+      "pos": "noun",
+      "category": "home",
+      "frequency": 7,
+      "icon": "home",
+      "text": "derë"
+    },
+    {
+      "id": "window",
+      "pos": "noun",
+      "category": "home",
+      "frequency": 7,
+      "icon": "home",
+      "text": "dritare"
+    },
+    {
+      "id": "book",
+      "pos": "noun",
+      "category": "school",
+      "frequency": 6,
+      "icon": "book",
+      "text": "libër"
+    },
+    {
+      "id": "pencil",
+      "pos": "noun",
+      "category": "school",
+      "frequency": 6,
+      "icon": "book",
+      "text": "laps"
+    },
+    {
+      "id": "paper",
+      "pos": "noun",
+      "category": "school",
+      "frequency": 6,
+      "icon": "book",
+      "text": "letër"
+    },
+    {
+      "id": "bag",
+      "pos": "noun",
+      "category": "school",
+      "frequency": 6,
+      "icon": "book",
+      "text": "çantë"
+    },
+    {
+      "id": "coat",
+      "pos": "noun",
+      "category": "school",
+      "frequency": 6,
+      "icon": "book",
+      "text": "xhaketë"
+    },
+    {
+      "id": "shoes",
+      "pos": "noun",
+      "category": "school",
+      "frequency": 6,
+      "icon": "book",
+      "text": "këpucë"
+    },
+    {
+      "id": "lunchbox",
+      "pos": "noun",
+      "category": "school",
+      "frequency": 6,
+      "icon": "book",
+      "text": "kuti dreke"
+    },
+    {
+      "id": "tablet",
+      "pos": "noun",
+      "category": "school",
+      "frequency": 6,
+      "icon": "book",
+      "text": "tabletë"
+    },
+    {
+      "id": "screen",
+      "pos": "noun",
+      "category": "school",
+      "frequency": 6,
+      "icon": "book",
+      "text": "ekran"
+    },
+    {
+      "id": "timer",
+      "pos": "noun",
+      "category": "school",
+      "frequency": 6,
+      "icon": "book",
+      "text": "kohëmatës"
+    },
+    {
+      "id": "schedule",
+      "pos": "noun",
+      "category": "school",
+      "frequency": 6,
+      "icon": "book",
+      "text": "orar"
+    },
+    {
+      "id": "picture",
+      "pos": "noun",
+      "category": "school",
+      "frequency": 6,
+      "icon": "book",
+      "text": "foto"
+    },
+    {
+      "id": "card",
+      "pos": "noun",
+      "category": "school",
+      "frequency": 6,
+      "icon": "book",
+      "text": "kartë"
+    },
+    {
+      "id": "story",
+      "pos": "noun",
+      "category": "school",
+      "frequency": 6,
+      "icon": "book",
+      "text": "histori"
+    },
+    {
+      "id": "music",
+      "pos": "noun",
+      "category": "school",
+      "frequency": 6,
+      "icon": "book",
+      "text": "muzikë"
+    },
+    {
+      "id": "ball",
+      "pos": "noun",
+      "category": "toys",
+      "frequency": 6,
+      "icon": "puzzle",
+      "text": "top"
+    },
+    {
+      "id": "blocks",
+      "pos": "noun",
+      "category": "toys",
+      "frequency": 6,
+      "icon": "puzzle",
+      "text": "kubikë"
+    },
+    {
+      "id": "doll",
+      "pos": "noun",
+      "category": "toys",
+      "frequency": 6,
+      "icon": "puzzle",
+      "text": "kukull"
+    },
+    {
+      "id": "car-toy",
+      "pos": "noun",
+      "category": "toys",
+      "frequency": 6,
+      "icon": "puzzle",
+      "text": "makinë lodër"
+    },
+    {
+      "id": "train",
+      "pos": "noun",
+      "category": "toys",
+      "frequency": 6,
+      "icon": "puzzle",
+      "text": "tren"
+    },
+    {
+      "id": "puzzle",
+      "pos": "noun",
+      "category": "toys",
+      "frequency": 6,
+      "icon": "puzzle",
+      "text": "puzzle"
+    },
+    {
+      "id": "game",
+      "pos": "noun",
+      "category": "toys",
+      "frequency": 6,
+      "icon": "puzzle",
+      "text": "lojë"
+    },
+    {
+      "id": "paint",
+      "pos": "noun",
+      "category": "toys",
+      "frequency": 6,
+      "icon": "puzzle",
+      "text": "bojë"
+    },
+    {
+      "id": "clay",
+      "pos": "noun",
+      "category": "toys",
+      "frequency": 6,
+      "icon": "puzzle",
+      "text": "plastelinë"
+    },
+    {
+      "id": "bubbles",
+      "pos": "noun",
+      "category": "toys",
+      "frequency": 6,
+      "icon": "puzzle",
+      "text": "flluska"
+    },
+    {
+      "id": "swing",
+      "pos": "noun",
+      "category": "toys",
+      "frequency": 6,
+      "icon": "puzzle",
+      "text": "lëkundëse"
+    },
+    {
+      "id": "slide",
+      "pos": "noun",
+      "category": "toys",
+      "frequency": 6,
+      "icon": "puzzle",
+      "text": "rrëshqitëse"
+    },
+    {
+      "id": "bike",
+      "pos": "noun",
+      "category": "toys",
+      "frequency": 6,
+      "icon": "puzzle",
+      "text": "biçikletë"
+    },
+    {
+      "id": "teddy",
+      "pos": "noun",
+      "category": "toys",
+      "frequency": 6,
+      "icon": "puzzle",
+      "text": "arush"
+    },
+    {
+      "id": "lego",
+      "pos": "noun",
+      "category": "toys",
+      "frequency": 6,
+      "icon": "puzzle",
+      "text": "lego"
+    },
+    {
+      "id": "red",
+      "pos": "adjective",
+      "category": "colors",
+      "frequency": 5,
+      "icon": "palette",
+      "text": "i kuq"
+    },
+    {
+      "id": "blue",
+      "pos": "adjective",
+      "category": "colors",
+      "frequency": 5,
+      "icon": "palette",
+      "text": "blu"
+    },
+    {
+      "id": "green",
+      "pos": "adjective",
+      "category": "colors",
+      "frequency": 5,
+      "icon": "palette",
+      "text": "i gjelbër"
+    },
+    {
+      "id": "yellow",
+      "pos": "adjective",
+      "category": "colors",
+      "frequency": 5,
+      "icon": "palette",
+      "text": "i verdhë"
+    },
+    {
+      "id": "orange",
+      "pos": "adjective",
+      "category": "colors",
+      "frequency": 5,
+      "icon": "palette",
+      "text": "portokalli"
+    },
+    {
+      "id": "purple",
+      "pos": "adjective",
+      "category": "colors",
+      "frequency": 5,
+      "icon": "palette",
+      "text": "vjollcë"
+    },
+    {
+      "id": "pink",
+      "pos": "adjective",
+      "category": "colors",
+      "frequency": 5,
+      "icon": "palette",
+      "text": "rozë"
+    },
+    {
+      "id": "brown",
+      "pos": "adjective",
+      "category": "colors",
+      "frequency": 5,
+      "icon": "palette",
+      "text": "kafe"
+    },
+    {
+      "id": "black",
+      "pos": "adjective",
+      "category": "colors",
+      "frequency": 5,
+      "icon": "palette",
+      "text": "i zi"
+    },
+    {
+      "id": "white",
+      "pos": "adjective",
+      "category": "colors",
+      "frequency": 5,
+      "icon": "palette",
+      "text": "i bardhë"
+    },
+    {
+      "id": "grey",
+      "pos": "adjective",
+      "category": "colors",
+      "frequency": 5,
+      "icon": "palette",
+      "text": "gri"
+    },
+    {
+      "id": "bright",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "palette",
+      "text": "i ndritshëm"
+    },
+    {
+      "id": "dark",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "palette",
+      "text": "i errët"
+    },
+    {
+      "id": "soft",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "palette",
+      "text": "i butë"
+    },
+    {
+      "id": "hard",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "palette",
+      "text": "i fortë"
+    },
+    {
+      "id": "quiet",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "palette",
+      "text": "i qetë"
+    },
+    {
+      "id": "loud",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "palette",
+      "text": "i zhurmshëm"
+    },
+    {
+      "id": "fast",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "palette",
+      "text": "i shpejtë"
+    },
+    {
+      "id": "slow",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "palette",
+      "text": "i ngadalshëm"
+    },
+    {
+      "id": "clean",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "palette",
+      "text": "i pastër"
+    },
+    {
+      "id": "dirty",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "palette",
+      "text": "i pisët"
+    },
+    {
+      "id": "wet",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "palette",
+      "text": "i lagësht"
+    },
+    {
+      "id": "dry",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "palette",
+      "text": "i thatë"
+    },
+    {
+      "id": "new",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "palette",
+      "text": "i ri"
+    },
+    {
+      "id": "old",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "palette",
+      "text": "i vjetër"
+    },
+    {
+      "id": "now",
+      "pos": "adverb",
+      "category": "time",
+      "frequency": 6,
+      "icon": "clock",
+      "text": "tani"
+    },
+    {
+      "id": "later",
+      "pos": "adverb",
+      "category": "time",
+      "frequency": 6,
+      "icon": "clock",
+      "text": "më vonë"
+    },
+    {
+      "id": "today",
+      "pos": "adverb",
+      "category": "time",
+      "frequency": 6,
+      "icon": "clock",
+      "text": "sot"
+    },
+    {
+      "id": "tomorrow",
+      "pos": "adverb",
+      "category": "time",
+      "frequency": 6,
+      "icon": "clock",
+      "text": "nesër"
+    },
+    {
+      "id": "morning",
+      "pos": "adverb",
+      "category": "time",
+      "frequency": 6,
+      "icon": "clock",
+      "text": "mëngjes"
+    },
+    {
+      "id": "afternoon",
+      "pos": "adverb",
+      "category": "time",
+      "frequency": 6,
+      "icon": "clock",
+      "text": "pasdite"
+    },
+    {
+      "id": "night",
+      "pos": "adverb",
+      "category": "time",
+      "frequency": 6,
+      "icon": "clock",
+      "text": "natë"
+    },
+    {
+      "id": "before",
+      "pos": "adverb",
+      "category": "time",
+      "frequency": 6,
+      "icon": "clock",
+      "text": "para"
+    },
+    {
+      "id": "after",
+      "pos": "adverb",
+      "category": "time",
+      "frequency": 6,
+      "icon": "clock",
+      "text": "pas"
+    },
+    {
+      "id": "soon",
+      "pos": "adverb",
+      "category": "time",
+      "frequency": 6,
+      "icon": "clock",
+      "text": "së shpejti"
+    },
+    {
+      "id": "first",
+      "pos": "adverb",
+      "category": "time",
+      "frequency": 6,
+      "icon": "clock",
+      "text": "së pari"
+    },
+    {
+      "id": "next",
+      "pos": "adverb",
+      "category": "time",
+      "frequency": 6,
+      "icon": "clock",
+      "text": "tjetri"
+    },
+    {
+      "id": "last",
+      "pos": "adverb",
+      "category": "time",
+      "frequency": 6,
+      "icon": "clock",
+      "text": "i fundit"
+    },
+    {
+      "id": "minute",
+      "pos": "adverb",
+      "category": "time",
+      "frequency": 6,
+      "icon": "clock",
+      "text": "minutë"
+    },
+    {
+      "id": "hour",
+      "pos": "adverb",
+      "category": "time",
+      "frequency": 6,
+      "icon": "clock",
+      "text": "orë"
+    },
+    {
+      "id": "break",
+      "pos": "noun",
+      "category": "needs",
+      "frequency": 8,
+      "icon": "heart-hand",
+      "text": "pushim"
+    },
+    {
+      "id": "quiet-time",
+      "pos": "noun",
+      "category": "needs",
+      "frequency": 8,
+      "icon": "heart-hand",
+      "text": "kohë e qetë"
+    },
+    {
+      "id": "hug",
+      "pos": "noun",
+      "category": "needs",
+      "frequency": 8,
+      "icon": "heart-hand",
+      "text": "përqafim"
+    },
+    {
+      "id": "space",
+      "pos": "noun",
+      "category": "needs",
+      "frequency": 8,
+      "icon": "heart-hand",
+      "text": "hapësirë"
+    },
+    {
+      "id": "toilet",
+      "pos": "noun",
+      "category": "needs",
+      "frequency": 8,
+      "icon": "heart-hand",
+      "text": "banjë"
+    },
+    {
+      "id": "medicine",
+      "pos": "noun",
+      "category": "needs",
+      "frequency": 8,
+      "icon": "heart-hand",
+      "text": "ilaç"
+    },
+    {
+      "id": "light",
+      "pos": "noun",
+      "category": "needs",
+      "frequency": 8,
+      "icon": "heart-hand",
+      "text": "dritë"
+    },
+    {
+      "id": "dark-2",
+      "pos": "noun",
+      "category": "needs",
+      "frequency": 8,
+      "icon": "heart-hand",
+      "text": "errësirë"
+    },
+    {
+      "id": "noise",
+      "pos": "noun",
+      "category": "needs",
+      "frequency": 8,
+      "icon": "heart-hand",
+      "text": "zhurmë"
+    },
+    {
+      "id": "headphones",
+      "pos": "noun",
+      "category": "needs",
+      "frequency": 8,
+      "icon": "heart-hand",
+      "text": "kufje"
+    },
+    {
+      "id": "blanket",
+      "pos": "noun",
+      "category": "needs",
+      "frequency": 8,
+      "icon": "heart-hand",
+      "text": "batanije"
+    },
+    {
+      "id": "charger",
+      "pos": "noun",
+      "category": "needs",
+      "frequency": 8,
+      "icon": "heart-hand",
+      "text": "karikues"
+    },
+    {
+      "id": "choice",
+      "pos": "noun",
+      "category": "needs",
+      "frequency": 8,
+      "icon": "heart-hand",
+      "text": "zgjedhje"
+    },
+    {
+      "id": "turn",
+      "pos": "noun",
+      "category": "needs",
+      "frequency": 8,
+      "icon": "heart-hand",
+      "text": "radha"
+    },
+    {
+      "id": "help-please",
+      "pos": "noun",
+      "category": "needs",
+      "frequency": 8,
+      "icon": "heart-hand",
+      "text": "ndihmë të lutem"
+    },
+    {
+      "id": "different",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "sparkles",
+      "text": "i ndryshëm"
+    },
+    {
+      "id": "same",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "sparkles",
+      "text": "i njëjtë"
+    },
+    {
+      "id": "easy",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "sparkles",
+      "text": "i lehtë"
+    },
+    {
+      "id": "harder",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "sparkles",
+      "text": "më i vështirë"
+    },
+    {
+      "id": "favorite",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "sparkles",
+      "text": "i preferuar"
+    },
+    {
+      "id": "missing",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "sparkles",
+      "text": "mungon"
+    },
+    {
+      "id": "broken",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "sparkles",
+      "text": "i thyer"
+    },
+    {
+      "id": "ready",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "sparkles",
+      "text": "gati"
+    },
+    {
+      "id": "busy",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "sparkles",
+      "text": "i zënë"
+    },
+    {
+      "id": "empty",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "sparkles",
+      "text": "i zbrazët"
+    },
+    {
+      "id": "full",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "sparkles",
+      "text": "i plotë"
+    },
+    {
+      "id": "small",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "sparkles",
+      "text": "i vogël"
+    },
+    {
+      "id": "tall",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "sparkles",
+      "text": "i lartë"
+    },
+    {
+      "id": "short",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "sparkles",
+      "text": "i shkurtër"
+    },
+    {
+      "id": "round",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "sparkles",
+      "text": "i rrumbullakët"
+    },
+    {
+      "id": "square",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "sparkles",
+      "text": "katror"
+    },
+    {
+      "id": "kind",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "sparkles",
+      "text": "i mirë"
+    },
+    {
+      "id": "gentle",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "sparkles",
+      "text": "i butë"
+    },
+    {
+      "id": "careful",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "sparkles",
+      "text": "i kujdesshëm"
+    },
+    {
+      "id": "safe-place",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "sparkles",
+      "text": "vend i sigurt"
+    }
+  ],
+  "templates": [
+    {
+      "id": "want-object",
+      "pattern": "I want {thing}.",
+      "category": "needs",
+      "icon": "heart-hand",
+      "slots": [
+        {
+          "acceptedPos": [
+            "pronoun"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "noun"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "need-help",
+      "pattern": "I need help with {thing}.",
+      "category": "needs",
+      "icon": "heart-hand",
+      "slots": [
+        {
+          "acceptedPos": [
+            "pronoun"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "noun"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "feel-state",
+      "pattern": "I feel {feeling}.",
+      "category": "feelings",
+      "icon": "smile",
+      "slots": [
+        {
+          "acceptedPos": [
+            "pronoun"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "adjective"
+          ],
+          "categoryFilter": "feelings"
+        }
+      ]
+    },
+    {
+      "id": "body-hurts",
+      "pattern": "My {body} hurts.",
+      "category": "body",
+      "icon": "body",
+      "slots": [
+        {
+          "acceptedPos": [
+            "pronoun"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "noun"
+          ],
+          "categoryFilter": "body"
+        },
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "like-activity",
+      "pattern": "I like {activity}.",
+      "category": "actions",
+      "icon": "play",
+      "slots": [
+        {
+          "acceptedPos": [
+            "pronoun"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "noun"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "go-place",
+      "pattern": "I want to go to {place}.",
+      "category": "places",
+      "icon": "home",
+      "slots": [
+        {
+          "acceptedPos": [
+            "pronoun"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "preposition"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "preposition"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "noun"
+          ],
+          "categoryFilter": "places"
+        }
+      ]
+    },
+    {
+      "id": "question-where",
+      "pattern": "Where is {thing}?",
+      "category": "questions",
+      "icon": "question-circle",
+      "slots": [
+        {
+          "acceptedPos": [
+            "question"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "noun"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "question-what",
+      "pattern": "What is this?",
+      "category": "questions",
+      "icon": "question-circle",
+      "slots": [
+        {
+          "acceptedPos": [
+            "question"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "determiner"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "question-can",
+      "pattern": "Can you help me?",
+      "category": "questions",
+      "icon": "question-circle",
+      "slots": [
+        {
+          "acceptedPos": [
+            "question"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "pronoun"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "pronoun"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "more-thing",
+      "pattern": "More {thing}, please.",
+      "category": "social",
+      "icon": "chat-bubble",
+      "slots": [
+        {
+          "acceptedPos": [
+            "social"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "noun"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "social"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "all-done",
+      "pattern": "I am all done.",
+      "category": "social",
+      "icon": "chat-bubble",
+      "slots": [
+        {
+          "acceptedPos": [
+            "pronoun"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "social"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "not-want",
+      "pattern": "I do not want {thing}.",
+      "category": "needs",
+      "icon": "heart-hand",
+      "slots": [
+        {
+          "acceptedPos": [
+            "pronoun"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "social"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "noun"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "choose-one",
+      "pattern": "I choose {thing}.",
+      "category": "actions",
+      "icon": "play",
+      "slots": [
+        {
+          "acceptedPos": [
+            "pronoun"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "noun"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "with-person",
+      "pattern": "I want to be with {person}.",
+      "category": "people",
+      "icon": "user",
+      "slots": [
+        {
+          "acceptedPos": [
+            "pronoun"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "preposition"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "preposition"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "noun"
+          ],
+          "categoryFilter": "people"
+        }
+      ]
+    },
+    {
+      "id": "too-loud",
+      "pattern": "It is too loud.",
+      "category": "feelings",
+      "icon": "smile",
+      "slots": [
+        {
+          "acceptedPos": [
+            "pronoun"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "adjective"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "need-break",
+      "pattern": "I need a break.",
+      "category": "needs",
+      "icon": "heart-hand",
+      "slots": [
+        {
+          "acceptedPos": [
+            "pronoun"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "determiner"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "noun"
+          ],
+          "categoryFilter": "needs"
+        }
+      ]
+    },
+    {
+      "id": "first-next",
+      "pattern": "First {thing}, then {thing}.",
+      "category": "time",
+      "icon": "clock",
+      "slots": [
+        {
+          "acceptedPos": [
+            "adverb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "noun"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "conjunction"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "noun"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "yes-answer",
+      "pattern": "Yes, please.",
+      "category": "social",
+      "icon": "chat-bubble",
+      "slots": [
+        {
+          "acceptedPos": [
+            "social"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "social"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "no-answer",
+      "pattern": "No, thank you.",
+      "category": "social",
+      "icon": "chat-bubble",
+      "slots": [
+        {
+          "acceptedPos": [
+            "social"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "social"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "descriptor-object",
+      "pattern": "The {thing} is {description}.",
+      "category": "describing",
+      "icon": "sparkles",
+      "slots": [
+        {
+          "acceptedPos": [
+            "determiner"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "noun"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "adjective"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "place-position",
+      "pattern": "The {thing} is {position} the {place}.",
+      "category": "positions",
+      "icon": "arrow-right",
+      "slots": [
+        {
+          "acceptedPos": [
+            "determiner"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "noun"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "preposition"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "determiner"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "noun"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "time-request",
+      "pattern": "I want {thing} later.",
+      "category": "time",
+      "icon": "clock",
+      "slots": [
+        {
+          "acceptedPos": [
+            "pronoun"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "noun"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "adverb"
+          ],
+          "categoryFilter": "time"
+        }
+      ]
+    },
+    {
+      "id": "polite-help",
+      "pattern": "Help please.",
+      "category": "needs",
+      "icon": "heart-hand",
+      "slots": [
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "social"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "try-again",
+      "pattern": "I want to try again.",
+      "category": "actions",
+      "icon": "play",
+      "slots": [
+        {
+          "acceptedPos": [
+            "pronoun"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "preposition"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "social"
+          ]
+        }
+      ]
+    }
+  ],
+  "grammar": {
+    "wordOrder": "subject-verb-object",
+    "validTransitions": {
+      "pronoun": [
+        "verb",
+        "noun",
+        "adjective"
+      ],
+      "determiner": [
+        "noun",
+        "adjective"
+      ],
+      "verb": [
+        "determiner",
+        "noun",
+        "adjective",
+        "preposition",
+        "social"
+      ],
+      "noun": [
+        "verb",
+        "preposition",
+        "conjunction",
+        "social"
+      ],
+      "adjective": [
+        "noun",
+        "social",
+        "conjunction"
+      ],
+      "question": [
+        "verb",
+        "pronoun",
+        "determiner"
+      ],
+      "preposition": [
+        "determiner",
+        "noun",
+        "verb"
+      ],
+      "conjunction": [
+        "pronoun",
+        "determiner",
+        "noun",
+        "verb"
+      ],
+      "social": [
+        "noun",
+        "verb"
+      ]
+    },
+    "articles": {
+      "default": {
+        "position": "suffix"
+      }
+    },
+    "negation": {
+      "position": "before-verb",
+      "words": [
+        "nuk"
+      ]
+    }
+  },
+  "source": "generated",
+  "reviewStatus": "needs-native-review"
+}

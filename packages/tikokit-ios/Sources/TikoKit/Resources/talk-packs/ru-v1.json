@@ -1,0 +1,3136 @@
+{
+  "locale": "ru",
+  "version": 1,
+  "words": [
+    {
+      "id": "i",
+      "pos": "pronoun",
+      "category": "people",
+      "frequency": 10,
+      "icon": "user",
+      "text": "я"
+    },
+    {
+      "id": "you",
+      "pos": "pronoun",
+      "category": "people",
+      "frequency": 10,
+      "icon": "user",
+      "text": "ты"
+    },
+    {
+      "id": "we",
+      "pos": "pronoun",
+      "category": "people",
+      "frequency": 7,
+      "icon": "user",
+      "text": "мы"
+    },
+    {
+      "id": "me",
+      "pos": "pronoun",
+      "category": "people",
+      "frequency": 10,
+      "icon": "user",
+      "text": "меня"
+    },
+    {
+      "id": "my",
+      "pos": "pronoun",
+      "category": "people",
+      "frequency": 10,
+      "icon": "user",
+      "text": "мой"
+    },
+    {
+      "id": "your",
+      "pos": "pronoun",
+      "category": "people",
+      "frequency": 7,
+      "icon": "user",
+      "text": "твой"
+    },
+    {
+      "id": "he",
+      "pos": "pronoun",
+      "category": "people",
+      "frequency": 7,
+      "icon": "user",
+      "text": "он"
+    },
+    {
+      "id": "she",
+      "pos": "pronoun",
+      "category": "people",
+      "frequency": 7,
+      "icon": "user",
+      "text": "она"
+    },
+    {
+      "id": "they",
+      "pos": "pronoun",
+      "category": "people",
+      "frequency": 7,
+      "icon": "user",
+      "text": "они"
+    },
+    {
+      "id": "mum",
+      "pos": "noun",
+      "category": "people",
+      "frequency": 7,
+      "icon": "user",
+      "text": "мама"
+    },
+    {
+      "id": "dad",
+      "pos": "noun",
+      "category": "people",
+      "frequency": 7,
+      "icon": "user",
+      "text": "папа"
+    },
+    {
+      "id": "teacher",
+      "pos": "noun",
+      "category": "people",
+      "frequency": 7,
+      "icon": "user",
+      "text": "учительница"
+    },
+    {
+      "id": "friend",
+      "pos": "noun",
+      "category": "people",
+      "frequency": 7,
+      "icon": "user",
+      "text": "друг"
+    },
+    {
+      "id": "brother",
+      "pos": "noun",
+      "category": "people",
+      "frequency": 7,
+      "icon": "user",
+      "text": "брат"
+    },
+    {
+      "id": "sister",
+      "pos": "noun",
+      "category": "people",
+      "frequency": 7,
+      "icon": "user",
+      "text": "сестра"
+    },
+    {
+      "id": "grandma",
+      "pos": "noun",
+      "category": "people",
+      "frequency": 7,
+      "icon": "user",
+      "text": "бабушка"
+    },
+    {
+      "id": "grandpa",
+      "pos": "noun",
+      "category": "people",
+      "frequency": 7,
+      "icon": "user",
+      "text": "дедушка"
+    },
+    {
+      "id": "helper",
+      "pos": "noun",
+      "category": "people",
+      "frequency": 7,
+      "icon": "user",
+      "text": "помощник"
+    },
+    {
+      "id": "doctor",
+      "pos": "noun",
+      "category": "people",
+      "frequency": 7,
+      "icon": "user",
+      "text": "врач"
+    },
+    {
+      "id": "class",
+      "pos": "noun",
+      "category": "people",
+      "frequency": 7,
+      "icon": "user",
+      "text": "класс"
+    },
+    {
+      "id": "want",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 10,
+      "icon": "play",
+      "inflections": {
+        "past": "wanted"
+      },
+      "text": "хочу"
+    },
+    {
+      "id": "need",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 10,
+      "icon": "play",
+      "inflections": {
+        "past": "needed"
+      },
+      "text": "нужно"
+    },
+    {
+      "id": "like",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play",
+      "inflections": {
+        "past": "likeed"
+      },
+      "text": "люблю"
+    },
+    {
+      "id": "feel",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 10,
+      "icon": "play",
+      "inflections": {
+        "past": "feeled"
+      },
+      "text": "чувствую"
+    },
+    {
+      "id": "see",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play",
+      "inflections": {
+        "past": "seeed"
+      },
+      "text": "вижу"
+    },
+    {
+      "id": "hear",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play",
+      "inflections": {
+        "past": "heared"
+      },
+      "text": "слышу"
+    },
+    {
+      "id": "have",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play",
+      "inflections": {
+        "past": "haveed"
+      },
+      "text": "есть"
+    },
+    {
+      "id": "go",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play",
+      "text": "иду"
+    },
+    {
+      "id": "come",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play",
+      "inflections": {
+        "past": "comeed"
+      },
+      "text": "прихожу"
+    },
+    {
+      "id": "play",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play",
+      "inflections": {
+        "past": "played"
+      },
+      "text": "играю"
+    },
+    {
+      "id": "read",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play",
+      "inflections": {
+        "past": "readed"
+      },
+      "text": "читаю"
+    },
+    {
+      "id": "draw",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play",
+      "inflections": {
+        "past": "drawed"
+      },
+      "text": "рисую"
+    },
+    {
+      "id": "eat",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play",
+      "text": "ем"
+    },
+    {
+      "id": "drink",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play",
+      "text": "пью"
+    },
+    {
+      "id": "sit",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play",
+      "text": "сижу"
+    },
+    {
+      "id": "stand",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play",
+      "text": "стою"
+    },
+    {
+      "id": "walk",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play",
+      "inflections": {
+        "past": "walked"
+      },
+      "text": "гуляю"
+    },
+    {
+      "id": "run",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play",
+      "text": "бегу"
+    },
+    {
+      "id": "stop",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 10,
+      "icon": "play",
+      "inflections": {
+        "past": "stoped"
+      },
+      "text": "останавливаюсь"
+    },
+    {
+      "id": "start",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play",
+      "inflections": {
+        "past": "started"
+      },
+      "text": "начинаю"
+    },
+    {
+      "id": "wait",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play",
+      "inflections": {
+        "past": "waited"
+      },
+      "text": "жду"
+    },
+    {
+      "id": "help",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 10,
+      "icon": "play",
+      "inflections": {
+        "past": "helped"
+      },
+      "text": "помогаю"
+    },
+    {
+      "id": "choose",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play",
+      "inflections": {
+        "past": "chooseed"
+      },
+      "text": "выбираю"
+    },
+    {
+      "id": "open",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play",
+      "inflections": {
+        "past": "opened"
+      },
+      "text": "открываю"
+    },
+    {
+      "id": "close",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play",
+      "inflections": {
+        "past": "closeed"
+      },
+      "text": "закрываю"
+    },
+    {
+      "id": "wash",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play",
+      "inflections": {
+        "past": "washed"
+      },
+      "text": "мою"
+    },
+    {
+      "id": "sleep",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play",
+      "text": "сплю"
+    },
+    {
+      "id": "rest",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play",
+      "inflections": {
+        "past": "rested"
+      },
+      "text": "отдыхаю"
+    },
+    {
+      "id": "try",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play",
+      "inflections": {
+        "past": "tryed"
+      },
+      "text": "пробую"
+    },
+    {
+      "id": "talk",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play",
+      "inflections": {
+        "past": "talked"
+      },
+      "text": "говорю"
+    },
+    {
+      "id": "yes",
+      "pos": "social",
+      "category": "social",
+      "frequency": 9,
+      "icon": "chat-bubble",
+      "text": "да"
+    },
+    {
+      "id": "no",
+      "pos": "social",
+      "category": "social",
+      "frequency": 9,
+      "icon": "chat-bubble",
+      "text": "нет"
+    },
+    {
+      "id": "please",
+      "pos": "social",
+      "category": "social",
+      "frequency": 9,
+      "icon": "chat-bubble",
+      "text": "пожалуйста"
+    },
+    {
+      "id": "thank-you",
+      "pos": "social",
+      "category": "social",
+      "frequency": 9,
+      "icon": "chat-bubble",
+      "text": "спасибо"
+    },
+    {
+      "id": "sorry",
+      "pos": "social",
+      "category": "social",
+      "frequency": 9,
+      "icon": "chat-bubble",
+      "text": "извини"
+    },
+    {
+      "id": "hello",
+      "pos": "social",
+      "category": "social",
+      "frequency": 9,
+      "icon": "chat-bubble",
+      "text": "привет"
+    },
+    {
+      "id": "goodbye",
+      "pos": "social",
+      "category": "social",
+      "frequency": 9,
+      "icon": "chat-bubble",
+      "text": "пока"
+    },
+    {
+      "id": "more",
+      "pos": "social",
+      "category": "social",
+      "frequency": 9,
+      "icon": "chat-bubble",
+      "text": "ещё"
+    },
+    {
+      "id": "all-done",
+      "pos": "social",
+      "category": "social",
+      "frequency": 9,
+      "icon": "chat-bubble",
+      "text": "всё готово"
+    },
+    {
+      "id": "again",
+      "pos": "social",
+      "category": "social",
+      "frequency": 9,
+      "icon": "chat-bubble",
+      "text": "снова"
+    },
+    {
+      "id": "finished",
+      "pos": "social",
+      "category": "social",
+      "frequency": 9,
+      "icon": "chat-bubble",
+      "text": "закончил"
+    },
+    {
+      "id": "okay",
+      "pos": "social",
+      "category": "social",
+      "frequency": 9,
+      "icon": "chat-bubble",
+      "text": "хорошо"
+    },
+    {
+      "id": "not-yet",
+      "pos": "social",
+      "category": "social",
+      "frequency": 9,
+      "icon": "chat-bubble",
+      "text": "ещё нет"
+    },
+    {
+      "id": "maybe",
+      "pos": "social",
+      "category": "social",
+      "frequency": 9,
+      "icon": "chat-bubble",
+      "text": "может быть"
+    },
+    {
+      "id": "what",
+      "pos": "question",
+      "category": "questions",
+      "frequency": 8,
+      "icon": "question-circle",
+      "text": "что"
+    },
+    {
+      "id": "where",
+      "pos": "question",
+      "category": "questions",
+      "frequency": 8,
+      "icon": "question-circle",
+      "text": "где"
+    },
+    {
+      "id": "who",
+      "pos": "question",
+      "category": "questions",
+      "frequency": 8,
+      "icon": "question-circle",
+      "text": "кто"
+    },
+    {
+      "id": "when",
+      "pos": "question",
+      "category": "questions",
+      "frequency": 8,
+      "icon": "question-circle",
+      "text": "когда"
+    },
+    {
+      "id": "why",
+      "pos": "question",
+      "category": "questions",
+      "frequency": 8,
+      "icon": "question-circle",
+      "text": "почему"
+    },
+    {
+      "id": "which",
+      "pos": "question",
+      "category": "questions",
+      "frequency": 8,
+      "icon": "question-circle",
+      "text": "который"
+    },
+    {
+      "id": "how",
+      "pos": "question",
+      "category": "questions",
+      "frequency": 8,
+      "icon": "question-circle",
+      "text": "как"
+    },
+    {
+      "id": "can",
+      "pos": "question",
+      "category": "questions",
+      "frequency": 8,
+      "icon": "question-circle",
+      "text": "могу"
+    },
+    {
+      "id": "is",
+      "pos": "question",
+      "category": "questions",
+      "frequency": 8,
+      "icon": "question-circle",
+      "text": "есть"
+    },
+    {
+      "id": "are",
+      "pos": "question",
+      "category": "questions",
+      "frequency": 8,
+      "icon": "question-circle",
+      "text": "есть"
+    },
+    {
+      "id": "a",
+      "pos": "determiner",
+      "category": "helpers",
+      "frequency": 8,
+      "icon": "text",
+      "text": "один"
+    },
+    {
+      "id": "the",
+      "pos": "determiner",
+      "category": "helpers",
+      "frequency": 8,
+      "icon": "text",
+      "text": "этот"
+    },
+    {
+      "id": "this",
+      "pos": "determiner",
+      "category": "helpers",
+      "frequency": 8,
+      "icon": "text",
+      "text": "этот"
+    },
+    {
+      "id": "that",
+      "pos": "determiner",
+      "category": "helpers",
+      "frequency": 8,
+      "icon": "text",
+      "text": "тот"
+    },
+    {
+      "id": "some",
+      "pos": "determiner",
+      "category": "helpers",
+      "frequency": 8,
+      "icon": "text",
+      "text": "немного"
+    },
+    {
+      "id": "one",
+      "pos": "determiner",
+      "category": "helpers",
+      "frequency": 8,
+      "icon": "text",
+      "text": "один"
+    },
+    {
+      "id": "two",
+      "pos": "determiner",
+      "category": "helpers",
+      "frequency": 8,
+      "icon": "text",
+      "text": "два"
+    },
+    {
+      "id": "three",
+      "pos": "determiner",
+      "category": "helpers",
+      "frequency": 8,
+      "icon": "text",
+      "text": "три"
+    },
+    {
+      "id": "many",
+      "pos": "determiner",
+      "category": "helpers",
+      "frequency": 8,
+      "icon": "text",
+      "text": "много"
+    },
+    {
+      "id": "little",
+      "pos": "determiner",
+      "category": "helpers",
+      "frequency": 8,
+      "icon": "text",
+      "text": "мало"
+    },
+    {
+      "id": "big",
+      "pos": "determiner",
+      "category": "helpers",
+      "frequency": 8,
+      "icon": "text",
+      "text": "большой"
+    },
+    {
+      "id": "in",
+      "pos": "preposition",
+      "category": "positions",
+      "frequency": 7,
+      "icon": "arrow-right",
+      "text": "в"
+    },
+    {
+      "id": "on",
+      "pos": "preposition",
+      "category": "positions",
+      "frequency": 7,
+      "icon": "arrow-right",
+      "text": "на"
+    },
+    {
+      "id": "under",
+      "pos": "preposition",
+      "category": "positions",
+      "frequency": 7,
+      "icon": "arrow-right",
+      "text": "под"
+    },
+    {
+      "id": "next-to",
+      "pos": "preposition",
+      "category": "positions",
+      "frequency": 7,
+      "icon": "arrow-right",
+      "text": "рядом"
+    },
+    {
+      "id": "with",
+      "pos": "preposition",
+      "category": "positions",
+      "frequency": 7,
+      "icon": "arrow-right",
+      "text": "с"
+    },
+    {
+      "id": "without",
+      "pos": "preposition",
+      "category": "positions",
+      "frequency": 7,
+      "icon": "arrow-right",
+      "text": "без"
+    },
+    {
+      "id": "to",
+      "pos": "preposition",
+      "category": "positions",
+      "frequency": 7,
+      "icon": "arrow-right",
+      "text": "к"
+    },
+    {
+      "id": "from",
+      "pos": "preposition",
+      "category": "positions",
+      "frequency": 7,
+      "icon": "arrow-right",
+      "text": "от"
+    },
+    {
+      "id": "inside",
+      "pos": "preposition",
+      "category": "positions",
+      "frequency": 7,
+      "icon": "arrow-right",
+      "text": "внутри"
+    },
+    {
+      "id": "outside",
+      "pos": "preposition",
+      "category": "positions",
+      "frequency": 7,
+      "icon": "arrow-right",
+      "text": "снаружи"
+    },
+    {
+      "id": "near",
+      "pos": "preposition",
+      "category": "positions",
+      "frequency": 7,
+      "icon": "arrow-right",
+      "text": "близко"
+    },
+    {
+      "id": "far",
+      "pos": "preposition",
+      "category": "positions",
+      "frequency": 7,
+      "icon": "arrow-right",
+      "text": "далеко"
+    },
+    {
+      "id": "and",
+      "pos": "conjunction",
+      "category": "helpers",
+      "frequency": 6,
+      "icon": "branch",
+      "text": "и"
+    },
+    {
+      "id": "or",
+      "pos": "conjunction",
+      "category": "helpers",
+      "frequency": 6,
+      "icon": "branch",
+      "text": "или"
+    },
+    {
+      "id": "because",
+      "pos": "conjunction",
+      "category": "helpers",
+      "frequency": 6,
+      "icon": "branch",
+      "text": "потому что"
+    },
+    {
+      "id": "then",
+      "pos": "conjunction",
+      "category": "helpers",
+      "frequency": 6,
+      "icon": "branch",
+      "text": "потом"
+    },
+    {
+      "id": "but",
+      "pos": "conjunction",
+      "category": "helpers",
+      "frequency": 6,
+      "icon": "branch",
+      "text": "но"
+    },
+    {
+      "id": "water",
+      "pos": "noun",
+      "category": "drinks",
+      "frequency": 8,
+      "icon": "water",
+      "text": "вода"
+    },
+    {
+      "id": "milk",
+      "pos": "noun",
+      "category": "drinks",
+      "frequency": 8,
+      "icon": "water",
+      "text": "молоко"
+    },
+    {
+      "id": "juice",
+      "pos": "noun",
+      "category": "drinks",
+      "frequency": 8,
+      "icon": "water",
+      "text": "сок"
+    },
+    {
+      "id": "tea",
+      "pos": "noun",
+      "category": "drinks",
+      "frequency": 8,
+      "icon": "water",
+      "text": "чай"
+    },
+    {
+      "id": "smoothie",
+      "pos": "noun",
+      "category": "drinks",
+      "frequency": 8,
+      "icon": "water",
+      "text": "смузи"
+    },
+    {
+      "id": "lemonade",
+      "pos": "noun",
+      "category": "drinks",
+      "frequency": 8,
+      "icon": "water",
+      "text": "лимонад"
+    },
+    {
+      "id": "hot-drink",
+      "pos": "noun",
+      "category": "drinks",
+      "frequency": 8,
+      "icon": "water",
+      "text": "горячий напиток"
+    },
+    {
+      "id": "cold-drink",
+      "pos": "noun",
+      "category": "drinks",
+      "frequency": 8,
+      "icon": "water",
+      "text": "холодный напиток"
+    },
+    {
+      "id": "cup",
+      "pos": "noun",
+      "category": "drinks",
+      "frequency": 8,
+      "icon": "water",
+      "text": "чашка"
+    },
+    {
+      "id": "straw",
+      "pos": "noun",
+      "category": "drinks",
+      "frequency": 8,
+      "icon": "water",
+      "text": "соломинка"
+    },
+    {
+      "id": "bottle",
+      "pos": "noun",
+      "category": "drinks",
+      "frequency": 8,
+      "icon": "water",
+      "text": "бутылка"
+    },
+    {
+      "id": "sip",
+      "pos": "noun",
+      "category": "drinks",
+      "frequency": 8,
+      "icon": "water",
+      "text": "глоток"
+    },
+    {
+      "id": "apple",
+      "pos": "noun",
+      "category": "food",
+      "frequency": 8,
+      "icon": "apple",
+      "text": "яблоко"
+    },
+    {
+      "id": "banana",
+      "pos": "noun",
+      "category": "food",
+      "frequency": 8,
+      "icon": "apple",
+      "text": "банан"
+    },
+    {
+      "id": "bread",
+      "pos": "noun",
+      "category": "food",
+      "frequency": 8,
+      "icon": "apple",
+      "text": "хлеб"
+    },
+    {
+      "id": "toast",
+      "pos": "noun",
+      "category": "food",
+      "frequency": 8,
+      "icon": "apple",
+      "text": "тост"
+    },
+    {
+      "id": "sandwich",
+      "pos": "noun",
+      "category": "food",
+      "frequency": 8,
+      "icon": "apple",
+      "text": "сэндвич"
+    },
+    {
+      "id": "rice",
+      "pos": "noun",
+      "category": "food",
+      "frequency": 8,
+      "icon": "apple",
+      "text": "рис"
+    },
+    {
+      "id": "pasta",
+      "pos": "noun",
+      "category": "food",
+      "frequency": 8,
+      "icon": "apple",
+      "text": "макароны"
+    },
+    {
+      "id": "soup",
+      "pos": "noun",
+      "category": "food",
+      "frequency": 8,
+      "icon": "apple",
+      "text": "суп"
+    },
+    {
+      "id": "yogurt",
+      "pos": "noun",
+      "category": "food",
+      "frequency": 8,
+      "icon": "apple",
+      "text": "йогурт"
+    },
+    {
+      "id": "cheese",
+      "pos": "noun",
+      "category": "food",
+      "frequency": 8,
+      "icon": "apple",
+      "text": "сыр"
+    },
+    {
+      "id": "cracker",
+      "pos": "noun",
+      "category": "food",
+      "frequency": 8,
+      "icon": "apple",
+      "text": "крекер"
+    },
+    {
+      "id": "carrot",
+      "pos": "noun",
+      "category": "food",
+      "frequency": 8,
+      "icon": "apple",
+      "text": "морковка"
+    },
+    {
+      "id": "chips",
+      "pos": "noun",
+      "category": "food",
+      "frequency": 8,
+      "icon": "apple",
+      "text": "чипсы"
+    },
+    {
+      "id": "cookie",
+      "pos": "noun",
+      "category": "food",
+      "frequency": 8,
+      "icon": "apple",
+      "text": "печенье"
+    },
+    {
+      "id": "egg",
+      "pos": "noun",
+      "category": "food",
+      "frequency": 8,
+      "icon": "apple",
+      "text": "яйцо"
+    },
+    {
+      "id": "cereal",
+      "pos": "noun",
+      "category": "food",
+      "frequency": 8,
+      "icon": "apple",
+      "text": "хлопья"
+    },
+    {
+      "id": "fruit",
+      "pos": "noun",
+      "category": "food",
+      "frequency": 8,
+      "icon": "apple",
+      "text": "фрукт"
+    },
+    {
+      "id": "snack",
+      "pos": "noun",
+      "category": "food",
+      "frequency": 8,
+      "icon": "apple",
+      "text": "перекус"
+    },
+    {
+      "id": "dinner",
+      "pos": "noun",
+      "category": "food",
+      "frequency": 8,
+      "icon": "apple",
+      "text": "ужин"
+    },
+    {
+      "id": "lunch",
+      "pos": "noun",
+      "category": "food",
+      "frequency": 8,
+      "icon": "apple",
+      "text": "обед"
+    },
+    {
+      "id": "happy",
+      "pos": "adjective",
+      "category": "feelings",
+      "frequency": 9,
+      "icon": "smile",
+      "text": "счастливый"
+    },
+    {
+      "id": "sad",
+      "pos": "adjective",
+      "category": "feelings",
+      "frequency": 9,
+      "icon": "smile",
+      "text": "грустный"
+    },
+    {
+      "id": "angry",
+      "pos": "adjective",
+      "category": "feelings",
+      "frequency": 9,
+      "icon": "smile",
+      "text": "злой"
+    },
+    {
+      "id": "worried",
+      "pos": "adjective",
+      "category": "feelings",
+      "frequency": 9,
+      "icon": "smile",
+      "text": "встревоженный"
+    },
+    {
+      "id": "scared",
+      "pos": "adjective",
+      "category": "feelings",
+      "frequency": 9,
+      "icon": "smile",
+      "text": "испуганный"
+    },
+    {
+      "id": "tired",
+      "pos": "adjective",
+      "category": "feelings",
+      "frequency": 9,
+      "icon": "smile",
+      "text": "усталый"
+    },
+    {
+      "id": "sick",
+      "pos": "adjective",
+      "category": "feelings",
+      "frequency": 9,
+      "icon": "smile",
+      "text": "больной"
+    },
+    {
+      "id": "hurt",
+      "pos": "adjective",
+      "category": "feelings",
+      "frequency": 9,
+      "icon": "smile",
+      "text": "больно"
+    },
+    {
+      "id": "calm",
+      "pos": "adjective",
+      "category": "feelings",
+      "frequency": 9,
+      "icon": "smile",
+      "text": "спокойный"
+    },
+    {
+      "id": "excited",
+      "pos": "adjective",
+      "category": "feelings",
+      "frequency": 9,
+      "icon": "smile",
+      "text": "радостный"
+    },
+    {
+      "id": "confused",
+      "pos": "adjective",
+      "category": "feelings",
+      "frequency": 9,
+      "icon": "smile",
+      "text": "растерянный"
+    },
+    {
+      "id": "proud",
+      "pos": "adjective",
+      "category": "feelings",
+      "frequency": 9,
+      "icon": "smile",
+      "text": "гордый"
+    },
+    {
+      "id": "lonely",
+      "pos": "adjective",
+      "category": "feelings",
+      "frequency": 9,
+      "icon": "smile",
+      "text": "одинокий"
+    },
+    {
+      "id": "bored",
+      "pos": "adjective",
+      "category": "feelings",
+      "frequency": 9,
+      "icon": "smile",
+      "text": "скучно"
+    },
+    {
+      "id": "safe",
+      "pos": "adjective",
+      "category": "feelings",
+      "frequency": 9,
+      "icon": "smile",
+      "text": "в безопасности"
+    },
+    {
+      "id": "upset",
+      "pos": "adjective",
+      "category": "feelings",
+      "frequency": 9,
+      "icon": "smile",
+      "text": "расстроенный"
+    },
+    {
+      "id": "okay-2",
+      "pos": "adjective",
+      "category": "feelings",
+      "frequency": 9,
+      "icon": "smile",
+      "text": "нормально"
+    },
+    {
+      "id": "hot",
+      "pos": "adjective",
+      "category": "feelings",
+      "frequency": 9,
+      "icon": "smile",
+      "text": "горячий"
+    },
+    {
+      "id": "cold",
+      "pos": "adjective",
+      "category": "feelings",
+      "frequency": 9,
+      "icon": "smile",
+      "text": "холодный"
+    },
+    {
+      "id": "hungry",
+      "pos": "adjective",
+      "category": "feelings",
+      "frequency": 9,
+      "icon": "smile",
+      "text": "голодный"
+    },
+    {
+      "id": "thirsty",
+      "pos": "adjective",
+      "category": "feelings",
+      "frequency": 9,
+      "icon": "smile",
+      "text": "жажда"
+    },
+    {
+      "id": "head",
+      "pos": "noun",
+      "category": "body",
+      "frequency": 6,
+      "icon": "body",
+      "text": "голова"
+    },
+    {
+      "id": "hand",
+      "pos": "noun",
+      "category": "body",
+      "frequency": 6,
+      "icon": "body",
+      "text": "рука"
+    },
+    {
+      "id": "foot",
+      "pos": "noun",
+      "category": "body",
+      "frequency": 6,
+      "icon": "body",
+      "text": "нога"
+    },
+    {
+      "id": "tummy",
+      "pos": "noun",
+      "category": "body",
+      "frequency": 6,
+      "icon": "body",
+      "text": "живот"
+    },
+    {
+      "id": "mouth",
+      "pos": "noun",
+      "category": "body",
+      "frequency": 6,
+      "icon": "body",
+      "text": "рот"
+    },
+    {
+      "id": "ear",
+      "pos": "noun",
+      "category": "body",
+      "frequency": 6,
+      "icon": "body",
+      "text": "ухо"
+    },
+    {
+      "id": "eye",
+      "pos": "noun",
+      "category": "body",
+      "frequency": 6,
+      "icon": "body",
+      "text": "глаз"
+    },
+    {
+      "id": "arm",
+      "pos": "noun",
+      "category": "body",
+      "frequency": 6,
+      "icon": "body",
+      "text": "рука"
+    },
+    {
+      "id": "leg",
+      "pos": "noun",
+      "category": "body",
+      "frequency": 6,
+      "icon": "body",
+      "text": "нога"
+    },
+    {
+      "id": "back",
+      "pos": "noun",
+      "category": "body",
+      "frequency": 6,
+      "icon": "body",
+      "text": "спина"
+    },
+    {
+      "id": "tooth",
+      "pos": "noun",
+      "category": "body",
+      "frequency": 6,
+      "icon": "body",
+      "text": "зуб"
+    },
+    {
+      "id": "hair",
+      "pos": "noun",
+      "category": "body",
+      "frequency": 6,
+      "icon": "body",
+      "text": "волосы"
+    },
+    {
+      "id": "nose",
+      "pos": "noun",
+      "category": "body",
+      "frequency": 6,
+      "icon": "body",
+      "text": "нос"
+    },
+    {
+      "id": "skin",
+      "pos": "noun",
+      "category": "body",
+      "frequency": 6,
+      "icon": "body",
+      "text": "кожа"
+    },
+    {
+      "id": "heart",
+      "pos": "noun",
+      "category": "body",
+      "frequency": 6,
+      "icon": "body",
+      "text": "сердце"
+    },
+    {
+      "id": "home",
+      "pos": "noun",
+      "category": "places",
+      "frequency": 7,
+      "icon": "home",
+      "text": "дом"
+    },
+    {
+      "id": "school",
+      "pos": "noun",
+      "category": "places",
+      "frequency": 7,
+      "icon": "home",
+      "text": "школа"
+    },
+    {
+      "id": "classroom",
+      "pos": "noun",
+      "category": "places",
+      "frequency": 7,
+      "icon": "home",
+      "text": "класс"
+    },
+    {
+      "id": "bathroom",
+      "pos": "noun",
+      "category": "places",
+      "frequency": 7,
+      "icon": "home",
+      "text": "ванная"
+    },
+    {
+      "id": "kitchen",
+      "pos": "noun",
+      "category": "places",
+      "frequency": 7,
+      "icon": "home",
+      "text": "кухня"
+    },
+    {
+      "id": "bedroom",
+      "pos": "noun",
+      "category": "places",
+      "frequency": 7,
+      "icon": "home",
+      "text": "спальня"
+    },
+    {
+      "id": "garden",
+      "pos": "noun",
+      "category": "places",
+      "frequency": 7,
+      "icon": "home",
+      "text": "сад"
+    },
+    {
+      "id": "shop",
+      "pos": "noun",
+      "category": "places",
+      "frequency": 7,
+      "icon": "home",
+      "text": "магазин"
+    },
+    {
+      "id": "car",
+      "pos": "noun",
+      "category": "places",
+      "frequency": 7,
+      "icon": "home",
+      "text": "машина"
+    },
+    {
+      "id": "bus",
+      "pos": "noun",
+      "category": "places",
+      "frequency": 7,
+      "icon": "home",
+      "text": "автобус"
+    },
+    {
+      "id": "park",
+      "pos": "noun",
+      "category": "places",
+      "frequency": 7,
+      "icon": "home",
+      "text": "парк"
+    },
+    {
+      "id": "playground",
+      "pos": "noun",
+      "category": "places",
+      "frequency": 7,
+      "icon": "home",
+      "text": "площадка"
+    },
+    {
+      "id": "library",
+      "pos": "noun",
+      "category": "places",
+      "frequency": 7,
+      "icon": "home",
+      "text": "библиотека"
+    },
+    {
+      "id": "pool",
+      "pos": "noun",
+      "category": "places",
+      "frequency": 7,
+      "icon": "home",
+      "text": "бассейн"
+    },
+    {
+      "id": "table",
+      "pos": "noun",
+      "category": "home",
+      "frequency": 7,
+      "icon": "home",
+      "text": "стол"
+    },
+    {
+      "id": "chair",
+      "pos": "noun",
+      "category": "home",
+      "frequency": 7,
+      "icon": "home",
+      "text": "стул"
+    },
+    {
+      "id": "sofa",
+      "pos": "noun",
+      "category": "home",
+      "frequency": 7,
+      "icon": "home",
+      "text": "диван"
+    },
+    {
+      "id": "bed",
+      "pos": "noun",
+      "category": "home",
+      "frequency": 7,
+      "icon": "home",
+      "text": "кровать"
+    },
+    {
+      "id": "door",
+      "pos": "noun",
+      "category": "home",
+      "frequency": 7,
+      "icon": "home",
+      "text": "дверь"
+    },
+    {
+      "id": "window",
+      "pos": "noun",
+      "category": "home",
+      "frequency": 7,
+      "icon": "home",
+      "text": "окно"
+    },
+    {
+      "id": "book",
+      "pos": "noun",
+      "category": "school",
+      "frequency": 6,
+      "icon": "book",
+      "text": "книга"
+    },
+    {
+      "id": "pencil",
+      "pos": "noun",
+      "category": "school",
+      "frequency": 6,
+      "icon": "book",
+      "text": "карандаш"
+    },
+    {
+      "id": "paper",
+      "pos": "noun",
+      "category": "school",
+      "frequency": 6,
+      "icon": "book",
+      "text": "бумага"
+    },
+    {
+      "id": "bag",
+      "pos": "noun",
+      "category": "school",
+      "frequency": 6,
+      "icon": "book",
+      "text": "сумка"
+    },
+    {
+      "id": "coat",
+      "pos": "noun",
+      "category": "school",
+      "frequency": 6,
+      "icon": "book",
+      "text": "куртка"
+    },
+    {
+      "id": "shoes",
+      "pos": "noun",
+      "category": "school",
+      "frequency": 6,
+      "icon": "book",
+      "text": "обувь"
+    },
+    {
+      "id": "lunchbox",
+      "pos": "noun",
+      "category": "school",
+      "frequency": 6,
+      "icon": "book",
+      "text": "ланчбокс"
+    },
+    {
+      "id": "tablet",
+      "pos": "noun",
+      "category": "school",
+      "frequency": 6,
+      "icon": "book",
+      "text": "планшет"
+    },
+    {
+      "id": "screen",
+      "pos": "noun",
+      "category": "school",
+      "frequency": 6,
+      "icon": "book",
+      "text": "экран"
+    },
+    {
+      "id": "timer",
+      "pos": "noun",
+      "category": "school",
+      "frequency": 6,
+      "icon": "book",
+      "text": "таймер"
+    },
+    {
+      "id": "schedule",
+      "pos": "noun",
+      "category": "school",
+      "frequency": 6,
+      "icon": "book",
+      "text": "расписание"
+    },
+    {
+      "id": "picture",
+      "pos": "noun",
+      "category": "school",
+      "frequency": 6,
+      "icon": "book",
+      "text": "картинка"
+    },
+    {
+      "id": "card",
+      "pos": "noun",
+      "category": "school",
+      "frequency": 6,
+      "icon": "book",
+      "text": "карточка"
+    },
+    {
+      "id": "story",
+      "pos": "noun",
+      "category": "school",
+      "frequency": 6,
+      "icon": "book",
+      "text": "история"
+    },
+    {
+      "id": "music",
+      "pos": "noun",
+      "category": "school",
+      "frequency": 6,
+      "icon": "book",
+      "text": "музыка"
+    },
+    {
+      "id": "ball",
+      "pos": "noun",
+      "category": "toys",
+      "frequency": 6,
+      "icon": "puzzle",
+      "text": "мяч"
+    },
+    {
+      "id": "blocks",
+      "pos": "noun",
+      "category": "toys",
+      "frequency": 6,
+      "icon": "puzzle",
+      "text": "кубики"
+    },
+    {
+      "id": "doll",
+      "pos": "noun",
+      "category": "toys",
+      "frequency": 6,
+      "icon": "puzzle",
+      "text": "кукла"
+    },
+    {
+      "id": "car-toy",
+      "pos": "noun",
+      "category": "toys",
+      "frequency": 6,
+      "icon": "puzzle",
+      "text": "машинка"
+    },
+    {
+      "id": "train",
+      "pos": "noun",
+      "category": "toys",
+      "frequency": 6,
+      "icon": "puzzle",
+      "text": "поезд"
+    },
+    {
+      "id": "puzzle",
+      "pos": "noun",
+      "category": "toys",
+      "frequency": 6,
+      "icon": "puzzle",
+      "text": "пазл"
+    },
+    {
+      "id": "game",
+      "pos": "noun",
+      "category": "toys",
+      "frequency": 6,
+      "icon": "puzzle",
+      "text": "игра"
+    },
+    {
+      "id": "paint",
+      "pos": "noun",
+      "category": "toys",
+      "frequency": 6,
+      "icon": "puzzle",
+      "text": "краска"
+    },
+    {
+      "id": "clay",
+      "pos": "noun",
+      "category": "toys",
+      "frequency": 6,
+      "icon": "puzzle",
+      "text": "пластилин"
+    },
+    {
+      "id": "bubbles",
+      "pos": "noun",
+      "category": "toys",
+      "frequency": 6,
+      "icon": "puzzle",
+      "text": "пузыри"
+    },
+    {
+      "id": "swing",
+      "pos": "noun",
+      "category": "toys",
+      "frequency": 6,
+      "icon": "puzzle",
+      "text": "качели"
+    },
+    {
+      "id": "slide",
+      "pos": "noun",
+      "category": "toys",
+      "frequency": 6,
+      "icon": "puzzle",
+      "text": "горка"
+    },
+    {
+      "id": "bike",
+      "pos": "noun",
+      "category": "toys",
+      "frequency": 6,
+      "icon": "puzzle",
+      "text": "велосипед"
+    },
+    {
+      "id": "teddy",
+      "pos": "noun",
+      "category": "toys",
+      "frequency": 6,
+      "icon": "puzzle",
+      "text": "мишка"
+    },
+    {
+      "id": "lego",
+      "pos": "noun",
+      "category": "toys",
+      "frequency": 6,
+      "icon": "puzzle",
+      "text": "лего"
+    },
+    {
+      "id": "red",
+      "pos": "adjective",
+      "category": "colors",
+      "frequency": 5,
+      "icon": "palette",
+      "text": "красный"
+    },
+    {
+      "id": "blue",
+      "pos": "adjective",
+      "category": "colors",
+      "frequency": 5,
+      "icon": "palette",
+      "text": "синий"
+    },
+    {
+      "id": "green",
+      "pos": "adjective",
+      "category": "colors",
+      "frequency": 5,
+      "icon": "palette",
+      "text": "зелёный"
+    },
+    {
+      "id": "yellow",
+      "pos": "adjective",
+      "category": "colors",
+      "frequency": 5,
+      "icon": "palette",
+      "text": "жёлтый"
+    },
+    {
+      "id": "orange",
+      "pos": "adjective",
+      "category": "colors",
+      "frequency": 5,
+      "icon": "palette",
+      "text": "оранжевый"
+    },
+    {
+      "id": "purple",
+      "pos": "adjective",
+      "category": "colors",
+      "frequency": 5,
+      "icon": "palette",
+      "text": "фиолетовый"
+    },
+    {
+      "id": "pink",
+      "pos": "adjective",
+      "category": "colors",
+      "frequency": 5,
+      "icon": "palette",
+      "text": "розовый"
+    },
+    {
+      "id": "brown",
+      "pos": "adjective",
+      "category": "colors",
+      "frequency": 5,
+      "icon": "palette",
+      "text": "коричневый"
+    },
+    {
+      "id": "black",
+      "pos": "adjective",
+      "category": "colors",
+      "frequency": 5,
+      "icon": "palette",
+      "text": "чёрный"
+    },
+    {
+      "id": "white",
+      "pos": "adjective",
+      "category": "colors",
+      "frequency": 5,
+      "icon": "palette",
+      "text": "белый"
+    },
+    {
+      "id": "grey",
+      "pos": "adjective",
+      "category": "colors",
+      "frequency": 5,
+      "icon": "palette",
+      "text": "серый"
+    },
+    {
+      "id": "bright",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "palette",
+      "text": "яркий"
+    },
+    {
+      "id": "dark",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "palette",
+      "text": "тёмный"
+    },
+    {
+      "id": "soft",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "palette",
+      "text": "мягкий"
+    },
+    {
+      "id": "hard",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "palette",
+      "text": "твёрдый"
+    },
+    {
+      "id": "quiet",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "palette",
+      "text": "тихий"
+    },
+    {
+      "id": "loud",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "palette",
+      "text": "громкий"
+    },
+    {
+      "id": "fast",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "palette",
+      "text": "быстрый"
+    },
+    {
+      "id": "slow",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "palette",
+      "text": "медленный"
+    },
+    {
+      "id": "clean",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "palette",
+      "text": "чистый"
+    },
+    {
+      "id": "dirty",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "palette",
+      "text": "грязный"
+    },
+    {
+      "id": "wet",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "palette",
+      "text": "мокрый"
+    },
+    {
+      "id": "dry",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "palette",
+      "text": "сухой"
+    },
+    {
+      "id": "new",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "palette",
+      "text": "новый"
+    },
+    {
+      "id": "old",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "palette",
+      "text": "старый"
+    },
+    {
+      "id": "now",
+      "pos": "adverb",
+      "category": "time",
+      "frequency": 6,
+      "icon": "clock",
+      "text": "сейчас"
+    },
+    {
+      "id": "later",
+      "pos": "adverb",
+      "category": "time",
+      "frequency": 6,
+      "icon": "clock",
+      "text": "позже"
+    },
+    {
+      "id": "today",
+      "pos": "adverb",
+      "category": "time",
+      "frequency": 6,
+      "icon": "clock",
+      "text": "сегодня"
+    },
+    {
+      "id": "tomorrow",
+      "pos": "adverb",
+      "category": "time",
+      "frequency": 6,
+      "icon": "clock",
+      "text": "завтра"
+    },
+    {
+      "id": "morning",
+      "pos": "adverb",
+      "category": "time",
+      "frequency": 6,
+      "icon": "clock",
+      "text": "утро"
+    },
+    {
+      "id": "afternoon",
+      "pos": "adverb",
+      "category": "time",
+      "frequency": 6,
+      "icon": "clock",
+      "text": "день"
+    },
+    {
+      "id": "night",
+      "pos": "adverb",
+      "category": "time",
+      "frequency": 6,
+      "icon": "clock",
+      "text": "ночь"
+    },
+    {
+      "id": "before",
+      "pos": "adverb",
+      "category": "time",
+      "frequency": 6,
+      "icon": "clock",
+      "text": "до"
+    },
+    {
+      "id": "after",
+      "pos": "adverb",
+      "category": "time",
+      "frequency": 6,
+      "icon": "clock",
+      "text": "после"
+    },
+    {
+      "id": "soon",
+      "pos": "adverb",
+      "category": "time",
+      "frequency": 6,
+      "icon": "clock",
+      "text": "скоро"
+    },
+    {
+      "id": "first",
+      "pos": "adverb",
+      "category": "time",
+      "frequency": 6,
+      "icon": "clock",
+      "text": "сначала"
+    },
+    {
+      "id": "next",
+      "pos": "adverb",
+      "category": "time",
+      "frequency": 6,
+      "icon": "clock",
+      "text": "следующий"
+    },
+    {
+      "id": "last",
+      "pos": "adverb",
+      "category": "time",
+      "frequency": 6,
+      "icon": "clock",
+      "text": "последний"
+    },
+    {
+      "id": "minute",
+      "pos": "adverb",
+      "category": "time",
+      "frequency": 6,
+      "icon": "clock",
+      "text": "минута"
+    },
+    {
+      "id": "hour",
+      "pos": "adverb",
+      "category": "time",
+      "frequency": 6,
+      "icon": "clock",
+      "text": "час"
+    },
+    {
+      "id": "break",
+      "pos": "noun",
+      "category": "needs",
+      "frequency": 8,
+      "icon": "heart-hand",
+      "text": "перерыв"
+    },
+    {
+      "id": "quiet-time",
+      "pos": "noun",
+      "category": "needs",
+      "frequency": 8,
+      "icon": "heart-hand",
+      "text": "тихий час"
+    },
+    {
+      "id": "hug",
+      "pos": "noun",
+      "category": "needs",
+      "frequency": 8,
+      "icon": "heart-hand",
+      "text": "обнимашки"
+    },
+    {
+      "id": "space",
+      "pos": "noun",
+      "category": "needs",
+      "frequency": 8,
+      "icon": "heart-hand",
+      "text": "место"
+    },
+    {
+      "id": "toilet",
+      "pos": "noun",
+      "category": "needs",
+      "frequency": 8,
+      "icon": "heart-hand",
+      "text": "туалет"
+    },
+    {
+      "id": "medicine",
+      "pos": "noun",
+      "category": "needs",
+      "frequency": 8,
+      "icon": "heart-hand",
+      "text": "лекарство"
+    },
+    {
+      "id": "light",
+      "pos": "noun",
+      "category": "needs",
+      "frequency": 8,
+      "icon": "heart-hand",
+      "text": "свет"
+    },
+    {
+      "id": "dark-2",
+      "pos": "noun",
+      "category": "needs",
+      "frequency": 8,
+      "icon": "heart-hand",
+      "text": "темнота"
+    },
+    {
+      "id": "noise",
+      "pos": "noun",
+      "category": "needs",
+      "frequency": 8,
+      "icon": "heart-hand",
+      "text": "шум"
+    },
+    {
+      "id": "headphones",
+      "pos": "noun",
+      "category": "needs",
+      "frequency": 8,
+      "icon": "heart-hand",
+      "text": "наушники"
+    },
+    {
+      "id": "blanket",
+      "pos": "noun",
+      "category": "needs",
+      "frequency": 8,
+      "icon": "heart-hand",
+      "text": "одеяло"
+    },
+    {
+      "id": "charger",
+      "pos": "noun",
+      "category": "needs",
+      "frequency": 8,
+      "icon": "heart-hand",
+      "text": "зарядка"
+    },
+    {
+      "id": "choice",
+      "pos": "noun",
+      "category": "needs",
+      "frequency": 8,
+      "icon": "heart-hand",
+      "text": "выбор"
+    },
+    {
+      "id": "turn",
+      "pos": "noun",
+      "category": "needs",
+      "frequency": 8,
+      "icon": "heart-hand",
+      "text": "очередь"
+    },
+    {
+      "id": "help-please",
+      "pos": "noun",
+      "category": "needs",
+      "frequency": 8,
+      "icon": "heart-hand",
+      "text": "помогите пожалуйста"
+    },
+    {
+      "id": "different",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "sparkles",
+      "text": "другой"
+    },
+    {
+      "id": "same",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "sparkles",
+      "text": "такой же"
+    },
+    {
+      "id": "easy",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "sparkles",
+      "text": "легкий"
+    },
+    {
+      "id": "harder",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "sparkles",
+      "text": "сложнее"
+    },
+    {
+      "id": "favorite",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "sparkles",
+      "text": "любимый"
+    },
+    {
+      "id": "missing",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "sparkles",
+      "text": "пропал"
+    },
+    {
+      "id": "broken",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "sparkles",
+      "text": "сломанный"
+    },
+    {
+      "id": "ready",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "sparkles",
+      "text": "готовый"
+    },
+    {
+      "id": "busy",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "sparkles",
+      "text": "занятый"
+    },
+    {
+      "id": "empty",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "sparkles",
+      "text": "пустой"
+    },
+    {
+      "id": "full",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "sparkles",
+      "text": "полный"
+    },
+    {
+      "id": "small",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "sparkles",
+      "text": "маленький"
+    },
+    {
+      "id": "tall",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "sparkles",
+      "text": "высокий"
+    },
+    {
+      "id": "short",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "sparkles",
+      "text": "короткий"
+    },
+    {
+      "id": "round",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "sparkles",
+      "text": "круглый"
+    },
+    {
+      "id": "square",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "sparkles",
+      "text": "квадратный"
+    },
+    {
+      "id": "kind",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "sparkles",
+      "text": "добрый"
+    },
+    {
+      "id": "gentle",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "sparkles",
+      "text": "нежный"
+    },
+    {
+      "id": "careful",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "sparkles",
+      "text": "осторожный"
+    },
+    {
+      "id": "safe-place",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "sparkles",
+      "text": "безопасное место"
+    }
+  ],
+  "templates": [
+    {
+      "id": "want-object",
+      "pattern": "I want {thing}.",
+      "category": "needs",
+      "icon": "heart-hand",
+      "slots": [
+        {
+          "acceptedPos": [
+            "pronoun"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "noun"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "need-help",
+      "pattern": "I need help with {thing}.",
+      "category": "needs",
+      "icon": "heart-hand",
+      "slots": [
+        {
+          "acceptedPos": [
+            "pronoun"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "noun"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "feel-state",
+      "pattern": "I feel {feeling}.",
+      "category": "feelings",
+      "icon": "smile",
+      "slots": [
+        {
+          "acceptedPos": [
+            "pronoun"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "adjective"
+          ],
+          "categoryFilter": "feelings"
+        }
+      ]
+    },
+    {
+      "id": "body-hurts",
+      "pattern": "My {body} hurts.",
+      "category": "body",
+      "icon": "body",
+      "slots": [
+        {
+          "acceptedPos": [
+            "pronoun"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "noun"
+          ],
+          "categoryFilter": "body"
+        },
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "like-activity",
+      "pattern": "I like {activity}.",
+      "category": "actions",
+      "icon": "play",
+      "slots": [
+        {
+          "acceptedPos": [
+            "pronoun"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "noun"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "go-place",
+      "pattern": "I want to go to {place}.",
+      "category": "places",
+      "icon": "home",
+      "slots": [
+        {
+          "acceptedPos": [
+            "pronoun"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "preposition"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "preposition"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "noun"
+          ],
+          "categoryFilter": "places"
+        }
+      ]
+    },
+    {
+      "id": "question-where",
+      "pattern": "Where is {thing}?",
+      "category": "questions",
+      "icon": "question-circle",
+      "slots": [
+        {
+          "acceptedPos": [
+            "question"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "noun"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "question-what",
+      "pattern": "What is this?",
+      "category": "questions",
+      "icon": "question-circle",
+      "slots": [
+        {
+          "acceptedPos": [
+            "question"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "determiner"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "question-can",
+      "pattern": "Can you help me?",
+      "category": "questions",
+      "icon": "question-circle",
+      "slots": [
+        {
+          "acceptedPos": [
+            "question"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "pronoun"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "pronoun"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "more-thing",
+      "pattern": "More {thing}, please.",
+      "category": "social",
+      "icon": "chat-bubble",
+      "slots": [
+        {
+          "acceptedPos": [
+            "social"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "noun"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "social"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "all-done",
+      "pattern": "I am all done.",
+      "category": "social",
+      "icon": "chat-bubble",
+      "slots": [
+        {
+          "acceptedPos": [
+            "pronoun"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "social"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "not-want",
+      "pattern": "I do not want {thing}.",
+      "category": "needs",
+      "icon": "heart-hand",
+      "slots": [
+        {
+          "acceptedPos": [
+            "pronoun"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "social"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "noun"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "choose-one",
+      "pattern": "I choose {thing}.",
+      "category": "actions",
+      "icon": "play",
+      "slots": [
+        {
+          "acceptedPos": [
+            "pronoun"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "noun"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "with-person",
+      "pattern": "I want to be with {person}.",
+      "category": "people",
+      "icon": "user",
+      "slots": [
+        {
+          "acceptedPos": [
+            "pronoun"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "preposition"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "preposition"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "noun"
+          ],
+          "categoryFilter": "people"
+        }
+      ]
+    },
+    {
+      "id": "too-loud",
+      "pattern": "It is too loud.",
+      "category": "feelings",
+      "icon": "smile",
+      "slots": [
+        {
+          "acceptedPos": [
+            "pronoun"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "adjective"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "need-break",
+      "pattern": "I need a break.",
+      "category": "needs",
+      "icon": "heart-hand",
+      "slots": [
+        {
+          "acceptedPos": [
+            "pronoun"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "determiner"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "noun"
+          ],
+          "categoryFilter": "needs"
+        }
+      ]
+    },
+    {
+      "id": "first-next",
+      "pattern": "First {thing}, then {thing}.",
+      "category": "time",
+      "icon": "clock",
+      "slots": [
+        {
+          "acceptedPos": [
+            "adverb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "noun"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "conjunction"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "noun"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "yes-answer",
+      "pattern": "Yes, please.",
+      "category": "social",
+      "icon": "chat-bubble",
+      "slots": [
+        {
+          "acceptedPos": [
+            "social"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "social"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "no-answer",
+      "pattern": "No, thank you.",
+      "category": "social",
+      "icon": "chat-bubble",
+      "slots": [
+        {
+          "acceptedPos": [
+            "social"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "social"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "descriptor-object",
+      "pattern": "The {thing} is {description}.",
+      "category": "describing",
+      "icon": "sparkles",
+      "slots": [
+        {
+          "acceptedPos": [
+            "determiner"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "noun"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "adjective"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "place-position",
+      "pattern": "The {thing} is {position} the {place}.",
+      "category": "positions",
+      "icon": "arrow-right",
+      "slots": [
+        {
+          "acceptedPos": [
+            "determiner"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "noun"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "preposition"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "determiner"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "noun"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "time-request",
+      "pattern": "I want {thing} later.",
+      "category": "time",
+      "icon": "clock",
+      "slots": [
+        {
+          "acceptedPos": [
+            "pronoun"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "noun"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "adverb"
+          ],
+          "categoryFilter": "time"
+        }
+      ]
+    },
+    {
+      "id": "polite-help",
+      "pattern": "Help please.",
+      "category": "needs",
+      "icon": "heart-hand",
+      "slots": [
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "social"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "try-again",
+      "pattern": "I want to try again.",
+      "category": "actions",
+      "icon": "play",
+      "slots": [
+        {
+          "acceptedPos": [
+            "pronoun"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "preposition"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "social"
+          ]
+        }
+      ]
+    }
+  ],
+  "grammar": {
+    "wordOrder": "subject-verb-object",
+    "validTransitions": {
+      "pronoun": [
+        "verb",
+        "noun",
+        "adjective"
+      ],
+      "determiner": [
+        "noun",
+        "adjective"
+      ],
+      "verb": [
+        "determiner",
+        "noun",
+        "adjective",
+        "preposition",
+        "social"
+      ],
+      "noun": [
+        "verb",
+        "preposition",
+        "conjunction",
+        "social"
+      ],
+      "adjective": [
+        "noun",
+        "social",
+        "conjunction"
+      ],
+      "question": [
+        "verb",
+        "pronoun",
+        "determiner"
+      ],
+      "preposition": [
+        "determiner",
+        "noun",
+        "verb"
+      ],
+      "conjunction": [
+        "pronoun",
+        "determiner",
+        "noun",
+        "verb"
+      ],
+      "social": [
+        "noun",
+        "verb"
+      ]
+    },
+    "articles": {},
+    "cases": [
+      "nominative",
+      "accusative",
+      "genitive"
+    ],
+    "negation": {
+      "position": "before-verb",
+      "words": [
+        "не"
+      ]
+    }
+  },
+  "source": "generated",
+  "reviewStatus": "needs-native-review"
+}

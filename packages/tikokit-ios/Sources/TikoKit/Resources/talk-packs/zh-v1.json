@@ -1,0 +1,3088 @@
+{
+  "locale": "zh",
+  "version": 1,
+  "words": [
+    {
+      "id": "i",
+      "text": "我",
+      "pos": "pronoun",
+      "category": "people",
+      "frequency": 10,
+      "icon": "user"
+    },
+    {
+      "id": "you",
+      "text": "你",
+      "pos": "pronoun",
+      "category": "people",
+      "frequency": 10,
+      "icon": "user"
+    },
+    {
+      "id": "we",
+      "text": "我们",
+      "pos": "pronoun",
+      "category": "people",
+      "frequency": 7,
+      "icon": "user"
+    },
+    {
+      "id": "me",
+      "text": "我自己",
+      "pos": "pronoun",
+      "category": "people",
+      "frequency": 10,
+      "icon": "user"
+    },
+    {
+      "id": "my",
+      "text": "我的",
+      "pos": "pronoun",
+      "category": "people",
+      "frequency": 10,
+      "icon": "user"
+    },
+    {
+      "id": "your",
+      "text": "你的",
+      "pos": "pronoun",
+      "category": "people",
+      "frequency": 7,
+      "icon": "user"
+    },
+    {
+      "id": "he",
+      "text": "他",
+      "pos": "pronoun",
+      "category": "people",
+      "frequency": 7,
+      "icon": "user"
+    },
+    {
+      "id": "she",
+      "text": "她",
+      "pos": "pronoun",
+      "category": "people",
+      "frequency": 7,
+      "icon": "user"
+    },
+    {
+      "id": "they",
+      "text": "他们",
+      "pos": "pronoun",
+      "category": "people",
+      "frequency": 7,
+      "icon": "user"
+    },
+    {
+      "id": "mum",
+      "text": "妈妈",
+      "pos": "noun",
+      "category": "people",
+      "frequency": 7,
+      "icon": "user"
+    },
+    {
+      "id": "dad",
+      "text": "爸爸",
+      "pos": "noun",
+      "category": "people",
+      "frequency": 7,
+      "icon": "user"
+    },
+    {
+      "id": "teacher",
+      "text": "老师",
+      "pos": "noun",
+      "category": "people",
+      "frequency": 7,
+      "icon": "user"
+    },
+    {
+      "id": "friend",
+      "text": "朋友",
+      "pos": "noun",
+      "category": "people",
+      "frequency": 7,
+      "icon": "user"
+    },
+    {
+      "id": "brother",
+      "text": "哥哥",
+      "pos": "noun",
+      "category": "people",
+      "frequency": 7,
+      "icon": "user"
+    },
+    {
+      "id": "sister",
+      "text": "姐姐",
+      "pos": "noun",
+      "category": "people",
+      "frequency": 7,
+      "icon": "user"
+    },
+    {
+      "id": "grandma",
+      "text": "奶奶",
+      "pos": "noun",
+      "category": "people",
+      "frequency": 7,
+      "icon": "user"
+    },
+    {
+      "id": "grandpa",
+      "text": "爷爷",
+      "pos": "noun",
+      "category": "people",
+      "frequency": 7,
+      "icon": "user"
+    },
+    {
+      "id": "helper",
+      "text": "帮手",
+      "pos": "noun",
+      "category": "people",
+      "frequency": 7,
+      "icon": "user"
+    },
+    {
+      "id": "doctor",
+      "text": "医生",
+      "pos": "noun",
+      "category": "people",
+      "frequency": 7,
+      "icon": "user"
+    },
+    {
+      "id": "class",
+      "text": "班级",
+      "pos": "noun",
+      "category": "people",
+      "frequency": 7,
+      "icon": "user"
+    },
+    {
+      "id": "want",
+      "text": "要",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 10,
+      "icon": "play",
+      "inflections": {}
+    },
+    {
+      "id": "need",
+      "text": "需要",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 10,
+      "icon": "play",
+      "inflections": {}
+    },
+    {
+      "id": "like",
+      "text": "喜欢",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play",
+      "inflections": {}
+    },
+    {
+      "id": "feel",
+      "text": "觉得",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 10,
+      "icon": "play",
+      "inflections": {}
+    },
+    {
+      "id": "see",
+      "text": "看见",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play",
+      "inflections": {}
+    },
+    {
+      "id": "hear",
+      "text": "听见",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play",
+      "inflections": {}
+    },
+    {
+      "id": "have",
+      "text": "有",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play",
+      "inflections": {}
+    },
+    {
+      "id": "go",
+      "text": "去",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play"
+    },
+    {
+      "id": "come",
+      "text": "来",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play",
+      "inflections": {}
+    },
+    {
+      "id": "play",
+      "text": "玩",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play",
+      "inflections": {}
+    },
+    {
+      "id": "read",
+      "text": "读",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play",
+      "inflections": {}
+    },
+    {
+      "id": "draw",
+      "text": "画",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play",
+      "inflections": {}
+    },
+    {
+      "id": "eat",
+      "text": "吃",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play"
+    },
+    {
+      "id": "drink",
+      "text": "喝",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play"
+    },
+    {
+      "id": "sit",
+      "text": "坐",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play"
+    },
+    {
+      "id": "stand",
+      "text": "站",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play"
+    },
+    {
+      "id": "walk",
+      "text": "走",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play",
+      "inflections": {}
+    },
+    {
+      "id": "run",
+      "text": "跑",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play"
+    },
+    {
+      "id": "stop",
+      "text": "停",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 10,
+      "icon": "play",
+      "inflections": {}
+    },
+    {
+      "id": "start",
+      "text": "开始",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play",
+      "inflections": {}
+    },
+    {
+      "id": "wait",
+      "text": "等",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play",
+      "inflections": {}
+    },
+    {
+      "id": "help",
+      "text": "帮助",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 10,
+      "icon": "play",
+      "inflections": {}
+    },
+    {
+      "id": "choose",
+      "text": "选",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play",
+      "inflections": {}
+    },
+    {
+      "id": "open",
+      "text": "打开",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play",
+      "inflections": {}
+    },
+    {
+      "id": "close",
+      "text": "关上",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play",
+      "inflections": {}
+    },
+    {
+      "id": "wash",
+      "text": "洗",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play",
+      "inflections": {}
+    },
+    {
+      "id": "sleep",
+      "text": "睡觉",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play"
+    },
+    {
+      "id": "rest",
+      "text": "休息",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play",
+      "inflections": {}
+    },
+    {
+      "id": "try",
+      "text": "试试",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play",
+      "inflections": {}
+    },
+    {
+      "id": "talk",
+      "text": "说话",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play",
+      "inflections": {}
+    },
+    {
+      "id": "yes",
+      "text": "是的",
+      "pos": "social",
+      "category": "social",
+      "frequency": 9,
+      "icon": "chat-bubble"
+    },
+    {
+      "id": "no",
+      "text": "不",
+      "pos": "social",
+      "category": "social",
+      "frequency": 9,
+      "icon": "chat-bubble"
+    },
+    {
+      "id": "please",
+      "text": "请",
+      "pos": "social",
+      "category": "social",
+      "frequency": 9,
+      "icon": "chat-bubble"
+    },
+    {
+      "id": "thank-you",
+      "text": "谢谢",
+      "pos": "social",
+      "category": "social",
+      "frequency": 9,
+      "icon": "chat-bubble"
+    },
+    {
+      "id": "sorry",
+      "text": "对不起",
+      "pos": "social",
+      "category": "social",
+      "frequency": 9,
+      "icon": "chat-bubble"
+    },
+    {
+      "id": "hello",
+      "text": "你好",
+      "pos": "social",
+      "category": "social",
+      "frequency": 9,
+      "icon": "chat-bubble"
+    },
+    {
+      "id": "goodbye",
+      "text": "再见",
+      "pos": "social",
+      "category": "social",
+      "frequency": 9,
+      "icon": "chat-bubble"
+    },
+    {
+      "id": "more",
+      "text": "还要",
+      "pos": "social",
+      "category": "social",
+      "frequency": 9,
+      "icon": "chat-bubble"
+    },
+    {
+      "id": "all-done",
+      "text": "做完了",
+      "pos": "social",
+      "category": "social",
+      "frequency": 9,
+      "icon": "chat-bubble"
+    },
+    {
+      "id": "again",
+      "text": "再一次",
+      "pos": "social",
+      "category": "social",
+      "frequency": 9,
+      "icon": "chat-bubble"
+    },
+    {
+      "id": "finished",
+      "text": "完成了",
+      "pos": "social",
+      "category": "social",
+      "frequency": 9,
+      "icon": "chat-bubble"
+    },
+    {
+      "id": "okay",
+      "text": "好的",
+      "pos": "social",
+      "category": "social",
+      "frequency": 9,
+      "icon": "chat-bubble"
+    },
+    {
+      "id": "not-yet",
+      "text": "还没",
+      "pos": "social",
+      "category": "social",
+      "frequency": 9,
+      "icon": "chat-bubble"
+    },
+    {
+      "id": "maybe",
+      "text": "可能",
+      "pos": "social",
+      "category": "social",
+      "frequency": 9,
+      "icon": "chat-bubble"
+    },
+    {
+      "id": "what",
+      "text": "什么",
+      "pos": "question",
+      "category": "questions",
+      "frequency": 8,
+      "icon": "question-circle"
+    },
+    {
+      "id": "where",
+      "text": "哪里",
+      "pos": "question",
+      "category": "questions",
+      "frequency": 8,
+      "icon": "question-circle"
+    },
+    {
+      "id": "who",
+      "text": "谁",
+      "pos": "question",
+      "category": "questions",
+      "frequency": 8,
+      "icon": "question-circle"
+    },
+    {
+      "id": "when",
+      "text": "什么时候",
+      "pos": "question",
+      "category": "questions",
+      "frequency": 8,
+      "icon": "question-circle"
+    },
+    {
+      "id": "why",
+      "text": "为什么",
+      "pos": "question",
+      "category": "questions",
+      "frequency": 8,
+      "icon": "question-circle"
+    },
+    {
+      "id": "which",
+      "text": "哪个",
+      "pos": "question",
+      "category": "questions",
+      "frequency": 8,
+      "icon": "question-circle"
+    },
+    {
+      "id": "how",
+      "text": "怎么",
+      "pos": "question",
+      "category": "questions",
+      "frequency": 8,
+      "icon": "question-circle"
+    },
+    {
+      "id": "can",
+      "text": "可以",
+      "pos": "question",
+      "category": "questions",
+      "frequency": 8,
+      "icon": "question-circle"
+    },
+    {
+      "id": "is",
+      "text": "是",
+      "pos": "question",
+      "category": "questions",
+      "frequency": 8,
+      "icon": "question-circle"
+    },
+    {
+      "id": "are",
+      "text": "是不是",
+      "pos": "question",
+      "category": "questions",
+      "frequency": 8,
+      "icon": "question-circle"
+    },
+    {
+      "id": "a",
+      "text": "一个",
+      "pos": "determiner",
+      "category": "helpers",
+      "frequency": 8,
+      "icon": "text"
+    },
+    {
+      "id": "the",
+      "text": "这",
+      "pos": "determiner",
+      "category": "helpers",
+      "frequency": 8,
+      "icon": "text"
+    },
+    {
+      "id": "this",
+      "text": "这个",
+      "pos": "determiner",
+      "category": "helpers",
+      "frequency": 8,
+      "icon": "text"
+    },
+    {
+      "id": "that",
+      "text": "那个",
+      "pos": "determiner",
+      "category": "helpers",
+      "frequency": 8,
+      "icon": "text"
+    },
+    {
+      "id": "some",
+      "text": "一些",
+      "pos": "determiner",
+      "category": "helpers",
+      "frequency": 8,
+      "icon": "text"
+    },
+    {
+      "id": "one",
+      "text": "一",
+      "pos": "determiner",
+      "category": "helpers",
+      "frequency": 8,
+      "icon": "text"
+    },
+    {
+      "id": "two",
+      "text": "二",
+      "pos": "determiner",
+      "category": "helpers",
+      "frequency": 8,
+      "icon": "text"
+    },
+    {
+      "id": "three",
+      "text": "三",
+      "pos": "determiner",
+      "category": "helpers",
+      "frequency": 8,
+      "icon": "text"
+    },
+    {
+      "id": "many",
+      "text": "很多",
+      "pos": "determiner",
+      "category": "helpers",
+      "frequency": 8,
+      "icon": "text"
+    },
+    {
+      "id": "little",
+      "text": "一点",
+      "pos": "determiner",
+      "category": "helpers",
+      "frequency": 8,
+      "icon": "text"
+    },
+    {
+      "id": "big",
+      "text": "大",
+      "pos": "determiner",
+      "category": "helpers",
+      "frequency": 8,
+      "icon": "text"
+    },
+    {
+      "id": "in",
+      "text": "在",
+      "pos": "preposition",
+      "category": "positions",
+      "frequency": 7,
+      "icon": "arrow-right"
+    },
+    {
+      "id": "on",
+      "text": "上面",
+      "pos": "preposition",
+      "category": "positions",
+      "frequency": 7,
+      "icon": "arrow-right"
+    },
+    {
+      "id": "under",
+      "text": "下面",
+      "pos": "preposition",
+      "category": "positions",
+      "frequency": 7,
+      "icon": "arrow-right"
+    },
+    {
+      "id": "next-to",
+      "text": "旁边",
+      "pos": "preposition",
+      "category": "positions",
+      "frequency": 7,
+      "icon": "arrow-right"
+    },
+    {
+      "id": "with",
+      "text": "跟",
+      "pos": "preposition",
+      "category": "positions",
+      "frequency": 7,
+      "icon": "arrow-right"
+    },
+    {
+      "id": "without",
+      "text": "没有",
+      "pos": "preposition",
+      "category": "positions",
+      "frequency": 7,
+      "icon": "arrow-right"
+    },
+    {
+      "id": "to",
+      "text": "到",
+      "pos": "preposition",
+      "category": "positions",
+      "frequency": 7,
+      "icon": "arrow-right"
+    },
+    {
+      "id": "from",
+      "text": "从",
+      "pos": "preposition",
+      "category": "positions",
+      "frequency": 7,
+      "icon": "arrow-right"
+    },
+    {
+      "id": "inside",
+      "text": "里面",
+      "pos": "preposition",
+      "category": "positions",
+      "frequency": 7,
+      "icon": "arrow-right"
+    },
+    {
+      "id": "outside",
+      "text": "外面",
+      "pos": "preposition",
+      "category": "positions",
+      "frequency": 7,
+      "icon": "arrow-right"
+    },
+    {
+      "id": "near",
+      "text": "附近",
+      "pos": "preposition",
+      "category": "positions",
+      "frequency": 7,
+      "icon": "arrow-right"
+    },
+    {
+      "id": "far",
+      "text": "远",
+      "pos": "preposition",
+      "category": "positions",
+      "frequency": 7,
+      "icon": "arrow-right"
+    },
+    {
+      "id": "and",
+      "text": "和",
+      "pos": "conjunction",
+      "category": "helpers",
+      "frequency": 6,
+      "icon": "branch"
+    },
+    {
+      "id": "or",
+      "text": "或者",
+      "pos": "conjunction",
+      "category": "helpers",
+      "frequency": 6,
+      "icon": "branch"
+    },
+    {
+      "id": "because",
+      "text": "因为",
+      "pos": "conjunction",
+      "category": "helpers",
+      "frequency": 6,
+      "icon": "branch"
+    },
+    {
+      "id": "then",
+      "text": "然后",
+      "pos": "conjunction",
+      "category": "helpers",
+      "frequency": 6,
+      "icon": "branch"
+    },
+    {
+      "id": "but",
+      "text": "但是",
+      "pos": "conjunction",
+      "category": "helpers",
+      "frequency": 6,
+      "icon": "branch"
+    },
+    {
+      "id": "water",
+      "text": "水",
+      "pos": "noun",
+      "category": "drinks",
+      "frequency": 8,
+      "icon": "water"
+    },
+    {
+      "id": "milk",
+      "text": "牛奶",
+      "pos": "noun",
+      "category": "drinks",
+      "frequency": 8,
+      "icon": "water"
+    },
+    {
+      "id": "juice",
+      "text": "果汁",
+      "pos": "noun",
+      "category": "drinks",
+      "frequency": 8,
+      "icon": "water"
+    },
+    {
+      "id": "tea",
+      "text": "茶",
+      "pos": "noun",
+      "category": "drinks",
+      "frequency": 8,
+      "icon": "water"
+    },
+    {
+      "id": "smoothie",
+      "text": "奶昔",
+      "pos": "noun",
+      "category": "drinks",
+      "frequency": 8,
+      "icon": "water"
+    },
+    {
+      "id": "lemonade",
+      "text": "柠檬水",
+      "pos": "noun",
+      "category": "drinks",
+      "frequency": 8,
+      "icon": "water"
+    },
+    {
+      "id": "hot-drink",
+      "text": "热饮",
+      "pos": "noun",
+      "category": "drinks",
+      "frequency": 8,
+      "icon": "water"
+    },
+    {
+      "id": "cold-drink",
+      "text": "冷饮",
+      "pos": "noun",
+      "category": "drinks",
+      "frequency": 8,
+      "icon": "water"
+    },
+    {
+      "id": "cup",
+      "text": "杯子",
+      "pos": "noun",
+      "category": "drinks",
+      "frequency": 8,
+      "icon": "water"
+    },
+    {
+      "id": "straw",
+      "text": "吸管",
+      "pos": "noun",
+      "category": "drinks",
+      "frequency": 8,
+      "icon": "water"
+    },
+    {
+      "id": "bottle",
+      "text": "瓶子",
+      "pos": "noun",
+      "category": "drinks",
+      "frequency": 8,
+      "icon": "water"
+    },
+    {
+      "id": "sip",
+      "text": "一小口",
+      "pos": "noun",
+      "category": "drinks",
+      "frequency": 8,
+      "icon": "water"
+    },
+    {
+      "id": "apple",
+      "text": "苹果",
+      "pos": "noun",
+      "category": "food",
+      "frequency": 8,
+      "icon": "apple"
+    },
+    {
+      "id": "banana",
+      "text": "香蕉",
+      "pos": "noun",
+      "category": "food",
+      "frequency": 8,
+      "icon": "apple"
+    },
+    {
+      "id": "bread",
+      "text": "面包",
+      "pos": "noun",
+      "category": "food",
+      "frequency": 8,
+      "icon": "apple"
+    },
+    {
+      "id": "toast",
+      "text": "烤面包",
+      "pos": "noun",
+      "category": "food",
+      "frequency": 8,
+      "icon": "apple"
+    },
+    {
+      "id": "sandwich",
+      "text": "三明治",
+      "pos": "noun",
+      "category": "food",
+      "frequency": 8,
+      "icon": "apple"
+    },
+    {
+      "id": "rice",
+      "text": "米饭",
+      "pos": "noun",
+      "category": "food",
+      "frequency": 8,
+      "icon": "apple"
+    },
+    {
+      "id": "pasta",
+      "text": "意大利面",
+      "pos": "noun",
+      "category": "food",
+      "frequency": 8,
+      "icon": "apple"
+    },
+    {
+      "id": "soup",
+      "text": "汤",
+      "pos": "noun",
+      "category": "food",
+      "frequency": 8,
+      "icon": "apple"
+    },
+    {
+      "id": "yogurt",
+      "text": "酸奶",
+      "pos": "noun",
+      "category": "food",
+      "frequency": 8,
+      "icon": "apple"
+    },
+    {
+      "id": "cheese",
+      "text": "奶酪",
+      "pos": "noun",
+      "category": "food",
+      "frequency": 8,
+      "icon": "apple"
+    },
+    {
+      "id": "cracker",
+      "text": "咸饼干",
+      "pos": "noun",
+      "category": "food",
+      "frequency": 8,
+      "icon": "apple"
+    },
+    {
+      "id": "carrot",
+      "text": "胡萝卜",
+      "pos": "noun",
+      "category": "food",
+      "frequency": 8,
+      "icon": "apple"
+    },
+    {
+      "id": "chips",
+      "text": "薯条",
+      "pos": "noun",
+      "category": "food",
+      "frequency": 8,
+      "icon": "apple"
+    },
+    {
+      "id": "cookie",
+      "text": "饼干",
+      "pos": "noun",
+      "category": "food",
+      "frequency": 8,
+      "icon": "apple"
+    },
+    {
+      "id": "egg",
+      "text": "鸡蛋",
+      "pos": "noun",
+      "category": "food",
+      "frequency": 8,
+      "icon": "apple"
+    },
+    {
+      "id": "cereal",
+      "text": "麦片",
+      "pos": "noun",
+      "category": "food",
+      "frequency": 8,
+      "icon": "apple"
+    },
+    {
+      "id": "fruit",
+      "text": "水果",
+      "pos": "noun",
+      "category": "food",
+      "frequency": 8,
+      "icon": "apple"
+    },
+    {
+      "id": "snack",
+      "text": "零食",
+      "pos": "noun",
+      "category": "food",
+      "frequency": 8,
+      "icon": "apple"
+    },
+    {
+      "id": "dinner",
+      "text": "晚饭",
+      "pos": "noun",
+      "category": "food",
+      "frequency": 8,
+      "icon": "apple"
+    },
+    {
+      "id": "lunch",
+      "text": "午饭",
+      "pos": "noun",
+      "category": "food",
+      "frequency": 8,
+      "icon": "apple"
+    },
+    {
+      "id": "happy",
+      "text": "开心",
+      "pos": "adjective",
+      "category": "feelings",
+      "frequency": 9,
+      "icon": "smile"
+    },
+    {
+      "id": "sad",
+      "text": "难过",
+      "pos": "adjective",
+      "category": "feelings",
+      "frequency": 9,
+      "icon": "smile"
+    },
+    {
+      "id": "angry",
+      "text": "生气",
+      "pos": "adjective",
+      "category": "feelings",
+      "frequency": 9,
+      "icon": "smile"
+    },
+    {
+      "id": "worried",
+      "text": "担心",
+      "pos": "adjective",
+      "category": "feelings",
+      "frequency": 9,
+      "icon": "smile"
+    },
+    {
+      "id": "scared",
+      "text": "害怕",
+      "pos": "adjective",
+      "category": "feelings",
+      "frequency": 9,
+      "icon": "smile"
+    },
+    {
+      "id": "tired",
+      "text": "累",
+      "pos": "adjective",
+      "category": "feelings",
+      "frequency": 9,
+      "icon": "smile"
+    },
+    {
+      "id": "sick",
+      "text": "生病",
+      "pos": "adjective",
+      "category": "feelings",
+      "frequency": 9,
+      "icon": "smile"
+    },
+    {
+      "id": "hurt",
+      "text": "疼",
+      "pos": "adjective",
+      "category": "feelings",
+      "frequency": 9,
+      "icon": "smile"
+    },
+    {
+      "id": "calm",
+      "text": "平静",
+      "pos": "adjective",
+      "category": "feelings",
+      "frequency": 9,
+      "icon": "smile"
+    },
+    {
+      "id": "excited",
+      "text": "兴奋",
+      "pos": "adjective",
+      "category": "feelings",
+      "frequency": 9,
+      "icon": "smile"
+    },
+    {
+      "id": "confused",
+      "text": "不明白",
+      "pos": "adjective",
+      "category": "feelings",
+      "frequency": 9,
+      "icon": "smile"
+    },
+    {
+      "id": "proud",
+      "text": "自豪",
+      "pos": "adjective",
+      "category": "feelings",
+      "frequency": 9,
+      "icon": "smile"
+    },
+    {
+      "id": "lonely",
+      "text": "孤单",
+      "pos": "adjective",
+      "category": "feelings",
+      "frequency": 9,
+      "icon": "smile"
+    },
+    {
+      "id": "bored",
+      "text": "无聊",
+      "pos": "adjective",
+      "category": "feelings",
+      "frequency": 9,
+      "icon": "smile"
+    },
+    {
+      "id": "safe",
+      "text": "安全",
+      "pos": "adjective",
+      "category": "feelings",
+      "frequency": 9,
+      "icon": "smile"
+    },
+    {
+      "id": "upset",
+      "text": "不高兴",
+      "pos": "adjective",
+      "category": "feelings",
+      "frequency": 9,
+      "icon": "smile"
+    },
+    {
+      "id": "okay-2",
+      "text": "还好",
+      "pos": "adjective",
+      "category": "feelings",
+      "frequency": 9,
+      "icon": "smile"
+    },
+    {
+      "id": "hot",
+      "text": "热",
+      "pos": "adjective",
+      "category": "feelings",
+      "frequency": 9,
+      "icon": "smile"
+    },
+    {
+      "id": "cold",
+      "text": "冷",
+      "pos": "adjective",
+      "category": "feelings",
+      "frequency": 9,
+      "icon": "smile"
+    },
+    {
+      "id": "hungry",
+      "text": "饿",
+      "pos": "adjective",
+      "category": "feelings",
+      "frequency": 9,
+      "icon": "smile"
+    },
+    {
+      "id": "thirsty",
+      "text": "渴",
+      "pos": "adjective",
+      "category": "feelings",
+      "frequency": 9,
+      "icon": "smile"
+    },
+    {
+      "id": "head",
+      "text": "头",
+      "pos": "noun",
+      "category": "body",
+      "frequency": 6,
+      "icon": "body"
+    },
+    {
+      "id": "hand",
+      "text": "手",
+      "pos": "noun",
+      "category": "body",
+      "frequency": 6,
+      "icon": "body"
+    },
+    {
+      "id": "foot",
+      "text": "脚",
+      "pos": "noun",
+      "category": "body",
+      "frequency": 6,
+      "icon": "body"
+    },
+    {
+      "id": "tummy",
+      "text": "肚子",
+      "pos": "noun",
+      "category": "body",
+      "frequency": 6,
+      "icon": "body"
+    },
+    {
+      "id": "mouth",
+      "text": "嘴巴",
+      "pos": "noun",
+      "category": "body",
+      "frequency": 6,
+      "icon": "body"
+    },
+    {
+      "id": "ear",
+      "text": "耳朵",
+      "pos": "noun",
+      "category": "body",
+      "frequency": 6,
+      "icon": "body"
+    },
+    {
+      "id": "eye",
+      "text": "眼睛",
+      "pos": "noun",
+      "category": "body",
+      "frequency": 6,
+      "icon": "body"
+    },
+    {
+      "id": "arm",
+      "text": "胳膊",
+      "pos": "noun",
+      "category": "body",
+      "frequency": 6,
+      "icon": "body"
+    },
+    {
+      "id": "leg",
+      "text": "腿",
+      "pos": "noun",
+      "category": "body",
+      "frequency": 6,
+      "icon": "body"
+    },
+    {
+      "id": "back",
+      "text": "背",
+      "pos": "noun",
+      "category": "body",
+      "frequency": 6,
+      "icon": "body"
+    },
+    {
+      "id": "tooth",
+      "text": "牙齿",
+      "pos": "noun",
+      "category": "body",
+      "frequency": 6,
+      "icon": "body"
+    },
+    {
+      "id": "hair",
+      "text": "头发",
+      "pos": "noun",
+      "category": "body",
+      "frequency": 6,
+      "icon": "body"
+    },
+    {
+      "id": "nose",
+      "text": "鼻子",
+      "pos": "noun",
+      "category": "body",
+      "frequency": 6,
+      "icon": "body"
+    },
+    {
+      "id": "skin",
+      "text": "皮肤",
+      "pos": "noun",
+      "category": "body",
+      "frequency": 6,
+      "icon": "body"
+    },
+    {
+      "id": "heart",
+      "text": "心脏",
+      "pos": "noun",
+      "category": "body",
+      "frequency": 6,
+      "icon": "body"
+    },
+    {
+      "id": "home",
+      "text": "家",
+      "pos": "noun",
+      "category": "places",
+      "frequency": 7,
+      "icon": "home"
+    },
+    {
+      "id": "school",
+      "text": "学校",
+      "pos": "noun",
+      "category": "places",
+      "frequency": 7,
+      "icon": "home"
+    },
+    {
+      "id": "classroom",
+      "text": "教室",
+      "pos": "noun",
+      "category": "places",
+      "frequency": 7,
+      "icon": "home"
+    },
+    {
+      "id": "bathroom",
+      "text": "卫生间",
+      "pos": "noun",
+      "category": "places",
+      "frequency": 7,
+      "icon": "home"
+    },
+    {
+      "id": "kitchen",
+      "text": "厨房",
+      "pos": "noun",
+      "category": "places",
+      "frequency": 7,
+      "icon": "home"
+    },
+    {
+      "id": "bedroom",
+      "text": "卧室",
+      "pos": "noun",
+      "category": "places",
+      "frequency": 7,
+      "icon": "home"
+    },
+    {
+      "id": "garden",
+      "text": "花园",
+      "pos": "noun",
+      "category": "places",
+      "frequency": 7,
+      "icon": "home"
+    },
+    {
+      "id": "shop",
+      "text": "商店",
+      "pos": "noun",
+      "category": "places",
+      "frequency": 7,
+      "icon": "home"
+    },
+    {
+      "id": "car",
+      "text": "汽车",
+      "pos": "noun",
+      "category": "places",
+      "frequency": 7,
+      "icon": "home"
+    },
+    {
+      "id": "bus",
+      "text": "公交车",
+      "pos": "noun",
+      "category": "places",
+      "frequency": 7,
+      "icon": "home"
+    },
+    {
+      "id": "park",
+      "text": "公园",
+      "pos": "noun",
+      "category": "places",
+      "frequency": 7,
+      "icon": "home"
+    },
+    {
+      "id": "playground",
+      "text": "游乐场",
+      "pos": "noun",
+      "category": "places",
+      "frequency": 7,
+      "icon": "home"
+    },
+    {
+      "id": "library",
+      "text": "图书馆",
+      "pos": "noun",
+      "category": "places",
+      "frequency": 7,
+      "icon": "home"
+    },
+    {
+      "id": "pool",
+      "text": "游泳池",
+      "pos": "noun",
+      "category": "places",
+      "frequency": 7,
+      "icon": "home"
+    },
+    {
+      "id": "table",
+      "text": "桌子",
+      "pos": "noun",
+      "category": "home",
+      "frequency": 7,
+      "icon": "home"
+    },
+    {
+      "id": "chair",
+      "text": "椅子",
+      "pos": "noun",
+      "category": "home",
+      "frequency": 7,
+      "icon": "home"
+    },
+    {
+      "id": "sofa",
+      "text": "沙发",
+      "pos": "noun",
+      "category": "home",
+      "frequency": 7,
+      "icon": "home"
+    },
+    {
+      "id": "bed",
+      "text": "床",
+      "pos": "noun",
+      "category": "home",
+      "frequency": 7,
+      "icon": "home"
+    },
+    {
+      "id": "door",
+      "text": "门",
+      "pos": "noun",
+      "category": "home",
+      "frequency": 7,
+      "icon": "home"
+    },
+    {
+      "id": "window",
+      "text": "窗户",
+      "pos": "noun",
+      "category": "home",
+      "frequency": 7,
+      "icon": "home"
+    },
+    {
+      "id": "book",
+      "text": "书",
+      "pos": "noun",
+      "category": "school",
+      "frequency": 6,
+      "icon": "book"
+    },
+    {
+      "id": "pencil",
+      "text": "铅笔",
+      "pos": "noun",
+      "category": "school",
+      "frequency": 6,
+      "icon": "book"
+    },
+    {
+      "id": "paper",
+      "text": "纸",
+      "pos": "noun",
+      "category": "school",
+      "frequency": 6,
+      "icon": "book"
+    },
+    {
+      "id": "bag",
+      "text": "书包",
+      "pos": "noun",
+      "category": "school",
+      "frequency": 6,
+      "icon": "book"
+    },
+    {
+      "id": "coat",
+      "text": "外套",
+      "pos": "noun",
+      "category": "school",
+      "frequency": 6,
+      "icon": "book"
+    },
+    {
+      "id": "shoes",
+      "text": "鞋子",
+      "pos": "noun",
+      "category": "school",
+      "frequency": 6,
+      "icon": "book"
+    },
+    {
+      "id": "lunchbox",
+      "text": "饭盒",
+      "pos": "noun",
+      "category": "school",
+      "frequency": 6,
+      "icon": "book"
+    },
+    {
+      "id": "tablet",
+      "text": "平板电脑",
+      "pos": "noun",
+      "category": "school",
+      "frequency": 6,
+      "icon": "book"
+    },
+    {
+      "id": "screen",
+      "text": "屏幕",
+      "pos": "noun",
+      "category": "school",
+      "frequency": 6,
+      "icon": "book"
+    },
+    {
+      "id": "timer",
+      "text": "计时器",
+      "pos": "noun",
+      "category": "school",
+      "frequency": 6,
+      "icon": "book"
+    },
+    {
+      "id": "schedule",
+      "text": "时间表",
+      "pos": "noun",
+      "category": "school",
+      "frequency": 6,
+      "icon": "book"
+    },
+    {
+      "id": "picture",
+      "text": "图片",
+      "pos": "noun",
+      "category": "school",
+      "frequency": 6,
+      "icon": "book"
+    },
+    {
+      "id": "card",
+      "text": "卡片",
+      "pos": "noun",
+      "category": "school",
+      "frequency": 6,
+      "icon": "book"
+    },
+    {
+      "id": "story",
+      "text": "故事",
+      "pos": "noun",
+      "category": "school",
+      "frequency": 6,
+      "icon": "book"
+    },
+    {
+      "id": "music",
+      "text": "音乐",
+      "pos": "noun",
+      "category": "school",
+      "frequency": 6,
+      "icon": "book"
+    },
+    {
+      "id": "ball",
+      "text": "球",
+      "pos": "noun",
+      "category": "toys",
+      "frequency": 6,
+      "icon": "puzzle"
+    },
+    {
+      "id": "blocks",
+      "text": "积木",
+      "pos": "noun",
+      "category": "toys",
+      "frequency": 6,
+      "icon": "puzzle"
+    },
+    {
+      "id": "doll",
+      "text": "娃娃",
+      "pos": "noun",
+      "category": "toys",
+      "frequency": 6,
+      "icon": "puzzle"
+    },
+    {
+      "id": "car-toy",
+      "text": "玩具车",
+      "pos": "noun",
+      "category": "toys",
+      "frequency": 6,
+      "icon": "puzzle"
+    },
+    {
+      "id": "train",
+      "text": "火车",
+      "pos": "noun",
+      "category": "toys",
+      "frequency": 6,
+      "icon": "puzzle"
+    },
+    {
+      "id": "puzzle",
+      "text": "拼图",
+      "pos": "noun",
+      "category": "toys",
+      "frequency": 6,
+      "icon": "puzzle"
+    },
+    {
+      "id": "game",
+      "text": "游戏",
+      "pos": "noun",
+      "category": "toys",
+      "frequency": 6,
+      "icon": "puzzle"
+    },
+    {
+      "id": "paint",
+      "text": "颜料",
+      "pos": "noun",
+      "category": "toys",
+      "frequency": 6,
+      "icon": "puzzle"
+    },
+    {
+      "id": "clay",
+      "text": "橡皮泥",
+      "pos": "noun",
+      "category": "toys",
+      "frequency": 6,
+      "icon": "puzzle"
+    },
+    {
+      "id": "bubbles",
+      "text": "泡泡",
+      "pos": "noun",
+      "category": "toys",
+      "frequency": 6,
+      "icon": "puzzle"
+    },
+    {
+      "id": "swing",
+      "text": "秋千",
+      "pos": "noun",
+      "category": "toys",
+      "frequency": 6,
+      "icon": "puzzle"
+    },
+    {
+      "id": "slide",
+      "text": "滑梯",
+      "pos": "noun",
+      "category": "toys",
+      "frequency": 6,
+      "icon": "puzzle"
+    },
+    {
+      "id": "bike",
+      "text": "自行车",
+      "pos": "noun",
+      "category": "toys",
+      "frequency": 6,
+      "icon": "puzzle"
+    },
+    {
+      "id": "teddy",
+      "text": "泰迪熊",
+      "pos": "noun",
+      "category": "toys",
+      "frequency": 6,
+      "icon": "puzzle"
+    },
+    {
+      "id": "lego",
+      "text": "乐高",
+      "pos": "noun",
+      "category": "toys",
+      "frequency": 6,
+      "icon": "puzzle"
+    },
+    {
+      "id": "red",
+      "text": "红色",
+      "pos": "adjective",
+      "category": "colors",
+      "frequency": 5,
+      "icon": "palette"
+    },
+    {
+      "id": "blue",
+      "text": "蓝色",
+      "pos": "adjective",
+      "category": "colors",
+      "frequency": 5,
+      "icon": "palette"
+    },
+    {
+      "id": "green",
+      "text": "绿色",
+      "pos": "adjective",
+      "category": "colors",
+      "frequency": 5,
+      "icon": "palette"
+    },
+    {
+      "id": "yellow",
+      "text": "黄色",
+      "pos": "adjective",
+      "category": "colors",
+      "frequency": 5,
+      "icon": "palette"
+    },
+    {
+      "id": "orange",
+      "text": "橙色",
+      "pos": "adjective",
+      "category": "colors",
+      "frequency": 5,
+      "icon": "palette"
+    },
+    {
+      "id": "purple",
+      "text": "紫色",
+      "pos": "adjective",
+      "category": "colors",
+      "frequency": 5,
+      "icon": "palette"
+    },
+    {
+      "id": "pink",
+      "text": "粉色",
+      "pos": "adjective",
+      "category": "colors",
+      "frequency": 5,
+      "icon": "palette"
+    },
+    {
+      "id": "brown",
+      "text": "棕色",
+      "pos": "adjective",
+      "category": "colors",
+      "frequency": 5,
+      "icon": "palette"
+    },
+    {
+      "id": "black",
+      "text": "黑色",
+      "pos": "adjective",
+      "category": "colors",
+      "frequency": 5,
+      "icon": "palette"
+    },
+    {
+      "id": "white",
+      "text": "白色",
+      "pos": "adjective",
+      "category": "colors",
+      "frequency": 5,
+      "icon": "palette"
+    },
+    {
+      "id": "grey",
+      "text": "灰色",
+      "pos": "adjective",
+      "category": "colors",
+      "frequency": 5,
+      "icon": "palette"
+    },
+    {
+      "id": "bright",
+      "text": "亮",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "palette"
+    },
+    {
+      "id": "dark",
+      "text": "暗",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "palette"
+    },
+    {
+      "id": "soft",
+      "text": "软",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "palette"
+    },
+    {
+      "id": "hard",
+      "text": "硬",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "palette"
+    },
+    {
+      "id": "quiet",
+      "text": "安静",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "palette"
+    },
+    {
+      "id": "loud",
+      "text": "吵",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "palette"
+    },
+    {
+      "id": "fast",
+      "text": "快",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "palette"
+    },
+    {
+      "id": "slow",
+      "text": "慢",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "palette"
+    },
+    {
+      "id": "clean",
+      "text": "干净",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "palette"
+    },
+    {
+      "id": "dirty",
+      "text": "脏",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "palette"
+    },
+    {
+      "id": "wet",
+      "text": "湿",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "palette"
+    },
+    {
+      "id": "dry",
+      "text": "干",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "palette"
+    },
+    {
+      "id": "new",
+      "text": "新",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "palette"
+    },
+    {
+      "id": "old",
+      "text": "旧",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "palette"
+    },
+    {
+      "id": "now",
+      "text": "现在",
+      "pos": "adverb",
+      "category": "time",
+      "frequency": 6,
+      "icon": "clock"
+    },
+    {
+      "id": "later",
+      "text": "等一会儿",
+      "pos": "adverb",
+      "category": "time",
+      "frequency": 6,
+      "icon": "clock"
+    },
+    {
+      "id": "today",
+      "text": "今天",
+      "pos": "adverb",
+      "category": "time",
+      "frequency": 6,
+      "icon": "clock"
+    },
+    {
+      "id": "tomorrow",
+      "text": "明天",
+      "pos": "adverb",
+      "category": "time",
+      "frequency": 6,
+      "icon": "clock"
+    },
+    {
+      "id": "morning",
+      "text": "早上",
+      "pos": "adverb",
+      "category": "time",
+      "frequency": 6,
+      "icon": "clock"
+    },
+    {
+      "id": "afternoon",
+      "text": "下午",
+      "pos": "adverb",
+      "category": "time",
+      "frequency": 6,
+      "icon": "clock"
+    },
+    {
+      "id": "night",
+      "text": "晚上",
+      "pos": "adverb",
+      "category": "time",
+      "frequency": 6,
+      "icon": "clock"
+    },
+    {
+      "id": "before",
+      "text": "之前",
+      "pos": "adverb",
+      "category": "time",
+      "frequency": 6,
+      "icon": "clock"
+    },
+    {
+      "id": "after",
+      "text": "之后",
+      "pos": "adverb",
+      "category": "time",
+      "frequency": 6,
+      "icon": "clock"
+    },
+    {
+      "id": "soon",
+      "text": "很快",
+      "pos": "adverb",
+      "category": "time",
+      "frequency": 6,
+      "icon": "clock"
+    },
+    {
+      "id": "first",
+      "text": "先",
+      "pos": "adverb",
+      "category": "time",
+      "frequency": 6,
+      "icon": "clock"
+    },
+    {
+      "id": "next",
+      "text": "下一个",
+      "pos": "adverb",
+      "category": "time",
+      "frequency": 6,
+      "icon": "clock"
+    },
+    {
+      "id": "last",
+      "text": "最后",
+      "pos": "adverb",
+      "category": "time",
+      "frequency": 6,
+      "icon": "clock"
+    },
+    {
+      "id": "minute",
+      "text": "分钟",
+      "pos": "adverb",
+      "category": "time",
+      "frequency": 6,
+      "icon": "clock"
+    },
+    {
+      "id": "hour",
+      "text": "小时",
+      "pos": "adverb",
+      "category": "time",
+      "frequency": 6,
+      "icon": "clock"
+    },
+    {
+      "id": "break",
+      "text": "休息一下",
+      "pos": "noun",
+      "category": "needs",
+      "frequency": 8,
+      "icon": "heart-hand"
+    },
+    {
+      "id": "quiet-time",
+      "text": "安静时间",
+      "pos": "noun",
+      "category": "needs",
+      "frequency": 8,
+      "icon": "heart-hand"
+    },
+    {
+      "id": "hug",
+      "text": "抱抱",
+      "pos": "noun",
+      "category": "needs",
+      "frequency": 8,
+      "icon": "heart-hand"
+    },
+    {
+      "id": "space",
+      "text": "空间",
+      "pos": "noun",
+      "category": "needs",
+      "frequency": 8,
+      "icon": "heart-hand"
+    },
+    {
+      "id": "toilet",
+      "text": "厕所",
+      "pos": "noun",
+      "category": "needs",
+      "frequency": 8,
+      "icon": "heart-hand"
+    },
+    {
+      "id": "medicine",
+      "text": "药",
+      "pos": "noun",
+      "category": "needs",
+      "frequency": 8,
+      "icon": "heart-hand"
+    },
+    {
+      "id": "light",
+      "text": "灯",
+      "pos": "noun",
+      "category": "needs",
+      "frequency": 8,
+      "icon": "heart-hand"
+    },
+    {
+      "id": "dark-2",
+      "text": "黑暗",
+      "pos": "noun",
+      "category": "needs",
+      "frequency": 8,
+      "icon": "heart-hand"
+    },
+    {
+      "id": "noise",
+      "text": "噪音",
+      "pos": "noun",
+      "category": "needs",
+      "frequency": 8,
+      "icon": "heart-hand"
+    },
+    {
+      "id": "headphones",
+      "text": "耳机",
+      "pos": "noun",
+      "category": "needs",
+      "frequency": 8,
+      "icon": "heart-hand"
+    },
+    {
+      "id": "blanket",
+      "text": "毯子",
+      "pos": "noun",
+      "category": "needs",
+      "frequency": 8,
+      "icon": "heart-hand"
+    },
+    {
+      "id": "charger",
+      "text": "充电器",
+      "pos": "noun",
+      "category": "needs",
+      "frequency": 8,
+      "icon": "heart-hand"
+    },
+    {
+      "id": "choice",
+      "text": "选择",
+      "pos": "noun",
+      "category": "needs",
+      "frequency": 8,
+      "icon": "heart-hand"
+    },
+    {
+      "id": "turn",
+      "text": "轮流",
+      "pos": "noun",
+      "category": "needs",
+      "frequency": 8,
+      "icon": "heart-hand"
+    },
+    {
+      "id": "help-please",
+      "text": "请帮忙",
+      "pos": "noun",
+      "category": "needs",
+      "frequency": 8,
+      "icon": "heart-hand"
+    },
+    {
+      "id": "different",
+      "text": "不一样",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "sparkles"
+    },
+    {
+      "id": "same",
+      "text": "一样",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "sparkles"
+    },
+    {
+      "id": "easy",
+      "text": "容易",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "sparkles"
+    },
+    {
+      "id": "harder",
+      "text": "更难",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "sparkles"
+    },
+    {
+      "id": "favorite",
+      "text": "最喜欢的",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "sparkles"
+    },
+    {
+      "id": "missing",
+      "text": "不见了",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "sparkles"
+    },
+    {
+      "id": "broken",
+      "text": "坏了",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "sparkles"
+    },
+    {
+      "id": "ready",
+      "text": "准备好了",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "sparkles"
+    },
+    {
+      "id": "busy",
+      "text": "忙",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "sparkles"
+    },
+    {
+      "id": "empty",
+      "text": "空的",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "sparkles"
+    },
+    {
+      "id": "full",
+      "text": "满的",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "sparkles"
+    },
+    {
+      "id": "small",
+      "text": "小",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "sparkles"
+    },
+    {
+      "id": "tall",
+      "text": "高",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "sparkles"
+    },
+    {
+      "id": "short",
+      "text": "矮",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "sparkles"
+    },
+    {
+      "id": "round",
+      "text": "圆的",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "sparkles"
+    },
+    {
+      "id": "square",
+      "text": "方的",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "sparkles"
+    },
+    {
+      "id": "kind",
+      "text": "善良",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "sparkles"
+    },
+    {
+      "id": "gentle",
+      "text": "温柔",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "sparkles"
+    },
+    {
+      "id": "careful",
+      "text": "小心",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "sparkles"
+    },
+    {
+      "id": "safe-place",
+      "text": "安全的地方",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "sparkles"
+    }
+  ],
+  "templates": [
+    {
+      "id": "want-object",
+      "pattern": "我要{thing}。",
+      "category": "needs",
+      "icon": "heart-hand",
+      "slots": [
+        {
+          "acceptedPos": [
+            "pronoun"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "noun"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "need-help",
+      "pattern": "我需要帮忙弄{thing}。",
+      "category": "needs",
+      "icon": "heart-hand",
+      "slots": [
+        {
+          "acceptedPos": [
+            "pronoun"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "noun"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "feel-state",
+      "pattern": "我觉得很{feeling}。",
+      "category": "feelings",
+      "icon": "smile",
+      "slots": [
+        {
+          "acceptedPos": [
+            "pronoun"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "adjective"
+          ],
+          "categoryFilter": "feelings"
+        }
+      ]
+    },
+    {
+      "id": "body-hurts",
+      "pattern": "我的{body}疼。",
+      "category": "body",
+      "icon": "body",
+      "slots": [
+        {
+          "acceptedPos": [
+            "pronoun"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "noun"
+          ],
+          "categoryFilter": "body"
+        },
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "like-activity",
+      "pattern": "我喜欢{activity}。",
+      "category": "actions",
+      "icon": "play",
+      "slots": [
+        {
+          "acceptedPos": [
+            "pronoun"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "noun"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "go-place",
+      "pattern": "我想去{place}。",
+      "category": "places",
+      "icon": "home",
+      "slots": [
+        {
+          "acceptedPos": [
+            "pronoun"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "preposition"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "preposition"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "noun"
+          ],
+          "categoryFilter": "places"
+        }
+      ]
+    },
+    {
+      "id": "question-where",
+      "pattern": "{thing}在哪里？",
+      "category": "questions",
+      "icon": "question-circle",
+      "slots": [
+        {
+          "acceptedPos": [
+            "question"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "noun"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "question-what",
+      "pattern": "这是什么？",
+      "category": "questions",
+      "icon": "question-circle",
+      "slots": [
+        {
+          "acceptedPos": [
+            "question"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "determiner"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "question-can",
+      "pattern": "你可以帮我吗？",
+      "category": "questions",
+      "icon": "question-circle",
+      "slots": [
+        {
+          "acceptedPos": [
+            "question"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "pronoun"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "pronoun"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "more-thing",
+      "pattern": "请再给我{thing}。",
+      "category": "social",
+      "icon": "chat-bubble",
+      "slots": [
+        {
+          "acceptedPos": [
+            "social"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "noun"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "social"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "all-done",
+      "pattern": "我做完了。",
+      "category": "social",
+      "icon": "chat-bubble",
+      "slots": [
+        {
+          "acceptedPos": [
+            "pronoun"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "social"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "not-want",
+      "pattern": "我不要{thing}。",
+      "category": "needs",
+      "icon": "heart-hand",
+      "slots": [
+        {
+          "acceptedPos": [
+            "pronoun"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "social"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "noun"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "choose-one",
+      "pattern": "我选{thing}。",
+      "category": "actions",
+      "icon": "play",
+      "slots": [
+        {
+          "acceptedPos": [
+            "pronoun"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "noun"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "with-person",
+      "pattern": "我想和{person}在一起。",
+      "category": "people",
+      "icon": "user",
+      "slots": [
+        {
+          "acceptedPos": [
+            "pronoun"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "preposition"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "preposition"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "noun"
+          ],
+          "categoryFilter": "people"
+        }
+      ]
+    },
+    {
+      "id": "too-loud",
+      "pattern": "太吵了。",
+      "category": "feelings",
+      "icon": "smile",
+      "slots": [
+        {
+          "acceptedPos": [
+            "pronoun"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "adjective"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "need-break",
+      "pattern": "我需要休息一下。",
+      "category": "needs",
+      "icon": "heart-hand",
+      "slots": [
+        {
+          "acceptedPos": [
+            "pronoun"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "determiner"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "noun"
+          ],
+          "categoryFilter": "needs"
+        }
+      ]
+    },
+    {
+      "id": "first-next",
+      "pattern": "先{thing}，然后{thing}。",
+      "category": "time",
+      "icon": "clock",
+      "slots": [
+        {
+          "acceptedPos": [
+            "adverb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "noun"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "conjunction"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "noun"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "yes-answer",
+      "pattern": "好的，谢谢。",
+      "category": "social",
+      "icon": "chat-bubble",
+      "slots": [
+        {
+          "acceptedPos": [
+            "social"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "social"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "no-answer",
+      "pattern": "不用了，谢谢。",
+      "category": "social",
+      "icon": "chat-bubble",
+      "slots": [
+        {
+          "acceptedPos": [
+            "social"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "social"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "descriptor-object",
+      "pattern": "这个{thing}很{description}。",
+      "category": "describing",
+      "icon": "sparkles",
+      "slots": [
+        {
+          "acceptedPos": [
+            "determiner"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "noun"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "adjective"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "place-position",
+      "pattern": "{thing}在{place}的{position}。",
+      "category": "positions",
+      "icon": "arrow-right",
+      "slots": [
+        {
+          "acceptedPos": [
+            "determiner"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "noun"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "preposition"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "determiner"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "noun"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "time-request",
+      "pattern": "我等一会儿要{thing}。",
+      "category": "time",
+      "icon": "clock",
+      "slots": [
+        {
+          "acceptedPos": [
+            "pronoun"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "noun"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "adverb"
+          ],
+          "categoryFilter": "time"
+        }
+      ]
+    },
+    {
+      "id": "polite-help",
+      "pattern": "请帮帮我。",
+      "category": "needs",
+      "icon": "heart-hand",
+      "slots": [
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "social"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "try-again",
+      "pattern": "我想再试一次。",
+      "category": "actions",
+      "icon": "play",
+      "slots": [
+        {
+          "acceptedPos": [
+            "pronoun"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "preposition"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "social"
+          ]
+        }
+      ]
+    }
+  ],
+  "grammar": {
+    "wordOrder": "subject-verb-object",
+    "validTransitions": {
+      "pronoun": [
+        "verb",
+        "adjective",
+        "noun"
+      ],
+      "determiner": [
+        "adjective",
+        "noun"
+      ],
+      "verb": [
+        "pronoun",
+        "determiner",
+        "adjective",
+        "noun",
+        "preposition",
+        "social"
+      ],
+      "noun": [
+        "verb",
+        "preposition",
+        "conjunction",
+        "social"
+      ],
+      "adjective": [
+        "noun",
+        "conjunction",
+        "social"
+      ],
+      "question": [
+        "verb",
+        "pronoun",
+        "determiner",
+        "noun"
+      ],
+      "preposition": [
+        "determiner",
+        "pronoun",
+        "noun"
+      ],
+      "conjunction": [
+        "pronoun",
+        "determiner",
+        "noun",
+        "verb"
+      ],
+      "social": [
+        "verb",
+        "noun"
+      ]
+    },
+    "articles": {
+      "default": {}
+    },
+    "negation": {
+      "position": "before-verb",
+      "words": [
+        "不",
+        "没"
+      ]
+    }
+  }
+}

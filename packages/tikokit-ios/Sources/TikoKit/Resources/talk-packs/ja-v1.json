@@ -1,0 +1,3129 @@
+{
+  "locale": "ja",
+  "version": 1,
+  "words": [
+    {
+      "id": "i",
+      "text": "わたし",
+      "pos": "pronoun",
+      "category": "people",
+      "frequency": 10,
+      "icon": "user"
+    },
+    {
+      "id": "you",
+      "text": "あなた",
+      "pos": "pronoun",
+      "category": "people",
+      "frequency": 10,
+      "icon": "user"
+    },
+    {
+      "id": "we",
+      "text": "わたしたち",
+      "pos": "pronoun",
+      "category": "people",
+      "frequency": 7,
+      "icon": "user"
+    },
+    {
+      "id": "me",
+      "text": "ぼく",
+      "pos": "pronoun",
+      "category": "people",
+      "frequency": 10,
+      "icon": "user"
+    },
+    {
+      "id": "my",
+      "text": "わたしの",
+      "pos": "pronoun",
+      "category": "people",
+      "frequency": 10,
+      "icon": "user"
+    },
+    {
+      "id": "your",
+      "text": "あなたの",
+      "pos": "pronoun",
+      "category": "people",
+      "frequency": 7,
+      "icon": "user"
+    },
+    {
+      "id": "he",
+      "text": "かれ",
+      "pos": "pronoun",
+      "category": "people",
+      "frequency": 7,
+      "icon": "user"
+    },
+    {
+      "id": "she",
+      "text": "かのじょ",
+      "pos": "pronoun",
+      "category": "people",
+      "frequency": 7,
+      "icon": "user"
+    },
+    {
+      "id": "they",
+      "text": "かれら",
+      "pos": "pronoun",
+      "category": "people",
+      "frequency": 7,
+      "icon": "user"
+    },
+    {
+      "id": "mum",
+      "text": "ママ",
+      "pos": "noun",
+      "category": "people",
+      "frequency": 7,
+      "icon": "user"
+    },
+    {
+      "id": "dad",
+      "text": "パパ",
+      "pos": "noun",
+      "category": "people",
+      "frequency": 7,
+      "icon": "user"
+    },
+    {
+      "id": "teacher",
+      "text": "せんせい",
+      "pos": "noun",
+      "category": "people",
+      "frequency": 7,
+      "icon": "user"
+    },
+    {
+      "id": "friend",
+      "text": "ともだち",
+      "pos": "noun",
+      "category": "people",
+      "frequency": 7,
+      "icon": "user"
+    },
+    {
+      "id": "brother",
+      "text": "おにいちゃん",
+      "pos": "noun",
+      "category": "people",
+      "frequency": 7,
+      "icon": "user"
+    },
+    {
+      "id": "sister",
+      "text": "おねえちゃん",
+      "pos": "noun",
+      "category": "people",
+      "frequency": 7,
+      "icon": "user"
+    },
+    {
+      "id": "grandma",
+      "text": "おばあちゃん",
+      "pos": "noun",
+      "category": "people",
+      "frequency": 7,
+      "icon": "user"
+    },
+    {
+      "id": "grandpa",
+      "text": "おじいちゃん",
+      "pos": "noun",
+      "category": "people",
+      "frequency": 7,
+      "icon": "user"
+    },
+    {
+      "id": "helper",
+      "text": "おてつだいさん",
+      "pos": "noun",
+      "category": "people",
+      "frequency": 7,
+      "icon": "user"
+    },
+    {
+      "id": "doctor",
+      "text": "おいしゃさん",
+      "pos": "noun",
+      "category": "people",
+      "frequency": 7,
+      "icon": "user"
+    },
+    {
+      "id": "class",
+      "text": "クラス",
+      "pos": "noun",
+      "category": "people",
+      "frequency": 7,
+      "icon": "user"
+    },
+    {
+      "id": "want",
+      "text": "ほしい",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 10,
+      "icon": "play",
+      "inflections": {
+        "past": "ほしかった"
+      }
+    },
+    {
+      "id": "need",
+      "text": "ひつよう",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 10,
+      "icon": "play",
+      "inflections": {
+        "past": "ひつようだった"
+      }
+    },
+    {
+      "id": "like",
+      "text": "すき",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play",
+      "inflections": {
+        "past": "すきだった"
+      }
+    },
+    {
+      "id": "feel",
+      "text": "かんじる",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 10,
+      "icon": "play",
+      "inflections": {
+        "past": "かんじた"
+      }
+    },
+    {
+      "id": "see",
+      "text": "みる",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play",
+      "inflections": {
+        "past": "みた"
+      }
+    },
+    {
+      "id": "hear",
+      "text": "きく",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play",
+      "inflections": {
+        "past": "きいた"
+      }
+    },
+    {
+      "id": "have",
+      "text": "もってる",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play",
+      "inflections": {
+        "past": "もってた"
+      }
+    },
+    {
+      "id": "go",
+      "text": "いく",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play"
+    },
+    {
+      "id": "come",
+      "text": "くる",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play",
+      "inflections": {
+        "past": "きた"
+      }
+    },
+    {
+      "id": "play",
+      "text": "あそぶ",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play",
+      "inflections": {
+        "past": "あそんだ"
+      }
+    },
+    {
+      "id": "read",
+      "text": "よむ",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play",
+      "inflections": {
+        "past": "よんだ"
+      }
+    },
+    {
+      "id": "draw",
+      "text": "かく",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play",
+      "inflections": {
+        "past": "かいた"
+      }
+    },
+    {
+      "id": "eat",
+      "text": "たべる",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play"
+    },
+    {
+      "id": "drink",
+      "text": "のむ",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play"
+    },
+    {
+      "id": "sit",
+      "text": "すわる",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play"
+    },
+    {
+      "id": "stand",
+      "text": "たつ",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play"
+    },
+    {
+      "id": "walk",
+      "text": "あるく",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play",
+      "inflections": {
+        "past": "あるいた"
+      }
+    },
+    {
+      "id": "run",
+      "text": "はしる",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play"
+    },
+    {
+      "id": "stop",
+      "text": "やめる",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 10,
+      "icon": "play",
+      "inflections": {
+        "past": "やめた"
+      }
+    },
+    {
+      "id": "start",
+      "text": "はじめる",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play",
+      "inflections": {
+        "past": "はじめた"
+      }
+    },
+    {
+      "id": "wait",
+      "text": "まつ",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play",
+      "inflections": {
+        "past": "まった"
+      }
+    },
+    {
+      "id": "help",
+      "text": "てつだう",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 10,
+      "icon": "play",
+      "inflections": {
+        "past": "てつだった"
+      }
+    },
+    {
+      "id": "choose",
+      "text": "えらぶ",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play",
+      "inflections": {
+        "past": "えらんだ"
+      }
+    },
+    {
+      "id": "open",
+      "text": "あける",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play",
+      "inflections": {
+        "past": "あけた"
+      }
+    },
+    {
+      "id": "close",
+      "text": "しめる",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play",
+      "inflections": {
+        "past": "しめた"
+      }
+    },
+    {
+      "id": "wash",
+      "text": "あらう",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play",
+      "inflections": {
+        "past": "あらった"
+      }
+    },
+    {
+      "id": "sleep",
+      "text": "ねる",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play"
+    },
+    {
+      "id": "rest",
+      "text": "やすむ",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play",
+      "inflections": {
+        "past": "やすんだ"
+      }
+    },
+    {
+      "id": "try",
+      "text": "やってみる",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play",
+      "inflections": {
+        "past": "やってみた"
+      }
+    },
+    {
+      "id": "talk",
+      "text": "はなす",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play",
+      "inflections": {
+        "past": "はなした"
+      }
+    },
+    {
+      "id": "yes",
+      "text": "はい",
+      "pos": "social",
+      "category": "social",
+      "frequency": 9,
+      "icon": "chat-bubble"
+    },
+    {
+      "id": "no",
+      "text": "いいえ",
+      "pos": "social",
+      "category": "social",
+      "frequency": 9,
+      "icon": "chat-bubble"
+    },
+    {
+      "id": "please",
+      "text": "ください",
+      "pos": "social",
+      "category": "social",
+      "frequency": 9,
+      "icon": "chat-bubble"
+    },
+    {
+      "id": "thank-you",
+      "text": "ありがとう",
+      "pos": "social",
+      "category": "social",
+      "frequency": 9,
+      "icon": "chat-bubble"
+    },
+    {
+      "id": "sorry",
+      "text": "ごめんなさい",
+      "pos": "social",
+      "category": "social",
+      "frequency": 9,
+      "icon": "chat-bubble"
+    },
+    {
+      "id": "hello",
+      "text": "こんにちは",
+      "pos": "social",
+      "category": "social",
+      "frequency": 9,
+      "icon": "chat-bubble"
+    },
+    {
+      "id": "goodbye",
+      "text": "バイバイ",
+      "pos": "social",
+      "category": "social",
+      "frequency": 9,
+      "icon": "chat-bubble"
+    },
+    {
+      "id": "more",
+      "text": "もっと",
+      "pos": "social",
+      "category": "social",
+      "frequency": 9,
+      "icon": "chat-bubble"
+    },
+    {
+      "id": "all-done",
+      "text": "おしまい",
+      "pos": "social",
+      "category": "social",
+      "frequency": 9,
+      "icon": "chat-bubble"
+    },
+    {
+      "id": "again",
+      "text": "もういっかい",
+      "pos": "social",
+      "category": "social",
+      "frequency": 9,
+      "icon": "chat-bubble"
+    },
+    {
+      "id": "finished",
+      "text": "おわった",
+      "pos": "social",
+      "category": "social",
+      "frequency": 9,
+      "icon": "chat-bubble"
+    },
+    {
+      "id": "okay",
+      "text": "いいよ",
+      "pos": "social",
+      "category": "social",
+      "frequency": 9,
+      "icon": "chat-bubble"
+    },
+    {
+      "id": "not-yet",
+      "text": "まだ",
+      "pos": "social",
+      "category": "social",
+      "frequency": 9,
+      "icon": "chat-bubble"
+    },
+    {
+      "id": "maybe",
+      "text": "たぶん",
+      "pos": "social",
+      "category": "social",
+      "frequency": 9,
+      "icon": "chat-bubble"
+    },
+    {
+      "id": "what",
+      "text": "なに",
+      "pos": "question",
+      "category": "questions",
+      "frequency": 8,
+      "icon": "question-circle"
+    },
+    {
+      "id": "where",
+      "text": "どこ",
+      "pos": "question",
+      "category": "questions",
+      "frequency": 8,
+      "icon": "question-circle"
+    },
+    {
+      "id": "who",
+      "text": "だれ",
+      "pos": "question",
+      "category": "questions",
+      "frequency": 8,
+      "icon": "question-circle"
+    },
+    {
+      "id": "when",
+      "text": "いつ",
+      "pos": "question",
+      "category": "questions",
+      "frequency": 8,
+      "icon": "question-circle"
+    },
+    {
+      "id": "why",
+      "text": "どうして",
+      "pos": "question",
+      "category": "questions",
+      "frequency": 8,
+      "icon": "question-circle"
+    },
+    {
+      "id": "which",
+      "text": "どっち",
+      "pos": "question",
+      "category": "questions",
+      "frequency": 8,
+      "icon": "question-circle"
+    },
+    {
+      "id": "how",
+      "text": "どうやって",
+      "pos": "question",
+      "category": "questions",
+      "frequency": 8,
+      "icon": "question-circle"
+    },
+    {
+      "id": "can",
+      "text": "できる",
+      "pos": "question",
+      "category": "questions",
+      "frequency": 8,
+      "icon": "question-circle"
+    },
+    {
+      "id": "is",
+      "text": "ですか",
+      "pos": "question",
+      "category": "questions",
+      "frequency": 8,
+      "icon": "question-circle"
+    },
+    {
+      "id": "are",
+      "text": "いますか",
+      "pos": "question",
+      "category": "questions",
+      "frequency": 8,
+      "icon": "question-circle"
+    },
+    {
+      "id": "a",
+      "text": "ひとつの",
+      "pos": "determiner",
+      "category": "helpers",
+      "frequency": 8,
+      "icon": "text"
+    },
+    {
+      "id": "the",
+      "text": "その",
+      "pos": "determiner",
+      "category": "helpers",
+      "frequency": 8,
+      "icon": "text"
+    },
+    {
+      "id": "this",
+      "text": "これ",
+      "pos": "determiner",
+      "category": "helpers",
+      "frequency": 8,
+      "icon": "text"
+    },
+    {
+      "id": "that",
+      "text": "あれ",
+      "pos": "determiner",
+      "category": "helpers",
+      "frequency": 8,
+      "icon": "text"
+    },
+    {
+      "id": "some",
+      "text": "いくつか",
+      "pos": "determiner",
+      "category": "helpers",
+      "frequency": 8,
+      "icon": "text"
+    },
+    {
+      "id": "one",
+      "text": "ひとつ",
+      "pos": "determiner",
+      "category": "helpers",
+      "frequency": 8,
+      "icon": "text"
+    },
+    {
+      "id": "two",
+      "text": "ふたつ",
+      "pos": "determiner",
+      "category": "helpers",
+      "frequency": 8,
+      "icon": "text"
+    },
+    {
+      "id": "three",
+      "text": "みっつ",
+      "pos": "determiner",
+      "category": "helpers",
+      "frequency": 8,
+      "icon": "text"
+    },
+    {
+      "id": "many",
+      "text": "たくさん",
+      "pos": "determiner",
+      "category": "helpers",
+      "frequency": 8,
+      "icon": "text"
+    },
+    {
+      "id": "little",
+      "text": "すこし",
+      "pos": "determiner",
+      "category": "helpers",
+      "frequency": 8,
+      "icon": "text"
+    },
+    {
+      "id": "big",
+      "text": "おおきい",
+      "pos": "determiner",
+      "category": "helpers",
+      "frequency": 8,
+      "icon": "text"
+    },
+    {
+      "id": "in",
+      "text": "のなか",
+      "pos": "preposition",
+      "category": "positions",
+      "frequency": 7,
+      "icon": "arrow-right"
+    },
+    {
+      "id": "on",
+      "text": "のうえ",
+      "pos": "preposition",
+      "category": "positions",
+      "frequency": 7,
+      "icon": "arrow-right"
+    },
+    {
+      "id": "under",
+      "text": "のした",
+      "pos": "preposition",
+      "category": "positions",
+      "frequency": 7,
+      "icon": "arrow-right"
+    },
+    {
+      "id": "next-to",
+      "text": "のとなり",
+      "pos": "preposition",
+      "category": "positions",
+      "frequency": 7,
+      "icon": "arrow-right"
+    },
+    {
+      "id": "with",
+      "text": "といっしょ",
+      "pos": "preposition",
+      "category": "positions",
+      "frequency": 7,
+      "icon": "arrow-right"
+    },
+    {
+      "id": "without",
+      "text": "なしで",
+      "pos": "preposition",
+      "category": "positions",
+      "frequency": 7,
+      "icon": "arrow-right"
+    },
+    {
+      "id": "to",
+      "text": "へ",
+      "pos": "preposition",
+      "category": "positions",
+      "frequency": 7,
+      "icon": "arrow-right"
+    },
+    {
+      "id": "from",
+      "text": "から",
+      "pos": "preposition",
+      "category": "positions",
+      "frequency": 7,
+      "icon": "arrow-right"
+    },
+    {
+      "id": "inside",
+      "text": "なか",
+      "pos": "preposition",
+      "category": "positions",
+      "frequency": 7,
+      "icon": "arrow-right"
+    },
+    {
+      "id": "outside",
+      "text": "そと",
+      "pos": "preposition",
+      "category": "positions",
+      "frequency": 7,
+      "icon": "arrow-right"
+    },
+    {
+      "id": "near",
+      "text": "のちかく",
+      "pos": "preposition",
+      "category": "positions",
+      "frequency": 7,
+      "icon": "arrow-right"
+    },
+    {
+      "id": "far",
+      "text": "とおく",
+      "pos": "preposition",
+      "category": "positions",
+      "frequency": 7,
+      "icon": "arrow-right"
+    },
+    {
+      "id": "and",
+      "text": "と",
+      "pos": "conjunction",
+      "category": "helpers",
+      "frequency": 6,
+      "icon": "branch"
+    },
+    {
+      "id": "or",
+      "text": "か",
+      "pos": "conjunction",
+      "category": "helpers",
+      "frequency": 6,
+      "icon": "branch"
+    },
+    {
+      "id": "because",
+      "text": "だって",
+      "pos": "conjunction",
+      "category": "helpers",
+      "frequency": 6,
+      "icon": "branch"
+    },
+    {
+      "id": "then",
+      "text": "それから",
+      "pos": "conjunction",
+      "category": "helpers",
+      "frequency": 6,
+      "icon": "branch"
+    },
+    {
+      "id": "but",
+      "text": "でも",
+      "pos": "conjunction",
+      "category": "helpers",
+      "frequency": 6,
+      "icon": "branch"
+    },
+    {
+      "id": "water",
+      "text": "みず",
+      "pos": "noun",
+      "category": "drinks",
+      "frequency": 8,
+      "icon": "water"
+    },
+    {
+      "id": "milk",
+      "text": "ぎゅうにゅう",
+      "pos": "noun",
+      "category": "drinks",
+      "frequency": 8,
+      "icon": "water"
+    },
+    {
+      "id": "juice",
+      "text": "ジュース",
+      "pos": "noun",
+      "category": "drinks",
+      "frequency": 8,
+      "icon": "water"
+    },
+    {
+      "id": "tea",
+      "text": "おちゃ",
+      "pos": "noun",
+      "category": "drinks",
+      "frequency": 8,
+      "icon": "water"
+    },
+    {
+      "id": "smoothie",
+      "text": "スムージー",
+      "pos": "noun",
+      "category": "drinks",
+      "frequency": 8,
+      "icon": "water"
+    },
+    {
+      "id": "lemonade",
+      "text": "レモネード",
+      "pos": "noun",
+      "category": "drinks",
+      "frequency": 8,
+      "icon": "water"
+    },
+    {
+      "id": "hot-drink",
+      "text": "あたたかいのみもの",
+      "pos": "noun",
+      "category": "drinks",
+      "frequency": 8,
+      "icon": "water"
+    },
+    {
+      "id": "cold-drink",
+      "text": "つめたいのみもの",
+      "pos": "noun",
+      "category": "drinks",
+      "frequency": 8,
+      "icon": "water"
+    },
+    {
+      "id": "cup",
+      "text": "コップ",
+      "pos": "noun",
+      "category": "drinks",
+      "frequency": 8,
+      "icon": "water"
+    },
+    {
+      "id": "straw",
+      "text": "ストロー",
+      "pos": "noun",
+      "category": "drinks",
+      "frequency": 8,
+      "icon": "water"
+    },
+    {
+      "id": "bottle",
+      "text": "ボトル",
+      "pos": "noun",
+      "category": "drinks",
+      "frequency": 8,
+      "icon": "water"
+    },
+    {
+      "id": "sip",
+      "text": "ひとくち",
+      "pos": "noun",
+      "category": "drinks",
+      "frequency": 8,
+      "icon": "water"
+    },
+    {
+      "id": "apple",
+      "text": "りんご",
+      "pos": "noun",
+      "category": "food",
+      "frequency": 8,
+      "icon": "apple"
+    },
+    {
+      "id": "banana",
+      "text": "バナナ",
+      "pos": "noun",
+      "category": "food",
+      "frequency": 8,
+      "icon": "apple"
+    },
+    {
+      "id": "bread",
+      "text": "パン",
+      "pos": "noun",
+      "category": "food",
+      "frequency": 8,
+      "icon": "apple"
+    },
+    {
+      "id": "toast",
+      "text": "トースト",
+      "pos": "noun",
+      "category": "food",
+      "frequency": 8,
+      "icon": "apple"
+    },
+    {
+      "id": "sandwich",
+      "text": "サンドイッチ",
+      "pos": "noun",
+      "category": "food",
+      "frequency": 8,
+      "icon": "apple"
+    },
+    {
+      "id": "rice",
+      "text": "ごはん",
+      "pos": "noun",
+      "category": "food",
+      "frequency": 8,
+      "icon": "apple"
+    },
+    {
+      "id": "pasta",
+      "text": "パスタ",
+      "pos": "noun",
+      "category": "food",
+      "frequency": 8,
+      "icon": "apple"
+    },
+    {
+      "id": "soup",
+      "text": "スープ",
+      "pos": "noun",
+      "category": "food",
+      "frequency": 8,
+      "icon": "apple"
+    },
+    {
+      "id": "yogurt",
+      "text": "ヨーグルト",
+      "pos": "noun",
+      "category": "food",
+      "frequency": 8,
+      "icon": "apple"
+    },
+    {
+      "id": "cheese",
+      "text": "チーズ",
+      "pos": "noun",
+      "category": "food",
+      "frequency": 8,
+      "icon": "apple"
+    },
+    {
+      "id": "cracker",
+      "text": "クラッカー",
+      "pos": "noun",
+      "category": "food",
+      "frequency": 8,
+      "icon": "apple"
+    },
+    {
+      "id": "carrot",
+      "text": "にんじん",
+      "pos": "noun",
+      "category": "food",
+      "frequency": 8,
+      "icon": "apple"
+    },
+    {
+      "id": "chips",
+      "text": "ポテト",
+      "pos": "noun",
+      "category": "food",
+      "frequency": 8,
+      "icon": "apple"
+    },
+    {
+      "id": "cookie",
+      "text": "クッキー",
+      "pos": "noun",
+      "category": "food",
+      "frequency": 8,
+      "icon": "apple"
+    },
+    {
+      "id": "egg",
+      "text": "たまご",
+      "pos": "noun",
+      "category": "food",
+      "frequency": 8,
+      "icon": "apple"
+    },
+    {
+      "id": "cereal",
+      "text": "シリアル",
+      "pos": "noun",
+      "category": "food",
+      "frequency": 8,
+      "icon": "apple"
+    },
+    {
+      "id": "fruit",
+      "text": "くだもの",
+      "pos": "noun",
+      "category": "food",
+      "frequency": 8,
+      "icon": "apple"
+    },
+    {
+      "id": "snack",
+      "text": "おやつ",
+      "pos": "noun",
+      "category": "food",
+      "frequency": 8,
+      "icon": "apple"
+    },
+    {
+      "id": "dinner",
+      "text": "ばんごはん",
+      "pos": "noun",
+      "category": "food",
+      "frequency": 8,
+      "icon": "apple"
+    },
+    {
+      "id": "lunch",
+      "text": "ひるごはん",
+      "pos": "noun",
+      "category": "food",
+      "frequency": 8,
+      "icon": "apple"
+    },
+    {
+      "id": "happy",
+      "text": "うれしい",
+      "pos": "adjective",
+      "category": "feelings",
+      "frequency": 9,
+      "icon": "smile"
+    },
+    {
+      "id": "sad",
+      "text": "かなしい",
+      "pos": "adjective",
+      "category": "feelings",
+      "frequency": 9,
+      "icon": "smile"
+    },
+    {
+      "id": "angry",
+      "text": "おこってる",
+      "pos": "adjective",
+      "category": "feelings",
+      "frequency": 9,
+      "icon": "smile"
+    },
+    {
+      "id": "worried",
+      "text": "しんぱい",
+      "pos": "adjective",
+      "category": "feelings",
+      "frequency": 9,
+      "icon": "smile"
+    },
+    {
+      "id": "scared",
+      "text": "こわい",
+      "pos": "adjective",
+      "category": "feelings",
+      "frequency": 9,
+      "icon": "smile"
+    },
+    {
+      "id": "tired",
+      "text": "つかれた",
+      "pos": "adjective",
+      "category": "feelings",
+      "frequency": 9,
+      "icon": "smile"
+    },
+    {
+      "id": "sick",
+      "text": "ぐあいわるい",
+      "pos": "adjective",
+      "category": "feelings",
+      "frequency": 9,
+      "icon": "smile"
+    },
+    {
+      "id": "hurt",
+      "text": "いたい",
+      "pos": "adjective",
+      "category": "feelings",
+      "frequency": 9,
+      "icon": "smile"
+    },
+    {
+      "id": "calm",
+      "text": "おちついてる",
+      "pos": "adjective",
+      "category": "feelings",
+      "frequency": 9,
+      "icon": "smile"
+    },
+    {
+      "id": "excited",
+      "text": "わくわく",
+      "pos": "adjective",
+      "category": "feelings",
+      "frequency": 9,
+      "icon": "smile"
+    },
+    {
+      "id": "confused",
+      "text": "こんがらがった",
+      "pos": "adjective",
+      "category": "feelings",
+      "frequency": 9,
+      "icon": "smile"
+    },
+    {
+      "id": "proud",
+      "text": "ほこらしい",
+      "pos": "adjective",
+      "category": "feelings",
+      "frequency": 9,
+      "icon": "smile"
+    },
+    {
+      "id": "lonely",
+      "text": "さみしい",
+      "pos": "adjective",
+      "category": "feelings",
+      "frequency": 9,
+      "icon": "smile"
+    },
+    {
+      "id": "bored",
+      "text": "たいくつ",
+      "pos": "adjective",
+      "category": "feelings",
+      "frequency": 9,
+      "icon": "smile"
+    },
+    {
+      "id": "safe",
+      "text": "あんしん",
+      "pos": "adjective",
+      "category": "feelings",
+      "frequency": 9,
+      "icon": "smile"
+    },
+    {
+      "id": "upset",
+      "text": "いやなきもち",
+      "pos": "adjective",
+      "category": "feelings",
+      "frequency": 9,
+      "icon": "smile"
+    },
+    {
+      "id": "okay-2",
+      "text": "だいじょうぶ",
+      "pos": "adjective",
+      "category": "feelings",
+      "frequency": 9,
+      "icon": "smile"
+    },
+    {
+      "id": "hot",
+      "text": "あつい",
+      "pos": "adjective",
+      "category": "feelings",
+      "frequency": 9,
+      "icon": "smile"
+    },
+    {
+      "id": "cold",
+      "text": "さむい",
+      "pos": "adjective",
+      "category": "feelings",
+      "frequency": 9,
+      "icon": "smile"
+    },
+    {
+      "id": "hungry",
+      "text": "おなかすいた",
+      "pos": "adjective",
+      "category": "feelings",
+      "frequency": 9,
+      "icon": "smile"
+    },
+    {
+      "id": "thirsty",
+      "text": "のどかわいた",
+      "pos": "adjective",
+      "category": "feelings",
+      "frequency": 9,
+      "icon": "smile"
+    },
+    {
+      "id": "head",
+      "text": "あたま",
+      "pos": "noun",
+      "category": "body",
+      "frequency": 6,
+      "icon": "body"
+    },
+    {
+      "id": "hand",
+      "text": "て",
+      "pos": "noun",
+      "category": "body",
+      "frequency": 6,
+      "icon": "body"
+    },
+    {
+      "id": "foot",
+      "text": "あし",
+      "pos": "noun",
+      "category": "body",
+      "frequency": 6,
+      "icon": "body"
+    },
+    {
+      "id": "tummy",
+      "text": "おなか",
+      "pos": "noun",
+      "category": "body",
+      "frequency": 6,
+      "icon": "body"
+    },
+    {
+      "id": "mouth",
+      "text": "くち",
+      "pos": "noun",
+      "category": "body",
+      "frequency": 6,
+      "icon": "body"
+    },
+    {
+      "id": "ear",
+      "text": "みみ",
+      "pos": "noun",
+      "category": "body",
+      "frequency": 6,
+      "icon": "body"
+    },
+    {
+      "id": "eye",
+      "text": "め",
+      "pos": "noun",
+      "category": "body",
+      "frequency": 6,
+      "icon": "body"
+    },
+    {
+      "id": "arm",
+      "text": "うで",
+      "pos": "noun",
+      "category": "body",
+      "frequency": 6,
+      "icon": "body"
+    },
+    {
+      "id": "leg",
+      "text": "ふともも",
+      "pos": "noun",
+      "category": "body",
+      "frequency": 6,
+      "icon": "body"
+    },
+    {
+      "id": "back",
+      "text": "せなか",
+      "pos": "noun",
+      "category": "body",
+      "frequency": 6,
+      "icon": "body"
+    },
+    {
+      "id": "tooth",
+      "text": "は",
+      "pos": "noun",
+      "category": "body",
+      "frequency": 6,
+      "icon": "body"
+    },
+    {
+      "id": "hair",
+      "text": "かみのけ",
+      "pos": "noun",
+      "category": "body",
+      "frequency": 6,
+      "icon": "body"
+    },
+    {
+      "id": "nose",
+      "text": "はな",
+      "pos": "noun",
+      "category": "body",
+      "frequency": 6,
+      "icon": "body"
+    },
+    {
+      "id": "skin",
+      "text": "はだ",
+      "pos": "noun",
+      "category": "body",
+      "frequency": 6,
+      "icon": "body"
+    },
+    {
+      "id": "heart",
+      "text": "こころ",
+      "pos": "noun",
+      "category": "body",
+      "frequency": 6,
+      "icon": "body"
+    },
+    {
+      "id": "home",
+      "text": "おうち",
+      "pos": "noun",
+      "category": "places",
+      "frequency": 7,
+      "icon": "home"
+    },
+    {
+      "id": "school",
+      "text": "がっこう",
+      "pos": "noun",
+      "category": "places",
+      "frequency": 7,
+      "icon": "home"
+    },
+    {
+      "id": "classroom",
+      "text": "きょうしつ",
+      "pos": "noun",
+      "category": "places",
+      "frequency": 7,
+      "icon": "home"
+    },
+    {
+      "id": "bathroom",
+      "text": "おてあらい",
+      "pos": "noun",
+      "category": "places",
+      "frequency": 7,
+      "icon": "home"
+    },
+    {
+      "id": "kitchen",
+      "text": "キッチン",
+      "pos": "noun",
+      "category": "places",
+      "frequency": 7,
+      "icon": "home"
+    },
+    {
+      "id": "bedroom",
+      "text": "ねるへや",
+      "pos": "noun",
+      "category": "places",
+      "frequency": 7,
+      "icon": "home"
+    },
+    {
+      "id": "garden",
+      "text": "にわ",
+      "pos": "noun",
+      "category": "places",
+      "frequency": 7,
+      "icon": "home"
+    },
+    {
+      "id": "shop",
+      "text": "おみせ",
+      "pos": "noun",
+      "category": "places",
+      "frequency": 7,
+      "icon": "home"
+    },
+    {
+      "id": "car",
+      "text": "くるま",
+      "pos": "noun",
+      "category": "places",
+      "frequency": 7,
+      "icon": "home"
+    },
+    {
+      "id": "bus",
+      "text": "バス",
+      "pos": "noun",
+      "category": "places",
+      "frequency": 7,
+      "icon": "home"
+    },
+    {
+      "id": "park",
+      "text": "こうえん",
+      "pos": "noun",
+      "category": "places",
+      "frequency": 7,
+      "icon": "home"
+    },
+    {
+      "id": "playground",
+      "text": "あそびば",
+      "pos": "noun",
+      "category": "places",
+      "frequency": 7,
+      "icon": "home"
+    },
+    {
+      "id": "library",
+      "text": "としょかん",
+      "pos": "noun",
+      "category": "places",
+      "frequency": 7,
+      "icon": "home"
+    },
+    {
+      "id": "pool",
+      "text": "プール",
+      "pos": "noun",
+      "category": "places",
+      "frequency": 7,
+      "icon": "home"
+    },
+    {
+      "id": "table",
+      "text": "テーブル",
+      "pos": "noun",
+      "category": "home",
+      "frequency": 7,
+      "icon": "home"
+    },
+    {
+      "id": "chair",
+      "text": "いす",
+      "pos": "noun",
+      "category": "home",
+      "frequency": 7,
+      "icon": "home"
+    },
+    {
+      "id": "sofa",
+      "text": "ソファ",
+      "pos": "noun",
+      "category": "home",
+      "frequency": 7,
+      "icon": "home"
+    },
+    {
+      "id": "bed",
+      "text": "ベッド",
+      "pos": "noun",
+      "category": "home",
+      "frequency": 7,
+      "icon": "home"
+    },
+    {
+      "id": "door",
+      "text": "ドア",
+      "pos": "noun",
+      "category": "home",
+      "frequency": 7,
+      "icon": "home"
+    },
+    {
+      "id": "window",
+      "text": "まど",
+      "pos": "noun",
+      "category": "home",
+      "frequency": 7,
+      "icon": "home"
+    },
+    {
+      "id": "book",
+      "text": "ほん",
+      "pos": "noun",
+      "category": "school",
+      "frequency": 6,
+      "icon": "book"
+    },
+    {
+      "id": "pencil",
+      "text": "えんぴつ",
+      "pos": "noun",
+      "category": "school",
+      "frequency": 6,
+      "icon": "book"
+    },
+    {
+      "id": "paper",
+      "text": "かみ",
+      "pos": "noun",
+      "category": "school",
+      "frequency": 6,
+      "icon": "book"
+    },
+    {
+      "id": "bag",
+      "text": "かばん",
+      "pos": "noun",
+      "category": "school",
+      "frequency": 6,
+      "icon": "book"
+    },
+    {
+      "id": "coat",
+      "text": "コート",
+      "pos": "noun",
+      "category": "school",
+      "frequency": 6,
+      "icon": "book"
+    },
+    {
+      "id": "shoes",
+      "text": "くつ",
+      "pos": "noun",
+      "category": "school",
+      "frequency": 6,
+      "icon": "book"
+    },
+    {
+      "id": "lunchbox",
+      "text": "おべんとうばこ",
+      "pos": "noun",
+      "category": "school",
+      "frequency": 6,
+      "icon": "book"
+    },
+    {
+      "id": "tablet",
+      "text": "タブレット",
+      "pos": "noun",
+      "category": "school",
+      "frequency": 6,
+      "icon": "book"
+    },
+    {
+      "id": "screen",
+      "text": "がめん",
+      "pos": "noun",
+      "category": "school",
+      "frequency": 6,
+      "icon": "book"
+    },
+    {
+      "id": "timer",
+      "text": "タイマー",
+      "pos": "noun",
+      "category": "school",
+      "frequency": 6,
+      "icon": "book"
+    },
+    {
+      "id": "schedule",
+      "text": "よてい",
+      "pos": "noun",
+      "category": "school",
+      "frequency": 6,
+      "icon": "book"
+    },
+    {
+      "id": "picture",
+      "text": "え",
+      "pos": "noun",
+      "category": "school",
+      "frequency": 6,
+      "icon": "book"
+    },
+    {
+      "id": "card",
+      "text": "カード",
+      "pos": "noun",
+      "category": "school",
+      "frequency": 6,
+      "icon": "book"
+    },
+    {
+      "id": "story",
+      "text": "おはなし",
+      "pos": "noun",
+      "category": "school",
+      "frequency": 6,
+      "icon": "book"
+    },
+    {
+      "id": "music",
+      "text": "おんがく",
+      "pos": "noun",
+      "category": "school",
+      "frequency": 6,
+      "icon": "book"
+    },
+    {
+      "id": "ball",
+      "text": "ボール",
+      "pos": "noun",
+      "category": "toys",
+      "frequency": 6,
+      "icon": "puzzle"
+    },
+    {
+      "id": "blocks",
+      "text": "つみき",
+      "pos": "noun",
+      "category": "toys",
+      "frequency": 6,
+      "icon": "puzzle"
+    },
+    {
+      "id": "doll",
+      "text": "にんぎょう",
+      "pos": "noun",
+      "category": "toys",
+      "frequency": 6,
+      "icon": "puzzle"
+    },
+    {
+      "id": "car-toy",
+      "text": "くるまのおもちゃ",
+      "pos": "noun",
+      "category": "toys",
+      "frequency": 6,
+      "icon": "puzzle"
+    },
+    {
+      "id": "train",
+      "text": "でんしゃ",
+      "pos": "noun",
+      "category": "toys",
+      "frequency": 6,
+      "icon": "puzzle"
+    },
+    {
+      "id": "puzzle",
+      "text": "パズル",
+      "pos": "noun",
+      "category": "toys",
+      "frequency": 6,
+      "icon": "puzzle"
+    },
+    {
+      "id": "game",
+      "text": "ゲーム",
+      "pos": "noun",
+      "category": "toys",
+      "frequency": 6,
+      "icon": "puzzle"
+    },
+    {
+      "id": "paint",
+      "text": "えのぐ",
+      "pos": "noun",
+      "category": "toys",
+      "frequency": 6,
+      "icon": "puzzle"
+    },
+    {
+      "id": "clay",
+      "text": "ねんど",
+      "pos": "noun",
+      "category": "toys",
+      "frequency": 6,
+      "icon": "puzzle"
+    },
+    {
+      "id": "bubbles",
+      "text": "しゃぼんだま",
+      "pos": "noun",
+      "category": "toys",
+      "frequency": 6,
+      "icon": "puzzle"
+    },
+    {
+      "id": "swing",
+      "text": "ブランコ",
+      "pos": "noun",
+      "category": "toys",
+      "frequency": 6,
+      "icon": "puzzle"
+    },
+    {
+      "id": "slide",
+      "text": "すべりだい",
+      "pos": "noun",
+      "category": "toys",
+      "frequency": 6,
+      "icon": "puzzle"
+    },
+    {
+      "id": "bike",
+      "text": "じてんしゃ",
+      "pos": "noun",
+      "category": "toys",
+      "frequency": 6,
+      "icon": "puzzle"
+    },
+    {
+      "id": "teddy",
+      "text": "くまのぬいぐるみ",
+      "pos": "noun",
+      "category": "toys",
+      "frequency": 6,
+      "icon": "puzzle"
+    },
+    {
+      "id": "lego",
+      "text": "レゴ",
+      "pos": "noun",
+      "category": "toys",
+      "frequency": 6,
+      "icon": "puzzle"
+    },
+    {
+      "id": "red",
+      "text": "あか",
+      "pos": "adjective",
+      "category": "colors",
+      "frequency": 5,
+      "icon": "palette"
+    },
+    {
+      "id": "blue",
+      "text": "あお",
+      "pos": "adjective",
+      "category": "colors",
+      "frequency": 5,
+      "icon": "palette"
+    },
+    {
+      "id": "green",
+      "text": "みどり",
+      "pos": "adjective",
+      "category": "colors",
+      "frequency": 5,
+      "icon": "palette"
+    },
+    {
+      "id": "yellow",
+      "text": "きいろ",
+      "pos": "adjective",
+      "category": "colors",
+      "frequency": 5,
+      "icon": "palette"
+    },
+    {
+      "id": "orange",
+      "text": "オレンジ",
+      "pos": "adjective",
+      "category": "colors",
+      "frequency": 5,
+      "icon": "palette"
+    },
+    {
+      "id": "purple",
+      "text": "むらさき",
+      "pos": "adjective",
+      "category": "colors",
+      "frequency": 5,
+      "icon": "palette"
+    },
+    {
+      "id": "pink",
+      "text": "ピンク",
+      "pos": "adjective",
+      "category": "colors",
+      "frequency": 5,
+      "icon": "palette"
+    },
+    {
+      "id": "brown",
+      "text": "ちゃいろ",
+      "pos": "adjective",
+      "category": "colors",
+      "frequency": 5,
+      "icon": "palette"
+    },
+    {
+      "id": "black",
+      "text": "くろ",
+      "pos": "adjective",
+      "category": "colors",
+      "frequency": 5,
+      "icon": "palette"
+    },
+    {
+      "id": "white",
+      "text": "しろ",
+      "pos": "adjective",
+      "category": "colors",
+      "frequency": 5,
+      "icon": "palette"
+    },
+    {
+      "id": "grey",
+      "text": "はいいろ",
+      "pos": "adjective",
+      "category": "colors",
+      "frequency": 5,
+      "icon": "palette"
+    },
+    {
+      "id": "bright",
+      "text": "あかるい",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "palette"
+    },
+    {
+      "id": "dark",
+      "text": "くらい",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "palette"
+    },
+    {
+      "id": "soft",
+      "text": "やわらかい",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "palette"
+    },
+    {
+      "id": "hard",
+      "text": "かたい",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "palette"
+    },
+    {
+      "id": "quiet",
+      "text": "しずか",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "palette"
+    },
+    {
+      "id": "loud",
+      "text": "うるさい",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "palette"
+    },
+    {
+      "id": "fast",
+      "text": "はやい",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "palette"
+    },
+    {
+      "id": "slow",
+      "text": "ゆっくり",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "palette"
+    },
+    {
+      "id": "clean",
+      "text": "きれい",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "palette"
+    },
+    {
+      "id": "dirty",
+      "text": "きたない",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "palette"
+    },
+    {
+      "id": "wet",
+      "text": "ぬれてる",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "palette"
+    },
+    {
+      "id": "dry",
+      "text": "かわいてる",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "palette"
+    },
+    {
+      "id": "new",
+      "text": "あたらしい",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "palette"
+    },
+    {
+      "id": "old",
+      "text": "ふるい",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "palette"
+    },
+    {
+      "id": "now",
+      "text": "いま",
+      "pos": "adverb",
+      "category": "time",
+      "frequency": 6,
+      "icon": "clock"
+    },
+    {
+      "id": "later",
+      "text": "あとで",
+      "pos": "adverb",
+      "category": "time",
+      "frequency": 6,
+      "icon": "clock"
+    },
+    {
+      "id": "today",
+      "text": "きょう",
+      "pos": "adverb",
+      "category": "time",
+      "frequency": 6,
+      "icon": "clock"
+    },
+    {
+      "id": "tomorrow",
+      "text": "あした",
+      "pos": "adverb",
+      "category": "time",
+      "frequency": 6,
+      "icon": "clock"
+    },
+    {
+      "id": "morning",
+      "text": "あさ",
+      "pos": "adverb",
+      "category": "time",
+      "frequency": 6,
+      "icon": "clock"
+    },
+    {
+      "id": "afternoon",
+      "text": "ひる",
+      "pos": "adverb",
+      "category": "time",
+      "frequency": 6,
+      "icon": "clock"
+    },
+    {
+      "id": "night",
+      "text": "よる",
+      "pos": "adverb",
+      "category": "time",
+      "frequency": 6,
+      "icon": "clock"
+    },
+    {
+      "id": "before",
+      "text": "まえに",
+      "pos": "adverb",
+      "category": "time",
+      "frequency": 6,
+      "icon": "clock"
+    },
+    {
+      "id": "after",
+      "text": "あとに",
+      "pos": "adverb",
+      "category": "time",
+      "frequency": 6,
+      "icon": "clock"
+    },
+    {
+      "id": "soon",
+      "text": "もうすぐ",
+      "pos": "adverb",
+      "category": "time",
+      "frequency": 6,
+      "icon": "clock"
+    },
+    {
+      "id": "first",
+      "text": "さいしょ",
+      "pos": "adverb",
+      "category": "time",
+      "frequency": 6,
+      "icon": "clock"
+    },
+    {
+      "id": "next",
+      "text": "つぎ",
+      "pos": "adverb",
+      "category": "time",
+      "frequency": 6,
+      "icon": "clock"
+    },
+    {
+      "id": "last",
+      "text": "さいご",
+      "pos": "adverb",
+      "category": "time",
+      "frequency": 6,
+      "icon": "clock"
+    },
+    {
+      "id": "minute",
+      "text": "いっぷん",
+      "pos": "adverb",
+      "category": "time",
+      "frequency": 6,
+      "icon": "clock"
+    },
+    {
+      "id": "hour",
+      "text": "いちじかん",
+      "pos": "adverb",
+      "category": "time",
+      "frequency": 6,
+      "icon": "clock"
+    },
+    {
+      "id": "break",
+      "text": "きゅうけい",
+      "pos": "noun",
+      "category": "needs",
+      "frequency": 8,
+      "icon": "heart-hand"
+    },
+    {
+      "id": "quiet-time",
+      "text": "しずかなじかん",
+      "pos": "noun",
+      "category": "needs",
+      "frequency": 8,
+      "icon": "heart-hand"
+    },
+    {
+      "id": "hug",
+      "text": "ハグ",
+      "pos": "noun",
+      "category": "needs",
+      "frequency": 8,
+      "icon": "heart-hand"
+    },
+    {
+      "id": "space",
+      "text": "ひとりのばしょ",
+      "pos": "noun",
+      "category": "needs",
+      "frequency": 8,
+      "icon": "heart-hand"
+    },
+    {
+      "id": "toilet",
+      "text": "トイレ",
+      "pos": "noun",
+      "category": "needs",
+      "frequency": 8,
+      "icon": "heart-hand"
+    },
+    {
+      "id": "medicine",
+      "text": "おくすり",
+      "pos": "noun",
+      "category": "needs",
+      "frequency": 8,
+      "icon": "heart-hand"
+    },
+    {
+      "id": "light",
+      "text": "でんき",
+      "pos": "noun",
+      "category": "needs",
+      "frequency": 8,
+      "icon": "heart-hand"
+    },
+    {
+      "id": "dark-2",
+      "text": "くらやみ",
+      "pos": "noun",
+      "category": "needs",
+      "frequency": 8,
+      "icon": "heart-hand"
+    },
+    {
+      "id": "noise",
+      "text": "うるさいおと",
+      "pos": "noun",
+      "category": "needs",
+      "frequency": 8,
+      "icon": "heart-hand"
+    },
+    {
+      "id": "headphones",
+      "text": "ヘッドホン",
+      "pos": "noun",
+      "category": "needs",
+      "frequency": 8,
+      "icon": "heart-hand"
+    },
+    {
+      "id": "blanket",
+      "text": "もうふ",
+      "pos": "noun",
+      "category": "needs",
+      "frequency": 8,
+      "icon": "heart-hand"
+    },
+    {
+      "id": "charger",
+      "text": "じゅうでんき",
+      "pos": "noun",
+      "category": "needs",
+      "frequency": 8,
+      "icon": "heart-hand"
+    },
+    {
+      "id": "choice",
+      "text": "えらぶこと",
+      "pos": "noun",
+      "category": "needs",
+      "frequency": 8,
+      "icon": "heart-hand"
+    },
+    {
+      "id": "turn",
+      "text": "じゅんばん",
+      "pos": "noun",
+      "category": "needs",
+      "frequency": 8,
+      "icon": "heart-hand"
+    },
+    {
+      "id": "help-please",
+      "text": "てつだって",
+      "pos": "noun",
+      "category": "needs",
+      "frequency": 8,
+      "icon": "heart-hand"
+    },
+    {
+      "id": "different",
+      "text": "ちがう",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "sparkles"
+    },
+    {
+      "id": "same",
+      "text": "おなじ",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "sparkles"
+    },
+    {
+      "id": "easy",
+      "text": "かんたん",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "sparkles"
+    },
+    {
+      "id": "harder",
+      "text": "もっとむずかしい",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "sparkles"
+    },
+    {
+      "id": "favorite",
+      "text": "おきにいり",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "sparkles"
+    },
+    {
+      "id": "missing",
+      "text": "みつからない",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "sparkles"
+    },
+    {
+      "id": "broken",
+      "text": "こわれた",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "sparkles"
+    },
+    {
+      "id": "ready",
+      "text": "じゅんびできた",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "sparkles"
+    },
+    {
+      "id": "busy",
+      "text": "いそがしい",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "sparkles"
+    },
+    {
+      "id": "empty",
+      "text": "からっぽ",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "sparkles"
+    },
+    {
+      "id": "full",
+      "text": "いっぱい",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "sparkles"
+    },
+    {
+      "id": "small",
+      "text": "ちいさい",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "sparkles"
+    },
+    {
+      "id": "tall",
+      "text": "たかい",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "sparkles"
+    },
+    {
+      "id": "short",
+      "text": "みじかい",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "sparkles"
+    },
+    {
+      "id": "round",
+      "text": "まるい",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "sparkles"
+    },
+    {
+      "id": "square",
+      "text": "しかくい",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "sparkles"
+    },
+    {
+      "id": "kind",
+      "text": "やさしい",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "sparkles"
+    },
+    {
+      "id": "gentle",
+      "text": "そっと",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "sparkles"
+    },
+    {
+      "id": "careful",
+      "text": "きをつけて",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "sparkles"
+    },
+    {
+      "id": "safe-place",
+      "text": "あんしんできるばしょ",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "sparkles"
+    }
+  ],
+  "templates": [
+    {
+      "id": "want-object",
+      "pattern": "わたしは{thing}がほしい。",
+      "category": "needs",
+      "icon": "heart-hand",
+      "slots": [
+        {
+          "acceptedPos": [
+            "pronoun"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "noun"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "need-help",
+      "pattern": "わたしは{thing}をてつだってほしい。",
+      "category": "needs",
+      "icon": "heart-hand",
+      "slots": [
+        {
+          "acceptedPos": [
+            "pronoun"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "noun"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "feel-state",
+      "pattern": "わたしは{feeling}。",
+      "category": "feelings",
+      "icon": "smile",
+      "slots": [
+        {
+          "acceptedPos": [
+            "pronoun"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "adjective"
+          ],
+          "categoryFilter": "feelings"
+        }
+      ]
+    },
+    {
+      "id": "body-hurts",
+      "pattern": "わたしの{body}がいたい。",
+      "category": "body",
+      "icon": "body",
+      "slots": [
+        {
+          "acceptedPos": [
+            "pronoun"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "noun"
+          ],
+          "categoryFilter": "body"
+        },
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "like-activity",
+      "pattern": "わたしは{activity}がすき。",
+      "category": "actions",
+      "icon": "play",
+      "slots": [
+        {
+          "acceptedPos": [
+            "pronoun"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "noun"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "go-place",
+      "pattern": "わたしは{place}にいきたい。",
+      "category": "places",
+      "icon": "home",
+      "slots": [
+        {
+          "acceptedPos": [
+            "pronoun"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "preposition"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "preposition"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "noun"
+          ],
+          "categoryFilter": "places"
+        }
+      ]
+    },
+    {
+      "id": "question-where",
+      "pattern": "{thing}はどこ？",
+      "category": "questions",
+      "icon": "question-circle",
+      "slots": [
+        {
+          "acceptedPos": [
+            "question"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "noun"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "question-what",
+      "pattern": "これはなに？",
+      "category": "questions",
+      "icon": "question-circle",
+      "slots": [
+        {
+          "acceptedPos": [
+            "question"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "determiner"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "question-can",
+      "pattern": "てつだってくれる？",
+      "category": "questions",
+      "icon": "question-circle",
+      "slots": [
+        {
+          "acceptedPos": [
+            "question"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "pronoun"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "pronoun"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "more-thing",
+      "pattern": "{thing}をもっとください。",
+      "category": "social",
+      "icon": "chat-bubble",
+      "slots": [
+        {
+          "acceptedPos": [
+            "social"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "noun"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "social"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "all-done",
+      "pattern": "ぜんぶおわった。",
+      "category": "social",
+      "icon": "chat-bubble",
+      "slots": [
+        {
+          "acceptedPos": [
+            "pronoun"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "social"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "not-want",
+      "pattern": "わたしは{thing}がほしくない。",
+      "category": "needs",
+      "icon": "heart-hand",
+      "slots": [
+        {
+          "acceptedPos": [
+            "pronoun"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "social"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "noun"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "choose-one",
+      "pattern": "わたしは{thing}をえらぶ。",
+      "category": "actions",
+      "icon": "play",
+      "slots": [
+        {
+          "acceptedPos": [
+            "pronoun"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "noun"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "with-person",
+      "pattern": "わたしは{person}といっしょにいたい。",
+      "category": "people",
+      "icon": "user",
+      "slots": [
+        {
+          "acceptedPos": [
+            "pronoun"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "preposition"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "preposition"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "noun"
+          ],
+          "categoryFilter": "people"
+        }
+      ]
+    },
+    {
+      "id": "too-loud",
+      "pattern": "うるさすぎる。",
+      "category": "feelings",
+      "icon": "smile",
+      "slots": [
+        {
+          "acceptedPos": [
+            "pronoun"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "adjective"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "need-break",
+      "pattern": "きゅうけいがひつよう。",
+      "category": "needs",
+      "icon": "heart-hand",
+      "slots": [
+        {
+          "acceptedPos": [
+            "pronoun"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "determiner"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "noun"
+          ],
+          "categoryFilter": "needs"
+        }
+      ]
+    },
+    {
+      "id": "first-next",
+      "pattern": "さいしょは{thing}、つぎは{thing}。",
+      "category": "time",
+      "icon": "clock",
+      "slots": [
+        {
+          "acceptedPos": [
+            "adverb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "noun"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "conjunction"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "noun"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "yes-answer",
+      "pattern": "はい、おねがいします。",
+      "category": "social",
+      "icon": "chat-bubble",
+      "slots": [
+        {
+          "acceptedPos": [
+            "social"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "social"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "no-answer",
+      "pattern": "いいえ、いりません。",
+      "category": "social",
+      "icon": "chat-bubble",
+      "slots": [
+        {
+          "acceptedPos": [
+            "social"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "social"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "descriptor-object",
+      "pattern": "{thing}は{description}。",
+      "category": "describing",
+      "icon": "sparkles",
+      "slots": [
+        {
+          "acceptedPos": [
+            "determiner"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "noun"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "adjective"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "place-position",
+      "pattern": "{thing}は{place}{position}にある。",
+      "category": "positions",
+      "icon": "arrow-right",
+      "slots": [
+        {
+          "acceptedPos": [
+            "determiner"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "noun"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "preposition"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "determiner"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "noun"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "time-request",
+      "pattern": "あとで{thing}がほしい。",
+      "category": "time",
+      "icon": "clock",
+      "slots": [
+        {
+          "acceptedPos": [
+            "pronoun"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "noun"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "adverb"
+          ],
+          "categoryFilter": "time"
+        }
+      ]
+    },
+    {
+      "id": "polite-help",
+      "pattern": "てつだってください。",
+      "category": "needs",
+      "icon": "heart-hand",
+      "slots": [
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "social"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "try-again",
+      "pattern": "もういっかいやってみたい。",
+      "category": "actions",
+      "icon": "play",
+      "slots": [
+        {
+          "acceptedPos": [
+            "pronoun"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "preposition"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "social"
+          ]
+        }
+      ]
+    }
+  ],
+  "grammar": {
+    "wordOrder": "subject-object-verb",
+    "validTransitions": {
+      "pronoun": [
+        "noun",
+        "adjective",
+        "determiner"
+      ],
+      "determiner": [
+        "noun",
+        "adjective"
+      ],
+      "verb": [
+        "social",
+        "conjunction"
+      ],
+      "noun": [
+        "verb",
+        "adjective",
+        "noun",
+        "preposition"
+      ],
+      "adjective": [
+        "noun",
+        "verb",
+        "social",
+        "conjunction"
+      ],
+      "question": [
+        "verb",
+        "noun",
+        "social"
+      ],
+      "preposition": [
+        "verb",
+        "noun"
+      ],
+      "conjunction": [
+        "pronoun",
+        "noun",
+        "determiner",
+        "verb"
+      ],
+      "social": [
+        "pronoun",
+        "noun",
+        "social"
+      ]
+    },
+    "articles": {
+      "default": {}
+    },
+    "negation": {
+      "position": "verb-suffix",
+      "words": [
+        "ない"
+      ]
+    }
+  }
+}

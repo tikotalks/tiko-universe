@@ -1,0 +1,3130 @@
+{
+  "locale": "hy",
+  "version": 1,
+  "words": [
+    {
+      "id": "i",
+      "text": "ես",
+      "pos": "pronoun",
+      "category": "people",
+      "frequency": 10,
+      "icon": "user"
+    },
+    {
+      "id": "you",
+      "text": "դու",
+      "pos": "pronoun",
+      "category": "people",
+      "frequency": 10,
+      "icon": "user"
+    },
+    {
+      "id": "we",
+      "text": "մենք",
+      "pos": "pronoun",
+      "category": "people",
+      "frequency": 7,
+      "icon": "user"
+    },
+    {
+      "id": "me",
+      "text": "ինձ",
+      "pos": "pronoun",
+      "category": "people",
+      "frequency": 10,
+      "icon": "user"
+    },
+    {
+      "id": "my",
+      "text": "իմ",
+      "pos": "pronoun",
+      "category": "people",
+      "frequency": 10,
+      "icon": "user"
+    },
+    {
+      "id": "your",
+      "text": "քո",
+      "pos": "pronoun",
+      "category": "people",
+      "frequency": 7,
+      "icon": "user"
+    },
+    {
+      "id": "he",
+      "text": "նա",
+      "pos": "pronoun",
+      "category": "people",
+      "frequency": 7,
+      "icon": "user"
+    },
+    {
+      "id": "she",
+      "text": "ինքը",
+      "pos": "pronoun",
+      "category": "people",
+      "frequency": 7,
+      "icon": "user"
+    },
+    {
+      "id": "they",
+      "text": "նրանք",
+      "pos": "pronoun",
+      "category": "people",
+      "frequency": 7,
+      "icon": "user"
+    },
+    {
+      "id": "mum",
+      "text": "մամա",
+      "pos": "noun",
+      "category": "people",
+      "frequency": 7,
+      "icon": "user"
+    },
+    {
+      "id": "dad",
+      "text": "պապա",
+      "pos": "noun",
+      "category": "people",
+      "frequency": 7,
+      "icon": "user"
+    },
+    {
+      "id": "teacher",
+      "text": "ուսուցիչ",
+      "pos": "noun",
+      "category": "people",
+      "frequency": 7,
+      "icon": "user"
+    },
+    {
+      "id": "friend",
+      "text": "ընկեր",
+      "pos": "noun",
+      "category": "people",
+      "frequency": 7,
+      "icon": "user"
+    },
+    {
+      "id": "brother",
+      "text": "եղբայր",
+      "pos": "noun",
+      "category": "people",
+      "frequency": 7,
+      "icon": "user"
+    },
+    {
+      "id": "sister",
+      "text": "քույր",
+      "pos": "noun",
+      "category": "people",
+      "frequency": 7,
+      "icon": "user"
+    },
+    {
+      "id": "grandma",
+      "text": "տատիկ",
+      "pos": "noun",
+      "category": "people",
+      "frequency": 7,
+      "icon": "user"
+    },
+    {
+      "id": "grandpa",
+      "text": "պապիկ",
+      "pos": "noun",
+      "category": "people",
+      "frequency": 7,
+      "icon": "user"
+    },
+    {
+      "id": "helper",
+      "text": "օգնական",
+      "pos": "noun",
+      "category": "people",
+      "frequency": 7,
+      "icon": "user"
+    },
+    {
+      "id": "doctor",
+      "text": "բժիշկ",
+      "pos": "noun",
+      "category": "people",
+      "frequency": 7,
+      "icon": "user"
+    },
+    {
+      "id": "class",
+      "text": "դասարան",
+      "pos": "noun",
+      "category": "people",
+      "frequency": 7,
+      "icon": "user"
+    },
+    {
+      "id": "want",
+      "text": "ուզել",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 10,
+      "icon": "play",
+      "inflections": {
+        "past": "ուզեց"
+      }
+    },
+    {
+      "id": "need",
+      "text": "պետք",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 10,
+      "icon": "play",
+      "inflections": {
+        "past": "պետք էր"
+      }
+    },
+    {
+      "id": "like",
+      "text": "հավանել",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play",
+      "inflections": {
+        "past": "հավանեց"
+      }
+    },
+    {
+      "id": "feel",
+      "text": "զգալ",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 10,
+      "icon": "play",
+      "inflections": {
+        "past": "զգաց"
+      }
+    },
+    {
+      "id": "see",
+      "text": "տեսնել",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play",
+      "inflections": {
+        "past": "տեսավ"
+      }
+    },
+    {
+      "id": "hear",
+      "text": "լսել",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play",
+      "inflections": {
+        "past": "լսեց"
+      }
+    },
+    {
+      "id": "have",
+      "text": "ունենալ",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play",
+      "inflections": {
+        "past": "ուներ"
+      }
+    },
+    {
+      "id": "go",
+      "text": "գնալ",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play"
+    },
+    {
+      "id": "come",
+      "text": "գալ",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play",
+      "inflections": {
+        "past": "եկավ"
+      }
+    },
+    {
+      "id": "play",
+      "text": "խաղալ",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play",
+      "inflections": {
+        "past": "խաղաց"
+      }
+    },
+    {
+      "id": "read",
+      "text": "կարդալ",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play",
+      "inflections": {
+        "past": "կարդաց"
+      }
+    },
+    {
+      "id": "draw",
+      "text": "նկարել",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play",
+      "inflections": {
+        "past": "նկարեց"
+      }
+    },
+    {
+      "id": "eat",
+      "text": "ուտել",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play"
+    },
+    {
+      "id": "drink",
+      "text": "խմել",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play"
+    },
+    {
+      "id": "sit",
+      "text": "նստել",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play"
+    },
+    {
+      "id": "stand",
+      "text": "կանգնել",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play"
+    },
+    {
+      "id": "walk",
+      "text": "քայլել",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play",
+      "inflections": {
+        "past": "քայլեց"
+      }
+    },
+    {
+      "id": "run",
+      "text": "վազել",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play"
+    },
+    {
+      "id": "stop",
+      "text": "կանգ",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 10,
+      "icon": "play",
+      "inflections": {
+        "past": "կանգնեց"
+      }
+    },
+    {
+      "id": "start",
+      "text": "սկսել",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play",
+      "inflections": {
+        "past": "սկսեց"
+      }
+    },
+    {
+      "id": "wait",
+      "text": "սպասել",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play",
+      "inflections": {
+        "past": "սպասեց"
+      }
+    },
+    {
+      "id": "help",
+      "text": "օգնել",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 10,
+      "icon": "play",
+      "inflections": {
+        "past": "օգնեց"
+      }
+    },
+    {
+      "id": "choose",
+      "text": "ընտրել",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play",
+      "inflections": {
+        "past": "ընտրեց"
+      }
+    },
+    {
+      "id": "open",
+      "text": "բացել",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play",
+      "inflections": {
+        "past": "բացեց"
+      }
+    },
+    {
+      "id": "close",
+      "text": "փակել",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play",
+      "inflections": {
+        "past": "փակեց"
+      }
+    },
+    {
+      "id": "wash",
+      "text": "լվանալ",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play",
+      "inflections": {
+        "past": "լվաց"
+      }
+    },
+    {
+      "id": "sleep",
+      "text": "քնել",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play"
+    },
+    {
+      "id": "rest",
+      "text": "հանգստանալ",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play",
+      "inflections": {
+        "past": "հանգստացավ"
+      }
+    },
+    {
+      "id": "try",
+      "text": "փորձել",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play",
+      "inflections": {
+        "past": "փորձեց"
+      }
+    },
+    {
+      "id": "talk",
+      "text": "խոսել",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play",
+      "inflections": {
+        "past": "խոսեց"
+      }
+    },
+    {
+      "id": "yes",
+      "text": "այո",
+      "pos": "social",
+      "category": "social",
+      "frequency": 9,
+      "icon": "chat-bubble"
+    },
+    {
+      "id": "no",
+      "text": "ոչ",
+      "pos": "social",
+      "category": "social",
+      "frequency": 9,
+      "icon": "chat-bubble"
+    },
+    {
+      "id": "please",
+      "text": "խնդրում եմ",
+      "pos": "social",
+      "category": "social",
+      "frequency": 9,
+      "icon": "chat-bubble"
+    },
+    {
+      "id": "thank-you",
+      "text": "շնորհակալություն",
+      "pos": "social",
+      "category": "social",
+      "frequency": 9,
+      "icon": "chat-bubble"
+    },
+    {
+      "id": "sorry",
+      "text": "ներողություն",
+      "pos": "social",
+      "category": "social",
+      "frequency": 9,
+      "icon": "chat-bubble"
+    },
+    {
+      "id": "hello",
+      "text": "բարև",
+      "pos": "social",
+      "category": "social",
+      "frequency": 9,
+      "icon": "chat-bubble"
+    },
+    {
+      "id": "goodbye",
+      "text": "ցտեսություն",
+      "pos": "social",
+      "category": "social",
+      "frequency": 9,
+      "icon": "chat-bubble"
+    },
+    {
+      "id": "more",
+      "text": "ավելի",
+      "pos": "social",
+      "category": "social",
+      "frequency": 9,
+      "icon": "chat-bubble"
+    },
+    {
+      "id": "all-done",
+      "text": "վերջացրեց",
+      "pos": "social",
+      "category": "social",
+      "frequency": 9,
+      "icon": "chat-bubble"
+    },
+    {
+      "id": "again",
+      "text": "նորից",
+      "pos": "social",
+      "category": "social",
+      "frequency": 9,
+      "icon": "chat-bubble"
+    },
+    {
+      "id": "finished",
+      "text": "ավարտված",
+      "pos": "social",
+      "category": "social",
+      "frequency": 9,
+      "icon": "chat-bubble"
+    },
+    {
+      "id": "okay",
+      "text": "լավ",
+      "pos": "social",
+      "category": "social",
+      "frequency": 9,
+      "icon": "chat-bubble"
+    },
+    {
+      "id": "not-yet",
+      "text": "դեռ ոչ",
+      "pos": "social",
+      "category": "social",
+      "frequency": 9,
+      "icon": "chat-bubble"
+    },
+    {
+      "id": "maybe",
+      "text": "միգուցե",
+      "pos": "social",
+      "category": "social",
+      "frequency": 9,
+      "icon": "chat-bubble"
+    },
+    {
+      "id": "what",
+      "text": "ինչ",
+      "pos": "question",
+      "category": "questions",
+      "frequency": 8,
+      "icon": "question-circle"
+    },
+    {
+      "id": "where",
+      "text": "որտեղ",
+      "pos": "question",
+      "category": "questions",
+      "frequency": 8,
+      "icon": "question-circle"
+    },
+    {
+      "id": "who",
+      "text": "ով",
+      "pos": "question",
+      "category": "questions",
+      "frequency": 8,
+      "icon": "question-circle"
+    },
+    {
+      "id": "when",
+      "text": "երբ",
+      "pos": "question",
+      "category": "questions",
+      "frequency": 8,
+      "icon": "question-circle"
+    },
+    {
+      "id": "why",
+      "text": "ինչու",
+      "pos": "question",
+      "category": "questions",
+      "frequency": 8,
+      "icon": "question-circle"
+    },
+    {
+      "id": "which",
+      "text": "որը",
+      "pos": "question",
+      "category": "questions",
+      "frequency": 8,
+      "icon": "question-circle"
+    },
+    {
+      "id": "how",
+      "text": "ինչպես",
+      "pos": "question",
+      "category": "questions",
+      "frequency": 8,
+      "icon": "question-circle"
+    },
+    {
+      "id": "can",
+      "text": "կարող",
+      "pos": "question",
+      "category": "questions",
+      "frequency": 8,
+      "icon": "question-circle"
+    },
+    {
+      "id": "is",
+      "text": "է",
+      "pos": "question",
+      "category": "questions",
+      "frequency": 8,
+      "icon": "question-circle"
+    },
+    {
+      "id": "are",
+      "text": "են",
+      "pos": "question",
+      "category": "questions",
+      "frequency": 8,
+      "icon": "question-circle"
+    },
+    {
+      "id": "a",
+      "text": "մի",
+      "pos": "determiner",
+      "category": "helpers",
+      "frequency": 8,
+      "icon": "text"
+    },
+    {
+      "id": "the",
+      "text": "այն",
+      "pos": "determiner",
+      "category": "helpers",
+      "frequency": 8,
+      "icon": "text"
+    },
+    {
+      "id": "this",
+      "text": "սա",
+      "pos": "determiner",
+      "category": "helpers",
+      "frequency": 8,
+      "icon": "text"
+    },
+    {
+      "id": "that",
+      "text": "այդ",
+      "pos": "determiner",
+      "category": "helpers",
+      "frequency": 8,
+      "icon": "text"
+    },
+    {
+      "id": "some",
+      "text": "մի քանի",
+      "pos": "determiner",
+      "category": "helpers",
+      "frequency": 8,
+      "icon": "text"
+    },
+    {
+      "id": "one",
+      "text": "մեկ",
+      "pos": "determiner",
+      "category": "helpers",
+      "frequency": 8,
+      "icon": "text"
+    },
+    {
+      "id": "two",
+      "text": "երկու",
+      "pos": "determiner",
+      "category": "helpers",
+      "frequency": 8,
+      "icon": "text"
+    },
+    {
+      "id": "three",
+      "text": "երեք",
+      "pos": "determiner",
+      "category": "helpers",
+      "frequency": 8,
+      "icon": "text"
+    },
+    {
+      "id": "many",
+      "text": "շատ",
+      "pos": "determiner",
+      "category": "helpers",
+      "frequency": 8,
+      "icon": "text"
+    },
+    {
+      "id": "little",
+      "text": "քիչ",
+      "pos": "determiner",
+      "category": "helpers",
+      "frequency": 8,
+      "icon": "text"
+    },
+    {
+      "id": "big",
+      "text": "մեծ",
+      "pos": "determiner",
+      "category": "helpers",
+      "frequency": 8,
+      "icon": "text"
+    },
+    {
+      "id": "in",
+      "text": "մեջ",
+      "pos": "preposition",
+      "category": "positions",
+      "frequency": 7,
+      "icon": "arrow-right"
+    },
+    {
+      "id": "on",
+      "text": "վրա",
+      "pos": "preposition",
+      "category": "positions",
+      "frequency": 7,
+      "icon": "arrow-right"
+    },
+    {
+      "id": "under",
+      "text": "տակ",
+      "pos": "preposition",
+      "category": "positions",
+      "frequency": 7,
+      "icon": "arrow-right"
+    },
+    {
+      "id": "next-to",
+      "text": "կողքին",
+      "pos": "preposition",
+      "category": "positions",
+      "frequency": 7,
+      "icon": "arrow-right"
+    },
+    {
+      "id": "with",
+      "text": "հետ",
+      "pos": "preposition",
+      "category": "positions",
+      "frequency": 7,
+      "icon": "arrow-right"
+    },
+    {
+      "id": "without",
+      "text": "առանց",
+      "pos": "preposition",
+      "category": "positions",
+      "frequency": 7,
+      "icon": "arrow-right"
+    },
+    {
+      "id": "to",
+      "text": "դեպի",
+      "pos": "preposition",
+      "category": "positions",
+      "frequency": 7,
+      "icon": "arrow-right"
+    },
+    {
+      "id": "from",
+      "text": "ից",
+      "pos": "preposition",
+      "category": "positions",
+      "frequency": 7,
+      "icon": "arrow-right"
+    },
+    {
+      "id": "inside",
+      "text": "ներսում",
+      "pos": "preposition",
+      "category": "positions",
+      "frequency": 7,
+      "icon": "arrow-right"
+    },
+    {
+      "id": "outside",
+      "text": "դրսում",
+      "pos": "preposition",
+      "category": "positions",
+      "frequency": 7,
+      "icon": "arrow-right"
+    },
+    {
+      "id": "near",
+      "text": "մոտ",
+      "pos": "preposition",
+      "category": "positions",
+      "frequency": 7,
+      "icon": "arrow-right"
+    },
+    {
+      "id": "far",
+      "text": "հեռու",
+      "pos": "preposition",
+      "category": "positions",
+      "frequency": 7,
+      "icon": "arrow-right"
+    },
+    {
+      "id": "and",
+      "text": "և",
+      "pos": "conjunction",
+      "category": "helpers",
+      "frequency": 6,
+      "icon": "branch"
+    },
+    {
+      "id": "or",
+      "text": "կամ",
+      "pos": "conjunction",
+      "category": "helpers",
+      "frequency": 6,
+      "icon": "branch"
+    },
+    {
+      "id": "because",
+      "text": "որովհետև",
+      "pos": "conjunction",
+      "category": "helpers",
+      "frequency": 6,
+      "icon": "branch"
+    },
+    {
+      "id": "then",
+      "text": "հետո",
+      "pos": "conjunction",
+      "category": "helpers",
+      "frequency": 6,
+      "icon": "branch"
+    },
+    {
+      "id": "but",
+      "text": "բայց",
+      "pos": "conjunction",
+      "category": "helpers",
+      "frequency": 6,
+      "icon": "branch"
+    },
+    {
+      "id": "water",
+      "text": "ջուր",
+      "pos": "noun",
+      "category": "drinks",
+      "frequency": 8,
+      "icon": "water"
+    },
+    {
+      "id": "milk",
+      "text": "կաթ",
+      "pos": "noun",
+      "category": "drinks",
+      "frequency": 8,
+      "icon": "water"
+    },
+    {
+      "id": "juice",
+      "text": "հյութ",
+      "pos": "noun",
+      "category": "drinks",
+      "frequency": 8,
+      "icon": "water"
+    },
+    {
+      "id": "tea",
+      "text": "թեյ",
+      "pos": "noun",
+      "category": "drinks",
+      "frequency": 8,
+      "icon": "water"
+    },
+    {
+      "id": "smoothie",
+      "text": "սմուզի",
+      "pos": "noun",
+      "category": "drinks",
+      "frequency": 8,
+      "icon": "water"
+    },
+    {
+      "id": "lemonade",
+      "text": "լիմոնադ",
+      "pos": "noun",
+      "category": "drinks",
+      "frequency": 8,
+      "icon": "water"
+    },
+    {
+      "id": "hot-drink",
+      "text": "տաք ըմպելիք",
+      "pos": "noun",
+      "category": "drinks",
+      "frequency": 8,
+      "icon": "water"
+    },
+    {
+      "id": "cold-drink",
+      "text": "սառը ըմպելիք",
+      "pos": "noun",
+      "category": "drinks",
+      "frequency": 8,
+      "icon": "water"
+    },
+    {
+      "id": "cup",
+      "text": "գավաթ",
+      "pos": "noun",
+      "category": "drinks",
+      "frequency": 8,
+      "icon": "water"
+    },
+    {
+      "id": "straw",
+      "text": "ծղոտ",
+      "pos": "noun",
+      "category": "drinks",
+      "frequency": 8,
+      "icon": "water"
+    },
+    {
+      "id": "bottle",
+      "text": "շիշ",
+      "pos": "noun",
+      "category": "drinks",
+      "frequency": 8,
+      "icon": "water"
+    },
+    {
+      "id": "sip",
+      "text": "կում",
+      "pos": "noun",
+      "category": "drinks",
+      "frequency": 8,
+      "icon": "water"
+    },
+    {
+      "id": "apple",
+      "text": "խնձոր",
+      "pos": "noun",
+      "category": "food",
+      "frequency": 8,
+      "icon": "apple"
+    },
+    {
+      "id": "banana",
+      "text": "բանան",
+      "pos": "noun",
+      "category": "food",
+      "frequency": 8,
+      "icon": "apple"
+    },
+    {
+      "id": "bread",
+      "text": "հաց",
+      "pos": "noun",
+      "category": "food",
+      "frequency": 8,
+      "icon": "apple"
+    },
+    {
+      "id": "toast",
+      "text": "տոստ",
+      "pos": "noun",
+      "category": "food",
+      "frequency": 8,
+      "icon": "apple"
+    },
+    {
+      "id": "sandwich",
+      "text": "սենդվիչ",
+      "pos": "noun",
+      "category": "food",
+      "frequency": 8,
+      "icon": "apple"
+    },
+    {
+      "id": "rice",
+      "text": "բրինձ",
+      "pos": "noun",
+      "category": "food",
+      "frequency": 8,
+      "icon": "apple"
+    },
+    {
+      "id": "pasta",
+      "text": "մակարոն",
+      "pos": "noun",
+      "category": "food",
+      "frequency": 8,
+      "icon": "apple"
+    },
+    {
+      "id": "soup",
+      "text": "ապուր",
+      "pos": "noun",
+      "category": "food",
+      "frequency": 8,
+      "icon": "apple"
+    },
+    {
+      "id": "yogurt",
+      "text": "մածուն",
+      "pos": "noun",
+      "category": "food",
+      "frequency": 8,
+      "icon": "apple"
+    },
+    {
+      "id": "cheese",
+      "text": "պանիր",
+      "pos": "noun",
+      "category": "food",
+      "frequency": 8,
+      "icon": "apple"
+    },
+    {
+      "id": "cracker",
+      "text": "կրեկեր",
+      "pos": "noun",
+      "category": "food",
+      "frequency": 8,
+      "icon": "apple"
+    },
+    {
+      "id": "carrot",
+      "text": "գազար",
+      "pos": "noun",
+      "category": "food",
+      "frequency": 8,
+      "icon": "apple"
+    },
+    {
+      "id": "chips",
+      "text": "չիպս",
+      "pos": "noun",
+      "category": "food",
+      "frequency": 8,
+      "icon": "apple"
+    },
+    {
+      "id": "cookie",
+      "text": "թխվածք",
+      "pos": "noun",
+      "category": "food",
+      "frequency": 8,
+      "icon": "apple"
+    },
+    {
+      "id": "egg",
+      "text": "ձու",
+      "pos": "noun",
+      "category": "food",
+      "frequency": 8,
+      "icon": "apple"
+    },
+    {
+      "id": "cereal",
+      "text": "շիլա",
+      "pos": "noun",
+      "category": "food",
+      "frequency": 8,
+      "icon": "apple"
+    },
+    {
+      "id": "fruit",
+      "text": "միրգ",
+      "pos": "noun",
+      "category": "food",
+      "frequency": 8,
+      "icon": "apple"
+    },
+    {
+      "id": "snack",
+      "text": "խորտիկ",
+      "pos": "noun",
+      "category": "food",
+      "frequency": 8,
+      "icon": "apple"
+    },
+    {
+      "id": "dinner",
+      "text": "ընթրիք",
+      "pos": "noun",
+      "category": "food",
+      "frequency": 8,
+      "icon": "apple"
+    },
+    {
+      "id": "lunch",
+      "text": "ճաշ",
+      "pos": "noun",
+      "category": "food",
+      "frequency": 8,
+      "icon": "apple"
+    },
+    {
+      "id": "happy",
+      "text": "ուրախ",
+      "pos": "adjective",
+      "category": "feelings",
+      "frequency": 9,
+      "icon": "smile"
+    },
+    {
+      "id": "sad",
+      "text": "տխուր",
+      "pos": "adjective",
+      "category": "feelings",
+      "frequency": 9,
+      "icon": "smile"
+    },
+    {
+      "id": "angry",
+      "text": "բարկացած",
+      "pos": "adjective",
+      "category": "feelings",
+      "frequency": 9,
+      "icon": "smile"
+    },
+    {
+      "id": "worried",
+      "text": "անհանգիստ",
+      "pos": "adjective",
+      "category": "feelings",
+      "frequency": 9,
+      "icon": "smile"
+    },
+    {
+      "id": "scared",
+      "text": "վախեցած",
+      "pos": "adjective",
+      "category": "feelings",
+      "frequency": 9,
+      "icon": "smile"
+    },
+    {
+      "id": "tired",
+      "text": "հոգնած",
+      "pos": "adjective",
+      "category": "feelings",
+      "frequency": 9,
+      "icon": "smile"
+    },
+    {
+      "id": "sick",
+      "text": "հիվանդ",
+      "pos": "adjective",
+      "category": "feelings",
+      "frequency": 9,
+      "icon": "smile"
+    },
+    {
+      "id": "hurt",
+      "text": "ցավող",
+      "pos": "adjective",
+      "category": "feelings",
+      "frequency": 9,
+      "icon": "smile"
+    },
+    {
+      "id": "calm",
+      "text": "հանգիստ",
+      "pos": "adjective",
+      "category": "feelings",
+      "frequency": 9,
+      "icon": "smile"
+    },
+    {
+      "id": "excited",
+      "text": "հուզված",
+      "pos": "adjective",
+      "category": "feelings",
+      "frequency": 9,
+      "icon": "smile"
+    },
+    {
+      "id": "confused",
+      "text": "շփոթված",
+      "pos": "adjective",
+      "category": "feelings",
+      "frequency": 9,
+      "icon": "smile"
+    },
+    {
+      "id": "proud",
+      "text": "հպարտ",
+      "pos": "adjective",
+      "category": "feelings",
+      "frequency": 9,
+      "icon": "smile"
+    },
+    {
+      "id": "lonely",
+      "text": "միայնակ",
+      "pos": "adjective",
+      "category": "feelings",
+      "frequency": 9,
+      "icon": "smile"
+    },
+    {
+      "id": "bored",
+      "text": "ձանձրացած",
+      "pos": "adjective",
+      "category": "feelings",
+      "frequency": 9,
+      "icon": "smile"
+    },
+    {
+      "id": "safe",
+      "text": "ապահով",
+      "pos": "adjective",
+      "category": "feelings",
+      "frequency": 9,
+      "icon": "smile"
+    },
+    {
+      "id": "upset",
+      "text": "վրդովված",
+      "pos": "adjective",
+      "category": "feelings",
+      "frequency": 9,
+      "icon": "smile"
+    },
+    {
+      "id": "okay-2",
+      "text": "նորմալ",
+      "pos": "adjective",
+      "category": "feelings",
+      "frequency": 9,
+      "icon": "smile"
+    },
+    {
+      "id": "hot",
+      "text": "շոգ",
+      "pos": "adjective",
+      "category": "feelings",
+      "frequency": 9,
+      "icon": "smile"
+    },
+    {
+      "id": "cold",
+      "text": "ցուրտ",
+      "pos": "adjective",
+      "category": "feelings",
+      "frequency": 9,
+      "icon": "smile"
+    },
+    {
+      "id": "hungry",
+      "text": "քաղցած",
+      "pos": "adjective",
+      "category": "feelings",
+      "frequency": 9,
+      "icon": "smile"
+    },
+    {
+      "id": "thirsty",
+      "text": "ծարավ",
+      "pos": "adjective",
+      "category": "feelings",
+      "frequency": 9,
+      "icon": "smile"
+    },
+    {
+      "id": "head",
+      "text": "գլուխ",
+      "pos": "noun",
+      "category": "body",
+      "frequency": 6,
+      "icon": "body"
+    },
+    {
+      "id": "hand",
+      "text": "ձեռք",
+      "pos": "noun",
+      "category": "body",
+      "frequency": 6,
+      "icon": "body"
+    },
+    {
+      "id": "foot",
+      "text": "ոտնաթաթ",
+      "pos": "noun",
+      "category": "body",
+      "frequency": 6,
+      "icon": "body"
+    },
+    {
+      "id": "tummy",
+      "text": "փորիկ",
+      "pos": "noun",
+      "category": "body",
+      "frequency": 6,
+      "icon": "body"
+    },
+    {
+      "id": "mouth",
+      "text": "բերան",
+      "pos": "noun",
+      "category": "body",
+      "frequency": 6,
+      "icon": "body"
+    },
+    {
+      "id": "ear",
+      "text": "ականջ",
+      "pos": "noun",
+      "category": "body",
+      "frequency": 6,
+      "icon": "body"
+    },
+    {
+      "id": "eye",
+      "text": "աչք",
+      "pos": "noun",
+      "category": "body",
+      "frequency": 6,
+      "icon": "body"
+    },
+    {
+      "id": "arm",
+      "text": "բազուկ",
+      "pos": "noun",
+      "category": "body",
+      "frequency": 6,
+      "icon": "body"
+    },
+    {
+      "id": "leg",
+      "text": "ոտք",
+      "pos": "noun",
+      "category": "body",
+      "frequency": 6,
+      "icon": "body"
+    },
+    {
+      "id": "back",
+      "text": "մեջք",
+      "pos": "noun",
+      "category": "body",
+      "frequency": 6,
+      "icon": "body"
+    },
+    {
+      "id": "tooth",
+      "text": "ատամ",
+      "pos": "noun",
+      "category": "body",
+      "frequency": 6,
+      "icon": "body"
+    },
+    {
+      "id": "hair",
+      "text": "մազեր",
+      "pos": "noun",
+      "category": "body",
+      "frequency": 6,
+      "icon": "body"
+    },
+    {
+      "id": "nose",
+      "text": "քիթ",
+      "pos": "noun",
+      "category": "body",
+      "frequency": 6,
+      "icon": "body"
+    },
+    {
+      "id": "skin",
+      "text": "մաշկ",
+      "pos": "noun",
+      "category": "body",
+      "frequency": 6,
+      "icon": "body"
+    },
+    {
+      "id": "heart",
+      "text": "սիրտ",
+      "pos": "noun",
+      "category": "body",
+      "frequency": 6,
+      "icon": "body"
+    },
+    {
+      "id": "home",
+      "text": "տուն",
+      "pos": "noun",
+      "category": "places",
+      "frequency": 7,
+      "icon": "home"
+    },
+    {
+      "id": "school",
+      "text": "դպրոց",
+      "pos": "noun",
+      "category": "places",
+      "frequency": 7,
+      "icon": "home"
+    },
+    {
+      "id": "classroom",
+      "text": "լսարան",
+      "pos": "noun",
+      "category": "places",
+      "frequency": 7,
+      "icon": "home"
+    },
+    {
+      "id": "bathroom",
+      "text": "լոգարան",
+      "pos": "noun",
+      "category": "places",
+      "frequency": 7,
+      "icon": "home"
+    },
+    {
+      "id": "kitchen",
+      "text": "խոհանոց",
+      "pos": "noun",
+      "category": "places",
+      "frequency": 7,
+      "icon": "home"
+    },
+    {
+      "id": "bedroom",
+      "text": "ննջասենյակ",
+      "pos": "noun",
+      "category": "places",
+      "frequency": 7,
+      "icon": "home"
+    },
+    {
+      "id": "garden",
+      "text": "այգի",
+      "pos": "noun",
+      "category": "places",
+      "frequency": 7,
+      "icon": "home"
+    },
+    {
+      "id": "shop",
+      "text": "խանութ",
+      "pos": "noun",
+      "category": "places",
+      "frequency": 7,
+      "icon": "home"
+    },
+    {
+      "id": "car",
+      "text": "մեքենա",
+      "pos": "noun",
+      "category": "places",
+      "frequency": 7,
+      "icon": "home"
+    },
+    {
+      "id": "bus",
+      "text": "ավտոբուս",
+      "pos": "noun",
+      "category": "places",
+      "frequency": 7,
+      "icon": "home"
+    },
+    {
+      "id": "park",
+      "text": "զբոսայգի",
+      "pos": "noun",
+      "category": "places",
+      "frequency": 7,
+      "icon": "home"
+    },
+    {
+      "id": "playground",
+      "text": "խաղահրապարակ",
+      "pos": "noun",
+      "category": "places",
+      "frequency": 7,
+      "icon": "home"
+    },
+    {
+      "id": "library",
+      "text": "գրադարան",
+      "pos": "noun",
+      "category": "places",
+      "frequency": 7,
+      "icon": "home"
+    },
+    {
+      "id": "pool",
+      "text": "լողավազան",
+      "pos": "noun",
+      "category": "places",
+      "frequency": 7,
+      "icon": "home"
+    },
+    {
+      "id": "table",
+      "text": "սեղան",
+      "pos": "noun",
+      "category": "home",
+      "frequency": 7,
+      "icon": "home"
+    },
+    {
+      "id": "chair",
+      "text": "աթոռ",
+      "pos": "noun",
+      "category": "home",
+      "frequency": 7,
+      "icon": "home"
+    },
+    {
+      "id": "sofa",
+      "text": "բազմոց",
+      "pos": "noun",
+      "category": "home",
+      "frequency": 7,
+      "icon": "home"
+    },
+    {
+      "id": "bed",
+      "text": "մահճակալ",
+      "pos": "noun",
+      "category": "home",
+      "frequency": 7,
+      "icon": "home"
+    },
+    {
+      "id": "door",
+      "text": "դուռ",
+      "pos": "noun",
+      "category": "home",
+      "frequency": 7,
+      "icon": "home"
+    },
+    {
+      "id": "window",
+      "text": "պատուհան",
+      "pos": "noun",
+      "category": "home",
+      "frequency": 7,
+      "icon": "home"
+    },
+    {
+      "id": "book",
+      "text": "գիրք",
+      "pos": "noun",
+      "category": "school",
+      "frequency": 6,
+      "icon": "book"
+    },
+    {
+      "id": "pencil",
+      "text": "մատիտ",
+      "pos": "noun",
+      "category": "school",
+      "frequency": 6,
+      "icon": "book"
+    },
+    {
+      "id": "paper",
+      "text": "թուղթ",
+      "pos": "noun",
+      "category": "school",
+      "frequency": 6,
+      "icon": "book"
+    },
+    {
+      "id": "bag",
+      "text": "պայուսակ",
+      "pos": "noun",
+      "category": "school",
+      "frequency": 6,
+      "icon": "book"
+    },
+    {
+      "id": "coat",
+      "text": "վերարկու",
+      "pos": "noun",
+      "category": "school",
+      "frequency": 6,
+      "icon": "book"
+    },
+    {
+      "id": "shoes",
+      "text": "կոշիկ",
+      "pos": "noun",
+      "category": "school",
+      "frequency": 6,
+      "icon": "book"
+    },
+    {
+      "id": "lunchbox",
+      "text": "ճաշատուփ",
+      "pos": "noun",
+      "category": "school",
+      "frequency": 6,
+      "icon": "book"
+    },
+    {
+      "id": "tablet",
+      "text": "պլանշետ",
+      "pos": "noun",
+      "category": "school",
+      "frequency": 6,
+      "icon": "book"
+    },
+    {
+      "id": "screen",
+      "text": "էկրան",
+      "pos": "noun",
+      "category": "school",
+      "frequency": 6,
+      "icon": "book"
+    },
+    {
+      "id": "timer",
+      "text": "ժամանակաչափ",
+      "pos": "noun",
+      "category": "school",
+      "frequency": 6,
+      "icon": "book"
+    },
+    {
+      "id": "schedule",
+      "text": "ժամանակացույց",
+      "pos": "noun",
+      "category": "school",
+      "frequency": 6,
+      "icon": "book"
+    },
+    {
+      "id": "picture",
+      "text": "նկար",
+      "pos": "noun",
+      "category": "school",
+      "frequency": 6,
+      "icon": "book"
+    },
+    {
+      "id": "card",
+      "text": "բացիկ",
+      "pos": "noun",
+      "category": "school",
+      "frequency": 6,
+      "icon": "book"
+    },
+    {
+      "id": "story",
+      "text": "պատմություն",
+      "pos": "noun",
+      "category": "school",
+      "frequency": 6,
+      "icon": "book"
+    },
+    {
+      "id": "music",
+      "text": "երաժշտություն",
+      "pos": "noun",
+      "category": "school",
+      "frequency": 6,
+      "icon": "book"
+    },
+    {
+      "id": "ball",
+      "text": "գնդակ",
+      "pos": "noun",
+      "category": "toys",
+      "frequency": 6,
+      "icon": "puzzle"
+    },
+    {
+      "id": "blocks",
+      "text": "խորանարդիկ",
+      "pos": "noun",
+      "category": "toys",
+      "frequency": 6,
+      "icon": "puzzle"
+    },
+    {
+      "id": "doll",
+      "text": "տիկնիկ",
+      "pos": "noun",
+      "category": "toys",
+      "frequency": 6,
+      "icon": "puzzle"
+    },
+    {
+      "id": "car-toy",
+      "text": "մեքենա-խաղալիք",
+      "pos": "noun",
+      "category": "toys",
+      "frequency": 6,
+      "icon": "puzzle"
+    },
+    {
+      "id": "train",
+      "text": "գնացք",
+      "pos": "noun",
+      "category": "toys",
+      "frequency": 6,
+      "icon": "puzzle"
+    },
+    {
+      "id": "puzzle",
+      "text": "հանելուկ",
+      "pos": "noun",
+      "category": "toys",
+      "frequency": 6,
+      "icon": "puzzle"
+    },
+    {
+      "id": "game",
+      "text": "խաղ",
+      "pos": "noun",
+      "category": "toys",
+      "frequency": 6,
+      "icon": "puzzle"
+    },
+    {
+      "id": "paint",
+      "text": "ներկ",
+      "pos": "noun",
+      "category": "toys",
+      "frequency": 6,
+      "icon": "puzzle"
+    },
+    {
+      "id": "clay",
+      "text": "կավ",
+      "pos": "noun",
+      "category": "toys",
+      "frequency": 6,
+      "icon": "puzzle"
+    },
+    {
+      "id": "bubbles",
+      "text": "պղպջակ",
+      "pos": "noun",
+      "category": "toys",
+      "frequency": 6,
+      "icon": "puzzle"
+    },
+    {
+      "id": "swing",
+      "text": "ճոճանակ",
+      "pos": "noun",
+      "category": "toys",
+      "frequency": 6,
+      "icon": "puzzle"
+    },
+    {
+      "id": "slide",
+      "text": "սահարան",
+      "pos": "noun",
+      "category": "toys",
+      "frequency": 6,
+      "icon": "puzzle"
+    },
+    {
+      "id": "bike",
+      "text": "հեծանիվ",
+      "pos": "noun",
+      "category": "toys",
+      "frequency": 6,
+      "icon": "puzzle"
+    },
+    {
+      "id": "teddy",
+      "text": "արջուկ",
+      "pos": "noun",
+      "category": "toys",
+      "frequency": 6,
+      "icon": "puzzle"
+    },
+    {
+      "id": "lego",
+      "text": "լեգո",
+      "pos": "noun",
+      "category": "toys",
+      "frequency": 6,
+      "icon": "puzzle"
+    },
+    {
+      "id": "red",
+      "text": "կարմիր",
+      "pos": "adjective",
+      "category": "colors",
+      "frequency": 5,
+      "icon": "palette"
+    },
+    {
+      "id": "blue",
+      "text": "կապույտ",
+      "pos": "adjective",
+      "category": "colors",
+      "frequency": 5,
+      "icon": "palette"
+    },
+    {
+      "id": "green",
+      "text": "կանաչ",
+      "pos": "adjective",
+      "category": "colors",
+      "frequency": 5,
+      "icon": "palette"
+    },
+    {
+      "id": "yellow",
+      "text": "դեղին",
+      "pos": "adjective",
+      "category": "colors",
+      "frequency": 5,
+      "icon": "palette"
+    },
+    {
+      "id": "orange",
+      "text": "նարնջագույն",
+      "pos": "adjective",
+      "category": "colors",
+      "frequency": 5,
+      "icon": "palette"
+    },
+    {
+      "id": "purple",
+      "text": "մանուշակագույն",
+      "pos": "adjective",
+      "category": "colors",
+      "frequency": 5,
+      "icon": "palette"
+    },
+    {
+      "id": "pink",
+      "text": "վարդագույն",
+      "pos": "adjective",
+      "category": "colors",
+      "frequency": 5,
+      "icon": "palette"
+    },
+    {
+      "id": "brown",
+      "text": "շագանակագույն",
+      "pos": "adjective",
+      "category": "colors",
+      "frequency": 5,
+      "icon": "palette"
+    },
+    {
+      "id": "black",
+      "text": "սև",
+      "pos": "adjective",
+      "category": "colors",
+      "frequency": 5,
+      "icon": "palette"
+    },
+    {
+      "id": "white",
+      "text": "սպիտակ",
+      "pos": "adjective",
+      "category": "colors",
+      "frequency": 5,
+      "icon": "palette"
+    },
+    {
+      "id": "grey",
+      "text": "մոխրագույն",
+      "pos": "adjective",
+      "category": "colors",
+      "frequency": 5,
+      "icon": "palette"
+    },
+    {
+      "id": "bright",
+      "text": "պայծառ",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "palette"
+    },
+    {
+      "id": "dark",
+      "text": "մութ",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "palette"
+    },
+    {
+      "id": "soft",
+      "text": "փափուկ",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "palette"
+    },
+    {
+      "id": "hard",
+      "text": "կարծր",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "palette"
+    },
+    {
+      "id": "quiet",
+      "text": "հանդարտ",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "palette"
+    },
+    {
+      "id": "loud",
+      "text": "բարձր",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "palette"
+    },
+    {
+      "id": "fast",
+      "text": "արագ",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "palette"
+    },
+    {
+      "id": "slow",
+      "text": "դանդաղ",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "palette"
+    },
+    {
+      "id": "clean",
+      "text": "մաքուր",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "palette"
+    },
+    {
+      "id": "dirty",
+      "text": "կեղտոտ",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "palette"
+    },
+    {
+      "id": "wet",
+      "text": "թաց",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "palette"
+    },
+    {
+      "id": "dry",
+      "text": "չոր",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "palette"
+    },
+    {
+      "id": "new",
+      "text": "նոր",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "palette"
+    },
+    {
+      "id": "old",
+      "text": "հին",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "palette"
+    },
+    {
+      "id": "now",
+      "text": "հիմա",
+      "pos": "adverb",
+      "category": "time",
+      "frequency": 6,
+      "icon": "clock"
+    },
+    {
+      "id": "later",
+      "text": "ավելի ուշ",
+      "pos": "adverb",
+      "category": "time",
+      "frequency": 6,
+      "icon": "clock"
+    },
+    {
+      "id": "today",
+      "text": "այսօր",
+      "pos": "adverb",
+      "category": "time",
+      "frequency": 6,
+      "icon": "clock"
+    },
+    {
+      "id": "tomorrow",
+      "text": "վաղը",
+      "pos": "adverb",
+      "category": "time",
+      "frequency": 6,
+      "icon": "clock"
+    },
+    {
+      "id": "morning",
+      "text": "առավոտ",
+      "pos": "adverb",
+      "category": "time",
+      "frequency": 6,
+      "icon": "clock"
+    },
+    {
+      "id": "afternoon",
+      "text": "կեսօր",
+      "pos": "adverb",
+      "category": "time",
+      "frequency": 6,
+      "icon": "clock"
+    },
+    {
+      "id": "night",
+      "text": "գիշեր",
+      "pos": "adverb",
+      "category": "time",
+      "frequency": 6,
+      "icon": "clock"
+    },
+    {
+      "id": "before",
+      "text": "առաջ",
+      "pos": "adverb",
+      "category": "time",
+      "frequency": 6,
+      "icon": "clock"
+    },
+    {
+      "id": "after",
+      "text": "հետագայում",
+      "pos": "adverb",
+      "category": "time",
+      "frequency": 6,
+      "icon": "clock"
+    },
+    {
+      "id": "soon",
+      "text": "շուտով",
+      "pos": "adverb",
+      "category": "time",
+      "frequency": 6,
+      "icon": "clock"
+    },
+    {
+      "id": "first",
+      "text": "սկզբում",
+      "pos": "adverb",
+      "category": "time",
+      "frequency": 6,
+      "icon": "clock"
+    },
+    {
+      "id": "next",
+      "text": "հաջորդ",
+      "pos": "adverb",
+      "category": "time",
+      "frequency": 6,
+      "icon": "clock"
+    },
+    {
+      "id": "last",
+      "text": "վերջին",
+      "pos": "adverb",
+      "category": "time",
+      "frequency": 6,
+      "icon": "clock"
+    },
+    {
+      "id": "minute",
+      "text": "րոպե",
+      "pos": "adverb",
+      "category": "time",
+      "frequency": 6,
+      "icon": "clock"
+    },
+    {
+      "id": "hour",
+      "text": "ժամ",
+      "pos": "adverb",
+      "category": "time",
+      "frequency": 6,
+      "icon": "clock"
+    },
+    {
+      "id": "break",
+      "text": "ընդմիջում",
+      "pos": "noun",
+      "category": "needs",
+      "frequency": 8,
+      "icon": "heart-hand"
+    },
+    {
+      "id": "quiet-time",
+      "text": "հանգիստ ժամանակ",
+      "pos": "noun",
+      "category": "needs",
+      "frequency": 8,
+      "icon": "heart-hand"
+    },
+    {
+      "id": "hug",
+      "text": "գրկախառնում",
+      "pos": "noun",
+      "category": "needs",
+      "frequency": 8,
+      "icon": "heart-hand"
+    },
+    {
+      "id": "space",
+      "text": "տարածք",
+      "pos": "noun",
+      "category": "needs",
+      "frequency": 8,
+      "icon": "heart-hand"
+    },
+    {
+      "id": "toilet",
+      "text": "զուգարան",
+      "pos": "noun",
+      "category": "needs",
+      "frequency": 8,
+      "icon": "heart-hand"
+    },
+    {
+      "id": "medicine",
+      "text": "դեղ",
+      "pos": "noun",
+      "category": "needs",
+      "frequency": 8,
+      "icon": "heart-hand"
+    },
+    {
+      "id": "light",
+      "text": "լույս",
+      "pos": "noun",
+      "category": "needs",
+      "frequency": 8,
+      "icon": "heart-hand"
+    },
+    {
+      "id": "dark-2",
+      "text": "խավար",
+      "pos": "noun",
+      "category": "needs",
+      "frequency": 8,
+      "icon": "heart-hand"
+    },
+    {
+      "id": "noise",
+      "text": "աղմուկ",
+      "pos": "noun",
+      "category": "needs",
+      "frequency": 8,
+      "icon": "heart-hand"
+    },
+    {
+      "id": "headphones",
+      "text": "ականջակալ",
+      "pos": "noun",
+      "category": "needs",
+      "frequency": 8,
+      "icon": "heart-hand"
+    },
+    {
+      "id": "blanket",
+      "text": "վերմակ",
+      "pos": "noun",
+      "category": "needs",
+      "frequency": 8,
+      "icon": "heart-hand"
+    },
+    {
+      "id": "charger",
+      "text": "լիցքավորիչ",
+      "pos": "noun",
+      "category": "needs",
+      "frequency": 8,
+      "icon": "heart-hand"
+    },
+    {
+      "id": "choice",
+      "text": "ընտրություն",
+      "pos": "noun",
+      "category": "needs",
+      "frequency": 8,
+      "icon": "heart-hand"
+    },
+    {
+      "id": "turn",
+      "text": "հերթ",
+      "pos": "noun",
+      "category": "needs",
+      "frequency": 8,
+      "icon": "heart-hand"
+    },
+    {
+      "id": "help-please",
+      "text": "օգնիր խնդրեմ",
+      "pos": "noun",
+      "category": "needs",
+      "frequency": 8,
+      "icon": "heart-hand"
+    },
+    {
+      "id": "different",
+      "text": "տարբեր",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "sparkles"
+    },
+    {
+      "id": "same",
+      "text": "նույն",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "sparkles"
+    },
+    {
+      "id": "easy",
+      "text": "հեշտ",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "sparkles"
+    },
+    {
+      "id": "harder",
+      "text": "ավելի դժվար",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "sparkles"
+    },
+    {
+      "id": "favorite",
+      "text": "սիրելի",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "sparkles"
+    },
+    {
+      "id": "missing",
+      "text": "կորած",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "sparkles"
+    },
+    {
+      "id": "broken",
+      "text": "կոտրված",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "sparkles"
+    },
+    {
+      "id": "ready",
+      "text": "պատրաստ",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "sparkles"
+    },
+    {
+      "id": "busy",
+      "text": "զբաղված",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "sparkles"
+    },
+    {
+      "id": "empty",
+      "text": "դատարկ",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "sparkles"
+    },
+    {
+      "id": "full",
+      "text": "լի",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "sparkles"
+    },
+    {
+      "id": "small",
+      "text": "փոքր",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "sparkles"
+    },
+    {
+      "id": "tall",
+      "text": "բարձրահասակ",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "sparkles"
+    },
+    {
+      "id": "short",
+      "text": "կարճ",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "sparkles"
+    },
+    {
+      "id": "round",
+      "text": "կլոր",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "sparkles"
+    },
+    {
+      "id": "square",
+      "text": "քառակուսի",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "sparkles"
+    },
+    {
+      "id": "kind",
+      "text": "բարի",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "sparkles"
+    },
+    {
+      "id": "gentle",
+      "text": "նուրբ",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "sparkles"
+    },
+    {
+      "id": "careful",
+      "text": "զգույշ",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "sparkles"
+    },
+    {
+      "id": "safe-place",
+      "text": "ապահով տեղ",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "sparkles"
+    }
+  ],
+  "templates": [
+    {
+      "id": "want-object",
+      "pattern": "Ես ուզում եմ {thing}:",
+      "category": "needs",
+      "icon": "heart-hand",
+      "slots": [
+        {
+          "acceptedPos": [
+            "pronoun"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "noun"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "need-help",
+      "pattern": "Ինձ պետք է օգնություն {thing}-ի հետ:",
+      "category": "needs",
+      "icon": "heart-hand",
+      "slots": [
+        {
+          "acceptedPos": [
+            "pronoun"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "noun"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "feel-state",
+      "pattern": "Ես ինձ {feeling} եմ զգում:",
+      "category": "feelings",
+      "icon": "smile",
+      "slots": [
+        {
+          "acceptedPos": [
+            "pronoun"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "adjective"
+          ],
+          "categoryFilter": "feelings"
+        }
+      ]
+    },
+    {
+      "id": "body-hurts",
+      "pattern": "Իմ {body} ցավում է:",
+      "category": "body",
+      "icon": "body",
+      "slots": [
+        {
+          "acceptedPos": [
+            "pronoun"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "noun"
+          ],
+          "categoryFilter": "body"
+        },
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "like-activity",
+      "pattern": "Ինձ դուր է գալիս {activity}:",
+      "category": "actions",
+      "icon": "play",
+      "slots": [
+        {
+          "acceptedPos": [
+            "pronoun"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "noun"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "go-place",
+      "pattern": "Ես ուզում եմ գնալ {place}:",
+      "category": "places",
+      "icon": "home",
+      "slots": [
+        {
+          "acceptedPos": [
+            "pronoun"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "preposition"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "preposition"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "noun"
+          ],
+          "categoryFilter": "places"
+        }
+      ]
+    },
+    {
+      "id": "question-where",
+      "pattern": "Որտեղ է {thing}-ը:",
+      "category": "questions",
+      "icon": "question-circle",
+      "slots": [
+        {
+          "acceptedPos": [
+            "question"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "noun"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "question-what",
+      "pattern": "Ի՞նչ է սա:",
+      "category": "questions",
+      "icon": "question-circle",
+      "slots": [
+        {
+          "acceptedPos": [
+            "question"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "determiner"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "question-can",
+      "pattern": "Կարո՞ղ ես ինձ օգնել:",
+      "category": "questions",
+      "icon": "question-circle",
+      "slots": [
+        {
+          "acceptedPos": [
+            "question"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "pronoun"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "pronoun"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "more-thing",
+      "pattern": "Ավելի շատ {thing}, խնդրում եմ:",
+      "category": "social",
+      "icon": "chat-bubble",
+      "slots": [
+        {
+          "acceptedPos": [
+            "social"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "noun"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "social"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "all-done",
+      "pattern": "Ես ավարտեցի:",
+      "category": "social",
+      "icon": "chat-bubble",
+      "slots": [
+        {
+          "acceptedPos": [
+            "pronoun"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "social"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "not-want",
+      "pattern": "Ես չեմ ուզում {thing}:",
+      "category": "needs",
+      "icon": "heart-hand",
+      "slots": [
+        {
+          "acceptedPos": [
+            "pronoun"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "social"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "noun"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "choose-one",
+      "pattern": "Ես ընտրում եմ {thing}:",
+      "category": "actions",
+      "icon": "play",
+      "slots": [
+        {
+          "acceptedPos": [
+            "pronoun"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "noun"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "with-person",
+      "pattern": "Ես ուզում եմ լինել {person}-ի հետ:",
+      "category": "people",
+      "icon": "user",
+      "slots": [
+        {
+          "acceptedPos": [
+            "pronoun"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "preposition"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "preposition"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "noun"
+          ],
+          "categoryFilter": "people"
+        }
+      ]
+    },
+    {
+      "id": "too-loud",
+      "pattern": "Չափազանց բարձր է:",
+      "category": "feelings",
+      "icon": "smile",
+      "slots": [
+        {
+          "acceptedPos": [
+            "pronoun"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "adjective"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "need-break",
+      "pattern": "Ինձ ընդմիջում է պետք:",
+      "category": "needs",
+      "icon": "heart-hand",
+      "slots": [
+        {
+          "acceptedPos": [
+            "pronoun"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "determiner"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "noun"
+          ],
+          "categoryFilter": "needs"
+        }
+      ]
+    },
+    {
+      "id": "first-next",
+      "pattern": "Սկզբում {thing}, հետո {thing}:",
+      "category": "time",
+      "icon": "clock",
+      "slots": [
+        {
+          "acceptedPos": [
+            "adverb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "noun"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "conjunction"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "noun"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "yes-answer",
+      "pattern": "Այո, խնդրում եմ:",
+      "category": "social",
+      "icon": "chat-bubble",
+      "slots": [
+        {
+          "acceptedPos": [
+            "social"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "social"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "no-answer",
+      "pattern": "Ոչ, շնորհակալություն:",
+      "category": "social",
+      "icon": "chat-bubble",
+      "slots": [
+        {
+          "acceptedPos": [
+            "social"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "social"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "descriptor-object",
+      "pattern": "{thing}-ը {description} է:",
+      "category": "describing",
+      "icon": "sparkles",
+      "slots": [
+        {
+          "acceptedPos": [
+            "determiner"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "noun"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "adjective"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "place-position",
+      "pattern": "{thing}-ը {place}-ի {position} է:",
+      "category": "positions",
+      "icon": "arrow-right",
+      "slots": [
+        {
+          "acceptedPos": [
+            "determiner"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "noun"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "preposition"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "determiner"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "noun"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "time-request",
+      "pattern": "Ես ուզում եմ {thing} ավելի ուշ:",
+      "category": "time",
+      "icon": "clock",
+      "slots": [
+        {
+          "acceptedPos": [
+            "pronoun"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "noun"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "adverb"
+          ],
+          "categoryFilter": "time"
+        }
+      ]
+    },
+    {
+      "id": "polite-help",
+      "pattern": "Օգնիր խնդրեմ:",
+      "category": "needs",
+      "icon": "heart-hand",
+      "slots": [
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "social"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "try-again",
+      "pattern": "Ես ուզում եմ նորից փորձել:",
+      "category": "actions",
+      "icon": "play",
+      "slots": [
+        {
+          "acceptedPos": [
+            "pronoun"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "preposition"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "social"
+          ]
+        }
+      ]
+    }
+  ],
+  "grammar": {
+    "wordOrder": "subject-object-verb",
+    "validTransitions": {
+      "pronoun": [
+        "noun",
+        "adjective",
+        "verb"
+      ],
+      "determiner": [
+        "noun",
+        "adjective"
+      ],
+      "verb": [
+        "social",
+        "conjunction"
+      ],
+      "noun": [
+        "verb",
+        "adjective",
+        "preposition",
+        "conjunction"
+      ],
+      "adjective": [
+        "noun",
+        "verb",
+        "social"
+      ],
+      "question": [
+        "pronoun",
+        "noun",
+        "verb"
+      ],
+      "preposition": [
+        "noun",
+        "determiner",
+        "verb"
+      ],
+      "conjunction": [
+        "pronoun",
+        "determiner",
+        "noun"
+      ],
+      "social": [
+        "noun",
+        "verb"
+      ]
+    },
+    "articles": {
+      "default": {
+        "beforeConsonant": "-ը",
+        "beforeVowel": "-ն"
+      }
+    },
+    "negation": {
+      "position": "before-verb",
+      "words": [
+        "չ"
+      ]
+    }
+  }
+}
