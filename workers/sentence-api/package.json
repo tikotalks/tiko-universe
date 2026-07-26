@@ -9,6 +9,7 @@
     "deploy:dry-run": "wrangler deploy --dry-run"
   },
   "dependencies": {
-    "@tiko/talk-types": "file:../../packages/talk-types"
+    "@tiko/talk-types": "file:../../packages/talk-types",
+    "@tiko/talk-realizer": "file:../../packages/talk-realizer"
   }
 }

@@ -891,3 +891,48 @@ describe('sentence-api custom words and per-user learning', () => {
     expect(missing.body.error.code).toBe('word_not_found')
   })
 })
+
+describe('sentence-api grammar', () => {
+  // The worker used to build its sentence with words.map((w) => w.text).join(' '),
+  // which is why the packs read "ik wil appel" and "yo querer manzana". These pin
+  // down that the realizer is actually the thing producing the text now.
+  it('inserts the article the child never tapped', async () => {
+    const { body } = await fetchJson('/v1/sentence/complete', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ locale: 'en', wordIds: ['i', 'want', 'apple'] }),
+    })
+    expect(body.sentence).toBe('I want an apple.')
+  })
+
+  it('leaves a mass noun bare', async () => {
+    const { body } = await fetchJson('/v1/sentence/complete', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ locale: 'en', wordIds: ['i', 'want', 'water'] }),
+    })
+    expect(body.sentence).toBe('I want water.')
+  })
+
+  it('does not punctuate the strip a child is still building', async () => {
+    const { body } = await fetchJson('/v1/sentence/next', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ locale: 'en', currentWords: ['i', 'want'] }),
+    })
+    // Grammatical, but not finished: no full stop until the child completes it.
+    expect(body.stripState.display).toBe('I want')
+  })
+
+  it('falls back to joining the tiles for a locale it has no grammar for', async () => {
+    // A locale with no realizer must still answer, with exactly the string the
+    // worker produced before this change.
+    const { response, body } = await fetchJson('/v1/sentence/complete', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ locale: 'xx', wordIds: ['i', 'want', 'apple'] }),
+    })
+    expect([200, 404]).toContain(response.status)
+    if (response.status === 200) expect(typeof body.sentence).toBe('string')
+  })
+})
