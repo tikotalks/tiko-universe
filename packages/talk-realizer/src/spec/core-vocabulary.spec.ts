@@ -223,3 +223,37 @@ describe('a word the parent added', () => {
     expect(customNounFeatures('ماما', 'ar')).toEqual({ pos: 'noun' })
   })
 })
+
+/**
+ * How much a child can put in one sentence. There is no length limit in the engine;
+ * the limits are structural, and these are the ones that were wrong.
+ */
+describe('longer sentences', () => {
+  it('builds a twelve-tile sentence without dropping anything', () => {
+    const ids = ['i', 'not', 'want', 'go', 'to', 'the', 'park', 'with', 'mum', 'and', 'dad', 'now']
+    const result = realize(select('en', ids), { locale: 'en' })
+    expect(result.text).toBe('I do not want to go to the park with mum and dad now.')
+    const used = new Set(result.tokens.flatMap((token) => [token.from, ...(token.merged ?? [])]))
+    for (const id of ids.filter((word) => word !== 'not')) expect(used, `${id} vanished`).toContain(id)
+  })
+
+  const questions: Array<[string, string[], string]> = [
+    // The negation particle follows the subject in a question, in every strategy.
+    ['en', ['what', 'you', 'not', 'want'], 'What do you not want?'],
+    ['nl', ['what', 'you', 'not', 'want'], 'Wat wil jij niet?'],
+    ['de', ['what', 'you', 'not', 'want'], 'Was willst du nicht?'],
+    ['sv', ['what', 'you', 'not', 'want'], 'Vad vill du inte ha?'],
+
+    // A copula tile before its subject is how a child asks a yes/no question. It used
+    // to leave the sentence with no subject at all: "Am the apple big."
+    ['en', ['is', 'the', 'apple', 'big'], 'Is the apple big?'],
+    ['en', ['are', 'you', 'happy'], 'Are you happy?'],
+    ['nl', ['is', 'the', 'apple', 'big'], 'Is de appel groot?'],
+    ['de', ['is', 'the', 'apple', 'big'], 'Ist der Apfel groß?'],
+  ]
+  for (const [language, ids, expected] of questions) {
+    it(`${language}: ${ids.join(' + ')} → "${expected}"`, () => {
+      expect(realize(select(language, ids), { locale: language }).text).toBe(expected)
+    })
+  }
+})

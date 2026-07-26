@@ -24,7 +24,7 @@ export function realizeWith(
   const { person, number } = subjectPerson(chunks)
 
   const predicate = chunks.complements.find((phrase) => phrase.kind === 'adjp')
-  const isQuestion = !!chunks.question
+  const isQuestion = !!chunks.question || chunks.invertedCopula === true
   let needsCopula = !chunks.verb && !!chunks.subject && (!!predicate || isQuestion)
   const subjectHead = chunks.subject?.kind === 'np' ? chunks.subject.head : undefined
 
@@ -247,6 +247,8 @@ export function realizeWith(
   // Under verb-second inversion a verb's tail follows the subject rather than
   // the verb: "Vad vill du ha?", not "Vad vill ha du?".
   let deferTail = false
+  /** Set while the verb is emitted ahead of its subject, so the particle waits. */
+  let deferNegation = false
 
   /** The finite verb (or the copula), with any verb-adjacent negation. */
   const emitVerb = (bare = false): void => {
@@ -338,11 +340,11 @@ export function realizeWith(
         note(builder, `"${plan.before} … ${plan.after}": negation around the verb`)
         return
       case 'beforeVerb':
-        push(builder, plan.word, null)
+        if (!deferNegation) push(builder, plan.word, null)
         emitClitic()
         push(builder, rules.verbForm(verb, ctx), verb.id)
         if (tail) push(builder, tail, verb.id)
-        note(builder, `"${plan.word}": negation before the verb`)
+        if (!deferNegation) note(builder, `"${plan.word}": negation before the verb`)
         return
       case 'prefixVerb': {
         emitClitic()
@@ -356,7 +358,7 @@ export function realizeWith(
       case 'afterVerb':
         emitClitic()
         push(builder, rules.verbForm(verb, ctx), verb.id)
-        if (!particleAfterObject) {
+        if (!particleAfterObject && !deferNegation) {
           push(builder, plan.word, null)
           note(builder, `"${plan.word}": negation after the verb`)
         }
@@ -385,9 +387,15 @@ export function realizeWith(
 
   if (isQuestion && strategy === 'inversion') {
     deferTail = true
+    deferNegation = chunks.negated && (plan.kind === 'afterVerb' || plan.kind === 'beforeVerb')
     emitVerb()
     note(builder, 'verb-second: the verb precedes the subject in a question')
     if (chunks.subject) emitNounPhrase(chunks.subject, 'subject')
+    if (deferNegation && (plan.kind === 'afterVerb' || plan.kind === 'beforeVerb')) {
+      push(builder, plan.word, null)
+      note(builder, `"${plan.word}": the negation follows the subject in a question`)
+      deferNegation = false
+    }
     // Only a verb-adjacent tail follows the subject; a clause-final one waits
     // for the complements.
     const tail = chunks.verb?.features.verbTailPosition === 'clauseFinal'
@@ -405,8 +413,10 @@ export function realizeWith(
         : auxiliaryFor(ctx)
       push(builder, auxiliary, null)
       note(builder, `do-support: "${auxiliary}" fronted for the question`)
-      if (chunks.negated && plan.kind === 'auxiliary') push(builder, plan.word, null)
+      // The subject comes between the auxiliary and the particle: "What do you not
+      // want?", never "What do not you want?".
       if (chunks.subject) emitNounPhrase(chunks.subject, 'subject')
+      if (chunks.negated && plan.kind === 'auxiliary') push(builder, plan.word, null)
       emitVerb(true)
     } else if (chunks.subject) {
       emitNounPhrase(chunks.subject, 'subject')

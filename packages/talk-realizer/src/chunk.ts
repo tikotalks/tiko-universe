@@ -64,6 +64,11 @@ export interface Chunks {
   trailingSocials: Word[]
   adverbs: Word[]
   negated: boolean
+  /**
+   * True where a copula tile came before its subject, which is how a child asks a
+   * yes/no question on this board: "is the apple big".
+   */
+  invertedCopula?: boolean
 }
 
 /**
@@ -241,6 +246,23 @@ export function chunk(words: Word[], forceNegated = false): Chunks {
         }
         continue
       }
+    }
+  }
+
+  /**
+   * A copula tile first is a yes/no question: "is the apple big". The subject comes
+   * after it, so the noun phrase the loop filed as a complement is really the
+   * subject — without this the sentence has none, and reads as the speaker's own
+   * ("Am the apple big").
+   */
+  if (!chunks.subject && chunks.verb?.features.copula) {
+    const at = chunks.complements.findIndex(
+      (phrase) => phrase.kind === 'np' && (!!phrase.head || !!phrase.pronoun),
+    )
+    if (at !== -1) {
+      chunks.subject = chunks.complements[at] as NounPhrase
+      chunks.complements.splice(at, 1)
+      chunks.invertedCopula = true
     }
   }
 
