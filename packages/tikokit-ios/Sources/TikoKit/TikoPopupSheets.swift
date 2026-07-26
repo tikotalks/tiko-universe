@@ -198,35 +198,52 @@ public enum TikoDeviceDefaults {
     }
 }
 
+/// How complete a language's interface translation is.
+public enum TikoInterfaceCoverage: String, Codable, Sendable {
+    /// Translated throughout, by a person.
+    case full
+    /// The shared interface vocabulary is translated; the rest falls back to English.
+    case core
+    /// The interface is English; only the child's own tiles are in this language.
+    case none
+}
+
 public struct TikoLanguage: Identifiable, Codable, Equatable, Sendable {
     public let id: String
     public let title: String
     public let nativeTitle: String
+    /// Written right to left.
+    public let isRightToLeft: Bool
+    /// The Talk realizer builds sentences in this language rather than joining tiles.
+    public let hasTalkGrammar: Bool
+    /// How much of the interface is translated.
+    public let interfaceCoverage: TikoInterfaceCoverage
 
-    public init(id: String, title: String, nativeTitle: String) {
+    public init(
+        id: String,
+        title: String,
+        nativeTitle: String,
+        isRightToLeft: Bool = false,
+        hasTalkGrammar: Bool = false,
+        interfaceCoverage: TikoInterfaceCoverage = .none
+    ) {
         self.id = id
         self.title = title
         self.nativeTitle = nativeTitle
+        self.isRightToLeft = isRightToLeft
+        self.hasTalkGrammar = hasTalkGrammar
+        self.interfaceCoverage = interfaceCoverage
     }
 
-    public static let defaultLanguages: [TikoLanguage] = [
-        TikoLanguage(id: "en", title: "English", nativeTitle: "English"),
-        TikoLanguage(id: "nl", title: "Dutch", nativeTitle: "Nederlands"),
-        TikoLanguage(id: "fr", title: "French", nativeTitle: "Français"),
-        TikoLanguage(id: "de", title: "German", nativeTitle: "Deutsch"),
-        TikoLanguage(id: "es", title: "Spanish", nativeTitle: "Español"),
-        TikoLanguage(id: "pt", title: "Portuguese", nativeTitle: "Português"),
-        TikoLanguage(id: "it", title: "Italian", nativeTitle: "Italiano"),
-        TikoLanguage(id: "mt", title: "Maltese", nativeTitle: "Malti"),
-        TikoLanguage(id: "ja", title: "Japanese", nativeTitle: "日本語"),
-        TikoLanguage(id: "zh", title: "Chinese", nativeTitle: "中文"),
-        TikoLanguage(id: "ko", title: "Korean", nativeTitle: "한국어"),
-        TikoLanguage(id: "ar", title: "Arabic", nativeTitle: "العربية"),
-        TikoLanguage(id: "hy", title: "Armenian", nativeTitle: "Հայերեն"),
-    ]
+    /// Every language the app offers. Generated from `tools/locales.mjs` into
+    /// `TikoLocales.generated.swift`, which is the only place the list lives.
+    public static var defaultLanguages: [TikoLanguage] { allLanguages }
 
-    public static var supportedLanguageCodes: [String] {
-        defaultLanguages.map(\.id)
+    public static var supportedLanguageCodes: [String] { allLanguageCodes }
+
+    /// Looks a language up by code, falling back to English.
+    public static func named(_ code: String) -> TikoLanguage {
+        allLanguages.first { $0.id == code } ?? allLanguages[0]
     }
 }
 

@@ -348,6 +348,13 @@ public enum TikoFeedback {
         }
     }
 
+    /// A single tiny pop — for things that land one at a time, like the parts
+    /// of a sum arriving on screen. Quieter than a win, never an event.
+    public static func playPop() {
+        play(name: popSounds.randomElement()!, volume: 0.24)
+        UIImpactFeedbackGenerator(style: .light).impactOccurred(intensity: 0.45)
+    }
+
     public static func playRetry() {
         popTask?.cancel()
         UIImpactFeedbackGenerator(style: .soft).impactOccurred()

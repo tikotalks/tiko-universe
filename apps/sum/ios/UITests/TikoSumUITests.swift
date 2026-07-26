@@ -13,11 +13,61 @@ final class TikoSumUITests: XCTestCase {
         return app
     }
 
-    func testLaunchShowsHomeGrid() {
+    /// Home → difficulty → operator → ten sums.
+    private func startPresetGame(_ app: XCUIApplication, operatorID: String = "sum.op.plus") {
+        let preset = app.buttons["sum.preset.to10"]
+        XCTAssertTrue(preset.waitForExistence(timeout: 10))
+        preset.tap()
+
+        let op = app.buttons[operatorID]
+        XCTAssertTrue(op.waitForExistence(timeout: 10), "the operator picker should follow the preset")
+        op.tap()
+    }
+
+    func testHomeShowsDifficultyPresetsNotOperatorModes() {
         let app = launchApp()
-        XCTAssertTrue(app.buttons["sum.home.freePlay"].waitForExistence(timeout: 10))
-        XCTAssertTrue(app.buttons["sum.path.counting"].exists)
-        XCTAssertTrue(app.buttons["sum.path.shares"].exists)
+        XCTAssertTrue(app.buttons["sum.preset.to10"].waitForExistence(timeout: 10))
+        XCTAssertTrue(app.buttons["sum.preset.to20"].exists)
+        XCTAssertTrue(app.buttons["sum.preset.to50"].exists)
+        XCTAssertTrue(app.buttons["sum.preset.to100"].exists)
+        XCTAssertTrue(app.buttons["sum.home.freePlay"].exists)
+    }
+
+    func testPresetOffersEveryOperatorPlusMixed() {
+        let app = launchApp()
+        let preset = app.buttons["sum.preset.to20"]
+        XCTAssertTrue(preset.waitForExistence(timeout: 10))
+        preset.tap()
+
+        XCTAssertTrue(app.buttons["sum.op.plus"].waitForExistence(timeout: 10))
+        XCTAssertTrue(app.buttons["sum.op.minus"].exists)
+        XCTAssertTrue(app.buttons["sum.op.times"].exists)
+        XCTAssertTrue(app.buttons["sum.op.dividedBy"].exists)
+        XCTAssertTrue(app.buttons["sum.op.mixed"].exists, "one tile plays them all")
+    }
+
+    func testPresetGameDealsAnsweredSums() {
+        let app = launchApp()
+        startPresetGame(app)
+
+        let tiles = app.buttons.matching(NSPredicate(format: "identifier BEGINSWITH 'sum.answer.'"))
+        XCTAssertTrue(tiles.firstMatch.waitForExistence(timeout: 10), "answer tiles should be dealt")
+        XCTAssertEqual(tiles.count, 3)
+        XCTAssertTrue(app.buttons["sum.play.skip"].exists, "skip is always available")
+    }
+
+    func testSkippingTenSumsReachesTheEndScreen() {
+        let app = launchApp()
+        startPresetGame(app)
+
+        let skip = app.buttons["sum.play.skip"]
+        XCTAssertTrue(skip.waitForExistence(timeout: 10))
+        for _ in 0..<10 where skip.exists {
+            skip.tap()
+        }
+
+        XCTAssertTrue(app.buttons["sum.play.restart"].waitForExistence(timeout: 10), "the run should end on the end screen")
+        XCTAssertTrue(app.buttons["sum.play.home"].exists, "with a way back home")
     }
 
     func testFreePlayKeypadProducesAnswerTiles() {
@@ -84,7 +134,6 @@ final class TikoSumUITests: XCTestCase {
         let editButton = app.buttons["Edit paths"]
         XCTAssertTrue(editButton.waitForExistence(timeout: 10), "parent mode should expose the edit-paths header action")
         editButton.tap()
-        let addressable = app.buttons.matching(NSPredicate(format: "label CONTAINS 'Counting'")).firstMatch
-        XCTAssertTrue(addressable.waitForExistence(timeout: 10), "path manager should list the paths")
+        XCTAssertTrue(app.buttons["Add path"].waitForExistence(timeout: 10), "the path manager should offer a new path")
     }
 }

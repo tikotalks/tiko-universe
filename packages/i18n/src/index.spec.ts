@@ -2,6 +2,9 @@ import { describe, expect, it, vi } from 'vitest'
 import { computed } from '@vue/reactivity'
 import {
   defaultLanguage,
+  generatedBundles,
+  tikoLanguageOptions,
+  tikoLanguages,
   tikoAppKeys,
   tikoI18nKeys,
   createI18n,
@@ -165,5 +168,52 @@ describe('@tiko/i18n fallback contract', () => {
         [tikoI18nKeys.yesNo.answers.yes]: 'Ja',
       },
     }))
+  })
+})
+
+describe('the generated locale registry', () => {
+  it('offers every language the Talk realizer understands', () => {
+    // 52 locales, all of them with grammar: the picker and the realizer agreed on
+    // nothing at all before this was generated from one list.
+    expect(tikoLanguages.length).toBe(54)
+    expect(tikoLanguageOptions.every((option) => option.talk)).toBe(true)
+  })
+
+  it('names every language in its own language', () => {
+    for (const option of tikoLanguageOptions) {
+      expect(option.nativeLabel.length, `${option.value} has no native name`).toBeGreaterThan(0)
+      expect(option.label.length, `${option.value} has no English name`).toBeGreaterThan(0)
+    }
+  })
+
+  it('marks Arabic as right to left, and nothing else here', () => {
+    const rtl = tikoLanguageOptions.filter((option) => option.rtl).map((option) => option.value)
+    expect(rtl).toEqual(['ar'])
+  })
+
+  it('ships interface strings for every locale it offers', () => {
+    for (const [app, byLocale] of Object.entries(generatedBundles)) {
+      const locales = Object.keys(byLocale)
+      // English is the source and lives in the app itself, so it is not generated.
+      expect(locales.length, `${app} has bundles for only ${locales.length} locales`).toBe(53)
+      for (const [locale, strings] of Object.entries(byLocale)) {
+        expect(Object.keys(strings).length, `${app}/${locale} is empty`).toBeGreaterThan(0)
+      }
+    }
+  })
+
+  it('translates the strings a parent meets on every screen', () => {
+    // A spot check in three scripts: if these resolve, the pipeline is wired.
+    expect(generatedBundles.timer.lv['timer.controls.reset']).toBe('Atiestatīt')
+    expect(generatedBundles.timer.el['timer.controls.start']).toBe('Έναρξη')
+    expect(generatedBundles.timer.ka['timer.controls.pause']).toBe('პაუზა')
+  })
+
+  it('normalises an unknown language to English', () => {
+    expect(normalizeTikoLanguage('kl')).toBe('en')
+    expect(normalizeTikoLanguage(null)).toBe('en')
+    // …but keeps one it does know, including the three-letter codes.
+    expect(normalizeTikoLanguage('pap')).toBe('pap')
+    expect(normalizeTikoLanguage('cnr')).toBe('cnr')
   })
 })

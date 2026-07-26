@@ -1,24 +1,17 @@
 import { shallowRef, type Ref } from '@vue/reactivity'
+import { tikoLocaleCodes, tikoLocaleEntries } from './locales.generated'
+import type { TikoInterfaceCoverage } from './locales'
 
 export const defaultLanguage = 'en' as const
 
-export const tikoLanguages = [
-  'en',
-  'de',
-  'es',
-  'fr',
-  'nl',
-  'pt',
-  'ja',
-  'zh',
-  'ko',
-  'mt',
-  'it',
-  'ar',
-  'hy',
-] as const
+/**
+ * The languages the app offers. Generated from `tools/locales.mjs` into
+ * `locales.generated.ts`, which is also where the Swift list comes from — the two
+ * used to be maintained separately and had drifted.
+ */
+export const tikoLanguages = tikoLocaleCodes
 
-export type TikoLanguage = typeof tikoLanguages[number]
+export type TikoLanguage = string
 
 export function normalizeTikoLanguage(value: string | null | undefined): TikoLanguage {
   return tikoLanguages.includes(value as TikoLanguage) ? value as TikoLanguage : defaultLanguage
@@ -28,23 +21,27 @@ export interface TikoLanguageOption {
   value: TikoLanguage
   label: string
   nativeLabel: string
+  /** The Talk realizer builds sentences in this language. */
+  talk: boolean
+  /** How much of the interface is translated. */
+  ui: TikoInterfaceCoverage
+  /** Written right to left. */
+  rtl?: boolean
 }
 
-export const tikoLanguageOptions: TikoLanguageOption[] = [
-  { value: 'en', label: 'English', nativeLabel: 'English' },
-  { value: 'de', label: 'German', nativeLabel: 'Deutsch' },
-  { value: 'es', label: 'Spanish', nativeLabel: 'Español' },
-  { value: 'fr', label: 'French', nativeLabel: 'Français' },
-  { value: 'nl', label: 'Dutch', nativeLabel: 'Nederlands' },
-  { value: 'pt', label: 'Portuguese', nativeLabel: 'Português' },
-  { value: 'ja', label: 'Japanese', nativeLabel: '日本語' },
-  { value: 'zh', label: 'Chinese', nativeLabel: '中文' },
-  { value: 'ko', label: 'Korean', nativeLabel: '한국어' },
-  { value: 'mt', label: 'Maltese', nativeLabel: 'Malti' },
-  { value: 'it', label: 'Italian', nativeLabel: 'Italiano' },
-  { value: 'ar', label: 'Arabic', nativeLabel: 'العربية' },
-  { value: 'hy', label: 'Armenian', nativeLabel: 'Հայերեն' },
-]
+export const tikoLanguageOptions: TikoLanguageOption[] = tikoLocaleEntries.map((entry) => ({
+  value: entry.code,
+  label: entry.name,
+  nativeLabel: entry.native,
+  talk: entry.talk,
+  ui: entry.ui,
+  ...(entry.rtl ? { rtl: true } : {}),
+}))
+
+/** The interface strings this package ships, by app and locale. */
+export { generatedBundles } from './bundles.generated'
+export { tikoLocaleEntries, tikoLocaleCodes } from './locales.generated'
+export type { TikoLocaleEntry, TikoInterfaceCoverage } from './locales'
 
 export const tikoAppKeys = ['yes-no', 'type', 'timer', 'radio', 'cards', 'sequence', 'todo', 'talk'] as const
 

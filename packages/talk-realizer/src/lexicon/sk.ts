@@ -1,0 +1,70 @@
+import type { Lexicon } from '../features'
+
+/** Slovak overlay: Czech's structure with Slovak forms. */
+export const slovakLexicon: Lexicon = {
+  // "dva" for a masculine, "dve" for a feminine: Slavic numerals agree.
+  two: { pos: 'determiner', determinerKind: 'quantifier', forcesNumber: 'pl', feminine: 'dve', neuter: 'dve' },
+  i: { pos: 'pronoun', person: 1, number: 'sg', accusative: 'mňa', dative: 'mi', cases: { gen: 'mňa' } },
+  you: { pos: 'pronoun', person: 2, number: 'sg', accusative: 'ťa', dative: 'ti', cases: { gen: 'teba' } },
+  we: { pos: 'pronoun', person: 1, number: 'pl', accusative: 'nás', dative: 'nám', cases: { gen: 'nás' } },
+  he: { pos: 'pronoun', person: 3, number: 'sg', accusative: 'ho', dative: 'mu', cases: { gen: 'jeho' } },
+  she: { pos: 'pronoun', person: 3, number: 'sg', accusative: 'ju', dative: 'jej', cases: { gen: 'jej' } },
+  they: { pos: 'pronoun', person: 3, number: 'pl', accusative: 'ich', dative: 'im', cases: { gen: 'ich' } },
+  me: { pos: 'pronoun', person: 1, number: 'sg', pronounCase: 'acc', accusative: 'mňa', dative: 'mi' },
+  my: { pos: 'pronoun', person: 1, number: 'sg', pronounCase: 'poss' },
+  your: { pos: 'pronoun', person: 2, number: 'sg', pronounCase: 'poss' },
+
+  want: { pos: 'verb', forms: { '1sg': 'chcem', '2sg': 'chceš', '3sg': 'chce', '1pl': 'chceme', '2pl': 'chcete', '3pl': 'chcú' } },
+  like: { pos: 'verb', forms: { '1sg': 'mám rád', '2sg': 'máš rád', '3sg': 'má rád', '1pl': 'máme radi', '2pl': 'máte radi', '3pl': 'majú radi' } },
+  see: { pos: 'verb', forms: { '1sg': 'vidím', '2sg': 'vidíš', '3sg': 'vidí', '1pl': 'vidíme', '2pl': 'vidíte', '3pl': 'vidia' } },
+  have: { pos: 'verb', forms: { '1sg': 'mám', '2sg': 'máš', '3sg': 'má', '1pl': 'máme', '2pl': 'máte', '3pl': 'majú' } },
+  eat: { pos: 'verb', forms: { '1sg': 'jem', '2sg': 'ješ', '3sg': 'je', '1pl': 'jeme', '2pl': 'jete', '3pl': 'jedia' } },
+  drink: { pos: 'verb', forms: { '1sg': 'pijem', '2sg': 'piješ', '3sg': 'pije', '1pl': 'pijeme', '2pl': 'pijete', '3pl': 'pijú' } },
+  go: { pos: 'verb', forms: { '1sg': 'idem', '2sg': 'ideš', '3sg': 'ide', '1pl': 'ideme', '2pl': 'idete', '3pl': 'idú' } },
+  play: { pos: 'verb', forms: { '1sg': 'hrám', '2sg': 'hráš', '3sg': 'hrá', '1pl': 'hráme', '2pl': 'hráte', '3pl': 'hrajú' } },
+  read: { pos: 'verb', forms: { '1sg': 'čítam', '2sg': 'čítaš', '3sg': 'číta', '1pl': 'čítame', '2pl': 'čítate', '3pl': 'čítajú' } },
+  sleep: { pos: 'verb', forms: { '1sg': 'spím', '2sg': 'spíš', '3sg': 'spí', '1pl': 'spíme', '2pl': 'spíte', '3pl': 'spia' } },
+  talk: { pos: 'verb', forms: { '1sg': 'hovorím', '2sg': 'hovoríš', '3sg': 'hovorí', '1pl': 'hovoríme', '2pl': 'hovoríte', '3pl': 'hovoria' } },
+  help: { pos: 'verb', objectCase: 'dative', forms: { '1sg': 'pomáham', '2sg': 'pomáhaš', '3sg': 'pomáha', '1pl': 'pomáhame', '2pl': 'pomáhate', '3pl': 'pomáhajú' } },
+
+  friend: { pos: 'noun', gender: 'masculine', animate: true, cases: { acc: 'kamaráda', gen: 'kamaráda' } },
+  brother: { pos: 'noun', gender: 'masculine', animate: true, cases: { acc: 'brata', gen: 'brata' } },
+  doctor: { pos: 'noun', gender: 'masculine', animate: true, cases: { acc: 'doktora', gen: 'doktora' } },
+  teddy: { pos: 'noun', gender: 'masculine', animate: true, cases: { acc: 'medvedíka', gen: 'medvedíka' } },
+  dad: { pos: 'noun', gender: 'masculine', animate: true, proper: true },
+  mum: { pos: 'noun', gender: 'feminine', animate: true, proper: true },
+
+  water: { pos: 'noun', gender: 'feminine', mass: true },
+  milk: { pos: 'noun', gender: 'neuter', mass: true },
+  bread: { pos: 'noun', gender: 'masculine', mass: true, cases: { gen: 'chleba' } },
+  rice: { pos: 'noun', gender: 'feminine', mass: true },
+  cheese: { pos: 'noun', gender: 'masculine', mass: true, cases: { gen: 'syra' } },
+  juice: { pos: 'noun', gender: 'masculine', mass: true },
+  tea: { pos: 'noun', gender: 'masculine', mass: true },
+  music: { pos: 'noun', gender: 'feminine', mass: true },
+  paper: { pos: 'noun', gender: 'masculine', mass: true },
+
+  apple: { pos: 'noun', gender: 'neuter', cases: { gen: 'jablka' }, plural: 'jablká' },
+  book: { pos: 'noun', gender: 'feminine', cases: { acc: 'knihu', gen: 'knihy' }, plural: 'knihy' },
+  ball: { pos: 'noun', gender: 'feminine', cases: { acc: 'loptu', gen: 'lopty' }, plural: 'lopty' },
+  cookie: { pos: 'noun', gender: 'masculine', cases: { gen: 'keksu' }, plural: 'keksy' },
+  egg: { pos: 'noun', gender: 'neuter', cases: { gen: 'vajca' }, plural: 'vajcia' },
+  school: { pos: 'noun', gender: 'feminine', cases: { acc: 'školu', gen: 'školy' }, institutional: true },
+  home: { pos: 'noun', gender: 'masculine', proper: true, institutional: true },
+  bed: { pos: 'noun', gender: 'feminine', institutional: true },
+  park: { pos: 'noun', gender: 'masculine', cases: { gen: 'parku' } },
+  table: { pos: 'noun', gender: 'masculine', cases: { gen: 'stola' } },
+
+  to: { pos: 'preposition', governsCase: 'gen' },
+  in: { pos: 'preposition', governsCase: 'loc' },
+  on: { pos: 'preposition', governsCase: 'loc' },
+  from: { pos: 'preposition', governsCase: 'gen' },
+  without: { pos: 'preposition', governsCase: 'gen' },
+
+  // "with" governs the instrumental — the case this file's tables generate.
+  with: { pos: 'preposition', governsCase: 'ins' },
+  'next-to': { pos: 'preposition', governsCase: 'gen' },
+  under: { pos: 'preposition', governsCase: 'ins' },
+
+  not: { pos: 'negation' },
+}

@@ -17,11 +17,20 @@ struct SumView: View {
     @StateObject private var store = SumPathStore()
     @State private var selection: Selection?
     @State private var showingPathManager = false
-    @State private var editorInitialPath: SumPath?
 
+    @AppStorage(SumSettings.minusEnabledKey) private var minusEnabled = true
+    @AppStorage(SumSettings.timesEnabledKey) private var timesEnabled = true
+    @AppStorage(SumSettings.divideEnabledKey) private var divideEnabled = true
+
+    /// Home → pick a difficulty → pick what to practise → play ten.
     enum Selection: Equatable {
         case freePlay
-        case path(SumPath)
+        case operators(SumPreset)
+        case play(game: SumGame, spec: SumRunSpec?)
+    }
+
+    private var enabledOperators: [SumOperator] {
+        SumOperator.enabled(minus: minusEnabled, times: timesEnabled, divide: divideEnabled)
     }
 
     var body: some View {
@@ -46,34 +55,40 @@ struct SumView: View {
                     switch selection {
                     case .freePlay:
                         SumPlayView(
-                            path: nil,
+                            game: nil,
                             store: store,
                             i18n: i18n,
                             languageCode: languageCode,
                             onClose: { selection = nil },
-                            speech: TikoScreenshotMode.isActive ? SumScreenshotSpeechService() : nil
+                            speech: screenshotSpeech
                         )
                         .id("free-\(languageCode)-\(store.revision)")
-                    case .path(let path):
+                    case .operators(let preset):
+                        SumOperatorPickerView(
+                            preset: preset,
+                            operators: enabledOperators,
+                            onPick: { ops in
+                                let spec = SumRunSpec(preset: preset, operators: ops)
+                                selection = .play(game: spec.makeGame(), spec: spec)
+                            }
+                        )
+                    case .play(let game, let spec):
                         SumPlayView(
-                            path: path,
+                            game: game,
                             store: store,
                             i18n: i18n,
                             languageCode: languageCode,
                             onClose: { selection = nil },
-                            speech: TikoScreenshotMode.isActive ? SumScreenshotSpeechService() : nil
+                            regenerate: spec.map { s in { s.makeGame() } },
+                            speech: screenshotSpeech
                         )
-                        .id("\(path.id)-\(languageCode)-\(store.revision)")
+                        .id("\(game.id)-\(languageCode)-\(store.revision)")
                     case nil:
                         SumHomeView(
                             store: store,
                             i18n: i18n,
                             languageCode: languageCode,
-                            onSelect: { selection = $0 },
-                            onEdit: { path in
-                                editorInitialPath = path
-                                showingPathManager = true
-                            }
+                            onSelect: { selection = $0 }
                         )
                     }
                 }
@@ -84,26 +99,12 @@ struct SumView: View {
                 store: store,
                 i18n: i18n,
                 languageCode: languageCode,
-                onClose: {
-                    showingPathManager = false
-                    editorInitialPath = nil
-                }
+                onClose: { showingPathManager = false }
             )
         }
         .onAppear {
             i18n.setLanguage(languageCode)
-            if TikoScreenshotMode.isActive {
-                switch TikoScreenshotMode.scene {
-                case "practice", "celebrate":
-                    if let path = store.visiblePaths(language: languageCode, i18n: i18n).first {
-                        selection = .path(path)
-                    }
-                case "keypad":
-                    selection = .freePlay
-                default:
-                    break
-                }
-            }
+            applyScreenshotScene()
         }
         .task {
             // Atlas voices need a session token; bootstrap a device identity on
@@ -120,16 +121,37 @@ struct SumView: View {
             i18n.setLanguage(code)
         }
     }
+
+    private var screenshotSpeech: TikoSpeechServicing? {
+        TikoScreenshotMode.isActive ? SumScreenshotSpeechService() : nil
+    }
+
+    private func applyScreenshotScene() {
+        guard TikoScreenshotMode.isActive else { return }
+        switch TikoScreenshotMode.scene {
+        case "practice", "celebrate":
+            guard let preset = SumCatalog.presets.first else { return }
+            let spec = SumRunSpec(preset: preset, operators: [.plus])
+            selection = .play(game: spec.makeGame(), spec: spec)
+        case "operators":
+            selection = SumCatalog.presets.first.map(Selection.operators)
+        case "keypad":
+            selection = .freePlay
+        default:
+            break
+        }
+    }
 }
 
 // MARK: - Home
 
+/// Difficulty first, nothing else. The operators used to split this grid into
+/// a dozen near-identical tiles; now they are picked one screen later.
 struct SumHomeView: View {
     @ObservedObject var store: SumPathStore
     @ObservedObject var i18n: TikoI18n
     let languageCode: String
     let onSelect: (SumView.Selection) -> Void
-    let onEdit: (SumPath) -> Void
 
     private let columns = [GridItem(.adaptive(minimum: 150, maximum: 240), spacing: 16)]
     private let appColor = SumAppConfig.app.appColor
@@ -137,13 +159,56 @@ struct SumHomeView: View {
     var body: some View {
         ScrollView {
             LazyVGrid(columns: columns, spacing: 16) {
-                freePlayTile
-                ForEach(store.visiblePaths(language: languageCode, i18n: i18n)) { path in
+                ForEach(SumCatalog.presets) { preset in
+                    presetTile(preset)
+                }
+                ForEach(store.visiblePaths(language: languageCode)) { path in
                     pathTile(path)
                 }
+                freePlayTile
             }
             .padding(20)
         }
+    }
+
+    private func presetTile(_ preset: SumPreset) -> some View {
+        Button {
+            onSelect(.operators(preset))
+        } label: {
+            VStack(spacing: 8) {
+                tileImage(id: preset.id, emoji: preset.emoji)
+                Text(preset.label)
+                    .font(.system(size: 40, weight: .heavy, design: .rounded))
+                    .foregroundStyle(.primary)
+            }
+            .frame(maxWidth: .infinity, minHeight: 150)
+            .background(appColor.palette.primary.opacity(0.14))
+            .clipShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
+        }
+        .buttonStyle(.plain)
+        .accessibilityIdentifier("sum.preset.\(preset.id)")
+        .accessibilityLabel(i18n.t("sum.home.upTo", ["n": preset.maxNumber]))
+    }
+
+    private func pathTile(_ path: SumPath) -> some View {
+        Button {
+            onSelect(.play(game: SumGame(path: path), spec: nil))
+        } label: {
+            VStack(spacing: 10) {
+                tileImage(id: path.id, emoji: path.emoji)
+                Text(path.title)
+                    .font(.system(.title3, design: .rounded).weight(.heavy))
+                    .foregroundStyle(.primary)
+                    .multilineTextAlignment(.center)
+            }
+            .frame(maxWidth: .infinity, minHeight: 150)
+            .padding(.horizontal, 8)
+            .background(appColor.palette.primary.opacity(0.14))
+            .clipShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
+        }
+        .buttonStyle(.plain)
+        .accessibilityIdentifier("sum.path.\(path.id)")
+        .accessibilityLabel(path.title)
     }
 
     private var freePlayTile: some View {
@@ -168,44 +233,70 @@ struct SumHomeView: View {
         .accessibilityLabel(i18n.t("sum.home.freePlay"))
     }
 
-    private func pathTile(_ path: SumPath) -> some View {
-        Button {
-            onSelect(.path(path))
-        } label: {
-            VStack(spacing: 10) {
-                ZStack {
-                    if let imageURL = store.pathImages[path.id] {
-                        TikoCachedRemoteImage(url: imageURL) {
-                            Text(path.emoji).font(.system(size: 46))
-                        }
-                    } else {
-                        Text(path.emoji).font(.system(size: 46))
+    @ViewBuilder
+    private func tileImage(id: String, emoji: String) -> some View {
+        ZStack {
+            if let imageURL = store.tileImages[id] {
+                TikoCachedRemoteImage(url: imageURL) {
+                    Text(emoji).font(.system(size: 40))
+                }
+            } else {
+                Text(emoji).font(.system(size: 40))
+            }
+        }
+        .frame(width: 62, height: 62)
+        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+        .accessibilityHidden(true)
+    }
+}
+
+// MARK: - Operator picker
+
+/// The second and last question: what are we practising? One tap starts the
+/// ten — icon-only, no text, exactly like every other child-facing choice.
+struct SumOperatorPickerView: View {
+    let preset: SumPreset
+    let operators: [SumOperator]
+    let onPick: ([SumOperator]) -> Void
+
+    private let columns = [GridItem(.adaptive(minimum: 130, maximum: 200), spacing: 16)]
+    private let appColor = SumAppConfig.app.appColor
+
+    var body: some View {
+        ScrollView {
+            LazyVGrid(columns: columns, spacing: 16) {
+                ForEach(operators, id: \.self) { op in
+                    tile(systemImage: op.systemImage, identifier: "sum.op.\(op.rawValue)", label: op.symbol) {
+                        onPick([op])
                     }
                 }
-                .frame(width: 76, height: 76)
-                .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
-                .accessibilityHidden(true)
-                Text(path.title)
-                    .font(.system(.title3, design: .rounded).weight(.heavy))
-                    .foregroundStyle(.primary)
-                    .multilineTextAlignment(.center)
+                if operators.count > 1 {
+                    tile(systemImage: "shuffle", identifier: "sum.op.mixed", label: "+ − × ÷") {
+                        onPick(operators)
+                    }
+                }
             }
-            .frame(maxWidth: .infinity, minHeight: 150)
-            .padding(.horizontal, 8)
-            .background(appColor.palette.primary.opacity(0.14))
-            .clipShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
+            .padding(20)
+        }
+    }
+
+    private func tile(
+        systemImage: String,
+        identifier: String,
+        label: String,
+        action: @escaping () -> Void
+    ) -> some View {
+        Button(action: action) {
+            Image(systemName: systemImage)
+                .font(.system(size: 54, weight: .heavy))
+                .foregroundStyle(appColor.palette.primary)
+                .frame(maxWidth: .infinity, minHeight: 140)
+                .background(appColor.palette.primary.opacity(0.14))
+                .clipShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
         }
         .buttonStyle(.plain)
-        .accessibilityIdentifier("sum.path.\(path.id)")
-        .accessibilityLabel(path.title)
-        .simultaneousGesture(
-            LongPressGesture(minimumDuration: 0.6).onEnded { _ in
-                let isChild = (try? TikoDeviceSessionStore().load())?.isChildMode ?? false
-                guard !isChild else { return }
-                UIImpactFeedbackGenerator(style: .medium).impactOccurred()
-                onEdit(path)
-            }
-        )
+        .accessibilityIdentifier(identifier)
+        .accessibilityLabel(label)
     }
 }
 

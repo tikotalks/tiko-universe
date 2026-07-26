@@ -54,23 +54,25 @@ private final class MockSpeech: TikoSpeechServicing {
 
 @MainActor
 final class SumPlayViewModelTests: XCTestCase {
-    private func path(_ formulas: [Formula]) -> SumPath {
-        SumPath(id: "test", title: "Test", emoji: "🧪", formulas: formulas, isCustom: false, isHidden: false, sortOrder: 0)
+    private func game(_ formulas: [Formula]) -> SumGame {
+        SumGame(id: "test", emoji: "🧪", formulas: formulas)
     }
 
     private func makeViewModel(
-        path: SumPath?,
+        game: SumGame?,
         speech: MockSpeech,
         mode: SumAnswerMode = .choice,
-        maxNumber: Int = 100
+        maxNumber: Int = 100,
+        regenerate: (() -> SumGame)? = nil
     ) -> SumPlayViewModel {
         SumPlayViewModel(
-            path: path,
+            game: game,
             languageCode: "en",
             speaker: FormulaSpeaker(languageCode: "en"),
             speech: speech,
             maxNumber: maxNumber,
             answerMode: mode,
+            regenerate: regenerate,
             timings: .instant
         )
     }
@@ -99,7 +101,7 @@ final class SumPlayViewModelTests: XCTestCase {
 
     func testFreePlayStartsBuildingAndPrefetchesKeypad() async {
         let speech = MockSpeech()
-        let vm = makeViewModel(path: nil, speech: speech, maxNumber: 20)
+        let vm = makeViewModel(game: nil, speech: speech, maxNumber: 20)
         vm.begin()
         XCTAssertEqual(vm.state, .building)
         await waitFor("prefetch") { !speech.prefetched.isEmpty }
@@ -109,7 +111,7 @@ final class SumPlayViewModelTests: XCTestCase {
 
     func testKeypadSpeaksComposedOperand() async {
         let speech = MockSpeech()
-        let vm = makeViewModel(path: nil, speech: speech, maxNumber: 20)
+        let vm = makeViewModel(game: nil, speech: speech, maxNumber: 20)
         vm.begin()
         vm.pressDigit(1)
         vm.pressDigit(2)
@@ -120,7 +122,7 @@ final class SumPlayViewModelTests: XCTestCase {
 
     func testOperandRespectsMaxNumber() {
         let speech = MockSpeech()
-        let vm = makeViewModel(path: nil, speech: speech, maxNumber: 20)
+        let vm = makeViewModel(game: nil, speech: speech, maxNumber: 20)
         vm.begin()
         vm.pressDigit(2)
         vm.pressDigit(5)  // 25 > 20 → ignored
@@ -130,7 +132,7 @@ final class SumPlayViewModelTests: XCTestCase {
 
     func testEqualsDisabledForInvalidFormula() {
         let speech = MockSpeech()
-        let vm = makeViewModel(path: nil, speech: speech)
+        let vm = makeViewModel(game: nil, speech: speech)
         vm.begin()
         vm.pressDigit(7)
         vm.pressOperator(.dividedBy)
@@ -144,7 +146,7 @@ final class SumPlayViewModelTests: XCTestCase {
 
     func testFreePlayRoundCelebratesAndClears() async {
         let speech = MockSpeech()
-        let vm = makeViewModel(path: nil, speech: speech)
+        let vm = makeViewModel(game: nil, speech: speech)
         vm.begin()
         vm.pressDigit(3)
         vm.pressOperator(.plus)
@@ -159,48 +161,113 @@ final class SumPlayViewModelTests: XCTestCase {
         vm.cancel()
     }
 
-    // MARK: Answer round retry ladder
+    // MARK: Reveal
 
-    func testMissFadesTileThenPulsesCorrect() async {
+    func testFormulaLandsOnePartAtATimeAndIsSpokenAsItLands() async {
         let speech = MockSpeech()
-        let vm = makeViewModel(path: path([Formula(a: 3, op: .plus, b: 5)]), speech: speech)
+        let vm = makeViewModel(game: game([Formula(a: 10, op: .plus, b: 20)]), speech: speech)
+        XCTAssertEqual(vm.revealedParts, 0)
         vm.begin()
-        await waitFor("choosing") { vm.state == .choosing }
+        await waitFor("all three parts") { vm.revealedParts == 3 }
+        XCTAssertEqual(speech.spokenTexts.prefix(3), ["ten", "plus", "twenty"])
+        vm.cancel()
+    }
 
-        let wrong1 = wrongChoice(vm)!
-        vm.choose(wrong1)
-        XCTAssertTrue(vm.fadedValues.contains(wrong1.value))
-        XCTAssertFalse(vm.pulseCorrect)
-        await waitFor("choosing again") { vm.state == .choosing }
-
-        let wrong2 = vm.choices.first { !$0.isCorrect && !vm.fadedValues.contains($0.value) }!
-        vm.choose(wrong2)
-        XCTAssertTrue(vm.pulseCorrect, "second miss pulses the correct tile")
-        await waitFor("choosing third") { vm.state == .choosing }
-
+    func testTilesAreLiveBeforeTheFormulaFinishesLanding() async {
+        let speech = MockSpeech()
+        let vm = makeViewModel(game: game([Formula(a: 3, op: .plus, b: 5)]), speech: speech)
+        vm.begin()
+        await waitFor("tiles dealt") { !vm.choices.isEmpty }
+        XCTAssertEqual(vm.state, .revealing)
+        XCTAssertTrue(vm.isAnswerable, "the child can answer during the reveal")
         vm.choose(correctChoice(vm)!)
         XCTAssertEqual(vm.state, .celebrating)
         await waitFor("completed") { vm.state == .completed }
     }
 
-    func testFormulaRespokenOnRetry() async {
+    func testNextFormulaIsPrerenderedWhileTheCurrentOneIsAnswered() async {
         let speech = MockSpeech()
-        let vm = makeViewModel(path: path([Formula(a: 2, op: .plus, b: 2)]), speech: speech)
+        let formulas = [Formula(a: 1, op: .plus, b: 1), Formula(a: 40, op: .plus, b: 2)]
+        let vm = makeViewModel(game: game(formulas), speech: speech)
         vm.begin()
-        await waitFor("choosing") { vm.state == .choosing }
-        let spokenBefore = speech.spokenTexts.count
-        vm.choose(wrongChoice(vm)!)
-        await waitFor("respeak") { speech.spokenTexts.count > spokenBefore }
-        XCTAssertEqual(speech.spokenTexts.last, "two plus two is")
+        await waitFor("second sum prerendered") {
+            speech.prefetched.contains("forty") && speech.prefetched.contains("two")
+        }
+        XCTAssertEqual(vm.session.currentIndex, 0, "still on the first sum")
         vm.cancel()
     }
 
-    // MARK: Paths
+    // MARK: Wrong picks
 
-    func testPathAdvancesAndCompletes() async {
+    func testWrongPickStaysOnScreenThenSwitchesItselfOff() async {
+        let speech = MockSpeech()
+        let vm = makeViewModel(game: game([Formula(a: 3, op: .plus, b: 5)]), speech: speech)
+        vm.begin()
+        await waitFor("choosing") { vm.state == .choosing }
+
+        let wrong = wrongChoice(vm)!
+        let missesBefore = vm.missTrigger
+        vm.choose(wrong)
+        XCTAssertEqual(vm.wrongValue, wrong.value, "the tile flashes where it stands")
+        XCTAssertFalse(vm.disabledValues.contains(wrong.value), "not switched off yet")
+        XCTAssertEqual(vm.missTrigger, missesBefore + 1)
+        XCTAssertEqual(vm.state, .choosing, "a miss never leaves the choosing state")
+
+        await waitFor("switched off") { vm.disabledValues.contains(wrong.value) }
+        XCTAssertNil(vm.wrongValue)
+        XCTAssertTrue(vm.choices.contains { $0.value == wrong.value }, "still on screen, just off")
+        vm.cancel()
+    }
+
+    func testTappingAnOffTileDoesNothing() async {
+        let speech = MockSpeech()
+        let vm = makeViewModel(game: game([Formula(a: 3, op: .plus, b: 5)]), speech: speech)
+        vm.begin()
+        await waitFor("choosing") { vm.state == .choosing }
+        let wrong = wrongChoice(vm)!
+        vm.choose(wrong)
+        await waitFor("switched off") { vm.disabledValues.contains(wrong.value) }
+
+        let missesBefore = vm.missTrigger
+        vm.choose(wrong)
+        XCTAssertEqual(vm.missTrigger, missesBefore, "an off tile is inert")
+        vm.cancel()
+    }
+
+    func testLastTileStandingPulses() async {
+        let speech = MockSpeech()
+        let vm = makeViewModel(game: game([Formula(a: 3, op: .plus, b: 5)]), speech: speech)
+        vm.begin()
+        await waitFor("choosing") { vm.state == .choosing }
+
+        for wrong in vm.choices.filter({ !$0.isCorrect }) {
+            vm.choose(wrong)
+            await waitFor("off") { vm.disabledValues.contains(wrong.value) }
+        }
+        XCTAssertTrue(vm.pulseCorrect, "the only tile left guides the child")
+        XCTAssertEqual(vm.remainingChoices.map(\.isCorrect), [true])
+
+        vm.choose(correctChoice(vm)!)
+        await waitFor("completed") { vm.state == .completed }
+    }
+
+    func testCorrectPickMarksTheWinningTile() async {
+        let speech = MockSpeech()
+        let vm = makeViewModel(game: game([Formula(a: 2, op: .plus, b: 2)]), speech: speech)
+        vm.begin()
+        await waitFor("choosing") { vm.state == .choosing }
+        let correct = correctChoice(vm)!
+        vm.choose(correct)
+        XCTAssertEqual(vm.wonValue, correct.value, "the winning tile gets the fireworks")
+        await waitFor("completed") { vm.state == .completed }
+    }
+
+    // MARK: Games
+
+    func testGameAdvancesAndCompletes() async {
         let speech = MockSpeech()
         let formulas = [Formula(a: 1, op: .plus, b: 1), Formula(a: 2, op: .plus, b: 2)]
-        let vm = makeViewModel(path: path(formulas), speech: speech)
+        let vm = makeViewModel(game: game(formulas), speech: speech)
         vm.begin()
         await waitFor("choosing 1") { vm.state == .choosing }
         vm.choose(correctChoice(vm)!)
@@ -210,9 +277,23 @@ final class SumPlayViewModelTests: XCTestCase {
         XCTAssertEqual(vm.session.completedCount, 2)
     }
 
+    func testATenSumRunEndsOnTheEndScreen() async {
+        let speech = MockSpeech()
+        let spec = SumRunSpec(preset: SumCatalog.presets[0], operators: [.plus])
+        let vm = makeViewModel(game: spec.makeGame(), speech: speech)
+        XCTAssertEqual(vm.session.total, 10)
+        vm.begin()
+        for index in 0..<10 {
+            await waitFor("choosing \(index)") { vm.state == .choosing && vm.session.currentIndex == index }
+            vm.choose(correctChoice(vm)!)
+        }
+        await waitFor("completed") { vm.state == .completed }
+        XCTAssertEqual(vm.session.completedCount, 10)
+    }
+
     func testSkipAdvancesWithoutCelebration() async {
         let speech = MockSpeech()
-        let vm = makeViewModel(path: path([Formula(a: 1, op: .plus, b: 1)]), speech: speech)
+        let vm = makeViewModel(game: game([Formula(a: 1, op: .plus, b: 1)]), speech: speech)
         vm.begin()
         await waitFor("choosing") { vm.state == .choosing }
         vm.skip()
@@ -221,16 +302,33 @@ final class SumPlayViewModelTests: XCTestCase {
         XCTAssertEqual(vm.session.completedCount, 0)
     }
 
-    func testRestartResetsSession() async {
+    func testPlayAgainDealsAFreshRoundForAPreset() async {
         let speech = MockSpeech()
-        let vm = makeViewModel(path: path([Formula(a: 1, op: .plus, b: 1)]), speech: speech)
+        let spec = SumRunSpec(preset: SumCatalog.presets[3], operators: SumOperator.allCases)
+        let first = spec.makeGame()
+        let vm = makeViewModel(game: first, speech: speech, regenerate: { spec.makeGame() })
         vm.begin()
         await waitFor("choosing") { vm.state == .choosing }
         vm.skip()
-        await waitFor("completed") { vm.state == .completed }
+
         vm.restart()
         await waitFor("choosing after restart") { vm.state == .choosing }
         XCTAssertEqual(vm.session.currentIndex, 0)
+        XCTAssertEqual(vm.session.total, 10)
+        XCTAssertNotEqual(vm.session.game?.formulas, first.formulas, "play again deals new sums")
+        vm.cancel()
+    }
+
+    func testPlayAgainReplaysAFixedPathExactly() async {
+        let speech = MockSpeech()
+        let fixed = game([Formula(a: 1, op: .plus, b: 1), Formula(a: 2, op: .plus, b: 2)])
+        let vm = makeViewModel(game: fixed, speech: speech)
+        vm.begin()
+        await waitFor("choosing") { vm.state == .choosing }
+        vm.skip()
+        vm.restart()
+        await waitFor("choosing after restart") { vm.state == .choosing }
+        XCTAssertEqual(vm.session.game?.formulas, fixed.formulas)
         vm.cancel()
     }
 
@@ -238,7 +336,7 @@ final class SumPlayViewModelTests: XCTestCase {
 
     func testInterruptionPausesAndResumes() async {
         let speech = MockSpeech()
-        let vm = makeViewModel(path: path([Formula(a: 4, op: .plus, b: 4)]), speech: speech)
+        let vm = makeViewModel(game: game([Formula(a: 4, op: .plus, b: 4)]), speech: speech)
         vm.begin()
         await waitFor("choosing") { vm.state == .choosing }
         vm.pauseForInterruption()
@@ -246,6 +344,17 @@ final class SumPlayViewModelTests: XCTestCase {
         vm.resumeAfterInterruption()
         await waitFor("choosing again") { vm.state == .choosing }
         XCTAssertFalse(vm.isPausedForInterruption)
+        XCTAssertEqual(vm.revealedParts, 3, "a resumed sum is fully on screen")
+        vm.cancel()
+    }
+
+    func testReplaySaysTheWholeFormula() async {
+        let speech = MockSpeech()
+        let vm = makeViewModel(game: game([Formula(a: 2, op: .plus, b: 2)]), speech: speech)
+        vm.begin()
+        await waitFor("choosing") { vm.state == .choosing }
+        vm.replay()
+        await waitFor("respoken") { speech.spokenTexts.last == "two plus two is" }
         vm.cancel()
     }
 
@@ -254,7 +363,7 @@ final class SumPlayViewModelTests: XCTestCase {
     func testVoiceAnswerSelectsCorrectTile() async {
         let speech = MockSpeech()
         speech.scriptedAttempts = [[TikoTranscriptUpdate(transcript: "eight", isFinal: false)]]
-        let vm = makeViewModel(path: path([Formula(a: 3, op: .plus, b: 5)]), speech: speech, mode: .voice)
+        let vm = makeViewModel(game: game([Formula(a: 3, op: .plus, b: 5)]), speech: speech, mode: .voice)
         vm.begin()
         await waitFor("completed via voice") { vm.state == .completed }
         XCTAssertEqual(vm.session.completedCount, 1)
@@ -262,7 +371,7 @@ final class SumPlayViewModelTests: XCTestCase {
 
     func testVoiceDisabledNeverListens() async {
         let speech = MockSpeech()
-        let vm = makeViewModel(path: path([Formula(a: 3, op: .plus, b: 5)]), speech: speech, mode: .choice)
+        let vm = makeViewModel(game: game([Formula(a: 3, op: .plus, b: 5)]), speech: speech, mode: .choice)
         vm.begin()
         await waitFor("choosing") { vm.state == .choosing }
         XCTAssertEqual(speech.listenCount, 0)
@@ -272,7 +381,7 @@ final class SumPlayViewModelTests: XCTestCase {
     func testVoiceIgnoresWrongWords() async {
         let speech = MockSpeech()
         speech.scriptedAttempts = [[TikoTranscriptUpdate(transcript: "banana", isFinal: true)]]
-        let vm = makeViewModel(path: path([Formula(a: 3, op: .plus, b: 5)]), speech: speech, mode: .voice)
+        let vm = makeViewModel(game: game([Formula(a: 3, op: .plus, b: 5)]), speech: speech, mode: .voice)
         vm.begin()
         await waitFor("choosing") { vm.state == .choosing }
         try? await Task.sleep(nanoseconds: 100_000_000)
@@ -288,8 +397,7 @@ final class SumPlayViewModelTests: XCTestCase {
 final class SumTypeModeTests: XCTestCase {
     private func makeVM(_ speech: MockSpeech) -> SumPlayViewModel {
         SumPlayViewModel(
-            path: SumPath(id: "t", title: "T", emoji: "🧪", formulas: [Formula(a: 3, op: .plus, b: 5)],
-                          isCustom: false, isHidden: false, sortOrder: 0),
+            game: SumGame(id: "t", emoji: "🧪", formulas: [Formula(a: 3, op: .plus, b: 5)]),
             languageCode: "en",
             speaker: FormulaSpeaker(languageCode: "en"),
             speech: speech,
@@ -328,14 +436,12 @@ final class SumTypeModeTests: XCTestCase {
         vm.typeDigit(7)
         vm.submitTyped()
         XCTAssertEqual(vm.typedAnswer, "", "miss clears the input")
-        await waitFor { vm.state == .choosing }
+        XCTAssertEqual(vm.state, .choosing)
 
         vm.typeDigit(9)
         vm.submitTyped()
-        await waitFor { vm.state == .choosing }
         XCTAssertTrue(vm.showsChoiceTiles, "third round falls back to guided tiles")
-        let visible = vm.choices.filter { !vm.fadedValues.contains($0.value) }
-        XCTAssertLessThanOrEqual(visible.count, 2, "fallback narrows to two tiles")
+        XCTAssertLessThanOrEqual(vm.remainingChoices.count, 2, "fallback narrows to two tiles")
         vm.choose(vm.choices.first(where: \.isCorrect)!)
         await waitFor { vm.state == .completed }
     }

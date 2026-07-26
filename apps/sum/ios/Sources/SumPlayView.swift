@@ -2,9 +2,10 @@ import SwiftUI
 import TikoKit
 import TikoSpeechKit
 
-/// The child-facing play screen for both modes: a spoken formula, three big
-/// answer tiles, icon-only round controls, celebration on every win. One
-/// thing at a time, no explanations — per the family design principles.
+/// The child-facing play screen for both modes: the formula lands part by part
+/// while it is spoken, three big answer tiles are live from the first beat, and
+/// the winning tile dances inside its own burst of fireworks. One thing at a
+/// time, no explanations — per the family design principles.
 struct SumPlayView: View {
     @ObservedObject var i18n: TikoI18n
     @StateObject private var viewModel: SumPlayViewModel
@@ -13,8 +14,9 @@ struct SumPlayView: View {
     @Environment(\.scenePhase) private var scenePhase
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var celebrationTrigger = 0
-    @State private var celebrationVariant: TikoCelebrationVariant = .explosion
+    @State private var celebrationVariant: TikoCelebrationVariant = .fireworks
     @State private var winStyle: TikoCardWinStyle = .pop
+    @State private var finishTrigger = 0
 
     @AppStorage(SumSettings.minusEnabledKey) private var minusEnabled = true
     @AppStorage(SumSettings.timesEnabledKey) private var timesEnabled = true
@@ -23,11 +25,12 @@ struct SumPlayView: View {
     private let appColor = SumAppConfig.app.appColor
 
     init(
-        path: SumPath?,
+        game: SumGame?,
         store: SumPathStore,
         i18n: TikoI18n,
         languageCode: String,
         onClose: @escaping () -> Void,
+        regenerate: (() -> SumGame)? = nil,
         speech: TikoSpeechServicing? = nil,
         timings: SumPlayViewModel.Timings = .standard
     ) {
@@ -39,12 +42,13 @@ struct SumPlayView: View {
         let maxNumber = defaults.object(forKey: SumSettings.maxNumberKey) as? Int ?? 20
         let answerMode = SumAnswerMode(rawValue: defaults.string(forKey: SumSettings.answerModeKey) ?? "") ?? .choice
         _viewModel = StateObject(wrappedValue: SumPlayViewModel(
-            path: path,
+            game: game,
             languageCode: languageCode,
             speaker: speaker,
             speech: speech ?? TikoSpeechPracticeService(),
             maxNumber: maxNumber,
             answerMode: answerMode,
+            regenerate: regenerate,
             timings: timings
         ))
     }
@@ -69,7 +73,14 @@ struct SumPlayView: View {
                 TikoFeedback.stop()
             }
         }
-        .onChange(of: viewModel.state) { oldState, state in
+        .onChange(of: viewModel.revealTrigger) { _, _ in
+            // One small pop per part as it lands.
+            TikoFeedback.playPop()
+        }
+        .onChange(of: viewModel.missTrigger) { _, _ in
+            TikoFeedback.playRetry()
+        }
+        .onChange(of: viewModel.state) { _, state in
             #if DEBUG
             // Hands-free celebrate scene for App Store promo capture.
             if state == .choosing, TikoScreenshotMode.isActive, TikoScreenshotMode.scene == "celebrate" {
@@ -83,23 +94,9 @@ struct SumPlayView: View {
             #endif
             if state == .celebrating {
                 celebrationTrigger += 1
-                celebrationVariant = TikoCelebrationVariant.allCases.randomElement() ?? .explosion
+                celebrationVariant = TikoCelebrationVariant.allCases.randomElement() ?? .fireworks
                 winStyle = TikoCardWinStyle.allCases.randomElement() ?? .pop
                 TikoFeedback.playSuccess()
-            }
-            if case .retrying = state, oldState == .choosing {
-                TikoFeedback.playRetry()
-            }
-        }
-        .overlay {
-            if viewModel.state == .celebrating {
-                TikoCelebrationOverlay(
-                    trigger: celebrationTrigger,
-                    variant: celebrationVariant,
-                    emoji: viewModel.session.path?.emoji ?? "🧮",
-                    appColor: appColor
-                )
-                .allowsHitTesting(false)
             }
         }
         .overlay {
@@ -107,11 +104,6 @@ struct SumPlayView: View {
                 interruptionOverlay
             }
         }
-    }
-
-    private var isRetrying: Bool {
-        if case .retrying = viewModel.state { return true }
-        return false
     }
 
     // MARK: - Play content
@@ -138,7 +130,7 @@ struct SumPlayView: View {
                         onEquals: { viewModel.pressEquals() }
                     )
                     .frame(maxWidth: 460)
-                } else if viewModel.state == .choosing || viewModel.state == .celebrating || isRetrying {
+                } else if viewModel.activeFormula != nil {
                     if viewModel.showsChoiceTiles {
                         if !viewModel.choices.isEmpty {
                             answerTiles(compact: isCompact)
@@ -163,57 +155,70 @@ struct SumPlayView: View {
             }
             .padding(.horizontal, 24)
             .frame(maxWidth: .infinity, maxHeight: .infinity)
+            // Old tiles leave, new ones come in, while the next sum is spoken.
+            .animation(
+                reduceMotion ? nil : .spring(response: 0.42, dampingFraction: 0.75),
+                value: viewModel.activeFormula
+            )
         }
+    }
+
+    // MARK: - Formula display
+
+    /// No equals sign: the sum reads "10 + 20" and the answer is the tile the
+    /// child picks, never something the screen fills in.
+    @ViewBuilder
+    private func formulaDisplay(compact: Bool) -> some View {
+        let size: CGFloat = compact ? 56 : 76
+        Group {
+            if viewModel.state == .building {
+                Text(draftText.isEmpty ? " " : draftText)
+                    .font(.system(size: size, weight: .heavy, design: .rounded))
+                    .minimumScaleFactor(0.4)
+                    .lineLimit(1)
+            } else if let formula = viewModel.activeFormula {
+                HStack(spacing: compact ? 14 : 22) {
+                    formulaPart("\(formula.a)", index: 0, size: size)
+                    formulaPart(formula.op.symbol, index: 1, size: size)
+                    formulaPart("\(formula.b)", index: 2, size: size)
+                }
+            } else {
+                Text(" ").font(.system(size: size, weight: .heavy, design: .rounded))
+            }
+        }
+        .foregroundStyle(.primary)
+        .frame(maxWidth: .infinity)
+        .padding(.vertical, 12)
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(accessibilityFormula)
     }
 
     @ViewBuilder
-    private func formulaDisplay(compact: Bool) -> some View {
-        let text = displayText
-        Text(text.isEmpty ? " " : text)
-            .font(.system(size: compact ? 56 : 76, weight: .heavy, design: .rounded))
+    private func formulaPart(_ text: String, index: Int, size: CGFloat) -> some View {
+        let landed = viewModel.revealedParts > index
+        Text(text)
+            .font(.system(size: size, weight: .heavy, design: .rounded))
             .minimumScaleFactor(0.4)
             .lineLimit(1)
-            .foregroundStyle(.primary)
-            .frame(maxWidth: .infinity)
-            .padding(.vertical, 12)
-            .phaseAnimator(
-                reduceMotion ? [TikoCardWinStyle.Phase()] : winStyle.phases,
-                trigger: celebrationTrigger
-            ) { view, phase in
-                view
-                    .scaleEffect(phase.scale)
-                    .rotationEffect(.degrees(phase.rotation))
-                    .offset(y: phase.y)
-            } animation: { _ in
-                .spring(response: 0.34, dampingFraction: 0.44)
-            }
-            .accessibilityLabel(accessibilityFormula)
+            .scaleEffect(landed ? 1 : 0.3)
+            .opacity(landed ? 1 : 0)
+            .animation(
+                reduceMotion ? .easeOut(duration: 0.15) : .spring(response: 0.34, dampingFraction: 0.5),
+                value: landed
+            )
     }
 
-    private var displayText: String {
-        if viewModel.state == .building {
-            var parts: [String] = []
-            if !viewModel.draft.aText.isEmpty { parts.append(viewModel.draft.aText) }
-            if let op = viewModel.draft.op { parts.append(op.symbol) }
-            if !viewModel.draft.bText.isEmpty { parts.append(viewModel.draft.bText) }
-            return parts.joined(separator: " ")
-        }
-        if let formula = viewModel.activeFormula {
-            if viewModel.state == .celebrating, let result = formula.result {
-                return "\(formula.a) \(formula.op.symbol) \(formula.b) = \(result)"
-            }
-            if viewModel.answerMode == .type, !viewModel.typedAnswer.isEmpty {
-                return "\(formula.a) \(formula.op.symbol) \(formula.b) = \(viewModel.typedAnswer)"
-            }
-            return "\(formula.a) \(formula.op.symbol) \(formula.b) ="
-        }
-        return ""
+    private var draftText: String {
+        var parts: [String] = []
+        if !viewModel.draft.aText.isEmpty { parts.append(viewModel.draft.aText) }
+        if let op = viewModel.draft.op { parts.append(op.symbol) }
+        if !viewModel.draft.bText.isEmpty { parts.append(viewModel.draft.bText) }
+        return parts.joined(separator: " ")
     }
 
     private var accessibilityFormula: String {
-        guard let formula = viewModel.activeFormula else { return displayText }
-        let speaker = FormulaSpeaker(languageCode: viewModel.languageCode)
-        return speaker.formulaUtterance(formula)
+        guard let formula = viewModel.activeFormula else { return draftText }
+        return FormulaSpeaker(languageCode: viewModel.languageCode).formulaUtterance(formula)
     }
 
     // MARK: - Answer tiles
@@ -221,41 +226,26 @@ struct SumPlayView: View {
     private func answerTiles(compact: Bool) -> some View {
         HStack(spacing: compact ? 14 : 22) {
             ForEach(viewModel.choices) { choice in
-                answerTile(choice, compact: compact)
+                AnswerTileView(
+                    choice: choice,
+                    side: compact ? 92 : 120,
+                    appColor: appColor,
+                    languageCode: viewModel.languageCode,
+                    isWrong: viewModel.wrongValue == choice.value,
+                    isOff: viewModel.disabledValues.contains(choice.value),
+                    hasWon: viewModel.wonValue == choice.value,
+                    isPulsing: viewModel.pulseCorrect && choice.isCorrect && viewModel.wonValue == nil,
+                    isAnswerable: viewModel.isAnswerable,
+                    celebrationTrigger: celebrationTrigger,
+                    celebrationVariant: celebrationVariant,
+                    winStyle: winStyle,
+                    celebrationEmoji: viewModel.session.game?.emoji ?? "🎉"
+                ) {
+                    viewModel.choose(choice)
+                }
             }
         }
-    }
-
-    private func answerTile(_ choice: AnswerChoice, compact: Bool) -> some View {
-        let faded = viewModel.fadedValues.contains(choice.value)
-        let pulsing = viewModel.pulseCorrect && choice.isCorrect
-        return Button {
-            viewModel.choose(choice)
-        } label: {
-            Text("\(choice.value)")
-                .font(.system(size: compact ? 40 : 52, weight: .heavy, design: .rounded))
-                .foregroundStyle(appColor.palette.primary)
-                .frame(width: compact ? 92 : 120, height: compact ? 92 : 120)
-                .background(appColor.palette.primary.opacity(0.16))
-                .clipShape(RoundedRectangle(cornerRadius: 26, style: .continuous))
-                .opacity(faded ? 0.2 : 1)
-                .scaleEffect(pulsing ? 1.08 : 1.0)
-                .animation(
-                    pulsing && !reduceMotion
-                        ? .easeInOut(duration: 0.7).repeatForever(autoreverses: true)
-                        : .default,
-                    value: pulsing
-                )
-        }
-        .buttonStyle(.plain)
-        .disabled(faded || viewModel.state != .choosing)
-        .onLongPressGesture(minimumDuration: 0.4) {
-            // Audio preview without committing — choice-making the AAC way.
-            let speaker = FormulaSpeaker(languageCode: viewModel.languageCode)
-            Task { await TikoVoiceService.shared.speak(speaker.number(choice.value), languageCode: viewModel.languageCode) }
-        }
-        .accessibilityIdentifier("sum.answer.\(choice.value)")
-        .accessibilityLabel(FormulaSpeaker(languageCode: viewModel.languageCode).number(choice.value))
+        .transition(.scale(scale: 0.6).combined(with: .opacity))
     }
 
     // MARK: - Controls (icon-only round buttons)
@@ -291,28 +281,91 @@ struct SumPlayView: View {
         .buttonStyle(.plain)
     }
 
-    // MARK: - Completion / interruption
+    // MARK: - Completion
 
+    /// The end of a ten: one big celebration, then the only two things worth
+    /// doing next — go back, or play another ten.
     private var completionView: some View {
-        VStack(spacing: 24) {
+        VStack(spacing: 28) {
             Spacer()
-            Text(viewModel.session.path?.emoji ?? "🎉")
-                .font(.system(size: 110))
+
+            Text(viewModel.session.game?.emoji ?? "🎉")
+                .font(.system(size: 120))
                 .accessibilityHidden(true)
+                .phaseAnimator(
+                    reduceMotion ? [TikoCardWinStyle.Phase()] : TikoCardWinStyle.bounce.phases,
+                    trigger: finishTrigger
+                ) { view, phase in
+                    view
+                        .scaleEffect(phase.scale)
+                        .rotationEffect(.degrees(phase.rotation))
+                        .offset(y: phase.y)
+                } animation: { _ in
+                    .spring(response: 0.38, dampingFraction: 0.5)
+                }
+
             Spacer()
-            HStack(spacing: 28) {
-                roundButton(systemImage: "arrow.counterclockwise", prominent: true) {
+
+            HStack(spacing: 16) {
+                endButton(
+                    systemImage: "square.grid.2x2",
+                    label: i18n.t("sum.practice.back"),
+                    prominent: false,
+                    action: onClose
+                )
+                .accessibilityIdentifier("sum.play.home")
+
+                endButton(
+                    systemImage: "arrow.counterclockwise",
+                    label: i18n.t("sum.play.playAgain"),
+                    prominent: true
+                ) {
                     viewModel.restart()
                 }
                 .accessibilityIdentifier("sum.play.restart")
-                .accessibilityLabel(i18n.t("sum.practice.replay"))
-                roundButton(systemImage: "square.grid.2x2", prominent: false, action: onClose)
-                    .accessibilityIdentifier("sum.play.home")
-                    .accessibilityLabel(i18n.t("sum.practice.back"))
             }
-            .padding(.bottom, 32)
+            .padding(.horizontal, 24)
+            .padding(.bottom, 40)
         }
-        .onAppear { TikoFeedback.playSuccess() }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .overlay {
+            TikoCelebrationOverlay(
+                trigger: finishTrigger,
+                variant: .fireworks,
+                emoji: viewModel.session.game?.emoji ?? "🎉",
+                appColor: appColor
+            )
+            .allowsHitTesting(false)
+        }
+        .onAppear {
+            finishTrigger += 1
+            TikoFeedback.playSuccess()
+        }
+    }
+
+    private func endButton(
+        systemImage: String,
+        label: String,
+        prominent: Bool,
+        action: @escaping () -> Void
+    ) -> some View {
+        Button(action: action) {
+            VStack(spacing: 10) {
+                Image(systemName: systemImage)
+                    .font(.system(size: 30, weight: .heavy))
+                Text(label)
+                    .font(.system(size: 17, weight: .heavy, design: .rounded))
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.6)
+            }
+            .foregroundStyle(prominent ? .white : appColor.palette.primary)
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 22)
+            .background(prominent ? appColor.palette.primary : appColor.palette.primary.opacity(0.14))
+            .clipShape(RoundedRectangle(cornerRadius: 28, style: .continuous))
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel(label)
     }
 
     private var interruptionOverlay: some View {
@@ -328,6 +381,101 @@ struct SumPlayView: View {
         .buttonStyle(.plain)
         .accessibilityLabel(i18n.t("sum.practice.replay"))
     }
+}
+
+// MARK: - Answer tile
+
+/// One answer tile through its whole life: waiting, wrongly picked (stays put,
+/// flashes red, wobbles), switched off (dimmed but still readable), or the
+/// winner (dances inside its own fireworks). Owns its shake counter so a miss
+/// on one tile never twitches the others.
+private struct AnswerTileView: View {
+    let choice: AnswerChoice
+    let side: CGFloat
+    let appColor: TikoAppColor
+    let languageCode: String
+    let isWrong: Bool
+    let isOff: Bool
+    let hasWon: Bool
+    let isPulsing: Bool
+    let isAnswerable: Bool
+    let celebrationTrigger: Int
+    let celebrationVariant: TikoCelebrationVariant
+    let winStyle: TikoCardWinStyle
+    let celebrationEmoji: String
+    let onTap: () -> Void
+
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @State private var shakeTrigger = 0
+
+    private var background: Color {
+        isWrong ? Color(hex: 0xef4444) : appColor.palette.primary.opacity(isOff ? 0.08 : 0.16)
+    }
+
+    var body: some View {
+        Button(action: onTap) {
+            Text("\(choice.value)")
+                .font(.system(size: side * 0.43, weight: .heavy, design: .rounded))
+                .foregroundStyle(isWrong ? Color.white : appColor.palette.primary)
+                .frame(width: side, height: side)
+                .background(background)
+                .clipShape(RoundedRectangle(cornerRadius: 26, style: .continuous))
+                .opacity(isOff ? 0.4 : 1)
+                .animation(.easeOut(duration: 0.16), value: isWrong)
+                .animation(.easeOut(duration: 0.25), value: isOff)
+                .scaleEffect(isPulsing ? 1.08 : 1.0)
+                .animation(
+                    isPulsing && !reduceMotion
+                        ? .easeInOut(duration: 0.7).repeatForever(autoreverses: true)
+                        : .default,
+                    value: isPulsing
+                )
+                .phaseAnimator(shakePhases, trigger: shakeTrigger) { view, offset in
+                    view.offset(x: offset)
+                } animation: { _ in
+                    .easeInOut(duration: 0.06)
+                }
+                // The winning tile dances where it stands…
+                .phaseAnimator(
+                    reduceMotion ? [TikoCardWinStyle.Phase()] : winStyle.phases,
+                    trigger: hasWon ? celebrationTrigger : 0
+                ) { view, phase in
+                    view
+                        .scaleEffect(phase.scale)
+                        .rotationEffect(.degrees(phase.rotation))
+                        .offset(y: phase.y)
+                } animation: { _ in
+                    .spring(response: 0.34, dampingFraction: 0.44)
+                }
+                // …inside its own burst of fireworks.
+                .overlay {
+                    if hasWon {
+                        TikoCelebrationOverlay(
+                            trigger: celebrationTrigger,
+                            variant: celebrationVariant,
+                            emoji: celebrationEmoji,
+                            appColor: appColor
+                        )
+                        .frame(width: side * 3.6, height: side * 3.6)
+                        .allowsHitTesting(false)
+                    }
+                }
+        }
+        .buttonStyle(.plain)
+        .disabled(isOff || !isAnswerable)
+        .onChange(of: isWrong) { _, wrong in
+            if wrong, !reduceMotion { shakeTrigger += 1 }
+        }
+        .onLongPressGesture(minimumDuration: 0.4) {
+            // Audio preview without committing — choice-making the AAC way.
+            let speaker = FormulaSpeaker(languageCode: languageCode)
+            Task { await TikoVoiceService.shared.speak(speaker.number(choice.value), languageCode: languageCode) }
+        }
+        .accessibilityIdentifier("sum.answer.\(choice.value)")
+        .accessibilityLabel(FormulaSpeaker(languageCode: languageCode).number(choice.value))
+    }
+
+    private var shakePhases: [CGFloat] { [0, -13, 11, -8, 6, -3, 0] }
 }
 
 // MARK: - Keypad
@@ -347,11 +495,7 @@ struct KeypadView: View {
     let onEquals: () -> Void
 
     private var visibleOperators: [SumOperator] {
-        var ops: [SumOperator] = [.plus]
-        if minusEnabled { ops.append(.minus) }
-        if timesEnabled { ops.append(.times) }
-        if divideEnabled { ops.append(.dividedBy) }
-        return ops
+        SumOperator.enabled(minus: minusEnabled, times: timesEnabled, divide: divideEnabled)
     }
 
     var body: some View {
