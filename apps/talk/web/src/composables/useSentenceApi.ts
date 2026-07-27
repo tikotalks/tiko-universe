@@ -85,9 +85,25 @@ export function useSentenceApi(options: SentenceApiOptions) {
   const savedPhrases = ref<SavedPhrase[]>([])
   const customWords = ref<UserWord[]>([])
   const stripState = ref<StripState>({ display: '', validNext: [], canComplete: false })
+  /** The whole pack, kept apart from what the board happens to be showing. */
+  const packWords = ref<WordTile[]>([])
   const lastCompletion = ref<SentenceCompleteResponse | null>(null)
 
-  const wordsById = computed(() => new Map(words.value.map((word) => [word.id, word])))
+  /**
+   * Every tile the app can name, by id.
+   *
+   * This used to be built from `words` — whatever the board is *showing*. So the
+   * moment a search narrowed the board, or the API returned one category, the tiles
+   * the child had already chosen could no longer be resolved, and the sentence they
+   * were building collapsed to nothing. The pack is the index; the visible list only
+   * adds to it.
+   */
+  const wordsById = computed(() => {
+    const index = new Map<string, WordTile>()
+    for (const word of packWords.value) index.set(word.id, word)
+    for (const word of words.value) index.set(word.id, word)
+    return index
+  })
   const prefetchCache = new Map<string, SentenceNextResponse>()
   const activeWordsByCategory = computed(() => wordsByCategory(words.value))
   const isOffline = computed(() => mode.value === 'offline')
@@ -128,6 +144,7 @@ export function useSentenceApi(options: SentenceApiOptions) {
     if (!board) return
     templates.value = board.templates
     categories.value = board.categories
+    packWords.value = board.words
     words.value = board.words
     suggestions.value = localSuggestions(board.pack, [])
     stripState.value = { display: '', validNext: validNextFor(board.pack, []), canComplete: false }

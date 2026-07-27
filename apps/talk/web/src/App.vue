@@ -42,6 +42,16 @@ function onSearch(value: string) {
   talk.applyBoardFilter(value)
 }
 
+/**
+ * Only offer to add a word the board does not already have. Offering it for "sad"
+ * invites a duplicate tile for a word that is already there.
+ */
+const canAddWord = computed(() => {
+  const text = trimmedFilter.value.toLowerCase()
+  if (!text) return false
+  return !talk.cloudWords.value.some((node) => node.label.toLowerCase() === text)
+})
+
 async function onAddWord() {
   const text = trimmedFilter.value
   if (!text) return
@@ -105,7 +115,7 @@ onMounted(() => {
           @input="onSearch(($event.target as HTMLInputElement).value)"
         >
         <button
-          v-if="trimmedFilter"
+          v-if="canAddWord"
           :class="bemm('add-word')"
           type="button"
           @click="onAddWord"
@@ -121,6 +131,7 @@ onMounted(() => {
       <div :class="bemm('sentence')">
         <TalkSentenceBar
           :words="talk.strip.words.value"
+          :sentence="talk.sentence.value"
           :can-speak="talk.canSpeak.value"
           :speech-status="talk.speechStatus.value"
           :word-icon="talk.wordIcon"
@@ -147,6 +158,15 @@ onMounted(() => {
     padding-inline: 0 !important;
     padding-block: 0 !important;
     overflow: hidden;
+    /**
+     * The shared shell centres `main` with `margin: 0 auto`, and an auto margin on
+     * the cross axis of a column flex container shrink-wraps the item to its
+     * content. Every tile on this board is absolutely positioned, so that content is
+     * zero wide — the whole board was in the DOM and clipped to nothing. The board
+     * fills the window instead of being centred in it.
+     */
+    width: 100%;
+    margin-inline: 0 !important;
   }
 }
 

@@ -54,6 +54,54 @@ describe('Talk web app', () => {
     expect(wrapper.text()).toContain('want')
   })
 
+  /**
+   * Building a two-clause sentence in the app, which is what the grammar is for.
+   * Every step here was broken in a different way: the board was clipped to zero
+   * width, search was scoped to one category, the tiles a child had chosen could not
+   * be resolved once the board narrowed, a word already used disappeared, and the
+   * finished sentence was never shown to anybody.
+   */
+  it('builds "I am sad because I want mum" from six taps, and shows it', async () => {
+    const wrapper = mount(App)
+    await vi.waitFor(() => {
+      expect(wrapper.findAll('.word-cloud__bubble').length).toBeGreaterThan(0)
+    }, { timeout: 5000 })
+
+    const tap = async (label: string) => {
+      // Search for the tile the way a child reaches a low-frequency word.
+      const search = wrapper.get('input[type="search"]')
+      await search.setValue(label)
+      await flushPromises()
+      const bubble = wrapper.findAll('.word-cloud__bubble')
+        .find((node) => node.text().trim().toLowerCase() === label.toLowerCase())
+      expect(bubble, `no tile for "${label}"`).toBeTruthy()
+      await bubble!.trigger('click')
+      await flushPromises()
+    }
+
+    for (const word of ['I', 'sad', 'because', 'I', 'want', 'mum']) await tap(word)
+
+    await vi.waitFor(() => {
+      expect(wrapper.get('.sentence-bar__sentence').text()).toBe('I am sad because I want mum')
+    }, { timeout: 5000 })
+  })
+
+  it('offers to add a word only when the board does not already have it', async () => {
+    const wrapper = mount(App)
+    await vi.waitFor(() => {
+      expect(wrapper.findAll('.word-cloud__bubble').length).toBeGreaterThan(0)
+    }, { timeout: 5000 })
+
+    const search = wrapper.get('input[type="search"]')
+    await search.setValue('because')
+    await flushPromises()
+    expect(wrapper.find('.talk-screen__add-word').exists()).toBe(false)
+
+    await search.setValue('trampoline')
+    await flushPromises()
+    expect(wrapper.find('.talk-screen__add-word').exists()).toBe(true)
+  })
+
   it('calls handleAvatarClick when the avatar is tapped', async () => {
     const wrapper = mount(App)
 

@@ -76,7 +76,7 @@ export function useTalkApp() {
     words: sentenceApi.words,
     suggestions: sentenceApi.suggestions,
     categories: sentenceApi.categories,
-    selectedWordIds: strip.wordIds,
+    filter: boardFilter,
   })
 
   const canSpeak = computed(() => strip.canSpeak.value && speechStatus.value !== 'speaking' && !sentenceApi.loading.value)
@@ -137,10 +137,18 @@ export function useTalkApp() {
     void sentenceApi.loadVocabulary(category.source.id, boardFilter.value || undefined)
   }
 
-  // Board search: filter the visible words (custom words included server-side).
+  /**
+   * Board search, over the whole board.
+   *
+   * This used to pass the active category, which `start()` sets to the first
+   * shortcut and every tap re-points at whatever was tapped. So a search was
+   * silently scoped to one category of eighteen: searching "because" or "sad"
+   * found nothing and offered to *create* the word, which already existed.
+   * A category is a way to browse; it is not the scope of a search.
+   */
   function applyBoardFilter(query: string) {
     boardFilter.value = query
-    void sentenceApi.filterBoard(query, activeCategoryId.value ?? undefined)
+    void sentenceApi.filterBoard(query)
   }
 
   function clearBoardFilter() {
@@ -213,6 +221,8 @@ export function useTalkApp() {
     runtime,
     sentenceApi,
     strip,
+    /** The sentence the realizer makes of the strip, for the child to read. */
+    sentence: computed(() => sentenceApi.stripState.value.display ?? ''),
     canSpeak,
     statusText,
     customWords: sentenceApi.customWords,

@@ -198,3 +198,49 @@ describe('useSentenceApi', () => {
     ])
   })
 })
+
+describe('searching the board', () => {
+  const offlineApi = () => useSentenceApi({
+    language: ref('en'),
+    sessionToken: ref(''),
+    fetcher: vi.fn(async () => json({ error: { message: 'offline' } }, 503)) as unknown as typeof fetch,
+    baseUrl: 'https://sentence.test',
+  })
+
+  it('finds a word anywhere in the pack, not just among the suggestions', async () => {
+    const api = offlineApi()
+    await api.start()
+    // "because" is a conjunction with a low frequency: the ranked suggestions never
+    // include it, so search is the only way a child reaches it.
+    await api.filterBoard('because')
+    expect(api.words.value.map((word) => word.id)).toContain('because')
+  })
+
+  it('keeps searching after a word has been chosen', async () => {
+    const api = offlineApi()
+    await api.start()
+    await api.next(['i'])
+    await api.filterBoard('sad')
+    expect(api.words.value.map((word) => word.id)).toContain('sad')
+  })
+})
+
+describe('the sentence survives what the board is showing', () => {
+  it('still builds the strip after a search has narrowed the board', async () => {
+    const api = useSentenceApi({
+      language: ref('en'),
+      sessionToken: ref(''),
+      fetcher: vi.fn(async () => json({ error: { message: 'offline' } }, 503)) as unknown as typeof fetch,
+      baseUrl: 'https://sentence.test',
+    })
+    await api.start()
+
+    // A child searches for a word, taps it, and searches again — which is the only
+    // way to reach "because". The board is left showing one tile.
+    await api.filterBoard('because')
+    await api.next(['i', 'sad', 'because', 'i', 'want', 'mum'])
+
+    // The sentence is built from the pack, not from the one tile on screen.
+    expect(api.stripState.value.display).toBe('I am sad because I want mum')
+  })
+})
