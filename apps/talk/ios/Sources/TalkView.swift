@@ -88,6 +88,7 @@ struct TalkView: View {
                 VStack(spacing: 10) {
                     TalkSentenceStripView(
                         words: store.sentenceWords,
+                        sentence: store.stripDisplay,
                         canSpeak: store.canSpeak,
                         isSpeaking: isSpeaking,
                         appColor: .talk,
@@ -194,6 +195,7 @@ struct TalkView: View {
                 Image(systemName: "magnifyingglass")
                     .foregroundStyle(.primary.opacity(0.5))
                 TextField("Find or add a word", text: $searchText)
+                    .accessibilityIdentifier("talk.board.search")
                     .focused($searchFocused)
                     .autocorrectionDisabled()
                     .textInputAutocapitalization(.never)
