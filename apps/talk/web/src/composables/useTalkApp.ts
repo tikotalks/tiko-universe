@@ -1,4 +1,5 @@
 import { computed, ref, watch } from 'vue'
+import { hasPack } from '@tiko/talk-packs'
 import { IdentityClient } from '@tiko/identity'
 import { useIdentityRuntime, type IdentityRuntimeState, type TikoColorMode } from '@tiko/ui'
 import { useSentenceApi } from './useSentenceApi'
@@ -34,9 +35,17 @@ function resolveIdentityBaseUrl() {
   return (env?.VITE_IDENTITY_API_URL ?? env?.VITE_TIKO_IDENTITY_BASE_URL ?? 'https://id.tikoapps.org/v1').replace(/\/$/, '')
 }
 
+/**
+ * The board's language.
+ *
+ * This used to be `candidate === 'nl' ? 'nl' : 'en'`, so fifty-two of the fifty-four
+ * languages the picker offers collapsed to English: choosing Georgian gave an English
+ * board. Any language with a pack is a language this app can speak, and the pack is
+ * what the board and the grammar both come from.
+ */
 function detectLanguage(value: string | undefined): string {
   const candidate = value ?? (typeof navigator === 'undefined' ? 'en' : navigator.language.split('-')[0])
-  return candidate === 'nl' ? 'nl' : 'en'
+  return hasPack(candidate) ? candidate.split('-')[0].toLowerCase() : 'en'
 }
 
 function toColorMode(value: string | undefined): TikoColorMode {

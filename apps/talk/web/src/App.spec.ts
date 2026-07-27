@@ -113,3 +113,31 @@ describe('Talk web app', () => {
     expect(wrapper.find('button[aria-label="Account"]').exists()).toBe(true)
   })
 })
+
+describe('the language the board speaks', () => {
+  /**
+   * The picker offers 54 languages. The board used to collapse every one of them but
+   * Dutch to English — `candidate === 'nl' ? 'nl' : 'en'` — so choosing Georgian gave
+   * an English board.
+   */
+  it('keeps a stored language that has a pack, in its own words', async () => {
+    window.localStorage.setItem('tiko:talk', JSON.stringify({ language: 'nl', colorMode: 'system' }))
+    const wrapper = mount(App)
+    await vi.waitFor(() => {
+      expect(wrapper.findAll('.word-cloud__bubble').length).toBeGreaterThan(0)
+    }, { timeout: 5000 })
+
+    // Dutch words, not English ones.
+    expect(wrapper.text()).toContain('wil')
+    expect(wrapper.text()).toContain('alsjeblieft')
+  })
+
+  it('falls back to English for a language with no pack', async () => {
+    window.localStorage.setItem('tiko:talk', JSON.stringify({ language: 'xx', colorMode: 'system' }))
+    const wrapper = mount(App)
+    await vi.waitFor(() => {
+      expect(wrapper.findAll('.word-cloud__bubble').length).toBeGreaterThan(0)
+    }, { timeout: 5000 })
+    expect(wrapper.text()).toContain('want')
+  })
+})
