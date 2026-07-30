@@ -61,6 +61,25 @@ final class TikoWriteUITests: XCTestCase {
         XCTAssertTrue(app.buttons["Again"].exists || app.buttons["Next"].exists)
     }
 
+    /// Traces a glyph all the way to the finish. A synthesized drag is too
+    /// coarse to complete a corridor reliably, so this drives the same replay
+    /// the screenshot capture uses — which feeds the glyph's own polyline
+    /// through the real engine. If the engine ever stops completing, or the
+    /// Well done card stops appearing, this fails.
+    func testAGlyphCanBeTracedToTheFinish() {
+        let app = XCUIApplication()
+        app.launchArguments = ["--screenshot-mode", "--screenshot", "celebrate"]
+        app.launch()
+        XCTAssertTrue(app.wait(for: .runningForeground, timeout: 30))
+
+        XCTAssertTrue(
+            app.staticTexts["Well done!"].waitForExistence(timeout: 25),
+            "a completed glyph must reach the Well done card"
+        )
+        XCTAssertTrue(app.staticTexts["Star"].exists, "the finish names what was drawn")
+        XCTAssertFalse(app.buttons["Again"].exists, "the trace controls give way to the finish")
+    }
+
     /// Words are the headline feature: a child should reach one in two taps.
     func testWordsAreReachableAndOpen() {
         let app = launch()
