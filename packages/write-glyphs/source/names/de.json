@@ -203,6 +203,120 @@
     },
     "spiral": {
       "name": "Spirale"
+    },
+    "fish": {
+      "name": "Fisch"
+    },
+    "bird": {
+      "name": "Vogel"
+    },
+    "butterfly": {
+      "name": "Schmetterling"
+    },
+    "snake": {
+      "name": "Schlange"
+    },
+    "cat": {
+      "name": "Katze"
+    },
+    "duck": {
+      "name": "Ente"
+    },
+    "ladybird": {
+      "name": "Marienkäfer"
+    },
+    "snail": {
+      "name": "Schnecke"
+    },
+    "car": {
+      "name": "Auto"
+    },
+    "bus": {
+      "name": "Bus"
+    },
+    "boat": {
+      "name": "Boot"
+    },
+    "plane": {
+      "name": "Flugzeug"
+    },
+    "rocket": {
+      "name": "Rakete"
+    },
+    "train": {
+      "name": "Zug"
+    },
+    "balloon": {
+      "name": "Ballon"
+    },
+    "bicycle": {
+      "name": "Fahrrad"
+    },
+    "sun": {
+      "name": "Sonne"
+    },
+    "cloud": {
+      "name": "Wolke"
+    },
+    "tree": {
+      "name": "Baum"
+    },
+    "flower": {
+      "name": "Blume"
+    },
+    "leaf": {
+      "name": "Blatt"
+    },
+    "moon": {
+      "name": "Mond"
+    },
+    "mountain": {
+      "name": "Berg"
+    },
+    "raindrop": {
+      "name": "Regentropfen"
+    },
+    "apple": {
+      "name": "Apfel"
+    },
+    "banana": {
+      "name": "Banane"
+    },
+    "ice-cream": {
+      "name": "Eis"
+    },
+    "cherry": {
+      "name": "Kirsche"
+    },
+    "carrot": {
+      "name": "Karotte"
+    },
+    "cupcake": {
+      "name": "Törtchen"
+    },
+    "bee": {
+      "name": "Biene"
+    },
+    "frog": {
+      "name": "Frosch"
+    },
+    "owl": {
+      "name": "Eule"
+    },
+    "turtle": {
+      "name": "Schildkröte"
+    },
+    "mouse": {
+      "name": "Maus"
+    },
+    "dog": {
+      "name": "Hund"
+    },
+    "whale": {
+      "name": "Wal"
+    },
+    "crab": {
+      "name": "Krabbe"
     }
   }
 }
