@@ -429,7 +429,7 @@ final class TikoCardsTests: XCTestCase {
           {"id":"1","file_name":"cat.png","title":"Cat","folder":"animals","tags":["cat","pet"],"original_url":"https://data.tikocdn.org/uploads/cards/cat.png"}
         ]}
         """.utf8)
-        let items = try JSONDecoder().decode(TikoMediaListResponse.self, from: json).data
+        let items = try JSONDecoder().decode(TikoCards.TikoMediaListResponse.self, from: json).data
         XCTAssertEqual(items.count, 1)
         XCTAssertEqual(items.first?.name, "cat")
         XCTAssertEqual(items.first?.fileName, "cat.png")
@@ -445,7 +445,7 @@ final class TikoCardsTests: XCTestCase {
           {"id":"2","file_name":"dog.png","title":"Dog","folder":"animals","tags":["dog"],"original_url":"https://data.tikocdn.org/uploads/cards/dog.png"}
         ]}
         """.utf8)
-        let items = try JSONDecoder().decode(TikoMediaListResponse.self, from: json).data
+        let items = try JSONDecoder().decode(TikoCards.TikoMediaListResponse.self, from: json).data
         let collection = CardCollection(id: "c", title: "Animals", color: "green", order: 0, cards: [
             CommunicationCard(id: "cat", title: "Cat", speech: "Cat", color: "green"),
             CommunicationCard(id: "dog", title: "Dog", speech: "Dog", color: "green"),
@@ -467,7 +467,7 @@ final class TikoCardsTests: XCTestCase {
           {"id":"1","file_name":"cat.png","title":"Cat","folder":"animals","tags":["cat"],"original_url":"https://data.tikocdn.org/uploads/cards/cat.png"}
         ]}
         """.utf8)
-        let items = try JSONDecoder().decode(TikoMediaListResponse.self, from: json).data
+        let items = try JSONDecoder().decode(TikoCards.TikoMediaListResponse.self, from: json).data
         let collection = CardCollection(id: "c", title: "Animals", color: "green", order: 0, cards: [
             CommunicationCard(id: "cat", title: "Cat", speech: "Cat", imageRef: "custom-ref", color: "green"),
         ])
@@ -481,20 +481,85 @@ final class TikoCardsTests: XCTestCase {
     }
 
     /// A card with no name match still resolves an image via a shared tag word.
-    func testMediaMatcherFallsBackToTagWordMatch() throws {
+    /// Tag-only matching used to be the fallback, and it is what put wrong
+    /// pictures on cards: the library tags loosely, so "water" lands on a toilet
+    /// and "juice" on an apple. A card with no confident title match now keeps
+    /// its text and colour instead.
+    func testMediaMatcherDoesNotMatchOnTagsAlone() throws {
         let json = Data("""
         {"data":[
           {"id":"1","file_name":"young-dog.png","title":"Young Dog","folder":"animals","tags":["puppy","dog"],"original_url":"https://data.tikocdn.org/uploads/cards/young-dog.png"}
         ]}
         """.utf8)
-        let items = try JSONDecoder().decode(TikoMediaListResponse.self, from: json).data
+        let items = try JSONDecoder().decode(TikoCards.TikoMediaListResponse.self, from: json).data
         let collection = CardCollection(id: "c", title: "Animals", color: "green", order: 0, cards: [
             CommunicationCard(id: "puppy", title: "Puppy", speech: "Puppy", color: "green"),
         ])
 
         let result = CardsMediaMatcher.match(collection: collection, mediaItems: items)
 
-        let source = try XCTUnwrap(URL(string: "https://data.tikocdn.org/uploads/cards/young-dog.png"))
-        XCTAssertEqual(result.cardImages["puppy"], CardsMediaMatcher.resizedCDNURL(source))
+        XCTAssertNil(result.cardImages["puppy"])
+    }
+
+    // MARK: - Media matching safety (regression)
+    //
+    // The library is capped and sorted by title, so a category page for
+    // "animals" only ever returns Aardvark…Atlantic Puffin and a card called
+    // "Cat" never saw a candidate. Every default card rendered as a flat colour
+    // block. These pin the matcher that replaced it.
+
+    private func items(_ titles: [String]) throws -> [TikoCards.TikoMediaItem] {
+        let entries = titles.enumerated().map { index, title in
+            let slug = title.lowercased().replacingOccurrences(of: " ", with: "-")
+            return """
+            {"id":"\(index)","file_name":"\(slug).png","title":"\(title)","folder":"f","tags":[],            "original_url":"https://data.tikocdn.org/uploads/\(slug).png"}
+            """
+        }
+        return try JSONDecoder()
+            .decode(TikoCards.TikoMediaListResponse.self, from: Data("{\"data\":[\(entries.joined(separator: ","))]}".utf8))
+            .data
+    }
+
+    func testBestMatchPrefersTheExactWord() throws {
+        let match = CardsMediaMatcher.bestMatch(for: "Cat", in: try items(["Wildcat", "Cat", "Cat Food"]))
+        XCTAssertEqual(match?.title, "Cat")
+    }
+
+    func testBestMatchIgnoresPluralDifference() throws {
+        XCTAssertEqual(CardsMediaMatcher.bestMatch(for: "Pretzels", in: try items(["Pretzel"]))?.title, "Pretzel")
+        XCTAssertEqual(CardsMediaMatcher.bestMatch(for: "Eyes", in: try items(["Eye"]))?.title, "Eye")
+    }
+
+    /// A leading modifier is fine while the card word stays the head noun:
+    /// a Golden Apple is still an apple.
+    func testBestMatchAcceptsAModifierBeforeTheCardWord() throws {
+        XCTAssertEqual(CardsMediaMatcher.bestMatch(for: "Apple", in: try items(["Golden Apple"]))?.title, "Golden Apple")
+        XCTAssertEqual(CardsMediaMatcher.bestMatch(for: "Bird", in: try items(["Indigo Bird"]))?.title, "Indigo Bird")
+    }
+
+    /// The card word as a *modifier* names a different object. Rice Cooker is
+    /// not rice, and on an AAC card the wrong picture is worse than none.
+    func testBestMatchRejectsWhenTheCardWordIsNotTheHeadNoun() throws {
+        XCTAssertNil(CardsMediaMatcher.bestMatch(for: "Rice", in: try items(["Rice Cooker"])))
+        XCTAssertNil(CardsMediaMatcher.bestMatch(for: "Pizza", in: try items(["Pizza Cutter"])))
+        XCTAssertNil(CardsMediaMatcher.bestMatch(for: "Soup", in: try items(["Soup Ladle"])))
+    }
+
+    /// Some modifiers change the referent even in head-noun position.
+    func testBestMatchRejectsMeaningChangingModifiers() throws {
+        XCTAssertNil(CardsMediaMatcher.bestMatch(for: "Pig", in: try items(["Guinea Pig"])))
+        XCTAssertNil(CardsMediaMatcher.bestMatch(for: "Star", in: try items(["Ninja Star"])))
+    }
+
+    /// No confident candidate means no picture, not a nearest guess.
+    func testBestMatchReturnsNilRatherThanAWrongPicture() throws {
+        XCTAssertNil(CardsMediaMatcher.bestMatch(for: "Eat", in: try items(["Volleyball", "Fairy", "Basketball"])))
+        XCTAssertNil(CardsMediaMatcher.bestMatch(for: "Red", in: try items(["Tennis Ball", "Little Red Riding Hood"])))
+    }
+
+    func testBestMatchSkipsItemsAlreadyUsedByAnotherCard() throws {
+        let pool = try items(["Cat"])
+        let used = Set([pool[0].originalURL])
+        XCTAssertNil(CardsMediaMatcher.bestMatch(for: "Cat", in: pool, excluding: used))
     }
 }
