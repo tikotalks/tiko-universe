@@ -121,18 +121,37 @@ public class TraceSession internal constructor(
     /**
      * Pen down. Rejected unless it lands near the start of the expected stroke —
      * a child who begins a `1` at the bottom is not writing a `1`.
+     *
+     * Once there is ink, putting the pen back down **where the ink stopped** is
+     * also accepted. Children lift constantly: to reposition their hand, because
+     * the stroke is longer than their reach, or simply because they paused. If
+     * only the stroke's start were accepted, every lift would silently strand
+     * them — the pen would be down but nothing would move.
      */
     public fun begin(x: Double, y: Double): StrokeEvent {
         if (finished) return event(StrokeTag.IGNORED)
 
         val start = current.polyline.pointAt(0.0)
-        val distance = hypot(x - start[0], y - start[1])
-        if (distance > startTolerance()) {
-            return event(StrokeTag.STROKE_BEGIN_WRONG_PLACE)
+        if (hypot(x - start[0], y - start[1]) <= startTolerance()) {
+            penDown = true
+            cursor = 0.0
+            // Starting over from the top of a stroke is always allowed, and
+            // rewinds the ink so the child sees a clean slate for it.
+            frontier = 0.0
+            keyPointsCrossed = 0
+            return event(StrokeTag.STROKE_BEGIN_OK, inkS = 0.0)
         }
-        penDown = true
-        cursor = 0.0
-        return event(StrokeTag.STROKE_BEGIN_OK, inkS = frontier)
+
+        if (frontier > 0.0) {
+            val resume = current.polyline.pointAt(frontier)
+            if (hypot(x - resume[0], y - resume[1]) <= startTolerance()) {
+                penDown = true
+                cursor = frontier
+                return event(StrokeTag.STROKE_BEGIN_OK, inkS = frontier)
+            }
+        }
+
+        return event(StrokeTag.STROKE_BEGIN_WRONG_PLACE)
     }
 
     /**

@@ -109,10 +109,16 @@ public class GlyphPack internal constructor(
     public val viewBoxHeight: Double,
     public val baseline: Double?,
     private val glyphList: List<Glyph>,
+    private val groupList: List<GroupSpec>,
 ) {
     public val glyphCount: Int get() = glyphList.size
     public fun glyphAt(index: Int): Glyph = glyphList[index]
     public fun glyph(id: String): Glyph? = glyphList.firstOrNull { it.id == id }
+
+    /** Groups in authored order. Presentation order is content, not a client guess. */
+    public val groupCount: Int get() = groupList.size
+    public fun groupIdAt(index: Int): String = groupList[index].id
+    public fun groupSortOrderAt(index: Int): Int = groupList[index].sortOrder
 }
 
 internal val packJson: Json = Json { ignoreUnknownKeys = true }
@@ -155,5 +161,6 @@ internal fun decodePack(json: String): GlyphPack {
         viewBoxHeight = spec.viewBox[3],
         baseline = spec.guides?.baseline,
         glyphList = glyphs,
+        groupList = spec.groups.sortedBy { it.sortOrder },
     )
 }

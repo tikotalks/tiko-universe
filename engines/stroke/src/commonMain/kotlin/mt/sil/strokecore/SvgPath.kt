@@ -24,8 +24,13 @@ import kotlin.math.sqrt
  */
 internal object SvgPath {
 
-    /** Maximum deviation between the true curve and its polyline, in viewBox units. */
-    const val FLATTEN_TOLERANCE: Double = 0.25
+    /**
+     * Maximum deviation between the true curve and its polyline, in viewBox
+     * units. Small because a 100-unit viewBox fills a phone screen: at 0.25 the
+     * facets on a bowl were visible as flat spots, and a letter a child traces
+     * should not look like a polygon.
+     */
+    const val FLATTEN_TOLERANCE: Double = 0.06
 
     private val COMMANDS = "MmLlHhVvCcSsQqTtAaZz".toSet()
 

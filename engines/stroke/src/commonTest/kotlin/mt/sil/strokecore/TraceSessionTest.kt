@@ -231,6 +231,57 @@ class TraceSessionTest {
     }
 
     @Test
+    fun liftingAndPuttingThePenBackDownContinuesTheStroke() {
+        // Children lift constantly — to move their hand, or because the stroke is
+        // longer than their reach. Landing back where the ink stopped must carry
+        // on, not strand them with a pen that draws nothing.
+        val g = glyph("line")
+        val session = StrokeCore.createSession(g, TraceSettings.forgiving)
+        session.begin(10.0, 50.0)
+        drag(session, 50.0)
+        val reached = session.currentProgress
+        assertTrue(reached > 0.4, "should have advanced, got $reached")
+
+        session.lift()
+
+        // Down again at the ink tip.
+        assertEquals(StrokeTag.STROKE_BEGIN_OK, session.begin(50.0, 50.0).tag)
+        assertEquals(reached, session.currentProgress, "resuming must not rewind")
+
+        // And carrying on from there completes it.
+        var x = 50.0
+        var tag = StrokeTag.IGNORED
+        var t = 300L
+        while (x < 90.0) {
+            x = minOf(90.0, x + 4.0); t += 8
+            tag = session.onPoint(x, 50.0, t).tag
+        }
+        assertEquals(StrokeTag.GLYPH_COMPLETE, tag)
+    }
+
+    @Test
+    fun puttingThePenDownSomewhereElseEntirelyIsStillRefused() {
+        val g = glyph("line")
+        val session = StrokeCore.createSession(g, TraceSettings.forgiving)
+        session.begin(10.0, 50.0)
+        drag(session, 40.0)
+        session.lift()
+        // Far ahead of the ink: not a resume, and not the start.
+        assertEquals(StrokeTag.STROKE_BEGIN_WRONG_PLACE, session.begin(88.0, 50.0).tag)
+    }
+
+    @Test
+    fun startingOverFromTheTopRewindsTheInk() {
+        val g = glyph("line")
+        val session = StrokeCore.createSession(g, TraceSettings.forgiving)
+        session.begin(10.0, 50.0)
+        drag(session, 60.0)
+        session.lift()
+        assertEquals(StrokeTag.STROKE_BEGIN_OK, session.begin(10.0, 50.0).tag)
+        assertEquals(0.0, session.currentProgress, "beginning again should clear the ink")
+    }
+
+    @Test
     fun authoredKeyPointsWinOverDerivedOnes() {
         val json = """
         {"packId":"kp","packSchemaVersion":1,"packVersion":1,"style":"shape",
