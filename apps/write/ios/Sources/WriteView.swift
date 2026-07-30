@@ -4,7 +4,7 @@ import TikoKit
 
 /// Categories, then the glyphs inside one, then one glyph at a time.
 ///
-/// Three shallow levels rather than one long scroll: with 113 glyphs a single
+/// Three shallow levels rather than one long scroll: with 165 glyphs a single
 /// grid buries everything below the fold, and the design principles ask for few
 /// choices per screen and no scroll-dependent child interaction.
 struct WriteView: View {
@@ -30,6 +30,8 @@ struct WriteView: View {
         switch scene {
         case "words":
             showingWords = true
+        case "cursive":
+            category = store.groups.first { $0.id.hasSuffix("/cursive-lowercase") }
         case "trace", "celebrate":
             category = store.groups.first { $0.id.hasSuffix("/shapes") }
             if let group = category, let id = group.glyphIDs.first(where: { $0 == "star" })
@@ -288,6 +290,9 @@ private struct TraceScreen: View {
                 .padding(.bottom, 18)
             }
         }
+        .onAppear {
+            if TikoScreenshotMode.scene == "celebrate" { model.replayForScreenshot() }
+        }
     }
 }
 
@@ -309,7 +314,12 @@ private struct WellDoneCard: View {
 
     var body: some View {
         ZStack {
-            Color.black.opacity(0.18).ignoresSafeArea()
+            // Blurred rather than merely dimmed: the finished ink sits directly
+            // behind, and its edges poking out past the card read as a glitch.
+            Rectangle()
+                .fill(.ultraThinMaterial)
+                .overlay(Color.black.opacity(0.1))
+                .ignoresSafeArea()
 
             VStack(spacing: 18) {
                 GlyphShape(glyph: glyph, viewBox: viewBox)

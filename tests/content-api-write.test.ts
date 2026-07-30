@@ -91,8 +91,14 @@ describe('GET /v1/write/content', () => {
 
     expect(response.status).toBe(200)
     expect(body.success).toBe(true)
+    // Derived from the authored source, so adding a pack fails here when it is
+    // not seeded rather than silently serving one fewer than the app bundles.
+    const authored = (await readdir('packages/write-glyphs/source'))
+      .filter((f) => f.endsWith('.json'))
+      .map((f) => f.replace(/\.json$/, ''))
+      .sort()
     const ids = body.data.packs.map((p) => p.packId).sort()
-    expect(ids).toEqual(['numbers-latin', 'print-latin', 'shapes'])
+    expect(ids).toEqual(authored)
   })
 
   it('returns the authored stroke geometry unchanged', async () => {

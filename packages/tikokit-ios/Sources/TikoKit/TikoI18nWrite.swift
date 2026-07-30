@@ -43,6 +43,7 @@ extension TikoLocalTranslations {
         "write.settings.leftHanded": "Left-handed",
         "write.settings.pencilOnly": "Apple Pencil only",
         "write.words.remove": "Remove",
+        "write.group.cursive-uppercase": "Cursive capitals",
         "write.action.again": "Again",
         "write.action.next": "Next",
     ]
@@ -84,6 +85,7 @@ extension TikoLocalTranslations {
         "write.settings.leftHanded": "Linkshandig",
         "write.settings.pencilOnly": "Alleen Apple Pencil",
         "write.words.remove": "Verwijderen",
+        "write.group.cursive-uppercase": "Schrijf-hoofdletters",
         "write.action.again": "Nog een keer",
         "write.action.next": "Verder",
     ]
@@ -125,6 +127,7 @@ extension TikoLocalTranslations {
         "write.settings.leftHanded": "Gaucher",
         "write.settings.pencilOnly": "Apple Pencil seulement",
         "write.words.remove": "Retirer",
+        "write.group.cursive-uppercase": "Capitales cursives",
         "write.action.again": "Encore",
         "write.action.next": "Suivant",
     ]
@@ -166,6 +169,7 @@ extension TikoLocalTranslations {
         "write.settings.leftHanded": "Zurdo",
         "write.settings.pencilOnly": "Solo Apple Pencil",
         "write.words.remove": "Quitar",
+        "write.group.cursive-uppercase": "Mayúsculas ligadas",
         "write.action.again": "Otra vez",
         "write.action.next": "Siguiente",
     ]
@@ -207,6 +211,7 @@ extension TikoLocalTranslations {
         "write.settings.leftHanded": "Linkshändig",
         "write.settings.pencilOnly": "Nur Apple Pencil",
         "write.words.remove": "Entfernen",
+        "write.group.cursive-uppercase": "Schreibschrift groß",
         "write.action.again": "Nochmal",
         "write.action.next": "Weiter",
     ]
@@ -248,6 +253,7 @@ extension TikoLocalTranslations {
         "write.settings.leftHanded": "Xellugi",
         "write.settings.pencilOnly": "Apple Pencil biss",
         "write.words.remove": "Neħħi",
+        "write.group.cursive-uppercase": "Kapitali miktuba",
         "write.action.again": "Erġa'",
         "write.action.next": "Li jmiss",
     ]

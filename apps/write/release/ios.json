@@ -111,8 +111,26 @@
         "waitSeconds": 8
       },
       {
+        "id": "cursive-light",
+        "filename": "03-{deviceSlug}-cursive-en-light.png",
+        "launchArgs": [
+          "--screenshot",
+          "cursive"
+        ],
+        "locales": [
+          {
+            "id": "en-US",
+            "appLanguage": "en"
+          }
+        ],
+        "colorModes": [
+          "light"
+        ],
+        "waitSeconds": 8
+      },
+      {
         "id": "trace-light",
-        "filename": "03-{deviceSlug}-trace-en-light.png",
+        "filename": "04-{deviceSlug}-trace-en-light.png",
         "launchArgs": [
           "--screenshot",
           "trace"
@@ -130,7 +148,7 @@
       },
       {
         "id": "celebrate-light",
-        "filename": "04-{deviceSlug}-celebrate-en-light.png",
+        "filename": "05-{deviceSlug}-celebrate-en-light.png",
         "launchArgs": [
           "--screenshot",
           "celebrate"
@@ -144,11 +162,11 @@
         "colorModes": [
           "light"
         ],
-        "waitSeconds": 8
+        "waitSeconds": 14
       },
       {
         "id": "home-dark",
-        "filename": "05-{deviceSlug}-home-en-dark.png",
+        "filename": "06-{deviceSlug}-home-en-dark.png",
         "launchArgs": [
           "--screenshot",
           "home"
@@ -166,7 +184,7 @@
       },
       {
         "id": "trace-dark",
-        "filename": "06-{deviceSlug}-trace-en-dark.png",
+        "filename": "07-{deviceSlug}-trace-en-dark.png",
         "launchArgs": [
           "--screenshot",
           "trace"

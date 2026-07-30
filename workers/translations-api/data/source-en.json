@@ -631,6 +631,7 @@
       "write.settings.leftHanded": "Left-handed",
       "write.settings.pencilOnly": "Apple Pencil only",
       "write.words.remove": "Remove",
+      "write.group.cursive-uppercase": "Cursive capitals",
       "write.action.again": "Again",
       "write.action.next": "Next"
     }

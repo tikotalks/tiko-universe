@@ -83,6 +83,34 @@ final class TraceViewModel: ObservableObject {
     /// Accuracy for Parent Mode. Never shown to the child.
     var attemptResult: AttemptResult? { session.result() }
 
+    /// Traces the glyph perfectly by replaying its own polyline, so the capture
+    /// of the celebration screen reaches that state through the engine rather
+    /// than by setting `isComplete` behind its back. If a scene ever stops
+    /// completing, the shot goes wrong and the bug is real.
+    func replayForScreenshot() {
+        guard TikoScreenshotMode.isActive else { return }
+        // Straight runs flatten to just their end vertices, so a vertex-by-vertex
+        // replay would jump further than the engine lets one sample advance.
+        // Step along at a finger's sampling density instead.
+        let step: CGFloat = 1.5
+        var t: TimeInterval = 0
+        for stroke in strokePoints {
+            guard var previous = stroke.first else { continue }
+            begin(at: previous)
+            for vertex in stroke.dropFirst() {
+                let dx = vertex.x - previous.x, dy = vertex.y - previous.y
+                let steps = max(1, Int((dx * dx + dy * dy).squareRoot() / step))
+                for i in 1...steps {
+                    let f = CGFloat(i) / CGFloat(steps)
+                    t += 0.008
+                    move(to: CGPoint(x: previous.x + dx * f, y: previous.y + dy * f), at: t)
+                }
+                previous = vertex
+            }
+            lift()
+        }
+    }
+
     private func apply(_ event: WriteEngine.Event) {
         switch event.tag {
         case .progress, .beginOK:
