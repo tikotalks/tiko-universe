@@ -473,6 +473,31 @@ final class TikoTalkTests: XCTestCase {
         XCTAssertEqual(store.stripDisplay, "More ___ please")
         XCTAssertTrue(store.canSpeak)
     }
+
+    // MARK: - Bundled pack artwork (regression)
+
+    /// The Tiko Media URLs lived in `packages/talk-packs/data` while the copy
+    /// the app actually bundles had none, so every tile in the word cloud
+    /// rendered as bare text. Nothing kept the two in step; this fails if the
+    /// bundled pack goes back to being imageless.
+    func testBundledEnglishPackCarriesMediaImages() throws {
+        let response = try XCTUnwrap(TalkLocalBoard.startResponse(locale: "en"))
+        let words = response.initialWords
+        XCTAssertFalse(words.isEmpty, "the English pack should ship with the app")
+
+        let withImages = words.filter { ($0.image?.isEmpty == false) }
+        XCTAssertGreaterThan(
+            withImages.count, 50,
+            "expected Tiko Media artwork on the pack; run `node tools/enrich-talk-media.mjs` "
+            + "then `node tools/generate-talk-packs.mjs`"
+        )
+        for word in withImages {
+            XCTAssertTrue(
+                word.image?.hasPrefix("https://data.tikocdn.org/") == true,
+                "\(word.id) should point at Tiko Media, got \(word.image ?? "nil")"
+            )
+        }
+    }
 }
 
 private final class FakeTalkIdentityProvider: TalkIdentityProviding, @unchecked Sendable {
@@ -538,4 +563,5 @@ private final class FakeTalkAPIClient: TalkSentenceAPI, @unchecked Sendable {
         deletedPhraseIds.append(phraseId)
         return TalkDeleteSentencePhraseResponse(deleted: true)
     }
+
 }
