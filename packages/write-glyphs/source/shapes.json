@@ -1,0 +1,136 @@
+{
+  "packId": "shapes",
+  "packSchemaVersion": 1,
+  "packVersion": 1,
+  "style": "shape",
+  "viewBox": [0, 0, 100, 100],
+  "groups": [
+    { "id": "lines", "sortOrder": 1 },
+    { "id": "shapes", "sortOrder": 2 }
+  ],
+  "glyphs": [
+    {
+      "id": "vertical-line",
+      "char": "vertical-line",
+      "groupId": "lines",
+      "sortOrder": 1,
+      "strokes": [{ "d": "M50 15 L50 85" }]
+    },
+    {
+      "id": "horizontal-line",
+      "char": "horizontal-line",
+      "groupId": "lines",
+      "sortOrder": 2,
+      "strokes": [{ "d": "M15 50 L85 50" }]
+    },
+    {
+      "id": "diagonal-line",
+      "char": "diagonal-line",
+      "groupId": "lines",
+      "sortOrder": 3,
+      "strokes": [{ "d": "M20 20 L80 80", "widthScale": 1.15 }]
+    },
+    {
+      "id": "cross",
+      "char": "cross",
+      "groupId": "lines",
+      "sortOrder": 4,
+      "strokes": [
+        { "d": "M50 15 L50 85" },
+        { "d": "M15 50 L85 50" }
+      ]
+    },
+    {
+      "id": "cross-diagonal",
+      "char": "cross-diagonal",
+      "groupId": "lines",
+      "sortOrder": 5,
+      "strokes": [
+        { "d": "M20 20 L80 80", "widthScale": 1.15 },
+        { "d": "M80 20 L20 80", "widthScale": 1.15 }
+      ]
+    },
+    {
+      "id": "zigzag",
+      "char": "zigzag",
+      "groupId": "lines",
+      "sortOrder": 6,
+      "strokes": [{ "d": "M15 30 L38 70 L61 30 L84 70" }]
+    },
+    {
+      "id": "circle",
+      "char": "circle",
+      "groupId": "shapes",
+      "sortOrder": 1,
+      "strokes": [{ "d": "M50 15 A35 35 0 1 0 50 85 A35 35 0 1 0 50 15" }]
+    },
+    {
+      "id": "square",
+      "char": "square",
+      "groupId": "shapes",
+      "sortOrder": 2,
+      "strokes": [
+        {
+          "d": "M20 20 L80 20 L80 80 L20 80 L20 20",
+          "keyPoints": [0.25, 0.5, 0.75]
+        }
+      ]
+    },
+    {
+      "id": "triangle",
+      "char": "triangle",
+      "groupId": "shapes",
+      "sortOrder": 3,
+      "strokes": [
+        {
+          "d": "M50 18 L20 78 L80 78 L50 18",
+          "keyPoints": [0.3455, 0.6545]
+        }
+      ]
+    },
+    {
+      "id": "diamond",
+      "char": "diamond",
+      "groupId": "shapes",
+      "sortOrder": 4,
+      "strokes": [
+        {
+          "d": "M50 18 L82 50 L50 82 L18 50 L50 18",
+          "keyPoints": [0.25, 0.5, 0.75]
+        }
+      ]
+    },
+    {
+      "id": "heart",
+      "char": "heart",
+      "groupId": "shapes",
+      "sortOrder": 5,
+      "strokes": [
+        { "d": "M50 32 C40 15 12 22 15 45 C18 62 38 74 50 88" },
+        { "d": "M50 32 C60 15 88 22 85 45 C82 62 62 74 50 88" }
+      ]
+    },
+    {
+      "id": "star",
+      "char": "star",
+      "groupId": "shapes",
+      "sortOrder": 6,
+      "strokes": [
+        {
+          "d": "M50 12 L61 44 L95 44 L67 64 L78 96 L50 76 L22 96 L33 64 L5 44 L39 44 L50 12"
+        }
+      ]
+    },
+    {
+      "id": "spiral",
+      "char": "spiral",
+      "groupId": "shapes",
+      "sortOrder": 7,
+      "strokes": [
+        {
+          "d": "M56 50 A9 9 0 1 1 38 50 A12 12 0 1 1 62 50 A15 15 0 1 1 32 50 A18 18 0 1 1 68 50 A21 21 0 1 1 26 50"
+        }
+      ]
+    }
+  ]
+}

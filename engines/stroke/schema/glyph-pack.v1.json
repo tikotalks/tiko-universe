@@ -1,0 +1,130 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://tiko.mt/schema/glyph-pack.v1.json",
+  "title": "StrokeCore glyph pack",
+  "description": "An ordered set of traceable glyphs. Geometry only: no spoken text, no translations, no curriculum. Spoken names, phonics and example words live in translations so a pack is not multiplied by language.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["packId", "packSchemaVersion", "packVersion", "style", "viewBox", "glyphs"],
+  "properties": {
+    "packId": {
+      "description": "Stable identifier, kebab-case. Referenced by attempt records, so it must not change once shipped.",
+      "type": "string",
+      "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"
+    },
+    "packSchemaVersion": {
+      "description": "Version of this schema the pack targets. StrokeCore refuses a pack whose schema version it does not know. Version 2 adds cursive join anchors.",
+      "type": "integer",
+      "const": 1
+    },
+    "packVersion": {
+      "description": "Content revision, bumped on any geometry change. Recorded in attempt records so a replay against a re-authored glyph is identifiable.",
+      "type": "integer",
+      "minimum": 1
+    },
+    "style": {
+      "description": "Which handwriting convention this pack follows. 'shape' and 'number' packs are not handwriting styles but share the format.",
+      "enum": ["print", "cursive", "shape", "number"]
+    },
+    "viewBox": {
+      "description": "[minX, minY, width, height]. All stroke coordinates and guide values are in this space; the client scales it to the screen. Every glyph in a pack shares one viewBox so glyphs are mutually consistent in size.",
+      "type": "array",
+      "items": { "type": "number" },
+      "minItems": 4,
+      "maxItems": 4
+    },
+    "guides": {
+      "description": "Horizontal writing guides in viewBox y-coordinates, drawn behind the glyph. Omit for shape packs, which have no baseline.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "ascender": { "type": "number" },
+        "capHeight": { "type": "number" },
+        "xHeight": { "type": "number" },
+        "baseline": { "type": "number" },
+        "descender": { "type": "number" }
+      },
+      "required": ["baseline"]
+    },
+    "groups": {
+      "description": "Presentation grouping for the glyph grid. A glyph's groupId must appear here.",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "sortOrder"],
+        "properties": {
+          "id": { "type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$" },
+          "sortOrder": { "type": "integer" }
+        }
+      }
+    },
+    "glyphs": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/glyph" }
+    }
+  },
+  "$defs": {
+    "glyph": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "char", "groupId", "sortOrder", "strokes"],
+      "properties": {
+        "id": {
+          "description": "Stable within the pack. Recorded in attempt records, so it must not change once shipped.",
+          "type": "string",
+          "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"
+        },
+        "char": {
+          "description": "The character or short label this glyph represents. Used as the tile face and as the translation lookup key. Not spoken directly — the spoken form comes from translations.",
+          "type": "string",
+          "minLength": 1
+        },
+        "groupId": {
+          "type": "string",
+          "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"
+        },
+        "sortOrder": { "type": "integer" },
+        "strokes": {
+          "description": "Ordered. Index 0 is drawn first. Order is pedagogical content, not an implementation detail.",
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/stroke" }
+        },
+        "strokeOrderStrict": {
+          "description": "Whether strokes must be traced in the listed order. Defaults to true; set false for glyphs where order genuinely does not matter.",
+          "type": "boolean",
+          "default": true
+        },
+        "joins": {
+          "description": "Reserved for packSchemaVersion 2 (cursive entry/exit anchors). Must be null in version 1.",
+          "type": "null"
+        }
+      }
+    },
+    "stroke": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["d"],
+      "properties": {
+        "d": {
+          "description": "SVG path data. The direction of travel is the direction of the path — reversing the path reverses what the child is taught. Supported commands: M L H V C S Q T A Z, absolute and relative. A path must contain exactly one subpath: one stroke is one continuous pen-down movement.",
+          "type": "string",
+          "minLength": 2
+        },
+        "keyPoints": {
+          "description": "Hand-placed key points as normalized arc-length positions in [0,1], ascending. Omit to let StrokeCore generate them from curvature and spacing. 0 and 1 are implicit and need not be listed.",
+          "type": "array",
+          "items": { "type": "number", "minimum": 0, "maximum": 1 }
+        },
+        "widthScale": {
+          "description": "Multiplies the tolerance corridor width for this stroke. Use above 1 for a stroke that is legitimately harder to be precise about, such as a long diagonal.",
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "default": 1
+        }
+      }
+    }
+  }
+}

@@ -51,6 +51,12 @@
       ],
       "@tiko/ui/*": [
         "packages/ui/src/*"
+      ],
+      "@tiko/write-glyphs": [
+        "packages/write-glyphs/src/index.ts"
+      ],
+      "@tiko/write-glyphs/*": [
+        "packages/write-glyphs/src/*"
       ]
     },
     "types": [

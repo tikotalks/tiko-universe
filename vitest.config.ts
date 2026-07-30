@@ -17,7 +17,9 @@ export default defineConfig({
       '@tiko/testing': fileURLToPath(new URL('./packages/testing/src/index.ts', import.meta.url)),
       '@tiko/testing/': fileURLToPath(new URL('./packages/testing/src/', import.meta.url)) + '/',
       '@tiko/ui': fileURLToPath(new URL('./packages/ui/src/index.ts', import.meta.url)),
-      '@tiko/ui/': fileURLToPath(new URL('./packages/ui/src/', import.meta.url)) + '/'
+      '@tiko/ui/': fileURLToPath(new URL('./packages/ui/src/', import.meta.url)) + '/',
+      '@tiko/write-glyphs': fileURLToPath(new URL('./packages/write-glyphs/src/index.ts', import.meta.url)),
+      '@tiko/write-glyphs/': fileURLToPath(new URL('./packages/write-glyphs/src/', import.meta.url)) + '/'
     }
   },
   test: {
