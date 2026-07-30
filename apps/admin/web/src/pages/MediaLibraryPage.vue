@@ -2,7 +2,7 @@
 import { computed, onMounted, ref } from 'vue'
 import { useBemm } from 'bemm'
 import { Button, Icon, useConfirm } from '@sil/ui'
-import { useAdminMediaLibrary } from '../composables/useAdminMediaLibrary'
+import { EMPTY_MEDIA_FACETS, useAdminMediaLibrary } from '../composables/useAdminMediaLibrary'
 import { useAdminAuth } from '../composables/useAdminAuth'
 import { useImageGeneration } from '../composables/useImageGeneration'
 import { useToast } from '../composables/useToast'
@@ -36,7 +36,7 @@ const type = ref('')
 const category = ref('')
 const tag = ref('')
 const state = ref<MediaState>('')
-const facets = ref<MediaFacets>({ categories: [], tags: [], types: [] })
+const facets = ref<MediaFacets>(EMPTY_MEDIA_FACETS)
 const selectedFile = ref<File | null>(null)
 const selectedThumbnail = ref<File | null>(null)
 const uploadResult = ref<string | null>(null)
@@ -431,6 +431,8 @@ async function onSaveAsNew() {
       :categories="facets.categories"
       :tags="facets.tags"
       :types="facets.types"
+      :category-meta="facets.meta.categories"
+      :tag-meta="facets.meta.tags"
       show-type
       show-state
       :loading="loading"
