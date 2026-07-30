@@ -23,6 +23,24 @@ struct WriteView: View {
         var id: String { "\(packId)/\(glyphID)" }
     }
 
+    /// Screenshot-mode scenes, so store captures are deterministic rather than
+    /// whatever state a capture run happens to land in.
+    private func applyScreenshotScene() {
+        guard TikoScreenshotMode.isActive, let scene = TikoScreenshotMode.scene else { return }
+        switch scene {
+        case "words":
+            showingWords = true
+        case "trace", "celebrate":
+            category = store.groups.first { $0.id.hasSuffix("/shapes") }
+            if let group = category, let id = group.glyphIDs.first(where: { $0 == "star" })
+                ?? group.glyphIDs.first {
+                selection = Selection(packId: group.packId, glyphID: id)
+            }
+        default:
+            break
+        }
+    }
+
     var body: some View {
         TikoAppShell(
             appConfig: WriteAppConfig.app,
@@ -63,6 +81,10 @@ struct WriteView: View {
                 }
             }
         )
+        .onAppear {
+            wordStore.refresh(language: languageCode)
+            applyScreenshotScene()
+        }
     }
 
     private func goBack() {

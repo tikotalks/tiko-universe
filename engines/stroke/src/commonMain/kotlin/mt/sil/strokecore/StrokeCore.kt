@@ -46,7 +46,13 @@ public object StrokeCore {
      * Decodes a glyph pack. Throws [PackDecodeError] on malformed data or an
      * unknown schema version — a bad pack fails at load rather than tracing
      * something unintended.
+     *
+     * Annotated [Throws] so the failure crosses the Objective-C bridge as an
+     * error Swift can catch. Without it Kotlin/Native treats an unchecked
+     * exception as unrecoverable and the app terminates, which would turn a
+     * malformed pack served from D1 into a crash instead of a fallback.
      */
+    @Throws(PackDecodeError::class)
     public fun loadPack(json: String): GlyphPack = decodePack(json)
 
     /**
@@ -66,6 +72,7 @@ public object StrokeCore {
      * asked to write their name should not be handed a name with a letter
      * missing.
      */
+    @Throws(PackDecodeError::class)
     public fun createWordSession(
         pack: GlyphPack,
         glyphIds: List<String>,

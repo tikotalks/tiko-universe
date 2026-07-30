@@ -1,0 +1,124 @@
+{
+  "app": "write",
+  "name": "Write",
+  "scheme": "TikoWrite",
+  "project": "apps/write/ios/TikoWrite.xcodeproj",
+  "iosDir": "apps/write/ios",
+  "bundleId": "mt.tiko.write",
+  "appleId": null,
+  "appStoreId": null,
+  "appStoreUrl": null,
+  "validation": {
+    "script": "apps/write/ios/scripts/validate-local.sh"
+  },
+  "archive": {
+    "configuration": "Release",
+    "archivePath": "artifacts/archives/write/TikoWrite.xcarchive",
+    "exportPath": "artifacts/archives/write/export",
+    "exportOptionsPlist": "release/ExportOptions.plist",
+    "allowProvisioningUpdates": true
+  },
+  "upload": {
+    "ipaPath": "artifacts/archives/write/export/TikoWrite.ipa",
+    "deliverDir": "artifacts/app-store/write",
+    "apiKeyEnv": "APP_STORE_CONNECT_KEY_ID",
+    "apiIssuerEnv": "APP_STORE_CONNECT_ISSUER_ID"
+  },
+  "screenshots": {
+    "outputDir": "/Users/silvandiepen/Projects/Tiko/apps/write",
+    "configuration": "Debug",
+    "eraseBeforeCapture": false,
+    "defaultWaitSeconds": 8,
+    "baseLaunchArgs": [
+      "--screenshot-mode"
+    ],
+    "statusBar": {
+      "time": "9:41",
+      "wifiBars": 3,
+      "cellularBars": 4,
+      "batteryState": "charged",
+      "batteryLevel": 100
+    },
+    "devices": [
+      {
+        "name": "iPhone 17 Pro Max",
+        "os": "26.2",
+        "displayType": "APP_IPHONE_67",
+        "createIfMissing": true
+      },
+      {
+        "name": "iPad Pro 13-inch (M5)",
+        "os": "26.2",
+        "displayType": "APP_IPAD_PRO_13",
+        "createIfMissing": true
+      }
+    ],
+    "locales": [
+      {
+        "id": "en-US",
+        "appLanguage": "en"
+      }
+    ],
+    "colorModes": [
+      {
+        "id": "light",
+        "userDefaults": {
+          "tiko.colorMode": "light"
+        }
+      },
+      {
+        "id": "dark",
+        "userDefaults": {
+          "tiko.colorMode": "dark"
+        }
+      }
+    ],
+    "scenarios": [
+      {
+        "id": "home-light",
+        "filename": "01-{device}-home-light.png",
+        "launchArgs": [
+          "--screenshot",
+          "home"
+        ],
+        "colorMode": "light"
+      },
+      {
+        "id": "words-light",
+        "filename": "02-{device}-words-light.png",
+        "launchArgs": [
+          "--screenshot",
+          "words"
+        ],
+        "colorMode": "light"
+      },
+      {
+        "id": "trace-light",
+        "filename": "03-{device}-trace-light.png",
+        "launchArgs": [
+          "--screenshot",
+          "trace"
+        ],
+        "colorMode": "light"
+      },
+      {
+        "id": "celebrate-light",
+        "filename": "04-{device}-celebrate-light.png",
+        "launchArgs": [
+          "--screenshot",
+          "celebrate"
+        ],
+        "colorMode": "light"
+      },
+      {
+        "id": "home-dark",
+        "filename": "05-{device}-home-dark.png",
+        "launchArgs": [
+          "--screenshot",
+          "home"
+        ],
+        "colorMode": "dark"
+      }
+    ]
+  }
+}

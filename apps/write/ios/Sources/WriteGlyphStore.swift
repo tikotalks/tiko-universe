@@ -81,10 +81,11 @@ final class WriteGlyphStore: ObservableObject {
         loadError = failures.isEmpty ? nil : failures.joined(separator: "; ")
     }
 
-    /// Wraps the engine's throwing decode, which arrives as an NSException-backed
-    /// error across the Kotlin/Native bridge.
+    /// The engine's decode, which now bridges as a real Swift error thanks to
+    /// @Throws on the Kotlin side — a malformed pack is caught and reported
+    /// rather than terminating the app.
     private func engineLoad(_ json: String) throws -> GlyphPack {
-        StrokeCore.shared.loadPack(json: json)
+        try StrokeCore.shared.loadPack(json: json)
     }
 
     func glyph(packId: String, glyphID: String) -> Glyph? {
