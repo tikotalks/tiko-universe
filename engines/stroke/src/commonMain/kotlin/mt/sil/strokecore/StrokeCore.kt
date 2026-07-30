@@ -57,4 +57,24 @@ public object StrokeCore {
      */
     public fun createSession(glyph: Glyph, settings: TraceSettings, attempt: Int = 1): TraceSession =
         TraceSession(glyph, settings, attempt)
+
+    /**
+     * Starts a word: several glyphs traced in order along one line.
+     *
+     * [glyphIds] are resolved against [pack]; an id the pack does not hold is a
+     * [PackDecodeError] rather than a silently shortened word, because a child
+     * asked to write their name should not be handed a name with a letter
+     * missing.
+     */
+    public fun createWordSession(
+        pack: GlyphPack,
+        glyphIds: List<String>,
+        settings: TraceSettings,
+    ): WordSession {
+        if (glyphIds.isEmpty()) throw PackDecodeError("a word needs at least one letter")
+        val glyphs = glyphIds.map { id ->
+            pack.glyph(id) ?: throw PackDecodeError("pack '${pack.packId}' has no glyph '$id'")
+        }
+        return WordSession(glyphs, settings, pack.viewBoxWidth)
+    }
 }
