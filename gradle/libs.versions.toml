@@ -1,0 +1,16 @@
+# Version catalog for the Kotlin side of the monorepo.
+#
+# UNVERIFIED: these versions were written without a JDK available, so they have
+# not been resolved. Confirm against current releases on first `./gradlew build`
+# and bump here — this file is the single place to change them.
+
+[versions]
+kotlin = "2.2.0"
+kotlinxSerialization = "1.8.0"
+
+[libraries]
+kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerialization" }
+
+[plugins]
+kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
+kotlinSerialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
