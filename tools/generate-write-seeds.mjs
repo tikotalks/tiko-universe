@@ -73,6 +73,16 @@ function nameEntry(locale, pack, glyph) {
   return locale.letters?.[glyph.char.toLowerCase()]
 }
 
+// `en` is the source locale, so English content belongs on the base row rather
+// than in a translation: getLocalizedContentItems in content-api deliberately
+// skips the translation query when the requested language is English, so an `en`
+// translation row would be dead data that never resolves.
+const SOURCE_LOCALE = 'en'
+const sourceNames = locales.find((l) => l.locale === SOURCE_LOCALE)
+if (locales.length > 0 && !sourceNames) {
+  fail(`no ${SOURCE_LOCALE}.json in ${NAMES_DIR} — the source locale must exist`)
+}
+
 // ---------------------------------------------------------------------------
 // Emit
 // ---------------------------------------------------------------------------
@@ -135,12 +145,15 @@ packs.forEach((pack, packIndex) => {
 
   for (const glyph of pack.glyphs) {
     const glyphRowId = `write_${pack.packId}_${glyph.id}`
+    const source = sourceNames ? nameEntry(sourceNames, pack, glyph) : undefined
     const glyphMeta = JSON.stringify({
       glyphId: glyph.id,
       packId: pack.packId,
       groupId: glyph.groupId,
       strokes: glyph.strokes,
       strokeOrderStrict: glyph.strokeOrderStrict ?? true,
+      ...(source?.sound === undefined ? {} : { sound: source.sound }),
+      ...(source?.word === undefined ? {} : { word: source.word }),
     })
     lines.push(itemInsert({
       id: sqlString(glyphRowId),
@@ -156,7 +169,9 @@ packs.forEach((pack, packIndex) => {
       type: sqlString('write_glyph'),
       parent_id: sqlString(packRowId),
       source_locale: sqlString('en'),
-      speech: 'NULL',
+      // The tile face is the character; the voice says the name. `title` stays
+      // the character in every language so a Dutch tile still reads "A".
+      speech: sqlStringOrNull(source?.name),
       sort_order: String(glyph.sortOrder),
       is_default: '1',
       is_published: '1',
@@ -170,9 +185,12 @@ packs.forEach((pack, packIndex) => {
 // Translations: the spoken name per locale. `speech` is what the voice says;
 // the phoneme and example word ride along in metadata so a parent can switch
 // the app between name, sound and word without another round trip.
-if (locales.length > 0) {
-  lines.push('-- Spoken names, phonics and example words.')
-  for (const locale of locales) {
+const translated = locales.filter((l) => l.locale !== SOURCE_LOCALE)
+if (translated.length > 0) {
+  lines.push('-- Spoken names, phonics and example words, per non-source locale.')
+  lines.push('-- `title` is deliberately NULL: it would override the glyph character,')
+  lines.push('-- and a Dutch tile must still read "A" rather than "aa".')
+  for (const locale of translated) {
     for (const pack of packs) {
       for (const glyph of pack.glyphs) {
         const entry = nameEntry(locale, pack, glyph)
@@ -185,7 +203,7 @@ if (locales.length > 0) {
           `INSERT INTO content_item_translations (item_id, locale, title, speech, metadata_json) VALUES (${[
             sqlString(`write_${pack.packId}_${glyph.id}`),
             sqlString(locale.locale),
-            sqlString(entry.name),
+            'NULL',
             sqlString(entry.name),
             sqlStringOrNull(meta === '{}' ? null : meta),
           ].join(', ')});`
