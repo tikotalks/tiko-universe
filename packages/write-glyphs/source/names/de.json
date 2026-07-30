@@ -1,0 +1,208 @@
+{
+  "locale": "de",
+  "letters": {
+    "a": {
+      "name": "ah",
+      "sound": "a",
+      "word": "Apfel"
+    },
+    "b": {
+      "name": "beh",
+      "sound": "b",
+      "word": "Ball"
+    },
+    "c": {
+      "name": "tseh",
+      "sound": "k",
+      "word": "Computer"
+    },
+    "d": {
+      "name": "deh",
+      "sound": "d",
+      "word": "Dach"
+    },
+    "e": {
+      "name": "eh",
+      "sound": "e",
+      "word": "Elefant"
+    },
+    "f": {
+      "name": "ef",
+      "sound": "f",
+      "word": "Fisch"
+    },
+    "g": {
+      "name": "geh",
+      "sound": "g",
+      "word": "Gabel"
+    },
+    "h": {
+      "name": "hah",
+      "sound": "h",
+      "word": "Haus"
+    },
+    "i": {
+      "name": "ih",
+      "sound": "i",
+      "word": "Igel"
+    },
+    "j": {
+      "name": "jot",
+      "sound": "j",
+      "word": "Jacke"
+    },
+    "k": {
+      "name": "kah",
+      "sound": "k",
+      "word": "Katze"
+    },
+    "l": {
+      "name": "el",
+      "sound": "l",
+      "word": "Lampe"
+    },
+    "m": {
+      "name": "em",
+      "sound": "m",
+      "word": "Maus"
+    },
+    "n": {
+      "name": "en",
+      "sound": "n",
+      "word": "Nase"
+    },
+    "o": {
+      "name": "oh",
+      "sound": "o",
+      "word": "Ofen"
+    },
+    "p": {
+      "name": "peh",
+      "sound": "p",
+      "word": "Pferd"
+    },
+    "q": {
+      "name": "kuh",
+      "sound": "kw",
+      "word": "Quelle"
+    },
+    "r": {
+      "name": "er",
+      "sound": "r",
+      "word": "Rose"
+    },
+    "s": {
+      "name": "es",
+      "sound": "s",
+      "word": "Sonne"
+    },
+    "t": {
+      "name": "teh",
+      "sound": "t",
+      "word": "Tisch"
+    },
+    "u": {
+      "name": "uh",
+      "sound": "u",
+      "word": "Uhr"
+    },
+    "v": {
+      "name": "fau",
+      "sound": "f",
+      "word": "Vogel"
+    },
+    "w": {
+      "name": "weh",
+      "sound": "v",
+      "word": "Wolke"
+    },
+    "x": {
+      "name": "iks",
+      "sound": "ks",
+      "word": "Xylophon"
+    },
+    "y": {
+      "name": "üpsilon",
+      "sound": "ü",
+      "word": "Yacht"
+    },
+    "z": {
+      "name": "tset",
+      "sound": "ts",
+      "word": "Zug"
+    }
+  },
+  "digits": {
+    "0": {
+      "name": "null"
+    },
+    "1": {
+      "name": "eins"
+    },
+    "2": {
+      "name": "zwei"
+    },
+    "3": {
+      "name": "drei"
+    },
+    "4": {
+      "name": "vier"
+    },
+    "5": {
+      "name": "fünf"
+    },
+    "6": {
+      "name": "sechs"
+    },
+    "7": {
+      "name": "sieben"
+    },
+    "8": {
+      "name": "acht"
+    },
+    "9": {
+      "name": "neun"
+    }
+  },
+  "shapes": {
+    "vertical-line": {
+      "name": "Linie nach unten"
+    },
+    "horizontal-line": {
+      "name": "Linie quer"
+    },
+    "diagonal-line": {
+      "name": "schräge Linie"
+    },
+    "cross": {
+      "name": "Kreuz"
+    },
+    "cross-diagonal": {
+      "name": "X"
+    },
+    "zigzag": {
+      "name": "Zickzack"
+    },
+    "circle": {
+      "name": "Kreis"
+    },
+    "square": {
+      "name": "Quadrat"
+    },
+    "triangle": {
+      "name": "Dreieck"
+    },
+    "diamond": {
+      "name": "Raute"
+    },
+    "heart": {
+      "name": "Herz"
+    },
+    "star": {
+      "name": "Stern"
+    },
+    "spiral": {
+      "name": "Spirale"
+    }
+  }
+}

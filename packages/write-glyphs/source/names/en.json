@@ -1,0 +1,208 @@
+{
+  "locale": "en",
+  "letters": {
+    "a": {
+      "name": "ay",
+      "sound": "a",
+      "word": "apple"
+    },
+    "b": {
+      "name": "bee",
+      "sound": "b",
+      "word": "ball"
+    },
+    "c": {
+      "name": "see",
+      "sound": "k",
+      "word": "cat"
+    },
+    "d": {
+      "name": "dee",
+      "sound": "d",
+      "word": "dog"
+    },
+    "e": {
+      "name": "ee",
+      "sound": "e",
+      "word": "egg"
+    },
+    "f": {
+      "name": "ef",
+      "sound": "f",
+      "word": "fish"
+    },
+    "g": {
+      "name": "jee",
+      "sound": "g",
+      "word": "goat"
+    },
+    "h": {
+      "name": "aitch",
+      "sound": "h",
+      "word": "hat"
+    },
+    "i": {
+      "name": "eye",
+      "sound": "i",
+      "word": "igloo"
+    },
+    "j": {
+      "name": "jay",
+      "sound": "j",
+      "word": "jam"
+    },
+    "k": {
+      "name": "kay",
+      "sound": "k",
+      "word": "kite"
+    },
+    "l": {
+      "name": "el",
+      "sound": "l",
+      "word": "leaf"
+    },
+    "m": {
+      "name": "em",
+      "sound": "m",
+      "word": "moon"
+    },
+    "n": {
+      "name": "en",
+      "sound": "n",
+      "word": "nest"
+    },
+    "o": {
+      "name": "oh",
+      "sound": "o",
+      "word": "orange"
+    },
+    "p": {
+      "name": "pee",
+      "sound": "p",
+      "word": "pig"
+    },
+    "q": {
+      "name": "cue",
+      "sound": "kw",
+      "word": "queen"
+    },
+    "r": {
+      "name": "ar",
+      "sound": "r",
+      "word": "rain"
+    },
+    "s": {
+      "name": "ess",
+      "sound": "s",
+      "word": "sun"
+    },
+    "t": {
+      "name": "tee",
+      "sound": "t",
+      "word": "tree"
+    },
+    "u": {
+      "name": "you",
+      "sound": "u",
+      "word": "umbrella"
+    },
+    "v": {
+      "name": "vee",
+      "sound": "v",
+      "word": "van"
+    },
+    "w": {
+      "name": "double-you",
+      "sound": "w",
+      "word": "water"
+    },
+    "x": {
+      "name": "ex",
+      "sound": "ks",
+      "word": "box"
+    },
+    "y": {
+      "name": "why",
+      "sound": "y",
+      "word": "yellow"
+    },
+    "z": {
+      "name": "zed",
+      "sound": "z",
+      "word": "zebra"
+    }
+  },
+  "digits": {
+    "0": {
+      "name": "zero"
+    },
+    "1": {
+      "name": "one"
+    },
+    "2": {
+      "name": "two"
+    },
+    "3": {
+      "name": "three"
+    },
+    "4": {
+      "name": "four"
+    },
+    "5": {
+      "name": "five"
+    },
+    "6": {
+      "name": "six"
+    },
+    "7": {
+      "name": "seven"
+    },
+    "8": {
+      "name": "eight"
+    },
+    "9": {
+      "name": "nine"
+    }
+  },
+  "shapes": {
+    "vertical-line": {
+      "name": "line down"
+    },
+    "horizontal-line": {
+      "name": "line across"
+    },
+    "diagonal-line": {
+      "name": "slanted line"
+    },
+    "cross": {
+      "name": "cross"
+    },
+    "cross-diagonal": {
+      "name": "X"
+    },
+    "zigzag": {
+      "name": "zigzag"
+    },
+    "circle": {
+      "name": "circle"
+    },
+    "square": {
+      "name": "square"
+    },
+    "triangle": {
+      "name": "triangle"
+    },
+    "diamond": {
+      "name": "diamond"
+    },
+    "heart": {
+      "name": "heart"
+    },
+    "star": {
+      "name": "star"
+    },
+    "spiral": {
+      "name": "spiral"
+    }
+  }
+}

@@ -1,0 +1,208 @@
+{
+  "locale": "fr",
+  "letters": {
+    "a": {
+      "name": "a",
+      "sound": "a",
+      "word": "avion"
+    },
+    "b": {
+      "name": "bé",
+      "sound": "b",
+      "word": "ballon"
+    },
+    "c": {
+      "name": "cé",
+      "sound": "k",
+      "word": "chat"
+    },
+    "d": {
+      "name": "dé",
+      "sound": "d",
+      "word": "dé"
+    },
+    "e": {
+      "name": "e",
+      "sound": "e",
+      "word": "école"
+    },
+    "f": {
+      "name": "èf",
+      "sound": "f",
+      "word": "fleur"
+    },
+    "g": {
+      "name": "gé",
+      "sound": "g",
+      "word": "gâteau"
+    },
+    "h": {
+      "name": "ach",
+      "sound": "",
+      "word": "hibou"
+    },
+    "i": {
+      "name": "i",
+      "sound": "i",
+      "word": "île"
+    },
+    "j": {
+      "name": "ji",
+      "sound": "j",
+      "word": "jardin"
+    },
+    "k": {
+      "name": "ka",
+      "sound": "k",
+      "word": "koala"
+    },
+    "l": {
+      "name": "èl",
+      "sound": "l",
+      "word": "lune"
+    },
+    "m": {
+      "name": "èm",
+      "sound": "m",
+      "word": "maison"
+    },
+    "n": {
+      "name": "èn",
+      "sound": "n",
+      "word": "nuage"
+    },
+    "o": {
+      "name": "o",
+      "sound": "o",
+      "word": "orange"
+    },
+    "p": {
+      "name": "pé",
+      "sound": "p",
+      "word": "poisson"
+    },
+    "q": {
+      "name": "qu",
+      "sound": "k",
+      "word": "quatre"
+    },
+    "r": {
+      "name": "èr",
+      "sound": "r",
+      "word": "robe"
+    },
+    "s": {
+      "name": "èss",
+      "sound": "s",
+      "word": "soleil"
+    },
+    "t": {
+      "name": "té",
+      "sound": "t",
+      "word": "table"
+    },
+    "u": {
+      "name": "u",
+      "sound": "u",
+      "word": "usine"
+    },
+    "v": {
+      "name": "vé",
+      "sound": "v",
+      "word": "vache"
+    },
+    "w": {
+      "name": "double vé",
+      "sound": "v",
+      "word": "wagon"
+    },
+    "x": {
+      "name": "iks",
+      "sound": "ks",
+      "word": "xylophone"
+    },
+    "y": {
+      "name": "i grec",
+      "sound": "i",
+      "word": "yaourt"
+    },
+    "z": {
+      "name": "zèd",
+      "sound": "z",
+      "word": "zèbre"
+    }
+  },
+  "digits": {
+    "0": {
+      "name": "zéro"
+    },
+    "1": {
+      "name": "un"
+    },
+    "2": {
+      "name": "deux"
+    },
+    "3": {
+      "name": "trois"
+    },
+    "4": {
+      "name": "quatre"
+    },
+    "5": {
+      "name": "cinq"
+    },
+    "6": {
+      "name": "six"
+    },
+    "7": {
+      "name": "sept"
+    },
+    "8": {
+      "name": "huit"
+    },
+    "9": {
+      "name": "neuf"
+    }
+  },
+  "shapes": {
+    "vertical-line": {
+      "name": "ligne vers le bas"
+    },
+    "horizontal-line": {
+      "name": "ligne en travers"
+    },
+    "diagonal-line": {
+      "name": "ligne oblique"
+    },
+    "cross": {
+      "name": "croix"
+    },
+    "cross-diagonal": {
+      "name": "X"
+    },
+    "zigzag": {
+      "name": "zigzag"
+    },
+    "circle": {
+      "name": "cercle"
+    },
+    "square": {
+      "name": "carré"
+    },
+    "triangle": {
+      "name": "triangle"
+    },
+    "diamond": {
+      "name": "losange"
+    },
+    "heart": {
+      "name": "cœur"
+    },
+    "star": {
+      "name": "étoile"
+    },
+    "spiral": {
+      "name": "spirale"
+    }
+  }
+}
