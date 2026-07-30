@@ -10,7 +10,10 @@ export interface AdminMediaItem {
   file_size?: number
   mime_type?: string
   type?: 'image' | 'audio' | 'video'
+  /** First category, as `folder` on the wire. Kept for callers that only need one. */
   category?: string
+  folder?: string
+  categories?: string[]
   tags?: string[]
   url?: string
   original_url?: string
@@ -69,6 +72,31 @@ export interface AudioLibraryTrack {
   fileName?: string
 }
 
+export type MediaState = '' | 'active' | 'inactive' | 'hidden'
+
+export interface MediaListFilters {
+  search?: string
+  type?: string
+  category?: string
+  tag?: string
+  state?: MediaState
+  page?: number
+  limit?: number
+  includeInactive?: boolean
+  includeHidden?: boolean
+}
+
+export interface MediaFacet {
+  value: string
+  count: number
+}
+
+export interface MediaFacets {
+  categories: MediaFacet[]
+  tags: MediaFacet[]
+  types: MediaFacet[]
+}
+
 export interface AudioLibraryAlbum {
   id: string
   title: string
@@ -81,6 +109,14 @@ export interface AudioLibraryAlbum {
   tracks: AudioLibraryTrack[]
   createdAt: string
   updatedAt: string
+}
+
+// The API names the category list `folder` (a single value) plus `categories`.
+// Admin code reads `category`, so fill it in once here rather than at every call site.
+function normaliseItem(item: AdminMediaItem): AdminMediaItem {
+  const categories = item.categories ?? (item.folder ? [item.folder] : [])
+  const category = item.category ?? categories[0]
+  return category ? { ...item, categories, category } : { ...item, categories }
 }
 
 export function useAdminMediaLibrary() {
@@ -99,7 +135,7 @@ export function useAdminMediaLibrary() {
     return (config.value?.mediaApiUrl ?? 'https://media.tikoapi.org/v1').replace(/\/$/, '')
   }
 
-  async function list(params: { search?: string; type?: string; page?: number; limit?: number } = {}) {
+  async function list(params: MediaListFilters = {}) {
     const requestId = listRequestId + 1
     listRequestId = requestId
     listAbortController?.abort()
@@ -111,6 +147,11 @@ export function useAdminMediaLibrary() {
       const url = new URL(`${mediaBaseUrl()}/media`)
       if (params.search) url.searchParams.set('search', params.search)
       if (params.type) url.searchParams.set('type', params.type)
+      if (params.category) url.searchParams.set('category', params.category)
+      if (params.tag) url.searchParams.set('tags', params.tag)
+      if (params.state) url.searchParams.set('state', params.state)
+      if (params.includeInactive) url.searchParams.set('includeInactive', 'true')
+      if (params.includeHidden) url.searchParams.set('includeHidden', 'true')
       url.searchParams.set('page', String(params.page ?? page.value))
       url.searchParams.set('limit', String(params.limit ?? 20))
       const response = await fetch(url, {
@@ -122,7 +163,7 @@ export function useAdminMediaLibrary() {
       if (!response.ok) throw new Error((typeof apiError === 'string' ? apiError : apiError?.message) ?? `Media list failed: ${response.status}`)
       if (requestId !== listRequestId) return
       const parsed = body as MediaListResponse
-      items.value = parsed.data
+      items.value = parsed.data.map(normaliseItem)
       total.value = parsed.meta.total
       page.value = parsed.meta.page
       totalPages.value = parsed.meta.totalPages
@@ -228,8 +269,19 @@ export function useAdminMediaLibrary() {
     const body = await response.json().catch(() => null) as ApiErrorBody | { data: AdminMediaItem } | null
     const apiError = body && 'error' in body ? body.error : undefined
     if (!response.ok) throw new Error((typeof apiError === 'string' ? apiError : apiError?.message) ?? `Update failed: ${response.status}`)
-    const updated = (body as { data: AdminMediaItem }).data
+    const updated = normaliseItem((body as { data: AdminMediaItem }).data)
     items.value = items.value.map(item => item.id === id ? { ...item, ...updated } : item)
+  }
+
+  async function listFacets(): Promise<MediaFacets> {
+    const url = new URL(`${mediaBaseUrl()}/media/facets`)
+    url.searchParams.set('includeInactive', 'true')
+    url.searchParams.set('includeHidden', 'true')
+    const response = await fetch(url, { headers: { authorization: `Bearer ${token.value}` } })
+    const body = await response.json().catch(() => null) as ApiErrorBody | { data: MediaFacets } | null
+    const apiError = body && 'error' in body ? body.error : undefined
+    if (!response.ok) throw new Error((typeof apiError === 'string' ? apiError : apiError?.message) ?? `Media facets failed: ${response.status}`)
+    return (body as { data: MediaFacets }).data
   }
 
   async function deleteMedia(id: string): Promise<void> {
@@ -251,5 +303,5 @@ export function useAdminMediaLibrary() {
     await updateMedia(id, { is_hidden: isHidden })
   }
 
-  return { items, total, page, totalPages, loading, uploading, error, list, upload, updateMedia, deleteMedia, toggleActive, toggleHidden, itemUrl, mediaDownloadUrl, mediaRefPreviewUrl, itemPreviewUrl, previewUrl, listAudioAlbums, createAudioAlbum, addAudioTrack }
+  return { items, total, page, totalPages, loading, uploading, error, list, listFacets, upload, updateMedia, deleteMedia, toggleActive, toggleHidden, itemUrl, mediaDownloadUrl, mediaRefPreviewUrl, itemPreviewUrl, previewUrl, listAudioAlbums, createAudioAlbum, addAudioTrack }
 }

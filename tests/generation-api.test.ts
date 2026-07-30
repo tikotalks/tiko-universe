@@ -16,12 +16,66 @@ class MemoryD1 {
   usageWindows = new Map<string, { request_count: number; unit_count: number }>()
   generationJobs = new Map<string, Record<string, unknown>>()
 
+  // Mirrors the generated_images WHERE clause the worker builds: visibility and
+  // owner first, then the optional search/category/tag filters, in bind order.
+  private selectImages(sql: string, values: unknown[]): Record<string, unknown>[] {
+    let images = Array.from(this.generatedImages.values())
+    let index = 0
+    if (sql.includes('is_public = ?')) {
+      const isPublic = Number(values[index++])
+      images = images.filter(image => Number(image.is_public) === isPublic)
+    }
+    if (sql.includes('created_by = ?')) {
+      const owner = values[index++]
+      images = images.filter(image => image.created_by === owner)
+    }
+    // The search group also contains `tags LIKE ?`, so drop it from the SQL
+    // before looking for the standalone category and tag filters.
+    let remaining = sql
+    const searchStart = sql.indexOf('(title LIKE ?')
+    if (searchStart !== -1) {
+      const needle = String(values[index]).replaceAll('%', '').toLowerCase()
+      index += 6
+      images = images.filter(image => [image.title, image.description, image.prompt, image.revised_prompt, image.category, image.tags]
+        .some(field => String(field ?? '').toLowerCase().includes(needle)))
+      remaining = sql.slice(0, searchStart) + sql.slice(sql.indexOf(')', searchStart) + 1)
+    }
+    if (remaining.includes('category = ?')) {
+      const category = values[index++]
+      images = images.filter(image => image.category === category)
+    }
+    if (remaining.includes('tags LIKE ?')) {
+      const tag = String(values[index++]).replaceAll('%', '')
+      images = images.filter(image => String(image.tags ?? '').includes(tag))
+    }
+    return images
+  }
+
+  private tagFacets(sql: string, values: unknown[]): Array<{ value: string; count: number }> {
+    const counts = new Map<string, number>()
+    for (const image of this.selectImages(sql, values)) {
+      let parsed: unknown
+      try { parsed = JSON.parse(String(image.tags ?? '[]')) } catch { continue }
+      if (!Array.isArray(parsed)) continue
+      for (const tag of parsed) {
+        if (typeof tag !== 'string') continue
+        counts.set(tag, (counts.get(tag) ?? 0) + 1)
+      }
+    }
+    return [...counts]
+      .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
+      .map(([value, count]) => ({ value, count }))
+  }
+
   private statement(sql: string, values: unknown[]): Statement {
     return {
       first: async <T>() => {
         if (sql.includes('FROM generation_usage_windows')) {
           const key = values.slice(0, 4).map(String).join('|')
           return (this.usageWindows.get(key) ?? null) as T | null
+        }
+        if (sql.includes('FROM generated_images') && sql.includes('COUNT(*)')) {
+          return { count: this.selectImages(sql, values).length } as T | null
         }
         if (sql.includes('FROM generated_images') && sql.includes('WHERE id')) return (this.generatedImages.get(values[0] as string) ?? null) as T | null
         if (sql.includes('FROM story_drafts') && sql.includes('WHERE id')) return (this.storyDrafts.get(values[0] as string) ?? null) as T | null
@@ -52,6 +106,22 @@ class MemoryD1 {
           if (sql.includes('created_by = ?')) jobs = jobs.filter((j) => j.created_by === values[0])
           jobs = jobs.sort((a, b) => String(b.created_at).localeCompare(String(a.created_at)))
           return { results: jobs as T[] }
+        }
+        if (sql.includes('json_each(generated_images.tags)')) {
+          return { results: this.tagFacets(sql, values) as T[] }
+        }
+        if (sql.includes('FROM generated_images') && sql.includes('GROUP BY category')) {
+          const counts = new Map<string, number>()
+          for (const image of this.selectImages(sql, values)) {
+            const category = String(image.category ?? '')
+            if (category) counts.set(category, (counts.get(category) ?? 0) + 1)
+          }
+          return { results: [...counts].map(([value, count]) => ({ value, count })) as T[] }
+        }
+        if (sql.includes('FROM generated_images')) {
+          const images = this.selectImages(sql, values)
+            .sort((a, b) => String(b.created_at).localeCompare(String(a.created_at)))
+          return { results: images as T[] }
         }
         return { results: [] as T[] }
       },
@@ -124,7 +194,16 @@ class MemoryD1 {
           const id = values.at(-1) as string
           const existing = this.generatedImages.get(id)
           if (!existing) return { success: true, meta: { changes: 0 } }
-          this.generatedImages.set(id, { ...existing, updated_at: values[0] })
+          // Statements built from a variable field list are `col = ?, …`; apply
+          // them positionally. Anything fancier only ever touches updated_at.
+          const assignments = sql.slice(sql.indexOf(' SET ') + 5, sql.lastIndexOf(' WHERE ')).split(',').map(part => part.trim())
+          if (assignments.every(part => /^\w+ = \?$/.test(part))) {
+            const patch: Record<string, unknown> = {}
+            assignments.forEach((part, index) => { patch[part.split(' ')[0]] = values[index] })
+            this.generatedImages.set(id, { ...existing, ...patch })
+          } else {
+            this.generatedImages.set(id, { ...existing, updated_at: values[0] })
+          }
           return { success: true, meta: { changes: 1 } }
         }
         if (sql.includes('DELETE FROM generated_images')) {
@@ -748,5 +827,144 @@ describe('generation-api TTS contract', () => {
       body: JSON.stringify({ items: [{ type: 'unknown' }] }),
     }), env, { waitUntil: () => undefined } as unknown as ExecutionContext)
     expect(badType.status).toBe(400)
+  })
+})
+
+describe('generation-api image library filtering and metadata', () => {
+  function seedImage(db: MemoryD1, overrides: Record<string, unknown> = {}) {
+    const record = {
+      id: 'image_1',
+      prompt: 'A friendly cat',
+      revised_prompt: null,
+      model: 'gpt-image-1',
+      size: '1024x1024',
+      quality: 'standard',
+      style: 'vivid',
+      image_url: '/v1/generation/images/image_1/binary',
+      r2_key: 'generated/image_1.png',
+      content_type: 'image/png',
+      file_size_bytes: 10,
+      width: 1024,
+      height: 1024,
+      category: 'animals',
+      tags: JSON.stringify(['cat', 'pet']),
+      title: 'Cat',
+      description: 'A cat',
+      is_public: 1,
+      is_preview: 0,
+      media_id: null,
+      created_by: 'service_user',
+      created_at: '2026-05-01T00:00:00.000Z',
+      updated_at: '2026-05-01T00:00:00.000Z',
+      ...overrides,
+    }
+    db.generatedImages.set(record.id as string, record)
+    return record
+  }
+
+  it('filters the promoted library by free text across prompt, title and tags', async () => {
+    const env = makeEnv()
+    seedImage(env.db)
+    seedImage(env.db, {
+      id: 'image_2',
+      prompt: 'A red bus',
+      title: 'Bus',
+      description: 'A bus',
+      category: 'transport',
+      tags: JSON.stringify(['bus', 'vehicle']),
+    })
+
+    const byTag = await json(await worker.fetch(
+      new Request('https://api.test/v1/generation/images?status=promoted&search=pet'), env,
+    ))
+    expect(byTag.data.map((item: { id: string }) => item.id)).toEqual(['image_1'])
+    expect(byTag.meta.total).toBe(1)
+
+    const byPrompt = await json(await worker.fetch(
+      new Request('https://api.test/v1/generation/images?status=promoted&search=red%20bus'), env,
+    ))
+    expect(byPrompt.data.map((item: { id: string }) => item.id)).toEqual(['image_2'])
+  })
+
+  it('filters the promoted library by category and tag', async () => {
+    const env = makeEnv()
+    seedImage(env.db)
+    seedImage(env.db, { id: 'image_2', category: 'transport', tags: JSON.stringify(['bus']) })
+
+    const byCategory = await json(await worker.fetch(
+      new Request('https://api.test/v1/generation/images?status=promoted&category=transport'), env,
+    ))
+    expect(byCategory.data.map((item: { id: string }) => item.id)).toEqual(['image_2'])
+
+    const byTag = await json(await worker.fetch(
+      new Request('https://api.test/v1/generation/images?status=promoted&tag=cat'), env,
+    ))
+    expect(byTag.data.map((item: { id: string }) => item.id)).toEqual(['image_1'])
+  })
+
+  it('reports the categories and tags the library actually uses', async () => {
+    const env = makeEnv()
+    seedImage(env.db)
+    seedImage(env.db, { id: 'image_2', category: 'transport', tags: JSON.stringify(['bus', 'pet']) })
+
+    const response = await worker.fetch(new Request('https://api.test/v1/generation/images/facets?status=promoted'), env)
+    const body = await json(response)
+
+    expect(response.status).toBe(200)
+    expect(body.data.categories).toEqual(expect.arrayContaining([
+      { value: 'animals', count: 1 },
+      { value: 'transport', count: 1 },
+    ]))
+    expect(body.data.tags[0]).toEqual({ value: 'pet', count: 2 })
+  })
+
+  it('edits image metadata without touching the picture', async () => {
+    const env = makeEnv()
+    seedImage(env.db)
+
+    const response = await worker.fetch(new Request('https://api.test/v1/generation/images/image_1', {
+      method: 'PATCH',
+      headers: authHeaders({ 'content-type': 'application/json' }),
+      body: JSON.stringify({ title: 'Sleepy cat', description: 'A cat napping', category: 'pets', tags: ['cat', 'sleep'] }),
+    }), env)
+    const body = await json(response)
+
+    expect(response.status).toBe(200)
+    expect(body.data).toMatchObject({
+      id: 'image_1',
+      title: 'Sleepy cat',
+      description: 'A cat napping',
+      category: 'pets',
+      tags: ['cat', 'sleep'],
+    })
+    const stored = env.db.generatedImages.get('image_1')!
+    expect(stored.r2_key).toBe('generated/image_1.png')
+    expect(stored.image_url).toBe('/v1/generation/images/image_1/binary')
+  })
+
+  it('rejects metadata edits without auth, on unknown images, and with no editable fields', async () => {
+    const env = makeEnv()
+    seedImage(env.db)
+
+    const unauthed = await worker.fetch(new Request('https://api.test/v1/generation/images/image_1', {
+      method: 'PATCH',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ title: 'Nope' }),
+    }), env)
+    expect(unauthed.status).toBe(401)
+
+    const missing = await worker.fetch(new Request('https://api.test/v1/generation/images/image_missing', {
+      method: 'PATCH',
+      headers: authHeaders({ 'content-type': 'application/json' }),
+      body: JSON.stringify({ title: 'Nope' }),
+    }), env)
+    expect(missing.status).toBe(404)
+
+    const empty = await worker.fetch(new Request('https://api.test/v1/generation/images/image_1', {
+      method: 'PATCH',
+      headers: authHeaders({ 'content-type': 'application/json' }),
+      body: JSON.stringify({ unrelated: true }),
+    }), env)
+    expect(empty.status).toBe(400)
   })
 })

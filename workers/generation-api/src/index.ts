@@ -159,6 +159,8 @@ export default {
       if (url.pathname.startsWith('/v1/generation/images/') && url.pathname.endsWith('/upscale') && request.method === 'POST') return await requireAuth(request, resolvedEnv, (access) => upscaleImage(url.pathname, request, resolvedEnv, access))
       if (url.pathname === '/v1/generation/images/import' && request.method === 'POST') return await requireAuth(request, resolvedEnv, (access) => importExternalImage(request, resolvedEnv, access))
       if (url.pathname.startsWith('/v1/generation/images/') && request.method === 'DELETE') return await requireAuth(request, resolvedEnv, (access) => deleteImage(url.pathname, resolvedEnv, access))
+      if (url.pathname.startsWith('/v1/generation/images/') && request.method === 'PATCH') return await requireAuth(request, resolvedEnv, (access) => updateImageMeta(url.pathname, request, resolvedEnv, access))
+      if (url.pathname === '/v1/generation/images/facets' && request.method === 'GET') return await listImageFacets(request, resolvedEnv)
       if (url.pathname === '/v1/generation/images' && request.method === 'GET') return await listImages(request, resolvedEnv)
       if (url.pathname === '/v1/generation/stories/tryout' && request.method === 'POST') return await requireAuth(request, resolvedEnv, (access) => generateStoryTryout(request, resolvedEnv, access))
       if (url.pathname === '/v1/generation/stories/render' && request.method === 'POST') return await requireAuth(request, resolvedEnv, (access) => renderStory(request, resolvedEnv, access))
@@ -1146,19 +1148,42 @@ async function listImages(request: Request, env: Env): Promise<Response> {
   const ownerClause = isPublic === 0 && !isElevatedAccess(access) ? ' AND created_by = ?' : ''
   const ownerValues = ownerClause ? [sessionUserId(access)] : []
 
+  const search = url.searchParams.get('search')?.trim()
+  const category = url.searchParams.get('category')?.trim()
+  const tag = url.searchParams.get('tag')?.trim()
+
+  const filterClauses: string[] = []
+  const filterValues: unknown[] = []
+  // Generated images are described by their prompt as much as by their metadata,
+  // so free text has to match both, plus the tag list.
+  if (search) {
+    filterClauses.push('(title LIKE ? OR description LIKE ? OR prompt LIKE ? OR revised_prompt LIKE ? OR category LIKE ? OR tags LIKE ?)')
+    const like = `%${search}%`
+    filterValues.push(like, like, like, like, like, like)
+  }
+  if (category) {
+    filterClauses.push('category = ?')
+    filterValues.push(category)
+  }
+  if (tag) {
+    filterClauses.push('tags LIKE ?')
+    filterValues.push(`%"${tag}"%`)
+  }
+  const filters = filterClauses.length ? ` AND ${filterClauses.join(' AND ')}` : ''
+
   const rows = await env.GENERATION_DB.prepare(
     `SELECT id, prompt, revised_prompt, model, size, quality, style, image_url, r2_key,
             content_type, file_size_bytes, width, height, category, tags, title, description,
             is_public, is_preview, media_id, created_by, created_at, updated_at
      FROM generated_images
-     WHERE is_public = ?${ownerClause}
+     WHERE is_public = ?${ownerClause}${filters}
      ORDER BY created_at DESC
      LIMIT ? OFFSET ?`,
-  ).bind(isPublic, ...ownerValues, limit, offset).all<GeneratedImageRecord>()
+  ).bind(isPublic, ...ownerValues, ...filterValues, limit, offset).all<GeneratedImageRecord>()
 
   const countRow = await env.GENERATION_DB.prepare(
-    `SELECT COUNT(*) AS count FROM generated_images WHERE is_public = ?${ownerClause}`,
-  ).bind(isPublic, ...ownerValues).first<{ count: number }>()
+    `SELECT COUNT(*) AS count FROM generated_images WHERE is_public = ?${ownerClause}${filters}`,
+  ).bind(isPublic, ...ownerValues, ...filterValues).first<{ count: number }>()
 
   const total = countRow?.count ?? 0
 
@@ -1671,6 +1696,94 @@ async function deleteImage(pathname: string, env: Env, access: GenerationAccessC
   await env.GENERATION_DB.prepare('DELETE FROM generated_images WHERE id = ?').bind(id).run()
 
   return json({ data: { id, deleted: true } })
+}
+
+// PATCH /v1/generation/images/:id — hand-edit the descriptive metadata. This is
+// the counterpart to /enrich (which writes the same fields from vision) and is
+// deliberately separate from /edit, which regenerates the picture itself.
+async function updateImageMeta(pathname: string, request: Request, env: Env, access: GenerationAccessContext): Promise<Response> {
+  const id = pathname.replace('/v1/generation/images/', '')
+  if (!isSafeId(id)) return apiError('invalid_image_id', 'Image id is invalid.', 400)
+
+  const record = await env.GENERATION_DB.prepare(
+    'SELECT created_by FROM generated_images WHERE id = ? LIMIT 1',
+  ).bind(id).first<{ created_by: string | null }>()
+
+  if (!record) return apiError('image_not_found', 'Image not found.', 404)
+  if (!canMutateOwnedRecord(access, record)) return forbiddenOrUnauthorized(access)
+
+  const body = await request.json().catch(() => null) as Record<string, unknown> | null
+  if (!body) return apiError('invalid_body', 'Body must be a JSON object.', 400)
+
+  const sets: string[] = []
+  const values: unknown[] = []
+  if (typeof body.title === 'string') { sets.push('title = ?'); values.push(body.title.trim() || null) }
+  if (typeof body.description === 'string') { sets.push('description = ?'); values.push(body.description.trim() || null) }
+  if (typeof body.category === 'string') { sets.push('category = ?'); values.push(body.category.trim()) }
+  if (Array.isArray(body.tags)) {
+    sets.push('tags = ?')
+    values.push(JSON.stringify(body.tags.filter((tag): tag is string => typeof tag === 'string')))
+  }
+  if (sets.length === 0) return apiError('no_fields', 'No editable fields were supplied.', 400)
+
+  sets.push('updated_at = ?')
+  values.push(new Date().toISOString(), id)
+
+  await env.GENERATION_DB.prepare(
+    `UPDATE generated_images SET ${sets.join(', ')} WHERE id = ?`,
+  ).bind(...values).run()
+
+  const updated = await env.GENERATION_DB.prepare(
+    'SELECT id, title, description, category, tags FROM generated_images WHERE id = ? LIMIT 1',
+  ).bind(id).first<{ id: string; title: string | null; description: string | null; category: string; tags: string }>()
+
+  return json({
+    data: {
+      id: updated!.id,
+      title: updated!.title,
+      description: updated!.description,
+      category: updated!.category,
+      tags: JSON.parse(updated!.tags || '[]') as string[],
+    },
+  })
+}
+
+// GET /v1/generation/images/facets — the categories and tags that actually occur,
+// so the admin filter bar can offer real options.
+async function listImageFacets(request: Request, env: Env): Promise<Response> {
+  const url = new URL(request.url)
+  const access = await optionalAuth(request, env)
+  if (access instanceof Response) return access
+  const status = url.searchParams.get('status') || 'promoted'
+  const isPublic = status === 'draft' ? 0 : 1
+  if (isPublic === 0 && !access.auth) return forbiddenOrUnauthorized(access)
+  const ownerClause = isPublic === 0 && !isElevatedAccess(access) ? ' AND created_by = ?' : ''
+  const ownerValues = ownerClause ? [sessionUserId(access)] : []
+
+  const [categories, tags] = await Promise.all([
+    env.GENERATION_DB.prepare(
+      `SELECT category AS value, COUNT(*) AS count
+       FROM generated_images
+       WHERE is_public = ?${ownerClause} AND category IS NOT NULL AND category != ''
+       GROUP BY category
+       ORDER BY count DESC, value ASC`,
+    ).bind(isPublic, ...ownerValues).all<{ value: string; count: number }>(),
+    // json_each aborts the whole query on a malformed document, hence json_valid.
+    env.GENERATION_DB.prepare(
+      `SELECT entry.value AS value, COUNT(*) AS count
+       FROM generated_images, json_each(generated_images.tags) AS entry
+       WHERE is_public = ?${ownerClause} AND json_valid(generated_images.tags)
+       GROUP BY entry.value
+       ORDER BY count DESC, value ASC
+       LIMIT 500`,
+    ).bind(isPublic, ...ownerValues).all<{ value: string; count: number }>(),
+  ])
+
+  const clean = (rows: Array<{ value: string; count: number }>) => rows
+    .filter(row => typeof row.value === 'string' && row.value.length > 0)
+    .map(row => ({ value: row.value, count: Number(row.count) }))
+
+  return json({ data: { categories: clean(categories.results), tags: clean(tags.results) } })
 }
 
 function parseImageSize(size: string): { width: number; height: number } {
