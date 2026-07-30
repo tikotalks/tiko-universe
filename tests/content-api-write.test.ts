@@ -59,8 +59,11 @@ async function applyContentMigrations(db: D1Database) {
       .split(/;\s*(?:\n|$)/)
       .map((s) => s.trim())
       .filter(Boolean)
-    for (const statement of statements) {
-      await db.prepare(statement).run()
+    // Batched rather than one round trip per statement: the write seed alone is
+    // ~570 inserts, and applying them serially held the CPU long enough to time
+    // out unrelated suites running in parallel.
+    for (let i = 0; i < statements.length; i += 200) {
+      await db.batch(statements.slice(i, i + 200).map((s) => db.prepare(s)))
     }
   }
 }
