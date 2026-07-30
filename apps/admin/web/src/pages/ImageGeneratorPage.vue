@@ -9,7 +9,7 @@ import MediaFilterBar from '../components/media/MediaFilterBar.vue'
 import MediaDetailsModal from '../components/media/MediaDetailsModal.vue'
 import type { MediaDetails } from '../components/media/mediaTypes'
 import type { EditInput, GenerateInput, UpscaleInput } from '../components/images/imageGenerationQueueTypes'
-import { useImageGeneration, type ImageFacets, type ImageGalleryItem } from '../composables/useImageGeneration'
+import { EMPTY_IMAGE_FACETS, useImageGeneration, type ImageFacets, type ImageGalleryItem } from '../composables/useImageGeneration'
 import { useJobQueue } from '../composables/useJobQueue'
 import { useToast } from '../composables/useToast'
 import { useAdminAuth } from '../composables/useAdminAuth'
@@ -42,8 +42,8 @@ const filters = ref<Record<Exclude<Tab, 'create'>, { search: string; category: s
   drafts: { search: '', category: '', tag: '' },
 })
 const facets = ref<Record<Exclude<Tab, 'create'>, ImageFacets>>({
-  library: { categories: [], tags: [] },
-  drafts: { categories: [], tags: [] },
+  library: EMPTY_IMAGE_FACETS,
+  drafts: EMPTY_IMAGE_FACETS,
 })
 
 const pushingToMediaIds = ref<Set<string>>(new Set())
@@ -421,6 +421,8 @@ onMounted(async () => {
         v-model:tag="filters.library.tag"
         :categories="facets.library.categories"
         :tags="facets.library.tags"
+        :category-meta="facets.library.meta.categories"
+        :tag-meta="facets.library.meta.tags"
         :loading="galleryLoading"
         :total="libraryTotal"
         @apply="loadLibrary"
@@ -471,6 +473,8 @@ onMounted(async () => {
         v-model:tag="filters.drafts.tag"
         :categories="facets.drafts.categories"
         :tags="facets.drafts.tags"
+        :category-meta="facets.drafts.meta.categories"
+        :tag-meta="facets.drafts.meta.tags"
         :loading="galleryLoading"
         :total="draftTotal"
         @apply="loadDrafts"

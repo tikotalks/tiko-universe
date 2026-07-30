@@ -431,6 +431,16 @@ function isSafeId(id: string): boolean {
   return /^[a-zA-Z0-9_-]{1,128}$/.test(id)
 }
 
+// `%` and `_` are LIKE wildcards, so a search for "100%" or "_" would otherwise
+// match everything. Neutralise them and pair with likeClause's ESCAPE.
+function escapeLike(value: string): string {
+  return value.replace(/[\\%_]/g, character => `\\${character}`)
+}
+
+function likeClause(column: string): string {
+  return `${column} LIKE ? ESCAPE '\\'`
+}
+
 async function getVoiceSample(url: URL, env: Env): Promise<Response> {
   const voiceId = decodeURIComponent(url.pathname.replace('/v1/generation/voice-samples/', ''))
   if (!ELEVENLABS_VOICE_ID_RE.test(voiceId) && !OPENAI_VOICES.has(voiceId)) return apiError('invalid_voice_id', 'Voice id is invalid.', 400)
@@ -1155,19 +1165,21 @@ async function listImages(request: Request, env: Env): Promise<Response> {
   const filterClauses: string[] = []
   const filterValues: unknown[] = []
   // Generated images are described by their prompt as much as by their metadata,
-  // so free text has to match both, plus the tag list.
+  // so free text has to match both, plus the tag list. Prose matches anywhere,
+  // but the category and each tag anchor to the start of the value, so "pet"
+  // finds "pets" without dragging in everything tagged "carpet".
   if (search) {
-    filterClauses.push('(title LIKE ? OR description LIKE ? OR prompt LIKE ? OR revised_prompt LIKE ? OR category LIKE ? OR tags LIKE ?)')
-    const like = `%${search}%`
-    filterValues.push(like, like, like, like, like, like)
+    filterClauses.push(`(${['title', 'description', 'prompt', 'revised_prompt'].map(column => likeClause(column)).join(' OR ')} OR ${likeClause('category')} OR ${likeClause('tags')})`)
+    const anywhere = `%${escapeLike(search)}%`
+    filterValues.push(anywhere, anywhere, anywhere, anywhere, `${escapeLike(search)}%`, `%"${escapeLike(search)}%`)
   }
   if (category) {
     filterClauses.push('category = ?')
     filterValues.push(category)
   }
   if (tag) {
-    filterClauses.push('tags LIKE ?')
-    filterValues.push(`%"${tag}"%`)
+    filterClauses.push(likeClause('tags'))
+    filterValues.push(`%"${escapeLike(tag)}"%`)
   }
   const filters = filterClauses.length ? ` AND ${filterClauses.join(' AND ')}` : ''
 
@@ -1760,14 +1772,17 @@ async function listImageFacets(request: Request, env: Env): Promise<Response> {
   const ownerClause = isPublic === 0 && !isElevatedAccess(access) ? ' AND created_by = ?' : ''
   const ownerValues = ownerClause ? [sessionUserId(access)] : []
 
-  const [categories, tags] = await Promise.all([
+  const limit = Math.min(Math.max(parseInt(url.searchParams.get('limit') || '500'), 1), 2000)
+
+  const [categories, tags, tagTotal] = await Promise.all([
     env.GENERATION_DB.prepare(
       `SELECT category AS value, COUNT(*) AS count
        FROM generated_images
        WHERE is_public = ?${ownerClause} AND category IS NOT NULL AND category != ''
        GROUP BY category
-       ORDER BY count DESC, value ASC`,
-    ).bind(isPublic, ...ownerValues).all<{ value: string; count: number }>(),
+       ORDER BY count DESC, value ASC
+       LIMIT ?`,
+    ).bind(isPublic, ...ownerValues, limit).all<{ value: string; count: number }>(),
     // json_each aborts the whole query on a malformed document, hence json_valid.
     env.GENERATION_DB.prepare(
       `SELECT entry.value AS value, COUNT(*) AS count
@@ -1775,15 +1790,35 @@ async function listImageFacets(request: Request, env: Env): Promise<Response> {
        WHERE is_public = ?${ownerClause} AND json_valid(generated_images.tags)
        GROUP BY entry.value
        ORDER BY count DESC, value ASC
-       LIMIT 500`,
-    ).bind(isPublic, ...ownerValues).all<{ value: string; count: number }>(),
+       LIMIT ?`,
+    ).bind(isPublic, ...ownerValues, limit).all<{ value: string; count: number }>(),
+    env.GENERATION_DB.prepare(
+      `SELECT COUNT(DISTINCT entry.value) AS count
+       FROM generated_images, json_each(generated_images.tags) AS entry
+       WHERE is_public = ?${ownerClause} AND json_valid(generated_images.tags)`,
+    ).bind(isPublic, ...ownerValues).first<{ count: number }>(),
   ])
 
   const clean = (rows: Array<{ value: string; count: number }>) => rows
     .filter(row => typeof row.value === 'string' && row.value.length > 0)
     .map(row => ({ value: row.value, count: Number(row.count) }))
 
-  return json({ data: { categories: clean(categories.results), tags: clean(tags.results) } })
+  const cleanCategories = clean(categories.results)
+  const cleanTags = clean(tags.results)
+
+  // Say what was left out rather than letting a capped list read as the whole set.
+  return json({
+    data: { categories: cleanCategories, tags: cleanTags },
+    meta: {
+      limit,
+      categories: { returned: cleanCategories.length, total: cleanCategories.length, truncated: false },
+      tags: {
+        returned: cleanTags.length,
+        total: Number(tagTotal?.count ?? cleanTags.length),
+        truncated: Number(tagTotal?.count ?? cleanTags.length) > cleanTags.length,
+      },
+    },
+  })
 }
 
 function parseImageSize(size: string): { width: number; height: number } {
