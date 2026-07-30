@@ -76,6 +76,17 @@ class MemoryD1 {
       return new MemoryResult()
     }
 
+    if (normalized.includes('json_each(media.tags)')) return new MemoryResult(this.facetRows('tags'))
+    if (normalized.includes('json_each(media.categories)')) return new MemoryResult(this.facetRows('categories'))
+    if (normalized.includes('substr(mime_type')) {
+      const counts = new Map<string, number>()
+      for (const row of this.media) {
+        const kind = String(row.mime_type ?? '').split('/')[0]
+        if (kind) counts.set(kind, (counts.get(kind) ?? 0) + 1)
+      }
+      return new MemoryResult([...counts].map(([value, count]) => ({ value, count })))
+    }
+
     if (normalized.includes('FROM media')) {
       const rows = this.filterRows(this.media, normalized, values)
       if (normalized.includes('COUNT(*)')) return new MemoryResult([{ count: rows.length }])
@@ -148,6 +159,23 @@ class MemoryD1 {
     throw new Error(`Unhandled SQL in media-api test fake: ${normalized}`)
   }
 
+  // Stands in for `json_each` over a JSON array column.
+  private facetRows(column: 'tags' | 'categories'): Row[] {
+    const counts = new Map<string, number>()
+    for (const row of this.media) {
+      let parsed: unknown
+      try { parsed = JSON.parse(String(row[column] ?? '[]')) } catch { continue }
+      if (!Array.isArray(parsed)) continue
+      for (const value of parsed) {
+        if (typeof value !== 'string') continue
+        counts.set(value, (counts.get(value) ?? 0) + 1)
+      }
+    }
+    return [...counts]
+      .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
+      .map(([value, count]) => ({ value, count }))
+  }
+
   private filterRows(rows: Row[], normalized: string, values: unknown[]): Row[] {
     let filtered = rows
     let valueIndex = 0
@@ -172,6 +200,15 @@ class MemoryD1 {
       valueIndex += 1
       filtered = filtered.filter(row => row.user_id === userId)
     }
+    if (normalized.includes('title LIKE ? OR description LIKE ?')) {
+      const needle = String(values[valueIndex]).replaceAll('%', '').toLowerCase()
+      // One bound value per LIKE inside the search clause specifically.
+      const searchClause = normalized.slice(normalized.indexOf('(title LIKE ?'))
+      valueIndex += (searchClause.slice(0, searchClause.indexOf(')')).match(/LIKE \?/g) ?? []).length
+      filtered = filtered.filter(row => [row.title, row.description, row.name, row.filename, row.tags, row.categories]
+        .some(field => String(field ?? '').toLowerCase().includes(needle)))
+    }
+
     if (normalized.includes('categories LIKE ?')) {
       const categoryPatterns = values
         .slice(valueIndex)
@@ -342,6 +379,74 @@ describe('media-api worker', () => {
     expect(response.status).toBe(200)
     expect(body.data.map((item: { id: string }) => item.id)).toEqual(['media_1', 'media_2'])
     expect(body.meta).toMatchObject({ total: 2, page: 1, limit: 10 })
+  })
+
+  it('searches media by tag, not just by title and description', async () => {
+    const env = makeEnv()
+    env.MEDIA_DB.media.push(mediaRow({
+      id: 'media_cat',
+      filename: 'img_2847.png',
+      title: 'Untitled upload',
+      description: null,
+      tags: JSON.stringify(['cat', 'pet']),
+      categories: JSON.stringify(['animals']),
+      folder: JSON.stringify(['animals']),
+    }))
+
+    const response = await worker.fetch(new Request('https://media.test/v1/media?search=cat&limit=10'), env as never)
+    const body = await parseJson(response)
+
+    expect(response.status).toBe(200)
+    expect(body.data.map((item: { id: string }) => item.id)).toContain('media_cat')
+  })
+
+  it('searches media by category', async () => {
+    const env = makeEnv()
+    env.MEDIA_DB.media.push(mediaRow({
+      id: 'media_food',
+      title: 'Untitled upload',
+      description: null,
+      tags: JSON.stringify([]),
+      categories: JSON.stringify(['food']),
+      folder: JSON.stringify(['food']),
+    }))
+
+    const response = await worker.fetch(new Request('https://media.test/v1/media?search=food&limit=10'), env as never)
+    const body = await parseJson(response)
+
+    expect(body.data.map((item: { id: string }) => item.id)).toEqual(['media_food'])
+  })
+
+  it('exposes the full category list on each media item', async () => {
+    const response = await worker.fetch(new Request('https://media.test/v1/media?limit=10'), makeEnv() as never)
+    const body = await parseJson(response)
+
+    expect(body.data[0]).toMatchObject({ folder: 'cards', categories: ['cards'] })
+  })
+
+  it('reports the categories, tags and types that media actually uses', async () => {
+    const env = makeEnv()
+    env.MEDIA_DB.media.push(mediaRow({
+      id: 'media_cat',
+      mime_type: 'audio/mpeg',
+      tags: JSON.stringify(['cat', 'test']),
+      categories: JSON.stringify(['animals']),
+    }))
+
+    const response = await worker.fetch(new Request('https://media.test/v1/media/facets'), env as never)
+    const body = await parseJson(response)
+
+    expect(response.status).toBe(200)
+    expect(body.data.categories).toEqual(expect.arrayContaining([
+      { value: 'animals', count: 1 },
+      { value: 'cards', count: 1 },
+    ]))
+    // 'test' appears on both rows, so it must outrank the single-use tags.
+    expect(body.data.tags[0]).toEqual({ value: 'test', count: 2 })
+    expect(body.data.types).toEqual(expect.arrayContaining([
+      { value: 'image', count: 1 },
+      { value: 'audio', count: 1 },
+    ]))
   })
 
   it('returns one media record and 404s missing media', async () => {
