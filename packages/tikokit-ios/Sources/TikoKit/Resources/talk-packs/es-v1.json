@@ -96,7 +96,8 @@
       "pos": "noun",
       "category": "people",
       "frequency": 7,
-      "icon": "user"
+      "icon": "user",
+      "image": "https://data.tikocdn.org/uploads/1754637645261-teacher.png"
     },
     {
       "id": "friend",
@@ -112,7 +113,8 @@
       "pos": "noun",
       "category": "people",
       "frequency": 7,
-      "icon": "user"
+      "icon": "user",
+      "image": "https://data.tikocdn.org/uploads/1754859143591-brother.png"
     },
     {
       "id": "sister",
@@ -120,7 +122,8 @@
       "pos": "noun",
       "category": "people",
       "frequency": 7,
-      "icon": "user"
+      "icon": "user",
+      "image": "https://data.tikocdn.org/uploads/1754859230045-sister.png"
     },
     {
       "id": "grandma",
@@ -128,7 +131,8 @@
       "pos": "noun",
       "category": "people",
       "frequency": 7,
-      "icon": "user"
+      "icon": "user",
+      "image": "https://data.tikocdn.org/uploads/1754859202766-grandma.png"
     },
     {
       "id": "grandpa",
@@ -136,7 +140,8 @@
       "pos": "noun",
       "category": "people",
       "frequency": 7,
-      "icon": "user"
+      "icon": "user",
+      "image": "https://data.tikocdn.org/uploads/1754859213573-grandpa.png"
     },
     {
       "id": "helper",
@@ -152,7 +157,8 @@
       "pos": "noun",
       "category": "people",
       "frequency": 7,
-      "icon": "user"
+      "icon": "user",
+      "image": "https://data.tikocdn.org/uploads/1754574511096-doctor.png"
     },
     {
       "id": "class",
@@ -320,7 +326,8 @@
       "pos": "verb",
       "category": "actions",
       "frequency": 10,
-      "icon": "play"
+      "icon": "play",
+      "image": "https://data.tikocdn.org/uploads/1781021853608-stop-sign.png"
     },
     {
       "id": "start",
@@ -536,7 +543,8 @@
       "pos": "verb",
       "category": "actions",
       "frequency": 7,
-      "icon": "play"
+      "icon": "play",
+      "image": "https://data.tikocdn.org/uploads/1755106132141-jump-rope.png"
     },
     {
       "id": "write",
@@ -600,7 +608,8 @@
       "pos": "verb",
       "category": "actions",
       "frequency": 6,
-      "icon": "play"
+      "icon": "play",
+      "image": "https://data.tikocdn.org/uploads/1755624084539-just-dance-series.png"
     },
     {
       "id": "sing",
@@ -648,7 +657,8 @@
       "pos": "verb",
       "category": "actions",
       "frequency": 6,
-      "icon": "play"
+      "icon": "play",
+      "image": "https://data.tikocdn.org/uploads/1755105544355-textured-sensory-brush.png"
     },
     {
       "id": "push",
@@ -664,7 +674,8 @@
       "pos": "verb",
       "category": "actions",
       "frequency": 6,
-      "icon": "play"
+      "icon": "play",
+      "image": "https://data.tikocdn.org/uploads/1755105220123-pull-up-bar.png"
     },
     {
       "id": "throw",
@@ -824,7 +835,8 @@
       "pos": "social",
       "category": "social",
       "frequency": 9,
-      "icon": "chat-bubble"
+      "icon": "chat-bubble",
+      "image": "https://data.tikocdn.org/uploads/1755617101267-house-finished.png"
     },
     {
       "id": "okay",
@@ -1248,7 +1260,8 @@
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water"
+      "icon": "water",
+      "image": "https://data.tikocdn.org/uploads/1755624098419-kirby-and-the-forgotten-land.png"
     },
     {
       "id": "juice",
@@ -1264,7 +1277,8 @@
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water"
+      "icon": "water",
+      "image": "https://data.tikocdn.org/uploads/1756293128101-tea-kettle.png"
     },
     {
       "id": "smoothie",
@@ -1272,7 +1286,8 @@
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water"
+      "icon": "water",
+      "image": "https://data.tikocdn.org/uploads/1753451476359-smoothie.png"
     },
     {
       "id": "lemonade",
@@ -1280,7 +1295,8 @@
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water"
+      "icon": "water",
+      "image": "https://data.tikocdn.org/uploads/1753451510315-lemonade.png"
     },
     {
       "id": "hot-drink",
@@ -1304,7 +1320,8 @@
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water"
+      "icon": "water",
+      "image": "https://data.tikocdn.org/uploads/1756292863905-toothbrushes-in-cup.png"
     },
     {
       "id": "straw",
@@ -1312,7 +1329,8 @@
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water"
+      "icon": "water",
+      "image": "https://data.tikocdn.org/uploads/1754732213846-reusable-straw.png"
     },
     {
       "id": "bottle",
@@ -1320,7 +1338,8 @@
       "pos": "noun",
       "category": "drinks",
       "frequency": 8,
-      "icon": "water"
+      "icon": "water",
+      "image": "https://data.tikocdn.org/uploads/1755105708364-water-bottle.png"
     },
     {
       "id": "sip",
@@ -1336,7 +1355,8 @@
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple"
+      "icon": "apple",
+      "image": "https://data.tikocdn.org/uploads/1756292940670-golden-apple.png"
     },
     {
       "id": "banana",
@@ -1344,7 +1364,8 @@
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple"
+      "icon": "apple",
+      "image": "https://data.tikocdn.org/uploads/1755286983850-banana.png"
     },
     {
       "id": "bread",
@@ -1352,7 +1373,8 @@
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple"
+      "icon": "apple",
+      "image": "https://data.tikocdn.org/uploads/1755290972081-pide-bread.png"
     },
     {
       "id": "toast",
@@ -1360,7 +1382,8 @@
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple"
+      "icon": "apple",
+      "image": "https://data.tikocdn.org/uploads/1755286514343-fried-egg-on-toast.png"
     },
     {
       "id": "sandwich",
@@ -1368,7 +1391,8 @@
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple"
+      "icon": "apple",
+      "image": "https://data.tikocdn.org/uploads/1781021862923-sandwich.png"
     },
     {
       "id": "rice",
@@ -1376,7 +1400,8 @@
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple"
+      "icon": "apple",
+      "image": "https://data.tikocdn.org/uploads/1756293151213-ricecooker.png"
     },
     {
       "id": "pasta",
@@ -1384,7 +1409,8 @@
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple"
+      "icon": "apple",
+      "image": "https://data.tikocdn.org/uploads/1754731989461-jar-of-pasta.png"
     },
     {
       "id": "soup",
@@ -1392,7 +1418,8 @@
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple"
+      "icon": "apple",
+      "image": "https://data.tikocdn.org/uploads/1754732309169-soup-ladle.png"
     },
     {
       "id": "yogurt",
@@ -1400,7 +1427,8 @@
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple"
+      "icon": "apple",
+      "image": "https://data.tikocdn.org/uploads/1753772684470-spas-yogurt-soup.png"
     },
     {
       "id": "cheese",
@@ -1416,7 +1444,8 @@
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple"
+      "icon": "apple",
+      "image": "https://data.tikocdn.org/uploads/1781470952178-cracker.png"
     },
     {
       "id": "carrot",
@@ -1424,7 +1453,8 @@
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple"
+      "icon": "apple",
+      "image": "https://data.tikocdn.org/uploads/1753448184127-carrot.png"
     },
     {
       "id": "chips",
@@ -1432,7 +1462,8 @@
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple"
+      "icon": "apple",
+      "image": "https://data.tikocdn.org/uploads/1753282919807-fish-chips.png"
     },
     {
       "id": "cookie",
@@ -1440,7 +1471,8 @@
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple"
+      "icon": "apple",
+      "image": "https://data.tikocdn.org/uploads/1755286480193-cookie.png"
     },
     {
       "id": "egg",
@@ -1448,7 +1480,8 @@
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple"
+      "icon": "apple",
+      "image": "https://data.tikocdn.org/uploads/1781374488401-egg.png"
     },
     {
       "id": "cereal",
@@ -1456,7 +1489,8 @@
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple"
+      "icon": "apple",
+      "image": "https://data.tikocdn.org/uploads/1781470544730-cereal.png"
     },
     {
       "id": "fruit",
@@ -1472,7 +1506,8 @@
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple"
+      "icon": "apple",
+      "image": "https://data.tikocdn.org/uploads/1781443428722-plate-of-snack-foods.png"
     },
     {
       "id": "dinner",
@@ -1480,7 +1515,8 @@
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple"
+      "icon": "apple",
+      "image": "https://data.tikocdn.org/uploads/1755455040733-dinner.png"
     },
     {
       "id": "lunch",
@@ -1488,7 +1524,8 @@
       "pos": "noun",
       "category": "food",
       "frequency": 8,
-      "icon": "apple"
+      "icon": "apple",
+      "image": "https://data.tikocdn.org/uploads/1755455052116-lunch.png"
     },
     {
       "id": "happy",
@@ -1496,7 +1533,8 @@
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile"
+      "icon": "smile",
+      "image": "https://data.tikocdn.org/uploads/1756901925456-happy-boy-disney-pixar-style.png"
     },
     {
       "id": "sad",
@@ -1504,7 +1542,8 @@
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile"
+      "icon": "smile",
+      "image": "https://data.tikocdn.org/uploads/1754688205220-emotion-sad-boy.png"
     },
     {
       "id": "angry",
@@ -1512,7 +1551,8 @@
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile"
+      "icon": "smile",
+      "image": "https://data.tikocdn.org/uploads/1754688232560-emotion-angry.png"
     },
     {
       "id": "worried",
@@ -1520,7 +1560,8 @@
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile"
+      "icon": "smile",
+      "image": "https://data.tikocdn.org/uploads/1754739808295-emotion-worried.png"
     },
     {
       "id": "scared",
@@ -1528,7 +1569,8 @@
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile"
+      "icon": "smile",
+      "image": "https://data.tikocdn.org/uploads/1754857383614-girl-scared.png"
     },
     {
       "id": "tired",
@@ -1536,7 +1578,8 @@
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile"
+      "icon": "smile",
+      "image": "https://data.tikocdn.org/uploads/1754857341192-girl-im-tired.png"
     },
     {
       "id": "sick",
@@ -1544,7 +1587,8 @@
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile"
+      "icon": "smile",
+      "image": "https://data.tikocdn.org/uploads/1754857314148-girl-im-sick.png"
     },
     {
       "id": "hurt",
@@ -1568,7 +1612,8 @@
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile"
+      "icon": "smile",
+      "image": "https://data.tikocdn.org/uploads/1754688148492-emotion-excited-boy.png"
     },
     {
       "id": "confused",
@@ -1576,7 +1621,8 @@
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile"
+      "icon": "smile",
+      "image": "https://data.tikocdn.org/uploads/1754688114785-emotion-confused.png"
     },
     {
       "id": "proud",
@@ -1584,7 +1630,8 @@
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile"
+      "icon": "smile",
+      "image": "https://data.tikocdn.org/uploads/1754687852045-emotion-proud-girl.png"
     },
     {
       "id": "lonely",
@@ -1592,7 +1639,8 @@
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile"
+      "icon": "smile",
+      "image": "https://data.tikocdn.org/uploads/1754688067529-emotion-lonely.png"
     },
     {
       "id": "bored",
@@ -1600,7 +1648,8 @@
       "pos": "adjective",
       "category": "feelings",
       "frequency": 9,
-      "icon": "smile"
+      "icon": "smile",
+      "image": "https://data.tikocdn.org/uploads/1754687814850-emotion-bored.png"
     },
     {
       "id": "safe",
@@ -1664,7 +1713,8 @@
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body"
+      "icon": "body",
+      "image": "https://data.tikocdn.org/uploads/1781021866617-head.png"
     },
     {
       "id": "hand",
@@ -1696,7 +1746,8 @@
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body"
+      "icon": "body",
+      "image": "https://data.tikocdn.org/uploads/1756128342077-human-mouth.png"
     },
     {
       "id": "ear",
@@ -1712,7 +1763,8 @@
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body"
+      "icon": "body",
+      "image": "https://data.tikocdn.org/uploads/1756128223153-human-eye.png"
     },
     {
       "id": "arm",
@@ -1720,7 +1772,8 @@
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body"
+      "icon": "body",
+      "image": "https://data.tikocdn.org/uploads/1756473758354-human-arm.png"
     },
     {
       "id": "leg",
@@ -1728,7 +1781,8 @@
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body"
+      "icon": "body",
+      "image": "https://data.tikocdn.org/uploads/1756128317552-human-leg.png"
     },
     {
       "id": "back",
@@ -1744,7 +1798,8 @@
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body"
+      "icon": "body",
+      "image": "https://data.tikocdn.org/uploads/1754662438843-tooth.png"
     },
     {
       "id": "hair",
@@ -1760,7 +1815,8 @@
       "pos": "noun",
       "category": "body",
       "frequency": 6,
-      "icon": "body"
+      "icon": "body",
+      "image": "https://data.tikocdn.org/uploads/1756128358450-human-nose.png"
     },
     {
       "id": "skin",
@@ -1816,7 +1872,8 @@
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home"
+      "icon": "home",
+      "image": "https://data.tikocdn.org/uploads/1781443445242-kids-kitchen.png"
     },
     {
       "id": "bedroom",
@@ -1864,7 +1921,8 @@
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home"
+      "icon": "home",
+      "image": "https://data.tikocdn.org/uploads/1781443441644-generated.png"
     },
     {
       "id": "playground",
@@ -1872,7 +1930,8 @@
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home"
+      "icon": "home",
+      "image": "https://data.tikocdn.org/uploads/1781021542071-playground.png"
     },
     {
       "id": "library",
@@ -1880,7 +1939,8 @@
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home"
+      "icon": "home",
+      "image": "https://data.tikocdn.org/uploads/1754663673001-library.png"
     },
     {
       "id": "pool",
@@ -1888,7 +1948,8 @@
       "pos": "noun",
       "category": "places",
       "frequency": 7,
-      "icon": "home"
+      "icon": "home",
+      "image": "https://data.tikocdn.org/uploads/1754741588695-pool-table.png"
     },
     {
       "id": "table",
@@ -1896,7 +1957,8 @@
       "pos": "noun",
       "category": "home",
       "frequency": 7,
-      "icon": "home"
+      "icon": "home",
+      "image": "https://data.tikocdn.org/uploads/1756292929848-table-tennis-table.png"
     },
     {
       "id": "chair",
@@ -1904,7 +1966,8 @@
       "pos": "noun",
       "category": "home",
       "frequency": 7,
-      "icon": "home"
+      "icon": "home",
+      "image": "https://data.tikocdn.org/uploads/1756293239181-gaming-chair.png"
     },
     {
       "id": "sofa",
@@ -1912,7 +1975,8 @@
       "pos": "noun",
       "category": "home",
       "frequency": 7,
-      "icon": "home"
+      "icon": "home",
+      "image": "https://data.tikocdn.org/uploads/1754569010181-sofa.png"
     },
     {
       "id": "bed",
@@ -1944,7 +2008,8 @@
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book"
+      "icon": "book",
+      "image": "https://data.tikocdn.org/uploads/1781474706796-teddy-bear-with-book.png"
     },
     {
       "id": "pencil",
@@ -1952,7 +2017,8 @@
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book"
+      "icon": "book",
+      "image": "https://data.tikocdn.org/uploads/1755106280944-pencil.png"
     },
     {
       "id": "paper",
@@ -1968,7 +2034,8 @@
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book"
+      "icon": "book",
+      "image": "https://data.tikocdn.org/uploads/1754988042752-bag-of-tools-1.png"
     },
     {
       "id": "coat",
@@ -1984,7 +2051,8 @@
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book"
+      "icon": "book",
+      "image": "https://data.tikocdn.org/uploads/1756144652467-adidas-campus-shoes.png"
     },
     {
       "id": "lunchbox",
@@ -1992,7 +2060,8 @@
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book"
+      "icon": "book",
+      "image": "https://data.tikocdn.org/uploads/1755105586186-lunchbox.png"
     },
     {
       "id": "tablet",
@@ -2000,7 +2069,8 @@
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book"
+      "icon": "book",
+      "image": "https://data.tikocdn.org/uploads/1754986350201-tablet.png"
     },
     {
       "id": "screen",
@@ -2016,7 +2086,8 @@
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book"
+      "icon": "book",
+      "image": "https://data.tikocdn.org/uploads/1754413853153-timer2.png"
     },
     {
       "id": "schedule",
@@ -2040,7 +2111,8 @@
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book"
+      "icon": "book",
+      "image": "https://data.tikocdn.org/uploads/1754741501044-bingo-card.png"
     },
     {
       "id": "story",
@@ -2056,7 +2128,8 @@
       "pos": "noun",
       "category": "school",
       "frequency": 6,
-      "icon": "book"
+      "icon": "book",
+      "image": "https://data.tikocdn.org/uploads/1755106316235-music-note.png"
     },
     {
       "id": "ball",
@@ -2064,7 +2137,8 @@
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle"
+      "icon": "puzzle",
+      "image": "https://data.tikocdn.org/uploads/1755624225308-pok-mon-red-blue.png"
     },
     {
       "id": "blocks",
@@ -2072,7 +2146,8 @@
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle"
+      "icon": "puzzle",
+      "image": "https://data.tikocdn.org/uploads/1755680491621-a-b-c-sequence.png"
     },
     {
       "id": "doll",
@@ -2080,7 +2155,8 @@
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle"
+      "icon": "puzzle",
+      "image": "https://data.tikocdn.org/uploads/1754860491004-babushka.png"
     },
     {
       "id": "car-toy",
@@ -2096,7 +2172,8 @@
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle"
+      "icon": "puzzle",
+      "image": "https://data.tikocdn.org/uploads/1756293139653-model-trains.png"
     },
     {
       "id": "puzzle",
@@ -2104,7 +2181,8 @@
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle"
+      "icon": "puzzle",
+      "image": "https://data.tikocdn.org/uploads/1755105977331-puzzle-piece.png"
     },
     {
       "id": "game",
@@ -2120,7 +2198,8 @@
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle"
+      "icon": "puzzle",
+      "image": "https://data.tikocdn.org/uploads/1755106304863-paint-palette.png"
     },
     {
       "id": "clay",
@@ -2144,7 +2223,8 @@
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle"
+      "icon": "puzzle",
+      "image": "https://data.tikocdn.org/uploads/1781021543058-swing.png"
     },
     {
       "id": "slide",
@@ -2152,7 +2232,8 @@
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle"
+      "icon": "puzzle",
+      "image": "https://data.tikocdn.org/uploads/1781021473617-slide.png"
     },
     {
       "id": "bike",
@@ -2160,7 +2241,8 @@
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle"
+      "icon": "puzzle",
+      "image": "https://data.tikocdn.org/uploads/1755105272207-stationary-bike.png"
     },
     {
       "id": "teddy",
@@ -2168,7 +2250,8 @@
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle"
+      "icon": "puzzle",
+      "image": "https://data.tikocdn.org/uploads/1781474706796-teddy-bear-with-book.png"
     },
     {
       "id": "lego",
@@ -2176,7 +2259,8 @@
       "pos": "noun",
       "category": "toys",
       "frequency": 6,
-      "icon": "puzzle"
+      "icon": "puzzle",
+      "image": "https://data.tikocdn.org/uploads/1755624111907-lego-star-wars-the-skywalker-saga.png"
     },
     {
       "id": "red",
@@ -2184,7 +2268,8 @@
       "pos": "adjective",
       "category": "colors",
       "frequency": 5,
-      "icon": "palette"
+      "icon": "palette",
+      "image": "https://data.tikocdn.org/uploads/1756293164075-red-velvet-mite.png"
     },
     {
       "id": "blue",
@@ -2192,7 +2277,8 @@
       "pos": "adjective",
       "category": "colors",
       "frequency": 5,
-      "icon": "palette"
+      "icon": "palette",
+      "image": "https://data.tikocdn.org/uploads/1756292886243-blue-ribbon.png"
     },
     {
       "id": "green",
@@ -2200,7 +2286,8 @@
       "pos": "adjective",
       "category": "colors",
       "frequency": 5,
-      "icon": "palette"
+      "icon": "palette",
+      "image": "https://data.tikocdn.org/uploads/1756128110497-green-apple.png"
     },
     {
       "id": "yellow",
@@ -2208,7 +2295,8 @@
       "pos": "adjective",
       "category": "colors",
       "frequency": 5,
-      "icon": "palette"
+      "icon": "palette",
+      "image": "https://data.tikocdn.org/uploads/1756127975148-blue-and-yellow-macaw.png"
     },
     {
       "id": "orange",
@@ -2224,7 +2312,8 @@
       "pos": "adjective",
       "category": "colors",
       "frequency": 5,
-      "icon": "palette"
+      "icon": "palette",
+      "image": "https://data.tikocdn.org/uploads/1754662713276-purple-star.png"
     },
     {
       "id": "pink",
@@ -2232,7 +2321,8 @@
       "pos": "adjective",
       "category": "colors",
       "frequency": 5,
-      "icon": "palette"
+      "icon": "palette",
+      "image": "https://data.tikocdn.org/uploads/1755354254398-pink-tulip.png"
     },
     {
       "id": "brown",
@@ -2256,7 +2346,8 @@
       "pos": "adjective",
       "category": "colors",
       "frequency": 5,
-      "icon": "palette"
+      "icon": "palette",
+      "image": "https://data.tikocdn.org/uploads/1755587227281-white-dove-with-branch.png"
     },
     {
       "id": "grey",
@@ -2264,7 +2355,8 @@
       "pos": "adjective",
       "category": "colors",
       "frequency": 5,
-      "icon": "palette"
+      "icon": "palette",
+      "image": "https://data.tikocdn.org/uploads/1753597634531-african-grey-parrot.png"
     },
     {
       "id": "bright",
@@ -2280,7 +2372,8 @@
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette"
+      "icon": "palette",
+      "image": "https://data.tikocdn.org/uploads/1755286874263-woman-with-dark-brown-hair.png"
     },
     {
       "id": "soft",
@@ -2312,7 +2405,8 @@
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette"
+      "icon": "palette",
+      "image": "https://data.tikocdn.org/uploads/1754857413077-girl-too-loud.png"
     },
     {
       "id": "fast",
@@ -2328,7 +2422,8 @@
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "palette"
+      "icon": "palette",
+      "image": "https://data.tikocdn.org/uploads/1754732295324-slow-cooker.png"
     },
     {
       "id": "clean",
@@ -2416,7 +2511,8 @@
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock"
+      "icon": "clock",
+      "image": "https://data.tikocdn.org/uploads/1756182914290-morning-star.png"
     },
     {
       "id": "afternoon",
@@ -2472,7 +2568,8 @@
       "pos": "adverb",
       "category": "time",
       "frequency": 6,
-      "icon": "clock"
+      "icon": "clock",
+      "image": "https://data.tikocdn.org/uploads/1755454465323-letter-n-next.png"
     },
     {
       "id": "last",
@@ -2536,7 +2633,8 @@
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand"
+      "icon": "heart-hand",
+      "image": "https://data.tikocdn.org/uploads/1781077119826-toilet.png"
     },
     {
       "id": "medicine",
@@ -2544,7 +2642,8 @@
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand"
+      "icon": "heart-hand",
+      "image": "https://data.tikocdn.org/uploads/1754731147636-medicine-bottle.png"
     },
     {
       "id": "light",
@@ -2560,7 +2659,8 @@
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand"
+      "icon": "heart-hand",
+      "image": "https://data.tikocdn.org/uploads/1755286874263-woman-with-dark-brown-hair.png"
     },
     {
       "id": "noise",
@@ -2568,7 +2668,8 @@
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand"
+      "icon": "heart-hand",
+      "image": "https://data.tikocdn.org/uploads/1755105522864-noise-canceling-headphones.png"
     },
     {
       "id": "headphones",
@@ -2576,7 +2677,8 @@
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand"
+      "icon": "heart-hand",
+      "image": "https://data.tikocdn.org/uploads/1754739165099-headphones.png"
     },
     {
       "id": "blanket",
@@ -2584,7 +2686,8 @@
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand"
+      "icon": "heart-hand",
+      "image": "https://data.tikocdn.org/uploads/1755105554760-weighted-blanket.png"
     },
     {
       "id": "charger",
@@ -2592,7 +2695,8 @@
       "pos": "noun",
       "category": "needs",
       "frequency": 8,
-      "icon": "heart-hand"
+      "icon": "heart-hand",
+      "image": "https://data.tikocdn.org/uploads/1755623381187-dodge-charger-1969.png"
     },
     {
       "id": "choice",
@@ -2624,7 +2728,8 @@
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles"
+      "icon": "sparkles",
+      "image": "https://data.tikocdn.org/uploads/1756902017583-talking-kids-from-different-cultures.png"
     },
     {
       "id": "same",
@@ -2696,7 +2801,8 @@
       "pos": "adjective",
       "category": "describing",
       "frequency": 5,
-      "icon": "sparkles"
+      "icon": "sparkles",
+      "image": "https://data.tikocdn.org/uploads/1756035003445-empty-basket.png"
     },
     {
       "id": "full",
