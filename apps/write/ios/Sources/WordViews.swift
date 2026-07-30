@@ -106,7 +106,7 @@ struct WordScreen: View {
         self.onNext = onNext
         _model = StateObject(
             wrappedValue: WordTraceModel(
-                word: word, pack: pack, settings: TraceSettings.companion.forgiving
+                word: word, pack: pack, settings: WriteSettings.traceSettings()
             ) ?? WordTraceModel.placeholder(pack: pack)
         )
     }
@@ -240,6 +240,6 @@ extension WordTraceModel {
         let fallback = WriteWordStore.Word(
             id: "a", text: "a", shapeId: nil, glyphIDs: ["lower-a"], isCustom: false
         )
-        return WordTraceModel(word: fallback, pack: pack, settings: TraceSettings.companion.forgiving)!
+        return WordTraceModel(word: fallback, pack: pack, settings: WriteSettings.traceSettings())!
     }
 }

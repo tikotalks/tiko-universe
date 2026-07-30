@@ -11115,6 +11115,7 @@ extension TikoLocalTranslations {
         "write.group.food": "Eten",
         "write.words.save": "Opslaan",
         "write.words.cancel": "Annuleren",
+        "write.settings.offPath.restart": "Opnieuw beginnen",
         "write.action.again": "Nog eens",
         "write.action.next": "Volgende",
     ]
@@ -11126,6 +11127,7 @@ extension TikoLocalTranslations {
         "write.group.food": "Essen",
         "write.words.save": "Speichern",
         "write.words.cancel": "Abbrechen",
+        "write.settings.offPath.restart": "Neu anfangen",
         "write.action.again": "Nochmal",
         "write.action.next": "Weiter",
     ]
@@ -11137,6 +11139,7 @@ extension TikoLocalTranslations {
         "write.group.food": "Nourriture",
         "write.words.save": "Enregistrer",
         "write.words.cancel": "Annuler",
+        "write.settings.offPath.restart": "Recommencer",
         "write.action.again": "Encore",
         "write.action.next": "Suivant",
     ]
@@ -11148,6 +11151,7 @@ extension TikoLocalTranslations {
         "write.group.food": "Comida",
         "write.words.save": "Guardar",
         "write.words.cancel": "Cancelar",
+        "write.settings.offPath.restart": "Empezar de nuevo",
         "write.action.again": "Otra vez",
         "write.action.next": "Siguiente",
     ]
@@ -11155,6 +11159,7 @@ extension TikoLocalTranslations {
     static let write_pt: [String: String] = [
         "write.words.save": "Guardar",
         "write.words.cancel": "Cancelar",
+        "write.settings.offPath.restart": "Começar de novo",
         "write.action.again": "Outra vez",
         "write.action.next": "Seguinte",
     ]
@@ -11162,6 +11167,7 @@ extension TikoLocalTranslations {
     static let write_it: [String: String] = [
         "write.words.save": "Salva",
         "write.words.cancel": "Annulla",
+        "write.settings.offPath.restart": "Ricomincia",
         "write.action.again": "Ancora",
         "write.action.next": "Avanti",
     ]
@@ -11173,6 +11179,7 @@ extension TikoLocalTranslations {
         "write.group.food": "Ikel",
         "write.words.save": "Issejvja",
         "write.words.cancel": "Ikkanċella",
+        "write.settings.offPath.restart": "Ibda mill-ġdid",
         "write.action.again": "Erġa'",
         "write.action.next": "Li jmiss",
     ]
@@ -11180,6 +11187,7 @@ extension TikoLocalTranslations {
     static let write_ja: [String: String] = [
         "write.words.save": "保存",
         "write.words.cancel": "キャンセル",
+        "write.settings.offPath.restart": "最初から",
         "write.action.again": "もう一度",
         "write.action.next": "次へ",
     ]
@@ -11187,6 +11195,7 @@ extension TikoLocalTranslations {
     static let write_zh: [String: String] = [
         "write.words.save": "保存",
         "write.words.cancel": "取消",
+        "write.settings.offPath.restart": "重新开始",
         "write.action.again": "再来一次",
         "write.action.next": "下一个",
     ]
@@ -11194,6 +11203,7 @@ extension TikoLocalTranslations {
     static let write_ko: [String: String] = [
         "write.words.save": "저장",
         "write.words.cancel": "취소",
+        "write.settings.offPath.restart": "다시 시작",
         "write.action.again": "다시",
         "write.action.next": "다음",
     ]
@@ -11201,6 +11211,7 @@ extension TikoLocalTranslations {
     static let write_ar: [String: String] = [
         "write.words.save": "حفظ",
         "write.words.cancel": "إلغاء",
+        "write.settings.offPath.restart": "ابدأ من جديد",
         "write.action.again": "مرة أخرى",
         "write.action.next": "التالي",
     ]
@@ -11208,6 +11219,7 @@ extension TikoLocalTranslations {
     static let write_hy: [String: String] = [
         "write.words.save": "Պահպանել",
         "write.words.cancel": "Չեղարկել",
+        "write.settings.offPath.restart": "Սկսել նորից",
         "write.action.again": "Կրկին",
         "write.action.next": "Հաջորդը",
     ]
@@ -11215,6 +11227,7 @@ extension TikoLocalTranslations {
     static let write_id: [String: String] = [
         "write.words.save": "Simpan",
         "write.words.cancel": "Batal",
+        "write.settings.offPath.restart": "Mulai lagi",
         "write.action.again": "Lagi",
         "write.action.next": "Berikutnya",
     ]
@@ -11222,6 +11235,7 @@ extension TikoLocalTranslations {
     static let write_ms: [String: String] = [
         "write.words.save": "Simpan",
         "write.words.cancel": "Batal",
+        "write.settings.offPath.restart": "Mula semula",
         "write.action.again": "Sekali lagi",
         "write.action.next": "Seterusnya",
     ]
@@ -11229,6 +11243,7 @@ extension TikoLocalTranslations {
     static let write_vi: [String: String] = [
         "write.words.save": "Lưu",
         "write.words.cancel": "Hủy",
+        "write.settings.offPath.restart": "Bắt đầu lại",
         "write.action.again": "Lần nữa",
         "write.action.next": "Tiếp",
     ]
@@ -11236,6 +11251,7 @@ extension TikoLocalTranslations {
     static let write_af: [String: String] = [
         "write.words.save": "Stoor",
         "write.words.cancel": "Kanselleer",
+        "write.settings.offPath.restart": "Begin oor",
         "write.action.again": "Weer",
         "write.action.next": "Volgende",
     ]
@@ -11243,6 +11259,7 @@ extension TikoLocalTranslations {
     static let write_sv: [String: String] = [
         "write.words.save": "Spara",
         "write.words.cancel": "Avbryt",
+        "write.settings.offPath.restart": "Börja om",
         "write.action.again": "Igen",
         "write.action.next": "Nästa",
     ]
@@ -11250,6 +11267,7 @@ extension TikoLocalTranslations {
     static let write_da: [String: String] = [
         "write.words.save": "Gem",
         "write.words.cancel": "Annuller",
+        "write.settings.offPath.restart": "Start forfra",
         "write.action.again": "Igen",
         "write.action.next": "Næste",
     ]
@@ -11257,6 +11275,7 @@ extension TikoLocalTranslations {
     static let write_nb: [String: String] = [
         "write.words.save": "Lagre",
         "write.words.cancel": "Avbryt",
+        "write.settings.offPath.restart": "Start på nytt",
         "write.action.again": "Igjen",
         "write.action.next": "Neste",
     ]
@@ -11264,6 +11283,7 @@ extension TikoLocalTranslations {
     static let write_is: [String: String] = [
         "write.words.save": "Vista",
         "write.words.cancel": "Hætta",
+        "write.settings.offPath.restart": "Byrja upp á nýtt",
         "write.action.again": "Aftur",
         "write.action.next": "Næsta",
     ]
@@ -11271,6 +11291,7 @@ extension TikoLocalTranslations {
     static let write_fy: [String: String] = [
         "write.words.save": "Bewarje",
         "write.words.cancel": "Ofbrekke",
+        "write.settings.offPath.restart": "Op'e nij begjinne",
         "write.action.again": "Nochris",
         "write.action.next": "Folgjende",
     ]
@@ -11278,6 +11299,7 @@ extension TikoLocalTranslations {
     static let write_lb: [String: String] = [
         "write.words.save": "Speicheren",
         "write.words.cancel": "Ofbrieche",
+        "write.settings.offPath.restart": "Nei ufänken",
         "write.action.again": "Nochmol",
         "write.action.next": "Weider",
     ]
@@ -11285,6 +11307,7 @@ extension TikoLocalTranslations {
     static let write_ca: [String: String] = [
         "write.words.save": "Desa",
         "write.words.cancel": "Cancel·la",
+        "write.settings.offPath.restart": "Torna a començar",
         "write.action.again": "Un altre cop",
         "write.action.next": "Següent",
     ]
@@ -11292,6 +11315,7 @@ extension TikoLocalTranslations {
     static let write_gl: [String: String] = [
         "write.words.save": "Gardar",
         "write.words.cancel": "Cancelar",
+        "write.settings.offPath.restart": "Comezar de novo",
         "write.action.again": "Outra vez",
         "write.action.next": "Seguinte",
     ]
@@ -11299,6 +11323,7 @@ extension TikoLocalTranslations {
     static let write_ro: [String: String] = [
         "write.words.save": "Salvează",
         "write.words.cancel": "Anulează",
+        "write.settings.offPath.restart": "Începe din nou",
         "write.action.again": "Din nou",
         "write.action.next": "Următor",
     ]
@@ -11306,6 +11331,7 @@ extension TikoLocalTranslations {
     static let write_pap: [String: String] = [
         "write.words.save": "Warda",
         "write.words.cancel": "Kanselá",
+        "write.settings.offPath.restart": "Kuminsá di nobo",
         "write.action.again": "Atrobe",
         "write.action.next": "Siguiente",
     ]
@@ -11313,6 +11339,7 @@ extension TikoLocalTranslations {
     static let write_ru: [String: String] = [
         "write.words.save": "Сохранить",
         "write.words.cancel": "Отмена",
+        "write.settings.offPath.restart": "Начать заново",
         "write.action.again": "Ещё раз",
         "write.action.next": "Далее",
     ]
@@ -11320,6 +11347,7 @@ extension TikoLocalTranslations {
     static let write_uk: [String: String] = [
         "write.words.save": "Зберегти",
         "write.words.cancel": "Скасувати",
+        "write.settings.offPath.restart": "Почати спочатку",
         "write.action.again": "Ще раз",
         "write.action.next": "Далі",
     ]
@@ -11327,6 +11355,7 @@ extension TikoLocalTranslations {
     static let write_be: [String: String] = [
         "write.words.save": "Захаваць",
         "write.words.cancel": "Скасаваць",
+        "write.settings.offPath.restart": "Пачаць спачатку",
         "write.action.again": "Яшчэ раз",
         "write.action.next": "Далей",
     ]
@@ -11334,6 +11363,7 @@ extension TikoLocalTranslations {
     static let write_pl: [String: String] = [
         "write.words.save": "Zapisz",
         "write.words.cancel": "Anuluj",
+        "write.settings.offPath.restart": "Zacznij od nowa",
         "write.action.again": "Jeszcze raz",
         "write.action.next": "Dalej",
     ]
@@ -11341,6 +11371,7 @@ extension TikoLocalTranslations {
     static let write_cs: [String: String] = [
         "write.words.save": "Uložit",
         "write.words.cancel": "Zrušit",
+        "write.settings.offPath.restart": "Začít znovu",
         "write.action.again": "Znovu",
         "write.action.next": "Další",
     ]
@@ -11348,6 +11379,7 @@ extension TikoLocalTranslations {
     static let write_sk: [String: String] = [
         "write.words.save": "Uložiť",
         "write.words.cancel": "Zrušiť",
+        "write.settings.offPath.restart": "Začať odznova",
         "write.action.again": "Znova",
         "write.action.next": "Ďalej",
     ]
@@ -11355,6 +11387,7 @@ extension TikoLocalTranslations {
     static let write_sl: [String: String] = [
         "write.words.save": "Shrani",
         "write.words.cancel": "Prekliči",
+        "write.settings.offPath.restart": "Začni znova",
         "write.action.again": "Še enkrat",
         "write.action.next": "Naprej",
     ]
@@ -11362,6 +11395,7 @@ extension TikoLocalTranslations {
     static let write_hr: [String: String] = [
         "write.words.save": "Spremi",
         "write.words.cancel": "Odustani",
+        "write.settings.offPath.restart": "Počni ispočetka",
         "write.action.again": "Ponovno",
         "write.action.next": "Sljedeće",
     ]
@@ -11369,6 +11403,7 @@ extension TikoLocalTranslations {
     static let write_sr: [String: String] = [
         "write.words.save": "Сачувај",
         "write.words.cancel": "Одустани",
+        "write.settings.offPath.restart": "Почни испочетка",
         "write.action.again": "Поново",
         "write.action.next": "Следеће",
     ]
@@ -11376,6 +11411,7 @@ extension TikoLocalTranslations {
     static let write_bs: [String: String] = [
         "write.words.save": "Spremi",
         "write.words.cancel": "Odustani",
+        "write.settings.offPath.restart": "Počni ispočetka",
         "write.action.again": "Ponovno",
         "write.action.next": "Sljedeće",
     ]
@@ -11383,6 +11419,7 @@ extension TikoLocalTranslations {
     static let write_cnr: [String: String] = [
         "write.words.save": "Spremi",
         "write.words.cancel": "Odustani",
+        "write.settings.offPath.restart": "Počni ispočetka",
         "write.action.again": "Ponovno",
         "write.action.next": "Sljedeće",
     ]
@@ -11390,6 +11427,7 @@ extension TikoLocalTranslations {
     static let write_bg: [String: String] = [
         "write.words.save": "Запази",
         "write.words.cancel": "Отказ",
+        "write.settings.offPath.restart": "Започни отначало",
         "write.action.again": "Отново",
         "write.action.next": "Напред",
     ]
@@ -11397,6 +11435,7 @@ extension TikoLocalTranslations {
     static let write_mk: [String: String] = [
         "write.words.save": "Зачувај",
         "write.words.cancel": "Откажи",
+        "write.settings.offPath.restart": "Почни од почеток",
         "write.action.again": "Повторно",
         "write.action.next": "Следно",
     ]
@@ -11404,6 +11443,7 @@ extension TikoLocalTranslations {
     static let write_lt: [String: String] = [
         "write.words.save": "Išsaugoti",
         "write.words.cancel": "Atšaukti",
+        "write.settings.offPath.restart": "Pradėti iš naujo",
         "write.action.again": "Dar kartą",
         "write.action.next": "Toliau",
     ]
@@ -11411,6 +11451,7 @@ extension TikoLocalTranslations {
     static let write_lv: [String: String] = [
         "write.words.save": "Saglabāt",
         "write.words.cancel": "Atcelt",
+        "write.settings.offPath.restart": "Sākt no jauna",
         "write.action.again": "Vēlreiz",
         "write.action.next": "Tālāk",
     ]
@@ -11418,6 +11459,7 @@ extension TikoLocalTranslations {
     static let write_fi: [String: String] = [
         "write.words.save": "Tallenna",
         "write.words.cancel": "Peruuta",
+        "write.settings.offPath.restart": "Aloita alusta",
         "write.action.again": "Uudelleen",
         "write.action.next": "Seuraava",
     ]
@@ -11425,6 +11467,7 @@ extension TikoLocalTranslations {
     static let write_et: [String: String] = [
         "write.words.save": "Salvesta",
         "write.words.cancel": "Tühista",
+        "write.settings.offPath.restart": "Alusta uuesti",
         "write.action.again": "Uuesti",
         "write.action.next": "Järgmine",
     ]
@@ -11432,6 +11475,7 @@ extension TikoLocalTranslations {
     static let write_hu: [String: String] = [
         "write.words.save": "Mentés",
         "write.words.cancel": "Mégse",
+        "write.settings.offPath.restart": "Újrakezdés",
         "write.action.again": "Újra",
         "write.action.next": "Következő",
     ]
@@ -11439,6 +11483,7 @@ extension TikoLocalTranslations {
     static let write_cy: [String: String] = [
         "write.words.save": "Cadw",
         "write.words.cancel": "Canslo",
+        "write.settings.offPath.restart": "Dechrau eto",
         "write.action.again": "Eto",
         "write.action.next": "Nesaf",
     ]
@@ -11446,6 +11491,7 @@ extension TikoLocalTranslations {
     static let write_ga: [String: String] = [
         "write.words.save": "Sábháil",
         "write.words.cancel": "Cealaigh",
+        "write.settings.offPath.restart": "Tosaigh arís",
         "write.action.again": "Arís",
         "write.action.next": "Ar aghaidh",
     ]
@@ -11453,6 +11499,7 @@ extension TikoLocalTranslations {
     static let write_bn: [String: String] = [
         "write.words.save": "সংরক্ষণ",
         "write.words.cancel": "বাতিল",
+        "write.settings.offPath.restart": "আবার শুরু",
         "write.action.again": "আবার",
         "write.action.next": "পরবর্তী",
     ]
@@ -11460,6 +11507,7 @@ extension TikoLocalTranslations {
     static let write_hi: [String: String] = [
         "write.words.save": "सहेजें",
         "write.words.cancel": "रद्द करें",
+        "write.settings.offPath.restart": "फिर से शुरू",
         "write.action.again": "फिर से",
         "write.action.next": "आगे",
     ]
@@ -11467,6 +11515,7 @@ extension TikoLocalTranslations {
     static let write_el: [String: String] = [
         "write.words.save": "Αποθήκευση",
         "write.words.cancel": "Άκυρο",
+        "write.settings.offPath.restart": "Ξεκίνα από την αρχή",
         "write.action.again": "Ξανά",
         "write.action.next": "Επόμενο",
     ]
@@ -11474,6 +11523,7 @@ extension TikoLocalTranslations {
     static let write_sq: [String: String] = [
         "write.words.save": "Ruaj",
         "write.words.cancel": "Anulo",
+        "write.settings.offPath.restart": "Nis nga fillimi",
         "write.action.again": "Sërish",
         "write.action.next": "Tjetra",
     ]
@@ -11481,6 +11531,7 @@ extension TikoLocalTranslations {
     static let write_tr: [String: String] = [
         "write.words.save": "Kaydet",
         "write.words.cancel": "İptal",
+        "write.settings.offPath.restart": "Baştan başla",
         "write.action.again": "Tekrar",
         "write.action.next": "İleri",
     ]
@@ -11488,6 +11539,7 @@ extension TikoLocalTranslations {
     static let write_eu: [String: String] = [
         "write.words.save": "Gorde",
         "write.words.cancel": "Utzi",
+        "write.settings.offPath.restart": "Hasi berriro",
         "write.action.again": "Berriro",
         "write.action.next": "Hurrengoa",
     ]
@@ -11495,6 +11547,7 @@ extension TikoLocalTranslations {
     static let write_ka: [String: String] = [
         "write.words.save": "შენახვა",
         "write.words.cancel": "გაუქმება",
+        "write.settings.offPath.restart": "თავიდან დაწყება",
         "write.action.again": "ხელახლა",
         "write.action.next": "შემდეგი",
     ]

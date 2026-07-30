@@ -46,7 +46,9 @@ struct WriteView: View {
             appConfig: WriteAppConfig.app,
             appName: i18n.t("write.appName"),
             onIconTap: (category == nil && selection == nil && !showingWords) ? nil : goBack,
-            settingsContent: { EmptyView() },
+            settingsContent: {
+                WriteSettingsContent(i18n: i18n, wordStore: wordStore, languageCode: languageCode)
+            },
             content: {
                 if let selection,
                    let glyph = store.glyph(packId: selection.packId, glyphID: selection.glyphID),
@@ -224,7 +226,7 @@ private struct TraceScreen: View {
     ) {
         _model = StateObject(
             wrappedValue: TraceViewModel(
-                glyph: glyph, viewBox: viewBox, settings: TraceSettings.companion.forgiving
+                glyph: glyph, viewBox: viewBox, settings: WriteSettings.traceSettings()
             )
         )
         self.spokenName = spokenName
@@ -236,7 +238,11 @@ private struct TraceScreen: View {
     var body: some View {
         VStack(spacing: 0) {
             ZStack {
-                TraceCanvasView(model: model, tint: TikoAppColor.write.palette.primary)
+                TraceCanvasView(
+                    model: model,
+                    tint: TikoAppColor.write.palette.primary,
+                    showModelDemo: WriteSettings.modelDemoEnabled
+                )
                     .accessibilityLabel(model.glyph.character)
                 TikoCelebrationOverlay(
                     trigger: model.celebrationTrigger,

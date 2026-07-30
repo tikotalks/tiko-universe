@@ -26,7 +26,7 @@ final class WriteGlyphStore: ObservableObject {
     private var names: [String: String] = [:]
 
     /// Presentation order across packs: shapes first, then numbers, then letters.
-    private static let packOrder = ["shapes", "numbers-latin", "print-latin"]
+    private static let packOrder = ["shapes", "numbers-latin", "print-latin", "cursive-latin"]
 
     init(bundle: Bundle = .main) {
         load(from: bundle)

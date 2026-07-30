@@ -12,6 +12,7 @@ import UIKit
 struct TraceCanvasView: UIViewRepresentable {
     @ObservedObject var model: TraceViewModel
     let tint: Color
+    var showModelDemo = true
 
     func makeUIView(context: Context) -> TraceInputView {
         let view = TraceInputView()
@@ -19,12 +20,16 @@ struct TraceCanvasView: UIViewRepresentable {
         view.isMultipleTouchEnabled = false
         view.tint = UIColor(tint)
         view.model = model
+        view.modelDemoEnabled = showModelDemo
+        // Show the letter making itself as soon as it appears.
+        DispatchQueue.main.async { view.startDemoIfWanted() }
         return view
     }
 
     func updateUIView(_ uiView: TraceInputView, context: Context) {
         uiView.model = model
         uiView.tint = UIColor(tint)
+        uiView.modelDemoEnabled = showModelDemo
         uiView.syncToModel()
     }
 }
@@ -47,6 +52,16 @@ final class TraceInputView: UIView {
         var size: CGFloat
         var hueShift: CGFloat
     }
+
+    /// Model demonstration: how far along the current stroke the showing dot has
+    /// travelled, 0…1, or nil when nothing is being demonstrated. A child who has
+    /// never been shown how a letter is made cannot discover it from a static
+    /// outline, which is why this is on by default.
+    private var demoProgress: CGFloat?
+    private var demoStroke = 0
+    private var demoLink: CADisplayLink?
+    private var demoStartedAt: CFTimeInterval = 0
+    var modelDemoEnabled = true
 
     private var particles: [Particle] = []
     private var link: CADisplayLink?
@@ -79,8 +94,45 @@ final class TraceInputView: UIView {
 
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         guard let touch = touches.first, let model else { return }
+        // The child taking over always wins: stop showing and let them write.
+        stopDemo()
         model.begin(at: boxPoint(touch))
         syncToModel()
+    }
+
+    // MARK: - Model demonstration
+
+    /// Shows the current stroke drawing itself, once.
+    func startDemoIfWanted() {
+        guard modelDemoEnabled, let model, !model.isComplete,
+              model.currentProgress == 0, demoLink == nil else { return }
+        demoStroke = model.currentStroke
+        demoProgress = 0
+        demoStartedAt = CACurrentMediaTime()
+        let l = CADisplayLink(target: self, selector: #selector(stepDemo))
+        l.add(to: .main, forMode: .common)
+        demoLink = l
+    }
+
+    private func stopDemo() {
+        demoLink?.invalidate()
+        demoLink = nil
+        demoProgress = nil
+    }
+
+    @objc private func stepDemo() {
+        guard let model, demoStroke < model.strokePoints.count else { stopDemo(); return }
+        // Constant speed along arc length, so a long stroke takes longer than a
+        // short one rather than every stroke taking the same time.
+        let elapsed = CACurrentMediaTime() - demoStartedAt
+        let duration = 1.5
+        let p = CGFloat(min(1, elapsed / duration))
+        demoProgress = p
+        if p >= 1 {
+            // Hold the finished stroke a beat, then clear.
+            stopDemo()
+        }
+        setNeedsDisplay()
     }
 
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -260,6 +312,26 @@ final class TraceInputView: UIView {
             ctx.setLineJoin(.round)
             ctx.addPath(WriteEngine.path(from: drawn))
             ctx.strokePath()
+        }
+
+        // The demonstration: a trail drawing itself along the stroke, with a dot
+        // at the pen. Drawn under the start marker so the marker stays visible.
+        if let demo = demoProgress, demoStroke < model.strokePoints.count {
+            let pts = model.strokePoints[demoStroke].map { $0.applying(t) }
+            let shown = Self.prefix(of: pts, fraction: max(demo, 0.001))
+            if shown.count > 1 {
+                ctx.setStrokeColor(tint.withAlphaComponent(0.45).cgColor)
+                ctx.setLineWidth(strokeWidth * 0.5)
+                ctx.setLineCap(.round)
+                ctx.setLineJoin(.round)
+                ctx.addPath(WriteEngine.path(from: shown))
+                ctx.strokePath()
+            }
+            if let head = shown.last {
+                ctx.setFillColor(tint.cgColor)
+                let r = strokeWidth * 0.3
+                ctx.fillEllipse(in: CGRect(x: head.x - r, y: head.y - r, width: r * 2, height: r * 2))
+            }
         }
 
         // Where to start, pulsing until the child sets off.
