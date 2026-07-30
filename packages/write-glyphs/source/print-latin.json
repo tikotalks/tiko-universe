@@ -1,0 +1,280 @@
+{
+  "packId": "print-latin",
+  "packSchemaVersion": 1,
+  "packVersion": 1,
+  "style": "print",
+  "viewBox": [0, 0, 100, 140],
+  "guides": {
+    "ascender": 10,
+    "capHeight": 24,
+    "xHeight": 60,
+    "baseline": 110,
+    "descender": 134
+  },
+  "groups": [
+    { "id": "uppercase", "sortOrder": 1 },
+    { "id": "lowercase", "sortOrder": 2 }
+  ],
+  "glyphs": [
+    {
+      "id": "upper-a",
+      "char": "A",
+      "groupId": "uppercase",
+      "sortOrder": 1,
+      "strokes": [
+        { "d": "M50 24 L28 110", "widthScale": 1.1 },
+        { "d": "M50 24 L72 110", "widthScale": 1.1 },
+        { "d": "M36 84 L64 84" }
+      ]
+    },
+    {
+      "id": "upper-b",
+      "char": "B",
+      "groupId": "uppercase",
+      "sortOrder": 2,
+      "strokes": [
+        { "d": "M30 24 L30 110" },
+        { "d": "M30 24 C58 24 68 32 68 45 C68 58 56 66 30 66 C60 66 72 76 72 88 C72 100 60 110 30 110" }
+      ]
+    },
+    {
+      "id": "upper-c",
+      "char": "C",
+      "groupId": "uppercase",
+      "sortOrder": 3,
+      "strokes": [
+        { "d": "M70 40 C64 28 52 24 44 24 C32 24 26 40 26 67 C26 94 32 110 44 110 C52 110 64 106 70 94" }
+      ]
+    },
+    {
+      "id": "upper-d",
+      "char": "D",
+      "groupId": "uppercase",
+      "sortOrder": 4,
+      "strokes": [
+        { "d": "M30 24 L30 110" },
+        { "d": "M30 24 C58 24 72 40 72 67 C72 94 58 110 30 110" }
+      ]
+    },
+    {
+      "id": "upper-e",
+      "char": "E",
+      "groupId": "uppercase",
+      "sortOrder": 5,
+      "strokes": [
+        { "d": "M30 24 L30 110" },
+        { "d": "M30 24 L70 24" },
+        { "d": "M30 66 L62 66" },
+        { "d": "M30 110 L70 110" }
+      ]
+    },
+    {
+      "id": "upper-f",
+      "char": "F",
+      "groupId": "uppercase",
+      "sortOrder": 6,
+      "strokes": [
+        { "d": "M30 24 L30 110" },
+        { "d": "M30 24 L70 24" },
+        { "d": "M30 66 L62 66" }
+      ]
+    },
+    {
+      "id": "upper-g",
+      "char": "G",
+      "groupId": "uppercase",
+      "sortOrder": 7,
+      "strokes": [
+        { "d": "M70 40 C64 28 52 24 44 24 C32 24 26 40 26 67 C26 94 32 110 44 110 C58 110 70 100 70 82" },
+        { "d": "M52 82 L70 82" }
+      ]
+    },
+    {
+      "id": "upper-h",
+      "char": "H",
+      "groupId": "uppercase",
+      "sortOrder": 8,
+      "strokes": [
+        { "d": "M30 24 L30 110" },
+        { "d": "M70 24 L70 110" },
+        { "d": "M30 66 L70 66" }
+      ]
+    },
+    {
+      "id": "upper-i",
+      "char": "I",
+      "groupId": "uppercase",
+      "sortOrder": 9,
+      "strokes": [
+        { "d": "M50 24 L50 110" },
+        { "d": "M34 24 L66 24" },
+        { "d": "M34 110 L66 110" }
+      ]
+    },
+    {
+      "id": "upper-j",
+      "char": "J",
+      "groupId": "uppercase",
+      "sortOrder": 10,
+      "strokes": [
+        { "d": "M62 24 L62 92 C62 106 50 113 42 110 C35 107 32 100 32 94" }
+      ]
+    },
+    {
+      "id": "upper-k",
+      "char": "K",
+      "groupId": "uppercase",
+      "sortOrder": 11,
+      "strokes": [
+        { "d": "M30 24 L30 110" },
+        { "d": "M70 24 L30 67", "widthScale": 1.1 },
+        { "d": "M46 50 L72 110", "widthScale": 1.1 }
+      ]
+    },
+    {
+      "id": "upper-l",
+      "char": "L",
+      "groupId": "uppercase",
+      "sortOrder": 12,
+      "strokes": [
+        { "d": "M30 24 L30 110" },
+        { "d": "M30 110 L70 110" }
+      ]
+    },
+    {
+      "id": "upper-m",
+      "char": "M",
+      "groupId": "uppercase",
+      "sortOrder": 13,
+      "strokes": [
+        { "d": "M24 24 L24 110" },
+        { "d": "M24 24 L50 76 L76 24 L76 110", "widthScale": 1.1 }
+      ]
+    },
+    {
+      "id": "upper-n",
+      "char": "N",
+      "groupId": "uppercase",
+      "sortOrder": 14,
+      "strokes": [
+        { "d": "M30 24 L30 110" },
+        { "d": "M30 24 L70 110 L70 24", "widthScale": 1.1 }
+      ]
+    },
+    {
+      "id": "upper-o",
+      "char": "O",
+      "groupId": "uppercase",
+      "sortOrder": 15,
+      "strokes": [
+        { "d": "M66 38 C60 29 55 24 50 24 C36 24 24 43 24 67 C24 91 36 110 50 110 C64 110 76 91 76 67 C76 55 72 45 66 38" }
+      ]
+    },
+    {
+      "id": "upper-p",
+      "char": "P",
+      "groupId": "uppercase",
+      "sortOrder": 16,
+      "strokes": [
+        { "d": "M30 24 L30 110" },
+        { "d": "M30 24 C58 24 70 33 70 48 C70 63 58 72 30 72" }
+      ]
+    },
+    {
+      "id": "upper-q",
+      "char": "Q",
+      "groupId": "uppercase",
+      "sortOrder": 17,
+      "strokes": [
+        { "d": "M66 38 C60 29 55 24 50 24 C36 24 24 43 24 67 C24 91 36 110 50 110 C64 110 76 91 76 67 C76 55 72 45 66 38" },
+        { "d": "M58 88 L78 116", "widthScale": 1.1 }
+      ]
+    },
+    {
+      "id": "upper-r",
+      "char": "R",
+      "groupId": "uppercase",
+      "sortOrder": 18,
+      "strokes": [
+        { "d": "M30 24 L30 110" },
+        { "d": "M30 24 C58 24 70 33 70 48 C70 63 58 72 30 72" },
+        { "d": "M46 72 L72 110", "widthScale": 1.1 }
+      ]
+    },
+    {
+      "id": "upper-s",
+      "char": "S",
+      "groupId": "uppercase",
+      "sortOrder": 19,
+      "strokes": [
+        { "d": "M70 38 C66 28 56 24 48 24 C36 24 28 32 28 44 C28 56 40 62 52 66 C64 70 74 76 74 90 C74 102 64 110 50 110 C40 110 30 104 28 96" }
+      ]
+    },
+    {
+      "id": "upper-t",
+      "char": "T",
+      "groupId": "uppercase",
+      "sortOrder": 20,
+      "strokes": [
+        { "d": "M50 24 L50 110" },
+        { "d": "M26 24 L74 24" }
+      ]
+    },
+    {
+      "id": "upper-u",
+      "char": "U",
+      "groupId": "uppercase",
+      "sortOrder": 21,
+      "strokes": [
+        { "d": "M30 24 L30 84 C30 100 40 110 50 110 C60 110 70 100 70 84 L70 24" }
+      ]
+    },
+    {
+      "id": "upper-v",
+      "char": "V",
+      "groupId": "uppercase",
+      "sortOrder": 22,
+      "strokes": [
+        { "d": "M28 24 L50 110 L72 24", "widthScale": 1.1 }
+      ]
+    },
+    {
+      "id": "upper-w",
+      "char": "W",
+      "groupId": "uppercase",
+      "sortOrder": 23,
+      "strokes": [
+        { "d": "M22 24 L38 110 L50 44 L62 110 L78 24", "widthScale": 1.1 }
+      ]
+    },
+    {
+      "id": "upper-x",
+      "char": "X",
+      "groupId": "uppercase",
+      "sortOrder": 24,
+      "strokes": [
+        { "d": "M28 24 L72 110", "widthScale": 1.1 },
+        { "d": "M72 24 L28 110", "widthScale": 1.1 }
+      ]
+    },
+    {
+      "id": "upper-y",
+      "char": "Y",
+      "groupId": "uppercase",
+      "sortOrder": 25,
+      "strokes": [
+        { "d": "M30 24 L50 68", "widthScale": 1.1 },
+        { "d": "M70 24 L50 68 L50 110", "widthScale": 1.1 }
+      ]
+    },
+    {
+      "id": "upper-z",
+      "char": "Z",
+      "groupId": "uppercase",
+      "sortOrder": 26,
+      "strokes": [
+        { "d": "M28 24 L72 24 L28 110 L72 110", "widthScale": 1.1 }
+      ]
+    }
+  ]
+}

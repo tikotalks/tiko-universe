@@ -13,6 +13,7 @@
 
 import shapes from '../source/shapes.json'
 import numbersLatin from '../source/numbers-latin.json'
+import printLatin from '../source/print-latin.json'
 
 export const GLYPH_PACK_SCHEMA_VERSION = 1 as const
 
@@ -82,6 +83,7 @@ export interface GlyphPack {
 const packs = {
   shapes: shapes as unknown as GlyphPack,
   'numbers-latin': numbersLatin as unknown as GlyphPack,
+  'print-latin': printLatin as unknown as GlyphPack,
 } satisfies Record<string, GlyphPack>
 
 export type GlyphPackId = keyof typeof packs
