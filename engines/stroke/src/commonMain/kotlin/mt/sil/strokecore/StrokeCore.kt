@@ -41,4 +41,15 @@ public object StrokeCore {
 
     /** Schema version of the saved attempt-record envelope. */
     public const val STATE_SCHEMA_VERSION: Int = 1
+
+    /**
+     * Decodes a glyph pack. Throws [PackDecodeError] on malformed data or an
+     * unknown schema version — a bad pack fails at load rather than tracing
+     * something unintended.
+     */
+    public fun loadPack(json: String): GlyphPack = decodePack(json)
+
+    /** Starts one attempt at one glyph. [attempt] is 1-based. */
+    public fun newSession(glyph: Glyph, settings: TraceSettings, attempt: Int = 1): TraceSession =
+        TraceSession(glyph, settings, attempt)
 }
