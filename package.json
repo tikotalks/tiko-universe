@@ -16,6 +16,7 @@
     "generate:app-configs": "node tools/generate-app-configs.mjs",
     "generate:colors": "node tools/generate-tiko-colors.mjs",
     "generate:talk-seeds": "node tools/generate-talk-seeds.mjs",
+    "generate:write-seeds": "node tools/generate-write-seeds.mjs",
     "prebuild": "npm run generate:colors",
     "scaffold:check": "node tools/check-placeholders.mjs",
     "lint": "oxlint .",
@@ -49,7 +50,7 @@
     "generate:locales": "node tools/generate-locales.mjs",
     "generate:ui-translations": "node tools/generate-ui-translations.mjs",
     "i18n:report": "node tools/generate-ui-translations.mjs --report",
-    "generated:check": "node tools/generate-locales.mjs --check && node tools/generate-ui-translations.mjs --check && node tools/generate-talk-packs.mjs --check && node tools/generate-talk-packs-index.mjs --check && node tools/generate-talk-realizer-bundle.mjs --check && node tools/generate-talk-seeds.mjs --check",
+    "generated:check": "node tools/generate-locales.mjs --check && node tools/generate-ui-translations.mjs --check && node tools/generate-talk-packs.mjs --check && node tools/generate-talk-packs-index.mjs --check && node tools/generate-talk-realizer-bundle.mjs --check && node tools/generate-talk-seeds.mjs --check && node tools/generate-write-seeds.mjs --check",
     "generate:talk-packs": "node tools/generate-talk-packs.mjs",
     "generate:talk-packs-index": "node tools/generate-talk-packs-index.mjs",
     "generate:talk-bundle": "node tools/generate-talk-realizer-bundle.mjs"
