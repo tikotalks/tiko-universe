@@ -47,6 +47,7 @@ interface MediaItem {
   title?: string
   description?: string
   folder?: string
+  categories: string[]
   tags?: string[]
   is_private: boolean
   is_active: boolean
@@ -243,6 +244,7 @@ function rowToMediaItem(row: Record<string, unknown>): MediaItem {
     title: nullableString(row.title),
     description: nullableString(row.description),
     folder: firstCategory(row.folder),
+    categories: parseStringArray(row.folder),
     tags: parseStringArray(row.tags),
     is_private: dbBoolean(row.is_private),
     is_active: row.is_active === undefined ? true : dbBoolean(row.is_active),
@@ -800,6 +802,7 @@ async function handleListMedia(request: Request, env: Env): Promise<Response> {
     const includePrivate = url.searchParams.get('private') === 'true'
     const includeInactive = url.searchParams.get('includeInactive') === 'true'
     const includeHidden = url.searchParams.get('includeHidden') === 'true'
+    const state = url.searchParams.get('state')?.trim()  // active | inactive | hidden
     const isAdmin = isServiceAccess(access) || (!!access.auth && !!sessionUserId(access))
 
     const allowedSorts = ['created_at', 'file_size', 'title']
@@ -828,9 +831,18 @@ async function handleListMedia(request: Request, env: Env): Promise<Response> {
       clauses.push('is_hidden = 0')
     }
 
+    // Admin-only narrowing on top of the visibility gate above, so a caller that
+    // opted into inactive/hidden can still look at one state at a time.
+    if (isAdmin && state === 'active') clauses.push('is_active = 1 AND is_hidden = 0')
+    if (isAdmin && state === 'inactive') clauses.push('is_active = 0')
+    if (isAdmin && state === 'hidden') clauses.push('is_hidden = 1')
+
+    // Tags and categories are how most Tiko media is described, so free-text
+    // search has to reach into them as well as the title/description fields.
     if (search) {
-      clauses.push('(title LIKE ? OR description LIKE ? OR name LIKE ? OR filename LIKE ?)')
-      values.push(`%${search}%`, `%${search}%`, `%${search}%`, `%${search}%`)
+      clauses.push('(title LIKE ? OR description LIKE ? OR name LIKE ? OR filename LIKE ? OR tags LIKE ? OR categories LIKE ?)')
+      const like = `%${search}%`
+      values.push(like, like, like, like, like, like)
     }
     if (type) {
       clauses.push('mime_type LIKE ?')
@@ -878,6 +890,68 @@ async function handleListMedia(request: Request, env: Env): Promise<Response> {
   } catch (error) {
     return json(
       { success: false, error: 'Failed to list media', details: (error as Error).message },
+      500,
+    )
+  }
+}
+
+interface MediaFacet {
+  value: string
+  count: number
+}
+
+// GET /v1/media/facets — the category, tag and type values that actually occur,
+// so a client can offer real filter options instead of guessing at them.
+async function handleMediaFacets(request: Request, env: Env): Promise<Response> {
+  try {
+    const url = new URL(request.url)
+    const access = await optionalAuth(request, env)
+    if (access instanceof Response) return access
+    const includeInactive = url.searchParams.get('includeInactive') === 'true'
+    const includeHidden = url.searchParams.get('includeHidden') === 'true'
+    const isAdmin = isServiceAccess(access) || (!!access.auth && !!sessionUserId(access))
+
+    const clauses = ['is_private = 0']
+    if (!isAdmin || !includeInactive) clauses.push('is_active = 1')
+    if (!isAdmin || !includeHidden) clauses.push('is_hidden = 0')
+    const where = `WHERE ${clauses.join(' AND ')}`
+
+    // json_each aborts the whole query on a malformed document, so only expand
+    // rows whose column actually parses as JSON.
+    const jsonFacet = (column: 'categories' | 'tags') =>
+      `SELECT entry.value AS value, COUNT(*) AS count
+       FROM media, json_each(media.${column}) AS entry
+       ${where} AND json_valid(media.${column})
+       GROUP BY entry.value
+       ORDER BY count DESC, value ASC
+       LIMIT 500`
+
+    const [categories, tags, types] = await Promise.all([
+      env.MEDIA_DB.prepare(jsonFacet('categories')).bind().all<MediaFacet>(),
+      env.MEDIA_DB.prepare(jsonFacet('tags')).bind().all<MediaFacet>(),
+      env.MEDIA_DB.prepare(
+        `SELECT substr(mime_type, 1, instr(mime_type, '/') - 1) AS value, COUNT(*) AS count
+         FROM media
+         ${where}
+         GROUP BY value
+         ORDER BY count DESC, value ASC`,
+      ).bind().all<MediaFacet>(),
+    ])
+
+    const clean = (rows: MediaFacet[]) => rows
+      .filter(row => typeof row.value === 'string' && row.value.length > 0)
+      .map(row => ({ value: row.value, count: Number(row.count) }))
+
+    return json({
+      data: {
+        categories: clean(categories.results),
+        tags: clean(tags.results),
+        types: clean(types.results),
+      },
+    })
+  } catch (error) {
+    return json(
+      { success: false, error: 'Failed to load media facets', details: (error as Error).message },
       500,
     )
   }
@@ -1435,6 +1509,7 @@ export default {
         return withCors(await handleMediaDelete(request, env, id))
       }
       if (request.method === 'GET' && !id) return handleListMedia(request, env)
+      if (request.method === 'GET' && id === 'facets') return handleMediaFacets(request, env)
       if (request.method === 'GET' && id && segments[3] === 'image' && segments[4]) {
         return handleMediaImage(request, env, id, segments[4])
       }
