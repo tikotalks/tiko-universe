@@ -50,6 +50,24 @@ interface ImageListResponse {
   meta: { total: number; page: number; limit: number; totalPages: number; status: string }
 }
 
+export interface ImageFilters {
+  search?: string
+  category?: string
+  tag?: string
+}
+
+export interface ImageFacets {
+  categories: Array<{ value: string; count: number }>
+  tags: Array<{ value: string; count: number }>
+}
+
+export interface ImageMetaFields {
+  title?: string | null
+  description?: string | null
+  category?: string
+  tags?: string[]
+}
+
 interface ApiErrorBody {
   error?: { message?: string } | string
 }
@@ -93,10 +111,35 @@ export function useImageGeneration() {
     return (body as AdminApiResponse<ImageGenerationResult>).data
   }
 
-  async function listImages(status: 'draft' | 'promoted', page = 1, limit = 24): Promise<ImageListResponse> {
-    const url = `${baseUrl()}/images?status=${status}&page=${page}&limit=${limit}`
+  async function listImages(status: 'draft' | 'promoted', page = 1, limit = 24, filters: ImageFilters = {}): Promise<ImageListResponse> {
+    const url = new URL(`${baseUrl()}/images`)
+    url.searchParams.set('status', status)
+    url.searchParams.set('page', String(page))
+    url.searchParams.set('limit', String(limit))
+    if (filters.search) url.searchParams.set('search', filters.search)
+    if (filters.category) url.searchParams.set('category', filters.category)
+    if (filters.tag) url.searchParams.set('tag', filters.tag)
     const response = await fetch(url, { headers: authHeaders() })
     return readJson<ImageListResponse>(response, 'Could not load images')
+  }
+
+  async function listImageFacets(status: 'draft' | 'promoted'): Promise<ImageFacets> {
+    const url = `${baseUrl()}/images/facets?status=${status}`
+    const response = await fetch(url, { headers: authHeaders() })
+    const body = await readJson<{ data: ImageFacets }>(response, 'Could not load image facets')
+    return body.data
+  }
+
+  // Hand-edits the descriptive metadata. Distinct from editImage(), which
+  // regenerates the picture itself.
+  async function updateImageMeta(id: string, fields: ImageMetaFields): Promise<ImageMetaFields & { id: string }> {
+    const response = await fetch(`${baseUrl()}/images/${encodeURIComponent(id)}`, {
+      method: 'PATCH',
+      headers: authHeaders({ 'content-type': 'application/json' }),
+      body: JSON.stringify(fields),
+    })
+    const body = await readJson<{ data: ImageMetaFields & { id: string } }>(response, 'Could not update image details')
+    return body.data
   }
 
   function binaryUrl(item: { imageUrl: string }): string {
@@ -261,5 +304,5 @@ export function useImageGeneration() {
     return body.data
   }
 
-  return { generateImage, listImages, promoteImage, pushToMedia, deleteImage, enrichImage, editImage, upscaleImage, enqueueJobs, listJobs, deleteJob, processJobs, imageSrc, importImage }
+  return { generateImage, listImages, listImageFacets, updateImageMeta, promoteImage, pushToMedia, deleteImage, enrichImage, editImage, upscaleImage, enqueueJobs, listJobs, deleteJob, processJobs, imageSrc, importImage }
 }
