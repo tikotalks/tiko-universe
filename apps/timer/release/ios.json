@@ -5,9 +5,9 @@
   "project": "apps/timer/ios/TikoTimer.xcodeproj",
   "iosDir": "apps/timer/ios",
   "bundleId": "mt.tiko.timer",
-  "appleId": "",
-  "appStoreId": "",
-  "appStoreUrl": "",
+  "appleId": "6793059288",
+  "appStoreId": "6793059288",
+  "appStoreUrl": "https://apps.apple.com/app/id6793059288",
   "validation": {
     "script": "apps/timer/ios/scripts/validate-local.sh"
   },
@@ -15,7 +15,7 @@
     "outputDir": "/Users/silvandiepen/Projects/Tiko/apps/timer",
     "configuration": "Debug",
     "eraseBeforeCapture": false,
-    "defaultWaitSeconds": 2,
+    "defaultWaitSeconds": 8,
     "baseLaunchArgs": [
       "--screenshot-mode"
     ],
@@ -77,7 +77,7 @@
         "colorModes": [
           "light"
         ],
-        "waitSeconds": 2
+        "waitSeconds": 8
       },
       {
         "id": "running-dark",
@@ -95,7 +95,7 @@
         "colorModes": [
           "dark"
         ],
-        "waitSeconds": 2
+        "waitSeconds": 8
       },
       {
         "id": "set-light",
@@ -113,7 +113,7 @@
         "colorModes": [
           "light"
         ],
-        "waitSeconds": 2
+        "waitSeconds": 8
       },
       {
         "id": "settings-light",
@@ -131,7 +131,7 @@
         "colorModes": [
           "light"
         ],
-        "waitSeconds": 3
+        "waitSeconds": 8
       }
     ],
     "scenarioBudgetPerDevice": 10
@@ -140,7 +140,7 @@
     "configuration": "Release",
     "archivePath": "artifacts/archives/timer/TikoTimer.xcarchive",
     "exportPath": "artifacts/archives/timer/export",
-    "exportOptionsPlist": null,
+    "exportOptionsPlist": "release/ExportOptions.plist",
     "allowProvisioningUpdates": true
   },
   "upload": {

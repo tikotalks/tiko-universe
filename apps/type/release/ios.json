@@ -5,9 +5,9 @@
   "project": "apps/type/ios/TikoType.xcodeproj",
   "iosDir": "apps/type/ios",
   "bundleId": "mt.tiko.type",
-  "appleId": "",
-  "appStoreId": "",
-  "appStoreUrl": "",
+  "appleId": "6780917101",
+  "appStoreId": "6780917101",
+  "appStoreUrl": "https://apps.apple.com/app/id6780917101",
   "validation": {
     "script": "apps/type/ios/scripts/validate-local.sh"
   },
@@ -15,7 +15,7 @@
     "outputDir": "/Users/silvandiepen/Projects/Tiko/apps/type",
     "configuration": "Debug",
     "eraseBeforeCapture": false,
-    "defaultWaitSeconds": 2,
+    "defaultWaitSeconds": 8,
     "baseLaunchArgs": [
       "--screenshot-mode"
     ],
@@ -77,7 +77,7 @@
         "colorModes": [
           "light"
         ],
-        "waitSeconds": 2
+        "waitSeconds": 8
       },
       {
         "id": "keyboard-dark",
@@ -95,7 +95,7 @@
         "colorModes": [
           "dark"
         ],
-        "waitSeconds": 2
+        "waitSeconds": 8
       },
       {
         "id": "sentence-light",
@@ -113,7 +113,7 @@
         "colorModes": [
           "light"
         ],
-        "waitSeconds": 2
+        "waitSeconds": 8
       },
       {
         "id": "settings-light",
@@ -131,7 +131,7 @@
         "colorModes": [
           "light"
         ],
-        "waitSeconds": 3
+        "waitSeconds": 8
       }
     ],
     "scenarioBudgetPerDevice": 10
@@ -140,7 +140,7 @@
     "configuration": "Release",
     "archivePath": "artifacts/archives/type/TikoType.xcarchive",
     "exportPath": "artifacts/archives/type/export",
-    "exportOptionsPlist": null,
+    "exportOptionsPlist": "release/ExportOptions.plist",
     "allowProvisioningUpdates": true
   },
   "upload": {
