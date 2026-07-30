@@ -76,48 +76,111 @@
     "scenarios": [
       {
         "id": "home-light",
-        "filename": "01-{device}-home-light.png",
+        "filename": "01-{deviceSlug}-home-en-light.png",
         "launchArgs": [
           "--screenshot",
           "home"
         ],
-        "colorMode": "light"
+        "locales": [
+          {
+            "id": "en-US",
+            "appLanguage": "en"
+          }
+        ],
+        "colorModes": [
+          "light"
+        ],
+        "waitSeconds": 8
       },
       {
         "id": "words-light",
-        "filename": "02-{device}-words-light.png",
+        "filename": "02-{deviceSlug}-words-en-light.png",
         "launchArgs": [
           "--screenshot",
           "words"
         ],
-        "colorMode": "light"
+        "locales": [
+          {
+            "id": "en-US",
+            "appLanguage": "en"
+          }
+        ],
+        "colorModes": [
+          "light"
+        ],
+        "waitSeconds": 8
       },
       {
         "id": "trace-light",
-        "filename": "03-{device}-trace-light.png",
+        "filename": "03-{deviceSlug}-trace-en-light.png",
         "launchArgs": [
           "--screenshot",
           "trace"
         ],
-        "colorMode": "light"
+        "locales": [
+          {
+            "id": "en-US",
+            "appLanguage": "en"
+          }
+        ],
+        "colorModes": [
+          "light"
+        ],
+        "waitSeconds": 8
       },
       {
         "id": "celebrate-light",
-        "filename": "04-{device}-celebrate-light.png",
+        "filename": "04-{deviceSlug}-celebrate-en-light.png",
         "launchArgs": [
           "--screenshot",
           "celebrate"
         ],
-        "colorMode": "light"
+        "locales": [
+          {
+            "id": "en-US",
+            "appLanguage": "en"
+          }
+        ],
+        "colorModes": [
+          "light"
+        ],
+        "waitSeconds": 8
       },
       {
         "id": "home-dark",
-        "filename": "05-{device}-home-dark.png",
+        "filename": "05-{deviceSlug}-home-en-dark.png",
         "launchArgs": [
           "--screenshot",
           "home"
         ],
-        "colorMode": "dark"
+        "locales": [
+          {
+            "id": "en-US",
+            "appLanguage": "en"
+          }
+        ],
+        "colorModes": [
+          "dark"
+        ],
+        "waitSeconds": 8
+      },
+      {
+        "id": "trace-dark",
+        "filename": "06-{deviceSlug}-trace-en-dark.png",
+        "launchArgs": [
+          "--screenshot",
+          "trace"
+        ],
+        "locales": [
+          {
+            "id": "en-US",
+            "appLanguage": "en"
+          }
+        ],
+        "colorModes": [
+          "dark"
+        ],
+        "waitSeconds": 8
       }
     ]
   }
