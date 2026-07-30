@@ -15,6 +15,7 @@ import { join } from 'node:path'
 
 const SOURCE_DIR = 'packages/write-glyphs/source'
 const NAMES_DIR = 'packages/write-glyphs/source/names'
+const WORDS_DIR = 'packages/write-glyphs/source/words'
 const SCHEMA_PATH = 'engines/stroke/schema/glyph-pack.v1.json'
 
 const KEBAB = /^[a-z0-9]+(-[a-z0-9]+)*$/
@@ -479,6 +480,59 @@ if (existsSync(NAMES_DIR)) {
   }
 }
 
+// ---------------------------------------------------------------------------
+// Words
+//
+// A word is a sequence of glyph ids. One that names a letter no pack holds
+// would hand a child their own name with a letter missing, so it fails here
+// rather than at trace time.
+// ---------------------------------------------------------------------------
+
+let wordCount = 0
+if (existsSync(WORDS_DIR)) {
+  const glyphIds = new Set()
+  const shapeIds = new Set()
+  for (const file of files) {
+    const pack = JSON.parse(readFileSync(join(SOURCE_DIR, file), 'utf8'))
+    for (const glyph of pack.glyphs ?? []) {
+      glyphIds.add(glyph.id)
+      if (pack.style === 'shape') shapeIds.add(glyph.id)
+    }
+  }
+
+  for (const file of readdirSync(WORDS_DIR).filter((n) => n.endsWith('.json')).sort()) {
+    const path = join(WORDS_DIR, file)
+    let doc
+    try {
+      doc = JSON.parse(readFileSync(path, 'utf8'))
+    } catch (error) {
+      fail(path, `invalid JSON: ${error.message}`)
+      continue
+    }
+    if (doc.locale !== file.replace(/\.json$/, '')) {
+      fail(path, `locale field ${JSON.stringify(doc.locale)} does not match the filename`)
+    }
+    const seen = new Set()
+    for (const word of doc.words ?? []) {
+      wordCount += 1
+      const at = `${path} (${word.id})`
+      if (typeof word.text !== 'string' || word.text.length === 0) fail(at, 'word needs text')
+      if (seen.has(word.id)) fail(at, `duplicate word id ${JSON.stringify(word.id)}`)
+      seen.add(word.id)
+      if (!Array.isArray(word.glyphIds) || word.glyphIds.length === 0) {
+        fail(at, 'word needs glyphIds')
+        continue
+      }
+      for (const id of word.glyphIds) {
+        if (!glyphIds.has(id)) fail(at, `refers to glyph ${JSON.stringify(id)}, which no pack holds`)
+      }
+      if (word.shapeId !== undefined && !shapeIds.has(word.shapeId)) {
+        fail(at, `shapeId ${JSON.stringify(word.shapeId)} is not a shape`)
+      }
+    }
+  }
+}
+
 if (problems.length) {
   console.error(`glyph pack checks failed (${problems.length}):`)
   for (const problem of problems) console.error(`  ${problem}`)
@@ -486,5 +540,6 @@ if (problems.length) {
 }
 
 console.log(
-  `glyph pack checks passed — ${files.length} pack(s), ${glyphCount} glyphs, ${strokeCount} strokes, ${localeCount} locale(s)`
+  `glyph pack checks passed — ${files.length} pack(s), ${glyphCount} glyphs, ` +
+  `${strokeCount} strokes, ${localeCount} locale(s), ${wordCount} words`
 )

@@ -1,0 +1,254 @@
+{
+  "locale": "es",
+  "words": [
+    {
+      "id": "gato",
+      "text": "gato",
+      "sortOrder": 0,
+      "glyphIds": [
+        "lower-g",
+        "lower-a",
+        "lower-t",
+        "lower-o"
+      ],
+      "shapeId": "cat"
+    },
+    {
+      "id": "perro",
+      "text": "perro",
+      "sortOrder": 1,
+      "glyphIds": [
+        "lower-p",
+        "lower-e",
+        "lower-r",
+        "lower-r",
+        "lower-o"
+      ],
+      "shapeId": "dog"
+    },
+    {
+      "id": "sol",
+      "text": "sol",
+      "sortOrder": 2,
+      "glyphIds": [
+        "lower-s",
+        "lower-o",
+        "lower-l"
+      ],
+      "shapeId": "sun"
+    },
+    {
+      "id": "abeja",
+      "text": "abeja",
+      "sortOrder": 3,
+      "glyphIds": [
+        "lower-a",
+        "lower-b",
+        "lower-e",
+        "lower-j",
+        "lower-a"
+      ],
+      "shapeId": "bee"
+    },
+    {
+      "id": "buho",
+      "text": "buho",
+      "sortOrder": 4,
+      "glyphIds": [
+        "lower-b",
+        "lower-u",
+        "lower-h",
+        "lower-o"
+      ],
+      "shapeId": "owl"
+    },
+    {
+      "id": "bus",
+      "text": "bus",
+      "sortOrder": 5,
+      "glyphIds": [
+        "lower-b",
+        "lower-u",
+        "lower-s"
+      ],
+      "shapeId": "bus"
+    },
+    {
+      "id": "coche",
+      "text": "coche",
+      "sortOrder": 6,
+      "glyphIds": [
+        "lower-c",
+        "lower-o",
+        "lower-c",
+        "lower-h",
+        "lower-e"
+      ],
+      "shapeId": "car"
+    },
+    {
+      "id": "pez",
+      "text": "pez",
+      "sortOrder": 7,
+      "glyphIds": [
+        "lower-p",
+        "lower-e",
+        "lower-z"
+      ],
+      "shapeId": "fish"
+    },
+    {
+      "id": "arbol",
+      "text": "arbol",
+      "sortOrder": 8,
+      "glyphIds": [
+        "lower-a",
+        "lower-r",
+        "lower-b",
+        "lower-o",
+        "lower-l"
+      ],
+      "shapeId": "tree"
+    },
+    {
+      "id": "luna",
+      "text": "luna",
+      "sortOrder": 9,
+      "glyphIds": [
+        "lower-l",
+        "lower-u",
+        "lower-n",
+        "lower-a"
+      ],
+      "shapeId": "moon"
+    },
+    {
+      "id": "estrella",
+      "text": "estrella",
+      "sortOrder": 10,
+      "glyphIds": [
+        "lower-e",
+        "lower-s",
+        "lower-t",
+        "lower-r",
+        "lower-e",
+        "lower-l",
+        "lower-l",
+        "lower-a"
+      ],
+      "shapeId": "star"
+    },
+    {
+      "id": "rana",
+      "text": "rana",
+      "sortOrder": 11,
+      "glyphIds": [
+        "lower-r",
+        "lower-a",
+        "lower-n",
+        "lower-a"
+      ],
+      "shapeId": "frog"
+    },
+    {
+      "id": "hoja",
+      "text": "hoja",
+      "sortOrder": 12,
+      "glyphIds": [
+        "lower-h",
+        "lower-o",
+        "lower-j",
+        "lower-a"
+      ],
+      "shapeId": "leaf"
+    },
+    {
+      "id": "barco",
+      "text": "barco",
+      "sortOrder": 13,
+      "glyphIds": [
+        "lower-b",
+        "lower-a",
+        "lower-r",
+        "lower-c",
+        "lower-o"
+      ],
+      "shapeId": "boat"
+    },
+    {
+      "id": "manzana",
+      "text": "manzana",
+      "sortOrder": 14,
+      "glyphIds": [
+        "lower-m",
+        "lower-a",
+        "lower-n",
+        "lower-z",
+        "lower-a",
+        "lower-n",
+        "lower-a"
+      ],
+      "shapeId": "apple"
+    },
+    {
+      "id": "mama",
+      "text": "mama",
+      "sortOrder": 15,
+      "glyphIds": [
+        "lower-m",
+        "lower-a",
+        "lower-m",
+        "lower-a"
+      ]
+    },
+    {
+      "id": "papa",
+      "text": "papa",
+      "sortOrder": 16,
+      "glyphIds": [
+        "lower-p",
+        "lower-a",
+        "lower-p",
+        "lower-a"
+      ]
+    },
+    {
+      "id": "si",
+      "text": "si",
+      "sortOrder": 17,
+      "glyphIds": [
+        "lower-s",
+        "lower-i"
+      ]
+    },
+    {
+      "id": "no",
+      "text": "no",
+      "sortOrder": 18,
+      "glyphIds": [
+        "lower-n",
+        "lower-o"
+      ]
+    },
+    {
+      "id": "hola",
+      "text": "hola",
+      "sortOrder": 19,
+      "glyphIds": [
+        "lower-h",
+        "lower-o",
+        "lower-l",
+        "lower-a"
+      ]
+    },
+    {
+      "id": "yo",
+      "text": "yo",
+      "sortOrder": 20,
+      "glyphIds": [
+        "lower-y",
+        "lower-o"
+      ]
+    }
+  ]
+}
