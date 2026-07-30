@@ -1,13 +1,16 @@
 <script setup lang="ts">
 import { computed, watch } from 'vue'
 import { useBemm } from 'bemm'
-import { Button, InputSearch, InputSelect } from '@sil/ui'
-import type { FilterFacet } from './mediaTypes'
+import { Button, InputCustomSelect, InputSearch, InputSelect } from '@sil/ui'
+import type { FacetMeta, FilterFacet } from './mediaTypes'
 
 const props = withDefaults(defineProps<{
   categories?: FilterFacet[]
   tags?: FilterFacet[]
   types?: FilterFacet[]
+  /** How much of each list the API returned, so a capped list can say so. */
+  categoryMeta?: FacetMeta
+  tagMeta?: FacetMeta
   /** Show the media-type select. Off for surfaces that only hold images. */
   showType?: boolean
   /** Show the active/inactive/hidden select. Only the media library has those states. */
@@ -20,6 +23,8 @@ const props = withDefaults(defineProps<{
   categories: () => [],
   tags: () => [],
   types: () => [],
+  categoryMeta: undefined,
+  tagMeta: undefined,
   showType: false,
   showState: false,
   loading: false,
@@ -49,14 +54,28 @@ const typeOptions = computed(() => [
 ])
 
 const categoryOptions = computed(() => [
-  { label: 'All categories', value: '' },
+  { label: 'All categories', value: '', isNull: true },
   ...props.categories.map(facet => ({ label: `${labelFor(facet.value)} (${facet.count})`, value: facet.value })),
 ])
 
 const tagOptions = computed(() => [
-  { label: 'All tags', value: '' },
+  { label: 'All tags', value: '', isNull: true },
   ...props.tags.map(facet => ({ label: `${facet.value} (${facet.count})`, value: facet.value })),
 ])
+
+// The suggestion lists are capped server-side, so a value can be real without
+// being offered. Say so, and let the field take a typed value either way.
+const truncationNotice = computed(() => {
+  const parts: string[] = []
+  if (props.categoryMeta?.truncated) {
+    parts.push(`${props.categoryMeta.returned} of ${props.categoryMeta.total} categories`)
+  }
+  if (props.tagMeta?.truncated) {
+    parts.push(`${props.tagMeta.returned} of ${props.tagMeta.total} tags`)
+  }
+  if (!parts.length) return ''
+  return `Suggesting the most-used ${parts.join(' and ')} — type any other value to filter by it.`
+})
 
 const stateOptions = [
   { label: 'Any state', value: '' },
@@ -119,19 +138,23 @@ function clearAll() {
       aria-label="Media type"
     />
 
-    <InputSelect
+    <InputCustomSelect
       v-model="category"
       :class="bemm('select')"
       :options="categoryOptions"
-      filterable
+      searchable
+      allow-custom
+      placeholder="All categories"
       aria-label="Category"
     />
 
-    <InputSelect
+    <InputCustomSelect
       v-model="tag"
       :class="bemm('select')"
       :options="tagOptions"
-      filterable
+      searchable
+      allow-custom
+      placeholder="All tags"
       aria-label="Tag"
     />
 
@@ -148,6 +171,8 @@ function clearAll() {
     </span>
 
     <Button v-if="hasFilters" variant="ghost" size="small" @click="clearAll">Clear</Button>
+
+    <p v-if="truncationNotice" :class="bemm('notice')">{{ truncationNotice }}</p>
   </div>
 </template>
 
@@ -176,6 +201,13 @@ function clearAll() {
     font-size: var(--font-size-s);
     white-space: nowrap;
     margin-left: auto;
+  }
+
+  &__notice {
+    flex: 1 0 100%;
+    color: var(--admin-text-dim);
+    font-size: var(--font-size-xs);
+    margin: 0;
   }
 
   @media (max-width: 860px) {

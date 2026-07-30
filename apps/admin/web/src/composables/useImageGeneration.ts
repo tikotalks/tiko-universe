@@ -56,9 +56,24 @@ export interface ImageFilters {
   tag?: string
 }
 
+export interface ImageFacetMeta {
+  returned: number
+  total: number
+  truncated: boolean
+}
+
 export interface ImageFacets {
   categories: Array<{ value: string; count: number }>
   tags: Array<{ value: string; count: number }>
+  meta: { categories: ImageFacetMeta; tags: ImageFacetMeta }
+}
+
+const EMPTY_IMAGE_FACET_META: ImageFacetMeta = { returned: 0, total: 0, truncated: false }
+
+export const EMPTY_IMAGE_FACETS: ImageFacets = {
+  categories: [],
+  tags: [],
+  meta: { categories: EMPTY_IMAGE_FACET_META, tags: EMPTY_IMAGE_FACET_META },
 }
 
 export interface ImageMetaFields {
@@ -126,8 +141,15 @@ export function useImageGeneration() {
   async function listImageFacets(status: 'draft' | 'promoted'): Promise<ImageFacets> {
     const url = `${baseUrl()}/images/facets?status=${status}`
     const response = await fetch(url, { headers: authHeaders() })
-    const body = await readJson<{ data: ImageFacets }>(response, 'Could not load image facets')
-    return body.data
+    const body = await readJson<{
+      data: { categories?: ImageFacets['categories']; tags?: ImageFacets['tags'] }
+      meta?: ImageFacets['meta']
+    }>(response, 'Could not load image facets')
+    return {
+      categories: body.data.categories ?? [],
+      tags: body.data.tags ?? [],
+      meta: body.meta ?? EMPTY_IMAGE_FACETS.meta,
+    }
   }
 
   // Hand-edits the descriptive metadata. Distinct from editImage(), which

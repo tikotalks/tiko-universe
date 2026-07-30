@@ -9,6 +9,25 @@ type Statement = {
   run(): Promise<{ success: boolean; meta: { changes: number } }>
 }
 
+// SQLite LIKE with ESCAPE '\': `%` and `_` are wildcards unless backslash-escaped.
+function likeMatches(subject: string, pattern: string): boolean {
+  let regex = ''
+  for (let index = 0; index < pattern.length; index += 1) {
+    const character = pattern[index]
+    if (character === '\\') {
+      index += 1
+      regex += pattern[index]?.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') ?? ''
+    } else if (character === '%') {
+      regex += '.*'
+    } else if (character === '_') {
+      regex += '.'
+    } else {
+      regex += character.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+    }
+  }
+  return new RegExp(`^${regex}$`, 'i').test(subject)
+}
+
 class MemoryD1 {
   storyDrafts = new Map<string, Record<string, unknown>>()
   stories = new Map<string, Record<string, unknown>>()
@@ -34,10 +53,13 @@ class MemoryD1 {
     let remaining = sql
     const searchStart = sql.indexOf('(title LIKE ?')
     if (searchStart !== -1) {
-      const needle = String(values[index]).replaceAll('%', '').toLowerCase()
-      index += 6
-      images = images.filter(image => [image.title, image.description, image.prompt, image.revised_prompt, image.category, image.tags]
-        .some(field => String(field ?? '').toLowerCase().includes(needle)))
+      // Each column gets its own bound pattern — prose is `%term%`, category is
+      // `term%`, tags are `%"term%` — so match them column by column.
+      const columns = ['title', 'description', 'prompt', 'revised_prompt', 'category', 'tags']
+      const patterns = values.slice(index, index + columns.length).map(String)
+      index += columns.length
+      images = images.filter(image => columns.some((column, position) =>
+        likeMatches(String(image[column] ?? ''), patterns[position] ?? '')))
       remaining = sql.slice(0, searchStart) + sql.slice(sql.indexOf(')', searchStart) + 1)
     }
     if (remaining.includes('category = ?')) {
@@ -74,6 +96,9 @@ class MemoryD1 {
           const key = values.slice(0, 4).map(String).join('|')
           return (this.usageWindows.get(key) ?? null) as T | null
         }
+        if (sql.includes('FROM generated_images') && sql.includes('COUNT(DISTINCT')) {
+          return { count: this.tagFacets(sql, values).length } as T | null
+        }
         if (sql.includes('FROM generated_images') && sql.includes('COUNT(*)')) {
           return { count: this.selectImages(sql, values).length } as T | null
         }
@@ -108,7 +133,8 @@ class MemoryD1 {
           return { results: jobs as T[] }
         }
         if (sql.includes('json_each(generated_images.tags)')) {
-          return { results: this.tagFacets(sql, values) as T[] }
+          const rows = this.tagFacets(sql, values)
+          return { results: (sql.includes('LIMIT ?') ? rows.slice(0, Number(values.at(-1))) : rows) as T[] }
         }
         if (sql.includes('FROM generated_images') && sql.includes('GROUP BY category')) {
           const counts = new Map<string, number>()
@@ -916,6 +942,40 @@ describe('generation-api image library filtering and metadata', () => {
       { value: 'transport', count: 1 },
     ]))
     expect(body.data.tags[0]).toEqual({ value: 'pet', count: 2 })
+    expect(body.meta.tags).toMatchObject({ truncated: false })
+  })
+
+  it('reports how much of the tag list it left out', async () => {
+    const env = makeEnv()
+    seedImage(env.db)
+    seedImage(env.db, { id: 'image_2', tags: JSON.stringify(['bus', 'vehicle', 'wheels']) })
+
+    const response = await worker.fetch(new Request('https://api.test/v1/generation/images/facets?status=promoted&limit=2'), env)
+    const body = await json(response)
+
+    expect(body.data.tags).toHaveLength(2)
+    expect(body.meta.limit).toBe(2)
+    expect(body.meta.tags).toMatchObject({ returned: 2, truncated: true })
+    expect(body.meta.tags.total).toBeGreaterThan(2)
+  })
+
+  it('anchors tag search to the start of a value and treats wildcards literally', async () => {
+    const env = makeEnv()
+    seedImage(env.db, { id: 'image_pets', title: 'Shop', prompt: 'a shop', description: null, category: 'places', tags: JSON.stringify(['pets']) })
+    seedImage(env.db, { id: 'image_vacuum', title: 'Vacuum', prompt: 'a vacuum', description: null, category: 'tools', tags: JSON.stringify(['carpet']) })
+
+    const anchored = await json(await worker.fetch(
+      new Request('https://api.test/v1/generation/images?status=promoted&search=pet'), env,
+    ))
+    const ids = anchored.data.map((item: { id: string }) => item.id)
+    expect(ids).toContain('image_pets')
+    expect(ids).not.toContain('image_vacuum')
+
+    // A bare "%" must not behave as "match everything".
+    const wildcard = await json(await worker.fetch(
+      new Request('https://api.test/v1/generation/images?status=promoted&search=%25'), env,
+    ))
+    expect(wildcard.data).toHaveLength(0)
   })
 
   it('edits image metadata without touching the picture', async () => {
