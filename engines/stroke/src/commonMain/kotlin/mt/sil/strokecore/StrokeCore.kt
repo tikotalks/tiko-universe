@@ -49,7 +49,12 @@ public object StrokeCore {
      */
     public fun loadPack(json: String): GlyphPack = decodePack(json)
 
-    /** Starts one attempt at one glyph. [attempt] is 1-based. */
-    public fun newSession(glyph: Glyph, settings: TraceSettings, attempt: Int = 1): TraceSession =
+    /**
+     * Starts one attempt at one glyph. [attempt] is 1-based.
+     *
+     * Named `createSession` rather than `newSession`: `new` is reserved in
+     * Objective-C, so Kotlin/Native would export the latter as `doNewSession`.
+     */
+    public fun createSession(glyph: Glyph, settings: TraceSettings, attempt: Int = 1): TraceSession =
         TraceSession(glyph, settings, attempt)
 }

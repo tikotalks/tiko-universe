@@ -72,7 +72,7 @@ class TraceSessionTest {
     @Test
     fun aPerfectReplayCompletesTheGlyph() {
         val g = glyph("line")
-        val session = StrokeCore.newSession(g, TraceSettings.forgiving)
+        val session = StrokeCore.createSession(g, TraceSettings.forgiving)
         val tags = replay(session, g.stroke(0))
 
         assertEquals(StrokeTag.STROKE_BEGIN_OK, tags.first())
@@ -86,7 +86,7 @@ class TraceSessionTest {
     @Test
     fun startingInTheWrongPlaceIsRefused() {
         val g = glyph("line")
-        val session = StrokeCore.newSession(g, TraceSettings.forgiving)
+        val session = StrokeCore.createSession(g, TraceSettings.forgiving)
         // The far end of the stroke: on the path, but not where it begins.
         val event = session.begin(90.0, 50.0)
         assertEquals(StrokeTag.STROKE_BEGIN_WRONG_PLACE, event.tag)
@@ -97,7 +97,7 @@ class TraceSessionTest {
     @Test
     fun tracingBackwardsDoesNotAdvance() {
         val g = glyph("line")
-        val session = StrokeCore.newSession(g, TraceSettings.forgiving)
+        val session = StrokeCore.createSession(g, TraceSettings.forgiving)
         session.begin(10.0, 50.0)
         drag(session, 50.0)
         val advanced = session.currentProgress
@@ -112,7 +112,7 @@ class TraceSessionTest {
     @Test
     fun leavingTheCorridorStopsTheInkWithoutTakingItAway() {
         val g = glyph("line")
-        val session = StrokeCore.newSession(g, TraceSettings.forgiving)
+        val session = StrokeCore.createSession(g, TraceSettings.forgiving)
         session.begin(10.0, 50.0)
         drag(session, 40.0)
         val before = session.currentProgress
@@ -126,7 +126,7 @@ class TraceSessionTest {
     @Test
     fun backToStartRewindsAndCountsTheReset() {
         val g = glyph("line")
-        val session = StrokeCore.newSession(
+        val session = StrokeCore.createSession(
             g, TraceSettings.forgiving.copy(offPathPolicy = OffPathPolicy.BACK_TO_START)
         )
         session.begin(10.0, 50.0)
@@ -144,7 +144,7 @@ class TraceSessionTest {
         // A generous corridor would accept this; a key point will not, and that
         // is the whole difference between tracing and scribbling.
         val g = glyph("vee")
-        val session = StrokeCore.newSession(g, TraceSettings.forgiving)
+        val session = StrokeCore.createSession(g, TraceSettings.forgiving)
         val stroke = g.stroke(0)
         assertTrue(stroke.keyPointCount > 0, "the vee's corner should be a key point")
 
@@ -159,7 +159,7 @@ class TraceSessionTest {
     @Test
     fun theVeeCompletesWhenTheCornerIsVisited() {
         val g = glyph("vee")
-        val session = StrokeCore.newSession(g, TraceSettings.forgiving)
+        val session = StrokeCore.createSession(g, TraceSettings.forgiving)
         val tags = replay(session, g.stroke(0), samples = 120)
         assertTrue(tags.contains(StrokeTag.STROKE_KEYPOINT), "the corner should register")
         assertTrue(tags.contains(StrokeTag.GLYPH_COMPLETE))
@@ -168,7 +168,7 @@ class TraceSessionTest {
     @Test
     fun strokesRunInOrderAndTheGlyphCompletesOnTheLast() {
         val g = glyph("cross")
-        val session = StrokeCore.newSession(g, TraceSettings.forgiving)
+        val session = StrokeCore.createSession(g, TraceSettings.forgiving)
 
         val first = replay(session, g.stroke(0))
         assertTrue(first.contains(StrokeTag.STROKE_COMPLETE), "first stroke should complete, got $first")
@@ -184,7 +184,7 @@ class TraceSessionTest {
     @Test
     fun theWrongStrokeIsRefusedWhenOrderIsEnforced() {
         val g = glyph("cross")
-        val session = StrokeCore.newSession(g, TraceSettings.forgiving)
+        val session = StrokeCore.createSession(g, TraceSettings.forgiving)
         val event = session.selectStroke(1)
         assertEquals(StrokeTag.GLYPH_STROKE_OUT_OF_ORDER, event.tag)
         assertEquals(0, session.currentStrokeIndex, "the expected stroke must not change")
@@ -199,7 +199,7 @@ class TraceSessionTest {
         // A wobble accepted on attempt 1 is refused on attempt 5.
         val g = glyph("line")
         val offset = 8.0 // extent 80: attempt 1 allows 10.4, attempt 5 allows 6.24
-        val early = StrokeCore.newSession(g, settings, attempt = 1)
+        val early = StrokeCore.createSession(g, settings, attempt = 1)
         early.begin(10.0, 50.0)
         val earlyTag = drag(early, 40.0, offset)
         assertTrue(
@@ -207,7 +207,7 @@ class TraceSessionTest {
             "attempt 1 should accept a ${offset}u wobble, got $earlyTag",
         )
 
-        val late = StrokeCore.newSession(g, settings, attempt = 5)
+        val late = StrokeCore.createSession(g, settings, attempt = 5)
         late.begin(10.0, 50.0)
         assertEquals(StrokeTag.STROKE_OFF_PATH, drag(late, 40.0, offset))
     }
@@ -217,7 +217,7 @@ class TraceSessionTest {
         // Ink snapping means a wobbly child still sees a clean letter; the engine
         // still has to know how wobbly it was, because Parent Mode shows that.
         val g = glyph("line")
-        val session = StrokeCore.newSession(g, TraceSettings.forgiving)
+        val session = StrokeCore.createSession(g, TraceSettings.forgiving)
         session.begin(10.0, 50.0)
         for (i in 1..60) {
             val t = i / 60.0

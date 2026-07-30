@@ -12,6 +12,7 @@ public enum TikoAppColor: String, CaseIterable, Sendable {
     case say
     case sum
     case first
+    case write
 }
 
 
@@ -54,6 +55,7 @@ public extension TikoAppConfig {
     static let talk = TikoAppConfig(id: .talk, title: "Talk", appColor: .talk, appIconSystemName: "message.fill", appIconMediaCategory: "communication", appIconImageUrl: "https://media.tikoapi.org/v1/media/da85b30b-6865-41ef-9b75-71e46999de22/download", themeColorHex: 0xff6b6b)
     static let say = TikoAppConfig(id: .say, title: "Say", appColor: .say, appIconSystemName: "waveform", appIconMediaCategory: "communication", appIconImageUrl: "https://data.tikocdn.org/uploads/1781443432968-speech-balloon.png", themeColorHex: 0x8b5cf6)
     static let sum = TikoAppConfig(id: .sum, title: "Sum", appColor: .sum, appIconSystemName: "plus.forwardslash.minus", appIconMediaCategory: "numbers", appIconImageUrl: "https://data.tikocdn.org/uploads/1755105954065-calculator.png", themeColorHex: 0xdd8966)
+    static let write = TikoAppConfig(id: .write, title: "Write", appColor: .write, appIconSystemName: "pencil.and.outline", appIconMediaCategory: "letters", appIconImageUrl: "https://data.tikocdn.org/uploads/1756901709154-boy-saying-hi-disney-pixar-style-1.png", themeColorHex: 0x22c55e)
     static let first = TikoAppConfig(id: .first, title: "First", appColor: .first, appIconSystemName: "checklist", appIconMediaCategory: "routines", appIconImageUrl: "https://data.tikocdn.org/uploads/1754413862502-todo.png", themeColorHex: 0x06b6d4)
 }
 
@@ -92,6 +94,8 @@ public extension TikoAppColor {
             TikoAppPalette(label: "Say", primary: Color(hex: 0x8b5cf6), dark: Color(hex: 0x483080))
         case .sum:
             TikoAppPalette(label: "Sum", primary: Color(hex: 0xdd8966), dark: Color(hex: 0x734735))
+        case .write:
+            TikoAppPalette(label: "Write", primary: Color(hex: 0x22c55e), dark: Color(hex: 0x126631))
         case .first:
             TikoAppPalette(label: "First", primary: Color(hex: 0x06b6d4), dark: Color(hex: 0x035f6e))
         }

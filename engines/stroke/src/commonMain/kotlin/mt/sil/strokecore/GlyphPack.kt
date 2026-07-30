@@ -86,7 +86,10 @@ public class Stroke internal constructor(
 
 public class Glyph internal constructor(
     public val id: String,
-    public val char: String,
+    /** The character this glyph represents. Named `character` rather than `char`
+     *  because `char` is a C keyword and Kotlin/Native would mangle it to `char_`
+     *  on the Objective-C bridge. */
+    public val character: String,
     public val groupId: String,
     public val sortOrder: Int,
     public val strokeOrderStrict: Boolean,

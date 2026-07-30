@@ -27,7 +27,7 @@ class RealPackReplayTest {
 
     /** Traces a glyph exactly along its own geometry. */
     private fun traceIdeally(glyph: Glyph, settings: TraceSettings): AttemptResult? {
-        val session = StrokeCore.newSession(glyph, settings)
+        val session = StrokeCore.createSession(glyph, settings)
         for (i in 0 until glyph.strokeCount) {
             val stroke = glyph.stroke(i)
             val start = stroke.polyline.pointAt(0.0)
@@ -75,7 +75,7 @@ class RealPackReplayTest {
         for ((name, pack) in packs()) {
             for (i in 0 until pack.glyphCount) {
                 val glyph = pack.glyphAt(i)
-                val session = StrokeCore.newSession(glyph, settings, attempt = 5)
+                val session = StrokeCore.createSession(glyph, settings, attempt = 5)
                 for (s in 0 until glyph.strokeCount) {
                     val stroke = glyph.stroke(s)
                     val start = stroke.polyline.pointAt(0.0)
@@ -120,7 +120,7 @@ class RealPackReplayTest {
         for ((name, pack) in packs()) {
             for (i in 0 until pack.glyphCount) {
                 val glyph = pack.glyphAt(i)
-                val session = StrokeCore.newSession(glyph, TraceSettings.forgiving)
+                val session = StrokeCore.createSession(glyph, TraceSettings.forgiving)
                 for (s in 0 until glyph.strokeCount) {
                     val stroke = glyph.stroke(s)
                     val start = stroke.polyline.pointAt(0.0)

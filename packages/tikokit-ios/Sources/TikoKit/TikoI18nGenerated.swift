@@ -11108,6 +11108,276 @@ extension TikoLocalTranslations {
         "common.settings": "პარამეტრები",
     ]
 
+    static let write_nl: [String: String] = [
+        "write.group.numbers": "Cijfers",
+        "write.action.again": "Nog eens",
+        "write.action.next": "Volgende",
+    ]
+
+    static let write_de: [String: String] = [
+        "write.group.numbers": "Zahlen",
+        "write.action.again": "Nochmal",
+        "write.action.next": "Weiter",
+    ]
+
+    static let write_fr: [String: String] = [
+        "write.group.numbers": "Chiffres",
+        "write.action.again": "Encore",
+        "write.action.next": "Suivant",
+    ]
+
+    static let write_es: [String: String] = [
+        "write.group.numbers": "Números",
+        "write.action.again": "Otra vez",
+        "write.action.next": "Siguiente",
+    ]
+
+    static let write_pt: [String: String] = [
+        "write.action.again": "Outra vez",
+        "write.action.next": "Seguinte",
+    ]
+
+    static let write_it: [String: String] = [
+        "write.action.again": "Ancora",
+        "write.action.next": "Avanti",
+    ]
+
+    static let write_mt: [String: String] = [
+        "write.group.numbers": "Numri",
+        "write.action.again": "Erġa'",
+        "write.action.next": "Li jmiss",
+    ]
+
+    static let write_ja: [String: String] = [
+        "write.action.again": "もう一度",
+        "write.action.next": "次へ",
+    ]
+
+    static let write_zh: [String: String] = [
+        "write.action.again": "再来一次",
+        "write.action.next": "下一个",
+    ]
+
+    static let write_ko: [String: String] = [
+        "write.action.again": "다시",
+        "write.action.next": "다음",
+    ]
+
+    static let write_ar: [String: String] = [
+        "write.action.again": "مرة أخرى",
+        "write.action.next": "التالي",
+    ]
+
+    static let write_hy: [String: String] = [
+        "write.action.again": "Կրկին",
+        "write.action.next": "Հաջորդը",
+    ]
+
+    static let write_id: [String: String] = [
+        "write.action.again": "Lagi",
+        "write.action.next": "Berikutnya",
+    ]
+
+    static let write_ms: [String: String] = [
+        "write.action.again": "Sekali lagi",
+        "write.action.next": "Seterusnya",
+    ]
+
+    static let write_vi: [String: String] = [
+        "write.action.again": "Lần nữa",
+        "write.action.next": "Tiếp",
+    ]
+
+    static let write_af: [String: String] = [
+        "write.action.again": "Weer",
+        "write.action.next": "Volgende",
+    ]
+
+    static let write_sv: [String: String] = [
+        "write.action.again": "Igen",
+        "write.action.next": "Nästa",
+    ]
+
+    static let write_da: [String: String] = [
+        "write.action.again": "Igen",
+        "write.action.next": "Næste",
+    ]
+
+    static let write_nb: [String: String] = [
+        "write.action.again": "Igjen",
+        "write.action.next": "Neste",
+    ]
+
+    static let write_is: [String: String] = [
+        "write.action.again": "Aftur",
+        "write.action.next": "Næsta",
+    ]
+
+    static let write_fy: [String: String] = [
+        "write.action.again": "Nochris",
+        "write.action.next": "Folgjende",
+    ]
+
+    static let write_lb: [String: String] = [
+        "write.action.again": "Nochmol",
+        "write.action.next": "Weider",
+    ]
+
+    static let write_ca: [String: String] = [
+        "write.action.again": "Un altre cop",
+        "write.action.next": "Següent",
+    ]
+
+    static let write_gl: [String: String] = [
+        "write.action.again": "Outra vez",
+        "write.action.next": "Seguinte",
+    ]
+
+    static let write_ro: [String: String] = [
+        "write.action.again": "Din nou",
+        "write.action.next": "Următor",
+    ]
+
+    static let write_pap: [String: String] = [
+        "write.action.again": "Atrobe",
+        "write.action.next": "Siguiente",
+    ]
+
+    static let write_ru: [String: String] = [
+        "write.action.again": "Ещё раз",
+        "write.action.next": "Далее",
+    ]
+
+    static let write_uk: [String: String] = [
+        "write.action.again": "Ще раз",
+        "write.action.next": "Далі",
+    ]
+
+    static let write_be: [String: String] = [
+        "write.action.again": "Яшчэ раз",
+        "write.action.next": "Далей",
+    ]
+
+    static let write_pl: [String: String] = [
+        "write.action.again": "Jeszcze raz",
+        "write.action.next": "Dalej",
+    ]
+
+    static let write_cs: [String: String] = [
+        "write.action.again": "Znovu",
+        "write.action.next": "Další",
+    ]
+
+    static let write_sk: [String: String] = [
+        "write.action.again": "Znova",
+        "write.action.next": "Ďalej",
+    ]
+
+    static let write_sl: [String: String] = [
+        "write.action.again": "Še enkrat",
+        "write.action.next": "Naprej",
+    ]
+
+    static let write_hr: [String: String] = [
+        "write.action.again": "Ponovno",
+        "write.action.next": "Sljedeće",
+    ]
+
+    static let write_sr: [String: String] = [
+        "write.action.again": "Поново",
+        "write.action.next": "Следеће",
+    ]
+
+    static let write_bs: [String: String] = [
+        "write.action.again": "Ponovno",
+        "write.action.next": "Sljedeće",
+    ]
+
+    static let write_cnr: [String: String] = [
+        "write.action.again": "Ponovno",
+        "write.action.next": "Sljedeće",
+    ]
+
+    static let write_bg: [String: String] = [
+        "write.action.again": "Отново",
+        "write.action.next": "Напред",
+    ]
+
+    static let write_mk: [String: String] = [
+        "write.action.again": "Повторно",
+        "write.action.next": "Следно",
+    ]
+
+    static let write_lt: [String: String] = [
+        "write.action.again": "Dar kartą",
+        "write.action.next": "Toliau",
+    ]
+
+    static let write_lv: [String: String] = [
+        "write.action.again": "Vēlreiz",
+        "write.action.next": "Tālāk",
+    ]
+
+    static let write_fi: [String: String] = [
+        "write.action.again": "Uudelleen",
+        "write.action.next": "Seuraava",
+    ]
+
+    static let write_et: [String: String] = [
+        "write.action.again": "Uuesti",
+        "write.action.next": "Järgmine",
+    ]
+
+    static let write_hu: [String: String] = [
+        "write.action.again": "Újra",
+        "write.action.next": "Következő",
+    ]
+
+    static let write_cy: [String: String] = [
+        "write.action.again": "Eto",
+        "write.action.next": "Nesaf",
+    ]
+
+    static let write_ga: [String: String] = [
+        "write.action.again": "Arís",
+        "write.action.next": "Ar aghaidh",
+    ]
+
+    static let write_bn: [String: String] = [
+        "write.action.again": "আবার",
+        "write.action.next": "পরবর্তী",
+    ]
+
+    static let write_hi: [String: String] = [
+        "write.action.again": "फिर से",
+        "write.action.next": "आगे",
+    ]
+
+    static let write_el: [String: String] = [
+        "write.action.again": "Ξανά",
+        "write.action.next": "Επόμενο",
+    ]
+
+    static let write_sq: [String: String] = [
+        "write.action.again": "Sërish",
+        "write.action.next": "Tjetra",
+    ]
+
+    static let write_tr: [String: String] = [
+        "write.action.again": "Tekrar",
+        "write.action.next": "İleri",
+    ]
+
+    static let write_eu: [String: String] = [
+        "write.action.again": "Berriro",
+        "write.action.next": "Hurrengoa",
+    ]
+
+    static let write_ka: [String: String] = [
+        "write.action.again": "ხელახლა",
+        "write.action.next": "შემდეგი",
+    ]
+
     /// The generated bundles for one app, in locale order.
     static func generatedBundles(for app: TikoAppKey) -> [(String, [String: String])] {
         switch app {
@@ -11121,6 +11391,7 @@ extension TikoLocalTranslations {
         case .say: return [("nl", say_nl), ("de", say_de), ("fr", say_fr), ("es", say_es), ("pt", say_pt), ("it", say_it), ("mt", say_mt), ("ja", say_ja), ("zh", say_zh), ("ko", say_ko), ("ar", say_ar), ("hy", say_hy), ("id", say_id), ("ms", say_ms), ("vi", say_vi), ("af", say_af), ("sv", say_sv), ("da", say_da), ("nb", say_nb), ("is", say_is), ("fy", say_fy), ("lb", say_lb), ("ca", say_ca), ("gl", say_gl), ("ro", say_ro), ("pap", say_pap), ("ru", say_ru), ("uk", say_uk), ("be", say_be), ("pl", say_pl), ("cs", say_cs), ("sk", say_sk), ("sl", say_sl), ("hr", say_hr), ("sr", say_sr), ("bs", say_bs), ("cnr", say_cnr), ("bg", say_bg), ("mk", say_mk), ("lt", say_lt), ("lv", say_lv), ("fi", say_fi), ("et", say_et), ("hu", say_hu), ("cy", say_cy), ("ga", say_ga), ("bn", say_bn), ("hi", say_hi), ("el", say_el), ("sq", say_sq), ("tr", say_tr), ("eu", say_eu), ("ka", say_ka)]
         case .sum: return [("nl", sum_nl), ("de", sum_de), ("fr", sum_fr), ("es", sum_es), ("pt", sum_pt), ("it", sum_it), ("mt", sum_mt), ("ja", sum_ja), ("zh", sum_zh), ("ko", sum_ko), ("ar", sum_ar), ("hy", sum_hy), ("id", sum_id), ("ms", sum_ms), ("vi", sum_vi), ("af", sum_af), ("sv", sum_sv), ("da", sum_da), ("nb", sum_nb), ("is", sum_is), ("fy", sum_fy), ("lb", sum_lb), ("ca", sum_ca), ("gl", sum_gl), ("ro", sum_ro), ("pap", sum_pap), ("ru", sum_ru), ("uk", sum_uk), ("be", sum_be), ("pl", sum_pl), ("cs", sum_cs), ("sk", sum_sk), ("sl", sum_sl), ("hr", sum_hr), ("sr", sum_sr), ("bs", sum_bs), ("cnr", sum_cnr), ("bg", sum_bg), ("mk", sum_mk), ("lt", sum_lt), ("lv", sum_lv), ("fi", sum_fi), ("et", sum_et), ("hu", sum_hu), ("cy", sum_cy), ("ga", sum_ga), ("bn", sum_bn), ("hi", sum_hi), ("el", sum_el), ("sq", sum_sq), ("tr", sum_tr), ("eu", sum_eu), ("ka", sum_ka)]
         case .first: return [("nl", first_nl), ("de", first_de), ("fr", first_fr), ("es", first_es), ("pt", first_pt), ("it", first_it), ("mt", first_mt), ("ja", first_ja), ("zh", first_zh), ("ko", first_ko), ("ar", first_ar), ("hy", first_hy), ("id", first_id), ("ms", first_ms), ("vi", first_vi), ("af", first_af), ("sv", first_sv), ("da", first_da), ("nb", first_nb), ("is", first_is), ("fy", first_fy), ("lb", first_lb), ("ca", first_ca), ("gl", first_gl), ("ro", first_ro), ("pap", first_pap), ("ru", first_ru), ("uk", first_uk), ("be", first_be), ("pl", first_pl), ("cs", first_cs), ("sk", first_sk), ("sl", first_sl), ("hr", first_hr), ("sr", first_sr), ("bs", first_bs), ("cnr", first_cnr), ("bg", first_bg), ("mk", first_mk), ("lt", first_lt), ("lv", first_lv), ("fi", first_fi), ("et", first_et), ("hu", first_hu), ("cy", first_cy), ("ga", first_ga), ("bn", first_bn), ("hi", first_hi), ("el", first_el), ("sq", first_sq), ("tr", first_tr), ("eu", first_eu), ("ka", first_ka)]
+        case .write: return [("nl", write_nl), ("de", write_de), ("fr", write_fr), ("es", write_es), ("pt", write_pt), ("it", write_it), ("mt", write_mt), ("ja", write_ja), ("zh", write_zh), ("ko", write_ko), ("ar", write_ar), ("hy", write_hy), ("id", write_id), ("ms", write_ms), ("vi", write_vi), ("af", write_af), ("sv", write_sv), ("da", write_da), ("nb", write_nb), ("is", write_is), ("fy", write_fy), ("lb", write_lb), ("ca", write_ca), ("gl", write_gl), ("ro", write_ro), ("pap", write_pap), ("ru", write_ru), ("uk", write_uk), ("be", write_be), ("pl", write_pl), ("cs", write_cs), ("sk", write_sk), ("sl", write_sl), ("hr", write_hr), ("sr", write_sr), ("bs", write_bs), ("cnr", write_cnr), ("bg", write_bg), ("mk", write_mk), ("lt", write_lt), ("lv", write_lv), ("fi", write_fi), ("et", write_et), ("hu", write_hu), ("cy", write_cy), ("ga", write_ga), ("bn", write_bn), ("hi", write_hi), ("el", write_el), ("sq", write_sq), ("tr", write_tr), ("eu", write_eu), ("ka", write_ka)]
         }
     }
 }

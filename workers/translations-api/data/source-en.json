@@ -592,6 +592,16 @@
       "common.add": "Add",
       "common.done": "Done",
       "common.settings": "Settings"
+    },
+    "write": {
+      "write.appName": "Write",
+      "write.group.lines": "Lines",
+      "write.group.shapes": "Shapes",
+      "write.group.numbers": "Numbers",
+      "write.group.uppercase": "Big letters",
+      "write.group.lowercase": "Small letters",
+      "write.action.again": "Again",
+      "write.action.next": "Next"
     }
   }
 }
