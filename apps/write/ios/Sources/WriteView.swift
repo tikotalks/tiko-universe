@@ -11,8 +11,11 @@ struct WriteView: View {
     @AppStorage("tiko.language") private var languageCode = "en"
     @StateObject private var i18n = TikoI18n(app: .write)
     @StateObject private var store = WriteGlyphStore()
+    @StateObject private var wordStore = WriteWordStore()
     @State private var category: WriteGlyphStore.Group?
     @State private var selection: Selection?
+    @State private var showingWords = false
+    @State private var word: WriteWordStore.Word?
 
     struct Selection: Identifiable, Equatable {
         let packId: String
@@ -24,7 +27,7 @@ struct WriteView: View {
         TikoAppShell(
             appConfig: WriteAppConfig.app,
             appName: i18n.t("write.appName"),
-            onIconTap: (category == nil && selection == nil) ? nil : goBack,
+            onIconTap: (category == nil && selection == nil && !showingWords) ? nil : goBack,
             settingsContent: { EmptyView() },
             content: {
                 if let selection,
@@ -41,19 +44,32 @@ struct WriteView: View {
                         onNext: { self.selection = nil }
                     )
                     .id(selection.id)
+                } else if let word, let pack = store.pack("print-latin") {
+                    WordScreen(word: word, pack: pack, languageCode: languageCode, i18n: i18n) {
+                        self.word = nil
+                    }
+                    .id(word.id)
+                } else if showingWords {
+                    WordList(store: wordStore, i18n: i18n) { word = $0 }
+                        .onAppear { wordStore.refresh(language: languageCode) }
                 } else if let category {
                     GlyphGrid(store: store, group: category, i18n: i18n) { packId, glyphID in
                         selection = Selection(packId: packId, glyphID: glyphID)
                     }
                 } else {
-                    CategoryGrid(store: store, i18n: i18n) { category = $0 }
+                    CategoryGrid(store: store, i18n: i18n, onWords: { showingWords = true }) {
+                        category = $0
+                    }
                 }
             }
         )
     }
 
     private func goBack() {
-        if selection != nil { selection = nil } else { category = nil }
+        if selection != nil { selection = nil }
+        else if word != nil { word = nil }
+        else if showingWords { showingWords = false }
+        else { category = nil }
     }
 }
 
@@ -64,6 +80,7 @@ struct WriteView: View {
 private struct CategoryGrid: View {
     @ObservedObject var store: WriteGlyphStore
     let i18n: TikoI18n
+    let onWords: () -> Void
     let onPick: (WriteGlyphStore.Group) -> Void
 
     private let columns = [GridItem(.adaptive(minimum: 150, maximum: 230), spacing: 16)]
@@ -74,6 +91,23 @@ private struct CategoryGrid: View {
                 Text(error).font(.footnote).foregroundStyle(.secondary).padding()
             }
             LazyVGrid(columns: columns, spacing: 16) {
+                // Words first: writing your own name is the thing a child most
+                // wants to do, and it should not be at the bottom of a list.
+                Button(action: onWords) {
+                    VStack(spacing: 10) {
+                        Text("abc")
+                            .font(.system(size: 46, weight: .semibold, design: .rounded))
+                            .foregroundStyle(TikoAppColor.write.palette.primary)
+                            .frame(height: 92)
+                            .padding(.top, 10)
+                        Text(i18n.t("write.group.words")).font(.headline)
+                        Text(" ").font(.caption).padding(.bottom, 12)
+                    }
+                    .frame(maxWidth: .infinity)
+                    .background(Color.primary.opacity(0.06), in: RoundedRectangle(cornerRadius: 26))
+                }
+                .buttonStyle(.plain)
+                .accessibilityLabel(i18n.t("write.group.words"))
                 ForEach(store.groups) { group in
                     Button { onPick(group) } label: {
                         VStack(spacing: 10) {

@@ -11113,6 +11113,8 @@ extension TikoLocalTranslations {
         "write.group.animals": "Dieren",
         "write.group.vehicles": "Voertuigen",
         "write.group.food": "Eten",
+        "write.words.save": "Opslaan",
+        "write.words.cancel": "Annuleren",
         "write.action.again": "Nog eens",
         "write.action.next": "Volgende",
     ]
@@ -11122,6 +11124,8 @@ extension TikoLocalTranslations {
         "write.group.animals": "Tiere",
         "write.group.vehicles": "Fahrzeuge",
         "write.group.food": "Essen",
+        "write.words.save": "Speichern",
+        "write.words.cancel": "Abbrechen",
         "write.action.again": "Nochmal",
         "write.action.next": "Weiter",
     ]
@@ -11131,6 +11135,8 @@ extension TikoLocalTranslations {
         "write.group.animals": "Animaux",
         "write.group.vehicles": "Véhicules",
         "write.group.food": "Nourriture",
+        "write.words.save": "Enregistrer",
+        "write.words.cancel": "Annuler",
         "write.action.again": "Encore",
         "write.action.next": "Suivant",
     ]
@@ -11140,16 +11146,22 @@ extension TikoLocalTranslations {
         "write.group.animals": "Animales",
         "write.group.vehicles": "Vehículos",
         "write.group.food": "Comida",
+        "write.words.save": "Guardar",
+        "write.words.cancel": "Cancelar",
         "write.action.again": "Otra vez",
         "write.action.next": "Siguiente",
     ]
 
     static let write_pt: [String: String] = [
+        "write.words.save": "Guardar",
+        "write.words.cancel": "Cancelar",
         "write.action.again": "Outra vez",
         "write.action.next": "Seguinte",
     ]
 
     static let write_it: [String: String] = [
+        "write.words.save": "Salva",
+        "write.words.cancel": "Annulla",
         "write.action.again": "Ancora",
         "write.action.next": "Avanti",
     ]
@@ -11159,236 +11171,330 @@ extension TikoLocalTranslations {
         "write.group.animals": "Annimali",
         "write.group.vehicles": "Vetturi",
         "write.group.food": "Ikel",
+        "write.words.save": "Issejvja",
+        "write.words.cancel": "Ikkanċella",
         "write.action.again": "Erġa'",
         "write.action.next": "Li jmiss",
     ]
 
     static let write_ja: [String: String] = [
+        "write.words.save": "保存",
+        "write.words.cancel": "キャンセル",
         "write.action.again": "もう一度",
         "write.action.next": "次へ",
     ]
 
     static let write_zh: [String: String] = [
+        "write.words.save": "保存",
+        "write.words.cancel": "取消",
         "write.action.again": "再来一次",
         "write.action.next": "下一个",
     ]
 
     static let write_ko: [String: String] = [
+        "write.words.save": "저장",
+        "write.words.cancel": "취소",
         "write.action.again": "다시",
         "write.action.next": "다음",
     ]
 
     static let write_ar: [String: String] = [
+        "write.words.save": "حفظ",
+        "write.words.cancel": "إلغاء",
         "write.action.again": "مرة أخرى",
         "write.action.next": "التالي",
     ]
 
     static let write_hy: [String: String] = [
+        "write.words.save": "Պահպանել",
+        "write.words.cancel": "Չեղարկել",
         "write.action.again": "Կրկին",
         "write.action.next": "Հաջորդը",
     ]
 
     static let write_id: [String: String] = [
+        "write.words.save": "Simpan",
+        "write.words.cancel": "Batal",
         "write.action.again": "Lagi",
         "write.action.next": "Berikutnya",
     ]
 
     static let write_ms: [String: String] = [
+        "write.words.save": "Simpan",
+        "write.words.cancel": "Batal",
         "write.action.again": "Sekali lagi",
         "write.action.next": "Seterusnya",
     ]
 
     static let write_vi: [String: String] = [
+        "write.words.save": "Lưu",
+        "write.words.cancel": "Hủy",
         "write.action.again": "Lần nữa",
         "write.action.next": "Tiếp",
     ]
 
     static let write_af: [String: String] = [
+        "write.words.save": "Stoor",
+        "write.words.cancel": "Kanselleer",
         "write.action.again": "Weer",
         "write.action.next": "Volgende",
     ]
 
     static let write_sv: [String: String] = [
+        "write.words.save": "Spara",
+        "write.words.cancel": "Avbryt",
         "write.action.again": "Igen",
         "write.action.next": "Nästa",
     ]
 
     static let write_da: [String: String] = [
+        "write.words.save": "Gem",
+        "write.words.cancel": "Annuller",
         "write.action.again": "Igen",
         "write.action.next": "Næste",
     ]
 
     static let write_nb: [String: String] = [
+        "write.words.save": "Lagre",
+        "write.words.cancel": "Avbryt",
         "write.action.again": "Igjen",
         "write.action.next": "Neste",
     ]
 
     static let write_is: [String: String] = [
+        "write.words.save": "Vista",
+        "write.words.cancel": "Hætta",
         "write.action.again": "Aftur",
         "write.action.next": "Næsta",
     ]
 
     static let write_fy: [String: String] = [
+        "write.words.save": "Bewarje",
+        "write.words.cancel": "Ofbrekke",
         "write.action.again": "Nochris",
         "write.action.next": "Folgjende",
     ]
 
     static let write_lb: [String: String] = [
+        "write.words.save": "Speicheren",
+        "write.words.cancel": "Ofbrieche",
         "write.action.again": "Nochmol",
         "write.action.next": "Weider",
     ]
 
     static let write_ca: [String: String] = [
+        "write.words.save": "Desa",
+        "write.words.cancel": "Cancel·la",
         "write.action.again": "Un altre cop",
         "write.action.next": "Següent",
     ]
 
     static let write_gl: [String: String] = [
+        "write.words.save": "Gardar",
+        "write.words.cancel": "Cancelar",
         "write.action.again": "Outra vez",
         "write.action.next": "Seguinte",
     ]
 
     static let write_ro: [String: String] = [
+        "write.words.save": "Salvează",
+        "write.words.cancel": "Anulează",
         "write.action.again": "Din nou",
         "write.action.next": "Următor",
     ]
 
     static let write_pap: [String: String] = [
+        "write.words.save": "Warda",
+        "write.words.cancel": "Kanselá",
         "write.action.again": "Atrobe",
         "write.action.next": "Siguiente",
     ]
 
     static let write_ru: [String: String] = [
+        "write.words.save": "Сохранить",
+        "write.words.cancel": "Отмена",
         "write.action.again": "Ещё раз",
         "write.action.next": "Далее",
     ]
 
     static let write_uk: [String: String] = [
+        "write.words.save": "Зберегти",
+        "write.words.cancel": "Скасувати",
         "write.action.again": "Ще раз",
         "write.action.next": "Далі",
     ]
 
     static let write_be: [String: String] = [
+        "write.words.save": "Захаваць",
+        "write.words.cancel": "Скасаваць",
         "write.action.again": "Яшчэ раз",
         "write.action.next": "Далей",
     ]
 
     static let write_pl: [String: String] = [
+        "write.words.save": "Zapisz",
+        "write.words.cancel": "Anuluj",
         "write.action.again": "Jeszcze raz",
         "write.action.next": "Dalej",
     ]
 
     static let write_cs: [String: String] = [
+        "write.words.save": "Uložit",
+        "write.words.cancel": "Zrušit",
         "write.action.again": "Znovu",
         "write.action.next": "Další",
     ]
 
     static let write_sk: [String: String] = [
+        "write.words.save": "Uložiť",
+        "write.words.cancel": "Zrušiť",
         "write.action.again": "Znova",
         "write.action.next": "Ďalej",
     ]
 
     static let write_sl: [String: String] = [
+        "write.words.save": "Shrani",
+        "write.words.cancel": "Prekliči",
         "write.action.again": "Še enkrat",
         "write.action.next": "Naprej",
     ]
 
     static let write_hr: [String: String] = [
+        "write.words.save": "Spremi",
+        "write.words.cancel": "Odustani",
         "write.action.again": "Ponovno",
         "write.action.next": "Sljedeće",
     ]
 
     static let write_sr: [String: String] = [
+        "write.words.save": "Сачувај",
+        "write.words.cancel": "Одустани",
         "write.action.again": "Поново",
         "write.action.next": "Следеће",
     ]
 
     static let write_bs: [String: String] = [
+        "write.words.save": "Spremi",
+        "write.words.cancel": "Odustani",
         "write.action.again": "Ponovno",
         "write.action.next": "Sljedeće",
     ]
 
     static let write_cnr: [String: String] = [
+        "write.words.save": "Spremi",
+        "write.words.cancel": "Odustani",
         "write.action.again": "Ponovno",
         "write.action.next": "Sljedeće",
     ]
 
     static let write_bg: [String: String] = [
+        "write.words.save": "Запази",
+        "write.words.cancel": "Отказ",
         "write.action.again": "Отново",
         "write.action.next": "Напред",
     ]
 
     static let write_mk: [String: String] = [
+        "write.words.save": "Зачувај",
+        "write.words.cancel": "Откажи",
         "write.action.again": "Повторно",
         "write.action.next": "Следно",
     ]
 
     static let write_lt: [String: String] = [
+        "write.words.save": "Išsaugoti",
+        "write.words.cancel": "Atšaukti",
         "write.action.again": "Dar kartą",
         "write.action.next": "Toliau",
     ]
 
     static let write_lv: [String: String] = [
+        "write.words.save": "Saglabāt",
+        "write.words.cancel": "Atcelt",
         "write.action.again": "Vēlreiz",
         "write.action.next": "Tālāk",
     ]
 
     static let write_fi: [String: String] = [
+        "write.words.save": "Tallenna",
+        "write.words.cancel": "Peruuta",
         "write.action.again": "Uudelleen",
         "write.action.next": "Seuraava",
     ]
 
     static let write_et: [String: String] = [
+        "write.words.save": "Salvesta",
+        "write.words.cancel": "Tühista",
         "write.action.again": "Uuesti",
         "write.action.next": "Järgmine",
     ]
 
     static let write_hu: [String: String] = [
+        "write.words.save": "Mentés",
+        "write.words.cancel": "Mégse",
         "write.action.again": "Újra",
         "write.action.next": "Következő",
     ]
 
     static let write_cy: [String: String] = [
+        "write.words.save": "Cadw",
+        "write.words.cancel": "Canslo",
         "write.action.again": "Eto",
         "write.action.next": "Nesaf",
     ]
 
     static let write_ga: [String: String] = [
+        "write.words.save": "Sábháil",
+        "write.words.cancel": "Cealaigh",
         "write.action.again": "Arís",
         "write.action.next": "Ar aghaidh",
     ]
 
     static let write_bn: [String: String] = [
+        "write.words.save": "সংরক্ষণ",
+        "write.words.cancel": "বাতিল",
         "write.action.again": "আবার",
         "write.action.next": "পরবর্তী",
     ]
 
     static let write_hi: [String: String] = [
+        "write.words.save": "सहेजें",
+        "write.words.cancel": "रद्द करें",
         "write.action.again": "फिर से",
         "write.action.next": "आगे",
     ]
 
     static let write_el: [String: String] = [
+        "write.words.save": "Αποθήκευση",
+        "write.words.cancel": "Άκυρο",
         "write.action.again": "Ξανά",
         "write.action.next": "Επόμενο",
     ]
 
     static let write_sq: [String: String] = [
+        "write.words.save": "Ruaj",
+        "write.words.cancel": "Anulo",
         "write.action.again": "Sërish",
         "write.action.next": "Tjetra",
     ]
 
     static let write_tr: [String: String] = [
+        "write.words.save": "Kaydet",
+        "write.words.cancel": "İptal",
         "write.action.again": "Tekrar",
         "write.action.next": "İleri",
     ]
 
     static let write_eu: [String: String] = [
+        "write.words.save": "Gorde",
+        "write.words.cancel": "Utzi",
         "write.action.again": "Berriro",
         "write.action.next": "Hurrengoa",
     ]
 
     static let write_ka: [String: String] = [
+        "write.words.save": "შენახვა",
+        "write.words.cancel": "გაუქმება",
         "write.action.again": "ხელახლა",
         "write.action.next": "შემდეგი",
     ]

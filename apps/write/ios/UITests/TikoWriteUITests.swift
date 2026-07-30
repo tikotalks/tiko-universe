@@ -13,9 +13,11 @@ final class TikoWriteUITests: XCTestCase {
     /// prompt — Write asks for nothing, because it needs nothing.
     func testOpensWithoutLoginAndShowsGlyphs() {
         let app = launch()
+        XCTAssertTrue(app.buttons["Shapes"].waitForExistence(timeout: 20), "expected the Shapes category")
+        app.buttons["Shapes"].tap()
         XCTAssertTrue(
-            app.buttons["circle"].waitForExistence(timeout: 20),
-            "expected the circle tile on the home grid"
+            app.buttons["circle"].waitForExistence(timeout: 10),
+            "expected the circle tile inside Shapes"
         )
         // A raw key on screen means the localization lookup is broken.
         XCTAssertFalse(app.staticTexts["write.group.shapes"].exists, "group titles must be localized")
@@ -26,6 +28,8 @@ final class TikoWriteUITests: XCTestCase {
     /// engine, ink.
     func testTracingACircleReachesTheCanvas() {
         let app = launch()
+        XCTAssertTrue(app.buttons["Shapes"].waitForExistence(timeout: 20))
+        app.buttons["Shapes"].tap()
         let tile = app.buttons["circle"]
         XCTAssertTrue(tile.waitForExistence(timeout: 20))
         tile.tap()
@@ -57,9 +61,43 @@ final class TikoWriteUITests: XCTestCase {
         XCTAssertTrue(app.buttons["Again"].exists || app.buttons["Next"].exists)
     }
 
+    /// Words are the headline feature: a child should reach one in two taps.
+    func testWordsAreReachableAndOpen() {
+        let app = launch()
+        let words = app.buttons["Words"]
+        XCTAssertTrue(words.waitForExistence(timeout: 20), "expected the Words category first")
+        words.tap()
+
+        // Bundled starter words, so there is something to trace before any
+        // grown-up has set anything up.
+        let cat = app.buttons["cat"]
+        XCTAssertTrue(cat.waitForExistence(timeout: 10), "expected bundled starter words")
+        XCTAssertTrue(app.buttons["Add a word"].exists, "a grown-up needs a way in")
+
+        cat.tap()
+        XCTAssertTrue(
+            app.buttons["Again"].waitForExistence(timeout: 10),
+            "expected the word canvas"
+        )
+    }
+
+    /// Navigation must unwind all the way back, from any depth.
+    func testBackUnwindsFromAWord() {
+        let app = launch()
+        XCTAssertTrue(app.buttons["Words"].waitForExistence(timeout: 20))
+        app.buttons["Words"].tap()
+        XCTAssertTrue(app.buttons["cat"].waitForExistence(timeout: 10))
+        app.buttons["cat"].tap()
+        XCTAssertTrue(app.buttons["Next"].waitForExistence(timeout: 10))
+        app.buttons["Next"].tap()
+        XCTAssertTrue(app.buttons["cat"].waitForExistence(timeout: 10), "should return to the word list")
+    }
+
     /// A child must never be trapped on a glyph they cannot finish.
     func testAlwaysHasAWayBack() {
         let app = launch()
+        XCTAssertTrue(app.buttons["Shapes"].waitForExistence(timeout: 20))
+        app.buttons["Shapes"].tap()
         let tile = app.buttons["square"]
         XCTAssertTrue(tile.waitForExistence(timeout: 20))
         tile.tap()
@@ -67,6 +105,6 @@ final class TikoWriteUITests: XCTestCase {
         let next = app.buttons["Next"]
         XCTAssertTrue(next.waitForExistence(timeout: 10), "next must always be reachable")
         next.tap()
-        XCTAssertTrue(app.buttons["circle"].waitForExistence(timeout: 10), "should return to the grid")
+        XCTAssertTrue(app.buttons["circle"].waitForExistence(timeout: 10), "should return to the glyph grid")
     }
 }

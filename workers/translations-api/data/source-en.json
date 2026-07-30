@@ -605,6 +605,13 @@
       "write.group.vehicles": "Vehicles",
       "write.group.nature": "Nature",
       "write.group.food": "Food",
+      "write.group.words": "Words",
+      "write.words.add": "Add a word",
+      "write.words.save": "Save",
+      "write.words.cancel": "Cancel",
+      "write.words.placeholder": "name",
+      "write.words.hint": "A grown-up can type a name or a word to write.",
+      "write.words.rejected": "Use only the letters a to z.",
       "write.action.again": "Again",
       "write.action.next": "Next"
     }
