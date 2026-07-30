@@ -601,6 +601,10 @@
       "write.group.uppercase": "Big letters",
       "write.group.lowercase": "Small letters",
       "write.wellDone": "Well done!",
+      "write.group.animals": "Animals",
+      "write.group.vehicles": "Vehicles",
+      "write.group.nature": "Nature",
+      "write.group.food": "Food",
       "write.action.again": "Again",
       "write.action.next": "Next"
     }

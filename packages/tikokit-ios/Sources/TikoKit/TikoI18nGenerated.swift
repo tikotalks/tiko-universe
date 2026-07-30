@@ -11110,24 +11110,36 @@ extension TikoLocalTranslations {
 
     static let write_nl: [String: String] = [
         "write.group.numbers": "Cijfers",
+        "write.group.animals": "Dieren",
+        "write.group.vehicles": "Voertuigen",
+        "write.group.food": "Eten",
         "write.action.again": "Nog eens",
         "write.action.next": "Volgende",
     ]
 
     static let write_de: [String: String] = [
         "write.group.numbers": "Zahlen",
+        "write.group.animals": "Tiere",
+        "write.group.vehicles": "Fahrzeuge",
+        "write.group.food": "Essen",
         "write.action.again": "Nochmal",
         "write.action.next": "Weiter",
     ]
 
     static let write_fr: [String: String] = [
         "write.group.numbers": "Chiffres",
+        "write.group.animals": "Animaux",
+        "write.group.vehicles": "Véhicules",
+        "write.group.food": "Nourriture",
         "write.action.again": "Encore",
         "write.action.next": "Suivant",
     ]
 
     static let write_es: [String: String] = [
         "write.group.numbers": "Números",
+        "write.group.animals": "Animales",
+        "write.group.vehicles": "Vehículos",
+        "write.group.food": "Comida",
         "write.action.again": "Otra vez",
         "write.action.next": "Siguiente",
     ]
@@ -11144,6 +11156,9 @@ extension TikoLocalTranslations {
 
     static let write_mt: [String: String] = [
         "write.group.numbers": "Numri",
+        "write.group.animals": "Annimali",
+        "write.group.vehicles": "Vetturi",
+        "write.group.food": "Ikel",
         "write.action.again": "Erġa'",
         "write.action.next": "Li jmiss",
     ]
