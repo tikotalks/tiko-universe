@@ -126,4 +126,34 @@ final class TikoWriteUITests: XCTestCase {
         next.tap()
         XCTAssertTrue(app.buttons["circle"].waitForExistence(timeout: 10), "should return to the glyph grid")
     }
+
+    /// Support has to be reachable by a grown-up and reach Arlez. This walks the
+    /// real path — settings, then Support — and waits for the category list,
+    /// which only appears once the configuration has been fetched over the
+    /// network. A wrong product ID or a broken decode fails here.
+    func testSupportOpensInParentModeAndLoadsItsCategories() {
+        let app = launch()
+
+        let settings = app.buttons["Settings"].exists ? app.buttons["Settings"] : app.images["gearshape.fill"]
+        XCTAssertTrue(settings.waitForExistence(timeout: 20), "expected the Parent Mode settings button")
+        settings.tap()
+
+        let support = app.buttons["Support"]
+        XCTAssertTrue(support.waitForExistence(timeout: 10), "Support must be in the settings sheet")
+        support.tap()
+
+        // Categories come from Arlez, not from the app.
+        XCTAssertTrue(
+            app.buttons["Bug"].waitForExistence(timeout: 25),
+            "the published feedback categories did not load"
+        )
+        XCTAssertTrue(app.buttons["Idea"].exists)
+        XCTAssertTrue(app.buttons["Question"].exists)
+
+        app.buttons["Bug"].tap()
+        XCTAssertTrue(
+            app.staticTexts["What happened?"].waitForExistence(timeout: 10),
+            "the form should be built from the category's published fields"
+        )
+    }
 }

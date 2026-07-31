@@ -51,7 +51,7 @@ jobs:
         working-directory: packages/tikokit-ios
         run: |
           xcodebuild test \
-            -scheme TikoKit \
+            -scheme TikoKit-Package \
             -destination 'platform=iOS Simulator,name=${{ steps.simulator.outputs.device }}' \
             CODE_SIGNING_ALLOWED=NO
 

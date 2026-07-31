@@ -11,7 +11,7 @@
     "workers/*"
   ],
   "scripts": {
-    "check": "npm run scaffold:check && npm run generated:check && npm run glyphs:check && npm run lint && npm run typecheck && npm run test",
+    "check": "npm run scaffold:check && npm run generated:check && npm run glyphs:check && npm run arlez:check && npm run lint && npm run typecheck && npm run test",
     "glyphs:check": "node tools/check-glyph-packs.mjs",
     "generate:app-configs": "node tools/generate-app-configs.mjs",
     "generate:colors": "node tools/generate-tiko-colors.mjs",
@@ -53,7 +53,9 @@
     "generated:check": "node tools/generate-locales.mjs --check && node tools/generate-ui-translations.mjs --check && node tools/generate-talk-packs.mjs --check && node tools/generate-talk-packs-index.mjs --check && node tools/generate-talk-realizer-bundle.mjs --check && node tools/generate-talk-seeds.mjs --check && node tools/generate-write-seeds.mjs --check",
     "generate:talk-packs": "node tools/generate-talk-packs.mjs",
     "generate:talk-packs-index": "node tools/generate-talk-packs-index.mjs",
-    "generate:talk-bundle": "node tools/generate-talk-realizer-bundle.mjs"
+    "generate:talk-bundle": "node tools/generate-talk-realizer-bundle.mjs",
+    "arlez:check": "node tools/generate-arlez-projects.mjs --check",
+    "arlez:refresh": "node tools/generate-arlez-projects.mjs --refresh"
   },
   "dependencies": {
     "@sil/ui": "^2.6.0",
