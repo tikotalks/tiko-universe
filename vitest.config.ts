@@ -14,6 +14,7 @@ export default defineConfig({
       '@tiko/i18n/': fileURLToPath(new URL('./packages/i18n/src/', import.meta.url)) + '/',
       '@tiko/media': fileURLToPath(new URL('./packages/media/src/index.ts', import.meta.url)),
       '@tiko/media/': fileURLToPath(new URL('./packages/media/src/', import.meta.url)) + '/',
+      '@tiko/site': fileURLToPath(new URL('./packages/site/src/index.ts', import.meta.url)),
       '@tiko/testing': fileURLToPath(new URL('./packages/testing/src/index.ts', import.meta.url)),
       '@tiko/testing/': fileURLToPath(new URL('./packages/testing/src/', import.meta.url)) + '/',
       '@tiko/ui': fileURLToPath(new URL('./packages/ui/src/index.ts', import.meta.url)),

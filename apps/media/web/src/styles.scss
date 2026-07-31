@@ -1,0 +1,17 @@
+// Media keeps its own accent — #2dd4bf is the canonical Tiko app colour for `media`
+// (see tools/generate-app-configs.mjs). Everything else about how this surface looks
+// comes from @tiko/site, so it reads as the same product as tikotalks.com.
+@use '@sil/ui/defaults' with ($project-colors: (
+  'primary': #2dd4bf,
+  'secondary': #2488ff,
+  'tertiary': #9b3fbd,
+  'success': #93ee3f,
+  'warning': #f8c22e,
+  'error': #ef405d,
+  'dark': #17131c,
+  'light': #f8f6f1,
+));
+
+@use '@sil/ui/styles/main.scss';
+
+@use '@tiko/site/src/site.scss';

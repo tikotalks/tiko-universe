@@ -1,0 +1,341 @@
+// Shared chrome for Tiko's public web surfaces (tikotalks.com, media.tikoapps.org).
+//
+// This file assumes the consuming app has already loaded `@sil/ui/defaults` with its own
+// `$project-colors` and `@sil/ui/styles/main.scss`. It deliberately does not load either:
+// each surface owns its own palette (the website is purple, media is teal), and `@use`-ing
+// a configured module twice in one compilation is an error.
+//
+// Everything below is the part that must NOT differ between surfaces: type, surface tiers,
+// spacing rhythm, and the shared layout/typography/button/card helpers.
+
+// ─── Design tokens ───────────────────────────────────────────────────────────
+
+:root {
+  // Inter for body copy, Nunito for headings/brand display only.
+  --font-family-body: 'Inter', ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-family-heading: 'Nunito', ui-sans-serif, system-ui, -apple-system, sans-serif;
+
+  // Surface tiers (--color-background covers page bg via @sil/ui). A card must sit
+  // *above* the page, so --surface-card is a real step away from the background —
+  // a 0% mix would make every neutral card invisible.
+  --surface-card: color-mix(in srgb, var(--color-background), var(--color-foreground) 5%);
+  --surface-subtle: color-mix(in srgb, var(--color-background), var(--color-foreground) 9%);
+  --surface-ink-wash: color-mix(in srgb, var(--color-foreground), transparent 94%);
+  // Hairline that keeps a card readable even when its own colour is close to the
+  // page background (Talk's #17131c in dark mode, Light-toned cards in light mode).
+  --surface-hairline: color-mix(in srgb, currentColor, transparent 88%);
+
+  // Text secondary/muted (--color-foreground covers primary via @sil/ui)
+  --text-secondary: color-mix(in srgb, var(--color-foreground), transparent 28%);
+  --text-muted: color-mix(in srgb, var(--color-foreground), transparent 52%);
+
+  // Border (--shadow-s/m/l come from @sil/ui)
+  --border: color-mix(in srgb, var(--color-foreground), transparent 88%);
+  --border-strong: color-mix(in srgb, var(--color-foreground), transparent 78%);
+
+  // Header
+  --header-bg: color-mix(in srgb, var(--color-background), transparent 8%);
+
+  // Layout
+  --max-width: 1200px;
+  --header-height: 64px;
+  // The vertical rhythm between top-level page sections. Whitespace is the primary
+  // structuring tool on these surfaces, so this is deliberately generous.
+  --section-space: clamp(calc(var(--space) * 3), 9vw, calc(var(--space) * 6));
+
+  // Motion — custom easing only (never default `ease`/`linear`).
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+// Derived color variables use color-mix() so they adapt automatically between modes.
+
+// ─── Reset / base ─────────────────────────────────────────────────────────────
+
+html {
+  height: initial !important;
+  scroll-snap-type: none !important;
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+  overflow: visible !important;
+  display: block !important;
+  background: var(--color-background);
+  color: var(--color-foreground);
+  font-family: var(--font-family);
+  font-size: 16px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  transition: background 0.2s var(--ease-out), color 0.2s var(--ease-out);
+}
+
+// Branded text selection — works across light/dark via auto text colour.
+::selection {
+  background: var(--color-primary);
+  color: var(--color-primary-text);
+}
+
+// Balanced line breaks on headings prevent orphan words.
+h1, h2, h3 {
+  text-wrap: balance;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-family-heading);
+  font-weight: 800;
+  line-height: 1.05;
+  letter-spacing: 0;
+  margin: 0;
+  color: var(--color-foreground);
+}
+
+p { margin: 0; }
+
+a { color: inherit; }
+
+a { text-decoration: none; }
+
+button, a { font: inherit; }
+
+img { max-width: 100%; height: auto; display: block; }
+
+ul, ol { margin: 0; padding: 0; list-style: none; }
+
+code, pre {
+  font-family: var(--font-family-monospace);
+}
+
+// ─── Site shell ───────────────────────────────────────────────────────────────
+
+.site {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+
+  &__main {
+    flex: 1;
+    // The header is fixed and floats on its own margin, so nothing below it is
+    // laid out around it. Reserve its full footprint or the first block of a page
+    // renders underneath it.
+    padding-top: calc(var(--header-height) + var(--space));
+  }
+}
+
+// ─── Layout helpers ───────────────────────────────────────────────────────────
+
+.container {
+  width: 100%;
+  max-width: var(--max-width);
+  margin-inline: auto;
+  // Match .section__inner so container-based blocks (header, footer, docs) keep
+  // the same gutter instead of running into the viewport edge.
+  padding: var(--section-container-padding, 0) clamp(1rem, 4vw, 2.5rem);
+  background-color: var(--section-container-background, transparent);
+  border-radius: var(--section-container-border-radius, var(--border-radius-xl));
+}
+
+.section {
+  padding: var(--spacing);
+}
+
+// ─── Typography helpers ────────────────────────────────────────────────────────
+
+.eyebrow {
+  display: inline-block;
+  font-family: var(--font-family);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: calc(var(--space) * 0.75);
+}
+
+.display-1 {
+  font-size: clamp(2.75rem, 7vw, 5.5rem);
+  line-height: 0.8;
+  letter-spacing: -0.025em;
+}
+
+.display-2 {
+  font-size: clamp(2rem, 4.5vw, 3.75rem);
+  line-height: 0.8;
+  letter-spacing: -0.025em;
+}
+
+.display-3 {
+  font-size: clamp(1.5rem, 3vw, 2.5rem);
+  line-height: 0.8;
+  letter-spacing: -0.025em;
+}
+
+.body-lg {
+  font-size: clamp(1rem, 2vw, 1.2rem);
+  line-height: 1.65;
+  color: var(--text-secondary);
+}
+
+.body-sm {
+  font-size: 0.875rem;
+  line-height: 1.6;
+  color: var(--text-secondary);
+}
+
+// ─── Buttons ──────────────────────────────────────────────────────────────────
+//
+// These surfaces' calls to action are plain links, so they get their own class rather
+// than @sil/ui's `.button`. That class is built for the `<Button>` component: it
+// paints its background on a `::before` at `z-index: 0` and carries its padding on
+// a required `.button__container` child, so a bare `<a class="button">Label</a>`
+// collapses to zero padding and hides its own label behind the background.
+//
+// `--light` / `--ghost-light` are for buttons sitting on a full-colour band, where
+// the surrounding text colour is the band's, not the page's.
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-s);
+  padding: 0.7rem 1.4rem;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  font-family: var(--font-family);
+  font-size: 0.95rem;
+  font-weight: 700;
+  line-height: 1.2;
+  text-align: center;
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background 0.18s var(--ease-out), color 0.18s var(--ease-out),
+    border-color 0.18s var(--ease-out), transform 0.18s var(--ease-out);
+
+  &:hover { transform: translateY(-1px); }
+  &:focus-visible {
+    outline: 2px solid currentColor;
+    outline-offset: 3px;
+  }
+
+  // On the page background.
+  &--primary {
+    background: var(--color-primary);
+    color: var(--color-primary-text);
+
+    &:hover { background: color-mix(in srgb, var(--color-primary), #000 12%); }
+  }
+
+  &--ghost {
+    background: transparent;
+    color: var(--color-primary);
+    border-color: color-mix(in srgb, var(--color-primary), transparent 70%);
+
+    &:hover {
+      background: color-mix(in srgb, var(--color-primary), transparent 88%);
+      border-color: var(--color-primary);
+    }
+  }
+
+  // A neutral secondary action that must not compete with the accent.
+  &--quiet {
+    background: transparent;
+    color: var(--text-secondary);
+    border-color: var(--border);
+
+    &:hover {
+      background: var(--surface-ink-wash);
+      color: var(--color-foreground);
+    }
+  }
+
+  // On a full-colour band (CtaBanner, toned PageSection).
+  &--light {
+    background: var(--color-light);
+    color: var(--color-dark);
+
+    &:hover { background: #fff; }
+  }
+
+  &--ghost-light {
+    background: transparent;
+    color: inherit;
+    border-color: color-mix(in srgb, currentColor, transparent 55%);
+
+    &:hover {
+      background: color-mix(in srgb, currentColor, transparent 88%);
+      border-color: currentColor;
+    }
+  }
+
+  &:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+
+    &:hover { transform: none; }
+  }
+
+  // A non-interactive pill (e.g. "Coming soon") should not pretend to be clickable.
+  &:is(span) {
+    cursor: default;
+    &:hover { transform: none; }
+  }
+}
+
+// ─── Cards ────────────────────────────────────────────────────────────────────
+
+.card {
+  background: var(--surface-card);
+  border-radius: 20px;
+  box-shadow: var(--shadow-s);
+}
+
+.card--raised {
+  box-shadow: var(--shadow-m);
+}
+
+// ─── Status badge ─────────────────────────────────────────────────────────────
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  background: var(--surface-subtle);
+  color: var(--text-secondary);
+}
+
+.badge--available {
+  background: color-mix(in srgb, var(--color-background), var(--color-primary) 14%);
+  color: color-mix(in srgb, var(--color-foreground), var(--color-primary) 28%);
+}
+
+.badge--planned {
+  background: var(--surface-subtle);
+  color: var(--text-muted);
+}
+
+// ─── Code blocks ──────────────────────────────────────────────────────────────
+
+pre {
+  overflow-x: auto;
+  margin: 0;
+  padding: calc(var(--space) * 1.5);
+  border-radius: 16px;
+  background: #111111;
+  color: #e5e7eb;
+  font-size: 0.875rem;
+  line-height: 1.6;
+}
