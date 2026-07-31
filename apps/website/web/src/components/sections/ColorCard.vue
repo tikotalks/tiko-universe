@@ -63,7 +63,9 @@ const tag = computed(() => (props.to ? RouterLink : props.href ? 'a' : 'div'))
   gap: 1rem;
   padding: clamp(1.25rem, 2.5vw, 1.75rem);
   border-radius: 24px;
-  border: none;
+  // Keeps the card's edge readable when its own colour sits close to the page
+  // background — Talk's near-black in dark mode, pale tones in light mode.
+  border: 1px solid var(--surface-hairline);
   background: var(--card-bg);
   color: var(--card-fg);
   box-shadow: 0 18px 40px -28px color-mix(in srgb, var(--card-bg), #000 55%);

@@ -45,7 +45,9 @@ const items = (p: { apps?: TikoAppInfo[] }) => p.apps ?? tikoApps
     gap: 0.75rem;
     padding: clamp(1.25rem, 2.5vw, 1.75rem);
     border-radius: 28px;
-    border: none;
+    // Talk's brand colour is near-black; without an edge its card disappears into
+    // the dark page entirely.
+    border: 1px solid var(--surface-hairline);
     background: var(--card-bg);
     color: var(--card-fg);
     text-decoration: none;

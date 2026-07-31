@@ -1,54 +1,45 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
 import { RouterLink } from 'vue-router'
-import { platformNotes } from '../siteContent'
+import { mediaImage, type MediaImageName } from '../content/mediaImages'
+import { platformNotes, sectionTones as tones } from '../siteContent'
 import PageSection from '../components/sections/PageSection.vue'
 import CardGrid from '../components/sections/CardGrid.vue'
 import ColorCard from '../components/sections/ColorCard.vue'
 import SplitMedia from '../components/sections/SplitMedia.vue'
 import CtaBanner from '../components/sections/CtaBanner.vue'
 
-// Colour rotation so adjacent cards read as distinct Tiko colours.
-const tones = ['primary', 'secondary', 'tertiary', 'accent', 'warning', 'yes-no', 'cards', 'sequence']
-
 const steps = [
   {
     title: 'Open the link',
     body: 'A caregiver shares a link or bookmarks a Tiko app. No app store, no download required — just a URL.',
+    image: 'laptop' as MediaImageName
   },
   {
     title: 'Use it immediately',
     body: 'The app is ready with no sign-in, no tutorial, no onboarding flow. The child sees the tool straight away.',
+    image: 'lightBulb' as MediaImageName
   },
   {
     title: 'Recover later if needed',
     body: 'If the caregiver wants to keep settings across devices, they can add an email and get a magic link — no password ever.',
+    image: 'caregiver' as MediaImageName
   },
 ]
 
 const identityProps = [
-  { label: 'Device session', body: 'Created automatically on first open. Stored locally, never requires login.' },
-  { label: 'Magic link recovery', body: 'Optional. The caregiver adds an email and verifies it once to enable cross-device sync.' },
-  { label: 'No child-facing ceremony', body: 'Recovery and admin flows are always caregiver-only. The child never sees an account form.' },
-  { label: 'Bearer token auth', body: 'API sessions use bearer tokens so iOS, Android, and web all behave the same way.' },
+  { label: 'Device session', body: 'Created automatically on first open. Stored locally, never requires login.',
+    image: 'smartphone' as MediaImageName
+  },
+  { label: 'Magic link recovery', body: 'Optional. The caregiver adds an email and verifies it once to enable cross-device sync.',
+    image: 'envelope' as MediaImageName
+  },
+  { label: 'No child-facing ceremony', body: 'Recovery and admin flows are always caregiver-only. The child never sees an account form.',
+    image: 'childSayingHi' as MediaImageName
+  },
+  { label: 'Bearer token auth', body: 'API sessions use bearer tokens so iOS, Android, and web all behave the same way.',
+    image: 'gear' as MediaImageName
+  },
 ]
-
-// A small pool of Tiko Media images to give each section a real visual.
-const MEDIA_API = (import.meta as { env?: Record<string, string | undefined> }).env?.VITE_MEDIA_API_URL
-  ?? 'https://media.tikoapi.org/v1'
-const pool = ref<string[]>([])
-function poolImage(i: number): string | undefined {
-  return pool.value.length ? pool.value[i % pool.value.length] : undefined
-}
-onMounted(async () => {
-  try {
-    const res = await fetch(`${MEDIA_API}/media?type=image&limit=24&page=1`)
-    const body = await res.json() as { data?: Array<{ id?: string; original_url?: string }> }
-    pool.value = (body.data ?? [])
-      .map((m) => m.original_url || (m.id ? `${MEDIA_API}/media/${m.id}/download` : ''))
-      .filter(Boolean)
-  } catch { pool.value = [] }
-})
 </script>
 
 <template>
@@ -71,7 +62,7 @@ onMounted(async () => {
           :tone="tones[(i + 1) % tones.length]"
           :title="item.label"
           :body="item.copy"
-          :image="poolImage(i)"
+          :image="mediaImage(item.image)"
         />
       </CardGrid>
     </PageSection>
@@ -89,13 +80,13 @@ onMounted(async () => {
           :eyebrow="`Step ${i + 1}`"
           :title="step.title"
           :body="step.body"
-          :image="poolImage(i + 3)"
+          :image="mediaImage(step.image)"
         />
       </CardGrid>
     </PageSection>
 
     <PageSection tone="dark">
-      <SplitMedia :image="poolImage(6)" image-alt="A caregiver using Tiko device-first" media-side="right">
+      <SplitMedia :image="mediaImage('adultAndChildWithTablet')" image-alt="A caregiver using Tiko on a device with a child" media-side="right">
         <p class="how-page__eyebrow">Device-first identity</p>
         <h2 class="how-page__split-title">No passwords, ever.</h2>
         <p>
@@ -119,7 +110,7 @@ onMounted(async () => {
           :tone="tones[(i + 2) % tones.length]"
           :title="prop.label"
           :body="prop.body"
-          :image="poolImage(i + 8)"
+          :image="mediaImage(prop.image)"
         />
       </CardGrid>
     </PageSection>
@@ -131,8 +122,8 @@ onMounted(async () => {
         body="Read the architecture and API documentation for how workers, storage, and clients fit together."
       >
         <template #actions>
-          <RouterLink class="button button--light" to="/docs/architecture">Architecture docs →</RouterLink>
-          <RouterLink class="button button--ghost-light" to="/docs/apis">API contracts →</RouterLink>
+          <RouterLink class="btn btn--light" to="/docs/architecture">Architecture docs →</RouterLink>
+          <RouterLink class="btn btn--ghost-light" to="/docs/apis">API contracts →</RouterLink>
         </template>
       </CtaBanner>
     </PageSection>

@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
 import { RouterLink } from 'vue-router'
+import { mediaImage } from '../content/mediaImages'
 import { tikoApps } from '../content/appUniverse'
-import { trustPrinciples, whyTikoPillars, whyFreePillars, platformNotes } from '../siteContent'
+import { trustPrinciples, whyTikoPillars, whyFreePillars, platformNotes, sectionTones as tones } from '../siteContent'
 import HeroSection from '../components/sections/HeroSection.vue'
 import PageSection from '../components/sections/PageSection.vue'
 import CardGrid from '../components/sections/CardGrid.vue'
@@ -11,26 +11,6 @@ import AppCardGrid from '../components/sections/AppCardGrid.vue'
 import SplitMedia from '../components/sections/SplitMedia.vue'
 import MediaStream from '../components/sections/MediaStream.vue'
 import CtaBanner from '../components/sections/CtaBanner.vue'
-
-// Colour rotation so adjacent cards read as distinct Tiko colours.
-const tones = ['primary', 'secondary', 'tertiary', 'accent', 'warning', 'yes-no', 'cards', 'sequence']
-
-// A small pool of Tiko Media images to give each section a real visual.
-const MEDIA_API = (import.meta as { env?: Record<string, string | undefined> }).env?.VITE_MEDIA_API_URL
-  ?? 'https://media.tikoapi.org/v1'
-const pool = ref<string[]>([])
-function poolImage(i: number): string | undefined {
-  return pool.value.length ? pool.value[i % pool.value.length] : undefined
-}
-onMounted(async () => {
-  try {
-    const res = await fetch(`${MEDIA_API}/media?type=image&limit=24&page=1`)
-    const body = await res.json() as { data?: Array<{ id?: string; original_url?: string }> }
-    pool.value = (body.data ?? [])
-      .map((m) => m.original_url || (m.id ? `${MEDIA_API}/media/${m.id}/download` : ''))
-      .filter(Boolean)
-  } catch { pool.value = [] }
-})
 </script>
 
 <template>
@@ -42,8 +22,8 @@ onMounted(async () => {
       note="No ads · No account · Any language"
     >
       <template #actions>
-        <RouterLink class="button button--primary" to="/tools">Explore the apps</RouterLink>
-        <RouterLink class="button button--ghost" to="/why-tiko">Why Tiko</RouterLink>
+        <RouterLink class="btn btn--primary" to="/tools">Explore the apps</RouterLink>
+        <RouterLink class="btn btn--ghost" to="/why-tiko">Why Tiko</RouterLink>
       </template>
     </HeroSection>
 
@@ -60,7 +40,7 @@ onMounted(async () => {
           :tone="tones[i % tones.length]"
           :title="pillar.title"
           :body="pillar.body"
-          :image="poolImage(i)"
+          :image="mediaImage(pillar.image)"
         />
       </CardGrid>
     </PageSection>
@@ -75,7 +55,7 @@ onMounted(async () => {
     </PageSection>
 
     <PageSection tone="dark">
-      <SplitMedia :image="poolImage(4)" image-alt="A calm Tiko moment" media-side="right">
+      <SplitMedia :image="mediaImage('adultAndChildTalking')" image-alt="A caregiver and child talking together" media-side="right">
         <p class="home__eyebrow">For caregivers</p>
         <h2 class="home__split-title">Built so the first moment isn't an account form.</h2>
         <ul class="home__trust">
@@ -104,7 +84,7 @@ onMounted(async () => {
           :tone="tones[(i + 3) % tones.length]"
           :title="pillar.title"
           :body="pillar.body"
-          :image="poolImage(i + 6)"
+          :image="mediaImage(pillar.image)"
         />
       </CardGrid>
     </PageSection>
@@ -121,7 +101,7 @@ onMounted(async () => {
           :tone="tones[(i + 1) % tones.length]"
           :title="note.label"
           :body="note.copy"
-          :image="poolImage(i + 10)"
+          :image="mediaImage(note.image)"
         />
       </CardGrid>
     </PageSection>
@@ -133,8 +113,8 @@ onMounted(async () => {
         body="Open a Tiko app and use it with a child right now — no account, no download, no waiting room."
       >
         <template #actions>
-          <RouterLink class="button button--light" to="/tools">Explore the apps</RouterLink>
-          <a class="button button--ghost-light" href="https://yesno.tikoapps.org">Open Yes No</a>
+          <RouterLink class="btn btn--light" to="/tools">Explore the apps</RouterLink>
+          <a class="btn btn--ghost-light" href="https://yesno.tikoapps.org">Open Yes No</a>
         </template>
       </CtaBanner>
     </PageSection>

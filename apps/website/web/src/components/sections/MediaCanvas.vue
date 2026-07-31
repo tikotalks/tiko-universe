@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { onBeforeUnmount, onMounted, ref } from 'vue'
 import { tikoImageUrl } from '@tiko/ui'
+import { showcaseCategories } from '../../content/mediaImages'
 
 /**
  * Hero canvas: a drifting field of Tiko Media image tiles that respond to the
@@ -43,7 +44,9 @@ const reduceMotion = typeof matchMedia !== 'undefined' && matchMedia('(prefers-r
 function loadImage(src: string): Promise<HTMLImageElement | null> {
   return new Promise((resolve) => {
     const img = new Image()
-    img.crossOrigin = 'anonymous'
+    // No crossOrigin: data.tikocdn.org serves no Access-Control-Allow-Origin, so
+    // requesting CORS fails every load. The canvas only draws — it never reads
+    // pixels back — so a tainted canvas costs nothing here.
     img.onload = () => resolve(img)
     img.onerror = () => resolve(null)
     img.src = src
@@ -52,7 +55,11 @@ function loadImage(src: string): Promise<HTMLImageElement | null> {
 
 async function fetchUrls(): Promise<string[]> {
   try {
-    const res = await fetch(`${MEDIA_API}/media?type=image&limit=${props.count * 2}&page=1`)
+    // Filtered to the child-facing categories: unfiltered the API returns
+    // newest-first, so the hero drifted whatever had just been uploaded.
+    const res = await fetch(
+      `${MEDIA_API}/media?type=image&limit=${props.count * 2}&page=1&category=${encodeURIComponent(showcaseCategories)}`,
+    )
     if (!res.ok) throw new Error(String(res.status))
     const body = await res.json() as { data?: Array<{ id?: string; original_url?: string }> }
     const urls = (body.data ?? [])

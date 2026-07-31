@@ -2,9 +2,15 @@
 import { onMounted, ref } from 'vue'
 import { useBemm } from 'bemm'
 import { tikoImageUrl } from '@tiko/ui'
+import { showcaseCategories } from '../../content/mediaImages'
 
 /** Auto-scrolling marquee of Tiko Media images. Pauses on hover; reduced-motion aware. */
-const props = withDefaults(defineProps<{ limit?: number; category?: string }>(), { limit: 24 })
+const props = withDefaults(defineProps<{ limit?: number; category?: string }>(), {
+  limit: 24,
+  // Unfiltered, the API returns newest-first, so the marquee showed whatever had
+  // just been generated. Default to the child-facing categories.
+  category: showcaseCategories,
+})
 
 const bemm = useBemm('media-stream', { return: 'string', includeBaseClass: true })
 const MEDIA_API = (import.meta as { env?: Record<string, string | undefined> }).env?.VITE_MEDIA_API_URL

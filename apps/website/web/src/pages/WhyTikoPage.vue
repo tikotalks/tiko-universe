@@ -1,33 +1,13 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
 import { RouterLink } from 'vue-router'
-import { whyTikoPillars, whyFreePillars, trustPrinciples } from '../siteContent'
+import { mediaImage } from '../content/mediaImages'
+import { whyTikoPillars, whyFreePillars, trustPrinciples, sectionTones as tones } from '../siteContent'
 import PageSection from '../components/sections/PageSection.vue'
 import CardGrid from '../components/sections/CardGrid.vue'
 import ColorCard from '../components/sections/ColorCard.vue'
 import SplitMedia from '../components/sections/SplitMedia.vue'
 import MediaStream from '../components/sections/MediaStream.vue'
 import CtaBanner from '../components/sections/CtaBanner.vue'
-
-// Colour rotation so adjacent cards read as distinct Tiko colours.
-const tones = ['primary', 'secondary', 'tertiary', 'accent', 'warning', 'yes-no', 'cards', 'sequence']
-
-// A small pool of Tiko Media images to give each section a real visual.
-const MEDIA_API = (import.meta as { env?: Record<string, string | undefined> }).env?.VITE_MEDIA_API_URL
-  ?? 'https://media.tikoapi.org/v1'
-const pool = ref<string[]>([])
-function poolImage(i: number): string | undefined {
-  return pool.value.length ? pool.value[i % pool.value.length] : undefined
-}
-onMounted(async () => {
-  try {
-    const res = await fetch(`${MEDIA_API}/media?type=image&limit=24&page=1`)
-    const body = await res.json() as { data?: Array<{ id?: string; original_url?: string }> }
-    pool.value = (body.data ?? [])
-      .map((m) => m.original_url || (m.id ? `${MEDIA_API}/media/${m.id}/download` : ''))
-      .filter(Boolean)
-  } catch { pool.value = [] }
-})
 </script>
 
 <template>
@@ -39,7 +19,7 @@ onMounted(async () => {
     />
 
     <PageSection tone="dark">
-      <SplitMedia :image="poolImage(0)" image-alt="A Tiko education and communication moment" media-side="right">
+      <SplitMedia :image="mediaImage('adultAndChildrenLearning')" image-alt="An adult and two children learning together" media-side="right">
         <p class="why-page__eyebrow">What Tiko is</p>
         <h2 class="why-page__split-title">One universe of tiny apps.</h2>
         <p>
@@ -62,7 +42,7 @@ onMounted(async () => {
           :tone="tones[i % tones.length]"
           :title="pillar.title"
           :body="pillar.body"
-          :image="poolImage(i)"
+          :image="mediaImage(pillar.image)"
         />
       </CardGrid>
     </PageSection>
@@ -79,13 +59,13 @@ onMounted(async () => {
           :tone="tones[(i + 3) % tones.length]"
           :title="item.title"
           :body="item.body"
-          :image="poolImage(i + 4)"
+          :image="mediaImage(item.image)"
         />
       </CardGrid>
     </PageSection>
 
-    <PageSection tone="accent">
-      <SplitMedia :image="poolImage(8)" image-alt="A calm, ad-free Tiko moment" media-side="left">
+    <PageSection tone="dark">
+      <SplitMedia :image="mediaImage('adultAndGirlPractising')" image-alt="An adult practising words with a child" media-side="left">
         <p class="why-page__eyebrow">No ads. Ever.</p>
         <h2 class="why-page__split-title">A child’s attention is not the business model.</h2>
         <p>
@@ -118,8 +98,8 @@ onMounted(async () => {
         body="Try the first tool right away — then explore the rest of the Tiko universe."
       >
         <template #actions>
-          <a class="button button--light" href="https://yesno.tikoapps.org" target="_blank" rel="noopener">Try Yes No free</a>
-          <RouterLink class="button button--ghost-light" to="/apps">See all apps →</RouterLink>
+          <a class="btn btn--light" href="https://yesno.tikoapps.org" target="_blank" rel="noopener">Try Yes No free</a>
+          <RouterLink class="btn btn--ghost-light" to="/apps">See all apps →</RouterLink>
         </template>
       </CtaBanner>
     </PageSection>

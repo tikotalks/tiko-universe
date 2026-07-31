@@ -80,10 +80,22 @@ withDefaults(defineProps<{ href: string; label?: string }>(), {
   }
 }
 
+// Follow the site's own colour mode, not just the OS one, so the badge stays
+// inverted correctly when the header toggle overrides the system preference.
 @media (prefers-color-scheme: dark) {
   .app-store-btn {
     background: #ffffff;
     color: #000000;
   }
+}
+
+:root[data-color-mode='dark'] .app-store-btn {
+  background: #ffffff;
+  color: #000000;
+}
+
+:root[data-color-mode='light'] .app-store-btn {
+  background: #000000;
+  color: #ffffff;
 }
 </style>
