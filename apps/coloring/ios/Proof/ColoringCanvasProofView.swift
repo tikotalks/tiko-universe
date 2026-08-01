@@ -83,7 +83,7 @@ struct ColoringCanvasProofView: View {
                         }
                 )
             }
-            .aspectRatio(5 / 3, contentMode: .fit)
+            .aspectRatio(5.0 / 3.0, contentMode: .fit)
             .shadow(color: .black.opacity(0.08), radius: 18, y: 8)
 
             HStack(spacing: 12) {
@@ -169,18 +169,26 @@ private struct ColorDTO: Decodable {
     let hex: String
 }
 
+private struct DocumentPoint {
+    let x: Double
+    let y: Double
+}
+
 private struct CanvasTransform {
     let canvas: CanvasDTO
     let viewSize: CGSize
 
+    private var canvasWidth: CGFloat { CGFloat(canvas.width) }
+    private var canvasHeight: CGFloat { CGFloat(canvas.height) }
+
     private var scale: CGFloat {
-        min(viewSize.width / canvas.width, viewSize.height / canvas.height)
+        min(viewSize.width / canvasWidth, viewSize.height / canvasHeight)
     }
 
     private var offset: CGPoint {
         CGPoint(
-            x: (viewSize.width - canvas.width * scale) / 2,
-            y: (viewSize.height - canvas.height * scale) / 2
+            x: (viewSize.width - canvasWidth * scale) / 2,
+            y: (viewSize.height - canvasHeight * scale) / 2
         )
     }
 
@@ -195,17 +203,17 @@ private struct CanvasTransform {
         return path
     }
 
-    func documentPoint(for point: CGPoint) -> CGPoint {
-        CGPoint(
-            x: (point.x - offset.x) / scale,
-            y: (point.y - offset.y) / scale
+    func documentPoint(for point: CGPoint) -> DocumentPoint {
+        DocumentPoint(
+            x: Double((point.x - offset.x) / scale),
+            y: Double((point.y - offset.y) / scale)
         )
     }
 
     private func viewPoint(for point: PointDTO) -> CGPoint {
         CGPoint(
-            x: offset.x + point.x * scale,
-            y: offset.y + point.y * scale
+            x: offset.x + CGFloat(point.x) * scale,
+            y: offset.y + CGFloat(point.y) * scale
         )
     }
 }
