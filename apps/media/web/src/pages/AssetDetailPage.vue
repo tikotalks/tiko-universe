@@ -72,11 +72,17 @@ interface DetailField {
   value: string
 }
 
+// Only the human-readable words get title case. A MIME type must not — CSS `capitalize`
+// on the whole value turned `image/png` into `Image/Png`.
+function capitalize(value: string): string {
+  return value ? value[0].toUpperCase() + value.slice(1) : value
+}
+
 const fields = computed<DetailField[]>(() => {
   const current = item.value
   if (!current) return []
   const rows: DetailField[] = [
-    { label: 'Type', value: `${current.fileType} · ${current.mimeType}` },
+    { label: 'Type', value: `${capitalize(current.fileType)} · ${current.mimeType}` },
     { label: 'Size', value: formatSize(current.fileSizeBytes) },
   ]
   if (current.width && current.height) {
@@ -85,8 +91,8 @@ const fields = computed<DetailField[]>(() => {
   if (current.durationSeconds) {
     rows.push({ label: 'Duration', value: formatDuration(current.durationSeconds) })
   }
-  rows.push({ label: 'Category', value: current.category })
-  rows.push({ label: 'Source', value: current.source })
+  rows.push({ label: 'Category', value: capitalize(current.category) })
+  rows.push({ label: 'Source', value: capitalize(current.source) })
   rows.push({ label: 'Added', value: formatDate(current.createdAt) })
   return rows
 })
@@ -261,7 +267,6 @@ const fields = computed<DetailField[]>(() => {
   &__field-value {
     margin: 0;
     text-align: right;
-    text-transform: capitalize;
     overflow-wrap: anywhere;
   }
 

@@ -71,8 +71,8 @@ function onTypeChange(type: MediaType | undefined) {
     <section :class="[bemm('hero'), 'container']">
       <div :class="bemm('intro')">
         <p class="eyebrow">Tiko media library</p>
-        <h1 class="display-2">Every image and sound behind the Tiko apps.</h1>
-        <p class="body-lg">
+        <h1 :class="bemm('title')">Every image and sound behind the Tiko apps.</h1>
+        <p :class="[bemm('lead'), 'body-lg']">
           Images, audio, thumbnails and generated assets, served straight from the Tiko Media
           API. Search it, filter it, download what you need.
         </p>
@@ -106,7 +106,7 @@ function onTypeChange(type: MediaType | undefined) {
     <section id="browse" :class="[bemm('browse'), 'container']">
       <div :class="bemm('browse-head')">
         <p class="eyebrow">Browse</p>
-        <h2 class="display-3">Search the library</h2>
+        <h2 :class="bemm('browse-title')">Search the library</h2>
       </div>
 
       <div :class="bemm('controls')">
@@ -171,7 +171,7 @@ function onTypeChange(type: MediaType | undefined) {
 
   &__hero {
     display: grid;
-    grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
     align-items: center;
     gap: clamp(calc(var(--space) * 2), 6vw, calc(var(--space) * 5));
     padding-block: clamp(calc(var(--space) * 2), 7vw, calc(var(--space) * 5));
@@ -181,7 +181,19 @@ function onTypeChange(type: MediaType | undefined) {
     display: flex;
     flex-direction: column;
     gap: var(--space);
-    max-width: 30ch;
+  }
+
+  // The `.display-*` helpers are set at `line-height: 0.8`, which only clears itself on a
+  // single line — the website uses them for short titles like "App not found." and gives its
+  // own wrapping headings a component class. This heading wraps, so it does the same.
+  &__title {
+    font-size: clamp(2.25rem, 4.5vw, 3.5rem);
+    line-height: 1;
+    letter-spacing: -0.02em;
+  }
+
+  &__lead {
+    max-width: 46ch;
   }
 
   &__stats {
@@ -269,6 +281,12 @@ function onTypeChange(type: MediaType | undefined) {
     flex-direction: column;
   }
 
+  &__browse-title {
+    font-size: clamp(1.5rem, 3vw, 2.25rem);
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+  }
+
   &__controls {
     display: flex;
     align-items: center;
@@ -342,10 +360,6 @@ function onTypeChange(type: MediaType | undefined) {
   .gallery {
     &__hero {
       grid-template-columns: 1fr;
-    }
-
-    &__intro {
-      max-width: none;
     }
   }
 }
