@@ -11,6 +11,11 @@ coverage/
 !.env.example
 .DS_Store
 
+# Gradle / Kotlin Multiplatform build state
+**/.gradle/
+**/.kotlin/
+engines/**/build/
+
 # Xcode / SwiftPM build + per-user state
 DerivedData/
 **/xcuserdata/
