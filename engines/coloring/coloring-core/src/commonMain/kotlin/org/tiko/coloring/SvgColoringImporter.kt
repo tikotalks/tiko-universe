@@ -17,9 +17,8 @@ object SvgColoringImporter {
         "<filter",
         "<mask",
         "<text",
+        "<a ",
         "javascript:",
-        "http://",
-        "https://",
     )
 
     private val viewBoxRegex = Regex("""viewBox\s*=\s*[\"']([^\"']+)[\"']""", RegexOption.IGNORE_CASE)
@@ -93,6 +92,11 @@ object SvgColoringImporter {
         }
 
     private fun parsePath(id: String, data: String): ColoringPath {
+        val unsupportedCommand = data.firstOrNull { character ->
+            character.isLetter() && character !in "MmLlHhVvZzEe"
+        }
+        require(unsupportedCommand == null) { "Unsupported path command $unsupportedCommand in $id" }
+
         val tokens = tokenRegex.findAll(data).map { it.value }.toList()
         require(tokens.isNotEmpty()) { "Path $id is empty" }
 
