@@ -103,6 +103,12 @@ enum class ColoringResultCode {
     FILLED,
     NO_REGION,
     SAME_COLOR,
+    /**
+     * The requested colour was not #RRGGBB or #RRGGBBAA. Reported rather than thrown:
+     * a Kotlin exception crossing the Kotlin/Native boundary terminates the host app,
+     * and a colour arriving from a picker or a config file is input, not a bug.
+     */
+    INVALID_COLOR,
     UNDONE,
     REDONE,
     NOTHING_TO_UNDO,

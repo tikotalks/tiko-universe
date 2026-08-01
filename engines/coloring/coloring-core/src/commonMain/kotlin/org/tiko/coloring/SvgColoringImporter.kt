@@ -32,7 +32,8 @@ object SvgColoringImporter {
         require(documentId.isNotBlank()) { "documentId must not be blank" }
         validateSafeMarkup(svg)
 
-        val canvas = parseCanvas(svg)
+        val viewport = parseViewport(svg)
+        val canvas = ColoringCanvas(width = viewport.width, height = viewport.height)
         val regions = pathRegex.findAll(svg).mapIndexedNotNull { index, match ->
             val attributes = parseAttributes(match.groupValues[1])
             if (attributes["data-color-region"]?.lowercase() == "false") return@mapIndexedNotNull null
@@ -42,7 +43,7 @@ object SvgColoringImporter {
             val path = parsePath(id, data)
             ColoringRegion(
                 id = id,
-                path = path,
+                path = viewport.toCanvasSpace(path),
                 parentRegionId = attributes["data-parent-region"],
                 zIndex = attributes["data-z-index"]?.toIntOrNull() ?: index,
             )
@@ -60,6 +61,24 @@ object SvgColoringImporter {
         )
     }
 
+    /**
+     * An SVG viewBox may start anywhere, but the engine and every renderer treat the
+     * canvas as `0,0 .. width,height`. Keeping the offset lets artwork drawn at, say,
+     * `viewBox="100 100 200 200"` sit entirely outside its own canvas, so translate
+     * geometry into canvas space at import time.
+     */
+    private data class Viewport(
+        val minX: Double,
+        val minY: Double,
+        val width: Double,
+        val height: Double,
+    ) {
+        fun toCanvasSpace(path: ColoringPath): ColoringPath {
+            if (minX == 0.0 && minY == 0.0) return path
+            return path.copy(points = path.points.map { ColoringPoint(it.x - minX, it.y - minY) })
+        }
+    }
+
     private fun validateSafeMarkup(svg: String) {
         val normalized = svg.lowercase()
         val forbidden = forbiddenMarkup.firstOrNull(normalized::contains)
@@ -67,7 +86,7 @@ object SvgColoringImporter {
         require("<svg" in normalized) { "Input is not an SVG document" }
     }
 
-    private fun parseCanvas(svg: String): ColoringCanvas {
+    private fun parseViewport(svg: String): Viewport {
         val viewBox = viewBoxRegex.find(svg)?.groupValues?.get(1)
             ?.trim()
             ?.split(Regex("[ ,]+"))
@@ -75,7 +94,7 @@ object SvgColoringImporter {
 
         if (viewBox != null && viewBox.size == 4) {
             require(viewBox[2] > 0 && viewBox[3] > 0) { "SVG viewBox must have a positive size" }
-            return ColoringCanvas(width = viewBox[2], height = viewBox[3])
+            return Viewport(minX = viewBox[0], minY = viewBox[1], width = viewBox[2], height = viewBox[3])
         }
 
         val width = widthRegex.find(svg)?.groupValues?.get(1)?.toDoubleOrNull()
@@ -83,7 +102,7 @@ object SvgColoringImporter {
         require(width != null && height != null && width > 0 && height > 0) {
             "SVG must define a valid viewBox or numeric width and height"
         }
-        return ColoringCanvas(width = width, height = height)
+        return Viewport(minX = 0.0, minY = 0.0, width = width, height = height)
     }
 
     private fun parseAttributes(source: String): Map<String, String> =
@@ -136,6 +155,13 @@ object SvgColoringImporter {
                 'M', 'L' -> {
                     val x = number()
                     val y = number()
+                    // A second move-to starts a new sub-path. Appending its points to the
+                    // same list silently welds two disjoint shapes into one polygon, which
+                    // then hit-tests as filled across the empty space between them. This
+                    // importer handles one region per <path>, so say so instead.
+                    require(!(active.uppercaseChar() == 'M' && points.isNotEmpty())) {
+                        "Path $id contains more than one sub-path; split each region into its own <path> element"
+                    }
                     val next = if (relative) ColoringPoint(current.x + x, current.y + y) else ColoringPoint(x, y)
                     append(next)
                     if (active == 'M') command = 'L'

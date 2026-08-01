@@ -9,6 +9,10 @@ group = "org.tiko.coloring"
 version = "0.1.0"
 
 kotlin {
+    // Pin the toolchain so a local build matches CI instead of using whatever JDK
+    // happens to launch Gradle.
+    jvmToolchain(21)
+
     jvm()
 
     iosX64()

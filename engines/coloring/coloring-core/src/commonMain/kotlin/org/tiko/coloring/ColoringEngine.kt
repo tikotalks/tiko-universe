@@ -37,9 +37,13 @@ class ColoringEngine private constructor(initialDocument: ColoringDocument) {
     fun serialize(): String = json.encodeToString(document)
 
     fun fill(x: Double, y: Double, colorHex: String): ColoringResult {
+        // Validate the colour before hit testing so a malformed value reports the same
+        // way wherever the tap landed.
+        val normalized = normalizeColorOrNull(colorHex)
+            ?: return ColoringResult(changed = false, code = ColoringResultCode.INVALID_COLOR)
         val region = hitTest(ColoringPoint(x, y))
             ?: return ColoringResult(changed = false, code = ColoringResultCode.NO_REGION)
-        val color = ColorValue(normalizeColor(colorHex))
+        val color = ColorValue(normalized)
         if (region.fill == color) {
             return ColoringResult(changed = false, code = ColoringResultCode.SAME_COLOR, regionId = region.id)
         }
@@ -103,15 +107,25 @@ class ColoringEngine private constructor(initialDocument: ColoringDocument) {
             value.regions.forEach { region ->
                 require(region.path.closed) { "Coloring region ${region.id} must be closed" }
                 require(region.path.points.size >= 3) { "Coloring region ${region.id} is not a polygon" }
-                region.fill?.let { normalizeColor(it.hex) }
             }
-            return value
+            // Canonicalise stored fills rather than only checking them. Colour equality is
+            // data-class equality on the hex string, so a document saved with `#ff3366`
+            // would never compare equal to an incoming `#FF3366` and every repeat fill
+            // would count as a change.
+            return value.copy(
+                regions = value.regions.map { region ->
+                    val fill = region.fill ?: return@map region
+                    val normalized = requireNotNull(normalizeColorOrNull(fill.hex)) {
+                        "Coloring region ${region.id} has an invalid fill: ${fill.hex}"
+                    }
+                    if (normalized == fill.hex) region else region.copy(fill = ColorValue(normalized))
+                },
+            )
         }
 
-        private fun normalizeColor(value: String): String {
+        private fun normalizeColorOrNull(value: String): String? {
             val normalized = value.trim().uppercase()
-            require(colorRegex.matches(normalized)) { "Color must be #RRGGBB or #RRGGBBAA" }
-            return normalized
+            return if (colorRegex.matches(normalized)) normalized else null
         }
 
         private fun pointInPolygon(point: ColoringPoint, polygon: List<ColoringPoint>): Boolean {
