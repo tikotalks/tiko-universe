@@ -1,0 +1,73 @@
+name: TikoColoring
+options:
+  bundleIdPrefix: mt.tiko
+  deploymentTarget:
+    iOS: "18.0"
+settings:
+  base:
+    DEVELOPMENT_TEAM: 38MGF83L2L
+    SWIFT_VERSION: "6.0"
+targets:
+  TikoColoring:
+    type: application
+    platform: iOS
+    sources:
+      - Sources
+    dependencies:
+      # ColoringCore owns the document, hit testing, fills and history. The app
+      # owns rendering and input. One XCFramework covers device and simulator.
+      - framework: ../../../engines/coloring/coloring-core/build/XCFrameworks/release/ColoringCore.xcframework
+        embed: true
+        codeSign: true
+    preBuildScripts:
+      - name: Build ColoringCore if missing
+        basedOnDependencyAnalysis: false
+        script: |
+          set -euo pipefail
+          ENGINE="${SRCROOT}/../../../engines/coloring"
+          FRAMEWORK="${ENGINE}/coloring-core/build/XCFrameworks/release/ColoringCore.xcframework"
+          if [ -d "$FRAMEWORK" ]; then exit 0; fi
+          echo "ColoringCore.xcframework not found; building it."
+          if [ -z "${JAVA_HOME:-}" ]; then
+            for candidate in /opt/homebrew/opt/openjdk@21 /opt/homebrew/opt/openjdk; do
+              if [ -x "$candidate/bin/java" ]; then export JAVA_HOME="$candidate"; break; fi
+            done
+          fi
+          if [ -z "${JAVA_HOME:-}" ] || [ ! -x "${JAVA_HOME}/bin/java" ]; then
+            echo "error: a JDK 21 is required to build ColoringCore. Try: brew install openjdk@21"
+            exit 1
+          fi
+          cd "$ENGINE" && gradle --no-daemon :coloring-core:assembleColoringCoreReleaseXCFramework
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: mt.tiko.coloring
+        INFOPLIST_FILE: Sources/Info.plist
+        MARKETING_VERSION: "1.0"
+        CURRENT_PROJECT_VERSION: "1"
+  TikoColoringTests:
+    type: bundle.unit-test
+    platform: iOS
+    sources:
+      - Tests
+    dependencies:
+      - target: TikoColoring
+    settings:
+      base:
+        GENERATE_INFOPLIST_FILE: YES
+schemes:
+  TikoColoring:
+    build:
+      targets:
+        TikoColoring: all
+    test:
+      targets:
+        - TikoColoringTests
+      gatherCoverageData: false
+    run:
+      config: Debug
+    profile:
+      config: Release
+    analyze:
+      config: Debug
+    archive:
+      config: Release

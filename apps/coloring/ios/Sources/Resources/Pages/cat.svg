@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160">
+  <path id="background" data-z-index="0" d="M 0 0 H 160 V 160 H 0 Z"/>
+  <path id="ear-left" data-z-index="1" d="M 32 62 L 40 18 L 68 40 Z"/>
+  <path id="ear-right" data-z-index="1" d="M 128 62 L 120 18 L 92 40 Z"/>
+  <path id="head" data-z-index="2" d="M 30 60 L 80 32 L 130 60 V 108 L 80 140 L 30 108 Z"/>
+  <path id="eye-left" data-z-index="3" d="M 60 68 L 68 80 L 60 92 L 52 80 Z"/>
+  <path id="eye-right" data-z-index="3" d="M 100 68 L 108 80 L 100 92 L 92 80 Z"/>
+  <path id="nose" data-z-index="3" d="M 80 96 L 89 108 H 71 Z"/>
+</svg>
