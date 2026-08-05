@@ -152,7 +152,10 @@ struct TimerView: View {
         .environmentObject(i18n)
         .onAppear {
             i18n.setLanguage(languageCode)
-            if TikoScreenshotMode.isActive { return }
+            if TikoScreenshotMode.isActive {
+                applyScreenshotScene()
+                return
+            }
             restoreFromPersisted()
         }
         .onChange(of: languageCode) { _, code in
@@ -167,6 +170,21 @@ struct TimerView: View {
                 }
                 persist()
             }
+        }
+    }
+
+    /// Renders the fixed state named by `--screenshot <scene>`. Without this the
+    /// "running" scene captures the same idle 00:00 dial as every other scene.
+    private func applyScreenshotScene() {
+        switch TikoScreenshotMode.scene {
+        case "running":
+            // Five minutes, started ~2 minutes ago, so the ring reads as a
+            // countdown already in progress rather than a full circle.
+            now = Date()
+            engine.start(durationMs: TimerEngine.presetsMs[2], now: now.addingTimeInterval(-115))
+        default:
+            // "set"/"settings" want the idle dial with the presets visible.
+            break
         }
     }
 

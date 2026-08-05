@@ -129,8 +129,8 @@ final class TikoRadioUITests: XCTestCase {
         music.tap()
 
         // A sample track tile inside the collection must be present and tappable.
-        let track = element(withIdentifier: "Twinkle Twinkle Little Star")
-        XCTAssertTrue(track.waitForExistence(timeout: 15), "A track ('Twinkle Twinkle Little Star') should be present inside Music")
+        let track = element(withIdentifier: "Go Go Dodo")
+        XCTAssertTrue(track.waitForExistence(timeout: 15), "A track ('Go Go Dodo') should be present inside Music")
         XCTAssertTrue(waitUntilHittable(track, timeout: 10), "The track tile should be hittable")
         track.tap()
 
@@ -153,10 +153,10 @@ final class TikoRadioUITests: XCTestCase {
         // Retry the collection tap until its tracks appear — the LazyVGrid
         // occasionally needs a second tap when the first lands during the
         // splash fade under simulator load.
-        var track = element(withIdentifier: "Twinkle Twinkle Little Star")
+        var track = element(withIdentifier: "Go Go Dodo")
         for _ in 0..<5 {
             if music.isHittable { music.tap() }
-            track = element(withIdentifier: "Twinkle Twinkle Little Star")
+            track = element(withIdentifier: "Go Go Dodo")
             if track.waitForExistence(timeout: 8) { break }
         }
         XCTAssertTrue(track.exists, "A track should be present inside Music")
@@ -231,7 +231,7 @@ final class TikoRadioUITests: XCTestCase {
         XCTAssertTrue(waitUntilHittable(animals, timeout: 10), "Animals collection should be hittable")
         animals.tap()
 
-        let track = element(withIdentifier: "Old MacDonald Had a Farm")
+        let track = element(withIdentifier: "Tomato Bird")
         XCTAssertTrue(track.waitForExistence(timeout: 15), "The Animals collection should list its sample track")
     }
 
@@ -241,13 +241,13 @@ final class TikoRadioUITests: XCTestCase {
         openMusicTrackPlayer()
 
         // The other Music sample track appears as a "More in collection" row.
-        let related = app.buttons["The Wheels on the Bus"]
+        let related = app.buttons["Beatle Beast"]
         XCTAssertTrue(related.waitForExistence(timeout: 10), "A related track should be listed under the player")
         XCTAssertTrue(waitUntilHittable(related, timeout: 10), "The related track row should be hittable")
         related.tap()
 
         // The player now shows the newly selected track, controls intact.
-        XCTAssertTrue(app.staticTexts["The Wheels on the Bus"].waitForExistence(timeout: 10), "Player switches to the related track")
+        XCTAssertTrue(app.staticTexts["Beatle Beast"].waitForExistence(timeout: 10), "Player switches to the related track")
         XCTAssertTrue(element(withIdentifier: "PlayPause").exists, "Playback controls remain after switching track")
     }
 

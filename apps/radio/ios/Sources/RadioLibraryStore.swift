@@ -182,30 +182,65 @@ final class RadioLibraryStore {
         selectedCategoryID = nil
     }
 
+    /// First-party content only: every sample track is from the Tiko-owned
+    /// "Tomato Bird" YouTube channel, so the thumbnails are safe to ship in
+    /// App Store screenshots (third-party artwork would not be).
     static let offlineSampleTracks: [RadioTrack] = [
         RadioTrack(
-            title: "Twinkle Twinkle Little Star",
-            artist: "Kids Songs",
+            title: "Tomato Bird",
+            artist: "Tomato Bird",
             source: .youtube,
-            youtubeVideoId: "yCjJyiqpAuU",
-            thumbnailUrl: "https://img.youtube.com/vi/yCjJyiqpAuU/hqdefault.jpg",
-            categoryId: "music"
-        ),
-        RadioTrack(
-            title: "The Wheels on the Bus",
-            artist: "Kids Songs",
-            source: .youtube,
-            youtubeVideoId: "e_04ZrNroTo",
-            thumbnailUrl: "https://img.youtube.com/vi/e_04ZrNroTo/hqdefault.jpg",
-            categoryId: "music"
-        ),
-        RadioTrack(
-            title: "Old MacDonald Had a Farm",
-            artist: "Farm Friends",
-            source: .youtube,
-            youtubeVideoId: "_6HzoUcx3eo",
-            thumbnailUrl: "https://img.youtube.com/vi/_6HzoUcx3eo/hqdefault.jpg",
+            youtubeVideoId: "ROtWkfulLSI",
+            thumbnailUrl: "https://img.youtube.com/vi/ROtWkfulLSI/hqdefault.jpg",
             categoryId: "animals"
+        ),
+        RadioTrack(
+            title: "Cheeky Lily",
+            artist: "Tomato Bird",
+            source: .youtube,
+            youtubeVideoId: "6B9wNRI4IH4",
+            thumbnailUrl: "https://img.youtube.com/vi/6B9wNRI4IH4/hqdefault.jpg",
+            categoryId: "animals"
+        ),
+        RadioTrack(
+            title: "Go Go Dodo",
+            artist: "Tomato Bird",
+            source: .youtube,
+            youtubeVideoId: "7hnP1nmk0FU",
+            thumbnailUrl: "https://img.youtube.com/vi/7hnP1nmk0FU/hqdefault.jpg",
+            categoryId: "music"
+        ),
+        RadioTrack(
+            title: "Beatle Beast",
+            artist: "Tomato Bird",
+            source: .youtube,
+            youtubeVideoId: "aLrgbWPfZ80",
+            thumbnailUrl: "https://img.youtube.com/vi/aLrgbWPfZ80/hqdefault.jpg",
+            categoryId: "music"
+        ),
+        RadioTrack(
+            title: "Stomp",
+            artist: "Tomato Bird",
+            source: .youtube,
+            youtubeVideoId: "OVx7cH5ais4",
+            thumbnailUrl: "https://img.youtube.com/vi/OVx7cH5ais4/hqdefault.jpg",
+            categoryId: "music"
+        ),
+        RadioTrack(
+            title: "The Fix",
+            artist: "Tomato Bird",
+            source: .youtube,
+            youtubeVideoId: "jqHFqZBFySc",
+            thumbnailUrl: "https://img.youtube.com/vi/jqHFqZBFySc/hqdefault.jpg",
+            categoryId: "music"
+        ),
+        RadioTrack(
+            title: "Lumo",
+            artist: "Tomato Bird",
+            source: .youtube,
+            youtubeVideoId: "Kw_nHvspuA0",
+            thumbnailUrl: "https://img.youtube.com/vi/Kw_nHvspuA0/hqdefault.jpg",
+            categoryId: "calm"
         )
     ]
 

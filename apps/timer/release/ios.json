@@ -14,7 +14,7 @@
   "screenshots": {
     "outputDir": "/Users/silvandiepen/Projects/Tiko/apps/timer",
     "configuration": "Debug",
-    "eraseBeforeCapture": false,
+    "eraseBeforeCapture": true,
     "defaultWaitSeconds": 2,
     "baseLaunchArgs": [
       "--screenshot-mode"

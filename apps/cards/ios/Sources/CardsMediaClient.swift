@@ -10,28 +10,59 @@ actor CardsMediaClient {
         self.session = session
     }
 
-    func fetchMedia(for categories: [String], limit: Int = 100) async throws -> [TikoMediaItem] {
+    /// Maximum pages walked per category. A category is a few hundred items, so
+    /// this is a safety stop, not the expected path — `wantedTitles` normally
+    /// ends the walk much earlier.
+    private static let maxPages = 8
+
+    /// Fetches the media for `categories`, walking pages until every title in
+    /// `wantedTitles` has been seen (or the category runs out).
+    ///
+    /// A single 100-item page is not enough: categories are sorted by title and
+    /// run to several hundred entries, so one page only ever covers the start of
+    /// the alphabet — "animals" returned Aardvark…Catterpillar, leaving 10 of the
+    /// 12 default Animals cards permanently without a picture.
+    func fetchMedia(
+        for categories: [String],
+        limit: Int = 100,
+        wantedTitles: Set<String> = []
+    ) async throws -> [TikoMediaItem] {
         var merged: [TikoMediaItem] = []
         var seen = Set<String>()
+        var stillWanted = Set(wantedTitles.map { Self.normalizeTitle($0) })
 
         for category in categories {
-            let items = try await fetchMedia(category: category, limit: limit)
-            for item in items where !seen.contains(item.id) {
-                seen.insert(item.id)
-                merged.append(item)
+            for page in 1...Self.maxPages {
+                let items = try await fetchMedia(category: category, limit: limit, page: page)
+                for item in items where !seen.contains(item.id) {
+                    seen.insert(item.id)
+                    merged.append(item)
+                    stillWanted.remove(Self.normalizeTitle(item.title))
+                    stillWanted.remove(Self.normalizeTitle(item.name))
+                }
+                // Short page means the category is exhausted.
+                if items.count < limit { break }
+                // Everything the caller asked for has been found.
+                if !wantedTitles.isEmpty && stillWanted.isEmpty { break }
             }
+            if !wantedTitles.isEmpty && stillWanted.isEmpty { break }
         }
 
         return merged
     }
 
-    private func fetchMedia(category: String, limit: Int) async throws -> [TikoMediaItem] {
+    private static func normalizeTitle(_ value: String) -> String {
+        value.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+    }
+
+    private func fetchMedia(category: String, limit: Int, page: Int) async throws -> [TikoMediaItem] {
         let listURL = baseURL.appending(path: "media")
         var components = URLComponents(url: listURL, resolvingAgainstBaseURL: false)!
         components.queryItems = [
             URLQueryItem(name: "type", value: "image"),
             URLQueryItem(name: "category", value: category),
             URLQueryItem(name: "limit", value: String(limit)),
+            URLQueryItem(name: "page", value: String(page)),
             URLQueryItem(name: "sort", value: "title"),
             URLQueryItem(name: "order", value: "asc"),
         ]

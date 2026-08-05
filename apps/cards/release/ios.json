@@ -14,7 +14,7 @@
   "screenshots": {
     "outputDir": "/Users/silvandiepen/Projects/Tiko/apps/cards",
     "configuration": "Debug",
-    "eraseBeforeCapture": false,
+    "eraseBeforeCapture": true,
     "defaultWaitSeconds": 2,
     "baseLaunchArgs": [
       "--screenshot-mode"
@@ -77,7 +77,7 @@
         "colorModes": [
           "light"
         ],
-        "waitSeconds": 2
+        "waitSeconds": 14
       },
       {
         "id": "grid-dark",
@@ -95,7 +95,7 @@
         "colorModes": [
           "dark"
         ],
-        "waitSeconds": 2
+        "waitSeconds": 14
       },
       {
         "id": "card-open-light",
@@ -113,7 +113,7 @@
         "colorModes": [
           "light"
         ],
-        "waitSeconds": 2
+        "waitSeconds": 14
       },
       {
         "id": "settings-light",
@@ -131,7 +131,7 @@
         "colorModes": [
           "light"
         ],
-        "waitSeconds": 3
+        "waitSeconds": 8
       }
     ],
     "scenarioBudgetPerDevice": 10
