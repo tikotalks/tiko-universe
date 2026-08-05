@@ -40,8 +40,7 @@
       </MacroExpansion>
       <Testables>
          <TestableReference
-            skipped = "NO"
-            parallelizable = "NO">
+            skipped = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "8E1D196099A93F7831BFD805"
@@ -51,11 +50,10 @@
             </BuildableReference>
          </TestableReference>
          <TestableReference
-            skipped = "NO"
-            parallelizable = "NO">
+            skipped = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "C1A0D5000000000000000005"
+               BlueprintIdentifier = "D4131F7FF35CAB0516F8C545"
                BuildableName = "TikoCardsUITests.xctest"
                BlueprintName = "TikoCardsUITests"
                ReferencedContainer = "container:TikoCards.xcodeproj">

@@ -33,7 +33,7 @@ targets:
         PRODUCT_BUNDLE_IDENTIFIER: mt.tiko.talk
         INFOPLIST_FILE: Sources/Info.plist
         MARKETING_VERSION: "1.0"
-        CURRENT_PROJECT_VERSION: "2"
+        CURRENT_PROJECT_VERSION: "4"
         CODE_SIGN_ENTITLEMENTS: Sources/TikoTalk.entitlements
   TikoTalkTests:
     type: bundle.unit-test
