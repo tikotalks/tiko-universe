@@ -1781,7 +1781,9 @@ public struct TikoProfileMenuSheet: View {
 
 public struct TikoParentCodeEntrySheet: View {
     private let appColor: TikoAppColor
-    private let onParentMode: (TikoIdentityBundle) -> Void
+    /// Nil when the device-local gate answered — a guest device may hold a PIN
+    /// without ever having an identity bundle to hand back.
+    private let onParentMode: (TikoIdentityBundle?) -> Void
     private let onClose: () -> Void
 
     @State private var enteredCode = ""
@@ -1797,7 +1799,7 @@ public struct TikoParentCodeEntrySheet: View {
     private let identityClient = TikoIdentityClient()
     private let sessionStore = TikoDeviceSessionStore()
 
-    public init(appColor: TikoAppColor, onParentMode: @escaping (TikoIdentityBundle) -> Void, onClose: @escaping () -> Void) {
+    public init(appColor: TikoAppColor, onParentMode: @escaping (TikoIdentityBundle?) -> Void, onClose: @escaping () -> Void) {
         self.appColor = appColor
         self.onParentMode = onParentMode
         self.onClose = onClose
@@ -1835,6 +1837,7 @@ public struct TikoParentCodeEntrySheet: View {
                     let filtered = String(new.filter { $0.isNumber }.prefix(4))
                     if filtered != new { enteredCode = filtered }
                 }
+                .accessibilityIdentifier("tiko.parentPin.entry")
 
             if let error {
                 Text(error)
@@ -1858,18 +1861,29 @@ public struct TikoParentCodeEntrySheet: View {
                 .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
             }
             .buttonStyle(.plain)
+            .accessibilityIdentifier("tiko.parentPin.submit")
             .disabled(enteredCode.count != 4 || isLoading)
 
             if failedAttempts >= 3 {
-                Button {
-                    Task { await sendResetOtp() }
-                } label: {
-                    Text("Forgot PIN? Reset via email")
-                        .font(.system(size: 14, weight: .heavy, design: .rounded))
-                        .foregroundStyle(appColor.palette.primary)
+                if TikoParentGate.isLocalChildModeActive {
+                    // A local PIN is held nowhere but this device, so there is
+                    // no code to email. Say so plainly instead of offering a
+                    // reset that cannot work.
+                    Text("This PIN is stored only on this device. If it is forgotten, the only way back is to delete and reinstall the app.")
+                        .font(.system(size: 13, weight: .semibold))
+                        .foregroundStyle(.secondary)
+                        .multilineTextAlignment(.center)
+                } else {
+                    Button {
+                        Task { await sendResetOtp() }
+                    } label: {
+                        Text("Forgot PIN? Reset via email")
+                            .font(.system(size: 14, weight: .heavy, design: .rounded))
+                            .foregroundStyle(appColor.palette.primary)
+                    }
+                    .buttonStyle(.plain)
+                    .disabled(isLoading)
                 }
-                .buttonStyle(.plain)
-                .disabled(isLoading)
             }
         }
     }
@@ -1966,6 +1980,24 @@ public struct TikoParentCodeEntrySheet: View {
         guard enteredCode.count == 4 else { return }
         isLoading = true
         error = nil
+
+        // The device-local gate wins while it is active, even if the parent has
+        // since verified an email — the server holds no PIN that could unlock
+        // this session, so only the local one can.
+        if TikoParentGate.isLocalChildModeActive {
+            guard TikoParentGate.verifyLocalPin(enteredCode) else {
+                failedAttempts += 1
+                error = "Incorrect PIN. Please try again."
+                enteredCode = ""
+                isLoading = false
+                return
+            }
+            TikoParentGate.leaveLocalChildMode()
+            onParentMode(try? sessionStore.load())
+            isLoading = false
+            return
+        }
+
         do {
             let storedBundle = try sessionStore.load()
             var activeBundle = try await recoverParentModeSession(from: storedBundle)
@@ -2052,7 +2084,9 @@ public struct TikoParentCodeEntrySheet: View {
 
 public struct TikoCreateParentCodeSheet: View {
     private let appColor: TikoAppColor
-    private let onChildMode: (TikoIdentityBundle) -> Void
+    /// Nil when the device-local gate took the PIN — see
+    /// `TikoParentCodeEntrySheet.onParentMode`.
+    private let onChildMode: (TikoIdentityBundle?) -> Void
     private let onClose: () -> Void
 
     @State private var code = ""
@@ -2063,7 +2097,7 @@ public struct TikoCreateParentCodeSheet: View {
     private let identityClient = TikoIdentityClient()
     private let sessionStore = TikoDeviceSessionStore()
 
-    public init(appColor: TikoAppColor, onChildMode: @escaping (TikoIdentityBundle) -> Void, onClose: @escaping () -> Void) {
+    public init(appColor: TikoAppColor, onChildMode: @escaping (TikoIdentityBundle?) -> Void, onClose: @escaping () -> Void) {
         self.appColor = appColor
         self.onChildMode = onChildMode
         self.onClose = onClose
@@ -2093,6 +2127,7 @@ public struct TikoCreateParentCodeSheet: View {
                             let filtered = String(new.filter { $0.isNumber }.prefix(4))
                             if filtered != new { code = filtered }
                         }
+                        .accessibilityIdentifier("tiko.parentPin.new")
                 }
 
                 VStack(alignment: .leading, spacing: 7) {
@@ -2110,6 +2145,14 @@ public struct TikoCreateParentCodeSheet: View {
                             let filtered = String(new.filter { $0.isNumber }.prefix(4))
                             if filtered != new { confirmCode = filtered }
                         }
+                        .accessibilityIdentifier("tiko.parentPin.confirm")
+                }
+
+                if usesLocalGate {
+                    Text("Without a verified email this PIN is stored only on this device, and a forgotten PIN can only be cleared by reinstalling the app.")
+                        .font(.system(size: 13, weight: .semibold))
+                        .foregroundStyle(.secondary)
+                        .multilineTextAlignment(.center)
                 }
 
                 if let error {
@@ -2134,9 +2177,14 @@ public struct TikoCreateParentCodeSheet: View {
                     .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
                 }
                 .buttonStyle(.plain)
+                .accessibilityIdentifier("tiko.parentPin.save")
                 .disabled(code.count != 4 || confirmCode.count != 4 || isLoading)
             }
         }
+    }
+
+    private var usesLocalGate: Bool {
+        TikoParentGate.usesLocalGate(try? sessionStore.load())
     }
 
     private func saveCode() async {
@@ -2147,6 +2195,16 @@ public struct TikoCreateParentCodeSheet: View {
         }
         isLoading = true
         error = nil
+
+        // No verified email means the server will refuse the PIN, so keep it on
+        // the device instead of denying child mode altogether.
+        if usesLocalGate {
+            TikoParentGate.configureLocalPin(code)
+            onChildMode(try? sessionStore.load())
+            isLoading = false
+            return
+        }
+
         guard let initialBundle = (try? sessionStore.load()),
               let token = initialBundle.accessToken else {
             error = "No active session."

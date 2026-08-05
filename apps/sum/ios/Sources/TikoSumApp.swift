@@ -9,6 +9,9 @@ struct TikoSumApp: App {
             for key in defaults.dictionaryRepresentation().keys where key.hasPrefix("tiko.sum.") {
                 defaults.removeObject(forKey: key)
             }
+            // Child Mode is shell-level, so its key sits outside the app prefix;
+            // a test that locks the app would otherwise leak into the next one.
+            TikoParentGate.clearLocalPin()
         }
 
         TikoDeviceDefaults.register()
