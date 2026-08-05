@@ -1,12 +1,12 @@
 {
   "name": "Tiko Cards",
   "subtitle": "Picture cards that speak",
-  "promotional_text": "A visual AAC card library for children. Tap a card, hear it spoken. Build vocabulary, one picture at a time.",
+  "promotional_text": "A visual AAC card library. Tap a card, hear it spoken. Build vocabulary, one picture at a time.",
   "description": "Tiko Cards is a picture-card communication tool for children and non-verbal users. Tap a card and it speaks — building vocabulary and a voice, one picture at a time.\n\nOrganize cards into folders, browse by category, and let children explore language visually. Works offline and opens ready to use.\n\n- Tap any card to hear it spoken aloud\n- Browse and organize a personal card library\n- No ads, no clutter, no account required to start\n- Child mode keeps the focus on communication\n\nPart of Tiko, a child-first universe of small, focused AAC tools.",
-  "keywords": "aac,speech,communication,nonverbal,pictures,cards,vocabulary,autism,special needs,accessibility,education",
+  "keywords": "aac,speech,communication,nonverbal,pictures,vocabulary,autism,special needs,accessibility,education",
   "release_notes": "Initial release.",
-  "support_url": "https://tikoapps.org/support",
-  "privacy_url": "https://tikoapps.org/privacy",
-  "marketing_url": "https://tikoapps.org/cards",
+  "support_url": "https://tiko.mt/support",
+  "privacy_url": "https://tiko.mt/privacy-policy",
+  "marketing_url": "https://tiko.mt/apps/cards",
   "copyright": "© 2026 Tiko"
 }
