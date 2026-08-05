@@ -1794,6 +1794,8 @@ public struct TikoParentCodeEntrySheet: View {
     @State private var resetOtp = ""
     @State private var resetOtpSent = false
     @State private var resetError: String? = nil
+    /// Only used by the local gate, which has no address on file to mail.
+    @State private var resetEmail = ""
     @AppStorage("tiko.language") private var languageID = "en"
 
     private let identityClient = TikoIdentityClient()
@@ -1810,7 +1812,7 @@ public struct TikoParentCodeEntrySheet: View {
 
         TikoPopupCard(
             title: showingResetFlow ? "Reset PIN" : labels.parentMode,
-            subtitle: showingResetFlow ? "Enter the code sent to your email." : labels.parentModeSubtitle,
+            subtitle: resetSubtitle(labels: labels),
             icon: showingResetFlow ? "envelope.fill" : "lock.fill",
             appColor: appColor,
             onClose: onClose
@@ -1821,6 +1823,14 @@ public struct TikoParentCodeEntrySheet: View {
                 pinEntryContent(labels: labels)
             }
         }
+    }
+
+    private func resetSubtitle(labels: TikoIdentityLabels) -> String {
+        guard showingResetFlow else { return labels.parentModeSubtitle }
+        if !resetOtpSent && TikoParentGate.isLocalChildModeActive {
+            return "Enter an email you can open. We will send a code that clears the PIN."
+        }
+        return "Enter the code sent to your email."
     }
 
     @ViewBuilder
@@ -1865,25 +1875,23 @@ public struct TikoParentCodeEntrySheet: View {
             .disabled(enteredCode.count != 4 || isLoading)
 
             if failedAttempts >= 3 {
-                if TikoParentGate.isLocalChildModeActive {
-                    // A local PIN is held nowhere but this device, so there is
-                    // no code to email. Say so plainly instead of offering a
-                    // reset that cannot work.
-                    Text("This PIN is stored only on this device. If it is forgotten, the only way back is to delete and reinstall the app.")
-                        .font(.system(size: 13, weight: .semibold))
-                        .foregroundStyle(.secondary)
-                        .multilineTextAlignment(.center)
-                } else {
-                    Button {
+                Button {
+                    if TikoParentGate.isLocalChildModeActive {
+                        // No account, so there is no address on file yet — ask
+                        // for one rather than mailing nowhere.
+                        showingResetFlow = true
+                        resetOtpSent = false
+                    } else {
                         Task { await sendResetOtp() }
-                    } label: {
-                        Text("Forgot PIN? Reset via email")
-                            .font(.system(size: 14, weight: .heavy, design: .rounded))
-                            .foregroundStyle(appColor.palette.primary)
                     }
-                    .buttonStyle(.plain)
-                    .disabled(isLoading)
+                } label: {
+                    Text("Forgot PIN? Reset via email")
+                        .font(.system(size: 14, weight: .heavy, design: .rounded))
+                        .foregroundStyle(appColor.palette.primary)
                 }
+                .buttonStyle(.plain)
+                .accessibilityIdentifier("tiko.parentPin.forgot")
+                .disabled(isLoading)
             }
         }
     }
@@ -1891,7 +1899,45 @@ public struct TikoParentCodeEntrySheet: View {
     @ViewBuilder
     private func resetFlowContent(labels: TikoIdentityLabels) -> some View {
         VStack(spacing: 12) {
-            if !resetOtpSent {
+            if !resetOtpSent && TikoParentGate.isLocalChildModeActive {
+                // A local PIN was never mailed anywhere, so recovery starts by
+                // asking for an inbox the parent can open — something a child
+                // cannot do, which is the whole point of the gate.
+                TextField(labels.emailPlaceholder, text: $resetEmail)
+                    .font(.system(size: 17, weight: .semibold))
+                    .textInputAutocapitalization(.never)
+                    .autocorrectionDisabled()
+                    .keyboardType(.emailAddress)
+                    .padding(15)
+                    .background(Color(.systemBackground))
+                    .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+                    .accessibilityIdentifier("tiko.parentPin.resetEmail")
+
+                if let resetError {
+                    Text(resetError)
+                        .font(.system(size: 13, weight: .semibold))
+                        .foregroundStyle(.red)
+                        .multilineTextAlignment(.center)
+                }
+
+                Button {
+                    Task { await sendLocalResetCode(labels: labels) }
+                } label: {
+                    Group {
+                        if isLoading { ProgressView().tint(.white) }
+                        else { Text(labels.sendSignInCode) }
+                    }
+                    .font(.system(size: 17, weight: .heavy, design: .rounded))
+                    .foregroundStyle(.white)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 15)
+                    .background(appColor.palette.primary)
+                    .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
+                }
+                .buttonStyle(.plain)
+                .accessibilityIdentifier("tiko.parentPin.resetSend")
+                .disabled(isLoading)
+            } else if !resetOtpSent {
                 Text("Sending code to your email…")
                     .font(.system(size: 14, weight: .semibold))
                     .foregroundStyle(.secondary)
@@ -1936,6 +1982,26 @@ public struct TikoParentCodeEntrySheet: View {
         }
     }
 
+    /// Recovery for a PIN the server never held: mail a code to whatever inbox
+    /// the parent names. Verifying it also attaches the address, so the next
+    /// child-mode session is server-backed and recoverable by default.
+    private func sendLocalResetCode(labels: TikoIdentityLabels) async {
+        let email = resetEmail.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+        guard !email.isEmpty, email.contains("@") else {
+            resetError = labels.invalidEmail
+            return
+        }
+        isLoading = true
+        resetError = nil
+        do {
+            try await identityClient.requestRecoveryEmail(email: email, accessToken: (try? sessionStore.load())?.accessToken)
+            resetOtpSent = true
+        } catch {
+            resetError = labels.sendCodeError
+        }
+        isLoading = false
+    }
+
     private func sendResetOtp() async {
         isLoading = true
         error = nil
@@ -1963,6 +2029,10 @@ public struct TikoParentCodeEntrySheet: View {
             let token = (try? sessionStore.load())?.accessToken
             let bundle = try await identityClient.verifyOtp(otp: resetOtp, accessToken: token)
             try sessionStore.save(bundle)
+            // A verified inbox is proof enough for the local gate too: drop the
+            // PIN it was holding rather than leaving the parent locked out with
+            // a now-verified account.
+            TikoParentGate.clearLocalPin()
             // Server already reset to parent mode and cleared the PIN.
             // Refresh to get the clean bundle.
             let refreshed = try await identityClient.getSession(accessToken: bundle.accessToken ?? "")
@@ -2149,7 +2219,7 @@ public struct TikoCreateParentCodeSheet: View {
                 }
 
                 if usesLocalGate {
-                    Text("Without a verified email this PIN is stored only on this device, and a forgotten PIN can only be cleared by reinstalling the app.")
+                    Text("This PIN is stored on this device. If you forget it, you can clear it with a code sent to any email you own.")
                         .font(.system(size: 13, weight: .semibold))
                         .foregroundStyle(.secondary)
                         .multilineTextAlignment(.center)

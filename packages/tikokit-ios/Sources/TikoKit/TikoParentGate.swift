@@ -13,11 +13,17 @@ import CryptoKit
 /// child-mode flag that never leave the device. When the account *is* verified
 /// the server stays authoritative and none of this is used.
 ///
+/// **Forgetting the PIN is recoverable.** `TikoParentCodeEntrySheet` offers
+/// "Forgot PIN?", which mails a code to any inbox the parent names and clears
+/// the gate on success — an account is needed to *recover* the PIN, never to
+/// *set* one. That keeps a child out without ever locking a parent out.
+///
 /// **Why `UserDefaults` and not the keychain.** The keychain survives deleting
-/// the app. A local PIN has no email recovery, so its only escape hatch is a
-/// reinstall — storing it somewhere that outlives deletion would brick the app
-/// for any parent who forgets it. Recoverability wins over hiding the hash of a
-/// four-digit number that guards a UI lock, not data.
+/// the app, so a PIN stored there would outlive a reinstall and leave a parent
+/// with no offline way back. Reinstalling stays the last resort behind email
+/// recovery, and that only works if the gate goes with the app. Recoverability
+/// wins over hiding the hash of a four-digit number that guards a UI lock, not
+/// data.
 public enum TikoParentGate {
     private static let storageKey = "tiko.parentGate.local"
 
