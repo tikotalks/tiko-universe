@@ -29,7 +29,6 @@ final class PracticeViewModel: ObservableObject {
     @Published private(set) var attempt = 1
     @Published private(set) var skipProminent = false
     @Published private(set) var isPausedForInterruption = false
-    @Published private(set) var permissionDenied = false
     @Published private(set) var audioLevel: Float = 0
     /// Set when the app language has no recognizer and practice falls back to
     /// the nearest supported language. Parent-facing notice, never a blocker.
@@ -51,6 +50,7 @@ final class PracticeViewModel: ObservableObject {
     private var recognitionLanguage: String
     private var runTask: Task<Void, Never>?
     private var consecutiveListenFailures = 0
+    private var isRequestingPermissions = false
 
     var currentCard: SayCard? { session.currentCard }
 
@@ -75,8 +75,9 @@ final class PracticeViewModel: ObservableObject {
 
     // MARK: - Lifecycle
 
-    /// Entry point. Requests nothing itself — permission is asked only after
-    /// the parent-facing explanation via `requestPermissions()`.
+    /// Entry point. Practice needs the microphone, so an undecided permission
+    /// goes straight to the system prompt — there is no interstitial the user
+    /// can back out of before being asked (App Store guideline 5.1.1(iv)).
     func begin() {
         guard !session.cards.isEmpty else {
             state = .completed
@@ -84,29 +85,35 @@ final class PracticeViewModel: ObservableObject {
         }
         switch speech.permissionState() {
         case .granted:
-            permissionDenied = false
             beginAfterPermission()
         case .denied:
-            permissionDenied = true
-            state = .permissionRequired
+            state = .permissionDenied
         case .notDetermined:
-            permissionDenied = false
-            state = .permissionRequired
+            requestPermissions()
         }
     }
 
-    /// Called from the parent-facing explanation screen's Continue button.
+    /// Presents the system microphone and speech-recognition prompts.
     func requestPermissions() {
+        guard !isRequestingPermissions else { return }
+        isRequestingPermissions = true
+        state = .requestingPermission
         Task { @MainActor in
             let granted = await speech.requestPermissions()
+            isRequestingPermissions = false
             if granted {
-                permissionDenied = false
                 beginAfterPermission()
             } else {
-                permissionDenied = true
-                state = .permissionRequired
+                state = .permissionDenied
             }
         }
+    }
+
+    /// Coming back from Settings with permission granted must start practice
+    /// without another tap; anything else leaves the Settings screen up.
+    func recheckPermissionsAfterSettings() {
+        guard state == .permissionDenied, speech.permissionState() == .granted else { return }
+        beginAfterPermission()
     }
 
     private func beginAfterPermission() {
@@ -150,8 +157,8 @@ final class PracticeViewModel: ObservableObject {
     /// Backgrounding or navigating away: stop capture, keep the same item, and
     /// require a tap to resume. Never counts as a failed attempt.
     func pauseForInterruption() {
-        guard state != .completed, state != .idle, state != .permissionRequired,
-              state != .recognitionUnavailable else { return }
+        guard state != .completed, state != .idle, state != .requestingPermission,
+              state != .permissionDenied, state != .recognitionUnavailable else { return }
         runTask?.cancel()
         runTask = nil
         speech.stopAll()
@@ -239,7 +246,12 @@ final class PracticeViewModel: ObservableObject {
         while !Task.isCancelled {
             state = .listening
             listeningStartedAt = Date()
-            let config: WordMatcherConfig = attempt >= 4 ? .relaxed : .standard
+            // Forgiveness widens with each failed attempt so a struggling child
+            // still reaches the celebration: standard early, relaxed long-word
+            // net on the fourth try, fully forgiving (per-word + short-word
+            // fuzzy) from the fifth. Whole-word containment and article/
+            // alternative matching apply on every attempt regardless.
+            let config: WordMatcherConfig = attempt >= 5 ? .forgiving : (attempt >= 4 ? .relaxed : .standard)
             let matcher = WordMatcher(languageCode: languageCode, config: config)
 
             var matched: MatchType?

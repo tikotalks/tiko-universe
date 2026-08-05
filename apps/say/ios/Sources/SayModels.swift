@@ -81,7 +81,10 @@ enum PracticeState: Equatable {
     case processing
     case retrying(attempt: Int)
     case celebrating
-    case permissionRequired
+    /// The system microphone / speech-recognition prompt is being presented.
+    case requestingPermission
+    /// Permission was refused: the only way forward is Settings.
+    case permissionDenied
     case recognitionUnavailable
     case completed
     case error(String)

@@ -123,7 +123,8 @@ enum PracticeState: Equatable {
     case processing
     case retrying(attempt: Int)
     case celebrating
-    case permissionRequired
+    case requestingPermission
+    case permissionDenied
     case recognitionUnavailable
     case completed
     case error(String)
@@ -144,7 +145,7 @@ presenting
 
 ## Recognition behaviour
 
-- Request microphone and speech-recognition permission only when the activity is about to start.
+- Request microphone and speech-recognition permission only when the activity is about to start, and request it directly: opening a category presents the system prompt itself. Nothing dismissible may stand in front of it (App Store guideline 5.1.1(iv)) — the explanation renders behind the prompt, and the only recovery screen is the one shown *after* a refusal, which links to Settings.
 - Stop recognition while the app speaks, otherwise it may recognise its own voice.
 - Use the active app language's locale.
 - Enable partial recognition results.
