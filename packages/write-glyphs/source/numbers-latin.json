@@ -1,0 +1,107 @@
+{
+  "packId": "numbers-latin",
+  "packSchemaVersion": 1,
+  "packVersion": 1,
+  "style": "number",
+  "viewBox": [0, 0, 100, 140],
+  "guides": {
+    "ascender": 10,
+    "capHeight": 24,
+    "xHeight": 60,
+    "baseline": 110,
+    "descender": 134
+  },
+  "groups": [{ "id": "numbers", "sortOrder": 1 }],
+  "glyphs": [
+    {
+      "id": "digit-1",
+      "char": "1",
+      "groupId": "numbers",
+      "sortOrder": 1,
+      "strokes": [{ "d": "M50 24 L50 110" }]
+    },
+    {
+      "id": "digit-2",
+      "char": "2",
+      "groupId": "numbers",
+      "sortOrder": 2,
+      "strokes": [
+        { "d": "M32 40 C34 26 66 24 66 44 C66 62 44 80 32 110 L70 110" }
+      ]
+    },
+    {
+      "id": "digit-3",
+      "char": "3",
+      "groupId": "numbers",
+      "sortOrder": 3,
+      "strokes": [
+        { "d": "M32 38 C38 24 68 28 66 48 C64 62 50 67 45 67 C52 67 68 72 68 89 C68 108 38 111 31 97" }
+      ]
+    },
+    {
+      "id": "digit-4",
+      "char": "4",
+      "groupId": "numbers",
+      "sortOrder": 4,
+      "strokes": [
+        { "d": "M56 24 L26 76 L74 76", "widthScale": 1.1 },
+        { "d": "M60 38 L60 110" }
+      ]
+    },
+    {
+      "id": "digit-5",
+      "char": "5",
+      "groupId": "numbers",
+      "sortOrder": 5,
+      "strokes": [
+        { "d": "M34 24 L34 60 C50 52 70 60 70 84 C70 106 44 114 32 102" },
+        { "d": "M34 24 L66 24" }
+      ]
+    },
+    {
+      "id": "digit-6",
+      "char": "6",
+      "groupId": "numbers",
+      "sortOrder": 6,
+      "strokes": [
+        { "d": "M62 28 C48 22 32 44 32 76 C32 98 44 111 52 110 C64 109 70 97 69 85 C68 73 58 66 49 67 C40 68 34 73 32 79" }
+      ]
+    },
+    {
+      "id": "digit-7",
+      "char": "7",
+      "groupId": "numbers",
+      "sortOrder": 7,
+      "strokes": [
+        { "d": "M30 24 L72 24 L42 110", "widthScale": 1.1 }
+      ]
+    },
+    {
+      "id": "digit-8",
+      "char": "8",
+      "groupId": "numbers",
+      "sortOrder": 8,
+      "strokes": [
+        { "d": "M62 34 C62 24 38 24 38 34 C38 48 68 58 68 84 C68 110 32 110 32 84 C32 58 62 48 62 34" }
+      ]
+    },
+    {
+      "id": "digit-9",
+      "char": "9",
+      "groupId": "numbers",
+      "sortOrder": 9,
+      "strokes": [
+        { "d": "M68 50 C68 36 60 28 50 28 C39 28 32 38 32 50 C32 62 40 70 50 70 C60 70 68 63 68 52 L68 110" }
+      ]
+    },
+    {
+      "id": "digit-0",
+      "char": "0",
+      "groupId": "numbers",
+      "sortOrder": 10,
+      "strokes": [
+        { "d": "M50 24 A20 43 0 1 0 50 110 A20 43 0 1 0 50 24" }
+      ]
+    }
+  ]
+}

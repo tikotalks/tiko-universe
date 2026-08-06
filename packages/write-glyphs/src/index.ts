@@ -12,6 +12,13 @@
 // the seed migration and the admin editor.
 
 import shapes from '../source/shapes.json'
+import numbersLatin from '../source/numbers-latin.json'
+import printLatin from '../source/print-latin.json'
+import en from '../source/names/en.json'
+import nl from '../source/names/nl.json'
+import de from '../source/names/de.json'
+import fr from '../source/names/fr.json'
+import es from '../source/names/es.json'
 
 export const GLYPH_PACK_SCHEMA_VERSION = 1 as const
 
@@ -80,6 +87,8 @@ export interface GlyphPack {
 
 const packs = {
   shapes: shapes as unknown as GlyphPack,
+  'numbers-latin': numbersLatin as unknown as GlyphPack,
+  'print-latin': printLatin as unknown as GlyphPack,
 } satisfies Record<string, GlyphPack>
 
 export type GlyphPackId = keyof typeof packs
@@ -110,4 +119,58 @@ export function orderedGlyphs(pack: GlyphPack): Glyph[] {
 /** True when strokes must be traced in the order they are listed. */
 export function strokeOrderStrict(glyph: Glyph): boolean {
   return glyph.strokeOrderStrict ?? true
+}
+
+// ---------------------------------------------------------------------------
+// Spoken names
+//
+// Kept out of the packs on purpose: a pack is geometry, and geometry does not
+// change with language. Letters are keyed lowercase because a name belongs to
+// the letter rather than to each case of it — "A" and "a" are both "ay".
+// ---------------------------------------------------------------------------
+
+export interface LetterName {
+  /** What the letter is called, spelled for a speech synthesizer. */
+  name: string
+  /** The phoneme. Empty string for a letter that is silent in this language. */
+  sound: string
+  /** An example word beginning with the letter. */
+  word: string
+}
+
+export interface GlyphNames {
+  locale: string
+  letters: Record<string, LetterName>
+  digits: Record<string, { name: string }>
+  shapes: Record<string, { name: string }>
+}
+
+const names = {
+  en: en as unknown as GlyphNames,
+  nl: nl as unknown as GlyphNames,
+  de: de as unknown as GlyphNames,
+  fr: fr as unknown as GlyphNames,
+  es: es as unknown as GlyphNames,
+} satisfies Record<string, GlyphNames>
+
+export type GlyphNamesLocale = keyof typeof names
+
+/** Locales with spoken names. Maltese is deliberately absent — see the README. */
+export const glyphNameLocales = Object.keys(names) as GlyphNamesLocale[]
+
+export function glyphNames(locale: GlyphNamesLocale): GlyphNames {
+  return names[locale]
+}
+
+/** The spoken entry for a glyph, or undefined when the locale has no name for
+ *  it. Callers fall back to another locale rather than speaking a raw id. */
+export function nameFor(
+  locale: GlyphNamesLocale,
+  pack: GlyphPack,
+  glyph: Glyph
+): LetterName | { name: string } | undefined {
+  const doc = names[locale]
+  if (pack.style === 'shape') return doc.shapes[glyph.id]
+  if (pack.style === 'number') return doc.digits[glyph.char]
+  return doc.letters[glyph.char.toLowerCase()]
 }

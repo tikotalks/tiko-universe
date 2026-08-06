@@ -10,10 +10,11 @@
 // toolchain. Every check here is unconditional: a validator whose best checks
 // are behind a flag is a validator that misses things.
 
-import { readdirSync, readFileSync } from 'node:fs'
+import { existsSync, readdirSync, readFileSync } from 'node:fs'
 import { join } from 'node:path'
 
 const SOURCE_DIR = 'packages/write-glyphs/source'
+const NAMES_DIR = 'packages/write-glyphs/source/names'
 const SCHEMA_PATH = 'engines/stroke/schema/glyph-pack.v1.json'
 
 const KEBAB = /^[a-z0-9]+(-[a-z0-9]+)*$/
@@ -415,10 +416,75 @@ for (const file of files) {
   }
 }
 
+// ---------------------------------------------------------------------------
+// Spoken names
+//
+// Names, phonics and example words are deliberately NOT in the packs — they are
+// language, and a pack is geometry. But a glyph the app cannot name is a glyph
+// the app cannot speak, so coverage is checked here: every locale that exists
+// must cover every glyph, or it is an incomplete translation rather than an
+// optional extra.
+// ---------------------------------------------------------------------------
+
+let localeCount = 0
+if (existsSync(NAMES_DIR)) {
+  const wanted = { letters: new Set(), digits: new Set(), shapes: new Set() }
+  for (const file of files) {
+    const pack = JSON.parse(readFileSync(join(SOURCE_DIR, file), 'utf8'))
+    if (!Array.isArray(pack?.glyphs)) continue
+    for (const glyph of pack.glyphs) {
+      if (pack.style === 'shape') wanted.shapes.add(glyph.id)
+      else if (pack.style === 'number') wanted.digits.add(glyph.char)
+      // A letter's name and sound belong to the letter, not to each case of it:
+      // "A" and "a" are both called "ay". Keyed lowercase so one entry serves both.
+      else wanted.letters.add(glyph.char.toLowerCase())
+    }
+  }
+
+  const localeFiles = readdirSync(NAMES_DIR).filter((n) => n.endsWith('.json')).sort()
+  localeCount = localeFiles.length
+  for (const file of localeFiles) {
+    const path = join(NAMES_DIR, file)
+    let doc
+    try {
+      doc = JSON.parse(readFileSync(path, 'utf8'))
+    } catch (error) {
+      fail(path, `invalid JSON: ${error.message}`)
+      continue
+    }
+    const expectedLocale = file.replace(/\.json$/, '')
+    if (doc.locale !== expectedLocale) {
+      fail(path, `locale field is ${JSON.stringify(doc.locale)} but the filename says ${expectedLocale}`)
+    }
+    for (const [section, ids] of Object.entries(wanted)) {
+      const have = doc[section] ?? {}
+      for (const id of ids) {
+        const entry = have[id]
+        if (!entry) {
+          fail(path, `${section} is missing ${JSON.stringify(id)}`)
+        } else if (typeof entry.name !== 'string' || entry.name.length === 0) {
+          fail(path, `${section}.${id} has no name`)
+        }
+      }
+      // Letters carry phonics too; a letter with no sound cannot be taught by sound.
+      if (section === 'letters') {
+        for (const id of ids) {
+          const entry = have[id]
+          if (entry && typeof entry.sound !== 'string') {
+            fail(path, `letters.${id} has no sound (use "" for a silent letter)`)
+          }
+        }
+      }
+    }
+  }
+}
+
 if (problems.length) {
   console.error(`glyph pack checks failed (${problems.length}):`)
   for (const problem of problems) console.error(`  ${problem}`)
   process.exit(1)
 }
 
-console.log(`glyph pack checks passed — ${files.length} pack(s), ${glyphCount} glyphs, ${strokeCount} strokes`)
+console.log(
+  `glyph pack checks passed — ${files.length} pack(s), ${glyphCount} glyphs, ${strokeCount} strokes, ${localeCount} locale(s)`
+)
