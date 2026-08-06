@@ -93,13 +93,48 @@ describe('TikoTalks website', () => {
     expect(header.text()).not.toContain('Try Yes No')
   })
 
+  it('offers a download for every app that has shipped on the App Store', async () => {
+    const wrapper = await mountAt('/')
+
+    // Until this section existed the badge lived only on an app's own detail
+    // page, so a visitor had to already know which apps had shipped on iOS in
+    // order to find the download for one.
+    const shipped = appUniverse.filter((app) => app.appStoreUrl)
+    expect(shipped.length).toBeGreaterThan(0)
+
+    const badges = wrapper.findAll('.store-lineup a.app-store-btn')
+    expect(badges).toHaveLength(shipped.length)
+    for (const app of shipped) {
+      const badge = badges.find((b) => b.attributes('href') === app.appStoreUrl)
+      expect(badge, `${app.name} has a download badge`).toBeTruthy()
+      expect(badge!.attributes('aria-label')).toContain(app.name)
+    }
+  })
+
   it('shows the app universe on the apps route without overclaiming native availability', async () => {
     const wrapper = await mountAt('/apps')
 
     expect(wrapper.text()).toContain('Tiny apps')
     for (const app of appUniverse) {
       expect(wrapper.text()).toContain(app.name)
-      expect(wrapper.text()).toContain(app.statusLabel)
+    }
+    // A shipped app advertises where you can get it; an unshipped one says
+    // "Planned" and nothing more. Cards, Sequence and Timer carry an appUrl
+    // while still being planned, so a card that keys off the URL rather than
+    // the status silently promises three web apps that have not shipped.
+    const cards = wrapper.findAll('.app-card-grid__card')
+    expect(cards).toHaveLength(appUniverse.length)
+    for (const [i, app] of appUniverse.entries()) {
+      const text = cards[i].text()
+      if (app.status === 'available') {
+        expect(text, `${app.name} is available`).not.toContain('Planned')
+        expect(text, `${app.name} names a platform`).toMatch(/Web|App Store/)
+        if (app.appStoreUrl) expect(text, `${app.name} is on the App Store`).toContain('App Store')
+        else expect(text, `${app.name} has no App Store listing`).not.toContain('App Store')
+      } else {
+        expect(text, `${app.name} is planned`).toContain('Planned')
+        expect(text, `${app.name} must not advertise a platform`).not.toMatch(/Web|App Store/)
+      }
     }
     expect(wrapper.text()).toContain('Planned')
     expect(wrapper.text()).not.toContain('Native app available')

@@ -59,8 +59,8 @@ export function mediaImage(name: MediaImageName, size: TikoImageSize = 'medium')
 /**
  * Categories the library-showcase components draw from.
  *
- * MediaStream and MediaCanvas are meant to show the breadth of Tiko Media, so a
- * broad pull is right — but "newest first, unfiltered" surfaced whatever had just
+ * MediaStream is meant to show the breadth of Tiko Media, so a broad pull is
+ * right — but "newest first, unfiltered" surfaced whatever had just
  * been generated. Narrowing to child-facing categories keeps the showcase on brand
  * without pinning it to a fixed set.
  */
