@@ -13,6 +13,7 @@ public enum TikoAppColor: String, CaseIterable, Sendable {
     case sum
     case first
     case write
+    case coloring
 }
 
 
@@ -56,6 +57,7 @@ public extension TikoAppConfig {
     static let say = TikoAppConfig(id: .say, title: "Say", appColor: .say, appIconSystemName: "waveform", appIconMediaCategory: "communication", appIconImageUrl: "https://data.tikocdn.org/uploads/1781443432968-speech-balloon.png", themeColorHex: 0x8b5cf6)
     static let sum = TikoAppConfig(id: .sum, title: "Sum", appColor: .sum, appIconSystemName: "plus.forwardslash.minus", appIconMediaCategory: "numbers", appIconImageUrl: "https://data.tikocdn.org/uploads/1755105954065-calculator.png", themeColorHex: 0xdd8966)
     static let write = TikoAppConfig(id: .write, title: "Write", appColor: .write, appIconSystemName: "pencil.and.outline", appIconMediaCategory: "letters", appIconImageUrl: "https://data.tikocdn.org/uploads/1756901709154-boy-saying-hi-disney-pixar-style-1.png", themeColorHex: 0x22c55e)
+    static let coloring = TikoAppConfig(id: .coloring, title: "Coloring", appColor: .coloring, appIconSystemName: "paintbrush.pointed.fill", appIconMediaCategory: "art", appIconImageUrl: nil, themeColorHex: 0xf2802b)
     static let first = TikoAppConfig(id: .first, title: "First", appColor: .first, appIconSystemName: "checklist", appIconMediaCategory: "routines", appIconImageUrl: "https://data.tikocdn.org/uploads/1754413862502-todo.png", themeColorHex: 0x06b6d4)
 }
 
@@ -96,6 +98,8 @@ public extension TikoAppColor {
             TikoAppPalette(label: "Sum", primary: Color(hex: 0xdd8966), dark: Color(hex: 0x734735))
         case .write:
             TikoAppPalette(label: "Write", primary: Color(hex: 0x22c55e), dark: Color(hex: 0x126631))
+        case .coloring:
+            TikoAppPalette(label: "Coloring", primary: Color(hex: 0xf2802b), dark: Color(hex: 0x7e4316))
         case .first:
             TikoAppPalette(label: "First", primary: Color(hex: 0x06b6d4), dark: Color(hex: 0x035f6e))
         }

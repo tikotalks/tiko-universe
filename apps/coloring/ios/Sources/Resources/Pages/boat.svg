@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 140">
+  <path id="sky" data-z-index="0" d="M 0 0 H 200 V 100 H 0 Z"/>
+  <path id="sea" data-z-index="1" d="M 0 100 H 200 V 140 H 0 Z"/>
+  <path id="hull" data-z-index="2" d="M 40 100 H 160 L 140 128 H 60 Z"/>
+  <path id="mast" data-z-index="3" d="M 96 28 H 104 V 100 H 96 Z"/>
+  <path id="sail" data-z-index="3" d="M 108 34 L 152 96 H 108 Z"/>
+  <path id="flag" data-z-index="4" d="M 104 28 L 132 34 L 104 40 Z"/>
+  <path id="sun" data-z-index="2" d="M 26 20 H 40 L 48 28 V 42 L 40 50 H 26 L 18 42 V 28 Z"/>
+</svg>
