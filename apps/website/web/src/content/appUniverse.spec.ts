@@ -52,6 +52,34 @@ describe('TikoTalks website app universe metadata', () => {
     }
   })
 
+  // Every Tiko app live under the App Store developer account, pinned by track
+  // id. A shipped app missing from the metadata is a download button the site
+  // silently never renders, which is how Yes No went months without one.
+  const appStoreIds: Record<string, string> = {
+    'yes-no': '6781237407',
+    type: '6780917101',
+    say: '6794481329',
+    sum: '6794587838',
+    first: '6794608348'
+  }
+
+  it('links every app that has shipped on the App Store', () => {
+    for (const [slug, id] of Object.entries(appStoreIds)) {
+      const app = apps.find((item) => item.slug === slug)
+      expect(app, `${slug} must exist in the universe`).toBeDefined()
+      expect(app?.appStoreUrl).toBe(`https://apps.apple.com/app/id${id}`)
+      expect(app?.availability).toBe('available')
+    }
+  })
+
+  it('never claims an App Store listing for an app that has not shipped there', () => {
+    const shipped = Object.keys(appStoreIds)
+    for (const app of apps) {
+      if (shipped.includes(app.slug)) continue
+      expect(app.appStoreUrl, `${app.slug} has no App Store listing`).toBeUndefined()
+    }
+  })
+
   it('only offers a web link for apps that actually run on the web', () => {
     // Say, Sum and First have shipped on iOS only — an appUrl would 404.
     for (const app of apps) {
