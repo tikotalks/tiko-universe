@@ -8,11 +8,33 @@ import kotlin.math.max
 import kotlin.math.min
 
 class ColoringEngine private constructor(initialDocument: ColoringDocument) {
-    private data class FillChange(
-        val regionId: String,
-        val before: ColorValue?,
-        val after: ColorValue?,
-    )
+    /**
+     * One undoable edit. Fills and strokes share a single history so undo walks back
+     * through what the child actually did, in order, rather than through two stacks
+     * that interleave unpredictably.
+     */
+    private sealed interface Change {
+        val regionId: String?
+
+        data class Fill(
+            override val regionId: String,
+            val before: ColorValue?,
+            val after: ColorValue?,
+        ) : Change
+
+        /** A stroke that was added; undo removes it, redo puts it back. */
+        data class Stroke(val stroke: ColoringStroke) : Change {
+            override val regionId: String? get() = stroke.clippedRegionId
+        }
+
+        /** A wholesale document swap, used by clear, where per-edit inverses would not compose. */
+        data class Replace(
+            val before: ColoringDocument,
+            val after: ColoringDocument,
+        ) : Change {
+            override val regionId: String? get() = null
+        }
+    }
 
     private val json = Json {
         encodeDefaults = true
@@ -22,8 +44,12 @@ class ColoringEngine private constructor(initialDocument: ColoringDocument) {
     }
 
     private var document: ColoringDocument = validateDocument(initialDocument)
-    private val undoStack = ArrayDeque<FillChange>()
-    private val redoStack = ArrayDeque<FillChange>()
+    private val undoStack = ArrayDeque<Change>()
+    private val redoStack = ArrayDeque<Change>()
+
+    /** The stroke being drawn right now. Not in the document until the finger lifts. */
+    private var activeStroke: ColoringStroke? = null
+    private var strokeCounter: Int = 0
 
     fun snapshot(): ColoringSnapshot = ColoringSnapshot(
         document = document,
@@ -49,15 +75,86 @@ class ColoringEngine private constructor(initialDocument: ColoringDocument) {
         }
 
         applyFill(region.id, color)
-        undoStack.addLast(FillChange(region.id, region.fill, color))
+        undoStack.addLast(Change.Fill(region.id, region.fill, color))
         redoStack.clear()
         return ColoringResult(changed = true, code = ColoringResultCode.FILLED, regionId = region.id)
     }
 
+    /**
+     * Starts a freehand stroke.
+     *
+     * When [stayInsideLines] is true the stroke is tied to the region under the
+     * starting point and the renderer clips it there, so scribbling roughly over a
+     * shape colours only that shape. When false the stroke is free across the page.
+     * Starting outside every region is only an error in the first mode.
+     */
+    fun beginStroke(
+        x: Double,
+        y: Double,
+        colorHex: String,
+        width: Double,
+        tool: ColoringTool = ColoringTool.CRAYON,
+        stayInsideLines: Boolean = true,
+    ): ColoringResult {
+        val normalized = normalizeColorOrNull(colorHex)
+            ?: return ColoringResult(changed = false, code = ColoringResultCode.INVALID_COLOR)
+        if (width <= 0) return ColoringResult(changed = false, code = ColoringResultCode.INVALID_WIDTH)
+
+        val region = hitTest(ColoringPoint(x, y))
+        if (stayInsideLines && region == null) {
+            return ColoringResult(changed = false, code = ColoringResultCode.NO_REGION)
+        }
+
+        strokeCounter += 1
+        activeStroke = ColoringStroke(
+            id = "stroke-$strokeCounter",
+            tool = tool,
+            points = listOf(ColoringStrokePoint(x, y)),
+            color = ColorValue(normalized),
+            width = width,
+            clippedRegionId = if (stayInsideLines) region?.id else null,
+        )
+        return ColoringResult(changed = true, code = ColoringResultCode.STROKE_STARTED, regionId = region?.id)
+    }
+
+    /** Adds a point to the stroke in progress. Ignored when no stroke is active. */
+    fun extendStroke(x: Double, y: Double, pressure: Double = 1.0): ColoringResult {
+        val stroke = activeStroke
+            ?: return ColoringResult(changed = false, code = ColoringResultCode.NO_ACTIVE_STROKE)
+        // Points arrive far faster than they can be drawn; drop ones that add nothing.
+        val last = stroke.points.last()
+        if (abs(last.x - x) < MIN_STROKE_STEP && abs(last.y - y) < MIN_STROKE_STEP) {
+            return ColoringResult(changed = false, code = ColoringResultCode.STROKE_EXTENDED, regionId = stroke.clippedRegionId)
+        }
+        activeStroke = stroke.copy(points = stroke.points + ColoringStrokePoint(x, y, pressure))
+        return ColoringResult(changed = true, code = ColoringResultCode.STROKE_EXTENDED, regionId = stroke.clippedRegionId)
+    }
+
+    /** Commits the stroke in progress to the document as one undoable step. */
+    fun endStroke(): ColoringResult {
+        val stroke = activeStroke
+            ?: return ColoringResult(changed = false, code = ColoringResultCode.NO_ACTIVE_STROKE)
+        activeStroke = null
+        // A tap that never moved is a dot, which is still ink worth keeping.
+        document = document.copy(strokes = document.strokes + stroke)
+        undoStack.addLast(Change.Stroke(stroke))
+        redoStack.clear()
+        return ColoringResult(changed = true, code = ColoringResultCode.STROKE_ENDED, regionId = stroke.clippedRegionId)
+    }
+
+    /** The stroke being drawn, so the view can show ink under the finger. */
+    fun activeStrokeJson(): String? = activeStroke?.let { json.encodeToString(it) }
+
     fun undo(): ColoringResult {
         val change = undoStack.removeLastOrNull()
             ?: return ColoringResult(changed = false, code = ColoringResultCode.NOTHING_TO_UNDO)
-        applyFill(change.regionId, change.before)
+        when (change) {
+            is Change.Fill -> applyFill(change.regionId, change.before)
+            is Change.Stroke -> document = document.copy(
+                strokes = document.strokes.filterNot { it.id == change.stroke.id },
+            )
+            is Change.Replace -> document = change.before
+        }
         redoStack.addLast(change)
         return ColoringResult(changed = true, code = ColoringResultCode.UNDONE, regionId = change.regionId)
     }
@@ -65,9 +162,30 @@ class ColoringEngine private constructor(initialDocument: ColoringDocument) {
     fun redo(): ColoringResult {
         val change = redoStack.removeLastOrNull()
             ?: return ColoringResult(changed = false, code = ColoringResultCode.NOTHING_TO_REDO)
-        applyFill(change.regionId, change.after)
+        when (change) {
+            is Change.Fill -> applyFill(change.regionId, change.after)
+            is Change.Stroke -> document = document.copy(strokes = document.strokes + change.stroke)
+            is Change.Replace -> document = change.after
+        }
         undoStack.addLast(change)
         return ColoringResult(changed = true, code = ColoringResultCode.REDONE, regionId = change.regionId)
+    }
+
+    /** Removes every fill and stroke as a single undoable step. */
+    fun clear(): ColoringResult {
+        if (document.strokes.isEmpty() && document.regions.all { it.fill == null }) {
+            return ColoringResult(changed = false, code = ColoringResultCode.NOTHING_TO_CLEAR)
+        }
+        val before = document
+        val after = document.copy(
+            strokes = emptyList(),
+            regions = document.regions.map { it.copy(fill = null) },
+        )
+        document = after
+        activeStroke = null
+        undoStack.addLast(Change.Replace(before, after))
+        redoStack.clear()
+        return ColoringResult(changed = true, code = ColoringResultCode.CLEARED)
     }
 
     fun regionAt(x: Double, y: Double): String? = hitTest(ColoringPoint(x, y))?.id
@@ -87,6 +205,14 @@ class ColoringEngine private constructor(initialDocument: ColoringDocument) {
             .minWithOrNull(compareBy<ColoringRegion> { abs(polygonArea(it.path.points)) }.thenByDescending { it.zIndex })
 
     companion object {
+        /**
+         * Minimum movement, in canvas units, before a stroke records another point.
+         * Touch delivers points far faster than they can be drawn or stored, and a
+         * stroke that keeps every one of them bloats the saved document for no
+         * visible difference.
+         */
+        private const val MIN_STROKE_STEP = 0.75
+
         private val colorRegex = Regex("^#[0-9A-Fa-f]{6}(?:[0-9A-Fa-f]{2})?$")
         private val decoder = Json { ignoreUnknownKeys = true }
 

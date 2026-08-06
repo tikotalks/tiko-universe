@@ -52,14 +52,39 @@ object SvgColoringImporter {
         require(regions.isNotEmpty()) { "SVG does not contain any supported coloring regions" }
         require(regions.map { it.id }.distinct().size == regions.size) { "Coloring region IDs must be unique" }
 
+        // Artwork rarely reaches the corners of its own canvas, which leaves dead
+        // areas where a tap does nothing and the page feels broken. Back every
+        // document with a full-canvas region so there is always something to colour.
+        // It is the largest region, and hit testing prefers the smallest, so it only
+        // wins where nothing is drawn. It carries no outline of its own.
+        val backdrop = ColoringRegion(
+            id = CANVAS_REGION_ID,
+            path = ColoringPath(
+                id = CANVAS_REGION_ID,
+                points = listOf(
+                    ColoringPoint(0.0, 0.0),
+                    ColoringPoint(canvas.width, 0.0),
+                    ColoringPoint(canvas.width, canvas.height),
+                    ColoringPoint(0.0, canvas.height),
+                ),
+            ),
+            zIndex = -1,
+        )
+        require(regions.none { it.id == CANVAS_REGION_ID }) {
+            "\"$CANVAS_REGION_ID\" is reserved for the page backdrop; rename that path"
+        }
+
         return ColoringDocument(
             id = documentId,
             canvas = canvas,
-            regions = regions,
+            regions = listOf(backdrop) + regions,
             outlines = regions.map { it.path },
             metadata = ColoringMetadata(title = title),
         )
     }
+
+    /** Region id of the implicit full-canvas backdrop added to every imported page. */
+    const val CANVAS_REGION_ID: String = "canvas"
 
     /**
      * An SVG viewBox may start anywhere, but the engine and every renderer treat the

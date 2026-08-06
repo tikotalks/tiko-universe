@@ -109,6 +109,15 @@ enum class ColoringResultCode {
      * and a colour arriving from a picker or a config file is input, not a bug.
      */
     INVALID_COLOR,
+    /** Brush width was zero or negative. */
+    INVALID_WIDTH,
+    STROKE_STARTED,
+    STROKE_EXTENDED,
+    STROKE_ENDED,
+    /** extendStroke or endStroke arrived without a matching beginStroke. */
+    NO_ACTIVE_STROKE,
+    CLEARED,
+    NOTHING_TO_CLEAR,
     UNDONE,
     REDONE,
     NOTHING_TO_UNDO,

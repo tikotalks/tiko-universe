@@ -22,8 +22,132 @@ class ColoringEngineTest {
 
         assertEquals(200.0, snapshot.document.canvas.width)
         assertEquals(120.0, snapshot.document.canvas.height)
-        assertEquals(listOf("background", "house", "door"), snapshot.document.regions.map { it.id })
+        // The implicit backdrop comes first; authored regions keep their order and ids.
+        assertEquals(
+            listOf(SvgColoringImporter.CANVAS_REGION_ID, "background", "house", "door"),
+            snapshot.document.regions.map { it.id },
+        )
         assertEquals("House", snapshot.document.metadata.title)
+        // The backdrop is not an outline — nothing should draw a box round the page.
+        assertEquals(listOf("background", "house", "door"), snapshot.document.outlines.map { it.id })
+    }
+
+    @Test
+    fun everyPointOnTheCanvasBelongsToSomeRegion() {
+        // Artwork that deliberately leaves the corners empty.
+        val svg = """
+            <svg viewBox="0 0 100 100"><path id="blob" d="M 40 40 H 60 V 60 H 40 Z"/></svg>
+        """.trimIndent()
+        val engine = ColoringEngine.fromSvg("sparse", svg)
+
+        assertEquals(SvgColoringImporter.CANVAS_REGION_ID, engine.regionAt(2.0, 2.0))
+        assertEquals(SvgColoringImporter.CANVAS_REGION_ID, engine.regionAt(99.0, 99.0))
+        assertEquals("blob", engine.regionAt(50.0, 50.0))
+        // Off the page is still nothing.
+        assertNull(engine.regionAt(120.0, 50.0))
+    }
+
+    @Test
+    fun refusesArtworkThatClaimsTheReservedBackdropId() {
+        val svg = """<svg viewBox="0 0 10 10"><path id="canvas" d="M 0 0 H 10 V 10 H 0 Z"/></svg>"""
+
+        val failure = assertFailsWith<IllegalArgumentException> { ColoringEngine.fromSvg("clash", svg) }
+
+        assertTrue(failure.message.orEmpty().contains("reserved"))
+    }
+
+    @Test
+    fun drawsAStrokeClippedToTheRegionItStartedIn() {
+        val engine = ColoringEngine.fromSvg("sample-house", sampleSvg)
+
+        assertEquals(ColoringResultCode.STROKE_STARTED, engine.beginStroke(100.0, 80.0, "#4CAF50", 6.0).code)
+        assertEquals(ColoringResultCode.STROKE_EXTENDED, engine.extendStroke(104.0, 84.0).code)
+        assertEquals(ColoringResultCode.STROKE_EXTENDED, engine.extendStroke(108.0, 88.0).code)
+        assertEquals(ColoringResultCode.STROKE_ENDED, engine.endStroke().code)
+
+        val stroke = engine.snapshot().document.strokes.single()
+        assertEquals("door", stroke.clippedRegionId)
+        assertEquals("#4CAF50", stroke.color.hex)
+        assertEquals(3, stroke.points.size)
+        assertTrue(engine.snapshot().canUndo)
+    }
+
+    @Test
+    fun drawsFreelyAcrossThePageWhenNotStayingInsideTheLines() {
+        val engine = ColoringEngine.fromSvg("sample-house", sampleSvg)
+
+        engine.beginStroke(100.0, 80.0, "#4CAF50", 6.0, ColoringTool.MARKER, stayInsideLines = false)
+        engine.extendStroke(10.0, 10.0)
+        engine.endStroke()
+
+        assertNull(engine.snapshot().document.strokes.single().clippedRegionId)
+    }
+
+    @Test
+    fun undoAndRedoWalkBackThroughFillsAndStrokesInOrder() {
+        val engine = ColoringEngine.fromSvg("sample-house", sampleSvg)
+
+        engine.fill(100.0, 80.0, "#FF3366")
+        engine.beginStroke(100.0, 80.0, "#4CAF50", 6.0)
+        engine.extendStroke(104.0, 84.0)
+        engine.endStroke()
+
+        // The stroke came last, so it goes first.
+        engine.undo()
+        assertTrue(engine.snapshot().document.strokes.isEmpty())
+        assertEquals("#FF3366", engine.snapshot().document.regions.single { it.id == "door" }.fill?.hex)
+
+        engine.undo()
+        assertNull(engine.snapshot().document.regions.single { it.id == "door" }.fill)
+        assertEquals(ColoringResultCode.NOTHING_TO_UNDO, engine.undo().code)
+
+        engine.redo()
+        assertEquals("#FF3366", engine.snapshot().document.regions.single { it.id == "door" }.fill?.hex)
+        engine.redo()
+        assertEquals(1, engine.snapshot().document.strokes.size)
+    }
+
+    @Test
+    fun rejectsStrokeCallsThatCannotBeHonoured() {
+        val engine = ColoringEngine.fromSvg("sample-house", sampleSvg)
+
+        assertEquals(ColoringResultCode.NO_ACTIVE_STROKE, engine.extendStroke(1.0, 1.0).code)
+        assertEquals(ColoringResultCode.NO_ACTIVE_STROKE, engine.endStroke().code)
+        assertEquals(ColoringResultCode.INVALID_COLOR, engine.beginStroke(100.0, 80.0, "green", 6.0).code)
+        assertEquals(ColoringResultCode.INVALID_WIDTH, engine.beginStroke(100.0, 80.0, "#4CAF50", 0.0).code)
+        assertEquals(ColoringResultCode.NO_REGION, engine.beginStroke(900.0, 900.0, "#4CAF50", 6.0).code)
+        assertTrue(engine.snapshot().document.strokes.isEmpty())
+    }
+
+    @Test
+    fun clearRemovesEverythingAndIsASingleUndo() {
+        val engine = ColoringEngine.fromSvg("sample-house", sampleSvg)
+        engine.fill(100.0, 80.0, "#FF3366")
+        engine.fill(60.0, 75.0, "#4CAF50")
+        engine.beginStroke(100.0, 80.0, "#2196F3", 6.0)
+        engine.endStroke()
+
+        assertEquals(ColoringResultCode.CLEARED, engine.clear().code)
+        assertTrue(engine.snapshot().document.strokes.isEmpty())
+        assertTrue(engine.snapshot().document.regions.all { it.fill == null })
+        assertEquals(ColoringResultCode.NOTHING_TO_CLEAR, engine.clear().code)
+
+        engine.undo()
+        assertEquals(2, engine.snapshot().document.regions.count { it.fill != null })
+        assertEquals(1, engine.snapshot().document.strokes.size)
+    }
+
+    @Test
+    fun strokesSurviveASaveAndReload() {
+        val engine = ColoringEngine.fromSvg("sample-house", sampleSvg)
+        engine.beginStroke(100.0, 80.0, "#2196F3", 8.0)
+        engine.extendStroke(104.0, 90.0)
+        engine.endStroke()
+
+        val restored = ColoringEngine.open(engine.serialize())
+
+        assertEquals(engine.snapshot().document, restored.snapshot().document)
+        assertEquals(1, restored.snapshot().document.strokes.size)
     }
 
     @Test
