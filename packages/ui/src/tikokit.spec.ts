@@ -35,6 +35,7 @@ import {
   tikoAppConfigs,
   tikoKitComponents
 } from './index'
+import { tikoLanguageOptions } from '@tiko/i18n'
 import TikoChildAccountsPanel from './TikoChildAccountsPanel.vue'
 
 async function flushMountedWork() {
@@ -337,6 +338,30 @@ describe('TikoKit component contract', () => {
     expect(wrapper.get('.tiko-settings-panel__subtitle').text()).toBe('Lingwa, dehra u preferenzi tal-app.')
     expect(wrapper.get('[data-test="tiko-settings-language"]').text()).toContain('Malti')
     expect(wrapper.emitted('update:colorMode')).toEqual([['system']])
+  })
+
+  it('offers every language Tiko has, grouped by how complete its interface is', () => {
+    const wrapper = mount(TikoSettingsPanel, {
+      props: { language: 'en', colorMode: 'light', languages: tikoLanguageOptions },
+    })
+
+    const select = wrapper.get('[data-test="tiko-settings-language"]')
+    const options = select.findAll('option')
+    expect(options).toHaveLength(tikoLanguageOptions.length)
+    expect(options.length).toBeGreaterThan(50)
+
+    // The eight languages translated throughout come first, under their own heading.
+    const groups = select.findAll('optgroup')
+    expect(groups.map((group) => group.attributes('label'))).toEqual(['Fully translated', 'Core translated'])
+    expect(groups[0].findAll('option').map((option) => option.attributes('value')))
+      .toEqual(['en', 'nl', 'de', 'fr', 'es', 'pt', 'it', 'mt'])
+
+    // A parent may not read the script, so the English name is there too.
+    const georgian = options.find((option) => option.attributes('value') === 'ka')
+    expect(georgian?.text()).toBe('ქართული (Georgian)')
+    // Except where the two names are the same word.
+    const afrikaans = options.find((option) => option.attributes('value') === 'af')
+    expect(afrikaans?.text()).toBe('Afrikaans')
   })
 
   it('styles shared identity popups through sil/ui popup custom properties', () => {

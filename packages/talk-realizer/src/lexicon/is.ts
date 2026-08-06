@@ -6,6 +6,9 @@ import type { Lexicon } from '../features'
  * be told, so both are curated.
  */
 export const icelandicLexicon: Lexicon = {
+  // A subordinate clause moves its negation in front of the verb.
+  because: { pos: 'conjunction', subordinating: true },
+
   // The strong verbs, whose stem vowel changes: no rule finds these.
   need: { pos: 'verb', forms: { '1sg': 'þarf', '2sg': 'þarft', '3sg': 'þarf', '1pl': 'þurfum', '2pl': 'þurfið', '3pl': 'þurfa' } },
   feel: { pos: 'verb', forms: { '1sg': 'finn', '2sg': 'finnur', '3sg': 'finnur', '1pl': 'finnum', '2pl': 'finnið', '3pl': 'finna' } },

@@ -11,13 +11,20 @@ import type { Features } from '../features'
  * merges them in its own elision step.
  */
 export function extractObjectClitic(
-  chunks: { complements: Array<{ kind: string, pronoun?: { id: string, features: Features, text: string } }> },
+  chunks: {
+    verb?: unknown
+    complements: Array<{ kind: string, pronoun?: { id: string, features: Features, text: string } }>
+  },
   scratch: Record<string, unknown>,
   /** Picks the form, for languages where some verbs govern the dative. */
   pick?: (pronoun: { features: Features, text: string }) => string,
 ): void {
+  // A clitic is emitted next to the verb, so with no verb there is nowhere to put
+  // it — and taking it out of the complements would lose the tile entirely.
+  if (!chunks.verb) return
   const index = chunks.complements.findIndex(
-    (phrase) => phrase.kind === 'np' && !!phrase.pronoun,
+    // A tonic pronoun is not a clitic: "je veux le mien" keeps its own place.
+    (phrase) => phrase.kind === 'np' && !!phrase.pronoun && !phrase.pronoun.features.tonic,
   )
   if (index === -1) return
   const phrase = chunks.complements[index]

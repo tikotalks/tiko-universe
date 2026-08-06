@@ -308,3 +308,37 @@ export function possessiveForm(
 ): string {
   return feminine ? (features.feminine ?? text) : text
 }
+
+/**
+ * The definite article, for the quantifier that needs one in front of it. "All"
+ * takes it in every Romance language — "tous **les** biscuits", "todas **las**
+ * galletas" — and leaving it out is not a shade of meaning but an error.
+ */
+const DEFINITE: Record<RomanceLanguage, { masculine: string, feminine: string, masculinePlural: string, femininePlural: string }> = {
+  fr: { masculine: 'le', feminine: 'la', masculinePlural: 'les', femininePlural: 'les' },
+  es: { masculine: 'el', feminine: 'la', masculinePlural: 'los', femininePlural: 'las' },
+  it: { masculine: 'il', feminine: 'la', masculinePlural: 'i', femininePlural: 'le' },
+  pt: { masculine: 'o', feminine: 'a', masculinePlural: 'os', femininePlural: 'as' },
+  ca: { masculine: 'el', feminine: 'la', masculinePlural: 'els', femininePlural: 'les' },
+  gl: { masculine: 'o', feminine: 'a', masculinePlural: 'os', femininePlural: 'as' },
+}
+
+/**
+ * A quantifier and, where the language wants one, the definite article after it.
+ * Returns the quantifier alone when it does not.
+ */
+export function quantifierPhrase(
+  features: Features,
+  text: string,
+  language: RomanceLanguage,
+  feminine: boolean,
+  plural: boolean,
+): string {
+  const agreed = feminine ? (features.feminine ?? text) : text
+  if (!features.withDefinite) return agreed
+  const articles = DEFINITE[language]
+  const article = plural
+    ? (feminine ? articles.femininePlural : articles.masculinePlural)
+    : (feminine ? articles.feminine : articles.masculine)
+  return `${agreed} ${article}`
+}

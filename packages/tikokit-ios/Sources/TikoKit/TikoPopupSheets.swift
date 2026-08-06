@@ -755,6 +755,7 @@ public struct TikoSettingsSheet<AppSettings: View>: View {
     @AppStorage("tiko.colorMode") private var colorModeRawValue = TikoColorMode.system.rawValue
     @State private var showingLanguagePicker = false
     @State private var showingColorModePicker = false
+    @State private var showingSupport = false
 
     public init(
         appColor: TikoAppColor,
@@ -791,10 +792,26 @@ public struct TikoSettingsSheet<AppSettings: View>: View {
                         icon: "circle.lefthalf.filled",
                         appColor: appColor
                     ) { showingColorModePicker = true }
+
+                    // Settings are already behind Parent Mode, so Support is
+                    // reachable by a grown-up and by no child. Hidden entirely
+                    // when this app has no Arlez project, rather than offering a
+                    // form whose messages would go nowhere.
+                    if TikoArlez.productIDForRunningApp != nil {
+                        TikoSettingsActionRow(
+                            title: TikoSupportLabels.forLanguage(languageID).support,
+                            value: nil,
+                            icon: "lifepreserver.fill",
+                            appColor: appColor
+                        ) { showingSupport = true }
+                    }
                 }
 
                 appSettings
             }
+        }
+        .tikoPopup(isPresented: $showingSupport) {
+            TikoSupportSheet(appColor: appColor) { showingSupport = false }
         }
         .tikoPopup(isPresented: $showingLanguagePicker) {
             TikoLanguagePickerSheet(

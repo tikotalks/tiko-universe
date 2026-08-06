@@ -1,4 +1,5 @@
 import { computed, ref, watch } from 'vue'
+import { hasPack } from '@tiko/talk-packs'
 import { IdentityClient } from '@tiko/identity'
 import { useIdentityRuntime, type IdentityRuntimeState, type TikoColorMode } from '@tiko/ui'
 import { useSentenceApi } from './useSentenceApi'
@@ -34,9 +35,17 @@ function resolveIdentityBaseUrl() {
   return (env?.VITE_IDENTITY_API_URL ?? env?.VITE_TIKO_IDENTITY_BASE_URL ?? 'https://id.tikoapps.org/v1').replace(/\/$/, '')
 }
 
+/**
+ * The board's language.
+ *
+ * This used to be `candidate === 'nl' ? 'nl' : 'en'`, so fifty-two of the fifty-four
+ * languages the picker offers collapsed to English: choosing Georgian gave an English
+ * board. Any language with a pack is a language this app can speak, and the pack is
+ * what the board and the grammar both come from.
+ */
 function detectLanguage(value: string | undefined): string {
   const candidate = value ?? (typeof navigator === 'undefined' ? 'en' : navigator.language.split('-')[0])
-  return candidate === 'nl' ? 'nl' : 'en'
+  return hasPack(candidate) ? candidate.split('-')[0].toLowerCase() : 'en'
 }
 
 function toColorMode(value: string | undefined): TikoColorMode {
@@ -76,7 +85,7 @@ export function useTalkApp() {
     words: sentenceApi.words,
     suggestions: sentenceApi.suggestions,
     categories: sentenceApi.categories,
-    selectedWordIds: strip.wordIds,
+    filter: boardFilter,
   })
 
   const canSpeak = computed(() => strip.canSpeak.value && speechStatus.value !== 'speaking' && !sentenceApi.loading.value)
@@ -137,10 +146,18 @@ export function useTalkApp() {
     void sentenceApi.loadVocabulary(category.source.id, boardFilter.value || undefined)
   }
 
-  // Board search: filter the visible words (custom words included server-side).
+  /**
+   * Board search, over the whole board.
+   *
+   * This used to pass the active category, which `start()` sets to the first
+   * shortcut and every tap re-points at whatever was tapped. So a search was
+   * silently scoped to one category of eighteen: searching "because" or "sad"
+   * found nothing and offered to *create* the word, which already existed.
+   * A category is a way to browse; it is not the scope of a search.
+   */
   function applyBoardFilter(query: string) {
     boardFilter.value = query
-    void sentenceApi.filterBoard(query, activeCategoryId.value ?? undefined)
+    void sentenceApi.filterBoard(query)
   }
 
   function clearBoardFilter() {
@@ -213,6 +230,8 @@ export function useTalkApp() {
     runtime,
     sentenceApi,
     strip,
+    /** The sentence the realizer makes of the strip, for the child to read. */
+    sentence: computed(() => sentenceApi.stripState.value.display ?? ''),
     canSpeak,
     statusText,
     customWords: sentenceApi.customWords,

@@ -1,4 +1,5 @@
 import { appUniverse, stableRoutes, type StableRoute } from './content/appUniverse'
+import { type MediaImageName } from './content/mediaImages'
 import { docsPages } from './docsContent'
 
 export type WebsiteRouteId = 'home' | 'apps' | 'tools' | 'why-tiko' | 'how-it-works' | 'caregivers' | 'educators' | 'faq' | 'docs'
@@ -25,7 +26,28 @@ export interface TikoTool {
 export interface ContentPillar {
   title: string
   body: string
+  /** Curated artwork for this pillar — see `content/mediaImages.ts`. */
+  image: MediaImageName
 }
+
+/**
+ * Colour rotation for card grids, so adjacent cards read as distinct Tiko colours.
+ *
+ * `accent` is deliberately absent: @sil/ui hardcodes `--color-accent` to
+ * `var(--color-foreground)`, so a card toned `accent` renders black-on-black in
+ * dark mode. See the note at the top of `styles.scss`.
+ */
+export const sectionTones = [
+  'primary',
+  'secondary',
+  'tertiary',
+  'warning',
+  'yes-no',
+  'cards',
+  'sequence',
+  'say',
+  'first',
+] as const
 
 export const routes: WebsiteRoute[] = [
   { id: 'home', path: '/', label: 'Home', title: 'TikoTalks', description: 'Beautiful, free education and communication apps for every child. No ads, no account, any language.' },
@@ -55,41 +77,48 @@ export { docsPages, stableRoutes }
 export const whyTikoPillars: ContentPillar[] = [
   {
     title: 'Open instantly. No setup.',
-    body: 'Tiko apps are ready the moment you need them. No account form, no download, no tutorial — just open and use.'
+    body: 'Tiko apps are ready the moment you need them. No account form, no download, no tutorial — just open and use.',
+    image: 'lightBulb'
   },
   {
     title: 'One app, one clear job.',
-    body: 'Each Tiko app does exactly one thing. The screen stays simple, calm, and easy to trust — for the child and the adult beside them.'
+    body: 'Each Tiko app does exactly one thing. The screen stays simple, calm, and easy to trust — for the child and the adult beside them.',
+    image: 'puzzlePiece'
   },
   {
     title: 'Every language, built in.',
-    body: 'Tiko is multilingual from the ground up, not as an afterthought. Every app speaks the child\'s language — because communication tools that only work in one language leave too many people out.'
+    body: 'Tiko is multilingual from the ground up, not as an afterthought. Every app speaks the child\'s language — because communication tools that only work in one language leave too many people out.',
+    image: 'globe'
   },
   {
     title: 'Free and ad-free, always.',
-    body: 'No trial. No premium gate. No ads. No attention tracking. The tools work the same on day one as they do on day one thousand.'
+    body: 'No trial. No premium gate. No ads. No attention tracking. The tools work the same on day one as they do on day one thousand.',
+    image: 'giftBox'
   }
 ]
 
 export const whyFreePillars: ContentPillar[] = [
   {
     title: 'No hesitation.',
-    body: 'Open a tool and try it with a child right now — without deciding whether the moment is worth paying for.'
+    body: 'Open a tool and try it with a child right now — without deciding whether the moment is worth paying for.',
+    image: 'childSayingHi'
   },
   {
     title: 'No pressure.',
-    body: 'Tiko doesn\'t use urgency, shame, ads, or upgrade prompts. Nothing turns communication into a transaction.'
+    body: 'Tiko doesn\'t use urgency, shame, ads, or upgrade prompts. Nothing turns communication into a transaction.',
+    image: 'balloons'
   },
   {
     title: 'No hidden bargain.',
-    body: 'Free doesn\'t mean ad-funded. Tiko is not trading a child\'s attention or data for access.'
+    body: 'Free doesn\'t mean ad-funded. Tiko is not trading a child\'s attention or data for access.',
+    image: 'coin'
   }
 ]
 
-export const platformNotes = [
-  { label: 'Web', copy: 'The fastest way to try Tiko. A link is all it takes — no app store, no download required.' },
-  { label: 'iOS', copy: 'Native iOS apps are arriving — Type is on the App Store now, with the rest following the same calm, focused experience.' },
-  { label: 'Android', copy: 'Android follows the same approach — small tools, one job each, consistent behaviour.' }
+export const platformNotes: { label: string; copy: string; image: MediaImageName }[] = [
+  { label: 'Web', copy: 'The fastest way to try Tiko. A link is all it takes — no app store, no download required.', image: 'laptop' },
+  { label: 'iOS', copy: 'Yes No, Type, Say, Sum and First are on the App Store now, for iPhone and iPad. The rest follow the same calm, focused experience.', image: 'smartphone' },
+  { label: 'Android', copy: 'Android follows the same approach — small tools, one job each, consistent behaviour.', image: 'tablet' }
 ]
 
 export const trustPrinciples = [

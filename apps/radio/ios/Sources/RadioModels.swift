@@ -65,8 +65,20 @@ struct RadioCategory: Identifiable, Codable, Equatable, Sendable {
     var title: String
     var symbol: String
     var color: String
+    /// Tiko Media artwork for the tile. Tiko Media leads the visual language
+    /// across Tiko apps, so `symbol` is only the fallback while the image
+    /// loads or when a user-made collection has no artwork yet.
+    var imageURL: URL?
 
     var colorName: String { color }
+
+    init(id: String, title: String, symbol: String, color: String, imageURL: URL? = nil) {
+        self.id = id
+        self.title = title
+        self.symbol = symbol
+        self.color = color
+        self.imageURL = imageURL
+    }
 }
 
 struct RadioLibrarySnapshot: Codable, Equatable, Sendable {

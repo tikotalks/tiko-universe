@@ -2,6 +2,9 @@ import type { Lexicon } from '../features'
 
 /** Italian overlay: irregular verbs, reflexives, mass nouns, gender exceptions. */
 export const italianLexicon: Lexicon = {
+  // "All" agrees and takes the definite article after it.
+  all: { pos: 'determiner', determinerKind: 'quantifier', forcesNumber: 'pl', withDefinite: true, feminine: 'tutte' },
+
   hungry: { pos: 'adjective', sensation: 'fame' },
   thirsty: { pos: 'adjective', sensation: 'sete' },
   cold: { pos: 'adjective', sensation: 'freddo' },
@@ -29,6 +32,17 @@ export const italianLexicon: Lexicon = {
   little: { pos: 'determiner', determinerKind: 'quantifier' },
   big: { pos: 'adjective' },
 
+  // The verbs added in the core rebalance. The -isc- verbs and the stem-changers
+  // need stating; the rest follow the rule.
+  get: { pos: 'verb', forms: { '1sg': 'ottengo', '2sg': 'ottieni', '3sg': 'ottiene', pl: 'otteniamo', '3pl': 'ottengono' } },
+  know: { pos: 'verb', forms: { '1sg': 'so', '2sg': 'sai', '3sg': 'sa', pl: 'sappiamo', '3pl': 'sanno' } },
+  finish: { pos: 'verb', forms: { '1sg': 'finisco', '2sg': 'finisci', '3sg': 'finisce', pl: 'finiamo', '3pl': 'finiscono' } },
+  hold: { pos: 'verb', forms: { '1sg': 'tengo', '2sg': 'tieni', '3sg': 'tiene', pl: 'teniamo', '3pl': 'tengono' } },
+  build: { pos: 'verb', forms: { '1sg': 'costruisco', '2sg': 'costruisci', '3sg': 'costruisce', pl: 'costruiamo', '3pl': 'costruiscono' } },
+  give: { pos: 'verb', forms: { '1sg': 'do', '2sg': 'dai', '3sg': 'dà', pl: 'diamo', '3pl': 'danno' } },
+  ride: { pos: 'verb', forms: { '1sg': 'vado in bici', '2sg': 'vai in bici', '3sg': 'va in bici', pl: 'andiamo in bici', '3pl': 'vanno in bici' } },
+  wake: { pos: 'verb', forms: { '1sg': 'mi sveglio', '2sg': 'ti svegli', '3sg': 'si sveglia', pl: 'ci svegliamo', '3pl': 'si svegliano' } },
+  climb: { pos: 'verb', forms: { '1sg': 'mi arrampico', '2sg': 'ti arrampichi', '3sg': 'si arrampica', pl: 'ci arrampichiamo', '3pl': 'si arrampicano' } },
   want: { pos: 'verb', forms: { '1sg': 'voglio', '2sg': 'vuoi', '3sg': 'vuole', '1pl': 'vogliamo', '3pl': 'vogliono', past: 'volevo' } },
   like: { pos: 'verb', experiencerDative: true, forms: { '3sg': 'piace', '3pl': 'piacciono', past: 'piaceva' } },
   need: { pos: 'verb', forms: { '1sg': 'ho bisogno', '2sg': 'hai bisogno', '3sg': 'ha bisogno', '1pl': 'abbiamo bisogno', '3pl': 'hanno bisogno' } },

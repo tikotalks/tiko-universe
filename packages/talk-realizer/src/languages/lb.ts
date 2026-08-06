@@ -37,6 +37,7 @@ export const luxembourgish: LanguageRules = {
     language: 'lb',
     maturity: 'beta',
     wordOrder: 'svo',
+    subordinateVerbFinal: true,
     questionStrategy: 'inversion',
     spacing: 'space',
     capitalize: true,

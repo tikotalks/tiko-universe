@@ -73,8 +73,33 @@ final class CardsStore: ObservableObject {
             guard let index = collections.firstIndex(where: { $0.id == collectionID }) else { return }
             let match = CardsMediaMatcher.match(collection: collections[index], mediaItems: mediaItems)
             cardImages.merge(match.cardImages) { _, new in new }
-            if let thumbnailURL = match.thumbnailURL {
-                collectionThumbnails[collectionID] = thumbnailURL
+
+            // The category page is capped and sorted by title, so most cards get
+            // no candidate from it. Resolve whatever is still bare by searching
+            // the library for the card's own word. On the thumbnail pass only the
+            // first few are resolved, so opening the app stays cheap; the rest
+            // follow when the collection is actually opened.
+            var unresolved = collections[index].cards
+                .filter { cardImages[$0.id] == nil && $0.imageRef == nil }
+                .map { (id: $0.id, title: $0.title) }
+            // On the thumbnail pass, try the first few cards rather than all of
+            // them, so a cold launch stays cheap but a collection whose first
+            // card has no artwork still gets a tile picture.
+            if !prefetchCards { unresolved = Array(unresolved.prefix(4)) }
+            if !unresolved.isEmpty {
+                let searched = await mediaClient.resolveImages(for: unresolved)
+                cardImages.merge(searched) { _, new in new }
+            }
+
+            // The tile picture is the first card that actually resolved. Falling
+            // back to `match.thumbnailURL` would show whatever sorts first in the
+            // category — which is how "Animals" ended up as an aardvark and
+            // "Food" as a roll of kitchen towel.
+            let thumbnail = collections[index].cards.lazy
+                .compactMap { self.cardImages[$0.id] }
+                .first ?? match.thumbnailURL
+            if let thumbnail {
+                collectionThumbnails[collectionID] = thumbnail
             }
 
             var urls = Array(collections[index].cards.compactMap { match.cardImages[$0.id] ?? imageURL(for: $0) }.prefix(prefetchCards ? collections[index].cards.count : 6))

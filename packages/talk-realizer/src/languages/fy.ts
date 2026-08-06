@@ -32,6 +32,7 @@ export const frisian: LanguageRules = {
     language: 'fy',
     maturity: 'beta',
     wordOrder: 'svo',
+    subordinateVerbFinal: true,
     questionStrategy: 'inversion',
     spacing: 'space',
     capitalize: true,

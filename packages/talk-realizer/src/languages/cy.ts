@@ -56,6 +56,7 @@ export const welsh: LanguageRules = {
     language: 'cy',
     maturity: 'beta',
     wordOrder: 'vso',
+    verbTailIsVerb: true,
     questionStrategy: 'intonation',
     spacing: 'space',
     capitalize: true,

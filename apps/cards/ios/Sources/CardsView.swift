@@ -294,9 +294,14 @@ struct CardsView: View {
             .animation(showAnimations ? .spring(response: 0.38, dampingFraction: 0.85) : .linear(duration: 0), value: currentCollection?.id)
             .task {
                 if TikoScreenshotMode.isActive {
-                    // Deterministic, offline launch for UI tests / screenshots:
-                    // populate the grid from the built-in defaults with no network.
+                    // Deterministic launch for UI tests / screenshots: the grid
+                    // comes from the built-in defaults rather than the account.
                     store.loadOfflineDefaults()
+                    syncCollectionsFromStore()
+                    // Artwork still comes from Tiko Media. Skipping it made every
+                    // captured card a flat colour block, which is not what the
+                    // app looks like in a child's hands.
+                    await store.hydrateRootThumbnails()
                     syncCollectionsFromStore()
                     return
                 }

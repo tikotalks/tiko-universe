@@ -7,6 +7,9 @@ import type { Lexicon } from '../features'
  * "la meva pilota".
  */
 export const catalanLexicon: Lexicon = {
+  // "All" agrees and takes the definite article after it.
+  all: { pos: 'determiner', determinerKind: 'quantifier', forcesNumber: 'pl', withDefinite: true, feminine: 'totes' },
+
   hungry: { pos: 'adjective', sensation: 'gana' },
   thirsty: { pos: 'adjective', sensation: 'set' },
   cold: { pos: 'adjective', sensation: 'fred' },

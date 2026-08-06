@@ -96,6 +96,8 @@ export const german: LanguageRules = {
     language: 'de',
     maturity: 'production',
     wordOrder: 'svo',
+    subordinateVerbFinal: true,
+    verbComplementPosition: 'clauseFinal',
     questionStrategy: 'inversion',
     spacing: 'space',
     capitalize: true,
@@ -127,8 +129,22 @@ export const german: LanguageRules = {
     const direct = formFor(forms, ctx.person, ctx.number)
     if (direct) return direct
     // The pack stores a first-person form ("gehe", "will"); strip the -e for a stem.
-    const stem = verb.text.replace(/e$/, '')
-    return conjugate(stem, ctx)
+    // A separable prefix or a second word rides along unchanged — "höre zu" becomes
+    // "hört zu", not "höre zut".
+    const [first, ...rest] = verb.text.split(' ')
+    const inflected = conjugate(first.replace(/e$/, ''), ctx)
+    return [inflected, ...rest].join(' ')
+  },
+
+  /**
+   * A second verb takes the infinitive, and German spells that exactly like the
+   * third person plural — "wollen", "spielen", "lesen" — so the form the plural
+   * takes is the form to use, and no separate list of infinitives is needed.
+   */
+  verbComplement(verb, ctx) {
+    const infinitive = german.verbForm(verb, { ...ctx, person: 3, number: 'pl', tense: 'present' })
+    note(ctx.builder, `"${infinitive}": the infinitive, spelled like the plural`)
+    return infinitive
   },
 
   copula(ctx) {

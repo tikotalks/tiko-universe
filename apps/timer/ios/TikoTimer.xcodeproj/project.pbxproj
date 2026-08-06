@@ -13,6 +13,7 @@
 		5556B64C5B9B337F370A22DD /* TikoKit in Frameworks */ = {isa = PBXBuildFile; productRef = 7E98E3E3020F601127CD4DE8 /* TikoKit */; };
 		706593CA96493CC971FD35FF /* TikoTimerApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CA11BAD580A7FF1BA151E12 /* TikoTimerApp.swift */; };
 		73A60CE65E67CE28698D1A55 /* TikoTimerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A42A62D5D1C08136AE41EF3F /* TikoTimerTests.swift */; };
+		7C690D950F009F987911A3A3 /* TimerPalette.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A1557DA9D4FC67847C3A80E /* TimerPalette.swift */; };
 		DEFC7DF1298208E4A113A4E9 /* TikoKit in Frameworks */ = {isa = PBXBuildFile; productRef = F90566CDB25E6005658995DD /* TikoKit */; };
 		DF4AD65A13BFA95429B1AC45 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8DD9428740D5FF24A90C0CBC /* Assets.xcassets */; };
 		F8D454E2ABEFDF8D878C86CC /* TimerAppConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57CC96EA50F45F53D8E9B3C0 /* TimerAppConfig.swift */; };
@@ -41,6 +42,7 @@
 		48078D80322BE65093677655 /* TimerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimerView.swift; sourceTree = "<group>"; };
 		4CA11BAD580A7FF1BA151E12 /* TikoTimerApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TikoTimerApp.swift; sourceTree = "<group>"; };
 		57CC96EA50F45F53D8E9B3C0 /* TimerAppConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimerAppConfig.swift; sourceTree = "<group>"; };
+		6A1557DA9D4FC67847C3A80E /* TimerPalette.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimerPalette.swift; sourceTree = "<group>"; };
 		7CC7E0CFFC8AA09B2CA6532A /* TikoTimerUITests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = TikoTimerUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		7E01878316543CE6EE05D643 /* TikoTimerTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = TikoTimerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		7E120971C8392093444885A9 /* TikoTimer.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = TikoTimer.entitlements; sourceTree = "<group>"; };
@@ -125,6 +127,7 @@
 				4CA11BAD580A7FF1BA151E12 /* TikoTimerApp.swift */,
 				57CC96EA50F45F53D8E9B3C0 /* TimerAppConfig.swift */,
 				B6BE423B7BCB42CE6A1439E6 /* TimerEngine.swift */,
+				6A1557DA9D4FC67847C3A80E /* TimerPalette.swift */,
 				48078D80322BE65093677655 /* TimerView.swift */,
 			);
 			path = Sources;
@@ -202,13 +205,13 @@
 				LastUpgradeCheck = 1430;
 				TargetAttributes = {
 					0F41108524EF8F6774AC86D4 = {
-						DevelopmentTeam = "";
+						DevelopmentTeam = 38MGF83L2L;
 					};
 					6FD9C811BB9FB0F3579318D4 = {
-						DevelopmentTeam = "";
+						DevelopmentTeam = 38MGF83L2L;
 					};
 					95B3746F3F2B2A196A4684B3 = {
-						DevelopmentTeam = "";
+						DevelopmentTeam = 38MGF83L2L;
 						TestTargetID = 6FD9C811BB9FB0F3579318D4;
 					};
 				};
@@ -294,6 +297,7 @@
 				706593CA96493CC971FD35FF /* TikoTimerApp.swift in Sources */,
 				F8D454E2ABEFDF8D878C86CC /* TimerAppConfig.swift in Sources */,
 				2CE7350DE29638F01E387B6B /* TimerEngine.swift in Sources */,
+				7C690D950F009F987911A3A3 /* TimerPalette.swift in Sources */,
 				323134D99698474D059938C1 /* TimerView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -349,7 +353,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = 38MGF83L2L;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
@@ -449,7 +453,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = 38MGF83L2L;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
