@@ -1,13 +1,16 @@
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
+import { RouterLink, useRoute } from 'vue-router'
+import { useBemm } from 'bemm'
+import { SilIcon } from '@tiko/ui'
 import { useMediaLibrary } from '../composables/useMediaLibrary'
 import ImagePreview from '../components/ImagePreview.vue'
 import AudioPreview from '../components/AudioPreview.vue'
 import type { MediaItem } from '../types/media'
 
+const bemm = useBemm('asset-detail', { return: 'string', includeBaseClass: true })
+
 const route = useRoute()
-const router = useRouter()
 const { fetchMediaItem, getDownloadUrl } = useMediaLibrary()
 
 const item = ref<MediaItem | null>(null)
@@ -18,25 +21,20 @@ const assetId = computed(() => route.params.id as string)
 
 onMounted(async () => {
   const result = await fetchMediaItem(assetId.value)
-  if (result) {
-    item.value = result
-  } else {
-    error.value = 'Asset not found'
-  }
+  if (result) item.value = result
+  else error.value = 'That asset could not be found.'
   loading.value = false
 })
 
 function downloadAsset(format?: string) {
-  const url = getDownloadUrl(assetId.value, format)
-  window.open(url, '_blank')
+  window.open(getDownloadUrl(assetId.value, format), '_blank')
 }
 
 function formatDate(iso: string): string {
-  return new Date(iso).toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric',
-  })
+  if (!iso) return 'Unknown'
+  const date = new Date(iso)
+  if (Number.isNaN(date.getTime())) return 'Unknown'
+  return date.toLocaleDateString('en-GB', { year: 'numeric', month: 'short', day: 'numeric' })
 }
 
 function formatSize(bytes: number): string {
@@ -45,294 +43,294 @@ function formatSize(bytes: number): string {
   return `${(bytes / (1024 * 1024)).toFixed(1)} MB`
 }
 
-const downloadFormats = computed(() => {
-  const currentItem = item.value
-  if (!currentItem) return []
-  const formats = currentItem.fileType === 'image'
+function formatDuration(seconds: number): string {
+  const minutes = Math.floor(seconds / 60)
+  const rest = Math.floor(seconds % 60)
+  return `${minutes}:${rest.toString().padStart(2, '0')}`
+}
+
+const alternativeFormats = computed(() => {
+  const current = item.value
+  if (!current) return []
+  const formats = current.fileType === 'image'
     ? [
         { label: 'PNG', format: 'png' },
         { label: 'JPG', format: 'jpg' },
         { label: 'WebP', format: 'webp' },
       ]
-    : currentItem.fileType === 'audio'
+    : current.fileType === 'audio'
       ? [
           { label: 'MP3', format: 'mp3' },
           { label: 'WAV', format: 'wav' },
         ]
       : []
-  return formats.filter((format) => format.format !== currentItem.fileExtension)
+  return formats.filter((entry) => entry.format !== current.fileExtension)
+})
+
+interface DetailField {
+  label: string
+  value: string
+}
+
+// Only the human-readable words get title case. A MIME type must not — CSS `capitalize`
+// on the whole value turned `image/png` into `Image/Png`.
+function capitalize(value: string): string {
+  return value ? value[0].toUpperCase() + value.slice(1) : value
+}
+
+const fields = computed<DetailField[]>(() => {
+  const current = item.value
+  if (!current) return []
+  const rows: DetailField[] = [
+    { label: 'Type', value: `${capitalize(current.fileType)} · ${current.mimeType}` },
+    { label: 'Size', value: formatSize(current.fileSizeBytes) },
+  ]
+  if (current.width && current.height) {
+    rows.push({ label: 'Dimensions', value: `${current.width} × ${current.height}` })
+  }
+  if (current.durationSeconds) {
+    rows.push({ label: 'Duration', value: formatDuration(current.durationSeconds) })
+  }
+  rows.push({ label: 'Category', value: capitalize(current.category) })
+  rows.push({ label: 'Source', value: capitalize(current.source) })
+  rows.push({ label: 'Added', value: formatDate(current.createdAt) })
+  return rows
 })
 </script>
 
 <template>
-  <div class="asset-detail">
-    <button class="asset-detail__back" @click="router.push({ name: 'gallery' })">
-      ← Back to Gallery
-    </button>
+  <div :class="[bemm(''), 'container']">
+    <RouterLink :class="bemm('back')" :to="{ name: 'gallery' }">
+      <SilIcon name="arrows/arrow-left" />
+      Back to the library
+    </RouterLink>
 
-    <div v-if="loading" class="asset-detail__loading">Loading…</div>
-    <div v-else-if="error" class="asset-detail__error">{{ error }}</div>
+    <p v-if="loading" :class="bemm('status')" role="status">Loading asset…</p>
+    <p v-else-if="error" :class="bemm('status')" role="status">{{ error }}</p>
 
-    <template v-else-if="item">
-      <div class="asset-detail__layout">
-        <!-- Preview area -->
-        <section class="asset-detail__preview">
-          <ImagePreview
-            v-if="item.fileType === 'image'"
-            :src="item.url"
-            :alt="item.title"
-            :width="item.width"
-            :height="item.height"
-            @download="downloadAsset()"
-          />
-          <AudioPreview
-            v-else-if="item.fileType === 'audio'"
-            :src="item.url"
-            :title="item.title"
-            :duration-seconds="item.durationSeconds"
-            @download="downloadAsset()"
-          />
-          <div v-else class="asset-detail__unsupported">
-            <p>Preview not available for {{ item.fileType }} files.</p>
-            <button @click="downloadAsset()">↓ Download</button>
+    <div v-else-if="item" :class="bemm('layout')">
+      <section :class="bemm('preview')">
+        <ImagePreview
+          v-if="item.fileType === 'image'"
+          :src="item.url"
+          :alt="item.title"
+          :width="item.width"
+          :height="item.height"
+        />
+        <AudioPreview
+          v-else-if="item.fileType === 'audio'"
+          :src="item.url"
+          :title="item.title"
+          :duration-seconds="item.durationSeconds"
+        />
+        <p v-else :class="bemm('status')">
+          There is no in-page preview for {{ item.fileType }} files yet — download it instead.
+        </p>
+      </section>
+
+      <aside :class="bemm('meta')">
+        <div :class="bemm('heading')">
+          <p class="eyebrow">{{ item.category }}</p>
+          <h1 :class="bemm('title')">{{ item.title }}</h1>
+          <p v-if="item.description" class="body-sm">{{ item.description }}</p>
+        </div>
+
+        <dl :class="bemm('fields')">
+          <div v-for="field in fields" :key="field.label" :class="bemm('field')">
+            <dt :class="bemm('field-label')">{{ field.label }}</dt>
+            <dd :class="bemm('field-value')">{{ field.value }}</dd>
           </div>
-        </section>
+        </dl>
 
-        <!-- Metadata sidebar -->
-        <aside class="asset-detail__meta">
-          <h1 class="asset-detail__title">{{ item.title }}</h1>
-          <p v-if="item.description" class="asset-detail__desc">{{ item.description }}</p>
+        <div v-if="item.tags.length" :class="bemm('tags')">
+          <span v-for="tag in item.tags" :key="tag" :class="bemm('tag')">{{ tag }}</span>
+        </div>
 
-          <dl class="asset-detail__fields">
-            <div class="asset-detail__field">
-              <dt>Type</dt>
-              <dd>{{ item.fileType }} ({{ item.mimeType }})</dd>
-            </div>
-            <div class="asset-detail__field">
-              <dt>Size</dt>
-              <dd>{{ formatSize(item.fileSizeBytes) }}</dd>
-            </div>
-            <div v-if="item.width && item.height" class="asset-detail__field">
-              <dt>Dimensions</dt>
-              <dd>{{ item.width }} × {{ item.height }}</dd>
-            </div>
-            <div v-if="item.durationSeconds" class="asset-detail__field">
-              <dt>Duration</dt>
-              <dd>{{ Math.floor(item.durationSeconds / 60) }}:{{ String(Math.floor(item.durationSeconds % 60)).padStart(2, '0') }}</dd>
-            </div>
-            <div class="asset-detail__field">
-              <dt>Category</dt>
-              <dd>{{ item.category }}</dd>
-            </div>
-            <div v-if="item.tags.length" class="asset-detail__field">
-              <dt>Tags</dt>
-              <dd class="asset-detail__tags">
-                <span v-for="tag in item.tags" :key="tag" class="asset-detail__tag">{{ tag }}</span>
-              </dd>
-            </div>
-            <div class="asset-detail__field">
-              <dt>Source</dt>
-              <dd>{{ item.source }}</dd>
-            </div>
-            <div v-if="item.generationPrompt" class="asset-detail__field">
-              <dt>Prompt</dt>
-              <dd class="asset-detail__prompt">{{ item.generationPrompt }}</dd>
-            </div>
-            <div class="asset-detail__field">
-              <dt>Created</dt>
-              <dd>{{ formatDate(item.createdAt) }}</dd>
-            </div>
-          </dl>
+        <div v-if="item.generationPrompt" :class="bemm('prompt')">
+          <p :class="bemm('field-label')">Prompt</p>
+          <p :class="bemm('prompt-text')">{{ item.generationPrompt }}</p>
+        </div>
 
-          <!-- Download buttons -->
-          <div class="asset-detail__downloads">
-            <button
-              class="asset-detail__dl-btn asset-detail__dl-btn--primary"
-              @click="downloadAsset()"
-            >
-              ↓ Download {{ item.fileExtension.toUpperCase() }}
-            </button>
-            <div v-if="downloadFormats.length > 1" class="asset-detail__alt-formats">
-              <span class="asset-detail__alt-label">Also available as:</span>
+        <div :class="bemm('downloads')">
+          <button class="btn btn--primary" @click="downloadAsset()">
+            <SilIcon name="arrows/arrow-download" />
+            Download {{ item.fileExtension.toUpperCase() }}
+          </button>
+
+          <div v-if="alternativeFormats.length" :class="bemm('formats')">
+            <span :class="bemm('field-label')">Also available as</span>
+            <div :class="bemm('format-list')">
               <button
-                v-for="fmt in downloadFormats"
-                :key="fmt.format"
-                class="asset-detail__dl-btn asset-detail__dl-btn--ghost"
-                @click="downloadAsset(fmt.format)"
+                v-for="entry in alternativeFormats"
+                :key="entry.format"
+                class="btn btn--quiet"
+                @click="downloadAsset(entry.format)"
               >
-                {{ fmt.label }}
+                {{ entry.label }}
               </button>
             </div>
           </div>
-        </aside>
-      </div>
-    </template>
+        </div>
+      </aside>
+    </div>
   </div>
 </template>
 
-<style lang="scss" scoped>
+<style lang="scss">
 .asset-detail {
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--space) * 2);
+  padding-block: clamp(var(--space), 4vw, calc(var(--space) * 3));
+
   &__back {
     display: inline-flex;
     align-items: center;
-    gap: 0.35rem;
-    padding: 0.4rem 0.75rem;
-    border: 1px solid var(--tiko-border);
-    border-radius: 0.5rem;
-    background: var(--tiko-surface);
-    color: var(--color-foreground);
-    font-size: 0.85rem;
-    cursor: pointer;
-    margin-bottom: 1.25rem;
+    align-self: flex-start;
+    gap: var(--space-s);
+    padding: 8px 16px 8px 12px;
+    border-radius: 999px;
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+    font-weight: 600;
+    transition: background 0.15s var(--ease-out), color 0.15s var(--ease-out);
 
-    &:hover { background: var(--tiko-surface-raised); }
+    &:hover {
+      background: var(--surface-ink-wash);
+      color: var(--color-foreground);
+    }
   }
 
-  &__loading,
-  &__error {
+  &__status {
+    padding: calc(var(--space) * 3) var(--space);
     text-align: center;
-    padding: 3rem 1rem;
-    color: color-mix(in srgb, var(--color-foreground) 50%, transparent);
+    color: var(--text-muted);
   }
-
-  &__error { color: var(--color-error, #ef405d); }
 
   &__layout {
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-
-    @media (min-width: 768px) {
-      flex-direction: row;
-      align-items: flex-start;
-    }
+    display: grid;
+    grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr);
+    align-items: start;
+    gap: clamp(calc(var(--space) * 1.5), 4vw, calc(var(--space) * 3.5));
   }
 
   &__preview {
-    flex: 1;
     min-width: 0;
-
-    @media (min-width: 768px) {
-      max-width: 60%;
-    }
-  }
-
-  &__unsupported {
-    text-align: center;
-    padding: 2rem;
-    color: color-mix(in srgb, var(--color-foreground) 50%, transparent);
   }
 
   &__meta {
-    flex-shrink: 0;
-    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: calc(var(--space) * 1.5);
+    position: sticky;
+    top: calc(var(--header-height) + var(--space) * 2);
+  }
 
-    @media (min-width: 768px) {
-      width: 16rem;
-    }
+  &__heading {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-s);
   }
 
   &__title {
-    font-size: 1.2rem;
-    font-weight: 700;
-    margin: 0 0 0.5rem;
-  }
-
-  &__desc {
-    font-size: 0.9rem;
-    color: color-mix(in srgb, var(--color-foreground) 70%, transparent);
-    margin: 0 0 1rem;
-    line-height: 1.5;
+    font-size: clamp(1.5rem, 3vw, 2rem);
+    line-height: 1.1;
+    letter-spacing: -0.01em;
   }
 
   &__fields {
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
-    margin: 0 0 1rem;
+    gap: var(--space-s);
+    margin: 0;
   }
 
   &__field {
     display: flex;
+    align-items: baseline;
     justify-content: space-between;
-    gap: 0.5rem;
-    font-size: 0.85rem;
+    gap: var(--space);
+    padding-bottom: var(--space-s);
+    border-bottom: 1px solid var(--border);
+    font-size: 0.875rem;
+  }
 
-    dt {
-      color: color-mix(in srgb, var(--color-foreground) 55%, transparent);
-      flex-shrink: 0;
-    }
+  &__field-label {
+    flex-shrink: 0;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
 
-    dd {
-      text-align: right;
-      font-weight: 500;
-    }
+  &__field-value {
+    margin: 0;
+    text-align: right;
+    overflow-wrap: anywhere;
   }
 
   &__tags {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.25rem;
-    justify-content: flex-end;
+    gap: var(--space-xs);
   }
 
   &__tag {
-    padding: 0.1rem 0.45rem;
-    background: color-mix(in srgb, var(--tiko-app-primary) 15%, var(--color-background));
-    color: var(--tiko-app-primary);
+    padding: 3px 10px;
     border-radius: 999px;
+    background: color-mix(in srgb, var(--color-primary), transparent 85%);
+    color: color-mix(in srgb, var(--color-foreground), var(--color-primary) 30%);
     font-size: 0.75rem;
+    font-weight: 600;
   }
 
   &__prompt {
-    font-family: monospace;
-    font-size: 0.8rem;
-    max-height: 6rem;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+  }
+
+  &__prompt-text {
+    max-height: 9rem;
     overflow-y: auto;
+    padding: var(--space);
+    border-radius: 12px;
+    background: var(--surface-subtle);
+    font-family: var(--font-family-monospace);
+    font-size: 0.8rem;
+    line-height: 1.55;
     white-space: pre-wrap;
   }
 
   &__downloads {
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
-    padding-top: 0.75rem;
-    border-top: 1px solid var(--tiko-border);
+    gap: var(--space);
   }
 
-  &__dl-btn {
-    padding: 0.55rem 1rem;
-    border: none;
-    border-radius: 0.6rem;
-    font-size: 0.85rem;
-    font-weight: 600;
-    cursor: pointer;
-    text-align: center;
-
-    &--primary {
-      background: var(--tiko-app-primary);
-      color: var(--tiko-app-primary-text);
-    }
-
-    &--ghost {
-      background: transparent;
-      border: 1px solid var(--tiko-border);
-      color: var(--color-foreground);
-    }
-
-    &:hover { opacity: 0.85; }
-  }
-
-  &__alt-formats {
+  &__formats {
     display: flex;
-    align-items: center;
-    gap: 0.4rem;
-    flex-wrap: wrap;
+    flex-direction: column;
+    gap: var(--space-s);
   }
 
-  &__alt-label {
-    font-size: 0.75rem;
-    color: color-mix(in srgb, var(--color-foreground) 50%, transparent);
+  &__format-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-s);
+  }
+}
+
+@media (max-width: 900px) {
+  .asset-detail {
+    &__layout {
+      grid-template-columns: 1fr;
+    }
+
+    &__meta {
+      position: static;
+    }
   }
 }
 </style>

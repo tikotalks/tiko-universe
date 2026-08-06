@@ -3,6 +3,7 @@ import { RouterView, useRoute } from 'vue-router'
 import { watchEffect } from 'vue'
 import SiteHeader from './components/SiteHeader.vue'
 import SiteFooter from './components/SiteFooter.vue'
+import { getAppBySlug } from './content/appUniverse'
 
 const route = useRoute()
 
@@ -20,7 +21,17 @@ watchEffect(() => {
     '/privacy-policy': 'Privacy policy — TikoTalks',
     '/docs': 'Docs — TikoTalks',
   }
-  document.title = titles[route.path] ?? 'TikoTalks'
+
+  const known = titles[route.path]
+  if (known) {
+    document.title = known
+    return
+  }
+
+  // App detail pages carry the app's own name rather than the bare site name.
+  const slug = route.params.slug
+  const app = typeof slug === 'string' ? getAppBySlug(slug) : undefined
+  document.title = app ? `${app.name} — ${app.headline} — TikoTalks` : 'TikoTalks'
 })
 </script>
 

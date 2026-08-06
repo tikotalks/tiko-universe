@@ -1,5 +1,7 @@
 <script setup lang="ts">
-import { ref, onUnmounted } from 'vue'
+import { ref, computed, onUnmounted } from 'vue'
+import { useBemm } from 'bemm'
+import { SilIcon } from '@tiko/ui'
 
 const props = defineProps<{
   src: string
@@ -7,58 +9,55 @@ const props = defineProps<{
   durationSeconds?: number
 }>()
 
-const emit = defineEmits<{
-  download: []
-}>()
+const bemm = useBemm('audio-preview', { return: 'string', includeBaseClass: true })
 
 const audioRef = ref<HTMLAudioElement | null>(null)
 const isPlaying = ref(false)
 const currentTime = ref(0)
 const audioDuration = ref(props.durationSeconds ?? 0)
 
+const progress = computed(() => (audioDuration.value ? (currentTime.value / audioDuration.value) * 100 : 0))
+
 function togglePlay() {
-  if (!audioRef.value) return
-  if (isPlaying.value) {
-    audioRef.value.pause()
-  } else {
-    audioRef.value.play()
-  }
+  const audio = audioRef.value
+  if (!audio) return
+  if (isPlaying.value) audio.pause()
+  else void audio.play()
 }
 
 function onPlay() { isPlaying.value = true }
 function onPause() { isPlaying.value = false }
+
 function onTimeUpdate() {
   if (audioRef.value) currentTime.value = audioRef.value.currentTime
 }
+
 function onLoadedMetadata() {
   if (audioRef.value) audioDuration.value = audioRef.value.duration
 }
 
-function formatTime(s: number): string {
-  const m = Math.floor(s / 60)
-  const sec = Math.floor(s % 60)
-  return `${m}:${sec.toString().padStart(2, '0')}`
+function onSeek(event: Event) {
+  const value = Number((event.target as HTMLInputElement).value)
+  const audio = audioRef.value
+  if (!audio || !audioDuration.value) return
+  audio.currentTime = (value / 100) * audioDuration.value
+  currentTime.value = audio.currentTime
 }
 
-const progress = ref(0)
-function onProgressInput(e: Event) {
-  const val = Number((e.target as HTMLInputElement).value)
-  progress.value = val
-  if (audioRef.value && audioDuration.value) {
-    audioRef.value.currentTime = (val / 100) * audioDuration.value
-  }
+function formatTime(seconds: number): string {
+  if (!Number.isFinite(seconds)) return '0:00'
+  const minutes = Math.floor(seconds / 60)
+  const rest = Math.floor(seconds % 60)
+  return `${minutes}:${rest.toString().padStart(2, '0')}`
 }
 
 onUnmounted(() => {
-  if (audioRef.value) {
-    audioRef.value.pause()
-    audioRef.value = null
-  }
+  audioRef.value?.pause()
 })
 </script>
 
 <template>
-  <div class="audio-preview">
+  <div :class="bemm('')">
     <audio
       ref="audioRef"
       :src="src"
@@ -69,150 +68,112 @@ onUnmounted(() => {
       @loadedmetadata="onLoadedMetadata"
     />
 
-    <div class="audio-preview__card">
-      <div class="audio-preview__info">
-        <span class="audio-preview__icon">{{ isPlaying ? '⏸' : '▶' }}</span>
-        <div class="audio-preview__text">
-          <span class="audio-preview__title">{{ title }}</span>
-          <span class="audio-preview__time">
-            {{ formatTime(currentTime) }} / {{ formatTime(audioDuration) }}
-          </span>
-        </div>
-      </div>
+    <button
+      :class="bemm('play')"
+      :aria-label="isPlaying ? `Pause ${title}` : `Play ${title}`"
+      @click="togglePlay"
+    >
+      <SilIcon :name="isPlaying ? 'media/playback-pause' : 'media/playback-play'" />
+    </button>
 
-      <div class="audio-preview__controls">
-        <button class="audio-preview__play-btn" @click="togglePlay">
-          {{ isPlaying ? '⏸' : '▶' }}
-        </button>
-
-        <input
-          type="range"
-          class="audio-preview__progress"
-          min="0"
-          max="100"
-          :value="audioDuration ? (currentTime / audioDuration) * 100 : 0"
-          @input="onProgressInput"
-        />
-
-        <button class="audio-preview__dl-btn" @click="emit('download')">
-          ↓
-        </button>
-      </div>
+    <div :class="bemm('track')">
+      <p :class="bemm('title')">{{ title }}</p>
+      <input
+        type="range"
+        :class="bemm('scrubber')"
+        min="0"
+        max="100"
+        step="0.1"
+        :value="progress"
+        aria-label="Seek"
+        @input="onSeek"
+      >
+      <p :class="bemm('time')">
+        {{ formatTime(currentTime) }} / {{ formatTime(audioDuration) }}
+      </p>
     </div>
   </div>
 </template>
 
-<style lang="scss" scoped>
+<style lang="scss">
 .audio-preview {
-  &__card {
-    padding: 1rem;
-    background: var(--tiko-surface-raised);
-    border: 1px solid var(--tiko-border);
-    border-radius: 1rem;
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
-  }
+  display: flex;
+  align-items: center;
+  gap: var(--space);
+  padding: clamp(var(--space), 3vw, calc(var(--space) * 2));
+  border-radius: 24px;
+  background: var(--surface-subtle);
 
-  &__info {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-  }
-
-  &__icon {
-    font-size: 1.5rem;
-    width: 2.5rem;
-    height: 2.5rem;
+  &__play {
     display: flex;
     align-items: center;
     justify-content: center;
-    background: var(--tiko-app-primary);
-    color: var(--tiko-app-primary-text);
-    border-radius: 0.75rem;
+    flex-shrink: 0;
+    width: 3.5rem;
+    height: 3.5rem;
+    border: none;
+    border-radius: 50%;
+    background: var(--color-primary);
+    color: var(--color-primary-text);
+    font-size: 1.15rem;
+    cursor: pointer;
+    transition: transform 0.15s var(--ease-out);
+
+    &:hover { transform: translateY(-1px); }
+
+    &:focus-visible {
+      outline: 2px solid var(--color-primary);
+      outline-offset: 3px;
+    }
   }
 
-  &__text {
+  &__track {
     display: flex;
     flex-direction: column;
-    gap: 0.15rem;
+    gap: var(--space-xs);
+    flex: 1;
+    min-width: 0;
   }
 
   &__title {
     font-weight: 600;
-    font-size: 0.95rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
-  &__time {
-    font-size: 0.8rem;
-    color: color-mix(in srgb, var(--color-foreground) 50%, transparent);
-    font-variant-numeric: tabular-nums;
-  }
-
-  &__controls {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-  }
-
-  &__play-btn {
-    width: 2rem;
-    height: 2rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border: none;
-    border-radius: 50%;
-    background: var(--tiko-app-primary);
-    color: var(--tiko-app-primary-text);
-    font-size: 0.8rem;
-    cursor: pointer;
-    flex-shrink: 0;
-  }
-
-  &__progress {
-    flex: 1;
+  &__scrubber {
+    width: 100%;
     height: 0.35rem;
     appearance: none;
-    background: color-mix(in srgb, var(--color-foreground) 15%, transparent);
     border-radius: 999px;
+    background: color-mix(in srgb, var(--color-foreground), transparent 85%);
     outline: none;
     cursor: pointer;
 
     &::-webkit-slider-thumb {
       appearance: none;
-      width: 0.85rem;
-      height: 0.85rem;
+      width: 0.9rem;
+      height: 0.9rem;
       border-radius: 50%;
-      background: var(--tiko-app-primary);
+      background: var(--color-primary);
       cursor: pointer;
     }
 
     &::-moz-range-thumb {
-      width: 0.85rem;
-      height: 0.85rem;
+      width: 0.9rem;
+      height: 0.9rem;
       border: none;
       border-radius: 50%;
-      background: var(--tiko-app-primary);
+      background: var(--color-primary);
       cursor: pointer;
     }
   }
 
-  &__dl-btn {
-    width: 2rem;
-    height: 2rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border: 1px solid var(--tiko-border);
-    border-radius: 50%;
-    background: var(--tiko-surface);
-    color: var(--color-foreground);
-    font-size: 1rem;
-    cursor: pointer;
-    flex-shrink: 0;
-
-    &:hover { background: var(--tiko-surface-raised); }
+  &__time {
+    font-size: 0.8rem;
+    font-variant-numeric: tabular-nums;
+    color: var(--text-muted);
   }
 }
 </style>

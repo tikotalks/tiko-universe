@@ -59,6 +59,11 @@ interface ApiErrorBody {
   error?: { message?: string } | string
 }
 
+interface FacetsResponse {
+  data: { categories?: MediaFacet[]; tags?: MediaFacet[]; types?: MediaFacet[] }
+  meta?: MediaFacets['meta']
+}
+
 export interface AudioLibraryTrack {
   id: string
   albumId: string
@@ -91,10 +96,30 @@ export interface MediaFacet {
   count: number
 }
 
+export interface MediaFacetMeta {
+  returned: number
+  total: number
+  truncated: boolean
+}
+
 export interface MediaFacets {
   categories: MediaFacet[]
   tags: MediaFacet[]
   types: MediaFacet[]
+  meta: {
+    categories: MediaFacetMeta
+    tags: MediaFacetMeta
+    types: MediaFacetMeta
+  }
+}
+
+const EMPTY_FACET_META: MediaFacetMeta = { returned: 0, total: 0, truncated: false }
+
+export const EMPTY_MEDIA_FACETS: MediaFacets = {
+  categories: [],
+  tags: [],
+  types: [],
+  meta: { categories: EMPTY_FACET_META, tags: EMPTY_FACET_META, types: EMPTY_FACET_META },
 }
 
 export interface AudioLibraryAlbum {
@@ -278,10 +303,16 @@ export function useAdminMediaLibrary() {
     url.searchParams.set('includeInactive', 'true')
     url.searchParams.set('includeHidden', 'true')
     const response = await fetch(url, { headers: { authorization: `Bearer ${token.value}` } })
-    const body = await response.json().catch(() => null) as ApiErrorBody | { data: MediaFacets } | null
+    const body = await response.json().catch(() => null) as ApiErrorBody | FacetsResponse | null
     const apiError = body && 'error' in body ? body.error : undefined
     if (!response.ok) throw new Error((typeof apiError === 'string' ? apiError : apiError?.message) ?? `Media facets failed: ${response.status}`)
-    return (body as { data: MediaFacets }).data
+    const parsed = body as FacetsResponse
+    return {
+      categories: parsed.data.categories ?? [],
+      tags: parsed.data.tags ?? [],
+      types: parsed.data.types ?? [],
+      meta: parsed.meta ?? EMPTY_MEDIA_FACETS.meta,
+    }
   }
 
   async function deleteMedia(id: string): Promise<void> {

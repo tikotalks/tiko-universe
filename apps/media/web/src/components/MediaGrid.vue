@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import type { MediaItem } from '../types/media'
+import { useBemm } from 'bemm'
 import MediaCard from './MediaCard.vue'
+import type { MediaItem } from '../types/media'
 
 defineProps<{
   items: MediaItem[]
@@ -11,20 +12,21 @@ const emit = defineEmits<{
   cardClick: [item: MediaItem]
   download: [item: MediaItem]
 }>()
+
+const bemm = useBemm('media-grid', { return: 'string', includeBaseClass: true })
 </script>
 
 <template>
-  <div class="media-grid">
-    <div v-if="loading && items.length === 0" class="media-grid__empty">
-      <span class="media-grid__spinner">⟳</span>
-      <p>Loading media…</p>
-    </div>
+  <div :class="bemm('')">
+    <p v-if="loading && items.length === 0" :class="bemm('status')" role="status">
+      Loading media…
+    </p>
 
-    <div v-else-if="items.length === 0" class="media-grid__empty">
-      <p>No media found.</p>
-    </div>
+    <p v-else-if="items.length === 0" :class="bemm('status')" role="status">
+      No media matches those filters.
+    </p>
 
-    <div v-else class="media-grid__grid">
+    <div v-else :class="bemm('grid', ['', loading ? 'pending' : ''])">
       <MediaCard
         v-for="item in items"
         :key="item.id"
@@ -33,54 +35,28 @@ const emit = defineEmits<{
         @download="emit('download', item)"
       />
     </div>
-
-    <div v-if="loading && items.length > 0" class="media-grid__loading-more">
-      <span class="media-grid__spinner">⟳</span> Loading more…
-    </div>
   </div>
 </template>
 
-<style lang="scss" scoped>
+<style lang="scss">
 .media-grid {
   &__grid {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 1rem;
+    grid-template-columns: repeat(auto-fill, minmax(11rem, 1fr));
+    gap: var(--space);
+    transition: opacity 0.18s var(--ease-out);
 
-    @media (min-width: 640px) {
-      grid-template-columns: repeat(3, 1fr);
-    }
-
-    @media (min-width: 960px) {
-      grid-template-columns: repeat(4, 1fr);
-    }
-
-    @media (min-width: 1200px) {
-      grid-template-columns: repeat(5, 1fr);
+    // Refetching keeps the current page on screen and dims it, rather than
+    // replacing the grid with a spinner and losing the reader's place.
+    &--pending {
+      opacity: 0.55;
     }
   }
 
-  &__empty {
+  &__status {
+    padding: calc(var(--space) * 3) var(--space);
     text-align: center;
-    padding: 3rem 1rem;
-    color: color-mix(in srgb, var(--color-foreground) 50%, transparent);
-  }
-
-  &__loading-more {
-    text-align: center;
-    padding: 1rem;
-    color: color-mix(in srgb, var(--color-foreground) 50%, transparent);
-    font-size: 0.9rem;
-  }
-
-  &__spinner {
-    display: inline-block;
-    animation: spin 1s linear infinite;
-  }
-
-  @keyframes spin {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
+    color: var(--text-muted);
   }
 }
 </style>

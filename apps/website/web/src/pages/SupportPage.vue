@@ -1,12 +1,10 @@
 <script setup lang="ts">
 import { RouterLink } from 'vue-router'
+import { sectionTones as tones } from '../siteContent'
 import PageSection from '../components/sections/PageSection.vue'
 import CardGrid from '../components/sections/CardGrid.vue'
 import ColorCard from '../components/sections/ColorCard.vue'
 import CtaBanner from '../components/sections/CtaBanner.vue'
-
-// Colour rotation so adjacent cards read as distinct Tiko colours.
-const tones = ['primary', 'secondary', 'tertiary', 'accent', 'warning', 'yes-no', 'cards', 'sequence']
 
 const topics = [
   {
@@ -89,7 +87,7 @@ const topics = [
         body="No question is too small. Tell us what's happening and we'll help you get back to communicating."
       >
         <template #actions>
-          <a class="button button--light" href="mailto:support@tikotalks.com">Email support</a>
+          <a class="btn btn--light" href="mailto:support@tikotalks.com">Email support</a>
         </template>
       </CtaBanner>
     </PageSection>
