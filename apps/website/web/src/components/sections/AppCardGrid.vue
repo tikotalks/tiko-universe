@@ -22,7 +22,7 @@ const items = (p: { apps?: TikoAppInfo[] }) => p.apps ?? tikoApps
       :style="{ '--card-bg': app.color, '--card-fg': app.colorText }"
     >
       <div :class="bemm('icon-wrap')">
-        <img :src="app.iconUrl" :alt="app.name" :class="bemm('icon')" loading="lazy" />
+        <img :src="app.iconUrl" :alt="app.name" :class="bemm('icon')" loading="eager" />
       </div>
       <div :class="bemm('label')">
         <h3 :class="bemm('name')">{{ app.name }}</h3>

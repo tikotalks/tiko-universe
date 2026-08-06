@@ -199,14 +199,14 @@ watch(slug, (newSlug) => {
             <img
               :src="shot.light"
               :alt="`${app.name} — ${shot.caption}`"
-              loading="lazy"
+              loading="eager"
               class="app-detail__shot-img app-detail__shot-img--light"
             />
             <img
               :src="shot.dark"
               alt=""
               aria-hidden="true"
-              loading="lazy"
+              loading="eager"
               class="app-detail__shot-img app-detail__shot-img--dark"
             />
           </div>
@@ -239,7 +239,7 @@ watch(slug, (newSlug) => {
           <img
             :src="cdnUrl(resolveOriginalUrl(img), 300)"
             :alt="img.title"
-            loading="lazy"
+            loading="eager"
             class="app-detail__media-img"
           />
           <figcaption class="app-detail__media-caption">{{ img.title }}</figcaption>

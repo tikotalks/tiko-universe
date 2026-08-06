@@ -26,7 +26,7 @@ const shipped = computed(() => tikoApps.filter((app) => app.appStoreUrl))
       :style="{ '--card-bg': app.color, '--card-fg': app.colorText }"
     >
       <RouterLink :to="app.path" :class="bemm('link')">
-        <img :src="app.iconUrl" :alt="''" :class="bemm('icon')" loading="lazy" aria-hidden="true" />
+        <img :src="app.iconUrl" :alt="''" :class="bemm('icon')" loading="eager" aria-hidden="true" />
         <span :class="bemm('text')">
           <span :class="bemm('name')">{{ app.name }}</span>
           <span :class="bemm('summary')">{{ app.summary }}</span>
