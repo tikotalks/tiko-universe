@@ -41,3 +41,6 @@ artifacts/
 
 # iOS build output (archives, .ipa, dSYMs)
 apps/*/ios/build/
+
+# XcodeGen output for Write (generated from Project.yml)
+apps/write/ios/TikoWrite.xcodeproj/

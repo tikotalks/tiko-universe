@@ -203,6 +203,120 @@
     },
     "spiral": {
       "name": "spiraal"
+    },
+    "fish": {
+      "name": "vis"
+    },
+    "bird": {
+      "name": "vogel"
+    },
+    "butterfly": {
+      "name": "vlinder"
+    },
+    "snake": {
+      "name": "slang"
+    },
+    "cat": {
+      "name": "kat"
+    },
+    "duck": {
+      "name": "eend"
+    },
+    "ladybird": {
+      "name": "lieveheersbeestje"
+    },
+    "snail": {
+      "name": "slak"
+    },
+    "car": {
+      "name": "auto"
+    },
+    "bus": {
+      "name": "bus"
+    },
+    "boat": {
+      "name": "boot"
+    },
+    "plane": {
+      "name": "vliegtuig"
+    },
+    "rocket": {
+      "name": "raket"
+    },
+    "train": {
+      "name": "trein"
+    },
+    "balloon": {
+      "name": "ballon"
+    },
+    "bicycle": {
+      "name": "fiets"
+    },
+    "sun": {
+      "name": "zon"
+    },
+    "cloud": {
+      "name": "wolk"
+    },
+    "tree": {
+      "name": "boom"
+    },
+    "flower": {
+      "name": "bloem"
+    },
+    "leaf": {
+      "name": "blad"
+    },
+    "moon": {
+      "name": "maan"
+    },
+    "mountain": {
+      "name": "berg"
+    },
+    "raindrop": {
+      "name": "druppel"
+    },
+    "apple": {
+      "name": "appel"
+    },
+    "banana": {
+      "name": "banaan"
+    },
+    "ice-cream": {
+      "name": "ijsje"
+    },
+    "cherry": {
+      "name": "kers"
+    },
+    "carrot": {
+      "name": "wortel"
+    },
+    "cupcake": {
+      "name": "cakeje"
+    },
+    "bee": {
+      "name": "bij"
+    },
+    "frog": {
+      "name": "kikker"
+    },
+    "owl": {
+      "name": "uil"
+    },
+    "turtle": {
+      "name": "schildpad"
+    },
+    "mouse": {
+      "name": "muis"
+    },
+    "dog": {
+      "name": "hond"
+    },
+    "whale": {
+      "name": "walvis"
+    },
+    "crab": {
+      "name": "krab"
     }
   }
 }

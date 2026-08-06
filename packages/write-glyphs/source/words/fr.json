@@ -1,0 +1,274 @@
+{
+  "locale": "fr",
+  "words": [
+    {
+      "id": "chat",
+      "text": "chat",
+      "sortOrder": 0,
+      "glyphIds": [
+        "lower-c",
+        "lower-h",
+        "lower-a",
+        "lower-t"
+      ],
+      "shapeId": "cat"
+    },
+    {
+      "id": "chien",
+      "text": "chien",
+      "sortOrder": 1,
+      "glyphIds": [
+        "lower-c",
+        "lower-h",
+        "lower-i",
+        "lower-e",
+        "lower-n"
+      ],
+      "shapeId": "dog"
+    },
+    {
+      "id": "soleil",
+      "text": "soleil",
+      "sortOrder": 2,
+      "glyphIds": [
+        "lower-s",
+        "lower-o",
+        "lower-l",
+        "lower-e",
+        "lower-i",
+        "lower-l"
+      ],
+      "shapeId": "sun"
+    },
+    {
+      "id": "abeille",
+      "text": "abeille",
+      "sortOrder": 3,
+      "glyphIds": [
+        "lower-a",
+        "lower-b",
+        "lower-e",
+        "lower-i",
+        "lower-l",
+        "lower-l",
+        "lower-e"
+      ],
+      "shapeId": "bee"
+    },
+    {
+      "id": "hibou",
+      "text": "hibou",
+      "sortOrder": 4,
+      "glyphIds": [
+        "lower-h",
+        "lower-i",
+        "lower-b",
+        "lower-o",
+        "lower-u"
+      ],
+      "shapeId": "owl"
+    },
+    {
+      "id": "bus",
+      "text": "bus",
+      "sortOrder": 5,
+      "glyphIds": [
+        "lower-b",
+        "lower-u",
+        "lower-s"
+      ],
+      "shapeId": "bus"
+    },
+    {
+      "id": "auto",
+      "text": "auto",
+      "sortOrder": 6,
+      "glyphIds": [
+        "lower-a",
+        "lower-u",
+        "lower-t",
+        "lower-o"
+      ],
+      "shapeId": "car"
+    },
+    {
+      "id": "poisson",
+      "text": "poisson",
+      "sortOrder": 7,
+      "glyphIds": [
+        "lower-p",
+        "lower-o",
+        "lower-i",
+        "lower-s",
+        "lower-s",
+        "lower-o",
+        "lower-n"
+      ],
+      "shapeId": "fish"
+    },
+    {
+      "id": "arbre",
+      "text": "arbre",
+      "sortOrder": 8,
+      "glyphIds": [
+        "lower-a",
+        "lower-r",
+        "lower-b",
+        "lower-r",
+        "lower-e"
+      ],
+      "shapeId": "tree"
+    },
+    {
+      "id": "lune",
+      "text": "lune",
+      "sortOrder": 9,
+      "glyphIds": [
+        "lower-l",
+        "lower-u",
+        "lower-n",
+        "lower-e"
+      ],
+      "shapeId": "moon"
+    },
+    {
+      "id": "etoile",
+      "text": "etoile",
+      "sortOrder": 10,
+      "glyphIds": [
+        "lower-e",
+        "lower-t",
+        "lower-o",
+        "lower-i",
+        "lower-l",
+        "lower-e"
+      ],
+      "shapeId": "star"
+    },
+    {
+      "id": "grenouille",
+      "text": "grenouille",
+      "sortOrder": 11,
+      "glyphIds": [
+        "lower-g",
+        "lower-r",
+        "lower-e",
+        "lower-n",
+        "lower-o",
+        "lower-u",
+        "lower-i",
+        "lower-l",
+        "lower-l",
+        "lower-e"
+      ],
+      "shapeId": "frog"
+    },
+    {
+      "id": "feuille",
+      "text": "feuille",
+      "sortOrder": 12,
+      "glyphIds": [
+        "lower-f",
+        "lower-e",
+        "lower-u",
+        "lower-i",
+        "lower-l",
+        "lower-l",
+        "lower-e"
+      ],
+      "shapeId": "leaf"
+    },
+    {
+      "id": "bateau",
+      "text": "bateau",
+      "sortOrder": 13,
+      "glyphIds": [
+        "lower-b",
+        "lower-a",
+        "lower-t",
+        "lower-e",
+        "lower-a",
+        "lower-u"
+      ],
+      "shapeId": "boat"
+    },
+    {
+      "id": "pomme",
+      "text": "pomme",
+      "sortOrder": 14,
+      "glyphIds": [
+        "lower-p",
+        "lower-o",
+        "lower-m",
+        "lower-m",
+        "lower-e"
+      ],
+      "shapeId": "apple"
+    },
+    {
+      "id": "maman",
+      "text": "maman",
+      "sortOrder": 15,
+      "glyphIds": [
+        "lower-m",
+        "lower-a",
+        "lower-m",
+        "lower-a",
+        "lower-n"
+      ]
+    },
+    {
+      "id": "papa",
+      "text": "papa",
+      "sortOrder": 16,
+      "glyphIds": [
+        "lower-p",
+        "lower-a",
+        "lower-p",
+        "lower-a"
+      ]
+    },
+    {
+      "id": "oui",
+      "text": "oui",
+      "sortOrder": 17,
+      "glyphIds": [
+        "lower-o",
+        "lower-u",
+        "lower-i"
+      ]
+    },
+    {
+      "id": "non",
+      "text": "non",
+      "sortOrder": 18,
+      "glyphIds": [
+        "lower-n",
+        "lower-o",
+        "lower-n"
+      ]
+    },
+    {
+      "id": "salut",
+      "text": "salut",
+      "sortOrder": 19,
+      "glyphIds": [
+        "lower-s",
+        "lower-a",
+        "lower-l",
+        "lower-u",
+        "lower-t"
+      ]
+    },
+    {
+      "id": "moi",
+      "text": "moi",
+      "sortOrder": 20,
+      "glyphIds": [
+        "lower-m",
+        "lower-o",
+        "lower-i"
+      ]
+    }
+  ]
+}

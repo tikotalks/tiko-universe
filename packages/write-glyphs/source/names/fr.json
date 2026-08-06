@@ -203,6 +203,120 @@
     },
     "spiral": {
       "name": "spirale"
+    },
+    "fish": {
+      "name": "poisson"
+    },
+    "bird": {
+      "name": "oiseau"
+    },
+    "butterfly": {
+      "name": "papillon"
+    },
+    "snake": {
+      "name": "serpent"
+    },
+    "cat": {
+      "name": "chat"
+    },
+    "duck": {
+      "name": "canard"
+    },
+    "ladybird": {
+      "name": "coccinelle"
+    },
+    "snail": {
+      "name": "escargot"
+    },
+    "car": {
+      "name": "voiture"
+    },
+    "bus": {
+      "name": "bus"
+    },
+    "boat": {
+      "name": "bateau"
+    },
+    "plane": {
+      "name": "avion"
+    },
+    "rocket": {
+      "name": "fusée"
+    },
+    "train": {
+      "name": "train"
+    },
+    "balloon": {
+      "name": "ballon"
+    },
+    "bicycle": {
+      "name": "vélo"
+    },
+    "sun": {
+      "name": "soleil"
+    },
+    "cloud": {
+      "name": "nuage"
+    },
+    "tree": {
+      "name": "arbre"
+    },
+    "flower": {
+      "name": "fleur"
+    },
+    "leaf": {
+      "name": "feuille"
+    },
+    "moon": {
+      "name": "lune"
+    },
+    "mountain": {
+      "name": "montagne"
+    },
+    "raindrop": {
+      "name": "goutte"
+    },
+    "apple": {
+      "name": "pomme"
+    },
+    "banana": {
+      "name": "banane"
+    },
+    "ice-cream": {
+      "name": "glace"
+    },
+    "cherry": {
+      "name": "cerise"
+    },
+    "carrot": {
+      "name": "carotte"
+    },
+    "cupcake": {
+      "name": "cupcake"
+    },
+    "bee": {
+      "name": "abeille"
+    },
+    "frog": {
+      "name": "grenouille"
+    },
+    "owl": {
+      "name": "hibou"
+    },
+    "turtle": {
+      "name": "tortue"
+    },
+    "mouse": {
+      "name": "souris"
+    },
+    "dog": {
+      "name": "chien"
+    },
+    "whale": {
+      "name": "baleine"
+    },
+    "crab": {
+      "name": "crabe"
     }
   }
 }

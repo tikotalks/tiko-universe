@@ -203,6 +203,120 @@
     },
     "spiral": {
       "name": "spiral"
+    },
+    "fish": {
+      "name": "fish"
+    },
+    "bird": {
+      "name": "bird"
+    },
+    "butterfly": {
+      "name": "butterfly"
+    },
+    "snake": {
+      "name": "snake"
+    },
+    "cat": {
+      "name": "cat"
+    },
+    "duck": {
+      "name": "duck"
+    },
+    "ladybird": {
+      "name": "ladybird"
+    },
+    "snail": {
+      "name": "snail"
+    },
+    "car": {
+      "name": "car"
+    },
+    "bus": {
+      "name": "bus"
+    },
+    "boat": {
+      "name": "boat"
+    },
+    "plane": {
+      "name": "plane"
+    },
+    "rocket": {
+      "name": "rocket"
+    },
+    "train": {
+      "name": "train"
+    },
+    "balloon": {
+      "name": "balloon"
+    },
+    "bicycle": {
+      "name": "bicycle"
+    },
+    "sun": {
+      "name": "sun"
+    },
+    "cloud": {
+      "name": "cloud"
+    },
+    "tree": {
+      "name": "tree"
+    },
+    "flower": {
+      "name": "flower"
+    },
+    "leaf": {
+      "name": "leaf"
+    },
+    "moon": {
+      "name": "moon"
+    },
+    "mountain": {
+      "name": "mountain"
+    },
+    "raindrop": {
+      "name": "raindrop"
+    },
+    "apple": {
+      "name": "apple"
+    },
+    "banana": {
+      "name": "banana"
+    },
+    "ice-cream": {
+      "name": "ice cream"
+    },
+    "cherry": {
+      "name": "cherry"
+    },
+    "carrot": {
+      "name": "carrot"
+    },
+    "cupcake": {
+      "name": "cupcake"
+    },
+    "bee": {
+      "name": "bee"
+    },
+    "frog": {
+      "name": "frog"
+    },
+    "owl": {
+      "name": "owl"
+    },
+    "turtle": {
+      "name": "turtle"
+    },
+    "mouse": {
+      "name": "mouse"
+    },
+    "dog": {
+      "name": "dog"
+    },
+    "whale": {
+      "name": "whale"
+    },
+    "crab": {
+      "name": "crab"
     }
   }
 }

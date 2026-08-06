@@ -41,4 +41,47 @@ public object StrokeCore {
 
     /** Schema version of the saved attempt-record envelope. */
     public const val STATE_SCHEMA_VERSION: Int = 1
+
+    /**
+     * Decodes a glyph pack. Throws [PackDecodeError] on malformed data or an
+     * unknown schema version — a bad pack fails at load rather than tracing
+     * something unintended.
+     *
+     * Annotated [Throws] so the failure crosses the Objective-C bridge as an
+     * error Swift can catch. Without it Kotlin/Native treats an unchecked
+     * exception as unrecoverable and the app terminates, which would turn a
+     * malformed pack served from D1 into a crash instead of a fallback.
+     */
+    @Throws(PackDecodeError::class)
+    public fun loadPack(json: String): GlyphPack = decodePack(json)
+
+    /**
+     * Starts one attempt at one glyph. [attempt] is 1-based.
+     *
+     * Named `createSession` rather than `newSession`: `new` is reserved in
+     * Objective-C, so Kotlin/Native would export the latter as `doNewSession`.
+     */
+    public fun createSession(glyph: Glyph, settings: TraceSettings, attempt: Int = 1): TraceSession =
+        TraceSession(glyph, settings, attempt)
+
+    /**
+     * Starts a word: several glyphs traced in order along one line.
+     *
+     * [glyphIds] are resolved against [pack]; an id the pack does not hold is a
+     * [PackDecodeError] rather than a silently shortened word, because a child
+     * asked to write their name should not be handed a name with a letter
+     * missing.
+     */
+    @Throws(PackDecodeError::class)
+    public fun createWordSession(
+        pack: GlyphPack,
+        glyphIds: List<String>,
+        settings: TraceSettings,
+    ): WordSession {
+        if (glyphIds.isEmpty()) throw PackDecodeError("a word needs at least one letter")
+        val glyphs = glyphIds.map { id ->
+            pack.glyph(id) ?: throw PackDecodeError("pack '${pack.packId}' has no glyph '$id'")
+        }
+        return WordSession(glyphs, settings, pack.viewBoxWidth)
+    }
 }

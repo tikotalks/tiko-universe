@@ -138,7 +138,11 @@ struct TalkView: View {
 
     @ViewBuilder
     private var statusSection: some View {
-        if store.isOffline || (store.errorMessage?.isEmpty == false) {
+        // Capture runs deliberately load the local board, so "Working offline" is
+        // expected there and says nothing useful — it just lands in the App Store
+        // screenshot as a defect notice.
+        if !TikoScreenshotMode.isActive,
+           store.isOffline || (store.errorMessage?.isEmpty == false) {
             HStack(spacing: 8) {
                 if store.isOffline {
                     // The board and the sentences are on the device; what is missing

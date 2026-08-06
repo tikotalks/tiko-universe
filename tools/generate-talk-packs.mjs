@@ -84,20 +84,29 @@ function pack(locale) {
   return built
 }
 
+// The iOS app bundles its own copy of the packs, which is what Talk reads when
+// it has no network. Nothing kept that copy in step with `data/`, so the media
+// URLs sat in the source packs for weeks while every tile in the app rendered
+// as bare text. Write both from here.
+const IOS_RESOURCES = join(ROOT, 'packages/tikokit-ios/Sources/TikoKit/Resources/talk-packs')
+
 let written = 0
 let stale = 0
 for (const locale of locales) {
   const built = JSON.stringify(pack(locale), null, 2) + '\n'
-  const target = join(DATA, `${locale}-v${spine.version}.json`)
-  const previous = existsSync(target) ? readFileSync(target, 'utf8') : null
-  if (previous === built) continue
-  if (CHECK) {
-    console.error(`STALE packages/talk-packs/data/${locale}-v${spine.version}.json`)
-    stale += 1
-    continue
+  const name = `${locale}-v${spine.version}.json`
+  for (const dir of [DATA, IOS_RESOURCES]) {
+    const target = join(dir, name)
+    const previous = existsSync(target) ? readFileSync(target, 'utf8') : null
+    if (previous === built) continue
+    if (CHECK) {
+      console.error(`STALE ${target.replace(`${ROOT}/`, '')}`)
+      stale += 1
+      continue
+    }
+    writeFileSync(target, built)
+    written += 1
   }
-  writeFileSync(target, built)
-  written += 1
 }
 
 // A pack file with no source file behind it would keep shipping after its language
