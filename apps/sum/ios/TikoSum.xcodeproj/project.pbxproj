@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 77;
+	objectVersion = 54;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -24,6 +24,7 @@
 		71692F003E00802600EC0427 /* SumCatalog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C6CF8952638FE65FB56766F /* SumCatalog.swift */; };
 		7A61AFA69C4A1DCFB889332D /* TikoSpeechKit in Frameworks */ = {isa = PBXBuildFile; productRef = 11D9E42513A41A3ACEE04B59 /* TikoSpeechKit */; };
 		7C357C68077804DEA1A2FBBC /* SumPathStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD425AEEE765C7F1B22E6D01 /* SumPathStoreTests.swift */; };
+		89AE64C510CF529206ED6E34 /* SumPresetLabelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FA50FA7786A8DFA7578F7DA /* SumPresetLabelTests.swift */; };
 		8AE8B523DBED6D0A1F5CD926 /* SumPlayViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D60A0EDBA6F8FA3752A8E465 /* SumPlayViewModel.swift */; };
 		93A92401B43731D25DB97C74 /* NumberSpellerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 582AC46D722C12A9760BBEB3 /* NumberSpellerTests.swift */; };
 		93E0C92C9A9D5B29BA8D74C7 /* SumScreenshotSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E0E0CAF5CC8C30BF9DDA6C3 /* SumScreenshotSupport.swift */; };
@@ -67,6 +68,7 @@
 		8C6CF8952638FE65FB56766F /* SumCatalog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SumCatalog.swift; sourceTree = "<group>"; };
 		8D840F666230BDABBC74CA73 /* TikoSumUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TikoSumUITests.swift; sourceTree = "<group>"; };
 		90E1A75D54AECB146E116310 /* TikoSumTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = TikoSumTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		9FA50FA7786A8DFA7578F7DA /* SumPresetLabelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SumPresetLabelTests.swift; sourceTree = "<group>"; };
 		A2B7C454BDBB2AF55329A247 /* SumPlayViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SumPlayViewModelTests.swift; sourceTree = "<group>"; };
 		AABD00BD0BF8536FC8F49AF7 /* SumGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SumGenerator.swift; sourceTree = "<group>"; };
 		BE741DBB9C104F0B9E28FF70 /* SumParentEditor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SumParentEditor.swift; sourceTree = "<group>"; };
@@ -151,6 +153,7 @@
 				D0B9AB8A479E18E8F8ACFB48 /* SumGeneratorTests.swift */,
 				DD425AEEE765C7F1B22E6D01 /* SumPathStoreTests.swift */,
 				A2B7C454BDBB2AF55329A247 /* SumPlayViewModelTests.swift */,
+				9FA50FA7786A8DFA7578F7DA /* SumPresetLabelTests.swift */,
 			);
 			path = Tests;
 			sourceTree = "<group>";
@@ -265,6 +268,7 @@
 				};
 			};
 			buildConfigurationList = 8A2FC4009C1E1A775005479D /* Build configuration list for PBXProject "TikoSum" */;
+			compatibilityVersion = "Xcode 14.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -276,8 +280,7 @@
 			packageReferences = (
 				BF5D8109C4DB739A9DD8FD6A /* XCLocalSwiftPackageReference "../../../packages/tikokit-ios" */,
 			);
-			preferredProjectObjectVersion = 77;
-			productRefGroup = 762A1D0C9054EFD0185FCC1B /* Products */;
+			preferredProjectObjectVersion = 54;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
@@ -317,7 +320,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "set -euo pipefail\nREPO_ROOT=\"${SRCROOT}/../../..\"\nif ! command -v node >/dev/null 2>&1; then\n  echo \"error: node is required to generate Tiko app configs from admin before iOS build.\"\n  exit 1\nfi\nTIKO_APP_CONFIG_STRICT=1 node \"${REPO_ROOT}/tools/generate-app-configs.mjs\"\n";
+			shellScript = "set -euo pipefail\nREPO_ROOT=\"${SRCROOT}/../../..\"\n# Xcode runs build phases with a minimal PATH that does not include the\n# login shell's, so a node installed by homebrew, nvm, volta, fnm or\n# into ~/.local is invisible here even though `node -v` works in a\n# terminal. Look where it actually lives before giving up.\nPATH=\"$HOME/.local/bin:/opt/homebrew/bin:/usr/local/bin:$PATH\"\nif ! command -v node >/dev/null 2>&1; then\n  for candidate in \"$HOME\"/.nvm/versions/node/*/bin \"$HOME/.volta/bin\" \"$HOME\"/.fnm/node-versions/*/installation/bin; do\n    if [ -x \"$candidate/node\" ]; then\n      PATH=\"$candidate:$PATH\"\n      break\n    fi\n  done\nfi\nexport PATH\nif ! command -v node >/dev/null 2>&1; then\n  echo \"error: node is required to generate Tiko app configs from admin before iOS build.\"\n  exit 1\nfi\nTIKO_APP_CONFIG_STRICT=1 node \"${REPO_ROOT}/tools/generate-app-configs.mjs\"\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -361,6 +364,7 @@
 				F3FD3895543F51078AAD0FBB /* SumGeneratorTests.swift in Sources */,
 				7C357C68077804DEA1A2FBBC /* SumPathStoreTests.swift in Sources */,
 				0BE78BB7DE37BA8635EAC213 /* SumPlayViewModelTests.swift in Sources */,
+				89AE64C510CF529206ED6E34 /* SumPresetLabelTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -501,13 +505,13 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = Sources/TikoSum.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				INFOPLIST_FILE = Sources/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.1;
 				PRODUCT_BUNDLE_IDENTIFIER = mt.tiko.sum;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -520,13 +524,13 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = Sources/TikoSum.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				INFOPLIST_FILE = Sources/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.1;
 				PRODUCT_BUNDLE_IDENTIFIER = mt.tiko.sum;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
