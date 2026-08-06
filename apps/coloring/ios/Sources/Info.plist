@@ -20,6 +20,8 @@
 	<string>$(CURRENT_PROJECT_VERSION)</string>
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
+	<key>TikoKeychainAccessGroup</key>
+	<string>$(AppIdentifierPrefix)org.tiko.identity</string>
 	<key>UILaunchScreen</key>
 	<dict>
 		<key>UIColorName</key>

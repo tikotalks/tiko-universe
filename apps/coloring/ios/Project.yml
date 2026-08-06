@@ -7,6 +7,9 @@ settings:
   base:
     DEVELOPMENT_TEAM: 38MGF83L2L
     SWIFT_VERSION: "6.0"
+packages:
+  TikoKit:
+    path: ../../../packages/tikokit-ios
 targets:
   TikoColoring:
     type: application
@@ -14,12 +17,24 @@ targets:
     sources:
       - Sources
     dependencies:
+      - package: TikoKit
+        product: TikoKit
       # ColoringCore owns the document, hit testing, fills and history. The app
       # owns rendering and input. One XCFramework covers device and simulator.
       - framework: ../../../engines/coloring/coloring-core/build/XCFrameworks/release/ColoringCore.xcframework
         embed: true
         codeSign: true
     preBuildScripts:
+      - name: Generate Tiko app config
+        basedOnDependencyAnalysis: false
+        script: |
+          set -euo pipefail
+          REPO_ROOT="${SRCROOT}/../../.."
+          if ! command -v node >/dev/null 2>&1; then
+            echo "error: node is required to generate Tiko app configs before an iOS build."
+            exit 1
+          fi
+          TIKO_APP_CONFIG_STRICT=1 node "${REPO_ROOT}/tools/generate-app-configs.mjs"
       - name: Build ColoringCore if missing
         basedOnDependencyAnalysis: false
         script: |
@@ -44,6 +59,7 @@ targets:
         INFOPLIST_FILE: Sources/Info.plist
         MARKETING_VERSION: "1.0"
         CURRENT_PROJECT_VERSION: "1"
+        CODE_SIGN_ENTITLEMENTS: Sources/TikoColoring.entitlements
   TikoColoringTests:
     type: bundle.unit-test
     platform: iOS
@@ -51,6 +67,8 @@ targets:
       - Tests
     dependencies:
       - target: TikoColoring
+      - package: TikoKit
+        product: TikoKit
     settings:
       base:
         GENERATE_INFOPLIST_FILE: YES

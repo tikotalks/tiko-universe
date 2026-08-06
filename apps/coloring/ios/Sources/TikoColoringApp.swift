@@ -4,7 +4,7 @@ import SwiftUI
 struct TikoColoringApp: App {
     var body: some Scene {
         WindowGroup {
-            ColoringLibraryView()
+            ColoringHomeView()
         }
     }
 }

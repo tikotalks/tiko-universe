@@ -11,16 +11,21 @@
 		2FC393990374C41133F3C2B1 /* ColoringCore.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 99BC641CFC9AD4D80FEC5D44 /* ColoringCore.xcframework */; };
 		339E66218249049FF835E24C /* TikoColoringApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAC71F9D2B63AFDF5C4F244F /* TikoColoringApp.swift */; };
 		3A31024E81F9003109319D78 /* boat.svg in Resources */ = {isa = PBXBuildFile; fileRef = 0986D50E7067684BA77695DC /* boat.svg */; };
+		5EA9DF0F755CBDA7C815ED2D /* TikoKit in Frameworks */ = {isa = PBXBuildFile; productRef = E1395B001E64187DC44A5728 /* TikoKit */; };
 		7198A984006B0661F86F81CA /* ColoringView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4CCFA5AEAE3BC4A05652C90 /* ColoringView.swift */; };
 		797088D922BBA51995F2CC58 /* ColoringPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 627E67D1F98CBD195CBB9207 /* ColoringPage.swift */; };
 		881D77ED185BB924EC0B6D58 /* ColoringSnapshot.swift in Sources */ = {isa = PBXBuildFile; fileRef = F477838AFA58DE4D4249AAEA /* ColoringSnapshot.swift */; };
+		929754AF3D7A119E7076D7AE /* TikoKit in Frameworks */ = {isa = PBXBuildFile; productRef = 38FE37B343AF5F7C4B2294DA /* TikoKit */; };
+		9316E32625FCBDCBC57CA783 /* ColoringHomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37393DD37A96C0B3D9847787 /* ColoringHomeView.swift */; };
 		9B1703173D7403EB2079FE4F /* ColoringPageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AC3651975B623536037A3C4 /* ColoringPageTests.swift */; };
 		BD05900DA1B57A46D682A907 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3E6DD6E11712C048D259CFA8 /* Assets.xcassets */; };
 		C04228CEAB061C76879BDBCE /* ColoringLibraryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1BDD6675C4BE3619329015 /* ColoringLibraryView.swift */; };
 		C2A50F5E407837215CC6CB42 /* flower.svg in Resources */ = {isa = PBXBuildFile; fileRef = 53794BFBA6765C9BD8BF868E /* flower.svg */; };
 		C76D76EDFB214715C3D04DD4 /* cat.svg in Resources */ = {isa = PBXBuildFile; fileRef = A75F55EC72ED004EEE185B63 /* cat.svg */; };
 		CA3A7C8ECE3FAEC7325DB749 /* ColoringSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = A32ECCCF29B84990D97F79D0 /* ColoringSession.swift */; };
+		CBA3BD684376A429B6C101FA /* ColoringTools.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0F68D8C962A92F1DB1DD26C /* ColoringTools.swift */; };
 		D1A8062927512CF6B6665158 /* house.svg in Resources */ = {isa = PBXBuildFile; fileRef = 4F34402E7ECEF488699763B3 /* house.svg */; };
+		F4FD2A4A6BC5A2EA29EC5A22 /* ColoringAppConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = F60F1897D9598D536252F02F /* ColoringAppConfig.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -50,20 +55,25 @@
 /* Begin PBXFileReference section */
 		0986D50E7067684BA77695DC /* boat.svg */ = {isa = PBXFileReference; path = boat.svg; sourceTree = "<group>"; };
 		12A15D90378D1514AD2A2753 /* TikoColoringTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = TikoColoringTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		37393DD37A96C0B3D9847787 /* ColoringHomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColoringHomeView.swift; sourceTree = "<group>"; };
 		3E6DD6E11712C048D259CFA8 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		4F34402E7ECEF488699763B3 /* house.svg */ = {isa = PBXFileReference; path = house.svg; sourceTree = "<group>"; };
 		53794BFBA6765C9BD8BF868E /* flower.svg */ = {isa = PBXFileReference; path = flower.svg; sourceTree = "<group>"; };
+		5383AD4559B42C6B0AE18A2E /* TikoColoring.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = TikoColoring.entitlements; sourceTree = "<group>"; };
 		5D60CC0223C23616FAF46781 /* TikoColoring.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = TikoColoring.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		627E67D1F98CBD195CBB9207 /* ColoringPage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColoringPage.swift; sourceTree = "<group>"; };
 		6E1BDD6675C4BE3619329015 /* ColoringLibraryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColoringLibraryView.swift; sourceTree = "<group>"; };
 		99BC641CFC9AD4D80FEC5D44 /* ColoringCore.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = ColoringCore.xcframework; path = "../../../engines/coloring/coloring-core/build/XCFrameworks/release/ColoringCore.xcframework"; sourceTree = "<group>"; };
 		9AC3651975B623536037A3C4 /* ColoringPageTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColoringPageTests.swift; sourceTree = "<group>"; };
+		A13CDB1B7202D0A09AACC594 /* tikokit-ios */ = {isa = PBXFileReference; lastKnownFileType = folder; name = "tikokit-ios"; path = "../../../packages/tikokit-ios"; sourceTree = SOURCE_ROOT; };
 		A32ECCCF29B84990D97F79D0 /* ColoringSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColoringSession.swift; sourceTree = "<group>"; };
 		A4CCFA5AEAE3BC4A05652C90 /* ColoringView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColoringView.swift; sourceTree = "<group>"; };
 		A75F55EC72ED004EEE185B63 /* cat.svg */ = {isa = PBXFileReference; path = cat.svg; sourceTree = "<group>"; };
+		C0F68D8C962A92F1DB1DD26C /* ColoringTools.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColoringTools.swift; sourceTree = "<group>"; };
 		CAC71F9D2B63AFDF5C4F244F /* TikoColoringApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TikoColoringApp.swift; sourceTree = "<group>"; };
 		F477838AFA58DE4D4249AAEA /* ColoringSnapshot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColoringSnapshot.swift; sourceTree = "<group>"; };
 		F50F25A8A37D307CFF5487AC /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		F60F1897D9598D536252F02F /* ColoringAppConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColoringAppConfig.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -71,7 +81,16 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5EA9DF0F755CBDA7C815ED2D /* TikoKit in Frameworks */,
 				2FC393990374C41133F3C2B1 /* ColoringCore.xcframework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		57D61B6BB2A67C9783AAC170 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				929754AF3D7A119E7076D7AE /* TikoKit in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -89,6 +108,7 @@
 		1835A86EB160073B158614D7 = {
 			isa = PBXGroup;
 			children = (
+				DC8957417FA198FD66575B84 /* Packages */,
 				381588EBC433C49498C165CF /* Sources */,
 				058CD3273652B5853B00692E /* Tests */,
 				5B6F610690D4660DFF05E2E4 /* Frameworks */,
@@ -108,7 +128,9 @@
 			isa = PBXGroup;
 			children = (
 				3E6DD6E11712C048D259CFA8 /* Assets.xcassets */,
+				F60F1897D9598D536252F02F /* ColoringAppConfig.swift */,
 				F50F25A8A37D307CFF5487AC /* Info.plist */,
+				5383AD4559B42C6B0AE18A2E /* TikoColoring.entitlements */,
 				CAC71F9D2B63AFDF5C4F244F /* TikoColoringApp.swift */,
 				945AB39A17E1D7642497022C /* Models */,
 				F3AE63834382951AE4B7527D /* Resources */,
@@ -140,6 +162,7 @@
 			children = (
 				627E67D1F98CBD195CBB9207 /* ColoringPage.swift */,
 				A32ECCCF29B84990D97F79D0 /* ColoringSession.swift */,
+				C0F68D8C962A92F1DB1DD26C /* ColoringTools.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -147,10 +170,19 @@
 		BDA71134867C0C07BCACAE56 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				37393DD37A96C0B3D9847787 /* ColoringHomeView.swift */,
 				6E1BDD6675C4BE3619329015 /* ColoringLibraryView.swift */,
 				A4CCFA5AEAE3BC4A05652C90 /* ColoringView.swift */,
 			);
 			path = Views;
+			sourceTree = "<group>";
+		};
+		DC8957417FA198FD66575B84 /* Packages */ = {
+			isa = PBXGroup;
+			children = (
+				A13CDB1B7202D0A09AACC594 /* tikokit-ios */,
+			);
+			name = Packages;
 			sourceTree = "<group>";
 		};
 		EC8A0B65F71D174CF600668C /* Pages */ = {
@@ -180,6 +212,7 @@
 			buildConfigurationList = 752CE17AE40E4050110E082B /* Build configuration list for PBXNativeTarget "TikoColoringTests" */;
 			buildPhases = (
 				D6692B32CF3B0CD513D3810E /* Sources */,
+				57D61B6BB2A67C9783AAC170 /* Frameworks */,
 			);
 			buildRules = (
 			);
@@ -188,6 +221,7 @@
 			);
 			name = TikoColoringTests;
 			packageProductDependencies = (
+				38FE37B343AF5F7C4B2294DA /* TikoKit */,
 			);
 			productName = TikoColoringTests;
 			productReference = 12A15D90378D1514AD2A2753 /* TikoColoringTests.xctest */;
@@ -197,6 +231,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 35CEA33FFFB2C3FC0FF7B784 /* Build configuration list for PBXNativeTarget "TikoColoring" */;
 			buildPhases = (
+				BEF864341A36B19E93BF478A /* Generate Tiko app config */,
 				DB86388BB70F1E52B0B9E390 /* Build ColoringCore if missing */,
 				07A961E62854BB37651C6E67 /* Sources */,
 				8256062F91CD600F05DFBEDF /* Resources */,
@@ -209,6 +244,7 @@
 			);
 			name = TikoColoring;
 			packageProductDependencies = (
+				E1395B001E64187DC44A5728 /* TikoKit */,
 			);
 			productName = TikoColoring;
 			productReference = 5D60CC0223C23616FAF46781 /* TikoColoring.app */;
@@ -240,6 +276,9 @@
 			);
 			mainGroup = 1835A86EB160073B158614D7;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				8F1835BF8AD8A2BE85DFDDB4 /* XCLocalSwiftPackageReference "../../../packages/tikokit-ios" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 8A14AF8718DDB93E7E19C24D /* Products */;
 			projectDirPath = "";
@@ -267,6 +306,25 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		BEF864341A36B19E93BF478A /* Generate Tiko app config */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Generate Tiko app config";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "set -euo pipefail\nREPO_ROOT=\"${SRCROOT}/../../..\"\nif ! command -v node >/dev/null 2>&1; then\n  echo \"error: node is required to generate Tiko app configs before an iOS build.\"\n  exit 1\nfi\nTIKO_APP_CONFIG_STRICT=1 node \"${REPO_ROOT}/tools/generate-app-configs.mjs\"\n";
+		};
 		DB86388BB70F1E52B0B9E390 /* Build ColoringCore if missing */ = {
 			isa = PBXShellScriptBuildPhase;
 			alwaysOutOfDate = 1;
@@ -293,10 +351,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F4FD2A4A6BC5A2EA29EC5A22 /* ColoringAppConfig.swift in Sources */,
+				9316E32625FCBDCBC57CA783 /* ColoringHomeView.swift in Sources */,
 				C04228CEAB061C76879BDBCE /* ColoringLibraryView.swift in Sources */,
 				797088D922BBA51995F2CC58 /* ColoringPage.swift in Sources */,
 				CA3A7C8ECE3FAEC7325DB749 /* ColoringSession.swift in Sources */,
 				881D77ED185BB924EC0B6D58 /* ColoringSnapshot.swift in Sources */,
+				CBA3BD684376A429B6C101FA /* ColoringTools.swift in Sources */,
 				7198A984006B0661F86F81CA /* ColoringView.swift in Sources */,
 				339E66218249049FF835E24C /* TikoColoringApp.swift in Sources */,
 			);
@@ -463,6 +524,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = Sources/TikoColoring.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CURRENT_PROJECT_VERSION = 1;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -485,6 +547,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = Sources/TikoColoring.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CURRENT_PROJECT_VERSION = 1;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -551,6 +614,24 @@
 			defaultConfigurationName = Debug;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCLocalSwiftPackageReference section */
+		8F1835BF8AD8A2BE85DFDDB4 /* XCLocalSwiftPackageReference "../../../packages/tikokit-ios" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = "../../../packages/tikokit-ios";
+		};
+/* End XCLocalSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		38FE37B343AF5F7C4B2294DA /* TikoKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = TikoKit;
+		};
+		E1395B001E64187DC44A5728 /* TikoKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = TikoKit;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 9022A62787547F39E6078BB1 /* Project object */;
 }

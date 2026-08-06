@@ -15,6 +15,29 @@ struct ColoringSnapshot: Decodable {
 struct ColoringDocument: Decodable {
     let canvas: ColoringCanvas
     let regions: [ColoringRegion]
+    let strokes: [ColoringStrokeShape]
+
+    /// Outlines are drawn from the authored paths, never the implicit backdrop —
+    /// otherwise every page gets a box drawn round it.
+    var outlinedRegions: [ColoringRegion] {
+        regions.filter { $0.id != ColoringDocument.backdropRegionID }
+    }
+
+    static let backdropRegionID = "canvas"
+}
+
+struct ColoringStrokeShape: Decodable, Identifiable {
+    let id: String
+    let points: [ColoringStrokePoint]
+    let color: ColoringColor
+    let width: Double
+    /// Set when the stroke should be clipped to one region — "stay inside the lines".
+    let clippedRegionId: String?
+}
+
+struct ColoringStrokePoint: Decodable {
+    let x: Double
+    let y: Double
 }
 
 struct ColoringCanvas: Decodable {
@@ -68,6 +91,34 @@ struct CanvasTransform {
         }
         path.closeSubpath()
         return path
+    }
+
+    /// An open path through the stroke's points, smoothed with quadratic segments so
+    /// a fast drag reads as a curve rather than a run of straight lines.
+    func strokePath(for points: [ColoringStrokePoint]) -> Path {
+        var path = Path()
+        let viewPoints = points.map { CGPoint(x: offset.x + CGFloat($0.x) * scale, y: offset.y + CGFloat($0.y) * scale) }
+        guard let first = viewPoints.first else { return path }
+        path.move(to: first)
+        if viewPoints.count == 1 {
+            // A tap with no movement — a dot needs a segment to be strokable at all.
+            path.addLine(to: CGPoint(x: first.x + 0.01, y: first.y))
+            return path
+        }
+        for index in 1 ..< viewPoints.count {
+            let previous = viewPoints[index - 1]
+            let current = viewPoints[index]
+            let middle = CGPoint(x: (previous.x + current.x) / 2, y: (previous.y + current.y) / 2)
+            path.addQuadCurve(to: middle, control: previous)
+        }
+        path.addLine(to: viewPoints[viewPoints.count - 1])
+        return path
+    }
+
+    /// Brush widths are authored in canvas units so they mean the same thing on any
+    /// screen size; scale converts to points at render time.
+    func viewWidth(for canvasWidth: Double) -> CGFloat {
+        max(1, CGFloat(canvasWidth) * scale)
     }
 
     func documentPoint(for point: CGPoint) -> (x: Double, y: Double) {
