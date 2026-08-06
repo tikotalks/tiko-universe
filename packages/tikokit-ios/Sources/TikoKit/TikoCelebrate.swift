@@ -64,13 +64,27 @@ public struct TikoCelebrationOverlay: View {
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var startDate = Date()
 
-    private let duration = 1.6
+    /// How long the burst runs. Callers that show one celebration per tap can
+    /// leave it; a fast loop that celebrates ten times in a row wants it
+    /// shorter, so the reward never becomes the thing you wait out.
+    private let duration: Double
 
-    public init(trigger: Int, variant: TikoCelebrationVariant, emoji: String, appColor: TikoAppColor) {
+    /// The delay spread baked into the multi-wave variants is quoted against
+    /// this, and scaled so a shorter burst still finishes inside its duration.
+    public static let referenceDuration = 1.6
+
+    public init(
+        trigger: Int,
+        variant: TikoCelebrationVariant,
+        emoji: String,
+        appColor: TikoAppColor,
+        duration: Double = referenceDuration
+    ) {
         self.trigger = trigger
         self.variant = variant
         self.emoji = emoji
         self.appColor = appColor
+        self.duration = duration
     }
 
     private struct Particle {
@@ -115,9 +129,10 @@ public struct TikoCelebrationOverlay: View {
     }
 
     private func particleDelay(index: Int, generator: inout TikoSeededGenerator) -> Double {
+        let scale = duration / Self.referenceDuration
         switch variant {
-        case .fireworks: return Double(index / 20) * 0.28
-        case .confettiRain, .emojiRain: return Double.random(in: 0...0.5, using: &generator)
+        case .fireworks: return Double(index / 20) * 0.28 * scale
+        case .confettiRain, .emojiRain: return Double.random(in: 0...0.5, using: &generator) * scale
         default: return 0
         }
     }

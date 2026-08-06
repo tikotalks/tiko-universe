@@ -33,22 +33,27 @@ Sum is a Tiko app and uses the same harness as every other Tiko app. No exclusio
 
 ### Presets (the game)
 
-Two taps and the child is playing:
+One tap and the child is playing:
 
-1. **Pick a difficulty** — `10`, `20`, `50`, `100`. That is the only thing the home screen asks: how big do the numbers get. Operators never fragment this grid.
-2. **Pick what to practise** — `+`, `−`, `×`, `÷`, or one shuffle tile that mixes them all. Icon-only, one tap, no confirm.
-3. Sum deals **ten random sums** at that difficulty, no repeats back to back and nothing trivial (no zero operands, no ×1, no ÷1).
-4. Each sum lands **one part at a time** — “10”, then “+”, then “20” — spoken as it lands, with a small pop per part. There is no `=` on screen: the answer is the tile the child picks, never something the screen fills in.
-5. The three answer tiles are on screen and live from the first beat, so a child who already knows never waits out the voice.
-6. A right pick makes that tile dance inside its own burst of fireworks; the tiles then clear and the next sum comes in while the voice says it. The next sum’s voice is prerendered during the current one, so it starts instantly.
-7. After the tenth sum: an end screen with the celebration and the only two things worth doing next — **Go back** or **Play again**. Play again deals a brand-new ten.
-8. Skip is always available; a skipped sum just goes to the next.
+1. **The operator lives in the home header** — `+`, `−`, `×`, `÷`, plus a shuffle tab that mixes them all. Icon-only tabs; the choice is remembered between launches, so the child comes back to whatever they are working on. Only the operators a parent left switched on appear, and a remembered choice cannot outlive the parent switching it off.
+2. **Tap a mode and the ten starts** — there is no second question, because its answer is already on screen.
+3. Modes are ranges and number families, never operators:
+   - **Up to** — `1-5`, `1-10`, `1-20`, `1-50`, `1-100`. Spelled out as a range, so a bare `10` can never be read as "ten sums".
+   - **In between** — `10-20`, `20-50`, `50-100`, for the child who has the small numbers already and does not want to start from one every time.
+   - **Number families** — the `2`s through the `10`s. One operand is always that number, so the same tile is the 2 times table under `×`, counting on under `+`, counting back under `−`, and sharing under `÷`. The tile borrows the chosen operator and reads `×2` or `+2` accordingly.
+4. A range bounds the **answer** for `+` and `−`, and the **factors** for `×` and `÷` — "sums to ten" is about the answer, "tables to five" is about the numbers you multiply, so `5 × 5 = 25` belongs in the `1-5` mode. Where a band is too narrow to fill a varied round (`50-100 ÷` is only `100 ÷ 2` inside the 0–100 cap) the floor quietly opens up rather than dealing the same sum ten times.
+5. Sum deals **ten random sums** in that mode, no repeats back to back and nothing trivial (no zero operands or answers, no ×1 or ÷1 outside a family — where `1 × 5` is the first rung of the table and belongs).
+6. Each sum lands **one part at a time** — “10”, then “+”, then “20” — spoken as it lands, with a small pop per part. There is no `=` on screen: the answer is the tile the child picks, never something the screen fills in.
+7. The three answer tiles are on screen and live from the first beat, so a child who already knows never waits out the voice.
+8. A right pick makes that tile dance where it stands while fireworks go off across the **whole window** — the burst is a full-screen overlay, not something boxed around the tile. The tiles then clear and the next sum comes in while the voice says it. The next sum’s voice is prerendered during the current one, so it starts instantly. The hold is deliberately short (0.8s, burst 1.0s): ten celebrations in a row must never become something to wait out.
+9. After the tenth sum: an end screen with the celebration and the only two things worth doing next — **Go back** or **Play again**. Play again deals a brand-new ten.
+10. Skip is always available; a skipped sum just goes to the next.
 
 There are no points, streaks, timers, or leaderboards — the Tiko promise. Progress is the celebration itself.
 
 ### Paths (a family’s own sums)
 
-A parent can also write a fixed run of sums by hand — a named path with its own emoji, sitting next to the presets on the home screen. Presets cover the everyday ladder; paths exist for the family that wants a specific set.
+A parent can also write a fixed run of sums by hand — a named path with its own emoji, in its own section on the home screen. Presets cover the everyday ladder; paths exist for the family that wants a specific set.
 
 ## Answer tiles
 
@@ -77,7 +82,7 @@ Playback never touches the microphone: speaking uses a plain playback audio sess
 ## Parent Mode
 
 - Author, edit, hide, reorder, delete **paths**: name, emoji/image, ordered list of formulas.
-- Restrict which operators a child is offered — in the preset picker and on the free-play keypad alike. Plus is never hideable.
+- Restrict which operators a child is offered — in the home header tabs and on the free-play keypad alike. Plus is never hideable.
 - Constrain free play: maximum number (10 / 20 / 100).
 - Toggle voice answering.
 - All editing uses the shared Tiko popup sheets and is per account, Child Mode never sees it.
@@ -116,7 +121,7 @@ Sum is done when it is **live on the App Store**, not when it compiles:
 
 - Opens without login inside the shared harness; Parent/Child Mode per contract; both colour modes; portrait and landscape on iPhone and iPad.
 - Free play: keypad speaks every press in the active language (numbers to 100 composed correctly per language); all four operators; equals produces three tiles; correct celebrates; miss = soft tone + red flash + the tile switching itself off; the last tile standing pulses.
-- Presets: four difficulty rungs × any operator (or mixed), each dealing ten valid non-trivial random sums, playable end-to-end with the part-by-part reveal, per-answer fireworks on the winning tile, and an end screen with Go back / Play again; Skip always works; interruption resumes correctly.
+- Presets: seventeen modes (five ranges, three bands, nine number families) × any operator (or mixed), each dealing ten valid non-trivial random sums, playable end-to-end with the part-by-part reveal, full-window fireworks on a right answer, and an end screen with Go back / Play again; Skip always works; interruption resumes correctly.
 - Parent Mode: paths and operator pronunciations editable per language on the shared Tiko sheets; operator restrictions; free-play cap; answer-mode picker; edits survive relaunch and are account-scoped.
 - All three answer modes work: choice tiles, typed answers with the guided-tile fallback, and voice (spoken digits/number words in all six languages, permission flows handled, tapping never blocked). Choice and type modes never trigger a permission prompt.
 - Fully offline after first use; zero permission prompts unless voice answering is enabled.

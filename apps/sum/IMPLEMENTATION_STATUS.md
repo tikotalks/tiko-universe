@@ -48,11 +48,39 @@ Statuses: `NOT STARTED` · `IN PROGRESS` · `BLOCKED` · `IMPLEMENTED` · `VERIF
   - A wrong pick stays on screen: half-second red flash + wobble on the tile
     that was actually touched, then it dims and goes inert. No re-speak, no
     vanishing tile. Last tile standing pulses.
-  - The winning tile dances inside its own localized `TikoCelebrationOverlay`
-    burst rather than a full-screen one; full-screen is kept for the end of ten.
   - The next sum's voice is prefetched while the current one is being answered.
   - End screen: bouncing emoji, fireworks, and two labelled buttons — Back and
     Play again.
+- Cycle 6 (2026-07-25, user feedback — "animations masked in a frame; we need
+  way more game modes; the operator should be a remembered header toggle; and
+  also 10's 2's 5's"):
+  - **Celebration is full-window again.** It had been pinned to
+    `side * 3.6` around the winning tile, which clipped every particle at the
+    box edge — fireworks inside a picture frame. The burst is now an overlay on
+    the whole play view; the tile still dances where it stands.
+  - **Snappier loop.** `celebrationDuration` 1.5 → 0.8s, `nextItemDelay`
+    0.3 → 0.2s, and the burst itself 1.6 → 1.0s for Sum. `TikoCelebrationOverlay`
+    gained a `duration` parameter (defaulting to the old 1.6 so Cards/Talk/Radio
+    are untouched) and scales its multi-wave particle delays against it, so a
+    shorter burst still finishes inside its own window.
+  - **The operator moved into the home header** as remembered tabs
+    (`tiko.sum.operatorChoice`), so tapping a mode goes straight into the ten —
+    the intermediate `SumOperatorPickerView` screen is gone. The stored choice
+    resolves against the parent's operator toggles, so a remembered `×` cannot
+    survive `×` being switched off.
+  - **Seventeen modes instead of four**, in three sections: ranges
+    (`1-5 … 1-100`), bands (`10-20`, `20-50`, `50-100`), and number families
+    (the 2s through the 10s). Titles spell the range out — `1-10`, never a bare
+    `10` that reads as either "ten sums" or "up to ten". A family pins one
+    operand, so the same tile is the times table under `×` and counting on under
+    `+`, and its label borrows the chosen operator (`×2`, `+2`).
+  - `SumPresetKind` replaces the flat `maxNumber`. A range bounds the answer for
+    `+`/`−` and the factors for `×`/`÷` — bounding × by its answer would leave
+    `1-5` with nothing but `2 × 2`. Where a band cannot fill a varied round
+    (`50-100 ÷` is only `100 ÷ 2` inside the cap) the floor halves until the
+    pool reaches `minimumPool`, rather than dealing one sum ten times.
+  - Zero answers are now excluded from families too (`2 − 2` was reachable); a
+    new generator test caught it.
 - Verification commands (from `apps/sum/ios/`):
   - `xcodegen generate`
   - `xcodebuild -project TikoSum.xcodeproj -scheme TikoSum -destination 'platform=iOS Simulator,name=iPhone 17 Pro Max' -derivedDataPath .build/derived test` → all unit + UI tests pass
@@ -77,7 +105,7 @@ Statuses: `NOT STARTED` · `IN PROGRESS` · `BLOCKED` · `IMPLEMENTED` · `VERIF
 | 6 | Answer modes: choose / type / say, a parent setting | `docs/apps/sum.md` | VERIFIED | `Sources/SumModels.swift` (`SumAnswerMode`), `Sources/SumPlayViewModel.swift`, `AnswerTypePad` in `Sources/SumPlayView.swift` | `SumTypeModeTests`, voice tests in `SumPlayViewModelTests` |
 | 7 | No microphone prompt unless voice answering is chosen | user feedback, cycle 3 | VERIFIED | `packages/tikokit-ios/Sources/TikoKit/TikoVoice.swift`, `TikoSpeechPractice.swift` | Launched clean install through a full path: no permission dialog |
 | 8 | Typed answers: miss clears calmly, third miss falls back to two guided tiles | `docs/apps/sum.md` | VERIFIED | `Sources/SumPlayViewModel.swift` (`typeFallbackActive`) | `SumTypeModeTests` |
-| 9 | Presets are difficulty only (10/20/50/100); the operator is picked in the game | user feedback, cycle 5 | IMPLEMENTED | `Sources/SumCatalog.swift`, `Sources/SumView.swift` (`SumOperatorPickerView`) | UI tests `testHomeShowsDifficultyPresetsNotOperatorModes`, `testPresetOffersEveryOperatorPlusMixed` |
+| 9 | Seventeen modes (ranges, bands, number families); the operator is a remembered header toggle | user feedback, cycles 5–6 | IMPLEMENTED | `Sources/SumCatalog.swift`, `Sources/SumModels.swift` (`SumPresetKind`, `SumOperatorChoice`), `Sources/SumView.swift` | `SumGeneratorTests`, `SumPresetLabelTests`; UI tests `testHomeShowsTheWholeLadderOfModes`, `testHomeShowsBandsAndNumberFamilies`, `testTheHeaderOffersEveryOperatorPlusMixed`, `testTheChosenOperatorIsRememberedAcrossLaunches` |
 | 9a | A run is ten random valid non-trivial sums; play again deals a fresh ten | user feedback, cycle 5 | IMPLEMENTED | `Sources/SumGenerator.swift`, `SumRunSpec` in `Sources/SumModels.swift` | `SumGeneratorTests`; `testATenSumRunEndsOnTheEndScreen`, `testPlayAgainDealsAFreshRoundForAPreset` |
 | 9b | The sum lands part by part, spoken and popped as it lands, no `=` shown | user feedback, cycle 5 | IMPLEMENTED | `Sources/SumPlayViewModel.swift` (`revealParts`), `Sources/SumPlayView.swift` (`formulaPart`) | `testFormulaLandsOnePartAtATimeAndIsSpokenAsItLands` |
 | 9c | Tiles are live before the reveal finishes; the next sum's voice is prerendered | user feedback, cycle 5 | IMPLEMENTED | `Sources/SumPlayViewModel.swift` (`isAnswerable`, `prefetchNextFormula`) | `testTilesAreLiveBeforeTheFormulaFinishesLanding`, `testNextFormulaIsPrerenderedWhileTheCurrentOneIsAnswered` |
@@ -101,8 +129,9 @@ Statuses: `NOT STARTED` · `IN PROGRESS` · `BLOCKED` · `IMPLEMENTED` · `VERIF
   and "Twelve playful paths" in `release/app-store/en-US.json`. Version 1.0 is
   in review with that copy — rewrite the description and write fresh release
   notes when 1.1 is cut, not before.
-- Screenshot scenes: `home`, `practice`, `keypad` still work. The operator
-  picker is a new scene (`--screenshot operators`) that is not yet in
+- Screenshot scenes: `home`, `practice`, `keypad`, `celebrate` still work. The
+  `operators` scene was removed along with the picker screen it captured — the
+  operator now lives in the home header, so `home` covers it. Not yet in
   `release/ios.json` — add it if it earns a slot in the six.
 - Not verified on device or in the simulator by this cycle: this machine has
   Xcode 16.3 / iOS 18.4 SDK, and `TikoSpeechPractice.swift` uses the iOS 26

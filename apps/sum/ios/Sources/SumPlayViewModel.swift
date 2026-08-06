@@ -32,8 +32,10 @@ final class SumPlayViewModel: ObservableObject {
         var partGap: TimeInterval = 0.1
         /// How long a wrong tile flashes before it switches itself off.
         var wrongFlashDuration: TimeInterval = 0.5
-        var celebrationDuration: TimeInterval = 1.5
-        var nextItemDelay: TimeInterval = 0.3
+        /// Long enough to land as a reward, short enough that ten of them in a
+        /// row never feel like waiting. The burst itself runs a touch shorter.
+        var celebrationDuration: TimeInterval = 0.8
+        var nextItemDelay: TimeInterval = 0.2
         var listenTimeout: TimeInterval = 4.0
 
         static let standard = Timings()
