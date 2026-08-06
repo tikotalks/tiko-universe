@@ -35,6 +35,7 @@ export const japanese: LanguageRules = {
     language: 'ja',
     maturity: 'beta',
     wordOrder: 'sov',
+    verbCitation: 'invariant',
     questionStrategy: 'particle',
     questionParticle: 'か',
     spacing: 'none',

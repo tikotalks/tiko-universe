@@ -6,6 +6,9 @@ import type { Lexicon } from '../features'
  * the adjective ending.
  */
 export const swedishLexicon: Lexicon = {
+  // A subordinate clause moves its negation in front of the verb.
+  because: { pos: 'conjunction', subordinating: true },
+
   // "vilja" needs an infinitive: "jag vill ha ett äpple", and negation splits
   // the pair: "jag vill inte ha".
   want: { pos: 'verb', verbTail: 'ha', forms: { past: 'ville' } },

@@ -6,6 +6,9 @@ import type { Lexicon } from '../features'
  * the handful of gender exceptions.
  */
 export const spanishLexicon: Lexicon = {
+  // "All" agrees and takes the definite article after it.
+  all: { pos: 'determiner', determinerKind: 'quantifier', forcesNumber: 'pl', withDefinite: true, feminine: 'todas' },
+
   hungry: { pos: 'adjective', sensation: 'hambre' },
   thirsty: { pos: 'adjective', sensation: 'sed' },
   cold: { pos: 'adjective', sensation: 'frío' },
@@ -34,6 +37,18 @@ export const spanishLexicon: Lexicon = {
   big: { pos: 'adjective' },
 
   // Stem-changing and irregular verbs
+  // The verbs added in the core rebalance. These are the radical-changing ones,
+  // where the stressed stem vowel breaks: "pensar" → "pienso", "contar" → "cuento".
+  get: { pos: 'verb', forms: { '1sg': 'consigo', '2sg': 'consigues', '3sg': 'consigue', pl: 'conseguimos', '3pl': 'consiguen' } },
+  find: { pos: 'verb', forms: { '1sg': 'encuentro', '2sg': 'encuentras', '3sg': 'encuentra', pl: 'encontramos', '3pl': 'encuentran' } },
+  think: { pos: 'verb', forms: { '1sg': 'pienso', '2sg': 'piensas', '3sg': 'piensa', pl: 'pensamos', '3pl': 'piensan' } },
+  show: { pos: 'verb', forms: { '1sg': 'muestro', '2sg': 'muestras', '3sg': 'muestra', pl: 'mostramos', '3pl': 'muestran' } },
+  smell: { pos: 'verb', forms: { '1sg': 'huelo', '2sg': 'hueles', '3sg': 'huele', pl: 'olemos', '3pl': 'huelen' } },
+  taste: { pos: 'verb', forms: { '1sg': 'pruebo', '2sg': 'pruebas', '3sg': 'prueba', pl: 'probamos', '3pl': 'prueban' } },
+  build: { pos: 'verb', forms: { '1sg': 'construyo', '2sg': 'construyes', '3sg': 'construye', pl: 'construimos', '3pl': 'construyen' } },
+  count: { pos: 'verb', forms: { '1sg': 'cuento', '2sg': 'cuentas', '3sg': 'cuenta', pl: 'contamos', '3pl': 'cuentan' } },
+  wake: { pos: 'verb', forms: { '1sg': 'despierto', '2sg': 'despiertas', '3sg': 'despierta', pl: 'despertamos', '3pl': 'despiertan' } },
+  laugh: { pos: 'verb', forms: { '1sg': 'río', '2sg': 'ríes', '3sg': 'ríe', pl: 'reímos', '3pl': 'ríen' } },
   want: { pos: 'verb', forms: { '1sg': 'quiero', '2sg': 'quieres', '3sg': 'quiere', '1pl': 'queremos', '3pl': 'quieren', past: 'quería' } },
   like: { pos: 'verb', experiencerDative: true, forms: { '3sg': 'gusta', '3pl': 'gustan', past: 'gustaba' } },
   feel: { pos: 'verb', forms: { '1sg': 'siento', '2sg': 'sientes', '3sg': 'siente', '1pl': 'sentimos', '3pl': 'sienten' } },

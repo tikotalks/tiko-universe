@@ -6,6 +6,9 @@ import type { Lexicon } from '../features'
  * -s by word.
  */
 export const frisianLexicon: Lexicon = {
+  // "omdat" sends the verb to the end of its clause; "en" does not.
+  because: { pos: 'conjunction', subordinating: true },
+
   i: { pos: 'pronoun', person: 1, number: 'sg', accusative: 'my' },
   you: { pos: 'pronoun', person: 2, number: 'sg', accusative: 'dy' },
   we: { pos: 'pronoun', person: 1, number: 'pl', accusative: 'ús' },

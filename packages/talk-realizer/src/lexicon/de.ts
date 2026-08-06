@@ -10,6 +10,9 @@ import type { Lexicon } from '../features'
  * (essen → isst, sehen → sieht, laufen → läuft) that no ending rule produces.
  */
 export const germanLexicon: Lexicon = {
+  // "omdat" sends the verb to the end of its clause; "en" does not.
+  because: { pos: 'conjunction', subordinating: true },
+
   // "Mir ist kalt", never "ich bin kalt".
   hot: { pos: 'adjective', dativeSensation: true },
   // "Mir ist kalt", never "ich bin kalt".
@@ -43,6 +46,15 @@ export const germanLexicon: Lexicon = {
   big: { pos: 'adjective' },
 
   // ---- Verbs (irregular present forms) ----
+  // The verbs added in the core rebalance. The regular ones follow the rule; these
+  // are the strong verbs, whose stem vowel changes in the second and third person.
+  give: { pos: 'verb', forms: { '1sg': 'gebe', '2sg': 'gibst', '3sg': 'gibt', pl: 'geben' } },
+  take: { pos: 'verb', forms: { '1sg': 'nehme', '2sg': 'nimmst', '3sg': 'nimmt', pl: 'nehmen' } },
+  hold: { pos: 'verb', forms: { '1sg': 'halte', '2sg': 'hältst', '3sg': 'hält', pl: 'halten' } },
+  let: { pos: 'verb', forms: { '1sg': 'lasse', '2sg': 'lässt', '3sg': 'lässt', pl: 'lassen' } },
+  ride: { pos: 'verb', forms: { '1sg': 'fahre', '2sg': 'fährst', '3sg': 'fährt', pl: 'fahren' } },
+  throw: { pos: 'verb', forms: { '1sg': 'werfe', '2sg': 'wirfst', '3sg': 'wirft', pl: 'werfen' } },
+  catch: { pos: 'verb', forms: { '1sg': 'fange', '2sg': 'fängst', '3sg': 'fängt', pl: 'fangen' } },
   want: { pos: 'verb', forms: { '1sg': 'will', '2sg': 'willst', '3sg': 'will', pl: 'wollen', past: 'wollte' } },
   like: { pos: 'verb', forms: { '1sg': 'mag', '2sg': 'magst', '3sg': 'mag', pl: 'mögen', past: 'mochte' } },
   have: { pos: 'verb', forms: { '1sg': 'habe', '2sg': 'hast', '3sg': 'hat', pl: 'haben', past: 'hatte' } },

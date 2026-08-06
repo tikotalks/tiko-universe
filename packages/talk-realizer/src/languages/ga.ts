@@ -56,6 +56,7 @@ export const irish: LanguageRules = {
     language: 'ga',
     maturity: 'beta',
     wordOrder: 'vso',
+    verbTailIsVerb: true,
     questionStrategy: 'intonation',
     spacing: 'space',
     capitalize: true,

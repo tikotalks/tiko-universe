@@ -19,6 +19,7 @@ export const vietnamese: LanguageRules = {
     language: 'vi',
     maturity: 'beta',
     wordOrder: 'svo',
+    verbCitation: 'invariant',
     questionStrategy: 'intonation',
     // "Bạn muốn gì?" — the question word stays in the answer's place.
     questionWordPosition: 'final',

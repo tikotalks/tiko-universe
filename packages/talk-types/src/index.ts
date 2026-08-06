@@ -73,6 +73,12 @@ export interface PackWord {
   /** Tiko media image URL for this concept, shared across languages by id. */
   image?: string
   inflections?: Record<string, string>
+  /**
+   * True where the child (or their parent) added this word themselves. It is
+   * almost always a name, which the realizer needs to know: "I want Sil", not
+   * "I want a Sil".
+   */
+  isCustom?: boolean
 }
 
 export interface PackTemplate {

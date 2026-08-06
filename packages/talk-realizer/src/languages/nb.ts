@@ -22,6 +22,7 @@ export const norwegian = createScandinavian({
   pluralEnding: 'er',
   adjectiveDefiniteEnding: 'e',
   adjectiveNeuterEnding: 't',
+  infinitiveEnding: 'e',
   copula: { present: 'er', past: 'var' },
   negation: 'ikke',
   notes: 'Grammar is rule-based and tested; the optional feminine gender is not modelled, and the vocabulary was generated against the shared concept ids and needs review by a Norwegian speaker.',

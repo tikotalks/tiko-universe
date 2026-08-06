@@ -7,6 +7,12 @@ const bemm = useBemm('sentence-bar', { return: 'string', includeBaseClass: true 
 
 defineProps<{
   words: WordTile[]
+  /**
+   * The sentence the tiles make — "I am sad because I want mum" — as the realizer
+   * builds it. The app was computing this to speak it and showing nobody: the strip
+   * held the bare tiles, so the grammar was audible and invisible.
+   */
+  sentence: string
   canSpeak: boolean
   speechStatus: 'idle' | 'speaking' | 'ready' | 'fallback' | 'error'
   wordIcon: (word: WordTile) => string
@@ -21,6 +27,7 @@ const emit = defineEmits<{
 
 <template>
   <section :class="bemm('')" aria-label="Current sentence">
+    <p v-if="sentence" :class="bemm('sentence')" aria-live="polite">{{ sentence }}</p>
     <div :class="bemm('words')">
       <button
         v-for="(word, index) in words"
@@ -49,6 +56,27 @@ const emit = defineEmits<{
 
 <style lang="scss">
 .sentence-bar {
+  &__sentence {
+    position: absolute;
+    bottom: calc(100% + 0.5rem);
+    left: 50%;
+    transform: translateX(-50%);
+    max-width: min(40rem, calc(100vw - 2rem));
+    margin: 0;
+    padding: 0.4rem 1rem;
+    border-radius: 1rem;
+    font-size: 1.1rem;
+    font-weight: 800;
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: var(--talk-ink, #202431);
+    background: rgba(255, 252, 245, 0.96);
+    box-shadow: 0 0.5rem 1.5rem rgba(30, 24, 18, 0.18);
+  }
+
+  position: relative;
   width: fit-content;
   justify-self: center;
   padding: var(--space-s) var(--space);

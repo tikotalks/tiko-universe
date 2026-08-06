@@ -11,7 +11,8 @@
     "workers/*"
   ],
   "scripts": {
-    "check": "npm run scaffold:check && npm run generated:check && npm run lint && npm run typecheck && npm run test",
+    "check": "npm run scaffold:check && npm run generated:check && npm run glyphs:check && npm run lint && npm run typecheck && npm run test",
+    "glyphs:check": "node tools/check-glyph-packs.mjs",
     "generate:app-configs": "node tools/generate-app-configs.mjs",
     "generate:colors": "node tools/generate-tiko-colors.mjs",
     "generate:talk-seeds": "node tools/generate-talk-seeds.mjs",
@@ -48,7 +49,10 @@
     "generate:locales": "node tools/generate-locales.mjs",
     "generate:ui-translations": "node tools/generate-ui-translations.mjs",
     "i18n:report": "node tools/generate-ui-translations.mjs --report",
-    "generated:check": "node tools/generate-locales.mjs --check && node tools/generate-ui-translations.mjs --check && node tools/generate-talk-seeds.mjs --check"
+    "generated:check": "node tools/generate-locales.mjs --check && node tools/generate-ui-translations.mjs --check && node tools/generate-talk-packs.mjs --check && node tools/generate-talk-packs-index.mjs --check && node tools/generate-talk-realizer-bundle.mjs --check && node tools/generate-talk-seeds.mjs --check",
+    "generate:talk-packs": "node tools/generate-talk-packs.mjs",
+    "generate:talk-packs-index": "node tools/generate-talk-packs-index.mjs",
+    "generate:talk-bundle": "node tools/generate-talk-realizer-bundle.mjs"
   },
   "dependencies": {
     "@sil/ui": "^2.6.0",

@@ -7,6 +7,9 @@ import type { Lexicon } from '../features'
  * nouns that take the partitive.
  */
 export const frenchLexicon: Lexicon = {
+  // "All" agrees and takes the definite article after it.
+  all: { pos: 'determiner', determinerKind: 'quantifier', forcesNumber: 'pl', withDefinite: true, feminine: 'toutes' },
+
   cold: { pos: 'adjective', sensation: 'froid' },
   hot: { pos: 'adjective', sensation: 'chaud' },
   scared: { pos: 'adjective', sensation: 'peur' },
@@ -36,6 +39,17 @@ export const frenchLexicon: Lexicon = {
   big: { pos: 'adjective', adjectivePosition: 'before', feminine: 'grosse' },
 
   // Irregular verbs (the regular -er/-ir/-re ones are conjugated by rule)
+  // The verbs added in the core rebalance. The -er verbs follow the rule; these do
+  // not, and the rule was producing "savoit" and "mett".
+  get: { pos: 'verb', forms: { '1sg': 'obtiens', '2sg': 'obtiens', '3sg': 'obtient', pl: 'obtenons', '3pl': 'obtiennent' } },
+  put: { pos: 'verb', forms: { '1sg': 'mets', '2sg': 'mets', '3sg': 'met', pl: 'mettons', '3pl': 'mettent' } },
+  know: { pos: 'verb', forms: { '1sg': 'sais', '2sg': 'sais', '3sg': 'sait', pl: 'savons', '3pl': 'savent' } },
+  hold: { pos: 'verb', forms: { '1sg': 'tiens', '2sg': 'tiens', '3sg': 'tient', pl: 'tenons', '3pl': 'tiennent' } },
+  write: { pos: 'verb', forms: { '1sg': 'écris', '2sg': 'écris', '3sg': 'écrit', pl: 'écrivons', '3pl': 'écrivent' } },
+  build: { pos: 'verb', forms: { '1sg': 'construis', '2sg': 'construis', '3sg': 'construit', pl: 'construisons', '3pl': 'construisent' } },
+  smell: { pos: 'verb', forms: { '1sg': 'sens', '2sg': 'sens', '3sg': 'sent', pl: 'sentons', '3pl': 'sentent' } },
+  laugh: { pos: 'verb', forms: { '1sg': 'ris', '2sg': 'ris', '3sg': 'rit', pl: 'rions', '3pl': 'rient' } },
+  wake: { pos: 'verb', forms: { '1sg': 'me réveille', '2sg': 'te réveilles', '3sg': 'se réveille', pl: 'nous réveillons', '3pl': 'se réveillent' } },
   want: { pos: 'verb', forms: { '1sg': 'veux', '2sg': 'veux', '3sg': 'veut', '1pl': 'voulons', '3pl': 'veulent', past: 'voulais' } },
   have: { pos: 'verb', forms: { '1sg': 'ai', '2sg': 'as', '3sg': 'a', '1pl': 'avons', '3pl': 'ont', past: 'avais' } },
   need: { pos: 'verb', forms: { '1sg': 'ai besoin', '2sg': 'as besoin', '3sg': 'a besoin', '1pl': 'avons besoin', '3pl': 'ont besoin' } },

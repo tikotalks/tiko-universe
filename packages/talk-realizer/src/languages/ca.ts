@@ -1,5 +1,5 @@
 import type { Features, SelectedWord } from '../features'
-import { agreeAdjective, applyExperiencer, conjugateRegular, elide, induceGender, pluralize } from '../morphology/romance'
+import { agreeAdjective, applyExperiencer, conjugateRegular, elide, induceGender, pluralize, quantifierPhrase } from '../morphology/romance'
 import { extractObjectClitic } from '../morphology/clitic'
 import { agreesWith, formFor, isSensation, note, type LanguageRules } from '../profile'
 
@@ -33,6 +33,7 @@ export const catalan: LanguageRules = {
     language: 'ca',
     maturity: 'beta',
     wordOrder: 'svo',
+    verbCitation: 'infinitive',
     questionStrategy: 'inversion',
     spacing: 'space',
     capitalize: true,
@@ -95,9 +96,13 @@ export const catalan: LanguageRules = {
     if (determiner) {
       const kind = determiner.features.determinerKind
       if (kind === 'definite') return { text: definite, from: determiner.id }
-      if (determiner.features.forcesNumber === 'pl' && feminine && determiner.features.feminine) {
-        // "dues galetes": the numeral agrees.
-        return { text: determiner.features.feminine, from: determiner.id }
+      if (determiner.features.forcesNumber === 'pl' && determiner.features.feminine) {
+        // "dues galetes": the numeral agrees — and "totes les galetes" also wants
+        // the article, which the helper adds.
+        return {
+          text: quantifierPhrase(determiner.features, determiner.text, 'ca', feminine, plural),
+          from: determiner.id,
+        }
       }
       if (kind === 'indefinite') {
         return { text: plural ? (feminine ? 'unes' : 'uns') : (feminine ? 'una' : 'un'), from: determiner.id }
@@ -108,7 +113,10 @@ export const catalan: LanguageRules = {
         note(ctx.builder, `"${definite} ${possessive}": Catalan keeps the article before a possessive`)
         return { text: `${definite} ${possessive}`, from: determiner.id }
       }
-      return { text: determiner.text, from: determiner.id }
+      return {
+        text: quantifierPhrase(determiner.features, determiner.text, 'ca', feminine, plural),
+        from: determiner.id,
+      }
     }
 
     if (!head) return null

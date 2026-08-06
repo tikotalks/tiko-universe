@@ -6,6 +6,9 @@ import type { Lexicon } from '../features'
  * the verb persons and the sensations that take "hunn".
  */
 export const luxembourgishLexicon: Lexicon = {
+  // "omdat" sends the verb to the end of its clause; "en" does not.
+  because: { pos: 'conjunction', subordinating: true },
+
   i: { pos: 'pronoun', person: 1, number: 'sg', accusative: 'mech', dative: 'mir' },
   you: { pos: 'pronoun', person: 2, number: 'sg', accusative: 'dech', dative: 'dir' },
   we: { pos: 'pronoun', person: 1, number: 'pl', accusative: 'eis', dative: 'eis' },

@@ -67,6 +67,45 @@ export interface LanguageProfile {
    */
   questionWordPosition?: 'initial' | 'final' | 'preverbal'
 
+  /**
+   * Which form of a verb the language's pack lists, which decides what a second
+   * verb needs. The Romance packs give the infinitive, so it can be used as it
+   * stands; the Dutch, German and Slavic packs give a finite form, so a verbal
+   * complement needs the curated `inf` and is flagged for review without one; and
+   * an `invariant` language — Chinese, Japanese, Afrikaans, Papiamentu — has no
+   * such distinction to make. `finite` is the default because it is the one that
+   * asks to be checked.
+   */
+  verbCitation?: 'infinitive' | 'finite' | 'invariant'
+
+  /**
+   * True where a subordinate clause puts its verb last: "omdat ik mama wil", "weil
+   * ich Mama will". The Scandinavian languages do not — they keep the verb second
+   * and only move the negation — so this is not simply "Germanic".
+   */
+  subordinateVerbFinal?: boolean
+
+  /**
+   * True where a subordinate clause moves its negation in front of the verb, the way
+   * Swedish, Danish and Norwegian do: "för att jag **inte** vill". Their verb stays
+   * where it is, which is why this is a separate dial from `subordinateVerbFinal`.
+   */
+  subordinateNegationBeforeVerb?: boolean
+
+  /**
+   * True where the verb's tail *is* the verb — the Celtic languages realize every
+   * verb as an auxiliary plus a verbnoun, so "dwi" alone says only "I am". A tail
+   * like that is never dropped, where Swedish "vill **ha**" is.
+   */
+  verbTailIsVerb?: boolean
+
+  /**
+   * Where a second verb goes. The Germanic languages send the infinitive to the end
+   * of the clause — "Ik wil een appel eten", not "Ik wil eten een appel" — which is
+   * the same rule their `verbTail` already follows.
+   */
+  verbComplementPosition?: 'afterVerb' | 'clauseFinal'
+
   /** CJK scripts do not separate words with spaces. */
   spacing: 'space' | 'none'
 
@@ -323,6 +362,18 @@ export interface LanguageRules {
    * emits no separate particle.
    */
   negatedCopula?(ctx: SentenceContext): string | null
+
+  /**
+   * A second verb, complementing the first: the "play" of "I want to play". `base`
+   * is the infinitive — the verb's curated `inf`, or the tile's own text where the
+   * language has none yet. A language implements this when it needs a marker in
+   * front of that: English "to", Swedish "att", Irish "a". Return the parts in
+   * order; the last one is taken to be the verb itself, and anything before it
+   * counts as inserted, so a marker must also appear in `functionWords`. Returning
+   * nothing declines, and the engine falls back to `base` and says in a note that
+   * the form was not checked.
+   */
+  verbComplement?(verb: Word, ctx: SentenceContext, base: string): string | string[] | undefined
 
   /**
    * How to realize a preposition. Returning `null` suppresses the word entirely,

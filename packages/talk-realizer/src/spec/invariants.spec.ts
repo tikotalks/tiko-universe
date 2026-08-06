@@ -18,6 +18,15 @@ describe('realizer invariants', () => {
     ['i', 'want', 'two', 'big', 'cookie'],
     ['you', 'help', 'me'],
     ['i', 'want', 'apple', 'please'],
+    // Two verbs. Every second verb used to be dropped here — "I want to play" came
+    // out as "I want." — and none of the selections above had one, which is how the
+    // invariant below went on passing.
+    ['i', 'want', 'play'],
+    ['i', 'need', 'help'],
+    ['i', 'want', 'eat', 'apple'],
+    // No subject: a child tapping one tile, which is most of what they tap.
+    ['help'],
+    ['more', 'please'],
   ]
 
   for (const language of supportedLanguages) {

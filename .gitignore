@@ -25,6 +25,17 @@ apps/ios/**/*.xcodeproj/
 apps/android/**/.gradle/
 apps/android/**/build/
 
+# Kotlin / Gradle (root build for :stroke-core and :tikokotlinkit).
+# The TikoCore XCFramework is built, never committed.
+.gradle/
+**/.gradle/
+/build/
+engines/*/build/
+packages/tikokotlinkit/build/
+local.properties
+.kotlin/
+**/.kotlin/
+
 # iOS release artifacts (screenshots, archives, videos, generated metadata)
 artifacts/
 

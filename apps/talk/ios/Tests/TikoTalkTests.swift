@@ -59,32 +59,77 @@ final class TikoTalkTests: XCTestCase {
         XCTAssertEqual(phrases.phrases.first?.wordIds, ["i", "want", "juice"])
     }
 
-    func testSentenceTextJoinsWords() {
+    /// The tiles go through the realizer, so the strip is a sentence rather than a
+    /// list of words. "juice" is a mass noun and takes no article; "apple" does.
+    func testSentenceIsRealizedNotJoined() {
         let words = [
             TalkWordTile(id: "i", text: "I", pos: "pronoun", category: "pronouns"),
             TalkWordTile(id: "want", text: "want", pos: "verb", category: "actions"),
             TalkWordTile(id: "juice", text: "juice", pos: "noun", category: "things")
         ]
 
-        XCTAssertEqual(words.talkSentenceText, "I want juice")
+        let sentence = words.talkSentence(locale: "en")
+        XCTAssertEqual(sentence.strip, "I want juice")
+        XCTAssertEqual(sentence.text, "I want juice.")
     }
 
-    func testOfflineFallbackContainsSmallStarterPack() {
-        let fallback = TalkOfflineFallback.startResponse
+    /// The same tiles in Dutch: the realizer conjugates and adds the article that no
+    /// tile provided. This is the case the old joiner got wrong.
+    func testSentenceInflectsInDutch() {
+        let words = [
+            TalkWordTile(id: "i", text: "ik", pos: "pronoun", category: "pronouns"),
+            TalkWordTile(id: "want", text: "willen", pos: "verb", category: "actions"),
+            TalkWordTile(id: "apple", text: "appel", pos: "noun", category: "food")
+        ]
 
-        XCTAssertFalse(fallback.initialWords.isEmpty)
-        XCTAssertTrue(fallback.initialWords.contains { $0.id == "i" })
-        XCTAssertTrue(fallback.templates.contains { $0.id == "fallback-help" })
-        XCTAssertEqual(TalkOfflineFallback.templateWords(for: fallback.templates.first { $0.id == "fallback-help" }!).map(\.id), ["i", "need", "help"])
+        XCTAssertEqual(words.talkSentence(locale: "nl").strip, "Ik wil een appel")
+    }
+
+    /// A word the child added themselves is a name, so it takes no article.
+    func testCustomWordIsTreatedAsAName() {
+        let words = [
+            TalkWordTile(id: "i", text: "ik", pos: "pronoun", category: "pronouns"),
+            TalkWordTile(id: "want", text: "willen", pos: "verb", category: "actions"),
+            TalkWordTile(id: "uword-1", text: "Sil", pos: "noun", category: "people")
+        ]
+
+        XCTAssertEqual(
+            words.talkSentence(locale: "nl", customWordIds: ["uword-1"]).strip,
+            "Ik wil Sil"
+        )
+    }
+
+    /// The board with no network is the whole pack that ships with the app — 348
+    /// words and its templates — not a seven-word stub.
+    func testLocalBoardIsTheFullPack() throws {
+        let board = try XCTUnwrap(TalkLocalBoard.startResponse(locale: "en"))
+
+        XCTAssertEqual(board.initialWords.count, 348)
+        XCTAssertTrue(board.initialWords.contains { $0.id == "i" })
+        XCTAssertTrue(board.initialWords.contains { $0.id == "apple" })
+        XCTAssertFalse(board.templates.isEmpty)
+        XCTAssertTrue(board.initialCategories.count > 3, "the pack has more than the three stub categories")
+    }
+
+    /// Every language in the picker has a pack on the device, in its own words.
+    func testLocalBoardExistsForOtherLanguages() throws {
+        for locale in ["nl", "de", "fr", "es", "pl", "ar", "ja"] {
+            let board = try XCTUnwrap(TalkLocalBoard.startResponse(locale: locale), "no pack for \(locale)")
+            XCTAssertEqual(board.initialWords.count, 348, "\(locale) pack is the wrong size")
+        }
+        let dutch = try XCTUnwrap(TalkLocalBoard.startResponse(locale: "nl"))
+        XCTAssertEqual(dutch.initialWords.first { $0.id == "apple" }?.text, "appel")
     }
 
     func testStoreMutatesSentenceWithoutAPICalls() async {
         let store = TalkStore(apiClient: FakeTalkAPIClient())
-        store.isOfflineFallback = true
+        store.isOffline = true
         let word = TalkWordTile(id: "help", text: "help", pos: "verb", category: "actions")
 
         await store.addWord(word)
-        XCTAssertEqual(store.sentenceText, "help")
+        // One verb tile and nobody named: the child is the subject, so it is
+        // "Help.", not "Helps." and not the bare tile.
+        XCTAssertEqual(store.sentenceText, "Help.")
         XCTAssertTrue(store.canSpeak)
 
         await store.removeWord(id: "help")
@@ -94,7 +139,7 @@ final class TikoTalkTests: XCTestCase {
 
     func testClearSentenceResetsCompletionState() async {
         let store = TalkStore(apiClient: FakeTalkAPIClient())
-        store.isOfflineFallback = true
+        store.isOffline = true
         await store.addWord(TalkWordTile(id: "more", text: "more", pos: "modifier", category: "extras"))
 
         store.clearSentence()
@@ -124,13 +169,17 @@ final class TikoTalkTests: XCTestCase {
         await store.addWord(TalkWordTile(id: "i", text: "I", pos: "pronoun", category: "pronouns"))
 
         XCTAssertEqual(store.suggestions.map(\.id), ["want"])
-        XCTAssertEqual(store.stripDisplay, "I ___")
-        XCTAssertFalse(store.canSpeak)
+        // The strip is built on the device now, so it shows the sentence so far
+        // rather than the API's slot placeholder.
+        XCTAssertEqual(store.stripDisplay, "I")
+        // Whatever the child has built can be spoken: the sentence is made here, and
+        // an AAC board does not withhold a child's voice waiting for a server.
+        XCTAssertTrue(store.canSpeak)
     }
 
     func testStoreSupportsReorderWithoutChangingWords() async {
         let store = TalkStore(apiClient: FakeTalkAPIClient())
-        store.isOfflineFallback = true
+        store.isOffline = true
         await store.addWord(TalkWordTile(id: "want", text: "want", pos: "verb", category: "actions"))
         await store.addWord(TalkWordTile(id: "i", text: "I", pos: "pronoun", category: "pronouns"))
 
@@ -181,12 +230,12 @@ final class TikoTalkTests: XCTestCase {
     /// Req 1 / 14: the deterministic offline capture seed populates the board with
     /// the built-in starter words and no network — this is what a fresh, offline,
     /// no-account launch (and the UI tests) rely on.
-    func testLoadOfflineFallbackForCapturePopulatesBoard() {
+    func testLoadLocalBoardForCapturePopulatesBoard() {
         let store = TalkStore(apiClient: FakeTalkAPIClient(), identityProvider: FakeTalkIdentityProvider())
 
-        store.loadOfflineFallbackForCapture()
+        store.loadLocalBoardForCapture()
 
-        XCTAssertTrue(store.isOfflineFallback)
+        XCTAssertTrue(store.isOffline)
         XCTAssertFalse(store.boardWords.isEmpty)
         XCTAssertTrue(store.boardWords.contains { $0.id == "want" }, "starter board should include the 'want' tile the UI test taps")
         XCTAssertTrue(store.sentenceWords.isEmpty, "no words should be in the sentence before any tap")
@@ -202,7 +251,9 @@ final class TikoTalkTests: XCTestCase {
         await store.addWord(TalkWordTile(id: "i", text: "I", pos: "pronoun", category: "pronouns"))
         await store.addWord(TalkWordTile(id: "uword-local-\(UUID().uuidString)", text: "Sil", pos: "noun", category: "mine", isCustom: true))
 
-        XCTAssertEqual(store.sentenceText, "I Sil")
+        // A word the child typed is a name: no article, and the sentence is
+        // punctuated because this is the text that gets spoken.
+        XCTAssertEqual(store.sentenceText, "I Sil.")
         XCTAssertTrue(store.canSpeak, "a locally-typed custom word should still be speakable")
     }
 
@@ -217,7 +268,7 @@ final class TikoTalkTests: XCTestCase {
 
         XCTAssertNil(response, "custom-word sentences skip the /complete API")
         XCTAssertNil(store.audioURL)
-        XCTAssertEqual(store.completedSentence, "Mum")
+        XCTAssertEqual(store.completedSentence, "Mum.")
     }
 
     // MARK: - Model helpers (Req 5, 6)
@@ -239,7 +290,13 @@ final class TikoTalkTests: XCTestCase {
     /// `matching(ids:)` resolves saved-phrase / template word ids to tiles in the
     /// requested order, dropping ids it doesn't know.
     func testMatchingIdsResolvesInOrderAndDropsUnknown() {
-        let resolved = TalkOfflineFallback.words.matching(ids: ["help", "i", "unknown", "want"])
+        let words = [
+            TalkWordTile(id: "i", text: "I", pos: "pronoun", category: "pronouns"),
+            TalkWordTile(id: "want", text: "want", pos: "verb", category: "actions"),
+            TalkWordTile(id: "help", text: "help", pos: "verb", category: "actions")
+        ]
+
+        let resolved = words.matching(ids: ["help", "i", "unknown", "want"])
 
         XCTAssertEqual(resolved.map(\.id), ["help", "i", "want"])
     }
@@ -278,34 +335,38 @@ final class TikoTalkTests: XCTestCase {
         XCTAssertNotEqual(fallbackA, TalkPosColor.color(for: "pronoun"), "the fallback differs from a real pos colour")
     }
 
-    // MARK: - Offline fallback template + seed data
+    // MARK: - The board that ships with the app
 
-    /// Every offline template resolves to its exact ready-made word set, and an
-    /// unknown template id resolves to nothing (so the store falls through to the
-    /// pattern-prefill / slot logic instead).
-    func testTemplateWordsForEachOfflineTemplate() {
-        func words(_ id: String, pattern: String) -> [String] {
-            TalkOfflineFallback.templateWords(for: TalkTemplate(id: id, pattern: pattern, category: "needs", icon: nil, slotCount: 0)).map(\.id)
+    /// A template's words are the ones its own pattern names, resolved against the
+    /// pack — no per-template special cases.
+    func testTemplateWordsComeFromThePattern() throws {
+        let board = try XCTUnwrap(TalkLocalBoard.startResponse(locale: "en"))
+
+        func words(_ pattern: String) -> [String] {
+            TalkLocalBoard.templateWords(
+                for: TalkTemplate(id: "t", pattern: pattern, category: "needs", icon: nil, slotCount: 0),
+                in: board.initialWords
+            ).map(\.id)
         }
 
-        XCTAssertEqual(words("fallback-i-want", pattern: "I want ___"), ["i", "want"])
-        XCTAssertEqual(words("fallback-help", pattern: "I need help"), ["i", "need", "help"])
-        XCTAssertEqual(words("fallback-more", pattern: "More ___ please"), ["more", "please"])
-        XCTAssertTrue(words("not-a-template", pattern: "x").isEmpty, "unknown templates resolve to no words")
+        XCTAssertEqual(words("I want ___"), ["i", "want"])
+        XCTAssertEqual(words("I need help"), ["i", "need", "help"])
+        XCTAssertTrue(words("___").isEmpty, "a pattern with only a slot names no words")
     }
 
-    /// The deterministic offline start seed exposes the starter categories and a
-    /// ready-to-tap saved phrase — the no-network baseline the app degrades to.
-    func testOfflineStartResponseSeedsCategoriesAndSavedPhrase() {
-        let start = TalkOfflineFallback.startResponse
+    /// Suggestions with no server: what the grammar allows, most frequent first.
+    func testLocalSuggestionsFollowThePacksTransitions() {
+        let chosen = [TalkWordTile(id: "i", text: "I", pos: "pronoun", category: "pronouns")]
 
-        XCTAssertEqual(start.initialCategories.map(\.id), ["pronouns", "actions", "extras"])
-        XCTAssertEqual(start.stripState.validNext, ["pronoun", "verb", "modifier"])
-        XCTAssertFalse(start.stripState.canComplete, "an empty seeded strip cannot complete yet")
+        let allowed = TalkLocalBoard.validNext(after: chosen, locale: "en")
+        let suggestions = TalkLocalBoard.suggestions(after: chosen, locale: "en")
 
-        let phrase = start.savedPhrases.first { $0.id == "fallback-help-phrase" }
-        XCTAssertEqual(phrase?.wordIds, ["i", "need", "help"])
-        XCTAssertEqual(phrase?.sentence, "I need help")
+        XCTAssertFalse(allowed.isEmpty, "the pack states what may follow a pronoun")
+        XCTAssertFalse(suggestions.isEmpty)
+        for word in suggestions {
+            XCTAssertTrue(allowed.contains(word.pos), "\(word.id) (\(word.pos)) cannot follow a pronoun")
+        }
+        XCTAssertFalse(suggestions.contains { $0.id == "i" }, "a word already chosen is not suggested again")
     }
 
     // MARK: - Store board ordering, phrase recall, clearing, and guards
@@ -345,7 +406,7 @@ final class TikoTalkTests: XCTestCase {
     /// leaves the sentence immediately speakable.
     func testSelectPhraseLoadsWordsAndIsSpeakable() {
         let store = TalkStore(apiClient: FakeTalkAPIClient(), identityProvider: FakeTalkIdentityProvider())
-        store.loadOfflineFallbackForCapture()
+        store.loadLocalBoardForCapture()
 
         store.selectPhrase(TalkSavedPhrase(id: "p", sentence: "I want", wordIds: ["i", "want"], isAuto: false, usageCount: 1, label: nil))
 
@@ -374,7 +435,7 @@ final class TikoTalkTests: XCTestCase {
     func testSaveCurrentPhraseWithoutIdentityReturnsNil() async {
         let api = FakeTalkAPIClient()
         let store = TalkStore(apiClient: api, identityProvider: nil)
-        store.isOfflineFallback = true
+        store.isOffline = true
         await store.addWord(TalkWordTile(id: "help", text: "help", pos: "verb", category: "actions"))
 
         let saved = await store.saveCurrentPhrase(label: "Help")
@@ -387,7 +448,7 @@ final class TikoTalkTests: XCTestCase {
     /// unchanged.
     func testMoveWordIgnoresOutOfRangeIndices() async {
         let store = TalkStore(apiClient: FakeTalkAPIClient())
-        store.isOfflineFallback = true
+        store.isOffline = true
         await store.addWord(TalkWordTile(id: "i", text: "I", pos: "pronoun", category: "pronouns"))
 
         await store.moveWord(from: 5, to: 0)
@@ -398,16 +459,18 @@ final class TikoTalkTests: XCTestCase {
 
     /// Applying an offline template fills the sentence with its ready-made words
     /// and shows the template pattern as the strip display.
-    func testApplyOfflineTemplatePopulatesSentence() async {
+    func testApplyTemplatePopulatesSentenceFromThePack() async {
         let store = TalkStore(apiClient: FakeTalkAPIClient())
-        store.isOfflineFallback = true
+        store.isOffline = true
 
-        await store.applyTemplate(TalkTemplate(id: "fallback-more", pattern: "More ___ please", category: "extras", icon: nil, slotCount: 1))
+        await store.applyTemplate(TalkTemplate(id: "more-please", pattern: "More ___ please", category: "extras", icon: nil, slotCount: 1))
 
         XCTAssertEqual(store.sentenceWords.map(\.id), ["more", "please"])
-        XCTAssertEqual(store.sentenceText, "more please")
-        // Offline, the strip mirrors the built sentence and is speakable.
-        XCTAssertEqual(store.stripDisplay, store.sentenceText)
+        // "please" follows what it applies to, and the realizer punctuates it.
+        XCTAssertEqual(store.sentenceText, "More, please.")
+        // A template with an empty slot keeps showing its shape, so the child can
+        // see where the missing word goes; the next tap replaces it with the strip.
+        XCTAssertEqual(store.stripDisplay, "More ___ please")
         XCTAssertTrue(store.canSpeak)
     }
 }

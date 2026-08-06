@@ -6,6 +6,12 @@ import TikoKit
 /// double-tap to remove it. Words are coloured by part of speech.
 struct TalkSentenceStripView: View {
     let words: [TalkWordTile]
+    /**
+     The sentence the tiles make, as the realizer builds it: "I am sad because I want
+     mum". The app was computing this to speak it and showing nobody — the strip held
+     the bare tiles, so the grammar was audible and invisible.
+     */
+    let sentence: String
     let canSpeak: Bool
     let isSpeaking: Bool
     let appColor: TikoAppColor
@@ -21,6 +27,21 @@ struct TalkSentenceStripView: View {
     }
 
     var body: some View {
+        VStack(spacing: 6) {
+            if !sentence.isEmpty {
+                Text(sentence)
+                    .font(.system(.body, design: .rounded).weight(.bold))
+                    .foregroundStyle(.primary.opacity(0.75))
+                    .lineLimit(2)
+                    .multilineTextAlignment(.center)
+                    .frame(maxWidth: .infinity)
+                    .accessibilityIdentifier("talk.sentence.text")
+            }
+            strip
+        }
+    }
+
+    private var strip: some View {
         HStack(spacing: 8) {
             ScrollViewReader { proxy in
                 ScrollView(.horizontal, showsIndicators: false) {

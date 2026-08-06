@@ -18,6 +18,8 @@ export const afrikaans: LanguageRules = {
     language: 'af',
     maturity: 'beta',
     wordOrder: 'svo',
+    verbCitation: 'invariant',
+    verbComplementPosition: 'clauseFinal',
     questionStrategy: 'inversion',
     spacing: 'space',
     capitalize: true,

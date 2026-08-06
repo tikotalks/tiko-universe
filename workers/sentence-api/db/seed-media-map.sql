@@ -1,4 +1,4 @@
--- Generated from workers/sentence-api/data/media-map.json; concept -> Tiko media image.
+-- Generated from packages/talk-packs/data/media-map.json; concept -> Tiko media image.
 INSERT INTO talk_media_map (concept_id, image_url, source, updated_at) VALUES ('angry', 'https://data.tikocdn.org/uploads/1754688232560-emotion-angry.png', 'auto', CURRENT_TIMESTAMP) ON CONFLICT(concept_id) DO UPDATE SET image_url = excluded.image_url, updated_at = CURRENT_TIMESTAMP WHERE talk_media_map.source = 'auto';
 INSERT INTO talk_media_map (concept_id, image_url, source, updated_at) VALUES ('apple', 'https://data.tikocdn.org/uploads/1756292940670-golden-apple.png', 'auto', CURRENT_TIMESTAMP) ON CONFLICT(concept_id) DO UPDATE SET image_url = excluded.image_url, updated_at = CURRENT_TIMESTAMP WHERE talk_media_map.source = 'auto';
 INSERT INTO talk_media_map (concept_id, image_url, source, updated_at) VALUES ('arm', 'https://data.tikocdn.org/uploads/1756473758354-human-arm.png', 'auto', CURRENT_TIMESTAMP) ON CONFLICT(concept_id) DO UPDATE SET image_url = excluded.image_url, updated_at = CURRENT_TIMESTAMP WHERE talk_media_map.source = 'auto';
