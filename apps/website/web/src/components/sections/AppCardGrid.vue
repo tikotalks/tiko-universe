@@ -22,11 +22,23 @@ const items = (p: { apps?: TikoAppInfo[] }) => p.apps ?? tikoApps
       :style="{ '--card-bg': app.color, '--card-fg': app.colorText }"
     >
       <div :class="bemm('icon-wrap')">
-        <img :src="app.iconUrl" :alt="app.name" :class="bemm('icon')" loading="lazy" />
+        <img :src="app.iconUrl" :alt="app.name" :class="bemm('icon')" loading="eager" />
       </div>
       <div :class="bemm('label')">
         <h3 :class="bemm('name')">{{ app.name }}</h3>
-        <span :class="bemm('status')">{{ app.statusLabel }}</span>
+        <!--
+          Where you can actually get it, rather than a bare "Available". Gated
+          on status, not on the presence of a URL: Cards, Sequence and Timer
+          carry an appUrl while still being `planned`, so keying off the URL
+          alone advertised a web app for three apps that have not shipped.
+          These are plain text, not links — the whole card is already a link to
+          the detail page, and nesting an anchor inside one is invalid.
+        -->
+        <span v-if="app.status === 'available'" :class="bemm('platforms')">
+          <span v-if="app.appUrl" :class="bemm('platform')">Web</span>
+          <span v-if="app.appStoreUrl" :class="bemm('platform')">App Store</span>
+        </span>
+        <span v-else :class="bemm('status')">{{ app.statusLabel }}</span>
       </div>
     </RouterLink>
   </div>
@@ -89,7 +101,8 @@ const items = (p: { apps?: TikoAppInfo[] }) => p.apps ?? tikoApps
     color: inherit;
   }
 
-  &__status {
+  &__status,
+  &__platform {
     font-size: 0.72rem;
     font-weight: 700;
     letter-spacing: 0.04em;
@@ -97,6 +110,13 @@ const items = (p: { apps?: TikoAppInfo[] }) => p.apps ?? tikoApps
     border-radius: 999px;
     background: color-mix(in srgb, var(--card-fg), transparent 84%);
     color: inherit;
+  }
+
+  &__platforms {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.3rem;
   }
 }
 </style>

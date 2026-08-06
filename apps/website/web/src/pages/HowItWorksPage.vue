@@ -7,22 +7,20 @@ import CardGrid from '../components/sections/CardGrid.vue'
 import ColorCard from '../components/sections/ColorCard.vue'
 import SplitMedia from '../components/sections/SplitMedia.vue'
 import CtaBanner from '../components/sections/CtaBanner.vue'
+import StepList from '../components/sections/StepList.vue'
 
 const steps = [
   {
     title: 'Open the link',
     body: 'A caregiver shares a link or bookmarks a Tiko app. No app store, no download required — just a URL.',
-    image: 'laptop' as MediaImageName
   },
   {
     title: 'Use it immediately',
     body: 'The app is ready with no sign-in, no tutorial, no onboarding flow. The child sees the tool straight away.',
-    image: 'lightBulb' as MediaImageName
   },
   {
     title: 'Recover later if needed',
     body: 'If the caregiver wants to keep settings across devices, they can add an email and get a magic link — no password ever.',
-    image: 'caregiver' as MediaImageName
   },
 ]
 
@@ -46,9 +44,11 @@ const identityProps = [
   <div class="how-page">
     <PageSection
       eyebrow="How Tiko works"
-      title="Open first. Setup stays in the background."
       intro="Tiko starts device-first. Apps open and work immediately. Caregiver recovery can come later through email magic links — never before the child gets to use the tool."
-    />
+      layout="split"
+    >
+      <template #title>Open first. <em>Setup stays in the background.</em></template>
+    </PageSection>
 
     <PageSection
       eyebrow="One Tiko, many screens"
@@ -67,22 +67,15 @@ const identityProps = [
       </CardGrid>
     </PageSection>
 
-    <PageSection
-      eyebrow="The experience"
-      title="Three moments, no friction."
-      align="center"
-    >
-      <CardGrid min="250px">
-        <ColorCard
-          v-for="(step, i) in steps"
-          :key="step.title"
-          :tone="tones[(i + 4) % tones.length]"
-          :eyebrow="`Step ${i + 1}`"
-          :title="step.title"
-          :body="step.body"
-          :image="mediaImage(step.image)"
-        />
-      </CardGrid>
+    <PageSection eyebrow="The experience" layout="split">
+      <template #title>Three moments, <em>no friction.</em></template>
+      <!--
+        A numbered list rather than a card grid: these three are a sequence,
+        and equal-weight cards flatten that into a menu. It also drops three
+        pieces of stock artwork (a laptop, a light bulb, a photo of an adult)
+        that illustrated nothing the steps actually say.
+      -->
+      <StepList :steps="steps" />
     </PageSection>
 
     <PageSection tone="dark">

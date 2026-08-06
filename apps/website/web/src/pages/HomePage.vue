@@ -8,9 +8,19 @@ import PageSection from '../components/sections/PageSection.vue'
 import CardGrid from '../components/sections/CardGrid.vue'
 import ColorCard from '../components/sections/ColorCard.vue'
 import AppCardGrid from '../components/sections/AppCardGrid.vue'
+import AppStoreLineup from '../components/sections/AppStoreLineup.vue'
+import PrinciplePanels, { type Principle } from '../components/sections/PrinciplePanels.vue'
 import SplitMedia from '../components/sections/SplitMedia.vue'
 import MediaStream from '../components/sections/MediaStream.vue'
 import CtaBanner from '../components/sections/CtaBanner.vue'
+
+/** The Why-Tiko pillars as numbered colour panels. Copy is unchanged. */
+const whyTikoPanels: Principle[] = whyTikoPillars.map((pillar, i) => ({
+  marker: String(i + 1).padStart(2, '0'),
+  title: pillar.title,
+  body: pillar.body,
+  tone: tones[i % tones.length],
+}))
 </script>
 
 <template>
@@ -29,29 +39,35 @@ import CtaBanner from '../components/sections/CtaBanner.vue'
 
     <PageSection
       eyebrow="Why Tiko"
-      title="Small on purpose."
       intro="Each app stays focused so the moment stays calm — for the child and the adult beside them."
-      align="center"
+      layout="split"
     >
-      <CardGrid min="240px">
-        <ColorCard
-          v-for="(pillar, i) in whyTikoPillars"
-          :key="pillar.title"
-          :tone="tones[i % tones.length]"
-          :title="pillar.title"
-          :body="pillar.body"
-          :image="mediaImage(pillar.image)"
-        />
-      </CardGrid>
+      <template #title>Small <em>on purpose.</em></template>
+      <!--
+        Numbered colour panels rather than image cards: the pillar artwork was
+        generic stock (a light bulb, a puzzle piece, a globe) that illustrated
+        nothing the copy actually says.
+      -->
+      <PrinciplePanels :panels="whyTikoPanels" />
     </PageSection>
 
     <PageSection
       eyebrow="Education and Communication"
-      title="One everyday moment. One tiny app."
       intro="Open the one that fits the moment."
-      align="center"
+      layout="split"
     >
+      <template #title>One everyday moment. <em>One tiny app.</em></template>
       <AppCardGrid :apps="tikoApps" />
+    </PageSection>
+
+    <PageSection
+      eyebrow="Download"
+      intro="Five Tiko apps are on the App Store for iPhone and iPad, free and without an account. The rest run on the web today."
+      layout="split"
+      id="download"
+    >
+      <template #title>Get them on <em>the App Store.</em></template>
+      <AppStoreLineup />
     </PageSection>
 
     <PageSection tone="dark">

@@ -43,7 +43,7 @@ const tag = computed(() => (props.to ? RouterLink : props.href ? 'a' : 'div'))
   >
     <div v-if="image || $slots.visual" :class="bemm('visual')">
       <slot name="visual">
-        <img :src="image" :alt="imageAlt ?? title ?? ''" loading="lazy" :class="bemm('image')" />
+        <img :src="image" :alt="imageAlt ?? title ?? ''" loading="eager" :class="bemm('image')" />
       </slot>
     </div>
     <div :class="bemm('content')">

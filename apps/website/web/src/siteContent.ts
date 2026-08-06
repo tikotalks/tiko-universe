@@ -117,7 +117,7 @@ export const whyFreePillars: ContentPillar[] = [
 
 export const platformNotes: { label: string; copy: string; image: MediaImageName }[] = [
   { label: 'Web', copy: 'The fastest way to try Tiko. A link is all it takes — no app store, no download required.', image: 'laptop' },
-  { label: 'iOS', copy: 'Native iOS apps are arriving — Type is on the App Store now, with the rest following the same calm, focused experience.', image: 'smartphone' },
+  { label: 'iOS', copy: 'Yes No, Type, Say, Sum and First are on the App Store now, for iPhone and iPad. The rest follow the same calm, focused experience.', image: 'smartphone' },
   { label: 'Android', copy: 'Android follows the same approach — small tools, one job each, consistent behaviour.', image: 'tablet' }
 ]
 
