@@ -15,6 +15,9 @@ coverage/
 **/.gradle/
 **/.kotlin/
 engines/**/build/
+packages/**/build/
+# Gradle writes its configuration-cache and problems reports to the invocation root
+/build/
 
 # Xcode / SwiftPM build + per-user state
 DerivedData/
