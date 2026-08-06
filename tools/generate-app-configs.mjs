@@ -22,11 +22,12 @@ const fallbackConfigs = {
   talk: { id: 'talk', title: 'Talk', appColor: 'talk', appIcon: 'ui/talk', appIconMediaCategory: 'communication', themeColor: '#17131c', iosIcon: 'message.fill' },
   say: { id: 'say', title: 'Say', appColor: 'say', appIcon: 'ui/microphone', appIconMediaCategory: 'communication', appIconImageUrl: 'https://data.tikocdn.org/uploads/1781443432968-speech-balloon.png', themeColor: '#8b5cf6', iosIcon: 'waveform' },
   sum: { id: 'sum', title: 'Sum', appColor: 'sum', appIcon: 'ui/calculator', appIconMediaCategory: 'numbers', appIconImageUrl: 'https://data.tikocdn.org/uploads/1755105954065-calculator.png', themeColor: '#dd8966', iosIcon: 'plus.forwardslash.minus' },
+  coloring: { id: 'coloring', title: 'Coloring', appColor: 'coloring', appIcon: 'ui/paint-brush', appIconMediaCategory: 'art', themeColor: '#f2802b', iosIcon: 'paintbrush.pointed.fill' },
   first: { id: 'first', title: 'First', appColor: 'first', appIcon: 'ui/check-list', appIconMediaCategory: 'routines', appIconImageUrl: 'https://data.tikocdn.org/uploads/1754413862502-todo.png', themeColor: '#06b6d4', iosIcon: 'checklist' },
 }
 
 const webApps = ['yes-no', 'type', 'cards', 'sequence', 'timer', 'radio', 'todo', 'talk']
-const iosSharedApps = ['yes-no', 'type', 'cards', 'sequence', 'timer', 'radio', 'talk', 'tiko', 'say', 'sum', 'first']
+const iosSharedApps = ['yes-no', 'type', 'cards', 'sequence', 'timer', 'radio', 'talk', 'tiko', 'say', 'sum', 'first', 'coloring']
 const iosApps = {
   'yes-no': 'YesNoAppConfig.swift',
   type: 'TypeAppConfig.swift',
