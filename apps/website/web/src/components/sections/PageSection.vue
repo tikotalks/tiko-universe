@@ -16,13 +16,22 @@ const props = withDefaults(defineProps<{
   tone?: string        // a Tiko colour name e.g. 'primary' | 'yes-no' | 'dark'
   width?: 'narrow' | 'default' | 'wide'
   align?: 'left' | 'center'
+  /**
+   * `split` puts the eyebrow in a narrow left column with the title and intro
+   * beside it. The asymmetry is what keeps a long page from reading as a stack
+   * of identical centred blocks. Ignored when `align` is `center`.
+   */
+  layout?: 'stacked' | 'split'
   id?: string
 }>(), {
   width: 'default',
   align: 'left',
+  layout: 'stacked',
 })
 
 const bemm = useBemm('section', { return: 'string', includeBaseClass: true })
+
+const isSplit = computed(() => props.layout === 'split' && props.align !== 'center')
 
 const toneStyle = computed(() =>
   props.tone
@@ -34,15 +43,19 @@ const toneStyle = computed(() =>
 <template>
   <section
     :id="id"
-    :class="[bemm('', { toned: !!tone, [`w-${width}`]: true, [`a-${align}`]: true })]"
+    :class="[bemm('', { toned: !!tone, [`w-${width}`]: true, [`a-${align}`]: true, split: isSplit })]"
     :style="toneStyle"
   >
     <div :class="bemm('inner')">
-      <header v-if="eyebrow || title || intro || $slots.actions" :class="bemm('head')">
+      <header v-if="eyebrow || title || intro || $slots.actions || $slots.title" :class="bemm('head')">
         <span v-if="eyebrow" :class="bemm('eyebrow')">{{ eyebrow }}</span>
-        <h2 v-if="title" :class="bemm('title')">{{ title }}</h2>
-        <p v-if="intro" :class="bemm('intro')">{{ intro }}</p>
-        <div v-if="$slots.actions" :class="bemm('actions')"><slot name="actions" /></div>
+        <div :class="bemm('head-main')">
+          <h2 v-if="title || $slots.title" :class="bemm('title')">
+            <slot name="title">{{ title }}</slot>
+          </h2>
+          <p v-if="intro" :class="bemm('intro')">{{ intro }}</p>
+          <div v-if="$slots.actions" :class="bemm('actions')"><slot name="actions" /></div>
+        </div>
       </header>
       <div :class="bemm('body')"><slot /></div>
     </div>
@@ -81,6 +94,35 @@ const toneStyle = computed(() =>
     margin-bottom: clamp(1.5rem, 3vw, 2.75rem);
   }
 
+  &__head-main {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    min-width: 0;
+  }
+
+  // Eyebrow in a narrow left column, title and intro beside it.
+  &--split &__head {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: clamp(1rem, 4vw, 3rem);
+    align-items: start;
+    max-width: none;
+
+    @media (max-width: 860px) {
+      grid-template-columns: 1fr;
+      gap: 0.75rem;
+    }
+  }
+
+  &--split &__eyebrow {
+    padding-top: 0.4em;
+  }
+
+  &--split &__intro {
+    max-width: 46ch;
+  }
+
   &--a-center &__head {
     align-items: center;
     text-align: center;
@@ -99,6 +141,18 @@ const toneStyle = computed(() =>
     font-family: var(--font-family-heading);
     font-size: clamp(1.75rem, 4vw, 3rem);
     line-height: 1.05;
+
+    // Lets a title accent one clause without splitting it into two elements.
+    em {
+      font-style: normal;
+      color: var(--color-primary);
+    }
+  }
+
+  // On a toned band the page primary would fight the band; tint against the
+  // band's own readable ink instead.
+  &--toned &__title em {
+    color: color-mix(in srgb, var(--section-fg), transparent 38%);
   }
 
   &__intro {

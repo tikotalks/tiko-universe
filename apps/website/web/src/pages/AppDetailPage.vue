@@ -3,6 +3,7 @@ import { RouterLink, useRoute } from 'vue-router'
 import { computed, ref, watch, onMounted } from 'vue'
 import { tikoImageUrl } from '@tiko/ui'
 import { getAppBySlug } from '../content/appUniverse'
+import { mediaImage } from '../content/mediaImages'
 import PageSection from '../components/sections/PageSection.vue'
 import CardGrid from '../components/sections/CardGrid.vue'
 import ColorCard from '../components/sections/ColorCard.vue'
@@ -13,6 +14,17 @@ import AppStoreButton from '../components/AppStoreButton.vue'
 const route = useRoute()
 const slug = computed(() => route.params.slug as string)
 const app = computed(() => getAppBySlug(slug.value))
+
+/** Available on the web — Say, Sum and First have shipped, but on iOS only. */
+const hasWebApp = computed(() => Boolean(app.value?.appUrl) && app.value?.status === 'available')
+/** Shipped somewhere, so the page must not claim "Coming soon". */
+const isReleased = computed(() => app.value?.status === 'available')
+
+const ctaTitle = computed(() => {
+  if (hasWebApp.value) return 'Open now on the web.'
+  if (isReleased.value) return 'On the App Store now.'
+  return 'Coming soon.'
+})
 
 interface MediaImage {
   id: string
@@ -64,10 +76,9 @@ const FALLBACK_CARD_MEDIA: MediaImage[] = [
 const mediaSection = computed(() => APP_MEDIA_SECTION[slug.value])
 const hasMediaSection = computed(() => Boolean(mediaSection.value))
 const visibleMediaImages = computed(() => mediaImages.value.length ? mediaImages.value : FALLBACK_CARD_MEDIA)
-const heroMediaImage = computed(() => {
-  const first = visibleMediaImages.value[0]
-  return first ? tikoImageUrl(resolveOriginalUrl(first), 'large') : undefined
-})
+// The "human moment" panel used to show the first of the animal fallback list, so
+// every app illustrated its most human section with a frog. Each app names its own.
+const momentImage = computed(() => (app.value ? mediaImage(app.value.momentImage, 'large') : undefined))
 
 function resolveOriginalUrl(item: MediaImage): string {
   return item.original_url || (item.file_name ? `https://${CDN_ORIGIN}/${item.file_name}` : '')
@@ -128,7 +139,7 @@ watch(slug, (newSlug) => {
     <p class="eyebrow">Not found</p>
     <h1 class="display-2">App not found.</h1>
     <p class="body-lg">There is no Tiko app with that name.</p>
-    <RouterLink to="/apps" class="button button--ghost">Back to all apps</RouterLink>
+    <RouterLink to="/apps" class="btn btn--ghost">Back to all apps</RouterLink>
   </PageSection>
 
   <div v-else class="app-detail" :style="{ '--app-color': app.color, '--app-color-text': app.colorText }">
@@ -142,15 +153,15 @@ watch(slug, (newSlug) => {
         <p class="app-detail__desc">{{ app.description }}</p>
         <div class="app-detail__actions">
           <a
-            v-if="app.appUrl && app.status === 'available'"
+            v-if="hasWebApp"
             :href="app.appUrl"
-            class="button button--light"
+            class="btn btn--light"
             target="_blank"
             rel="noopener"
           >
             Open {{ app.name }}
           </a>
-          <span v-else class="button button--ghost-light">Coming soon</span>
+          <span v-else-if="!isReleased" class="btn btn--ghost-light">Coming soon</span>
           <AppStoreButton v-if="app.appStoreUrl" :href="app.appStoreUrl" />
         </div>
       </SplitMedia>
@@ -172,6 +183,38 @@ watch(slug, (newSlug) => {
       </CardGrid>
     </PageSection>
 
+    <!-- Real device screenshots (apps with a capture run in release/ios.json) -->
+    <PageSection
+      v-if="app.screenshots.length"
+      eyebrow="On the device"
+      :title="`${app.name}, on a real screen.`"
+      intro="Captured on an iPhone, in both light and dark mode. Nothing here is a mockup."
+      align="center"
+    >
+      <ul class="app-detail__shots">
+        <li v-for="shot in app.screenshots" :key="shot.light" class="app-detail__shot">
+          <div class="app-detail__shot-frame">
+            <!-- Two images rather than <picture media>, so the shot follows the
+                 site's own colour toggle and not only the OS preference. -->
+            <img
+              :src="shot.light"
+              :alt="`${app.name} — ${shot.caption}`"
+              loading="eager"
+              class="app-detail__shot-img app-detail__shot-img--light"
+            />
+            <img
+              :src="shot.dark"
+              alt=""
+              aria-hidden="true"
+              loading="eager"
+              class="app-detail__shot-img app-detail__shot-img--dark"
+            />
+          </div>
+          <p class="app-detail__shot-caption">{{ shot.caption }}</p>
+        </li>
+      </ul>
+    </PageSection>
+
     <!-- Media images (apps with a configured Tiko Media category) -->
     <PageSection
       v-if="hasMediaSection && mediaSection"
@@ -180,7 +223,7 @@ watch(slug, (newSlug) => {
       :intro="mediaSection.lede"
     >
       <template #actions>
-        <a :href="MEDIA_SITE_URL" class="button button--primary" target="_blank" rel="noopener">
+        <a :href="MEDIA_SITE_URL" class="btn btn--primary" target="_blank" rel="noopener">
           Browse Tiko Media
         </a>
       </template>
@@ -196,7 +239,7 @@ watch(slug, (newSlug) => {
           <img
             :src="cdnUrl(resolveOriginalUrl(img), 300)"
             :alt="img.title"
-            loading="lazy"
+            loading="eager"
             class="app-detail__media-img"
           />
           <figcaption class="app-detail__media-caption">{{ img.title }}</figcaption>
@@ -207,7 +250,7 @@ watch(slug, (newSlug) => {
     <!-- The human moment -->
     <PageSection tone="dark">
       <SplitMedia
-        :image="heroMediaImage"
+        :image="momentImage"
         :image-alt="`A calm ${app.name} moment`"
         media-side="left"
       >
@@ -239,21 +282,21 @@ watch(slug, (newSlug) => {
     <PageSection align="center">
       <CtaBanner
         :tone="app.id"
-        :title="app.status === 'available' ? 'Open now on the web.' : 'Coming soon.'"
+        :title="ctaTitle"
         :body="app.platformNotes"
       >
         <template #actions>
           <a
-            v-if="app.appUrl && app.status === 'available'"
+            v-if="hasWebApp"
             :href="app.appUrl"
-            class="button button--light"
+            class="btn btn--light"
             target="_blank"
             rel="noopener"
           >
             Open {{ app.name }}
           </a>
           <AppStoreButton v-if="app.appStoreUrl" :href="app.appStoreUrl" />
-          <RouterLink to="/apps" class="button button--ghost-light">All apps</RouterLink>
+          <RouterLink to="/apps" class="btn btn--ghost-light">All apps</RouterLink>
         </template>
       </CtaBanner>
     </PageSection>
@@ -264,6 +307,7 @@ watch(slug, (newSlug) => {
 .app-detail {
   &__back {
     display: inline-flex;
+    margin-bottom: 1.25rem;
     font-size: 0.85rem;
     font-weight: 700;
     color: inherit;
@@ -271,6 +315,64 @@ watch(slug, (newSlug) => {
     text-decoration: none;
     &:hover { opacity: 1; }
   }
+
+  // ─── Device screenshots ───────────────────────────────────────────────────
+  &__shots {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: clamp(1.25rem, 3vw, 2.5rem);
+    justify-items: center;
+    max-width: 900px;
+    margin-inline: auto;
+  }
+
+  &__shot {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.85rem;
+    max-width: 260px;
+  }
+
+  &__shot-frame {
+    width: 100%;
+    border-radius: 28px;
+    overflow: hidden;
+    background: var(--surface-subtle);
+    box-shadow: 0 26px 54px -30px color-mix(in srgb, var(--color-foreground), transparent 35%);
+  }
+
+  &__shot-img {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  // Default to the OS preference so the right shot is up before the header
+  // applies the stored colour mode, then let the site's own toggle win.
+  &__shot-img--dark { display: none; }
+
+  @media (prefers-color-scheme: dark) {
+    &__shot-img--light { display: none; }
+    &__shot-img--dark { display: block; }
+  }
+
+  &__shot-caption {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--text-muted);
+    text-align: center;
+  }
+}
+
+:root[data-color-mode='light'] .app-detail {
+  &__shot-img--light { display: block; }
+  &__shot-img--dark { display: none; }
+}
+
+:root[data-color-mode='dark'] .app-detail {
+  &__shot-img--light { display: none; }
+  &__shot-img--dark { display: block; }
 
   &__eyebrow {
     font-size: 0.75rem;

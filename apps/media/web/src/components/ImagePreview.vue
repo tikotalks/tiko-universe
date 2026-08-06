@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue'
+import { useBemm } from 'bemm'
 import { tikoImageUrl } from '@tiko/media'
 
 const props = defineProps<{
@@ -9,66 +10,41 @@ const props = defineProps<{
   height?: number
 }>()
 
-const emit = defineEmits<{
-  download: []
-}>()
+const bemm = useBemm('image-preview', { return: 'string', includeBaseClass: true })
 
 const previewSrc = computed(() => tikoImageUrl(props.src, 'medium') || props.src)
 </script>
 
 <template>
-  <div class="image-preview">
-    <div class="image-preview__frame">
-      <img
-        :src="previewSrc"
-        :alt="alt"
-        class="image-preview__img"
-        :width="width"
-        :height="height"
-      />
-    </div>
-    <button class="image-preview__download" @click="emit('download')">
-      ↓ Download Image
-    </button>
-  </div>
+  <figure :class="bemm('')">
+    <img
+      :class="bemm('image')"
+      :src="previewSrc"
+      :alt="alt"
+      :width="width"
+      :height="height"
+    >
+  </figure>
 </template>
 
-<style lang="scss" scoped>
+<style lang="scss">
 .image-preview {
   display: flex;
-  flex-direction: column;
-  gap: 1rem;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+  padding: clamp(var(--space), 3vw, calc(var(--space) * 2));
+  min-height: 20rem;
+  border-radius: 24px;
+  background: var(--surface-subtle);
+  overflow: hidden;
 
-  &__frame {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: color-mix(in srgb, var(--color-foreground) 4%, var(--color-background));
-    border-radius: 1rem;
-    overflow: hidden;
-    min-height: 16rem;
-  }
-
-  &__img {
+  &__image {
     max-width: 100%;
-    max-height: 32rem;
+    max-height: 34rem;
+    width: auto;
     object-fit: contain;
-    border-radius: 0.5rem;
-  }
-
-  &__download {
-    align-self: center;
-    padding: 0.6rem 1.5rem;
-    border: none;
-    border-radius: 0.75rem;
-    background: var(--tiko-app-primary);
-    color: var(--tiko-app-primary-text);
-    font-size: 0.9rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: opacity 0.15s;
-
-    &:hover { opacity: 0.85; }
+    border-radius: 12px;
   }
 }
 </style>

@@ -1,34 +1,43 @@
+// NOTE: 'accent' is reserved by @sil/ui — `_defaults.scss` emits
+// `--color-accent: var(--color-foreground)` *after* the $project-colors loop, so any
+// value declared here is discarded and the token resolves to the page foreground.
+// Never use `accent` as a Tiko tone; it renders black-on-black in dark mode.
 @use '@sil/ui/defaults' with ($project-colors: (
   'primary': #9b3fbd,
   'secondary': #2488ff,
   'tertiary': #16b8a6,
-  'accent': #ff8a1f,
   'warning': #f8c22e,
   'dark': #111111,
   'light': #faf8f4,
-  // Per-app colors (canonical Tiko app theme colors). @sil/ui generates
-  // --color-{name}, --color-{name}-text/-contrast/-light/-dark for each.
+  // Per-app colors (canonical Tiko app theme colors, mirroring
+  // tools/generate-app-configs.mjs). @sil/ui generates --color-{name} and
+  // --color-{name}-text/-contrast for each.
   'yes-no': #9b3fbd,
   'type': #2488ff,
   'cards': #ff8a1f,
   'sequence': #16b8a6,
   'timer': #f8c22e,
   'talk': #17131c,
+  'say': #8b5cf6,
+  'sum': #dd8966,
+  'first': #06b6d4,
 ));
 
 @use '@sil/ui/styles/main.scss';
 
-// ─── Design tokens ───────────────────────────────────────────────────────────
+// Type, surface tiers, spacing rhythm and the shared layout/typography/button/card
+// helpers live in @tiko/site so media.tikoapps.org renders as the same product.
+// Only the website's own palette belongs in this file.
+@use '@tiko/site/src/site.scss';
+
+// ─── App palette ─────────────────────────────────────────────────────────────
+//
+// Alias the @sil/ui-generated canonical app colors. @sil/ui emits --color-{name}
+// and --color-{name}-text/-contrast (auto readable text); the light tint is derived
+// here via color-mix so it adapts to light/dark mode. These are website-only: they
+// depend on the per-app entries in $project-colors above.
 
 :root {
-  // Inter for body copy, Nunito for headings/brand display only.
-  --font-family-body: 'Inter', ui-sans-serif, system-ui, -apple-system, sans-serif;
-  --font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, sans-serif;
-  --font-family-heading: 'Nunito', ui-sans-serif, system-ui, -apple-system, sans-serif;
-
-  // App palette — alias the @sil/ui-generated canonical app colors. @sil/ui emits
-  // --color-{name} and --color-{name}-text/-contrast (auto readable text); the
-  // light tint is derived here via color-mix so it adapts to light/dark mode.
   --app-yes-no: var(--color-yes-no);
   --app-yes-no-light: color-mix(in srgb, var(--color-yes-no), var(--color-background) 84%);
   --app-yes-no-text: var(--color-yes-no-text);
@@ -47,213 +56,13 @@
   --app-talk: var(--color-talk);
   --app-talk-light: color-mix(in srgb, var(--color-talk), var(--color-background) 84%);
   --app-talk-text: var(--color-talk-text);
-
-  // Surface tiers (--color-background covers page bg via @sil/ui)
-  --surface-card: color-mix(in srgb, var(--color-background), var(--color-foreground) 0%);
-  --surface-subtle: color-mix(in srgb, var(--color-background), var(--color-foreground) 4%);
-  --surface-ink-wash: color-mix(in srgb, var(--color-foreground), transparent 94%);
-
-  // Text secondary/muted (--color-foreground covers primary via @sil/ui)
-  --text-secondary: color-mix(in srgb, var(--color-foreground), transparent 28%);
-  --text-muted: color-mix(in srgb, var(--color-foreground), transparent 52%);
-
-  // Border (--shadow-s/m/l come from @sil/ui)
-  --border: color-mix(in srgb, var(--color-foreground), transparent 88%);
-  --border-strong: color-mix(in srgb, var(--color-foreground), transparent 78%);
-
-  // Header
-  --header-bg: color-mix(in srgb, var(--color-background), transparent 8%);
-
-  // Layout
-  --max-width: 1200px;
-  --header-height: 64px;
-
-  // Motion — custom easing only (never default `ease`/`linear`).
-  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
-  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
-}
-
-// Derived color variables use color-mix() so they adapt automatically between modes.
-
-// ─── Reset / base ─────────────────────────────────────────────────────────────
-
-html {
-  height: initial !important;
-  scroll-snap-type: none !important;
-  scroll-behavior: smooth;
-}
-
-body {
-  margin: 0;
-  min-width: 320px;
-  min-height: 100vh;
-  overflow: visible !important;
-  display: block !important;
-  background: var(--color-background);
-  color: var(--color-foreground);
-  font-family: var(--font-family);
-  font-size: 16px;
-  line-height: 1.6;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  transition: background 0.2s var(--ease-out), color 0.2s var(--ease-out);
-}
-
-// Branded text selection — works across light/dark via auto text colour.
-::selection {
-  background: var(--color-primary);
-  color: var(--color-primary-text);
-}
-
-// Balanced line breaks on headings prevent orphan words.
-h1, h2, h3 {
-  text-wrap: balance;
-}
-
-*, *::before, *::after {
-  box-sizing: border-box;
-}
-
-h1, h2, h3, h4, h5, h6 {
-  font-family: var(--font-family-heading);
-  font-weight: 800;
-  line-height: 1.05;
-  letter-spacing: 0;
-  margin: 0;
-  color: var(--color-foreground);
-}
-
-p { margin: 0; }
-
-a { color: inherit; }
-
-a:not(.button) { text-decoration: none; }
-
-button, a { font: inherit; }
-
-img { max-width: 100%; height: auto; display: block; }
-
-ul, ol { margin: 0; padding: 0; list-style: none; }
-
-code, pre {
-  font-family: var(--font-family-monospace);
-}
-
-// ─── Site shell ───────────────────────────────────────────────────────────────
-
-.site {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-
-  &__main {
-    flex: 1;
-  }
-}
-
-// ─── Layout helpers ───────────────────────────────────────────────────────────
-
-.container {
-  width: 100%;
-  max-width: var(--max-width);
-  margin-inline: auto;
-  padding: var(--section-container-padding, 0);
-  background-color: var(--section-container-background, transparent);
-  border-radius: var(--section-container-border-radius, var(--border-radius-xl));
-}
-
-.section {
-  padding: var(--spacing);
-}
-
-// ─── Typography helpers ────────────────────────────────────────────────────────
-
-.eyebrow {
-  display: inline-block;
-  font-family: var(--font-family);
-  font-size: 0.75rem;
-  font-weight: 700;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--text-muted);
-  margin-bottom: calc(var(--space) * 0.75);
-}
-
-.display-1 {
-  font-size: clamp(2.75rem, 7vw, 5.5rem);
-  line-height: 0.8;
-  letter-spacing: -0.025em;
-}
-
-.display-2 {
-  font-size: clamp(2rem, 4.5vw, 3.75rem);
-  line-height: 0.8;
-  letter-spacing: -0.025em;
-}
-
-.display-3 {
-  font-size: clamp(1.5rem, 3vw, 2.5rem);
-  line-height: 0.8;
-  letter-spacing: -0.025em;
-}
-
-.body-lg {
-  font-size: clamp(1rem, 2vw, 1.2rem);
-  line-height: 1.65;
-  color: var(--text-secondary);
-}
-
-.body-sm {
-  font-size: 0.875rem;
-  line-height: 1.6;
-  color: var(--text-secondary);
-}
-
-// ─── Cards ────────────────────────────────────────────────────────────────────
-
-.card {
-  background: var(--surface-card);
-  border-radius: 20px;
-  box-shadow: var(--shadow-s);
-}
-
-.card--raised {
-  box-shadow: var(--shadow-m);
-}
-
-// ─── Status badge ─────────────────────────────────────────────────────────────
-
-.badge {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-xs);
-  padding: 3px 10px;
-  border-radius: 999px;
-  font-size: 0.75rem;
-  font-weight: 700;
-  background: var(--surface-subtle);
-  color: var(--text-secondary);
-}
-
-.badge--available {
-  background: color-mix(in srgb, var(--color-background), var(--color-primary) 14%);
-  color: color-mix(in srgb, var(--color-foreground), var(--color-primary) 28%);
-}
-
-.badge--planned {
-  background: var(--surface-subtle);
-  color: var(--text-muted);
-}
-
-// ─── Code blocks ──────────────────────────────────────────────────────────────
-
-pre {
-  overflow-x: auto;
-  margin: 0;
-  padding: calc(var(--space) * 1.5);
-  border-radius: 16px;
-  background: #111111;
-  color: #e5e7eb;
-  font-size: 0.875rem;
-  line-height: 1.6;
+  --app-say: var(--color-say);
+  --app-say-light: color-mix(in srgb, var(--color-say), var(--color-background) 84%);
+  --app-say-text: var(--color-say-text);
+  --app-sum: var(--color-sum);
+  --app-sum-light: color-mix(in srgb, var(--color-sum), var(--color-background) 84%);
+  --app-sum-text: var(--color-sum-text);
+  --app-first: var(--color-first);
+  --app-first-light: color-mix(in srgb, var(--color-first), var(--color-background) 84%);
+  --app-first-text: var(--color-first-text);
 }

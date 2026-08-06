@@ -1,4 +1,6 @@
-export type TikoWebsiteAppSlug = 'yes-no' | 'type' | 'cards' | 'sequence' | 'timer' | 'talk'
+import { type MediaImageName } from './mediaImages'
+
+export type TikoWebsiteAppSlug = 'yes-no' | 'type' | 'cards' | 'sequence' | 'timer' | 'talk' | 'say' | 'sum' | 'first'
 
 export type TikoWebsiteAppStatus = 'available' | 'planned'
 export type AppStatus = TikoWebsiteAppStatus
@@ -9,6 +11,14 @@ export const stableRoutes: StableRoute[] = ['/', '/tools', '/why-tiko', '/how-it
 export interface AppFeature {
   title: string
   body: string
+}
+
+/** A real device screenshot, as produced by the app's `release/ios.json` capture run. */
+export interface AppScreenshot {
+  /** Path under /public, light and dark variants of the same screen. */
+  light: string
+  dark: string
+  caption: string
 }
 
 export interface TikoWebsiteAppMetadata {
@@ -32,24 +42,29 @@ export interface TikoWebsiteAppMetadata {
   whySmall: string
   calmDetail: string
   features: readonly AppFeature[]
+  screenshots?: readonly AppScreenshot[]
+  /** Artwork for the "human moment" section — see `content/mediaImages.ts`. */
+  momentImage: MediaImageName
 }
 
 export const tikoWebsiteAppUniverse = [
   {
     slug: 'yes-no',
+    momentImage: 'childSayingHi',
     appName: 'Yes No',
     shortSummary: 'Two giant buttons. One clear answer. Instantly.',
     headline: 'One clear question. One clear answer.',
     description: 'Yes No gives children two giant, unmissable choices on a single screen. No clutter, no scrolling, no account. Open it, see the question, tap the answer.',
     route: '/apps/yes-no',
     appUrl: 'https://yesno.tikoapps.org',
+    appStoreUrl: 'https://apps.apple.com/app/id6781237407',
     status: 'available',
     availability: 'available',
-    platformNotes: 'Open on the web now. iOS and Android keep the same simple two-choice shape.',
+    platformNotes: 'Open on the web now, and on the App Store for iPhone and iPad. Android keeps the same simple two-choice shape.',
     color: '#16b8a6',
     colorLight: '#ccfbf1',
     appIcon: 'ui/check-fat',
-    iconUrl: 'https://media.tikoapi.org/v1/media/c8bfb9e8-0427-4cd9-89e2-74e09d20b8ec/image/small',
+    iconUrl: 'https://media.tikoapi.org/v1/media/c8bfb9e8-0427-4cd9-89e2-74e09d20b8ec/image/medium',
     useWhen: [
       'a child needs to answer quickly',
       'a caregiver wants a simple prompt',
@@ -67,6 +82,7 @@ export const tikoWebsiteAppUniverse = [
   },
   {
     slug: 'type',
+    momentImage: 'penAndNotebook',
     appName: 'Type',
     shortSummary: 'Type a thought and hear it spoken aloud — instantly.',
     headline: 'Type a thought. Hear it spoken.',
@@ -76,11 +92,11 @@ export const tikoWebsiteAppUniverse = [
     appStoreUrl: 'https://apps.apple.com/app/id6780917101',
     status: 'available',
     availability: 'available',
-    platformNotes: 'Open on the web now, and on the App Store for iOS. Android will follow the same calm, focused experience.',
+    platformNotes: 'Open on the web now, and on the App Store for iPhone and iPad. Android will follow the same calm, focused experience.',
     color: '#ff8a1f',
     colorLight: '#fff3e0',
     appIcon: 'ui/type',
-    iconUrl: 'https://media.tikoapi.org/v1/media/eecf2917-a885-4025-a762-9c7a8783f5af/image/small',
+    iconUrl: 'https://media.tikoapi.org/v1/media/eecf2917-a885-4025-a762-9c7a8783f5af/image/medium',
     useWhen: [
       'a child wants to type a message',
       'saved phrases would help',
@@ -98,6 +114,7 @@ export const tikoWebsiteAppUniverse = [
   },
   {
     slug: 'cards',
+    momentImage: 'alphabetBlocks',
     appName: 'Cards',
     shortSummary: 'Beautiful picture cards. Tap one and hear it speak.',
     headline: 'Pictures that speak for themselves.',
@@ -110,7 +127,7 @@ export const tikoWebsiteAppUniverse = [
     color: '#82B1FF',
     colorLight: '#e8f0ff',
     appIcon: 'education/book-2',
-    iconUrl: 'https://media.tikoapi.org/v1/media/e37943b4-582c-40ee-be3a-c47be7c6e658/image/small',
+    iconUrl: 'https://media.tikoapi.org/v1/media/e37943b4-582c-40ee-be3a-c47be7c6e658/image/medium',
     useWhen: [
       'pictures communicate faster than text',
       'choices should be visible and easy to tap',
@@ -128,6 +145,7 @@ export const tikoWebsiteAppUniverse = [
   },
   {
     slug: 'sequence',
+    momentImage: 'todoList',
     appName: 'Sequence',
     shortSummary: 'Step-by-step routines. Always clear, always moving forward.',
     headline: 'One step at a time, always clear.',
@@ -140,7 +158,7 @@ export const tikoWebsiteAppUniverse = [
     color: '#ef4f8f',
     colorLight: '#fce7f3',
     appIcon: 'ui/list',
-    iconUrl: 'https://media.tikoapi.org/v1/media/c2e7188c-1ac4-41d6-a29c-2b122ec812e8/image/small',
+    iconUrl: 'https://media.tikoapi.org/v1/media/c2e7188c-1ac4-41d6-a29c-2b122ec812e8/image/medium',
     useWhen: [
       'a routine needs a clear order',
       'the next step should always be visible',
@@ -158,6 +176,7 @@ export const tikoWebsiteAppUniverse = [
   },
   {
     slug: 'timer',
+    momentImage: 'alarmClock',
     appName: 'Timer',
     shortSummary: 'A big, clear countdown. See exactly how much time is left.',
     headline: 'Time you can actually see.',
@@ -170,7 +189,7 @@ export const tikoWebsiteAppUniverse = [
     color: '#e84057',
     colorLight: '#ffe4e6',
     appIcon: 'ui/timer',
-    iconUrl: 'https://media.tikoapi.org/v1/media/ec6bad5e-8cbe-4934-b1c8-d66d80098f95/image/small',
+    iconUrl: 'https://media.tikoapi.org/v1/media/ec6bad5e-8cbe-4934-b1c8-d66d80098f95/image/medium',
     useWhen: [
       'transitions need a visible end point',
       'waiting feels less abstract when time is on screen',
@@ -188,6 +207,7 @@ export const tikoWebsiteAppUniverse = [
   },
   {
     slug: 'talk',
+    momentImage: 'adultAndChildTalking',
     appName: 'Talk',
     shortSummary: 'Tap words, build a sentence, and hear it spoken.',
     headline: 'Build sentences. Find your voice.',
@@ -200,7 +220,7 @@ export const tikoWebsiteAppUniverse = [
     color: '#FF6B6B',
     colorLight: '#ffe4e1',
     appIcon: 'ui/talk',
-    iconUrl: 'https://media.tikoapi.org/v1/media/da85b30b-6865-41ef-9b75-71e46999de22/image/small',
+    iconUrl: 'https://media.tikoapi.org/v1/media/da85b30b-6865-41ef-9b75-71e46999de22/image/medium',
     useWhen: [
       'a child is building language, one word at a time',
       'speaking a full sentence should take a few taps, not a keyboard',
@@ -214,6 +234,113 @@ export const tikoWebsiteAppUniverse = [
       { title: 'Sentence strip', body: 'See the sentence build up, word by word, before speaking it.' },
       { title: 'Speak aloud', body: 'One button speaks the whole sentence in a clear voice.' },
       { title: 'Works offline', body: 'Core word packs load from local storage so Talk works without a network.' }
+    ]
+  },
+  {
+    slug: 'say',
+    momentImage: 'adultAndGirlPractising',
+    appName: 'Say',
+    shortSummary: 'See a card, hear the word, say it back, celebrate.',
+    headline: 'Calm speech practice, one word at a time.',
+    description: 'Say is a speech-practice app for children. Pick a category, see one big friendly card, hear its word, and say it back. A correct word triggers a joyful celebration and the next card appears by itself.',
+    route: '/apps/say',
+    appStoreUrl: 'https://apps.apple.com/app/id6794481329',
+    status: 'available',
+    availability: 'available',
+    platformNotes: 'On the App Store for iPhone and iPad now. Android and web will follow the same calm, focused experience.',
+    color: '#8b5cf6',
+    colorLight: '#ede9fe',
+    appIcon: 'ui/microphone',
+    iconUrl: 'https://data.tikocdn.org/uploads/1781443432968-speech-balloon.png',
+    useWhen: [
+      'a child is practising their first words',
+      'a missed word should mean another calm try, not a buzzer',
+      'a familiar picture makes the word easier to reach for'
+    ],
+    moment: 'Practising a word should feel like being cheered on, never like being tested.',
+    whySmall: 'Say practises words. It is not a therapy programme, a progress dashboard, or a scoring system — there is no wrong-buzzer, no red cross, and no score anywhere in it.',
+    calmDetail: 'One big card at a time, the word spoken in a friendly voice, and Skip always within reach so no child ever gets stuck.',
+    features: [
+      { title: 'Six picture categories', body: 'Animals, Food, Vehicles, Body, Colors and Numbers, ready to practise.' },
+      { title: 'Every card editable', body: 'What is shown, what is said, and which words count as correct are all yours to change.' },
+      { title: 'On-device listening', body: 'Speech recognition runs on the device where supported. Recordings are never stored or uploaded.' },
+      { title: 'Six spoken languages', body: 'Speaks and listens in English, Dutch, French, Spanish, German and Maltese.' }
+    ],
+    screenshots: [
+      { light: '/screenshots/say-home-light.webp', dark: '/screenshots/say-home-dark.webp', caption: 'Pick a category' },
+      { light: '/screenshots/say-practice-light.webp', dark: '/screenshots/say-practice-dark.webp', caption: 'One card, one word' }
+    ]
+  },
+  {
+    slug: 'sum',
+    momentImage: 'calculator',
+    appName: 'Sum',
+    shortSummary: 'Math that talks — and never says "wrong".',
+    headline: 'Every number spoken. Every answer a choice.',
+    description: 'Sum is a talking math app for children, and it is not a calculator: it never shows the result. Every key is spoken aloud, and the answer is always a choice between three big tiles.',
+    route: '/apps/sum',
+    appStoreUrl: 'https://apps.apple.com/app/id6794587838',
+    status: 'available',
+    availability: 'available',
+    platformNotes: 'On the App Store for iPhone and iPad now. Android and web will follow the same calm, focused experience.',
+    color: '#dd8966',
+    colorLight: '#fbeae1',
+    appIcon: 'ui/calculator',
+    iconUrl: 'https://data.tikocdn.org/uploads/1755105954065-calculator.png',
+    useWhen: [
+      'counting and sums should be heard, not just seen',
+      'a wrong tap should mean hearing the sum again, not a buzzer',
+      'a parent wants to cap how big the numbers get'
+    ],
+    moment: 'A sum is easier to hold on to when you can hear it — "three… plus… five…" — instead of reading it off a screen.',
+    whySmall: 'Sum teaches one sum at a time. It is not a curriculum, a streak tracker, or a report card.',
+    calmDetail: 'Pick the right tile and the screen celebrates; pick another and Sum simply says the formula again. No buzzer, no red cross, no pressure.',
+    features: [
+      { title: 'A speaking keypad', body: 'Every number and symbol is read aloud in the child\'s language.' },
+      { title: 'The answer is a choice', body: 'Three tiles — one right, two clever look-alikes. Never a blank box to fail at.' },
+      { title: 'All four operators', body: 'Plus, minus, times and divide, with a maximum number a parent can cap.' },
+      { title: 'Three ways to answer', body: 'Pick a tile, type the number, or say it aloud. Only the last one ever uses the microphone.' }
+    ],
+    screenshots: [
+      { light: '/screenshots/sum-home-light.webp', dark: '/screenshots/sum-home-dark.webp', caption: 'Choose a difficulty' },
+      { light: '/screenshots/sum-practice-light.webp', dark: '/screenshots/sum-practice-dark.webp', caption: 'Three tiles, one right' },
+      { light: '/screenshots/sum-keypad-light.webp', dark: '/screenshots/sum-keypad-dark.webp', caption: 'The speaking keypad' }
+    ]
+  },
+  {
+    slug: 'first',
+    momentImage: 'childReading',
+    appName: 'First',
+    shortSummary: 'First, then, done. A picture routine that talks.',
+    headline: 'One step at a time, spoken aloud.',
+    description: 'First turns a routine into pictures a child can follow on their own. You build the steps; your child sees one big picture at a time, hears it spoken aloud, and taps to cross it off.',
+    route: '/apps/first',
+    appStoreUrl: 'https://apps.apple.com/app/id6794608348',
+    status: 'available',
+    availability: 'available',
+    platformNotes: 'On the App Store for iPhone and iPad now. Android and web will follow the same calm, focused experience.',
+    color: '#06b6d4',
+    colorLight: '#cffafe',
+    appIcon: 'ui/check-list',
+    iconUrl: 'https://data.tikocdn.org/uploads/1754413862502-todo.png',
+    useWhen: [
+      'a routine needs to be followed without an adult narrating it',
+      'a child should see what happens now and what comes next',
+      'no microphone, camera, or permission prompt is wanted at all'
+    ],
+    moment: 'A routine stops being a negotiation when the next step is already on the screen instead of in someone else\'s head.',
+    whySmall: 'First shows the step a child is on. It is not a planner, a clock, or a behaviour chart — there are no timers and no scores.',
+    calmDetail: 'Steps are crossed off in order, tapping ahead only speaks that step aloud, and the last tick can always be undone.',
+    features: [
+      { title: 'One big step at a time', body: 'A picture, a short title, spoken in the child\'s language as it becomes current.' },
+      { title: 'Eight ready routines', body: 'Morning, bedtime, going out, mealtime, bath time, tidy up, school day, and a first/then board.' },
+      { title: 'Your words, your pictures', body: 'Every routine and step is editable — including photos of the child\'s own shoes or bag.' },
+      { title: 'No permissions at all', body: 'No microphone, no camera, no ads, no accounts. Works offline after first use.' }
+    ],
+    screenshots: [
+      { light: '/screenshots/first-home-light.webp', dark: '/screenshots/first-home-dark.webp', caption: 'Pick a routine' },
+      { light: '/screenshots/first-routine-light.webp', dark: '/screenshots/first-routine-dark.webp', caption: 'One step, full screen' },
+      { light: '/screenshots/first-celebrate-light.webp', dark: '/screenshots/first-celebrate-dark.webp', caption: 'Finishing the routine' }
     ]
   }
 ] as const satisfies readonly TikoWebsiteAppMetadata[]
@@ -241,7 +368,9 @@ export const tikoApps = tikoWebsiteAppUniverse.map((app: TikoWebsiteAppMetadata)
   moment: app.moment,
   whySmall: app.whySmall,
   calmDetail: app.calmDetail,
-  features: [...app.features]
+  features: [...app.features],
+  screenshots: app.screenshots ? [...app.screenshots] : [],
+  momentImage: app.momentImage
 }))
 
 export type TikoAppInfo = (typeof tikoApps)[number]

@@ -18,7 +18,7 @@ const bemm = useBemm('split-media', { return: 'string', includeBaseClass: true }
     <div :class="bemm('content')"><slot /></div>
     <div :class="bemm('media')">
       <slot name="media">
-        <img v-if="image" :src="image" :alt="imageAlt ?? ''" loading="lazy" :class="bemm('image')" />
+        <img v-if="image" :src="image" :alt="imageAlt ?? ''" loading="eager" :class="bemm('image')" />
       </slot>
     </div>
   </div>

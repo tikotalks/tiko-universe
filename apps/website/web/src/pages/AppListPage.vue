@@ -37,7 +37,7 @@ import CtaBanner from '../components/sections/CtaBanner.vue'
         body="Every Tiko app follows the same child-first promises — open fast, do one thing, speak any language."
       >
         <template #actions>
-          <RouterLink to="/docs/architecture" class="button button--light">
+          <RouterLink to="/docs/architecture" class="btn btn--light">
             Read the architecture docs
           </RouterLink>
         </template>
