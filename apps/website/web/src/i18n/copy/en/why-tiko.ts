@@ -90,6 +90,32 @@ export const whyTikoEn = {
       ],
     },
     {
+      id: 'professionals',
+      eyebrow: 'Who shapes it',
+      title: 'Built with therapists, not just for them.',
+      lede: 'Speech and language therapists, teachers and other professionals review Tiko and tell us what is wrong with it.',
+      body: [
+        'A developer can build a communication tool that works. Whether it works for a child who is struggling to be understood is a different question entirely, and it is not one that gets answered by reading documentation. It gets answered by the people who sit with those children every week.',
+        'So the apps get looked at by speech and language therapists, special-education teachers and other professionals — and their feedback changes them. Some of it is small: a target that is too close to another, a word that is wrong in a particular dialect, a celebration that is too stimulating for the children they work with. Some of it is not: the reason Say has no wrong-answer buzzer, and the reason no Tiko app keeps a score, both came from that direction.',
+        'This is not a clinical endorsement and Tiko does not claim one. It is design review by people whose judgement is worth more than ours on the questions that matter most, and it is the reason several of the apps look the way they do rather than the way they started.',
+      ],
+      points: [
+        {
+          title: 'Reviewed from a therapy perspective',
+          body: 'Professionals look at the apps with the children they support in mind, and say plainly where something would get in the way.',
+        },
+        {
+          title: 'Feedback that changes the product',
+          body: 'When a review says a pattern is wrong for these children, the pattern changes. Removed buzzers and absent scores both came from that.',
+        },
+        {
+          title: 'Still not a treatment',
+          body: 'Professional input makes Tiko better designed. It does not make it a therapy programme, and we do not present it as one.',
+        },
+      ],
+      tone: 'secondary',
+    },
+    {
       id: 'open-source',
       eyebrow: 'Open by default',
       title: 'Built in the open, shaped by the people using it.',

@@ -65,6 +65,7 @@ const icons = computed(() =>
   }
 
   &__eyebrow {
+    font-family: var(--font-family-heading);
     font-size: 0.78rem;
     font-weight: 700;
     letter-spacing: 0.12em;

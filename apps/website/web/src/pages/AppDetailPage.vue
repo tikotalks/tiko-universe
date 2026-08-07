@@ -144,8 +144,13 @@ watch(slug, (newSlug) => {
 
   <div v-else class="app-detail" :style="{ '--app-color': app.color, '--app-color-text': app.colorText }">
     <!-- Hero / headline + description -->
-    <PageSection :tone="app.id">
-      <SplitMedia :image="app.iconUrl" :image-alt="`${app.name} app icon`" media-side="right">
+    <PageSection :tone="app.id" class="app-detail__hero">
+      <SplitMedia
+        :image="app.iconUrl"
+        :image-alt="`${app.name} app icon`"
+        media-side="right"
+        :frame="false"
+      >
         <RouterLink to="/apps" class="app-detail__back">All apps</RouterLink>
         <p class="app-detail__eyebrow">Tiko · {{ app.statusLabel }}</p>
         <h1 class="app-detail__name">{{ app.name }}</h1>
@@ -189,7 +194,6 @@ watch(slug, (newSlug) => {
       eyebrow="On the device"
       :title="`${app.name}, on a real screen.`"
       intro="Captured on an iPhone, in both light and dark mode. Nothing here is a mockup."
-      align="center"
     >
       <ul class="app-detail__shots">
         <li v-for="shot in app.screenshots" :key="shot.light" class="app-detail__shot">
@@ -279,7 +283,7 @@ watch(slug, (newSlug) => {
     </PageSection>
 
     <!-- Availability / platform notes + CTA -->
-    <PageSection align="center">
+    <PageSection>
       <CtaBanner
         :tone="app.id"
         :title="ctaTitle"
@@ -305,6 +309,15 @@ watch(slug, (newSlug) => {
 
 <style lang="scss">
 .app-detail {
+  // `.site__main` reserves the fixed header's footprint so pages do not render
+  // underneath it. The app hero wants the opposite — its colour should run all
+  // the way up behind the header — so it takes that reservation back and adds
+  // it again as its own padding.
+  &__hero {
+    margin-top: calc((var(--header-height) + var(--space)) * -1);
+    padding-top: calc(var(--header-height) + var(--space) + clamp(1.5rem, 4vw, 3rem));
+  }
+
   &__back {
     display: inline-flex;
     margin-bottom: 1.25rem;

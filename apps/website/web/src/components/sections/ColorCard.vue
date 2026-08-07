@@ -79,7 +79,7 @@ const tag = computed(() => (props.to ? RouterLink : props.href ? 'a' : 'div'))
   &__visual {
     display: grid;
     place-items: center;
-    aspect-ratio: 16 / 10;
+    aspect-ratio: 1;
     border-radius: 16px;
     overflow: hidden;
     background: color-mix(in srgb, var(--card-fg), transparent 86%);
@@ -94,6 +94,7 @@ const tag = computed(() => (props.to ? RouterLink : props.href ? 'a' : 'div'))
   }
 
   &__eyebrow {
+    font-family: var(--font-family-heading);
     font-size: 0.7rem;
     font-weight: 700;
     letter-spacing: 0.12em;
@@ -111,6 +112,7 @@ const tag = computed(() => (props.to ? RouterLink : props.href ? 'a' : 'div'))
   &__body { line-height: 1.55; opacity: 0.9; }
 
   &__badge {
+    font-family: var(--font-family-heading);
     align-self: flex-start;
     margin-top: 0.5rem;
     padding: 3px 10px;

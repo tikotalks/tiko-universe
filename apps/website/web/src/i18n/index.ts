@@ -18,10 +18,11 @@ import { es } from './copy/es'
 import { pt } from './copy/pt'
 import { it } from './copy/it'
 import { mt } from './copy/mt'
+import { hy } from './copy/hy'
 
 export type SiteCopyOverride = DeepPartial<SiteCopy>
 
-const overrides: Record<string, SiteCopyOverride> = { nl, de, fr, es, pt, it, mt }
+const overrides: Record<string, SiteCopyOverride> = { nl, de, fr, es, pt, it, mt, hy }
 
 /**
  * The English base, widened. `en` itself is `as const`, which keeps its keys

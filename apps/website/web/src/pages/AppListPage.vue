@@ -20,7 +20,6 @@ import CtaBanner from '../components/sections/CtaBanner.vue'
     <PageSection
       eyebrow="From the Tiko library"
       title="Thousands of clear, colourful images."
-      align="center"
     >
       <MediaStream :limit="24" />
     </PageSection>
@@ -29,7 +28,6 @@ import CtaBanner from '../components/sections/CtaBanner.vue'
       eyebrow="On the way"
       title="More tiny apps are coming."
       intro="Cards, Sequence, and Timer are built around the same child-first contracts as the apps above. Each one opens fast and does one thing only."
-      align="center"
     >
       <CtaBanner
         tone="primary"

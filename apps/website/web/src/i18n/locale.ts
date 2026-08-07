@@ -20,7 +20,7 @@ import {
 export const LOCALE_STORAGE_KEY = 'tiko.language'
 
 /** Locales the marketing copy has actually been written in. */
-export const translatedLocales = ['en', 'nl', 'de', 'fr', 'es', 'pt', 'it', 'mt'] as const
+export const translatedLocales = ['en', 'nl', 'de', 'fr', 'es', 'pt', 'it', 'mt', 'hy'] as const
 export type TranslatedLocale = (typeof translatedLocales)[number]
 
 function safeStorage(op: 'get', key: string): string | null

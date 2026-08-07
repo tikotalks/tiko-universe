@@ -101,6 +101,7 @@ const items = (p: { apps?: TikoAppInfo[] }) => p.apps ?? tikoApps
 
   &__status,
   &__platform {
+    font-family: var(--font-family-heading);
     font-size: 0.72rem;
     font-weight: 700;
     letter-spacing: 0.04em;

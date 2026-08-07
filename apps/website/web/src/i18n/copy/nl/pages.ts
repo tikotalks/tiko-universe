@@ -97,6 +97,32 @@ export const nlPages: NonNullable<SiteCopyOverride['pages']> = {
         ],
       },
       {
+        id: 'professionals',
+        eyebrow: 'Wie het vormt',
+        title: 'Gebouwd mét logopedisten, niet alleen vóór hen.',
+        lede: 'Logopedisten, leerkrachten en andere professionals bekijken Tiko en vertellen ons wat eraan mankeert.',
+        body: [
+          'Een ontwikkelaar kan een communicatiemiddel bouwen dat werkt. Of het werkt voor een kind dat moeite heeft om begrepen te worden is een heel andere vraag, en die beantwoord je niet door documentatie te lezen. Die beantwoorden de mensen die elke week naast die kinderen zitten.',
+          'De apps worden daarom bekeken door logopedisten, leerkrachten in het speciaal onderwijs en andere professionals — en hun feedback verandert ze. Soms gaat het om iets kleins: een knop die te dicht bij een andere zit, een woord dat in een bepaald dialect niet klopt, een felicitatie die te veel prikkelt voor de kinderen met wie zij werken. Soms om iets groots: dat Say geen pieptoon bij een fout antwoord heeft, en dat geen enkele Tiko-app een score bijhoudt, komt allebei uit die hoek.',
+          'Dit is geen klinische goedkeuring en Tiko doet ook niet alsof. Het is ontwerpbeoordeling door mensen wier oordeel op de belangrijkste vragen meer waard is dan het onze, en het is de reden dat verschillende apps eruitzien zoals ze nu doen in plaats van zoals ze begonnen.',
+        ],
+        points: [
+          {
+            title: 'Bekeken vanuit de logopedie',
+            body: 'Professionals kijken naar de apps met de kinderen in gedachten die zij begeleiden, en zeggen ronduit waar iets in de weg zit.',
+          },
+          {
+            title: 'Feedback die het product verandert',
+            body: 'Zegt een beoordeling dat een patroon verkeerd is voor deze kinderen, dan verandert het patroon. Weggehaalde pieptonen en het ontbreken van scores komen daarvandaan.',
+          },
+          {
+            title: 'Nog steeds geen behandeling',
+            body: 'Input van professionals maakt Tiko beter ontworpen. Het maakt er geen therapieprogramma van, en zo presenteren we het ook niet.',
+          },
+        ],
+        tone: 'secondary',
+      },
+      {
         id: 'open-source',
         eyebrow: 'Open van nature',
         title: 'Open gebouwd, gevormd door wie het gebruikt.',
