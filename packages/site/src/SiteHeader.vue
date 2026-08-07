@@ -108,19 +108,30 @@ function cycleTheme() {
           </RouterLink>
         </template>
 
-        <ThemeToggle :theme="colorMode" @toggle="cycleTheme" />
       </nav>
 
-      <button
-        :class="bemm('toggle')"
-        aria-label="Toggle menu"
-        :aria-expanded="mobileOpen"
-        @click="toggleMobile"
-      >
-        <span :class="bemm('toggle-bar')" />
-        <span :class="bemm('toggle-bar')" />
-        <span :class="bemm('toggle-bar')" />
-      </button>
+      <!--
+        Persistent controls, deliberately outside <nav>. Below the breakpoint
+        the whole nav collapses to `display: none` behind the hamburger, so
+        anything in it disappears — which is how the theme toggle came to be
+        unreachable on a narrow window. Language and theme are not navigation;
+        they stay in the bar at every width.
+      -->
+      <div :class="bemm('controls')">
+        <slot name="actions" />
+        <ThemeToggle :theme="colorMode" @toggle="cycleTheme" />
+
+        <button
+          :class="bemm('toggle')"
+          aria-label="Toggle menu"
+          :aria-expanded="mobileOpen"
+          @click="toggleMobile"
+        >
+          <span :class="bemm('toggle-bar')" />
+          <span :class="bemm('toggle-bar')" />
+          <span :class="bemm('toggle-bar')" />
+        </button>
+      </div>
     </div>
 
     <div v-if="mobileOpen" :class="bemm('backdrop')" @click="closeMobile" />
@@ -180,6 +191,17 @@ function cycleTheme() {
     justify-content: flex-end;
     min-width: 0;
     flex-wrap: nowrap;
+  }
+
+  &__controls {
+    display: flex;
+    align-items: center;
+    gap: clamp(4px, 0.7vw, var(--space-xs));
+    flex-shrink: 0;
+    // Pinned rather than auto-placed: once the nav collapses it leaves the grid
+    // flow entirely, and the controls would slide left to sit against the logo.
+    grid-column: 3;
+    justify-self: end;
   }
 
   &__nav-link {
@@ -265,8 +287,6 @@ function cycleTheme() {
 
     &__toggle {
       display: flex;
-      grid-column: 3;
-      justify-self: end;
     }
   }
 }

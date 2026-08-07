@@ -2,15 +2,16 @@
 import { useBemm } from 'bemm'
 
 /**
- * A short grid of solid-colour panels, each carrying a numeric marker, a
- * display heading and one paragraph.
+ * A short run of principles.
  *
- * Unlike `ColorCard` these carry no image: the panel is the statement. Corners
- * stay generously rounded so a row of them still reads as Tiko rather than as
- * a corporate slab.
+ * Not a grid of equal colour rectangles: that treatment gives every point the
+ * same weight and ends up reading as wallpaper. The first panel is deliberately
+ * larger, each carries an oversized ghost numeral, and the statement itself is
+ * set at display size — the panel *is* the sentence, and the supporting line
+ * sits under it rather than competing.
  */
 export interface Principle {
-  /** e.g. '01'. Omit on a lead panel that states the idea the rest answer. */
+  /** e.g. '01'. */
   marker?: string
   title: string
   body: string
@@ -18,15 +19,15 @@ export interface Principle {
   tone: string
 }
 
-withDefaults(defineProps<{ panels: Principle[]; columns?: 2 | 3 }>(), { columns: 2 })
+withDefaults(defineProps<{ panels: Principle[]; feature?: boolean }>(), { feature: true })
 
 const bemm = useBemm('principle-panels', { return: 'string', includeBaseClass: true })
 </script>
 
 <template>
-  <div :class="bemm()" :style="{ '--panel-columns': columns }">
-    <article
-      v-for="panel in panels"
+  <ol :class="bemm('', { feature })">
+    <li
+      v-for="(panel, i) in panels"
       :key="panel.title"
       :class="bemm('panel')"
       :style="{
@@ -34,66 +35,113 @@ const bemm = useBemm('principle-panels', { return: 'string', includeBaseClass: t
         '--panel-fg': `var(--color-${panel.tone}-text)`,
       }"
     >
-      <p v-if="panel.marker" :class="bemm('marker')">{{ panel.marker }}</p>
-      <h3 :class="bemm('title')">{{ panel.title }}</h3>
-      <p :class="bemm('body')">{{ panel.body }}</p>
-    </article>
-  </div>
+      <span v-if="panel.marker" :class="bemm('numeral')" aria-hidden="true">{{ panel.marker }}</span>
+      <div :class="bemm('content')">
+        <h3 :class="bemm('title')">{{ panel.title }}</h3>
+        <p :class="bemm('body')">{{ panel.body }}</p>
+      </div>
+    </li>
+  </ol>
 </template>
 
 <style lang="scss">
 .principle-panels {
+  list-style: none;
+  margin: 0;
+  padding: 0;
   display: grid;
-  grid-template-columns: repeat(var(--panel-columns), 1fr);
-  gap: 1.25rem;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 1rem;
 
   &__panel {
+    position: relative;
+    overflow: hidden;
     display: flex;
     flex-direction: column;
-    gap: 0.75rem;
-    padding: clamp(1.5rem, 3vw, 2.5rem);
+    justify-content: flex-end;
+    // Two of six columns, so three sit in a row by default.
+    grid-column: span 2;
+    min-block-size: clamp(15rem, 24vw, 21rem);
+    padding: clamp(1.5rem, 3vw, 2.25rem);
     border-radius: 28px;
-    // Talk's near-black and the pale tones both need an edge to separate from
-    // the page behind them.
     border: 1px solid var(--surface-hairline);
     background: var(--panel-bg);
     color: var(--panel-fg);
-    min-block-size: clamp(14rem, 22vw, 20rem);
-    box-shadow: 0 20px 44px -28px color-mix(in srgb, var(--panel-bg), #000 55%);
   }
 
-  &__marker {
-    font-size: 0.72rem;
-    font-weight: 700;
-    letter-spacing: 0.12em;
-    // Pushes the heading and body to the foot of the panel, so the marker sits
-    // alone at the top however tall the panel grows.
-    margin-block-end: auto;
-    opacity: 0.7;
+  // The first point carries the argument, so it gets the room to make it.
+  &--feature &__panel:first-child {
+    grid-column: span 3;
+  }
+
+  &--feature &__panel:nth-child(2) {
+    grid-column: span 3;
+  }
+
+  &__numeral {
+    position: absolute;
+    // Seated fully inside the panel. Bleeding it off the top edge cropped the
+    // glyph mid-stroke, which reads as a rendering fault rather than a device.
+    inset-block-start: clamp(0.75rem, 2vw, 1.25rem);
+    inset-inline-end: clamp(0.9rem, 2.5vw, 1.75rem);
+    font-family: var(--font-family-heading);
+    font-size: clamp(4.5rem, 9vw, 7.5rem);
+    font-weight: 800;
+    line-height: 0.8;
+    // Sits in the surface rather than on it — readable as texture, never as
+    // something competing with the sentence.
+    color: color-mix(in srgb, var(--panel-fg), transparent 88%);
+    pointer-events: none;
+    user-select: none;
+  }
+
+  &__content {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
   }
 
   &__title {
     font-family: var(--font-family-heading);
-    font-size: clamp(1.4rem, 2.6vw, 2.1rem);
-    line-height: 1.05;
+    font-size: clamp(1.5rem, 2.8vw, 2.25rem);
+    line-height: 1.02;
+    letter-spacing: -0.02em;
     color: inherit;
+    max-width: 16ch;
+  }
+
+  &--feature &__panel:first-child &__title,
+  &--feature &__panel:nth-child(2) &__title {
+    font-size: clamp(1.75rem, 3.4vw, 2.75rem);
   }
 
   &__body {
     line-height: 1.55;
-    max-width: 34ch;
-    opacity: 0.9;
+    max-width: 38ch;
+    // Held back from the title so the statement lands first.
+    color: color-mix(in srgb, var(--panel-fg), transparent 22%);
+    font-size: 0.95rem;
   }
 
-  @media (max-width: 860px) {
+  @media (max-width: 1000px) {
+    grid-template-columns: repeat(2, 1fr);
+
+    &__panel,
+    &--feature &__panel:first-child,
+    &--feature &__panel:nth-child(2) {
+      grid-column: span 1;
+    }
+  }
+
+  @media (max-width: 640px) {
     grid-template-columns: 1fr;
 
-    &__panel {
+    &__panel,
+    &--feature &__panel:first-child,
+    &--feature &__panel:nth-child(2) {
+      grid-column: span 1;
       min-block-size: 0;
-    }
-
-    &__marker {
-      margin-block-end: 0;
     }
   }
 }

@@ -83,7 +83,6 @@ const whyTikoPanels: Principle[] = whyTikoPillars.map((pillar, i) => ({
     <PageSection
       eyebrow="From the Tiko library"
       title="Thousands of clear, colourful images."
-      align="center"
     >
       <MediaStream :limit="24" />
     </PageSection>
@@ -91,7 +90,6 @@ const whyTikoPanels: Principle[] = whyTikoPillars.map((pillar, i) => ({
     <PageSection
       eyebrow="Why free"
       title="Free, and ad-free, always."
-      align="center"
     >
       <CardGrid min="260px">
         <ColorCard
@@ -108,7 +106,6 @@ const whyTikoPanels: Principle[] = whyTikoPillars.map((pillar, i) => ({
     <PageSection
       eyebrow="One Tiko, many screens"
       title="Start on the web. Stay consistent everywhere."
-      align="center"
     >
       <CardGrid min="240px">
         <ColorCard
@@ -122,7 +119,7 @@ const whyTikoPanels: Principle[] = whyTikoPillars.map((pillar, i) => ({
       </CardGrid>
     </PageSection>
 
-    <PageSection align="center">
+    <PageSection>
       <CtaBanner
         tone="primary"
         title="Ready to try?"

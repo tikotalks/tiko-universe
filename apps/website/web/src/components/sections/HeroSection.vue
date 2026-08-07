@@ -65,6 +65,7 @@ const icons = computed(() =>
   }
 
   &__eyebrow {
+    font-family: var(--font-family-heading);
     font-size: 0.78rem;
     font-weight: 700;
     letter-spacing: 0.12em;
@@ -117,7 +118,6 @@ const icons = computed(() =>
     display: grid;
     place-items: center;
     background: color-mix(in srgb, var(--tile-bg), transparent 82%);
-    box-shadow: 0 18px 40px -26px color-mix(in srgb, var(--tile-bg), #000 40%);
 
     &:nth-child(even) {
       transform: translateY(clamp(0.6rem, 1.6vw, 1.25rem));
