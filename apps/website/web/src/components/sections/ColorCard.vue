@@ -68,14 +68,12 @@ const tag = computed(() => (props.to ? RouterLink : props.href ? 'a' : 'div'))
   border: 1px solid var(--surface-hairline);
   background: var(--card-bg);
   color: var(--card-fg);
-  box-shadow: 0 18px 40px -28px color-mix(in srgb, var(--card-bg), #000 55%);
   text-decoration: none;
-  transition: transform 0.22s var(--ease-out), box-shadow 0.22s var(--ease-out);
+  transition: transform 0.22s var(--ease-out);
 
   &--link { cursor: pointer; }
   &--link:hover {
     transform: translateY(-4px);
-    box-shadow: 0 26px 50px -26px color-mix(in srgb, var(--card-bg), #000 50%);
   }
 
   &__visual {

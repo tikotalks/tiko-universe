@@ -119,6 +119,27 @@ const toneStyle = computed(() =>
     padding-top: 0.4em;
   }
 
+  // The body lines up under the title rather than starting back at the page
+  // edge, so a section reads as one column instead of two disconnected ones.
+  &--split &__body {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: clamp(1rem, 4vw, 3rem);
+
+    > * {
+      grid-column: 2;
+      min-width: 0;
+    }
+
+    @media (max-width: 860px) {
+      grid-template-columns: 1fr;
+
+      > * {
+        grid-column: 1;
+      }
+    }
+  }
+
   &--split &__intro {
     max-width: 46ch;
   }

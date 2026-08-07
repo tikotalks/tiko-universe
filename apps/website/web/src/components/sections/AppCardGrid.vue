@@ -63,12 +63,10 @@ const items = (p: { apps?: TikoAppInfo[] }) => p.apps ?? tikoApps
     background: var(--card-bg);
     color: var(--card-fg);
     text-decoration: none;
-    box-shadow: 0 20px 44px -28px color-mix(in srgb, var(--card-bg), #000 55%);
-    transition: transform 0.22s var(--ease-out), box-shadow 0.22s var(--ease-out);
+    transition: transform 0.22s var(--ease-out);
 
     &:hover {
       transform: translateY(-5px);
-      box-shadow: 0 30px 56px -26px color-mix(in srgb, var(--card-bg), #000 48%);
     }
   }
 

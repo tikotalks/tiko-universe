@@ -108,6 +108,12 @@ function cycleTheme() {
           </RouterLink>
         </template>
 
+        <!--
+          Surfaces that need an extra control beside the theme toggle — the
+          website's language picker — fill this rather than forking the header.
+        -->
+        <slot name="actions" />
+
         <ThemeToggle :theme="colorMode" @toggle="cycleTheme" />
       </nav>
 

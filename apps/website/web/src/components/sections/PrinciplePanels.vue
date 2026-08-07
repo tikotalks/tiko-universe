@@ -59,7 +59,6 @@ const bemm = useBemm('principle-panels', { return: 'string', includeBaseClass: t
     background: var(--panel-bg);
     color: var(--panel-fg);
     min-block-size: clamp(14rem, 22vw, 20rem);
-    box-shadow: 0 20px 44px -28px color-mix(in srgb, var(--panel-bg), #000 55%);
   }
 
   &__marker {
