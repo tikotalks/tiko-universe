@@ -5,7 +5,7 @@
   "project": "apps/sum/ios/TikoSum.xcodeproj",
   "iosDir": "apps/sum/ios",
   "bundleId": "mt.tiko.sum",
-  "appleId": "me@sil.mt",
+  "appleId": "6794587838",
   "appStoreId": "6794587838",
   "appStoreUrl": "https://apps.apple.com/app/id6794587838",
   "validation": {
@@ -15,7 +15,7 @@
     "outputDir": "/Users/silvandiepen/Projects/Tiko/apps/sum",
     "configuration": "Debug",
     "eraseBeforeCapture": false,
-    "defaultWaitSeconds": 2,
+    "defaultWaitSeconds": 8,
     "baseLaunchArgs": [
       "--screenshot-mode"
     ],
@@ -77,7 +77,7 @@
         "colorModes": [
           "light"
         ],
-        "waitSeconds": 2
+        "waitSeconds": 8
       },
       {
         "id": "home-dark",
@@ -95,7 +95,7 @@
         "colorModes": [
           "dark"
         ],
-        "waitSeconds": 2
+        "waitSeconds": 8
       },
       {
         "id": "practice-light",
@@ -113,7 +113,7 @@
         "colorModes": [
           "light"
         ],
-        "waitSeconds": 4
+        "waitSeconds": 8
       },
       {
         "id": "practice-dark",
@@ -131,7 +131,7 @@
         "colorModes": [
           "dark"
         ],
-        "waitSeconds": 4
+        "waitSeconds": 8
       },
       {
         "id": "keypad-light",
@@ -149,7 +149,7 @@
         "colorModes": [
           "light"
         ],
-        "waitSeconds": 3
+        "waitSeconds": 8
       },
       {
         "id": "keypad-dark",
@@ -167,7 +167,7 @@
         "colorModes": [
           "dark"
         ],
-        "waitSeconds": 3
+        "waitSeconds": 8
       }
     ]
   },
@@ -175,7 +175,7 @@
     "configuration": "Release",
     "archivePath": "artifacts/archives/sum/TikoSum.xcarchive",
     "exportPath": "artifacts/archives/sum/export",
-    "exportOptionsPlist": "apps/sum/release/exportOptions.plist",
+    "exportOptionsPlist": "release/ExportOptions.plist",
     "allowProvisioningUpdates": true
   },
   "upload": {

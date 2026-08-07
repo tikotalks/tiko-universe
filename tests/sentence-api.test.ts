@@ -6,7 +6,7 @@ import type { LanguagePack, PackTemplate, PackWord } from '@tiko/talk-types'
 type Row = Record<string, unknown>
 type JsonBody = Record<string, any>
 
-const pack = JSON.parse(readFileSync('workers/sentence-api/data/en-v1.json', 'utf8')) as LanguagePack
+const pack = JSON.parse(readFileSync('packages/talk-packs/data/en-v1.json', 'utf8')) as LanguagePack
 
 class MemoryResult {
   constructor(private rows: Row[] = [], private metaValues: Record<string, unknown> = {}) {}
@@ -420,7 +420,7 @@ describe('sentence-api foundation', () => {
     expect(first.response.status).toBe(200)
     expect(first.body.stripState.display).toBe('I want')
     // verb→noun has curated weight 9, so noun outranks the grammar-order default.
-    expect(first.body.stripState.validNext).toEqual(['noun', 'determiner', 'adjective', 'preposition', 'social'])
+    expect(first.body.stripState.validNext).toEqual(['noun', 'determiner', 'adjective', 'preposition', 'social', 'adverb'])
     expect(first.body.suggestions.length).toBeLessThanOrEqual(50)
     expect(first.body.suggestions.some((word: JsonBody) => word.id === 'water')).toBe(true)
     // Deterministic fallback -> both calls equal even though neither is cached.
@@ -709,7 +709,7 @@ describe('sentence-api foundation', () => {
       body: JSON.stringify({ locale: 'en', currentWords: ['i', 'want'] }),
     }, testEnv)
 
-    expect(body.stripState.validNext).toEqual(['social', 'noun', 'determiner', 'adjective', 'preposition'])
+    expect(body.stripState.validNext).toEqual(['social', 'noun', 'determiner', 'adjective', 'preposition', 'adverb'])
   })
 
   it('keeps admin pack generation shell behind an admin role gate', async () => {
@@ -889,5 +889,50 @@ describe('sentence-api custom words and per-user learning', () => {
     const missing = await fetchJson('/v1/sentence/words/uword_nope?locale=en', { method: 'DELETE', headers: AUTH }, testEnv)
     expect(missing.response.status).toBe(404)
     expect(missing.body.error.code).toBe('word_not_found')
+  })
+})
+
+describe('sentence-api grammar', () => {
+  // The worker used to build its sentence with words.map((w) => w.text).join(' '),
+  // which is why the packs read "ik wil appel" and "yo querer manzana". These pin
+  // down that the realizer is actually the thing producing the text now.
+  it('inserts the article the child never tapped', async () => {
+    const { body } = await fetchJson('/v1/sentence/complete', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ locale: 'en', wordIds: ['i', 'want', 'apple'] }),
+    })
+    expect(body.sentence).toBe('I want an apple.')
+  })
+
+  it('leaves a mass noun bare', async () => {
+    const { body } = await fetchJson('/v1/sentence/complete', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ locale: 'en', wordIds: ['i', 'want', 'water'] }),
+    })
+    expect(body.sentence).toBe('I want water.')
+  })
+
+  it('does not punctuate the strip a child is still building', async () => {
+    const { body } = await fetchJson('/v1/sentence/next', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ locale: 'en', currentWords: ['i', 'want'] }),
+    })
+    // Grammatical, but not finished: no full stop until the child completes it.
+    expect(body.stripState.display).toBe('I want')
+  })
+
+  it('falls back to joining the tiles for a locale it has no grammar for', async () => {
+    // A locale with no realizer must still answer, with exactly the string the
+    // worker produced before this change.
+    const { response, body } = await fetchJson('/v1/sentence/complete', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ locale: 'xx', wordIds: ['i', 'want', 'apple'] }),
+    })
+    expect([200, 404]).toContain(response.status)
+    if (response.status === 200) expect(typeof body.sentence).toBe('string')
   })
 })

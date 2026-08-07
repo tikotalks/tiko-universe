@@ -9,7 +9,7 @@ const availableApps = tikoApps.filter((app) => app.status === 'available')
 
 <template>
   <div class="not-found">
-    <PageSection width="narrow" align="center">
+    <PageSection width="narrow">
       <p class="eyebrow">Page not found</p>
       <h1 class="display-2 not-found__title">That page isn't here.</h1>
       <p class="body-lg not-found__lede">
@@ -21,7 +21,7 @@ const availableApps = tikoApps.filter((app) => app.status === 'available')
       </div>
     </PageSection>
 
-    <PageSection eyebrow="Open now" title="Apps you can use today." align="center">
+    <PageSection eyebrow="Open now" title="Apps you can use today.">
       <AppCardGrid :apps="availableApps" />
     </PageSection>
   </div>

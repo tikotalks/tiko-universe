@@ -5,9 +5,9 @@
   "project": "apps/cards/ios/TikoCards.xcodeproj",
   "iosDir": "apps/cards/ios",
   "bundleId": "mt.tiko.cards",
-  "appleId": "",
-  "appStoreId": "",
-  "appStoreUrl": "",
+  "appleId": "6793059274",
+  "appStoreId": "6793059274",
+  "appStoreUrl": "https://apps.apple.com/app/id6793059274",
   "validation": {
     "script": "apps/cards/ios/scripts/validate-local.sh"
   },
@@ -15,7 +15,7 @@
     "outputDir": "/Users/silvandiepen/Projects/Tiko/apps/cards",
     "configuration": "Debug",
     "eraseBeforeCapture": false,
-    "defaultWaitSeconds": 2,
+    "defaultWaitSeconds": 8,
     "baseLaunchArgs": [
       "--screenshot-mode"
     ],
@@ -77,7 +77,7 @@
         "colorModes": [
           "light"
         ],
-        "waitSeconds": 2
+        "waitSeconds": 8
       },
       {
         "id": "grid-dark",
@@ -95,7 +95,7 @@
         "colorModes": [
           "dark"
         ],
-        "waitSeconds": 2
+        "waitSeconds": 8
       },
       {
         "id": "card-open-light",
@@ -113,7 +113,7 @@
         "colorModes": [
           "light"
         ],
-        "waitSeconds": 2
+        "waitSeconds": 8
       },
       {
         "id": "settings-light",
@@ -131,7 +131,7 @@
         "colorModes": [
           "light"
         ],
-        "waitSeconds": 3
+        "waitSeconds": 8
       }
     ],
     "scenarioBudgetPerDevice": 10
@@ -140,7 +140,7 @@
     "configuration": "Release",
     "archivePath": "artifacts/archives/cards/TikoCards.xcarchive",
     "exportPath": "artifacts/archives/cards/export",
-    "exportOptionsPlist": null,
+    "exportOptionsPlist": "release/ExportOptions.plist",
     "allowProvisioningUpdates": true
   },
   "upload": {

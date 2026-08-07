@@ -94,6 +94,7 @@ const CACHE_TTL_SECONDS = 300
 const CACHE_KEY_CARDS_COLLECTIONS = 'cards:collections'
 const CACHE_KEY_YES_NO_CONTENT = 'yes-no:content'
 const CACHE_KEY_SEQUENCE_CONTENT = 'sequence:content'
+const CACHE_KEY_WRITE_CONTENT = 'write:content'
 const CONTENT_ADMIN_ROLES = ['admin', 'content_editor']
 const CONTENT_ADMIN_CAPABILITIES = ['canEditContent']
 const CACHE_VERSION_PREFIX = 'content-cache-version'
@@ -462,6 +463,44 @@ interface SequenceStep {
   imagePrompt?: string
 }
 
+interface WriteStroke {
+  d: string
+  keyPoints?: number[]
+  widthScale?: number
+}
+
+interface WriteGroup {
+  id: string
+  sortOrder: number
+}
+
+interface WriteGlyph {
+  id: string
+  /** The glyph character. Never localized — a Dutch tile still reads "A". */
+  char: string
+  groupId: string
+  sortOrder: number
+  strokes: WriteStroke[]
+  strokeOrderStrict: boolean
+  /** Spoken name in the requested language. */
+  name?: string
+  /** Phoneme. Present and empty for a letter that is silent in this language. */
+  sound?: string
+  word?: string
+}
+
+interface WritePack {
+  packId: string
+  packSchemaVersion: number
+  packVersion: number
+  style: string
+  viewBox: number[]
+  guides?: JsonRecord
+  groups?: WriteGroup[]
+  order: number
+  glyphs: WriteGlyph[]
+}
+
 interface SequenceDefault {
   id: string
   name: string
@@ -732,6 +771,63 @@ async function getSequenceContent(env: Env, language: string): Promise<{ sequenc
   }
 
   return { sequences: mappedSequences.sort((a, b) => a.order - b.order) }
+}
+
+// Write glyph packs.
+//
+// A pack is a `write_pack` item; each glyph is a `write_glyph` child carrying its
+// stroke geometry in metadata. Geometry is passed through untouched — StrokeCore
+// is the only thing that interprets it, and a worker that "helpfully" reshaped a
+// path would change what a child is taught. `char` stays the glyph character in
+// every language; only the spoken name is localized.
+async function getWriteContent(env: Env, language: string): Promise<{ packs: WritePack[] }> {
+  const items = await getLocalizedContentItems(env, 'write', language)
+  const packRows = items.filter(item => item.type === 'write_pack')
+  const glyphRows = items.filter(item => item.type === 'write_glyph')
+
+  const glyphsByPack = new Map<string, LocalizedContentItem[]>()
+  for (const glyph of glyphRows) {
+    if (!glyph.parent_id) continue
+    const existing = glyphsByPack.get(glyph.parent_id)
+    if (existing) existing.push(glyph)
+    else glyphsByPack.set(glyph.parent_id, [glyph])
+  }
+
+  const packs: WritePack[] = []
+  for (const packRow of packRows) {
+    const packMeta = packRow.metadata
+    const glyphs: WriteGlyph[] = []
+    for (const row of (glyphsByPack.get(packRow.id) ?? []).sort((a, b) => a.sort_order - b.sort_order)) {
+      const meta = row.metadata
+      const strokes = Array.isArray(meta.strokes) ? (meta.strokes as WriteStroke[]) : []
+      if (strokes.length === 0) continue
+      glyphs.push({
+        id: asString(meta.glyphId) ?? row.id,
+        char: row.title,
+        groupId: asString(meta.groupId) ?? '',
+        sortOrder: row.sort_order,
+        strokes,
+        strokeOrderStrict: meta.strokeOrderStrict !== false,
+        ...(row.speech ? { name: row.speech } : {}),
+        ...(asString(meta.sound) === undefined ? {} : { sound: asString(meta.sound) }),
+        ...(asString(meta.word) ? { word: asString(meta.word) } : {}),
+      })
+    }
+
+    packs.push({
+      packId: packRow.title,
+      packSchemaVersion: typeof packMeta.packSchemaVersion === 'number' ? packMeta.packSchemaVersion : 1,
+      packVersion: typeof packMeta.packVersion === 'number' ? packMeta.packVersion : 1,
+      style: asString(packMeta.style) ?? 'print',
+      viewBox: Array.isArray(packMeta.viewBox) ? (packMeta.viewBox as number[]) : [0, 0, 100, 100],
+      ...(packMeta.guides && typeof packMeta.guides === 'object' ? { guides: packMeta.guides as JsonRecord } : {}),
+      ...(Array.isArray(packMeta.groups) ? { groups: packMeta.groups as WriteGroup[] } : {}),
+      order: packRow.sort_order,
+      glyphs,
+    })
+  }
+
+  return { packs: packs.sort((a, b) => a.order - b.order) }
 }
 
 async function getCardsCollections(env: Env, language: string, sessionToken?: string): Promise<{ collections: CardCollection[] }> {
@@ -1557,6 +1653,20 @@ async function handleGet(request: Request, env: Env, segments: string[]): Promis
     }
 
     const data = await cachedInNamespace(request, env, CACHE_KEY_SEQUENCE_CONTENT, language, () => getSequenceContent(env, language))
+    return json(request, env, { success: true, data })
+  }
+
+  if (resource === 'write' && segments[2] === 'content') {
+    const authHeader = request.headers.get('Authorization') ?? ''
+    const sessionToken = authHeader.startsWith('Bearer ') ? authHeader.slice(7) : undefined
+    const language = await effectiveAppLanguage(request, env, 'write', sessionToken)
+
+    if (sessionToken) {
+      const data = await getWriteContent(env, language)
+      return json(request, env, { success: true, data }, 200, { 'Cache-Control': 'no-store' })
+    }
+
+    const data = await cachedInNamespace(request, env, CACHE_KEY_WRITE_CONTENT, language, () => getWriteContent(env, language))
     return json(request, env, { success: true, data })
   }
 

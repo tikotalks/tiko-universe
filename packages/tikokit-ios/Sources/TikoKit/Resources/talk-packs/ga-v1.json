@@ -1,0 +1,3617 @@
+{
+  "locale": "ga",
+  "version": 1,
+  "source": "generated",
+  "reviewStatus": "needs-native-review",
+  "words": [
+    {
+      "id": "i",
+      "text": "mé",
+      "pos": "pronoun",
+      "category": "people",
+      "frequency": 10,
+      "icon": "user"
+    },
+    {
+      "id": "you",
+      "text": "tú",
+      "pos": "pronoun",
+      "category": "people",
+      "frequency": 10,
+      "icon": "user"
+    },
+    {
+      "id": "we",
+      "text": "muid",
+      "pos": "pronoun",
+      "category": "people",
+      "frequency": 7,
+      "icon": "user"
+    },
+    {
+      "id": "me",
+      "text": "mé",
+      "pos": "pronoun",
+      "category": "people",
+      "frequency": 10,
+      "icon": "user"
+    },
+    {
+      "id": "my",
+      "text": "mo",
+      "pos": "pronoun",
+      "category": "people",
+      "frequency": 10,
+      "icon": "user"
+    },
+    {
+      "id": "your",
+      "text": "do",
+      "pos": "pronoun",
+      "category": "people",
+      "frequency": 7,
+      "icon": "user"
+    },
+    {
+      "id": "he",
+      "text": "sé",
+      "pos": "pronoun",
+      "category": "people",
+      "frequency": 7,
+      "icon": "user"
+    },
+    {
+      "id": "she",
+      "text": "sí",
+      "pos": "pronoun",
+      "category": "people",
+      "frequency": 7,
+      "icon": "user"
+    },
+    {
+      "id": "they",
+      "text": "siad",
+      "pos": "pronoun",
+      "category": "people",
+      "frequency": 7,
+      "icon": "user"
+    },
+    {
+      "id": "mum",
+      "text": "mamaí",
+      "pos": "noun",
+      "category": "people",
+      "frequency": 7,
+      "icon": "user"
+    },
+    {
+      "id": "dad",
+      "text": "daidí",
+      "pos": "noun",
+      "category": "people",
+      "frequency": 7,
+      "icon": "user"
+    },
+    {
+      "id": "teacher",
+      "text": "múinteoir",
+      "pos": "noun",
+      "category": "people",
+      "frequency": 7,
+      "icon": "user",
+      "image": "https://data.tikocdn.org/uploads/1754637645261-teacher.png"
+    },
+    {
+      "id": "friend",
+      "text": "cara",
+      "pos": "noun",
+      "category": "people",
+      "frequency": 7,
+      "icon": "user"
+    },
+    {
+      "id": "brother",
+      "text": "deartháir",
+      "pos": "noun",
+      "category": "people",
+      "frequency": 7,
+      "icon": "user",
+      "image": "https://data.tikocdn.org/uploads/1754859143591-brother.png"
+    },
+    {
+      "id": "sister",
+      "text": "deirfiúr",
+      "pos": "noun",
+      "category": "people",
+      "frequency": 7,
+      "icon": "user",
+      "image": "https://data.tikocdn.org/uploads/1754859230045-sister.png"
+    },
+    {
+      "id": "grandma",
+      "text": "mamó",
+      "pos": "noun",
+      "category": "people",
+      "frequency": 7,
+      "icon": "user",
+      "image": "https://data.tikocdn.org/uploads/1754859202766-grandma.png"
+    },
+    {
+      "id": "grandpa",
+      "text": "daideo",
+      "pos": "noun",
+      "category": "people",
+      "frequency": 7,
+      "icon": "user",
+      "image": "https://data.tikocdn.org/uploads/1754859213573-grandpa.png"
+    },
+    {
+      "id": "helper",
+      "text": "cúntóir",
+      "pos": "noun",
+      "category": "people",
+      "frequency": 7,
+      "icon": "user"
+    },
+    {
+      "id": "doctor",
+      "text": "dochtúir",
+      "pos": "noun",
+      "category": "people",
+      "frequency": 7,
+      "icon": "user",
+      "image": "https://data.tikocdn.org/uploads/1754574511096-doctor.png"
+    },
+    {
+      "id": "class",
+      "text": "rang",
+      "pos": "noun",
+      "category": "people",
+      "frequency": 7,
+      "icon": "user"
+    },
+    {
+      "id": "mine",
+      "text": "liomsa",
+      "pos": "pronoun",
+      "category": "people",
+      "frequency": 8,
+      "icon": "user"
+    },
+    {
+      "id": "want",
+      "text": "ag iarraidh",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 10,
+      "icon": "play"
+    },
+    {
+      "id": "need",
+      "text": "ag teastáil",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 10,
+      "icon": "play"
+    },
+    {
+      "id": "like",
+      "text": "is maith liom",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play"
+    },
+    {
+      "id": "feel",
+      "text": "ag mothú",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 10,
+      "icon": "play"
+    },
+    {
+      "id": "see",
+      "text": "ag feiceáil",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play"
+    },
+    {
+      "id": "hear",
+      "text": "ag cloisteáil",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play"
+    },
+    {
+      "id": "have",
+      "text": "agam",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play"
+    },
+    {
+      "id": "go",
+      "text": "ag dul",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play"
+    },
+    {
+      "id": "come",
+      "text": "ag teacht",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play"
+    },
+    {
+      "id": "play",
+      "text": "ag imirt",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play"
+    },
+    {
+      "id": "read",
+      "text": "ag léamh",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play"
+    },
+    {
+      "id": "draw",
+      "text": "ag tarraingt",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play"
+    },
+    {
+      "id": "eat",
+      "text": "ag ithe",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play"
+    },
+    {
+      "id": "drink",
+      "text": "ag ól",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play"
+    },
+    {
+      "id": "sit",
+      "text": "ag suí",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play"
+    },
+    {
+      "id": "stand",
+      "text": "ag seasamh",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play"
+    },
+    {
+      "id": "walk",
+      "text": "ag siúl",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play"
+    },
+    {
+      "id": "run",
+      "text": "ag rith",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play"
+    },
+    {
+      "id": "stop",
+      "text": "ag stopadh",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 10,
+      "icon": "play",
+      "image": "https://data.tikocdn.org/uploads/1781021853608-stop-sign.png"
+    },
+    {
+      "id": "start",
+      "text": "ag tosú",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play"
+    },
+    {
+      "id": "wait",
+      "text": "ag fanacht",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play"
+    },
+    {
+      "id": "help",
+      "text": "ag cabhrú",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 10,
+      "icon": "play"
+    },
+    {
+      "id": "choose",
+      "text": "ag roghnú",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play"
+    },
+    {
+      "id": "open",
+      "text": "ag oscailt",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play"
+    },
+    {
+      "id": "close",
+      "text": "ag dúnadh",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play"
+    },
+    {
+      "id": "wash",
+      "text": "ag ní",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play"
+    },
+    {
+      "id": "sleep",
+      "text": "ag codladh",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play"
+    },
+    {
+      "id": "rest",
+      "text": "ag ligean scíthe",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play"
+    },
+    {
+      "id": "try",
+      "text": "ag iarraidh",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play"
+    },
+    {
+      "id": "talk",
+      "text": "ag caint",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play"
+    },
+    {
+      "id": "get",
+      "text": "ag fáil",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 9,
+      "icon": "play"
+    },
+    {
+      "id": "give",
+      "text": "ag tabhairt",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 9,
+      "icon": "play"
+    },
+    {
+      "id": "put",
+      "text": "ag cur",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 8,
+      "icon": "play"
+    },
+    {
+      "id": "take",
+      "text": "ag glacadh",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 8,
+      "icon": "play"
+    },
+    {
+      "id": "make",
+      "text": "ag déanamh",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 8,
+      "icon": "play"
+    },
+    {
+      "id": "look",
+      "text": "ag breathnú",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 8,
+      "icon": "play"
+    },
+    {
+      "id": "know",
+      "text": "eolas agam",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 8,
+      "icon": "play"
+    },
+    {
+      "id": "listen",
+      "text": "ag éisteacht",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 8,
+      "icon": "play"
+    },
+    {
+      "id": "watch",
+      "text": "ag féachaint",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 8,
+      "icon": "play"
+    },
+    {
+      "id": "finish",
+      "text": "ag críochnú",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 8,
+      "icon": "play"
+    },
+    {
+      "id": "find",
+      "text": "ag aimsiú",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play"
+    },
+    {
+      "id": "think",
+      "text": "ag smaoineamh",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play"
+    },
+    {
+      "id": "tell",
+      "text": "ag insint",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play"
+    },
+    {
+      "id": "show",
+      "text": "ag taispeáint",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play"
+    },
+    {
+      "id": "hold",
+      "text": "ag coinneáil",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play"
+    },
+    {
+      "id": "jump",
+      "text": "ag léim",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play",
+      "image": "https://data.tikocdn.org/uploads/1755106132141-jump-rope.png"
+    },
+    {
+      "id": "write",
+      "text": "ag scríobh",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play"
+    },
+    {
+      "id": "let",
+      "text": "ag ligean",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 6,
+      "icon": "play"
+    },
+    {
+      "id": "work",
+      "text": "ag obair",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 6,
+      "icon": "play"
+    },
+    {
+      "id": "share",
+      "text": "ag roinnt",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 6,
+      "icon": "play"
+    },
+    {
+      "id": "smell",
+      "text": "ag boladh",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 6,
+      "icon": "play"
+    },
+    {
+      "id": "taste",
+      "text": "ag blaiseadh",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 6,
+      "icon": "play"
+    },
+    {
+      "id": "touch",
+      "text": "ag baint",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 6,
+      "icon": "play"
+    },
+    {
+      "id": "dance",
+      "text": "ag damhsa",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 6,
+      "icon": "play",
+      "image": "https://data.tikocdn.org/uploads/1755624084539-just-dance-series.png"
+    },
+    {
+      "id": "sing",
+      "text": "ag canadh",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 6,
+      "icon": "play"
+    },
+    {
+      "id": "cut",
+      "text": "ag gearradh",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 6,
+      "icon": "play"
+    },
+    {
+      "id": "build",
+      "text": "ag tógáil",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 6,
+      "icon": "play"
+    },
+    {
+      "id": "swim",
+      "text": "ag snámh",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 6,
+      "icon": "play"
+    },
+    {
+      "id": "ride",
+      "text": "ag rothaíocht",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 6,
+      "icon": "play"
+    },
+    {
+      "id": "brush",
+      "text": "ag scuabadh",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 6,
+      "icon": "play",
+      "image": "https://data.tikocdn.org/uploads/1755105544355-textured-sensory-brush.png"
+    },
+    {
+      "id": "push",
+      "text": "ag brú",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 6,
+      "icon": "play"
+    },
+    {
+      "id": "pull",
+      "text": "ag streachailt",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 6,
+      "icon": "play",
+      "image": "https://data.tikocdn.org/uploads/1755105220123-pull-up-bar.png"
+    },
+    {
+      "id": "throw",
+      "text": "ag caitheamh",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 6,
+      "icon": "play"
+    },
+    {
+      "id": "catch",
+      "text": "ag breith",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 6,
+      "icon": "play"
+    },
+    {
+      "id": "count",
+      "text": "ag comhaireamh",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 6,
+      "icon": "play"
+    },
+    {
+      "id": "wake",
+      "text": "ag dúiseacht",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 6,
+      "icon": "play"
+    },
+    {
+      "id": "cry",
+      "text": "ag caoineadh",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 6,
+      "icon": "play"
+    },
+    {
+      "id": "laugh",
+      "text": "ag gáire",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 6,
+      "icon": "play"
+    },
+    {
+      "id": "fix",
+      "text": "ag deisiú",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 5,
+      "icon": "play"
+    },
+    {
+      "id": "cook",
+      "text": "ag cócaireacht",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 5,
+      "icon": "play"
+    },
+    {
+      "id": "climb",
+      "text": "ag dreapadh",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 5,
+      "icon": "play"
+    },
+    {
+      "id": "yes",
+      "text": "sea",
+      "pos": "social",
+      "category": "social",
+      "frequency": 9,
+      "icon": "chat-bubble"
+    },
+    {
+      "id": "no",
+      "text": "níl",
+      "pos": "social",
+      "category": "social",
+      "frequency": 9,
+      "icon": "chat-bubble"
+    },
+    {
+      "id": "please",
+      "text": "le do thoil",
+      "pos": "social",
+      "category": "social",
+      "frequency": 9,
+      "icon": "chat-bubble"
+    },
+    {
+      "id": "thank-you",
+      "text": "go raibh maith agat",
+      "pos": "social",
+      "category": "social",
+      "frequency": 9,
+      "icon": "chat-bubble"
+    },
+    {
+      "id": "sorry",
+      "text": "tá brón orm",
+      "pos": "social",
+      "category": "social",
+      "frequency": 9,
+      "icon": "chat-bubble"
+    },
+    {
+      "id": "hello",
+      "text": "dia duit",
+      "pos": "social",
+      "category": "social",
+      "frequency": 9,
+      "icon": "chat-bubble"
+    },
+    {
+      "id": "goodbye",
+      "text": "slán",
+      "pos": "social",
+      "category": "social",
+      "frequency": 9,
+      "icon": "chat-bubble"
+    },
+    {
+      "id": "more",
+      "text": "níos mó",
+      "pos": "social",
+      "category": "social",
+      "frequency": 9,
+      "icon": "chat-bubble"
+    },
+    {
+      "id": "all-done",
+      "text": "críochnaithe",
+      "pos": "social",
+      "category": "social",
+      "frequency": 9,
+      "icon": "chat-bubble"
+    },
+    {
+      "id": "again",
+      "text": "arís",
+      "pos": "social",
+      "category": "social",
+      "frequency": 9,
+      "icon": "chat-bubble"
+    },
+    {
+      "id": "finished",
+      "text": "críochnaithe",
+      "pos": "social",
+      "category": "social",
+      "frequency": 9,
+      "icon": "chat-bubble",
+      "image": "https://data.tikocdn.org/uploads/1755617101267-house-finished.png"
+    },
+    {
+      "id": "okay",
+      "text": "ceart go leor",
+      "pos": "social",
+      "category": "social",
+      "frequency": 9,
+      "icon": "chat-bubble"
+    },
+    {
+      "id": "not-yet",
+      "text": "níl fós",
+      "pos": "social",
+      "category": "social",
+      "frequency": 9,
+      "icon": "chat-bubble"
+    },
+    {
+      "id": "maybe",
+      "text": "b’fhéidir",
+      "pos": "social",
+      "category": "social",
+      "frequency": 9,
+      "icon": "chat-bubble"
+    },
+    {
+      "id": "what",
+      "text": "cad",
+      "pos": "question",
+      "category": "questions",
+      "frequency": 8,
+      "icon": "question-circle"
+    },
+    {
+      "id": "where",
+      "text": "cá",
+      "pos": "question",
+      "category": "questions",
+      "frequency": 8,
+      "icon": "question-circle"
+    },
+    {
+      "id": "who",
+      "text": "cé",
+      "pos": "question",
+      "category": "questions",
+      "frequency": 8,
+      "icon": "question-circle"
+    },
+    {
+      "id": "when",
+      "text": "cathain",
+      "pos": "question",
+      "category": "questions",
+      "frequency": 8,
+      "icon": "question-circle"
+    },
+    {
+      "id": "why",
+      "text": "cén fáth",
+      "pos": "question",
+      "category": "questions",
+      "frequency": 8,
+      "icon": "question-circle"
+    },
+    {
+      "id": "which",
+      "text": "cén",
+      "pos": "question",
+      "category": "questions",
+      "frequency": 8,
+      "icon": "question-circle"
+    },
+    {
+      "id": "how",
+      "text": "conas",
+      "pos": "question",
+      "category": "questions",
+      "frequency": 8,
+      "icon": "question-circle"
+    },
+    {
+      "id": "can",
+      "text": "is féidir liom",
+      "pos": "question",
+      "category": "questions",
+      "frequency": 8,
+      "icon": "question-circle"
+    },
+    {
+      "id": "is",
+      "text": "tá",
+      "pos": "question",
+      "category": "questions",
+      "frequency": 8,
+      "icon": "question-circle"
+    },
+    {
+      "id": "are",
+      "text": "tá",
+      "pos": "question",
+      "category": "questions",
+      "frequency": 8,
+      "icon": "question-circle"
+    },
+    {
+      "id": "a",
+      "text": "ceann",
+      "pos": "determiner",
+      "category": "helpers",
+      "frequency": 8,
+      "icon": "text"
+    },
+    {
+      "id": "the",
+      "text": "an",
+      "pos": "determiner",
+      "category": "helpers",
+      "frequency": 8,
+      "icon": "text"
+    },
+    {
+      "id": "this",
+      "text": "seo",
+      "pos": "determiner",
+      "category": "helpers",
+      "frequency": 8,
+      "icon": "text"
+    },
+    {
+      "id": "that",
+      "text": "sin",
+      "pos": "determiner",
+      "category": "helpers",
+      "frequency": 8,
+      "icon": "text"
+    },
+    {
+      "id": "some",
+      "text": "roinnt",
+      "pos": "determiner",
+      "category": "helpers",
+      "frequency": 8,
+      "icon": "text"
+    },
+    {
+      "id": "one",
+      "text": "ceann",
+      "pos": "determiner",
+      "category": "helpers",
+      "frequency": 8,
+      "icon": "text"
+    },
+    {
+      "id": "two",
+      "text": "dhá",
+      "pos": "determiner",
+      "category": "helpers",
+      "frequency": 8,
+      "icon": "text"
+    },
+    {
+      "id": "three",
+      "text": "trí",
+      "pos": "determiner",
+      "category": "helpers",
+      "frequency": 8,
+      "icon": "text"
+    },
+    {
+      "id": "many",
+      "text": "go leor",
+      "pos": "determiner",
+      "category": "helpers",
+      "frequency": 8,
+      "icon": "text"
+    },
+    {
+      "id": "little",
+      "text": "beagán",
+      "pos": "determiner",
+      "category": "helpers",
+      "frequency": 8,
+      "icon": "text"
+    },
+    {
+      "id": "big",
+      "text": "mór",
+      "pos": "determiner",
+      "category": "helpers",
+      "frequency": 8,
+      "icon": "text"
+    },
+    {
+      "id": "in",
+      "text": "i",
+      "pos": "preposition",
+      "category": "positions",
+      "frequency": 7,
+      "icon": "arrow-right"
+    },
+    {
+      "id": "on",
+      "text": "ar",
+      "pos": "preposition",
+      "category": "positions",
+      "frequency": 7,
+      "icon": "arrow-right"
+    },
+    {
+      "id": "under",
+      "text": "faoi",
+      "pos": "preposition",
+      "category": "positions",
+      "frequency": 7,
+      "icon": "arrow-right"
+    },
+    {
+      "id": "next-to",
+      "text": "in aice",
+      "pos": "preposition",
+      "category": "positions",
+      "frequency": 7,
+      "icon": "arrow-right"
+    },
+    {
+      "id": "with",
+      "text": "le",
+      "pos": "preposition",
+      "category": "positions",
+      "frequency": 7,
+      "icon": "arrow-right"
+    },
+    {
+      "id": "without",
+      "text": "gan",
+      "pos": "preposition",
+      "category": "positions",
+      "frequency": 7,
+      "icon": "arrow-right"
+    },
+    {
+      "id": "to",
+      "text": "chuig",
+      "pos": "preposition",
+      "category": "positions",
+      "frequency": 7,
+      "icon": "arrow-right"
+    },
+    {
+      "id": "from",
+      "text": "ó",
+      "pos": "preposition",
+      "category": "positions",
+      "frequency": 7,
+      "icon": "arrow-right"
+    },
+    {
+      "id": "inside",
+      "text": "istigh",
+      "pos": "preposition",
+      "category": "positions",
+      "frequency": 7,
+      "icon": "arrow-right"
+    },
+    {
+      "id": "outside",
+      "text": "amuigh",
+      "pos": "preposition",
+      "category": "positions",
+      "frequency": 7,
+      "icon": "arrow-right"
+    },
+    {
+      "id": "near",
+      "text": "in aice",
+      "pos": "preposition",
+      "category": "positions",
+      "frequency": 7,
+      "icon": "arrow-right"
+    },
+    {
+      "id": "far",
+      "text": "i bhfad",
+      "pos": "preposition",
+      "category": "positions",
+      "frequency": 7,
+      "icon": "arrow-right"
+    },
+    {
+      "id": "here",
+      "text": "anseo",
+      "pos": "adverb",
+      "category": "positions",
+      "frequency": 9,
+      "icon": "arrow-right"
+    },
+    {
+      "id": "there",
+      "text": "ansiúd",
+      "pos": "adverb",
+      "category": "positions",
+      "frequency": 9,
+      "icon": "arrow-right"
+    },
+    {
+      "id": "up",
+      "text": "suas",
+      "pos": "adverb",
+      "category": "positions",
+      "frequency": 8,
+      "icon": "arrow-right"
+    },
+    {
+      "id": "down",
+      "text": "síos",
+      "pos": "adverb",
+      "category": "positions",
+      "frequency": 8,
+      "icon": "arrow-right"
+    },
+    {
+      "id": "off",
+      "text": "múchta",
+      "pos": "adverb",
+      "category": "positions",
+      "frequency": 7,
+      "icon": "arrow-right"
+    },
+    {
+      "id": "away",
+      "text": "ar shiúl",
+      "pos": "adverb",
+      "category": "positions",
+      "frequency": 7,
+      "icon": "arrow-right"
+    },
+    {
+      "id": "together",
+      "text": "le chéile",
+      "pos": "adverb",
+      "category": "positions",
+      "frequency": 6,
+      "icon": "arrow-right"
+    },
+    {
+      "id": "and",
+      "text": "agus",
+      "pos": "conjunction",
+      "category": "helpers",
+      "frequency": 6,
+      "icon": "branch"
+    },
+    {
+      "id": "or",
+      "text": "nó",
+      "pos": "conjunction",
+      "category": "helpers",
+      "frequency": 6,
+      "icon": "branch"
+    },
+    {
+      "id": "because",
+      "text": "mar",
+      "pos": "conjunction",
+      "category": "helpers",
+      "frequency": 6,
+      "icon": "branch"
+    },
+    {
+      "id": "then",
+      "text": "ansin",
+      "pos": "conjunction",
+      "category": "helpers",
+      "frequency": 6,
+      "icon": "branch"
+    },
+    {
+      "id": "but",
+      "text": "ach",
+      "pos": "conjunction",
+      "category": "helpers",
+      "frequency": 6,
+      "icon": "branch"
+    },
+    {
+      "id": "not",
+      "text": "ní",
+      "pos": "negation",
+      "category": "helpers",
+      "frequency": 10,
+      "icon": "text"
+    },
+    {
+      "id": "all",
+      "text": "gach rud",
+      "pos": "determiner",
+      "category": "helpers",
+      "frequency": 8,
+      "icon": "text"
+    },
+    {
+      "id": "another",
+      "text": "ceann eile",
+      "pos": "determiner",
+      "category": "helpers",
+      "frequency": 7,
+      "icon": "text"
+    },
+    {
+      "id": "water",
+      "text": "uisce",
+      "pos": "noun",
+      "category": "drinks",
+      "frequency": 8,
+      "icon": "water"
+    },
+    {
+      "id": "milk",
+      "text": "bainne",
+      "pos": "noun",
+      "category": "drinks",
+      "frequency": 8,
+      "icon": "water",
+      "image": "https://data.tikocdn.org/uploads/1755624098419-kirby-and-the-forgotten-land.png"
+    },
+    {
+      "id": "juice",
+      "text": "sú",
+      "pos": "noun",
+      "category": "drinks",
+      "frequency": 8,
+      "icon": "water"
+    },
+    {
+      "id": "tea",
+      "text": "tae",
+      "pos": "noun",
+      "category": "drinks",
+      "frequency": 8,
+      "icon": "water",
+      "image": "https://data.tikocdn.org/uploads/1756293128101-tea-kettle.png"
+    },
+    {
+      "id": "smoothie",
+      "text": "smoothie",
+      "pos": "noun",
+      "category": "drinks",
+      "frequency": 8,
+      "icon": "water",
+      "image": "https://data.tikocdn.org/uploads/1753451476359-smoothie.png"
+    },
+    {
+      "id": "lemonade",
+      "text": "liomanáid",
+      "pos": "noun",
+      "category": "drinks",
+      "frequency": 8,
+      "icon": "water",
+      "image": "https://data.tikocdn.org/uploads/1753451510315-lemonade.png"
+    },
+    {
+      "id": "hot-drink",
+      "text": "deoch te",
+      "pos": "noun",
+      "category": "drinks",
+      "frequency": 8,
+      "icon": "water"
+    },
+    {
+      "id": "cold-drink",
+      "text": "deoch fhuar",
+      "pos": "noun",
+      "category": "drinks",
+      "frequency": 8,
+      "icon": "water"
+    },
+    {
+      "id": "cup",
+      "text": "cupán",
+      "pos": "noun",
+      "category": "drinks",
+      "frequency": 8,
+      "icon": "water",
+      "image": "https://data.tikocdn.org/uploads/1756292863905-toothbrushes-in-cup.png"
+    },
+    {
+      "id": "straw",
+      "text": "cána",
+      "pos": "noun",
+      "category": "drinks",
+      "frequency": 8,
+      "icon": "water",
+      "image": "https://data.tikocdn.org/uploads/1754732213846-reusable-straw.png"
+    },
+    {
+      "id": "bottle",
+      "text": "buidéal",
+      "pos": "noun",
+      "category": "drinks",
+      "frequency": 8,
+      "icon": "water",
+      "image": "https://data.tikocdn.org/uploads/1755105708364-water-bottle.png"
+    },
+    {
+      "id": "sip",
+      "text": "bolgam",
+      "pos": "noun",
+      "category": "drinks",
+      "frequency": 8,
+      "icon": "water"
+    },
+    {
+      "id": "apple",
+      "text": "úll",
+      "pos": "noun",
+      "category": "food",
+      "frequency": 8,
+      "icon": "apple",
+      "image": "https://data.tikocdn.org/uploads/1756292940670-golden-apple.png"
+    },
+    {
+      "id": "banana",
+      "text": "banana",
+      "pos": "noun",
+      "category": "food",
+      "frequency": 8,
+      "icon": "apple",
+      "image": "https://data.tikocdn.org/uploads/1755286983850-banana.png"
+    },
+    {
+      "id": "bread",
+      "text": "arán",
+      "pos": "noun",
+      "category": "food",
+      "frequency": 8,
+      "icon": "apple",
+      "image": "https://data.tikocdn.org/uploads/1755290972081-pide-bread.png"
+    },
+    {
+      "id": "toast",
+      "text": "tósta",
+      "pos": "noun",
+      "category": "food",
+      "frequency": 8,
+      "icon": "apple",
+      "image": "https://data.tikocdn.org/uploads/1755286514343-fried-egg-on-toast.png"
+    },
+    {
+      "id": "sandwich",
+      "text": "ceapaire",
+      "pos": "noun",
+      "category": "food",
+      "frequency": 8,
+      "icon": "apple",
+      "image": "https://data.tikocdn.org/uploads/1781021862923-sandwich.png"
+    },
+    {
+      "id": "rice",
+      "text": "rís",
+      "pos": "noun",
+      "category": "food",
+      "frequency": 8,
+      "icon": "apple",
+      "image": "https://data.tikocdn.org/uploads/1756293151213-ricecooker.png"
+    },
+    {
+      "id": "pasta",
+      "text": "pasta",
+      "pos": "noun",
+      "category": "food",
+      "frequency": 8,
+      "icon": "apple",
+      "image": "https://data.tikocdn.org/uploads/1754731989461-jar-of-pasta.png"
+    },
+    {
+      "id": "soup",
+      "text": "anraith",
+      "pos": "noun",
+      "category": "food",
+      "frequency": 8,
+      "icon": "apple",
+      "image": "https://data.tikocdn.org/uploads/1754732309169-soup-ladle.png"
+    },
+    {
+      "id": "yogurt",
+      "text": "iógart",
+      "pos": "noun",
+      "category": "food",
+      "frequency": 8,
+      "icon": "apple",
+      "image": "https://data.tikocdn.org/uploads/1753772684470-spas-yogurt-soup.png"
+    },
+    {
+      "id": "cheese",
+      "text": "cáis",
+      "pos": "noun",
+      "category": "food",
+      "frequency": 8,
+      "icon": "apple"
+    },
+    {
+      "id": "cracker",
+      "text": "craicear",
+      "pos": "noun",
+      "category": "food",
+      "frequency": 8,
+      "icon": "apple",
+      "image": "https://data.tikocdn.org/uploads/1781470952178-cracker.png"
+    },
+    {
+      "id": "carrot",
+      "text": "cairéad",
+      "pos": "noun",
+      "category": "food",
+      "frequency": 8,
+      "icon": "apple",
+      "image": "https://data.tikocdn.org/uploads/1753448184127-carrot.png"
+    },
+    {
+      "id": "chips",
+      "text": "sceallóga",
+      "pos": "noun",
+      "category": "food",
+      "frequency": 8,
+      "icon": "apple",
+      "image": "https://data.tikocdn.org/uploads/1753282919807-fish-chips.png"
+    },
+    {
+      "id": "cookie",
+      "text": "briosca",
+      "pos": "noun",
+      "category": "food",
+      "frequency": 8,
+      "icon": "apple",
+      "image": "https://data.tikocdn.org/uploads/1755286480193-cookie.png"
+    },
+    {
+      "id": "egg",
+      "text": "ubh",
+      "pos": "noun",
+      "category": "food",
+      "frequency": 8,
+      "icon": "apple",
+      "image": "https://data.tikocdn.org/uploads/1781374488401-egg.png"
+    },
+    {
+      "id": "cereal",
+      "text": "gránach",
+      "pos": "noun",
+      "category": "food",
+      "frequency": 8,
+      "icon": "apple",
+      "image": "https://data.tikocdn.org/uploads/1781470544730-cereal.png"
+    },
+    {
+      "id": "fruit",
+      "text": "toradh",
+      "pos": "noun",
+      "category": "food",
+      "frequency": 8,
+      "icon": "apple"
+    },
+    {
+      "id": "snack",
+      "text": "sneaic",
+      "pos": "noun",
+      "category": "food",
+      "frequency": 8,
+      "icon": "apple",
+      "image": "https://data.tikocdn.org/uploads/1781443428722-plate-of-snack-foods.png"
+    },
+    {
+      "id": "dinner",
+      "text": "dinnéar",
+      "pos": "noun",
+      "category": "food",
+      "frequency": 8,
+      "icon": "apple",
+      "image": "https://data.tikocdn.org/uploads/1755455040733-dinner.png"
+    },
+    {
+      "id": "lunch",
+      "text": "lón",
+      "pos": "noun",
+      "category": "food",
+      "frequency": 8,
+      "icon": "apple",
+      "image": "https://data.tikocdn.org/uploads/1755455052116-lunch.png"
+    },
+    {
+      "id": "happy",
+      "text": "sásta",
+      "pos": "adjective",
+      "category": "feelings",
+      "frequency": 9,
+      "icon": "smile",
+      "image": "https://data.tikocdn.org/uploads/1756901925456-happy-boy-disney-pixar-style.png"
+    },
+    {
+      "id": "sad",
+      "text": "brónach",
+      "pos": "adjective",
+      "category": "feelings",
+      "frequency": 9,
+      "icon": "smile",
+      "image": "https://data.tikocdn.org/uploads/1754688205220-emotion-sad-boy.png"
+    },
+    {
+      "id": "angry",
+      "text": "feargach",
+      "pos": "adjective",
+      "category": "feelings",
+      "frequency": 9,
+      "icon": "smile",
+      "image": "https://data.tikocdn.org/uploads/1754688232560-emotion-angry.png"
+    },
+    {
+      "id": "worried",
+      "text": "buartha",
+      "pos": "adjective",
+      "category": "feelings",
+      "frequency": 9,
+      "icon": "smile",
+      "image": "https://data.tikocdn.org/uploads/1754739808295-emotion-worried.png"
+    },
+    {
+      "id": "scared",
+      "text": "eaglach",
+      "pos": "adjective",
+      "category": "feelings",
+      "frequency": 9,
+      "icon": "smile",
+      "image": "https://data.tikocdn.org/uploads/1754857383614-girl-scared.png"
+    },
+    {
+      "id": "tired",
+      "text": "tuirseach",
+      "pos": "adjective",
+      "category": "feelings",
+      "frequency": 9,
+      "icon": "smile",
+      "image": "https://data.tikocdn.org/uploads/1754857341192-girl-im-tired.png"
+    },
+    {
+      "id": "sick",
+      "text": "tinn",
+      "pos": "adjective",
+      "category": "feelings",
+      "frequency": 9,
+      "icon": "smile",
+      "image": "https://data.tikocdn.org/uploads/1754857314148-girl-im-sick.png"
+    },
+    {
+      "id": "hurt",
+      "text": "gortaithe",
+      "pos": "adjective",
+      "category": "feelings",
+      "frequency": 9,
+      "icon": "smile"
+    },
+    {
+      "id": "calm",
+      "text": "socair",
+      "pos": "adjective",
+      "category": "feelings",
+      "frequency": 9,
+      "icon": "smile"
+    },
+    {
+      "id": "excited",
+      "text": "corraithe",
+      "pos": "adjective",
+      "category": "feelings",
+      "frequency": 9,
+      "icon": "smile",
+      "image": "https://data.tikocdn.org/uploads/1754688148492-emotion-excited-boy.png"
+    },
+    {
+      "id": "confused",
+      "text": "trína chéile",
+      "pos": "adjective",
+      "category": "feelings",
+      "frequency": 9,
+      "icon": "smile",
+      "image": "https://data.tikocdn.org/uploads/1754688114785-emotion-confused.png"
+    },
+    {
+      "id": "proud",
+      "text": "bródúil",
+      "pos": "adjective",
+      "category": "feelings",
+      "frequency": 9,
+      "icon": "smile",
+      "image": "https://data.tikocdn.org/uploads/1754687852045-emotion-proud-girl.png"
+    },
+    {
+      "id": "lonely",
+      "text": "uaigneach",
+      "pos": "adjective",
+      "category": "feelings",
+      "frequency": 9,
+      "icon": "smile",
+      "image": "https://data.tikocdn.org/uploads/1754688067529-emotion-lonely.png"
+    },
+    {
+      "id": "bored",
+      "text": "leamh",
+      "pos": "adjective",
+      "category": "feelings",
+      "frequency": 9,
+      "icon": "smile",
+      "image": "https://data.tikocdn.org/uploads/1754687814850-emotion-bored.png"
+    },
+    {
+      "id": "safe",
+      "text": "sábháilte",
+      "pos": "adjective",
+      "category": "feelings",
+      "frequency": 9,
+      "icon": "smile"
+    },
+    {
+      "id": "upset",
+      "text": "trína chéile",
+      "pos": "adjective",
+      "category": "feelings",
+      "frequency": 9,
+      "icon": "smile"
+    },
+    {
+      "id": "okay-2",
+      "text": "ceart go leor",
+      "pos": "adjective",
+      "category": "feelings",
+      "frequency": 9,
+      "icon": "smile"
+    },
+    {
+      "id": "hot",
+      "text": "te",
+      "pos": "adjective",
+      "category": "feelings",
+      "frequency": 9,
+      "icon": "smile"
+    },
+    {
+      "id": "cold",
+      "text": "fuar",
+      "pos": "adjective",
+      "category": "feelings",
+      "frequency": 9,
+      "icon": "smile"
+    },
+    {
+      "id": "hungry",
+      "text": "ocras",
+      "pos": "adjective",
+      "category": "feelings",
+      "frequency": 9,
+      "icon": "smile"
+    },
+    {
+      "id": "thirsty",
+      "text": "tart",
+      "pos": "adjective",
+      "category": "feelings",
+      "frequency": 9,
+      "icon": "smile"
+    },
+    {
+      "id": "head",
+      "text": "ceann",
+      "pos": "noun",
+      "category": "body",
+      "frequency": 6,
+      "icon": "body",
+      "image": "https://data.tikocdn.org/uploads/1781021866617-head.png"
+    },
+    {
+      "id": "hand",
+      "text": "lámh",
+      "pos": "noun",
+      "category": "body",
+      "frequency": 6,
+      "icon": "body"
+    },
+    {
+      "id": "foot",
+      "text": "cos",
+      "pos": "noun",
+      "category": "body",
+      "frequency": 6,
+      "icon": "body"
+    },
+    {
+      "id": "tummy",
+      "text": "bolg",
+      "pos": "noun",
+      "category": "body",
+      "frequency": 6,
+      "icon": "body"
+    },
+    {
+      "id": "mouth",
+      "text": "béal",
+      "pos": "noun",
+      "category": "body",
+      "frequency": 6,
+      "icon": "body",
+      "image": "https://data.tikocdn.org/uploads/1756128342077-human-mouth.png"
+    },
+    {
+      "id": "ear",
+      "text": "cluas",
+      "pos": "noun",
+      "category": "body",
+      "frequency": 6,
+      "icon": "body"
+    },
+    {
+      "id": "eye",
+      "text": "súil",
+      "pos": "noun",
+      "category": "body",
+      "frequency": 6,
+      "icon": "body",
+      "image": "https://data.tikocdn.org/uploads/1756128223153-human-eye.png"
+    },
+    {
+      "id": "arm",
+      "text": "lámh",
+      "pos": "noun",
+      "category": "body",
+      "frequency": 6,
+      "icon": "body",
+      "image": "https://data.tikocdn.org/uploads/1756473758354-human-arm.png"
+    },
+    {
+      "id": "leg",
+      "text": "cos",
+      "pos": "noun",
+      "category": "body",
+      "frequency": 6,
+      "icon": "body",
+      "image": "https://data.tikocdn.org/uploads/1756128317552-human-leg.png"
+    },
+    {
+      "id": "back",
+      "text": "droim",
+      "pos": "noun",
+      "category": "body",
+      "frequency": 6,
+      "icon": "body"
+    },
+    {
+      "id": "tooth",
+      "text": "fiacail",
+      "pos": "noun",
+      "category": "body",
+      "frequency": 6,
+      "icon": "body",
+      "image": "https://data.tikocdn.org/uploads/1754662438843-tooth.png"
+    },
+    {
+      "id": "hair",
+      "text": "gruaig",
+      "pos": "noun",
+      "category": "body",
+      "frequency": 6,
+      "icon": "body"
+    },
+    {
+      "id": "nose",
+      "text": "srón",
+      "pos": "noun",
+      "category": "body",
+      "frequency": 6,
+      "icon": "body",
+      "image": "https://data.tikocdn.org/uploads/1756128358450-human-nose.png"
+    },
+    {
+      "id": "skin",
+      "text": "craiceann",
+      "pos": "noun",
+      "category": "body",
+      "frequency": 6,
+      "icon": "body"
+    },
+    {
+      "id": "heart",
+      "text": "croí",
+      "pos": "noun",
+      "category": "body",
+      "frequency": 6,
+      "icon": "body"
+    },
+    {
+      "id": "home",
+      "text": "baile",
+      "pos": "noun",
+      "category": "places",
+      "frequency": 7,
+      "icon": "home"
+    },
+    {
+      "id": "school",
+      "text": "scoil",
+      "pos": "noun",
+      "category": "places",
+      "frequency": 7,
+      "icon": "home"
+    },
+    {
+      "id": "classroom",
+      "text": "seomra ranga",
+      "pos": "noun",
+      "category": "places",
+      "frequency": 7,
+      "icon": "home"
+    },
+    {
+      "id": "bathroom",
+      "text": "seomra folctha",
+      "pos": "noun",
+      "category": "places",
+      "frequency": 7,
+      "icon": "home"
+    },
+    {
+      "id": "kitchen",
+      "text": "cistin",
+      "pos": "noun",
+      "category": "places",
+      "frequency": 7,
+      "icon": "home",
+      "image": "https://data.tikocdn.org/uploads/1781443445242-kids-kitchen.png"
+    },
+    {
+      "id": "bedroom",
+      "text": "seomra leapa",
+      "pos": "noun",
+      "category": "places",
+      "frequency": 7,
+      "icon": "home"
+    },
+    {
+      "id": "garden",
+      "text": "gairdín",
+      "pos": "noun",
+      "category": "places",
+      "frequency": 7,
+      "icon": "home"
+    },
+    {
+      "id": "shop",
+      "text": "siopa",
+      "pos": "noun",
+      "category": "places",
+      "frequency": 7,
+      "icon": "home"
+    },
+    {
+      "id": "car",
+      "text": "carr",
+      "pos": "noun",
+      "category": "places",
+      "frequency": 7,
+      "icon": "home"
+    },
+    {
+      "id": "bus",
+      "text": "bus",
+      "pos": "noun",
+      "category": "places",
+      "frequency": 7,
+      "icon": "home"
+    },
+    {
+      "id": "park",
+      "text": "páirc",
+      "pos": "noun",
+      "category": "places",
+      "frequency": 7,
+      "icon": "home",
+      "image": "https://data.tikocdn.org/uploads/1781443441644-generated.png"
+    },
+    {
+      "id": "playground",
+      "text": "clós súgradh",
+      "pos": "noun",
+      "category": "places",
+      "frequency": 7,
+      "icon": "home",
+      "image": "https://data.tikocdn.org/uploads/1781021542071-playground.png"
+    },
+    {
+      "id": "library",
+      "text": "leabharlann",
+      "pos": "noun",
+      "category": "places",
+      "frequency": 7,
+      "icon": "home",
+      "image": "https://data.tikocdn.org/uploads/1754663673001-library.png"
+    },
+    {
+      "id": "pool",
+      "text": "linn snámha",
+      "pos": "noun",
+      "category": "places",
+      "frequency": 7,
+      "icon": "home",
+      "image": "https://data.tikocdn.org/uploads/1754741588695-pool-table.png"
+    },
+    {
+      "id": "table",
+      "text": "bord",
+      "pos": "noun",
+      "category": "home",
+      "frequency": 7,
+      "icon": "home",
+      "image": "https://data.tikocdn.org/uploads/1756292929848-table-tennis-table.png"
+    },
+    {
+      "id": "chair",
+      "text": "cathaoir",
+      "pos": "noun",
+      "category": "home",
+      "frequency": 7,
+      "icon": "home",
+      "image": "https://data.tikocdn.org/uploads/1756293239181-gaming-chair.png"
+    },
+    {
+      "id": "sofa",
+      "text": "tolg",
+      "pos": "noun",
+      "category": "home",
+      "frequency": 7,
+      "icon": "home",
+      "image": "https://data.tikocdn.org/uploads/1754569010181-sofa.png"
+    },
+    {
+      "id": "bed",
+      "text": "leaba",
+      "pos": "noun",
+      "category": "home",
+      "frequency": 7,
+      "icon": "home"
+    },
+    {
+      "id": "door",
+      "text": "doras",
+      "pos": "noun",
+      "category": "home",
+      "frequency": 7,
+      "icon": "home"
+    },
+    {
+      "id": "window",
+      "text": "fuinneog",
+      "pos": "noun",
+      "category": "home",
+      "frequency": 7,
+      "icon": "home"
+    },
+    {
+      "id": "book",
+      "text": "leabhar",
+      "pos": "noun",
+      "category": "school",
+      "frequency": 6,
+      "icon": "book",
+      "image": "https://data.tikocdn.org/uploads/1781474706796-teddy-bear-with-book.png"
+    },
+    {
+      "id": "pencil",
+      "text": "peann luaidhe",
+      "pos": "noun",
+      "category": "school",
+      "frequency": 6,
+      "icon": "book",
+      "image": "https://data.tikocdn.org/uploads/1755106280944-pencil.png"
+    },
+    {
+      "id": "paper",
+      "text": "páipéar",
+      "pos": "noun",
+      "category": "school",
+      "frequency": 6,
+      "icon": "book"
+    },
+    {
+      "id": "bag",
+      "text": "mála",
+      "pos": "noun",
+      "category": "school",
+      "frequency": 6,
+      "icon": "book",
+      "image": "https://data.tikocdn.org/uploads/1754988042752-bag-of-tools-1.png"
+    },
+    {
+      "id": "coat",
+      "text": "cóta",
+      "pos": "noun",
+      "category": "school",
+      "frequency": 6,
+      "icon": "book"
+    },
+    {
+      "id": "shoes",
+      "text": "bróga",
+      "pos": "noun",
+      "category": "school",
+      "frequency": 6,
+      "icon": "book",
+      "image": "https://data.tikocdn.org/uploads/1756144652467-adidas-campus-shoes.png"
+    },
+    {
+      "id": "lunchbox",
+      "text": "bosca lóin",
+      "pos": "noun",
+      "category": "school",
+      "frequency": 6,
+      "icon": "book",
+      "image": "https://data.tikocdn.org/uploads/1755105586186-lunchbox.png"
+    },
+    {
+      "id": "tablet",
+      "text": "táibléad",
+      "pos": "noun",
+      "category": "school",
+      "frequency": 6,
+      "icon": "book",
+      "image": "https://data.tikocdn.org/uploads/1754986350201-tablet.png"
+    },
+    {
+      "id": "screen",
+      "text": "scáileán",
+      "pos": "noun",
+      "category": "school",
+      "frequency": 6,
+      "icon": "book"
+    },
+    {
+      "id": "timer",
+      "text": "uaireadóir",
+      "pos": "noun",
+      "category": "school",
+      "frequency": 6,
+      "icon": "book",
+      "image": "https://data.tikocdn.org/uploads/1754413853153-timer2.png"
+    },
+    {
+      "id": "schedule",
+      "text": "clár ama",
+      "pos": "noun",
+      "category": "school",
+      "frequency": 6,
+      "icon": "book"
+    },
+    {
+      "id": "picture",
+      "text": "pictiúr",
+      "pos": "noun",
+      "category": "school",
+      "frequency": 6,
+      "icon": "book"
+    },
+    {
+      "id": "card",
+      "text": "cárta",
+      "pos": "noun",
+      "category": "school",
+      "frequency": 6,
+      "icon": "book",
+      "image": "https://data.tikocdn.org/uploads/1754741501044-bingo-card.png"
+    },
+    {
+      "id": "story",
+      "text": "scéal",
+      "pos": "noun",
+      "category": "school",
+      "frequency": 6,
+      "icon": "book"
+    },
+    {
+      "id": "music",
+      "text": "ceol",
+      "pos": "noun",
+      "category": "school",
+      "frequency": 6,
+      "icon": "book",
+      "image": "https://data.tikocdn.org/uploads/1755106316235-music-note.png"
+    },
+    {
+      "id": "ball",
+      "text": "liathróid",
+      "pos": "noun",
+      "category": "toys",
+      "frequency": 6,
+      "icon": "puzzle",
+      "image": "https://data.tikocdn.org/uploads/1755624225308-pok-mon-red-blue.png"
+    },
+    {
+      "id": "blocks",
+      "text": "bloic",
+      "pos": "noun",
+      "category": "toys",
+      "frequency": 6,
+      "icon": "puzzle",
+      "image": "https://data.tikocdn.org/uploads/1755680491621-a-b-c-sequence.png"
+    },
+    {
+      "id": "doll",
+      "text": "bábóg",
+      "pos": "noun",
+      "category": "toys",
+      "frequency": 6,
+      "icon": "puzzle",
+      "image": "https://data.tikocdn.org/uploads/1754860491004-babushka.png"
+    },
+    {
+      "id": "car-toy",
+      "text": "carr bréagáin",
+      "pos": "noun",
+      "category": "toys",
+      "frequency": 6,
+      "icon": "puzzle"
+    },
+    {
+      "id": "train",
+      "text": "traein",
+      "pos": "noun",
+      "category": "toys",
+      "frequency": 6,
+      "icon": "puzzle",
+      "image": "https://data.tikocdn.org/uploads/1756293139653-model-trains.png"
+    },
+    {
+      "id": "puzzle",
+      "text": "puzal",
+      "pos": "noun",
+      "category": "toys",
+      "frequency": 6,
+      "icon": "puzzle",
+      "image": "https://data.tikocdn.org/uploads/1755105977331-puzzle-piece.png"
+    },
+    {
+      "id": "game",
+      "text": "cluiche",
+      "pos": "noun",
+      "category": "toys",
+      "frequency": 6,
+      "icon": "puzzle"
+    },
+    {
+      "id": "paint",
+      "text": "péint",
+      "pos": "noun",
+      "category": "toys",
+      "frequency": 6,
+      "icon": "puzzle",
+      "image": "https://data.tikocdn.org/uploads/1755106304863-paint-palette.png"
+    },
+    {
+      "id": "clay",
+      "text": "cré",
+      "pos": "noun",
+      "category": "toys",
+      "frequency": 6,
+      "icon": "puzzle"
+    },
+    {
+      "id": "bubbles",
+      "text": "boilgeoga",
+      "pos": "noun",
+      "category": "toys",
+      "frequency": 6,
+      "icon": "puzzle"
+    },
+    {
+      "id": "swing",
+      "text": "suíomh",
+      "pos": "noun",
+      "category": "toys",
+      "frequency": 6,
+      "icon": "puzzle",
+      "image": "https://data.tikocdn.org/uploads/1781021543058-swing.png"
+    },
+    {
+      "id": "slide",
+      "text": "sleamhnán",
+      "pos": "noun",
+      "category": "toys",
+      "frequency": 6,
+      "icon": "puzzle",
+      "image": "https://data.tikocdn.org/uploads/1781021473617-slide.png"
+    },
+    {
+      "id": "bike",
+      "text": "rothar",
+      "pos": "noun",
+      "category": "toys",
+      "frequency": 6,
+      "icon": "puzzle",
+      "image": "https://data.tikocdn.org/uploads/1755105272207-stationary-bike.png"
+    },
+    {
+      "id": "teddy",
+      "text": "béirín",
+      "pos": "noun",
+      "category": "toys",
+      "frequency": 6,
+      "icon": "puzzle",
+      "image": "https://data.tikocdn.org/uploads/1781474706796-teddy-bear-with-book.png"
+    },
+    {
+      "id": "lego",
+      "text": "lego",
+      "pos": "noun",
+      "category": "toys",
+      "frequency": 6,
+      "icon": "puzzle",
+      "image": "https://data.tikocdn.org/uploads/1755624111907-lego-star-wars-the-skywalker-saga.png"
+    },
+    {
+      "id": "red",
+      "text": "dearg",
+      "pos": "adjective",
+      "category": "colors",
+      "frequency": 5,
+      "icon": "palette",
+      "image": "https://data.tikocdn.org/uploads/1756293164075-red-velvet-mite.png"
+    },
+    {
+      "id": "blue",
+      "text": "gorm",
+      "pos": "adjective",
+      "category": "colors",
+      "frequency": 5,
+      "icon": "palette",
+      "image": "https://data.tikocdn.org/uploads/1756292886243-blue-ribbon.png"
+    },
+    {
+      "id": "green",
+      "text": "glas",
+      "pos": "adjective",
+      "category": "colors",
+      "frequency": 5,
+      "icon": "palette",
+      "image": "https://data.tikocdn.org/uploads/1756128110497-green-apple.png"
+    },
+    {
+      "id": "yellow",
+      "text": "buí",
+      "pos": "adjective",
+      "category": "colors",
+      "frequency": 5,
+      "icon": "palette",
+      "image": "https://data.tikocdn.org/uploads/1756127975148-blue-and-yellow-macaw.png"
+    },
+    {
+      "id": "orange",
+      "text": "oráiste",
+      "pos": "adjective",
+      "category": "colors",
+      "frequency": 5,
+      "icon": "palette"
+    },
+    {
+      "id": "purple",
+      "text": "corcra",
+      "pos": "adjective",
+      "category": "colors",
+      "frequency": 5,
+      "icon": "palette",
+      "image": "https://data.tikocdn.org/uploads/1754662713276-purple-star.png"
+    },
+    {
+      "id": "pink",
+      "text": "bándearg",
+      "pos": "adjective",
+      "category": "colors",
+      "frequency": 5,
+      "icon": "palette",
+      "image": "https://data.tikocdn.org/uploads/1755354254398-pink-tulip.png"
+    },
+    {
+      "id": "brown",
+      "text": "donn",
+      "pos": "adjective",
+      "category": "colors",
+      "frequency": 5,
+      "icon": "palette"
+    },
+    {
+      "id": "black",
+      "text": "dubh",
+      "pos": "adjective",
+      "category": "colors",
+      "frequency": 5,
+      "icon": "palette"
+    },
+    {
+      "id": "white",
+      "text": "bán",
+      "pos": "adjective",
+      "category": "colors",
+      "frequency": 5,
+      "icon": "palette",
+      "image": "https://data.tikocdn.org/uploads/1755587227281-white-dove-with-branch.png"
+    },
+    {
+      "id": "grey",
+      "text": "liath",
+      "pos": "adjective",
+      "category": "colors",
+      "frequency": 5,
+      "icon": "palette",
+      "image": "https://data.tikocdn.org/uploads/1753597634531-african-grey-parrot.png"
+    },
+    {
+      "id": "bright",
+      "text": "geal",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "palette"
+    },
+    {
+      "id": "dark",
+      "text": "dorcha",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "palette",
+      "image": "https://data.tikocdn.org/uploads/1755286874263-woman-with-dark-brown-hair.png"
+    },
+    {
+      "id": "soft",
+      "text": "bog",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "palette"
+    },
+    {
+      "id": "hard",
+      "text": "crua",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "palette"
+    },
+    {
+      "id": "quiet",
+      "text": "ciúin",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "palette"
+    },
+    {
+      "id": "loud",
+      "text": "ard",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "palette",
+      "image": "https://data.tikocdn.org/uploads/1754857413077-girl-too-loud.png"
+    },
+    {
+      "id": "fast",
+      "text": "tapa",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "palette"
+    },
+    {
+      "id": "slow",
+      "text": "mall",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "palette",
+      "image": "https://data.tikocdn.org/uploads/1754732295324-slow-cooker.png"
+    },
+    {
+      "id": "clean",
+      "text": "glan",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "palette"
+    },
+    {
+      "id": "dirty",
+      "text": "salach",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "palette"
+    },
+    {
+      "id": "wet",
+      "text": "fliuch",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "palette"
+    },
+    {
+      "id": "dry",
+      "text": "tirim",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "palette"
+    },
+    {
+      "id": "new",
+      "text": "nua",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "palette"
+    },
+    {
+      "id": "old",
+      "text": "sean",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "palette"
+    },
+    {
+      "id": "now",
+      "text": "anois",
+      "pos": "adverb",
+      "category": "time",
+      "frequency": 6,
+      "icon": "clock"
+    },
+    {
+      "id": "later",
+      "text": "níos déanaí",
+      "pos": "adverb",
+      "category": "time",
+      "frequency": 6,
+      "icon": "clock"
+    },
+    {
+      "id": "today",
+      "text": "inniu",
+      "pos": "adverb",
+      "category": "time",
+      "frequency": 6,
+      "icon": "clock"
+    },
+    {
+      "id": "tomorrow",
+      "text": "amárach",
+      "pos": "adverb",
+      "category": "time",
+      "frequency": 6,
+      "icon": "clock"
+    },
+    {
+      "id": "morning",
+      "text": "maidin",
+      "pos": "adverb",
+      "category": "time",
+      "frequency": 6,
+      "icon": "clock",
+      "image": "https://data.tikocdn.org/uploads/1756182914290-morning-star.png"
+    },
+    {
+      "id": "afternoon",
+      "text": "tráthnóna",
+      "pos": "adverb",
+      "category": "time",
+      "frequency": 6,
+      "icon": "clock"
+    },
+    {
+      "id": "night",
+      "text": "oíche",
+      "pos": "adverb",
+      "category": "time",
+      "frequency": 6,
+      "icon": "clock"
+    },
+    {
+      "id": "before",
+      "text": "roimh",
+      "pos": "adverb",
+      "category": "time",
+      "frequency": 6,
+      "icon": "clock"
+    },
+    {
+      "id": "after",
+      "text": "tar éis",
+      "pos": "adverb",
+      "category": "time",
+      "frequency": 6,
+      "icon": "clock"
+    },
+    {
+      "id": "soon",
+      "text": "go luath",
+      "pos": "adverb",
+      "category": "time",
+      "frequency": 6,
+      "icon": "clock"
+    },
+    {
+      "id": "first",
+      "text": "ar dtús",
+      "pos": "adverb",
+      "category": "time",
+      "frequency": 6,
+      "icon": "clock"
+    },
+    {
+      "id": "next",
+      "text": "ar aghaidh",
+      "pos": "adverb",
+      "category": "time",
+      "frequency": 6,
+      "icon": "clock",
+      "image": "https://data.tikocdn.org/uploads/1755454465323-letter-n-next.png"
+    },
+    {
+      "id": "last",
+      "text": "deireanach",
+      "pos": "adverb",
+      "category": "time",
+      "frequency": 6,
+      "icon": "clock"
+    },
+    {
+      "id": "minute",
+      "text": "nóiméad",
+      "pos": "adverb",
+      "category": "time",
+      "frequency": 6,
+      "icon": "clock"
+    },
+    {
+      "id": "hour",
+      "text": "uair",
+      "pos": "adverb",
+      "category": "time",
+      "frequency": 6,
+      "icon": "clock"
+    },
+    {
+      "id": "break",
+      "text": "sos",
+      "pos": "noun",
+      "category": "needs",
+      "frequency": 8,
+      "icon": "heart-hand"
+    },
+    {
+      "id": "quiet-time",
+      "text": "am ciúin",
+      "pos": "noun",
+      "category": "needs",
+      "frequency": 8,
+      "icon": "heart-hand"
+    },
+    {
+      "id": "hug",
+      "text": "barróg",
+      "pos": "noun",
+      "category": "needs",
+      "frequency": 8,
+      "icon": "heart-hand"
+    },
+    {
+      "id": "space",
+      "text": "spás",
+      "pos": "noun",
+      "category": "needs",
+      "frequency": 8,
+      "icon": "heart-hand"
+    },
+    {
+      "id": "toilet",
+      "text": "leithreas",
+      "pos": "noun",
+      "category": "needs",
+      "frequency": 8,
+      "icon": "heart-hand",
+      "image": "https://data.tikocdn.org/uploads/1781077119826-toilet.png"
+    },
+    {
+      "id": "medicine",
+      "text": "cógas",
+      "pos": "noun",
+      "category": "needs",
+      "frequency": 8,
+      "icon": "heart-hand",
+      "image": "https://data.tikocdn.org/uploads/1754731147636-medicine-bottle.png"
+    },
+    {
+      "id": "light",
+      "text": "solas",
+      "pos": "noun",
+      "category": "needs",
+      "frequency": 8,
+      "icon": "heart-hand"
+    },
+    {
+      "id": "dark-2",
+      "text": "dorchadas",
+      "pos": "noun",
+      "category": "needs",
+      "frequency": 8,
+      "icon": "heart-hand",
+      "image": "https://data.tikocdn.org/uploads/1755286874263-woman-with-dark-brown-hair.png"
+    },
+    {
+      "id": "noise",
+      "text": "torann",
+      "pos": "noun",
+      "category": "needs",
+      "frequency": 8,
+      "icon": "heart-hand",
+      "image": "https://data.tikocdn.org/uploads/1755105522864-noise-canceling-headphones.png"
+    },
+    {
+      "id": "headphones",
+      "text": "cluasáin",
+      "pos": "noun",
+      "category": "needs",
+      "frequency": 8,
+      "icon": "heart-hand",
+      "image": "https://data.tikocdn.org/uploads/1754739165099-headphones.png"
+    },
+    {
+      "id": "blanket",
+      "text": "blaincéad",
+      "pos": "noun",
+      "category": "needs",
+      "frequency": 8,
+      "icon": "heart-hand",
+      "image": "https://data.tikocdn.org/uploads/1755105554760-weighted-blanket.png"
+    },
+    {
+      "id": "charger",
+      "text": "luchtaire",
+      "pos": "noun",
+      "category": "needs",
+      "frequency": 8,
+      "icon": "heart-hand",
+      "image": "https://data.tikocdn.org/uploads/1755623381187-dodge-charger-1969.png"
+    },
+    {
+      "id": "choice",
+      "text": "rogha",
+      "pos": "noun",
+      "category": "needs",
+      "frequency": 8,
+      "icon": "heart-hand"
+    },
+    {
+      "id": "turn",
+      "text": "seal",
+      "pos": "noun",
+      "category": "needs",
+      "frequency": 8,
+      "icon": "heart-hand"
+    },
+    {
+      "id": "help-please",
+      "text": "cabhraigh liom le do thoil",
+      "pos": "noun",
+      "category": "needs",
+      "frequency": 8,
+      "icon": "heart-hand"
+    },
+    {
+      "id": "different",
+      "text": "difriúil",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "sparkles",
+      "image": "https://data.tikocdn.org/uploads/1756902017583-talking-kids-from-different-cultures.png"
+    },
+    {
+      "id": "same",
+      "text": "céanna",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "sparkles"
+    },
+    {
+      "id": "easy",
+      "text": "furasta",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "sparkles"
+    },
+    {
+      "id": "harder",
+      "text": "níos deacra",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "sparkles"
+    },
+    {
+      "id": "favorite",
+      "text": "is fearr",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "sparkles"
+    },
+    {
+      "id": "missing",
+      "text": "ar iarraidh",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "sparkles"
+    },
+    {
+      "id": "broken",
+      "text": "briste",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "sparkles"
+    },
+    {
+      "id": "ready",
+      "text": "réidh",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "sparkles"
+    },
+    {
+      "id": "busy",
+      "text": "gnóthach",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "sparkles"
+    },
+    {
+      "id": "empty",
+      "text": "folamh",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "sparkles",
+      "image": "https://data.tikocdn.org/uploads/1756035003445-empty-basket.png"
+    },
+    {
+      "id": "full",
+      "text": "lán",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "sparkles"
+    },
+    {
+      "id": "small",
+      "text": "beag",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "sparkles"
+    },
+    {
+      "id": "tall",
+      "text": "ard",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "sparkles"
+    },
+    {
+      "id": "short",
+      "text": "gearr",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "sparkles"
+    },
+    {
+      "id": "round",
+      "text": "cruinn",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "sparkles"
+    },
+    {
+      "id": "square",
+      "text": "cearnóg",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "sparkles"
+    },
+    {
+      "id": "kind",
+      "text": "cineálta",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "sparkles"
+    },
+    {
+      "id": "gentle",
+      "text": "séimh",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "sparkles"
+    },
+    {
+      "id": "careful",
+      "text": "cúramach",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "sparkles"
+    },
+    {
+      "id": "safe-place",
+      "text": "áit shábháilte",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "sparkles"
+    },
+    {
+      "id": "very",
+      "text": "an-mhaith",
+      "pos": "adverb",
+      "category": "describing",
+      "frequency": 7,
+      "icon": "sparkles"
+    }
+  ],
+  "templates": [
+    {
+      "id": "want-object",
+      "pattern": "I want {thing}.",
+      "category": "needs",
+      "icon": "heart-hand",
+      "slots": [
+        {
+          "acceptedPos": [
+            "pronoun"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "noun"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "need-help",
+      "pattern": "I need help with {thing}.",
+      "category": "needs",
+      "icon": "heart-hand",
+      "slots": [
+        {
+          "acceptedPos": [
+            "pronoun"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "noun"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "feel-state",
+      "pattern": "I feel {feeling}.",
+      "category": "feelings",
+      "icon": "smile",
+      "slots": [
+        {
+          "acceptedPos": [
+            "pronoun"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "adjective"
+          ],
+          "categoryFilter": "feelings"
+        }
+      ]
+    },
+    {
+      "id": "body-hurts",
+      "pattern": "My {body} hurts.",
+      "category": "body",
+      "icon": "body",
+      "slots": [
+        {
+          "acceptedPos": [
+            "pronoun"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "noun"
+          ],
+          "categoryFilter": "body"
+        },
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "like-activity",
+      "pattern": "I like {activity}.",
+      "category": "actions",
+      "icon": "play",
+      "slots": [
+        {
+          "acceptedPos": [
+            "pronoun"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "noun"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "go-place",
+      "pattern": "I want to go to {place}.",
+      "category": "places",
+      "icon": "home",
+      "slots": [
+        {
+          "acceptedPos": [
+            "pronoun"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "preposition"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "preposition"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "noun"
+          ],
+          "categoryFilter": "places"
+        }
+      ]
+    },
+    {
+      "id": "question-where",
+      "pattern": "Where is {thing}?",
+      "category": "questions",
+      "icon": "question-circle",
+      "slots": [
+        {
+          "acceptedPos": [
+            "question"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "noun"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "question-what",
+      "pattern": "What is this?",
+      "category": "questions",
+      "icon": "question-circle",
+      "slots": [
+        {
+          "acceptedPos": [
+            "question"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "determiner"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "question-can",
+      "pattern": "Can you help me?",
+      "category": "questions",
+      "icon": "question-circle",
+      "slots": [
+        {
+          "acceptedPos": [
+            "question"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "pronoun"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "pronoun"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "more-thing",
+      "pattern": "More {thing}, please.",
+      "category": "social",
+      "icon": "chat-bubble",
+      "slots": [
+        {
+          "acceptedPos": [
+            "social"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "noun"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "social"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "all-done",
+      "pattern": "I am all done.",
+      "category": "social",
+      "icon": "chat-bubble",
+      "slots": [
+        {
+          "acceptedPos": [
+            "pronoun"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "social"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "not-want",
+      "pattern": "I do not want {thing}.",
+      "category": "needs",
+      "icon": "heart-hand",
+      "slots": [
+        {
+          "acceptedPos": [
+            "pronoun"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "social"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "noun"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "choose-one",
+      "pattern": "I choose {thing}.",
+      "category": "actions",
+      "icon": "play",
+      "slots": [
+        {
+          "acceptedPos": [
+            "pronoun"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "noun"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "with-person",
+      "pattern": "I want to be with {person}.",
+      "category": "people",
+      "icon": "user",
+      "slots": [
+        {
+          "acceptedPos": [
+            "pronoun"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "preposition"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "preposition"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "noun"
+          ],
+          "categoryFilter": "people"
+        }
+      ]
+    },
+    {
+      "id": "too-loud",
+      "pattern": "It is too loud.",
+      "category": "feelings",
+      "icon": "smile",
+      "slots": [
+        {
+          "acceptedPos": [
+            "pronoun"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "adjective"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "need-break",
+      "pattern": "I need a break.",
+      "category": "needs",
+      "icon": "heart-hand",
+      "slots": [
+        {
+          "acceptedPos": [
+            "pronoun"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "determiner"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "noun"
+          ],
+          "categoryFilter": "needs"
+        }
+      ]
+    },
+    {
+      "id": "first-next",
+      "pattern": "First {thing}, then {thing}.",
+      "category": "time",
+      "icon": "clock",
+      "slots": [
+        {
+          "acceptedPos": [
+            "adverb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "noun"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "conjunction"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "noun"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "yes-answer",
+      "pattern": "Yes, please.",
+      "category": "social",
+      "icon": "chat-bubble",
+      "slots": [
+        {
+          "acceptedPos": [
+            "social"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "social"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "no-answer",
+      "pattern": "No, thank you.",
+      "category": "social",
+      "icon": "chat-bubble",
+      "slots": [
+        {
+          "acceptedPos": [
+            "social"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "social"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "descriptor-object",
+      "pattern": "The {thing} is {description}.",
+      "category": "describing",
+      "icon": "sparkles",
+      "slots": [
+        {
+          "acceptedPos": [
+            "determiner"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "noun"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "adjective"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "place-position",
+      "pattern": "The {thing} is {position} the {place}.",
+      "category": "positions",
+      "icon": "arrow-right",
+      "slots": [
+        {
+          "acceptedPos": [
+            "determiner"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "noun"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "preposition"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "determiner"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "noun"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "time-request",
+      "pattern": "I want {thing} later.",
+      "category": "time",
+      "icon": "clock",
+      "slots": [
+        {
+          "acceptedPos": [
+            "pronoun"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "noun"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "adverb"
+          ],
+          "categoryFilter": "time"
+        }
+      ]
+    },
+    {
+      "id": "polite-help",
+      "pattern": "Help please.",
+      "category": "needs",
+      "icon": "heart-hand",
+      "slots": [
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "social"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "try-again",
+      "pattern": "I want to try again.",
+      "category": "actions",
+      "icon": "play",
+      "slots": [
+        {
+          "acceptedPos": [
+            "pronoun"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "preposition"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "social"
+          ]
+        }
+      ]
+    }
+  ],
+  "grammar": {
+    "wordOrder": "verb-subject-object",
+    "validTransitions": {
+      "pronoun": [
+        "verb",
+        "noun",
+        "adjective",
+        "negation",
+        "adverb"
+      ],
+      "determiner": [
+        "noun",
+        "adjective"
+      ],
+      "verb": [
+        "determiner",
+        "noun",
+        "adjective",
+        "preposition",
+        "social",
+        "adverb"
+      ],
+      "noun": [
+        "verb",
+        "preposition",
+        "conjunction",
+        "social",
+        "adverb"
+      ],
+      "adjective": [
+        "noun",
+        "social",
+        "conjunction",
+        "adverb"
+      ],
+      "question": [
+        "verb",
+        "pronoun",
+        "determiner",
+        "adverb"
+      ],
+      "preposition": [
+        "determiner",
+        "noun",
+        "verb"
+      ],
+      "conjunction": [
+        "pronoun",
+        "determiner",
+        "noun",
+        "verb",
+        "negation"
+      ],
+      "social": [
+        "noun",
+        "verb",
+        "negation"
+      ],
+      "negation": [
+        "verb",
+        "determiner",
+        "noun",
+        "adjective",
+        "adverb"
+      ],
+      "adverb": [
+        "verb",
+        "noun",
+        "adjective",
+        "preposition",
+        "social"
+      ]
+    },
+    "articles": {
+      "definite": "an"
+    },
+    "negation": {
+      "position": "verb-form",
+      "words": [
+        "níl",
+        "ní"
+      ]
+    }
+  }
+}

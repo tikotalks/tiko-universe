@@ -9,6 +9,9 @@ import type { Lexicon } from '../features'
  * and precisely what a small multilingual model gets wrong.
  */
 export const dutchLexicon: Lexicon = {
+  // "omdat" sends the verb to the end of its clause; "en" does not.
+  because: { pos: 'conjunction', subordinating: true },
+
   thirsty: { pos: 'adjective', sensation: 'dorst' },
   cold: { pos: 'adjective', sensation: 'het koud' },
   hot: { pos: 'adjective', sensation: 'het warm' },
@@ -48,6 +51,24 @@ export const dutchLexicon: Lexicon = {
   play: { pos: 'verb', forms: { '1sg': 'speel', '2sg': 'speelt', '3sg': 'speelt', pl: 'spelen' } },
   see: { pos: 'verb', forms: { '1sg': 'zie', '2sg': 'ziet', '3sg': 'ziet', pl: 'zien' } },
   help: { pos: 'verb', forms: { '1sg': 'help', '2sg': 'helpt', '3sg': 'helpt', pl: 'helpen' } },
+  hear: { pos: 'verb', forms: { '1sg': 'hoor', '2sg': 'hoort', '3sg': 'hoort', pl: 'horen', past: 'hoorde' } },
+  come: { pos: 'verb', forms: { '1sg': 'kom', '2sg': 'komt', '3sg': 'komt', pl: 'komen', past: 'kwam' } },
+  read: { pos: 'verb', forms: { '1sg': 'lees', '2sg': 'leest', '3sg': 'leest', pl: 'lezen', past: 'las' } },
+  draw: { pos: 'verb', forms: { '1sg': 'teken', '2sg': 'tekent', '3sg': 'tekent', pl: 'tekenen', past: 'tekende' } },
+  sit: { pos: 'verb', forms: { '1sg': 'zit', '2sg': 'zit', '3sg': 'zit', pl: 'zitten', past: 'zat' } },
+  stand: { pos: 'verb', forms: { '1sg': 'sta', '2sg': 'staat', '3sg': 'staat', pl: 'staan', past: 'stond' } },
+  walk: { pos: 'verb', forms: { '1sg': 'loop', '2sg': 'loopt', '3sg': 'loopt', pl: 'lopen', past: 'liep' } },
+  run: { pos: 'verb', forms: { '1sg': 'ren', '2sg': 'rent', '3sg': 'rent', pl: 'rennen', past: 'rende' } },
+  stop: { pos: 'verb', forms: { '1sg': 'stop', '2sg': 'stopt', '3sg': 'stopt', pl: 'stoppen', past: 'stopte' } },
+  start: { pos: 'verb', forms: { '1sg': 'begin', '2sg': 'begint', '3sg': 'begint', pl: 'beginnen', past: 'begon' } },
+  wait: { pos: 'verb', forms: { '1sg': 'wacht', '2sg': 'wacht', '3sg': 'wacht', pl: 'wachten', past: 'wachtte' } },
+  choose: { pos: 'verb', forms: { '1sg': 'kies', '2sg': 'kiest', '3sg': 'kiest', pl: 'kiezen', past: 'koos' } },
+  open: { pos: 'verb', forms: { '1sg': 'doe open', '2sg': 'doet open', '3sg': 'doet open', pl: 'doen open', past: 'deed open' } },
+  close: { pos: 'verb', forms: { '1sg': 'doe dicht', '2sg': 'doet dicht', '3sg': 'doet dicht', pl: 'doen dicht', past: 'deed dicht' } },
+  wash: { pos: 'verb', forms: { '1sg': 'was', '2sg': 'wast', '3sg': 'wast', pl: 'wassen', past: 'waste' } },
+  rest: { pos: 'verb', forms: { '1sg': 'rust', '2sg': 'rust', '3sg': 'rust', pl: 'rusten', past: 'rustte' } },
+  try: { pos: 'verb', forms: { '1sg': 'probeer', '2sg': 'probeert', '3sg': 'probeert', pl: 'proberen', past: 'probeerde' } },
+  talk: { pos: 'verb', forms: { '1sg': 'praat', '2sg': 'praat', '3sg': 'praat', pl: 'praten', past: 'praatte' } },
   sleep: { pos: 'verb', forms: { '1sg': 'slaap', '2sg': 'slaapt', '3sg': 'slaapt', pl: 'slapen' } },
 
   // Nouns — gender is the whole point of this table.

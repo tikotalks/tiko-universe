@@ -168,6 +168,8 @@ export { romanianLexicon } from './lexicon/ro'
 export { greekLexicon } from './lexicon/el'
 
 /** Languages this prototype realizes. */
+export { customNounFeatures } from './custom'
+
 export const supportedLanguages = ['en', 'nl', 'de', 'fr', 'es', 'it', 'pt', 'mt', 'zh', 'ja', 'ko', 'ar', 'hy', 'sv', 'da', 'nb', 'id', 'vi', 'ro', 'el', 'ms', 'ca', 'gl', 'af', 'ru', 'pl', 'bg', 'sq', 'uk', 'mk', 'sr', 'hr', 'cs', 'sk', 'tr', 'hu', 'fi', 'et', 'sl', 'bs', 'be', 'lt', 'lv', 'pap', 'is', 'lb', 'cnr', 'cy', 'ga', 'eu', 'ka', 'fy', 'bn', 'hi'] as const
 export type SupportedLanguage = (typeof supportedLanguages)[number]
 

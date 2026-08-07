@@ -47,6 +47,7 @@ const marker = (index: number) => String(index + 1).padStart(2, '0')
   }
 
   &__number {
+    font-family: var(--font-family-heading);
     font-size: 0.72rem;
     font-weight: 700;
     letter-spacing: 0.12em;

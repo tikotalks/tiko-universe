@@ -1,0 +1,96 @@
+{
+  "workspace": "Tiko",
+  "workspaceID": "81b1be07-f374-4a1c-8feb-a70756a704a6",
+  "projects": {
+    "mt.tiko.cards": {
+      "productID": "pub_f06a4335bca6b9638581aae8",
+      "name": "Cards · iOS",
+      "platform": "ios"
+    },
+    "mt.tiko.first": {
+      "productID": "pub_013e04a614c8def7da07fbaa",
+      "name": "First · iOS",
+      "platform": "ios"
+    },
+    "mt.tiko.radio": {
+      "productID": "pub_bfafa020bf7e198ce9944463",
+      "name": "Radio · iOS",
+      "platform": "ios"
+    },
+    "mt.tiko.say": {
+      "productID": "pub_19cd8aac7f2c86138e663b27",
+      "name": "Say · iOS",
+      "platform": "ios"
+    },
+    "mt.tiko.sum": {
+      "productID": "pub_f4503538e30f4951705bda68",
+      "name": "Sum · iOS",
+      "platform": "ios"
+    },
+    "mt.tiko.talk": {
+      "productID": "pub_0a57f35efd52b775f3ad2e3d",
+      "name": "Talk · iOS",
+      "platform": "ios"
+    },
+    "mt.tiko.timer": {
+      "productID": "pub_bb304f243d76a12c10fc5328",
+      "name": "Timer · iOS",
+      "platform": "ios"
+    },
+    "mt.tiko.type": {
+      "productID": "pub_b04a93683710e1ed21122c2d",
+      "name": "Type · iOS",
+      "platform": "ios"
+    },
+    "mt.tiko.write": {
+      "productID": "pub_033d281e0b66caf0eee5dc01",
+      "name": "Write · iOS",
+      "platform": "ios"
+    },
+    "mt.tiko.yesno": {
+      "productID": "pub_c551cfdf0ab6fa82b903ab4e",
+      "name": "Yes No · iOS",
+      "platform": "ios"
+    },
+    "org.tikoapps.cards": {
+      "productID": "pub_478939c42bc1c420b88820bc",
+      "name": "Cards · Android",
+      "platform": "android"
+    },
+    "org.tikoapps.radio": {
+      "productID": "pub_afe6746c3b8c1b3338e7d018",
+      "name": "Radio · Android",
+      "platform": "android"
+    },
+    "org.tikoapps.sequence": {
+      "productID": "pub_9af47ab20f40fc883183d603",
+      "name": "Sequence · Android",
+      "platform": "android"
+    },
+    "org.tikoapps.talk": {
+      "productID": "pub_87377a031afdb3a1f844c2aa",
+      "name": "Talk · Android",
+      "platform": "android"
+    },
+    "org.tikoapps.timer": {
+      "productID": "pub_7d6d9d9e7b555889b9a657ec",
+      "name": "Timer · Android",
+      "platform": "android"
+    },
+    "org.tikoapps.todo": {
+      "productID": "pub_7dbe7327b0dd076efa7012f0",
+      "name": "Todo · Android",
+      "platform": "android"
+    },
+    "org.tikoapps.type": {
+      "productID": "pub_ba3ba6a4c4bb194cfdc40a01",
+      "name": "Type · Android",
+      "platform": "android"
+    },
+    "org.tikoapps.yesno": {
+      "productID": "pub_653c75b97545e0bd73e41bcf",
+      "name": "Yes No · Android",
+      "platform": "android"
+    }
+  }
+}

@@ -52,7 +52,6 @@ const shipped = computed(() => tikoApps.filter((app) => app.appStoreUrl))
     border: 1px solid var(--surface-hairline);
     background: var(--card-bg);
     color: var(--card-fg);
-    box-shadow: 0 20px 44px -28px color-mix(in srgb, var(--card-bg), #000 55%);
   }
 
   &__link {

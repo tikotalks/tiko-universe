@@ -26,6 +26,7 @@ export const korean: LanguageRules = {
     language: 'ko',
     maturity: 'beta',
     wordOrder: 'sov',
+    verbCitation: 'invariant',
     questionStrategy: 'intonation',
     spacing: 'space',
     prepositionPosition: 'after',

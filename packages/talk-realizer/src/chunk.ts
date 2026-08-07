@@ -40,7 +40,17 @@ export interface RawWord {
   word: Word
 }
 
-export type Phrase = NounPhrase | PrepositionalPhrase | AdjectivePhrase | RawWord
+/**
+ * A second verb, complementing the first: the "play" of "I want to play". Only the
+ * first verb is finite; this one stays in the form the pack lists it in, which is
+ * the infinitive in every one of them.
+ */
+export interface VerbPhrase {
+  kind: 'vp'
+  verb: Word
+}
+
+export type Phrase = NounPhrase | PrepositionalPhrase | AdjectivePhrase | RawWord | VerbPhrase
 
 export interface Chunks {
   question?: Word
@@ -54,6 +64,11 @@ export interface Chunks {
   trailingSocials: Word[]
   adverbs: Word[]
   negated: boolean
+  /**
+   * True where a copula tile came before its subject, which is how a child asks a
+   * yes/no question on this board: "is the apple big".
+   */
+  invertedCopula?: boolean
 }
 
 /**
@@ -163,6 +178,10 @@ export function chunk(words: Word[], forceNegated = false): Chunks {
       }
       case 'adverb': {
         chunks.adverbs.push(word)
+        // An adverb is content, so a social after it trails: "more please", not
+        // *"please more". Tapping "more" then "please" is one of the commonest
+        // things a child does on this board.
+        sawContent = true
         index += 1
         continue
       }
@@ -174,7 +193,18 @@ export function chunk(words: Word[], forceNegated = false): Chunks {
         continue
       }
       case 'verb': {
-        if (!chunks.verb) chunks.verb = word
+        if (!chunks.verb) {
+          chunks.verb = word
+        } else if (word.features.nominal) {
+          // A tile whose verb and noun are the same word, in the object's place:
+          // English "help" after "need" is the noun, and "I need to help" says the
+          // opposite of what the child means.
+          chunks.complements.push({ kind: 'np', adjectives: [], head: word })
+        } else {
+          // A second verb complements the first. It used to be dropped here, which
+          // is how "I want to play" came out as "I want."
+          chunks.complements.push({ kind: 'vp', verb: word })
+        }
         sawContent = true
         index += 1
         continue
@@ -219,7 +249,80 @@ export function chunk(words: Word[], forceNegated = false): Chunks {
     }
   }
 
+  /**
+   * A copula tile first is a yes/no question: "is the apple big". The subject comes
+   * after it, so the noun phrase the loop filed as a complement is really the
+   * subject — without this the sentence has none, and reads as the speaker's own
+   * ("Am the apple big").
+   */
+  if (!chunks.subject && chunks.verb?.features.copula) {
+    const at = chunks.complements.findIndex(
+      (phrase) => phrase.kind === 'np' && (!!phrase.head || !!phrase.pronoun),
+    )
+    if (at !== -1) {
+      chunks.subject = chunks.complements[at] as NounPhrase
+      chunks.complements.splice(at, 1)
+      chunks.invertedCopula = true
+    }
+  }
+
   return chunks
+}
+
+/** Two clauses and the conjunction between them. */
+export interface ClauseSplit {
+  left: Word[]
+  conjunction: Word
+  right: Word[]
+}
+
+/**
+ * True where this run of tiles is a clause in its own right: something to talk about,
+ * and something said about it.
+ *
+ * The adjective test is the careful part. "the small banana" is a noun phrase, and
+ * "dad sad" is a clause, and the difference is only that the adjective comes after
+ * the last noun rather than before it.
+ */
+function isClause(words: Word[]): boolean {
+  let lastNoun = -1
+  words.forEach((word, at) => { if (word.effectivePos === 'noun') lastNoun = at })
+  const subject = words.some((word) => word.effectivePos === 'pronoun' || word.effectivePos === 'noun')
+  const predicate = words.some((word, at) => (
+    word.effectivePos === 'verb'
+    || (word.effectivePos === 'adjective' && at > lastNoun)
+  ))
+  return subject && predicate
+}
+
+/**
+ * Where a selection is really two sentences joined by a conjunction: "I am sad
+ * **because** I want Mum".
+ *
+ * The chunker is one clause deep, and left to itself it melted the two halves
+ * together — the second subject became an object pronoun and "I am sad because I
+ * want Mum" came out as "I want sad because me mum". Splitting first means each half
+ * gets the whole grammar: its own subject, its own verb, its own agreement.
+ *
+ * A conjunction only splits when **both** sides stand on their own. That is what
+ * keeps "I want an apple and a banana" as one clause with two objects, and "I want to
+ * eat and drink" as one clause with two verbs.
+ *
+ * The **last** such conjunction wins, and each half is then split again. Taking the
+ * first one strands a coordination: "I want an apple and a banana because I am hungry"
+ * would break at "and", leaving "a banana because I am hungry" as one half, which is
+ * not a sentence. Splitting at "because" leaves the "and" inside a clause, where the
+ * chunker already reads it as a list.
+ */
+export function splitClause(words: Word[]): ClauseSplit | undefined {
+  for (let at = words.length - 2; at >= 1; at -= 1) {
+    if (words[at].effectivePos !== 'conjunction') continue
+    const left = words.slice(0, at)
+    const right = words.slice(at + 1)
+    if (!isClause(left) || !isClause(right)) continue
+    return { left, conjunction: words[at], right }
+  }
+  return undefined
 }
 
 /** The noun phrase a language should attach negation to, if any. */
@@ -233,6 +336,13 @@ export function firstNounComplement(chunks: Chunks): NounPhrase | undefined {
 export function subjectPerson(chunks: Chunks): { person: 1 | 2 | 3, number: 'sg' | 'pl' } {
   const subject = chunks.subject
   const word = subject?.pronoun ?? subject?.head
+  // No subject at all: the child is the subject. A board with one verb tile on it
+  // means "help" — the speaker asking — and third person made the app say *"helps"*,
+  // as though someone else were doing it. First person singular is also a complete
+  // sentence on its own in every pronoun-dropping language here (ru, pl, es, it, el,
+  // tr, hu, fi…), where "Помогаю." needs no pronoun to be right.
+  if (!subject) return { person: 1, number: 'sg' }
+  // A subject that is only a determiner ("the ___") has no person of its own.
   if (!word) return { person: 3, number: 'sg' }
   const features = word.features
   if (word.effectivePos === 'noun') {

@@ -1,0 +1,3619 @@
+{
+  "locale": "af",
+  "version": 1,
+  "source": "generated",
+  "reviewStatus": "needs-native-review",
+  "words": [
+    {
+      "id": "i",
+      "text": "ek",
+      "pos": "pronoun",
+      "category": "people",
+      "frequency": 10,
+      "icon": "user"
+    },
+    {
+      "id": "you",
+      "text": "jy",
+      "pos": "pronoun",
+      "category": "people",
+      "frequency": 10,
+      "icon": "user"
+    },
+    {
+      "id": "we",
+      "text": "ons",
+      "pos": "pronoun",
+      "category": "people",
+      "frequency": 7,
+      "icon": "user"
+    },
+    {
+      "id": "me",
+      "text": "my",
+      "pos": "pronoun",
+      "category": "people",
+      "frequency": 10,
+      "icon": "user"
+    },
+    {
+      "id": "my",
+      "text": "my",
+      "pos": "pronoun",
+      "category": "people",
+      "frequency": 10,
+      "icon": "user"
+    },
+    {
+      "id": "your",
+      "text": "jou",
+      "pos": "pronoun",
+      "category": "people",
+      "frequency": 7,
+      "icon": "user"
+    },
+    {
+      "id": "he",
+      "text": "hy",
+      "pos": "pronoun",
+      "category": "people",
+      "frequency": 7,
+      "icon": "user"
+    },
+    {
+      "id": "she",
+      "text": "sy",
+      "pos": "pronoun",
+      "category": "people",
+      "frequency": 7,
+      "icon": "user"
+    },
+    {
+      "id": "they",
+      "text": "hulle",
+      "pos": "pronoun",
+      "category": "people",
+      "frequency": 7,
+      "icon": "user"
+    },
+    {
+      "id": "mum",
+      "text": "ma",
+      "pos": "noun",
+      "category": "people",
+      "frequency": 7,
+      "icon": "user"
+    },
+    {
+      "id": "dad",
+      "text": "pa",
+      "pos": "noun",
+      "category": "people",
+      "frequency": 7,
+      "icon": "user"
+    },
+    {
+      "id": "teacher",
+      "text": "onderwyser",
+      "pos": "noun",
+      "category": "people",
+      "frequency": 7,
+      "icon": "user",
+      "image": "https://data.tikocdn.org/uploads/1754637645261-teacher.png"
+    },
+    {
+      "id": "friend",
+      "text": "vriend",
+      "pos": "noun",
+      "category": "people",
+      "frequency": 7,
+      "icon": "user"
+    },
+    {
+      "id": "brother",
+      "text": "broer",
+      "pos": "noun",
+      "category": "people",
+      "frequency": 7,
+      "icon": "user",
+      "image": "https://data.tikocdn.org/uploads/1754859143591-brother.png"
+    },
+    {
+      "id": "sister",
+      "text": "suster",
+      "pos": "noun",
+      "category": "people",
+      "frequency": 7,
+      "icon": "user",
+      "image": "https://data.tikocdn.org/uploads/1754859230045-sister.png"
+    },
+    {
+      "id": "grandma",
+      "text": "ouma",
+      "pos": "noun",
+      "category": "people",
+      "frequency": 7,
+      "icon": "user",
+      "image": "https://data.tikocdn.org/uploads/1754859202766-grandma.png"
+    },
+    {
+      "id": "grandpa",
+      "text": "oupa",
+      "pos": "noun",
+      "category": "people",
+      "frequency": 7,
+      "icon": "user",
+      "image": "https://data.tikocdn.org/uploads/1754859213573-grandpa.png"
+    },
+    {
+      "id": "helper",
+      "text": "helper",
+      "pos": "noun",
+      "category": "people",
+      "frequency": 7,
+      "icon": "user"
+    },
+    {
+      "id": "doctor",
+      "text": "dokter",
+      "pos": "noun",
+      "category": "people",
+      "frequency": 7,
+      "icon": "user",
+      "image": "https://data.tikocdn.org/uploads/1754574511096-doctor.png"
+    },
+    {
+      "id": "class",
+      "text": "klas",
+      "pos": "noun",
+      "category": "people",
+      "frequency": 7,
+      "icon": "user"
+    },
+    {
+      "id": "mine",
+      "text": "myne",
+      "pos": "pronoun",
+      "category": "people",
+      "frequency": 8,
+      "icon": "user"
+    },
+    {
+      "id": "want",
+      "text": "wil",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 10,
+      "icon": "play"
+    },
+    {
+      "id": "need",
+      "text": "benodig",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 10,
+      "icon": "play"
+    },
+    {
+      "id": "like",
+      "text": "hou van",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play"
+    },
+    {
+      "id": "feel",
+      "text": "voel",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 10,
+      "icon": "play"
+    },
+    {
+      "id": "see",
+      "text": "sien",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play"
+    },
+    {
+      "id": "hear",
+      "text": "hoor",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play"
+    },
+    {
+      "id": "have",
+      "text": "het",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play"
+    },
+    {
+      "id": "go",
+      "text": "gaan",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play"
+    },
+    {
+      "id": "come",
+      "text": "kom",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play"
+    },
+    {
+      "id": "play",
+      "text": "speel",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play"
+    },
+    {
+      "id": "read",
+      "text": "lees",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play"
+    },
+    {
+      "id": "draw",
+      "text": "teken",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play"
+    },
+    {
+      "id": "eat",
+      "text": "eet",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play"
+    },
+    {
+      "id": "drink",
+      "text": "drink",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play"
+    },
+    {
+      "id": "sit",
+      "text": "sit",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play"
+    },
+    {
+      "id": "stand",
+      "text": "staan",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play"
+    },
+    {
+      "id": "walk",
+      "text": "stap",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play"
+    },
+    {
+      "id": "run",
+      "text": "hardloop",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play"
+    },
+    {
+      "id": "stop",
+      "text": "stop",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 10,
+      "icon": "play",
+      "image": "https://data.tikocdn.org/uploads/1781021853608-stop-sign.png"
+    },
+    {
+      "id": "start",
+      "text": "begin",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play"
+    },
+    {
+      "id": "wait",
+      "text": "wag",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play"
+    },
+    {
+      "id": "help",
+      "text": "help",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 10,
+      "icon": "play"
+    },
+    {
+      "id": "choose",
+      "text": "kies",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play"
+    },
+    {
+      "id": "open",
+      "text": "maak oop",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play"
+    },
+    {
+      "id": "close",
+      "text": "maak toe",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play"
+    },
+    {
+      "id": "wash",
+      "text": "was",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play"
+    },
+    {
+      "id": "sleep",
+      "text": "slaap",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play"
+    },
+    {
+      "id": "rest",
+      "text": "rus",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play"
+    },
+    {
+      "id": "try",
+      "text": "probeer",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play"
+    },
+    {
+      "id": "talk",
+      "text": "praat",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play"
+    },
+    {
+      "id": "get",
+      "text": "kry",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 9,
+      "icon": "play"
+    },
+    {
+      "id": "give",
+      "text": "gee",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 9,
+      "icon": "play"
+    },
+    {
+      "id": "put",
+      "text": "plaas",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 8,
+      "icon": "play"
+    },
+    {
+      "id": "take",
+      "text": "neem",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 8,
+      "icon": "play"
+    },
+    {
+      "id": "make",
+      "text": "maak",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 8,
+      "icon": "play"
+    },
+    {
+      "id": "look",
+      "text": "kyk",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 8,
+      "icon": "play"
+    },
+    {
+      "id": "know",
+      "text": "weet",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 8,
+      "icon": "play"
+    },
+    {
+      "id": "listen",
+      "text": "luister",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 8,
+      "icon": "play"
+    },
+    {
+      "id": "watch",
+      "text": "kyk na",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 8,
+      "icon": "play"
+    },
+    {
+      "id": "finish",
+      "text": "maak klaar",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 8,
+      "icon": "play"
+    },
+    {
+      "id": "find",
+      "text": "vind",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play"
+    },
+    {
+      "id": "think",
+      "text": "dink",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play"
+    },
+    {
+      "id": "tell",
+      "text": "vertel",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play"
+    },
+    {
+      "id": "show",
+      "text": "wys",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play"
+    },
+    {
+      "id": "hold",
+      "text": "hou",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play"
+    },
+    {
+      "id": "jump",
+      "text": "spring",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play",
+      "image": "https://data.tikocdn.org/uploads/1755106132141-jump-rope.png"
+    },
+    {
+      "id": "write",
+      "text": "skryf",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play"
+    },
+    {
+      "id": "let",
+      "text": "laat",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 6,
+      "icon": "play"
+    },
+    {
+      "id": "work",
+      "text": "werk",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 6,
+      "icon": "play"
+    },
+    {
+      "id": "share",
+      "text": "deel",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 6,
+      "icon": "play"
+    },
+    {
+      "id": "smell",
+      "text": "ruik",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 6,
+      "icon": "play"
+    },
+    {
+      "id": "taste",
+      "text": "smaak",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 6,
+      "icon": "play"
+    },
+    {
+      "id": "touch",
+      "text": "raak",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 6,
+      "icon": "play"
+    },
+    {
+      "id": "dance",
+      "text": "dans",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 6,
+      "icon": "play",
+      "image": "https://data.tikocdn.org/uploads/1755624084539-just-dance-series.png"
+    },
+    {
+      "id": "sing",
+      "text": "sing",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 6,
+      "icon": "play"
+    },
+    {
+      "id": "cut",
+      "text": "sny",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 6,
+      "icon": "play"
+    },
+    {
+      "id": "build",
+      "text": "bou",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 6,
+      "icon": "play"
+    },
+    {
+      "id": "swim",
+      "text": "swem",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 6,
+      "icon": "play"
+    },
+    {
+      "id": "ride",
+      "text": "ry",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 6,
+      "icon": "play"
+    },
+    {
+      "id": "brush",
+      "text": "poets",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 6,
+      "icon": "play",
+      "image": "https://data.tikocdn.org/uploads/1755105544355-textured-sensory-brush.png"
+    },
+    {
+      "id": "push",
+      "text": "druk",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 6,
+      "icon": "play"
+    },
+    {
+      "id": "pull",
+      "text": "trek",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 6,
+      "icon": "play",
+      "image": "https://data.tikocdn.org/uploads/1755105220123-pull-up-bar.png"
+    },
+    {
+      "id": "throw",
+      "text": "gooi",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 6,
+      "icon": "play"
+    },
+    {
+      "id": "catch",
+      "text": "vang",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 6,
+      "icon": "play"
+    },
+    {
+      "id": "count",
+      "text": "tel",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 6,
+      "icon": "play"
+    },
+    {
+      "id": "wake",
+      "text": "word wakker",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 6,
+      "icon": "play"
+    },
+    {
+      "id": "cry",
+      "text": "huil",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 6,
+      "icon": "play"
+    },
+    {
+      "id": "laugh",
+      "text": "lag",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 6,
+      "icon": "play"
+    },
+    {
+      "id": "fix",
+      "text": "herstel",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 5,
+      "icon": "play"
+    },
+    {
+      "id": "cook",
+      "text": "kook",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 5,
+      "icon": "play"
+    },
+    {
+      "id": "climb",
+      "text": "klim",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 5,
+      "icon": "play"
+    },
+    {
+      "id": "yes",
+      "text": "ja",
+      "pos": "social",
+      "category": "social",
+      "frequency": 9,
+      "icon": "chat-bubble"
+    },
+    {
+      "id": "no",
+      "text": "nee",
+      "pos": "social",
+      "category": "social",
+      "frequency": 9,
+      "icon": "chat-bubble"
+    },
+    {
+      "id": "please",
+      "text": "asseblief",
+      "pos": "social",
+      "category": "social",
+      "frequency": 9,
+      "icon": "chat-bubble"
+    },
+    {
+      "id": "thank-you",
+      "text": "dankie",
+      "pos": "social",
+      "category": "social",
+      "frequency": 9,
+      "icon": "chat-bubble"
+    },
+    {
+      "id": "sorry",
+      "text": "jammer",
+      "pos": "social",
+      "category": "social",
+      "frequency": 9,
+      "icon": "chat-bubble"
+    },
+    {
+      "id": "hello",
+      "text": "hallo",
+      "pos": "social",
+      "category": "social",
+      "frequency": 9,
+      "icon": "chat-bubble"
+    },
+    {
+      "id": "goodbye",
+      "text": "totsiens",
+      "pos": "social",
+      "category": "social",
+      "frequency": 9,
+      "icon": "chat-bubble"
+    },
+    {
+      "id": "more",
+      "text": "meer",
+      "pos": "social",
+      "category": "social",
+      "frequency": 9,
+      "icon": "chat-bubble"
+    },
+    {
+      "id": "all-done",
+      "text": "alles klaar",
+      "pos": "social",
+      "category": "social",
+      "frequency": 9,
+      "icon": "chat-bubble"
+    },
+    {
+      "id": "again",
+      "text": "weer",
+      "pos": "social",
+      "category": "social",
+      "frequency": 9,
+      "icon": "chat-bubble"
+    },
+    {
+      "id": "finished",
+      "text": "klaar",
+      "pos": "social",
+      "category": "social",
+      "frequency": 9,
+      "icon": "chat-bubble",
+      "image": "https://data.tikocdn.org/uploads/1755617101267-house-finished.png"
+    },
+    {
+      "id": "okay",
+      "text": "okay",
+      "pos": "social",
+      "category": "social",
+      "frequency": 9,
+      "icon": "chat-bubble"
+    },
+    {
+      "id": "not-yet",
+      "text": "nog nie",
+      "pos": "social",
+      "category": "social",
+      "frequency": 9,
+      "icon": "chat-bubble"
+    },
+    {
+      "id": "maybe",
+      "text": "miskien",
+      "pos": "social",
+      "category": "social",
+      "frequency": 9,
+      "icon": "chat-bubble"
+    },
+    {
+      "id": "what",
+      "text": "wat",
+      "pos": "question",
+      "category": "questions",
+      "frequency": 8,
+      "icon": "question-circle"
+    },
+    {
+      "id": "where",
+      "text": "waar",
+      "pos": "question",
+      "category": "questions",
+      "frequency": 8,
+      "icon": "question-circle"
+    },
+    {
+      "id": "who",
+      "text": "wie",
+      "pos": "question",
+      "category": "questions",
+      "frequency": 8,
+      "icon": "question-circle"
+    },
+    {
+      "id": "when",
+      "text": "wanneer",
+      "pos": "question",
+      "category": "questions",
+      "frequency": 8,
+      "icon": "question-circle"
+    },
+    {
+      "id": "why",
+      "text": "hoekom",
+      "pos": "question",
+      "category": "questions",
+      "frequency": 8,
+      "icon": "question-circle"
+    },
+    {
+      "id": "which",
+      "text": "watter",
+      "pos": "question",
+      "category": "questions",
+      "frequency": 8,
+      "icon": "question-circle"
+    },
+    {
+      "id": "how",
+      "text": "hoe",
+      "pos": "question",
+      "category": "questions",
+      "frequency": 8,
+      "icon": "question-circle"
+    },
+    {
+      "id": "can",
+      "text": "kan",
+      "pos": "question",
+      "category": "questions",
+      "frequency": 8,
+      "icon": "question-circle"
+    },
+    {
+      "id": "is",
+      "text": "is",
+      "pos": "question",
+      "category": "questions",
+      "frequency": 8,
+      "icon": "question-circle"
+    },
+    {
+      "id": "are",
+      "text": "is",
+      "pos": "question",
+      "category": "questions",
+      "frequency": 8,
+      "icon": "question-circle"
+    },
+    {
+      "id": "a",
+      "text": "'n",
+      "pos": "determiner",
+      "category": "helpers",
+      "frequency": 8,
+      "icon": "text"
+    },
+    {
+      "id": "the",
+      "text": "die",
+      "pos": "determiner",
+      "category": "helpers",
+      "frequency": 8,
+      "icon": "text"
+    },
+    {
+      "id": "this",
+      "text": "hierdie",
+      "pos": "determiner",
+      "category": "helpers",
+      "frequency": 8,
+      "icon": "text"
+    },
+    {
+      "id": "that",
+      "text": "daardie",
+      "pos": "determiner",
+      "category": "helpers",
+      "frequency": 8,
+      "icon": "text"
+    },
+    {
+      "id": "some",
+      "text": "sommige",
+      "pos": "determiner",
+      "category": "helpers",
+      "frequency": 8,
+      "icon": "text"
+    },
+    {
+      "id": "one",
+      "text": "een",
+      "pos": "determiner",
+      "category": "helpers",
+      "frequency": 8,
+      "icon": "text"
+    },
+    {
+      "id": "two",
+      "text": "twee",
+      "pos": "determiner",
+      "category": "helpers",
+      "frequency": 8,
+      "icon": "text"
+    },
+    {
+      "id": "three",
+      "text": "drie",
+      "pos": "determiner",
+      "category": "helpers",
+      "frequency": 8,
+      "icon": "text"
+    },
+    {
+      "id": "many",
+      "text": "baie",
+      "pos": "determiner",
+      "category": "helpers",
+      "frequency": 8,
+      "icon": "text"
+    },
+    {
+      "id": "little",
+      "text": "bietjie",
+      "pos": "determiner",
+      "category": "helpers",
+      "frequency": 8,
+      "icon": "text"
+    },
+    {
+      "id": "big",
+      "text": "groot",
+      "pos": "determiner",
+      "category": "helpers",
+      "frequency": 8,
+      "icon": "text"
+    },
+    {
+      "id": "in",
+      "text": "in",
+      "pos": "preposition",
+      "category": "positions",
+      "frequency": 7,
+      "icon": "arrow-right"
+    },
+    {
+      "id": "on",
+      "text": "op",
+      "pos": "preposition",
+      "category": "positions",
+      "frequency": 7,
+      "icon": "arrow-right"
+    },
+    {
+      "id": "under",
+      "text": "onder",
+      "pos": "preposition",
+      "category": "positions",
+      "frequency": 7,
+      "icon": "arrow-right"
+    },
+    {
+      "id": "next-to",
+      "text": "naas",
+      "pos": "preposition",
+      "category": "positions",
+      "frequency": 7,
+      "icon": "arrow-right"
+    },
+    {
+      "id": "with",
+      "text": "met",
+      "pos": "preposition",
+      "category": "positions",
+      "frequency": 7,
+      "icon": "arrow-right"
+    },
+    {
+      "id": "without",
+      "text": "sonder",
+      "pos": "preposition",
+      "category": "positions",
+      "frequency": 7,
+      "icon": "arrow-right"
+    },
+    {
+      "id": "to",
+      "text": "na",
+      "pos": "preposition",
+      "category": "positions",
+      "frequency": 7,
+      "icon": "arrow-right"
+    },
+    {
+      "id": "from",
+      "text": "van",
+      "pos": "preposition",
+      "category": "positions",
+      "frequency": 7,
+      "icon": "arrow-right"
+    },
+    {
+      "id": "inside",
+      "text": "binne",
+      "pos": "preposition",
+      "category": "positions",
+      "frequency": 7,
+      "icon": "arrow-right"
+    },
+    {
+      "id": "outside",
+      "text": "buite",
+      "pos": "preposition",
+      "category": "positions",
+      "frequency": 7,
+      "icon": "arrow-right"
+    },
+    {
+      "id": "near",
+      "text": "naby",
+      "pos": "preposition",
+      "category": "positions",
+      "frequency": 7,
+      "icon": "arrow-right"
+    },
+    {
+      "id": "far",
+      "text": "ver",
+      "pos": "preposition",
+      "category": "positions",
+      "frequency": 7,
+      "icon": "arrow-right"
+    },
+    {
+      "id": "here",
+      "text": "hier",
+      "pos": "adverb",
+      "category": "positions",
+      "frequency": 9,
+      "icon": "arrow-right"
+    },
+    {
+      "id": "there",
+      "text": "daar",
+      "pos": "adverb",
+      "category": "positions",
+      "frequency": 9,
+      "icon": "arrow-right"
+    },
+    {
+      "id": "up",
+      "text": "boontoe",
+      "pos": "adverb",
+      "category": "positions",
+      "frequency": 8,
+      "icon": "arrow-right"
+    },
+    {
+      "id": "down",
+      "text": "ondertoe",
+      "pos": "adverb",
+      "category": "positions",
+      "frequency": 8,
+      "icon": "arrow-right"
+    },
+    {
+      "id": "off",
+      "text": "af",
+      "pos": "adverb",
+      "category": "positions",
+      "frequency": 7,
+      "icon": "arrow-right"
+    },
+    {
+      "id": "away",
+      "text": "vort",
+      "pos": "adverb",
+      "category": "positions",
+      "frequency": 7,
+      "icon": "arrow-right"
+    },
+    {
+      "id": "together",
+      "text": "saam",
+      "pos": "adverb",
+      "category": "positions",
+      "frequency": 6,
+      "icon": "arrow-right"
+    },
+    {
+      "id": "and",
+      "text": "en",
+      "pos": "conjunction",
+      "category": "helpers",
+      "frequency": 6,
+      "icon": "branch"
+    },
+    {
+      "id": "or",
+      "text": "of",
+      "pos": "conjunction",
+      "category": "helpers",
+      "frequency": 6,
+      "icon": "branch"
+    },
+    {
+      "id": "because",
+      "text": "want",
+      "pos": "conjunction",
+      "category": "helpers",
+      "frequency": 6,
+      "icon": "branch"
+    },
+    {
+      "id": "then",
+      "text": "toe",
+      "pos": "conjunction",
+      "category": "helpers",
+      "frequency": 6,
+      "icon": "branch"
+    },
+    {
+      "id": "but",
+      "text": "maar",
+      "pos": "conjunction",
+      "category": "helpers",
+      "frequency": 6,
+      "icon": "branch"
+    },
+    {
+      "id": "not",
+      "text": "nie",
+      "pos": "negation",
+      "category": "helpers",
+      "frequency": 10,
+      "icon": "text"
+    },
+    {
+      "id": "all",
+      "text": "al",
+      "pos": "determiner",
+      "category": "helpers",
+      "frequency": 8,
+      "icon": "text"
+    },
+    {
+      "id": "another",
+      "text": "nog een",
+      "pos": "determiner",
+      "category": "helpers",
+      "frequency": 7,
+      "icon": "text"
+    },
+    {
+      "id": "water",
+      "text": "water",
+      "pos": "noun",
+      "category": "drinks",
+      "frequency": 8,
+      "icon": "water"
+    },
+    {
+      "id": "milk",
+      "text": "melk",
+      "pos": "noun",
+      "category": "drinks",
+      "frequency": 8,
+      "icon": "water",
+      "image": "https://data.tikocdn.org/uploads/1755624098419-kirby-and-the-forgotten-land.png"
+    },
+    {
+      "id": "juice",
+      "text": "sap",
+      "pos": "noun",
+      "category": "drinks",
+      "frequency": 8,
+      "icon": "water"
+    },
+    {
+      "id": "tea",
+      "text": "tee",
+      "pos": "noun",
+      "category": "drinks",
+      "frequency": 8,
+      "icon": "water",
+      "image": "https://data.tikocdn.org/uploads/1756293128101-tea-kettle.png"
+    },
+    {
+      "id": "smoothie",
+      "text": "smoothie",
+      "pos": "noun",
+      "category": "drinks",
+      "frequency": 8,
+      "icon": "water",
+      "image": "https://data.tikocdn.org/uploads/1753451476359-smoothie.png"
+    },
+    {
+      "id": "lemonade",
+      "text": "limonade",
+      "pos": "noun",
+      "category": "drinks",
+      "frequency": 8,
+      "icon": "water",
+      "image": "https://data.tikocdn.org/uploads/1753451510315-lemonade.png"
+    },
+    {
+      "id": "hot-drink",
+      "text": "warm drankie",
+      "pos": "noun",
+      "category": "drinks",
+      "frequency": 8,
+      "icon": "water"
+    },
+    {
+      "id": "cold-drink",
+      "text": "koue drankie",
+      "pos": "noun",
+      "category": "drinks",
+      "frequency": 8,
+      "icon": "water"
+    },
+    {
+      "id": "cup",
+      "text": "beker",
+      "pos": "noun",
+      "category": "drinks",
+      "frequency": 8,
+      "icon": "water",
+      "image": "https://data.tikocdn.org/uploads/1756292863905-toothbrushes-in-cup.png"
+    },
+    {
+      "id": "straw",
+      "text": "strooitjie",
+      "pos": "noun",
+      "category": "drinks",
+      "frequency": 8,
+      "icon": "water",
+      "image": "https://data.tikocdn.org/uploads/1754732213846-reusable-straw.png"
+    },
+    {
+      "id": "bottle",
+      "text": "bottel",
+      "pos": "noun",
+      "category": "drinks",
+      "frequency": 8,
+      "icon": "water",
+      "image": "https://data.tikocdn.org/uploads/1755105708364-water-bottle.png"
+    },
+    {
+      "id": "sip",
+      "text": "sluk",
+      "pos": "noun",
+      "category": "drinks",
+      "frequency": 8,
+      "icon": "water"
+    },
+    {
+      "id": "apple",
+      "text": "appel",
+      "pos": "noun",
+      "category": "food",
+      "frequency": 8,
+      "icon": "apple",
+      "image": "https://data.tikocdn.org/uploads/1756292940670-golden-apple.png"
+    },
+    {
+      "id": "banana",
+      "text": "piesang",
+      "pos": "noun",
+      "category": "food",
+      "frequency": 8,
+      "icon": "apple",
+      "image": "https://data.tikocdn.org/uploads/1755286983850-banana.png"
+    },
+    {
+      "id": "bread",
+      "text": "brood",
+      "pos": "noun",
+      "category": "food",
+      "frequency": 8,
+      "icon": "apple",
+      "image": "https://data.tikocdn.org/uploads/1755290972081-pide-bread.png"
+    },
+    {
+      "id": "toast",
+      "text": "roosterbrood",
+      "pos": "noun",
+      "category": "food",
+      "frequency": 8,
+      "icon": "apple",
+      "image": "https://data.tikocdn.org/uploads/1755286514343-fried-egg-on-toast.png"
+    },
+    {
+      "id": "sandwich",
+      "text": "toebroodjie",
+      "pos": "noun",
+      "category": "food",
+      "frequency": 8,
+      "icon": "apple",
+      "image": "https://data.tikocdn.org/uploads/1781021862923-sandwich.png"
+    },
+    {
+      "id": "rice",
+      "text": "rys",
+      "pos": "noun",
+      "category": "food",
+      "frequency": 8,
+      "icon": "apple",
+      "image": "https://data.tikocdn.org/uploads/1756293151213-ricecooker.png"
+    },
+    {
+      "id": "pasta",
+      "text": "pasta",
+      "pos": "noun",
+      "category": "food",
+      "frequency": 8,
+      "icon": "apple",
+      "image": "https://data.tikocdn.org/uploads/1754731989461-jar-of-pasta.png"
+    },
+    {
+      "id": "soup",
+      "text": "sop",
+      "pos": "noun",
+      "category": "food",
+      "frequency": 8,
+      "icon": "apple",
+      "image": "https://data.tikocdn.org/uploads/1754732309169-soup-ladle.png"
+    },
+    {
+      "id": "yogurt",
+      "text": "jogurt",
+      "pos": "noun",
+      "category": "food",
+      "frequency": 8,
+      "icon": "apple",
+      "image": "https://data.tikocdn.org/uploads/1753772684470-spas-yogurt-soup.png"
+    },
+    {
+      "id": "cheese",
+      "text": "kaas",
+      "pos": "noun",
+      "category": "food",
+      "frequency": 8,
+      "icon": "apple"
+    },
+    {
+      "id": "cracker",
+      "text": "beskuitjie",
+      "pos": "noun",
+      "category": "food",
+      "frequency": 8,
+      "icon": "apple",
+      "image": "https://data.tikocdn.org/uploads/1781470952178-cracker.png"
+    },
+    {
+      "id": "carrot",
+      "text": "wortel",
+      "pos": "noun",
+      "category": "food",
+      "frequency": 8,
+      "icon": "apple",
+      "image": "https://data.tikocdn.org/uploads/1753448184127-carrot.png"
+    },
+    {
+      "id": "chips",
+      "text": "skyfies",
+      "pos": "noun",
+      "category": "food",
+      "frequency": 8,
+      "icon": "apple",
+      "image": "https://data.tikocdn.org/uploads/1753282919807-fish-chips.png"
+    },
+    {
+      "id": "cookie",
+      "text": "koekie",
+      "pos": "noun",
+      "category": "food",
+      "frequency": 8,
+      "icon": "apple",
+      "image": "https://data.tikocdn.org/uploads/1755286480193-cookie.png"
+    },
+    {
+      "id": "egg",
+      "text": "eier",
+      "pos": "noun",
+      "category": "food",
+      "frequency": 8,
+      "icon": "apple",
+      "image": "https://data.tikocdn.org/uploads/1781374488401-egg.png"
+    },
+    {
+      "id": "cereal",
+      "text": "graankos",
+      "pos": "noun",
+      "category": "food",
+      "frequency": 8,
+      "icon": "apple",
+      "image": "https://data.tikocdn.org/uploads/1781470544730-cereal.png"
+    },
+    {
+      "id": "fruit",
+      "text": "vrugte",
+      "pos": "noun",
+      "category": "food",
+      "frequency": 8,
+      "icon": "apple"
+    },
+    {
+      "id": "snack",
+      "text": "peuselhappie",
+      "pos": "noun",
+      "category": "food",
+      "frequency": 8,
+      "icon": "apple",
+      "image": "https://data.tikocdn.org/uploads/1781443428722-plate-of-snack-foods.png"
+    },
+    {
+      "id": "dinner",
+      "text": "aandete",
+      "pos": "noun",
+      "category": "food",
+      "frequency": 8,
+      "icon": "apple",
+      "image": "https://data.tikocdn.org/uploads/1755455040733-dinner.png"
+    },
+    {
+      "id": "lunch",
+      "text": "middagete",
+      "pos": "noun",
+      "category": "food",
+      "frequency": 8,
+      "icon": "apple",
+      "image": "https://data.tikocdn.org/uploads/1755455052116-lunch.png"
+    },
+    {
+      "id": "happy",
+      "text": "gelukkig",
+      "pos": "adjective",
+      "category": "feelings",
+      "frequency": 9,
+      "icon": "smile",
+      "image": "https://data.tikocdn.org/uploads/1756901925456-happy-boy-disney-pixar-style.png"
+    },
+    {
+      "id": "sad",
+      "text": "hartseer",
+      "pos": "adjective",
+      "category": "feelings",
+      "frequency": 9,
+      "icon": "smile",
+      "image": "https://data.tikocdn.org/uploads/1754688205220-emotion-sad-boy.png"
+    },
+    {
+      "id": "angry",
+      "text": "kwaad",
+      "pos": "adjective",
+      "category": "feelings",
+      "frequency": 9,
+      "icon": "smile",
+      "image": "https://data.tikocdn.org/uploads/1754688232560-emotion-angry.png"
+    },
+    {
+      "id": "worried",
+      "text": "bekommerd",
+      "pos": "adjective",
+      "category": "feelings",
+      "frequency": 9,
+      "icon": "smile",
+      "image": "https://data.tikocdn.org/uploads/1754739808295-emotion-worried.png"
+    },
+    {
+      "id": "scared",
+      "text": "bang",
+      "pos": "adjective",
+      "category": "feelings",
+      "frequency": 9,
+      "icon": "smile",
+      "image": "https://data.tikocdn.org/uploads/1754857383614-girl-scared.png"
+    },
+    {
+      "id": "tired",
+      "text": "moeg",
+      "pos": "adjective",
+      "category": "feelings",
+      "frequency": 9,
+      "icon": "smile",
+      "image": "https://data.tikocdn.org/uploads/1754857341192-girl-im-tired.png"
+    },
+    {
+      "id": "sick",
+      "text": "siek",
+      "pos": "adjective",
+      "category": "feelings",
+      "frequency": 9,
+      "icon": "smile",
+      "image": "https://data.tikocdn.org/uploads/1754857314148-girl-im-sick.png"
+    },
+    {
+      "id": "hurt",
+      "text": "seer",
+      "pos": "adjective",
+      "category": "feelings",
+      "frequency": 9,
+      "icon": "smile"
+    },
+    {
+      "id": "calm",
+      "text": "kalm",
+      "pos": "adjective",
+      "category": "feelings",
+      "frequency": 9,
+      "icon": "smile"
+    },
+    {
+      "id": "excited",
+      "text": "opgewonde",
+      "pos": "adjective",
+      "category": "feelings",
+      "frequency": 9,
+      "icon": "smile",
+      "image": "https://data.tikocdn.org/uploads/1754688148492-emotion-excited-boy.png"
+    },
+    {
+      "id": "confused",
+      "text": "verward",
+      "pos": "adjective",
+      "category": "feelings",
+      "frequency": 9,
+      "icon": "smile",
+      "image": "https://data.tikocdn.org/uploads/1754688114785-emotion-confused.png"
+    },
+    {
+      "id": "proud",
+      "text": "trots",
+      "pos": "adjective",
+      "category": "feelings",
+      "frequency": 9,
+      "icon": "smile",
+      "image": "https://data.tikocdn.org/uploads/1754687852045-emotion-proud-girl.png"
+    },
+    {
+      "id": "lonely",
+      "text": "alleen",
+      "pos": "adjective",
+      "category": "feelings",
+      "frequency": 9,
+      "icon": "smile",
+      "image": "https://data.tikocdn.org/uploads/1754688067529-emotion-lonely.png"
+    },
+    {
+      "id": "bored",
+      "text": "verveeld",
+      "pos": "adjective",
+      "category": "feelings",
+      "frequency": 9,
+      "icon": "smile",
+      "image": "https://data.tikocdn.org/uploads/1754687814850-emotion-bored.png"
+    },
+    {
+      "id": "safe",
+      "text": "veilig",
+      "pos": "adjective",
+      "category": "feelings",
+      "frequency": 9,
+      "icon": "smile"
+    },
+    {
+      "id": "upset",
+      "text": "ontsteld",
+      "pos": "adjective",
+      "category": "feelings",
+      "frequency": 9,
+      "icon": "smile"
+    },
+    {
+      "id": "okay-2",
+      "text": "okay",
+      "pos": "adjective",
+      "category": "feelings",
+      "frequency": 9,
+      "icon": "smile"
+    },
+    {
+      "id": "hot",
+      "text": "warm",
+      "pos": "adjective",
+      "category": "feelings",
+      "frequency": 9,
+      "icon": "smile"
+    },
+    {
+      "id": "cold",
+      "text": "koud",
+      "pos": "adjective",
+      "category": "feelings",
+      "frequency": 9,
+      "icon": "smile"
+    },
+    {
+      "id": "hungry",
+      "text": "honger",
+      "pos": "adjective",
+      "category": "feelings",
+      "frequency": 9,
+      "icon": "smile"
+    },
+    {
+      "id": "thirsty",
+      "text": "dors",
+      "pos": "adjective",
+      "category": "feelings",
+      "frequency": 9,
+      "icon": "smile"
+    },
+    {
+      "id": "head",
+      "text": "kop",
+      "pos": "noun",
+      "category": "body",
+      "frequency": 6,
+      "icon": "body",
+      "image": "https://data.tikocdn.org/uploads/1781021866617-head.png"
+    },
+    {
+      "id": "hand",
+      "text": "hand",
+      "pos": "noun",
+      "category": "body",
+      "frequency": 6,
+      "icon": "body"
+    },
+    {
+      "id": "foot",
+      "text": "voet",
+      "pos": "noun",
+      "category": "body",
+      "frequency": 6,
+      "icon": "body"
+    },
+    {
+      "id": "tummy",
+      "text": "maag",
+      "pos": "noun",
+      "category": "body",
+      "frequency": 6,
+      "icon": "body"
+    },
+    {
+      "id": "mouth",
+      "text": "mond",
+      "pos": "noun",
+      "category": "body",
+      "frequency": 6,
+      "icon": "body",
+      "image": "https://data.tikocdn.org/uploads/1756128342077-human-mouth.png"
+    },
+    {
+      "id": "ear",
+      "text": "oor",
+      "pos": "noun",
+      "category": "body",
+      "frequency": 6,
+      "icon": "body"
+    },
+    {
+      "id": "eye",
+      "text": "oog",
+      "pos": "noun",
+      "category": "body",
+      "frequency": 6,
+      "icon": "body",
+      "image": "https://data.tikocdn.org/uploads/1756128223153-human-eye.png"
+    },
+    {
+      "id": "arm",
+      "text": "arm",
+      "pos": "noun",
+      "category": "body",
+      "frequency": 6,
+      "icon": "body",
+      "image": "https://data.tikocdn.org/uploads/1756473758354-human-arm.png"
+    },
+    {
+      "id": "leg",
+      "text": "been",
+      "pos": "noun",
+      "category": "body",
+      "frequency": 6,
+      "icon": "body",
+      "image": "https://data.tikocdn.org/uploads/1756128317552-human-leg.png"
+    },
+    {
+      "id": "back",
+      "text": "rug",
+      "pos": "noun",
+      "category": "body",
+      "frequency": 6,
+      "icon": "body"
+    },
+    {
+      "id": "tooth",
+      "text": "tand",
+      "pos": "noun",
+      "category": "body",
+      "frequency": 6,
+      "icon": "body",
+      "image": "https://data.tikocdn.org/uploads/1754662438843-tooth.png"
+    },
+    {
+      "id": "hair",
+      "text": "hare",
+      "pos": "noun",
+      "category": "body",
+      "frequency": 6,
+      "icon": "body"
+    },
+    {
+      "id": "nose",
+      "text": "neus",
+      "pos": "noun",
+      "category": "body",
+      "frequency": 6,
+      "icon": "body",
+      "image": "https://data.tikocdn.org/uploads/1756128358450-human-nose.png"
+    },
+    {
+      "id": "skin",
+      "text": "vel",
+      "pos": "noun",
+      "category": "body",
+      "frequency": 6,
+      "icon": "body"
+    },
+    {
+      "id": "heart",
+      "text": "hart",
+      "pos": "noun",
+      "category": "body",
+      "frequency": 6,
+      "icon": "body"
+    },
+    {
+      "id": "home",
+      "text": "huis",
+      "pos": "noun",
+      "category": "places",
+      "frequency": 7,
+      "icon": "home"
+    },
+    {
+      "id": "school",
+      "text": "skool",
+      "pos": "noun",
+      "category": "places",
+      "frequency": 7,
+      "icon": "home"
+    },
+    {
+      "id": "classroom",
+      "text": "klaskamer",
+      "pos": "noun",
+      "category": "places",
+      "frequency": 7,
+      "icon": "home"
+    },
+    {
+      "id": "bathroom",
+      "text": "badkamer",
+      "pos": "noun",
+      "category": "places",
+      "frequency": 7,
+      "icon": "home"
+    },
+    {
+      "id": "kitchen",
+      "text": "kombuis",
+      "pos": "noun",
+      "category": "places",
+      "frequency": 7,
+      "icon": "home",
+      "image": "https://data.tikocdn.org/uploads/1781443445242-kids-kitchen.png"
+    },
+    {
+      "id": "bedroom",
+      "text": "slaapkamer",
+      "pos": "noun",
+      "category": "places",
+      "frequency": 7,
+      "icon": "home"
+    },
+    {
+      "id": "garden",
+      "text": "tuin",
+      "pos": "noun",
+      "category": "places",
+      "frequency": 7,
+      "icon": "home"
+    },
+    {
+      "id": "shop",
+      "text": "winkel",
+      "pos": "noun",
+      "category": "places",
+      "frequency": 7,
+      "icon": "home"
+    },
+    {
+      "id": "car",
+      "text": "kar",
+      "pos": "noun",
+      "category": "places",
+      "frequency": 7,
+      "icon": "home"
+    },
+    {
+      "id": "bus",
+      "text": "bus",
+      "pos": "noun",
+      "category": "places",
+      "frequency": 7,
+      "icon": "home"
+    },
+    {
+      "id": "park",
+      "text": "park",
+      "pos": "noun",
+      "category": "places",
+      "frequency": 7,
+      "icon": "home",
+      "image": "https://data.tikocdn.org/uploads/1781443441644-generated.png"
+    },
+    {
+      "id": "playground",
+      "text": "speelgrond",
+      "pos": "noun",
+      "category": "places",
+      "frequency": 7,
+      "icon": "home",
+      "image": "https://data.tikocdn.org/uploads/1781021542071-playground.png"
+    },
+    {
+      "id": "library",
+      "text": "biblioteek",
+      "pos": "noun",
+      "category": "places",
+      "frequency": 7,
+      "icon": "home",
+      "image": "https://data.tikocdn.org/uploads/1754663673001-library.png"
+    },
+    {
+      "id": "pool",
+      "text": "swembad",
+      "pos": "noun",
+      "category": "places",
+      "frequency": 7,
+      "icon": "home",
+      "image": "https://data.tikocdn.org/uploads/1754741588695-pool-table.png"
+    },
+    {
+      "id": "table",
+      "text": "tafel",
+      "pos": "noun",
+      "category": "home",
+      "frequency": 7,
+      "icon": "home",
+      "image": "https://data.tikocdn.org/uploads/1756292929848-table-tennis-table.png"
+    },
+    {
+      "id": "chair",
+      "text": "stoel",
+      "pos": "noun",
+      "category": "home",
+      "frequency": 7,
+      "icon": "home",
+      "image": "https://data.tikocdn.org/uploads/1756293239181-gaming-chair.png"
+    },
+    {
+      "id": "sofa",
+      "text": "bank",
+      "pos": "noun",
+      "category": "home",
+      "frequency": 7,
+      "icon": "home",
+      "image": "https://data.tikocdn.org/uploads/1754569010181-sofa.png"
+    },
+    {
+      "id": "bed",
+      "text": "bed",
+      "pos": "noun",
+      "category": "home",
+      "frequency": 7,
+      "icon": "home"
+    },
+    {
+      "id": "door",
+      "text": "deur",
+      "pos": "noun",
+      "category": "home",
+      "frequency": 7,
+      "icon": "home"
+    },
+    {
+      "id": "window",
+      "text": "venster",
+      "pos": "noun",
+      "category": "home",
+      "frequency": 7,
+      "icon": "home"
+    },
+    {
+      "id": "book",
+      "text": "boek",
+      "pos": "noun",
+      "category": "school",
+      "frequency": 6,
+      "icon": "book",
+      "image": "https://data.tikocdn.org/uploads/1781474706796-teddy-bear-with-book.png"
+    },
+    {
+      "id": "pencil",
+      "text": "potlood",
+      "pos": "noun",
+      "category": "school",
+      "frequency": 6,
+      "icon": "book",
+      "image": "https://data.tikocdn.org/uploads/1755106280944-pencil.png"
+    },
+    {
+      "id": "paper",
+      "text": "papier",
+      "pos": "noun",
+      "category": "school",
+      "frequency": 6,
+      "icon": "book"
+    },
+    {
+      "id": "bag",
+      "text": "sak",
+      "pos": "noun",
+      "category": "school",
+      "frequency": 6,
+      "icon": "book",
+      "image": "https://data.tikocdn.org/uploads/1754988042752-bag-of-tools-1.png"
+    },
+    {
+      "id": "coat",
+      "text": "jas",
+      "pos": "noun",
+      "category": "school",
+      "frequency": 6,
+      "icon": "book"
+    },
+    {
+      "id": "shoes",
+      "text": "skoene",
+      "pos": "noun",
+      "category": "school",
+      "frequency": 6,
+      "icon": "book",
+      "image": "https://data.tikocdn.org/uploads/1756144652467-adidas-campus-shoes.png"
+    },
+    {
+      "id": "lunchbox",
+      "text": "kosblik",
+      "pos": "noun",
+      "category": "school",
+      "frequency": 6,
+      "icon": "book",
+      "image": "https://data.tikocdn.org/uploads/1755105586186-lunchbox.png"
+    },
+    {
+      "id": "tablet",
+      "text": "tablet",
+      "pos": "noun",
+      "category": "school",
+      "frequency": 6,
+      "icon": "book",
+      "image": "https://data.tikocdn.org/uploads/1754986350201-tablet.png"
+    },
+    {
+      "id": "screen",
+      "text": "skerm",
+      "pos": "noun",
+      "category": "school",
+      "frequency": 6,
+      "icon": "book"
+    },
+    {
+      "id": "timer",
+      "text": "tydhouer",
+      "pos": "noun",
+      "category": "school",
+      "frequency": 6,
+      "icon": "book",
+      "image": "https://data.tikocdn.org/uploads/1754413853153-timer2.png"
+    },
+    {
+      "id": "schedule",
+      "text": "skedule",
+      "pos": "noun",
+      "category": "school",
+      "frequency": 6,
+      "icon": "book"
+    },
+    {
+      "id": "picture",
+      "text": "prentjie",
+      "pos": "noun",
+      "category": "school",
+      "frequency": 6,
+      "icon": "book"
+    },
+    {
+      "id": "card",
+      "text": "kaart",
+      "pos": "noun",
+      "category": "school",
+      "frequency": 6,
+      "icon": "book",
+      "image": "https://data.tikocdn.org/uploads/1754741501044-bingo-card.png"
+    },
+    {
+      "id": "story",
+      "text": "storie",
+      "pos": "noun",
+      "category": "school",
+      "frequency": 6,
+      "icon": "book"
+    },
+    {
+      "id": "music",
+      "text": "musiek",
+      "pos": "noun",
+      "category": "school",
+      "frequency": 6,
+      "icon": "book",
+      "image": "https://data.tikocdn.org/uploads/1755106316235-music-note.png"
+    },
+    {
+      "id": "ball",
+      "text": "bal",
+      "pos": "noun",
+      "category": "toys",
+      "frequency": 6,
+      "icon": "puzzle",
+      "image": "https://data.tikocdn.org/uploads/1755624225308-pok-mon-red-blue.png"
+    },
+    {
+      "id": "blocks",
+      "text": "blokke",
+      "pos": "noun",
+      "category": "toys",
+      "frequency": 6,
+      "icon": "puzzle",
+      "image": "https://data.tikocdn.org/uploads/1755680491621-a-b-c-sequence.png"
+    },
+    {
+      "id": "doll",
+      "text": "pop",
+      "pos": "noun",
+      "category": "toys",
+      "frequency": 6,
+      "icon": "puzzle",
+      "image": "https://data.tikocdn.org/uploads/1754860491004-babushka.png"
+    },
+    {
+      "id": "car-toy",
+      "text": "speelgoedkar",
+      "pos": "noun",
+      "category": "toys",
+      "frequency": 6,
+      "icon": "puzzle"
+    },
+    {
+      "id": "train",
+      "text": "trein",
+      "pos": "noun",
+      "category": "toys",
+      "frequency": 6,
+      "icon": "puzzle",
+      "image": "https://data.tikocdn.org/uploads/1756293139653-model-trains.png"
+    },
+    {
+      "id": "puzzle",
+      "text": "legkaart",
+      "pos": "noun",
+      "category": "toys",
+      "frequency": 6,
+      "icon": "puzzle",
+      "image": "https://data.tikocdn.org/uploads/1755105977331-puzzle-piece.png"
+    },
+    {
+      "id": "game",
+      "text": "speletjie",
+      "pos": "noun",
+      "category": "toys",
+      "frequency": 6,
+      "icon": "puzzle"
+    },
+    {
+      "id": "paint",
+      "text": "verf",
+      "pos": "noun",
+      "category": "toys",
+      "frequency": 6,
+      "icon": "puzzle",
+      "image": "https://data.tikocdn.org/uploads/1755106304863-paint-palette.png"
+    },
+    {
+      "id": "clay",
+      "text": "klei",
+      "pos": "noun",
+      "category": "toys",
+      "frequency": 6,
+      "icon": "puzzle"
+    },
+    {
+      "id": "bubbles",
+      "text": "borrels",
+      "pos": "noun",
+      "category": "toys",
+      "frequency": 6,
+      "icon": "puzzle"
+    },
+    {
+      "id": "swing",
+      "text": "swaai",
+      "pos": "noun",
+      "category": "toys",
+      "frequency": 6,
+      "icon": "puzzle",
+      "image": "https://data.tikocdn.org/uploads/1781021543058-swing.png"
+    },
+    {
+      "id": "slide",
+      "text": "glybaan",
+      "pos": "noun",
+      "category": "toys",
+      "frequency": 6,
+      "icon": "puzzle",
+      "image": "https://data.tikocdn.org/uploads/1781021473617-slide.png"
+    },
+    {
+      "id": "bike",
+      "text": "fiets",
+      "pos": "noun",
+      "category": "toys",
+      "frequency": 6,
+      "icon": "puzzle",
+      "image": "https://data.tikocdn.org/uploads/1755105272207-stationary-bike.png"
+    },
+    {
+      "id": "teddy",
+      "text": "teddiebeer",
+      "pos": "noun",
+      "category": "toys",
+      "frequency": 6,
+      "icon": "puzzle",
+      "image": "https://data.tikocdn.org/uploads/1781474706796-teddy-bear-with-book.png"
+    },
+    {
+      "id": "lego",
+      "text": "lego",
+      "pos": "noun",
+      "category": "toys",
+      "frequency": 6,
+      "icon": "puzzle",
+      "image": "https://data.tikocdn.org/uploads/1755624111907-lego-star-wars-the-skywalker-saga.png"
+    },
+    {
+      "id": "red",
+      "text": "rooi",
+      "pos": "adjective",
+      "category": "colors",
+      "frequency": 5,
+      "icon": "palette",
+      "image": "https://data.tikocdn.org/uploads/1756293164075-red-velvet-mite.png"
+    },
+    {
+      "id": "blue",
+      "text": "blou",
+      "pos": "adjective",
+      "category": "colors",
+      "frequency": 5,
+      "icon": "palette",
+      "image": "https://data.tikocdn.org/uploads/1756292886243-blue-ribbon.png"
+    },
+    {
+      "id": "green",
+      "text": "groen",
+      "pos": "adjective",
+      "category": "colors",
+      "frequency": 5,
+      "icon": "palette",
+      "image": "https://data.tikocdn.org/uploads/1756128110497-green-apple.png"
+    },
+    {
+      "id": "yellow",
+      "text": "geel",
+      "pos": "adjective",
+      "category": "colors",
+      "frequency": 5,
+      "icon": "palette",
+      "image": "https://data.tikocdn.org/uploads/1756127975148-blue-and-yellow-macaw.png"
+    },
+    {
+      "id": "orange",
+      "text": "oranje",
+      "pos": "adjective",
+      "category": "colors",
+      "frequency": 5,
+      "icon": "palette"
+    },
+    {
+      "id": "purple",
+      "text": "pers",
+      "pos": "adjective",
+      "category": "colors",
+      "frequency": 5,
+      "icon": "palette",
+      "image": "https://data.tikocdn.org/uploads/1754662713276-purple-star.png"
+    },
+    {
+      "id": "pink",
+      "text": "pienk",
+      "pos": "adjective",
+      "category": "colors",
+      "frequency": 5,
+      "icon": "palette",
+      "image": "https://data.tikocdn.org/uploads/1755354254398-pink-tulip.png"
+    },
+    {
+      "id": "brown",
+      "text": "bruin",
+      "pos": "adjective",
+      "category": "colors",
+      "frequency": 5,
+      "icon": "palette"
+    },
+    {
+      "id": "black",
+      "text": "swart",
+      "pos": "adjective",
+      "category": "colors",
+      "frequency": 5,
+      "icon": "palette"
+    },
+    {
+      "id": "white",
+      "text": "wit",
+      "pos": "adjective",
+      "category": "colors",
+      "frequency": 5,
+      "icon": "palette",
+      "image": "https://data.tikocdn.org/uploads/1755587227281-white-dove-with-branch.png"
+    },
+    {
+      "id": "grey",
+      "text": "grys",
+      "pos": "adjective",
+      "category": "colors",
+      "frequency": 5,
+      "icon": "palette",
+      "image": "https://data.tikocdn.org/uploads/1753597634531-african-grey-parrot.png"
+    },
+    {
+      "id": "bright",
+      "text": "helder",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "palette"
+    },
+    {
+      "id": "dark",
+      "text": "donker",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "palette",
+      "image": "https://data.tikocdn.org/uploads/1755286874263-woman-with-dark-brown-hair.png"
+    },
+    {
+      "id": "soft",
+      "text": "sag",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "palette"
+    },
+    {
+      "id": "hard",
+      "text": "hard",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "palette"
+    },
+    {
+      "id": "quiet",
+      "text": "stil",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "palette"
+    },
+    {
+      "id": "loud",
+      "text": "hard",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "palette",
+      "image": "https://data.tikocdn.org/uploads/1754857413077-girl-too-loud.png"
+    },
+    {
+      "id": "fast",
+      "text": "vinnig",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "palette"
+    },
+    {
+      "id": "slow",
+      "text": "stadig",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "palette",
+      "image": "https://data.tikocdn.org/uploads/1754732295324-slow-cooker.png"
+    },
+    {
+      "id": "clean",
+      "text": "skoon",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "palette"
+    },
+    {
+      "id": "dirty",
+      "text": "vuil",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "palette"
+    },
+    {
+      "id": "wet",
+      "text": "nat",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "palette"
+    },
+    {
+      "id": "dry",
+      "text": "droog",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "palette"
+    },
+    {
+      "id": "new",
+      "text": "nuut",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "palette"
+    },
+    {
+      "id": "old",
+      "text": "oud",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "palette"
+    },
+    {
+      "id": "now",
+      "text": "nou",
+      "pos": "adverb",
+      "category": "time",
+      "frequency": 6,
+      "icon": "clock"
+    },
+    {
+      "id": "later",
+      "text": "later",
+      "pos": "adverb",
+      "category": "time",
+      "frequency": 6,
+      "icon": "clock"
+    },
+    {
+      "id": "today",
+      "text": "vandag",
+      "pos": "adverb",
+      "category": "time",
+      "frequency": 6,
+      "icon": "clock"
+    },
+    {
+      "id": "tomorrow",
+      "text": "môre",
+      "pos": "adverb",
+      "category": "time",
+      "frequency": 6,
+      "icon": "clock"
+    },
+    {
+      "id": "morning",
+      "text": "oggend",
+      "pos": "adverb",
+      "category": "time",
+      "frequency": 6,
+      "icon": "clock",
+      "image": "https://data.tikocdn.org/uploads/1756182914290-morning-star.png"
+    },
+    {
+      "id": "afternoon",
+      "text": "middag",
+      "pos": "adverb",
+      "category": "time",
+      "frequency": 6,
+      "icon": "clock"
+    },
+    {
+      "id": "night",
+      "text": "nag",
+      "pos": "adverb",
+      "category": "time",
+      "frequency": 6,
+      "icon": "clock"
+    },
+    {
+      "id": "before",
+      "text": "voor",
+      "pos": "adverb",
+      "category": "time",
+      "frequency": 6,
+      "icon": "clock"
+    },
+    {
+      "id": "after",
+      "text": "na",
+      "pos": "adverb",
+      "category": "time",
+      "frequency": 6,
+      "icon": "clock"
+    },
+    {
+      "id": "soon",
+      "text": "binnekort",
+      "pos": "adverb",
+      "category": "time",
+      "frequency": 6,
+      "icon": "clock"
+    },
+    {
+      "id": "first",
+      "text": "eerste",
+      "pos": "adverb",
+      "category": "time",
+      "frequency": 6,
+      "icon": "clock"
+    },
+    {
+      "id": "next",
+      "text": "volgende",
+      "pos": "adverb",
+      "category": "time",
+      "frequency": 6,
+      "icon": "clock",
+      "image": "https://data.tikocdn.org/uploads/1755454465323-letter-n-next.png"
+    },
+    {
+      "id": "last",
+      "text": "laaste",
+      "pos": "adverb",
+      "category": "time",
+      "frequency": 6,
+      "icon": "clock"
+    },
+    {
+      "id": "minute",
+      "text": "minuut",
+      "pos": "adverb",
+      "category": "time",
+      "frequency": 6,
+      "icon": "clock"
+    },
+    {
+      "id": "hour",
+      "text": "uur",
+      "pos": "adverb",
+      "category": "time",
+      "frequency": 6,
+      "icon": "clock"
+    },
+    {
+      "id": "break",
+      "text": "pouse",
+      "pos": "noun",
+      "category": "needs",
+      "frequency": 8,
+      "icon": "heart-hand"
+    },
+    {
+      "id": "quiet-time",
+      "text": "stil tyd",
+      "pos": "noun",
+      "category": "needs",
+      "frequency": 8,
+      "icon": "heart-hand"
+    },
+    {
+      "id": "hug",
+      "text": "drukkie",
+      "pos": "noun",
+      "category": "needs",
+      "frequency": 8,
+      "icon": "heart-hand"
+    },
+    {
+      "id": "space",
+      "text": "ruimte",
+      "pos": "noun",
+      "category": "needs",
+      "frequency": 8,
+      "icon": "heart-hand"
+    },
+    {
+      "id": "toilet",
+      "text": "toilet",
+      "pos": "noun",
+      "category": "needs",
+      "frequency": 8,
+      "icon": "heart-hand",
+      "image": "https://data.tikocdn.org/uploads/1781077119826-toilet.png"
+    },
+    {
+      "id": "medicine",
+      "text": "medisyne",
+      "pos": "noun",
+      "category": "needs",
+      "frequency": 8,
+      "icon": "heart-hand",
+      "image": "https://data.tikocdn.org/uploads/1754731147636-medicine-bottle.png"
+    },
+    {
+      "id": "light",
+      "text": "lig",
+      "pos": "noun",
+      "category": "needs",
+      "frequency": 8,
+      "icon": "heart-hand"
+    },
+    {
+      "id": "dark-2",
+      "text": "donkerte",
+      "pos": "noun",
+      "category": "needs",
+      "frequency": 8,
+      "icon": "heart-hand",
+      "image": "https://data.tikocdn.org/uploads/1755286874263-woman-with-dark-brown-hair.png"
+    },
+    {
+      "id": "noise",
+      "text": "geraas",
+      "pos": "noun",
+      "category": "needs",
+      "frequency": 8,
+      "icon": "heart-hand",
+      "image": "https://data.tikocdn.org/uploads/1755105522864-noise-canceling-headphones.png"
+    },
+    {
+      "id": "headphones",
+      "text": "oorfone",
+      "pos": "noun",
+      "category": "needs",
+      "frequency": 8,
+      "icon": "heart-hand",
+      "image": "https://data.tikocdn.org/uploads/1754739165099-headphones.png"
+    },
+    {
+      "id": "blanket",
+      "text": "kombers",
+      "pos": "noun",
+      "category": "needs",
+      "frequency": 8,
+      "icon": "heart-hand",
+      "image": "https://data.tikocdn.org/uploads/1755105554760-weighted-blanket.png"
+    },
+    {
+      "id": "charger",
+      "text": "laaier",
+      "pos": "noun",
+      "category": "needs",
+      "frequency": 8,
+      "icon": "heart-hand",
+      "image": "https://data.tikocdn.org/uploads/1755623381187-dodge-charger-1969.png"
+    },
+    {
+      "id": "choice",
+      "text": "keuse",
+      "pos": "noun",
+      "category": "needs",
+      "frequency": 8,
+      "icon": "heart-hand"
+    },
+    {
+      "id": "turn",
+      "text": "draai",
+      "pos": "noun",
+      "category": "needs",
+      "frequency": 8,
+      "icon": "heart-hand"
+    },
+    {
+      "id": "help-please",
+      "text": "help asseblief",
+      "pos": "noun",
+      "category": "needs",
+      "frequency": 8,
+      "icon": "heart-hand"
+    },
+    {
+      "id": "different",
+      "text": "anders",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "sparkles",
+      "image": "https://data.tikocdn.org/uploads/1756902017583-talking-kids-from-different-cultures.png"
+    },
+    {
+      "id": "same",
+      "text": "dieselfde",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "sparkles"
+    },
+    {
+      "id": "easy",
+      "text": "maklik",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "sparkles"
+    },
+    {
+      "id": "harder",
+      "text": "moeiliker",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "sparkles"
+    },
+    {
+      "id": "favorite",
+      "text": "gunsteling",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "sparkles"
+    },
+    {
+      "id": "missing",
+      "text": "weg",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "sparkles"
+    },
+    {
+      "id": "broken",
+      "text": "gebreek",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "sparkles"
+    },
+    {
+      "id": "ready",
+      "text": "gereed",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "sparkles"
+    },
+    {
+      "id": "busy",
+      "text": "besig",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "sparkles"
+    },
+    {
+      "id": "empty",
+      "text": "leeg",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "sparkles",
+      "image": "https://data.tikocdn.org/uploads/1756035003445-empty-basket.png"
+    },
+    {
+      "id": "full",
+      "text": "vol",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "sparkles"
+    },
+    {
+      "id": "small",
+      "text": "klein",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "sparkles"
+    },
+    {
+      "id": "tall",
+      "text": "lank",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "sparkles"
+    },
+    {
+      "id": "short",
+      "text": "kort",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "sparkles"
+    },
+    {
+      "id": "round",
+      "text": "rond",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "sparkles"
+    },
+    {
+      "id": "square",
+      "text": "vierkantig",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "sparkles"
+    },
+    {
+      "id": "kind",
+      "text": "gaaf",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "sparkles"
+    },
+    {
+      "id": "gentle",
+      "text": "saggies",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "sparkles"
+    },
+    {
+      "id": "careful",
+      "text": "versigtig",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "sparkles"
+    },
+    {
+      "id": "safe-place",
+      "text": "veilige plek",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "sparkles"
+    },
+    {
+      "id": "very",
+      "text": "regtig",
+      "pos": "adverb",
+      "category": "describing",
+      "frequency": 7,
+      "icon": "sparkles"
+    }
+  ],
+  "templates": [
+    {
+      "id": "want-object",
+      "pattern": "I want {thing}.",
+      "category": "needs",
+      "icon": "heart-hand",
+      "slots": [
+        {
+          "acceptedPos": [
+            "pronoun"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "noun"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "need-help",
+      "pattern": "I need help with {thing}.",
+      "category": "needs",
+      "icon": "heart-hand",
+      "slots": [
+        {
+          "acceptedPos": [
+            "pronoun"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "noun"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "feel-state",
+      "pattern": "I feel {feeling}.",
+      "category": "feelings",
+      "icon": "smile",
+      "slots": [
+        {
+          "acceptedPos": [
+            "pronoun"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "adjective"
+          ],
+          "categoryFilter": "feelings"
+        }
+      ]
+    },
+    {
+      "id": "body-hurts",
+      "pattern": "My {body} hurts.",
+      "category": "body",
+      "icon": "body",
+      "slots": [
+        {
+          "acceptedPos": [
+            "pronoun"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "noun"
+          ],
+          "categoryFilter": "body"
+        },
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "like-activity",
+      "pattern": "I like {activity}.",
+      "category": "actions",
+      "icon": "play",
+      "slots": [
+        {
+          "acceptedPos": [
+            "pronoun"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "noun"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "go-place",
+      "pattern": "I want to go to {place}.",
+      "category": "places",
+      "icon": "home",
+      "slots": [
+        {
+          "acceptedPos": [
+            "pronoun"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "preposition"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "preposition"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "noun"
+          ],
+          "categoryFilter": "places"
+        }
+      ]
+    },
+    {
+      "id": "question-where",
+      "pattern": "Where is {thing}?",
+      "category": "questions",
+      "icon": "question-circle",
+      "slots": [
+        {
+          "acceptedPos": [
+            "question"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "noun"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "question-what",
+      "pattern": "What is this?",
+      "category": "questions",
+      "icon": "question-circle",
+      "slots": [
+        {
+          "acceptedPos": [
+            "question"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "determiner"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "question-can",
+      "pattern": "Can you help me?",
+      "category": "questions",
+      "icon": "question-circle",
+      "slots": [
+        {
+          "acceptedPos": [
+            "question"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "pronoun"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "pronoun"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "more-thing",
+      "pattern": "More {thing}, please.",
+      "category": "social",
+      "icon": "chat-bubble",
+      "slots": [
+        {
+          "acceptedPos": [
+            "social"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "noun"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "social"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "all-done",
+      "pattern": "I am all done.",
+      "category": "social",
+      "icon": "chat-bubble",
+      "slots": [
+        {
+          "acceptedPos": [
+            "pronoun"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "social"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "not-want",
+      "pattern": "I do not want {thing}.",
+      "category": "needs",
+      "icon": "heart-hand",
+      "slots": [
+        {
+          "acceptedPos": [
+            "pronoun"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "social"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "noun"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "choose-one",
+      "pattern": "I choose {thing}.",
+      "category": "actions",
+      "icon": "play",
+      "slots": [
+        {
+          "acceptedPos": [
+            "pronoun"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "noun"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "with-person",
+      "pattern": "I want to be with {person}.",
+      "category": "people",
+      "icon": "user",
+      "slots": [
+        {
+          "acceptedPos": [
+            "pronoun"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "preposition"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "preposition"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "noun"
+          ],
+          "categoryFilter": "people"
+        }
+      ]
+    },
+    {
+      "id": "too-loud",
+      "pattern": "It is too loud.",
+      "category": "feelings",
+      "icon": "smile",
+      "slots": [
+        {
+          "acceptedPos": [
+            "pronoun"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "adjective"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "need-break",
+      "pattern": "I need a break.",
+      "category": "needs",
+      "icon": "heart-hand",
+      "slots": [
+        {
+          "acceptedPos": [
+            "pronoun"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "determiner"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "noun"
+          ],
+          "categoryFilter": "needs"
+        }
+      ]
+    },
+    {
+      "id": "first-next",
+      "pattern": "First {thing}, then {thing}.",
+      "category": "time",
+      "icon": "clock",
+      "slots": [
+        {
+          "acceptedPos": [
+            "adverb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "noun"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "conjunction"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "noun"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "yes-answer",
+      "pattern": "Yes, please.",
+      "category": "social",
+      "icon": "chat-bubble",
+      "slots": [
+        {
+          "acceptedPos": [
+            "social"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "social"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "no-answer",
+      "pattern": "No, thank you.",
+      "category": "social",
+      "icon": "chat-bubble",
+      "slots": [
+        {
+          "acceptedPos": [
+            "social"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "social"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "descriptor-object",
+      "pattern": "The {thing} is {description}.",
+      "category": "describing",
+      "icon": "sparkles",
+      "slots": [
+        {
+          "acceptedPos": [
+            "determiner"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "noun"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "adjective"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "place-position",
+      "pattern": "The {thing} is {position} the {place}.",
+      "category": "positions",
+      "icon": "arrow-right",
+      "slots": [
+        {
+          "acceptedPos": [
+            "determiner"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "noun"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "preposition"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "determiner"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "noun"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "time-request",
+      "pattern": "I want {thing} later.",
+      "category": "time",
+      "icon": "clock",
+      "slots": [
+        {
+          "acceptedPos": [
+            "pronoun"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "noun"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "adverb"
+          ],
+          "categoryFilter": "time"
+        }
+      ]
+    },
+    {
+      "id": "polite-help",
+      "pattern": "Help please.",
+      "category": "needs",
+      "icon": "heart-hand",
+      "slots": [
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "social"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "try-again",
+      "pattern": "I want to try again.",
+      "category": "actions",
+      "icon": "play",
+      "slots": [
+        {
+          "acceptedPos": [
+            "pronoun"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "preposition"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "social"
+          ]
+        }
+      ]
+    }
+  ],
+  "grammar": {
+    "wordOrder": "subject-verb-object (verb-second)",
+    "validTransitions": {
+      "pronoun": [
+        "verb",
+        "noun",
+        "adjective",
+        "negation",
+        "adverb"
+      ],
+      "determiner": [
+        "noun",
+        "adjective"
+      ],
+      "verb": [
+        "determiner",
+        "noun",
+        "adjective",
+        "preposition",
+        "social",
+        "adverb"
+      ],
+      "noun": [
+        "verb",
+        "preposition",
+        "conjunction",
+        "social",
+        "adverb"
+      ],
+      "adjective": [
+        "noun",
+        "social",
+        "conjunction",
+        "adverb"
+      ],
+      "question": [
+        "verb",
+        "pronoun",
+        "determiner",
+        "adverb"
+      ],
+      "preposition": [
+        "determiner",
+        "noun",
+        "verb"
+      ],
+      "conjunction": [
+        "pronoun",
+        "determiner",
+        "noun",
+        "verb",
+        "negation"
+      ],
+      "social": [
+        "noun",
+        "verb",
+        "negation"
+      ],
+      "negation": [
+        "verb",
+        "determiner",
+        "noun",
+        "adjective",
+        "adverb"
+      ],
+      "adverb": [
+        "verb",
+        "noun",
+        "adjective",
+        "preposition",
+        "social"
+      ]
+    },
+    "articles": {
+      "default": {
+        "definite": "die",
+        "indefinite": "'n"
+      }
+    },
+    "negation": {
+      "position": "double",
+      "words": [
+        "nie"
+      ]
+    }
+  }
+}

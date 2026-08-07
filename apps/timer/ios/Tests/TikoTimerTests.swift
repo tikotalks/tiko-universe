@@ -1,3 +1,4 @@
+import SwiftUI
 import XCTest
 @testable import TikoTimer
 import TikoKit
@@ -304,5 +305,37 @@ final class TikoTimerTests: XCTestCase {
     /// smoke test).
     func testAppColorsExist() {
         XCTAssertEqual(TikoAppColor.timer.palette.label, "Timer")
+    }
+
+    // MARK: - Dark mode contrast (regression)
+
+    /// The countdown, the ring and every control glyph used `palette.dark` — a
+    /// deep maroon — regardless of colour scheme, so on the dark shell they were
+    /// dark red on near-black and unreadable. Foregrounds must differ between
+    /// schemes, and must not stay the app's dark maroon in dark mode.
+    func testTimerForegroundIsNotTheDarkMaroonInDarkMode() {
+        XCTAssertNotEqual(
+            TimerPalette.foreground(for: .dark),
+            TimerPalette.foreground(for: .light),
+            "the countdown colour must react to the colour scheme"
+        )
+        XCTAssertEqual(TimerPalette.foreground(for: .dark), Color.white)
+        XCTAssertEqual(TimerPalette.foreground(for: .light), TikoAppColor.timer.palette.dark)
+    }
+
+    /// Every surface behind a control also has to change, or the glyph is
+    /// readable while the button it sits on is not.
+    func testTimerControlSurfacesReactToColorScheme() {
+        XCTAssertNotEqual(TimerPalette.controlBackground(for: .dark), TimerPalette.controlBackground(for: .light))
+        XCTAssertNotEqual(TimerPalette.resetBackground(for: .dark), TimerPalette.resetBackground(for: .light))
+        XCTAssertNotEqual(TimerPalette.ringTrack(for: .dark), TimerPalette.ringTrack(for: .light))
+        XCTAssertNotEqual(TimerPalette.presetBackground(for: .dark), TimerPalette.presetBackground(for: .light))
+        XCTAssertNotEqual(TimerPalette.presetForeground(for: .dark), TimerPalette.presetForeground(for: .light))
+    }
+
+    /// A plain white card in a dark UI is the other half of the same bug.
+    func testPresetButtonsAreNotSolidWhiteInDarkMode() {
+        XCTAssertNotEqual(TimerPalette.presetBackground(for: .dark), Color.white)
+        XCTAssertEqual(TimerPalette.presetBackground(for: .light), Color.white)
     }
 }

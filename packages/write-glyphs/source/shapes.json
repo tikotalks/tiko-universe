@@ -1,0 +1,983 @@
+{
+  "packId": "shapes",
+  "packSchemaVersion": 1,
+  "packVersion": 8,
+  "style": "shape",
+  "viewBox": [
+    0,
+    0,
+    100,
+    100
+  ],
+  "groups": [
+    {
+      "id": "lines",
+      "sortOrder": 1
+    },
+    {
+      "id": "shapes",
+      "sortOrder": 2
+    },
+    {
+      "id": "animals",
+      "sortOrder": 3
+    },
+    {
+      "id": "vehicles",
+      "sortOrder": 4
+    },
+    {
+      "id": "nature",
+      "sortOrder": 5
+    },
+    {
+      "id": "food",
+      "sortOrder": 6
+    }
+  ],
+  "glyphs": [
+    {
+      "id": "vertical-line",
+      "char": "vertical-line",
+      "groupId": "lines",
+      "sortOrder": 1,
+      "strokes": [
+        {
+          "d": "M50 15 L50 85"
+        }
+      ]
+    },
+    {
+      "id": "horizontal-line",
+      "char": "horizontal-line",
+      "groupId": "lines",
+      "sortOrder": 2,
+      "strokes": [
+        {
+          "d": "M15 50 L85 50"
+        }
+      ]
+    },
+    {
+      "id": "diagonal-line",
+      "char": "diagonal-line",
+      "groupId": "lines",
+      "sortOrder": 3,
+      "strokes": [
+        {
+          "d": "M20 20 L80 80",
+          "widthScale": 1.15
+        }
+      ]
+    },
+    {
+      "id": "cross",
+      "char": "cross",
+      "groupId": "lines",
+      "sortOrder": 4,
+      "strokes": [
+        {
+          "d": "M50 15 L50 85"
+        },
+        {
+          "d": "M15 50 L85 50"
+        }
+      ]
+    },
+    {
+      "id": "cross-diagonal",
+      "char": "cross-diagonal",
+      "groupId": "lines",
+      "sortOrder": 5,
+      "strokes": [
+        {
+          "d": "M20 20 L80 80",
+          "widthScale": 1.15
+        },
+        {
+          "d": "M80 20 L20 80",
+          "widthScale": 1.15
+        }
+      ]
+    },
+    {
+      "id": "zigzag",
+      "char": "zigzag",
+      "groupId": "lines",
+      "sortOrder": 6,
+      "strokes": [
+        {
+          "d": "M15 30 L38 70 L61 30 L84 70"
+        }
+      ]
+    },
+    {
+      "id": "circle",
+      "char": "circle",
+      "groupId": "shapes",
+      "sortOrder": 1,
+      "strokes": [
+        {
+          "d": "M50 15 A35 35 0 1 0 50 85 A35 35 0 1 0 50 15"
+        }
+      ]
+    },
+    {
+      "id": "square",
+      "char": "square",
+      "groupId": "shapes",
+      "sortOrder": 2,
+      "strokes": [
+        {
+          "d": "M20 20 L80 20 L80 80 L20 80 L20 20",
+          "keyPoints": [
+            0.25,
+            0.5,
+            0.75
+          ]
+        }
+      ]
+    },
+    {
+      "id": "triangle",
+      "char": "triangle",
+      "groupId": "shapes",
+      "sortOrder": 3,
+      "strokes": [
+        {
+          "d": "M50 18 L20 78 L80 78 L50 18",
+          "keyPoints": [
+            0.3455,
+            0.6545
+          ]
+        }
+      ]
+    },
+    {
+      "id": "diamond",
+      "char": "diamond",
+      "groupId": "shapes",
+      "sortOrder": 4,
+      "strokes": [
+        {
+          "d": "M50 18 L82 50 L50 82 L18 50 L50 18",
+          "keyPoints": [
+            0.25,
+            0.5,
+            0.75
+          ]
+        }
+      ]
+    },
+    {
+      "id": "heart",
+      "char": "heart",
+      "groupId": "shapes",
+      "sortOrder": 5,
+      "strokes": [
+        {
+          "d": "M50 32 C40 15 12 22 15 45 C18 62 38 74 50 88"
+        },
+        {
+          "d": "M50 32 C60 15 88 22 85 45 C82 62 62 74 50 88"
+        }
+      ]
+    },
+    {
+      "id": "star",
+      "char": "star",
+      "groupId": "shapes",
+      "sortOrder": 6,
+      "strokes": [
+        {
+          "d": "M50 12 L61 44 L95 44 L67 64 L78 96 L50 76 L22 96 L33 64 L5 44 L39 44 L50 12"
+        }
+      ]
+    },
+    {
+      "id": "spiral",
+      "char": "spiral",
+      "groupId": "shapes",
+      "sortOrder": 7,
+      "strokes": [
+        {
+          "d": "M55 50 A9 9 0 1 1 37 50 A14 14 0 1 1 65 50 A19 19 0 1 1 27 50 A24 24 0 1 1 75 50"
+        }
+      ]
+    },
+    {
+      "id": "fish",
+      "char": "fish",
+      "groupId": "animals",
+      "sortOrder": 1,
+      "strokes": [
+        {
+          "d": "M18 50 C30 30 58 30 74 50 C58 70 30 70 18 50"
+        },
+        {
+          "d": "M74 50 L92 34 L92 66 L74 50"
+        }
+      ],
+      "strokeOrderStrict": false
+    },
+    {
+      "id": "bird",
+      "char": "bird",
+      "groupId": "animals",
+      "sortOrder": 2,
+      "strokes": [
+        {
+          "d": "M16 56 C28 38 42 38 50 52 C58 38 72 38 84 56"
+        }
+      ],
+      "strokeOrderStrict": false
+    },
+    {
+      "id": "butterfly",
+      "char": "butterfly",
+      "groupId": "animals",
+      "sortOrder": 3,
+      "strokes": [
+        {
+          "d": "M48 30 C34 12 12 18 14 34 C16 46 30 48 44 44 C30 48 22 58 26 68 C30 78 44 74 48 60"
+        },
+        {
+          "d": "M52 30 C66 12 88 18 86 34 C84 46 70 48 56 44 C70 48 78 58 74 68 C70 78 56 74 52 60"
+        },
+        {
+          "d": "M50 26 L50 72"
+        },
+        {
+          "d": "M40 12 L50 26 L60 12"
+        }
+      ],
+      "strokeOrderStrict": false
+    },
+    {
+      "id": "snake",
+      "char": "snake",
+      "groupId": "animals",
+      "sortOrder": 4,
+      "strokes": [
+        {
+          "d": "M14 72 C28 50 40 80 54 58 C66 40 78 62 90 44"
+        }
+      ],
+      "strokeOrderStrict": false
+    },
+    {
+      "id": "cat",
+      "char": "cat",
+      "groupId": "animals",
+      "sortOrder": 5,
+      "strokes": [
+        {
+          "d": "M50 31 A23 23 0 1 0 50 77 A23 23 0 1 0 50 31"
+        },
+        {
+          "d": "M31 40 L21 12 L47 25"
+        },
+        {
+          "d": "M69 40 L79 12 L53 25"
+        },
+        {
+          "d": "M40 43 A6 6 0 1 0 40 55 A6 6 0 1 0 40 43"
+        },
+        {
+          "d": "M60 43 A6 6 0 1 0 60 55 A6 6 0 1 0 60 43"
+        },
+        {
+          "d": "M44 60 L56 60 L50 68 L44 60"
+        },
+        {
+          "d": "M25 58 L37 61"
+        },
+        {
+          "d": "M25 69 L37 66"
+        },
+        {
+          "d": "M75 58 L63 61"
+        },
+        {
+          "d": "M75 69 L63 66"
+        }
+      ],
+      "strokeOrderStrict": false
+    },
+    {
+      "id": "duck",
+      "char": "duck",
+      "groupId": "animals",
+      "sortOrder": 6,
+      "strokes": [
+        {
+          "d": "M18 68 A28 13 0 1 0 74 68 A28 13 0 1 0 18 68"
+        },
+        {
+          "d": "M66 30 A13 13 0 1 0 66 56 A13 13 0 1 0 66 30"
+        },
+        {
+          "d": "M79 42 L94 46 L79 50"
+        }
+      ],
+      "strokeOrderStrict": false
+    },
+    {
+      "id": "ladybird",
+      "char": "ladybird",
+      "groupId": "animals",
+      "sortOrder": 7,
+      "strokes": [
+        {
+          "d": "M50 22 C72 22 84 40 84 56 C84 74 68 84 50 84 C32 84 16 74 16 56 C16 40 28 22 50 22"
+        },
+        {
+          "d": "M50 22 L50 84"
+        },
+        {
+          "d": "M38 26 A13 13 0 0 1 62 26"
+        },
+        {
+          "d": "M34 41 A5 5 0 1 0 34 51 A5 5 0 1 0 34 41"
+        },
+        {
+          "d": "M66 41 A5 5 0 1 0 66 51 A5 5 0 1 0 66 41"
+        },
+        {
+          "d": "M32 61 A5 5 0 1 0 32 71 A5 5 0 1 0 32 61"
+        },
+        {
+          "d": "M68 61 A5 5 0 1 0 68 71 A5 5 0 1 0 68 61"
+        }
+      ],
+      "strokeOrderStrict": false
+    },
+    {
+      "id": "snail",
+      "char": "snail",
+      "groupId": "animals",
+      "sortOrder": 8,
+      "strokes": [
+        {
+          "d": "M10 80 C10 70 20 66 34 66 C50 66 66 62 74 54 C80 48 88 52 86 60 C84 70 88 78 84 80 L10 80"
+        },
+        {
+          "d": "M46 46 A7 7 0 1 1 32 46 A14 14 0 1 1 60 46 A21 21 0 1 1 18 46"
+        },
+        {
+          "d": "M80 54 L84 40"
+        },
+        {
+          "d": "M86 56 L94 46"
+        }
+      ],
+      "strokeOrderStrict": false
+    },
+    {
+      "id": "car",
+      "char": "car",
+      "groupId": "vehicles",
+      "sortOrder": 1,
+      "strokes": [
+        {
+          "d": "M12 64 L20 46 L44 42 L58 30 L80 34 L88 50 L88 64 L12 64"
+        },
+        {
+          "d": "M32 64 A9 9 0 1 0 32 82 A9 9 0 1 0 32 64"
+        },
+        {
+          "d": "M70 64 A9 9 0 1 0 70 82 A9 9 0 1 0 70 64"
+        }
+      ],
+      "strokeOrderStrict": false
+    },
+    {
+      "id": "bus",
+      "char": "bus",
+      "groupId": "vehicles",
+      "sortOrder": 2,
+      "strokes": [
+        {
+          "d": "M14 24 L86 24 L86 68 L14 68 L14 24"
+        },
+        {
+          "d": "M30 68 A8 8 0 1 0 30 84 A8 8 0 1 0 30 68"
+        },
+        {
+          "d": "M70 68 A8 8 0 1 0 70 84 A8 8 0 1 0 70 68"
+        }
+      ],
+      "strokeOrderStrict": false
+    },
+    {
+      "id": "boat",
+      "char": "boat",
+      "groupId": "vehicles",
+      "sortOrder": 3,
+      "strokes": [
+        {
+          "d": "M12 62 L88 62 L74 82 L26 82 L12 62"
+        },
+        {
+          "d": "M50 62 L50 14"
+        },
+        {
+          "d": "M50 20 L80 56 L50 56"
+        }
+      ],
+      "strokeOrderStrict": false
+    },
+    {
+      "id": "plane",
+      "char": "plane",
+      "groupId": "vehicles",
+      "sortOrder": 4,
+      "strokes": [
+        {
+          "d": "M50 12 L58 48 L90 66 L90 74 L56 64 L54 82 L66 92 L34 92 L46 82 L44 64 L10 74 L10 66 L42 48 L50 12"
+        }
+      ],
+      "strokeOrderStrict": false
+    },
+    {
+      "id": "rocket",
+      "char": "rocket",
+      "groupId": "vehicles",
+      "sortOrder": 5,
+      "strokes": [
+        {
+          "d": "M50 10 C62 24 68 42 68 58 L68 74 L32 74 L32 58 C32 42 38 24 50 10"
+        },
+        {
+          "d": "M32 58 L16 80 L32 74"
+        },
+        {
+          "d": "M68 58 L84 80 L68 74"
+        }
+      ],
+      "strokeOrderStrict": false
+    },
+    {
+      "id": "train",
+      "char": "train",
+      "groupId": "vehicles",
+      "sortOrder": 6,
+      "strokes": [
+        {
+          "d": "M16 28 L58 28 L58 44 L84 44 L84 68 L16 68 L16 28"
+        },
+        {
+          "d": "M30 68 A8 8 0 1 0 30 84 A8 8 0 1 0 30 68"
+        },
+        {
+          "d": "M70 68 A8 8 0 1 0 70 84 A8 8 0 1 0 70 68"
+        }
+      ],
+      "strokeOrderStrict": false
+    },
+    {
+      "id": "balloon",
+      "char": "balloon",
+      "groupId": "vehicles",
+      "sortOrder": 7,
+      "strokes": [
+        {
+          "d": "M50 12 C72 12 84 30 80 48 C76 64 58 74 50 82 C42 74 24 64 20 48 C16 30 28 12 50 12"
+        },
+        {
+          "d": "M40 82 L60 82 L64 96 L36 96 L40 82"
+        }
+      ],
+      "strokeOrderStrict": false
+    },
+    {
+      "id": "bicycle",
+      "char": "bicycle",
+      "groupId": "vehicles",
+      "sortOrder": 8,
+      "strokes": [
+        {
+          "d": "M26 62 A16 16 0 1 0 26 94 A16 16 0 1 0 26 62"
+        },
+        {
+          "d": "M74 62 A16 16 0 1 0 74 94 A16 16 0 1 0 74 62"
+        },
+        {
+          "d": "M26 78 L46 44 L74 78"
+        },
+        {
+          "d": "M46 44 L64 44"
+        }
+      ],
+      "strokeOrderStrict": false
+    },
+    {
+      "id": "sun",
+      "char": "sun",
+      "groupId": "nature",
+      "sortOrder": 1,
+      "strokes": [
+        {
+          "d": "M50 32 A18 18 0 1 0 50 68 A18 18 0 1 0 50 32"
+        },
+        {
+          "d": "M50 8 L50 22"
+        },
+        {
+          "d": "M50 78 L50 92"
+        },
+        {
+          "d": "M8 50 L22 50"
+        },
+        {
+          "d": "M78 50 L92 50"
+        },
+        {
+          "d": "M22 22 L32 32"
+        },
+        {
+          "d": "M78 22 L68 32"
+        },
+        {
+          "d": "M22 78 L32 68"
+        },
+        {
+          "d": "M78 78 L68 68"
+        }
+      ],
+      "strokeOrderStrict": false
+    },
+    {
+      "id": "cloud",
+      "char": "cloud",
+      "groupId": "nature",
+      "sortOrder": 2,
+      "strokes": [
+        {
+          "d": "M26 70 C12 70 10 52 24 50 C22 32 46 26 54 40 C64 28 84 34 82 50 C94 54 90 70 76 70 L26 70"
+        }
+      ],
+      "strokeOrderStrict": false
+    },
+    {
+      "id": "tree",
+      "char": "tree",
+      "groupId": "nature",
+      "sortOrder": 3,
+      "strokes": [
+        {
+          "d": "M50 14 A12 12 0 1 0 50 38 A12 12 0 1 0 50 14"
+        },
+        {
+          "d": "M65 24 A12 12 0 1 0 65 48 A12 12 0 1 0 65 24"
+        },
+        {
+          "d": "M59 40 A12 12 0 1 0 59 64 A12 12 0 1 0 59 40"
+        },
+        {
+          "d": "M41 40 A12 12 0 1 0 41 64 A12 12 0 1 0 41 40"
+        },
+        {
+          "d": "M35 24 A12 12 0 1 0 35 48 A12 12 0 1 0 35 24"
+        },
+        {
+          "d": "M50 30 A9 9 0 1 0 50 48 A9 9 0 1 0 50 30"
+        },
+        {
+          "d": "M50 60 L50 92"
+        }
+      ],
+      "strokeOrderStrict": false
+    },
+    {
+      "id": "flower",
+      "char": "flower",
+      "groupId": "nature",
+      "sortOrder": 4,
+      "strokes": [
+        {
+          "d": "M50.0 30.0 A14 8 -90 1 0 50.0 2.0 A14 8 -90 1 0 50.0 30.0"
+        },
+        {
+          "d": "M58.7 35.0 A14 8 -30 1 0 82.9 21.0 A14 8 -30 1 0 58.7 35.0"
+        },
+        {
+          "d": "M58.7 45.0 A14 8 30 1 0 82.9 59.0 A14 8 30 1 0 58.7 45.0"
+        },
+        {
+          "d": "M50.0 50.0 A14 8 90 1 0 50.0 78.0 A14 8 90 1 0 50.0 50.0"
+        },
+        {
+          "d": "M41.3 45.0 A14 8 150 1 0 17.1 59.0 A14 8 150 1 0 41.3 45.0"
+        },
+        {
+          "d": "M41.3 35.0 A14 8 210 1 0 17.1 21.0 A14 8 210 1 0 41.3 35.0"
+        },
+        {
+          "d": "M50 27 A13 13 0 1 0 50 53 A13 13 0 1 0 50 27"
+        },
+        {
+          "d": "M50 78 L50 94"
+        }
+      ],
+      "strokeOrderStrict": false
+    },
+    {
+      "id": "leaf",
+      "char": "leaf",
+      "groupId": "nature",
+      "sortOrder": 5,
+      "strokes": [
+        {
+          "d": "M50 88 C18 72 18 30 50 12 C82 30 82 72 50 88"
+        },
+        {
+          "d": "M50 88 L50 12"
+        }
+      ],
+      "strokeOrderStrict": false
+    },
+    {
+      "id": "moon",
+      "char": "moon",
+      "groupId": "nature",
+      "sortOrder": 6,
+      "strokes": [
+        {
+          "d": "M64 12 C40 20 28 40 33 62 C38 82 58 92 78 86 C56 76 46 52 52 32 C55 22 59 16 64 12"
+        }
+      ],
+      "strokeOrderStrict": false
+    },
+    {
+      "id": "mountain",
+      "char": "mountain",
+      "groupId": "nature",
+      "sortOrder": 7,
+      "strokes": [
+        {
+          "d": "M8 78 L34 32 L50 58 L66 24 L92 78 L8 78"
+        }
+      ],
+      "strokeOrderStrict": false
+    },
+    {
+      "id": "raindrop",
+      "char": "raindrop",
+      "groupId": "nature",
+      "sortOrder": 8,
+      "strokes": [
+        {
+          "d": "M50 12 C64 34 76 48 76 60 C76 76 64 86 50 86 C36 86 24 76 24 60 C24 48 36 34 50 12"
+        }
+      ],
+      "strokeOrderStrict": false
+    },
+    {
+      "id": "apple",
+      "char": "apple",
+      "groupId": "food",
+      "sortOrder": 1,
+      "strokes": [
+        {
+          "d": "M50 32 C34 24 20 36 22 54 C24 74 38 88 50 88 C62 88 76 74 78 54 C80 36 66 24 50 32"
+        },
+        {
+          "d": "M50 32 L52 14"
+        },
+        {
+          "d": "M52 20 C62 10 76 16 73 25 C70 34 57 31 52 20"
+        }
+      ],
+      "strokeOrderStrict": false
+    },
+    {
+      "id": "banana",
+      "char": "banana",
+      "groupId": "food",
+      "sortOrder": 2,
+      "strokes": [
+        {
+          "d": "M16 40 C18 68 42 86 70 80 C84 77 88 66 86 58 C79 67 66 72 54 68 C36 62 28 48 28 34 C28 30 20 31 16 40"
+        }
+      ],
+      "strokeOrderStrict": false
+    },
+    {
+      "id": "ice-cream",
+      "char": "ice-cream",
+      "groupId": "food",
+      "sortOrder": 3,
+      "strokes": [
+        {
+          "d": "M30 46 C30 26 70 26 70 46 L30 46"
+        },
+        {
+          "d": "M30 46 L50 90 L70 46"
+        }
+      ],
+      "strokeOrderStrict": false
+    },
+    {
+      "id": "cherry",
+      "char": "cherry",
+      "groupId": "food",
+      "sortOrder": 4,
+      "strokes": [
+        {
+          "d": "M34 66 A14 14 0 1 0 34 94 A14 14 0 1 0 34 66"
+        },
+        {
+          "d": "M70 66 A13 13 0 1 0 70 92 A13 13 0 1 0 70 66"
+        },
+        {
+          "d": "M34 66 C40 36 56 24 74 18"
+        },
+        {
+          "d": "M70 66 C68 44 72 28 74 18"
+        }
+      ],
+      "strokeOrderStrict": false
+    },
+    {
+      "id": "carrot",
+      "char": "carrot",
+      "groupId": "food",
+      "sortOrder": 5,
+      "strokes": [
+        {
+          "d": "M50 90 L30 36 C40 28 60 28 70 36 L50 90"
+        },
+        {
+          "d": "M50 34 L44 12"
+        },
+        {
+          "d": "M50 34 L64 16"
+        }
+      ],
+      "strokeOrderStrict": false
+    },
+    {
+      "id": "cupcake",
+      "char": "cupcake",
+      "groupId": "food",
+      "sortOrder": 6,
+      "strokes": [
+        {
+          "d": "M24 44 L76 44 L68 84 L32 84 L24 44"
+        },
+        {
+          "d": "M28 44 C24 26 40 18 50 26 C60 14 78 22 74 44 L28 44"
+        }
+      ],
+      "strokeOrderStrict": false
+    },
+    {
+      "id": "bee",
+      "char": "bee",
+      "groupId": "animals",
+      "sortOrder": 9,
+      "strokes": [
+        {
+          "d": "M28 56 A22 14 0 1 0 72 56 A22 14 0 1 0 28 56"
+        },
+        {
+          "d": "M44 43 L44 69"
+        },
+        {
+          "d": "M58 43 L58 69"
+        },
+        {
+          "d": "M42 44 C34 24 54 20 56 38"
+        },
+        {
+          "d": "M58 42 C70 24 84 34 72 46"
+        }
+      ],
+      "strokeOrderStrict": false
+    },
+    {
+      "id": "frog",
+      "char": "frog",
+      "groupId": "animals",
+      "sortOrder": 10,
+      "strokes": [
+        {
+          "d": "M18 62 C18 42 34 32 50 32 C66 32 82 42 82 62 C82 74 68 80 50 80 C32 80 18 74 18 62"
+        },
+        {
+          "d": "M33 18 A11 11 0 1 0 33 40 A11 11 0 1 0 33 18"
+        },
+        {
+          "d": "M67 18 A11 11 0 1 0 67 40 A11 11 0 1 0 67 18"
+        },
+        {
+          "d": "M32 62 C40 70 60 70 68 62"
+        }
+      ],
+      "strokeOrderStrict": false
+    },
+    {
+      "id": "owl",
+      "char": "owl",
+      "groupId": "animals",
+      "sortOrder": 11,
+      "strokes": [
+        {
+          "d": "M50 18 C72 18 84 38 84 56 C84 76 68 88 50 88 C32 88 16 76 16 56 C16 38 28 18 50 18"
+        },
+        {
+          "d": "M37 32 A12 12 0 1 0 37 56 A12 12 0 1 0 37 32"
+        },
+        {
+          "d": "M63 32 A12 12 0 1 0 63 56 A12 12 0 1 0 63 32"
+        },
+        {
+          "d": "M40 58 L60 58 L50 74 L40 58"
+        },
+        {
+          "d": "M29 24 L25 10 L41 19"
+        },
+        {
+          "d": "M71 24 L75 10 L59 19"
+        }
+      ],
+      "strokeOrderStrict": false
+    },
+    {
+      "id": "turtle",
+      "char": "turtle",
+      "groupId": "animals",
+      "sortOrder": 12,
+      "strokes": [
+        {
+          "d": "M20 58 C20 36 34 26 50 26 C66 26 80 36 80 58 L20 58"
+        },
+        {
+          "d": "M20 58 L80 58"
+        },
+        {
+          "d": "M86 53 A9 9 0 1 0 86 71 A9 9 0 1 0 86 53"
+        },
+        {
+          "d": "M28 58 L24 74"
+        },
+        {
+          "d": "M44 58 L40 76"
+        },
+        {
+          "d": "M58 58 L62 76"
+        },
+        {
+          "d": "M72 58 L76 72"
+        }
+      ],
+      "strokeOrderStrict": false
+    },
+    {
+      "id": "mouse",
+      "char": "mouse",
+      "groupId": "animals",
+      "sortOrder": 13,
+      "strokes": [
+        {
+          "d": "M18 72 C18 52 36 42 56 46 C72 49 82 60 82 72 L18 72"
+        },
+        {
+          "d": "M44 29 A13 13 0 1 0 44 55 A13 13 0 1 0 44 29"
+        },
+        {
+          "d": "M18 72 C6 72 4 58 14 54"
+        },
+        {
+          "d": "M74 56 A6 6 0 1 0 74 68 A6 6 0 1 0 74 56"
+        }
+      ],
+      "strokeOrderStrict": false
+    },
+    {
+      "id": "dog",
+      "char": "dog",
+      "groupId": "animals",
+      "sortOrder": 14,
+      "strokes": [
+        {
+          "d": "M30 44 C30 28 70 28 70 44 C70 62 62 78 50 78 C38 78 30 62 30 44"
+        },
+        {
+          "d": "M30 40 C16 36 12 58 22 68 C26 72 31 64 31 56"
+        },
+        {
+          "d": "M70 40 C84 36 88 58 78 68 C74 72 69 64 69 56"
+        },
+        {
+          "d": "M41 41 A6 6 0 1 0 41 53 A6 6 0 1 0 41 41"
+        },
+        {
+          "d": "M59 41 A6 6 0 1 0 59 53 A6 6 0 1 0 59 41"
+        },
+        {
+          "d": "M44 60 L56 60 L50 68 L44 60"
+        }
+      ],
+      "strokeOrderStrict": false
+    },
+    {
+      "id": "whale",
+      "char": "whale",
+      "groupId": "animals",
+      "sortOrder": 15,
+      "strokes": [
+        {
+          "d": "M14 58 C14 44 34 36 54 40 C70 43 80 50 82 58 C80 68 66 74 50 74 C30 74 14 70 14 58"
+        },
+        {
+          "d": "M82 58 L94 42 L94 74 L82 58"
+        },
+        {
+          "d": "M38 40 C36 26 46 22 50 28"
+        },
+        {
+          "d": "M31 47 A6 6 0 1 0 31 59 A6 6 0 1 0 31 47"
+        }
+      ],
+      "strokeOrderStrict": false
+    },
+    {
+      "id": "crab",
+      "char": "crab",
+      "groupId": "animals",
+      "sortOrder": 16,
+      "strokes": [
+        {
+          "d": "M22 60 A28 16 0 1 0 78 60 A28 16 0 1 0 22 60"
+        },
+        {
+          "d": "M38 44 A6 6 0 1 0 38 56 A6 6 0 1 0 38 44"
+        },
+        {
+          "d": "M62 44 A6 6 0 1 0 62 56 A6 6 0 1 0 62 44"
+        },
+        {
+          "d": "M22 56 L8 44 L18 36"
+        },
+        {
+          "d": "M78 56 L92 44 L82 36"
+        },
+        {
+          "d": "M32 74 L26 88"
+        },
+        {
+          "d": "M46 76 L42 90"
+        },
+        {
+          "d": "M54 76 L58 90"
+        },
+        {
+          "d": "M68 74 L74 88"
+        }
+      ],
+      "strokeOrderStrict": false
+    }
+  ]
+}

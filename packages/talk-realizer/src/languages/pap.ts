@@ -31,6 +31,7 @@ export const papiamentu: LanguageRules = {
     language: 'pap',
     maturity: 'beta',
     wordOrder: 'svo',
+    verbCitation: 'invariant',
     questionStrategy: 'intonation',
     spacing: 'space',
     capitalize: true,

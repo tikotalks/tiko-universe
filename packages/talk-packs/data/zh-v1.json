@@ -1,0 +1,3617 @@
+{
+  "locale": "zh",
+  "version": 1,
+  "words": [
+    {
+      "id": "i",
+      "text": "我",
+      "pos": "pronoun",
+      "category": "people",
+      "frequency": 10,
+      "icon": "user"
+    },
+    {
+      "id": "you",
+      "text": "你",
+      "pos": "pronoun",
+      "category": "people",
+      "frequency": 10,
+      "icon": "user"
+    },
+    {
+      "id": "we",
+      "text": "我们",
+      "pos": "pronoun",
+      "category": "people",
+      "frequency": 7,
+      "icon": "user"
+    },
+    {
+      "id": "me",
+      "text": "我自己",
+      "pos": "pronoun",
+      "category": "people",
+      "frequency": 10,
+      "icon": "user"
+    },
+    {
+      "id": "my",
+      "text": "我的",
+      "pos": "pronoun",
+      "category": "people",
+      "frequency": 10,
+      "icon": "user"
+    },
+    {
+      "id": "your",
+      "text": "你的",
+      "pos": "pronoun",
+      "category": "people",
+      "frequency": 7,
+      "icon": "user"
+    },
+    {
+      "id": "he",
+      "text": "他",
+      "pos": "pronoun",
+      "category": "people",
+      "frequency": 7,
+      "icon": "user"
+    },
+    {
+      "id": "she",
+      "text": "她",
+      "pos": "pronoun",
+      "category": "people",
+      "frequency": 7,
+      "icon": "user"
+    },
+    {
+      "id": "they",
+      "text": "他们",
+      "pos": "pronoun",
+      "category": "people",
+      "frequency": 7,
+      "icon": "user"
+    },
+    {
+      "id": "mum",
+      "text": "妈妈",
+      "pos": "noun",
+      "category": "people",
+      "frequency": 7,
+      "icon": "user"
+    },
+    {
+      "id": "dad",
+      "text": "爸爸",
+      "pos": "noun",
+      "category": "people",
+      "frequency": 7,
+      "icon": "user"
+    },
+    {
+      "id": "teacher",
+      "text": "老师",
+      "pos": "noun",
+      "category": "people",
+      "frequency": 7,
+      "icon": "user",
+      "image": "https://data.tikocdn.org/uploads/1754637645261-teacher.png"
+    },
+    {
+      "id": "friend",
+      "text": "朋友",
+      "pos": "noun",
+      "category": "people",
+      "frequency": 7,
+      "icon": "user"
+    },
+    {
+      "id": "brother",
+      "text": "哥哥",
+      "pos": "noun",
+      "category": "people",
+      "frequency": 7,
+      "icon": "user",
+      "image": "https://data.tikocdn.org/uploads/1754859143591-brother.png"
+    },
+    {
+      "id": "sister",
+      "text": "姐姐",
+      "pos": "noun",
+      "category": "people",
+      "frequency": 7,
+      "icon": "user",
+      "image": "https://data.tikocdn.org/uploads/1754859230045-sister.png"
+    },
+    {
+      "id": "grandma",
+      "text": "奶奶",
+      "pos": "noun",
+      "category": "people",
+      "frequency": 7,
+      "icon": "user",
+      "image": "https://data.tikocdn.org/uploads/1754859202766-grandma.png"
+    },
+    {
+      "id": "grandpa",
+      "text": "爷爷",
+      "pos": "noun",
+      "category": "people",
+      "frequency": 7,
+      "icon": "user",
+      "image": "https://data.tikocdn.org/uploads/1754859213573-grandpa.png"
+    },
+    {
+      "id": "helper",
+      "text": "帮手",
+      "pos": "noun",
+      "category": "people",
+      "frequency": 7,
+      "icon": "user"
+    },
+    {
+      "id": "doctor",
+      "text": "医生",
+      "pos": "noun",
+      "category": "people",
+      "frequency": 7,
+      "icon": "user",
+      "image": "https://data.tikocdn.org/uploads/1754574511096-doctor.png"
+    },
+    {
+      "id": "class",
+      "text": "班级",
+      "pos": "noun",
+      "category": "people",
+      "frequency": 7,
+      "icon": "user"
+    },
+    {
+      "id": "mine",
+      "text": "属于我",
+      "pos": "pronoun",
+      "category": "people",
+      "frequency": 8,
+      "icon": "user"
+    },
+    {
+      "id": "want",
+      "text": "要",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 10,
+      "icon": "play"
+    },
+    {
+      "id": "need",
+      "text": "需要",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 10,
+      "icon": "play"
+    },
+    {
+      "id": "like",
+      "text": "喜欢",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play"
+    },
+    {
+      "id": "feel",
+      "text": "觉得",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 10,
+      "icon": "play"
+    },
+    {
+      "id": "see",
+      "text": "看见",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play"
+    },
+    {
+      "id": "hear",
+      "text": "听见",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play"
+    },
+    {
+      "id": "have",
+      "text": "有",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play"
+    },
+    {
+      "id": "go",
+      "text": "去",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play"
+    },
+    {
+      "id": "come",
+      "text": "来",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play"
+    },
+    {
+      "id": "play",
+      "text": "玩",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play"
+    },
+    {
+      "id": "read",
+      "text": "读",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play"
+    },
+    {
+      "id": "draw",
+      "text": "画",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play"
+    },
+    {
+      "id": "eat",
+      "text": "吃",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play"
+    },
+    {
+      "id": "drink",
+      "text": "喝",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play"
+    },
+    {
+      "id": "sit",
+      "text": "坐",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play"
+    },
+    {
+      "id": "stand",
+      "text": "站",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play"
+    },
+    {
+      "id": "walk",
+      "text": "走",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play"
+    },
+    {
+      "id": "run",
+      "text": "跑",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play"
+    },
+    {
+      "id": "stop",
+      "text": "停",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 10,
+      "icon": "play",
+      "image": "https://data.tikocdn.org/uploads/1781021853608-stop-sign.png"
+    },
+    {
+      "id": "start",
+      "text": "开始",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play"
+    },
+    {
+      "id": "wait",
+      "text": "等",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play"
+    },
+    {
+      "id": "help",
+      "text": "帮助",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 10,
+      "icon": "play"
+    },
+    {
+      "id": "choose",
+      "text": "选",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play"
+    },
+    {
+      "id": "open",
+      "text": "打开",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play"
+    },
+    {
+      "id": "close",
+      "text": "关上",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play"
+    },
+    {
+      "id": "wash",
+      "text": "洗",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play"
+    },
+    {
+      "id": "sleep",
+      "text": "睡觉",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play"
+    },
+    {
+      "id": "rest",
+      "text": "休息",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play"
+    },
+    {
+      "id": "try",
+      "text": "试试",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play"
+    },
+    {
+      "id": "talk",
+      "text": "说话",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play"
+    },
+    {
+      "id": "get",
+      "text": "得到",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 9,
+      "icon": "play"
+    },
+    {
+      "id": "give",
+      "text": "给",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 9,
+      "icon": "play"
+    },
+    {
+      "id": "put",
+      "text": "放",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 8,
+      "icon": "play"
+    },
+    {
+      "id": "take",
+      "text": "拿",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 8,
+      "icon": "play"
+    },
+    {
+      "id": "make",
+      "text": "做",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 8,
+      "icon": "play"
+    },
+    {
+      "id": "look",
+      "text": "看",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 8,
+      "icon": "play"
+    },
+    {
+      "id": "know",
+      "text": "知道",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 8,
+      "icon": "play"
+    },
+    {
+      "id": "listen",
+      "text": "听",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 8,
+      "icon": "play"
+    },
+    {
+      "id": "watch",
+      "text": "观看",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 8,
+      "icon": "play"
+    },
+    {
+      "id": "finish",
+      "text": "完成",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 8,
+      "icon": "play"
+    },
+    {
+      "id": "find",
+      "text": "找到",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play"
+    },
+    {
+      "id": "think",
+      "text": "想",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play"
+    },
+    {
+      "id": "tell",
+      "text": "告诉",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play"
+    },
+    {
+      "id": "show",
+      "text": "给看",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play"
+    },
+    {
+      "id": "hold",
+      "text": "拿着",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play"
+    },
+    {
+      "id": "jump",
+      "text": "跳",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play",
+      "image": "https://data.tikocdn.org/uploads/1755106132141-jump-rope.png"
+    },
+    {
+      "id": "write",
+      "text": "写",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 7,
+      "icon": "play"
+    },
+    {
+      "id": "let",
+      "text": "让",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 6,
+      "icon": "play"
+    },
+    {
+      "id": "work",
+      "text": "工作",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 6,
+      "icon": "play"
+    },
+    {
+      "id": "share",
+      "text": "分享",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 6,
+      "icon": "play"
+    },
+    {
+      "id": "smell",
+      "text": "闻",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 6,
+      "icon": "play"
+    },
+    {
+      "id": "taste",
+      "text": "尝",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 6,
+      "icon": "play"
+    },
+    {
+      "id": "touch",
+      "text": "摸",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 6,
+      "icon": "play"
+    },
+    {
+      "id": "dance",
+      "text": "跳舞",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 6,
+      "icon": "play",
+      "image": "https://data.tikocdn.org/uploads/1755624084539-just-dance-series.png"
+    },
+    {
+      "id": "sing",
+      "text": "唱歌",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 6,
+      "icon": "play"
+    },
+    {
+      "id": "cut",
+      "text": "剪",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 6,
+      "icon": "play"
+    },
+    {
+      "id": "build",
+      "text": "搭",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 6,
+      "icon": "play"
+    },
+    {
+      "id": "swim",
+      "text": "游泳",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 6,
+      "icon": "play"
+    },
+    {
+      "id": "ride",
+      "text": "骑",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 6,
+      "icon": "play"
+    },
+    {
+      "id": "brush",
+      "text": "刷",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 6,
+      "icon": "play",
+      "image": "https://data.tikocdn.org/uploads/1755105544355-textured-sensory-brush.png"
+    },
+    {
+      "id": "push",
+      "text": "推",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 6,
+      "icon": "play"
+    },
+    {
+      "id": "pull",
+      "text": "拉",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 6,
+      "icon": "play",
+      "image": "https://data.tikocdn.org/uploads/1755105220123-pull-up-bar.png"
+    },
+    {
+      "id": "throw",
+      "text": "扔",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 6,
+      "icon": "play"
+    },
+    {
+      "id": "catch",
+      "text": "接",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 6,
+      "icon": "play"
+    },
+    {
+      "id": "count",
+      "text": "数",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 6,
+      "icon": "play"
+    },
+    {
+      "id": "wake",
+      "text": "醒",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 6,
+      "icon": "play"
+    },
+    {
+      "id": "cry",
+      "text": "哭",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 6,
+      "icon": "play"
+    },
+    {
+      "id": "laugh",
+      "text": "笑",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 6,
+      "icon": "play"
+    },
+    {
+      "id": "fix",
+      "text": "修",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 5,
+      "icon": "play"
+    },
+    {
+      "id": "cook",
+      "text": "做饭",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 5,
+      "icon": "play"
+    },
+    {
+      "id": "climb",
+      "text": "爬",
+      "pos": "verb",
+      "category": "actions",
+      "frequency": 5,
+      "icon": "play"
+    },
+    {
+      "id": "yes",
+      "text": "是的",
+      "pos": "social",
+      "category": "social",
+      "frequency": 9,
+      "icon": "chat-bubble"
+    },
+    {
+      "id": "no",
+      "text": "不",
+      "pos": "social",
+      "category": "social",
+      "frequency": 9,
+      "icon": "chat-bubble"
+    },
+    {
+      "id": "please",
+      "text": "请",
+      "pos": "social",
+      "category": "social",
+      "frequency": 9,
+      "icon": "chat-bubble"
+    },
+    {
+      "id": "thank-you",
+      "text": "谢谢",
+      "pos": "social",
+      "category": "social",
+      "frequency": 9,
+      "icon": "chat-bubble"
+    },
+    {
+      "id": "sorry",
+      "text": "对不起",
+      "pos": "social",
+      "category": "social",
+      "frequency": 9,
+      "icon": "chat-bubble"
+    },
+    {
+      "id": "hello",
+      "text": "你好",
+      "pos": "social",
+      "category": "social",
+      "frequency": 9,
+      "icon": "chat-bubble"
+    },
+    {
+      "id": "goodbye",
+      "text": "再见",
+      "pos": "social",
+      "category": "social",
+      "frequency": 9,
+      "icon": "chat-bubble"
+    },
+    {
+      "id": "more",
+      "text": "还要",
+      "pos": "social",
+      "category": "social",
+      "frequency": 9,
+      "icon": "chat-bubble"
+    },
+    {
+      "id": "all-done",
+      "text": "做完了",
+      "pos": "social",
+      "category": "social",
+      "frequency": 9,
+      "icon": "chat-bubble"
+    },
+    {
+      "id": "again",
+      "text": "再一次",
+      "pos": "social",
+      "category": "social",
+      "frequency": 9,
+      "icon": "chat-bubble"
+    },
+    {
+      "id": "finished",
+      "text": "完成了",
+      "pos": "social",
+      "category": "social",
+      "frequency": 9,
+      "icon": "chat-bubble",
+      "image": "https://data.tikocdn.org/uploads/1755617101267-house-finished.png"
+    },
+    {
+      "id": "okay",
+      "text": "好的",
+      "pos": "social",
+      "category": "social",
+      "frequency": 9,
+      "icon": "chat-bubble"
+    },
+    {
+      "id": "not-yet",
+      "text": "还没",
+      "pos": "social",
+      "category": "social",
+      "frequency": 9,
+      "icon": "chat-bubble"
+    },
+    {
+      "id": "maybe",
+      "text": "可能",
+      "pos": "social",
+      "category": "social",
+      "frequency": 9,
+      "icon": "chat-bubble"
+    },
+    {
+      "id": "what",
+      "text": "什么",
+      "pos": "question",
+      "category": "questions",
+      "frequency": 8,
+      "icon": "question-circle"
+    },
+    {
+      "id": "where",
+      "text": "哪里",
+      "pos": "question",
+      "category": "questions",
+      "frequency": 8,
+      "icon": "question-circle"
+    },
+    {
+      "id": "who",
+      "text": "谁",
+      "pos": "question",
+      "category": "questions",
+      "frequency": 8,
+      "icon": "question-circle"
+    },
+    {
+      "id": "when",
+      "text": "什么时候",
+      "pos": "question",
+      "category": "questions",
+      "frequency": 8,
+      "icon": "question-circle"
+    },
+    {
+      "id": "why",
+      "text": "为什么",
+      "pos": "question",
+      "category": "questions",
+      "frequency": 8,
+      "icon": "question-circle"
+    },
+    {
+      "id": "which",
+      "text": "哪个",
+      "pos": "question",
+      "category": "questions",
+      "frequency": 8,
+      "icon": "question-circle"
+    },
+    {
+      "id": "how",
+      "text": "怎么",
+      "pos": "question",
+      "category": "questions",
+      "frequency": 8,
+      "icon": "question-circle"
+    },
+    {
+      "id": "can",
+      "text": "可以",
+      "pos": "question",
+      "category": "questions",
+      "frequency": 8,
+      "icon": "question-circle"
+    },
+    {
+      "id": "is",
+      "text": "是",
+      "pos": "question",
+      "category": "questions",
+      "frequency": 8,
+      "icon": "question-circle"
+    },
+    {
+      "id": "are",
+      "text": "是不是",
+      "pos": "question",
+      "category": "questions",
+      "frequency": 8,
+      "icon": "question-circle"
+    },
+    {
+      "id": "a",
+      "text": "一个",
+      "pos": "determiner",
+      "category": "helpers",
+      "frequency": 8,
+      "icon": "text"
+    },
+    {
+      "id": "the",
+      "text": "这",
+      "pos": "determiner",
+      "category": "helpers",
+      "frequency": 8,
+      "icon": "text"
+    },
+    {
+      "id": "this",
+      "text": "这个",
+      "pos": "determiner",
+      "category": "helpers",
+      "frequency": 8,
+      "icon": "text"
+    },
+    {
+      "id": "that",
+      "text": "那个",
+      "pos": "determiner",
+      "category": "helpers",
+      "frequency": 8,
+      "icon": "text"
+    },
+    {
+      "id": "some",
+      "text": "一些",
+      "pos": "determiner",
+      "category": "helpers",
+      "frequency": 8,
+      "icon": "text"
+    },
+    {
+      "id": "one",
+      "text": "一",
+      "pos": "determiner",
+      "category": "helpers",
+      "frequency": 8,
+      "icon": "text"
+    },
+    {
+      "id": "two",
+      "text": "二",
+      "pos": "determiner",
+      "category": "helpers",
+      "frequency": 8,
+      "icon": "text"
+    },
+    {
+      "id": "three",
+      "text": "三",
+      "pos": "determiner",
+      "category": "helpers",
+      "frequency": 8,
+      "icon": "text"
+    },
+    {
+      "id": "many",
+      "text": "很多",
+      "pos": "determiner",
+      "category": "helpers",
+      "frequency": 8,
+      "icon": "text"
+    },
+    {
+      "id": "little",
+      "text": "一点",
+      "pos": "determiner",
+      "category": "helpers",
+      "frequency": 8,
+      "icon": "text"
+    },
+    {
+      "id": "big",
+      "text": "大",
+      "pos": "determiner",
+      "category": "helpers",
+      "frequency": 8,
+      "icon": "text"
+    },
+    {
+      "id": "in",
+      "text": "在",
+      "pos": "preposition",
+      "category": "positions",
+      "frequency": 7,
+      "icon": "arrow-right"
+    },
+    {
+      "id": "on",
+      "text": "上面",
+      "pos": "preposition",
+      "category": "positions",
+      "frequency": 7,
+      "icon": "arrow-right"
+    },
+    {
+      "id": "under",
+      "text": "下面",
+      "pos": "preposition",
+      "category": "positions",
+      "frequency": 7,
+      "icon": "arrow-right"
+    },
+    {
+      "id": "next-to",
+      "text": "旁边",
+      "pos": "preposition",
+      "category": "positions",
+      "frequency": 7,
+      "icon": "arrow-right"
+    },
+    {
+      "id": "with",
+      "text": "跟",
+      "pos": "preposition",
+      "category": "positions",
+      "frequency": 7,
+      "icon": "arrow-right"
+    },
+    {
+      "id": "without",
+      "text": "没有",
+      "pos": "preposition",
+      "category": "positions",
+      "frequency": 7,
+      "icon": "arrow-right"
+    },
+    {
+      "id": "to",
+      "text": "到",
+      "pos": "preposition",
+      "category": "positions",
+      "frequency": 7,
+      "icon": "arrow-right"
+    },
+    {
+      "id": "from",
+      "text": "从",
+      "pos": "preposition",
+      "category": "positions",
+      "frequency": 7,
+      "icon": "arrow-right"
+    },
+    {
+      "id": "inside",
+      "text": "里面",
+      "pos": "preposition",
+      "category": "positions",
+      "frequency": 7,
+      "icon": "arrow-right"
+    },
+    {
+      "id": "outside",
+      "text": "外面",
+      "pos": "preposition",
+      "category": "positions",
+      "frequency": 7,
+      "icon": "arrow-right"
+    },
+    {
+      "id": "near",
+      "text": "附近",
+      "pos": "preposition",
+      "category": "positions",
+      "frequency": 7,
+      "icon": "arrow-right"
+    },
+    {
+      "id": "far",
+      "text": "远",
+      "pos": "preposition",
+      "category": "positions",
+      "frequency": 7,
+      "icon": "arrow-right"
+    },
+    {
+      "id": "here",
+      "text": "这里",
+      "pos": "adverb",
+      "category": "positions",
+      "frequency": 9,
+      "icon": "arrow-right"
+    },
+    {
+      "id": "there",
+      "text": "那里",
+      "pos": "adverb",
+      "category": "positions",
+      "frequency": 9,
+      "icon": "arrow-right"
+    },
+    {
+      "id": "up",
+      "text": "上",
+      "pos": "adverb",
+      "category": "positions",
+      "frequency": 8,
+      "icon": "arrow-right"
+    },
+    {
+      "id": "down",
+      "text": "下",
+      "pos": "adverb",
+      "category": "positions",
+      "frequency": 8,
+      "icon": "arrow-right"
+    },
+    {
+      "id": "off",
+      "text": "关掉",
+      "pos": "adverb",
+      "category": "positions",
+      "frequency": 7,
+      "icon": "arrow-right"
+    },
+    {
+      "id": "away",
+      "text": "走开",
+      "pos": "adverb",
+      "category": "positions",
+      "frequency": 7,
+      "icon": "arrow-right"
+    },
+    {
+      "id": "together",
+      "text": "一起",
+      "pos": "adverb",
+      "category": "positions",
+      "frequency": 6,
+      "icon": "arrow-right"
+    },
+    {
+      "id": "and",
+      "text": "和",
+      "pos": "conjunction",
+      "category": "helpers",
+      "frequency": 6,
+      "icon": "branch"
+    },
+    {
+      "id": "or",
+      "text": "或者",
+      "pos": "conjunction",
+      "category": "helpers",
+      "frequency": 6,
+      "icon": "branch"
+    },
+    {
+      "id": "because",
+      "text": "因为",
+      "pos": "conjunction",
+      "category": "helpers",
+      "frequency": 6,
+      "icon": "branch"
+    },
+    {
+      "id": "then",
+      "text": "然后",
+      "pos": "conjunction",
+      "category": "helpers",
+      "frequency": 6,
+      "icon": "branch"
+    },
+    {
+      "id": "but",
+      "text": "但是",
+      "pos": "conjunction",
+      "category": "helpers",
+      "frequency": 6,
+      "icon": "branch"
+    },
+    {
+      "id": "not",
+      "text": "不",
+      "pos": "negation",
+      "category": "helpers",
+      "frequency": 10,
+      "icon": "text"
+    },
+    {
+      "id": "all",
+      "text": "全部",
+      "pos": "determiner",
+      "category": "helpers",
+      "frequency": 8,
+      "icon": "text"
+    },
+    {
+      "id": "another",
+      "text": "再一个",
+      "pos": "determiner",
+      "category": "helpers",
+      "frequency": 7,
+      "icon": "text"
+    },
+    {
+      "id": "water",
+      "text": "水",
+      "pos": "noun",
+      "category": "drinks",
+      "frequency": 8,
+      "icon": "water"
+    },
+    {
+      "id": "milk",
+      "text": "牛奶",
+      "pos": "noun",
+      "category": "drinks",
+      "frequency": 8,
+      "icon": "water",
+      "image": "https://data.tikocdn.org/uploads/1755624098419-kirby-and-the-forgotten-land.png"
+    },
+    {
+      "id": "juice",
+      "text": "果汁",
+      "pos": "noun",
+      "category": "drinks",
+      "frequency": 8,
+      "icon": "water"
+    },
+    {
+      "id": "tea",
+      "text": "茶",
+      "pos": "noun",
+      "category": "drinks",
+      "frequency": 8,
+      "icon": "water",
+      "image": "https://data.tikocdn.org/uploads/1756293128101-tea-kettle.png"
+    },
+    {
+      "id": "smoothie",
+      "text": "奶昔",
+      "pos": "noun",
+      "category": "drinks",
+      "frequency": 8,
+      "icon": "water",
+      "image": "https://data.tikocdn.org/uploads/1753451476359-smoothie.png"
+    },
+    {
+      "id": "lemonade",
+      "text": "柠檬水",
+      "pos": "noun",
+      "category": "drinks",
+      "frequency": 8,
+      "icon": "water",
+      "image": "https://data.tikocdn.org/uploads/1753451510315-lemonade.png"
+    },
+    {
+      "id": "hot-drink",
+      "text": "热饮",
+      "pos": "noun",
+      "category": "drinks",
+      "frequency": 8,
+      "icon": "water"
+    },
+    {
+      "id": "cold-drink",
+      "text": "冷饮",
+      "pos": "noun",
+      "category": "drinks",
+      "frequency": 8,
+      "icon": "water"
+    },
+    {
+      "id": "cup",
+      "text": "杯子",
+      "pos": "noun",
+      "category": "drinks",
+      "frequency": 8,
+      "icon": "water",
+      "image": "https://data.tikocdn.org/uploads/1756292863905-toothbrushes-in-cup.png"
+    },
+    {
+      "id": "straw",
+      "text": "吸管",
+      "pos": "noun",
+      "category": "drinks",
+      "frequency": 8,
+      "icon": "water",
+      "image": "https://data.tikocdn.org/uploads/1754732213846-reusable-straw.png"
+    },
+    {
+      "id": "bottle",
+      "text": "瓶子",
+      "pos": "noun",
+      "category": "drinks",
+      "frequency": 8,
+      "icon": "water",
+      "image": "https://data.tikocdn.org/uploads/1755105708364-water-bottle.png"
+    },
+    {
+      "id": "sip",
+      "text": "一小口",
+      "pos": "noun",
+      "category": "drinks",
+      "frequency": 8,
+      "icon": "water"
+    },
+    {
+      "id": "apple",
+      "text": "苹果",
+      "pos": "noun",
+      "category": "food",
+      "frequency": 8,
+      "icon": "apple",
+      "image": "https://data.tikocdn.org/uploads/1756292940670-golden-apple.png"
+    },
+    {
+      "id": "banana",
+      "text": "香蕉",
+      "pos": "noun",
+      "category": "food",
+      "frequency": 8,
+      "icon": "apple",
+      "image": "https://data.tikocdn.org/uploads/1755286983850-banana.png"
+    },
+    {
+      "id": "bread",
+      "text": "面包",
+      "pos": "noun",
+      "category": "food",
+      "frequency": 8,
+      "icon": "apple",
+      "image": "https://data.tikocdn.org/uploads/1755290972081-pide-bread.png"
+    },
+    {
+      "id": "toast",
+      "text": "烤面包",
+      "pos": "noun",
+      "category": "food",
+      "frequency": 8,
+      "icon": "apple",
+      "image": "https://data.tikocdn.org/uploads/1755286514343-fried-egg-on-toast.png"
+    },
+    {
+      "id": "sandwich",
+      "text": "三明治",
+      "pos": "noun",
+      "category": "food",
+      "frequency": 8,
+      "icon": "apple",
+      "image": "https://data.tikocdn.org/uploads/1781021862923-sandwich.png"
+    },
+    {
+      "id": "rice",
+      "text": "米饭",
+      "pos": "noun",
+      "category": "food",
+      "frequency": 8,
+      "icon": "apple",
+      "image": "https://data.tikocdn.org/uploads/1756293151213-ricecooker.png"
+    },
+    {
+      "id": "pasta",
+      "text": "意大利面",
+      "pos": "noun",
+      "category": "food",
+      "frequency": 8,
+      "icon": "apple",
+      "image": "https://data.tikocdn.org/uploads/1754731989461-jar-of-pasta.png"
+    },
+    {
+      "id": "soup",
+      "text": "汤",
+      "pos": "noun",
+      "category": "food",
+      "frequency": 8,
+      "icon": "apple",
+      "image": "https://data.tikocdn.org/uploads/1754732309169-soup-ladle.png"
+    },
+    {
+      "id": "yogurt",
+      "text": "酸奶",
+      "pos": "noun",
+      "category": "food",
+      "frequency": 8,
+      "icon": "apple",
+      "image": "https://data.tikocdn.org/uploads/1753772684470-spas-yogurt-soup.png"
+    },
+    {
+      "id": "cheese",
+      "text": "奶酪",
+      "pos": "noun",
+      "category": "food",
+      "frequency": 8,
+      "icon": "apple"
+    },
+    {
+      "id": "cracker",
+      "text": "咸饼干",
+      "pos": "noun",
+      "category": "food",
+      "frequency": 8,
+      "icon": "apple",
+      "image": "https://data.tikocdn.org/uploads/1781470952178-cracker.png"
+    },
+    {
+      "id": "carrot",
+      "text": "胡萝卜",
+      "pos": "noun",
+      "category": "food",
+      "frequency": 8,
+      "icon": "apple",
+      "image": "https://data.tikocdn.org/uploads/1753448184127-carrot.png"
+    },
+    {
+      "id": "chips",
+      "text": "薯条",
+      "pos": "noun",
+      "category": "food",
+      "frequency": 8,
+      "icon": "apple",
+      "image": "https://data.tikocdn.org/uploads/1753282919807-fish-chips.png"
+    },
+    {
+      "id": "cookie",
+      "text": "饼干",
+      "pos": "noun",
+      "category": "food",
+      "frequency": 8,
+      "icon": "apple",
+      "image": "https://data.tikocdn.org/uploads/1755286480193-cookie.png"
+    },
+    {
+      "id": "egg",
+      "text": "鸡蛋",
+      "pos": "noun",
+      "category": "food",
+      "frequency": 8,
+      "icon": "apple",
+      "image": "https://data.tikocdn.org/uploads/1781374488401-egg.png"
+    },
+    {
+      "id": "cereal",
+      "text": "麦片",
+      "pos": "noun",
+      "category": "food",
+      "frequency": 8,
+      "icon": "apple",
+      "image": "https://data.tikocdn.org/uploads/1781470544730-cereal.png"
+    },
+    {
+      "id": "fruit",
+      "text": "水果",
+      "pos": "noun",
+      "category": "food",
+      "frequency": 8,
+      "icon": "apple"
+    },
+    {
+      "id": "snack",
+      "text": "零食",
+      "pos": "noun",
+      "category": "food",
+      "frequency": 8,
+      "icon": "apple",
+      "image": "https://data.tikocdn.org/uploads/1781443428722-plate-of-snack-foods.png"
+    },
+    {
+      "id": "dinner",
+      "text": "晚饭",
+      "pos": "noun",
+      "category": "food",
+      "frequency": 8,
+      "icon": "apple",
+      "image": "https://data.tikocdn.org/uploads/1755455040733-dinner.png"
+    },
+    {
+      "id": "lunch",
+      "text": "午饭",
+      "pos": "noun",
+      "category": "food",
+      "frequency": 8,
+      "icon": "apple",
+      "image": "https://data.tikocdn.org/uploads/1755455052116-lunch.png"
+    },
+    {
+      "id": "happy",
+      "text": "开心",
+      "pos": "adjective",
+      "category": "feelings",
+      "frequency": 9,
+      "icon": "smile",
+      "image": "https://data.tikocdn.org/uploads/1756901925456-happy-boy-disney-pixar-style.png"
+    },
+    {
+      "id": "sad",
+      "text": "难过",
+      "pos": "adjective",
+      "category": "feelings",
+      "frequency": 9,
+      "icon": "smile",
+      "image": "https://data.tikocdn.org/uploads/1754688205220-emotion-sad-boy.png"
+    },
+    {
+      "id": "angry",
+      "text": "生气",
+      "pos": "adjective",
+      "category": "feelings",
+      "frequency": 9,
+      "icon": "smile",
+      "image": "https://data.tikocdn.org/uploads/1754688232560-emotion-angry.png"
+    },
+    {
+      "id": "worried",
+      "text": "担心",
+      "pos": "adjective",
+      "category": "feelings",
+      "frequency": 9,
+      "icon": "smile",
+      "image": "https://data.tikocdn.org/uploads/1754739808295-emotion-worried.png"
+    },
+    {
+      "id": "scared",
+      "text": "害怕",
+      "pos": "adjective",
+      "category": "feelings",
+      "frequency": 9,
+      "icon": "smile",
+      "image": "https://data.tikocdn.org/uploads/1754857383614-girl-scared.png"
+    },
+    {
+      "id": "tired",
+      "text": "累",
+      "pos": "adjective",
+      "category": "feelings",
+      "frequency": 9,
+      "icon": "smile",
+      "image": "https://data.tikocdn.org/uploads/1754857341192-girl-im-tired.png"
+    },
+    {
+      "id": "sick",
+      "text": "生病",
+      "pos": "adjective",
+      "category": "feelings",
+      "frequency": 9,
+      "icon": "smile",
+      "image": "https://data.tikocdn.org/uploads/1754857314148-girl-im-sick.png"
+    },
+    {
+      "id": "hurt",
+      "text": "疼",
+      "pos": "adjective",
+      "category": "feelings",
+      "frequency": 9,
+      "icon": "smile"
+    },
+    {
+      "id": "calm",
+      "text": "平静",
+      "pos": "adjective",
+      "category": "feelings",
+      "frequency": 9,
+      "icon": "smile"
+    },
+    {
+      "id": "excited",
+      "text": "兴奋",
+      "pos": "adjective",
+      "category": "feelings",
+      "frequency": 9,
+      "icon": "smile",
+      "image": "https://data.tikocdn.org/uploads/1754688148492-emotion-excited-boy.png"
+    },
+    {
+      "id": "confused",
+      "text": "不明白",
+      "pos": "adjective",
+      "category": "feelings",
+      "frequency": 9,
+      "icon": "smile",
+      "image": "https://data.tikocdn.org/uploads/1754688114785-emotion-confused.png"
+    },
+    {
+      "id": "proud",
+      "text": "自豪",
+      "pos": "adjective",
+      "category": "feelings",
+      "frequency": 9,
+      "icon": "smile",
+      "image": "https://data.tikocdn.org/uploads/1754687852045-emotion-proud-girl.png"
+    },
+    {
+      "id": "lonely",
+      "text": "孤单",
+      "pos": "adjective",
+      "category": "feelings",
+      "frequency": 9,
+      "icon": "smile",
+      "image": "https://data.tikocdn.org/uploads/1754688067529-emotion-lonely.png"
+    },
+    {
+      "id": "bored",
+      "text": "无聊",
+      "pos": "adjective",
+      "category": "feelings",
+      "frequency": 9,
+      "icon": "smile",
+      "image": "https://data.tikocdn.org/uploads/1754687814850-emotion-bored.png"
+    },
+    {
+      "id": "safe",
+      "text": "安全",
+      "pos": "adjective",
+      "category": "feelings",
+      "frequency": 9,
+      "icon": "smile"
+    },
+    {
+      "id": "upset",
+      "text": "不高兴",
+      "pos": "adjective",
+      "category": "feelings",
+      "frequency": 9,
+      "icon": "smile"
+    },
+    {
+      "id": "okay-2",
+      "text": "还好",
+      "pos": "adjective",
+      "category": "feelings",
+      "frequency": 9,
+      "icon": "smile"
+    },
+    {
+      "id": "hot",
+      "text": "热",
+      "pos": "adjective",
+      "category": "feelings",
+      "frequency": 9,
+      "icon": "smile"
+    },
+    {
+      "id": "cold",
+      "text": "冷",
+      "pos": "adjective",
+      "category": "feelings",
+      "frequency": 9,
+      "icon": "smile"
+    },
+    {
+      "id": "hungry",
+      "text": "饿",
+      "pos": "adjective",
+      "category": "feelings",
+      "frequency": 9,
+      "icon": "smile"
+    },
+    {
+      "id": "thirsty",
+      "text": "渴",
+      "pos": "adjective",
+      "category": "feelings",
+      "frequency": 9,
+      "icon": "smile"
+    },
+    {
+      "id": "head",
+      "text": "头",
+      "pos": "noun",
+      "category": "body",
+      "frequency": 6,
+      "icon": "body",
+      "image": "https://data.tikocdn.org/uploads/1781021866617-head.png"
+    },
+    {
+      "id": "hand",
+      "text": "手",
+      "pos": "noun",
+      "category": "body",
+      "frequency": 6,
+      "icon": "body"
+    },
+    {
+      "id": "foot",
+      "text": "脚",
+      "pos": "noun",
+      "category": "body",
+      "frequency": 6,
+      "icon": "body"
+    },
+    {
+      "id": "tummy",
+      "text": "肚子",
+      "pos": "noun",
+      "category": "body",
+      "frequency": 6,
+      "icon": "body"
+    },
+    {
+      "id": "mouth",
+      "text": "嘴巴",
+      "pos": "noun",
+      "category": "body",
+      "frequency": 6,
+      "icon": "body",
+      "image": "https://data.tikocdn.org/uploads/1756128342077-human-mouth.png"
+    },
+    {
+      "id": "ear",
+      "text": "耳朵",
+      "pos": "noun",
+      "category": "body",
+      "frequency": 6,
+      "icon": "body"
+    },
+    {
+      "id": "eye",
+      "text": "眼睛",
+      "pos": "noun",
+      "category": "body",
+      "frequency": 6,
+      "icon": "body",
+      "image": "https://data.tikocdn.org/uploads/1756128223153-human-eye.png"
+    },
+    {
+      "id": "arm",
+      "text": "胳膊",
+      "pos": "noun",
+      "category": "body",
+      "frequency": 6,
+      "icon": "body",
+      "image": "https://data.tikocdn.org/uploads/1756473758354-human-arm.png"
+    },
+    {
+      "id": "leg",
+      "text": "腿",
+      "pos": "noun",
+      "category": "body",
+      "frequency": 6,
+      "icon": "body",
+      "image": "https://data.tikocdn.org/uploads/1756128317552-human-leg.png"
+    },
+    {
+      "id": "back",
+      "text": "背",
+      "pos": "noun",
+      "category": "body",
+      "frequency": 6,
+      "icon": "body"
+    },
+    {
+      "id": "tooth",
+      "text": "牙齿",
+      "pos": "noun",
+      "category": "body",
+      "frequency": 6,
+      "icon": "body",
+      "image": "https://data.tikocdn.org/uploads/1754662438843-tooth.png"
+    },
+    {
+      "id": "hair",
+      "text": "头发",
+      "pos": "noun",
+      "category": "body",
+      "frequency": 6,
+      "icon": "body"
+    },
+    {
+      "id": "nose",
+      "text": "鼻子",
+      "pos": "noun",
+      "category": "body",
+      "frequency": 6,
+      "icon": "body",
+      "image": "https://data.tikocdn.org/uploads/1756128358450-human-nose.png"
+    },
+    {
+      "id": "skin",
+      "text": "皮肤",
+      "pos": "noun",
+      "category": "body",
+      "frequency": 6,
+      "icon": "body"
+    },
+    {
+      "id": "heart",
+      "text": "心脏",
+      "pos": "noun",
+      "category": "body",
+      "frequency": 6,
+      "icon": "body"
+    },
+    {
+      "id": "home",
+      "text": "家",
+      "pos": "noun",
+      "category": "places",
+      "frequency": 7,
+      "icon": "home"
+    },
+    {
+      "id": "school",
+      "text": "学校",
+      "pos": "noun",
+      "category": "places",
+      "frequency": 7,
+      "icon": "home"
+    },
+    {
+      "id": "classroom",
+      "text": "教室",
+      "pos": "noun",
+      "category": "places",
+      "frequency": 7,
+      "icon": "home"
+    },
+    {
+      "id": "bathroom",
+      "text": "卫生间",
+      "pos": "noun",
+      "category": "places",
+      "frequency": 7,
+      "icon": "home"
+    },
+    {
+      "id": "kitchen",
+      "text": "厨房",
+      "pos": "noun",
+      "category": "places",
+      "frequency": 7,
+      "icon": "home",
+      "image": "https://data.tikocdn.org/uploads/1781443445242-kids-kitchen.png"
+    },
+    {
+      "id": "bedroom",
+      "text": "卧室",
+      "pos": "noun",
+      "category": "places",
+      "frequency": 7,
+      "icon": "home"
+    },
+    {
+      "id": "garden",
+      "text": "花园",
+      "pos": "noun",
+      "category": "places",
+      "frequency": 7,
+      "icon": "home"
+    },
+    {
+      "id": "shop",
+      "text": "商店",
+      "pos": "noun",
+      "category": "places",
+      "frequency": 7,
+      "icon": "home"
+    },
+    {
+      "id": "car",
+      "text": "汽车",
+      "pos": "noun",
+      "category": "places",
+      "frequency": 7,
+      "icon": "home"
+    },
+    {
+      "id": "bus",
+      "text": "公交车",
+      "pos": "noun",
+      "category": "places",
+      "frequency": 7,
+      "icon": "home"
+    },
+    {
+      "id": "park",
+      "text": "公园",
+      "pos": "noun",
+      "category": "places",
+      "frequency": 7,
+      "icon": "home",
+      "image": "https://data.tikocdn.org/uploads/1781443441644-generated.png"
+    },
+    {
+      "id": "playground",
+      "text": "游乐场",
+      "pos": "noun",
+      "category": "places",
+      "frequency": 7,
+      "icon": "home",
+      "image": "https://data.tikocdn.org/uploads/1781021542071-playground.png"
+    },
+    {
+      "id": "library",
+      "text": "图书馆",
+      "pos": "noun",
+      "category": "places",
+      "frequency": 7,
+      "icon": "home",
+      "image": "https://data.tikocdn.org/uploads/1754663673001-library.png"
+    },
+    {
+      "id": "pool",
+      "text": "游泳池",
+      "pos": "noun",
+      "category": "places",
+      "frequency": 7,
+      "icon": "home",
+      "image": "https://data.tikocdn.org/uploads/1754741588695-pool-table.png"
+    },
+    {
+      "id": "table",
+      "text": "桌子",
+      "pos": "noun",
+      "category": "home",
+      "frequency": 7,
+      "icon": "home",
+      "image": "https://data.tikocdn.org/uploads/1756292929848-table-tennis-table.png"
+    },
+    {
+      "id": "chair",
+      "text": "椅子",
+      "pos": "noun",
+      "category": "home",
+      "frequency": 7,
+      "icon": "home",
+      "image": "https://data.tikocdn.org/uploads/1756293239181-gaming-chair.png"
+    },
+    {
+      "id": "sofa",
+      "text": "沙发",
+      "pos": "noun",
+      "category": "home",
+      "frequency": 7,
+      "icon": "home",
+      "image": "https://data.tikocdn.org/uploads/1754569010181-sofa.png"
+    },
+    {
+      "id": "bed",
+      "text": "床",
+      "pos": "noun",
+      "category": "home",
+      "frequency": 7,
+      "icon": "home"
+    },
+    {
+      "id": "door",
+      "text": "门",
+      "pos": "noun",
+      "category": "home",
+      "frequency": 7,
+      "icon": "home"
+    },
+    {
+      "id": "window",
+      "text": "窗户",
+      "pos": "noun",
+      "category": "home",
+      "frequency": 7,
+      "icon": "home"
+    },
+    {
+      "id": "book",
+      "text": "书",
+      "pos": "noun",
+      "category": "school",
+      "frequency": 6,
+      "icon": "book",
+      "image": "https://data.tikocdn.org/uploads/1781474706796-teddy-bear-with-book.png"
+    },
+    {
+      "id": "pencil",
+      "text": "铅笔",
+      "pos": "noun",
+      "category": "school",
+      "frequency": 6,
+      "icon": "book",
+      "image": "https://data.tikocdn.org/uploads/1755106280944-pencil.png"
+    },
+    {
+      "id": "paper",
+      "text": "纸",
+      "pos": "noun",
+      "category": "school",
+      "frequency": 6,
+      "icon": "book"
+    },
+    {
+      "id": "bag",
+      "text": "书包",
+      "pos": "noun",
+      "category": "school",
+      "frequency": 6,
+      "icon": "book",
+      "image": "https://data.tikocdn.org/uploads/1754988042752-bag-of-tools-1.png"
+    },
+    {
+      "id": "coat",
+      "text": "外套",
+      "pos": "noun",
+      "category": "school",
+      "frequency": 6,
+      "icon": "book"
+    },
+    {
+      "id": "shoes",
+      "text": "鞋子",
+      "pos": "noun",
+      "category": "school",
+      "frequency": 6,
+      "icon": "book",
+      "image": "https://data.tikocdn.org/uploads/1756144652467-adidas-campus-shoes.png"
+    },
+    {
+      "id": "lunchbox",
+      "text": "饭盒",
+      "pos": "noun",
+      "category": "school",
+      "frequency": 6,
+      "icon": "book",
+      "image": "https://data.tikocdn.org/uploads/1755105586186-lunchbox.png"
+    },
+    {
+      "id": "tablet",
+      "text": "平板电脑",
+      "pos": "noun",
+      "category": "school",
+      "frequency": 6,
+      "icon": "book",
+      "image": "https://data.tikocdn.org/uploads/1754986350201-tablet.png"
+    },
+    {
+      "id": "screen",
+      "text": "屏幕",
+      "pos": "noun",
+      "category": "school",
+      "frequency": 6,
+      "icon": "book"
+    },
+    {
+      "id": "timer",
+      "text": "计时器",
+      "pos": "noun",
+      "category": "school",
+      "frequency": 6,
+      "icon": "book",
+      "image": "https://data.tikocdn.org/uploads/1754413853153-timer2.png"
+    },
+    {
+      "id": "schedule",
+      "text": "时间表",
+      "pos": "noun",
+      "category": "school",
+      "frequency": 6,
+      "icon": "book"
+    },
+    {
+      "id": "picture",
+      "text": "图片",
+      "pos": "noun",
+      "category": "school",
+      "frequency": 6,
+      "icon": "book"
+    },
+    {
+      "id": "card",
+      "text": "卡片",
+      "pos": "noun",
+      "category": "school",
+      "frequency": 6,
+      "icon": "book",
+      "image": "https://data.tikocdn.org/uploads/1754741501044-bingo-card.png"
+    },
+    {
+      "id": "story",
+      "text": "故事",
+      "pos": "noun",
+      "category": "school",
+      "frequency": 6,
+      "icon": "book"
+    },
+    {
+      "id": "music",
+      "text": "音乐",
+      "pos": "noun",
+      "category": "school",
+      "frequency": 6,
+      "icon": "book",
+      "image": "https://data.tikocdn.org/uploads/1755106316235-music-note.png"
+    },
+    {
+      "id": "ball",
+      "text": "球",
+      "pos": "noun",
+      "category": "toys",
+      "frequency": 6,
+      "icon": "puzzle",
+      "image": "https://data.tikocdn.org/uploads/1755624225308-pok-mon-red-blue.png"
+    },
+    {
+      "id": "blocks",
+      "text": "积木",
+      "pos": "noun",
+      "category": "toys",
+      "frequency": 6,
+      "icon": "puzzle",
+      "image": "https://data.tikocdn.org/uploads/1755680491621-a-b-c-sequence.png"
+    },
+    {
+      "id": "doll",
+      "text": "娃娃",
+      "pos": "noun",
+      "category": "toys",
+      "frequency": 6,
+      "icon": "puzzle",
+      "image": "https://data.tikocdn.org/uploads/1754860491004-babushka.png"
+    },
+    {
+      "id": "car-toy",
+      "text": "玩具车",
+      "pos": "noun",
+      "category": "toys",
+      "frequency": 6,
+      "icon": "puzzle"
+    },
+    {
+      "id": "train",
+      "text": "火车",
+      "pos": "noun",
+      "category": "toys",
+      "frequency": 6,
+      "icon": "puzzle",
+      "image": "https://data.tikocdn.org/uploads/1756293139653-model-trains.png"
+    },
+    {
+      "id": "puzzle",
+      "text": "拼图",
+      "pos": "noun",
+      "category": "toys",
+      "frequency": 6,
+      "icon": "puzzle",
+      "image": "https://data.tikocdn.org/uploads/1755105977331-puzzle-piece.png"
+    },
+    {
+      "id": "game",
+      "text": "游戏",
+      "pos": "noun",
+      "category": "toys",
+      "frequency": 6,
+      "icon": "puzzle"
+    },
+    {
+      "id": "paint",
+      "text": "颜料",
+      "pos": "noun",
+      "category": "toys",
+      "frequency": 6,
+      "icon": "puzzle",
+      "image": "https://data.tikocdn.org/uploads/1755106304863-paint-palette.png"
+    },
+    {
+      "id": "clay",
+      "text": "橡皮泥",
+      "pos": "noun",
+      "category": "toys",
+      "frequency": 6,
+      "icon": "puzzle"
+    },
+    {
+      "id": "bubbles",
+      "text": "泡泡",
+      "pos": "noun",
+      "category": "toys",
+      "frequency": 6,
+      "icon": "puzzle"
+    },
+    {
+      "id": "swing",
+      "text": "秋千",
+      "pos": "noun",
+      "category": "toys",
+      "frequency": 6,
+      "icon": "puzzle",
+      "image": "https://data.tikocdn.org/uploads/1781021543058-swing.png"
+    },
+    {
+      "id": "slide",
+      "text": "滑梯",
+      "pos": "noun",
+      "category": "toys",
+      "frequency": 6,
+      "icon": "puzzle",
+      "image": "https://data.tikocdn.org/uploads/1781021473617-slide.png"
+    },
+    {
+      "id": "bike",
+      "text": "自行车",
+      "pos": "noun",
+      "category": "toys",
+      "frequency": 6,
+      "icon": "puzzle",
+      "image": "https://data.tikocdn.org/uploads/1755105272207-stationary-bike.png"
+    },
+    {
+      "id": "teddy",
+      "text": "泰迪熊",
+      "pos": "noun",
+      "category": "toys",
+      "frequency": 6,
+      "icon": "puzzle",
+      "image": "https://data.tikocdn.org/uploads/1781474706796-teddy-bear-with-book.png"
+    },
+    {
+      "id": "lego",
+      "text": "乐高",
+      "pos": "noun",
+      "category": "toys",
+      "frequency": 6,
+      "icon": "puzzle",
+      "image": "https://data.tikocdn.org/uploads/1755624111907-lego-star-wars-the-skywalker-saga.png"
+    },
+    {
+      "id": "red",
+      "text": "红色",
+      "pos": "adjective",
+      "category": "colors",
+      "frequency": 5,
+      "icon": "palette",
+      "image": "https://data.tikocdn.org/uploads/1756293164075-red-velvet-mite.png"
+    },
+    {
+      "id": "blue",
+      "text": "蓝色",
+      "pos": "adjective",
+      "category": "colors",
+      "frequency": 5,
+      "icon": "palette",
+      "image": "https://data.tikocdn.org/uploads/1756292886243-blue-ribbon.png"
+    },
+    {
+      "id": "green",
+      "text": "绿色",
+      "pos": "adjective",
+      "category": "colors",
+      "frequency": 5,
+      "icon": "palette",
+      "image": "https://data.tikocdn.org/uploads/1756128110497-green-apple.png"
+    },
+    {
+      "id": "yellow",
+      "text": "黄色",
+      "pos": "adjective",
+      "category": "colors",
+      "frequency": 5,
+      "icon": "palette",
+      "image": "https://data.tikocdn.org/uploads/1756127975148-blue-and-yellow-macaw.png"
+    },
+    {
+      "id": "orange",
+      "text": "橙色",
+      "pos": "adjective",
+      "category": "colors",
+      "frequency": 5,
+      "icon": "palette"
+    },
+    {
+      "id": "purple",
+      "text": "紫色",
+      "pos": "adjective",
+      "category": "colors",
+      "frequency": 5,
+      "icon": "palette",
+      "image": "https://data.tikocdn.org/uploads/1754662713276-purple-star.png"
+    },
+    {
+      "id": "pink",
+      "text": "粉色",
+      "pos": "adjective",
+      "category": "colors",
+      "frequency": 5,
+      "icon": "palette",
+      "image": "https://data.tikocdn.org/uploads/1755354254398-pink-tulip.png"
+    },
+    {
+      "id": "brown",
+      "text": "棕色",
+      "pos": "adjective",
+      "category": "colors",
+      "frequency": 5,
+      "icon": "palette"
+    },
+    {
+      "id": "black",
+      "text": "黑色",
+      "pos": "adjective",
+      "category": "colors",
+      "frequency": 5,
+      "icon": "palette"
+    },
+    {
+      "id": "white",
+      "text": "白色",
+      "pos": "adjective",
+      "category": "colors",
+      "frequency": 5,
+      "icon": "palette",
+      "image": "https://data.tikocdn.org/uploads/1755587227281-white-dove-with-branch.png"
+    },
+    {
+      "id": "grey",
+      "text": "灰色",
+      "pos": "adjective",
+      "category": "colors",
+      "frequency": 5,
+      "icon": "palette",
+      "image": "https://data.tikocdn.org/uploads/1753597634531-african-grey-parrot.png"
+    },
+    {
+      "id": "bright",
+      "text": "亮",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "palette"
+    },
+    {
+      "id": "dark",
+      "text": "暗",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "palette",
+      "image": "https://data.tikocdn.org/uploads/1755286874263-woman-with-dark-brown-hair.png"
+    },
+    {
+      "id": "soft",
+      "text": "软",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "palette"
+    },
+    {
+      "id": "hard",
+      "text": "硬",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "palette"
+    },
+    {
+      "id": "quiet",
+      "text": "安静",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "palette"
+    },
+    {
+      "id": "loud",
+      "text": "吵",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "palette",
+      "image": "https://data.tikocdn.org/uploads/1754857413077-girl-too-loud.png"
+    },
+    {
+      "id": "fast",
+      "text": "快",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "palette"
+    },
+    {
+      "id": "slow",
+      "text": "慢",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "palette",
+      "image": "https://data.tikocdn.org/uploads/1754732295324-slow-cooker.png"
+    },
+    {
+      "id": "clean",
+      "text": "干净",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "palette"
+    },
+    {
+      "id": "dirty",
+      "text": "脏",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "palette"
+    },
+    {
+      "id": "wet",
+      "text": "湿",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "palette"
+    },
+    {
+      "id": "dry",
+      "text": "干",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "palette"
+    },
+    {
+      "id": "new",
+      "text": "新",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "palette"
+    },
+    {
+      "id": "old",
+      "text": "旧",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "palette"
+    },
+    {
+      "id": "now",
+      "text": "现在",
+      "pos": "adverb",
+      "category": "time",
+      "frequency": 6,
+      "icon": "clock"
+    },
+    {
+      "id": "later",
+      "text": "等一会儿",
+      "pos": "adverb",
+      "category": "time",
+      "frequency": 6,
+      "icon": "clock"
+    },
+    {
+      "id": "today",
+      "text": "今天",
+      "pos": "adverb",
+      "category": "time",
+      "frequency": 6,
+      "icon": "clock"
+    },
+    {
+      "id": "tomorrow",
+      "text": "明天",
+      "pos": "adverb",
+      "category": "time",
+      "frequency": 6,
+      "icon": "clock"
+    },
+    {
+      "id": "morning",
+      "text": "早上",
+      "pos": "adverb",
+      "category": "time",
+      "frequency": 6,
+      "icon": "clock",
+      "image": "https://data.tikocdn.org/uploads/1756182914290-morning-star.png"
+    },
+    {
+      "id": "afternoon",
+      "text": "下午",
+      "pos": "adverb",
+      "category": "time",
+      "frequency": 6,
+      "icon": "clock"
+    },
+    {
+      "id": "night",
+      "text": "晚上",
+      "pos": "adverb",
+      "category": "time",
+      "frequency": 6,
+      "icon": "clock"
+    },
+    {
+      "id": "before",
+      "text": "之前",
+      "pos": "adverb",
+      "category": "time",
+      "frequency": 6,
+      "icon": "clock"
+    },
+    {
+      "id": "after",
+      "text": "之后",
+      "pos": "adverb",
+      "category": "time",
+      "frequency": 6,
+      "icon": "clock"
+    },
+    {
+      "id": "soon",
+      "text": "很快",
+      "pos": "adverb",
+      "category": "time",
+      "frequency": 6,
+      "icon": "clock"
+    },
+    {
+      "id": "first",
+      "text": "先",
+      "pos": "adverb",
+      "category": "time",
+      "frequency": 6,
+      "icon": "clock"
+    },
+    {
+      "id": "next",
+      "text": "下一个",
+      "pos": "adverb",
+      "category": "time",
+      "frequency": 6,
+      "icon": "clock",
+      "image": "https://data.tikocdn.org/uploads/1755454465323-letter-n-next.png"
+    },
+    {
+      "id": "last",
+      "text": "最后",
+      "pos": "adverb",
+      "category": "time",
+      "frequency": 6,
+      "icon": "clock"
+    },
+    {
+      "id": "minute",
+      "text": "分钟",
+      "pos": "adverb",
+      "category": "time",
+      "frequency": 6,
+      "icon": "clock"
+    },
+    {
+      "id": "hour",
+      "text": "小时",
+      "pos": "adverb",
+      "category": "time",
+      "frequency": 6,
+      "icon": "clock"
+    },
+    {
+      "id": "break",
+      "text": "休息一下",
+      "pos": "noun",
+      "category": "needs",
+      "frequency": 8,
+      "icon": "heart-hand"
+    },
+    {
+      "id": "quiet-time",
+      "text": "安静时间",
+      "pos": "noun",
+      "category": "needs",
+      "frequency": 8,
+      "icon": "heart-hand"
+    },
+    {
+      "id": "hug",
+      "text": "抱抱",
+      "pos": "noun",
+      "category": "needs",
+      "frequency": 8,
+      "icon": "heart-hand"
+    },
+    {
+      "id": "space",
+      "text": "空间",
+      "pos": "noun",
+      "category": "needs",
+      "frequency": 8,
+      "icon": "heart-hand"
+    },
+    {
+      "id": "toilet",
+      "text": "厕所",
+      "pos": "noun",
+      "category": "needs",
+      "frequency": 8,
+      "icon": "heart-hand",
+      "image": "https://data.tikocdn.org/uploads/1781077119826-toilet.png"
+    },
+    {
+      "id": "medicine",
+      "text": "药",
+      "pos": "noun",
+      "category": "needs",
+      "frequency": 8,
+      "icon": "heart-hand",
+      "image": "https://data.tikocdn.org/uploads/1754731147636-medicine-bottle.png"
+    },
+    {
+      "id": "light",
+      "text": "灯",
+      "pos": "noun",
+      "category": "needs",
+      "frequency": 8,
+      "icon": "heart-hand"
+    },
+    {
+      "id": "dark-2",
+      "text": "黑暗",
+      "pos": "noun",
+      "category": "needs",
+      "frequency": 8,
+      "icon": "heart-hand",
+      "image": "https://data.tikocdn.org/uploads/1755286874263-woman-with-dark-brown-hair.png"
+    },
+    {
+      "id": "noise",
+      "text": "噪音",
+      "pos": "noun",
+      "category": "needs",
+      "frequency": 8,
+      "icon": "heart-hand",
+      "image": "https://data.tikocdn.org/uploads/1755105522864-noise-canceling-headphones.png"
+    },
+    {
+      "id": "headphones",
+      "text": "耳机",
+      "pos": "noun",
+      "category": "needs",
+      "frequency": 8,
+      "icon": "heart-hand",
+      "image": "https://data.tikocdn.org/uploads/1754739165099-headphones.png"
+    },
+    {
+      "id": "blanket",
+      "text": "毯子",
+      "pos": "noun",
+      "category": "needs",
+      "frequency": 8,
+      "icon": "heart-hand",
+      "image": "https://data.tikocdn.org/uploads/1755105554760-weighted-blanket.png"
+    },
+    {
+      "id": "charger",
+      "text": "充电器",
+      "pos": "noun",
+      "category": "needs",
+      "frequency": 8,
+      "icon": "heart-hand",
+      "image": "https://data.tikocdn.org/uploads/1755623381187-dodge-charger-1969.png"
+    },
+    {
+      "id": "choice",
+      "text": "选择",
+      "pos": "noun",
+      "category": "needs",
+      "frequency": 8,
+      "icon": "heart-hand"
+    },
+    {
+      "id": "turn",
+      "text": "轮流",
+      "pos": "noun",
+      "category": "needs",
+      "frequency": 8,
+      "icon": "heart-hand"
+    },
+    {
+      "id": "help-please",
+      "text": "请帮忙",
+      "pos": "noun",
+      "category": "needs",
+      "frequency": 8,
+      "icon": "heart-hand"
+    },
+    {
+      "id": "different",
+      "text": "不一样",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "sparkles",
+      "image": "https://data.tikocdn.org/uploads/1756902017583-talking-kids-from-different-cultures.png"
+    },
+    {
+      "id": "same",
+      "text": "一样",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "sparkles"
+    },
+    {
+      "id": "easy",
+      "text": "容易",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "sparkles"
+    },
+    {
+      "id": "harder",
+      "text": "更难",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "sparkles"
+    },
+    {
+      "id": "favorite",
+      "text": "最喜欢的",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "sparkles"
+    },
+    {
+      "id": "missing",
+      "text": "不见了",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "sparkles"
+    },
+    {
+      "id": "broken",
+      "text": "坏了",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "sparkles"
+    },
+    {
+      "id": "ready",
+      "text": "准备好了",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "sparkles"
+    },
+    {
+      "id": "busy",
+      "text": "忙",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "sparkles"
+    },
+    {
+      "id": "empty",
+      "text": "空的",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "sparkles",
+      "image": "https://data.tikocdn.org/uploads/1756035003445-empty-basket.png"
+    },
+    {
+      "id": "full",
+      "text": "满的",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "sparkles"
+    },
+    {
+      "id": "small",
+      "text": "小",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "sparkles"
+    },
+    {
+      "id": "tall",
+      "text": "高",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "sparkles"
+    },
+    {
+      "id": "short",
+      "text": "矮",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "sparkles"
+    },
+    {
+      "id": "round",
+      "text": "圆的",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "sparkles"
+    },
+    {
+      "id": "square",
+      "text": "方的",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "sparkles"
+    },
+    {
+      "id": "kind",
+      "text": "善良",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "sparkles"
+    },
+    {
+      "id": "gentle",
+      "text": "温柔",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "sparkles"
+    },
+    {
+      "id": "careful",
+      "text": "小心",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "sparkles"
+    },
+    {
+      "id": "safe-place",
+      "text": "安全的地方",
+      "pos": "adjective",
+      "category": "describing",
+      "frequency": 5,
+      "icon": "sparkles"
+    },
+    {
+      "id": "very",
+      "text": "很",
+      "pos": "adverb",
+      "category": "describing",
+      "frequency": 7,
+      "icon": "sparkles"
+    }
+  ],
+  "templates": [
+    {
+      "id": "want-object",
+      "pattern": "我要{thing}。",
+      "category": "needs",
+      "icon": "heart-hand",
+      "slots": [
+        {
+          "acceptedPos": [
+            "pronoun"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "noun"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "need-help",
+      "pattern": "我需要帮忙弄{thing}。",
+      "category": "needs",
+      "icon": "heart-hand",
+      "slots": [
+        {
+          "acceptedPos": [
+            "pronoun"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "noun"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "feel-state",
+      "pattern": "我觉得很{feeling}。",
+      "category": "feelings",
+      "icon": "smile",
+      "slots": [
+        {
+          "acceptedPos": [
+            "pronoun"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "adjective"
+          ],
+          "categoryFilter": "feelings"
+        }
+      ]
+    },
+    {
+      "id": "body-hurts",
+      "pattern": "我的{body}疼。",
+      "category": "body",
+      "icon": "body",
+      "slots": [
+        {
+          "acceptedPos": [
+            "pronoun"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "noun"
+          ],
+          "categoryFilter": "body"
+        },
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "like-activity",
+      "pattern": "我喜欢{activity}。",
+      "category": "actions",
+      "icon": "play",
+      "slots": [
+        {
+          "acceptedPos": [
+            "pronoun"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "noun"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "go-place",
+      "pattern": "我想去{place}。",
+      "category": "places",
+      "icon": "home",
+      "slots": [
+        {
+          "acceptedPos": [
+            "pronoun"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "preposition"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "preposition"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "noun"
+          ],
+          "categoryFilter": "places"
+        }
+      ]
+    },
+    {
+      "id": "question-where",
+      "pattern": "{thing}在哪里？",
+      "category": "questions",
+      "icon": "question-circle",
+      "slots": [
+        {
+          "acceptedPos": [
+            "question"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "noun"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "question-what",
+      "pattern": "这是什么？",
+      "category": "questions",
+      "icon": "question-circle",
+      "slots": [
+        {
+          "acceptedPos": [
+            "question"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "determiner"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "question-can",
+      "pattern": "你可以帮我吗？",
+      "category": "questions",
+      "icon": "question-circle",
+      "slots": [
+        {
+          "acceptedPos": [
+            "question"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "pronoun"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "pronoun"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "more-thing",
+      "pattern": "请再给我{thing}。",
+      "category": "social",
+      "icon": "chat-bubble",
+      "slots": [
+        {
+          "acceptedPos": [
+            "social"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "noun"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "social"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "all-done",
+      "pattern": "我做完了。",
+      "category": "social",
+      "icon": "chat-bubble",
+      "slots": [
+        {
+          "acceptedPos": [
+            "pronoun"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "social"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "not-want",
+      "pattern": "我不要{thing}。",
+      "category": "needs",
+      "icon": "heart-hand",
+      "slots": [
+        {
+          "acceptedPos": [
+            "pronoun"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "social"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "noun"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "choose-one",
+      "pattern": "我选{thing}。",
+      "category": "actions",
+      "icon": "play",
+      "slots": [
+        {
+          "acceptedPos": [
+            "pronoun"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "noun"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "with-person",
+      "pattern": "我想和{person}在一起。",
+      "category": "people",
+      "icon": "user",
+      "slots": [
+        {
+          "acceptedPos": [
+            "pronoun"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "preposition"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "preposition"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "noun"
+          ],
+          "categoryFilter": "people"
+        }
+      ]
+    },
+    {
+      "id": "too-loud",
+      "pattern": "太吵了。",
+      "category": "feelings",
+      "icon": "smile",
+      "slots": [
+        {
+          "acceptedPos": [
+            "pronoun"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "adjective"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "need-break",
+      "pattern": "我需要休息一下。",
+      "category": "needs",
+      "icon": "heart-hand",
+      "slots": [
+        {
+          "acceptedPos": [
+            "pronoun"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "determiner"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "noun"
+          ],
+          "categoryFilter": "needs"
+        }
+      ]
+    },
+    {
+      "id": "first-next",
+      "pattern": "先{thing}，然后{thing}。",
+      "category": "time",
+      "icon": "clock",
+      "slots": [
+        {
+          "acceptedPos": [
+            "adverb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "noun"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "conjunction"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "noun"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "yes-answer",
+      "pattern": "好的，谢谢。",
+      "category": "social",
+      "icon": "chat-bubble",
+      "slots": [
+        {
+          "acceptedPos": [
+            "social"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "social"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "no-answer",
+      "pattern": "不用了，谢谢。",
+      "category": "social",
+      "icon": "chat-bubble",
+      "slots": [
+        {
+          "acceptedPos": [
+            "social"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "social"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "descriptor-object",
+      "pattern": "这个{thing}很{description}。",
+      "category": "describing",
+      "icon": "sparkles",
+      "slots": [
+        {
+          "acceptedPos": [
+            "determiner"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "noun"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "adjective"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "place-position",
+      "pattern": "{thing}在{place}的{position}。",
+      "category": "positions",
+      "icon": "arrow-right",
+      "slots": [
+        {
+          "acceptedPos": [
+            "determiner"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "noun"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "preposition"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "determiner"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "noun"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "time-request",
+      "pattern": "我等一会儿要{thing}。",
+      "category": "time",
+      "icon": "clock",
+      "slots": [
+        {
+          "acceptedPos": [
+            "pronoun"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "noun"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "adverb"
+          ],
+          "categoryFilter": "time"
+        }
+      ]
+    },
+    {
+      "id": "polite-help",
+      "pattern": "请帮帮我。",
+      "category": "needs",
+      "icon": "heart-hand",
+      "slots": [
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "social"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "try-again",
+      "pattern": "我想再试一次。",
+      "category": "actions",
+      "icon": "play",
+      "slots": [
+        {
+          "acceptedPos": [
+            "pronoun"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "preposition"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "verb"
+          ]
+        },
+        {
+          "acceptedPos": [
+            "social"
+          ]
+        }
+      ]
+    }
+  ],
+  "grammar": {
+    "wordOrder": "subject-verb-object",
+    "validTransitions": {
+      "pronoun": [
+        "verb",
+        "adjective",
+        "noun",
+        "negation",
+        "adverb"
+      ],
+      "determiner": [
+        "adjective",
+        "noun"
+      ],
+      "verb": [
+        "pronoun",
+        "determiner",
+        "adjective",
+        "noun",
+        "preposition",
+        "social",
+        "adverb"
+      ],
+      "noun": [
+        "verb",
+        "preposition",
+        "conjunction",
+        "social",
+        "adverb"
+      ],
+      "adjective": [
+        "noun",
+        "conjunction",
+        "social",
+        "adverb"
+      ],
+      "question": [
+        "verb",
+        "pronoun",
+        "determiner",
+        "noun",
+        "adverb"
+      ],
+      "preposition": [
+        "determiner",
+        "pronoun",
+        "noun"
+      ],
+      "conjunction": [
+        "pronoun",
+        "determiner",
+        "noun",
+        "verb",
+        "negation"
+      ],
+      "social": [
+        "verb",
+        "noun",
+        "negation"
+      ],
+      "negation": [
+        "verb",
+        "determiner",
+        "noun",
+        "adjective",
+        "adverb"
+      ],
+      "adverb": [
+        "verb",
+        "noun",
+        "adjective",
+        "preposition",
+        "social"
+      ]
+    },
+    "articles": {
+      "default": {}
+    },
+    "negation": {
+      "position": "before-verb",
+      "words": [
+        "不",
+        "没"
+      ]
+    }
+  }
+}

@@ -18,7 +18,14 @@ import type {
   UserWord,
   WordTile,
 } from '@tiko/talk-types'
-import fallbackPackEn from '../data/fallback-pack-en.json'
+import {
+  buildSentence,
+  loadLocalBoard,
+  localStripState,
+  localSuggestions,
+  validNextFor,
+  type LocalBoard,
+} from './useLocalBoard'
 
 export interface SentenceApiOptions {
   language: Ref<string>
@@ -30,19 +37,7 @@ export interface SentenceApiOptions {
 
 export type SentenceApiMode = 'loading' | 'online' | 'offline' | 'error'
 
-interface FallbackPack {
-  templates: Template[]
-  categories: Category[]
-  words: WordTile[]
-  savedPhrases: SavedPhrase[]
-}
 
-const fallbackPack: FallbackPack = {
-  templates: fallbackPackEn.templates as Template[],
-  categories: fallbackPackEn.categories as Category[],
-  words: fallbackPackEn.words as WordTile[],
-  savedPhrases: fallbackPackEn.savedPhrases as SavedPhrase[],
-}
 
 function resolveSentenceBaseUrl() {
   const env = (import.meta as ImportMeta & { env?: Record<string, string | undefined> }).env
@@ -56,26 +51,18 @@ function resolveSentenceBaseUrl() {
   return 'https://sentence.tikoapi.org'
 }
 
-function sentenceDisplay(words: WordTile[]) {
-  return words.map((word) => word.text).join(' ')
-}
-
-function fallbackState(words: WordTile[]): StripState {
-  return { display: sentenceDisplay(words), validNext: [], canComplete: words.length > 0 }
-}
+/**
+ * The pack the app carries. Everything the board shows comes from here; the API only
+ * ever improves on it. `null` until the first `start()`, and for a locale with no
+ * pack at all — in which case the API is the only source, as it used to be.
+ */
+let board: LocalBoard | null = null
 
 function wordsByCategory(words: WordTile[]): Record<string, WordTile[]> {
   return words.reduce<Record<string, WordTile[]>>((grouped, word) => {
     grouped[word.category] = [...(grouped[word.category] ?? []), word]
     return grouped
   }, {})
-}
-
-function normalizeSentence(value: string) {
-  const trimmed = value.trim()
-  if (!trimmed) return ''
-  const capitalized = trimmed.charAt(0).toUpperCase() + trimmed.slice(1)
-  return /[.!?]$/.test(capitalized) ? capitalized : `${capitalized}.`
 }
 
 function resolveApiAssetUrl(baseUrl: string, assetUrl: string) {
@@ -98,12 +85,40 @@ export function useSentenceApi(options: SentenceApiOptions) {
   const savedPhrases = ref<SavedPhrase[]>([])
   const customWords = ref<UserWord[]>([])
   const stripState = ref<StripState>({ display: '', validNext: [], canComplete: false })
+  /** The whole pack, kept apart from what the board happens to be showing. */
+  const packWords = ref<WordTile[]>([])
   const lastCompletion = ref<SentenceCompleteResponse | null>(null)
 
-  const wordsById = computed(() => new Map(words.value.map((word) => [word.id, word])))
+  /**
+   * Every tile the app can name, by id.
+   *
+   * This used to be built from `words` — whatever the board is *showing*. So the
+   * moment a search narrowed the board, or the API returned one category, the tiles
+   * the child had already chosen could no longer be resolved, and the sentence they
+   * were building collapsed to nothing. The pack is the index; the visible list only
+   * adds to it.
+   */
+  const wordsById = computed(() => {
+    const index = new Map<string, WordTile>()
+    for (const word of packWords.value) index.set(word.id, word)
+    for (const word of words.value) index.set(word.id, word)
+    return index
+  })
   const prefetchCache = new Map<string, SentenceNextResponse>()
   const activeWordsByCategory = computed(() => wordsByCategory(words.value))
   const isOffline = computed(() => mode.value === 'offline')
+
+  /** The tiles behind a list of ids, in the order the child chose them. */
+  function tilesFor(wordIds: string[]): WordTile[] {
+    return wordIds
+      .map((id) => wordsById.value.get(id))
+      .filter((word): word is WordTile => Boolean(word))
+  }
+
+  /** The ids of words this child added, which the realizer treats as names. */
+  function customIds(): ReadonlySet<string> {
+    return new Set(customWords.value.map((word) => word.id))
+  }
 
   async function requestJson<T>(path: string, init: RequestInit = {}): Promise<T> {
     const headers = new Headers(init.headers)
@@ -116,22 +131,32 @@ export function useSentenceApi(options: SentenceApiOptions) {
     return body as T
   }
 
-  function activateFallback(currentError?: unknown) {
-    mode.value = 'offline'
-    error.value = currentError instanceof Error ? currentError.message : null
-    templates.value = fallbackPack.templates
-    categories.value = fallbackPack.categories
-    words.value = fallbackPack.words
-    suggestions.value = fallbackPack.words.slice(0, 50)
-    savedPhrases.value = fallbackPack.savedPhrases
-    stripState.value = { display: '', validNext: [], canComplete: false }
+  /**
+   * Puts the app on the pack it carries. This is not a degraded mode: it is the whole
+   * board, in the child's language, with the grammar that builds their sentences. The
+   * API adds their saved phrases and a better guess at what they want next.
+   */
+  async function activateLocalBoard(currentError?: unknown) {
+    if (currentError) {
+      error.value = currentError instanceof Error ? currentError.message : null
+    }
+    board = board ?? await loadLocalBoard(options.language.value)
+    if (!board) return
+    templates.value = board.templates
+    categories.value = board.categories
+    packWords.value = board.words
+    words.value = board.words
+    suggestions.value = localSuggestions(board.pack, [])
+    stripState.value = { display: '', validNext: validNextFor(board.pack, []), canComplete: false }
   }
 
   async function start() {
     error.value = null
 
-    // Show fallback words immediately so the cloud is never empty
-    activateFallback()
+    // The board comes from the device, so it is complete before anything is fetched.
+    board = null
+    await activateLocalBoard()
+    mode.value = board ? 'offline' : 'loading'
     loading.value = true
 
     // Race the API against a 6-second hard timeout
@@ -145,12 +170,17 @@ export function useSentenceApi(options: SentenceApiOptions) {
         { signal: controller.signal },
       )
       clearTimeout(timeoutId)
-      templates.value = data.templates
-      categories.value = data.initialCategories
-      words.value = data.initialWords
-      suggestions.value = data.initialWords
+      // Merge rather than replace: the local pack is the floor, and the API's words
+      // (which include this child's own) are added to it.
+      if (data.templates.length) templates.value = data.templates
+      if (data.initialCategories.length) categories.value = data.initialCategories
+      if (data.initialWords.length) {
+        const merged = new Map(words.value.map((word) => [word.id, word]))
+        for (const word of data.initialWords) merged.set(word.id, word)
+        words.value = [...merged.values()]
+        suggestions.value = data.initialWords
+      }
       savedPhrases.value = data.savedPhrases
-      stripState.value = { display: '', validNext: data.stripState.validNext, canComplete: data.stripState.canComplete }
       mode.value = 'online'
       void loadVocabulary()
       void listWords()
@@ -190,10 +220,13 @@ export function useSentenceApi(options: SentenceApiOptions) {
       stripState.value = cached.stripState
       return
     }
+    // The strip is always built locally: it is the child's own sentence and must
+    // never wait for a round trip.
+    const chosen = tilesFor(currentWords)
+    if (board) stripState.value = localStripState(board.pack, options.language.value, chosen, customIds())
+
     if (isOffline.value) {
-      const used = new Set(currentWords)
-      suggestions.value = fallbackPack.words.filter((word) => !used.has(word.id)).slice(0, 5)
-      stripState.value = fallbackState(currentWords.map((id) => wordsById.value.get(id)).filter((word): word is WordTile => Boolean(word)))
+      if (board) suggestions.value = localSuggestions(board.pack, chosen)
       return
     }
 
@@ -232,7 +265,9 @@ export function useSentenceApi(options: SentenceApiOptions) {
     if (isOffline.value) {
       // Filter the local fallback board so search still works offline.
       const q = query?.trim().toLowerCase()
-      const base = category ? fallbackPack.words.filter((word) => word.category === category) : fallbackPack.words
+      // Search the real board, not a stub: every word in the child's language is here.
+      const all = board?.words ?? []
+      const base = category ? all.filter((word) => word.category === category) : all
       words.value = q ? base.filter((word) => word.text.toLowerCase().includes(q)) : base
       return
     }
@@ -318,11 +353,20 @@ export function useSentenceApi(options: SentenceApiOptions) {
 
   async function complete(currentWords: string[]) {
     error.value = null
+    // The sentence is built on the device, in every case. The API is asked for spoken
+    // audio and to remember the phrase, neither of which the child should wait on to
+    // see what they said.
+    const local = buildSentence(options.language.value, tilesFor(currentWords), customIds())
+
     if (isOffline.value) {
-      const sentence = normalizeSentence(currentWords.map((id) => wordsById.value.get(id)?.text ?? '').join(' '))
-      const utterance = typeof SpeechSynthesisUtterance === 'undefined' ? null : new SpeechSynthesisUtterance(sentence)
-      if (utterance && typeof speechSynthesis !== 'undefined') speechSynthesis.speak(utterance)
-      lastCompletion.value = { sentence, audioUrl: '', audioCached: false }
+      const utterance = typeof SpeechSynthesisUtterance === 'undefined'
+        ? null
+        : new SpeechSynthesisUtterance(local)
+      if (utterance && typeof speechSynthesis !== 'undefined') {
+        utterance.lang = options.language.value
+        speechSynthesis.speak(utterance)
+      }
+      lastCompletion.value = { sentence: local, audioUrl: '', audioCached: false }
       return lastCompletion.value
     }
 
@@ -330,7 +374,11 @@ export function useSentenceApi(options: SentenceApiOptions) {
       method: 'POST',
       body: JSON.stringify({ locale: options.language.value, wordIds: currentWords, autoSave: true }),
     })
-    const completion = { ...data, audioUrl: resolveApiAssetUrl(baseUrl, data.audioUrl) }
+    const completion = {
+      ...data,
+      sentence: local || data.sentence,
+      audioUrl: resolveApiAssetUrl(baseUrl, data.audioUrl),
+    }
     lastCompletion.value = completion
     if (completion.audioUrl) await audioFactory(completion.audioUrl).play()
     if (data.savedPhraseId) await loadPhrases()

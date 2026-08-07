@@ -85,9 +85,26 @@ export interface Features {
    * ("vesi" → "vettä") are not recoverable from the nominative.
    */
   cases?: Partial<Record<'acc' | 'gen' | 'par', string>>
+  /**
+   * A pronoun that stands on its own and never becomes a preverbal clitic:
+   * "je veux le mien", not *"je le mien veux".
+   */
+  tonic?: boolean
+  /**
+   * A degree adverb — "very", "too" — which modifies the word after it rather than
+   * the clause. It goes in front of the adjective it strengthens instead of at the
+   * end of the sentence, where the other adverbs go.
+   */
+  degree?: boolean
   /** Mass nouns (water, music) take no indefinite article. */
   mass?: boolean
   proper?: boolean
+  /**
+   * A verb tile whose noun is the same word, so that after another verb it reads as
+   * the object: English "I need help", not "I need to help". Only worth declaring
+   * where the two forms are spelled alike — elsewhere the pack has no noun to use.
+   */
+  nominal?: boolean
   /**
    * Animate nouns behave differently in several languages: Armenian marks a
    * definite animate object with -ին, and Slavic languages need it for the
@@ -143,6 +160,19 @@ export interface Features {
    * adjectives after the noun but a short closed set before it.
    */
   adjectivePosition?: 'before' | 'after'
+  /**
+   * A conjunction that subordinates its clause rather than coordinating it. It
+   * matters where the language reorders a subordinate clause: Dutch "omdat ik mama
+   * **wil**" sends the verb to the end, while "en ik **wil** mama" does not. Which
+   * word does which is lexical — Afrikaans "want" coordinates where Dutch "omdat"
+   * subordinates.
+   */
+  subordinating?: boolean
+  /**
+   * A quantifier that wants the definite article after it: "tous **les** biscuits",
+   * "todas **las** galletas". Leaving it out is an error rather than a register.
+   */
+  withDefinite?: boolean
   /** Plural of an adjective, when it is not base + s. */
   pluralForm?: string
   /** Dative form, for languages that distinguish it ("ich" → "mir"). */

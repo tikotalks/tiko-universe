@@ -1,4 +1,5 @@
 import Foundation
+import TikoKit
 
 struct TalkWordTile: Codable, Equatable, Identifiable, Sendable {
     let id: String
@@ -122,8 +123,20 @@ struct TalkDeleteSentencePhraseResponse: Codable, Equatable, Sendable {
 }
 
 extension Array where Element == TalkWordTile {
-    var talkSentenceText: String {
-        map(\.text).joined(separator: " ").trimmingCharacters(in: .whitespacesAndNewlines)
+    /**
+     The sentence these tiles make, built on the device.
+
+     This used to be `map(\.text).joined(separator: " ")`, which is why the board
+     said "ik wil appel". `TikoSentenceBuilder` runs the same grammar the web app and
+     the API run — 54 languages, from a bundle that ships with the app — so a child
+     with no signal gets the sentence, not a list of words.
+     */
+    func talkSentence(locale: String, customWordIds: Set<String> = []) -> TikoSentence {
+        TikoSentenceBuilder.shared.sentence(
+            for: map { TikoSentenceWord(id: $0.id, text: $0.text, pos: $0.pos, category: $0.category) },
+            locale: locale,
+            customWordIds: customWordIds
+        )
     }
 
     func deduplicatedById() -> [TalkWordTile] {

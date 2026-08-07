@@ -2,7 +2,7 @@
 /**
  * Generate D1 seed SQL files for Talk language packs.
  *
- * Reads every workers/sentence-api/data/<locale>-v<version>.json pack file and
+ * Reads every packages/talk-packs/data/<locale>-v<version>.json pack file and
  * emits a matching workers/sentence-api/db/seed-<locale>.sql in the exact
  * format of the original hand-checked seed-en.sql.
  *
@@ -24,7 +24,7 @@ import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
-const DATA_DIR = join(ROOT, 'workers/sentence-api/data');
+const DATA_DIR = join(ROOT, 'packages/talk-packs/data');
 const DB_DIR = join(ROOT, 'workers/sentence-api/db');
 
 const CHECK_MODE = process.argv.includes('--check');
@@ -142,7 +142,7 @@ function generateSeedSql(pack, fileName) {
 
   const lines = [];
   lines.push(`-- Curated ${languageName(locale)} v${pack.version} seed for Talk sentence-api.`);
-  lines.push(`-- Generated from workers/sentence-api/data/${fileName}; keep JSON as the source of review.`);
+  lines.push(`-- Generated from packages/talk-packs/data/${fileName}; keep JSON as the source of review.`);
 
   const grammarJson = JSON.stringify(pack.grammar);
   const metadataJson =
@@ -251,7 +251,7 @@ function main() {
     } catch (error) {
       fail(`media-map.json: invalid JSON (${error.message})`);
     }
-    const lines = ['-- Generated from workers/sentence-api/data/media-map.json; concept -> Tiko media image.'];
+    const lines = ['-- Generated from packages/talk-packs/data/media-map.json; concept -> Tiko media image.'];
     for (const conceptId of Object.keys(mediaMap).sort()) {
       const imageUrl = mediaMap[conceptId];
       if (typeof imageUrl !== 'string' || !imageUrl) continue;

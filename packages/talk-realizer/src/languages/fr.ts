@@ -1,5 +1,5 @@
 import type { Features, SelectedWord } from '../features'
-import { agreeAdjective, conjugateRegular, elide, induceGender, pluralize, startsWithVowel } from '../morphology/romance'
+import { agreeAdjective, conjugateRegular, elide, induceGender, pluralize, startsWithVowel, quantifierPhrase } from '../morphology/romance'
 import { extractObjectClitic } from '../morphology/clitic'
 import { agreesWith, formFor, isSensation, note, type LanguageRules } from '../profile'
 
@@ -48,6 +48,7 @@ export const french: LanguageRules = {
     language: 'fr',
     maturity: 'production',
     wordOrder: 'svo',
+    verbCitation: 'infinitive',
     questionStrategy: 'intonation',
     // Spoken French: "Tu veux quoi ?" rather than inventing "qu'est-ce que".
     questionWordPosition: 'final',
@@ -118,7 +119,10 @@ export const french: LanguageRules = {
         const form = feminine && !plural ? (determiner.features.feminine ?? determiner.text) : determiner.text
         return { text: form, from: determiner.id }
       }
-      return { text: determiner.text, from: determiner.id }
+      return {
+        text: quantifierPhrase(determiner.features, determiner.text, 'fr', feminine, plural),
+        from: determiner.id,
+      }
     }
 
     if (!head) return null

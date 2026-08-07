@@ -50,6 +50,7 @@ const APPS = [
   { key: 'say', prefix: 'say' },
   { key: 'sum', prefix: 'sum' },
   { key: 'first', prefix: 'first' },
+  { key: 'write', prefix: 'write' },
 ]
 
 /** Reads a `static let <name>: [String: String] = [ ... ]` dictionary from Swift. */
@@ -210,9 +211,16 @@ swiftLines.push('        switch app {')
 const APP_CASES = {
   radio: '.radio', yesNo: '.yesNo', cards: '.cards', timer: '.timer', type: '.type',
   sequence: '.sequence', todo: '.todo', say: '.say', sum: '.sum', first: '.first',
+  write: '.write',
 }
-for (const [app, perLocale] of bundles) {
-  const pairs = [...perLocale.keys()].map((code) => `("${code}", ${app}_${code.replace(/-/g, '_')})`)
+// Emit a case for EVERY registered app, not only those with translations. An app
+// that has none yet would otherwise leave the switch non-exhaustive and break the
+// Swift build the moment it is added to TikoAppKey.
+for (const { key: app } of APPS) {
+  const perLocale = bundles.get(app)
+  const pairs = perLocale
+    ? [...perLocale.keys()].map((code) => `("${code}", ${app}_${code.replace(/-/g, '_')})`)
+    : []
   swiftLines.push(`        case ${APP_CASES[app]}: return [${pairs.join(', ')}]`)
 }
 swiftLines.push('        }')

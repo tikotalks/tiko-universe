@@ -1,0 +1,205 @@
+{
+  "app": "write",
+  "name": "Write",
+  "scheme": "TikoWrite",
+  "project": "apps/write/ios/TikoWrite.xcodeproj",
+  "iosDir": "apps/write/ios",
+  "bundleId": "mt.tiko.write",
+  "appleId": null,
+  "appStoreId": null,
+  "appStoreUrl": null,
+  "validation": {
+    "script": "apps/write/ios/scripts/validate-local.sh"
+  },
+  "archive": {
+    "configuration": "Release",
+    "archivePath": "artifacts/archives/write/TikoWrite.xcarchive",
+    "exportPath": "artifacts/archives/write/export",
+    "exportOptionsPlist": "release/ExportOptions.plist",
+    "allowProvisioningUpdates": true
+  },
+  "upload": {
+    "ipaPath": "artifacts/archives/write/export/TikoWrite.ipa",
+    "deliverDir": "artifacts/app-store/write",
+    "apiKeyEnv": "APP_STORE_CONNECT_KEY_ID",
+    "apiIssuerEnv": "APP_STORE_CONNECT_ISSUER_ID"
+  },
+  "screenshots": {
+    "outputDir": "/Users/silvandiepen/Projects/Tiko/apps/write",
+    "configuration": "Debug",
+    "eraseBeforeCapture": false,
+    "defaultWaitSeconds": 8,
+    "baseLaunchArgs": [
+      "--screenshot-mode"
+    ],
+    "statusBar": {
+      "time": "9:41",
+      "wifiBars": 3,
+      "cellularBars": 4,
+      "batteryState": "charged",
+      "batteryLevel": 100
+    },
+    "devices": [
+      {
+        "name": "iPhone 17 Pro Max",
+        "os": "26.2",
+        "displayType": "APP_IPHONE_67",
+        "createIfMissing": true
+      },
+      {
+        "name": "iPad Pro 13-inch (M5)",
+        "os": "26.2",
+        "displayType": "APP_IPAD_PRO_13",
+        "createIfMissing": true
+      }
+    ],
+    "locales": [
+      {
+        "id": "en-US",
+        "appLanguage": "en"
+      }
+    ],
+    "colorModes": [
+      {
+        "id": "light",
+        "userDefaults": {
+          "tiko.colorMode": "light"
+        }
+      },
+      {
+        "id": "dark",
+        "userDefaults": {
+          "tiko.colorMode": "dark"
+        }
+      }
+    ],
+    "scenarios": [
+      {
+        "id": "home-light",
+        "filename": "01-{deviceSlug}-home-en-light.png",
+        "launchArgs": [
+          "--screenshot",
+          "home"
+        ],
+        "locales": [
+          {
+            "id": "en-US",
+            "appLanguage": "en"
+          }
+        ],
+        "colorModes": [
+          "light"
+        ],
+        "waitSeconds": 8
+      },
+      {
+        "id": "words-light",
+        "filename": "02-{deviceSlug}-words-en-light.png",
+        "launchArgs": [
+          "--screenshot",
+          "words"
+        ],
+        "locales": [
+          {
+            "id": "en-US",
+            "appLanguage": "en"
+          }
+        ],
+        "colorModes": [
+          "light"
+        ],
+        "waitSeconds": 8
+      },
+      {
+        "id": "cursive-light",
+        "filename": "03-{deviceSlug}-cursive-en-light.png",
+        "launchArgs": [
+          "--screenshot",
+          "cursive"
+        ],
+        "locales": [
+          {
+            "id": "en-US",
+            "appLanguage": "en"
+          }
+        ],
+        "colorModes": [
+          "light"
+        ],
+        "waitSeconds": 8
+      },
+      {
+        "id": "trace-light",
+        "filename": "04-{deviceSlug}-trace-en-light.png",
+        "launchArgs": [
+          "--screenshot",
+          "trace"
+        ],
+        "locales": [
+          {
+            "id": "en-US",
+            "appLanguage": "en"
+          }
+        ],
+        "colorModes": [
+          "light"
+        ],
+        "waitSeconds": 8
+      },
+      {
+        "id": "celebrate-light",
+        "filename": "05-{deviceSlug}-celebrate-en-light.png",
+        "launchArgs": [
+          "--screenshot",
+          "celebrate"
+        ],
+        "locales": [
+          {
+            "id": "en-US",
+            "appLanguage": "en"
+          }
+        ],
+        "colorModes": [
+          "light"
+        ],
+        "waitSeconds": 14
+      },
+      {
+        "id": "home-dark",
+        "filename": "06-{deviceSlug}-home-en-dark.png",
+        "launchArgs": [
+          "--screenshot",
+          "home"
+        ],
+        "locales": [
+          {
+            "id": "en-US",
+            "appLanguage": "en"
+          }
+        ],
+        "colorModes": [
+          "dark"
+        ],
+        "waitSeconds": 8
+      },
+      {
+        "id": "trace-dark",
+        "filename": "07-{deviceSlug}-trace-en-dark.png",
+        "launchArgs": [
+          "--screenshot",
+          "trace"
+        ],
+        "locales": [
+          {
+            "id": "en-US",
+            "appLanguage": "en"
+          }
+        ],
+        "colorModes": [
+          "dark"
+        ],
+        "waitSeconds": 8
+      }
+    ]
+  }
+}

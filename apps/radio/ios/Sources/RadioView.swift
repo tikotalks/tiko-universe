@@ -225,6 +225,24 @@ struct RadioView: View {
         }
     }
 
+    /// Tiko Media artwork for a collection tile, falling back to the SF Symbol
+    /// while the image loads or for user-made collections without artwork.
+    @ViewBuilder
+    private func categoryArtwork(_ category: RadioCategory) -> some View {
+        if let url = category.imageURL {
+            TikoCachedRemoteImage(url: TikoImageURL.resized(url, size: .medium), contentMode: .fit) {
+                Image(systemName: category.symbol)
+                    .font(.system(size: 52, weight: .heavy))
+                    .foregroundStyle(.white)
+            }
+            .padding(14)
+        } else {
+            Image(systemName: category.symbol)
+                .font(.system(size: 52, weight: .heavy))
+                .foregroundStyle(.white)
+        }
+    }
+
     private func collectionTile(_ category: RadioCategory) -> some View {
         let count = library.tracks(in: category.id).count
         return Button(action: {
@@ -236,9 +254,7 @@ struct RadioView: View {
                 subtitle: count == 0 ? i18n.t("radio.collections.empty") : "\(count) \(count == 1 ? "song" : "songs")",
                 background: TikoColors.color(named: category.color) ?? TikoColors.color(named: "gray")!
             ) {
-                Image(systemName: category.symbol)
-                    .font(.system(size: 52, weight: .heavy))
-                    .foregroundStyle(.white)
+                categoryArtwork(category)
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
         }

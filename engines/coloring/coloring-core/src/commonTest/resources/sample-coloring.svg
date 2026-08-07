@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 120">
+  <path id="background" data-z-index="0" d="M 5 5 H 195 V 115 H 5 Z" fill="none" stroke="#111111" stroke-width="4"/>
+  <path id="house" data-parent-region="background" data-z-index="1" d="M 35 55 L 100 15 L 165 55 V 108 H 35 Z" fill="none" stroke="#111111" stroke-width="4"/>
+  <path id="door" data-parent-region="house" data-z-index="2" d="M 82 65 H 118 V 108 H 82 Z" fill="none" stroke="#111111" stroke-width="4"/>
+</svg>

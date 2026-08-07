@@ -1,3 +1,4 @@
+import { customNounFeatures, lexicons, realize, sharedStructure, type Lexicon, type SelectedWord } from '@tiko/talk-realizer'
 import type {
   AddUserWordRequest,
   AddUserWordResponse,
@@ -141,7 +142,6 @@ const SUGGESTION_LIMIT = 50
 const LEARNED_WEIGHT_CAP = 0.8
 const LEARNED_CLICK_SATURATION = 200
 // Locales whose sentences concatenate without spaces.
-const NO_SPACE_LOCALES = new Set(['ja', 'zh'])
 // User-added words live under a reserved id prefix so they never collide with
 // curated pack ids and can be routed to the per-user table for resolution.
 const USER_WORD_PREFIX = 'uword_'
@@ -1141,6 +1141,7 @@ function userWordToPackWord(row: UserWordRow): PackWord {
     pos: row.pos,
     category: row.category,
     frequency: CUSTOM_WORD_DEFAULT_FREQUENCY,
+    isCustom: true,
     ...(row.icon ? { icon: row.icon } : {}),
   }
 }
@@ -1425,20 +1426,58 @@ function orderWordsOrThrow(wordIds: string[], words: PackWord[]): PackWord[] {
   return ordered
 }
 
-function joinWords(words: PackWord[], locale: string): string {
+/**
+ * A word the child added themselves is almost always a name — "Sil", "Nana", the
+ * dog — so it is marked proper, which stops the realizer putting an article in
+ * front of it. Anything the pack already knows keeps the pack's own features.
+ */
+function lexiconFor(locale: string, words: PackWord[]): Lexicon {
   const base = locale.split('-')[0].toLowerCase()
-  if (NO_SPACE_LOCALES.has(base)) return words.map((word) => word.text).join('')
-  return words.map((word) => word.text).join(' ').replace(/\s+/g, ' ').trim()
+  const language = lexicons[base] ?? {}
+  const custom: Lexicon = {}
+  for (const word of words) {
+    if (word.isCustom === true && !sharedStructure[word.id] && !language[word.id]) {
+      // Only a custom *noun* can be a name, and only when it is written like one:
+      // "Mum" takes no article, "trampoline" does.
+      if (word.pos === 'noun') custom[word.id] = customNounFeatures(word.text, locale)
+    }
+  }
+  return Object.keys(custom).length > 0 ? { ...language, ...custom } : language
 }
 
+function toSelected(words: PackWord[]): SelectedWord[] {
+  return words.map((word) => ({
+    id: word.id,
+    text: word.text,
+    pos: word.pos,
+    category: word.category,
+    ...(word.inflections ? { inflections: word.inflections } : {}),
+  }))
+}
+
+/**
+ * The child's tiles as a sentence.
+ *
+ * This used to be `words.map((word) => word.text).join(' ')`, which is why the
+ * Dutch pack said "ik wil appel" and the Spanish one "yo querer manzana". The
+ * realizer turns the same tiles into "Ik wil een appel." and "Yo quiero una
+ * manzana." — and for a language it has no grammar for, falls back to exactly the
+ * join this replaced, so nothing can get worse than it was.
+ */
 function formatSentence(words: PackWord[], locale: string): string {
-  const base = locale.split('-')[0].toLowerCase()
-  const text = joinWords(words, locale)
-  if (NO_SPACE_LOCALES.has(base)) {
-    return /[。！？.!?]$/.test(text) ? text : `${text}。`
-  }
-  const capitalized = text.charAt(0).toUpperCase() + text.slice(1)
-  return /[.!?]$/.test(capitalized) ? capitalized : `${capitalized}.`
+  return realize(toSelected(words), { locale, lexicon: lexiconFor(locale, words) }).text
+}
+
+/**
+ * The strip a child is still building. Same grammar, without the full stop — the
+ * sentence is not finished yet, and a premature terminator reads as if it were.
+ */
+function joinWords(words: PackWord[], locale: string): string {
+  if (words.length === 0) return ''
+  const sentence = formatSentence(words, locale)
+  // Every terminator the realizer can produce, including the Devanagari and Bengali
+  // danda and the Armenian verjaket — a strip is not a finished sentence.
+  return sentence.replace(/[.。！？?!।॥։]+$/u, '')
 }
 
 async function generateSpeech(env: Env, sentence: string, locale: string, authHeader: string | null): Promise<{ audioUrl: string, cached: boolean }> {
