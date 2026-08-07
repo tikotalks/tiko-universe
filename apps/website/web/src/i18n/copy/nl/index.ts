@@ -1,12 +1,12 @@
-import type { SiteCopyOverride } from '..'
+import type { SiteCopyOverride } from '../..'
+import { nlPages } from './pages'
+import { nlAudiencePages } from './pages-audience'
 
 /**
- * Dutch website copy.
- *
- * Only the chrome is translated so far; the long-form page copy still falls
- * back to English leaf by leaf, which is what `overlayCopy` is for.
+ * Dutch website copy — chrome and all six content pages.
  */
 export const nl: SiteCopyOverride = {
+  ...({
   "common": {
     "skipToContent": "Naar de inhoud",
     "languageLabel": "Taal",
@@ -46,4 +46,6 @@ export const nl: SiteCopyOverride = {
     "trustPrinciples": "Uitgangspunten",
     "philosophy": "Filosofie"
   }
+} as SiteCopyOverride),
+  pages: { ...nlPages, ...nlAudiencePages },
 }

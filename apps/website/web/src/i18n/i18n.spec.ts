@@ -4,6 +4,27 @@ import { copyFor, localesWithCopy } from './index'
 import { en } from './copy/en'
 import { translatedLocales } from './locale'
 import { tikoLocaleEntries } from '@tiko/i18n'
+import { nl } from './copy/nl'
+
+/**
+ * Every leaf English has that the override does not, as dotted paths. Arrays
+ * are compared as a unit because a locale replaces them wholesale.
+ */
+function missingKeys(base: unknown, override: unknown, path = ''): string[] {
+  if (typeof base === 'string') return override === undefined ? [path] : []
+  if (Array.isArray(base)) {
+    if (!Array.isArray(override)) return [path]
+    if (override.length !== base.length) return [`${path}[length]`]
+    return base.flatMap((item, i) => missingKeys(item, override[i], `${path}[${i}]`))
+  }
+  if (base && typeof base === 'object') {
+    if (!override || typeof override !== 'object') return [path]
+    return Object.entries(base as Record<string, unknown>).flatMap(([key, value]) =>
+      missingKeys(value, (override as Record<string, unknown>)[key], path ? `${path}.${key}` : key),
+    )
+  }
+  return []
+}
 
 describe('website copy resolution', () => {
   it('falls back to English leaf by leaf rather than whole-object', () => {
@@ -56,6 +77,29 @@ describe('website copy resolution', () => {
       expect(copy.nav.whyTiko, locale).not.toBe(en.nav.whyTiko)
       expect(copy.common.learnMore, locale).not.toBe(en.common.learnMore)
       expect(copy.footer.tagline, locale).not.toBe(en.footer.tagline)
+    }
+  })
+
+  it('has fully translated page copy for Dutch', () => {
+    // Dutch is the locale a native speaker will check, so it is the one held to
+    // "nothing left falling back". The others fall back on purpose.
+    //
+    // Measured by key coverage, not by comparing values: "Support" and "App
+    // Store" are the same word in Dutch, and asserting the text differs would
+    // flag a correct translation as a missing one.
+    expect(missingKeys(en.pages, (nl as Record<string, unknown>).pages)).toEqual([])
+  })
+
+  it('keeps section ids identical across locales so anchors survive translation', () => {
+    // Ids are anchors, not prose. A translated id would break every deep link.
+    const englishIds = Object.fromEntries(
+      Object.entries(en.pages).map(([name, page]) => [name, page.sections.map((s) => s.id)]),
+    )
+    for (const locale of translatedLocales) {
+      const copy = copyFor(locale)
+      for (const [name, page] of Object.entries(copy.pages)) {
+        expect(page.sections.map((s) => s.id), `${locale}/${name}`).toEqual(englishIds[name])
+      }
     }
   })
 
