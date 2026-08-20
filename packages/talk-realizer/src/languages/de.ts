@@ -67,8 +67,13 @@ function genderOf(features: Features): Gender {
   }
 }
 
+/**
+ * A predicate stands in the nominative alongside the subject it renames — "das
+ * ist ein Arzt" — which is why it is not simply "the subject is nominative and
+ * everything else is accusative".
+ */
 function caseOf(ctx: PhraseContext): Case {
-  return ctx.role === 'subject' ? 'nom' : 'acc'
+  return ctx.role === 'subject' || ctx.role === 'predicate' ? 'nom' : 'acc'
 }
 
 /**

@@ -50,6 +50,12 @@ const golden: Array<[string, string[], string]> = [
   ['its adjective takes the strong plural ending', ['i', 'want', 'big', 'shoes'], 'Ich will große Schuhe.'],
   ['kein takes its plural form', ['i', 'not', 'want', 'shoes'], 'Ich will keine Schuhe.'],
 
+  // A noun completing the copula is a predicate nominative, not an object. It
+  // used to arrive in the object's role, and German duly declined it: "einen".
+  ['predicate noun stays nominative', ['that', 'is', 'doctor'], 'Das da ist ein Arzt.'],
+  ['negated predicate noun too', ['that', 'is', 'not', 'doctor'], 'Das da ist kein Arzt.'],
+  ['the same noun as an object is accusative', ['i', 'want', 'doctor'], 'Ich will einen Arzt.'],
+
   // Copula
   ['copula, first person', ['i', 'happy'], 'Ich bin glücklich.'],
   ['copula, second person', ['you', 'happy'], 'Du bist glücklich.'],

@@ -248,7 +248,11 @@ export function agreesWith(
   np: { head?: Word, determiner?: Word } | undefined,
   ctx: PhraseContext,
 ): { gender?: Gender, plural: boolean } {
-  if (ctx.role === 'predicate') {
+  // A predicate *noun* phrase has a head of its own, and an adjective inside it
+  // agrees with that head rather than with the subject: "das ist ein guter Arzt".
+  // Only a bare predicate adjective, which has no phrase around it, reaches past
+  // itself to the subject.
+  if (ctx.role === 'predicate' && !np?.head) {
     // "Nous sommes contents": the subject is a pronoun, so its number comes from
     // the agreement the verb already used, not from a determiner.
     return { gender: ctx.subjectGender, plural: ctx.subjectPlural === true || ctx.number === 'pl' }

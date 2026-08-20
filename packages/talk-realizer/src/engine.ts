@@ -92,6 +92,21 @@ export function realizeWith(
     needsCopula = true
   }
 
+  /**
+   * A noun completing a copula is a **predicate nominative**, not an object: "das
+   * ist ein Arzt", never "das ist einen Arzt". It was reaching the languages in
+   * the object's role, so every language that declines an object declined it —
+   * which is a fact about the role it was given, not about German, and so it is
+   * fixed here rather than in each language that noticed.
+   *
+   * Only the first such phrase, and only a noun-headed one. A predicate *pronoun*
+   * is a separate question that languages answer differently — English says "that
+   * is me", not "that is I" — and nothing here should decide it for them.
+   */
+  const predicateNounPhrase = needsCopula
+    ? chunks.complements.find((phrase) => phrase.kind === 'np' && !!phrase.head)
+    : undefined
+
   const plan: NegationPlan = chunks.negated ? rules.negation(ctx) : { kind: 'none' }
 
   // Negation can live inside an indefinite object phrase instead of, or as well
@@ -256,7 +271,7 @@ export function realizeWith(
         return
       }
       default:
-        emitNounPhrase(phrase, 'object')
+        emitNounPhrase(phrase, phrase === predicateNounPhrase ? 'predicate' : 'object')
     }
   }
 

@@ -1,7 +1,7 @@
 import type { Features, SelectedWord } from '../features'
 import { applyExperiencer } from '../morphology/romance'
 import { extractObjectClitic } from '../morphology/clitic'
-import { agreesWith, formFor, isPlural, note, type LanguageRules, type SentenceContext } from '../profile'
+import { agreesWith, formFor, isPlural, note, type LanguageRules, type PhraseContext, type SentenceContext } from '../profile'
 
 /**
  * Greek. Three genders and a case system, but a regular one — which makes it the
@@ -73,6 +73,15 @@ function accusative(text: string, gender: Gender): string {
   return text
 }
 
+/**
+ * The case a phrase stands in. A predicate is nominative alongside the subject it
+ * renames — "αυτός είναι ένας γιατρός" — which the adjective rules already knew
+ * and the article and the noun did not.
+ */
+function caseFor(ctx: PhraseContext): Case {
+  return ctx.role === 'subject' || ctx.role === 'predicate' ? 'nom' : 'acc'
+}
+
 export const greek: LanguageRules = {
   profile: {
     language: 'el',
@@ -122,7 +131,7 @@ export const greek: LanguageRules = {
     const determiner = np.determiner
     const plural = isPlural(np)
     const gender = genderOf(head?.features ?? {})
-    const grammaticalCase: Case = ctx.role === 'subject' ? 'nom' : 'acc'
+    const grammaticalCase: Case = caseFor(ctx)
 
     if (determiner) {
       const kind = determiner.features.determinerKind
@@ -181,8 +190,7 @@ export const greek: LanguageRules = {
     const gender = predicate
       ? (subjectGender === 'feminine' ? 'f' : subjectGender === 'neuter' ? 'n' : 'm')
       : genderOf(head!.features)
-    // A predicate is in the nominative, like the subject it describes.
-    const grammaticalCase: Case = ctx.role === 'subject' || predicate ? 'nom' : 'acc'
+    const grammaticalCase: Case = caseFor(ctx)
     // Adjectives in -ος follow the ος/η/ο pattern.
     const stem = adjective.text.replace(/(ος|η|ο)$/, '')
     if (stem === adjective.text) return adjective.text
@@ -197,7 +205,7 @@ export const greek: LanguageRules = {
   noun(head, np, ctx) {
     const gender = genderOf(head.features)
     const plural = np.determiner?.features.forcesNumber === 'pl'
-    const grammaticalCase: Case = ctx.role === 'subject' ? 'nom' : 'acc'
+    const grammaticalCase: Case = caseFor(ctx)
     if (plural) {
       return head.features.plural
         ?? (gender === 'n' ? `${head.text.replace(/ο$/, '')}α` : `${head.text.replace(/(ος|α|η)$/, '')}ες`)
