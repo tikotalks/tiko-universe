@@ -1,7 +1,7 @@
 import type { Features, Gender, SelectedWord } from '../features'
 import { agreeAdjective, applyExperiencer, conjugateRegular, elide, induceGender, pluralize, possessiveForm, quantifierPhrase } from '../morphology/romance'
 import { extractObjectClitic } from '../morphology/clitic'
-import { agreesWith, formFor, isSensation, note, type LanguageRules, type PhraseContext } from '../profile'
+import { agreesWith, formFor, isPlural, isSensation, note, type LanguageRules, type PhraseContext } from '../profile'
 
 /**
  * Spanish. The pack stores infinitives, so conjugation is the main job; the
@@ -119,7 +119,7 @@ export const spanish: LanguageRules = {
   determiner(np, ctx) {
     const head = np.head
     const determiner = np.determiner
-    const plural = determiner?.features.forcesNumber === 'pl'
+    const plural = isPlural(np)
     const feminine = head?.features.gender === 'feminine'
     // "el agua", not "la agua": a stressed initial "a" takes the masculine
     // article in the singular, while the noun itself stays feminine.
@@ -158,7 +158,12 @@ export const spanish: LanguageRules = {
       note(ctx.builder, 'no article: mass noun')
       return null
     }
-    if (plural) return { text: feminine ? 'unas' : 'unos', from: null }
+    if (plural) {
+      // Spanish leaves a bare plural bare: "necesito gafas", not "necesito unas
+      // gafas", which counts a pair rather than naming the thing.
+      note(ctx.builder, `no article: "${head.text}" is plural`)
+      return null
+    }
     return { text: feminine && !stressedA ? 'una' : 'un', from: null }
   },
 

@@ -1,7 +1,7 @@
 import type { Features, SelectedWord } from '../features'
 import { applyExperiencer } from '../morphology/romance'
 import { extractObjectClitic } from '../morphology/clitic'
-import { agreesWith, formFor, note, type LanguageRules, type SentenceContext } from '../profile'
+import { agreesWith, formFor, isPlural, note, type LanguageRules, type SentenceContext } from '../profile'
 
 /**
  * Greek. Three genders and a case system, but a regular one — which makes it the
@@ -120,7 +120,7 @@ export const greek: LanguageRules = {
   determiner(np, ctx) {
     const head = np.head
     const determiner = np.determiner
-    const plural = determiner?.features.forcesNumber === 'pl'
+    const plural = isPlural(np)
     const gender = genderOf(head?.features ?? {})
     const grammaticalCase: Case = ctx.role === 'subject' ? 'nom' : 'acc'
 

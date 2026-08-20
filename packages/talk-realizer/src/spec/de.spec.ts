@@ -43,6 +43,13 @@ const golden: Array<[string, string[], string]> = [
   ['umlaut plural', ['i', 'want', 'two', 'apple'], 'Ich will zwei Äpfel.'],
   ['strong plural ending after a bare numeral', ['i', 'want', 'two', 'big', 'apple'], 'Ich will zwei große Äpfel.'],
 
+  // A noun that is plural on its own, with nothing counting it. "einen Schuhe"
+  // was the shape of this bug in every language with an article.
+  ['a lexically plural noun takes no article', ['i', 'want', 'shoes'], 'Ich will Schuhe.'],
+  ['its definite article is the plural one', ['i', 'want', 'the', 'shoes'], 'Ich will die Schuhe.'],
+  ['its adjective takes the strong plural ending', ['i', 'want', 'big', 'shoes'], 'Ich will große Schuhe.'],
+  ['kein takes its plural form', ['i', 'not', 'want', 'shoes'], 'Ich will keine Schuhe.'],
+
   // Copula
   ['copula, first person', ['i', 'happy'], 'Ich bin glücklich.'],
   ['copula, second person', ['you', 'happy'], 'Du bist glücklich.'],

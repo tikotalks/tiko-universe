@@ -1,7 +1,7 @@
 import type { Features, SelectedWord } from '../features'
 import { agreeAdjective, conjugateRegular, elide, induceGender, pluralize, startsWithVowel, quantifierPhrase } from '../morphology/romance'
 import { extractObjectClitic } from '../morphology/clitic'
-import { agreesWith, formFor, isSensation, note, type LanguageRules } from '../profile'
+import { agreesWith, formFor, isPlural, isSensation, note, type LanguageRules } from '../profile'
 
 /**
  * French. Four things make it more than concatenation:
@@ -99,7 +99,7 @@ export const french: LanguageRules = {
   determiner(np, ctx) {
     const head = np.head
     const determiner = np.determiner
-    const plural = determiner?.features.forcesNumber === 'pl'
+    const plural = isPlural(np)
     const feminine = head?.features.gender === 'feminine'
 
     if (determiner) {

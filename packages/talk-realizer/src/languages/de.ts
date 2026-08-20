@@ -1,5 +1,5 @@
 import type { Features, SelectedWord } from '../features'
-import { formFor, isDativeSensation, isSensation, note, type LanguageRules, type PhraseContext, type SentenceContext } from '../profile'
+import { formFor, isDativeSensation, isPlural, isSensation, note, type LanguageRules, type PhraseContext, type SentenceContext } from '../profile'
 
 /**
  * German. The hardest of the European languages here, because articles and
@@ -168,7 +168,7 @@ export const german: LanguageRules = {
   determiner(np, ctx) {
     const head = np.head
     const determiner = np.determiner
-    const plural = determiner?.features.forcesNumber === 'pl'
+    const plural = isPlural(np)
     const gender: Gender | 'pl' = plural ? 'pl' : genderOf(head?.features ?? {})
     const grammaticalCase = caseOf(ctx)
 
@@ -231,7 +231,7 @@ export const german: LanguageRules = {
     if (sensation && ctx.tense === 'present') return sensation
     const head = np.head
     if (!head) return adjective.text
-    const plural = np.determiner?.features.forcesNumber === 'pl'
+    const plural = isPlural(np)
     const gender: Gender | 'pl' = plural ? 'pl' : genderOf(head.features)
     const grammaticalCase = caseOf(ctx)
     const kind = np.determiner?.features.determinerKind

@@ -228,6 +228,22 @@ export function isDativeSensation(ctx: SentenceContext): boolean {
   return ctx.subjectAnimate === true && ctx.predicate?.features.dativeSensation === true
 }
 
+/**
+ * True where this noun phrase is plural. Two different things make it so: a
+ * quantifier that forces the count ("two apples"), and a head noun that is
+ * lexically plural in this language — "glasses", "Schuhe", "gafas". Only the
+ * first was ever asked about, so every language with an article gave a plural
+ * noun the singular indefinite one: "a glasses", "una gafas", "einen Schuhe".
+ *
+ * Deliberately **not** the same question as "does the head have to be
+ * pluralised". A lexically plural noun is already spelled plural, so the `noun`
+ * hooks go on asking `forcesNumber` on their own; using this there would
+ * pluralise a plural.
+ */
+export function isPlural(np: { head?: Word, determiner?: Word } | undefined): boolean {
+  return np?.determiner?.features.forcesNumber === 'pl' || np?.head?.features.number === 'pl'
+}
+
 export function agreesWith(
   np: { head?: Word, determiner?: Word } | undefined,
   ctx: PhraseContext,
@@ -239,7 +255,7 @@ export function agreesWith(
   }
   return {
     gender: np?.head?.features.gender,
-    plural: np?.determiner?.features.forcesNumber === 'pl',
+    plural: isPlural(np),
   }
 }
 
