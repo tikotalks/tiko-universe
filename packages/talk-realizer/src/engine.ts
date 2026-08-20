@@ -52,6 +52,7 @@ export function realizeWith(
   const isQuestion = !!chunks.question || chunks.invertedCopula === true
   let needsCopula = !chunks.verb && !!chunks.subject && (!!predicate || isQuestion)
   const subjectHead = chunks.subject?.kind === 'np' ? chunks.subject.head : undefined
+  const subjectPronoun = chunks.subject?.kind === 'np' ? chunks.subject.pronoun : undefined
 
   const ctx: SentenceContext = {
     verb: chunks.verb,
@@ -65,10 +66,14 @@ export function realizeWith(
     negated: chunks.negated,
     isQuestion,
     needsCopula,
-    subjectGender: subjectHead?.features.gender,
+    // A noun says its own gender; a pronoun says it too, and "ella" says it as
+    // plainly as "la manzana" does. Reading only the head left every sentence
+    // about a girl agreeing masculine: "Ella está cansado".
+    subjectGender: subjectHead?.features.gender ?? subjectPronoun?.features.gender,
     subjectPlural: chunks.subject?.kind === 'np'
       ? chunks.subject.determiner?.features.forcesNumber === 'pl'
       : undefined,
+    subjectIsPronoun: chunks.subject?.kind === 'np' ? !!chunks.subject.pronoun : undefined,
     subjectAnimate: chunks.subject?.kind === 'np'
       ? !!chunks.subject.pronoun || subjectHead?.features.animate === true
       : undefined,

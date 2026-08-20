@@ -281,9 +281,12 @@ export interface SentenceContext {
   /** True when the language must supply a copula (no verb tile was chosen). */
   needsCopula: boolean
   /**
-   * The subject's gender, where the subject is a noun. A predicate adjective
-   * agrees with it: "Äpplet är stort", "La pomme est grosse". Undefined for a
-   * pronoun subject, whose gender the tiles do not carry.
+   * The subject's gender. A predicate adjective agrees with it: "Äpplet är
+   * stort", "La pomme est grosse", "Ella está cansada". A noun subject gives its
+   * own; a pronoun subject gives the one its concept carries, because "she" is
+   * feminine in every language that has the distinction. Undefined only where
+   * neither says — an uncurated noun, or a language whose third person does not
+   * distinguish gender at all.
    */
   subjectGender?: Gender
   /**
@@ -296,6 +299,14 @@ export interface SentenceContext {
   speakerGenderAssumed: boolean
   /** True when the subject is plural, for the same agreement. */
   subjectPlural?: boolean
+  /**
+   * True where the subject is a pronoun rather than a noun. Russian and its
+   * neighbours want the short predicative adjective there — "он устал", not "он
+   * усталый" — while a noun subject takes the long one, "Яблоко большое". They
+   * used to tell the two apart by the pronoun having no gender, which is not the
+   * same question and stopped being true once pronouns carried one.
+   */
+  subjectIsPronoun?: boolean
   /**
    * True when the subject is a person rather than a thing. It decides between the
    * two readings of the same tile: "tengo frío" (I feel cold) and "el agua está

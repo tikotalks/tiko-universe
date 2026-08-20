@@ -24,6 +24,13 @@ const golden: Array<[string, string[], string]> = [
   ["a plural subject takes a plural predicate", ["they", "tired"], "Ellos están cansados."],
   ["plural agreement inside the noun phrase", ["i", "want", "two", "dirty", "cookie"], "Yo quiero dos galletas sucias."],
   ["an invariant adjective is left alone", ["i", "sad"], "Yo estoy triste."],
+
+  // A pronoun subject carries a gender of its own, and the predicate agrees with
+  // it. Reading only the noun-phrase head left every sentence about a girl
+  // masculine: "Ella está cansado".
+  ["predicate agrees with a feminine pronoun subject", ["she", "tired"], "Ella está cansada."],
+  ["and with a masculine one", ["he", "tired"], "Él está cansado."],
+  ["nothing to move in an invariant adjective", ["she", "happy"], "Ella está feliz."],
 ]
 
 describe('Spanish realizer', () => {
@@ -76,6 +83,17 @@ describe('Spanish speaker agreement', () => {
   it('leaves the first person plural masculine, because a group is not the speaker', () => {
     const asWoman = realize(select('es', ['we', 'tired']), { locale: 'es', speakerGender: 'feminine' })
     expect(asWoman.text).toBe('Nosotros estamos cansados.')
+  })
+
+  it('lets the third person keep its own gender, whoever is speaking', () => {
+    // The speaker's gender answers for "yo" and for nothing else: a woman saying
+    // "él está cansado" is not talking about herself.
+    expect(realize(select('es', ['she', 'tired']), { locale: 'es', speakerGender: 'masculine' }).text)
+      .toBe('Ella está cansada.')
+    expect(realize(select('es', ['he', 'tired']), { locale: 'es', speakerGender: 'feminine' }).text)
+      .toBe('Él está cansado.')
+    expect(realize(select('es', ['i', 'tired']), { locale: 'es', speakerGender: 'feminine' }).text)
+      .toBe('Yo estoy cansada.')
   })
 
   it('agrees an attributive adjective with its noun, not with the speaker', () => {
