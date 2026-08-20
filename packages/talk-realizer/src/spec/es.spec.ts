@@ -20,6 +20,10 @@ const golden: Array<[string, string[], string]> = [
   ["gustar inverts the clause", ["i", "like", "bread"], "Me gusta el pan."],
   ["inverted verb agrees with the plural", ["i", "like", "two", "cookie"], "Me gustan dos galletas."],
   ["question is bracketed", ["what", "you", "want"], "¿Qué tú quieres?"],
+  ["predicate agrees with a noun subject", ["the", "apple", "is", "cold"], "La manzana está fría."],
+  ["a plural subject takes a plural predicate", ["they", "tired"], "Ellos están cansados."],
+  ["plural agreement inside the noun phrase", ["i", "want", "two", "dirty", "cookie"], "Yo quiero dos galletas sucias."],
+  ["an invariant adjective is left alone", ["i", "sad"], "Yo estoy triste."],
 ]
 
 describe('Spanish realizer', () => {
@@ -28,4 +32,57 @@ describe('Spanish realizer', () => {
       expect(realize(select('es', ids), { locale: 'es' }).text).toBe(expected)
     })
   }
+})
+
+/**
+ * Predicate agreement with the speaker. Every Spanish sentence a girl or a woman
+ * makes with an adjective in -o is wrong without this, and there is no tile in the
+ * selection that carries the answer — only the profile knows.
+ */
+describe('Spanish speaker agreement', () => {
+  const tired = (speakerGender?: 'masculine' | 'feminine') =>
+    realize(select('es', ['i', 'tired']), speakerGender ? { locale: 'es', speakerGender } : { locale: 'es' })
+
+  it('says "cansada" for a girl and "cansado" for a boy', () => {
+    expect(tired('feminine').text).toBe('Yo estoy cansada.')
+    expect(tired('masculine').text).toBe('Yo estoy cansado.')
+  })
+
+  it('agrees a negated predicate too', () => {
+    expect(realize(select('es', ['i', 'not', 'tired']), { locale: 'es', speakerGender: 'feminine' }).text)
+      .toBe('Yo no estoy cansada.')
+  })
+
+  it('keeps the masculine when nobody said, and records that it had to assume', () => {
+    const assumed = tired()
+    expect(assumed.text).toBe('Yo estoy cansado.')
+    expect(assumed.notes.join(' ')).toContain('wrong for a girl')
+
+    // Told the answer, it says what it agreed with rather than warning about it.
+    expect(tired('feminine').notes.join(' ')).not.toContain('not recorded')
+  })
+
+  it('says nothing about an adjective that never moves', () => {
+    // "triste" and "feliz" are the same word for everyone: a warning here would be
+    // noise, and noise is what teaches a reader to skip the notes that matter.
+    for (const id of ['sad', 'happy']) {
+      const result = realize(select('es', ['i', id]), { locale: 'es' })
+      expect(result.notes.some((entry) => entry.includes('speaker'))).toBe(false)
+      expect(realize(select('es', ['i', id]), { locale: 'es', speakerGender: 'feminine' }).text)
+        .toBe(result.text)
+    }
+  })
+
+  it('leaves the first person plural masculine, because a group is not the speaker', () => {
+    const asWoman = realize(select('es', ['we', 'tired']), { locale: 'es', speakerGender: 'feminine' })
+    expect(asWoman.text).toBe('Nosotros estamos cansados.')
+  })
+
+  it('agrees an attributive adjective with its noun, not with the speaker', () => {
+    // "manzana" is feminine whoever is holding the tablet.
+    expect(realize(select('es', ['i', 'want', 'big', 'apple']), { locale: 'es', speakerGender: 'feminine' }).text)
+      .toBe('Yo quiero una manzana grande.')
+    expect(realize(select('es', ['i', 'want', 'dirty', 'cookie']), { locale: 'es', speakerGender: 'masculine' }).text)
+      .toBe('Yo quiero una galleta sucia.')
+  })
 })
