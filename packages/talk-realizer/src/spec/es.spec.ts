@@ -31,6 +31,14 @@ const golden: Array<[string, string[], string]> = [
   ["predicate agrees with a feminine pronoun subject", ["she", "tired"], "Ella está cansada."],
   ["and with a masculine one", ["he", "tired"], "Él está cansado."],
   ["nothing to move in an invariant adjective", ["she", "happy"], "Ella está feliz."],
+
+  // The demonstrative agrees with its noun. It used to pass through as the
+  // masculine tile the pack ships: "este manzana".
+  ["demonstrative agrees", ["this", "apple"], "Esta manzana."],
+  ["the other demonstrative series too", ["that", "apple"], "Esa manzana."],
+  // "el agua" is an article-only rule, and it reaches nothing else in the phrase.
+  ["the article of a stressed-a noun is masculine", ["i", "want", "the", "water"], "Yo quiero el agua."],
+  ["its demonstrative is not", ["this", "water"], "Esta agua."],
 ]
 
 describe('Spanish realizer', () => {
@@ -39,6 +47,22 @@ describe('Spanish realizer', () => {
       expect(realize(select('es', ids), { locale: 'es' }).text).toBe(expected)
     })
   }
+
+  /**
+   * Every other language says why it put an article there. Spanish said nothing,
+   * so its articles arrived with no reason attached and a consumer reading the
+   * notes could not tell one from any other word the realizer inserted.
+   */
+  it('says why it inserted an article', () => {
+    const result = realize(select('es', ['i', 'want', 'apple']), { locale: 'es' })
+    expect(result.inserted).toEqual(['una'])
+    expect(result.notes.join(' ')).toContain('article "una"')
+  })
+
+  it('names the noun a demonstrative agreed with', () => {
+    const result = realize(select('es', ['this', 'water']), { locale: 'es' })
+    expect(result.notes.join(' ')).toContain('"esta": the demonstrative agrees with water')
+  })
 })
 
 /**

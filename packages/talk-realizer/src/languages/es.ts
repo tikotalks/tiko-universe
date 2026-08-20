@@ -12,6 +12,12 @@ import { agreesWith, formFor, isPlural, isSensation, note, type LanguageRules, t
  * The copula is `estar`, because everything a child says with an adjective here
  * is a state: "estoy feliz", "estoy cansado".
  *
+ * Determiners agree with the noun, each in its own way. The article has the "el
+ * agua" rule — a feminine noun beginning with a stressed "a" takes the masculine
+ * *article* — and that rule stops at the article: the demonstrative, the
+ * adjective and everything else still treat the noun as feminine. A plural noun
+ * takes no indefinite article at all, because Spanish leaves a bare plural bare.
+ *
  * **A predicate adjective agrees with whoever it is said about**, and in the first
  * person that is the speaker: "estoy cansado" from a boy, "estoy cansada" from a
  * girl. Nothing in the selection carries that — the tile is "cansado" either way
@@ -53,6 +59,28 @@ const HAVE: Record<string, string> = {
 function predicateGender(ctx: PhraseContext, subjectGender: Gender | undefined): Gender | undefined {
   if (ctx.person === 1 && ctx.number === 'sg') return ctx.speakerGender
   return subjectGender
+}
+
+/**
+ * A demonstrative agrees with its noun in gender and number: "esta manzana",
+ * "estos zapatos". The packs cite it in the masculine singular ("este", "ese"),
+ * and both series build the rest by trading that final -e for -a, -os and -as.
+ *
+ * It agrees with the noun's **own** gender. "el agua" is an article-only rule —
+ * a stressed initial "a" takes the masculine *article* so that two a-sounds do
+ * not run together — and it reaches nothing else in the phrase: "esta agua", and
+ * "el agua fría" with a feminine adjective.
+ *
+ * Deliberately only the two series the packs ship. "Aquel" is irregular
+ * ("aquella", "aquellos") and the -e rule would spell it "aquela"; a curated
+ * `feminine` or `pluralForm` wins here, which is where that belongs.
+ */
+function demonstrativeForm(features: Features, text: string, feminine: boolean, plural: boolean): string {
+  if (feminine) {
+    const singular = features.feminine ?? text.replace(/e$/, 'a')
+    return plural ? pluralize(singular, 'es') : singular
+  }
+  return plural ? (features.pluralForm ?? text.replace(/e$/, 'os')) : text
 }
 
 export const spanish: LanguageRules = {
@@ -137,6 +165,11 @@ export const spanish: LanguageRules = {
       if (determiner.features.pronounCase === 'poss') {
         return { text: possessiveForm(determiner.features, determiner.text, feminine), from: determiner.id }
       }
+      if (kind === 'demonstrative') {
+        const form = demonstrativeForm(determiner.features, determiner.text, feminine, plural)
+        note(ctx.builder, `"${form}": the demonstrative agrees with ${head?.id ?? 'the noun'}`)
+        return { text: form, from: determiner.id }
+      }
       return {
         text: quantifierPhrase(determiner.features, determiner.text, 'es', feminine, plural),
         from: determiner.id,
@@ -164,7 +197,11 @@ export const spanish: LanguageRules = {
       note(ctx.builder, `no article: "${head.text}" is plural`)
       return null
     }
-    return { text: feminine && !stressedA ? 'una' : 'un', from: null }
+    const article = feminine && !stressedA ? 'una' : 'un'
+    note(ctx.builder, stressedA
+      ? `article "${article}": "${head.text}" is feminine, but a stressed initial "a" takes the masculine article`
+      : `article "${article}": indefinite ${feminine ? 'feminine' : 'masculine'} singular`)
+    return { text: article, from: null }
   },
 
   adjectivePosition: 'after',
