@@ -63,6 +63,9 @@ struct GlobeUniforms {
     /// above the water, below the slabs still lying flat around it.
     var shadowColor: SIMD4<Float>
     var shadowRadius: Float
+    /// Where the waterline of a country's slab sits this frame. A fixed slice
+    /// of the globe is a cliff once a child is standing on one island.
+    var slabBaseRadius: Float
     /// The sea over the deepest trench, and whether there is a depth image to
     /// read at all.
     var deepOceanColor: SIMD4<Float>
@@ -696,6 +699,33 @@ final class GlobeRenderer: NSObject, MTKViewDelegate {
 
     static let sampleCount = 4
 
+    /// How deep a country's slab is this frame. Baked at full depth and pulled
+    /// back up as the child comes closer: from the whole Earth the thickness is
+    /// what makes the countries read as pieces laid on a ball, and from inside
+    /// one country the same thickness is a wall around it.
+    private var slabBaseRadius: Float {
+        let radius = camera.visibleRadiusDegrees
+        let depth = Float(min(1, max(0.22, 0.22 + 0.78 * (radius / 28))))
+        let full = GlobeMeshBuilder.landRadius - GlobeMeshBuilder.landBaseRadius
+        return GlobeMeshBuilder.landRadius - full * depth
+    }
+
+    /// How much of its weight a river keeps at this zoom. A border holds the
+    /// same thickness whatever the camera does, and that is right for a border
+    /// — but every river on Earth at full weight is a net thrown over the
+    /// planet. They thin out as the child pulls back, until at the whole Earth
+    /// they are the hint of a line.
+    private var riverWeight: Float {
+        let radius = camera.visibleRadiusDegrees
+        switch radius {
+        case ..<4: return 1
+        case ..<12: return 0.8
+        case ..<30: return 0.6
+        case ..<50: return 0.45
+        default: return 0.35
+        }
+    }
+
     /// The world-space half-width that draws `borderWidthPoints` on screen at
     /// the current camera distance — so a border keeps its weight whether the
     /// child is looking at the planet or at one country.
@@ -770,6 +800,7 @@ final class GlobeRenderer: NSObject, MTKViewDelegate {
             selectedBorderColor: appearance.selectedBorder,
             shadowColor: appearance.shadow,
             shadowRadius: GlobeMeshBuilder.shadowRadius,
+            slabBaseRadius: slabBaseRadius,
             deepOceanColor: appearance.deepOcean,
             hasBathymetry: bathymetry == nil ? 0 : 1,
             flatShading: 0
@@ -848,7 +879,7 @@ final class GlobeRenderer: NSObject, MTKViewDelegate {
             riverUniforms.borderHalfWidth = borderHalfWidth(
                 drawableHeight: Double(size.height),
                 scale: Double(view.contentScaleFactor),
-                points: appearance.riverWidth
+                points: appearance.riverWidth * riverWeight
             )
             encoder.setRenderPipelineState(borderPipeline)
             encoder.setVertexBuffer(riverVertices, offset: 0, index: 0)

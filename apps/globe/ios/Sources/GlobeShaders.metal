@@ -27,6 +27,8 @@ struct Uniforms {
     /// The mark a lifted country leaves behind, and where it lies.
     float4 shadowColor;
     float shadowRadius;
+    /// Where the waterline of a slab sits this frame.
+    float slabBaseRadius;
     /// The colour over the deepest trench; `oceanColor` is the shallow end.
     float4 deepOceanColor;
     int hasBathymetry;
@@ -209,6 +211,9 @@ vertex LandInOut land_vertex(uint vertexID [[vertex_id]],
                              const device float4 *countryColors [[buffer(2)]]) {
     LandVertex source = vertices[vertexID];
     float3 position = float3(source.position);
+    // The bottom of a cut edge, which is the only part that moves: the face
+    // above it stays on the surface and the coastline stays where it is.
+    if (source.shade < 0.99) position = normalize(position) * uniforms.slabBaseRadius;
     bool selected = uniforms.selectedCountry >= 0 && int(source.country) == uniforms.selectedCountry;
     LandInOut out;
     out.position = uniforms.viewProjection * float4(lifted(position, selected, uniforms), 1.0);

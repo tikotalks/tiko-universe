@@ -10,7 +10,7 @@ extension TikoLocalTranslations {
         "globe.earth": "Earth",
         "globe.hint.explore": "Spin the Earth. Tap a country.",
         "globe.mode.countries": "Countries",
-        "globe.mode.capitals": "Capitals",
+        "globe.mode.capitals": "Cities",
         "globe.mode.animals": "Animals",
         "globe.mode.landmarks": "Landmarks",
         "globe.mode.picker": "What to look for",

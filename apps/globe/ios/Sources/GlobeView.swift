@@ -291,7 +291,10 @@ struct GlobeView: View {
                     at: CGPoint(x: placed.point.x, y: placed.point.y + radius + 11 * scale),
                     size: (isCapital ? 13 : 11) * min(scale, 1.5),
                     in: &context,
-                    isPlace: true
+                    // A capital is named the way its country is — a seat of
+                    // government reads as a place, not as one more town. The
+                    // towns keep the blue chip that says "there are more here".
+                    isPlace: !isCapital
                 )
             }
             context.opacity = 1
